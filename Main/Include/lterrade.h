@@ -139,7 +139,16 @@ class OLTERRAIN
 (
   olterraincontainer,
   olterrain,
-  ;
+ public:
+  virtual bool Open(character*);
+  virtual bool CanBeOpened() const { return true; }
+  virtual stack* GetContained() const { return Contained; }
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
+ protected:
+  virtual void VirtualConstructor(bool);
+  stack* Contained;
 );
 
 class OLTERRAIN

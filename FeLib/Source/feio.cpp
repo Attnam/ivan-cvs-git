@@ -58,7 +58,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
-      GET_KEY(false);
+      GET_KEY();
 }
 
 ulong iosystem::CountChars(char cSF, const std::string& sSH)

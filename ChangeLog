@@ -1,3 +1,31 @@
+November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Some bones and skulls added to the enner beast level
+	* Skulls severed from skeletons no longer weight eight kilograms
+	* A dying skeleton now always drops a skull if it has a head
+	* Removed the ambient light of Attnam
+	* Added 100 bananas to Hulbo's shop
+	* Reduced the possibility of people stepping on banana peels and the average damage
+	  caused by the fall
+	* Elpuri's lair and AI are now a little more interesting
+	* There is now a one-way magic portal in Elpuri's lair which leads to level 7 and
+	  is the only way to go for the seekers of the Shirt
+	* It was impossible to correct the bugs in the EnabledMember tracking structure of teams,
+	  so I remade the hole system differently
+	* Score calculation code rewritten
+	* High score list no longer behaves oddly if there are no entries
+	* Healing liquid, priests and wands of resurrection may no longer give angels or genies
+	  prohibited bodyparts
+	* Gods can again attach old bodyparts (Hex had forgotten the const tag after humanoid's
+	  CanCreateBodyPart())
+	* If a bodypart's HPs are at max when endurance is increased, its HPs are set to new max
+	* Killed the Hideous RAM Boulder Monster Spawn Error once and for all!
+	* Destroying a temple no longer *increases* relation to the divine owner
+	* Selling into and buying from chest on store floor works again
+	* The books and scrolls of the library are now inside the shelves
+	* The AI no longer eats spoiled food
+	* Items with different spoil levels are no longer piled together
+
 November 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Bugs squashed:

@@ -130,206 +130,6 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
-	/*Inventory = { 128, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels; }*/
-	/*Inventory == wandofpolymorph;
-	RightRing = ring(RING_OF_POLYMORPH_CONTROL);*/
-	/*Helmet = LEATHER helmet;
-	RightWielded = COPPER meleeweapon(SPEAR);
-	CWeaponSkillHits == 25;
-	RightSWeaponSkillHits = 25;*/
-
-	/*DefaultArmStrength = 12;
-	DefaultLegStrength = 12;
-	DefaultDexterity = 12;
-	DefaultAgility = 12;
-	DefaultEndurance = 12;
-	DefaultPerception = 10;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = LEATHER helmet;
-	BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-	Cloak = LEATHER cloak;
-	Belt = LEATHER belt;
-	RightWielded = COPPER meleeweapon(AXE);
-	RightGauntlet = LEATHER gauntlet;
-	RightBoot = LEATHER boot;
-	KnownCWeaponSkills = { 2, AXES, UNARMED; }
-	CWeaponSkillHits = { 2, 25, 25; }
-	RightSWeaponSkillHits = 25;*/
-
-	/*DefaultArmStrength = 15;
-	DefaultLegStrength = 15;
-	DefaultDexterity = 15;
-	DefaultAgility = 15;
-	DefaultEndurance = 15;
-	DefaultPerception = 10;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = BRONZE helmet;
-	BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-	Cloak = TROLL_HIDE cloak;
-	Belt = TROLL_HIDE belt;
-	RightWielded = IRON meleeweapon(MACE);
-	RightGauntlet = TROLL_HIDE gauntlet;
-	RightBoot = BRONZE boot;
-	KnownCWeaponSkills == MACES;
-	CWeaponSkillHits == 50;
-	RightSWeaponSkillHits = 50;
-	LeftSWeaponSkillHits = 50;*/
-
-	/*DefaultArmStrength = 18;
-	DefaultLegStrength = 18;
-	DefaultDexterity = 18;
-	DefaultAgility = 18;
-	DefaultEndurance = 18;
-	DefaultPerception = 14;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = IRON helmet;
-	BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
-	Cloak = LEATHER cloak;
-	Belt = HARDENED_LEATHER belt;
-	RightWielded = STEEL meleeweapon(LONG_SWORD);
-	LeftWielded = STEEL shield;
-	RightGauntlet = LEATHER gauntlet;
-	RightBoot = STEEL boot;
-	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 2, 75, 75; }
-	RightSWeaponSkillHits = 75;
-	LeftSWeaponSkillHits = 75;*/
-
-	/*DefaultArmStrength = 20;
-	DefaultLegStrength = 20;
-	DefaultDexterity = 20;
-	DefaultAgility = 20;
-	DefaultEndurance = 20;
-	DefaultPerception = 15;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = MITHRIL helmet;
-	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL);
-	Cloak = TROLL_HIDE cloak;
-	Belt = NYMPH_HAIR belt;
-	RightWielded = MITHRIL meleeweapon(LONG_SWORD);
-	LeftWielded = STEEL shield;
-	RightGauntlet = LEATHER gauntlet;
-	RightBoot = STEEL boot;
-	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 2, 100, 75; }
-	RightSWeaponSkillHits = 100;
-	LeftSWeaponSkillHits = 75;
-	Inventory == PHOENIX_FEATHER shield;*/
-
-	/*DefaultArmStrength = 25;
-	DefaultLegStrength = 25;
-	DefaultDexterity = 22;
-	DefaultAgility = 22;
-	DefaultEndurance = 22;
-	DefaultPerception = 20;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
-	DefaultCharisma = 10;
-	DefaultMana = 10;
-	Helmet = MITHRIL helmet;
-	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	Cloak = PHOENIX_FEATHER cloak { Enchantment = 1; }
-	Belt = NYMPH_HAIR belt;
-	RightWielded = MITHRIL turox { Enchantment = 2; }
-	RightRing = ring(RING_OF_INFRA_VISION);
-	RightGauntlet = NYMPH_HAIR gauntlet(BOOT_OF_AGILITY) { Enchantment = 1; }
-	RightBoot = NYMPH_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 1; }
-	KnownCWeaponSkills = { 2, MACES, SHIELDS; }
-	CWeaponSkillHits = { 2, 200, 75; }
-	RightSWeaponSkillHits = 200;
-	LeftSWeaponSkillHits = 200;
-	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }*/
-
-	/*DefaultArmStrength = 35;
-	DefaultLegStrength = 35;
-	DefaultDexterity = 30;
-	DefaultAgility = 30;
-	DefaultEndurance = 35;
-	DefaultPerception = 20;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
-	DefaultCharisma = 20;
-	DefaultMana = 20;
-
-	Helmet = MITHRIL helmet;
-	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 1; }
-	Belt = PHOENIX_FEATHER belt;
-	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
-	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 2; }
-	RightRing = ring(RING_OF_INFRA_VISION);
-	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
-	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 2; }
-	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 3, 500, 500, 500; }
-	RightSWeaponSkillHits = 200;
-	LeftSWeaponSkillHits = 200;*/
-
-	/*DefaultArmStrength = 45;
-	DefaultLegStrength = 45;
-	DefaultDexterity = 35;
-	DefaultAgility = 35;
-	DefaultEndurance = 35;
-	DefaultPerception = 30;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
-	DefaultCharisma = 20;
-	DefaultMana = 20;
-
-	Helmet = RUBY helmet { Enchantment = 3; }
-	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 4; }
-	Cloak = ANGEL_HAIR cloak { Enchantment = 3; }
-	Belt = RUBY belt { Enchantment = 3; }
-	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 4; }
-	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
-	RightRing = ring(RING_OF_INFRA_VISION);
-	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
-	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 3; }
-	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
-	RightSWeaponSkillHits = 500;
-	LeftSWeaponSkillHits = 500;*/
-
-        /*DefaultArmStrength = 50;
-	DefaultLegStrength = 50;
-	DefaultDexterity = 40;
-	DefaultAgility = 40;
-	DefaultEndurance = 40;
-	DefaultPerception = 30;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
-	DefaultCharisma = 20;
-	DefaultMana = 20;
-
-        Helmet = DIAMOND helmet { Enchantment = 5; }
-	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = goldeneagleshirt;
-	Cloak = ANGEL_HAIR cloak { Enchantment = 5; }
-	Belt = DIAMOND belt { Enchantment = 5; }
-	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 5; }
-	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 5; }
-	RightRing = ring(RING_OF_INFRA_VISION);
-	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
-	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 5; }
-	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
-	RightSWeaponSkillHits = 500;
-	LeftSWeaponSkillHits = 500;
-        Inventory = { 4, wandofslow, wandofhaste, wandofstriking, stethoscope; }*/
 }
 
 petrus
@@ -3090,7 +2890,7 @@ elder
 	{
 		9,
 		"\"So you're leaving? The stars tell me you will fight glorious battles, meet interesting people, find out suprising things and eventually die a violent death. But good luck anyway.\"",
-		"\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by a family of two male hippos.\"",
+		"\"I remember still clearly when we first found you in the jungle. You were five and had seemingly been raised by hippos since birth.\"",
 		"\"Even though you have lived here, you are somehow different from the Tweraifians, I can sense it. Is it your aggressive and wild character or your stupidity that separates us? Or is it just that your skin is white and our black?\"",
 		"\"Not long ago Tweraif was a civilization advanced beyound your comprehension. But we were pacifists and could not repulse Attnam's grunt army.\"",
 		"@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
@@ -3113,7 +2913,7 @@ encourager
 	DefaultWisdom = 7;
 	DefaultCharisma = 7;
 	DefaultMana = 0;
-	CapColor = rgb16(80, 80, 80);
+	CapColor = rgb16(64, 64, 64);
 	EyeColor = rgb16(140, 100, 70);
 	HeadBitmapPos = 96, 240;
 	TorsoBitmapPos = 32, 0;

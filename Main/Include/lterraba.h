@@ -23,6 +23,7 @@ class glterrain;
 class olterrain;
 class item;
 class level;
+template <class type> class contentscript;
 template <class type> class database;
 
 struct terraindatabase
@@ -84,6 +85,7 @@ class lterrain : public object
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   virtual bool HasKeyHole() const { return CanBeOpened(); }
+  virtual bool IsOnGround() const { return true; }
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -167,6 +169,7 @@ struct olterraindatabase : public terraindatabase
   uchar RestModifier;
   std::string RestMessage;
   bool IsUpLink;
+  ulong StorageVolume;
 };
 
 class olterrainprototype
@@ -247,11 +250,13 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE(uchar, RestModifier);
   virtual DATA_BASE_VALUE(const std::string&, RestMessage);
   virtual DATA_BASE_BOOL(IsUpLink);
+  virtual DATA_BASE_VALUE(ulong, StorageVolume);
   static olterrain* Clone(ushort, ushort) { return 0; }
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }
   virtual std::string GetText() const { return ""; }
+  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }

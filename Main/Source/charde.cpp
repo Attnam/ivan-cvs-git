@@ -90,6 +90,13 @@ bool ennerbeast::Hit(character*, bool)
 
 void skeleton::CreateCorpse()
 {
+  if(GetHead())
+    {
+      item* Skull = SevereBodyPart(HEAD_INDEX);
+      GetStackUnder()->AddItem(Skull);
+      Skull->DropEquipment();
+    }
+
   ushort Amount = 2 + RAND() % 4;
 
   for(ushort c = 0; c < Amount; ++c)
@@ -458,13 +465,13 @@ void petrus::BeTalkedTo()
 			    "receive a small dukedom in the middle of tundra where you rule with justice till\n"
 			    "the end of your content life.\n\nYou are victorious!");
 
-	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and was raised to nobility", 3, false);
+	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and was raised to nobility", 4, false);
 	  game::End();
 	  return;
 	}
       else
 	{
-	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thy greed hast overcome thy wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thy greed hath overcome thy wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
 	  /* And now we actually make his face change color ;-) */
 
@@ -517,7 +524,7 @@ void petrus::BeTalkedTo()
 				"medium-sized castles nearby. Thy brethren from New Attnam have also told Us about\n"
 				"vast riches seized from them. Our law says all such stolen valuables belong to \n"
 				"the Cathedral's treasury, so this is a severe claim. However, proof is needed,\n"
-				"and even if such was provided, we couldn't send soldiers over the snow fields\n"
+				"and even if such was provided, We couldn't send soldiers over the snow fields\n"
 				"ere spring.\"");
 
 	      game::TextScreen(	"\"However, since thou now servest Us, We ought to find thee something to do. Sir\n"
@@ -558,7 +565,7 @@ void priest::BeTalkedTo()
     }
 
   for(ushort c = 0; c < game::GetPlayer()->GetBodyParts(); ++c)
-    if(!game::GetPlayer()->GetBodyPart(c))
+    if(!game::GetPlayer()->GetBodyPart(c) && game::GetPlayer()->CanCreateBodyPart(c))
       {
 	bool HasOld = false;
 
@@ -3131,7 +3138,7 @@ void smith::BeTalkedTo()
 	}
     }
   else
-    ADD_MESSAGE("\"Come back when you have some weapons I can fix.\"");
+    ADD_MESSAGE("\"Come back when you have some weapons or armor I can fix.\"");
 }
 
 ushort wolf::GetSkinColor() const
@@ -3757,11 +3764,13 @@ bool humanoid::CheckTalk()
 {
   if(!character::CheckTalk())
     return false;
+
   if(!GetHead())
     {
-      ADD_MESSAGE("You need a head for talking.");
+      ADD_MESSAGE("You need a head to talk.");
       return false;
     }
+
   return true;
 }
 
@@ -3855,3 +3864,56 @@ void encourager::VirtualConstructor(bool Load)
   LastHit = 0;
 }
 
+ulong skeleton::GetBodyPartVolume(ushort Index) const
+{
+  switch(Index)
+    {
+    case HEAD_INDEX: return 600;
+    case TORSO_INDEX: return (GetTotalVolume() - 600) * 13 / 30;
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return (GetTotalVolume() - 600) / 10;
+    case GROIN_INDEX: return (GetTotalVolume() - 600) / 10;
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return (GetTotalVolume() - 600) * 2 / 15;
+    default:
+      ABORT("Illegal humanoid bodypart volume request!");
+      return 0;
+    }
+}
+
+void elpuri::Save(outputfile& SaveFile) const
+{
+  frog::Save(SaveFile);
+  SaveFile << Active;
+}
+
+void elpuri::Load(inputfile& SaveFile)
+{
+  frog::Load(SaveFile);
+  SaveFile >> Active;
+}
+
+void elpuri::GetAICommand()
+{
+  if(Active)
+    character::GetAICommand();
+  else
+    {
+      if(CheckForEnemies(false, false, false))
+	return;
+
+      EditAP(-1000);  
+    }
+}
+
+ushort elpuri::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
+{
+  Active = true;
+  return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg);
+}
+
+void elpuri::VirtualConstructor(bool Load)
+{
+  nonhumanoid::VirtualConstructor(Load);
+  Active = false;
+}

@@ -235,14 +235,14 @@ bool game::Init(const std::string& Name)
 			      "by colony masters for being late you performed your twelve-hour routine of\n"
 			      "climbing trees, gathering bananas, climbing trees, gathering bananas, chasing\n"
 			      "monkeys that stole the first gathered bananas, carrying bananas to the village\n"
-			      "and trying to look happy when meals (real food, not bananas) were distributed.\n\n"
+			      "and trying to look happy when real food was distributed.\n\n"
 			      "Finally you were about to enjoy your free time by taking a quick dip in the\n"
 			      "nearby crocodile bay. However, at this point something unusual happened.\n"
 			      "You were summoned to the mansion of Richel Decos, the viceroy of the\n"
 			      "colony, and were led directly to him.");
 
 	iosystem::TextScreen( "\"I have a task for you, citizen\", said the viceroy picking his golden\n"
-			      "teeth, \"The market price of bananas has took a deep dive and yet the\n"
+			      "teeth, \"The market price of bananas has taken a deep dive and yet the\n"
 			      "central government is about to raise taxes. I have sent appeals to high\n"
 			      "priest Petrus but received no response. I fear my enemies in Attnam are\n"
 			      "plotting against me and intercepting my messages before they reach him!\"\n\n"
@@ -283,7 +283,7 @@ bool game::Init(const std::string& Name)
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
 	Ticks = 0;
-	AveragePlayerArmStrength = AveragePlayerLegStrength = AveragePlayerDexterity = AveragePlayerAgility = 10;
+	InitPlayerAttributeAverage();
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -1753,6 +1753,58 @@ void game::SignalGeneration(ushort Type, ushort Config)
 
   if(Iterator != DangerMap.end())
     Iterator->second.HasBeenGenerated = true;
+}
+
+void game::InitPlayerAttributeAverage()
+{
+  AveragePlayerArmStrength = AveragePlayerLegStrength = AveragePlayerDexterity = AveragePlayerAgility = 0;
+
+  if(!GetPlayer()->IsHumanoid())
+    return;
+
+  humanoid* Player = static_cast<humanoid*>(GetPlayer());
+  ushort Arms = 0;
+  ushort Legs = 0;
+
+  if(Player->GetRightArm() && Player->GetRightArm()->IsAlive())
+    {
+      AveragePlayerArmStrength += Player->GetRightArm()->GetStrength();
+      AveragePlayerDexterity += Player->GetRightArm()->GetDexterity();
+      ++Arms;
+    }
+
+  if(Player->GetLeftArm() && Player->GetLeftArm()->IsAlive())
+    {
+      AveragePlayerArmStrength += Player->GetLeftArm()->GetStrength();
+      AveragePlayerDexterity += Player->GetLeftArm()->GetDexterity();
+      ++Arms;
+    }
+
+  if(Player->GetRightLeg() && Player->GetRightLeg()->IsAlive())
+    {
+      AveragePlayerLegStrength += Player->GetRightLeg()->GetStrength();
+      AveragePlayerAgility += Player->GetRightLeg()->GetAgility();
+      ++Legs;
+    }
+
+  if(Player->GetLeftLeg() && Player->GetLeftLeg()->IsAlive())
+    {
+      AveragePlayerLegStrength += Player->GetLeftLeg()->GetStrength();
+      AveragePlayerAgility += Player->GetLeftLeg()->GetAgility();
+      ++Legs;
+    }
+
+  if(Arms)
+    {
+      AveragePlayerArmStrength = AveragePlayerArmStrength / Arms;
+      AveragePlayerDexterity = AveragePlayerDexterity / Arms;
+    }
+
+  if(Legs)
+    {
+      AveragePlayerLegStrength = AveragePlayerLegStrength / Legs;
+      AveragePlayerAgility = AveragePlayerAgility / Legs;
+    }
 }
 
 void game::UpdatePlayerAttributeAverage()

@@ -983,7 +983,7 @@ void lsquare::PolymorphEverything(character* Zapper)
       if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
-      Character->PolymorphRandomly(5000 + RAND() % 5000);
+      Character->PolymorphRandomly(500 + RAND() % 500);
     }
 }
 

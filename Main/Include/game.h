@@ -237,6 +237,7 @@ class game
   static float GetAveragePlayerLegStrength() { return AveragePlayerLegStrength; }
   static float GetAveragePlayerDexterity() { return AveragePlayerDexterity; }
   static float GetAveragePlayerAgility() { return AveragePlayerAgility; }
+  static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
  private:
   static std::string Alignment[];

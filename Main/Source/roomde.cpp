@@ -390,7 +390,7 @@ void library::Enter(character* Customer)
       {
 	if(Master->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHAR_NAME(DEFINITE), Master->GetPersonalPronoun().c_str());
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Feel free to open the shelves, but be quiet in the library!\" %s whispers.", Master->CHAR_NAME(DEFINITE), Master->GetPersonalPronoun().c_str());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }

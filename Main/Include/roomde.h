@@ -57,7 +57,7 @@ class ROOM
   virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil() const { return false; }
-  virtual ushort GetGodRelationAdjustment() const { return 150; }
+  virtual short GetGodRelationAdjustment() const { return -150; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;

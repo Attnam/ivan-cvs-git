@@ -56,12 +56,12 @@ void team::Hostility(team* Enemy)
 
 void team::Save(outputfile& SaveFile) const
 {
-  SaveFile << ID << Relation << AttackEvilness << EnabledMembers;
+  SaveFile << ID << Relation << AttackEvilness;
 }
 
 void team::Load(inputfile& SaveFile)
 {
-  SaveFile >> ID >> Relation >> AttackEvilness >> EnabledMembers;
+  SaveFile >> ID >> Relation >> AttackEvilness;
 }
 
 bool team::HasEnemy() const
@@ -73,18 +73,13 @@ bool team::HasEnemy() const
   return false;
 }
 
-std::list<character*>::iterator team::Add(character* Char)
+ushort team::GetEnabledMembers() const
 {
-  if(Char->IsEnabled())
-    ++EnabledMembers;
+  ushort Amount = 0;
 
-  return Member.insert(Member.end(), Char);
-}
+  for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
+    if((*i)->IsEnabled())
+      ++Amount;
 
-void team::Remove(character* Char)
-{
-  if(Char->IsEnabled())
-    --EnabledMembers;
-
-  Member.erase(Char->GetTeamIterator());
+  return Amount;
 }

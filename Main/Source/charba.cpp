@@ -98,7 +98,7 @@ character::~character()
     }
 
   if(Team)
-    Team->Remove(this);
+    Team->Remove(GetTeamIterator());
 
   delete Stack;
   ushort c;
@@ -461,10 +461,9 @@ bool character::Drop()
 
   if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, ToDrop[0], ToDrop.size()))
     {
-      if(ToDrop.empty())
-	return false;
       for(ushort c = 0; c < ToDrop.size(); ++c)
 	ToDrop[c]->MoveTo(GetStackUnder());
+
       ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).c_str());
       DexterityAction(1);
       return true;
@@ -771,7 +770,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
 		  game::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pEtRuS aNd PlEaSeD mE!\nfRoM tHiS dAy On, ThOu ArT tHe DeArEsT sErVaNt Of AlL eViL!\"\n\nYou are victorious!");
-		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 4, false);
+		  game::GetPlayer()->AddScoreEntry("killed Petrus and became the Avatar of Chaos", 3, false);
 		  game::End();
 		  return true;
 		}
@@ -833,6 +832,9 @@ bool character::PickUp()
 
       if(Amount > 1)
 	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
+
+      if(!Amount)
+	return false;
 
       if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(this))
 	{
@@ -896,7 +898,6 @@ void character::CreateCorpse()
   Corpse->SetDeceased(this);
   GetStackUnder()->AddItem(Corpse);
   SetHasBe(false);
-  GetTeam()->DecreaseEnabledMembers();
 }
 
 void character::Die(bool ForceMsg)
@@ -1111,13 +1112,10 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
 bool character::Talk()
 {
   if(!CheckTalk())
-    {
-      return false;
-    }
+    return false;
 
   character* ToTalk = 0;
   ushort Characters = 0;
-
 
   for(ushort d = 0; d < 8; ++d)
     {
@@ -1590,12 +1588,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> TemporaryStateCounter[c];
 
   if(ReadType<bool>(SaveFile))
-    {
-      SetTeam(game::GetTeam(ReadType<ushort>(SaveFile)));
-
-      if(!IsEnabled())
-	Team->DecreaseEnabledMembers();
-    }
+    SetTeam(game::GetTeam(ReadType<ushort>(SaveFile)));
 
   if(ReadType<bool>(SaveFile))
     GetTeam()->SetLeader(this);
@@ -1935,12 +1928,12 @@ long character::GetStatScore() const
   for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     SkillScore += GetCWeaponSkill(c)->GetHits();
 
-  return (SkillScore >> 2) + (GetAttribute(ARM_STRENGTH) + GetAttribute(LEG_STRENGTH) + GetAttribute(DEXTERITY) + GetAttribute(AGILITY) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 40;
+  return (SkillScore << 1) + (long(game::GetAveragePlayerArmStrength() + game::GetAveragePlayerLegStrength() + game::GetAveragePlayerDexterity() + game::GetAveragePlayerAgility()) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 50;
 }
 
 long character::GetScore() const
 {
-  return (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
+  return (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + GetStuffScore() + game::GodScore();
 }
 
 void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
@@ -2208,7 +2201,6 @@ bool character::Polymorph(character* NewForm, ushort Counter)
       NewForm->SetPolymorphBackup(this);
       SetPolymorphed(true);
       SetHasBe(false);
-      GetTeam()->DecreaseEnabledMembers();
     }
 
   GetStack()->MoveItemsTo(NewForm->GetStack());
@@ -2268,14 +2260,12 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 	}
     }
 }
+
 /* return true if still in balance */
+
 bool character::CheckBalance(float KickDamage)
 {
-  if(!CanWalk()) // if the monster isn't standing it hardly can't loose its balance
-    return true;
-  if(KickDamage == 0)
-    return true;
-  return (KickDamage * 25 < RAND() % GetSize()); 
+  return !CanWalk() || !KickDamage || KickDamage * 25 < RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -2388,7 +2378,7 @@ void character::ActionAutoTermination()
 	  }
 }
 
-bool character::CheckForEnemies(bool CheckDoors, bool CheckGround)
+bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveRandomly)
 {
   bool HostileCharsNear = false;
   character* NearestChar = 0;
@@ -2451,10 +2441,11 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround)
 	      if(CheckGround && CheckForUsefulItemsOnGround())
 		return true;
 
-	      return MoveRandomly(); // one has heard that an enemy is near but doesn't know where
+	      if(MayMoveRandomly && MoveRandomly()) // one has heard that an enemy is near but doesn't know where
+		return true;; 
 	    }
-	  else
-	    return false;
+
+	  return false;
 	}
     }
 }
@@ -2861,19 +2852,19 @@ void character::SetTeam(team* What)
   if(GetSquareUnder())
     GetSquareUnder()->SendNewDrawRequest();
 
-  SetTeamIterator(GetTeam()->Add(this));
+  SetTeamIterator(What->Add(this));
 }
 
 void character::ChangeTeam(team* What)
 {
-  if(GetTeam())
-    GetTeam()->Remove(this);
+  if(Team)
+    Team->Remove(GetTeamIterator());
 
   Team = What;
   GetSquareUnder()->SendNewDrawRequest();
 
-  if(GetTeam())
-    SetTeamIterator(GetTeam()->Add(this));
+  if(Team)
+    SetTeamIterator(Team->Add(this));
 }
 
 bool character::ChangeRandomStat(short HowMuch)
@@ -3686,7 +3677,7 @@ bool character::RaiseTheDead(character*)
   bool Useful = false;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c))
+    if(!GetBodyPart(c) && CanCreateBodyPart(c))
       {
 	CreateBodyPart(c)->SetHP(1);
 
@@ -4001,7 +3992,7 @@ void character::ReceiveHeal(long Amount)
   Amount -= c * 50;
 
   for(c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c) && RAND() & 1 && Amount >= 500)
+    if(!GetBodyPart(c) && CanCreateBodyPart(c) && RAND() & 1 && Amount >= 500)
       {
 	if(IsPlayer())
 	  ADD_MESSAGE("You grow a new %s!", GetBodyPartName(c).c_str());
@@ -4792,7 +4783,6 @@ void character::EndPolymorph()
   SetPolymorphBackup(0);
   GetSquareUnder()->AddCharacter(Char);
   Char->SetHasBe(true);
-  Char->GetTeam()->IncreaseEnabledMembers();
   Char->SetPolymorphed(false);
   SetSquareUnder(0);
   GetStack()->MoveItemsTo(Char->GetStack());
@@ -5390,7 +5380,7 @@ void character::CalculateAll()
   CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
   CalculateEmitation();
-  CalculateBodyPartMaxHPs();
+  CalculateBodyPartMaxHPs(false);
   CalculateBurdenState();
   CalculateBattleInfo();
   Initializing = false;
@@ -5414,11 +5404,11 @@ void character::CalculateMaxHP()
       MaxHP += GetBodyPart(c)->GetMaxHP();
 }
 
-void character::CalculateBodyPartMaxHPs()
+void character::CalculateBodyPartMaxHPs(bool MayChangeHPs)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      GetBodyPart(c)->CalculateMaxHP();
+      GetBodyPart(c)->CalculateMaxHP(MayChangeHPs);
 
   CalculateMaxHP();
   CalculateHP();
@@ -5736,7 +5726,7 @@ bool character::TryToEquip(item* Item)
 
 bool character::TryToConsume(item* Item)
 {
-  if(Item->IsConsumable(this) && !Item->IsBadFoodForAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item, 1)))
+  if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item, 1)))
     {
       ConsumeItem(Item);
       return true;
@@ -6286,6 +6276,20 @@ bool character::CheckTalk()
       ADD_MESSAGE("This monster does not know the art of talking."); 
       return false;
     }
+
   return true;
 }
 
+long character::GetStuffScore() const
+{
+  long Score = GetStack()->GetScore();
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c))
+      Score += GetEquipment(c)->GetScore();
+
+  if(GetAction())
+    Score += GetAction()->GetScore();
+
+  return Score;
+}

@@ -907,8 +907,9 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	    if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
 	      {
 		room* Room = Square->GetRoomClass();
+
 		if(Room)
-		    Room->DestroyTerrain(Terrorist, Square->GetOLTerrain());
+		  Room->DestroyTerrain(Terrorist, Square->GetOLTerrain());
 
 		Square->GetOLTerrain()->Break();
 	      }

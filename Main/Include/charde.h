@@ -151,7 +151,7 @@ class ABSTRACT_CHARACTER
   virtual void AddAttributeInfo(std::string&) const;
   virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
-  virtual bool CanCreateBodyPart(ushort) { return true; }
+  virtual bool CanCreateBodyPart(ushort) const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -356,9 +356,16 @@ class CHARACTER
   elpuri,
   frog,
  public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual bool Hit(character*, bool = false);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual bool SpecialEnemySightedReaction(character*) { return !(Active = true); }
  protected:
+  virtual void VirtualConstructor(bool);
+  virtual void GetAICommand();
   virtual void CreateCorpse();
+  bool Active;
 );
 
 class CHARACTER
@@ -382,6 +389,7 @@ class CHARACTER
   virtual void BeTalkedTo();
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
+  virtual ulong GetBodyPartVolume(ushort) const;
  protected:
   virtual void CreateCorpse();
 );

@@ -90,7 +90,7 @@ Things thrown at doors.
 //"You didn't manage to get onto the high score list" message.
 //Glitter effect.
 //Fire effect.
-/Lightning effect.
+(s) Lightning effect.
 //Flies over spoiling items effect.
 (s) Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
@@ -113,7 +113,7 @@ Kick system should be checked. (timo)
 //Item possibilities. (timo)
 //Skull. (hex)
 //Wand of cloning. (hex)
-/Water should make gunpowder useless!
+//Water should make gunpowder useless!
 (r) ?Temporary invisibility should be cancelled if the character hits something.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.

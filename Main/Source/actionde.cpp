@@ -97,6 +97,12 @@ void consume::Handle()
 	return;
       }
 
+  if(!Actor->IsPlayer() && !Consuming->CanBeEatenByAI(Actor)) // item may be spoiled after action was started
+    {
+      Terminate(false);
+      return;
+    }
+
   SetHasEaten(true);
 
   /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
@@ -568,4 +574,25 @@ ulong read::GetEmitation() const
   return *Literature ? Literature->GetEmitation() : 0;
 }
 
+long consume::GetScore() const
+{
+  return *Consuming ? Consuming->GetScore() : 0;
+}
 
+long dig::GetScore() const
+{
+  long Score = 0;
+
+  if(*RightBackup)
+    Score += RightBackup->GetScore();
+
+  if(*LeftBackup)
+    Score += LeftBackup->GetScore();
+
+  return Score;
+}
+
+long read::GetScore() const
+{
+  return *Literature ? Literature->GetScore() : 0;
+}

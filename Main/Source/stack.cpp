@@ -211,7 +211,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
     ADD_MESSAGE("Your weak kick has no effect.");
 }
 
-long stack::Score() const
+long stack::GetScore() const
 {
   long Score = 0;
 
@@ -720,4 +720,96 @@ void stack::ReceiveFluidSpill(material* Liquid)
     i->ReceiveFluidSpill(Liquid);
 }
 
+bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName)
+{
+  if(!GetItems())
+    {
+      ADD_MESSAGE("There is nothing in %s.", ContainerName.c_str());
+      return false;
+    }
 
+  bool Success = false;
+  room* Room = GetLSquareUnder()->GetRoomClass();
+  SetSelected(0);
+
+  for(;;)
+    {
+      std::vector<item*> ToTake;
+      game::DrawEverythingNoBlit();
+      DrawContents(ToTake, Opener, "What do you want to take from " + ContainerName + "?", REMEMBER_SELECTED);
+
+      if(ToTake.empty())
+	break;
+
+      if(!IsOnGround() || !Room || Room->PickupItem(Opener, ToTake[0], ToTake.size()))
+	{
+	  for(ushort c = 0; c < ToTake.size(); ++c)
+	    ToTake[c]->MoveTo(Opener->GetStack());
+
+	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), ContainerName.c_str());
+	  Success = true;
+	}
+    }
+
+  return Success;
+}
+
+bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, ulong StorageVolume, ulong ContainerID)
+{
+  if(!Opener->GetStack()->GetItems())
+    {
+      ADD_MESSAGE("You have nothing to put in %s.", ContainerName.c_str());
+      return false;
+    }
+
+  bool Success = false;
+  room* Room = GetLSquareUnder()->GetRoomClass();
+  stack::SetSelected(0);
+
+  for(;;)
+    {
+      std::vector<item*> ToPut;
+      game::DrawEverythingNoBlit();
+      Opener->GetStack()->DrawContents(ToPut, Opener, "What do you want to put in " + ContainerName + "?", REMEMBER_SELECTED);
+
+      if(ToPut.empty())
+	break;
+
+      if(ToPut[0]->GetID() == ContainerID)
+	{
+	  ADD_MESSAGE("You can't put %s inside itself!", ContainerName.c_str());
+	  continue;
+	}
+
+      ushort Amount = Min<ushort>((StorageVolume - GetVolume()) / ToPut[0]->GetVolume(), ToPut.size());
+
+      if(!Amount)
+	{
+	  if(ToPut.size() == 1)
+	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), ContainerName.c_str());
+	  else
+	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), ContainerName.c_str());
+
+	  continue;
+	}
+
+      if(Amount != ToPut.size())
+	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", ContainerName.c_str());
+
+      if(!IsOnGround() || !Room || Room->DropItem(Opener, ToPut[0], Amount))
+	{
+	  for(ushort c = 0; c < Amount; ++c)
+	    ToPut[c]->MoveTo(this);
+
+	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), ContainerName.c_str());
+	  Success = true;
+	}
+    }
+
+  return Success;
+}
+
+bool stack::IsOnGround() const
+{
+  return !MotherEntity || MotherEntity->IsOnGround();
+}

@@ -51,6 +51,7 @@ class ACTION
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;
+  virtual long GetScore() const;
  protected:
   virtual void VirtualConstructor(bool);
   std::string Description;
@@ -98,6 +99,7 @@ class ACTION
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;
+  virtual long GetScore() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;
@@ -143,6 +145,7 @@ class ACTION
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;
   virtual ulong GetEmitation() const;
+  virtual long GetScore() const;
  protected:
   virtual void VirtualConstructor(bool);
   actionslot Literature;

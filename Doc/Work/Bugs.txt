@@ -79,7 +79,7 @@ Bear trap + displace.
 Headless player zombie + Chat.
 Messages after teleport.
 //Panic + vital bodypart.
-Poison + poison resistance message.
+//Poison + poison resistance message.
 (7x) the werewolf resists.
 Bear trap in shop.
 //Bloated monster eat AI.
@@ -101,20 +101,21 @@ Bear trap + level change crashes.
 Polymorphing while wearing a ring of infravision crashes.
 //Message history may crash if many many very long messages are successively printed.
 Unicorns kicking items in shop.
-Seges and others may give genies and angels a groin and legs.
+//Seges and others may give genies and angels a groin and legs.
 //You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
   (doesn't exists and hasn't; changing only works in WMode)
 //Teleportation state works in the wilderness.
 Golden plate mails are worth less than iron ones.
-The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
-When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
-Skulls are insanely heavy (8 kg).
-Carnivorous plants can be kicked around.
+//The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
+//When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
+//Skulls are insanely heavy (8 kg).
+//Carnivorous plants can be kicked around.
 //Merka's money amount bugs?
-The dead are counted when calculating population.
-"The kamikaze dwarf manages to free heself from the bear trap."
+//The dead are counted when calculating population.
+//"The kamikaze dwarf manages to free heself from the bear trap."
 Pet plants are able to follow the player to the world map.
 It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more precise" since there are many configurations with same name. (low priority)
-"0 scrolls of wishing dropped."
-Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
+//"0 scrolls of wishing dropped."
+//Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
+//The Hideous RAM Boulder Monster Spawn Error.

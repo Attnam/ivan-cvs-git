@@ -68,7 +68,7 @@ class room
   virtual void DestroyTerrain(character*, olterrain*);
   virtual bool AllowSpoil() const { return true; }
   virtual bool CheckDestroyTerrain(character*, olterrain*);
-  virtual ushort GetGodRelationAdjustment() const { return 50; }
+  virtual short GetGodRelationAdjustment() const { return -50; }
  protected:
   virtual void VirtualConstructor(bool) { }
   std::vector<vector2d> Door;

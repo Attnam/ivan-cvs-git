@@ -474,7 +474,7 @@ holybanana /* materialcontainer->banana-> */
 	StrengthModifier = 150;
 	FormModifier = 100;
 	DefaultSize = 30;
-	Score = 250;
+	Score = 500;
 	Price = 1000;
 	Adjective = "holy";
 	PostFix = "of Liukas Vipro";
@@ -501,7 +501,7 @@ justifier /* meleeweapon-> */
 	BitmapPos = 0, 64;
 	FormModifier = 275;
 	StrengthModifier = 275;
-	Score = 1000;
+	Score = 2500;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
 	NameSingular = "broadsword";
@@ -680,7 +680,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	DefaultSize = 60;
 	BitmapPos = 16, 112;
 	Possibility = 0;
-	Score = 2500;
+	Score = 4000;
 	CanBeWished = false;
 	IsDestroyable = false;
 	IsMaterialChangeable = false;
@@ -1590,7 +1590,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	Possibility = 0;
 	CanBeWished = false;
 	DefaultSize = 60;
-	Score = 1000;
+	Score = 2000;
 	IsDestroyable = false;
 	Category = MISC;
 	InHandsPic = 160, 144;
@@ -1901,6 +1901,7 @@ mjolak /* meleeweapon-> */
 	Alias == "Mjolak";
 	CanBeCloned = false;
 	Price = 750;
+	Score = 750;
 
 	Config BROKEN;
 	{
@@ -1931,6 +1932,7 @@ vermis /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 500;
+	Score = 750;
 
 	Config BROKEN;
 	{
@@ -1961,6 +1963,7 @@ turox /* meleeweapon-> */
 	ArticleMode = DEFINITE_ARTICLE;
 	CanBeCloned = false;
 	Price = 250;
+	Score = 750;
 
 	Config BROKEN;
 	{

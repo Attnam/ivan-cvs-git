@@ -159,7 +159,7 @@ class item : public object
   virtual void StepOnEffect(character*) { }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
-  virtual bool IsBadFoodForAI(const character*) const;
+  virtual bool CanBeEatenByAI(const character*) const;
   virtual std::string GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }

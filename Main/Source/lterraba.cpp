@@ -196,6 +196,3 @@ bool olterrain::Enter(bool DirectionUp) const
 
   return false;
 }
-
-
-

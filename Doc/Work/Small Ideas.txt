@@ -321,7 +321,7 @@ Acid blobs. (needs corrosion, might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
 Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
-There should be a one-way teleport at the bottom of the dungeon linked to the first level.
+//There should be a one-way teleport at the bottom of the dungeon linked to the first level.
 //*Level teleport option to wizard mode.
 Dobbelganger.
 Lick command.
@@ -335,9 +335,9 @@ Time bomb.
 Prohibit vomiting over the Avatar.
 Monster that only sees in red, green or blue light.
 Page up, page down, home and end should work with message panel.
-If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him.
+If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him and scream "NOOOOOOOOOH!"
 Monsters that have died of poisoning should be poisoned when eaten.
-Bear traps should break eventually.
+*Bear traps should break eventually.
 Carrot that would increase perception a little.
 //*RDAM and similiar unclear attributes should be moved to an own screen.
 When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
@@ -359,7 +359,7 @@ Money unit and its plural and symbol should be possible to define from config.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
 Lookmode should show whether a creature is panicked.
-"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2".
+//"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2".
 Coconuts falling from palms.
 Changing keyboard layout (some people don't seem to like numpad).
 Reflecting items (mirror and shield of reflection).
@@ -367,18 +367,19 @@ Reflecting items (mirror and shield of reflection).
 //Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
 Mellis could act as a small shop when prayed to.
 Rings appearing in fountains. (shouldn't be hard with the new system...)
-Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
+*Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
 Msg from hit should depend more on weapon and there should be more variation. ("the monsters STABS you with its wooden spear").
 Some monster types should taunt the player.
 Dragon scale material.
 Breaking different wands should cause different effects.
 Scroll of level teleport.
-Once implemented, game saga should show how many times the player has polymorphed.
+Once implemented, the game saga should show how many times the player has polymorphed.
 Buffalos shouldn't be able to throw items.
 Getting knowledge of all gods should be rewarded somehow.
 If a fireball beam doesn't hit anything, it should still explode at the end of its range.
-It should be possible to give the smith a better hammer so he could fix mithril items, too.
+*It should be possible to give the smith a better hammer so he could fix mithril items, too.
 SWeaponskills for gauntlets and boots.
 Deaf state in which the player can't hear explosions, can't converse and in the future can't hear footsteps etc.
 Explosions should sometimes trigger the deaf state.
-
+The Cathedral should employ a gardener whose duty is take care of the firs around the building.
+An environmentalist character who would protest outside the Cathedral against the imprisonment of the dolphins.

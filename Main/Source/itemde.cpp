@@ -854,7 +854,7 @@ bool banana::Zap(character*, vector2d, uchar)
 
 void bananapeels::StepOnEffect(character* Stepper)
 {
-  if(Stepper->HasFeet() && !(RAND() % 3))
+  if(Stepper->HasFeet() && !(RAND() % 5))
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHAR_NAME(INDEFINITE));
@@ -863,7 +863,7 @@ void bananapeels::StepOnEffect(character* Stepper)
 
       /* Do damage against any random bodypart except legs */
 
-      Stepper->ReceiveDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, ALL&~LEGS);
+      Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("slipped on a banana peel.");
       Stepper->EditAP(-1000);
     }
@@ -1516,13 +1516,13 @@ float corpse::GetWeaponStrength() const
   return GetFormModifier() * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() * sqrt(GetDeceased()->GetTorso()->GetMainMaterial()->GetWeight());
 }
 
-bool corpse::IsBadFoodForAI(const character* Eater) const
+bool corpse::CanBeEatenByAI(const character* Eater) const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsBadFoodForAI(Eater))
-      return true;
+    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->CanBeEatenByAI(Eater))
+      return false;
 
-  return false;
+  return true;
 }
 
 ushort corpse::GetStrengthValue() const
@@ -1642,7 +1642,7 @@ leg::~leg()
   delete GetBoot();
 }
 
-long corpse::Score() const
+long corpse::GetScore() const
 {
   long Score = 0;
 
@@ -1801,7 +1801,6 @@ bool corpse::RaiseTheDead(character* Summoner)
   GetLSquareUnder()->AddCharacter(GetDeceased());
   RemoveFromSlot();
   GetDeceased()->SetHasBe(true);
-  GetDeceased()->GetTeam()->IncreaseEnabledMembers();
   GetDeceased()->SetMotherEntity(0);
   GetDeceased()->CompleteRiseFromTheDead();
   Deceased = 0;
@@ -1982,7 +1981,7 @@ void itemcontainer::VirtualConstructor(bool Load)
 	{
 	  item* NewItem = protosystem::BalancedCreateItem();
 
-	  if(NewItem->CanBeGeneratedInContainer() && HowManyFits(NewItem))
+	  if(NewItem->CanBeGeneratedInContainer() && (GetStorageVolume() - GetContained()->GetVolume()) / NewItem->GetVolume())
 	    {
 	      GetContained()->AddItem(NewItem);
 	      NewItem->SpecialGenerationHandler();
@@ -2297,130 +2296,37 @@ bool itemcontainer::Open(character* Opener)
     }
 
   std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
+  bool Success;
 
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
     {
     case 't':
-      return TakeSomethingFrom(Opener);
+      Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
+      break;
     case 'p':
-      return PutSomethingIn(Opener);
+      Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), GetID());
+      break;
     default:
       return false;
     }
-}
-
-bool itemcontainer::TakeSomethingFrom(character* Opener)
-{
-  if(!GetContained()->GetItems())
-    {
-      ADD_MESSAGE("There is nothing in %s.", CHAR_NAME(DEFINITE));
-      return false;
-    }
-
-  bool Success = false;
-  uchar RoomNumber = GetLSquareUnder()->GetRoom();
-  stack::SetSelected(0);
-
-  for(;;)
-    {
-      std::vector<item*> ToTake;
-      game::DrawEverythingNoBlit();
-      GetContained()->DrawContents(ToTake, Opener, "What do you want to take from " + GetName(DEFINITE) + "?", REMEMBER_SELECTED);
-
-      if(ToTake.empty())
-	break;
-
-      if(!IsOnGround() || !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener, ToTake[0], ToTake.size()))
-	{
-	  for(ushort c = 0; c < ToTake.size(); ++c)
-	    ToTake[c]->MoveTo(Opener->GetStack());
-
-	  ADD_MESSAGE("You take %s from %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).c_str(), CHAR_NAME(DEFINITE));
-	  Success = true;
-	}
-    }
 
   if(Success)
-    {
-      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-      return true;
-    }
-  else
-    return false;
-}
+    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
 
-bool itemcontainer::PutSomethingIn(character* Opener)
-{
-  if(!Opener->GetStack()->GetItems())
-    {
-      ADD_MESSAGE("You have nothing to put in %s.", CHAR_NAME(DEFINITE));
-      return false;
-    }
-
-  bool Success = false;
-  uchar RoomNumber = GetLSquareUnder()->GetRoom();
-  stack::SetSelected(0);
-
-  for(;;)
-    {
-      std::vector<item*> ToPut;
-      game::DrawEverythingNoBlit();
-      Opener->GetStack()->DrawContents(ToPut, Opener, "What do you want to put in " + GetName(DEFINITE) + "?", REMEMBER_SELECTED);
-
-      if(ToPut.empty())
-	break;
-
-      if(ToPut[0]->GetID() == GetID())
-	{
-	  ADD_MESSAGE("You can't put %s inside itself!", CHAR_NAME(DEFINITE));
-	  continue;
-	}
-
-      ushort Amount = Min<ushort>(HowManyFits(ToPut[0]), ToPut.size());
-
-      if(!Amount)
-	{
-	  if(ToPut.size() == 1)
-	    ADD_MESSAGE("%s doesn't fit in %s.", ToPut[0]->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	  else
-	    ADD_MESSAGE("None of the %d %s fits in %s.", ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), CHAR_NAME(DEFINITE));
-
-	  continue;
-	}
-
-      if(Amount != ToPut.size())
-	ADD_MESSAGE("Only %d of the %d %s fit%s in %s.", Amount, ToPut.size(), ToPut[0]->CHAR_NAME(PLURAL), Amount == 1 ? "s" : "", CHAR_NAME(DEFINITE));
-
-      if(!IsOnGround() || !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, ToPut[0], Amount))
-	{
-	  for(ushort c = 0; c < Amount; ++c)
-	    ToPut[c]->MoveTo(GetContained());
-
-	  ADD_MESSAGE("You put %s in %s.", ToPut[0]->GetName(DEFINITE, Amount).c_str(), CHAR_NAME(DEFINITE));
-	  Success = true;
-	}
-    }
-
-  if(Success)
-    {
-      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
-      return true;
-    }
-  else
-    return false;
+  return Success;
 }
 
 void itemcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  GetContained()->Save(SaveFile);
+  Contained->Save(SaveFile);
   SaveFile << LockType << Locked;
 }
 
 void itemcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  GetContained()->Load(SaveFile);
+  Contained->Load(SaveFile);
   SaveFile >> LockType >> Locked;
 }
 
@@ -2429,11 +2335,6 @@ bool itemcontainer::Polymorph(stack* CurrentStack)
   GetContained()->MoveItemsTo(CurrentStack);
   item::Polymorph(CurrentStack);
   return true;
-}
-
-ushort itemcontainer::HowManyFits(item* ToBePut) const
-{
-  return (GetStorageVolume() - GetContained()->GetVolume()) / ToBePut->GetVolume();
 }
 
 itemcontainer::~itemcontainer()
@@ -2890,8 +2791,9 @@ void bodypart::CalculateEmitation()
       game::CombineLights(Emitation, GetEquipment(c)->GetEmitation());
 }
 
-void bodypart::CalculateMaxHP()
+void bodypart::CalculateMaxHP(bool MayChangeHPs)
 {
+  bool WasAtMaxHP = (HP == MaxHP);
   MaxHP = 0;
 
   if(GetMaster())
@@ -2910,7 +2812,7 @@ void bodypart::CalculateMaxHP()
       if(MaxHP < 1)
 	MaxHP = 1;
 
-      if(HP >= MaxHP)
+      if(MayChangeHPs && (WasAtMaxHP || HP >= MaxHP))
 	HP = MaxHP;
     }
 }
@@ -3640,7 +3542,10 @@ bool materialcontainer::CanBePiledWith(const item* Item, const character* Viewer
   if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
     return true;
 
-  return ContainedMaterial != 0 && Weapon->ContainedMaterial != 0 && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial);
+  return ContainedMaterial != 0
+      && Weapon->ContainedMaterial != 0
+      && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
+      && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
 }
 
 bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -3650,13 +3555,16 @@ bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) cons
 
   const meleeweapon* Weapon = static_cast<const meleeweapon*>(Item);
 
-  if(Enchantment != Weapon->Enchantment || !SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial))
+  if(Enchantment != Weapon->Enchantment || !SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial) || SecondaryMaterial->GetSpoilLevel() != Weapon->SecondaryMaterial->GetSpoilLevel())
     return false;
 
   if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
     return true;
 
-  return ContainedMaterial != 0 && Weapon->ContainedMaterial != 0 && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial);
+  return ContainedMaterial != 0
+      && Weapon->ContainedMaterial != 0
+      && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
+      && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
 }
 
 bool armor::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -4866,9 +4774,9 @@ bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
   return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-bool bodypart::IsBadFoodForAI(const character* Who) const
+bool bodypart::CanBeEatenByAI(const character* Who) const
 {
-  return item::IsBadFoodForAI(Who) || (Who->GetTeam()->GetID() == game::GetPlayer()->GetTeam()->GetID() && game::GetPlayer()->HasHadBodyPart(this));
+  return item::CanBeEatenByAI(Who) && !(Who->GetTeam()->GetID() == game::GetPlayer()->GetTeam()->GetID() && game::GetPlayer()->HasHadBodyPart(this));
 }
 
 bool mine::CheckPickUpEffect(character*)
@@ -4967,4 +4875,9 @@ bool encryptedscroll::Read(character*)
 {
   ADD_MESSAGE("You could never hope to decipher this top secret message. It is meant for Petrus's eyes only.");
   return false;
+}
+
+long itemcontainer::GetScore() const
+{
+  return item::GetScore() + GetContained()->GetScore();
 }

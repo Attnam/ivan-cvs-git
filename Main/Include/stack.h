@@ -65,7 +65,7 @@ class stack
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
   void BeKicked(character*, ushort);
-  long Score() const;
+  long GetScore() const;
   void Polymorph();
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
@@ -75,7 +75,7 @@ class stack
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, const character*, const std::string&, uchar, bool (*)(const item*, const character*)) const;
   ushort SearchChosen(std::vector<item*>&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
-  bool IsOnGround() const { return SquarePosition != HIDDEN; }
+  bool IsOnGround() const;
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   bool Open(character*);
@@ -104,6 +104,9 @@ class stack
   void ReceiveFluidSpill(material*);
   static ushort GetSelected() { return Selected; }
   static void SetSelected(ushort What) { Selected = What; }
+  bool TakeSomethingFrom(character*, const std::string);
+  bool PutSomethingIn(character*, const std::string, ulong, ulong);
+  bool IsVisible() const { return !MotherEntity; }
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

@@ -185,9 +185,9 @@ bool item::Consume(character* Eater, long Amount)
   return GetConsumeMaterial()->GetVolume() ? false : true;
 }
 
-bool item::IsBadFoodForAI(const character* Eater) const
+bool item::CanBeEatenByAI(const character* Eater) const
 {
-  return Eater->CheckCannibalism(GetConsumeMaterial()) || GetConsumeMaterial()->IsBadFoodForAI();
+  return !Eater->CheckCannibalism(GetConsumeMaterial()) && GetConsumeMaterial()->CanBeEatenByAI();
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -588,6 +588,7 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && Config == Item->Config
       && Weight == Item->Weight
       && MainMaterial->IsSameAs(Item->MainMaterial)
+      && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
       && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item);
 }
@@ -691,5 +692,3 @@ void item::ResetSpoiling()
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
 }
-
-

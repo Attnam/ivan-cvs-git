@@ -646,7 +646,7 @@ class character : public entity, public id
   void CalculateMaxHP();
   short GetHP() const { return HP; }
   short GetMaxHP() const { return MaxHP; }
-  void CalculateBodyPartMaxHPs();
+  void CalculateBodyPartMaxHPs(bool = true);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
   bool ActivateRandomState(ushort);
@@ -736,6 +736,8 @@ class character : public entity, public id
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
   virtual std::string& ProcessMessage(std::string&) const;
   virtual bool IsHumanoid() const { return false; }
+  virtual long GetStuffScore() const;
+  virtual bool IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
@@ -759,7 +761,7 @@ class character : public entity, public id
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
   virtual bool CheckForDoors();
-  virtual bool CheckForEnemies(bool, bool);
+  virtual bool CheckForEnemies(bool, bool, bool = false);
   virtual bool FollowLeader();
   virtual void StandIdleAI();
   virtual void CreateCorpse();

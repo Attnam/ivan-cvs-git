@@ -58,6 +58,7 @@ class action
   virtual ulong GetVolume() const { return 0; }
   virtual ulong GetWeight() const { return 0; }
   virtual ulong GetEmitation() const { return 0; }
+  virtual long GetScore() const { return 0; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

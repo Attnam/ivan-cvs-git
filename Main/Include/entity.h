@@ -38,6 +38,7 @@ class entity
   virtual bool AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
   virtual void SignalSpoilLevelChange(material*) { }
+  virtual bool IsOnGround() const = 0;
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool ExistsBool;

@@ -6,6 +6,7 @@
 #include "save.h"
 #include "colorbit.h"
 #include "felist.h"
+#include "feio.h"
 
 #define HIGH_SCORE_VERSION 110 // Increment this if changes make highscores incompatible
 
@@ -43,6 +44,12 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
 
 void highscore::Draw() const
 {
+  if(Score.empty())
+    {
+      iosystem::TextScreen("There are no entries yet. Play a game to correct this.");
+      return;
+    }
+
   felist List("Adventurers' Hall of Fame");
 
   for(ushort c = 0; c < Score.size(); ++c)

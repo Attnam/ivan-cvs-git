@@ -26,6 +26,7 @@ class fluid : public entity
   virtual square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
+  virtual bool IsOnGround() const { return true; }
  protected:
   bitmap* Picture;
   material* Material;

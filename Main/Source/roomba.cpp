@@ -44,6 +44,7 @@ void room::DestroyTerrain(character* Who, olterrain*)
 {
   if(Master)
     Who->Hostility(Master);
+
   if(DivineMaster)
     game::GetGod(DivineMaster)->AdjustRelation(GetGodRelationAdjustment());
 }

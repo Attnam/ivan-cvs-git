@@ -37,6 +37,8 @@ olterrain
 	DefaultContainedVolume = 0;
 	ShowMaterial = true;
 	IsUpLink = false;
+	CreateDivineConfigurations = false;
+	StorageVolume = 0;
 }
 
 wall
@@ -297,6 +299,7 @@ portal /* link -> */
 
 	Config OREE_LAIR_ENTRY; { }
 	Config OREE_LAIR_EXIT; { }
+	Config DARK_LEVEL; { }
 }
 
 altar /* olterrain-> */
@@ -332,6 +335,7 @@ olterraincontainer /* olterrain->decoration-> */
 		NameSingular = "bookcase";
 		BitmapPos = 16, 272;
 		SitMessage = "The bookcase is very unconfortable to sit on.";
+		StorageVolume = 100000;
 	}
 }
 
@@ -363,7 +367,6 @@ boulder /* olterrain-> */
 	SitMessage = "The boulder is rather hard to sit on.";
 	CanBeDug = true;
 	IsAbstract = true;
-	BitmapPos = 64, 304;
 
 	Config 1;
 	{

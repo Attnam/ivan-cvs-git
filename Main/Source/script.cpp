@@ -317,6 +317,7 @@ datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(AttachedArea);
   ANALYZE_MEMBER(AttachedEntry);
   ANALYZE_MEMBER(Text);
+  ANALYZE_MEMBER(ItemsInside);
   return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
@@ -338,6 +339,9 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 
   if(GetText(false))
     Instance->SetText(*GetText());
+
+  if(GetItemsInside(false))
+    Instance->SetItemsInside(*GetItemsInside(), SpecialFlags);
 
   return Instance;
 }

@@ -759,7 +759,7 @@ class ABSTRACT_ITEM
   virtual ushort GetEquipmentSlots() const { return 0; }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
-  virtual void CalculateMaxHP();
+  virtual void CalculateMaxHP(bool = true);
   virtual void SignalVolumeAndWeightChange();
   void RestoreHP() { HP = MaxHP; }
   virtual void CalculateDamage() { }
@@ -792,7 +792,7 @@ class ABSTRACT_ITEM
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
-  virtual bool IsBadFoodForAI(const character*) const;
+  virtual bool CanBeEatenByAI(const character*) const;
   virtual bool DamageArmor(character*, ushort, uchar) { return false; }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
@@ -1141,7 +1141,7 @@ class ITEM
   virtual bool IsConsumable(const character*) const;
   virtual short GetOfferValue(char) const;
   virtual float GetWeaponStrength() const;
-  virtual bool IsBadFoodForAI(const character*) const;
+  virtual bool CanBeEatenByAI(const character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
   //virtual bool IsDipDestination(const character*) const { return true; }
@@ -1151,7 +1151,7 @@ class ITEM
   virtual void Load(inputfile&);
   virtual void AddConsumeEndMessage(character*) const;
   virtual void GenerateLeftOvers(character*);
-  virtual long Score() const;
+  virtual long GetScore() const;
   virtual bool IsDestroyable() const;
   virtual ulong GetPrice() const;
   virtual uchar GetMaterials() const { return 2; }
@@ -1239,12 +1239,9 @@ class ITEM
   virtual bool IsLocked() const { return Locked; }
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual stack* GetContained() const { return Contained; }
-  virtual bool TakeSomethingFrom(character*);
-  virtual bool PutSomethingIn(character*);
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool Polymorph(stack*);
-  virtual ushort HowManyFits(item*) const;
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetPrice() const;
@@ -1253,7 +1250,8 @@ class ITEM
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
-  virtual void GenerateLeftOvers(character*);  
+  virtual void GenerateLeftOvers(character*);
+  virtual long GetScore() const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

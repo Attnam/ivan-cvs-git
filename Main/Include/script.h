@@ -237,6 +237,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   DATA_MEMBER(uchar, AttachedArea);
   DATA_MEMBER(uchar, AttachedEntry);
   DATA_MEMBER(std::string, Text);
+  DATA_MEMBER(std::vector<contentscript<item> >, ItemsInside);
 };
 
 class squarescript : public script

@@ -853,9 +853,9 @@ bool link::Enter(bool DirectionUp) const
 
   if(Config == OREE_LAIR_ENTRY)
     {
-      ADD_MESSAGE("A great evil power seems to tremble under your feet. You feel you shouldn't wander any further.");
+      ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
 
-      if(!game::BoolQuestion("Continue anyway? [y/N]"))
+      if(!game::BoolQuestion("Continue? [y/N]"))
 	return false;
     }
 
@@ -872,6 +872,14 @@ bool link::Enter(bool DirectionUp) const
 	ADD_MESSAGE("An unknown magical force pushes you back.");
 	return true;
       }
+
+  if(Config == DARK_LEVEL)
+    {
+      ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
+
+      if(!game::BoolQuestion("Continue? [y/N]"))
+	return false;
+    }
 
   /* These must be backupped, since LeaveLevel destroys the link */
 
@@ -936,7 +944,6 @@ void boulder::Break()
   olterrain::Break();
 }
 
-
 void sign::AddPostFix(std::string& String) const
 {
   String << " with text \"" << Text << "\"";
@@ -958,4 +965,54 @@ void sign::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
   SaveFile >> Text;
+}
+
+void olterraincontainer::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  Contained->Save(SaveFile);
+}
+
+void olterraincontainer::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  Contained->Load(SaveFile);
+}
+
+void olterraincontainer::VirtualConstructor(bool Load)
+{
+  olterrain::VirtualConstructor(Load);
+  Contained = new stack(0, this, HIDDEN, true);
+}
+
+bool olterraincontainer::Open(character* Opener)
+{
+  std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
+  bool Success;
+
+  switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
+    {
+    case 't':
+      Success = GetContained()->TakeSomethingFrom(Opener, GetName(DEFINITE));
+      break;
+    case 'p':
+      Success = GetContained()->PutSomethingIn(Opener, GetName(DEFINITE), GetStorageVolume(), 0);
+      break;
+    default:
+      return false;
+    }
+
+  if(Success)
+    Opener->DexterityAction(Opener->OpenMultiplier() * 5);
+
+  return Success;
+}
+
+void olterraincontainer::SetItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+{
+  GetContained()->Clean();
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c].IsValid())
+      GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
 }

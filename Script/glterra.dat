@@ -31,6 +31,7 @@ glterrain
 	DefaultSecondaryVolume = 0;
 	DefaultContainedVolume = 0;
 	ShowMaterial = true;
+	CreateDivineConfigurations = false;
 }
 
 solidterrain /* glterrain-> */

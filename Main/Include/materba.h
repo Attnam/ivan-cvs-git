@@ -155,6 +155,7 @@ class material
   virtual void SetWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
+  virtual bool CanBeEatenByAI() const { return !IsBadFoodForAI(); }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);
