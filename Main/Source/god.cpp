@@ -27,7 +27,7 @@ void god::Pray()
 		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
-	else if(Relation > 100)// && !(RAND() % 20))
+	else if(Relation > 100 && !(RAND() % 20))
 	  {
 	    long Category = RAND() & ANY_CATEGORY;
 
