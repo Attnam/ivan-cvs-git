@@ -1525,7 +1525,7 @@ bool character::Pray()
 		}
 		else
 		{
-			if(game::BoolQuestion("Do you really wish to pray? [Y/N]"))
+			if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(Select+1)->Name().c_str() + "? [Y/N]"))
 				game::GetGod(Select+1)->Pray();
 			else
 				return false;
