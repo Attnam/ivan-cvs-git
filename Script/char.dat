@@ -44,11 +44,9 @@ character
 	IsUnique = false;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED;
 	/* Obligatory: TotalVolume */
-	TalkVerb = "grunts";
 	IsNameable = true;
 	BaseEmitation = 0;
 	/* Obligatory: TorsoBitmapPos */
-	TorsoBonePercentile = 30;
 	Article = "a";
 	Adjective = "";
 	AdjectiveArticle = "a";
@@ -68,12 +66,16 @@ character
 	ClassStates = 0;
 	CanBeWished = true;
 	CreateDivineConfigurations = false;
-	CreateSolidMaterialConfigurations = false;
+	CreateGolemMaterialConfigurations = false;
 	AttributeBonus = 0;
 	RightSWeaponSkillHits = 0;
 	LeftSWeaponSkillHits = 0;
 	PanicLevel = 33;
 	CanBeCloned = true;
+	DangerModifier = 100;
+	DefaultName = "";
+	HostileReplies == "@Dd grunts angrily.";
+	FriendlyReplies == "@Dd grunts happily.";
 	CanZap = false;
 }
 
@@ -87,13 +89,8 @@ humanoid
 	TorsoSpecialColor = 0;
 	ArmSpecialColor = 0;
 	LegSpecialColor = 0;
-	HeadBonePercentile = 15;
-	TorsoBonePercentile = 10;
-	ArmBonePercentile = 30;
-	GroinBonePercentile = 40;
-	LegBonePercentile = 30;
 	IsAbstract = true;
-	BaseUnarmedStrength = 5000;
+	BaseUnarmedStrength = 150;
 	Sex = MALE;
 	CanUseEquipment = true;
 	CanKick = true;
@@ -123,39 +120,207 @@ human
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 0;
-	TotalVolume = 60000;
+	TotalVolume = 80000;
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
-	Helmet = LEATHER helmet;
+	/*Helmet = LEATHER helmet;
 	RightWielded = COPPER meleeweapon(SPEAR);
+	CWeaponSkillHits == 25;
+	RightSWeaponSkillHits = 25;*/
 
-	/*DefaultArmStrength = 50;
-	DefaultLegStrength = 50;
-	DefaultDexterity = 40;
-	DefaultAgility = 40;
-	DefaultEndurance = 40;
+	/*DefaultArmStrength = 12;
+	DefaultLegStrength = 12;
+	DefaultDexterity = 12;
+	DefaultAgility = 12;
+	DefaultEndurance = 12;
+	DefaultPerception = 10;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = LEATHER helmet;
+	BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
+	Cloak = LEATHER cloak;
+	Belt = LEATHER belt;
+	RightWielded = COPPER meleeweapon(AXE);
+	RightGauntlet = LEATHER gauntlet;
+	RightBoot = LEATHER boot;
+	KnownCWeaponSkills = { 2, AXES, UNARMED; }
+	CWeaponSkillHits = { 2, 25, 25; }
+	RightSWeaponSkillHits = 25;*/
+
+	/*DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 15;
+	DefaultAgility = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 10;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = BRONZE helmet;
+	BodyArmor = IRON bodyarmor(CHAIN_MAIL);
+	Cloak = TROLL_HIDE cloak;
+	Belt = TROLL_HIDE belt;
+	RightWielded = IRON meleeweapon(MACE);
+	RightGauntlet = TROLL_HIDE gauntlet;
+	RightBoot = BRONZE boot;
+	KnownCWeaponSkills == MACES;
+	CWeaponSkillHits == 50;
+	RightSWeaponSkillHits = 50;
+	LeftSWeaponSkillHits = 50;*/
+
+	/*DefaultArmStrength = 18;
+	DefaultLegStrength = 18;
+	DefaultDexterity = 18;
+	DefaultAgility = 18;
+	DefaultEndurance = 18;
+	DefaultPerception = 14;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = IRON helmet;
+	BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
+	Cloak = LEATHER cloak;
+	Belt = HARDENED_LEATHER belt;
+	RightWielded = STEEL meleeweapon(LONG_SWORD);
+	LeftWielded = STEEL shield;
+	RightGauntlet = LEATHER gauntlet;
+	RightBoot = STEEL boot;
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 2, 75, 75; }
+	RightSWeaponSkillHits = 75;
+	LeftSWeaponSkillHits = 75;*/
+
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 20;
+	DefaultAgility = 20;
+	DefaultEndurance = 20;
+	DefaultPerception = 15;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = MITHRIL helmet;
+	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL);
+	Cloak = TROLL_HIDE cloak;
+	Belt = NYMPH_HAIR belt;
+	RightWielded = MITHRIL meleeweapon(LONG_SWORD);
+	LeftWielded = STEEL shield;
+	RightGauntlet = LEATHER gauntlet;
+	RightBoot = STEEL boot;
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 2, 100, 75; }
+	RightSWeaponSkillHits = 100;
+	LeftSWeaponSkillHits = 75;
+	Inventory == PHOENIX_FEATHER shield;
+
+	/*DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 22;
+	DefaultAgility = 22;
+	DefaultEndurance = 22;
+	DefaultPerception = 20;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	Helmet = MITHRIL helmet;
+	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	Cloak = PHOENIX_FEATHER cloak { Enchantment = 1; }
+	Belt = NYMPH_HAIR belt;
+	RightWielded = MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
+	LeftWielded = MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
+	RightRing = ring(RING_OF_INFRA_VISION);
+	RightGauntlet = NYMPH_HAIR gauntlet(BOOT_OF_AGILITY) { Enchantment = 1; }
+	RightBoot = NYMPH_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 1; }
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 2, 200, 75; }
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;
+	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }*/
+
+	/*DefaultArmStrength = 35;
+	DefaultLegStrength = 35;
+	DefaultDexterity = 30;
+	DefaultAgility = 30;
+	DefaultEndurance = 35;
 	DefaultPerception = 20;
 	DefaultIntelligence = 20;
 	DefaultWisdom = 20;
 	DefaultCharisma = 20;
 	DefaultMana = 20;
 
-	Helmet = MITHRIL helmet(HELM_OF_PERCEPTION) { Enchantment = 5; }
+	Helmet = MITHRIL helmet;
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 5; }
-	Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_INVISIBILITY);
+	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_INVISIBILITY) { Enchantment = 1; }
 	Belt = PHOENIX_FEATHER belt;
-	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 5; }
-	LeftWielded = MITHRIL shield { Enchantment = 5; }
-	RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
+	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
+	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 2; }
 	RightRing = ring(RING_OF_INFRA_VISION);
 	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
-	RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
-	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
-	CWeaponSkillHits = { 2, 2000, 2000; }
-	RightSWeaponSkillHits = 1000;
-	LeftSWeaponSkillHits = 1000;*/
+	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 2; }
+	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 3, 500, 500, 500; }
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;*/
+
+	/*DefaultArmStrength = 45;
+	DefaultLegStrength = 45;
+	DefaultDexterity = 35;
+	DefaultAgility = 35;
+	DefaultEndurance = 35;
+	DefaultPerception = 30;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 20;
+	DefaultCharisma = 20;
+	DefaultMana = 20;
+
+	Helmet = RUBY helmet { Enchantment = 3; }
+	Amulet = amulet(AMULET_OF_LIFE_SAVING);
+	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+	Cloak = ANGEL_HAIR cloak { Enchantment = 3; }
+	Belt = RUBY belt { Enchantment = 3; }
+	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 4; }
+	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
+	RightRing = ring(RING_OF_INFRA_VISION);
+	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
+	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 3; }
+	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
+	RightSWeaponSkillHits = 500;
+	LeftSWeaponSkillHits = 500;*/
+
+	/*DefaultArmStrength = 50;
+	DefaultLegStrength = 50;
+	DefaultDexterity = 40;
+	DefaultAgility = 40;
+	DefaultEndurance = 40;
+	DefaultPerception = 30;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 20;
+	DefaultCharisma = 20;
+	DefaultMana = 20;
+
+	Helmet = DIAMOND helmet { Enchantment = 5; }
+	Amulet = amulet(AMULET_OF_LIFE_SAVING);
+	BodyArmor = goldeneagleshirt;
+	Cloak = ANGEL_HAIR cloak { Enchantment = 5; }
+	Belt = DIAMOND belt { Enchantment = 5; }
+	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 5; }
+	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 5; }
+	RightRing = ring(RING_OF_INFRA_VISION);
+	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
+	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 5; }
+	KnownCWeaponSkills = { 3, MACES, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
+	RightSWeaponSkillHits = 500;
+	LeftSWeaponSkillHits = 500;*/
 }
 
 petrus
@@ -181,7 +346,7 @@ petrus
 	TorsoBitmapPos = 32, 80;
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 0;
-	TotalVolume = 100000;
+	TotalVolume = 80000;
 	TotalSize = 225;
 	CanRead = true;
 	NameSingular = "high priest";
@@ -190,20 +355,22 @@ petrus
 	CanBeWished = false;
 	Alias == "Petrus";
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = DIAMOND bodyarmor(PLATE_MAIL) { Enchantment = 5; }
-	Cloak = SPIDER_SILK cloak { Enchantment = 5; }
-	Belt = NYMPH_HAIR belt { Enchantment = 5; }
+	BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+	Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
+	Belt = RUBY belt { Enchantment = 4; }
 	RightWielded = justifier;
-	RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 5; }
+	RightGauntlet = MITHRIL gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
 	RightRing = ring(RING_OF_FIRE_RESISTANCE);
 	LeftRing = ring(RING_OF_POISON_RESISTANCE);
-	RightBoot = ANGEL_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 5; }
+	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 4; }
 	KnownCWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; }
 	CWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
-	RightSWeaponSkillHits = 5000;
+	RightSWeaponSkillHits = 2000;
 	ClassStates = INFRA_VISION;
 	PanicLevel = 0;
 	CanBeCloned = false;
+	DefaultName = "Petrus";
+	/* Replies overridden */
 }
 
 farmer
@@ -220,7 +387,7 @@ farmer
 	DefaultMana = 5;
 	DefaultMoney = 20;
 	TorsoSpecialColor = rgb16(0, 96, 0);
-	TotalVolume = 30000;
+	TotalVolume = 50000;
 	TotalSize = 170;
 	NameSingular = "farmer";
 	TorsoBitmapPos = 32, 16;
@@ -229,6 +396,15 @@ farmer
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
+	HostileReplies == "\"Did you think I use this axe only to chop wood?\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
+		"@Dd seems suspicious. \"You look like one from Mondedr! Go away!\"",
+		"@Dd sighs: \"Again polar bears ate my cattle...\"",
+		"\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
+	}
 }
 
 guard
@@ -238,7 +414,7 @@ guard
 	DefaultDexterity = 15;
 	DefaultAgility = 15;
 	DefaultEndurance = 25;
-	DefaultPerception = 24;
+	DefaultPerception = 25;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
 	DefaultCharisma = 15;
@@ -249,26 +425,146 @@ guard
 	TorsoBitmapPos = 32, 128;
 	ArmBitmapPos = 64, 80;
 	LegBitmapPos = 0, 64;
-	TotalVolume = 60000;
+	TotalVolume = 70000;
 	TotalSize = 180;
-	CanRead = true;
 	NameSingular = "guard";
-	Helmet = IRON helmet;
-	BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-	RightWielded = IRON IRON meleeweapon(LONG_SWORD);
-	LeftWielded = IRON shield;
-	KnownCWeaponSkills == LARGE_SWORDS;
-	CWeaponSkillHits == 200;
-	RightSWeaponSkillHits = 5;
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	IsAbstract = true;
+	HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
+
+	Config ROOKIE;
+	{
+		AttributeBonus = -20;
+		Helmet = BRONZE helmet;
+		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
+		RightWielded = BRONZE BRONZE meleeweapon(LONG_SWORD);
+		LeftWielded = BRONZE shield;
+		Adjective = "rookie";
+		CWeaponSkillHits = { 2, 20, 20; }
+		PanicLevel = 50;
+		FriendlyReplies =
+		{
+			4,
+			"@Dd says sadly: \"Back then I used to love bananas. One day the master guard slipped on a peel I'd dropped. Guess where I got a transferred?\"",
+			"\"Lions ate a couple of banana growers again. Hope they're now satisfied and don't attack us.\"",
+			"\"This place's as hot as the elemental plane of fire! I want back home.\"",
+			"\"New Attnam, shit, I'm still only in New Attnam. Every time I think I'm gonna wake up back in the dungeon.\"";
+		}
+	}
+
+	Config VETERAN;
+	{
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(PLATE_MAIL);
+		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
+		LeftWielded = IRON shield;
+		Adjective = "veteran";
+		CWeaponSkillHits = { 2, 100, 100; }
+		RightSWeaponSkillHits = 10;
+		LeftSWeaponSkillHits = 10;
+		PanicLevel = 20;
+		FriendlyReplies =
+		{
+			5,
+			"@Dd says gravely: \"You don't have a life. Get it in the army.\"",
+			"@Dd seems very suspicious. \"Don't even think of damaging anything.\"",
+			"\"The High Priest is my idol. I would want a sword as big as his!\"",
+			"\"Can you imagine how cold our winter is if you wear only a rusty plate mail?\"",
+			"@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
+		}
+	}
+
+	Config SHOP;
+	{
+		Helmet = STEEL helmet { Enchantment = 1; }
+		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
+		LeftWielded = STEEL shield { Enchantment = 1; }
+		Adjective = "shop";
+		CWeaponSkillHits = { 2, 200, 200; }
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
+		PanicLevel = 15;
+		FriendlyReplies =
+		{
+			5,
+			"@Dd says gravely: \"You don't have a life. Get it as a shop guard.\"",
+			"@Dd seems very suspicious. \"Don't even think of stealing anything.\"",
+			"\"Yes, this is a dangerous place to work, but our boss pays us well.\"",
+			"\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do any rash moves here.\"",
+			"\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"";
+		}
+	}
+
+	Config ELITE;
+	{
+		AttributeBonus = 20;
+		Helmet = MITHRIL helmet { Enchantment = 2; }
+		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+		RightWielded = MITHRIL MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
+		LeftWielded = MITHRIL shield { Enchantment = 2; }
+		RightGauntlet = MITHRIL gauntlet { Enchantment = 2; }
+		RightBoot = MITHRIL boot { Enchantment = 2; }
+		AdjectiveArticle = "an";
+		Adjective = "elite";
+		CWeaponSkillHits = { 2, 500, 500; }
+		RightSWeaponSkillHits = 50;
+		LeftSWeaponSkillHits = 50;
+		PanicLevel = 10;
+		FriendlyReplies =
+		{
+			5,
+			"@Dd sounds annoyed. \"We do I have to work with these amateurs? They can't beat a rookie dark knight properly!\"",
+			"\"Don't believe Haedlac if he boasts with that enner beast. In reality he fled immediately and the monster stepped on a land mine while chasing him.\"",
+			"@Dd shouts excited: \"Attnam victoor!\"",
+			"\"We are the Imperial Guard. Bow.\"",
+			"\"If you even touch the shadow of our Magnificent High Priest, I'll squash you.\"";
+		}
+	}
+
+	Config MASTER;
+	{
+		AttributeBonus = 40;
+		TotalVolume = 100000;
+		Helmet = SAPPHIRE helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
+		Amulet = amulet(AMULET_OF_ESP);
+		BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+		RightWielded = VALPURIUM VALPURIUM meleeweapon(LONG_SWORD) { Enchantment = 3; }
+		LeftWielded = VALPURIUM shield { Enchantment = 3; }
+		RightGauntlet = SAPPHIRE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+		RightBoot = SAPPHIRE boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
+		Adjective = "master";
+		CWeaponSkillHits = { 2, 2000, 2000; }
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
+		PanicLevel = 5;
+		IsCharmable = false;
+		IsUnique = true;
+		DefaultName = "Haedlac Galladon VII";
+		IsNameable = false;
+		CanBeDisplaced = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		FriendlyReplies =
+		{
+			5,
+			"\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
+			"\"My grand-grand-father Haedlac Galladon IV once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
+			"\"In addition to all my other responsibilities, I am the head of the Attnamian Bureau of Investigation (ABI). By the way, mangos are your favorite fruit.\"",
+			"\"See the amulet? Don't think badly of the Government.\"",
+			"\"The house of Galladon has served Petrus ever since he took over.\"";
+		}
+	}
 }
 
 shopkeeper
 {
-	DefaultArmStrength = 10;
+	DefaultArmStrength = 20;
 	DefaultLegStrength = 30;
 	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultEndurance = 10;
+	DefaultEndurance = 20;
 	DefaultPerception = 30;
 	DefaultIntelligence = 25;
 	DefaultWisdom = 15;
@@ -280,31 +576,63 @@ shopkeeper
 	TorsoBitmapPos = 32, 32;
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 32;
-	TotalVolume = 100000;
+	TotalVolume = 150000;
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
-	IsPolymorphable = false;
-	Helmet = STEEL helmet { Enchantment = 1; }
-	BodyArmor = STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-	Cloak = LEATHER cloak { Enchantment = 1; }
-	Belt = LEATHER belt { Enchantment = 1; }
-	RightWielded = STEEL pickaxe { Enchantment = 1; }
-	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
-	RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
+	Helmet = MITHRIL helmet { Enchantment = 2; }
+	Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
+	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+	Belt = NYMPH_HAIR belt(BELT_OF_CARRYING) { Enchantment = 2; }
+	RightWielded = MITHRIL pickaxe { Enchantment = 3; }
+	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
+	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
 	KnownCWeaponSkills == AXES;
-	CWeaponSkillHits == 50;
-	RightSWeaponSkillHits = 20;
+	CWeaponSkillHits == 200;
+	RightSWeaponSkillHits = 100;
+	CanRead = true;
+	HostileReplies == "\"Criminal! Mellis bless my efforts of removing you!\"";
+	IsAbstract = true;
+	IsUnique = true;
+	IsNameable = false;
+	CanBeWished = false;
 	CanBeCloned = false;
+	IsPolymorphable = false;
+	Inventory == holybook(MELLIS);
+
+	Config ATTNAM;
+	{
+		DefaultName = "Hulbo";
+		FriendlyReplies =
+		{
+			4,
+			"@Dd sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"",
+			"@Dd sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"",
+			"\"You truly can't find better prices in this city! Indeed, you can't find ANY prices, since my store is a monopoly.\"",
+			"\"Don't try anything. The High Priest is a friend of mine.\"";
+		}
+	}
+
+	Config ELPURI_CAVE;
+	{
+		DefaultName = "Merka";
+		FriendlyReplies =
+		{
+			3,
+			"@Dd sighs: \"I wonder why I have so few customers these days...\"",
+			"\"The topmost reason why I work here is that the monsters devour tax collectors.\"",
+			"\"The monsters don't attack me, because of our mutually profitable contract.\"";
+		}
+	}
 }
 
 priest
 {
-	DefaultArmStrength = 10;
-	DefaultLegStrength = 30;
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 20;
 	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultEndurance = 10;
-	DefaultPerception = 18;
+	DefaultEndurance = 15;
+	DefaultPerception = 24;
 	DefaultIntelligence = 15;
 	DefaultWisdom = 25;
 	DefaultCharisma = 20;
@@ -321,29 +649,30 @@ priest
 	NameSingular = "priest";
 	Helmet = MITHRIL helmet { Enchantment = 2; }
 	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-	Cloak = LEATHER cloak { Enchantment = 2; }
-	Belt = LEATHER belt { Enchantment = 2; }
-	RightWielded = MITHRIL meleeweapon(MACE) { Enchantment = 2; }
+	Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
+	Belt = NYMPH_HAIR belt { Enchantment = 2; }
+	RightWielded = MITHRIL meleeweapon(MACE) { Enchantment = 3; }
 	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
 	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
 	KnownCWeaponSkills == MACES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
 	CanBeCloned = false;
+	/* Replies overridden */
 }
 
 oree
 {
-	DefaultArmStrength = 50;
-	DefaultLegStrength = 50;
-	DefaultDexterity = 80;
-	DefaultAgility = 80;
-	DefaultEndurance = 20;
-	DefaultPerception = 20;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 10;
+	DefaultArmStrength = 40;
+	DefaultLegStrength = 40;
+	DefaultDexterity = 90;
+	DefaultAgility = 90;
+	DefaultEndurance = 30;
+	DefaultPerception = 30;
+	DefaultIntelligence = 30;
+	DefaultWisdom = 20;
 	DefaultCharisma = 3;
-	DefaultMana = 20;
+	DefaultMana = 30;
 	IsCharmable = false;
 	CanBeDisplaced = false;
 	IsNameable = false;
@@ -355,43 +684,47 @@ oree
 	ClothColor = rgb16(30, 20, 0);
 	SkinColor = rgb16(180, 0, 0);
 	EyeColor = rgb16(100, 0, 0);
-	TotalVolume = 110000;
+	TotalVolume = 120000;
 	TotalSize = 225;
 	CanRead = true;
-	NameSingular = "Blood Daemon King";
+	NameSingular = "blood daemon king";
 	IsPolymorphable = false;
 	AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
-	BaseUnarmedStrength = 15000;
-	BaseKickStrength = 30000;
-	BaseBiteStrength = 300000;
+	BaseUnarmedStrength = 1250;
+	BaseKickStrength = 2500;
+	BaseBiteStrength = 6000;
 	CanBeWished = false;
 	Alias == "Oree";
 	ClassStates = INVISIBLE|INFRA_VISION|ESP;
-	Helmet = MITHRIL helmet { Enchantment = 6; }
+	Helmet = RUBY helmet { Enchantment = 3; }
+	Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
+	Belt = SAPPHIRE belt { Enchantment = 3; }
 	BodyArmor = goldeneagleshirt;
-	RightGauntlet = MITHRIL gauntlet { Enchantment = 6; }
-	RightBoot = MITHRIL boot(BOOT_OF_AGILITY) { Enchantment = 6; }
+	RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
+	RightBoot = OMMEL_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 3; }
 	KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
 	PanicLevel = 0;
 	CanBeCloned = false;
 	Inventory == can { MainMaterial = IRON { Volume = 10; } ContainedMaterial = PEPSI { Volume = 330; } }
+	DefaultName = "Oree";
+	HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
 }
 
 darkknight
 {
 	DefaultArmStrength = 30;
 	DefaultLegStrength = 30;
-	DefaultDexterity = 25;
-	DefaultAgility = 25;
-	DefaultEndurance = 30;
-	DefaultPerception = 30;
+	DefaultDexterity = 20;
+	DefaultAgility = 20;
+	DefaultEndurance = 20;
+	DefaultPerception = 25;
 	DefaultIntelligence = 20;
-	DefaultWisdom = 15;
-	DefaultCharisma = 15;
-	DefaultMana = 15;
-	HeadBitmapPos = 96, 240; 
-	TorsoBitmapPos = 32, 176;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 10;
+	HeadBitmapPos = 96, 240;
+	TorsoBitmapPos = 32, 16;
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 48;
 	ClothColor = rgb16(0, 0, 100);
@@ -402,66 +735,82 @@ darkknight
 	NameSingular = "dark knight";
 	CanBeGenerated = true;
 	IsAbstract = true;
-	KnownCWeaponSkills == LARGE_SWORDS;
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
 	ClassStates = INFRA_VISION;
-	PanicLevel = 5;
+	HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
+	FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
 
 	Config ROOKIE;
 	{
-		AttributeBonus = -25;
-		Helmet = WOOD helmet;
-		BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-		RightWielded = WOOD WOOD meleeweapon(LONG_SWORD);
-		LeftWielded = WOOD shield;
+		AttributeBonus = -20;
+		Helmet = BRONZE helmet;
+		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
+		RightWielded = IRON  meleeweapon(LONG_SWORD);
+		LeftWielded = BRONZE shield;
 		Adjective = "rookie";
-		CWeaponSkillHits == 50;
-		RightSWeaponSkillHits = 20;
+		CWeaponSkillHits = { 2, 200, 200; }
+		RightSWeaponSkillHits = 100;
+		LeftSWeaponSkillHits = 100;
+		PanicLevel = 15;
 	}
 
 	Config VETERAN;
 	{
-		AttributeBonus = -10;
-		Helmet = BRONZE helmet;
-		BodyArmor = BRONZE bodyarmor(CHAIN_MAIL);
-		RightWielded = BRONZE BRONZE meleeweapon(LONG_SWORD);
-		LeftWielded = BRONZE shield;
+		Helmet = IRON helmet { Enchantment = 1; }
+		BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
+		LeftWielded = IRON shield { Enchantment = 1; }
+		RightGauntlet = IRON gauntlet { Enchantment = 1; }
+		RightBoot = IRON boot { Enchantment = 1; }
 		Adjective = "veteran";
-		CWeaponSkillHits == 100;
-		RightSWeaponSkillHits = 50;
+		CWeaponSkillHits = { 2, 500, 500; }
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
+		PanicLevel = 10;
 	}
 
 	Config ELITE;
 	{
-		Helmet = IRON helmet;
-		BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
-		LeftWielded = IRON shield;
+		AttributeBonus = 20;
+		Helmet = STEEL helmet { Enchantment = 2; }
+		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+		RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
+		RightGauntlet = STEEL gauntlet { Enchantment = 2; }
+		RightBoot = STEEL boot { Enchantment = 2; }
 		AdjectiveArticle = "an";
 		Adjective = "elite";
-		CWeaponSkillHits == 200;
-		RightSWeaponSkillHits = 100;
-	}
-
-	Config MASTER;
-	{
-		AttributeBonus = 10;
-		Helmet = STEEL helmet { Enchantment = 1; }
-		BodyArmor = STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-		RightWielded = IRON IRON meleeweapon(TWO_HANDED_SWORD) { Enchantment = 1; }
-		Adjective = "master";
-		CWeaponSkillHits == 500;
-		RightSWeaponSkillHits = 200;
+		KnownCWeaponSkills == LARGE_SWORDS;
+		CWeaponSkillHits == 1000;
+		RightSWeaponSkillHits = 500;
+		PanicLevel = 5;
 	}
 
 	Config GRAND_MASTER;
 	{
-		AttributeBonus = 25;
-		Helmet = MITHRIL helmet { Enchantment = 2; }
-		BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-		RightWielded = STEEL STEEL meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 2; }
+		AttributeBonus = 40;
+		TotalVolume = 150000;
+		Helmet = DIAMOND helmet { Enchantment = 3; }
+		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
+		Belt = RUBY belt { Enchantment = 3; }
+		RightWielded = DIAMOND DIAMOND meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
+		RightGauntlet = RUBY gauntlet { Enchantment = 3; }
+		RightBoot = RUBY boot { Enchantment = 3; }
 		Adjective = "grand master";
-		CWeaponSkillHits == 1000;
-		RightSWeaponSkillHits = 500;
+		KnownCWeaponSkills == LARGE_SWORDS;
+		CWeaponSkillHits == 5000;
+		RightSWeaponSkillHits = 2000;
+		PanicLevel = 0;
+		IsCharmable = false;
+		IsUnique = true;
+		DefaultName = "Golgor Dhan";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeDisplaced = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		Inventory = { 4, scrollofenchantarmor, scrollofenchantarmor, scrollofenchantweapon, scrollofenchantweapon; }
 	}
 }
 
@@ -471,14 +820,14 @@ ennerbeast
 	DefaultLegStrength = 10;
 	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultEndurance = 10;
+	DefaultEndurance = 20;
 	DefaultPerception = 12;
 	DefaultIntelligence = 1;
 	DefaultWisdom = 1;
 	DefaultCharisma = 1;
 	DefaultMana = 0;
 	CanOpen = false;
-	TotalVolume = 30000;
+	TotalVolume = 50000;
 	TorsoBitmapPos = 96, 0;
 	TotalSize = 150;
 	Adjective = "enner";
@@ -486,7 +835,7 @@ ennerbeast
 	AdjectiveArticle = "an";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 100000;
+	BaseBiteStrength = 5000;
 	CanUseEquipment = false;
 	CanBeWished = false;
 	LegBitmapPos = 16, 48;
@@ -497,47 +846,116 @@ ennerbeast
 	ClothColor = rgb16(0, 0, 100);
 	LegMainColor = rgb16(64, 20, 0);
 	PanicLevel = 75;
+	HostileReplies == "Aighee!";
+	FriendlyReplies =
+	{
+		4,
+		"\"Fishing is fun! Do you fish?\"",
+		"\"And then I got that perch weighting fifty stones...\"",
+		"\"I only want to talk but everyone is rude and dies when I try.\"",
+		"\"Can you help me with this download problem?\"";
+	}
 }
 
 frog
 {
 	CanOpen = false;
-	TalkVerb = "croaks";
+	HostileReplies == "@Dd croaks angrily.";
+	FriendlyReplies == "@Dd croaks happily.";
 	NameSingular = "frog";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 30000;
+	BaseBiteStrength = 750;
 	CanSwim = true;
 	KnownCWeaponSkills == BITE;
-}
 
-darkfrog
-{
-	DefaultArmStrength = 5;
-	DefaultAgility = 40;
-	DefaultEndurance = 15;
-	DefaultPerception = 18;
-	DefaultIntelligence = 40;
-	DefaultWisdom = 30;
-	DefaultCharisma = 5;
-	DefaultMana = 20;
-	BloodColor = rgb16(0, 0, 0);
-	TotalVolume = 2500;
-	TorsoBitmapPos = 80, 0;
-	TotalSize = 25;
-	SkinColor = rgb16(60, 60, 60);
-	Adjective = "dark";
-	CanBeGenerated = true;
-	ClassStates = INFRA_VISION;
-	CWeaponSkillHits == 100;
+	Config DARK;
+	{
+		DefaultArmStrength = 5;
+		DefaultAgility = 40;
+		DefaultEndurance = 10;
+		DefaultPerception = 24;
+		DefaultIntelligence = 30;
+		DefaultWisdom = 20;
+		DefaultCharisma = 5;
+		DefaultMana = 20;
+		BloodColor = rgb16(0, 0, 0);
+		TotalVolume = 5000;
+		TorsoBitmapPos = 80, 0;
+		TotalSize = 25;
+		SkinColor = rgb16(60, 60, 60);
+		Adjective = "dark";
+		CanBeGenerated = true;
+		ClassStates = INFRA_VISION;
+		CWeaponSkillHits == 100;
+	}
+
+	Config GREATER_DARK;
+	{
+		DefaultArmStrength = 20;
+		DefaultAgility = 30;
+		DefaultEndurance = 15;
+		DefaultPerception = 36;
+		DefaultIntelligence = 35;
+		DefaultWisdom = 25;
+		DefaultCharisma = 4;
+		DefaultMana = 25;
+		BaseBiteStrength = 1000;
+		BloodColor = rgb16(0, 0, 0);
+		TotalVolume = 50000;
+		TorsoBitmapPos = 96, 0;
+		TotalSize = 100;
+		SkinColor = rgb16(60, 60, 60);
+		Adjective = "greater dark";
+		CanBeGenerated = true;
+		ClassStates = INFRA_VISION;
+		CWeaponSkillHits == 200;
+	}
+
+	Config LIGHT;
+	{
+		DefaultArmStrength = 5;
+		DefaultAgility = 40;
+		DefaultEndurance = 10;
+		DefaultPerception = 24;
+		DefaultIntelligence = 20;
+		DefaultWisdom = 30;
+		DefaultCharisma = 15;
+		DefaultMana = 20;
+		TotalVolume = 5000;
+		TorsoBitmapPos = 80, 0;
+		TotalSize = 25;
+		SkinColor = rgb16(32, 88, 32);
+		Adjective = "light";
+		CWeaponSkillHits == 100;
+	}
+
+	Config GREATER_LIGHT;
+	{
+		DefaultArmStrength = 20;
+		DefaultAgility = 30;
+		DefaultEndurance = 15;
+		DefaultPerception = 36;
+		DefaultIntelligence = 25;
+		DefaultWisdom = 35;
+		DefaultCharisma = 4;
+		DefaultMana = 25;
+		BaseBiteStrength = 1000;
+		TotalVolume = 50000;
+		TorsoBitmapPos = 96, 0;
+		TotalSize = 100;
+		SkinColor = rgb16(32, 88, 32);
+		Adjective = "greater light";
+		CWeaponSkillHits == 200;
+	}
 }
 
 elpuri
 {
 	DefaultArmStrength = 70;
-	DefaultAgility = 10;
-	DefaultEndurance = 40;
-	DefaultPerception = 30;
+	DefaultAgility = 25;
+	DefaultEndurance = 20;
+	DefaultPerception = 50;
 	DefaultIntelligence = 40;
 	DefaultWisdom = 30;
 	DefaultCharisma = 2;
@@ -546,26 +964,31 @@ elpuri
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
-	TotalVolume = 277500;
+	TotalVolume = 600000;
 	TorsoBitmapPos = 64, 0;
-	TotalSize = 300;
+	TotalSize = 250;
 	CanOpen = true;
-	Adjective = "";
 	NameSingular = "Master Dark Frog";
 	IsPolymorphable = false;
 	CanBeGenerated = false;
 	CanBeWished = false;
 	Alias == "Elpuri";
-	CWeaponSkillHits == 500;
+	CWeaponSkillHits == 1000;
 	PanicLevel = 0;
 	CanBeCloned = false;
+	DefaultName = "Elpuri";
+	HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
+	BloodColor = rgb16(0, 0, 0);
+	SkinColor = rgb16(60, 60, 60);
+	ClassStates = INFRA_VISION;
+	BaseBiteStrength = 1250;
 }
 
 billswill
 {
-	DefaultArmStrength = 0; /* depends on material */
-	DefaultAgility = 0; /* depends on material */
-	DefaultEndurance = 0; /* has no effect */
+	DefaultArmStrength = 1;
+	DefaultAgility = 50;
+	DefaultEndurance = 5;
 	DefaultPerception = 27;
 	DefaultIntelligence = 2;
 	DefaultWisdom = 2;
@@ -573,6 +996,7 @@ billswill
 	DefaultMana = 10;
 	StandVerb = "floating";
 	Frequency = 100;
+	DangerModifier = 250;
 	CanFly = true;
 	TotalVolume = 500000;
 	TorsoBitmapPos = 48, 0;
@@ -581,12 +1005,16 @@ billswill
 	NameSingular = "mass";
 	NamePlural = "masses";
 	PostFix = "of Bill's will";
-	BaseUnarmedStrength = 50000;
+	BaseUnarmedStrength = 3000;
 	CanBeGenerated = true;
-	ClassStates = ESP;
+	ClassStates = HASTE|ESP;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 100;
 	BaseEmitation = rgb24(110, 110, 130);
+	HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilited.\"";
+	FriendlyReplies == "\"Praise the Corporation!\"";
+	Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
+	PanicLevel = 0;
 }
 
 skeleton
@@ -595,14 +1023,14 @@ skeleton
 	DefaultLegStrength = 10;
 	DefaultDexterity = 10;
 	DefaultAgility = 10;
-	DefaultEndurance = 5;
-	DefaultPerception = 15;
+	DefaultEndurance = 10;
+	DefaultPerception = 9;
 	DefaultIntelligence = 4;
 	DefaultWisdom = 4;
 	DefaultCharisma = 3;
 	DefaultMana = 5;
 	SkinColor = rgb16(160, 160, 160);
-	EyeColor = rgb16(160, 0, 0);
+	EyeColor = rgb16(0, 0, 0);
 	ClothColor = rgb16(111, 74, 37);
 	HeadBitmapPos = 96, 96;
 	TorsoBitmapPos = 32, 96;
@@ -612,17 +1040,14 @@ skeleton
 	TotalSize = 150;
 	NameSingular = "skeleton";
 	CanBeGenerated = true;
-	HeadBonePercentile = 100;
-	TorsoBonePercentile = 100;
-	ArmBonePercentile = 100;
-	GroinBonePercentile = 100;
-	LegBonePercentile = 100;
 	Helmet = helmet;
 	RightWielded = meleeweapon(AXE) { Enchantment = -2; }
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 20;
 	RightSWeaponSkillHits = 10;
 	PanicLevel = 0;
+	HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
+	FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"";
 
 	Config WARRIOR;
 	{
@@ -632,19 +1057,37 @@ skeleton
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		PostFix = "warrior";
+		TotalVolume = 20000;
+		EyeColor = rgb16(255, 0, 0);
+		ClothColor = rgb16(32, 32, 32);
 	}
 
 	Config WAR_LORD;
 	{
 		AttributeBonus = 200;
-		BodyArmor = STEEL bodyarmor(BROKEN|PLATE_MAIL);
-		RightWielded = STEEL STEEL flamingsword { Enchantment = 0; }
-		LeftWielded = STEEL shield;
-		KnownCWeaponSkills == LARGE_SWORDS;
-		CWeaponSkillHits == 200;
-		RightSWeaponSkillHits = 100;
+		Helmet = MITHRIL helmet;
+		Cloak = PHOENIX_FEATHER cloak;
+		BodyArmor = RUBY bodyarmor(BROKEN|CHAIN_MAIL);
+		RightWielded = RUBY RUBY flamingsword { Enchantment = 0; }
+		LeftWielded = RUBY shield;
+		RightGauntlet = SPIDER_SILK gauntlet;
+		RightRing = ring(RING_OF_INFRA_VISION);
+		RightBoot = MITHRIL boot;
+		KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+		CWeaponSkillHits = { 2, 500, 500; }
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
 		PostFix = "warlord";
-		Frequency = 1000;
+		IsUnique = true;
+		DefaultName = "Xinroch";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		TotalVolume = 40000;
+		EyeColor = rgb16(255, 255, 0);
+		ClothColor = rgb16(100, 0, 0);
+		Inventory == wandofresurrection;
 	}
 }
 
@@ -655,14 +1098,14 @@ goblin
 	DefaultDexterity = 10;
 	DefaultAgility = 15;
 	DefaultEndurance = 10;
-	DefaultPerception = 18;
+	DefaultPerception = 15;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
 	DefaultCharisma = 5;
 	DefaultMana = 5;
 	SkinColor = rgb16(0, 96, 0);
 	EyeColor = rgb16(200, 200, 0);
-	ClothColor = rgb16(48, 32, 24);
+	ClothColor = rgb16(48, 32, 16);
 	HeadBitmapPos = 96, 48;
 	TorsoBitmapPos = 32, 112;
 	ArmBitmapPos = 64, 144;
@@ -672,20 +1115,22 @@ goblin
 	NameSingular = "goblin";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	RightWielded = meleeweapon(SPEAR);
-	KnownCWeaponSkills == SPEARS;
+	RightWielded = COPPER COPPER meleeweapon(SHORT_SWORD);
+	KnownCWeaponSkills == SMALL_SWORDS;
 	CWeaponSkillHits == 10;
 	RightSWeaponSkillHits = 5;
 	PanicLevel = 66;
+	HostileReplies == "@Dd yells goblin war cries at you.";
+	FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
 
 	Config BERSERKER;
 	{
 		AttributeBonus = 25;
-		RightWielded = BRONZE meleeweapon(AXE);
-		KnownCWeaponSkills == AXES;
+		RightWielded = BRONZE BRONZE meleeweapon(SHORT_SWORD);
 		CWeaponSkillHits == 20;
 		RightSWeaponSkillHits = 10;
 		PostFix = "berserker";
+		ClothColor = rgb16(0, 96, 0);
 	}
 
 	Config BUTCHER;
@@ -693,54 +1138,73 @@ goblin
 		AttributeBonus = 50;
 		Helmet = LEATHER helmet;
 		BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
-		RightWielded = IRON meleeweapon(AXE);
-		KnownCWeaponSkills == AXES;
+		RightWielded = IRON IRON meleeweapon(SHORT_SWORD);
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		PostFix = "butcher";
+		ClothColor = rgb16(200, 0, 0);
 	}
 
 	Config PRINCE;
 	{
 		AttributeBonus = 75;
-		Helmet = BRONZE helmet { Enchantment = 1; }
-		BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-		RightWielded = BRONZE meleeweapon(HALBERD) { Enchantment = 1; }
-		KnownCWeaponSkills == AXES;
+		Helmet = BRONZE helmet;
+		BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL);
+		RightWielded = STEEL STEEL meleeweapon(SHORT_SWORD) { Enchantment = 1; }
+		LeftWielded = STEEL STEEL meleeweapon(SHORT_SWORD) { Enchantment = 1; }
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
+		LeftSWeaponSkillHits = 50;
 		PostFix = "prince";
-		Frequency = 2500;
+		HeadBitmapPos = 112, 288;
+		TorsoBitmapPos = 48, 208;
+		HairColor = rgb16(220, 220, 0);
+		ClothColor = rgb16(200, 0, 0);
 	}
 
 	Config KING;
 	{
 		AttributeBonus = 100;
-		Helmet = IRON helmet { Enchantment = 2; }
-		BodyArmor = IRON bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-		RightWielded = IRON meleeweapon(HALBERD) { Enchantment = 2; }
-		KnownCWeaponSkills == AXES;
+		Helmet = STEEL helmet { Enchantment = 1; }
+		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+		Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
+		LeftWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
+		RightRing = ring(RING_OF_TELEPORTATION);
+		RightGauntlet = STEEL gauntlet { Enchantment = 1; }
+		RightBoot = STEEL boot { Enchantment = 1; }
+		TotalVolume = 50000;
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
+		LeftSWeaponSkillHits = 100;
 		PostFix = "king";
-		Frequency = 500;
+		IsUnique = true;
+		DefaultName = "Guugzamesh";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		HeadBitmapPos = 96, 288;
+		TorsoBitmapPos = 48, 208;
+		HairColor = rgb16(220, 220, 0);
+		ClothColor = rgb16(200, 0, 0);
+		Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
 	}
 }
 
 mommo
 {
-	DefaultArmStrength = 0; /* depends on material */
-	DefaultAgility = 0; /* depends on material */
-	DefaultEndurance = 0; /* has no effect */
+	DefaultEndurance = 8;
 	DefaultMana = 0;
 	CanOpen = "false";
 	StandVerb = "bubbling";
-	TalkVerb = "vibrates oddly";
+	HostileReplies == "@Dd vibrates in fury.";
+	FriendlyReplies == "@Dd vibrates oddly.";
 	BloodColor = rgb16(7, 155, 0);
 	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 800;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
@@ -749,11 +1213,13 @@ mommo
 
 	Config CONICAL;
 	{
+		DefaultArmStrength = 4;
+		DefaultAgility = 2;
 		DefaultPerception = 9;
 		DefaultIntelligence = 3;
 		DefaultWisdom = 2;
 		DefaultCharisma = 4;
-		TotalVolume = 250000;
+		TotalVolume = 300000;
 		TorsoBitmapPos = 176, 0;
 		TotalSize = 100;
 		Adjective = "conical";
@@ -761,6 +1227,8 @@ mommo
 
 	Config FLAT;
 	{
+		DefaultArmStrength = 2;
+		DefaultAgility = 4;
 		DefaultPerception = 9;
 		DefaultIntelligence = 2;
 		DefaultWisdom = 3;
@@ -790,23 +1258,50 @@ golem
 	NameSingular = "golem";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	EyeColor = rgb16(160, 0, 0);
+	EyeColor = rgb16(0, 0, 0);
 	HeadBitmapPos = 96, 256;
 	TorsoBitmapPos = 32, 256;
 	ArmBitmapPos = 64, 256;
 	LegBitmapPos = 0, 256;
 	CanUseEquipment = false;
-	CreateSolidMaterialConfigurations = true;
+	CreateGolemMaterialConfigurations = true;
 	IsAbstract = true;
-	BaseUnarmedStrength = 5000;
+	BaseUnarmedStrength = 500;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
 	PanicLevel = 10;
+	HostileReplies == "\"Yes, master. Golem kill human. Golem then return.\"";
+	FriendlyReplies == "\"Yes, master?\"";
+
+	Config VALPURIUM;
+	{
+		Frequency = 1000;
+		DangerModifier = 500;
+	}
+
+	Config SPIDER_SILK;
+	{
+		DefaultName = "experiment ZQ-29";
+		Frequency = 500;
+		DangerModifier = 1000;
+		IsUnique = true;
+		Inventory = { 6, wandofinvisibility, wandofteleportation, wandofcloning, scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
+		ClassStates = HASTE|INFRA_VISION|INVISIBLE;
+		IsNameable = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+	}
+
+	Config BLOOD;
+	{
+		CanBeGenerated = false;
+	}
 }
 
 wolf
 {
-	DefaultArmStrength = 7;
+	DefaultArmStrength = 10;
 	DefaultAgility = 25;
 	DefaultEndurance = 10;
 	DefaultPerception = 24;
@@ -816,37 +1311,41 @@ wolf
 	DefaultMana = 0;
 	TotalVolume = 40000;
 	TorsoBitmapPos = 224, 0;
-	TalkVerb = "howls";
+	HostileReplies == "@Dd growls madly.";
+	FriendlyReplies == "@Dd growls happily.";
 	TotalSize = 100;
 	/* SkinColor overridden */
 	NameSingular = "wolf";
 	NamePlural = "wolves";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 600;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
+	ClassStates = INFRA_VISION;
 }
 
 dog
 {
 	DefaultArmStrength = 5;
-	DefaultAgility = 20;
+	DefaultAgility = 15;
 	DefaultEndurance = 7;
-	DefaultPerception = 21;
+	DefaultPerception = 18;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
 	DefaultCharisma = 15;
 	DefaultMana = 0;
-	TotalVolume = 30000;
+	TotalVolume = 20000;
 	TorsoBitmapPos = 240, 0;
-	TalkVerb = "barks";
+	HostileReplies == "@Dd barks in fury.";
+	FriendlyReplies == "@Dd barks happily.";
 	TotalSize = 70;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	SkinColor = rgb16(111, 74, 37);
+	Adjective = "little";
 	NameSingular = "dog";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 400;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
@@ -855,7 +1354,7 @@ dog
 spider
 {
 	DefaultArmStrength = 2;
-	DefaultAgility = 4;
+	DefaultAgility = 5;
 	DefaultEndurance = 4;
 	DefaultPerception = 9;
 	DefaultIntelligence = 5;
@@ -866,12 +1365,13 @@ spider
 	CanOpen = false;
 	TotalVolume = 100;
 	TorsoBitmapPos = 272, 0;
-	TalkVerb = "says nothing";
+	HostileReplies == "@Dd says nothing.";
+	FriendlyReplies == "@Dd says nothing.";
 	TotalSize = 10;
 	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "spider";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 400;
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION;
 	KnownCWeaponSkills == BITE;
@@ -881,8 +1381,8 @@ spider
 jackal
 {
 	DefaultArmStrength = 3;
-	DefaultAgility = 15;
-	DefaultEndurance = 5;
+	DefaultAgility = 12;
+	DefaultEndurance = 6;
 	DefaultPerception = 18;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
@@ -890,12 +1390,13 @@ jackal
 	DefaultMana = 0;
 	TotalVolume = 20000;
 	TorsoBitmapPos = 304, 0;
-	TalkVerb = "howls";
+	HostileReplies == "@Dd howls in fury.";
+	FriendlyReplies == "@Dd howls happily.";
 	TotalSize = 80;
 	SkinColor = rgb16(255, 255, 255);
 	NameSingular = "jackal";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 300;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
@@ -913,13 +1414,14 @@ ass
 	DefaultMana = 0;
 	TotalVolume = 40000;
 	TorsoBitmapPos = 288, 0;
-	TalkVerb = "neighs";
+	HostileReplies == "@Dd neighs angrily.";
+	FriendlyReplies == "@Dd neighs cheerfully.";
 	TotalSize = 150;
 	SkinColor = rgb16(80, 80, 80);
 	Adjective = "mutant";
 	NameSingular = "ass";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 2500;
+	BaseBiteStrength = 150;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
@@ -927,11 +1429,11 @@ ass
 
 communist /* Ivan */
 {
-	DefaultArmStrength = 50;
-	DefaultLegStrength = 50;
-	DefaultDexterity = 20;
-	DefaultAgility = 20;
-	DefaultEndurance = 30;
+	DefaultArmStrength = 40;
+	DefaultLegStrength = 40;
+	DefaultDexterity = 15;
+	DefaultAgility = 15;
+	DefaultEndurance = 25;
 	DefaultPerception = 18;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
@@ -952,25 +1454,42 @@ communist /* Ivan */
 	NameSingular = "communist";
 	Alias == "Ivan";
 	ClassStates = INFRA_VISION;
-	Helmet = IRON helmet { Enchantment = 3; }
-	Cloak = LEATHER cloak { Enchantment = 3; }
-	BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-	Belt = LEATHER belt { Enchantment = 3; }
-	RightWielded = STEEL meleeweapon(HAMMER) { Enchantment = 3; }
-	LeftWielded = STEEL meleeweapon(SICKLE) { Enchantment = 3; }
+	Helmet = IRON helmet { Enchantment = 1; }
+	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+	BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	Belt = NYMPH_HAIR belt { Enchantment = 1; }
+	RightWielded = gorovitshammer;
+	LeftWielded = gorovitssickle;
 	KnownCWeaponSkills = { 7, UNARMED, CLUBS, HAMMERS, MACES, FLAILS, AXES, POLE_ARMS; }
-	CWeaponSkillHits = { 7, 1000, 1000, 2000, 2000, 1000, 2000, 1000; }
-	RightSWeaponSkillHits = 1000;
-	LeftSWeaponSkillHits = 1000;
-	RightGauntlet = IRON gauntlet { Enchantment = 3; }
-	RightBoot = IRON boot { Enchantment = 3; }
+	CWeaponSkillHits = { 7, 200, 200, 500, 500, 200, 500, 200; }
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;
+	RightGauntlet = HARDENED_LEATHER gauntlet { Enchantment = 1; }
+	RightBoot = HARDENED_LEATHER boot { Enchantment = 1; }
 	PanicLevel = 0;
 	Inventory == fiftymillionroubles;
+	IsUnique = true;
+	DefaultName = "Ivan";
+	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
+	FriendlyReplies =
+	{
+		10,
+		"\"Da, @nu like killing.\"",
+		"\"@Nu ruski specialist.\"",
+		"\"@Nu work. Else @nu get stapled.\"",
+		"\"Party mean big weapons. @Nu like big weapons. @Nu kill for Party.\"",
+		"\"CCCP roxxx.\"",
+		"\"@Nu like throw Ladas. You want compete?\"",
+		"\"Why is AK not invented?\"",
+		"\"@Nu like Attnam. Petrus communist too.\"",
+		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
+		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"";
+	}
 }
 
 hunter
 {
-	DefaultArmStrength = 15;
+	DefaultArmStrength = 25;
 	DefaultLegStrength = 15;
 	DefaultDexterity = 15;
 	DefaultAgility = 20;
@@ -997,30 +1516,40 @@ hunter
 	LeftGauntlet = 0;
 	RightBoot = HARDENED_LEATHER boot;
 	KnownCWeaponSkills == SPEARS;
-	CWeaponSkillHits == 100;
-	RightSWeaponSkillHits = 100;
+	CWeaponSkillHits == 200;
+	RightSWeaponSkillHits = 200;
 	PanicLevel = 20;
+	HostileReplies == "\"Your head will look fine above my fireplace!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"",
+		"\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"",
+		"\"I am the Great White Hunter. Get out of My way!\"",
+		"\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"";
+	}
 }
 
 polarbear
 {
 	DefaultArmStrength = 50;
 	DefaultAgility = 10;
-	DefaultEndurance = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 24;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 7;
 	DefaultCharisma = 15;
 	DefaultMana = 0;
-	TotalVolume = 400000;
+	TotalVolume = 300000;
 	TorsoBitmapPos = 336, 0;
-	TalkVerb = "growls";
+	HostileReplies == "@Dd growls madly.";
+	FriendlyReplies == "@Dd growls happily.";
 	TotalSize = 250;
 	SkinColor = rgb16(240, 240, 240);
 	Adjective = "polar";
 	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 600;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 }
@@ -1042,7 +1571,8 @@ dolphin
 	CanSwim = true;
 	TotalVolume = 150000;
 	TorsoBitmapPos = 320, 0;
-	TalkVerb = "peeps passionately to you";
+	HostileReplies == "@Dd peeps diabolically to you.";
+	FriendlyReplies == "@Dd peeps passionately to you.";
 	TotalSize = 300;
 	SkinColor = rgb16(144, 144, 144);
 	EyeColor = rgb16(100, 100, 255);
@@ -1050,25 +1580,8 @@ dolphin
 	NameSingular = "dolphin";
 	PostFix = "in season";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 5000;
-}
-
-lightfrog
-{
-	DefaultArmStrength = 5;
-	DefaultAgility = 40;
-	DefaultEndurance = 15;
-	DefaultPerception = 18;
-	DefaultIntelligence = 30;
-	DefaultWisdom = 40;
-	DefaultCharisma = 15;
-	DefaultMana = 20;
-	TotalVolume = 2500;
-	TorsoBitmapPos = 80, 0;
-	TotalSize = 25;
-	SkinColor = rgb16(32, 88, 32);
-	Adjective = "light";
-	CWeaponSkillHits == 100;
+	BaseBiteStrength = 200;
+	CanRead = true;
 }
 
 slave
@@ -1077,7 +1590,7 @@ slave
 	DefaultLegStrength = 25;
 	DefaultDexterity = 15;
 	DefaultAgility = 10;
-	DefaultEndurance = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 15;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
@@ -1095,6 +1608,15 @@ slave
 	NameSingular = "slave";
 	KnownCWeaponSkills = { 2, UNARMED, CLUBS; }
 	CWeaponSkillHits = { 2, 100, 100; }
+	FriendlyReplies = /* used only if the slave has been bought */
+	{
+		5,
+		"\"Whatever the master wants.\"",
+		"\"Work work work all day long. No, that was not a complain! Don't punish!\"",
+		"\"I love all my masters. At least when the whip is being washed.\"",
+		"\"I would like to be like Ivan. Ivan is a good worker.\"",
+		"\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"";
+	}
 }
 
 petrusswife
@@ -1103,7 +1625,7 @@ petrusswife
 	DefaultLegStrength = 7;
 	DefaultDexterity = 7;
 	DefaultAgility = 7;
-	DefaultEndurance = 5;
+	DefaultEndurance = 7;
 	DefaultPerception = 21;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
@@ -1123,7 +1645,16 @@ petrusswife
 	ArticleMode = NO_ARTICLE;
 	IsAbstract = true;
 	PanicLevel = 95;
-	BaseUnarmedStrength = 6000;
+	BaseUnarmedStrength = 200;
+	HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"I'm so sick jealous to those dolphins...\"",
+		"\"I'm Petrus's favorite, not she!\"",
+		"\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
+		"\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
+	}
 
 	Config 1;
 	{
@@ -1196,7 +1727,17 @@ housewife
 	NameSingular = "housewife";
 	KnownCWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
 	CWeaponSkillHits = { 2, 50, 50; }
-	BaseUnarmedStrength = 6000;
+	BaseUnarmedStrength = 200;
+	HostileReplies == "\"Face my rolling pin! Graah!\"";
+	FriendlyReplies =
+	{
+		5,
+		"\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"",
+		"\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"",
+		"\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"",
+		"\"Petrus's wives are so arrogant towards us working class ones. Grr...\"",
+		"\"If you men only knew!\"";
+	}
 }
 
 femaleslave
@@ -1223,6 +1764,16 @@ femaleslave
 	Adjective = "female";
 	NameSingular = "slave";
 	RightWielded = palmbranch;
+	BaseUnarmedStrength = 200;
+	HostileReplies == "\"Yikes!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"Praise our lord Petrus!\"",
+		"\"Does that toy frog really need us serving it?\"",
+		"\"I'm not a slave. I'm a high-ranking palm branch officer with a good career history.\"",
+		"\"Palm leaves are good for health. Petrus loves their smell.\"";
+	}
 }
 
 librarian
@@ -1251,15 +1802,20 @@ librarian
 	PanicLevel = 50;
 	CanBeCloned = false;
 	DefaultMoney = 2000;
+	/* Replies depend on story state */
+	IsUnique = true;
+	IsNameable = false;
+	CanBeCloned = false;
+	DefaultName = "Haathbar";
 }
 
 zombie
 {
-	DefaultArmStrength = 10;
-	DefaultLegStrength = 10;
+	DefaultArmStrength = 12;
+	DefaultLegStrength = 12;
 	DefaultDexterity = 5;
 	DefaultAgility = 5;
-	DefaultEndurance = 5;
+	DefaultEndurance = 7;
 	DefaultPerception = 12;
 	DefaultIntelligence = 4;
 	DefaultWisdom = 4;
@@ -1272,21 +1828,18 @@ zombie
 	TorsoBitmapPos = 32, 224;
 	ArmBitmapPos = 64, 224;
 	LegBitmapPos = 0, 160;
-	TotalVolume = 50000;
+	TotalVolume = 80000;
 	TotalSize = 160;
 	NameSingular = "zombie";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
 	PanicLevel = 0;
+	BaseUnarmedStrength = 200;
+	/* Replies overridden */
 }
 
 imp
 {
-	DefaultArmStrength = 15;
-	DefaultLegStrength = 15;
-	DefaultDexterity = 10;
-	DefaultAgility = 10;
-	DefaultEndurance = 10;
 	DefaultPerception = 15;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
@@ -1309,12 +1862,13 @@ imp
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
 	PanicLevel = 75;
+	BaseUnarmedStrength = 300;
 }
 
 bat
 {
 	DefaultArmStrength = 2;
-	DefaultAgility = 50;
+	DefaultAgility = 40;
 	DefaultEndurance = 10;
 	DefaultPerception = 24;
 	DefaultIntelligence = 7;
@@ -1326,12 +1880,13 @@ bat
 	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;
-	TalkVerb = "squeaks";
+	HostileReplies == "@Dd squeaks evilly.";
+	FriendlyReplies == "@Dd squeaks happily.";
 	TotalSize = 20;
 	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "bat";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 250;
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION;
 	KnownCWeaponSkills == BITE;
@@ -1341,16 +1896,16 @@ bat
 
 mistress
 {
-	DefaultArmStrength = 25;
-	DefaultLegStrength = 25;
-	DefaultDexterity = 35;
-	DefaultAgility = 35;
-	DefaultEndurance = 25;
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 40;
+	DefaultAgility = 40;
+	DefaultEndurance = 20;
 	DefaultPerception = 30;
-	DefaultIntelligence = 15;
-	DefaultWisdom = 15;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 20;
 	DefaultCharisma = 40;
-	DefaultMana = 15;
+	DefaultMana = 10;
 	Sex = FEMALE;
 	SkinColor = rgb16(255, 212, 192);
 	HairColor = rgb16(200, 200, 200);
@@ -1359,16 +1914,16 @@ mistress
 	TorsoBitmapPos = 48, 96;
 	ArmBitmapPos = 80, 80;
 	LegBitmapPos = 16, 32;
-	TotalVolume = 60000;
+	TotalVolume = 50000;
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "mistress";
 	CanBeGenerated = true;
-	BodyArmor = LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	RightGauntlet = LEATHER gauntlet { Enchantment = 1; }
-	RightBoot = LEATHER boot { Enchantment = 1; }
-	RightWielded = LEATHER whip { Enchantment = 1; }
-	LeftWielded = LEATHER whip { Enchantment = 1; }
+	BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
+	RightGauntlet = LEATHER gauntlet;
+	RightBoot = LEATHER boot;
+	RightWielded = NYMPH_HAIR whip { Enchantment = 1; }
+	LeftWielded = NYMPH_HAIR whip { Enchantment = 1; }
 	KnownCWeaponSkills == WHIPS;
 	CWeaponSkillHits == 200;
 	RightSWeaponSkillHits = 200;
@@ -1376,16 +1931,18 @@ mistress
 	ClassStates = INFRA_VISION;
 	PanicLevel = 20;
 	Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
+	HostileReplies == "\"Come closer, little boy, I'll teach you something...\"";
+	FriendlyReplies == "\"Just wait for the night, darling.\"";
 
 	Config TORTURING_CHIEF;
 	{
 		HairColor = rgb16(200, 200, 0);
-		AttributeBonus = 25;
-		BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
-		RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
-		RightWielded = NYMPH_HAIR whip { Enchantment = 2; }
-		LeftWielded = NYMPH_HAIR whip { Enchantment = 2; }
+		AttributeBonus = 15;
+		BodyArmor = NYMPH_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+		RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
+		RightWielded = OMMEL_HAIR whip { Enchantment = 2; }
+		LeftWielded = OMMEL_HAIR whip { Enchantment = 2; }
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 500;
 		LeftSWeaponSkillHits = 500;
@@ -1396,12 +1953,12 @@ mistress
 	Config WHIP_CHAMPION;
 	{
 		HairColor = rgb16(200, 0, 0);
-		AttributeBonus = 50;
-		BodyArmor = OMMEL_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 3; }
-		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 3; }
-		RightBoot = OMMEL_HAIR boot { Enchantment = 3; }
-		RightWielded = OMMEL_HAIR whipofthievery { Enchantment = 3; }
-		LeftWielded = OMMEL_HAIR whip { Enchantment = 3; }
+		AttributeBonus = 30;
+		BodyArmor = OMMEL_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 2; }
+		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 2; }
+		RightBoot = OMMEL_HAIR boot { Enchantment = 2; }
+		RightWielded = PHOENIX_FEATHER whip(RUNED_WHIP) { Enchantment = 3; }
+		LeftWielded = PHOENIX_FEATHER whip(RUNED_WHIP) { Enchantment = 3; }
 		CWeaponSkillHits == 1000;
 		RightSWeaponSkillHits = 1000;
 		LeftSWeaponSkillHits = 1000;
@@ -1412,12 +1969,13 @@ mistress
 	Config WAR_LADY;
 	{
 		HairColor = rgb16(80, 64, 32);
-		AttributeBonus = 75;
-		BodyArmor = PHOENIX_FEATHER bodyarmor(PLATE_MAIL) { Enchantment = 4; }
-		RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-		RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 4; }
-		RightWielded = PHOENIX_FEATHER whipofthievery { Enchantment = 4; }
-		LeftWielded = PHOENIX_FEATHER whipofthievery { Enchantment = 4; }
+		AttributeBonus = 45;
+		BodyArmor = PHOENIX_FEATHER bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
+		RightGauntlet = PHOENIX_FEATHER gauntlet { Enchantment = 3; }
+		RightBoot = PHOENIX_FEATHER boot { Enchantment = 3; }
+		RightWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
+		LeftWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
 		CWeaponSkillHits == 2000;
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
@@ -1428,41 +1986,57 @@ mistress
 	Config QUEEN;
 	{
 		HairColor = rgb16(35, 35, 35);
-		AttributeBonus = 100;
-		BodyArmor = SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 5; }
-		RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 5; }
-		RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 5; }
+		AttributeBonus = 60;
+		BodyArmor = ANGEL_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 4; }
+		Amulet = amulet(AMULET_OF_LIFE_SAVING);
+		Cloak = SPIDER_SILK cloak { Enchantment = 4; }
+		Belt = ANGEL_HAIR belt { Enchantment = 4; }
+		RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+		RightBoot = ANGEL_HAIR boot { Enchantment = 4; }
 		RightWielded = SPIDER_SILK whipofthievery { Enchantment = 5; }
 		LeftWielded = SPIDER_SILK whipofthievery { Enchantment = 5; }
+		RightRing = ring(RING_OF_FIRE_RESISTANCE);
+		LeftRing = ring(RING_OF_POISON_RESISTANCE);
 		CWeaponSkillHits == 5000;
 		RightSWeaponSkillHits = 5000;
 		LeftSWeaponSkillHits = 5000;
 		PostFix = "queen";
-		Frequency = 500;
 		PanicLevel = 0;
+		ClassStates = INVISIBLE|HASTE|INFRA_VISION;
+		IsCharmable = false;
+		IsUnique = true;
+		DefaultName = "Sherarax";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeDisplaced = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		Inventory = { 4, scrolloftaming, scrolloftaming, wandofhaste, scrollofwishing; }
 	}
 }
 
 werewolfhuman
 {
-	DefaultArmStrength = 15;
-	DefaultLegStrength = 15;
-	DefaultDexterity = 15;
-	DefaultAgility = 15;
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 20;
+	DefaultAgility = 20;
 	DefaultEndurance = 15;
-	DefaultPerception = 15;
-	DefaultIntelligence = 15;
-	DefaultWisdom = 15;
-	DefaultCharisma = 15;
-	DefaultMana = 15;
-	TotalVolume = 80000;
+	DefaultPerception = 18;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 20;
+	DefaultCharisma = 20;
+	DefaultMana = 20;
+	TotalVolume = 70000;
 	EyeColor = rgb16(160, 0, 0);
 	ClothColor = rgb16(114, 84, 52);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 176;
-	TalkVerb = "screams";
+	HostileReplies == "@Dd screams in fury.";
+	FriendlyReplies == "@Dd screams in a friendly manner.";
 	TotalSize = 170;
 	NameSingular = "werewolf";
 	NamePlural = "werewolves";
@@ -1471,7 +2045,8 @@ werewolfhuman
 	CanRead = true;
 	ClassStates = LYCANTHROPY;
 	KnownCWeaponSkills == UNARMED;
-	CWeaponSkillHits == 100;
+	CWeaponSkillHits == 200;
+	BaseUnarmedStrength = 300;
 }
 
 werewolfwolf
@@ -1480,13 +2055,13 @@ werewolfwolf
 	DefaultLegStrength = 25;
 	DefaultDexterity = 35;
 	DefaultAgility = 35;
-	DefaultEndurance = 35;
+	DefaultEndurance = 25;
 	DefaultPerception = 24;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
 	DefaultCharisma = 10;
 	DefaultMana = 0;
-	TotalVolume = 80000;
+	TotalVolume = 70000;
 	EyeColor = rgb16(200, 200, 0);
 	ClothColor = rgb16(114, 84, 52);
 	SkinColor = rgb16(100, 100, 100);
@@ -1494,13 +2069,14 @@ werewolfwolf
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 64, 240;
 	LegBitmapPos = 0, 192;
-	TalkVerb = "howls";
+	HostileReplies == "@Dd growls in fury.";
+	FriendlyReplies == "@Dd growls cheerfully.";
 	TotalSize = 200;
 	NameSingular = "werewolf";
 	NamePlural = "werewolves";
 	AttackStyle = USE_HEAD;
 	Sex = UNDEFINED;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 1200;
 	CanUseEquipment = false;
 	CanBeWished = false;
 	ClassStates = INFRA_VISION;
@@ -1509,11 +2085,11 @@ werewolfwolf
 
 kobold
 {
-	DefaultArmStrength = 5;
-	DefaultLegStrength = 5;
-	DefaultDexterity = 10;
-	DefaultAgility = 10;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 6;
+	DefaultLegStrength = 6;
+	DefaultDexterity = 7;
+	DefaultAgility = 7;
+	DefaultEndurance = 8;
 	DefaultPerception = 12;
 	DefaultIntelligence = 4;
 	DefaultWisdom = 4;
@@ -1535,35 +2111,67 @@ kobold
 	Sex = UNDEFINED;
 	RightWielded = WOOD meleeweapon(SPEAR);
 	KnownCWeaponSkills == SPEARS;
-	CWeaponSkillHits == 10;
-	RightSWeaponSkillHits = 5;
+	CWeaponSkillHits == 5;
+	RightSWeaponSkillHits = 0;
 	PanicLevel = 66;
 
 	Config CHIEFTAIN;
 	{
-		AttributeBonus = 50;
+		AttributeBonus = 30;
 		RightWielded = COPPER meleeweapon(SPEAR);
-		CWeaponSkillHits == 20;
-		RightSWeaponSkillHits = 10;
+		CWeaponSkillHits == 10;
+		RightSWeaponSkillHits = 5;
 		PostFix = "chieftain";
+		PanicLevel = 50;
+		ClothColor = rgb16(00, 96, 0);
+		LegMainColor = rgb16(111, 74, 37);
 	}
 
 	Config LORD;
 	{
-		AttributeBonus = 100;
+		AttributeBonus = 60;
 		RightWielded = IRON meleeweapon(SPEAR);
+		CWeaponSkillHits == 20;
+		RightSWeaponSkillHits = 10;
+		PostFix = "lord";
+		PanicLevel = 33;
+		ClothColor = rgb16(140, 0, 0);
+		LegMainColor = rgb16(111, 74, 37);
+	}
+
+	Config PATRIARCH;
+	{
+		AttributeBonus = 90;
+		Helmet = BRONZE helmet;
+		BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
+		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
+		Belt = TROLL_HIDE belt;
+		Cloak = TROLL_HIDE cloak;
+		RightGauntlet = TROLL_HIDE gauntlet;
+		RightBoot = TROLL_HIDE boot;
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
-		PostFix = "lord";
+		PostFix = "patriarch";
+		IsUnique = true;
+		DefaultName = "Rondol";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeCloned = false;
+		TotalVolume = 50000;
+		PanicLevel = 10;
+		TotalSize = 120;
+		ClothColor = rgb16(120, 0, 120);
+		LegMainColor = rgb16(111, 74, 37);
+		Inventory == wandofpolymorph;
 	}
 }
 
 gibberling
 {
-	DefaultArmStrength = 5;
-	DefaultLegStrength = 5;
+	DefaultArmStrength = 7;
+	DefaultLegStrength = 7;
 	DefaultDexterity = 5;
-	DefaultAgility = 20;
+	DefaultAgility = 15;
 	DefaultEndurance = 10;
 	DefaultPerception = 15;
 	DefaultIntelligence = 4;
@@ -1589,11 +2197,12 @@ gibberling
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
 	PanicLevel = 85;
+	BaseUnarmedStrength = 300;
 }
 
 largecat
 {
-	DefaultArmStrength = 5;
+	DefaultArmStrength = 4;
 	DefaultAgility = 35;
 	DefaultEndurance = 10;
 	DefaultPerception = 21;
@@ -1603,22 +2212,24 @@ largecat
 	DefaultMana = 0;
 	TotalVolume = 15000;
 	TorsoBitmapPos = 496, 0;
-	TalkVerb = "mews";
+	HostileReplies == "@Dd mews.";
+	FriendlyReplies == "@Dd purrs.";
 	TotalSize = 60;
 	SkinColor = rgb16(50, 50, 50);
 	Adjective = "large";
 	NameSingular = "cat";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 600;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
+	ClassStates = INFRA_VISION;
 }
 
 largerat
 {
 	DefaultArmStrength = 3;
-	DefaultAgility = 30;
+	DefaultAgility = 20;
 	DefaultEndurance = 10;
 	DefaultPerception = 12;
 	DefaultIntelligence = 5;
@@ -1626,29 +2237,31 @@ largerat
 	DefaultCharisma = 4;
 	DefaultMana = 0;
 	CanOpen = false;
-	TotalVolume = 2000;
+	TotalVolume = 4000;
 	TorsoBitmapPos = 512, 0;
-	TalkVerb = "squeaks";
+	HostileReplies == "The furious @du squeaks.";
+	FriendlyReplies == "@Dd squeaks in a friendly manner.";
 	TotalSize = 30;
 	SkinColor = rgb16(180, 100, 40);
 	Adjective = "large";
 	NameSingular = "rat";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 350;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
+	ClassStates = INFRA_VISION;
 }
 
 angel
 {
-	DefaultArmStrength = 35;
-	DefaultLegStrength = 35;
-	DefaultDexterity = 35;
-	DefaultAgility = 35;
-	DefaultEndurance = 35;
-	DefaultPerception = 45;
-	DefaultIntelligence = 35;
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 25;
+	DefaultAgility = 25;
+	DefaultEndurance = 25;
+	DefaultPerception = 35;
+	DefaultIntelligence = 25;
 	DefaultWisdom = 35;
 	DefaultCharisma = 50;
 	DefaultMana = 35;
@@ -1657,7 +2270,7 @@ angel
 	CanFly = true;
 	TotalVolume = 60000;
 	TorsoBitmapPos = 432, 0;
-	TotalSize = 180;
+	TotalSize = 200;
 	CanRead = true;
 	NameSingular = "angel";
 	Article = "an";
@@ -1674,7 +2287,9 @@ angel
 	IsAbstract = true;
 	/* Equipment initialization overridden */
 	PanicLevel = 0;
-	BaseUnarmedStrength = 6000;
+	BaseUnarmedStrength = 200;
+	HostileReplies == "\"With the power of @Gd, I shall slay thee, sinner!\"";
+	FriendlyReplies == "\"@Gd be with you, mortal.\"";
 }
 
 dwarf
@@ -1688,8 +2303,8 @@ kamikazedwarf
 	DefaultLegStrength = 20;
 	DefaultDexterity = 20;
 	DefaultAgility = 20;
-	DefaultEndurance = 10;
-	DefaultPerception = 24;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 5;
 	DefaultCharisma = 10;
@@ -1710,32 +2325,43 @@ kamikazedwarf
 	/* Equipment initialization overridden */
 	PanicLevel = 1;
 	Inventory == backpack;
+	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"Would you like me to teach you the best suicidal bombing tactics?\"",
+		"@Dd shouts: \"Death to disbelievers!\"",
+		"@Dd praises @Gd with numerous hymns. %s is obviously a very devoted follower.",
+		"\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
+	}
 }
 
 mammoth
 {
 	DefaultArmStrength = 80;
 	DefaultAgility = 20;
-	DefaultEndurance = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 18;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 7;
 	DefaultCharisma = 10;
 	DefaultMana = 0;
-	TotalVolume = 4000000;
+	TotalVolume = 2500000;
 	TorsoBitmapPos = 528, 0;
-	TalkVerb = "roars";
+	HostileReplies == "@Dd roars furiously.";
+	FriendlyReplies == "@Dd roars kindly.";
 	TotalSize = 500;
 	SkinColor = rgb16(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 400000;
-	BaseBiteStrength = 100000;
+	BaseKickStrength = 800;
+	BaseBiteStrength = 400;
 	CanBeGenerated = true;
 	CanKick = true;
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	PanicLevel = 10;
+	CanBeWished = false;
 }
 
 unicorn
@@ -1748,14 +2374,15 @@ unicorn
 	DefaultWisdom = 20;
 	DefaultCharisma = 30;
 	DefaultMana = 25;
-	TalkVerb = "neighs";
+	HostileReplies == "The furious @du neighs.";
+	FriendlyReplies == "The happy @du neighs.";
 	TotalVolume = 200000;
 	TorsoBitmapPos = 544, 0;
 	TotalSize = 200;
 	NameSingular = "unicorn";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 15000;
-	BaseBiteStrength = 7500;
+	BaseKickStrength = 700;
+	BaseBiteStrength = 350;
 	CanBeGenerated = true;
 	CanKick = true;
 	IsAbstract = true;
@@ -1785,10 +2412,10 @@ unicorn
 
 genie
 {
-	DefaultArmStrength = 30;
-	DefaultLegStrength = 30; /* not used */
-	DefaultDexterity = 30;
-	DefaultAgility = 30;
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 20; /* not used */
+	DefaultDexterity = 25;
+	DefaultAgility = 50;
 	DefaultEndurance = 15;
 	DefaultPerception = 18;
 	DefaultIntelligence = 20;
@@ -1806,32 +2433,36 @@ genie
 	TorsoBitmapPos = 32, 272;
 	ArmBitmapPos = 64, 272;
 	/* LegBitmapPos is not used */
-	RightWielded = meleeweapon(TWO_HANDED_SCIMITAR);
+	RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SCIMITAR);
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
 	PanicLevel = 0;
 	BaseEmitation = rgb24(110, 110, 130);
+	HostileReplies == "\"Fall, puny primy!\"";
+	FriendlyReplies == "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
+	Belt = SPIDER_SILK belt;
 }
 
 lion
 {
-	DefaultArmStrength = 25;
+	DefaultArmStrength = 20;
 	DefaultAgility = 25;
-	DefaultEndurance = 20;
+	DefaultEndurance = 15;
 	DefaultPerception = 24;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 15;
 	DefaultCharisma = 20;
 	DefaultMana = 0;
-	TotalVolume = 150000;
+	TotalVolume = 100000;
 	TorsoBitmapPos = 576, 0;
-	TalkVerb = "growls";
+	HostileReplies == "@Dd growls furiously.";
+	FriendlyReplies == "@Dd growls happily.";
 	TotalSize = 200;
 	SkinColor = rgb16(200, 200, 112);
 	NameSingular = "lion";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 700;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
@@ -1839,23 +2470,24 @@ lion
 
 carnivorousplant
 {
-	DefaultArmStrength = 10;
-	DefaultAgility = 1;
-	DefaultEndurance = 5;
+	DefaultArmStrength = 4;
+	DefaultAgility = 2;
+	DefaultEndurance = 8;
 	DefaultPerception = 6;
 	DefaultIntelligence = 3;
 	DefaultWisdom = 2;
 	DefaultCharisma = 5;
 	DefaultMana = 0;
 	CanOpen = false;
-	TotalVolume = 20000;
-	TorsoBitmapPos = 0,16;
-	TalkVerb = "is silent";
-	TotalSize = 250;
+	TotalVolume = 15000;
+	TorsoBitmapPos = 0, 16;
+	HostileReplies == "@Dd is silent.";
+	FriendlyReplies == "@Dd is silent.";
+	TotalSize = 100;
 	Adjective = "carnivorous";
 	NameSingular = "plant";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 5000;
+	BaseBiteStrength = 300;
 	SkinColor = rgb16(111, 64, 37);
 	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
@@ -1864,13 +2496,25 @@ carnivorousplant
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
+	ClassStates = INFRA_VISION;
+
+	Config GREATER;
+	{
+		AttributeBonus = 150;
+		TorsoBitmapPos = 96, 16;
+		Adjective = "greater carnivorous";
+		BaseBiteStrength = 500;
+		CWeaponSkillHits == 50;
+		TotalVolume = 20000;
+		TotalSize = 175;
+	}
 }
 
 buffalo
 {
 	DefaultArmStrength = 40;
 	DefaultAgility = 25;
-	DefaultEndurance = 25;
+	DefaultEndurance = 20;
 	DefaultPerception = 24;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
@@ -1878,14 +2522,15 @@ buffalo
 	DefaultMana = 0;
 	TotalVolume = 200000;
 	TorsoBitmapPos = 16,16;
-	TalkVerb = "snarls";
+	HostileReplies == "The angry @du snarls.";
+	FriendlyReplies == "The friendly @du snarls.";
 	TotalSize = 250;
 	SkinColor = rgb16(90, 85, 80);
 	TorsoMainColor = rgb16(120, 120, 120); /* the horns */
 	NameSingular = "buffalo";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 20000;
-	BaseBiteStrength = 10000;
+	BaseKickStrength = 500;
+	BaseBiteStrength = 250;
 	CanKick = true;
 	CanBeGenerated = true;
 	KnownCWeaponSkills = { 2, KICK, BITE; }
@@ -1895,7 +2540,7 @@ buffalo
 
 snake
 {
-	DefaultArmStrength = 10;
+	DefaultArmStrength = 7;
 	DefaultAgility = 15;
 	DefaultEndurance = 10;
 	DefaultPerception = 9;
@@ -1905,12 +2550,13 @@ snake
 	DefaultMana = 0;
 	TotalVolume = 10000;
 	TorsoBitmapPos = 384, 0;
-	TalkVerb = "hisses";
+	HostileReplies == "@Dd hisses in fury.";
+	FriendlyReplies == "@Dd hisses in a friendly manner.";
 	TotalSize = 250;
 	SkinColor = rgb16(130, 0, 0);
 	NameSingular = "snake";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 10000;
+	BaseBiteStrength = 500;
 	StandVerb = "lying";
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
@@ -1922,7 +2568,7 @@ orc
 {
 	DefaultArmStrength = 15;
 	DefaultLegStrength = 15;
-	DefaultDexterity = 15;
+	DefaultDexterity = 10;
 	DefaultAgility = 20;
 	DefaultEndurance = 15;
 	DefaultPerception = 18;
@@ -1939,51 +2585,79 @@ orc
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 80, 32;
 	LegBitmapPos = 0, 240;
-	TotalVolume = 90000;
+	TotalVolume = 80000;
 	TotalSize = 180;
 	Article = "an";
 	NameSingular = "orc";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
-	BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL);
+	BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
 	RightWielded = BRONZE meleeweapon(AXE);
+	LeftWielded = BRONZE meleeweapon(AXE);
 	KnownCWeaponSkills == AXES;
-	CWeaponSkillHits == 20;
-	RightSWeaponSkillHits = 10;
+	CWeaponSkillHits == 50;
+	RightSWeaponSkillHits = 20;
+	LeftSWeaponSkillHits = 20;
 	ClassStates = INFRA_VISION;
-	PanicLevel = 66;
+	PanicLevel = 50;
+	HostileReplies == "\"Nice scalp! Me want it!\"";
+	FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
 
 	Config SLAUGHTERER;
 	{
 		TorsoBitmapPos = 48, 48;
-		AttributeBonus = 25;
-		Helmet = HARDENED_LEATHER helmet;
-		BodyArmor = COPPER bodyarmor(CHAIN_MAIL);
+		AttributeBonus = 20;
+		Helmet = BRONZE helmet;
+		BodyArmor = BRONZE bodyarmor(CHAIN_MAIL);
 		RightWielded = IRON meleeweapon(AXE);
-		KnownCWeaponSkills == AXES;
-		CWeaponSkillHits == 50;
-		RightSWeaponSkillHits = 20;
+		LeftWielded = IRON meleeweapon(AXE);
+		CWeaponSkillHits == 100;
+		RightSWeaponSkillHits = 50;
+		LeftSWeaponSkillHits = 50;
 		PostFix = "slaughterer";
-		PanicLevel = 66;
+		PanicLevel = 40;
 	}
 
 	Config SQUAD_LEADER;
 	{
-		HairColor = rgb16(200, 0, 0);
+		HairColor = rgb16(120, 120, 120);
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 48;
-		AttributeBonus = 50;
-		Helmet = BRONZE helmet;
-		BodyArmor = BRONZE bodyarmor(CHAIN_MAIL);
-		RightWielded = meleeweapon(HALBERD);
-		KnownCWeaponSkills == AXES;
-		CWeaponSkillHits == 100;
-		RightSWeaponSkillHits = 50;
+		AttributeBonus = 40;
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(CHAIN_MAIL);
+		RightWielded = IRON meleeweapon(HALBERD);
+		LeftWielded = 0;
+		KnownCWeaponSkills == POLE_ARMS;
+		CWeaponSkillHits == 200;
+		RightSWeaponSkillHits = 100;
 		PostFix = "squad leader";
-		PanicLevel = 50;
+		PanicLevel = 30;
 	}
 
 	Config OFFICER;
+	{
+		HairColor = rgb16(0, 200, 0);
+		ClothColor = rgb16(96, 96, 96);
+		LegMainColor = rgb16(72, 72, 72);
+		LegSpecialColor = rgb16(112, 80, 48);
+		HeadBitmapPos = 112, 176;
+		TorsoBitmapPos = 48, 32;
+		ArmBitmapPos = 80, 16;
+		LegBitmapPos = 0, 224;
+		AttributeBonus = 60;
+		Helmet = STEEL helmet;
+		BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
+		RightWielded = STEEL meleeweapon(HALBERD) { Enchantment = 1; }
+		LeftWielded = 0;
+		KnownCWeaponSkills == POLE_ARMS;
+		CWeaponSkillHits == 500;
+		RightSWeaponSkillHits = 200;
+		PostFix = "officer";
+		PanicLevel = 20;
+	}
+
+	Config GENERAL;
 	{
 		HairColor = rgb16(200, 0, 0);
 		ClothColor = rgb16(72, 72, 72);
@@ -1993,36 +2667,53 @@ orc
 		TorsoBitmapPos = 48, 32;
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
-		AttributeBonus = 75;
-		Helmet = IRON helmet { Enchantment = 1; }
-		BodyArmor = IRON bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-		RightWielded = IRON meleeweapon(HALBERD) { Enchantment = 1; }
-		KnownCWeaponSkills == AXES;
-		CWeaponSkillHits == 200;
-		RightSWeaponSkillHits = 100;
-		PostFix = "officer";
-		PanicLevel = 33;
+		AttributeBonus = 80;
+		Helmet = MITHRIL helmet { Enchantment = 1; }
+		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+		RightWielded = MITHRIL meleeweapon(HALBERD) { Enchantment = 2; }
+		LeftWielded = 0;
+		KnownCWeaponSkills == POLE_ARMS;
+		CWeaponSkillHits == 1000;
+		RightSWeaponSkillHits = 500;
+		PostFix = "general";
+		PanicLevel = 10;
 	}
 
-	Config GENERAL;
+	Config MARSHAL;
 	{
 		HairColor = rgb16(200, 0, 200);
-		ClothColor = rgb16(72, 72, 72);
-		LegMainColor = rgb16(48, 48, 48);
-		LegSpecialColor = rgb16(96, 64, 32);
+		ClothColor = rgb16(48, 48, 48);
+		LegMainColor = rgb16(32, 32, 32);
+		LegSpecialColor = rgb16(80, 48, 16);
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 32;
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 100;
-		Helmet = STEEL helmet { Enchantment = 2; }
-		BodyArmor = STEEL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-		RightWielded = meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
-		KnownCWeaponSkills == LARGE_SWORDS;
-		CWeaponSkillHits == 500;
-		RightSWeaponSkillHits = 200;
-		PostFix = "general";
-		PanicLevel = 10;
+		Helmet = SAPPHIRE helmet { Enchantment = 2; }
+		Cloak = PHOENIX_FEATHER cloak { Enchantment = 2; }
+		BodyArmor = MITHRIL bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
+		RightWielded = DIAMOND meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
+		LeftWielded = 0;
+		Belt = DIAMOND belt { Enchantment = 2; }
+		RightGauntlet = MITHRIL gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
+		RightBoot = SPIDER_SILK boot { Enchantment = 2; }
+		LeftWielded = 0;
+		KnownCWeaponSkills == POLE_ARMS;
+		CWeaponSkillHits == 2000;
+		RightSWeaponSkillHits = 1000;
+		PostFix = "marshal";
+		PanicLevel = 0;
+		IsUnique = true;
+		DefaultName = "Ur-Khan";
+		DangerModifier = 1000;
+		IsNameable = false;
+		CanBeDisplaced = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		TotalVolume = 150000;
+		Inventory = { 4, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; } }
 	}
 }
 
@@ -2058,26 +2749,33 @@ cossack
 	RightGauntlet = HARDENED_LEATHER gauntlet;
 	RightBoot = HARDENED_LEATHER boot;
 	PanicLevel = 10;
+	HostileReplies == "%s shouts wildly: \"For Tataria!\"";
+	FriendlyReplies =
+	{
+		4,
+		"\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"",
+		"\"It surely is cold on this island. Remembers me of my six years in Siberia after breaking into the local pub's booze cellar...\"",
+		"\"What, why have I no horse? Er, I lost it in poker.\"",
+		"\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"";
+	}
 }
 
 bananagrower
 {
-	DefaultArmStrength = 8;
-	DefaultLegStrength = 7;
-	DefaultDexterity = 7;
-	DefaultAgility = 25;
-	DefaultEndurance = 8;
+	DefaultArmStrength = 10;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 10;
+	DefaultAgility = 20;
+	DefaultEndurance = 10;
 	DefaultPerception = 15;
 	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
+	DefaultWisdom = 30;
 	DefaultCharisma = 10;
 	DefaultMana = 5;
 	TotalVolume = 80000;
 	TotalSize = 170;
 	NameSingular = "banana grower";
-	RightWielded = banana;
 	RightGauntlet = LEATHER gauntlet;
-	PanicLevel = 20;
 	ClothColor = rgb16(128, 18, 18);
 	SkinColor = rgb16(128, 80, 48);
 	HairColor = rgb16(80, 48, 32);
@@ -2086,105 +2784,129 @@ bananagrower
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 16;
-
 }
 
 imperialist
 {
-	DefaultArmStrength = 8;
-	DefaultLegStrength = 7;
-	DefaultDexterity = 7;
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 15;
 	DefaultAgility = 20;
-	DefaultEndurance = 20;
-	DefaultPerception = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 24;
 	DefaultIntelligence = 40;
 	DefaultWisdom = 10;
-	DefaultCharisma = 31;
-	DefaultMana = 5;
-	TotalVolume = 120000;
+	DefaultCharisma = 25;
+	DefaultMana = 10;
+	TotalVolume = 160000;
 	TotalSize = 160;
 	NameSingular = "imperialist";
-	Cloak = LEATHER cloak;
-	BodyArmor = GOLD bodyarmor(PLATE_MAIL);
-	RightWielded = LEATHER whip;
-	RightGauntlet = FABRIC gauntlet;
-	LeftGauntlet = FABRIC gauntlet;
-	RightBoot = LEATHER boot;
-	LeftBoot = LEATHER boot;
-	KnownCWeaponSkills == WHIPS;
-	CWeaponSkillHits == 100;
-	RightSWeaponSkillHits = 5000;
-	LeftSWeaponSkillHits = 5000;
-	PanicLevel = 20;
+	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+	Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 1; }
+	RightWielded = HARDENED_LEATHER DIAMOND whip(RUNED_WHIP) { Enchantment = 3; }
+	LeftWielded = HARDENED_LEATHER DIAMOND whip(RUNED_WHIP) { Enchantment = 3; }
+	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+	RightBoot = MITHRIL boot(BOOT_OF_KICKING) { Enchantment = 3; }
+	KnownCWeaponSkills = { 2, WHIPS, KICK; }
+	CWeaponSkillHits = { 2, 500, 500; }
+	RightSWeaponSkillHits = 500;
+	LeftSWeaponSkillHits = 500;
+	PanicLevel = 10;
 	TorsoBitmapPos = 48, 240;
 	HeadBitmapPos = 96, 208;
 	ArmBitmapPos = 80, 112;
 	LegBitmapPos = 0, 0;
 	ClothColor = rgb16(50, 50, 50);
 	Article = "an";
-	Inventory = { 5, stone, stone, stone, stone, stone; }
+	Inventory = { 6, stone, stone, stone, stone, stone, holybook(MELLIS); }
+	CanRead = true;
+	HostileReplies == "\"Die you communist pig!\"";
+	IsUnique = true;
+	IsNameable = false;
+	CanBeCloned = false;
+	DefaultName = "Richel Decos";
+	AttackStyle = USE_ARMS|USE_LEGS;
+	CriticalModifier = 4;
+	FriendlyReplies =
+	{
+		5,
+		"\"They said that levitating ostriches had no future! HAHAHAAHHA!\"",
+		"\"Ostriches Corp. was a high risk investment, but more than worth it.\"",
+		"\"I'm originally from Attnam, but I like the climate here in New Attnam more.\"",
+		"\"The tax laws of Attnam don't encourage free enterprise.\"",
+		"\"Poor people shouldn't complain - after all it's their own fault.\"";
+	}
 }
 
 smith
 {
-	DefaultArmStrength = 20;
-	DefaultLegStrength = 10;
-	DefaultDexterity = 10;
-	DefaultAgility = 15;
-	DefaultEndurance = 20;
+	DefaultArmStrength = 35;
+	DefaultLegStrength = 20;
+	DefaultDexterity = 30;
+	DefaultAgility = 10;
+	DefaultEndurance = 30;
 	DefaultPerception = 15;
-	DefaultIntelligence = 20;
-	DefaultWisdom = 20;
-	DefaultCharisma = 25;
-	DefaultMana = 5;
-	TotalVolume = 120000;
-	TotalSize = 200;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 15;
+	DefaultCharisma = 15;
+	DefaultMana = 10;
+	TotalVolume = 80000;
+	TotalSize = 190;
 	NameSingular = "smith";
-	RightWielded = IRON meleeweapon(HAMMER);
-	RightBoot = LEATHER boot;
-	LeftBoot = LEATHER boot;
+	Helmet = STEEL helmet { Enchantment = 1; }
+	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
+	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+	RightRing = ring(RING_OF_FIRE_RESISTANCE);
+	LeftRing = ring(RING_OF_FIRE_RESISTANCE);
+	RightBoot = STEEL boot { Enchantment = 1; }
 	KnownCWeaponSkills == HAMMERS;
-	CWeaponSkillHits == 100;
-	RightSWeaponSkillHits = 5000;
-	LeftSWeaponSkillHits = 5000;
-	PanicLevel = 1;
+	CWeaponSkillHits == 500;
+	RightSWeaponSkillHits = 200;
+	LeftSWeaponSkillHits = 200;
 	TorsoBitmapPos = 48, 192; 
 	HeadBitmapPos = 112, 160;
 	ArmBitmapPos = 64, 64;
 	LegBitmapPos = 0, 16; 
-	SkinColor = rgb16(160, 95, 60);
-	HairColor = rgb16(48, 48, 48);
-	ClothColor = rgb16(80, 80, 80);
-	LegSpecialColor = rgb16(110,70, 48);
+	HairColor = rgb16(200, 200, 200);
+	ClothColor = rgb16(100, 100, 100);
+	CanRead = true;
+	/* Replies overridden */
+	IsUnique = true;
+	IsNameable = false;
+	CanBeCloned = false;
+	DefaultName = "Ikiros";
 }
 
 genetrixvesana
 {
-	DefaultArmStrength = 10;
-	DefaultAgility = 1;
-	DefaultEndurance = 5;
-	DefaultPerception = 20;
-	DefaultIntelligence = 3;
-	DefaultWisdom = 40;
-	DefaultCharisma = 40;
+	DefaultArmStrength = 16;
+	DefaultAgility = 8;
+	DefaultEndurance = 32;
+	DefaultPerception = 24;
+	DefaultIntelligence = 12;
+	DefaultWisdom = 8;
+	DefaultCharisma = 20;
 	DefaultMana = 0;
 	CanOpen = false;
-	TotalVolume = 20000;
-	TorsoBitmapPos = 0,16;
-	TalkVerb = "is silent";
+	TotalVolume = 25000;
+	TorsoBitmapPos = 80, 16;
 	TotalSize = 250;
-	NameSingular = "genetrix vesana";
+	Adjective = "mother carnivorous";
+	DefaultName = "genetrix vesana";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 5000;
+	BaseBiteStrength = 700;
 	SkinColor = rgb16(111, 64, 37);
 	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
-	TorsoSpecialColor = rgb16(100,0,0);
 	CanWalk = false;
-	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
-	CWeaponSkillHits == 20;
+	CWeaponSkillHits == 100;
 	PanicLevel = 0;
 	CanBeGenerated = false;
 	IsCharmable = false;
 	CanBeDisplaced = false;
+	IsNameable = false;
+	IsUnique = true;
+	CanBeWished = false;
 }

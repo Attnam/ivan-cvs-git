@@ -71,7 +71,7 @@ class ABSTRACT_CHARACTER
   virtual arm* GetSecondaryArm() const;
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX || Index == GROIN_INDEX; }
-  virtual bool BodyPartCanBeSevered(ushort Index) const { return Index != TORSO_INDEX && Index != GROIN_INDEX && GetBodyPart(Index); }
+  virtual bool BodyPartCanBeSevered(ushort Index) const { return Index != TORSO_INDEX && Index != GROIN_INDEX; }
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
@@ -146,17 +146,19 @@ class ABSTRACT_CHARACTER
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
   virtual bool ShowBattleInfo();
+  virtual void AddSpecialMovePenaltyInfo(felist&) const;
+  virtual void CalculateDodgeValue();
   virtual bool CheckZap();
+  virtual void AddAttributeInfo(std::string&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
   virtual ushort GetBodyPartColorB(ushort);
   virtual ushort GetBodyPartColorC(ushort);
   virtual ushort GetBodyPartColorD(ushort);
-  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(HUMAN_FLESH, Volume); }
   virtual ulong GetBodyPartSize(ushort, ushort);
-  virtual ulong GetBodyPartVolume(ushort);
-  virtual uchar GetBodyPartBonePercentile(ushort);
+  virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort);
   virtual std::string GetDeathMessage() const;
   std::vector<sweaponskill*> SWeaponSkill;
@@ -208,7 +210,7 @@ class ABSTRACT_CHARACTER
   virtual void Bite(character*);
   virtual bool RaiseStats();
   virtual bool LowerStats();
-  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEG_STRENGTH) << 1, 1) + CarryingBonus; }
+  virtual ushort GetCarryingStrength() const { return (Max<ushort>(GetAttribute(LEG_STRENGTH), 1) << 1) + CarryingBonus; }
   virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   virtual void CalculateUnarmedAttackInfo();
@@ -216,9 +218,12 @@ class ABSTRACT_CHARACTER
   virtual void CalculateBiteAttackInfo();
   virtual bool IsAlive() const { return GetTorso()->IsAlive(); }
   virtual bool ShowBattleInfo();
-  void AddUnarmedInfo(felist&) const;
-  void AddKickInfo(felist&) const;
-  void AddBiteInfo(felist&) const;
+  void ShowUnarmedInfo() const;
+  void ShowKickInfo() const;
+  void ShowBiteInfo() const;
+  void SetStrength(ushort What) { Strength = What; }
+  void SetAgility(ushort What) { Agility = What; }
+  virtual void AddAttributeInfo(std::string&) const;
  protected:
   ushort Strength;
   ushort Agility;
@@ -256,7 +261,7 @@ class CHARACTER
  public:
   virtual ~petrus();
   virtual void Load(inputfile&);
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
   bool HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() const { return HealTimer; }
@@ -276,8 +281,6 @@ class CHARACTER
 (
   farmer,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
   virtual vector2d GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) * 16); }
@@ -293,7 +296,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void BeTalkedTo(character*);
 );
 
 class CHARACTER
@@ -303,7 +305,6 @@ class CHARACTER
  public:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void BeTalkedTo(character*);
 );
 
 class CHARACTER
@@ -312,18 +313,15 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
 );
 
 class CHARACTER
 (
   oree,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
-  virtual void VirtualConstructor(bool);
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMON_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMON_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vomits blood for one last time and then dies."; }
   virtual std::string FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
@@ -336,8 +334,7 @@ class CHARACTER
 (
   darkknight,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
+  ;
 );
 
 class CHARACTER
@@ -346,42 +343,32 @@ class CHARACTER
   humanoid,
  public:
   virtual bool Hit(character*);
-  virtual void BeTalkedTo(character*);
-  /*virtual ulong CurrentDanger() const { return character::CurrentDanger() * 5; }
-  virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }*/
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNER_BEAST_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNER_BEAST_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual void GetAICommand();
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
-class ABSTRACT_CHARACTER
+class CHARACTER
 (
   frog,
   nonhumanoid,
-  ;
-);
-
-class CHARACTER
-(
-  darkfrog,
-  frog,
+ public:
+  virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROG_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(FROG_FLESH, Volume); }
 );
 
 class CHARACTER
 (
   elpuri,
-  darkfrog,
+  frog,
  public:
-  virtual void VirtualConstructor(bool);
-  virtual void BeTalkedTo(character*);
   virtual bool Hit(character*);
  protected:
   virtual void CreateCorpse();
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ELPURI_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(ELPURI_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " groans horribly and drops " + GetPossessivePronoun() + " head."; }
 );
 
@@ -390,11 +377,9 @@ class CHARACTER
   billswill,
   nonhumanoid,
  public:
-  virtual void BeTalkedTo(character*);
-  virtual void CalculateUnarmedDamage();
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(AIR, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(MAGICAL_AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vanishes from existence."; }
   virtual std::string FirstPersonUnarmedHitVerb() const { return "emit psi waves at"; }
@@ -409,10 +394,11 @@ class CHARACTER
   skeleton,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
  protected:
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(BONE, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
   virtual void CreateCorpse();
 );
@@ -421,10 +407,8 @@ class CHARACTER
 (
   goblin,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GOBLINOID_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(GOBLINOID_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -434,7 +418,7 @@ class CHARACTER
  public:
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BROWN_SLIME, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(BROWN_SLIME, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " turns into lifeless goo."; }
   virtual std::string FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous slime at"; }
@@ -449,9 +433,9 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  virtual void BeTalkedTo(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
  protected:
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(Config, Volume); }
   virtual std::string GetDeathMessage() const { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
 );
 
@@ -461,7 +445,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual ushort GetSkinColor() const;
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WOLF_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(WOLF_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -470,9 +454,9 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Catches(item*, float);
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOG_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(DOG_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -482,7 +466,7 @@ class CHARACTER
  public:
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SPIDER_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(SPIDER_FLESH, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
 );
 
@@ -491,7 +475,7 @@ class CHARACTER
   jackal,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(JACKAL_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(JACKAL_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -499,7 +483,7 @@ class CHARACTER
   ass,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ASS_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(ASS_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " neighs one last time and dies."; }
 );
 
@@ -509,9 +493,8 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
  protected:
-  virtual void VirtualConstructor(bool);
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
   virtual bool ShowClassDescription() const { return GetAssignedName() != "Ivan"; }
 );
@@ -521,7 +504,7 @@ class CHARACTER
   hunter,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
  protected:
   virtual void CreateBodyParts(ushort);
 );
@@ -531,7 +514,7 @@ class CHARACTER
   polarbear,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(POLAR_BEAR_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(POLAR_BEAR_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " groans terribly and falls dead to the ground."; }
 );
 
@@ -542,19 +525,9 @@ class CHARACTER
  public:
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHIN_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHIN_FLESH, Volume); }
   virtual uchar GetSpecialBodyPartFlags(ushort) const { return (RAND() % 8)&~FLIP; }
   virtual void SpecialTurnHandler() { UpdatePictures(); }
-);
-
-class CHARACTER
-(
-  lightfrog,
-  frog,
- public:
-  virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
- protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROG_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -562,7 +535,7 @@ class CHARACTER
   slave,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
   virtual void GetAICommand();
 );
 
@@ -571,7 +544,6 @@ class CHARACTER
   petrusswife,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
 );
 
@@ -579,8 +551,6 @@ class CHARACTER
 (
   housewife,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
   virtual ushort GetHairColor() const;
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) * 16); }
@@ -590,8 +560,6 @@ class CHARACTER
 (
   femaleslave,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -601,7 +569,7 @@ class CHARACTER
   librarian,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -611,7 +579,7 @@ class CHARACTER
   zombie,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
   virtual bool BodyPartVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
   virtual void CreateBodyParts(ushort);
  protected:
@@ -623,7 +591,7 @@ class CHARACTER
   imp,
   humanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SULFUR, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(SULFUR, Volume); }
 );
 
 class CHARACTER
@@ -631,15 +599,14 @@ class CHARACTER
   bat,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BAT_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(BAT_FLESH, Volume); }
 );
 
 class CHARACTER
 (
   mistress,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
+  ;
 );
 
 class CHARACTER
@@ -647,7 +614,7 @@ class CHARACTER
   werewolfhuman,
   humanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WERE_WOLF_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(WERE_WOLF_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -655,7 +622,7 @@ class CHARACTER
   werewolfwolf,
   humanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WERE_WOLF_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(WERE_WOLF_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -663,7 +630,7 @@ class CHARACTER
   kobold,
   humanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLD_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLD_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
 );
 
@@ -672,7 +639,7 @@ class CHARACTER
   gibberling,
   humanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GIBBERLING_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(GIBBERLING_FLESH, Volume); }
 );
 
 class CHARACTER  
@@ -682,7 +649,7 @@ class CHARACTER
  public:
   virtual bool Catches(item*, float);
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(CAT_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(CAT_FLESH, Volume); }
 );
 
 class CHARACTER  
@@ -690,7 +657,7 @@ class CHARACTER
   largerat,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(RAT_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(RAT_FLESH, Volume); }
 );
 
 class CHARACTER  
@@ -698,7 +665,6 @@ class CHARACTER
   angel,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool AttachBodyPartsOfFriendsNear(); 
@@ -727,7 +693,7 @@ class ABSTRACT_CHARACTER
  public:
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DWARF_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(DWARF_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -735,7 +701,6 @@ class CHARACTER
   kamikazedwarf,
   dwarf,
  public:
-  virtual void BeTalkedTo(character*);
   virtual float GetTimeToKill(const character*, bool) const;
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
@@ -753,7 +718,7 @@ class CHARACTER
   mammoth,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(MAMMOTH_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(MAMMOTH_FLESH, Volume); }
 );
 
 class CHARACTER
@@ -768,7 +733,7 @@ class CHARACTER
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual void CreateBodyParts(ushort);
-  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
+  virtual material* CreateBodyPartMaterial(ushort, ulong) const;
   uchar Alignment;
 );
 
@@ -777,12 +742,11 @@ class CHARACTER
   genie,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
   virtual void CreateBodyParts(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
   virtual ushort GetAttribute(ushort) const;
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(AIR, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(MAGICAL_AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vanishes from existence."; }
 );
@@ -792,7 +756,7 @@ class CHARACTER
   lion,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LION_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(LION_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " growls ans is slain."; }
 );
 
@@ -803,7 +767,7 @@ class CHARACTER
  public:
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(PLANT_FIBER, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(PLANT_FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
   virtual ushort GetTorsoSpecialColor() const { return MakeRGB16(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
   virtual void GetAICommand();
@@ -814,7 +778,7 @@ class CHARACTER
   buffalo,
   nonhumanoid,
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BUFFALO_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(BUFFALO_FLESH, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " snarls one last time."; }
 );
 
@@ -825,7 +789,7 @@ class CHARACTER
  public:
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKE_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKE_FLESH, Volume); }
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
 );
 
@@ -833,18 +797,14 @@ class CHARACTER
 (
   orc,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ORC_FLESH, Volume); }
+  virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(ORC_FLESH, Volume); }
 );
 
 class CHARACTER
 (
   cossack,
   humanoid,
- public:
-  virtual void BeTalkedTo(character*);
  protected:
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Hope there's vodka in hell!"; }
 );
@@ -854,7 +814,7 @@ class CHARACTER
   bananagrower,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
+  virtual void BeTalkedTo();
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
  protected:
@@ -867,8 +827,7 @@ class CHARACTER
   imperialist,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
-  virtual void GetAICommand();
+  virtual void GetAICommand() { StandIdleAI(); }
 );
 
 class CHARACTER
@@ -876,8 +835,8 @@ class CHARACTER
   smith,
   humanoid,
  public:
-  virtual void BeTalkedTo(character*);
-  virtual void GetAICommand();
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
 );
 
 class CHARACTER
@@ -889,4 +848,5 @@ class CHARACTER
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is brutally destroyed."; }
   virtual void GetAICommand();
 );
+
 #endif

@@ -60,7 +60,27 @@ inline inputfile& operator>>(inputfile& SaveFile, configid& Value)
   return SaveFile;
 }
 
-typedef std::map<configid, float> dangermap;
+struct dangerid
+{
+  dangerid() { }
+  dangerid(float Danger) : Danger(Danger), HasBeenGenerated(false) { }
+  float Danger;
+  bool HasBeenGenerated;
+};
+
+inline outputfile& operator<<(outputfile& SaveFile, const dangerid& Value)
+{
+  SaveFile << Value.Danger << Value.HasBeenGenerated;
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
+{
+  SaveFile >> Value.Danger >> Value.HasBeenGenerated;
+  return SaveFile;
+}
+
+typedef std::map<configid, dangerid> dangermap;
 
 class game
 {
@@ -212,6 +232,7 @@ class game
   static void CombineLights(ulong&, ulong);
   static bool IsDark(ulong);
   static void SetStandardListAttributes(felist&);
+  static void SignalGeneration(ushort, ushort);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

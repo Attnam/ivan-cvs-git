@@ -29,7 +29,7 @@ struct materialdatabase
   ushort Density;
   ushort Color;
   ulong PriceModifier;
-  bool IsSolid;
+  bool IsGolemMaterial;
   ulong Emitation;
   bool CanBeWished;
   uchar Alignment;
@@ -51,6 +51,7 @@ struct materialdatabase
   ushort SpoilModifier;
   bool IsSparkling;
   ushort EffectStrength;
+  bool IsMetal;
 };
 
 class materialprototype
@@ -107,7 +108,7 @@ class material
   DATA_BASE_VALUE(ushort, Density);
   DATA_BASE_VALUE(ushort, Color);
   DATA_BASE_VALUE(ulong, PriceModifier);
-  DATA_BASE_BOOL(IsSolid);
+  DATA_BASE_BOOL(IsGolemMaterial);
   DATA_BASE_VALUE(ulong, Emitation);
   DATA_BASE_BOOL(CanBeWished);
   DATA_BASE_VALUE(uchar, Alignment);
@@ -127,6 +128,7 @@ class material
   DATA_BASE_VALUE(ushort, Flexibility);
   DATA_BASE_VALUE(ushort, SpoilModifier);
   DATA_BASE_BOOL(IsSparkling);
+  DATA_BASE_BOOL(IsMetal);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }

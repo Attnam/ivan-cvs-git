@@ -160,7 +160,7 @@ class item : public object
   virtual void StepOnEffect(character*) { }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
-  virtual bool IsBadFoodForAI(character*) const;
+  virtual bool IsBadFoodForAI(const character*) const;
   virtual std::string GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
@@ -251,10 +251,10 @@ class item : public object
   virtual DATA_BASE_VALUE(ushort, StrengthModifier);
   virtual DATA_BASE_VALUE(ushort, FormModifier);
   virtual DATA_BASE_VALUE(ulong, NPModifier);
-  virtual DATA_BASE_VALUE(ushort, DefaultSize);
-  virtual DATA_BASE_VALUE(ulong, DefaultMainVolume);
-  virtual DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
-  virtual DATA_BASE_VALUE(ulong, DefaultContainedVolume);
+  DATA_BASE_VALUE(ushort, DefaultSize);
+  DATA_BASE_VALUE(ulong, DefaultMainVolume);
+  DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
+  DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   virtual DATA_BASE_VALUE(ulong, Price);
   virtual DATA_BASE_VALUE(ulong, BaseEmitation);
@@ -292,13 +292,16 @@ class item : public object
   DATA_BASE_BOOL(AffectsCharisma);
   DATA_BASE_BOOL(AffectsMana);
   DATA_BASE_BOOL(AffectsCarryingCapacity);
-  virtual DATA_BASE_VALUE(char, DefaultEnchantment);
+  DATA_BASE_VALUE(char, DefaultEnchantment);
   virtual DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
   virtual DATA_BASE_VALUE(uchar, MaxCharges);
   virtual DATA_BASE_VALUE(uchar, MinCharges);
-  virtual DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
+  DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
+  virtual DATA_BASE_BOOL(CanBeCloned);
+  virtual DATA_BASE_VALUE(ushort, BeamRange);
+  virtual DATA_BASE_BOOL(CanBeUsedBySmith);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -338,8 +341,6 @@ class item : public object
   virtual void AddAttackInfo(felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
-  virtual DATA_BASE_BOOL(CanBeCloned);
-  virtual DATA_BASE_VALUE(ushort, BeamRange);
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
   bool CarriedByPlayer() const;
@@ -363,13 +364,12 @@ class item : public object
   virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
   virtual bool IsFixableBySmith(const character*) const { return false; }
   static bool IsFixableBySmithSorter(item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
-  DATA_BASE_BOOL(CanBeUsedBySmith);
   virtual ulong GetFixPrice() const { return 100; } 
   void DonateSlotTo(item*);
   virtual uchar GetFlyAmount() const;
   virtual void SignalSpoilLevelChange(material*);
   virtual void ResetSpoiling();
-  virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort) { }
+  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
   virtual short GetCarryingBonus() const { return 0; }
  protected:
   virtual item* RawDuplicate() const = 0;

@@ -74,6 +74,8 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      return;
 
 	  Buffer += char(Char);
+	  Get();
+	  continue;
 	}
 
       if(Char == ' ' && Mode)
@@ -123,7 +125,10 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 		  }
 
 	      if(Mode)
-		return;
+		{
+		  ungetc('/', this->Buffer);
+		  return;
+		}
 
 	      Buffer += char(Char);
 	      return;

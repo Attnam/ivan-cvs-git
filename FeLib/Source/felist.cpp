@@ -96,13 +96,13 @@ ushort felist::Draw()
 
       if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 + PageBegin < long(Entry.size()))
 	{
-	  Return = Pressed - 65 + PageBegin;
+	  Return = Selected = Pressed - 65 + PageBegin;
 	  break;
 	}
 
       if(Flags & SELECTABLE && Pressed > 96 && Pressed < 123 && Pressed - 97 + PageBegin < long(Entry.size()))
 	{
-	  Return = Pressed - 97 + PageBegin;
+	  Return = Selected = Pressed - 97 + PageBegin;
 	  break;
 	}
 

@@ -61,7 +61,6 @@ void legifer::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
-  //game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
   game::GetPlayer()->CheckDeath("burned to death by the wrath of " + Name());
 }
 
@@ -688,18 +687,12 @@ void scabies::PrayGoodEffect()
       for(ushort d = 0; d < 8; ++d)
 	{
 	  lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
-	  if(Square)
-	    {
-	      if(Square->GetCharacter())
-		{
-		  if(Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
-		    ADD_MESSAGE("%s throws poisons on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
-		  else
-		    continue;
-		}
-	      Square->SpillFluid(MAKE_MATERIAL(POISON_LIQUID, 300), 100, game::GetPlayer());
-	    }
 
+	  if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
+	    {
+	      ADD_MESSAGE("%s throws poison on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
+	      Square->SpillFluid(MAKE_MATERIAL(POISON_LIQUID, 500), 100, game::GetPlayer());
+	    }
 	}
     }
 
@@ -720,7 +713,7 @@ void scabies::PrayBadEffect()
   else
     {
       ADD_MESSAGE("%s unleashes all her fury upon you!", GOD_NAME);
-      game::GetPlayer()->BeginTemporaryState(POISONED, 500 + RAND() % 300);
+      game::GetPlayer()->BeginTemporaryState(POISONED, 600 + RAND() % 400);
     }
 }
 

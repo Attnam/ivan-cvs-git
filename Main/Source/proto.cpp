@@ -67,15 +67,21 @@ character* protosystem::BalancedCreateMonster()
 	      {
 		if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
 		  {
-		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
+		    const dangerid& DangerId = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 10))
+		    if(i->second.IsUnique && DangerId.HasBeenGenerated)
+		      break;
+
+		    float DangerModifier = DangerId.Danger * 100 / i->second.DangerModifier;
+
+		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 5))
 		      {
 			character* Monster = Proto->Clone(i->first);
 
 			if(c >= 100 || (!(RAND() % 3) && Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 50000))
 			  {
-			    Monster->SetTeam(game::GetTeam(1));
+			    game::SignalGeneration(ChosenType, i->first);
+			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 			    return Monster;
 			  }
 			else
@@ -165,10 +171,14 @@ character* protosystem::CreateMonster(ushort SpecialFlags)
       for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!Chosen--)
 	  {
-	    if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
+	    if(!i->second.IsAbstract
+	    && i->second.CanBeGenerated
+	    && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000)
+	    && (!i->second.IsUnique || !game::GetDangerMap().find(configid(Chosen, i->first))->second.HasBeenGenerated))
 	      {
 		character* Monster = Proto->Clone(i->first, SpecialFlags);
-		Monster->SetTeam(game::GetTeam(1));
+		game::SignalGeneration(Chosen, i->first);
+		Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 		return Monster;
 	      }
 

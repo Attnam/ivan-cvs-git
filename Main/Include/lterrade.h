@@ -152,7 +152,6 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
-  virtual bool HasContainedMaterial() const { return true; }
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual material*& GetMaterialReference(ushort);
@@ -216,4 +215,5 @@ class OLTERRAIN
  protected:
   std::string Text;
 );
+
 #endif

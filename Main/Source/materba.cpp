@@ -48,6 +48,9 @@ bool material::Effect(character* Eater, long Amount)
 
   Amount = Amount * GetEffectStrength() / 100;
 
+  if(!Amount)
+    return false;
+
   switch(GetEffect())
     {
     case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;

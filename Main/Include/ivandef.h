@@ -340,6 +340,7 @@
 #define GAS_ID (4096 * 3)
 
 #define AIR (GAS_ID + 1)
+#define MAGICAL_AIR (GAS_ID + 2)
 
 #define LIQUID_ID (4096 * 4)
 
@@ -422,7 +423,7 @@
 #define DIR_ERROR 0xFF
 #define DIR_ERROR_VECTOR vector2d(-666, -666)
 
-#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 5.0f
+#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 25.0f
 
 #define HELMET_INDEX 0
 #define AMULET_INDEX 1
@@ -456,16 +457,19 @@
 #define PLATE_MAIL 2
 #define ARMOR_OF_GREAT_HEALTH 3
 
+#define RUNED_WHIP 1
+
 #define CLOAK_OF_INVISIBILITY 1
 
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
+#define BOOT_OF_KICKING 3
 
 #define GAUNTLET_OF_STRENGTH 1
 #define GAUNTLET_OF_DEXTERITY 2
 
 #define RING_OF_FIRE_RESISTANCE 1
-#define RING_OF_POLYMORPHCONTROL 2
+#define RING_OF_POLYMORPH_CONTROL 2
 #define RING_OF_INFRA_VISION 3
 #define RING_OF_TELEPORTATION 4
 #define RING_OF_TELEPORT_CONTROL 5
@@ -490,9 +494,15 @@
 
 #define ROOKIE 1
 #define VETERAN 2
-#define ELITE 3
-#define MASTER 4
-#define GRAND_MASTER 5
+#define SHOP 3
+#define ELITE 4
+#define MASTER 5
+#define GRAND_MASTER 6
+
+#define DARK 1
+#define GREATER_DARK 2
+#define LIGHT 3
+#define GREATER_LIGHT 4
 
 #define WARRIOR 1
 #define WAR_LORD 2
@@ -512,11 +522,15 @@
 
 #define CHIEFTAIN 1
 #define LORD 2
+#define PATRIARCH 3
+
+#define GREATER 1
 
 #define SLAUGHTERER 1
 #define SQUAD_LEADER 2
 #define OFFICER 3
 #define GENERAL 4
+#define MARSHAL 5
 
 #define PARQUET 1
 #define FLOOR 2
@@ -555,8 +569,10 @@
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
 /* Hard-coded teams */
-#define MONSTER_TEAM 1
 #define PLAYER_TEAM 0
+#define MONSTER_TEAM 1
+#define ATTNAM_TEAM 2
+#define FINAL_BATTLE_TEAM 3
 
 #define LOAD 1
 #define NO_PIC_UPDATE 2
@@ -576,8 +592,8 @@
 #define UNDER_WATER_TUNNEL 4
 #define UNDER_WATER_TUNNEL_EXIT 5
 
-#define DARK_LEVEL 4
-#define OREE_LAIR 6
+#define DARK_LEVEL 6
+#define OREE_LAIR 9
 
 #define NO_SELECT 1
 #define NO_MULTI_SELECT 2
@@ -589,7 +605,7 @@
 
 /* Gods, 0 == none */
 
-#define VALPURI 1
+#define VALPURUS 1
 #define LEGIFER 2
 #define ATAVUS 3
 #define DULCIS 4

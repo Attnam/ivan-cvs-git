@@ -14,7 +14,7 @@ material
 	/* Obligatory: Density */
 	/* Obligatory: Color */
 	PriceModifier = 0;
-	IsSolid = false;
+	IsGolemMaterial = false;
 	Emitation = 0;
 	CanBeWished = true;
 	Alignment = NEUTRAL;
@@ -34,6 +34,8 @@ material
 	CreateDivineConfigurations = false;
 	Flexibility = 1;
 	IsSparkling = false;
+	IsMetal = false;
+	EffectStrength = 100;
 
 	Config IRON;
 	{
@@ -42,9 +44,10 @@ material
 		Density = 8000;
 		Color = rgb16(96, 96, 96);
 		PriceModifier = 40;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		NameStem = "iron";
 		Article = "an";
+		IsMetal = true;
 	}
 
 	Config VALPURIUM;
@@ -53,13 +56,15 @@ material
 		ConsumeType = CT_METAL;
 		Density = 3000;
 		Color = rgb16(232, 232, 0);
-		IsSolid = true;
+		IsGolemMaterial = true;
 		CanBeWished = false;
 		Emitation = rgb24(150, 150, 150);
 		PriceModifier = 50000;
 		Alignment = GOOD;
 		NameStem = "valpurium";
 		IsSparkling = true;
+		IsMetal = true;
+		Flexibility = 4;
 	}	
 
 	Config STONE;
@@ -67,7 +72,7 @@ material
 		StrengthValue = 60;
 		ConsumeType = CT_MINERAL; 
 		Density = 3000;
-		IsSolid = true; 
+		IsGolemMaterial = true; 
 		Color = rgb16(80, 80, 80);
 		NameStem = "stone";
 	}
@@ -95,7 +100,7 @@ material
 		StrengthValue = 35;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(140, 96, 48);
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
@@ -106,7 +111,7 @@ material
 		StrengthValue = 40;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(180, 180, 255);
 		NameStem = "glass";
 		Alpha = 150;
@@ -114,10 +119,10 @@ material
 
 	Config PARCHMENT;
 	{
-		StrengthValue = 15;
+		StrengthValue = 7;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 800;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(200, 200, 200);
 		IsFlammable = true;
 		NameStem = "parchment";
@@ -126,10 +131,10 @@ material
 
 	Config CLOTH;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 100;
-		IsSolid = true;
+		Density = 200;
+		IsGolemMaterial = true;
 		Color = rgb16(80, 80, 176);
 		IsFlammable = true;
 		NameStem = "cloth";
@@ -141,11 +146,13 @@ material
 		StrengthValue = 200;
 		ConsumeType = CT_METAL;
 		Density = 5000;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(224, 224, 224);
 		PriceModifier = 5000;
 		NameStem = "mithril";
 		IsSparkling = true;
+		IsMetal = true;
+		Flexibility = 2;
 	}
 		
 	Config MARBLE;
@@ -153,24 +160,25 @@ material
 		StrengthValue = 50;
 		ConsumeType = CT_MINERAL;
 		Density = 3000;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(200, 200, 200);
 		NameStem = "marble";
 	}
 
 	Config GOLD;
 	{
-		StrengthValue = 50;
+		StrengthValue = 55;
 		ConsumeType = CT_METAL;
 		Density = 20000;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(224, 224, 0);
 		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "gold";
 		AdjectiveStem = "golden";
-		Flexibility = 2;
+		Flexibility = 3;
 		IsSparkling = true;
+		IsMetal = true;
 	}
 
 	Config GRASS;
@@ -190,7 +198,7 @@ material
 		StrengthValue = 20;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 800;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
 		NameStem = "leather";
@@ -199,10 +207,10 @@ material
 
 	Config LEAF;
 	{
-		StrengthValue = 10;
+		StrengthValue = 3;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(0, 160, 0);
 		IsFlammable = true;
 		NameStem = "leaf";
@@ -211,22 +219,22 @@ material
 
 	Config FABRIC;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 100;
-		IsSolid = true;
+		Density = 200;
+		IsGolemMaterial = true;
 		IsFlammable = true;
 		Color = rgb16(176, 0, 0);
 		NameStem = "fabric";
-		Flexibility = 10;
+		Flexibility = 15;
 	}
 
 	Config PALM_LEAF;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(0, 160, 0);
 		IsFlammable = true;
 		NameStem = "palm leaf";
@@ -235,12 +243,13 @@ material
 
 	Config SULFUR;
 	{
-		StrengthValue = 50;
+		StrengthValue = 30;
 		ConsumeType = CT_MINERAL;
 		Density = 2000;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(128, 0, 0);
 		NameStem = "sulfur";
+		Flexibility = 3;
 	}
 
 	Config UNICORN_HORN;
@@ -257,7 +266,7 @@ material
 		StrengthValue = 300;
 		ConsumeType = CT_MINERAL;
 		Density = 3500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(240, 240, 240);
 		PriceModifier = 10000;
 		NameStem = "diamond";
@@ -271,12 +280,13 @@ material
 		StrengthValue = 60;
 		ConsumeType = CT_METAL;
 		Density = 10500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(200, 200, 200);
 		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "silver";
 		IsSparkling = true;
+		IsMetal = true;
 	}
 
 	Config SAPPHIRE;
@@ -284,7 +294,7 @@ material
 		StrengthValue = 250;
 		ConsumeType = CT_MINERAL;
 		Density = 3500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(96, 96, 200);
 		PriceModifier = 6000;
 		NameStem = "sapphire";
@@ -298,7 +308,7 @@ material
 		StrengthValue = 250;
 		ConsumeType = CT_MINERAL;
 		Density = 3500;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(180, 0, 0);
 		PriceModifier = 8000;
 		NameStem = "ruby";
@@ -312,10 +322,11 @@ material
 		StrengthValue = 80;
 		ConsumeType = CT_METAL;
 		Density = 8300;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(150, 100, 50);
 		PriceModifier = 30;
 		NameStem = "bronze";
+		IsMetal = true;
 	}
 
 	Config COPPER;
@@ -323,10 +334,11 @@ material
 		StrengthValue = 70;
 		ConsumeType = CT_METAL;
 		Density = 9000; /* rounded from 8920 */
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(96, 64, 32);
 		PriceModifier = 20;
 		NameStem = "copper";
+		IsMetal = true;
 	}
 
 	Config TIN;
@@ -334,10 +346,11 @@ material
 		StrengthValue = 60;
 		ConsumeType = CT_METAL;
 		Density = 7250; 
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(100, 100, 100);
 		PriceModifier = 15;
 		NameStem = "tin";
+		IsMetal = true;
 	}
 
 	Config STEEL;
@@ -346,21 +359,23 @@ material
 		ConsumeType = CT_METAL;
 		Density = 7500;
 		Color = rgb16(128, 128, 128);
-		IsSolid = true;
+		IsGolemMaterial = true;
 		PriceModifier = 40;
 		NameStem = "steel";
+		IsMetal = true;
 	}
 
 	Config SPIDER_SILK;
 	{
 		StrengthValue = 160;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 200;
+		Density = 300;
 		Color = rgb16(160, 160, 160);
 		IsFlammable = true;
 		NameStem = "spider silk";
 		Flexibility = 20;
 		CanBeWished = false;
+		IsGolemMaterial = true;
 	}
 
 	Config KEVLAR;
@@ -379,7 +394,7 @@ material
 		StrengthValue = 60;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 400;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(160, 0, 0);
 		IsFlammable = true;
 		NameStem = "ommel hair";
@@ -389,10 +404,10 @@ material
 
 	Config HARDENED_LEATHER;
 	{
-		StrengthValue = 30;
+		StrengthValue = 35;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 1200;
-		IsSolid = true;
+		IsGolemMaterial = true;
 		Color = rgb16(100, 50, 30);
 		IsFlammable = true;
 		NameStem = "hardened leather";
@@ -401,7 +416,7 @@ material
 
 	Config TROLL_HIDE;
 	{
-		StrengthValue = 40;
+		StrengthValue = 45;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 2000;
 		Color = rgb16(128, 100, 32);
@@ -414,18 +429,19 @@ material
 	{
 		StrengthValue = 30;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 200;
+		Density = 300;
 		Color = rgb16(100, 100, 200);
 		IsFlammable = true;
 		NameStem = "nymph hair";
 		Flexibility = 20;
+		IsGolemMaterial = true;
 	}
 
 	Config ANGEL_HAIR;
 	{
-		StrengthValue = 120;
+		StrengthValue = 140;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 200;
+		Density = 300;
 		Color = rgb16(200, 200, 0);
 		IsFlammable = true;
 		NameStem = "angel hair";
@@ -438,15 +454,16 @@ material
 	{
 		StrengthValue = 100;
 		ConsumeType = CT_MISC_ORGANIC;
-		Density = 100;
+		Density = 200;
 		Color = rgb16(220, 220, 0);
 		NameStem = "phoenix feather";
 		Flexibility = 30;
+		IsGolemMaterial = true;
 	}
 
 	Config GOLDEN_EAGLE_FEATHER;
 	{
-		StrengthValue = 200;
+		StrengthValue = 250;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 100;
 		Color = rgb16(80, 80, 176);
@@ -463,7 +480,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config BANANA_FLESH;
 	{
-		StrengthValue = 5;
+		StrengthValue = 3;
 		Density = 1200;
 		ConsumeType = CT_FRUIT;
 		NutritionValue = 100;
@@ -475,7 +492,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config SCHOOL_FOOD;
 	{
-		StrengthValue = 5;
+		StrengthValue = 3;
 		ConsumeType = CT_MEAT;
 		Density = 1500;
 		Alignment = EVIL;
@@ -491,19 +508,19 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config BANANA_PEEL;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(224, 224, 0);
 		NameStem = "banana peel";
 		Flexibility = 10;
 		IsAlive = false;
-		IsSolid = true;
+		IsGolemMaterial = true;
 	}
 
 	Config KIWI_FLESH;
 	{
-		StrengthValue = 5;
+		StrengthValue = 3;
 		ConsumeType = CT_FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
@@ -515,7 +532,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config PINEAPPLE_FLESH;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_FRUIT;
 		Density = 1200;
 		NutritionValue = 100;
@@ -527,7 +544,7 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config PLANT_FIBER;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(111, 64, 37);
@@ -542,18 +559,16 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 35;
 		Density = 2000;
 		ConsumeType = CT_BONE;
-		IsSolid = true;
 		Color = rgb16(180, 180, 180);
 		NutritionValue = 50;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 50000;
-		IsAlive = false;
 	}
 
 	Config BREAD;
 	{
-		StrengthValue = 10;
+		StrengthValue = 5;
 		ConsumeType = CT_PROCESSED;
 		Density = 250;
 		NutritionValue = 100;
@@ -579,6 +594,19 @@ gas
 		Article = "an";
 		Alpha = 150;
 		Flexibility = 75;
+	}
+
+	Config MAGICAL_AIR;
+	{
+		StrengthValue = 1;
+		Density = 1;
+		Color = rgb16(180, 180, 255);
+		ConsumeType = CT_GAS;
+		Article = "magical";
+		NameStem = "air";
+		Alpha = 150;
+		Flexibility = 75;
+		IsAlive = true;
 	}
 }
 
@@ -654,7 +682,7 @@ liquid
 
 	Config BROWN_SLIME;
 	{
-		StrengthValue = 2;
+		StrengthValue = 5;
 		Density = 400;
 		NutritionValue = 25;
 		Color = rgb16(0, 128, 0);
@@ -662,6 +690,7 @@ liquid
 		NameStem = "brown slime";
 		Alpha = 200;
 		Flexibility = 30;
+		IsAlive = true;
 	}
 
 	Config POISON_LIQUID;
@@ -702,7 +731,7 @@ liquid
 
 flesh
 {
-	StrengthValue = 10;
+	StrengthValue = 5;
 	ConsumeType = CT_MEAT;
 	Density = 1200;
 	NutritionValue = 200;
@@ -755,7 +784,7 @@ flesh
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
-		StrengthValue = 30;
+		StrengthValue = 10;
 		Density = 2400;
 		NameStem = "Elpuri's flesh";
 		Article = "an";
@@ -791,7 +820,7 @@ flesh
 
 	Config ENNER_BEAST_FLESH;
 	{
-		StrengthValue = 30;
+		StrengthValue = 10;
 		Density = 1800;
 		IsBadFoodForAI = true;
 		NameStem = "enner beast flesh";
@@ -926,7 +955,7 @@ powder
 {
 	Config GUN_POWDER;
 	{
-		StrengthValue = 5;
+		StrengthValue = 2;
 		ConsumeType = CT_MINERAL;
 		Density = 250;
 		Color = rgb16(30, 30, 30);
@@ -934,6 +963,6 @@ powder
 		IsExplosive = true;
 		PriceModifier = 600;
 		NameStem = "gunpowder";
-		ExplosivePower = 8000;
+		ExplosivePower = 10000;
 	}
 }

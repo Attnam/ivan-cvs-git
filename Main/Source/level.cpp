@@ -480,28 +480,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  for(c = 0; c < RoomScript->GetSquare().size(); ++c)
-    {
-      game::BusyAnimation();
-      squarescript* Script = RoomScript->GetSquare()[c];
-      uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
-
-      for(ushort t = 0; t < Times; ++t)
-	{
-	  vector2d Pos;
-
-	  if(Script->GetPosition()->GetRandom())
-	    {
-	      rect Borders = Script->GetPosition()->GetBorders(false) ? *Script->GetPosition()->GetBorders() + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
-	      Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
-	    }
-	  else
-	    Pos = vector2d(XPos, YPos) + *Script->GetPosition()->GetVector();
-
-	  Map[Pos.X][Pos.Y]->ApplyScript(Script, RoomClass);
-	}
-    }
-
   if(RoomScript->GetCharacterMap(false))
     {
       vector2d CharPos(XPos + RoomScript->GetCharacterMap()->GetPos()->X, YPos + RoomScript->GetCharacterMap()->GetPos()->Y);
@@ -590,6 +568,28 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
 		RoomClass->HandleInstantiatedOLTerrain(Terrain);
 	      }
+	}
+    }
+
+  for(c = 0; c < RoomScript->GetSquare().size(); ++c)
+    {
+      game::BusyAnimation();
+      squarescript* Script = RoomScript->GetSquare()[c];
+      uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
+
+      for(ushort t = 0; t < Times; ++t)
+	{
+	  vector2d Pos;
+
+	  if(Script->GetPosition()->GetRandom())
+	    {
+	      rect Borders = Script->GetPosition()->GetBorders(false) ? *Script->GetPosition()->GetBorders() + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
+	      Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
+	    }
+	  else
+	    Pos = vector2d(XPos, YPos) + *Script->GetPosition()->GetVector();
+
+	  Map[Pos.X][Pos.Y]->ApplyScript(Script, RoomClass);
 	}
     }
 
@@ -881,7 +881,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	    ushort Damage = Strength / (DistanceSquare + 1);
 	    uchar DamageDirection = vector2d(x, y) == Pos ? RANDOM_DIR : game::CalculateRoughDirection(vector2d(x, y) - Pos);
 
-	    if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
+	    if(Char && (HurtNeutrals || (Terrorist && Char->GetRelation(Terrorist) == HOSTILE)))
 	      if(Char->IsPlayer())
 		{
 		  PlayerDamage = Damage;

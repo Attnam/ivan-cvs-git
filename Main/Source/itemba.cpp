@@ -185,12 +185,9 @@ bool item::Consume(character* Eater, long Amount)
   return GetConsumeMaterial()->GetVolume() ? false : true;
 }
 
-bool item::IsBadFoodForAI(character* Eater) const
+bool item::IsBadFoodForAI(const character* Eater) const
 {
-  if(Eater->CheckCannibalism(GetConsumeMaterial()))
-    return true;
-  else
-    return GetConsumeMaterial()->IsBadFoodForAI();
+  return Eater->CheckCannibalism(GetConsumeMaterial()) || GetConsumeMaterial()->IsBadFoodForAI();
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -216,7 +213,7 @@ void item::TeleportRandomly()
 
 ushort item::GetStrengthValue() const
 {
-  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000;
 }
 
 void item::RemoveFromSlot()
@@ -497,7 +494,7 @@ bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
       if(!StrengthValue)
 	StrengthValue = 1;
 
-      if(Damage > StrengthValue << 1 && RAND() % (50 * Damage / StrengthValue) >= 100)
+      if(Damage > StrengthValue << 2 && RAND() % (25 * Damage / StrengthValue) >= 100)
 	{
 	  Break();
 	  return true;
@@ -605,6 +602,9 @@ void item::Break()
   Broken->SetSize(Broken->GetSize() >> 1);
   DonateSlotTo(Broken);
   SendToHell();
+
+  if(game::GetPlayer()->Equips(Broken))
+    game::AskForKeyPress("Equipment broken! [press any key to continue]");
 }
 
 void item::Be()

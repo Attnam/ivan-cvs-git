@@ -1,3 +1,93 @@
+November 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Practically every battle algorithm has been rewritten
+	* *Lots* of attribute and equipment balancing
+	* Show battle info screen is now very (perhaps even too) informative
+	* Automatic dropping of banana peels via config option is now considered
+	  a dexterity action of difficulty one
+	* The smith no longer fixes broken bananas
+	* Gave the smith a mithril hammer, because without it he was completely useless
+	* The "What do you want me to fix?" menu of now shows valpurium swords etc.
+	  which cannot actually be fixed, so that the smith can verbally give the precise
+	  reason why he can't do it
+	* The smithy now fixes armor, too
+	* Added IsMetal database bool for materials
+	* The smithy now fixes only items made of metal
+	* Added a couple of random mines and bear traps in the artifact vault
+	* Corrected a bug in the code that prevented pets from eating the player's bodyparts
+	  that prevented *all* other monsters from eating *any* severed bodyparts
+	* To avoid accidents, an "Are you sure?" question is now asked if the player tries
+	  to eat his own severed limb
+	* Scroll of create monster is again destroyed after reading
+	* Magical whistles can no longer be piled
+	* Added summon monster WMode command ('&')
+	* Added runed whip to fill the gap between whip and whip of thievery
+	* Added festring::SearchAndReplace() which searches and replaces
+	* Character chat replies can now be defined from the script
+	* Added DefaultName character database attribute
+	* The following script-placed characters have been named:
+	  * Hulbo the shopkeeper (the one in Attnam)
+	  * Merka the shopkeeper (the one in Elpuri's Cave)
+	  * Haathbar the librarian
+	  * Ikiros the smith
+	  * Richel Decos the imperialist
+	* It is now possible to add unique monster which are generated at most once
+	* Added DangerModifier which allows monster designers to force certain creatures
+	  to be generated earlier or later than they normally would
+	* The following monsters are now unique and more powerful than monsters
+	  normally encountered at the time they are generated:
+	  * Rondol the kobold patriarch
+	  * Guugzamesh the goblin king
+	  * Xinroch the skeleton warlord
+	  * experiment ZQ-29 the spider silk golem (very rare)
+	  * Ur-Khan the orc marshal
+	  * Golgor Dhan the grand master dark knight
+	  * Sherarax the mistress queen
+	* Valpurium golems are now both rarer and more powerful when they are generated
+	* IsSolid material database boolean renamed as IsGolemMaterial
+	* CreateSolidMaterialConfigurations character database boolean renamed as
+	  CreateGolemMaterialConfigurations
+	* Added an alive material called magical air of which Bill's wills and genies are made;
+	  this solves the problem with their strengths
+	* Guards are now divided to rookie, veteran, shop and elite configurations
+	* Added Haedlac Galladon VII the master guard to the Cathedral
+	* Added Gorovits family hammer and Gorovits family sickle for Ivan
+	* The imperialist can again fight (he was just overloaded because of that 80 kg golden
+	  plate mail :)
+	* Added boot of kicking for the imperialist
+	* Added greater dark frogs, greater light frogs and greater carnivorous plants
+	* Genetrix vesana now has a 1/3 chance to create a greater carnivorous plant instead
+	  of a normal one
+	* Genetrix vesana's AI no longer crashes if one of the player team members is at the
+	  very edge of the level
+	* Greater frog, greater carnivorous plant and genetrix vesana pictures added
+	  to char.pcx by me
+	* Torso picture and head pictures for goblin prince and king added to humanoid.pcx
+	  by me
+	* All kobold, goblin and skeleton configurations now look different
+	* Elpuri's cave consists again of 10 levels; while balancing I realised it wasn't
+	  too long in the last version and now we have thrice as many monsters to meet and
+	  items to collect so I believe shortening was not justified
+	* Added pick-axe to level 9 (fan request)
+	* Displacing is no longer faster than normal moving
+	* Displacing creatures to terrain which they can't walk on is now not allowed
+	* Polymorphing is now a secret state
+	* The player will no longer become hungry if saved by WMode life saving
+	* Mammoths no longer gain insane amounts of endurance experience
+	* Decreased the healing rate of high endurance monsters
+	* Corrected a fatal bug in the armor breaking code
+	* Poison works again
+	* Added "peaballs" to insults
+	* The game now asks for keypress if a worn or wielded item is broken
+	* Messages are again splitted before sending them to history; this way panel
+	  scrolling works more conveniently and great amounts of very long messages
+	  no longer cause a crash when pressing 'M'
+	* Corrected a bug in the script reading functions that prevented the divide
+	  operator '/' from working correctly
+	* Corrected a fatal bug in Mjolak's and flaming sword's hit effects
+	* Added character attributes option to SecretKnowledge
+	* Removed bone support; it was realistic but not fun and slowed down the game
+
 November 12 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Stacking system's GUI improved
@@ -22,7 +112,7 @@ November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Daemon flesh is now poisones
 	* Strong box now looks like a strong box (also edited its graphics)
 	
-October 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+October 31 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Item strength values are now somewhat more balanced
 	* A few gcc warnings corrected

@@ -62,10 +62,10 @@ Atavus should do something special on Christmas.
 Gurus.
 Meditation command.
 Opening a banana should remove its peals.
-*Specialities to daemon flesh.
+//*Specialities to daemon flesh.
 //*Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
-*Random item option to script.
+//*Random item option to script.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
 //Punishment of cathedral terrain destruction.
@@ -116,7 +116,7 @@ Fix wear-time AV inconsistency. (very difficult)
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
 Elpuri's lair could be even more frightening.
 Fluid should handle melded metals.
-In-game manual.
+*In-game manual.
 In-game credits.
 Valpurus's altar rooms should be frog-shaped.
 When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into an ass.")
@@ -137,7 +137,7 @@ Gambling. (from JM)
 Inns. (from JM)
 //Double wielding. (from JM)
 Thief monsters. (from JM)
-Invisible monsters. (from JM)
+//Invisible monsters. (from JM)
 /*There should be more ways to gain pets for non-lawfuls.
 If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack full of gunpowder anymore.
 *Explosions should be stopped by walls.
@@ -204,7 +204,7 @@ Deathblow that penetrates armor. (from JM)
 Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
-Pick-axes available in the lowest levels. (from JM)
+//Pick-axes available in the lowest levels. (from JM)
 In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
 Spiders should make webs.
 //Wand of locking.
@@ -240,7 +240,7 @@ Chatting shouldn't be possible if you aren't intelligent.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
 Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
-It should be possible to use SoCM to gear.
+*It should be possible to use SoCM to gear.
 Explosions could be m-colored: this way magical explosions could look different.
 WoDC should clone its own material to created doors.
 (r) One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
@@ -263,7 +263,7 @@ It should be possible to specify the material while wishing for items and while 
 Allow animate and allow alpha blend options to configuration.
 Draw during automated action as an option.
 We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
-Look stretch config option.
+//Look stretch config option.
 //If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
 //Bodyparts should be rotated when they are severed.
 Weight should be the fundamental character of materials, not volume?
@@ -279,8 +279,8 @@ Zombies should pick up and use heads if they lack one.
 Whips should sometimes remove the helmet of the target.
 //*Pictures to Equipment Screen.
 Page up should work correctly in felists.
-If a melee hit is blocker with a weapon, the attacking arm should take damage.
-*Poison effect for snake flesh.
+If a melee hit is blocked with a weapon, the attacking arm should take damage.
+//*Poison effect for snake flesh.
 //Wishing shouldn't perhaps be case sensitive.
 //Werewolves should drop their equipment when they polymorph.
 Mistresses should not exchange their whips for any other weapons.
@@ -311,19 +311,18 @@ Physical damage should be divided to slashing, blunt, piercing etc. damage. (fro
 Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
 Metal detector.
 More info about players' old games in highscore list (maybe a sub menu).
-If the handle of a weapon is of the same material as the edge, change material should change it, too.
+*If the handle of a weapon is of the same material as the edge, change material should change it, too.
 Stressed state should slowly decrease player's size.
 Being satiated or bloated should decrease move ease.
 If HP == MaxHP, healing liquid should increase MaxHP a bit.
-Frost weapons should gradually develop ice which would increase damage .
-Metal should look different from other materials. (the lighter parts should be even lighter and darker parts slightly darker to increase the contrast) 
+Metal should look different from other materials: the lighter parts should be even lighter and darker parts slightly darker to increase the contrast.
 Corrosion for materials. 
 Acid blobs. (needs corrosion, might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
 Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
 There should be a one-way teleport at the bottom of the dungeon linked to the first level.
-Level teleport option to wizard mode.
+*Level teleport option to wizard mode.
 Dobbelganger.
 Lick command.
 Bulimia state.
@@ -331,7 +330,7 @@ It should be possible to slip on a bloody floor.
 Fluids could spill also over character pictures.
 Spruces should block light.
 "It is too dark to read" message should be printed before selecting item, not after.
-Reading holy books should aggravate monsters.
+Reading holy books should aggravate certain monsters.
 Time bomb.
 Prohibit vomiting over the Avatar.
 Monster that only sees in red, green or blue light.
@@ -340,7 +339,7 @@ If Petrus is attacked via a ranged weapon, his guards should jump in the missile
 Monsters that have died of poisoning should be poisoned when eaten.
 Bear traps should break eventually.
 Carrot that would increase perception a little.
-*RDAM and similiar unclear attributes should be moved to an own screen.
+//*RDAM and similiar unclear attributes should be moved to an own screen.
 When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
 Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
@@ -356,14 +355,15 @@ The smith of Attnam should have a golden statue of a woman in his closet. (A Kal
 Wishing for a plate mail shouldn't yield a leather armor.
 //Kevlar.
 Money unit and its plural and symbol should be possible to define from config.
-Scoll of harden material.
+*Scoll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
 Lookmode should show whether a creature is panicked.
-"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2"
-Coconuts falling from palms
-Changing keyboard layout (some people don't seem to like numpad)
-Reflecting items (mirror and shield of reflection)
-Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)       
-Mellis could act as a small shop when prayed to.  
+"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2".
+Coconuts falling from palms.
+Changing keyboard layout (some people don't seem to like numpad).
+Reflecting items (mirror and shield of reflection).
+*Scroll of repair.
+//Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
+Mellis could act as a small shop when prayed to.
 Rings appearing in fountains. (shouldn't be hard with the new system...)

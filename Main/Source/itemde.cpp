@@ -38,7 +38,10 @@ void banana::GenerateLeftOvers(character* Eater)
   Peel->InitMaterials(GetMainMaterial());
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    Eater->GetStackUnder()->AddItem(Peel);
+    {
+      Eater->GetStackUnder()->AddItem(Peel);
+      Eater->DexterityAction(1);
+    }
   else
     Eater->GetStack()->AddItem(Peel);
 
@@ -52,7 +55,10 @@ void potion::GenerateLeftOvers(character* Eater)
   ChangeConsumeMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    MoveTo(Eater->GetStackUnder());
+    {
+      MoveTo(Eater->GetStackUnder());
+      Eater->DexterityAction(1);
+    }
   else
     MoveTo(Eater->GetStack());
 }
@@ -96,6 +102,8 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 	  else if(Monster->CanBeSeenByPlayer())
 	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHAR_NAME(INDEFINITE));
 
+	  RemoveFromSlot();
+	  SendToHell();
 	  return;
 	}
       else
@@ -248,7 +256,7 @@ bool wand::Apply(character* Terrorist)
   else
     DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
-  Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
+  Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 50);
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -410,7 +418,7 @@ void potion::DipInto(material* Material, character* Dipper)
 
 ulong meleeweapon::GetPrice() const
 {
-  float WeaponStrengthModifier = GetFormModifier() * GetMainMaterial()->GetStrengthValue();
+  float WeaponStrengthModifier = GetFormModifier() * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 20;
   WeaponStrengthModifier *= WeaponStrengthModifier;
   WeaponStrengthModifier *= GetMainMaterial()->GetWeight();
   return ulong(WeaponStrengthModifier / (20000000.0f * sqrt(GetWeight()))) + GetEnchantedPrice(Enchantment);
@@ -569,7 +577,7 @@ bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), 40);
+      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), 50);
       return true;
     }
 
@@ -662,7 +670,7 @@ bool wandofpolymorph::BeamEffect(character* Zapper, const std::string&, uchar, l
 
 bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uchar Dir, lsquare* Where) 
 { 
-  Where->StrikeEverything(Who, DeathMsg, 20, Dir); 
+  Where->StrikeEverything(Who, DeathMsg, 50 + RAND() % 21 - RAND() % 21, Dir); 
   return false;
 }
 
@@ -711,7 +719,7 @@ bool oillamp::Apply(character* Applier)
 	{
 	  if(!(RAND() % 5))
 	    {
-	      Genie->SetTeam(game::GetTeam(1));
+	      Genie->SetTeam(game::GetTeam(MONSTER_TEAM));
 	      ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! As a reward, I will kill you.\"", Genie->CHAR_NAME(INDEFINITE));
 	    }
 	  else
@@ -720,8 +728,6 @@ bool oillamp::Apply(character* Applier)
 		{
 		  Genie->SetTeam(Applier->GetTeam());
 		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHAR_NAME(INDEFINITE));
-		  game::DrawEverything();
-		  GET_KEY();
 
 		  if(game::BoolQuestion("Do you want to wish? [Y/n]", YES))
 		    {
@@ -748,7 +754,7 @@ bool oillamp::Apply(character* Applier)
 		}
 	    }
 
-	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
+	  ADD_MESSAGE("%s wishes for a two-handed scimitar. Suddenly %s appears from nothing and %s wields it.", Genie->CHAR_NAME(DEFINITE), Genie->GetMainWielded()->CHAR_NAME(INDEFINITE), Genie->CHAR_NAME(DEFINITE));
 	}
       else
 	{
@@ -865,7 +871,7 @@ bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uc
 { 
   if(!Where->GetOTerrain()->IsWalkable() || Where->GetCharacter())
     {
-      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 20 + RAND() % 5 - RAND() % 5);
+      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 60 + RAND() % 11 - RAND() % 11);
       return true;
     }
 
@@ -931,13 +937,13 @@ void scrolloftaming::FinishReading(character* Reader)
 
 void bodypart::Save(outputfile& SaveFile) const
 {
-  materialcontainer::Save(SaveFile);
+  item::Save(SaveFile);
   SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << BloodColor;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
-  materialcontainer::Load(SaveFile);
+  item::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> BloodColor;
 }
 
@@ -950,9 +956,9 @@ bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, 
 ushort bodypart::GetStrengthValue() const
 {
   if(GetMaster() && IsAlive())
-    return ulong(GetStrengthModifier()) * GetMaster()->GetAttribute(ENDURANCE) / 1000;
+    return ulong(GetStrengthModifier()) * GetMaster()->GetAttribute(ENDURANCE) / 2000;
   else
-    return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
+    return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000;
 }
 
 ushort head::GetTotalResistance(uchar Type) const
@@ -965,7 +971,7 @@ ushort head::GetTotalResistance(uchar Type) const
 	Resistance += GetHelmet()->GetResistance(Type);
 
       if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 1;
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 2;
 
       return Resistance;
     }
@@ -1006,7 +1012,7 @@ ushort arm::GetTotalResistance(uchar Type) const
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
       if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += (GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3) >> 2;
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 1;
 
       if(GetGauntlet())
 	Resistance += GetGauntlet()->GetResistance(Type);
@@ -1042,7 +1048,7 @@ ushort leg::GetTotalResistance(uchar Type) const
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
       if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += (GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) * 3) >> 2;
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 1;
 
       if(GetBoot())
 	Resistance += GetBoot()->GetResistance(Type);
@@ -1115,7 +1121,7 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
     {
       ushort BHP = GetHP();
 
-      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1)
+      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1 && Master->BodyPartVital(GetBodyPartIndex()))
 	Damage = GetHP() - 1;
 
       EditHP(-Damage);
@@ -1247,7 +1253,7 @@ bool key::Apply(character* User)
 
 float arm::GetUnarmedDamage() const
 {
-  float WeaponStrength = GetBaseUnarmedStrength();
+  float WeaponStrength = GetBaseUnarmedStrength() * GetBaseUnarmedStrength();
 
   if(GetGauntlet())
     WeaponStrength += GetGauntlet()->GetWeaponStrength();
@@ -1257,12 +1263,12 @@ float arm::GetUnarmedDamage() const
 
 float arm::GetUnarmedToHitValue() const
 {
-  return 2e-5f * ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus() * GetMaster()->GetMoveEase();
+  return GetAttribute(DEXTERITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus() * Master->GetMoveEase() / 50000;
 }
 
 long arm::GetUnarmedAPCost() const
 {
-  return 50000 * (200 - GetAttribute(DEXTERITY)) / (GetMaster()->GetMoveEase() * GetMaster()->GetCWeaponSkill(UNARMED)->GetBonus());
+  return 1000000000 / (APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(UNARMED)->GetBonus());
 }
 
 void arm::CalculateDamage()
@@ -1300,8 +1306,7 @@ void arm::CalculateAPCost()
     APCost = GetWieldedAPCost();
   else if(PairArmAllowsMelee())
     APCost = GetUnarmedAPCost();
-  else
-    APCost = 100;
+  else return;
 
   if(APCost < 100)
     APCost = 100;
@@ -1315,11 +1320,13 @@ bool arm::PairArmAllowsMelee() const
 
 float arm::GetWieldedDamage() const
 {
-  if(GetWielded()->IsShield(Master))
+  const item* Wielded = GetWielded();
+
+  if(Wielded->IsShield(Master))
     return 0;
 
   ushort HitStrength = GetAttribute(ARM_STRENGTH);
-  ushort Requirement = GetWielded()->GetStrengthRequirement();
+  ushort Requirement = Wielded->GetStrengthRequirement();
 
   if(TwoHandWieldIsActive())
     {
@@ -1328,7 +1335,7 @@ float arm::GetWieldedDamage() const
     }
 
   if(HitStrength > Requirement)
-    return sqrt(5e-14f * HitStrength * GetWielded()->GetWeaponStrength()) * GetCurrentSWeaponSkill()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
+    return sqrt(5e-14f * HitStrength * Wielded->GetWeaponStrength()) * GetCurrentSWeaponSkill()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus();
   else
     return 0;
 }
@@ -1340,27 +1347,32 @@ float arm::GetWieldedToHitValue() const
   if(HitStrength <= 0)
     return 0;
 
-  float Bonus = 1e-7f * Min<short>(HitStrength, 10) * GetWielded()->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * GetMaster()->GetMoveEase() / (500 + GetWielded()->GetWeight());
-  float ThisToHit = ((GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION));
-  arm* PairArm = GetPairArm();
+  const item* Wielded = GetWielded();
+  float Base = 1e-7f * Min<short>(HitStrength, 10) * Wielded->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() / (500 + Wielded->GetWeight());
+  float ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION));
+  const arm* PairArm = GetPairArm();
 
   if(PairArm)
     {
-      if(!PairArm->GetWielded())
+      const item* PairWielded = PairArm->GetWielded();
+
+      if(!PairWielded)
 	{
-	  if(GetWielded()->IsTwoHanded() && !GetWielded()->IsShield(Master))
-	    return Bonus * (ThisToHit + ((PairArm->GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION))) / 2;
+	  if(Wielded->IsTwoHanded() && !Wielded->IsShield(Master))
+	    return Base * (ThisToHit + PairArm->GetAttribute(DEXTERITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION))) / 2;
 	}
-      else
-	return Bonus * ThisToHit / 2;
+      else if(!Wielded->IsShield(Master) && !PairWielded->IsShield(Master))
+	return Base * ThisToHit / (1.0f + (500.0f + PairWielded->GetWeight()) / (1000.0f + (Wielded->GetWeight() << 1)));
     }
 
-  return Bonus * ThisToHit;
+  return Base * ThisToHit;
 }
 
 long arm::GetWieldedAPCost() const
 {
-  if(GetWielded()->IsShield(Master))
+  const item* Wielded = GetWielded();
+
+  if(Wielded->IsShield(Master))
     return 0;
 
   short HitStrength = GetWieldedHitStrength();
@@ -1368,7 +1380,7 @@ long arm::GetWieldedAPCost() const
   if(HitStrength <= 0)
     return 0;
 
-  return long((200 - GetAttribute(DEXTERITY)) / (2e-10f * GetMaster()->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * GetWielded()->GetBonus() * Min<short>(HitStrength, 10)));
+  return long(1 / (1e-14f * APBonus(GetAttribute(DEXTERITY)) * Master->GetMoveEase() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Wielded->GetBonus() * Min<short>(HitStrength, 10)));
 }
 
 void head::CalculateDamage()
@@ -1376,7 +1388,7 @@ void head::CalculateDamage()
   if(!Master)
     return;
 
-  BiteDamage = sqrt(5e-9f * GetBaseBiteStrength()) * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  BiteDamage = 7.07e-5f * GetBaseBiteStrength() * GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
 }
 
 void head::CalculateToHitValue()
@@ -1384,7 +1396,7 @@ void head::CalculateToHitValue()
   if(!Master)
     return;
 
-  BiteToHitValue = 1e-5f * ((Master->GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * GetMaster()->GetMoveEase();
+  BiteToHitValue = Master->GetAttribute(AGILITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 100000;
 }
 
 void head::CalculateAPCost()
@@ -1392,7 +1404,7 @@ void head::CalculateAPCost()
   if(!Master)
     return;
 
-  BiteAPCost = Max(50000 * (200 - GetMaster()->GetAttribute(AGILITY)) / (GetMaster()->GetMoveEase() * GetMaster()->GetCWeaponSkill(BITE)->GetBonus()), 100);
+  BiteAPCost = Max(1000000000 / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus()), 100);
 }
 
 void leg::CalculateDamage()
@@ -1400,7 +1412,7 @@ void leg::CalculateDamage()
   if(!Master)
     return;
 
-  float WeaponStrength = GetBaseKickStrength();
+  float WeaponStrength = GetBaseKickStrength() * GetBaseKickStrength();
 
   if(GetBoot())
     WeaponStrength += GetBoot()->GetWeaponStrength();
@@ -1413,7 +1425,7 @@ void leg::CalculateToHitValue()
   if(!Master)
     return;
 
-  KickToHitValue = 1e-5f * ((GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * GetMaster()->GetMoveEase();
+  KickToHitValue = GetAttribute(AGILITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus() * Master->GetMoveEase() / 100000;
 }
 
 void leg::CalculateAPCost()
@@ -1421,7 +1433,7 @@ void leg::CalculateAPCost()
   if(!Master)
     return;
 
-  KickAPCost = Max(100000 * (200 - GetAttribute(AGILITY)) / (GetMaster()->GetMoveEase() * GetMaster()->GetCWeaponSkill(KICK)->GetBonus()), 100);
+  KickAPCost = Max(2000000000 / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus()), 100);
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -1507,7 +1519,7 @@ float corpse::GetWeaponStrength() const
   return GetFormModifier() * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() * sqrt(GetDeceased()->GetTorso()->GetMainMaterial()->GetWeight());
 }
 
-bool corpse::IsBadFoodForAI(character* Eater) const
+bool corpse::IsBadFoodForAI(const character* Eater) const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsBadFoodForAI(Eater))
@@ -1518,7 +1530,7 @@ bool corpse::IsBadFoodForAI(character* Eater) const
 
 ushort corpse::GetStrengthValue() const
 {
-  return ulong(GetStrengthModifier()) * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() / 1000;
+  return ulong(GetStrengthModifier()) * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() / 2000;
 }
 
 corpse::~corpse()
@@ -1839,7 +1851,7 @@ void key::VirtualConstructor(bool Load)
 
 void bodypart::VirtualConstructor(bool Load)
 {
-  materialcontainer::VirtualConstructor(Load);
+  item::VirtualConstructor(Load);
   SetUnique(false);
   SetMaster(0);
 }
@@ -2161,7 +2173,7 @@ ushort arm::GetAttribute(ushort Identifier) const
       if(IsAlive())
 	return Max(Dexterity + DexterityBonus, 1);
       else
-	return Max(GetMainMaterial()->GetFlexibility() + DexterityBonus, 1);
+	return Max((GetMainMaterial()->GetFlexibility() << 1) + DexterityBonus, 1);
     }
   else
     {
@@ -2204,16 +2216,16 @@ ushort leg::GetAttribute(ushort Identifier) const
   if(Identifier == LEG_STRENGTH)
     {
       if(IsAlive())
-	return Strength + StrengthBonus;
+	return Max(Strength + StrengthBonus, 1);
       else
-	return GetMainMaterial()->GetStrengthValue() + StrengthBonus;
+	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == AGILITY)
     {
       if(IsAlive())
-	return Agility + AgilityBonus;
+	return Max(Agility + AgilityBonus, 1);
       else
-	return GetMainMaterial()->GetFlexibility() + AgilityBonus;
+	return Max((GetMainMaterial()->GetFlexibility() << 1) + AgilityBonus, 1);
     }
   else
     {
@@ -2285,7 +2297,7 @@ bool itemcontainer::Open(character* Opener)
       return false;
     }
 
-  std::string Question = "Do you want to (t)ake something from or (p)ut something in this " + GetName(UNARTICLED) + "? [t,p]";
+  std::string Question = "Do you want to (t)ake something from or (p)ut something in this container? [t,p]";
 
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
     {
@@ -2697,7 +2709,10 @@ void can::GenerateLeftOvers(character* Eater)
   ChangeConsumeMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
-    MoveTo(Eater->GetStackUnder());
+    {
+      MoveTo(Eater->GetStackUnder());
+      Eater->DexterityAction(1);
+    }
   else
     MoveTo(Eater->GetStack());
 }
@@ -2863,9 +2878,15 @@ void bodypart::CalculateMaxHP()
   if(GetMaster())
     {
       if(IsAlive())
-	MaxHP = GetBodyPartVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
+	{
+	  float Endurance = GetMaster()->GetAttribute(ENDURANCE);
+	  MaxHP = short(GetBodyPartVolume() * Endurance * Endurance / 200000);
+	}
       else
-	MaxHP = GetBodyPartVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
+	{
+	  float SV = GetMainMaterial()->GetStrengthValue();
+	  MaxHP = short(GetBodyPartVolume() * SV * SV / 4000000);
+	}
 
       if(MaxHP < 1)
 	MaxHP = 1;
@@ -3021,8 +3042,15 @@ bool arm::TwoHandWieldIsActive() const
 
 float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
+  if(dynamic_cast<gibberling*>(GetMaster()) != 0)
+    int esko = 2;
+
   float Durability;
-  short TrueDamage = Damage - GetTotalResistance(PHYSICAL_DAMAGE);
+  short TrueDamage = (19 * (Max((Damage * 3 >> 2) - GetTotalResistance(PHYSICAL_DAMAGE), 0)
+			 +  Max((Damage * 5 >> 2) + 1 - (GetTotalResistance(PHYSICAL_DAMAGE) >> 1), 0))
+			 + (Max((Damage * 3 >> 1) - GetTotalResistance(PHYSICAL_DAMAGE), 0)
+			 +  Max((Damage * 5 >> 1) + 3 - (GetTotalResistance(PHYSICAL_DAMAGE) >> 1), 0))) / 40;
+
   short HP = UseMaxHP ? GetMaxHP() : GetHP();
 
   if(TrueDamage > 0)
@@ -3232,7 +3260,7 @@ ushort arm::GetBlockCapability() const
   if(HitStrength <= 0)
     return 0;
 
-  return ushort(1e-5f * Min<short>(HitStrength, 10) * GetWielded()->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus());
+  return Min<short>(HitStrength, 10) * GetWielded()->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() / 100000;
 }
 
 void arm::WieldedSkillHit()
@@ -3540,24 +3568,15 @@ void meleeweapon::AddPostFix(std::string& String) const
 
 void bodypart::SignalSpoil(material* Material)
 {
-  if(Material == GetContainedMaterial())
-    {
-      /* Bug: this isn't shown if the bpart is part of a player-carried corpse */
-
-      if(CarriedByPlayer())
-	ADD_MESSAGE("%s feels lighter.", CHAR_NAME(DEFINITE));
-
-      ChangeContainedMaterial(0);
-    }
-  else if(GetMaster())
-    GetMaster()->SignalSpoil();
+  if(Master)
+    Master->SignalSpoil();
   else
     item::SignalSpoil(Material);
 }
 
 bool bodypart::IsVeryCloseToSpoiling() const
 {
-  return GetMainMaterial()->IsVeryCloseToSpoiling();
+  return MainMaterial->IsVeryCloseToSpoiling();
 }
 
 void corpse::SignalSpoil(material*)
@@ -3636,7 +3655,7 @@ bool key::CanBePiledWith(const item* Item, const character* Viewer) const
 
 bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
 {
-  return materialcontainer::CanBePiledWith(Item, Viewer) && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
+  return item::CanBePiledWith(Item, Viewer) && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
 }
 
 bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -3701,6 +3720,9 @@ void potion::Break()
   Remains->InitMaterials(GetMainMaterial()->Clone());
   DonateSlotTo(Remains);
   SendToHell();
+
+  if(game::GetPlayer()->Equips(Remains))
+    game::AskForKeyPress("Equipment broken! [press any key to continue]");
 }
 
 void bodypart::Be()
@@ -3725,7 +3747,7 @@ void bodypart::Be()
       HP += Max(((MaxHP - HP) >> 2), 1);
     }
 
-  materialcontainer::Be();
+  item::Be();
 }
 
 void bodypart::SpillBlood(ushort HowMuch, vector2d GetPos)
@@ -3927,12 +3949,12 @@ float meleeweapon::GetWeaponStrength() const
 
 ushort meleeweapon::GetStrengthValue() const
 {
-  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 20000;
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (20 + Enchantment) / 40000;
 }
 
 ushort armor::GetStrengthValue() const
 {
-  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (10 + Enchantment) / 10000;
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (10 + Enchantment) / 20000;
 }
 
 void bodypart::SignalEnchantmentChange()
@@ -3984,6 +4006,7 @@ void backpack::ReceiveFluidSpill(material* Liquid)
     {
       ulong Amount = Liquid->GetVolume() * (30 + (RAND() % 71)) / 100;
       GetContainedMaterial()->SetWetness(Amount);
+
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s gets wet.", CHAR_NAME(DEFINITE));
     }
@@ -4204,245 +4227,322 @@ void bodypart::SignalSpoilLevelChange(material* Material)
     item::SignalSpoilLevelChange(Material);
 }
 
-void arm::AddBattleInfo(felist& Info) const
+void arm::ShowAttackInfo() const
 {
   if(GetWielded())
-    AddWieldedInfo(Info);
-  else if(PairArmAllowsMelee())
-    AddUnarmedInfo(Info);
+    ShowWieldedAttackInfo();
+  else
+    ShowUnarmedInfo();
 }
 
-void arm::AddWieldedInfo(felist& Info) const
+void arm::ShowWieldedAttackInfo() const
 {
-  Info.AddEntry(festring::CapitalizeCopy(GetBodyPartName()) + " attack info:", WHITE, 0, 0, false);
-  Info.AddEntry("", LIGHT_GRAY);
+  felist Info(festring::CapitalizeCopy(GetBodyPartName()) + " attack info:");
+  game::SetStandardListAttributes(Info);
   ushort HitStrength = GetAttribute(ARM_STRENGTH);
   ushort Requirement = GetWielded()->GetStrengthRequirement();
-  ushort Bonus;
+  short Bonus;
 
   if(TwoHandWieldIsActive())
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220));
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
-      Requirement >>= 1;
+      Requirement >>= 2;
 
       if(HitStrength <= Requirement)
 	{
-	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires a total of ") + Requirement + " strength.", RED);
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + (Requirement + 1) + " strength.", RED);
 	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.Draw();
 	  return;
 	}
     }
   else
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220));
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
 
       if(HitStrength <= Requirement)
 	{
-	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with one hand requires ") + Requirement + " strength.", RED);
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with one hand requires ") + (Requirement + 1) + " strength.", RED);
 	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.Draw();
 	  return;
 	}
     }
 
-  Info.AddEntry("", LIGHT_GRAY);
-
-  if(!GetWielded()->IsShield(Master))
-    {
-      /* Damage */
-
-      Info.AddEntry(std::string("Base damage: ") + GetWielded()->GetBaseMinDamage() + '-' + GetWielded()->GetBaseMaxDamage(), LIGHT_GRAY);
-
-      if(HitStrength > 10)
-	Info.AddEntry(std::string("Strength bonus: ") + '+' + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
-      else if(HitStrength < 10)
-	Info.AddEntry(std::string("Strength penalty: ") + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
-
-      Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      Bonus = GetCurrentSWeaponSkill()->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      Info.AddEntry(std::string("Real damage: ") + GetMinDamage() + '-' + GetMaxDamage(), MakeRGB16(220, 220, 220));
-      Info.AddEntry("", LIGHT_GRAY);
-
-      /* To Hit Value */
-
-      Info.AddEntry(std::string("Base to hit value: ") + (50 * GetWielded()->GetBonus() / (500 + GetWielded()->GetWeight())), LIGHT_GRAY);
-
-      if(HitStrength - Requirement < 10)
-	Info.AddEntry(std::string("Strength penalty: ") + ((HitStrength - Requirement) * 10 - 100) + '%', LIGHT_GRAY);
-
-      Bonus = (GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-
-      if(TwoHandWieldIsActive())
-	{
-	  arm* PairArm = GetPairArm();
-
-	  Bonus += (PairArm->GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-	  Bonus >>= 1;
-	}
-
-      if(Bonus > 50)
-	Info.AddEntry(std::string("Dexterity/perception bonus: ") + '+' + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-      else if(Bonus < 50)
-	Info.AddEntry(std::string("Dexterity/perception penalty: ") + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-
-      Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      Bonus = GetCurrentSWeaponSkill()->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      if(GetMaster()->GetMoveEase() < 100)
-	Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
-
-      Info.AddEntry(std::string("Real to hit value: ") + int(GetToHitValue()), MakeRGB16(220, 220, 220));
-      Info.AddEntry("", LIGHT_GRAY);
-
-      /* Speed */
-
-      Info.AddEntry(std::string("Base Speed: ") + GetWielded()->GetBonus() / 10, LIGHT_GRAY);
-
-      if(HitStrength - Requirement < 10)
-	Info.AddEntry(std::string("Strength penalty: ") + (10 * (HitStrength - Requirement) - 100) + '%', LIGHT_GRAY);
-
-      Bonus = 100 / (200 / GetAttribute(DEXTERITY) - 1);
-
-      if(Bonus > 0)
-	Info.AddEntry(std::string("Dexterity bonus: ") + '+' + Bonus + '%', LIGHT_GRAY);
-
-      Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      Bonus = GetCurrentSWeaponSkill()->GetBonus();
-
-      if(Bonus > 100)
-	Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-      if(GetMaster()->GetMoveEase() < 100)
-	Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
-
-      Info.AddEntry(std::string("Real speed: ") + 10000 / GetAPCost(), MakeRGB16(220, 220, 220));
-      Info.AddEntry("", LIGHT_GRAY);
-    }
-
-  /* Block capability */
-
-  Info.AddEntry(std::string("Base block capability: ") + GetWielded()->GetStrengthValue(), LIGHT_GRAY);
-
-  if(HitStrength - Requirement < 10)
-    Info.AddEntry(std::string("Strength penalty: ") + (10 * (HitStrength - Requirement) - 100) + '%', LIGHT_GRAY);
-
+  bool Shown = false;
   Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    {
+      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+      Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+      Shown = true;
+    }
 
   Bonus = GetCurrentSWeaponSkill()->GetBonus();
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    {
+      if(!Shown)
+	{
+	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+	}
+
+      Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    }
+
+  Info.AddEntry("", LIGHT_GRAY);
+
+  /* Damage */
+
+  Info.AddEntry("Damage: how much you can hurt an enemy", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + GetWielded()->GetBaseMinDamage() + '-' + GetWielded()->GetBaseMaxDamage(), LIGHT_GRAY);
+
+  if(HitStrength > 10)
+    Info.AddEntry(std::string("Strength bonus: ") + '+' + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
+  else if(HitStrength < 10)
+    Info.AddEntry(std::string("Strength penalty: ") + int(sqrt(1000 * HitStrength) - 100) + '%', LIGHT_GRAY);
+
+  Info.AddEntry(std::string("Real damage: ") + GetMinDamage() + '-' + GetMaxDamage(), MakeRGB16(220, 220, 220));
+  Info.AddEntry("", LIGHT_GRAY);
+
+  /* To Hit Value */
+
+  Info.AddEntry("To hit value: determines your chance to hit", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + (50 * GetWielded()->GetBonus() / (500 + GetWielded()->GetWeight())), LIGHT_GRAY);
+
+  if(HitStrength - Requirement < 10)
+    Info.AddEntry(std::string("Strength penalty: ") + ((HitStrength - Requirement) * 10 - 100) + '%', LIGHT_GRAY);
+
+  Bonus = GetAttribute(DEXTERITY) * 10;
+
+  if(TwoHandWieldIsActive())
+    Bonus = (Bonus >> 1) + GetPairArm()->GetAttribute(DEXTERITY) * 5;
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Perception penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  if(!GetWielded()->IsShield(GetMaster()) && GetPairArm() && GetPairArm()->GetWielded() && !GetPairArm()->GetWielded()->IsShield(GetMaster()))
+    {
+      Bonus = short(-100.0f / (1.0f + (1000.0f + (GetWielded()->GetWeight() << 1)) / (500.0f + GetPairArm()->GetWielded()->GetWeight())));
+
+      if(Bonus < 0)
+	Info.AddEntry(std::string("Penalty for using a weapon in another hand: ") + Bonus + '%', LIGHT_GRAY);
+    }
+
+  if(GetMaster()->GetMoveEase() < 100)
+    Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
+
+  Info.AddEntry(std::string("Real to hit value: ") + int(GetToHitValue()), MakeRGB16(220, 220, 220));
+  Info.AddEntry("", LIGHT_GRAY);
+
+  /* Speed */
+
+  Info.AddEntry("Speed: how often you are able to strike", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + GetWielded()->GetBonus() / 10, LIGHT_GRAY);
+
+  if(HitStrength - Requirement < 10)
+    Info.AddEntry(std::string("Strength penalty: ") + (10 * (HitStrength - Requirement) - 100) + '%', LIGHT_GRAY);
+
+  Bonus = APBonus(GetAttribute(DEXTERITY));
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  if(GetMaster()->GetMoveEase() < 100)
+    Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
+
+  Info.AddEntry(std::string("Real speed: ") + 10000 / GetAPCost(), MakeRGB16(220, 220, 220));
+  Info.Draw();
+}
+
+void arm::ShowDefenceInfo() const
+{
+  felist Info(festring::CapitalizeCopy(GetBodyPartName()) + " defence info:");
+  game::SetStandardListAttributes(Info);
+  ushort HitStrength = GetAttribute(ARM_STRENGTH);
+  ushort Requirement = GetWielded()->GetStrengthRequirement();
+  short Bonus;
+
+  if(TwoHandWieldIsActive())
+    {
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+      HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
+      Requirement >>= 2;
+
+      if(HitStrength <= Requirement)
+	{
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with two hands requires ") + (Requirement + 1) + " strength.", RED);
+	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.Draw();
+	  return;
+	}
+    }
+  else
+    {
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+
+      if(HitStrength <= Requirement)
+	{
+	  Info.AddEntry(std::string("You cannot use this weapon. Wielding it with one hand requires ") + (Requirement + 1) + " strength.", RED);
+	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.Draw();
+	  return;
+	}
+    }
+
+  bool Shown = false;
+  Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
+
+  if(Bonus > 100)
+    {
+      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+      Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+      Shown = true;
+    }
+
+  Bonus = GetCurrentSWeaponSkill()->GetBonus();
+
+  if(Bonus > 100)
+    {
+      if(!Shown)
+	{
+	  Info.AddEntry("", LIGHT_GRAY);
+	  Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+	}
+
+      Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    }
+
+  Info.AddEntry("", LIGHT_GRAY);
+
+  /* Block capability */
+
+  Info.AddEntry("Block capability: how much damage you are able to block", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + GetWielded()->GetStrengthValue(), LIGHT_GRAY);
+
+  if(HitStrength - Requirement < 10)
+    Info.AddEntry(std::string("Strength penalty: ") + (10 * (HitStrength - Requirement) - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real block capability: ") + GetBlockCapability(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
 
   /* Block value */
 
-  Info.AddEntry(std::string("Base block value: ") + GetWielded()->GetBaseBlockValue(), LIGHT_GRAY);
+  Info.AddEntry("Block value: determines your chance to block an attack", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + GetWielded()->GetBaseBlockValue(), LIGHT_GRAY);
 
   if(HitStrength - Requirement < 10)
     Info.AddEntry(std::string("Strength penalty: ") + ((HitStrength - Requirement) * 10 - 100) + '%', LIGHT_GRAY);
 
-  Bonus = (GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
+  Bonus = GetAttribute(DEXTERITY) * 10;
 
   if(TwoHandWieldIsActive())
+    Bonus = (Bonus >> 1) + GetPairArm()->GetAttribute(DEXTERITY) * 5;
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Perception penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  if(!GetWielded()->IsShield(GetMaster()) && GetPairArm() && GetPairArm()->GetWielded() && !GetPairArm()->GetWielded()->IsShield(GetMaster()))
     {
-      arm* PairArm = GetPairArm();
+      Bonus = short(-100.0f / (1.0f + (1000.0f + (GetWielded()->GetWeight() << 1)) / (500.0f + GetPairArm()->GetWielded()->GetWeight())));
 
-      Bonus += (PairArm->GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-      Bonus >>= 1;
+      if(Bonus < 0)
+	Info.AddEntry(std::string("Penalty for using a weapon in another hand: ") + Bonus + '%', LIGHT_GRAY);
     }
-
-  if(Bonus > 50)
-    Info.AddEntry(std::string("Dexterity/perception bonus: ") + '+' + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 50)
-    Info.AddEntry(std::string("Dexterity/perception penalty: ") + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-
-  Bonus = GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus();
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
-  Bonus = GetCurrentSWeaponSkill()->GetBonus();
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real block value: ") + int(GetBlockValue()), MakeRGB16(220, 220, 220));
-  Info.AddEntry("", LIGHT_GRAY);
+  Info.Draw();
 }
 
-void arm::AddUnarmedInfo(felist& Info) const
+void arm::ShowUnarmedInfo() const
 {
-  ushort Bonus;
-  Info.AddEntry("Unarmed attack info:", WHITE);
-  Info.AddEntry("", LIGHT_GRAY);
-  float WeaponStrength = GetBaseUnarmedStrength();
+  felist Info(festring::CapitalizeCopy(GetBodyPartName()) + " unarmed attack info:");
+  game::SetStandardListAttributes(Info);
+  float WeaponStrength = GetBaseUnarmedStrength() * GetBaseUnarmedStrength();
+  short Bonus;
 
   if(GetGauntlet())
     {
-      Info.AddEntry("Worn: " + GetGauntlet()->GetName(INDEFINITE), MakeRGB16(220, 220, 220));
-      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry("Worn: " + GetGauntlet()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetGauntlet()->GetPicture());
       WeaponStrength += GetGauntlet()->GetWeaponStrength();
+      Info.AddEntry("", LIGHT_GRAY);
+    }
+
+  Bonus = GetHumanoidMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+
+  if(Bonus > 100)
+    {
+      Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
     }
 
   /* Damage */
 
+  Info.AddEntry("Damage: how much you can hurt an enemy", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
   float Damage = sqrt(WeaponStrength / 20000);
-  Info.AddEntry(std::string("Base damage: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
 
   if(GetAttribute(ARM_STRENGTH) > 10)
     Info.AddEntry(std::string("Strength bonus: ") + '+' + int(sqrt(1000 * GetAttribute(ARM_STRENGTH)) - 100) + '%', LIGHT_GRAY);
   else if(GetAttribute(ARM_STRENGTH) < 10)
     Info.AddEntry(std::string("Strength penalty: ") + int(sqrt(1000 * GetAttribute(ARM_STRENGTH)) - 100) + '%', LIGHT_GRAY);
 
-  Bonus = GetMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
   Info.AddEntry(std::string("Real damage: ") + GetMinDamage() + '-' + GetMaxDamage(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
 
   /* To hit value */
 
-  Info.AddEntry("Base to hit value: 10", LIGHT_GRAY);
-  Bonus = (GetAttribute(DEXTERITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-
-  if(Bonus > 50)
-    Info.AddEntry(std::string("Dexterity/perception bonus: ") + '+' + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 50)
-    Info.AddEntry(std::string("Dexterity/perception penalty: ") + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+  Info.AddEntry("To hit value: determines your chance to hit", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 10", LIGHT_GRAY);
+  Bonus = GetAttribute(DEXTERITY) * 10;
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Perception penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
@@ -4452,70 +4552,79 @@ void arm::AddUnarmedInfo(felist& Info) const
 
   /* Speed */
 
-  Info.AddEntry("Base speed: 10", LIGHT_GRAY);
-  Bonus = 100 / (200 / GetAttribute(DEXTERITY) - 1);
-
-  if(Bonus > 0)
-    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + Bonus + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(UNARMED)->GetBonus();
+  Info.AddEntry("Speed: how often you are able to strike", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 10", LIGHT_GRAY);
+  Bonus = APBonus(GetAttribute(DEXTERITY));
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Dexterity bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real speed: ") + 10000 / GetUnarmedAPCost(), MakeRGB16(220, 220, 220));
-  Info.AddEntry("", LIGHT_GRAY);
+  Info.Draw();
 }
 
-void leg::AddKickInfo(felist& Info) const
+void leg::ShowKickInfo() const
 {
-  ushort Bonus;
-  Info.AddEntry("Kick attack info:", WHITE);
-  Info.AddEntry("", LIGHT_GRAY);
-  float WeaponStrength = GetBaseKickStrength();
+  felist Info("Kick attack info (" + GetBodyPartName() + "):");
+  game::SetStandardListAttributes(Info);
+  float WeaponStrength = GetBaseKickStrength() * GetBaseKickStrength();
+  short Bonus;
 
   if(GetBoot())
     {
-      Info.AddEntry("Worn: " + GetBoot()->GetName(INDEFINITE), MakeRGB16(220, 220, 220));
-      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry("Worn: " + GetBoot()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetBoot()->GetPicture());
       WeaponStrength += GetBoot()->GetWeaponStrength();
+      Info.AddEntry("", LIGHT_GRAY);
+    }
+
+  Bonus = GetHumanoidMaster()->GetCWeaponSkill(KICK)->GetBonus();
+
+  if(Bonus > 100)
+    {
+      Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+      Info.AddEntry("", LIGHT_GRAY);
+      Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
     }
 
   /* Damage */
 
+  Info.AddEntry("Damage: how much you can hurt an enemy", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
   float Damage = sqrt(WeaponStrength / 20000);
-  Info.AddEntry(std::string("Base damage: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
 
   if(GetAttribute(LEG_STRENGTH) > 10)
     Info.AddEntry(std::string("Strength bonus: ") + '+' + int(sqrt(1000 * GetAttribute(LEG_STRENGTH)) - 100) + '%', LIGHT_GRAY);
   else if(GetAttribute(LEG_STRENGTH) < 10)
     Info.AddEntry(std::string("Strength penalty: ") + int(sqrt(1000 * GetAttribute(LEG_STRENGTH)) - 100) + '%', LIGHT_GRAY);
 
-  Bonus = GetMaster()->GetCWeaponSkill(KICK)->GetBonus();
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
   Info.AddEntry(std::string("Real damage: ") + GetKickMinDamage() + '-' + GetKickMaxDamage(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
 
   /* To hit value */
 
-  Info.AddEntry("Base to hit value: 5", LIGHT_GRAY);
-  Bonus = (GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-
-  if(Bonus > 50)
-    Info.AddEntry(std::string("Agility/perception bonus: ") + '+' + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 50)
-    Info.AddEntry(std::string("Agility/perception penalty: ") + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(KICK)->GetBonus();
+  Info.AddEntry("To hit value: determines your chance to hit", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 5", LIGHT_GRAY);
+  Bonus = GetAttribute(AGILITY) * 10;
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Perception penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
@@ -4525,56 +4634,63 @@ void leg::AddKickInfo(felist& Info) const
 
   /* Speed */
 
-  Info.AddEntry("Base speed: 5", LIGHT_GRAY);
-  Bonus = 100 / (200 / GetAttribute(AGILITY) - 1);
-
-  if(Bonus > 0)
-    Info.AddEntry(std::string("Agility bonus: ") + '+' + Bonus + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(KICK)->GetBonus();
+  Info.AddEntry("Speed: how often you are able to strike", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 5", LIGHT_GRAY);
+  Bonus = APBonus(GetAttribute(AGILITY));
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real speed: ") + 10000 / GetKickAPCost(), MakeRGB16(220, 220, 220));
-  Info.AddEntry("", LIGHT_GRAY);
+  Info.Draw();
 }
 
-void head::AddBiteInfo(felist& Info) const
+void head::ShowBiteInfo() const
 {
-  ushort Bonus;
-  Info.AddEntry("Bite attack info:", WHITE);
-  Info.AddEntry("", LIGHT_GRAY);
+  felist Info("Bite attack info:");
+  game::SetStandardListAttributes(Info);
+  short Bonus = GetHumanoidMaster()->GetCWeaponSkill(BITE)->GetBonus();
+
+  if(Bonus > 100)
+    {
+      Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
+      Info.AddEntry(std::string("Category weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+      Info.AddEntry("", LIGHT_GRAY);
+    }
 
   /* Damage */
 
-  float Damage = sqrt(GetBaseBiteStrength() / 20000);
-  Info.AddEntry(std::string("Base damage: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
-  Bonus = GetMaster()->GetCWeaponSkill(BITE)->GetBonus();
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-
+  Info.AddEntry("Damage: how much you can hurt an enemy", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  float Damage = 7.07e-3f * GetBaseBiteStrength();
+  Info.AddEntry(std::string("Base: ") + int(Damage * 0.75f) + '-' + int(Damage * 1.25f + 1), LIGHT_GRAY);
   Info.AddEntry(std::string("Real damage: ") + GetBiteMinDamage() + '-' + GetBiteMaxDamage(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
 
   /* To hit value */
 
-  Info.AddEntry("Base to hit value: 5", LIGHT_GRAY);
-  Bonus = (GetMaster()->GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION);
-
-  if(Bonus > 50)
-    Info.AddEntry(std::string("Agility/perception bonus: ") + '+' + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 50)
-    Info.AddEntry(std::string("Agility/perception penalty: ") + (Bonus * 2 - 100) + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  Info.AddEntry("To hit value: determines your chance to hit", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 5", LIGHT_GRAY);
+  Bonus = GetMaster()->GetAttribute(AGILITY) * 10;
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
+
+  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+
+  if(Bonus > 100)
+    Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Perception penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
@@ -4583,40 +4699,31 @@ void head::AddBiteInfo(felist& Info) const
   Info.AddEntry("", LIGHT_GRAY);
 
   /* Speed */
-  Info.AddEntry("Base speed: 10", LIGHT_GRAY);
-  Bonus = 100 / (200 / GetMaster()->GetAttribute(AGILITY) - 1);
 
-  if(Bonus > 0)
-    Info.AddEntry(std::string("Agility bonus: ") + '+' + Bonus + '%', LIGHT_GRAY);
-
-  Bonus = GetMaster()->GetCWeaponSkill(BITE)->GetBonus();
+  Info.AddEntry("Speed: how often you are able to strike", LIGHT_GRAY);
+  Info.AddEntry("", LIGHT_GRAY);
+  Info.AddEntry("Base: 10", LIGHT_GRAY);
+  Bonus = APBonus(GetMaster()->GetAttribute(AGILITY));
 
   if(Bonus > 100)
-    Info.AddEntry(std::string("Skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+  else if(Bonus < 100)
+    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
   if(GetMaster()->GetMoveEase() < 100)
     Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMaster()->GetMoveEase() - 100) + '%', LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real speed: ") + 10000 / GetBiteAPCost(), MakeRGB16(220, 220, 220));
-  Info.AddEntry("", LIGHT_GRAY);
+  Info.Draw();
 }
 
-void itemcontainer::AddItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+void itemcontainer::SetItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
 {
+  GetContained()->Clean();
+
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c].IsValid())
       GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
-}
-
-bool meleeweapon::IsFixableBySmith(const character* Smith) const
-{
-  if(!IsBroken())
-    return false;
-
-  if(Smith->GetMainWielded())
-    return Smith->GetMainWielded()->CanBeUsedBySmith() && Smith->GetMainWielded()->GetMainMaterial()->GetStrengthValue() > GetMainMaterial()->GetStrengthValue();
-
-  return false;
 }
 
 bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
@@ -4627,19 +4734,19 @@ bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
 
   if((Armor[0] = GetHelmet()))
     {
-      AV[0] = Armor[0]->GetStrengthValue();
+      AV[0] = Max<ushort>(Armor[0]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
     {
-      AV[1] = Armor[1]->GetStrengthValue() >> 1;
+      AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 2, 1);
       AnyArmor = true;
     }
 
   if((Armor[2] = GetHumanoidMaster()->GetCloak()))
     {
-      AV[2] = Armor[2]->GetStrengthValue();
+      AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
@@ -4654,19 +4761,19 @@ bool humanoidtorso::DamageArmor(character* Damager, ushort Damage, uchar Type)
 
   if((Armor[0] = GetBodyArmor()))
     {
-      AV[0] = Armor[0]->GetStrengthValue();
+      AV[0] = Max<ushort>(Armor[0]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   if((Armor[1] = GetBelt()))
     {
-      AV[1] = Armor[1]->GetStrengthValue() >> 1;
+      AV[1] = Max<ushort>(Armor[1]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   if((Armor[2] = GetCloak()))
     {
-      AV[2] = Armor[2]->GetStrengthValue();
+      AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
@@ -4681,19 +4788,19 @@ bool arm::DamageArmor(character* Damager, ushort Damage, uchar Type)
 
   if((Armor[0] = GetGauntlet()))
     {
-      AV[0] = Armor[0]->GetStrengthValue();
+      AV[0] = Max<ushort>(Armor[0]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
     {
-      AV[1] = (Armor[1]->GetStrengthValue() * 3) >> 2;
+      AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 1, 1);
       AnyArmor = true;
     }
 
   if((Armor[2] = GetHumanoidMaster()->GetCloak()))
     {
-      AV[2] = Armor[2]->GetStrengthValue();
+      AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
@@ -4710,30 +4817,31 @@ bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
   std::vector<long> AV(3, 0);
   item* Armor[3];
   bool AnyArmor = false;
+
   if((Armor[0] = GetBoot()))
     {
-      AV[0] = Armor[0]->GetStrengthValue();
+      AV[0] = Max<ushort>(Armor[0]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
     {
-      AV[1] = (Armor[1]->GetStrengthValue() * 3) >> 2;
+      AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 1, 1);
       AnyArmor = true;
     }
 
   if((Armor[2] = GetHumanoidMaster()->GetCloak()))
     {
-      AV[2] = Armor[2]->GetStrengthValue();
+      AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
     }
 
   return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-bool bodypart::IsBadFoodForAI(character* Who) const
+bool bodypart::IsBadFoodForAI(const character* Who) const
 {
-  return (!GetMaster() || GetMaster()->IsPlayer()) || materialcontainer::IsBadFoodForAI(Who); 
+  return item::IsBadFoodForAI(Who) || (Who->GetTeam()->GetID() == game::GetPlayer()->GetTeam()->GetID() && game::GetPlayer()->HasHadBodyPart(this));
 }
 
 bool mine::CheckPickUpEffect(character* Picker)
@@ -4743,18 +4851,11 @@ bool mine::CheckPickUpEffect(character* Picker)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(0, "killed trying to pickup a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevelUnder()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return false;
     }
-  return true;
-}
 
-short armor::GetCarryingBonus() const
-{
-  if(AffectsCarryingCapacity())
-    return Enchantment << 1;
-  else
-    return 0;
+  return true;
 }
 
 void itemcontainer::GenerateLeftOvers(character*)
@@ -4762,3 +4863,14 @@ void itemcontainer::GenerateLeftOvers(character*)
   Contained->MoveItemsTo(GetSlot());
 }
 
+ushort gorovitshammer::GetOutlineColor(ushort Frame) const
+{
+  Frame &= 31;
+  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
+}
+
+ushort gorovitssickle::GetOutlineColor(ushort Frame) const
+{
+  Frame &= 31;
+  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
+}

@@ -96,4 +96,12 @@ Bodyparts hit by sound or energy are never severed nor destroyed, so they can re
 Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
 (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. 
+Bear trap + level change crashes.
+Polymorphing while wearing a ring of infravision crashes.
+Message history may crash if many many very long messages are successively printed.
+Unicorns kicking items in shop.
+Seges and others may give genies and angels a groin and legs.
 You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
+Teleportation state works in the wilderness.
+Golden plate mails are worth less than iron ones.
+The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.

@@ -1039,6 +1039,11 @@ void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, u
 
   if(Char)
     {
+      if(Char->IsPlayer())
+	ADD_MESSAGE("You are hit by a burst of energy!");
+      else if(Char->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s is hit by a burst of energy!", Char->CHAR_NAME(DEFINITE));
+
       Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
       Zapper->Hostility(Char);
       Char->CheckDeath("killed by a burst of energy");

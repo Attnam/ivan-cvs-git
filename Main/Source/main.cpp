@@ -22,6 +22,8 @@
 #include "felibdef.h"
 #include "festring.h"
 
+#include "charba.h"
+
 const bool ValpuriIsAlive = true;
 
 #ifdef WIN32

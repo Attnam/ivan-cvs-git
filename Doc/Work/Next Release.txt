@@ -35,7 +35,7 @@ Bodypartien ja actioneiden scoret. (timo)
 (r) Ring of strength.
 //Ring of infravision. (timo)
 //Ring of teleportation. (hex)
-?Potion of invisibility. (hex)
+(r) ?Potion of invisibility. (hex)
 //Magic whistlen kuva. (kahvi)
 //Magic whistle. (hex)
 (s) Inhandspicit kuntoon. (timo)
@@ -59,7 +59,7 @@ Bodypartien ja actioneiden scoret. (timo)
 //Prices. (timo)
 //OfferModifiers. (timo)
 //NPModifiers. (timo)
-1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
+//1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
 Dipping to corpses, containers etc.
 //Aliases!!!!!!!!!!!!!! (timo)
 //Potion of poison. (timo)
@@ -84,7 +84,7 @@ Things thrown at doors.
 //Drinking should be separated.
 //Skeleton volume.
 //"snake is standing"
-Genie's strength.
+//Genie's strength.
 //Items inside chests carried by player at death should be shown. (hex)
 //Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
@@ -105,8 +105,8 @@ Applying wielded item should be possible.
 //Splitting lines in highscores.
 //Calamus and whip of Calamus should work together.
 //Treasure room to the right arm of the Cathedral.
-?Artifact vault.
-Village and tunnel.
+//?Artifact vault.
+/Village and tunnel.
 /Kick system should be checked. (timo)
 //Kamikaze dwarves should be separated by colours.
 ?Manual.
@@ -114,7 +114,7 @@ Village and tunnel.
 //Skull. (hex)
 //Wand of cloning. (hex)
 /Water should make gunpowder useless!
-?Temporary invisibility should be cancelled if the character hits something.
+(r) ?Temporary invisibility should be cancelled if the character hits something.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.
 Stethoscope should show relative danger.
@@ -122,14 +122,11 @@ Remove the school food effects of scabies (or make them a lot more seldom).
 ?Raven.
 Kicking chests.
 //Prohibit spoiling in shops and on the cathedral floor.
-?Mellis should give information about unknown gods.
+/?Mellis should give information about unknown gods.
 //Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
-//Charges for magic whistle.
-//Smithy to Attnam.
-Cut down the size of Elpuri's cave.
-?Charges for magic whistle.
-Smithy to Attnam.
+//?Charges for magic whistle.
+/Smithy to Attnam.
 //Cut down the size of Elpuri's cave.
 //Mana should be hidden.
 Solving the Elpuri Cave distance problem.
@@ -138,12 +135,12 @@ Stats of summoned bodyparts must be made more intelligent.
 Ergonomification of corpse consumption.
 //RDAM and similiar unclear attributes should be moved to an own screen.
 //?Snake flesh should be poisonous.
-?Some special effect for daemon flesh.
+//?Some special effect for daemon flesh.
 Checking throw balance.
-Pick-axe available in the lowest levels.
+//Pick-axe available in the lowest levels.
 Boot m-color.
-?Look stretch config option.
-?If a mine in the inventory is active, it should be displayed somehow.
+//?Look stretch config option.
+(r) ?If a mine in the inventory is active, it should be displayed somehow.
 //Potion full of antidote.
 ?Teleport to level 10.
 Selecting from gear when using SoCM/SoEW/SoEA.
@@ -154,10 +151,11 @@ Selecting from gear when using SoCM/SoEW/SoEA.
 Imperialist quest.
 //Moving the lamp room to the tunnel.
 New background story.
-?Armor breaking.
-Tunnel boss.
+//?Armor breaking.
+//Tunnel boss.
 ?Something special to tunnel level 2.
 ?Penalty for eating spoiled food.
 //Pets shouldn't eat the player's bodyparts.
 ?Village duelist.
-
+?olterraincontainer
+Smith prices.

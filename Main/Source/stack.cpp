@@ -371,7 +371,7 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
     {
       Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, SorterFunction);
 
-      if(Pos != 0xFFFF)
+      if(!ReturnVector.empty())
 	return;
     }
 

@@ -143,6 +143,7 @@ command* game::Command[] =
   new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
   new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
   new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
+  new command(&character::SummonMonster, "summon monster", '&', false, true),
   0
 };
 
@@ -163,7 +164,7 @@ bool KeyIsOK(char);
 ulong game::Ticks;
 gamescript* game::GameScript = 0;
 valuemap game::GlobalValueMap;
-std::map<configid, float> game::DangerMap;
+std::map<configid, dangerid> game::DangerMap;
 configid game::NextDangerId;
 
 void game::InitScript()
@@ -245,7 +246,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new smith);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -268,9 +269,9 @@ bool game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	character* Doggie = new dog;
+	/*character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+	GetWorldMap()->GetPlayerGroup().push_back(Doggie);*/
 
 	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {
@@ -432,6 +433,7 @@ const char* game::Insult()
     case 12 : return "stupid-headed person";
     case 13 : return "software abuser";
     case 14 : return "loser";
+    case 15 : return "peaballs";
     default : return "hugger-mugger";
     }
 }
@@ -697,7 +699,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = 0.050f + float(GetCurrent()) / 50;
+  float Base = float(*GetCurrentLevel()->GetLevelScript()->GetBaseDifficulty() + *GetCurrentLevel()->GetLevelScript()->GetDifficultyDelta() * GetCurrent()) / 1000;
 
   while(true)
     {
@@ -1566,7 +1568,7 @@ void game::InitDangerMap()
 	      }
 
 	    character* Char = Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-	    DangerMap[configid(c, i->first)] = Char->GetRelativeDanger(Player, true);
+	    DangerMap[configid(c, i->first)] = dangerid(Char->GetRelativeDanger(Player, true));
 	    delete Char;
 	  }
     }
@@ -1585,7 +1587,7 @@ void game::CalculateNextDanger()
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
       character* Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      DangerIterator->second = (DangerIterator->second * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      DangerIterator->second.Danger = (DangerIterator->second.Danger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
       delete Char;
 
       for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)
@@ -1716,5 +1718,13 @@ void game::SetStandardListAttributes(felist& List)
   List.SetPos(vector2d(26, 42));
   List.SetWidth(652);
   List.SetBackColor(MakeRGB16(0, 0, 32));
-  List.SetFlags(BLIT_AFTERWARDS|DRAW_BACKGROUND_AFTERWARDS);
+  List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
+}
+
+void game::SignalGeneration(ushort Type, ushort Config)
+{
+  dangermap::iterator Iterator = DangerMap.find(configid(Type, Config));
+
+  if(Iterator != DangerMap.end())
+    Iterator->second.HasBeenGenerated = true;
 }

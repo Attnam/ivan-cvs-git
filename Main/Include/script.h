@@ -11,13 +11,13 @@
 #include "vector2d.h"
 #include "error.h"
 
-#define DATAMEMBER(type, name)\
+#define DATA_MEMBER(type, name)\
  public:\
   type* Get##name(bool AbortOnError = true) const { return name.GetMember(Base, #name, AbortOnError); }\
  protected:\
   datamember< type > name;
 
-#define PROTONAMEDMEMBER(type, name)\
+#define PROTO_NAMED_MEMBER(type, name)\
  public:\
   ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(Base, #name, AbortOnError); }\
  protected:\
@@ -144,9 +144,9 @@ class posscript : public script
   virtual datamemberbase* GetData(const std::string&);
  protected:
   bool Random;
-  DATAMEMBER(vector2d, Vector);
-  DATAMEMBER(uchar, Flags);
-  DATAMEMBER(rect, Borders);
+  DATA_MEMBER(vector2d, Vector);
+  DATA_MEMBER(uchar, Flags);
+  DATA_MEMBER(rect, Borders);
 };
 
 class materialscript : public script
@@ -157,7 +157,7 @@ class materialscript : public script
   material* Instantiate() const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  DATAMEMBER(ulong, Volume);
+  DATA_MEMBER(ulong, Volume);
   ushort Config;
 };
 
@@ -172,10 +172,10 @@ class basecontentscript : public script
  protected:
   virtual const std::string& GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
-  DATAMEMBER(materialscript, MainMaterial);
-  DATAMEMBER(materialscript, SecondaryMaterial);
-  DATAMEMBER(materialscript, ContainedMaterial);
-  DATAMEMBER(ulong, Parameters);
+  DATA_MEMBER(materialscript, MainMaterial);
+  DATA_MEMBER(materialscript, SecondaryMaterial);
+  DATA_MEMBER(materialscript, ContainedMaterial);
+  DATA_MEMBER(ulong, Parameters);
   ushort ContentType;
   ushort Config;
   bool Random;
@@ -199,8 +199,8 @@ class contentscript<character> : public contentscripttemplate<character>
   character* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  DATAMEMBER(ushort, Team);
-  DATAMEMBER(std::vector<contentscript<item> >, Inventory);
+  DATA_MEMBER(ushort, Team);
+  DATA_MEMBER(std::vector<contentscript<item> >, Inventory);
 };
 
 class contentscript<item> : public contentscripttemplate<item>
@@ -209,15 +209,15 @@ class contentscript<item> : public contentscripttemplate<item>
   item* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  DATAMEMBER(ushort, Team);
-  DATAMEMBER(bool, Active);
-  DATAMEMBER(uchar, SideStackIndex);
-  DATAMEMBER(short, Enchantment);
-  DATAMEMBER(ulong, MinPrice);
-  DATAMEMBER(ulong, MaxPrice);
-  DATAMEMBER(ulong, Category);
-  DATAMEMBER(std::vector<contentscript<item> >, ItemsInside);
-  DATAMEMBER(uchar, Chance);
+  DATA_MEMBER(ushort, Team);
+  DATA_MEMBER(bool, Active);
+  DATA_MEMBER(uchar, SideStackIndex);
+  DATA_MEMBER(short, Enchantment);
+  DATA_MEMBER(ulong, MinPrice);
+  DATA_MEMBER(ulong, MaxPrice);
+  DATA_MEMBER(ulong, Category);
+  DATA_MEMBER(std::vector<contentscript<item> >, ItemsInside);
+  DATA_MEMBER(uchar, Chance);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
@@ -232,10 +232,10 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   olterrain* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  DATAMEMBER(uchar, VisualEffects);
-  DATAMEMBER(uchar, AttachedArea);
-  DATAMEMBER(uchar, AttachedEntry);
-  DATAMEMBER(std::string, Text);
+  DATA_MEMBER(uchar, VisualEffects);
+  DATA_MEMBER(uchar, AttachedArea);
+  DATA_MEMBER(uchar, AttachedEntry);
+  DATA_MEMBER(std::string, Text);
 };
 
 class squarescript : public script
@@ -244,14 +244,14 @@ class squarescript : public script
   virtual void ReadFrom(inputfile&, bool = false);
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  DATAMEMBER(posscript, Position);
-  DATAMEMBER(contentscript<character>, Character);
-  DATAMEMBER(std::vector<contentscript<item> >, Items);
-  DATAMEMBER(contentscript<glterrain>, GTerrain);
-  DATAMEMBER(contentscript<olterrain>, OTerrain);
-  DATAMEMBER(uchar, Times);
-  DATAMEMBER(bool, AttachRequired);
-  DATAMEMBER(uchar, EntryIndex);
+  DATA_MEMBER(posscript, Position);
+  DATA_MEMBER(contentscript<character>, Character);
+  DATA_MEMBER(std::vector<contentscript<item> >, Items);
+  DATA_MEMBER(contentscript<glterrain>, GTerrain);
+  DATA_MEMBER(contentscript<olterrain>, OTerrain);
+  DATA_MEMBER(uchar, Times);
+  DATA_MEMBER(bool, AttachRequired);
+  DATA_MEMBER(uchar, EntryIndex);
 };
 
 template <class type, class contenttype = contentscript<type> > class contentmap : public script
@@ -265,8 +265,8 @@ template <class type, class contenttype = contentscript<type> > class contentmap
   virtual datamemberbase* GetData(const std::string&);
  protected:
   contenttype*** ContentMap;
-  DATAMEMBER(vector2d, Size);
-  DATAMEMBER(vector2d, Pos);
+  DATA_MEMBER(vector2d, Size);
+  DATA_MEMBER(vector2d, Pos);
 };
 
 typedef contentmap<item, std::vector<contentscript<item> > > itemcontentmap;
@@ -284,26 +284,26 @@ class roomscript : public script
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
-  DATAMEMBER(charactercontentmap, CharacterMap);
-  DATAMEMBER(itemcontentmap, ItemMap);
-  DATAMEMBER(glterraincontentmap, GTerrainMap);
-  DATAMEMBER(olterraincontentmap, OTerrainMap);
-  DATAMEMBER(squarescript, WallSquare);
-  DATAMEMBER(squarescript, FloorSquare);
-  DATAMEMBER(squarescript, DoorSquare);
-  DATAMEMBER(vector2d, Size);
-  DATAMEMBER(vector2d, Pos);
-  DATAMEMBER(bool, AltarPossible);
-  DATAMEMBER(bool, GenerateDoor);
-  DATAMEMBER(bool, ReCalculate);
-  DATAMEMBER(bool, GenerateTunnel);
-  PROTONAMEDMEMBER(god, DivineMaster);
-  DATAMEMBER(bool, GenerateLanterns);
-  PROTONAMEDMEMBER(room, Type);
-  DATAMEMBER(bool, GenerateFountains);
-  DATAMEMBER(bool, AllowLockedDoors);
-  DATAMEMBER(bool, AllowBoobyTrappedDoors);
-  DATAMEMBER(uchar, Shape);
+  DATA_MEMBER(charactercontentmap, CharacterMap);
+  DATA_MEMBER(itemcontentmap, ItemMap);
+  DATA_MEMBER(glterraincontentmap, GTerrainMap);
+  DATA_MEMBER(olterraincontentmap, OTerrainMap);
+  DATA_MEMBER(squarescript, WallSquare);
+  DATA_MEMBER(squarescript, FloorSquare);
+  DATA_MEMBER(squarescript, DoorSquare);
+  DATA_MEMBER(vector2d, Size);
+  DATA_MEMBER(vector2d, Pos);
+  DATA_MEMBER(bool, AltarPossible);
+  DATA_MEMBER(bool, GenerateDoor);
+  DATA_MEMBER(bool, ReCalculate);
+  DATA_MEMBER(bool, GenerateTunnel);
+  PROTO_NAMED_MEMBER(god, DivineMaster);
+  DATA_MEMBER(bool, GenerateLanterns);
+  PROTO_NAMED_MEMBER(room, Type);
+  DATA_MEMBER(bool, GenerateFountains);
+  DATA_MEMBER(bool, AllowLockedDoors);
+  DATA_MEMBER(bool, AllowBoobyTrappedDoors);
+  DATA_MEMBER(uchar, Shape);
 };
 
 class levelscript : public script
@@ -318,20 +318,22 @@ class levelscript : public script
   ulong BufferPos;
   std::vector<squarescript*> Square;
   std::map<uchar, roomscript*> Room;
-  DATAMEMBER(roomscript, RoomDefault);
-  DATAMEMBER(squarescript, FillSquare);
-  DATAMEMBER(std::string, LevelMessage);
-  DATAMEMBER(vector2d, Size);
-  DATAMEMBER(ushort, Items);
-  DATAMEMBER(uchar, Rooms);
-  DATAMEMBER(bool, GenerateMonsters);
-  DATAMEMBER(bool, ReCalculate);
-  DATAMEMBER(bool, OnGround);
-  DATAMEMBER(uchar, TeamDefault);
-  DATAMEMBER(ulong, AmbientLight);
-  DATAMEMBER(std::string, Description);
-  DATAMEMBER(uchar, LOSModifier);
-  DATAMEMBER(bool, IgnoreDefaultSpecialSquares);
+  DATA_MEMBER(roomscript, RoomDefault);
+  DATA_MEMBER(squarescript, FillSquare);
+  DATA_MEMBER(std::string, LevelMessage);
+  DATA_MEMBER(vector2d, Size);
+  DATA_MEMBER(ushort, Items);
+  DATA_MEMBER(uchar, Rooms);
+  DATA_MEMBER(bool, GenerateMonsters);
+  DATA_MEMBER(bool, ReCalculate);
+  DATA_MEMBER(bool, OnGround);
+  DATA_MEMBER(uchar, TeamDefault);
+  DATA_MEMBER(ulong, AmbientLight);
+  DATA_MEMBER(std::string, Description);
+  DATA_MEMBER(uchar, LOSModifier);
+  DATA_MEMBER(bool, IgnoreDefaultSpecialSquares);
+  DATA_MEMBER(ushort, BaseDifficulty);
+  DATA_MEMBER(ushort, DifficultyDelta);
 };
 
 class dungeonscript : public script
@@ -343,8 +345,8 @@ class dungeonscript : public script
   virtual datamemberbase* GetData(const std::string&);
  protected:
   std::map<uchar, levelscript*> Level;
-  DATAMEMBER(levelscript, LevelDefault);
-  DATAMEMBER(uchar, Levels);
+  DATA_MEMBER(levelscript, LevelDefault);
+  DATA_MEMBER(uchar, Levels);
 };
 
 class teamscript : public script
@@ -355,7 +357,7 @@ class teamscript : public script
   virtual datamemberbase* GetData(const std::string&);
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
-  DATAMEMBER(ushort, AttackEvilness);
+  DATA_MEMBER(ushort, AttackEvilness);
 };
 
 class gamescript : public script
@@ -369,9 +371,9 @@ class gamescript : public script
  protected:
   std::vector<std::pair<uchar, teamscript*> > Team;
   std::map<uchar, dungeonscript*> Dungeon;
-  DATAMEMBER(dungeonscript, DungeonDefault);
-  DATAMEMBER(uchar, Dungeons);
-  DATAMEMBER(uchar, Teams);
+  DATA_MEMBER(dungeonscript, DungeonDefault);
+  DATA_MEMBER(uchar, Dungeons);
+  DATA_MEMBER(uchar, Teams);
 };
 
 #endif

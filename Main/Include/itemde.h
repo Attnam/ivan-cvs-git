@@ -36,7 +36,6 @@ class ABSTRACT_ITEM
   virtual uchar GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
-  virtual bool HasContainedMaterial() const { return true; }
   virtual ulong GetPrice() const { return GetContainedMaterial() ? GetContainedMaterial()->GetRawPrice() + item::GetPrice() : item::GetPrice(); }
   virtual void Be();
   virtual uchar GetFlyAmount() const;
@@ -119,8 +118,6 @@ class ITEM
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
-  virtual bool HasSecondaryMaterial() const { return true; }
-  virtual bool HasContainedMaterial() const { return true; }
   virtual void Be();
   virtual bool IsWeapon(const character*) const { return true; }
   virtual char GetEnchantment() const { return Enchantment; }
@@ -130,7 +127,7 @@ class ITEM
   virtual ushort GetStrengthValue() const;
   virtual ushort GetEffectBonus() const { return 100 + 5 * Enchantment; }
   virtual ushort GetAPBonus() const { return 2000 / (20 + Enchantment); }
-  virtual bool IsFixableBySmith(const character*) const;
+  virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
   virtual ushort GetBonus() const { return 100 + 5 * Enchantment; }
   virtual uchar GetFlyAmount() const;
  protected:
@@ -166,6 +163,7 @@ class ITEM
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
+  virtual bool IsFixableBySmith(const character*) const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -227,7 +225,8 @@ class ABSTRACT_ITEM
   virtual ushort GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ushort GetInElasticityPenalty(ushort) const;
-  virtual short GetCarryingBonus() const;
+  virtual short GetCarryingBonus() const { return Enchantment << 1; }
+  virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
  protected:
   virtual void AddPostFix(std::string&) const;
   virtual void VirtualConstructor(bool);
@@ -719,7 +718,7 @@ class ITEM
 class ABSTRACT_ITEM
 (
   bodypart,
-  materialcontainer,
+  item,
  public:
   friend class corpse;
   virtual void Save(outputfile&) const;
@@ -789,7 +788,7 @@ class ABSTRACT_ITEM
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
-  virtual bool IsBadFoodForAI(character*) const;
+  virtual bool IsBadFoodForAI(const character*) const;
   virtual bool DamageArmor(character*, ushort, uchar) { return false; }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
@@ -849,7 +848,7 @@ class ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
-  void AddBiteInfo(felist&) const;
+  void ShowBiteInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
@@ -973,9 +972,10 @@ class ABSTRACT_ITEM
   short GetWieldedHitStrength() const;
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyDexterityPenalty(item*);
-  void AddBattleInfo(felist&) const;
-  void AddWieldedInfo(felist&) const;
-  void AddUnarmedInfo(felist&) const;
+  void ShowAttackInfo() const;
+  void ShowWieldedAttackInfo() const;
+  void ShowDefenceInfo() const;
+  void ShowUnarmedInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
@@ -1076,7 +1076,7 @@ class ABSTRACT_ITEM
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
-  void AddKickInfo(felist&) const;
+  void ShowKickInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
  protected:
   virtual void VirtualConstructor(bool);
@@ -1138,7 +1138,7 @@ class ITEM
   virtual bool IsConsumable(const character*) const;
   virtual short GetOfferValue(char) const;
   virtual float GetWeaponStrength() const;
-  virtual bool IsBadFoodForAI(character*) const;
+  virtual bool IsBadFoodForAI(const character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
   //virtual bool IsDipDestination(const character*) const { return true; }
@@ -1249,7 +1249,7 @@ class ITEM
   virtual void DrawContents(const character*);
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort);
+  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
   virtual void GenerateLeftOvers(character*);  
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
@@ -1309,7 +1309,7 @@ class ITEM
   helmet,
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() / 3 + GetEnchantedPrice(Enchantment); }
+  virtual ulong GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
   virtual bool IsHelmet(const character*) const { return true; }
 );
 
@@ -1400,6 +1400,26 @@ class ITEM
   skull,
   item,
   ;
+);
+
+class ITEM
+(
+  gorovitshammer,
+  meleeweapon,
+ protected:
+  virtual void Be() { }
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual ushort GetOutlineColor(ushort) const;
+);
+
+class ITEM
+(
+  gorovitssickle,
+  meleeweapon,
+ protected:
+  virtual void Be() { }
+  virtual ushort GetClassAnimationFrames() const { return 32; }
+  virtual ushort GetOutlineColor(ushort) const;
 );
 
 #endif

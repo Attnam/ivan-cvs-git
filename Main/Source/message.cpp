@@ -87,8 +87,13 @@ void msgsystem::AddMessage(const char* Format, ...)
   ushort Marginal = Temp.length();
   Temp << Buffer;
 
-  MessageHistory.AddEntry(Temp, WHITE, Marginal);
-  MessageHistory.SetSelected(MessageHistory.Length() - 1);
+  std::vector<std::string> Chapter;
+  festring::SplitString(Temp, Chapter, 78, Marginal);
+
+  for(c = 0; c < Chapter.size(); ++c)
+    MessageHistory.AddEntry(Chapter[c], WHITE);
+
+  MessageHistory.SetSelected(MessageHistory.LastEntryIndex());
 }
 
 void msgsystem::Draw()
@@ -105,7 +110,7 @@ void msgsystem::DrawMessageHistory()
 {
   game::SetStandardListAttributes(MessageHistory); // optimize
   MessageHistory.AddFlags(INVERSE_MODE);
-  MessageHistory.Draw();//vector2d(26, 42), 652, 32, MakeRGB16(0, 0, 16), false, true, true, false, true);
+  MessageHistory.Draw();
 }
 
 void msgsystem::Format()

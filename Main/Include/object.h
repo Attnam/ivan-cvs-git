@@ -65,8 +65,6 @@ class object : public entity, public id
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
   void SetConfig(ushort);
   virtual void CalculateAll() = 0;
-  virtual bool HasSecondaryMaterial() const { return false; }
-  virtual bool HasContainedMaterial() const { return false; }
   virtual uchar GetFlyAmount() const { return 0; }
  protected:
   virtual bool IsSparkling(ushort) const;

@@ -27,11 +27,11 @@ bool attnam::Enter(bool DirectionUp) const
   if(!owterrain::Enter(DirectionUp))
     return false;
 
-  if(game::GetPlayer()->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
+  if(game::GetPlayer()->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(ATTNAM_TEAM)->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
     {
       game::GetCurrentLevel()->GetLSquare(30, 52)->KickAnyoneStandingHereAway();
       game::GetPetrus()->Move(vector2d(30, 52), true);
-      game::GetPetrus()->ChangeTeam(game::GetTeam(3));
+      game::GetPetrus()->ChangeTeam(game::GetTeam(FINAL_BATTLE_TEAM));
       game::GetPetrus()->SetStoryState(3);
     }
 

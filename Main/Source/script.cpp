@@ -221,10 +221,10 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   if(GetMainMaterial(false))
     Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(GetSecondaryMaterial(false) && Instance->HasSecondaryMaterial())
+  if(GetSecondaryMaterial(false))
     Instance->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(GetContainedMaterial(false) && Instance->HasContainedMaterial())
+  if(GetContainedMaterial(false))
     Instance->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
@@ -305,7 +305,7 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
     Instance->SetEnchantment(*GetEnchantment());
 
   if(GetItemsInside(false))
-    Instance->AddItemsInside(*GetItemsInside(), SpecialFlags);
+    Instance->SetItemsInside(*GetItemsInside(), SpecialFlags);
 
   return Instance;
 }
@@ -555,6 +555,8 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(Description);
   ANALYZE_MEMBER(LOSModifier);
   ANALYZE_MEMBER(IgnoreDefaultSpecialSquares);
+  ANALYZE_MEMBER(BaseDifficulty);
+  ANALYZE_MEMBER(DifficultyDelta);
   return 0;
 }
 
@@ -676,6 +678,13 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 
 	  LS->ReadFrom(SaveFile);
 	  Level[Index] = LS;
+	  continue;
+	}
+
+      if(Word == "Variable")
+	{
+	  SaveFile.ReadWord(Word);
+	  ValueMap[Word] = SaveFile.ReadNumber(ValueMap);
 	  continue;
 	}
 

@@ -101,6 +101,16 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
     DataBase.data = statement;\
 }
 
+#define ANALYZE_DATA_AND_ADD_TO_ANOTHER(data, to)\
+{\
+  if(Word == #data)\
+    {\
+      ReadData(DataBase.data, SaveFile, ValueMap);\
+      DataBase.to.push_back(DataBase.data);\
+      Found = true;\
+    }\
+}
+
 bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
@@ -141,7 +151,6 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(IsUnique);
   ANALYZE_DATA(ConsumeFlags);
   ANALYZE_DATA(TotalVolume);
-  ANALYZE_DATA(TalkVerb);
   ANALYZE_DATA(HeadBitmapPos);
   ANALYZE_DATA(TorsoBitmapPos);
   ANALYZE_DATA(ArmBitmapPos);
@@ -163,15 +172,6 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(ArmSpecialColor);
   ANALYZE_DATA_WITH_DEFAULT(LegMainColor, ClothColor);
   ANALYZE_DATA(LegSpecialColor);
-  ANALYZE_DATA(HeadBonePercentile);
-  ANALYZE_DATA(TorsoBonePercentile);
-  ANALYZE_DATA(ArmBonePercentile);
-  ANALYZE_DATA_WITH_DEFAULT(RightArmBonePercentile, ArmBonePercentile);
-  ANALYZE_DATA_WITH_DEFAULT(LeftArmBonePercentile, ArmBonePercentile);
-  ANALYZE_DATA(GroinBonePercentile);
-  ANALYZE_DATA(LegBonePercentile);
-  ANALYZE_DATA_WITH_DEFAULT(RightLegBonePercentile, LegBonePercentile);
-  ANALYZE_DATA_WITH_DEFAULT(LeftLegBonePercentile, LegBonePercentile);
   ANALYZE_DATA(IsNameable);
   ANALYZE_DATA(BaseEmitation);
   ANALYZE_DATA(Article);
@@ -184,8 +184,8 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(IsAbstract);
   ANALYZE_DATA(IsPolymorphable);
   ANALYZE_DATA(BaseUnarmedStrength);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength / 4);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength * 4);
+  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength >> 1);
+  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength << 1);
   ANALYZE_DATA(AttackStyle);
   ANALYZE_DATA(CanUseEquipment);
   ANALYZE_DATA(CanKick);
@@ -194,7 +194,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(CanBeWished);
   ANALYZE_DATA(Alias);
   ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(CreateSolidMaterialConfigurations);
+  ANALYZE_DATA(CreateGolemMaterialConfigurations);
   ANALYZE_DATA(Helmet);
   ANALYZE_DATA(Amulet);
   ANALYZE_DATA(Cloak);
@@ -216,7 +216,17 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(PanicLevel);
   ANALYZE_DATA(CanBeCloned);
   ANALYZE_DATA(Inventory);
+  ANALYZE_DATA(DangerModifier);
+  ANALYZE_DATA_AND_ADD_TO_ANOTHER(DefaultName, Alias);
+  ANALYZE_DATA(FriendlyReplies);
+  ANALYZE_DATA(HostileReplies);
   ANALYZE_DATA(CanZap);
+  ANALYZE_DATA(InHandsPicPos);
+  ANALYZE_DATA(ShieldPos);
+  ANALYZE_DATA(InHandsPicColorA);
+  ANALYZE_DATA(InHandsPicColorB);
+  ANALYZE_DATA(ShieldColor);
+
   return Found;
 }
 
@@ -382,7 +392,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZE_DATA(Density);
   ANALYZE_DATA(Color);
   ANALYZE_DATA(PriceModifier);
-  ANALYZE_DATA(IsSolid);
+  ANALYZE_DATA(IsGolemMaterial);
   ANALYZE_DATA(Emitation);
   ANALYZE_DATA(CanBeWished);
   ANALYZE_DATA(Alignment);
@@ -404,6 +414,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZE_DATA(SpoilModifier);
   ANALYZE_DATA(IsSparkling);
   ANALYZE_DATA(EffectStrength);
+  ANALYZE_DATA(IsMetal);
 
   return Found;
 }

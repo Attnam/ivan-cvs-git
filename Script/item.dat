@@ -75,6 +75,7 @@ item
 	DefaultEnchantment = 0;
 	PriceIsProportionalToEnchantment = false;
 	CanBeUsedBySmith = false;
+	AffectsCarryingCapacity = false;
 }
 
 materialcontainer
@@ -84,17 +85,17 @@ materialcontainer
 
 lantern
 {
-        DefaultSize = 30;
+	DefaultSize = 30;
 	Possibility = 100;
 	InHandsPic = 160, 160;
-        Category = TOOL;
+	Category = TOOL;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 50;
 	FormModifier = 20;
 	Price = 50;
 	BaseEmitation = rgb24(130, 130, 120);
 	NameSingular = "lantern";
-        MainMaterialConfig == GLASS;
+	MainMaterialConfig == GLASS;
 	Alias == "light";
 	Roundness = 75;
 	CanBeBroken = true;
@@ -372,7 +373,7 @@ meleeweapon
 		DefaultSecondaryVolume = 50;
 		BitmapPos = 48, 144;
 		FormModifier = 45;
-		StrengthModifier = 20;
+		StrengthModifier = 40;
 		NameSingular = "sickle";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
@@ -483,6 +484,7 @@ holybanana /* materialcontainer->banana-> */
 	Config BROKEN;
 	{
 		BitmapPos = 32, 272;
+		Price = 500;
 	}
 }
 
@@ -495,8 +497,8 @@ justifier /* meleeweapon-> */
 	DefaultMainVolume = 200;
 	DefaultSecondaryVolume = 100;
 	BitmapPos = 0, 64;
-	FormModifier = 300;
-	StrengthModifier = 300;
+	FormModifier = 275;
+	StrengthModifier = 275;
 	Score = 1000;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
@@ -601,7 +603,7 @@ bodyarmor /* armor-> */
 	Config CHAIN_MAIL;
 	{
 		Possibility = 50;
-		StrengthModifier = 100; 
+		StrengthModifier = 125; 
 		DefaultSize = 75; 
 		DefaultMainVolume = 2000; 
 		BitmapPos = 16, 96;
@@ -617,7 +619,7 @@ bodyarmor /* armor-> */
 		Possibility = 5;
 		BitmapPos = 48, 208;
 		FormModifier = 20;
-		StrengthModifier = 50;
+		StrengthModifier = 75;
 	}
 
 	Config PLATE_MAIL;
@@ -637,7 +639,7 @@ bodyarmor /* armor-> */
 	Config BROKEN|PLATE_MAIL;
 	{
 		Possibility = 25;
-		StrengthModifier = 75;
+		StrengthModifier = 100;
 		BitmapPos = 0, 352;
 		FormModifier = 20;
 	}
@@ -656,14 +658,17 @@ bodyarmor /* armor-> */
 		InElasticityPenaltyModifier = 25;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
+		Price = 200;
+		PriceIsProportionalToEnchantment = true;
 	}
 
 	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
 	{
 		Possibility = 3;
-		StrengthModifier = 60;
+		StrengthModifier = 75;
 		BitmapPos = 0, 352;
 		FormModifier = 20;
+		Price = 50;
 		AffectsEndurance = false;
 	}
 }
@@ -679,14 +684,14 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 1000;
 	BaseEmitation = rgb24(112, 112, 166);
-	StrengthModifier = 150;
+	StrengthModifier = 200;
 	NameSingular = "Shirt of the Golden Eagle";
 	MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
 	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	CanBeBroken = false;
 	CanBeCloned = false;
-	DefaultEnchantment = 23;
+	DefaultEnchantment = 10;
 	InElasticityPenaltyModifier = 30;
 } 
 
@@ -1010,6 +1015,23 @@ whip /* meleeweapon-> */
 		Possibility = 5;
 		BitmapPos = 32, 256;
 	}
+
+	Config RUNED_WHIP;
+	{
+		DefaultSize = 230;
+		Possibility = 25;
+		DefaultMainVolume = 750;
+		DefaultSecondaryVolume = 50;
+		StrengthModifier = 20;
+		Adjective = "runed";
+		FormModifier = 15;
+	}
+
+	Config BROKEN|RUNED_WHIP;
+	{
+		Possibility = 2;
+		BitmapPos = 32, 256;
+	}
 }
 
 backpack /* materialcontainer-> */
@@ -1192,7 +1214,7 @@ key
 
 shield /* armor-> */
 {
-	DefaultSize = 80;
+	DefaultSize = 60;
 	Possibility = 250;
 	Category = SHIELD;
 	DefaultMainVolume = 500;
@@ -1221,7 +1243,7 @@ cloak /* armor-> */
 	Possibility = 250;
 	Category = CLOAK;
 	DefaultMainVolume = 2000;
-	StrengthModifier = 75;
+	StrengthModifier = 100;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
 	NameSingular = "cloak";
@@ -1246,7 +1268,7 @@ boot /* armor-> */
 	Possibility = 250;
 	Category = BOOT;
 	DefaultMainVolume = 400;
-	StrengthModifier = 100;
+	StrengthModifier = 150;
 	BitmapPos = 0, 400;
 	FormModifier = 20;
 	NameSingular = "boot";
@@ -1275,9 +1297,19 @@ boot /* armor-> */
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
 		AffectsAgility = true;
-		Price = 40;
+		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
+	}
+
+	Config BOOT_OF_KICKING;
+	{
+		Possibility = 25;
+		PostFix = "of kicking";
+		MainMaterialConfig == IRON;
+		MaterialConfigChances == 100;
+		Price = 50;
+		FormModifier = 50;
 	}
 }
 
@@ -1287,7 +1319,7 @@ gauntlet /* armor-> */
 	Possibility = 250;
 	Category = GAUNTLET;
 	DefaultMainVolume = 300;
-	StrengthModifier = 75;
+	StrengthModifier = 125;
 	BitmapPos = 32, 368;
 	FormModifier = 20;
 	NameSingular = "gauntlet";
@@ -1304,7 +1336,7 @@ gauntlet /* armor-> */
 		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
 		AffectsArmStrength = true;
-		Price = 75;
+		Price = 100;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 	}
@@ -1316,7 +1348,7 @@ gauntlet /* armor-> */
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
 		AffectsDexterity = true;
-		Price = 60;
+		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 	}
@@ -1342,11 +1374,10 @@ belt /* armor-> */
 		Possibility = 25;
 		PostFix = "of carrying";
 		AffectsCarryingCapacity = true;
-		Price = 100;
+		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 	}
-	
 }
 
 ring
@@ -1371,7 +1402,7 @@ ring
 		Price = 250;
 	}
 
-	Config RING_OF_POLYMORPHCONTROL;
+	Config RING_OF_POLYMORPH_CONTROL;
 	{
 		Possibility = 10;
 		PostFix = "of polymorph control";
@@ -1388,13 +1419,13 @@ ring
 		GearStates = INFRA_VISION;
 		Price = 500;
 	}
-	
+
 	Config RING_OF_TELEPORTATION;
 	{
 		Possibility = 30;
 		PostFix = "of teleportation";
 		GearStates = TELEPORT;
-		MainMaterialConfig == IRON;
+		MainMaterialConfig == ANGEL_HAIR;
 		Alias == "ring of teleport";
 		Price = 250;
 	}
@@ -1420,9 +1451,9 @@ ring
 	Config RING_OF_POISON_RESISTANCE;
 	{
 		Possibility = 40;
-		PoisonResistance = 10;
+		PoisonResistance = 1;
 		PostFix = "of poison resistance";
-		MainMaterialConfig == IRON;
+		MainMaterialConfig == PHOENIX_FEATHER;
 		Price = 250;
 	}
 
@@ -1430,7 +1461,7 @@ ring
 	{
 		Possibility = 1;
 		PostFix = "of invisibility";
-		MainMaterialConfig == GLASS;
+		MainMaterialConfig == GOLD;
 		GearStates = INVISIBLE;
 		Price = 2500;
 	}
@@ -1485,7 +1516,7 @@ bodypart
 head /* bodypart-> */
 {
 	InHandsPic = 160, 144;
-	StrengthModifier = 150;
+	StrengthModifier = 200;
 	FormModifier = 10;
 	NameSingular = "head";
 	Roundness = 70;
@@ -1510,7 +1541,7 @@ humanoidtorso /* bodypart->torso-> */
 
 arm /* bodypart-> */
 {
-	StrengthModifier = 50;
+	StrengthModifier = 75;
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 15;
@@ -1528,7 +1559,7 @@ leftarm /* bodypart->arm-> */
 
 groin /* bodypart-> */
 {
-	StrengthModifier = 100;
+	StrengthModifier = 150;
 	FormModifier = 10;
 	NameSingular = "groin";
 	Roundness = 40;
@@ -1536,7 +1567,7 @@ groin /* bodypart-> */
 
 leg /* bodypart-> */
 {
-	StrengthModifier = 75;
+	StrengthModifier = 100;
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 20;
@@ -1637,6 +1668,7 @@ magicalwhistle /* whistle-> */
 	Adjective = "magical";
 	Price = 1500;
 	Alias == "magic whistle";
+	CanBePiled = false;
 }
 
 itemcontainer
@@ -1689,6 +1721,7 @@ itemcontainer
 		MaxGeneratedContainedItems = 10;
 		StrengthModifier = 1000;
 	}
+
 	Config STRONG_BOX;
 	{
 		NameSingular = "strong box";
@@ -1945,7 +1978,7 @@ whipofthievery /* meleeweapon->whip-> */
 	NameSingular = "whip";
 	PostFix = "of thievery";
 	MainMaterialConfig == NYMPH_HAIR;
-	SecondaryMaterialConfig == WOOD;
+	SecondaryMaterialConfig == DIAMOND;
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
@@ -2003,4 +2036,50 @@ skull
 	MainMaterialConfig == BONE;
 	Roundness = 20;
 	IsTwoHanded = true;
+}
+
+gorovitshammer
+{
+	DefaultSize = 90;
+	Possibility = 0;
+	InHandsPic = 176, 16;
+	WeaponCategory = HAMMERS;
+	DefaultMainVolume = 300;
+	DefaultSecondaryVolume = 600;
+	StrengthModifier = 125;
+	BitmapPos = 48, 160;
+	FormModifier = 70;
+	Adjective = "Gorovits family";
+	NameSingular = "hammer";
+	MainMaterialConfig == MITHRIL;
+	SecondaryMaterialConfig == WOOD;
+	Roundness = 20;
+	IsTwoHanded = true;
+	CanBeUsedBySmith = true;
+	CanBeBroken = false;
+	CanBeWished = false;
+	DefaultEnchantment = 2;
+	ArticleMode = DEFINITE_ARTICLE;
+}
+
+gorovitssickle
+{
+	DefaultSize = 60;
+	Possibility = 0;
+	InHandsPic = 160, 64; /* fix */
+	WeaponCategory = AXES;
+	DefaultMainVolume = 125;
+	DefaultSecondaryVolume = 50;
+	BitmapPos = 48, 144;
+	FormModifier = 60;
+	StrengthModifier = 50;
+	Adjective = "Gorovits family";
+	NameSingular = "sickle";
+	MainMaterialConfig == MITHRIL;
+	SecondaryMaterialConfig == WOOD;
+	Roundness = 50;
+	CanBeBroken = false;
+	CanBeWished = false;
+	DefaultEnchantment = 2;
+	ArticleMode = DEFINITE_ARTICLE;
 }

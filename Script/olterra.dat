@@ -57,7 +57,7 @@ wall
 		DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
 		MainMaterialConfig == STONE;
 		NameSingular = "wall";
-		PostFix = "with a poster explaining who's in charge here";
+		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamian Empire";
 		BitmapPos = 80, 272;
 	}
 
@@ -307,7 +307,7 @@ boulder /* olterrain-> */
 sign
 {
 	DigMessage = "You smash the sign to tiny bits.";
-	MainMaterialConfig == WOOD; /* stick part */
+	MainMaterialConfig == WOOD;
 	DefaultMainVolume = 5000; 
 	MaterialColorB = rgb16(200,200,200);
 	/* Uses own postfix */
@@ -315,4 +315,5 @@ sign
 	BitmapPos = 16, 336;
 	SitMessage = "You feel very wierd sitting on the sign.";
 	CanBeDug = true;
+	MaterialColorB = rgb16(48, 48, 48);
 }

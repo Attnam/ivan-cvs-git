@@ -4,20 +4,23 @@
  */
 
 Dungeons=4;
-Teams=9;
+Teams=10;
 
 /*
- * Description of teams:
- * 0 - Player and pets
- * 1 - Monsters, default relation to other teams == hostile
- * 3 - Petrus's team during the Final Battle
+ * Description of hard-coded teams:
+ * 0 == PLAYER_TEAM == Player and pets
+ * 1 == MONSTER_TEAM == Monsters, default relation to other teams == hostile
+ * 2 == ATTNAM_TEAM == Residents of Attnam
+ * 3 == FINAL_BATTLE_TEAM == Petrus's team during the Final Battle
  */
 
-Team 2; /* Residents of Attnam */
+Team ATTNAM_TEAM;
 {
 	Relation 0, FRIEND;
 	AttackEvilness=250;
 }
+
+/* Script defined teams: */
 
 Team 4; /* Enner beasts */
 {
@@ -49,22 +52,24 @@ Team 7; /* Ivan */
 Team 8; /* Residents of New Attnam */
 {
 	Relation 0, FRIEND;
-	Relation 2, FRIEND;
 	Relation 4, HOSTILE;
 	AttackEvilness=200;
 }
 
+Team 9; /* Richel Decos and his guards */
+{
+	Relation 4, HOSTILE;
+}
+
 Dungeon ELPURI_CAVE;
 {
-	Levels=7;
+	Levels=10;
+	Variable XSize = 64;
+	Variable YSize = 36;
 
 	LevelDefault
 	{
 		FillSquare=solidterrain(GROUND),wall(EARTH);
-
-		Variable XSize = 64;
-		Variable YSize = 36;
-
 		Size=XSize, YSize;
 		Rooms=10+rand%21;
 		Items=25+rand%26;
@@ -75,6 +80,8 @@ Dungeon ELPURI_CAVE;
 		AmbientLight=0;
 		LOSModifier=16;
 		IgnoreDefaultSpecialSquares = false;
+		BaseDifficulty = 80;
+		DifficultyDelta = 20;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
@@ -82,7 +89,7 @@ Dungeon ELPURI_CAVE;
 			Times = 25+rand%25;
 		}
 
-                Square, Random;
+		Square, Random;
 		{
 			Items == mine { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%4;
@@ -118,8 +125,8 @@ Dungeon ELPURI_CAVE;
 			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
 			ReCalculate=true;
-                        DivineMaster=0;
-                        GenerateTunnel=true;
+			DivineMaster=0;
+			GenerateTunnel=true;
 			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=true;
@@ -129,7 +136,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 0;
+	Level rand%3;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
 		Rooms=10+rand%21;
@@ -161,7 +168,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 1;
+	Level 1+rand%3;
 	{
 		Rooms=10+rand%21;
 
@@ -175,29 +182,23 @@ Dungeon ELPURI_CAVE;
 			AllowBoobyTrappedDoors=false;
 			GenerateFountains=false;
 
-			Square, Pos 1,1;
+			CharacterMap
 			{
-				Character=guard { Team=6; }
-			}
+				Pos = 1, 1;
+				Size = 3, 5;
 
-			Square, Pos 3,1;
-			{
-				Character=guard { Team=6; }
+				Types
+				{
+					g = guard(SHOP) { Team=6; }
+					s = shopkeeper(ELPURI_CAVE) { Team=6; }
+				}
 			}
-
-			Square, Pos 1,5;
 			{
-				Character=guard { Team=6; }
-			}
-
-			Square, Pos 3,5;
-			{
-				Character=guard { Team=6; }
-			}
-
-			Square, Pos 2,3;
-			{
-				Character=shopkeeper { Team=6; }
+				g.g
+				...
+				.s.
+				...
+				g.g
 			}
 
 			ItemMap
@@ -227,7 +228,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 2;
+	Level 4;
 	{
 		LevelMessage="You hear a wailing scream in the distance. An enner beast must dwell in the level!";
 		Rooms=10+rand%21;
@@ -238,27 +239,29 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 3;
+	Level 5;
 	{
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
+
 		Room 0; /* vault */
 		{
 		
-			GenerateLanterns=true;
+			GenerateLanterns=false;
 			GenerateFountains=false;
 			WallSquare = solidterrain(GROUND),wall(EARTH);
 			GenerateDoor = false;
 			GenerateTunnel = false;
 			AltarPossible = false;
 			Size = 7,7;
+
 			OTerrainMap
 			{
 				Pos=1,1;
 				Size=5,5;
 				Types
 				{
-					x = STONE wall(BRICK_OLD);
+					x = IRON wall(BRICK_OLD);
 				}
 			}
 			{
@@ -268,14 +271,32 @@ Dungeon ELPURI_CAVE;
 				x...x
 				xxxxx
 			}
+
+			Square, Random;
+			{
+				Items == mine { Team = MONSTER_TEAM; Active = true; Chance = 50; }
+				Times = 2;
+			}
+
+			Square, Random;
+			{
+				Items == beartrap { Team = MONSTER_TEAM; Active = true; Chance = 50; }
+				Times = 2;
+			}
+
 			Square, Pos 3,3;
 			{
 				Items == itemcontainer(CHEST) 
 				{
-					ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } 
+					ItemsInside = { 5,	Random { MinPrice = 1000; },
+										Random { MinPrice = 1000; },
+										stone { Chance = 75; },
+										stone { Chance = 75; },
+										stone { Chance = 75; } } 
 				}
 			}
 		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			Character=communist { Team=7; }
@@ -312,7 +333,7 @@ Dungeon ELPURI_CAVE;
 		}
 	}
 
-	Level 4+rand%4;
+	Level 5+rand%4;
 	{
 		Rooms=10+rand%21;
 
@@ -320,6 +341,7 @@ Dungeon ELPURI_CAVE;
 		{
 			Size=7,7;
 			AltarPossible=false;
+			Shape = ROUND_CORNERS;
 
 			CharacterMap
 			{
@@ -332,16 +354,16 @@ Dungeon ELPURI_CAVE;
 				}
 			}
 			{
+				.GGG.
 				GGGGG
 				GGGGG
 				GGGGG
-				GGGGG
-				GGGGG
+				.GGG.
 			}
 		}
 	}
 
-	Level 5;
+	Level 8;
 	{
 		IgnoreDefaultSpecialSquares = true;
 
@@ -369,6 +391,11 @@ Dungeon ELPURI_CAVE;
 			{
 				EntryIndex = STAIRS_DOWN;
 			}
+		}
+
+		Square, Random;
+		{
+			Items == pickaxe;
 		}
 	}
 
@@ -418,7 +445,7 @@ Dungeon ELPURI_CAVE;
 				{
 					O=oree;
 					B=darkknight(ELITE);
-					G=BLOOD golem;
+					G=golem(BLOOD);
 				}
 			}
 			{
@@ -435,15 +462,13 @@ Dungeon ELPURI_CAVE;
 Dungeon ATTNAM;
 {
 	Levels=1;
+	Variable XSize = 61;
+	Variable YSize = 62;
 
 	Level 0;
 	{
 		Description=Attnam;
 		FillSquare=solidterrain(GRASS_TERRAIN),empty;
-
-		Variable XSize = 61;
-		Variable YSize = 62;
-
 		Size=XSize, YSize;
 		GenerateMonsters=false;
 		Rooms=20 + rand % 6;
@@ -636,12 +661,12 @@ Dungeon ATTNAM;
 				..b...b........#########........b...b..
 				b....b.......bb#.......#bb.......b....b
 				...####b..b..###.......###..b..b####...
-				b.b#..#.b....#...........#....b.#..#b.b
+				b.b#..#.b....#...........#....b.#.B#b.b
 				...#..#....###...........###....#..#...
 				b.b#..#b..b#.....T...T.....#b..b#..#b.b
 				...#..###..#.......c.......#..###.B#...
 				b.b#....#.b#.......c.......#b.#....#b.b
-				...#....#..#.......c.......#..#BB..#...
+				...#....#..#.......c.......#..#B...#...
 				b.b###..#b.###.....c.....###.b#..###b.b
 				....b#..#@#.b#.....c.....#b.#@#.B#b....
 				b....#....#..#.....c.....#..#..B.#....b
@@ -695,38 +720,41 @@ Dungeon ATTNAM;
 					h == SAPPHIRE stone;
 					r == RUBY stone;
 					d == DIAMOND stone;
-					C == RUBY itemcontainer(CHEST);
-					W == wandofpolymorph;
 					1 == lantern { SideStackIndex = UP; }
 					2 == lantern { SideStackIndex = DOWN; }
 					3 == lantern { SideStackIndex = RIGHT; }
 					4 == lantern { SideStackIndex = LEFT; }
-					R == ring(RING_OF_FIRE_RESISTANCE); 
+					C == GOLD itemcontainer(CHEST) { ItemsInside = { 5, GOLD helmet, stone, stone, stone, GOLD banana; } }
+					F == ring(RING_OF_FIRE_RESISTANCE); 
 					I == ring(RING_OF_INVISIBILITY);
 					E == amulet(AMULET_OF_ESP);
-					S == GOLD meleeweapon(LONG_SWORD);
-					H == DIAMOND helmet(HELM_OF_UNDERSTANDING);
-					G == GOLD banana;
+					S == GOLD GOLD meleeweapon(LONG_SWORD);
+					U == DIAMOND helmet(HELM_OF_UNDERSTANDING);
+					A == GOLD helmet(HELM_OF_ATTRACTIVITY);
+					L == oillamp;
+					P == GOLD bodyarmor(PLATE_MAIL);
+					O == GOLD cloak;
+					W == wandofpolymorph;
 				}
 			}
 			{
 				............##2###2##............
 				............#.......#............
 				####......###.......###......####
-				#..#......#...........#......#rd#
-				#..#....###...........###....#gg#
-				#..#....#...d.....a.d...#....#gC#
-				#..###..#......p.p......#..###IR#
-				#...e#..#......b.b......#..#EEII#
-				#...e#..#......k.k......#..#SHHG#
-				##1.e#..##1.r..p.p..r.1##..#dg1##
-				..#.e4##..#....b.b....#..##3rr#..
-				..#....#..#....k.k....#..#rRRR#..
-				..###..4###....p.p....###3gi###..
-				....#.....3.h..b.b..h.4irdWg#....
-				....#.....#....k.k....#iEggg#....
-				....###3..#....p.p....#SW4###....
-				.......#..#....b.b....#gd#.......
+				#..#......#...........#......#r.#
+				#..#....###...........###....#gi#
+				#..#....#...d.....a.d...#....#hC#
+				#..###..#......p.p......#..###I.#
+				#...e#..#......b.b......#..#EOLF#
+				#...e#..#......k.k......#..#.dPS#
+				##1.e#..##1.r..p.p..r.1##..#Ug1##
+				..#.e4##..#....b.b....#..##3r.#..
+				..#....#..#....k.k....#..#Wh.L#..
+				..###..4###....p.p....###3Fi###..
+				....#.....3.h..b.b..h.4P.A.I#....
+				....#.....#....k.k....#r.gEd#....
+				....###3..#....p.p....#Sd4###....
+				.......#..#....b.b....#h.#.......
 				......###.3.i..k.k..i.4.###......
 				..#####.#.#....p.p....#.#.#####..
 				.##.......#....b.b....#.......##.
@@ -754,10 +782,13 @@ Dungeon ATTNAM;
 				{
 					# = 0;
 					P = petrus;
-					c = guard;
+					g = guard(VETERAN);
+					e = guard(ELITE);
+					m = guard(MASTER);
 					p = priest;
 					d = dolphin;
-					l = lightfrog;
+					l = frog(LIGHT);
+					f = frog(GREATER_LIGHT);
 					s = femaleslave;
 					1 = petrusswife(1);
 					2 = petrusswife(2);
@@ -770,34 +801,34 @@ Dungeon ATTNAM;
 			}
 			{
 				............#########............
-				............#c..c..c#............
-				####......###.......###......####
-				#k.#......#c....l....c#......#..#
+				............#g.....g#............
+				####......###...m...###......####
+				#k.#......#g....l....g#......#..#
 				#k.#....###...........###....#..#
-				#k.#....#c...sPs.s.s...c#....#..#
+				#k.#....#e...sPs.s.s...e#....#..#
 				#k.###..#...............#..###..#
-				#k...#..#..l....l....l..#..#....#
-				#k...#..#c.............c#..#....#
+				#k...#..#..l....f....l..#..#....#
+				#k...#..#e.............e#..#....#
 				###..#..###...........###..#..###
 				..#..###..#...........#..###..#..
-				..#....#..#c.l.....l.c#..#....#..
+				..#....#..#g.l.....l.g#..#....#..
 				..###k.####...........####..###..
+				....#k...k#...........#.e...#....
 				....#k...k#...........#.....#....
-				....#k...k#...........#.....#....
-				....####.k#c.........c#..####....
+				....####.k#g.........g#..####....
 				.......#..#...........#..#.......
 				......###.#...........#.###......
-				..#####c#.#...........#.#.#####..
-				.##.......#c.........c#.......##.
+				..#####e#.#...........#.#.#####..
+				.##.......#g.........g#.......##.
 				.#......#.#...........#.#..p...#.
 				.#....d.#.#...........#.#......#.
 				.##...d.#.#...........#.#.....##.
-				..##.d.d#.#c.........c#.#....##..
+				..##.d.d#.#g.........g#.#....##..
 				...##.d.#.######.######.#...##...
-				....#.d.#......c.c......#...#....
+				....#.d.#......g.g......#...#....
 				....#...#...............#...#....
-				...#######...###.###..c#######...
-				####.3.5.....#c...c#..c......####
+				...#######...###.###..g#######...
+				####.3.5.....#g...g#..g......####
 				#.1......#####.....#####........#
 				#....4.6.#.............#........#
 				##...#####.............#####...##
@@ -830,7 +861,7 @@ Dungeon ATTNAM;
 
 			Square, Pos 5, 1;
 			{
-				Character = shopkeeper;
+				Character = shopkeeper(ATTNAM);
 			}
 
 			ItemMap
@@ -1065,14 +1096,13 @@ Dungeon ATTNAM;
 Dungeon NEW_ATTNAM;
 {
 	Levels = 1;
+	Variable XSize = 50;
+	Variable YSize = 50;
+
 	Level 0;
 	{
 		Description="New Attnam";
 		FillSquare=solidterrain(GRASS_TERRAIN),empty;
-
-		Variable XSize = 50;
-		Variable YSize = 50;
-
 		Size=XSize, YSize;
 		GenerateMonsters=false;
 		Rooms= 5 + rand % 3;
@@ -1144,7 +1174,7 @@ Dungeon NEW_ATTNAM;
 				Types
 				{
 					# = 0;
-					I = imperialist;
+					I = imperialist { Team = 9; }
 				}
 			}
 			{
@@ -1186,32 +1216,38 @@ Dungeon NEW_ATTNAM;
 				.............
 			}
 		}
-		Square, Pos 9, 18;
-		{
-			OTerrain = sign { Text = "former temple of Silva"; }
-		}
+
 		Square, Pos 10, 17;
 		{
 			OTerrain = GOLD door;
 		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			EntryIndex = STAIRS_UP;
 		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain=boulder;
 			Times=50;
 		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain=decoration(PALM);
 			Times = 100;
 		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			Character=bananagrower;
 			Times=40;
+		}
+
+		Square, Pos 9, 18;
+		{
+			OTerrain = sign { Text = "The mansion of Viceroy Richel Decos, formerly a temple of nature."; }
 		}
 	}
 }
@@ -1219,14 +1255,12 @@ Dungeon NEW_ATTNAM;
 Dungeon UNDER_WATER_TUNNEL;
 {
 	Levels=3;
+	Variable XSize = 80;
+	Variable YSize = 20;
 
 	LevelDefault
 	{
 		FillSquare=solidterrain(GROUND),wall(EARTH);
-
-		Variable XSize = 80;
-		Variable YSize = 20;
-
 		Size=XSize, YSize;
 		Rooms=5+rand%6;
 		Items=15+rand%16;
@@ -1237,6 +1271,8 @@ Dungeon UNDER_WATER_TUNNEL;
 		AmbientLight=0;
 		LOSModifier=16;
 		IgnoreDefaultSpecialSquares = false;
+		BaseDifficulty = 20;
+		DifficultyDelta = 20;
 
 		Square, Random;
 		{
@@ -1254,8 +1290,8 @@ Dungeon UNDER_WATER_TUNNEL;
 			DoorSquare=solidterrain(PARQUET),door;
 			GenerateDoor=true;
 			ReCalculate=true;
-                        DivineMaster=0;
-                        GenerateTunnel=true;
+			DivineMaster=0;
+			GenerateTunnel=true;
 			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=true;
@@ -1268,6 +1304,7 @@ Dungeon UNDER_WATER_TUNNEL;
 	Level 0;
 	{
 		IgnoreDefaultSpecialSquares = true;
+		GenerateMonsters = false;
 
 		RoomDefault
 		{
@@ -1276,17 +1313,23 @@ Dungeon UNDER_WATER_TUNNEL;
 			AllowBoobyTrappedDoors=false;
 		}
 
-		Square, Random;
+		/*Square, Random;
 		{
 			Character=spider;
-			Times=20;
+			Times=5;
 		}
 
 		Square, Random;
 		{
 			Character=kobold;
-			Times=10;
+			Times=5;
 		}
+
+		Square, Random;
+		{
+			Character=zombie;
+			Times=5;
+		}*/
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{
@@ -1297,6 +1340,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
+			Pos=2+rand%(XSize/2-6),2+rand%(YSize-6);
 			Size=5,5;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
@@ -1310,8 +1354,8 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,1;
 			{
-                                Items==lantern;
-				/*Character=mistress(QUEEN);*/
+				Items==lantern;
+				/*Character = golem(BLOOD);*/
 			}
 		}
 	}
@@ -1335,6 +1379,8 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 2;
 	{
+		LevelMessage="This level seems to be somehow alive...";
+
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_DOWN) { AttachedArea = 1; AttachedEntry = STAIRS_UP + 1; }
@@ -1344,13 +1390,32 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
-			Size=6,5;
+			Size=5,5;
+			Pos=XSize/2 + rand%(XSize/2-10),2+rand%(YSize-6);
 			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
-			Square, Pos 3,2;
+			GenerateFountains = false;
+			AltarPossible = false;
+
+			Square, Pos 2,2;
 			{
-				Character=genetrixvesana;
 				OTerrain = link(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
 				EntryIndex = STAIRS_UP;				
+			}
+
+			CharacterMap
+			{
+				Size = 3,3;
+				Pos = 1,1;
+				Types
+				{
+					c = carnivorousplant(GREATER);
+					g = genetrixvesana;
+				}
+			}
+			{
+				ccc
+				cgc
+				ccc
 			}
 		}
 	}

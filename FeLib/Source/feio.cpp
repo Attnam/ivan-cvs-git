@@ -290,6 +290,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 {
   long BarValue = StartValue;
   std::string Input;
+  bool FirstTime = true;
 
   if(Fade)
     {
@@ -304,7 +305,6 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
       Buffer.FadeToScreen();
     }
 
-  bool FirstTime = true, Overwrite = false;
   for(int LastKey = 0;; LastKey = 0)
     {
       if(!FirstTime)
@@ -321,24 +321,19 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 
       DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
       DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
-      std::string Output;
 
       if(FirstTime)
 	{
-	  Output = festring::IntegerToChar(StartValue);
-	  BarValue = StartValue;
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %d", Topic.c_str(), StartValue);
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X + (Topic.length() << 3) + 8, Pos.Y + 1, TopicColor, "_");
+	  FirstTime = false;
 	}
       else
 	{
-	if(Input.length())
-	  Output = Input.c_str();
-	else
-	  Output = Min;
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X + ((Topic.length() + Input.length()) << 3) + 8, Pos.Y + 1, TopicColor, "_");
 	}
-
-      FirstTime = false;
-
-      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Output.c_str());
+      
       DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
       DOUBLE_BUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
       DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
@@ -369,7 +364,6 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 
 	  Input.resize(0);
 	  Input += BarValue;
-	  Overwrite = true;
 	  continue;
 	}
 
@@ -382,14 +376,9 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 
 	  Input.resize(0);
 	  Input += BarValue;
-	  Overwrite = true;
 	  continue;
 	}
-      if(Overwrite)
-	{
-	  Input.resize(0);
-	  Overwrite = false;
-	}
+
       if(Input.length() < 12)
 	Input += char(LastKey);
     }
