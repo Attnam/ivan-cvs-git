@@ -2208,7 +2208,7 @@ void level::CollectEverything(itemvector& IVector, charactervector& CVector)
     for(int y = 0; y < YSize; ++y)
       {
 	lsquare* LS = Map[x][y];
-	LS->GetStack()->MoveItemsTo(IVector);
+	LS->GetStack()->MoveItemsTo(IVector, CENTER);
 	character* C = LS->GetCharacter();
 
 	if(C && !C->IsPlayer())

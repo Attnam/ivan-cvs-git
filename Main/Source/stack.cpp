@@ -1087,14 +1087,17 @@ void stack::AddItems(const itemvector& ItemVector)
     AddItem(ItemVector[c]);
 }
 
-void stack::MoveItemsTo(itemvector& ItemVector)
+void stack::MoveItemsTo(itemvector& ToVector, int RequiredSquarePosition)
 {
-  while(Items)
-    {
-      item* Item = *GetBottom();
-      Item->RemoveFromSlot();
-      ItemVector.push_back(Item);
-    }
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->GetSquarePosition() == RequiredSquarePosition)
+      {
+	ItemVector[c]->RemoveFromSlot();
+	ToVector.push_back(ItemVector[c]);
+      }
 }
 
 void stack::DropSideItems()

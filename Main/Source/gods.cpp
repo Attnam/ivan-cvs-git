@@ -166,7 +166,7 @@ void valpurus::PrayBadEffect()
 void legifer::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed accidentally by ") + GetName(), PLAYER->GetPos(), 40, false);
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed accidentally by ") + GetName(), PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
 }
 
 void legifer::PrayBadEffect()

@@ -144,7 +144,7 @@ class stack
   void AddElement(item*);
   void SpillFluid(character*, liquid*, long);
   void AddItems(const itemvector&);
-  void MoveItemsTo(itemvector&);
+  void MoveItemsTo(itemvector&, int);
   void Freeze() { Flags |= FREEZED; }
   void UnFreeze() { Flags &= ~FREEZED; }
   void DropSideItems();
