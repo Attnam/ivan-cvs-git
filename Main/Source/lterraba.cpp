@@ -129,7 +129,7 @@ bool lterrain::CanBeSeenBy(character* Who) const
   if(Who->IsPlayer())
     return CanBeSeenByPlayer();
   else
-    return LSquareUnder->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+    return LSquareUnder->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare());
 }
 
 void glterrain::InstallDataBase()

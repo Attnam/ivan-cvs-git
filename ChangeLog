@@ -7,6 +7,12 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A floating eye can't make enemies faint if the they don't see it
+	* Corrected a rounding error bug in the LOS code
+	* Endurance changes affect current HP a little differently
+
 January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Lookmode now shows if a monster has panicked. (now works)

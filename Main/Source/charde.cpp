@@ -4174,8 +4174,8 @@ void floatingeye::GetAICommand()
 bool floatingeye::Hit(character* Enemy, bool)
 {
   if(IsPlayer())
-    ADD_MESSAGE("You stare at %s.", Enemy->CHAR_NAME(DEFINITE));
-  else if(Enemy->IsPlayer())
+    ADD_MESSAGE("You stare at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+  else if(Enemy->IsPlayer() && CanBeSeenByPlayer())
     ADD_MESSAGE("%s stares at you.", CHAR_NAME(DEFINITE));
 
   EditAP(-1000);
@@ -4184,7 +4184,7 @@ bool floatingeye::Hit(character* Enemy, bool)
 
 ushort floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
-  if(Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
+  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
     {
       Enemy->Faint(250 + RAND() % 250);
       return HAS_FAILED;

@@ -255,10 +255,10 @@ class character : public entity, public id
   uchar GetBurdenState() const { return BurdenState; }
   bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
   virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
-  ushort LOSRange() const;
-  ushort LOSRangeSquare() const;
-  ushort ESPRange() const;
-  ushort ESPRangeSquare() const;
+  ushort GetLOSRange() const;
+  ushort GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
+  ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
+  ushort GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
   virtual void AddMissMessage(const character*) const;
   virtual void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, ushort) const;
   virtual void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;

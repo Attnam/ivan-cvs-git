@@ -836,7 +836,7 @@ bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
-  return (GetPos() - FromPos).Length() <= MaxDistance && (IgnoreDarkness || !IsDark())
+  return (GetPos() - FromPos).GetLengthSquare() <= MaxDistance && (IgnoreDarkness || !IsDark())
       && ((Character && Character->IsPlayer() && GetNearSquare(FromPos)->CanBeSeenByPlayer(true))
       || femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }

@@ -2688,7 +2688,7 @@ void bodypart::CalculateEmitation()
 
 void bodypart::CalculateMaxHP(bool MayChangeHPs)
 {
-  bool WasAtMaxHP = (HP == MaxHP);
+  short HPDelta = MaxHP - HP;
   MaxHP = 0;
 
   if(GetMaster())
@@ -2707,8 +2707,8 @@ void bodypart::CalculateMaxHP(bool MayChangeHPs)
       if(MaxHP < 1)
 	MaxHP = 1;
 
-      if(MayChangeHPs && (WasAtMaxHP || HP >= MaxHP))
-	HP = MaxHP;
+      if(MayChangeHPs)
+	HP = Max(MaxHP - HPDelta, 1);
     }
 }
 

@@ -67,7 +67,7 @@ void area::AddCharacter(vector2d Pos, character* Guy)
 void area::UpdateLOS()
 {
   game::LOSTurn();
-  ushort Radius = game::GetPlayer()->LOSRange();
+  ushort Radius = game::GetPlayer()->GetLOSRange();
   ulong RadiusSquare = Radius * Radius;
   vector2d Pos = game::GetPlayer()->GetPos();
 

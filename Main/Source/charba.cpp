@@ -2098,9 +2098,6 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
   if(Succeeded)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
 
-  //if(DoneDamage < TrueDamage)
-  //Thingy->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
-
   if(CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED), Thrower))
     return;
 
@@ -2466,7 +2463,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	  {
 	    ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
-	    if(ThisDistance <= LOSRangeSquare())
+	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
 	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true))
@@ -2674,33 +2671,12 @@ bool character::LowerGodRelations()
   return false;
 }
 
-ushort character::LOSRange() const
+ushort character::GetLOSRange() const
 {
   if(!game::IsInWilderness())
     return GetAttribute(PERCEPTION) * GetLevel()->GetLOSModifier() / 48;
   else
     return 3;
-}
-
-ushort character::LOSRangeSquare() const
-{
-  if(!game::IsInWilderness())
-    {
-      ulong LOSModifier = GetLevel()->GetLOSModifier();
-      return GetAttribute(PERCEPTION) * GetAttribute(PERCEPTION) * LOSModifier * LOSModifier / 2304;
-    }
-  else
-    return 9;
-}
-
-ushort character::ESPRange() const
-{
-  return GetAttribute(INTELLIGENCE) / 3;
-}
-
-ushort character::ESPRangeSquare() const
-{
-  return GetAttribute(INTELLIGENCE) * GetAttribute(INTELLIGENCE) / 9;
 }
 
 bool character::GainDivineKnowledge()
@@ -4248,8 +4224,8 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
 	    {
 	      if(Attribute < 100)
 		{
-		  Attribute += 1;
 		  Experience -= Attribute << 8;
+		  Attribute += 1;
 		  Effect = true;
 		  continue;
 		}
@@ -4261,8 +4237,8 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
 	    {
 	      if(Attribute < 200)
 		{
-		  Attribute += 1;
 		  Experience -= Attribute << 7;
+		  Attribute += 1;
 		  Effect = true;
 		  continue;
 		}
@@ -4292,8 +4268,8 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	    {
 	      if(Attribute > 1)
 		{
-		  Attribute -= 1;
 		  Experience += Max(long(100 - Attribute) << 10, 0L);
+		  Attribute -= 1;
 		  Effect = true;
 		  continue;
 		}
@@ -4305,8 +4281,8 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	    {
 	      if(Attribute > 2)
 		{
-		  Attribute -= 1;
 		  Experience += Max(long(200 - Attribute) << 9, 0L);
+		  Attribute -= 1;
 		  Effect = true;
 		  continue;
 		}
@@ -5003,12 +4979,12 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
   bool InfraSeen = game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm();
   bool Visible = !StateIsActivated(INVISIBLE) || InfraSeen;
 
-  if((game::IsInWilderness() && Visible) || (!IgnoreESP && game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare())))
+  if((game::IsInWilderness() && Visible) || (!IgnoreESP && game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - game::GetPlayer()->GetPos()).GetLengthSquare() <= game::GetPlayer()->GetESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->LOSRangeSquare() && femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
+    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - game::GetPlayer()->GetPos()).GetLengthSquare() <= game::GetPlayer()->GetLOSRangeSquare() && femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -5019,12 +4995,12 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
     {
       bool Visible = !StateIsActivated(INVISIBLE) || (Who->StateIsActivated(INFRA_VISION) && IsWarm());
 
-      if((game::IsInWilderness() && Visible) || (!IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare())))
+      if((game::IsInWilderness() && Visible) || (!IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).GetLengthSquare() <= Who->GetESPRangeSquare())))
 	return true;
       else if(!Visible)
 	return false;
       else
-	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), Who->StateIsActivated(INFRA_VISION) && IsWarm());
+	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), Who->StateIsActivated(INFRA_VISION) && IsWarm());
     }
 }
 
@@ -5175,7 +5151,7 @@ void character::EndESP()
 
 void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
-  if((game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (game::GetPlayer()->GetPos() - GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare()) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm()))
+  if((game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (game::GetPlayer()->GetPos() - GetPos()).GetLengthSquare() <= game::GetPlayer()->GetESPRangeSquare()) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm()))
     Luminance = configuration::GetContrastLuminance();
 
   DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);

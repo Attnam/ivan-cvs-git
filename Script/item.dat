@@ -1145,7 +1145,7 @@ wand
 
 scrollofchangematerial /* scroll-> */
 {
-	Possibility = 10;
+	Possibility = 20;
 	Price = 1000;
 	PostFix = "of change material";
 	Alias == "SoCM";
@@ -2004,7 +2004,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 10;
+		Possibility = 5;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
 		MainMaterialConfig == UNICORN_HORN;
@@ -2017,7 +2017,7 @@ helmet
 	Config BROKEN|HELM_OF_UNDERSTANDING;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 1;
+		Possibility = 0;
 		Price = 20;
 		AffectsWisdom = false;
 	}
@@ -2029,7 +2029,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 10;
+		Possibility = 5;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
 		MainMaterialConfig == MITHRIL;
@@ -2042,7 +2042,7 @@ helmet
 	Config BROKEN|HELM_OF_BRILLIANCE;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 1;
+		Possibility = 0;
 		Price = 20;
 		AffectsIntelligence = false;
 	}

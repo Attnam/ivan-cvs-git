@@ -58,7 +58,7 @@ bool square::CanBeSeenByPlayer(bool) const
 
 bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
 {
-  ulong Distance = (GetPos() - FromPos).Length();
+  ulong Distance = (GetPos() - FromPos).GetLengthSquare();
 
   if(Distance > MaxDistance)
     return false;
@@ -66,7 +66,7 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
     {
       character* Char = GetCharacter();
 
-      if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
+      if(Char && Char->IsPlayer() && Distance < Char->GetLOSRangeSquare())
 	return GetNearSquare(FromPos)->CanBeSeenByPlayer(true);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
@@ -138,5 +138,5 @@ bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
   if(Who->IsPlayer())
     return CanBeSeenByPlayer(IgnoreDarkness);
   else
-    return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), IgnoreDarkness);
+    return CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), IgnoreDarkness);
 }
