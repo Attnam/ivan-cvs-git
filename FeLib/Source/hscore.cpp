@@ -19,7 +19,6 @@
 /* Increment this if changes make highscores incompatible */
 #define HIGH_SCORE_VERSION 121
 
-
 const festring& highscore::GetEntry(int I) const { return Entry[I]; }
 long highscore::GetScore(int I) const { return Score[I]; }
 long highscore::GetSize() const { return Entry.size(); }

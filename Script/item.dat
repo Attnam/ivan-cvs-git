@@ -40,7 +40,7 @@ item
   StrengthModifier = 0;
   /* Obligatory: FormModifier */
   /* Obligatory: DefaultSize */
-  /* Obligatory: DefaultMainVolume */
+  DefaultMainVolume = 0;
   DefaultSecondaryVolume = 0;
   /* Obligatory: BitmapPos */
   Price = 0;
@@ -933,6 +933,7 @@ bodyarmor /* armor-> */
     MainMaterialConfig = { 6, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
     MaterialConfigChances = { 6, 50, 25, 20, 25, 5, 5; }
     EnchantmentPlusChance = 20;
+    InElasticityPenaltyModifier = 15;
   }
 
   Config PLATE_MAIL;
@@ -959,6 +960,7 @@ bodyarmor /* armor-> */
     MainMaterialConfig = { 6, NYMPH_HAIR, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE; }
     MaterialConfigChances = { 6, 250, 100, 250, 100, 25, 10; }
     EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 25;
   }
 
   Config ARMOR_OF_GREAT_HEALTH;
@@ -992,6 +994,7 @@ bodyarmor /* armor-> */
     MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 6, 150, 75, 25, 50, 10, 1; }
     EnchantmentPlusChance = 4;
+    InElasticityPenaltyModifier = 50;
   }
 }
 
@@ -1846,7 +1849,7 @@ cloak /* armor-> */
   {
     Possibility = 25;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 25;
+    InElasticityPenaltyModifier = 40;
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
     MaterialConfigChances = { 4, 500, 250, 100, 25; }
     EnchantmentPlusChance = 20;
@@ -1867,7 +1870,7 @@ cloak /* armor-> */
   {
     Possibility = 2;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 25;
+    InElasticityPenaltyModifier = 40;
     Price = 500;
     GearStates = 0;
     EnchantmentPlusChance = 4;
@@ -1886,7 +1889,7 @@ cloak /* armor-> */
   {
     Possibility = 2;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 25;
+    InElasticityPenaltyModifier = 40;
     FireResistance = 10;
     Price = 150;
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
@@ -1907,7 +1910,7 @@ cloak /* armor-> */
   {
     Possibility = 2;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 25;
+    InElasticityPenaltyModifier = 40;
     ElectricityResistance = 10;
     Price = 150;
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
@@ -1929,7 +1932,7 @@ cloak /* armor-> */
   {
     Possibility = 1;
     BitmapPos = 64, 304;
-    InElasticityPenaltyModifier = 25;
+    InElasticityPenaltyModifier = 40;
     AcidResistance = 2;
     Price = 150;
     MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
@@ -1968,6 +1971,7 @@ boot /* armor-> */
     MainMaterialConfig = { 9, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
     MaterialConfigChances = { 9, 100, 500, 100, 25, 10, 10, 25, 5, 1; }
     EnchantmentPlusChance = 20;
+    InElasticityPenaltyModifier = 30;
   }
 
   Config BOOT_OF_STRENGTH;
@@ -1992,6 +1996,7 @@ boot /* armor-> */
     AffectsLegStrength = false;
     Price = 10;
     EnchantmentPlusChance = 4;
+    InElasticityPenaltyModifier = 30;
   }
 
   Config BOOT_OF_AGILITY;
@@ -2017,6 +2022,7 @@ boot /* armor-> */
     AffectsAgility = false;
     Price = 25;
     EnchantmentPlusChance = 4;
+    InElasticityPenaltyModifier = 30;
   }
 
   Config BOOT_OF_KICKING;
@@ -2039,6 +2045,7 @@ boot /* armor-> */
     MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
     MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
     EnchantmentPlusChance = 10;
+    InElasticityPenaltyModifier = 30;
   }
 }
 
@@ -2071,9 +2078,9 @@ gauntlet /* armor-> */
     MaterialConfigChances = { 7, 100, 500, 250, 50, 10, 5, 10; }
     DefaultSize = 30;
     FormModifier = 30;
-    InElasticityPenaltyModifier = 10;
     BitmapPos = 80, 400;
     EnchantmentPlusChance = 20;
+    InElasticityPenaltyModifier = 30;
   }
 
   Config GAUNTLET_OF_STRENGTH;
@@ -2094,11 +2101,11 @@ gauntlet /* armor-> */
   {
     DefaultSize = 20;
     FormModifier = 30;
-    InElasticityPenaltyModifier = 10;
     BitmapPos = 80, 400;
     AffectsArmStrength = false;
     Price = 25;
     EnchantmentPlusChance = 4;
+    InElasticityPenaltyModifier = 30;
   }
 
   Config GAUNTLET_OF_DEXTERITY;
@@ -2119,11 +2126,11 @@ gauntlet /* armor-> */
   {
     DefaultSize = 20;
     FormModifier = 30;
-    InElasticityPenaltyModifier = 10;
     BitmapPos = 80, 400;
     AffectsDexterity = false;
     Price = 25;
     EnchantmentPlusChance = 4;
+    InElasticityPenaltyModifier = 30;
   }
 }
 

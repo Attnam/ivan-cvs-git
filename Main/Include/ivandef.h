@@ -283,15 +283,6 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define VALUABLE (1 << 16)
 #define MISC (1 << 17)
 
-/*#define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
-
-#define ROUND 0
-#define SQUARE 1
-#define TRIANGULAR 2
-#define DAMAGED 3 // lock is too damaged to be used again
-#define HEXAGONAL 4
-#define OCTAGONAL 5*/
-
 #define GOOD 1
 #define NEUTRAL 2
 #define EVIL 3
@@ -690,8 +681,6 @@ const v2 SILHOUETTE_SIZE(48, 64);
 
 #define ARMOR_OUTLINE_PRIORITY ((7 << 4) + 7)
 #define CLOAK_PRIORITY ((8 << 4) + 7)
-/*#define DRIP_PRIORITY ((9 << 4) + 9)
-#define FLUID_PRIORITY ((9 << 4) + 9)*/
 
 #define BODY_ARMOR_PARTS 6
 

@@ -12,13 +12,16 @@
 
 /* Compiled through charset.cpp */
 
-/* These statedata structs contain functions and values used for handling states. Remember to update them.
- * All normal states must have PrintBeginMessage and PrintEndMessage functions and a Description string.
- * BeginHandler, EndHandler, Handler (called each tick) and IsAllowed are optional, enter zero if the state
- * doesn't need one. If the SECRET flag is set, Description is not shown in the panel without magical means.
- * You can also set some source (SRC_*) and duration (DUR_*) flags, which control whether the state can be
- * randomly activated in certain situations. These flags can be found in ivandef.h. RANDOMIZABLE sets all
- * source & duration flags at once. */
+/* These statedata structs contain functions and values used for handling
+ * states. Remember to update them. All normal states must have
+ * PrintBeginMessage and PrintEndMessage functions and a Description string.
+ * BeginHandler, EndHandler, Handler (called each tick) and IsAllowed are
+ * optional, enter zero if the state doesn't need one. If the SECRET flag
+ * is set, Description is not shown in the panel without magical means.
+ * You can also set some source (SRC_*) and duration (DUR_*) flags, which
+ * control whether the state can be randomly activated in certain situations.
+ * These flags can be found in ivandef.h. RANDOMIZABLE sets all source
+ * & duration flags at once. */
 
 struct statedata
 {
@@ -247,67 +250,122 @@ statedata StateData[STATES] =
   }*/
 };
 
-characterprototype::characterprototype(const characterprototype* Base, characterspawner Spawner, charactercloner Cloner, const char* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<character>::Add(this); }
-std::list<character*>::iterator character::GetTeamIterator() { return TeamIterator; }
-void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
-void character::CreateInitialEquipment(int SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
-void character::EditAP(long What) { AP = Limit<long>(AP + What, -12000, 1200); }
+characterprototype::characterprototype(const characterprototype* Base,
+				       characterspawner Spawner,
+				       charactercloner Cloner,
+				       const char* ClassID)
+: Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID)
+{ Index = protocontainer<character>::Add(this); }
+std::list<character*>::iterator character::GetTeamIterator()
+{ return TeamIterator; }
+void character::SetTeamIterator(std::list<character*>::iterator What)
+{ TeamIterator = What; }
+void character::CreateInitialEquipment(int SpecialFlags)
+{ AddToInventory(DataBase->Inventory, SpecialFlags); }
+void character::EditAP(long What)
+{ AP = Limit<long>(AP + What, -12000, 1200); }
 int character::GetRandomStepperBodyPart() const { return TORSO_INDEX; }
-void character::GainIntrinsic(long What) { BeginTemporaryState(What, PERMANENT); }
+void character::GainIntrinsic(long What)
+{ BeginTemporaryState(What, PERMANENT); }
 truth character::IsUsingArms() const { return GetAttackStyle() & USE_ARMS; }
 truth character::IsUsingLegs() const { return GetAttackStyle() & USE_LEGS; }
 truth character::IsUsingHead() const { return GetAttackStyle() & USE_HEAD; }
-void character::CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
-festring character::GetBeVerb() const { return IsPlayer() ? CONST_S("are") : CONST_S("is"); }
-void character::SetEndurance(int What) { BaseExperience[ENDURANCE] = What * EXP_MULTIPLIER; }
-void character::SetPerception(int What) { BaseExperience[PERCEPTION] = What * EXP_MULTIPLIER; }
-void character::SetIntelligence(int What) { BaseExperience[INTELLIGENCE] = What * EXP_MULTIPLIER; }
-void character::SetWisdom(int What) { BaseExperience[WISDOM] = What * EXP_MULTIPLIER; }
-void character::SetCharisma(int What) { BaseExperience[CHARISMA] = What * EXP_MULTIPLIER; }
-void character::SetMana(int What) { BaseExperience[MANA] = What * EXP_MULTIPLIER; }
-truth character::IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
-truth character::LeftOversAreUnique() const { return GetArticleMode() || AssignedName.GetSize(); }
-truth character::HomeDataIsValid() const { return HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex() && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex(); }
+void character::CalculateAllowedWeaponSkillCategories()
+{ AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
+festring character::GetBeVerb() const
+{ return IsPlayer() ? CONST_S("are") : CONST_S("is"); }
+void character::SetEndurance(int What)
+{ BaseExperience[ENDURANCE] = What * EXP_MULTIPLIER; }
+void character::SetPerception(int What)
+{ BaseExperience[PERCEPTION] = What * EXP_MULTIPLIER; }
+void character::SetIntelligence(int What)
+{ BaseExperience[INTELLIGENCE] = What * EXP_MULTIPLIER; }
+void character::SetWisdom(int What)
+{ BaseExperience[WISDOM] = What * EXP_MULTIPLIER; }
+void character::SetCharisma(int What)
+{ BaseExperience[CHARISMA] = What * EXP_MULTIPLIER; }
+void character::SetMana(int What)
+{ BaseExperience[MANA] = What * EXP_MULTIPLIER; }
+truth character::IsOnGround() const
+{ return MotherEntity && MotherEntity->IsOnGround(); }
+truth character::LeftOversAreUnique() const
+{ return GetArticleMode() || AssignedName.GetSize(); }
+truth character::HomeDataIsValid() const
+{ return (HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex()
+	  && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex()); }
 void character::SetHomePos(v2 Pos) { HomeData->Pos = Pos; }
 const char* character::FirstPersonUnarmedHitVerb() const { return "hit"; }
-const char* character::FirstPersonCriticalUnarmedHitVerb() const { return "critically hit"; }
+const char* character::FirstPersonCriticalUnarmedHitVerb() const
+{ return "critically hit"; }
 const char* character::ThirdPersonUnarmedHitVerb() const { return "hits"; }
-const char* character::ThirdPersonCriticalUnarmedHitVerb() const { return "critically hits"; }
+const char* character::ThirdPersonCriticalUnarmedHitVerb() const
+{ return "critically hits"; }
 const char* character::FirstPersonKickVerb() const { return "kick"; }
-const char* character::FirstPersonCriticalKickVerb() const { return "critically kick"; }
+const char* character::FirstPersonCriticalKickVerb() const
+{ return "critically kick"; }
 const char* character::ThirdPersonKickVerb() const { return "kicks"; }
-const char* character::ThirdPersonCriticalKickVerb() const { return "critically kicks"; }
+const char* character::ThirdPersonCriticalKickVerb() const
+{ return "critically kicks"; }
 const char* character::FirstPersonBiteVerb() const { return "bite"; }
-const char* character::FirstPersonCriticalBiteVerb() const { return "critically bite"; }
+const char* character::FirstPersonCriticalBiteVerb() const
+{ return "critically bite"; }
 const char* character::ThirdPersonBiteVerb() const { return "bites"; }
-const char* character::ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
+const char* character::ThirdPersonCriticalBiteVerb() const
+{ return "critically bites"; }
 const char* character::UnarmedHitNoun() const { return "attack"; }
 const char* character::KickNoun() const { return "kick"; }
 const char* character::BiteNoun() const { return "attack"; }
 const char* character::GetEquipmentName(int) const { return ""; }
-const std::list<ulong>& character::GetOriginalBodyPartID(int I) const { return OriginalBodyPartID[I]; }
-square* character::GetNeighbourSquare(int I) const { return GetSquareUnder()->GetNeighbourSquare(I); }
-lsquare* character::GetNeighbourLSquare(int I) const { return static_cast<lsquare*>(GetSquareUnder())->GetNeighbourLSquare(I); }
-wsquare* character::GetNeighbourWSquare(int I) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(I); }
+const std::list<ulong>& character::GetOriginalBodyPartID(int I) const
+{ return OriginalBodyPartID[I]; }
+square* character::GetNeighbourSquare(int I) const
+{ return GetSquareUnder()->GetNeighbourSquare(I); }
+lsquare* character::GetNeighbourLSquare(int I) const
+{ return static_cast<lsquare*>(GetSquareUnder())->GetNeighbourLSquare(I); }
+wsquare* character::GetNeighbourWSquare(int I) const
+{ return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(I); }
 god* character::GetMasterGod() const { return game::GetGod(GetConfig()); }
-wsquare* character::GetNearWSquare(v2 Pos) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
-wsquare* character::GetNearWSquare(int x, int y) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
-col16 character::GetBodyPartColorA(int, truth) const { return GetSkinColor(); }
-col16 character::GetBodyPartColorB(int, truth) const { return GetTorsoMainColor(); }
-col16 character::GetBodyPartColorC(int, truth) const { return GetBeltColor(); } // sorry...
-col16 character::GetBodyPartColorD(int, truth) const { return GetTorsoSpecialColor(); }
+col16 character::GetBodyPartColorA(int, truth) const
+{ return GetSkinColor(); }
+col16 character::GetBodyPartColorB(int, truth) const
+{ return GetTorsoMainColor(); }
+col16 character::GetBodyPartColorC(int, truth) const
+{ return GetBeltColor(); } // sorry...
+col16 character::GetBodyPartColorD(int, truth) const
+{ return GetTorsoSpecialColor(); }
 int character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
-truth character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
+truth character::MustBeRemovedFromBone() const
+{ return IsUnique() && !CanBeGenerated(); }
 truth character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 character* character::GetLeader() const { return GetTeam()->GetLeader(); }
-int character::GetMoveType() const { return !StateIsActivated(LEVITATION) ? DataBase->MoveType : DataBase->MoveType | FLY; }
-festring character::GetZombieDescription() const { return " of " + GetName(INDEFINITE); }
+int character::GetMoveType() const
+{ return (!StateIsActivated(LEVITATION)
+	  ? DataBase->MoveType
+	  : DataBase->MoveType | FLY); }
+festring character::GetZombieDescription() const
+{ return " of " + GetName(INDEFINITE); }
 truth character::BodyPartCanBeSevered(int I) const { return I; }
-truth character::HasBeenSeen() const { return DataBase->Flags & HAS_BEEN_SEEN; }
-truth character::IsTemporary() const { return GetTorso()->GetLifeExpectancy(); }
+truth character::HasBeenSeen() const
+{ return DataBase->Flags & HAS_BEEN_SEEN; }
+truth character::IsTemporary() const
+{ return GetTorso()->GetLifeExpectancy(); }
 const char* character::GetNormalDeathMessage() const { return "killed @k"; }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_V2), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), RegenerationCounter(Char.RegenerationCounter), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), WarnFlags(0), ScienceTalks(Char.ScienceTalks), TrapData(0)
+character::character(const character& Char)
+: entity(Char), id(Char), NP(Char.NP), AP(Char.AP),
+  TemporaryState(Char.TemporaryState&~POLYMORPHED),
+  Team(Char.Team), GoingTo(ERROR_V2), Money(0),
+  AssignedName(Char.AssignedName), Action(0),
+  DataBase(Char.DataBase), MotherEntity(0),
+  PolymorphBackup(0), EquipmentState(0), SquareUnder(0),
+  AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories),
+  BodyParts(Char.BodyParts),
+  RegenerationCounter(Char.RegenerationCounter),
+  SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0),
+  Stamina(Char.Stamina), MaxStamina(Char.MaxStamina),
+  BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger),
+  CommandFlags(Char.CommandFlags), WarnFlags(0),
+  ScienceTalks(Char.ScienceTalks), TrapData(0)
 {
   Flags &= ~C_PLAYER;
   Flags |= C_INITIALIZING|C_IN_NO_MSG_MODE;
@@ -355,7 +413,13 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   ID = game::CreateNewCharacterID(this);
 }
 
-character::character() : entity(HAS_BE), NP(50000), AP(0), TemporaryState(0), Team(0), GoingTo(ERROR_V2), Money(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0), BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER), WarnFlags(0), ScienceTalks(0), TrapData(0)
+character::character()
+: entity(HAS_BE), NP(50000), AP(0), TemporaryState(0), Team(0),
+  GoingTo(ERROR_V2), Money(0), Action(0), MotherEntity(0),
+  PolymorphBackup(0), EquipmentState(0), SquareUnder(0),
+  RegenerationCounter(0), HomeData(0), LastAcidMsgMin(0),
+  BlocksSinceLastTurn(0), GenerationDanger(DEFAULT_GENERATION_DANGER),
+  WarnFlags(0), ScienceTalks(0), TrapData(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -439,7 +503,11 @@ void character::Hunger()
   CheckStarvationDeath(CONST_S("starved to death"));
 }
 
-int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2 HitPos, double Damage, double ToHitValue, int Success, int Type, int GivenDir, truth Critical, truth ForceHit)
+int character::TakeHit(character* Enemy, item* Weapon,
+		       bodypart* EnemyBodyPart, v2 HitPos,
+		       double Damage, double ToHitValue,
+		       int Success, int Type, int GivenDir,
+		       truth Critical, truth ForceHit)
 {
   int Dir = Type == BITE_ATTACK ? YOURSELF : GivenDir;
   double DodgeValue = GetDodgeValue();
@@ -482,26 +550,31 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
     if(!Enemy->IsRetreating())
       Enemy->SetGoingTo(GetPos());
     else
-      Enemy->SetGoingTo(Enemy->GetPos() - ((GetPos() - Enemy->GetPos()) << 4));
+      Enemy->SetGoingTo(Enemy->GetPos()
+			- ((GetPos() - Enemy->GetPos()) << 4));
   }
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
-  if(RAND() % int(100 + ToHitValue / DodgeValue * (100 + Success)) < 100 && !Critical && !ForceHit)
+  if(RAND() % int(100 + ToHitValue / DodgeValue * (100 + Success)) < 100
+     && !Critical && !ForceHit)
   {
     Enemy->AddMissMessage(this);
     EditExperience(AGILITY, 150, 1 << 7);
     EditExperience(PERCEPTION, 75, 1 << 7);
 
     if(Enemy->CanBeSeenByPlayer())
-      DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
+      DeActivateVoluntaryAction(CONST_S("The attack of ")
+				+ Enemy->GetName(DEFINITE)
+				+ CONST_S(" interrupts you."));
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
     return HAS_DODGED;
   }
 
-  int TrueDamage = int(Damage * (100 + Success) / 100) + (RAND() % 3 ? 1 : 0);
+  int TrueDamage = int(Damage * (100 + Success) / 100)
+		   + (RAND() % 3 ? 1 : 0);
 
   if(Critical)
   {
@@ -534,28 +607,40 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
     switch(Type)
     {
      case UNARMED_ATTACK:
-      Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonUnarmedHitVerb(), Enemy->ThirdPersonUnarmedHitVerb(), BodyPart);
+      Enemy->AddPrimitiveHitMessage(this,
+				    Enemy->FirstPersonUnarmedHitVerb(),
+				    Enemy->ThirdPersonUnarmedHitVerb(),
+				    BodyPart);
       break;
      case WEAPON_ATTACK:
       Enemy->AddWeaponHitMessage(this, Weapon, BodyPart, false);
       break;
      case KICK_ATTACK:
-      Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonKickVerb(), Enemy->ThirdPersonKickVerb(), BodyPart);
+      Enemy->AddPrimitiveHitMessage(this,
+				    Enemy->FirstPersonKickVerb(),
+				    Enemy->ThirdPersonKickVerb(),
+				    BodyPart);
       break;
      case BITE_ATTACK:
-      Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonBiteVerb(), Enemy->ThirdPersonBiteVerb(), BodyPart);
+      Enemy->AddPrimitiveHitMessage(this,
+				    Enemy->FirstPersonBiteVerb(),
+				    Enemy->ThirdPersonBiteVerb(),
+				    BodyPart);
       break;
     }
   }
 
   if(!Critical && TrueDamage && Enemy->AttackIsBlockable(Type))
   {
-    TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue, TrueDamage, Success, Type);
+    TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue,
+			       TrueDamage, Success, Type);
 
     if(!TrueDamage || (Weapon && !Weapon->Exists()))
     {
       if(Enemy->CanBeSeenByPlayer())
-	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
+	DeActivateVoluntaryAction(CONST_S("The attack of ")
+				  + Enemy->GetName(DEFINITE)
+				  + CONST_S(" interrupts you."));
       else
 	DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
@@ -564,8 +649,15 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
   }
 
   int WeaponSkillHits = CalculateWeaponSkillHits(Enemy);
-  int DoneDamage = ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICAL_DAMAGE, BodyPart, Dir, false, Critical, true, Type == BITE_ATTACK && Enemy->BiteCapturesBodyPart());
-  truth Succeeded = (GetBodyPart(BodyPart) && HitEffect(Enemy, Weapon, HitPos, Type, BodyPart, Dir, !DoneDamage)) || DoneDamage;
+  int DoneDamage = ReceiveBodyPartDamage(Enemy, TrueDamage,
+					 PHYSICAL_DAMAGE, BodyPart,
+					 Dir, false, Critical, true,
+					 Type == BITE_ATTACK
+					 && Enemy->BiteCapturesBodyPart());
+  truth Succeeded = (GetBodyPart(BodyPart)
+		     && HitEffect(Enemy, Weapon, HitPos, Type,
+				  BodyPart, Dir, !DoneDamage))
+		    || DoneDamage;
 
   if(Succeeded)
     Enemy->WeaponSkillHit(Weapon, Type, WeaponSkillHits);
@@ -575,7 +667,10 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
     if(Weapon->Exists() && DoneDamage < TrueDamage)
       Weapon->ReceiveDamage(Enemy, TrueDamage - DoneDamage, PHYSICAL_DAMAGE);
 
-    if(Weapon->Exists() && DoneDamage && SpillsBlood() && GetBodyPart(BodyPart) && (GetBodyPart(BodyPart)->IsAlive() || GetBodyPart(BodyPart)->GetMainMaterial()->IsLiquid()))
+    if(Weapon->Exists() && DoneDamage
+       && SpillsBlood() && GetBodyPart(BodyPart)
+       && (GetBodyPart(BodyPart)->IsAlive()
+	   || GetBodyPart(BodyPart)->GetMainMaterial()->IsLiquid()))
       Weapon->SpillFluid(0, CreateBlood(15 + RAND() % 15));
   }
 
@@ -585,18 +680,23 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
   if(!Succeeded)
   {
     if(Enemy->CanBeSeenByPlayer())
-      DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
+      DeActivateVoluntaryAction(CONST_S("The attack of ")
+				+ Enemy->GetName(DEFINITE)
+				+ CONST_S(" interrupts you."));
     else
       DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
     return DID_NO_DAMAGE;
   }
 
-  if(CheckDeath(GetNormalDeathMessage(), Enemy, Enemy->IsPlayer() ? FORCE_MSG : 0))
+  if(CheckDeath(GetNormalDeathMessage(), Enemy,
+		Enemy->IsPlayer() ? FORCE_MSG : 0))
     return HAS_DIED;
 
   if(Enemy->CanBeSeenByPlayer())
-    DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
+    DeActivateVoluntaryAction(CONST_S("The attack of ")
+			      + Enemy->GetName(DEFINITE)
+			      + CONST_S(" interrupts you."));
   else
     DeActivateVoluntaryAction(CONST_S("The attack interrupts you."));
 
@@ -605,13 +705,16 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
 struct svpriorityelement
 {
-  svpriorityelement(int BodyPart, int StrengthValue) : BodyPart(BodyPart), StrengthValue(StrengthValue) { }
-  bool operator<(const svpriorityelement& AnotherPair) const { return StrengthValue > AnotherPair.StrengthValue; }
+  svpriorityelement(int BodyPart, int StrengthValue)
+  : BodyPart(BodyPart), StrengthValue(StrengthValue) { }
+  bool operator<(const svpriorityelement& AnotherPair) const
+  { return StrengthValue > AnotherPair.StrengthValue; }
   int BodyPart;
   int StrengthValue;
 };
 
-int character::ChooseBodyPartToReceiveHit(double ToHitValue, double DodgeValue)
+int character::ChooseBodyPartToReceiveHit(double ToHitValue,
+					  double DodgeValue)
 {
   if(BodyParts == 1)
     return 0;
@@ -623,14 +726,18 @@ int character::ChooseBodyPartToReceiveHit(double ToHitValue, double DodgeValue)
     bodypart* BodyPart = GetBodyPart(c);
 
     if(BodyPart
-       && (BodyPart->GetHP() != 1 || BodyPart->CanBeSevered(PHYSICAL_DAMAGE)))
+       && (BodyPart->GetHP() != 1
+	   || BodyPart->CanBeSevered(PHYSICAL_DAMAGE)))
       SVQueue.push(svpriorityelement(c, ModifyBodyPartHitPreference(c, BodyPart->GetStrengthValue() + BodyPart->GetHP())));
   }
 
   while(SVQueue.size())
   {
     svpriorityelement E = SVQueue.top();
-    int ToHitPercentage = int(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(E.BodyPart)->GetBodyPartVolume() / (DodgeValue * GetBodyVolume()));
+    int ToHitPercentage = int(GLOBAL_WEAK_BODYPART_HIT_MODIFIER
+			      * ToHitValue
+			      * GetBodyPart(E.BodyPart)->GetBodyPartVolume()
+			      / (DodgeValue * GetBodyVolume()));
     ToHitPercentage = ModifyBodyPartToHitChance(E.BodyPart, ToHitPercentage);
 
     if(ToHitPercentage < 1)
@@ -720,7 +827,8 @@ void character::Be()
     {
       static int Timer = 0;
 
-      if(ivanconfig::GetAutoSaveInterval() && !GetAction() && ++Timer >= ivanconfig::GetAutoSaveInterval())
+      if(ivanconfig::GetAutoSaveInterval() && !GetAction()
+	 && ++Timer >= ivanconfig::GetAutoSaveInterval())
       {
 	game::Save(game::GetAutoSaveFileName());
 	Timer = 0;
@@ -797,9 +905,10 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
 
       if(Run)
       {
-	EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) >> 1);
-	EditNP(-24 * GetSquareUnder()->GetEntryDifficulty());
-	EditExperience(AGILITY, 125, GetSquareUnder()->GetEntryDifficulty() << 7);
+	int ED = GetSquareUnder()->GetEntryDifficulty();
+	EditAP(-GetMoveAPRequirement(ED) >> 1);
+	EditNP(-24 * ED);
+	EditExperience(AGILITY, 125, ED << 7);
 	int Base = 10000;
 
 	if(IsPlayer())
@@ -820,9 +929,10 @@ void character::Move(v2 MoveTo, truth TeleportMove, truth Run)
       }
       else
       {
-	EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
-	EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
-	EditExperience(AGILITY, 75, GetSquareUnder()->GetEntryDifficulty() << 7);
+	int ED = GetSquareUnder()->GetEntryDifficulty();
+	EditAP(-GetMoveAPRequirement(ED));
+	EditNP(-12 * ED);
+	EditExperience(AGILITY, 75, ED << 7);
       }
     }
 
@@ -1137,10 +1247,7 @@ truth character::TryMove(v2 MoveVector, truth Important, truth Run)
 	      else
 	      {
 		if(!IsPlayer() || game::TruthQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
-		{
 		  return OpenPos(MoveToSquare[c]->GetPos());
-		  //return true;
-		}
 		else
 		  return false;
 	      }
@@ -3714,7 +3821,7 @@ void character::LoadDataBaseStats()
 {
   for(int c = 0; c < BASE_ATTRIBUTES; ++c)
   {
-    BaseExperience[c] = GetNaturalExperience(c);
+    BaseExperience[c] = DataBase->NaturalExperience[c];
 
     if(BaseExperience[c])
       LimitRef(BaseExperience[c], MIN_EXP, MAX_EXP);
@@ -3745,7 +3852,6 @@ void character::LoadDataBaseStats()
 character* characterprototype::SpawnAndLoad(inputfile& SaveFile) const
 {
   character* Char = Spawner(0, LOAD);
-  //Char->Initialize(0, LOAD);
   Char->Load(SaveFile);
   Char->CalculateAll();
   return Char;
@@ -4149,9 +4255,6 @@ void character::DrawPanel(truth AnimationDraw) const
     if(strlen(SecondLine))
       FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, SecondLine);
   }
-
-  /* test */
-  //FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "T: %ld", game::GetTimeSpent());
 }
 
 void character::CalculateDodgeValue()
@@ -4349,7 +4452,6 @@ void character::BeginTemporaryState(long State, int Counter)
   }
   else if(StateData[Index].IsAllowed == 0 || (this->*StateData[Index].IsAllowed)())
   {
-    ActivateTemporaryState(State);
     SetTemporaryStateCounter(State, Max(Counter, 50));
 
     if(!EquipmentStateIsActivated(State))
@@ -4357,9 +4459,13 @@ void character::BeginTemporaryState(long State, int Counter)
       if(!IsInNoMsgMode())
 	(this->*StateData[Index].PrintBeginMessage)();
 
+      ActivateTemporaryState(State);
+
       if(StateData[Index].BeginHandler)
 	(this->*StateData[Index].BeginHandler)();
     }
+    else
+      ActivateTemporaryState(State);
   }
 }
 
@@ -6843,11 +6949,6 @@ void character::FinalProcessForBone()
     }
   }
 }
-
-/*truth character::HasRepairableBodyParts() const
-{
-  return CombineBodyPartPredicates<1>(this, &bodypart::IsRepairable);
-}*/
 
 void character::SetSoulID(ulong What)
 {
@@ -9409,4 +9510,30 @@ void character::HiccupsSituationDangerModifier(double& Danger) const
 
 bool character::IsConscious() const {
   return !Action || !Action->IsUnconsciousness();
+}
+
+wsquare* character::GetNearWSquare(v2 Pos) const
+{
+  return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos));
+}
+
+wsquare* character::GetNearWSquare(int x, int y) const
+{
+  return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y));
+}
+
+void character::ForcePutNear(v2 Pos)
+{
+  /* GUM SOLUTION!!! */
+
+  v2 NewPos = game::GetCurrentLevel()->GetNearestFreeSquare(PLAYER, Pos, false);
+
+  if(NewPos == ERROR_V2)
+    do
+    {
+      NewPos = game::GetCurrentLevel()->GetRandomSquare(this);
+    }
+    while(NewPos == Pos);
+
+  PutTo(NewPos);
 }

@@ -1,5 +1,5 @@
 Version 0.50
--------------
+------------
 
 - fluids can now cover items and characters and interact with them
 - items made of iron alloys can now rust
@@ -17,10 +17,12 @@ Version 0.50
 - one can now give pets tactical commands, change their equipment and
   use them to carry extra stuff (these are accessed using 'C'hat and
   'I'ssue commands keys)
-- the player can now panic if he gets hit too much
+- the player can now panic if he gets hit too much, like the monsters
+  have done in previous versions
 - the player can now become exhausted if he fights for too long and/or
   uses the new r'u'n command too much
 - spiders are now able to make webs
+- you can now get stuck to slime
 - badly hurt/trapped bodyparts now become unusable until they regain
   some HP/become untrapped
 - it is now possible to browse detailed death reasons of individual

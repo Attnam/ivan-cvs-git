@@ -40,7 +40,6 @@ template <class type> class protocontainer
   typedef typename type::prototype prototype;
   static int Add(prototype*);
   static const prototype* GetProto(int I) { return GetProtoData()[I]; }
-  //static int GetSize() { return Size; }
   static int SearchCodeName(const festring&);
   static const char* GetMainClassID() { return GetProtoData()[1]->GetClassID(); }
   static int GetSize() { return GetSizeRef(); }
@@ -50,22 +49,21 @@ template <class type> class protocontainer
   static int& GetSizeRef();
 };
 
-/*template <class type> void** protocontainer<type>::ProtoData;
-  template <class type> valuemap protocontainer<type>::CodeNameMap;
-  template <class type> int protocontainer<type>::Size;*/
-
-template <class type> inline int protocontainer<type>::Add(prototype* Proto)
+template <class type>
+inline int protocontainer<type>::Add(prototype* Proto)
 {
   if(!GetSize())
     (GetProtoData() = new prototype*[1024])[GetSizeRef()++] = 0;
 
   int Index = GetSizeRef()++;
   GetProtoData()[Index] = Proto;
-  GetCodeNameMap().insert(std::pair<festring, long>(Proto->GetClassID(), Index));
+  std::pair<festring, long> Pair(Proto->GetClassID(), Index);
+  GetCodeNameMap().insert(Pair);
   return Index;
 }
 
-template <class type> inline int protocontainer<type>::SearchCodeName(const festring& Name)
+template <class type>
+inline int protocontainer<type>::SearchCodeName(const festring& Name)
 {
   valuemap::iterator I = GetCodeNameMap().find(Name);
   return I != GetCodeNameMap().end() ? I->second : 0;

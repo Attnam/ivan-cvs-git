@@ -109,11 +109,6 @@ int OutputHTML(festring InputFilename)
 {
   highscore Input;
   Input.Load(InputFilename);
-  /*  if(!Input.IsOpen())
-  {
-    std::cout << "Can't open " << InputFilename.CStr() << "\n";
-    return 2;
-    }*/
   std::cout << "<TABLE BORDER=3> \n <TR> <TH>Rank</TH> <TH>Who</TH> <TH>Score</TH>\n";
 
   for(int c = 0; c < Input.GetSize();++c)

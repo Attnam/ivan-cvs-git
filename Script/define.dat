@@ -688,6 +688,7 @@
 #define FOUNTAIN 65535
 
 #define BOOK_CASE 1
+#define CHEST_OF_DRAWERS 2
 
 #define WORLD_MAP 255
 

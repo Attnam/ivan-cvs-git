@@ -521,20 +521,6 @@ col16 holybook::GetMaterialColorA(int) const
   return GetMasterGod()->GetColor();
 }
 
-/*truth scrollofcharging::Read(character* Reader)
-{
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsChargeable) && !Reader->EquipsSomething(&item::IsChargeable))
-  {
-    ADD_MESSAGE("You have nothing to charge.");
-    return false;
-  }
-  else
-  {
-    Reader->StartReading(this, GetReadDifficulty());
-    return true;
-  }
-}*/
-
 void scrollofcharging::FinishReading(character* Reader)
 {
   for(;;)
@@ -1722,40 +1708,8 @@ truth mine::CheckPickUpEffect(character*)
   return true;
 }
 
-/*truth scrollofrepair::Read(character* Reader)
-{
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
-  {
-    ADD_MESSAGE("You have nothing to repair.");
-    return false;
-  }
-
-  Reader->StartReading(this, GetReadDifficulty());
-  return true;
-}*/
-
 void scrollofrepair::FinishReading(character* Reader)
 {
-  /*if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::IsRepairable) && !Reader->EquipsSomething(&item::IsRepairable))
-    ADD_MESSAGE("You have lost whatever you wished to repair.");
-  else
-  {
-    for(int c = 0; c < Reader->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = Reader->GetBodyPart(c);
-
-      if(BodyPart)
-      {
-	if(BodyPart->IsRepairable() && game::TruthQuestion("Would you like to repair your " + BodyPart->GetBodyPartName() + "? [y/N]"))
-	{
-	  BodyPart->RestoreHP();
-	  RemoveFromSlot();
-	  SendToHell();  
-	  return;
-	}
-      }
-    }*/
-      
   for(;;)
   {
     itemvector Item;
@@ -2776,20 +2730,6 @@ ulong wand::GetSpecialParameters() const
 
   return 0;
 }
-
-/*truth scrollofgolemcreation::Read(character* Reader)
-{
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsDestroyable) && !Reader->EquipsSomething(&item::IsDestroyable))
-  {
-    ADD_MESSAGE("You have nothing you can use for golem creation.");
-    return false;
-  }
-  else
-  {
-    Reader->StartReading(this, GetReadDifficulty());
-    return true;
-  }
-}*/
 
 void scrollofgolemcreation::FinishReading(character* Reader)
 {

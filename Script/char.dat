@@ -28,13 +28,13 @@ character
   /* Obligatory: DefaultArmStrength */
   /* Obligatory for humanoids: DefaultLegStrength */
   /* Obligatory for humanoids: DefaultDexterity */
-  /* Obligatory: DefaultAgility */
-  /* Obligatory: DefaultEndurance */
-  /* Obligatory: DefaultPerception */
-  /* Obligatory: DefaultIntelligence */
-  /* Obligatory: DefaultWisdom */
-  /* Obligatory: DefaultCharisma */
-  /* Obligatory: DefaultMana */
+  DefaultAgility = 0;
+  DefaultEndurance = 0;
+  DefaultPerception = 0;
+  DefaultIntelligence = 0;
+  DefaultWisdom = 0;
+  DefaultCharisma = 0;
+  DefaultMana = 0;
   DefaultMoney = 0;
   /* Obligatory: TotalSize */
   CanRead = false;
@@ -128,11 +128,11 @@ character
   IsEnormous = false;
   ScienceTalkAdjectiveAttribute =
   {
-    142,
+    141,
     "", "applied", "recent", "dark", "linear",
     "molecular", "theoretical", "classical", "the future of", "queer",
     "multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
-    "higher", "terrible", "mad", "tertiary", "probability",
+    "higher", "terrible", "mad", "tertiary", "the art of",
     "elementary", "practical", "artificial", "existential", "quantum",
 
     "modern", "ancient", "empirical", "statistical", "the axioms of",
@@ -162,15 +162,15 @@ character
     "sentient", "silksteel", "dead", "temporal", "transcendent",
     "unified", "the threshold of", "finite", "postmodern", "selective",
     "arctic", "the proofs of", "mortal", "teleological", "sick",
-    "the principle of", "the art of";
+    "the principle of";
   }
   ScienceTalkSubstantiveAttribute =
   {
-    16,
+    17,
     "New Age", "military", "space", "neutronium", "punishment",
     "last century", "mass", "horseback", "tachyon", "singularity",
     "antimatter", "superstring", "nerd", "crystal", "free market",
-    "hybrid";
+    "hybrid", "probability";
   }
   ScienceTalkPrefix =
   {
@@ -1637,7 +1637,6 @@ golem
   CanRead = true;
   BodyPartsDisappearWhenSevered = true;
   DangerModifier = 75;
-  /*IsImmuneToLeprosy = true;*/
   AlwaysUseMaterialAttributes = true;
   IsEnormous = true;
   CanChoke = false;
@@ -1780,7 +1779,6 @@ spider
   KnownCWeaponSkills == BITE;
   FleshMaterial = SPIDER_FLESH;
   AttachedGod = SCABIES;
-  /*BodyPartsDisappearWhenSevered = true;*/
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
   IsImmuneToStickiness = true;
@@ -3666,7 +3664,7 @@ imperialist
   NameSingular = "imperialist";
   Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
   BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
-  Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 1; }
+  Belt = GOLD belt(BELT_OF_CARRYING) { Enchantment = 2; }
   RightWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
   LeftWielded = OMMEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 3; }
   LeftRing = ring(RING_OF_INFRA_VISION);
@@ -3711,9 +3709,9 @@ imperialist
   AutomaticallySeen = true;
   ScienceTalkAdjectiveAttribute =
   {
-    82,
+    81,
     "applied",  "recent", "theoretical", "classical", "the future of",
-    "fundamental", "probability", "higher", "elementary", "practical",
+    "fundamental", "legendary", "higher", "elementary", "practical",
     "artificial", "the wonders of", "modern", "empirical", "statistical",
     "the axioms of", "the theory of", "urban", "forbidden", "nautical", 
     "popular", "the current state of", "liberal", "ceremonial", "heroic",
@@ -3731,13 +3729,13 @@ imperialist
     "the implementation of", "paraller", "orthodox", "soft", "chaotic",
 
     "happy", "the blessings of", "ancient", "flexible", "laissez-faire",
-    "legendary", "the magnificence of";
+    "the magnificence of";
   }
   ScienceTalkSubstantiveAttribute =
   {
-    6,
+    7,
     "New Age", "space", "last century", "mass", "free market",
-    "hybrid";
+    "hybrid", "probability";
   }
   ScienceTalkPrefix =
   {
@@ -3750,7 +3748,7 @@ imperialist
 
   ScienceTalkName =
   {
-    36,
+    37,
     "commercials", "lockouts", "banking", "profits", "egoism",
     "bazaars", "corporations", "sackings", "advertising", "capitalism",
     "monopolies", "!M.U.L.E.", "tax cuts", "bargaining", "brands",
@@ -3761,7 +3759,7 @@ imperialist
     "public relations", "guerilla marketing", "industrial espionage",
     "the anti-communist movement", "investor relations", "price warfare",
     "the crusade against labour unions", "ESP marketing", "insurance firms",
-    "cigarettes";
+    "cigarettes", "!the Prince";
   }
   ScienceTalkPossibility = 80;
   ScienceTalkIntelligenceModifier = 25;
@@ -5299,7 +5297,6 @@ lobhse
   CWeaponSkillHits == 50;
   FleshMaterial = SICK_SPIDER_FLESH;
   AttachedGod = SCABIES;
-  /*BodyPartsDisappearWhenSevered = true;*/
   BiteCapturesBodyPart = false;
   AutomaticallySeen = true;
   IsImmuneToStickiness = true;

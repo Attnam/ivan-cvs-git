@@ -2883,3 +2883,32 @@ void level::Amnesia(int Percentile)
       }
     }
 }
+
+/* Returns how many of the monsters were seen */
+
+spawnresult level::SpawnMonsters(characterspawner Spawner, team* Team,
+				 v2 Pos, int Config, int Amount,
+				 truth IgnoreWalkability)
+{
+  spawnresult SR = { 0, 0 };
+
+  for(int c = 0; c < Amount; ++c)
+  {
+    character* Char = Spawner(Config, 0);
+
+    if(!c)
+      SR.Pioneer = Char;
+
+    Char->SetTeam(Team);
+
+    if(IgnoreWalkability)
+      Char->ForcePutNear(Pos);
+    else
+      Char->PutNear(Pos);
+
+    if(Char->CanBeSeenByPlayer())
+      ++SR.Seen;
+  }
+
+  return SR;
+}

@@ -371,7 +371,6 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  //int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
   {
@@ -413,7 +412,6 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  //int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
   {

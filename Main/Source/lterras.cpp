@@ -353,25 +353,26 @@ truth fountain::Drink(character* Drinker)
 
       Drinker->EditAP(-1000);
 
-      switch(RAND() % 10)
+      switch(RAND() % 12)
       {
        case 0:
-	ADD_MESSAGE("The water is contaminated!");
-	Drinker->EditNP(100);
+	if(RAND_N(3))
+	{
+	  ADD_MESSAGE("The water is contaminated!");
+	  Drinker->EditNP(100);
 
-	if(!(RAND() % 5))
-	  Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
-	else
-	  Drinker->ChangeRandomAttribute(-1);
+	  if(!RAND_4)
+	    Drinker->PolymorphRandomly(0, 1000000, 2500 + RAND() % 2500);
+	  else
+	    Drinker->ChangeRandomAttribute(-1);
 
-	break;
-	
+	  break;
+	}
        case 1:
 	ADD_MESSAGE("The water tasted very good.");
 	Drinker->EditNP(2500);
 	Drinker->ChangeRandomAttribute(1);
 	break;
-
        case 2:
 	if(!(RAND() % 15))
 	{
@@ -384,7 +385,6 @@ truth fountain::Drink(character* Drinker)
 	  DryOut();
 
 	break;
-
        case 4:
 	if(RAND() & 7)
 	{
@@ -398,83 +398,116 @@ truth fountain::Drink(character* Drinker)
 	  if(!Drinker->GainRandomIntrinsic(SRC_FOUNTAIN))
 	    ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
 	}
-	break;
 
+	break;
        case 5:
 	{
-	  truth Created = false;
-	  character* Monster = 0;
+	  characterspawner Spawner = 0;
+	  int Config = 0, AddChance = 0;
+	  truth ForceAdjacency = false;
 
 	  switch(RAND_N(5))
 	  {
 	   case 0:
-	    Monster = snake::Spawn();
+	    Spawner = (characterspawner)(&snake::Spawn);
+	    AddChance = 66;
 	    break;
 	   case 1:
-	    Monster = mommo::Spawn(RAND_2 ? CONICAL : FLAT);
+	    Spawner = (characterspawner)(&mommo::Spawn);
+	    Config = RAND_2 ? CONICAL : FLAT;
+	    AddChance = 50;
 	    break;
 	   case 2:
-	    Monster = spider::Spawn(LARGE);
+	    Spawner = (characterspawner)(&spider::Spawn);
+
+	    if(RAND_4)
+	    {
+	      Config = LARGE;
+	      AddChance = 90;
+	    }
+	    else
+	    {
+	      Config = GIANT;
+	      AddChance = 75;
+	    }
+
 	    break;
 	   case 3:
 	    if(!RAND_N(50))
-	      Monster = dolphin::Spawn();
+	    {
+	      Spawner = (characterspawner)(&dolphin::Spawn);
+	      AddChance = 75;
+	      ForceAdjacency = true;
+	    }
+	    else if(!RAND_N(50))
+	    {
+	      Spawner = (characterspawner)(&mysticfrog::Spawn);
+	      Config = DARK;
+	      AddChance = 1;
+	    }
 	    else
-	      Monster = frog::Spawn(RAND_N(5) ? DARK : RAND_N(5) ? GREATER_DARK : GIANT_DARK);
+	    {
+	      Spawner = (characterspawner)(&frog::Spawn);
+
+	      if(RAND_N(5))
+	      {
+		Config = DARK;
+		AddChance = 10;
+	      }
+	      else if(RAND_N(5))
+	      {
+		Config = GREATER_DARK;
+		AddChance = 5;
+	      }
+	      else
+	      {
+		Config = GIANT_DARK;
+		AddChance = 2;
+	      }
+	    }
 
 	    break;
 	   case 4:
-	    Monster = largerat::Spawn();
+	    Spawner = (characterspawner)(&largerat::Spawn);
+	    AddChance = 90;
 	    break;
 	  }
 
-	  for(int p = 0; p < 10; ++p)
+	  int TeamIndex = RAND_N(3) ? MONSTER_TEAM : PLAYER_TEAM;
+	  team* Team =  game::GetTeam(TeamIndex);
+	  int Amount = 1 + femath::LoopRoll(AddChance, 7);
+	  spawnresult SR = GetLevel()->SpawnMonsters(Spawner, Team, GetPos(), Config, Amount, ForceAdjacency);
+
+	  msgsystem::EnterBigMessageMode();
+
+	  if(SR.Seen == 1)
 	  {
-	    v2 TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+	    ADD_MESSAGE("%s appears from the fountain!", SR.Pioneer->CHAR_NAME(INDEFINITE));
 
-	    if(GetLevel()->IsValidPos(TryToCreate)
-	       && GetNearLSquare(TryToCreate)->IsFlyable()
-	       && !GetNearLSquare(TryToCreate)->GetCharacter())//Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && Monster->IsFreeForMe(GetNearLSquare(TryToCreate)))
-	    {
-	      Created = true;
+	    if(TeamIndex == PLAYER_TEAM)
+	      ADD_MESSAGE("%s seems to be friendly.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
 
-	      if(RAND_N(3))
-		Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-	      else
-		Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
-
-	      Monster->PutTo(TryToCreate);
-
-	      if(Monster->CanBeSeenByPlayer())
-	      {
-		if(Monster->IsPet())
-		{
-		  if(Monster->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
-		}
-		else
-		{
-		  if(Monster->CanBeSeenByPlayer())
-		    ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
-		}
-	      }
-	      else
-		ADD_MESSAGE("You feel something moving near you.");
-
-	      break;
-	    }
+	    if(Amount > SR.Seen)
+	      ADD_MESSAGE("Somehow you also sense %s isn't alone.", SR.Pioneer->CHAR_PERSONAL_PRONOUN);
 	  }
-
-	  if(!Created)
+	  else if(SR.Seen)
 	  {
-	    ADD_MESSAGE("Weird water...");
-	    delete Monster;
-	  }
+	    ADD_MESSAGE("%s appear from the fountain!", SR.Pioneer->GetName(PLURAL, SR.Seen).CStr());
 
+	    if(TeamIndex == PLAYER_TEAM)
+	      ADD_MESSAGE("They seem to be friendly.");
+
+	    if(Amount > SR.Seen)
+	      ADD_MESSAGE("Somehow you also sense you haven't yet seen all of them.");
+	  }
+	  else
+	    ADD_MESSAGE("You feel something moving near you.");
+
+	  msgsystem::LeaveBigMessageMode();
 	  break;
 	}
        case 6:
-	if(!(RAND() % 5))
+	if(!RAND_N(5))
 	{
 	  item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
 	  GetLSquareUnder()->AddItem(ToBeCreated);
@@ -491,7 +524,7 @@ truth fountain::Drink(character* Drinker)
 	    olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
 	    Drinker->RemoveTraps();
 
-	    if(Found)
+	    if(Found && RAND_N(3))
 	    {
 	      ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
 	      Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
@@ -503,7 +536,7 @@ truth fountain::Drink(character* Drinker)
 	      int From = GetLevel()->GetIndex();
 
 	      if(To == From)
-		game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);		   
+		game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);
 	      else
 		game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
 
@@ -513,10 +546,9 @@ truth fountain::Drink(character* Drinker)
 		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
 	      else
 		ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
-
-	      Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
 	    }
 
+	    Drinker->GetLSquareUnder()->SpillFluid(Drinker, liquid::Spawn(WATER, 1000 + RAND() % 501), false, false);
 	    break;
 	  }
 	}

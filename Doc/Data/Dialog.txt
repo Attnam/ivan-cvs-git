@@ -2872,6 +2872,173 @@ punishers immediately.
 Ivan put one in humanoid.pcx along with children.
 And he ought not forget happy mask.
 
+Leader on December 8 2004
+-------------------------
+
+Leader hope Ivan had pleasant and vodka-plenty Independence Day.
+It one day when all Finnish should recollect the munificence of Uncle Lenin,
+who graciously gave them their sovereignty!
+
+But Leader disappointed Ivan not submit any score to past IVAN competition.
+Leader order happy mask punisher beat Ivan to pulp.
+Happy mask punisher disobey since Ivan create him.
+Leader annoyed.
+Everyone disregard Leader these days.
+Just because Leader was overthrown and has unluckily failed in every attempt
+to regain power not mean people allowed to have different opinions than He!
+Some of latter become ridiculously outrageous lately.
+Last week Tajik newspaper call Leader "one stupid and predictable gay
+terrorist-supporting mass murderer".
+Leader lose temper completely after seeing article.
+Leader forced to stop strip poker match with Osama bin Laden and Mullah Omar
+and swear vengeance on spreaders of such blatant lies.
+Leader order his guerillas to march into Stalinabad and remove it from CCCP
+map with flamethrowers Ivan made.
+Alas, this trap of Enemy.
+When city burned, troops notice they surrounded by army of Emmanuel
+Goldstein, the malevolent mastermind of anti-Leader revolution.
+Leader loyalists engage in fierce flame war to defend socialist honor.
+But enemy numbers overwhelming and eventually gas reserves used up.
+Leader give order to use vodka as flamethrower fuel instead.
+This however minor miscalculation.
+Soon soldiers become sober, start to think and switch sides.
+Soviet cause suffer defeat and Uncle Lenin cry tears of blood deep in His
+mausoleum.
+
+Fortunately Leader still partying wildly with bin Laden and Omar and high
+enough not to become depressed by setback.
+After a rather exciting round of Twister Leader ask if they could invest a
+bit to Leader plan of retaliation against Goldstein.
+Osama scratch his masculine beard and say perhaps he indeed can fund Party
+with $100 million.
+It gift between friends so he want nothing in return.
+But 60 megaton Tsar Bomba or two would naturally make money appear sooner in
+Leader Swiss account.
+Unfortunately all these in enemy hands now.
+Leader recall Ivan unemployed so he have time to arrange one.
+Ivan just infiltrate the appropriate nuclear facility and smuggle bomb to
+item.pcx.
+To identify the toy, Leader provide crypted description at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Item_ideas#Misc
+
+under the codename 'thaumic bomb'.
+As additional recreational task Ivan design gas grenade in same file.
+This can be loaded with eg. sleeping, mustard or tear gas.
+Ivan has one week to fulfill duties.
+Then Leader has next strategic meeting with his muslim allies and their
+harems and Leader want to suprise all with some laughing gas grenades to
+provide proper mood for negotiations.
+
+Leader on December 8 2004
+-------------------------
+
+Ivan should not fail to keep in mind Great Deadline on Friday.
+This mean he should, if any way possible, be available on IRC in today and
+tomorrow evening, and preferably in moderately sane condition, too.
+Small but critical graphics checks and opinions about important game,
+homepage and marketing issues will most likely be needed.
+There also additional, longer term assignment Leader forget in last letter.
+Ivan express eagerness to add monster descriptions which seen if player
+press some help button, move cursor above monster and push another key.
+Or, alternatively, use some help command and write name of the monster.
+This open menu, where verbal description of monster's nature or quote from
+famous book relating to the creature, or something similiar, be shown, and
+below it some information which Party decide later.
+These could include normal or estimated stats, approximate danger or
+whatever, depending on a number of factors (whether the player has used a
+stethoscope on the monster, has killed many or few of them, or is more or
+less intelligent, could affect the data shown).
+This however too big a job to do in one session alone.
+Therefore Leader ask Ivan write eg. about ten descriptions in some file and
+deliver it to Leader.
+Entries should preferably range from 50 to 500 words.
+Ivan note he not need to describe every creature around, just each category.
+Id est he not pay attention to palm leaf golem, kamikaze dwarf of Nefas nor
+orc officer.
+Instead he consider general golems, kamikaze dwarves and orcs.
+Some good examples or quote-style entries (siren, mind worm) exist at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Monster_ideas
+
+Ivan not restricted to literature, movie, game, etc. quotes, though.
+He can conjure up frightening prosaic portraits of the creature's hideous
+nature.
+He can write poems that affect the unconscious depths of reader's mind,
+inspiring his subjective understanding of the complexities of the monster's
+inner spiritual self.
+He can design small tales which feature the respective being, thus giving
+additional insight into its lifestyle, habits, basic tactics, and so forth.
+In short, Ivan can write almost anything he like as long as it concerns the
+creature somehow and sounds good.
+
+Because Leader given Ivan so much work, he provide short list which Ivan
+ought to tattoo on his muscular arm so it in his mind all the time:
+
+--------------------------------------------------------------------------
+
+1. thaumic bomb in item.pcx, which looks like a nuclear bomb; this should be
+very big but have some space available for a magical halo caused by thaumic
+leakage (low priority)
+2. dwarven gas grenade in item.pcx (medium priority)
+3. verbal descriptions of about 10 monsters, for in-game reference (high
+priority)
+4. 16x16 -> 32x32 conversion of tiles in each file (low priority in short
+term, high in long term)
+5. advising Party in the myriad of critical questions which may arise before
+the Deadline at 10.12., 23:59 EET (ultra-high priority)
+
+--------------------------------------------------------------------------
+
+Ivan on December 8 2004
+-----------------------
+
+Ivan make bombs out of Grand Ire towards the capitalist pig bathing and 
+sweating in his pool of coins! Why has enemy wanted to disgrace the pure 
+red Stalinabad to obey their mindless, limiting and unjust dogma of 
+liberal society? Father Lenin is crestfallen, only because of the greed 
+of Goldstein and his fellow criminals! Let justice be! Ivan percent a 
+new thaumic bomb tool for the Party to make a "Just Adjustment". Let our 
+motto be: "Enemy may succeed in entering a city of ours, but they won't 
+succeed in leaving the city without three heads!"
+
+Ivan notice smell of chlorine. Oh no! Ivan must have left the light bulb 
+boiling! Then Ivan will QWERTYUIOP and MNBVCXZ. It seems like there is 
+faint leakage in thaumic bomb! Ivan rub a clock and leakage shuts. What 
+good luck!
+
+A note on gas grenades: Ivan make deflated and inflated graphic versions 
+of the device, so that user can pick desired gas type from the filling 
+station himself.
+
+Ivan now get keen on monster descriptions.
+
+Leader on December 9 2004
+-------------------------
+
+Great Day beginning.
+Leader ask following:
+
+Is broken gauntlet (item.pcx, 80:400) good-looking enough for IVAN?
+It not Ivan-drawn, since Leader needed it immediately the day it was 
+integrated in era long forgotten.
+Leader ripped intact one quickly to shreds and he not really proud of it.
+
+Ivan once complained about the outlook of certain game areas.
+Are these now better?
+Especially GC levels 6, 9, 10, 11 and 12 should be checked.
+
+Screenshots in game homepage horribly old.
+Leader ask Ivan look at
+
+http://a25a.mtalo.ton.tut.fi/wiki/index.php/Screen_shots
+
+and choose, say ten, best pictures.
+Leader and comrade Hex will also choose their favourites.
+Out of these Party get very appealing propaganda poster collection.
+
+All these questions require answering ASAP.
+
 ----------------------------------------------------------------------------
 
 End of document.

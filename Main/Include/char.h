@@ -1019,6 +1019,7 @@ class character : public entity, public id
   virtual const character* FindCarrier() const;
   virtual const char* GetNormalDeathMessage() const;
   virtual bool IsConscious() const;
+  void ForcePutNear(v2);
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1129,7 +1130,10 @@ class character : public entity, public id
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 #define CHARACTER_PROTO(name, base)\
-template<> const characterprototype name##sysbase::ProtoType(&base::ProtoType, (characterspawner)(&name##sysbase::Spawn), (charactercloner)(&name##sysbase::Clone), #name);
+template<> const characterprototype\
+  name##sysbase::ProtoType(&base::ProtoType,\
+			   (characterspawner)(&name##sysbase::Spawn),\
+			   (charactercloner)(&name##sysbase::Clone), #name);
 #else
 #define CHARACTER_PROTO(name, base)
 #endif

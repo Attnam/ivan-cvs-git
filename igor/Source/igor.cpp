@@ -227,8 +227,6 @@ int Main(int, char**)
 	  DOUBLE_BUFFER->StretchBlit(B2);
 	  B3.Dest = DrawQueue[c];
 	  CursorBitmap.NormalMaskedBlit(B3);
-	  //DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], , TILE_V2, STRETCH);
-	  //CursorBitmap.NormalMaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], TILE_V2);
 	}
 
       B3.Dest = Cursor;

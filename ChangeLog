@@ -5,12 +5,30 @@
  This file contains SPOILERS, which might ruin your IVAN experience
  totally. The file is provided AS IS and is probably completely unreadable.
 
+ Note also that the file contains only a fraction of the changes between
+ versions 0.430 and 0.50, since Timo Kiviluoto did not update ChangeLog
+ during the period between January and September 2004
+
 -----------------------------------------------------------------------------
+
+December 9 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Fixed some minor "problems" reported by Valgrind
+  * Thaumic bomb and empty/full dwarven gas grenades added to item.pcx
+    by Kahvi
+  * Adjusted the InElasticityPenaltyModifiers of broken items upwards
+  * BugFix: No message was printed when levitation was activated, except
+    if due to a BoL
+  * Decreased the possibility of attribute increase and polymorph
+    effects of fountains
+  * Groups of monsters can appear from a fountain, not just one;
+    the amount depends on the species and luck
+  * Removed some obsolete commented code
 
 December 03 2004 Heikki Sairanen <first.last@tut.fi>
 
-	* uncosciuous shop keepers don't trade
-	
+  * unconscious shopkeepers don't trade
+
 November 17 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Science talks can now require and train charisma

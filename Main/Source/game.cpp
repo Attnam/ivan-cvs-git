@@ -269,7 +269,7 @@ truth game::Init(const festring& Name)
       SetForceJumpToPlayerBe(true);
       GetCurrentArea()->SendNewDrawRequest();
       SendLOSUpdateRequest();
-      /***ADD_MESSAGE("Game loaded successfully.");*/
+      ADD_MESSAGE("Game loaded successfully.");
       return true;
     }
    case NEW_GAME:
@@ -331,9 +331,6 @@ truth game::Init(const festring& Name)
 
 
       Player->SetMoney(Player->GetMoney() + RAND() % 11);
-      // ///
-      //Player->GainIntrinsic(PARASITIZED);
-      // ///
       GetTeam(0)->SetLeader(Player);
       InitDangerMap();
       Petrus = 0;
@@ -1130,31 +1127,9 @@ void game::Hostility(team* Attacker, team* Defender)
 {
   for(int c = 0; c < Teams; ++c)
     if(GetTeam(c) != Attacker && GetTeam(c) != Defender
+       && GetTeam(c)->GetRelation(Defender) == FRIEND
        && c != NEW_ATTNAM_TEAM) // gum solution
-      switch(GetTeam(c)->GetRelation(Defender))
-      {
-	/*case HOSTILE:
-	  {
-	  if(GetTeam(c)->GetRelation(Attacker) == UNCARING)
-	  GetTeam(c)->SetRelation(Attacker, FRIEND);
-
-	  break;
-	  }
-	  case UNCARING:
-	  {
-	  if(GetTeam(c)->GetRelation(Attacker) == HOSTILE)
-	  GetTeam(c)->SetRelation(Defender, FRIEND);
-
-	  break;
-	  }*/
-       case FRIEND:
-	{
-	  GetTeam(c)->SetRelation(Attacker, HOSTILE);
-	  break;
-	}
-	/*default:
-	  ABORT("Enemy unknown!");*/
-      }
+      GetTeam(c)->SetRelation(Attacker, HOSTILE);
 }
 
 void game::CreateTeams()
@@ -2949,7 +2924,6 @@ truth game::EndSumoWrestling(int Result)
   {
     PlayerSumoChampion = true;
     character* Sumo = GetSumo();
-    //item* Belt = Sumo && Sumo->IsHumanoid() ? static_cast<humanoid*>(Sumo)->GetBelt() : 0;
     festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
     Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun() << " says and hands you a belt of levitation.\n\"";
     (belt::Spawn(BELT_OF_LEVITATION))->MoveTo(Player->GetStack());

@@ -311,7 +311,7 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
       {
 	int BaseConfig = TempConfig[c1]->Config;
 	int NewConfig = BaseConfig | BROKEN_LOCK;
-	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);//Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
 	ConfigDataBase->InitDefaults(this, NewConfig);
 	ConfigDataBase->PostFix << "with a broken lock";
 	TempConfig[Configs++] = ConfigDataBase;
@@ -319,7 +319,7 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
 	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
 	{
 	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-	  ConfigDataBase = new olterraindatabase(*TempConfig[c1]);// = Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	  ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
 	  ConfigDataBase->InitDefaults(this, NewConfig);
 	  ConfigDataBase->PostFix << "with ";
 
@@ -342,7 +342,7 @@ int olterrainprototype::CreateSpecialConfigurations(olterraindatabase** TempConf
       if(!TempConfig[c1]->IsAbstract)
       {
 	int NewConfig = TempConfig[c1]->Config | WINDOW;
-	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);// = Config.insert(std::pair<int, olterraindatabase>(NewConfig, i->second)).first->second;
+	olterraindatabase* ConfigDataBase = new olterraindatabase(*TempConfig[c1]);
 	ConfigDataBase->InitDefaults(this, NewConfig);
 	ConfigDataBase->PostFix << "with a window";
 	ConfigDataBase->IsAlwaysTransparent = true;
@@ -358,13 +358,6 @@ truth olterrain::IsTransparent() const
 {
   return IsAlwaysTransparent() || MainMaterial->IsTransparent();
 }
-
-/*void glterrain::Draw(blitdata& BlitData) const
-{
-  const int AF = GraphicData.AnimationFrames;
-  const int F = !(BlitData.CustomData & ALLOW_ANIMATE) || AF == 1 ? 0 : GET_TICK() & (AF - 1);
-  GraphicData.Picture[F]->LuminanceBlit(BlitData);
-}*/
 
 void glterrain::ModifyAnimationFrames(int& AF) const
 {
@@ -577,4 +570,3 @@ void lterrain::AddLocationDescription(festring& String) const
 {
   String << " on the " << GetNameSingular();
 }
-

@@ -302,8 +302,6 @@ meleeweapon::meleeweapon(const meleeweapon& MW) : mybase(MW), Enchantment(MW.Enc
   CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
 }
 
-//extern character::prototype petrus_ProtoType;
-
 truth whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
   /* TERRIBLE gum solution! */

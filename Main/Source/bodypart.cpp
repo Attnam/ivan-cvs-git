@@ -638,11 +638,6 @@ int corpse::GetSparkleFlags() const
   torso* Torso = GetDeceased()->GetTorso();
   material* Material = Torso->GetMainMaterial();
   return Material->IsSparkling() ? SPARKLING_A|(!Torso->IsAlive() ? SPARKLING_B : 0) : 0;
-
-  /*if(!I)
-    return ->GetMainMaterial()->IsSparkling();
-    else
-    return GetDeceased()->GetTorso()->IsAlive() ? false : GetDeceased()->GetTorso()->GetMainMaterial()->IsSparkling();*/
 }
 
 v2 corpse::GetBitmapPos(int) const
@@ -819,19 +814,6 @@ int bodypart::GetSparkleFlags() const
   return (GetMainMaterial()->SkinColorIsSparkling() ? SPARKLING_A : 0)
     | (Flags >> BODYPART_SPARKLE_SHIFT & (SPARKLING_B|SPARKLING_C|SPARKLING_D));
 }
-
-/*truth bodypart::IsSparkling(int I) const
-  {
-  switch(I)
-  {
-  case 0: return GetMainMaterial()->SkinColorIsSparkling();
-  case 1: return IsSparklingB;
-  case 2: return IsSparklingC;
-  case 3: return IsSparklingD;
-  }
-
-  return false;
-  }*/
 
 truth corpse::RaiseTheDead(character* Summoner)
 {

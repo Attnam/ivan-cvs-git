@@ -757,7 +757,7 @@ void mommo::CreateCorpse(lsquare* Square)
   {
     lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
 
-    if(NeighbourSquare)// && NeighbourSquare->IsFlyable())
+    if(NeighbourSquare)
       NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
   }
 
@@ -2331,8 +2331,5 @@ void lobhse::GetAICommand()
 
 void lobhse::CreateCorpse(lsquare* Square)
 {
-//  for(int c = 0; c < 3; ++c)
-//    Square->AddItem(pineapple::Spawn());
-
   largecreature::CreateCorpse(Square);
 }

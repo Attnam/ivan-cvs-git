@@ -342,7 +342,7 @@ Dungeon ELPURI_CAVE;
 
     Square, Random;
     {
-      Items == VALPURIUM VALPURIUM flamingsword { Enchantment = 10; LifeExpectancy = 1000:10000; Chance = 1; }
+      Items == VALPURIUM VALPURIUM flamingsword { Enchantment = 10; LifeExpectancy = 1000:10000; Chance = 5; }
     }
   }
 
@@ -352,7 +352,7 @@ Dungeon ELPURI_CAVE;
 
     Square, Random;
     {
-      Items == itemcontainer(LARGE_CHEST) { LifeExpectancy = 100:10000; Chance = 1; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }
+      Items == itemcontainer(LARGE_CHEST) { LifeExpectancy = 100:10000; Chance = 5; ItemsInside == Random { MinPrice = 1500; Times = 10; Category = HELMET|AMULET|CLOAK|BODY_ARMOR|WEAPON|SHIELD|RING|GAUNTLET|BELT|BOOT|TOOL|VALUABLE; LifeExpectancy = 100:10000; } }
     }
   }
 

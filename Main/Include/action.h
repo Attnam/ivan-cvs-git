@@ -27,7 +27,6 @@ class actionprototype
 {
  public:
   actionprototype(actionspawner, const char*);
-  /*action* Spawn() const { return Spawner(false); }*/
   action* SpawnAndLoad(inputfile&) const;
   const char* GetClassID() const { return ClassID; }
   int GetIndex() const { return Index; }
@@ -85,7 +84,8 @@ class actionsysbase : public base
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__
 #define ACTION_PROTO(name)\
-template<> const actionprototype name##sysbase::ProtoType((actionspawner)(&name##sysbase::Spawn), #name);
+template<> const actionprototype\
+  name##sysbase::ProtoType((actionspawner)(&name##sysbase::Spawn), #name);
 #else
 #define ACTION_PROTO(name)
 #endif

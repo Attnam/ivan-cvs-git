@@ -187,7 +187,6 @@ ITEM(scrollofteleportation, scroll)
 ITEM(scrollofcharging, scroll)
 {
  public:
-  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -504,14 +503,12 @@ ITEM(stethoscope, item)
 ITEM(scrollofenchantweapon, scroll)
 {
  public:
-  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
 ITEM(scrollofenchantarmor, scroll)
 {
  public:
-  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -522,7 +519,6 @@ ITEM(skull, item)
 ITEM(scrollofrepair, scroll)
 {
  public:
-  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 
@@ -593,7 +589,6 @@ ITEM(scrollofhardenmaterial, scroll)
 ITEM(scrollofgolemcreation, scroll)
 {
  public:
-  //virtual truth Read(character*);
   virtual void FinishReading(character*);
 };
 

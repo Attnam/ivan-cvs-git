@@ -484,11 +484,11 @@ olterraincontainer /* olterrain->decoration-> */
 {
   IsAbstract = true;
   Walkability = ETHEREAL;
+  DigMessage = "You smash this piece of furniture into pieces.";
 
   Config BOOK_CASE;
   {
     CanBeDestroyed = true;
-    DigMessage = "You smash the bookcase into pieces.";
     MainMaterialConfig == FIR_WOOD;
     NameSingular = "bookcase";
     BitmapPos = 16, 272;
@@ -497,6 +497,19 @@ olterraincontainer /* olterrain->decoration-> */
     HPModifier = 20;
     AttachedGod = SOPHOS;
     LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 250:750; } Times = 1:2; }
+  }
+
+  Config CHEST_OF_DRAWERS;
+  {
+    CanBeDestroyed = true;
+    MainMaterialConfig == FIR_WOOD;
+    NameSingular = "chest of drawers";
+    BitmapPos = 0, 224;
+    SitMessage = "The chest of drawers is very unconfortable to sit on.";
+    StorageVolume = 50000;
+    HPModifier = 40;
+    AttachedGod = SOPHOS;
+    LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1000; } Times = 1:2; }
   }
 }
 

@@ -1057,7 +1057,7 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
       {
 	int BaseConfig = TempConfig[c1]->Config;
 	int NewConfig = BaseConfig | BROKEN_LOCK;
-	itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);//Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	itemdatabase* ConfigDataBase = new itemdatabase(*TempConfig[c1]);
 	ConfigDataBase->InitDefaults(this, NewConfig);
 	ConfigDataBase->PostFix << "with a broken lock";
 	ConfigDataBase->Possibility = 0;
@@ -1066,7 +1066,7 @@ int itemprototype::CreateSpecialConfigurations(itemdatabase** TempConfig, int Co
 	for(int c2 = 0; c2 < KeyConfigSize; ++c2)
 	{
 	  NewConfig = BaseConfig | KeyConfigData[c2]->Config;
-	  ConfigDataBase = new itemdatabase(*TempConfig[c1]);// = Config.insert(std::pair<int, itemdatabase>(NewConfig, i1->second)).first->second;
+	  ConfigDataBase = new itemdatabase(*TempConfig[c1]);
 	  ConfigDataBase->InitDefaults(this, NewConfig);
 	  ConfigDataBase->PostFix << "with ";
 

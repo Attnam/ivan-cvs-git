@@ -2238,14 +2238,6 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
 		 TRANSPARENT_COLOR,
 		 BlitData.CustomData };
 
-  /*bitmap* TileBuffer = igraph::GetTileBuffer();
-    bitmap* RealBitmap = BlitData.Bitmap;
-    BlitData.Bitmap = TileBuffer;
-    podv2 RealDest = BlitData.Dest;
-    BlitData.Src = RealDest;
-    BlitData.Dest.X = BlitData.Dest.Y = 0;
-    RealBitmap->NormalBlit(BlitData);//NormalBlit(TileBuffer, Pos, 0, 0, TILE_V2);
-    BlitData.Src.X = BlitData.Src.Y = 0;*/
   RealBitmap->NormalBlit(B);
   TileBuffer->FillPriority(0);
   B.Src.X = B.Src.Y = 0;
@@ -2274,12 +2266,6 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
     RightArm->DrawWielded(B);
 
   TileBuffer->FastBlit(RealBitmap, BlitData.Dest);
-  /*BlitData.Bitmap = RealBitmap;
-    BlitData.Dest = RealDest;
-    ccol24 RealLuminance = BlitData.Luminance;
-    BlitData.Flags = 0;
-    TileBuffer->FastBlit(RealBitmap, RealDest);
-    BlitData.Luminance = RealLuminance;*/
 }
 
 v2 kamikazedwarf::GetDrawDisplacement(int I) const
@@ -2675,28 +2661,6 @@ void smith::BeTalkedTo()
     ADD_MESSAGE("\"Sorry, I need an intact hammer to practise the art of smithing.\"");
     return;
   }
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-    bodypart* BodyPart = PLAYER->GetBodyPart(c);
-
-    if(BodyPart)
-    {
-    if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & IS_METAL))
-    continue;
-	  
-    if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
-    continue;
-
-    ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
-	  
-    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
-    {
-    BodyPart->RestoreHP();
-    PLAYER->EditMoney(-25);
-    }	
-    }
-    }*/
 
   if(PLAYER->PossessesItem(&item::IsFixableBySmith))
   {
@@ -4644,28 +4608,6 @@ void tailor::BeTalkedTo()
     ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who the hell else are you talkin' to? You talkin' to me? Well I'm the only one here. Who do you think you're talking to? Oh yeah? Huh? Ok.\"");
     return;
   }
-
-  /*for(int c = 0; c < BodyParts; ++c)
-    {
-    bodypart* BodyPart = PLAYER->GetBodyPart(c);
-
-    if(BodyPart)
-    {
-    if(!(BodyPart->GetMainMaterial()->GetCategoryFlags() & CAN_BE_TAILORED))
-    continue;
-	  
-    if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
-    continue;
-
-    ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
-	  
-    if(game::TruthQuestion(CONST_S("Do you accept this deal? [y/N]")))
-    {
-    BodyPart->RestoreHP();
-    PLAYER->EditMoney(-25);
-    }	
-    }
-    }*/
 
   if(PLAYER->PossessesItem(&item::IsFixableByTailor))
   {

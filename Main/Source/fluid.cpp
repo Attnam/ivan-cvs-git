@@ -167,7 +167,6 @@ void fluid::Load(inputfile& SaveFile)
       GearImage[c].Load(SaveFile);
       GearImage[c].Picture->InitRandMap();
       GearImage[c].Picture->CalculateRandMap();
-      //GearImage[c].Picture->InitPriorityMap(AVERAGE_PRIORITY);
     }
   }
 }

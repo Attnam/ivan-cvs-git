@@ -27,7 +27,6 @@
 #include "wterras.h"
 #include "materia.h"
 #include "database.h"
-//#include "fetime.h"
 #include "team.h"
 
 #ifdef WIZARD
@@ -100,7 +99,7 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
   new command(&GainAllItems, "gain all items", '$', '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, false),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
   new command(&SummonMonster, "summon monster", '&', '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', '|', false, true),

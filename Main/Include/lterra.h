@@ -344,7 +344,10 @@ class olterrain : public lterrain, public oterrain
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DEFINITIONS__
 #define LTERRAIN_PROTO(name, base, protobase)\
-template<> const protobase##prototype name##sysbase::ProtoType(&base::ProtoType, (protobase##spawner)(&name##sysbase::Spawn), #name);
+template<> const protobase##prototype\
+  name##sysbase::ProtoType(&base::ProtoType,\
+			   (protobase##spawner)(&name##sysbase::Spawn),\
+			   #name);
 #else
 #define LTERRAIN_PROTO(name, base, protobase)
 #endif

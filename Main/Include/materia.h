@@ -162,7 +162,6 @@ class material
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   truth IsSameAs(const material* What) const { return What->GetConfig() == GetConfig(); }
   truth IsTransparent() const { return GetAlpha() != 255; }
-  //virtual material* Duplicate() const = 0;
   virtual long GetTotalNutritionValue() const;
   virtual truth IsVeryCloseToSpoiling() const { return false; }
   virtual void AddWetness(long) { }
@@ -235,7 +234,10 @@ class materialsysbase : public base
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 #define MATERIAL_PROTO(name, base)\
-template<> const materialprototype name##sysbase::ProtoType(&base::ProtoType, (materialspawner)(&name##sysbase::Spawn), (materialcloner)(&name##sysbase::Clone), #name);
+template<> const materialprototype\
+  name##sysbase::ProtoType(&base::ProtoType,\
+			   (materialspawner)(&name##sysbase::Spawn),\
+			   (materialcloner)(&name##sysbase::Clone), #name);
 #else
 #define MATERIAL_PROTO(name, base)
 #endif

@@ -87,7 +87,7 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
       if(Word == "Config")
       {
 	int ConfigNumber = SaveFile.ReadNumber();
-	database* ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));//&Proto->Config.insert(std::pair<int, database>(ConfigNumber, Proto->ChooseBaseForConfig(ConfigNumber))).first->second;
+	database* ConfigDataBase = new database(*Proto->ChooseBaseForConfig(TempConfig, Configs, ConfigNumber));
 	ConfigDataBase->InitDefaults(Proto, ConfigNumber);
 	TempConfig[Configs++] = ConfigDataBase;
 

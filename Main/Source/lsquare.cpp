@@ -271,8 +271,6 @@ void lsquare::DrawStaticContents(blitdata& BlitData) const
 
 void lsquare::Draw(blitdata& BlitData) const
 {
-  //DOUBLE_BUFFER->Fill(BlitData.Dest, BlitData.Border, 0);
-
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
   {
     if(!IsDark() || game::GetSeeWholeMapCheatMode())
@@ -1948,11 +1946,6 @@ struct groundborderpartner
   glterrain* Terrain;
   int SquareIndex;
 };
-
-/*truth BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
-{
-  return BP1.Terrain->GetBorderTilePriority() < BP2.Terrain->GetBorderTilePriority();
-}*/
 
 void lsquare::CalculateGroundBorderPartners()
 {

@@ -33,6 +33,7 @@ class item;
 class liquid;
 class level;
 class material;
+class team;
 struct node;
 struct emitter;
 template <class type> struct fearray;
@@ -44,11 +45,18 @@ struct nodepointerstorer
   node* Node;
 };
 
+struct spawnresult
+{
+  const character* Pioneer;
+  int Seen;
+};
+
 typedef std::priority_queue<nodepointerstorer> nodequeue;
 typedef std::vector<item*> itemvector;
 typedef std::vector<character*> charactervector;
 typedef std::vector<emitter> emittervector;
 typedef std::vector<ulong> sunemittervector;
+typedef character* (*characterspawner)(int, int);
 
 struct node
 {
@@ -226,6 +234,7 @@ class level : public area
   int GetEnchantmentMinusChance() { return EnchantmentMinusChance; }
   int GetEnchantmentPlusChance() { return EnchantmentPlusChance; }
   void Amnesia(int);
+  spawnresult SpawnMonsters(characterspawner, team*, v2, int = 0, int = 1, truth = false);
  protected:
   truth GenerateLanterns(int, int, int) const;
   truth GenerateWindows(int, int) const;

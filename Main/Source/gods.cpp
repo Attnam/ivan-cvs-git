@@ -529,8 +529,6 @@ void loricatus::PrayGoodEffect()
       else
 	ADD_MESSAGE("\"Mortal, thou art always my valiant knight!\"");  
     }
-    /*else
-      ADD_MESSAGE("%s emits strange light but remains unchanged.", MainWielded->CHAR_NAME(DEFINITE));*/
   }
 
   for(int c = 0; c < PLAYER->GetEquipments(); ++c)

@@ -126,7 +126,6 @@ solidterrain /* glterrain-> */
 liquidterrain /* glterrain-> */
 {
   MainMaterialConfig == WATER;
-  /*BitmapPos = 16, 0;*/
   IsAbstract = true;
   Walkability = SWIM|FLY|ETHEREAL;
   ShowMaterial = false;
