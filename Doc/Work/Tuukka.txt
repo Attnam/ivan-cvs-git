@@ -1,0 +1,9 @@
+LTerrain should be divided.
+Battle symbol.
+Hit symbol.
+Small, medium, large and mega-large corpses.
+Broken items.
+Broken inhandspics.
+Shield items.
+48x48 mammoth.
+Bodypart items?

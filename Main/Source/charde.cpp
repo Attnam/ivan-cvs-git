@@ -151,87 +151,6 @@ bool ennerbeast::Hit(character*)
   return true;
 }
 
-/*void complexhumanoid::DrawToTileBuffer() const
-{	
-  vector2d InHandsPic, LegPos, TorsoPos, ArmPos, HeadPos, ShieldPos;
-
-  if(GetLegType() >= 16)
-    {
-      LegPos.X = 16;
-      LegPos.Y = (GetLegType() - 16) << 4;
-    }
-  else
-    {
-      LegPos.X = 0;
-      LegPos.Y = GetLegType() << 4;
-    }
-
-  if(GetTorsoType() >= 16)
-    {
-      TorsoPos.X = 48;
-      TorsoPos.Y = (GetTorsoType() - 16) << 4;
-    }
-  else
-    {
-      TorsoPos.X = 32;
-      TorsoPos.Y = GetTorsoType() << 4;
-    }
-
-  if(GetArmType() >= 16)
-    {
-      ArmPos.X = 80;
-      ArmPos.Y = (GetArmType() - 16) << 4;
-    }
-  else
-    {
-      ArmPos.X = 64;
-      ArmPos.Y = GetArmType() << 4;
-    }
-
-  if(GetHeadType() >= 16)
-    {
-      HeadPos.X = 112;
-      HeadPos.Y = (GetHeadType() - 16) << 4;
-    }
-  else
-    {
-      HeadPos.X = 96;
-      HeadPos.Y = GetHeadType() << 4;
-    }
-
-  if(GetShieldType() >= 16)
-    {
-      ShieldPos.X = 144;
-      ShieldPos.Y = (GetShieldType() - 16) << 4;
-    }
-  else
-    {
-      ShieldPos.X = 128;
-      ShieldPos.Y = GetShieldType() << 4;
-    }
-
-  DrawLegs(LegPos);
-  DrawTorso(TorsoPos);
-  DrawArms(ArmPos);
-  DrawHead(HeadPos);
-  DrawShield(ShieldPos);
-
-  if(GetWielded())
-    {
-      InHandsPic = GetWielded()->GetInHandsPic();
-
-      if(InHandsPic.X != 0 || InHandsPic.Y != 0)
-	DrawInHandsPic(InHandsPic);
-    }
-}*/
-
-/*void complexhumanoid::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawTorso(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawArms(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawShield(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }
-void complexhumanoid::DrawInHandsPic(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 0, 16, 16); }*/
-
 void skeleton::CreateCorpse()
 {
   ushort Amount = 2 + RAND() % 4;
@@ -326,20 +245,6 @@ void humanoid::Load(inputfile& SaveFile)
 	}
 }
 
-/*void complexhumanoid::Save(outputfile& SaveFile) const
-{
-  humanoid::Save(SaveFile);
-
-  SaveFile << ArmType << HeadType << LegType << TorsoType << ShieldType;
-}
-
-void complexhumanoid::Load(inputfile& SaveFile)
-{
-  humanoid::Load(SaveFile);
-
-  SaveFile >> ArmType >> HeadType >> LegType >> TorsoType >> ShieldType;
-}*/
-
 float golem::GetMeleeStrength() const
 {
   return 150 * GetTorso()->GetMaterial(0)->GetHitValue();
@@ -398,16 +303,16 @@ void petrus::GetAICommand()
       }
   })
 
-    if(CheckForEnemies(true))
-      return;
-
-  if(CheckForDoors())
+  if(CheckForEnemies(true))
     return;
 
   if(CheckForUsefulItemsOnGround())
     return;
 
-  FollowLeader();
+  if(FollowLeader())
+    return;
+
+  CheckForDoors();
 }
 
 void petrus::HealFully(character* ToBeHealed)
@@ -1207,13 +1112,13 @@ void slave::GetAICommand()
   if(CheckForEnemies(true))
     return;
 
-  if(CheckForDoors())
-    return;
-
   if(CheckForUsefulItemsOnGround())
     return;
 
   if(FollowLeader())
+    return;
+
+  if(CheckForDoors())
     return;
 
   if(!HomeRoom || !GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
@@ -1929,7 +1834,7 @@ ushort humanoid::GetSize() const
 
 ulong humanoid::HeadVolume() const
 {
-  return 1800 + RAND() % 401;
+  return 4000;
 }
 
 ulong humanoid::TorsoVolume() const
@@ -1939,17 +1844,17 @@ ulong humanoid::TorsoVolume() const
 
 ulong humanoid::ArmVolume() const
 {
-  return (TotalVolume() - HeadVolume()) >> 4;
+  return (TotalVolume() - HeadVolume()) / 10;
 }
 
 ulong humanoid::GroinVolume() const
 {
-  return (TotalVolume() - HeadVolume()) >> 4;
+  return (TotalVolume() - HeadVolume()) / 10;
 }
 
 ulong humanoid::LegVolume() const
 {
-  return (TotalVolume() - HeadVolume()) >> 3;
+  return (TotalVolume() - HeadVolume()) * 2 / 15;
 }
 
 void humanoid::CreateBodyParts()

@@ -158,3 +158,4 @@ Symbolic inventory.
 Symbolic god menu.
 Lists, especially message history, should look better.
 *Hunters must be one-armed.
+Something special should happen if the player is polymorphed into a chicken and loses his head.

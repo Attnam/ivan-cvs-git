@@ -642,13 +642,13 @@ void character::GetAICommand()	// Freedom is slavery. Love is hate. War is peace
   if(CheckForEnemies(true))
     return;
 
-  if(CheckForDoors())
-    return;
-
   if(CheckForUsefulItemsOnGround())
     return;
 
   if(FollowLeader())
+    return;
+
+  if(CheckForDoors())
     return;
 
   MoveRandomly();
@@ -2518,13 +2518,13 @@ void character::StandIdleAI()
   if(CheckForEnemies(true))
     return;
 
-  if(CheckForDoors())
-    return;
-
   if(CheckForUsefulItemsOnGround())
     return;
 
   if(FollowLeader())
+    return;
+
+  if(CheckForDoors())
     return;
 }
 
@@ -2778,8 +2778,8 @@ bool character::CheckForDoors()
     {
       DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 			    if(game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetOLTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->Open(this))
-			    return true;)
-	}
+			      return true;);
+    }
 
   return false;
 }

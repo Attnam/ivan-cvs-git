@@ -1,0 +1,24 @@
+Iter Vehemens ad Necem attributes:
+
+Strength
+-damage
+-carrying capacity
+-to hit value, slightly
+Endurance
+-hp
+Dexterity
+-to hit value
+-dodge value
+Perception
+-to hit value
+-dodge value
+Charisma
+-shop prices
+-pet handling
+Intelligence
+-ability to cast wizard spells
+Wisdom
+-ability to cast priest spells
+Mana
+-spell efficiency
+-mana points
