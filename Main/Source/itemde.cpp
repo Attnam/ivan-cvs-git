@@ -2232,7 +2232,7 @@ item* corpse::PrepareForConsuming(character*)
   return this;
 }
 
-bool wandoflocking::BeamEffect(character* Who, std::string, uchar, lsquare* Where) 
+bool wandoflocking::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
 { 
   return Where->LockEverything(Who); 
 }
@@ -2341,3 +2341,70 @@ ushort banana::GetMaterialColor0(ushort Frame) const
     return MAKE_RGB(GET_RED(Color) * Frame / 20, GET_GREEN(Color) * Frame / 20, GET_BLUE(Color) * Frame / 20);
 }
 
+bool wandofresurrection::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
+{
+  return LSquare->RaiseTheDead(Zapper);
+}
+
+bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a wand of resurrection", Direction, 15);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}
+
+bool corpse::RaiseTheDead(character* Summoner)
+{
+  if(Summoner->GetIsPlayer())
+    game::DoEvilDeed(50);
+  GetLSquareUnder()->AddCharacter(GetDeceased());
+  GetDeceased()->SetHasBe(true);
+  GetDeceased()->CompleteRiseFromTheDead();
+  SetDeceased(0);
+  SetExists(false);
+  RemoveFromSlot();
+  return true;
+}
+
+bool head::FitsBodyPartIndex(uchar c, character*) const 
+{ 
+  return c == HEAD_INDEX; 
+}
+
+bool torso::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == TORSO_INDEX;
+}
+
+bool rightarm::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == RIGHT_ARM_INDEX;
+}
+
+bool leftarm::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == LEFT_ARM_INDEX;
+}
+
+bool groin::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == GROIN_INDEX;
+}
+
+bool rightleg::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == RIGHT_LEG_INDEX;
+}
+
+bool leftleg::FitsBodyPartIndex(uchar c, character*) const
+{
+  return c == LEFT_LEG_INDEX;
+}

@@ -1214,3 +1214,15 @@ bool lsquare::LockEverything(character* Zapper)
   else
     return false;
 }
+
+bool lsquare::RaiseTheDead(character* Summoner)
+{
+  if(GetStack()->RaiseTheDead(Summoner))
+      return true;
+
+  if(GetCharacter())
+    {
+      return GetCharacter()->RaiseTheDead(Summoner);
+    }
+  return false;
+}

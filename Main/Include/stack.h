@@ -79,6 +79,7 @@ class stack
   void AddContentsToList(felist&, character*, const std::string&, bool, bool (*)(item*, character*)) const;
   item* SearchChosen(ushort&, ushort, character*, bool (*)(item*, character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
+  bool RaiseTheDead(character*);
  private:
   stacklist* Item;
   square* SquareUnder;

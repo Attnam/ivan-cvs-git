@@ -3871,3 +3871,49 @@ void character::AddInfo(felist& Info) const
   Info.AddEntry(std::string("To hit value: ") + ulong(GetToHitValue()), LIGHTGRAY);
 }
 
+void character::CompleteRiseFromTheDead()
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    {
+      if(GetBodyPart(c))
+	GetBodyPart(c)->SetHP(1);
+    }
+}
+
+bool character::RaiseTheDead(character*)
+{
+  bool Useful = false;
+  for(ushort c = 0; c < BodyParts(); ++c)
+    {
+      if(!GetBodyPart(c))
+	{
+	  CreateBodyPart(c);
+	  if(GetIsPlayer())
+	    ADD_MESSAGE("Suddenly you grow a new %s.", GetBodyPart(c)->CHARNAME(UNARTICLED));
+	  else if(GetLSquareUnder()->CanBeSeen())
+	    ADD_MESSAGE("%s grows a new %s.", CHARNAME(DEFINITE), GetBodyPart(c)->CHARNAME(UNARTICLED));
+	  Useful = true;
+	}
+    }
+  if(!Useful)
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("You shudder.");
+      else if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s shudders.", CHARNAME(DEFINITE));
+    }
+  return true;
+}
+
+
+void character::CreateBodyPart(uchar c)
+{
+  switch(c)
+    {
+    case TORSO_INDEX:
+      CreateTorso();
+      break;
+    default:
+      ABORT("Wierd bodypart case to create for a character. Sorry.");
+    }
+}

@@ -149,6 +149,9 @@ class ABSTRACT_CHARACTER
   virtual ushort GlobalResistance(uchar) const;
   virtual bool CanUseEquipment() const { return true; }
   virtual void AddInfo(felist&) const;
+  virtual void CompleteRiseFromTheDead();
+  virtual void CreateBodyPart(uchar);
+  virtual bool HandleNoBodyPart(uchar);
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
@@ -301,6 +304,7 @@ class CHARACTER
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
   virtual bool CanBeAssignedAName() const { return false; }
+  virtual bool IsUnique() const { return true; }
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
@@ -446,6 +450,7 @@ class CHARACTER
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
   virtual bool CanBeAssignedAName() const { return false; }
+  virtual bool IsUnique() const { return true; }
  protected:
 
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 32); } 
@@ -583,6 +588,7 @@ class CHARACTER
   virtual bool CanBeDisplaced() const { return false; }
   virtual bool CanBeAssignedAName() const { return false; }
   virtual bool CanOpen() const { return true; }
+  virtual bool IsUnique() const { return true; }
  protected:
   virtual void CreateCorpse();
   virtual ulong TotalVolume() const { return 277500; }

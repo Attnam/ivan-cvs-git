@@ -1740,6 +1740,7 @@ class ITEM
   virtual ushort DangerWeight() const;
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual ushort GetStrengthModifier() const { return 150; }
   virtual std::string NameSingular() const { return "head"; }
@@ -1754,6 +1755,7 @@ class ABSTRACT_ITEM
   bodypart,
  public:
   virtual ushort DangerWeight() const;
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual ushort GetStrengthModifier() const { return 250; }
@@ -1860,6 +1862,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STRIGHTARM; }
   virtual std::string NameSingular() const { return "right arm"; }
@@ -1880,6 +1883,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STLEFTARM; }
   virtual std::string NameSingular() const { return "left arm"; }
@@ -1897,6 +1901,7 @@ class ITEM
  public:
   virtual ushort GetTotalResistance(uchar) const;
   virtual ushort DangerWeight() const;
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual ushort GetStrengthModifier() const { return 100; }
   virtual uchar GetSpecialType(ushort) const { return STGROIN; }
@@ -1933,6 +1938,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STRIGHTLEG; }
   virtual std::string NameSingular() const { return "right leg"; }
@@ -1949,6 +1955,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual bool FitsBodyPartIndex(uchar, character*) const;
  protected:
   virtual uchar GetSpecialType(ushort) const { return STLEFTLEG; }
   virtual std::string NameSingular() const { return "left leg"; }
@@ -2057,6 +2064,7 @@ class ITEM
   virtual item* PrepareForConsuming(character*);
   virtual uchar GetMaterials() const { return 2; }
   virtual material* GetMaterial(uchar) const;
+  virtual bool RaiseTheDead(character*);
  protected:
   virtual ushort GetMaterialColor0(ushort) const;
   virtual ushort GetMaterialColor1(ushort) const;
@@ -2088,7 +2096,28 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 70; }
   virtual ushort GetBeamColor() const { return WHITE; }
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
+);
+
+class ITEM
+(
+  wandofresurrection,
+  wand,
+  InitMaterials(new bone),
+  {
+    SetSize(30);
+    SetCharges(1 + RAND() % 2);
+    SetTimesUsed(0);
+  },
+ public:
+  static ushort Possibility() { return 20; }
+  virtual std::string NameSingular() const { return "wand of resurrection"; }
+  virtual std::string NamePlural() const { return "wands of resurrection"; }
+  virtual float OfferModifier() const { return 10; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual ulong Price() const { return 400; }
+  virtual ushort GetBeamColor() const { return BLACK; }
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
 );
 #endif
 

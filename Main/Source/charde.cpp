@@ -1864,37 +1864,18 @@ ulong humanoid::LegVolume() const
 
 void humanoid::CreateBodyParts()
 {
-  CreateHead();
-  CreateTorso();
-  CreateRightArm();
-  CreateLeftArm();
-  CreateGroin();
-  CreateRightLeg();
-  CreateLeftLeg();
+  /* Create all body parts */
+  for(uchar c = 0; c < 7; ++c) 
+    {
+      CreateBodyPart(c);
+    }
 }
 
 void humanoid::RestoreBodyParts()
 {
-  if(!GetHead())
-    CreateHead();
-
-  if(!GetTorso())
-    CreateTorso();
-
-  if(!GetRightArm())
-    CreateRightArm();
-
-  if(!GetLeftArm())
-    CreateLeftArm();
-
-  if(!GetGroin())
-    CreateGroin();
-
-  if(!GetRightLeg())
-    CreateRightLeg();
-
-  if(!GetLeftLeg())
-    CreateLeftLeg();
+  for(uchar c = 0; c < BodyParts(); ++c)
+      if(GetBodyPart(c))
+	CreateBodyPart(c);
 }
 
 void humanoid::UpdateBodyPartPictures(bool CallUpdatePictures)
@@ -2634,3 +2615,83 @@ void ennerbeast::CreateHead()
   GetHead()->SetSize(HeadSize(TotalSize()));*/
 }
 
+void humanoid::CompleteRiseFromTheDead()
+{
+  ushort c;
+  for(c = 0; c < BodyParts(); ++c)
+    {
+      if(!GetBodyPart(c))
+	{
+	  stack* Stack = GetLSquareUnder()->GetStack(); 
+	  for(stackiterator i = Stack->GetBottomSlot(); i != Stack->GetSlotAboveTop(); ++i)
+	    {
+	      if((**i)->FitsBodyPartIndex(c, this))
+		{
+		  item* Item = ***i;
+		  Item->RemoveFromSlot();
+		  SetBodyPart(c, (bodypart*)Item);
+		  break;
+		}
+	    }
+	}
+    }
+
+  for(c = 0; c < BodyParts(); ++c)
+    {
+      if(BodyPartVital(c) && !GetBodyPart(c))
+	{
+	  if(!HandleNoBodyPart(c))
+	    return;
+	}
+      GetBodyPart(c)->SetHP(1);
+    }
+}
+
+bool humanoid::HandleNoBodyPart(uchar Index)
+{
+  switch(Index)
+    {
+    case HEAD_INDEX:
+      if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("The headless body of %s vibrates violently.", CHARNAME(DEFINITE));
+      Die();
+      return false;
+
+    case GROIN_INDEX:
+      CreateGroin();
+      return true;
+    case TORSO_INDEX:
+      ABORT("The corpse does not have a torso.");
+    }
+  return false;
+}
+
+void humanoid::CreateBodyPart(uchar c)
+{
+  switch(c)
+    {
+    case TORSO_INDEX:
+      CreateTorso();
+      break;
+    case HEAD_INDEX:
+      CreateHead();
+      break;
+    case RIGHT_ARM_INDEX:
+      CreateRightArm();
+      break;
+    case LEFT_ARM_INDEX:
+      CreateLeftArm();
+      break;
+    case GROIN_INDEX:
+      CreateGroin();
+      break;
+    case RIGHT_LEG_INDEX:
+      CreateRightLeg();
+      break;
+    case LEFT_LEG_INDEX:
+      CreateLeftLeg();
+      break;
+    default:
+      ABORT("Wierd bodypart case to create for a humanoid. Sorry.");
+    }
+}

@@ -182,6 +182,8 @@ class item : public object
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsStackable() const { return false; }
   virtual bool IsEqual(item*) const { return false; }
+  virtual bool RaiseTheDead(character*) { return false; }
+  virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }

@@ -59,6 +59,14 @@
 #define FEMALE 2
 #define TRANSSEXUAL 3
 
+#define TORSO_INDEX 0
+#define HEAD_INDEX 1
+#define RIGHT_ARM_INDEX 2
+#define LEFT_ARM_INDEX 3
+#define GROIN_INDEX 4
+#define RIGHT_LEG_INDEX 5
+#define LEFT_LEG_INDEX 6
+
 #include <list>
 
 #include "typedef.h"
@@ -402,6 +410,10 @@ class character : public entity, public id
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(uchar);
   virtual bool IsAnimated() const { return false; }
+  virtual bool IsUnique() const { return false; }
+  virtual void CompleteRiseFromTheDead();
+  virtual bool RaiseTheDead(character*);
+  virtual void CreateBodyPart(uchar);
  protected:
   virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;

@@ -514,3 +514,13 @@ item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (*
 
   return 0;
 }
+
+bool stack::RaiseTheDead(character* Summoner)
+{
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+    {
+      if((**i)->RaiseTheDead(Summoner))
+	return true;
+    }
+  return false;
+}
