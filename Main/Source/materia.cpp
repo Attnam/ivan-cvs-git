@@ -64,7 +64,7 @@ void material::Load(inputfile& SaveFile)
   databasecreator<material>::InstallDataBase(this, ReadType<ushort>(SaveFile));
 }
 
-truth material::Effect(character* Eater, long Amount)
+truth material::Effect(character* Char, int BodyPart, long Amount)
 {
   /* Receivexxx should return truth! */
 
@@ -75,55 +75,57 @@ truth material::Effect(character* Eater, long Amount)
 
   switch(GetEffect())
   {
-   case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); break;
-   case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); break;
-   case EFFECT_OMMEL_URINE: Eater->ReceiveOmmelUrine(Amount); break;
-   case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); break;
-   case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); break;
-   case EFFECT_HEAL: Eater->ReceiveHeal(Amount); break;
-   case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount); break;
-   case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); break;
-   case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); break;
-   case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); break;
-   case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); break;
-   case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); break;
-   case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); break;
+   case EFFECT_POISON: Char->BeginTemporaryState(POISONED, Amount); break;
+   case EFFECT_DARKNESS: Char->ReceiveDarkness(Amount); break;
+   case EFFECT_OMMEL_URINE: Char->ReceiveOmmelUrine(Amount); break;
+   case EFFECT_PEPSI: Char->ReceivePepsi(Amount); break;
+   case EFFECT_KOBOLD_FLESH: Char->ReceiveKoboldFlesh(Amount); break;
+   case EFFECT_HEAL: Char->ReceiveHeal(Amount); break;
+   case EFFECT_LYCANTHROPY: Char->BeginTemporaryState(LYCANTHROPY, Amount); break;
+   case EFFECT_SCHOOL_FOOD: Char->ReceiveSchoolFood(Amount); break;
+   case EFFECT_ANTIDOTE: Char->ReceiveAntidote(Amount); break;
+   case EFFECT_CONFUSE: Char->BeginTemporaryState(CONFUSED, Amount); break;
+   case EFFECT_POLYMORPH: Char->BeginTemporaryState(POLYMORPH, Amount); break;
+   case EFFECT_ESP: Char->BeginTemporaryState(ESP, Amount); break;
+   case EFFECT_SKUNK_SMELL: Char->BeginTemporaryState(POISONED, Amount); break;
    case EFFECT_MAGIC_MUSHROOM:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Eater->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_MAGIC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
-   case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount, 1 << 14); break;
-   case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); break;
+   case EFFECT_TRAIN_PERCEPTION: Char->EditExperience(PERCEPTION, Amount, 1 << 14); break;
+   case EFFECT_HOLY_BANANA: Char->ReceiveHolyBanana(Amount); break;
    case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Eater->ActivateRandomState(SRC_EVIL, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_EVIL, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
    case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Eater->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
-   case EFFECT_PEA_SOUP: Eater->ReceivePeaSoup(Amount); break;
-   case EFFECT_BLACK_UNICORN_FLESH: Eater->ReceiveBlackUnicorn(Amount); break;
-   case EFFECT_GRAY_UNICORN_FLESH: Eater->ReceiveGrayUnicorn(Amount); break;
-   case EFFECT_WHITE_UNICORN_FLESH: Eater->ReceiveWhiteUnicorn(Amount); break;
-   case EFFECT_TELEPORT_CONTROL: Eater->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
+   case EFFECT_PEA_SOUP: Char->ReceivePeaSoup(Amount); break;
+   case EFFECT_BLACK_UNICORN_FLESH: Char->ReceiveBlackUnicorn(Amount); break;
+   case EFFECT_GRAY_UNICORN_FLESH: Char->ReceiveGrayUnicorn(Amount); break;
+   case EFFECT_WHITE_UNICORN_FLESH: Char->ReceiveWhiteUnicorn(Amount); break;
+   case EFFECT_TELEPORT_CONTROL: Char->BeginTemporaryState(TELEPORT_CONTROL, Amount); break;
    case EFFECT_MUSHROOM:
     {
       v2 Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
-      Eater->ActivateRandomState(SRC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+      Char->ActivateRandomState(SRC_MUSHROOM, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
       break;
     }
-   case EFFECT_OMMEL_CERUMEN: Eater->ReceiveOmmelCerumen(Amount); break;
-   case EFFECT_OMMEL_SWEAT: Eater->ReceiveOmmelSweat(Amount); break;
-   case EFFECT_OMMEL_TEARS: Eater->ReceiveOmmelTears(Amount); break;
-   case EFFECT_OMMEL_SNOT: Eater->ReceiveOmmelSnot(Amount); break;
-   case EFFECT_OMMEL_BONE: Eater->ReceiveOmmelBone(Amount); break;
+   case EFFECT_OMMEL_CERUMEN: Char->ReceiveOmmelCerumen(Amount); break;
+   case EFFECT_OMMEL_SWEAT: Char->ReceiveOmmelSweat(Amount); break;
+   case EFFECT_OMMEL_TEARS: Char->ReceiveOmmelTears(Amount); break;
+   case EFFECT_OMMEL_SNOT: Char->ReceiveOmmelSnot(Amount); break;
+   case EFFECT_OMMEL_BONE: Char->ReceiveOmmelBone(Amount); break;
+   case EFFECT_MUSTARD_GAS: Char->ReceiveMustardGas(BodyPart, Amount); break;
+   case EFFECT_MUSTARD_GAS_LIQUID: Char->ReceiveMustardGasLiquid(BodyPart, Amount); break;
    default: return false;
   }
 
@@ -150,7 +152,7 @@ material* material::EatEffect(character* Eater, long Amount)
   }
   else
   {
-    Effect(Eater, Amount);
+    Effect(Eater, TORSO_INDEX, Amount);
 
     if(IsLiquid())
       Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
@@ -197,7 +199,10 @@ truth material::HitEffect(character* Enemy, bodypart* BodyPart)
       Success = false;
   }
   else
-    Success = Effect(Enemy, Amount);
+  {
+    int BPIndex = BodyPart ? BodyPart->GetBodyPartIndex() : NONE_INDEX;
+    Success = Effect(Enemy, BPIndex, Amount);
+  }
 
   if(Amount != Volume)
     EditVolume(-Amount);
@@ -287,7 +292,7 @@ truth material::CanBeEatenByAI(const character* Eater) const
 
 truth material::BreatheEffect(character* Enemy)
 {
-  return Effect(Enemy, Max<long>(GetVolume() / 10, 50));
+  return Effect(Enemy, TORSO_INDEX, Max<long>(GetVolume() / 10, 50));
 }
 
 const materialdatabase* material::GetDataBase(int Config)

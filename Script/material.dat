@@ -1341,9 +1341,9 @@ gas
     NameStem = "mustard gas";
     Alpha = 200;
     AttachedGod = CRUENTUS;
-    BreatheMessage = "It smells like mustard here.";
-    CategoryFlags = Base|IS_SCARY;    
+    BreatheMessage = "It smells like mustard here."; 
     Effect = EFFECT_MUSTARD_GAS;
+    StepInWisdomLimit = 8;
   }
 }
 
@@ -1754,7 +1754,6 @@ liquid
     Alpha = 150;
     AttachedGod = CRUENTUS;
     Effect = EFFECT_MUSTARD_GAS_LIQUID;
-    EffectStrength = 100;
   }
 }
 
@@ -1770,6 +1769,7 @@ flesh
   SpoilModifier = 10000;
   PriceModifier = 60;
   BodyFlags = Base|IS_ALIVE|IS_WARM|CAN_HAVE_PARASITE|CAN_REGENERATE&~USE_MATERIAL_ATTRIBUTES;
+  InteractionFlags = Base|IS_AFFECTED_BY_MUSTARD_GAS;
 
   Config GOBLINOID_FLESH;
   {

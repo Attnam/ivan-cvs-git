@@ -109,7 +109,7 @@ material* organic::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   GetMotherEntity()->SpecialEatEffect(Eater, Amount);
-  Effect(Eater, Amount);
+  Effect(Eater, TORSO_INDEX, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 20 / (1000 * (GetSpoilLevel() + 1)));
 
   if(IsInfectedByLeprosy() && Amount && !RAND_N(25000 / Amount))
@@ -248,7 +248,7 @@ void liquid::TouchEffect(item* Item, const festring& LocationName)
   character* Char = Item->GetBodyPartMaster();
 
   if(Char)
-    Effect(Char, Volume >> 6);
+    Effect(Char, Item->GetBodyPartIndex(), Volume >> 6);
 }
 
 void liquid::TouchEffect(lterrain* Terrain)
@@ -269,7 +269,7 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, CONST_S(""), Volume * GetAcidicity() >> 1);
 
   if(Char->IsEnabled())
-    Effect(Char, Volume >> 9);
+    Effect(Char, BodyPartIndex, Volume >> 9);
 }
 
 /* Doesn't do the actual rusting, just returns whether it should happen */

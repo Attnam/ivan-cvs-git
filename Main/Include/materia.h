@@ -106,7 +106,7 @@ class material
   material* TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  truth Effect(character*, long);
+  truth Effect(character*, int, long);
   virtual material* EatEffect(character*, long);
   truth HitEffect(character*, bodypart*);
   virtual col16 GetSkinColor() const { return GetColor(); }

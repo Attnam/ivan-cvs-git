@@ -270,7 +270,7 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(HP <= 0)
       return true;
 
-    if(DamageTypeCanScar(Type))// && !(RAND_N(25 + 25 * HP / MaxHP)))
+    if(DamageTypeCanScar(Type) && !(RAND_N(25 + 25 * HP / MaxHP)))
       GenerateScar(Damage, Type);
 
     if(Master->IsPlayer())
@@ -2916,7 +2916,7 @@ void bodypart::ReceiveAcid(material* Material, const festring& LocationName, lon
   if(Master && MainMaterial->GetInteractionFlags() & CAN_DISSOLVE)
   {
     long Tries = Modifier / 1000;
-    Modifier -= Tries * 1000;
+    Modifier -= Tries * 1000; //opt%?
     int Damage = 0;
 
     for(long c = 0; c < Tries; ++c)

@@ -3218,6 +3218,7 @@ truth character::AllowDamageTypeBloodSpill(int Type)
    case DRAIN:
    case POISON:
    case ELECTRICITY:
+   case MUSTARD_GAS_DAMAGE:
     return false;
   }
 
@@ -3227,7 +3228,7 @@ truth character::AllowDamageTypeBloodSpill(int Type)
 
 /* Returns truly done damage */
 
-int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,int BodyPartIndex, int Direction, truth PenetrateResistance, truth Critical, truth ShowNoDamageMsg, truth CaptureBodyPart)
+int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type, int BodyPartIndex, int Direction, truth PenetrateResistance, truth Critical, truth ShowNoDamageMsg, truth CaptureBodyPart)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
@@ -3536,6 +3537,7 @@ int character::GetResistance(int Type) const
    case PHYSICAL_DAMAGE:
    case SOUND:
    case DRAIN:
+   case MUSTARD_GAS_DAMAGE:
     return 0;
    case ENERGY: return GetEnergyResistance();
    case FIRE: return GetFireResistance();
@@ -4272,6 +4274,7 @@ truth character::DamageTypeAffectsInventory(int Type)
    case PHYSICAL_DAMAGE:
    case POISON:
    case DRAIN:
+   case MUSTARD_GAS_DAMAGE:
     return false;
   }
 
@@ -9573,4 +9576,47 @@ void character::ForcePutNear(v2 Pos)
     while(NewPos == Pos);
 
   PutTo(NewPos);
+}
+
+void character::ReceiveMustardGas(int BodyPart, long Volume)
+{
+  if(Volume)
+    GetBodyPart(BodyPart)->AddFluid(liquid::Spawn(MUSTARD_GAS_LIQUID, Volume), CONST_S("skin"), 0, true);
+}
+
+void character::ReceiveMustardGasLiquid(int BodyPartIndex, long Modifier)
+{
+  bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+
+  if(BodyPart->GetMainMaterial()->GetInteractionFlags() & IS_AFFECTED_BY_MUSTARD_GAS)
+  {
+    long Tries = Modifier;
+    Modifier -= Tries; //opt%?
+    int Damage = 0;
+
+    for(long c = 0; c < Tries; ++c)
+      if(!(RAND() % 100))
+	++Damage;
+
+    if(Modifier && !(RAND() % 1000 / Modifier))
+      ++Damage;
+
+    if(Damage)
+    {
+      ulong Minute = game::GetTotalMinutes();
+
+      if(GetLastAcidMsgMin() != Minute && (CanBeSeenByPlayer() || IsPlayer()))
+      {
+	SetLastAcidMsgMin(Minute);
+
+	if(IsPlayer())
+	  ADD_MESSAGE("Mustard gas dissolves the skin of your %s.", BodyPart->GetBodyPartName().CStr());
+	else
+	  ADD_MESSAGE("Mustard gas dissolves %s.", CHAR_NAME(DEFINITE));
+      }
+
+      ReceiveBodyPartDamage(0, Damage, MUSTARD_GAS_DAMAGE, BodyPartIndex, YOURSELF, false, false, false);
+      CheckDeath(CONST_S("killed by a fatal exposure to mustard gas"));
+    }
+  }
 }

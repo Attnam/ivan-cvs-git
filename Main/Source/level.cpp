@@ -2927,8 +2927,6 @@ void level::GasExplosion(gas* GasMaterial, lsquare* Square)
     lsquare* Neighbour = Square->GetNeighbourLSquare(d);
 
     if(Neighbour && Neighbour->IsFlyable())
-    {
       Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
-    }
   } 
 }

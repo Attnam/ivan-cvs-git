@@ -2883,10 +2883,8 @@ truth gasgrenade::ReceiveDamage(character* Damager, int Damage, int Type, int)
 
     material* GasMaterial = GetSecondaryMaterial();
     GetLevel()->GasExplosion(static_cast<gas*>(GasMaterial), GetLSquareUnder());
-    
     RemoveFromSlot();
     SendToHell();
-    
     return true;
   }
 

@@ -413,6 +413,7 @@ int item::GetResistance(int Type) const
    case SOUND:
    case ENERGY:
    case DRAIN:
+   case MUSTARD_GAS_DAMAGE:
     return 0;
    case FIRE: return GetFireResistance();
    case POISON: return GetPoisonResistance();

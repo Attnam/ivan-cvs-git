@@ -160,6 +160,7 @@ const name##prototype name::ProtoType
 #define ENERGY 32
 #define POISON 64
 #define DRAIN 128
+#define MUSTARD_GAS_DAMAGE 256
 #define THROW 32768
 
 #define UNDEFINED 0
@@ -1068,6 +1069,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define CAN_DISSOLVE 4
 #define AFFECT_INSIDE 8
 #define EFFECT_IS_GOOD 16
+#define IS_AFFECTED_BY_MUSTARD_GAS 32
 
 /*************************/
 /* End of DataBase flags */
