@@ -3039,6 +3039,200 @@ Out of these Party get very appealing propaganda poster collection.
 
 All these questions require answering ASAP.
 
+Ivan on 10 December 2004
+------------------------
+
+Ivan comprehend. Favourites of pictures are:
+screen 1 - main menu good to show because it create familiar feeling to game
+screen 7 - show the glory of combat! and illustrate fine equipment handling
+screen 8 - show what happen when shit hits the fan
+holyscreen 2 - show some fine city
+holyscreen 33 - show some totally trashed dungeon
+holyscreen 17 - show some fine magic gas and regular dungeon fighting
+holyscreen 23 - seeing items invigorate viewer
+holyscreen 30 - some new landscape
+holyscreen 28 - being able to buy pets is a rare priviledge in the 
+roguelike genre!
+
+ivan also pick joker extra bonus 11th picture!:
+holyscreen 39 - show lost limb!
+
+Gauntlet look completely fine in ivan eye, is seeming like a few metal 
+plate and screw or leather strip be loose, which is perfect.
+
+Ivan will now dig into dungeon levels and return with reports.
+
+Ivan on 10 December 2004
+------------------------
+
+Wait, Ivan incorrect. Gauntlet look rather clumsy. Ivan remind that 
+there have been a better-looking versio of gauntlet somewhere? Hmm.. 
+mystify. Ivan check hard drive and draw new if needed
+
+Ivan on 13 December 2004
+------------------------
+
+Ivan have been drink 900 bottles of CCCP vodka and so usage of IvanWiki 
+at the moment be terrifyingly inconvenient. Thus Ivan text submit to leader:
+
+Team Formations:
+Teams members can be arranged to formations. A dialog window opens, and
+in the window there is a matrix in which you can pick team members from
+a list and place them on it.
+
+Example: (j and x are some monsters, @ is player)
+
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | |x|j|x| | | | | |
+-----------------------
+| | |x|j|@|j|x| | | | |
+-----------------------
+| | | |x|j|x| | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+| | | | | | | | | | | |
+-----------------------
+
+Team members will attempt to create the formation whenever the enviroment
+permits it. This means they will also attempt to copy players movements.
+Formation can be set to modes Strict (members try to stick in formation
+no matter what) or Loose (members will help each other in combat etc.).
+Perhaps the function would also require a certain INT from the members,
+otherwise it could not be performed. It might also require a certain INT
+from the player, and maybe higher INT would increase the maximum allowed
+size of the matrix?
+On the side of the dialog window there could be following buttons:
+Rotate formation 90 degrees to left
+Rotate formation 90 degrees to right
+Mirror formation (left/right)
+Flip formation (up/down)
+The function would be of importance, because having and controlling a team
+is essential in the harder levels of the game.
+Perhaps there could also be an Allow team rotation -switch, which, if set,
+would allow the team to try to adjust to the environment by rotating,
+mirroring or flipping itself.
+
+Ivan on 16 December 2004
+------------------------
+
+Ivan play and feed back:
+
+Iventories should seem like opened trees, so that you could see the 
+contents of chests like any other objects
+
+There should be a selectable default container, so that it would be 
+faster to use containers.
+
+There should be a button for Wear, so that Wearing items would be faster.
+
+Leader on 16 December 2004
+--------------------------
+
+Leader like tree-like inventory screen idea very much.
+Leader not think of it before.
+Default container idea also good, though it has been presented before and
+could perhaps be developed further.
+Perhaps player have inventory structure somewhat like this:
+
+player
+-helmet
+-amulet
+-etc.
+-right pocket
+--item
+--item
+-left pocket
+--item
+-sack
+--item
+--item
+--chest
+---item
+---strongbox
+----item
+----etc.
+---etc.
+--etc.
+
+Choosing default container work like this.
+When game start, player get sack which default container.
+Player push certain key.
+Screen opened.
+Player choose from:
+
+-right pocket
+-left pocket
+-sack
+--chest
+---strong box
+
+If container locked, it ignored.
+When player press comma, item go to default container.
+If default container full, player prompted with screen above to choose
+another container.
+Sack quite big, enough for most normal items but not for 10 ass corpses, for
+example.
+Pockets small, but they take almost no time to access, so a wand of teleport
+could be stored there.
+These like quick item slots in certain games.
+They only usable if player wear certain armours.
+There also command for emptying one container and putting its items to
+another.
+This usable when eg. changing sack.
+There waterproof, fireproof etc. different kinds of sacks.
+They can of course be nested in tree-structure for extra protection, but
+retrieving an item which is inside chest inside sack inside strong-box
+inside sack very slow, so basic sack usually quite important to upgrade.
+Also, there magical containers like bag of holding, which stores its
+contents in another dimension, so it can hold an enormous amount of things
+and still have constant weight.
+Of course, there could be some drawback, for instance if there thousand
+items stored in BoH, retrieving one would be very slow since the player
+wouldn't be able to find right one quickly.
+The time would depend on dexterity, perception and intelligence (if very
+intelligent, he remember where he put each item almost instantly).
+There could also be magical chest where time does not pass or does so very
+slowly.
+This perfect for storing food, but useless for lyre of charm, magic whistle,
+etc.
+
+By command for wearing, what does Ivan exactly mean?
+There no sense in opening menu where each equipment slot shown, since this
+almost identical to equipment screen.
+Perhaps key, which open inventory, and when player select for instance a
+cloak, the player chooses the only slot where cloak fits, ie. the cloak slot
+and empties it first, if necessary?
+If player choose gauntlet and there pair, both gaunlet slots emptied and
+gauntlets put in place.
+What would Ivan like to happen if he choose only one gauntlet?
+If only one gauntlet slot empty, it of course go there.
+But if two are available?
+Right arm?
+The arm which the game thinks more important, according to some formula?
+Or would there be question where player is prompted to choose either 'r'ight
+or 'l'eft gaunlet slot?
+
+Leader not commented team formations yet.
+First of all, Ivan idea imply displacement system has to be modified.
+If team moving in formation along a hallway like this
+
+#####
+.x@y.
+#####
+
+and player presses right arrow key, he should automatically wait for team
+member y to move eastward and then follow it.
+Now he displaces it or, worse yet, fails to displace it because it so
+stubborn.
+Ivan agree?
+In any case, IVAN AI code not very good and Ivan probably have to wait for
+formations for some time.
+
 ----------------------------------------------------------------------------
 
 End of document.

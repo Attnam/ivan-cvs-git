@@ -436,7 +436,7 @@ Fortune cookies.
 Changes in attributes should be highlighted by some other colored font. (in the sidebar)
 Detonator and starting explosive. When applied the detonator explodes the small other explosive. Could be useful to start big explosions.    
 Vesana and other big monsters should also vomit much more than smaller creatures.
-Doing evil/good deads should have greater effect on the god on whose altar room the deed is done.
+Doing evil/good deeds should have greater effect on the god on whose altar room the deed is done.
 Mutant limbs should be of different color (maybe even have a different picture?), they should emitate light and drip odd liquid occasionally.
 //Leprosy state.
 Randomly generated bonefiles.
@@ -552,3 +552,4 @@ Priest should perhaps be able to remove parasites.
 It should be possible to name individual items.
 You should be able to change level anywhere if WalkThroughWalls cheat is on.
 Using teleport control / polymorph control should train either intelligence or willpower.
+Bears shouldn't attack you if you play dead.

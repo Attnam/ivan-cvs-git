@@ -7990,7 +7990,7 @@ void character::RegenerateStamina()
 
   int Plus1 = 100;
 
-  switch(GetHungerState())
+  switch(GetBurdenState())
   {
    case OVER_LOADED:
     Plus1 = 25;

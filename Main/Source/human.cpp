@@ -1459,7 +1459,7 @@ truth humanoid::CheckKick() const
   if(GetUsableLegs() < 2)
   {
     if(IsPlayer())
-      ADD_MESSAGE("How are you you going to do that with %s?", GetUsableLegs() ? "only one usable leg" : "no usable legs");
+      ADD_MESSAGE("How are you going to do that with %s?", GetUsableLegs() ? "only one usable leg" : "no usable legs");
 
     return false;
   }
