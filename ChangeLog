@@ -1,3 +1,11 @@
+2002-25-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.cpp: Added CheckKick(), GetLengthOfOpen(), CheckApply(), CheckOffer() to humanoid also added GetArms(), GetLegs() and GetAPMultiplier()
+	
+	* charba.cpp: Added the above checks + relevant calls.
+	* charde.h: (added functions) and tweaked some colors
+	* charba.cpp: added functions
+
 April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* charde.cpp/h: Petrus's "temporary" AddHitMessage finally removed

@@ -121,9 +121,14 @@ class ABSTRACT_CHARACTER
   virtual item* GetLeftGauntlet() const;
   virtual item* GetRightBoot() const;
   virtual item* GetLeftBoot() const;
-
   virtual bool VirtualEquipmentScreen();
-
+  virtual uchar GetLegs() const;
+  virtual uchar GetArms() const;
+  virtual bool CheckKick();
+  virtual float GetAPStateMultiplier() const;
+  virtual short GetLengthOfOpen(vector2d) const;
+  virtual bool CheckThrow() const;
+  virtual bool CheckOffer() const;
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
@@ -463,7 +468,7 @@ class CHARACTER
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 176); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(0, 64); }
-  virtual ushort ClothColor() const { return MAKE_RGB(0,0,64); }
+  virtual ushort ClothColor() const { return MAKE_RGB(0,0,30); }
   virtual ushort EyeColor() const { return MAKE_RGB(100, 0, 0); }
   virtual ulong TotalVolume() const { return 110000; }
   virtual vector2d GetBitmapPos() const { return vector2d(128,0); }
@@ -1262,9 +1267,19 @@ class CHARACTER
     SetPerception(15);
   },
  protected:
+<<<<<<< charde.h
+  //  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
+  virtual ushort SkinColor() const { return MAKE_RGB(128, 0, 0); }
+  virtual ushort EyeColor() const { return MAKE_RGB(150, 80, 0); }
+=======
   virtual ushort SkinColor() const { return MAKE_RGB(144, 144, 144); }
   virtual ushort EyeColor() const { return MAKE_RGB(150, 150, 0); }
+>>>>>>> 1.119
   virtual ushort ClothColor() const { return MAKE_RGB(111,74,37); }
+<<<<<<< charde.h
+  virtual ushort CapColor() const { return MAKE_RGB(30,0,0); }
+=======
+>>>>>>> 1.119
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 16); } 
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 112); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 32); }
@@ -1390,7 +1405,11 @@ class CHARACTER
   virtual bool CanBeGenerated() const { return true; }
   virtual void CreateInitialEquipment();
  protected:
+<<<<<<< charde.h
+  virtual ushort SkinColor() const { return MAKE_RGB(30, 100, 110); }
+=======
   virtual ushort SkinColor() const { return MAKE_RGB(40, 140, 150); }
+>>>>>>> 1.119
   virtual ushort HairColor() const { return MAKE_RGB(35, 35, 35); }
   virtual ushort ClothColor() const { return MAKE_RGB(111, 74, 37); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 208); }

@@ -279,7 +279,7 @@ item* leftnutofpetrus::CreateWishedItem() const
 bool pickaxe::Apply(character* User)
 {
   vector2d Temp;
-	
+
   if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
     {
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);

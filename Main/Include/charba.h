@@ -361,6 +361,12 @@ class character : public type, public entity, public id
   virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
   virtual characterslot* GetBodyPartSlot(ushort) const;
   virtual bool VirtualEquipmentScreen();
+  //  virtual uchar GetLegs() const;
+  virtual bool CheckKick();
+  virtual short GetLengthOfOpen(vector2d) const { return -500; }
+  virtual bool CheckThrow() const { return true; }  
+  virtual bool CheckApply() const { return true; }
+  virtual bool CheckOffer() const { return true; }
  protected:
   virtual ushort TotalSize() const = 0;
   virtual uchar ChooseBodyPartToReceiveHit(float, float);

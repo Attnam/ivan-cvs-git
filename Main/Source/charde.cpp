@@ -2492,3 +2492,107 @@ bool humanoid::VirtualEquipmentScreen()
   game::GetCurrentArea()->SendNewDrawRequest();
   return EquipmentChanged;
 }
+
+bool humanoid::CheckKick()
+{
+  if(!CanKick())
+    {
+      ADD_MESSAGE("This monster type can not kick.");
+      return false;
+    }
+  if(GetLegs() < 2)
+    {
+      std::string LegNumber;
+      switch(GetLegs())
+	{
+	case 0: 
+	  LegNumber = "no legs";
+	  break;
+	case 1:
+	  LegNumber = "one leg";
+	  break;
+	}
+      ADD_MESSAGE("How are you you going to do that with %s?", LegNumber.c_str());
+      return false;
+    }
+  return true;
+}
+
+uchar humanoid::GetLegs() const
+{
+  ushort Legs = 0;
+  if(GetRightLeg())
+    ++Legs;
+  if(GetLeftLeg())
+    ++Legs;
+  return Legs;
+}
+
+uchar humanoid::GetArms() const
+{
+  ushort Arms = 0;
+  if(GetRightArm())
+    ++Arms;
+  if(GetLeftArm())
+    ++Arms;
+  return Arms;
+}
+
+float humanoid::GetAPStateMultiplier() const
+{
+  float Multiplier = 1;
+  switch(GetLegs())
+    {
+    case 0:
+      Multiplier = 0.1;
+      break;
+    case 1:
+      Multiplier = 1/3;
+      break;
+    case 2:
+      Multiplier = 1;
+    }
+
+  if(StateIsActivated(HASTE))
+    Multiplier *= 2;
+  if(StateIsActivated(SLOW))
+    Multiplier *= 0.5;
+  
+  return Multiplier;
+}
+
+
+short humanoid::GetLengthOfOpen(vector2d) const
+{ 
+  switch(GetArms())
+    {
+    case 0:
+      return -1500;
+    default:
+      return -500;
+    }
+}
+
+bool humanoid::CheckThrow() const
+{
+  switch(GetArms())
+    {
+    case 0:
+      ADD_MESSAGE("You don't have an arm to do that!");
+      return false;
+    default:
+      return true;
+    }
+}
+
+bool humanoid::CheckOffer() const
+{
+  switch(GetArms())
+    {
+    case 0:
+      ADD_MESSAGE("You need an arm to offer.");
+      return false; 
+    default:
+      return true;
+    }
+}

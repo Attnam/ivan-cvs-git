@@ -1946,7 +1946,7 @@ bool character::OpenPos(vector2d APos)
     {
       EditAgilityExperience(25);
       EditNP(-10);
-      EditAP(-500);
+      EditAP(GetLengthOfOpen(APos));
       return true;
     }
 
@@ -2124,11 +2124,8 @@ bool character::Kick()
 {
   uchar Direction = 0;
 
-  if(!CanKick())
-    {
-      ADD_MESSAGE("This monster type can not kick.");
-      return false;
-    }
+  if(!CheckKick())
+    return false;
 
   if(GetBurdenState() == OVERLOADED)
     {
@@ -2154,6 +2151,9 @@ bool character::Kick()
 
 bool character::Offer()
 {
+  if(!CheckOffer())
+    return false;
+
   if(GetLSquareUnder()->GetOLTerrain()->CanBeOffered())
     {
       if(!GetStack()->GetItems())
@@ -2269,6 +2269,9 @@ bool character::DrawMessageHistory()
 
 bool character::Throw()
 {
+  if(!CheckThrow())
+    return false;
+
   if(!GetStack()->GetItems())
     {
       ADD_MESSAGE("You have nothing to throw!");
@@ -2419,6 +2422,9 @@ void character::Vomit(ushort)
 
 bool character::Apply()
 {
+  if(!CheckApply())
+    return false;
+
   if(!GetStack()->GetItems())
     {
       ADD_MESSAGE("You have nothing to apply!");
@@ -4126,4 +4132,13 @@ void character::AllocateBodyPartArray()
 characterslot* character::GetBodyPartSlot(ushort Index) const
 {
   return &BodyPartSlot[Index];
+}
+
+bool character::CheckKick()
+{
+  if(!CanKick())
+    {
+      ADD_MESSAGE("This monster type can not kick.");
+      return false;
+    }
 }
