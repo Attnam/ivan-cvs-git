@@ -99,7 +99,6 @@ bitmap::~bitmap()
 
 void bitmap::Save(outputfile& SaveFile) const
 {
-#ifdef WIN32
 	SaveFile.GetBuffer().write((char*)Data[0], (XSize * YSize) << 1);
 
 	if(AlphaMap)
@@ -109,7 +108,6 @@ void bitmap::Save(outputfile& SaveFile) const
 	}
 	else
 		SaveFile << uchar(0);
-#endif
 }
 
 void bitmap::Load(inputfile& SaveFile)
