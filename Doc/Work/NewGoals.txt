@@ -26,7 +26,7 @@ D-adding more blood in criticals (Hex)
  -adding Banana and Pick-axe logo to menu (Hex)
  -adding "Name too short!" message (Hex)
  -adding grass, pines and spruces to Attnam once the pics are available (Timo)
- -removing the polymorph feature that multiplies items (Timo)
+D-removing the polymorph feature that multiplies items (Timo)
  -adding config menu and autosave interval option (Hex)
 
 -fixing buggy graphics that are buggy due to code
