@@ -140,6 +140,7 @@ class material
   void CalculateWeight() { Weight = ulong(float(Volume) * GetDensity() / 1000); }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
+  bool IsSameAs(material* What) const { return What->GetConfig() == GetConfig(); }
  protected:
   virtual void InstallDataBase();
   const database* DataBase;

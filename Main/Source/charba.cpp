@@ -3647,11 +3647,7 @@ bodypart* character::MakeBodyPart(ushort Index)
 void character::CreateBodyPart(ushort Index)
 {
   bodypart* BodyPart = MakeBodyPart(Index);
-  BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
-  BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
-  SetBodyPart(Index, BodyPart);
-  BodyPart->InitSpecialAttributes();
-  UpdateBodyPartPicture(Index);
+  AttachBodyPart(BodyPart,Index);
 }
 
 vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
@@ -4693,18 +4689,64 @@ void character::PolymorphRandomly(ushort Time)
   Polymorph(NewForm, Time);
 }
 
-/* Returns a uchar with flags that are true for the missing bodyparts */ 
-uchar character::GetNeededBodyParts() const
-{
-  uchar ToBeReturned = 0;
-  for(ushort c = 0; c < BodyParts(); ++c)
-    if(!GetBodyPart(c))
-      ToBeReturned |= (1 << c);
-  return ToBeReturned;
-}
-
 bool character::DetachBodyPart()
 {
   ADD_MESSAGE("You haven't got any extra bodyparts.");
   return false;
+}
+
+
+void character::AttachBodyPart(bodypart* BodyPart, ushort Index)
+{
+  BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
+  BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
+  SetBodyPart(Index, BodyPart);
+  BodyPart->InitSpecialAttributes();
+  UpdateBodyPartPicture(Index);
+}
+
+bool character::HasAllBodyParts() const
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c))
+      return false;
+  return true;
+}
+
+/* Returns false if the character has all body parts else true */ 
+bodypart* character::GenerateRandomBodyPart()
+{
+  std::vector<ushort> NeededBodyParts;
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(!GetBodyPart(c))
+      {
+	NeededBodyParts.push_back(c);
+      }
+
+  if(NeededBodyParts.empty())
+    return 0;
+
+  ushort NewBodyPartsIndex = NeededBodyParts[RAND() % NeededBodyParts.size()];
+  bodypart* NewBodyPart = MakeBodyPart(NewBodyPartsIndex);
+  return NewBodyPart;
+}
+
+/* searched for character's Stack and if it find some bodyparts their that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
+stackiterator character::FindRandomOwnBodyPart()
+{
+  std::vector<stackiterator> LostAndFound;
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(!GetBodyPart(c))
+      {
+	ushort OriginalID = GetOriginalBodyPartID(c);
+	for(stackiterator ii = GetStack()->GetBottomSlot(); ii != GetStack()->GetSlotAboveTop(); ++ii)
+	  {
+	    if(GetOriginalBodyPartID(c) == (**ii)->GetID())
+	      LostAndFound.push_back(ii);
+	  }
+      }
+  if(LostAndFound.empty())
+    return 0;
+  else
+    return LostAndFound[RAND() % LostAndFound.size()];
 }

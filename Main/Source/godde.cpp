@@ -103,10 +103,36 @@ void dulcis::PrayBadEffect()
 
 void seges::PrayGoodEffect()
 {
-  ADD_MESSAGE("Your stomach feels full again.");
+  if(game::GetPlayer()->HasAllBodyParts() || game::GetPlayer()->GetNP() < HUNGERLEVEL)
+    {
+      ADD_MESSAGE("Your stomach feels full again.");
 
-  if(game::GetPlayer()->GetNP() < 10000)
-    game::GetPlayer()->SetNP(10000);
+      if(game::GetPlayer()->GetNP() < 10000)
+	game::GetPlayer()->SetNP(10000);
+    }
+  else
+    {
+      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+
+      if(OldOwnBodyPartIterator != 0)
+	{
+	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
+	  if(!OldOwnBodyPart)
+	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
+	  
+	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
+	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
+	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());  
+	}
+      else
+	{
+	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
+	  ADD_MESSAGE("You grow a new %s", NewBodyPart->GetNameSingular().c_str()); 
+	}
+    }
 }
 
 void seges::PrayBadEffect()
@@ -120,10 +146,21 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  item* Reward = new platemail(0, false);
-  Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
-  ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
-  game::GetPlayer()->GetGiftStack()->AddItem(Reward);
+  if(game::GetPlayer()->HasAllBodyParts())
+    {
+      item* Reward = new platemail(0, false);
+      Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
+      ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
+      game::GetPlayer()->GetGiftStack()->AddItem(Reward);
+    }
+  else
+    {
+      bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+      NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
+      
+      ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str());
+    }
 }
 
 void atavus::PrayBadEffect()
@@ -162,6 +199,31 @@ void atavus::PrayBadEffect()
 
 void silva::PrayGoodEffect()
 {
+  if(!game::GetPlayer()->HasAllBodyParts())
+    {
+      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+
+      if(OldOwnBodyPartIterator != 0)
+	{
+	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
+	  if(!OldOwnBodyPart)
+	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
+	  
+	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
+	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
+	  OldOwnBodyPart->SetHP(1);
+	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());  
+	}
+      else
+	{
+	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
+	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
+	  NewBodyPart->SetHP(1);
+	  ADD_MESSAGE("You grow a new %s", NewBodyPart->GetNameSingular().c_str()); 
+	}
+      return;
+    }
+
   if(!*game::GetCurrentLevel()->GetLevelScript()->GetOnGround())
     {
       ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");

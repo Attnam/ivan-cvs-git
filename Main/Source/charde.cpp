@@ -691,43 +691,61 @@ void priest::BeTalkedTo(character* Talker)
       return;
     }
 
-  std::vector<ushort> Indexes;
-  uchar NeededBodyParts = Talker->GetNeededBodyParts();
-  /* Analize the whole byte, bit by bit */
-  uchar c;
-  for(c = 0; c < 8; ++c)
-    {
-      if(NeededBodyParts & (1 << c))
-	{
-	  Indexes.push_back(c);
-	}
-    }
-  if(!Indexes.empty())
-    {
-      for(c = 0; c < Indexes.size(); ++c)
-	{
-	  ushort OriginalID = Talker->GetOriginalBodyPartID(Indexes[c]);
-	  for(stackiterator ii = Talker->GetStack()->GetBottomSlot(); ii != Talker->GetStack()->GetSlotAboveTop(); ++ii)
-	    if(OriginalID == (**ii)->GetID())
+  for(ushort c = 0; c < Talker->BodyParts(); ++c)
+    if(!Talker->GetBodyPart(c))
+      {
+	ushort OriginalID = Talker->GetOriginalBodyPartID(c);
+	for(stackiterator ii = Talker->GetStack()->GetBottomSlot(); ii != Talker->GetStack()->GetSlotAboveTop(); ++ii)
+	  if(OriginalID == (**ii)->GetID())
+	    {
+	      /* Now attach the old BodyPart (**ii) to slot c */
+	      if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+		{
+		  if(game::BoolQuestion("Would you like me to put your old " + (**ii)->GetNameSingular() + " back in exchange for " + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR + " gold? [y,N]"))
+		    {
+		      ((bodypart*)***ii)->SetHP(1);
+		      Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+		      SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+		      bodypart* OldBodyPart = dynamic_cast<bodypart*>(***ii);
+		      if(!OldBodyPart)
+			ABORT("Priest is asked to but odd object in place of BodyPart");
+		      if(OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
+			{
+			  Talker->AttachBodyPart(OldBodyPart,c);
+			  Talker->GetStack()->RemoveItem(ii);
+			}
+		      else
+			{
+			  ADD_MESSAGE("Sorry I cannot help you, because your old %s doesn't seem to fit anymore.", (***ii)->GetNameSingular().c_str());   
+			}
+		    }
+		  else
+		    ADD_MESSAGE("\"Help yourself and get some money and we'll help you too.\"");
+		}
+	      return;
+	    }
+	bodypart* NewBodyPart = Talker->MakeBodyPart(c);
+	NewBodyPart->SetHP(1);
+	ADD_MESSAGE("You seem to be missing %s %s.", NewBodyPart->GetArticle().c_str(), NewBodyPart->GetNameSingular().c_str());
+	if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+	  {
+	    ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one.", NewBodyPart->GetNameSingular().c_str());
+	    if(game::BoolQuestion(std::string("And this would cost you only ") + PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR +std::string(" gold. Agreed? [y,N]")))
 	      {
-		/* Now attach the old BodyPart (**ii) to slot Indexes[c] */
-		if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
-		  {
-		    if(game::BoolQuestion("Would you like me to put your old " + (**ii)->GetNameSingular() + " back in exchange for " + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR + " gold? [y,N]"))
-		      {
-			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
-			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
-			Talker->SetBodyPart(Indexes[c],(bodypart*)***ii);
-		      }
-		    else
-		      ADD_MESSAGE("\"Help yourself and get some money and we'll help you too.\"");
-		  }
+		Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+		Talker->AttachBodyPart(NewBodyPart, c);
+	      }
+	    else
+	      {
+		ADD_MESSAGE("Since you don't have your original %s with you, I could summon up %s %s, but I am not a communist and you haven't got %d gold.", NewBodyPart->GetNameSingular().c_str(), NewBodyPart->GetArticle().c_str(), NewBodyPart->GetNameSingular().c_str(), PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+		delete NewBodyPart;
 		return;
 	      }
-	}
+	  }
 
 
-    }
+      }
 
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");

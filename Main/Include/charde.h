@@ -131,6 +131,7 @@ class ABSTRACT_CHARACTER
   virtual bool EquipmentHasNoPairProblems(ushort) const;
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
+  virtual uchar BodyParts() const { return 7; }
  protected:
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -141,7 +142,6 @@ class ABSTRACT_CHARACTER
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
-  virtual uchar BodyParts() const { return 7; }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
   virtual uchar AllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
 );

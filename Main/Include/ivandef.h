@@ -445,5 +445,6 @@
 
 /* Prices */
 #define PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR 50
-
+#define PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR 100
+/* The logic will go bad, if a new limb cost less than an old one */
 #endif

@@ -36,6 +36,8 @@ class characterslot;
 class action;
 class go;
 class gweaponskill;
+class stackslot;
+typedef std::list<stackslot*>::iterator stackiterator;
 template <class type> class database;
 
 struct characterdatabase
@@ -576,8 +578,13 @@ class character : public entity, public id
   virtual void LycanthropyHandler();
   virtual void SaveLife();
   virtual void PolymorphRandomly(ushort);
-  virtual uchar GetNeededBodyParts() const;
   virtual bool DetachBodyPart();
+  virtual bodypart* MakeBodyPart(ushort);
+  virtual void AttachBodyPart(bodypart*, ushort);
+  virtual uchar BodyParts() const { return 1; }
+  virtual bool HasAllBodyParts() const;
+  virtual stackiterator FindRandomOwnBodyPart();
+  virtual bodypart* GenerateRandomBodyPart();
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);
@@ -596,12 +603,10 @@ class character : public entity, public id
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual void UpdateBodyPartPicture(ushort);
   virtual void UpdateBodyPartPictures();
-  virtual bodypart* MakeBodyPart(ushort);
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts();
   virtual material* CreateBodyPartFlesh(ushort, ulong) const = 0;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
-  virtual uchar BodyParts() const { return 1; }
   virtual std::string GetMaterialDescription(bool) const;
   virtual bool ShowClassDescription() const { return true; }
   virtual void SeekLeader();
