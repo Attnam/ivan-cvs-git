@@ -324,11 +324,14 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 
 void object::ChangeMaterial(uchar Index, material* NewMaterial)
 {
-	material* OldMaterial = Material[Index];
-
-	SetMaterial(Index, NewMaterial);
-
-	delete OldMaterial;
+	if(Index >= Material.size())
+		SetMaterial(Index, NewMaterial);
+	else
+	{
+		material* OldMaterial = Material[Index];
+		SetMaterial(Index, NewMaterial);
+		delete OldMaterial;
+	}
 }
 
 void object::UpdatePicture()
@@ -351,4 +354,12 @@ levelsquare* object::GetLevelSquareUnder() const
 void object::SetLevelSquareUnder(levelsquare* What)
 {
 	SquareUnder = What;
+}
+
+material* object::GetMaterial(ushort Index) const
+{
+	if(Index < Material.size())
+		return Material[Index];
+	else
+		return 0;
 }

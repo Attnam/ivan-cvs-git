@@ -14,3 +14,4 @@ Mikroaaltouuni.
 In-code documentation!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Item enchantments.
 Random gods.
+Ego monsters.

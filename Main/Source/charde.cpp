@@ -65,7 +65,7 @@ void swatcommando::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(rand() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
 	GetStack()->FastAddItem(new lamp);
-	GetStack()->FastAddItem(new platemail);
+	GetStack()->FastAddItem(new chainmail(new mithril));
 }
 
 void fallenvalpurist::CreateInitialEquipment()
@@ -328,7 +328,7 @@ void golem::MoveRandomly()
 			Engrave("Golem Needs Master");
 	}
 	else
-		if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 			TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 

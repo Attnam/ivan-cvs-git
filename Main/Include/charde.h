@@ -288,7 +288,7 @@ class CHARACTER
 	{
 		SetSize(200);
 		SetAgility(30);
-		SetStrength(20);
+		SetStrength(25);
 		SetEndurance(30);
 		SetPerception(30);
 	},
@@ -298,7 +298,7 @@ public:
 	virtual bool CanWield() const RET(true)
 	virtual bool Charmable() const RET(false)
 	virtual bool CanKick() const RET(true)
-	virtual ushort CalculateArmorModifier() const RET(50)
+	virtual ushort CalculateArmorModifier() const RET(61)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:

@@ -149,7 +149,9 @@ uchar character::TakeHit(character* Enemy, short Success)
 		return HAS_HIT;
 	}
 
-	if(rand() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
+	ushort p = ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success));
+
+	if(rand() % p >= 100)
 	{
 		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2000000) + (rand() % 3 ? 1 : 0);
 
@@ -226,12 +228,12 @@ void character::Be()
 		{
 			if(GetIsPlayer())
 			{
-				/*static ushort Timer = 0;
+				static ushort Timer = 0;
 				if(CanMove() && !game::GetInWilderness() && Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
-				}*/
+				}
 				CharacterSpeciality();
 				StateAutoDeactivation();
 				if(CanMove())
@@ -2163,6 +2165,7 @@ bool character::Polymorph()
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
 		NewForm->SetStateCounter(POLYMORPHED, 1000);
+		NewForm->GetLevelSquareUnder()->GetLevelUnder()->UpdateLOS();
 	}
 	else
 		SetExists(false);
@@ -2376,6 +2379,8 @@ void character::EndPolymorph()
 
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
+
+		game::GetPlayer()->GetLevelSquareUnder()->GetLevelUnder()->UpdateLOS();
 	}
 }
 

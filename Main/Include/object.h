@@ -36,7 +36,7 @@ public:
 	virtual void Load(inputfile&);
 	virtual void InitMaterials(ushort, ...);
 	virtual void InitMaterials(material*);
-	virtual material* GetMaterial(ushort Index) const { return Material[Index]; }
+	virtual material* GetMaterial(ushort) const;
 	virtual ushort GetEmitation() const;
 	virtual void SetSize(ushort Value) { Size = Value; }
 	virtual ushort GetSize() const { return Size; }

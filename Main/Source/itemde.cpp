@@ -177,7 +177,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 
 void meleeweapon::DipInto(item* DipTo)
 {
-	ChangeMaterial(GetMaterials() - 1, DipTo->BeDippedInto());
+	ChangeMaterial(2, DipTo->BeDippedInto());
 	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), GetMaterial(GetMaterials() - 1)->CNAME(UNARTICLED));
 }
 

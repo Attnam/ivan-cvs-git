@@ -141,6 +141,7 @@ void game::Init(std::string Name)
 	srand(time(0));
 	game::CalculateGodNumber();
 	LOSTurns = 1;
+	WorldMap = 0;
 
 	_mkdir("Save");
 

@@ -5,6 +5,7 @@ New goals for version 0.30 alpha:
  -eating weapons made of an eatable material (Hex)
  -wrath of Seges (Timo)
  -score bug with polymorph (Timo)
+ -money is temporarily lost in polymorph (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features
@@ -25,6 +26,7 @@ New goals for version 0.30 alpha:
  -adding Banana and Pick-axe logo to menu (Hex)
  -adding "Name too short!" message (Hex)
  -adding grass, pines and spruces to Attnam once the pics are available (Timo)
+ -removing the polymorph feature that multiplies items (Timo)
 
 -fixing buggy graphics that are buggy due to code
  -can (Timo)
