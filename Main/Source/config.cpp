@@ -18,7 +18,7 @@ void configuration::Save()
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
 	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
-	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
+	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";";
 }
 
 void configuration::Load()

@@ -97,7 +97,7 @@ public:
 	virtual ushort Possibility() const RET(200)
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
-	virtual item* TryToOpen(stack*);
+	virtual item* TryToOpen(character*, stack*);
 	virtual uchar GetConsumeType() const RET(GetMaterial(1) ? GetMaterial(1)->GetConsumeType() : ODD)
 	virtual std::string NameSingular() const RET("can")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))

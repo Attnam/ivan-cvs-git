@@ -31,7 +31,7 @@ public:
 	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
 	virtual ushort GetEmitation() const;
 	virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
-	virtual item* TryToOpen(stack*) { return 0; }
+	virtual item* TryToOpen(character*, stack*) { return 0; }
 	virtual ulong GetWeight() const;
 	virtual bool Consume(character*, float);
 	virtual ushort GetArmorValue() const { return 100; }

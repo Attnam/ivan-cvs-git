@@ -149,10 +149,13 @@ void game::Init(std::string Name)
 	_mkdir("Save");
 
 	if(Name == "")
-	{
-		DOUBLEBUFFER->ClearToColor(0);
-		SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 20));
-	}
+		if(configuration::GetDefaultName() == "")
+		{
+			DOUBLEBUFFER->ClearToColor(0);
+			SetPlayerName(iosystem::StringQuestion("What is your name?", vector2d(30, 50), WHITE, 3, 20));
+		}
+		else
+			SetPlayerName(configuration::GetDefaultName());
 	else
 		SetPlayerName(Name);
 

@@ -14,18 +14,28 @@
 #include "feio.h"
 #include "team.h"
 #include "rand.h"
+#include "config.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-item* can::TryToOpen(stack* Stack)
+item* can::TryToOpen(character* Opener, stack* Stack)
 {
 	item* x = new lump(GetMaterial(1));
 	Stack->AddItem(x);
 	SetMaterial(1,0);
 	UpdatePicture();
+
+	if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+	{
+		ushort Index = Opener->GetStack()->SearchItem(this);
+
+		if(Index != 0xFFFF)
+			Opener->GetStack()->MoveItem(Index, Opener->GetLevelSquareUnder()->GetStack());
+	}
+
 	return x;
 }
 
@@ -44,7 +54,11 @@ bool banana::Consume(character* Eater, float Amount)
 		item* Peals = new bananapeals(false);
 		Peals->InitMaterials(GetMaterial(0));
 		PreserveMaterial(0);
-		Eater->GetStack()->AddItem(Peals);
+
+		if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+			Eater->GetLevelSquareUnder()->GetStack()->AddItem(Peals);
+		else
+			Eater->GetStack()->AddItem(Peals);
 	}
 
 	return GetMaterial(1)->GetVolume() ? false : true;
@@ -64,6 +78,14 @@ bool potion::Consume(character* Eater, float Amount)
 
 	if(!GetMaterial(1)->GetVolume())
 		ChangeMaterial(1,0);
+
+	if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
+	{
+		ushort Index = Eater->GetStack()->SearchItem(this);
+
+		if(Index != 0xFFFF)
+			Eater->GetStack()->MoveItem(Index, Eater->GetLevelSquareUnder()->GetStack());
+	}
 
 	if(GetSquareUnder())
 	{
@@ -205,7 +227,7 @@ void potion::PositionedDrawToTileBuffer(uchar) const
 item* can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
 	if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/n]", 'y'))
-		return TryToOpen(Stack);
+		return TryToOpen(Consumer, Stack);
 	else
 		return 0;
 }

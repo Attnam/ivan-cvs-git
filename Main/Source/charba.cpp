@@ -421,7 +421,7 @@ bool character::Consume()
 			return false;
 	}
 
-	if(GetIsPlayer() && !GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && !GetStack()->ConsumableItems(this))
+	if(GetIsPlayer() && (game::GetInWilderness() || !GetLevelSquareUnder()->GetStack()->ConsumableItems(this)) && !GetStack()->ConsumableItems(this))
 		ADD_MESSAGE("You have nothing to consume!");
 
 	return false;
@@ -948,7 +948,7 @@ bool character::OpenItem()
 	ushort Index = Stack->DrawContents(this, "What do you want to open?");
 
 	if(Index < GetStack()->GetItems())
-		if(GetStack()->GetItem(Index)->TryToOpen(Stack))
+		if(GetStack()->GetItem(Index)->TryToOpen(this, Stack))
 		{
 			SetAgilityExperience(GetAgilityExperience() + 25);
 			SetNP(GetNP() - 1);
