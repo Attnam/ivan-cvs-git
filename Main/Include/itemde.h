@@ -541,12 +541,12 @@ class ITEM
     SetSize(30);
   },
  public:
-  virtual ushort Possibility() const { return 50; }
+  virtual ushort Possibility() const { return 5; }
   virtual std::string NameSingular() const { return "scroll of charging"; }
   virtual std::string NamePlural() const { return "scrolls of charging"; }
   virtual float OfferModifier() const { return 5; }
   virtual bool Read(character*);
-  virtual ulong Price() const { return 50; }
+  virtual ulong Price() const { return 400; }
 );
 
 class ITEM
