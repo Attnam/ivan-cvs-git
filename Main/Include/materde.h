@@ -474,6 +474,24 @@ protected:
 	virtual std::string NameStem() const	{ return "donkey flesh"; }
 );
 
+
+class MATERIAL
+(
+	marble,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 40; }
+	virtual uchar GetConsumeType() const			{ return HARD; }
+	virtual ushort GetDensity() const				{ return 3100; }
+	virtual ushort OfferValue() const				{ return 7; }
+	virtual uchar GetItemColor() const			{ return LGRAY; }
+	virtual bool IsSolid() const { return true; }
+	virtual ushort GetColor() const { return MAKE_RGB(230, 230, 230); }
+protected:
+	virtual std::string NameStem() const	{ return "marble"; }
+);
+
+
 class MATERIAL
 (
 	gold,
@@ -489,6 +507,20 @@ public:
 	virtual bool CanBeWished() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "gold"; }
+);
+
+class MATERIAL
+(
+	grass,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 6; }
+	virtual uchar GetConsumeType() const			{ return ODD; }
+	virtual ushort GetDensity() const				{ return 100; }
+	virtual ushort OfferValue() const				{ return 2; }
+	virtual ushort GetColor() const { return MAKE_RGB(0, 150, 0); }
+protected:
+	virtual std::string NameStem() const	{ return "grass"; }
 );
 
 #endif

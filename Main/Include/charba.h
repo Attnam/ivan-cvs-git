@@ -199,6 +199,7 @@ public:
 	virtual void FallTo(vector2d, bool);
 	virtual bool CheckCannibalism(ushort);
 	virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
+	virtual void SoldierAICommand();
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }

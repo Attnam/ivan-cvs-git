@@ -449,3 +449,15 @@ bool scrollofchangematerial::Read(character* Reader)
 
 	return true;
 }
+
+void avatarofvalpuri::CheckPickUpEffect(character* Picker)
+{
+	if(Picker->GetIsPlayer())
+	{
+		character* Temp;
+		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, GetLevelUnder()->GetXSize(), GetLevelUnder()->GetYSize() - 1, 40, 
+			if(Temp = GetLevelUnder()->GetSquare(XPointer, YPointer)->GetCharacter())
+				Temp->SetRelations(HOSTILE);)
+
+	}
+}

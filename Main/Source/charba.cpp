@@ -755,7 +755,7 @@ bool character::PickUp()
 					if(GetLevelSquareUnder()->GetStack()->GetItem(Index))
 					{
 						ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
-						GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack());
+						GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack()))->CheckPickUpEffect(this);
 						ToBeReturned = true;
 					}
 
@@ -768,7 +768,7 @@ bool character::PickUp()
 		else
 		{
 			ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
-			GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack());
+			GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack()))->CheckPickUpEffect(this);
 			return true;
 		}
 	}
@@ -2272,4 +2272,18 @@ void character::FallTo(vector2d Where, bool OnScreen)
 bool character::CheckCannibalism(ushort What)
 { 
 	return (GetMaterial(0)->GetType() == What); 
+}
+
+void character::SoldierAICommand()
+{
+	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	{
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetIsPlayer() || game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetRelations() > HOSTILE)
+		{
+
+		}
+		else
+			Hit(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter());
+	})
 }

@@ -785,4 +785,25 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
 );
+
+class ITEM
+(
+	avatarofvalpuri,
+	item,
+	InitMaterials(1, new gold(200)),
+	{
+		SetSize(10);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual std::string NameSingular() const RET("avatar of Valpuri")
+	virtual std::string NamePlural() const RET("avatars of Valpuri")
+	virtual vector2d GetBitmapPos() const RETV(0,0)
+	virtual bool CanBeWished() const RET(false)
+	virtual bool Destroyable() const { return false; }
+	virtual void CheckPickUpEffect(character*);
+protected:
+	virtual ushort GetFormModifier() const RET(30)
+);
+
 #endif

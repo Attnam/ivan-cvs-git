@@ -69,6 +69,7 @@ public:
 	virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
 	virtual bool IsMaterialChangeable() const { return true; }
 	virtual void ChangeMainMaterial(material*);
+	virtual void CheckPickUpEffect(character*) { }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

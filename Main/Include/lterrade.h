@@ -184,4 +184,19 @@ protected:
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 304); }
 );
 
+class GROUNDLEVELTERRAIN
+(
+	grassterrain,
+	groundlevelterrain,
+	InitMaterials(new grass(1)),
+	{
+	},
+public:
+	virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", grass::StaticType()))
+protected:
+	virtual std::string NameSingular() const				{ return "grass"; }
+	virtual std::string NamePlural() const					{ return "grasses"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 352); }
+);
 #endif

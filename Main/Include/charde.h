@@ -162,6 +162,7 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
+	virtual void NeutralAICommand() { SoldierAICommand(); }
 protected:
 	virtual std::string NameSingular() const RET("city guard")
 	virtual std::string NamePlural() const RET("city guards")
@@ -600,7 +601,7 @@ protected:
 	virtual std::string NameSingular() const RET("jackal")
 	virtual std::string NamePlural() const RET("jackals")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
-	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))																																																																																																																																													//Jackalit on epäoriginaaleja.
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))																																																																																																																																													//Jackals are unoriginal
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(3000)
 );
