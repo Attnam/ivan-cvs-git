@@ -3423,6 +3423,24 @@ void banana::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
   item::AddInventoryEntry(Viewer, Entry, Amount, ShowSpecialInfo);
 }
 
+void whip::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
+{
+  AddName(Entry, INDEFINITE);
+
+  if(ShowSpecialInfo)
+    {
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+
+      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
+      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
+
+      if(CWeaponSkillLevel || SWeaponSkillLevel)
+	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
+
+      Entry << "]";
+    }
+}
+
 void armor::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
   if(Amount == 1)
@@ -3443,7 +3461,7 @@ void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, " << GetStrengthValueDescription() << ", "  << GetBaseToHitValueDescription();
+      Entry << " [" << GetWeight() << "g, "  << GetBaseToHitValueDescription() << ", " << GetStrengthValueDescription();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3795,7 +3813,7 @@ void bodypart::InitSpecialAttributes()
 ulong shield::GetPrice() const /* temporary... */
 {
   float StrengthValue = GetStrengthValue();
-  return ulong(GetBaseBlockValue() * StrengthValue * StrengthValue * StrengthValue / 750) + item::GetPrice();
+  return ulong(sqrt(GetBaseBlockValue()) * StrengthValue * StrengthValue) + item::GetPrice();
 }
 
 ulong whipofthievery::GetPrice() const
@@ -4049,8 +4067,9 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   if(Type == PHYSICAL_DAMAGE || Type == SOUND)
     {
       Contained->ReceiveDamage(Damager, Damage / GetDamageDivider(), Type);
+      ushort SV = Max<ushort>(GetStrengthValue(), 1);
 
-      if(IsLocked() && Damage > RAND() % 6)
+      if(IsLocked() && Damage > SV && RAND() % (100 * Damage / SV) >= 100)
 	{
 	  SetIsLocked(false);
 	  SetLockType(DAMAGED);

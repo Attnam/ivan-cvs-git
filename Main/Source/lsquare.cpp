@@ -1112,9 +1112,14 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
 
 bool lsquare::LockEverything(character*)
 {
-  if(!GetOLTerrain()->IsLocked())
+  if(GetOLTerrain()->IsDoor() && !GetOLTerrain()->IsLocked())
     {
       GetOLTerrain()->Lock();
+      DescriptionChanged = true;
+
+      if(LastSeen == game::GetLOSTurns())
+	game::SendLOSUpdateRequest();
+
       return true;
     }
   else

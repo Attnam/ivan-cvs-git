@@ -29,6 +29,7 @@ class stackiterator
 public:
   stackiterator(stackslot* Slot) : Slot(Slot) { }
   stackiterator& operator++() { Slot = Slot->Next; return *this; }
+  stackiterator& operator--() { Slot = Slot->Last; return *this; }
   bool HasItem() const { return Slot != 0; }
   item* operator->() const { return Slot->Item; }
   item* operator*() const { return Slot->Item; }

@@ -62,6 +62,7 @@ Team COLONIST_TEAM;
 {
 	Relation 4, HOSTILE;
 	Relation 1, UNCARING;
+	Relation 8, FRIEND;
 }
 
 Dungeon ELPURI_CAVE;

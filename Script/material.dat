@@ -435,7 +435,7 @@ material
 
 	Config NYMPH_HAIR;
 	{
-		StrengthValue = 30;
+		StrengthValue = 35;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 300;
 		Color = rgb16(100, 100, 200);
@@ -736,6 +736,7 @@ liquid
 		NameStem = "poison";
 		Effect = EFFECT_POISON;
 		Alpha = 150;
+		PriceModifier = 500;
 	}
 
 	Config VALDEMAR;
@@ -750,6 +751,7 @@ liquid
 		Alpha = 200;
 		IsExplosive = true;
 		ExplosivePower = 4000;
+		PriceModifier = 500;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -764,6 +766,7 @@ liquid
 		HitMessage = HM_ANTIDOTE;
 		Alpha = 170;
 		EffectStrength = 50;
+		PriceModifier = 1000;
 	}
 
 	Config VODKA;
@@ -778,6 +781,7 @@ liquid
 		EffectStrength = 200;
 		IsExplosive = true;
 		ExplosivePower = 20000;
+		PriceModifier = 500;
 	}
 
 	Config TROLL_BLOOD;
@@ -794,6 +798,7 @@ liquid
 		ConsumeEndMessage = CEM_HEALING_LIQUID;
 		HitMessage = HM_HEALING_LIQUID;
 		EffectStrength = 50;
+		PriceModifier = 500;
 	}
 }
 
@@ -814,7 +819,6 @@ flesh
 	Config GOBLINOID_FLESH;
 	{
 		Color = rgb16(0, 128, 0);
-		PriceModifier = 600;
 		NameStem = "green flesh";
 		NutritionValue = 150;
 		PriceModifier = 400;
@@ -937,7 +941,7 @@ flesh
 		Effect = EFFECT_KOBOLD_FLESH;
 		ConsumeEndMessage = CEM_KOBOLD_FLESH;
 		HitMessage = HM_KOBOLD_FLESH;
-		PriceModifier = 200;
+		PriceModifier = 0;
 	}
 
 	Config GIBBERLING_FLESH;
@@ -985,12 +989,14 @@ flesh
 		/* Slightly strange. This means that the good gods like to receive this sacrifice */
 		Alignment = GOOD;
 		NameStem = "black unicorn flesh";
+		PriceModifier = 1000;
 	}
 
 	Config GRAY_UNICORN_FLESH;
 	{
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
+		PriceModifier = 1000;
 	}
 
 	Config WHITE_UNICORN_FLESH;
@@ -999,6 +1005,7 @@ flesh
 		/* Slightly strange. This means that the evil gods like to receive this sacrifice */
 		Alignment = EVIL;
 		NameStem = "white unicorn flesh";
+		PriceModifier = 1000;
 	}
 
 	Config LION_FLESH;
@@ -1033,6 +1040,7 @@ flesh
 	{
 		NameStem = "chameleon flesh";
 		Effect = EFFECT_POLYMORPH;
+		PriceModifier = 1000;
 	}
 }
 

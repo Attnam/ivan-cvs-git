@@ -483,6 +483,7 @@ class ITEM
   meleeweapon,
  public:
   virtual bool IsWhip() const { return true; }
+  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
  protected:
   virtual ushort GetFormModifier() const;
 );
@@ -664,7 +665,7 @@ class ITEM
   cloak,
   armor,
  public:
-  virtual ulong GetPrice() const { return armor::GetPrice() * 20 + GetEnchantedPrice(Enchantment); }
+  virtual ulong GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPrice(Enchantment); }
   virtual bool IsCloak(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == CLOAK_INDEX; }
  protected:

@@ -33,7 +33,7 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 (s) It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 //Petrus's wives' corpses use indefinite article.
 (s) Entering a dungeon and loading an autosave saves some time.
-Skeletons are probably seen by infravision.
+(s) Skeletons are probably seen by infravision.
 //ESP + Wmode look bugs.
 //Wishing for ring of teleport bugs.
 //Teleportation in Attnam bugs.
@@ -124,13 +124,13 @@ Unicorns kicking items in shop.
   A funny side note: a kamikaze dwarf had just blown up his wives, which would perhaps be a humane reason for his actions :)
 //Lanterns put inside itemcontainers still emit light.
 //Digging book shelves probably doesn't work correctly.
-It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
-Can angry Atavus or Cruentus destroy a quest artifact inside a container?
+(s) It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+//Can angry Atavus or Cruentus destroy a quest artifact inside a container?
 //Items left on shop floor do not spoil even if the shopkeeper is dead.
 //"A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
-Wand of locking doesn't update memorized description correctly.
+//Wand of locking doesn't update memorized description correctly.
 (s) The three letter player name minimum can be avoided by adding extra spaces which will eventually be discarded.
 You can fill a potion with ice.
 The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
-Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
-Putting mines in Attnam is considered OK by guards.
+//Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
+(s) Putting mines in Attnam is considered OK by guards.

@@ -1,5 +1,16 @@
 December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Whips' durability descriptions are no longer shown in the inventory screen
+	* Price balancing
+	* Increased the force kicks give to items when sending them to flight
+	* Kicking chests now prints less "THUMP"s
+	* Tweaked the lock breaking algorithm of chests
+	* Corrected two bugs in the wand of locking code
+	* The game no longer crashes when Atavus or Cruentus destroys a chest
+	* Added some information about genetrix vesana's origin to Kaethos's replies
+
+December 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Wishing for a (special) boot or gauntlet now yields a pair
 	* Loricatus can now change the material of two identical gauntlets/boots
 	  if they are placed to both hands simultaneously before praying

@@ -198,14 +198,16 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(KickDamage)
     {
-      ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE);
+      if(GetItems())
+	{
+	  ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE);
+	  item* Item1 = *GetTop();
+	  item* Item2 = RAND() & 1 && GetItems() > 1 ? *--GetTop() : 0;
+	  Item1->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage * 3);
 
-      /* Bug: you can kick mines with this. - somebody
-	 Feature: you can kick mines with this. - hex */
-
-      for(ushort c = 0; c < 1 + (RAND() & 1); ++c)
-	if(GetItems())
-	  GetTop()->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
+	  if(Item2)
+	    Item2->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage * 3);
+	}
     }
   else if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
     ADD_MESSAGE("Your weak kick has no effect.");

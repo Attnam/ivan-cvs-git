@@ -1228,7 +1228,7 @@ cloak /* armor-> */
 	Possibility = 250;
 	Category = CLOAK;
 	DefaultMainVolume = 2000;
-	StrengthModifier = 100;
+	StrengthModifier = 125;
 	BitmapPos = 32, 352;
 	FormModifier = 20;
 	NameSingular = "cloak";
@@ -1672,6 +1672,7 @@ itemcontainer
 	CanBePiled = false;
 	IsAbstract = true;
 	IsPolymorphSpawnable = false;
+	IsDestroyable = false;
 
 	Config SMALL_CHEST;
 	{
@@ -1683,9 +1684,9 @@ itemcontainer
 		Price = 75;
 		Possibility = 100;
 		MaxGeneratedContainedItems = 3;
-		StrengthModifier = 100;
 		BitmapPos = 64, 48;
 		DamageDivider = 2;
+		StrengthModifier = 100;
 	}
 
 	Config CHEST;
@@ -1697,9 +1698,9 @@ itemcontainer
 		Price = 150;
 		Possibility = 50;
 		MaxGeneratedContainedItems = 5;
-		StrengthModifier = 500;
 		BitmapPos = 48, 80;
 		DamageDivider = 3;
+		StrengthModifier = 150;
 	}
 
 	Config LARGE_CHEST;
@@ -1712,9 +1713,9 @@ itemcontainer
 		Price = 250;
 		Possibility = 10;
 		MaxGeneratedContainedItems = 10;
-		StrengthModifier = 1000;
 		BitmapPos = 48, 64;
 		DamageDivider = 4;
+		StrengthModifier = 200;
 	}
 
 	Config STRONG_BOX;
@@ -1730,6 +1731,7 @@ itemcontainer
 		MainMaterialConfig == IRON;
 		BitmapPos = 48, 368;
 		DamageDivider = 5;
+		StrengthModifier = 150;
 	}
 }
 
@@ -2059,7 +2061,7 @@ whipofthievery /* meleeweapon->whip-> */
 	Roundness = 2;
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
-	Price = 750;
+	Price = 1000;
 }
 
 wandofcloning /* wand-> */
@@ -2128,6 +2130,7 @@ gorovitshammer
 	CanBeWished = false;
 	DefaultEnchantment = 2;
 	ArticleMode = DEFINITE_ARTICLE;
+	Price = 250;
 }
 
 gorovitssickle
@@ -2150,6 +2153,7 @@ gorovitssickle
 	CanBeWished = false;
 	DefaultEnchantment = 2;
 	ArticleMode = DEFINITE_ARTICLE;
+	Price = 250;
 }
 
 scrollofrepair /* scroll-> */
