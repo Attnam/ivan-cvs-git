@@ -414,7 +414,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult() // convert to array
 {
-  switch(RAND_N(19))
+  switch(RAND_N(18))
     {
     case 0  : return "moron";
     case 1  : return "silly";
@@ -2119,7 +2119,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
     {
       ushort BoneIndex;
       festring BoneName;

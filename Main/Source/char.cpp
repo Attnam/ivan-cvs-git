@@ -1747,7 +1747,7 @@ void character::Vomit(ushort Amount)
   EditExperience(LEG_STRENGTH, -50);
   EditNP(-2000 - RAND() % 2001);
 
-  if(StateIsActivated(PARASITIZED) && !(RAND() & 3))
+  if(StateIsActivated(PARASITIZED) && !(RAND() % 5))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You notice a dead broad tapeworm among your former stomach contents.");

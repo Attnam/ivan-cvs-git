@@ -872,7 +872,7 @@ bool commandsystem::Zap(character* Char)
   if(!Char->CheckZap())
     return false;
 
-  if(!Char->GetStack()->SortedItems(Char, &item::ZappableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::ZappableSorter) && !Char->EquipsSomething(&item::ZappableSorter))
     {
       ADD_MESSAGE("You have nothing to zap with, %s.", game::Insult());
       return false;
@@ -1116,11 +1116,13 @@ bool commandsystem::ShowWeaponSkills(character* Char)
 
 	  Buffer.Resize(60, ' ');
 	  Buffer << '+' << int(Skill->GetBonus() - 100) << '%';
+
 	  if((PLAYER->GetMainWielded() && PLAYER->GetMainWielded()->GetWeaponCategory() == c)
-	     || (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->GetWeaponCategory() == c))
+	  || (PLAYER->GetSecondaryWielded() && PLAYER->GetSecondaryWielded()->GetWeaponCategory() == c))
 	    List.AddEntry(Buffer, WHITE);
 	  else
 	    List.AddEntry(Buffer, LIGHT_GRAY);
+
 	  Something = true;
 	}
     }

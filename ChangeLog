@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Bonefiles aren't now *always* generated when it's possible
+
+May 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Corrected a minor bug in the whip of thievery code
 	* Lowered orcs' danger modifier from 100 to 75
 	* Reduced NPC exp by 50% (it was a *bit* too high)
