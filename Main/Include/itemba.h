@@ -178,25 +178,27 @@ class item : public object
   void RemoveFromSlot();
   void MoveTo(stack*);
   static std::string ItemCategoryName(ulong);
-  static bool EatableSorter(item* Item, const character* Char) { return Item->IsEatable(Char); }
-  static bool DrinkableSorter(item* Item, const character* Char) { return Item->IsDrinkable(Char); }
-  static bool OpenableSorter(item* Item, const character* Char) { return Item->IsOpenable(Char); }
-  static bool ReadableSorter(item* Item, const character* Char) { return Item->IsReadable(Char); }
-  static bool DippableSorter(item* Item, const character* Char) { return Item->IsDippable(Char); }
-  static bool DipDestinationSorter(item* Item, const character* Char) { return Item->IsDipDestination(Char); }
-  static bool AppliableSorter(item* Item, const character* Char) { return Item->IsAppliable(Char); }
-  static bool ZappableSorter(item* Item, const character* Char) { return Item->IsZappable(Char); }
-  static bool ChargeableSorter(item* Item, const character* Char) { return Item->IsChargeable(Char); }
-  static bool HelmetSorter(item* Item, const character* Char) { return Item->IsHelmet(Char); }
-  static bool AmuletSorter(item* Item, const character* Char) { return Item->IsAmulet(Char); }
-  static bool CloakSorter(item* Item, const character* Char) { return Item->IsCloak(Char); }
-  static bool BodyArmorSorter(item* Item, const character* Char) { return Item->IsBodyArmor(Char); }
-  static bool RingSorter(item* Item, const character* Char) { return Item->IsRing(Char); }
-  static bool GauntletSorter(item* Item, const character* Char) { return Item->IsGauntlet(Char); }
-  static bool BeltSorter(item* Item, const character* Char) { return Item->IsBelt(Char); }
-  static bool BootSorter(item* Item, const character* Char) { return Item->IsBoot(Char); }
-  static bool WeaponSorter(item* Item, const character* Char) { return Item->IsWeapon(Char); }
-  static bool ArmorSorter(item* Item, const character* Char) { return Item->IsArmor(Char); }
+  static bool EatableSorter(const item* Item, const character* Char) { return Item->IsEatable(Char); }
+  static bool DrinkableSorter(const item* Item, const character* Char) { return Item->IsDrinkable(Char); }
+  static bool OpenableSorter(const item* Item, const character* Char) { return Item->IsOpenable(Char); }
+  static bool ReadableSorter(const item* Item, const character* Char) { return Item->IsReadable(Char); }
+  static bool DippableSorter(const item* Item, const character* Char) { return Item->IsDippable(Char); }
+  static bool DipDestinationSorter(const item* Item, const character* Char) { return Item->IsDipDestination(Char); }
+  static bool AppliableSorter(const item* Item, const character* Char) { return Item->IsAppliable(Char); }
+  static bool ZappableSorter(const item* Item, const character* Char) { return Item->IsZappable(Char); }
+  static bool ChargeableSorter(const item* Item, const character* Char) { return Item->IsChargeable(Char); }
+  static bool HelmetSorter(const item* Item, const character* Char) { return Item->IsHelmet(Char); }
+  static bool AmuletSorter(const item* Item, const character* Char) { return Item->IsAmulet(Char); }
+  static bool CloakSorter(const item* Item, const character* Char) { return Item->IsCloak(Char); }
+  static bool BodyArmorSorter(const item* Item, const character* Char) { return Item->IsBodyArmor(Char); }
+  static bool RingSorter(const item* Item, const character* Char) { return Item->IsRing(Char); }
+  static bool GauntletSorter(const item* Item, const character* Char) { return Item->IsGauntlet(Char); }
+  static bool BeltSorter(const item* Item, const character* Char) { return Item->IsBelt(Char); }
+  static bool BootSorter(const item* Item, const character* Char) { return Item->IsBoot(Char); }
+  static bool WeaponSorter(const item* Item, const character* Char) { return Item->IsWeapon(Char); }
+  static bool ArmorSorter(const item* Item, const character* Char) { return Item->IsArmor(Char); }
+  static bool FixableBySmithSorter(const item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
+  static bool BrokenSorter(const item* Item, const character*) { return Item->IsBroken(); }
   virtual bool IsConsumable(const character*) const;
   virtual bool IsEatable(const character*) const;
   virtual bool IsDrinkable(const character*) const;
@@ -362,8 +364,6 @@ class item : public object
   virtual ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
   virtual bool IsFixableBySmith(const character*) const { return false; }
-  static bool IsFixableBySmithSorter(item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
-  static bool IsBrokenSorter(item* Item, const character*) { return Item->IsBroken(); }
   virtual ulong GetFixPrice() const { return 100; } 
   void DonateSlotTo(item*);
   virtual uchar GetFlyAmount() const;

@@ -37,14 +37,14 @@
  * doesn't need one.
  */
 
-void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage };
-void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage };
-void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0 };
-void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0 };
-std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused" };
-bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false };
-bool character::StateCanBeRandomlyActivated[] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true };
+void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage };
+void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage };
+void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0 };
+void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0 };
+void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0 };
+std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused" };
+bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false };
+bool character::StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true };
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
@@ -3019,7 +3019,7 @@ void character::TeleportRandomly()
 	    {
 	      if(GetNearLSquare(PlayersInput)->GetCharacter())
 		{
-		  ADD_MESSAGE("You feel that something wierd has happened, but can't really tell what exactly.");
+		  ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
 		  break;
 		  /* break this loop and teleport randomly */
 		}
@@ -5101,6 +5101,9 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAl
   
   if(GetTeam() == game::GetPlayer()->GetTeam() && !IsPlayer())
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+
+  if(CanFly())
+    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
 void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
@@ -6184,7 +6187,7 @@ void character::AddConfuseHitMessage() const
     ADD_MESSAGE("This stuff is confusing.");
 }
 
-item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(item*, const character*))
+item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(const item*, const character*))
 {
   if(!CanUseEquipment())
     return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
@@ -6196,7 +6199,6 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
     List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
 
   bool UseSorterFunction = SorterFunction != 0;
-
   std::vector<item*> Item;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
@@ -6222,7 +6224,7 @@ item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFu
     return Item[InventoryPossible ? Chosen - 1 : Chosen];
 }
 
-bool character::EquipsSomething(bool (*SorterFunction)(item*, const character*))
+bool character::EquipsSomething(bool (*SorterFunction)(const item*, const character*))
 {
   bool UseSorterFunction = SorterFunction != 0;
 
@@ -6237,5 +6239,3 @@ material* character::CreateBodyPartMaterial(ushort, ulong Volume) const
 {
   return MAKE_MATERIAL(GetFleshMaterial(), Volume);
 }
-
-

@@ -78,6 +78,8 @@ class lterrain : public object
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
   level* GetLevelUnder() const { return LSquareUnder->GetLevelUnder(); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevelUnder()->GetLSquare(Pos); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevelUnder()->GetLSquare(x, y); }
   virtual void CalculateAll() { CalculateEmitation(); }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);

@@ -389,7 +389,7 @@ class character : public entity, public id
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
   virtual ushort GetEquipmentSlots() const { return 0; }
-  virtual bool (*EquipmentSorter(ushort) const)(item*, const character*) { return 0; }
+  virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*) { return 0; }
   virtual void SetEquipment(ushort, item*) { }
   virtual bool ScrollMessagesDown();
   virtual bool ScrollMessagesUp();
@@ -694,6 +694,7 @@ class character : public entity, public id
   void SetPolymorphed(bool What) { Polymorphed = What; }
   bool IsInBadCondition() const { return HP * 3 < MaxHP; }
   bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP; }
+  ushort GetCondition() const;
   void UpdatePictures();
   virtual bool CanHeal() const;
   vector2d GetWaypoint() const { return WayPoint; }
@@ -727,8 +728,8 @@ class character : public entity, public id
   virtual void PrintEndConfuseMessage() const;
   virtual vector2d ApplyStateModification(vector2d) const;
   virtual void AddConfuseHitMessage() const;
-  virtual item* SelectFromPossessions(const std::string&, bool (*)(item*, const character*) = 0);
-  virtual bool EquipsSomething(bool (*)(item*, const character*) = 0);
+  virtual item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
+  virtual bool EquipsSomething(bool (*)(const item*, const character*) = 0);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
@@ -800,14 +801,14 @@ class character : public entity, public id
   character* PolymorphBackup;
   cweaponskill** CWeaponSkill;
   ushort EquipmentState;
-  static void (character::*PrintBeginStateMessage[])() const;
-  static void (character::*PrintEndStateMessage[])() const;
-  static void (character::*BeginStateHandler[])();
-  static void (character::*EndStateHandler[])();
-  static void (character::*StateHandler[])();
-  static std::string StateDescription[];
-  static bool StateIsSecret[];
-  static bool StateCanBeRandomlyActivated[];
+  static void (character::*PrintBeginStateMessage[STATES])() const;
+  static void (character::*PrintEndStateMessage[STATES])() const;
+  static void (character::*BeginStateHandler[STATES])();
+  static void (character::*EndStateHandler[STATES])();
+  static void (character::*StateHandler[STATES])();
+  static std::string StateDescription[STATES];
+  static bool StateIsSecret[STATES];
+  static bool StateCanBeRandomlyActivated[STATES];
   square* SquareUnder;
   static prototype character_ProtoType;
   ulong Volume;

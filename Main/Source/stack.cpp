@@ -176,7 +176,7 @@ vector2d stack::GetPos() const
   return GetSquareUnder()->GetPos();
 }
 
-bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
+bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
   if(SorterFunction == 0)
     {
@@ -324,21 +324,21 @@ ushort stack::SearchItem(item* ToBeSearched) const
   return 0xFFFF;
 }
 
-item* stack::DrawContents(const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   std::vector<item*> ReturnVector;
   DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags|NO_MULTI_SELECT, SorterFunction);
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
-void stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+void stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   felist Contents(Topic);
 
@@ -394,7 +394,7 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
 
 /* fix selectitem warning! */
 
-void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+void stack::AddContentsToList(felist& Contents, const character* Viewer, const std::string& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   std::vector<std::vector<item*> > PileVector;
   Pile(PileVector, Viewer, SorterFunction);
@@ -428,7 +428,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
     }
 }
 
-ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(item*, const character*)) const
+ushort stack::SearchChosen(std::vector<item*>& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   /* Not really efficient... :( */
 
@@ -660,7 +660,7 @@ bool CategorySorter(const std::vector<item*>& V1, const std::vector<item*>& V2)
   return (*V1.begin())->GetCategory() < (*V2.begin())->GetCategory();
 }
 
-void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
+void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
   std::list<item*> List;

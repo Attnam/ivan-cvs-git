@@ -240,7 +240,7 @@ Chatting shouldn't be possible if you aren't intelligent.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
 Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
-*It should be possible to use SoCM to gear.
+//*It should be possible to use SoCM to gear.
 Explosions could be m-colored: this way magical explosions could look different.
 WoDC should clone its own material to created doors.
 (r) One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
@@ -363,7 +363,7 @@ Lookmode should show whether a creature is panicked.
 Coconuts falling from palms.
 Changing keyboard layout (some people don't seem to like numpad).
 Reflecting items (mirror and shield of reflection).
-*Scroll of repair.
+//*Scroll of repair.
 //Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
 Mellis could act as a small shop when prayed to.
 Rings appearing in fountains. (shouldn't be hard with the new system...)

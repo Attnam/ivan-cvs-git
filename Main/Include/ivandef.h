@@ -76,7 +76,6 @@
 #define PANIC 8192
 #define CONFUSED 16384
 
-
 #define TORSO 1
 #define HEAD 2
 #define RIGHT_ARM 4

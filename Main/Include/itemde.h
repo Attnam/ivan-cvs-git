@@ -783,6 +783,7 @@ class ABSTRACT_ITEM
   virtual void Be();
   bool IsInBadCondition() const { return HP * 3 < MaxHP || (HP == 1 && MaxHP != 1); }
   bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP || (HP == 1 && MaxHP != 1); }
+  ushort GetConditionColor() const;
   void SetBitmapPos(vector2d What) { BitmapPos = What; }
   void SetSpecialFlags(uchar What) { SpecialFlags = What; }
   void SetMaterialColorB(ushort What) { ColorB = What; }

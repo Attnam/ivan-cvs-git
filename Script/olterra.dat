@@ -349,7 +349,7 @@ sign
 	/* Uses own postfix */
 	NameSingular = "sign";
 	BitmapPos = 16, 336;
-	SitMessage = "You feel very wierd sitting on the sign.";
+	SitMessage = "You feel very weird sitting on the sign.";
 	CanBeDug = true;
 	MaterialColorB = rgb16(48, 48, 48);
 }

@@ -1128,7 +1128,6 @@ bool game::HandleQuitMessage()
 void game::Beep()
 {
   if(configuration::GetBeepOnCritical())
-    //    ::Beep(400, 1000);
     std::cout << "\a";
 }
 

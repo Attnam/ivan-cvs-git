@@ -88,7 +88,7 @@ class ABSTRACT_CHARACTER
   virtual uchar CloseMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 2; }
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
-  virtual bool (*EquipmentSorter(ushort) const)(item*, const character*);
+  virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*);
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(uchar) const;

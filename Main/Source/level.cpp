@@ -1017,7 +1017,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();
 
-  if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No wierd shapes this way. */
+  if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No weird shapes this way. */
     Shape = RECTANGLE;
 
   for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)

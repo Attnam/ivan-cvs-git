@@ -364,9 +364,8 @@ bool fountain::Drink(character* Drinker)
 
 		for(ushort c = 0; c < 3; ++c)
 		  {
-		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-		  
 		    character* Monster;
+
 		    switch(RAND() % 3)
 		      {
 		      case 0:
@@ -382,30 +381,44 @@ bool fountain::Drink(character* Drinker)
 			Monster = new spider;
 			break;
 		      }
-		    lsquare* Under = GetLSquareUnder();
-		    if(Under->GetAreaUnder()->IsValidPos(TryToCreate) && Under->GetNearSquare(TryToCreate)->IsWalkable(Monster) && Under->GetNearSquare(TryToCreate)->GetCharacter() == 0)
+
+		    for(ushort p = 0; p < 10; ++p)
 		      {
-			Created = true;
-			Under->GetNearLSquare(TryToCreate)->AddCharacter(Monster);
-			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-			if(Monster->CanBeSeenByPlayer())
-			  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+			vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+			if(GetLevelUnder()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
+			  {
+			    Created = true;
+			    GetNearLSquare(TryToCreate)->AddCharacter(Monster);
+			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+
+			    if(Monster->CanBeSeenByPlayer())
+			      ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+
+			    break;
+			  }
 		      }
-		    else
+
+		    if(!Created)
 		      delete Monster;
 		  }
+
 		if(!Created)
 		  ADD_MESSAGE("Weird water...");
+
 		return true;
 	      }
 	    case 6:
-	      {
-		item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
-		GetLSquareUnder()->GetStack()->AddItem(ToBeCreated);
-		if(ToBeCreated->CanBeSeenByPlayer())
-		  ADD_MESSAGE("There's something sparkling in the water.");
-		break;
-	      }
+	      if(!(RAND() % 5))
+		{
+		  item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
+		  GetLSquareUnder()->GetStack()->AddItem(ToBeCreated);
+
+		  if(ToBeCreated->CanBeSeenByPlayer())
+		    ADD_MESSAGE("There's something sparkling in the water.");
+
+		  break;
+		}
 
 	    default:
 	      ADD_MESSAGE("The water tastes good.");

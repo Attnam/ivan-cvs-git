@@ -4883,28 +4883,37 @@ ushort gorovitssickle::GetOutlineColor(ushort Frame) const
 
 bool scrollofrepair::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsBrokenSorter) && !Reader->EquipsSomething(&item::IsBrokenSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
     {
       ADD_MESSAGE("You have nothing to repair.");
       return false;
     }
+
   Reader->StartReading(this, 1000);
   return true;
 }
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(game::GetPlayer()->GetStack()->SortedItems(Reader, &item::IsBrokenSorter) || Reader->EquipsSomething(&item::IsBrokenSorter))
-    {
-      item* Item = game::GetPlayer()->GetStack()->DrawContents(Reader, "\"What do you want to fix?\"", 0, &item::IsBrokenSorter);
-      if(!Item)
-	return;
+  if(!Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
+    ADD_MESSAGE("You have lost whatever you wished to repair.");
+  else
+    while(true)
+      {
+	item* Item = Reader->SelectFromPossessions("Which item do you wish to repair?", &item::BrokenSorter);
 
-      if(Reader->IsPlayer())
-	ADD_MESSAGE("As you read the scroll, %s glows blue and fixes itself.", Item->CHAR_NAME(DEFINITE));
+	if(Item)
+	  {
+	    if(Reader->IsPlayer())
+	      ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item->CHAR_NAME(DEFINITE));
 
-      Item->Fix();
-    }
+	    Item->Fix();
+	    break;
+	  }
+	else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	  return;
+      }
+
   RemoveFromSlot();
   SendToHell();  
 }
@@ -4914,8 +4923,19 @@ item* brokenbottle::Fix()
   potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
   DonateSlotTo(Potion);
-  SetMainMaterial(0,NO_PIC_UPDATE|NO_SIGNALS);
+  SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
   SendToHell();
   return Potion;
 }
   
+ushort bodypart::GetConditionColor() const
+{
+  if(HP * 3 < MaxHP)
+    return MakeRGB16(100, 0, 0);
+  else if(HP * 3 < MaxHP << 1)
+    return MakeRGB16(160, 60, 60);
+  else if(HP < MaxHP)
+    return MakeRGB16(180, 100, 100);
+  else
+    return LIGHT_GRAY;
+}

@@ -1208,7 +1208,7 @@ std::string humanoid::EquipmentName(ushort Index) const
     }
 }
 
-bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, const character*)
+bool (*humanoid::EquipmentSorter(ushort Index) const)(const item*, const character*)
 {
   switch(Index)
     {
@@ -1460,16 +1460,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[0] = GetHead()->GetConditionColor();
 
   if(GetRightArm())
-    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[1] = GetRightArm()->GetConditionColor();
 
   if(GetLeftArm())
-    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[2] = GetLeftArm()->GetConditionColor();
 
   if(GetTorso())
-    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[3] = GetTorso()->GetConditionColor();
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
@@ -1477,13 +1477,13 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
     Color[c] = 0;
 
   if(GetGroin())
-    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[1] = GetGroin()->GetConditionColor();
 
   if(GetRightLeg())
-    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[2] = GetRightLeg()->GetConditionColor();
 
   if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB16(128,0,0) : LIGHT_GRAY;
+    Color[3] = GetLeftLeg()->GetConditionColor();
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
@@ -3094,9 +3094,9 @@ void smith::BeTalkedTo()
       return;
     }
 
-  if(game::GetPlayer()->GetStack()->SortedItems(this, &item::IsFixableBySmithSorter))
+  if(game::GetPlayer()->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
     {
-      item* Item = game::GetPlayer()->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::IsFixableBySmithSorter);
+      item* Item = game::GetPlayer()->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::FixableBySmithSorter);
 
       if(!Item)
 	return;

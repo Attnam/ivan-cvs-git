@@ -100,7 +100,7 @@ Things thrown at doors.
 //Blocking and visibility should be considered when calculating relative danger.
 //Spiders must not trigger mines.
 Hit effects of thrown items.
-Applying wielded item should be possible.
+(s) Applying wielded item should be possible.
 ?Vodka.
 //Splitting lines in highscores.
 //Calamus and whip of Calamus should work together.

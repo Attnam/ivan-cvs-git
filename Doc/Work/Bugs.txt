@@ -3,6 +3,7 @@
 / partly fixed or needs still testing
 (r) rejected
 (s) suspended
+? not undestandable
 
 (r) Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 //Item's GetSquareUnder() doesn't work.
@@ -19,7 +20,7 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Do slimes slip down on banana peals? Or bats?
 //Hex's buggy messages.
 //Pressing esc in stringquestion crashes game!!!
-Backround problem with config screen.
+Background problem with config screen.
 Wishing for corpse or any bodypart crashes.
 Can one eat a can MADE of bananaflesh?
 //Dos-prompt bug.
@@ -64,7 +65,7 @@ Splinter message has incorrect order.
 //Kamikaze dwarves don't use backpacks correctly.
 Highscore of no entries doesn't work properly.
 //Carnivorous plants inside walls!
-Scroll of charging ("no items to charge")
+//Scroll of charging ("no items to charge")
 Alpha + rotate doesn't work.
 //Beartraps + groinless creatures.
 //Zapping is possible without arms.
@@ -74,7 +75,7 @@ Consummo message.
 //Picking up a bear trap.
 //Turox etc. + poison  doesn't work.
 Bear trap + displace.
-Attnam + Elpuri.
+?Attnam + Elpuri.
 Headless player zombie + Chat.
 Messages after teleport.
 //Panic + vital bodypart.
@@ -117,4 +118,3 @@ It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more
 "0 scrolls of wishing dropped."
 Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
-
