@@ -1,5 +1,9 @@
 December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* README updated
+
+December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Corrected fatal mistake in Makefile.am (thank Valpurus that I caught this before we release)
 	* Adjusted color of flaming sword.
 	* Added BoolQuestion confirmation for appling wands.
