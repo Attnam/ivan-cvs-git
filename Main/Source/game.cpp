@@ -1457,7 +1457,7 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
       if(Character && Character->CanBeSeenByPlayer())
 	{
 	  if(Character->GetTeam() != GetPlayer()->GetTeam())
-	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHARNAME(DEFINITE), Character->PersonalPronoun().c_str());
+	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHARNAME(DEFINITE), Character->GetPersonalPronoun().c_str());
 	  else if(!Character->IsNameable())
 	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHARNAME(DEFINITE), Character->CHARNAME(DEFINITE));
 	  else
@@ -1527,3 +1527,4 @@ void game::SetCurrentEmitterPos(vector2d What)
   CurrentEmitterPosX = What.X;
   CurrentEmitterPosY = What.Y;
 }
+

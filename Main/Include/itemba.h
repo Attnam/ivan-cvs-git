@@ -270,7 +270,7 @@ class item : public object
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(character*) const;
-  virtual std::string Description(uchar) const;
+  virtual std::string GetDescription(uchar) const;
   virtual bool IsVisible() const { return true; }
   virtual void SetIsVisible(bool) { }
   virtual square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }

@@ -2667,7 +2667,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->PossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
       std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
@@ -2683,7 +2683,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 	ADD_MESSAGE("You manage to free yourself from %s.", CHARNAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
 	{
-	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->PersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
+	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->GetPersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
 	  ADD_MESSAGE("%s", msg.c_str());
 	}
 
@@ -3177,3 +3177,4 @@ void bodypart::CalculateAttackInfo()
   CalculateToHitValue();
   CalculateAPCost();
 }
+

@@ -53,19 +53,21 @@ character::character(donothing) : entity(true), NP(25000), AP(0), Player(false),
 
 character::~character()
 {
-  if(GetAction())
+  if(Action)
     {
-      GetAction()->DeleteUsedItems();
-      delete GetAction();
+      Action->DeleteUsedItems();
+      delete Action;
     }
 
-  if(GetTeam())
-    GetTeam()->Remove(GetTeamIterator());
+  if(Team)
+    Team->Remove(GetTeamIterator());
 
   delete Stack;
+  ushort c;
 
-  if(GetTorso())
-    GetTorso()->SendToHell();
+  for(c = 0; c < BodyParts; ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->SendToHell();
 
   delete [] BodyPartSlot;
   delete [] OriginalBodyPartID;
@@ -73,7 +75,7 @@ character::~character()
   if(PolymorphBackup)
     PolymorphBackup->SendToHell();
 
-  for(ushort c = 0; CategoryWeaponSkill[c]; ++c)
+  for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     delete CategoryWeaponSkill[c];
 
   delete [] CategoryWeaponSkill;
@@ -242,7 +244,7 @@ void character::Be()
 
       ushort c;
 
-      for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
+      for(c = 0; c < AllowedWeaponSkillCategories; ++c)
 	if(CategoryWeaponSkill[c]->Tick() && IsPlayer())
 	  CategoryWeaponSkill[c]->AddLevelDownMessage();
 
@@ -949,11 +951,11 @@ void character::AddMissMessage(character* Enemy) const
   std::string Msg;
 
   if(Enemy->IsPlayer())
-    Msg = Description(DEFINITE) + " misses you!";
+    Msg = GetDescription(DEFINITE) + " misses you!";
   else if(IsPlayer())
-    Msg = "You miss " + Enemy->Description(DEFINITE) + "!";
+    Msg = "You miss " + Enemy->GetDescription(DEFINITE) + "!";
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg = Description(DEFINITE) + " misses " + Enemy->Description(DEFINITE) + "!";
+    Msg = GetDescription(DEFINITE) + " misses " + Enemy->GetDescription(DEFINITE) + "!";
   else
     return;
 
@@ -968,7 +970,7 @@ void character::AddBlockMessage(character* Enemy, item* Blocker, const std::stri
   if(IsPlayer())
     Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << "!";
   else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg << Description(DEFINITE) << " manages" << BlockVerb << " with " << PossessivePronoun() << " " << Blocker->GetName(UNARTICLED) << "!";
+    Msg << GetDescription(DEFINITE) << " manages" << BlockVerb << " with " << GetPossessivePronoun() << " " << Blocker->GetName(UNARTICLED) << "!";
   else
     return;
 
@@ -981,11 +983,11 @@ void character::AddPrimitiveHitMessage(character* Enemy, const std::string& Firs
   std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in " + Enemy->GetBodyPart(BodyPart)->GetName(DEFINITE) : "";
 
   if(Enemy->IsPlayer())
-    Msg << Description(DEFINITE) << " " << ThirdPersonHitVerb << " you" << BodyPartDescription << "!";
+    Msg << GetDescription(DEFINITE) << " " << ThirdPersonHitVerb << " you" << BodyPartDescription << "!";
   else if(IsPlayer())
-    Msg << "You " << FirstPersonHitVerb << " " << Enemy->Description(DEFINITE) << BodyPartDescription << "!";
+    Msg << "You " << FirstPersonHitVerb << " " << Enemy->GetDescription(DEFINITE) << BodyPartDescription << "!";
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg << Description(DEFINITE) << " " << ThirdPersonHitVerb << " " << Enemy->Description(DEFINITE) + BodyPartDescription << "!";
+    Msg << GetDescription(DEFINITE) << " " << ThirdPersonHitVerb << " " << Enemy->GetDescription(DEFINITE) + BodyPartDescription << "!";
   else
     return;
 
@@ -999,21 +1001,21 @@ void character::AddWeaponHitMessage(character* Enemy, item* Weapon, uchar BodyPa
 
   if(Enemy->IsPlayer())
     {
-      Msg << Description(DEFINITE) << (Critical ? " critically hits you" : " hits you") << BodyPartDescription;
+      Msg << GetDescription(DEFINITE) << (Critical ? " critically hits you" : " hits you") << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg << " with " << PossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
+	Msg << " with " << GetPossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
 
       Msg << "!";
     }
   else if(IsPlayer())
-    Msg << "You hit " << Enemy->Description(DEFINITE) << BodyPartDescription << "!";
+    Msg << "You hit " << Enemy->GetDescription(DEFINITE) << BodyPartDescription << "!";
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
     {
-      Msg << Description(DEFINITE) << (Critical ? " critically hits " : " hits ") << Enemy->Description(DEFINITE) << BodyPartDescription;
+      Msg << GetDescription(DEFINITE) << (Critical ? " critically hits " : " hits ") << Enemy->GetDescription(DEFINITE) << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg << " with " << PossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
+	Msg << " with " << GetPossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
 
       Msg << "!";
     }
@@ -1107,6 +1109,8 @@ bool character::NOP()
 {
   EditExperience(AGILITY, -10);
   EditAP(-1000);
+  EditExperience(LEGSTRENGTH, 1000);
+  EditExperience(ENDURANCE, 1000);
   return true;
 }
 
@@ -1400,7 +1404,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config;
   SaveFile << HasBe();
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   if(HomeRoom)
@@ -1429,7 +1433,7 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << AssignedName << PolymorphBackup;
 
-  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile << GetCategoryWeaponSkill(c);
 
   SaveFile << StuckTo << StuckToBodyPart;
@@ -1449,7 +1453,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config;
   SetHasBe(ReadType<bool>(SaveFile));
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
 
   if(HomeRoom)
@@ -1472,7 +1476,7 @@ void character::Load(inputfile& SaveFile)
 
   SaveFile >> AssignedName >> PolymorphBackup;
 
-  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
 
   SaveFile >> StuckTo >> StuckToBodyPart;
@@ -2051,7 +2055,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(IsPlayer())
     ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHARNAME(INDEFINITE));
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHARNAME(DEFINITE), PersonalPronoun().c_str(), NewForm->CHARNAME(INDEFINITE));
+    ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHARNAME(DEFINITE), GetPersonalPronoun().c_str(), NewForm->CHARNAME(INDEFINITE));
 
   GetSquareUnder()->RemoveCharacter();
   GetSquareUnder()->AddCharacter(NewForm);
@@ -2143,7 +2147,7 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
       if(IsPlayer()) 
 	ADD_MESSAGE("You hit your head on the wall.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s hits %s head on the wall.", CHARNAME(DEFINITE), PossessivePronoun().c_str());
+	ADD_MESSAGE("%s hits %s head on the wall.", CHARNAME(DEFINITE), GetPossessivePronoun().c_str());
 
       ReceiveDamage(GuiltyGuy, 1 + RAND() % 5, PHYSICALDAMAGE, HEAD);
       CheckDeath("killed by hitting a wall");
@@ -2797,7 +2801,7 @@ void character::DisplayInfo(std::string& Msg)
     Msg << " You are " << GetStandVerb() << " here.";
   else
     {
-      Msg << " " << CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << CapitalizeCopy(PersonalPronoun());
+      Msg << " " << CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << CapitalizeCopy(GetPersonalPronoun());
 
       if(GetTeam() == game::GetPlayer()->GetTeam())
 	Msg << " is at danger level " << DangerLevel() << " and";
@@ -3087,7 +3091,7 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
       if(IsPlayer())
 	ADD_MESSAGE("Your %s is severed off!", BodyPart->CHARNAME(UNARTICLED));
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s %s is severed off!", PossessivePronoun().c_str(), BodyPart->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->CHARNAME(UNARTICLED));
 
       SevereBodyPart(BodyPartIndex);
       GetSquareUnder()->SendNewDrawRequest();
@@ -3131,7 +3135,7 @@ bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, ucha
       if(IsPlayer())
 	ADD_MESSAGE("You are not hurt.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is not hurt.", PersonalPronoun().c_str());
+	ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
     }
 
   if(DamageTypeAffectsInventory(Type))
@@ -3160,7 +3164,7 @@ bool character::AssignName()
   return false;
 }
 
-std::string character::Description(uchar Case) const
+std::string character::GetDescription(uchar Case) const
 {
   if(CanBeSeenByPlayer())
     return GetName(Case);
@@ -3168,7 +3172,7 @@ std::string character::Description(uchar Case) const
     return "something";
 }
 
-std::string character::PersonalPronoun() const
+std::string character::GetPersonalPronoun() const
 {
   if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
@@ -3178,7 +3182,7 @@ std::string character::PersonalPronoun() const
     return "she";
 }
 
-std::string character::PossessivePronoun() const
+std::string character::GetPossessivePronoun() const
 {
   if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "its";
@@ -3188,7 +3192,7 @@ std::string character::PossessivePronoun() const
     return "her";
 }
 
-std::string character::ObjectPronoun() const
+std::string character::GetObjectPronoun() const
 {
   if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
@@ -3384,7 +3388,7 @@ bool character::ScrollMessagesUp()
 
 void character::Regenerate()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->Regenerate();
 }
@@ -3666,19 +3670,19 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 {
   Initializing = true;
-  BodyPartSlot = new characterslot[GetBodyParts()];
-  OriginalBodyPartID = new ulong[GetBodyParts()];
-  CategoryWeaponSkill = new gweaponskill*[GetAllowedWeaponSkillCategories() + 1];
+  CalculateBodyParts();
+  CalculateAllowedWeaponSkillCategories();
+  BodyPartSlot = new characterslot[BodyParts];
+  OriginalBodyPartID = new ulong[BodyParts];
+  CategoryWeaponSkill = new gweaponskill*[AllowedWeaponSkillCategories];
 
   ushort c;
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     BodyPartSlot[c].SetMaster(this);
 
-  for(c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
+  for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     CategoryWeaponSkill[c] = new gweaponskill(c);
-
-  CategoryWeaponSkill[GetAllowedWeaponSkillCategories()] = 0;
 
   if(!Load)
     {
@@ -3688,11 +3692,17 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
       TemporaryState |= GetClassStates();
 
       if(TemporaryState)
-	for(ushort c = 0; c < STATES; ++c)
+	for(c = 0; c < STATES; ++c)
 	  if(TemporaryState & (1 << c))
 	    TemporaryStateCounter[c] = 0;
 
       CreateBodyParts();
+
+      for(c = 0; c < BASEATTRIBUTES; ++c)
+	BaseExperience[c] = 0;
+
+      StuckTo = 0;
+      StuckToBodyPart = NONEINDEX;
       InitSpecialAttributes();
     }
 
@@ -3943,62 +3953,70 @@ bool character::IsStuck() const
 
 bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, bool DoubleAttribute)
 {
-  /* Check if attribute is disabled for creature */
+  /* Check if attribute is disabled for the creature */
 
   if(!Attribute)
     return false;
 
   if(!DoubleAttribute)
-    if(Experience >= long(Attribute) << 10)
-      {
-	if(Attribute < 100)
-	  {
-	    Attribute += 1;
-	    Experience = 0;
-	    return true;
-	  }
-      }
+    {
+      if(Experience >= long(Attribute) << 10)
+	{
+	  if(Attribute < 100)
+	    {
+	      Attribute += 1;
+	      Experience = 0;
+	      return true;
+	    }
+	}
+    }
   else
-    if(Experience >= long(Attribute) << 9)
-      {
-	if(Attribute < 200)
-	  {
-	    Attribute += 1;
-	    Experience = 0;
-	    return true;
-	  }
-      }
+    {
+      if(Experience >= long(Attribute) << 9)
+	{
+	  if(Attribute < 200)
+	    {
+	      Attribute += 1;
+	      Experience = 0;
+	      return true;
+	    }
+	}
+    }
 
   return false;
 }
 
 bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, bool DoubleAttribute)
 {
-  /* Check if attribute is disabled for creature */
+  /* Check if attribute is disabled for the creature */
 
   if(!Attribute)
     return false;
 
   if(!DoubleAttribute)
-    if(Experience <= (long(Attribute) - 100) << 8)
-      {
-	if(Attribute > 1)
-	  {
-	    Attribute -= 1;
-	    Experience = 0;
-	    return true;
-	  }
-      }
+    {
+      if(Experience <= (long(Attribute) - 100) << 8)
+	{
+	  if(Attribute > 1)
+	    {
+	      Attribute -= 1;
+	      Experience = 0;
+	      return true;
+	    }
+	}
+    }
   else
-    if(Experience <= (long(Attribute) - 200) << 7)
-      {
-	if(Attribute > 2)
-	  {
-	    Attribute -= 1;
-	    Experience = 0;
-	    return true;
-	  }
-      }
+    {
+      if(Experience <= (long(Attribute) - 200) << 7)
+	{
+	  if(Attribute > 2)
+	    {
+	      Attribute -= 1;
+	      Experience = 0;
+	      return true;
+	    }
+	}
+    }
 
   return false;
 }
@@ -4100,17 +4118,6 @@ void character::CalculateDodgeValue()
 
   if(DodgeValue < 1)
     DodgeValue = 1;
-}
-
-void character::VirtualConstructor(bool Load)
-{
-  if(!Load)
-    {
-      for(ushort c = 0; c < BASEATTRIBUTES; ++c)
-	BaseExperience[c] = 0;
-      SetStuckTo(0);
-      SetStuckToBodyPart(NONEINDEX);
-    }
 }
 
 bool character::DamageTypeAffectsInventory(uchar Type) const
@@ -4504,7 +4511,7 @@ void character::EndPolymorph()
   else if(game::IsInWilderness())
     return; // fast gum solution, state ends when the player enters a dungeon
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s returns to %s true form.", CHARNAME(DEFINITE), PossessivePronoun().c_str());
+    ADD_MESSAGE("%s returns to %s true form.", CHARNAME(DEFINITE), GetPossessivePronoun().c_str());
 
   if(GetAction())
     GetAction()->Terminate(false);
@@ -4566,7 +4573,7 @@ void character::SaveLife()
       if(IsPlayer())
 	ADD_MESSAGE("But wait! You glow briefly red and seem to be in a better shape!");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", PersonalPronoun().c_str());
+	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", GetPersonalPronoun().c_str());
 
       DeActivateTemporaryState(LIFE_SAVED);
     }
@@ -4584,7 +4591,7 @@ void character::SaveLife()
       if(IsPlayer())
 	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(UNARTICLED));
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", PossessivePronoun().c_str(), LifeSaver->CHARNAME(UNARTICLED), PersonalPronoun().c_str());
+	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", GetPossessivePronoun().c_str(), LifeSaver->CHARNAME(UNARTICLED), GetPersonalPronoun().c_str());
 
       LifeSaver->RemoveFromSlot();
       LifeSaver->SendToHell();
@@ -5027,7 +5034,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	  if(IsPlayer())
 	    ADD_MESSAGE("Your %s teleports away.", SeveredBodyPart->CHARNAME(UNARTICLED));
 	  else
-	    ADD_MESSAGE("%s %s teleports away.", PossessivePronoun().c_str(), SeveredBodyPart->CHARNAME(UNARTICLED));
+	    ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), SeveredBodyPart->CHARNAME(UNARTICLED));
 	}	
     }
 }
@@ -5239,4 +5246,5 @@ ushort character::GetRandomNotActivatedState()
   
   return OKStates[RAND() % NumberOfOKStates];
 }
+
 

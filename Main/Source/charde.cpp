@@ -42,29 +42,6 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-humanoid::~humanoid()
-{
-  /* Do not delete these! */
-
-  if(GetHead())
-    GetHead()->SendToHell();
-
-  if(GetRightArm())
-    GetRightArm()->SendToHell();
-
-  if(GetLeftArm())
-    GetLeftArm()->SendToHell();
-
-  if(GetGroin())
-    GetGroin()->SendToHell();
-
-  if(GetRightLeg())
-    GetRightLeg()->SendToHell();
-
-  if(GetLeftLeg())
-    GetLeftLeg()->SendToHell();
-}
-
 void petrus::CreateInitialEquipment()
 {
   SetMainWielded(new valpurusjustifier);
@@ -1403,7 +1380,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), CapitalizeCopy(PersonalPronoun()).c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), GetMasterGod()->Name().c_str(), CapitalizeCopy(GetPersonalPronoun()).c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1677,7 +1654,7 @@ bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar
       if(IsPlayer())
 	ADD_MESSAGE("You are not hurt.");
       else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is not hurt.", PersonalPronoun().c_str());
+	ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
     }
 
   if(DamageTypeAffectsInventory(Type))
@@ -2388,6 +2365,7 @@ void nonhumanoid::InitSpecialAttributes()
 {
   Strength = GetDefaultArmStrength() << 1;
   Agility = GetDefaultAgility() << 1;
+  StrengthExperience = AgilityExperience = 0;
 }
 
 void humanoid::Bite(character* Enemy)
@@ -3071,7 +3049,6 @@ bool humanoid::EquipmentEasilyRecognized(ushort Index) const
 
 void humanoid::VirtualConstructor(bool Load)
 {
-  character::VirtualConstructor(Load);
   SetCurrentRightSingleWeaponSkill(0);
   SetCurrentLeftSingleWeaponSkill(0);
 }
@@ -3560,4 +3537,3 @@ leg* humanoid::GetKickLeg() const
 {
   return GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength() ? static_cast<leg*>(GetRightLeg()) : static_cast<leg*>(GetLeftLeg());
 }
-

@@ -391,7 +391,7 @@ bool item::CanBeSeenBy(character* Who) const
     return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
 
-std::string item::Description(uchar Case) const
+std::string item::GetDescription(uchar Case) const
 {
   if(CanBeSeenByPlayer())
     return GetName(Case);

@@ -87,5 +87,6 @@ CollectCreatures
 Genie's strength.
 Items inside chests carried by player at death should be shown.
 Consummo's pray effect. (hex)
-"You didn't manage to get onto the high score list" message.
+//"You didn't manage to get onto the high score list" message.
 Glitter effect.
+Fire effect.

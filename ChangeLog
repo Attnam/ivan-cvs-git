@@ -1,5 +1,18 @@
 July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* The number of BodyParts and AllowedWeaponSkillCategories cached
+	* Some S&R done:
+	  * Description() -> GetDescription()
+	  * PersonalPronoun() -> GetPersonalPronoun()
+	  * PossessivePronoun() -> GetPossessivePronoun()
+	  * ObjectPronoun() -> GetObjectPronoun()
+	* There were some brackets missing in the attribute experience code, which caused them
+	  to be increased and decreased twice as fast as they should; but this has been fixed
+	* Nonhumanoids' StrengthExperience and AgilityExperience are now correctly initialized
+	  with zero during creation
+
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Removed some obsolete and commented code
 	* Dodge value is now cached
 	* Optimized weaponskills and regeneration a bit
@@ -11,7 +24,7 @@ July 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* AnimationController now redraws only the equipment; stats and msg panel is left
+	* AnimationController now redraws only the equipment; stats and msg panel are left
 	  untouched
 
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>

@@ -12,8 +12,6 @@
 #include "wsquare.h"
 #include "itemde.h"
 
-#define CHARDESCRIPTION(Case) Description(Case).c_str()
-
 class felist;
 class bitmap;
 class character;
@@ -332,10 +330,10 @@ class character : public entity, public id
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(const std::string& What) { AssignedName = What; }
-  virtual std::string Description(uchar) const;
-  virtual std::string PersonalPronoun() const;
-  virtual std::string PossessivePronoun() const;
-  virtual std::string ObjectPronoun() const;
+  virtual std::string GetDescription(uchar) const;
+  virtual std::string GetPersonalPronoun() const;
+  virtual std::string GetPossessivePronoun() const;
+  virtual std::string GetObjectPronoun() const;
   virtual bool BodyPartCanBeSevered(ushort) const;
   virtual void AddName(std::string&, uchar) const;
   virtual void ReceiveHeal(long);
@@ -564,7 +562,6 @@ class character : public entity, public id
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   virtual void AttachBodyPart(bodypart*, ushort);
-  virtual uchar GetBodyParts() const { return 1; }
   virtual bool HasAllBodyParts() const;
   virtual stackiterator FindRandomOwnBodyPart();
   virtual bodypart* GenerateRandomBodyPart();
@@ -633,11 +630,14 @@ class character : public entity, public id
   virtual void CalculateBattleInfo() = 0;
   void CalculateBurdenState();
   void CalculateDodgeValue();
+  virtual void CalculateBodyParts() { BodyParts = 1; }
+  virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
+  uchar GetBodyParts() const { return BodyParts; }
+  uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
  protected:
   virtual void SpecialTurnHandler() { }
-  virtual uchar GetAllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   void Initialize(uchar, bool, bool);
-  virtual void VirtualConstructor(bool);
+  virtual void VirtualConstructor(bool) { }
   virtual void LoadDataBaseStats();
   void InstallDataBase();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -728,6 +728,8 @@ class character : public entity, public id
   bool Initializing;
   uchar BurdenState;
   float DodgeValue;
+  uchar AllowedWeaponSkillCategories;
+  uchar BodyParts;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

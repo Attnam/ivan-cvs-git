@@ -177,7 +177,7 @@ void temple::Enter(character* Pilgrim)
       {
 	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->PossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->Name().c_str());
       }
@@ -393,7 +393,7 @@ void library::Enter(character* Customer)
       {
 	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->CanBeSeenBy(Master))
 	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHARNAME(DEFINITE), Master->PersonalPronoun().c_str());
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHARNAME(DEFINITE), Master->GetPersonalPronoun().c_str());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }

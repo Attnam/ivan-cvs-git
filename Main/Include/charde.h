@@ -25,7 +25,6 @@ class ABSTRACT_CHARACTER
   humanoid,
   character,
  public:
-  virtual ~humanoid();
   virtual bool CanWield() const;
   virtual bool Hit(character*);
   virtual void AddSpecialItemInfo(std::string&, item*);
@@ -136,6 +135,8 @@ class ABSTRACT_CHARACTER
   virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   virtual leg* GetKickLeg() const;
+  virtual void CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
+  virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -148,7 +149,6 @@ class ABSTRACT_CHARACTER
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
-  virtual uchar GetAllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
   std::vector<sweaponskill*> SingleWeaponSkill;
   sweaponskill* CurrentRightSingleWeaponSkill;
   sweaponskill* CurrentLeftSingleWeaponSkill;
@@ -368,7 +368,7 @@ class CHARACTER
  protected:
   virtual void CreateCorpse();
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ELPURIFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans horribly and drops " + PossessivePronoun() + " head."; }
+  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans horribly and drops " + GetPossessivePronoun() + " head."; }
 );
 
 class CHARACTER

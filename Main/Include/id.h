@@ -11,6 +11,7 @@
 #include "ivandef.h"
 
 #define CHARNAME(Case) GetName(Case).c_str()
+#define CHARDESCRIPTION(Case) GetDescription(Case).c_str()
 
 #ifdef VC
 typedef void YesThisIsNotAJoke;
