@@ -422,6 +422,7 @@ public:
 	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
 	virtual uchar GetConsumeMaterial() const { return 1; }
 	virtual item* BetterVersion() const;
+	virtual std::string GetConsumeVerb() const { return std::string("drinking"); }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );

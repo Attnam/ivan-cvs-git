@@ -83,6 +83,7 @@ public:
 	virtual uchar GetConsumeType() const RET(GetMaterial(0)->GetConsumeType())
 	virtual bool IsBadFoodForAI(character*) const;
 	virtual uchar GetConsumeMaterial() const { return 0; }
+	virtual std::string GetConsumeVerb() const { return std::string("eating"); }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }
