@@ -364,6 +364,8 @@ class OLTERRAIN
   virtual bool Consume(character*);
   virtual bool HasConsumeEffect() const { return true; } 
   virtual void DryOut();
+  virtual bool ReceiveDip(item*, character*);
+  virtual bool HasDipEffect() const { return true; }
  protected:
   virtual std::string NameSingular() const { return "fountain"; }
   virtual vector2d GetBitmapPos() const { return vector2d(GetMaterial(1) ? 16 : 32, 288); }

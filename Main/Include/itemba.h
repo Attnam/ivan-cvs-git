@@ -12,7 +12,7 @@
 #include "materba.h"
 #include "igraph.h"
 #include "proto.h"
-
+#include "lterrade.h"
 class bitmap;
 class character;
 class material;
@@ -103,6 +103,7 @@ class item : public object
   virtual uchar SurfaceMaterial() const { return 0; }
   virtual bool AutoInitializable() const { return true; }
   virtual uchar GetLockType() const { return 0; }
+  virtual bool HasBeenDippedInFountain(character*,fountain*) { return false; }
  protected:
   virtual ushort StrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }

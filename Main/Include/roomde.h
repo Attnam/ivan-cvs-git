@@ -63,6 +63,8 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual bool Drink(character*) const;
   virtual bool HasDrinkHandler() const { return true; }
+  virtual bool Dip(character*) const;
+  virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
  protected:
   bool Entered;

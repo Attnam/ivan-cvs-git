@@ -1,3 +1,16 @@
+2002-04-01 (later) Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Include/itemba.h: #included lterrade (fountain), added function HasBeenDippedInFountain
+	* Main/Include/itemde.h: Added function HasBeenDippedInFountain and CanBeDipped to fountain
+	* Main/Include/lterraba.h: Added functions ReceiveDip and HasDipEffect
+	* Main/Include/lterrade.h: Added functions ReceiveDip and HasDipEffect to fountain
+	* Main/Include/roomba.h: Added functions Dip and HasDipHandler
+	* Main/Source/charba.cpp: Altered Dip function to ask wheter the player wants to dip into a square or to an item in his inventory 
+	* Main/Source/itemde.cpp: Added HasBeenDippedInFountain for potion
+	* Main/Source/lsquare.cpp: Put a GetIsPlayer checker on Apply (for the message "You cannot apply that on this"), added function ReceiveDip
+	* Main/Source/lterrade.cpp: Added ReceiveDip for fountain 
+	* Main/Source/roomde.cpp: Added Dip for cathedral
+
+
 2002-04-01 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Include/itemba.h: GetLockType() function added to item (returns 0 for everything else but key)
 	* Main/Include/itemde.h: Key added

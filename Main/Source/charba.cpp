@@ -1408,18 +1408,33 @@ bool character::Dip()
       if(GetStack()->GetItem(What)->CanBeDipped())
 	{
 	  game::DrawEverythingNoBlit();
+	  if(game::BoolQuestion("Do you wish to dip in a nearby square? [y,n]", 2))
+	    {
+	      vector2d VectorDir;
+	      std::string Question = std::string("Where do you want to dip ") + GetStack()->GetItem(What)->Name(DEFINITE) + std::string("? [press a cursor key or . for the current square]");
+	      uchar Dir = game::DirectionQuestion(Question, 0,true,true);
 
-	  ushort To = GetStack()->DrawContents(this, "Into what do you wish to dip it?");
+	      if(Dir == '.')
+		VectorDir = vector2d(0,0);
+	      else
+		VectorDir = game::GetMoveVector(Dir);
+	      
+	      return game::GetCurrentLevel()->GetLSquare(GetPos() + VectorDir)->ReceiveDip(GetStack()->GetItem(What), this);
+	    }
+	  else
+	    {
+	      ushort To = GetStack()->DrawContents(this, "Into what do you wish to dip it?");
 
-	  if(To < GetStack()->GetItems() && GetStack()->GetItem(To) && GetStack()->GetItem(What) != GetStack()->GetItem(To))
-	    if(GetStack()->GetItem(To)->CanBeDippedInto(GetStack()->GetItem(What)))
-	      {
-		GetStack()->GetItem(What)->DipInto(GetStack()->GetItem(To));
-		return true;
-	      }
+	      if(To < GetStack()->GetItems() && GetStack()->GetItem(To) && GetStack()->GetItem(What) != GetStack()->GetItem(To))
+		if(GetStack()->GetItem(To)->CanBeDippedInto(GetStack()->GetItem(What)))
+		  {
+		    GetStack()->GetItem(What)->DipInto(GetStack()->GetItem(To));
+		    return true;
+		  }
+	    }
+
+	  ADD_MESSAGE("Invalid selection!");
 	}
-
-      ADD_MESSAGE("Invalid selection!");
     }
 
   return false;

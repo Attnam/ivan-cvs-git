@@ -354,3 +354,22 @@ void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
       Teleporter->GetTeam()->Hostility(game::GetTeam(2));
     }
 }
+
+bool cathedral::Dip(character* Thirsty) const
+{
+  if(game::GetTeam(2)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
+    return true;
+
+  if(Thirsty->GetIsPlayer())
+    {
+      ADD_MESSAGE("Stealing the precious water of the Cathedral is prohibited.");
+
+      if(game::BoolQuestion("Are you sure you want to dip? [y/N]"))
+	{
+	  Thirsty->GetTeam()->Hostility(game::GetTeam(2));
+	  return true;
+	}
+    }
+
+  return false;
+}

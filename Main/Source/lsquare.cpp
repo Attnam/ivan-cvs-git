@@ -1081,7 +1081,38 @@ bool lsquare::ReceiveApply(item* Thingy, character* Applier)
     }
   else
     {
-      ADD_MESSAGE("You cannot apply that on this!");
+      if(Applier->GetIsPlayer()) 
+	ADD_MESSAGE("You cannot apply that on this!");
+      return false;
+    }
+}
+
+bool lsquare::ReceiveDip(item* Thingy, character* Dipper)
+{
+  if(GetGLTerrain()->HasDipEffect() || GetOLTerrain()->HasDipEffect())
+    {
+    	  if(GetRoom() && GetLevelUnder()->GetRoom(GetRoom())->HasDipHandler())
+	    {
+	      if(!GetLevelUnder()->GetRoom(GetRoom())->Dip(Dipper))
+		return false;
+	    }
+	  else
+	    {
+	      if(!game::BoolQuestion("Do you still want to dip? [y/N]"))
+		{
+		  return false;
+		}
+	    }
+    }
+  
+  if(GetGLTerrain()->ReceiveDip(Thingy, Dipper) || GetOLTerrain()->ReceiveDip(Thingy,Dipper))
+    {
+      return true;
+    }
+  else
+    {
+      if(Dipper->GetIsPlayer())
+	ADD_MESSAGE("You cannot dip that on this!");
       return false;
     }
 }

@@ -45,6 +45,8 @@ class room : public type
   virtual bool AllowDropGifts() const { return true; }
   virtual bool Drink(character*) const { return true; }
   virtual bool HasDrinkHandler() const { return false; }
+  virtual bool Dip(character*) const { return true; }
+  virtual bool HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
  protected:
   virtual void SetDefaultStats() = 0;

@@ -24,6 +24,7 @@ std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 #include "godba.h"
 #include "strover.h"
 #include "whandler.h"
+#include "lterrade.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
@@ -1365,4 +1366,13 @@ bool key::Apply(character* User, stack*)
 	}
       User->EditAP(500);
     }
+}
+
+bool potion::HasBeenDippedInFountain(character* Dipper,fountain* Fountain)
+{
+  if(Dipper->GetIsPlayer())
+      ADD_MESSAGE("You dip %s in %s and it fills with water.", CNAME(DEFINITE), Fountain->CNAME(DEFINITE));
+
+  ChangeMaterial(1, new water);
+  return true;
 }

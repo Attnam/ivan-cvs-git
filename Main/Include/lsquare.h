@@ -105,6 +105,7 @@ class lsquare : public square
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual bool TeleportEverything(character*);
   virtual bool ReceiveApply(item*, character*);
+  virtual bool ReceiveDip(item*, character*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

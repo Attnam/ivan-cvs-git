@@ -871,3 +871,10 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
   else
     return false;
 }
+
+
+bool fountain::ReceiveDip(item* ToBeDipped, character* Who)
+{
+  /* The dipping system suck, so can't really do this better without major code rewrites and yes... I am lazy */ 
+  return ToBeDipped->HasBeenDippedInFountain(Who, this);
+}

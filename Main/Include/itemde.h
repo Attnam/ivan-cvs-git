@@ -457,6 +457,8 @@ class ITEM
   virtual item* BetterVersion() const;
   virtual std::string GetConsumeVerb() const { return std::string("drinking"); }
   virtual void GeneratePotionMaterials();
+  virtual bool HasBeenDippedInFountain(character*,fountain*);
+  virtual bool CanBeDipped() const { return true; }
  protected:
   virtual ushort StrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,160); }
