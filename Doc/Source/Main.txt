@@ -2323,6 +2323,65 @@ vector CPos(void)
 
 	Returns the position of the stack.
 
+ushort ConsumableItems(character* Eater)
+
+	returns the number of consumable items (for Eater)
+
+ushort DrawConsumableContents(const char* Topic, character* Eater)
+
+	Makes a list out of the consumable items (for Eater) and then returns what ever
+	list::draw() returns. 
+
+DeletePointers()
+
+	All pointers to items are set to 0
+
+ushort FindItem(item* ToBeSearched)
+	Returns the index of ToBeSearched.
+
+Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
+	Strength is the strength of the kick. If ShowOnScreen is true
+	kick messages are displayed on screen. Direction is the 
+	vector in which direction the kick is going. 
+
+long Score()
+	Returns the score value of all the items in the stack.
+
+SSquareUnder(square* Square)
+
+	SquareUnder is set to Square.
+
+item** CItem()
+
+	A pointer to the item* array.
+
+item* CItem(ushort I)
+
+	Returns a pointer to item which has the index of I.
+
+ushort CItems(void)
+
+	Returns the number of items in this stack.
+
+levelsquare* CLevelSquareUnder(void)
+
+	Returns the pointer to the levelsquare under the stack.
+
+SEmitation(ushort What)
+
+	Sets the Emitation to What.
+
+ushort CNonExistent()
+
+	Returns the amount of pointers (which is stored in NonExistent) that point to 0.
+
+SNonExistent(ushort What)
+
+	Sets NonExistent to What.
+
+
+
+
 ----------------------------------------------------------------------------
 
 End of document.
