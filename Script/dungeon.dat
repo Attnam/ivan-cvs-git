@@ -1527,14 +1527,14 @@ Dungeon ATTNAM;
 			{
 				............#########............
 				............#g.....g#............
-				####......###...m...###......####
+				####......###..ymy..###......####
 				#.K#......#g....l....g#......#..#
 				#..#....###...........###....#..#
 				#k.#....#E.............E#....#..#
 				#k.###..#....sPs.s.s....#..###..#
 				#k...#..#..f....i....f..#..#....#
 				#k...#..#E.............E#..#....#
-				###..#..###....y.y....###..#..###
+				###..#..###...........###..#..###
 				..#..###..#...........#..###..#..
 				..#....#..#g.l.....l.g#..#....#..
 				..###k.####...........####..###..
@@ -1706,7 +1706,7 @@ Dungeon ATTNAM;
 
 			Square, Pos 3, 5;
 			{
-				GTerrain = solidterrain(PARQUET);
+				GTerrain = solidterrain(FLOOR);
 				OTerrain = door;
 			}
 
@@ -1762,8 +1762,7 @@ Dungeon ATTNAM;
 			Size = 7,6;
 			AltarPossible = false;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(FLOOR), 0;
-			DoorSquare = solidterrain(FLOOR), door;
+			FloorSquare = solidterrain(PARQUET), 0;
 			GenerateDoor = false;
 			DivineMaster = LORICATUS;
 			GenerateLanterns = false;

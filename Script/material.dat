@@ -1835,7 +1835,7 @@ flesh
 		NameStem = "Elpuri's flesh";
 		Article = "an";
 		Color = rgb16(60, 60, 60);
-		AttachedGod = VALPURUS;
+		AttachedGod = MORTIFER;
 		IsWarm = false;
 		IsImmuneToAcid = true;
 	}

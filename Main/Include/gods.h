@@ -62,6 +62,7 @@ class GOD
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
   virtual color16 GetEliteColor() const;
+  virtual bool LikesMaterial(const materialdatabase*, const character*) const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -94,6 +95,9 @@ class GOD
   virtual int GetBasicAlignment() const;
   virtual color16 GetColor() const;
   virtual color16 GetEliteColor() const;
+  virtual bool ForceGiveBodyPart() const { return true; }
+  virtual bool HealRegeneratingBodyParts() const { return true; }
+  virtual bool LikesMaterial(const materialdatabase*, const character*) const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -207,6 +211,8 @@ class GOD
   virtual bool PlayerVomitedOnAltar(liquid*);
   virtual color16 GetColor() const;
   virtual color16 GetEliteColor() const;
+  virtual bool LikesMaterial(const materialdatabase*, const character*) const;
+  virtual bool MutatesBodyParts() const { return true; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

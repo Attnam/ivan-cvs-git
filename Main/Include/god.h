@@ -26,6 +26,7 @@ class festring;
 class god;
 class liquid;
 class team;
+struct materialdatabase;
 
 class godprototype
 {
@@ -73,6 +74,12 @@ class god
   virtual color16 GetEliteColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
+  virtual bool ForceGiveBodyPart() const { return false; }
+  virtual bool HealRegeneratingBodyParts() const { return false; }
+  virtual bool LikesMaterial(const materialdatabase*, const character*) const;
+  bool TryToAttachBodyPart(character*);
+  bool TryToHardenBodyPart(character*);
+  virtual bool MutatesBodyParts() const { return false; }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;

@@ -26,6 +26,7 @@
 class character;
 class item;
 class material;
+class god;
 template <class type> class databasecreator;
 struct itemdatabase;
 
@@ -33,6 +34,7 @@ typedef std::map<festring, long> valuemap;
 typedef std::vector<item*> itemvector;
 typedef std::vector<itemvector> itemvectorvector;
 typedef std::vector<character*> charactervector;
+typedef std::vector<material*> materialvector;
 
 template <class type> class protocontainer
 {
@@ -88,6 +90,7 @@ class protosystem
   static void SaveCharacterDataBaseFlags(outputfile&);
   static void LoadCharacterDataBaseFlags(inputfile&);
   static void CreateEverySeenCharacter(charactervector&);
+  static void CreateEveryMaterial(std::vector<material*>&, const god*, const character*);
  private:
   static itemdatabase** ItemConfigData;
   static int ItemConfigDataSize;

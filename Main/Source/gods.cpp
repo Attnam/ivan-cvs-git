@@ -218,7 +218,7 @@ void dulcis::PrayBadEffect()
 
 void seges::PrayGoodEffect()
 {
-  if(!PLAYER->HasAllBodyParts())
+  /*if(!PLAYER->HasAllBodyParts())
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
@@ -237,7 +237,7 @@ void seges::PrayGoodEffect()
 	}
 
       return;
-    }
+    }*/
 
   if(PLAYER->IsInBadCondition())
     {
@@ -298,12 +298,12 @@ void atavus::PrayGoodEffect()
       AdjustTimer(45000);
       AdjustRelation(-300);
     }
-  else if(!PLAYER->HasAllBodyParts())
+  /*else if(!PLAYER->HasAllBodyParts())
     {
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
       ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().CStr());
-    }
+    }*/
   else
     ADD_MESSAGE("Nothing happens.");
 }
@@ -342,7 +342,7 @@ void atavus::PrayBadEffect()
 
 void silva::PrayGoodEffect()
 {
-  if(!PLAYER->HasAllBodyParts())
+  /*if(!PLAYER->HasAllBodyParts())
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
@@ -361,7 +361,7 @@ void silva::PrayGoodEffect()
 	}
 
       return;
-    }
+    }*/
 
   if(PLAYER->GetNP() < HUNGER_LEVEL)
     {
@@ -520,14 +520,14 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  if(!PLAYER->HasAllBodyParts())
+  /*if(!PLAYER->HasAllBodyParts())
     {
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
       ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().CStr());
       return;
-    }
+    }*/
 
   for(int c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
     {
@@ -759,7 +759,7 @@ void valpurus::Pray()
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
-  else
+  else if(Relation < 0 || (!TryToAttachBodyPart(PLAYER) && !TryToHardenBodyPart(PLAYER)))
     {
       ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GetName());
       PrayBadEffect();
@@ -902,7 +902,7 @@ void nefas::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-  if(!PLAYER->HasAllBodyParts())
+  /*if(!PLAYER->HasAllBodyParts())
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
@@ -923,7 +923,7 @@ void scabies::PrayGoodEffect()
 	}
 
       return;
-    }
+    }*/
 
   if(!RAND_N(10))
     {
@@ -1027,14 +1027,14 @@ void infuscor::PrayGoodEffect()
 
 void cruentus::PrayGoodEffect()
 {
-  if(!PLAYER->HasAllBodyParts())
+  /*if(!PLAYER->HasAllBodyParts())
     {
       bodypart* NewBodyPart = PLAYER->GenerateRandomBodyPart();
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(IRON));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
       ADD_MESSAGE("You grow a new %s, which seems to be made of iron.", NewBodyPart->GetBodyPartName().CStr()); 
       return;
-    }
+    }*/
 
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), PLAYER->GetPos(), 10);
@@ -1142,4 +1142,21 @@ bool scabies::PlayerVomitedOnAltar(liquid*)
   ADD_MESSAGE("%s feels that you are indeed her follower.", GetName()); 
   AdjustRelation(1);
   return false;
+}
+
+bool atavus::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+{
+  return Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;
+}
+
+bool seges::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+{
+  return MDB->IsAlive
+      && Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;
+}
+
+bool scabies::LikesMaterial(const materialdatabase* MDB, const character* Char) const
+{
+  return MDB->IsAlive
+      && Char->GetTorso()->GetMainMaterial()->GetConfig() == MDB->Config;
 }

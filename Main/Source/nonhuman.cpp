@@ -1153,7 +1153,7 @@ void eddy::GetAICommand()
 {
   if(!GetLSquareUnder()->GetOLTerrain() && !(RAND() % 500))
     {
-      decoration* Couch = new decoration(COUCH);
+      decoration* Couch = new decoration(RAND_N(5) ? COUCH : DOUBLE_BED);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s spits out %s.", CHAR_NAME(DEFINITE), Couch->CHAR_NAME(INDEFINITE));
@@ -2187,13 +2187,7 @@ void mysticfrog::GetAICommand()
       return;
     }
 
-  if(CheckForDoors())
-    return;
-
-  if(MoveRandomly())
-    return;
-
-  EditAP(-1000);
+  StandIdleAI();
 }
 
 bool largecreature::PartCanMoveOn(const lsquare* LSquare) const

@@ -22,7 +22,10 @@ void god::Pray()
     if(Relation >= -RAND_N(500))
       {
 	ADD_MESSAGE("You feel %s is pleased.", GetName());
-	PrayGoodEffect();
+
+	if(!TryToAttachBodyPart(PLAYER) && !TryToHardenBodyPart(PLAYER))
+	  PrayGoodEffect();
+
 	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, 10, true);
@@ -76,7 +79,10 @@ void god::Pray()
     if(Relation > RAND_N(500) && Timer < RAND_N(500000))
       {
 	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
-	PrayGoodEffect();
+
+	if(!TryToAttachBodyPart(PLAYER) && !TryToHardenBodyPart(PLAYER))
+	  PrayGoodEffect();
+
 	AdjustTimer(25000);
 	AdjustRelation(-75);
 	game::ApplyDivineAlignmentBonuses(this, 15, false);
@@ -324,13 +330,26 @@ void god::ApplyDivineTick()
     --Timer;
 }
 
-/*bool god::TryToAttachLimb(character* Char)
+bool god::LikesMaterial(const materialdatabase* MDB, const character*) const
 {
+  return MDB->AttachedGod == GetType();
+}
+
+bool MaterialSorter(const material* M1, const material* M2)
+{
+  return M1->GetStrengthValue() + M1->GetFlexibility()
+       > M2->GetStrengthValue() + M2->GetFlexibility();
+}
+
+bool god::TryToAttachBodyPart(character* Char)
+{
+  msgsystem::EnterBigMessageMode();
+
   if(!Char->HasAllBodyParts())
     {
       bodypart* BodyPart = Char->FindRandomOwnBodyPart();
 
-      if(BodyPart)
+      if(BodyPart && LikesMaterial(BodyPart->GetMainMaterial()->GetDataBase(), Char))
 	{
 	  BodyPart->RemoveFromSlot();
 	  Char->AttachBodyPart(BodyPart);
@@ -338,11 +357,99 @@ void god::ApplyDivineTick()
 	}
       else
 	{
-	  BodyPart = Char->GenerateRandomBodyPart();
-	  ADD_MESSAGE("You grow a new %s.", BodyPart->GetBodyPartName().CStr()); 
+	  BodyPart = 0;
+	  materialvector MaterialVector;
+	  protosystem::CreateEveryMaterial(MaterialVector, this, Char);
+	  std::sort(MaterialVector.begin(), MaterialVector.end(), MaterialSorter);
+	  int c;
+
+	  for(c = 0; c < MaterialVector.size(); ++c)
+	    if(ForceGiveBodyPart()
+	    || (MaterialVector[c]->CanBeWished()
+	     && !RAND_N(6000 / (GetRelation() + 2000))
+	     && !RAND_N(Max(MaterialVector[c]->GetIntelligenceRequirement() - 10, 1))))
+	      {
+		BodyPart = Char->GenerateRandomBodyPart();
+		BodyPart->ChangeMainMaterial(MaterialVector[c]->Clone());
+		Char->UpdatePictures();
+		festring MadeOf;
+
+		if(!MaterialVector[c]->IsSameAs(Char->GetTorso()->GetMainMaterial()))
+		  {
+		    MadeOf << " made of ";
+		    MaterialVector[c]->AddName(MadeOf, false, false);
+		  }
+
+		ADD_MESSAGE("%s gives you a new %s%s.", GetName(), BodyPart->GetBodyPartName().CStr(), MadeOf.CStr());
+		break;
+	      }
+
+	  for(c = 0; c < MaterialVector.size(); ++c)
+	    delete MaterialVector[c];
 	}
 
-      BodyPart->SetHP(1);
-      return;
+      if(BodyPart)
+	{
+	  if(MutatesBodyParts())
+	    {
+	      BodyPart->Mutate();
+	      ADD_MESSAGE("It seems somehow different.");
+	    }
+
+	  bool Heal = !BodyPart->CanRegenerate() || HealRegeneratingBodyParts();
+	  BodyPart->SetHP(Heal ? BodyPart->GetMaxHP() : 1);
+	  msgsystem::LeaveBigMessageMode();
+	  return true;
+	}
     }
-}*/
+
+  msgsystem::LeaveBigMessageMode();
+  return false;
+}
+
+bool god::TryToHardenBodyPart(character* Char)
+{
+  bodypart* PossibleBodyPart[MAX_BODYPARTS];
+  int c, Index = 0;
+
+  for(c = 1; c < Char->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = Char->GetBodyPart(c);
+
+      if(BodyPart && LikesMaterial(BodyPart->GetMainMaterial()->GetDataBase(), Char))
+	PossibleBodyPart[Index++] = BodyPart;
+    }
+
+  if(!Index)
+    return false;
+
+  bodypart* BodyPart = PossibleBodyPart[RAND_N(Index)];
+  material* OldMaterial = BodyPart->GetMainMaterial();
+  int OldModifier = OldMaterial->GetStrengthValue() + OldMaterial->GetFlexibility();
+  materialvector MaterialVector;
+  protosystem::CreateEveryMaterial(MaterialVector, this, Char);
+  std::sort(MaterialVector.begin(), MaterialVector.end(), MaterialSorter);
+  bool Changed = false;
+
+  for(c = 0; c < MaterialVector.size(); ++c)
+    if(MaterialVector[c]->CanBeWished())
+      {
+	material* Material = MaterialVector[c];
+
+	if(Material->GetStrengthValue() + Material->GetFlexibility() > OldModifier
+	&& !RAND_N(12000 / (GetRelation() + 2000))
+	&& !RAND_N(Max(Material->GetIntelligenceRequirement() - 15, 1)))
+	  {
+	    BodyPart->ChangeMainMaterial(Material->Clone());
+	    ADD_MESSAGE("%s changes your %s to %s.", GetName(), BodyPart->GetBodyPartName().CStr(), Material->GetName(false, false).CStr());
+	    BodyPart->RestoreHP();
+	    Changed = true;
+	    break;
+	  }
+      }
+
+  for(c = 0; c < MaterialVector.size(); ++c)
+    delete MaterialVector[c];
+
+  return Changed;
+}

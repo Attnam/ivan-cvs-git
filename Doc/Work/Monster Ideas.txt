@@ -389,3 +389,7 @@ Splitting monsters
 Monsters which release other monsters from their body when they die
 
 Bees
+
+Golden Eagle
+
+	Hyper-powerful.

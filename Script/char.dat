@@ -2257,7 +2257,7 @@ petrusswife
 		"\"I'm Petrus's favorite, not she!\"",
 		"\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"",
 		"\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"";
-		"\"That head on the wall looks really scary sometimes. Just like we were watched.\"";
+		"\"That head on the wall looks really scary sometimes. Just like we were being watched.\"";
 	}
 	AttachedGod = DULCIS;
 	WillCarryItems = false;
@@ -5112,7 +5112,8 @@ tailor
 	HeadBitmapPos = 96, 0;
 	ArmBitmapPos = 64, 16;
 	LegBitmapPos = 0, 0;
-	ClothColor = rgb16(111, 64, 37);
+	ClothColor = rgb16(200, 200, 200);
+	LegMainColor = rgb16(111, 64, 37);
 	CanRead = true;
 	/* Replies overridden */
 	IsUnique = true;
