@@ -874,4 +874,12 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class CHARACTER
+(
+  smith,
+  humanoid,
+ public:
+  virtual void BeTalkedTo(character*);
+  virtual void GetAICommand();
+);
 #endif

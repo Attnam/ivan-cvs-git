@@ -262,6 +262,7 @@ bool game::Init(const std::string& Name)
 	GetGod(4)->SetKnown(true);
 	GetGod(5)->SetKnown(true);
 	GetGod(6)->SetKnown(true);
+	GetGod(9)->SetKnown(true);
 
 	Ticks = 0;
 
@@ -1092,6 +1093,8 @@ bool game::HandleQuitMessage()
 	    case IDCANCEL:
 #ifndef WIN32
 	      GetCurrentArea()->SendNewDrawRequest();
+	      game::DrawEverything();
+	      return false;
 #endif
 	      return false;
 	    default:

@@ -689,3 +689,4 @@ void item::ResetSpoiling()
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
 }
+

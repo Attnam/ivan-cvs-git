@@ -1,3 +1,9 @@
+/* 
+NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally.
+*/
+
 /* Numeric olterrain data loaded during game startup */
 
 /* Default values: */
@@ -253,7 +259,7 @@ throne /* olterrain-> */
 	BitmapPos = 0, 416;
 }
 
-container /* olterrain->decoration-> */
+olterraincontainer /* olterrain->decoration-> */
 {
 	IsAbstract = true;
 
@@ -299,3 +305,14 @@ boulder /* olterrain-> */
 	CanBeDug = true;
 }
 
+sign
+{
+	DigMessage = "You smash the sign to tiny bits.";
+	MainMaterialConfig == WOOD;
+	DefaultMainVolume = 11000;
+	/* Uses own postfix */
+	NameSingular = "sign";
+	BitmapPos = 16, 336;
+	SitMessage = "You feel very wierd sitting on the sign.";
+	CanBeDug = true;
+}

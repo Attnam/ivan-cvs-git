@@ -351,6 +351,7 @@ If an invisible monster hits the player, a Nethack-style question mark should be
 New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
 Some way of adding things to character's inventory from the script.
 In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.
+When picking up many items with the New Great System the overall weight of the items should be displayed.   
 The smith of Attnam should have a golden statue of a woman in his closet. (A Kalevala reference)
 Wishing for a plate mail shouldn't yield a leather armor.
 //Kevlar.
@@ -359,3 +360,4 @@ Scoll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
 Lookmode should show whether a creature is panicked.
+

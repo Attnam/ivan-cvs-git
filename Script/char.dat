@@ -1,3 +1,9 @@
+/* 
+NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally.
+*/
+
 /* Numeric character data loaded during game startup */
 
 /* Default values: */
@@ -2106,4 +2112,38 @@ imperialist
 	ArmBitmapPos = 80, 112;
 	LegBitmapPos = 0, 0;
 	ClothColor = rgb16(50, 50, 50);
+	Article = "an";
+}
+
+smith
+{
+	DefaultArmStrength = 20;
+	DefaultLegStrength = 10;
+	DefaultDexterity = 10;
+	DefaultAgility = 15;
+	DefaultEndurance = 20;
+	DefaultPerception = 15;
+	DefaultIntelligence = 20;
+	DefaultWisdom = 20;
+	DefaultCharisma = 25;
+	DefaultMana = 5;
+	TotalVolume = 120000;
+	TotalSize = 200;
+	NameSingular = "smith";
+	RightWielded = IRON meleeweapon(HAMMER);
+	RightBoot = LEATHER boot;
+	LeftBoot = LEATHER boot;
+	KnownCWeaponSkills == HAMMERS;
+	CWeaponSkillHits == 100;
+	RightSWeaponSkillHits = 5000;
+	LeftSWeaponSkillHits = 5000;
+	PanicLevel = 1;
+	TorsoBitmapPos = 48, 192; 
+	HeadBitmapPos = 112, 160;
+	ArmBitmapPos = 64, 64;
+	LegBitmapPos = 0, 16; 
+	SkinColor = rgb16(160, 95, 60);
+	HairColor = rgb16(48, 48, 48);
+	ClothColor = rgb16(80, 80, 80);
+	LegSpecialColor = rgb16(110,70, 48);
 }

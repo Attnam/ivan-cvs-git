@@ -1,3 +1,9 @@
+/* 
+NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally.
+*/
+
 /* Numeric item data loaded during game startup */
 
 /* Default values: */
@@ -69,6 +75,7 @@ item
 	AffectsMana = false;
 	DefaultEnchantment = 0;
 	PriceIsProportionalToEnchantment = false;
+	CanBeUsedBySmith = false;
 }
 
 materialcontainer
@@ -349,6 +356,7 @@ meleeweapon
 		MaterialConfigChances = { 4, 100, 100, 50, 10; }
 		Roundness = 20;
 		IsTwoHanded = true;
+		CanBeUsedBySmith = true;
 	}
 
 	Config BROKEN|HAMMER;
@@ -1621,13 +1629,12 @@ magicalwhistle /* whistle-> */
 	MainMaterialConfig == RUBY;
 	NameSingular = "whistle";
 	Adjective = "magical";
-	Price = 2000;
+	Price = 1500;
 	Alias == "magic whistle";
 }
 
-chest
+itemcontainer
 {
-	NameSingular = "chest";
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
 	IsTwoHanded = true;
@@ -1642,10 +1649,11 @@ chest
 
 	Config SMALL_CHEST;
 	{
+		NameSingular = "chest";
 		Adjective = "small";
 		DefaultSize = 50;
-		StorageVolume = 62500;
-		DefaultMainVolume = 7500;
+		StorageVolume = 30000;
+		DefaultMainVolume = 4000;
 		Price = 75;
 		Possibility = 100;
 		MaxGeneratedContainedItems = 3;
@@ -1653,8 +1661,9 @@ chest
 
 	Config CHEST;
 	{
-		StorageVolume = 500000;
-		DefaultMainVolume = 60000;
+		NameSingular = "chest";
+		StorageVolume = 250000;
+		DefaultMainVolume = 30000;
 		DefaultSize = 100;
 		Price = 150;
 		Possibility = 50;
@@ -1663,13 +1672,25 @@ chest
 
 	Config LARGE_CHEST;
 	{
+		NameSingular = "chest";
 		Adjective = "large";
 		DefaultSize = 200;
-		StorageVolume = 4000000;
-		DefaultMainVolume = 480000;
+		StorageVolume = 2000000;
+		DefaultMainVolume = 240000;
 		Price = 250;
 		Possibility = 10;
 		MaxGeneratedContainedItems = 10;
+	}
+	Config STRONG_BOX;
+	{
+		NameSingular = "strong box";
+		DefaultSize = 30;
+		StorageVolume = 3000;
+		DefaultMainVolume = 250;
+		Price = 150;
+		Possibility = 10;
+		MaxGeneratedContainedItems = 3;
+		MainMaterialConfig == IRON;
 	}
 }
 

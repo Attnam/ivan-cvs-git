@@ -50,6 +50,7 @@ struct materialdatabase
   ushort Flexibility;
   ushort SpoilModifier;
   bool IsSparkling;
+  ushort EffectStrength;
 };
 
 class materialprototype
@@ -148,6 +149,7 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
+  DATA_BASE_VALUE(ushort, EffectStrength);
   virtual void SetWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }

@@ -1,3 +1,9 @@
+/* 
+NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally.
+*/
+
 Dungeons=4;
 Teams=8;
 
@@ -416,7 +422,7 @@ Dungeon ATTNAM;
 
 		Size=XSize, YSize;
 		GenerateMonsters=false;
-		Rooms=25 + rand % 6;
+		Rooms=20 + rand % 6;
 		Items=0;
 		ReCalculate=false;
 		OnGround=true;
@@ -665,7 +671,7 @@ Dungeon ATTNAM;
 					h == SAPPHIRE stone;
 					r == RUBY stone;
 					d == DIAMOND stone;
-					C == RUBY chest;
+					C == RUBY itemcontainer(CHEST);
 					W == wandofpolymorph;
 					1 == lantern { SideStackIndex = UP; }
 					2 == lantern { SideStackIndex = DOWN; }
@@ -975,7 +981,7 @@ Dungeon ATTNAM;
 				Size=5,3;
 				Types
 				{
-					= = container(BOOK_CASE);
+					= = olterraincontainer(BOOK_CASE);
 				}
 			}
 			{
@@ -987,11 +993,27 @@ Dungeon ATTNAM;
 
 		Room 7;
 		{
-			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
-			DoorSquare=solidterrain(FLOOR), door;
-		}
+			Pos=2,47;
+			Size=7,5;
+			AltarPossible=false;
+			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare=solidterrain(PARQUET),empty;
+			GenerateDoor=false;
+			ReCalculate=false;
+			DivineMaster=loricatus;
 
+			Square, Pos 3, 4;
+			{
+				GTerrain = solidterrain(PARQUET);
+				OTerrain = door;
+			}
+
+
+			Square, Pos 3, 2;
+			{
+				Character = smith;
+			}
+		}
 		Room 8;
 		{
 			FloorSquare=solidterrain(FLOOR),empty;
@@ -1005,6 +1027,14 @@ Dungeon ATTNAM;
 			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare=solidterrain(FLOOR), door;
 		}
+
+		Room 10;
+		{
+			FloorSquare=solidterrain(FLOOR),empty;
+			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare=solidterrain(FLOOR), door;
+		}
+
 	}
 }
 
@@ -1067,6 +1097,7 @@ Dungeon NEW_ATTNAM;
 				Types
 				{
 					# = GOLD wall(BRICK_FINE);
+					s = sign { Text = "under construction"; }
 				}
 			}
 			{
@@ -1084,7 +1115,7 @@ Dungeon NEW_ATTNAM;
 				..#..........#..
 				..#..........#..
 				..#####.######..
-				................
+				......s.........
 				................
 			}
 			CharacterMap

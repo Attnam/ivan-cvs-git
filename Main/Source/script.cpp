@@ -393,6 +393,7 @@ datamemberbase* contentscript<olterrain>::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(VisualEffects);
   ANALYZE_MEMBER(AttachedArea);
   ANALYZE_MEMBER(AttachedEntry);
+  ANALYZE_MEMBER(Text);
   return contentscripttemplate<olterrain>::GetData(Identifier);
 }
 
@@ -420,6 +421,12 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
     for(ulong c = 0; c < Amount; ++c)
       if(Instance[c])
 	Instance[c]->SetAttachedEntry(*GetAttachedEntry());
+
+
+  if(GetText(false))
+    for(ulong c = 0; c < Amount; ++c)
+      if(Instance[c])
+	Instance[c]->SetText(*GetText());
 }
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const

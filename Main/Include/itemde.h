@@ -128,6 +128,9 @@ class ITEM
   virtual void EditEnchantment(char);
   virtual float GetWeaponStrength() const;
   virtual ushort GetStrengthValue() const;
+  virtual ushort GetEffectBonus() const { return 100 + 5 * Enchantment; }
+  virtual ushort GetAPBonus() const { return 2000 / (20 + Enchantment); }
+  virtual bool IsFixableBySmith(const character*) const;
   virtual ushort GetBonus() const { return 100 + 5 * Enchantment; }
   virtual uchar GetFlyAmount() const;
  protected:
@@ -1201,15 +1204,20 @@ class ITEM
   whistle,
  public:
   virtual void BlowEffect(character*);
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+ protected:
+  ulong LastUsed;
+  virtual void VirtualConstructor(bool);
 );
 
 class ITEM
 (
-  chest,
+  itemcontainer,
   item,
  public:
-  chest(const chest&);
-  virtual ~chest();
+  itemcontainer(const itemcontainer&);
+  virtual ~itemcontainer();
   virtual bool Open(character*);
   virtual bool IsOpenable(const character*) const { return true; }
   virtual bool TryKey(item*, character*);

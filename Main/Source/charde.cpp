@@ -196,7 +196,7 @@ bool petrus::HealFully(character* ToBeHealed)
       {
 	bodypart* BodyPart;
 
-	for(std::list<ulong>::iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
+	for(std::list<ulong>::const_iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
 	  {
 	    BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItemWithID(*i));
 
@@ -640,7 +640,7 @@ void priest::BeTalkedTo(character* Talker)
       {
 	bool HasOld = false;
 
-	for(std::list<ulong>::iterator i = Talker->GetOriginalBodyPartID(c).begin(); i != Talker->GetOriginalBodyPartID(c).end(); ++i)
+	for(std::list<ulong>::const_iterator i = Talker->GetOriginalBodyPartID(c).begin(); i != Talker->GetOriginalBodyPartID(c).end(); ++i)
 	  {
 	    bodypart* OldBodyPart = static_cast<bodypart*>(Talker->SearchForItemWithID(*i));
 
@@ -3638,12 +3638,54 @@ void imperialist::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"The tax laws of Attnam don't encourage free enterprise.\""); 
       break;
     case 4:
-      ADD_MESSAGE("\"Poor people shouldn't complain: after all it's their own fault.\"");
+      ADD_MESSAGE("\"Poor people shouldn't complain - after all it's their own fault.\"");
       break;
     }  
 }
 
 void imperialist::GetAICommand()
+{
+  StandIdleAI();
+}
+
+void smith::BeTalkedTo(character* Talker)
+{
+  if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    {
+      ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who the hell else are you talkin' to? You talkin' to me? Well I'm the only one here. Who do you think you're talking to? Oh yeah? Huh? Ok.\"");
+      return;
+    }
+
+  if(Talker->GetStack()->SortedItems(this, &item::IsFixableBySmithSorter))
+    {
+      item* Item = Talker->GetStack()->DrawContents(this, "\"What do you want me to fix?\"", 0, &item::IsFixableBySmithSorter);
+      if(!Item)
+	return;
+      std::string Msg = "Do you want me to fix your " + Item->GetName(UNARTICLED) + " for " + Item->GetFixPrice() + " gold pieces? [y/N]";
+      if(game::BoolQuestion(Msg), REQUIRES_ANSWER)
+	{
+	  if(Talker->GetMoney() > Item->GetFixPrice())
+	    {
+	      Item->Fix();
+	      Talker->EditMoney(-Item->GetFixPrice());
+	      ADD_MESSAGE("%s the fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));
+	      return;
+	    }
+	  else
+	    {
+	      ADD_MESSAGE("\"You haven't got the money, punk!\"");
+	    }
+	}
+      return;
+    }
+  else
+    {
+      ADD_MESSAGE("\"Come back when you have some weapons that I could fix.\"");
+    }
+  return;
+}
+
+void smith::GetAICommand()
 {
   StandIdleAI();
 }
@@ -3918,3 +3960,4 @@ void nonhumanoid::AddBiteInfo(felist& Info) const
   Info.AddEntry(std::string("Real speed: ") + 10000 / GetBiteAPCost(), MakeRGB16(220, 220, 220));
   Info.AddEntry("", LIGHT_GRAY);
 }
+

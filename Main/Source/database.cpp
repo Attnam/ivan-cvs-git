@@ -295,6 +295,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(DefaultEnchantment);
   ANALYZE_DATA(PriceIsProportionalToEnchantment);
   ANALYZE_DATA(InElasticityPenaltyModifier);
+  ANALYZE_DATA(CanBeUsedBySmith);
 
   return Found;
 }
@@ -401,6 +402,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZE_DATA(Flexibility);
   ANALYZE_DATA(SpoilModifier);
   ANALYZE_DATA(IsSparkling);
+  ANALYZE_DATA(EffectStrength);
 
   return Found;
 }

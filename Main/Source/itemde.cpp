@@ -1934,6 +1934,14 @@ void whistle::BlowEffect(character* Whistler)
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
+  if(LastUsed != 0 && game::GetTicks() - LastUsed < 1000)
+    {
+      whistle::BlowEffect(Whistler);
+      return;
+    }
+  else 
+    LastUsed = game::GetTicks();
+
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce a peculiar sound.");
   else if(Whistler->CanBeSeenByPlayer())
@@ -1948,7 +1956,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
       (*i)->TeleportNear(Whistler);
 }
 
-void chest::VirtualConstructor(bool Load)
+void itemcontainer::VirtualConstructor(bool Load)
 {
   Contained = new stack(0, this, HIDDEN, true);
 
@@ -1973,7 +1981,7 @@ void chest::VirtualConstructor(bool Load)
     }
 }
 
-bool chest::TryKey(item* Key, character* Applier)
+bool itemcontainer::TryKey(item* Key, character* Applier)
 {
   if(GetLockType() == DAMAGED)
     {
@@ -2266,17 +2274,17 @@ void leg::LowerStats()
   Agility -= 10;
 }
 
-/* Returns true if chest opens fine else false */
+/* Returns true if container opens fine else false */
 
-bool chest::Open(character* Opener)
+bool itemcontainer::Open(character* Opener)
 {
   if(IsLocked())
     {
-      ADD_MESSAGE("The chest seems to be locked.");
+      ADD_MESSAGE("%s seems to be locked.", CHAR_NAME(DEFINITE));
       return false;
     }
 
-  std::string Question = "Do you want to (t)ake something from or (p)ut something in this chest? [t,p]";
+  std::string Question = "Do you want to (t)ake something from or (p)ut something in this " + GetName(UNARTICLED) + "? [t,p]";
 
   switch(game::KeyQuestion(Question, KEY_ESC, 3, 't', 'p', KEY_ESC))
     {
@@ -2289,7 +2297,7 @@ bool chest::Open(character* Opener)
     }
 }
 
-bool chest::TakeSomethingFrom(character* Opener)
+bool itemcontainer::TakeSomethingFrom(character* Opener)
 {
   if(!GetContained()->GetItems())
     {
@@ -2329,7 +2337,7 @@ bool chest::TakeSomethingFrom(character* Opener)
     return false;
 }
 
-bool chest::PutSomethingIn(character* Opener)
+bool itemcontainer::PutSomethingIn(character* Opener)
 {
   if(!Opener->GetStack()->GetItems())
     {
@@ -2390,33 +2398,33 @@ bool chest::PutSomethingIn(character* Opener)
     return false;
 }
 
-void chest::Save(outputfile& SaveFile) const
+void itemcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   GetContained()->Save(SaveFile);
   SaveFile << LockType << Locked;
 }
 
-void chest::Load(inputfile& SaveFile)
+void itemcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   GetContained()->Load(SaveFile);
   SaveFile >> LockType >> Locked;
 }
 
-bool chest::Polymorph(stack* CurrentStack)
+bool itemcontainer::Polymorph(stack* CurrentStack)
 {
   GetContained()->MoveItemsTo(CurrentStack);
   item::Polymorph(CurrentStack);
   return true;
 }
 
-ushort chest::HowManyFits(item* ToBePut) const
+ushort itemcontainer::HowManyFits(item* ToBePut) const
 {
   return (GetStorageVolume() - GetContained()->GetVolume()) / ToBePut->GetVolume();
 }
 
-chest::~chest()
+itemcontainer::~itemcontainer()
 {
   delete Contained;
 }
@@ -2764,7 +2772,7 @@ bool stethoscope::ListenTo(lsquare* Square, character* Listener)
   return true;
 }
 
-void chest::CalculateVolumeAndWeight()
+void itemcontainer::CalculateVolumeAndWeight()
 {
   item::CalculateVolumeAndWeight();
   Volume += Contained->GetVolume();
@@ -3157,7 +3165,7 @@ void bodypart::RandomizePosition()
   UpdatePictures();
 }
 
-bool chest::ContentsCanBeSeenBy(const character* Viewer) const
+bool itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
 {
   return GetMainMaterial()->IsTransparent() && CanBeSeenBy(Viewer);
 }
@@ -3312,7 +3320,7 @@ corpse::corpse(const corpse& Corpse) : item(Corpse)
   Deceased->SetMotherEntity(this);
 }
 
-chest::chest(const chest& Chest) : item(Chest), LockType(Chest.LockType), Locked(Chest.Locked)
+itemcontainer::itemcontainer(const itemcontainer& Container) : item(Container), LockType(Container.LockType), Locked(Container.Locked)
 {
   Contained = new stack(0, this, HIDDEN, true);
 }
@@ -3667,7 +3675,7 @@ ulong mine::GetPrice() const
     return item::GetPrice();
 }
 
-ulong chest::GetPrice() const
+ulong itemcontainer::GetPrice() const
 {
   return GetContained()->GetPrice() + item::GetPrice();
 }
@@ -3927,7 +3935,7 @@ void bodypart::SignalEnchantmentChange()
     }
 }
 
-bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if(Type == PHYSICAL_DAMAGE)
     {
@@ -3955,7 +3963,7 @@ bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   return false;
 }
 
-void chest::DrawContents(const character* Char)
+void itemcontainer::DrawContents(const character* Char)
 {
   std::string Topic = "Contents of your " + GetName(UNARTICLED);
   GetContained()->DrawContents(Char, Topic, NO_SELECT);
@@ -4103,6 +4111,26 @@ void armor::VirtualConstructor(bool Load)
 {
   if(!Load)
     Enchantment = GetDefaultEnchantment();
+}
+
+void magicalwhistle::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void magicalwhistle::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void magicalwhistle::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    {
+      LastUsed = 0;
+    }
 }
 
 short arm::GetWieldedHitStrength() const
@@ -4540,7 +4568,6 @@ void head::AddBiteInfo(felist& Info) const
   Info.AddEntry("", LIGHT_GRAY);
 
   /* Speed */
-
   Info.AddEntry("Base speed: 10", LIGHT_GRAY);
   Bonus = 100 / (200 / GetMaster()->GetAttribute(AGILITY) - 1);
 
@@ -4559,8 +4586,22 @@ void head::AddBiteInfo(felist& Info) const
   Info.AddEntry("", LIGHT_GRAY);
 }
 
-void chest::AddItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+void itemcontainer::AddItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
 {
   for(ushort c = 0; c < ItemVector.size(); ++c)
     GetContained()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
 }
+
+bool meleeweapon::IsFixableBySmith(const character* Smith) const
+{
+  if(!IsBroken())
+    return false;
+
+  if(Smith->GetMainWielded())
+    {
+      return Smith->GetMainWielded()->CanBeUsedBySmith() && Smith->GetMainWielded()->GetMainMaterial()->GetStrengthValue() > GetMainMaterial()->GetStrengthValue();
+    }
+  return false;
+}
+
+

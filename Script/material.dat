@@ -1,3 +1,9 @@
+/* 
+NOTICE!!!
+
+This file contains SPOILERS, which might ruin your IVAN experience totally.
+*/
+
 /* Numeric material data loaded during game startup */
 
 /* Default values: */
@@ -901,6 +907,8 @@ flesh
 	Config SNAKE_FLESH;
 	{
 		NameStem = "snake flesh";
+		Effect = EFFECT_POISON;
+		EffectStrength = 15;
 	}
 
 	Config ORC_FLESH;

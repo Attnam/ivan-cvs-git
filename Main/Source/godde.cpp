@@ -441,7 +441,6 @@ void mellis::PrayGoodEffect()
 
   if(game::GetPlayer()->GetStack()->GetItems())
     {
-      ADD_MESSAGE("%s tries to trade some of your items into better ones.", GOD_NAME);
       bool Cont = true;
 
       while(Cont)
@@ -467,8 +466,27 @@ void mellis::PrayGoodEffect()
 	}
     }
 
-  if(!Success)
-    ADD_MESSAGE("You have no good items for trade.");
+  if((Success && !(RAND() % 10) || (!Success && !(RAND() % 5))))
+    {
+      uchar GodNumber = game::GetGods();
+      uchar* Possible = new uchar[GodNumber]; 
+      ushort PossibleSize = 0;
+      for(uchar c = 1; c < GodNumber; ++c)
+	if(!game::GetGod(c)->GetKnown())
+	  Possible[++PossibleSize - 1] = c;
+
+      if(!PossibleSize)
+	{
+	  ADD_MESSAGE("Nothing happens.");
+	  return;
+	}
+      uchar NewKnownGod = Possible[RAND() % PossibleSize];
+      
+      game::GetGod(NewKnownGod)->SetKnown(true);
+      ADD_MESSAGE("%s shares his knowledge of %s the %s.", GOD_NAME, game::GetGod(NewKnownGod)->Name().c_str(), game::GetGod(NewKnownGod)->Description().c_str());
+      return;
+    }
+  ADD_MESSAGE("Nothing happens.");
 }
 
 void mellis::PrayBadEffect()

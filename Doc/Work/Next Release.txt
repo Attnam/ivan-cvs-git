@@ -104,7 +104,7 @@ Applying wielded item should be possible.
 ?Vodka.
 //Splitting lines in highscores.
 //Calamus and whip of Calamus should work together.
-?Treasure room to the right arm of the Cathedral.
+//Treasure room to the right arm of the Cathedral.
 ?Artifact vault.
 Village and tunnel.
 /Kick system should be checked. (timo)
@@ -125,6 +125,9 @@ Kicking chests.
 ?Mellis should give information about unknown gods.
 //Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
+//Charges for magic whistle.
+//Smithy to Attnam.
+Cut down the size of Elpuri's cave.
 ?Charges for magic whistle.
 Smithy to Attnam.
 //Cut down the size of Elpuri's cave.
@@ -141,7 +144,7 @@ Pick-axe available in the lowest levels.
 Boot m-color.
 ?Look stretch config option.
 ?If a mine in the inventory is active, it should be displayed somehow.
-?Potion full of antidote.
+//Potion full of antidote.
 ?Teleport to level 10.
 Selecting from gear when using SoCM/SoEW/SoEA.
 //Weapon volumes should be more realistic.

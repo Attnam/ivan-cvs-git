@@ -164,7 +164,7 @@ class materialscript : public script
 class basecontentscript : public script
 {
  public:
-  basecontentscript() : ContentType(0), Config(0) { }
+  basecontentscript() : ContentType(0), Config(0), Random(false) { }
   virtual void ReadFrom(inputfile&, bool = false);
   virtual datamemberbase* GetData(const std::string&);
   ushort GetContentType() const { return ContentType; }
@@ -239,6 +239,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   DATAMEMBER(uchar, VisualEffects);
   DATAMEMBER(uchar, AttachedArea);
   DATAMEMBER(uchar, AttachedEntry);
+  DATAMEMBER(std::string, Text);
 };
 
 class squarescript : public script

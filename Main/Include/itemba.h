@@ -100,6 +100,7 @@ struct itemdatabase
   char DefaultEnchantment;
   bool PriceIsProportionalToEnchantment;
   uchar InElasticityPenaltyModifier;
+  bool CanBeUsedBySmith;
 };
 
 class itemprototype
@@ -359,7 +360,11 @@ class item : public object
   virtual ulong GetEnchantedPrice(char) const;
   virtual void Fix();
   virtual ushort GetStrengthRequirement() const;
-  virtual ushort GetInElasticityPenalty(ushort) const { return 0;  }
+  virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
+  virtual bool IsFixableBySmith(const character*) const { return false; }
+  static bool IsFixableBySmithSorter(item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
+  DATA_BASE_BOOL(CanBeUsedBySmith);
+  virtual ulong GetFixPrice() const { return 100; } 
   void DonateSlotTo(item*);
   virtual uchar GetFlyAmount() const;
   virtual void SignalSpoilLevelChange(material*);

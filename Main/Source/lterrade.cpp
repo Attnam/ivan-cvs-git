@@ -868,3 +868,7 @@ void boulder::Break()
 }
 
 
+void sign::AddPostFix(std::string& String) const
+{
+  String << " " << " saying \"" << Text << "\".";
+}

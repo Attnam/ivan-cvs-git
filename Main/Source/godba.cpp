@@ -42,7 +42,7 @@ void god::Pray()
   else
     if(Relation > RAND() % 500)
       {
-	ADD_MESSAGE("You feel %s is displeased, but helps you anyway.", GOD_NAME);
+	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GOD_NAME);
 	PrayGoodEffect();
 	AdjustTimer(25000);
 	AdjustRelation(-50);

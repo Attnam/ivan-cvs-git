@@ -482,6 +482,7 @@
 #define SMALL_CHEST 1
 #define CHEST 2
 #define LARGE_CHEST 3
+#define STRONG_BOX 4
 
 #define ROOKIE 1
 #define VETERAN 2
@@ -582,6 +583,22 @@
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
 
-#define MAX_PRICE 4294967295
+/* gods 0 = none*/
+#define VALPURI 1
+#define LEGIFER 2
+#define ATAVUS 3
+#define DULCIS 4
+#define SEGES 5
+#define SOPHOS 6
+#define SILVA 7
+#define LORICATUS 8
+#define MELLIS 9
+#define CLEPTIA 10
+#define NEFAS 11
+#define SCABIES 12
+#define INFUSCRO 13
+#define CRUENTUS 14
+#define MORTIFIER 15
 
+#define MAX_PRICE 4294967295UL
 #endif

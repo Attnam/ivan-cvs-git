@@ -45,7 +45,7 @@ void material::Load(inputfile& SaveFile)
 bool material::Effect(character* Eater, long Amount)
 {
   /* Receivexxx should return bool! */
-
+  Amount = Amount * GetEffectStrength() / 100;
   switch(GetEffect())
     {
     case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;

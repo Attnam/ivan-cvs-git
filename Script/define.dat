@@ -436,6 +436,7 @@
 #define SMALL_CHEST 1
 #define CHEST 2
 #define LARGE_CHEST 3
+#define STRONG_BOX 4
 
 #define ROOKIE 1
 #define VETERAN 2

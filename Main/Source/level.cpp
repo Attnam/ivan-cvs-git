@@ -273,7 +273,8 @@ void level::Generate()
 
       if(RoomIterator != LevelScript->GetRoom().end())
 	{
-	  for(ushort i = 0; i < 1000; ++i)
+	  ushort i;
+	  for(i = 0; i < 1000; ++i)
 	    {
 	      RoomScript = RoomIterator->second;
 

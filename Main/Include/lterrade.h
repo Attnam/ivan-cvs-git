@@ -128,7 +128,7 @@ class OLTERRAIN
 
 class OLTERRAIN
 (
-  container,
+  olterraincontainer,
   olterrain,
   ;
 );
@@ -202,5 +202,17 @@ class OLTERRAIN
   olterrain,
  public:
   virtual void Break();
+);
+
+class OLTERRAIN
+(
+  sign,
+  olterrain,
+ public:
+  virtual void SetText(const std::string& What) { Text = What; }
+  virtual std::string GetText() const { return Text; }
+  virtual void AddPostFix(std::string&) const;
+ protected:
+  std::string Text;
 );
 #endif
