@@ -113,16 +113,15 @@ class ABSTRACT_CHARACTER
   virtual characterslot* GetLeftLegSlot() const { return GetBodyPartSlot(6); }
 
  protected:
-
-  virtual uchar GetHeadType() const { return 0; } // = 0;
-  virtual uchar GetTorsoType() const { return 0; } // = 0;
-  virtual uchar GetRightArmType() const { return GetArmType(); }
-  virtual uchar GetLeftArmType() const { return GetArmType(); }
-  virtual uchar GetArmType() const { return 0; } // = 0;
-  virtual uchar GetGroinType() const { return GetLegType(); }
-  virtual uchar GetRightLegType() const { return GetLegType(); }
-  virtual uchar GetLeftLegType() const { return GetLegType(); }
-  virtual uchar GetLegType() const { return 0; } // = 0;
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
+  virtual vector2d GetRightArmBitmapPos() const { return GetArmBitmapPos(); }
+  virtual vector2d GetLeftArmBitmapPos() const { return GetArmBitmapPos(); }
+  virtual vector2d GetRightLegBitmapPos() const { return GetLegBitmapPos(); }
+  virtual vector2d GetLeftLegBitmapPos() const { return GetLegBitmapPos(); }
+  virtual vector2d GetGroinBitmapPos() const { return GetLegBitmapPos(); }
 
   virtual ushort SkinColor() const { return MAKE_RGB(180, 120, 90); }
 
@@ -238,10 +237,10 @@ class CHARACTER
   },
  public:
  protected:
-  virtual uchar GetHeadType() const { return 0; }
-  virtual uchar GetTorsoType() const { return 0; }
-  virtual uchar GetArmType() const { return 0; }
-  virtual uchar GetLegType() const { return 0; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "human"; }
   virtual ushort TotalSize() const { return 180; }
@@ -285,10 +284,10 @@ class CHARACTER
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual uchar GetHeadType() const { return 9; }
-  virtual uchar GetTorsoType() const { return 5; }
-  virtual uchar GetArmType() const { return 1; }
-  virtual uchar GetLegType() const { return 0; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 144); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 80); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0,0); }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
   virtual void CreateCorpse();
@@ -318,10 +317,10 @@ class CHARACTER
  protected:
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual ushort HairColor() const { return RAND() % 2 ? humanoid::HairColor() : MAKE_RGB(160, 160, 160); }
-  virtual uchar GetHeadType() const { return 4 + RAND() % 2; }
-  virtual uchar GetTorsoType() const { return 2; }
-  virtual uchar GetArmType() const { return RAND() % 2; }
-  virtual uchar GetLegType() const { return RAND() % 3; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + RAND() % 2) * 16); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 32); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, (RAND() % 2) * 16); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0,(RAND() % 3) * 16); }
   virtual ulong TotalVolume() const { return 30000; }
   virtual std::string NameSingular() const { return "farmer"; }
   virtual ushort TotalSize() const { return 170; }
@@ -344,10 +343,10 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
  protected:
   virtual ushort ClothColor() const { return MAKE_RGB(0, 128, 128); }
-  virtual uchar GetHeadType() const { return 7; }
-  virtual uchar GetTorsoType() const { return 8; }
-  virtual uchar GetArmType() const { return 5; }
-  virtual uchar GetLegType() const { return 4; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 112); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 128); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 80); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 64); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "guard"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -373,10 +372,10 @@ class CHARACTER
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
-  virtual uchar GetHeadType() const { return 4; }
-  virtual uchar GetTorsoType() const { return 2; }
-  virtual uchar GetArmType() const { return 1; }
-  virtual uchar GetLegType() const { return 2; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 64); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 32); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 32); }
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "shopkeeper"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -402,10 +401,10 @@ class CHARACTER
  protected:
   virtual ushort CapColor() const { return MAKE_RGB(180, 0, 80); }
   virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
-  virtual uchar GetHeadType() const { return 8; }
-  virtual uchar GetTorsoType() const { return 2; }
-  virtual uchar GetArmType() const { return 1; }
-  virtual uchar GetLegType() const { return 2; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 128); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 32); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 32); }
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "priest"; }
   virtual ushort TotalSize() const { return 180; }
@@ -628,7 +627,7 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 1000; }
   virtual ushort TotalSize() const { return 150; }
 );
-
+// legs 16,64 (1,4) = 20
 class CHARACTER
 (
   goblin,
@@ -645,7 +644,20 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
  protected:
+  /*  virtual ushort TorsoMainColor() const { return MAKE_RGB(160, 160, 160); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(100, 100, 100); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(180, 80, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
+  virtual ushort SkinColor() const { return MAKE_RGB(60, 48, 24); }*/
+
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 48); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32,112); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 144); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(16, 64); }
+
   virtual ulong TotalVolume() const { return 25000; }
+
+
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new goblinoidflesh(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(144,0); }
   virtual std::string NameSingular() const { return "goblin"; }
@@ -893,10 +905,10 @@ class CHARACTER
   virtual ushort BeltColor() const { return MAKE_RGB(0, 0, 0); }
   virtual ushort ArmSpecialColor() const { return MAKE_RGB(160, 0, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(64, 56, 24); }
-  virtual uchar GetHeadType() const { return 11; }
-  virtual uchar GetTorsoType() const { return 9; }
-  virtual uchar GetArmType() const { return 7; }
-  virtual uchar GetLegType() const { return 0; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 176); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 144); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 112); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0,0); }
   virtual ulong TotalVolume() const { return 120000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " falls groaning bravely: \"Party revenges " + Name(UNARTICLED) + "\"!"; }
   virtual std::string NameSingular() const { return "communist"; }
@@ -922,10 +934,10 @@ class CHARACTER
  protected:
   virtual ushort ClothColor() const { return MAKE_RGB(128, 80, 48); }
   virtual ushort BeltColor() const { return MAKE_RGB(144, 96, 60); }
-  virtual uchar GetHeadType() const { return 12; }
-  virtual uchar GetTorsoType() const { return 12; }
-  virtual uchar GetArmType() const { return 8; }
-  virtual uchar GetLegType() const { return 6; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 192); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 192); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 128); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 96); }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "hunter"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -1027,10 +1039,10 @@ class CHARACTER
   virtual ushort HairColor() const { return MAKE_RGB(80, 48, 32); }
   virtual ushort EyeColor() const { return MAKE_RGB(64, 48, 24); }
   virtual ushort ClothColor() const { return MAKE_RGB(56, 48, 20); }
-  virtual uchar GetHeadType() const { return 0; }
-  virtual uchar GetTorsoType() const { return 0; }
-  virtual uchar GetArmType() const { return 0; }
-  virtual uchar GetLegType() const { return 1; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96,0); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32,0); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0,16); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "slave"; }
   virtual ushort TotalSize() const { return 160; }
@@ -1055,10 +1067,10 @@ class CHARACTER
  protected:
   virtual ushort ClothColor() const { return MAKE_RGB(150, 0, 0); }
   virtual ushort BeltColor() const { return MAKE_RGB(180, 180, 0); }
-  virtual uchar GetHeadType() const { return 16; }
-  virtual uchar GetTorsoType() const { return 10; }
-  virtual uchar GetArmType() const { return 10; }
-  virtual uchar GetLegType() const { return 7; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,0); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 160); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 160); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 112); }
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string NameSingular() const { return "Petrus's wife"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1075,7 +1087,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
-  virtual uchar GetHeadType() const { return 16; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 0); }
   virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
 );
 
@@ -1088,7 +1100,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
-  virtual uchar GetHeadType() const { return 17; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 16); }
   virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
 );
 
@@ -1101,7 +1113,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
-  virtual uchar GetHeadType() const { return 16; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,0); }
   virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
 );
 
@@ -1114,7 +1126,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(200, 96, 0); }
-  virtual uchar GetHeadType() const { return 19; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,48); }
   virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
 );
 
@@ -1127,7 +1139,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(80, 64, 32); }
-  virtual uchar GetHeadType() const { return 20; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,64); }
   virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
 );
 
@@ -1140,7 +1152,7 @@ class CHARACTER
   },
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
-  virtual uchar GetHeadType() const { return 21; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,80); }
   virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
 );
 
@@ -1163,10 +1175,10 @@ class CHARACTER
   virtual ushort ArmMainColor() const { return MAKE_RGB(100, 100, 100); }
   virtual ushort LegMainColor() const { return MAKE_RGB(180, 80, 0); }
   virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
-  virtual uchar GetHeadType() const { return 16 + RAND() % 6; } //may produce headless housewives...
-  virtual uchar GetTorsoType() const { return 10; }
-  virtual uchar GetArmType() const { return 10; }
-  virtual uchar GetLegType() const { return 7; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) * 16); } //may produce gibberling headed housewives...
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 160); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 160); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 112); }
   virtual ulong TotalVolume() const { return 70000; }
   virtual std::string NameSingular() const { return "housewife"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1191,10 +1203,10 @@ class CHARACTER
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(160, 100, 64); }
   virtual ushort HairColor() const { return MAKE_RGB(80, 48, 32); }
-  virtual uchar GetHeadType() const { return 22; }
-  virtual uchar GetTorsoType() const { return 13; }
-  virtual uchar GetArmType() const { return 13; }
-  virtual uchar GetLegType() const { return 9; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 96); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 208); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 208); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 144); }
   virtual ulong TotalVolume() const { return 40000; }
   virtual std::string NameSingular() const { return "female slave"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1219,10 +1231,10 @@ class CHARACTER
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
   virtual ushort ArmMainColor() const { return MAKE_RGB(144, 144, 144); }
-  virtual uchar GetHeadType() const { return 14; }
-  virtual uchar GetTorsoType() const { return 5; }
-  virtual uchar GetArmType() const { return 1; }
-  virtual uchar GetLegType() const { return 0; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 224); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 80); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 16); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 0); }
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "librarian"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1250,10 +1262,10 @@ class CHARACTER
   virtual ushort SkinColor() const { return MAKE_RGB(0, 120, 120); }
   virtual ushort EyeColor() const { return MAKE_RGB(200, 0, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(56, 16, 96); }
-  virtual uchar GetHeadType() const { return 23; }
-  virtual uchar GetTorsoType() const { return 14; }
-  virtual uchar GetArmType() const { return 14; }
-  virtual uchar GetLegType() const { return 10; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 112); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 224); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 224); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 160); }
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " is slain (again)."; }
   virtual std::string NameSingular() const { return "zombie"; }
@@ -1328,10 +1340,10 @@ class CHARACTER
   virtual ushort SkinColor() const { return MAKE_RGB(255, 212, 192); }
   virtual ushort HairColor() const { return MAKE_RGB(35, 35, 35); }
   virtual ushort ClothColor() const { return MAKE_RGB(35, 35, 35); }
-  virtual uchar GetHeadType() const { return 31; }
-  virtual uchar GetTorsoType() const { return 22; }
-  virtual uchar GetArmType() const { return 21; }
-  virtual uchar GetLegType() const { return 18; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 240); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 96); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(80, 80); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(16, 32); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual vector2d GetBitmapPos() const { return vector2d(352,0); }
   virtual std::string NameSingular() const { return "mistress"; }
@@ -1368,10 +1380,10 @@ class CHARACTER
   virtual ushort SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(); }
   virtual ushort EyeColor() const { return MAKE_RGB(160, 0, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(96, 64, 32); }
-  virtual uchar GetHeadType() const { return IsWolf ? 25 : 0; }
-  virtual uchar GetTorsoType() const { return 16; }
-  virtual uchar GetArmType() const { return IsWolf ? 15 : 0; }
-  virtual uchar GetLegType() const { return IsWolf ? 12 : 11; }
+  virtual vector2d GetHeadBitmapPos() const { return IsWolf ? vector2d(112, 144) : vector2d(96, 0); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 0); }
+  virtual vector2d GetArmBitmapPos() const { return IsWolf ? vector2d(80, 240) : vector2d(64, 0); }
+  virtual vector2d GetLegBitmapPos() const { return IsWolf ? vector2d(0, 192) : vector2d(0, 176); }
   virtual ulong TotalVolume() const { return 80000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new werewolfflesh(Volume); }
   virtual std::string NameSingular() const { return "werewolf"; }
@@ -1547,10 +1559,10 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual ushort Frequency() const { return 1000; }
  protected:
-  virtual uchar GetHeadType() const { return 26; }
-  virtual uchar GetTorsoType() const { return 17; }
-  virtual uchar GetArmType() const { return 16; }
-  virtual uchar GetLegType() const { return 13; }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 160); }
+  virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 16); }
+  virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
+  virtual vector2d GetLegBitmapPos() const { return vector2d(0, 208); }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies smiling."; }
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }

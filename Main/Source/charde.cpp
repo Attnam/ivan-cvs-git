@@ -2187,7 +2187,7 @@ void humanoid::UpdateHeadPicture(bool CallUpdatePicture)
 {
   if(GetHead())
     {
-      GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
+      GetHead()->SetBitmapPos(GetHeadBitmapPos());
       GetHead()->SetColor(0, SkinColor());
       GetHead()->SetColor(1, CapColor());
       GetHead()->SetColor(2, HairColor());
@@ -2213,7 +2213,7 @@ void humanoid::UpdateTorsoPicture(bool CallUpdatePicture)
 {
   if(GetTorso())
     {
-      GetTorso()->SetBitmapPos(vector2d(32 + (GetTorsoType() / 16) * 16, (GetTorsoType() % 16) * 16));
+      GetTorso()->SetBitmapPos(GetTorsoBitmapPos());
       GetTorso()->SetColor(0, SkinColor());
       GetTorso()->SetColor(1, TorsoMainColor());
       GetTorso()->SetColor(2, BeltColor());
@@ -2239,7 +2239,7 @@ void humanoid::UpdateRightArmPicture(bool CallUpdatePicture)
 {
   if(GetRightArm())
     {
-      GetRightArm()->SetBitmapPos(vector2d(64 + (GetRightArmType() / 16) * 16, (GetRightArmType() % 16) * 16));
+      GetRightArm()->SetBitmapPos(GetRightArmBitmapPos());
       GetRightArm()->SetColor(0, SkinColor());
       GetRightArm()->SetColor(1, ArmMainColor());
       GetRightArm()->SetColor(3, ArmSpecialColor());
@@ -2263,7 +2263,7 @@ void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture)
 {
   if(GetLeftArm())
     {
-      GetLeftArm()->SetBitmapPos(vector2d(64 + (GetLeftArmType() / 16) * 16, (GetLeftArmType() % 16) * 16));
+      GetLeftArm()->SetBitmapPos(GetLeftArmBitmapPos());
       GetLeftArm()->SetColor(0, SkinColor());
       GetLeftArm()->SetColor(1, ArmMainColor());
       GetLeftArm()->SetColor(3, ArmSpecialColor());
@@ -2288,7 +2288,7 @@ void humanoid::UpdateGroinPicture(bool CallUpdatePicture)
 {
   if(GetGroin())
     {
-      GetGroin()->SetBitmapPos(vector2d((GetGroinType() / 16) * 16, (GetGroinType() % 16) * 16));
+      GetGroin()->SetBitmapPos(GetGroinBitmapPos());
       GetGroin()->SetColor(0, SkinColor());
       GetGroin()->SetColor(1, LegMainColor());
       GetGroin()->SetColor(3, LegSpecialColor());
@@ -2313,7 +2313,7 @@ void humanoid::UpdateRightLegPicture(bool CallUpdatePicture)
 {
   if(GetRightLeg())
     {
-      GetRightLeg()->SetBitmapPos(vector2d((GetRightLegType() / 16) * 16, (GetRightLegType() % 16) * 16));
+      GetRightLeg()->SetBitmapPos(GetRightLegBitmapPos());
       GetRightLeg()->SetColor(0, SkinColor());
       GetRightLeg()->SetColor(1, LegMainColor());
       GetRightLeg()->SetColor(3, LegSpecialColor());
@@ -2338,7 +2338,7 @@ void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture)
 {
   if(GetLeftLeg())
     {
-      GetLeftLeg()->SetBitmapPos(vector2d((GetLeftLegType() / 16) * 16, (GetLeftLegType() % 16) * 16));
+      GetLeftLeg()->SetBitmapPos(GetLeftLegBitmapPos());
       GetLeftLeg()->SetColor(0, SkinColor());
       GetLeftLeg()->SetColor(1, LegMainColor());
       GetLeftLeg()->SetColor(3, LegSpecialColor());

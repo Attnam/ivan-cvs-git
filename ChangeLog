@@ -1,3 +1,8 @@
+2002-04-20  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* Main/Include/charde.h: Changed all cordinates in bitmap to vector2ds
+	* Main/Source/charde.cpp: Some changes that relate to the above change
+
 April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* itemba.cpp/h, itemde.cpp/h, charba.cpp, charde.cpp: Stack parameter removed from Apply funcs
