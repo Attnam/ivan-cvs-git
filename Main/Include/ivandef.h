@@ -726,4 +726,9 @@ struct databasebase { int Config; };
 #define LE_RAND_SHIFT 18
 #define LE_RAND_RANGE 0x3FFF
 
+/* Action flags */
+
+#define IN_DND_MODE 1
+#define TERMINATING 2
+
 #endif

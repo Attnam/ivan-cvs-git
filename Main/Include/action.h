@@ -46,8 +46,8 @@ class action
   virtual const prototype* GetProtoType() const = 0;
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual const char* GetDescription() const = 0;
-  bool InDNDMode() const { return DNDMode; }
-  void SetInDNDMode(bool What) { DNDMode = What; }
+  bool InDNDMode() const { return Flags & IN_DND_MODE; }
+  void ActivateInDNDMode() { Flags |= IN_DND_MODE; }
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
   virtual bool CanBeTalkedTo() const { return true; }
@@ -55,7 +55,7 @@ class action
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;
-  bool DNDMode;
+  ulong Flags;
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DEFINITIONS__

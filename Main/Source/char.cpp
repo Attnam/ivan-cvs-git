@@ -2088,7 +2088,7 @@ void character::DeActivateVoluntaryAction(const festring& Reason)
 	    ADD_MESSAGE("%s", Reason.CStr());
 
 	  if(game::BoolQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
-	    GetAction()->SetInDNDMode(true);
+	    GetAction()->ActivateInDNDMode();
 	  else
 	    GetAction()->Terminate(false);
 	}
@@ -2117,7 +2117,7 @@ void character::ActionAutoTermination()
 		ADD_MESSAGE("%s seems to be hostile.", (*i)->CHAR_NAME(DEFINITE));
 
 		if(game::BoolQuestion(CONST_S("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
-		  GetAction()->SetInDNDMode(true);
+		  GetAction()->ActivateInDNDMode();
 		else
 		  GetAction()->Terminate(false);
 	      }
@@ -2810,8 +2810,8 @@ void character::TeleportRandomly()
   if(!IsPlayer() && CanBeSeenByPlayer())
     ADD_MESSAGE("%s appears.", CHAR_NAME(INDEFINITE));
 
-  /*if(GetAction() && GetAction()->IsVoluntary())
-    GetAction()->Terminate(false);*/
+  if(GetAction() && GetAction()->IsVoluntary())
+    GetAction()->Terminate(false);
 }
 
 void character::RestoreHP()
@@ -5761,13 +5761,18 @@ vector2d character::ApplyStateModification(vector2d TryDirection) const
   else
     {
       vector2d To = GetLevel()->GetFreeAdjacentSquare(this, GetPos(), true);
-      if(To != TryDirection && IsPlayer())
-	ADD_MESSAGE("Whoa! You somehow don't manage to walk straight.");
 
       if(To == ERROR_VECTOR)
 	return TryDirection;
       else
-	return To - GetPos();
+	{
+	  To -= GetPos();
+
+	  if(To != TryDirection && IsPlayer())
+	    ADD_MESSAGE("Whoa! You somehow don't manage to walk straight.");
+
+	  return To;
+	}
     }
 }
 

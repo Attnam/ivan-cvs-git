@@ -34,6 +34,11 @@ void faint::Handle()
 
 void faint::Terminate(bool Finished)
 {
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
+
   if(GetActor()->IsPlayer())
     ADD_MESSAGE("You wake up.");
   else if(GetActor()->CanBeSeenByPlayer())
@@ -72,7 +77,7 @@ void consume::Handle()
 	ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
 	if(game::BoolQuestion(CONST_S("Continue ") + GetDescription() + "? [y/N]"))
-	  SetInDNDMode(true);
+	  ActivateInDNDMode();
 	else
 	  {
 	    Terminate(false);
@@ -105,6 +110,10 @@ void consume::Handle()
 
 void consume::Terminate(bool Finished)
 {
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
   item* Consuming = game::SearchItem(ConsumingID);
   character* Actor = GetActor();
 
@@ -159,6 +168,11 @@ void rest::Handle()
 
 void rest::Terminate(bool Finished)
 {
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
+
   if(Finished)
     {
       if(GetActor()->IsPlayer())
@@ -254,6 +268,11 @@ void dig::Handle()
 
 void dig::Terminate(bool Finished)
 {
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
+
   if(!Finished)
     {
       if(GetActor()->IsPlayer())
@@ -317,6 +336,10 @@ void study::Handle()
 
 void study::Terminate(bool Finished)
 {
+  if(Flags & TERMINATING)
+    return;
+
+  Flags |= TERMINATING;
   item* Literature = game::SearchItem(LiteratureID);
 
   if(Finished)
@@ -349,7 +372,6 @@ void study::Terminate(bool Finished)
 
   action::Terminate(Finished);
 }
-
 
 void study::Save(outputfile& SaveFile) const
 {

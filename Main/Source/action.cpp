@@ -2,7 +2,7 @@
 
 actionprototype::actionprototype(action* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<action>::Add(this); }
 
-action::action(donothing) : Actor(0), DNDMode(false) { }
+action::action(donothing) : Actor(0), Flags(0) { }
 action::~action() { }
 
 void action::Terminate(bool)
@@ -13,12 +13,12 @@ void action::Terminate(bool)
 
 void action::Save(outputfile& SaveFile) const
 {
-  SaveFile << (ushort)GetType() << DNDMode;
+  SaveFile << (ushort)GetType() << Flags;
 }
 
 void action::Load(inputfile& SaveFile)
 {
-  SaveFile >> DNDMode;
+  SaveFile >> Flags;
 }
 
 action* actionprototype::CloneAndLoad(inputfile& SaveFile) const

@@ -103,14 +103,12 @@ void powder::Load(inputfile& SaveFile)
 material* organic::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
+  GetMotherEntity()->SpecialEatEffect(Eater, Amount);
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / (1000 * (GetSpoilLevel() + 1)));
 
-
   if(IsInfectedByLeprosy() && Amount && !RAND_N(100000 / Amount))
-    {
-      Eater->GainIntrinsic(LEPROSY);
-    }
+    Eater->GainIntrinsic(LEPROSY);
 
   if(GetSpoilLevel() > 0)
     {

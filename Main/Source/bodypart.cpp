@@ -3040,3 +3040,16 @@ void bodypart::SetLifeExpectancy(int Base, int RandPlus)
   if(!Master)
     Enable();
 }
+
+void bodypart::SpecialEatEffect(character* Eater, int Amount)
+{
+  Amount >>= 6;
+
+  if(Amount && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
+    {
+      if(Eater->GetVirtualHead())
+	Eater->GetVirtualHead()->SpillFluid(Eater, CreateBlood(Amount));
+
+      Eater->GetTorso()->SpillFluid(Eater, CreateBlood(Amount));
+    }
+}

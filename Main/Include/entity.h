@@ -45,6 +45,7 @@ class entity
   virtual material* RemoveMaterial(material*) { return 0; }
   virtual character* TryNecromancy(character*) { return 0; }
   virtual void SignalDisappearance() { }
+  virtual void SpecialEatEffect(character*, int) { }
  protected:
   color24 Emitation;
   ulong Flags;

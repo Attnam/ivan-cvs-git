@@ -110,6 +110,7 @@ class ABSTRACT_ITEM
   virtual void CopyAttributes(const bodypart*) { }
   virtual void DestroyBodyPart(stack*);
   virtual void SetLifeExpectancy(int, int);
+  virtual void SpecialEatEffect(character*, int);
  protected:
   virtual bool AllowFluids() const { return true; }
   virtual bool IsSparkling(int) const;
