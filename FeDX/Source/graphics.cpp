@@ -449,6 +449,13 @@ void graphics::SwitchMode()
 
 #endif
 
+#ifdef USE_SDL
+void graphics::ToggleFullScreen()
+{
+   SDL_WM_ToggleFullScreen(screen);
+}
+#endif
+
 void graphics::LoadDefaultFont(std::string FileName)
 {
   DefaultFont = new colorizablebitmap(FileName);

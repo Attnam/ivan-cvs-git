@@ -64,6 +64,7 @@ class graphics
 #endif
 #ifdef USE_SDL
   static void SetMode(const char*, ushort, ushort, uchar);
+  static void ToggleFullScreen(void);
 #endif
 #ifdef __DJGPP__
   static void SetMode(ushort);

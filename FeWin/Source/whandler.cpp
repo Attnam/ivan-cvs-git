@@ -316,6 +316,12 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
     case SDL_KEYDOWN:
       switch(event.key.keysym.sym)
 	{
+   case SDLK_RETURN:
+      if (event.key.keysym.mod & KMOD_ALT)
+         graphics::ToggleFullScreen();
+      else
+         KeyPressed = event.key.keysym.unicode;
+      break;
 	case SDLK_DOWN:
 	case SDLK_KP2:
 	  KeyPressed = 0x150 + 0xE000;

@@ -1,3 +1,9 @@
+Friday, March 08 2002 Heikki Sairanen <heikki.sairanen@phpoint.net> 
+	(however all changes actually coded by Mark Schreiber)
+
+	* FeDX/Source/graphics.cpp: ToggleFullScreen for USE_SDL added, 
+	* FeWin/Source/whandler.cpp: Function globalwindowhandler::ProcessMessage() funcion for SDL changed to call ToggeFullScreen when alt + enter pressed
+
 March 07 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* itemde.cpp: Two unused parameter warnings corrected
