@@ -280,7 +280,11 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
       return DID_NO_DAMAGE;
     }
 
-  if(CheckDeath("killed by " + Enemy->GetKillName(), Enemy, Enemy->IsPlayer()))
+  std::string DeathMsg = "killed by " + Enemy->GetKillName();
+  if(Action)
+    DeathMsg += Action->GetDeathExplanation();
+
+  if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
   DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
@@ -1390,8 +1394,10 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
 
   if(Succeeded)
     Thrower->WeaponSkillHit(Thingy, THROW_ATTACK);
-
-  if(CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED), Thrower))
+  std::string DeathMsg = "killed by a flying " + Thingy->GetName(UNARTICLED);
+  if(Action)
+    DeathMsg += Action->GetDeathExplanation();
+  if(CheckDeath(DeathMsg, Thrower))
     return;
 
   DeActivateVoluntaryAction("The attack of " + Thrower->GetName(DEFINITE) + " interupts you.");

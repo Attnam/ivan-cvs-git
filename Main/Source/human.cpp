@@ -67,7 +67,10 @@ bool ennerbeast::Hit(character*, bool)
 		  ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
 
 		Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
-		Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream", this);
+		std::string DeathMsg = "killed by " + GetName(INDEFINITE) + "'s scream";
+		if(Action)
+		  DeathMsg += Action->GetDeathExplanation();
+		Char->CheckDeath(DeathMsg, this);
 		msgsystem::LeaveBigMessageMode();
 	      }
 
@@ -3099,12 +3102,15 @@ void darkwizard::GetAICommand()
 
   if(NearestChar && NearestDistance <= 49)
     {
+      std::string Addition;
+      if(Action) 
+	Addition = Action->GetDeathExplanation();
       if(!(RAND() % 4))
-	NearestChar->GetLSquareUnder()->Strike(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+	NearestChar->GetLSquareUnder()->Strike(this, "killed by the spells of " + GetName(INDEFINITE) + Addition, YOURSELF);
       else if(!(RAND() % 4))
-	NearestChar->GetLSquareUnder()->Lightning(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+	NearestChar->GetLSquareUnder()->Lightning(this, "killed by the spells of " + GetName(INDEFINITE) + Addition, YOURSELF);
       else
-	NearestChar->GetLSquareUnder()->LowerEnchantment(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
+	NearestChar->GetLSquareUnder()->LowerEnchantment(this, "killed by the spells of " + GetName(INDEFINITE) + Addition, YOURSELF);
       EditAP(-1000);
       return;
     }

@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 February 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* When player is killed by something when he is fainting the death message now says "killed by a X while helpless".
+	
+February 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Polymorph question should default to the monster that the player last polymorphed to.
 
 February 26 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>

@@ -59,6 +59,7 @@ class action
   virtual ulong GetEmitation() const { return 0; }
   virtual long GetScore() const { return 0; }
   virtual bool ShowEnvironment() const { return true; }
+  virtual std::string GetDeathExplanation() const { return ""; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

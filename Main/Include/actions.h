@@ -23,6 +23,7 @@ class ACTION
   virtual void Terminate(bool);
   virtual bool AllowFaint() const { return false; }
   virtual std::string GetDescription() const;
+  virtual std::string GetDeathExplanation() const { return " while helpless"; }
  protected:
   ushort Counter;
 );
