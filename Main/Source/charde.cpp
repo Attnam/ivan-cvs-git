@@ -1402,7 +1402,7 @@ void ivan::MoveRandomly()
 	switch(RAND() % 500)
 	{
 		case 0:
-			Engrave("The weapons with which the bourgeoisie felled feudalism to the ground are now turned against the bourgeoisie itself.");
+			Engrave("The Communists are further reproached with desiring to abolish countries and nationality.");
 			break;
 		case 1:
 			Engrave("Proletarians of all countries, unite!");
