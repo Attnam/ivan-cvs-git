@@ -65,6 +65,3 @@ class globalwindowhandler
 #endif
 
 #endif
-
-
-

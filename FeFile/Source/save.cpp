@@ -6,8 +6,6 @@
 #include "error.h"
 #include "femath.h"
 
-//#ifdef __SAVE_H__
-
 outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
 {
   if(AbortOnErr && !IsOpen())
@@ -39,22 +37,6 @@ int inputfile::Peek()
   ungetc(Char, Buffer);
   return Char;
 }
-
-/*#else
-
-outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::out | std::ios::binary)
-{
-	if(AbortOnErr && !IsOpen())
-		ABORT("Can't open %s for output!", FileName.c_str());
-}
-
-inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::in | std::ios::binary)
-{
-	if(AbortOnErr && !IsOpen())
-		ABORT("File %s not found!", FileName.c_str());
-}
-
-#endif*/
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {
@@ -376,4 +358,3 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 
   return SaveFile;
 }
-

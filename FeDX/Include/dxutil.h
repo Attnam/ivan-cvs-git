@@ -97,8 +97,4 @@ HRESULT _DbgOut( TCHAR*, DWORD, HRESULT, TCHAR* );
     #define DEBUG_MSG(str) (0L)
 #endif
 
-
-
-
 #endif // DXUTIL_H
-

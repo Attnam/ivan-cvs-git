@@ -278,6 +278,7 @@ class character : public object
   virtual bool CanWalk() const { return true; }
   virtual bool CanSwim() const { return false; }
   virtual bool CanFly() const { return false; }
+  virtual void TestWalkability();
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -398,6 +399,3 @@ public:\
 };
 
 #endif
-
-
-

@@ -139,6 +139,3 @@ protected:\
 }; MATERIAL_PROTOINSTALLER(name, base)
 
 #endif
-
-
-

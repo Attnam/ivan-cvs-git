@@ -94,6 +94,3 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 }
 
 #endif
-
-
-

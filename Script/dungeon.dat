@@ -5,17 +5,13 @@ Teams=8;
  * Description of teams:
  * 0 - Player and pets
  * 1 - Monsters, default relation to other teams == hostile
+ * 3 - Petrus's team during the Final Battle
  */
 
 Team 2; /* Residents of Attnam */
 {
 	Relation 0, FRIEND;
 	AttackEvilness=250;
-}
-
-Team 3; /* Petrus's team during the Final Battle */
-{
-	AttackEvilness=100;
 }
 
 Team 4; /* Enner Beasts */

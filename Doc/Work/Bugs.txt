@@ -2,7 +2,6 @@
 
 *Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 *Item's GetSquareUnder() doesn't work.
-Cannibalism abuse.
 *Alt+Enter twice.
 Keys don't work on Win2k fullscreen mode.
 *Alt+Enter in config screen.

@@ -1815,11 +1815,6 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-void human::CreateInitialEquipment()
-{
-  /* Player's initial equipment creation should be added */
-}
-
 void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
 void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }
 

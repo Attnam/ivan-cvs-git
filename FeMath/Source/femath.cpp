@@ -138,6 +138,8 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 		}									\
 	}
 
+  /* What the??? Hex! */
+
   if(DX >= 0)
     if(DY >= 0)
       if(DX >= DY)
@@ -163,4 +165,3 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 
 					      return true;
 }
-

@@ -80,20 +80,23 @@ class item : public object
   virtual bool GetStepOnEffect(character*) { return false; }
   virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
-    virtual void SignalSquarePositionChange(bool) {}
+  virtual void SignalSquarePositionChange(bool) {}
   virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
   virtual uchar GetConsumeType() const { return GetMaterial(0)->GetConsumeType(); }
-    virtual bool IsBadFoodForAI(character*) const;
+  virtual bool IsBadFoodForAI(character*) const;
   virtual uchar GetConsumeMaterial() const { return 0; }
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }
   virtual bool PolymorphSpawnable() const { return true; }
   virtual bool IsExplosive() const { return false; }
   virtual bool ReceiveFireDamage(character*, std::string, stack*, long) { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
   virtual void SetDefaultStats() = 0;
   virtual ushort GetFormModifier() const { return 0; }
   virtual float NPModifier() const { return 1.0f; }
+  bool Cannibalised;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -150,6 +153,3 @@ public:\
 };
 
 #endif
-
-
-

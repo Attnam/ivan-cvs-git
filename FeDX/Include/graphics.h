@@ -147,6 +147,3 @@ class graphics
 };
 
 #endif
-
-
-

@@ -18,40 +18,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   globalerrorhandler::SetWindow(&hWnd);
 #else
 
-  int Main(int, char**);
+int Main(int, char**);
 
-  int main(int argc, char** argv)
+int main(int argc, char** argv)
+{
+#endif
+  globalerrorhandler::Install();
+
+  try
     {
-#endif
-      globalerrorhandler::Install();
-
-      try
-	{
 #ifdef WIN32
-	  return Main(hInstance, hPrevInstance, &hWnd, lpCmdLine, nCmdShow);
+      return Main(hInstance, hPrevInstance, &hWnd, lpCmdLine, nCmdShow);
 #else
-	  return Main(argc, argv);
+      return Main(argc, argv);
 #endif
-	}
-      catch(...)
-	{
+    }
+  catch(...)
+    {
 #ifdef WIN32
-	  ShowWindow(hWnd, SW_HIDE);
+      ShowWindow(hWnd, SW_HIDE);
 
-	  MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
+      MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef USE_SDL
-	  std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
+      std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
 #ifdef __DJGPP__
-	  graphics::DeInit();
-	  std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
+      graphics::DeInit();
+      std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
-	  exit(3);
+      exit(3);
 
-	}
-
-      exit(0);
     }
 
-  
+  exit(0);
+}

@@ -377,4 +377,3 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
   return Buffer.GetEntry(Check);
 #endif
 }
-

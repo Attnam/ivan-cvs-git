@@ -47,6 +47,3 @@ class worldmapsquare : public square
 };
 
 #endif
-
-
-

@@ -15,7 +15,7 @@
 #include "team.h"
 #include "femath.h"
 
-item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool)
+item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool), Cannibalised(false)
 {
   if(CreateMaterials || SetStats)
     ABORT("Boo!");
@@ -231,10 +231,11 @@ bool item::Consume(character* Eater, float Amount)
 {
   GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
 
-  if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
+      Cannibalised = true;
     }
 
   return GetMaterial(0)->GetVolume() ? false : true;
@@ -246,4 +247,18 @@ bool item::IsBadFoodForAI(character* Eater) const
     return true;
   else
     return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
+}
+
+void item::Save(outputfile& SaveFile) const
+{
+  object::Save(SaveFile);
+
+  SaveFile << Cannibalised;
+}
+
+void item::Load(inputfile& SaveFile)
+{
+  object::Load(SaveFile);
+
+  SaveFile >> Cannibalised;
 }

@@ -53,7 +53,6 @@ Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
 Cube-like screenshot system.
-*Loaf of bread.
 Atavus should do something special on Christmas.
 A graphical equipment screen.
 Gurus.

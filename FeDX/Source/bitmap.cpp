@@ -594,4 +594,3 @@ void bitmap::FadeToScreen()
   MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, uchar(0), 0);
   graphics::BlitDBToScreen();
 }
-

@@ -161,4 +161,3 @@ int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)
 
   return 0;
 }
-

@@ -145,14 +145,9 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
 void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
 {
-  //	SDL_Surface *screen;
-
   screen = SDL_SetVideoMode(NewXRes, NewYRes, NewColorDepth, SDL_SWSURFACE);
   if ( screen == NULL ) 
     ABORT("Couldn't set video mode.");
-        
-    
-
 
   globalwindowhandler::Init(Title);
 	
@@ -161,18 +156,6 @@ void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar 
   XRes = NewXRes;
   YRes = NewYRes;
   ColorDepth = NewColorDepth;
-
-  /*	if(!FullScreen)
-	{
-		DDPIXELFORMAT DDPixelFormat;
-		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
-		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
-
-		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
-
-		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
-			SwitchMode();
-			}*/
 
   globalwindowhandler::SetInitialized(true);
 }
@@ -489,14 +472,10 @@ void graphics::SetMode(ushort Mode)
 
   XRes =		ModeInfo.Width;
   YRes =		ModeInfo.Height;
-  /*BitsPerPixel =	ModeInfo.BitsPerPixel;
-    BytesPerLine =	ModeInfo.BytesPerLine;*/
   BufferSize =	YRes * ModeInfo.BytesPerLine;
 
-  //delete Screen;
   delete DoubleBuffer;
 
-  //Screen = new bitmap(XRes, YRes, BytesPerLine, ModeInfo.PhysicalLFBAddress);
   DoubleBuffer = new bitmap(XRes, YRes);
 
   __dpmi_meminfo MemoryInfo;
@@ -558,4 +537,3 @@ void graphics::modeinfo::Retrieve(ushort Mode)
 }
 
 #endif
-

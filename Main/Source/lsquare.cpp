@@ -1090,4 +1090,3 @@ void levelsquare::StrikeEverything(character* Zapper, std::string DeathMsg, ucha
 
   GetOverLevelTerrain()->ReceiveStrike();	
 }
-

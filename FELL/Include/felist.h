@@ -60,6 +60,3 @@ inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 }
 
 #endif
-
-
-

@@ -886,7 +886,7 @@ class MATERIAL
   virtual ushort OfferValue() const { return 7; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
   virtual short NutritionValue() const { return 200; }
-  virtual ushort GetColor() const { return MAKE_RGB(170, 110, 60); }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 110, 60); }
   virtual ulong RawPrice() const { return GetVolume() >> 4; }
  protected:
   virtual std::string NameStem() const { return "bread"; }
@@ -1009,4 +1009,3 @@ class MATERIAL
  );
  
 #endif
-

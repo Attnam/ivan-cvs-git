@@ -94,6 +94,3 @@ class object : public typeable
 };
 
 #endif
-
-
-

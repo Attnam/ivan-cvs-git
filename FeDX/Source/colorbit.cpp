@@ -167,13 +167,3 @@ ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Colo
 
   return strlen(Buffer);
 }
-
-
-
-
-
-
-
-
-
-

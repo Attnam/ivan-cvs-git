@@ -94,6 +94,3 @@ protected:\
 }; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif
-
-
-

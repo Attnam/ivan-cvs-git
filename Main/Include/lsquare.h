@@ -125,6 +125,3 @@ class levelsquare : public square
 };
 
 #endif
-
-
-

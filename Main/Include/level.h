@@ -85,6 +85,3 @@ class level : public area
 };
 
 #endif
-
-
-

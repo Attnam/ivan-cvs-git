@@ -176,6 +176,3 @@ template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Resi
 }
 
 #endif
-
-
-

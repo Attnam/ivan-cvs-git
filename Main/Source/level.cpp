@@ -712,19 +712,6 @@ void level::HandleCharacters()
       GenerateNewMonsters(1);
 }
 
-/*void level::PutPlayer(bool)
-{
-  vector2d Pos = RandomSquare(true);
-  Map[Pos.X][Pos.Y]->FastAddCharacter(game::GetPlayer());
-  game::GetPlayer()->SetSquareUnder(Map[Pos.X][Pos.Y]);
-}*/
-
-/*void level::PutPlayerAround(vector2d Pos)
-{
-  DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable() && !Map[DoX][DoY]->GetCharacter()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
-  ABORT("Petrus is too popular!");
-}*/
-
 void level::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
@@ -1091,4 +1078,3 @@ bool level::IsValid(vector2d Vector) const
   else
     return false;
 }
-

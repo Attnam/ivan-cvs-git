@@ -446,9 +446,6 @@ void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
   for(ushort c = 0; c < GetItems();)
     if(!GetItem(c)->StruckByWandOfStriking(Zapper, DeathMsg, this))
       ++c;
-
-  //for(ushort x = 0; x < GetItems(); ++x)
-  //	GetItem(x)->StruckByWandOfStriking(this);
 }
 
 void stack::CheckForStepOnEffect(character* Stepper)
@@ -456,9 +453,6 @@ void stack::CheckForStepOnEffect(character* Stepper)
   for(ushort c = 0; c < GetItems();)
     if(!GetItem(c)->GetStepOnEffect(Stepper))
       ++c;
-
-  //for(ushort c = 0; c < GetItems(); c++)
-  //	GetItem(c)->GetStepOnEffect(Stepper);
 }
 
 square* stack::GetSquareTrulyUnder() const
@@ -505,4 +499,3 @@ void stack::ReceiveFireDamage(character* Burner, std::string DeathMsg, long Size
     if(!GetItem(c)->ReceiveFireDamage(Burner, DeathMsg, this, SizeOfEffect))
       ++c;
 }
-

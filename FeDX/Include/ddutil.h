@@ -135,8 +135,4 @@ class CSurface
 
 extern CDisplay* g_pDisplay;
 
-
-
-
 #endif // DDUTIL_H
-

@@ -59,6 +59,3 @@ inline inputfile& operator>>(inputfile& SaveFile, team*& Team)
 }
 
 #endif
-
-
-

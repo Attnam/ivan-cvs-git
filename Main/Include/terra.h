@@ -16,6 +16,10 @@ class terrain
  public:
   virtual bool GetIsWalkable() const { return true; }
   virtual void StepOn(character*) {}
+  virtual std::string SurviveMessage() const { return "somehow you survive"; }
+  virtual std::string DeathMessage() const { return "strangely enough, you die"; }
+  virtual std::string MonsterDeathVerb() const { return "dies"; }
+  virtual std::string ScoreEntry() const { return "died on unfriendly terrain"; }
 };
 
 class groundterrain : public terrain

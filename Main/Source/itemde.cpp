@@ -57,10 +57,11 @@ bool banana::Consume(character* Eater, float Amount)
 {
   GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
-  if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
+      Cannibalised = true;
     }
 
   if(!GetMaterial(1)->GetVolume())
@@ -82,10 +83,11 @@ bool potion::Consume(character* Eater, float Amount)
 {
   GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
-  if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(1)->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
+      Cannibalised = true;
     }
 
   ushort Emit = GetEmitation();
@@ -362,7 +364,6 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
 void wand::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-
   SaveFile << TimesUsed;
   SaveFile << Charges;
 }
@@ -370,7 +371,6 @@ void wand::Save(outputfile& SaveFile) const
 void wand::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-
   SaveFile >> TimesUsed;
   SaveFile >> Charges;
 }
@@ -609,14 +609,12 @@ void lantern::SignalSquarePositionChange(bool NewPosOnWall)
 void lantern::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-
   SaveFile << OnWall;
 }
 
 void lantern::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-
   SaveFile >> OnWall;
 }
 
@@ -708,14 +706,12 @@ bool backpack::Apply(character* Terrorist, stack* MotherStack)
 void holybook::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-
   SaveFile >> OwnerGod;
 }
 
 void holybook::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-
   SaveFile << OwnerGod;
 }
 
@@ -926,7 +922,7 @@ bool oillamp::Apply(character* Applier, stack*)
 
       /*
 	First try to create a genie nearby (10 tries - if all of them fail then stop trying)
-      */
+       */
 
       for(ushort c = 0; c < 10 && !FoundPlace; c++)
 	{	  
@@ -1020,14 +1016,12 @@ bool oillamp::Apply(character* Applier, stack*)
 void oillamp::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-
   SaveFile << InhabitedByGenie;
 }
 
 void oillamp::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-
   SaveFile >> InhabitedByGenie;
 }
 

@@ -112,6 +112,3 @@ WORLDMAPTERRAIN(\
 );
 
 #endif
-
-
-

@@ -1080,4 +1080,3 @@ void gamescript::ReadFrom(inputfile& SaveFile)
       ABORT("Odd script term %s encountered in game script!", Word.c_str());
     }
 }
-

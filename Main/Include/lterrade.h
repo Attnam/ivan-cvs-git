@@ -410,6 +410,10 @@ class GROUNDLEVELTERRAIN
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool GetIsWalkable(character*) const;
   virtual bool SitOn(character*);
+  virtual std::string SurviveMessage() const { return "you manage to get out of the pool"; }
+  virtual std::string DeathMessage() const { return "you drown"; }
+  virtual std::string MonsterDeathVerb() const { return "drowns"; }
+  virtual std::string ScoreEntry() const { return "drowned"; }
  protected:
   virtual std::string NameSingular() const { return "pool"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }

@@ -1233,4 +1233,3 @@ std::string game::GetVerbalPlayerAlignment()
 
   return std::string("extremely chaotic");
 }
-

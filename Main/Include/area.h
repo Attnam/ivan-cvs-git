@@ -57,6 +57,3 @@ inline outputfile& operator<<(outputfile& SaveFile, area* Area)
 }
 
 #endif
-
-
-

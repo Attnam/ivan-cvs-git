@@ -285,6 +285,3 @@ class erado : public god
 };
 
 #endif
-
-
-

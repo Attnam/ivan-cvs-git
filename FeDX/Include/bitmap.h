@@ -58,7 +58,3 @@ class bitmap
 };
 
 #endif
-
-
-
-

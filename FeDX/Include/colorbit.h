@@ -31,6 +31,3 @@ class colorizablebitmap
 };
 
 #endif
-
-
-

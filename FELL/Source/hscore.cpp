@@ -110,4 +110,3 @@ void highscore::Load(std::string File)
   if(HVersion == 110)
     HighScore >> Score >> Entry >> LastAdd;
 }
-

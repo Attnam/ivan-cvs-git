@@ -26,6 +26,3 @@ class iosystem
 };
 
 #endif
-
-
-

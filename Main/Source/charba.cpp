@@ -2568,14 +2568,14 @@ void character::EndPolymorph()
 	game::GetPlayerBackup()->SetTorsoArmor(GetTorsoArmor());
 
       game::GetPlayerBackup()->SetMoney(GetMoney());
-
       game::SetPlayer(game::GetPlayerBackup());
       game::SetPlayerBackup(0);
-
       game::GetPlayer()->ChangeTeam(GetTeam());
 
       if(GetTeam()->GetLeader() == this)
 	GetTeam()->SetLeader(game::GetPlayer());
+
+      game::GetPlayer()->TestWalkability();
 
       game::SendLOSUpdateRequest();
     }
@@ -3373,3 +3373,55 @@ void character::DisplayInfo()
     ADD_MESSAGE("(danger: %d)", CurrentDanger());
 }
 
+void character::TestWalkability()
+{
+  if(!GetSquareUnder()->GetIsWalkable(this))
+    {
+      bool Alive = false;
+
+      while(true)
+	{
+	  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentArea()->GetXSize(), game::GetCurrentArea()->GetYSize(),
+	  {
+	    vector2d Where(DoX, DoY);
+
+	    if(GetSquareUnder()->GetAreaUnder()->GetSquare(Where)->GetIsWalkable(this) && !GetSquareUnder()->GetAreaUnder()->GetSquare(Where)->GetCharacter()) 
+	      {
+		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this).c_str());
+		Move(Where, true); // actually, this shouldn't be a teleport move
+		Alive = true;
+		break;
+	      }
+	  });
+
+	  break;
+	}
+
+      if(!Alive)
+	{
+	  if(GetIsPlayer())
+	    {
+	      GetSquareUnder()->RemoveCharacter();
+	      ADD_MESSAGE("%s.", GetSquareUnder()->DeathMessage(this).c_str());
+	      game::DrawEverything();
+	      GETKEY();
+
+	      game::RemoveSaves();
+
+	      if(!game::GetWizardMode())
+		{
+		  game::GetPlayer()->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
+		  highscore HScore;
+		  HScore.Draw();
+		}
+
+	      game::Quit();
+	    }
+	  else
+	    {
+	      ADD_MESSAGE("%s.", GetSquareUnder()->MonsterDeathVerb(this).c_str());
+	      Die();
+	    }
+	}
+    }
+}

@@ -25,6 +25,3 @@ class typeable
 };
 
 #endif
-
-
-

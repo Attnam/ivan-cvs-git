@@ -115,7 +115,6 @@ class CHARACTER
   },
  public:
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
-  virtual void CreateInitialEquipment();
  protected:
   virtual std::string NameSingular() const { return "human"; }
 );

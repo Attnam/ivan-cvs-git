@@ -55,6 +55,10 @@ class square
   virtual void KickAnyoneStandingHereAway();
   virtual void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
   virtual bool GetIsWalkable(character*) const;
+  virtual std::string SurviveMessage(character*) const;
+  virtual std::string DeathMessage(character*) const;
+  virtual std::string MonsterDeathVerb(character*) const;
+  virtual std::string ScoreEntry(character*) const;
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;
@@ -73,6 +77,3 @@ inline outputfile& operator<<(outputfile& SaveFile, square* Square)
 }
 
 #endif
-
-
-

@@ -214,4 +214,3 @@ void configuration::SwitchModeHandler()
 {
   SetFullScreenMode(!GetFullScreenMode());
 }
-

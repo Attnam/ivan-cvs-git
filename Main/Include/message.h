@@ -29,6 +29,3 @@ class globalmessagingsystem
 };
 
 #endif
-
-
-

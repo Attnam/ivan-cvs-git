@@ -73,6 +73,3 @@ inline inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 }
 
 #endif
-
-
-

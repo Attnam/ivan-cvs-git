@@ -168,4 +168,3 @@ void globalerrorhandler::SignalHandler(int Signal)
 }
 
 #endif
-

@@ -107,3 +107,35 @@ bool square::GetIsWalkable(character* Char) const
 {
   return GetOverTerrain()->GetIsWalkable() && GetGroundTerrain()->GetIsWalkable(Char);
 }
+
+std::string square::SurviveMessage(character* Char) const
+{
+  if(!GetOverTerrain()->GetIsWalkable())
+    return GetOverTerrain()->SurviveMessage();
+  else
+    return GetGroundTerrain()->SurviveMessage();
+}
+
+std::string square::DeathMessage(character* Char) const
+{
+  if(!GetOverTerrain()->GetIsWalkable())
+    return GetOverTerrain()->DeathMessage();
+  else
+    return GetGroundTerrain()->DeathMessage();
+}
+
+std::string square::MonsterDeathVerb(character* Char) const
+{
+  if(!GetOverTerrain()->GetIsWalkable())
+    return GetOverTerrain()->MonsterDeathVerb();
+  else
+    return GetGroundTerrain()->MonsterDeathVerb();
+}
+
+std::string square::ScoreEntry(character* Char) const
+{
+  if(!GetOverTerrain()->GetIsWalkable())
+    return GetOverTerrain()->ScoreEntry();
+  else
+    return GetGroundTerrain()->ScoreEntry();
+}

@@ -181,4 +181,3 @@ void area::Draw() const
       for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 	Map[x][y]->Draw();
 }
-

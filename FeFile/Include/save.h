@@ -17,20 +17,12 @@ class outputfile
 {
  public:
   outputfile(std::string, bool = true);
-  //#ifdef __SAVE_H__
   ~outputfile() { if(Buffer) fclose(Buffer); }
   void Put(char What) { fputc(What, Buffer); }
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
   bool IsOpen() { return Buffer != 0; }
  private:
   FILE* Buffer;
-  /*#else
-    void Put(char What) { Buffer.put(What); }
-    void Write(const char* Offset, long Size) { Buffer.write(Offset, Size); }
-    bool IsOpen() { return Buffer.is_open(); }
-    private:
-    std::ofstream Buffer;
-    #endif*/
 };
 
 class inputfile
@@ -42,7 +34,6 @@ class inputfile
   long ReadNumber(std::map<std::string, long>, uchar = 0xFF);
   vector2d ReadVector2d(std::map<std::string, long>);
   bool ReadBool();
-  //#ifdef __SAVE_H__
   ~inputfile() { if(Buffer) fclose(Buffer); }
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
@@ -56,20 +47,6 @@ class inputfile
   int Peek();
  private:
   FILE* Buffer;
-  /*#else
-    int Get() { return Buffer.get(); }
-    void Read(char* Offset, long Size) { Buffer.read(Offset, Size); }
-    bool IsOpen() { return Buffer.is_open(); }
-    bool Eof() { return Buffer.eof(); }
-    void ClearFlags() { Buffer.clear(); }
-    void SeekPosBeg(long Offset) { Buffer.seekg(Offset, std::ios::beg); }
-    void SeekPosCur(long Offset) { Buffer.seekg(Offset, std::ios::cur); }
-    void SeekPosEnd(long Offset) { Buffer.seekg(Offset, std::ios::end); }
-    long TellPos() { return Buffer.tellg(); }
-    int Peek() { return Buffer.peek(); }
-    private:
-    std::ifstream Buffer;
-    #endif*/
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)

@@ -401,4 +401,3 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
 #endif
 
 #endif
-
