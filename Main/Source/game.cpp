@@ -2247,8 +2247,19 @@ long game::GetScore()
 {
   double Counter = 0;
   character* Char;
-  massacremap::const_iterator i1;
+  massacremap::const_iterator i1, i2;
+
+  massacremap SumMap;
+
   for(i1 = PlayerMassacreMap.begin(); i1 != PlayerMassacreMap.end(); ++i1)
+    SumMap.insert(std::pair<configid, ushort>(i1->first, i1->second));
+
+  for(i1 = PetMassacreMap.begin(); i1 != PetMassacreMap.end(); ++i1)
+    {
+      SumMap[i1->first] += i1->second;
+    }
+
+  for(i1 = SumMap.begin(); i1 != SumMap.end(); ++i1)
     {
       Char = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
       ushort SumOfAttributes = Char->GetSumOfAttributes();
@@ -2256,12 +2267,6 @@ long game::GetScore()
       Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
     }
 
-  for(i1 = PetMassacreMap.begin(); i1 != PetMassacreMap.end(); ++i1)
-    {
-      Char = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
-      ushort SumOfAttributes = Char->GetSumOfAttributes();
-      delete Char;
-      Counter += double(SumOfAttributes * SumOfAttributes) * sqrt(i1->second);
-    }
+
   return long(0.01 * Counter);
 }

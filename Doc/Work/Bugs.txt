@@ -34,15 +34,15 @@ Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
 Mistresses like shields more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
-Headless zombies can eat.
+//Headless zombies can eat.
 Broken thunder hammer emits light.
 While in read-mode player can find mines.
 Squares near should be redrawn when digged. (bad edge tiles)
-Creating doors doesn't update the lookmode description.
+//Creating doors doesn't update the lookmode description.
 Do teleported, activated and seen mines still say seen by player?
 Angels shouldn't eat
 //Squares near should be redrawn when digged. (bad edge tiles)
 //Creating doors doesn't update the lookmode description.
 Dying + being resurrected doesn't eliminate poison.
 Teleport control can be used to detect walls.
-RED ommel urine ALERT!
+//RED ommel urine ALERT!

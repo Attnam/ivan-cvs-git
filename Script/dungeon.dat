@@ -1512,23 +1512,6 @@ Dungeon UNDER_WATER_TUNNEL;
 			Times = 2;
 		}
 
-		Square, Random;
-		{
-			Character = bunny(ADULT_MALE);
-			Times = 2;
-		}
-
-		Square, Random;
-		{
-			Character = bunny(ADULT_FEMALE);
-			Times = 2;
-		}
-
-		Square, Random;
-		{
-			Items == Random { Category = FOOD; }
-			Times = 100;
-		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
 		{

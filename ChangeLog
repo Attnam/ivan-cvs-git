@@ -8,6 +8,11 @@ is also provided AS IS and is probably completely unreadable.
 ------------------------------------------------------------------------------------
 July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Pets and player killed monsters are no longer handled seperatly for score calculation
+	* Bug with digging earth tiles 
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Headless zombies can no longer eat or drink.
 
 July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>

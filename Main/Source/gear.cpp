@@ -100,32 +100,40 @@ bool pickaxe::Apply(character* User)
   uchar Dir = game::DirectionQuestion(CONST_S("What direction do you want to dig? [press a direction key]"), false);
 
   vector2d Temp = game::GetMoveVector(Dir);
-
-  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(User->GetPos() + Temp))
+  vector2d ToBeDug = User->GetPos() + Temp;
+  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(ToBeDug))
     return false;
 
-  lsquare* Square = GetNearLSquare(User->GetPos() + Temp);
+  lsquare* Square = GetNearLSquare(ToBeDug);
   olterrain* Terrain = Square->GetOLTerrain();
 
-  if(Square->CanBeDug() && Terrain)
-    if(Terrain->CanBeDestroyed())
-      if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
-	{
-	  uchar RoomNumber = Square->GetRoomIndex();
+  if(!Terrain)
+    {
+        ADD_MESSAGE("Nothing to dig there!");
+	return false;
+    }
 
-	  if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
-	    {
-	      User->SwitchToDig(this, User->GetPos() + Temp);
-	      User->DexterityAction(5);
-	      return true;
-	    }
-	  else
-	    return false;
-	}
+  if(Square->CanBeDug())
+    {
+      if(Terrain->CanBeDestroyed())
+	if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+	  {
+	    uchar RoomNumber = Square->GetRoomIndex();
+
+	    if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
+	      {
+		User->SwitchToDig(this, ToBeDug);
+		User->DexterityAction(5);
+		return true;
+	      }
+	    else
+	      return false;
+	  }
+	else
+	  ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
       else
-	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
-    else
-      ADD_MESSAGE(Terrain->GetDigMessage().CStr());
+	ADD_MESSAGE(Terrain->GetDigMessage().CStr());
+    }
 
   return false;
 }

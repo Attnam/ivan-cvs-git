@@ -1118,6 +1118,7 @@ void earth::Break()
 
 void earth::VirtualConstructor(bool Load)
 {
+  olterrain::VirtualConstructor(Load);
   if(!Load)
     PictureIndex = RAND() & 3;
 }
