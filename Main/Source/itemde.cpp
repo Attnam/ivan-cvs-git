@@ -2067,7 +2067,7 @@ void mine::VirtualConstructor(bool Load)
   if(!Load)
     {
       Team = MONSTER_TEAM;
-      Active = true;
+      Active = false;
     }
 }
 
@@ -2523,7 +2523,7 @@ bool chest::Open(character* Opener)
       return false;
     }
 
-  std::string Question = "Do you want to (t)ake something from or (p) something in this chest? [t,p]";
+  std::string Question = "Do you want to (t)ake something from or (p)ut something in this chest? [t,p]";
 
   switch(game::KeyQuestion(Question, KEYESC, 3, 't', 'p', KEYESC))
     {
@@ -2704,7 +2704,7 @@ void beartrap::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      Active = true;
+      Active = false;
       Team = MONSTER_TEAM;
     }
 }
@@ -3294,12 +3294,13 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
     return false;
 }
 
-bool vermis::HitEffect(character* Enemy, character*, uchar, uchar, bool)
+bool vermis::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
   if(RAND() & 1)
     {
+      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
       Enemy->TeleportRandomly();
-      ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
       return true;
     }
   else
@@ -3310,10 +3311,11 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
   if(!(RAND() % 5))
     {
+      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s smashes %s with the full force of Turox.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
       square* Square = Enemy->GetSquareUnder();
       std::string DeathMSG = "Killed by " + Enemy->GetName(DEFINITE); 
       Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Square->GetPos(), 20);
-      ADD_MESSAGE("BANG BANG BANG! FIX FIX FIX!");
       return true;
     }
   else
@@ -3322,9 +3324,12 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 
 bool whipofcalamus::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
 {
-  if(Enemy->GetMainWielded() && !(RAND() % 7))
+  if(CalamusHelps(Enemy, Hitter))
     {
-      ADD_MESSAGE("THIEF THIEF THIEF. FIX FIX FIX.");
+      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s whip asks for the help of Calamus as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
+      if(Hitter->IsPlayer())
+	game::GetGod(10)->AdjustRelation(10);
       Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
       return true;
     }
@@ -3427,4 +3432,21 @@ vector2d beartrap::GetBitmapPos(ushort) const
 bool mine::WillExplode(const character* Stepper) const
 {
   return GetContainedMaterial()->GetTotalExplosivePower() != 0 && Stepper->GetWeight() > 500;
+}
+
+bool whipofcalamus::CalamusHelps(const character* Enemy, const character* Hitter) const
+{
+  if(!Hitter->GetMainWielded() || !Enemy->GetMainWielded())
+    return false;
+  if(Hitter->IsPlayer())
+    {
+      if(game::GetGod(10)->GetRelation() < 0)
+	return false;
+      else
+	{
+	  return (RAND() % (game::GetGod(10)->GetRelation() / 200 + 1));
+	}
+    }
+  else
+    return !(RAND() % 5);
 }

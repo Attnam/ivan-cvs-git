@@ -452,6 +452,7 @@ class ITEM
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual bool IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
 );
@@ -1263,6 +1264,8 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+ protected:
+  virtual bool CalamusHelps(const character*, const character*) const;
 );
 
 #endif

@@ -19,4 +19,4 @@ Flail + broken and in hands picture.
 Staff + broken and in hands picture.
 Skull.
 
-Fabrick belts and whips seem are not clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
+Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

@@ -1071,6 +1071,7 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 {
   ushort* FlameLowestPoint = new ushort[XSize];
   ushort x,y, Top, MaxDist, RelPos;
+  long NewSeed = RAND(); 
   ++Frame; /* 0 doesn't seem to be a good seed */
   femath::SetSeed(Frame); /* Because we want flame animation loops to be same in every session */
 
@@ -1107,6 +1108,6 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 	    PutPixel(x,0, MakeRGB(0,255,0));
 	}
     }
-  femath::SetSeed(time(0));
+  femath::SetSeed(NewSeed);
 }
 

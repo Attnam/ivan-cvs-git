@@ -156,7 +156,7 @@ class ABSTRACT_CHARACTER
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
   virtual bodypart* MakeBodyPart(ushort);
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
+  virtual std::string GetDeathMessage() const;
   std::vector<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
@@ -260,7 +260,7 @@ class CHARACTER
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse();
-  virtual std::string GetDeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
+  virtual std::string GetDeathMessage() const { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
   virtual void GetAICommand();
   ushort HealTimer;
   uchar StoryState;
@@ -319,7 +319,7 @@ class CHARACTER
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + "vomits blood for one last time and then dies."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + "vomits blood for one last time and then dies."; }
   virtual std::string FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
@@ -346,7 +346,7 @@ class CHARACTER
   virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }*/
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ENNERBEASTFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual void GetAICommand();
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
@@ -377,7 +377,7 @@ class CHARACTER
  protected:
   virtual void CreateCorpse();
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ELPURIFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans horribly and drops " + GetPossessivePronoun() + " head."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " groans horribly and drops " + GetPossessivePronoun() + " head."; }
 );
 
 class CHARACTER
@@ -392,7 +392,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vanishes from existence."; }
   virtual std::string FirstPersonUnarmedHitVerb() const { return "emit psi waves at"; }
   virtual std::string FirstPersonCriticalUnarmedHitVerb() const { return "emit powerful psi waves at"; }
   virtual std::string ThirdPersonUnarmedHitVerb() const { return "emits psi waves at"; }
@@ -411,7 +411,7 @@ class CHARACTER
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
  protected:
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
   virtual void CreateCorpse();
 );
 
@@ -431,7 +431,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BROWNSLIME, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " turns into lifeless goo."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " turns into lifeless goo."; }
   virtual std::string FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous slime at"; }
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
@@ -451,7 +451,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
  protected:
-  virtual std::string GetDeathMessage() { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
+  virtual std::string GetDeathMessage() const { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
 );
 
 class CHARACTER
@@ -497,7 +497,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DONKEYFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " neighs one last time and dies."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " neighs one last time and dies."; }
 );
 
 class CHARACTER
@@ -510,7 +510,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Party revenges " + GetName(UNARTICLED) + "\"!"; }
   virtual bool ShowClassDescription() const { return GetAssignedName() != "Ivan"; }
 );
 
@@ -530,7 +530,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(POLARBEARFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " groans terribly and falls dead to the ground."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " groans terribly and falls dead to the ground."; }
 );
 
 class CHARACTER
@@ -612,7 +612,7 @@ class CHARACTER
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
   virtual void CreateBodyParts();
  protected:
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is slain (again)."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is slain (again)."; }
 );
 
 class CHARACTER
@@ -662,7 +662,7 @@ class CHARACTER
   humanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLDFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
 );
 
 class CHARACTER
@@ -710,7 +710,7 @@ class CHARACTER
   virtual ushort GetArmMainColor(ushort) const;
   virtual void VirtualConstructor(bool);
   virtual void CreateInitialEquipment();
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
   virtual void CreateCorpse() { SendToHell(); }
   virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
   virtual void GetAICommand();
@@ -740,7 +740,7 @@ class CHARACTER
   virtual void GetAICommand();
   virtual void CreateInitialEquipment();
  protected:
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies smiling."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " dies smiling."; }
 );
 
 class CHARACTER  
@@ -782,7 +782,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vanishes from existence."; }
 );
 
 class CHARACTER
@@ -791,7 +791,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(LIONFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " growls ans is slain."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " growls ans is slain."; }
 );
 
 class CHARACTER
@@ -800,7 +800,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is destroyed."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
   virtual ushort GetTorsoSpecialColor(ushort) const { return RAND() % WHITE; } // the flower
   virtual void GetAICommand();
 );
@@ -811,7 +811,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BUFFALOFLESH, Volume); }
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " snarls one last time."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " snarls one last time."; }
 );
 
 class CHARACTER
@@ -841,7 +841,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " falls groaning bravely: \"Hope there's vodka in hell!"; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " falls groaning bravely: \"Hope there's vodka in hell!"; }
 );
 
 #endif

@@ -60,3 +60,4 @@ Digging doors doesn't work.
 (2x) you wake up.
 Your weak kick has no effect.
 Memorized doesn't update correctly.
+Carnivorous plants inside walls!

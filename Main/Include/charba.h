@@ -701,7 +701,7 @@ class character : public entity, public id
   virtual bool FollowLeader();
   virtual void StandIdleAI();
   virtual void CreateCorpse();
-  virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is slain."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is slain."; }
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);

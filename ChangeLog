@@ -1,5 +1,16 @@
 August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Msgs of special items corrected
+	* Success of using Whip of Calamus now depends on players relations to Calamus.
+	* Wishing for "lamp" gives now an oil lamp
+ 	* Headless creatures don't screams
+	* Backpacks work (-> Suicide dwarfs work)
+	* GetDeathMessage functions changed to const
+	* Bug with bitmap::DrawFlames that did funny things to the RAND() function corrected
+	* Corrected a minor typo in chest
+	
+August 4 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Bug in poisoned fixed
 
 	

@@ -3652,3 +3652,8 @@ void humanoid::AddDefenceInfo(felist& List) const
   if(GetLeftArm())
     GetLeftArm()->AddDefenceInfo(List);
 }
+
+std::string humanoid::GetDeathMessage() const
+{
+  return GetName(DEFINITE) + (GetHead() ? " dies screaming." : " dies without a sound."); 
+}

@@ -846,7 +846,8 @@ oillamp
 	FormModifier = 30;
 	BaseEmitation = 256;
 	OfferModifier = 10000;
-	NameSingular = "oil lamp";
+	NameSingular = "lamp";
+	Adjective = "oil";
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
@@ -1489,4 +1490,5 @@ whipofcalamus /* meleeweapon-> */
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 2;
+	Alias == "whip of calamus";
 }
