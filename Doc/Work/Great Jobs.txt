@@ -22,7 +22,7 @@ Monster memory.
 
 Mouse interface.
 
-Removing asm from FeLib.
+//Removing asm from FeLib.
 
 Support for multiple resolutions.
 
@@ -47,6 +47,8 @@ Fluid system that handles special material effects, eg. molten metals.
 Corrosion for materials.
 
 Dividing physical damage to slashing, blunt, piercing etc. damage.
+
+Balancing enchantment formulas.
 
 Unusable state for bodyparts.
 

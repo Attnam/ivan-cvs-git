@@ -113,10 +113,8 @@ class bitmap
   void DrawLine(ushort FromX, ushort FromY, vector2d To, ushort Color, bool Wide = false) { DrawLine(FromX, FromY, To.X, To.Y, Color, Wide); }
   void DrawLine(vector2d From, vector2d To, ushort Color, bool Wide = false) { DrawLine(From.X, From.Y, To.X, To.Y, Color, Wide); }
 
-  void FillWithGradient(ushort, ushort, ushort, ushort, ushort, ushort);
-  void FillWithGradient(vector2d Pos, ushort Width, ushort Height, ushort Color1, ushort Color2) { FillWithGradient(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
-  void FillWithGradient(ushort X, ushort Y, vector2d FillSize, ushort Color1, ushort Color2) { FillWithGradient(X, Y, FillSize.X, FillSize.Y, Color1, Color2); }
-  void FillWithGradient(vector2d Pos, vector2d FillSize, ushort Color1, ushort Color2) { FillWithGradient(Pos.X, Pos.Y, FillSize.X, FillSize.Y, Color1, Color2); }
+  void DrawVerticalLine(ushort, ushort, ushort, ushort, bool = false);
+  void DrawHorizontalLine(ushort, ushort, ushort, ushort, bool = false);
 
   void StretchBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, char) const;
   void StretchBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, char Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Stretch); }

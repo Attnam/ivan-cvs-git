@@ -13,7 +13,6 @@
 #include "whandler.h"
 #include "error.h"
 #include "colorbit.h"
-#include "blit.h"
 
 void (*graphics::SwitchModeHandler)();
 
@@ -29,7 +28,8 @@ graphics::modeinfo graphics::ModeInfo;
 #endif
 
 bitmap* graphics::DoubleBuffer;
-vector2d graphics::Res;
+ushort graphics::ResX;
+ushort graphics::ResY;
 uchar graphics::ColorDepth;
 colorizablebitmap* graphics::DefaultFont = 0;
 
@@ -75,7 +75,7 @@ void graphics::DeInit()
 
 #ifdef USE_SDL
 
-void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes, bool FullScreen)
+void graphics::SetMode(const char* Title, const char* IconName, ushort NewResX, ushort NewResY, bool FullScreen)
 {
   if(IconName)
     {
@@ -92,15 +92,16 @@ void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes,
       Flags |= SDL_FULLSCREEN;
     }
 
-  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
+  Screen = SDL_SetVideoMode(NewResX, NewResY, 16, Flags);
 
   if(!Screen) 
     ABORT("Couldn't set video mode.");
 
   SDL_WM_SetCaption(Title, 0);
   globalwindowhandler::Init();
-  DoubleBuffer = new bitmap(NewRes);
-  Res = NewRes;
+  DoubleBuffer = new bitmap(NewResX, NewResY);
+  ResX = NewResX;
+  ResY = NewResY;
   ColorDepth = 16;
 }
 
@@ -109,12 +110,18 @@ void graphics::BlitDBToScreen()
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
 
-  BlitToDB(ulong(DoubleBuffer->GetImage()[0]), ulong(Screen->pixels), Screen->pitch - (RES.X << 1), RES.X, RES.Y);
+  ushort* SrcPtr = &DoubleBuffer->GetImage()[0][0];
+  ushort* DestPtr = static_cast<ushort*>(Screen->pixels);
+  ulong ScreenYMove = (Screen->pitch >> 1) - ResX;
+
+  for(ushort y = 0; y < ResY; ++y, DestPtr += ScreenYMove)
+    for(ushort x = 0; x < ResX; ++x, ++SrcPtr, ++DestPtr)
+      *DestPtr = *SrcPtr;
 
   if(SDL_MUSTLOCK(Screen))
     SDL_UnlockSurface(Screen);
 
-  SDL_UpdateRect(Screen, 0,0, RES.X, RES.Y);
+  SDL_UpdateRect(Screen, 0, 0, ResX, ResY);
 }
 
 void graphics::SwitchMode()
@@ -135,7 +142,7 @@ void graphics::SwitchMode()
   if(SwitchModeHandler)
     SwitchModeHandler();
 
-  Screen = SDL_SetVideoMode(Res.X, Res.Y, ColorDepth, Flags);
+  Screen = SDL_SetVideoMode(ResX, ResY, ColorDepth, Flags);
 
   if(!Screen) 
     ABORT("Couldn't toggle fullscreen mode.");
@@ -152,7 +159,7 @@ void graphics::LoadDefaultFont(const std::string& FileName)
 
 #ifdef __DJGPP__
 
-void graphics::SetMode(const char*, const char*, vector2d NewRes, bool)
+void graphics::SetMode(const char*, const char*, ushort NewResX, ushort NewResY, bool)
 {
   ulong Mode;
 
@@ -162,24 +169,24 @@ void graphics::SetMode(const char*, const char*, vector2d NewRes, bool)
       
       if(ModeInfo.Attribs1 & 0x01
       && ModeInfo.Attribs1 & 0xFF
-      && ModeInfo.Width == NewRes.X
-      && ModeInfo.Height == NewRes.Y
+      && ModeInfo.Width == NewResX
+      && ModeInfo.Height == NewResY
       && ModeInfo.BitsPerPixel == 16)
 	  break;
     }
 
   if(Mode == 0x10000)
-    ABORT("Resolution %dx%d not supported!", NewRes.X, NewRes.Y);
+    ABORT("Resolution %dx%d not supported!", NewResX, NewResY);
 
   __dpmi_regs Regs;
   Regs.x.ax = 0x4F02;
   Regs.x.bx = Mode | 0x4000;
   __dpmi_int(0x10, &Regs);
-  Res.X = ModeInfo.Width;
-  Res.Y = ModeInfo.Height;
-  BufferSize =	Res.Y * ModeInfo.BytesPerLine;
+  ResX = ModeInfo.Width;
+  ResY = ModeInfo.Height;
+  BufferSize = ResY * ModeInfo.BytesPerLine;
   delete DoubleBuffer;
-  DoubleBuffer = new bitmap(Res);
+  DoubleBuffer = new bitmap(ResX, ResY);
   __dpmi_meminfo MemoryInfo;
   MemoryInfo.size = BufferSize;
   MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
@@ -192,10 +199,7 @@ void graphics::SetMode(const char*, const char*, vector2d NewRes, bool)
 
 void graphics::BlitDBToScreen()
 {
-  ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
-  ulong TrueDestOffset = 0;
-  ulong TrueDestXMove = 0;
-  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, RES.X, RES.Y);
+  movedata(_my_ds(), ulong(DoubleBuffer->GetImage()[0]), ScreenSelector, 0, BufferSize);
 }
 
 void graphics::vesainfo::Retrieve()
@@ -223,3 +227,4 @@ void graphics::modeinfo::Retrieve(ushort Mode)
 }
 
 #endif
+

@@ -484,7 +484,7 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
   if(AnimationDraw)
     return 3;
 
-  ushort PanelPosX = RES.X - 96, PanelPosY = 3;
+  ushort PanelPosX = RES_X - 96, PanelPosY = 3;
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Str %d", GetAttribute(ARM_STRENGTH));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
@@ -1179,3 +1179,4 @@ bool eddy::Hit(character* Enemy, bool)
   EditAP(-1000);
   return true;  
 }
+

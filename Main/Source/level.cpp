@@ -852,14 +852,14 @@ bool level::DrawExplosion(const explosion& Explosion) const
 	BPos.Y = 0;
       }
 
-  if(BPos.X >= RES.X || BPos.Y >= RES.Y)
+  if(BPos.X >= RES_X || BPos.Y >= RES_Y)
     return false;
 
-  if(BPos.X + SizeVect.X > RES.X)
-    SizeVect.X = RES.X - BPos.X;
+  if(BPos.X + SizeVect.X > RES_X)
+    SizeVect.X = RES_X - BPos.X;
 
-  if(BPos.Y + SizeVect.Y > RES.Y)
-    SizeVect.Y = RES.Y - BPos.Y;
+  if(BPos.Y + SizeVect.Y > RES_Y)
+    SizeVect.Y = RES_Y - BPos.Y;
 
   uchar Flags = RAND() & 7;
 
@@ -1379,3 +1379,4 @@ void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vect
   static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
   return Beam[Index];
 }
+

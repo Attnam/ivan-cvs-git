@@ -47,7 +47,7 @@ Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
 //Charba.cpp:n resplittaus (kontrollit erilleen?).
 Kirjallisen yliluonnollisuuden epäfunktioittaminen.
 //Säiliöluokat.
-Piirron deasmaus.
+//Piirron deasmaus.
 //Repliikkien datafilesaatio.
 Raajarajapinta.
 //Jumalten arrayttäminen.

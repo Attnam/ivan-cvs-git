@@ -30,6 +30,13 @@ template <class type> inline const type& Min(const type& X, const type& Y, const
 template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
 template <class f, class type> inline type Recurse(f F, type Value, ushort Amount) { return Amount ? Recurse(F, F(Value), Amount - 1) : Value; }
 
+template <class type> inline void Swap(type& X, type& Y)
+{
+  type T(X);
+  X = Y;
+  Y = T;
+}
+
 class femath
 {
 public: 

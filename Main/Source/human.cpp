@@ -1772,12 +1772,12 @@ void humanoid::EditExperience(ushort Identifier, long Value)
 
 ushort humanoid::DrawStats(bool AnimationDraw) const
 {
-  DrawSilhouette(DOUBLE_BUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
+  DrawSilhouette(DOUBLE_BUFFER, vector2d(RES_X - SILHOUETTE_X_SIZE - 23, 53), AnimationDraw);
 
   if(AnimationDraw)
     return 15;
 
-  ushort PanelPosX = RES.X - 96, PanelPosY = 15;
+  ushort PanelPosX = RES_X - 96, PanelPosY = 15;
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
@@ -3095,3 +3095,4 @@ const std::string& humanoid::GetStandVerb() const
   static std::string HasntFeet = "crawling";
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
+

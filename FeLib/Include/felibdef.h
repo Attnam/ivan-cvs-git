@@ -20,6 +20,7 @@ inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
 inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
 inline ushort GetBlue16(ushort Color) { return Color << 3 & 0xF8; }
 inline ushort MakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F); }
+inline ushort RightShift8AndMakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11); }
 inline ushort MakeShadeColor(ushort Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
 
 inline ulong GetRed24(ulong Color) { return Color >> 16 & 0xFF; }

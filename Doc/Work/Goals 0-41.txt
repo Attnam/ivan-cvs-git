@@ -5,5 +5,5 @@ A* route code.
 Verbalized danger to stethoscope info.
 //Explosions should be stopped by walls.
 Different effects for breaking different wands.
-Removing asm.
+//Removing asm.
 //Removing MS-code.

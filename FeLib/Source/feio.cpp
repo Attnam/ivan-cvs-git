@@ -29,7 +29,7 @@
 
 void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
-  bitmap Buffer(RES);
+  bitmap Buffer(RES_X, RES_Y);
   Buffer.Fill(0);
   ushort c, LineNumber = 0;
 
@@ -45,7 +45,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
     if(Text[c] == '\n')
       {
 	Line[c - LastBeginningOfLine] = 0;
-	FONT->Printf(&Buffer, (RES.X >> 1) - (strlen(Line) << 2), (RES.Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
+	FONT->Printf(&Buffer, (RES_X >> 1) - (strlen(Line) << 2), (RES_Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
 	++Lines;
 	LastBeginningOfLine = c + 1;
       }
@@ -53,7 +53,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
       Line[c - LastBeginningOfLine] = Text[c];
 
   Line[c - LastBeginningOfLine] = 0;
-  FONT->Printf(&Buffer, (RES.X >> 1) - (strlen(Line) << 2), (RES.Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
+  FONT->Printf(&Buffer, (RES_X >> 1) - (strlen(Line) << 2), (RES_Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
@@ -78,9 +78,9 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
   bool bReady = false;
   ulong iSelected = 0;
-  bitmap Backup(RES);
+  bitmap Backup(RES_X, RES_Y);
   DOUBLE_BUFFER->Blit(&Backup);
-  bitmap Buffer(RES);
+  bitmap Buffer(RES_X, RES_Y);
   ushort c = 0;
 
   if(BackGround)
@@ -129,7 +129,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	{
 	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, 3, RES.Y - CountChars('\r', SmallText1) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
+	  FONT->Printf(&Buffer, 3, RES_Y - CountChars('\r', SmallText1) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
 	}
 
       sCopyOfMS = SmallText2;
@@ -138,7 +138,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	{
 	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, RES.X - (VeryUnGuruPrintf.length() << 3) - 2, RES.Y - CountChars('\r', SmallText2) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
+	  FONT->Printf(&Buffer, RES_X - (VeryUnGuruPrintf.length() << 3) - 2, RES_Y - CountChars('\r', SmallText2) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
 	}
 
       int k;
@@ -192,7 +192,7 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 {
   if(Fade)
     {
-      bitmap Buffer(RES);
+      bitmap Buffer(RES_X, RES_Y);
       Buffer.Fill(0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
@@ -260,7 +260,7 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
 {
   if(Fade)
     {
-      bitmap Buffer(RES);
+      bitmap Buffer(RES_X, RES_Y);
       Buffer.Fill(0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
@@ -305,14 +305,15 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 
   if(Fade)
     {
-      bitmap Buffer(RES);
+      bitmap Buffer(RES_X, RES_Y);
       Buffer.Fill(0);
-      FONT->Printf(&Buffer, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
-      Buffer.DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
-      Buffer.DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
-      Buffer.DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
-      Buffer.DrawLine(Pos.X + 1, Pos.Y + 12, Pos.X + 1, Pos.Y + 18, Color1, true);
-      Buffer.DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
+      FONT->Printf(&Buffer, Pos.X, Pos.Y, TopicColor, "%s %d", Topic.c_str(), StartValue);
+      FONT->Printf(&Buffer, Pos.X + (Topic.length() << 3) + 8, Pos.Y + 1, TopicColor, "_");
+      Buffer.DrawHorizontalLine(Pos.X + 1, Pos.X + 201, Pos.Y + 15, Color2, false);
+      Buffer.DrawVerticalLine(Pos.X + 201, Pos.Y + 12, Pos.Y + 18, Color2, false);
+      Buffer.DrawHorizontalLine(Pos.X + 1, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
+      Buffer.DrawVerticalLine(Pos.X + 1, Pos.Y + 12, Pos.Y + 18, Color1, true);
+      Buffer.DrawVerticalLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.Y + 18, Color1, true);
       Buffer.FadeToScreen();
     }
 
@@ -345,11 +346,11 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 	  FONT->Printf(DOUBLE_BUFFER, Pos.X + ((Topic.length() + Input.length()) << 3) + 8, Pos.Y + 1, TopicColor, "_");
 	}
       
-      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
-      DOUBLE_BUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
-      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
-      DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 12, Pos.X + 1, Pos.Y + 18, Color1, true);
-      DOUBLE_BUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
+      DOUBLE_BUFFER->DrawHorizontalLine(Pos.X + 1, Pos.X + 201, Pos.Y + 15, Color2, false);
+      DOUBLE_BUFFER->DrawVerticalLine(Pos.X + 201, Pos.Y + 12, Pos.Y + 18, Color2, false);
+      DOUBLE_BUFFER->DrawHorizontalLine(Pos.X + 1, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
+      DOUBLE_BUFFER->DrawVerticalLine(Pos.X + 1, Pos.Y + 12, Pos.Y + 18, Color1, true);
+      DOUBLE_BUFFER->DrawVerticalLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
       while(!isdigit(LastKey) && LastKey != KEY_ESC && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != KEY_SPACE && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
@@ -493,3 +494,4 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
   return Buffer.GetEntry(Check);
 #endif
 }
+

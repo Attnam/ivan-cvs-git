@@ -1940,7 +1940,7 @@ mistress
 		RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
 		RightBoot = ANGEL_HAIR boot { Enchantment = 4; }
 		RightWielded = SPIDER_SILK whipofthievery { Enchantment = 5; }
-		LeftWielded = SPIDER_SILK whipofthievery { Enchantment = 5; }
+		LeftWielded = SPIDER_SILK chameleonwhip { Enchantment = 5; }
 		RightRing = ring(RING_OF_FIRE_RESISTANCE);
 		LeftRing = ring(RING_OF_POISON_RESISTANCE);
 		CWeaponSkillHits == 5000;
@@ -2296,13 +2296,13 @@ mammoth
 {
 	DefaultArmStrength = 80;
 	DefaultAgility = 20;
-	DefaultEndurance = 20;
+	DefaultEndurance = 15;
 	DefaultPerception = 18;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 7;
 	DefaultCharisma = 10;
 	DefaultMana = 0;
-	TotalVolume = 2500000;
+	TotalVolume = 2000000;
 	TorsoBitmapPos = 528, 0;
 	HostileReplies == "@Dd roars furiously.";
 	FriendlyReplies == "@Dd roars kindly.";
@@ -3105,7 +3105,7 @@ eddy
 	HostileReplies == "The @du twirls angrily.";
 	FriendlyReplies == "The @du twirls faster for a moment.";
 	TotalSize = 100;
-	/* SkinColor overridden */
+	SkinColor = rgb16(200, 200, 112);
 	NameSingular = "eddy";
 	NamePlural = "eddies";
 	PostFix = "in space-time continuum";

@@ -201,11 +201,10 @@ void configuration::ShowConfigScreen()
 	  break;
 #endif
 	default:
+	  Save();
 	  return;
 	}
     }
-
-  Save();
 }
 
 void configuration::SetDefaultName(const std::string& What)

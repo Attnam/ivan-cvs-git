@@ -3223,11 +3223,11 @@ void character::DrawPanel(bool AnimationDraw) const
       return;
     }
 
-  DOUBLE_BUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
+  DOUBLE_BUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES_X - 19 - (game::GetScreenSize().X << 4), RES_Y, 0);
   DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenSize().Y << 4), game::GetScreenSize().X << 4, 9, 0);
   FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenSize().Y << 4), WHITE, "%s", GetPanelName().c_str());
 
-  ushort PanelPosX = RES.X - 96;
+  ushort PanelPosX = RES_X - 96;
   ushort PanelPosY = DrawStats(false);
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
@@ -5404,3 +5404,4 @@ void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
   ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
   CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
 }
+

@@ -11,11 +11,12 @@
 
 #include <string>
 
-#include "vector2d.h"
+#include "typedef.h"
 #include "felibdef.h"
 
 #define DOUBLE_BUFFER graphics::GetDoubleBuffer()
-#define RES graphics::GetRes()
+#define RES_X graphics::GetResX()
+#define RES_Y graphics::GetResY()
 #define FONT graphics::GetDefaultFont()
 
 class bitmap;
@@ -33,9 +34,10 @@ class graphics
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
-  static void SetMode(const char*, const char*, vector2d, bool);
+  static void SetMode(const char*, const char*, ushort, ushort, bool);
   static void BlitDBToScreen();
-  static vector2d GetRes() { return Res; }
+  static ushort GetResX() { return ResX; }
+  static ushort GetResY() { return ResY; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(const std::string&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
@@ -98,7 +100,8 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static vector2d Res;
+  static ushort ResX;
+  static ushort ResY;
   static uchar ColorDepth;
   static colorizablebitmap* DefaultFont;
 };

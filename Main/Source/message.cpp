@@ -94,7 +94,7 @@ void msgsystem::Draw()
 {
   bool WasInBigMessageMode = BigMessageMode;
   LeaveBigMessageMode();
-  MessageHistory.QuickDraw(vector2d(13, RES.Y - 122), (game::GetScreenSize().X << 4) + 6, 8);
+  MessageHistory.QuickDraw(vector2d(13, RES_Y - 122), (game::GetScreenSize().X << 4) + 6, 8);
 
   if(WasInBigMessageMode)
     EnterBigMessageMode();
@@ -147,3 +147,4 @@ void msgsystem::LeaveBigMessageMode()
       BigMessage.resize(0);
     }
 }
+

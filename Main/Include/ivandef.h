@@ -14,7 +14,7 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#define IVAN_VERSION "0.401"
+#define IVAN_VERSION "0.402"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }

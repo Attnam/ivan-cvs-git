@@ -61,7 +61,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /Ob2 /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -148,10 +148,6 @@ SOURCE=.\FeLib\Source\save.cpp
 
 SOURCE=.\FeLib\Source\whandler.cpp
 # End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Source\winblit.cpp
-# End Source File
 # End Group
 # Begin Group "Include"
 
@@ -163,10 +159,6 @@ SOURCE=.\FeLib\Include\allocate.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\bitmap.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Include\blit.h
 # End Source File
 # Begin Source File
 

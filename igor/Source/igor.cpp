@@ -48,7 +48,7 @@ int Main(int, char**)
   OConfigFile.close();
 
   graphics::Init();
-  graphics::SetMode("IGOR 1.203", 0, vector2d(800, 600), true);
+  graphics::SetMode("IGOR 1.203", 0, 800, 600, true);
   graphics::LoadDefaultFont(Directory + "Font.pcx");
   DOUBLE_BUFFER->Fill(0);
 
@@ -186,9 +186,9 @@ int Main(int, char**)
       DOUBLE_BUFFER->Fill(0);
       DOUBLE_BUFFER->Fill(0, 0, CBitmap->GetSize(), 0xF81F);
       CBitmap->MaskedBlit(DOUBLE_BUFFER, 0, 0, 0, 0, CBitmap->GetSize(), Color);
-      DOUBLE_BUFFER->DrawRectangle(RES.X - STRETCH * 16 - 12, RES.Y - STRETCH * 16 - 12, RES.X - 9, RES.Y - 9, DARK_GRAY, true);
-      DOUBLE_BUFFER->DrawRectangle(RES.X - STRETCH * 32 - 22, RES.Y - STRETCH * 16 - 12, RES.X - STRETCH * 16 - 19, RES.Y - 9, DARK_GRAY, true);
-      DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, Cursor, RES.X - STRETCH * 16 - 10, RES.Y - STRETCH * 16 - 10, 16, 16, STRETCH);
+      DOUBLE_BUFFER->DrawRectangle(RES_X - STRETCH * 16 - 12, RES_Y - STRETCH * 16 - 12, RES_X - 9, RES_Y - 9, DARK_GRAY, true);
+      DOUBLE_BUFFER->DrawRectangle(RES_X - STRETCH * 32 - 22, RES_Y - STRETCH * 16 - 12, RES_X - STRETCH * 16 - 19, RES_Y - 9, DARK_GRAY, true);
+      DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, Cursor, RES_X - STRETCH * 16 - 10, RES_Y - STRETCH * 16 - 10, 16, 16, STRETCH);
       FONT->Printf(DOUBLE_BUFFER, 10, 480, WHITE, "Control cursor: wasd and WASD");
       FONT->Printf(DOUBLE_BUFFER, 10, 490, WHITE, "Select m-color: 1-4");
       FONT->Printf(DOUBLE_BUFFER, 10, 500, WHITE, "Safely alter gradient: ±");
@@ -202,7 +202,7 @@ int Main(int, char**)
 
       for(c = 0; c < DrawQueue.size(); ++c)
 	{
-	  DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], RES.X - STRETCH * 32 - 20, RES.Y - STRETCH * 16 - 10, 16, 16, STRETCH);
+	  DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, DrawQueue[c], RES_X - STRETCH * 32 - 20, RES_Y - STRETCH * 16 - 10, 16, 16, STRETCH);
 	  CursorBitmap.MaskedBlit(DOUBLE_BUFFER, 0, 0, DrawQueue[c], 16, 16);
 	}
 
@@ -213,3 +213,4 @@ int Main(int, char**)
 
   return 1;
 }
+

@@ -146,12 +146,12 @@ ushort felist::Draw()
   if(globalwindowhandler::ControlLoopsInstalled())
     globalwindowhandler::InstallControlLoop(FelistDrawController);
 
-  bitmap BackGround(RES);
+  bitmap BackGround(RES_X, RES_Y);
   bitmap* Buffer;
 
   if(Flags & FADE)
     {
-      Buffer = new bitmap(RES, 0);
+      Buffer = new bitmap(RES_X, RES_Y, 0);
       BackGround.Fill(0);
     }
   else

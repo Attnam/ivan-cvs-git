@@ -7,6 +7,14 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed asm
+
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Configuration can again be saved
+
 February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a bug in the Igor's savefile code

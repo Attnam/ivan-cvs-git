@@ -5,7 +5,6 @@
 #include "graphics.h"
 #include "save.h"
 #include "allocate.h"
-#include "blit.h"
 #include "femath.h"
 
 bitmap* CurrentSprite;
@@ -187,10 +186,11 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
   if(Y + Height > YSize)
     Height = YSize - Y;
 
-  ulong TrueOffset = ulong(&GetImage()[Y][X]);
-  ulong TrueXMove = (XSize - Width) << 1;
+  ushort** Image = GetImage();
 
-  ::Fill(TrueOffset, TrueXMove, Width, Height, Color);
+  for(ushort y = 0; y < Height; ++y)
+    for(ushort* Ptr = &Image[Y + y][X], x = 0; x < Width; ++x, ++Ptr)
+      *Ptr = Color;
 }
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
@@ -217,76 +217,139 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
     return;
 
   Flags &= 0x7;
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
 
   switch(Flags)
     {
     case NONE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	BlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case MIRROR:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	BlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+	DestX += Width - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case FLIP:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	BlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	BlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+	DestX += Width - 1;
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case ROTATE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	BlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+	DestX += Width - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	BlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	BlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+	DestX += Width - 1;
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	BlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      *DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
     }
@@ -318,11 +381,23 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
-  ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-  BlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance);
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
+
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
+
+  for(ushort y = 0; y < Height; ++y)
+    {
+      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	*DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
+			     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
+			     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+    }
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
@@ -349,77 +424,147 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
     return;
 
   Flags &= 0x7;
-
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
 
   switch(Flags)
     {
     case NONE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	MaskedBlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case MIRROR:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	MaskedBlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case FLIP:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	MaskedBlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	MaskedBlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case ROTATE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	MaskedBlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	MaskedBlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	MaskedBlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	MaskedBlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = *SrcPtr;
+	  }
+
 	break;
       }
     }
@@ -451,11 +596,24 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
-  ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-  MaskedBlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance, MaskColor);
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
+
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
+
+  for(ushort y = 0; y < Height; ++y)
+    {
+      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	if(*SrcPtr != MaskColor)
+	  *DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
+			       Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
+			       Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+    }
 }
 
 void bitmap::SimpleAlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
@@ -484,11 +642,21 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ush
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
-  ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-  ::SimpleAlphaBlit(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Alpha, MaskColor);
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
+  uchar NegAlpha = 0xFF - Alpha;
+
+  for(ushort y = 0; y < Height; ++y)
+    {
+      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	if(*SrcPtr != MaskColor)
+	  *DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * Alpha + GetRed16(*DestPtr) * NegAlpha,
+					     GetGreen16(*SrcPtr) * Alpha + GetGreen16(*DestPtr) * NegAlpha,
+					     GetBlue16(*SrcPtr) * Alpha + GetBlue16(*DestPtr) * NegAlpha);
+    }
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
@@ -521,78 +689,172 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
     return;
 
   Flags &= 0x7;
-
-  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
-  ulong TrueSourceXMove = (XSize - Width) << 1;
-  ulong AlphaMapOffset = ulong(&GetAlphaMap()[SourceY][SourceX]);
+  ushort** SrcImage = GetImage();
+  ushort** DestImage = Bitmap->GetImage();
+  uchar** AlphaMap = GetAlphaMap();
 
   switch(Flags)
     {
     case NONE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	AlphaBlitNoFlags(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case MIRROR:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	AlphaBlitMirror(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY + y][DestX];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case FLIP:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
-	AlphaBlitFlip(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-	AlphaBlitMirrorFlip(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	DestY += Height - 1;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY - y][DestX];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case ROTATE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	AlphaBlitRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case (MIRROR | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	AlphaBlitMirrorRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case (FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
-	AlphaBlitFlipRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestX += Width - 1;
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX - y];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
 
     case (MIRROR | FLIP | ROTATE):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
-	ulong TrueDestXMove = Bitmap->XSize << 1;
-	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
-	AlphaBlitMirrorFlipRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	DestY += Height - 1;
+	ulong TrueDestXMove = Bitmap->XSize;
+
+	for(ushort y = 0; y < Height; ++y)
+	  {
+	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    ushort* DestPtr = &DestImage[DestY][DestX + y];
+	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+
+	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
+	      if(*SrcPtr != MaskColor)
+		*DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetGreen16(*SrcPtr) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+						   GetBlue16(*SrcPtr) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
+	  }
+
 	break;
       }
     }
@@ -606,17 +868,172 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
       return;
     }
 
-  ushort ThisXSize = XSize, ThisYSize = YSize;
-  ulong Pitch = XSize << 1, Surface = ulong(GetImage()[0]);
-  static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
+  if(OrigFromY == OrigToY)
+    DrawHorizontalLine(OrigFromX, OrigToX, OrigFromY, Color, Wide);
 
-  for(ushort c = 0; c < (Wide ? 5 : 1); ++c)
+  if(OrigFromX == OrigToX)
+    DrawVerticalLine(OrigFromX, OrigFromY, OrigToY, Color, Wide);
+
+  static short PointX[] = { 0, 0, -1, 1, 0 };
+  static short PointY[] = { 0, -1, 0, 0, 1 };
+  ushort Times = Wide ? 5 : 1;
+
+  for(ushort c = 0; c < Times; ++c)
     {
-      ushort FromX = OrigFromX + Point[c].X;
-      ushort FromY = OrigFromY + Point[c].Y;
-      ushort ToX = OrigToX + Point[c].X;
-      ushort ToY = OrigToY + Point[c].Y;
-      ::DrawLine(Surface, Pitch, FromX, FromY, ToX, ToY, ThisXSize, ThisYSize, Color);
+      short FromX = OrigFromX + PointX[c];
+      short FromY = OrigFromY + PointY[c];
+      short ToX = OrigToX + PointX[c];
+      short ToY = OrigToY + PointY[c];
+      short DistaX = ToX - FromX;
+      short DistaY = ToY - FromY;
+
+      if(DistaX < 0)
+	DistaX = -DistaX;
+
+      if(DistaY < 0)
+	DistaY = -DistaY;
+
+      if(DistaX >= DistaY)
+	{
+	  if(FromX > ToX)
+	    {
+	      Swap(FromX, ToX);
+	      Swap(FromY, ToY);
+	    }
+
+	  /* FromY may be negative, so using &GetImage()[FromY][FromX] is a bad idea */
+
+	  ushort* Ptr = &GetImage()[0][0] + FromY * XSize + FromX;
+	  short UFO = (DistaX >> 1) + 1;
+	  short YMove, PtrYMove;
+
+	  if(FromY <= ToY)
+	    {
+	      YMove = 1;
+	      PtrYMove = XSize;
+	    }
+	  else
+	    {
+	      YMove = -1;
+	      PtrYMove = -XSize;
+	    }
+
+	  for(short x = FromX, y = FromY, c = 0; x <= ToX; ++x, ++Ptr, c += DistaY)
+	    {
+	      if(c >= UFO)
+		{
+		  c -= DistaX;
+		  y += YMove;
+		  Ptr += PtrYMove;
+		}
+
+	      if(IsValidPos(x, y))
+		*Ptr = Color;
+	    }
+	}
+      else
+	{
+	  if(FromY > ToY)
+	    {
+	      Swap(FromX, ToX);
+	      Swap(FromY, ToY);
+	    }
+
+	  /* FromY may be negative, so using &GetImage()[FromY][FromX] is a bad idea */
+
+	  ushort* Ptr = &GetImage()[0][0] + FromY * XSize + FromX;
+	  short UFO = (DistaY >> 1) + 1;
+	  short XMove = FromX <= ToX ? 1 : -1;
+
+	  for(short x = FromX, y = FromY, c = 0; y <= ToY; ++y, Ptr += XSize, c += DistaX)
+	    {
+	      if(c >= UFO)
+		{
+		  c -= DistaY;
+		  x += XMove;
+		  Ptr += XMove;
+		}
+
+	      if(IsValidPos(x, y))
+		*Ptr = Color;
+	    }
+	}
+    }
+}
+
+void bitmap::DrawVerticalLine(ushort OrigX, ushort OrigFromY, ushort OrigToY, ushort Color, bool Wide)
+{
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->DrawVerticalLine(GetXPos() + OrigX, GetYPos() + OrigFromY, GetYPos() + OrigToY, Color, Wide);
+      return;
+    }
+
+  static short PointX[] = { 0, -1, 1 };
+  ushort Times = Wide ? 3 : 1;
+
+  for(ushort c = 0; c < Times; ++c)
+    {
+      short X = OrigX + PointX[c];
+      short FromY = OrigFromY;
+      short ToY = OrigToY;
+
+      if(FromY > ToY)
+	Swap(FromY, ToY);
+
+      if(Wide && !c)
+	{
+	  --FromY;
+	  ++ToY;
+	}
+
+      if(X < 0 || X >= XSize || ToY < 0 || FromY >= YSize)
+	continue;
+
+      FromY = Max<short>(FromY, 0);
+      ToY = Min<short>(ToY, YSize);
+      ushort* Ptr = &GetImage()[FromY][X];
+
+      for(short y = FromY; y <= ToY; ++y, Ptr += XSize)
+	*Ptr = Color;
+    }
+}
+
+void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, ushort Color, bool Wide)
+{
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->DrawVerticalLine(GetXPos() + OrigFromX, GetXPos() + OrigToX, GetYPos() + OrigY, Color, Wide);
+      return;
+    }
+
+  static short PointY[] = { 0, -1, 1 };
+  ushort Times = Wide ? 3 : 1;
+
+  for(ushort c = 0; c < Times; ++c)
+    {
+      short Y = OrigY + PointY[c];
+      short FromX = OrigFromX;
+      short ToX = OrigToX;
+
+      if(FromX > ToX)
+	Swap(FromX, ToX);
+
+      if(Wide && !c)
+	{
+	  --FromX;
+	  ++ToX;
+	}
+
+      if(Y < 0 || Y >= YSize || ToX < 0 || FromX >= XSize)
+	continue;
+
+      FromX = Max<short>(FromX, 0);
+      ToX = Min<short>(ToX, XSize);
+      ushort* Ptr = &GetImage()[Y][FromX];
+
+      for(short x = FromX; x <= ToX; ++x, ++Ptr)
+	*Ptr = Color;
     }
 }
 
@@ -721,26 +1138,24 @@ void bitmap::Outline(ushort Color)
   if(!IsIndependent)
     ABORT("Subbitmap outline request detected!");
 
-  ulong Buffer;
   ushort LastColor, NextColor;
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      Buffer = ulong(&GetImage()[0][x]);
-
-      LastColor = *reinterpret_cast<ushort*>(Buffer);
+      ushort* Buffer = &GetImage()[0][x];
+      LastColor = *Buffer;
 
       for(ushort y = 0; y < YSize - 1; ++y)
 	{
-	  NextColor = *reinterpret_cast<ushort*>(Buffer + (XSize << 1));
+	  NextColor = *(Buffer + XSize);
 
 	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
-	    *reinterpret_cast<ushort*>(Buffer) = Color;
+	    *Buffer = Color;
 
-	  Buffer += XSize << 1;
+	  Buffer += XSize;
 
 	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
-	    *reinterpret_cast<ushort*>(Buffer) = Color;
+	    *Buffer = Color;
 
 	  LastColor = NextColor;
 	}
@@ -748,20 +1163,20 @@ void bitmap::Outline(ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      Buffer = ulong(GetImage()[y]);
-      LastColor = *reinterpret_cast<ushort*>(Buffer);
+      ushort* Buffer = GetImage()[y];
+      LastColor = *Buffer;
 
       for(ushort x = 0; x < XSize - 1; ++x)
 	{
-	  NextColor = *reinterpret_cast<ushort*>(Buffer + 2);
+	  NextColor = *(Buffer + 1);
 
 	  if((LastColor == TRANSPARENT_COLOR || !x) && NextColor != TRANSPARENT_COLOR)
-	    *reinterpret_cast<ushort*>(Buffer) = Color;
+	    *Buffer = Color;
 
-	  Buffer += 2;
+	  ++Buffer;
 
 	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || x == XSize - 2))
-	    *reinterpret_cast<ushort*>(Buffer) = Color;
+	    *Buffer = Color;
 
 	  LastColor = NextColor;
 	}
@@ -777,22 +1192,22 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      ulong SrcBuffer = ulong(&GetImage()[0][x]);
-      ulong DestBuffer = ulong(&Bitmap->GetImage()[0][x]);
-      ushort LastColor = *reinterpret_cast<ushort*>(SrcBuffer);
+      ushort* SrcBuffer = &GetImage()[0][x];
+      ushort* DestBuffer = &Bitmap->GetImage()[0][x];
+      ushort LastColor = *SrcBuffer;
 
       for(ushort y = 0; y < YSize - 1; ++y)
 	{
-	  ushort NextColor = *reinterpret_cast<ushort*>(SrcBuffer + (XSize << 1));
+	  ushort NextColor = *(SrcBuffer + XSize);
 
 	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
-	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
+	    *DestBuffer = Color;
 
-	  SrcBuffer += XSize << 1;
-	  DestBuffer += Bitmap->XSize << 1;
+	  SrcBuffer += XSize;
+	  DestBuffer += Bitmap->XSize;
 
 	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
-	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
+	    *DestBuffer = Color;
 
 	  LastColor = NextColor;
 	}
@@ -800,57 +1215,29 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      ulong SrcBuffer = ulong(GetImage()[y]);
-      ulong DestBuffer = ulong(Bitmap->GetImage()[y]);
-      ushort LastSrcColor = *reinterpret_cast<ushort*>(SrcBuffer);
-      ushort LastDestColor = *reinterpret_cast<ushort*>(DestBuffer);
+      ushort* SrcBuffer = GetImage()[y];
+      ushort* DestBuffer = Bitmap->GetImage()[y];
+      ushort LastSrcColor = *SrcBuffer;
+      ushort LastDestColor = *DestBuffer;
 
       for(ushort x = 0; x < XSize - 1; ++x)
 	{
-	  ushort NextSrcColor = *reinterpret_cast<ushort*>(SrcBuffer + 2);
-	  ushort NextDestColor = *reinterpret_cast<ushort*>(DestBuffer + 2);
+	  ushort NextSrcColor = *(SrcBuffer + 1);
+	  ushort NextDestColor = *(DestBuffer + 1);
 
 	  if((LastSrcColor == TRANSPARENT_COLOR || !x) && (NextSrcColor != TRANSPARENT_COLOR || NextDestColor != TRANSPARENT_COLOR))
-	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
+	    *DestBuffer = Color;
 
-	  SrcBuffer += 2;
-	  DestBuffer += 2;
+	  ++SrcBuffer;
+	  ++DestBuffer;
 
 	  if((LastSrcColor != TRANSPARENT_COLOR || LastDestColor != TRANSPARENT_COLOR) && (NextSrcColor == TRANSPARENT_COLOR || x == XSize - 2))
-	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
+	    *DestBuffer = Color;
 
 	  LastSrcColor = NextSrcColor;
 	  LastDestColor = NextDestColor;
 	}
     }
-}
-
-void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
-{
-  bitmap Backup(RES);
-  DOUBLE_BUFFER->Blit(&Backup);
-
-  for(ushort c = 0; c <= 5; ++c)
-    {
-      clock_t StartTime = clock();
-      ushort Element = 127 - c * 25;
-      Backup.MaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
-
-      if(BitmapEditor)
-	BitmapEditor(this);
-
-      SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
-      graphics::BlitDBToScreen();
-      while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
-    }
-
-  DOUBLE_BUFFER->Fill(0);
-
-  if(BitmapEditor)
-    BitmapEditor(this);
-
-  MaskedBlit(DOUBLE_BUFFER, uchar(0), 0);
-  graphics::BlitDBToScreen();
 }
 
 void bitmap::ResetAlpha(ushort X, ushort Y)
@@ -898,17 +1285,32 @@ uchar bitmap::GetAlpha(ushort X, ushort Y) const
     return GetMotherBitmap()->GetAlpha(GetXPos() + X, GetYPos() + Y);
 }
 
-void bitmap::FillWithGradient(ushort X, ushort Y, ushort Width, ushort Height, ushort Color1, ushort Color2)
+void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
 {
-  for(ushort x = 0; x < Width; ++x)
-    for(ushort y = 0; y < Height; ++y)
-      {
-	float Multiplier = (float(x) / Width + float(y) / Height) / 2;
+  bitmap Backup(RES_X, RES_Y);
+  DOUBLE_BUFFER->Blit(&Backup);
 
-	PutPixel(X + x, Y + y, MakeRGB16(ushort(GetRed16(Color1) * (1.0f - Multiplier) + GetRed16(Color2) * Multiplier),
-					ushort(GetGreen16(Color1) * (1.0f - Multiplier) + GetGreen16(Color2) * Multiplier),
-					ushort(GetBlue16(Color1) * (1.0f - Multiplier) + GetBlue16(Color2) * Multiplier)));
-      }
+  for(ushort c = 0; c <= 5; ++c)
+    {
+      clock_t StartTime = clock();
+      ushort Element = 127 - c * 25;
+      Backup.MaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
+
+      if(BitmapEditor)
+	BitmapEditor(this);
+
+      SimpleAlphaBlit(DOUBLE_BUFFER, c * 50, 0);
+      graphics::BlitDBToScreen();
+      while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
+    }
+
+  DOUBLE_BUFFER->Fill(0);
+
+  if(BitmapEditor)
+    BitmapEditor(this);
+
+  MaskedBlit(DOUBLE_BUFFER, uchar(0), 0);
+  graphics::BlitDBToScreen();
 }
 
 void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, char Stretch) const
@@ -1007,10 +1409,10 @@ inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
 
 void bitmap::DrawRectangle(ushort Left, ushort Top, ushort Right, ushort Bottom, ushort Color, bool Wide)
 {
-  DrawLine(Left, Top, Right, Top, Color, Wide);
-  DrawLine(Right, Top, Right, Bottom, Color, Wide);
-  DrawLine(Right, Bottom, Left, Bottom, Color, Wide);
-  DrawLine(Left, Bottom, Left, Top, Color, Wide);
+  DrawHorizontalLine(Left, Right, Top, Color, Wide);
+  DrawHorizontalLine(Left, Right, Bottom, Color, Wide);
+  DrawVerticalLine(Right, Top, Bottom, Color, Wide);
+  DrawVerticalLine(Left, Top, Bottom, Color, Wide);
 }
 
 void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
@@ -1061,35 +1463,9 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
-	  {
-	    ushort Red = GetRed16(*SrcPtr) + RedLuminance;
-
-	    if(Red & 0x8000)
-	      Red = 0;
-
-	    if(Red > 0xFF)
-	      Red = 0xFF;
-
-	    ushort Green = GetGreen16(*SrcPtr) + GreenLuminance;
-
-	    if(Green & 0x8000)
-	      Green = 0;
-
-	    if(Green > 0xFF)
-	      Green = 0xFF;
-
-	    ushort Blue = GetBlue16(*SrcPtr) + BlueLuminance;
-
-	    if(Blue & 0x8000)
-	      Blue = 0;
-
-	    if(Blue > 0xFF)
-	      Blue = 0xFF;
-
-	    *DestPtr = ((Red * (*AlphaPtr) + GetRed16(*DestPtr) * (255 - (*AlphaPtr))) & 0xF800)
-		     | ((Green * (*AlphaPtr) + GetGreen16(*DestPtr) * (255 - (*AlphaPtr))) >> 5 & 0x7E0)
-		     | ((Blue * (*AlphaPtr) + GetBlue16(*DestPtr) * (255 - (*AlphaPtr))) >> 11);
-	  }
+	  *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (0xFF - (*AlphaPtr)),
+					     Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (0xFF - (*AlphaPtr)),
+					     Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (0xFF - (*AlphaPtr)));
     }
 }
 

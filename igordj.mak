@@ -6,7 +6,6 @@ AR       = ar rs
 CC       = gcc -o
 FeLibDIR = FeLib
 FeLibOBJ = $(FeLibDIR)/Source/bitmap.o $(FeLibDIR)/Source/colorbit.o $(FeLibDIR)/Source/error.o $(FeLibDIR)/Source/feio.o $(FeLibDIR)/Source/felist.o $(FeLibDIR)/Source/femain.o $(FeLibDIR)/Source/femath.o $(FeLibDIR)/Source/festring.o $(FeLibDIR)/Source/graphics.o $(FeLibDIR)/Source/hscore.o $(FeLibDIR)/Source/save.o $(FeLibDIR)/Source/whandler.o
-FeLibASM = $(FeLibDIR)/Source/gccblit.o
 IGORDIR  = Igor
 IGORBIN  = Igor.exe
 IGOROBJ  = $(IGORDIR)/Source/igor.o
@@ -19,14 +18,10 @@ $(FeLibOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeLibASM) : %.o : %.s
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
 $(IGOROBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS) -I$(IGORDIR)/Include
 
-$(IGORBIN) : $(FeLibOBJ) $(FeLibASM) $(IGOROBJ)
+$(IGORBIN) : $(FeLibOBJ) $(IGOROBJ)
 	@echo Compiling $(IGORBIN)...
-	@$(CC) $(IGORBIN) $(FeLibOBJ) $(FeLibASM) $(IGOROBJ) $(FLAGS) $(LIBS)
+	@$(CC) $(IGORBIN) $(FeLibOBJ) $(IGOROBJ) $(FLAGS) $(LIBS)
