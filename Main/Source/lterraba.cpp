@@ -134,7 +134,7 @@ vector2d lterrain::GetPos() const
 
 bool lterrain::SitOn(character* Sitter)
 {
-  if(GetSitMessage() != "")
+  if(GetSitMessage().length())
     {
       ADD_MESSAGE("%s", GetSitMessage().c_str());
       Sitter->EditAP(-1000);
@@ -216,7 +216,7 @@ void olterrain::InstallDataBase()
 
 void olterrain::ShowRestMessage(character*) const
 {
-  if(GetRestMessage() != "")
+  if(GetRestMessage().length())
     ADD_MESSAGE("%s", GetRestMessage().c_str());
 }
 

@@ -87,13 +87,14 @@ class object : public entity, public id
   virtual uchar GetAlphaB(ushort) const { return 255; }
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
-  virtual std::string GetMaterialDescription(bool) const;
+  virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
   virtual void InstallDataBase() = 0;
-  std::string ContainerPostFix() const;
-  std::string LumpyPostFix() const;
+  void AddContainerPostFix(std::string&) const;
+  void AddLumpyPostFix(std::string&) const;
+  bool AddEmptyAdjective(std::string&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
   void RandomizeVisualEffects();
   material* MainMaterial;

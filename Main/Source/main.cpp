@@ -89,7 +89,7 @@ int Main(int argc, char **argv)
 	{
 	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, LIGHTGRAY, SAVE_DIR);
 
-	  if(LoadName != "")
+	  if(LoadName.length())
 	    {
 	      LoadName.resize(LoadName.size() - 4);
 

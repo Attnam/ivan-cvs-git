@@ -22,21 +22,23 @@ class id
 #ifdef VC
   virtual void ThisFunctionIsHereBecauseMicrosoftIsEvilAndVCGeneratesAnInternalCompilerErrorIfGetNameIsTheFirstVirtualFunctionHere(YesThisIsNotAJoke) { }
 #endif
+  virtual void AddName(std::string&, uchar) const;
   virtual std::string GetName(uchar) const;
  protected:
-  virtual std::string GetNameSingular() const = 0;
-  virtual std::string GetNameSingular(bool) const;
-  virtual std::string GetNamePlural() const { return GetNameSingular() + "s"; }
-  virtual std::string GetArticle() const { return "a"; }
-  virtual std::string GetAdjective(bool) const;
-  virtual std::string GetAdjective() const { return ""; }
-  virtual std::string GetAdjectiveArticle() const { return "a"; }
-  virtual std::string GetMaterialDescription(bool) const = 0;
-  virtual std::string GetPostFix() const { return ""; }
+  virtual const std::string& GetNameSingular() const = 0;
+  virtual void AddNameSingular(std::string&, bool) const;
+  virtual const std::string& GetNamePlural() const = 0;
+  virtual const std::string& GetArticle() const = 0;// { return "a"; }
+  virtual bool AddAdjective(std::string&, bool) const;
+  virtual const std::string& GetAdjective() const = 0; //{ return ""; }
+  virtual const std::string& GetAdjectiveArticle() const = 0;// { return "a"; }
+  virtual bool AddMaterialDescription(std::string&, bool) const = 0;
+  virtual const std::string& GetPostFix() const = 0; //{ return ""; }
+  virtual void AddPostFix(std::string&) const;
   virtual uchar GetArticleMode() const { return NORMALARTICLE; }
   virtual bool ShowMaterial() const { return false; }
-  virtual std::string GetDivineMasterDescription(uchar) const;
-  virtual std::string GetLockPostFix(uchar) const;
+  virtual void AddDivineMasterDescription(std::string&, uchar) const;
+  virtual void AddLockPostFix(std::string&, uchar) const;
 };
 
 #endif

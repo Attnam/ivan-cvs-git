@@ -74,11 +74,9 @@ class lterrain : public object
   virtual bool CanBeSeenBy(character*) const;
   virtual const std::string& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-
   virtual square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const;
-
  protected:
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool) { }
@@ -124,14 +122,13 @@ class glterrain : public lterrain, public gterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-
   DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  DATABASEVALUE(std::string, Article);
-  DATABASEVALUE(std::string, Adjective);
-  DATABASEVALUE(std::string, AdjectiveArticle);
-  DATABASEVALUE(std::string, NameSingular);
-  DATABASEVALUE(std::string, NamePlural);
-  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(const std::string&, Article);
+  DATABASEVALUE(const std::string&, Adjective);
+  DATABASEVALUE(const std::string&, AdjectiveArticle);
+  DATABASEVALUE(const std::string&, NameSingular);
+  DATABASEVALUE(const std::string&, NamePlural);
+  DATABASEVALUE(const std::string&, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
   DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
@@ -146,9 +143,7 @@ class glterrain : public lterrain, public gterrain
   DATABASEVALUE(ulong, DefaultSecondaryVolume);
   DATABASEVALUE(ulong, DefaultContainedVolume);
   DATABASEBOOL(ShowMaterial);
-
   static glterrain* Clone(ushort, bool, bool) { return 0; }
-
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
@@ -197,7 +192,6 @@ class olterrain : public lterrain, public oterrain
   virtual void Load(inputfile&);
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual void BeKicked(character*, float) { }
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
@@ -216,14 +210,13 @@ class olterrain : public lterrain, public oterrain
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   virtual void ShowRestMessage(character*) const;
-
   DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
-  DATABASEVALUE(std::string, Article);
-  DATABASEVALUE(std::string, Adjective);
-  DATABASEVALUE(std::string, AdjectiveArticle);
-  DATABASEVALUE(std::string, NameSingular);
-  DATABASEVALUE(std::string, NamePlural);
-  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(const std::string&, Article);
+  DATABASEVALUE(const std::string&, Adjective);
+  DATABASEVALUE(const std::string&, AdjectiveArticle);
+  DATABASEVALUE(const std::string&, NameSingular);
+  DATABASEVALUE(const std::string&, NamePlural);
+  DATABASEVALUE(const std::string&, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
   DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);
@@ -238,15 +231,12 @@ class olterrain : public lterrain, public oterrain
   DATABASEVALUE(ulong, DefaultSecondaryVolume);
   DATABASEVALUE(ulong, DefaultContainedVolume);
   DATABASEBOOL(ShowMaterial);
-
-  DATABASEVALUE(std::string, DigMessage);
+  DATABASEVALUE(const std::string&, DigMessage);
   DATABASEBOOL(CanBeDug);
   DATABASEBOOL(IsSafeToDestroy);
   DATABASEVALUE(uchar, RestModifier);
-  DATABASEVALUE(std::string, RestMessage);
-
+  DATABASEVALUE(const std::string&, RestMessage);
   static olterrain* Clone(ushort, bool, bool) { return 0; }
-
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }

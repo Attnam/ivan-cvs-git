@@ -240,12 +240,12 @@ class item : public object
   DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
   DATABASEVALUE(ulong, Price);
   DATABASEVALUE(ushort, BaseEmitation);
-  DATABASEVALUE(std::string, Article);
-  DATABASEVALUE(std::string, Adjective);
-  DATABASEVALUE(std::string, AdjectiveArticle);
-  DATABASEVALUE(std::string, NameSingular);
-  DATABASEVALUE(std::string, NamePlural);
-  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(const std::string&, Article);
+  DATABASEVALUE(const std::string&, Adjective);
+  DATABASEVALUE(const std::string&, AdjectiveArticle);
+  DATABASEVALUE(const std::string&, NameSingular);
+  DATABASEVALUE(const std::string&, NamePlural);
+  DATABASEVALUE(const std::string&, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
   DATABASEVALUE(const std::vector<long>&, MainMaterialConfig);
   DATABASEVALUE(const std::vector<long>&, SecondaryMaterialConfig);

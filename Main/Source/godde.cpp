@@ -118,7 +118,7 @@ void seges::PrayGoodEffect()
 	{
 	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
 	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());  
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
 	}
       else
 	{
@@ -417,7 +417,8 @@ void loricatus::PrayGoodEffect()
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	std::string OldName = game::GetPlayer()->GetMainWielded()->GetName(UNARTICLED);
+	std::string OldName;
+	game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
 	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
@@ -435,7 +436,7 @@ void loricatus::PrayBadEffect()
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	OldName = game::GetPlayer()->GetMainWielded()->GetName(UNARTICLED);
+	game::GetPlayer()->GetMainWielded()->AddName(OldName, UNARTICLED);
 	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(BANANAFLESH));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
       }

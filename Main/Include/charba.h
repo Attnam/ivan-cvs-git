@@ -349,7 +349,8 @@ class character : public entity, public id
   virtual std::string PossessivePronoun() const;
   virtual std::string ObjectPronoun() const;
   virtual bool BodyPartCanBeSevered(ushort) const;
-  virtual std::string GetName(uchar) const;
+  //virtual std::string GetName(uchar) const;
+  virtual void AddName(std::string&, uchar) const;
   virtual void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
@@ -479,12 +480,12 @@ class character : public entity, public id
   DATABASEVALUE(uchar, LeftLegBonePercentile);
   DATABASEBOOL(IsNameable);
   DATABASEVALUE(ushort, BaseEmitation);
-  DATABASEVALUE(std::string, Article);
-  DATABASEVALUE(std::string, Adjective);
-  DATABASEVALUE(std::string, AdjectiveArticle);
-  DATABASEVALUE(std::string, NameSingular);
-  DATABASEVALUE(std::string, NamePlural);
-  DATABASEVALUE(std::string, PostFix);
+  DATABASEVALUE(const std::string&, Article);
+  DATABASEVALUE(const std::string&, Adjective);
+  DATABASEVALUE(const std::string&, AdjectiveArticle);
+  DATABASEVALUE(const std::string&, NameSingular);
+  DATABASEVALUE(const std::string&, NamePlural);
+  DATABASEVALUE(const std::string&, PostFix);
   DATABASEVALUE(uchar, ArticleMode);
   DATABASEBOOL(IsPolymorphable);
   DATABASEVALUE(ulong, UnarmedStrength);
@@ -497,7 +498,6 @@ class character : public entity, public id
   DATABASEVALUE(ushort, ClassStates);
   DATABASEBOOL(CanBeWished);
   DATABASEVALUE(const std::vector<std::string>&, Alias);
-
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -534,7 +534,6 @@ class character : public entity, public id
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
   virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
   virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
-
   virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
@@ -544,7 +543,6 @@ class character : public entity, public id
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
   ushort GetConfig() const { return Config; }
-
   virtual void BeginTemporaryState(ushort, ushort);
   virtual void GainIntrinsic(ushort What) { BeginTemporaryState(What, 0); }
   virtual void LoseIntrinsic(ushort);
@@ -584,7 +582,7 @@ class character : public entity, public id
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   virtual void AttachBodyPart(bodypart*, ushort);
-  virtual uchar BodyParts() const { return 1; }
+  virtual uchar GetBodyParts() const { return 1; }
   virtual bool HasAllBodyParts() const;
   virtual stackiterator FindRandomOwnBodyPart();
   virtual bodypart* GenerateRandomBodyPart();
@@ -599,12 +597,10 @@ class character : public entity, public id
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
   void SetConfig(ushort);
   virtual god* GetMasterGod() const;
-
   virtual square* GetSquareUnder() const { return SquareUnder; }
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const;
   wsquare* GetWSquareUnder() const;
-
   virtual void PoisonedHandler();
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
@@ -618,7 +614,6 @@ class character : public entity, public id
   virtual ushort GetBodyPartColorC(ushort, ushort);
   virtual ushort GetBodyPartColorD(ushort, ushort);
   virtual ushort GetBodyPartAnimationFrames(ushort) const { return 1; }
-
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort);
   virtual uchar GetBodyPartBonePercentile(ushort);
@@ -628,7 +623,7 @@ class character : public entity, public id
   virtual void CreateBodyParts();
   virtual material* CreateBodyPartFlesh(ushort, ulong) const = 0;
   virtual material* CreateBodyPartBone(ushort, ulong) const;
-  virtual std::string GetMaterialDescription(bool) const;
+  virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual bool ShowClassDescription() const { return true; }
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -676,17 +671,17 @@ class character : public entity, public id
   item* StuckTo; // Bad naming. Sorry.
   ushort BaseAttribute[BASEATTRIBUTES];
   long BaseExperience[BASEATTRIBUTES];
-  static std::string StateDescription[STATES];
   ulong* OriginalBodyPartID;
   entity* MotherEntity;
   character* PolymorphBackup;
   gweaponskill** CategoryWeaponSkill;
   ushort EquipmentState;
-  static void (character::*PrintBeginStateMessage[STATES])() const;
-  static void (character::*PrintEndStateMessage[STATES])() const;
-  static void (character::*BeginStateHandler[STATES])();
-  static void (character::*EndStateHandler[STATES])();
-  static void (character::*StateHandler[STATES])();
+  static void (character::*PrintBeginStateMessage[])() const;
+  static void (character::*PrintEndStateMessage[])() const;
+  static void (character::*BeginStateHandler[])();
+  static void (character::*EndStateHandler[])();
+  static void (character::*StateHandler[])();
+  static std::string StateDescription[];
   square* SquareUnder;
 };
 

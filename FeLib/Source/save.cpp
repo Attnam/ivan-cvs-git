@@ -384,7 +384,7 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
       String = Buffer;
     }
   else
-    String = "";
+    String.resize(0);
 
   return SaveFile;
 }

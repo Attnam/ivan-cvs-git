@@ -1,78 +1,77 @@
 #include "id.h"
 #include "game.h"
 #include "godba.h"
+#include "stdover.h"
 
-std::string id::GetNameSingular(bool Articled) const
+void id::AddNameSingular(std::string& String, bool Articled) const
 {
   if(Articled)
-    return GetArticle() + " " + GetNameSingular();
-  else
-    return GetNameSingular();
+    String << GetArticle() << " ";
+
+  String << GetNameSingular();
 }
 
-std::string id::GetDivineMasterDescription(uchar DivineMaster) const
+void id::AddName(std::string& Name, uchar Case) const
 {
-  return DivineMaster ? "of " + game::GetGod(DivineMaster)->Name() : "";
-}
-
-std::string id::GetName(uchar Case) const
-{
-  std::string Name;
   bool Articled;
 
   if((Case & ARTICLEBIT) && (GetArticleMode() == DEFINITEARTICLE || (GetArticleMode() == NORMALARTICLE && !(Case & INDEFINEBIT))))
     {
-      Name += "the ";
+      Name << "the ";
       Articled = false;
     }
   else
     Articled = !(Case & PLURAL) && (Case & ARTICLEBIT) && (Case & INDEFINEBIT) && GetArticleMode() != NOARTICLE;
 
-  std::string AF = GetAdjective(Articled);
+  if(AddAdjective(Name, Articled))
+    Articled = false;
 
-  if(AF != "")
-    {
-      Name += AF + " ";
-      Articled = false;
-    }
+  if(ShowMaterial() && AddMaterialDescription(Name, Articled))
+    Articled = false;
 
-  if(ShowMaterial())
-    {
-      std::string MD = GetMaterialDescription(Articled);
+  if(Case & PLURAL)
+    Name << GetNamePlural();
+  else
+    AddNameSingular(Name, Articled);
 
-      if(MD != "")
-	{
-	  Name += MD + " ";
-	  Articled = false;
-	}
-    }
+  AddPostFix(Name);
+}
 
-  Name += Case & PLURAL ? GetNamePlural() : GetNameSingular(Articled);
-
-  std::string PoF = GetPostFix();
-
-  if(PoF != "")
-    Name += " " + PoF;
-
+std::string id::GetName(uchar Case) const
+{
+  std::string Name;
+  AddName(Name, Case);
   return Name;
 }
 
-std::string id::GetAdjective(bool Articled) const
+bool id::AddAdjective(std::string& String, bool Articled) const
 {
-  if(GetAdjective() != "")
+  if(GetAdjective().length())
     {
       if(Articled)
-	return GetAdjectiveArticle() + " " + GetAdjective();
-      else
-	return GetAdjective();
+	String << GetAdjectiveArticle() << " ";
+
+      String << GetAdjective() << " ";
+      return true;
     }
   else
-    return "";
+    return false;
 }
 
-std::string id::GetLockPostFix(uchar LockType) const
+void id::AddPostFix(std::string& String) const
+{
+  if(GetPostFix().length())
+    String << " " << GetPostFix();
+}
+
+void id::AddLockPostFix(std::string& String, uchar LockType) const
 {
   /* doesn't yet support other locktype articles than "a" */
 
-  return "with a " + game::GetLockDescription(LockType) + " lock";
+  String << " with a " << game::GetLockDescription(LockType) << " lock";
+}
+
+void id::AddDivineMasterDescription(std::string& String, uchar DivineMaster) const
+{
+  String << " of " << game::GetGod(DivineMaster)->Name();
 }

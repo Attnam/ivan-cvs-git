@@ -123,12 +123,10 @@ class ABSTRACT_CHARACTER
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
   virtual bool EquipmentEasilyRecognized(ushort) const;
-
   virtual sweaponskill* GetCurrentRightSingleWeaponSkill() const { return CurrentRightSingleWeaponSkill; }
   virtual void SetCurrentRightSingleWeaponSkill(sweaponskill* What) { CurrentRightSingleWeaponSkill = What; }
   virtual sweaponskill* GetCurrentLeftSingleWeaponSkill() const { return CurrentLeftSingleWeaponSkill; }
   virtual void SetCurrentLeftSingleWeaponSkill(sweaponskill* What) { CurrentLeftSingleWeaponSkill = What; }
-
   virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
   virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
   virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
@@ -137,8 +135,7 @@ class ABSTRACT_CHARACTER
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-
-  virtual uchar BodyParts() const { return HUMANOID_BODYPARTS; }
+  virtual uchar GetBodyParts() const { return HUMANOID_BODYPARTS; }
   virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -207,7 +204,6 @@ class CHARACTER
   virtual void SetTotalSize(ushort What) { TotalSize = What; }
  protected:
   virtual void VirtualConstructor(bool);
-  //virtual std::string NameSingular() const { return "human"; }
   ushort TotalSize;
 );
 
@@ -1253,7 +1249,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " leaves this mortal plane behind."; }
   virtual void CreateCorpse() { SendToHell(); }
-  virtual std::string GetPostFix() const { return GetDivineMasterDescription(GetConfig()); }
+  virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
   virtual void GetAICommand();
   ushort HealTimer;
 );

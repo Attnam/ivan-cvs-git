@@ -362,7 +362,7 @@ Dungeon 0;
 
 			Square, Pos 3,1;
 			{
-				OTerrain = IRON altar;
+				OTerrain = IRON altar(erado);
 			}
 
 			Square, Pos 3,3;
@@ -482,11 +482,6 @@ Dungeon 1;
 			IsWorldMapEntry=true;
 		}
 
-		Square, Pos 29,60;
-		{
-			Character=unicorn;
-		}
-
 		/*Square, Pos 30,60;
 		{
 			Character=angel(silva);
@@ -582,7 +577,7 @@ Dungeon 1;
 					# = VALPURIUM wall(BRICK_FINE);
 					T = throne;
 					c = decoration(CARPET);
-					A = VALPURIUM altar;
+					A = VALPURIUM altar(valpurus);
 					D = VALPURIUM door;
 					L = VALPURIUM door { Parameters = LOCKED; }
 					b = decoration(LINDEN);
@@ -852,7 +847,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = GOLD altar;
+				OTerrain = GOLD altar(venius);
 			}
 
 			Square, Pos 2, 3;
@@ -878,7 +873,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = MARBLE altar;
+				OTerrain = MARBLE altar(dulcis);
 			}
 
 			Square, Pos 1, 2;
@@ -904,7 +899,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = BANANAFLESH altar;
+				OTerrain = BANANAFLESH altar(seges);
 			}
 
 			Square, Pos 3, 2;
@@ -930,7 +925,7 @@ Dungeon 1;
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = PARCHMENT altar;
+				OTerrain = PARCHMENT altar(consummo);
 			}
 
 			Square, Pos 2, 1;

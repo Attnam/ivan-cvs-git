@@ -30,7 +30,7 @@ std::string wterrain::Name(uchar Case) const
       if(!(Case & INDEFINEBIT))
 	return "the " + GetNameStem();
       else
-	return GetArticle() + " " + GetNameStem();
+	return (LongerArticle() ? "an " : "a ") + GetNameStem();
   else
     if(!(Case & ARTICLEBIT))
       return GetNameStem() + " terrains";

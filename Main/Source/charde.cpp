@@ -279,7 +279,7 @@ void petrus::HealFully(character* ToBeHealed)
 	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
 	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
 	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), OldOwnBodyPart->GetNameSingular().c_str());  
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), OldOwnBodyPart->GetNameSingular().c_str());
 	}
     }
 }
@@ -767,7 +767,7 @@ void priest::BeTalkedTo(character* Talker)
       return;
     }
 
-  for(ushort c = 0; c < Talker->BodyParts(); ++c)
+  for(ushort c = 0; c < Talker->GetBodyParts(); ++c)
     if(!Talker->GetBodyPart(c))
       {
 	ushort OriginalID = Talker->GetOriginalBodyPartID(c);
@@ -2239,7 +2239,7 @@ void humanoid::CompleteRiseFromTheDead()
 {
   ushort c;
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
 	stack* Stack = GetLSquareUnder()->GetStack();
@@ -2272,7 +2272,7 @@ void humanoid::CompleteRiseFromTheDead()
 	    }
       }
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     {
       if(BodyPartVital(c) && !GetBodyPart(c))
 	if(!HandleNoBodyPart(c))
@@ -3339,23 +3339,24 @@ void angel::GetAICommand()
   humanoid::GetAICommand();
 }
 
-/* Returns true if the angel founds somebody near to heal else false */
+/* Returns true if the angel finds somebody near to heal else false */
 bool angel::AttachBodyPartsOfFriendsNear()
 {
   std::vector<character*> HurtFriends = GetFriendsAround();
   std::vector<character*> Temp;
 
   /* 
-     Now analize HurtFriendsAround for really hurt friends and delete unhurt onesd and 
+     Now analyze HurtFriendsAround for really hurt friends and delete unhurt ones and 
      check whether the HurtFriends are curable (ie. they have one of their bodyparts in their stack)
    */
+
   std::vector<character*>::iterator i;
 
   for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
-    if(!(*i)->HasAllBodyParts() && !((*i)->FindRandomOwnBodyPart() == 0))
-	Temp.push_back(*i);
-  HurtFriends.swap(Temp);
+    if(!(*i)->HasAllBodyParts() && (*i)->FindRandomOwnBodyPart() != 0)
+      Temp.push_back(*i);
 
+  HurtFriends.swap(Temp);
  
   /* Now if there are no friends left return false */
   if(HurtFriends.empty())
@@ -3363,6 +3364,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
 
   /* Check whether the player is in the list */
   character* TheOneWhoWillBeCured = 0;
+
   for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
     if(!(*i)->IsPlayer())
       {

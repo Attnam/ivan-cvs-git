@@ -31,7 +31,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   ushort c;
 
-  if(Buffer == "")
+  if(!Buffer.length())
     ABORT("Empty message request!");
 
   if(Buffer == LastMessage)
@@ -115,7 +115,7 @@ void msgsystem::DrawMessageHistory()
 void msgsystem::Format()
 {
   MessageHistory.Empty();
-  LastMessage = "";
+  LastMessage.resize(0);
 }
 
 void msgsystem::Save(outputfile& SaveFile)

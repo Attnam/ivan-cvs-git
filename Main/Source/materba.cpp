@@ -4,11 +4,20 @@
 #include "femath.h"
 #include "save.h"
 #include "proto.h"
+#include "stdover.h"
+
+void material::AddName(std::string& Name, bool Articled, bool Adjective) const
+{
+  if(Articled)
+    Name << GetArticle() << " ";
+
+  Name << (Adjective ? GetAdjectiveStem() : GetNameStem());
+}
 
 std::string material::GetName(bool Articled, bool Adjective) const
 {
-  std::string Name = Articled ? GetArticle() + " " : "";
-  Name += Adjective ? GetAdjectiveStem() : GetNameStem();
+  std::string Name;
+  AddName(Name, Articled, Adjective);
   return Name;
 }
 

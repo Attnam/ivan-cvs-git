@@ -31,6 +31,7 @@ LTERRAIN_PROTOTYPE(olterrain, 0, olterrain);
 #include "config.h"
 #include "itemba.h"
 #include "save.h"
+#include "stdover.h"
 
 bool door::Open(character* Opener)
 {
@@ -368,19 +369,19 @@ void altar::ReceiveVomit(character* Who)
     GetMasterGod()->PlayerVomitedOnAltar();
 }
 
-std::string door::GetAdjective(bool Articled) const
+bool door::AddAdjective(std::string& String, bool Articled) const
 {
-  std::string Adj;
-
   if(Articled)
-    Adj = std::string(Opened ? "an open" : "a closed");
+    String << (Opened ? "an open" : "a closed");
   else
-    Adj = std::string(Opened ? "open" : "closed");
+    String << (Opened ? "open" : "closed");
 
   if(IsLocked())
-    Adj += ", locked";
+    String << ", locked ";
+  else
+    String << " ";
 
-  return Adj;
+  return true;
 }
 
 void stairsup::StepOn(character* Stepper)
@@ -867,4 +868,15 @@ void fountain::GenerateMaterials()
   ushort Chosen = RandomizeMaterialConfiguration();
   InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
   InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+}
+
+bool fountain::AddAdjective(std::string& String, bool Articled) const
+{
+  if(!GetContainedMaterial())
+    {
+      String += Articled ? "a dried out" : "dried out";
+      return true;
+    }
+  else
+    return false;
 }

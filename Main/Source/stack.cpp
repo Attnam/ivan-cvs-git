@@ -481,7 +481,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
 	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->IsVisible())
 	  {
-	    if(!DescDrawn && Desc != "")
+	    if(!DescDrawn && Desc.length())
 	      {
 		if(!ItemNames.IsEmpty())
 		  ItemNames.AddEntry("", WHITE, 0, false);
@@ -497,7 +497,8 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 		CatDescDrawn = true;
 	      }
 
-	    std::string Buffer = (**i)->GetName(INDEFINITE);
+	    std::string Buffer;
+	    (**i)->AddName(Buffer, INDEFINITE);
 
 	    if(Buffer.length() > 44)
 	      {

@@ -94,9 +94,8 @@ class ITEM
   virtual item* BetterVersion() const;
   virtual void GenerateLeftOvers(character*);
  protected:
-  virtual std::string GetPostFix() const { return ContainerPostFix(); }
-  virtual std::string GetAdjective() const { return !GetContainedMaterial() ? "empty" : ""; }
-  virtual std::string GetAdjectiveArticle() const { return "an"; }
+  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
 );
 
@@ -110,7 +109,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); }
   virtual bool IsDipDestination(const character*) const { return true; }
  protected:
-  virtual std::string GetPostFix() const { return LumpyPostFix(); }
+  virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -182,7 +181,7 @@ class ITEM
  public:
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string GetNameSingular() const;
+  virtual const std::string& GetNameSingular() const;
 );
 
 class ITEM
@@ -209,9 +208,8 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string GetPostFix() const { return ContainerPostFix(); }
-  virtual std::string GetAdjective() const { return !GetContainedMaterial() ? "empty" : ""; }
-  virtual std::string GetAdjectiveArticle() const { return "an"; }
+  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 );
 
 class ITEM
@@ -301,7 +299,7 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial() ? GetMainMaterial()->RawPrice() : 0; }
  protected:
-  virtual std::string GetPostFix() const { return LumpyPostFix(); }
+  virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -343,7 +341,7 @@ class ABSTRACT_ITEM
  protected:
   virtual ushort GetBeamColor() const { return WHITE; }
   virtual void VirtualConstructor(bool);
-  virtual std::string GetPostFix() const;
+  virtual void AddPostFix(std::string&) const;
   uchar Charges;
   uchar TimesUsed;
 );
@@ -452,7 +450,7 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
-  virtual std::string GetPostFix() const { return ContainerPostFix(); }
+  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
 );
 
 class ITEM
@@ -467,7 +465,7 @@ class ITEM
   virtual void FinishReading(character*);
  protected:
   virtual ushort GetMaterialColorA(ushort) const;
-  virtual std::string GetPostFix() const { return GetDivineMasterDescription(GetConfig()); }
+  virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
   virtual bool ShowMaterial() const { return false; }
 );
 
@@ -594,7 +592,7 @@ class ITEM
   virtual bool CanOpenDoors() const { return true; }
   virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
  protected:
-  virtual std::string GetAdjective() const;
+  virtual const std::string& GetAdjective() const;
   virtual void VirtualConstructor(bool);
   uchar LockType;
 );
@@ -716,7 +714,7 @@ class ABSTRACT_ITEM
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
-  virtual std::string GetPostFix() const { return GetOwnerDescription(); }
+  virtual void GetPostFix(std::string&) const;
   virtual bool ShowMaterial() const { return false; }
   virtual uchar GetArticleMode() const { return Unique ? DEFINITEARTICLE : NORMALARTICLE; }
   virtual ushort GetMaterialColorA(ushort) const;
@@ -1006,7 +1004,7 @@ class ITEM
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaA(ushort) const;
   virtual bool ShowMaterial() const { return false; }
-  virtual std::string GetPostFix() const;
+  virtual void AddPostFix(std::string&) const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual ushort GetSize() const;
   character* Deceased;
@@ -1078,7 +1076,7 @@ class ITEM
   virtual bool FitsIn(item*) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(80, 80, 80); }
-  virtual std::string GetPostFix() const { return GetLockPostFix(LockType); }
+  virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;
   stack* Contained;

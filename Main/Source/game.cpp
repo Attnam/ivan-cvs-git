@@ -60,13 +60,11 @@ worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
-//character* game::PlayerBackup;
 uchar game::CurrentDungeon;
 ulong game::NextItemID = 1;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
-//bool game::AnimationControllerActive = true;
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
 ushort game::CurrentEmitterEmitation;
@@ -136,8 +134,8 @@ command* game::Command[] =
   0
 };
 
-int game::MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS] = { 0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.' };
-const vector2d game::MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
+int game::MoveCommandKey[] = { 0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.' };
+const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable;
@@ -170,12 +168,12 @@ bool game::Init(const std::string& Name)
 {
   std::string PlayerName;
 
-  if(Name == "")
-    if(configuration::GetDefaultName() == "")
+  if(!Name.length())
+    if(!configuration::GetDefaultName().length())
       {
 	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
 
-	if(PlayerName == "")
+	if(!PlayerName.length())
 	  return false;
       }
     else
@@ -568,10 +566,10 @@ std::string game::SaveName(const std::string& Base)
 {
   std::string SaveName = SAVE_DIR;
 
-  if(Base == "")
-    SaveName += game::GetPlayer()->GetAssignedName();
+  if(!Base.length())
+    SaveName << game::GetPlayer()->GetAssignedName();
   else
-    SaveName += Base;
+    SaveName << Base;
 
   for(ushort c = 0; c < SaveName.length(); ++c)
     if(SaveName[c] == ' ')
@@ -748,7 +746,7 @@ void game::TriggerQuestForGoldenEagleShirt()
   GetDungeon(0)->PrepareLevel(6);
   GetDungeon(0)->GetLevel(6)->CreateStairs(false);
 
-  if(GetDungeon(0)->GetLevel(6)->GetLevelMessage() == "")
+  if(!GetDungeon(0)->GetLevel(6)->GetLevelMessage().length())
     GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
 
   GetDungeon(0)->SaveLevel(SaveName(), 6);
@@ -1322,7 +1320,7 @@ void game::LookHandler(vector2d CursorPos)
       else
 	Msg = "You remember here ";
 
-      Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() + ".";
+      Msg << game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() << ".";
     }
   else
     Msg = "You have never been here.";
@@ -1333,7 +1331,7 @@ void game::LookHandler(vector2d CursorPos)
     Character->DisplayInfo(Msg);
 
   if(game::WizardModeActivated())
-    Msg += std::string(" (") + CursorPos.X + ", " + CursorPos.Y + ")";
+    Msg << " (" << CursorPos.X << ", " << CursorPos.Y << ")";
 
   ADD_MESSAGE("%s", Msg.c_str());
 
@@ -1441,7 +1439,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	{
 	  character* Char = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-	  if(Char && Char->CanBeSeenByPlayer())
+	  if(Char && (Char->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
 	    Char->PrintInfo();
 	  else
 	    ADD_MESSAGE("You see no one here.");
@@ -1471,7 +1469,7 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
 	      std::string Topic = "What name will you give to " + Character->GetName(UNARTICLED) + "?";
 	      std::string Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
 
-	      if(Name != "")
+	      if(Name.length())
 		Character->SetAssignedName(Name);
 	    }
 	}

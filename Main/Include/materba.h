@@ -84,6 +84,7 @@ class material
   material(ushort Config) : MotherEntity(0), Volume(0), Weight(0), Config(Config) { InstallDataBase(); }
   material(donothing) : MotherEntity(0), Volume(0), Weight(0), Config(0) { }
   virtual ~material() { }
+  virtual void AddName(std::string&, bool = false, bool = true) const;
   virtual std::string GetName(bool = false, bool = true) const;
   ulong GetVolume() const { return Volume; }
   virtual ushort TakeDipVolumeAway();

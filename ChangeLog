@@ -1,3 +1,15 @@
+July 8 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* BodyParts() search & replaced with GetBodyParts()
+	* If SeeWholeMapCheat is active, character look info is now available even if the target can't be seen
+	* Name functions are now much faster
+	* New, *yet* faster techniques for string handling are available:
+	  * AddName(String, Case); which is much faster than String += GetName(Case);
+	  * String << AnotherString << Int << CString << Etc; which is much faster than
+	    String += AnotherString + Int + CString + Etc; (you must #include "stdover.h" though)
+	* Script generated altars again randomize their divine owner correctly
+	* Attnam's and level 10's altars are again owned correctly
+
 July 8 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* snake added (although it doesn't work)

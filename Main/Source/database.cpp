@@ -37,7 +37,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	  if(Word == "Config")
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber(game::GetGlobalValueMap());
-	      typename type::database TempDataBase = Proto->DataBase;
+	      typename type::database TempDataBase(Proto->DataBase);
 	      TempDataBase.InitDefaults();
 
 	      if(SaveFile.ReadWord() != "{")
@@ -60,7 +60,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
-		typename type::database TempDataBase = Proto->DataBase;
+		typename type::database TempDataBase(Proto->DataBase);
 		TempDataBase.InitDefaults();
 		Proto->Config[c] = TempDataBase;
 	      }

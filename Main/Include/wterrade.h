@@ -15,7 +15,7 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual std::string GetNameStem() const { return "ocean"; }
-  virtual std::string GetArticle() const { return "an"; }
+  virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(208, 64); }
   virtual uchar Priority() const { return 10; }
   virtual bool IsWalkable(character*) const;
@@ -89,7 +89,7 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual std::string GetNameStem() const { return "evergreen forest"; }
-  virtual std::string GetArticle() const { return "an"; }
+  virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(352, 16); }
   virtual uchar Priority() const { return 70; }
 );
@@ -110,7 +110,7 @@ class OWTERRAIN
   owterrain,
  public:
   virtual std::string GetNameStem() const { return "atmosphere"; }
-  virtual std::string GetArticle() const { return "an"; }
+  virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(208, 256); }
 );
 

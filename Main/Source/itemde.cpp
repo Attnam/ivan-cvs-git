@@ -195,7 +195,7 @@ bool pickaxe::Apply(character* User)
       else
 	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
     else
-      ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
+      ADD_MESSAGE(Square->GetOLTerrain()->GetDigMessage().c_str());
 
   return false;
 }
@@ -596,11 +596,10 @@ bool wand::ReceiveDamage(character* Damager, short, uchar Type)
   if((Type == FIRE && !(RAND() % 10)) || (Type == ENERGY && !(RAND() % 10)))
     {
       std::string DeathMsg = "explosion of ";
+      DeathMsg << GetName(INDEFINITE);
 
       if(Damager)
-	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
-      else
-	DeathMsg += GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -620,11 +619,10 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
   if((Type == FIRE && !(RAND() % 3)) || (Type == ENERGY && RAND() % 3))
     {
       std::string DeathMsg = "explosion of ";
+      DeathMsg << GetName(INDEFINITE);
 
       if(Damager)
-	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
-      else
-	DeathMsg += GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -639,14 +637,14 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
   return false;
 }
 
-std::string wand::GetPostFix() const
+void wand::AddPostFix(std::string& String) const
 {
-  if(!TimesUsed)
-    return item::GetPostFix();
-  else if(TimesUsed == 1)
-    return item::GetPostFix() + " (used 1 time)";
-  else
-    return item::GetPostFix() + " (used " + TimesUsed + " times)";
+  String << " " << item::GetPostFix();
+
+  if(TimesUsed == 1)
+    String += " (used 1 time)";
+  else if(TimesUsed)
+    String += std::string(" (used ") + TimesUsed + " times)";
 }
 
 bool scroll::ReceiveDamage(character*, short, uchar Type)
@@ -1275,11 +1273,10 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
   if((Type == FIRE && !(RAND() % 2)) || (Type == ENERGY && !(RAND() % 2)))
     {
       std::string DeathMsg = "explosion of ";
+      DeathMsg << GetName(INDEFINITE);
 
       if(Damager)
-	DeathMsg += GetName(INDEFINITE) + " caused by " + Damager->GetName(INDEFINITE);
-      else
-	DeathMsg += GetName(INDEFINITE);
+	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
@@ -1550,9 +1547,9 @@ void corpse::Load(inputfile& SaveFile)
   EditWeight(Deceased->GetWeight());
 }
 
-std::string corpse::GetPostFix() const
+void corpse::AddPostFix(std::string& String) const
 {
-  return "of " + GetDeceased()->GetName(INDEFINITE);
+  String += "of " + GetDeceased()->GetName(INDEFINITE);
 }
 
 bool corpse::Consume(character* Eater, long Amount)
@@ -1574,7 +1571,7 @@ ushort corpse::GetEmitation() const
 
 bool corpse::IsConsumable(const character* Eater) const
 {
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsConsumable(Eater))
       return true;
 
@@ -1585,7 +1582,7 @@ short corpse::CalculateOfferValue(char GodAlignment) const
 {
   short OfferValue = 0;
 
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
       OfferValue += GetDeceased()->GetBodyPart(c)->CalculateOfferValue(GodAlignment);
 
@@ -1599,7 +1596,7 @@ float corpse::GetWeaponStrength() const
 
 bool corpse::IsBadFoodForAI(character* Eater) const
 {
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsBadFoodForAI(Eater))
       return true;
 
@@ -1824,7 +1821,7 @@ long corpse::Score() const
 {
   long Score = 0;
 
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
       Score += GetDeceased()->GetBodyPart(c)->GetScore();
 
@@ -1833,7 +1830,7 @@ long corpse::Score() const
 
 bool corpse::IsDestroyable() const
 {
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->IsDestroyable())
       return false;
 
@@ -1844,7 +1841,7 @@ ulong corpse::Price() const
 {
   ulong Price = 0;
 
-  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
       Price += GetDeceased()->GetBodyPart(c)->GetPrice();
 
@@ -1853,7 +1850,7 @@ ulong corpse::Price() const
 
 item* corpse::PrepareForConsuming(character*)
 {
-  for(ushort c = GetDeceased()->BodyParts() - 1; c != 0; --c)
+  for(ushort c = GetDeceased()->GetBodyParts() - 1; c != 0; --c)
     {
       bodypart* BPart = GetDeceased()->GetBodyPart(c);
 
@@ -2202,12 +2199,20 @@ void wandofresurrection::VirtualConstructor(bool Load)
     SetCharges(1 + RAND() % 2);
 }
 
-std::string platemail::GetNameSingular() const
+const std::string& platemail::GetNameSingular() const
 {
-  if(GetMainMaterial() && GetMainMaterial()->IsFlexible()) 
-    return "armor";
+  /* Fast, but really unelegant... */
+
+  if(GetMainMaterial() && GetMainMaterial()->IsFlexible())
+    {
+      static std::string Armor = "armor";
+      return Armor;
+    }
   else
-    return "plate mail"; 
+    {
+      static std::string PlateMail = "plate mail";
+      return PlateMail;
+    }
 }
 
 bool whistle::Apply(character* Whistler) 
@@ -2633,7 +2638,12 @@ chest::~chest()
   delete Contained;
 }
 
-std::string key::GetAdjective() const
+/*void key::AddAdjective(std::string& String) const
+{
+  String +
+}*/
+
+const std::string& key::GetAdjective() const
 {
   return game::GetLockDescription(LockType);
 }
@@ -3031,3 +3041,7 @@ uchar lantern::GetSpecialFlags(ushort) const
     }
 }
 
+void bodypart::GetPostFix(std::string& String) const
+{
+  String << " " << OwnerDescription;
+}

@@ -29,8 +29,9 @@ class wterrain
   virtual bool IsAnimated() const { return false; }
  protected:
   virtual void VirtualConstructor() { }
-  virtual std::string GetNameStem() const = 0;
-  virtual std::string GetArticle() const { return "a"; }
+  virtual std::string GetNameStem() const = 0; // should be const std::string&
+  //virtual const char* GetArticle() const { return "a"; }
+  virtual bool LongerArticle() const { return false; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
   wsquare* WSquareUnder;
 };

@@ -67,9 +67,9 @@ class OLTERRAIN
   virtual void SetParameters(uchar);
   virtual void Lock() { SetIsLocked(true); }
  protected:
-  virtual std::string GetPostFix() const { return GetLockPostFix(LockType); }
+  virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
-  virtual std::string GetAdjective(bool) const;
+  virtual bool AddAdjective(std::string&, bool) const;
   virtual void Break();
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, IsWalkable() ? 48 : 176); }
   virtual void MakeWalkable();
@@ -113,7 +113,7 @@ class OLTERRAIN
   virtual bool SitOn(character*);
   virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
-  virtual std::string GetPostFix() const { return GetDivineMasterDescription(GetConfig()); }
+  virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
 );
 
 class OLTERRAIN
@@ -154,8 +154,8 @@ class OLTERRAIN
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
-  virtual std::string GetPostFix() const { return ContainerPostFix(); }
-  virtual std::string GetAdjective() const { return GetContainedMaterial() ? "" : "dried out"; }
+  virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
+  virtual bool AddAdjective(std::string&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
   material* ContainedMaterial;
 );

@@ -175,8 +175,8 @@ class game
   static std::vector<god*> God;
   static ushort Current;
   static uchar CurrentDungeon;
-  static int MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS];
-  static const vector2d MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS];
+  static int MoveCommandKey[];
+  static const vector2d MoveVector[];
   static ushort*** LuxTable;
   static ushort* LuxTableSize;
   static bool Running;

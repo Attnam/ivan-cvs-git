@@ -581,75 +581,79 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
   if(DescriptionChanged || Cheat)
     {
       if(GetLuminance() >= LIGHT_BORDER || Cheat)
-	if(GetOTerrain()->IsWalkable())
-	  {
-	    bool Anything = false;
+	{
+	  MemorizedDescription.resize(0);
 
-	    if(GetOLTerrain()->GetNameSingular() != "")
-	      {
-		SetMemorizedDescription(GetOLTerrain()->GetName(INDEFINITE));
-		Anything = true;
-	      }
+	  if(GetOTerrain()->IsWalkable())
+	    {
+	      bool Anything = false;
 
-	    ushort VisibleItems = GetStack()->GetVisibleItems();
-
-	    if(VisibleItems)
-	      {
-		if(Anything)
-		  if(VisibleItems == 1)
-		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomVisibleItem()->GetName(INDEFINITE)));
-		  else
-		    SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
-		else
-		  if(VisibleItems == 1)
-		    SetMemorizedDescription(std::string(GetStack()->GetBottomVisibleItem()->GetName(INDEFINITE)));
-		  else
-		    SetMemorizedDescription("many items");
-
-		Anything = true;
-
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->GetName(INDEFINITE));
-	      }
-	    else
-	      if(Anything)
-		SetMemorizedDescription(GetMemorizedDescription() + " on " + GetGLTerrain()->GetName(INDEFINITE));
-	      else
-		SetMemorizedDescription(GetGLTerrain()->GetName(INDEFINITE));
-	  }
-	else
-	  {
-	    uchar HasItems = 0;
-	    bool HasManyItems = false;
-
-	    for(ushort c = 0; c < 4; ++c)
-	      if(GetSideStack(c)->GetVisibleItems())
+	      if(OLTerrain->GetNameSingular().length())
 		{
-		  if(++HasItems > 1)
-		    break;
-
-		  if(GetSideStack(c)->GetVisibleItems() > 1)
-		    {
-		      HasManyItems = true;
-		      break;
-		    }
+		  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+		  Anything = true;
 		}
 
-	    if(HasItems > 1 || HasManyItems)
-	      SetMemorizedDescription("many items on " + GetOLTerrain()->GetName(INDEFINITE));
-	    else if(HasItems == 1)
+	      ushort VisibleItems = GetStack()->GetVisibleItems();
+
+	      if(VisibleItems)
+		{
+		  if(Anything)
+		    MemorizedDescription << " and ";
+
+		  if(VisibleItems == 1)
+		    GetStack()->GetBottomVisibleItem()->AddName(MemorizedDescription, INDEFINITE);
+		  else
+		    MemorizedDescription = "many items";
+
+		  MemorizedDescription << " on ";
+		  Anything = true;
+		}
+	      else if(Anything)
+		MemorizedDescription << " on ";
+
+	      GLTerrain->AddName(MemorizedDescription, INDEFINITE);
+	    }
+	  else
+	    {
+	      uchar HasItems = 0;
+	      bool HasManyItems = false;
+
 	      for(ushort c = 0; c < 4; ++c)
-		{
-		  if(GetSideStack(c)->GetVisibleItems())
-		    {
-		      SetMemorizedDescription(GetSideStack(c)->GetBottomVisibleItem()->GetName(INDEFINITE) + " on " + GetOLTerrain()->GetName(INDEFINITE));
+		if(SideStack[c]->GetVisibleItems())
+		  {
+		    if(++HasItems > 1)
 		      break;
-		    }
+
+		    if(SideStack[c]->GetVisibleItems() > 1)
+		      {
+			HasManyItems = true;
+			break;
+		      }
+		  }
+
+	      if(HasItems > 1 || HasManyItems)
+		{
+		  MemorizedDescription << "many items on ";
+		  OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 		}
-	    else
-	      SetMemorizedDescription(GetOLTerrain()->GetName(INDEFINITE));
+	      else if(HasItems == 1)
+		{
+		  for(ushort c = 0; c < 4; ++c)
+		    if(SideStack[c]->GetVisibleItems())
+		      {
+			SideStack[c]->GetBottomVisibleItem()->AddName(MemorizedDescription, INDEFINITE);
+			MemorizedDescription << " on ";
+			OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+			break;
+		      }
+		}
+	      else
+		OLTerrain->AddName(MemorizedDescription, INDEFINITE);
+	    }
 	  }
       else
-	SetMemorizedDescription("darkness");
+	MemorizedDescription = "darkness";
 
       DescriptionChanged = false;
     }

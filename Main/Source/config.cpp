@@ -140,7 +140,7 @@ void configuration::ShowConfigScreen()
 	}
 
       List.Empty();
-      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
+      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHTGRAY);
       List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
@@ -201,7 +201,7 @@ void configuration::ShowConfigScreen()
 void configuration::SetDefaultName(const std::string& What)
 {
   if(What.length() < 3)
-    DefaultName = "";
+    DefaultName.resize(0);
   else
     DefaultName = What;
 }

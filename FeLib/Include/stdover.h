@@ -111,4 +111,39 @@ inline void Capitalize(std::string& String)
     String[0] &= ~0x20;
 }
 
+inline std::string& operator<<(std::string& CppString, const char* CString)
+{
+  return CppString += CString;
+}
+
+inline std::string& operator<<(std::string& CppString1, const std::string& CppString2)
+{
+  return CppString1 += CppString2;
+}
+
+inline std::string& operator<< (std::string& CppString, const short& Int)
+{
+  return CppString += Int;
+}
+
+inline std::string& operator<< (std::string& CppString, const ushort& Int)
+{
+  return CppString += Int;
+}
+
+inline std::string& operator<< (std::string& CppString, const int& Int)
+{
+  return CppString += Int;
+}
+
+inline std::string& operator<< (std::string& CppString, const long& Int)
+{
+  return CppString += Int;
+}
+
+inline std::string& operator<< (std::string& CppString, const ulong& Int)
+{
+  return CppString += Int;
+}
+
 #endif

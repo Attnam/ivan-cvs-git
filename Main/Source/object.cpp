@@ -9,6 +9,7 @@
 #include "materba.h"
 #include "femath.h"
 #include "whandler.h"
+#include "stdover.h"
 
 object::~object()
 {
@@ -188,19 +189,23 @@ ushort object::GetMaterialColorA(ushort) const
     return 0;
 }
 
-std::string object::GetMaterialDescription(bool Articled) const
+bool object::AddMaterialDescription(std::string& String, bool Articled) const
 {
-  return GetMainMaterial()->GetName(Articled);
+  GetMainMaterial()->AddName(String, Articled);
+  String << " ";
+  return true;
 }
 
-std::string object::ContainerPostFix() const
+void object::AddContainerPostFix(std::string& String) const
 {
-  return GetContainedMaterial() ? "full of " + GetContainedMaterial()->GetName() : "";
+  if(GetContainedMaterial())
+    GetContainedMaterial()->AddName(String << " full of ");
 }
 
-std::string object::LumpyPostFix() const
+void object::AddLumpyPostFix(std::string& String) const
 {
-  return GetMainMaterial() ? "of " + GetMainMaterial()->GetName() : "";
+  if(GetMainMaterial())
+    GetMainMaterial()->AddName(String << " of ");
 }
 
 void object::CalculateEmitation()
@@ -323,4 +328,15 @@ void object::SetConfig(ushort NewConfig)
 {
   Config = NewConfig;
   InstallDataBase();
+}
+
+bool object::AddEmptyAdjective(std::string& String, bool Articled) const
+{
+  if(GetContainedMaterial())
+    return false;
+  else
+    {
+      String << (Articled ? "an empty " : "empty ");
+      return true;
+    }
 }

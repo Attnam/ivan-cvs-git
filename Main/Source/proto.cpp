@@ -11,6 +11,7 @@
 #include "game.h"
 #include "lterraba.h"
 #include "save.h"
+#include "stdover.h"
 
 template <class type> void protocontainer<type>::GenerateCodeNameMap()
 {
@@ -140,10 +141,10 @@ template <class type> uchar CountCorrectNameParts(const typename type::database&
   if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1))
     ++Counter;
 
-  if(DataBase.Adjective != "" && Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1))
+  if(DataBase.Adjective.length() && Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1))
     ++Counter;
 
-  if(DataBase.PostFix != "" && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
+  if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
     ++Counter;
 
   if(!Counter)
@@ -159,7 +160,8 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
   typedef type::prototype prototype;
   typedef type::databasemap databasemap;
 
-  std::string Identifier = " " + What + " ";
+  std::string Identifier;
+  Identifier << " " << What << " ";
   bool Illegal = false;
   std::pair<const prototype*, ushort> Id(0, 0);
   ushort Best = 0;

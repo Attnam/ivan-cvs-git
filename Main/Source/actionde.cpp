@@ -217,7 +217,7 @@ void dig::Handle()
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {
       if(Square->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s", Square->GetOLTerrain()->DigMessage().c_str());
+	ADD_MESSAGE("%s", Square->GetOLTerrain()->GetDigMessage().c_str());
 
       character* Actor = GetActor();
       Square->GetOLTerrain()->Break();

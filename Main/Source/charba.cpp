@@ -29,14 +29,19 @@
 #include "database.h"
 #include "wsquare.h"
 
-void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage };
-void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage };
-void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP };
-void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP };
-void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0 };
+/*
+ * These arrays contain functions and values used for handling states. Remember to update them.
+ * All normal states must have PrintBeginMessage and PrintEndMessage functions and a StateDescription string.
+ * BeginHandler, EndHandler and StateHandler (called each tick) are optional,
+ * enter zero if the state doesn't need one.
+ */
 
-std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
-
+void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage };
+void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage };
+void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP };
+void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP };
+void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0 };
+std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
@@ -186,12 +191,12 @@ struct svpriorityelement
 
 uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 {
-  if(BodyParts() == 1)
+  if(GetBodyParts() == 1)
     return 0;
 
   std::priority_queue<svpriorityelement> SVQueue;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       SVQueue.push(svpriorityelement(c, GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP()));
 
@@ -877,7 +882,7 @@ void character::Die(bool ForceMsg)
       while(GetStack()->GetItems())
 	GetStack()->MoveItem(GetStack()->GetBottomSlot(), Square->GetStack());
 
-      for(ushort c = 0; c < BodyParts(); ++c)
+      for(ushort c = 0; c < GetBodyParts(); ++c)
 	if(GetBodyPart(c))
 	  GetBodyPart(c)->DropEquipment();
 
@@ -892,7 +897,7 @@ void character::Die(bool ForceMsg)
     {
       /* Drops the equipment to the character's stack */
 
-      for(ushort c = 0; c < BodyParts(); ++c)
+      for(ushort c = 0; c < GetBodyParts(); ++c)
 	if(GetBodyPart(c))
 	  GetBodyPart(c)->DropEquipment();
 
@@ -948,9 +953,9 @@ void character::AddBlockMessage(character* Enemy, item* Blocker, const std::stri
   std::string BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
 
   if(Enemy->IsPlayer())
-    Msg = "You manage" + BlockVerb + " with your " + Blocker->GetName(UNARTICLED) + "!";
+    Msg << "You manage" << BlockVerb << " with your " << Blocker->GetName(UNARTICLED) << "!";
   else if(IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg = Description(DEFINITE) + " manages" + BlockVerb + " with " + PossessivePronoun() + " " + Blocker->GetName(UNARTICLED) + "!";
+    Msg << Description(DEFINITE) << " manages" << BlockVerb << " with " << PossessivePronoun() << " " << Blocker->GetName(UNARTICLED) << "!";
   else
     return;
 
@@ -963,11 +968,11 @@ void character::AddPrimitiveHitMessage(character* Enemy, const std::string& Firs
   std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in " + Enemy->GetBodyPart(BodyPart)->GetName(DEFINITE) : "";
 
   if(Enemy->IsPlayer())
-    Msg = Description(DEFINITE) + " " + ThirdPersonHitVerb + " you" + BodyPartDescription + "!";
+    Msg << Description(DEFINITE) << " " << ThirdPersonHitVerb << " you" << BodyPartDescription << "!";
   else if(IsPlayer())
-    Msg = "You " + FirstPersonHitVerb + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
+    Msg << "You " << FirstPersonHitVerb << " " << Enemy->Description(DEFINITE) << BodyPartDescription << "!";
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
-    Msg = Description(DEFINITE) + " " + ThirdPersonHitVerb + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
+    Msg << Description(DEFINITE) << " " << ThirdPersonHitVerb << " " << Enemy->Description(DEFINITE) + BodyPartDescription << "!";
   else
     return;
 
@@ -981,23 +986,23 @@ void character::AddWeaponHitMessage(character* Enemy, item* Weapon, uchar BodyPa
 
   if(Enemy->IsPlayer())
     {
-      Msg = Description(DEFINITE) + (Critical ? " critically hits you" : " hits you") + BodyPartDescription;
+      Msg << Description(DEFINITE) << (Critical ? " critically hits you" : " hits you") << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg += " with " + PossessivePronoun() + " " + Weapon->GetName(UNARTICLED);
+	Msg << " with " << PossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
 
-      Msg += "!";
+      Msg << "!";
     }
   else if(IsPlayer())
-    Msg = "You hit " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
+    Msg << "You hit " << Enemy->Description(DEFINITE) << BodyPartDescription << "!";
   else if(CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
     {
-      Msg = Description(DEFINITE) + (Critical ? " critically hits " : " hits ") + Enemy->Description(DEFINITE) + BodyPartDescription;
+      Msg << Description(DEFINITE) << (Critical ? " critically hits " : " hits ") << Enemy->Description(DEFINITE) << BodyPartDescription;
 
       if(CanBeSeenByPlayer())
-	Msg += " with " + PossessivePronoun() + " " + Weapon->GetName(UNARTICLED);
+	Msg << " with " << PossessivePronoun() << " " << Weapon->GetName(UNARTICLED);
 
-      Msg += "!";
+      Msg << "!";
     }
   else
     return;
@@ -1088,7 +1093,7 @@ bool character::NOP()
 
 void character::ApplyExperience()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->ApplyExperience();
 
@@ -1345,7 +1350,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config;
   SaveFile << HasBe();
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   if(HomeRoom)
@@ -1394,7 +1399,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config;
   SetHasBe(ReadType<bool>(SaveFile));
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     {
       SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
 
@@ -1465,7 +1470,7 @@ bool character::RaiseStats()
 {
   ushort c = 0;
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->RaiseStats();
 
@@ -1481,7 +1486,7 @@ bool character::LowerStats()
 {
   ushort c = 0;
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->LowerStats();
 
@@ -1522,7 +1527,7 @@ ushort character::GetEmitation() const
 {
   ushort Emitation = GetBaseEmitation();
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c) && GetBodyPart(c)->GetEmitation() > Emitation)
       Emitation = GetBodyPart(c)->GetEmitation();
 
@@ -1790,7 +1795,7 @@ bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
 {
   bool Dead = false;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(BodyPartVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
       {
 	Dead = true;
@@ -2173,7 +2178,7 @@ void character::DeActivateVoluntaryAction(const std::string& Reason)
     {
       if(IsPlayer())
 	{
-	  if(Reason != "")
+	  if(Reason.length())
 	    ADD_MESSAGE("%s", Reason.c_str());
 
 	  if(game::BoolQuestion("Continue " + GetAction()->GetDescription() + "? [y/N]"))
@@ -2385,7 +2390,7 @@ ulong character::CurrentDanger() const
   ulong TotalDanger = 0;
   ushort TotalWeight = 0;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
 	TotalWeight += GetBodyPart(c)->DangerWeight();
@@ -2401,7 +2406,7 @@ ulong character::MaxDanger() const
   ulong TotalDanger = 0;
   ushort TotalWeight = 0;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
 	TotalWeight += GetBodyPart(c)->DangerWeight();
@@ -2555,7 +2560,7 @@ void character::ShowNewPosInfo() const
 	    ADD_MESSAGE("%s is lying here.", GetLSquareUnder()->GetStack()->GetBottomVisibleItem()->CHARNAME(INDEFINITE));
 	}
 		
-      if(game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved() != "")
+      if(game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved().length())
 	ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved().c_str());
     }
 }
@@ -2741,26 +2746,26 @@ ushort character::DangerLevel() const
 void character::DisplayInfo(std::string& Msg)
 {
   if(IsPlayer())
-    Msg += " You are " + GetStandVerb() + " here.";
+    Msg << " You are " << GetStandVerb() << " here.";
   else
     {
-      Msg += " " + CapitalizeCopy(GetName(INDEFINITE)) + " is " + GetStandVerb() + " here. " + CapitalizeCopy(PersonalPronoun());
+      Msg << " " << CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << CapitalizeCopy(PersonalPronoun());
 
       if(GetTeam() == game::GetPlayer()->GetTeam())
-	Msg += std::string(" is at danger level ") + DangerLevel() + " and";
+	Msg << " is at danger level " << DangerLevel() << " and";
 
       if(GetTeam() == game::GetPlayer()->GetTeam())
-	Msg += " is tame.";
+	Msg << " is tame.";
       else
 	{
 	  uchar Relation = GetTeam()->GetRelation(game::GetPlayer()->GetTeam());
 
 	  if(Relation == HOSTILE)
-	    Msg += " is hostile.";
+	    Msg << " is hostile.";
 	  else if(Relation == UNCARING)
-	    Msg += " does not care about you.";
+	    Msg << " does not care about you.";
 	  else
-	    Msg += " is friendly.";
+	    Msg << " is friendly.";
 	}
     }
 }
@@ -2829,7 +2834,7 @@ void character::SetMainMaterial(material* NewMaterial)
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
   GetBodyPart(0)->SetMainMaterial(NewMaterial);
 
-  for(ushort c = 1; c < BodyParts(); ++c)
+  for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->SetMainMaterial(NewMaterial);
@@ -2841,7 +2846,7 @@ void character::ChangeMainMaterial(material* NewMaterial)
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
   GetBodyPart(0)->ChangeMainMaterial(NewMaterial);
 
-  for(ushort c = 1; c < BodyParts(); ++c)
+  for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->ChangeMainMaterial(NewMaterial);
@@ -2863,7 +2868,7 @@ void character::SetContainedMaterial(material* NewMaterial)
   NewMaterial->SetVolume(GetBodyPart(0)->GetContainedMaterial()->GetVolume());
   GetBodyPart(0)->SetContainedMaterial(NewMaterial);
 
-  for(ushort c = 1; c < BodyParts(); ++c)
+  for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
       GetBodyPart(c)->SetContainedMaterial(NewMaterial);
@@ -2875,7 +2880,7 @@ void character::ChangeContainedMaterial(material* NewMaterial)
   NewMaterial->SetVolume(GetBodyPart(0)->GetContainedMaterial()->GetVolume());
   GetBodyPart(0)->SetContainedMaterial(NewMaterial);
 
-  for(ushort c = 1; c < BodyParts(); ++c)
+  for(ushort c = 1; c < GetBodyParts(); ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetContainedMaterial()->GetVolume());
       GetBodyPart(c)->ChangeContainedMaterial(NewMaterial);
@@ -2918,7 +2923,7 @@ short character::GetHP() const
 {
   short HP = 0;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       HP += GetBodyPart(c)->GetHP();
 
@@ -2929,7 +2934,7 @@ short character::GetMaxHP() const
 {
   short HP = 0;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       HP += GetBodyPart(c)->GetMaxHP();
 
@@ -2938,7 +2943,7 @@ short character::GetMaxHP() const
 
 void character::RestoreHP()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
 }
@@ -3053,7 +3058,7 @@ bodypart* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
-  BodyPart->SetUnique(GetArticleMode() != NORMALARTICLE || AssignedName != "");
+  BodyPart->SetUnique(GetArticleMode() != NORMALARTICLE || AssignedName.length());
   BodyPart->RemoveFromSlot();
   return BodyPart;
 }
@@ -3136,22 +3141,27 @@ std::string character::ObjectPronoun() const
     return "her";
 }
 
-std::string character::GetMaterialDescription(bool Articled) const
+bool character::AddMaterialDescription(std::string& String, bool Articled) const
 {
-  return GetTorso()->GetMainMaterial()->GetName(Articled);
+  GetTorso()->GetMainMaterial()->AddName(String, Articled);
+  String << " ";
+  return true;
 }
 
-std::string character::GetName(uchar Case) const
+void character::AddName(std::string& String, uchar Case) const
 {
-  if(!(Case & PLURAL) && AssignedName != "")
+  if(!(Case & PLURAL) && AssignedName.length())
     {
       if(!ShowClassDescription())
-	return AssignedName;
+	String << AssignedName;
       else
-	return AssignedName + " " + id::GetName((Case|ARTICLEBIT)&~INDEFINEBIT);
+	{
+	  String << AssignedName << " ";
+	  id::AddName(String, (Case|ARTICLEBIT)&~INDEFINEBIT);
+	}
     }
   else
-    return id::GetName(Case);
+    id::AddName(String, Case);
 }
 
 uchar character::GetHungerState() const
@@ -3194,7 +3204,7 @@ bool character::EquipmentScreen()
 	  else if(!GetEquipment(c))
 	    Entry += "-";
 	  else
-	    Entry += GetEquipment(c)->GetName(INDEFINITE);
+	    GetEquipment(c)->AddName(Entry, INDEFINITE);
 
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
@@ -3327,7 +3337,7 @@ bool character::ScrollMessagesUp()
 
 void character::Regenerate(ushort Ticks)
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->Regenerate(Ticks);
 }
@@ -3347,7 +3357,7 @@ void character::PrintInfo() const
       Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
       Info.AddEntry(std::string("Total weight: ") + GetWeight(), LIGHTGRAY);
 
-      for(c = 0; c < BodyParts(); ++c)
+      for(c = 0; c < GetBodyParts(); ++c)
 	if(GetBodyPart(c))
 	  Info.AddEntry(GetBodyPart(c)->GetName(UNARTICLED) + " armor value: " + GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE), LIGHTGRAY);
     }
@@ -3358,11 +3368,11 @@ void character::PrintInfo() const
 	std::string Entry = EquipmentName(c) + ": ";
 
 	if(!GetBodyPartOfEquipment(c))
-	  Entry += "can't use";
+	  Entry << "can't use";
 	else if(!GetEquipment(c))
-	  Entry += "-";
+	  Entry << "-";
 	else
-	  Entry += GetEquipment(c)->GetName(INDEFINITE);
+	  GetEquipment(c)->AddName(Entry, INDEFINITE);
 
 	Info.AddEntry(Entry, LIGHTGRAY);
       }
@@ -3377,7 +3387,7 @@ void character::PrintInfo() const
 
 void character::CompleteRiseFromTheDead()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     {
       if(GetBodyPart(c))
 	GetBodyPart(c)->SetHP(1);
@@ -3388,7 +3398,7 @@ bool character::RaiseTheDead(character*)
 {
   bool Useful = false;
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     {
       if(!GetBodyPart(c))
 	{
@@ -3414,7 +3424,7 @@ bool character::RaiseTheDead(character*)
 
 void character::SetSize(ushort Size)
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->SetSize(GetBodyPartSize(c, Size));
 }
@@ -3454,20 +3464,20 @@ uchar character::GetBodyPartBonePercentile(ushort Index)
 
 void character::CreateBodyParts()
 {
-  for(ushort c = 0; c < BodyParts(); ++c) 
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
     CreateBodyPart(c);
 }
 
 void character::RestoreBodyParts()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       CreateBodyPart(c);
 }
 
 void character::UpdateBodyPartPictures()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     UpdateBodyPartPicture(c);
 }
 
@@ -3501,7 +3511,7 @@ vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
 
 ushort character::GetBodyPartColorA(ushort Index, ushort Frame)
 {
-  if(Index < BodyParts())
+  if(Index < GetBodyParts())
     return GetSkinColor(Frame);
   else
     {
@@ -3608,13 +3618,13 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
 
 void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 {
-  BodyPartSlot = new characterslot[BodyParts()];
-  OriginalBodyPartID = new ulong[BodyParts()];
+  BodyPartSlot = new characterslot[GetBodyParts()];
+  OriginalBodyPartID = new ulong[GetBodyParts()];
   CategoryWeaponSkill = new gweaponskill*[AllowedWeaponSkillCategories() + 1];
 
   ushort c;
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     GetBodyPartSlot(c)->SetMaster(this);
 
   for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
@@ -3673,7 +3683,7 @@ void character::ReceiveHeal(long Amount)
 {
   ushort c;
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     {
       if(!GetBodyPart(c) && Amount > 1000)
 	{
@@ -3684,14 +3694,14 @@ void character::ReceiveHeal(long Amount)
 	}
     }
 
-  for(c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < GetBodyParts(); ++c)
     {
       if(GetBodyPart(c))
 	{
-	  if(GetBodyPart(c)->GetHP() + Amount / BodyParts() > GetBodyPart(c)->GetMaxHP())
+	  if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
 	    GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
 	  else
-	    GetBodyPart(c)->EditHP(Amount / BodyParts());
+	    GetBodyPart(c)->EditHP(Amount / GetBodyParts());
 	}
     }
 }
@@ -4644,7 +4654,7 @@ void character::AttachBodyPart(bodypart* BodyPart, ushort Index)
 
 bool character::HasAllBodyParts() const
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       return false;
   return true;
@@ -4654,7 +4664,7 @@ bool character::HasAllBodyParts() const
 bodypart* character::GenerateRandomBodyPart()
 {
   std::vector<ushort> NeededBodyParts;
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
 	NeededBodyParts.push_back(c);
@@ -4672,7 +4682,7 @@ bodypart* character::GenerateRandomBodyPart()
 stackiterator character::FindRandomOwnBodyPart()
 {
   std::vector<stackiterator> LostAndFound;
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
 	ushort OriginalID = GetOriginalBodyPartID(c);
@@ -4756,7 +4766,7 @@ void character::PoisonedHandler()
 
 bool character::IsWarm() const
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c) && GetBodyPart(c)->GetMainMaterial()->IsAlive())
       return true;
 
@@ -4765,7 +4775,7 @@ bool character::IsWarm() const
 
 void character::BeginInvisibility()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->UpdatePictures();
 
@@ -4786,7 +4796,7 @@ void character::BeginESP()
 
 void character::EndInvisibility()
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->UpdatePictures();
 
@@ -4859,3 +4869,14 @@ wsquare* character::GetWSquareUnder() const
 {
   return static_cast<wsquare*>(SquareUnder);
 }
+
+/*void characterdatabase::characterdatabase(const characterdatabase& Base)
+{
+  *this = Base;
+  Article = AllocateCopyOf(Base.Article);
+  Adjective = AllocateCopyOf(Adjective.Article);
+  AdjectiveArticle = AllocateCopyOf(AdjectiveArticle.Article);
+  NameSingular = AllocateCopyOf(NameSingular.Article);
+  NamePlural = AllocateCopyOf(NamePlural.Article);
+  PostFix = AllocateCopyOf(PostFix.Article);
+}*/

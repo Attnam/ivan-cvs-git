@@ -212,6 +212,7 @@ altar /* olterrain-> */
 	BitmapPos = 0, 368;
 	/* PostFix depends on Config */
 	CreateDivineConfigurations = true;
+	IsAbstract = true;
 }
 
 throne /* olterrain-> */
