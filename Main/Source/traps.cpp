@@ -90,9 +90,9 @@ bool web::TryToUnStick(character* Victim, vector2d)
 	  Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
 
 	  if(Victim->IsPlayer())
-	    ADD_MESSAGE("You fail to free yourself from the web and your %s is stuck to it in the attempt.", Victim->GetBodyPartName(VictimBodyPart).CStr());
+	    ADD_MESSAGE("You fail to free yourself from the web and your %s is stuck in it in the attempt.", Victim->GetBodyPartName(VictimBodyPart).CStr());
 	  else if(Victim->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s tries to free %sself from the web but is stuck more tightly to it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+	    ADD_MESSAGE("%s tries to free %sself from the web but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
 	  Victim->EditAP(-1000);
 	  return true;
@@ -134,14 +134,14 @@ void web::StepOnEffect(character* Stepper)
   Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You try to step through the web but your %s sticks to it.", Stepper->GetBodyPartName(StepperBodyPart).CStr());
+    ADD_MESSAGE("You try to step through the web but your %s sticks in it.", Stepper->GetBodyPartName(StepperBodyPart).CStr());
   else if(Stepper->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s gets stuck to the web.", Stepper->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s gets stuck in the web.", Stepper->CHAR_NAME(DEFINITE));
 }
 
 void web::AddDescription(festring& Msg) const
 {
-  Msg << ". A web envelops the square.";
+  Msg << ". A web envelops the square";
 }
 
 void web::AddTrapName(festring& String, int) const

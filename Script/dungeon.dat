@@ -2583,7 +2583,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			Character = spider;
-			Times = 5;
+			Times = 2;
 		}
 
 		Square, Random;
