@@ -105,9 +105,9 @@ void god::PrayBadEffect()
 	ADD_MESSAGE("%s doesn't know how to punish at the moment.", GOD_NAME);
 }
 
-void god::AdjustRelation(god* Competitor, bool Good)
+void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
 {
-	short Adjustment = 50 - abs((signed char)(Alignment()) - Competitor->Alignment()) * 25;
+	short Adjustment = 2 * Multiplier - abs((signed char)(Alignment()) - Competitor->Alignment()) * Multiplier;
 
 	if(!Good && Adjustment > 0)
 		Adjustment = -Adjustment;
@@ -455,13 +455,13 @@ void silva::PrayBadEffect()
 	switch(RAND() % 300 / 100)
 	{
 	case 0:
-		game::GetPlayer()->Polymorph(new spider(true, true, false));
+		game::GetPlayer()->Polymorph(new spider(true, true, false), 100 + RAND() % 100);
 		break;
 	case 1:
-		game::GetPlayer()->Polymorph(new donkey(true, true, false));
+		game::GetPlayer()->Polymorph(new donkey(true, true, false), 100 + RAND() % 100);
 		break;
 	case 2:
-		game::GetPlayer()->Polymorph(new jackal(true, true, false));
+		game::GetPlayer()->Polymorph(new jackal(true, true, false), 100 + RAND() % 100);
 		break;
 	}
 }

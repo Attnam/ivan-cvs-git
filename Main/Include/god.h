@@ -38,7 +38,7 @@ public:
 	virtual uchar Alignment() const = 0;
 	virtual std::string CompleteDescription() const;
 	virtual void ApplyDivineTick(ushort Turns) { Timer -= Turns; if(Timer < 0) Timer = 0; }
-	virtual void AdjustRelation(god*, bool);
+	virtual void AdjustRelation(god*, bool, short = 25);
 	virtual void AdjustRelation(short Amount);
 	virtual void AdjustTimer(long Amount);
 	virtual void Save(outputfile&) const;

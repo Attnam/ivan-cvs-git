@@ -21,3 +21,5 @@ Fake gods.
 Capitalists.
 Material color editor.
 Graphical script editor.
+The Holy Haven of Gurus.
+Febot the Oracle.

@@ -194,7 +194,7 @@ public:
 	virtual void Vomit(ushort);
 	virtual void Be();
 	virtual bool Zap();
-	virtual bool Polymorph(character*);
+	virtual bool Polymorph(character*, ushort);
 	virtual bool SetTorsoArmor(item*) RET(false)
 	virtual bool CanKick() const RET(false)
 	virtual void BeKicked(ushort, bool, uchar, character*);

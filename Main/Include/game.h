@@ -104,7 +104,7 @@ public:
 	static god* GetGod(uchar Index) { return God[Index]; }
 	static std::string CAlignment(uchar Index) { return Alignment[Index]; }
 	static void ApplyDivineTick(ushort = 1);
-	static void ApplyDivineAlignmentBonuses(god*, bool);
+	static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
 	static vector2d GetDirectionVectorForKey(ushort);
 	static vector2d AskForDirectionVector(std::string = "");
 	static std::string GetPlayerName() { return PlayerName; }

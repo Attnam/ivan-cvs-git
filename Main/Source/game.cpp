@@ -717,11 +717,11 @@ void game::ApplyDivineTick(ushort Turns)
 		GetGod(c)->ApplyDivineTick(Turns);
 }
 
-void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good)
+void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Multiplier)
 {
 	for(ushort c = 1; GetGod(c); ++c)
 		if(GetGod(c) != CompareTarget)
-			GetGod(c)->AdjustRelation(CompareTarget, Good);
+			GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
 
 vector2d game::GetDirectionVectorForKey(ushort Key)

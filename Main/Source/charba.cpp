@@ -963,8 +963,13 @@ void character::Die(bool ForceMsg)
 	}
 
 	if(!game::GetInWilderness())
+	{
+		stack* StackUnder = GetLevelSquareUnder()->GetStack();
+		SetSquareUnder(0); // prevents light optimization
+
 		while(GetStack()->GetItems())
-			GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
+			GetStack()->MoveItem(0, StackUnder);
+	}
 	else
 		while(GetStack()->GetItems())
 		{
@@ -2334,7 +2339,7 @@ bool character::Zap()
 		return false;
 }
 
-bool character::Polymorph(character* NewForm)
+bool character::Polymorph(character* NewForm, ushort Counter)
 {
 	if(GetIsPlayer())
 	{
@@ -2353,7 +2358,7 @@ bool character::Polymorph(character* NewForm)
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
-		NewForm->SetStateCounter(POLYMORPHED, 1000);
+		NewForm->SetStateCounter(POLYMORPHED, Counter);
 		game::SendLOSUpdateRequest();
 	}
 	else

@@ -440,7 +440,7 @@ void fountain::Consume(character* Drinker)
 		Drinker->ChangeRandomStat(-1);
 
 		if(!(RAND() % 5))
-			Drinker->Polymorph(protosystem::CreateMonster(false));
+			Drinker->Polymorph(protosystem::CreateMonster(false), 250 + RAND() % 250);
 	break;
 	
 	case 2:
@@ -585,7 +585,35 @@ bool altar::Polymorph(character*)
 	{
 		GetSquareUnder()->UpdateMemorizedDescription();
 		GetSquareUnder()->UpdateMemorized();
-	}			
+	}
 
 	return true;	
+}
+
+void altar::SitOn(character*)
+{
+	ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(OwnerGod)->GOD_NAME);
+
+	if(game::GetGod(OwnerGod)->GetRelation() < 500)
+	{
+		if(!(RAND() % 5))
+		{
+			game::GetGod(OwnerGod)->AdjustRelation(2);
+			game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true, 1);
+		}
+	}
+	else
+		if(!(RAND() % 10))
+		{
+			character* Angel = game::GetGod(OwnerGod)->CreateAngel();
+
+			if(Angel)
+			{
+				Angel->SetTeam(game::GetPlayer()->GetTeam());
+				ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+			}
+
+			game::GetGod(OwnerGod)->AdjustRelation(50);
+			game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true);
+		}
 }
