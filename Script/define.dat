@@ -617,7 +617,7 @@
 #define OREE_LAIR_EXIT 4
 #define SUMO_ARENA_ENTRY 7
 #define SUMO_ARENA_EXIT 8
-#define FOUNTAIN 0xFFFF
+#define FOUNTAIN 65535
 
 #define BOOK_CASE 1
 

@@ -338,8 +338,7 @@ bool fountain::Drink(character* Drinker)
 
 	  Drinker->EditAP(-1000);
 
-	  //	  switch(RAND() % 10)
-	  switch(RAND_2 + 7)
+	  switch(RAND() % 10)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");

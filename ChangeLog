@@ -6,7 +6,10 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+Heikki Sairanen <firstname.lastname@tut.fi>
 
+	* fountain test removed. sorry
+	
 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* Fountains can now throw player to other fountains in near levels or same level.
