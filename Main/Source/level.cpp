@@ -259,7 +259,7 @@ void level::Generate(levelscript* GenLevelScript)
 
 				if(*RoomScript->GetReCalculate())
 				{
-					inputfile ScriptFile("Script/Dungeon.dat");
+					inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 					RoomScript->ReadFrom(ScriptFile, true);
 				}
 
@@ -275,7 +275,7 @@ void level::Generate(levelscript* GenLevelScript)
 
 				if(*RoomScript->GetReCalculate())
 				{
-					inputfile ScriptFile("Script/Dungeon.dat");
+					inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 					RoomScript->ReadFrom(ScriptFile, true);
 				}
 

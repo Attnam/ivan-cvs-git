@@ -17,12 +17,12 @@ template contentscript<overlevelterrain>;
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
+  //	std::string Word = SaveFile.ReadWord();
+
+  //	if(Word != ",")
+  //	ABORT("Colon missing in position script!");
+
 	std::string Word = SaveFile.ReadWord();
-
-	if(Word != ",")
-		ABORT("Colon missing in position script!");
-
-	Word = SaveFile.ReadWord();
 
 	if(Word == "Pos")
 	{
@@ -62,6 +62,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
 
 				continue;
 			}
+			ABORT("Odd script term %s encountered in position script!", Word.c_str());
 		}
 	}
 }
@@ -180,8 +181,8 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 	if(Word != "=")
 	{
-		SaveFile.GetBuffer().seekg(-Word.length(), std::ios::cur);
-
+	  //		SaveFile.GetBuffer().seekg(-Word.length(), std::ios::cur);
+	  //	SaveFile.GetBuffer().clear();
 		if(!PosScript)
 			PosScript = new posscript;
 

@@ -4,6 +4,7 @@
 #include <direct.h>	// Needed for _mkdir
 #include <windows.h>
 #else
+#include <stdlib.h>
 #define IDNO 0
 #define IDYES 1
 #define IDCANCEL 2
@@ -548,8 +549,12 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 
 bool game::Save(std::string SaveName)
 {
+  // if HOME is not defined this will probably fail... / - might also cause problem...
+  #ifdef WIN32
 	outputfile SaveFile(SaveName + ".sav");
-
+  #else
+	outputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".sav");
+  #endif
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << InWilderness << NextObjectID;
@@ -983,7 +988,13 @@ void game::DoNeutralDeed(ushort Amount)
 
 void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
 {
+  #ifdef WIN32
 	outputfile SaveFile(SaveName + ".wm");
+  #else
+	outputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".wm");
+  #endif
+
+	//	outputfile SaveFile(SaveName + ".wm");
 
 	SaveFile << WorldMap;
 
@@ -993,7 +1004,12 @@ void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
 
 void game::LoadWorldMap(std::string SaveName)
 {
+  #ifdef WIN32
 	inputfile SaveFile(SaveName + ".wm");
+  #else
+	inputfile SaveFile((std::string(getenv("HOME")) + "/" + SaveName) + ".wm");
+  #endif
+
 
 	SaveFile >> WorldMap;
 }

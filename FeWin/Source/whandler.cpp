@@ -255,6 +255,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 		{
 			int Key =  KeyBuffer.Remove(0);
 			int BackUp = Key;
+			if(Key > 0xE000) Key -= 0xE000;
 			/*
 			if(Key == VK_LEFT || Key == VK_NUMPAD4) return 0x14B;
 			if(Key == VK_HOME || Key == VK_NUMPAD7) return 0x147;
@@ -287,16 +288,61 @@ int globalwindowhandler::ReadKey()
 
 void globalwindowhandler::CheckMessages()
 {
-  ushort Index;
+  ushort Index, KeyPressed;
   SDL_Event event;
   while( SDL_PollEvent( &event ) )
-     {
-    switch( event.type ){
+     { 
+   switch( event.type ){
       case SDL_KEYDOWN:
-	Index = KeyBuffer.Search(event.key.keysym.unicode);
+	switch(event.key.keysym.sym)
+	  {
+	  case SDLK_DOWN:
+	  case SDLK_KP2:
+	    KeyPressed = 0x150 + 0xE000;
+	    break;
+
+	  case SDLK_UP:
+	  case SDLK_KP8:
+	    KeyPressed = 0x148 + 0xE000;
+	    break;
+
+	  case SDLK_RIGHT:
+	  case SDLK_KP6:
+	    KeyPressed = 0x14D + 0xE000;
+	    break;
+
+	  case SDLK_LEFT:
+	  case SDLK_KP4:
+	    KeyPressed = 0x14B + 0xE000;
+	    break;
+
+	  case SDLK_HOME:
+	  case SDLK_KP7:
+	    KeyPressed = 0x147 + 0xE000;
+	    break;
+
+	  case SDLK_END:
+	  case SDLK_KP1:
+	    KeyPressed = 0x14F + 0xE000;
+	    break;
+
+	  case SDLK_PAGEUP:
+	  case SDLK_KP9:
+	    KeyPressed = 0x149 + 0xE000;
+	    break;
+
+	  case SDLK_KP3:
+	  case SDLK_PAGEDOWN:
+	    KeyPressed = 0x151 + 0xE000;
+	    break;
+	  default:
+	    KeyPressed = event.key.keysym.unicode;
+	  }
+
+	Index = KeyBuffer.Search(KeyPressed);
 
 	if(Index == 0xFFFF)
-	KeyBuffer.Add(event.key.keysym.unicode);
+	  KeyBuffer.Add(KeyPressed);	  
         break;
 
       case SDL_KEYUP:

@@ -55,7 +55,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
 
 		if(*LevelScript->GetReCalculate())
 		{
-			inputfile ScriptFile("Script/Dungeon.dat");
+			inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 			LevelScript->ReadFrom(ScriptFile, true);
 		}
 	}
@@ -65,7 +65,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
 
 		if(*LevelScript->GetReCalculate())
 		{
-			inputfile ScriptFile("Script/Dungeon.dat");
+			inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 			LevelScript->ReadFrom(ScriptFile, true);
 		}
 	}
