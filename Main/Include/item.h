@@ -73,7 +73,7 @@ protected:
 
 	#define ITEM(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
@@ -100,7 +100,7 @@ protected:
 
 	#define ITEM(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
@@ -116,14 +116,15 @@ protected:
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
-class name : public base\
+name : public base\
 {\
 public:\
 	name(bool CreateMaterials, bool SetStats) : base(CreateMaterials, SetStats) {}\
 	data\
 };
 
-ABSTRACT_ITEM(
+class ABSTRACT_ITEM
+(
 	meleeweapon,
 	item,
 public:
@@ -133,7 +134,8 @@ public:
 	virtual bool CanBeDipped(void) const RET(true)
 );
 
-ITEM(
+class ITEM
+(
 	banana,
 	item,
 	InitMaterials(2, new bananapeal(30), new bananaflesh(150)),
@@ -154,7 +156,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(25)
 );
 
-ITEM(
+class ITEM
+(
 	holybananaofliukasvipro,
 	banana,
 	InitMaterials(2, new bananapeal(40), new bananaflesh(300)),
@@ -173,7 +176,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(35)
 );
 
-ITEM(
+class ITEM
+(
 	lamp,
 	item,
 	InitMaterials(new glass(850)),
@@ -193,7 +197,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(30)
 );
 
-ITEM(
+class ITEM
+(
 	can,
 	item,
 	InitMaterials(2, new iron(50), rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
@@ -216,7 +221,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(20)
 );
 
-ITEM(
+class ITEM
+(
 	lump,
 	item,
 	InitMaterials(rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
@@ -241,7 +247,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(10)
 );
 
-ITEM(
+class ITEM
+(
 	sword,
 	meleeweapon,
 	InitMaterials(3, new iron(2500), new iron(100), 0),
@@ -259,7 +266,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(100)
 );
 
-ITEM(
+class ITEM
+(
 	twohandedsword,
 	sword,
 	InitMaterials(3, new iron(5500), new iron(250), 0),
@@ -276,7 +284,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(125)
 );
 
-ITEM(
+class ITEM
+(
 	curvedtwohandedsword,
 	twohandedsword,
 	InitMaterials(3, new iron(5500), new iron(250), 0),
@@ -293,7 +302,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(150)
 );
 
-ITEM(
+class ITEM
+(
 	valpurijustifier,
 	sword,
 	InitMaterials(3, new valpurium(6500), new valpurium(300), 0),
@@ -313,7 +323,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(400)
 );
 
-ITEM(
+class ITEM
+(
 	axe,
 	meleeweapon,
 	InitMaterials(3, new iron(450), new iron(900), 0),
@@ -331,7 +342,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(150)
 );
 
-ITEM(
+class ITEM
+(
 	pickaxe,
 	axe,
 	InitMaterials(3, new iron(1000), new wood(1050), 0),
@@ -350,7 +362,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(150)
 );
 
-ITEM(
+class ITEM
+(
 	spear,
 	meleeweapon,
 	InitMaterials(3, new iron(150), new wood(1500), 0),
@@ -369,7 +382,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(200)
 );
 
-ABSTRACT_ITEM(
+class ABSTRACT_ITEM
+(
 	torsoarmor,
 	item,
 public:
@@ -378,7 +392,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(15)
 );
 
-ITEM(
+class ITEM
+(
 	platemail,
 	torsoarmor,
 	InitMaterials(new iron(4000)),
@@ -394,7 +409,8 @@ public:
 	virtual vector GetBitmapPos(void) const RETV(144,128)
 );
 
-ITEM(
+class ITEM
+(
 	chainmail,
 	torsoarmor,
 	InitMaterials(new iron(2000)),
@@ -410,14 +426,16 @@ public:
 	virtual vector GetBitmapPos(void) const RETV(144,96)
 );
 
-ABSTRACT_ITEM(
+class ABSTRACT_ITEM
+(
 	shirt,
 	torsoarmor,
 private:
 	void Temporary(void) {} //...
 );
 
-ITEM(
+class ITEM
+(
 	maakotkashirt,
 	shirt,
 	InitMaterials(new cloth(1000)),
@@ -437,7 +455,8 @@ public:
 	virtual bool Destroyable(void) const { return false; }
 );
 
-ITEM(
+class ITEM
+(
 	corpse,
 	item,
 	InitMaterials(new humanflesh(60000)),
@@ -457,7 +476,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(20)
 );
 
-ITEM(
+class ITEM
+(
 	potion,
 	item,
 	InitMaterials(2, new glass(50), rand() % 3 ? 0 : new omleurine(1500)),
@@ -479,7 +499,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(40)
 );
 
-ITEM(
+class ITEM
+(
 	bananapeals,
 	item,
 	InitMaterials(new bananapeal(15)),
@@ -499,7 +520,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(20)
 );
 
-ITEM(
+class ITEM
+(
 	brokenbottle,
 	item,
 	InitMaterials(new glass(50)),
@@ -517,7 +539,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(60)
 );
 
-ABSTRACT_ITEM(
+class ABSTRACT_ITEM
+(
 	scroll,
 	item,
 public:
@@ -526,7 +549,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(30)
 );
 
-ITEM(
+class ITEM
+(
 	scrollofcreatemonster,
 	scroll,
 	InitMaterials(new parchment(200)),
@@ -542,7 +566,8 @@ public:
 	virtual bool Read(character*);
 );
 
-ITEM(
+class ITEM
+(
 	scrollofteleport,
 	scroll,
 	InitMaterials(new parchment(200)),
@@ -558,7 +583,8 @@ public:
 	virtual bool Read(character*);
 );
 
-ITEM(
+class ITEM
+(
 	head,
 	item,
 	InitMaterials(new humanflesh(2000)),
@@ -576,7 +602,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(10)
 );
 
-ITEM(
+class ITEM
+(
 	headofelpuri,
 	head,
 	InitMaterials(new elpuriflesh(25000)),
@@ -595,7 +622,8 @@ public:
 	virtual bool Destroyable(void) const { return false; }
 );
 
-ITEM(
+class ITEM
+(
 	nut,
 	item,
 	InitMaterials(new humanflesh(15)),
@@ -612,7 +640,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(10)
 );
 
-ITEM(
+class ITEM
+(
 	leftnutofperttu,
 	nut,
 	InitMaterials(new humanflesh(150)),
@@ -631,7 +660,8 @@ public:
 	virtual bool Destroyable(void) const { return false; }
 );
 
-ITEM(
+class ITEM
+(
 	abone,
 	item,
 	InitMaterials(new bone(2000)),
@@ -652,7 +682,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(50)
 );
 
-ITEM(
+class ITEM
+(
 	poleaxe,
 	axe,
 	InitMaterials(3, new iron(1500), new wood(3000), 0),
@@ -669,7 +700,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(100)
 );
 
-ITEM(
+class ITEM
+(
 	spikedmace,
 	meleeweapon,
 	InitMaterials(3, new iron(5000), new wood(3000), 0),
@@ -687,7 +719,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(75)
 );
 
-ITEM(
+class ITEM
+(
 	htaedfoneercseulb,
 	spikedmace,
 	InitMaterials(3, new mithril(15000), new iron(8000), new darkfrogflesh(1000)),
@@ -708,7 +741,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(100)
 );
 
-ITEM(
+class ITEM
+(
 	loaf,
 	item,
 	InitMaterials(rand() % 2 ? (material*)new pork(2000) : (material*)new beef(2000)),
@@ -728,7 +762,8 @@ protected:
 	virtual ushort GetFormModifier(void) const RET(15)
 );
 
-ITEM(
+class ITEM
+(
 	scrollofwishing,
 	scroll,
 	InitMaterials(new parchment(200)),
@@ -745,7 +780,8 @@ public:
 	virtual bool Read(character*);
 );
 
-ITEM(
+class ITEM
+(
 	cheapcopyofleftnutofperttu,
 	nut,
 	InitMaterials(new glass(150)),

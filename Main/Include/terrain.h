@@ -76,7 +76,7 @@ protected:
 
 	#define TERRAIN(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
@@ -102,7 +102,7 @@ protected:
 
 	#define TERRAIN(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
@@ -137,7 +137,8 @@ TERRAIN(\
 	data\
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	earth,
 	overterrain,
 	InitMaterials(new moraine(1)),
@@ -154,7 +155,8 @@ protected:
 	virtual vector GetBitmapPos(void) const					{ return vector(0, 336); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	wall,
 	overterrain,
 	InitMaterials(new stone(1)),
@@ -171,7 +173,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	empty,
 	overterrain,
 	InitMaterials(new air(1)),
@@ -186,7 +189,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 480); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	door,
 	overterrain,
 	InitMaterials(new stone(1)),
@@ -204,7 +208,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, GetIsWalkable() ? 48 : 176); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	stairsup,
 	overterrain,
 	InitMaterials(new stone(1)),
@@ -221,7 +226,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 192); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	stairsdown,
 	overterrain,
 	InitMaterials(new stone(1)),
@@ -238,7 +244,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 208); }
 );
 
-GROUNDTERRAIN(
+class GROUNDTERRAIN
+(
 	parquet,
 	groundterrain,
 	InitMaterials(new wood(1)),
@@ -252,7 +259,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
-GROUNDTERRAIN(
+class GROUNDTERRAIN
+(
 	floory,
 	groundterrain,
 	InitMaterials(new gravel(1)),
@@ -266,7 +274,8 @@ protected:
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 352); }
 );
 
-OVERTERRAIN(
+class OVERTERRAIN
+(
 	altar,
 	overterrain,
 	InitMaterials(new stone(1)),

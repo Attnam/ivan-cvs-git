@@ -902,6 +902,13 @@ bool character::Quit(void)
 		return false;
 }
 
+void character::CreateCorpse(void)
+{
+	GetLevelSquareUnder()->GetStack()->AddItem(new corpse(CMaterial(0)));
+
+	SetMaterial(0, 0);
+}
+
 void character::Die(void)
 {
 	if(Dead)
@@ -924,7 +931,8 @@ void character::Die(void)
 		}
 	}
 	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s dies screaming.", CNAME(DEFINITE));
+		if(GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE(DeathMessage().c_str());
 
 	Dead = true;
 
@@ -933,13 +941,7 @@ void character::Die(void)
 	
 	GetLevelSquareUnder()->RemoveCharacter();
 
-	item* Corpse = new corpse(false);
-
-	Corpse->InitMaterials(CMaterial(0));
-
-	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
-
-	SetMaterial(0, 0);
+	CreateCorpse();
 
 	game::SendToHell(this);
 
@@ -999,157 +1001,26 @@ void character::Regenerate(ushort Turns)
 	}
 }
 
-void fallenvalpurist::Die(void)
+void fallenvalpurist::CreateCorpse(void)
 {
-	if(Dead)
-		return;
-
-	if(GetIsPlayer())
-	{
-		ADD_MESSAGE("You die.");
-
-		game::DrawEverything();
-
-		GETKEY();
-
-		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
-
-		game::RemoveSaves();
-
-		game::Quit();
-	}
-	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s is transformed into a crumpled heap of bones.", CNAME(DEFINITE));
-
-	Dead = true;
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
-
 	ushort Amount = 2 + rand() % 4;
 
 	for(ushort c = 0; c < Amount; c++)
 		GetLevelSquareUnder()->GetStack()->AddItem(new abone);
-
-	GetLevelSquareUnder()->RemoveCharacter();
-
-	game::SendToHell(this);
 }
 
-void elpuri::Die(void)
+void elpuri::CreateCorpse(void)
 {
-	if(Dead)
-		return;
-
-	if(GetIsPlayer())
-	{
-		ADD_MESSAGE("You die and your head drops off.");
-
-		game::DrawEverything();
-
-		GETKEY();
-
-		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
-
-		game::RemoveSaves();
-
-		game::Quit();
-	}
-	else
-		if(GetLevelSquareUnder()->CanBeSeen())
-			ADD_MESSAGE("%s groans horribly and drops %s head.", CNAME(DEFINITE), game::PossessivePronoun(GetSex()));
-
-	Dead = true;
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
-
-	item* Corpse = new corpse(false);
-
-	Corpse->InitMaterials(CMaterial(0));
-
-	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
-
-	SetMaterial(0,0);
+	character::CreateCorpse();
 
 	GetLevelSquareUnder()->GetStack()->AddItem(new headofelpuri);
-	GetLevelSquareUnder()->RemoveCharacter();
-
-	game::SendToHell(this);
 }
 
-void perttu::Die(void)
+void perttu::CreateCorpse(void)
 {
-	if(Dead)
-		return;
-
-	if(GetIsPlayer())
-	{
-		ADD_MESSAGE("You die and your left nut falls off.");
-
-		game::DrawEverything();
-
-		GETKEY();
-
-		game::StoryScreen("Unfortunately thee died during thine journey. Thee are not happy.");
-
-		game::RemoveSaves();
-
-		game::Quit();
-	}
-	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s disappears in a bright light and his left nut is left behind.", CNAME(DEFINITE));
-
-	Dead = true;
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
-
-	item* Corpse = new corpse(false);
-
-	Corpse->InitMaterials(CMaterial(0));
-
-	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
-
-	SetMaterial(0, 0);
+	character::CreateCorpse();
 
 	GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofperttu);
-
-	GetLevelSquareUnder()->RemoveCharacter();
-
-	game::SendToHell(this);
-}
-
-void billswill::Die(void)
-{
-	if(Dead)
-		return;
-
-	if(GetIsPlayer())
-	{
-		ADD_MESSAGE("You die and disappear in a whisp of smoke."); // Shouldn't this smoke be poison?
-
-		game::DrawEverything();
-
-		GETKEY();
-
-		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
-
-		game::RemoveSaves();
-
-		game::Quit();
-	}
-	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("%s vanishes from existence.", CNAME(DEFINITE));
-
-	Dead = true;
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
-
-	GetLevelSquareUnder()->RemoveCharacter();
-
-	game::SendToHell(this);
 }
 
 bool humanoid::WearArmor(void)
@@ -1746,9 +1617,9 @@ bool character::WalkThroughWalls(void)
 		game::GoThroughWalls();
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
+
 	return false;
 }
-
 
 float character::CWeaponStrength(void) const
 {
@@ -1878,51 +1749,6 @@ bool character::Look(void)
 		Key = GETKEY();
 	}
 	return false;
-}
-
-std::string golem::NameSingular(void) const
-{
-	return Material[0]->Name() + " golem";
-}
-
-void golem::Die(void)
-{
-	if(Dead)
-		return;
-
-	if(GetIsPlayer())
-	{
-		ADD_MESSAGE("Your Holy Words fly out of your nose and you collapse and die.");
-
-		game::DrawEverything();
-
-		GETKEY();
-
-		game::StoryScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
-
-		game::RemoveSaves();
-
-		game::Quit();
-	}
-	else
-		if(GetLevelSquareUnder()->CanBeSeen()) ADD_MESSAGE("The Holy Words of the golem fly away and the golem collapses.");
-
-	Dead = true;
-
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
-
-	item* Corpse = new corpse(false);
-
-	Corpse->InitMaterials(CMaterial(0));
-
-	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
-
-	SetMaterial(0, 0);
-
-	GetLevelSquareUnder()->RemoveCharacter();
-
-	game::SendToHell(this);
 }
 
 float golem::GetMeleeStrength(void) const
@@ -2340,7 +2166,6 @@ void character::ReceivePepsiEffect(long SizeOfEffect)
 
 void character::Darkness(long SizeOfEffect)
 {
-	if(SizeOfEffect == 0) SizeOfEffect++; // Gum solution... It appears that while eating Elpuries corpse this *might* result a division by zero error
 	ushort x = 30 + rand() % SizeOfEffect;
 	if(GetIsPlayer())
 		ADD_MESSAGE("Arg. You feel the fate of a navastater placed upon you...");

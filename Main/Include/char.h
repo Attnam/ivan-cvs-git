@@ -196,6 +196,8 @@ public:
 	virtual bool GetIsPlayer(void) const { return IsPlayer; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 protected:
+	virtual void CreateCorpse(void);
+	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
 	virtual void CreateInitialEquipment(void) {}
 	virtual void SetDefaultStats(void) = 0;
 	virtual void GetPlayerCommand(void);
@@ -239,7 +241,7 @@ protected:
 
 	#define CHARACTER(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
@@ -266,7 +268,7 @@ protected:
 
 	#define CHARACTER(name, base, initmaterials, setstats, data)\
 	\
-	class name : public base\
+	name : public base\
 	{\
 	public:\
 		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
@@ -282,14 +284,15 @@ protected:
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
-class name : public base\
+name : public base\
 {\
 public:\
 	name(bool CreateMaterials, bool SetStats, bool CreateEquipment) : base(CreateMaterials, SetStats, CreateEquipment) {}\
 	data\
 };
 
-ABSTRACT_CHARACTER(
+class ABSTRACT_CHARACTER
+(
 	humanoid,
 	character,
 public:
@@ -308,13 +311,13 @@ public:
 	virtual bool CanWield(void) const RET(true)
 	virtual bool CanWear(void) const RET(true)
 	virtual bool WearItem(item* What) { Armor.Torso = What; return true; }
-	virtual vector GetBitmapPos(void) const RETV(0,0)
 	virtual bool Apply(void);
 	virtual void SetArmType(uchar Value) { ArmType = Value; }
 	virtual void SetHeadType(uchar Value) { HeadType = Value; }
 	virtual void SetLegType(uchar Value) { LegType = Value; }
 	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
 protected:
+	virtual vector GetBitmapPos(void) const RETV(0,0)
 	virtual float GetMeleeStrength(void) const RET(2000)
 	struct armor
 	{
@@ -334,7 +337,8 @@ protected:
 
 inline humanoid::armor::armor(void) : Torso(0), Legs(0), Hands(0), Head(0), Feet(0) {}
 
-CHARACTER(
+class CHARACTER
+(
 	human,
 	humanoid,
 	InitMaterials(new humanflesh(80000)),
@@ -350,13 +354,15 @@ CHARACTER(
 		SetTorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
 	},
 public:
-	virtual std::string NameSingular(void) const RET("human")
-	virtual std::string NamePlural(void) const RET("humans")
 	virtual ulong Danger(void) const RET(0)
 	virtual ushort Possibility(void) const RET(0)
+protected:
+	virtual std::string NameSingular(void) const RET("human")
+	virtual std::string NamePlural(void) const RET("humans")
 );
                       
-CHARACTER(
+class CHARACTER
+(
 	perttu,
 	human,
 	InitMaterials(new humanflesh(80000)),
@@ -375,12 +381,9 @@ CHARACTER(
 	},
 public:
 	virtual void Load(std::ifstream*);
-	virtual std::string NameSingular(void) const RET("Perttu, the Überpriest of the Great Frog")
-	virtual std::string NamePlural(void) const RET("Perttus, the Überpriests of the Great Frog")
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void BeTalkedTo(character*);
 	virtual ushort GetEmitation(void) const RET(333)
-	virtual void Die(void);
 	virtual void HealFully(character*);
 	virtual void SetHealTimer(ushort What) { HealTimer = What; }
 	virtual ushort GetHealTimer(void) RET(HealTimer)
@@ -390,13 +393,18 @@ public:
 	virtual bool Charmable(void) const RET(false)
 	virtual ushort Possibility(void) const RET(0)
 protected:
+	virtual std::string NameSingular(void) const RET("Perttu, the Überpriest of the Great Frog")
+	virtual std::string NamePlural(void) const RET("Perttus, the Überpriests of the Great Frog")
+	virtual void CreateCorpse(void);
+	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " disappears in a bright light and his left nut is left behind."; }
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(10000)
 	virtual void NeutralAICommand(void);
 	ushort HealTimer;
 );
 
-CHARACTER(
+class CHARACTER
+(
 	oree,
 	character,
 	InitMaterials(new pepsi(110000)),
@@ -412,12 +420,12 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual uchar GetSex(void) const RET(MALE)
 	virtual ushort CalculateArmorModifier(void) const RET(10)
-	virtual std::string NameSingular(void) const RET("Oree the Pepsi Daemon King")
-	virtual std::string NamePlural(void) const RET("Orees the Pepsi Daemon Kings")
 	virtual ulong Danger(void) const RET(30000)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector GetBitmapPos(void) const RETV(208,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(208,0)
+	virtual std::string NameSingular(void) const RET("Oree the Pepsi Daemon King")
+	virtual std::string NamePlural(void) const RET("Orees the Pepsi Daemon Kings")
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(40000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
@@ -425,7 +433,8 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
 );
 
-CHARACTER(
+class CHARACTER
+(
 	swatcommando,
 	character,
 	InitMaterials(new humanflesh(110000)),
@@ -439,18 +448,19 @@ CHARACTER(
 public:
 	virtual ushort Possibility(void) const RET(5)
 	virtual uchar GetSex(void) const RET(MALE)
-	virtual std::string NameSingular(void) const RET("Bill's SWAT commando")
-	virtual std::string NamePlural(void) const RET("Bill's SWAT commandos")
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(750)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector GetBitmapPos(void) const RETV(128,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(128,0)
+	virtual std::string NameSingular(void) const RET("Bill's SWAT commando")
+	virtual std::string NamePlural(void) const RET("Bill's SWAT commandos")
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(10000)
 );
 
-CHARACTER(
+class CHARACTER
+(
 	ennerbeast,
 	character,
 	InitMaterials(new ennerbeastflesh(60000)),
@@ -464,17 +474,18 @@ CHARACTER(
 public:
 	virtual ushort Possibility(void) const RET(0)
 	virtual bool Hit(character*);
-	virtual std::string NameSingular(void) const RET("Enner Beast")
-	virtual std::string NamePlural(void) const RET("Enner Beasts")
 	virtual ulong Danger(void) const RET(2500);
 	virtual bool Charmable(void) const RET(false)
-	virtual vector GetBitmapPos(void) const RETV(96,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(96,0)
+	virtual std::string NameSingular(void) const RET("Enner Beast")
+	virtual std::string NamePlural(void) const RET("Enner Beasts")
 	virtual float GetMeleeStrength(void) const RET(200000)
 	virtual void HostileAICommand(void);
 );
 
-ABSTRACT_CHARACTER(
+class ABSTRACT_CHARACTER
+(
 	frog,
 	character,
 protected:
@@ -484,7 +495,8 @@ protected:
 	virtual float GetMeleeStrength(void) const RET(20000)
 );
 
-CHARACTER(
+class CHARACTER
+(
 	darkfrog,
 	frog,
 	InitMaterials(new darkfrogflesh(100)),
@@ -497,13 +509,15 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(100)
+	virtual ulong Danger(void) const RET(25)
+protected:
+	virtual vector GetBitmapPos(void) const RETV(80,0)
 	virtual std::string NameSingular(void) const RET("dark frog")
 	virtual std::string NamePlural(void) const RET("dark frogs")
-	virtual ulong Danger(void) const RET(25)
-	virtual vector GetBitmapPos(void) const RETV(80,0)
 );
 
-CHARACTER(
+class CHARACTER
+(
 	elpuri,
 	darkfrog,
 	InitMaterials(new elpuriflesh(8000000)),
@@ -515,17 +529,20 @@ CHARACTER(
 		SetPerception(18);
 	},
 public:
+	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual ushort Possibility(void) const RET(0)
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
-	virtual std::string NameSingular(void) const RET("Elpuri the Dark Frog")
-	virtual std::string NamePlural(void) const RET("Elpuris the Dark Frogs")
-	virtual void Die(void);
 	virtual ulong Danger(void) const RET(5000)
 	virtual bool Charmable(void) const RET(false)
+protected:
 	virtual vector GetBitmapPos(void) const RETV(64,0)
+	virtual std::string NameSingular(void) const RET("Elpuri the Dark Frog")
+	virtual std::string NamePlural(void) const RET("Elpuris the Dark Frogs")
+	virtual void CreateCorpse(void);
 );
 
-CHARACTER(
+class CHARACTER
+(
 	billswill,
 	character,
 	InitMaterials(new air(500000)),
@@ -538,21 +555,23 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(50)
-	virtual void Die(void);
-	virtual std::string NameSingular(void) const RET("pure mass of Bill's will")
-	virtual std::string NamePlural(void) const RET("pure masses of Bill's will")
 	virtual void SpillBlood(uchar) {}
 	virtual ulong Danger(void) const RET(75)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector GetBitmapPos(void) const RETV(48,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(48,0)
+	virtual std::string NameSingular(void) const RET("pure mass of Bill's will")
+	virtual std::string NamePlural(void) const RET("pure masses of Bill's will")
+	virtual void CreateCorpse(void) {}
+	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " vanishes from existence."; }
 	virtual float GetMeleeStrength(void) const RET(30000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPSIVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPSIVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPSIVerb(Critical))
 );
 
-CHARACTER(
+class CHARACTER
+(
 	fallenvalpurist,
 	character,
 	InitMaterials(new bone(60000)),
@@ -564,19 +583,21 @@ CHARACTER(
 		SetPerception(15);
 	},
 public:
+	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual ushort Possibility(void) const RET(50)
+	virtual bool CanWield(void) const RET(true)
+	virtual ulong Danger(void) const RET(25)
+protected:
+	virtual vector GetBitmapPos(void) const RETV(112,0)
 	virtual std::string NameSingular(void) const RET("fallen valpurist")
 	virtual std::string NamePlural(void) const RET("fallen valpurists")
-	virtual bool CanWield(void) const RET(true)
-	virtual void Die(void);
-	virtual ulong Danger(void) const RET(25)
-	virtual vector GetBitmapPos(void) const RETV(112,0)
-protected:
+	virtual void CreateCorpse(void);
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(5000)
 );
 
-CHARACTER(
+class CHARACTER
+(
 	froggoblin,
 	character,
 	InitMaterials(new goblinoidflesh(25000)),
@@ -589,17 +610,18 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(100)
-	virtual std::string NameSingular(void) const RET("frog-goblin hybrid")
-	virtual std::string NamePlural(void) const RET("frog-goblin hybrids")
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(25)
-	virtual vector GetBitmapPos(void) const RETV(144,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(144,0)
+	virtual std::string NameSingular(void) const RET("frog-goblin hybrid")
+	virtual std::string NamePlural(void) const RET("frog-goblin hybrids")
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(5000)
 );
 
-ABSTRACT_CHARACTER(
+class ABSTRACT_CHARACTER
+(
 	mommo,
 	character,
 protected:
@@ -609,7 +631,8 @@ protected:
 	virtual float GetMeleeStrength(void) const RET(25000)
 );
 
-CHARACTER(
+class CHARACTER
+(
 	conicalmommo,
 	mommo,
 	InitMaterials(new brownslime(250000)),
@@ -622,15 +645,17 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(25)
+	virtual ulong Danger(void) const RET(250)
+	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
+protected:
 	virtual std::string NameSingular(void) const RET("conical mommo slime")
 	virtual std::string NamePlural(void) const RET("conical mommo slimes")
-	virtual ulong Danger(void) const RET(250)
 	virtual vector GetBitmapPos(void) const RETV(176,0)
-	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
 
 );
 
-CHARACTER(
+class CHARACTER
+(
 	flatmommo,
 	mommo,
 	InitMaterials(new brownslime(150000)),
@@ -643,14 +668,16 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(75)
+	virtual ulong Danger(void) const RET(75)
+	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
+protected:
 	virtual std::string NameSingular(void) const RET("flat mommo slime")
 	virtual std::string NamePlural(void) const RET("flat mommo slimes")
-	virtual ulong Danger(void) const RET(75)
 	virtual vector GetBitmapPos(void) const RETV(192,0)
-	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
 );
 
-CHARACTER(
+class CHARACTER
+(
 	golem,
 	character,
 	InitMaterials(game::CreateRandomSolidMaterial(100000)),
@@ -662,21 +689,23 @@ CHARACTER(
 		SetPerception(12);
 	},
 public:
+	virtual std::string DeathMessage(void) { return "The Holy Words of " + Name(DEFINITE) + " fly away and the monster collapses."; }
 	virtual ushort Possibility(void) const RET(20)
 	virtual ushort CalculateArmorModifier(void) const;
-	virtual void Die(void);
 	virtual void MoveRandomly(void);
-	virtual std::string NameSingular(void) const;
-	virtual std::string NamePlural(void) const RET("golems")
+	virtual std::string Name(uchar Case) const RET(NameWithMaterial(Case))
 	virtual ulong Danger(void) const;
-	virtual vector GetBitmapPos(void) const RETV(256,0)
 	virtual void DrawToTileBuffer(void) const;
 	virtual void SpillBlood(uchar) {}
 protected:
+	virtual std::string NameSingular(void) const RET("golem")
+	virtual std::string NamePlural(void) const RET("golems")
+	virtual vector GetBitmapPos(void) const RETV(256,0)
 	virtual float GetMeleeStrength(void) const;
 );
 
-CHARACTER(
+class CHARACTER
+(
 	wolf,
 	character,
 	InitMaterials(new wolfflesh(30000)),
@@ -689,18 +718,19 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(40)
+	virtual ulong Danger(void) const RET(20)
+protected:
 	virtual std::string NameSingular(void) const RET("wolf")
 	virtual std::string NamePlural(void) const RET("wolves")
-	virtual ulong Danger(void) const RET(20)
 	virtual vector GetBitmapPos(void) const RETV(224,0)
-protected:
 	virtual float GetMeleeStrength(void) const RET(7500)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 );
 
-CHARACTER(
+class CHARACTER
+(
 	dog,
 	character,
 	InitMaterials(new dogflesh(20000)),
@@ -713,13 +743,13 @@ CHARACTER(
 	},
 public:
 	virtual ushort Possibility(void) const RET(20)
-	virtual std::string NameSingular(void) const RET("dog")
-	virtual std::string NamePlural(void) const RET("dogs")
 	virtual ulong Danger(void) const RET(10)
 	virtual bool Catches(item*, float, bool);
 	virtual bool ConsumeItemType(uchar) const;
-	virtual vector GetBitmapPos(void) const RETV(240,0)
 protected:
+	virtual vector GetBitmapPos(void) const RETV(240,0)
+	virtual std::string NameSingular(void) const RET("dog")
+	virtual std::string NamePlural(void) const RET("dogs")
 	virtual float GetMeleeStrength(void) const RET(5000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
