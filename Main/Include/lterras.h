@@ -100,6 +100,7 @@ OLTERRAIN(altar, olterrain)
   virtual truth Polymorph(character*);
   virtual truth SitOn(character*);
   virtual void Draw(blitdata&) const;
+  virtual truth VomitingIsDangerous(const character*) const;
 };
 
 OLTERRAIN(throne, decoration)
@@ -134,7 +135,7 @@ OLTERRAIN(fountain, olterrain)
   virtual ~fountain();
   virtual truth SitOn(character*);
   virtual truth Drink(character*);
-  virtual truth HasDrinkEffect() const { return true; } 
+  virtual truth HasDrinkEffect() const { return true; }
   virtual void DryOut();
   virtual truth DipInto(item*, character*);
   virtual truth IsDipDestination() const;

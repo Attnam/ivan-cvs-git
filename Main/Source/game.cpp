@@ -329,7 +329,6 @@ truth game::Init(const festring& Name)
 	Player->EditExperience(c, 500, 1 << 11);
       }
 
-
       Player->SetMoney(Player->GetMoney() + RAND() % 11);
       GetTeam(0)->SetLeader(Player);
       InitDangerMap();
@@ -482,7 +481,7 @@ void game::Run()
 
 	GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	{
+	/*{
 	  item* Item;
 
 	  if(!RAND_N(2))
@@ -574,7 +573,7 @@ void game::Run()
 
 	  Char->SetTeam(GetTeam(RAND() % Teams));
 	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  }
+	  }*/
       }
     }
 
@@ -692,7 +691,7 @@ truth game::TruthQuestion(const festring& String, int DefaultAnswer, int OtherKe
     DefaultAnswer = 'y';
   else if(DefaultAnswer != REQUIRES_ANSWER)
     ABORT("Illegal TruthQuestion DefaultAnswer send!");
-  
+
   int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
   return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
 }
@@ -812,7 +811,7 @@ truth game::Save(const festring& SaveName)
   SaveFile << DangerMap << NextDangerIDType << NextDangerIDConfigIndex;
   SaveFile << DefaultPolymorphTo << DefaultSummonMonster;
   SaveFile << DefaultWish << DefaultChangeMaterial << DefaultDetectMaterial;
-  SaveFile << GetTimeSpent(); 
+  SaveFile << GetTimeSpent();
   /* or in more readable format: time() - LastLoad + TimeAtLastLoad */
 
   protosystem::SaveCharacterDataBaseFlags(SaveFile);
@@ -1385,9 +1384,9 @@ int game::AskForKeyPress(const festring& Topic)
   return Key;
 }
 
-/* Handler is called when the key has been identified as a movement key 
+/* Handler is called when the key has been identified as a movement key
  * KeyHandler is called when the key has NOT been identified as a movement key
- * Both can be deactivated by passing 0 as parameter */  
+ * Both can be deactivated by passing 0 as parameter */
 
 v2 game::PositionQuestion(const festring& Topic, v2 CursorPos, void (*Handler)(v2), positionkeyhandler KeyHandler, truth Zoom)
 {
@@ -1549,8 +1548,8 @@ void game::TextScreen(const festring& Text, col16 Color, truth GKey, void (*Bitm
   globalwindowhandler::EnableControlLoops();
 }
 
-/* ... all the keys that are acceptable 
-   DefaultAnswer = REQUIRES_ANSWER if this question requires an answer 
+/* ... all the keys that are acceptable
+   DefaultAnswer = REQUIRES_ANSWER if this question requires an answer
    Not surprisingly KeyNumber is the number of keys at ...
 */
 
@@ -1904,6 +1903,15 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       GlobalRainLiquid = liquid::Spawn(WATER);
       GlobalRainSpeed = v2(256, 512);
       CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+    }
+
+    if(New && CurrentDungeonIndex == ELPURI_CAVE && Area == OREE_LAIR)
+    {
+      GlobalRainLiquid = liquid::Spawn(BLOOD);
+      GlobalRainSpeed = v2(256, 512);
+      CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+      GlobalRainLiquid->SetVolumeNoSignals(200);
+      CurrentLevel->EnableGlobalRain();
     }
 
     Generating = false;
@@ -2476,7 +2484,7 @@ void game::SeeWholeMap()
     ++SeeWholeMapCheatMode;
   else
     SeeWholeMapCheatMode = 0;
-    
+
   GetCurrentArea()->SendNewDrawRequest();
 }
 
@@ -2484,7 +2492,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
   {
     int BoneIndex;
     festring BoneName;
@@ -2520,7 +2528,7 @@ truth game::PrepareRandomBone(int LevelIndex)
     BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
     inputfile BoneFile(BoneName, 0, false);
 
-    if(BoneFile.IsOpen())// && !(RAND() & 7))
+    if(BoneFile.IsOpen() && !(RAND() & 7))
     {
       if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
       {
@@ -2627,7 +2635,7 @@ character* game::CreateGhost()
   return Ghost;
 }
 
-int game::GetMoveCommandKey(int I) 
+int game::GetMoveCommandKey(int I)
 {
   if(!ivanconfig::GetUseAlternativeKeys())
     return MoveNormalCommandKey[I];
@@ -3395,6 +3403,10 @@ truth game::CommandAll()
   for(c1 = 0; c1 < PetVector.size(); ++c1)
   {
     character* Char = PetVector[c1];
+
+    if(!Char->IsConscious())
+      continue;
+
     ulong OldC = Char->GetCommandFlags();
     ulong ConstC = Char->GetConstantCommandFlags();
     ulong ThisC = NewFlags
@@ -3533,7 +3545,7 @@ double game::GetGameSituationDanger()
   return SituationDanger;
 }
 
-long game::GetTimeSpent() 
+long game::GetTimeSpent()
 {
   return time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
 }

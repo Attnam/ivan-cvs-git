@@ -38,6 +38,9 @@ void msgsystem::AddMessage(const char* Format, ...)
   if(!Enabled)
     return;
 
+  if(BigMessageMode && BigMessage.GetSize() >= 512)
+    LeaveBigMessageMode();
+
   char Message[1024];
 
   va_list AP;

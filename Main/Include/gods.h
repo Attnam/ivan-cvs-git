@@ -198,6 +198,7 @@ GOD(scabies, god)
   virtual truth LikesMaterial(const materialdatabase*, const character*) const;
   virtual truth MutatesBodyParts() const { return true; }
   virtual int GetSex() const { return FEMALE; }
+  virtual truth LikesVomit() const { return true; }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

@@ -545,7 +545,7 @@ void fluid::imagedata::AddLiquidToPicture(const rawbitmap* Shadow, long Pixels, 
   for(long c = 0; c < Lumps; ++c)
   {
     v2 Cords;
-    
+
     if(Shadow)
       Cords = PixelAllowed[RAND() % PixelsAllowed];
     else

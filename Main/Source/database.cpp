@@ -382,6 +382,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(RunDescriptionLineTwo);
   ADD_MEMBER(ForceCustomStandVerb);
   ADD_MEMBER(VomittingIsUnhealthy);
+  ADD_MEMBER(AllowPlayerToChangeEquipment);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

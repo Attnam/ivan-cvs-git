@@ -78,7 +78,7 @@ void scrollofteleportation::FinishReading(character* Reader)
 
 truth wand::Apply(character* Terrorist)
 {
-  if(Terrorist->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
+  if(Terrorist->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   if(Terrorist->IsPlayer())
@@ -284,8 +284,8 @@ item* can::BetterVersion() const
     else
       Stuff = MAKE_MATERIAL(BANANA_FLESH);
 
-    can* P = can::Spawn(0, NO_MATERIALS); 
-    P->InitMaterials(MAKE_MATERIAL(IRON), Stuff); 
+    can* P = can::Spawn(0, NO_MATERIALS);
+    P->InitMaterials(MAKE_MATERIAL(IRON), Stuff);
     return P;
   }
   else
@@ -444,7 +444,7 @@ truth oillamp::Apply(character* Applier)
     /* First try to create a genie nearby (10 tries - if all of them fail then stop trying) */
 
     for(int c = 0; c < 10 && !FoundPlace; ++c)
-    {	  
+    {
       TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
       if(GetArea()->IsValidPos(TryToCreate) && Genie->CanMoveOn(GetNearLSquare(TryToCreate)) && Genie->IsFreeForMe(GetNearLSquare(TryToCreate)))
@@ -594,7 +594,7 @@ void scrolloftaming::FinishReading(character* Reader)
 	CharacterNear[Index++] = Char;
     }
   }
-  
+
   // Then pick one of the characters and set it to the same team as Reader
 
   if(!Index)
@@ -770,7 +770,7 @@ oillamp::oillamp()
     InhabitedByGenie = RAND_2;
 }
 
-truth whistle::Apply(character* Whistler) 
+truth whistle::Apply(character* Whistler)
 {
   if(!Whistler->HasHead())
   {
@@ -780,7 +780,7 @@ truth whistle::Apply(character* Whistler)
   BlowEffect(Whistler);
   Whistler->EditAP(-1000);
   return true;
-} 
+}
 
 void whistle::BlowEffect(character* Whistler)
 {
@@ -819,7 +819,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
     whistle::BlowEffect(Whistler);
     return;
   }
-  else 
+  else
     LastUsed = game::GetTick();
 
   if(Whistler->IsPlayer())
@@ -835,7 +835,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
       ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
     else
       ADD_MESSAGE("%s blows %s.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-  }  
+  }
   else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear a strange tune playing.");
 
@@ -1182,13 +1182,13 @@ int lantern::GetSpecialFlags() const
    case LEFT: return ROTATE|MIRROR;
    case DOWN: return FLIP;
    case UP: return 0;
-   case RIGHT: return ROTATE; 
+   case RIGHT: return ROTATE;
   }
 
   return 0;
 }
 
-truth stethoscope::Apply(character* Doctor) 
+truth stethoscope::Apply(character* Doctor)
 {
   if(!Doctor->CanUseStethoscope(true))
     return false;
@@ -1196,7 +1196,7 @@ truth stethoscope::Apply(character* Doctor)
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
-  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);  
+  int Dir = game::DirectionQuestion(CONST_S("What do you want to inspect? [press a direction key]"), false,true);
 
   if(Dir == DIR_ERROR)
     return false;
@@ -1212,7 +1212,7 @@ truth stethoscope::Apply(character* Doctor)
 
   Char->DisplayStethoscopeInfo(Doctor);
   return true;
-} 
+}
 
 void itemcontainer::CalculateVolumeAndWeight()
 {
@@ -1232,7 +1232,7 @@ truth itemcontainer::ContentsCanBeSeenBy(const character* Viewer) const
 }
 
 truth mine::CanBeSeenBy(const character* Viewer) const
-{ 
+{
   int ViewerTeam = Viewer->GetTeam()->GetID();
   return (!IsActive() || ViewerTeam == Team || DiscoveredByTeam.find(ViewerTeam) != DiscoveredByTeam.end()) && materialcontainer::CanBeSeenBy(Viewer);
 }
@@ -1245,7 +1245,7 @@ truth beartrap::CanBeSeenBy(const character* Viewer) const
 
 truth mine::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
+  if(User->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1280,7 +1280,7 @@ truth beartrap::Apply(character* User)
   }
 
   if(User->IsPlayer()
-     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
+     && !game::TruthQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]"))
     return false;
 
   room* Room = GetRoom();
@@ -1770,7 +1770,7 @@ truth encryptedscroll::Read(character*)
   return false;
 }
 
-truth horn::Apply(character* Blower) 
+truth horn::Apply(character* Blower)
 {
   if(!Blower->HasHead())
   {
@@ -1822,7 +1822,7 @@ truth horn::Apply(character* Blower)
 
 	    Audience->DeActivateTemporaryState(PANIC);
 	  }
-	  else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) 
+	  else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC)
 		  && Blower->GetRelation(Audience) == HOSTILE && Audience->HornOfFearWorks())
 	    Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	}
@@ -2062,7 +2062,7 @@ truth beartrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damage > 125 || !(RAND() % (250 / Damage)))
     {
       SetIsActive(false);
-      Break(Damager);	  
+      Break(Damager);
       return true;
     }
     else
@@ -2073,7 +2073,7 @@ truth beartrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
 	  ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
 
 	SetIsActive(false);
-	SendNewDrawAndMemorizedUpdateRequest();  
+	SendNewDrawAndMemorizedUpdateRequest();
 	return true;
       }
     }
@@ -2827,7 +2827,7 @@ truth bananapeels::RaiseTheDead(character*)
   GetSlot()->AddFriendItem(banana::Spawn());
   RemoveFromSlot();
   SendToHell();
-  return true;  
+  return true;
 }
 
 void beartrap::RemoveFromSlot()

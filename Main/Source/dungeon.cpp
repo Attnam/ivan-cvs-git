@@ -204,7 +204,7 @@ int dungeon::GetLevelTeleportDestination(int From) const
       To = From + RAND_2 + RAND_2 + RAND_2 + RAND_2 + 1;
 
       if(To > DARK_LEVEL)
-	To = From;	    
+	To = From;
     }
     else
     {

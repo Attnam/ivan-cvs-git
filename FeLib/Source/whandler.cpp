@@ -194,7 +194,7 @@ int globalwindowhandler::ReadKey()
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   int KeyPressed;
- 
+
   switch(Event->active.type)
   {
    case SDL_VIDEOEXPOSE:
@@ -203,7 +203,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
    case SDL_QUIT:
     if(!QuitMessageHandler || QuitMessageHandler())
       exit(0);
-	
+
     return;
    case SDL_KEYDOWN:
     switch(Event->key.keysym.sym)
@@ -280,7 +280,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
     if(std::find(KeyBuffer.begin(), KeyBuffer.end(), KeyPressed)
        == KeyBuffer.end())
       KeyBuffer.push_back(KeyPressed);
-	  
+
     break;
   }
 }

@@ -10,7 +10,7 @@
  *
  */
 
-/* 
+/*
  * NOTICE!!!
  *
  * This file contains SPOILERS, which might ruin your IVAN experience
@@ -409,9 +409,9 @@ meleeweapon
 
   Config MACE;
   {
-    StrengthModifier = 125; 
-    FormModifier = 75; 
-    DefaultSize = 70; 
+    StrengthModifier = 125;
+    FormModifier = 75;
+    DefaultSize = 70;
     DefaultMainVolume = 300;
     DefaultSecondaryVolume = 500;
     BitmapPos = 0, 32;
@@ -909,9 +909,9 @@ bodyarmor /* armor-> */
   Config CHAIN_MAIL;
   {
     Possibility = 50;
-    StrengthModifier = 125; 
-    DefaultSize = 75; 
-    DefaultMainVolume = 2000; 
+    StrengthModifier = 125;
+    DefaultSize = 75;
+    DefaultMainVolume = 2000;
     BitmapPos = 16, 96;
     NameSingular = "chain mail";
     MainMaterialConfig = { 8, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
@@ -965,9 +965,9 @@ bodyarmor /* armor-> */
 
   Config ARMOR_OF_GREAT_HEALTH;
   {
-    StrengthModifier = 150; 
+    StrengthModifier = 150;
     DefaultSize = 80;
-    DefaultMainVolume = 5000; 
+    DefaultMainVolume = 5000;
     BitmapPos = 64, 208;
     Possibility = 5;
     NameSingular = "armor";
@@ -1125,7 +1125,7 @@ scrollofcharging /* scroll-> */
 
 nut
 {
-  DefaultSize = 3; 
+  DefaultSize = 3;
   Possibility = 5;
   Category = FOOD;
   DefaultMainVolume = 25;
@@ -1135,7 +1135,7 @@ nut
   MainMaterialConfig == HUMAN_FLESH;
   NameSingular = "nut";
   Roundness = 90;
-  AttachedGod = NEFAS;  
+  AttachedGod = NEFAS;
   WieldedBitmapPos = 160, 368;
   IsValuable = false;
 }
@@ -1175,7 +1175,7 @@ bone
   MainMaterialConfig == BONE;
   Roundness = 20;
   IsTwoHanded = true;
-  AttachedGod = MORTIFER;  
+  AttachedGod = MORTIFER;
   WieldedBitmapPos = 160, 336;
   IsValuable = false;
 }
@@ -2904,7 +2904,7 @@ stethoscope
   Possibility = 25;
   Category = TOOL;
   DefaultMainVolume = 200;
-  StrengthModifier = 50;  
+  StrengthModifier = 50;
   BitmapPos = 48, 96;
   FormModifier = 10;
   Roundness = 20;
@@ -3029,7 +3029,7 @@ vermis /* meleeweapon-> */
 
 turox /* meleeweapon-> */
 {
-  StrengthModifier = 150; 
+  StrengthModifier = 150;
   FormModifier = 225;
   DefaultSize = 90;
   BitmapPos = 0, 32;
@@ -3056,7 +3056,7 @@ turox /* meleeweapon-> */
   {
     Possibility = 3;
     BitmapPos = 32, 112;
-    Price = 50;    
+    Price = 50;
     WieldedBitmapPos = 176, 192;
     EnchantmentPlusChance = 4;
   }
@@ -3410,7 +3410,7 @@ decosadshirt /* armor->bodyarmor-> */
   AttachedGod = MELLIS;
   TorsoArmorBitmapPos = 32, 448;
   Price = 0;
-} 
+}
 
 scrollofdetectmaterial /* scroll-> */
 {

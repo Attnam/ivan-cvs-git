@@ -172,11 +172,11 @@ void wsquare::CalculateLuminance()
   Luminance = MakeRGB24(Element, Element, Element);
 }
 
-int wsquare::GetWalkability() const 
-{ 
+int wsquare::GetWalkability() const
+{
   return (OWTerrain
 	  ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability()
-	  : GWTerrain->GetWalkability()); 
+	  : GWTerrain->GetWalkability());
 }
 
 truth wsquare::CanBeSeenByPlayer(truth) const

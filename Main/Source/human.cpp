@@ -417,7 +417,7 @@ truth humanoid::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 
 	if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	  DropBodyPart(SecondArm->GetBodyPartIndex());
-      } 
+      }
 
       EditNP(-50);
       EditAP(-Max(FirstAPCost, SecondAPCost));
@@ -2100,7 +2100,7 @@ long humanoid::GetMoveAPRequirement(int Difficulty) const
 
 void hunter::CreateBodyParts(int SpecialFlags)
 {
-  for(int c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c)
     if(c != LEFT_ARM_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
@@ -2214,7 +2214,7 @@ truth angel::AttachBodyPartsOfFriendsNear()
       ADD_MESSAGE("%s puts your %s back to its place.", CHAR_DESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().CStr());
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHAR_DESCRIPTION(DEFINITE), HurtOne->CHAR_DESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().CStr(), SeveredOne->GetBodyPartName().CStr());
-	
+
     SeveredOne->SetHP(1);
     SeveredOne->RemoveFromSlot();
     HurtOne->AttachBodyPart(SeveredOne);
@@ -2406,12 +2406,12 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stac
   CalculateBattleInfo();
   SignalPossibleTransparencyChange();
   RemoveTraps(BodyPartIndex);
-  return Bone;  
+  return Bone;
 }
 
 void zombie::CreateBodyParts(int SpecialFlags)
 {
-  for(int c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c)
     if(BodyPartIsVital(c) || RAND() % 3)
     {
       bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
@@ -2721,7 +2721,7 @@ truth humanoid::CheckZap()
 {
   if(!GetUsableArms())
   {
-    ADD_MESSAGE("You need at least one usable arm to zap."); 
+    ADD_MESSAGE("You need at least one usable arm to zap.");
     return false;
   }
   else
@@ -2876,7 +2876,7 @@ festring& bananagrower::ProcessMessage(festring& Msg) const
 
 void elder::CreateBodyParts(int SpecialFlags)
 {
-  for(int c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c)
     if(c != LEFT_LEG_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
@@ -3261,7 +3261,7 @@ void darkmage::GetAICommand()
 	    if(Golem->CanBeSeenByPlayer())
 	      ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(INDEFINITE));
 
-	    Golem->GetLSquareUnder()->DrawParticles(RED); 
+	    Golem->GetLSquareUnder()->DrawParticles(RED);
 	  }
 
 	  break;
@@ -3492,7 +3492,7 @@ void humanoid::DetachBodyPart()
       ToDrop->DropEquipment();
     }
 
-    ADD_MESSAGE("Bodypart detached!");  
+    ADD_MESSAGE("Bodypart detached!");
   }
   else
     ADD_MESSAGE("That bodypart has already been detached.");
@@ -4372,7 +4372,7 @@ void humanoid::LeprosyHandler()
 void humanoid::DropRandomNonVitalBodypart()
 {
   int BodyPartIndexToDrop = GetRandomNonVitalBodyPart();
-  
+
   if(BodyPartIndexToDrop != NONE_INDEX)
     DropBodyPart(BodyPartIndexToDrop);
 }
@@ -4384,7 +4384,7 @@ void humanoid::DropBodyPart(int Index)
 
   festring NameOfDropped = GetBodyPart(Index)->GetBodyPartName();
   item* Dropped = SevereBodyPart(Index);
-  
+
   if(Dropped)
   {
     if(game::IsInWilderness())
@@ -4412,7 +4412,7 @@ void humanoid::DropBodyPart(int Index)
       DeActivateVoluntaryAction();
     }
     else if(CanBeSeenByPlayer())
-      ADD_MESSAGE("Suddenly %s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());      
+      ADD_MESSAGE("Suddenly %s's %s disappears.", CHAR_NAME(DEFINITE), NameOfDropped.CStr());
   }
 }
 
@@ -4464,43 +4464,43 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
   {
    case GOOD:
     Weapon = flamingsword::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(ADAMANT), !(SpecialFlags & NO_PIC_UPDATE));
+    Weapon->InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(ADAMANT), !(SpecialFlags & NO_PIC_UPDATE));
     Weapon->SetEnchantment(4);
     SetRightWielded(Weapon);
     Equipment = shield::Spawn(0, SpecialFlags|NO_MATERIALS);
-    Equipment->InitMaterials(MAKE_MATERIAL(ARCANITE), !(SpecialFlags & NO_PIC_UPDATE));
+    Equipment->InitMaterials(MAKE_MATERIAL(DIAMOND), !(SpecialFlags & NO_PIC_UPDATE));
     Equipment->SetEnchantment(4);
     SetLeftWielded(Equipment);
     GetCWeaponSkill(LARGE_SWORDS)->AddHit(200000);
     GetCWeaponSkill(SHIELDS)->AddHit(500000);
     GetCurrentRightSWeaponSkill()->AddHit(200000);
     GetCurrentLeftSWeaponSkill()->AddHit(200000);
-    GetRightArm()->SetDexterity(80);
-    GetLeftArm()->SetDexterity(80);
+    GetRightArm()->SetDexterity(70);
+    GetLeftArm()->SetDexterity(70);
     break;
    case NEUTRAL:
     Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+    Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
     Weapon->SetEnchantment(4);
     SetRightWielded(Weapon);
-    Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+    /*Weapon = meleeweapon::Spawn(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
+    Weapon->InitMaterials(MAKE_MATERIAL(SAPPHIRE), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
     Weapon->SetEnchantment(4);
-    SetLeftWielded(Weapon);
+    SetLeftWielded(Weapon);*/
     GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500000);
-    GetCurrentRightSWeaponSkill()->AddHit(500000);
-    GetCurrentLeftSWeaponSkill()->AddHit(500000);
-    SetEndurance(80);
+    GetCurrentRightSWeaponSkill()->AddHit(200000);
+    //GetCurrentLeftSWeaponSkill()->AddHit(500000);
+    SetEndurance(70);
     break;
    case EVIL:
     Weapon = meleeweapon::Spawn(HALBERD, SpecialFlags|NO_MATERIALS);
-    Weapon->InitMaterials(MAKE_MATERIAL(ADAMANT), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
+    Weapon->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(OCTIRON), !(SpecialFlags & NO_PIC_UPDATE));
     Weapon->SetEnchantment(4);
-    SetRightWielded(Weapon);
-    GetCWeaponSkill(POLE_ARMS)->AddHit(1000000);
-    GetCurrentRightSWeaponSkill()->AddHit(1000000);
-    GetRightArm()->SetStrength(80);
-    GetLeftArm()->SetStrength(80);
+    SetLeftWielded(Weapon);
+    GetCWeaponSkill(POLE_ARMS)->AddHit(500000);
+    GetCurrentLeftSWeaponSkill()->AddHit(500000);
+    GetRightArm()->SetStrength(70);
+    GetLeftArm()->SetStrength(70);
   }
 }
 
@@ -4557,8 +4557,8 @@ void golem::Load(inputfile& SaveFile)
 }
 
 truth humanoid::CanVomit() const
-{ 
-  return HasHead() && character::CanVomit(); 
+{
+  return HasHead() && character::CanVomit();
 }
 
 truth humanoid::CheckApply() const
@@ -4660,8 +4660,7 @@ void veterankamikazedwarf::PostConstruct()
 
 truth humanoid::IsTransparent() const
 {
-  return !IsEnormous() || GetTorso()->GetMainMaterial()->IsTransparent()
-    || !(GetRightLeg() || GetLeftLeg());
+  return character::IsTransparent() || !(GetRightLeg() || GetLeftLeg());
 }
 
 void humanoid::ModifySituationDanger(double& Danger) const
@@ -4684,9 +4683,7 @@ void humanoid::ModifySituationDanger(double& Danger) const
 void oree::GetAICommand()
 {
   if(!RAND_N(50))
-  {
     CallForMonsters();
-  }
 
   humanoid::GetAICommand();
 }
@@ -4706,14 +4703,14 @@ void oree::CallForMonsters()
    case 1:
     ToBeCalled = frog::Spawn(RAND_2 ? GREATER_DARK : GIANT_DARK);
     break;
-   case 2: 
+   case 2:
     ToBeCalled = frog::Spawn(DARK);
     break;
    case 3:
     ToBeCalled = darkmage::Spawn(RAND_2 ? APPRENTICE : BATTLE_MAGE);
     break;
    case 4:
-    ToBeCalled = darkmage::Spawn(RAND_2 ? APPRENTICE : ELDER);      
+    ToBeCalled = darkmage::Spawn(RAND_2 ? APPRENTICE : ELDER);
     break;
    case 5:
     ToBeCalled = necromancer::Spawn(RAND_2 ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
@@ -4735,7 +4732,6 @@ void oree::CallForMonsters()
   }
 
   delete ToBeCalled;
-  return;
 }
 
 int humanoid::RandomizeTryToUnStickBodyPart(ulong PossibleBodyParts) const
@@ -4845,7 +4841,7 @@ truth humanoid::BrainsHurt() const
 void playerkind::PostConstruct()
 {
   int R = 0, G = 0, B = 0;
-  
+
   switch(RAND_N(4))
   {
    case 0: R = 180; G = 180; B = 40; break;

@@ -459,7 +459,7 @@ CHARACTER(angel, humanoid)
   angel() : LastHealed(0) { }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual truth AttachBodyPartsOfFriendsNear(); 
+  virtual truth AttachBodyPartsOfFriendsNear();
   virtual truth BodyPartIsVital(int) const;
   virtual int GetAttribute(int, truth = true) const;
   virtual col24 GetBaseEmitation() const;

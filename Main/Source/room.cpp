@@ -43,7 +43,7 @@ void room::DestroyTerrain(character* Who)
 
 /* returns true if player agrees to continue */
 
-truth room::CheckDestroyTerrain(character* Infidel) 
+truth room::CheckDestroyTerrain(character* Infidel)
 {
   if(!MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE)
     return true;
@@ -56,7 +56,7 @@ truth room::CheckDestroyTerrain(character* Infidel)
     return true;
   }
   else
-    return false; 
+    return false;
 }
 
 truth room::MasterIsActive() const

@@ -49,7 +49,7 @@ void area::Load(inputfile& SaveFile)
 {
   game::SetAreaInLoad(this);
   SaveFile >> XSize >> YSize;
-  
+
   if(SaveFile.Eof())
     ABORT("Area file %s corrupted!", SaveFile.GetFileName().CStr());
 

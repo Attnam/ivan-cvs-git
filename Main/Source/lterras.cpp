@@ -44,7 +44,7 @@ truth door::Open(character* Opener)
     {
       if(Opener->IsPlayer())
 	ADD_MESSAGE("The door is locked.");
-	  
+
       return false;
     }
     else if(RAND() % 20 < Opener->GetAttribute(ARM_STRENGTH))
@@ -117,7 +117,7 @@ void altar::Draw(blitdata& BlitData) const
 
 void door::BeKicked(character* Kicker, int KickDamage, int)
 {
-  if(!Opened) 
+  if(!Opened)
   {
     if(!IsLocked() && KickDamage > (RAND() & 3))
     {
@@ -132,7 +132,7 @@ void door::BeKicked(character* Kicker, int KickDamage, int)
     {
       if(CanBeSeenByPlayer() && (Kicker->CanBeSeenByPlayer() || Kicker->IsPlayer()))
 	ADD_MESSAGE("%s weak kick has no chance to affect this door.", Kicker->CHAR_POSSESSIVE_PRONOUN);
-	  
+
       return;
     }
 
@@ -305,6 +305,11 @@ truth altar::ReceiveVomit(character* Who, liquid* Liquid)
     return false;
 }
 
+truth altar::VomitingIsDangerous(const character*) const
+{
+  return !GetMasterGod()->LikesVomit();
+}
+
 truth door::AddAdjective(festring& String, truth Articled) const
 {
   if(olterrain::AddAdjective(String, Articled))
@@ -339,7 +344,7 @@ truth fountain::Drink(character* Drinker)
 {
   if(GetSecondaryMaterial())
   {
-    if(GetSecondaryMaterial()->GetConfig() == WATER) 
+    if(GetSecondaryMaterial()->GetConfig() == WATER)
     {
       room* Room = GetRoom();
 
@@ -589,7 +594,7 @@ void fountain::DryOut()
 
 void brokendoor::BeKicked(character* Kicker, int KickDamage, int)
 {
-  if(!Opened) 
+  if(!Opened)
   {
     if(!IsLocked() && KickDamage > (RAND() & 3))
     {
@@ -640,7 +645,7 @@ truth altar::Polymorph(character*)
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s glows briefly.", CHAR_NAME(DEFINITE));
-	
+
   int OldGod = GetConfig(), NewGod = GetConfig();
 
   while(NewGod == OldGod)
@@ -652,7 +657,7 @@ truth altar::Polymorph(character*)
   SetConfig(NewGod);
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
-  return true;	
+  return true;
 }
 
 truth altar::SitOn(character* Sitter)
@@ -700,7 +705,7 @@ void door::Break()
 
     if(Open)
       Temp->MakeWalkable();
-    else 
+    else
       Temp->MakeNotWalkable();
   }
 }
@@ -724,7 +729,7 @@ void door::ActivateBoobyTrap()
 
 void door::CreateBoobyTrap()
 {
-  SetBoobyTrap(1); 
+  SetBoobyTrap(1);
 }
 
 truth fountain::DipInto(item* ToBeDipped, character* Who)
@@ -928,7 +933,7 @@ truth stairs::Enter(truth DirectionUp) const
 
 void stairs::StepOn(character* Stepper)
 {
-  if(Stepper->IsPlayer()) 
+  if(Stepper->IsPlayer())
     ADD_MESSAGE("There is %s here.", CHAR_NAME(INDEFINITE));
 }
 
@@ -1048,7 +1053,7 @@ void door::ReceiveDamage(character* Villain, int Damage, int)
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("The door opens.");
-		
+
     MakeWalkable();
     return;
   }
@@ -1092,7 +1097,7 @@ void brokendoor::ReceiveDamage(character* Villain, int Damage, int)
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("The broken door opens.");
-		
+
     MakeWalkable();
     return;
   }
@@ -1140,7 +1145,7 @@ void olterraincontainer::Break()
 
 truth fountain::IsDipDestination() const
 {
-  return SecondaryMaterial && SecondaryMaterial->IsLiquid(); 
+  return SecondaryMaterial && SecondaryMaterial->IsLiquid();
 }
 
 int door::GetWalkability() const
@@ -1193,7 +1198,7 @@ truth fountain::IsFountainWithWater() const
 
 void liquidterrain::SurviveEffect(character* Survivor)
 {
-  Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);  
+  Survivor->GetLSquareUnder()->SpillFluid(Survivor, static_cast<liquid*>(GetMainMaterial()->SpawnMore(1000 + RAND_N(500))), false, false);
 }
 
 monsterportal::monsterportal()

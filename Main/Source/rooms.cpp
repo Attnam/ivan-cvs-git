@@ -510,7 +510,7 @@ truth library::DropItem(character* Customer, item* ForSale, int Amount)
       ADD_MESSAGE("\"Sorry, but I don't think %s into my collection.\"", Amount == 1 ? "that fits" : "those fit");
       return false;
     }
-      
+
     if(GetMaster()->GetMoney())
     {
       if(GetMaster()->GetMoney() < Price)
@@ -711,7 +711,7 @@ void sumoarena::HostileAction(character* Guilty) const
     Guilty->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
 }
 
-truth sumoarena::CheckDestroyTerrain(character* Infidel) 
+truth sumoarena::CheckDestroyTerrain(character* Infidel)
 {
   if(Infidel->GetTeam()->GetRelation(game::GetTeam(NEW_ATTNAM_TEAM)) == HOSTILE)
     return true;
@@ -724,7 +724,7 @@ truth sumoarena::CheckDestroyTerrain(character* Infidel)
     return true;
   }
   else
-    return false; 
+    return false;
 }
 
 void shop::ReceiveVomit(character* Who)
@@ -750,7 +750,7 @@ void cathedral::AddItemEffect(item* Dropped)
 
     if(KamikazeDwarf->CanBeSeenByPlayer())
     {
-      if(SeenBeforeTeleport) 
+      if(SeenBeforeTeleport)
 	ADD_MESSAGE("%s disappears and reappears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
       else
 	ADD_MESSAGE("%s appears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
@@ -767,11 +767,11 @@ void cathedral::AddItemEffect(item* Dropped)
 
     if(Dropped->CanBeSeenByPlayer())
     {
-      if(SeenBeforeTeleport) 
-	ADD_MESSAGE("%s disappears and reappears in the kamikaze dwarf room.", 
+      if(SeenBeforeTeleport)
+	ADD_MESSAGE("%s disappears and reappears in the kamikaze dwarf room.",
 		    Dropped->GetName(DEFINITE).CStr());
       else
-	ADD_MESSAGE("%s appears in the kamikaze dwarf room.", 
+	ADD_MESSAGE("%s appears in the kamikaze dwarf room.",
 		    Dropped->GetName(DEFINITE).CStr());
     }
     else if(SeenBeforeTeleport)

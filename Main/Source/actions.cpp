@@ -168,7 +168,7 @@ void rest::Load(inputfile& SaveFile)
 
 void rest::Handle()
 {
-  if((GoalHP && (GetActor()->GetHP() >= GoalHP 
+  if((GoalHP && (GetActor()->GetHP() >= GoalHP
 		 || GetActor()->GetHP() == GetActor()->GetMaxHP()
 		 || !GetActor()->CanHeal()))
      || (MinToStop && game::GetTotalMinutes() >= MinToStop))

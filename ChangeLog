@@ -11,13 +11,47 @@
 
 -----------------------------------------------------------------------------
 
-December 9 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: Very complex chain explosions caused by kicking could crash
+    the game
+  * BugFix: Polymorphing to Petrus in WMode crashed
+  * Great War in Attnam is inactive
+  * BugFix: Fleeing monsters using teleport control could try to teleport
+    outside the level, causing a crash
+  * You can no longer use your vital bodyparts for golem creation
+  * Invisible creatures can no longer block light
+  * BugFix: There was no way to use stairs covered by slime
+  * Flying creatures no longer get stuck to slime, at least if it's not
+    vomited at them
+  * You can give no more commands to unconscious pets
+  * BugFix: "Don't consume anything valuable" command flag wasn't activated
+    by default due to an obscure problem
+  * Increased Shirt of the Golden Eagle's AV from 35 to 40
+  * The player no longer autovomits on altars unless he has to or it
+    belongs to Scabies
+  * Removed the "temporary" comments that increased the probability of bone
+    files being created/loaded
+  * The veteran kamikaze dwarf of GC6 is no longer always on the downstairs;
+    this was too nasty for those players unfortunate enough to come up
+    from GC7 after being sucked there through a fountain
+  * An extra confirmation is needed before the game allows the player to
+    vomit at a neutral NPC; I've died too many times because of pressing
+    'V' instead of 'C'
+  * There are no doors in UT4 now; it is a natural cave
+  * The player is no more allowed to change the equipment of archangels
+  * Archangels are now less invincible
+  * Cut the time archangels exist to one tenth
+  * Added some extra monsters to Oree's lair
+  * It now rains blood in Oree's lair
+
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Broken gauntlet pic modified by Kahvi
   * BugFix: Killing a unicorn could crash
   * Great War in Attnam is active
 
-December 9 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+December 10 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Fixed some minor "problems" reported by Valgrind
   * Thaumic bomb and empty/full dwarven gas grenades added to item.pcx

@@ -215,6 +215,7 @@ struct characterdatabase : public databasebase
   int DisplacePriority;
   festring RunDescriptionLineOne;
   festring RunDescriptionLineTwo;
+  truth AllowPlayerToChangeEquipment;
 };
 
 class characterprototype
@@ -312,7 +313,7 @@ class character : public entity, public id
   void DeActivateTemporaryState(long What) { TemporaryState &= ~What; }
   void ActivateEquipmentState(long What) { EquipmentState |= What; }
   void DeActivateEquipmentState(long What) { EquipmentState &= ~What; }
-  truth TemporaryStateIsActivated(long What) const { return TemporaryState & What; }	
+  truth TemporaryStateIsActivated(long What) const { return TemporaryState & What; }
   truth EquipmentStateIsActivated(long What) const { return EquipmentState & What; }
   truth StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
   truth LoseConsciousness(int, truth = false);
@@ -557,6 +558,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const festring&, RunDescriptionLineTwo);
   DATA_BASE_TRUTH(ForceCustomStandVerb);
   DATA_BASE_TRUTH(VomittingIsUnhealthy);
+  DATA_BASE_TRUTH(AllowPlayerToChangeEquipment);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(truth = false);
   truth TeleportNear(character*);

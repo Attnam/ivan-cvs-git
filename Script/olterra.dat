@@ -10,7 +10,7 @@
  *
  */
 
-/* 
+/*
  * NOTICE!!!
  *
  * This file contains SPOILERS, which might ruin your IVAN experience
@@ -339,7 +339,7 @@ decoration
     HPModifier = 20;
     LeftOverItems == 0;
   }
-  
+
   Config OAK;
   {
     CanBeDestroyed = true;

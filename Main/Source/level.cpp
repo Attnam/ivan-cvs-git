@@ -1209,7 +1209,7 @@ v2 level::GetEntryPos(const character* Char, int I) const
 
     if(Fountains.empty())
       return GetRandomSquare();
-      
+
     return Fountains[RAND_N(Fountains.size())];
   }
   std::map<int, v2>::const_iterator i = EntryMap.find(I);
@@ -1965,7 +1965,7 @@ void level::GenerateDesert()
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(decoration::Spawn(CACTUS));
 
   int AmountOfBoulders = RAND_N(10);
-  
+
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(boulder::Spawn(1 + RAND_2));
 }
@@ -1981,9 +1981,9 @@ void level::GenerateSteppe()
 
   game::BusyAnimation();
   int c;
-  
+
   int AmountOfBoulders = RAND_N(20) + 5;
-  
+
   for(c = 0; c < AmountOfBoulders; ++c)
     Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(boulder::Spawn(1 + RAND_2));
 }
@@ -2132,7 +2132,7 @@ void level::GenerateGlacier()
 
       for(y = 0; y < YSize; ++y)
       {
-	if(!(FlagMap[x][y] & PREFERRED)) 
+	if(!(FlagMap[x][y] & PREFERRED))
 	{
 	  int SquaresAround = 0;
 	  int IceAround = 0;
@@ -2166,7 +2166,7 @@ void level::GenerateGlacier()
 	    GetLSquare(x,y)->ChangeOLTerrain(wall::Spawn(STONE_WALL));
 	}
 
-    break; // Doesn't yet check path in any way 
+    break; // Doesn't yet check path in any way
   }
 }
 
@@ -2249,8 +2249,8 @@ node* level::FindRoute(v2 From, v2 To, const std::set<v2>& Illegal, int Required
     for(int y = 0; y < YSize; ++y)
       NodeMap[x][y]->Processed = false;
 
-  node* Node = NodeMap[From.X][From.Y]; 
-  Node->Last = 0; 
+  node* Node = NodeMap[From.X][From.Y];
+  Node->Last = 0;
   Node->Processed = true;
   Node->Distance = 0;
   Node->Diagonals = 0;
@@ -2846,7 +2846,7 @@ int level::AddRadiusToSquareStack(v2 Center, long RadiusSquare) const
   return stackcontroller::StackIndex;
 }
 
-/* Any fountain is good that is not dry and is NOT Except */ 
+/* Any fountain is good that is not dry and is NOT Except */
 
 olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
 {

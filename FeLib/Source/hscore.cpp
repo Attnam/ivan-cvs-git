@@ -28,7 +28,6 @@ highscore::highscore(const festring& File) : LastAdd(0xFF) { Load(File); }
 truth highscore::Add(long NewScore, const festring& NewEntry,
 		     time_t NewTime, long NewRandomID)
 {
-    
   for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
     {
@@ -123,13 +122,11 @@ void highscore::Load(const festring& File)
     HighScore.Get();
 
     if(HighScore.Eof())
-      return; 
+      return;
   }
 
   inputfile HighScore(File, 0, false);
-
   HighScore >> Version;
-  
   HighScore >> Score >> Entry >> Time >> RandomID >> LastAdd;
 }
 
@@ -171,7 +168,7 @@ int highscore::Find(long AScore, const festring& AEntry,
 truth highscore::LastAddFailed() const
 { return LastAdd == MAX_HIGHSCORES; }
 
-void highscore::Clear() 
+void highscore::Clear()
 {
   Entry.clear();
   Score.clear();

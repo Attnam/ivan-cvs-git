@@ -455,7 +455,7 @@ character::~character()
   game::RemoveCharacterID(ID);
 }
 
-void character::Hunger() 
+void character::Hunger()
 {
   switch(GetBurdenState())
   {
@@ -1919,9 +1919,8 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, tr
 
       if(!OK)
 	return;
-	
+
       HScore.Clear();
-	
     }
     festring Desc = game::GetPlayerName();
     Desc << ", " << Description;
@@ -2293,7 +2292,7 @@ void character::FallTo(character* GuiltyGuy, v2 Where)
     {
       if(HasHead())
       {
-	if(IsPlayer()) 
+	if(IsPlayer())
 	  ADD_MESSAGE("You hit your head on the wall.");
 	else if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
@@ -2313,8 +2312,8 @@ void character::FallTo(character* GuiltyGuy, v2 Where)
 }
 
 truth character::CheckCannibalism(const material* What) const
-{ 
-  return GetTorso()->GetMainMaterial()->IsSameAs(What); 
+{
+  return GetTorso()->GetMainMaterial()->IsSameAs(What);
 }
 
 void character::StandIdleAI()
@@ -2665,7 +2664,7 @@ truth character::Displace(character* Who, truth Forced)
   else
     Danger /= 1 << -PriorityDifference;
 
-  if(IsSmall() && Who->IsSmall() 
+  if(IsSmall() && Who->IsSmall()
      && (Forced || Danger > 1.)
      && !IsStuck() && !Who->IsStuck()
      && (!Who->GetAction() || Who->GetAction()->TryDisplace())
@@ -2802,7 +2801,7 @@ void character::ShowNewPosInfo() const
 
     if(!SideItems.IsEmpty())
       ADD_MESSAGE("There is %s.", SideItems.CStr());
-		
+
     if(GetLSquareUnder()->HasEngravings())
     {
       if(CanRead())
@@ -3165,7 +3164,7 @@ void character::TeleportRandomly(truth Intentional)
     }
     else if(!Intentional)
     {
-      if(IsGoingSomeWhere())
+      if(IsGoingSomeWhere() && GetLevel()->IsValidPos(GoingTo))
       {
 	v2 Where = GetLevel()->GetNearestFreeSquare(this, GoingTo);
 
@@ -3316,7 +3315,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 	  /** No multi-tile humanoid support! */
 
 	  GetStackUnder()->AddItem(Severed);
-		  
+
 	  if(Direction != YOURSELF)
 	    Severed->Fly(0, Direction, Damage);
 	}
@@ -3733,7 +3732,7 @@ long character::GetBodyPartVolume(int I) const
 
 void character::CreateBodyParts(int SpecialFlags)
 {
-  for(int c = 0; c < BodyParts; ++c) 
+  for(int c = 0; c < BodyParts; ++c)
     if(CanCreateBodyPart(c))
       CreateBodyPart(c, SpecialFlags);
 }
@@ -3894,7 +3893,7 @@ void character::Initialize(int NewConfig, int SpecialFlags)
     InitSpecialAttributes();
     CommandFlags = GetDefaultCommandFlags();
 
-    if(GetAttribute(INTELLIGENCE) < 8) // gum
+    if(GetAttribute(INTELLIGENCE, false) < 8) // gum
       CommandFlags &= ~DONT_CONSUME_ANYTHING_VALUABLE;
 
     if(!GetDefaultName().IsEmpty())
@@ -3954,7 +3953,7 @@ void character::ReceiveHeal(long Amount)
     NewBodyPart->SetHP(1);
 
     if(IsPlayer())
-      ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr()); 
+      ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().CStr());
     else if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().CStr());
   }
@@ -4184,7 +4183,7 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
-  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), 
+  FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
 	       IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Gold: %ld", GetMoney());
@@ -4776,7 +4775,7 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
 	return NewForm;
     }
     else
-      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);  
+      NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);
   }
   else
     NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
@@ -4817,7 +4816,7 @@ void character::DexterityAction(int Difficulty)
 
 truth character::CanBeSeenByPlayer(truth Theoretically, truth IgnoreESP) const
 {
-  if(IsEnabled() && !game::IsGenerating())
+  if(IsEnabled() && !game::IsGenerating() && (Theoretically || GetSquareUnder()))
   {
     truth MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
     truth MayBeInfraSeen = PLAYER->IsEnabled() && PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
@@ -4845,7 +4844,7 @@ truth character::CanBeSeenBy(const character* Who, truth Theoretically, truth Ig
     return CanBeSeenByPlayer(Theoretically, IgnoreESP);
   else
   {
-    if(IsEnabled() && !game::IsGenerating())
+    if(IsEnabled() && !game::IsGenerating() && (Theoretically || GetSquareUnder()))
     {
       truth MayBeESPSeen = Who->IsEnabled() && !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
       truth MayBeInfraSeen = Who->IsEnabled() && Who->StateIsActivated(INFRA_VISION) && IsWarm();
@@ -4870,6 +4869,9 @@ truth character::CanBeSeenBy(const character* Who, truth Theoretically, truth Ig
 
 truth character::SquareUnderCanBeSeenByPlayer(truth IgnoreDarkness) const
 {
+  if(!GetSquareUnder())
+    return false;
+
   int S1 = SquaresUnder, S2 = PLAYER->SquaresUnder;
 
   if(S1 == 1 && S2 == 1)
@@ -5060,7 +5062,7 @@ void character::PrintEndPoisonedMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You feel better again.");
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s looks better.", CHAR_NAME(DEFINITE)); 
+    ADD_MESSAGE("%s looks better.", CHAR_NAME(DEFINITE));
 }
 
 void character::PoisonedHandler()
@@ -5090,6 +5092,7 @@ void character::BeginInvisibility()
 {
   UpdatePictures();
   SendNewDrawRequest();
+  SignalPossibleTransparencyChange();
 }
 
 void character::BeginInfraVision()
@@ -5108,6 +5111,7 @@ void character::EndInvisibility()
 {
   UpdatePictures();
   SendNewDrawRequest();
+  SignalPossibleTransparencyChange();
 }
 
 void character::EndInfraVision()
@@ -5268,7 +5272,7 @@ truth character::CanUseStethoscope(truth PrintReason) const
   return false;
 }
 
-/* Effect used by at least Sophos. 
+/* Effect used by at least Sophos.
  * NOTICE: Doesn't check for death! */
 
 void character::TeleportSomePartsAway(int NumberToTeleport)
@@ -5286,7 +5290,7 @@ void character::TeleportSomePartsAway(int NumberToTeleport)
 
 	if(!TorsosVolume)
 	  break;
-	      
+
 	long Amount = (RAND() % TorsosVolume) + 1;
 	item* Lump = GetTorso()->GetMainMaterial()->CreateNaturalForm(Amount);
 	GetTorso()->GetMainMaterial()->EditVolume(-Amount);
@@ -5319,7 +5323,7 @@ void character::TeleportSomePartsAway(int NumberToTeleport)
 	else if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s %s disappears.", GetPossessivePronoun().CStr(), GetBodyPartName(RandomBodyPart).CStr());
       }
-    }	
+    }
   }
 }
 
@@ -5514,7 +5518,7 @@ long character::GetRandomState(int Flags) const
   for(int c = 0; c < STATES; ++c)
     if(StateData[c].Flags & Flags & DUR_FLAGS && StateData[c].Flags & Flags & SRC_FLAGS)
       OKStates[NumberOfOKStates++] = 1 << c;
-  
+
   return NumberOfOKStates ? OKStates[RAND() % NumberOfOKStates] : 0;
 }
 
@@ -5942,7 +5946,7 @@ void character::CalculateAttributeBonuses()
 
     if(Equipment->AffectsMana())
       AttributeBonus[MANA] += Equipment->GetEnchantment();
-      
+
     if(Equipment->AffectsCarryingCapacity())
       CarryingBonus += Equipment->GetCarryingBonus();
   }
@@ -6031,7 +6035,7 @@ void character::ReceiveAntidote(long Amount)
     DeActivateTemporaryState(PARASITIZED);
     Amount -= Min(100L, Amount);
   }
-  
+
   if((Amount >= 100 || RAND_N(100) < Amount) && StateIsActivated(LEPROSY))
   {
     if(IsPlayer())
@@ -6335,7 +6339,7 @@ truth character::CheckTalk()
 {
   if(!CanTalk())
   {
-    ADD_MESSAGE("This monster does not know the art of talking."); 
+    ADD_MESSAGE("This monster does not know the art of talking.");
     return false;
   }
 
@@ -6529,7 +6533,7 @@ room* character::GetHomeRoom() const
 }
 
 void character::RemoveHomeData()
-{ 
+{
   delete HomeData;
   HomeData = 0;
 }
@@ -6564,7 +6568,7 @@ truth character::ConsumeItem(item* Item, const festring& ConsumeVerb)
 
   if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this, Item, 1))
     return false;
-     
+
   if(IsPlayer())
     ADD_MESSAGE("You begin %s %s.", ConsumeVerb.CStr(), Item->CHAR_NAME(DEFINITE));
   else if(CanBeSeenByPlayer())
@@ -6647,7 +6651,7 @@ void character::Search(int Perception)
   {
     lsquare* LSquare = GetNeighbourLSquare(d);
 
-    if(LSquare) 
+    if(LSquare)
       LSquare->GetStack()->Search(this, Min(Perception, 200));
   }
 }
@@ -6663,7 +6667,7 @@ character* character::GetRandomNeighbour(int RelationFlags) const
   {
     lsquare* LSquare = GetNeighbourLSquare(d);
 
-    if(LSquare) 
+    if(LSquare)
     {
       character* Char = LSquare->GetCharacter();
 
@@ -7546,7 +7550,7 @@ void character::EditExperience(int Identifier, double Value, double Speed)
     {
       if(Change > 0)
 	PlayerMsg = "You now see the world in much better detail than before.";
-      else 
+      else
       {
 	PlayerMsg = "You feel very guru.";
 	game::GetGod(VALPURUS)->AdjustRelation(100);
@@ -7718,7 +7722,7 @@ void character::TryToInfectWithLeprosy(const character* Infector)
 {
   if(!IsImmuneToLeprosy()
      && ((GetRelation(Infector) == HOSTILE
-	  && !RAND_N(50 * GetAttribute(ENDURANCE))) 
+	  && !RAND_N(50 * GetAttribute(ENDURANCE)))
 	 || !RAND_N(500 * GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
@@ -7952,7 +7956,6 @@ void character::RegenerateStamina()
       for(int c = 0; c < SquaresUnder; ++c)
 	GetLSquareUnder(c)->SpillFluid(0, CreateSweat(Volume), false, false);
     }
-	  
   }
 
   int Bonus = 1;
@@ -8146,7 +8149,7 @@ void character::LeprosyHandler()
   EditExperience(ARM_STRENGTH, -25, 1 << 1);
   EditExperience(LEG_STRENGTH, -25, 1 << 1);
   EditExperience(DEXTERITY, -25, 1 << 1);
-  EditExperience(AGILITY, -25, 1 << 1);  
+  EditExperience(AGILITY, -25, 1 << 1);
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
 }
@@ -8500,6 +8503,12 @@ truth character::GivePetItems()
 
 truth character::IssuePetCommands()
 {
+  if(!IsConscious())
+  {
+    ADD_MESSAGE("%s is unconscious.", CHAR_DESCRIPTION(DEFINITE));
+    return false;
+  }
+
   ulong PossibleC = GetPossibleCommandFlags();
 
   if(!PossibleC)
@@ -8601,7 +8610,7 @@ ulong character::GetManagementFlags() const
 {
   ulong Flags = ALL_MANAGEMENT_FLAGS;
 
-  if(!CanUseEquipment())
+  if(!CanUseEquipment() || !AllowPlayerToChangeEquipment())
     Flags &= ~CHANGE_EQUIPMENT;
 
   if(!GetStack()->GetItems())
@@ -8814,7 +8823,7 @@ truth character::HasClearRouteTo(v2 Pos) const
 
 truth character::IsTransparent() const
 {
-  return !IsEnormous() || GetTorso()->GetMainMaterial()->IsTransparent();
+  return !IsEnormous() || GetTorso()->GetMainMaterial()->IsTransparent() || StateIsActivated(INVISIBLE);
 }
 
 void character::SignalPossibleTransparencyChange()
@@ -9009,7 +9018,7 @@ void character::AddRandomScienceName(festring& String) const
     int S2 = GetScienceTalkSubstantiveAttribute().Size;
     festring OtherAttribute;
     int Chosen = RAND_GOOD(S1 + S2);
-    
+
     if(Chosen < S1)
       OtherAttribute = GetScienceTalkAdjectiveAttribute()[Chosen];
     else
@@ -9133,7 +9142,7 @@ truth character::TryToUnStickTraps(v2 Dir)
 	break;
     }
 
-  return !TrapData && IsEnabled(); 
+  return !TrapData && IsEnabled();
 }
 
 struct trapidcomparer
@@ -9319,8 +9328,8 @@ void character::PrintAttribute(const char* Desc, int I, int PanelPosX, int Panel
   if(Attribute != NoBonusAttribute)
   {
     int Where = PanelPosX + (String.GetSize() + 1 << 3);
-    FONT->Printf(DOUBLE_BUFFER, v2(Where, PanelPosY * 10), LIGHT_GRAY, 
-		 "%d", NoBonusAttribute); 
+    FONT->Printf(DOUBLE_BUFFER, v2(Where, PanelPosY * 10), LIGHT_GRAY,
+		 "%d", NoBonusAttribute);
   }
 }
 
@@ -9447,12 +9456,21 @@ void character::VomitAtRandomDirection(int Amount)
   if(game::IsInWilderness())
     return;
 
-  lsquare* Where = GetLSquareUnder()->GetRandomAdjacentSquare();
+  /* Lacks support of multitile monsters */
 
-  /* Slightly more probable to vomit on self than other squares */
+  v2 Possible[9];
+  int Index = 0;
 
-  if(RAND_8 && (!Where->GetCharacter() || Where->GetCharacter()->IsPet()))
-    Vomit(Where->GetPos(), Amount);
+  for(int d = 0; d < 9; ++d)
+  {
+    lsquare* Square = GetLSquareUnder()->GetNeighbourLSquare(d);
+
+    if(Square && !Square->VomitingIsDangerous(this))
+      Possible[Index++] = Square->GetPos();
+  }
+
+  if(Index)
+    Vomit(Possible[RAND_N(Index)], Amount);
   else
     Vomit(GetPos(), Amount);
 }

@@ -184,7 +184,7 @@ int item::HitCharacter(character* Thrower, character* Dude, int Damage, double T
   if(Thrower && !EffectIsGood())
     Thrower->Hostility(Dude);
 
-  if(Dude->DodgesFlyingItem(this, ToHitValue)) 
+  if(Dude->DodgesFlyingItem(this, ToHitValue))
   {
     if(Dude->IsPlayer())
       ADD_MESSAGE("%s misses you.", CHAR_NAME(DEFINITE));

@@ -273,7 +273,7 @@ ITEM(belt, armor)
  public:
   virtual long GetPrice() const;
   virtual truth IsBelt(const character*) const { return true; }
-  virtual int GetFormModifier() const; 
+  virtual int GetFormModifier() const;
   virtual truth IsInCorrectSlot(int) const;
   virtual col16 GetMaterialColorB(int Frame) const { return GetMaterialColorA(Frame); }
 };
@@ -310,10 +310,10 @@ ITEM(helmet, armor)
 
 ITEM(chameleonwhip, whip)
 {
- public: 
-  virtual truth HitEffect(character*, character*, v2, int, int, truth); 
- protected: 
-  virtual truth ScabiesHelps(const character*, const character*) const; 
+ public:
+  virtual truth HitEffect(character*, character*, v2, int, int, truth);
+ protected:
+  virtual truth ScabiesHelps(const character*, const character*) const;
 };
 
 ITEM(wondersmellstaff, meleeweapon)

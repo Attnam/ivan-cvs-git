@@ -122,7 +122,7 @@ int globalerrorhandler::NewHandler(size_t)
 		    "Get more RAM and hard disk space.";
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
-  MessageBox(NULL, Msg, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
+  MessageBox(NULL, Msg, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef LINUX
   std::cout << Msg << std::endl;

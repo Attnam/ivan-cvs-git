@@ -131,6 +131,7 @@ ITEM(bodypart, item)
   virtual void SignalMaterialChange();
   void SetNormalMaterial(int What) { NormalMaterial = What; }
   virtual truth IsBroken() const { return HP < MaxHP; }
+  virtual truth IsDestroyable(const character*) const;
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }

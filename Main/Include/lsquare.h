@@ -256,6 +256,7 @@ class lsquare : public square
   truth HasDangerousTraps(const character*) const;
   truth HasDangerousFluids(const character*) const;
   void AddLocationDescription(festring&) const;
+  truth VomitingIsDangerous(const character*) const;
  protected:
   void ChangeLuminance(col24&, col24);
   void RemoveLuminance(col24&);

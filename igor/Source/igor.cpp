@@ -145,7 +145,7 @@ int Main(int, char**)
 	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, 1, true);
       else if(k == '<')
 	CBitmap->AlterGradient(Cursor, TILE_V2, Selected, -1, true);
-      else if(k == KEY_UP) 
+      else if(k == KEY_UP)
 	CBitmap->Roll(Cursor, TILE_V2, v2(0, -1), TempBuffer);
       else if(k == KEY_DOWN)
 	CBitmap->Roll(Cursor, TILE_V2, v2(0, 1), TempBuffer);

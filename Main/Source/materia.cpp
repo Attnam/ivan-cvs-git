@@ -275,7 +275,7 @@ void material::Initialize(int NewConfig, long InitVolume, truth Load)
 }
 
 long material::GetTotalNutritionValue() const
-{ 
+{
   return GetNutritionValue() * GetVolume() / 50;
 }
 

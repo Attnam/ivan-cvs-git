@@ -203,12 +203,17 @@ character* god::CreateAngel(team* Team, int LifeBase)
 
       if(LifeBase && GetType() != VALPURUS
 	 && (!(RAND() % 5) || abs(Relation) == 1000))
+      {
 	Angel = archangel::Spawn(GetType());
+	Angel->SetLifeExpectancy(LifeBase / 10, 0);
+      }
       else
+      {
 	Angel = angel::Spawn(GetType());
 
-      if(LifeBase)
-	Angel->SetLifeExpectancy(LifeBase, 0);
+	if(LifeBase)
+	  Angel->SetLifeExpectancy(LifeBase, 0);
+      }
 
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(TryToCreate);
 

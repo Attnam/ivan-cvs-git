@@ -10,7 +10,7 @@
  *
  */
 
-/* 
+/*
  * NOTICE!!!
  *
  * This file contains SPOILERS, which might ruin your IVAN experience
@@ -387,7 +387,7 @@ solid
   {
     StrengthValue = 60;
     ConsumeType = CT_METAL;
-    Density = 7250; 
+    Density = 7250;
     Color = rgb16(100, 100, 100);
     PriceModifier = 15;
     NameStem = "tin";
@@ -520,7 +520,7 @@ solid
 
   Config GOLDEN_EAGLE_FEATHER;
   {
-    StrengthValue = 250;
+    StrengthValue = 300;
     ConsumeType = CT_MISC_ORGANIC;
     Density = 100;
     Color = rgb16(80, 80, 176);
@@ -536,7 +536,7 @@ solid
   Config ICE;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MINERAL; /* correct someday */
+    ConsumeType = CT_MINERAL;/* correct someday */
     Density = 750;
     Color = rgb16(175, 175, 230);
     NameStem = "ice";
@@ -785,7 +785,7 @@ solid
   Config LIME_STONE;
   {
     StrengthValue = 30;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2500;
     Color = rgb16(160, 170, 160);
     NameStem = "limestone";
@@ -798,7 +798,7 @@ solid
   Config CALCITE;
   {
     StrengthValue = 35;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2700;
     Color = rgb16(180, 180, 200);
     NameStem = "calcite";
@@ -812,7 +812,7 @@ solid
   Config OBSIDIAN;
   {
     StrengthValue = 40;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2400;
     Color = rgb16(40, 40, 40);
     NameStem = "obsidian";
@@ -826,7 +826,7 @@ solid
   Config GNEISS;
   {
     StrengthValue = 45;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2900;
     Color = rgb16(108, 80, 75);
     NameStem = "gneiss";
@@ -839,7 +839,7 @@ solid
   Config SLATE;
   {
     StrengthValue = 50;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2700;
     Color = rgb16(140, 80, 64);
     NameStem = "slate";
@@ -852,7 +852,7 @@ solid
   Config GRANITE;
   {
     StrengthValue = 55;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2700;
     Color = rgb16(100, 100, 100);
     NameStem = "granite";
@@ -865,7 +865,7 @@ solid
   Config BASALT;
   {
     StrengthValue = 60;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2900;
     Color = rgb16(60, 60, 60);
     NameStem = "basalt";
@@ -878,7 +878,7 @@ solid
   Config MILKY_QUARTZ;
   {
     StrengthValue = 65;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(200, 240, 200);
     NameStem = "milky quartz";
@@ -891,7 +891,7 @@ solid
   Config FLINT;
   {
     StrengthValue = 65;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(135, 150, 180);
     NameStem = "flint";
@@ -904,7 +904,7 @@ solid
   Config QUARTZITE;
   {
     StrengthValue = 70;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2700;
     Color = rgb16(175, 160, 135);
     NameStem = "quartzite";
@@ -917,7 +917,7 @@ solid
   Config AMETHYST;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(160, 35, 160);
     NameStem = "amethyst";
@@ -934,7 +934,7 @@ solid
   Config CITRINE;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(230, 210, 40);
     NameStem = "citrine";
@@ -950,7 +950,7 @@ solid
   Config ROSE_QUARTZ;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(160, 130, 130);
     NameStem = "rose quartz";
@@ -966,7 +966,7 @@ solid
   Config JASPER;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(150, 40, 30);
     NameStem = "jasper";
@@ -981,7 +981,7 @@ solid
   Config ROCK_CRYSTAL;
   {
     StrengthValue = 75;
-    ConsumeType = CT_MINERAL; 
+    ConsumeType = CT_MINERAL;
     Density = 2650;
     Color = rgb16(180, 180, 200);
     NameStem = "rock crystal";
@@ -2140,7 +2140,7 @@ powder
   Config SNOW;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MINERAL; /* add something appropriate for this */
+    ConsumeType = CT_MINERAL;/* add something appropriate for this */
     Density = 500;
     Color = rgb16(200, 200, 200);
     NameStem = "snow";
@@ -2153,7 +2153,7 @@ powder
   Config SAND;
   {
     StrengthValue = 2;
-    ConsumeType = CT_MINERAL; /* add something appropriate for this */
+    ConsumeType = CT_MINERAL;/* add something appropriate for this */
     Density = 1600;
     Color = rgb16(200, 200, 125);
     NameStem = "sand";

@@ -121,7 +121,7 @@ truth team::HasEnemy() const
   for(int c = 0; c < game::GetTeams(); ++c)
     if(!game::GetTeam(c)->GetMember().empty() && GetRelation(game::GetTeam(c)) == HOSTILE)
       return true;
-      
+
   return false;
 }
 

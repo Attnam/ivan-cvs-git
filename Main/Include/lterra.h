@@ -211,7 +211,7 @@ struct olterraindatabase : public lterraindatabase
   truth CreateDivineConfigurations;
   truth CanBeDestroyed;
   truth IsUpLink;
-  truth CreateLockConfigurations;  
+  truth CreateLockConfigurations;
   truth IsAlwaysTransparent;
   truth ShowThingsUnder;
   truth IsWall;
@@ -254,8 +254,8 @@ class olterrain : public lterrain, public oterrain
   virtual truth Enter(truth) const;
   virtual void BeKicked(character*, int, int);
   virtual truth IsDoor() const { return false; }
-  virtual truth HasEatEffect() const { return false; } 
-  virtual truth HasDrinkEffect() const { return false; } 
+  virtual truth HasEatEffect() const { return false; }
+  virtual truth HasDrinkEffect() const { return false; }
   virtual truth Eat(character*) { return false; }
   virtual truth Drink(character*) { return false; }
   virtual void Lock() { }
@@ -330,6 +330,7 @@ class olterrain : public lterrain, public oterrain
   virtual void FinalProcessForBone() { }
   virtual void RestoreHP() { HP = CalculateMaxHP(); }
   virtual truth IsAnimated() const;
+  virtual truth VomitingIsDangerous(const character*) const { return false; }
  protected:
   virtual v2 GetBitmapPos(int) const;
   v2 GetBorderBitmapPos(v2, int) const;

@@ -83,6 +83,7 @@ class god
   virtual truth MutatesBodyParts() const { return false; }
   virtual int GetSex() const = 0;
   void SignalRandomAltarGeneration(const std::vector<v2>&);
+  virtual truth LikesVomit() const { return false; }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;

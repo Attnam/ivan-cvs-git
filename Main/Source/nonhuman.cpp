@@ -599,7 +599,7 @@ void genetrixvesana::GetAICommand()
 
   if(AttackAdjacentEnemyAI())
     return;
-  
+
   if(MoveRandomly())
     return;
 
@@ -635,7 +635,7 @@ void ostrich::GetAICommand()
 
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
-  int BananasPicked = 0;  
+  int BananasPicked = 0;
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->IsBanana() && ItemVector[c]->CanBeSeenBy(this)
@@ -741,7 +741,7 @@ void elpuri::GetAICommand()
     if(CheckForEnemies(false, false, false))
       return;
 
-    EditAP(-1000);  
+    EditAP(-1000);
   }
 }
 
@@ -761,7 +761,7 @@ void mommo::CreateCorpse(lsquare* Square)
       NeighbourSquare->SpillFluid(0, static_cast<liquid*>(GetTorso()->GetMainMaterial()->SpawnMore(250 + RAND() % 250)));
   }
 
-  SendToHell();  
+  SendToHell();
 }
 
 void carnivorousplant::CreateCorpse(lsquare* Square)
@@ -924,7 +924,7 @@ truth eddy::Hit(character* Enemy, v2, int, truth)
     ADD_MESSAGE("You miss %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
   EditAP(-500);
-  return true;  
+  return true;
 }
 
 void mushroom::Save(outputfile& SaveFile) const
@@ -945,7 +945,7 @@ void mushroom::GetAICommand()
 
   if(FollowLeader(GetLeader()))
     return;
-  
+
   lsquare* CradleSquare = GetNeighbourLSquare(RAND() % 8);
 
   if(CradleSquare && !CradleSquare->GetCharacter()
@@ -987,7 +987,7 @@ void mushroom::GetAICommand()
 
   if(AttackAdjacentEnemyAI())
     return;
-  
+
   if(MoveRandomly())
     return;
 
@@ -1067,7 +1067,7 @@ truth twoheadedmoose::Hit(character* Enemy, v2 HitPos, int Direction, truth Forc
   {
     lsquare* LSquare = GetNeighbourLSquare(d);
 
-    if(LSquare) 
+    if(LSquare)
     {
       character* Enemy = LSquare->GetCharacter();
 
@@ -1379,7 +1379,7 @@ void ghost::GetAICommand()
     if(CheckForEnemies(false, false, false))
       return;
 
-    EditAP(-1000);  
+    EditAP(-1000);
   }
 }
 
@@ -1584,7 +1584,7 @@ void hattifattener::CreateCorpse(lsquare* Square)
 }
 
 void hedgehog::SpecialBodyDefenceEffect(character* Enemy, bodypart* BodyPart, int Type)
-{   
+{
   if(Type != WEAPON_ATTACK && RAND() & 1)
   {
     if(Enemy->IsPlayer())
@@ -1842,7 +1842,7 @@ truth mommo::Hit(character* Enemy, v2 Pos, int, truth)
 
   Vomit(Pos, 250 + RAND() % 250, false);
   EditAP(-1000);
-  return true;  
+  return true;
 }
 
 void mommo::GetAICommand()

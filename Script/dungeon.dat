@@ -10,7 +10,7 @@
  *
  */
 
-/* 
+/*
  * NOTICE!!!
  *
  * This file contains SPOILERS, which might ruin your IVAN experience
@@ -478,9 +478,13 @@ Dungeon ELPURI_CAVE;
 
       Square, BoundedRandom 35, 1, 58, 58, HAS_NO_OTERRAIN;
       {
-        Character = veterankamikazedwarf;
         OTerrain = stairs(STAIRS_DOWN);
         EntryIndex = STAIRS_DOWN;
+      }
+
+      Square, BoundedRandom 35, 1, 58, 58, 0;
+      {
+        Character = veterankamikazedwarf;
       }
     }
 
@@ -652,7 +656,7 @@ Dungeon ELPURI_CAVE;
     {
       Character = communist { Team = IVAN_TEAM; Flags = IS_LEADER; }
     }
-    
+
     Square, Random;
     {
       Character = vladimir { Team = IVAN_TEAM; }
@@ -1142,7 +1146,7 @@ Dungeon ELPURI_CAVE;
     Description = "Oree's lair";
     ShortDescription = "OreeLair";
     LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
-    FillSquare = ACIDOUS_BLOOD liquidterrain(UNDERGROUND_LAKE), 0;
+    FillSquare = BLOOD liquidterrain(UNDERGROUND_LAKE), 0;
     TunnelSquare = solidterrain(GROUND), 0;
     Rooms = 5;
     GenerateMonsters = false;
@@ -1158,17 +1162,26 @@ Dungeon ELPURI_CAVE;
       Size = 5:7,5:7;
       WallSquare = RUBY solidterrain(PARQUET), RUBY wall(BRICK_FINE);
       FloorSquare = RUBY solidterrain(PARQUET), 0;
-      DoorSquare = RUBY solidterrain(PARQUET), RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+      DoorSquare = RUBY solidterrain(PARQUET), RUBY door(OCTAGONAL_LOCK);
       Shape = ROUND_CORNERS;
       AltarPossible = false;
-      DivineMaster = MORTIFER;
+      DivineMaster = CRUENTUS;
       GenerateFountains = false;
       GenerateLanterns = false;
+      AllowLockedDoors = false;
+      IsInside = false;
     }
 
     Room
     {
       Size = 9,9;
+      GenerateDoor = false;
+
+      Square, Pos 4,0;
+      {
+        OTerrain = RUBY door(OCTAGONAL_LOCK) { Parameters = LOCKED; }
+        AttachRequired = true;
+      }
 
       Square, Pos 4,4;
       {
@@ -1200,14 +1213,14 @@ Dungeon ELPURI_CAVE;
     Room
     {
       Size = 9,9;
-      DivineMaster = MORTIFER;
+      DivineMaster = CRUENTUS;
 
       Square, Pos 4,1;
       {
-        OTerrain = STEEL altar(MORTIFER);
+        OTerrain = STEEL altar(CRUENTUS);
       }
 
-      Square, Pos 4,7;
+      Square, Pos 1,4;
       {
         OTerrain = portal(OREE_LAIR_EXIT) { AttachedArea = 0; AttachedEntry = RANDOM; }
       }
@@ -1225,7 +1238,7 @@ Dungeon ELPURI_CAVE;
         Types
         {
           O = oree;
-          A = angel(MORTIFER);
+          A = angel(CRUENTUS);
         }
       }
       {
@@ -1237,6 +1250,42 @@ Dungeon ELPURI_CAVE;
         .......
         .......
       }
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkknight(ELITE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = frog(GIANT_DARK);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = mysticfrog(DARK);
+      Times = 1;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(APPRENTICE);
+      Times = 4;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(BATTLE_MAGE);
+      Times = 2;
+    }
+
+    Square, Random NOT_IN_ROOM;
+    {
+      Character = darkmage(ELDER);
+      Times = 1;
     }
   }
 }
@@ -1337,7 +1386,7 @@ Dungeon ATTNAM;
     {
       EntryIndex = STAIRS_UP;
     }
-  
+
     Room
     {
       Pos = 10,10;
@@ -1370,7 +1419,7 @@ Dungeon ATTNAM;
       {
         OTerrain = 0;
       }
-      
+
       GTerrainMap
       {
         Pos = 4,4;
@@ -1444,7 +1493,7 @@ Dungeon ATTNAM;
           s = decoration(COUCH);
           f = fountain { SecondaryMaterial = ICE; }
           d = decoration(DOUBLE_BED);
-          B = GOLD boulder(1); 
+          B = GOLD boulder(1);
         }
       }
       {
@@ -1512,7 +1561,7 @@ Dungeon ATTNAM;
           3 == lantern { SquarePosition = RIGHT; }
           4 == lantern { SquarePosition = LEFT; }
           C == GOLD itemcontainer(CHEST) { ItemsInside = { 3, GOLD helmet, stone { Times = 10; }, GOLD banana; } }
-          F == ring(RING_OF_FIRE_RESISTANCE); 
+          F == ring(RING_OF_FIRE_RESISTANCE);
           I == ring(RING_OF_INVISIBILITY);
           E == amulet(AMULET_OF_ESP);
           S == GOLD GOLD meleeweapon(LONG_SWORD);
@@ -1642,7 +1691,7 @@ Dungeon ATTNAM;
       Type = ROOM_SHOP;
       GenerateLanterns = false;
       GenerateWindows = false;
-      
+
       Square, Pos 3, 5;
       {
         GTerrain = solidterrain(PARQUET);
@@ -1711,7 +1760,7 @@ Dungeon ATTNAM;
       Type = ROOM_LIBRARY;
       GenerateLanterns = false;
       GenerateWindows = false;
-      
+
       Square, Pos 3, 5;
       {
         GTerrain = solidterrain(PARQUET);
@@ -1905,7 +1954,7 @@ Dungeon ATTNAM;
       DoorSquare = solidterrain(FLOOR), door;
     }
 
-    Square, Random;
+    /*Square, Random;
     {
       Character = communist { Team = IVAN_TEAM; }
       Times = 3;
@@ -2011,7 +2060,7 @@ Dungeon ATTNAM;
     {
       Character = spider { Team = MONSTER_TEAM; }
       Times = 3;
-    }
+    }*/
   }
 }
 
@@ -2821,7 +2870,7 @@ Dungeon UNDER_WATER_TUNNEL;
       Square, Pos 3,3;
       {
         OTerrain = stairs(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
-        EntryIndex = STAIRS_UP;      
+        EntryIndex = STAIRS_UP;
       }
 
       Square, Pos 0,1;
@@ -2877,7 +2926,8 @@ Dungeon UNDER_WATER_TUNNEL;
       GenerateLanterns = false;
       Shape = ROUND_CORNERS;
       WallSquare = solidterrain(DARK_GRASS_TERRAIN), BASALT earth;
-      FloorSquare = GRANITE solidterrain(DARK_GRASS_TERRAIN), 0;
+      FloorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
+      DoorSquare = solidterrain(DARK_GRASS_TERRAIN), 0;
       AltarPossible = false;
     }
 

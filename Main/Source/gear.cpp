@@ -651,7 +651,7 @@ truth chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitte
   }
   else
     return !(RAND() % 20);
-} 
+}
 
 alpha justifier::GetOutlineAlpha(int Frame) const
 {

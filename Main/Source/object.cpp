@@ -133,7 +133,7 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, long D
   {
     if(OldMaterial)
       SignalEmitationDecrease(OldMaterial->GetEmitation());
-  
+
     SignalVolumeAndWeightChange();
     SignalMaterialChange();
   }
@@ -214,7 +214,7 @@ void object::UpdatePictures(graphicdata& GraphicData, v2 Position, int SpecialFl
   v2 SparklePos;
   int SparkleTime = 0;
   int Seed = 0;
-  int FlyAmount = GetSpoilLevel(); 
+  int FlyAmount = GetSpoilLevel();
   truth Sparkling = false, FrameNeeded = false, SeedNeeded = false;
   v2 BPos = (this->*BitmapPosRetriever)(0);
   alpha Alpha;

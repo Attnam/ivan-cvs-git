@@ -405,8 +405,8 @@ class item : public object
   virtual void SignalEmitationDecrease(col24);
   void CalculateAll();
   virtual void DropEquipment(stack* = 0) { }
-  virtual truth IsDangerous(const character*) const { return false; } 
-  virtual truth NeedDangerSymbol() const { return false; } 
+  virtual truth IsDangerous(const character*) const { return false; }
+  virtual truth NeedDangerSymbol() const { return false; }
   void WeaponSkillHit(int);
   virtual void SetTeam(int) { }
   void SpecialGenerationHandler();

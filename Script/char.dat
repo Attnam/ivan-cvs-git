@@ -10,7 +10,7 @@
  *
  */
 
-/* 
+/*
  * NOTICE!!!
  *
  * This file contains SPOILERS, which might ruin your IVAN experience
@@ -274,6 +274,7 @@ character
   RunDescriptionLineOne = ""; /* if empty, IVAN determines this itself */
   RunDescriptionLineTwo = "";
   VomittingIsUnhealthy = true;
+  AllowPlayerToChangeEquipment = true;
 }
 
 humanoid
@@ -2377,7 +2378,7 @@ femaleslave
     DefaultCharisma = 20;
     NameSingular = "servant";
     AttachedGod = SEGES;
-    FriendlyReplies = 
+    FriendlyReplies =
     {
       7, /* 4 first are used before revolution */
       "\"Thank Silva I don't have to gather bananas!\"",
@@ -2477,7 +2478,7 @@ imp
   EyeColor = rgb16(200, 200, 0);
   ClothColor = rgb16(111, 74, 37);
   HairColor = rgb16(100, 0, 0);
-  HeadBitmapPos = 96, 16; 
+  HeadBitmapPos = 96, 16;
   TorsoBitmapPos = 48, 112;
   ArmBitmapPos = 64, 32;
   LegBitmapPos = 16, 80;
@@ -3713,7 +3714,7 @@ imperialist
     "applied",  "recent", "theoretical", "classical", "the future of",
     "fundamental", "legendary", "higher", "elementary", "practical",
     "artificial", "the wonders of", "modern", "empirical", "statistical",
-    "the axioms of", "the theory of", "urban", "forbidden", "nautical", 
+    "the axioms of", "the theory of", "urban", "forbidden", "nautical",
     "popular", "the current state of", "liberal", "ceremonial", "heroic",
 
     "mythical", "scientific", "advanced", "revolutionary", "motorized",
@@ -3722,7 +3723,7 @@ imperialist
     "the evolution of", "global", "natural", "genetic", "intellectual",
     "hard", "compressed", "educational", "recreational", "teleological",
 
-    "the creative uses of", "selective", "the origin of", "royal", "alien", 
+    "the creative uses of", "selective", "the origin of", "royal", "alien",
     "evolutionary", "the art of", "psychic", "unified", "postmodern",
     "hypnotic", "doctrine:", "frictionless", "the secrets of", "mental",
     "transcendent", "the purpose of", "the history of", "good", "arctic",
@@ -3797,7 +3798,7 @@ smith
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 192; 
+  TorsoBitmapPos = 48, 192;
   HeadBitmapPos = 112, 160;
   ArmBitmapPos = 64, 64;
   LegBitmapPos = 0, 96;
@@ -3978,7 +3979,7 @@ chameleon
 
 floatingeye
 {
-  DefaultArmStrength = 1; 
+  DefaultArmStrength = 1;
   DefaultAgility = 3;
   DefaultEndurance = 6;
   DefaultPerception = 50;
@@ -4078,7 +4079,7 @@ mushroom
   DefaultWisdom = 2;
   DefaultCharisma = 8;
   DefaultMana = 4;
-  TotalVolume = 6250; 
+  TotalVolume = 6250;
   TorsoBitmapPos = 208, 16;
   TotalSize = 40;
   Adjective = "giant";
@@ -4449,7 +4450,7 @@ skunk
   FleshMaterial = SKUNK_FLESH;
   AttachedGod = SILVA;
   PanicLevel = 85;
-  TorsoMainColor = rgb16(220, 220, 220); 
+  TorsoMainColor = rgb16(220, 220, 220);
   PoisonResistance = 10;
   DangerModifier = 33;
   ClassStates = GAS_IMMUNITY;
@@ -4533,7 +4534,7 @@ elpuri
   CanBeConfused = false;
   AttackStyle = USE_HEAD;
   KnownCWeaponSkills == BITE;
-  MoveType = WALK|SWIM; 
+  MoveType = WALK|SWIM;
   DestroysWalls = true;
   AllowUnconsciousness = false;
 }
@@ -4702,7 +4703,7 @@ vladimir
   FleshMaterial = MUTANT_BUNNY_FLESH;
   AttachedGod = SCABIES;
   TotalSize = 400;
-  MoveType = WALK; 
+  MoveType = WALK;
   DestroysWalls = true;
   DefaultName = "Vladimir";
   Alias == "Vladimir";
@@ -5068,9 +5069,16 @@ veterankamikazedwarf
 
 archangel
 {
-  DefaultLegStrength = 50; /* gum */
-  DefaultAgility = 50; /* gum */
-  AttributeBonus = 100;
+  DefaultArmStrength = 35;
+  DefaultLegStrength = 35;
+  DefaultDexterity = 35;
+  DefaultAgility = 35;
+  DefaultEndurance = 35;
+  DefaultPerception = 45;
+  DefaultIntelligence = 35;
+  DefaultWisdom = 45;
+  DefaultCharisma = 60;
+  DefaultMana = 45;
   IsAbstract = true;
   ClassStates = TELEPORT|HASTE|INFRA_VISION|ESP|TELEPORT_CONTROL|POLYMORPH_CONTROL|GAS_IMMUNITY|LIFE_SAVED;
   IsCharmable = false;
@@ -5096,6 +5104,7 @@ archangel
   AllowUnconsciousness = false;
   CanChoke = false;
   DisplacePriority = 10;
+  AllowPlayerToChangeEquipment = false;
 
   Config VALPURUS;
   {
@@ -5197,7 +5206,7 @@ tailor
   CWeaponSkillHits == 500;
   RightSWeaponSkillHits = 200;
   LeftSWeaponSkillHits = 200;
-  TorsoBitmapPos = 48, 48; 
+  TorsoBitmapPos = 48, 48;
   HeadBitmapPos = 96, 0;
   ArmBitmapPos = 64, 16;
   LegBitmapPos = 0, 0;

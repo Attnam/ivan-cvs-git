@@ -26,7 +26,8 @@ int Main(int argc, char** argv)
   if(argc == 3)
   {
     festring Arg = festring(argv[1]);
-    if(Arg == "-l") 
+
+    if(Arg == "-l")
     {
       highscore Input(argv[2]);
 
@@ -45,14 +46,14 @@ int Main(int argc, char** argv)
     }
     else if(Arg == "-d")
     {
-      if(!DebugDraw(argv[2])) 
+      if(!DebugDraw(argv[2]))
       {
 	std::cout << "\nProblem showing version number\n";
 	return 1;
       }
       return 0;
-    } 
-    else 
+    }
+    else
       return 1;
   }
 
@@ -60,15 +61,16 @@ int Main(int argc, char** argv)
   {
     highscore Input;
     Input.Load(argv[1]);
-    if(!Input.CheckVersion()) 
+
+    if(!Input.CheckVersion())
     {
       std::cout << "Version check not ok with " << argv[1] << std::endl;
       return 2;
     }
 
     highscore Output;
+    Output.Load(argv[2]);
 
-    Output.Load(argv[2]);	
     if(!Output.CheckVersion())
     {
       std::cout << "Version check not ok with " << argv[2] << std::endl;
@@ -85,7 +87,7 @@ int Main(int argc, char** argv)
   return 1;
 }
 
-truth DebugDraw(festring Filename) 
+truth DebugDraw(festring Filename)
 {
   {
     inputfile HighScore(Filename, 0, false);
@@ -96,7 +98,7 @@ truth DebugDraw(festring Filename)
     HighScore.Get();
 
     if(HighScore.Eof())
-      return false; 
+      return false;
   }
   inputfile HighScore(Filename, 0, false);
   ushort HVersion;
@@ -105,7 +107,7 @@ truth DebugDraw(festring Filename)
   return true;
 }
 
-int OutputHTML(festring InputFilename) 
+int OutputHTML(festring InputFilename)
 {
   highscore Input;
   Input.Load(InputFilename);
@@ -116,12 +118,12 @@ int OutputHTML(festring InputFilename)
     festring Rank,Score;
     Score << Input.GetScore(c);
     Rank << c + 1 << festring(".");
-    std::cout 
-      << std::string("<TR> <TD>") 
+    std::cout
+      << std::string("<TR> <TD>")
       << Rank.CStr()
-      << std::string("</TD> <TD>") 
+      << std::string("</TD> <TD>")
       << Input.GetEntry(c).CStr()
-      << std::string("</TD> <TD>") 
+      << std::string("</TD> <TD>")
       << Score.CStr()
       << std::string("</TD> </TR>\n");
   }

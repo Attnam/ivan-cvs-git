@@ -479,7 +479,7 @@ Creation of magpies depends on dangervalues. (maybe a problem)
 (hs-) Drinking vodka (maybe just getting confused) should improve relations with Nefas.
 Items in bonefiles should spoil a bit before player enters again. 
 Equipment weight to inventory.
-(hs) Levitating mushrooms should be able to move.
+//(hs) Levitating mushrooms should be able to move.
 (d) Offering many items at the same time.
 Running and levitating.
 //(hs+) Autovomiting should choose various squares.
@@ -518,7 +518,6 @@ Golems' wisdom shouldn't rise.
 "Psycho" state.
 The holy kiwi of Oily Orpiv.
 The holy pineapple of Oily Orpiv.
-If the player has a giant beard, Richel Decos shouldn't pay for him for wearing the ad shirt, since the banana logo can't be seen by anyone.
 System should be more intuative so that people wouldn't be confuse wielding and wearing.
 If the player has a giant beard, Richel Decos shouldn't pay him for wearing the ad shirt, since the banana logo can't be seen by anyone.
 "Berserk" state.
@@ -531,7 +530,7 @@ Go back -function to menus like ?-key.
 When there is vomit stuck to character, its charisma should be lowered.
 Mommos should follow the player more agressively; as of now they are useless as pets.
 "Sulphuric acid is raining here." to look mode when appropriate.
-You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
+//You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
 If the player is confused or has bad relations to Dulcis, using a magical whistle should sometimes fail, teleporting all monsters in the level around the player.
 When confused, stethoscope should produce very inaccurate results.
 There should be a way of getting a verbal hint whether a god's pray timer allows praying without relation penalties; maybe the relation description printed upon offering could be modified, or a special msg could be given when reading a holy book.
@@ -549,6 +548,6 @@ Quicksand traps. (from Henri Kiviluoto)
 Toys for Attnam's peasant children. (from Henri Kiviluoto)
 You shouldn't be able to go upstairs when overloaded.
 Priest should perhaps be able to remove parasites.
-There shouldn't be doors in UT4. It is a natural cave.
+//There shouldn't be doors in UT4. It is a natural cave.
 It should be possible to name individual items.
 You should be able to change level anywhere if WalkThroughWalls cheat is on.

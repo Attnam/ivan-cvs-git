@@ -478,7 +478,7 @@ void silva::PrayBadEffect()
 void loricatus::PrayGoodEffect()
 {
   item* MainWielded = PLAYER->GetMainWielded();
-	
+
   if(MainWielded)
   {
     if(MainWielded->IsMaterialChangeable() && MainWielded->GetMainMaterial()->GetAttachedGod() == GetType())
@@ -527,7 +527,7 @@ void loricatus::PrayGoodEffect()
 	return;
       }
       else
-	ADD_MESSAGE("\"Mortal, thou art always my valiant knight!\"");  
+	ADD_MESSAGE("\"Mortal, thou art always my valiant knight!\"");
     }
   }
 
@@ -588,7 +588,7 @@ void loricatus::PrayBadEffect()
 void cleptia::PrayGoodEffect()
 {
   PLAYER->RestoreStamina();
-  
+
   if(!PLAYER->StateIsActivated(HASTE))
   {
     ADD_MESSAGE("%s gives you the talent for speed.", GetName());
@@ -603,7 +603,7 @@ void cleptia::PrayGoodEffect()
     return;
   }
 
-  ADD_MESSAGE("Cleptia helps you, but you really don't know how.");  
+  ADD_MESSAGE("Cleptia helps you, but you really don't know how.");
   int StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
   PLAYER->BeginTemporaryState(StateToActivate, 2500);
 }
@@ -639,7 +639,7 @@ void mellis::PrayGoodEffect()
   {
     if(!i->HasBetterVersion())
       continue;
-	  
+
     OKItems.push_back(*i);
     Success = true;
   }
@@ -900,7 +900,7 @@ void scabies::PrayBadEffect()
     PLAYER->EditAttribute(ARM_STRENGTH, -1);
     PLAYER->EditAttribute(DEXTERITY, -1);
   }
-  else if(RAND_2) 
+  else if(RAND_2)
   {
     ADD_MESSAGE("%s unleashes all her fury upon you!", GetName());
     PLAYER->BeginTemporaryState(POISONED, 600 + RAND() % 400);
@@ -932,7 +932,7 @@ void infuscor::PrayGoodEffect()
   {
     PLAYER->BeginTemporaryState(POLYMORPH_CONTROL, 10000 + RAND() % 10000);
     return;
-  }    
+  }
 
   ADD_MESSAGE("Suddenly three scrolls appear almost under your feet.");
 
@@ -1045,7 +1045,7 @@ void cruentus::PrayBadEffect()
 
 truth scabies::PlayerVomitedOnAltar(liquid*)
 {
-  ADD_MESSAGE("%s feels that you are indeed her follower.", GetName()); 
+  ADD_MESSAGE("%s feels that you are indeed her follower.", GetName());
   AdjustRelation(1);
   return false;
 }

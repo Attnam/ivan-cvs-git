@@ -430,7 +430,7 @@ material* protosystem::CreateMaterial(const festring& What, long Volume, truth O
 	  return 0;
 	}
   }
-		
+
   if(Output)
     ADD_MESSAGE("There is no such material.");
 

@@ -565,7 +565,7 @@ void lsquare::AddSunLightEmitter(ulong ID)
 
 truth lsquare::Open(character* Opener)
 {
-  return GetStack()->Open(Opener) || (OLTerrain && OLTerrain->Open(Opener)); 
+  return GetStack()->Open(Opener) || (OLTerrain && OLTerrain->Open(Opener));
 }
 
 truth lsquare::Close(character* Closer)
@@ -1052,7 +1052,7 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 
     if(Stepper->DestroysWalls() && OLTerrain->WillBeDestroyedBy(Stepper))
     {
-      if(CanBeSeenByPlayer()) 
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
 
       Stepper->EditAP(-100);
@@ -1075,22 +1075,24 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 	return;
     }
 
-  std::vector<fluid*> FluidVector;
-
-  for(fluid* F = Fluid; F; F = F->Next)
-    FluidVector.push_back(F);
-
-  for(c = 0; c < FluidVector.size(); ++c)
-    if(FluidVector[c]->Exists())
-    {
-      FluidVector[c]->StepOnEffect(Stepper);
-
-      if(!Stepper->IsEnabled())
-	return;
-    }
-
   if(!Stepper->IsFlying())
+  {
+    std::vector<fluid*> FluidVector;
+
+    for(fluid* F = Fluid; F; F = F->Next)
+      FluidVector.push_back(F);
+
+    for(c = 0; c < FluidVector.size(); ++c)
+      if(FluidVector[c]->Exists())
+      {
+	FluidVector[c]->StepOnEffect(Stepper);
+
+	if(!Stepper->IsEnabled())
+	  return;
+      }
+
     GetStack()->CheckForStepOnEffect(Stepper);
+  }
 }
 
 void lsquare::ReceiveVomit(character* Who, liquid* Liquid)
@@ -1310,7 +1312,7 @@ truth lsquare::IsDangerous(const character* Who) const
 {
   return ((!Who->IsFlying()
 	   && (Stack->IsDangerous(Who)
-	    || HasDangerousFluids(Who)))
+	       || HasDangerousFluids(Who)))
 	  || IsDangerousToBreathe(Who) || HasDangerousTraps(Who));
 }
 
@@ -1472,7 +1474,7 @@ truth lsquare::Polymorph(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::Strike(const beamdata& Beam) 
+truth lsquare::Strike(const beamdata& Beam)
 {
   int Damage = 50 + RAND() % 21 - RAND() % 21;
   GetStack()->ReceiveDamage(Beam.Owner, Damage, ENERGY, Beam.Direction);
@@ -1500,8 +1502,8 @@ truth lsquare::Strike(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::FireBall(const beamdata& Beam) 
-{ 
+truth lsquare::FireBall(const beamdata& Beam)
+{
   if(!IsFlyable() || GetCharacter())
   {
     if(CanBeSeenByPlayer(true))
@@ -1514,8 +1516,8 @@ truth lsquare::FireBall(const beamdata& Beam)
   return false;
 }
 
-truth lsquare::Teleport(const beamdata& Beam) 
-{ 
+truth lsquare::Teleport(const beamdata& Beam)
+{
   if(Character)
   {
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
@@ -1569,7 +1571,7 @@ truth lsquare::Resurrect(const beamdata& Beam)
     return GetStack()->RaiseTheDead(Beam.Owner);
 }
 
-truth lsquare::Invisibility(const beamdata&) 
+truth lsquare::Invisibility(const beamdata&)
 {
   if(GetCharacter())
     GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
@@ -2116,12 +2118,12 @@ int lsquare::GetWalkability() const
   if(!GetLevel()->IsOnGround())
   {
     if(Pos.X >= 1 && Pos.Y >= 1 && Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)
-      return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+      return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability();
     else
       return 0;
   }
   else
-    return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+    return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability();
 }
 
 void lsquare::RemoveFluid(fluid* ToRemove)
@@ -2205,7 +2207,7 @@ void lsquare::SpillFluid(character* Spiller, liquid* Liquid, truth ForceHit, tru
     GetStack()->SpillFluid(Spiller, Liquid, Liquid->GetVolume());
   }
 
-  if(Liquid->GetVolume())
+  if(Liquid->GetVolume() && !Liquid->IsSameAs(GLTerrain->GetMainMaterial()))
   {
     fluid* F = AddFluid(Liquid);
 
@@ -2557,8 +2559,8 @@ void lsquare::CreateMemorized()
   FowMemorized->ActivateFastFlag();
 }
 
-truth lsquare::AcidRain(const beamdata& Beam) 
-{ 
+truth lsquare::AcidRain(const beamdata& Beam)
+{
   if(!IsFlyable() || GetCharacter() || Beam.Direction == YOURSELF)
   {
     int StackSize = GetLevel()->AddRadiusToSquareStack(Pos, 9);
@@ -2758,7 +2760,7 @@ void lsquare::ReceiveTrapDamage(character* Damager, int Damage, int Type, int Di
   for(uint c = 0; c < TrapVector.size(); ++c)
     TrapVector[c]->ReceiveDamage(Damager, Damage, Type, Direction);
 }
- 
+
 truth lsquare::HasDangerousTraps(const character* Who) const
 {
   for(trap* T = Trap; T; T = T->Next)
@@ -2788,4 +2790,11 @@ void lsquare::AddLocationDescription(festring& String) const
     GLTerrain->AddLocationDescription(String);
   else
     OLTerrain->AddLocationDescription(String);
+}
+
+truth lsquare::VomitingIsDangerous(const character* Char) const
+{
+  return ((OLTerrain && OLTerrain->VomitingIsDangerous(Char))
+	  || (Character && Character->GetTeam() != Char->GetTeam()
+	      && Character->GetRelation(Char) != HOSTILE));
 }

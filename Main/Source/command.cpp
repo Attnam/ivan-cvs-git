@@ -113,11 +113,8 @@ command* commandsystem::Command[] =
 
 truth commandsystem::GoUp(character* Char)
 {
-  if(Char->IsStuck())
-  {
-    ADD_MESSAGE("You are unable to go up when caught in %s.", Char->GetTrapDescription().CStr());
+  if(!Char->TryToUnStickTraps(ZERO_V2))
     return false;
-  }
 
   /*if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() >= 1)
     if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() - 1, RANDOM, true))
@@ -153,11 +150,8 @@ truth commandsystem::GoUp(character* Char)
 
 truth commandsystem::GoDown(character* Char)
 {
-  if(Char->IsStuck())
-  {
-    ADD_MESSAGE("You are unable to go down when caught in %s.", Char->GetTrapDescription().CStr());
+  if(!Char->TryToUnStickTraps(ZERO_V2))
     return false;
-  }
 
   /*if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() < game::GetLevels() - 1)
     if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() + 1, RANDOM, true))
@@ -583,7 +577,7 @@ truth commandsystem::Dip(character* Char)
 
       if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
 	return false;
-	  
+
       return Char->GetNearLSquare(Pos)->DipInto(Item, Char);
     }
     else
@@ -897,12 +891,25 @@ truth commandsystem::ForceVomit(character* Char)
   {
     int Dir = game::DirectionQuestion(CONST_S("Where do you wish to vomit?  [press a direction key]"), false, true);
 
-    if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+    if(Dir != DIR_ERROR)
     {
-      ADD_MESSAGE(Char->GetForceVomitMessage().CStr());
-      Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500, false);
-      Char->EditAP(-1000);
-      return true;
+      v2 VomitPos = Char->GetPos() + game::GetMoveVector(Dir);
+
+      if(Char->GetArea()->IsValidPos(VomitPos))
+      {
+	const character* Other = Char->GetArea()->GetSquare(VomitPos)->GetCharacter();
+
+	if(Other && Other->GetTeam() != Char->GetTeam()
+	   && Other->GetRelation(Char) != HOSTILE
+	   && Other->CanBeSeenBy(Char)
+	   && !game::TruthQuestion("Do you really want to vomit at " + Other->GetObjectPronoun() + "? [y/N]"))
+	   return false;
+
+	ADD_MESSAGE(Char->GetForceVomitMessage().CStr());
+	Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500, false);
+	Char->EditAP(-1000);
+	return true;
+      }
     }
   }
   else

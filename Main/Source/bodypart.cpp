@@ -1741,7 +1741,7 @@ void bodypart::Be()
 
 void bodypart::SpillBlood(int HowMuch, v2 Pos)
 {
-  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness()) 
+  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
     GetNearLSquare(Pos)->SpillFluid(0, CreateBlood(long(HowMuch * sqrt(BodyPartVolume) / 2)), false, false);
 }
 
@@ -2329,7 +2329,7 @@ truth corpse::SuckSoul(character* Soul, character* Summoner)
     return false;
 }
 
-double arm::GetTypeDamage(const character* Enemy) const 
+double arm::GetTypeDamage(const character* Enemy) const
 {
   if(!GetWielded() || !GetWielded()->IsGoodWithPlants() || !Enemy->IsPlant())
     return Damage;
@@ -2399,7 +2399,7 @@ int largecorpse::GetSquareIndex(v2 Pos) const
   return RelativePos.X + (RelativePos.Y << 1);
 }
 
-character* corpse::TryNecromancy(character* Summoner) 
+character* corpse::TryNecromancy(character* Summoner)
 {
   if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
@@ -3187,12 +3187,12 @@ void head::SignalPossibleUsabilityChange()
     switch(RAND_N(7))
     {
      case 0:
-     case 1: 
+     case 1:
      case 2: Master->LoseConsciousness(50 + RAND_N(50)); break;
      case 3:
      case 4:
      case 5: Master->BeginTemporaryState(CONFUSED, 500 + RAND_N(500)); break;
-     case 6: 
+     case 6:
       if(Master->IsPlayer() && !RAND_N(3))
       {
 	if(RAND_N(5))
@@ -3367,4 +3367,9 @@ col16 lobhsetorso::GetMaterialColorD(int Frame) const
   Frame &= 31;
   int Modifier = Frame * (31 - Frame);
   return MakeRGB16(220 - (Modifier >> 2), 220 - (Modifier >> 1), 0);
+}
+
+truth bodypart::IsDestroyable(const character*) const
+{
+  return !Master || !Master->BodyPartIsVital(GetBodyPartIndex());
 }
