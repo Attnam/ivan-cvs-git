@@ -32,7 +32,7 @@ Entering a dungeon and loading an autosave saves some time.
 (s) Do new bodyparts of player clones work properly? (no)
 //Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
-Mistresses like shields more than their whips.
+Mistresses like shields and jewels more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
 //Headless zombies can eat.
 //Broken thunder hammer emits light.

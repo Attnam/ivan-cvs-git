@@ -7308,9 +7308,9 @@ void character::PrintEndLeprosyMessage() const
 void character::TryToInfectWithLeprosy(const character* Infector)
 {
   if(!IsImmuneToLeprosy()
-         && ((GetRelation(Infector) == HOSTILE
-      && !RAND_N(100 * GetAttribute(ENDURANCE))) 
-	     || !RAND_N(1000 * GetAttribute(ENDURANCE))))
+  && ((GetRelation(Infector) == HOSTILE
+    && !RAND_N(50 * GetAttribute(ENDURANCE))) 
+   || !RAND_N(500 * GetAttribute(ENDURANCE))))
     GainIntrinsic(LEPROSY);
 }
 

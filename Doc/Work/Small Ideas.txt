@@ -330,7 +330,7 @@ Wand of healing. (from JM)
 Disease. (from JM)
 Different kinds of jewels. (from JM)
 Monsters that are afraid of fire. (from JM)
-Harp of charm which tames monsters. (from JM)
+//Harp of charm which tames monsters. (from JM)
 Pipes.
 Magical herbs.
 More shapes for rooms.
@@ -350,7 +350,7 @@ Fish. (from JM)
 Floods. (from JM)
 Wand's explosive effect strength should depend on its charges.
 Alpha halos to some other items, too.
-*Arm m-color 3 should be allocated for gauntlets.
+//*Arm m-color 3 should be allocated for gauntlets.
 Shirt of the Golden Eagle shouldn't emit light unless it's worn.
 Using the lookmode while polymorphed into a floating eye should have a special effect.
 Raining frogs.
@@ -384,7 +384,7 @@ The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
 *Blindfold.
 "Walk through walls" state.
-Being confused should decrease chance to hit.
+//Being confused should decrease chance to hit.
 Rabbits should be brown in summer and white in winter, as in real life.
 Houses floating in water.
 Fountain of youth.
@@ -392,8 +392,8 @@ Fountain of youth.
 If one monster can see an invisible player, then it should reveal his location his comrades, too.
 Cave paintings.
 List of dead friends.
-*New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
-New fountain effect: random level teleport.
+//*New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
+//New fountain effect: random level teleport.
 Carnivorous plants should be carnivorous, not anorectic.
 *There should be an option to display weapon skills at the end of the game.
 Loricatus shouldn't change whips to steel.
@@ -424,7 +424,7 @@ There should be a special effect for selling empty potions.
 Polymorph beam should change engraved messages to random gibberish.
 Breaking a staff of wondrous smells should result in a lot of erupting gas.
 Leather should have several possible colors. For instance mistress should wear black leather.
-Polymorphing from nonhumanoid back to humanoid should autoequip items.
+//Polymorphing from nonhumanoid back to humanoid should autoequip items.
 Potion of ommel spit which would increase random attribute.
 //If Vesana is slowed, plants should be created at half speed.
 Drinking and surviving a potion of poison should give some permanent poison resistance.
@@ -435,7 +435,7 @@ Detonator and starting explosive. When applied the detonator explodes the small 
 Vesana and other big monsters should also vomit much more than smaller creatures.
 Doing evil/good deads should have greater effect on the god on whose altar room the deed is done.
 Mutant limbs should be of different color (maybe even have a different picture?), they should emitate light and drip odd liquid occasionally.
-Leprosy state.
+//Leprosy state.
 Randomly generated bonefiles.
 Faster scrolling for look mode. (maybe when shift is pressed)
 Petrus' birthday (petrus gives player 1 banana).

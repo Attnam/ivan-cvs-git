@@ -368,7 +368,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	      FirstAPCost = FirstArm->GetAPCost();
 	      FirstArm->Hit(Enemy, HitPos, Direction, ForceHit);
 
-	      if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
+	      if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 		DropBodyPart(FirstArm->GetBodyPartIndex());
 	    }
 
@@ -377,7 +377,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	      SecondAPCost = SecondArm->GetAPCost();
 	      SecondArm->Hit(Enemy, HitPos, Direction, ForceHit);
 
-	      if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
+	      if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 		DropBodyPart(SecondArm->GetBodyPartIndex());
 	    } 
 
@@ -394,7 +394,7 @@ bool humanoid::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceH
 	  Hostility(Enemy);
 	  Kick(GetNearLSquare(HitPos), Direction, ForceHit);
 
-	  if(StateIsActivated(LEPROSY) && !RAND_N(50 * GetAttribute(ENDURANCE)))
+	  if(StateIsActivated(LEPROSY) && !RAND_N(25 * GetAttribute(ENDURANCE)))
 	    DropBodyPart(RAND_2 ? RIGHT_LEG_INDEX : LEFT_LEG_INDEX);
 
 	  msgsystem::LeaveBigMessageMode();
@@ -4284,7 +4284,7 @@ void darkknight::SpecialBodyPartSeverReaction()
 
 void humanoid::LeprosyHandler()
 {
-  if(!RAND_N(5000 * GetAttribute(ENDURANCE)))
+  if(!RAND_N(2500 * GetAttribute(ENDURANCE)))
     DropRandomNonVitalBodypart();
 
   if(!game::IsInWilderness())
