@@ -97,6 +97,11 @@ void consume::Handle()
 
   if(Consuming->Consume(Actor, 500) && Actor->GetAction() == this && Actor->IsEnabled())
     Terminate(true);
+  else if(Actor->GetHungerState() == OVER_FED)
+    {
+      Actor->DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
+      Actor->Vomit(2 + RAND() % 3);
+    }
 }
 
 void consume::Terminate(bool Finished)

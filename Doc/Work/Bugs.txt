@@ -10,12 +10,12 @@
 (s) The White Screen Bug.
 (s) Wishing for corpse or any bodypart in WMode crashes.
 (s) One cannot eat a can MADE of bananaflesh.
-(s) It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
+//It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 Entering a dungeon and loading an autosave saves some time.
-(s) Messages after teleport.
+Messages after teleport.
 (s) Bear trap in shop.
 (s) "Valpurus shall not carry more continents!"
-(s) Strength bonus is shown in the battle info screen even for Bill's wills.
+//Strength bonus is shown in the battle info screen even for Bill's wills.
 (s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 (s) Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
 /Putting mines in Attnam is considered OK by guards.
@@ -26,23 +26,23 @@ The player often becomes burdened, stressed or overloaded when he eats big corps
 (s) The bone file code doesn't handle shelves correctly. (but there are never shelves in bone levels)
 (s) The bone file code doesn't handle shops correctly. (but there are never shops in bone levels)
 (s) The head of Ivan is left in bone levels.
-Kamikaze dwarves die smiling even if headless.
-Odd pentagram missing bug.
-A puppy can polymorph into a puppy.
+(s) Kamikaze dwarves die smiling even if headless.
+(s) Odd pentagram missing bug.
+(s) A puppy can polymorph into a puppy.
 (s) Do new bodyparts of player clones work properly? (no)
 //Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
 Mistresses like shields more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
 //Headless zombies can eat.
-Broken thunder hammer emits light.
-While in read-mode player can find mines.
-Squares near should be redrawn when digged. (bad edge tiles)
+//Broken thunder hammer emits light.
+(s) While in read-mode player can find mines.
+//Squares near should be redrawn when digged. (bad edge tiles)
 //Creating doors doesn't update the lookmode description.
-Teleported, activated mines can be seen by player.
-Angels shouldn't eat
+//Teleported, activated mines can be seen by player.
+//Angels shouldn't eat
 //Squares near should be redrawn when digged. (bad edge tiles)
 //Creating doors doesn't update the lookmode description.
 //Dying + being resurrected doesn't eliminate poison.
-Teleport control can be used to detect walls.
+//Teleport control can be used to detect walls.
 //RED ommel urine ALERT!

@@ -444,12 +444,22 @@ void nonhumanoid::EditExperience(ushort Identifier, long Value)
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(!GetTorso()->UseMaterialAttributes())
-	StrengthExperience += Value;
+	{
+	  if(!IsPlayer())
+	    Value <<= 1;
+
+	  StrengthExperience += Value;
+	}
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
       if(!GetTorso()->UseMaterialAttributes())
-	AgilityExperience += Value;
+	{
+	  if(!IsPlayer())
+	    Value <<= 1;
+
+	  AgilityExperience += Value;
+	}
     }
   else
     ABORT("Illegal nonhumanoid attribute %d experience edit request!", Identifier);

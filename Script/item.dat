@@ -2733,6 +2733,7 @@ thunderhammer /* meleeweapon-> */
 		WieldedBitmapPos = 176, 224;
 		MainMaterialConfig = { 5, STEEL, METEORIC_STEEL, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 5, 250, 25, 25, 25, 5; }
+		BaseEmitation = 0;
 	}
 }
 

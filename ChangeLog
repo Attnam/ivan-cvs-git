@@ -6,10 +6,20 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* Corrected a fatal bug in the dig code
+	* Fixed a small bug in the consuming code which could create fleshless
+	  holy bananas
+	* Removed a tiny abusable bug in the teleport control code
+	* Broken thunder hammers no longer emit light
+	* Eliminated a minor bug in the clone experience behaviour
+	* Destroyed an ugly bug that occurred when teleporting vesana
+
 July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Stupidity in my bug correction (zombies eating headless) corrected
-
 	
 July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 

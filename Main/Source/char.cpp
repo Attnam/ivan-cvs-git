@@ -914,7 +914,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
 	  else if(Pets)
 	    return false;
 
-	  if(CanMoveOn(MoveToSquare[0]) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
+	  if(CanMove() && CanMoveOn(MoveToSquare[0]) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
 	    {
 	      Move(MoveTo);
 
@@ -1019,7 +1019,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
     {
       /** no multitile support */
 
-      if(GetArea()->IsValidPos(MoveTo) && (CanMoveOn(GetNearWSquare(MoveTo)) || game::GoThroughWallsCheatIsActive()))
+      if(CanMove() && GetArea()->IsValidPos(MoveTo) && (CanMoveOn(GetNearWSquare(MoveTo)) || game::GoThroughWallsCheatIsActive()))
 	{
 	  if(!game::GoThroughWallsCheatIsActive())
 	    for(ushort c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
@@ -2732,30 +2732,27 @@ void character::TeleportRandomly()
 
   if(StateIsActivated(TELEPORT_CONTROL) && IsPlayer())
     {
-      while(true)
+      vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
+      lsquare* Square = GetNearLSquare(PlayersInput);
+
+      if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())
 	{
-	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
-	  lsquare* Square = GetNearLSquare(PlayersInput);
-
-	  if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())
+	  if(Square->GetPos() == GetPos())
 	    {
-	      if(Square->GetPos() == GetPos())
-		{
-		  ADD_MESSAGE("You disappear and reappear.");
-		  return;
-		}
+	      ADD_MESSAGE("You disappear and reappear.");
+	      return;
+	    }
 
-	      if(!IsFreeForMe(Square))
-		{
-		  ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
-		  break;
-		  /* Break this loop and teleport randomly */
-		}
-
+	  if(IsFreeForMe(Square))
+	    {
 	      Move(PlayersInput, true);
 	      return;
 	    }
+	  else
+	    ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
 	}
+      else
+	ADD_MESSAGE("You feel like having been hit by something really hard from the inside.");
     }
 
   Move(GetLevel()->GetRandomSquare(this), true);
@@ -3531,12 +3528,6 @@ void character::AddSchoolFoodHitMessage() const
 void character::ReceiveNutrition(long SizeOfEffect)
 {
   EditNP(SizeOfEffect);
-
-  if(GetHungerState() == OVER_FED)
-    {
-      DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
-      Vomit(2 + RAND() % 3);
-    }
 }
 
 void character::ReceiveOmmelUrine(long Amount)
@@ -3647,9 +3638,6 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
   if(!Attribute)
     return false;
 
-  if(!IsPlayer())
-    Experience <<= 1;
-
   bool Effect = false;
 
   while(true)
@@ -3683,9 +3671,6 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
 
       break;
     }
-
-  if(!IsPlayer())
-    Experience >>= 1;
 
   return Effect;
 }
@@ -5004,6 +4989,9 @@ bool character::EditAttribute(ushort Identifier, short Value)
 
 void character::EditExperience(ushort Identifier, long Value)
 {
+  if(!IsPlayer())
+    Value <<= 1;
+
   if(Identifier != ENDURANCE || !UseMaterialAttributes())
     BaseExperience[Identifier] += Value;
 }
@@ -6008,6 +5996,7 @@ bool character::ConsumeItem(item* Item)
     ADD_MESSAGE("%s begins %s %s.", CHAR_NAME(DEFINITE), Item->GetConsumeVerb(), Item->CHAR_NAME(DEFINITE));
 
   consume* Consume = new consume(this);
+  Consume->SetHasEaten(false);
   Consume->SetDescription(Item->GetConsumeVerb());
   Consume->SetWasOnGround(Item->IsOnGround());
   Consume->SetConsumingID(Item->GetID());

@@ -166,6 +166,7 @@ struct characterdatabase
   bool IsPlant;
   uchar MoveType;
   bool DestroysWalls;
+  bool CanMove;
 };
 
 class characterprototype
@@ -483,6 +484,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(IsPlant);
   DATA_BASE_VALUE(uchar, MoveType);
   DATA_BASE_BOOL(DestroysWalls);
+  DATA_BASE_BOOL(CanMove);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -737,7 +739,6 @@ class character : public entity, public id
   virtual head* Behead() { return 0; }
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
-  bool CanMove() const { return GetMoveType() != 0; }
   void ShowAdventureInfo() const;
   ushort DrawBodyPartArray(bitmap**&, ushort) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }

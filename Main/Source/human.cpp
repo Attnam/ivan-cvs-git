@@ -1299,16 +1299,26 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 {
   dig* Dig = new dig(this);
 
-  if(GetRightArm() && GetRightArm()->GetWielded() != DigItem)
+  if(GetRightArm())
     {
-      Dig->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
-      GetRightArm()->GetWielded()->MoveTo(GetStack());
+      item* Item = GetRightArm()->GetWielded();
+
+      if(Item && Item != DigItem)
+	{
+	  Dig->SetRightBackupID(GetRightArm()->GetWielded()->GetID());
+	  GetRightArm()->GetWielded()->MoveTo(GetStack());
+	}
     }
 
-  if(GetLeftArm() && GetLeftArm()->GetWielded() != DigItem)
+  if(GetLeftArm())
     {
-      Dig->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
-      GetLeftArm()->GetWielded()->MoveTo(GetStack());
+      item* Item = GetLeftArm()->GetWielded();
+
+      if(Item && Item != DigItem)
+	{
+	  Dig->SetLeftBackupID(GetLeftArm()->GetWielded()->GetID());
+	  GetLeftArm()->GetWielded()->MoveTo(GetStack());
+	}
     }
 
   if(GetMainWielded() != DigItem)
@@ -1887,6 +1897,9 @@ void humanoid::EditExperience(ushort Identifier, long Value)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
     {
+      if(!IsPlayer())
+	Value <<= 1;
+
       if(GetRightArm())
 	GetRightArm()->EditExperience(Identifier, Value, false);
 
@@ -1895,6 +1908,9 @@ void humanoid::EditExperience(ushort Identifier, long Value)
     }
   else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
     {
+      if(!IsPlayer())
+	Value <<= 1;
+
       if(GetRightLeg())
 	GetRightLeg()->EditExperience(Identifier, Value, false);
 
