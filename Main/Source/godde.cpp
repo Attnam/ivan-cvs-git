@@ -513,7 +513,7 @@ void mellis::PrayGoodEffect()
 	}
     }
 
-  if((Success && !(RAND() % 10) || (!Success && !(RAND() % 5))))
+  if((Success && !(RAND() % 5) || (!Success && !(RAND() % 3))))
     {
       uchar GodNumber = game::GetGods();
       uchar* Possible = new uchar[GodNumber]; 
@@ -766,8 +766,26 @@ void scabies::PrayBadEffect()
 
 void infuscor::PrayGoodEffect()
 {
-  ADD_MESSAGE("Suddenly five scrolls appear from nothing!");
+  ADD_MESSAGE("%s help you.", GOD_NAME);
+  if(!game::GetPlayer()->StateIsActivated(ESP))
+    {
+      game::GetPlayer()->BeginTemporaryState(ESP, 10000 + RAND() % 10000);
+      return;
+    }
 
+  if(!game::GetPlayer()->StateIsActivated(TELEPORT_CONTROL))
+    {
+      game::GetPlayer()->BeginTemporaryState(TELEPORT_CONTROL, 10000 + RAND() % 10000);
+      return;
+    }
+
+  if(!game::GetPlayer()->StateIsActivated(POLYMORPH_CONTROL))
+    {
+      game::GetPlayer()->BeginTemporaryState(POLYMORPH_CONTROL, 10000 + RAND() % 10000);
+      return;
+    }    
+
+  ADD_MESSAGE("Suddenly 5 scrolls appear almost under your feet.");
   for(ushort c = 0; c < 5; ++c)
     game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleportation);
 }

@@ -1,3 +1,8 @@
+December 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	 * Cleptis' effect changed
+	 * Corrected bug with Beartraps and CheckDeath
+	
 December 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a major bug in the score system
@@ -29,6 +34,12 @@ December 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Removed the smaller temples of Attnam
 	* Valpurus's pray effect is now a little less superior
 	* Show battle info is henceforth a WMode command
+
+December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* weapon and shield info verbalized
+	* Perception increase message changed
+	* Mellis's GoodPrayEffect adjusted to give more often gods
 
 December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

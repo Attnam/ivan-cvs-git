@@ -21,6 +21,9 @@
 #include "felist.h"
 #include "festring.h"
 
+const std::string item::ToHitValueDescription[] = { "unbelievably inaccurate", "inaccurate", "decently accurate", "accurate","highly accurate","extremely accurate","unbelievably accurate" };
+const std::string item::StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "unbreakable" };
+
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
 {
 }
@@ -691,4 +694,31 @@ void item::ResetSpoiling()
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c))
       GetMaterial(c)->ResetSpoiling();
+}
+
+const std::string& item::GetBaseToHitValueDescription() const
+{
+  if(GetBaseToHitValue() < 6)
+    return ToHitValueDescription[GetBaseToHitValue()];
+  else
+    return ToHitValueDescription[6];
+}
+
+const std::string& item::GetStrengthValueDescription() const
+{
+  ushort SV = GetStrengthValue();
+  if(SV < 3)
+    return StrengthValueDescription[0];
+  if(SV < 5)
+    return StrengthValueDescription[1];
+  if(SV < 8)
+    return StrengthValueDescription[2];
+  if(SV < 11)
+    return StrengthValueDescription[3];
+  if(SV < 16)
+    return StrengthValueDescription[4];
+  if(SV < 20)
+    return StrengthValueDescription[5];
+  else
+    return StrengthValueDescription[6];
 }

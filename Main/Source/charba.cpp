@@ -1222,7 +1222,7 @@ void character::ApplyExperience(bool Edited)
     {
       if(IsPlayer())
 	{
-	  ADD_MESSAGE("Your don't feel as guru anymore.");
+	  ADD_MESSAGE("You now see the world in much better detail than before.");
 	  game::SendLOSUpdateRequest();
 	}
 
@@ -1974,7 +1974,7 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
       if(IsPlayer())
 	AddScoreEntry(Msg);
 
-      if(Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
+      if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
       Die(ForceMsg);

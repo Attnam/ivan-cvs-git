@@ -3319,16 +3319,13 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", THV " << GetBaseToHitValue() << ", SV " << GetStrengthValue() << ", SR " << GetStrengthRequirement() + 1;
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription() << ", " << GetStrengthValueDescription();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-      if(CWeaponSkillLevel)
-	Entry << ", CS " << CWeaponSkillLevel;
-
-      if(SWeaponSkillLevel)
-	Entry << ", SS " << SWeaponSkillLevel;
+      if(CWeaponSkillLevel || SWeaponSkillLevel)
+	Entry << ", Skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
       Entry << "]";
     }
@@ -3359,16 +3356,13 @@ void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, BC " << GetStrengthValue() << ", BV " << GetBaseBlockValue() << ", SR " << GetStrengthRequirement() + 1;
+      Entry << " [" << GetWeight() << "g, " << GetStrengthValueDescription() << ", "  << GetBaseToHitValueDescription();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
 
-      if(CWeaponSkillLevel)
-	Entry << ", CS " << CWeaponSkillLevel;
-
-      if(SWeaponSkillLevel)
-	Entry << ", SS " << SWeaponSkillLevel;
+      if(CWeaponSkillLevel || SWeaponSkillLevel)
+	Entry << ", Skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
 
       Entry << "]";
     }

@@ -375,6 +375,8 @@ class item : public object
   virtual short GetCarryingBonus() const { return 0; }
   virtual bool IsBanana() const { return false; }
   virtual bool IsEncryptedScroll() const { return false; }
+  virtual const std::string& GetStrengthValueDescription() const;
+  virtual const std::string& GetBaseToHitValueDescription() const;
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
@@ -391,6 +393,8 @@ class item : public object
   static prototype item_ProtoType;
   ulong Volume;
   ulong Weight;
+  static const std::string ToHitValueDescription[];
+  static const std::string StrengthValueDescription[];
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

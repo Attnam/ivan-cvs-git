@@ -385,3 +385,4 @@ The Cathedral should employ a gardener whose duty is take care of the firs aroun
 An environmentalist character who would protest outside the Cathedral against the imprisonment of the dolphins.
 Monsters shouldn't drink antidote liquid if they don't need it.
 Ask for auto wear for picked up items.
+Teleport trap
