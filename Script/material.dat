@@ -1278,6 +1278,15 @@ flesh
 		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
 	}
+
+	Config CARROT_FLESH;
+	{
+		NameStem = "carrot flesh";
+		Effect = EFFECT_PERCEPTION_INCREASE;
+		EffectStrength = 2000;
+		AttachedGod = SILVA;
+		Color = rgb16(100, 0, 0);
+	}
 }
 
 powder

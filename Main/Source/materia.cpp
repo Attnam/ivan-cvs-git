@@ -74,6 +74,7 @@ bool material::Effect(character* Eater, ulong Amount)
         Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
 	return true;
       }
+    case EFFECT_PERCEPTION_INCREASE: Eater->EditExperience(PERCEPTION, Amount);
     default: return false;
     }
 }

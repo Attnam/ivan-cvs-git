@@ -625,4 +625,10 @@ class ITEM
   ulong LastUsed;
 );
 
+class ITEM
+(
+  carrot,
+  item,
+  ;
+);
 #endif

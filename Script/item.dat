@@ -2601,3 +2601,22 @@ chameleonwhip
 	Price = 500;
 	AttachedGod = SCABIES;
 }
+
+carrot
+{
+	Possibility = 150;
+	WeaponCategory = BLUNT_WEAPONS;
+	DefaultMainVolume = 40;
+	DefaultContainedVolume = 150;
+	StrengthModifier = 75;
+	Category = FOOD;
+	BitmapPos = 64, 272;
+	FormModifier = 30;
+	DefaultSize = 20;
+	NameSingular = "carrot";
+	MainMaterialConfig == CARROT_FLESH;
+	Alias == "bazooka";
+	Roundness = 10;
+	CanBePiled = true;
+	AttachedGod = SEGES;
+}

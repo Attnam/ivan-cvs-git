@@ -133,3 +133,6 @@ Ent (or treant)
 Hydra
 
 	Attacks everyone around, like Elpuri.
+
+Mummy
+	With the wrapping

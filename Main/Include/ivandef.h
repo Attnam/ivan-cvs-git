@@ -261,6 +261,7 @@
 #define EFFECT_ESP 12
 #define EFFECT_SKUNK_SMELL 13
 #define EFFECT_MAGIC_VAPOUR 14
+#define EFFECT_PERCEPTION_INCREASE 15
 
 /* CEM = Consume End Message */
 
