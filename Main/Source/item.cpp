@@ -803,7 +803,7 @@ long item::GetEnchantedPrice(int Enchantment) const
 
 item* item::Fix()
 {
-  item* Fixed = 0;
+  item* Fixed = this;
 
   if(IsBroken())
     {

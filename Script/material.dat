@@ -1482,7 +1482,7 @@ liquid
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
 		IsBlood = true;
-		RustModifier = 5;
+		RustModifier = 1;
 	}
 
 	Config BROWN_SLIME;
@@ -1670,6 +1670,7 @@ liquid
 		NameStem = "dog drool";
 		Alpha = 175;
 		AttachedGod = SILVA;
+		RustModifier = 5;
 	}
 
 	Config PEA_SOUP;
@@ -1743,7 +1744,7 @@ liquid
 		NameStem = "sweat";
 		Alpha = 175;
 		AttachedGod = SILVA;
-		RustModifier = 10;
+		RustModifier = 5;
 	}
 }
 
