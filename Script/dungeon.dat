@@ -153,12 +153,13 @@ Dungeon 0;
 				Types
 				{
 					W=wolf;
+					w=werewolf;
 				}
 			}
 			{
 				WWWWW
 				WWWWW
-				WWWWW
+				WWwWW
 				WWWWW
 				WWWWW
 			}
