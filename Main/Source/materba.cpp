@@ -66,7 +66,7 @@ bool material::Effect(character* Eater, long Amount)
     default: return false;
     }
 }
-
+/* NPModifier / 100 = percent */
 void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;

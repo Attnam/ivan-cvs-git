@@ -93,7 +93,7 @@ class material
   virtual void Load(inputfile&);
   void SetVolume(ulong);
   bool Effect(character*, long);
-  void EatEffect(character*, ulong, float = 1.0);
+  virtual void EatEffect(character*, ulong, float = 1.0);
   bool HitEffect(character*);
   virtual ushort GetSkinColor() const { return GetColor(); }
   virtual void SetSkinColor(ushort) { }

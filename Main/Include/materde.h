@@ -22,6 +22,7 @@ class MATERIAL
   virtual bool IsVeryCloseToSpoiling() const { return SpoilLevel == 8; }
   virtual uchar GetSpoilLevel() const { return SpoilLevel; }
   virtual void ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
+  virtual void EatEffect(character*, ulong, float = 1.0);
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;

@@ -6161,13 +6161,13 @@ bool character::LevelTeleport()
 void character::PrintBeginConfuseMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Whoh! The ground refuses to settle .");
+    ADD_MESSAGE("Whoh! The ground refuses to settle.");
 }
 
 void character::PrintEndConfuseMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("The world is so boring again.");
+    ADD_MESSAGE("The world is boring again.");
 }
 
 vector2d character::ApplyStateModification(vector2d TryDirection) const

@@ -4883,7 +4883,7 @@ ushort gorovitssickle::GetOutlineColor(ushort Frame) const
 
 bool scrollofrepair::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::IsBrokenSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsBrokenSorter) && !Reader->EquipsSomething(&item::IsBrokenSorter))
     {
       ADD_MESSAGE("You have nothing to repair.");
       return false;
@@ -4894,7 +4894,7 @@ bool scrollofrepair::Read(character* Reader)
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(game::GetPlayer()->GetStack()->SortedItems(Reader, &item::IsBrokenSorter))
+  if(game::GetPlayer()->GetStack()->SortedItems(Reader, &item::IsBrokenSorter) || Reader->EquipsSomething(&item::IsBrokenSorter))
     {
       item* Item = game::GetPlayer()->GetStack()->DrawContents(Reader, "\"What do you want to fix?\"", 0, &item::IsBrokenSorter);
       if(!Item)
