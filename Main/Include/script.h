@@ -154,7 +154,7 @@ protected:
 class roomscript : public script
 {
 public:
-	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Type(0), Base(0) {}
+	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Type(0), GenerateFountains(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -174,6 +174,7 @@ public:
 	uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
 	bool* GetGenerateLamps(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLamps) }
 	ushort* GetType(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Type) }
+	bool* GetGenerateFountains(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateFountains) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -191,6 +192,7 @@ protected:
 	roomscript* Base;
 	bool* GenerateLamps;
 	ushort* Type;
+	bool * GenerateFountains;
 };
 
 class levelscript : public script

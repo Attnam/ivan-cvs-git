@@ -556,6 +556,16 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
+		if(Word == "GenerateFountains")
+		{
+			if(!GenerateFountains)
+				GenerateFountains = new bool;
+
+			*GenerateFountains = SaveFile.ReadBool();
+
+			continue;
+		}
+
 		ABORT("Odd script term %s encountered in room script!", Word.c_str());
 	}
 }

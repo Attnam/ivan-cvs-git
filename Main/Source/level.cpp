@@ -493,7 +493,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][y]->SetRoom(RoomClass->GetIndex());
 		}
 
-	if(*RoomScript->GetAltarPossible() && !(RAND() % 3))
+	if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
 	{
 		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
 		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new altar);
@@ -503,6 +503,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 		for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 			for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
 				Map[x][y]->SetDivineOwner(Owner);
+	}
+
+	if(*RoomScript->GetGenerateFountains() && !(RAND() % 7))
+	{
+		vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
+		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new fountain);
 	}
 
 	if(*RoomScript->GetGenerateTunnel() && Door.Length())
