@@ -803,7 +803,7 @@ class CHARACTER
  public:
   virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(PLANT_FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
   virtual ushort GetTorsoSpecialColor() const { return MakeRGB16(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
   virtual void GetAICommand();
@@ -882,12 +882,10 @@ class CHARACTER
 
 class CHARACTER
 (
-  genedrixvesana,
-  nonhumanoid,
+  genetrixvesana,
+  carnivorousplant,
  public:
-  virtual bool HasFeet() const { return false; }
  protected:
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is brutally destroyed."; }
   virtual void GetAICommand();
 );

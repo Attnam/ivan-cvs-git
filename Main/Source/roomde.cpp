@@ -148,7 +148,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
 
-      if(Master->GetMoney() == 0)
+      if(Master->GetMoney() != 0)
 	{
 	  if(Master->GetMoney() < Price)
 	    Price = Master->GetMoney();
@@ -519,13 +519,19 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  ADD_MESSAGE("\"Sorry, but I don't think %s into my collection.\"", Amount == 1 ? "that fits" : "those fit");
 	  return false;
 	}
-
-      if(Master->GetMoney() >= Price)
+      
+      if(Master->GetMoney() != 0)
 	{
+	  if(Master->GetMoney() < Price)
+	    {
+	      Price = Master->GetMoney();
+	    }
 	  if(Amount == 1)
 	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
 	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
+
+
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
@@ -537,10 +543,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	    return false;
 	}
       else
-	{
-	  ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I don't have so much. Sorry.\"", Price, Amount == 1 ? "it" : "them");
-	  return false;
-	}
+	ADD_MESSAGE("\"I would pay you %d gold pieces for %s, but I'm temporary short of cash. Sorry.\"", Price, Amount == 1 ? "it" : "them");
     }
   else
     return true;

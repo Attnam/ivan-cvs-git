@@ -3941,8 +3941,10 @@ bool humanoid::CheckZap()
   return character::CheckZap();
 }
 
-void genedrixvesana::GetAICommand()
+void genetrixvesana::GetAICommand()
 {
+  if(CheckForEnemies(false))
+    return;
   if(!(RAND() % 20))
     {
       uchar NumberOfTries = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
@@ -3957,7 +3959,7 @@ void genedrixvesana::GetAICommand()
 		  character* NewPlant = new carnivorousplant;
 		  NewPlant->SetTeam(GetTeam());
 		  LSquare->AddCharacter(NewPlant);
-		  if(NewPlant->CanBeSeenByPlayer(Victim))
+		  if(NewPlant->CanBeSeenByPlayer())
 		    {
 		      if(Victim->IsPlayer())
 			ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));

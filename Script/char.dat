@@ -2158,7 +2158,7 @@ smith
 	LegSpecialColor = rgb16(110,70, 48);
 }
 
-genedrixvesana
+genetrixvesana
 {
 	DefaultArmStrength = 10;
 	DefaultAgility = 1;
@@ -2173,7 +2173,7 @@ genedrixvesana
 	TorsoBitmapPos = 0,16;
 	TalkVerb = "is silent";
 	TotalSize = 250;
-	NameSingular = "genedrix vesana";
+	NameSingular = "genetrix vesana";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 5000;
 	SkinColor = rgb16(111, 64, 37);

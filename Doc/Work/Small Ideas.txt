@@ -365,3 +365,5 @@ Coconuts falling from palms
 Changing keyboard layout (some people don't seem to like numpad)
 Reflecting items (mirror and shield of reflection)
 Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)       
+Mellis could act as a small shop when prayed to.  
+Rings appearing in fountains. (shouldn't be hard with the new system...)

@@ -1348,7 +1348,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
 			Square, Pos 3,2;
 			{
-				Character=genedrixvesana;
+				Character=genetrixvesana;
 				OTerrain = link(STAIRS_UP) { AttachedArea = WORLD_MAP; AttachedEntry = UNDER_WATER_TUNNEL_EXIT; }
 				EntryIndex = STAIRS_UP;				
 			}

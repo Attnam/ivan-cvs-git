@@ -265,10 +265,10 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()))
+      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && (LastKey != '-' || Input.length()))
 	LastKey = GET_KEY(false);
 
-      if(LastKey == 8)
+      if(LastKey == KEY_BACK_SPACE)
 	{
 	  if(Input.length())
 	    Input.resize(Input.length() - 1);
@@ -276,7 +276,7 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
 	  continue;
 	}
 
-      if(LastKey == 13)
+      if(LastKey == KEY_ENTER)
 	break;
 
       if(Input.length() < 12)
@@ -286,9 +286,9 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
   return atoi(Input.c_str());
 }
 
-long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long DefaultValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
+long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, bool Fade, void (*Handler)(long))
 {
-  long BarValue = DefaultValue;
+  long BarValue = StartValue;
   std::string Input;
 
   if(Fade)
@@ -304,9 +304,11 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
       Buffer.FadeToScreen();
     }
 
+  bool FirstTime = true, Overwrite = false;
   for(int LastKey = 0;; LastKey = 0)
     {
-      BarValue = Input.empty() ? DefaultValue : atoi(Input.c_str());
+      if(!FirstTime)
+	BarValue = Input.empty() ? Min : atoi(Input.c_str());
 
       if(BarValue < Min)
 	BarValue = Min;
@@ -319,7 +321,24 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
 
       DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
       DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
-      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Input.c_str());
+      std::string Output;
+
+      if(FirstTime)
+	{
+	  Output = festring::IntegerToChar(StartValue);
+	  BarValue = StartValue;
+	}
+      else
+	{
+	if(Input.length())
+	  Output = Input.c_str();
+	else
+	  Output = Min;
+	}
+
+      FirstTime = false;
+
+      FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.c_str(), Output.c_str());
       DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 201, Pos.Y + 15, Color2, false);
       DOUBLE_BUFFER->DrawLine(Pos.X + 201, Pos.Y + 12, Pos.X + 201, Pos.Y + 18, Color2, false);
       DOUBLE_BUFFER->DrawLine(Pos.X + 1, Pos.Y + 15, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 15, Color1, true);
@@ -327,10 +346,10 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
       DOUBLE_BUFFER->DrawLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 18, Color1, true);
       graphics::BlitDBToScreen();
 
-      while(!isdigit(LastKey) && LastKey != 8 && LastKey != 13 && (LastKey != '-' || Input.length()) && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
+      while(!isdigit(LastKey) && LastKey != KEY_BACK_SPACE && LastKey != KEY_ENTER && LastKey != '<' && LastKey != '>' && LastKey != KEY_RIGHT && LastKey != KEY_LEFT)
 	LastKey = GET_KEY(false);
 
-      if(LastKey == 8)
+      if(LastKey == KEY_BACK_SPACE)
 	{
 	  if(Input.length())
 	    Input.resize(Input.length() - 1);
@@ -338,7 +357,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
 	  continue;
 	}
 
-      if(LastKey == 13)
+      if(LastKey == KEY_ENTER)
 	break;
 
       if(LastKey == '<' || LastKey == KEY_LEFT)
@@ -350,6 +369,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
 
 	  Input.resize(0);
 	  Input += BarValue;
+	  Overwrite = true;
 	  continue;
 	}
 
@@ -362,9 +382,14 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long De
 
 	  Input.resize(0);
 	  Input += BarValue;
+	  Overwrite = true;
 	  continue;
 	}
-
+      if(Overwrite)
+	{
+	  Input.resize(0);
+	  Overwrite = false;
+	}
       if(Input.length() < 12)
 	Input += char(LastKey);
     }

@@ -4915,6 +4915,7 @@ void character::DexterityAction(ushort Difficulty)
   EditExperience(DEXTERITY, 5 * Difficulty);
 }
 
+/* if Theretically true then Range is not a factor */
 bool character::CanBeSeenByPlayer(bool Theoretically) const
 {
   bool Visible = !StateIsActivated(INVISIBLE) || (game::GetPlayer()->StateIsActivated(INFRA_VISION) && IsWarm());

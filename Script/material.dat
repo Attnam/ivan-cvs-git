@@ -525,14 +525,14 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 5;
 	}
 
-	Config FIBER;
+	Config PLANT_FIBER;
 	{
 		StrengthValue = 10;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(111, 64, 37);
 		IsFlammable = true;
-		NameStem = "fiber";
+		NameStem = "plant fiber";
 		Flexibility = 10;
 		SpoilModifier = 20000;
 	}
@@ -548,6 +548,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 50000;
+		IsAlive = false;
 	}
 
 	Config BREAD;

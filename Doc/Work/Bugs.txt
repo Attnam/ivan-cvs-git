@@ -96,3 +96,4 @@ Bodyparts hit by sound or energy are never severed nor destroyed, so they can re
 Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
 (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. 
+You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
