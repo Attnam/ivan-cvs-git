@@ -15,7 +15,7 @@ ushort		graphics::XRes;
 ushort		graphics::YRes;
 uchar		graphics::ColorDepth;
 std::list<bitmap*> graphics::BitmapContainer;
-colorizablebitmap*	graphics::DefaultFont;
+colorizablebitmap* graphics::DefaultFont = 0;
 
 extern DWORD GetDXVersion();
 
@@ -26,8 +26,6 @@ void graphics::Init()
 	if(!AlreadyInstalled)
 	{
 		AlreadyInstalled = true;
-
-		DefaultFont = 0;
 
 		atexit(graphics::DeInit);
 	}

@@ -158,8 +158,8 @@ public:
 	//static ushort GetAutosaveInterval() { return AutosaveInterval; }
 	//static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
 	static bool HandleQuitMessage();
-	static bool GetBeepOnCriticalMsg() { return BeepOnCriticalMsg; }
-	static void SetBeepOnCriticalMsg(bool What) { BeepOnCriticalMsg = What; }
+	//static bool GetBeepOnCriticalMsg() { return BeepOnCriticalMsg; }
+	//static void SetBeepOnCriticalMsg(bool What) { BeepOnCriticalMsg = What; }
 	static void Beep();
 	static uchar GetDirectionForVector(vector2d);
 	static void SetInGetCommand(bool What) { InGetCommand = What; }
@@ -200,7 +200,7 @@ private:
 	static bool LOSUpdateRequested;
 	static perttu* Perttu;
 	//static ushort AutosaveInterval;
-	static bool BeepOnCriticalMsg;
+	//static bool BeepOnCriticalMsg;
 	static bool InGetCommand;
 };
 

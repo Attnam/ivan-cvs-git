@@ -28,6 +28,7 @@
 #include "team.h"
 #include "colorbit.h"
 #include "rand.h"
+#include "config.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -44,7 +45,7 @@ ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
-bool game::Flag, game::BeepOnCriticalMsg = false, game::InGetCommand = false;
+bool game::Flag, game::InGetCommand = false;
 perttu* game::Perttu = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
@@ -1158,17 +1159,22 @@ bool game::HandleQuitMessage()
 			switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 			{
 			case IDYES:
+				configuration::Save();
 				Save();
 				break;
 			case IDCANCEL:
 				return false;
 			default:
+				configuration::Save();
 				RemoveSaves();
 				break;
 			}
 		else
 			if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
+			{
+				configuration::Save();
 				RemoveSaves();
+			}
 			else
 				return false;
 	}
@@ -1178,7 +1184,8 @@ bool game::HandleQuitMessage()
 
 void game::Beep()
 {
-	::Beep(400, 1000);
+	if(configuration::GetBeepOnCritical())
+		::Beep(400, 1000);
 }
 
 uchar game::GetDirectionForVector(vector2d Vector)

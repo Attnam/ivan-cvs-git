@@ -4,7 +4,7 @@
 uchar configuration::Contrast = 90;
 bool configuration::BeepOnCritical = false;
 std::string configuration::DefaultName;
-bool configuration::AutodropFoodRemains = true;
+bool configuration::AutodropLeftOvers = true;
 ushort configuration::AutosaveInterval = 100;
 
 void configuration::Save()
@@ -17,7 +17,7 @@ void configuration::Save()
 	SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
-	SaveFile << "AutodropFoodRemains = " << AutodropFoodRemains << ";\n";
+	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
 	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
 }
 
@@ -44,8 +44,8 @@ void configuration::Load()
 			DefaultName = SaveFile.ReadWord();
 		}
 
-		if(Word == "AutodropFoodRemains")
-			AutodropFoodRemains = SaveFile.ReadBool();
+		if(Word == "AutodropLeftOvers")
+			AutodropLeftOvers = SaveFile.ReadBool();
 
 		if(Word == "AutosaveInterval")
 			AutosaveInterval = SaveFile.ReadNumber(ValueMap);

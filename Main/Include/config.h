@@ -15,8 +15,8 @@ public:
 	static void SetBeepOnCritical(bool What) { BeepOnCritical = What; }
 	static std::string GetDefaultName() { return DefaultName; }
 	static void SetDefaultName(std::string What) { DefaultName = What; }
-	static bool GetAutodropFoodRemains() { return AutodropFoodRemains; }
-	static void SetAutodropFoodRemains(bool What) { AutodropFoodRemains = What; }
+	static bool GetAutodropLeftOvers() { return AutodropLeftOvers; }
+	static void SetAutodropLeftOvers(bool What) { AutodropLeftOvers = What; }
 	static ushort GetAutosaveInterval() { return AutosaveInterval; }
 	static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
 	static void Save();
@@ -25,7 +25,7 @@ private:
 	static uchar Contrast;
 	static bool BeepOnCritical;
 	static std::string DefaultName;
-	static bool AutodropFoodRemains;
+	static bool AutodropLeftOvers;
 	static ushort AutosaveInterval;
 };
 

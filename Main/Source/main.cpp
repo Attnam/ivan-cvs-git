@@ -6,10 +6,13 @@
 #include "whandler.h"
 #include "charde.h"
 #include "rand.h"
+#include "config.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
 	__asm _emit(1 << 0x04)|(1 << 0x07);
+
+	configuration::Load();
 
 	igraph::Init(hInstance, hWnd);
 
@@ -60,6 +63,7 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 			break;
 		}
 		case 3:
+			configuration::Save();
 			return 0;
 		}
 	}

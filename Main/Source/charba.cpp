@@ -2945,7 +2945,6 @@ void character::SetNP(long What)
 		}
 		else if(GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL)
 		{
-			game::Beep();
 			ADD_MESSAGE("You are getting hungry.");
 			DeActivateVoluntaryStates();
 		}
@@ -3087,11 +3086,11 @@ void character::GoHandler(void)
 	});
 
 	if((!MoveToSquare->GetOverTerrain()->GetIsWalkable()
-	|| MoveToSquare->GetLuminance() < LIGHT_BORDER
-	|| OKDirectionsCounter > 2
-	|| MoveToSquare->GetCharacter()
-	|| MoveToSquare->GetStack()->GetItems())
-	&& !StateVariables.Going.FirstSquare)
+	 || MoveToSquare->GetLuminance() < LIGHT_BORDER
+	 || OKDirectionsCounter > 2
+	 || MoveToSquare->GetCharacter()
+	 || MoveToSquare->GetStack()->GetItems())
+	 && !StateVariables.Going.FirstSquare)
 		EndGoing();
 	else
 	{
