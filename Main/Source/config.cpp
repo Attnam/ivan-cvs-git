@@ -1,14 +1,15 @@
 #include <fstream>
 
 #include "config.h"
+#include "save.h"
+#include "game.h"
 #include "felist.h"
-#include "graphics.h"
 #include "festring.h"
 #include "feio.h"
-#include "game.h"
 #include "area.h"
-#include "save.h"
 #include "bitmap.h"
+#include "graphics.h"
+#include "femath.h"
 
 #if defined(WIN32) || defined(__DJGPP__)
 #define CONFIG_FILENAME "ivan.cfg"
@@ -100,9 +101,6 @@ void configuration::Load()
 	  SetItemOutlineColor(MakeRGB16(Red, Green, Blue));
 	}
 
-      /*      if(Word == "BeepOnCritical")
-	      SetBeepOnCritical(SaveFile.ReadBool());*/
-
       if(Word == "FullScreenMode")
 	SetFullScreenMode(SaveFile.ReadBool());
 
@@ -152,60 +150,59 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
-
-      /*      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHT_GRAY);*/
-      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
+
+#ifndef __DJGPP__
+      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
+#endif
 
       if(game::IsRunning())
 	game::SetStandardListAttributes(List);
 
       List.SetFlags(SELECTABLE|(game::IsRunning() ? DRAW_BACKGROUND_AFTERWARDS : 0)|(!game::IsRunning() && !BoolChange ? FADE : 0));
-      Chosen = List.Draw();// vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MakeRGB16(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
+      Chosen = List.Draw();
 
       switch(Chosen)
 	{
 	case 0:
 	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
 	  BoolChange = false;
-	  continue;
+	  break;
 	case 1:
 	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::IsRunning()));
 	  BoolChange = false;
-	  continue;
+	  break;
 	case 2:
 	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
 	  BoolChange = false;
-	  continue;
+	  break;
 	case 3:
 	  SetAutoDropLeftOvers(!GetAutoDropLeftOvers());
 	  BoolChange = true;
-	  continue;
+	  break;
 	case 4:
 	  SetOutlineCharacters(!GetOutlineCharacters());
 	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
-	  continue;
+	  break;
 	case 5:
 	  SetOutlineItems(!GetOutlineItems());
 	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
-	  continue;
+	  break;
 	case 6:
-	  graphics::SwitchMode();
-	  BoolChange = true;
-	  continue;
-	case 7:
 	  SetLookZoom(!GetLookZoom());
 	  BoolChange = true;
-	  continue;
-	case 8:
-	  /*	  SetBeepOnCritical(!GetBeepOnCritical());
-		  BoolChange = true;*/
-	  continue;
+	  break;
+#ifndef __DJGPP__
+	case 7:
+	  graphics::SwitchMode();
+	  BoolChange = true;
+	  break;
+#endif
+	default:
+	  return;
 	}
-
-      break;
     }
 
   Save();

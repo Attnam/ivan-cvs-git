@@ -1,19 +1,16 @@
 #include <ctime>
-#include <ctype.h>
+#include <cctype>
 
 #ifdef WIN32
 #include <io.h>
 #endif
 
-#ifdef USE_SDL
-#include <stddef.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <algorithm>
-#endif
-
 #ifdef LINUX
 #include <dirent.h>
+#include <stddef.h>
+#include <cstdio>
+#include <sys/types.h>
+#include <algorithm>
 #endif
 
 #ifdef __DJGPP__
@@ -21,13 +18,12 @@
 #endif
 
 #include "graphics.h"
-#include "bitmap.h"
 #include "feio.h"
 #include "whandler.h"
 #include "felist.h"
 #include "colorbit.h"
-#include "femath.h"
 #include "festring.h"
+#include "bitmap.h"
 
 #define PENT_WIDTH 70
 
@@ -442,16 +438,17 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
   std::string Buffer;
   felist List("Choose a file and be sorry:", TopicColor);
   dp = opendir(DirectoryName.c_str());
+
   if(dp)
     {
       while(ep = readdir(dp))
 	{
 	  Buffer = ep->d_name;
+
 	  if(Buffer.find(".sav") != Buffer.npos)
-	    {
-	      List.AddEntry(Buffer, ListColor);
-	    }
+	    List.AddEntry(Buffer, ListColor);
 	}
+
       if(List.IsEmpty())
 	{
 	  TextScreen("You don't have any previous saves.", TopicColor);

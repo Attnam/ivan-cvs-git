@@ -1,6 +1,6 @@
 # Iter Vehemens ad Necem makefile for DJGPP environment
 
-# Copyrights (C) Timo Kiviluoto / IvanDev 2000-2002
+# Copyrights (C) Timo Kiviluoto / IvanDev 2000-2003
 
 AR       = ar rs
 CC       = gcc -o
@@ -9,8 +9,8 @@ FeLibOBJ = $(FeLibDIR)/Source/bitmap.o $(FeLibDIR)/Source/colorbit.o $(FeLibDIR)
 FeLibASM = $(FeLibDIR)/Source/gccblit.o
 IVANDIR  = Main
 IVANBIN  = Ivan.exe
-IVANOBJ  = $(IVANDIR)/Source/actionba.o $(IVANDIR)/Source/actionde.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/charde.o $(IVANDIR)/Source/config.o $(IVANDIR)/Source/cont.o $(IVANDIR)/Source/database.o $(IVANDIR)/Source/dungeon.o $(IVANDIR)/Source/entity.o $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/game.o $(IVANDIR)/Source/godba.o $(IVANDIR)/Source/godde.o $(IVANDIR)/Source/hell.o $(IVANDIR)/Source/id.o $(IVANDIR)/Source/igraph.o $(IVANDIR)/Source/itemba.o $(IVANDIR)/Source/itemde.o $(IVANDIR)/Source/level.o $(IVANDIR)/Source/lsquare.o $(IVANDIR)/Source/lterraba.o $(IVANDIR)/Source/lterrade.o $(IVANDIR)/Source/main.o $(IVANDIR)/Source/materba.o $(IVANDIR)/Source/materde.o $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/pool.o $(IVANDIR)/Source/proto.o $(IVANDIR)/Source/roomba.o $(IVANDIR)/Source/roomde.o $(IVANDIR)/Source/script.o $(IVANDIR)/Source/slot.o $(IVANDIR)/Source/square.o $(IVANDIR)/Source/stack.o $(IVANDIR)/Source/team.o $(IVANDIR)/Source/terra.o $(IVANDIR)/Source/worldmap.o $(IVANDIR)/Source/wskill.o $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/wterraba.o $(IVANDIR)/Source/wterrade.o
-FLAGS = -DGCC -IInclude -I$(FeLibDIR)/Include -pg -W -Wall -pedantic -Wno-long-long -ftemplate-depth-99
+IVANOBJ  = $(IVANDIR)/Source/actset.o $(IVANDIR)/Source/areaset.o $(IVANDIR)/Source/charset.o $(IVANDIR)/Source/charsset.o $(IVANDIR)/Source/config.o $(IVANDIR)/Source/coreset.o $(IVANDIR)/Source/dataset.o $(IVANDIR)/Source/dungeon.o $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/game.o $(IVANDIR)/Source/godset.o $(IVANDIR)/Source/id.o $(IVANDIR)/Source/igraph.o $(IVANDIR)/Source/itemset.o $(IVANDIR)/Source/levelset.o $(IVANDIR)/Source/main.o $(IVANDIR)/Source/materset.o $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/roomset.o $(IVANDIR)/Source/slotset.o $(IVANDIR)/Source/wmapset.o $(IVANDIR)/Source/wskill.o
+FLAGS = -DGCC -IInclude -I$(FeLibDIR)/Include -W -Wall -pedantic -Wno-long-long -ftemplate-depth-99
 LIBS = -lstdcxx
 
 all:	$(IVANBIN)

@@ -33,20 +33,9 @@ private:
   static char IntegerBuffer[12];
 };
 
-/* Replaces all occurances of What in Where after Begin with With */
-
-inline void festring::SearchAndReplace(std::string& Where, const std::string& What, const std::string& With, strsize Begin)
-{
-  for(strsize Pos = Where.find(What, Begin); Pos != std::string::npos; Pos = Where.find(What, Pos))
-    {
-      Where.erase(Pos, What.length());
-      Where.insert(Pos, With);
-    }
-}
-
 /* This macro doesn't evaluate with if what is not found so it's often faster */
 
-#define SEARCH_N_REPLACE(what, with) if(Msg.find(what, 0) != std::string::npos) festring::SearchAndReplace(Msg, what, with);
+#define SEARCH_N_REPLACE(what, with) if(Msg.find(what) != std::string::npos) festring::SearchAndReplace(Msg, what, with);
 
 /* Overloaded operators that make std::string use much more convenient */
 

@@ -1,15 +1,11 @@
-#include "cont.h"
-#include "festring.h"
-#include "proto.h"
-#include "error.h"
-#include "femath.h"
-#include "wterraba.h"
-#include "save.h"
-#include "charba.h"
+/* Compiled through wmapset.cpp */
 
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;
 uchar** continent::ContinentBuffer;
+
+continent::continent() { }
+continent::continent(ushort Index) : Index(Index) { }
 
 void continent::Save(outputfile& SaveFile) const
 {
@@ -42,7 +38,8 @@ void continent::GenerateInfo()
   for(ulong c = 0; c < Member.size(); ++c)
     ++GTerrainAmount[TypeBuffer[Member[c].X][Member[c].Y]];
 
-  Name = std::string("number ") + Index;
+  Name = "number ";
+  Name += Index;
 }
 
 vector2d continent::GetRandomMember(ushort Type)
@@ -86,4 +83,10 @@ inputfile& operator>>(inputfile& SaveFile, continent*& Continent)
     }
 
   return SaveFile;
+}
+
+void continent::Add(vector2d Pos)
+{
+  Member.push_back(Pos);
+  ContinentBuffer[Pos.X][Pos.Y] = Index;
 }

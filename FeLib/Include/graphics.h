@@ -9,10 +9,8 @@
 #include "SDL.h"
 #endif
 
-#include <list>
 #include <string>
 
-#include "typedef.h"
 #include "vector2d.h"
 #include "felibdef.h"
 
@@ -30,12 +28,7 @@ class graphics
   static void Init();
   static void DeInit();
   static void SwitchMode();
-#ifdef USE_SDL
-  static void SetMode(const char*, const char*, vector2d, uchar, bool);
-#endif
-#ifdef __DJGPP__
-  static void SetMode(ushort);
-#endif
+  static void SetMode(const char*, const char*, vector2d, bool);
   static void BlitDBToScreen();
   static vector2d GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
@@ -53,7 +46,6 @@ class graphics
   static struct vesainfo
   {
     void Retrieve();
-    bool CheckSupport() { return Version == 0x0200; }
     ulong Signature NO_ALIGNMENT;
     ushort Version NO_ALIGNMENT;
     ulong OEMString NO_ALIGNMENT;
@@ -65,7 +57,6 @@ class graphics
   static struct modeinfo
   {
     void Retrieve(ushort);
-    bool CheckSupport() { return Attribs1 & 1 != 0; }
     ushort Attribs1 NO_ALIGNMENT;
     uchar AWindowAttribs NO_ALIGNMENT;
     uchar BWindowAttribs NO_ALIGNMENT;

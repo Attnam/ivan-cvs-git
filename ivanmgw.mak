@@ -1,6 +1,6 @@
 # Iter Vehemens ad Necem makefile for MinGW environment
 
-# Copyrights (C) Timo Kiviluoto / IvanDev 2002
+# Copyrights (C) Timo Kiviluoto / IvanDev 2002-2003
 
 AR       = ar rs
 CC       = gcc -o

@@ -5,11 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "typedef.h"
 #include "vector2d.h"
 
 class bitmap;
-class colorizablebitmap;
 
 class iosystem
 {

@@ -24,7 +24,7 @@ class databasesystem
   static void Initialize();
 };
 
-template <class type> void database<type>::InstallDataBase(type* Instance)
+template <class type> inline void database<type>::InstallDataBase(type* Instance)
 {
   const typename type::databasemap& Config = Instance->GetProtoType()->GetConfig();
   const typename type::databasemap::const_iterator i = Config.find(Instance->Config);

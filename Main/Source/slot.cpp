@@ -1,12 +1,4 @@
-#include "slot.h"
-#include "stack.h"
-#include "save.h"
-#include "itemde.h"
-#include "charba.h"
-#include "lsquare.h"
-#include "actionba.h"
-#include "proto.h"
-#include "game.h"
+/* Compiled through slotset.cpp */
 
 void slot::Save(outputfile& SaveFile) const
 {
@@ -281,3 +273,4 @@ bool stackslot::IsVisible() const
 {
   return GetMotherStack()->IsVisible();
 }
+

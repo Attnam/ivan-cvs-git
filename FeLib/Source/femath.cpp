@@ -1,10 +1,7 @@
-#include <cstdio>
-#include <ctime>
 #include <cmath>
 
 #include "femath.h"
 #include "error.h"
-#include "felibdef.h"
 
 ulonglong femath::Seed;
 
@@ -100,6 +97,30 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(long, long)
 
   return true;
 }
+
+ushort femath::WeightedRand(long* Possibility, ushort Size)
+{
+  ushort c;
+  ulong TotalPossibility = 0;
+
+  for(c = 0; c < Size; ++c)
+    TotalPossibility += Possibility[c];
+
+  ulong Chosen = RAND() % TotalPossibility;
+  TotalPossibility = 0;
+
+  for(c = 0; c < Size; ++c)
+    {
+      TotalPossibility += Possibility[c];
+
+      if(TotalPossibility > Chosen)
+	return c;
+    }
+
+  ABORT("WeightedRand bugs severely!");
+  return 0x0666;
+}
+
 
 ushort femath::WeightedRand(const std::vector<long>& Possibility)
 {
@@ -212,4 +233,18 @@ bool femath::Clip(ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY
     Height = DestYSize - DestY;
 
   return short(Width) > 0 && short(Height) > 0;
+}
+
+/* This allows ordering of POD objects whose structure members are not aligned */
+
+bool femath::CompareBits(const void* V1, const void* V2, ushort Size)
+{
+  const char* Ptr1 = reinterpret_cast<const char*>(V1);
+  const char* Ptr2 = reinterpret_cast<const char*>(V2);
+
+  for(ushort c = 0; c < Size; ++c, ++Ptr1, ++Ptr2)
+    if(*Ptr1 != *Ptr2)
+      return *Ptr1 < *Ptr2;
+
+  return false;
 }

@@ -1,5 +1,3 @@
-#include <cstdarg>
-
 #include "festring.h"
 #include "allocate.h"
 #include "error.h"
@@ -222,4 +220,15 @@ strsize festring::IgnoreCaseFind(const std::string& Where, const std::string& Wh
       }
 
   return std::string::npos;
+}
+
+/* Replaces all occurances of What in Where after Begin with With */
+
+void festring::SearchAndReplace(std::string& Where, const std::string& What, const std::string& With, strsize Begin)
+{
+  for(strsize Pos = Where.find(What, Begin); Pos != std::string::npos; Pos = Where.find(What, Pos))
+    {
+      Where.erase(Pos, What.length());
+      Where.insert(Pos, With);
+    }
 }

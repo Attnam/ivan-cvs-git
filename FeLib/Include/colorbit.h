@@ -8,7 +8,6 @@
 #include <string>
 #include <map>
 
-#include "typedef.h"
 #include "vector2d.h"
 
 class outputfile;

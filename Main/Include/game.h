@@ -5,32 +5,28 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <map>
 #include <vector>
 
-#include "felibdef.h"
-#include "typedef.h"
 #include "vector2d.h"
-#include "graphics.h"
-#include "ivandef.h"
-#include "save.h"
+#include "felibdef.h"
 
 class area;
-class material;
 class level;
-class character;
-class felist;
-class item;
-class god;
-class item;
-class command;
-class worldmap;
-class square;
 class dungeon;
+class felist;
 class team;
-class bitmap;
-class petrus;
+class character;
 class gamescript;
-class guard;
+class item;
+class outputfile;
+class inputfile;
+class worldmap;
+class god;
+class square;
+class bitmap;
+
+typedef std::map<std::string, long> valuemap;
 
 struct homedata
 {
@@ -51,7 +47,7 @@ struct configid
 {
   configid() { }
   configid(ushort Type, ushort Config) : Type(Type), Config(Config) { }
-  bool operator<(const configid& CI) const { return CompareBits(*this, CI); }
+  bool operator<(const configid&) const;
   ushort Type NO_ALIGNMENT;
   ushort Config NO_ALIGNMENT;
 };
@@ -60,17 +56,8 @@ struct configid
 #pragma pack()
 #endif
 
-inline outputfile& operator<<(outputfile& SaveFile, const configid& Value)
-{
-  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, configid& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, const configid&);
+inputfile& operator>>(inputfile&, configid&);
 
 struct dangerid
 {
@@ -80,17 +67,8 @@ struct dangerid
   bool HasBeenGenerated;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, const dangerid& Value)
-{
-  SaveFile << Value.Danger << Value.HasBeenGenerated;
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
-{
-  SaveFile >> Value.Danger >> Value.HasBeenGenerated;
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, const dangerid&);
+inputfile& operator>>(inputfile&, dangerid&);
 
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
@@ -121,7 +99,7 @@ class game
   static void InitLuxTable();
   static void DeInitLuxTable();
   static const char* Insult();
-  static bool BoolQuestion(const std::string&, int = NO, int = 0);
+  static bool BoolQuestion(const std::string&, int = 0, int = 0);
   static void DrawEverything();
   static bool Save(const std::string& = SaveName(""));
   static uchar Load(const std::string& = SaveName(""));
@@ -143,9 +121,8 @@ class game
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
   static god* GetGod(ushort Index) { return God[Index]; }
-  static uchar GetGods() { return God.size(); }
   static const std::string& GetAlignment(ushort Index) { return Alignment[Index]; }
-  static void ApplyDivineTick(ushort = 1);
+  static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(int);
   static std::string SaveName(const std::string& = "");
@@ -160,7 +137,6 @@ class game
   static ulong GetTicks() { return Ticks; }
   static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
   static uchar DirectionQuestion(const std::string&, bool = true, bool = false);
-  static command* GetCommand(ushort Index) { return Command[Index]; }
   static void RemoveSaves(bool = true);
   static bool IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(bool What) { InWilderness = What; }
@@ -184,7 +160,7 @@ class game
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID() { return NextItemID++; }
   static team* GetTeam(ushort Index) { return Team[Index]; }
-  static uchar GetTeams() { return Team.size(); }
+  static uchar GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
   static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool);
@@ -193,19 +169,17 @@ class game
   static ulong GetLOSTurns() { return LOSTurns; }
   static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
   static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
-  static petrus* GetPetrus() { return Petrus; }
-  static void SetPetrus(petrus* What) { Petrus = What; }
+  static character* GetPetrus() { return Petrus; }
+  static void SetPetrus(character* What) { Petrus = What; }
   static bool HandleQuitMessage();
-  static void Beep();
   static uchar GetDirectionForVector(vector2d);
-  static void SetIsInGetCommand(bool What) { InGetCommand = What; }
-  static bool IsInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
   static vector2d GetScreenSize() { return ScreenSize; }
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
-  static vector2d CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
-  static void BusyAnimation(bitmap* = DOUBLE_BUFFER);
+  static vector2d CalculateScreenCoordinates(vector2d);
+  static void BusyAnimation();
+  static void BusyAnimation(bitmap*);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
@@ -231,11 +205,11 @@ class game
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
   static void CalculateNextDanger();
-  static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "");
+  static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "", const std::string& = "");
   static void InitDangerMap();
   static const dangermap& GetDangerMap() { return DangerMap; }
-  static bool LeaveLevel(std::vector<character*>&, bool);
-  static bool LeaveWorldMap(std::vector<character*>&);
+  static bool TryTravel(uchar, uchar, uchar, bool = false);
+  static bool LeaveArea(std::vector<character*>&, bool);
   static void EnterArea(std::vector<character*>&, uchar, uchar);
   static char CompareLights(ulong, ulong);
   static char CompareLightToInt(ulong, uchar);
@@ -250,17 +224,21 @@ class game
   static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
   static void CallForAttention(vector2d, ushort);
-  static guard* GetHaedlac() { return Haedlac; }
-  static void SetHaedlac(guard* What) { Haedlac = What; }
+  static character* GetHaedlac() { return Haedlac; }
+  static void SetHaedlac(character* What) { Haedlac = What; }
   static character* SearchCharacter(ulong);
-  static void AddCharacterID(character* Char, ulong ID) { CharacterIDMap[ID] = Char; }
-  static void RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
+  static void AddCharacterID(character*, ulong);
+  static void RemoveCharacterID(ulong);
+  static uchar GetStoryState() { return StoryState; }
+  static void SetStoryState(uchar What) { StoryState = What; }
+  static void SetIsInGetCommand(bool What) { InGetCommand = What; }
+  static bool IsInGetCommand() { return InGetCommand; }
   static std::string GetHomeDir();
   static std::string GetSaveDir();
   static std::string GetGameDir();
  private:
   static std::string Alignment[];
-  static std::vector<god*> God;
+  static god** God;
   static uchar CurrentLevelIndex;
   static uchar CurrentDungeonIndex;
   static int MoveCommandKey[];
@@ -277,19 +255,17 @@ class game
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;
-  static command* Command[];
   static bool InWilderness;
   static worldmap* WorldMap;
   static area* AreaInLoad;
   static square* SquareInLoad;
-  static std::vector<dungeon*> Dungeon;
+  static dungeon** Dungeon;
   static ulong NextCharacterID;
   static ulong NextItemID;
-  static std::vector<team*> Team;
+  static team** Team;
   static ulong LOSTurns;
   static bool LOSUpdateRequested;
-  static petrus* Petrus;
-  static bool InGetCommand;
+  static character* Petrus;
   static bool Loading;
   static vector2d ScreenSize;
   static gamescript* GameScript;
@@ -308,8 +284,12 @@ class game
   static float AveragePlayerLegStrength;
   static float AveragePlayerDexterity;
   static float AveragePlayerAgility;
-  static guard* Haedlac;
+  static character* Haedlac;
   static characteridmap CharacterIDMap;
+  static uchar Teams;
+  static uchar Dungeons;
+  static uchar StoryState;
+  static bool InGetCommand;
 };
 
 #endif

@@ -1,17 +1,12 @@
-#include <cctype>
-#include <cstdio>
 #include <cstdarg>
+#include <cctype>
 
 #include "message.h"
+#include "festring.h"
 #include "felist.h"
 #include "game.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "whandler.h"
-#include "colorbit.h"
-#include "festring.h"
-#include "error.h"
 #include "save.h"
+#include "graphics.h"
 
 felist msgsystem::MessageHistory("Message history", WHITE, 128);
 std::string msgsystem::LastMessage;
@@ -57,7 +52,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   if(Buffer == LastMessage)
     {
-      while(MessageHistory.Length() && MessageHistory.GetColor(MessageHistory.LastEntryIndex()) == WHITE)
+      while(MessageHistory.GetLength() && MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
 	MessageHistory.Pop();
 
       ++Times;
@@ -65,7 +60,7 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      for(short c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
+      for(short c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
 	MessageHistory.SetColor(c, LIGHT_GRAY);
 
       Times = 1;
@@ -92,7 +87,7 @@ void msgsystem::AddMessage(const char* Format, ...)
   for(ushort c = 0; c < Chapter.size(); ++c)
     MessageHistory.AddEntry(Chapter[c], WHITE);
 
-  MessageHistory.SetSelected(MessageHistory.LastEntryIndex());
+  MessageHistory.SetSelected(MessageHistory.GetLastEntryIndex());
 }
 
 void msgsystem::Draw()
@@ -132,7 +127,7 @@ void msgsystem::Load(inputfile& SaveFile)
 
 void msgsystem::ScrollDown()
 {
-  if(MessageHistory.GetSelected() < MessageHistory.Length() - 1)
+  if(MessageHistory.GetSelected() < MessageHistory.GetLastEntryIndex())
     MessageHistory.EditSelected(1);
 }
 

@@ -5,24 +5,18 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <vector>
 
-#include "typedef.h"
 #include "area.h"
-#include "cont.h"
 
 class wsquare;
-class outputfile;
-class inputfile;
-class character;
 class continent;
 
 class worldmap : public area
 {
  public:
   worldmap(ushort, ushort);
-  worldmap() { }
+  worldmap();
   virtual ~worldmap();
   void Generate();
   void Save(outputfile&) const;
@@ -35,7 +29,7 @@ class worldmap : public area
   void SmoothAltitude();
   void SmoothClimate();
   void RandomizeAltitude();
-  continent* GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+  continent* GetContinentUnder(vector2d) const;
   continent* GetContinent(ushort Index) const { return Continent[Index]; }
   void RemoveEmptyContinents();
   short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
@@ -45,30 +39,22 @@ class worldmap : public area
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
   wsquare* GetNeighbourWSquare(vector2d, ushort) const;
-  vector2d GetEntryPos(const character*, uchar Index) const { return EntryMap.find(Index)->second; }
+  vector2d GetEntryPos(const character*, uchar) const;
   void RevealEnvironment(vector2d, ushort);
   void SafeSmooth(ushort, ushort);
   void FastSmooth(ushort, ushort);
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;
-  ushort** TypeBuffer, ** OldTypeBuffer;
-  short** AltitudeBuffer, ** OldAltitudeBuffer;
+  ushort** TypeBuffer;
+  ushort** OldTypeBuffer;
+  short** AltitudeBuffer;
+  short** OldAltitudeBuffer;
   uchar** ContinentBuffer;
   std::vector<character*> PlayerGroup;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
-{
-  WorldMap->Save(SaveFile);
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
-{
-  WorldMap = new worldmap;
-  WorldMap->Load(SaveFile);
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, worldmap*);
+inputfile& operator>>(inputfile&, worldmap*&);
 
 #endif

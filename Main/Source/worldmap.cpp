@@ -1,16 +1,4 @@
-#include <cmath>
-#include <cstring>
-
-#include "worldmap.h"
-#include "wsquare.h"
-#include "wterrade.h"
-#include "charba.h"
-#include "allocate.h"
-#include "error.h"
-#include "dungeon.h"
-#include "femath.h"
-#include "proto.h"
-#include "save.h"
+/* Compiled through wmapset.cpp */
 
 #define MAX_TEMPERATURE			27		//increase for more tropical world
 #define LATITUDE_EFFECT			40		//increase for more effect
@@ -20,6 +8,12 @@
 #define MEDIUM				12
 #define WARM				17
 #define HOT				19
+
+/* This can't be inlined, since then #include of char.h and cont.h should be included in worldmap.h */
+
+worldmap::worldmap() { }
+continent* worldmap::GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+vector2d worldmap::GetEntryPos(const character*, uchar Index) const { return EntryMap.find(Index)->second; }
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -637,3 +631,17 @@ void worldmap::RevealEnvironment(vector2d Pos, ushort Radius)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       Map[x][y]->SetLastSeen(LastSeen);
 }
+
+outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+{
+  WorldMap->Save(SaveFile);
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
+{
+  WorldMap = new worldmap;
+  WorldMap->Load(SaveFile);
+  return SaveFile;
+}
+

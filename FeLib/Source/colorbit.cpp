@@ -1,11 +1,7 @@
 #include <cstdarg>
-#include <cstdio>
-#include <memory.h>
 
 #include "colorbit.h"
-#include "error.h"
 #include "bitmap.h"
-#include "graphics.h"
 #include "save.h"
 #include "femath.h"
 
@@ -56,9 +52,7 @@ colorizablebitmap::~colorizablebitmap()
     }
 }
 
-/*
- * A lousy bitmap saver that uses the pcx format but doesn't do any compression.
- */
+/* A lousy bitmap saver that uses the pcx format but doesn't do any compression. */
 
 void colorizablebitmap::Save(const std::string& FileName)
 {
@@ -245,9 +239,6 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-
-  if(!strlen(Format))
-    int esko = 2;
 
   if(Iterator == FontCache.end())
     {

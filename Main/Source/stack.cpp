@@ -1,30 +1,10 @@
-#include <algorithm>
-
-#include "itemba.h"
-#include "stack.h"
-#include "festring.h"
-#include "felist.h"
-#include "lsquare.h"
-#include "message.h"
-#include "graphics.h"
-#include "charba.h"
-#include "area.h"
-#include "femath.h"
-#include "slot.h"
-#include "game.h"
-#include "save.h"
-#include "config.h"
+/* Compiled through slotset.cpp */
 
 ushort stack::Selected;
 
-stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility)
-{
-}
-
-stack::~stack()
-{
-  Clean(true);
-}
+stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility) { }
+stack::~stack() { Clean(true); }
+square* stack::GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
 
 void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
 {

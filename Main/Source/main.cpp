@@ -1,28 +1,20 @@
-#include <cstdio>
 #include <iostream>
 #include <ctime>
 
 #ifdef __DJGPP__
-#include <conio.h>
 #include <go32.h>
 #include <sys/farptr.h>
 #endif
 
-#include "hscore.h"
-#include "feio.h"
-#include "whandler.h"
-#include "config.h"
 #include "game.h"
-#include "igraph.h"
-#include "main.h"
-#include "femath.h"
-#include "proto.h"
-#include "script.h"
-#include "database.h"
-#include "felibdef.h"
 #include "festring.h"
-
-const bool ValpuriIsAlive = true;
+#include "database.h"
+#include "feio.h"
+#include "igraph.h"
+#include "config.h"
+#include "whandler.h"
+#include "hscore.h"
+#include "graphics.h"
 
 int Main(int argc, char **argv)
 {
@@ -49,10 +41,7 @@ int Main(int argc, char **argv)
   game::InitScript();
   configuration::Load();
   igraph::Init();
-
-#ifndef __DJGPP__
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
-#endif
 
   while(true)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" IVAN_VERSION "\r"))

@@ -1,21 +1,6 @@
-#include "charba.h"
-#include "square.h"
-#include "terra.h"
-#include "area.h"
-#include "materba.h"
-#include "festring.h"
-#include "config.h"
-#include "femath.h"
-#include "bitmap.h"
-#include "graphics.h"
-#include "proto.h"
-#include "game.h"
-#include "save.h"
-#include "igraph.h"
+/* Compiled through areaset.cpp */
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), AnimatedEntities(0), DescriptionChanged(true)
-{
-}
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), LastSeen(0), AnimatedEntities(0), DescriptionChanged(true) { }
 
 square::~square()
 {
@@ -140,3 +125,4 @@ bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), IgnoreDarkness);
 }
+

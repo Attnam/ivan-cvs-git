@@ -19,7 +19,7 @@
 class highscore
 {
  public:
-  highscore(const std::string& File = HIGH_SCORE_FILENAME) : LastAdd(0xFF) { Load(File); }
+  highscore(const std::string& = HIGH_SCORE_FILENAME);
   bool Add(long, const std::string&);
   void Draw() const;
   void Save(const std::string& = HIGH_SCORE_FILENAME) const;

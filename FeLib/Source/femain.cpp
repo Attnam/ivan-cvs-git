@@ -1,6 +1,3 @@
-#include <iostream>
-#include <stdlib.h>
-
 #ifdef __DJGPP__
 #include <conio.h>
 #include "graphics.h"
@@ -8,6 +5,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <iostream>
 #endif
 
 #ifdef USE_SDL
@@ -29,7 +28,7 @@ int main(int argc, char* argv[])
   catch(...)
     {
 #ifdef WIN32
-      SDL_WM_IconifyWindow();
+      ShowWindow(GetActiveWindow(), SW_HIDE);
       char Buffer[256];
       strcpy(Buffer, "Fatal Error: Unknown exception thrown.");
       strcat(Buffer, globalerrorhandler::GetBugMsg());

@@ -8,10 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "typedef.h"
 #include "vector2d.h"
 
-class worldmap;
 class outputfile;
 class inputfile;
 
@@ -19,8 +17,8 @@ class continent
 {
  public:
   friend class worldmap;
-  continent() { }
-  continent(ushort Index) : Index(Index) { }
+  continent();
+  continent(ushort);
   void AttachTo(continent*);
   void Add(vector2d);
   void Save(outputfile&) const;
@@ -41,12 +39,6 @@ class continent
   std::vector<ushort> GTerrainAmount;
   uchar Index;
 };
-
-inline void continent::Add(vector2d Pos)
-{
-  Member.push_back(Pos);
-  ContinentBuffer[Pos.X][Pos.Y] = Index;
-}
 
 outputfile& operator<<(outputfile&, continent*);
 inputfile& operator>>(inputfile&, continent*&);

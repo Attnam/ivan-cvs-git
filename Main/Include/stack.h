@@ -5,25 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
-#include <string>
-
-#include "typedef.h"
-#include "vector2d.h"
-#include "ivandef.h"
-#include "entity.h"
 #include "lsquare.h"
 #include "slot.h"
 
-class item;
-class character;
-class bitmap;
-class outputfile;
-class inputfile;
+typedef std::vector<item*> itemvector;
+
 class felist;
 class entity;
-
-typedef std::vector<item*> itemvector;
 
 class stackiterator
 {
@@ -63,7 +51,7 @@ class stack
   void Clean(bool = false);
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
-  square* GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
+  square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
   void BeKicked(character*, ushort);

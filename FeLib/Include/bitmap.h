@@ -5,9 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <list>
 #include <string>
-#include <vector>
 
 #include "vector2d.h"
 #include "felibdef.h"
@@ -159,8 +157,8 @@ class bitmap
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(void (*)(bitmap*) = 0);
   void CreateFlames(ushort, ushort = TRANSPARENT_COLOR);
-  bool IsValidPos(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
-  bool IsValidPos(short X, short Y) const { return (X >= 0 && Y >= 0 && X < XSize && Y < YSize); }
+  bool IsValidPos(vector2d What) const { return What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize; }
+  bool IsValidPos(short X, short Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   void CreateSparkle(vector2d, ushort);
   void CreateFlies(ulonglong, ushort, uchar);
   void CreateLightning(ulonglong, ushort);
@@ -192,8 +190,6 @@ class bitmap
       ushort XPos, YPos;
     } Child;
   } Data;
-  static bitmap* CurrentSprite;
-  static std::vector<vector2d> CurrentPixelVector;
 };
 
 outputfile& operator<<(outputfile&, bitmap*);

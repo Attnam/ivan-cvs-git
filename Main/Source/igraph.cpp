@@ -1,12 +1,11 @@
+#include "igraph.h"
+#include "felist.h"
 #include "bitmap.h"
 #include "graphics.h"
-#include "igraph.h"
-#include "game.h"
-#include "error.h"
-#include "colorbit.h"
-#include "config.h"
 #include "save.h"
-#include "felist.h"
+#include "config.h"
+#include "colorbit.h"
+#include "game.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
@@ -24,15 +23,7 @@ void igraph::Init()
     {
       AlreadyInstalled = true;
       graphics::Init();
-
-#ifdef USE_SDL
-      graphics::SetMode("IVAN " IVAN_VERSION, std::string(game::GetGameDir() + "Graphics/Icon.bmp").c_str(), vector2d(800, 600), 16, configuration::GetFullScreenMode());
-#endif
-
-#ifdef __DJGPP__
-      graphics::SetMode(0x114);
-#endif
-
+      graphics::SetMode("IVAN " IVAN_VERSION, (game::GetGameDir() + "Graphics/Icon.bmp").c_str(), vector2d(800, 600), configuration::GetFullScreenMode());
       DOUBLE_BUFFER->Fill(0);
       graphics::BlitDBToScreen();
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
@@ -188,3 +179,15 @@ void igraph::RemoveUser(graphicid GI)
       }
 }
 
+outputfile& operator<<(outputfile& SaveFile, const graphicid& Value)
+{
+  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+
+inputfile& operator>>(inputfile& SaveFile, graphicid& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}

@@ -1,5 +1,3 @@
-#include <ctime>
-
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
@@ -33,22 +31,15 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
     }
 }
 
-ulong globalwindowhandler::UpdateTick()
-{
-#ifdef USE_SDL
-  Tick = SDL_GetTicks() / 40;
-#else
-  Tick = clock() * 25 / CLOCKS_PER_SEC;
-#endif
-  return Tick;
-}
-
 #ifdef __DJGPP__
 
-int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
+#include <pc.h>
+
+int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
   if(EmptyBuffer)
-    while(kbhit()) getkey();
+    while(kbhit())
+      getkey();
 
   while(!kbhit())
     if(Controls)
@@ -81,17 +72,17 @@ int globalwindowhandler::ReadKey()
     return 0;
 }
 
-#else
+#endif
+
+#ifdef USE_SDL
 
 #include <algorithm>
 
-#include "error.h"
 #include "bitmap.h"
 
 std::vector<int> globalwindowhandler::KeyBuffer;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
 
-#ifdef USE_SDL
 void globalwindowhandler::Init()
 {
   SDL_EnableUNICODE(1);
@@ -100,11 +91,12 @@ void globalwindowhandler::Init()
 
 int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
-  SDL_Event event;
+  SDL_Event Event;
+
   if(EmptyBuffer)
     {
-      while(SDL_PollEvent(&event))
-	ProcessMessage(&event);	     
+      while(SDL_PollEvent(&Event))
+	ProcessMessage(&Event);	     
 
       KeyBuffer.clear();
     }
@@ -123,11 +115,11 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
       }
     else
       {
-	if(SDL_PollEvent(&event))
-	  ProcessMessage(&event);
+	if(SDL_PollEvent(&Event))
+	  ProcessMessage(&Event);
 	else
 	  {
-	    if((SDL_GetAppState() & SDL_APPACTIVE)  && Controls)
+	    if(SDL_GetAppState() & SDL_APPACTIVE && Controls)
 	      {
 		static ulong LastTick = 0;
 		UpdateTick();
@@ -144,12 +136,13 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    if(Draw)
 		      graphics::BlitDBToScreen();
 		  }
+
 		SDL_Delay(10);
 	      }
 	    else
 	      {
-		SDL_WaitEvent(&event);
-		ProcessMessage(&event);
+		SDL_WaitEvent(&Event);
+		ProcessMessage(&Event);
 	      }
 	  }
       }
@@ -157,32 +150,32 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 
 int globalwindowhandler::ReadKey()
 {
-  SDL_Event event;
+  SDL_Event Event;
 
   if(SDL_GetAppState() & SDL_APPACTIVE)
     {
-      ProcessMessage(&event);
-      while(SDL_PollEvent(&event))
-	{
-	  ProcessMessage(&event);
-	}
+      ProcessMessage(&Event);
+
+      while(SDL_PollEvent(&Event))
+	ProcessMessage(&Event);
     }
   else
     {
-      SDL_WaitEvent(&event);
-      ProcessMessage(&event);
+      SDL_WaitEvent(&Event);
+      ProcessMessage(&Event);
     }
+
   if(KeyBuffer.size())
     return GetKey(false);
   else
     return 0;
 }
 
-void globalwindowhandler::ProcessMessage(SDL_Event* event)
+void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
   ushort KeyPressed;
  
-  switch(event->active.type)
+  switch(Event->active.type)
     {
     case SDL_VIDEOEXPOSE:
       graphics::BlitDBToScreen();
@@ -192,16 +185,16 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	exit(0);	
       return;
     case SDL_KEYDOWN:
-      switch(event->key.keysym.sym)
+      switch(Event->key.keysym.sym)
 	{
 	case SDLK_RETURN:
-	  if(event->key.keysym.mod & KMOD_ALT)
+	  if(Event->key.keysym.mod & KMOD_ALT)
 	    {
 	      graphics::SwitchMode();
 	      return;
 	    }
 	  else
-	    KeyPressed = event->key.keysym.unicode;
+	    KeyPressed = Event->key.keysym.unicode;
 	  break;
 
 	case SDLK_DOWN:
@@ -240,7 +233,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
 	default:
-	  KeyPressed = event->key.keysym.unicode;
+	  KeyPressed = Event->key.keysym.unicode;
 
 	  if(KeyPressed == 0)
 	    return;
@@ -258,7 +251,5 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
       break;
     }
 }
-
-#endif
 
 #endif

@@ -1,29 +1,11 @@
-#include <cmath>
-#include <ctime>
-
-#include "level.h"
-#include "charba.h"
-#include "itemde.h"
-#include "lsquare.h"
-#include "stack.h"
-#include "lterrade.h"
-#include "proto.h"
-#include "script.h"
-#include "team.h"
-#include "config.h"
-#include "femath.h"
-#include "message.h"
-#include "actionba.h"
-#include "error.h"
-#include "game.h"
-#include "save.h"
-
-void (level::*level::Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+/* Compiled through levelset.cpp */
 
 #define FORBIDDEN 1
 #define ON_POSSIBLE_ROUTE 2
 #define STILL_ON_POSSIBLE_ROUTE 4
 #define PREFERRED 8
+
+level::level() : Room(1, static_cast<room*>(0)) { }
 
 level::~level()
 {
@@ -417,7 +399,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(*RoomScript->AltarPossible() && !(RAND() % 5))
     {
-      uchar Owner = 1 + RAND() % (game::GetGods() - 1);
+      uchar Owner = 1 + RAND() % GODS;
       GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
 
       for(c = 0; c < Inside.size(); ++c)
@@ -851,7 +833,6 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	SizeVect.Y = RES.Y - BPos.Y;
 
       game::DrawEverythingNoBlit();
-
       uchar Flags = RAND() & 7;
 
       if(!Flags || SizeVect != OldSizeVect)
@@ -1363,3 +1344,21 @@ void level::ShieldBeam(character* BeamOwner, const std::string& DeathMsg, vector
       }
 }
 
+outputfile& operator<<(outputfile& SaveFile, level* Level)
+{
+  Level->Save(SaveFile);
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, level*& Level)
+{
+  Level = new level;
+  Level->Load(SaveFile);
+  return SaveFile;
+}
+
+void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar)
+{
+  static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+  return Beam[Index];
+}

@@ -1,0 +1,12 @@
+#include "allocate.h"
+#include "char.h"
+#include "team.h"
+#include "game.h"
+#include "graphics.h"
+#include "bitmap.h"
+#include "terra.h"
+#include "proto.h"
+
+#include "area.cpp"
+#include "square.cpp"
+#include "terra.cpp"

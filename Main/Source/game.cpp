@@ -1,11 +1,9 @@
-#include <cmath>
 #include <ctime>
 #include <algorithm>
 #include <cstdarg>
-#include <iostream>
 
-#ifdef USE_SDL
-#include <cstdlib>
+#ifdef LINUX
+//#include <cstdlib>
 #include <sys/stat.h>
 #endif
 
@@ -17,31 +15,27 @@
 #include <direct.h>
 #endif
 
-#include "level.h"
-#include "charde.h"
-#include "itemba.h"
-#include "godba.h"
-#include "festring.h"
+#include "lterra.h"
 #include "whandler.h"
-#include "lsquare.h"
-#include "lterrade.h"
-#include "worldmap.h"
-#include "message.h"
-#include "dungeon.h"
-#include "feio.h"
-#include "script.h"
-#include "team.h"
-#include "colorbit.h"
-#include "config.h"
-#include "femath.h"
+#include "festring.h"
 #include "hscore.h"
-#include "error.h"
-#include "command.h"
-#include "save.h"
-#include "stack.h"
-#include "hell.h"
-#include "wsquare.h"
+#include "colorbit.h"
+#include "message.h"
+#include "feio.h"
+#include "team.h"
+#include "config.h"
 #include "allocate.h"
+#include "pool.h"
+#include "god.h"
+#include "proto.h"
+#include "stack.h"
+#include "felist.h"
+#include "human.h"
+#include "nonhuman.h"
+#include "wsquare.h"
+#include "game.h"
+#include "graphics.h"
+#include "bitmap.h"
 
 #define SAVE_FILE_VERSION 111 // Increment this if changes make savefiles incompatible
 
@@ -51,17 +45,22 @@
 
 class quitrequest { };
 
+bool configid::operator<(const configid& CI) const
+{
+  return femath::CompareBits(this, &CI, sizeof(configid));
+}
+
 uchar game::CurrentLevelIndex;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
-std::vector<dungeon*> game::Dungeon;
+dungeon** game::Dungeon;
 uchar game::CurrentDungeonIndex;
 ulong game::NextCharacterID = 1;
 ulong game::NextItemID = 1;
-std::vector<team*> game::Team;
+team** game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 vector2d game::CursorPos(-1, -1);
@@ -75,81 +74,19 @@ float game::AveragePlayerArmStrength;
 float game::AveragePlayerLegStrength;
 float game::AveragePlayerDexterity;
 float game::AveragePlayerAgility;
+uchar game::Teams;
+uchar game::Dungeons;
+uchar game::StoryState;
 
-bool game::Loading = false, game::InGetCommand = false;
-petrus* game::Petrus = 0;
-guard* game::Haedlac = 0;
+bool game::Loading = false;
+bool game::InGetCommand = false;
+character* game::Petrus = 0;
+character* game::Haedlac = 0;
 
 std::string game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 std::string game::LockDescription[] = { "round", "square", "triangular", "broken" };
-std::vector<god*> game::God;
-
-command* game::Command[] =
-{
-  0,
-
-  /* Sort according to description */
-
-  new command(&character::Apply, "apply", 'a', false),
-  new command(&character::Talk, "chat", 'C', false),
-  new command(&character::Close, "close", 'c', false),
-  new command(&character::Dip, "dip", '!', true),
-  new command(&character::Drink, "drink", 'D', true),
-  new command(&character::Drop, "drop", 'd', false),
-  new command(&character::Eat, "eat", 'e', true),
-  new command(&character::WhatToEngrave, "engrave", 'G', false),
-  new command(&character::EquipmentScreen, "equipment menu", 'E', true),
-  new command(&character::Go, "go", 'g', false),
-  new command(&character::GoDown, "go down", '>', true),
-  new command(&character::GoUp, "go up", '<', true),
-  new command(&character::Kick, "kick", 'k', false),
-  new command(&character::Look, "look", 'l', true),
-  new command(&character::AssignName, "name", 'n', false),
-  new command(&character::Offer, "offer", 'O', false),
-  new command(&character::Open, "open", 'o', false),
-  new command(&character::OutlineCharacters, "outline characters", 'u', true),
-  new command(&character::OutlineItems, "outline items", 'U', true),
-  new command(&character::PickUp, "pick up", ',', false),
-  new command(&character::Pray, "pray", 'p', false),
-  new command(&character::Quit, "quit", 'Q', true),
-  new command(&character::Read, "read", 'r', false),
-  new command(&character::RestUntilHealed, "rest/heal", 'h', true),
-  new command(&character::Save, "save game", 's', true),
-  new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
-  new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
-  new command(&character::ShowConfigScreen, "show config screen", '\\', true),
-  new command(&character::ShowInventory, "show inventory", 'i', true),
-  new command(&character::ShowKeyLayout, "show key layout", '?', true),
-  new command(&character::DrawMessageHistory, "show message history", 'M', true),
-  new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
-  new command(&character::Sit, "sit", 'S', false),
-  new command(&character::Throw, "throw", 't', false),
-  new command(&character::ForceVomit, "vomit", 'v', false),
-  new command(&character::NOP, "wait", '.', true),
-  new command(&character::WieldInRightArm, "wield in right arm", 'w', true),
-  new command(&character::WieldInLeftArm, "wield in left arm", 'W', true),
-  new command(&character::WizardMode, "wizard mode activation", 'X', true),
-  new command(&character::Zap, "zap", 'z', false),
-
-  /* Sort according to key */
-
-  new command(&character::RaiseStats, "raise stats", '1', true, true),
-  new command(&character::LowerStats, "lower stats", '2', true, true),
-  new command(&character::SeeWholeMap, "see whole map", '3', true, true),
-  new command(&character::WalkThroughWalls, "toggle walk through walls mode", '4', true, true),
-  new command(&character::RaiseGodRelations, "raise your relations to the gods", '5', true, true),
-  new command(&character::LowerGodRelations, "lower your relations to the gods", '6', true, true),
-  new command(&character::GainDivineKnowledge, "gain knowledge of all gods", '7', true, true),
-  new command(&character::GainAllItems, "gain all items", '8', true, true),
-  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, false),
-  new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
-  new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
-  new command(&character::ShowBattleInfo, "show battle info", '%', true, false),
-  new command(&character::SummonMonster, "summon monster", '&', false, true),
-  new command(&character::LevelTeleport, "level teleport", '|', false, true),
-  0
-};
+god** game::God;
 
 int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
@@ -172,6 +109,10 @@ dangermap game::DangerMap;
 configid game::NextDangerId;
 characteridmap game::CharacterIDMap;
 
+vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
+void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
+void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
+
 void game::InitScript()
 {
   inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
@@ -180,8 +121,8 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
 }
 
-/*#include "materde.h"
-#include "itemde.h"
+/*#include "materias.h"
+#include "item.h"
 #include "stack.h"*/
 
 bool game::Init(const std::string& Name)
@@ -284,6 +225,7 @@ bool game::Init(const std::string& Name)
 	game::SendLOSUpdateRequest();
 	Ticks = 0;
 	InitPlayerAttributeAverage();
+	StoryState = 0;
 
 	BaseScore = Player->GetScore();
 	character* Doggie = new dog;
@@ -317,21 +259,21 @@ void game::DeInit()
   SetWorldMap(0);
   ushort c;
 
-  for(c = 1; c < Dungeon.size(); ++c)
+  for(c = 1; c < Dungeons; ++c)
     delete Dungeon[c];
 
-  Dungeon.clear();
+  delete [] Dungeon;
 
-  for(c = 1; c < GetGods(); ++c)
-    delete GetGod(c); // sorry, Valpuri!
+  for(c = 1; c <= GODS; ++c)
+    delete God[c]; // sorry, Valpuri!
 
-  God.clear();
-  hell::Burn();
+  delete [] God;
+  pool::BurnHell();
 
-  for(c = 0; c < Team.size(); ++c)
-    delete GetTeam(c);
+  for(c = 0; c < Teams; ++c)
+    delete Team[c];
 
-  Team.clear();
+  delete [] Team;
 }
 
 void game::Run()
@@ -352,7 +294,7 @@ void game::Run()
       try
 	{
 	  pool::Be();
-	  hell::Burn();
+	  pool::BurnHell();
 
 	  Tick();
 	  ApplyDivineTick();
@@ -533,8 +475,18 @@ bool game::Save(const std::string& SaveName)
   SaveFile << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
   SaveFile << LOSTurns << femath::GetSeed();
-  SaveFile << God << Dungeon << Team;
   SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
+  SaveFile << Teams << Dungeons << StoryState;
+  ushort c;
+
+  for(c = 1; c < Dungeons; ++c)
+    SaveFile << Dungeon[c];
+
+  for(c = 1; c <= GODS; ++c)
+    SaveFile << God[c];
+
+  for(c = 0; c < Teams; ++c)
+    SaveFile << Team[c];
 
   if(InWilderness)
     SaveWorldMap(SaveName);
@@ -569,13 +521,31 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
   femath::SetSeed(ReadType<ulonglong>(SaveFile));
-  SaveFile >> God >> Dungeon >> Team;
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
+  SaveFile >> Teams >> Dungeons >> StoryState;
+  ushort c;
+
+  Dungeon = new dungeon*[Dungeons];
+  Dungeon[0] = 0;
+
+  for(c = 1; c < Dungeons; ++c)
+    SaveFile >> Dungeon[c];
+
+  God = new god*[GODS + 1];
+  God[0] = 0;
+
+  for(c = 1; c <= GODS; ++c)
+    SaveFile >> God[c];
+
+  Team = new team*[Teams];
+
+  for(c = 0; c < Teams; ++c)
+    SaveFile >> Team[c];
 
   if(InWilderness)
     LoadWorldMap(SaveName);
   else
-    GetCurrentDungeon()->LoadLevel(SaveName);
+    GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex);
 
   vector2d Pos;
   SaveFile >> Pos;
@@ -684,15 +654,15 @@ int game::GetMoveCommandKeyBetweenPoints(vector2d A, vector2d B)
   return DIR_ERROR;
 }
 
-void game::ApplyDivineTick(ushort Ticks)
+void game::ApplyDivineTick()
 {
-  for(ushort c = 1; c < GetGods(); ++c)
-    GetGod(c)->ApplyDivineTick(Ticks);
+  for(ushort c = 1; c <= GODS; ++c)
+    GetGod(c)->ApplyDivineTick();
 }
 
 void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Multiplier)
 {
-  for(ushort c = 1; c < GetGods(); ++c)
+  for(ushort c = 1; c <= GODS; ++c)
     if(GetGod(c) != CompareTarget)
       GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
@@ -715,7 +685,7 @@ long game::GodScore()
 {
   long Score = -1000;
 
-  for(ushort c = 1; c < GetGods(); ++c)
+  for(ushort c = 1; c <= GODS; ++c)
     if(GetGod(c)->GetRelation() > Score)
       Score = GetGod(c)->GetRelation();
 
@@ -796,7 +766,7 @@ void game::RemoveSaves(bool RealSavesAlso)
   remove((AutoSaveFileName + ".wm").c_str());
   std::string File;
 
-  for(ushort i = 1; i < Dungeon.size(); ++i)
+  for(ushort i = 1; i < Dungeons; ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
 	/*
@@ -854,10 +824,11 @@ void game::SeeWholeMap()
 
 void game::InitDungeons()
 {
-  Dungeon.resize(*GetGameScript()->GetDungeons() + 1);
+  Dungeons = *GetGameScript()->GetDungeons() + 1;
+  Dungeon = new dungeon*[Dungeons];
   Dungeon[0] = 0;
 
-  for(ushort c = 1; c < Dungeon.size(); ++c)
+  for(ushort c = 1; c < Dungeons; ++c)
     {
       Dungeon[c] = new dungeon(c);
       Dungeon[c]->SetIndex(c);
@@ -869,9 +840,9 @@ void game::DoEvilDeed(ushort Amount)
   if(!Amount)
     return;
 
-  for(ushort c = 1; c < game::GetGods(); ++c)
+  for(ushort c = 1; c <= GODS; ++c)
     {
-      short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
+      short Change = Amount - Amount * GetGod(c)->GetAlignment() / 5;
 
       if(!IsInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
 	if(GetGod(c)->GetRelation() - (Change << 1) < -750)
@@ -922,7 +893,7 @@ void game::LoadWorldMap(const std::string& SaveName)
 
 void game::Hostility(team* Attacker, team* Defender)
 {
-  for(ushort c = 0; c < Team.size(); ++c)
+  for(ushort c = 0; c < Teams; ++c)
     if(GetTeam(c) != Attacker && GetTeam(c) != Defender)
       switch(GetTeam(c)->GetRelation(Defender))
 	{
@@ -952,31 +923,33 @@ void game::Hostility(team* Attacker, team* Defender)
 
 void game::CreateTeams()
 {
+  Teams = *GetGameScript()->GetTeams();
+  Team = new team*[Teams];
   ushort c;
 
-  for(c = 0; c < *GetGameScript()->GetTeams(); ++c)
+  for(c = 0; c < Teams; ++c)
     {
-      team* NewTeam = new team(c);
+      Team[c] = new team(c);
 
-      for(ushort i = 0; i < Team.size(); ++i)
-	GetTeam(i)->SetRelation(NewTeam, UNCARING);
-
-      Team.push_back(NewTeam);
+      for(ushort i = 0; i < c; ++i)
+	Team[i]->SetRelation(Team[c], UNCARING);
     }
 
-  for(c = 0; c < Team.size(); ++c)
+  for(c = 0; c < Teams; ++c)
     if(c != 1)
-      GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
+      Team[1]->SetRelation(Team[c], HOSTILE);
 
-  for(c = 0; c < GetGameScript()->GetTeam().size(); ++c)
+  const std::vector<std::pair<uchar, teamscript*> >& TeamScript = GetGameScript()->GetTeam();
+
+  for(c = 0; c < TeamScript.size(); ++c)
   {
-    for(ushort i = 0; i < GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
-      GetTeam(GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GetGameScript()->GetTeam()[c].first), GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
+    for(ushort i = 0; i < TeamScript[c].second->GetRelation().size(); ++i)
+      GetTeam(TeamScript[c].second->GetRelation()[i].first)->SetRelation(GetTeam(TeamScript[c].first), TeamScript[c].second->GetRelation()[i].second);
 
-    ushort* KillEvilness = GetGameScript()->GetTeam()[c].second->GetKillEvilness();
+    ushort* KillEvilness = TeamScript[c].second->GetKillEvilness();
 
     if(KillEvilness)
-      GetTeam(GetGameScript()->GetTeam()[c].first)->SetKillEvilness(*KillEvilness);
+      GetTeam(TeamScript[c].first)->SetKillEvilness(*KillEvilness);
   }
 }
 
@@ -1064,12 +1037,6 @@ bool game::HandleQuitMessage()
   return true;
 }
 
-void game::Beep()
-{
-  /*   if(configuration::GetBeepOnCritical())
-       std::cout << "\007";*/
-}
-
 uchar game::GetDirectionForVector(vector2d Vector)
 {
   for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
@@ -1083,10 +1050,10 @@ std::string game::GetVerbalPlayerAlignment()
 {
   long Sum = 0;
 
-  for(ushort c = 1; c < game::GetGods(); ++c)
+  for(ushort c = 1; c <= GODS; ++c)
     {
       if(GetGod(c)->GetRelation() > 0)
-	Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
+	Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->GetAlignment());
     }
 
   if(Sum > 15000)
@@ -1111,10 +1078,16 @@ std::string game::GetVerbalPlayerAlignment()
 
 void game::CreateGods()
 {
-  God.resize(1, 0);
+  God = new god*[GODS + 1];
+  God[0] = 0;
 
   for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
-    God.push_back(protocontainer<god>::GetProto(c)->Clone());
+    God[c] = protocontainer<god>::GetProto(c)->Clone();
+}
+
+void game::BusyAnimation()
+{
+  BusyAnimation(DOUBLE_BUFFER);
 }
 
 void game::BusyAnimation(bitmap* Buffer)
@@ -1320,9 +1293,7 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
   va_start(Arguments, KeyNumber);
 
   for(ushort c = 0; c < KeyNumber; ++c)
-    {
-      KeyVector.push_back(va_arg(Arguments,int));
-    }
+    KeyVector.push_back(va_arg(Arguments, int));
 
   va_end(Arguments);
 
@@ -1479,10 +1450,10 @@ void game::SetCurrentEmitterPos(vector2d What)
   CurrentEmitterPosY = What.Y;
 }
 
-int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText)
+int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText1, const std::string& SmallText2)
 {
   globalwindowhandler::DeInstallControlLoop(AnimationController);
-  int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText);
+  int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
   globalwindowhandler::InstallControlLoop(AnimationController);
   return Return;
 }
@@ -1558,21 +1529,37 @@ void game::CalculateNextDanger()
     ABORT("It is dangerous to go ice fishing in the summer.");
 }
 
-bool game::LeaveLevel(std::vector<character*>& Group, bool AllowHostiles)
+bool game::TryTravel(uchar Dungeon, uchar Area, uchar EntryIndex, bool AllowHostiles)
 {
-  if(!GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
-    return false;
+  std::vector<character*> Group;
 
-  GetCurrentLevel()->RemoveCharacter(Player->GetPos());
-  GetCurrentDungeon()->SaveLevel();
-  return true;
+  if(LeaveArea(Group, AllowHostiles))
+    {
+      game::SetCurrentDungeonIndex(Dungeon);
+      game::EnterArea(Group, Area, EntryIndex);
+      return true;
+    }
+  else
+    return false;
 }
 
-bool game::LeaveWorldMap(std::vector<character*>& Group)
+bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
 {
-  GetWorldMap()->RemoveCharacter(Player->GetPos());
-  GetWorldMap()->GetPlayerGroup().swap(Group);
-  SaveWorldMap(SaveName(), true);
+  if(!IsInWilderness())
+    {
+      if(!GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
+	return false;
+
+      GetCurrentLevel()->RemoveCharacter(Player->GetPos());
+      GetCurrentDungeon()->SaveLevel(SaveName(), CurrentLevelIndex);
+    }
+  else
+    {
+      GetWorldMap()->RemoveCharacter(Player->GetPos());
+      GetWorldMap()->GetPlayerGroup().swap(Group);
+      SaveWorldMap(SaveName(), true);
+    }
+
   return true;
 }
 
@@ -1833,6 +1820,31 @@ character* game::SearchCharacter(ulong ID)
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
 }
 
+outputfile& operator<<(outputfile& SaveFile, const configid& Value)
+{
+  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, configid& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+outputfile& operator<<(outputfile& SaveFile, const dangerid& Value)
+{
+  SaveFile << Value.Danger << Value.HasBeenGenerated;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
+{
+  SaveFile >> Value.Danger >> Value.HasBeenGenerated;
+  return SaveFile;
+}
+
+/* The program can only create directories to the deepness of one, no more... */
 
 std::string game::GetHomeDir()
 {

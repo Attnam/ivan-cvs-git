@@ -43,18 +43,18 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
-# ADD RSC /l 0x40b /d "NDEBUG" /d "VC"
+# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /version:0.401 /subsystem:windows /machine:I386 /nodefaultlib:"libc"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib user32.lib /nologo /version:0.401 /subsystem:windows /machine:I386 /nodefaultlib:"libc"
+# SUBTRACT LINK32 /pdb:none /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
@@ -75,18 +75,19 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
-# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
+# SUBTRACT CPP /Gy
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "_DEBUG" /D "VC" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "_DEBUG"
-# ADD RSC /l 0x40b /d "_DEBUG" /d "VC"
+# ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Debug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /version:0.40 /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib user32.lib /nologo /version:0.401 /subsystem:windows /incremental:no /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
+# SUBTRACT LINK32 /verbose /pdb:none /map /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
@@ -107,19 +108,19 @@ PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /Zi /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
-# ADD RSC /l 0x40b /d "NDEBUG" /d "VC"
+# ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Release/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # SUBTRACT BASE LINK32 /pdb:none /debug
-# ADD LINK32 FeLib/FastDebug/FeLib.lib SDLmain.lib SDL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /version:0.40 /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt"
-# SUBTRACT LINK32 /pdb:none
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/FastDebug/FeLib.lib user32.lib /nologo /version:0.401 /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
+# SUBTRACT LINK32 /verbose /pdb:none /incremental:yes /map
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\FastDebug\Main.exe IVAN.exe
@@ -137,18 +138,13 @@ PostBuild_Cmds=copy Main\FastDebug\Main.exe IVAN.exe
 # PROP Default_Filter "c,cc,cpp"
 # Begin Source File
 
-SOURCE=.\Main\Source\actionba.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Main\Source\actionde.cpp
+SOURCE=.\Main\Source\action.cpp
 
 !IF  "$(CFG)" == "Main - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
 
-# ADD BASE CPP /W3
-# ADD CPP /W3
+# PROP Exclude_From_Build 1
 
 !ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
 
@@ -157,15 +153,94 @@ SOURCE=.\Main\Source\actionde.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\actions.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\actset.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\area.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\charba.cpp
+SOURCE=.\Main\Source\areaset.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\charde.cpp
+SOURCE=.\Main\Source\bodypart.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\char.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\charset.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\charsset.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\command.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -174,10 +249,40 @@ SOURCE=.\Main\Source\config.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\cont.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\coreset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\database.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\dataset.cpp
 # End Source File
 # Begin Source File
 
@@ -186,6 +291,17 @@ SOURCE=.\Main\Source\dungeon.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\entity.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -197,15 +313,67 @@ SOURCE=.\Main\Source\game.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\godba.cpp
+SOURCE=.\Main\Source\gear.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\godde.cpp
+SOURCE=.\Main\Source\god.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\hell.cpp
+SOURCE=.\Main\Source\gods.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\godset.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\human.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -217,27 +385,86 @@ SOURCE=.\Main\Source\igraph.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\itemba.cpp
+SOURCE=.\Main\Source\item.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\itemde.cpp
+SOURCE=.\Main\Source\itemset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\level.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\levelset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\lsquare.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\lterraba.cpp
+SOURCE=.\Main\Source\lterra.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\lterrade.cpp
+SOURCE=.\Main\Source\lterras.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -245,15 +472,71 @@ SOURCE=.\Main\Source\main.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\materba.cpp
+SOURCE=.\Main\Source\materia.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\materde.cpp
+SOURCE=.\Main\Source\materias.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\materset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\message.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\miscitem.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\nonhuman.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -262,46 +545,179 @@ SOURCE=.\Main\Source\object.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\pool.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\proto.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\roomba.cpp
+SOURCE=.\Main\Source\room.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\roomde.cpp
+SOURCE=.\Main\Source\rooms.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\roomset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\script.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\slot.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\slotset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\square.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\stack.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\team.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\terra.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\wmapset.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Source\worldmap.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -310,14 +726,47 @@ SOURCE=.\Main\Source\wskill.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\wsquare.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\wterraba.cpp
+SOURCE=.\Main\Source\wterra.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\wterrade.cpp
+SOURCE=.\Main\Source\wterras.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -325,11 +774,11 @@ SOURCE=.\Main\Source\wterrade.cpp
 # PROP Default_Filter "h,hh,hpp"
 # Begin Source File
 
-SOURCE=.\Main\Include\actionba.h
+SOURCE=.\Main\Include\action.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\actionde.h
+SOURCE=.\Main\Include\actions.h
 # End Source File
 # Begin Source File
 
@@ -337,15 +786,19 @@ SOURCE=.\Main\Include\area.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\charba.h
+SOURCE=.\Main\Include\bodypart.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\charde.h
+SOURCE=.\Main\Include\char.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Include\command.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\confdef.h
 # End Source File
 # Begin Source File
 
@@ -377,15 +830,19 @@ SOURCE=.\Main\Include\game.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\godba.h
+SOURCE=.\Main\Include\gear.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\godde.h
+SOURCE=.\Main\Include\god.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\hell.h
+SOURCE=.\Main\Include\gods.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\human.h
 # End Source File
 # Begin Source File
 
@@ -397,11 +854,7 @@ SOURCE=.\Main\Include\igraph.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\itemba.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Main\Include\itemde.h
+SOURCE=.\Main\Include\item.h
 # End Source File
 # Begin Source File
 
@@ -417,27 +870,31 @@ SOURCE=.\Main\Include\lsquare.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\lterraba.h
+SOURCE=.\Main\Include\lterra.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\lterrade.h
+SOURCE=.\Main\Include\lterras.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\main.h
+SOURCE=.\Main\Include\materia.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\materba.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Main\Include\materde.h
+SOURCE=.\Main\Include\materias.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\Main\Include\message.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\miscitem.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\nonhuman.h
 # End Source File
 # Begin Source File
 
@@ -453,11 +910,11 @@ SOURCE=.\Main\Include\proto.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\roomba.h
+SOURCE=.\Main\Include\room.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\roomde.h
+SOURCE=.\Main\Include\rooms.h
 # End Source File
 # Begin Source File
 
@@ -497,11 +954,11 @@ SOURCE=.\Main\Include\wsquare.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\wterraba.h
+SOURCE=.\Main\Include\wterra.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\wterrade.h
+SOURCE=.\Main\Include\wterras.h
 # End Source File
 # End Group
 # Begin Source File

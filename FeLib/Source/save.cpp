@@ -1,11 +1,7 @@
-#include <ctype.h>
+#include <cctype>
 
 #include "save.h"
-#include "festring.h"
-#include "error.h"
 #include "femath.h"
-#include "graphics.h"
-#include "felibdef.h"
 
 outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
 {
@@ -13,10 +9,22 @@ outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fo
     ABORT("Can't open %s for output!", FileName.c_str());
 }
 
+outputfile::~outputfile()
+{
+  if(Buffer)
+    fclose(Buffer);
+}
+
 inputfile::inputfile(const std::string& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb")), FileName(FileName), ValueMap(ValueMap)
 {
   if(AbortOnErr && !IsOpen())
     ABORT("File %s not found!", FileName.c_str());
+}
+
+inputfile::~inputfile()
+{
+  if(Buffer)
+    fclose(Buffer);
 }
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
@@ -238,9 +246,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
     }
 }
 
-/*
- * Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+rand%4" etc.
- */
+/* Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+rand%4" etc. */
 
 long inputfile::ReadNumber(uchar CallLevel)
 {

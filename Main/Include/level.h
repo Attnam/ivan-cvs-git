@@ -5,31 +5,23 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
 #include <vector>
 
-#include "typedef.h"
-#include "vector2d.h"
 #include "area.h"
-#include "roomba.h"
-#include "ivandef.h"
 
-class lsquare;
-class character;
-class area;
-class bitmap;
-class outputfile;
-class inputfile;
 class levelscript;
 class roomscript;
 class squarescript;
 class glterrain;
 class olterrain;
+class dungeon;
+class lsquare;
+class room;
 
 class level : public area
 {
  public:
-  level() : Room(1, (room*)0) { }
+  level();
   virtual ~level();
   void Generate(ushort);
   vector2d GetRandomSquare(const character* = 0, uchar = 0, const rect* = 0) const;
@@ -55,7 +47,7 @@ class level : public area
   bool IsOnGround() const;
   levelscript* GetLevelScript() const { return LevelScript; }
   virtual void MoveCharacter(vector2d, vector2d);
-  virtual ushort GetLOSModifier() const;
+  ushort GetLOSModifier() const;
   ushort CalculateMinimumEmitationRadius(ulong) const;
   room* GetRoom(ushort) const;
   void SetRoom(ushort Index, room* What) { Room[Index] = What; }
@@ -68,7 +60,7 @@ class level : public area
   vector2d GetEntryPos(const character*, uchar) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, roomscript*, room*, vector2d, vector2d);
   void Reveal();
-  static void (level::*GetBeam(ushort Index))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) { return Beam[Index]; }
+  static void (level::*GetBeam(ushort))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void ParticleBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void LightningBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void ShieldBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
@@ -77,7 +69,6 @@ class level : public area
   uchar GetIndex() const { return Index; }
   void SetIndex(uchar What) { Index = What; }
  protected:
-  static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
   lsquare*** Map;
@@ -92,17 +83,7 @@ class level : public area
   uchar Index;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, level* Level)
-{
-  Level->Save(SaveFile);
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, level*& Level)
-{
-  Level = new level;
-  Level->Load(SaveFile);
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, level*);
+inputfile& operator>>(inputfile&, level*&);
 
 #endif

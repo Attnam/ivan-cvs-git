@@ -5,15 +5,12 @@
 #include "entity.h"
 #include "lsquare.h"
 
-class outputfile;
-class inputfile;
-class material;
 class bitmap;
 
 class fluid : public entity
 {
  public:
-  fluid() : entity(HAS_BE) { }
+  fluid();
   fluid(square*);
   virtual ~fluid();
   void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);

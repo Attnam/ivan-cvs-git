@@ -3,12 +3,9 @@
 #endif
 
 #ifdef __DJGPP__
-#include <cstdlib>
 #include <dpmi.h>
-#include <go32.h>
-#include <pc.h>
-#include <sys/farptr.h>
 #include <conio.h>
+#include <go32.h>
 #endif
 
 #include "graphics.h"
@@ -20,9 +17,6 @@
 
 void (*graphics::SwitchModeHandler)();
 
-/*#if defined (WIN32) || (USE_SDL)
-void (*graphics::SwitchModeHandler)();
-#endif*/
 #ifdef USE_SDL
 SDL_Surface* graphics::Screen;
 #endif
@@ -84,7 +78,7 @@ void graphics::DeInit()
 
 #ifdef USE_SDL
 
-void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes, uchar NewColorDepth, bool FullScreen)
+void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes, bool FullScreen)
 {
   if(IconName)
     {
@@ -101,7 +95,7 @@ void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes,
       Flags |= SDL_FULLSCREEN;
     }
 
-  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, NewColorDepth, Flags);
+  Screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, 16, Flags);
 
   if(!Screen) 
     ABORT("Couldn't set video mode.");
@@ -110,7 +104,7 @@ void graphics::SetMode(const char* Title, const char* IconName, vector2d NewRes,
   globalwindowhandler::Init();
   DoubleBuffer = new bitmap(NewRes);
   Res = NewRes;
-  ColorDepth = NewColorDepth;
+  ColorDepth = 16;
 }
 
 void graphics::BlitDBToScreen()
@@ -165,12 +159,24 @@ void graphics::LoadDefaultFont(const std::string& FileName)
 
 #ifdef __DJGPP__
 
-void graphics::SetMode(ushort Mode)
+void graphics::SetMode(const char*, const char*, vector2d NewRes, bool)
 {
-  ModeInfo.Retrieve(Mode);
+  ulong Mode;
 
-  if(!ModeInfo.CheckSupport())
-    ABORT("Mode 0x%X not supported!", Mode);
+  for(Mode = 0; Mode < 0x10000; ++Mode)
+    {
+      ModeInfo.Retrieve(Mode);
+      
+      if(ModeInfo.Attribs1 & 0x01
+      && ModeInfo.Attribs1 & 0xFF
+      && ModeInfo.Width == NewRes.X
+      && ModeInfo.Height == NewRes.Y
+      && ModeInfo.BitsPerPixel == 16)
+	  break;
+    }
+
+  if(Mode == 0x10000)
+    ABORT("Resolution %dx%d not supported!", NewRes.X, NewRes.Y);
 
   __dpmi_regs Regs;
   Regs.x.ax = 0x4F02;

@@ -1,14 +1,15 @@
-#include "graphics.h"
-#include "bitmap.h"
-#include "festring.h"
 #include "hscore.h"
-#include "whandler.h"
 #include "save.h"
-#include "colorbit.h"
 #include "felist.h"
 #include "feio.h"
+#include "festring.h"
 
 #define HIGH_SCORE_VERSION 110 // Increment this if changes make highscores incompatible
+
+highscore::highscore(const std::string& File) : LastAdd(0xFF)
+{
+  Load(File);
+}
 
 bool highscore::Add(long NewScore, const std::string& NewEntry)
 {
@@ -20,7 +21,7 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
 
 	if(Score.size() > 100)
 	  {
-	    Entry.resize(100);
+	    Entry.resize(100, std::string());
 	    Score.resize(100);
 	  }
 

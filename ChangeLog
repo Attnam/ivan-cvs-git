@@ -9,6 +9,16 @@ is also provided AS IS and is probably completely unreadable.
 
 January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Corrected some bugs in the Win SDL port
+	* The DOS port compiles again
+	* Compiling is now twice as fast as before
+	* Monoheaded and two two-headed mooses and two giant mushrooms added to char.pcx
+	  by Kahvi
+	* Breaking and fixing an item no longer destroys accustomization
+	* Something that I forgot
+
+January 18 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Smith now fixes damaged bodyparts if they are made from a metal
 	* Bug with highscores corrected (makefiles)
 	* CanThrow added to script

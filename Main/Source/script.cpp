@@ -1,17 +1,4 @@
-#include "script.h"
-#include "lterraba.h"
-#include "charba.h"
-#include "allocate.h"
-#include "team.h"
-#include "itemba.h"
-#include "roomba.h"
-#include "godba.h"
-#include "error.h"
-#include "game.h"
-#include "proto.h"
-#include "save.h"
-#include "materba.h"
-#include "femath.h"
+/* Compiled through dataset.cpp */
 
 #define ANALYZE_MEMBER(name)\
 {\
@@ -114,6 +101,8 @@ datamemberbase* basecontentscript::GetData(const std::string& Identifier)
   return 0;
 }
 
+basecontentscript::basecontentscript() : ContentType(0), Config(0), Random(false) { }
+
 void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word = SaveFile.ReadWord();
@@ -181,13 +170,13 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
 {
   type* Instance;
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
+  const typename type::databasemap& ProtoConfig = Proto->GetConfig();
 
-  if(!Config && Proto->IsAbstract())
+  if(!Config && ProtoConfig.begin()->second.IsAbstract)
     {
-      const typename type::databasemap& Config = Proto->GetConfig();
-      ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
+      ushort ChosenConfig = 1 + RAND() % (ProtoConfig.size() - 1);
       typename type::databasemap::const_iterator i;
-      for(i = Config.begin(); ChosenConfig; ++i, --ChosenConfig);
+      for(i = ProtoConfig.begin(); ChosenConfig; ++i, --ChosenConfig);
       Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
     }
   else
@@ -234,6 +223,11 @@ template ushort contentscripttemplate<character>::SearchCodeName(const std::stri
 template ushort contentscripttemplate<item>::SearchCodeName(const std::string&) const;
 template ushort contentscripttemplate<glterrain>::SearchCodeName(const std::string&) const;
 template ushort contentscripttemplate<olterrain>::SearchCodeName(const std::string&) const;
+
+const char* contentscript<character>::GetClassId() const { return "character"; }
+const char* contentscript<item>::GetClassId() const { return "item"; }
+const char* contentscript<glterrain>::GetClassId() const { return "glterrain"; }
+const char* contentscript<olterrain>::GetClassId() const { return "olterrain"; }
 
 datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
@@ -402,6 +396,9 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
       OTerrainHolder.Load(SaveFile);
     }
 }
+
+template <class type, class contenttype> contentmap<type, contenttype>::contentmap<type, contenttype>() : ContentMap(0) { }
+template <class type, class contenttype> contentmap<type, contenttype>::~contentmap<type, contenttype>() { DeleteContents(); }
 
 template <class type, class contenttype> datamemberbase* contentmap<type, contenttype>::GetData(const std::string& Identifier)
 {
@@ -673,13 +670,6 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  continue;
 	}
 
-      /*if(Word == "Variable")
-	{
-	  SaveFile.ReadWord(Word);
-	  ValueMap[Word] = SaveFile.ReadNumber(ValueMap);
-	  continue;
-	}*/
-
       if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in level script line %d!", Word.c_str(), SaveFile.TellLine());
     }
@@ -808,3 +798,4 @@ void gamescript::ReadFrom(inputfile& SaveFile, bool)
 	ABORT("Odd script term %s encountered in game script line %d!", Word.c_str(), SaveFile.TellLine());
     }
 }
+

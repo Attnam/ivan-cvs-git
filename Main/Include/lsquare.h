@@ -5,28 +5,16 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
-
-#include "typedef.h"
-#include "vector2d.h"
 #include "square.h"
 #include "level.h"
-#include "game.h"
 #include "dungeon.h"
 
-class bitmap;
-class character;
 class stack;
-class lterrain;
 class glterrain;
 class olterrain;
+class fluid;
 class material;
 class item;
-class outputfile;
-class inputfile;
-class room;
-class fluid;
-class squarescript;
 
 struct emitter
 {
@@ -123,7 +111,7 @@ class lsquare : public square
   void SpillFluid(character*, material*, ushort);
   bool IsDark() const;
   void AddItem(item*);
-  static bool (lsquare::*GetBeamEffect(ushort Index))(character*, const std::string&, uchar) { return BeamEffect[Index]; }
+  static bool (lsquare::*GetBeamEffect(ushort))(character*, const std::string&, uchar);
   bool Polymorph(character*, const std::string&, uchar);
   bool Strike(character*, const std::string&, uchar);
   bool FireBall(character*, const std::string&, uchar);
@@ -141,7 +129,6 @@ class lsquare : public square
   uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
  protected:
-  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar);
   glterrain* GLTerrain;
   olterrain* OLTerrain;
   void CalculateEmitation();

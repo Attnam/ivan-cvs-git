@@ -1,16 +1,19 @@
-#include <cstdarg>
-
 #include "object.h"
-#include "error.h"
-#include "game.h"
-#include "godba.h"
-#include "save.h"
-#include "proto.h"
-#include "materba.h"
-#include "femath.h"
-#include "whandler.h"
+#include "materia.h"
 #include "festring.h"
+#include "whandler.h"
 #include "colorbit.h"
+#include "proto.h"
+#include "game.h"
+#include "bitmap.h"
+
+object::object() : entity(0), MainMaterial(0), AnimationFrames(1) { }
+void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void object::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
+void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
+uchar object::GetSpecialFlags() const { return ST_NORMAL; }
+ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
 
 object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects)
 {
@@ -112,8 +115,8 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
   if((!OldMaterial || !OldMaterial->HasBe()) && NewMaterial && NewMaterial->HasBe())
     Enable();
-  else if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
-    SetIsEnabled(CalculateHasBe());
+  else if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()) && !CalculateHasBe())
+    Disable();
 
   if(NewMaterial)
     {

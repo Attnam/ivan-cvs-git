@@ -5,11 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
-
+#include "rect.h"
 #include "save.h"
-#include "vector2d.h"
-#include "error.h"
 
 #define DATA_MEMBER(type, name)\
  public:\
@@ -35,13 +32,10 @@
  protected:\
   datamember<bool> name##Holder;
 
-class inputfile;
 class glterrain;
 class olterrain;
 class character;
 class item;
-class god;
-class room;
 class material;
 class scriptwithbase;
 
@@ -92,11 +86,8 @@ template <class type> inline datamember<type>& datamember<type>::operator=(const
 	  Member = 0;
 	}
     }
-  else
-    {
-      if(Data.Member)
-	Member = new type(*Data.Member);
-    }
+  else if(Data.Member)
+    Member = new type(*Data.Member);
 
   return *this;
 }
@@ -158,7 +149,7 @@ class materialscript : public script
 class basecontentscript : public script
 {
  public:
-  basecontentscript() : ContentType(0), Config(0), Random(false) { }
+  basecontentscript();
   virtual void ReadFrom(inputfile&, bool = false);
   virtual datamemberbase* GetData(const std::string&);
   ushort GetContentType() const { return ContentType; }
@@ -192,7 +183,7 @@ class contentscript<character> : public contentscripttemplate<character>
   character* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  virtual const char* GetClassId() const { return "character"; }
+  virtual const char* GetClassId() const;
   DATA_MEMBER(ushort, Team);
   DATA_MEMBER(std::vector<contentscript<item> >, Inventory);
   DATA_BOOL(IsMaster);
@@ -205,7 +196,7 @@ class contentscript<item> : public contentscripttemplate<item>
   item* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  virtual const char* GetClassId() const { return "item"; }
+  virtual const char* GetClassId() const;
   DATA_MEMBER(ushort, Team);
   DATA_BOOL(IsActive);
   DATA_MEMBER(uchar, SideStackIndex);
@@ -222,7 +213,7 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
  public:
   glterrain* Instantiate(ushort SpecialFlags = 0) const { return contentscripttemplate<glterrain>::BasicInstantiate(SpecialFlags); }
  protected:
-  virtual const char* GetClassId() const { return "glterrain"; }
+  virtual const char* GetClassId() const;
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
@@ -231,7 +222,7 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   olterrain* Instantiate(ushort = 0) const;
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  virtual const char* GetClassId() const { return "olterrain"; }
+  virtual const char* GetClassId() const;
   DATA_MEMBER(uchar, VisualEffects);
   DATA_MEMBER(uchar, AttachedArea);
   DATA_MEMBER(uchar, AttachedEntry);
@@ -258,8 +249,8 @@ class squarescript : public script
 template <class type, class contenttype = contentscript<type> > class contentmap : public script
 {
  public:
-  contentmap() : ContentMap(0) { }
-  virtual ~contentmap() { DeleteContents(); }
+  contentmap();
+  virtual ~contentmap();
   virtual void ReadFrom(inputfile&, bool = false);
   void DeleteContents();
   const contenttype* GetContentScript(ushort X, ushort Y) const { return ContentMap[X][Y]; }

@@ -1,14 +1,13 @@
-#include "area.h"
+/* Compiled through areaset.cpp */
+
 #include "allocate.h"
-#include "square.h"
-#include "bitmap.h"
-#include "charba.h"
-#include "graphics.h"
-#include "error.h"
-#include "femath.h"
-#include "game.h"
-#include "save.h"
+#include "char.h"
 #include "team.h"
+#include "game.h"
+#include "graphics.h"
+#include "bitmap.h"
+
+area::area() { }
 
 area::area(ushort InitXSize, ushort InitYSize)
 {
@@ -197,3 +196,7 @@ square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
     return 0;
 }
 
+void area::SetEntryPos(uchar Index, vector2d Pos)
+{
+  EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
+}

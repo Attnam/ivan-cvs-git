@@ -1,8 +1,8 @@
-#include "entity.h"
-#include "game.h"
+/* Compiled through coreset.cpp */
 
 std::list<entity*> pool::Pool;
 std::list<entity*>::iterator pool::CurrentEntity = pool::Pool.end();
+std::vector<entity*> pool::Hell;
 
 /*
  * Calls the Be() function of each self-changeable entity during each tick,
@@ -22,4 +22,12 @@ void pool::Remove(std::list<entity*>::iterator Iterator)
     ++CurrentEntity;
 
   Pool.erase(Iterator);
+}
+
+void pool::BurnHell()
+{
+  for(ushort c = 0; c < Hell.size(); ++c)
+    delete Hell[c];
+
+  Hell.clear();
 }

@@ -7,15 +7,10 @@
 
 #include <string>
 
-#include "typedef.h"
-#include "vector2d.h"
 #include "area.h"
 
-class character;
 class gterrain;
 class oterrain;
-class outputfile;
-class inputfile;
 
 class square
 {
@@ -30,7 +25,6 @@ class square
   virtual character* GetCharacter() const { return Character; }
   ulong GetLastSeen() const { return LastSeen; }
   vector2d GetPos() const { return Pos; }
-  ushort GetPopulation() const { return Character ? 1 : 0; }
   area* GetArea() const { return AreaUnder; }
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
@@ -67,11 +61,4 @@ class square
   bool DescriptionChanged;
 };
 
-/*inline outputfile& operator<<(outputfile& SaveFile, square* Square)
-{
-  Square->Save(SaveFile);
-  return SaveFile;
-}*/
-
 #endif
-

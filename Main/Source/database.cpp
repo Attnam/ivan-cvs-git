@@ -1,15 +1,4 @@
-#include "database.h"
-#include "charba.h"
-#include "itemba.h"
-#include "materba.h"
-#include "save.h"
-#include "proto.h"
-#include "error.h"
-#include "game.h"
-#include "godba.h"
-#include "lterraba.h"
-
-#include <iostream>
+/* Compiled through dataset.cpp */
 
 template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {
@@ -455,3 +444,4 @@ void databasesystem::Initialize()
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }
+

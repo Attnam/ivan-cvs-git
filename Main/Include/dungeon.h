@@ -5,8 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "typedef.h"
-#include "game.h"
+#include <string>
+
+#include "vector2d.h"
 
 class level;
 class outputfile;
@@ -17,12 +18,12 @@ class levelscript;
 class dungeon
 {
  public:
-  dungeon() { }
+  dungeon();
   dungeon(uchar);
   ~dungeon();
-  bool PrepareLevel(ushort = game::GetCurrentLevelIndex(), bool = true);
-  void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrentLevelIndex(), bool = true);
-  void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrentLevelIndex());
+  bool PrepareLevel(ushort, bool = true);
+  void SaveLevel(const std::string&, ushort, bool = true);
+  void LoadLevel(const std::string&, ushort);
   level* GetLevel(ushort Index) const { return Level[Index]; }
   ushort GetLevels() const;
   void Save(outputfile&) const;

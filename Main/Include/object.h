@@ -7,25 +7,16 @@
 
 #include <vector>
 
-#include "typedef.h"
-#include "vector2d.h"
 #include "igraph.h"
 #include "entity.h"
 #include "id.h"
-#include "bitmap.h"
 
-class material;
-class outputfile;
-class inputfile;
-class bitmap;
-class lsquare;
-class square;
 class god;
 
 class object : public entity, public id
 {
  public:
-  object() : entity(0), MainMaterial(0), AnimationFrames(1) { }
+  object();
   object(const object&);
   virtual ~object();
   virtual void Save(outputfile&) const;
@@ -36,16 +27,16 @@ class object : public entity, public id
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  void SetMainMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-  void ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-  virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetMainMaterial(NewMaterial, SpecialFlags); }
-  virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
+  void SetMainMaterial(material*, ushort = 0);
+  void ChangeMainMaterial(material*, ushort = 0);
+  virtual void SetConsumeMaterial(material*, ushort = 0);
+  virtual void ChangeConsumeMaterial(material*, ushort = 0);
   virtual void SetSecondaryMaterial(material*, ushort = 0);
   virtual void ChangeSecondaryMaterial(material*, ushort = 0);
   virtual void SetContainedMaterial(material*, ushort = 0);
   virtual void ChangeContainedMaterial(material*, ushort = 0);
   virtual ushort GetMaterials() const { return 1; }
-  material* GetMaterial(ushort Index) const { return const_cast<object*>(this)->GetMaterialReference(Index); }
+  virtual material* GetMaterial(ushort) const { return MainMaterial; }
   const std::vector<bitmap*>& GetPicture() const { return Picture; }
   bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ulong GetBaseEmitation() const { return 0; }
@@ -69,7 +60,6 @@ class object : public entity, public id
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
-  virtual material*& GetMaterialReference(ushort) { return MainMaterial; }
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual ulong GetDefaultMainVolume() const { return 0; }
@@ -79,7 +69,7 @@ class object : public entity, public id
   material* SetMaterial(material*&, material*, ulong, ushort);
   void ChangeMaterial(material*&, material*, ulong, ushort);
   bool CalculateHasBe() const;
-  virtual uchar GetSpecialFlags() const { return ST_NORMAL; }
+  virtual uchar GetSpecialFlags() const;
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }
@@ -91,7 +81,7 @@ class object : public entity, public id
   virtual uchar GetAlphaB(ushort) const { return 255; }
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
-  virtual ushort GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
+  virtual ushort GetOutlineColor(ushort) const;
   virtual bool AddMaterialDescription(std::string&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();

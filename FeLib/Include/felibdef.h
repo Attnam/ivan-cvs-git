@@ -7,9 +7,9 @@
  * because it decreases compilation efficiency and may even cause cross-including
  *
  * List of macros that should be gathered here:
- * 1. all numeric defines used in multiple source files
- * 2. all inline functions used in multiple source files and independent enough (do not require other headers)
- * 3. class construction macros used in multiple header files
+ * 1. all numeric defines used in multiple .cpp or .h files
+ * 2. all inline functions used in multiple .cpp or .h files and independent enough (do not require other headers)
+ * 3. class construction macros used in multiple .h files
  *
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */

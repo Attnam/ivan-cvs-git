@@ -1,25 +1,4 @@
-#include <ctime>
-#include <cmath>
-
-#include "lsquare.h"
-#include "stack.h"
-#include "lterrade.h"
-#include "level.h"
-#include "itemba.h"
-#include "message.h"
-#include "festring.h"
-#include "script.h"
-#include "charba.h"
-#include "team.h"
-#include "config.h"
-#include "femath.h"
-#include "fluid.h"
-#include "error.h"
-#include "game.h"
-#include "proto.h"
-#include "save.h"
-
-bool (lsquare::*lsquare::BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar) = { &lsquare::Polymorph, &lsquare::Strike, &lsquare::FireBall, &lsquare::Teleport, &lsquare::Haste, &lsquare::Slow, &lsquare::Resurrect, &lsquare::Invisibility, &lsquare::Clone, &lsquare::Lightning, &lsquare::DoorCreation };
+/* Compiled through levelset.cpp */
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true)
 {
@@ -982,8 +961,10 @@ void lsquare::DrawParticles(ulong Color)
   if(Color & RANDOM_COLOR)
     Color = MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190);
 
+  vector2d Pos = game::CalculateScreenCoordinates(GetPos());
+
   for(ushort c = 0; c < 10; ++c)
-    DOUBLE_BUFFER->PutPixel(game::CalculateScreenCoordinates(GetPos()) + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
+    DOUBLE_BUFFER->PutPixel(Pos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   graphics::BlitDBToScreen();
   NewDrawRequested = true; // Clean the pixels from the screen afterwards
@@ -1082,7 +1063,7 @@ void lsquare::SetLastSeen(ulong What)
   UpdateMemorizedDescription();
 }
 
-#include "charde.h"
+#include "char.h"
 
 void lsquare::DrawMemorized()
 {
@@ -1412,9 +1393,8 @@ stack* lsquare::GetFirstSideStackUnderAttack(uchar Direction) const
     case 5: return GetSideStack(UP);
     case 6: return GetSideStack(UP);
     case 7: return GetSideStack(UP);
+    default: return 0; /* Not possible */
     }
-
-  return 0; /* Not possible */
 }
 
 stack* lsquare::GetSecondSideStackUnderAttack(uchar Direction) const
@@ -1425,8 +1405,12 @@ stack* lsquare::GetSecondSideStackUnderAttack(uchar Direction) const
     case 2: return GetSideStack(LEFT);
     case 5: return GetSideStack(RIGHT);
     case 7: return GetSideStack(LEFT);
+    default: return 0;
     }
-
-  return 0;
 }
 
+bool (lsquare::*lsquare::GetBeamEffect(ushort Index))(character*, const std::string&, uchar)
+{
+  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar) = { &lsquare::Polymorph, &lsquare::Strike, &lsquare::FireBall, &lsquare::Teleport, &lsquare::Haste, &lsquare::Slow, &lsquare::Resurrect, &lsquare::Invisibility, &lsquare::Clone, &lsquare::Lightning, &lsquare::DoorCreation };
+  return BeamEffect[Index];
+}

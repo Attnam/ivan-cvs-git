@@ -8,14 +8,13 @@
 #include <map>
 #include <string>
 
-#include "felibdef.h"
-#include "typedef.h"
-#include "vector2d.h"
 #include "ivandef.h"
-#include "save.h"
+#include "femath.h"
 
 class bitmap;
 class colorizablebitmap;
+class outputfile;
+class inputfile;
 
 /* CompareBits doesn't like alignment of structure members */
 
@@ -26,7 +25,7 @@ class colorizablebitmap;
 struct graphicid
 {
   graphicid() { }
-  bool operator<(const graphicid& GI) const { return CompareBits(*this, GI); }
+  bool operator<(const graphicid& GI) const { return femath::CompareBits(this, &GI, sizeof(graphicid)); }
   vector2d BitmapPos NO_ALIGNMENT;
   ushort Color[4] NO_ALIGNMENT;
   uchar Frame NO_ALIGNMENT;
@@ -45,18 +44,8 @@ struct graphicid
 #pragma pack()
 #endif
 
-inline outputfile& operator<<(outputfile& SaveFile, const graphicid& Value)
-{
-  SaveFile.Write(reinterpret_cast<const char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
-
-
-inline inputfile& operator>>(inputfile& SaveFile, graphicid& Value)
-{
-  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
-  return SaveFile;
-}
+outputfile& operator<<(outputfile&, const graphicid&);
+inputfile& operator>>(inputfile&, graphicid&);
 
 struct tile
 {

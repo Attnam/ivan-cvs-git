@@ -1,19 +1,4 @@
-#include <algorithm>
-
-#include "proto.h"
-#include "charba.h"
-#include "itemba.h"
-#include "materba.h"
-#include "femath.h"
-#include "message.h"
-#include "actionba.h"
-#include "godba.h"
-#include "roomba.h"
-#include "wterraba.h"
-#include "game.h"
-#include "lterraba.h"
-#include "save.h"
-#include "festring.h"
+/* Compiled through dataset.cpp */
 
 character* protosystem::BalancedCreateMonster()
 {
@@ -362,3 +347,4 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
+

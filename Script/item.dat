@@ -545,7 +545,7 @@ banana /* materialcontainer-> */
 	InHandsPic = 160, 112;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 40;
-	DefaultSecondaryVolume = 150;
+	DefaultContainedVolume = 150;
 	StrengthModifier = 75;
 	Category = FOOD;
 	BitmapPos = 0, 112;
@@ -553,7 +553,7 @@ banana /* materialcontainer-> */
 	DefaultSize = 20;
 	NameSingular = "banana";
 	MainMaterialConfig == BANANA_PEEL;
-	SecondaryMaterialConfig == BANANA_FLESH;
+	ContainedMaterialConfig == BANANA_FLESH;
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
@@ -572,7 +572,7 @@ holybanana /* materialcontainer->banana-> */
 {
 	Possibility = 5;
 	DefaultMainVolume = 400;
-	DefaultSecondaryVolume = 1500;
+	DefaultContainedVolume = 1500;
 	StrengthModifier = 150;
 	FormModifier = 100;
 	DefaultSize = 30;

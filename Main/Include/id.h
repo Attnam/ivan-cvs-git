@@ -8,7 +8,6 @@
 #include <string>
 
 #include "typedef.h"
-#include "ivandef.h"
 
 #define CHAR_NAME(Case) GetName(Case).c_str()
 #define CHAR_DESCRIPTION(Case) GetDescription(Case).c_str()
@@ -31,7 +30,7 @@ class id
   virtual bool AddMaterialDescription(std::string&, bool) const { return false; }
   virtual const std::string& GetPostFix() const = 0;
   virtual void AddPostFix(std::string&) const;
-  virtual uchar GetArticleMode() const { return NORMAL_ARTICLE; }
+  virtual uchar GetArticleMode() const;
   virtual bool ShowMaterial() const { return false; }
   virtual void AddDivineMasterDescription(std::string&, uchar) const;
   virtual void AddLockPostFix(std::string&, uchar) const;

@@ -8,7 +8,6 @@
 #include <string>
 
 #include "typedef.h"
-#include "ivandef.h"
 
 class outputfile;
 class inputfile;
@@ -40,18 +39,14 @@ class cweaponskill : public weaponskill
 {
  public:
   cweaponskill(uchar Index) : Index(Index) { }
-  virtual ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
-  virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-  const std::string& Name() const { return SkillName[Index]; }
+  virtual ushort GetLevelMap(ushort) const;
+  virtual ulong GetUnuseTickMap(ushort) const;
+  virtual ushort GetUnusePenaltyMap(ushort) const;
+  const std::string& GetName() const;
   ushort GetBonus() const { return 100 + 10 * Level; }
   void AddLevelUpMessage() const;
   void AddLevelDownMessage() const;
  private:
-  static ushort LevelMap[];
-  static ulong UnuseTickMap[];
-  static ushort UnusePenaltyMap[];
-  static std::string SkillName[WEAPON_SKILL_CATEGORIES];
   uchar Index;
 };
 
@@ -70,9 +65,9 @@ inline inputfile& operator>>(inputfile& SaveFile, cweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
  public:
-  virtual ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
-  virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
+  virtual ushort GetLevelMap(ushort) const;
+  virtual ulong GetUnuseTickMap(ushort) const;
+  virtual ushort GetUnusePenaltyMap(ushort) const;
   ushort GetBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
   void AddLevelUpMessage(const std::string&) const;
   void AddLevelDownMessage(const std::string&) const;
@@ -81,9 +76,6 @@ class sweaponskill : public weaponskill
   void SetID(ulong What) { ID = What; }
   ulong GetID() const { return ID; }
  private:
-  static ushort LevelMap[];
-  static ulong UnuseTickMap[];
-  static ushort UnusePenaltyMap[];
   ulong ID;
 };
 

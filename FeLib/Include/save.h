@@ -11,8 +11,7 @@
 #include <string>
 #include <map>
 
-#include "vector2d.h"
-#include "femath.h"
+#include "rect.h"
 #include "error.h"
 
 typedef std::map<std::string, long> valuemap;
@@ -23,7 +22,7 @@ class outputfile
 {
  public:
   outputfile(const std::string&, bool = true);
-  ~outputfile() { if(Buffer) fclose(Buffer); }
+  ~outputfile();
   void Put(char What) { fputc(What, Buffer); }
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
   bool IsOpen() { return Buffer != 0; }
@@ -35,7 +34,7 @@ class inputfile
 {
  public:
   inputfile(const std::string&, const valuemap* = 0, bool = true);
-  ~inputfile() { if(Buffer) fclose(Buffer); }
+  ~inputfile();
   std::string ReadWord(bool = true);
   void ReadWord(std::string&, bool = true);
   char ReadLetter(bool = true);
@@ -256,7 +255,6 @@ inline inputfile& operator>>(inputfile& SaveFile, vector2d& Vector)
 }
 
 outputfile& operator<<(outputfile&, const std::string&);
-
 inputfile& operator>>(inputfile&, std::string&);
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, const std::vector<type>& Vector)

@@ -3,14 +3,13 @@
 
 #include "bitmap.h"
 #include "graphics.h"
-#include "error.h"
 #include "save.h"
 #include "allocate.h"
-#include "femath.h"
 #include "blit.h"
+#include "femath.h"
 
-bitmap* bitmap::CurrentSprite;
-std::vector<vector2d> bitmap::CurrentPixelVector;
+bitmap* CurrentSprite;
+std::vector<vector2d> CurrentPixelVector;
 
 bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
 {

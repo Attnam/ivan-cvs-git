@@ -1,7 +1,4 @@
-#include <iostream>
 #include <new.h>
-#include <cstdlib>
-#include <cstdio>
 #include <cstdarg>
 #include <cstring>
 
@@ -14,6 +11,8 @@
 #ifdef WIN32
 #include "SDL.h"
 #include <windows.h>
+#else
+#include <iostream>
 #endif
 
 #include "error.h"
@@ -79,8 +78,8 @@ void globalerrorhandler::Abort(const char* Format, ...)
   strcat(Buffer, BugMsg);
 
 #ifdef WIN32
-  SDL_WM_IconifyWindow();
-  MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
+  ShowWindow(GetActiveWindow(), SW_HIDE);
+  MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION|MB_TASKMODAL);
 #endif
 #ifdef LINUX
   std::cout << Buffer << std::endl;
@@ -100,7 +99,7 @@ void globalerrorhandler::NewHandler()
 #endif
 {
 #ifdef WIN32
-  SDL_WM_IconifyWindow();
+  ShowWindow(GetActiveWindow(), SW_HIDE);
   MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
 #endif
 #ifdef LINUX

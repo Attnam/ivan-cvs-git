@@ -1591,7 +1591,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 Dungeon MONDEDR;
 {
-	Levels = 1;
+	Levels = 2;
 	/*Variable XSize = 60;
 	Variable YSize = 60;*/
 
@@ -1634,6 +1634,56 @@ Dungeon MONDEDR;
 		Square, Pos 0, 0;
 		{
 			EntryIndex = STAIRS_UP;
+		}
+
+
+			Square, Pos 15, 15;
+			{
+				OTerrain = link(STAIRS_DOWN);
+				EntryIndex = STAIRS_DOWN;
+			}
+	}
+
+	Level 1;
+	{
+		Size = 70, 70;
+		IsOnGround = false;
+		TeamDefault = 10;
+		AmbientLight = 0;
+		LOSModifier = 16;
+		IgnoreDefaultSpecialSquares = false;
+		Description = "Mondedr dungeon";
+		ShortDescription = "MD";
+		FillSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+		Rooms = 1;
+		GenerateMonsters = false;
+		Items = 0;
+		IgnoreDefaultSpecialSquares = true;
+		ReCalculate = false;
+
+		Room 0;
+		{
+			Size = 9,9;
+			AltarPossible = false;
+			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+			FloorSquare = solidterrain(PARQUET),empty;
+			GenerateDoor = false;
+			DivineMaster = MORTIFER;
+			GenerateFountains = false;
+			GenerateLanterns = false;
+			GenerateTunnel = false;
+			Pos = 2+rand%(70-6),2+rand%(70-6);
+			Type = ROOM_NORMAL;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
+			Shape = RECTANGLE;
+			ReCalculate = false;
+
+			Square, Pos 4,4;
+			{
+				OTerrain = link(STAIRS_UP);
+				EntryIndex = STAIRS_UP;
+			}
 		}
 	}
 }

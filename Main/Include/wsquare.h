@@ -5,19 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
-#include "typedef.h"
-#include "vector2d.h"
 #include "square.h"
 #include "worldmap.h"
 
-class area;
-class material;
 class gwterrain;
 class owterrain;
-class outputfile;
-class inputfile;
 
 class wsquare : public square
 {

@@ -2,9 +2,11 @@
 #include "level.h"
 #include "festring.h"
 #include "script.h"
-#include "feio.h"
-#include "save.h"
-#include "felibdef.h"
+#include "error.h"
+#include "game.h"
+#include "ivandef.h"
+
+dungeon::dungeon() { }
 
 dungeon::dungeon(uchar Index) : Index(Index)
 {

@@ -5,16 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <list>
-
 #include "typedef.h"
 
 class item;
-class stack;
 class character;
 class outputfile;
 class inputfile;
-class stack;
 class bodypart;
 class action;
 class square;

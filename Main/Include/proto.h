@@ -5,10 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
-
-#include "ivandef.h"
-#include "typedef.h"
 #include "save.h"
 
 class character;
@@ -53,7 +49,7 @@ class protosystem
 {
  public:
   static character* BalancedCreateMonster();
-  static item* BalancedCreateItem(ulong = 0, ulong = MAX_PRICE, ulong = ANY_CATEGORY, bool = false);
+  static item* BalancedCreateItem(ulong = 0, ulong = 4294967295UL, ulong = 0, bool = false);
   static character* CreateMonster(ushort = 0, ushort = 10000, ushort = 0);
   static character* CreateMonster(const std::string&, ushort = 0, bool = true);
   static item* CreateItem(const std::string&, bool = true);

@@ -40,7 +40,7 @@ CPP=cl.exe
 # PROP Intermediate_Dir "FeLib/Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GR /GX /O2 /Ob2 /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -61,7 +61,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /GR /GX /Zi /Od /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -82,7 +82,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/FastDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /Ob2 /I "FeLib/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /GR /GX /Zi /O2 /Ob2 /I "FeLib/Include" /D "USE_SDL" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /GX /Zi /O2 /Ob2 /I "FeLib/Include" /D "USE_SDL" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -203,6 +203,10 @@ SOURCE=.\FeLib\Include\graphics.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\hscore.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeLib\Include\rect.h
 # End Source File
 # Begin Source File
 

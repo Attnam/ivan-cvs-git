@@ -1,5 +1,5 @@
-#ifndef __TERRAIN_H__
-#define __TERRAIN_H__
+#ifndef __TERRA_H__
+#define __TERRA_H__
 
 #ifdef VC
 #pragma warning(disable : 4786)
@@ -9,8 +9,6 @@
 
 #include "typedef.h"
 
-class outputfile;
-class inputfile;
 class character;
 
 class terrain
@@ -18,11 +16,11 @@ class terrain
  public:
   virtual bool IsWalkable() const { return true; }
   virtual void StepOn(character*) { }
-  virtual std::string SurviveMessage() const { return "somehow you survive"; }
-  virtual std::string MonsterSurviveMessage() const { return "somehow survives"; }
-  virtual std::string DeathMessage() const { return "strangely enough, you die"; }
-  virtual std::string MonsterDeathVerb() const { return "dies"; }
-  virtual std::string ScoreEntry() const { return "died on unfriendly terrain"; }
+  virtual std::string SurviveMessage() const;
+  virtual std::string MonsterSurviveMessage() const;
+  virtual std::string DeathMessage() const;
+  virtual std::string MonsterDeathVerb() const;
+  virtual std::string ScoreEntry() const;
   virtual bool IsFatalToStay() const { return false; }
 };
 

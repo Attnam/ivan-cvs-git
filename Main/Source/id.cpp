@@ -1,7 +1,8 @@
 #include "id.h"
 #include "game.h"
-#include "godba.h"
+#include "god.h"
 #include "festring.h"
+#include "ivandef.h"
 
 void id::AddNameSingular(std::string& String, bool Articled) const
 {
@@ -94,5 +95,10 @@ void id::AddLockPostFix(std::string& String, uchar LockType) const
 
 void id::AddDivineMasterDescription(std::string& String, uchar DivineMaster) const
 {
-  String << " of " << game::GetGod(DivineMaster)->Name();
+  String << " of " << game::GetGod(DivineMaster)->GetName();
+}
+
+uchar id::GetArticleMode() const
+{
+  return NORMAL_ARTICLE;
 }

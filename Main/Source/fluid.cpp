@@ -1,12 +1,10 @@
 #include "fluid.h"
 #include "bitmap.h"
-#include "femath.h"
-#include "graphics.h"
-#include "game.h"
-#include "lsquare.h"
-#include "materba.h"
-#include "igraph.h"
 #include "save.h"
+#include "game.h"
+#include "femath.h"
+
+fluid::fluid() : entity(HAS_BE) { }
 
 fluid::fluid(square* SquareUnder) : entity(HAS_BE), Picture(0), Material(0), SquareUnder(SquareUnder)
 {

@@ -7,8 +7,7 @@
 
 #include <map>
 
-#include "typedef.h"
-#include "femath.h"
+#include "rect.h"
 
 class character;
 class square;
@@ -19,8 +18,8 @@ class inputfile;
 class area
 {
  public:
+  area();
   area(ushort, ushort);
-  area() { }
   virtual ~area();
   virtual void Draw() const = 0;
   void AddCharacter(vector2d, character*);
@@ -38,12 +37,11 @@ class area
   virtual void MoveCharacter(vector2d, vector2d);
   vector2d GetNearestFreeSquare(const character*, vector2d) const;
   vector2d FreeSquareSeeker(const character*, vector2d, vector2d, uchar) const;
-  virtual ushort GetLOSModifier() const { return 16; }
   square* GetNeighbourSquare(vector2d, ushort) const;
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
   bool IsValidPos(short X, short Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   const rect& GetBorder() const { return Border; }
-  void SetEntryPos(uchar Index, vector2d Pos) { EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos)); }
+  void SetEntryPos(uchar, vector2d);
  protected:
   square*** Map;
   ushort** FlagMap;

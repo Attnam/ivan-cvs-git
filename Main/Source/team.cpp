@@ -1,10 +1,9 @@
-#include "team.h"
-#include "error.h"
-#include "charde.h"
-#include "message.h"
-#include "config.h"
-#include "game.h"
-#include "save.h"
+/* Compiled through charset.cpp */
+
+team::team() : Leader(0) { }
+team::team(ushort ID) : Leader(0), ID(ID), KillEvilness(0) { }
+std::list<character*>::iterator team::Add(character* Char) { return Member.insert(Member.end(), Char); }
+void team::Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {
@@ -80,3 +79,17 @@ ushort team::GetEnabledMembers() const
 
   return Amount;
 }
+
+outputfile& operator<<(outputfile& SaveFile, team* Team)
+{
+  Team->Save(SaveFile);
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, team*& Team)
+{
+  Team = new team;
+  Team->Load(SaveFile);
+  return SaveFile;
+}
+

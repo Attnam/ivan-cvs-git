@@ -1,9 +1,4 @@
-#include "entity.h"
-#include "game.h"
-#include "lsquare.h"
-#include "hell.h"
-#include "materba.h"
-#include "proto.h"
+/* Compiled through coreset.cpp */
 
 entity::entity(const entity& Entity) : Emitation(Entity.Emitation), EntityFlags(Entity.EntityFlags)
 {
@@ -34,7 +29,7 @@ void entity::SendToHell()
 {
   if(EntityFlags & EXISTS)
     {
-      hell::Add(this);
+      pool::AddToHell(this);
       EntityFlags ^= EXISTS;
 
       if(EntityFlags & HAS_BE)

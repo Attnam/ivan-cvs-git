@@ -8,13 +8,11 @@
 #include <list>
 
 #include "typedef.h"
-#include "pool.h"
-#include "ivandef.h"
+
+#define EXISTS 1
+#define HAS_BE 2
 
 class square;
-class lsquare;
-class outputfile;
-class inputfile;
 class material;
 class character;
 
@@ -28,7 +26,6 @@ class entity
   bool Exists() const { return (EntityFlags & EXISTS) != 0; }
   void SendToHell();
   bool IsEnabled() const { return (EntityFlags & HAS_BE) != 0; }
-  void SetIsEnabled(bool What) { if(What) Enable(); else Disable(); }
   void Enable();
   void Disable();
   virtual square* GetSquareUnderEntity() const = 0;
