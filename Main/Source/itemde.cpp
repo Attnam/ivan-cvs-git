@@ -1296,3 +1296,55 @@ void potion::GeneratePotionMaterials()
     case 1: InitMaterials(2, new glass, new healingliquid); break;
     }
 }
+
+bool wandofhaste::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
+{
+  character* Dude = LSquare->GetCharacter();
+  if(Dude)
+    {
+      Dude->Haste(500 + RAND() % 1000);
+      return true;
+    }
+  return false;
+}
+
+bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a bug in the haste code", Direction, 5);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}
+
+bool wandofslow::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
+{
+  character* Dude = LSquare->GetCharacter();
+  if(Dude)
+    {
+      Dude->Slow(500 + RAND() % 1000);
+      return true;
+    }
+  return false;
+}
+
+bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a bug in the slow code", Direction, 5);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}

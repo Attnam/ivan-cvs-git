@@ -1,3 +1,9 @@
+2002-03-31 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Source/itemde.cpp:
+	* Main/Include/itemde.h: Added wandofhaste and wandofslow (and their needed funcitons: BeamEffect, Zap)
+	* Main/Source/charba.cpp: Added states SLOW and HASTE (and their functions: EndX, X
+	* Main/Include/charba.h: Added the defines for SLOW and HASTE (and upped the STATES counter by two)
+	
 2002-03-30  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* Main/Source/materde.cpp: healingliquid::EatEffect and HitEffect added

@@ -32,6 +32,8 @@ character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bo
   StateHandler[RESTING] = &character::RestHandler;
   StateHandler[DIGGING] = &character::DigHandler;
   StateHandler[GOING] = &character::GoHandler;
+  StateHandler[HASTE] = &character::HasteHandler;
+  StateHandler[SLOW] = &character::SlowHandler;
 }
 
 character::~character()
@@ -237,14 +239,14 @@ void character::Be()
 	  switch(GetBurdenState())
 	    {
 	    case UNBURDENED:
-	      EditAP(100 + (GetAgility() >> 1));
+	      EditAP(long((100 + (GetAgility() >> 1)) * GetAPStateMultiplier()));
 	      break;
 	    case BURDENED:
-	      EditAP(75 + (GetAgility() >> 1) - (GetAgility() >> 2));
+	      EditAP(long((75 + (GetAgility() >> 1) - (GetAgility() >> 2)) * GetAPStateMultiplier()));
 	      break;
 	    case STRESSED:
 	    case OVERLOADED:
-	      EditAP(50 + (GetAgility() >> 2));
+	      EditAP(long((50 + (GetAgility() >> 2)) * GetAPStateMultiplier()));
 	      break;
 	    }
 
@@ -3641,4 +3643,99 @@ void character::ReceiveHeal(long Amount)
     SetHP(GetMaxHP());
   else
     SetHP(GetHP() + Amount);
+}
+
+void character::Haste(ushort Counter)
+{
+  if(StateIsActivated(HASTE))
+    return;
+
+  if(StateIsActivated(SLOW))
+    {
+      EndSlow();
+      if(GetIsPlayer())
+	ADD_MESSAGE("Time seems to go by at the normal rate now.");
+      else
+	ADD_MESSAGE("%s slows down to the normal pace.", CNAME(DEFINITE));
+    }   
+  else
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("Time slows down to a crawl.");
+      else
+	if(GetLSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("%s looks faster!", CNAME(DEFINITE));
+      ActivateState(HASTE);
+      SetStateCounter(HASTE, Counter);
+    }
+}
+
+void character::HasteHandler()
+{
+  if(!(StateCounter[HASTE]--))
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("Time seems to go by at the normal rate now.");
+      else if(GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s seems to move at the normal pace now.", CNAME(DEFINITE));
+      EndHaste();
+    }
+}
+
+void character::EndHaste()
+{
+  if(StateIsActivated(HASTE))
+    DeActivateState(HASTE);
+}
+
+void character::Slow(ushort Counter)
+{
+  if(StateIsActivated(SLOW))
+     return;
+  if(StateIsActivated(HASTE))
+    {
+      EndHaste();
+      if(GetIsPlayer())
+	ADD_MESSAGE("Time seems to go by at the normal rate now.");
+      else
+	ADD_MESSAGE("%s slows down to the normal pace.", CNAME(DEFINITE));
+    }
+  else
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("Everything seems to move much faster now.");
+      else
+	if(GetLSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("%s looks slower!", CNAME(DEFINITE));
+      ActivateState(SLOW);
+      SetStateCounter(SLOW, Counter);
+    }
+}
+
+void character::SlowHandler()
+{
+  if(!(StateCounter[SLOW]--))
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("Time seems to go by at the normal rate now.");
+      else
+	ADD_MESSAGE("%s seems to move at the normal pace now.", CNAME(DEFINITE));
+      EndHaste();
+    }
+}
+
+void character::EndSlow()
+{
+  if(StateIsActivated(SLOW))
+    DeActivateState(SLOW);
+}
+
+float character::GetAPStateMultiplier() const
+{
+  if(StateIsActivated(HASTE))
+    return 2;
+  if(StateIsActivated(SLOW))
+    return 0.5;
+  
+  return 1;
 }

@@ -1485,5 +1485,48 @@ class ITEM
   virtual ushort GetFormModifier() const { return 30; }
   bool Charged;
 );
+
+
+class ITEM
+(
+  wandofhaste,
+  wand,
+  InitMaterials(new iron),
+  {
+    SetSize(10);
+    SetCharges(2 + RAND() % 4);
+    SetTimesUsed(0);
+  },
+ public:
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "wand of haste"; }
+  virtual std::string NamePlural() const { return "wands of haste"; }
+  virtual float OfferModifier() const { return 20; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual ushort GetBeamColor() const { return RED; }
+);
+
+class ITEM
+(
+  wandofslow,
+  wand,
+  InitMaterials(new iron),
+  {
+    SetSize(10);
+    SetCharges(2 + RAND() % 4);
+    SetTimesUsed(0);
+  },
+ public:
+  virtual ushort Possibility() const { return 30; }
+  virtual std::string NameSingular() const { return "wand of slow"; }
+  virtual std::string NamePlural() const { return "wands of slow"; }
+  virtual float OfferModifier() const { return 20; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual ushort GetBeamColor() const { return GREEN; }
+);
+
+
 #endif
 

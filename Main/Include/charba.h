@@ -23,7 +23,7 @@
 #define BURDENED    2
 #define UNBURDENED    3
 
-#define STATES      6
+#define STATES      8
 
 #define FAINTED      0
 #define CONSUMING    1
@@ -31,6 +31,9 @@
 #define RESTING      3
 #define DIGGING      4
 #define GOING      5
+#define HASTE 6
+#define SLOW 7
+
 
 #include <list>
 
@@ -308,6 +311,13 @@ class character : public type, public entity
  
  virtual bool CanBeAssignedAName() const { return true; }
  virtual void ReceiveHeal(long);
+ virtual void Haste(ushort);
+ virtual void EndHaste();
+ virtual void HasteHandler();
+ virtual float GetAPStateMultiplier() const;
+ virtual void Slow(ushort);
+ virtual void SlowHandler();
+ virtual void EndSlow();
  protected:
 
   virtual void CreateBodyParts();
