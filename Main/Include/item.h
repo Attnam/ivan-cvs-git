@@ -420,6 +420,7 @@ class item : public object
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool) const;
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
   virtual ushort GetStackAnimationFrames() const { return AnimationFrames; }
+  virtual bool BunnyWillCatchAndConsume() const { return false; }
  protected:
   virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;

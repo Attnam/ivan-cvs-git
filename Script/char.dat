@@ -3950,4 +3950,5 @@ hattifattener
 	DeathMessage = "@Dd explodes in a burst of electricity!";
 	BaseEmitation = rgb24(130, 130, 130);
 	SpillsBlood = false;
+	Alias == "Hattivatti";
 }

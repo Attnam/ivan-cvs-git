@@ -458,6 +458,7 @@ class CHARACTER
   virtual bool CheckIfSatiated() { return GetNP() > BLOATED_LEVEL; }
   virtual void SignalNaturalGeneration();
   virtual bool IsBunny() const { return true; }
+  virtual bool Catches(item*);
  protected:
   bool CheckForMatePartner();
   ushort RandomizeBabyAttribute(ushort);

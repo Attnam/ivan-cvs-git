@@ -1750,3 +1750,30 @@ ushort bunny::RandomizeBabyAttribute(ushort SumA)
 {
   return Limit<short>((SumA & 3 ? (SumA >> 2) + (RAND() % (SumA & 3) ? 1 : 0) : SumA >> 2) + (RAND() & 1) - (RAND() & 1), 0, 100);
 }
+
+bool bunny::Catches(item* Thingy)
+{
+  if(Thingy->BunnyWillCatchAndConsume())
+    {
+      if(ConsumeItem(Thingy))
+	{
+	  if(IsPlayer())
+	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
+	  else
+	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+
+	      ChangeTeam(PLAYER->GetTeam());
+	    }
+	}
+      else if(IsPlayer())
+	ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
+
+      return true;
+    }
+  else
+    return false;
+}

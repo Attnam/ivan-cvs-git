@@ -625,6 +625,8 @@ class ITEM
 (
   carrot,
   item,
+ public:
+  virtual bool BunnyWillCatchAndConsume() const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
 );

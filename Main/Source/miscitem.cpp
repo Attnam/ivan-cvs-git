@@ -2500,3 +2500,8 @@ void charmlyre::FinalProcessForBone()
   item::FinalProcessForBone();
   LastUsed = 0;
 }
+
+bool carrot::BunnyWillCatchAndConsume() const
+{
+  return GetConsumeMaterial()->GetConfig() == CARROT_FLESH && GetConsumeMaterial()->GetSpoilLevel() == 0;
+}

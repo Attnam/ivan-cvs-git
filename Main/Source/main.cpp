@@ -47,7 +47,7 @@ int Main(int argc, char **argv)
   msgsystem::Init();
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES_X / 2 - 130, RES_Y / 2 + 20), CONST_S("\r"), CONST_S("Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r"), LIGHT_GRAY, CONST_S("Released under the GNU\rGeneral Public License\rMore info: see COPYING\r"), CONST_S("IVAN v" IVAN_VERSION "\r")))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES_X / 2, RES_Y / 2 - 20), CONST_S("\r"), CONST_S("Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r"), LIGHT_GRAY, CONST_S("Released under the GNU\rGeneral Public License\rMore info: see COPYING\r"), CONST_S("IVAN v" IVAN_VERSION "\r")))
       {
       case 0:
 	if(game::Init())
