@@ -1649,6 +1649,7 @@ ring
 		GearStates == POLYMORPH_CONTROL;
 		Price = 500;
 		AttachedGod = SCABIES;
+		Alias == "ring of polycontrol";
 	}
 
 	Config RING_OF_INFRA_VISION;

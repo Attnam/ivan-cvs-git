@@ -253,6 +253,8 @@ class game
   static void SetCurrentLevel(level* What) { CurrentLevel = What; }
   static void SetCurrentWSquareMap(wsquare*** What) { CurrentWSquareMap = What; }
   static void SetCurrentLSquareMap(lsquare*** What) { CurrentLSquareMap = What; }
+  static const std::string& GetDefaultPolymorphTo() { return DefaultPolymorphTo; }
+  static void SetDefaultPolymorphTo(const std::string What) { DefaultPolymorphTo = What; }
  private:
   static std::string Alignment[];
   static god** God;
@@ -316,6 +318,7 @@ class game
   static level* CurrentLevel;
   static wsquare*** CurrentWSquareMap;
   static lsquare*** CurrentLSquareMap;
+  static std::string DefaultPolymorphTo;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

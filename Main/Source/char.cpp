@@ -3783,12 +3783,21 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
 
   if(StateIsActivated(POLYMORPH_CONTROL))
     {
+      std::string Topic, Temp;
       if(IsPlayer())
-	while(!NewForm)
-	  {
-	    std::string Temp = game::StringQuestion("What do you want to become?", vector2d(16, 6), WHITE, 0, 80, false);
-	    NewForm = protosystem::CreateMonster(Temp, NO_EQUIPMENT);
-	  }
+	{
+	  while(!NewForm)
+	    {
+	      Topic = "What do you want to become?";
+	      if(game::GetDefaultPolymorphTo() != "")
+		Topic += " [" + game::GetDefaultPolymorphTo() + "]";
+	      Temp = game::StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false);
+	      if(Temp == "")
+		Temp = game::GetDefaultPolymorphTo();
+	      NewForm = protosystem::CreateMonster(Temp, NO_EQUIPMENT);
+	    }
+	  game::SetDefaultPolymorphTo(Temp);
+	}
       else
 	{
 	  switch(GetSex())

@@ -112,6 +112,7 @@ area* game::CurrentArea;
 level* game::CurrentLevel;
 wsquare*** game::CurrentWSquareMap;
 lsquare*** game::CurrentLSquareMap;
+std::string game::DefaultPolymorphTo;
 
 vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
@@ -502,7 +503,7 @@ bool game::Save(const std::string& SaveName)
 
   SaveFile << PLAYER->GetPos();
   msgsystem::Save(SaveFile);
-  SaveFile << DangerMap << NextDangerId;
+  SaveFile << DangerMap << NextDangerId << DefaultPolymorphTo;
   return true;
 }
 
@@ -564,7 +565,7 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> Pos;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
   msgsystem::Load(SaveFile);
-  SaveFile >> DangerMap >> NextDangerId;
+  SaveFile >> DangerMap >> NextDangerId >> DefaultPolymorphTo;
   return LOADED;
 }
 
