@@ -795,6 +795,7 @@ class CHARACTER
  protected:
   virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
+  virtual void CreateCorpse();
 );
 
 class CHARACTER

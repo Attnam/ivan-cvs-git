@@ -1827,7 +1827,10 @@ bool character::Pray()
 	Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineMaster())->CompleteDescription(), LIGHT_GRAY, 20, &Icon);
       }
     else
-      ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
+      {
+	ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
+	return false;
+      }
 
   game::SetStandardListAttributes(Panthenon);
   Panthenon.AddFlags(SELECTABLE);
@@ -6400,4 +6403,9 @@ void character::ParasitizedHandler()
 
       ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
     }
+}
+
+bool character::CanFollow() const
+{
+  return !StateIsActivated(PANIC);
 }

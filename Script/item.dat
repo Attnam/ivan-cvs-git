@@ -1786,7 +1786,7 @@ wandofinvisibility /* wand-> */
 helmet
 {
 	DefaultSize = 30;
-	Possibility = 300;
+	Possibility = 350;
 	Category = HELMET;
 	DefaultMainVolume = 150;
 	StrengthModifier = 100;
@@ -1810,7 +1810,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 100;
+		Possibility = 30;
 		Adjective = "full";
 		MainMaterialConfig = { 5, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
 		MaterialConfigChances = { 5, 125, 100, 75, 25, 5; }
@@ -1828,7 +1828,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 25;
+		Possibility = 15;
 		PostFix = "of piercing perception";
 		AffectsPerception = true;
 		MainMaterialConfig == GLASS;
@@ -1850,7 +1850,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 25;
+		Possibility = 15;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
 		MainMaterialConfig == UNICORN_HORN;
@@ -1872,7 +1872,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 25;
+		Possibility = 15;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
 		MainMaterialConfig == MITHRIL;
@@ -1894,7 +1894,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 25;
+		Possibility = 15;
 		PostFix = "of attractivity";
 		AffectsCharisma = true;
 		MainMaterialConfig == GOLD;

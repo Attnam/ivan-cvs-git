@@ -4058,3 +4058,10 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
 
   return Success;
 }
+
+void genetrixvesana::CreateCorpse()
+{
+  for(ushort c = 0; c < 3; ++c)
+    GetStackUnder()->AddItem(new pineapple);
+  carnivorousplant::CreateCorpse();
+}

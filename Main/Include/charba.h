@@ -743,6 +743,7 @@ class character : public entity, public id
   virtual void PrintBeginParasitizedMessage() const;
   virtual void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
+  virtual bool CanFollow() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

@@ -386,3 +386,8 @@ An environmentalist character who would protest outside the Cathedral against th
 Monsters shouldn't drink antidote liquid if they don't need it.
 Ask for auto wear for picked up items.
 Teleport trap
+Small shadows for items. (one pixel right and down from the items graphic)
+Using sickle against plants should yield a bonus.
+"Select the direction you wish to enter Attnam from"
+Petrus should offer a small meal for player when he first visits him.
+Food in can's should spoil _much_ slower
