@@ -64,7 +64,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 
       int Char = Peek();
 
-      if(isalpha(Char))
+      if(isalpha(Char) || Char == '_')
 	{
 	  if(!Mode)
 	    Mode = 1;
