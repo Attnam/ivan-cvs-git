@@ -6,6 +6,10 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+November 8 2003 Heikki Sairanen <firstname.lastname@tut.fi>
+
+	* feio.cpp documented
+
 August 31 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	
 	* Now compiles with gcc

@@ -27,6 +27,10 @@
 
 #define PENT_WIDTH 70
 
+/* Prints screen full of Text in color Color. If GKey is true function waits for
+   keypress. BitmapEditor is a pointer to function that is called during every fade tick. */
+ 
+
 void iosystem::TextScreen(const festring& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
   bitmap Buffer(RES_X, RES_Y, 0);
@@ -59,6 +63,8 @@ void iosystem::TextScreen(const festring& Text, ushort Color, bool GKey, void (*
       GET_KEY();
 }
 
+/* Returns amount of chars cSF in string sSH */
+
 ulong iosystem::CountChars(char cSF, const festring& sSH)
 {
   ulong iReturnCounter = 0;
@@ -69,6 +75,17 @@ ulong iosystem::CountChars(char cSF, const festring& sSH)
 
   return iReturnCounter;
 }
+
+/* Draws a menu on bitmap BackGround to position Pos. festring Topic is the text
+   that is shown before the choices '\r' is a line-ending character. Topic must end
+   with a '\r'. sMS is a list of choices separated by '\r'. sMS must end with '\r'.
+
+   Color is the color of font of sMS, SmallText1 and SmallText2. SmallText1 is printed
+   to the lower-left corner and SmallText2 is printed to the lower-right. They both can have
+   line-ending characters ('\r') and must also always end with one. */
+
+/* Warning: This function is uter garbage that just happens to work. If you need to use 
+   this function use the comments. Don't try to understand it. It is impossible. */
 
 int iosystem::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, ushort Color, const festring& SmallText1, const festring& SmallText2)
 {
@@ -193,6 +210,15 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, cons
   return signed(iSelected);
 }
 
+/* Asks the user a question requiring a string answer. The answer is saved to Input. Input can also already
+   have a default something retyped for the user. Topic is the question or other topic for the question. 
+   Pos the cordinates of where the question is printed on the screen. Color is the color of all the fonts
+   in this function. Enter is only accepted when the answers length is between MinLetters and MaxLetters. 
+   If Fade is true the question is asked on a black background and the transition to that is a fade. 
+   If AllowExit is true the user can abort with the esc-key.
+
+   The function returns ABORTED (when user aborts with esc) or NORMAL_EXIT. */
+
 ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
 {
   if(Fade)
@@ -222,6 +248,8 @@ ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d
       if(TooShort)
 	DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 30, 81, 9, 0);
 		
+      /* if LastKey is less than 20 it is a control character not available in the font */
+
       while(!(LastKey >= 0x20 || LastKey == KEY_BACK_SPACE || LastKey == KEY_ENTER || LastKey == KEY_ESC))
 	LastKey = GET_KEY(false);
 
@@ -249,15 +277,24 @@ ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d
 	Input << char(LastKey);
     }
 
+  /* Delete all the trailing spaces */
+
   festring::sizetype LastAlpha = festring::NPos;
 
   for(festring::sizetype c = 0; c < Input.GetSize(); ++c)
     if(Input[c] != ' ')
       LastAlpha = c;
 
+  /* note: festring::NPos + 1 == 0 */
+
   Input.Resize(LastAlpha + 1);
+
   return NORMAL_EXIT;
 }
+
+/* Ask a question defined by Topic. This function only accepts numbers. The question
+   is drawn to cordinates given by Pos. All fonts are Color colored. If Fade is true
+   the question is asked on a black background and the transition to that is a fade. */
 
 long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color, bool Fade)
 {
@@ -299,7 +336,14 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color,
   return atoi(Input.CStr());
 }
 
-/* Notice that '<' and '>' are active always. */
+/* Asks a question defined by Topic and the answer is numeric. The value is 
+   represented by a scroll bar. The topic is drawn to position Pos. Step is 
+   the step size. Min and Max are the minimum and maximum values. If the player
+   aborts with the esc key AbortValue is returned. Color1 is the left portion 
+   controls the color of left portion of the scroll bar and Color2 the right portion.
+   LeftKey and RightKey are the keys for changing the scrollbar. Although '<' and '>' 
+   also work always. If Fade is true the screen is faded to black before drawing th scrollbar.
+   If Handler is set it is called always when the value of the scroll bar changes. */
 
 long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, ushort LeftKey, ushort RightKey, bool Fade, void (*Handler)(long))
 {
@@ -407,6 +451,9 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
   return BarValue;
 }
 
+/* DirectoryName is the directory where the savefiles are located. Returns
+   the selected file or "" if an error occures or if no files are found. */
+
 festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festring& DirectoryName)
 {
 #ifdef WIN32
@@ -417,6 +464,7 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
   hFile = _findfirst(festring(DirectoryName + "*.sav").CStr(), &Found);
 
+  /* No file found */
   if(hFile == -1L)
     {
       TextScreen(CONST_S("You don't have any previous saves."), TopicColor);
@@ -425,6 +473,9 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
 
   while(!Check)
     {
+      /* Copy all the filenames to Buffer */
+      /* Buffer = Found.name; Doesn't work because of a festring bug */
+
       Buffer.Empty();
       Buffer << Found.name;
       List.AddEntry(Buffer, ListColor);
@@ -433,7 +484,9 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
 
   Check = List.Draw();
 
-  if(Check & FELIST_ERROR_BIT)
+  /* an error has occured in felist */
+
+  if(Check & FELIST_ERROR_BIT) 
     return "";
 
   return List.GetEntry(Check);
@@ -450,9 +503,10 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
     {
       while((ep = readdir(dp)))
 	{
+	  /* Buffer = ep->d_name; Doesn't work because of a festring bug */
 	  Buffer.Empty();
 	  Buffer << ep->d_name;
-
+	  /* Add to List all save files */
 	  if(Buffer.Find(".sav") != Buffer.NPos)
 	    List.AddEntry(Buffer, ListColor);
 	}
@@ -482,6 +536,10 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
   int Check = 0;
   festring Buffer;
   felist List(CONST_S("Choose a file and be sorry:"), TopicColor);
+
+  /* get all filenames ending with .sav. Accepts all files even if they FA_HIDDEN or FA_ARCH
+     flags are set (ie. they are hidden or archives */
+
   Check = findfirst(festring(DirectoryName + "*.sav").CStr(), &Found, FA_HIDDEN | FA_ARCH);
 
   if(Check)
@@ -492,6 +550,7 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
 
   while(!Check)
     {
+      /* Buffer = Found.ff_name; Doesn't work because of a festring bug */
       Buffer.Empty();
       Buffer << Found.ff_name;
       List.AddEntry(Buffer, ListColor);

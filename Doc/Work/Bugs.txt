@@ -58,3 +58,4 @@ NetBSD and trailing slash
 Mirage puppies.
 Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
 Still some problems with bad edge tiles.
+Better gentoo packages. No root should be needed.
