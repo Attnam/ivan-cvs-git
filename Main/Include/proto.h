@@ -18,8 +18,8 @@ template <class type> class database;
 template <class type> class protocontainer
 {
  public:
-  typedef typename type::prototype prototype;
   friend class database<type>;
+  typedef typename type::prototype prototype;
   static ushort Add(prototype*);
   static const prototype* GetProto(ushort Index) { return ProtoData[Index]; }
   static ushort GetProtoAmount() { return ProtoData.size(); }

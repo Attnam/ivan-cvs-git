@@ -100,15 +100,12 @@ class glterrainprototype
   glterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
-  PROTODATABASEBOOL(IsAbstract);
-  PROTODATABASEBOOL(CreateDivineConfigurations);
-  const glterraindatabase* GetDataBase() const { return &DataBase; }
   const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
   const glterrainprototype* GetBase() const { return Base; }
   void CreateSpecialConfigurations() { }
+  bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
  protected:
   ushort Index;
-  glterraindatabase DataBase;
   glterrainprototype* Base;
   std::map<ushort, glterraindatabase> Config;
   glterrain* (*Cloner)(ushort, bool, bool);
@@ -176,15 +173,12 @@ class olterrainprototype
   olterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
-  PROTODATABASEBOOL(IsAbstract);
-  PROTODATABASEBOOL(CreateDivineConfigurations);
-  const olterraindatabase* GetDataBase() const { return &DataBase; }
   const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
   const olterrainprototype* GetBase() const { return Base; }
   void CreateSpecialConfigurations() { }
+  bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
  protected:
   ushort Index;
-  olterraindatabase DataBase;
   olterrainprototype* Base;
   std::map<ushort, olterraindatabase> Config;
   olterrain* (*Cloner)(ushort, bool, bool);

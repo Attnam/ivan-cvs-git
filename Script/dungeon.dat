@@ -1,5 +1,5 @@
 Dungeons=2;
-Teams=9;
+Teams=8;
 
 /*
  * Description of teams:
@@ -39,11 +39,6 @@ Team 7; /* Ivan */
 {
 	Relation 4, HOSTILE;
 	AttackEvilness=100;
-}
-
-Team 8; /* Temporary */
-{
-	Relation 2, HOSTILE;
 }
 
 Dungeon 0;
@@ -110,14 +105,13 @@ Dungeon 0;
 	Level 0;
 	{
 		GenerateUpStairs=false;
-		GenerateMonsters=false;
 
 		RoomDefault
 		{
 			AltarPossible=false;
 		}
 
-		/*Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; }
 		{
 			Character=spider;
 			Times=20;
@@ -127,7 +121,7 @@ Dungeon 0;
 		{
 			Character=kobold;
 			Times=10;
-		}*/
+		}
 
 		Room 0;
 		{
@@ -144,16 +138,6 @@ Dungeon 0;
 			Square, Pos 3,1;
 			{
 				Item=lantern;
-			}
-
-			Square, Pos 2,3;
-			{
-				/*Character=petrus { Team = 2; }*/
-			}
-
-			Square, Pos 3,3;
-			{
-				Character=golem(IRON) { Team = 8; }
 			}
 		}
 	}

@@ -91,3 +91,5 @@ Consummo's pray effect. (hex)
 Glitter effect.
 Fire effect.
 Monster mine triggering should be limited.
+Boots and gauntlets should be generated in pairs of two.
+Re-enable Golden Eagle Quest danger requirement.

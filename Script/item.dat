@@ -51,6 +51,7 @@ item
 	GearStates = 0;
 	IsTwoHanded = false;
 	CreateDivineConfigurations = false;
+	ForcedVisualEffects = 0;
 }
 
 materialcontainer

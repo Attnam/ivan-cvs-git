@@ -60,13 +60,11 @@ class materialprototype
   material* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
-  const materialdatabase* GetDataBase() const { return &DataBase; }
   const materialprototype* GetBase() const { return Base; }
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
   void CreateSpecialConfigurations() { }
  protected:
   ushort Index;
-  materialdatabase DataBase;
   materialprototype* Base;
   std::map<ushort, materialdatabase> Config;
   material* (*Cloner)(ushort, ulong, bool);
@@ -76,6 +74,7 @@ class materialprototype
 class material
 {
  public:
+  friend class database<material>;
   typedef materialprototype prototype;
   typedef materialdatabase database;
   typedef std::map<ushort, materialdatabase> databasemap;

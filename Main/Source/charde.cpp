@@ -518,7 +518,7 @@ void petrus::BeTalkedTo(character* Talker)
 
   if(Talker->HasHeadOfElpuri())
     {
-      if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 250000)
+      if(game::GetGod(1)->GetRelation() >= 0)// && Talker->MaxDanger() >= 250000)
 	{
 	  ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee.");
 
@@ -844,7 +844,7 @@ void communist::BeTalkedTo(character* Talker)
       return;
     }
 
-  if(GetTeam() == Talker->GetTeam() || Talker->MaxDanger() < 100000)
+  if(GetTeam() == Talker->GetTeam() || Talker->GetRelativeDanger(this, true) < 1.0f)
     {
       static bool Said[11];
 
@@ -2923,13 +2923,13 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
 
-  if(game::WizardModeActivated())
+  /*if(game::WizardModeActivated())
     {
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
     }
   else
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());*/
 
   return PanelPosY;
 }
@@ -2978,13 +2978,13 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
 
-  if(game::WizardModeActivated())
+  /*if(game::WizardModeActivated())
     {
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Da: %d", CurrentDanger());
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "NP: %d", GetNP());
     }
   else
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DL: %d", DangerLevel());*/
 
   return PanelPosY;
 }

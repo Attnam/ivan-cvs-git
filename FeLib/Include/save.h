@@ -261,7 +261,7 @@ template <class type1, class type2> inline outputfile& operator<<(outputfile& Sa
   ulong Size = Map.size();
   SaveFile.Write((char*)&Size, sizeof(Size));
 
-  for(typename std::map<ulong, uchar>::const_iterator i = Map.begin(); i != Map.end(); ++i)
+  for(typename std::map<type1, type2>::const_iterator i = Map.begin(); i != Map.end(); ++i)
     SaveFile << i->first << i->second;
 
   return SaveFile;

@@ -151,6 +151,8 @@ bool KeyIsOK(char);
 ulong game::Ticks;
 gamescript* game::GameScript = 0;
 valuemap game::GlobalValueMap;
+std::map<configid, float> game::DangerMap;
+configid game::NextDangerId;
 
 void game::InitScript()
 {
@@ -231,11 +233,12 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new zombie(0, false));
+	SetPlayer(new human);
+	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
 	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);*/
-	Player->CalculateAll();
+	//Player->CalculateAll();
 
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
@@ -270,6 +273,7 @@ bool game::Init(const std::string& Name)
 	      Player->GetStack()->AddItem(new oillamp(MAKE_MATERIAL(i->first)));
 	  }*/
 
+	InitDangerMap();
 	ADD_MESSAGE("Game generated successfully.");
 	return true;
       }
@@ -532,6 +536,7 @@ bool game::Save(const std::string& SaveName)
   SaveFile << God;
   SaveFile << game::GetPlayer()->GetPos();
   msgsystem::Save(SaveFile);
+  SaveFile << DangerMap << NextDangerId;
   return true;
 }
 
@@ -571,6 +576,7 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> Pos;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
   msgsystem::Load(SaveFile);
+  SaveFile >> DangerMap >> NextDangerId;
   return LOADED;
 }
 
@@ -711,7 +717,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = game::GetPlayer()->MaxDanger() * (0.075f + float(GetCurrent()) / 75);
+  float Base = 0.075f + float(GetCurrent()) / 75;
 
   while(true)
     {
@@ -1538,6 +1544,78 @@ void game::SetCurrentEmitterPos(vector2d What)
 int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText)
 {
   globalwindowhandler::DeInstallControlLoop(AnimationController);
-  iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText);
+  int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText);
   globalwindowhandler::InstallControlLoop(AnimationController);
+  return Return;
 }
+
+void game::InitDangerMap()
+{
+  bool First = true;
+
+  for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
+    {
+      const character::prototype* Proto = protocontainer<character>::GetProto(c);
+      const character::databasemap& Config = Proto->GetConfig();
+
+      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(!i->second.IsAbstract)
+	  {
+	    if(First)
+	      {
+		NextDangerId.Type = c;
+		NextDangerId.Config = i->first;
+		First = false;
+	      }
+
+	    character* Char = Proto->Clone(i->first);
+	    DangerMap[configid(c, i->first)] = Char->GetRelativeDanger(Player, true);
+	    delete Char;
+	  }
+    }
+}
+
+void game::CalculateNextDanger()
+{
+  if(IsInWilderness() || !*GetCurrentLevel()->GetLevelScript()->GetGenerateMonsters())
+    ;//return;
+
+  const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerId.Type);
+  const character::databasemap& Config = Proto->GetConfig();
+  character::databasemap::const_iterator ConfigIterator = Config.find(NextDangerId.Config);
+  dangermap::iterator DangerIterator = DangerMap.find(NextDangerId);
+
+  if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
+    {
+      character* Char = Proto->Clone(NextDangerId.Config);
+      DangerIterator->second = (DangerIterator->second * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      delete Char;
+
+      for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)
+	if(!ConfigIterator->second.IsAbstract)
+	  {
+	    NextDangerId.Config = ConfigIterator->first;
+	    return;
+	  }
+
+      while(true)
+	{
+	  if(NextDangerId.Type < protocontainer<character>::GetProtoAmount() - 1)
+	    ++NextDangerId.Type;
+	  else
+	    NextDangerId.Type = 1;
+
+	  const character::databasemap& Config = protocontainer<character>::GetProto(NextDangerId.Type)->GetConfig();
+
+	  for(ConfigIterator = Config.begin(); ConfigIterator != Config.end(); ++ConfigIterator)
+	    if(!ConfigIterator->second.IsAbstract)
+	      {
+		NextDangerId.Config = ConfigIterator->first;
+		return;
+	      }
+	}
+    }
+  else
+    ABORT("It is dangerous to go ice fishing in the summer.");
+}
+

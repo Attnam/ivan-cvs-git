@@ -21,11 +21,12 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
       typename type::prototype* Proto = protocontainer<type>::ProtoData[Index];
+      typename type::database DataBase;
 
       if(Proto->Base)
-	Proto->DataBase = Proto->Base->DataBase;
+	DataBase = Proto->Base->Config.begin()->second;
 
-      Proto->DataBase.InitDefaults();
+      DataBase.InitDefaults();
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
@@ -35,30 +36,32 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	  if(Word == "Config")
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber(game::GetGlobalValueMap());
-	      typename type::database TempDataBase(Proto->DataBase);
+	      typename type::database TempDataBase(DataBase);
 	      TempDataBase.InitDefaults();
 
 	      if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-		if(!AnalyzeData(SaveFile, Word, &TempDataBase))
+		if(!AnalyzeData(SaveFile, Word, TempDataBase))
 		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId().c_str(), ConfigNumber, SaveFile.TellLine());
 
 	      Proto->Config[ConfigNumber] = TempDataBase;
 	      continue;
 	    }
 
-	  if(!AnalyzeData(SaveFile, Word, &Proto->DataBase))
+	  if(!AnalyzeData(SaveFile, Word, DataBase))
 	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId().c_str(), SaveFile.TellLine());
 	}
 
-      if(Proto->DataBase.CreateDivineConfigurations)
+      Proto->Config[0] = DataBase;
+
+      if(DataBase.CreateDivineConfigurations)
 	{
 	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
-		typename type::database TempDataBase(Proto->DataBase);
+		typename type::database TempDataBase(DataBase);
 		TempDataBase.InitDefaults();
 		Proto->Config[c] = TempDataBase;
 	      }
@@ -72,7 +75,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase->data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile, ValueMap);\
       Found = true;\
     }\
 }
@@ -81,27 +84,27 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase->data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile, ValueMap);\
       Found = true;\
     }\
   \
   if(Word == #defaultdata)\
-    DataBase->data = DataBase->defaultdata;\
+    DataBase.data = DataBase.defaultdata;\
 }
 
 #define ANALYZEDATAWITHCOMPLEXDEFAULT(data, defaultdata, statement)\
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase->data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile, ValueMap);\
       Found = true;\
     }\
   \
   if(Word == #defaultdata)\
-    DataBase->data = statement;\
+    DataBase.data = statement;\
 }
 
-bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database* DataBase)
+bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -178,14 +181,14 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Adjective);
   ANALYZEDATA(AdjectiveArticle);
   ANALYZEDATA(NameSingular);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
   ANALYZEDATA(PostFix);
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(IsAbstract);
   ANALYZEDATA(IsPolymorphable);
   ANALYZEDATA(BaseUnarmedStrength);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase->BaseUnarmedStrength / 2);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase->BaseUnarmedStrength * 2);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength / 2);
+  ANALYZEDATAWITHCOMPLEXDEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength * 2);
   ANALYZEDATA(AttackStyle);
   ANALYZEDATA(CanUseEquipment);
   ANALYZEDATA(CanKick);
@@ -199,7 +202,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   return Found;
 }
 
-bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
+bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -236,7 +239,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(Adjective);
   ANALYZEDATA(AdjectiveArticle);
   ANALYZEDATA(NameSingular);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
   ANALYZEDATA(PostFix);
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(MainMaterialConfig);
@@ -257,7 +260,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   return Found;
 }
 
-bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database* DataBase)
+bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -267,7 +270,7 @@ bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Adjective);
   ANALYZEDATA(AdjectiveArticle);
   ANALYZEDATA(NameSingular);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
   ANALYZEDATA(PostFix);
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(MainMaterialConfig);
@@ -289,7 +292,7 @@ bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   return Found;
 }
 
-bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database* DataBase)
+bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -299,7 +302,7 @@ bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Adjective);
   ANALYZEDATA(AdjectiveArticle);
   ANALYZEDATA(NameSingular);
-  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase->NameSingular + "s");
+  ANALYZEDATAWITHCOMPLEXDEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
   ANALYZEDATA(PostFix);
   ANALYZEDATA(ArticleMode);
   ANALYZEDATA(MainMaterialConfig);
@@ -327,7 +330,7 @@ bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   return Found;
 }
 
-bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)
+bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;

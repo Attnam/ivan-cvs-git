@@ -50,3 +50,5 @@ Wand of resurrection doesn't work
 DonateSlotTo bugs.
 RestoreBodyParts() may crash.
 AddScoreEntry bugs.
+When bear traps become visible, Memorized isn't updated.
+"You are hit by the explosion!" "You are not hurt." "Your torso bleeds."

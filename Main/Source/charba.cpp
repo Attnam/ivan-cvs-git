@@ -137,7 +137,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 	  break;
 	}
 
-      ReceiveBodyPartDamage(this, Damage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
+      ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
 	return HASDIED;
@@ -171,7 +171,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
       if(Enemy->AttackIsBlockable(Type))
 	Damage = CheckForBlock(Enemy, Weapon, ToHitValue, Damage, Success, Type);
 
-      if(!Damage || !ReceiveBodyPartDamage(this, Damage, PHYSICALDAMAGE, BodyPart, Dir))
+      if(!Damage || !ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir))
 	return HASBLOCKED;
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
@@ -290,6 +290,9 @@ void character::Be()
 	      game::Save(game::GetAutoSaveFileName());
 	      Timer = 0;
 	    }
+
+	  for(ushort c = 0; c < 2; ++c)
+	    game::CalculateNextDanger();
 
 	  if(!GetAction())
 	    GetPlayerCommand();
@@ -1111,8 +1114,6 @@ bool character::NOP()
 {
   EditExperience(AGILITY, -10);
   EditAP(-1000);
-  EditExperience(LEGSTRENGTH, 1000);
-  EditExperience(ENDURANCE, 1000);
   return true;
 }
 
@@ -1493,7 +1494,7 @@ bool character::WizardMode()
 	{
 	  game::ActivateWizardMode();
 	  ADD_MESSAGE("Wizard mode activated.");
-	  game::RemoveSaves();
+	  game::Save();
 	  game::Save(game::GetAutoSaveFileName());
 
 	  for(ushort x = 0; x < 5; ++x)
@@ -2427,32 +2428,6 @@ uchar character::GetMoveEase() const
     }
 }
 
-ulong character::CurrentDanger() const
-{
-  return 100;
-  /*float AttrDanger = GetAttackStrengthDanger() * sqrt(GetDodgeValue());
-  ulong BodyDanger = 0;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      BodyDanger += GetBodyPart(c)->Danger(AttrDanger, false);
-
-  return ulong(AttrDanger * BodyDanger / 1000);*/
-}
-
-ulong character::MaxDanger() const
-{
-  return 100;
-  /*float AttrDanger = GetAttackStrengthDanger() * sqrt(GetDodgeValue());
-  ulong BodyDanger = 0;
-
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      BodyDanger += GetBodyPart(c)->Danger(AttrDanger, true);
-
-  return ulong(AttrDanger * BodyDanger / 1000);*/
-}
-
 bool character::RaiseGodRelations()
 {
   for(ushort c = 1; c < game::GetGods(); ++c)
@@ -2516,7 +2491,7 @@ bool character::Displace(character* Who)
       return true;
     }
 
-  if(CurrentDanger() > Who->CurrentDanger() && Who->CanBeDisplaced() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()))
+  if(GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHARDESCRIPTION(DEFINITE));
@@ -2784,14 +2759,14 @@ uchar character::RandomizeReply(uchar Replies, bool* Said)
   return ToSay;
 }
 
-ushort character::DangerLevel() const
+/*ushort character::DangerLevel() const
 {
   static ulong DangerPointMinimum[] = { 0, 100, 500, 2500, 10000, 50000, 250000, 1000000, 5000000, 25000000 };
 
   for(ushort c = 9;; --c)
     if(CurrentDanger() >= DangerPointMinimum[c])
       return c;
-}
+}*/
 
 void character::DisplayInfo(std::string& Msg)
 {
@@ -2801,8 +2776,8 @@ void character::DisplayInfo(std::string& Msg)
     {
       Msg << " " << CapitalizeCopy(GetName(INDEFINITE)) << " is " << GetStandVerb() << " here. " << CapitalizeCopy(GetPersonalPronoun());
 
-      if(GetTeam() == game::GetPlayer()->GetTeam())
-	Msg << " is at danger level " << DangerLevel() << " and";
+      /*if(GetTeam() == game::GetPlayer()->GetTeam())
+	Msg << " is at danger level " << DangerLevel() << " and";*/
 
       if(GetTeam() == game::GetPlayer()->GetTeam())
 	Msg << " is tame.";
@@ -3015,7 +2990,7 @@ bool character::SecretKnowledge()
 
 	  break;
 	case 2:
-	  List.AddDescription("                                                  Relative danger");
+	  List.AddDescription("                                                  Danger    Average");
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
@@ -3023,6 +2998,8 @@ bool character::SecretKnowledge()
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Entry.resize(47, ' ');
 	      Entry << int(Character[c]->GetRelativeDanger(this, true) * 100);
+	      Entry.resize(57, ' ');
+	      Entry << int(Character[c]->GetDangerModifier() * 100);
 	      Pic.Fill(TRANSPARENTCOL);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), 256, false, false);
 	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
@@ -4867,7 +4844,7 @@ void character::PrintEndPoisonedMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You feel better again.");
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("Looks better.");
+    ADD_MESSAGE("Looks better."); // Hex?
 }
 
 void character::PoisonedHandler()
@@ -5300,15 +5277,15 @@ ushort character::GetRandomNotActivatedState()
 
 void characterprototype::CreateSpecialConfigurations()
 {
-  if(DataBase.CreateSolidMaterialConfigurations)
+  if(Config.begin()->second.CreateSolidMaterialConfigurations)
     for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
       {
 	const material::databasemap& MaterialConfig = protocontainer<material>::GetProto(c)->GetConfig();
 
 	for(material::databasemap::const_iterator i = MaterialConfig.begin(); i != MaterialConfig.end(); ++i)
-	  if(i->second.IsSolid && Config.find(i->first) == Config.end())
+	  if(i->first && i->second.IsSolid && Config.find(i->first) == Config.end())
 	    {
-	      character::database TempDataBase(DataBase);
+	      character::database TempDataBase(Config.begin()->second);
 	      TempDataBase.InitDefaults();
 	      Config[i->first] = TempDataBase;
 	    }
@@ -5350,4 +5327,14 @@ float character::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) co
   return MinHits;
 }
 
+float character::GetDangerModifier() const
+{
+  return game::GetDangerMap().find(configid(GetType(), GetConfig()))->second;
+}
+
+float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
+{
+  float Danger = Enemy->GetEffectivityAgainst(this, UseMaxHP) / GetEffectivityAgainst(Enemy, UseMaxHP);
+  return Limit(Danger, -100.0f, 100.0f);
+}
 

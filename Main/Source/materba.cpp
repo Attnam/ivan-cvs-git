@@ -5,6 +5,7 @@
 #include "save.h"
 #include "proto.h"
 #include "stdover.h"
+#include "database.h"
 
 void material::AddName(std::string& Name, bool Articled, bool Adjective) const
 {
@@ -136,7 +137,9 @@ materialprototype::materialprototype(materialprototype* Base, material* (*Cloner
 
 void material::InstallDataBase()
 {
-  if(!Config)
+  ::database<material>::InstallDataBase(this);
+
+  /*if(!Config)
     return; // loading
 
   const material::databasemap& Configs = GetProtoType()->GetConfig();
@@ -145,7 +148,7 @@ void material::InstallDataBase()
   if(i != Configs.end())
     DataBase = &i->second;
   else
-    ABORT("Undefined material configuration #%d sought!", Config);
+    ABORT("Undefined material configuration #%d sought!", Config);*/
 }
 
 material* material::MakeMaterial(ushort Config)

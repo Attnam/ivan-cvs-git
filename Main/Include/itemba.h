@@ -85,23 +85,12 @@ class itemprototype
   item* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
-  const itemdatabase* GetDataBase() const { return &DataBase; }
   const itemprototype* GetBase() const { return Base; }
-  PROTODATABASEBOOL(IsAutoInitializable);
-  PROTODATABASEBOOL(CanBeWished);
-  PROTODATABASEBOOL(IsPolymorphSpawnable);
-  PROTODATABASEVALUE(ushort, Possibility);
-  PROTODATABASEVALUE(const std::string&, Adjective);
-  PROTODATABASEVALUE(const std::string&, NameSingular);
-  PROTODATABASEVALUE(const std::string&, NamePlural);
-  PROTODATABASEVALUE(const std::string&, PostFix);
-  PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
-  PROTODATABASEBOOL(IsAbstract);
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
   void CreateSpecialConfigurations() { }
+  bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
  protected:
   ushort Index;
-  itemdatabase DataBase;
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
   item* (*Cloner)(ushort, bool, bool);

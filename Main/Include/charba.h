@@ -134,19 +134,13 @@ class characterprototype
   character* Clone(ushort Config = 0, bool CreateEquipment = true) const { return Cloner(Config, CreateEquipment, false); }
   character* CloneAndLoad(inputfile&) const;
   ushort GetIndex() const { return Index; }
-  const characterdatabase* GetDataBase() const { return &DataBase; }
   const characterprototype* GetBase() const { return Base; }
-  PROTODATABASEVALUE(ushort, Frequency);
-  PROTODATABASEBOOL(CanBeGenerated);
-  PROTODATABASEBOOL(IsAbstract);
-  PROTODATABASEBOOL(CanBeWished);
-  PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
   const std::string& GetClassId() const { return ClassId; }
   void CreateSpecialConfigurations();
+  bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
  protected:
   ushort Index;
-  characterdatabase DataBase;
   characterprototype* Base;
   std::map<ushort, characterdatabase> Config;
   character* (*Cloner)(ushort, bool, bool);
@@ -223,8 +217,7 @@ class character : public entity, public id
   virtual uchar GetBurdenState() const { return BurdenState; }
   virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
-  virtual ulong CurrentDanger() const;
-  virtual ulong MaxDanger() const;
+  //virtual ulong MaxDanger() const;
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual ushort ESPRange() const;
@@ -302,7 +295,6 @@ class character : public entity, public id
   virtual void ReceiveKoboldFlesh(long);
   virtual bool ChangeRandomStat(short);
   virtual uchar RandomizeReply(uchar, bool*);
-  virtual ushort DangerLevel() const;
   virtual void CreateInitialEquipment() { }
   virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
@@ -636,10 +628,11 @@ class character : public entity, public id
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
-  virtual float GetRelativeDanger(const character* Enemy, bool UseMaxHP) const { return Enemy->GetEffectivityAgainst(this, UseMaxHP) / GetEffectivityAgainst(Enemy, UseMaxHP); }
+  virtual float GetRelativeDanger(const character*, bool = false) const;
   virtual float GetDurability(short, float, bool) const;
   virtual float GetEffectivityAgainst(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
+  float GetDangerModifier() const;
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }

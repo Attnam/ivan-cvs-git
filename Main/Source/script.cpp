@@ -212,7 +212,7 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
 
       for(ulong c = 0; c < Amount; ++c)
 	{
-	  ushort ChosenConfig = RAND() % Config.size();
+	  ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
 
 	  for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!ChosenConfig--)

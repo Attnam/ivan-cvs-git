@@ -63,6 +63,7 @@ character
 	ClassStates = 0;
 	CanBeWished = true;
 	CreateDivineConfigurations = false;
+	CreateSolidMaterialConfigurations = false;
 }
 
 humanoid

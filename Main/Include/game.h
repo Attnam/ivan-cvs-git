@@ -32,6 +32,59 @@ class bitmap;
 class petrus;
 class gamescript;
 
+struct configid
+{
+  configid() { }
+  configid(ushort Type, ushort Config) : Type(Type), Config(Config) { }
+  ushort Type;
+  ushort Config;
+};
+
+inline bool operator < (const configid& CI1, const configid& CI2)
+{
+  if(CI1.Type != CI2.Type)
+    return CI1.Type < CI2.Type;
+
+  if(CI1.Config != CI2.Config)
+    return CI1.Config < CI2.Config;
+
+  return false;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, const configid& ConfigId)
+{
+  SaveFile << ConfigId.Type << ConfigId.Config;
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, configid& ConfigId)
+{
+  SaveFile >> ConfigId.Type >> ConfigId.Config;
+  return SaveFile;
+}
+
+/*struct dangerinfo
+{
+  dangerinfo() { }
+  dangerinfo(float DangerModifier, ulong DangerTicks) : DangerModifier(DangerModifier), DangerTicks(DangerTicks) { }
+  float DangerModifier;
+  ulong DangerTicks;
+};
+
+inline outputfile& operator<<(outputfile& SaveFile, const dangerinfo& DangerInfo)
+{
+  SaveFile << DangerInfo.DangerModifier << DangerInfo.DangerTicks;
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, dangerinfo& DangerInfo)
+{
+  SaveFile >> DangerInfo.DangerModifier >> DangerInfo.DangerTicks;
+  return SaveFile;
+}*/
+
+typedef std::map<configid, float> dangermap;
+
 class game
 {
  public:
@@ -169,7 +222,10 @@ class game
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
+  static void CalculateNextDanger();
   static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "");
+  static void InitDangerMap();
+  static const dangermap& GetDangerMap() { return DangerMap; }
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -212,6 +268,8 @@ class game
   static long CurrentEmitterPosY;
   static vector2d CurrentEmitterPos;
   static bool Generating;
+  static dangermap DangerMap;
+  static configid NextDangerId;
 };
 
 #endif

@@ -273,3 +273,5 @@ Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should
 Zombies should be able to continue even without a head, maybe even without a torso.
 Handling flying bear traps and kicking bear traps.
 Calamus should haste the player.
+Priests should be created using CreateDivineConfigurations.
+Zombies should pick up and use heads if they lack one.

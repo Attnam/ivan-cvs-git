@@ -1,3 +1,14 @@
+July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added system to estimate the danger of a monster relative to another
+	* Removed old danger system; it just didn't work
+	* Monsters generation is at least a little more balanced and less dynamic now
+	* Corrected a bug in the wizard mode activation code
+	* Config system is now much simpler
+	* Corrected a bug in std::map save code
+	* Added Limit(Value, Minimum, Maximum) inline function to femath.h, which limits Value
+	  to range [Minimum, Maximum] and returns it
+
 July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Zombies' and skeletons' heads are no longer vital
@@ -8,7 +19,7 @@ July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Doors stay closed if closed when broken
 	* Visual bugs with close in Linux with the X-button corrected
 	* Skeletons now drop bones instead of bodyparts
-	
+
 July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* A really bad memory leak corrected: materials were never destroyed. I'm bottomlessly

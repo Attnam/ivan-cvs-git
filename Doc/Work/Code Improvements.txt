@@ -38,3 +38,4 @@ Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 *Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
 Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
 Värimakrojen sisärivittäminen.
+Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.

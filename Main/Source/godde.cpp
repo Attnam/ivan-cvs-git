@@ -78,10 +78,10 @@ void dulcis::PrayGoodEffect()
 
 	  if(Char)
 	    if(Char->IsCharmable())
-	      if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
+	      if(game::GetPlayer()->GetRelativeDanger(Char) > 2.0f)
 		{
 		  if(Char->GetTeam() == game::GetPlayer()->GetTeam())
-		    ADD_MESSAGE("%s seems to be very happy.", Char->CHARNAME(DEFINITE));
+		    ADD_MESSAGE("%s seems to be ve5ry happy.", Char->CHARNAME(DEFINITE));
 		  else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
 		    ADD_MESSAGE("%s stops fighting.", Char->CHARNAME(DEFINITE));
 		  else

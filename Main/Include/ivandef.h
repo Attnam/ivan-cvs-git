@@ -22,9 +22,9 @@
 #define DATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
 #define DATABASEBOOL(data) bool data() const { return DataBase->data; }
 
-#define PROTODATABASEVALUE(type, data) type Get##data() const { return DataBase.data; }
+/*#define PROTODATABASEVALUE(type, data) type Get##data() const { return DataBase.data; }
 #define PROTODATABASEVALUEWITHPARAMETER(type, data, param) type Get##data(param) const { return DataBase.data; }
-#define PROTODATABASEBOOL(data) bool data() const { return DataBase.data; }
+#define PROTODATABASEBOOL(data) bool data() const { return DataBase.data; }*/
 
 #if defined WIN32 || defined __DJGPP__
 #define GAME_DIR std::string("")

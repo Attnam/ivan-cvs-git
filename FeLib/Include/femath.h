@@ -15,6 +15,7 @@
 template <class type> inline type GetHypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
 template <class type> inline const type& Max(const type& X, const type& Y) { return X > Y ? X : Y; }
 template <class type> inline const type& Min(const type& X, const type& Y) { return X < Y ? X : Y; }
+template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
 
 struct rect
 {

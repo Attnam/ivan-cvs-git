@@ -23,44 +23,34 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 {
   for(ushort c = 0;; ++c)
     {
-      float Difficulty = game::Difficulty();
+      float Difficulty = game::Difficulty() * Multiplier;
 
       for(ushort i = 0; i < 10; ++i)
 	{
-	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
+	  ushort ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
+	  const character::prototype* Proto = protocontainer<character>::GetProto(ChosenType);
 	  const character::databasemap& Config = Proto->GetConfig();
 
-	  Chosen = RAND() % (1 + Config.size());
+	  ushort ChosenConfig = RAND() % Config.size();
 	  character* Monster = 0;
 
-	  if(Chosen)
-	    {
-	      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-		if(!--Chosen)
+	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	    if(!ChosenConfig--)
+	      {
+		if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
 		  {
-		    if(i->second.CanBeGenerated && i->second.Frequency > RAND() % 10000)
-		      Monster = Proto->Clone(i->first, CreateItems);
+		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    break;
+		    if(c >= 99 || (DangerModifier < Difficulty * 2 && DangerModifier > Difficulty / 2))
+		      {
+			character* Monster = Proto->Clone(i->first, CreateItems);
+			Monster->SetTeam(game::GetTeam(1));
+			return Monster;
+		      }
 		  }
-	    }
-	  else
-	    if(!Proto->IsAbstract() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
-	      Monster = Proto->Clone(0, CreateItems);
 
-	  if(Monster)
-	    {
-	      float Danger = Monster->MaxDanger();
-
-	      if(c >= 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
-		{
-		  Monster->SetTeam(game::GetTeam(1));
-		  return Monster;
-		}
-	      else
-		delete Monster;
-	    }
+		break;
+	      }
 	}
     }
 }
@@ -71,13 +61,11 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
 
   for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     {
-      const item::prototype* Proto = protocontainer<item>::GetProto(c);
+      const item::databasemap& Config = protocontainer<item>::GetProto(c)->GetConfig();
 
-      if(!Proto->IsAbstract())
-	SumOfPossibilities += Proto->GetPossibility();
-
-      for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
-	SumOfPossibilities += i->second.Possibility;
+      for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(!i->second.IsAbstract)
+	  SumOfPossibilities += i->second.Possibility;
     }
 
   while(true)
@@ -87,47 +75,45 @@ item* protosystem::BalancedCreateItem(bool Polymorph)
       for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
 	{
 	  const item::prototype* Proto = protocontainer<item>::GetProto(c);
+	  const item::databasemap& Config = Proto->GetConfig();
 
-	  if(!Proto->IsAbstract())
-	    {
-	      Counter += Proto->GetPossibility();
+	  for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	    if(!i->second.IsAbstract)
+	      {
+		Counter += i->second.Possibility;
 
-	      if(Counter >= RandomOne)
-		if(!Polymorph || Proto->IsPolymorphSpawnable())
-		  return Proto->Clone();
-		else
-		  break;
-	    }
-
-	  for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
-	    {
-	      Counter += i->second.Possibility;
-
-	      if(Counter >= RandomOne)
-		if(!Polymorph || i->second.IsPolymorphSpawnable)
-		  return Proto->Clone(i->first);
-		else
-		  break;
-	    }
+		if(Counter >= RandomOne)
+		  if(!Polymorph || i->second.IsPolymorphSpawnable)
+		    return Proto->Clone(i->first);
+		  else
+		    break;
+	      }
 	}
     }
 }
 
 character* protosystem::CreateMonster(bool CreateItems)
 {
-  /* Fix configs! */
-
   while(true)
     {
       ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
       const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
+      const character::databasemap& Config = Proto->GetConfig();
 
-      if(!Proto->IsAbstract() && Proto->CanBeGenerated())
-	{
-	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(0, CreateItems);
-	  Monster->SetTeam(game::GetTeam(1));
-	  return Monster;
-	}
+      Chosen = RAND() % Config.size();
+
+      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(!Chosen--)
+	  {
+	    if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
+	      {
+		character* Monster = Proto->Clone(i->first, CreateItems);
+		Monster->SetTeam(game::GetTeam(1));
+		return Monster;
+	      }
+
+	    break;
+	  }
     }
 }
 
@@ -167,7 +153,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       const prototype* Proto = protocontainer<type>::GetProto(c);
       const databasemap& Config = Proto->GetConfig();
 
-      ushort Correct = CountCorrectNameLetters<type>(*Proto->GetDataBase(), Identifier);
+      /*ushort Correct = CountCorrectNameLetters<type>(*Proto->GetDataBase(), Identifier);
 
       if(!Proto->IsAbstract() && Correct > Best)
 	if(Proto->CanBeWished() || game::WizardModeActivated())
@@ -177,22 +163,23 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	    Best = Correct;
 	  }
 	else
-	  Illegal = true;
+	  Illegal = true;*/
 
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	{
-	  Correct = CountCorrectNameLetters<type>(i->second, Identifier);
+	if(!i->second.IsAbstract)
+	  {
+	    ushort Correct = CountCorrectNameLetters<type>(i->second, Identifier);
 
-	  if(Correct > Best)
-	    if(i->second.CanBeWished || game::WizardModeActivated())
-	      {
-		Id.first = Proto;
-		Id.second = i->first;
-		Best = Correct;
-	      }
-	    else
-	      Illegal = true;
-	}
+	    if(Correct > Best)
+	      if(i->second.CanBeWished || game::WizardModeActivated())
+		{
+		  Id.first = Proto;
+		  Id.second = i->first;
+		  Best = Correct;
+		}
+	      else
+		Illegal = true;
+	  }
     }
 
   if(!Best && Output)
@@ -234,7 +221,7 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
       const material::databasemap& Config = Proto->GetConfig();
 
       for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(i->second.NameStem == What)
+	if(i->first && i->second.NameStem == What)
 	  if(i->second.CanBeWished || game::WizardModeActivated())
 	    return Proto->Clone(i->first, Volume);
 	  else if(Output)
@@ -271,14 +258,9 @@ void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
       const character::prototype* Proto = protocontainer<character>::GetProto(c);
       const character::databasemap& Config = Proto->GetConfig();
 
-      if(!Proto->IsAbstract())
-	Character.push_back(Proto->Clone());
-
       for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	{
-	ushort p = i->first;
-	Character.push_back(Proto->Clone(i->first));
-	}
+	if(!i->second.IsAbstract)
+	  Character.push_back(Proto->Clone(i->first));
     }
 }
 
@@ -289,11 +271,8 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
       const item::prototype* Proto = protocontainer<item>::GetProto(c);
       const item::databasemap& Config = Proto->GetConfig();
 
-      if(!Proto->IsAbstract() && Proto->IsAutoInitializable())
-	Item.push_back(Proto->Clone());
-
       for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(i->second.IsAutoInitializable)
+	if(!i->second.IsAbstract && i->second.IsAutoInitializable)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
