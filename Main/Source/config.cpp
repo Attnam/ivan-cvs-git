@@ -178,33 +178,38 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  break;
 	case 1:
+	  SetDefaultName(iosystem::StringQuestion("Set new default name for the starting pet (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
+	  BoolChange = false;
+	  break;
+
+	case 2:
 	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::IsRunning()));
 	  BoolChange = false;
 	  break;
-	case 2:
+	case 3:
 	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
 	  BoolChange = false;
 	  break;
-	case 3:
+	case 4:
 	  SetAutoDropLeftOvers(!GetAutoDropLeftOvers());
 	  BoolChange = true;
 	  break;
-	case 4:
+	case 5:
 	  SetOutlineCharacters(!GetOutlineCharacters());
 	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
 	  break;
-	case 5:
+	case 6:
 	  SetOutlineItems(!GetOutlineItems());
 	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
 	  break;
-	case 6:
+	case 7:
 	  SetLookZoom(!GetLookZoom());
 	  BoolChange = true;
 	  break;
 #ifndef __DJGPP__
-	case 7:
+	case 8:
 	  graphics::SwitchMode();
 	  BoolChange = true;
 	  break;

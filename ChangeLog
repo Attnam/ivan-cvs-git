@@ -8,6 +8,10 @@ is also provided AS IS and is probably completely unreadable.
 ------------------------------------------------------------------------------------
 April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Automatic start pet naming works now
+	
+April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Certain function added to hscore.cpp for Mihail
 	
 April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
