@@ -15,6 +15,11 @@ void web::VirtualConstructor(bool)
 {
   TrapData.TrapID = game::CreateNewTrapID(this);
   TrapData.VictimID = 0;
+  Picture = new bitmap(16,16, TRANSPARENT_COLOR);
+  bitmap Temp(16, 16, TRANSPARENT_COLOR);
+  Picture->ActivateFastFlag();
+  packedcolor16 Color = packedcolor16( MakeRGB16(25,25,25));
+  igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0,0,16,16, &Color);
 }
 
 bool web::TryToUnStick(character* Victim, vector2d)
@@ -91,13 +96,13 @@ bool web::TryToUnStick(character* Victim, vector2d)
 void web::Save(outputfile& SaveFile) const
 {
   trap::Save(SaveFile);
-  SaveFile << Strength;
+  SaveFile << Strength << Picture;
 }
 
 void web::Load(inputfile& SaveFile)
 {
   trap::Load(SaveFile);
-  SaveFile >> Strength;
+  SaveFile >> Strength >> Picture;
 }
 
 void web::StepOnEffect(character* Stepper)
@@ -119,4 +124,9 @@ void web::StepOnEffect(character* Stepper)
   if(Stepper->IsPlayer())
     game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
+}
+
+void web::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
+{
+  Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

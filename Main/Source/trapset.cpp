@@ -13,6 +13,9 @@
 
 #include "proto.h"
 #include "trap.h"
+#include "felibdef.h"
+#include "igraph.h"
+#include "rawbit.h"
 
 trap::prototype** protocontainer<trap>::ProtoData;
 valuemap protocontainer<trap>::CodeNameMap;
@@ -27,6 +30,7 @@ int protocontainer<trap>::Size;
 #include "char.h"
 #include "message.h"
 #include "lsquare.h"
+#include "bitmap.h"
 
 
 #include "trap.cpp"

@@ -18,6 +18,8 @@
 
 #include "trap.h"
 
+class bitmap;
+
 class TRAP
 (
   web,
@@ -28,9 +30,11 @@ class TRAP
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void StepOnEffect(character*);
+  virtual void Draw(bitmap*, vector2d, color24) const;
  protected:
   virtual void VirtualConstructor(bool);
   trapdata TrapData;
+  bitmap* Picture;
   int Strength; /* must be more than 0 */
 );
 

@@ -1950,6 +1950,7 @@ ass
 	AttachedGod = SCABIES;
 	AutomaticallySeen = true;
 	WillCarryItems = true;
+	BloodMaterial = GLOWING_BLOOD;
 }
 
 communist /* Ivan */
@@ -2521,7 +2522,7 @@ imp
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
 	FireResistance = 1000;
-	WillCarryItems = false
+	WillCarryItems = false;
 	CanChoke = false;
 }
 
@@ -4536,6 +4537,7 @@ bunny
 	AttachedGod = SILVA;
 	IsAbstract = true;
 	CanOpen = false;
+	BloodMaterial = GLOWING_BLOOD;
 
 	Config BABY_MALE;
 	{
@@ -4614,6 +4616,7 @@ vladimir
 	IsPolymorphable = false;
 	CanBeCloned = false;
 	ConstantCommandFlags = FLEE_FROM_ENEMIES;
+	BloodMaterial = GLOWING_BLOOD;
 }
 
 hattifattener

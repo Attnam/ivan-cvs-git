@@ -1415,6 +1415,7 @@ liquid
 	{
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
+		Emitation = rgb24(140, 140, 100);
 		NutritionValue = 500;
 		PriceModifier = 2500;
 		NameStem = "ommel urine";
@@ -1482,6 +1483,20 @@ liquid
 		Alpha = 175;
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
+		IsBlood = true;
+		RustModifier = 1;
+	}
+	
+	Config GLOWING_BLOOD;
+	{
+		StrengthValue = 1;
+		NutritionValue = 75;
+		Color = rgb16(100, 0, 0);
+		Emitation = rgb24(140, 100, 100);
+		NameStem = "glowing blood";
+		Alpha = 150;
+		Flexibility = 40;
+		AttachedGod = SCABIES;
 		IsBlood = true;
 		RustModifier = 1;
 	}
