@@ -250,7 +250,7 @@ bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpec
 ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -275,9 +275,10 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   for(c = 0; c < BodyParts; ++c)
     {
       BodyPartSlot[c].SetMaster(this);
+      bodypart* CharBodyPart = Char.GetBodyPart(c);
 
-      if(Char.GetBodyPart(c))
-	SetBodyPart(c, static_cast<bodypart*>(Char.GetBodyPart(c)->Duplicate()));
+      if(CharBodyPart)
+	SetBodyPart(c, static_cast<bodypart*>(CharBodyPart->Duplicate()));
       else
 	OriginalBodyPartID[c] = Char.OriginalBodyPartID[c];
     }
@@ -290,7 +291,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -510,12 +511,12 @@ struct svpriorityelement
 
 ushort character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 {
-  if(GetBodyParts() == 1)
+  if(BodyParts == 1)
     return 0;
 
   std::priority_queue<svpriorityelement> SVQueue;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -1014,9 +1015,13 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
     {
       GetStack()->MoveItemsTo(GetLSquareUnder()->GetStack());
 
-      for(ushort c = 0; c < GetBodyParts(); ++c)
-	if(GetBodyPart(c))
-	  GetBodyPart(c)->DropEquipment();
+      for(ushort c = 0; c < BodyParts; ++c)
+	{
+	  bodypart* BodyPart = GetBodyPart(c);
+
+	  if(BodyPart)
+	    BodyPart->DropEquipment();
+	}
 
       if(GetAction())
 	{
@@ -1029,9 +1034,13 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg)
     {
       /* Drops the equipment to the character's stack */
 
-      for(ushort c = 0; c < GetBodyParts(); ++c)
-	if(GetBodyPart(c))
-	  GetBodyPart(c)->DropEquipment();
+      for(ushort c = 0; c < BodyParts; ++c)
+	{
+	  bodypart* BodyPart = GetBodyPart(c);
+
+	  if(BodyPart)
+	    BodyPart->DropEquipment();
+	}
 
       if(GetAction())
 	{
@@ -1155,9 +1164,13 @@ void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, 
 
 void character::ApplyExperience(bool Edited)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->ApplyExperience())
-      Edited = true;
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->ApplyExperience())
+	Edited = true;
+    }
 
   if(!UseMaterialAttributes())
     if(CheckForAttributeIncrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
@@ -1412,12 +1425,13 @@ void character::CalculateBurdenState()
 {
   uchar OldBurdenState = BurdenState;
   ulong SumOfMasses = GetCarriedWeight();
+  ulong CarryingStrengthUnits = ulong(GetCarryingStrength()) * 2500;
 
-  if(SumOfMasses > ulong(GetCarryingStrength()) * 7500)
+  if(SumOfMasses > (CarryingStrengthUnits << 1) + CarryingStrengthUnits)
     BurdenState = OVER_LOADED;
-  else if(SumOfMasses > ulong(GetCarryingStrength()) * 5000)
+  else if(SumOfMasses > CarryingStrengthUnits << 1)
     BurdenState = STRESSED;
-  else if(SumOfMasses > ulong(GetCarryingStrength()) * 2500)
+  else if(SumOfMasses > CarryingStrengthUnits)
     BurdenState = BURDENED;
   else
     BurdenState = UNBURDENED;
@@ -2034,7 +2048,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    }
 	  else
 	    {
-	      if(Pos == WayPoint)
+	      if(GetPos() == WayPoint)
 		WayPoint.X = -1;
 
 	      return true;
@@ -2131,15 +2145,13 @@ void character::SeekLeader()
 
 ushort character::GetMoveEase() const
 {
-  switch(GetBurdenState())
+  switch(BurdenState)
     {
-    case BURDENED:
-      return 75;
-    case STRESSED:
     case OVER_LOADED:
-      return 50;
-    default:
-      return 100;
+    case STRESSED: return 50;
+    case BURDENED: return 75;
+    case UNBURDENED: return 100;
+    default: return 666;
     }
 }
 
@@ -2497,10 +2509,7 @@ void character::TestWalkability()
 
 ushort character::GetSize() const
 {
-  if(GetTorso())
-    return GetTorso()->GetSize();
-  else
-    return 0;
+  return GetTorso()->GetSize();
 }
 
 void character::SetMainMaterial(material* NewMaterial, ushort SpecialFlags)
@@ -2508,7 +2517,7 @@ void character::SetMainMaterial(material* NewMaterial, ushort SpecialFlags)
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
   GetBodyPart(0)->SetMainMaterial(NewMaterial, SpecialFlags);
 
-  for(ushort c = 1; c < GetBodyParts(); ++c)
+  for(ushort c = 1; c < BodyParts; ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->SetMainMaterial(NewMaterial, SpecialFlags);
@@ -2520,7 +2529,7 @@ void character::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags)
   NewMaterial->SetVolume(GetBodyPart(0)->GetMainMaterial()->GetVolume());
   GetBodyPart(0)->ChangeMainMaterial(NewMaterial, SpecialFlags);
 
-  for(ushort c = 1; c < GetBodyParts(); ++c)
+  for(ushort c = 1; c < BodyParts; ++c)
     {
       NewMaterial = NewMaterial->Clone(GetBodyPart(c)->GetMainMaterial()->GetVolume());
       GetBodyPart(c)->ChangeMainMaterial(NewMaterial, SpecialFlags);
@@ -2587,7 +2596,7 @@ void character::TeleportRandomly()
 
 void character::RestoreHP()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -2602,7 +2611,7 @@ void character::RestoreLivingHP()
 {
   HP = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -2758,8 +2767,12 @@ bool character::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uc
   if(DamageTypeAffectsInventory(Type))
     {
       for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	if(GetEquipment(c))
-	  GetEquipment(c)->ReceiveDamage(Damager, Damage, Type);
+	{
+	  item* Equipment = GetEquipment(c);
+
+	  if(Equipment)
+	    Equipment->ReceiveDamage(Damager, Damage, Type);
+	}
 
       GetStack()->ReceiveDamage(Damager, Damage, Type);
     }
@@ -2957,8 +2970,12 @@ void character::PrintInfo() const
   felist Info(CONST_S("Information about ") + GetName(DEFINITE));
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
-      Info.AddEntry(festring(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), GetEquipment(c)->GetAnimationFrames(), true, GetEquipment(c)->AllowAlphaEverywhere());
+    {
+      item* Equipment = GetEquipment(c);
+
+      if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && Equipment)
+	Info.AddEntry(festring(GetEquipmentName(c)) + ": " + Equipment->GetName(INDEFINITE), LIGHT_GRAY, 0, Equipment->GetPicture(), Equipment->GetAnimationFrames(), true, Equipment->AllowAlphaEverywhere());
+    }
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -2971,7 +2988,7 @@ void character::PrintInfo() const
 
 bool character::CompleteRiseFromTheDead()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -2991,7 +3008,7 @@ bool character::RaiseTheDead(character*)
 {
   bool Useful = false;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -3023,9 +3040,13 @@ bool character::RaiseTheDead(character*)
 
 void character::SetSize(ushort Size)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->SetSize(GetBodyPartSize(c, Size));
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->SetSize(GetBodyPartSize(c, Size));
+    }
 }
 
 ulong character::GetBodyPartSize(ushort Index, ushort TotalSize) const
@@ -3052,22 +3073,23 @@ ulong character::GetBodyPartVolume(ushort Index) const
 
 void character::CreateBodyParts(ushort SpecialFlags)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
+  for(ushort c = 0; c < BodyParts; ++c) 
     if(CanCreateBodyPart(c))
       CreateBodyPart(c, SpecialFlags);
 }
 
 void character::RestoreBodyParts()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c) && CanCreateBodyPart(c))
       CreateBodyPart(c);
 }
 
 void character::UpdatePictures()
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    UpdateBodyPartPicture(c);
+  if(!PictureUpdatesForbidden)
+    for(ushort c = 0; c < BodyParts; ++c)
+      UpdateBodyPartPicture(c);
 }
 
 bodypart* character::MakeBodyPart(ushort Index) const
@@ -3755,8 +3777,12 @@ void character::CalculateEquipmentState()
   EquipmentState = 0;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->IsInCorrectSlot(c))
-      EquipmentState |= GetEquipment(c)->GetGearStates();
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && Equipment->IsInCorrectSlot(c))
+	EquipmentState |= Equipment->GetGearStates();
+    }
 
   for(c = 0; c < STATES; ++c)
     if(Back & (1 << c) && !StateIsActivated(1 << c))
@@ -4071,8 +4097,12 @@ void character::SaveLife()
       item* LifeSaver = 0;
 
       for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	if(GetEquipment(c) && GetEquipment(c)->IsInCorrectSlot(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
-	  LifeSaver = GetEquipment(c);
+	{
+	  item* Equipment = GetEquipment(c);
+
+	  if(Equipment && Equipment->IsInCorrectSlot(c) && Equipment->GetGearStates() & LIFE_SAVED)
+	    LifeSaver = Equipment;
+	}
 
       if(!LifeSaver)
 	ABORT("The Universe can only kill you once!");
@@ -4222,7 +4252,7 @@ void character::AttachBodyPart(bodypart* BodyPart)
 
 bool character::HasAllBodyParts() const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c) && CanCreateBodyPart(c))
       return false;
 
@@ -4234,7 +4264,7 @@ bodypart* character::GenerateRandomBodyPart()
   ushort NeededBodyPart[MAX_BODYPARTS];
   ushort Index = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c) && CanCreateBodyPart(c))
       NeededBodyPart[Index++] = c;
 
@@ -4247,7 +4277,7 @@ bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
 {
   itemvector LostAndFound;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c))
       for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end(); ++i)
 	{
@@ -4299,9 +4329,13 @@ void character::PoisonedHandler()
 
 bool character::IsWarm() const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->IsWarm())
-      return true;
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsWarm())
+	return true;
+    }
 
   return false;
 }
@@ -4512,7 +4546,7 @@ ushort character::GetRandomNonVitalBodyPart()
   ushort OKBodyPart[MAX_BODYPARTS];
   ushort OKBodyParts = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c) && !BodyPartIsVital(c))
       OKBodyPart[OKBodyParts++] = c;
 
@@ -4533,7 +4567,7 @@ void character::CalculateVolumeAndWeight()
   BodyVolume = 0;
   CarriedWeight = Weight;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -4595,9 +4629,13 @@ void character::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      game::CombineLights(Emitation, GetBodyPart(c)->GetEmitation());
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	game::CombineLights(Emitation, BodyPart->GetEmitation());
+    }
 
   game::CombineLights(Emitation, Stack->GetEmitation());
 
@@ -4621,25 +4659,37 @@ void character::CalculateHP()
 {
   HP = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      HP += GetBodyPart(c)->GetHP();
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	HP += BodyPart->GetHP();
+    }
 }
 
 void character::CalculateMaxHP()
 {
   MaxHP = 0;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      MaxHP += GetBodyPart(c)->GetMaxHP();
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	MaxHP += BodyPart->GetMaxHP();
+    }
 }
 
 void character::CalculateBodyPartMaxHPs(bool MayChangeHPs)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->CalculateMaxHP(MayChangeHPs);
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->CalculateMaxHP(MayChangeHPs);
+    }
 
   CalculateMaxHP();
   CalculateHP();
@@ -4751,7 +4801,7 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
   float MinHits = 1000;
   bool First = true;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(BodyPartIsVital(c) && GetBodyPart(c))
       {
 	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, DodgeValue, AttackIsBlockable, UseMaxHP);
@@ -4802,8 +4852,12 @@ festring character::GetBodyPartName(ushort Index, bool Articled) const
 item* character::SearchForItem(ulong ID) const
 {
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->GetID() == ID)
-      return GetEquipment(c);
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && Equipment->GetID() == ID)
+	return Equipment;
+    }
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->GetID() == ID)
@@ -4897,7 +4951,12 @@ bool character::TryToEquip(item* Item)
 	if(BoundToUse(OldEquipment, e))
 	  continue;
 
+	lsquare* LSquareUnder = GetLSquareUnder();
+	stack* StackUnder = LSquareUnder->GetStack();
 	msgsystem::DisableMessages();
+	PictureUpdatesForbidden = true;
+	LSquareUnder->SetIsFreezed(true);
+	StackUnder->SetIsFreezed(true);
 	float Danger = GetRelativeDanger(PLAYER);
 
 	if(OldEquipment)
@@ -4907,26 +4966,31 @@ bool character::TryToEquip(item* Item)
 	SetEquipment(e, Item);
 	float NewDanger = GetRelativeDanger(PLAYER);
 	Item->RemoveFromSlot();
-	GetStackUnder()->AddItem(Item);
+	StackUnder->AddItem(Item);
 
 	if(OldEquipment)
 	  SetEquipment(e, OldEquipment);
 
 	msgsystem::EnableMessages();
+	PictureUpdatesForbidden = false;
+	LSquareUnder->SetIsFreezed(false);
+	StackUnder->SetIsFreezed(false);
 
 	if(OldEquipment)
 	  {
 	    if(NewDanger > Danger || BoundToUse(Item, e))
 	      {
-		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
+		room* Room = GetRoom();
+
+		if(!Room || Room->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s drops %s %s and equips %s instead.", CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN, OldEquipment->CHAR_NAME(UNARTICLED), Item->CHAR_NAME(INDEFINITE));
 
-		    if(GetRoom())
-		      GetRoom()->DropItem(this, OldEquipment, 1);
+		    if(Room)
+		      Room->DropItem(this, OldEquipment, 1);
 
-		    OldEquipment->MoveTo(GetStackUnder());
+		    OldEquipment->MoveTo(StackUnder);
 		    Item->RemoveFromSlot();
 		    SetEquipment(e, Item);
 		    DexterityAction(5);
@@ -4938,7 +5002,9 @@ bool character::TryToEquip(item* Item)
 	  {
 	    if(NewDanger > Danger || (NewDanger == Danger && e != RIGHT_WIELDED_INDEX && e != LEFT_WIELDED_INDEX) || BoundToUse(Item, e))
 	      {
-		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
+		room* Room = GetRoom();
+
+		if(!Room || Room->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s picks up and equips %s.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(INDEFINITE));
@@ -5065,13 +5131,18 @@ void character::CalculateAttributeBonuses()
 {
   ushort c;
 
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->CalculateAttributeBonuses();
+  for(c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->CalculateAttributeBonuses();
+    }
 
   short BackupBonus[BASE_ATTRIBUTES];
   short BackupCarryingBonus = CarryingBonus;
   CarryingBonus = 0;
+
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     {
       BackupBonus[c] = AttributeBonus[c];
@@ -5200,9 +5271,13 @@ void character::AddAntidoteConsumeEndMessage() const
 
 bool character::IsDead() const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(BodyPartIsVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
-      return true;
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPartIsVital(c) && (!BodyPart || BodyPart->GetHP() < 1))
+	return true;
+    }
 
   return false;
 }
@@ -5240,7 +5315,7 @@ void character::AddToInventory(const std::list<contentscript<item> >& ItemList, 
 
 bool character::HasHadBodyPart(const item* Item) const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(std::find(OriginalBodyPartID[c].begin(), OriginalBodyPartID[c].end(), Item->GetID()) != OriginalBodyPartID[c].end())
       return true;
 
@@ -5302,15 +5377,23 @@ void character::DamageAllItems(character* Damager, ushort Damage, ushort Type)
   GetStack()->ReceiveDamage(Damager, Damage, Type);
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      GetEquipment(c)->ReceiveDamage(Damager, Damage, Type);
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->ReceiveDamage(Damager, Damage, Type);
+    }
 }
 
 bool character::Equips(const item* Item) const
 {
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->GetID() == Item->GetID())
-      return true;
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && Equipment->GetID() == Item->GetID())
+	return true;
+    }
 
   return false;
 }
@@ -5374,17 +5457,21 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
   festring Entry;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
-      {
-	Item.push_back(GetEquipment(c));
-	Entry = GetEquipmentName(c);
-	Entry << ':';
-	Entry.Resize(20, ' ');
-	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
-	AddSpecialEquipmentInfo(Entry, c);
-	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture(), GetEquipment(c)->GetAnimationFrames(), true, GetEquipment(c)->AllowAlphaEverywhere());
-	Any = true;
-      }
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && (!UseSorterFunction || SorterFunction(Equipment, this)))
+	{
+	  Item.push_back(Equipment);
+	  Entry = GetEquipmentName(c);
+	  Entry << ':';
+	  Entry.Resize(20, ' ');
+	  Equipment->AddInventoryEntry(this, Entry, 1, true);
+	  AddSpecialEquipmentInfo(Entry, c);
+	  List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), Equipment->GetAnimationFrames(), true, Equipment->AllowAlphaEverywhere());
+	  Any = true;
+	}
+    }
 
   if(Any)
     {
@@ -5419,8 +5506,12 @@ bool character::EquipsSomething(bool (*SorterFunction)(const item*, const charac
   bool UseSorterFunction = SorterFunction != 0;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
-      return true;
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && (!UseSorterFunction || SorterFunction(Equipment, this)))
+	return true;
+    }
 
   return false;
 }
@@ -5693,8 +5784,12 @@ void character::SortAllItems(itemvector& AllItems, const character* Character, b
   GetStack()->SortAllItems(AllItems, Character, Sorter);
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      GetEquipment(c)->SortAllItems(AllItems, Character, Sorter);
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->SortAllItems(AllItems, Character, Sorter);
+    }
 }
 
 void character::PrintBeginSearchingMessage() const
@@ -5875,10 +5970,13 @@ bool character::EditAllAttributes(short Amount)
   ushort c;
   bool MayRaiseMore = false;
 
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      if(GetBodyPart(c)->EditAllAttributes(Amount))
+  for(c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->EditAllAttributes(Amount))
 	MayRaiseMore = true;
+    }
 
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     {
@@ -5927,7 +6025,7 @@ void character::AddDefenceInfo(felist& List) const
 {
   festring Entry;
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -6003,8 +6101,12 @@ bool character::PreProcessForBone()
   GetStack()->PreProcessForBone();
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      GetEquipment(c)->PreProcessForBone();
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->PreProcessForBone();
+    }
 
   game::RemoveCharacterID(ID);
   ID = -ID;
@@ -6057,12 +6159,20 @@ bool character::PostProcessForBone()
   ushort c;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      GetEquipment(c)->PostProcessForBone();
+    {
+      item* Equipment = GetEquipment(c);
 
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->PostProcessForBone();
+      if(Equipment)
+	Equipment->PostProcessForBone();
+    }
+
+  for(c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+        BodyPart->PostProcessForBone();
+    }
 
   return true;
 }
@@ -6074,8 +6184,12 @@ void character::FinalProcessForBone()
   ushort c;
 
   for(c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      GetEquipment(c)->FinalProcessForBone();
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	Equipment->FinalProcessForBone();
+    }
 
   for(c = 0; c < BodyParts; ++c)
     {
@@ -6099,7 +6213,7 @@ void character::FinalProcessForBone()
 
 bool character::HasRepairableBodyParts() const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c) && GetBodyPart(c)->IsRepairable())
       return true;
 
@@ -6115,8 +6229,12 @@ void character::SetSoulID(ulong What)
 bool character::SearchForItem(const item* Item) const
 {
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c) == Item)
-      return true;
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && Equipment == Item)
+	return true;
+    }
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(*i == Item)
@@ -6128,8 +6246,12 @@ bool character::SearchForItem(const item* Item) const
 item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
 {
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && SWeaponSkill->IsSkillOf(GetEquipment(c)))
-      return GetEquipment(c);
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && SWeaponSkill->IsSkillOf(Equipment))
+	return Equipment;
+    }
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(SWeaponSkill->IsSkillOf(*i))

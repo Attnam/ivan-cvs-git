@@ -1823,16 +1823,20 @@ void scrollofrepair::FinishReading(character* Reader)
   else
     {
       for(ushort c = 0; c < Reader->GetBodyParts(); ++c)
-	if(Reader->GetBodyPart(c))
-	  {
-	    if(Reader->GetBodyPart(c)->IsRepairable() && game::BoolQuestion("Would you like to repair your " + Reader->GetBodyPart(c)->GetBodyPartName() + "? [y/N]"))
-	      {
-		Reader->GetBodyPart(c)->RestoreHP();
-		RemoveFromSlot();
-		SendToHell();  
-		return;
-	      }
-	  }
+	{
+	  bodypart* BodyPart = Reader->GetBodyPart(c);
+
+	  if(BodyPart)
+	    {
+	      if(BodyPart->IsRepairable() && game::BoolQuestion("Would you like to repair your " + BodyPart->GetBodyPartName() + "? [y/N]"))
+		{
+		  BodyPart->RestoreHP();
+		  RemoveFromSlot();
+		  SendToHell();  
+		  return;
+		}
+	    }
+	}
       
       while(true)
 	{

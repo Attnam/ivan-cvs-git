@@ -162,6 +162,7 @@ class lsquare : public square
   bool EngravingsCanBeReadByPlayer();
   bool HasEngravings() const { return !Engraved.IsEmpty(); }
   void FinalProcessForBone();
+  void SetIsFreezed(bool What) { Freezed = What; }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -179,6 +180,7 @@ class lsquare : public square
   ulong LastExplosionID;
   std::vector<smoke*> Smoke;
   ushort SmokeAlphaSum;
+  bool Freezed;
 };
 
 inline bool lsquare::IsDark() const

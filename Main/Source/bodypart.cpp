@@ -354,7 +354,7 @@ void arm::CalculateAPCost()
 
 bool arm::PairArmAllowsMelee() const
 {
-  arm* PairArm = GetPairArm();
+  const arm* PairArm = GetPairArm();
   return !PairArm || !PairArm->GetWielded() || PairArm->GetWielded()->IsShield(Master);
 }
 
@@ -510,8 +510,12 @@ void corpse::GenerateLeftOvers(character* Eater)
 bool corpse::IsConsumable(const character* Eater) const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsConsumable(Eater))
-      return true;
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsConsumable(Eater))
+	return true;
+    }
 
   return false;
 }
@@ -521,8 +525,12 @@ short corpse::GetOfferValue(uchar Receiver) const
   short OfferValue = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c))
-      OfferValue += GetDeceased()->GetBodyPart(c)->GetOfferValue(Receiver);
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+        OfferValue += BodyPart->GetOfferValue(Receiver);
+    }
 
   return OfferValue;
 }
@@ -535,8 +543,12 @@ float corpse::GetWeaponStrength() const
 bool corpse::CanBeEatenByAI(const character* Eater) const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->CanBeEatenByAI(Eater))
-      return false;
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && !BodyPart->CanBeEatenByAI(Eater))
+	return false;
+    }
 
   return true;
 }
@@ -686,8 +698,12 @@ long corpse::GetScore() const
   long Score = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c))
-      Score += GetDeceased()->GetBodyPart(c)->GetScore();
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+	Score += BodyPart->GetScore();
+    }
 
   return Score;
 }
@@ -695,8 +711,12 @@ long corpse::GetScore() const
 bool corpse::IsDestroyable() const
 {
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->IsDestroyable())
-      return false;
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && !BodyPart->IsDestroyable())
+	return false;
+    }
 
   return true;
 }
@@ -706,8 +726,12 @@ ulong corpse::GetTruePrice() const
   ulong Price = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    if(GetDeceased()->GetBodyPart(c))
-      Price += GetDeceased()->GetBodyPart(c)->GetTruePrice();
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+	Price += BodyPart->GetTruePrice();
+    }
 
   return Price;
 }
@@ -936,7 +960,9 @@ bool leg::ApplyExperience()
 
 void arm::Hit(character* Enemy, bool ForceHit)
 {
-  switch(Enemy->TakeHit(Master, GetWielded() ? GetWielded() : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, GetWielded() ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % Master->GetCriticalModifier()), ForceHit))
+  item* Wielded = GetWielded();
+
+  switch(Enemy->TakeHit(Master, Wielded ? Wielded : GetGauntlet(), GetDamage(), GetToHitValue(), RAND() % 26 - RAND() % 26, Wielded ? WEAPON_ATTACK : UNARMED_ATTACK, !(RAND() % Master->GetCriticalModifier()), ForceHit))
     {
     case HAS_HIT:
     case HAS_BLOCKED:
@@ -944,7 +970,7 @@ void arm::Hit(character* Enemy, bool ForceHit)
     case DID_NO_DAMAGE:
       EditExperience(ARM_STRENGTH, 20);
 
-      if(GetWielded() && TwoHandWieldIsActive())
+      if(GetWielded() && TwoHandWieldIsActive()) // wielded might have changed
 	GetPairArm()->EditExperience(ARM_STRENGTH, 20);
 
     case HAS_DODGED:
@@ -1236,11 +1262,15 @@ void bodypart::CalculateVolumeAndWeight()
   BodyPartVolume = Volume;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      {
-	Volume += GetEquipment(c)->GetVolume();
-	CarriedWeight += GetEquipment(c)->GetWeight();
-      }
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	{
+	  Volume += Equipment->GetVolume();
+	  CarriedWeight += Equipment->GetWeight();
+	}
+    }
 
   Weight += CarriedWeight;
 }
@@ -1255,8 +1285,12 @@ void bodypart::CalculateEmitation()
   item::CalculateEmitation();
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c))
-      game::CombineLights(Emitation, GetEquipment(c)->GetEmitation());
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	game::CombineLights(Emitation, Equipment->GetEmitation());
+    }
 }
 
 void bodypart::CalculateMaxHP(bool MayChangeHPs)
@@ -1344,17 +1378,19 @@ void humanoidtorso::SignalVolumeAndWeightChange()
 
   if(Master && !Master->IsInitializing())
     {
-      if(GetHumanoidMaster()->GetRightArm())
-	GetHumanoidMaster()->GetRightArm()->CalculateAttributeBonuses();
+      humanoid* HumanoidMaster = GetHumanoidMaster();
 
-      if(GetHumanoidMaster()->GetLeftArm())
-	GetHumanoidMaster()->GetLeftArm()->CalculateAttributeBonuses();
+      if(HumanoidMaster->GetRightArm())
+	HumanoidMaster->GetRightArm()->CalculateAttributeBonuses();
 
-      if(GetHumanoidMaster()->GetRightLeg())
-	GetHumanoidMaster()->GetRightLeg()->CalculateAttributeBonuses();
+      if(HumanoidMaster->GetLeftArm())
+	HumanoidMaster->GetLeftArm()->CalculateAttributeBonuses();
 
-      if(GetHumanoidMaster()->GetLeftLeg())
-	GetHumanoidMaster()->GetLeftLeg()->CalculateAttributeBonuses();
+      if(HumanoidMaster->GetRightLeg())
+	HumanoidMaster->GetRightLeg()->CalculateAttributeBonuses();
+
+      if(HumanoidMaster->GetLeftLeg())
+	HumanoidMaster->GetLeftLeg()->CalculateAttributeBonuses();
     }
 }
 
@@ -1367,7 +1403,9 @@ void bodypart::CalculateAttackInfo()
 
 bool arm::TwoHandWieldIsActive() const
 {
-  if(GetWielded()->IsTwoHanded() && !GetWielded()->IsShield(Master))
+  const item* Wielded = GetWielded();
+
+  if(Wielded->IsTwoHanded() && !Wielded->IsShield(Master))
     {
       arm* PairArm = GetPairArm();
       return PairArm && !PairArm->GetWielded();
@@ -1380,10 +1418,12 @@ float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, 
 {
   float Durability;
   ushort TotalResistance = GetTotalResistance(PHYSICAL_DAMAGE);
-  short TrueDamage = (19 * (Max((Damage * 3 >> 2) - TotalResistance, 0)
-			 +  Max((Damage * 5 >> 2) + 1 - (TotalResistance >> 1), 0))
-			 + (Max((Damage * 3 >> 1) - TotalResistance, 0)
-			 +  Max((Damage * 5 >> 1) + 3 - (TotalResistance >> 1), 0))) / 40;
+  ushort Damage3 = (Damage << 1) + Damage;
+  ushort Damage5 = (Damage << 2) + Damage;
+  short TrueDamage = (19 * (Max((Damage3 >> 2) - TotalResistance, 0)
+			 +  Max((Damage5 >> 2) + 1 - (TotalResistance >> 1), 0))
+			 + (Max((Damage3 >> 1) - TotalResistance, 0)
+			 +  Max((Damage5 >> 1) + 3 - (TotalResistance >> 1), 0))) / 40;
 
   short HP = UseMaxHP ? GetMaxHP() : GetHP();
 
@@ -1449,12 +1489,15 @@ void bodypart::RandomizePosition()
 
 float arm::GetBlockChance(float EnemyToHitValue) const
 {
-  return GetWielded() ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * GetWielded()->GetBlockModifier()) * 10000), 1.0f) : 0;
+  const item* Wielded = GetWielded();
+  return Wielded ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * Wielded->GetBlockModifier()) * 10000), 1.0f) : 0;
 }
 
 ushort arm::GetBlockCapability() const
 {
-  if(!GetWielded())
+  const item* Wielded = GetWielded();
+
+  if(!Wielded)
     return 0;
 
   short HitStrength = GetWieldedHitStrength();
@@ -1462,17 +1505,19 @@ ushort arm::GetBlockCapability() const
   if(HitStrength <= 0)
     return 0;
 
-  return Min<short>(HitStrength, 10) * GetWielded()->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() / 100000;
+  return Min<short>(HitStrength, 10) * Wielded->GetStrengthValue() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() / 100000;
 }
 
 void arm::WieldedSkillHit()
 {
-  if(Master->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->AddHit())
+  item* Wielded = GetWielded();
+
+  if(Master->GetCWeaponSkill(Wielded->GetWeaponCategory())->AddHit())
     {
       CalculateAttackInfo();
 
       if(Master->IsPlayer())
-	GetHumanoidMaster()->GetCWeaponSkill(GetWielded()->GetWeaponCategory())->AddLevelUpMessage();
+	GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->AddLevelUpMessage();
     }
 
   if(GetCurrentSWeaponSkill()->AddHit())
@@ -1480,7 +1525,7 @@ void arm::WieldedSkillHit()
       CalculateAttackInfo();
 
       if(Master->IsPlayer())
-	GetCurrentSWeaponSkill()->AddLevelUpMessage(GetWielded()->CHAR_NAME(UNARTICLED));
+	GetCurrentSWeaponSkill()->AddLevelUpMessage(Wielded->CHAR_NAME(UNARTICLED));
     }
 }
 
@@ -2237,21 +2282,24 @@ void arm::AddDefenceInfo(felist&) const { }
 
 void arm::UpdateWieldedPicture()
 {
-  item* Wielded = GetWielded();
-
-  if(Wielded && Master)
+  if(!Master || !Master->PictureUpdatesAreForbidden())
     {
-      ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
-      WieldedAnimationFrames = Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
-    }
-  else if(WieldedAnimationFrames)
-    {
-      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
-        igraph::RemoveUser(WieldedGraphicIterator[c]);
+      const item* Wielded = GetWielded();
 
-      WieldedAnimationFrames = 0;
-      delete [] WieldedPicture;
-      delete [] WieldedGraphicIterator;
+      if(Wielded && Master)
+	{
+	  ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
+	  WieldedAnimationFrames = Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
+	}
+      else if(WieldedAnimationFrames)
+	{
+	  for(ushort c = 0; c < WieldedAnimationFrames; ++c)
+	    igraph::RemoveUser(WieldedGraphicIterator[c]);
+
+	  WieldedAnimationFrames = 0;
+	  delete [] WieldedPicture;
+	  delete [] WieldedGraphicIterator;
+	}
     }
 }
 

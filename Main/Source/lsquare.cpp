@@ -2,7 +2,7 @@
 
 bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0), Freezed(false)
 {
   Stack = new stack(this, 0, CENTER, false);
   SideStack[DOWN] = new stack(this, 0, DOWN, false);
@@ -30,7 +30,7 @@ lsquare::~lsquare()
 
 void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(game::CompareLights(EmitationUpdate, Emitation) > 0 && !game::IsGenerating())
+  if(game::CompareLights(EmitationUpdate, Emitation) > 0 && !game::IsGenerating() && !Freezed)
     {
       CalculateEmitation();
       Emitate();
@@ -39,7 +39,7 @@ void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
 
 void lsquare::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation && !game::IsGenerating())
+  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation && !game::IsGenerating() && !Freezed)
     {
       ulong Backup = Emitation;
       CalculateEmitation();
@@ -1162,7 +1162,7 @@ void lsquare::DrawMemorizedCharacter()
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
-  return !Who->CanFly() && GetStack()->IsDangerousForAIToStepOn(Who); 
+  return !Who->CanFly() && Stack->IsDangerousForAIToStepOn(Who); 
 }
 
 stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
@@ -1179,13 +1179,16 @@ stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
 
 void lsquare::SendMemorizedUpdateRequest()
 {
-  MemorizedUpdateRequested = true;
-  DescriptionChanged = true;
-
-  if(CanBeSeenByPlayer())
+  if(!Freezed)
     {
-      UpdateMemorized();
-      UpdateMemorizedDescription();
+      MemorizedUpdateRequested = true;
+      DescriptionChanged = true;
+
+      if(CanBeSeenByPlayer())
+	{
+	  UpdateMemorized();
+	  UpdateMemorizedDescription();
+	}
     }
 }
 

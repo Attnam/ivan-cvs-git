@@ -2,7 +2,7 @@
 
 ushort stack::Selected;
 
-stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility) { }
+stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility), Freezed(false) { }
 stack::~stack() { Clean(true); }
 square* stack::GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
 
@@ -512,10 +512,13 @@ item* stack::GetBottomVisibleItem(const character* Viewer) const
 
 void stack::SignalVolumeAndWeightChange()
 {
-  CalculateVolumeAndWeight();
+  if(!Freezed)
+    {
+      CalculateVolumeAndWeight();
 
-  if(MotherEntity)
-    MotherEntity->SignalVolumeAndWeightChange();
+      if(MotherEntity)
+	MotherEntity->SignalVolumeAndWeightChange();
+    }
 }
 
 void stack::CalculateVolumeAndWeight()
@@ -531,36 +534,42 @@ void stack::CalculateVolumeAndWeight()
 
 void stack::SignalEmitationIncrease(ulong EmitationUpdate)
 {
-  if(game::CompareLights(EmitationUpdate, Emitation) > 0)
+  if(!Freezed)
     {
-      game::CombineLights(Emitation, EmitationUpdate);
-
-      if(MotherEntity)
+      if(game::CompareLights(EmitationUpdate, Emitation) > 0)
 	{
-	  if(MotherEntity->AllowContentEmitation())
-	    MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+	  game::CombineLights(Emitation, EmitationUpdate);
+
+	  if(MotherEntity)
+	    {
+	      if(MotherEntity->AllowContentEmitation())
+		MotherEntity->SignalEmitationIncrease(EmitationUpdate);
+	    }
+	  else
+	    GetLSquareTrulyUnder()->SignalEmitationIncrease(EmitationUpdate);
 	}
-      else
-	GetLSquareTrulyUnder()->SignalEmitationIncrease(EmitationUpdate);
     }
 }
 
 void stack::SignalEmitationDecrease(ulong EmitationUpdate)
 {
-  if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
+  if(!Freezed)
     {
-      ulong Backup = Emitation;
-      CalculateEmitation();
-
-      if(Backup != Emitation)
+      if(game::CompareLights(EmitationUpdate, Emitation) >= 0 && Emitation)
 	{
-	  if(MotherEntity)
+	  ulong Backup = Emitation;
+	  CalculateEmitation();
+
+	  if(Backup != Emitation)
 	    {
-	      if(MotherEntity->AllowContentEmitation())
-		MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+	      if(MotherEntity)
+		{
+		  if(MotherEntity->AllowContentEmitation())
+		    MotherEntity->SignalEmitationDecrease(EmitationUpdate);
+		}
+	      else
+		GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
 	    }
-	  else
-	    GetLSquareTrulyUnder()->SignalEmitationDecrease(EmitationUpdate);
 	}
     }
 }
@@ -584,7 +593,7 @@ bool stack::CanBeSeenBy(const character* Viewer) const
 bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    if(i->CanBeSeenBy(Stepper) && i->IsDangerousForAI(Stepper))
+    if(i->IsDangerousForAI(Stepper) && i->CanBeSeenBy(Stepper))
       return true;
 
   return false;
@@ -678,7 +687,7 @@ void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, b
 	  std::list<item*>::iterator j = i;
 
 	  for(++j; j != List.end();)
-	    if((*i)->CanBePiledWith(*j, Viewer))
+	    if((*j)->CanBePiled() && (*i)->CanBePiledWith(*j, Viewer))
 	      {
 		Pile.push_back(*j);
 		std::list<item*>::iterator Dirt = j++;

@@ -788,7 +788,6 @@ void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d P
   E->RadiusSquare = (8 - Size) * (8 - Size);
   E->Size = Size;
   E->HurtNeutrals = HurtNeutrals;
-
   ExplosionQueue.push_back(E);
 
   if(ExplosionQueue.size() == 1)
@@ -974,6 +973,7 @@ void level::Draw(bool AnimationDraw) const
   ushort YMin = game::GetCamera().Y;
   ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
   ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  ulong LOSTurns = game::GetLOSTurns();
 
   if(!game::GetSeeWholeMapCheatMode())
     {
@@ -987,9 +987,9 @@ void level::Draw(bool AnimationDraw) const
 		{
 		  ulong LastSeen = (*Square)->LastSeen;
 
-		  if(LastSeen == game::GetLOSTurns())
+		  if(LastSeen == LOSTurns)
 		    (*Square)->Draw();
-		  else if((*Square)->NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
+		  else if((*Square)->NewDrawRequested || LastSeen == LOSTurns - 1)
 		    (*Square)->DrawMemorized();
 		}
 	    }
@@ -1001,7 +1001,7 @@ void level::Draw(bool AnimationDraw) const
 	      lsquare** Square = &Map[x][YMin];
 
 	      for(ushort y = YMin; y < YMax; ++y, ++Square)
-		if((*Square)->LastSeen == game::GetLOSTurns())
+		if((*Square)->LastSeen == LOSTurns)
 		  (*Square)->Draw();
 		else
 		  (*Square)->DrawMemorizedCharacter();

@@ -104,6 +104,7 @@ class stack
   void PreProcessForBone();
   void PostProcessForBone();
   void FinalProcessForBone();
+  void SetIsFreezed(bool What) { Freezed = What; }
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);
@@ -118,6 +119,7 @@ class stack
   ulong Emitation;
   ushort Items;
   bool IgnoreVisibility;
+  bool Freezed;
 };
 
 #endif

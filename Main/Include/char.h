@@ -763,6 +763,7 @@ class character : public entity, public id
   virtual bool SuckSoul(character*) { return false; }
   virtual bool MustBeRemovedFromBone() const;
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
+  bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
@@ -855,6 +856,7 @@ class character : public entity, public id
   short CarryingBonus;
   homedata* HomeData;
   ulong ID;
+  bool PictureUpdatesForbidden;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

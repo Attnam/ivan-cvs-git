@@ -492,12 +492,16 @@ void loricatus::PrayGoodEffect()
     }
 
   for(ushort c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
-    if(PLAYER->GetEquipment(c) && PLAYER->GetEquipment(c)->IsBroken())
-      {
-	ADD_MESSAGE("%s fixes your %s.", GetName(), PLAYER->GetEquipment(c)->CHAR_NAME(UNARTICLED));
-	PLAYER->GetEquipment(c)->Fix();
-	return;
-      }
+    {
+      item* Equipment = PLAYER->GetEquipment(c);
+
+      if(Equipment && Equipment->IsBroken())
+	{
+	  ADD_MESSAGE("%s fixes your %s.", GetName(), Equipment->CHAR_NAME(UNARTICLED));
+	  Equipment->Fix();
+	  return;
+	}
+    }
 
   item* MainWielded = PLAYER->GetMainWielded();
 	

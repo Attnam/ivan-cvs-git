@@ -989,12 +989,15 @@ ushort humanoid::GetSize() const
   if(GetTorso())
     Size += GetTorso()->GetSize();
 
-  if(GetLeftLeg() && GetRightLeg())
-    Size += Max(GetLeftLeg()->GetSize(), GetRightLeg()->GetSize());
-  else if(GetLeftLeg())
-    Size += GetLeftLeg()->GetSize();
-  else if(GetRightLeg())
-    Size += GetRightLeg()->GetSize();
+  rightleg* RightLeg = GetRightLeg();
+  leftleg* LeftLeg = GetLeftLeg();
+
+  if(LeftLeg && RightLeg)
+    Size += Max(LeftLeg->GetSize(), RightLeg->GetSize());
+  else if(LeftLeg)
+    Size += LeftLeg->GetSize();
+  else if(RightLeg)
+    Size += RightLeg->GetSize();
 
   return Size;
 }
@@ -1115,8 +1118,12 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uch
   if(DamageTypeAffectsInventory(Type))
     {
       for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-	if(GetEquipment(c))
-	  GetEquipment(c)->ReceiveDamage(Damager, Damage, Type);
+	{
+	  item* Equipment = GetEquipment(c);
+
+	  if(Equipment)
+	    Equipment->ReceiveDamage(Damager, Damage, Type);
+	}
 
       GetStack()->ReceiveDamage(Damager, Damage, Type);
     }
@@ -1466,7 +1473,7 @@ bool humanoid::CompleteRiseFromTheDead()
 {
   ushort c;
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     if(!GetBodyPart(c))
       {
 	/* Let's search for the original bodypart */
@@ -1488,7 +1495,7 @@ bool humanoid::CompleteRiseFromTheDead()
 	  }
       }
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 
@@ -1721,11 +1728,25 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingArms())
     {
-      if(GetRightArm() && GetRightArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetRightArm()->GetDamage()) + 1, GetRightArm()->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * GetRightArm()->GetAPCost());
+      rightarm* RightArm = GetRightArm();
 
-      if(GetLeftArm() && GetLeftArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetLeftArm()->GetDamage()) + 1, GetLeftArm()->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * GetLeftArm()->GetAPCost());
+      if(RightArm)
+	{
+	  float Damage = RightArm->GetDamage();
+
+	  if(Damage)
+	    Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Damage) + 1, RightArm->GetToHitValue(), AttackIsBlockable(GetRightWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * RightArm->GetAPCost());
+	}
+
+      leftarm* LeftArm = GetLeftArm();
+
+      if(LeftArm)
+	{
+	  float Damage = LeftArm->GetDamage();
+
+	  if(Damage)
+	    Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Damage) + 1, LeftArm->GetToHitValue(), AttackIsBlockable(GetLeftWielded() ? WEAPON_ATTACK : UNARMED_ATTACK), UseMaxHP) * LeftArm->GetAPCost());
+	}
 
       ++AttackStyles;
     }
@@ -1742,7 +1763,8 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(GetHead()->GetBiteDamage()) + 1, GetHead()->GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * GetHead()->GetBiteAPCost());
+      head* Head = GetHead();
+      Effectivity += 1 / (Enemy->GetTimeToDie(this, ushort(Head->GetBiteDamage()) + 1, Head->GetBiteToHitValue(), AttackIsBlockable(BITE_ATTACK), UseMaxHP) * Head->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -1765,19 +1787,27 @@ ushort humanoid::GetAttribute(ushort Identifier) const
 
        if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)
 	{
-	  if(GetRightArm())
-	    Attrib += GetRightArm()->GetAttribute(Identifier);
+	  rightarm* RightArm = GetRightArm();
 
-	  if(GetLeftArm())
-	    Attrib += GetLeftArm()->GetAttribute(Identifier);
+	  if(RightArm)
+	    Attrib += RightArm->GetAttribute(Identifier);
+
+	  leftarm* LeftArm = GetLeftArm();
+
+	  if(LeftArm)
+	    Attrib += LeftArm->GetAttribute(Identifier);
 	}
       else if(Identifier == LEG_STRENGTH || Identifier == AGILITY)
 	{
-	  if(GetRightLeg())
-	    Attrib += GetRightLeg()->GetAttribute(Identifier);
+	  rightleg* RightLeg = GetRightLeg();
 
-	  if(GetLeftLeg())
-	    Attrib += GetLeftLeg()->GetAttribute(Identifier);
+	  if(RightLeg)
+	    Attrib += RightLeg->GetAttribute(Identifier);
+
+	  leftleg* LeftLeg = GetLeftLeg();
+
+	  if(LeftLeg)
+	    Attrib += LeftLeg->GetAttribute(Identifier);
 	}
       else
 	{
@@ -1934,7 +1964,7 @@ long humanoid::GetMoveAPRequirement(uchar Difficulty) const
 
 void hunter::CreateBodyParts(ushort SpecialFlags)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
+  for(ushort c = 0; c < BodyParts; ++c) 
     if(c != LEFT_ARM_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
@@ -2234,9 +2264,13 @@ void humanoid::CalculateBattleInfo()
 {
   CalculateDodgeValue();
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->CalculateAttackInfo();
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->CalculateAttackInfo();
+    }
 }
 
 leg* humanoid::GetRandomLeg() const
@@ -2276,7 +2310,7 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 
 void zombie::CreateBodyParts(ushort SpecialFlags)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
+  for(ushort c = 0; c < BodyParts; ++c) 
     if(BodyPartIsVital(c) || RAND() % 3)
       CreateBodyPart(c, SpecialFlags);
 }
@@ -2341,10 +2375,24 @@ festring humanoid::GetBodyPartName(ushort Index, bool Articled) const
 
 void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValue) const
 {
-  float RightBlockChance = GetRightArm() ? GetRightArm()->GetBlockChance(ToHitValue) : 0;
-  float LeftBlockChance = GetLeftArm() ? GetLeftArm()->GetBlockChance(ToHitValue) : 0;
-  ushort RightBlockCapability = GetRightArm() ? GetRightArm()->GetBlockCapability() : 0;
-  ushort LeftBlockCapability = GetLeftArm() ? GetLeftArm()->GetBlockCapability() : 0;
+  float RightBlockChance = 0;
+  ushort RightBlockCapability = 0;
+  float LeftBlockChance = 0;
+  ushort LeftBlockCapability = 0;
+  rightarm* RightArm = GetRightArm();
+  leftarm* LeftArm = GetLeftArm();
+
+  if(RightArm)
+    {
+      RightBlockChance = RightArm->GetBlockChance(ToHitValue);
+      RightBlockCapability = RightArm->GetBlockCapability();
+    }
+
+  if(LeftArm)
+    {
+      LeftBlockChance = LeftArm->GetBlockChance(ToHitValue);
+      LeftBlockCapability = LeftArm->GetBlockCapability();
+    }
 
   /* Double block */
 
@@ -2399,9 +2447,13 @@ uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
 
 bool humanoid::UseMaterialAttributes() const
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && !GetBodyPart(c)->UseMaterialAttributes())
-      return false;
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && !BodyPart->UseMaterialAttributes())
+	return false;
+    }
 
   return true;
 }
@@ -2496,7 +2548,7 @@ void smith::BeTalkedTo()
       return;
     }
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
@@ -2698,7 +2750,7 @@ festring& bananagrower::ProcessMessage(festring& Msg) const
 
 void elder::CreateBodyParts(ushort SpecialFlags)
 {
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
+  for(ushort c = 0; c < BodyParts; ++c) 
     if(c != LEFT_LEG_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
@@ -2893,7 +2945,7 @@ void zombie::CreateCorpse(lsquare* Square)
   Square->AddItem(Corpse);
   Disable();
 
-  for(ushort c = 0; c < GetBodyParts(); ++c)
+  for(ushort c = 0; c < BodyParts; ++c)
     if(Exists() && GetBodyPart(c))
       GetBodyPart(c)->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
 }

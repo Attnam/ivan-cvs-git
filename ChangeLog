@@ -7,11 +7,19 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a truly horrible bug in the sparkle position randomization code
+	  that only appeared when compiled with gcc
+	* Monster equipment choosing code now doesn't update pictures, lights, memorized
+	  bitmaps, descriptions and ground stack's weight and volume if the gear doesn't
+	  actually change -> suberb speed increase to monster equipping AI
+
 May 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Fixed a few bugs added in the last commit
 	* Squashed a minor bug that caused messages to be concatenated oddly for some
-	  turns after the player has died and started immediately a new game
+	  turns after the player had died and started immediately a new game
 	* Deleted a fatal bug that allowed polymorphed monsters to crash during the
 	  creation of bone files
 	* Object graphic creation system optimized yet more
