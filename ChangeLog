@@ -6,6 +6,12 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+July 13 2004 Heikki Sairanen <firstname.lastname@tut.fi>
+
+	* Makefile corrections (couple of missing files)
+	* Moved Polymorph command in cpp to only wizard mode compiles..
+	
 July 8 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* Minor correction to fountains...

@@ -1511,6 +1511,13 @@ bool commandsystem::Possess(character* Char)
   return true; // The old player's turn must end
 }
 
+bool commandsystem::Polymorph(character* Char)
+{
+  character* NewForm = Char->GetNewFormForPolymorphWithControl();
+  Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), 
+						vector2d(16, 6), WHITE));
+  return true;
+}
 #endif
 
 bool commandsystem::ToggleRunning(character*)
@@ -1535,10 +1542,4 @@ bool commandsystem::IssueCommand(character* Char)
   return game::CommandQuestion();
 }
 
-bool commandsystem::Polymorph(character* Char)
-{
-  character* NewForm = Char->GetNewFormForPolymorphWithControl();
-  Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), 
-						vector2d(16, 6), WHITE));
-  return true;
-}
+

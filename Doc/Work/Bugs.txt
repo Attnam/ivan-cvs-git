@@ -67,7 +67,7 @@ Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
 //(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
 // (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
 // (hs) Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
-(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
+//(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
 Golems can be poisoned at least by poison covered weapons.
 It seems to be possible to occasionally find traps by saveloading next to them.
 // (hs) Mushrooms can be kicked around.
@@ -87,3 +87,4 @@ Mirror + WorldMap.
 You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
 Vladimir can destroys terrains in Attnam even if the citizens are not hostile.
 "The kobold glows and transforms into an invisible talker."
+Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death. 
