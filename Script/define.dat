@@ -268,6 +268,7 @@
 #define ARCANITE (MATERIAL_ID + 40)
 #define ILLITHIUM (MATERIAL_ID + 41)
 #define ADAMANT (MATERIAL_ID + 42)
+#define SWAMP (MATERIAL_ID + 43)
 
 #define ORGANIC_SUBSTANCE_ID (4096 * 2)
 
@@ -303,6 +304,7 @@
 #define ANTIDOTE_LIQUID (LIQUID_ID + 9)
 #define VODKA (LIQUID_ID + 10)
 #define TROLL_BLOOD (LIQUID_ID + 11)
+#define LAVA (LIQUID_ID + 12)
 
 #define FLESH_ID (4096 * 5)
 
@@ -470,6 +472,8 @@
 #define ELITE 5
 #define MASTER 6
 #define GRAND_MASTER 7
+#define NECRO 8
+#define REAPER 9
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -515,6 +519,7 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
+#define SWAMP_TERRAIN 7
 
 #define POOL 1
 
@@ -539,6 +544,8 @@
 #define SNOW_BIRCH 13
 #define ANVIL 13
 
+#define DOOR_PRISON 1
+
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
 #define OREE_LAIR_ENTRY 3
@@ -553,8 +560,8 @@
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
-#define NEW_ATTNAM_TEAM 8
-#define COLONIST_TEAM 9
+#define NEW_ATTNAM_TEAM 7
+#define COLONIST_TEAM 8
 
 #define NOT_WALKABLE 1
 #define HAS_CHARACTER 2

@@ -1,6 +1,8 @@
 /* Compiled through levelset.cpp */
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0)
+bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
+
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0)
 {
   Stack = new stack(this, 0, CENTER, false);
   SideStack[DOWN] = new stack(this, 0, DOWN, false);
@@ -15,11 +17,13 @@ lsquare::~lsquare()
   delete OLTerrain;
   delete Stack;
   ushort c;
+
   for(c = 0; c < 4; ++c)
     delete SideStack[c];
 
   delete Fluid;
   delete Memorized;
+
   for(c = 0; c < Smoke.size(); ++c)
     delete Smoke[c];
 }
@@ -479,7 +483,7 @@ void lsquare::Save(outputfile& SaveFile) const
   for(ushort c = 0; c < 4; ++c)
     SideStack[c]->Save(SaveFile);
 
-  SaveFile << Emitter << Fluid << Emitation << DivineMaster << Engraved << RoomIndex << Luminance << Smoke << SmokeAlphaSum;
+  SaveFile << Emitter << Fluid << Emitation << Engraved << RoomIndex << Luminance << Smoke << SmokeAlphaSum;
 
   if(LastSeen)
     Memorized->Save(SaveFile);
@@ -498,7 +502,7 @@ void lsquare::Load(inputfile& SaveFile)
       SideStack[c]->SetMotherSquare(this);
     }
 
-  SaveFile >> Emitter >> Fluid >> Emitation >> DivineMaster >> Engraved >> RoomIndex >> Luminance >> Smoke >> SmokeAlphaSum;
+  SaveFile >> Emitter >> Fluid >> Emitation >> Engraved >> RoomIndex >> Luminance >> Smoke >> SmokeAlphaSum;
 
   if(LastSeen)
     {
@@ -599,15 +603,16 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  Anything = true;
 		}
 
-	      ushort VisibleItems = GetStack()->GetItems(PLAYER, Cheat);
+	      std::vector<itemvector> PileVector;
+	      GetStack()->Pile(PileVector, PLAYER);
 
-	      if(VisibleItems)
+	      if(PileVector.size())
 		{
 		  if(Anything)
 		    MemorizedDescription << " and ";
 
-		  if(VisibleItems == 1)
-		    GetStack()->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
+		  if(PileVector.size() == 1)
+		    PileVector[0][0]->AddName(MemorizedDescription, INDEFINITE, PileVector[0].size());
 		  else
 		    MemorizedDescription = "many items";
 
@@ -964,6 +969,16 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
       if(LastSeen == game::GetLOSTurns())
 	game::SendLOSUpdateRequest();
     }
+
+  if(!IsFlyable() && !Smoke.empty())
+    {
+      DecAnimatedEntities();
+
+      for(ushort c = 0; c < Smoke.size(); ++c)
+	Smoke[c]->SendToHell();
+
+      Smoke.clear();
+    }
 }
 
 void lsquare::DrawParticles(ulong Color, bool DrawHere)
@@ -1010,16 +1025,15 @@ void lsquare::RemoveFluid()
 
 bool lsquare::DipInto(item* Thingy, character* Dipper)
 {
-  if(GetGLTerrain()->IsDipDestination() || (GetOLTerrain() && GetOLTerrain()->IsDipDestination()))
+  if(IsDipDestination())
     {
       room* Room = GetRoom();
 
       if(Room && Room->HasDipHandler() && !Room->Dip(Dipper))
 	return false;
+
+      return (GLTerrain->IsDipDestination() && GLTerrain->DipInto(Thingy, Dipper)) || (OLTerrain && OLTerrain->IsDipDestination() && OLTerrain->DipInto(Thingy, Dipper));
     }
-  
-  if(GetGLTerrain()->DipInto(Thingy, Dipper) || (GetOLTerrain() && GetOLTerrain()->DipInto(Thingy, Dipper)))
-    return true;
   else
     {
       if(Dipper->IsPlayer())
@@ -1257,7 +1271,7 @@ bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
 
   if(Character)
     {
-      if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
+      if(Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
       Character->PolymorphRandomly(1, 9999, 5000 + RAND() % 5000);
@@ -1316,7 +1330,9 @@ bool lsquare::Teleport(character* Teleporter, const std::string&, uchar)
 { 
   if(GetCharacter())
     {
-      Teleporter->Hostility(GetCharacter());
+      if(Character->GetTeam() != Teleporter->GetTeam())
+	Teleporter->Hostility(GetCharacter());
+
       GetCharacter()->TeleportRandomly();
     }
 
@@ -1465,6 +1481,7 @@ bool lsquare::CheckKick(const character* Kicker) const
 {
   if(RoomIndex && !GetLevel()->GetRoom(RoomIndex)->CheckKickSquare(Kicker, this))
     return false;
+
   return true;
 }
 
@@ -1566,9 +1583,7 @@ void lsquare::AddSmoke(gas* ToBeAdded)
 void lsquare::ShowSmokeMessage() const
 {
   for(ushort c = 0; c < Smoke.size(); ++c)
-    {
-      Smoke[c]->AddBreatheMessage();
-    }
+    Smoke[c]->AddBreatheMessage();
 }
 
 void lsquare::SignalSmokeAlphaChange(short What)
@@ -1601,4 +1616,30 @@ void lsquare::SignalSmokeAlphaChange(short What)
 	    game::SendLOSUpdateRequest();
 	}
     }
+}
+
+uchar lsquare::GetDivineMaster() const
+{
+  return RoomIndex ? GetLevel()->GetRoom(RoomIndex)->GetDivineMaster() : 0;
+}
+
+void lsquare::DisplaySmokeInfo(std::string& Msg) const
+{
+  if(Smoke.size() == 1)
+    Msg << " A cloud of " << Smoke[0]->GetGas()->GetName(false, false) << " surrounds the square.";
+  else if(Smoke.size())
+    Msg << " A lot of gases hover over the square.";
+}
+
+void lsquare::ReceiveEarthQuakeDamage()
+{
+  GetStack()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
+
+  for(ushort c = 0; c < 4; ++c)
+    GetSideStack(c)->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
+
+  /* Gum solution */
+
+  if(GetOLTerrain() && GetOLTerrain()->IsDoor())
+    GetOLTerrain()->ReceiveDamage(0, 5 + RAND() % 10, PHYSICAL_DAMAGE);
 }

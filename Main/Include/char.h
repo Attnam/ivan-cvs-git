@@ -146,6 +146,8 @@ struct characterdatabase
   bool CanWalkThroughWalls;
   uchar AttachedGod;
   bool BodyPartsDisappearWhenSevered;
+  bool CanBeConfused;
+  bool CanAttack;
 };
 
 class characterprototype
@@ -447,6 +449,8 @@ class character : public entity, public id
   DATA_BASE_VALUE(uchar, AttachedGod);
   DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
   DATA_BASE_VALUE(ushort, Frequency);
+  DATA_BASE_BOOL(CanBeConfused);
+  DATA_BASE_BOOL(CanAttack);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -586,7 +590,7 @@ class character : public entity, public id
   void CalculateBodyPartMaxHPs(bool = true);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
-  bool ActivateRandomState(ushort);
+  bool ActivateRandomState(ushort, ulonglong = 0);
   ulong GetRandomNotActivatedState(bool) const;
   bool GainRandomInstric();
   virtual void CalculateBattleInfo() = 0;
@@ -599,7 +603,6 @@ class character : public entity, public id
   float GetRelativeDanger(const character*, bool = false) const;
   float GetTimeToDie(const character*, ushort, float, bool, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
-  float GetDangerModifier() const;
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
   virtual std::string GetBodyPartName(ushort, bool = false) const;
   item* SearchForItemWithID(ulong) const;
@@ -710,6 +713,7 @@ class character : public entity, public id
   virtual head* Behead() { return 0; }
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
+  bool CanMove() const { return CanWalk() || CanFly() || CanSwim(); }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

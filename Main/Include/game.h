@@ -73,8 +73,9 @@ inputfile& operator>>(inputfile&, configid&);
 struct dangerid
 {
   dangerid() { }
-  dangerid(float Danger) : Danger(Danger), HasBeenGenerated(false) { }
-  float Danger;
+  dangerid(float NakedDanger, float EquippedDanger) : NakedDanger(NakedDanger), EquippedDanger(EquippedDanger), HasBeenGenerated(false) { }
+  float NakedDanger;
+  float EquippedDanger;
   bool HasBeenGenerated;
 };
 

@@ -34,7 +34,7 @@ void itemcontainer::AddPostFix(std::string& String) const { AddLockPostFix(Strin
 
 bool mine::AddAdjective(std::string& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
 
-bool beartrap::AddAdjective(std::string& String, bool Articled) const { return IsActive() && AddActiveAdjective(String, Articled); }
+bool beartrap::AddAdjective(std::string& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
 
 void potion::GenerateLeftOvers(character* Eater)
 {
@@ -2032,14 +2032,14 @@ bool stone::ShowMaterial() const
   return GetMainMaterial()->GetConfig() != STONE; // gum solution
 }
 
-short itemcontainer::GetOfferValue(char BasicAlignment) const
+short itemcontainer::GetOfferValue(uchar Receiver) const
 {
   short Sum = 0;
 
   for(ushort c = 0; c < GetContained()->GetItems(); ++c)
-    Sum += GetContained()->GetItem(c)->GetOfferValue(BasicAlignment);
+    Sum += GetContained()->GetItem(c)->GetOfferValue(Receiver);
 
-  return item::GetOfferValue(BasicAlignment) + Sum;
+  return item::GetOfferValue(Receiver) + Sum;
 }
 
 bool itemcontainer::IsDestroyable() const

@@ -13,7 +13,7 @@ void (character::*PrintEndStateMessage[STATES])() const = { 0, &character::Print
 void (character::*BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 void (character::*EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 void (character::*StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler, &character::SearchingHandler, 0 };
-bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, 0, &character::AllowParasitized, 0, 0 };
+bool (character::*StateIsAllowed[STATES])() const = { 0, 0, 0, 0, 0, 0, 0, 0, 0, &character::AllowPoisoned, 0, 0, 0, 0, &character::CanBeConfused, &character::AllowParasitized, 0, 0 };
 std::string StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized", "Searching", "Gas immunity" };
 bool StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false, false, true };
 bool TemporaryStateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false, false, true };
@@ -1364,14 +1364,16 @@ bool character::CheckDeath(const std::string& Msg, character* Murderer, bool For
     {
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
-      if(IsPlayer() && game::WizardModeIsActive())
-	ADD_MESSAGE("Death message: %s.", Msg.c_str());
+
+      std::string NewMsg = Msg;
 
       if(GetAction())
-	Die(Msg + GetAction()->GetDeathExplanation(), ForceMsg);
-      else
-	Die(Msg, ForceMsg);
+	NewMsg += GetAction()->GetDeathExplanation();
 
+      if(IsPlayer() && game::WizardModeIsActive())
+	ADD_MESSAGE("Death message: %s.", NewMsg.c_str());
+
+      Die(NewMsg, ForceMsg);
       return true;
     }
   else
@@ -1700,7 +1702,7 @@ void character::ActionAutoTermination()
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
+	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this, false, true) && ((*i)->CanMove() || (*i)->GetPos().IsAdjacent(GetPos())) && (*i)->CanAttack())
 	  {
 	    if(IsPlayer())
 	      {
@@ -1723,6 +1725,9 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   bool HostileCharsNear = false;
   character* NearestChar = 0;
   ulong NearestDistance = 0xFFFFFFFF;
+
+  if(Config == MASTER)
+    int esko = 2;
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
@@ -1956,6 +1961,7 @@ void character::ShowNewPosInfo() const
     {
       if(GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
 	ADD_MESSAGE("It's dark in here!");
+
       GetLSquareUnder()->ShowSmokeMessage();
       std::vector<itemvector> PileVector;
       GetStackUnder()->Pile(PileVector, this);
@@ -3821,29 +3827,28 @@ character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, usho
   if(StateIsActivated(POLYMORPH_CONTROL))
     {
       std::string Topic, Temp;
+
       if(IsPlayer())
 	{
 	  while(!NewForm)
 	    {
 	      Topic = "What do you want to become?";
+
 	      if(game::GetDefaultPolymorphTo() != "")
-		Topic += " [" + game::GetDefaultPolymorphTo() + "]";
+		Topic << " [" << game::GetDefaultPolymorphTo() << ']';
+
 	      Temp = game::StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false);
+
 	      if(Temp == "")
 		Temp = game::GetDefaultPolymorphTo();
+
 	      NewForm = protosystem::CreateMonster(Temp, NO_EQUIPMENT);
 	    }
+
 	  game::SetDefaultPolymorphTo(Temp);
 	}
       else
-	{
-	  switch(GetSex())
-	    {
-	    case UNDEFINED: NewForm = new golem(DIAMOND, NO_EQUIPMENT); break;
-	    case MALE: NewForm = new communist(0, NO_EQUIPMENT); break;
-	    case FEMALE: NewForm = new mistress(WHIP_CHAMPION, NO_EQUIPMENT); break;
-	    }
-	}
+	NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);
     }
   else
     NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
@@ -3886,15 +3891,16 @@ void character::DexterityAction(ushort Difficulty)
 
 bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
-  bool InfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
-  bool Visible = !StateIsActivated(INVISIBLE) || InfraSeen;
+  bool MayBeESPSeen = PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+  bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
+  bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-  if((game::IsInWilderness() && Visible) || (!IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())))
+  if((game::IsInWilderness() && Visible) || (!IgnoreESP && MayBeESPSeen && (Theoretically || (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(InfraSeen) || (InfraSeen && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetLOSRangeSquare() && femath::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
+    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(MayBeInfraSeen || MayBeESPSeen) || ((MayBeInfraSeen || MayBeESPSeen) && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetLOSRangeSquare() && femath::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -3903,14 +3909,16 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
     return CanBeSeenByPlayer(Theoretically, IgnoreESP);
   else
     {
-      bool Visible = !StateIsActivated(INVISIBLE) || (Who->StateIsActivated(INFRA_VISION) && IsWarm());
+      bool MayBeESPSeen = Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+      bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
+      bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-      if((game::IsInWilderness() && Visible) || (!IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (Theoretically || (GetPos() - Who->GetPos()).GetLengthSquare() <= Who->GetESPRangeSquare())))
+      if((game::IsInWilderness() && Visible) || (!IgnoreESP && MayBeESPSeen && (Theoretically || (GetPos() - Who->GetPos()).GetLengthSquare() <= Who->GetESPRangeSquare())))
 	return true;
       else if(!Visible)
 	return false;
       else
-	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), Who->StateIsActivated(INFRA_VISION) && IsWarm());
+	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), MayBeESPSeen || MayBeInfraSeen);
     }
 }
 
@@ -4376,9 +4384,15 @@ void character::EditExperience(ushort Identifier, long Value)
   BaseExperience[Identifier] += Value;
 }
 
-bool character::ActivateRandomState(ushort Time)
+bool character::ActivateRandomState(ushort Time, ulonglong Seed)
 {
+  ulonglong OldSeed = femath::GetSeed();
+
+  if(Seed)
+    femath::SetSeed(Seed);
+
   ulong ToBeActivated = GetRandomNotActivatedState(false);
+  femath::SetSeed(OldSeed);
 
   if(ToBeActivated == 0)
     return false;
@@ -4465,11 +4479,6 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
       }
 
   return MinHits;
-}
-
-float character::GetDangerModifier() const
-{
-  return game::GetDangerMap().find(configid(GetType(), GetConfig()))->second.Danger;
 }
 
 float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
@@ -5460,7 +5469,7 @@ void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
 {
   uchar DamageDirection = GetPos() == Explosion->Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion->Pos);
 
-  if(Explosion->Terrorist)
+  if(GetTeam()->GetID() != PLAYER->GetTeam()->GetID() && Explosion->Terrorist)
     Explosion->Terrorist->Hostility(this);
 
   GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);

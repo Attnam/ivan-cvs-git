@@ -41,6 +41,8 @@ vector2d eddytorso::GetBitmapPos(ushort Frame) const { return torso::GetBitmapPo
 vector2d mommotorso::GetBitmapPos(ushort Frame) const { return Frame >> 4 ? torso::GetBitmapPos(Frame) : torso::GetBitmapPos(Frame) + vector2d((Frame&0xE) << 3, 0); }
 
 head* corpse::Behead() { return Deceased->Behead(); }
+bool corpse::CanBeCloned() const { return GetDeceased()->CanBeCloned(); }
+uchar corpse::GetAttachedGod() const { return GetDeceased()->GetTorso()->GetAttachedGod(); }
 
 void bodypart::Save(outputfile& SaveFile) const
 {
@@ -489,13 +491,13 @@ bool corpse::IsConsumable(const character* Eater) const
   return false;
 }
 
-short corpse::GetOfferValue(char GodAlignment) const
+short corpse::GetOfferValue(uchar Receiver) const
 {
   short OfferValue = 0;
 
   for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c))
-      OfferValue += GetDeceased()->GetBodyPart(c)->GetOfferValue(GodAlignment);
+      OfferValue += GetDeceased()->GetBodyPart(c)->GetOfferValue(Receiver);
 
   return OfferValue;
 }
@@ -2539,9 +2541,4 @@ head* head::Behead()
 {
   RemoveFromSlot();
   return this;
-}
-
-bool corpse::CanBeCloned() const
-{
-  return GetDeceased()->CanBeCloned();
 }

@@ -129,6 +129,8 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
+//#include "confdef.h"
+
 bool game::Init(const std::string& Name)
 {
   std::string PlayerName;
@@ -155,7 +157,7 @@ bool game::Init(const std::string& Name)
 #endif
 
 #ifdef LINUX
-  mkdir(GetSaveDir().c_str(), S_IRWXU | S_IRWXG);
+  mkdir(GetSaveDir().c_str(), S_IRWXU|S_IRWXG);
 #endif
 
   switch(Load(SaveName(PlayerName)))
@@ -391,7 +393,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult()
 {
-  switch(RAND() % 16)
+  switch(RAND() & 15)
     {
     case 0  : return "moron";
     case 1  : return "silly";
@@ -1213,11 +1215,12 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
 void game::LookHandler(vector2d CursorPos)
 {
+  square* Square = GetCurrentArea()->GetSquare(CursorPos);
   std::string OldMemory;
 
   if(SeeWholeMapCheatIsActive())
     {
-      OldMemory = GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+      OldMemory = Square->GetMemorizedDescription();
 
       if(IsInWilderness())
 	GetWorldMap()->GetWSquare(CursorPos)->UpdateMemorizedDescription(true);
@@ -1227,19 +1230,22 @@ void game::LookHandler(vector2d CursorPos)
 
   std::string Msg;
 
-  if(GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || SeeWholeMapCheatIsActive())
+  if(Square->GetLastSeen() || SeeWholeMapCheatIsActive())
     {
-      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
+      if(Square->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
 	Msg = "You see here ";
       else
 	Msg = "You remember here ";
 
-      Msg << GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() << ".";
+      Msg << Square->GetMemorizedDescription() << ".";
+
+      if(Square->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
+	Square->DisplaySmokeInfo(Msg);
     }
   else
     Msg = "You have never been here.";
 
-  character* Character = GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+  character* Character = Square->GetCharacter();
 
   if(Character && (Character->CanBeSeenByPlayer() || SeeWholeMapCheatIsActive()))
     Character->DisplayInfo(Msg);
@@ -1250,7 +1256,7 @@ void game::LookHandler(vector2d CursorPos)
   ADD_MESSAGE("%s", Msg.c_str());
 
   if(SeeWholeMapCheatIsActive())
-    GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
+    Square->SetMemorizedDescription(OldMemory);
 }
 
 bool game::AnimationController()
@@ -1472,9 +1478,13 @@ void game::InitDangerMap()
 		First = false;
 	      }
 
-	    character* Char = Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-	    DangerMap.insert(std::pair<configid, dangerid>(configid(c, i->first), dangerid(Char->GetRelativeDanger(Player, true))));
+	    character* Char = Proto->Clone(i->first, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+	    float NakedDanger = Char->GetRelativeDanger(Player, true);
 	    delete Char;
+	    Char = Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+	    float EquippedDanger = Char->GetRelativeDanger(Player, true);
+	    delete Char;
+	    DangerMap[configid(c, i->first)] = dangerid(NakedDanger, EquippedDanger);
 	  }
     }
 }
@@ -1491,8 +1501,11 @@ void game::CalculateNextDanger()
 
   if(ConfigIterator != Config.end() && DangerIterator != DangerMap.end())
     {
-      character* Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      DangerIterator->second.Danger = (DangerIterator->second.Danger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      character* Char = Proto->Clone(NextDangerId.Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+      DangerIterator->second.NakedDanger = (DangerIterator->second.NakedDanger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
+      delete Char;
+      Char = Proto->Clone(NextDangerId.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
+      DangerIterator->second.EquippedDanger = (DangerIterator->second.EquippedDanger * 9 + Char->GetRelativeDanger(Player, true)) / 10;
       delete Char;
 
       for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)
@@ -1820,13 +1833,13 @@ inputfile& operator>>(inputfile& SaveFile, configid& Value)
 
 outputfile& operator<<(outputfile& SaveFile, const dangerid& Value)
 {
-  SaveFile << Value.Danger << Value.HasBeenGenerated;
+  SaveFile << Value.NakedDanger << Value.EquippedDanger << Value.HasBeenGenerated;
   return SaveFile;
 }
 
 inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 {
-  SaveFile >> Value.Danger >> Value.HasBeenGenerated;
+  SaveFile >> Value.NakedDanger >> Value.EquippedDanger >> Value.HasBeenGenerated;
   return SaveFile;
 }
 

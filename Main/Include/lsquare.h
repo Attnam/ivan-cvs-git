@@ -69,8 +69,7 @@ class lsquare : public square
   void SetEmitation(ulong What) { Emitation = What; }
   void UpdateMemorizedDescription(bool = false);
   void BeKicked(character*, item*, float, float, short, bool, bool);
-  uchar GetDivineMaster() const { return DivineMaster; }
-  void SetDivineMaster(uchar What) { DivineMaster = What; }
+  uchar GetDivineMaster() const;
   void Draw();
   void UpdateMemorized();
   bool CanBeDug() const;
@@ -151,6 +150,9 @@ class lsquare : public square
   virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
   void SignalSmokeAlphaChange(short);
   void ShowSmokeMessage() const;
+  virtual void DisplaySmokeInfo(std::string&) const;
+  bool IsDipDestination() const;
+  void ReceiveEarthQuakeDamage();
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -160,7 +162,6 @@ class lsquare : public square
   stack* SideStack[4];
   ulong Emitation;
   std::string Engraved;
-  uchar DivineMaster;
   uchar RoomIndex;
   ulong TemporaryEmitation;
   fluid* Fluid;

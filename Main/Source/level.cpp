@@ -366,7 +366,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
   game::BusyAnimation();
   vector2d Pos = RoomScript->GetPos()->Randomize();
   vector2d Size = RoomScript->GetSize()->Randomize();
-  ushort x, y, c;
+  ushort x, y;
 
   if(Pos.X + Size.X > XSize - 2)
     return false;
@@ -397,12 +397,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
     {
       uchar Owner = 1 + RAND() % GODS;
       GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
-
-      for(c = 0; c < Inside.size(); ++c)
-	GetLSquare(Inside[c])->SetDivineMaster(Owner);
-
-      for(c = 0; c < Border.size(); ++c)
-	GetLSquare(Border[c])->SetDivineMaster(Owner);
+      RoomClass->SetDivineMaster(Owner);
     }
 
   if(*RoomScript->GenerateTunnel() && !Door.empty())
@@ -609,14 +604,10 @@ void level::GenerateLanterns(ushort X, ushort Y, uchar SquarePos) const
     }
 }
 
-void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room, uchar DivineMaster) const
+void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort X, ushort Y, uchar Room) const
 {
   Map[X][Y]->ChangeLTerrain(GLTerrain, OLTerrain);
   FlagMap[X][Y] |= FORBIDDEN;
-
-  if(DivineMaster)
-    Map[X][Y]->SetDivineMaster(DivineMaster);
-
   Map[X][Y]->SetRoomIndex(Room);
 }
 
@@ -1049,8 +1040,6 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   const contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
   uchar Room = RoomClass->GetIndex();
   ulong Counter = 0;
-  const uchar* ScriptDivineMaster = RoomScript->GetDivineMaster();
-  uchar DivineMaster = ScriptDivineMaster ? *ScriptDivineMaster : 0;
   bool AllowLanterns = *RoomScript->GenerateLanterns();
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();
@@ -1064,24 +1053,24 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	{
 	  if(x == Pos.X)
 	    {
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room, DivineMaster);
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room, DivineMaster);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + 1, Room);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x + 1, Pos.Y + Size.Y - 2, Room);
 	      Border.push_back(vector2d(x + 1, Pos.Y + 1));
 	      Border.push_back(vector2d(x + 1, Pos.Y + Size.Y - 2));
 	      continue;
 	    }
 	  else if(x == Pos.X + Size.X - 1)
 	    {
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room, DivineMaster);
-	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room, DivineMaster);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + 1, Room);
+	      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x - 1, Pos.Y + Size.Y - 2, Room);
 	      Border.push_back(vector2d(x - 1, Pos.Y + 1));
 	      Border.push_back(vector2d(x - 1, Pos.Y + Size.Y - 2));
 	      continue;
 	    }
 	}
 
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y, Room, DivineMaster);
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y + Size.Y - 1, Room, DivineMaster);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y, Room);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, Pos.Y + Size.Y - 1, Room);
 
       if((Shape == RECTANGLE && x != Pos.X && x != Pos.X + Size.X - 1)
       || (Shape == ROUND_CORNERS && x > Pos.X + 1 && x < Pos.X + Size.X - 2))
@@ -1104,8 +1093,8 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 
   for(y = Pos.Y + 1; y < Pos.Y + Size.Y - 1; ++y, Counter += 2)
     {
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room, DivineMaster);
-      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room, DivineMaster);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X, y, Room);
+      CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), Pos.X + Size.X - 1, y, Room);
 
       if(Shape == ROUND_CORNERS && y > Pos.Y + 1 && y < Pos.Y + Size.Y - 2)
 	{
@@ -1134,7 +1123,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 
 	if(!(Shape == ROUND_CORNERS && (x == Pos.X + 1 || x == Pos.X + Size.X - 2) && (y == Pos.Y + 1 || y == Pos.Y + Size.Y - 2)))
 	  {
-	    CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room, DivineMaster);
+	    CreateRoomSquare(GTerrain->Instantiate(), OTerrain->Instantiate(), x, y, Room);
 	    Inside.push_back(vector2d(x,y));
 	  }
       }

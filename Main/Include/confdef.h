@@ -47,6 +47,7 @@
 #define ARCANITE (MATERIAL_ID + 40)
 #define ILLITHIUM (MATERIAL_ID + 41)
 #define ADAMANT (MATERIAL_ID + 42)
+#define SWAMP (MATERIAL_ID + 43)
 
 #define ORGANIC_SUBSTANCE_ID (4096 << 1)
 
@@ -82,6 +83,7 @@
 #define ANTITODE_LIQUID (LIQUID_ID + 9)
 #define VODKA (LIQUID_ID + 10)
 #define TROLL_BLOOD (LIQUID_ID + 11)
+#define LAVA (LIQUID_ID + 12)
 
 #define FLESH_ID (4096 * 5)
 
@@ -252,6 +254,7 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
+#define SWAMP_TERRAIN 7
 
 #define POOL 1
 
@@ -274,6 +277,8 @@
 #define SNOW_PINE 11
 #define SNOW_FIR 12
 #define ANVIL 13
+
+#define DOOR_PRISON 1
 
 #define OREE_LAIR_ENTRY 3
 #define OREE_LAIR_EXIT 4

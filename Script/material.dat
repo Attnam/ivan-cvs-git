@@ -267,7 +267,7 @@ material
 
 	Config SULFUR;
 	{
-		StrengthValue = 30;
+		StrengthValue = 50;
 		ConsumeType = CT_MINERAL;
 		Density = 2000;
 		IsGolemMaterial = true;
@@ -598,6 +598,19 @@ material
 		AttachedGod = LORICATUS;
 		IsSparkling = true;
 	}
+
+	Config SWAMP;
+	{
+		StrengthValue = 30;
+		Density = 750;
+		Color = rgb16(80, 120, 80);
+		NameStem = "swamp";
+		ConsumeType = CT_MISC_ORGANIC;
+		AdjectiveStem = "swampy";
+		Flexibility = 15;
+		CanBeWished = false;
+		AttachedGod = TERRA;
+	}
 }
 
 organicsubstance /* substances that spoil but are not flesh */
@@ -772,7 +785,7 @@ gas
 		NameStem = "skunk smell";
 		Alpha = 200;
 		AttachedGod = SCABIES;
-		EffectStrength = 10;
+		EffectStrength = 5;
 		Effect = EFFECT_SKUNK_SMELL;
 		BreatheMessage = "It smells really bad here.";
 	}
@@ -958,6 +971,16 @@ liquid
 		EffectStrength = 50;
 		PriceModifier = 500;
 		AttachedGod = CRUENTUS;
+	}
+
+	Config LAVA;
+	{
+		StrengthValue = 25;
+		Color = rgb16(255, 0, 0);
+		CanBeWished = false;
+		NameStem = "lava";
+		Alpha = 200;
+		AttachedGod = LORICATUS;
 	}
 }
 

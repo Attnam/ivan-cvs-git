@@ -423,7 +423,7 @@ class ITEM
   corpse(const corpse&);
   virtual ~corpse();
   virtual bool IsConsumable(const character*) const;
-  virtual short GetOfferValue(char) const;
+  virtual short GetOfferValue(uchar) const;
   virtual float GetWeaponStrength() const;
   virtual bool CanBeEatenByAI(const character*) const;
   virtual ushort GetStrengthValue() const;
@@ -452,6 +452,7 @@ class ITEM
   virtual bool IsStupidToConsume() const;
   virtual head* Behead();
   virtual bool CanBeCloned() const;
+  virtual uchar GetAttachedGod() const;
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual void GenerateMaterials() { }

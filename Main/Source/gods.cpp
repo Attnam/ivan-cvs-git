@@ -105,7 +105,7 @@ void sophos::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  if(RAND() & 7)
+  if(RAND() & 1)
     {
       ADD_MESSAGE("You hear booming voice: \"THIS WILL PROTECT THEE FROM MORTIFER, MY PALADIN!\" A shield glittering with holy might appears from nothing.");
       shield* Shield = new shield;
@@ -244,7 +244,7 @@ void atavus::PrayGoodEffect()
   if(!Timer && Relation > 500 + RAND_N(500))
     {
       item* Reward = new bodyarmor(PLATE_MAIL, NO_MATERIALS);
-      Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
+      Reward->InitMaterials(MAKE_MATERIAL(ARCANITE));
       ADD_MESSAGE("%s materializes before you.", Reward->CHAR_NAME(INDEFINITE));
       PLAYER->GetGiftStack()->AddItem(Reward);
       AdjustTimer(45000);
@@ -423,7 +423,7 @@ void silva::PrayGoodEffect()
 		if(MonsterHere)
 		  MonsterHere->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
 
-		Square->GetStack()->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE);
+		Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 10, PHYSICAL_DAMAGE);
 	      }
 	}
 
@@ -431,12 +431,7 @@ void silva::PrayGoodEffect()
 
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
-	  {
-	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ReceiveDamage(0, RAND() % 5, PHYSICAL_DAMAGE);
-
-	    for(ushort c = 0; c < 4; ++c)
-	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ReceiveDamage(0, RAND() % 5, PHYSICAL_DAMAGE);
-	  }
+	  game::GetCurrentLevel()->GetLSquare(x, y)->ReceiveEarthQuakeDamage();
     }
   else
     {
@@ -471,10 +466,10 @@ void silva::PrayGoodEffect()
 
 void silva::PrayBadEffect()
 {
-  switch(RAND() % 300 / 100)
+  switch(RAND() % 3)
     {
     case 0:
-      PLAYER->Polymorph(new spider, 1000 + RAND() % 1000);
+      PLAYER->Polymorph(new largerat, 1000 + RAND() % 1000);
       break;
     case 1:
       PLAYER->Polymorph(new ass, 1000 + RAND() % 1000);
@@ -721,7 +716,7 @@ void valpurus::Pray()
 
 	  if(Angel)
 	    {
-	      Angel->SetTeam(game::GetTeam(5));
+	      Angel->SetTeam(game::GetTeam(4));
 	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	    }
 	}
@@ -765,7 +760,7 @@ void mortifer::Pray()
 
 	  if(Angel)
 	    {
-	      Angel->SetTeam(game::GetTeam(5));
+	      Angel->SetTeam(game::GetTeam(4));
 	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	    }
 	}
@@ -790,7 +785,7 @@ void nefas::PrayGoodEffect()
 	{
 	  character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
-	  if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(CONFUSED) && PLAYER->GetRelation(Audience) == HOSTILE)
+	  if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(CONFUSED) && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
 	    {
 	      AudiencePresent = true;
 	      break;
@@ -808,7 +803,7 @@ void nefas::PrayGoodEffect()
 	  {
 	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
 
-	    if(Audience && !Audience->TemporaryStateIsActivated(CONFUSED) && PLAYER->GetRelation(Audience) == HOSTILE)
+	    if(Audience && !Audience->TemporaryStateIsActivated(CONFUSED) && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
 	      {
 		if(Audience->CanBeSeenByPlayer())
 		  ADD_MESSAGE("%s confuses %s with her sweet lies.", GOD_NAME, Audience->CHAR_NAME(DEFINITE));
@@ -1016,10 +1011,10 @@ void cruentus::PrayGoodEffect()
     }
   else if(RAND() & 3)
     {
-      ADD_MESSAGE("Your inventory feels heavier.");
       potion* Bottle = new potion(0, NO_MATERIALS);
       Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));
       PLAYER->GetGiftStack()->AddItem(Bottle);
+      ADD_MESSAGE("%s drops from nowhere.", Bottle->CHAR_DESCRIPTION(DEFINITE));
     }
   else
     {

@@ -104,7 +104,7 @@ class ITEM
  public:
   virtual item* BetterVersion() const;
   virtual void GenerateLeftOvers(character*);
-  virtual bool IsDipDestination(const character*) const { return true; }
+  virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
   virtual material* CreateDipMaterial();
   virtual bool AllowSpoil() const { return false; } // temporary
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
@@ -121,7 +121,7 @@ class ITEM
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual material* CreateDipMaterial();
-  virtual bool IsDipDestination(const character*) const { return true; }
+  virtual bool IsDipDestination(const character*) const { return MainMaterial != 0; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
@@ -138,7 +138,7 @@ class ITEM
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual void GenerateLeftOvers(character*);
   virtual void Break();
-  virtual bool IsDipDestination(const character*) const { return true; }
+  virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
   virtual bool IsExplosive() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
@@ -514,7 +514,7 @@ class ITEM
   virtual long GetScore() const;
   virtual bool AllowContentEmitation() const { return false; }
   virtual bool IsDestroyable() const;
-  virtual short GetOfferValue(char) const;
+  virtual short GetOfferValue(uchar) const;
   virtual void SortAllItems(itemvector&, const character*, bool (*)(const item*, const character*)) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;

@@ -536,7 +536,7 @@ void item::AddMiscellaneousInfo(felist& List) const
   std::string Entry(40, ' ');
   Entry << int(GetTruePrice());
   Entry.resize(55, ' ');
-  Entry << int(GetOfferValue(NEUTRAL));
+  Entry << int(GetOfferValue(0));
   Entry.resize(70, ' ');
   Entry << int(GetNutritionValue());
   List.AddEntry(Entry, LIGHT_GRAY);
@@ -624,10 +624,18 @@ void item::Empty()
     }
 }
 
-short item::GetOfferValue(char) const
+short item::GetOfferValue(uchar Receiver) const
 {
   /* Temporary */
-  return short(sqrt(GetTruePrice()));
+
+  short OfferValue = short(sqrt(GetTruePrice()));
+
+  if(Receiver == GetAttachedGod())
+    OfferValue <<= 1;
+  else
+    OfferValue >>= 1;
+
+  return OfferValue;
 }
 
 void item::SignalEnchantmentChange()

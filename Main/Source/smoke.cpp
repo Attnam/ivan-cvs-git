@@ -20,7 +20,7 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
 
   for(ushort c = 0; c < 4; ++c)
     {
-      Picture[c] = new bitmap(16,16,TRANSPARENT_COLOR);
+      Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
       Picture[c]->CreateAlphaMap(Alpha);
       igraph::GetRawGraphic(GR_OLTERRAIN)->MaskedBlit(Picture[c], 16 + (c << 4), 16, 0, 0, 16,16, &Color);
     }
@@ -85,6 +85,7 @@ void smoke::Save(outputfile& SaveFile) const
 void smoke::Load(inputfile& SaveFile)
 {
   SaveFile >> Picture >> Gas >> Alpha;
+  Gas->SetMotherEntity(this);
   LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
 }
 

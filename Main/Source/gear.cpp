@@ -623,7 +623,7 @@ bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 	}
 
       ushort CurrentDanger = ushort(Enemy->GetRelativeDanger(PLAYER) * 100);
-      Enemy->PolymorphRandomly(CurrentDanger / 4, CurrentDanger, 100 + RAND() % 400);
+      Enemy->PolymorphRandomly(CurrentDanger / 4, Min<ushort>(CurrentDanger, 9999), 100 + RAND() % 400);
       return true;
     }
   else

@@ -29,7 +29,7 @@ character* protosystem::BalancedCreateMonster()
 
 		if(!i->second.IgnoreDanger)
 		  {
-		    float DangerModifier = i->second.DangerModifier == 100 ? DangerId.Danger : DangerId.Danger * 100 / i->second.DangerModifier;
+		    float DangerModifier = i->second.DangerModifier == 100 ? DangerId.EquippedDanger : DangerId.EquippedDanger * 100 / i->second.DangerModifier;
 
 		    if(DangerModifier > Difficulty * 5 || DangerModifier < Difficulty / 5)
 		      continue;
@@ -51,7 +51,7 @@ character* protosystem::BalancedCreateMonster()
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
 	  character* Monster = Proto->Clone(Chosen.Config);
 
-	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && Monster->GetTimeToKill(PLAYER, true) > 7500 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
+	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && Monster->GetTimeToKill(PLAYER, true) > 5000 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
 	    {
 	      game::SignalGeneration(Chosen);
 	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -132,51 +132,49 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 
 character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort SpecialFlags)
 {
-  while(true)
+  std::vector<configid> Possible;
+  character* Monster = 0;
+
+  for(ushort c = 0; !Monster; ++c)
     {
-      for(ushort c = 0; c < 100; ++c)
+      for(ushort Type = 1; Type < protocontainer<character>::GetProtoAmount(); ++Type)
 	{
-	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
+	  const character::prototype* Proto = protocontainer<character>::GetProto(Type);
 	  const character::databasemap& Config = Proto->GetConfig();
-	  Chosen = RAND() % Config.size();
 
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	    if(!Chosen--)
+	    if(!i->second.IsAbstract && i->second.CanBeGenerated && i->second.CanBeWished && !i->second.IsUnique && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
 	      {
-		configid ConfigID(Chosen, i->first);
+		configid ConfigID(Type, i->first);
 
-		if(!i->second.IsAbstract
-		&& i->second.CanBeGenerated
-		&& i->second.CanBeWished
-		&& (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000)
-		&& (!i->second.IsUnique || !game::GetDangerMap().find(ConfigID)->second.HasBeenGenerated))
+		if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
 		  {
-		    character* Monster = Proto->Clone(i->first, SpecialFlags);
+		    const dangerid& DangerId = game::GetDangerMap().find(ConfigID)->second;
+		    float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerId.NakedDanger : DangerId.EquippedDanger;
+		    ushort Danger = ushort(i->second.DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / i->second.DangerModifier);
 
-		    if(MinDanger > 0 || MaxDanger < 10000)
-		      {
-			ushort Danger = ushort(Monster->GetRelativeDanger(PLAYER) * 100.0f);
-
-			if(Danger < MinDanger || Danger > MaxDanger)
-			  {
-			    delete Monster;
-			    break;
-			  }
-		      }
-
-		    game::SignalGeneration(ConfigID);
-		    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-		    return Monster;
+		    if(Danger < MinDanger || Danger > MaxDanger)
+		      continue;
 		  }
 
-		break;
+		Possible.push_back(ConfigID);
 	      }
 	}
 
-      MinDanger = MinDanger > 0 ? Max<ushort>(MinDanger * 3 >> 2, 1) : 0;
-      MaxDanger = MaxDanger < 10000 ? Min<ushort>(MaxDanger * 5 >> 2, 9999) : 10000;
+      if(Possible.empty())
+	{
+	  MinDanger = MinDanger > 0 ? Max<ushort>(MinDanger * 3 >> 2, 1) : 0;
+	  MaxDanger = MaxDanger < 10000 ? Min<ushort>(MaxDanger * 5 >> 2, 9999) : 10000;
+	  continue;
+	}
+
+      configid Chosen = Possible[RAND() % Possible.size()];
+      Monster = protocontainer<character>::GetProto(Chosen.Type)->Clone(Chosen.Config, SpecialFlags);
+      game::SignalGeneration(Chosen);
+      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
     }
+
+  return Monster;
 }
 
 template <class type> std::pair<ushort, ushort> CountCorrectNameLetters(const typename type::database& DataBase, const std::string& Identifier)

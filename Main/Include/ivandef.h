@@ -14,7 +14,7 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#define IVAN_VERSION "0.402"
+#define IVAN_VERSION "0.410"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -344,8 +344,8 @@
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
-#define NEW_ATTNAM_TEAM 8
-#define COLONIST_TEAM 9
+#define NEW_ATTNAM_TEAM 7
+#define COLONIST_TEAM 8
 
 #define LOAD 1
 #define NO_PIC_UPDATE 2

@@ -170,7 +170,7 @@ Special birth gifts like "big head" that gives more intelligence but increases e
 Potion effect from fountain.
 Bananas should have black dots when spoiled.
 //Zoom to look.
-"Need brain but you too stupid!"
+//"Need brain but you too stupid!"
 High level priests should be able to summon angels.
 Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
 //Healing potions. (from JM)
@@ -450,5 +450,7 @@ Eating only unspoiled food should require a bit of wisdom.
 Iron and other "good" materials should become more probable for items.
 Monsters with ESP should be seen from a longer distance with ESP.
 Pets should also be seen from a longer distance with ESP.
+Rings of teleportation on the ground should occasionally teleport around the level.
 Characters wearing bright colored cloaks should be more visible in the dark.
-Fire immunity for imps
+Fire immunity for imps.
+One should occasionally pray to a wrong god when confused.

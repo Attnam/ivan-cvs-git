@@ -145,7 +145,7 @@ class item : public object
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
-  virtual short GetOfferValue(char) const;
+  virtual short GetOfferValue(uchar) const;
   void Fly(character*, uchar, ushort);
   uchar HitCharacter(character*, character*, ushort, float, uchar);
   virtual bool DogWillCatchAndConsume() const { return false; }

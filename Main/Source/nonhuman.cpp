@@ -210,7 +210,7 @@ void nonhumanoid::Bite(character* Enemy, bool ForceHit)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-  EditExperience(AGILITY, 75);
+  EditExperience(AGILITY, 50);
   Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
@@ -219,12 +219,23 @@ void nonhumanoid::Kick(lsquare* Square, bool ForceHit)
   EditNP(-50);
   EditAP(-GetKickAPCost());
   EditExperience(LEG_STRENGTH, 25);
-  EditExperience(AGILITY, 50);
+  EditExperience(AGILITY, 25);
   Square->BeKicked(this, 0, GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()), ForceHit);
 }
 
 bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 {
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+    return false;
+
+  if(GetBurdenState() == OVER_LOADED)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You cannot fight while carrying so much.");
+
+      return false;
+    }
+
   /* Behold this Terrible Father of Gum Solutions! */
 
   uchar AttackStyle = GetAttackStyle();
@@ -810,31 +821,33 @@ void genetrixvesana::GetAICommand()
     {
       ushort NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 
-      for(ushort c = 0; c < 50 && NumberOfPlants; ++c)
+      for(ushort c1 = 0; c1 < 50 && NumberOfPlants; ++c1)
 	{
-	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-	    if((*i)->IsEnabled())
-	      {
-		lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() & 7);
-
-		if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
+	  for(ushort c2 = 0; c2 < game::GetTeams() && NumberOfPlants; ++c2)
+	    if(GetTeam()->GetRelation(game::GetTeam(c2)) == HOSTILE)
+	      for(std::list<character*>::const_iterator i = game::GetTeam(c2)->GetMember().begin(); i != game::GetTeam(c2)->GetMember().end() && NumberOfPlants; ++i)
+		if((*i)->IsEnabled())
 		  {
-		    character* NewPlant = new carnivorousplant(RAND() & 3 ? 0 : GREATER);
-		    NewPlant->SetTeam(GetTeam());
-		    LSquare->AddCharacter(NewPlant);
-		    --NumberOfPlants;
+		    lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() & 7);
 
-		    if(NewPlant->CanBeSeenByPlayer())
+		    if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
 		      {
-			if((*i)->IsPlayer())
-			  ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
-			else if((*i)->CanBeSeenByPlayer())
-			  ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), (*i)->CHAR_NAME(DEFINITE));
-			else
-			  ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(DEFINITE));
+			character* NewPlant = new carnivorousplant(RAND() & 3 ? 0 : GREATER);
+			NewPlant->SetTeam(GetTeam());
+			LSquare->AddCharacter(NewPlant);
+			--NumberOfPlants;
+
+			if(NewPlant->CanBeSeenByPlayer())
+			  {
+			    if((*i)->IsPlayer())
+			      ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
+			    else if((*i)->CanBeSeenByPlayer())
+			      ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), (*i)->CHAR_NAME(DEFINITE));
+			    else
+			      ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(DEFINITE));
+			  }
 		      }
 		  }
-	      }
 	}
     }
 
@@ -1277,7 +1290,7 @@ void mushroom::VirtualConstructor(bool Load)
 
 void magicmushroom::GetAICommand()
 {
-  if(!(RAND() % 200))
+  if(!(RAND() % 500))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
@@ -1426,7 +1439,7 @@ void skunk::GetAICommand()
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
 
-	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 250));
+	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 500));
 	      EditAP(-1000);
 	      return;
 	    }
@@ -1437,7 +1450,7 @@ void skunk::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
 
-      GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 250));
+      GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 500));
     }
 
   nonhumanoid::GetAICommand();

@@ -92,7 +92,7 @@ class level : public area
   void LightningVisualizer(const rect&, ushort) const;
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
-  void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
+  void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
   lsquare*** Map;
   const levelscript* LevelScript;
   std::string LevelMessage;

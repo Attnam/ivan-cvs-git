@@ -136,7 +136,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
-	MaterialConfigChances = { 3, 75, 5, 10; }
+	MaterialConfigChances = { 3, 75, 5, 5; }
 	Roundness = 60;
 	AttachedGod = NONE;
 }
@@ -1431,8 +1431,8 @@ stone
 	BitmapPos = 0, 48;
 	FormModifier = 10;
 	NameSingular = "stone";
-	MainMaterialConfig = { 6, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND, VALPURIUM; }
-	MaterialConfigChances = { 6, 300, 200, 150, 100, 50, 1; }
+	MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
+	MaterialConfigChances = { 5, 300, 200, 150, 100, 50; }
 	Alias == "jewel";
 	Roundness = 90;
 	AttachedGod = NONE;
@@ -1671,7 +1671,7 @@ ring
 
 	Config RING_OF_FIRE_RESISTANCE;
 	{
-		Possibility = 50;
+		Possibility = 40;
 		FireResistance = 15;
 		PostFix = "of fire resistance";
 		MainMaterialConfig == ARCANITE;

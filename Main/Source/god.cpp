@@ -61,7 +61,7 @@ void god::Pray()
 
 	    if(Angel)
 	      {
-		Angel->SetTeam(game::GetTeam(5));
+		Angel->SetTeam(game::GetTeam(4));
 		ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
@@ -141,7 +141,7 @@ void god::PlayerVomitedOnAltar()
 
       if(Angel)
 	{
-	  Angel->SetTeam(game::GetTeam(5));
+	  Angel->SetTeam(game::GetTeam(4));
 	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
@@ -201,7 +201,7 @@ void god::PrintRelation() const
 
 bool god::ReceiveOffer(item* Sacrifice)
 {
-  short OfferValue = Sacrifice->GetOfferValue(GetBasicAlignment());
+  short OfferValue = Sacrifice->GetOfferValue(GetType());
 
   if(OfferValue)
     {
@@ -220,7 +220,12 @@ bool god::ReceiveOffer(item* Sacrifice)
 	PLAYER->EditExperience(WISDOM, -50);
 
       if(OfferValue > 0)
-	ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);
+	{
+	  if(Sacrifice->GetAttachedGod() == GetType())
+	    ADD_MESSAGE("%s appreciates your generous offer truly.", GOD_NAME);
+	  else
+	    ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);
+	}
       else
 	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GOD_NAME);
 

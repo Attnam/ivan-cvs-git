@@ -184,8 +184,6 @@ class OLTERRAIN
   virtual void ReceiveDamage(character*, ushort, uchar);
   virtual void HasBeenHitByItem(character*, item*, ushort);
   virtual void Break() { olterrain::Break(); }
- protected:
-  virtual vector2d GetBitmapPos(ushort) const;
 );
 
 class GLTERRAIN
@@ -200,9 +198,10 @@ class GLTERRAIN
   virtual std::string MonsterDeathVerb() const;
   virtual std::string ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
+  virtual bool DipInto(item*, character*);
+  virtual bool IsDipDestination() const { return true; }
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
-  //virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );

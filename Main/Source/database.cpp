@@ -224,6 +224,8 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(CanWalkThroughWalls);
   ANALYZE_DATA(AttachedGod);
   ANALYZE_DATA(BodyPartsDisappearWhenSevered);
+  ANALYZE_DATA(CanBeConfused);
+  ANALYZE_DATA(CanAttack);
 
   return Found;
 }
@@ -383,6 +385,7 @@ template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(StorageVolume);
   ANALYZE_DATA(HPModifier);
   ANALYZE_DATA(IsSafeToCreateDoor);
+  ANALYZE_DATA(OpenBitmapPos);
 
   return Found;
 }

@@ -87,6 +87,14 @@ solidterrain /* glterrain-> */
 		NameSingular = "ground";
 		BitmapPos = 16, 16;
 	}
+
+	Config SWAMP_TERRAIN;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == SWAMP;
+		NameSingular = "ground";
+		BitmapPos = 16, 16;
+	}
 }
 
 liquidterrain /* glterrain-> */

@@ -275,9 +275,19 @@ door /* olterrain-> */
 	CanBeDestroyed = true;
 	MainMaterialConfig == WOOD;
 	NameSingular = "door";
-	/* BitmapPos depends on being open or not */
+	BitmapPos = 0, 176;
+	OpenBitmapPos = 0, 48;
 	/* PostFix depends on LockType */
 	HPModifier = 20;
+
+	Config DOOR_PRISON;
+	{
+		DigMessage = "You break the prison door.";
+		CanBeDestroyed = true;
+		MainMaterialConfig == IRON;
+		NameSingular = "prison door";
+		BitmapPos = 0, 80;
+	}
 }
 
 link /* olterrain-> */
@@ -378,7 +388,16 @@ brokendoor /* olterrain->door-> */
 {
 	DigMessage = "You destroy the broken door.";
 	Adjective = "broken";
-	/* BitmapPos depends on being open or not */
+	BitmapPos = 0, 160;
+
+	Config DOOR_PRISON;
+	{
+		DigMessage = "You break the broken prison door.";
+		CanBeDestroyed = true;
+		MainMaterialConfig == IRON;
+		NameSingular = "prison door";
+		BitmapPos = 0, 64;
+	}
 }
 
 boulder /* olterrain-> */

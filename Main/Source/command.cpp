@@ -196,19 +196,31 @@ bool commandsystem::Drop(character* Char)
       return false;
     }
 
-  itemvector ToDrop;
-  Char->GetStack()->DrawContents(ToDrop, Char, "What do you want to drop?");
+  bool Success = false;
+  stack::SetSelected(0);
 
-  if(ToDrop.empty())
-    return false;
-
-  if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
+  for(;;)
     {
-      for(ushort c = 0; c < ToDrop.size(); ++c)
-	ToDrop[c]->MoveTo(Char->GetStackUnder());
+      itemvector ToDrop;
+      game::DrawEverythingNoBlit();
+      Char->GetStack()->DrawContents(ToDrop, Char, "What do you want to drop?", REMEMBER_SELECTED);
 
-      ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).c_str());
-      Char->DexterityAction(1);
+      if(ToDrop.empty())
+	break;
+
+      if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))
+	{
+	  for(ushort c = 0; c < ToDrop.size(); ++c)
+	    ToDrop[c]->MoveTo(Char->GetStackUnder());
+
+	  ADD_MESSAGE("%s dropped.", ToDrop[0]->GetName(INDEFINITE, ToDrop.size()).c_str());
+	  Success = true;
+	}
+    }
+
+  if(Success)
+    {
+      Char->DexterityAction(2);
       return true;
     }
 
@@ -468,6 +480,12 @@ bool commandsystem::Read(character* Char)
       return false;
     }
 
+  if(Char->GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
+    {
+      ADD_MESSAGE("It is too dark to read.");
+      return false;
+    }
+
   item* Item = Char->GetStack()->DrawContents(Char, "What do you want to read?", 0, &item::ReadableSorter);
   return Item && Char->ReadItem(Item);
 }
@@ -480,20 +498,36 @@ bool commandsystem::Dip(character* Char)
       return false;
     }
 
+  bool HasDipDestination = Char->GetStack()->SortedItems(Char, &item::DipDestinationSorter) || Char->EquipsSomething(&item::DippableSorter);
+  bool DipDestinationNear = false;
+
+  for(ushort d = 0; d < 9; ++d)
+    {
+      lsquare* Square = Char->GetNeighbourLSquare(d);
+
+      if(Square && Square->IsDipDestination())
+	DipDestinationNear = true;
+    }
+
+  if(!HasDipDestination && !DipDestinationNear)
+    {
+      ADD_MESSAGE("There is nothing to dip anything into.");
+      return false;
+    }
+
   item* Item = Char->SelectFromPossessions("What do you want to dip?", &item::DippableSorter);
 
   if(Item)
     {
-      bool HasDipDestination = Char->GetStack()->SortedItems(Char, &item::DipDestinationSorter) || Char->EquipsSomething(&item::DippableSorter);
-
-      if(!HasDipDestination || game::BoolQuestion("Do you wish to dip in a nearby square? [y/N]"))
+      if(!HasDipDestination || (DipDestinationNear && game::BoolQuestion("Do you wish to dip in a nearby square? [y/N]")))
 	{
 	  uchar Dir = game::DirectionQuestion("Where do you want to dip " + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
+	  vector2d Pos = Char->GetPos() + game::GetMoveVector(Dir);
 
-	  if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+	  if(Dir == DIR_ERROR || !Char->GetArea()->IsValidPos(Pos) || !Char->GetNearLSquare(Pos)->IsDipDestination())
 	    return false;
 	  
-	  return Char->GetNearLSquare(Char->GetPos() + game::GetMoveVector(Dir))->DipInto(Item, Char);
+	  return Char->GetNearLSquare(Pos)->DipInto(Item, Char);
 	}
       else
 	{
@@ -1091,7 +1125,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	  PageLength = 25;
 	  break;
 	case 3:
-	  List.AddDescription("                                                  Danger    GModifier");
+	  List.AddDescription("                                                  Danger    NGM       EGM");
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
@@ -1102,9 +1136,14 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry.resize(57, ' ');
 
 	      if(Character[c]->CanBeGenerated())
-		Entry << int(Character[c]->GetDangerModifier() * 100);
+		{
+		  const dangerid& DI = game::GetDangerMap().find(configid(Character[c]->GetType(), Character[c]->GetConfig()))->second;
+		  Entry << int(DI.NakedDanger * 100);
+		  Entry.resize(67, ' ');
+		  Entry << int(DI.EquippedDanger * 100);
+		}
 	      else
-		Entry << '-';
+		Entry << "-         -";
 
 	      Pic.ClearToColor(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);

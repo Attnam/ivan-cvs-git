@@ -163,6 +163,7 @@ struct olterraindatabase : public terraindatabase
   ulong StorageVolume;
   uchar HPModifier;
   bool IsSafeToCreateDoor;
+  vector2d OpenBitmapPos;
 };
 
 class olterrainprototype
@@ -244,6 +245,7 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   DATA_BASE_VALUE(uchar, HPModifier);
   virtual DATA_BASE_BOOL(IsSafeToCreateDoor);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, OpenBitmapPos, ushort);
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }

@@ -7,10 +7,40 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Kicking mines no longer crashes
+	* Added CanBeConfused and CanAttack character database booleans
+	* Most special monsters can no longer be confused (this made them too easy)
+	* ESP-capable monsters are now more intelligent
+	* Only ESP-seen monsters, non-movable non-adjacent creatures and floating eyes
+	  no longer trigger action deactivation requests
+	* Spiders are no longer seen by ESP
+	* Offering an item to its AttachedGod is now especially pious
+	* Other offers are no less valuable, for balance
+	* Corrected a fatal bug in the gas loading code
+	* Polymorph targets are again more balanced
+	* Broken bear traps' names are now shown correctly
+	* Smoke is now shown in the lookmode
+	* Lookmode pile messages are now more informative
+	* Dropping is now more convenient
+	* Magic vapour and skunk smell work now a little better
+	* Fixed a terrible bug in the altar polymorph code
+	* Corrected a horrible error in the danger system initialization code
+	* Added Janne Miettinen's Mondedr to CVS
+	  * Added swamp terrain and prison doors
+	  * Added lava and swamp materials
+	  * Added a couple of temporary bad guys to the town
+	* Prison doors can now be seen through
+	* Dipping into an empty bottle no longer crashes
+	* It is no longer possible to dip a potion to the ice fountains of Attnam
+	* Falling roofs now destroys smoke
+	* Earthquake now damages doors
+
 March 14 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
-	* Made skunk easier 
-	
+	* Made skunk easier
+
 March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Mage tweaks

@@ -3,7 +3,7 @@
 bool door::CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
 void door::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 void door::AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
-vector2d door::GetBitmapPos(ushort) const { return vector2d(0, Opened ? 48 : 176); }
+vector2d door::GetBitmapPos(ushort Frame) const { return Opened ? GetOpenBitmapPos(Frame) : olterrain::GetBitmapPos(Frame); }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
@@ -13,7 +13,6 @@ void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitM
 vector2d fountain::GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
 
 void brokendoor::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
-vector2d brokendoor::GetBitmapPos(ushort) const { return vector2d(0, Opened ? 48 : 160); }
 
 std::string liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
 std::string liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
@@ -536,6 +535,9 @@ bool altar::Polymorph(character*)
   while(NewGod == OldGod)
     NewGod = 1 + RAND() % GODS;
 
+  if(GetRoom())
+    GetRoom()->SetDivineMaster(NewGod);
+
   SetConfig(NewGod);
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
@@ -626,13 +628,8 @@ void door::CreateBoobyTrap()
 
 bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  if(GetContainedMaterial())
-    {
-      ToBeDipped->DipInto(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()), Who);
-      return true;
-    }
-  else
-    return false;
+  ToBeDipped->DipInto(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()), Who);
+  return true;
 }
 
 void fountain::Save(outputfile& SaveFile) const
@@ -1075,5 +1072,11 @@ bool door::IsWalkable(const character* Char) const
 
 bool door::IsTransparent() const
 {
-  return Opened || MainMaterial->IsTransparent();
+  return Opened || MainMaterial->IsTransparent() || Config == DOOR_PRISON;
+}
+
+bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
+{
+  ToBeDipped->DipInto(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway()), Who);
+  return true;
 }

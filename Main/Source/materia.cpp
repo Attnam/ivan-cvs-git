@@ -68,7 +68,12 @@ bool material::Effect(character* Eater, ulong Amount)
     case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
     case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); return true;
     case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); return true;
-    case EFFECT_MAGIC_VAPOUR: Eater->ActivateRandomState(Amount); return true;
+    case EFFECT_MAGIC_VAPOUR:
+      {
+	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
+        Eater->ActivateRandomState(Amount, Volume % 250 + Pos.X + Pos.Y + 1);
+	return true;
+      }
     default: return false;
     }
 }
@@ -202,5 +207,5 @@ bool material::IsStupidToConsume()
 
 bool material::BreatheEffect(character* Enemy)
 {
-  return Effect(Enemy, GetVolume() / 10);
+  return Effect(Enemy, Max<ulong>(GetVolume() / 10, 50));
 }
