@@ -105,17 +105,6 @@ template <class type> type* contentscript<type>::Instantiate() const
 	for(ushort c = 0; c < MaterialType.size(); ++c)
 		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialType[c])->Clone(0));
 
-	/*if(MaterialType.size())
-	{
-		Instance = protocontainer<type>::GetProto(*ContentType)->Clone(false);
-		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType[0])->Clone(0));
-
-		for(ushort c = 1; c < MaterialType.size(); ++c)
-			Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialType[c])->Clone(0));
-	}
-	else
-		Instance = protocontainer<type>::GetProto(*ContentType)->Clone();*/
-
 	return Instance;
 }
 

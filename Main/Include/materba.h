@@ -47,7 +47,8 @@ class inputfile;
 
 class material : public typeable
 {
-public: 
+public:
+	material() : Volume(0) {}
 	virtual ~material()					{}
 	virtual std::string Name(uchar Case = 0) const;
 	virtual ushort GetHitValue() const = 0;

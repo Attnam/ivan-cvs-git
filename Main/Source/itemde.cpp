@@ -212,11 +212,10 @@ bool pickaxe::Apply(character* User, stack*)
 	
 	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
 	{
-
 		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->CanBeDigged(User, this))
 		{
 			//User->SetAP(ushort(User->GetAP() + float(User->GetStrength() * 2 - 200)));
-			User->SetSquareToBeDigged(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp));
+			User->SetSquareBeingDigged(User->GetPos() + Temp);
 			User->SetOldWieldedItem(User->GetWielded());
 			User->SetWielded(this);
 			User->ActivateState(DIGGING);

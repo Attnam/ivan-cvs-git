@@ -219,10 +219,12 @@ public:
 	virtual void EndRest();
 	virtual void DigHandler();
 	virtual void EndDig();
-	virtual levelsquare* GetSquareBeingDigged() { return StateVariables.Digging.SquareBeingDigged; }
-	virtual void SetSquareToBeDigged(levelsquare* What) { StateVariables.Digging.SquareBeingDigged = What; }
-	virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
+	//virtual levelsquare* GetSquareBeingDigged() { return StateVariables.Digging.SquareBeingDigged; }
+	//virtual void SetSquareToBeDigged(levelsquare* What) { StateVariables.Digging.SquareBeingDigged = What; }
 	virtual void SetOldWieldedItem(item* What) { StateVariables.Digging.OldWieldedItem = What; }
+	virtual void SetSquareBeingDigged(vector2d What) { StateVariables.Digging.SquareBeingDiggedX = What.X; StateVariables.Digging.SquareBeingDiggedY = What.Y; }
+	virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
+	virtual vector2d GetSquareBeingDigged() const { return vector2d(StateVariables.Digging.SquareBeingDiggedX, StateVariables.Digging.SquareBeingDiggedY); }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();
@@ -272,7 +274,8 @@ protected:
 		} Consuming;
 		struct digging
 		{
-			levelsquare* SquareBeingDigged;
+			ushort SquareBeingDiggedX;
+			ushort SquareBeingDiggedY;
 			item* OldWieldedItem;
 		} Digging;
 	} StateVariables;

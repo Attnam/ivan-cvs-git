@@ -223,7 +223,7 @@ void character::Be()
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
-				if(Timer++ == 20)
+				if(CanMove() && Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -1223,18 +1223,27 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
 	SaveFile << State;
-/*
-	if(GetConsumingCurrently())
-		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently);
+
+	if(StateIsActivated(EATING))
+		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
 	else
-		SaveFile << ushort(0);*/
+		SaveFile << ushort(0);
+
+	if(StateIsActivated(DIGGING))
+	{
+		SaveFile << ushort(1);
+		SaveFile << GetStack()->SearchItem(GetOldWieldedItem());
+		SaveFile << StateVariables.Digging.SquareBeingDiggedX << StateVariables.Digging.SquareBeingDiggedY;
+	}
+	else
+		SaveFile << ushort(0);
 
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile << StateCounter[c];
 
 	SaveFile << Team->GetID();
 
-/*	if(GetConsumingCurrently())
+	if(StateIsActivated(EATING))
 	{
 		Index = GetStack()->SearchItem(GetConsumingCurrently());
 
@@ -1252,7 +1261,7 @@ void character::Save(outputfile& SaveFile) const
 		}
 	}
 	else
-		SaveFile << uchar(0);*/
+		SaveFile << uchar(0);
 
 	if(GetTeam()->GetLeader() == this)
 		SaveFile << uchar(1);
@@ -1285,6 +1294,15 @@ void character::Load(inputfile& SaveFile)
 
 	if(Index)
 		SetConsumingCurrently(GetLevelSquareUnder()->GetStack()->GetItem(Index));
+
+	SaveFile >> Index;
+
+	if(Index)
+	{
+		SaveFile >> Index;
+		SetOldWieldedItem(GetStack()->GetItem(Index));
+		SaveFile >> StateVariables.Digging.SquareBeingDiggedX >> StateVariables.Digging.SquareBeingDiggedY;
+	}
 
 	for(uchar c = 0; c < STATES; ++c)
 		SaveFile >> StateCounter[c];
@@ -2301,7 +2319,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 {
 	if(GetIsPlayer())
 	{
-		if((StateIsActivated(EATING) || StateIsActivated(RESTING)) && Reason != "")
+		if((StateIsActivated(EATING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING)) && Reason != "")
 			ADD_MESSAGE("%s.", Reason.c_str());
 
 		if(StateIsActivated(EATING))
@@ -2309,6 +2327,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 
 		if(StateIsActivated(RESTING))
 			ADD_MESSAGE("You stop resting.");
+
 		if(StateIsActivated(DIGGING))
 		{
 			ADD_MESSAGE("You stop digging.");
@@ -2523,8 +2542,12 @@ void character::DigHandler(void)
 
 void character::EndDig(void)
 {
-	if(StateCounter[DIGGING] == 0)
-		StateVariables.Digging.SquareBeingDigged->Dig(this, GetWielded());
-	SetWielded(GetOldWieldedItem());
-	DeActivateState(DIGGING);
+	if(StateIsActivated(DIGGING))
+	{
+		if(StateCounter[DIGGING] == 0)
+			game::GetCurrentLevel()->GetLevelSquare(GetSquareBeingDigged())->Dig(this, GetWielded());
+
+		SetWielded(GetOldWieldedItem());
+		DeActivateState(DIGGING);
+	}
 }

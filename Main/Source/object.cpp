@@ -58,7 +58,7 @@ void object::InitMaterials(ushort Materials, ...)
 	{
 		Material.push_back(va_arg(AP, material*));
 
-		if(Material[c])
+		if(Material[c] && !Material[c]->GetVolume())
 			Material[c]->SetVolume(GetDefaultVolume(c));
 
 		if(c < 4 && Material[c])
@@ -76,7 +76,12 @@ void object::InitMaterials(material* FirstMaterial)
 	Material.push_back(FirstMaterial);
 
 	if(Material[0])
+	{
 		GraphicId.Color[0] = Material[0]->GetColor();
+
+		if(!Material[0]->GetVolume())
+			Material[0]->SetVolume(GetDefaultVolume(0));
+	}
 
 	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
 	Picture = igraph::AddUser(GraphicId).Bitmap;
