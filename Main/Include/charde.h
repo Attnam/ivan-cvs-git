@@ -279,10 +279,8 @@ class CHARACTER
 	},
 public:
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
-	virtual uchar GetSex() const RET(MALE)
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
-	virtual bool CanKick() const RET(true)
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
@@ -312,9 +310,6 @@ class CHARACTER
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }
-	virtual uchar GetSex() const RET(MALE)
-	virtual bool CanWield() const RET(true)
-	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
@@ -340,7 +335,6 @@ public:
 	virtual bool CanBeGenerated() const { return false; }
 	virtual bool Hit(character*);
 	virtual bool Polymorph() const RET(false)
-	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
@@ -460,8 +454,6 @@ class CHARACTER
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }
-	virtual bool CanWield() const RET(true)
-	virtual bool CanKick() const RET(true)
 	virtual void SpillBlood(uchar) {}
 	virtual void SpillBlood(uchar, vector2d) {}
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
@@ -489,8 +481,6 @@ class CHARACTER
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }
-	virtual bool CanWield() const RET(true)
-	virtual bool CanKick() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 25000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
@@ -1118,11 +1108,10 @@ protected:
 	virtual float GetMeleeStrength() const RET(5000)
 );
 
-
 class CHARACTER
 (
 	mistress,
-	character,
+	humanoid,
 	InitMaterials(new humanflesh),
 	{
 		SetSize(180);
@@ -1132,9 +1121,8 @@ class CHARACTER
 		SetPerception(10);
 	},
 public:
-	virtual ushort Possibility() const RET(50)
+	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
-	virtual bool CanWield() const RET(true)
 	virtual uchar GetSex() const RET(FEMALE)
 protected:
 	virtual vector2d GetBitmapPos() const RETV(352,0)
@@ -1142,24 +1130,23 @@ protected:
 	virtual std::string NameSingular() const RET("mistress")
 );
 
-
 class CHARACTER
 (
 	werewolf,
-	human,
+	complexhumanoid,
 	InitMaterials(new werewolfflesh),
 	{
-		SetMoney(RAND() % 30);
 		SetChangeCounter(0);
+
 		if(RAND() % 2) 
 			ChangeIntoHuman();
 		else
 			ChangeIntoWolf();
 	},
 public:
+	virtual bool CanBeGenerated() const { return true; }
 	virtual void Load(inputfile&);
 	virtual void Save(outputfile&) const;
-	virtual ushort Possibility() const RET(125)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
 	virtual bool HasInfraVision() const { return GetIsWolf(); }
 	virtual void ChangeIntoHuman();
@@ -1169,7 +1156,7 @@ public:
 	virtual void SetIsWolf(bool What) { IsWolf = What; }
 	virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
 	virtual ushort GetChangeCounter() { return ChangeCounter; }
-	virtual ulong werewolf::MaxDanger();
+	virtual ulong MaxDanger();
 	virtual bool CanWield() const { return !GetIsWolf(); } 
 protected:
 	virtual std::string NameSingular() const RET("werewolf")
@@ -1178,11 +1165,10 @@ protected:
 	unsigned short ChangeCounter;
 );
 
-
 class CHARACTER
 (
 	kobold,
-	character,
+	humanoid,
 	InitMaterials(new koboldflesh),
 	{
 		SetSize(70);
@@ -1192,7 +1178,7 @@ class CHARACTER
 		SetPerception(12);
 	},
 public:
-	virtual ushort Possibility() const RET(75)
+	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 90000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(448,0)
@@ -1201,7 +1187,7 @@ protected:
 );
 
 class CHARACTER	// it should be noted that I no idea what 
-(				// a gibberling is.... sooooo....
+(		// a gibberling is.... sooooo....
 	gibberling,
 	character,
 	InitMaterials(new gibberlingflesh),
@@ -1213,7 +1199,6 @@ class CHARACTER	// it should be noted that I no idea what
 		SetPerception(12);
 	},
 public:
-	virtual ushort Possibility() const RET(125)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 70000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(480,0)
@@ -1234,14 +1219,12 @@ class CHARACTER
 		SetPerception(20);
 	},
 public:
-	virtual ushort Possibility() const RET(125)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(496,0)
 	virtual std::string NameSingular() const RET("large cat")
 	virtual float GetMeleeStrength() const RET(15000)
 );
-
 
 class CHARACTER	
 (				
@@ -1256,7 +1239,6 @@ class CHARACTER
 		SetPerception(10);
 	},
 public:
-	virtual ushort Possibility() const RET(150)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(512,0)
@@ -1264,12 +1246,10 @@ protected:
 	virtual float GetMeleeStrength() const RET(4000)
 );
 
-
-
 class CHARACTER	
 (				
 	angel,
-	character,
+	humanoid,
 	InitMaterials(2, new angelflesh, new pork), // 2nd is temp material.
 	{
 		SetSize(30);
@@ -1279,14 +1259,11 @@ class CHARACTER
 		SetPerception(40);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(432,0)
 	virtual std::string NameSingular() const RET("angel")
 	virtual float GetMeleeStrength() const RET(40000)
 );
-
-
 
 #endif

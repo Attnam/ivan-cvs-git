@@ -1465,10 +1465,6 @@ void werewolf::ChangeIntoHuman()
 	SetArmType(1);		// Needs GFX
 	SetHeadType(1);
 	SetShieldType(0);
-	SetStrengthExperience(0);
-	SetEnduranceExperience(0);
-	SetAgilityExperience(0);
-	SetPerceptionExperience(0);
 	SetIsWolf(false);
 }
 
@@ -1486,12 +1482,7 @@ void werewolf::ChangeIntoWolf()
 	SetShieldType(0);
 	SetIsWolf(true);
 	SetWielded(0);
-	SetStrengthExperience(0);
-	SetEnduranceExperience(0);
-	SetAgilityExperience(0);
-	SetPerceptionExperience(0);
 }
-
 
 void werewolf::Be()
 {
@@ -1502,7 +1493,7 @@ void werewolf::Be()
 		{	
 			ChangeIntoHuman();
 			if(GetIsPlayer())
-				ADD_MESSAGE("You change into a human... Atleast for some time.");
+				ADD_MESSAGE("You change into a human... At least for some time.");
 			else if(GetSquareUnder()->CanBeSeen())
 			{
 				ADD_MESSAGE("%s changes into human.", CNAME(DEFINITE));
@@ -1512,7 +1503,7 @@ void werewolf::Be()
 		{
 			ChangeIntoWolf();
 			if(GetIsPlayer())
-				ADD_MESSAGE("You change into a wolf... Atleast for some time.");
+				ADD_MESSAGE("You change into a wolf... At least for some time.");
 			else if(GetSquareUnder()->CanBeSeen())
 			{
 				ADD_MESSAGE("%s changes into a wolf.", CNAME(DEFINITE));
@@ -1545,17 +1536,16 @@ float werewolf::GetMeleeStrength() const
 		return 1000;
 }
 
-
 void werewolf::Save(outputfile& SaveFile) const
 {
-	humanoid::Save(SaveFile);
+	complexhumanoid::Save(SaveFile);
 
 	SaveFile << IsWolf << ChangeCounter;
 }
 
 void werewolf::Load(inputfile& SaveFile)
 {
-	humanoid::Load(SaveFile);
+	complexhumanoid::Load(SaveFile);
 
 	SaveFile >> IsWolf >> ChangeCounter;
 }
