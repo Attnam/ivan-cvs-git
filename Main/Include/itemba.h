@@ -191,7 +191,7 @@ class item : public object
   virtual void Be();
   virtual bool RemoveMaterial(uchar) { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ReceiveDamage(character*, short, uchar) { return false; }
+  virtual bool ReceiveDamage(character*, ushort, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }

@@ -198,6 +198,24 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Alias);
   ANALYZEDATA(CreateDivineConfigurations);
   ANALYZEDATA(CreateSolidMaterialConfigurations);
+  ANALYZEDATA(Helmet);
+  ANALYZEDATA(Amulet);
+  ANALYZEDATA(Cloak);
+  ANALYZEDATA(BodyArmor);
+  ANALYZEDATA(Belt);
+  ANALYZEDATA(RightWielded);
+  ANALYZEDATA(LeftWielded);
+  ANALYZEDATA(RightRing);
+  ANALYZEDATA(LeftRing);
+  ANALYZEDATA(RightGauntlet);
+  ANALYZEDATAWITHDEFAULT(LeftGauntlet, RightGauntlet);
+  ANALYZEDATA(RightBoot);
+  ANALYZEDATAWITHDEFAULT(LeftBoot, RightBoot);
+  ANALYZEDATA(AttributeBonus);
+  ANALYZEDATA(KnownCategoryWeaponSkills);
+  ANALYZEDATA(CategoryWeaponSkillHits);
+  ANALYZEDATA(RightSingleWeaponSkillHits);
+  ANALYZEDATA(LeftSingleWeaponSkillHits);
 
   return Found;
 }

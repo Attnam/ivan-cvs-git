@@ -1,10 +1,33 @@
+July 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Equipment screen now shows if a weapon is wielded with both hands
+	* It is now possible to define starting equipment of a character from the datafile
+	* Added rings of energy, acid and poison resistance
+	* Added "reload datafiles" WMode command: it is now possible to add characters,
+	  items, terrains and materials at run time!
+	* Added AttributeBonus character database value, which is a percental value
+	  added to or substracted from all attributes and very useful with configurations
+	* If a hit does no damage, the game now prints a special message
+	* Category and single weapon skills can now be set in the datafiles
+	* Panel and all info commands now show min and max damage instead of the
+	  incomprehensible "attack strength"
+	* Corrected the rounding errors of the weapon skill screen caused by floating
+	  point arithmetic
+	* Corrected a fatal bug in the corpse save code
+	* 17 new character configurations added:
+		* rookie, veteran, elite, master and grand master darkknight
+		* skeleton warrior and warlord
+		* goblin berserker, butcher, prince and king
+		* kobold chieftain and lord
+		* mistress torturing chief, whip champion, warlady and queen
+
 July 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added poleaxe named Mjolak 
 	* Added spear named Vermis 
 	* Both have currently _BAD_ messages. The system is not ready yet.
 	
-July 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+July 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added system to estimate the danger of a monster relative to another
 	* Removed old danger system; it just didn't work

@@ -275,3 +275,4 @@ Handling flying bear traps and kicking bear traps.
 Calamus should haste the player.
 Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
+"Bang your head at" command.

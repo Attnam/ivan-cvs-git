@@ -70,7 +70,7 @@ class ABSTRACT_CHARACTER
   void SetLeftBoot(item* What) { GetLeftLeg()->SetBoot(What); }
   virtual arm* GetMainArm() const;
   virtual arm* GetSecondaryArm() const;
-  virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX || Index == GROININDEX; }
   virtual bool BodyPartCanBeSevered(ushort Index) const { return Index != TORSOINDEX && Index != GROININDEX && GetBodyPart(Index); }
   virtual item* GetMainWielded() const;
@@ -138,6 +138,8 @@ class ABSTRACT_CHARACTER
   virtual void CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
   virtual bool HasFeet() const;
+  virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
+  virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -162,18 +164,24 @@ class ABSTRACT_CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void CalculateUnarmedStrength();
-  virtual void CalculateKickStrength();
-  virtual void CalculateBiteStrength();
+  virtual void CalculateUnarmedDamage();
+  virtual void CalculateKickDamage();
+  virtual void CalculateBiteDamage();
   virtual void CalculateUnarmedToHitValue();
   virtual void CalculateKickToHitValue();
   virtual void CalculateBiteToHitValue();
   virtual void CalculateUnarmedAPCost();
   virtual void CalculateKickAPCost();
   virtual void CalculateBiteAPCost();
-  float GetUnarmedStrength() const { return UnarmedStrength; }
-  float GetKickStrength() const { return KickStrength; }
-  float GetBiteStrength() const { return BiteStrength; }
+  float GetUnarmedDamage() const { return UnarmedDamage; }
+  ushort GetUnarmedMinDamage() const { return UnarmedDamage * 0.75f; }
+  ushort GetUnarmedMaxDamage() const { return UnarmedDamage * 1.25f + 1; }
+  float GetKickDamage() const { return KickDamage; }
+  ushort GetKickMinDamage() const { return KickDamage * 0.75f; }
+  ushort GetKickMaxDamage() const { return KickDamage * 1.25f + 1; }
+  float GetBiteDamage() const { return BiteDamage; }
+  ushort GetBiteMinDamage() const { return BiteDamage * 0.75f; }
+  ushort GetBiteMaxDamage() const { return BiteDamage * 1.25f + 1; }
   float GetUnarmedToHitValue() const { return UnarmedToHitValue; }
   float GetKickToHitValue() const { return KickToHitValue; }
   float GetBiteToHitValue() const { return BiteToHitValue; }
@@ -205,9 +213,9 @@ class ABSTRACT_CHARACTER
   ushort Agility;
   long StrengthExperience;
   long AgilityExperience;
-  float UnarmedStrength;
-  float KickStrength;
-  float BiteStrength;
+  float UnarmedDamage;
+  float KickDamage;
+  float BiteDamage;
   float UnarmedToHitValue;
   float KickToHitValue;
   float BiteToHitValue;
@@ -244,7 +252,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse();
@@ -259,7 +267,7 @@ class CHARACTER
   farmer,
   humanoid,
  public:
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
   virtual vector2d GetHeadBitmapPos(ushort) const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
@@ -276,7 +284,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -287,7 +295,7 @@ class CHARACTER
  public:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -297,7 +305,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
 );
 
@@ -307,7 +315,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
@@ -325,7 +333,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
 );
 
 class CHARACTER
@@ -380,7 +388,7 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  virtual float GetUnarmedStrength() const;
+  virtual void CalculateUnarmedDamage();
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
@@ -400,7 +408,7 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
  protected:
@@ -414,7 +422,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(GOBLINOIDFLESH, Volume); }
 );
@@ -500,7 +508,7 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
   virtual void VirtualConstructor(bool);
@@ -513,7 +521,7 @@ class CHARACTER
   hunter,
   humanoid,
  public:
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
   virtual void CreateBodyPart(ushort);
@@ -583,7 +591,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -633,7 +641,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
 );
 
 class CHARACTER
@@ -657,7 +665,7 @@ class CHARACTER
   kobold,
   humanoid,
  public:
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(KOBOLDFLESH, Volume); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies yelling like a tortured hyena."; }
@@ -736,7 +744,7 @@ class CHARACTER
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
-  virtual void CreateInitialEquipment();
+  //virtual void CreateInitialEquipment();
  protected:
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies smiling."; }
 );

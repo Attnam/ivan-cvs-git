@@ -64,6 +64,9 @@ character
 	CanBeWished = true;
 	CreateDivineConfigurations = false;
 	CreateSolidMaterialConfigurations = false;
+	AttributeBonus = 0;
+	RightSingleWeaponSkillHits = 0;
+	LeftSingleWeaponSkillHits = 0;
 }
 
 humanoid
@@ -149,7 +152,15 @@ petrus
 	IsPolymorphable = false;
 	CanBeWished = false;
 	Alias == "Petrus";
-	ClassStates = INFRAVISION;
+	Amulet = amulet(AMULETOFLIFESAVING);
+	BodyArmor = DIAMOND platemail;
+	RightWielded = valpurusjustifier;
+	RightRing = ring(RINGOFFIRERESISTANCE);
+	LeftRing = ring(RINGOFPOISONRESISTANCE);
+	RightBoot = GOLD boot(BOOTOFSPEED);
+	KnownCategoryWeaponSkills == LARGE_SWORDS;
+	CategoryWeaponSkillHits == 5000;
+	RightSingleWeaponSkillHits = 5000;
 }
 
 farmer
@@ -170,6 +181,11 @@ farmer
 	TotalSize = 170;
 	NameSingular = "farmer";
 	TorsoBitmapPos = 32, 16;
+	Belt = LEATHER belt;
+	RightWielded = meleeweapon(AXE);
+	KnownCategoryWeaponSkills == AXES;
+	CategoryWeaponSkillHits == 50;
+	RightSingleWeaponSkillHits = 20;
 }
 
 guard
@@ -194,6 +210,13 @@ guard
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "guard";
+	Helmet = IRON helmet;
+	BodyArmor = IRON bodyarmor(CHAINMAIL);
+	RightWielded = IRON meleeweapon(LONGSWORD);
+	LeftWielded = IRON shield;
+	KnownCategoryWeaponSkills == LARGE_SWORDS;
+	CategoryWeaponSkillHits == 200;
+	RightSingleWeaponSkillHits = 5;
 }
 
 shopkeeper
@@ -218,6 +241,12 @@ shopkeeper
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
 	IsPolymorphable = false;
+	Helmet = STEEL helmet;
+	BodyArmor = STEEL bodyarmor(CHAINMAIL);
+	RightWielded = STEEL pickaxe;
+	KnownCategoryWeaponSkills == AXES;
+	CategoryWeaponSkillHits == 50;
+	RightSingleWeaponSkillHits = 20;
 }
 
 priest
@@ -242,6 +271,12 @@ priest
 	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "priest";
+	Helmet = MITHRIL helmet;
+	BodyArmor = MITHRIL bodyarmor(CHAINMAIL);
+	RightWielded = MITHRIL meleeweapon(SPIKEDMACE);
+	KnownCategoryWeaponSkills == MACES;
+	CategoryWeaponSkillHits == 50;
+	RightSingleWeaponSkillHits = 20;
 }
 
 oree
@@ -277,6 +312,10 @@ oree
 	CanBeWished = false;
 	Alias == "Oree";
 	ClassStates = INFRAVISION;
+	BodyArmor = goldeneagleshirt;
+	RightBoot = DIAMOND boot(BOOTOFSPEED);
+	/*KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 50;*/
 }
 
 darkknight
@@ -300,9 +339,67 @@ darkknight
 	TotalVolume = 110000;
 	TotalSize = 200;
 	CanRead = true;
-	Adjective = "dark";
-	NameSingular = "knight";
+	NameSingular = "dark knight";
 	CanBeGenerated = true;
+	IsAbstract = true;
+	KnownCategoryWeaponSkills == LARGE_SWORDS;
+
+	Config ROOKIE;
+	{
+		AttributeBonus = -25;
+		Helmet = WOOD helmet;
+		BodyArmor = LEATHER platemail;
+		RightWielded = WOOD meleeweapon(LONGSWORD);
+		LeftWielded = WOOD shield;
+		Adjective = "rookie";
+		CategoryWeaponSkillHits == 50;
+		RightSingleWeaponSkillHits = 20;
+	}
+
+	Config VETERAN;
+	{
+		AttributeBonus = -10;
+		Helmet = BRONZE helmet;
+		BodyArmor = BRONZE bodyarmor(CHAINMAIL);
+		RightWielded = BRONZE meleeweapon(LONGSWORD);
+		LeftWielded = BRONZE shield;
+		Adjective = "veteran";
+		CategoryWeaponSkillHits == 100;
+		RightSingleWeaponSkillHits = 50;
+	}
+
+	Config ELITE;
+	{
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(CHAINMAIL);
+		RightWielded = IRON meleeweapon(LONGSWORD);
+		LeftWielded = IRON shield;
+		Adjective = "elite";
+		CategoryWeaponSkillHits == 200;
+		RightSingleWeaponSkillHits = 100;
+	}
+
+	Config MASTER;
+	{
+		AttributeBonus = 10;
+		Helmet = STEEL helmet;
+		BodyArmor = STEEL bodyarmor(CHAINMAIL);
+		RightWielded =IRON meleeweapon(TWOHANDEDSWORD);
+		Adjective = "master";
+		CategoryWeaponSkillHits == 500;
+		RightSingleWeaponSkillHits = 200;
+	}
+
+	Config GRANDMASTER;
+	{
+		AttributeBonus = 25;
+		Helmet = MITHRIL helmet;
+		BodyArmor = IRON platemail;
+		RightWielded = IRON meleeweapon(CURVEDTWOHANDEDSWORD);
+		Adjective = "grand master";
+		CategoryWeaponSkillHits == 1000;
+		RightSingleWeaponSkillHits = 500;
+	}
 }
 
 ennerbeast
@@ -345,7 +442,7 @@ frog
 	NameSingular = "frog";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 20000;
+	BaseBiteStrength = 30000;
 	CanSwim = true;
 }
 
@@ -414,7 +511,7 @@ billswill
 	NameSingular = "mass";
 	NamePlural = "masses";
 	PostFix = "of Bill's will";
-	BaseUnarmedStrength = 20000;
+	BaseUnarmedStrength = 50000;
 	CanBeGenerated = true;
 	ClassStates = ESP;
 }
@@ -447,6 +544,35 @@ skeleton
 	ArmBonePercentile = 100;
 	GroinBonePercentile = 100;
 	LegBonePercentile = 100;
+	Helmet = helmet;
+	RightWielded = meleeweapon(AXE);
+	KnownCategoryWeaponSkills == AXES;
+	CategoryWeaponSkillHits == 50;
+	RightSingleWeaponSkillHits = 20;
+
+	Config WARRIOR;
+	{
+		AttributeBonus = 100;
+		RightWielded = meleeweapon(SPIKEDMACE);
+		KnownCategoryWeaponSkills == MACES;
+		CategoryWeaponSkillHits == 100;
+		RightSingleWeaponSkillHits = 50;
+		PostFix = "warrior";
+	}
+
+	Config WARLORD;
+	{
+		AttributeBonus = 200;
+		Helmet = STEEL helmet;
+		BodyArmor = STEEL brokenplatemail;
+		RightWielded = STEEL flamingsword;
+		LeftWielded = STEEL shield;
+		KnownCategoryWeaponSkills == LARGE_SWORDS;
+		CategoryWeaponSkillHits == 200;
+		RightSingleWeaponSkillHits = 100;
+		PostFix = "warlord";
+		Frequency = 1000;
+	}
 }
 
 goblin
@@ -473,6 +599,58 @@ goblin
 	NameSingular = "goblin";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	RightWielded = meleeweapon(SPEAR);
+	KnownCategoryWeaponSkills == SPEARS;
+	CategoryWeaponSkillHits == 10;
+	RightSingleWeaponSkillHits = 5;
+
+	Config BERSERKER;
+	{
+		AttributeBonus = 25;
+		RightWielded = BRONZE meleeweapon(AXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 20;
+		RightSingleWeaponSkillHits = 10;
+		PostFix = "berserker";
+	}
+
+	Config BUTCHER;
+	{
+		AttributeBonus = 50;
+		Helmet = LEATHER helmet;
+		BodyArmor = LEATHER platemail;
+		RightWielded = IRON meleeweapon(AXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 50;
+		RightSingleWeaponSkillHits = 20;
+		PostFix = "butcher";
+	}
+
+	Config PRINCE;
+	{
+		AttributeBonus = 100;
+		Helmet = BRONZE helmet;
+		BodyArmor = LEATHER platemail;
+		RightWielded = BRONZE meleeweapon(POLEAXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 100;
+		RightSingleWeaponSkillHits = 50;
+		PostFix = "prince";
+		Frequency = 2500;
+	}
+
+	Config KING;
+	{
+		AttributeBonus = 200;
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(CHAINMAIL);
+		RightWielded = IRON meleeweapon(POLEAXE);
+		KnownCategoryWeaponSkills == AXES;
+		CategoryWeaponSkillHits == 200;
+		RightSingleWeaponSkillHits = 100;
+		PostFix = "king";
+		Frequency = 500;
+	}
 }
 
 mommo
@@ -541,6 +719,7 @@ golem
 	CanUseEquipment = false;
 	CreateSolidMaterialConfigurations = true;
 	IsAbstract = true;
+	BaseUnarmedStrength = 5000;
 }
 
 wolf
@@ -561,7 +740,7 @@ wolf
 	NameSingular = "wolf";
 	NamePlural = "wolves";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 }
 
@@ -583,7 +762,7 @@ dog
 	SkinColor = rgb(111, 74, 37);
 	NameSingular = "dog";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 10000;
+	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
 }
 
@@ -628,13 +807,13 @@ jackal
 	SkinColor = rgb(255, 255, 255);
 	NameSingular = "jackal";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 10000;
+	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
 }
 
 donkey
 {
-	DefaultArmStrength = 15;
+	DefaultArmStrength = 20;
 	DefaultAgility = 5;
 	DefaultEndurance = 15;
 	DefaultPerception = 15;
@@ -681,6 +860,16 @@ communist /* Ivan */
 	NameSingular = "communist";
 	Alias == "Ivan";
 	ClassStates = INFRAVISION;
+	Helmet = IRON helmet;
+	Cloak = LEATHER cloak;
+	BodyArmor = IRON platemail;
+	Belt = LEATHER belt;
+	RightWielded = IRON meleeweapon(SPIKEDMACE);
+	KnownCategoryWeaponSkills = { 7, UNARMED, CLUBS, HAMMERS, MACES, FLAILS, AXES, HALBERDS; }
+	CategoryWeaponSkillHits = { 7, 1000, 1000, 2000, 2000, 1000, 1000, 1000; }
+	RightSingleWeaponSkillHits = 1000;
+	RightGauntlet = IRON gauntlet;
+	RightBoot = IRON boot;
 }
 
 hunter
@@ -704,6 +893,16 @@ hunter
 	TotalVolume = 80000;
 	TotalSize = 180;
 	NameSingular = "hunter";
+	Helmet = LEATHER helmet;
+	Cloak = LEATHER cloak;
+	BodyArmor = LEATHER platemail;
+	RightWielded = meleeweapon(SPEAR);
+	RightGauntlet = LEATHER gauntlet;
+	LeftGauntlet = 0;
+	RightBoot = LEATHER boot;
+	KnownCategoryWeaponSkills == SPEARS;
+	CategoryWeaponSkillHits == 100;
+	RightSingleWeaponSkillHits = 100;
 }
 
 polarbear
@@ -724,7 +923,7 @@ polarbear
 	Adjective = "polar";
 	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 10000;
+	BaseBiteStrength = 15000;
 }
 
 dolphin
@@ -795,6 +994,8 @@ slave
 	TotalVolume = 60000;
 	TotalSize = 160;
 	NameSingular = "slave";
+	KnownCategoryWeaponSkills == CLUBS;
+	CategoryWeaponSkillHits == 200;
 }
 
 petrusswife
@@ -1048,6 +1249,54 @@ mistress
 	CanRead = true;
 	NameSingular = "mistress";
 	CanBeGenerated = true;
+	BodyArmor = LEATHER platemail;
+	RightWielded = LEATHER whip;
+	LeftWielded = LEATHER whip;
+	KnownCategoryWeaponSkills == WHIPS;
+	CategoryWeaponSkillHits == 200;
+	RightSingleWeaponSkillHits = 200;
+	LeftSingleWeaponSkillHits = 200;
+
+	Config TORTURINGCHIEF;
+	{
+		AttributeBonus = 25;
+		BodyArmor = IRON bodyarmor(CHAINMAIL);
+		CategoryWeaponSkillHits == 500;
+		RightSingleWeaponSkillHits = 500;
+		LeftSingleWeaponSkillHits = 500;
+		PostFix = "torturing chief";
+	}
+
+	Config WHIPCHAMPION;
+	{
+		AttributeBonus = 50;
+		BodyArmor = STEEL bodyarmor(CHAINMAIL);
+		CategoryWeaponSkillHits == 1000;
+		RightSingleWeaponSkillHits = 1000;
+		LeftSingleWeaponSkillHits = 1000;
+		PostFix = "whip champion";
+	}
+
+	Config WARLADY;
+	{
+		AttributeBonus = 75;
+		BodyArmor = MITHRIL bodyarmor(CHAINMAIL);
+		CategoryWeaponSkillHits == 2000;
+		RightSingleWeaponSkillHits = 2000;
+		LeftSingleWeaponSkillHits = 2000;
+		PostFix = "warlady";
+	}
+
+	Config QUEEN;
+	{
+		AttributeBonus = 100;
+		BodyArmor = DIAMOND bodyarmor(CHAINMAIL);
+		CategoryWeaponSkillHits == 5000;
+		RightSingleWeaponSkillHits = 5000;
+		LeftSingleWeaponSkillHits = 5000;
+		PostFix = "queen";
+		Frequency = 500;
+	}
 }
 
 werewolfhuman
@@ -1137,6 +1386,28 @@ kobold
 	NameSingular = "kobold";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	RightWielded = WOOD meleeweapon(SPEAR);
+	KnownCategoryWeaponSkills == SPEARS;
+	CategoryWeaponSkillHits == 10;
+	RightSingleWeaponSkillHits = 5;
+
+	Config CHIEFTAIN;
+	{
+		AttributeBonus = 50;
+		RightWielded = COPPER meleeweapon(SPEAR);
+		CategoryWeaponSkillHits == 20;
+		RightSingleWeaponSkillHits = 10;
+		PostFix = "chieftain";
+	}
+
+	Config LORD;
+	{
+		AttributeBonus = 100;
+		RightWielded = IRON meleeweapon(SPEAR);
+		CategoryWeaponSkillHits == 50;
+		RightSingleWeaponSkillHits = 20;
+		PostFix = "lord";
+	}
 }
 
 gibberling
@@ -1246,6 +1517,7 @@ angel
 	/* LegBitmapPos is not used */
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
+	/* Equipment initialization overridden */
 }
 
 dwarf
@@ -1280,6 +1552,7 @@ kamikazedwarf
 	CanBeGenerated = true;
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
+	/* Equipment initialization overridden */
 }
 
 mammoth
@@ -1299,8 +1572,8 @@ mammoth
 	SkinColor = rgb(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 10000;
-	BaseBiteStrength = 5000;
+	BaseKickStrength = 15000;
+	BaseBiteStrength = 7500;
 	CanBeGenerated = true;
 	CanKick = true;
 }
@@ -1321,8 +1594,8 @@ unicorn
 	TotalSize = 200;
 	NameSingular = "unicorn";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 10000;
-	BaseBiteStrength = 5000;
+	BaseKickStrength = 15000;
+	BaseBiteStrength = 7500;
 	CanBeGenerated = true;
 	CanKick = true;
 	IsAbstract = true;
@@ -1370,6 +1643,10 @@ genie
 	TorsoBitmapPos = 32, 272;
 	ArmBitmapPos = 64, 272;
 	/* LegBitmapPos is not used */
+	RightWielded = meleeweapon(CURVEDTWOHANDEDSWORD);
+	KnownCategoryWeaponSkills == LARGE_SWORDS;
+	CategoryWeaponSkillHits == 500;
+	RightSingleWeaponSkillHits = 200;
 }
 
 lion
@@ -1389,7 +1666,7 @@ lion
 	SkinColor = rgb(200, 200, 112);
 	NameSingular = "lion";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 15000;
+	BaseBiteStrength = 20000;
 }
 
 carnivorousplant
@@ -1410,7 +1687,7 @@ carnivorousplant
 	Adjective = "carnivorous";
 	NameSingular = "plant";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 2500;
+	BaseBiteStrength = 5000;
 	SkinColor = rgb(111, 64, 37);
 	TorsoMainColor = rgb(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
@@ -1435,29 +1712,29 @@ buffalo
 	TorsoMainColor = rgb(120, 120, 120); /* the horns */
 	NameSingular = "buffalo";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 10000;
-	BaseBiteStrength = 5000;
+	BaseKickStrength = 15000;
+	BaseBiteStrength = 7500;
 	CanKick = true;
 }
 
 snake
 {
-	DefaultArmStrength = 2;
-	DefaultAgility = 4;
-	DefaultEndurance = 4;
+	DefaultArmStrength = 10;
+	DefaultAgility = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 9;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
-	DefaultCharisma = 4;
+	DefaultCharisma = 5;
 	DefaultMana = 0;
-	TotalVolume = 400;
+	TotalVolume = 10000;
 	TorsoBitmapPos = 384, 0;
 	TalkVerb = "hisses";
 	TotalSize = 250;
 	SkinColor = rgb(130, 0, 0);
 	NameSingular = "snake";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 5000;
+	BaseBiteStrength = 10000;
 	CanKick = false;
 	StandVerb = "lying";
 }

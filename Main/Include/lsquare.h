@@ -104,7 +104,7 @@ class lsquare : public square
   void ChangeOLTerrainAndUpdateLights(olterrain*);
   void DrawParticles(ushort, uchar);
   void PolymorphEverything(character*);
-  void StrikeEverything(character*, const std::string&, short, uchar);
+  void StrikeEverything(character*, const std::string&, ushort, uchar);
   fluid* GetFluid() const { return Fluid; }
   void SetFluid(fluid* What) { Fluid = What; }
   void RemoveFluid();

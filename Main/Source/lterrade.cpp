@@ -214,18 +214,18 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
     }
 }
 
-void door::BeKicked(character*, float KickStrength)
+void door::BeKicked(character*, float KickDamage)
 {
   if(!IsWalkable()) 
     {
-      if(!IsLocked() && KickStrength > RAND() % 100000)
+      if(!IsLocked() && KickDamage > RAND() % 5)
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The door opens.");
 
 	  MakeWalkable();
 	}
-      else if(KickStrength > RAND() % 200000)
+      else if(KickDamage > RAND() % 10)
 	{
 	  if(IsLocked() && RAND() & 1)	// _can't really think of a good formula for this... 
 	    {				//Strength isn't everything
@@ -526,12 +526,12 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::BeKicked(character*, float KickStrength)
+void brokendoor::BeKicked(character*, float KickDamage)
 {
   if(!IsWalkable())
     if(IsLocked())
       {
-	if(KickStrength > RAND() % 150000)
+	if(KickDamage > RAND() % 5)
 	  {
 	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The door opens from the force of your kick.");
@@ -539,7 +539,7 @@ void brokendoor::BeKicked(character*, float KickStrength)
 	    SetIsLocked(false);
 	    MakeWalkable();
 	  }
-	else if(KickStrength > RAND() % 100000)
+	else if(KickDamage > RAND() % 5)
 	  {
 	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The lock breaks from the force of your kick.");
@@ -551,7 +551,7 @@ void brokendoor::BeKicked(character*, float KickStrength)
 	    ADD_MESSAGE("The door won't budge!");
       }
     else
-      if(KickStrength > RAND() % 100000)
+      if(KickDamage > RAND() % 5)
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The broken door opens.");

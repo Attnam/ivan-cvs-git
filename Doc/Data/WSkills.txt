@@ -20,7 +20,7 @@ Whips
 
 Category experience chart:
 
-Level	Succesful hits	Unuse penalty	Idle Turns for	Bonus
+Level	Successful hits	Unuse penalty	Idle Turns for	Bonus
 	needed				level minus	%
 						
 0	0		10/50000	-		0/0
@@ -40,7 +40,7 @@ and THV and -5% to AP cost.
 
 Single weapon experience chart:
 
-Level	Succesful hits	Unuse penalty	Idle Turns for	Bonus
+Level	Successful hits	Unuse penalty	Idle Turns for	Bonus
 	needed				level minus	%
 						
 0	0		5/10000		-		0/0

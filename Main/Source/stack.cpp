@@ -245,17 +245,17 @@ void stack::DeletePointers()
     FastRemoveItem(GetBottomSlot());
 }
 
-void stack::BeKicked(character* Kicker, float KickStrength)
+void stack::BeKicked(character* Kicker, float KickDamage)
 {
-  if(KickStrength >= 25000)
+  if(KickDamage >= 25000)
     {
-      ReceiveDamage(Kicker, short(KickStrength / 5000), PHYSICALDAMAGE);
+      ReceiveDamage(Kicker, KickDamage, PHYSICALDAMAGE);
 
       /* Bug: you can kick mines with this. */
 
       for(ushort c = 0; c < 1 + (RAND() & 1); ++c)
 	if(GetItems())
-	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), short(KickStrength / 5000));
+	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
     }
   else
     if(GetVisibleItems() && Kicker->IsPlayer())
@@ -322,7 +322,7 @@ square* stack::GetSquareTrulyUnder() const
     }
 }
 
-void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
+void stack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);

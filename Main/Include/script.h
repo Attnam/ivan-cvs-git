@@ -15,13 +15,13 @@
  public:\
   type* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
  protected:\
-  datamember< type > name ;
+  datamember< type > name;
 
 #define PROTONAMEDMEMBER(type, name)\
  public:\
   ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
  protected:\
-  protonamedmember< type > name ;
+  protonamedmember< type > name;
 
 class inputfile;
 class glterrain;
@@ -48,6 +48,8 @@ template <class type> class datamembertemplate : public datamemberbase
  public:
   virtual ~datamembertemplate();
   datamembertemplate() : Base(0), Member(0) { }
+  datamembertemplate(const datamembertemplate& Data) : Base(Data.Base), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  datamembertemplate& operator=(const datamembertemplate&);
   type* GetMember(bool) const;
   void SetMember(type* What) { Member = What; }
   virtual void SetBase(datamemberbase*);
@@ -55,6 +57,29 @@ template <class type> class datamembertemplate : public datamemberbase
   datamembertemplate<type>* Base;
   type* Member;
 };
+
+template <class type> inline datamembertemplate<type>& datamembertemplate<type>::operator=(const datamembertemplate<type>& Data)
+{
+  Base = Data.Base;
+
+  if(Member)
+    {
+      if(Data.Member)
+	*Member = *Data.Member;
+      else
+	{
+	  delete Member;
+	  Member = 0;
+	}
+    }
+  else
+    {
+      if(Data.Member)
+	Member = new type(*Data.Member);
+    }
+
+  return *this;
+}
 
 template <class type> inline type* datamembertemplate<type>::GetMember(bool AbortOnError) const
 {
@@ -87,6 +112,9 @@ template <class type> class protonamedmember : public datamembertemplate<ushort>
 class script
 {
  public:
+  script() { }
+  script(const script&) { }
+  script& operator=(const script&) { return *this; }
   const valuemap& GetValueMap() const { return ValueMap; }
   void SetValueMap(const valuemap& What) { ValueMap = What; }
   datamemberbase* GetDataMember(ushort Index) const { return Data[Index]; }
@@ -139,7 +167,7 @@ class basecontentscript : public script
   void ReadFrom(inputfile&);
   ushort GetContentType() const { return ContentType; }
  protected:
-  virtual std::string GetClassId() const = 0;
+  virtual const std::string& GetClassId() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
   DATAMEMBER(materialscript, MainMaterial);
   DATAMEMBER(materialscript, SecondaryMaterial);
@@ -152,6 +180,7 @@ class basecontentscript : public script
 template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
+  virtual const std::string& GetClassId() const;
   void BasicInstantiate(std::vector<type*>&, ulong) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
@@ -165,7 +194,6 @@ class contentscript<character> : public contentscripttemplate<character>
   void Instantiate(std::vector<character*>&, ulong) const;
   character* Instantiate() const;
  protected:
-  virtual std::string GetClassId() const { return "character"; }
   DATAMEMBER(ushort, Team);
 };
 
@@ -176,7 +204,6 @@ class contentscript<item> : public contentscripttemplate<item>
   void Instantiate(std::vector<item*>&, ulong) const;
   item* Instantiate() const;
  protected:
-  virtual std::string GetClassId() const { return "item"; }
   DATAMEMBER(bool, IsVisible);
 };
 
@@ -185,8 +212,6 @@ class contentscript<glterrain> : public contentscripttemplate<glterrain>
  public:
   void Instantiate(std::vector<glterrain*>&, ulong) const;
   glterrain* Instantiate() const;
- protected:
-  virtual std::string GetClassId() const { return "glterrain"; }
 };
 
 class contentscript<olterrain> : public contentscripttemplate<olterrain>
@@ -196,7 +221,6 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   void Instantiate(std::vector<olterrain*>&, ulong) const;
   olterrain* Instantiate() const;
  protected:
-  virtual std::string GetClassId() const { return "olterrain"; }
   DATAMEMBER(uchar, VisualEffects);
 };
 

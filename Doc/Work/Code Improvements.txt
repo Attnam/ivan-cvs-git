@@ -39,3 +39,5 @@ Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
 Värimakrojen sisärivittäminen.
 Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
+//AP-hintojen negaatio.
+*Selitepohjainen ja itsetaipuva viestijärjestelmä.

@@ -317,6 +317,7 @@ material
 		PriceModifier = 30000;
 		NameStem = "diamond";
 		Alpha = 175;
+		CanBeWished = false;
 	}
 
 	Config SILVER;
@@ -343,6 +344,7 @@ material
 		PriceModifier = 20000;
 		NameStem = "sapphire";
 		Alpha = 200;
+		CanBeWished = false;
 	}
 
 	Config RUBY;
@@ -356,6 +358,7 @@ material
 		PriceModifier = 24000;
 		NameStem = "ruby";
 		Alpha = 200;
+		CanBeWished = false;
 	}
 
 	Config BRONZE;

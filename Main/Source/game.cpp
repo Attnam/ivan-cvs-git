@@ -114,6 +114,7 @@ command* game::Command[] =
   new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
   new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
   new command(&character::Read, "read", 'r', false),
+  new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&character::RestUntilHealed, "rest/heal", 'h', true),
   new command(&character::Save, "save game", 's', true),
   new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
@@ -233,7 +234,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new skeleton(WARLORD));
 	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);

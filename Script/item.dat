@@ -1089,6 +1089,30 @@ ring
 		PostFix = "of polymorph";
 		GearStates = POLYMORPH;
 	}
+
+	Config RINGOFENERGYRESISTANCE;
+	{
+		Possibility = 15;
+		EnergyResistance = 10;
+		PostFix = "of energy resistance";
+		MainMaterialConfig == GOLD;
+	}
+
+	Config RINGOFACIDRESISTANCE;
+	{
+		Possibility = 15;
+		EnergyResistance = 10;
+		PostFix = "of acid resistance";
+		MainMaterialConfig == GOLD;
+	}
+
+	Config RINGOFPOISONRESISTANCE;
+	{
+		Possibility = 15;
+		EnergyResistance = 10;
+		PostFix = "of poison resistance";
+		MainMaterialConfig == GOLD;
+	}
 }
 
 amulet
@@ -1325,12 +1349,12 @@ helmet
 	DefaultSize = 30;
 	Possibility = 40;
 	Category = HELMET;
-        DefaultMainVolume = 600;
+	DefaultMainVolume = 600;
 	StrengthModifier = 100;
 	BitmapPos = 16, 384;
 	FormModifier = 35;
 	OfferModifier = 4000;
-        NameSingular = "helmet";
+	NameSingular = "helmet";
 	MainMaterialConfig = { 9, 	BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
 	MaterialConfigChances = { 9, 	30,	10,	10,	2,	4,	20,	5,	3,	30; }
 	Roundness = 50;
@@ -1346,7 +1370,7 @@ stethoscope
 	BitmapPos = 0, 0; /* Needs pic */
 	FormModifier = 50;
 	Roundness = 20;
-        NameSingular = "stethoscope";
+	NameSingular = "stethoscope";
 	Price = 250;
 	MainMaterialConfig == UNICORNHORN;
 	OfferModifier = 4000;

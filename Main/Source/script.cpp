@@ -151,7 +151,7 @@ material* materialscript::Instantiate() const
   return Instance;
 }
 
-basecontentscript::basecontentscript() : Config(0)
+basecontentscript::basecontentscript() : ContentType(0), Config(0)
 {
   INITMEMBER(MainMaterial);
   INITMEMBER(SecondaryMaterial);
@@ -182,23 +182,30 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   if(ContentType || Word == "0")
     Word = SaveFile.ReadWord();
   else
-    ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
+    ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
   if(Word == "(")
     {
       Config = SaveFile.ReadNumber(ValueMap);
       Word = SaveFile.ReadWord();
     }
+  else
+    Config = 0;
 
   if(Word == "{")
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	if(!LoadData(SaveFile, Word))
-	  ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
+	  ABORT("Odd script term %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
       }
   else
     if(Word != ";" && Word != ",")
-      ABORT("Odd terminator %s encountered in %s content script line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.TellLine());
+      ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId().c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+}
+
+template <class type> const std::string& contentscripttemplate<type>::GetClassId() const
+{
+  return protocontainer<type>::GetMainClassId();
 }
 
 template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount) const
@@ -266,6 +273,9 @@ void contentscript<character>::Instantiate(std::vector<character*>& Instance, ul
 
 character* contentscript<character>::Instantiate() const
 {
+  if(!ContentType)
+    return 0;
+
   std::vector<character*> Instance;
   Instantiate(Instance, 1);
   return Instance[0];
@@ -287,6 +297,9 @@ void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount
 
 item* contentscript<item>::Instantiate() const
 {
+  if(!ContentType)
+    return 0;
+
   std::vector<item*> Instance;
   Instantiate(Instance, 1);
   return Instance[0];
@@ -299,6 +312,9 @@ void contentscript<glterrain>::Instantiate(std::vector<glterrain*>& Instance, ul
 
 glterrain* contentscript<glterrain>::Instantiate() const
 {
+  if(!ContentType)
+    return 0;
+
   std::vector<glterrain*> Instance;
   Instantiate(Instance, 1);
   return Instance[0];
@@ -323,6 +339,9 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
 
 olterrain* contentscript<olterrain>::Instantiate() const
 {
+  if(!ContentType)
+    return 0;
+
   std::vector<olterrain*> Instance;
   Instantiate(Instance, 1);
   return Instance[0];

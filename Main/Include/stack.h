@@ -65,7 +65,7 @@ class stack
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const { return static_cast<lsquare*>(GetSquareTrulyUnder()); }
-  void ReceiveDamage(character*, short, uchar);
+  void ReceiveDamage(character*, ushort, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, character*, const std::string&, bool, bool (*)(item*, character*)) const;

@@ -43,8 +43,8 @@ class gweaponskill : public weaponskill
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   const std::string& Name() const { return SkillName[Index]; }
-  float GetEffectBonus() const { return 1.0f + 0.10f * Level; }
-  float GetAPBonus() const { return 1.0f - 0.05f * Level; }
+  uchar GetEffectBonus() const { return 100 + 10 * Level; }
+  uchar GetAPBonus() const { return 100 - 5 * Level; }
   void AddLevelUpMessage() const;
   void AddLevelDownMessage() const;
  private:
@@ -74,8 +74,8 @@ class sweaponskill : public weaponskill
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-  float GetEffectBonus() const { return Level ? 1.15f + 0.05f * (Level - 1) : 1.0f; }
-  float GetAPBonus() const { return Level ? 0.93f - 0.02f * (Level - 1) : 1.0f; }
+  uchar GetEffectBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
+  uchar GetAPBonus() const { return Level ? 93 - 2 * (Level - 1) : 100; }
   void AddLevelUpMessage(const std::string&) const;
   void AddLevelDownMessage(const std::string&) const;
   virtual void Save(outputfile&) const;

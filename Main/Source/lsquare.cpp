@@ -689,17 +689,17 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-void lsquare::BeKicked(character* Kicker, float KickStrength, float KickToHitValue, short Success, bool Critical)
+void lsquare::BeKicked(character* Kicker, float KickDamage, float KickToHitValue, short Success, bool Critical)
 {
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
 
-  GetStack()->BeKicked(Kicker, KickStrength);
+  GetStack()->BeKicked(Kicker, KickDamage);
 
   if(GetCharacter())
-    GetCharacter()->BeKicked(Kicker, KickStrength, KickToHitValue, Success, Critical);
+    GetCharacter()->BeKicked(Kicker, KickDamage, KickToHitValue, Success, Critical);
 
-  GetOLTerrain()->BeKicked(Kicker, KickStrength);
+  GetOLTerrain()->BeKicked(Kicker, KickDamage);
 }
 
 bool lsquare::CanBeDug() const
@@ -1015,7 +1015,7 @@ void lsquare::DrawParticles(ushort Color, uchar)
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, short Damage, uchar Direction)
+void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, ushort Damage, uchar Direction)
 {
   GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
 

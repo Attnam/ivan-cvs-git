@@ -110,7 +110,7 @@ void character::Hunger(ushort Ticks)
   CheckStarvationDeath("starved to death");
 }
 
-uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, float ToHitValue, short Success, uchar Type, bool Critical)
+uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical)
 {
   DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
   uchar Dir = Type == BITEATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
@@ -118,7 +118,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
   if(Critical)
     {
-      ushort Damage = ushort(AttackStrength * (100 + Success) / 2500000) + (RAND() % 3 ? 2 : 1);
+      Damage = Damage * (100 + Success) / 50 + (RAND() % 3 ? 2 : 1);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
@@ -149,7 +149,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
   if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) >= 100)
     {
-      ushort Damage = ushort(AttackStrength * (100 + Success) / 5000000) + (RAND() % 3 ? 1 : 0);
+      Damage = Damage * (100 + Success) / 100 + (RAND() % 3 ? 1 : 0);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
@@ -171,8 +171,18 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
       if(Enemy->AttackIsBlockable(Type))
 	Damage = CheckForBlock(Enemy, Weapon, ToHitValue, Damage, Success, Type);
 
-      if(!Damage || !ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir))
+      if(!Damage)
 	return HASBLOCKED;
+
+      if(!ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir))
+	  {
+	    if(IsPlayer())
+	      ADD_MESSAGE("You are not hurt.");
+	    else if(CanBeSeenByPlayer())
+	      ADD_MESSAGE("%s is not hurt.", GetPersonalPronoun().c_str());
+
+	    return HASBLOCKED;
+	  }
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
 	return HASDIED;
@@ -1411,7 +1421,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
 
   if(HomeRoom)
-    if(!game::IsInWilderness() && GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
+    if(!game::IsInWilderness() && GetSquareUnder() && GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
       SaveFile << bool(true);
     else
       SaveFile << bool(false);
@@ -2116,13 +2126,13 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   return true;
 }
 
-void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue, short Success, bool Critical)
+void character::BeKicked(character* Kicker, float KickDamage, float ToHitValue, short Success, bool Critical)
 {
-  switch(TakeHit(Kicker, 0, KickStrength, ToHitValue, Success, KICKATTACK, Critical))
+  switch(TakeHit(Kicker, 0, KickDamage, ToHitValue, Success, KICKATTACK, Critical))
     {
     case HASHIT:
     case HASBLOCKED:
-      if(CheckBalance(KickStrength))
+      if(CheckBalance(KickDamage))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("The kick throws you off balance.");
@@ -2135,9 +2145,9 @@ void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue
     }
 }
 
-bool character::CheckBalance(float KickStrength)
+bool character::CheckBalance(float KickDamage)
 {
-  return KickStrength / 2000 >= RAND() % GetSize();
+  return KickDamage * 25 >= RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -2759,15 +2769,6 @@ uchar character::RandomizeReply(uchar Replies, bool* Said)
   return ToSay;
 }
 
-/*ushort character::DangerLevel() const
-{
-  static ulong DangerPointMinimum[] = { 0, 100, 500, 2500, 10000, 50000, 250000, 1000000, 5000000, 25000000 };
-
-  for(ushort c = 9;; --c)
-    if(CurrentDanger() >= DangerPointMinimum[c])
-      return c;
-}*/
-
 void character::DisplayInfo(std::string& Msg)
 {
   if(IsPlayer())
@@ -2939,6 +2940,7 @@ bool character::SecretKnowledge()
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
       bitmap Pic(16, 16);
+      ushort PageLength;
 
       switch(Chosen)
 	{
@@ -2955,6 +2957,7 @@ bool character::SecretKnowledge()
 	      Character[c]->AddAttackInfo(List);
 	    }
 
+	  PageLength = 20;
 	  break;
 	case 1:
 	  List.AddDescription("                                                  DV        HP        AV");
@@ -2988,9 +2991,10 @@ bool character::SecretKnowledge()
 		}
 	    }
 
+	  PageLength = 25;
 	  break;
 	case 2:
-	  List.AddDescription("                                                  Danger    Average");
+	  List.AddDescription("                                                  Danger    Modifier");
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
@@ -3005,10 +3009,11 @@ bool character::SecretKnowledge()
 	      List.AddEntry(Entry, LIGHTGRAY, &Pic);
 	    }
 
+	  PageLength = 15;
 	  break;
 	}
 
-      List.Draw(vector2d(26, 42), 652, 15, MAKE_RGB(0, 0, 16), false);
+      List.Draw(vector2d(26, 42), 652, PageLength, MAKE_RGB(0, 0, 16), false);
       List.PrintToFile(GAME_DIR + "secret" + Chosen + ".txt");
       ADD_MESSAGE("Info written also to %ssecret%d.txt.", GAME_DIR.c_str(), Chosen);
 
@@ -3076,14 +3081,14 @@ bool character::DamageTypeCanSeverBodyPart(uchar Type) const
     }
 }
 /* Returns true if the damage really does some damage */
-bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical)
+bool character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
   if(!PenetrateResistance)
     Damage -= BodyPart->GetTotalResistance(Type);
 
-  if(Damage < 1)
+  if(short(Damage) < 1)
     if(Critical)
       Damage = 1;
     else
@@ -3145,7 +3150,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 
 /* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
 
-bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
+bool character::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
   bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical);
 
@@ -3284,7 +3289,10 @@ bool character::EquipmentScreen()
 	  else if(!GetEquipment(c))
 	    Entry += "-";
 	  else
-	    GetEquipment(c)->AddName(Entry, INDEFINITE);
+	    {
+	      GetEquipment(c)->AddName(Entry, INDEFINITE);
+	      AddSpecialEquipmentInfo(Entry, c);
+	    }
 
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
@@ -3671,13 +3679,33 @@ void character::UpdateBodyPartPicture(ushort Index)
 
 void character::LoadDataBaseStats()
 {
-  BaseAttribute[ENDURANCE] = GetDefaultEndurance();
-  BaseAttribute[PERCEPTION] = GetDefaultPerception();
-  BaseAttribute[INTELLIGENCE] = GetDefaultIntelligence();
-  BaseAttribute[WISDOM] = GetDefaultWisdom();
-  BaseAttribute[CHARISMA] = GetDefaultCharisma();
-  BaseAttribute[MANA] = GetDefaultMana();
+  BaseAttribute[ENDURANCE] = GetDefaultEndurance() * (100 + GetAttributeBonus()) / 100;
+  BaseAttribute[PERCEPTION] = GetDefaultPerception() * (100 + GetAttributeBonus()) / 100;
+  BaseAttribute[INTELLIGENCE] = GetDefaultIntelligence() * (100 + GetAttributeBonus()) / 100;
+  BaseAttribute[WISDOM] = GetDefaultWisdom() * (100 + GetAttributeBonus()) / 100;
+  BaseAttribute[CHARISMA] = GetDefaultCharisma() * (100 + GetAttributeBonus()) / 100;
+  BaseAttribute[MANA] = GetDefaultMana() * (100 + GetAttributeBonus()) / 100;
   SetMoney(GetDefaultMoney());
+
+  const std::vector<long>& Skills = GetKnownCategoryWeaponSkills();
+
+  if(Skills.size())
+    {
+      const std::vector<long>& Hits = GetCategoryWeaponSkillHits();
+
+      if(Hits.size() == 1)
+	{
+	  for(ushort c = 0; c < Skills.size(); ++c)
+	    CategoryWeaponSkill[Skills[c]]->AddHit(Hits[0]);
+	}
+      else if(Hits.size() == Skills.size())
+	{
+	  for(ushort c = 0; c < Skills.size(); ++c)
+	    CategoryWeaponSkill[Skills[c]]->AddHit(Hits[c]);
+	}
+      else
+	ABORT("Illegal weapon skill hit array size detected!");
+    }
 }
 
 character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
@@ -4197,7 +4225,7 @@ bool character::ShowWeaponSkills()
   felist List("Your experience in weapon categories", WHITE, 0);
 
   List.AddDescription("");
-  List.AddDescription("Category name                 Level     Points    Needed    AS/THV    APC");
+  List.AddDescription("Category name                 Level     Points    Needed    DAM/THV   APC");
 
   bool Something = false;
 
@@ -4205,24 +4233,22 @@ bool character::ShowWeaponSkills()
     if(GetCategoryWeaponSkill(c)->GetHits())
       {
 	std::string Buffer;
-	Buffer += GetCategoryWeaponSkill(c)->Name();
+	Buffer << GetCategoryWeaponSkill(c)->Name();
 	Buffer.resize(30, ' ');
-	Buffer += GetCategoryWeaponSkill(c)->GetLevel();
+	Buffer << GetCategoryWeaponSkill(c)->GetLevel();
 	Buffer.resize(40, ' ');
-	Buffer += GetCategoryWeaponSkill(c)->GetHits();
+	Buffer << GetCategoryWeaponSkill(c)->GetHits();
 	Buffer.resize(50, ' ');
 
 	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-	  Buffer += (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits());
+	  Buffer << (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits());
 	else
-	  Buffer += '-';
+	  Buffer << '-';
 
 	Buffer.resize(60, ' ');
-	Buffer += int(GetCategoryWeaponSkill(c)->GetEffectBonus() * 100 - 100);
-	Buffer += '%';
+	Buffer << '+' << int(GetCategoryWeaponSkill(c)->GetEffectBonus() - 100) << '%';
 	Buffer.resize(70, ' ');
-	Buffer += int(GetCategoryWeaponSkill(c)->GetAPBonus() * 100 - 100);
-	Buffer += '%';
+	Buffer << '-' << int(100 - GetCategoryWeaponSkill(c)->GetAPBonus()) << '%';
 	List.AddEntry(Buffer, LIGHTGRAY);
 	Something = true;
       }
@@ -4268,7 +4294,8 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 		if(BeginStateHandler[c])
 		  (this->*BeginStateHandler[c])();
 
-		(this->*PrintBeginStateMessage[c])();
+		if(!Initializing)
+		  (this->*PrintBeginStateMessage[c])();
 	      }
 	    else
 	      EquipmentState |= 1 << c;
@@ -4855,11 +4882,12 @@ void character::PoisonedHandler()
   ushort Used = 0;
   while(Used + 100 <= TemporaryStateCounter[POISONED])
     {
-	character::ReceiveDamage(this, 1, POISON, ALL, 0, false, true, false);
+	ReceiveDamage(this, 1, POISON);
 	Used += 100;
     }
+
   if(Used != TemporaryStateCounter[POISONED] && !(RAND() % (100 - (TemporaryStateCounter[POISONED] - Used))))
-    character::ReceiveDamage(this, 1, POISON, ALL, 0, false, true, false);
+    ReceiveDamage(this, 1, POISON);
 }
 
 bool character::IsWarm() const
@@ -5311,7 +5339,7 @@ material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
     }
 }
 
-float character::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) const
+float character::GetDurability(ushort Damage, float ToHitValue, bool UseMaxHP) const
 {
   float MinHits = 1000;
 
@@ -5338,3 +5366,8 @@ float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
   return Limit(Danger, -100.0f, 100.0f);
 }
 
+bool character::ReloadDatafiles()
+{
+  databasesystem::Initialize();
+  return false;
+}

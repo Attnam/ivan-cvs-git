@@ -38,6 +38,9 @@ bool weaponskill::AddHit()
 
 bool weaponskill::AddHit(ushort AddHits)
 {
+  if(!AddHits)
+    return false;
+
   HitCounter = 0;
 
   if(Hits <= 50000 - AddHits)
@@ -71,6 +74,9 @@ bool weaponskill::SubHit()
 
 bool weaponskill::SubHit(ushort SubHits)
 {
+  if(!SubHits)
+    return false;
+
   if(Hits >= SubHits)
     Hits -= SubHits;
   else

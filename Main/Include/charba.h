@@ -11,6 +11,7 @@
 
 #include "wsquare.h"
 #include "itemde.h"
+#include "script.h"
 
 class felist;
 class bitmap;
@@ -124,6 +125,24 @@ struct characterdatabase
   std::vector<std::string> Alias;
   bool CreateDivineConfigurations;
   bool CreateSolidMaterialConfigurations;
+  contentscript<item> Helmet;
+  contentscript<item> Amulet;
+  contentscript<item> Cloak;
+  contentscript<item> BodyArmor;
+  contentscript<item> Belt;
+  contentscript<item> RightWielded;
+  contentscript<item> LeftWielded;
+  contentscript<item> RightRing;
+  contentscript<item> LeftRing;
+  contentscript<item> RightGauntlet;
+  contentscript<item> LeftGauntlet;
+  contentscript<item> RightBoot;
+  contentscript<item> LeftBoot;
+  short AttributeBonus;
+  std::vector<long> KnownCategoryWeaponSkills;
+  std::vector<long> CategoryWeaponSkillHits;
+  ushort RightSingleWeaponSkillHits;
+  ushort LeftSingleWeaponSkillHits;
 };
 
 class characterprototype
@@ -317,8 +336,8 @@ class character : public entity, public id
   virtual void Teleport(vector2d);
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
-  virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
-  virtual bool ReceiveBodyPartDamage(character*, short, uchar, uchar, uchar = 8, bool = false, bool = false);
+  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false);
   virtual bool BodyPartVital(ushort) const { return true; }
   virtual void RestoreBodyParts();
   virtual bool AssignName();
@@ -475,6 +494,11 @@ class character : public entity, public id
   virtual DATABASEBOOL(CanBeWished);
   virtual DATABASEVALUE(const std::vector<std::string>&, Alias);
   virtual DATABASEBOOL(CreateSolidMaterialConfigurations);
+  virtual DATABASEVALUE(short, AttributeBonus);
+  virtual DATABASEVALUE(const std::vector<long>&, KnownCategoryWeaponSkills);
+  virtual DATABASEVALUE(const std::vector<long>&, CategoryWeaponSkillHits);
+  virtual DATABASEVALUE(ushort, RightSingleWeaponSkillHits);
+  virtual DATABASEVALUE(ushort, LeftSingleWeaponSkillHits);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -629,10 +653,12 @@ class character : public entity, public id
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
   virtual float GetRelativeDanger(const character*, bool = false) const;
-  virtual float GetDurability(short, float, bool) const;
+  virtual float GetDurability(ushort, float, bool) const;
   virtual float GetEffectivityAgainst(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
   float GetDangerModifier() const;
+  virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
+  virtual bool ReloadDatafiles();
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }

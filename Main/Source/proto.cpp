@@ -41,7 +41,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 		  {
 		    float DangerModifier = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
 
-		    if(c >= 99 || (DangerModifier < Difficulty * 2 && DangerModifier > Difficulty / 2))
+		    if(c >= 99 || (DangerModifier < Difficulty * 3 && DangerModifier > Difficulty / 3))
 		      {
 			character* Monster = Proto->Clone(i->first, CreateItems);
 			Monster->SetTeam(game::GetTeam(1));
