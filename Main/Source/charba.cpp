@@ -2435,7 +2435,7 @@ void character::StruckByWandOfStriking()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - 10 - rand() % 10);
+	SetHP(GetHP() - 20 - rand() % 21);
 	
 	CheckDeath("killed by a wand of striking");
 }
