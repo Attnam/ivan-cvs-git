@@ -82,12 +82,16 @@ void overlevelterrain::Load(inputfile& SaveFile)
 
 void groundlevelterrain::DrawToTileBuffer() const
 {
-	igraph::GetLevelTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
+	//igraph::GetLevelTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
+	if(!Picture)
+		int esko = 2;
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void overlevelterrain::DrawToTileBuffer() const
 {
-	igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16, GetVisualFlags());
+	//igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16, GetVisualFlags());
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool levelterrain::Open(character* Opener)

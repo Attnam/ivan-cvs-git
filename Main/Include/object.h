@@ -15,15 +15,17 @@
 #include <list>
 
 #include "typedef.h"
+#include "vector2d.h"
 
+#include "igraph.h"
 #include "typeable.h"
-#include "drawable.h"
 
 class material;
 class outputfile;
 class inputfile;
+class bitmap;
 
-class object : virtual public typeable, virtual public drawable
+class object : virtual public typeable//, virtual public drawable
 {
 public:
 	object(bool);
@@ -46,6 +48,9 @@ public:
 	virtual void SetPoolIterator(std::list<object*>::iterator What) { PoolIterator = What; }
 	virtual bool GetExists() const { return Exists; }
 	virtual void SetExists(bool What) { Exists = What; }
+	virtual uchar GetGraphicsContainerIndex() const = 0;
+	virtual void DrawToTileBuffer() const = 0;
+	virtual void SetMaterial(uchar, material*);
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;
@@ -57,10 +62,15 @@ protected:
 	virtual std::string NameContainer(uchar) const;
 	virtual std::string NameSized(uchar, std::string, ushort, ushort) const;
 	virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
+	virtual vector2d GetBitmapPos() const = 0;
+	//virtual ushort* CColor() const;
 	std::vector<material*> Material;
 	std::list<object*>::iterator PoolIterator;
 	ushort Size;
 	bool InPool, Exists;
+	bitmap* Picture;
+	ushort* Color;
+	graphic_id GraphicId;
 };
 
 #endif

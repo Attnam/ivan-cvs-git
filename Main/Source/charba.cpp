@@ -535,7 +535,8 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::DrawToTileBuffer() const
 {
-	igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetFleshColor()) << 4, 0, 0, 16, 16);
+	//igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetFleshColor()) << 4, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 bool character::Wield()
@@ -2011,7 +2012,7 @@ void character::GetPlayerCommand()
 			}
 
 		if (!ValidKeyPressed)
-			ADD_MESSAGE("Unknown key, you %s. Press '?' for a felist of commands.", game::Insult());
+			ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
 	}
 }
 

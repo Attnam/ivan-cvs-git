@@ -5,8 +5,11 @@
 #include "pool.h"
 #include "save.h"
 
-object::object(bool AddToPool) : InPool(AddToPool), Exists(true)
+object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), Color(new ushort[4])
 {
+	for(uchar c = 0; c < 4; ++c)
+		Color[c] = 0;
+
 	if(AddToPool)
 		SetPoolIterator(objectpool::Add(this));
 }
@@ -14,6 +17,8 @@ object::object(bool AddToPool) : InPool(AddToPool), Exists(true)
 object::~object()
 {
 	EraseMaterials();
+
+	delete [] Color;
 
 	if(InPool)
 		objectpool::Remove(GetPoolIterator());
@@ -23,14 +28,18 @@ void object::Save(outputfile& SaveFile) const
 {
 	typeable::Save(SaveFile);
 
-	SaveFile << Material << Size;
+	SaveFile << Material << Size << GraphicId;
 }
 
 void object::Load(inputfile& SaveFile)
 {
 	typeable::Load(SaveFile);
 
-	SaveFile >> Material >> Size;
+	GraphicId.Color = Color;
+
+	SaveFile >> Material >> Size >> GraphicId;
+
+	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
 void object::InitMaterials(ushort Materials, ...)
@@ -40,7 +49,15 @@ void object::InitMaterials(ushort Materials, ...)
 	va_start(AP, Materials);
 
 	for(ushort c = 0; c < Materials; ++c)
+	{
 		Material.push_back(va_arg(AP, material*));
+
+		if(c < 4 && Material[c])
+			Color[c] = Material[c]->GetColor();
+	}
+
+	GraphicId = graphic_id(GetBitmapPos(), Color, GetGraphicsContainerIndex());
+	Picture = igraph::AddUser(GraphicId).Bitmap;
 
 	va_end(AP);
 }
@@ -48,6 +65,12 @@ void object::InitMaterials(ushort Materials, ...)
 void object::InitMaterials(material* FirstMaterial)
 {
 	Material.push_back(FirstMaterial);
+
+	if(Material[0])
+		Color[0] = Material[0]->GetColor();
+
+	GraphicId = graphic_id(GetBitmapPos(), Color, GetGraphicsContainerIndex());
+	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
 ushort object::GetEmitation() const
@@ -249,9 +272,29 @@ std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) 
 
 void object::EraseMaterials()
 {
+	igraph::RemoveUser(GraphicId);
+
 	for(ushort c = 0; c < Material.size(); ++c)
+	{
 		delete Material[c];
+
+		//if(c < 4)
+		//	Color[c] = 0;
+	}
 
 	Material.resize(0);
 }
 
+void object::SetMaterial(uchar Index, material* NewMaterial)
+{
+	if(Index < 4)
+		if((Material[Index] && NewMaterial && Material[Index]->GetColor() != NewMaterial->GetColor()) || (!Material[Index] && NewMaterial && NewMaterial->GetColor()) || (Material[Index] && !NewMaterial && Material[Index]->GetColor()))
+		{
+			igraph::RemoveUser(GraphicId);
+			Color[Index] = NewMaterial ? NewMaterial->GetColor() : 0;
+			GraphicId.Color = Color;
+			Picture = igraph::AddUser(GraphicId).Bitmap;
+		}
+
+	Material[Index] = NewMaterial;
+}

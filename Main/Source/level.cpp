@@ -963,6 +963,8 @@ void level::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; x++)
 			for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			{
+				if(x == 31 && y == 9)
+					int esko = 2;
 				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
 				if(Map[x][y]->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())

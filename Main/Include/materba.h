@@ -86,6 +86,7 @@ public:
 	virtual bool IsSolid() const { return false; }
 	virtual void Be() {}
 	virtual ushort GetColor() const = 0;
+	virtual bool IsFlesh() { return false; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }
@@ -95,12 +96,12 @@ protected:
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define MATERIAL_PROTOINSTALLER(name, base, color)\
+	#define MATERIAL_PROTOINSTALLER(name, base)\
 	\
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) { igraph::CreateGraphics(color); }\
+		name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) { }\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
@@ -112,11 +113,11 @@ protected:
 
 #else
 
-	#define MATERIAL_PROTOINSTALLER(name, base, color)
+	#define MATERIAL_PROTOINSTALLER(name, base)
 
 #endif
 
-#define MATERIAL(name, base, color, data)\
+#define MATERIAL(name, base, data)\
 \
 name : public base\
 {\
@@ -129,10 +130,9 @@ public:\
 	static ushort StaticType();\
 	static const material* const GetPrototype();\
 	virtual std::string ClassName() const { return #name; }\
-	virtual ushort GetColor() const { return color; }\
 protected:\
 	virtual ushort Type() const;\
 	data\
-}; MATERIAL_PROTOINSTALLER(name, base, color)
+}; MATERIAL_PROTOINSTALLER(name, base)
 
 #endif

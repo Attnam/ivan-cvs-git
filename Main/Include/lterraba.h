@@ -10,6 +10,7 @@
 #include "proto.h"
 #include "materba.h"
 #include "game.h"
+#include "igraph.h"
 
 class bitmap;
 class character;
@@ -26,7 +27,7 @@ class inputfile;
 class levelterrain : public object
 {
 public:
-	levelterrain::levelterrain(bool AddToPool) : object(AddToPool) {}
+	levelterrain(bool AddToPool) : object(AddToPool) {}
 	virtual void Load(inputfile&);
 	virtual bool Open(character* Opener);
 	virtual bool Close(character* Closer);
@@ -41,6 +42,7 @@ public:
 	virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
 	virtual void HandleVisualEffects();
 	virtual void Save(outputfile&) const;
+	virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
 protected:
 	uchar VisualFlags;
 };
@@ -48,7 +50,7 @@ protected:
 class groundlevelterrain : public levelterrain, public groundterrain
 {
 public:
-	groundlevelterrain::groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+	groundlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
 	virtual void DrawToTileBuffer() const;
 	virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual void Save(outputfile& SaveFile) const { levelterrain::Save(SaveFile); }
@@ -59,7 +61,7 @@ public:
 class overlevelterrain : public levelterrain, public overterrain
 {
 public:
-	overlevelterrain::overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
+	overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
 	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
 	virtual bool GoUp(character*) const;

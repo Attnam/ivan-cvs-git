@@ -2,10 +2,12 @@
 #include "graphics.h"
 #include "igraph.h"
 #include "game.h"
+#include "error.h"
 
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
-char* igraph::GraphicFileName[] = {"Graphics/LTerrain.pcx", "Graphics/WTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/FOW.pcx", "Graphics/Human.pcx", "Graphics/FontR.pcx", "Graphics/FontB.pcx", "Graphics/FontW.pcx", "Graphics/Symbol.pcx"};
+char* igraph::GraphicFileName[] = {"Graphics/LTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Human.pcx", "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/FontR.pcx", "Graphics/FontB.pcx", "Graphics/FontW.pcx", "Graphics/Symbol.pcx"};
+tilemap igraph::TileMap;
 
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 {
@@ -17,7 +19,12 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 
 		graphics::SetMode(hInst, hWnd, "IVAN 0.240a", 800, 600, 16, false);
 
-		for(uchar c = 0; c < GRAPHIC_TYPES; ++c)
+		uchar c;
+
+		for(c = 0; c < 3; ++c)
+			Graphic[c] = new bitmap(GraphicFileName[c], false);
+
+		for(c = 3; c < GRAPHIC_TYPES; ++c)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
 		//CharacterGraphics = new bitmap("Graphics/NovaChar.pcx");
@@ -48,7 +55,7 @@ void igraph::DrawCursor(vector2d Pos)
 {
 	ushort Luminance = ushort(256 * game::GetSoftGamma());
 
-	igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
+	igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
 
 /*void igraph::CreateGraphics(ushort Color)
@@ -74,3 +81,70 @@ bitmap* GetCharacterGraphic(ushort Color)
 
 	return Iterator->second.CharacterGraphics;
 }*/
+
+tile igraph::GetTile(graphic_id GI)
+{
+	tilemap::iterator Iterator = TileMap.find(GI);
+
+	if(Iterator == TileMap.end())
+		ABORT("Art stolen!");
+
+	return Iterator->second;
+}
+
+tile igraph::AddUser(graphic_id GI)
+{
+	tilemap::iterator Iterator = TileMap.find(GI);
+
+	if(Iterator != TileMap.end())
+	{
+		ulong p = Iterator->second.Users;
+		++(Iterator->second.Users);
+
+		p = Iterator->second.Users;
+	}
+	else
+	{
+		bitmap* Bitmap = Graphic[GI.FileIndex]->ColorizeTo16Bit(GI.BitmapPos, vector2d(16, 16), GI.Color);
+
+		tile Tile(Bitmap, 1);
+
+		graphic_id NewGI(GI.BitmapPos, new ushort[4], GI.FileIndex);
+
+		for(uchar c = 0; c < 4; ++c)
+			NewGI.Color[c] = GI.Color[c];
+
+		TileMap[NewGI] = Tile;
+
+		return Tile;
+	}
+
+	return Iterator->second;
+}
+
+void igraph::RemoveUser(graphic_id GI)
+{
+	tilemap::iterator Iterator = TileMap.find(GI);
+
+	if(Iterator != TileMap.end())
+	{
+		ulong p = Iterator->second.Users;
+		--(Iterator->second.Users);
+
+		p = Iterator->second.Users;
+
+		if(!Iterator->second.Users)
+		{
+			delete Iterator->second.Bitmap;
+			delete [] Iterator->first.Color;
+			TileMap.erase(Iterator);
+
+			tilemap::iterator Iterator2 = TileMap.find(GI);
+
+			if(Iterator2 != TileMap.end())
+				int esko =2;
+			else
+				int esko =2;
+		}
+	}
+}

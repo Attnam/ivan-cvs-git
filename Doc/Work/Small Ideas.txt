@@ -56,3 +56,6 @@ You must be able to open door by throwing items.
 Lamps should be white.
 Name too short.
 Kick should affect only the topmost stacked item.
+Renaming of ClearToColor.
+One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
+Lookmode of WMode should show square coordinates.

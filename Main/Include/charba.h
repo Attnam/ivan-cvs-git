@@ -27,6 +27,7 @@
 #include "object.h"
 #include "typedef.h"
 #include "vector2d.h"
+#include "igraph.h"
 
 class square;
 class bitmap;
@@ -177,7 +178,7 @@ public:
 	virtual void SetFainted(bool To) { Fainted = To; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
-	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
+	//virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
 	virtual void SetNP(long What) { NP = What; }
 	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
 	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
@@ -199,6 +200,7 @@ public:
 	virtual void BeKicked(ushort, bool, uchar, character*);
 	virtual void FallTo(vector2d, bool);
 	virtual bool CheckCannibalism(ushort);
+	virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }

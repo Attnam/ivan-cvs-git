@@ -93,7 +93,8 @@ bool humanoid::Drop()
 
 void golem::DrawToTileBuffer() const
 {
-	igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetItemColor()) << 4, 0, 0, 16, 16);
+	//igraph::GetCharacterGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, (Material[0]->GetItemColor()) << 4, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
 void humanoid::DrawToTileBuffer() const

@@ -2,13 +2,13 @@
 
 #include "proto.h"
 
-std::vector<material*>			protocontainer<material>::ProtoData(2, 0);
-std::vector<item*>			protocontainer<item>::ProtoData(2, 0);
-std::vector<character*>			protocontainer<character>::ProtoData(2, 0);
-std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData(2, 0);
-std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData(2, 0);
-std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData(2, 0);
-std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData(2, 0);
+std::vector<material*>			protocontainer<material>::ProtoData;//(2, 0, std::allocator<material*>());
+std::vector<item*>			protocontainer<item>::ProtoData;//(2, 0);
+std::vector<character*>			protocontainer<character>::ProtoData;//(2, 0);
+std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData;//(2, 0);
+std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData;//(2, 0);
+std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData;//(2, 0);
+std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData;//(2, 0);
 std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;

@@ -90,10 +90,10 @@ void dungeon::PrepareLevel(ushort Index)
 
 void dungeon::SaveLevel(std::string SaveName, ushort Number, bool DeleteAfterwards)
 {
-	outputfile SaveFile(SaveName + ".d" + Index + "-" + Number);
+	outputfile SaveFile(SaveName + ".d" + Index + "-" + Number, true);
 
-	if(!SaveFile.GetBuffer().is_open())
-		ABORT("Level lost!");
+	//if(!SaveFile.GetBuffer().is_open())
+	//	ABORT("Level lost!");
 
 	SaveFile << Level[Number];
 
@@ -108,8 +108,8 @@ void dungeon::LoadLevel(std::string SaveName, ushort Number)
 {
 	inputfile SaveFile(SaveName + ".d" + Index + "-" + Number);
 
-	if(!SaveFile.GetBuffer().is_open())
-		ABORT("Level gone!");
+	//if(!SaveFile.GetBuffer().is_open())
+	//	ABORT("Level gone!");
 
 	Level[Number] = new level;
 	Level[Number]->Load(SaveFile);

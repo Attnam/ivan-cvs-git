@@ -73,10 +73,7 @@ void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
 
 void highscore::Save(std::string File) const
 {
-	outputfile HighScore(File);
-
-	if(!HighScore.GetBuffer().is_open())
-		ABORT("Can't save highscores! Disk write-protected?");
+	outputfile HighScore(File, true);
 
 	HighScore << Score.Length();
 
@@ -89,7 +86,7 @@ void highscore::Save(std::string File) const
 
 void highscore::Load(std::string File)
 {
-	inputfile HighScore(File);
+	inputfile HighScore(File, false);
 
 	if(!HighScore.GetBuffer().is_open())
 		return;

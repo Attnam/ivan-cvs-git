@@ -556,7 +556,7 @@ bool game::Save(std::string SaveName)
 
 bool game::Load(std::string SaveName)
 {
-	inputfile SaveFile(SaveName + ".sav");
+	inputfile SaveFile(SaveName + ".sav", false);
 
 	if(!SaveFile.GetBuffer().is_open())
 		return false;

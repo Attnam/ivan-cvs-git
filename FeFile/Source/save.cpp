@@ -321,3 +321,15 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 
 	return SaveFile;
 }
+
+outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::out | std::ios::binary)
+{
+	if(AbortOnErr && !Buffer.is_open())
+		ABORT("Can't open %s for output!", FileName.c_str());
+}
+
+inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(FileName.c_str(), std::ios::in | std::ios::binary)
+{
+	if(AbortOnErr && !Buffer.is_open())
+		ABORT("File %s not found!", FileName.c_str());
+}

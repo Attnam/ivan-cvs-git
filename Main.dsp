@@ -246,10 +246,6 @@ SOURCE=.\Main\Include\cont.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\drawable.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Include\dungeon.h
 # End Source File
 # Begin Source File

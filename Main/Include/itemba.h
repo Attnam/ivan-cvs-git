@@ -6,7 +6,7 @@
 
 #include "object.h"
 #include "materba.h"
-
+#include "igraph.h"
 #include "proto.h"
 
 class bitmap;
@@ -45,7 +45,7 @@ public:
 	virtual material* BeDippedInto() { return 0; }
 	virtual bool CanBeDipped() const { return false; }
 	virtual bool CanBeWorn() const { return false; }
-	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
+	//virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
 	virtual bool Consumable(character*) const;
 	virtual item* BetterVersion() const { return 0; }
 	virtual void ImpactDamage(ushort, bool, stack*) {};
@@ -66,7 +66,8 @@ public:
 	virtual bool Zap(vector2d, uchar);
 	virtual bool CanBeZapped() const { return false; }
 	virtual bool Polymorph(stack*);
-	virtual bool ReceiveSound(float, bool, stack*) {return false;}
+	virtual bool ReceiveSound(float, bool, stack*) { return false; }
+	virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

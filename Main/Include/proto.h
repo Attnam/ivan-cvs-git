@@ -33,6 +33,14 @@ private:
 
 template <class type> ushort protocontainer<type>::Add(type* Proto)
 {
+	static bool Initialized = false;
+
+	if(!Initialized)
+	{
+		ProtoData.resize(2, 0);
+		Initialized = true;
+	}
+
 	ProtoData.insert(ProtoData.end() - 1, Proto);
 	CodeNameMap[Proto->ClassName()] = ProtoData.size() - 2;
 	return ProtoData.size() - 2;

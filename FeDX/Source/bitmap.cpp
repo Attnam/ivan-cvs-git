@@ -11,8 +11,8 @@ bitmap::bitmap(std::string FileName, bool Is16Bit) : BackupBuffer(0), Is16Bit(Is
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
-	if(!File.is_open())
-		ABORT("Bitmap %s not found!", FileName);
+	//if(!File.is_open())
+	//	ABORT("Bitmap %s not found!", FileName);
 
 	File.seekg(-768, std::ios::end);
 
@@ -1419,7 +1419,7 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 			DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
 }
 
-bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
+/*bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
 {
 	bitmap* Bitmap = new bitmap(XSize, YSize);
 
@@ -1454,5 +1454,45 @@ bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 
 	return Bitmap;
+}*/
+
+bitmap* bitmap::ColorizeTo16Bit(vector2d Pos, vector2d Size, ushort* Color)
+{
+	bitmap* Bitmap = new bitmap(Size.X, Size.Y);
+
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+	uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
+	ulong DestBuffer = ulong(ddsd.lpSurface);
+
+	for(ushort y = 0; y < Size.Y; ++y)
+	{
+		for(ushort x = 0; x < Size.X; ++x)
+		{
+			uchar PaletteElement = Buffer[Pos.X + x];
+
+			if(PaletteElement >= 192)
+			{
+				ushort ThisColor = Color[(PaletteElement - 192) / 16];
+
+				float Gradient = float(PaletteElement % 16) / 8 - 1.0f;
+
+				((ushort*)DestBuffer)[x] = MAKE_RGB(uchar(GET_RED(ThisColor) * Gradient), uchar(GET_GREEN(ThisColor) * Gradient), uchar(GET_BLUE(ThisColor) * Gradient));
+			}
+			else
+				((ushort*)DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
+		}
+
+		DestBuffer += ddsd.lPitch;
+		Buffer = (uchar*)(ulong(Buffer) + XSize);
+	}
+
+	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	return Bitmap;
 }
+
 

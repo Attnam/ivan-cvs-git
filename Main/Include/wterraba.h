@@ -10,7 +10,7 @@ class outputfile;
 class inputfile;
 class dungeon;
 
-class worldmapterrain : virtual public typeable, virtual public drawable
+class worldmapterrain : virtual public typeable//, virtual public drawable
 {
 public:
 	friend class worldmap;
@@ -21,6 +21,7 @@ public:
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }
+	virtual vector2d GetBitmapPos() const = 0;
 };
 
 class groundworldmapterrain : public worldmapterrain, public groundterrain

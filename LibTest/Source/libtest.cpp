@@ -21,20 +21,20 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	ushort Color[1];
 
 	Color[0] = MAKE_RGB(128, 0, 0);
-	bitmap* CharRed = NovaChar.ColorizeTo16Bit(Color);
+	bitmap* CharRed = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 	Color[0] = MAKE_RGB(0, 128, 0);
-	bitmap* CharGreen = NovaChar.ColorizeTo16Bit(Color);
+	bitmap* CharGreen = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 	Color[0] = MAKE_RGB(0, 0, 128);
-	bitmap* CharBlue = NovaChar.ColorizeTo16Bit(Color);
+	bitmap* CharBlue = NovaChar.ColorizeTo16Bit(vector2d(0, 16), vector2d(32, 32), Color);
 
 	bitmap Font("Graphics/FontR.pcx");
 	bitmap Pertti("Graphics/Char.pcx");
 
 	Font.Printf(DOUBLEBUFFER, 212, 450, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
 
-	CharRed->MaskedBlit(DOUBLEBUFFER, 0, 16, 352, 308, 32, 32);
-	CharGreen->MaskedBlit(DOUBLEBUFFER, 0, 16, 384, 308, 32, 32);
-	CharBlue->MaskedBlit(DOUBLEBUFFER, 0, 16, 416, 308, 32, 32);
+	CharRed->MaskedBlit(DOUBLEBUFFER, 0, 0, 352, 308, 32, 32);
+	CharGreen->MaskedBlit(DOUBLEBUFFER, 0, 0, 384, 308, 32, 32);
+	CharBlue->MaskedBlit(DOUBLEBUFFER, 0, 0, 416, 308, 32, 32);
 
 	for(uchar x = 0; x < 8; x++)
 	{
