@@ -55,3 +55,5 @@ When bear traps become visible, Memorized isn't updated.
 StuckTo bugs; it isn't cleared at least when the bodypart is severed, and saving crashes afterwards.
 Lamps can be seen through walls in lookmode.
 Oree dies. Oree looks slower.
+Digging doors doesn't work.
+Eating kobolds is evil.

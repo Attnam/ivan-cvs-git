@@ -20,6 +20,7 @@
 #include "script.h"
 #include "database.h"
 #include "felibdef.h"
+#include "festring.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -57,6 +58,7 @@ int Main(int argc, char **argv)
 
 #endif
 
+  festring::InstallIntegerMap();
   protosystem::GenerateCodeNameMaps();
   femath::SetSeed(time(0));;
   game::InitGlobalValueMap();

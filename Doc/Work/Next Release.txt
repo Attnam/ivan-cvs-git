@@ -98,3 +98,4 @@ Configurations should be visually separated with colors.
 Blocking and visibility should be considered when calculating relative danger.
 Spiders must not trigger mines.
 Hit effects of thrown items.
+Applying wielded item should be possible.

@@ -5123,7 +5123,9 @@ void character::CalculateVolumeAndWeight()
 void character::SignalVolumeAndWeightChange()
 {
   CalculateVolumeAndWeight();
-  CalculateBurdenState();
+
+  if(IsEnabled())
+    CalculateBurdenState();
 
   if(MotherEntity)
     MotherEntity->SignalVolumeAndWeightChange();

@@ -1,3 +1,8 @@
+August 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added char* festring::IntegerToChar(long) which is a much faster
+	  variant of the nonstandard itoa
+
 August 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* SecretKnowledge's defence part now shows block info
