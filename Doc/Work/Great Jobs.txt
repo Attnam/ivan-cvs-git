@@ -1,0 +1,11 @@
+Identify system.
+Gcc port.
+In-code documentation.
+Magic system.
+Genetic AI algorithms.
+Random towns and dungeons.
+Intercontinental transportation.
+Dungeon water tiles and swimming.
+Skill system.
+Player races and classes.
+Renewed god system.

@@ -987,7 +987,7 @@ class CHARACTER
 		SetPerception(24);
 		SetLegType(8);
 		SetTorsoType(11);
-		SetArmType(12);
+		SetArmType(11);
 		SetHeadType(16 + rand() % 6);
 		SetShieldType(0);
 	},
@@ -1042,7 +1042,7 @@ class CHARACTER
 		SetEndurance(5);
 		SetPerception(12);
 		SetLegType(1);
-		SetTorsoType(1);
+		SetTorsoType(5);
 		SetArmType(12);
 		SetHeadType(14);
 		SetShieldType(0);

@@ -19,7 +19,7 @@ Goals:
 -many new items and monsters
 -block AI system
 -renewed god system
--fixing the Great Surface Destruction Bug
+-fixing the Great Surface Destruction Bug by remaking FeDX
 -a second city that will act as a haven for chaotics
 -completely comprehensive in-code documentation
 
@@ -28,6 +28,7 @@ Release time: winter 2002
 
 Goals:
 
+-identify system
 -genetic algorithms
 -magic system
 -random towns and dungeons (perhaps even *very* simple quests?)

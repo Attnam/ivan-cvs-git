@@ -16,3 +16,4 @@ Random gods.
 Ego monsters.
 Monster, item and god memories.
 The Saveloader.
+Random fellow adventurers.

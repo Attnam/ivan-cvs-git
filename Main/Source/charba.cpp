@@ -1831,7 +1831,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 
 void character::ReceiveNutrition(long SizeOfEffect)
 {
-	SetNP(GetNP() + SizeOfEffect);
+	SetNP(GetNP() + SizeOfEffect * 2);
 }
 
 void character::ReceiveOmleUrineEffect(long SizeOfEffect)

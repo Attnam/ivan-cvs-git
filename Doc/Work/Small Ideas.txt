@@ -50,12 +50,4 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-Walking around in open areas with a lamp is very slow. It should be optimized.
-We should ensure that the menu pentagram is not too fast on future machines nor too slow on our minimum system requirement goal (150 MHz Pentium).
-There should be size levels for corpses.
-The camera should stop on borders so that no black part would be drawn.
-Pressing the corner X should ask whether one wants to save the game.
-There should be two modes of SeeWholeMapCheat: one like the cheat now and one with light levels enabled everywhere.
-Slave market.
-Golden throne.
-Housewives should have rolling pins as weapons.
+Parser to wishing.
