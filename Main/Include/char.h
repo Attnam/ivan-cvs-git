@@ -630,6 +630,8 @@ public:
 	virtual std::string NamePlural(void) const RET("conical mommo slimes")
 	virtual ulong Danger(void) const RET(250)
 	virtual vector CBitmapPos(void) const RETV(176,0)
+	virtual ulong CBloodColor(void) const RET(RGB(7,155,0))
+
 );
 
 CHARACTER(
@@ -649,6 +651,7 @@ public:
 	virtual std::string NamePlural(void) const RET("flat mommo slimes")
 	virtual ulong Danger(void) const RET(75)
 	virtual vector CBitmapPos(void) const RETV(192,0)
+	virtual ulong CBloodColor(void) const RET(RGB(7,155,0))
 );
 
 CHARACTER(
