@@ -4849,7 +4849,7 @@ void character::PrintEndPoisonedMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You feel better again.");
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("Looks better."); // Hex?
+    ADD_MESSAGE("%s looks better.", CHARNAME(DEFINITE)); 
 }
 
 void character::PoisonedHandler()
@@ -4858,14 +4858,15 @@ void character::PoisonedHandler()
     Vomit(3); 
 
   ushort Used = 0;
-  while(Used + 100 <= TemporaryStateCounter[POISONED])
+  while(Used + 100 <= GetTemporaryStateCounter(POISONED))
     {
 	ReceiveDamage(this, 1, POISON);
 	Used += 100;
     }
 
-  if(Used != TemporaryStateCounter[POISONED] && !(RAND() % (100 - (TemporaryStateCounter[POISONED] - Used))))
+  if(Used != GetTemporaryStateCounter(POISONED) && !(RAND() % (100 - (GetTemporaryStateCounter(POISONED) - Used))))
     ReceiveDamage(this, 1, POISON);
+  CheckDeath("poisoned.");
 }
 
 bool character::IsWarm() const
