@@ -31,6 +31,7 @@ std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 #include "config.h"
 #include "slot.h"
 #include "actionde.h"
+#include "colorbit.h"
 
 petrus::~petrus()
 {
@@ -2551,6 +2552,54 @@ void carnivorousplant::CreateTorso()
   GetTorso()->UpdatePicture();
 }
 
+bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
+{
+  ushort Color[4];
+  for(int x = 0 ; x < 4; x++)
+    Color[x] = BLACK;
+
+  if(GetLeftLeg())
+    {
+      Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+
+  if(GetRightLeg())
+    {
+      Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+
+  if(GetGroin())
+    {
+      Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+
+  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
+
+  for(int x = 0 ; x < 4; x++)
+    Color[x] = BLACK;
+
+  if(GetTorso())
+    {
+      Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+
+  if(GetLeftArm())
+    {
+      Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+
+  if(GetRightArm())
+    {
+      Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+  if(GetHead())
+    {
+      Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? RED : LIGHTGRAY;
+    }
+  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
+  return true;
+}
+
 ushort humanoid::GlobalResistance(uchar Type) const
 {
   ushort Resistance = GetResistance(Type);
@@ -2598,3 +2647,4 @@ void humanoid::AddInfo(felist& Info) const
 
   
 }
+

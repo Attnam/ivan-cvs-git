@@ -6,6 +6,7 @@
 #endif
 
 #include <vector>
+#include <string>
 
 #include "vector2d.h"
 

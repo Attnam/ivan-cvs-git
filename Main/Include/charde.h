@@ -144,11 +144,10 @@ class ABSTRACT_CHARACTER
 
   virtual bool (item::*EquipmentSorter(uchar) const)(character*) const;
   virtual void SetEquipment(uchar, item*);
-
+  virtual bool DrawSilhouette(bitmap*, vector2d);
   virtual ushort GlobalResistance(uchar) const;
   virtual bool CanUseEquipment() const { return true; }
   virtual void AddInfo(felist&) const;
-
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }

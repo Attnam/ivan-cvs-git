@@ -29,6 +29,8 @@
 #define STRIGHTLEG	4
 #define STLEFTLEG	5
 
+#define SILHOUETTE_X_SIZE 64
+#define SILHOUETTE_Y_SIZE 64
 #ifdef WIN32
 #include <windows.h>
 #endif

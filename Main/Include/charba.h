@@ -358,6 +358,7 @@ class character : public entity, public id
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
+  virtual bool DrawSilhouette(bitmap*, vector2d) { return false; }
   virtual void TalkTo(character*);
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;

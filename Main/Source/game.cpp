@@ -398,9 +398,9 @@ void game::DrawPanel()
     FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetMainWielded()->CHARNAME(INDEFINITE));
 
   if(Player->GetBodyArmor())
-    FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetBodyArmor()->CHARNAME(INDEFINITE));*/
+    FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetBodyArmor()->CHARNAME(INDEFINITE));
 
-  /*FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
   FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
   FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 66667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 40000 + 1));
   FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, WHITE, "Money: %d", Player->GetMoney());
@@ -449,7 +449,9 @@ void game::DrawPanel()
       FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, BLUE, "Burdened!");
     case UNBURDENED:
       break;
-    }*/
+
+      }*/
+  Player->DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 16, 32));
 }
 
 void game::UpdateCameraX()
@@ -1197,7 +1199,7 @@ bool game::HandleQuitMessage()
       if(GetInGetCommand())
 	{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
+	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1229,7 +1231,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
+	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 #endif
 	  {
 	    RemoveSaves();
