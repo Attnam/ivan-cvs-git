@@ -1198,6 +1198,7 @@ class ITEM
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetPrice() const;
+  virtual bool ReceiveDamage(character*, ushort, uchar);
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

@@ -1961,7 +1961,7 @@ void chest::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      StorageVolume = 1000;
+      StorageVolume = 5000;
       SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
       SetIsLocked(RAND() % 3 != 0);
       uchar ItemNumber = RAND() % 5;
@@ -1983,6 +1983,12 @@ void chest::VirtualConstructor(bool Load)
 
 bool chest::TryKey(item* Key, character* Applier)
 {
+  if(GetLockType() == DAMAGED)
+    {
+      ADD_MESSAGE("The lock is broken.");
+      return true;
+    }
+
   if(Key->CanOpenLockType(GetLockType()))
     {
       if(IsLocked())
@@ -3610,7 +3616,7 @@ ulong chest::GetPrice() const
 void potion::Break()
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("The %s shatters to pieces.", CHARNAME(DEFINITE));
 
   if(GetContainedMaterial()) 
     GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
@@ -3845,4 +3851,27 @@ void arm::SignalAttackInfoChange()
 
   if(GetMaster() && !GetMaster()->IsInitializing())
     CalculateAttackInfo();
+}
+
+bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+{
+  if(Type == PHYSICALDAMAGE)
+    {
+      Contained->ReceiveDamage(Damager, Damage / 2, PHYSICALDAMAGE);
+      if(IsLocked() && Damage > RAND() % 6)
+	{
+	  SetIsLocked(false);
+	  SetLockType(DAMAGED);
+
+	  if(CanBeSeenByPlayer())
+	    {
+	      ADD_MESSAGE("%s's lock shatters to pieces.", GetNameSingular().c_str());
+	    }
+	}
+      else
+	{
+	  if(Damager->IsPlayer())
+	    ADD_MESSAGE("THUMB!");
+	}
+    }
 }

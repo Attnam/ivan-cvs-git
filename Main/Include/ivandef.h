@@ -195,11 +195,12 @@
 #define VALUABLE 16
 #define MISC 17
 
-#define NUMBER_OF_LOCK_TYPES 3
+#define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
 
 #define ROUND 0
 #define SQUARE 1
 #define TRIANGULAR 2
+#define DAMAGED 3 // lock is too damaged to be used again
 
 #define GOOD 1
 #define NEUTRAL 2

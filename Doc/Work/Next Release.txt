@@ -122,3 +122,4 @@ Remove the school food effects of scabies (or make them a lot more seldom).
 Raven.
 Kicking chests.
 Prohibit spoiling in shops and on the cathedral floor.
+Mellis should give information about unknown gods.

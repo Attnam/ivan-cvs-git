@@ -197,7 +197,8 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
     {
       ReceiveDamage(Kicker, KickDamage, PHYSICALDAMAGE);
 
-      /* Bug: you can kick mines with this. */
+      /* Bug: you can kick mines with this. - somebody
+	 Feature: you can kick mines with this. - hex */
 
       for(ushort c = 0; c < 1 + (RAND() & 1); ++c)
 	if(GetItems())

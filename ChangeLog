@@ -1,3 +1,10 @@
+September 07 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* The frequency of suicide dwarfs increased from 1000 to 10000
+	* Kicking locked chests can now shatter the lock
+	* The contained items of a chest now receive 50 % of the physical damaged inflicted to the chest 
+	* Chest's StorageVolume incresed from 1000 to 5000 (even bottles couldn't fit inside before)
+	
 August 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Whistle now sets the waypoint of some creatures to users pos

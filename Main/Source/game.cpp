@@ -79,7 +79,7 @@ petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
 std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
-std::string game::LockDescription[] = { "round", "square", "triangular" };
+std::string game::LockDescription[] = { "round", "square", "triangular", "broken" };
 std::vector<god*> game::God;
 
 command* game::Command[] =

@@ -1621,7 +1621,7 @@ kamikazedwarf
 	DefaultWisdom = 5;
 	DefaultCharisma = 10;
 	DefaultMana = 10;
-	Frequency = 1000;
+	Frequency = 10000;
 	HeadBitmapPos = 112, 160;
 	TorsoBitmapPos = 48, 16;
 	ArmBitmapPos = 80, 0;
