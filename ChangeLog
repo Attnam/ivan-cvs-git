@@ -1,3 +1,8 @@
+August 11 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Monsters now panic more or less correctly
+	* Item info option added to Wizard mode's secret knowledge command
+	
 August 10 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* corrected funny (ok it's not very funny) spelling mistake. The text said before: "...ThOu HaSt SlAuGtHeReD pEtRuS..."

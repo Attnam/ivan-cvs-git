@@ -11,6 +11,7 @@
 #include "lsquare.h"
 #include "slot.h"
 
+class felist;
 class bitmap;
 class character;
 class humanoid;
@@ -282,6 +283,8 @@ class item : public object
   virtual void SpecialGenerationHandler() { }
   item* Duplicate() const;
   virtual void SetIsActive(bool) { }
+  virtual void AddMiscellaneousInfo(felist&) const;
+  virtual ulong GetNutritionValue() const;
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

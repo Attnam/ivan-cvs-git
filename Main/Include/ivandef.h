@@ -25,6 +25,7 @@
 #if defined WIN32 || defined __DJGPP__
 #define GAME_DIR std::string("")
 #define SAVE_DIR std::string("Save/")
+#define HOME_DIR std::string("")
 #endif
 
 // The program can only create directories to the deepness of one, no more...
@@ -32,6 +33,7 @@
 #ifdef USE_SDL
 #define GAME_DIR (std::string(DATADIR) + "/ivan/")
 #define SAVE_DIR (std::string(getenv("HOME")) + "/IvanSave/")
+#define HOME_DIR (std::string(getenv("HOME")) + "/")
 #endif
 
 #define HASHIT 0

@@ -67,6 +67,7 @@ character
 	AttributeBonus = 0;
 	RightSWeaponSkillHits = 0;
 	LeftSWeaponSkillHits = 0;
+	PanicLevel = 33;
 }
 
 humanoid
@@ -162,6 +163,7 @@ petrus
 	CWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
 	RightSWeaponSkillHits = 5000;
 	ClassStates = INFRAVISION;
+	PanicLevel = 0;
 }
 
 farmer
@@ -321,6 +323,7 @@ oree
 	RightBoot = DIAMOND boot(BOOTOFSPEED);
 	KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
+	PanicLevel = 0;
 }
 
 darkknight
@@ -349,6 +352,7 @@ darkknight
 	IsAbstract = true;
 	KnownCWeaponSkills == LARGE_SWORDS;
 	ClassStates = INFRAVISION;
+	PanicLevel = 0;
 
 	Config ROOKIE;
 	{
@@ -439,6 +443,7 @@ ennerbeast
 	HairColor = rgb(64, 20, 0);
 	ClothColor = rgb(0, 0, 100);
 	LegMainColor = rgb(64, 20, 0);
+	PanicLevel = 70;
 }
 
 frog
@@ -499,6 +504,7 @@ elpuri
 	CanBeWished = false;
 	Alias == "Elpuri";
 	CWeaponSkillHits == 500;
+	PanicLevel = 0;
 }
 
 billswill
@@ -560,6 +566,7 @@ skeleton
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 20;
 	RightSWeaponSkillHits = 10;
+	PanicLevel = 0;
 
 	Config WARRIOR;
 	{
@@ -613,6 +620,7 @@ goblin
 	KnownCWeaponSkills == SPEARS;
 	CWeaponSkillHits == 10;
 	RightSWeaponSkillHits = 5;
+	PanicLevel = 66;
 
 	Config BERSERKER;
 	{
@@ -676,7 +684,7 @@ mommo
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
-
+	PanicLevel = 0;
 	Config CONICAL;
 	{
 		/* Strength and Agility depend on the slime type */
@@ -734,6 +742,7 @@ golem
 	BaseUnarmedStrength = 5000;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
+	PanicLevel = 10;
 }
 
 wolf
@@ -894,6 +903,7 @@ communist /* Ivan */
 	RightSWeaponSkillHits = 1000;
 	RightGauntlet = IRON gauntlet;
 	RightBoot = IRON boot;
+	PanicLevel = 0;
 }
 
 hunter
@@ -927,6 +937,7 @@ hunter
 	KnownCWeaponSkills == SPEARS;
 	CWeaponSkillHits == 100;
 	RightSWeaponSkillHits = 100;
+	PanicLevel = 20;
 }
 
 polarbear
@@ -1050,6 +1061,7 @@ petrusswife
 	NameSingular = "wife";
 	ArticleMode = NOARTICLE;
 	IsAbstract = true;
+	PanicLevel = 95;
 
 	Config 1;
 	{
@@ -1172,6 +1184,7 @@ librarian
 	TotalSize = 170;
 	CanRead = true;
 	NameSingular = "librarian";
+	PanicLevel = 50;
 }
 
 zombie
@@ -1198,6 +1211,7 @@ zombie
 	NameSingular = "zombie";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	PanicLevel = 0;
 }
 
 imp
@@ -1228,6 +1242,7 @@ imp
 	CanUseEquipment = false;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
+	PanicLevel = 70;
 }
 
 bat
@@ -1255,6 +1270,7 @@ bat
 	ClassStates = INFRAVISION;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
+	PanicLevel = 70;
 }
 
 mistress
@@ -1290,6 +1306,7 @@ mistress
 	RightSWeaponSkillHits = 200;
 	LeftSWeaponSkillHits = 200;
 	ClassStates = INFRAVISION;
+	PanicLevel = 20;
 
 	Config TORTURINGCHIEF;
 	{
@@ -1300,6 +1317,7 @@ mistress
 		RightSWeaponSkillHits = 500;
 		LeftSWeaponSkillHits = 500;
 		PostFix = "torturing chief";
+		PanicLevel = 0;
 	}
 
 	Config WHIPCHAMPION;
@@ -1311,6 +1329,7 @@ mistress
 		RightSWeaponSkillHits = 1000;
 		LeftSWeaponSkillHits = 1000;
 		PostFix = "whip champion";
+		PanicLevel = 5;
 	}
 
 	Config WARLADY;
@@ -1322,6 +1341,7 @@ mistress
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
 		PostFix = "warlady";
+		PanicLevel = 10;
 	}
 
 	Config QUEEN;
@@ -1335,6 +1355,7 @@ mistress
 		LeftSWeaponSkillHits = 5000;
 		PostFix = "queen";
 		Frequency = 500;
+		PanicLevel = 15;
 	}
 }
 
@@ -1399,6 +1420,7 @@ werewolfwolf
 	CanUseEquipment = false;
 	CanBeWished = false;
 	ClassStates = INFRAVISION;
+	PanicLevel = 0;
 }
 
 kobold
@@ -1431,6 +1453,7 @@ kobold
 	KnownCWeaponSkills == SPEARS;
 	CWeaponSkillHits == 10;
 	RightSWeaponSkillHits = 5;
+	PanicLevel = 66;
 
 	Config CHIEFTAIN;
 	{
@@ -1481,6 +1504,7 @@ gibberling
 	CanTalk = false;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
+	PanicLevel = 85;
 }
 
 largecat
@@ -1565,6 +1589,7 @@ angel
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
 	/* Equipment initialization overridden */
+	PanicLevel = 0;
 }
 
 dwarf
@@ -1600,6 +1625,7 @@ kamikazedwarf
 	CreateDivineConfigurations = true;
 	IsAbstract = true;
 	/* Equipment initialization overridden */
+	PanicLevel = 1;
 }
 
 mammoth
@@ -1651,6 +1677,7 @@ unicorn
 	TorsoMainColor = rgb(200, 200, 200); /* the horn */
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
+	PanicLevel = 0;
 
 	Config GOOD;
 	{
@@ -1698,6 +1725,7 @@ genie
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
+	PanicLevel = 0;
 }
 
 lion
@@ -1749,6 +1777,7 @@ carnivorousplant
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
+	PanicLevel = 0;
 }
 
 buffalo
@@ -1837,6 +1866,7 @@ orc
 	CWeaponSkillHits == 20;
 	RightSWeaponSkillHits = 10;
 	ClassStates = INFRAVISION;
+	PanicLevel = 66;
 
 	Config SLAUGHTERER;
 	{
@@ -1849,6 +1879,7 @@ orc
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		PostFix = "slaughterer";
+		PanicLevel = 66;
 	}
 
 	Config SQUADLEADER;
@@ -1864,6 +1895,7 @@ orc
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		PostFix = "squad leader";
+		PanicLevel = 50;
 	}
 
 	Config OFFICER;
@@ -1884,6 +1916,7 @@ orc
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
 		PostFix = "officer";
+		PanicLevel = 33;
 	}
 
 	Config GENERAL;
@@ -1904,6 +1937,7 @@ orc
 		CWeaponSkillHits == 500;
 		RightSWeaponSkillHits = 200;
 		PostFix = "general";
+		PanicLevel = 10;
 	}
 }
 
@@ -1938,4 +1972,5 @@ cossack
 	RightSWeaponSkillHits = 100;
 	RightGauntlet = LEATHER gauntlet;
 	RightBoot = LEATHER boot;
+	PanicLevel = 10;
 }

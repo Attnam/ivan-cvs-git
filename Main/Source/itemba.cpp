@@ -18,6 +18,8 @@
 #include "materba.h"
 #include "save.h"
 #include "database.h"
+#include "felist.h"
+#include "festring.h"
 
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
 {
@@ -463,4 +465,21 @@ item* item::Duplicate() const
   item* Clone = RawDuplicate();
   Clone->UpdatePictures();
   return Clone;
+}
+
+void item::AddMiscellaneousInfo(felist& List) const
+{
+  std::string Entry = "   ";
+  Entry.resize(40, ' ');
+  Entry << int(GetPrice());
+  Entry.resize(55, ' ');
+  Entry << int(GetOfferValue(NEUTRAL));
+  Entry.resize(70, ' ');
+  Entry << int(GetNutritionValue());
+  List.AddEntry(Entry, LIGHTGRAY);
+}
+
+ulong item::GetNutritionValue() const
+{ 
+  return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue(this) : 0; 
 }

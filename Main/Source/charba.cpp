@@ -580,11 +580,6 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::GetAICommand()
 {
-  if(WillPanic())
-    ActivateTemporaryState(PANIC);
-  else
-    DeActivateTemporaryState(PANIC);
-
   SeekLeader();
 
   if(CheckForEnemies(true))
@@ -2356,7 +2351,7 @@ bool character::CheckForEnemies(bool CheckDoors)
       if(StateIsActivated(PANIC))
 	{
 	  if(!MoveTowards((GetPos() << 1) - NearestChar->GetPos()))
-	    MoveRandomly();
+	    return MoveRandomly();
 	  return true;
 	}
       if(!GetTeam()->GetLeader() && NearestChar->IsPlayer())
@@ -3001,6 +2996,7 @@ bool character::SecretKnowledge()
   List.AddEntry("Character attack info", LIGHTGRAY);
   List.AddEntry("Character defence info", LIGHTGRAY);
   List.AddEntry("Character danger values", LIGHTGRAY);
+  List.AddEntry("Item miscellaneous info", LIGHTGRAY);
   ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
   List.Empty();
 
@@ -3068,11 +3064,31 @@ bool character::SecretKnowledge()
 	}
 
       List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB(0, 0, 16), false);
-      List.PrintToFile(GAME_DIR + "secret" + Chosen + ".txt");
-      ADD_MESSAGE("Info written also to %ssecret%d.txt.", GAME_DIR.c_str(), Chosen);
+      List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
+      ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
 
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
+    }
+  else if(Chosen == 3)
+    {
+      std::vector<item*> Item;
+      protosystem::CreateEveryItem(Item);
+      List.AddDescription("                                        \177                OV                NV");
+
+      for(c = 0; c < Item.size(); ++c)
+	{
+	  std::string Entry;
+	  Item[c]->AddName(Entry, UNARTICLED);
+	  List.AddEntry(Entry, LIGHTGRAY, Item[c]->GetPicture());
+	  Item[c]->AddMiscellaneousInfo(List);
+	}
+      List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), false);
+      List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
+      ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
+
+      for(c = 0; c < Item.size(); ++c)
+	delete Item[c];
     }
 
   return false;
@@ -3197,8 +3213,13 @@ bool character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar T
 
       if(IsPlayer())
 	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
+      else
+	{
+	  BeginTemporaryState(PANIC, 1000);
+	}
     }
-
+  if(!IsPlayer())
+    CheckPanic(300);
   return true;
 }
 
@@ -5607,11 +5628,14 @@ void character::PrintEndPanicMessage() const
 {
   if(IsPlayer())
     ADD_MESSAGE("You finally calm down.");
-  else
-    ADD_MESSAGE("Calms down.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s calms down.", CHARNAME(DEFINITE));
 }
 
-bool character::WillPanic() const
+void character::CheckPanic(ulong Ticks)
 {
-  return (GetHP() < 2); // temporary. 
+  if(GetHP() * 100 < GetPanicLevel() * GetMaxHP())
+    {
+      BeginTemporaryState(PANIC, Ticks);
+    }
 }

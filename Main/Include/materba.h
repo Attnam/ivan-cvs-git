@@ -143,6 +143,7 @@ class material
   static material* Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
   bool IsTransparent() const { return GetAlpha() != 255; }
   virtual material* Duplicate() const { return new material(*this); }
+  virtual ulong GetTotalNutritionValue(const item*) const; 
  protected:
   void Initialize(ushort, ulong, bool);
   void InstallDataBase();

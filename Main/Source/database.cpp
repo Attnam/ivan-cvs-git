@@ -216,6 +216,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(CWeaponSkillHits);
   ANALYZEDATA(RightSWeaponSkillHits);
   ANALYZEDATA(LeftSWeaponSkillHits);
+  ANALYZEDATA(PanicLevel);
 
   return Found;
 }

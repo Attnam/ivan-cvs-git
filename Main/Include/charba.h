@@ -149,6 +149,7 @@ struct characterdatabase
   std::vector<long> CWeaponSkillHits;
   ushort RightSWeaponSkillHits;
   ushort LeftSWeaponSkillHits;
+  uchar PanicLevel;
 };
 
 class characterprototype
@@ -678,7 +679,7 @@ class character : public entity, public id
   virtual bool TryToConsume(item*);
   virtual void PrintBeginPanicMessage() const;
   virtual void PrintEndPanicMessage() const;
-  virtual bool WillPanic() const;
+  virtual void CheckPanic(ulong);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -732,6 +733,7 @@ class character : public entity, public id
   virtual std::string BiteNoun() const { return "attack"; }
   virtual bool AttackIsBlockable(uchar) const { return true; }
   virtual uchar GetSpecialBodyPartFlags(ushort, ushort) const { return STNORMAL; }
+  virtual DATABASEVALUE(uchar, PanicLevel);
   stack* Stack;
   long NP, AP;
   bool Player;
