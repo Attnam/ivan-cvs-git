@@ -98,9 +98,7 @@ void graphics::DeInit()
 void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, vector2d NewRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
   FullScreen = FScreen;
-
   globalwindowhandler::Init(hInst, phWnd, Title, IconName);
-
   hWnd = *phWnd;
 
   if(FullScreen)
@@ -143,7 +141,8 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, vector2d
 void graphics::SetMode(const char* Title, vector2d NewRes, uchar NewColorDepth)
 {
   screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, NewColorDepth, SDL_SWSURFACE);
-  if ( screen == NULL ) 
+
+  if(screen == NULL) 
     ABORT("Couldn't set video mode.");
 
   globalwindowhandler::Init(Title);
@@ -192,22 +191,16 @@ void graphics::BlitDBToScreen()
 
 void graphics::BlitDBToScreen()
 {
-  if ( SDL_MUSTLOCK(screen) ) {
-    if ( SDL_LockSurface(screen) < 0 ) {
-      ABORT("Can't lock screen");
-    }
-  }
+  if(SDL_MUSTLOCK(screen) && SDL_LockSurface(screen) < 0)
+    ABORT("Can't lock screen");
 
   ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
-  //ulong TrueSourceXMove = 0;
   ulong TrueDestOffset = ulong(screen->pixels);
   ulong TrueDestXMove =  screen->pitch - (RES.X << 1);
-
   BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, RES.X, RES.Y);
 
-  if ( SDL_MUSTLOCK(screen) ) {
+  if(SDL_MUSTLOCK(screen))
     SDL_UnlockSurface(screen);
-  }
 
   SDL_UpdateRect(screen, 0,0, RES.X, RES.Y);
 }
@@ -453,8 +446,8 @@ void graphics::SetMode(ushort Mode)
   Regs.x.ax = 0x4F02;
   Regs.x.bx = Mode | 0x4000;
   __dpmi_int(0x10, &Regs);
-  Res.X =		ModeInfo.Width;
-  Res.Y =		ModeInfo.Height;
+  Res.X = ModeInfo.Width;
+  Res.Y = ModeInfo.Height;
   BufferSize =	Res.Y * ModeInfo.BytesPerLine;
   delete DoubleBuffer;
   DoubleBuffer = new bitmap(Res);

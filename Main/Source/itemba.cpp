@@ -404,3 +404,9 @@ void item::AddConsumeEndMessage(character* Eater) const
 {
   GetConsumeMaterial()->AddConsumeEndMessage(Eater);
 }
+
+void item::GenerateLeftOvers(character*)
+{
+  RemoveFromSlot();
+  SetExists(false);
+}

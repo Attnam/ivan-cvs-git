@@ -32,7 +32,6 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*Bitm
 {
   bitmap Buffer(RES);
   Buffer.Fill(0);
-
   ushort c, LineNumber = 0;
 
   for(c = 0; c < Text.length(); ++c)
@@ -40,7 +39,6 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*Bitm
       ++LineNumber;
 
   LineNumber >>= 1;
-
   char Line[200];
   ushort Lines = 0, LastBeginningOfLine = 0;
 
@@ -57,10 +55,6 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*Bitm
 
   Line[c - LastBeginningOfLine] = 0;
   FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 3 / 8 - (LineNumber - Lines) * 15, Color, Line);
-
-  //if(BitmapEditor)
-    //BitmapEditor(&Buffer);
-
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
@@ -85,22 +79,20 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
 
   bool bReady = false;
   ulong iSelected = 0;
-  //double Rotation = 0;
-
   bitmap Backup(RES);
   DOUBLEBUFFER->Blit(&Backup);
   bitmap Buffer(RES);
-
   ushort c = 0;
 
-  BackGround->Blit(&Buffer);
+  if(BackGround)
+    BackGround->Blit(&Buffer);
+  else
+    Buffer.Fill(0);
 
   while(!bReady)
     {
       clock_t StartTime = clock();
-
       std::string sCopyOfMS = Topic;
-
       ulong i;
 
       for(i = 0; i < CountChars('\r', Topic); ++i)
@@ -147,14 +139,14 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
       switch(k)
 	{	
 	case 0x148:
-	  if (iSelected > 0)
+	  if(iSelected > 0)
 	    --iSelected;
 	  else
 	    iSelected = (CountChars('\r',sMS)-1);
 	  break;
 
 	case 0x150:
-	  if (iSelected < (CountChars('\r',sMS)-1))
+	  if(iSelected < (CountChars('\r',sMS)-1))
 	    ++iSelected;
 	  else
 	    iSelected = 0;
@@ -185,11 +177,9 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
     }
 
   std::string Input;
-
   bitmap Backup(RES);
   DOUBLEBUFFER->Blit(&Backup);
   Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);
-
   bool TooShort = false;
 
   for(int LastKey = 0;; LastKey = 0)
@@ -206,13 +196,11 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 
       graphics::BlitDBToScreen();
 		
-      while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == '-' || LastKey == 0x08 || LastKey == 0x0D || LastKey == 0x1B))
+      while(!(LastKey >= 0x20 || LastKey == 0x08 || LastKey == 0x0D || LastKey == 0x1B))
 	LastKey = GETKEY();
 
       if(LastKey == 0x1B && AllowExit)
-	{
-	  return "";
-	}
+	return "";
 		
       if(LastKey == 0x08)
 	{
@@ -231,7 +219,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 	    continue;
 	  }
 
-      if(Input.length() < MaxLetters)
+      if(LastKey >= 0x20 && Input.length() < MaxLetters)
 	Input += char(LastKey);
     }
 
@@ -250,7 +238,6 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
     }
 
   std::string Input;
-
   bitmap Backup(RES);
   DOUBLEBUFFER->Blit(&Backup);
   Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);

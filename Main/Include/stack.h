@@ -52,10 +52,10 @@ class stack
   item* GetBottomItem() const;
   ushort GetItems() const { return Item->size(); }
   void SetSquareUnder(square*);
-  item* DrawContents(character*, std::string, bool (item::*)(character*) const = 0) const;
-  item* DrawContents(character*, std::string, bool, bool (item::*)(character*) const = 0) const;
-  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool (item::*)(character*) const = 0) const;
-  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool, bool (item::*)(character*) const = 0) const;
+  item* DrawContents(character*, std::string, bool (*)(item*, character*) = 0) const;
+  item* DrawContents(character*, std::string, bool, bool (*)(item*, character*) = 0) const;
+  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool (*)(item*, character*) = 0) const;
+  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool, bool (*)(item*, character*) = 0) const;
   item* MoveItem(stackiterator, stack*);
   ushort GetEmitation() const;
   vector2d GetPos() const;
@@ -65,7 +65,7 @@ class stack
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
   lsquare* GetLSquareUnder() const;
-  bool SortedItems(character*, bool (item::*jipii)(character*) const) const;
+  bool SortedItems(character*, bool (*)(item*, character*)) const;
   void DrawItemData(ushort, ushort) const;
   void DeletePointers();
   void Kick(character*, ushort, uchar);
@@ -80,9 +80,9 @@ class stack
   void ReceiveDamage(character*, short, uchar);
   void Teleport();
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, character*, std::string, bool, bool (item::*)(character*) const) const;
-  item* SearchChosen(ushort&, ushort, character*, bool (item::*)(character*) const) const;
-  bool IsOnGround() const { return SquarePosition == HIDDEN; }
+  void AddContentsToList(felist&, character*, std::string, bool, bool (*)(item*, character*)) const;
+  item* SearchChosen(ushort&, ushort, character*, bool (*)(item*, character*)) const;
+  bool IsOnGround() const { return SquarePosition != HIDDEN; }
  private:
   stacklist* Item;
   square* SquareUnder;

@@ -30,9 +30,7 @@ ushort felist::Draw(vector2d Pos, ushort Width, ushort PageLength, bool Selectab
     }
 
   ushort BackColor = MAKE_RGB(0, 0, 16);
-
   DrawDescription(Buffer, Pos, Width, BackColor);
-
   ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   ushort Selected = this->Selected;
   ushort Min = Selected - Selected % PageLength;

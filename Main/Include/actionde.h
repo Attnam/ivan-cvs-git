@@ -50,6 +50,8 @@ class ACTION
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual ulong GetWeight() const;
+  virtual void DropUsedItems();
+  virtual void DeleteUsedItems();
  protected:
   actionslot Consuming;
   bool WasOnGround;
@@ -95,6 +97,8 @@ class ACTION
   virtual void SetLeftBackup(item*);
   virtual bool AllowDisplace() const { return false; }
   virtual ulong GetWeight() const;
+  virtual void DropUsedItems();
+  virtual void DeleteUsedItems();
  protected:
   actionslot RightBackup;
   actionslot LeftBackup;

@@ -14,16 +14,14 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
       for(ushort i = 0; i < 10; ++i)
 	{
 	  ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
-
 	  const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
 
 	  if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
 	    {
 	      character* Monster = Proto->Clone(true, true, CreateItems);
-
 	      float Danger = Monster->MaxDanger();
 
-	      if(c == 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
+	      if(c >= 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
 		{
 		  Monster->SetTeam(game::GetTeam(1));
 		  return Monster;

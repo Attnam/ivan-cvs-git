@@ -42,6 +42,8 @@ class action
   virtual void Load(inputfile&) { }
   virtual bool GetRestRegenerationBonus() const { return false; }
   virtual ulong GetWeight() const { return 0; }
+  virtual void DropUsedItems() { }
+  virtual void DeleteUsedItems() { }
  protected:
   virtual ushort Type() const = 0;
   character* Actor;

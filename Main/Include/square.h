@@ -32,7 +32,7 @@ class square
   virtual void UpdateMemorized() = 0;
   virtual bool DrawTerrain() const = 0;
   virtual bool DrawCharacters() const = 0;
-  virtual void SetCharacter(character* What ) { Character = What; }
+  virtual void SetCharacter(character* What) { Character = What; }
   virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
   virtual character* GetCharacter() const { return Character; }

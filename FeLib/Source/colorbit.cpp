@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <fstream>
+#include <memory.h>
 
 #include "colorbit.h"
 #include "error.h"
@@ -19,14 +20,11 @@ colorizablebitmap::colorizablebitmap(std::string FileName)
   Palette = new uchar[768];
   File.Read((char*)Palette, 768);
   File.SeekPosBeg(8);
-
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
   YSize  =  File.Get();
   YSize += (File.Get() << 8) + 1;
-
   File.SeekPosBeg(128);
-
   PaletteBuffer = new uchar[XSize * YSize];
   uchar* Buffer = PaletteBuffer;
 
@@ -52,6 +50,39 @@ colorizablebitmap::~colorizablebitmap()
   delete [] PaletteBuffer;
 }
 
+/*
+ * A lousy bitmap saver that uses the pcx format but doesn't do any compression.
+ */
+
+void colorizablebitmap::Save(std::string FileName)
+{
+  char PCXHeader[128];
+  memset(PCXHeader, 0, 128);
+  *((ulong*)PCXHeader) = 0x0801050A;
+  PCXHeader[65] = 0x01;
+  PCXHeader[66] = XSize & 0xFF;
+  PCXHeader[67] = (XSize >> 8) & 0xFF;
+  PCXHeader[0x08] = (XSize - 1) & 0xFF;
+  PCXHeader[0x09] = ((XSize - 1) >> 8) & 0xFF;
+  PCXHeader[0x0A] = (YSize - 1) & 0xFF;
+  PCXHeader[0x0B] = ((YSize - 1) >> 8) & 0xFF;
+  outputfile SaveFile(FileName);
+  SaveFile.Write(PCXHeader, 128);
+  uchar* Buffer = PaletteBuffer;
+
+  while(ulong(Buffer) != ulong(PaletteBuffer) + XSize * YSize)
+    {
+      uchar Char = *(Buffer++);
+
+      if(Char >= 192)
+	SaveFile.Put(uchar(193));
+
+      SaveFile.Put(Char);
+    }
+
+  SaveFile.Write((char*)Palette, 768);
+}
+
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
   uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
@@ -66,11 +97,8 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	  if(PaletteElement >= 192)
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
-
 	      float Gradient = float(PaletteElement % 16) / 8;
-
 	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
-
 	      ((ushort*)DestBuffer)[DestX + x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
@@ -100,9 +128,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color) const
 	  if(Buffer[x] >= 192)
 	    {
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
-
 	      float Gradient = float(Buffer[x] % 16) / 8 - 1.0f;
-
 	      ((ushort*)DestBuffer)[x] = MAKE_RGB(uchar(GET_RED(ThisColor) * Gradient), uchar(GET_GREEN(ThisColor) * Gradient), uchar(GET_BLUE(ThisColor) * Gradient));
 	    }
 	  else
@@ -131,11 +157,8 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color) 
 	  if(PaletteElement >= 192)
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
-
 	      float Gradient = float(PaletteElement % 16) / 8;
-
 	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
-
 	      ((ushort*)DestBuffer)[x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
@@ -186,4 +209,62 @@ ushort colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ush
     }
 
   return strlen(Buffer);
+}
+
+void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip)
+{
+  uchar ColorMin = 192 + MColor * 16;
+  uchar ColorMax = 207 + MColor * 16;
+
+  if(Clip)
+    {
+      for(ushort x = X; x < X + Width; ++x)
+	for(ushort y = Y; y < Y + Height; ++y)
+	  {
+	    uchar Pixel = PaletteBuffer[y * XSize + x];
+
+	    if(Pixel >= ColorMin && Pixel <= ColorMax)
+	      {
+		ushort NewPixel = ushort(Pixel) + Amount;
+
+		if(NewPixel < ColorMin)
+		  NewPixel = ColorMin;
+
+		if(NewPixel > ColorMax)
+		  NewPixel = ColorMax;
+
+		PaletteBuffer[y * XSize + x] = NewPixel;
+	      }
+	  }
+    }
+  else
+    {
+      ushort x;
+
+      for(x = X; x < X + Width; ++x)
+	for(ushort y = Y; y < Y + Height; ++y)
+	  {
+	    uchar Pixel = PaletteBuffer[y * XSize + x];
+
+	    if(Pixel >= ColorMin && Pixel <= ColorMax)
+	      {
+		ushort NewPixel = ushort(Pixel) + Amount;
+
+		if(NewPixel < ColorMin)
+		  return;
+
+		if(NewPixel > ColorMax)
+		  return;
+	      }
+	  }
+
+      for(x = X; x < X + Width; ++x)
+	for(ushort y = Y; y < Y + Height; ++y)
+	  {
+	    uchar Pixel = PaletteBuffer[y * XSize + x];
+
+	    if(Pixel >= ColorMin && Pixel <= ColorMax)
+	      PaletteBuffer[y * XSize + x] = Pixel + Amount;
+	  }
+    }
 }

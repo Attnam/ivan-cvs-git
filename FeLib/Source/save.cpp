@@ -41,7 +41,6 @@ int inputfile::Peek()
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {
   uchar Mode = 0;
-
   std::string Buffer;
 
   for(;;)
@@ -190,9 +189,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
       int Char = Get();
 
       if(isalpha(Char) || isdigit(Char))
-	{
-	  return Char;
-	}
+	return Char;
 
       if(ispunct(Char))
 	{
@@ -252,6 +249,8 @@ long inputfile::ReadNumber(valuemap ValueMap, uchar CallLevel)
 
 	  return Value;
 	}
+
+      /* Convert this into an inline function! */
 
 	#define CHECK_OP(op, cl)\
 	\

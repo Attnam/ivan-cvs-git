@@ -20,7 +20,7 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 
 #ifdef __DJGPP__
 void (*globalerrorhandler::OldSignal[SIGNALS])(int) = {0, 0, 0, 0, 0, 0, 0, 0};
-int    globalerrorhandler::Signal[SIGNALS]		= {SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT};
+int globalerrorhandler::Signal[SIGNALS] = {SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT};
 #endif
 
 #ifdef WIN32
@@ -38,7 +38,6 @@ void globalerrorhandler::Install()
   if(!AlreadyInstalled)
     {
       AlreadyInstalled = true;
-
       OldNewHandler = set_new_handler(NewHandler);
 
 #ifdef __DJGPP__
@@ -87,7 +86,7 @@ void globalerrorhandler::Abort(const char* Format, ...)
 #ifdef VC
 int globalerrorhandler::NewHandler(size_t)
 #else
-  void globalerrorhandler::NewHandler()
+void globalerrorhandler::NewHandler()
 #endif
 {
 #ifdef WIN32
@@ -118,9 +117,7 @@ void globalerrorhandler::SignalHandler(int Signal)
   if(!AlreadySignalled)
     {
       AlreadySignalled = true;
-
       graphics::DeInit();
-
       std::cout << "Fatal Error: ";
 
       switch (Signal)
@@ -128,35 +125,27 @@ void globalerrorhandler::SignalHandler(int Signal)
 	case SIGABRT:
 	  std::cout << "Abort";
 	  break;
-
 	case SIGFPE:
 	  std::cout << "Divide by zero";
 	  break;
-
 	case SIGILL:
 	  std::cout << "Invalid/unknown";
 	  break;
-
 	case SIGSEGV:
 	  std::cout << "Segmentation violation";
 	  break;
-
 	case SIGTERM:
 	  std::cout << "Termination request";
 	  break;
-
 	case SIGINT:
 	  std::cout << "Break interrupt";
 	  break;
-
 	case SIGKILL:
 	  std::cout << "Kill";
 	  break;
-
 	case SIGQUIT:
 	  std::cout << "Quit";
 	  break;
-
 	default:
 	  std::cout << "Unknown";
 	}

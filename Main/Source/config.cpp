@@ -118,9 +118,6 @@ void configuration::EditContrast(char Change)
   Contrast = TContrast;
 }
 
-#include "charde.h"
-#include "itemde.h"
-
 void configuration::ShowConfigScreen()
 {
   vector2d QuestionPos = game::GetRunning() ? vector2d(16, 6) : vector2d(30, 46);
@@ -130,15 +127,15 @@ void configuration::ShowConfigScreen()
   while(true)
     {
       if(game::GetRunning())
-	game::DrawEverythingNoBlit();
+	{
+	  game::DrawEverythingNoBlit();
+	  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+	}
 
       felist List("Which setting do you wish to configure?", WHITE);
-
       List.SetSelected(Chosen);
-
       List.AddDescription("");
       List.AddDescription("Setting                                    Value");
-
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
       List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);

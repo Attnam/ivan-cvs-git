@@ -211,13 +211,13 @@ vector2d stack::GetPos() const
   return GetLSquareUnder()->GetPos();
 }
 
-bool stack::SortedItems(character* Viewer, bool (item::*SorterFunction)(character*) const) const
+bool stack::SortedItems(character* Viewer, bool (*SorterFunction)(item*, character*)) const
 {
   if(SorterFunction == 0)
     return GetItems() ? true : false;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if(((***i)->*SorterFunction)(Viewer))
+    if(SorterFunction(***i, Viewer))
       return true;
 
   return false;
@@ -389,22 +389,22 @@ stackiterator stack::GetSlotAboveTop() const
   return Item->end();
 }
 
-item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*) const) const
+item* stack::DrawContents(character* Viewer, std::string Topic, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", true, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool (item::*SorterFunction)(character*) const) const
+item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, SorterFunction);
 }
 
-item* stack::DrawContents(character* Viewer, std::string Topic, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+item* stack::DrawContents(character* Viewer, std::string Topic, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   felist ItemNames(Topic, WHITE, 0);
 
@@ -442,7 +442,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topi
   return Item;
 }
 
-void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string Desc, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string Desc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   bool UseSorterFunction = SorterFunction ? true : false;
   bool DescDrawn = false;
@@ -452,7 +452,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string 
       bool CatDescDrawn = false;
 
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->GetCategory() == c && (!UseSorterFunction || ((***i)->*SorterFunction)(Viewer)))
+	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)))
 	  {
 	    if(!DescDrawn && Desc != "")
 	      {
@@ -492,13 +492,13 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string 
     }
 }
 
-item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (item::*SorterFunction)(character*) const) const
+item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (*SorterFunction)(item*, character*)) const
 {
   bool UseSorterFunction = SorterFunction ? true : false;
 
   for(ushort c = 0; c < item::ItemCategories(); ++c)
     for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-      if((**i)->GetCategory() == c && (!UseSorterFunction || ((***i)->*SorterFunction)(Viewer)) && Pos++ == Chosen)
+      if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && Pos++ == Chosen)
 	return ***i;
 
   return 0;

@@ -110,7 +110,7 @@ class item : public object
   virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
-  virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
+  //virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }
   static bool PolymorphSpawnable() { return true; }
@@ -140,22 +140,22 @@ class item : public object
   virtual uchar GetCategory() const = 0;
   static uchar ItemCategories() { return 18; }
   static std::string ItemCategoryName(uchar);
-  bool ConsumableSorter(character* Char) const { return IsConsumable(Char); }
-  bool OpenableSorter(character* Char) const { return IsOpenable(Char); }
-  bool ReadableSorter(character* Char) const { return IsReadable(Char); }
-  bool DippableSorter(character* Char) const { return IsDippable(Char); }
-  bool DipDestinationSorter(character* Char) const { return IsDipDestination(Char); }
-  bool AppliableSorter(character* Char) const { return IsAppliable(Char); }
-  bool ZappableSorter(character* Char) const { return IsZappable(Char); }
-  bool ChargeableSorter(character* Char) const { return IsChargeable(Char); }
-  bool HelmetSorter(character* Char) const { return IsHelmet(Char); }
-  bool AmuletSorter(character* Char) const { return IsAmulet(Char); }
-  bool CloakSorter(character* Char) const { return IsCloak(Char); }
-  bool BodyArmorSorter(character* Char) const { return IsBodyArmor(Char); }
-  bool RingSorter(character* Char) const { return IsRing(Char); }
-  bool GauntletSorter(character* Char) const { return IsGauntlet(Char); }
-  bool BeltSorter(character* Char) const { return IsBelt(Char); }
-  bool BootSorter(character* Char) const { return IsBoot(Char); }
+  static bool ConsumableSorter(item* Item, character* Char) { return Item->IsConsumable(Char); }
+  static bool OpenableSorter(item* Item, character* Char) { return Item->IsOpenable(Char); }
+  static bool ReadableSorter(item* Item, character* Char) { return Item->IsReadable(Char); }
+  static bool DippableSorter(item* Item, character* Char) { return Item->IsDippable(Char); }
+  static bool DipDestinationSorter(item* Item, character* Char) { return Item->IsDipDestination(Char); }
+  static bool AppliableSorter(item* Item, character* Char) { return Item->IsAppliable(Char); }
+  static bool ZappableSorter(item* Item, character* Char) { return Item->IsZappable(Char); }
+  static bool ChargeableSorter(item* Item, character* Char) { return Item->IsChargeable(Char); }
+  static bool HelmetSorter(item* Item, character* Char) { return Item->IsHelmet(Char); }
+  static bool AmuletSorter(item* Item, character* Char) { return Item->IsAmulet(Char); }
+  static bool CloakSorter(item* Item, character* Char) { return Item->IsCloak(Char); }
+  static bool BodyArmorSorter(item* Item, character* Char) { return Item->IsBodyArmor(Char); }
+  static bool RingSorter(item* Item, character* Char) { return Item->IsRing(Char); }
+  static bool GauntletSorter(item* Item, character* Char) { return Item->IsGauntlet(Char); }
+  static bool BeltSorter(item* Item, character* Char) { return Item->IsBelt(Char); }
+  static bool BootSorter(item* Item, character* Char) { return Item->IsBoot(Char); }
   virtual bool IsConsumable(character*) const;
   virtual bool IsOpenable(character*) const { return false; }
   virtual bool IsReadable(character*) const { return false; }
@@ -174,7 +174,7 @@ class item : public object
   virtual bool IsBoot(character*) const { return false; }
   virtual bool IsOnGround() const;
   virtual ushort GetResistance(uchar) const;
-  virtual bool GenerateLeftOvers(character*) { return true; }
+  virtual void GenerateLeftOvers(character*);
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
   virtual ushort SoundResistance() const { return 0; }

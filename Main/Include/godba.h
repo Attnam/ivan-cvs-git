@@ -73,8 +73,8 @@ class god
   virtual god* Clone() const = 0;
   virtual ushort GetColor() const = 0;
  protected:
-  virtual void PrayGoodEffect();
-  virtual void PrayBadEffect();
+  virtual void PrayGoodEffect() = 0;
+  virtual void PrayBadEffect() = 0;
   virtual ushort Type() const = 0;
   short Relation;
   long Timer;

@@ -142,7 +142,7 @@ class ABSTRACT_CHARACTER
   virtual void SetRightBoot(item*);
   virtual void SetLeftBoot(item*);
 
-  virtual bool (item::*EquipmentSorter(uchar) const)(character*) const;
+  virtual bool (*EquipmentSorter(uchar) const)(item*, character*);
   virtual void SetEquipment(uchar, item*);
   virtual bool DrawSilhouette(bitmap*, vector2d);
   virtual ushort GlobalResistance(uchar) const;

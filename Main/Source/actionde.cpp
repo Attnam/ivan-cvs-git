@@ -93,8 +93,7 @@ void consume::Terminate(bool Finished)
       if(GetHasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
 
-      if(Consuming->GenerateLeftOvers(GetActor()))
-	Consuming->SetExists(false);
+      Consuming->GenerateLeftOvers(GetActor());
     }
   else if(*Consuming)
     {
@@ -110,6 +109,8 @@ void consume::Terminate(bool Finished)
 	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
       else
 	Consuming->MoveTo(GetActor()->GetStack());
+
+      Consuming.SetItem(0);
     }
   else
     {
@@ -293,4 +294,43 @@ ulong dig::GetWeight() const
     Weight += GetLeftBackup()->GetWeight();
 
   return Weight;
+}
+
+void consume::DropUsedItems()
+{
+  if(GetConsuming())
+    if(!game::GetInWilderness())
+      GetConsuming()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+    else
+      GetConsuming()->MoveTo(GetActor()->GetStack());
+}
+
+void consume::DeleteUsedItems()
+{
+  if(GetConsuming())
+    GetConsuming()->SetExists(false);
+}
+
+void dig::DropUsedItems()
+{
+  if(GetRightBackup())
+    if(!game::GetInWilderness())
+      GetRightBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+    else
+      GetRightBackup()->MoveTo(GetActor()->GetStack());
+
+  if(GetLeftBackup())
+    if(!game::GetInWilderness())
+      GetLeftBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+    else
+      GetLeftBackup()->MoveTo(GetActor()->GetStack());
+}
+
+void dig::DeleteUsedItems()
+{
+  if(GetRightBackup())
+    GetRightBackup()->SetExists(false);
+
+  if(GetLeftBackup())
+    GetLeftBackup()->SetExists(false);
 }

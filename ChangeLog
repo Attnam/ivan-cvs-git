@@ -1,10 +1,17 @@
+May 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Some possible memory leaks prevented
+	* Eating corpses works again, I think
+	* The Great Optimized Inventory Bug corrected
+	* Other bug corrections
+
 2002-05-01  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* Silhouette added to humanoids
 
 May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Bug corrections.
+	* Bug corrections
 
 May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
@@ -12,7 +19,7 @@ May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
-	* Monster can move again
+	* Monsters can move again
 	* Some list tweaks
 
 May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>

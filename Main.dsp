@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
 
-CFG=Main - Win32 Debug
+CFG=Main - Win32 PowerDebug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,12 +13,13 @@ CFG=Main - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "Main.mak" CFG="Main - Win32 Debug"
+!MESSAGE NMAKE /f "Main.mak" CFG="Main - Win32 PowerDebug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "Main - Win32 Release" (based on "Win32 (x86) Application")
-!MESSAGE "Main - Win32 Debug" (based on "Win32 (x86) Application")
+!MESSAGE "Main - Win32 PowerDebug" (based on "Win32 (x86) Application")
+!MESSAGE "Main - Win32 FastDebug" (based on "Win32 (x86) Application")
 !MESSAGE 
 
 # Begin Project
@@ -43,50 +44,86 @@ RSC=rc.exe
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# SUBTRACT CPP /Z<none>
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
-# ADD RSC /l 0x40b /d "NDEBUG"
+# ADD RSC /l 0x40b /d "NDEBUG" /d "VC"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 dxguid.lib ddraw.lib FeLib/Release/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# SUBTRACT LINK32 /pdb:none
+# SUBTRACT LINK32 /pdb:none /debug
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # End Special Build Tool
 
-!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
 # PROP BASE Output_Dir "Main___W"
 # PROP BASE Intermediate_Dir "Main___W"
+# PROP BASE Ignore_Export_Lib 0
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Main/Debug"
-# PROP Intermediate_Dir "Main/Debug"
+# PROP Output_Dir "Main/PowerDebug"
+# PROP Intermediate_Dir "Main/PowerDebug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD BASE CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
 # ADD CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
-# ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "_DEBUG" /D "VC" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "_DEBUG"
-# ADD RSC /l 0x40b /d "_DEBUG"
+# ADD RSC /l 0x40b /d "_DEBUG" /d "VC"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
 LINK32=link.exe
-# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib ddraw.lib FeLib/Debug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
+# ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Debug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
+# ADD LINK32 dxguid.lib ddraw.lib FeLib/PowerDebug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
 # Begin Special Build Tool
 SOURCE=$(InputPath)
-PostBuild_Cmds=copy Main\Debug\Main.exe IVAN.exe
+PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
+# End Special Build Tool
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "Main___0"
+# PROP BASE Intermediate_Dir "Main___0"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "Main/FastDebug"
+# PROP Intermediate_Dir "Main/FastDebug"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# SUBTRACT BASE CPP /Z<none>
+# ADD CPP /nologo /W3 /GR /GX /Zi /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
+# ADD MTL /nologo /D "NDEBUG" /D "VC" /mktyplib203 /o NUL /win32
+# ADD BASE RSC /l 0x40b /d "NDEBUG"
+# ADD RSC /l 0x40b /d "NDEBUG" /d "VC"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Release/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+# SUBTRACT BASE LINK32 /pdb:none /debug
+# ADD LINK32 dxguid.lib ddraw.lib FeLib/FastDebug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386
+# SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE=$(InputPath)
+PostBuild_Cmds=copy Main\FastDebug\Main.exe IVAN.exe
 # End Special Build Tool
 
 !ENDIF 
@@ -94,7 +131,8 @@ PostBuild_Cmds=copy Main\Debug\Main.exe IVAN.exe
 # Begin Target
 
 # Name "Main - Win32 Release"
-# Name "Main - Win32 Debug"
+# Name "Main - Win32 PowerDebug"
+# Name "Main - Win32 FastDebug"
 # Begin Group "Source"
 
 # PROP Default_Filter "c,cc,cpp"
@@ -108,9 +146,12 @@ SOURCE=.\Main\Source\actionde.cpp
 
 !IF  "$(CFG)" == "Main - Win32 Release"
 
-!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
 
+# ADD BASE CPP /W3
 # ADD CPP /W3
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
 
 !ENDIF 
 
@@ -459,13 +500,6 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
-
-!ENDIF 
-
 # End Source File
 # End Target
 # End Project

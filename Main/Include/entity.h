@@ -35,6 +35,7 @@ class entity
   virtual void SetLSquareUnder(lsquare*);
   virtual bool GetHasBe() const;
   virtual void SetHasBe(bool);
+  virtual bool IsEnabled() const { return GetExists() && GetHasBe(); }
  protected:
   std::list<entityinfo>::iterator PoolIterator;
   bool InPool;

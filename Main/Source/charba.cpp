@@ -36,6 +36,12 @@ character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bo
 
 character::~character()
 {
+  if(GetAction())
+    {
+      GetAction()->DeleteUsedItems();
+      delete GetAction();
+    }
+
   if(GetTeam())
     GetTeam()->Remove(GetTeamIterator());
 
@@ -187,98 +193,95 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 }
 
 void character::Be()
-{
-  if(game::GetPlayerBackup() != this)
-    {		
-      if(game::GetIsLoading())
+{	
+  if(game::GetIsLoading())
+    {
+      if(!GetIsPlayer())
+	return;
+      else
+	game::SetIsLoading(false);
+    }
+  else
+    {
+      ApplyExperience();
+
+      switch(GetBurdenState())
 	{
-	  if(!GetIsPlayer())
-	    return;
+	case UNBURDENED:
+	  EditAP(long((100 + (GetAgility() >> 1)) * GetAPStateMultiplier()));
+	  break;
+	case BURDENED:
+	  EditAP(long((75 + (GetAgility() >> 1) - (GetAgility() >> 2)) * GetAPStateMultiplier()));
+	  break;
+	case STRESSED:
+	case OVERLOADED:
+	  EditAP(long((50 + (GetAgility() >> 2)) * GetAPStateMultiplier()));
+	  break;
+	}
+
+      for(ushort c = 0; c < STATES; ++c)
+	if(StateIsActivated(c))
+	  (this->*StateHandler[c])();
+
+      if(GetAction())
+	GetAction()->Handle();
+
+      if(!IsEnabled())
+	return;
+
+      if(GetHP() < GetMaxHP() / 3)
+	SpillBlood(RAND() % 2);
+
+      if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && (!GetAction() || GetAction()->AllowFaint()))
+	{
+	  if(GetAction())
+	    GetAction()->Terminate(false);
+
+	  Faint();
+	}
+    }
+
+  if(GetAP() >= 0)
+    ActionAutoTermination();
+
+  if(GetAP() >= 0)
+    {
+      if(GetIsPlayer())
+	{
+	  static ushort Timer = 0;
+
+	  if(configuration::GetAutoSaveInterval() && !GetAction() && ++Timer >= configuration::GetAutoSaveInterval())
+	    {
+	      game::Save(game::GetAutoSaveFileName().c_str());
+	      Timer = 0;
+	    }
+
+	  if(!GetAction())
+	    GetPlayerCommand();
 	  else
-	    game::SetIsLoading(false);
+	    {
+	      game::DrawEverything();
+
+	      if(READKEY() && GetAction()->IsVoluntary())
+		GetAction()->Terminate(false);
+	    }
 	}
       else
 	{
-	  ApplyExperience();
-
-	  switch(GetBurdenState())
-	    {
-	    case UNBURDENED:
-	      EditAP(long((100 + (GetAgility() >> 1)) * GetAPStateMultiplier()));
-	      break;
-	    case BURDENED:
-	      EditAP(long((75 + (GetAgility() >> 1) - (GetAgility() >> 2)) * GetAPStateMultiplier()));
-	      break;
-	    case STRESSED:
-	    case OVERLOADED:
-	      EditAP(long((50 + (GetAgility() >> 2)) * GetAPStateMultiplier()));
-	      break;
-	    }
-
-	  for(ushort c = 0; c < STATES; ++c)
-	    if(StateIsActivated(c))
-	      (this->*StateHandler[c])();
-
-	  if(GetAction())
-	    GetAction()->Handle();
-
-	  if(!GetExists())
-	    return;
-
-	  if(GetHP() < GetMaxHP() / 3)
-	    SpillBlood(RAND() % 2);
-
-	  if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && (!GetAction() || GetAction()->AllowFaint()))
-	    {
-	      if(GetAction())
-		GetAction()->Terminate(false);
-
-	      Faint();
-	    }
+	  if(!GetAction() && !game::GetInWilderness())
+	    GetAICommand();
 	}
 
-      if(GetAP() >= 0)
-	ActionAutoTermination();
+      EditAP(-1000);
+    }
 
-      if(GetAP() >= 0)
-	{
-	  if(GetIsPlayer())
-	    {
-	      static ushort Timer = 0;
+  CharacterSpeciality();
+  Regenerate();
 
-	      if(configuration::GetAutoSaveInterval() && !GetAction() && ++Timer >= configuration::GetAutoSaveInterval())
-		{
-		  game::Save(game::GetAutoSaveFileName().c_str());
-		  Timer = 0;
-		}
-
-	      if(!GetAction())
-		GetPlayerCommand();
-	      else
-		{
-		  game::DrawEverything();
-
-		  if(READKEY() && GetAction()->IsVoluntary())
-		    GetAction()->Terminate(false);
-		}
-	    }
-	  else
-	    {
-	      if(!GetAction() && !game::GetInWilderness())
-		GetAICommand();
-	    }
-
-	  EditAP(-1000);
-	}
-
-      CharacterSpeciality();
-      Regenerate();
-
-      if(GetIsPlayer())
-	{
-	  if(!GetAction() || GetAction()->AllowFoodConsumption())
-	    Hunger();
-	}
+  if(GetIsPlayer())
+    {
+      if(!GetAction() || GetAction()->AllowFoodConsumption())
+	Hunger();
     }
 }
 
@@ -381,7 +384,7 @@ bool character::Consume()
 	return true;
     }
 
-  if((!game::GetInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter)) && !GetStack()->SortedItems(this, &item::ConsumableSorter))
+  if((game::GetInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter)) && !GetStack()->SortedItems(this, &item::ConsumableSorter))
     {
       ADD_MESSAGE("You have nothing to consume!");
       return false;
@@ -680,7 +683,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 bool character::ShowInventory()
 {
   GetStack()->DrawContents(this, "Your inventory", false);
-  return false;
+  return true;
 }
 
 bool character::PickUp()
@@ -759,7 +762,7 @@ void character::Die(bool ForceMsg)
 {
   // Note for programmers: This function MUST NOT delete any objects!
 
-  if(!GetExists())
+  if(!IsEnabled())
     return;
 
   if(GetIsPlayer())
@@ -794,15 +797,15 @@ void character::Die(bool ForceMsg)
 
   GetSquareUnder()->RemoveCharacter();
 
+  if(!game::GetInWilderness())
+    CreateCorpse();
+
   if(GetIsPlayer())
     {
       if(!game::GetInWilderness())
 	GetLSquareUnder()->SetTemporaryEmitation(GetEmitation());
 
-      game::DrawEverything();
-
-      if(!game::GetInWilderness())
-	GetLSquareUnder()->SetTemporaryEmitation(0);
+      //game::DrawEverything();
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
@@ -810,31 +813,53 @@ void character::Die(bool ForceMsg)
 
       if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 	DrawMessageHistory();
+
+      if(!game::GetInWilderness())
+	GetLSquareUnder()->SetTemporaryEmitation(0);
     }
-
-  for(ushort c = 0; c < BodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->DropEquipment();
-
-  if(!game::GetInWilderness())
-    CreateCorpse();
 
   if(!game::GetInWilderness())
     {
       lsquare* Square = GetLSquareUnder();
-      SetSquareUnder(0); // prevents light optimization
+      //SetSquareUnder(0); // prevents light optimization
 
       while(GetStack()->GetItems())
 	GetStack()->MoveItem(GetStack()->GetBottomSlot(), Square->GetStack());
 
-      SetSquareUnder(Square);
+      for(ushort c = 0; c < BodyParts(); ++c)
+	if(GetBodyPart(c))
+	  GetBodyPart(c)->DropEquipment();
+
+      if(GetAction())
+	{
+	  GetAction()->DropUsedItems();
+	  delete GetAction();
+	  SetAction(0);
+	}
+
+      //SetSquareUnder(Square);
     }
   else
-    while(GetStack()->GetItems())
-      {
-	GetStack()->GetBottomItem()->SetExists(false);
-	GetStack()->RemoveItem(GetStack()->GetBottomSlot());
-      }
+    {
+      /* Drops the equipment to the character's stack */
+
+      for(ushort c = 0; c < BodyParts(); ++c)
+	if(GetBodyPart(c))
+	  GetBodyPart(c)->DropEquipment();
+
+      if(GetAction())
+	{
+	  GetAction()->DeleteUsedItems();
+	  delete GetAction();
+	  SetAction(0);
+	}
+
+      while(GetStack()->GetItems())
+	{
+	  GetStack()->GetBottomItem()->SetExists(false);
+	  GetStack()->RemoveItem(GetStack()->GetBottomSlot());
+	}
+    }
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(0);
@@ -907,7 +932,7 @@ void character::AddHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bo
   else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
     Msg = Description(DEFINITE) + " " + AICombatHitVerb(Enemy, Critical) + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
   else
-    Msg = "";
+    return;
 
   ADD_MESSAGE("%s", Msg.c_str());
 }
@@ -1854,6 +1879,7 @@ void character::GetPlayerCommand()
 		HasActed = (this->*game::GetCommand(c)->GetLinkedFunction())();
 
 	    ValidKeyPressed = true;
+	    break;
 	  }
 
       if(!ValidKeyPressed)
@@ -2137,6 +2163,7 @@ void character::EndPolymorph()
       SetExists(false);
       GetSquareUnder()->RemoveCharacter();
       GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+      game::GetPlayerBackup()->SetHasBe(true);
       SetSquareUnder(0);
 
       while(GetStack()->GetItems())
@@ -2187,9 +2214,9 @@ void character::ActionAutoTermination()
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->GetExists() && ((GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
+	if((*i)->IsEnabled() && ((GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
 	  {
-	    ADD_MESSAGE("%s seems to be hostile", (*i)->CHARNAME(DEFINITE));
+	    ADD_MESSAGE("%s seems to be hostile.", (*i)->CHARNAME(DEFINITE));
 	    GetAction()->Terminate(false);
 	    return;
 	  }
@@ -2205,7 +2232,7 @@ bool character::CheckForEnemies(bool CheckDoors)
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->GetExists())
+	if((*i)->IsEnabled())
 	  {
 	    ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
@@ -2611,7 +2638,7 @@ void character::Hostility(character* Enemy)
 {
   if(GetTeam() != Enemy->GetTeam())
     GetTeam()->Hostility(Enemy->GetTeam());
-  else if(Enemy->GetExists())
+  else if(Enemy->IsEnabled())
     {
       if(Enemy->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s becomes enraged.", Enemy->CHARNAME(DEFINITE));
@@ -3151,9 +3178,7 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
       else if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s %s is severed off!", PossessivePronoun().c_str(), BodyPart->CHARNAME(UNARTICLED));
 
-      BodyPart->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
-      BodyPart->SetUnique(ForceDefiniteArticle() || AssignedName != "");
-      BodyPart->RemoveFromSlot();
+      SevereBodyPart(BodyPartIndex);
       GetSquareUnder()->SendNewDrawRequest();
 
       if(!game::GetInWilderness())
@@ -3170,6 +3195,15 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
     }
 
   return true;
+}
+
+bodypart* character::SevereBodyPart(uchar BodyPartIndex)
+{
+  bodypart* BodyPart = GetBodyPart(BodyPartIndex);
+  BodyPart->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
+  BodyPart->SetUnique(ForceDefiniteArticle() || AssignedName != "");
+  BodyPart->RemoveFromSlot();
+  return BodyPart;
 }
 
 bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)

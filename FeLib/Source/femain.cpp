@@ -37,7 +37,6 @@ int main(int argc, char** argv)
     {
 #ifdef WIN32
       ShowWindow(hWnd, SW_HIDE);
-
       MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
 #ifdef USE_SDL

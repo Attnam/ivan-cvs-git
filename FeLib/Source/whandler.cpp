@@ -132,7 +132,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
     case WM_KEYUP:
       {
 	if(wParam == VK_SNAPSHOT)
-	    DOUBLEBUFFER->Save("Scrshot.bmp");
+	  DOUBLEBUFFER->Save("Scrshot.bmp");
 
 	return 0;
       }
@@ -163,9 +163,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 
   while(true)
     if(Active && KeyBuffer.Length())
-      {
-	return KeyBuffer.Remove(0);
-      }
+      return KeyBuffer.Remove(0);
     else
       if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
 	if(msg.message == WM_QUIT)
@@ -186,7 +184,6 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title, 
 {
   WNDCLASS wc;
   HWND hWnd;
-
   wc.lpszClassName = Title;
   wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
   wc.style         = CS_OWNDC;
@@ -198,20 +195,18 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title, 
   wc.cbClsExtra    = 0;
   wc.cbWndExtra    = 0;
 
-  if(!RegisterClass( &wc ))
+  if(!RegisterClass(&wc))
     ABORT("No Window register.");
 
-  hWnd = CreateWindowEx(0, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInst, 0 );
+  hWnd = CreateWindowEx(0, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInst, 0);
 
   if(!hWnd)
-    ABORT("No Windows.");
+    ABORT("No Window.");
 
   ShowWindow(hWnd, SW_SHOW);
   SetFocus(hWnd);
   UpdateWindow(hWnd);
-
   *phWnd = hWnd;
-
   GetKeyboardLayoutName(KeyboardLayoutName);
 }
 
@@ -262,7 +257,8 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
   if(EmptyBuffer)
     {
       SDL_Event event;
-      while( SDL_PollEvent( &event ) )
+
+      while(SDL_PollEvent(&event))
 	ProcessMessage(event);	     
 
       while(KeyBuffer.Length())
@@ -274,8 +270,10 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
       {
 	int Key =  KeyBuffer.Remove(0);
 	int BackUp = Key;
+
 	if(Key > 0xE000) 
 	  return Key - 0xE000;
+
 	if(Key != 0 && Key < 0x81)
 	  return Key;
       }
@@ -290,6 +288,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 int globalwindowhandler::ReadKey()
 {
   SDL_Event event;
+
   if(!(SDL_GetAppState() & SDL_APPACTIVE))
     {
       SDL_WaitEvent(&event);
@@ -297,9 +296,10 @@ int globalwindowhandler::ReadKey()
     }
   else
     {
-      while( SDL_PollEvent( &event ) )
+      while(SDL_PollEvent(&event))
 	ProcessMessage(event);
     }
+
   if(KeyBuffer.Length())
     return GetKey(false);
   else
@@ -310,65 +310,55 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
 {
   ushort Index, KeyPressed;
  
-  switch( event.type )
+  switch(event.type)
     {
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
-
     case SDL_KEYDOWN:
       switch(event.key.keysym.sym)
 	{
-   case SDLK_RETURN:
-      if (event.key.keysym.mod & KMOD_ALT)
-         graphics::ToggleFullScreen();
-      else
-         KeyPressed = event.key.keysym.unicode;
-      break;
+	case SDLK_RETURN:
+	  if(event.key.keysym.mod & KMOD_ALT)
+	     graphics::ToggleFullScreen();
+	  else
+	     KeyPressed = event.key.keysym.unicode;
+	  break;
 	case SDLK_DOWN:
 	case SDLK_KP2:
 	  KeyPressed = 0x150 + 0xE000;
 	  break;
-
 	case SDLK_UP:
 	case SDLK_KP8:
 	  KeyPressed = 0x148 + 0xE000;
 	  break;
-
 	case SDLK_RIGHT:
 	case SDLK_KP6:
 	  KeyPressed = 0x14D + 0xE000;
 	  break;
-
 	case SDLK_LEFT:
 	case SDLK_KP4:
 	  KeyPressed = 0x14B + 0xE000;
 	  break;
-
 	case SDLK_HOME:
 	case SDLK_KP7:
 	  KeyPressed = 0x147 + 0xE000;
 	  break;
-
 	case SDLK_END:
 	case SDLK_KP1:
 	  KeyPressed = 0x14F + 0xE000;
 	  break;
-
 	case SDLK_PAGEUP:
 	case SDLK_KP9:
 	  KeyPressed = 0x149 + 0xE000;
 	  break;
-
 	case SDLK_KP3:
 	case SDLK_PAGEDOWN:
 	  KeyPressed = 0x151 + 0xE000;
 	  break;
-
 	case SDLK_PRINT:
 	  DOUBLEBUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
-
 	default:
 	  KeyPressed = event.key.keysym.unicode;
 	}
@@ -385,8 +375,6 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
     default:
       break;
     }
-  
-
 }
 
 #endif

@@ -27,14 +27,26 @@ void entitypool::Be()
 }
 
 /*
- * Brutally removes all entities.
+ * Brutally removes all entities marked as dead.
  */
 
-void entitypool::KillEverything()
+void entitypool::BurnTheDead()
 {
-  for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
+  ulong NewSize = 0, OldSize = Pool.size();
+
+  while(NewSize != OldSize)
     {
-      std::list<entityinfo>::iterator Dirt = i++;
-      delete Dirt->Entity;
+      OldSize = Pool.size();
+
+      for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
+	if(i->Exists)
+	  ++i;
+	else
+	  {
+	    std::list<entityinfo>::iterator Dirt = i++;
+	    delete Dirt->Entity;
+	  }
+
+      NewSize = Pool.size();
     }
 }

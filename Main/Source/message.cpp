@@ -9,6 +9,7 @@
 #include "whandler.h"
 #include "colorbit.h"
 #include "strover.h"
+#include "error.h"
 
 felist msgsystem::MessageHistory("Message history", WHITE, 200, true);
 std::string msgsystem::LastMessage;
@@ -30,6 +31,9 @@ void msgsystem::AddMessage(const char* Format, ...)
   std::string Buffer(Message);
 
   ushort c;
+
+  if(Buffer == "")
+    ABORT("Empty message request!");
 
   if(Buffer == LastMessage)
     {
@@ -93,7 +97,7 @@ void msgsystem::AddMessage(const char* Format, ...)
 	  Buffer.erase(0, Pos + 1);
 	}
 
-      MessageHistory.AddEntryToPos(Temp, c, WHITE);
+      MessageHistory.AddEntryToPos(Temp, c, 0xFFFF);
     }
 
   MessageHistory.SetSelected(0);

@@ -19,6 +19,7 @@ class colorizablebitmap
  public:
   colorizablebitmap(std::string);
   ~colorizablebitmap();
+  void colorizablebitmap::Save(std::string);
 
   void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
   void MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
@@ -34,6 +35,14 @@ class colorizablebitmap
   ushort PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   bitmap* Colorize(ushort*) const;
   bitmap* Colorize(vector2d, vector2d, ushort*) const;
+  ushort GetXSize() const { return XSize; }
+  ushort GetYSize() const { return YSize; }
+
+  void AlterGradient(ushort, ushort, ushort, ushort, uchar, char, bool);
+  void AlterGradient(vector2d Pos, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
+  void AlterGradient(ushort X, ushort Y, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+  void AlterGradient(vector2d Pos, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+
  protected:
   ushort XSize, YSize;
   uchar* Palette;

@@ -6,6 +6,7 @@
 #include "level.h"
 #include "lsquare.h"
 #include "itemba.h"
+#include "strover.h"
 
 void god::Pray()
 {
@@ -71,31 +72,19 @@ std::string god::CompleteDescription() const
   std::string Desc = game::CAlignment(Alignment());
 
   Desc.resize(4, ' ');
-
   Desc += Name();
-
-  Desc.resize(30, ' ');
+  Desc.resize(17, ' ');
 
   if(game::GetWizardMode())
     {
-      char Buffer[256];
-
-      sprintf(Buffer, "%d - %d", int(Timer), int(Relation));
-
-      return Desc + Buffer;
+      Desc += Timer;
+      Desc += " - ";
+      Desc += Relation;
     }
 
+  Desc.resize(32, ' ');
+
   return Desc + "the " + Description();
-}
-
-void god::PrayGoodEffect()
-{
-  ADD_MESSAGE("%s doesn't know what good he could do to you for now.", GOD_NAME);
-}
-
-void god::PrayBadEffect()
-{
-  ADD_MESSAGE("%s doesn't know how to punish at the moment.", GOD_NAME);
 }
 
 void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)

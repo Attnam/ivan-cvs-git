@@ -536,23 +536,11 @@ bool humanoid::ShowWeaponSkills()
 	  List.AddEntry(Buffer + '-', LIGHTGRAY);
       }
 
-    /*if(CurrentSingleWeaponSkill)
-      {
-	List.AddEntry("", RED);
+    if(GetRightArm())
+      GetRightArm()->AddCurrentSingleWeaponSkillInfo(List);
 
-	std::string Buffer = "current right hand single weapon skill:  ";
-
-	Buffer += CurrentSingleWeaponSkill->GetLevel();
-	Buffer.resize(40, ' ');
-
-	Buffer += int(CurrentSingleWeaponSkill->GetHits());
-	Buffer.resize(50, ' ');
-
-	if(CurrentSingleWeaponSkill->GetLevel() != 10)
-	  List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
-	else
-	  List.AddEntry(Buffer + '-', RED);
-      }*/
+    if(GetLeftArm())
+      GetLeftArm()->AddCurrentSingleWeaponSkillInfo(List);
 
     List.Draw(vector2d(26, 42), 652, 20, false);
   }
@@ -2271,7 +2259,7 @@ std::string humanoid::EquipmentName(uchar Index) const
     }
 }
 
-bool (item::*humanoid::EquipmentSorter(uchar Index) const)(character*) const
+bool (*humanoid::EquipmentSorter(uchar Index) const)(item*, character*)
 {
   switch(Index)
     {
@@ -2545,8 +2533,9 @@ void carnivorousplant::CreateTorso()
 
 bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 {
-  ushort Color[4];
-  for(int x = 0 ; x < 4; x++)
+  ushort Color[4], x;
+
+  for(x = 0; x < 4; x++)
     Color[x] = BLACK;
 
   if(GetLeftLeg())
@@ -2566,7 +2555,7 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
-  for(int x = 0 ; x < 4; x++)
+  for(x = 0; x < 4; x++)
     Color[x] = BLACK;
 
   if(GetTorso())
@@ -2583,10 +2572,12 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where)
     {
       Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? RED : LIGHTGRAY;
     }
+
   if(GetHead())
     {
       Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? RED : LIGHTGRAY;
     }
+
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
   return true;
 }

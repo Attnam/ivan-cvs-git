@@ -41,7 +41,7 @@ class ITEM
   virtual uchar GetCategory() const { return FOOD; }
   virtual bool IsZappable(character*) const { return true; }
   virtual bool IsChargeable(character*) const { return true; }
-  virtual bool GenerateLeftOvers(character*);
+  virtual void GenerateLeftOvers(character*);
  protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,112); }
@@ -455,7 +455,7 @@ class ITEM
   virtual uchar GetCategory() const { return POTION; }
   virtual material* CreateDipMaterial();
   virtual bool IsDippable(character*) const { return !GetContainedMaterial(); }
-  virtual bool GenerateLeftOvers(character*);
+  virtual void GenerateLeftOvers(character*);
   virtual void GenerateMaterials();
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
@@ -1599,6 +1599,7 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterialColor2() const { return Color[2]; }
   virtual ushort GetMaterialColor3() const { return Color[3]; }
   virtual vector2d GetBitmapPos() const { return BitmapPos; }
+  virtual float NPModifier() const { return 0.01f; }
   std::string OwnerDescription;
   vector2d BitmapPos;
   ushort Color[4];
@@ -1619,6 +1620,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual ~head();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual float OfferModifier() const { return 0.1f; }
@@ -1684,6 +1686,7 @@ class ITEM
     SetRegenerationCounter(0);
   },
  public:
+  virtual ~humanoidtorso();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetGraphicsContainerIndex() const { return GRHUMANOID; }
@@ -1707,6 +1710,7 @@ class ABSTRACT_ITEM
   arm,
   bodypart,
  public:
+  virtual ~arm();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
@@ -1730,6 +1734,7 @@ class ABSTRACT_ITEM
   virtual ushort DangerWeight() const;
   virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
+  virtual void AddCurrentSingleWeaponSkillInfo(felist&);
  protected:
   virtual ushort GetStrengthModifier() const { return 50; }
   gearslot WieldedSlot;
@@ -1802,6 +1807,7 @@ class ABSTRACT_ITEM
   leg,
   bodypart,
  public:
+  virtual ~leg();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
@@ -1935,6 +1941,15 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void AddConsumeEndMessage(character*) const;
+  virtual void GenerateLeftOvers(character*);
+  virtual long Score() const;
+  static bool CanBeWished() { return false; }
+  static bool AutoInitializable() { return false; }
+  static bool PolymorphSpawnable() { return false; }
+  virtual ulong GetWeight() const;
+  virtual bool Destroyable() const;
+  virtual ulong Price() const;
+  virtual item* PrepareForConsuming(character*);
  protected:
   virtual ushort GetMaterialColor0() const;
   virtual ushort GetMaterialColor1() const;
@@ -1945,7 +1960,6 @@ class ITEM
   virtual vector2d GetBitmapPos() const;
   virtual ushort GetSize() const;
   virtual ushort GetFormModifier() const { return 15; }
-  virtual float NPModifier() const { return 0.01f; }
   character* Deceased;
 );
 

@@ -23,7 +23,7 @@ class entitypool
   static std::list<entityinfo>::iterator Add(entity* Entity) { return Pool.insert(Pool.end(), entityinfo(Entity)); }
   static void Remove(std::list<entityinfo>::iterator Iterator) { Pool.erase(Iterator); }
   static void Be();
-  static void KillEverything();
+  static void BurnTheDead();
  private:
   static std::list<entityinfo> Pool;
 };

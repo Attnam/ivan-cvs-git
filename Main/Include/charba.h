@@ -377,7 +377,7 @@ class character : public entity, public id
   virtual bodypart* GetBodyPartOfEquipment(uchar) const { return 0; }
   virtual item* GetEquipment(uchar) const { return 0; }
   virtual ushort EquipmentSlots() const { return 0; }
-  virtual bool (item::*EquipmentSorter(uchar) const)(character*) const { return 0; }
+  virtual bool (*EquipmentSorter(uchar) const)(item*, character*) { return 0; }
   virtual void SetEquipment(uchar, item*) { }
   virtual bool ScrollMessagesDown();
   virtual bool ScrollMessagesUp();
@@ -391,6 +391,7 @@ class character : public entity, public id
   virtual ulong GetTotalWeight() const;
   virtual void AddInfo(felist&) const;
   virtual void PrintInfo() const;
+  virtual bodypart* SevereBodyPart(uchar);
  protected:
   virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;

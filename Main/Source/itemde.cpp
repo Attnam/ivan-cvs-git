@@ -25,6 +25,7 @@ std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
 #include "whandler.h"
 #include "lterrade.h"
 #include "actionba.h"
+#include "felist.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
@@ -57,7 +58,7 @@ item* can::TryToOpen(character* Opener)
     }
 }
 
-bool banana::GenerateLeftOvers(character* Eater)
+void banana::GenerateLeftOvers(character* Eater)
 {
   item* Peals = new bananapeals(false);
   Peals->InitMaterials(GetMaterial(0));
@@ -68,10 +69,11 @@ bool banana::GenerateLeftOvers(character* Eater)
   else
     Eater->GetStack()->AddItem(Peals);
 
-  return true;
+  RemoveFromSlot();
+  SetExists(false);
 }
 
-bool potion::GenerateLeftOvers(character* Eater)
+void potion::GenerateLeftOvers(character* Eater)
 {
   /*ushort Emit = GetEmitation();
 
@@ -101,8 +103,6 @@ bool potion::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetLSquareUnder()->GetStack());
   else
     MoveTo(Eater->GetStack());
-
-  return false;
 }
 
 void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition) const
@@ -550,7 +550,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
 {
   if(Strength > 2500.0f / GetStrengthValue() + RAND() % 11 - RAND() % 11)
     {
-      if (IsShown)
+      if(IsShown)
 	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
 
       ItemStack->RemoveItem(ItemStack->SearchItem(this));
@@ -2106,7 +2106,23 @@ std::string corpse::PostFix() const
 
 bool corpse::Consume(character* Eater, float Amount)
 {
-  return true;
+  /*for(ushort c = GetDeceased()->BodyParts() - 1; c != 0; --c)
+    if(GetDeceased()->GetBodyPart(c))
+      if(GetDeceased()->GetBodyPart(c)->Consume(Eater, Amount))
+	{
+	  GetDeceased()->GetBodyPart(c)->AddConsumeEndMessage(Eater);
+	  GetDeceased()->GetBodyPart(c)->GenerateLeftOvers(Eater);
+	  return false;
+	}*/
+
+  return GetDeceased()->GetBodyPart(0)->Consume(Eater, Amount);
+}
+
+void corpse::GenerateLeftOvers(character* Eater)
+{
+  GetDeceased()->GetBodyPart(0)->GenerateLeftOvers(Eater);
+  RemoveFromSlot();
+  SetExists(false);
 }
 
 ushort corpse::GetEmitation() const
@@ -2362,4 +2378,124 @@ void leg::DropEquipment()
 
 void corpse::AddConsumeEndMessage(character* Eater) const
 {
+  GetDeceased()->GetBodyPart(0)->AddConsumeEndMessage(Eater);
+}
+
+void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
+{
+  if(CurrentSingleWeaponSkill)
+    {
+      List.AddEntry("", RED);
+
+      std::string Buffer = "current " + Name(UNARTICLED) + " single weapon skill:  ";
+
+      Buffer += CurrentSingleWeaponSkill->GetLevel();
+      Buffer.resize(40, ' ');
+
+      Buffer += int(CurrentSingleWeaponSkill->GetHits());
+      Buffer.resize(50, ' ');
+
+      if(CurrentSingleWeaponSkill->GetLevel() != 10)
+	List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
+      else
+	List.AddEntry(Buffer + '-', RED);
+    }
+}
+
+head::~head()
+{
+  if(GetHelmet())
+    GetHelmet()->SetExists(false);
+
+  if(GetAmulet())
+    GetAmulet()->SetExists(false);
+}
+
+humanoidtorso::~humanoidtorso()
+{
+  if(GetBodyArmor())
+    GetBodyArmor()->SetExists(false);
+
+  if(GetCloak())
+    GetCloak()->SetExists(false);
+
+  if(GetBelt())
+    GetBelt()->SetExists(false);
+}
+
+arm::~arm()
+{
+  if(GetWielded())
+    GetWielded()->SetExists(false);
+
+  if(GetGauntlet())
+    GetGauntlet()->SetExists(false);
+
+  if(GetRing())
+    GetRing()->SetExists(false);
+}
+
+leg::~leg()
+{
+  if(GetBoot())
+    GetBoot()->SetExists(false);
+}
+
+long corpse::Score() const
+{
+  long Score = 0;
+
+  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+    if(GetDeceased()->GetBodyPart(c))
+      Score += GetDeceased()->GetBodyPart(c)->Score();
+
+  return Score;
+}
+
+bool corpse::Destroyable() const
+{
+  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+    if(GetDeceased()->GetBodyPart(c) && !GetDeceased()->GetBodyPart(c)->Destroyable())
+      return false;
+
+  return true;
+}
+
+ulong corpse::Price() const
+{
+  ulong Price = 0;
+
+  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+    if(GetDeceased()->GetBodyPart(c))
+      Price += GetDeceased()->GetBodyPart(c)->Price();
+
+  return Price;
+}
+
+ulong corpse::GetWeight() const
+{
+  ulong Weight = 0;
+
+  for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
+    if(GetDeceased()->GetBodyPart(c))
+      Weight += GetDeceased()->GetBodyPart(c)->GetWeight();
+
+  return Weight;
+}
+
+item* corpse::PrepareForConsuming(character*)
+{
+  for(ushort c = GetDeceased()->BodyParts() - 1; c != 0; --c)
+    {
+      bodypart* BPart = GetDeceased()->GetBodyPart(c);
+
+      if(BPart)
+	{
+	  GetDeceased()->SevereBodyPart(c);
+	  GetSlot()->AddFriendItem(BPart);
+	  return BPart;
+	}
+    }
+
+  return this;
 }

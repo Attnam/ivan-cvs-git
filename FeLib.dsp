@@ -4,7 +4,7 @@
 
 # TARGTYPE "Win32 (x86) Static Library" 0x0104
 
-CFG=FeLib - Win32 Debug
+CFG=FeLib - Win32 PowerDebug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
@@ -13,12 +13,13 @@ CFG=FeLib - Win32 Debug
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "FeLib.mak" CFG="FeLib - Win32 Debug"
+!MESSAGE NMAKE /f "FeLib.mak" CFG="FeLib - Win32 PowerDebug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
 !MESSAGE "FeLib - Win32 Release" (based on "Win32 (x86) Static Library")
-!MESSAGE "FeLib - Win32 Debug" (based on "Win32 (x86) Static Library")
+!MESSAGE "FeLib - Win32 PowerDebug" (based on "Win32 (x86) Static Library")
+!MESSAGE "FeLib - Win32 FastDebug" (based on "Win32 (x86) Static Library")
 !MESSAGE 
 
 # Begin Project
@@ -47,20 +48,41 @@ LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
 
-!ELSEIF  "$(CFG)" == "FeLib - Win32 Debug"
+!ELSEIF  "$(CFG)" == "FeLib - Win32 PowerDebug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "FeLib___"
+# PROP BASE Intermediate_Dir "FeLib___"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "FeLib/Debug"
-# PROP Intermediate_Dir "FeLib/Debug"
+# PROP Output_Dir "FeLib/PowerDebug"
+# PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LIB32=link.exe -lib
+# ADD BASE LIB32 /nologo
+# ADD LIB32 /nologo
+
+!ELSEIF  "$(CFG)" == "FeLib - Win32 FastDebug"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "FeLib__0"
+# PROP BASE Intermediate_Dir "FeLib__0"
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "FeLib/FastDebug"
+# PROP Intermediate_Dir "FeLib/FastDebug"
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /Ob2 /I "FeLib/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /Zi /O2 /Ob2 /I "FeLib/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -73,7 +95,8 @@ LIB32=link.exe -lib
 # Begin Target
 
 # Name "FeLib - Win32 Release"
-# Name "FeLib - Win32 Debug"
+# Name "FeLib - Win32 PowerDebug"
+# Name "FeLib - Win32 FastDebug"
 # Begin Group "Source"
 
 # PROP Default_Filter "c,cc,cpp"

@@ -106,65 +106,121 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 {
   long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
-  #define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond) 	\
-	{										\
-		if(!D##PriC) 						\
-		{									\
-			Proc(vector2d(X1, Y1), vector2d(X1, Y1));			\
-			return true;							\
-		}									\
-											\
-		I1 = D##SecC << 1;							\
-		DD = I1 - (SecSign (PriSign D##PriC));					\
-		I2 = DD - (SecSign (PriSign D##PriC));					\
-											\
-		X = X1;									\
-		Y = Y1;									\
-											\
-		while(PriC PriCond PriC##2) 				\
-		{									\
-			if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance ||	\
-			   !Proc(vector2d(X, Y), vector2d(X1, Y1))) 	\
-				return false;						\
-											\
-			if(DD SecCond 0) 				\
-			{								\
-				SecC SecSign##= 1;					\
-				DD += I2;						\
-			}								\
-			else								\
-				DD += I1;						\
-											\
-			PriC PriSign##= 1;						\
-		}									\
-	}
+  #define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)\
+    {\
+      if(!D##PriC)\
+	{\
+	  Proc(vector2d(X1, Y1), vector2d(X1, Y1));\
+	  return true;\
+	}\
+      \
+      I1 = D##SecC << 1;\
+      DD = I1 - (SecSign (PriSign D##PriC));\
+      I2 = DD - (SecSign (PriSign D##PriC));\
+      \
+      X = X1;\
+      Y = Y1;\
+      \
+      while(PriC PriCond PriC##2)\
+	{\
+	  if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || !Proc(vector2d(X, Y), vector2d(X1, Y1)))\
+	    return false;\
+	  \
+	  if(DD SecCond 0)\
+	    {\
+	      SecC SecSign##= 1;\
+	      DD += I2;\
+	    }\
+	  else\
+	    DD += I1;\
+	  \
+	  PriC PriSign##= 1;\
+	}\
+    }
 
-  /* What the??? Hex! */
+  /*#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)\
+    {\
+      if(!D##PriC)\
+	{\
+	  Proc(vector2d(X1, Y1), vector2d(X1, Y1));\
+	  return true;\
+	}\
+      \
+      I1 = D##SecC << 1;\
+      DD = I1 - (SecSign (PriSign D##PriC));\
+      I2 = DD - (SecSign (PriSign D##PriC));\
+      \
+      X = X1;\
+      Y = Y1;\
+      \
+      bool C = false, D = false, E = false;\
+      \
+      while(PriC PriCond PriC##2)\
+	{\
+	  if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || (D = !Proc(vector2d(X, Y), vector2d(X1, Y1))))\
+	    return false;\
+	  \
+	  if(DD SecCond 0)\
+	    {\
+	      SecC SecSign##= 1;\
+	      DD += I2;\
+	      C = true;\
+	    }\
+	  else\
+	    {\
+	      if(D)\
+		return false;\
+	      \
+	      DD += I1;\
+	      C = false;\
+	    }\
+	  \
+	  if(C && PriC PriSign 1 PriCond PriC##2)\
+	    {\
+	      if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || (!Proc(vector2d(X, Y), vector2d(X1, Y1)) && D))\
+		return false;\
+	    }\
+	  \
+	  PriC PriSign##= 1;\
+	}\
+    }*/
 
   if(DX >= 0)
-    if(DY >= 0)
-      if(DX >= DY)
-	DO_LINE(+, X, <=, +, Y, >=)
+    {
+      if(DY >= 0)
+	{
+	  if(DX >= DY)
+	    DO_LINE(+, X, <=, +, Y, >=)
 	  else
 	    DO_LINE(+, Y, <=, +, X, >=)
-	      else
-		if (DX >= -DY)
-		  DO_LINE(+, X, <=, -, Y, <=)
-		    else
-		      DO_LINE(-, Y, >=, +, X, >=)
-			else
-			  if (DY >= 0)
-			    if (-DX >= DY)
-			      DO_LINE(-, X, >=, +, Y, >=)
-				else
-				  DO_LINE(+, Y, <=, -, X, <=)
-				    else
-				      if (-DX >= -DY)
-					DO_LINE(-, X, >=, -, Y, <=)
-					  else
-					    DO_LINE(-, Y, >=, -, X, <=)
+	}
+      else
+	{
+	  if(DX >= -DY)
+	    DO_LINE(+, X, <=, -, Y, <=)
+	  else
+	    DO_LINE(-, Y, >=, +, X, >=)
+	}
+    }
+  else
+    {
+      if(DY >= 0)
+	{
+	  if(-DX >= DY)
+	    DO_LINE(-, X, >=, +, Y, >=)
+	  else
+	    DO_LINE(+, Y, <=, -, X, <=)
+	}
+      else
+	{
+	  if(-DX >= -DY)
+	    DO_LINE(-, X, >=, -, Y, <=)
+	  else
+	    DO_LINE(-, Y, >=, -, X, <=)
+	}
+    }
 
-					      return true;
+  return true;
 }
 
 ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
@@ -176,7 +232,6 @@ ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
     TotalPossibility += Possibility[c];
 
   ulong Chosen = RAND() % TotalPossibility;
-
   TotalPossibility = 0;
 
   for(c = 0; c < Elements; ++c)

@@ -13,7 +13,6 @@
 bitmap::bitmap(std::string FileName) : IsIndependent(true)
 {
   SetAlphaMap(0);
-
   inputfile File(FileName.c_str(), false);
 
   if(!File.IsOpen())
@@ -23,16 +22,12 @@ bitmap::bitmap(std::string FileName) : IsIndependent(true)
   File.SeekPosEnd(-768);
   File.Read((char*)Palette, 768);
   File.SeekPosBeg(8);
-
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
   YSize  =  File.Get();
   YSize += (File.Get() << 8) + 1;
-
   File.SeekPosBeg(128);
-
   SetImage(Alloc2D<ushort>(YSize, XSize));
-
   ushort* Buffer = GetImage()[0];
 
   for(ushort y = 0; y < YSize; ++y)
@@ -43,7 +38,6 @@ bitmap::bitmap(std::string FileName) : IsIndependent(true)
 	if(Char1 > 192)
 	  {
 	    int Char2 = File.Get();
-
 	    --x;
 
 	    for(; Char1 > 192; --Char1)
@@ -161,12 +155,10 @@ void bitmap::Save(std::string FileName) const
 				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x00), char(0x00)};
 
   outputfile SaveFile(FileName);
-
   BMPHeader[0x12] =  XSize       & 0xFF;
   BMPHeader[0x13] = (XSize >> 8) & 0xFF;
   BMPHeader[0x16] =  YSize       & 0xFF;
   BMPHeader[0x17] = (YSize >> 8) & 0xFF;
-
   SaveFile.Write(BMPHeader, 0x36);
 
   for(long y = YSize - 1; y >= 0; --y)
@@ -209,7 +201,6 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
     ABORT("Zero-sized bitmap blit attempt detected!");
 
   Flags &= 0x7;
-
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
 
@@ -437,7 +428,6 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-
   MaskedBlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance, MaskColor);
 }
 
@@ -468,7 +458,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-
   ::AlphaBlit(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Alpha, MaskColor);
 }
 
@@ -490,9 +479,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskCo
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueDestXMove = (Bitmap->XSize - XSize) << 1;
   ulong AlphaMapOffset = ulong(GetAlphaMap()[0]);
-
   ushort Width = XSize, Height = YSize;
-
   ::AlphaBlit(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height, MaskColor);
 }
 
@@ -505,9 +492,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
     }
 
   ushort ThisXSize = XSize, ThisYSize = YSize;
-
   ulong Pitch = XSize << 1, Surface = ulong(GetImage()[0]);
-
   static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
 
   for(ushort c = 0; c < (Wide ? 5 : 1); ++c)
@@ -516,7 +501,6 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
       ushort FromY = OrigFromY + Point[c].Y;
       ushort ToX = OrigToX + Point[c].X;
       ushort ToY = OrigToY + Point[c].Y;
-
       ::DrawLine(Surface, Pitch, FromX, FromY, ToX, ToY, ThisXSize, ThisYSize, Color);
     }
 }
@@ -535,7 +519,6 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
     return;
 
   std::vector<vector2d> Points;
-
   ushort c;
 
   for(c = 0; c < NumberOfSides; ++c)
@@ -624,7 +607,6 @@ void bitmap::Outline(ushort Color)
     ABORT("Subbitmap outline request detected!");
 
   ulong Buffer;
-
   ushort LastColor, NextColor;
 
   for(ushort x = 0; x < XSize; ++x)
@@ -652,7 +634,6 @@ void bitmap::Outline(ushort Color)
   for(ushort y = 0; y < YSize; ++y)
     {
       Buffer = ulong(GetImage()[y]);
-
       LastColor = *(ushort*)Buffer;
 
       for(ushort x = 0; x < XSize - 1; ++x)
@@ -707,7 +688,6 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
     {
       ulong SrcBuffer = ulong(GetImage()[y]);
       ulong DestBuffer = ulong(Bitmap->GetImage()[y]);
-
       ushort LastSrcColor = *(ushort*)SrcBuffer;
       ushort LastDestColor = *(ushort*)DestBuffer;
 
@@ -801,4 +781,65 @@ void bitmap::FillWithGradient(ushort X, ushort Y, ushort Width, ushort Height, u
 					ushort(GET_GREEN(Color1) * (1.0f - Multiplier) + GET_GREEN(Color2) * Multiplier),
 					ushort(GET_BLUE(Color1) * (1.0f - Multiplier) + GET_BLUE(Color2) * Multiplier)));
       }
+}
+
+void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, char Stretch) const
+{
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->StretchBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Stretch);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      StretchBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Stretch);
+      return;
+    }
+
+  if(!Width || !Height)
+    ABORT("Zero-sized bitmap stretch blit attempt detected!");
+
+  if(Stretch > 1)
+    {
+      ushort tx = DestX;
+
+      for(ushort x1 = SourceX; x1 < SourceX + Width; ++x1, tx += Stretch)
+	{
+	  ushort ty = DestY;
+
+	  for(ushort y1 = SourceY; y1 < SourceY + Height; ++y1, ty += Stretch)
+	    {
+	      ushort Pixel = GetImage()[y1][x1];
+
+	      for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
+		for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
+		  Bitmap->GetImage()[y2][x2] = Pixel;
+	    }
+	}
+
+      return;
+    }
+  else if(Stretch < -1)
+    {
+      ushort tx = DestX, ty = DestY;
+
+      for(ushort x1 = SourceX; x1 < SourceX + Width; x1 -= Stretch, ++tx)
+	{
+	  ushort ty = DestY;
+
+	  for(ushort y1 = SourceY; y1 < SourceY + Height; y1 -= Stretch, ++ty)
+	    {
+	      ushort Pixel = GetImage()[y1][x1];
+	      Bitmap->GetImage()[ty][tx] = Pixel;
+	    }
+	}
+
+      return;
+    }
+  else
+    {
+      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+      return;
+    }
 }
