@@ -9,7 +9,7 @@
 #include "femath.h"
 #include "blit.h"
 
-bitmap::bitmap(std::string FileName) : IsIndependent(true)
+bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
 {
   SetAlphaMap(0);
   inputfile File(FileName.c_str(), false);
@@ -141,7 +141,7 @@ void bitmap::Load(inputfile& SaveFile)
     }
 }
 
-void bitmap::Save(std::string FileName) const
+void bitmap::Save(const std::string& FileName) const
 {
   static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),

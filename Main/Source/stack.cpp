@@ -389,22 +389,22 @@ stackiterator stack::GetSlotAboveTop() const
   return Item->end();
 }
 
-item* stack::DrawContents(character* Viewer, std::string Topic, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(character* Viewer, const std::string& Topic, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", true, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, SorterFunction);
 }
 
-item* stack::DrawContents(character* Viewer, std::string Topic, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   felist ItemNames(Topic, WHITE, 0);
 
@@ -421,7 +421,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topi
 
   AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
 
-  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, MergeStack ? 12 : 15, SelectItem, false);
+  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;
@@ -442,7 +442,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topi
   return Item;
 }
 
-void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string Desc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
 {
   bool UseSorterFunction = SorterFunction ? true : false;
   bool DescDrawn = false;

@@ -12,7 +12,7 @@ class character;
 class command
 {
  public:
-  command(bool (character::*LinkedFunction)(), std::string Description, char Key, bool CanBeUsedInWilderness, bool WizardModeFunction = false) : LinkedFunction(LinkedFunction), Description(Description), Key(Key), CanBeUsedInWilderness(CanBeUsedInWilderness), WizardModeFunction(WizardModeFunction) { }
+  command(bool (character::*LinkedFunction)(), const std::string& Description, char Key, bool CanBeUsedInWilderness, bool WizardModeFunction = false) : LinkedFunction(LinkedFunction), Description(Description), Key(Key), CanBeUsedInWilderness(CanBeUsedInWilderness), WizardModeFunction(WizardModeFunction) { }
   bool (character::*GetLinkedFunction() const)() { return LinkedFunction; }
   std::string GetDescription() const { return Description; }
   char GetKey() const { return Key; }

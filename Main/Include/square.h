@@ -44,7 +44,7 @@ class square
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
   virtual std::string GetMemorizedDescription() { return MemorizedDescription; }
-  virtual void SetMemorizedDescription(std::string What) { MemorizedDescription = What; }
+  virtual void SetMemorizedDescription(const std::string& What) { MemorizedDescription = What; }
   virtual void UpdateMemorizedDescription(bool = false) = 0;
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;

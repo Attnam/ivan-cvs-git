@@ -356,19 +356,19 @@ void altar::Kick(ushort, bool ShowOnScreen, uchar)
   if(ShowOnScreen)
     ADD_MESSAGE("You feel like a sinner.");
 
-  game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerKickedAltar();
+  game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerKickedAltar();
 
-  if(GetLSquareUnder()->GetDivineOwner() > 1)
-    game::GetGod(GetLSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
+  if(GetLSquareUnder()->GetDivineMaster() > 1)
+    game::GetGod(GetLSquareUnder()->GetDivineMaster() - 1)->PlayerKickedFriendsAltar();
 
-  if(GetLSquareUnder()->GetDivineOwner() < game::GetGods() - 1)
-    game::GetGod(GetLSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
+  if(GetLSquareUnder()->GetDivineMaster() < game::GetGods() - 1)
+    game::GetGod(GetLSquareUnder()->GetDivineMaster() + 1)->PlayerKickedFriendsAltar();
 }
 
 void altar::ReceiveVomit(character* Who)
 {
   if(Who->GetIsPlayer())
-    game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
+    game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerVomitedOnAltar();
 }
 
 std::string door::Adjective(bool Articled) const

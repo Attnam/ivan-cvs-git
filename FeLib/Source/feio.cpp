@@ -28,7 +28,7 @@
 
 #define PENT_WIDTH 70
 
-void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
+void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
   bitmap Buffer(RES);
   Buffer.Fill(0);
@@ -61,7 +61,7 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*Bitm
       GETKEY(false);
 }
 
-ulong iosystem::CountChars(char cSF,std::string sSH)
+ulong iosystem::CountChars(char cSF, const std::string& sSH)
 {
   ulong iReturnCounter = 0;
 
@@ -72,7 +72,7 @@ ulong iosystem::CountChars(char cSF,std::string sSH)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected)
+int iosystem::Menu(bitmap* BackGround, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -165,7 +165,7 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
   return signed(iSelected);
 }
 
-std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
+std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
 {
   if(Fade)
     {
@@ -226,7 +226,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
   return Input;
 }
 
-long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, bool Fade)
+long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color, bool Fade)
 {
   if(Fade)
     {
@@ -275,7 +275,7 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
   return atoi(Input.c_str());
 }
 
-std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::string DirectoryName) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
+std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const std::string& DirectoryName) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
 {
 #ifdef WIN32
   struct _finddata_t Found;

@@ -168,9 +168,9 @@ void temple::Enter(character* Pilgrim)
       {
 	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	  if(Master->GetSquareUnder()->CanBeSeenFrom(Pilgrim->GetSquareUnder()->GetPos(), Pilgrim->LOSRangeSquare()))
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->PossessivePronoun().c_str(), game::GetGod(DivineOwner)->Name().c_str());
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->PossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
 	  else
-	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineOwner)->Name().c_str());
+	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->Name().c_str());
       }
     else
       ADD_MESSAGE("The temple appears to be deserted.");
@@ -372,3 +372,4 @@ bool cathedral::Dip(character* Thirsty) const
 
   return false;
 }
+

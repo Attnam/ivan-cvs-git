@@ -50,8 +50,8 @@ class room
   virtual void SetMaster(character* What) { Master = What; }
   virtual bool PickupItem(character*, item*) { return true; }
   virtual bool DropItem(character*, item*) { return true; }
-  virtual uchar GetDivineOwner() const { return DivineOwner; }
-  virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
+  virtual uchar GetDivineMaster() const { return DivineMaster; }
+  virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void KickSquare(character*, lsquare*) { }
   virtual bool ConsumeItem(character*, item*) { return true; }
   virtual bool AllowDropGifts() const { return true; }
@@ -66,7 +66,7 @@ class room
   std::vector<vector2d> Door;
   vector2d Pos, Size;
   character* Master;
-  uchar Index, DivineOwner;
+  uchar Index, DivineMaster;
 };
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__

@@ -50,7 +50,6 @@ bool weaponskill::AddHit()
     if(++Hits == ulong(GetLevelMap(Level + 1) * HitMultiplier))
       {
 	++Level;
-
 	return true;
       }
 
@@ -86,9 +85,7 @@ bool weaponskill::SubHit()
       if(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
 	{
 	  --Level;
-
 	  HitCounter = 0;
-
 	  return true;
 	}
     }
@@ -108,7 +105,6 @@ bool weaponskill::SubHit(ulong SubHits)
   while(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
     {
       --Level;
-
       HitCounter = 0;
     }
 
@@ -128,12 +124,12 @@ void gweaponskill::AddLevelDownMessage() const
   ADD_MESSAGE("You have not practised enough with %s lately. Your skill level is reduced to %d!", SkillName[Index].c_str(), Level);
 }
 
-void sweaponskill::AddLevelUpMessage(std::string WeaponName) const
+void sweaponskill::AddLevelUpMessage(const std::string& WeaponName) const
 {
   ADD_MESSAGE("You advance to skill level %d with your %s!", Level, WeaponName.c_str());
 }
 
-void sweaponskill::AddLevelDownMessage(std::string WeaponName) const
+void sweaponskill::AddLevelDownMessage(const std::string& WeaponName) const
 {
   ADD_MESSAGE("You have not practised enough with your %s lately. Your skill level is reduced to %d!", WeaponName.c_str(), Level);
 }
@@ -141,13 +137,11 @@ void sweaponskill::AddLevelDownMessage(std::string WeaponName) const
 void sweaponskill::Save(outputfile& SaveFile) const
 {
   weaponskill::Save(SaveFile);
-
   SaveFile << ID;
 }
 
 void sweaponskill::Load(inputfile& SaveFile)
 {
   weaponskill::Load(SaveFile);
-
   SaveFile >> ID;
 }

@@ -74,7 +74,7 @@ class petrus;
 class game
 {
  public:
-  static void Init(std::string = "");
+  static void Init(const std::string& = "");
   static void DeInit();
   static void Run();
   static int GetMoveCommandKey(uchar Index) { return MoveCommandKey[Index]; }
@@ -97,10 +97,10 @@ class game
   static void InitLuxTable();
   static void DeInitLuxTable();
   static const char* Insult();
-  static bool BoolQuestion(std::string, char = 0, int = 0);
+  static bool BoolQuestion(const std::string&, char = 0, int = 0);
   static void DrawEverything();
-  static bool Save(std::string = SaveName(""));
-  static uchar Load(std::string = SaveName(""));
+  static bool Save(const std::string& = SaveName(""));
+  static uchar Load(const std::string& = SaveName(""));
   static bool GetRunning() { return Running; }
   static void EnableWizardMode() { WizardMode = true; }
   static bool GetWizardMode() { return WizardMode; }
@@ -123,8 +123,7 @@ class game
   static void ApplyDivineTick(ushort = 1);
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(int);
-  //static vector2d AskForDirectionVector(std::string = "");
-  static std::string SaveName(std::string = "");
+  static std::string SaveName(const std::string& = "");
   static bool EyeHandler(vector2d, vector2d);
   static long GodScore();
   static void ShowLevelMessage();
@@ -135,7 +134,7 @@ class game
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
   static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
-  static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
+  static uchar DirectionQuestion(const std::string&, uchar = 8, bool = true, bool = false);
   static command* GetCommand(ushort Index) { return Command[Index]; }
   static void RemoveSaves(bool = true);
   static bool GetInWilderness() { return InWilderness; }
@@ -159,8 +158,8 @@ class game
   static void DoNeutralDeed(ushort);
   static void DoEvilDeed(ushort);
   static void InitScript();
-  static void SaveWorldMap(std::string = SaveName(""), bool = false);
-  static void LoadWorldMap(std::string = SaveName(""));
+  static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
+  static void LoadWorldMap(const std::string& = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewItemID();
   static void PopItemID(ulong ID) { if(NextItemID == ID + 1) --NextItemID; }
@@ -169,8 +168,8 @@ class game
   static void Hostility(team*, team*);
   static void CreateTeams();
   static bool IsValidPos(vector2d);
-  static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort, bool);
-  static long NumberQuestion(std::string, vector2d, ushort);
+  static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool);
+  static long NumberQuestion(const std::string&, vector2d, ushort);
   static void LOSTurn();
   static ulong GetLOSTurns() { return LOSTurns; }
   static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
@@ -186,15 +185,14 @@ class game
   static bool GetInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
-  //static vector2d PositionQuestion(std::string, vector2d);
   static vector2d GetScreenSize() { return ScreenSize; }
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
   static vector2d CalculateScreenCoordinates(vector2d);
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
   static uchar GetDirectionIndexForKey(int);
-  static vector2d PositionQuestion(std::string, vector2d, void (*)(vector2d) = 0);
+  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0);
   static void LookHandler(vector2d);
-  static int AskForKeyPress(std::string);
+  static int AskForKeyPress(const std::string&);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

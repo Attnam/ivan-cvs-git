@@ -58,12 +58,12 @@ class lsquare : public square
   virtual void NoxifyEmitter(vector2d);
   virtual uchar CalculateBitMask(vector2d) const;
   virtual std::string GetEngraved() const { return Engraved; }
-  virtual bool Engrave(std::string What) { Engraved = What; return true; }
+  virtual bool Engrave(const std::string& What) { Engraved = What; return true; }
   virtual void SetEmitation(ushort What) { Emitation = What; }
   virtual void UpdateMemorizedDescription(bool = false);
   virtual bool Kick(character*, ushort, uchar);
-  virtual uchar GetDivineOwner() const { return DivineOwner; }
-  virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
+  virtual uchar GetDivineMaster() const { return DivineMaster; }
+  virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual bool DrawTerrain() const;
   virtual bool DrawStacks() const;
   virtual bool DrawCharacters() const;
@@ -96,7 +96,7 @@ class lsquare : public square
   virtual void ChangeOLTerrainAndUpdateLights(olterrain*);
   virtual void DrawParticles(ushort, uchar);
   virtual void PolymorphEverything(character*);
-  virtual void StrikeEverything(character*, std::string, short, uchar);
+  virtual void StrikeEverything(character*, const std::string&, short, uchar);
   virtual fluid* GetFluid() const { return Fluid; }
   virtual void SetFluid(fluid* What) { Fluid = What; }
   virtual void RemoveFluid();
@@ -113,8 +113,8 @@ class lsquare : public square
   {
     emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) { }
     emitter() { }
-    bool operator==(emitter& AE) const { if(Pos == AE.Pos) return true; else return false; }
-    emitter& operator=(emitter& AE) { Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
+    bool operator==(const emitter& AE) const { if(Pos == AE.Pos) return true; else return false; }
+    emitter& operator=(const emitter& AE) { Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
     vector2d Pos;
     ushort DilatedEmitation;
   };
@@ -122,7 +122,7 @@ class lsquare : public square
   stack* Stack, * SideStack[4];
   ushort Emitation;
   std::string Engraved;
-  uchar DivineOwner;
+  uchar DivineMaster;
   uchar Room;
   ushort TemporaryEmitation;
   fluid* Fluid;

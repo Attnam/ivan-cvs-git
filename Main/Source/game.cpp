@@ -140,7 +140,7 @@ void game::InitScript()
 #include "stack.h"
 #include "itemde.h"
 
-void game::Init(std::string Name)
+void game::Init(const std::string& Name)
 {
   std::string PlayerName;
 
@@ -199,7 +199,7 @@ void game::Init(std::string Name)
       {
 	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
 			     "Constantly you have had to fight against ultra-violent bears and\n"
-			     "goblins that roam freely in this area. Screams of Enner Beasts have\n"
+			     "goblins that roam freely in this area. Screams of enner beasts have\n"
 			     "wailed in the distance and the cold air has almost freezed your body.\n"
 			     "But now your eyes catch the destination: A small settlement of a few\n"
 			     "houses build around a frog-shaped tower. The town has recently tried\n"
@@ -524,7 +524,7 @@ const char* game::Insult()
     }
 }
 
-bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForTrue)
+bool game::BoolQuestion(const std::string& String, char DefaultAnswer, int OtherKeyForTrue)
 {
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", String.c_str());
@@ -587,7 +587,7 @@ void game::DrawEverythingNoBlit()
   msgsystem::Draw();
 }
 
-bool game::Save(std::string SaveName)
+bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
 
@@ -614,7 +614,7 @@ bool game::Save(std::string SaveName)
   return true;
 }
 
-uchar game::Load(std::string SaveName)
+uchar game::Load(const std::string& SaveName)
 {
   inputfile SaveFile(SaveName + ".sav", false);
 
@@ -660,7 +660,7 @@ uchar game::Load(std::string SaveName)
   return LOADED;
 }
 
-std::string game::SaveName(std::string Base)
+std::string game::SaveName(const std::string& Base)
 {
   std::string SaveName = SAVE_DIR;
 
@@ -877,7 +877,7 @@ void game::TriggerQuestForGoldenEagleShirt()
   GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
 
-uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
+uchar game::DirectionQuestion(const std::string& Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
 {
   while(true)
     {
@@ -986,7 +986,7 @@ void game::DoGoodDeed(ushort Amount)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineOwner() == c)
+      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
 	if(GetGod(c)->GetRelation() + Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1024,7 +1024,7 @@ void game::DoEvilDeed(ushort Amount)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineOwner() == c)
+      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
 	if(GetGod(c)->GetRelation() - Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1061,7 +1061,7 @@ void game::DoNeutralDeed(ushort Amount)
   ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed!");
 }
 
-void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
+void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + ".wm");
   SaveFile << WorldMap;
@@ -1070,7 +1070,7 @@ void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
     delete WorldMap;
 }
 
-void game::LoadWorldMap(std::string SaveName)
+void game::LoadWorldMap(const std::string& SaveName)
 {
   inputfile SaveFile(SaveName + ".wm");
   SaveFile >> WorldMap;
@@ -1151,7 +1151,7 @@ bool game::IsValidPos(vector2d Pos)
     return false;
 }
 
-std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
+std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
@@ -1159,7 +1159,7 @@ std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, 
   return Return;
 }
 
-long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
+long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
   long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
@@ -1350,7 +1350,7 @@ void game::BusyAnimation(bitmap* Buffer)
     }
 }
 
-int game::AskForKeyPress(std::string Topic)
+int game::AskForKeyPress(const std::string& Topic)
 {
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
@@ -1360,7 +1360,7 @@ int game::AskForKeyPress(std::string Topic)
   return Key;
 }
 
-vector2d game::PositionQuestion(std::string Topic, vector2d CursorPos, void (*Handler)(vector2d))
+vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d))
 {
   int Key = 0;
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
@@ -1454,3 +1454,4 @@ void game::LookHandler(vector2d CursorPos)
   if(game::GetWizardMode())
     ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 }
+

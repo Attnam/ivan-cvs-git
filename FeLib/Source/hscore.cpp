@@ -7,7 +7,7 @@
 #include "colorbit.h"
 #include "felist.h"
 
-bool highscore::Add(long NewScore, std::string NewEntry)
+bool highscore::Add(long NewScore, const std::string& NewEntry)
 {
   for(ushort c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
@@ -57,13 +57,13 @@ void highscore::Draw() const
   List.Draw(vector2d(10, 10), 780, 50, false, false, false, true);
 }
 
-void highscore::Save(std::string File) const
+void highscore::Save(const std::string& File) const
 {
   outputfile HighScore(File);
   HighScore << ushort(HIGHSCORE_VERSION) << Score << Entry << LastAdd;
 }
 
-void highscore::Load(std::string File)
+void highscore::Load(const std::string& File)
 {
   {
     inputfile HighScore(File, false);

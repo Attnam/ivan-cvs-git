@@ -87,7 +87,7 @@ void dungeon::PrepareLevel(ushort Index)
     }
 }
 
-void dungeon::SaveLevel(std::string SaveName, ushort Number, bool DeleteAfterwards)
+void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + "." + Index + Number);
 
@@ -100,7 +100,7 @@ void dungeon::SaveLevel(std::string SaveName, ushort Number, bool DeleteAfterwar
     }
 }
 
-void dungeon::LoadLevel(std::string SaveName, ushort Number)
+void dungeon::LoadLevel(const std::string& SaveName, ushort Number)
 {
   inputfile SaveFile(SaveName + "." + Index + Number);
 

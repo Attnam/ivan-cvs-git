@@ -76,7 +76,7 @@ class graphics
   static vector2d GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void UpdateBounds();
-  static void LoadDefaultFont(std::string);
+  static void LoadDefaultFont(const std::string&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
  private:
 #ifdef WIN32

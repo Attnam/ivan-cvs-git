@@ -25,8 +25,8 @@ class dungeon
   dungeon(uchar);
   ~dungeon();
   void PrepareLevel(ushort = game::GetCurrent());
-  void SaveLevel(std::string = game::SaveName(), ushort = game::GetCurrent(), bool = true);
-  void LoadLevel(std::string = game::SaveName(), ushort = game::GetCurrent());
+  void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent(), bool = true);
+  void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent());
   level* GetLevel(uchar Index) const { return Level[Index]; }
   uchar GetLevels() const;
   void Save(outputfile&) const;

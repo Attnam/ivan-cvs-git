@@ -112,7 +112,7 @@ class item : public object
   virtual void SignalSquarePositionChange(bool) { }
   //virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
   virtual bool IsBadFoodForAI(character*) const;
-  virtual std::string GetConsumeVerb() const { return std::string("eating"); }
+  virtual std::string GetConsumeVerb() const { return "eating"; }
   static bool PolymorphSpawnable() { return true; }
   virtual bool IsExplosive() const { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }

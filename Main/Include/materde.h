@@ -238,6 +238,7 @@ class MATERIAL
   static bool IsSolid() { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(144, 144, 144); }
   virtual short NutritionValue() const { return 20; }
+  virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
  protected:
   virtual std::string NameStem() const { return "bone"; }
 );

@@ -60,7 +60,7 @@ template <class type> bool datamember<type>::Load(const std::string& Word, input
       if(!Member)
 	Member = new type;
 
-      ReadData(Member, SaveFile, ValueMap);
+      ReadData(*Member, SaveFile, ValueMap);
       return true;
     }
 
@@ -72,7 +72,7 @@ template <class type> void datamember<type>::Load(inputfile& SaveFile, const val
   if(!Member)
     Member = new type;
 
-  ReadData(Member, SaveFile, ValueMap);
+  ReadData(*Member, SaveFile, ValueMap);
 }
 
 template <class type> bool protonamedmember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap&)
@@ -82,7 +82,7 @@ template <class type> bool protonamedmember<type>::Load(const std::string& Word,
       if(!Member)
 	Member = new ushort;
 
-      ReadData(Member, SaveFile, protocontainer<type>::GetCodeNameMap());
+      ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
       return true;
     }
 
@@ -94,7 +94,7 @@ template <class type> void protonamedmember<type>::Load(inputfile& SaveFile, con
   if(!Member)
     Member = new ushort;
 
-  ReadData(Member, SaveFile, protocontainer<type>::GetCodeNameMap());
+  ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
 }
 
 template <class basetype> void scriptwithbase<basetype>::SetBase(basetype* NewBase)
@@ -118,7 +118,9 @@ posscript::posscript()
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word = SaveFile.ReadWord();
+  std::string Word;
+
+  SaveFile.ReadWord(Word);
 
   if(Word == "Pos")
     {
@@ -133,7 +135,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
       if(SaveFile.ReadWord() != "{")
 	ABORT("Script error in level script!");
 
-      for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
 	  ushort c;
 
@@ -209,7 +211,7 @@ template <class type> type* basecontentscript<type>::Instantiate() const
   return Instance;
 }
 
-template <class type> void basecontentscript<type>::ReadParameters(inputfile&, std::string LastWord)
+template <class type> void basecontentscript<type>::ReadParameters(inputfile&, const std::string& LastWord)
 {
   if(LastWord != ";" && LastWord != ",")
     ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
@@ -246,10 +248,12 @@ contentscript<character>::contentscript<character>()
   INITMEMBER(Team);
 }
 
-void contentscript<character>::ReadParameters(inputfile& SaveFile, std::string LastWord)
+void contentscript<character>::ReadParameters(inputfile& SaveFile, const std::string& LastWord)
 {
+  std::string Word;
+
   if(LastWord == "{")
-    for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	ushort c;
 
@@ -280,15 +284,17 @@ contentscript<olterrain>::contentscript<olterrain>()
   INITMEMBER(VisualFlags);
 }
 
-void contentscript<olterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
+void contentscript<olterrain>::ReadParameters(inputfile& SaveFile, const std::string& LastWord)
 {
   ValueMap["NONE"] = 0;
   ValueMap["MIRROR"] = 1;
   ValueMap["FLIP"] = 2;
   ValueMap["ROTATE"] = 4;
 
+  std::string Word;
+
   if(LastWord == "{")
-    for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+    for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
 	ushort c;
 
@@ -331,7 +337,8 @@ squarescript::squarescript()
 
 void squarescript::ReadFrom(inputfile& SaveFile)
 {
-  std::string Word = SaveFile.ReadWord();
+  std::string Word;
+  SaveFile.ReadWord(Word);
 
   if(Word != "=")
     {
@@ -340,7 +347,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in square script!");
 
-      for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
 	  ushort c;
 
@@ -449,7 +456,7 @@ roomscript::roomscript()
   INITMEMBER(GenerateDoor);
   INITMEMBER(ReCalculate);
   INITMEMBER(GenerateTunnel);
-  INITMEMBER(DivineOwner);
+  INITMEMBER(DivineMaster);
   INITMEMBER(GenerateLanterns);
   INITMEMBER(Type);
   INITMEMBER(GenerateFountains);
@@ -479,7 +486,9 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in room script!");
 
-  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(Word == "Square")
 	{
@@ -547,7 +556,9 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in level script!");
 
-  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(Word == "Square")
 	{
@@ -581,7 +592,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
       if(Word == "Variable")
 	{
-	  Word = SaveFile.ReadWord();
+	  SaveFile.ReadWord(Word);
 	  ValueMap[Word] = SaveFile.ReadNumber(ValueMap);
 	  continue;
 	}
@@ -611,7 +622,9 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in dungeon script!");
 
-  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(Word == "Level")
 	{
@@ -656,7 +669,9 @@ void teamscript::ReadFrom(inputfile& SaveFile)
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in team script!");
 
-  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
     {
       if(Word == "Relation")
 	{
@@ -687,7 +702,9 @@ gamescript::gamescript()
 
 void gamescript::ReadFrom(inputfile& SaveFile)
 {
-  for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       if(Word == "Dungeon")
 	{

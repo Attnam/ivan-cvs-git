@@ -19,8 +19,8 @@ class outputfile;
 struct felistentry
 {
   felistentry() { }
-  felistentry(std::string String, ushort Color, bool Selectable) : Bitmap(0), String(String), Color(Color), Selectable(Selectable) { }
-  felistentry(bitmap* Bitmap, std::string String, ushort Color, bool Selectable) : Bitmap(Bitmap), String(String), Color(Color), Selectable(Selectable) { }
+  felistentry(const std::string& String, ushort Color, bool Selectable) : Bitmap(0), String(String), Color(Color), Selectable(Selectable) { }
+  felistentry(bitmap* Bitmap, const std::string& String, ushort Color, bool Selectable) : Bitmap(Bitmap), String(String), Color(Color), Selectable(Selectable) { }
   bitmap* Bitmap;
   std::string String;
   ushort Color;
@@ -43,7 +43,7 @@ inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 struct felistdescription
 {
   felistdescription() { }
-  felistdescription(std::string String, ushort Color) : String(String), Color(Color) { }
+  felistdescription(const std::string& String, ushort Color) : String(String), Color(Color) { }
   std::string String;
   ushort Color;
 };
@@ -63,12 +63,12 @@ inline inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
 class felist
 {
  public:
-  felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool InverseMode = false) : Maximum(Maximum), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
+  felist(const std::string& Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool InverseMode = false) : Maximum(Maximum), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
   ~felist();
-  void AddEntry(std::string, ushort, bitmap* = 0, bool = true);
-  void AddEntryToPos(std::string, ushort, ushort, bitmap* = 0, bool = true);
+  void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
+  void AddEntryToPos(const std::string&, ushort, ushort, bitmap* = 0, bool = true);
   void RemoveEntryFromPos(ushort);
-  void AddDescription(std::string, ushort = 0xFFFF);
+  void AddDescription(const std::string&, ushort = 0xFFFF);
   ushort Draw(vector2d, ushort, ushort = 20, bool = true, bool = true, bool = true, bool = false) const;
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();

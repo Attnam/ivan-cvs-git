@@ -13,12 +13,12 @@ room::room(bool SetStats) : Master(0)
 void room::Save(outputfile& SaveFile) const
 {
   SaveFile << Type();
-  SaveFile << Pos << Size << Door << Index << DivineOwner;
+  SaveFile << Pos << Size << Door << Index << DivineMaster;
 }
 
 void room::Load(inputfile& SaveFile)
 {
-  SaveFile >> Pos >> Size >> Door >> Index >> DivineOwner;
+  SaveFile >> Pos >> Size >> Door >> Index >> DivineMaster;
 }
 
 void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
@@ -26,16 +26,16 @@ void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
   if(Terrain->IsDoor())
     Door.push_back(Terrain->GetPos());
 
-  if(DivineOwner)
-    Terrain->SetDivineMaster(DivineOwner);
+  if(DivineMaster)
+    Terrain->SetDivineMaster(DivineMaster);
 }
 
 void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
 
-  if(DivineOwner)
-    Character->SetDivineMaster(DivineOwner);
+  if(DivineMaster)
+    Character->SetDivineMaster(DivineMaster);
 }
 
 

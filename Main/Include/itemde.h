@@ -450,7 +450,7 @@ class ITEM
   virtual ulong Price() const { return GetContainedMaterial() ? GetContainedMaterial()->RawPrice() : 0; }
   virtual uchar GetConsumeMaterialIndex() const { return 1; }
   virtual item* BetterVersion() const;
-  virtual std::string GetConsumeVerb() const { return std::string("drinking"); }
+  virtual std::string GetConsumeVerb() const { return "drinking"; }
   virtual void DipInto(material*, character*);
   virtual uchar GetCategory() const { return POTION; }
   virtual material* CreateDipMaterial();
@@ -813,8 +813,8 @@ class ABSTRACT_ITEM
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
-  virtual void Beam(character*, std::string, uchar, uchar);
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*) { return false; };
+  virtual void Beam(character*, const std::string&, uchar, uchar);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*) { return false; };
   virtual ushort GetBeamColor() const = 0;
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
   virtual bool IsChargable() const { return true; }
@@ -851,7 +851,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   static bool PolymorphSpawnable() { return false; }
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
   virtual ushort GetBeamColor() const { return BLUE; }
 );
 
@@ -963,7 +963,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   virtual ushort GetBeamColor() const { return WHITE; }
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
 );
 
 class ITEM
@@ -1258,7 +1258,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   virtual ushort GetBeamColor() const { return YELLOW; }
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
 );
 
 class ITEM
@@ -1295,7 +1295,7 @@ class ITEM
   virtual float OfferModifier() const { return 30; }
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
@@ -1346,7 +1346,7 @@ class ITEM
   virtual std::string NamePlural() const { return "wands of haste"; }
   virtual float OfferModifier() const { return 20; }
   virtual bool Zap(character*, vector2d, uchar);
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
   virtual ushort GetBeamColor() const { return RED; }
 );
 
@@ -1366,7 +1366,7 @@ class ITEM
   virtual std::string NamePlural() const { return "wands of slow"; }
   virtual float OfferModifier() const { return 20; }
   virtual bool Zap(character*, vector2d, uchar);
-  virtual bool BeamEffect(character*, std::string, uchar, lsquare*);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
@@ -1577,7 +1577,7 @@ class ABSTRACT_ITEM
   virtual ushort GetTotalResistance(uchar) const = 0;
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual std::string GetOwnerDescription() const { return OwnerDescription; }
-  virtual void SetOwnerDescription(std::string What) { OwnerDescription = What; }
+  virtual void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
   virtual bool GetUnique() const { return Unique; }
   virtual void SetUnique(bool What) { Unique = What; }
   virtual characterslot* GetCharacterSlot() const;

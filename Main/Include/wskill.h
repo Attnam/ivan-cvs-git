@@ -92,8 +92,8 @@ class sweaponskill : public weaponskill
   ushort GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
-  void AddLevelUpMessage(std::string) const;
-  void AddLevelDownMessage(std::string) const;
+  void AddLevelUpMessage(const std::string&) const;
+  void AddLevelDownMessage(const std::string&) const;
   void Save(outputfile&) const;
   void Load(inputfile&);
   void SetID(ulong What) { ID = What; }

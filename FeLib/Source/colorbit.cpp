@@ -9,7 +9,7 @@
 #include "graphics.h"
 #include "save.h"
 
-colorizablebitmap::colorizablebitmap(std::string FileName)
+colorizablebitmap::colorizablebitmap(const std::string& FileName)
 {
   inputfile File(FileName.c_str(), false);
 
@@ -54,7 +54,7 @@ colorizablebitmap::~colorizablebitmap()
  * A lousy bitmap saver that uses the pcx format but doesn't do any compression.
  */
 
-void colorizablebitmap::Save(std::string FileName)
+void colorizablebitmap::Save(const std::string& FileName)
 {
   char PCXHeader[128];
   memset(PCXHeader, 0, 128);

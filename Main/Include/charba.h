@@ -114,7 +114,7 @@ class character : public entity, public id
   virtual bool Charmable() const { return true; }
   virtual bool Catches(item*, float) { return false; }
   virtual bool CheckBulimia() const;
-  virtual bool CheckDeath(std::string, bool = false);
+  virtual bool CheckDeath(const std::string&, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*);
   virtual bool OpenItem();
@@ -134,7 +134,7 @@ class character : public entity, public id
   virtual bool Dip();
   virtual bool DrawMessageHistory();
   virtual bool Drop();
-  virtual bool Engrave(std::string);
+  virtual bool Engrave(const std::string&);
   virtual bool ForceVomit();
   virtual bool GainAllItems();
   virtual bool GoDown();
@@ -162,7 +162,7 @@ class character : public entity, public id
   virtual bool EqupmentScreen();
   virtual bool WhatToEngrave();
   virtual bool WizardMode();
-  virtual void AddScoreEntry(std::string, float = 1, bool = true) const;
+  virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
   virtual long Score() const;
   virtual float GetAttackStrength() const;
   virtual wsquare* GetWSquareUnder() const;
@@ -236,7 +236,7 @@ class character : public entity, public id
   virtual void Faint();
   virtual void PolymorphHandler();
   virtual void SetStateCounter(uchar, ushort);
-  virtual void DeActivateVoluntaryStates(std::string = "");
+  virtual void DeActivateVoluntaryStates(const std::string& = "");
   virtual void EndPolymorph();
   virtual void ActionAutoTermination();
   virtual team* GetTeam() const { return Team; }
@@ -262,7 +262,7 @@ class character : public entity, public id
   virtual void AddSpecialItemInfo(std::string&, item*) { }
   virtual void AddSpecialItemInfoDescription(std::string&) { }
   virtual long StatScore() const;
-  virtual bool CheckStarvationDeath(std::string);
+  virtual bool CheckStarvationDeath(const std::string&);
   virtual void ShowNewPosInfo() const;
   virtual void Hostility(character*);
   virtual void KickHit() { }
@@ -312,7 +312,7 @@ class character : public entity, public id
   virtual void RestoreBodyParts();
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
-  virtual void SetAssignedName(std::string What) { AssignedName = What; }
+  virtual void SetAssignedName(const std::string& What) { AssignedName = What; }
   virtual bool CanBeAssignedAName() const { return true; }
   virtual std::string Description(uchar) const;
   virtual std::string PersonalPronoun() const;

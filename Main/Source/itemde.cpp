@@ -892,7 +892,7 @@ bool scroll::ReceiveDamage(character*, short, uchar Type)
     return false;
 }*/
 
-void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar Range)
+void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction, uchar Range)
 {
   vector2d CurrentPos = Zapper->GetPos();
 
@@ -929,13 +929,13 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
     }
 }
 
-bool wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
+bool wandofpolymorph::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
 {
   LSquare->PolymorphEverything(Zapper);
   return false;
 }
 
-bool wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, lsquare* Where) 
+bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uchar Dir, lsquare* Where) 
 { 
   Where->StrikeEverything(Who, DeathMsg, 20, Dir); 
   return false;
@@ -1208,7 +1208,7 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar, lsquare* Where) 
+bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
 { 
   if(!Where->GetOTerrain()->GetIsWalkable() || Where->GetCharacter())
     {
@@ -1276,7 +1276,7 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofteleportation::BeamEffect(character* Who, std::string DeathMsg, uchar, lsquare* Where) 
+bool wandofteleportation::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
 { 
   Where->TeleportEverything(Who);
   return false;
@@ -1594,7 +1594,7 @@ bool mine::GetStepOnEffect(character* Stepper)
   return false;
 }
 
-bool wandofhaste::BeamEffect(character*, std::string, uchar, lsquare* LSquare)
+bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
   if(Dude)
@@ -1620,7 +1620,7 @@ bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofslow::BeamEffect(character*, std::string, uchar, lsquare* LSquare)
+bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
   if(Dude)

@@ -430,7 +430,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   AddRoom(RoomClass);
 
-  RoomClass->SetDivineOwner(*RoomScript->GetDivineOwner());
+  RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
 
   game::BusyAnimation();
 
@@ -456,10 +456,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 	    Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lantern);
 	  }
 
-	if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
+	if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
 	  {
-	    Map[x][YPos]->SetDivineOwner(*RoomScript->GetDivineOwner());
-	    Map[x][YPos + Height - 1]->SetDivineOwner(*RoomScript->GetDivineOwner());
+	    Map[x][YPos]->SetDivineMaster(*RoomScript->GetDivineMaster());
+	    Map[x][YPos + Height - 1]->SetDivineMaster(*RoomScript->GetDivineMaster());
 	  }
 
 	Map[x][YPos]->SetRoom(RoomClass->GetIndex());
@@ -490,10 +490,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lantern);
 	}
 
-      if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
+      if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
 	{
-	  Map[XPos][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
-	  Map[XPos + Width - 1][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
+	  Map[XPos][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
+	  Map[XPos + Width - 1][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
 	}
 
       Map[XPos][y]->SetRoom(RoomClass->GetIndex());
@@ -509,8 +509,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	FlagMap[x][y] |= FORBIDDEN;
 
-	if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
-	  Map[x][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
+	if(RoomScript->GetDivineMaster(false) && *RoomScript->GetDivineMaster())
+	  Map[x][y]->SetDivineMaster(*RoomScript->GetDivineMaster());
 
 	Map[x][y]->SetRoom(RoomClass->GetIndex());
       }
@@ -530,7 +530,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 	for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
-	  Map[x][y]->SetDivineOwner(Owner);
+	  Map[x][y]->SetDivineMaster(Owner);
     }
 
   if(*RoomScript->GetGenerateTunnel() && Door.Length())
@@ -895,7 +895,7 @@ room* level::GetRoom(uchar Index) const
   return Room[Index];
 }
 
-void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
+void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
 {
   ushort EmitChange = 300 + Strength * 2;
 
@@ -1101,3 +1101,4 @@ bool level::IsValid(vector2d Vector) const
   else
     return false;
 }
+

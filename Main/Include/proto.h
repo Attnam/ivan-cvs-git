@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "typedef.h"
-#include "save.h"
 
 template <class type> class protocontainer
 {
@@ -17,8 +16,8 @@ template <class type> class protocontainer
   static ushort Add(prototype*);
   static const prototype* const GetProto(ushort Index) { return ProtoData[Index]; }
   static ushort GetProtoAmount() { return ProtoData.size() - 2; }
-  static ushort SearchCodeName(std::string);
-  static valuemap& GetCodeNameMap() { return CodeNameMap; }
+  static ushort SearchCodeName(const std::string&);
+  static const valuemap& GetCodeNameMap() { return CodeNameMap; }
  private:
   static std::vector<prototype*> ProtoData;
   static valuemap CodeNameMap;
@@ -36,10 +35,10 @@ class protosystem
   static character* BalancedCreateMonster(float = 1.0f, bool = true);
   static item* BalancedCreateItem(bool = false);
   static character* CreateMonster(bool = true);
-  static item* CreateItem(std::string, bool = true);
+  static item* CreateItem(const std::string&, bool = true);
   static material* CreateRandomSolidMaterial(ulong);
   static material* CreateMaterial(ushort, ulong);
-  static material* CreateMaterial(std::string, ulong, bool = true);
+  static material* CreateMaterial(const std::string&, ulong, bool = true);
 };
 
 template <class type> inline outputfile& operator<<(outputfile&, type*);

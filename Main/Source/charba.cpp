@@ -910,7 +910,7 @@ void character::AddMissMessage(character* Enemy) const
   else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
     Msg = Description(DEFINITE) + " misses " + Enemy->Description(DEFINITE) + "!";
   else
-    Msg = "";
+    return;
 
   ADD_MESSAGE("%s", Msg.c_str());
 }
@@ -1514,7 +1514,7 @@ float character::GetAttackStrength() const
   return GetMeleeStrength();
 }
 
-bool character::Engrave(std::string What)
+bool character::Engrave(const std::string& What)
 {
   game::GetCurrentLevel()->GetLSquare(GetPos())->Engrave(What);
   return true;
@@ -1581,7 +1581,7 @@ bool character::Pray()
 
   std::vector<uchar> KnownIndex;
 
-  if(!GetLSquareUnder()->GetDivineOwner())
+  if(!GetLSquareUnder()->GetDivineMaster())
     {
       for(ushort c = 1; c < game::GetGods(); ++c)
 	if(game::GetGod(c)->GetKnown())
@@ -1592,10 +1592,10 @@ bool character::Pray()
 	  }
     }
   else
-    if(game::GetGod(GetLSquareUnder()->GetDivineOwner())->GetKnown())
+    if(game::GetGod(GetLSquareUnder()->GetDivineMaster())->GetKnown())
       {
-	bitmap Icon(igraph::GetSymbolGraphic(), GetLSquareUnder()->GetDivineOwner() << 4, 0, 16, 16);
-	Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineOwner())->CompleteDescription(), LIGHTGRAY, &Icon);
+	bitmap Icon(igraph::GetSymbolGraphic(), GetLSquareUnder()->GetDivineMaster() << 4, 0, 16, 16);
+	Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineMaster())->CompleteDescription(), LIGHTGRAY, &Icon);
       }
     else
       ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
@@ -1606,12 +1606,12 @@ bool character::Pray()
     return false;
   else
     {
-      if(GetLSquareUnder()->GetDivineOwner())
+      if(GetLSquareUnder()->GetDivineMaster())
 	{
 	  if(!Select)
 	    {
-	      if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(GetLSquareUnder()->GetDivineOwner())->Name() + "? [y/N]"))
-		game::GetGod(GetLSquareUnder()->GetDivineOwner())->Pray();
+	      if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(GetLSquareUnder()->GetDivineMaster())->Name() + "? [y/N]"))
+		game::GetGod(GetLSquareUnder()->GetDivineMaster())->Pray();
 	      else
 		return false;
 	    }
@@ -1715,7 +1715,7 @@ long character::Score() const
   return (game::GetPlayerBackup() ? game::GetPlayerBackup()->StatScore() : StatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
 }
 
-void character::AddScoreEntry(std::string Description, float Multiplier, bool AddEndLevel) const
+void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
 {
   highscore HScore;
 
@@ -1729,7 +1729,7 @@ void character::AddScoreEntry(std::string Description, float Multiplier, bool Ad
   HScore.Save();
 }
 
-bool character::CheckDeath(std::string Msg, bool ForceMsg)
+bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
 {
   bool Dead = false;
 
@@ -1753,7 +1753,7 @@ bool character::CheckDeath(std::string Msg, bool ForceMsg)
     return false;
 }
 
-bool character::CheckStarvationDeath(std::string Msg)
+bool character::CheckStarvationDeath(const std::string& Msg)
 {
   if(GetNP() < 1)
     {
@@ -2195,7 +2195,7 @@ void character::EndPolymorph()
     }
 }
 
-void character::DeActivateVoluntaryStates(std::string Reason)
+void character::DeActivateVoluntaryStates(const std::string& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
     {
@@ -2627,10 +2627,7 @@ void character::ShowNewPosInfo() const
 	}
 		
       if(game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved() != "")
-	{
-	  ADD_MESSAGE("Something has been engraved here:");
-	  ADD_MESSAGE("\"%s\"", game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved().c_str());
-	}
+	ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved().c_str());
     }
 }
 
@@ -3827,3 +3824,4 @@ void character::AddInfo(felist& Info) const
   Info.AddEntry(std::string("Attack strength: ") + int(GetAttackStrength()), LIGHTGRAY);
   Info.AddEntry(std::string("To hit value: ") + int(GetToHitValue()), LIGHTGRAY);
 }
+

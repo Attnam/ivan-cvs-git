@@ -57,7 +57,9 @@ void configuration::Load()
   if(!SaveFile.IsOpen())
     return;
 
-  for(std::string Word = SaveFile.ReadWord(false); !SaveFile.Eof(); Word = SaveFile.ReadWord(false))
+  std::string Word;
+
+  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
     {
       if(Word == "DefaultName")
 	{
@@ -195,12 +197,12 @@ void configuration::ShowConfigScreen()
     }
 }
 
-void configuration::SetDefaultName(std::string What)
+void configuration::SetDefaultName(const std::string& What)
 {
-  DefaultName = What;
-
-  if(DefaultName.length() < 3)
+  if(What.length() < 3)
     DefaultName = "";
+  else
+    DefaultName = What;
 }
 
 void configuration::SetAutoSaveInterval(long What)

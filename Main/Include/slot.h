@@ -88,7 +88,7 @@ class characterslot : public slot
   character* Master;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, characterslot CharacterSlot)
+inline outputfile& operator<<(outputfile& SaveFile, const characterslot& CharacterSlot)
 {
   CharacterSlot.Save(SaveFile);
   return SaveFile;
@@ -115,7 +115,7 @@ class gearslot : public slot
   bodypart* BodyPart;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, gearslot GearSlot)
+inline outputfile& operator<<(outputfile& SaveFile, const gearslot& GearSlot)
 {
   GearSlot.Save(SaveFile);
   return SaveFile;
@@ -142,7 +142,7 @@ class actionslot : public slot
   action* Action;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, actionslot ActionSlot)
+inline outputfile& operator<<(outputfile& SaveFile, const actionslot& ActionSlot)
 {
   ActionSlot.Save(SaveFile);
   return SaveFile;

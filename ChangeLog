@@ -1,5 +1,9 @@
 May 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* String and save routine optimizations
+
+May 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Most of script code structures and data reading routines remade
 	* Some template instantiation relocations committed
 	* Warning corrections

@@ -35,7 +35,7 @@ template ushort protocontainer<material>::Add(material::prototype*);
 template ushort protocontainer<owterrain>::Add(owterrain::prototype*);
 template ushort protocontainer<gwterrain>::Add(gwterrain::prototype*);
 
-template <class type> ushort protocontainer<type>::SearchCodeName(std::string Name)
+template <class type> ushort protocontainer<type>::SearchCodeName(const std::string& Name)
 {
   valuemap::iterator I = CodeNameMap.find(Name);
 
@@ -45,16 +45,16 @@ template <class type> ushort protocontainer<type>::SearchCodeName(std::string Na
     return 0;
 }
 
-template ushort protocontainer<action>::SearchCodeName(std::string);
-template ushort protocontainer<character>::SearchCodeName(std::string);
-template ushort protocontainer<god>::SearchCodeName(std::string);
-template ushort protocontainer<item>::SearchCodeName(std::string);
-template ushort protocontainer<room>::SearchCodeName(std::string);
-template ushort protocontainer<olterrain>::SearchCodeName(std::string);
-template ushort protocontainer<glterrain>::SearchCodeName(std::string);
-template ushort protocontainer<material>::SearchCodeName(std::string);
-template ushort protocontainer<owterrain>::SearchCodeName(std::string);
-template ushort protocontainer<gwterrain>::SearchCodeName(std::string);
+template ushort protocontainer<action>::SearchCodeName(const std::string&);
+template ushort protocontainer<character>::SearchCodeName(const std::string&);
+template ushort protocontainer<god>::SearchCodeName(const std::string&);
+template ushort protocontainer<item>::SearchCodeName(const std::string&);
+template ushort protocontainer<room>::SearchCodeName(const std::string&);
+template ushort protocontainer<olterrain>::SearchCodeName(const std::string&);
+template ushort protocontainer<glterrain>::SearchCodeName(const std::string&);
+template ushort protocontainer<material>::SearchCodeName(const std::string&);
+template ushort protocontainer<owterrain>::SearchCodeName(const std::string&);
+template ushort protocontainer<gwterrain>::SearchCodeName(const std::string&);
 
 template <class type> outputfile& operator<<(outputfile& SaveFile, type* Class)
 {
@@ -172,7 +172,7 @@ character* protosystem::CreateMonster(bool CreateItems)
     }
 }
 
-item* protosystem::CreateItem(std::string What, bool Output)
+item* protosystem::CreateItem(const std::string& What, bool Output)
 {
   for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
     {
@@ -196,7 +196,7 @@ item* protosystem::CreateItem(std::string What, bool Output)
   return 0;
 }
 
-material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Output)
+material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)
 {
   for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
     {

@@ -24,10 +24,10 @@
 #include "blit.h"
 
 #ifdef WIN32
-HWND			graphics::hWnd;
-bool			graphics::FullScreen;
-CDisplay*		graphics::DXDisplay;
-void			(*graphics::SwitchModeHandler)();
+HWND graphics::hWnd;
+bool graphics::FullScreen;
+CDisplay* graphics::DXDisplay;
+void (*graphics::SwitchModeHandler)();
 #endif
 
 #ifdef USE_SDL
@@ -35,14 +35,14 @@ SDL_Surface* graphics::screen;
 #endif
 
 #ifdef __DJGPP__
-ulong			graphics::BufferSize;
-ushort			graphics::ScreenSelector = 0;
+ulong graphics::BufferSize;
+ushort graphics::ScreenSelector = 0;
 #endif
 
-bitmap*			graphics::DoubleBuffer;
-vector2d		graphics::Res;
-uchar			graphics::ColorDepth;
-colorizablebitmap*	graphics::DefaultFont = 0;
+bitmap* graphics::DoubleBuffer;
+vector2d graphics::Res;
+uchar graphics::ColorDepth;
+colorizablebitmap* graphics::DefaultFont = 0;
 
 #ifdef WIN32
 extern DWORD GetDXVersion();
@@ -428,7 +428,7 @@ void graphics::ToggleFullScreen()
 }
 #endif
 
-void graphics::LoadDefaultFont(std::string FileName)
+void graphics::LoadDefaultFont(const std::string& FileName)
 {
   DefaultFont = new colorizablebitmap(FileName);
 }

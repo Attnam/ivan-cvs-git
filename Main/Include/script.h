@@ -43,7 +43,7 @@ class datamemberbase
   virtual void SetBase(datamemberbase*) = 0;
   virtual bool Load(const std::string&, inputfile&, const valuemap&) = 0;
   virtual void Load(inputfile&, const valuemap&) = 0;
-  void SetIdentifier(std::string What) { Identifier = What; }
+  void SetIdentifier(const std::string& What) { Identifier = What; }
  protected:
   std::string Identifier;
 };
@@ -112,7 +112,7 @@ template <class type> class basecontentscript : public script
  public:
   virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&);
-  virtual void ReadParameters(inputfile&, std::string);
+  virtual void ReadParameters(inputfile&, const std::string&);
   virtual ushort* GetMaterialType(ushort, bool = true) const;
   virtual ulong* GetMaterialVolume(ushort, bool = true) const;
   virtual ushort GetContentType() const { return ContentType; }
@@ -128,7 +128,7 @@ class contentscript<character> : public basecontentscript<character>
 {
  public:
   contentscript<character>();
-  virtual void ReadParameters(inputfile&, std::string);
+  virtual void ReadParameters(inputfile&, const std::string&);
   virtual character* Instantiate() const;
  protected:
   DATAMEMBER(ushort, Team);
@@ -138,7 +138,7 @@ class contentscript<olterrain> : public basecontentscript<olterrain>
 {
  public:
   contentscript<olterrain>();
-  virtual void ReadParameters(inputfile&, std::string);
+  virtual void ReadParameters(inputfile&, const std::string&);
   virtual olterrain* Instantiate() const;
  protected:
   DATAMEMBER(bool, Locked);
@@ -196,7 +196,7 @@ class roomscript : public scriptwithbase<roomscript>
   DATAMEMBER(bool, GenerateDoor);
   DATAMEMBER(bool, ReCalculate);
   DATAMEMBER(bool, GenerateTunnel);
-  PROTONAMEDMEMBER(god, DivineOwner);
+  PROTONAMEDMEMBER(god, DivineMaster);
   DATAMEMBER(bool, GenerateLanterns);
   PROTONAMEDMEMBER(room, Type);
   DATAMEMBER(bool, GenerateFountains);
@@ -271,3 +271,4 @@ class gamescript : public script
 };
 
 #endif
+

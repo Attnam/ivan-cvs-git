@@ -14,7 +14,6 @@ int Main(HINSTANCE, HINSTANCE, HWND*, LPSTR, int);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
   HWND hWnd;
-
   globalerrorhandler::SetWindow(&hWnd);
 #else
 

@@ -16,7 +16,7 @@
 #include "fluid.h"
 #include "error.h"
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineOwner(0), Room(0), TemporaryEmitation(0), Fluid(0)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineMaster(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
   Stack = new stack(this);
   SideStack[DOWN] = new stack(this, DOWN);
@@ -527,7 +527,7 @@ void lsquare::Save(outputfile& SaveFile) const
     SaveFile << Emitter.Access(c).Pos << Emitter.Access(c).DilatedEmitation;
 
   SaveFile << Fluid;
-  SaveFile << Emitation << DivineOwner;
+  SaveFile << Emitation << DivineMaster;
   SaveFile << Engraved << Room;
 }
 
@@ -560,7 +560,7 @@ void lsquare::Load(inputfile& SaveFile)
     }
 
   SaveFile >> Fluid;
-  SaveFile >> Emitation >> DivineOwner;
+  SaveFile >> Emitation >> DivineMaster;
   SaveFile >> Engraved >> Room;
 }
 
@@ -1001,7 +1001,7 @@ void lsquare::DrawParticles(ushort Color, uchar)
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void lsquare::StrikeEverything(character* Zapper, std::string DeathMsg, short Damage, uchar Direction)
+void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, short Damage, uchar Direction)
 {
   GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
 

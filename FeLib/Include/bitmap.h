@@ -25,7 +25,7 @@ class bitmap
  public:
   friend class graphics;
   friend class colorizablebitmap;
-  bitmap(std::string);
+  bitmap(const std::string&);
   bitmap(bitmap*);
   bitmap(ushort, ushort);
   bitmap(vector2d);
@@ -36,7 +36,7 @@ class bitmap
   ~bitmap();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void Save(std::string) const;
+  void Save(const std::string&) const;
   void PutPixel(ushort, ushort, ushort);
   void PutPixel(vector2d Pos, ushort Color) { PutPixel(Pos.X, Pos.Y, Color); }
   ushort GetPixel(ushort, ushort) const;

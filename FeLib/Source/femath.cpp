@@ -139,53 +139,6 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 	}\
     }
 
-  /*#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)\
-    {\
-      if(!D##PriC)\
-	{\
-	  Proc(vector2d(X1, Y1), vector2d(X1, Y1));\
-	  return true;\
-	}\
-      \
-      I1 = D##SecC << 1;\
-      DD = I1 - (SecSign (PriSign D##PriC));\
-      I2 = DD - (SecSign (PriSign D##PriC));\
-      \
-      X = X1;\
-      Y = Y1;\
-      \
-      bool C = false, D = false, E = false;\
-      \
-      while(PriC PriCond PriC##2)\
-	{\
-	  if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || (D = !Proc(vector2d(X, Y), vector2d(X1, Y1))))\
-	    return false;\
-	  \
-	  if(DD SecCond 0)\
-	    {\
-	      SecC SecSign##= 1;\
-	      DD += I2;\
-	      C = true;\
-	    }\
-	  else\
-	    {\
-	      if(D)\
-		return false;\
-	      \
-	      DD += I1;\
-	      C = false;\
-	    }\
-	  \
-	  if(C && PriC PriSign 1 PriCond PriC##2)\
-	    {\
-	      if(ulong(GetHypotSquare((X - X1), (Y - Y1))) > MaxDistance || (!Proc(vector2d(X, Y), vector2d(X1, Y1)) && D))\
-		return false;\
-	    }\
-	  \
-	  PriC PriSign##= 1;\
-	}\
-    }*/
-
   if(DX >= 0)
     {
       if(DY >= 0)
@@ -249,33 +202,6 @@ ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
 
 float femath::CalculateAngle(vector2d Direction)
 {
-  /*if(Direction.Y < 0)
-    {
-      if(Direction.X != 0)
-	return atan(float(Direction.Y) / Direction.X) + PI;
-      else
-	return 3 * PI / 2;
-    }
-  else if(Direction.Y > 0)
-    {
-      if(Direction.X != 0)
-	return atan(float(Direction.Y) / Direction.X);
-      else
-	return PI / 2;
-    }
-  else
-    {
-      if(Direction.X < 0)
-	return PI;
-      else if (Direction.X > 0)
-	return 0;
-      else
-	{
-	  ABORT("Illegal direction passed to femath::CalculateAngle()!");
-	  return 0;
-	}
-    }*/
-
   if(Direction.X < 0)
     return atan(float(Direction.Y) / Direction.X) + PI;
   else if(Direction.X > 0)

@@ -26,11 +26,11 @@
 class highscore
 {
  public:
-  highscore(std::string File = HIGHSCORE_FILENAME) : LastAdd(0xFF) { Load(File); }
-  bool Add(long, std::string);
+  highscore(const std::string& File = HIGHSCORE_FILENAME) : LastAdd(0xFF) { Load(File); }
+  bool Add(long, const std::string&);
   void Draw() const;
-  void Save(std::string = HIGHSCORE_FILENAME) const;
-  void Load(std::string = HIGHSCORE_FILENAME);
+  void Save(const std::string& = HIGHSCORE_FILENAME) const;
+  void Load(const std::string& = HIGHSCORE_FILENAME);
  private:
   std::vector<std::string> Entry;
   std::vector<long> Score;

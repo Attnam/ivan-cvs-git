@@ -5,17 +5,19 @@
 #include "error.h"
 #include "femath.h"
 
-outputfile::outputfile(std::string FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
+outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "wb"))
 {
   if(AbortOnErr && !IsOpen())
     ABORT("Can't open %s for output!", FileName.c_str());
 }
 
-inputfile::inputfile(std::string FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb"))
+inputfile::inputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb"))
 {
   if(AbortOnErr && !IsOpen())
     ABORT("File %s not found!", FileName.c_str());
 }
+
+/* This function is a gum solution */
 
 bool inputfile::Eof()
 {
@@ -39,8 +41,15 @@ int inputfile::Peek()
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
 {
+  std::string ToReturn;
+  ReadWord(ToReturn, AbortOnEOF);
+  return ToReturn;
+}
+
+void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
+{
   uchar Mode = 0;
-  std::string Buffer;
+  Buffer.resize(0);
 
   for(;;)
     {
@@ -49,7 +58,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 	  if(AbortOnEOF)
 	    ABORT("Unexpected end of script file!");
 
-	  return Buffer;
+	  return;
 	}
 
       int Char = Peek();
@@ -60,13 +69,13 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 	    Mode = 1;
 	  else
 	    if(Mode == 2)
-	      return Buffer;
+	      return;
 
 	  Buffer += char(Char);
 	}
 
       if(Char == ' ' && Mode)
-	return Buffer;
+	return;
 
       if(isdigit(Char))
 	{
@@ -74,7 +83,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 	    Mode = 2;
 	  else
 	    if(Mode == 1)
-	      return Buffer;
+	      return;
 
 	  Buffer += char(Char);
 	}
@@ -100,7 +109,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 			    Get();
 
 			    if(Mode == 2)
-			      return Buffer;
+			      return;
 			    else
 			      break;
 			  }		
@@ -110,14 +119,14 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 		  }
 
 	      if(Mode)
-		return Buffer;
+		return;
 
 	      Buffer += char(Char);
-	      return Buffer;
+	      return;
 	    }
 
 	  if(Mode)
-	    return Buffer;
+	    return;
 
 	  if(Char == '"')
 	    {
@@ -129,7 +138,7 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 	      if(Peek() == '"')
 		{
 		  Get();
-		  return Buffer;
+		  return;
 		}
 
 	      for(;;)
@@ -161,12 +170,12 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 		    Buffer += char(Char);
 		}
 
-	      return Buffer;
+	      return;
 	    }
 
 	  Buffer += char(Char);
 	  Get();
-	  return Buffer;
+	  return;
 	}
 
       Get();
@@ -230,10 +239,11 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 {
   long Value = 0;
+  std::string Word;
 
   for(;;)
     {
-      std::string Word = ReadWord();
+      ReadWord(Word);
 
       if(isdigit(Word[0]))
 	{
@@ -311,10 +321,11 @@ vector2d inputfile::ReadVector2d(const valuemap& ValueMap)
 
 bool inputfile::ReadBool()
 {
-  std::string Word = ReadWord();
+  std::string Word;
+  ReadWord(Word);
 
   if(Word == "=")
-    Word = ReadWord();
+    ReadWord(Word);
 
   if(ReadWord() != ";")
     ABORT("Bool value terminated incorrectly!");
@@ -330,10 +341,9 @@ bool inputfile::ReadBool()
   return RAND() % 2 ? true : false;
 }
 
-outputfile& operator<<(outputfile& SaveFile, std::string String)
+outputfile& operator<<(outputfile& SaveFile, const std::string& String)
 {
   uchar Length = String.length();
-
   SaveFile << Length;
 
   if(Length)
@@ -345,9 +355,7 @@ outputfile& operator<<(outputfile& SaveFile, std::string String)
 inputfile& operator>>(inputfile& SaveFile, std::string& String)
 {
   char Buffer[256];
-
   uchar Length;
-
   SaveFile >> Length;
 
   if(Length)
@@ -369,12 +377,12 @@ long inputfile::ReadNumber()
   return ReadNumber(valuemap());
 }
 
-void ReadData(std::string* String, inputfile& SaveFile, const valuemap&)
+void ReadData(std::string& String, inputfile& SaveFile, const valuemap&)
 {
-  *String = SaveFile.ReadWord();
+  SaveFile.ReadWord(String);
 
-  if(*String == "=")
-    *String = SaveFile.ReadWord();
+  if(String == "=")
+    SaveFile.ReadWord(String);
 
   SaveFile.ReadWord();
 }

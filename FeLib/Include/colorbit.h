@@ -15,9 +15,9 @@ class bitmap;
 class colorizablebitmap
 {
  public:
-  colorizablebitmap(std::string);
+  colorizablebitmap(const std::string&);
   ~colorizablebitmap();
-  void colorizablebitmap::Save(std::string);
+  void colorizablebitmap::Save(const std::string&);
 
   void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
   void MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }

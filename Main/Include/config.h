@@ -11,7 +11,7 @@ class configuration
 {
  public:
   static std::string GetDefaultName() { return DefaultName; }
-  static void SetDefaultName(std::string);
+  static void SetDefaultName(const std::string&);
   static ushort GetAutoSaveInterval() { return AutoSaveInterval; }
   static void SetAutoSaveInterval(long);
   static void EditContrast(char);

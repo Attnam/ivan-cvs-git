@@ -123,7 +123,7 @@ class igraph
   static bitmap* OutlineBuffer;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, graphic_id GI)
+inline outputfile& operator<<(outputfile& SaveFile, const graphic_id& GI)
 {
   SaveFile << GI.BitmapPos << GI.FileIndex << GI.SpecialType;
   SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];

@@ -9,25 +9,18 @@
 
 #include "typedef.h"
 
-inline std::string operator+ (std::string CppString, const int& Int)
+inline std::string operator+ (const std::string& CppString, const int& Int)
 {
   char Buffer[12];
-
   sprintf(Buffer, "%d", Int);
-
-  CppString += Buffer;
-
-  return CppString;
+  return CppString + Buffer;
 }
 
 inline std::string& operator+= (std::string& CppString, const int& Int)
 {
   char Buffer[12];
-
   sprintf(Buffer, "%d", Int);
-
   CppString += Buffer;
-
   return CppString;
 }
 
@@ -36,15 +29,11 @@ inline std::string operator+ (const char* CString, std::string CppString)
   return std::string(CString) + CppString;
 }
 
-inline std::string& operator+ (std::string& CppString, const ulong& Int)
+inline std::string& operator+ (const std::string& CppString, const ulong& Int)
 {
   char Buffer[12];
-
   sprintf(Buffer, "%d", int(Int));
-
-  CppString += Buffer;
-
-  return CppString;
+  return CppString + Buffer;
 }
 
 #endif

@@ -58,7 +58,7 @@ class level : public area
   virtual void SetWorldMapEntry(vector2d What) { WorldMapEntry = What; }
   virtual void ParticleTrail(vector2d, vector2d);
   virtual std::string GetLevelMessage() { return LevelMessage; }
-  virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
+  virtual void SetLevelMessage(const std::string& What) { LevelMessage = What; }
   virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
   virtual bool GetOnGround() const;
   virtual bool IsValid(vector2d) const;
@@ -69,7 +69,7 @@ class level : public area
   virtual room* GetRoom(uchar) const;
   virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
   virtual void AddRoom(room*);
-  virtual void Explosion(character*, std::string, vector2d, ushort, bool = true);
+  virtual void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
   virtual bool CollectCreatures(std::vector<character*>&, character*, bool);
   virtual void ApplyLSquareScript(squarescript*);
  protected:

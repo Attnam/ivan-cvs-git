@@ -271,12 +271,12 @@ void felist::Empty()
   Entry.clear();
 }
 
-void felist::AddEntry(std::string Str, ushort Color, bitmap* Bitmap, bool Selectable)
+void felist::AddEntry(const std::string& Str, ushort Color, bitmap* Bitmap, bool Selectable)
 {
   AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, Bitmap, Selectable);
 }
 
-void felist::AddEntryToPos(std::string Str, ushort Pos, ushort Color, bitmap* Bitmap, bool Selectable)
+void felist::AddEntryToPos(const std::string& Str, ushort Pos, ushort Color, bitmap* Bitmap, bool Selectable)
 {
   bitmap* NewBitmap = Bitmap ? new bitmap(Bitmap) : 0;
 
@@ -304,7 +304,7 @@ void felist::Load(inputfile& SaveFile)
   SaveFile >> Entry >> Description >> Maximum >> InverseMode >> Selected;
 }
 
-void felist::AddDescription(std::string Str, ushort Color)
+void felist::AddDescription(const std::string& Str, ushort Color)
 {
   Description.push_back(felistdescription(Str, Color)); 
 }

@@ -753,7 +753,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 1:
-      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an Enner Beast. It must be all Elpuri's doings!\"", CHARDESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an enner beast. It must be all Elpuri's doings!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
@@ -781,7 +781,7 @@ void priest::BeTalkedTo(character* Talker)
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->GetPriestMessage().c_str());
+    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
 }
 
 void oree::BeTalkedTo(character*)
@@ -1318,7 +1318,7 @@ void librarian::BeTalkedTo(character* Talker)
 	  break;
 	}
     case 8:
-      ADD_MESSAGE("\"If thou shalt ever encounter an Enner Beast, know this: It is a horrible foe. It may shatter thine items and armor with its scream that penetrates iron and stone. Thou should not engage it in melee. Kill it from afar.\"");
+      ADD_MESSAGE("\"If thou shalt ever encounter an enner beast, know this: It is a horrible foe. It may shatter thine items and armor with its scream that penetrates iron and stone. Thou should not engage it in melee. Kill it from afar.\"");
       break;
     case 9:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)

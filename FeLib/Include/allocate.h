@@ -28,7 +28,7 @@ template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize)
   return Map;
 }
 
-template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize, Type Initializer)
+template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize, const Type& Initializer)
 {
   ulong MapXSize = sizeof(Type*) * XSize;
 
@@ -45,7 +45,7 @@ template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize,
   }
 }
 
-template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize, Type Initializer)
+template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize, const Type& Initializer)
 {
   Type** Map;
 
@@ -54,7 +54,7 @@ template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize, Type Initi
   return Map;
 }
 
-template <class Type> inline void Fill2D(Type** Map, ulong CornerXPos, ulong CornerYPos, ulong XSize, ulong YSize, Type Value)
+template <class Type> inline void Fill2D(Type** Map, ulong CornerXPos, ulong CornerYPos, ulong XSize, ulong YSize, const Type& Value)
 {
   for(ulong x = CornerXPos; x < CornerXPos + XSize; ++x)
     for(ulong y = CornerYPos; y < CornerYPos + YSize; ++y)
@@ -88,7 +88,7 @@ template <class Type> inline Type*** Alloc3D(ulong XSize, ulong YSize, ulong ZSi
   return Map;
 }
 
-template <class Type> inline void Alloc3D(Type***& Map, ulong XSize, ulong YSize, ulong ZSize, Type Initializer)
+template <class Type> inline void Alloc3D(Type***& Map, ulong XSize, ulong YSize, ulong ZSize, const Type& Initializer)
 {
   ulong MapXSize = sizeof(Type**) * XSize;
   ulong MapYSize = sizeof(Type*) * XSize * YSize;
@@ -111,7 +111,7 @@ template <class Type> inline void Alloc3D(Type***& Map, ulong XSize, ulong YSize
   }
 }
 
-template <class Type> inline Type*** Alloc3D(ulong XSize, ulong YSize, ulong ZSize, Type Initializer)
+template <class Type> inline Type*** Alloc3D(ulong XSize, ulong YSize, ulong ZSize, const Type& Initializer)
 {
   Type*** Map;
 
@@ -120,7 +120,7 @@ template <class Type> inline Type*** Alloc3D(ulong XSize, ulong YSize, ulong ZSi
   return Map;
 }
 
-template <class Type> inline void Fill3D(Type*** Map, ulong CornerXPos, ulong CornerYPos, ulong CornerZPos, ulong XSize, ulong YSize, ulong ZSize, Type Value)
+template <class Type> inline void Fill3D(Type*** Map, ulong CornerXPos, ulong CornerYPos, ulong CornerZPos, ulong XSize, ulong YSize, ulong ZSize, const Type& Value)
 {
   for(ulong x = CornerXPos; x < CornerXPos + XSize; ++x)
     for(ulong y = CornerYPos; y < CornerYPos + YSize; ++y)
