@@ -19,6 +19,7 @@ class outputfile;
 class inputfile;
 class slot;
 class item;
+template <class type> class database;
 
 struct itemdatabase
 {
@@ -57,20 +58,25 @@ struct itemdatabase
 class itemprototype
 {
  public:
-  itemprototype();
-  virtual item* Clone(bool = true) const = 0;
+  friend class database<item>;
+  itemprototype(itemprototype*);
+  virtual item* Clone(ushort = 0, bool = true, bool = false) const = 0;
   item* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  virtual itemdatabase* GetDataBase() const = 0;
-  virtual itemprototype* GetBase() const = 0;
+  const itemdatabase* GetDataBase() const { return &DataBase; }
+  const itemprototype* GetBase() const { return Base; }
   DATABASEBOOL(IsAutoInitializable);
   DATABASEBOOL(CanBeWished);
   DATABASEBOOL(IsPolymorphSpawnable);
   DATABASEVALUE(ushort, Possibility);
   virtual bool IsConcrete() const = 0;
+  const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
+  itemdatabase DataBase;
+  itemprototype* Base;
+  std::map<ushort, itemdatabase> Config;
 };
 
 /* Presentation of the item class */
@@ -80,13 +86,14 @@ class item : public object
  public:
   typedef itemprototype prototype;
   typedef itemdatabase database;
-  item();
+  typedef std::map<ushort, itemdatabase> databasemap;
+  item(donothing);
   virtual float GetWeaponStrength() const;
   virtual void DrawToTileBuffer(bool) const;
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
   virtual item* TryToOpen(character*);
-  virtual bool Consume(character*, float);
+  virtual bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }
   virtual bool IsGoldenEagleShirt() const { return false; }
@@ -173,11 +180,11 @@ class item : public object
   virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
-  static ushort StaticType();
-  virtual prototype* GetProtoType() const = 0;
-  virtual database* GetDataBase() const = 0;
+  virtual const prototype* GetProtoType() const;
+  virtual const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenDoors() const { return false; }
   virtual uchar GetLockType() const { return 0xFF; }
+  virtual bool IsWhip() const { return false; }
 
   DATABASEVALUE(ushort, Possibility);
   DATABASEVALUE(vector2d, InHandsPic);
@@ -212,8 +219,9 @@ class item : public object
   virtual bool SavesLifeWhenWorn() const { return false; }
  protected:
   virtual void LoadDataBaseStats();
-  virtual void VirtualConstructor() { }
-  virtual void Initialize(bool);
+  virtual void VirtualConstructor(bool) { }
+  virtual void Initialize(uchar, bool, bool);
+  virtual void InstallDataBase();
   virtual void GenerateMaterials() = 0;
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRITEM; }
   virtual bool ShowMaterial() const { return true; }
@@ -222,27 +230,23 @@ class item : public object
   ushort Size;
   ulong ID;
   graphic_id InHandsGraphicId;
+  const database* DataBase;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
 
 #define ITEM_PROTOTYPE(name, cloner, baseproto, concrete)\
   \
-  item::database name##_DataBase;\
-  \
-  static class name##_prototype : public item::prototype\
+  static class name##_prototype : public itemprototype\
   {\
    public:\
-    virtual item* Clone(bool CallGenerateMaterials = true) const { return cloner; }\
+    name##_prototype(itemprototype* Base) : itemprototype(Base) { }\
+    virtual item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) const { return cloner; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual item::database* GetDataBase() const { return &name##_DataBase; }\
-    virtual item::prototype* GetBase() const { return baseproto; }\
     virtual bool IsConcrete() const { return concrete; }\
-  } name##_ProtoType;\
+  } name##_ProtoType(baseproto);\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  item::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
-  item::database* name::GetDataBase() const { return &name##_DataBase; }
+  const item::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -255,22 +259,20 @@ class item : public object
 name : public base\
 {\
  public:\
-  name(bool CallGenerateMaterials = true) { Initialize(CallGenerateMaterials); }\
-  name(material* FirstMaterial) { Initialize(true); SetMainMaterial(FirstMaterial); }\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
+  name(ushort Config = 0, bool CallGenerateMaterials = true, bool Load = false) : base(donothing()) { Initialize(Config, CallGenerateMaterials, Load); }\
+  name(material* FirstMaterial, ushort Config = 0) : base(donothing()) { Initialize(Config, true, false); SetMainMaterial(FirstMaterial); }\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const;\
   data\
-}; ITEM_PROTOTYPE(name, new name(CallGenerateMaterials), &base##_ProtoType, true);
+}; ITEM_PROTOTYPE(name, new name(Config, CallGenerateMaterials, Load), &base##_ProtoType, true);
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; ITEM_PROTOTYPE(name, 0, &base##_ProtoType, false);
 

@@ -551,7 +551,6 @@ petrusswife
 	Sex = FEMALE;
 	ClothColor = rgb(150, 0, 0);
 	BeltColor = rgb(180, 180, 0);
-	HeadBitmapPos = 112, 0;
 	TorsoBitmapPos = 32, 160;
 	ArmBitmapPos = 64, 160;
 	LegBitmapPos = 0, 112;
@@ -559,43 +558,43 @@ petrusswife
 	MeleeStrength = 500;
 	TotalSize = 170;
 	CanRead = true;
-}
 
-/*petrusswife1
-{
-	HairColor = rgb(0, 0, 0);
-	HeadBitmapPos = 112, 0;
-}
+	Config 1;
+	{
+		HairColor = rgb(0, 0, 0);
+		HeadBitmapPos = 112, 0;
+	}
 
-petrusswife2
-{
-	HairColor = rgb(0, 0, 0);
-	HeadBitmapPos = 112, 16;
-}
+	Config 2;
+	{
+		HairColor = rgb(0, 0, 0);
+		HeadBitmapPos = 112, 16;
+	}
 
-petrusswife3
-{
-	HairColor = rgb(60, 48, 24);
-	HeadBitmapPos = 112, 0;
-}
+	Config 3;
+	{
+		HairColor = rgb(60, 48, 24);
+		HeadBitmapPos = 112, 0;
+	}
 
-petrusswife4
-{
-	HairColor = rgb(200, 96, 0);
-	HeadBitmapPos = 112, 48;
-}
+	Config 4;
+	{
+		HairColor = rgb(200, 96, 0);
+		HeadBitmapPos = 112, 48;
+	}
 
-petrusswife5
-{
-	HairColor = rgb(80, 64, 32);
-	HeadBitmapPos = 112, 64;
-}
+	Config 5;
+	{
+		HairColor = rgb(80, 64, 32);
+		HeadBitmapPos = 112, 64;
+	}
 
-petrusswife6
-{
-	HairColor = rgb(144, 0, 0);
-	HeadBitmapPos = 112, 80;
-}*/
+	Config 6;
+	{
+		HairColor = rgb(144, 0, 0);
+		HeadBitmapPos = 112, 80;
+	}
+}
 
 housewife
 {

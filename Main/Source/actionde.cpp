@@ -37,7 +37,7 @@ void faint::Handle()
 {
   if(!(Counter--))
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You wake up.");
       else
 	if(GetActor()->GetLSquareUnder()->CanBeSeen())
@@ -53,7 +53,7 @@ void faint::Handle()
 
 void faint::Terminate(bool Finished)
 {
-  if(GetActor()->GetIsPlayer())
+  if(GetActor()->IsPlayer())
     ADD_MESSAGE("You wake up.");
   else if(GetActor()->GetSquareUnder()->CanBeSeen())
     ADD_MESSAGE("%s wakes up.", GetActor()->CHARNAME(DEFINITE));
@@ -88,24 +88,24 @@ void consume::Terminate(bool Finished)
 {
   if(Finished)
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You finish %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
 
-      if(GetHasEaten())
+      if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
 
       Consuming->GenerateLeftOvers(GetActor());
     }
   else if(*Consuming)
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
 
-      if(GetHasEaten())
+      if(HasEaten())
 	Consuming->AddConsumeEndMessage(GetActor());
 
       if(GetWasOnGround())
@@ -117,7 +117,7 @@ void consume::Terminate(bool Finished)
     }
   else
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s.", Consuming->GetConsumeVerb().c_str());
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
@@ -165,14 +165,14 @@ void rest::Terminate(bool Finished)
 {
   if(Finished)
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You finish resting.");
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s finishes resting.", GetActor()->CHARNAME(DEFINITE));
     }
   else
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop resting.");
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s stops resting.", GetActor()->CHARNAME(DEFINITE));
@@ -220,7 +220,7 @@ void dig::Terminate(bool Finished)
 {
   if(!Finished)
     {
-      if(GetActor()->GetIsPlayer())
+      if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop digging.");
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s stops digging.", GetActor()->CHARNAME(DEFINITE));
@@ -302,7 +302,7 @@ ulong dig::GetWeight() const
 void consume::DropUsedItems()
 {
   if(GetConsuming())
-    if(!game::GetInWilderness())
+    if(!game::IsInWilderness())
       GetConsuming()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
     else
       GetConsuming()->MoveTo(GetActor()->GetStack());
@@ -317,13 +317,13 @@ void consume::DeleteUsedItems()
 void dig::DropUsedItems()
 {
   if(GetRightBackup())
-    if(!game::GetInWilderness())
+    if(!game::IsInWilderness())
       GetRightBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
     else
       GetRightBackup()->MoveTo(GetActor()->GetStack());
 
   if(GetLeftBackup())
-    if(!game::GetInWilderness())
+    if(!game::IsInWilderness())
       GetLeftBackup()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
     else
       GetLeftBackup()->MoveTo(GetActor()->GetStack());
@@ -349,3 +349,4 @@ void dig::VirtualConstructor()
   RightBackup.Init(this);
   LeftBackup.Init(this);
 }
+

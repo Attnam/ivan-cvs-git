@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
 
 class character;
@@ -42,7 +44,7 @@ class action
   virtual ulong GetWeight() const { return 0; }
   virtual void DropUsedItems() { }
   virtual void DeleteUsedItems() { }
-  virtual prototype* GetProtoType() const = 0;
+  virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void VirtualConstructor() { }
@@ -53,15 +55,14 @@ class action
 
 #define ACTION_PROTOTYPE(name)\
   \
-  static class name##_prototype : public action::prototype\
+  static class name##_prototype : public actionprototype\
   {\
    public:\
     virtual action* Clone() const { return new name; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  action::prototype* name::GetProtoType() const { return &name##_ProtoType; }
+  const action::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -75,8 +76,7 @@ name : public base\
 {\
  public:\
   name(character* Actor = 0) { SetActor(Actor); VirtualConstructor(); }\
-  static ushort StaticType();\
-  virtual action::prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; ACTION_PROTOTYPE(name);
 

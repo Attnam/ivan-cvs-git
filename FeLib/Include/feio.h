@@ -17,7 +17,7 @@ class iosystem
   static std::string WhatToLoadMenu(ushort, ushort, const std::string&);
   static std::string StringQuestion(const std::string&, vector2d, ushort, ushort, ushort, bool, bool);
   static long NumberQuestion(const std::string&, vector2d, ushort, bool);
-  static int Menu(bitmap*, const std::string&, const std::string&, ushort, ushort);
+  static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, ushort);
   static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
  private:
   static ulong CountChars(char, const std::string&);

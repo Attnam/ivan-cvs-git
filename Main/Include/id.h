@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
 
 #define CHARNAME(Case) Name(Case).c_str()

@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "typedef.h"
+#include "save.h"
 #include "vector2d.h"
 #include "error.h"
 
@@ -23,12 +23,6 @@
  protected:\
   protonamedmember< type > name ;
 
-#define INITMEMBER(name)\
-  {\
-    name.SetIdentifier(#name);\
-    Data.push_back(&name);\
-  }
-
 class inputfile;
 class glterrain;
 class olterrain;
@@ -41,11 +35,9 @@ class material;
 class datamemberbase
 {
  public:
-  virtual ~datamemberbase() { }
-  virtual void SetBase(datamemberbase*) = 0;
-  virtual bool Load(const std::string&, inputfile&, const valuemap&) = 0;
-  virtual void Load(inputfile&, const valuemap&) = 0;
   void SetIdentifier(const std::string& What) { Identifier = What; }
+  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true) = 0;
+  virtual void SetBase(datamemberbase*) = 0;
  protected:
   std::string Identifier;
 };
@@ -82,23 +74,22 @@ template <class type> inline type* datamembertemplate<type>::GetMember(bool Abor
 template <class type> class datamember : public datamembertemplate<type>
 {
  public:
-  virtual bool Load(const std::string&, inputfile&, const valuemap&);
-  virtual void Load(inputfile&, const valuemap&);
+  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true);
 };
 
 template <class type> class protonamedmember : public datamembertemplate<ushort>
 {
  public:
-  virtual bool Load(const std::string&, inputfile&, const valuemap&);
-  virtual void Load(inputfile&, const valuemap&);
+  virtual bool Load(const std::string&, inputfile&, const valuemap&, bool = true);
 };
 
 class script
 {
  public:
-  valuemap& GetValueMap() { return ValueMap; }
+  const valuemap& GetValueMap() const { return ValueMap; }
   void SetValueMap(const valuemap& What) { ValueMap = What; }
   datamemberbase* GetDataMember(ushort Index) const { return Data[Index]; }
+  bool LoadData(inputfile&, const std::string&);
  protected:
   std::vector<datamemberbase*> Data;
   valuemap ValueMap;
@@ -132,12 +123,11 @@ class materialscript : public script
  public:
   materialscript();
   void ReadFrom(inputfile&);
-  void SetType(ushort What) { Type = What; }
-  ushort GetType() const { return Type; }
+  void SetConfig(ushort What) { Config = What; }
   material* Instantiate() const;
  protected:
   DATAMEMBER(ulong, Volume);
-  ushort Type;
+  ushort Config;
 };
 
 class basecontentscript : public script
@@ -145,14 +135,16 @@ class basecontentscript : public script
  public:
   basecontentscript();
   virtual ~basecontentscript() { }
-  virtual void ReadFrom(inputfile&);
-  virtual ushort GetContentType() const { return ContentType; }
+  void ReadFrom(inputfile&);
+  ushort GetContentType() const { return ContentType; }
  protected:
   virtual std::string ClassName() const = 0;
   virtual ushort SearchCodeName(const std::string&) const = 0;
   DATAMEMBER(materialscript, MainMaterial);
   DATAMEMBER(materialscript, SecondaryMaterial);
   DATAMEMBER(materialscript, ContainedMaterial);
+  DATAMEMBER(ulong, Parameters);
+  DATAMEMBER(ushort, Config);
   ushort ContentType;
 };
 
@@ -164,7 +156,7 @@ template <class type> class contentscripttemplate : public basecontentscript
   virtual ushort SearchCodeName(const std::string&) const;
 };
 
-template <class type> class contentscript : public contentscripttemplate<type> { };
+template <class type> class contentscript;
 
 class contentscript<character> : public contentscripttemplate<character>
 {
@@ -195,7 +187,6 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   virtual olterrain* Instantiate() const;
  protected:
   virtual std::string ClassName() const { return "olterrain"; }
-  DATAMEMBER(bool, Locked);
   DATAMEMBER(uchar, VisualFlags);
 };
 
@@ -223,7 +214,7 @@ template <class type> class contentmap : public script
   ~contentmap() { DeleteContents(); }
   void ReadFrom(inputfile&);
   void DeleteContents();
-  contentscript<type>* GetContentScript(ushort X, ushort Y) { return ContentScriptMap[X][Y]; }
+  const contentscript<type>* GetContentScript(ushort X, ushort Y) const { return ContentScriptMap[X][Y]; }
  protected:
   contentscript<type>*** ContentScriptMap;
   DATAMEMBER(vector2d, Size);
@@ -236,7 +227,7 @@ class roomscript : public scriptwithbase<roomscript>
   roomscript();
   ~roomscript();
   void ReadFrom(inputfile&, bool = false);
-  const std::vector<squarescript*>& GetSquare() { return Square; }
+  const std::vector<squarescript*>& GetSquare() const { return Square; }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -267,8 +258,8 @@ class levelscript : public scriptwithbase<levelscript>
   levelscript();
   ~levelscript();
   void ReadFrom(inputfile&, bool = false);
-  const std::vector<squarescript*>& GetSquare() { return Square; }
-  const std::map<uchar, roomscript*>& GetRoom() { return Room; }
+  const std::vector<squarescript*>& GetSquare() const { return Square; }
+  const std::map<uchar, roomscript*>& GetRoom() const { return Room; }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
@@ -296,7 +287,7 @@ class dungeonscript : public scriptwithbase<dungeonscript>
   dungeonscript();
   ~dungeonscript();
   void ReadFrom(inputfile&);
-  const std::map<uchar, levelscript*>& GetLevel() { return Level; }
+  const std::map<uchar, levelscript*>& GetLevel() const { return Level; }
  protected:
   std::map<uchar, levelscript*> Level;
   DATAMEMBER(levelscript, LevelDefault);
@@ -308,7 +299,7 @@ class teamscript : public script
  public:
   teamscript();
   void ReadFrom(inputfile&);
-  const std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
+  const std::vector<std::pair<uchar, uchar> >& GetRelation() const { return Relation; }
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
   DATAMEMBER(ushort, AttackEvilness);
@@ -320,186 +311,14 @@ class gamescript : public script
   gamescript();
   ~gamescript();
   void ReadFrom(inputfile&);
-  const std::vector<std::pair<uchar, teamscript*> >& GetTeam() { return Team; }
-  const std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
+  const std::vector<std::pair<uchar, teamscript*> >& GetTeam() const { return Team; }
+  const std::map<uchar, dungeonscript*>& GetDungeon() const { return Dungeon; }
  protected:
   std::vector<std::pair<uchar, teamscript*> > Team;
   std::map<uchar, dungeonscript*> Dungeon;
   DATAMEMBER(dungeonscript, DungeonDefault);
   DATAMEMBER(uchar, Dungeons);
   DATAMEMBER(uchar, Teams);
-};
-
-class basedata : public script
-{
- public:
-  virtual ~basedata() { }
-  void ReadFrom(inputfile&);
-  ushort GetType() const { return Type; }
-  void SetType(ushort What) { Type = What; }
- protected:
-  virtual std::string ClassName() const = 0;
-  ushort Type;
-};
-
-template <class type> class data : public basedata { };
-
-class data<character> : public basedata
-{
- public:
-  data<character>();
- protected:
-  virtual std::string ClassName() const { return "character"; }
-  DATAMEMBER(ushort, DefaultAgility);
-  DATAMEMBER(ushort, DefaultStrength);
-  DATAMEMBER(ushort, DefaultEndurance);
-  DATAMEMBER(ushort, DefaultPerception);
-  DATAMEMBER(ulong, DefaultMoney);
-  DATAMEMBER(ushort, TotalSize);
-  DATAMEMBER(bool, CanRead);
-  DATAMEMBER(bool, IsCharmable);
-  DATAMEMBER(uchar, Sex);
-  DATAMEMBER(ulong, BloodColor);
-  DATAMEMBER(bool, CanBeGenerated);
-  DATAMEMBER(bool, HasInfraVision);
-  DATAMEMBER(uchar, CriticalModifier);
-  DATAMEMBER(std::string, StandVerb);
-  DATAMEMBER(bool, CanOpen);
-  DATAMEMBER(bool, CanBeDisplaced);
-  DATAMEMBER(ushort, Frequency);
-  DATAMEMBER(bool, CanWalk);
-  DATAMEMBER(bool, CanSwim);
-  DATAMEMBER(bool, CanFly);
-  DATAMEMBER(ushort, PhysicalDamageResistance);
-  DATAMEMBER(ushort, SoundResistance);
-  DATAMEMBER(ushort, EnergyResistance);
-  DATAMEMBER(ushort, AcidResistance);
-  DATAMEMBER(ushort, FireResistance);
-  DATAMEMBER(ushort, PoisonResistance);
-  DATAMEMBER(ushort, BulimiaResistance);
-  DATAMEMBER(bool, IsUnique);
-  DATAMEMBER(ushort, EatFlags);
-  DATAMEMBER(ulong, TotalVolume);
-  DATAMEMBER(ulong, MeleeStrength);
-  DATAMEMBER(std::string, TalkVerb);
-  DATAMEMBER(vector2d, HeadBitmapPos);
-  DATAMEMBER(vector2d, TorsoBitmapPos);
-  DATAMEMBER(vector2d, ArmBitmapPos);
-  DATAMEMBER(vector2d, LegBitmapPos);
-  DATAMEMBER(vector2d, RightArmBitmapPos);
-  DATAMEMBER(vector2d, LeftArmBitmapPos);
-  DATAMEMBER(vector2d, RightLegBitmapPos);
-  DATAMEMBER(vector2d, LeftLegBitmapPos);
-  DATAMEMBER(vector2d, GroinBitmapPos);
-  DATAMEMBER(ushort, ClothColor);
-  DATAMEMBER(ushort, SkinColor);
-  DATAMEMBER(ushort, CapColor);
-  DATAMEMBER(ushort, HairColor);
-  DATAMEMBER(ushort, EyeColor);
-  DATAMEMBER(ushort, TorsoMainColor);
-  DATAMEMBER(ushort, BeltColor);
-  DATAMEMBER(ushort, TorsoSpecialColor);
-  DATAMEMBER(ushort, ArmMainColor);
-  DATAMEMBER(ushort, ArmSpecialColor);
-  DATAMEMBER(ushort, LegMainColor);
-  DATAMEMBER(ushort, LegSpecialColor);
-  DATAMEMBER(uchar, HeadBonePercentile);
-  DATAMEMBER(uchar, TorsoBonePercentile);
-  DATAMEMBER(uchar, ArmBonePercentile);
-  DATAMEMBER(uchar, RightArmBonePercentile);
-  DATAMEMBER(uchar, LeftArmBonePercentile);
-  DATAMEMBER(uchar, GroinBonePercentile);
-  DATAMEMBER(uchar, LegBonePercentile);
-  DATAMEMBER(uchar, RightLegBonePercentile);
-  DATAMEMBER(uchar, LeftLegBonePercentile);
-  DATAMEMBER(bool, IsNameable);
-  DATAMEMBER(ushort, BaseEmitation);
-};
-
-class data<item> : public basedata
-{
- public:
-  data<item>();
- protected:
-  virtual std::string ClassName() const { return "item"; }
-  DATAMEMBER(ushort, Possibility);
-  DATAMEMBER(vector2d, InHandsPic);
-  DATAMEMBER(ulong, OfferModifier);
-  DATAMEMBER(long, Score);
-  DATAMEMBER(bool, IsDestroyable);
-  DATAMEMBER(bool, CanBeWished);
-  DATAMEMBER(bool, IsMaterialChangeable);
-  DATAMEMBER(uchar, WeaponCategory);
-  DATAMEMBER(bool, IsPolymorphSpawnable);
-  DATAMEMBER(bool, IsAutoInitializable);
-  DATAMEMBER(ushort, OneHandedStrengthPenalty);
-  DATAMEMBER(ushort, OneHandedToHitPenalty);
-  DATAMEMBER(uchar, Category);
-  DATAMEMBER(ushort, SoundResistance);
-  DATAMEMBER(ushort, EnergyResistance);
-  DATAMEMBER(ushort, AcidResistance);
-  DATAMEMBER(ushort, FireResistance);
-  DATAMEMBER(ushort, PoisonResistance);
-  DATAMEMBER(ushort, BulimiaResistance);
-  DATAMEMBER(bool, IsStackable);
-  DATAMEMBER(ushort, StrengthModifier);
-  DATAMEMBER(ushort, FormModifier);
-  DATAMEMBER(ulong, NPModifier);
-  DATAMEMBER(ushort, DefaultSize);
-  DATAMEMBER(ulong, DefaultMainVolume);
-  DATAMEMBER(ulong, DefaultSecondaryVolume);
-  DATAMEMBER(ulong, DefaultContainedVolume);
-  DATAMEMBER(vector2d, BitmapPos);
-  DATAMEMBER(ulong, Price);
-  DATAMEMBER(ushort, BaseEmitation);
-};
-
-class data<material> : public basedata
-{
- public:
-  data<material>();
- protected:
-  virtual std::string ClassName() const { return "material"; }
-  DATAMEMBER(ushort, StrengthValue);
-  DATAMEMBER(ushort, ConsumeType);
-  DATAMEMBER(ushort, Density);
-  DATAMEMBER(ushort, OfferValue);
-  DATAMEMBER(ushort, Color);
-  DATAMEMBER(ulong, PriceModifier);
-  DATAMEMBER(bool, IsSolid);
-  DATAMEMBER(ushort, Emitation);
-  DATAMEMBER(bool, CanBeWished);
-  DATAMEMBER(uchar, Alignment);
-  DATAMEMBER(ushort, NutritionValue);
-  DATAMEMBER(bool, IsAlive);
-  DATAMEMBER(bool, IsBadFoodForAI);
-  DATAMEMBER(ushort, ExplosivePower);
-  DATAMEMBER(bool, IsFlammable);
-  DATAMEMBER(bool, IsFlexible);
-  DATAMEMBER(bool, IsExplosive);
-};
-
-template <class type> class database
-{
- public:
-  ~database();
-  void ReadFrom(inputfile&);
-  void Apply();
- protected:
-  std::vector<data<type>*> Data;
-};
-
-class scriptsystem
-{
- public:
-  static void Initialize();
-  static gamescript* GetGameScript() { return GameScript; }
- protected:
-  static gamescript* GameScript;
-  static database<character>* CharacterDataBase;
-  static database<item>* ItemDataBase;
-  static database<material>* MaterialDataBase;
-  
 };
 
 #endif

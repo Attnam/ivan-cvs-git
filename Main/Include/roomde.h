@@ -11,8 +11,6 @@ class ROOM
 (
   normalroom,
   room,
-  /*{
-  },*/
   ;
 );
 
@@ -20,8 +18,6 @@ class ROOM
 (
   shop,
   room,
-  /*{
-  },*/
  public:
   virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
@@ -37,8 +33,6 @@ class ROOM
 (
   temple,
   room,
-  /*{
-  },*/
  public:
   virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
@@ -48,9 +42,6 @@ class ROOM
 (
   cathedral,
   room,
-  /*{
-    SetEntered(false);
-  },*/
  public:
   virtual void Enter(character*);
   virtual bool PickupItem(character*, item*);

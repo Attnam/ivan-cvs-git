@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
 #include "ivandef.h"
 
@@ -58,7 +60,7 @@ class god
   virtual void PlayerVomitedOnAltar();
   virtual character* CreateAngel();
   virtual ushort GetColor() const = 0;
-  virtual prototype* GetProtoType() const = 0;
+  virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void PrayGoodEffect() = 0;
@@ -72,15 +74,14 @@ class god
 
 #define GOD_PROTOTYPE(name)\
   \
-  static class name##_prototype : public god::prototype\
+  static class name##_prototype : public godprototype\
   {\
    public:\
     virtual god* Clone() const { return new name; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  god::prototype* name::GetProtoType() const { return &name##_ProtoType; }
+  const god::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -93,8 +94,7 @@ class god
 name : public base\
 {\
  public:\
-  static ushort StaticType();\
-  virtual god::prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; GOD_PROTOTYPE(name);
 

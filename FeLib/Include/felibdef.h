@@ -14,13 +14,6 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-/* Blit flags */
-
-#define NONE 0
-#define MIRROR 1
-#define FLIP 2
-#define ROTATE_90 4
-
 #ifndef PI
 #define PI 3.1415926535897932384626433832795f
 #endif
@@ -32,21 +25,33 @@
 #define MAKE_RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
 #define MAKE_SHADE_COL(Color) MAKE_RGB(GET_RED(Color) / 3, GET_GREEN(Color) / 3, GET_BLUE(Color) / 3)
 
+#define NONE 0
+#define MIRROR 1
+#define FLIP 2
+#define ROTATE 4
+
+#define DEFAULTTRANSPARENT 0xF81F
+
 #define RED MAKE_RGB(255, 0, 0)
 #define GREEN MAKE_RGB(0, 255, 0)
 #define BLUE MAKE_RGB(0, 0, 255)
 
 #define YELLOW MAKE_RGB(255, 255, 0)
 #define PINK MAKE_RGB(255, 0, 255)
-#define DEFAULT_TRANSPARENT 0xF81F
 
 #define WHITE MAKE_RGB(255, 255, 255)
 #define LIGHTGRAY MAKE_RGB(180, 180, 180)
 #define DARKGRAY MAKE_RGB(80, 80, 80)
 #define BLACK MAKE_RGB(0, 0, 0)
 
-#define FK_BACKSPACE 0x08
-#define FK_ESC 0x1b
-#define FK_ENTER 0x0d
+#define KEYBACKSPACE 0x08
+#define KEYESC 0x1b
+#define KEYENTER 0x0d
+
+#define NONE 0
+#define MIRROR 1
+#define FLIP 2
+#define ROTATE_90 4
 
 #endif
+

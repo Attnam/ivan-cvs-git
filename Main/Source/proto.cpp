@@ -27,7 +27,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
       for(ushort i = 0; i < 10; ++i)
 	{
 	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-	  const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
+	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
 
 	  if(Proto->IsConcrete() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
 	    {
@@ -80,7 +80,7 @@ character* protosystem::CreateMonster(bool CreateItems)
     {
       ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 
-      const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
+      const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
 
       if(Proto->IsConcrete() && Proto->CanBeGenerated())
 	{
@@ -93,16 +93,15 @@ character* protosystem::CreateMonster(bool CreateItems)
 
 item* protosystem::CreateItem(const std::string& What, bool Output)
 {
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  /*for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
     if(protocontainer<item>::GetProto(c)->IsConcrete())
       {
-	/* "Temporary" gum solution! */
+	/ "Temporary" gum solution! /
 
-	item* Temp = protocontainer<item>::GetProto(c)->Clone(false);
+	item* Temp = protocontainer<item>::GetProto(c)->Clone(0, false);
 
 	if(Temp->NameSingular() == What)
 	  if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
-	    //return protocontainer<item>::GetProto(c)->CreateWishedItem();
 	    return protocontainer<item>::GetProto(c)->Clone();
 	  else if(Output)
 	    {
@@ -112,29 +111,56 @@ item* protosystem::CreateItem(const std::string& What, bool Output)
       }
 
   if(Output)
-    ADD_MESSAGE("There is no such item.");
+    ADD_MESSAGE("There is no such item.");*/
 
   return 0;
 }
 
 material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)
 {
+  /*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+    {
+      const material::prototype* Proto = protocontainer<material>::GetProto(c);
+      material::databasemap& Config = Proto->GetConfig();
+
+      if(!Config.size())
+	{
+	  if(Proto->GetNameSingular() == What)
+	    if(Proto->CanBeWished())
+	      return Proto->Clone(0, Volume);
+	    else if(Output)
+	      {
+		ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+		return 0;
+	      }
+	}
+      else
+	for(material::databasemap::iterator i = Config.begin(); i != Config.end(); ++i)
+	  if(i->second.NameSingular == What)
+	    if(i->second.CanBeWished)
+	      return Proto->Clone(i->first, Volume);
+	    else if(Output)
+	      {
+		ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+		return 0;
+	      }
+    }*/
+
   for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
-    if(protocontainer<material>::GetProto(c)->IsConcrete())
-      {
-	/* "Temporary" gum solution! */
+    {
+      const material::prototype* Proto = protocontainer<material>::GetProto(c);
+      const material::databasemap& Config = Proto->GetConfig();
 
-	material* Temp = protocontainer<material>::GetProto(c)->Clone();
-
-	if(Temp->Name(UNARTICLED) == What)
-	  if(protocontainer<material>::GetProto(c)->CanBeWished())
-	    return protocontainer<material>::GetProto(c)->Clone(Volume);
+      for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	if(i->second.NameStem == What)
+	  if(i->second.CanBeWished)
+	    return Proto->Clone(i->first, Volume);
 	  else if(Output)
 	    {
 	      ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
 	      return 0;
 	    }
-      }
+    }
 		
   if(Output)
     ADD_MESSAGE("There is no such material.");
@@ -145,8 +171,21 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
   for(ushort c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1);; c = 1 + RAND() % (protocontainer<material>::GetProtoAmount() - 1))
-    if(protocontainer<material>::GetProto(c)->IsSolid() && protocontainer<material>::GetProto(c)->IsConcrete())
-      return protocontainer<material>::GetProto(c)->Clone(Volume);
+    {
+      const material::prototype* Proto = protocontainer<material>::GetProto(c);
+      const material::databasemap& Config = Proto->GetConfig();
+
+      uchar j = 0, r = RAND() % Config.size();
+
+      for(material::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i, ++j)
+	if(j == r)
+	  {
+	    if(i->second.IsSolid)
+	      return Proto->Clone(i->first, Volume);
+
+	    break;
+	  }
+    }
 }
 
 void protosystem::GenerateCodeNameMaps()

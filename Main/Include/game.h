@@ -11,6 +11,7 @@
 #include "vector2d.h"
 #include "graphics.h"
 #include "ivandef.h"
+#include "save.h"
 
 class area;
 class material;
@@ -29,6 +30,7 @@ class inputfile;
 class team;
 class bitmap;
 class petrus;
+class gamescript;
 
 /* Presentation of the game class */
 
@@ -52,8 +54,8 @@ class game
   static vector2d GetCamera() { return Camera; }
   static void UpdateCameraX();
   static void UpdateCameraY();
-  static bool GetIsLoading() { return IsLoading; }
-  static void SetIsLoading(bool What) { IsLoading = What; }
+  static bool IsLoading() { return Loading; }
+  static void SetIsLoading(bool What) { Loading = What; }
   static level* GetLevel(ushort);
   static void InitLuxTable();
   static void DeInitLuxTable();
@@ -62,7 +64,8 @@ class game
   static void DrawEverything();
   static bool Save(const std::string& = SaveName(""));
   static uchar Load(const std::string& = SaveName(""));
-  static bool GetRunning() { return Running; }
+  static bool IsRunning() { return Running; }
+  static void SetIsRunning(bool What) { Running = What; }
   static void EnableWizardMode() { WizardMode = true; }
   static bool GetWizardMode() { return WizardMode; }
   static void SeeWholeMap();
@@ -98,8 +101,8 @@ class game
   static uchar DirectionQuestion(const std::string&, uchar = 8, bool = true, bool = false);
   static command* GetCommand(ushort Index) { return Command[Index]; }
   static void RemoveSaves(bool = true);
-  static bool GetInWilderness() { return InWilderness; }
-  static void SetInWilderness(bool What) { InWilderness = What; }
+  static bool IsInWilderness() { return InWilderness; }
+  static void SetIsInWilderness(bool What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }
   static void SetWorldMap(worldmap* What) { WorldMap = What; }
   static void SetAreaInLoad(area* What) { AreaInLoad = What; }
@@ -140,8 +143,8 @@ class game
 #endif
   static void Beep();
   static uchar GetDirectionForVector(vector2d);
-  static void SetInGetCommand(bool What) { InGetCommand = What; }
-  static bool GetInGetCommand() { return InGetCommand; }
+  static void SetIsInGetCommand(bool What) { InGetCommand = What; }
+  static bool IsInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
   static vector2d GetScreenSize() { return ScreenSize; }
@@ -153,7 +156,11 @@ class game
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
   static void AnimationController();
-  static void AddDefinesToValueMap(valuemap&);
+  static gamescript* GetGameScript() { return GameScript; }
+  static void InitScript();
+  static const valuemap& GetGlobalValueMap() { return GlobalValueMap; }
+  static void InitGlobalValueMap();
+  //static void AddGlobalValue(const std::string&, long);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -185,8 +192,11 @@ class game
   static bool LOSUpdateRequested;
   static petrus* Petrus;
   static bool InGetCommand;
-  static bool IsLoading;
+  static bool Loading;
   static vector2d ScreenSize;
+  static gamescript* GameScript;
+  static valuemap GlobalValueMap;
 };
 
 #endif
+

@@ -54,7 +54,7 @@ class square
   virtual void StepOn(character*, square*) { }
   virtual void KickAnyoneStandingHereAway();
   virtual void SendMemorizedUpdateRequest() { MemorizedUpdateRequested = true; }
-  virtual bool GetIsWalkable(character*) const;
+  virtual bool IsWalkable(character*) const;
   virtual std::string SurviveMessage(character*) const;
   virtual std::string DeathMessage(character*) const;
   virtual std::string MonsterDeathVerb(character*) const;

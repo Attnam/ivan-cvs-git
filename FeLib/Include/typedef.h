@@ -5,14 +5,11 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-#include <map>
+struct donothing { };
 
 typedef signed   char  schar;
 typedef unsigned char  uchar;
 typedef unsigned short ushort;
 typedef unsigned long  ulong;
-
-typedef std::map<std::string, long> valuemap;
 
 #endif

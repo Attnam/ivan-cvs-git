@@ -121,7 +121,7 @@ void characterslot::AddFriendItem(item* Item) const
 {
   Item->RemoveFromSlot();
 
-  if(!game::GetInWilderness())
+  if(!game::IsInWilderness())
     GetMaster()->GetLSquareUnder()->GetStack()->AddItem(Item);
   else
     GetMaster()->GetStack()->AddItem(Item);
@@ -131,7 +131,7 @@ void gearslot::AddFriendItem(item* Item) const
 {
   Item->RemoveFromSlot();
 
-  if(!game::GetInWilderness())
+  if(!game::IsInWilderness())
     GetBodyPart()->GetLSquareUnder()->GetStack()->AddItem(Item);
   else
     GetBodyPart()->GetMaster()->GetStack()->AddItem(Item);
@@ -147,3 +147,4 @@ bool stackslot::IsOnGround() const
 {
   return GetMotherStack()->IsOnGround();
 }
+

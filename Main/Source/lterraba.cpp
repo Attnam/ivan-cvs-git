@@ -32,7 +32,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
   else
     if(!game::GetCurrent() && game::GetWizardMode())
       {
-	if(Who->GetIsPlayer())
+	if(Who->IsPlayer())
 	  {
 	    std::vector<character*> TempPlayerGroup;
 
@@ -45,7 +45,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
 
 	    game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 
-	    game::SetInWilderness(true);
+	    game::SetIsInWilderness(true);
 	    game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
@@ -59,7 +59,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       }
     else
       {
-	if(Who->GetIsPlayer())
+	if(Who->IsPlayer())
 	  ADD_MESSAGE("You can't go up.");
 
 	return false;
@@ -86,7 +86,7 @@ bool olterrain::GoDown(character* Who) const // Try to go down
     }
   else
     {
-      if(Who->GetIsPlayer())
+      if(Who->IsPlayer())
 	ADD_MESSAGE("You can't go down.");
 
       return false;
@@ -127,7 +127,7 @@ void lterrain::DrawToTileBuffer(bool Animate) const
 
 bool lterrain::Open(character* Opener)
 {
-  if(Opener->GetIsPlayer())
+  if(Opener->IsPlayer())
     ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
 
   return false;
@@ -135,7 +135,7 @@ bool lterrain::Open(character* Opener)
 
 bool lterrain::Close(character* Closer)
 {
-  if(Closer->GetIsPlayer())
+  if(Closer->IsPlayer())
     ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
 
   return false;
@@ -170,25 +170,30 @@ void olterrain::Break()
 
 glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  glterrain* Terrain = Clone(false);
+  glterrain* Terrain = Clone(0, false, true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
 olterrain* olterrainprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  olterrain* Terrain = Clone(false);
+  olterrain* Terrain = Clone(0, false, true);
   Terrain->Load(SaveFile);
   return Terrain;
 }
 
-void lterrain::Initialize(bool CallGenerateMaterials)
+void lterrain::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
 {
-  VirtualConstructor();
-  HandleVisualEffects();
+  Config = NewConfig;
+  VirtualConstructor(Load);
 
-  if(CallGenerateMaterials)
-    GenerateMaterials();
+  if(!Load)
+    {
+      HandleVisualEffects();
+
+      if(CallGenerateMaterials)
+	GenerateMaterials();
+    }
 }
 
 glterrainprototype::glterrainprototype()
@@ -200,3 +205,4 @@ olterrainprototype::olterrainprototype()
 {
   Index = protocontainer<olterrain>::Add(this);
 }
+

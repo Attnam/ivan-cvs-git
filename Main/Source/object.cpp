@@ -18,13 +18,13 @@ void object::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   entity::Save(SaveFile);
-  SaveFile << GraphicId << MainMaterial;
+  SaveFile << GraphicId << MainMaterial << Config;
 }
 
 void object::Load(inputfile& SaveFile)
 {
   entity::Load(SaveFile);
-  SaveFile >> GraphicId >> MainMaterial;
+  SaveFile >> GraphicId >> MainMaterial >> Config;
 
   Picture.resize(GraphicId.size());
 

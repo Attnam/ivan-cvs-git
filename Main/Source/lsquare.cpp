@@ -105,7 +105,7 @@ bool lsquare::DrawStacks(bool Animate) const
 {
   bool Items = false;
 
-  if(GetOTerrain()->GetIsWalkable())
+  if(GetOTerrain()->IsWalkable())
     {
       if(GetStack()->DrawToTileBuffer(Animate))
 	Items = true;
@@ -156,7 +156,7 @@ void lsquare::UpdateMemorized()
 
 	  igraph::GetTileBuffer()->Blit(GetMemorized());
 
-	  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
+	  if(GetStack()->GetItems() > 1 && GetOTerrain()->IsWalkable())
 	    igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
 	  
 	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
@@ -199,7 +199,7 @@ void lsquare::Draw()
 		  {
 		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 
-		    if(GetOTerrain()->GetIsWalkable())
+		    if(GetOTerrain()->IsWalkable())
 		      igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
 
 		    if(GetCharacter())
@@ -214,7 +214,7 @@ void lsquare::Draw()
 		{
 		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 
-		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable()) 
+		  if(GetStack()->GetItems() > 1 && GetOTerrain()->IsWalkable()) 
 		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
@@ -240,7 +240,7 @@ void lsquare::Draw()
 		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		  igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
 
-		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
+		  if(GetStack()->GetItems() > 1 && GetOTerrain()->IsWalkable())
 		    igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
 
 		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
@@ -365,7 +365,7 @@ uchar lsquare::CalculateBitMask(vector2d Dir) const
 {
   uchar BitMask = 0;
 
-#define IW(X, Y) game::GetCurrentLevel()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->GetIsWalkable()
+#define IW(X, Y) game::GetCurrentLevel()->GetLSquare(Pos + vector2d(X, Y))->GetOLTerrain()->IsWalkable()
 
   if(Dir.X < Pos.X)
     {
@@ -588,7 +588,7 @@ ushort lsquare::GetLuminance() const
 {
   ushort Luminance = *GetLevelUnder()->GetLevelScript()->GetAmbientLight();
 
-  if(GetOLTerrain()->GetIsWalkable())
+  if(GetOLTerrain()->IsWalkable())
     {
       for(ushort c = 0; c < Emitter.Length(); ++c)
 	if(Emitter.Access(c).DilatedEmitation > Luminance)
@@ -667,7 +667,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
   if(DescriptionChanged || Cheat)
     {
       if(GetLuminance() >= LIGHT_BORDER || Cheat)
-	if(GetOTerrain()->GetIsWalkable())
+	if(GetOTerrain()->IsWalkable())
 	  {
 	    bool Anything = false;
 
@@ -742,7 +742,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 bool lsquare::Kick(character* Kicker, ushort Strength, uchar KickWay)
 {
   if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
-    if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+    if(Kicker->IsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
       return false;
     else
       Kicker->Hostility(GetCharacter());
@@ -911,7 +911,7 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
     {
       character* Char = GetCharacter();
 
-      if(Char && Char->GetIsPlayer() && Distance < Char->LOSRangeSquare())
+      if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
 	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
@@ -1166,7 +1166,7 @@ bool lsquare::ReceiveApply(item* Thingy, character* Applier)
     }
   else
     {
-      if(Applier->GetIsPlayer()) 
+      if(Applier->IsPlayer()) 
 	ADD_MESSAGE("You cannot apply that on this!");
       return false;
     }
@@ -1189,7 +1189,7 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
     }
   else
     {
-      if(Dipper->GetIsPlayer())
+      if(Dipper->IsPlayer())
 	ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHARNAME(DEFINITE));
 
       return false;
@@ -1198,7 +1198,7 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
 
 void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 {
-  if(GetCharacter() && !GetCharacter()->GetIsPlayer())
+  if(GetCharacter() && !GetCharacter()->IsPlayer())
     {
       if(GetCharacter()->GetTeam() == game::GetPlayer()->GetTeam())
 	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos, 16, 16, ContrastLuminance);
@@ -1207,7 +1207,7 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 
 bool lsquare::LockEverything(character*)
 {
-  if(GetOLTerrain()->GetIsLocked())
+  if(GetOLTerrain()->IsLocked())
     {
       GetOLTerrain()->Lock();
       return true;
@@ -1228,3 +1228,4 @@ bool lsquare::RaiseTheDead(character* Summoner)
 
   return false;
 }
+

@@ -22,7 +22,7 @@ IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source
            $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/pool.o\
            $(IVANDIR)/Source/proto.o $(IVANDIR)/Source/roomba.o  $(IVANDIR)/Source/roomde.o\
            $(IVANDIR)/Source/script.o $(IVANDIR)/Source/square.o $(IVANDIR)/Source/stack.o\
-           $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/worldmap.o\
+           $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/worldmap.o $(IVANDIR)/Source/database.o\
            $(IVANDIR)/Source/wskill.o $(IVANDIR)/Source/wterraba.o $(IVANDIR)/Source/wterrade.o\
            $(IVANDIR)/Source/config.o $(IVANDIR)/Source/terra.o $(IVANDIR)/Source/entity.o\
            $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/igraph.o\

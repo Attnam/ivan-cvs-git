@@ -277,15 +277,15 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 			return Value;\
 		}
 
-      CHECK_OP(&, 1) CHECK_OP(|, 1) CHECK_OP(^, 1)
-      CHECK_OP(*, 2) CHECK_OP(/, 2) CHECK_OP(%, 2)
-      CHECK_OP(+, 3) CHECK_OP(-, 3)
+      CHECK_OP(&, 1); CHECK_OP(|, 1); CHECK_OP(^, 1);
+      CHECK_OP(*, 2); CHECK_OP(/, 2); CHECK_OP(%, 2);
+      CHECK_OP(+, 3); CHECK_OP(-, 3);
 
-	if(Word == "(")
-	  {
-	    Value = ReadNumber(ValueMap, 4);
-	    continue;
-	  }
+      if(Word == "(")
+	{
+	  Value = ReadNumber(ValueMap, 4);
+	  continue;
+	}
 
       if(Word == ")")
 	return Value;
@@ -312,6 +312,12 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       if(Word == "=" && CallLevel == 0xFF)
 	continue;
+
+      if(Word == "#") // for #defines
+	{
+	  SeekPosCur(-1);
+	  return Value;
+	}
 
       ABORT("Odd script value \"%s\" encountered!", Word.c_str());
     }

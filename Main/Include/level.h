@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
 #include <vector>
 
 #include "dynarray.h"
@@ -30,7 +31,7 @@ class level : public area
  public:
   level() : Room(1, (room*)0) { }
   virtual ~level() { }
-  virtual void Generate(levelscript*);
+  virtual void Generate();
   virtual vector2d RandomSquare(character*, bool, bool = false) const;
   virtual void FastAddCharacter(vector2d, character*);
   virtual void GenerateMonsters();

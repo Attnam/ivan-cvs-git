@@ -5,8 +5,13 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+#include <map>
+
 #include "typedef.h"
 #include "ivandef.h"
+
+#define MAKE_MATERIAL material::MakeMaterial
 
 /* Presentation of material class */
 
@@ -16,6 +21,7 @@ class entity;
 class outputfile;
 class inputfile;
 class material;
+template <class type> class database;
 
 struct materialdatabase
 {
@@ -32,28 +38,36 @@ struct materialdatabase
   ushort NutritionValue;
   bool IsAlive;
   bool IsBadFoodForAI;
-  ushort ExplosivePower;
   bool IsFlammable;
   bool IsFlexible;
   bool IsExplosive;
+  std::string NameStem;
+  std::string AdjectiveStem;
+  std::string Article;
+  uchar Effect;
+  uchar ConsumeEndMessage;
+  uchar HitMessage;
+  ulong ExplosivePower;
 };
 
 class materialprototype
 {
  public:
-  materialprototype();
-  material* Clone(ulong) const;
-  virtual material* Clone() const = 0;
+  friend class database<material>;
+  materialprototype(materialprototype*);
+  material* Clone(ushort, ulong) const;
+  virtual material* Clone(ushort) const = 0;
   material* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  DATABASEBOOL(IsSolid);
-  DATABASEBOOL(CanBeWished);
-  virtual materialdatabase* GetDataBase() const = 0;
-  virtual materialprototype* GetBase() const = 0;
-  virtual bool IsConcrete() const = 0;
+  const materialdatabase* GetDataBase() const { return &DataBase; }
+  const materialprototype* GetBase() const { return Base; }
+  const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
+  materialdatabase DataBase;
+  materialprototype* Base;
+  std::map<ushort, materialdatabase> Config;
 };
 
 class material
@@ -61,7 +75,10 @@ class material
  public:
   typedef materialprototype prototype;
   typedef materialdatabase database;
-  material() : Volume(0), MotherEntity(0) { }
+  typedef std::map<ushort, materialdatabase> databasemap;
+  material(ushort Config, ulong Volume) : Volume(Volume), MotherEntity(0), Config(Config) { InstallDataBase(); }
+  material(ushort Config) : Volume(0), MotherEntity(0), Config(Config) { InstallDataBase(); }
+  material(donothing) : Volume(0), MotherEntity(0), Config(0) { }
   virtual ~material() { }
   virtual std::string Name(bool = false, bool = true) const;
   virtual ulong GetVolume() const { return Volume; }
@@ -70,10 +87,10 @@ class material
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SetVolume(ulong What) { Volume = What; }
-  virtual void EatEffect(character*, float, float = 1.0);
-  virtual void HitEffect(character*)   { }
-  virtual void MinusAmount(float Amount)   { SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
-  //virtual bool IsType(ushort QType) const { return Type() == QType; }
+  virtual void Effect(character*, long);
+  virtual void EatEffect(character*, long, float = 1.0);
+  virtual void HitEffect(character*);
+  //virtual void MinusAmount(float Amount) { SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
   virtual entity* GetMotherEntity() const { return MotherEntity; }
   virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
@@ -82,7 +99,7 @@ class material
   virtual bool HasBe() const { return false; }
   virtual bool Be() { return true; }
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void AddConsumeEndMessage(character*) const { }
+  virtual void AddConsumeEndMessage(character*) const;
   virtual long CalculateOfferValue(char GodAlignment) const;
 
   DATABASEVALUE(ushort, StrengthValue);
@@ -98,49 +115,51 @@ class material
   DATABASEVALUE(ushort, NutritionValue);
   DATABASEBOOL(IsAlive);
   DATABASEBOOL(IsBadFoodForAI);
-  DATABASEVALUE(ushort, ExplosivePower);
   DATABASEBOOL(IsFlammable);
   DATABASEBOOL(IsFlexible);
   DATABASEBOOL(IsExplosive);
+  DATABASEVALUE(const std::string&, NameStem);
+  DATABASEVALUE(const std::string&, AdjectiveStem);
+  DATABASEVALUE(const std::string&, Article);
+  DATABASEVALUE(uchar, Effect);
+  DATABASEVALUE(uchar, ConsumeEndMessage);
+  DATABASEVALUE(uchar, HitMessage);
+  DATABASEVALUE(ulong, ExplosivePower);
 
-  static ushort StaticType();
-  virtual prototype* GetProtoType() const;
-  virtual database* GetDataBase() const;
-  virtual material* Clone(ulong Volume) const { return GetProtoType()->Clone(Volume); }
-  virtual material* Clone() const { return GetProtoType()->Clone(); }
-
+  virtual const prototype* GetProtoType() const;
+  virtual const database* GetDataBase() const { return DataBase; }
+  virtual material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
+  virtual material* Clone() const { return GetProtoType()->Clone(Config); }
+  virtual ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
+  virtual uchar GetConfig() const { return Config; }
+  static material* MakeMaterial(ushort);
+  static material* MakeMaterial(ushort, ulong);
+  virtual bool IsFlesh() const { return false; }
  protected:
-  virtual std::string NameStem() const = 0;
-  virtual std::string AdjectiveStem() const { return NameStem(); }
-  virtual std::string Article() const { return "a"; }
-  virtual void NormalFoodEffect(character*, float, float);
+  virtual void InstallDataBase();
   ulong Volume;
   entity* MotherEntity;
+  ushort Config;
+  const database* DataBase;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
 
-#define MATERIAL_PROTOTYPE(name, cloner, baseproto, concrete)\
+#define MATERIAL_PROTOTYPE(name, baseproto)\
   \
-  material::database name##_DataBase;\
-  \
-  static class name##_prototype : public material::prototype\
+  static class name##_prototype : public materialprototype\
   {\
    public:\
-    virtual material* Clone() const { return cloner; }\
+    name##_prototype(materialprototype* Base) : materialprototype(Base) { }\
+    virtual material* Clone(ushort Config) const { return new name(Config); }\
     virtual std::string ClassName() const { return #name; }\
-    virtual material::database* GetDataBase() const { return &name##_DataBase; }\
-    virtual material::prototype* GetBase() const { return baseproto; }\
-    virtual bool IsConcrete() const { return concrete; }\
-  } name##_ProtoType;\
+  } name##_ProtoType(baseproto);\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  material::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
-  material::database* name::GetDataBase() const { return &name##_DataBase; }
+  const material::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
-#define MATERIAL_PROTOTYPE(name, cloner, baseproto, concrete)
+#define MATERIAL_PROTOTYPE(name, baseproto)
 
 #endif
 
@@ -149,24 +168,12 @@ class material
 name : public base\
 {\
  public:\
-  name(ulong InitVolume) { Volume = InitVolume; }\
-  name() { }\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
+  name(ushort NewConfig, ulong InitVolume) : base(donothing()) { Config = NewConfig; InstallDataBase(); Volume = InitVolume; }\
+  name(ushort NewConfig) : base(donothing()) { Config = NewConfig; InstallDataBase(); }\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const;\
   data\
-}; MATERIAL_PROTOTYPE(name, new name, &base##_ProtoType, true);
-
-#define ABSTRACT_MATERIAL(name, base, data)\
-\
-name : public base\
-{\
- public:\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
-  data\
-}; MATERIAL_PROTOTYPE(name, 0, &base##_ProtoType, false);
+}; MATERIAL_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
 

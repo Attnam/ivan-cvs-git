@@ -60,7 +60,7 @@ class room
   virtual bool Dip(character*) const { return true; }
   virtual bool HasDipHandler() const { return false; }
   virtual void TeleportSquare(character*, lsquare*) { }
-  virtual prototype* GetProtoType() const = 0;
+  virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void VirtualConstructor() { }
@@ -74,15 +74,14 @@ class room
 
 #define ROOM_PROTOTYPE(name)\
   \
-  static class name##_prototype : public room::prototype\
+  static class name##_prototype : public roomprototype\
   {\
    public:\
     virtual room* Clone() const { return new name; }\
     virtual std::string ClassName() const { return #name; }\
   } name##_ProtoType;\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  room::prototype* name::GetProtoType() const { return &name##_ProtoType; }
+  const room::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -96,8 +95,7 @@ name : public base\
 {\
  public:\
   name() { VirtualConstructor(); }\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; ROOM_PROTOTYPE(name);
 

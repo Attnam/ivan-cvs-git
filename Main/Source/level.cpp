@@ -232,9 +232,8 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
       FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
-void level::Generate(levelscript* GenLevelScript)
+void level::Generate()
 {
-  LevelScript = GenLevelScript;
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = (lsquare***)area::Map;
@@ -551,7 +550,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  if(*RoomScript->GetAllowBoobyTrappedDoors() && !(RAND() % 5))
 	    Door->CreateBoobyTrap();
-	Door->Lock();
+
+	  Door->Lock();
 	}      
       Map[LXPos][LYPos]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[LXPos][LYPos]->Clean();
@@ -654,7 +654,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       game::BusyAnimation();
       XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
-      contentscript<character>* CharacterScript;
+      const contentscript<character>* CharacterScript;
 
       for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
 	for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
@@ -675,7 +675,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       game::BusyAnimation();
       XPos = BXPos + RoomScript->GetItemMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetItemMap()->GetPos()->Y;
-      contentscript<item>* ItemScript;
+      const contentscript<item>* ItemScript;
 
       for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
 	for(ushort y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
@@ -688,7 +688,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       game::BusyAnimation();
       XPos = BXPos + RoomScript->GetGTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetGTerrainMap()->GetPos()->Y;
-      contentscript<glterrain>* GTerrainScript;
+      const contentscript<glterrain>* GTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
 	for(ushort y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
@@ -701,7 +701,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       game::BusyAnimation();
       XPos = BXPos + RoomScript->GetOTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetOTerrainMap()->GetPos()->Y;
-      contentscript<olterrain>* OTerrainScript;
+      const contentscript<olterrain>* OTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
 	for(ushort y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
@@ -846,7 +846,7 @@ vector2d level::RandomSquare(character* Char, bool Walkablility, bool HasCharact
 {
   vector2d Pos(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
 
-  for(ushort c = 0; (Map[Pos.X][Pos.Y]->GetIsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
+  for(ushort c = 0; (Map[Pos.X][Pos.Y]->IsWalkable(Char) != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter())) && c < 1000; ++c)
     {
       Pos.X = 1 + RAND() % (XSize - 2);
       Pos.Y = 1 + RAND() % (YSize - 2);
@@ -998,7 +998,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	ushort Damage = Strength / (DistanceSquare + 1);
 
 	if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
-	  if(Char->GetIsPlayer())
+	  if(Char->IsPlayer())
 	    {
 	      PlayerDamage = Damage;
 	      PlayerHurt = true;
@@ -1015,7 +1015,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 		  {
 		    vector2d Where(DoX, DoY);
 
-		    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->GetIsWalkable())
+		    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->IsWalkable())
 		      Char->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
 		  }
 	      });
@@ -1043,7 +1043,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	  {
 	    vector2d Where(DoX, DoY);
 
-	    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->GetIsWalkable())
+	    if(game::GetCurrentLevel()->GetLSquare(Where)->GetOTerrain()->IsWalkable())
 	      game::GetPlayer()->SpillBlood(((Size < 5 ? 6 - Size : 1) + RAND() % (Size < 5 ? 6 - Size : 1)) / 2, Where);
 	  }
       });
@@ -1062,7 +1062,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
       character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
       if(Char)
-	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	  {
 	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	    return false;
@@ -1074,7 +1074,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
     if(Char)
-      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	{
 	  if(Char->GetAction() && Char->GetAction()->IsVoluntary())
 	    Char->GetAction()->Terminate(false);

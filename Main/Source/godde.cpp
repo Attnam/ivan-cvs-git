@@ -40,7 +40,7 @@ void consummo::PrayBadEffect()
 void valpurus::PrayGoodEffect()
 {
   ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
-  game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(new valpurium));
+  game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(MAKE_MATERIAL(VALPURIUM)));
 }
 
 void valpurus::PrayBadEffect()
@@ -120,8 +120,8 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  item* Reward = new platemail(false);
-  Reward->InitMaterials(new mithril);
+  item* Reward = new platemail(0, false);
+  Reward->InitMaterials(MAKE_MATERIAL(MITHRIL));
   ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 }
@@ -180,7 +180,7 @@ void silva::PrayGoodEffect()
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->IsWalkable())
 		{
 		  Correct = true;
 		  break;
@@ -207,14 +207,14 @@ void silva::PrayGoodEffect()
 
 	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
-	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
+	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
 	      continue;
 
 	    uchar Walkables = 0;
 
 	    DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 	    {
-	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->GetIsWalkable())
+	      if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetOTerrain()->IsWalkable())
 		++Walkables;
 	    });
 
@@ -268,7 +268,7 @@ void silva::PrayGoodEffect()
       {
 	wolf* Wolf = new wolf;
 
-	if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetIsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter())
+	if(game::GetCurrentLevel()->GetLSquare(DoX, DoY)->IsWalkable(Wolf) && !game::GetCurrentLevel()->GetLSquare(DoX, DoY)->GetCharacter())
 	  {
 	    Wolf->SetTeam(game::GetPlayer()->GetTeam());
 	    game::GetCurrentLevel()->GetLSquare(DoX, DoY)->AddCharacter(Wolf);
@@ -340,23 +340,23 @@ void loricatus::PrayGoodEffect()
 	}
     }*/
 
-  item* Old = game::GetPlayer()->GetBodyArmor();
+  /*item* Old = game::GetPlayer()->GetBodyArmor();
 
   if(Old && Old->GetType() == brokenplatemail::StaticType())
     {
       ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
       Old->RemoveFromSlot();
       Old->SetExists(false);
-      item* Plate = new platemail(false);
+      item* Plate = new platemail(0, false);
       Plate->InitMaterials(Old->GetMainMaterial());
       game::GetPlayer()->GetStack()->AddItem(Plate);
-    }
+    }*/
 	
   if(game::GetPlayer()->GetMainWielded())
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
 	std::string OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(new mithril);
+	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
       }
@@ -374,7 +374,7 @@ void loricatus::PrayBadEffect()
     if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
 	OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(new bananaflesh);
+	game::GetPlayer()->GetMainWielded()->ChangeMainMaterial(MAKE_MATERIAL(BANANAFLESH));
 	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
       }
     else
@@ -600,8 +600,8 @@ void infuscor::PrayBadEffect()
 void macellarius::PrayGoodEffect()
 {
   ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
-  potion* Reward = new potion(false);
-  Reward->InitMaterials(new glass, new omleurine);
+  potion* Reward = new potion(0, false);
+  Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMLEURINE));
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
   ADD_MESSAGE("%s drops on the ground.", Reward->CHARNAME(DEFINITE));
 }
@@ -621,8 +621,8 @@ void scabies::PrayGoodEffect()
 
   for(ushort c = 0; c < 5; ++c)
     {
-      can* Reward = new can(false);
-      Reward->InitMaterials(new iron, new schoolfood);
+      can* Reward = new can(0, false);
+      Reward->InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD));
       game::GetPlayer()->GetGiftStack()->AddItem(Reward);
     }
 }
@@ -633,7 +633,7 @@ void scabies::PrayBadEffect()
 
   for(ushort c = 0; c < 5; ++c)
     {
-      material* SchoolFood = new schoolfood(600);
+      material* SchoolFood = MAKE_MATERIAL(SCHOOLFOOD, 600);
       SchoolFood->EatEffect(game::GetPlayer(), 600);
       delete SchoolFood;
     }

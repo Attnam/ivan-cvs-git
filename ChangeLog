@@ -1,3 +1,24 @@
+May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Database configuration system added
+	* Pertus's wives (almost) work now
+	* Added a new innovative super-powerful valuesystem that allows constants to be easily shared between code and script
+	* Deleted the new innovative super-powerful valuesystem that allowed constants to be easily shared between code and script and caused my gcc to run out of memory
+	  (this is what you get when you plan your code in a Swedish textbook margin)
+	* Instead added a global script define datafile which understands a format similiar to C/C++ preprocessor language:
+	  project's release compilation time decreased by about 5%
+	* Names and effects of materials datafiled
+	* Ultra major structural change problematic enough to become a source for a thousand heroic coding sagas:
+	  All materials converted as configurations of five bases, just for fun!
+	  This allows new materials to be added without changing code at all,
+	  and in addition, project's release compilation time was decreased by about 5%
+	* "Generating dungeon" messages changed to "Generating <level description>" (thanks to Will Riley for the idea)
+	* Much search & replace done with boolean variable retrieval names (GetIsPlayer() -> IsPlayer() etc.)
+	* Corrected the Excruciating All-Devastating Color Bug of Empty Bottles
+	* Prototype and database security tightened
+	* Database initialization code rewritten:
+	  project's release compilation time decreased by about 10%
+
 May 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Compilation optimizations that certainly didn't optimize anything

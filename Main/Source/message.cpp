@@ -27,7 +27,7 @@ void msgsystem::AddMessage(const char* Format, ...)
   va_end(AP);
 
   if(Message[0] > 0x60 && Message[0] < 0x7B)
-    Message[0] &= ~0x20;              // Very guru and odd. Capitalizes the first letter!
+    Message[0] &= ~0x20; // Very guru and odd. Capitalizes the first letter!
 
   std::string Buffer(Message);
 
@@ -143,3 +143,4 @@ void msgsystem::ScrollUp()
   if(MessageHistory.GetSelected())
     MessageHistory.EditSelected(-1);
 }
+

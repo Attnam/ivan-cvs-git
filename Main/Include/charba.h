@@ -6,6 +6,7 @@
 #endif
 
 #include <list>
+#include <map>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -33,6 +34,7 @@ class bodypart;
 class characterslot;
 class action;
 class go;
+template <class type> class database;
 
 struct characterdatabase
 {
@@ -105,18 +107,23 @@ struct characterdatabase
 class characterprototype
 {
  public:
-  characterprototype();
-  virtual character* Clone(bool = true, bool = true) const = 0;
+  friend class database<character>;
+  characterprototype(characterprototype*);
+  virtual character* Clone(ushort = 0, bool = true, bool = false) const = 0;
   character* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  virtual characterdatabase* GetDataBase() const = 0;
-  virtual characterprototype* GetBase() const = 0;
+  const characterdatabase* GetDataBase() const { return &DataBase; }
+  const characterprototype* GetBase() const { return Base; }
   DATABASEVALUE(ushort, Frequency);
   DATABASEBOOL(CanBeGenerated);
   virtual bool IsConcrete() const = 0;
+  const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
+  characterdatabase DataBase;
+  characterprototype* Base;
+  std::map<ushort, characterdatabase> Config;
 };
 
 /* Presentation of the character class */
@@ -126,8 +133,9 @@ class character : public entity, public id
  public:
   typedef characterprototype prototype;
   typedef characterdatabase database;
+  typedef std::map<ushort, characterdatabase> databasemap;
   friend class corpse;
-  character();
+  character(donothing);
   virtual ~character();
   virtual character* Clone(bool = true, bool = true) const;
   virtual void Save(outputfile&) const;
@@ -147,7 +155,7 @@ class character : public entity, public id
   virtual bool HasHeadOfElpuri() const;
   virtual bool HasGoldenEagleShirt() const;
   virtual bool HasPetrussNut() const;
-  virtual bool GetIsPlayer() const { return IsPlayer; }
+  virtual bool IsPlayer() const { return Player; }
   virtual bool Apply();
   virtual bool Close();
   virtual bool Consume();
@@ -211,7 +219,7 @@ class character : public entity, public id
   virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
   virtual void ApplyExperience();
   virtual void BeTalkedTo(character*);
-  virtual void Darkness(long);
+  virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
   virtual void DrawToTileBuffer(bool) const;
   virtual void HasBeenHitByItem(character*, item*, float);
@@ -220,16 +228,16 @@ class character : public entity, public id
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveNutrition(long);
-  virtual void ReceiveOmleUrineEffect(long);
-  virtual void ReceivePepsiEffect(long);
-  virtual void ReceiveSchoolFoodEffect(long);
+  virtual void ReceiveOmleUrine(long);
+  virtual void ReceivePepsi(long);
+  virtual void ReceivePoison(long);
   virtual void Regenerate(ushort = 1);
   virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; if(Agility > 99) Agility = 99; }
   virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
   virtual void SetAP(long What) { AP = What; }
   virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
   virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
-  virtual void SetIsPlayer(bool What) { IsPlayer = What; }
+  virtual void SetIsPlayer(bool What) { Player = What; }
   virtual void SetNP(long);
   virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; if(Perception > 99) Perception = 99; }
   virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
@@ -287,7 +295,7 @@ class character : public entity, public id
   virtual bool ShowConfigScreen();
   virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
   virtual void SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
-  virtual void ReceiveKoboldFleshEffect(long);
+  virtual void ReceiveKoboldFlesh(long);
   virtual bool ChangeRandomStat(short);
   virtual uchar RandomizeReply(uchar, bool*);
   virtual ushort DangerLevel() const;
@@ -383,10 +391,12 @@ class character : public entity, public id
   virtual bool ScrollMessagesUp();
   virtual void AddHealingLiquidConsumeEndMessage() const;
   virtual void AddSchoolFoodConsumeEndMessage() const;
+  virtual void AddSchoolFoodHitMessage() const;
   virtual void AddOmleUrineConsumeEndMessage() const;
   virtual void AddPepsiConsumeEndMessage() const;
-  virtual void AddDarknessConsumeEndMessage() const;
+  virtual void AddFrogFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshConsumeEndMessage() const;
+  virtual void AddKoboldFleshHitMessage() const;
   virtual void AddBoneConsumeEndMessage() const;
   virtual ulong GetTotalWeight() const;
   virtual void AddInfo(felist&) const;
@@ -397,9 +407,9 @@ class character : public entity, public id
   virtual bool RaiseTheDead(character*);
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
-  static ushort StaticType();
-  virtual prototype* GetProtoType() const;
-  virtual database* GetDataBase() const;
+  virtual const prototype* GetProtoType() const;
+  virtual const database* GetDataBase() const { return DataBase; }
+  virtual void SetParameters(uchar) { }
 
   DATABASEVALUE(ushort, DefaultAgility);
   DATABASEVALUE(ushort, DefaultStrength);
@@ -414,7 +424,7 @@ class character : public entity, public id
   DATABASEBOOL(CanBeGenerated);
   DATABASEBOOL(HasInfraVision);
   DATABASEVALUE(uchar, CriticalModifier);
-  DATABASEVALUE(std::string, StandVerb);
+  DATABASEVALUE(const std::string&, StandVerb);
   DATABASEBOOL(CanOpen);
   DATABASEBOOL(CanBeDisplaced);
   DATABASEVALUE(ushort, Frequency);
@@ -432,7 +442,7 @@ class character : public entity, public id
   DATABASEVALUE(ushort, EatFlags);
   DATABASEVALUE(ulong, TotalVolume);
   DATABASEVALUE(ulong, MeleeStrength);
-  DATABASEVALUE(std::string, TalkVerb);
+  DATABASEVALUE(const std::string&, TalkVerb);
   DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
   DATABASEVALUEWITHPARAMETER(vector2d, TorsoBitmapPos, ushort);
   DATABASEVALUEWITHPARAMETER(vector2d, ArmBitmapPos, ushort);
@@ -469,9 +479,10 @@ class character : public entity, public id
   virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
-  virtual void Initialize(bool, bool);
-  virtual void VirtualConstructor() { }
+  virtual void Initialize(uchar, bool, bool);
+  virtual void VirtualConstructor(bool) { }
   virtual void LoadDataBaseStats();
+  virtual void InstallDataBase();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor0(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -521,7 +532,7 @@ class character : public entity, public id
   ushort Strength, Endurance, Agility, Perception;
   long NP, AP;
   long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
-  bool IsPlayer;
+  bool Player;
   uchar State;
   short StateCounter[STATES];
   static void (character::*StateHandler[STATES])();
@@ -533,27 +544,24 @@ class character : public entity, public id
   characterslot* BodyPartSlot;
   std::string AssignedName;
   action* Action;
+  ushort Config;
+  const database* DataBase;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
 #define CHARACTER_PROTOTYPE(name, cloner, baseproto, concrete)\
   \
-  static character::database name##_DataBase;\
-  \
-  static class name##_prototype : public character::prototype\
+  static class name##_prototype : public characterprototype\
   {\
    public:\
-    virtual character* Clone(bool MakeBodyParts, bool CreateEquipment) const { return cloner; }\
+    name##_prototype(characterprototype* Base) : characterprototype(Base) { }\
+    virtual character* Clone(ushort Config, bool CreateEquipment, bool Load) const { return cloner; }\
     virtual std::string ClassName() const { return #name; }\
-    virtual character::database* GetDataBase() const { return &name##_DataBase; }\
-    virtual character::prototype* GetBase() const { return baseproto; }\
     virtual bool IsConcrete() const { return concrete; }\
-  } name##_ProtoType;\
+  } name##_ProtoType(baseproto);\
   \
-  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  character::prototype* name::GetProtoType() const { return &name##_ProtoType; }\
-  character::database* name::GetDataBase() const { return &name##_DataBase; }
+  const character::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -566,22 +574,21 @@ class character : public entity, public id
 name : public base\
 {\
  public:\
-  name(bool MakeBodyParts = true, bool CreateEquipment = true) { Initialize(MakeBodyParts, CreateEquipment); }\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
+  name(ushort Config = 0, bool CreateEquipment = true, bool Load = false) : base(donothing()) { Initialize(Config, CreateEquipment, Load); }\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const;\
   data\
-}; CHARACTER_PROTOTYPE(name, new name(MakeBodyParts, CreateEquipment), &base##_ProtoType, true);
+}; CHARACTER_PROTOTYPE(name, new name(Config, CreateEquipment, Load), &base##_ProtoType, true);
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
-  virtual database* GetDataBase() const;\
+  name(donothing D) : base(D) { }\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; CHARACTER_PROTOTYPE(name, 0, &base##_ProtoType, false);
 
 #endif
+

@@ -334,3 +334,4 @@ inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
   SaveFile >> Desc.String >> Desc.Color;
   return SaveFile;
 }
+

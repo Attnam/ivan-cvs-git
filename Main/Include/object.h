@@ -51,6 +51,7 @@ class object : public entity, public id
   virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ushort GetBaseEmitation() const { return 0; }
   virtual ushort GetType() const = 0;
+  virtual void SetParameters(uchar) { }
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -75,6 +76,8 @@ class object : public entity, public id
   material* MainMaterial;
   std::vector<graphic_id> GraphicId;
   std::vector<bitmap*> Picture;
+  ushort Config;
 };
 
 #endif
+

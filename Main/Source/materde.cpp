@@ -6,7 +6,7 @@
 std::vector<material::prototype*> protocontainer<material>::ProtoData;
 valuemap protocontainer<material>::CodeNameMap;
 
-MATERIAL_PROTOTYPE(material, 0, 0, false);
+MATERIAL_PROTOTYPE(material, 0);
 
 #include "materde.h"
 
@@ -16,108 +16,6 @@ MATERIAL_PROTOTYPE(material, 0, 0, false);
 #include "message.h"
 #include "lsquare.h"
 #include "save.h"
-
-void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->ReceiveSchoolFoodEffect(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void schoolfood::HitEffect(character* Enemy)
-{
-  Enemy->ReceiveSchoolFoodEffect(Volume);
-}
-
-void schoolfood::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddSchoolFoodConsumeEndMessage();
-}
-
-void frogflesh::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->Darkness(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void frogflesh::HitEffect(character* Enemy)
-{
-  Enemy->Darkness(Volume);
-}
-
-void frogflesh::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddDarknessConsumeEndMessage();
-}
-
-void omleurine::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->ReceiveOmleUrineEffect(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void omleurine::HitEffect(character* Enemy)
-{
-  Enemy->ReceiveOmleUrineEffect(Volume);
-}
-
-void omleurine::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddOmleUrineConsumeEndMessage();
-}
-
-void pepsi::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->ReceivePepsiEffect(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void pepsi::HitEffect(character* Enemy)
-{
-  Enemy->ReceivePepsiEffect(Volume);
-}
-
-void pepsi::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddPepsiConsumeEndMessage();
-}
-
-void bone::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddBoneConsumeEndMessage();
-}
-
-void koboldflesh::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->ReceiveKoboldFleshEffect(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void koboldflesh::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddKoboldFleshConsumeEndMessage();
-}
-
-void healingliquid::EatEffect(character* Eater, float Amount, float NPModifier)
-{
-  Eater->ReceiveHeal(long(Volume > Amount ? Amount : Volume));
-  NormalFoodEffect(Eater, Amount, NPModifier);
-  MinusAmount(Amount);
-}
-
-void healingliquid::AddConsumeEndMessage(character* Eater) const
-{
-  Eater->AddHealingLiquidConsumeEndMessage();
-}
-
-void healingliquid::HitEffect(character* Enemy)
-{
-  Enemy->ReceiveHeal(Volume);
-}
 
 bool organicsubstance::Be()
 {
@@ -136,14 +34,15 @@ void organicsubstance::Load(inputfile& SaveFile)
   SaveFile >> SpoilCounter;
 }
 
-void humanflesh::Save(outputfile& SaveFile) const
+void flesh::Save(outputfile& SaveFile) const
 {
-  material::Save(SaveFile);
+  organicsubstance::Save(SaveFile);
   SaveFile << SkinColor;
 }
 
-void humanflesh::Load(inputfile& SaveFile)
+void flesh::Load(inputfile& SaveFile)
 {
-  material::Load(SaveFile);
+  organicsubstance::Load(SaveFile);
   SaveFile >> SkinColor;
 }
+

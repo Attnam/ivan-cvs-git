@@ -28,7 +28,7 @@ void shop::HandleInstantiatedCharacter(character* Character)
 
 void shop::Enter(character* Customer)
 {
-  if(Customer->GetIsPlayer())
+  if(Customer->IsPlayer())
     if(Master)
       {
 	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
@@ -48,7 +48,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
   ulong Price = ForSale->GetPrice();
 
-  if(!Customer->GetIsPlayer())
+  if(!Customer->IsPlayer())
     if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
@@ -109,7 +109,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
   ulong Price = (ForSale->GetPrice() >> 1);
 
-  if(!Customer->GetIsPlayer())
+  if(!Customer->IsPlayer())
     if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
@@ -165,7 +165,7 @@ void temple::HandleInstantiatedCharacter(character* Character)
 
 void temple::Enter(character* Pilgrim)
 {
-  if(Pilgrim->GetIsPlayer())
+  if(Pilgrim->IsPlayer())
     if(Master)
       {
 	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
@@ -195,7 +195,7 @@ bool shop::ConsumeItem(character* Customer, item*)
   if(!Master)
     return true;
 
-  if(!Customer->GetIsPlayer())
+  if(!Customer->IsPlayer())
     return false;
 
   if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
@@ -215,7 +215,7 @@ bool shop::ConsumeItem(character* Customer, item*)
 
 void cathedral::Enter(character* Visitor)
 {
-  if(Visitor->GetIsPlayer() && !Entered)
+  if(Visitor->IsPlayer() && !Entered)
     {
       ADD_MESSAGE("The majestetic Cathedral of Valpurus looms before you. You watch it with utter respect.");
       Entered = true;
@@ -227,7 +227,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item)
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
 
-  if(Visitor->GetIsPlayer())
+  if(Visitor->IsPlayer())
     {
       if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->GetPrice())
 	return true;
@@ -249,7 +249,7 @@ bool cathedral::DropItem(character* Visitor, item* Item)
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
     return true;
 
-  if(Visitor->GetIsPlayer())
+  if(Visitor->IsPlayer())
     {
       if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || Item->IsTheAvatar())
 	{
@@ -269,7 +269,7 @@ void cathedral::KickSquare(character* Kicker, lsquare* Square)
   if(game::GetTeam(2)->GetRelation(Kicker->GetTeam()) == HOSTILE)
     return;
 
-  if(Kicker->GetIsPlayer() && Square->GetStack()->GetItems())
+  if(Kicker->IsPlayer() && Square->GetStack()->GetItems())
     {
       ADD_MESSAGE("You have harmed the property of the Cathedral!");
 
@@ -282,7 +282,7 @@ bool cathedral::ConsumeItem(character* HungryMan, item*)
   if(game::GetTeam(2)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
     return true;
 
-  if(HungryMan->GetIsPlayer())
+  if(HungryMan->IsPlayer())
     {
       ADD_MESSAGE("Eating the property of the Cathedral is forbidden.");
 
@@ -315,7 +315,7 @@ bool cathedral::Drink(character* Thirsty) const
   if(game::GetTeam(2)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
     return game::BoolQuestion("Do you want to drink? [y/N]");
 
-  if(Thirsty->GetIsPlayer())
+  if(Thirsty->IsPlayer())
     {
       ADD_MESSAGE("Drinking property of the Cathedral is prohibited.");
 
@@ -346,7 +346,7 @@ void cathedral::TeleportSquare(character* Teleporter, lsquare* Square)
   if(game::GetTeam(2)->GetRelation(Teleporter->GetTeam()) == HOSTILE)
     return;
 
-  if(Teleporter->GetIsPlayer() && Square->GetStack()->GetItems())
+  if(Teleporter->IsPlayer() && Square->GetStack()->GetItems())
     {
       ADD_MESSAGE("You have done unnatural things to the property of the Cathedral!");
 
@@ -359,7 +359,7 @@ bool cathedral::Dip(character* Thirsty) const
   if(game::GetTeam(2)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
     return true;
 
-  if(Thirsty->GetIsPlayer())
+  if(Thirsty->IsPlayer())
     {
       /* What if it's not water? */
 

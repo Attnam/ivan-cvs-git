@@ -8,9 +8,12 @@
 #include <cstdio>
 #include <vector>
 #include <list>
+#include <string>
+#include <map>
 
-#include "typedef.h"
 #include "vector2d.h"
+
+typedef std::map<std::string, long> valuemap;
 
 /* fstream seems to bug with DJGPP, so we use FILE* here */
 

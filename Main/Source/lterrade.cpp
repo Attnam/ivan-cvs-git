@@ -31,11 +31,11 @@ valuemap protocontainer<olterrain>::CodeNameMap;
 
 bool door::Open(character* Opener)
 {
-  if(!GetIsWalkable())
+  if(!IsWalkable())
     {
-      if(IsLocked)
+      if(IsLocked())
 	{
-	  if(Opener->GetIsPlayer())
+	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("The door is locked.");
 	  
 	  return false;
@@ -44,7 +44,7 @@ bool door::Open(character* Opener)
 	{
 	  MakeWalkable();
 
-	  if(Opener->GetIsPlayer())
+	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("You open the door.");
 	  else if(GetLSquareUnder()->CanBeSeen())
 	    {
@@ -57,7 +57,7 @@ bool door::Open(character* Opener)
 	}
       else
 	{
-	  if(Opener->GetIsPlayer())
+	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("The door resists.");
 	  else if(GetLSquareUnder()->CanBeSeen())
 	    if(Opener->GetLSquareUnder()->CanBeSeen())
@@ -68,15 +68,15 @@ bool door::Open(character* Opener)
     }
   else
     {
-      if(Opener->GetIsPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
+      if(Opener->IsPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
       return false;
     }
 }
 
 bool door::Close(character* Closer)
 {
-  if(Closer->GetIsPlayer())
-    if(GetIsWalkable())
+  if(Closer->IsPlayer())
+    if(IsWalkable())
       if(RAND() % 20 < Closer->GetStrength())
 	ADD_MESSAGE("You close the door.");
       else
@@ -149,7 +149,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
     }
   else
     {
-      if(Who->GetIsPlayer())
+      if(Who->IsPlayer())
 	{
 	  std::vector<character*> TempPlayerGroup;
 
@@ -162,7 +162,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 
 	  game::GetWorldMap()->GetPlayerGroup().swap(TempPlayerGroup);
 
-	  game::SetInWilderness(true);
+	  game::SetIsInWilderness(true);
 	  game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
 	  game::SendLOSUpdateRequest();
 	  game::UpdateCamera();
@@ -218,7 +218,7 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
     }
   else
     {
-      if(Who->GetIsPlayer())
+      if(Who->IsPlayer())
 	ADD_MESSAGE("You are at the bottom.");
 
       return false;
@@ -227,17 +227,17 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
 
 void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
-  if(!GetIsWalkable()) 
+  if(!IsWalkable()) 
     {
-      if(!IsLocked && Strength > RAND() % 20)
+      if(!IsLocked() && Strength > RAND() % 20)
 	{
 	  if(ShowOnScreen) ADD_MESSAGE("The door opens.");
 	  MakeWalkable();
 	}
       else if(Strength > RAND() % 40)
 	{
-	  if(IsLocked && RAND() % 2) // _can't really think of a good formula for this... 
-	    {			//Strength isn't everything
+	  if(IsLocked() && RAND() % 2)	// _can't really think of a good formula for this... 
+	    {				//Strength isn't everything
 	      if(ShowOnScreen)
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
 
@@ -262,18 +262,18 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 void door::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
-  SaveFile << IsOpen << IsLocked;
+  SaveFile << Opened << Locked;
 }
 
 void door::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
-  SaveFile >> IsOpen >> IsLocked;
+  SaveFile >> Opened >> Locked;
 }
 
 void door::MakeWalkable()
 {
-  IsOpen = true;
+  SetIsOpened(true);
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
@@ -292,7 +292,7 @@ void door::MakeWalkable()
 void door::MakeNotWalkable()
 {
   GetLSquareUnder()->ForceEmitterNoxify();
-  IsOpen = false;
+  SetIsOpened(false);
   UpdatePictures();
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
@@ -308,7 +308,7 @@ void door::MakeNotWalkable()
 
 void altar::StepOn(character* Stepper)
 {
-  if(Stepper->GetIsPlayer() && DivineMaster && !game::GetGod(DivineMaster)->GetKnown())
+  if(Stepper->IsPlayer() && DivineMaster && !game::GetGod(DivineMaster)->GetKnown())
     {
       ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", game::GetGod(DivineMaster)->Name().c_str(), game::GetGod(DivineMaster)->Description().c_str());
       game::GetGod(DivineMaster)->SetKnown(true);
@@ -373,7 +373,7 @@ void altar::Kick(ushort, bool ShowOnScreen, uchar)
 
 void altar::ReceiveVomit(character* Who)
 {
-  if(Who->GetIsPlayer())
+  if(Who->IsPlayer())
     game::GetGod(GetLSquareUnder()->GetDivineMaster())->PlayerVomitedOnAltar();
 }
 
@@ -382,11 +382,11 @@ std::string door::Adjective(bool Articled) const
   std::string Adj;
 
   if(Articled)
-    Adj = std::string(IsOpen ? "an open" : "a closed");
+    Adj = std::string(Opened ? "an open" : "a closed");
   else
-    Adj = std::string(IsOpen ? "open" : "closed");
+    Adj = std::string(Opened ? "open" : "closed");
 
-  if(IsLocked)
+  if(IsLocked())
     Adj += ", locked";
 
   return Adj;
@@ -406,13 +406,13 @@ bool pool::SitOn(character*)
 
 void stairsup::StepOn(character* Stepper)
 {
-  if(Stepper->GetIsPlayer()) 
+  if(Stepper->IsPlayer()) 
     ADD_MESSAGE("There is stairway leading upwards here.");
 }
 
 void stairsdown::StepOn(character* Stepper)
 {
-  if(Stepper->GetIsPlayer()) 
+  if(Stepper->IsPlayer()) 
     ADD_MESSAGE("There is stairway leading downwards here.");
 }
 
@@ -443,7 +443,7 @@ bool fountain::Consume(character* Drinker)
 {
   if(GetContainedMaterial())
     {
-      if(GetContainedMaterial()->GetType() == water::StaticType()) 
+      if(GetContainedMaterial()->GetConfig() == WATER) 
 	{
 	  if(GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
 	    {
@@ -485,7 +485,7 @@ bool fountain::Consume(character* Drinker)
 		  while(true)
 		    {
 		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-		      item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
+		      item* TempItem = protosystem::CreateItem(Temp, Drinker->IsPlayer());
 
 		      if(TempItem)
 			{
@@ -546,8 +546,8 @@ void fountain::DryOut()
 
 void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
-  if(!GetIsWalkable())
-    if(IsLocked)
+  if(!IsWalkable())
+    if(IsLocked())
       {
 	if(Strength > RAND() % 30)
 	  {
@@ -596,7 +596,7 @@ bool door::ReceiveDamage(character*, short, uchar)
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 		
       MakeWalkable();
-      IsLocked = false;
+      SetIsLocked(false);
     }
 
   return true;
@@ -610,7 +610,7 @@ bool brokendoor::ReceiveDamage(character*, short, uchar)
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 
       MakeWalkable();
-      IsLocked = false;
+      SetIsLocked(false);
     }
 
   return true;
@@ -669,7 +669,7 @@ bool altar::SitOn(character*)
   return true;
 }
 
-bool pool::GetIsWalkable(character* ByWho) const
+bool pool::IsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
@@ -686,7 +686,7 @@ void doublebed::ShowRestMessage(character*) const
 
 void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 {
-  if(!GetIsWalkable())
+  if(!IsWalkable())
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
@@ -706,7 +706,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
       else if(Energy > 500)
 	{
 	  // The door breaks
-	  if(GetIsLocked())
+	  if(IsLocked())
 	    SetIsLocked(RAND() % 2 ? true : false);
 
 	  if(Visible)
@@ -727,7 +727,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 
 void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 {
-  if(!GetIsWalkable())
+  if(!IsWalkable())
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // I hear Newton screaming in his grave.
@@ -763,7 +763,7 @@ void door::Break()
     {
       brokendoor* Temp = new brokendoor(false);
       Temp->InitMaterials(GetMainMaterial());
-      Temp->SetIsLocked(GetIsLocked());
+      Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
       GetLSquareUnder()->ChangeOLTerrain(Temp);
@@ -796,31 +796,31 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
 {
   if(Thingy->CanOpenDoors())
     {
-      if(IsOpen)
+      if(Opened)
 	return false;
 
       if(Thingy->GetLockType() == GetLockType())
 	{
-	  if(Applier->GetIsPlayer())
+	  if(Applier->IsPlayer())
 	    {
-	      if(GetIsLocked())
+	      if(IsLocked())
 		ADD_MESSAGE("You unlock the door.");
 	      else
 		ADD_MESSAGE("You lock the door.");
 	    }
 	  else if(Applier->GetLSquareUnder()->CanBeSeen())
 	    {
-	      if(GetIsLocked())
+	      if(IsLocked())
 		ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
 	      else
 		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
 	    }
 
-	  SetIsLocked(!GetIsLocked());	      
+	  SetIsLocked(!IsLocked());	      
 	}
       else
 	{
-	  if(Applier->GetIsPlayer())
+	  if(Applier->IsPlayer())
 	    ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
 
 	}
@@ -871,18 +871,30 @@ ushort fountain::GetMaterialColor1(ushort) const
     return 0;
 }
 
-void door::VirtualConstructor()
+void door::VirtualConstructor(bool Load)
 {
-  olterrain::VirtualConstructor();
-  SetIsOpen(false);
-  SetIsLocked(false);
-  SetBoobyTrap(0);
-  SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
-  SetHP(500);
+  olterrain::VirtualConstructor(Load);
+
+  if(!Load)
+    {
+      SetIsOpened(false);
+      SetIsLocked(false);
+      SetBoobyTrap(0);
+      SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+      SetHP(500);
+    }
 }
 
-void altar::VirtualConstructor()
+void altar::VirtualConstructor(bool Load)
 {
-  olterrain::VirtualConstructor();
-  SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
+  olterrain::VirtualConstructor(Load);
+
+  if(!Load)
+    SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
 }
+
+void door::SetParameters(uchar Param)
+{
+  SetIsLocked(Param & LOCKED);
+}
+

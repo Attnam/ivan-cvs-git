@@ -24,13 +24,13 @@ Team 4; /* Enner Beasts */
 Team 5; /* Spawned hostile angels */
 {
 	Relation 0, HOSTILE;
-	Relation 1, NEUTRAL;
+	Relation 1, UNCARING;
 	Relation 4, HOSTILE;
 }
 
 Team 6; /* Dungeon shopkeepers */
 {
-	Relation 1, NEUTRAL;
+	Relation 1, UNCARING;
 	Relation 4, HOSTILE;
 	AttackEvilness=100;
 }
@@ -207,15 +207,15 @@ Dungeon 0;
 				Types
 				{
 					c = scrollofchangematerial;
-					L = iron longsword;
-					C = mithril chainmail;
+					L = IRON longsword;
+					C = MITHRIL chainmail;
 					s = wandofstriking;
 					a = lantern;
-					l = bread loaf;
+					l = BREAD loaf;
 					t = scrollofteleport;
-					g = iron can { ContainedMaterial = goblinoidflesh; }
-					p = iron poleaxe;
-					B = beef loaf;
+					g = IRON can { ContainedMaterial = GOBLINOIDFLESH; }
+					p = IRON poleaxe;
+					B = BEEF loaf;
 				}
 			}
 			{
@@ -254,15 +254,15 @@ Dungeon 0;
 	{
 		Description=DarkLevel;
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare=floor, iron wall;
+		FillSquare=floor, IRON wall;
 		Items=0;
 		GenerateDownStairs=false;
 
 		RoomDefault
 		{
 			AltarPossible=false;
-			WallSquare=floor, iron wall;
-			DoorSquare=parquet,iron door;
+			WallSquare=floor, IRON wall;
+			DoorSquare=parquet, IRON door;
 			GenerateLanterns=false;
 		}
 
@@ -309,13 +309,13 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=ground,iron wall;
+			WallSquare=ground,IRON wall;
 			FloorSquare=parquet,empty;
-			DoorSquare=parquet,iron door;
+			DoorSquare=parquet,IRON door;
 
 			Square, Pos 3,3;
 			{
-				OTerrain=iron stairsdown;
+				OTerrain=IRON stairsdown;
 			}
 
 			Square, Pos 3,5;
@@ -329,7 +329,7 @@ Dungeon 0;
 	{
 		Description=OreeLair;
 		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
-		FillSquare=floor, iron wall;
+		FillSquare=floor, IRON wall;
 		Rooms=1;
 		GenerateMonsters=false;
 		GenerateUpStairs=false;
@@ -341,7 +341,7 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=floor, iron wall;
+			WallSquare=floor, IRON wall;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -350,7 +350,7 @@ Dungeon 0;
 
 			Square, Pos 3,1;
 			{
-				OTerrain = iron altar;
+				OTerrain = IRON altar;
 			}
 
 			Square, Pos 3,3;
@@ -360,7 +360,7 @@ Dungeon 0;
 
 			Square, Pos 3,5;
 			{
-				OTerrain=iron stairsup;
+				OTerrain=IRON stairsup;
 			}
 
 			CharacterMap
@@ -372,7 +372,7 @@ Dungeon 0;
 				{
 					O=oree;
 					B=darkknight;
-					G=blood golem;
+					G=BLOOD golem;
 				}
 			}
 			{
@@ -468,6 +468,7 @@ Dungeon 1;
 		Square, Pos 30,61;
 		{
 			IsWorldMapEntry=true;
+			Item = ORMOPIUM longsword;
 		}
 	
 		Room 0;
@@ -475,7 +476,7 @@ Dungeon 1;
 			Pos=10,10;
 			Size=41,42;
 			AltarPossible=false;
-			WallSquare=grassterrain,mithril wall;
+			WallSquare=grassterrain,MITHRIL wall;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -504,8 +505,8 @@ Dungeon 1;
 				Size=33,34;
 				Types
 				{
-					# = marble floor;
-					- = marble floor;
+					# = MARBLE floor;
+					- = MARBLE floor;
 					~ = pool;
 				}
 			}
@@ -552,12 +553,12 @@ Dungeon 1;
 				Size=39,40;
 				Types
 				{
-					# = valpurium wall;
+					# = VALPURIUM wall;
 					T = throne;
 					c = carpet;
-					A = valpurium altar;
-					D = valpurium door;
-					L = valpurium door { Locked = true; }
+					A = VALPURIUM altar;
+					D = VALPURIUM door;
+					L = VALPURIUM door { Parameters = LOCKED; }
 					b = linden;
 					1 = poolcorner { VisualFlags = NONE; }
 					2 = poolcorner { VisualFlags = MIRROR; }
@@ -627,18 +628,18 @@ Dungeon 1;
 					b = banana;
 					k = kiwi;
 					p = pineapple;
-					o = iron poleaxe;
-					l = mithril longsword;
-					t = iron twohandedsword;
-					m = iron spikedmace;
-					s = iron spear;
+					o = IRON poleaxe;
+					l = MITHRIL longsword;
+					t = IRON twohandedsword;
+					m = IRON spikedmace;
+					s = IRON spear;
 					c = chainmail;
 					e = backpack;
-					g = gold astone;
-					i = silver astone;
-					h = sapphire astone;
-					r = ruby astone;
-					d = diamond astone;
+					g = GOLD astone;
+					i = SILVER astone;
+					h = SAPPHIRE astone;
+					r = RUBY astone;
+					d = DIAMOND astone;
 				}
 			}
 			{
@@ -692,12 +693,12 @@ Dungeon 1;
 					l = lightfrog;
 					8 = librarian;
 					s = femaleslave;
-					1 = petrusswife;
-					2 = petrusswife;
-					3 = petrusswife;
-					4 = petrusswife;
-					5 = petrusswife;
-					6 = petrusswife;
+					1 = petrusswife { Config = 1; }
+					2 = petrusswife { Config = 2; }
+					3 = petrusswife { Config = 3; }
+					4 = petrusswife { Config = 4; }
+					5 = petrusswife { Config = 5; }
+					6 = petrusswife { Config = 6; }
 					k = kamikazedwarf;
 					A = oree;
 					B = goblin;
@@ -785,15 +786,15 @@ Dungeon 1;
 				Types
 				{
 					t = scrollofteleport;
-					s = stone spear;
+					s = STONE spear;
 					p = pickaxe;
 					A = pineapple;
 					b = banana;
-					l = wolfflesh lump;
-					i = iron can { ContainedMaterial = polarbearflesh; }
-					L = bread loaf;
+					l = WOLFFLESH lump;
+					i = IRON can { ContainedMaterial = POLARBEARFLESH; }
+					L = BREAD loaf;
 					a = lantern;
-					P = glass potion { ContainedMaterial = omleurine; }
+					P = GLASS potion { ContainedMaterial = OMLEURINE; }
 					C = chainmail;
 					w = whip;
 				}
@@ -809,7 +810,7 @@ Dungeon 1;
 		{
 			Pos=54,55;
 			Size=5,5;
-			WallSquare=grassterrain,gold wall;
+			WallSquare=grassterrain,GOLD wall;
 			GenerateDoor=false;
 			DivineMaster=venius;
 			Type=temple;
@@ -817,12 +818,12 @@ Dungeon 1;
 			Square, Pos 2, 0;
 			{
 				GTerrain = parquet;
-				OTerrain = gold door;
+				OTerrain = GOLD door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = gold altar;
+				OTerrain = GOLD altar;
 			}
 
 			Square, Pos 2, 3;
@@ -835,7 +836,7 @@ Dungeon 1;
 		{
 			Pos=2,55;
 			Size=5,5;
-			WallSquare=grassterrain,marble wall;
+			WallSquare=grassterrain,MARBLE wall;
 			GenerateDoor=false;
 			DivineMaster=dulcis;
 			Type=temple;
@@ -843,12 +844,12 @@ Dungeon 1;
 			Square, Pos 4, 2;
 			{
 				GTerrain = parquet;
-				OTerrain = marble door;
+				OTerrain = MARBLE door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = marble altar;
+				OTerrain = MARBLE altar;
 			}
 
 			Square, Pos 1, 2;
@@ -861,7 +862,7 @@ Dungeon 1;
 		{
 			Pos=54,2;
 			Size=5,5;
-			WallSquare=grassterrain,bananaflesh wall;
+			WallSquare=grassterrain,BANANAFLESH wall;
 			GenerateDoor=false;
 			DivineMaster=seges;
 			Type=temple;
@@ -869,12 +870,12 @@ Dungeon 1;
 			Square, Pos 0, 2;
 			{
 				GTerrain = parquet;
-				OTerrain = bananaflesh door;
+				OTerrain = BANANAFLESH door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = bananaflesh altar;
+				OTerrain = BANANAFLESH altar;
 			}
 
 			Square, Pos 3, 2;
@@ -887,7 +888,7 @@ Dungeon 1;
 		{
 			Pos=2,2;
 			Size=5,5;
-			WallSquare=grassterrain,parchment wall;
+			WallSquare=grassterrain,PARCHMENT wall;
 			GenerateDoor=false;
 			DivineMaster=consummo;
 			Type=temple;
@@ -895,12 +896,12 @@ Dungeon 1;
 			Square, Pos 2, 4;
 			{
 				GTerrain = parquet;
-				OTerrain = parchment door;
+				OTerrain = PARCHMENT door;
 			}
 
 			Square, Pos 2, 2;
 			{
-				OTerrain = parchment altar;
+				OTerrain = PARCHMENT altar;
 			}
 
 			Square, Pos 2, 1;
@@ -912,21 +913,21 @@ Dungeon 1;
 		Room 6;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=grassterrain, wood wall;
+			WallSquare=grassterrain, WOOD wall;
 			DoorSquare=floor, door;
 		}
 
 		Room 7;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=grassterrain, wood wall;
+			WallSquare=grassterrain, WOOD wall;
 			DoorSquare=floor, door;
 		}
 
 		Room 8;
 		{
 			FloorSquare=floor,empty;
-			WallSquare=grassterrain, wood wall;
+			WallSquare=grassterrain, WOOD wall;
 			DoorSquare=floor, door;
 		}
 	}

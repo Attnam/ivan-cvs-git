@@ -7,7 +7,6 @@
 #include "feio.h"
 #include "game.h"
 #include "area.h"
-#include "felibdef.h"
 #include "save.h"
 #include "bitmap.h"
 
@@ -125,13 +124,13 @@ void configuration::EditContrast(char Change)
 
 void configuration::ShowConfigScreen()
 {
-  vector2d QuestionPos = game::GetRunning() ? vector2d(16, 6) : vector2d(30, 46);
+  vector2d QuestionPos = game::IsRunning() ? vector2d(16, 6) : vector2d(30, 46);
   ushort Chosen = 0;
   bool BoolChange = false;
 
   while(true)
     {
-      if(game::GetRunning())
+      if(game::IsRunning())
 	{
 	  game::DrawEverythingNoBlit();
 	  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
@@ -153,21 +152,21 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
 #endif
 
-      Chosen = List.Draw(vector2d(game::GetRunning() ? 26 : 10, game::GetRunning() ? 42 : 10), game::GetRunning() ? 652 : 780, 20, true, false, game::GetRunning(), !game::GetRunning() && !BoolChange);
+      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
 
       switch(Chosen)
 	{
 	case 0:
-	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::GetRunning(), true));
+	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::IsRunning(), true));
 	  BoolChange = false;
 	  continue;
 	case 1:
-	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::GetRunning()));
+	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::IsRunning()));
 	  BoolChange = false;
 	  continue;
 	case 2:
-	  SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::GetRunning()));
-	  if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+	  SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::IsRunning()));
+	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = false;
 	  continue;
 	case 3:
@@ -176,12 +175,12 @@ void configuration::ShowConfigScreen()
 	  continue;
 	case 4:
 	  SetOutlineCharacters(!GetOutlineCharacters());
-	  if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
 	  continue;
 	case 5:
 	  SetOutlineItems(!GetOutlineItems());
-	  if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
 	  continue;
 #ifdef WIN32

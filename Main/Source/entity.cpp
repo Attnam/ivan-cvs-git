@@ -35,7 +35,7 @@ void entity::SetLSquareUnder(lsquare* What)
  * Tells whether an entity exists, i.e. hasn't been marked as removable by the poolsystem.
  */
 
-bool entity::GetExists() const
+bool entity::Exists() const
 {
   return GetPoolIterator()->Exists;
 }
@@ -62,7 +62,7 @@ void entity::SetExists(bool What)
  * poolsystem during each tick, false otherwise.
  */
 
-bool entity::GetHasBe() const
+bool entity::HasBe() const
 {
   return GetPoolIterator()->HasBe;
 }
@@ -77,3 +77,4 @@ void entity::SetHasBe(bool What)
 {
   GetPoolIterator()->HasBe = What;
 }
+

@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
 
 class outputfile;
@@ -14,7 +16,7 @@ class character;
 class terrain
 {
  public:
-  virtual bool GetIsWalkable() const { return true; }
+  virtual bool IsWalkable() const { return true; }
   virtual void StepOn(character*) { }
   virtual std::string SurviveMessage() const { return "somehow you survive"; }
   virtual std::string DeathMessage() const { return "strangely enough, you die"; }
@@ -25,7 +27,7 @@ class terrain
 class gterrain : public terrain
 {
  public:
-  virtual bool GetIsWalkable(character*) const;
+  virtual bool IsWalkable(character*) const;
   virtual ushort GetEntryAPRequirement() const = 0;
 };
 

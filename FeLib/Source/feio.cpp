@@ -72,7 +72,7 @@ ulong iosystem::CountChars(char cSF, const std::string& sSH)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected)
+int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort ColorSelected, ushort ColorNotSelected)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -99,7 +99,7 @@ int iosystem::Menu(bitmap* BackGround, const std::string& Topic, const std::stri
 	{
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, RES.X / 2 - (HYVINEPAGURUPRINTF.length() << 2), RES.Y / 2 + 10 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, Pos.X - (HYVINEPAGURUPRINTF.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
 	}
 
       sCopyOfMS = sMS;
@@ -111,11 +111,11 @@ int iosystem::Menu(bitmap* BackGround, const std::string& Topic, const std::stri
 
 	  if(i == iSelected)
 	    {
-	      FONT->PrintfUnshaded(&Buffer, RES.X / 2 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 40 - CountChars('\r', sMS) * 25 + i * 50, BLACK, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
-	      FONT->PrintfUnshaded(&Buffer, RES.X / 2 + 1 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 41 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	      FONT->PrintfUnshaded(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, BLACK, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	      FONT->PrintfUnshaded(&Buffer, Pos.X + 1 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y + 1 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	    }
 	  else
-	    FONT->Printf(&Buffer, RES.X / 2 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 40 - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    FONT->Printf(&Buffer, Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2), Pos.Y - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
 
       int k;
@@ -364,3 +364,4 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, const 
   return Buffer.GetEntry(Check);
 #endif
 }
+

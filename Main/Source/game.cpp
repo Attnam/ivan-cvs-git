@@ -63,63 +63,66 @@ std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 
-bool game::IsLoading = false, game::InGetCommand = false;
+bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 std::vector<god*> game::God;
 
-command* game::Command[] = {0,
-			    new command(&character::Apply, "apply", 'a', false),
-			    new command(&character::Talk, "chat", 'C', false),
-			    new command(&character::Close, "close", 'c', false),
-			    new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
-			    new command(&character::Dip, "dip", 'D', true),
-			    new command(&character::Drop, "drop", 'd', false),
-			    new command(&character::Consume, "eat/drink", 'e', true),
-			    new command(&character::WhatToEngrave, "engrave", 'E', false),
-			    new command(&character::EqupmentScreen, "equipment menu", 'I', true),
-			    new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
-			    new command(&character::GainAllItems, "give all items cheat", '8', true, true),
-			    new command(&character::Go, "go", 'g', false),
-			    new command(&character::GoDown, "go down", '>', true),
-			    new command(&character::GoUp, "go up", '<', true),
-			    new command(&character::IncreaseContrast, "increase contrast", 'b', true),
-			    new command(&character::Kick, "kick", 'k', false),
-			    new command(&character::Look, "look", 'l', true),
-			    new command(&character::LowerStats, "lower stats cheat", '2', true, true),
-			    new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
-			    new command(&character::AssignName, "name", 'n', false),
-			    new command(&character::Offer, "offer", 'O', false),
-			    new command(&character::Open, "open", 'o', false),
-			    new command(&character::OutlineCharacters, "outline characters", 'K', true),
-			    new command(&character::OutlineItems, "outline items", 'J', true),
-			    new command(&character::PickUp, "pick up", ',', false),
-			    new command(&character::Pray, "pray", 'p', false),
-			    new command(&character::Quit, "quit", 'q', true),
-			    new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
-			    new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
-			    new command(&character::Read, "read", 'r', false),
-			    new command(&character::RestUntilHealed, "rest/heal", 'h', true),
-			    new command(&character::Save, "save game", 's', true),
-			    new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
-			    new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
-			    new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
-			    new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
-			    new command(&character::ShowConfigScreen, "show config screen", '\\', true),
-			    new command(&character::ShowInventory, "show inventory", 'i', true),
-			    new command(&character::ShowKeyLayout, "show key layout", '?', true),
-			    new command(&character::DrawMessageHistory, "show message history", 'M', true),
-			    new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
-			    new command(&character::Sit, "sit", 'S', false),
-			    new command(&character::Throw, "throw", 't', false),
-			    new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
-			    new command(&character::ForceVomit, "vomit", 'v', false),
-			    new command(&character::NOP, "wait", '.', true),
-			    new command(&character::WizardMode, "wizard mode activation", 'X', true),
-			    new command(&character::Zap, "zap", 'z', false),
-			    0};
+command* game::Command[] =
+{
+  0,
+  new command(&character::Apply, "apply", 'a', false),
+  new command(&character::Talk, "chat", 'C', false),
+  new command(&character::Close, "close", 'c', false),
+  new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
+  new command(&character::Dip, "dip", 'D', true),
+  new command(&character::Drop, "drop", 'd', false),
+  new command(&character::Consume, "eat/drink", 'e', true),
+  new command(&character::WhatToEngrave, "engrave", 'E', false),
+  new command(&character::EqupmentScreen, "equipment menu", 'I', true),
+  new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
+  new command(&character::GainAllItems, "give all items cheat", '8', true, true),
+  new command(&character::Go, "go", 'g', false),
+  new command(&character::GoDown, "go down", '>', true),
+  new command(&character::GoUp, "go up", '<', true),
+  new command(&character::IncreaseContrast, "increase contrast", 'b', true),
+  new command(&character::Kick, "kick", 'k', false),
+  new command(&character::Look, "look", 'l', true),
+  new command(&character::LowerStats, "lower stats cheat", '2', true, true),
+  new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
+  new command(&character::AssignName, "name", 'n', false),
+  new command(&character::Offer, "offer", 'O', false),
+  new command(&character::Open, "open", 'o', false),
+  new command(&character::OutlineCharacters, "outline characters", 'K', true),
+  new command(&character::OutlineItems, "outline items", 'J', true),
+  new command(&character::PickUp, "pick up", ',', false),
+  new command(&character::Pray, "pray", 'p', false),
+  new command(&character::Quit, "quit", 'q', true),
+  new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
+  new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
+  new command(&character::Read, "read", 'r', false),
+  new command(&character::RestUntilHealed, "rest/heal", 'h', true),
+  new command(&character::Save, "save game", 's', true),
+  new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
+  new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
+  new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
+  new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
+  new command(&character::ShowConfigScreen, "show config screen", '\\', true),
+  new command(&character::ShowInventory, "show inventory", 'i', true),
+  new command(&character::ShowKeyLayout, "show key layout", '?', true),
+  new command(&character::DrawMessageHistory, "show message history", 'M', true),
+  new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
+  new command(&character::Sit, "sit", 'S', false),
+  new command(&character::Throw, "throw", 't', false),
+  new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
+  new command(&character::ForceVomit, "vomit", 'v', false),
+  new command(&character::NOP, "wait", '.', true),
+  new command(&character::WizardMode, "wizard mode activation", 'X', true),
+  new command(&character::Zap, "zap", 'z', false),
+  0
+};
 
 int game::MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.'};
 const vector2d game::MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0)};
@@ -135,9 +138,17 @@ bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 ulong game::Ticks;
+gamescript* game::GameScript = 0;
+valuemap game::GlobalValueMap;
 
-/*#include "stack.h"
-#include "itemde.h"*/
+void game::InitScript()
+{
+  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
+  delete GameScript;
+  GameScript = new gamescript;
+  GameScript->SetValueMap(GetGlobalValueMap());
+  GameScript->ReadFrom(ScriptFile);
+}
 
 void game::Init(const std::string& Name)
 {
@@ -186,8 +197,8 @@ void game::Init(const std::string& Name)
     {
     case LOADED:
       {
-	Running = true;
-	IsLoading = true;
+	SetIsRunning(true);
+	SetIsLoading(true);
 	GetCurrentArea()->SendNewDrawRequest();
 	game::SendLOSUpdateRequest();
 	ADD_MESSAGE("Game loaded successfully.");
@@ -195,7 +206,7 @@ void game::Init(const std::string& Name)
       }
     case NEWGAME:
       {
-	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
+	iosystem::TextScreen("For many days you have wandeRED through a thick and gloomy forest.\n"
 			     "Constantly you have had to fight against ultra-violent bears and\n"
 			     "goblins that roam freely in this area. Screams of enner beasts have\n"
 			     "wailed in the distance and the cold air has almost freezed your body.\n"
@@ -207,7 +218,7 @@ void game::Init(const std::string& Name)
 			     "You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
 			     "And you know nothing about the adventures that await you here.");
 
-	Running = true;
+	SetIsRunning(true);
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
 	CreateTeams();
 	CreateGods();
@@ -236,24 +247,12 @@ void game::Init(const std::string& Name)
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
-	/*communist* Communist = new communist;
-	Communist->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Communist);
-
-	angel* Angel = new angel;
-	Angel->SetMaster(1);
-	Angel->SetTeam(GetTeam(0));
-	GetWorldMap()->GetPlayerGroup().push_back(Angel);*/
-
-	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
-	  Player->GetStack()->AddItem(new oillamp(protocontainer<material>::GetProto(c)->Clone()));*/
-
 	ADD_MESSAGE("Game generated successfully.");
 	break;
       }
     case BACK:
       {
-	Running = false;
+	SetIsRunning(false);
 	break;
       }
     }
@@ -288,7 +287,7 @@ void game::DeInit()
 
 void game::Run()
 {
-  while(GetRunning())
+  while(IsRunning())
     {	
       if(!InWilderness)
 	GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
@@ -302,7 +301,7 @@ void game::Run()
 	}
       catch(quitrequest) { }
 
-      if(!GetRunning())
+      if(!IsRunning())
 	break;
     }
 }
@@ -352,16 +351,14 @@ void game::DeInitLuxTable()
 	}
 
       delete [] LuxTable;
-
       delete [] LuxTableSize;
-
       LuxTable = 0;
     }
 }
 
 void game::Quit()
 {
-  Running = false;
+  SetIsRunning(false);
 
   /* This prevents monster movement etc. after death. */
 
@@ -378,7 +375,7 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentArea()->GetSquare(Pos)->GetOTerrain()->GetIsWalkable();
+    return GetCurrentArea()->GetSquare(Pos)->GetOTerrain()->IsWalkable();
 }
 
 void game::DrawPanel()
@@ -418,7 +415,7 @@ void game::DrawPanel()
   else
     FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Danger Level: %d", Player->DangerLevel());
 
-  if(GetInWilderness())
+  if(IsInWilderness())
     FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Worldmap");
   else
     FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
@@ -623,7 +620,7 @@ uchar game::Load(const std::string& SaveName)
 
   if(Version != SAVEFILE_VERSION)
     {
-      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+      if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 	  return NEWGAME;
       else
 	  return BACK;
@@ -702,7 +699,7 @@ bool game::EmitationHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
 }
 
 bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
@@ -715,7 +712,7 @@ bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -805,7 +802,7 @@ bool game::EyeHandler(vector2d Pos, vector2d Origo)
   if(Pos == Origo)
     return true;
   else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->GetIsWalkable();
+    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
 }
 
 long game::GodScore()
@@ -965,7 +962,7 @@ void game::SeeWholeMap()
 
 void game::InitDungeons()
 {
-  Dungeon.resize(*scriptsystem::GetGameScript()->GetDungeons());
+  Dungeon.resize(*GetGameScript()->GetDungeons());
 
   for(ushort c = 0; c < Dungeon.size(); ++c)
     {
@@ -983,7 +980,7 @@ void game::DoGoodDeed(ushort Amount)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
+      if(!IsInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
 	if(GetGod(c)->GetRelation() + Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1021,7 +1018,7 @@ void game::DoEvilDeed(ushort Amount)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
-      if(!GetInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
+      if(!IsInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
 	if(GetGod(c)->GetRelation() - Change * 2 < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
@@ -1089,12 +1086,12 @@ void game::Hostility(team* Attacker, team* Defender)
 	{
 	case HOSTILE:
 	  {
-	    if(GetTeam(c)->GetRelation(Attacker) == NEUTRAL)
+	    if(GetTeam(c)->GetRelation(Attacker) == UNCARING)
 	      GetTeam(c)->SetRelation(Attacker, FRIEND);
 
 	    break;
 	  }
-	case NEUTRAL:
+	case UNCARING:
 	  {
 	    if(GetTeam(c)->GetRelation(Attacker) == HOSTILE)
 	      GetTeam(c)->SetRelation(Defender, FRIEND);
@@ -1116,12 +1113,12 @@ void game::CreateTeams()
 {
   ushort c;
 
-  for(c = 0; c < *scriptsystem::GetGameScript()->GetTeams(); ++c)
+  for(c = 0; c < *GetGameScript()->GetTeams(); ++c)
     {
       team* NewTeam = new team(c);
 
       for(ushort i = 0; i < Team.size(); ++i)
-	GetTeam(i)->SetRelation(NewTeam, NEUTRAL);
+	GetTeam(i)->SetRelation(NewTeam, UNCARING);
 
       Team.push_back(NewTeam);
     }
@@ -1130,13 +1127,13 @@ void game::CreateTeams()
     if(c != 1)
       GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
 
-  for(c = 0; c < scriptsystem::GetGameScript()->GetTeam().size(); ++c)
+  for(c = 0; c < GetGameScript()->GetTeam().size(); ++c)
   {
-    for(ushort i = 0; i < scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
-      GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].first), scriptsystem::GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
+    for(ushort i = 0; i < GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
+      GetTeam(GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GetGameScript()->GetTeam()[c].first), GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
 
-    if(scriptsystem::GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false))
-      GetTeam(scriptsystem::GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*scriptsystem::GetGameScript()->GetTeam()[c].second->GetAttackEvilness());
+    if(GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false))
+      GetTeam(GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*GetGameScript()->GetTeam()[c].second->GetAttackEvilness());
   }
 }
 
@@ -1195,12 +1192,12 @@ void game::UpdateCamera()
 
 bool game::HandleQuitMessage()
 {
-  if(GetRunning())
+  if(IsRunning())
     {
-      if(GetInGetCommand())
+      if(IsInGetCommand())
 	{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+	  switch(iosystem::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1216,7 +1213,7 @@ bool game::HandleQuitMessage()
 	      return false;
 	    default:
 	      RemoveSaves();
-	      Running = false;
+	      SetIsRunning(false);
 
 	      if(!GetWizardMode())
 		{
@@ -1232,7 +1229,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+	if(iosystem::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 #endif
 	  {
 	    RemoveSaves();
@@ -1441,7 +1438,7 @@ void game::LookHandler(vector2d CursorPos)
 
       character* Character;
 
-      if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
+      if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::IsInWilderness() || game::GetCurrentLevel()->GetLSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
 	Character->DisplayInfo();
     }
   else
@@ -1459,62 +1456,22 @@ void game::LookHandler(vector2d CursorPos)
 
 void game::AnimationController()
 {
-  if(GetRunning() && GetInGetCommand())
+  if(IsRunning() && IsInGetCommand())
     game::DrawEverything();
 }
 
-void game::AddDefinesToValueMap(valuemap& ValueMap)
+void game::InitGlobalValueMap()
 {
-  ValueMap["ODD"] = ODD;
-  ValueMap["FRUIT"] = FRUIT;
-  ValueMap["MEAT"] = MEAT;
-  ValueMap["METAL"] = METAL;
-  ValueMap["MINERAL"] = MINERAL;
-  ValueMap["LIQUID"] = LIQUID;
-  ValueMap["BONE"] = BONE;
-  ValueMap["PROCESSED"] = PROCESSED;
-  ValueMap["MISC_ORGANIC"] = MISC_ORGANIC;
-  ValueMap["GAS"] = GAS;
+  inputfile SaveFile(GAME_DIR + "Script/define.dat");
+  std::string Word;
 
-  ValueMap["GOOD"] = GOOD;
-  ValueMap["NEUTRAL"] = NEUTRAL;
-  ValueMap["EVIL"] = EVIL;
+  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
+    {
+      if(Word != "#" || SaveFile.ReadWord() != "define")
+	ABORT("Illegal datafile define!");
 
-  ValueMap["UNCATEGORIZED"] = UNCATEGORIZED;
-  ValueMap["UNARMED"] = UNARMED;
-  ValueMap["DAGGERS"] = DAGGERS;
-  ValueMap["SMALL_SWORDS"] = SMALL_SWORDS;
-  ValueMap["LARGE_SWORDS"] = LARGE_SWORDS;
-  ValueMap["CLUBS"] = CLUBS;
-  ValueMap["HAMMERS"] = HAMMERS;
-  ValueMap["MACES"] = MACES;
-  ValueMap["FLAILS"] = FLAILS;
-  ValueMap["AXES"] = AXES;
-  ValueMap["HALBERDS"] = HALBERDS;
-  ValueMap["SPEARS"] = SPEARS;
-  ValueMap["WHIPS"] = WHIPS;
-
-  ValueMap["HELMET"] = HELMET;
-  ValueMap["AMULET"] = AMULET;
-  ValueMap["CLOAK"] = CLOAK;
-  ValueMap["BODYARMOR"] = BODYARMOR;
-  ValueMap["WEAPON"] = WEAPON;
-  ValueMap["SHIELD"] = SHIELD;
-  ValueMap["RING"] = RING;
-  ValueMap["GAUNTLET"] = GAUNTLET;
-  ValueMap["BELT"] = BELT;
-  ValueMap["BOOT"] = BOOT;
-  ValueMap["FOOD"] = FOOD;
-  ValueMap["POTION"] = POTION;
-  ValueMap["SCROLL"] = SCROLL;
-  ValueMap["BOOK"] = BOOK;
-  ValueMap["WAND"] = WAND;
-  ValueMap["TOOL"] = TOOL;
-  ValueMap["VALUABLE"] = VALUABLE;
-  ValueMap["MISC"] = MISC;
-
-  ValueMap["UNDEFINED"] = UNDEFINED;
-  ValueMap["MALE"] = MALE;
-  ValueMap["FEMALE"] = FEMALE;
-  ValueMap["TRANSSEXUAL"] = TRANSSEXUAL;
+      SaveFile.ReadWord(Word);
+      GlobalValueMap[Word] = SaveFile.ReadNumber(GlobalValueMap);
+    }
 }
+

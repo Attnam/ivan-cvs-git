@@ -108,7 +108,7 @@ vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Pro
   {
     vector2d Vector = vector2d(DoX, DoY);
 
-    if(GetSquare(Vector)->GetIsWalkable(Char) && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
+    if(GetSquare(Vector)->IsWalkable(Char) && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
       return Vector;
   });
 
@@ -117,7 +117,7 @@ vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Pro
     {
       vector2d Vector = vector2d(DoX, DoY);
 
-      if(GetSquare(Vector)->GetIsWalkable(Char) && Vector != Prohibited)
+      if(GetSquare(Vector)->IsWalkable(Char) && Vector != Prohibited)
 	{
 	  Vector = FreeSquareSeeker(Char, Vector, StartPos, MaxDistance - 1);
 
@@ -131,14 +131,14 @@ vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Pro
 
 vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
 {
-  if(GetSquare(StartPos)->GetIsWalkable(Char) && !GetSquare(StartPos)->GetCharacter())
+  if(GetSquare(StartPos)->IsWalkable(Char) && !GetSquare(StartPos)->GetCharacter())
     return StartPos;
 
   DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
   {
     vector2d Vector = vector2d(DoX, DoY);
 
-    if(GetSquare(Vector)->GetIsWalkable(Char) && !GetSquare(Vector)->GetCharacter())
+    if(GetSquare(Vector)->IsWalkable(Char) && !GetSquare(Vector)->GetCharacter())
       return Vector;
   });
 
@@ -147,7 +147,7 @@ vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
     {
       vector2d Vector = vector2d(DoX, DoY);
 
-      if(GetSquare(Vector)->GetIsWalkable(Char))
+      if(GetSquare(Vector)->IsWalkable(Char))
 	{
 	  Vector = FreeSquareSeeker(Char, Vector, StartPos, c);
 
@@ -178,3 +178,4 @@ void area::Draw() const
       for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 	Map[x][y]->Draw();
 }
+

@@ -25,16 +25,16 @@ class entity
   virtual void Be() { }
   virtual std::list<entityinfo>::iterator GetPoolIterator() const { return PoolIterator; }
   virtual void SetPoolIterator(std::list<entityinfo>::iterator What) { PoolIterator = What; }
-  virtual bool GetExists() const;
+  virtual bool Exists() const;
   virtual void SetExists(bool);
   virtual void DrawToTileBuffer(bool) const = 0;
   virtual square* GetSquareUnder() const { return SquareUnder; }
   virtual void SetSquareUnder(square* What) { SquareUnder = What; }
   virtual lsquare* GetLSquareUnder() const;
   virtual void SetLSquareUnder(lsquare*);
-  virtual bool GetHasBe() const;
+  virtual bool HasBe() const;
   virtual void SetHasBe(bool);
-  virtual bool IsEnabled() const { return GetExists() && GetHasBe(); }
+  virtual bool IsEnabled() const { return Exists() && HasBe(); }
  protected:
   std::list<entityinfo>::iterator PoolIterator;
   bool InPool;

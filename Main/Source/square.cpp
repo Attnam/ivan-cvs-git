@@ -93,7 +93,7 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkn
     {
       character* Char = GetCharacter();
 
-      if(Char && Char->GetIsPlayer() && Distance < Char->LOSRangeSquare())
+      if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
 	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
@@ -105,7 +105,7 @@ void square::SetLastSeen(ulong What)
   if(!GetLastSeen())
     Memorized = new bitmap(16, 16);
 
-  if(GetLastSeen() < What - 1 || !GetOTerrain()->GetIsWalkable())
+  if(GetLastSeen() < What - 1 || !GetOTerrain()->IsWalkable())
     SendNewDrawRequest();
 
   UpdateMemorized();
@@ -123,14 +123,14 @@ void square::KickAnyoneStandingHereAway()
     }
 }
 
-bool square::GetIsWalkable(character* Char) const
+bool square::IsWalkable(character* Char) const
 {
-  return GetOTerrain()->GetIsWalkable() && GetGTerrain()->GetIsWalkable(Char);
+  return GetOTerrain()->IsWalkable() && GetGTerrain()->IsWalkable(Char);
 }
 
 std::string square::SurviveMessage(character*) const
 {
-  if(!GetOTerrain()->GetIsWalkable())
+  if(!GetOTerrain()->IsWalkable())
     return GetOTerrain()->SurviveMessage();
   else
     return GetGTerrain()->SurviveMessage();
@@ -138,7 +138,7 @@ std::string square::SurviveMessage(character*) const
 
 std::string square::DeathMessage(character*) const
 {
-  if(!GetOTerrain()->GetIsWalkable())
+  if(!GetOTerrain()->IsWalkable())
     return GetOTerrain()->DeathMessage();
   else
     return GetGTerrain()->DeathMessage();
@@ -146,7 +146,7 @@ std::string square::DeathMessage(character*) const
 
 std::string square::MonsterDeathVerb(character*) const
 {
-  if(!GetOTerrain()->GetIsWalkable())
+  if(!GetOTerrain()->IsWalkable())
     return GetOTerrain()->MonsterDeathVerb();
   else
     return GetGTerrain()->MonsterDeathVerb();
@@ -154,7 +154,7 @@ std::string square::MonsterDeathVerb(character*) const
 
 std::string square::ScoreEntry(character*) const
 {
-  if(!GetOTerrain()->GetIsWalkable())
+  if(!GetOTerrain()->IsWalkable())
     return GetOTerrain()->ScoreEntry();
   else
     return GetGTerrain()->ScoreEntry();
@@ -169,3 +169,4 @@ uchar square::RestModifier() const
 {
   return GetOTerrain()->RestModifier();
 }
+

@@ -5,7 +5,7 @@ Pertun kasvot. (timo)
 //Zoom lookiin. (hex)
 V‰rien tarkistusl‰pik‰yminen.
 Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
-Menua vasemmalle. (hex)
+//Menua vasemmalle.
 Damage estimate kuntoon. (timo)
 Werewolfit kuntoon. (timo)
 Paneeli kuntoon:
@@ -54,3 +54,4 @@ Prices. (timo)
 OfferModifiers. (timo)
 NPModifiers. (timo)
 1-2 spesiaali helmetti‰, cloakkia, gauntlettia, beltti‰ ja boottia.
+Dipping to corpses, containers etc.

@@ -54,7 +54,7 @@ void stack::AddItem(item* ToBeAdded)
 
   if(GetSquareTrulyUnder())
     {
-      if(!game::GetInWilderness())
+      if(!game::IsInWilderness())
 	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
 
       if(SquarePosition != HIDDEN)
@@ -100,7 +100,7 @@ void stack::RemoveItem(stackiterator Iterator)
 
   if(GetSquareTrulyUnder())
     {
-      if(!game::GetInWilderness())
+      if(!game::IsInWilderness())
 	GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);
 
       if(SquarePosition != HIDDEN)
@@ -254,7 +254,7 @@ void stack::Kick(character* Kicker, ushort Strength, uchar Direction)
 	(***Item->begin())->Fly(Kicker, Direction, Strength);
     }
   else
-    if(GetItems() && Kicker->GetIsPlayer())
+    if(GetItems() && Kicker->IsPlayer())
       ADD_MESSAGE("Your weak kick has no effect.");
 }
 
@@ -282,7 +282,7 @@ void stack::Polymorph()
   ushort p = 0;
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists() && ItemVector[c]->Polymorph(this) && ++p == 5)
+    if(ItemVector[c]->Exists() && ItemVector[c]->Polymorph(this) && ++p == 5)
       break;
 }
 
@@ -293,7 +293,7 @@ void stack::CheckForStepOnEffect(character* Stepper)
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
+    if(ItemVector[c]->Exists())
       ItemVector[c]->GetStepOnEffect(Stepper);
 }
 
@@ -333,7 +333,7 @@ void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
+    if(ItemVector[c]->Exists())
       ItemVector[c]->ReceiveDamage(Damager, Damage, Type);
 }
 
@@ -344,7 +344,7 @@ void stack::Teleport()
   FillItemVector(ItemVector);
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
+    if(ItemVector[c]->Exists())
       ItemVector[c]->Teleport();
 }
 
@@ -525,3 +525,4 @@ bool stack::RaiseTheDead(character* Summoner)
     }
   return false;
 }
+

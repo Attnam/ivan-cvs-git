@@ -8,13 +8,20 @@
 #include <vector>
 
 #include "typedef.h"
+#include "save.h"
+
+class character;
+class item;
+class material;
+template <class type> class database;
 
 template <class type> class protocontainer
 {
  public:
   typedef typename type::prototype prototype;
+  friend class database<type>;
   static ushort Add(prototype*);
-  static const prototype* const GetProto(ushort Index) { return ProtoData[Index]; }
+  static const prototype* GetProto(ushort Index) { return ProtoData[Index]; }
   static ushort GetProtoAmount() { return ProtoData.size(); }
   static ushort SearchCodeName(const std::string&);
   static const valuemap& GetCodeNameMap() { return CodeNameMap; }
@@ -38,12 +45,6 @@ template <class type> inline ushort protocontainer<type>::SearchCodeName(const s
   valuemap::iterator I = CodeNameMap.find(Name);
   return I != CodeNameMap.end() ? I->second : 0;
 }
-
-class character;
-class item;
-class material;
-class outputfile;
-class inputfile;
 
 class protosystem
 {

@@ -53,7 +53,7 @@ class gwterrain : public wterrain, public gterrain
   virtual void DrawToTileBuffer(bool) const;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
-  virtual prototype* GetProtoType() const = 0;
+  virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
@@ -76,7 +76,7 @@ class owterrain : public wterrain, public oterrain
   virtual void DrawToTileBuffer(bool) const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual prototype* GetProtoType() const = 0;
+  virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
@@ -92,7 +92,7 @@ class owterrain : public wterrain, public oterrain
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  protobase::prototype* name::GetProtoType() const { return &name##_ProtoType; }
+  const protobase::prototype* name::GetProtoType() const { return &name##_ProtoType; }
 
 #else
 
@@ -107,7 +107,7 @@ name : public base\
  public:\
   name() { VirtualConstructor(); }\
   static ushort StaticType();\
-  virtual prototype* GetProtoType() const;\
+  virtual const prototype* GetProtoType() const;\
   data\
 }; WTERRAIN_PROTOTYPE(name, protobase);
 

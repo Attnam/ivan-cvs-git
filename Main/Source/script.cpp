@@ -11,14 +11,14 @@
 #include "error.h"
 #include "game.h"
 #include "proto.h"
-#include "wskill.h"
 #include "save.h"
 #include "materba.h"
 
-gamescript* scriptsystem::GameScript = 0;
-database<character>* scriptsystem::CharacterDataBase = 0;
-database<item>* scriptsystem::ItemDataBase = 0;
-database<material>* scriptsystem::MaterialDataBase = 0;
+#define INITMEMBER(name)\
+{\
+  name.SetIdentifier(#name);\
+  Data.push_back(&name);\
+}
 
 template <class type> datamembertemplate<type>::~datamembertemplate<type>()
 {
@@ -32,9 +32,9 @@ template <class type> void datamembertemplate<type>::SetBase(datamemberbase* Wha
   Base = (datamembertemplate<type>*)What;
 }
 
-template <class type> bool datamember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap& ValueMap)
+template <class type> bool datamember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap& ValueMap, bool RequireIdentifier)
 {
-  if(Word == Identifier)
+  if(!RequireIdentifier || Word == Identifier)
     {
       if(!Member)
 	Member = new type;
@@ -46,17 +46,9 @@ template <class type> bool datamember<type>::Load(const std::string& Word, input
   return false;
 }
 
-template <class type> void datamember<type>::Load(inputfile& SaveFile, const valuemap& ValueMap)
+template <class type> bool protonamedmember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap&, bool RequireIdentifier)
 {
-  if(!Member)
-    Member = new type;
-
-  ReadData(*Member, SaveFile, ValueMap);
-}
-
-template <class type> bool protonamedmember<type>::Load(const std::string& Word, inputfile& SaveFile, const valuemap&)
-{
-  if(Word == Identifier)
+  if(!RequireIdentifier || Word == Identifier)
     {
       if(!Member)
 	Member = new ushort;
@@ -68,12 +60,15 @@ template <class type> bool protonamedmember<type>::Load(const std::string& Word,
   return false;
 }
 
-template <class type> void protonamedmember<type>::Load(inputfile& SaveFile, const valuemap&)
+bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 {
-  if(!Member)
-    Member = new ushort;
+  ushort c;
 
-  ReadData(*Member, SaveFile, protocontainer<type>::GetCodeNameMap());
+  for(c = 0; c < Data.size(); ++c)
+    if(Data[c]->Load(Word, SaveFile, ValueMap))
+      break;
+
+  return c != Data.size();
 }
 
 template <class basetype> void scriptwithbase<basetype>::SetBase(basetype* NewBase)
@@ -98,13 +93,12 @@ posscript::posscript()
 void posscript::ReadFrom(inputfile& SaveFile)
 {
   std::string Word;
-
   SaveFile.ReadWord(Word);
 
   if(Word == "Pos")
     {
       Random = false;
-      Vector.Load(SaveFile, ValueMap);
+      Vector.Load("", SaveFile, ValueMap, false);
     }
 
   if(Word == "Random")
@@ -115,20 +109,12 @@ void posscript::ReadFrom(inputfile& SaveFile)
 	ABORT("Script error in level script!");
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-	{
-	  ushort c;
-
-	  for(c = 0; c < Data.size(); ++c)
-	    if(Data[c]->Load(Word, SaveFile, ValueMap))
-	      break;
-
-	  if(c == Data.size())
-	    ABORT("Odd script term %s encountered in position script!", Word.c_str());
-	}
+	if(!LoadData(SaveFile, Word))
+	  ABORT("Odd script term %s encountered in position script!", Word.c_str());
     }
 }
 
-materialscript::materialscript() : Type(0)
+materialscript::materialscript()
 {
   INITMEMBER(Volume);
 }
@@ -141,30 +127,24 @@ void materialscript::ReadFrom(inputfile& SaveFile)
   if(Word == "=")
     Word = SaveFile.ReadWord();
 
-  Type = protocontainer<material>::SearchCodeName(Word);
+  valuemap::const_iterator Iterator = ValueMap.find(Word);
 
-  if(!Type)
-    ABORT("Odd script term %s encountered in material script!", Word.c_str());
+  if(Iterator != ValueMap.end())
+    Config = Iterator->second;
+  else
+    ABORT("Unconfigured material script detected!");
 
   if(SaveFile.ReadWord() != "{")
     return;
 
   for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-    {
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
-	ABORT("Odd script term %s encountered in material script!", Word.c_str());
-    }
+    if(!LoadData(SaveFile, Word))
+      ABORT("Odd script term %s encountered in material script!", Word.c_str());
 }
 
 material* materialscript::Instantiate() const
 {
-  material* Instance = protocontainer<material>::GetProto(Type)->Clone();
+  material* Instance = MAKE_MATERIAL(Config);
 
   if(GetVolume(false))
     Instance->SetVolume(*GetVolume());
@@ -177,6 +157,8 @@ basecontentscript::basecontentscript()
   INITMEMBER(MainMaterial);
   INITMEMBER(SecondaryMaterial);
   INITMEMBER(ContainedMaterial);
+  INITMEMBER(Parameters);
+  INITMEMBER(Config);
 }
 
 void basecontentscript::ReadFrom(inputfile& SaveFile)
@@ -186,14 +168,14 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   if(Word == "=")
     Word = SaveFile.ReadWord();
 
-  ushort Index = protocontainer<material>::SearchCodeName(Word);
+  valuemap::const_iterator Iterator = ValueMap.find(Word);
 
-  if(Index)
+  if(Iterator != ValueMap.end())
     {
       if(!GetMainMaterial(false))
 	MainMaterial.SetMember(new materialscript);
 
-      GetMainMaterial()->SetType(Index);
+      GetMainMaterial()->SetConfig(Iterator->second);
       Word = SaveFile.ReadWord();
     }
 
@@ -204,21 +186,10 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   else
     ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), ClassName().c_str());
 
-  ValueMap["NONE"] = NONE;
-  ValueMap["MIRROR"] = MIRROR;
-  ValueMap["FLIP"] = FLIP;
-  ValueMap["ROTATE"] = ROTATE_90;
-
   if(Word == "{")
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
-	ushort c;
-
-	for(c = 0; c < Data.size(); ++c)
-	  if(Data[c]->Load(Word, SaveFile, ValueMap))
-	    break;
-
-	if(c == Data.size())
+	if(!LoadData(SaveFile, Word))
 	  ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), ClassName().c_str());
       }
   else
@@ -228,7 +199,10 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 
 template <class type> type* contentscripttemplate<type>::Instantiate() const
 {
-  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone();
+  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone(GetConfig(false) ? *GetConfig() : 0);
+
+  if(GetParameters(false))
+    Instance->SetParameters(*GetParameters());
 
   if(GetMainMaterial(false))
     Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate());
@@ -264,16 +238,12 @@ character* contentscript<character>::Instantiate() const
 
 contentscript<olterrain>::contentscript<olterrain>()
 {
-  INITMEMBER(Locked);
   INITMEMBER(VisualFlags);
 }
 
 olterrain* contentscript<olterrain>::Instantiate() const
 {
   olterrain* Instance = contentscripttemplate<olterrain>::Instantiate();
-
-  if(GetLocked(false) && *GetLocked())
-    Instance->Lock();
 
   if(GetVisualFlags(false))
     Instance->SetVisualFlags(*GetVisualFlags());
@@ -301,27 +271,19 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
   if(Word != "=")
     {
-      Position.Load(SaveFile, ValueMap);
+      Position.Load("", SaveFile, ValueMap, false);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in square script!");
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-	{
-	  ushort c;
-
-	  for(c = 0; c < Data.size(); ++c)
-	    if(Data[c]->Load(Word, SaveFile, ValueMap))
-	      break;
-
-	  if(c == Data.size())
-	    ABORT("Odd script term %s encountered in square script!", Word.c_str());
-	}
+	if(!LoadData(SaveFile, Word))
+	  ABORT("Odd script term %s encountered in square script!", Word.c_str());
     }
   else
     {
-      GTerrain.Load(SaveFile, ValueMap);
-      OTerrain.Load(SaveFile, ValueMap);
+      GTerrain.Load("", SaveFile, ValueMap, false);
+      OTerrain.Load("", SaveFile, ValueMap, false);
     }
 }
 
@@ -381,13 +343,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
     }
 
@@ -485,13 +441,7 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in room script!", Word.c_str());
     }
 }
@@ -587,13 +537,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in level script!", Word.c_str());
     }
 
@@ -637,13 +581,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in dungeon script!", Word.c_str());
     }
 
@@ -658,10 +596,6 @@ teamscript::teamscript()
 
 void teamscript::ReadFrom(inputfile& SaveFile)
 {
-  ValueMap["HOSTILE"] = HOSTILE;
-  ValueMap["NEUTRAL"] = NEUTRAL;
-  ValueMap["FRIEND"] = FRIEND;
-
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in team script!");
 
@@ -678,13 +612,7 @@ void teamscript::ReadFrom(inputfile& SaveFile)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in team script!", Word.c_str());
     }
 }
@@ -733,378 +661,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 	  continue;
 	}
 
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
+      if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in game script!", Word.c_str());
     }
-}
-
-void basedata::ReadFrom(inputfile& SaveFile)
-{
-  if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in the data script of %s!", ClassName().c_str());
-
-  std::string Word;
-
-  for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-    {
-      ushort c;
-
-      for(c = 0; c < Data.size(); ++c)
-	if(Data[c]->Load(Word, SaveFile, ValueMap))
-	  break;
-
-      if(c == Data.size())
-	ABORT("Odd script term %s encountered in the data script of %s!", Word.c_str(), ClassName().c_str());
-    }
-}
-
-data<character>::data<character>()
-{
-  INITMEMBER(DefaultAgility);
-  INITMEMBER(DefaultStrength);
-  INITMEMBER(DefaultEndurance);
-  INITMEMBER(DefaultPerception);
-  INITMEMBER(DefaultMoney);
-  INITMEMBER(TotalSize);
-  INITMEMBER(CanRead);
-  INITMEMBER(IsCharmable);
-  INITMEMBER(Sex);
-  INITMEMBER(BloodColor);
-  INITMEMBER(CanBeGenerated);
-  INITMEMBER(HasInfraVision);
-  INITMEMBER(CriticalModifier);
-  INITMEMBER(StandVerb);
-  INITMEMBER(CanOpen);
-  INITMEMBER(CanBeDisplaced);
-  INITMEMBER(Frequency);
-  INITMEMBER(CanWalk);
-  INITMEMBER(CanSwim);
-  INITMEMBER(CanFly);
-  INITMEMBER(PhysicalDamageResistance);
-  INITMEMBER(SoundResistance);
-  INITMEMBER(EnergyResistance);
-  INITMEMBER(AcidResistance);
-  INITMEMBER(FireResistance);
-  INITMEMBER(PoisonResistance);
-  INITMEMBER(BulimiaResistance);
-  INITMEMBER(IsUnique);
-  INITMEMBER(EatFlags);
-  INITMEMBER(TotalVolume);
-  INITMEMBER(MeleeStrength);
-  INITMEMBER(TalkVerb);
-  INITMEMBER(HeadBitmapPos);
-  INITMEMBER(TorsoBitmapPos);
-  INITMEMBER(ArmBitmapPos);
-  INITMEMBER(LegBitmapPos);
-  INITMEMBER(RightArmBitmapPos);
-  INITMEMBER(LeftArmBitmapPos);
-  INITMEMBER(RightLegBitmapPos);
-  INITMEMBER(LeftLegBitmapPos);
-  INITMEMBER(GroinBitmapPos);
-  INITMEMBER(ClothColor);
-  INITMEMBER(SkinColor);
-  INITMEMBER(CapColor);
-  INITMEMBER(HairColor);
-  INITMEMBER(EyeColor);
-  INITMEMBER(TorsoMainColor);
-  INITMEMBER(BeltColor);
-  INITMEMBER(TorsoSpecialColor);
-  INITMEMBER(ArmMainColor);
-  INITMEMBER(ArmSpecialColor);
-  INITMEMBER(LegMainColor);
-  INITMEMBER(LegSpecialColor);
-  INITMEMBER(HeadBonePercentile);
-  INITMEMBER(TorsoBonePercentile);
-  INITMEMBER(ArmBonePercentile);
-  INITMEMBER(RightArmBonePercentile);
-  INITMEMBER(LeftArmBonePercentile);
-  INITMEMBER(GroinBonePercentile);
-  INITMEMBER(LegBonePercentile);
-  INITMEMBER(RightLegBonePercentile);
-  INITMEMBER(LeftLegBonePercentile);
-  INITMEMBER(IsNameable);
-  INITMEMBER(BaseEmitation);
-}
-
-data<item>::data<item>()
-{
-  INITMEMBER(Possibility);
-  INITMEMBER(InHandsPic);
-  INITMEMBER(OfferModifier);
-  INITMEMBER(Score);
-  INITMEMBER(IsDestroyable);
-  INITMEMBER(CanBeWished);
-  INITMEMBER(IsMaterialChangeable);
-  INITMEMBER(WeaponCategory);
-  INITMEMBER(IsPolymorphSpawnable);
-  INITMEMBER(IsAutoInitializable);
-  INITMEMBER(OneHandedStrengthPenalty);
-  INITMEMBER(OneHandedToHitPenalty);
-  INITMEMBER(Category);
-  INITMEMBER(SoundResistance);
-  INITMEMBER(EnergyResistance);
-  INITMEMBER(AcidResistance);
-  INITMEMBER(FireResistance);
-  INITMEMBER(PoisonResistance);
-  INITMEMBER(BulimiaResistance);
-  INITMEMBER(IsStackable);
-  INITMEMBER(StrengthModifier);
-  INITMEMBER(FormModifier);
-  INITMEMBER(NPModifier);
-  INITMEMBER(DefaultSize);
-  INITMEMBER(DefaultMainVolume);
-  INITMEMBER(DefaultSecondaryVolume);
-  INITMEMBER(DefaultContainedVolume);
-  INITMEMBER(BitmapPos);
-  INITMEMBER(Price);
-  INITMEMBER(BaseEmitation);
-}
-
-data<material>::data<material>()
-{
-  INITMEMBER(StrengthValue);
-  INITMEMBER(ConsumeType);
-  INITMEMBER(Density);
-  INITMEMBER(OfferValue);
-  INITMEMBER(Color);
-  INITMEMBER(PriceModifier);
-  INITMEMBER(IsSolid);
-  INITMEMBER(Emitation);
-  INITMEMBER(CanBeWished);
-  INITMEMBER(Alignment);
-  INITMEMBER(NutritionValue);
-  INITMEMBER(IsAlive);
-  INITMEMBER(IsBadFoodForAI);
-  INITMEMBER(ExplosivePower);
-  INITMEMBER(IsFlammable);
-  INITMEMBER(IsFlexible);
-  INITMEMBER(IsExplosive);
-}
-
-template <class type> database<type>::~database<type>()
-{
-  for(ushort c = 0; c < Data.size(); ++c)
-    delete Data[c];
-}
-
-template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
-{
-  std::string Word;
-  valuemap ValueMap;
-
-  game::AddDefinesToValueMap(ValueMap);
-
-  for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
-    {
-      ushort Index = protocontainer<type>::SearchCodeName(Word);
-
-      if(!Index)
-	ABORT("Odd term %s encountered in %s datafile!", Word.c_str(), typeid(type).name());
-
-      data<type>* DataElement = new data<type>;
-      DataElement->SetType(Index);
-      DataElement->SetValueMap(ValueMap);
-      DataElement->ReadFrom(SaveFile);
-      Data.push_back(DataElement);
-    }
-}
-
-#define SETDATA(data)\
-{\
-  if(DataElement->Get##data(false))\
-    DataBase->data = *DataElement->Get##data();\
-  else if(Base)\
-    DataBase->data = Base->data;\
-}
-
-#define SETDATAWITHDEFAULT(data, defaultvalue)\
-{\
-  if(DataElement->Get##data(false))\
-    DataBase->data = *DataElement->Get##data();\
-  else\
-    DataBase->data = defaultvalue;\
-}
-
-void database<character>::Apply()
-{
-  for(ushort c = 0; c < Data.size(); ++c)
-    {
-      data<character>* DataElement = Data[c];
-      const character::prototype* const Proto = protocontainer<character>::GetProto(DataElement->GetType());
-      character::database* DataBase = Proto->GetDataBase();
-      character::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
-      SETDATA(DefaultAgility);
-      SETDATA(DefaultStrength);
-      SETDATA(DefaultEndurance);
-      SETDATA(DefaultPerception);
-      SETDATA(DefaultMoney);
-      SETDATA(TotalSize);
-      SETDATA(CanRead);
-      SETDATA(IsCharmable);
-      SETDATA(Sex);
-      SETDATA(BloodColor);
-      SETDATA(CanBeGenerated);
-      SETDATA(HasInfraVision);
-      SETDATA(CriticalModifier);
-      SETDATA(StandVerb);
-      SETDATA(CanOpen);
-      SETDATA(CanBeDisplaced);
-      SETDATA(Frequency);
-      SETDATA(CanWalk);
-      SETDATA(CanSwim);
-      SETDATA(CanFly);
-      SETDATA(PhysicalDamageResistance);
-      SETDATA(SoundResistance);
-      SETDATA(EnergyResistance);
-      SETDATA(AcidResistance);
-      SETDATA(FireResistance);
-      SETDATA(PoisonResistance);
-      SETDATA(BulimiaResistance);
-      SETDATA(IsUnique);
-      SETDATA(EatFlags);
-      SETDATA(TotalVolume);
-      SETDATA(MeleeStrength);
-      SETDATA(TalkVerb);
-      SETDATA(HeadBitmapPos);
-      SETDATA(TorsoBitmapPos);
-      SETDATA(ArmBitmapPos);
-      SETDATA(LegBitmapPos);
-      SETDATAWITHDEFAULT(RightArmBitmapPos, DataBase->ArmBitmapPos);
-      SETDATAWITHDEFAULT(LeftArmBitmapPos, DataBase->ArmBitmapPos);
-      SETDATAWITHDEFAULT(RightLegBitmapPos, DataBase->LegBitmapPos);
-      SETDATAWITHDEFAULT(LeftLegBitmapPos, DataBase->LegBitmapPos);
-      SETDATAWITHDEFAULT(GroinBitmapPos, DataBase->LegBitmapPos);
-      SETDATA(ClothColor);
-      SETDATA(SkinColor);
-      SETDATAWITHDEFAULT(CapColor, DataBase->ClothColor);
-      SETDATA(HairColor);
-      SETDATA(EyeColor);
-      SETDATAWITHDEFAULT(TorsoMainColor, DataBase->ClothColor);
-      SETDATA(BeltColor);
-      SETDATA(TorsoSpecialColor);
-      SETDATAWITHDEFAULT(ArmMainColor, DataBase->ClothColor);
-      SETDATA(ArmSpecialColor);
-      SETDATAWITHDEFAULT(LegMainColor, DataBase->ClothColor);
-      SETDATA(LegSpecialColor);
-      SETDATA(HeadBonePercentile);
-      SETDATA(TorsoBonePercentile);
-      SETDATA(ArmBonePercentile);
-      SETDATAWITHDEFAULT(RightArmBonePercentile, DataBase->ArmBonePercentile);
-      SETDATAWITHDEFAULT(LeftArmBonePercentile, DataBase->ArmBonePercentile);
-      SETDATA(GroinBonePercentile);
-      SETDATA(LegBonePercentile);
-      SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase->LegBonePercentile);
-      SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase->LegBonePercentile);
-      SETDATA(IsNameable);
-      SETDATA(BaseEmitation);
-    }
-}
-
-void database<item>::Apply()
-{
-  for(ushort c = 0; c < Data.size(); ++c)
-    {
-      data<item>* DataElement = Data[c];
-      const item::prototype* const Proto = protocontainer<item>::GetProto(DataElement->GetType());
-      item::database* DataBase = Proto->GetDataBase();
-      item::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
-      SETDATA(Possibility);
-      SETDATA(InHandsPic);
-      SETDATA(OfferModifier);
-      SETDATA(Score);
-      SETDATA(IsDestroyable);
-      SETDATA(CanBeWished);
-      SETDATA(IsMaterialChangeable);
-      SETDATA(WeaponCategory);
-      SETDATA(IsPolymorphSpawnable);
-      SETDATA(IsAutoInitializable);
-      SETDATA(OneHandedStrengthPenalty);
-      SETDATA(OneHandedToHitPenalty);
-      SETDATA(Category);
-      SETDATA(SoundResistance);
-      SETDATA(EnergyResistance);
-      SETDATA(AcidResistance);
-      SETDATA(FireResistance);
-      SETDATA(PoisonResistance);
-      SETDATA(BulimiaResistance);
-      SETDATA(IsStackable);
-      SETDATA(StrengthModifier);
-      SETDATA(FormModifier);
-      SETDATA(NPModifier);
-      SETDATA(DefaultSize);
-      SETDATA(DefaultMainVolume);
-      SETDATA(DefaultSecondaryVolume);
-      SETDATA(DefaultContainedVolume);
-      SETDATA(BitmapPos);
-      SETDATA(Price);
-      SETDATA(BaseEmitation);
-    }
-}
-
-void database<material>::Apply()
-{
-  for(ushort c = 0; c < Data.size(); ++c)
-    {
-      data<material>* DataElement = Data[c];
-      const material::prototype* const Proto = protocontainer<material>::GetProto(DataElement->GetType());
-      material::database* DataBase = Proto->GetDataBase();
-      material::database* Base = Proto->GetBase() ? Proto->GetBase()->GetDataBase() : 0;
-      SETDATA(StrengthValue);
-      SETDATA(ConsumeType);
-      SETDATA(Density);
-      SETDATA(OfferValue);
-      SETDATA(Color);
-      SETDATA(PriceModifier);
-      SETDATA(IsSolid);
-      SETDATA(Emitation);
-      SETDATA(CanBeWished);
-      SETDATA(Alignment);
-      SETDATA(NutritionValue);
-      SETDATA(IsAlive);
-      SETDATA(IsBadFoodForAI);
-      SETDATA(ExplosivePower);
-      SETDATA(IsFlammable);
-      SETDATA(IsFlexible);
-      SETDATA(IsExplosive);
-    }
-}
-
-void scriptsystem::Initialize()
-{
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
-    delete GameScript;
-    GameScript = new gamescript;
-    GameScript->ReadFrom(ScriptFile);
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/char.dat");
-    delete CharacterDataBase;
-    CharacterDataBase = new database<character>;
-    CharacterDataBase->ReadFrom(ScriptFile);
-    CharacterDataBase->Apply();
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/item.dat");
-    delete ItemDataBase;
-    ItemDataBase = new database<item>;
-    ItemDataBase->ReadFrom(ScriptFile);
-    ItemDataBase->Apply();
-  }
-
-  {
-    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
-    delete MaterialDataBase;
-    MaterialDataBase = new database<material>;
-    MaterialDataBase->ReadFrom(ScriptFile);
-    MaterialDataBase->Apply();
-  }
 }

@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
 
 class outputfile;
@@ -57,14 +59,12 @@ class gweaponskill : public weaponskill
 inline outputfile& operator<<(outputfile& SaveFile, gweaponskill* WeaponSkill)
 {
   WeaponSkill->Save(SaveFile);
-
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
 {
   WeaponSkill->Load(SaveFile);
-
   return SaveFile;
 }
 

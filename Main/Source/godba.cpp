@@ -151,7 +151,7 @@ character* god::CreateAngel()
 
       angel* Angel = new angel;
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  Angel->SetDivineMaster(GetType());
 
@@ -260,3 +260,4 @@ godprototype::godprototype()
 {
   Index = protocontainer<god>::Add(this);
 }
+

@@ -25,7 +25,7 @@ valuemap protocontainer<owterrain>::CodeNameMap;
 bool attnam::GoDown(character* Who) const
 {
   game::GetWorldMap()->RemoveCharacter(Who->GetPos());
-  game::SetInWilderness(false);
+  game::SetIsInWilderness(false);
   game::SetCurrentDungeon(1);
   game::SetCurrent(0);
   std::vector<character*> Temp;
@@ -61,7 +61,7 @@ bool attnam::GoDown(character* Who) const
 bool elpuricave::GoDown(character* Who) const
 {
   game::GetWorldMap()->RemoveCharacter(Who->GetPos());
-  game::SetInWilderness(false);
+  game::SetIsInWilderness(false);
   game::SetCurrentDungeon(0);
   game::SetCurrent(0);
   std::vector<character*> Temp;
@@ -86,7 +86,7 @@ bool elpuricave::GoDown(character* Who) const
   return true;
 }
 
-bool ocean::GetIsWalkable(character* ByWho) const
+bool ocean::IsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }

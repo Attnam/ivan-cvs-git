@@ -37,7 +37,7 @@ item* can::TryToOpen(character* Opener)
       item* Item = new lump(GetContainedMaterial());
       DonateSlotTo(Item);
 
-      if(!game::GetInWilderness() && configuration::GetAutoDropLeftOvers())
+      if(!game::IsInWilderness() && configuration::GetAutoDropLeftOvers())
 	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
       else
 	  Item->GetSlot()->AddFriendItem(this);
@@ -47,7 +47,7 @@ item* can::TryToOpen(character* Opener)
     }
   else
     {
-      if(Opener->GetIsPlayer())
+      if(Opener->IsPlayer())
 	ADD_MESSAGE("The can is shut tight.");
 
       return 0;
@@ -56,10 +56,10 @@ item* can::TryToOpen(character* Opener)
 
 void banana::GenerateLeftOvers(character* Eater)
 {
-  item* Peals = new bananapeals(false);
+  item* Peals = new bananapeals(0, false);
   Peals->InitMaterials(GetMainMaterial());
 
-  if(!game::GetInWilderness() && (!Eater->GetIsPlayer() || configuration::GetAutoDropLeftOvers()))
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
     Eater->GetLSquareUnder()->GetStack()->AddItem(Peals);
   else
     Eater->GetStack()->AddItem(Peals);
@@ -82,7 +82,7 @@ void potion::GenerateLeftOvers(character* Eater)
       if(GetSquareUnder()->CanBeSeen())
 	GetSquareUnder()->UpdateMemorizedDescription();
 
-      if(!game::GetInWilderness())
+      if(!game::IsInWilderness())
 	GetLSquareUnder()->SignalEmitationDecrease(Emit);
 
       GetSquareUnder()->SendNewDrawRequest();
@@ -94,7 +94,7 @@ void potion::GenerateLeftOvers(character* Eater)
 
   ChangeConsumeMaterial(0);
 
-  if(!game::GetInWilderness() && (!Eater->GetIsPlayer() || configuration::GetAutoDropLeftOvers()))
+  if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
     MoveTo(Eater->GetLSquareUnder()->GetStack());
   else
     MoveTo(Eater->GetStack());
@@ -111,13 +111,13 @@ void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) co
       Bitmap->MaskedBlit(igraph::GetTileBuffer());
       break;
     case LEFT:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90));
+      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE));
       break;
     case UP:
       Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(FLIP));
       break;
     case RIGHT:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE_90 | MIRROR));
+      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE | MIRROR));
       break;
     }
 }
@@ -137,11 +137,11 @@ bool scrollofcreatemonster::Read(character* Reader)
 
       character* Monster = protosystem::CreateMonster();
 
-      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Monster) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+      if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Monster) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Monster);
 
-	  if(Reader->GetIsPlayer())
+	  if(Reader->IsPlayer())
 	    ADD_MESSAGE("As you read the scroll a monster appears.");
 	  else
 	    if(Reader->GetSquareUnder()->CanBeSeen())
@@ -159,7 +159,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 bool scrollofteleport::Read(character* Reader)
 {
-  if(Reader->GetIsPlayer())
+  if(Reader->IsPlayer())
     ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
   else
     if(Reader->GetSquareUnder()->CanBeSeen())
@@ -184,7 +184,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 {
   if(GetContainedMaterial())
     {
-      if(Enemy->GetIsPlayer())
+      if(Enemy->IsPlayer())
 	ADD_MESSAGE("The %s reacts with you!", GetContainedMaterial()->CHARNAME(UNARTICLED));
       else
 	if(Enemy->GetSquareUnder()->CanBeSeen())
@@ -198,8 +198,8 @@ void meleeweapon::DipInto(material* Material, character* Dipper)
 {
   ChangeContainedMaterial(Material);
 
-  if(Dipper->GetIsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+  if(Dipper->IsPlayer())
+    ADD_MESSAGE("%s is now coveRED with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
 material* lump::CreateDipMaterial()
@@ -209,7 +209,7 @@ material* lump::CreateDipMaterial()
 
 item* can::PrepareForConsuming(character* Consumer)
 {
-  if(!Consumer->GetIsPlayer() || game::BoolQuestion("Do you want to open " + Name(DEFINITE) + " before eating it? [Y/n]", 'y'))
+  if(!Consumer->IsPlayer() || game::BoolQuestion("Do you want to open " + Name(DEFINITE) + " before eating it? [Y/n]", 'y'))
     return TryToOpen(Consumer);
   else
     return 0;
@@ -246,7 +246,7 @@ bool pickaxe::Apply(character* User)
 
 bool wand::Apply(character* Terrorist)
 {
-  if(Terrorist->GetIsPlayer())
+  if(Terrorist->IsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CHARNAME(DEFINITE));
   else
     if(Terrorist->GetSquareUnder()->CanBeSeen())
@@ -257,7 +257,7 @@ bool wand::Apply(character* Terrorist)
 
   std::string DeathMsg;
 
-  if(Terrorist->GetIsPlayer())
+  if(Terrorist->IsPlayer())
     DeathMsg = "exploded himself by breaking a wand";
   else
     DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
@@ -298,7 +298,7 @@ bool scrollofwishing::Read(character* Reader)
   game::DrawEverythingNoBlit();
   std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
 
-  item* TempItem = protosystem::CreateItem(Temp, Reader->GetIsPlayer());
+  item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
 
   if(TempItem)
     {
@@ -318,7 +318,7 @@ bool lantern::ReceiveDamage(character*, short Damage, uchar)
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
 
-      brokenlantern* Lantern = new brokenlantern(false);
+      brokenlantern* Lantern = new brokenlantern(0, false);
       Lantern->InitMaterials(GetMainMaterial());
       Lantern->SignalSquarePositionChange(OnWall);
       DonateSlotTo(Lantern);
@@ -339,7 +339,7 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
       if(GetContainedMaterial()) 
 	GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
 
-      item* Remains = new brokenbottle(false);
+      item* Remains = new brokenbottle(0, false);
       Remains->InitMaterials(GetMainMaterial());
       DonateSlotTo(Remains);
       SetExists(false);
@@ -394,12 +394,12 @@ item* brokenbottle::BetterVersion() const
   material* Stuff;
 
   if(RAND() % 5)
-    Stuff = new bananaflesh;
+    Stuff = MAKE_MATERIAL(BANANAFLESH);
   else
-    Stuff = new omleurine;
+    Stuff = MAKE_MATERIAL(OMLEURINE);
 
-  potion* P = new potion(false); 
-  P->InitMaterials(new glass, Stuff); 
+  potion* P = new potion(0, false); 
+  P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
 
   return P;
 }
@@ -426,7 +426,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
 
-      item* Plate = new brokenplatemail(false);
+      item* Plate = new brokenplatemail(0, false);
       Plate->InitMaterials(GetMainMaterial());
       DonateSlotTo(Plate);
       SetExists(false);
@@ -442,7 +442,7 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
     {
       if(Stepper->ReceiveDamage(0, 1 + RAND() % 2, PHYSICALDAMAGE, LEGS))
 	{
-	  if(Stepper->GetIsPlayer())
+	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
 	  else
 	    if(Stepper->GetSquareUnder()->CanBeSeen())
@@ -450,11 +450,11 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
 	}
       else
 	{
-	  if(Stepper->GetIsPlayer())
-	    ADD_MESSAGE("Some glass splinters are shattered under your feet.");
+	  if(Stepper->IsPlayer())
+	    ADD_MESSAGE("Some glass splinters are shatteRED under your feet.");
 	  else
 	    if(Stepper->GetSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("Some glass splinters are shatteRED under %s's feet.", Stepper->CHARNAME(DEFINITE));
 	}
 
       //Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
@@ -475,7 +475,7 @@ void potion::DipInto(material* Material, character* Dipper)
 
   ChangeContainedMaterial(Material);
 
-  if(Dipper->GetIsPlayer())
+  if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
@@ -519,12 +519,12 @@ item* potion::BetterVersion() const
       material* Stuff;
 
       if(RAND() % 5)
-	Stuff = new bananaflesh;
+	Stuff = MAKE_MATERIAL(BANANAFLESH);
       else
-	Stuff = new omleurine;
+	Stuff = MAKE_MATERIAL(OMLEURINE);
 
-      potion* P = new potion(false); 
-      P->InitMaterials(new glass, Stuff);
+      potion* P = new potion(0, false); 
+      P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
 
       return P;
     }
@@ -539,12 +539,12 @@ item* can::BetterVersion() const
       material* Stuff;
 
       if(RAND() % 2)
-	Stuff = new schoolfood;
+	Stuff = MAKE_MATERIAL(SCHOOLFOOD);
       else
-	Stuff = new bananaflesh;
+	Stuff = MAKE_MATERIAL(BANANAFLESH);
 
-      can* P = new can(false); 
-      P->InitMaterials(new iron, Stuff); 
+      can* P = new can(0, false); 
+      P->InitMaterials(MAKE_MATERIAL(IRON), Stuff); 
 
       return P;
     }
@@ -564,7 +564,7 @@ bool backpack::Apply(character* Terrorist)
 {
   if(GetContainedMaterial() && GetContainedMaterial()->IsExplosive())
     {
-      if(Terrorist->GetIsPlayer())
+      if(Terrorist->IsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
       else
 	if(Terrorist->GetSquareUnder()->CanBeSeen())
@@ -575,16 +575,16 @@ bool backpack::Apply(character* Terrorist)
 
       std::string DeathMsg;
 
-      if(Terrorist->GetIsPlayer())
+      if(Terrorist->IsPlayer())
 	DeathMsg = "exploded himself with " + Name(INDEFINITE);
       else
 	DeathMsg = "kamikazed by " + Terrorist->Name(INDEFINITE);
 
-      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetExplosivePower());
+      Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
   else
-    if(Terrorist->GetIsPlayer())
+    if(Terrorist->IsPlayer())
       ADD_MESSAGE("You can't apply this!");	
 
   return false;
@@ -609,7 +609,7 @@ bool holybook::CanBeRead(character* Reader) const
 
 bool holybook::Read(character* Reader)
 {
-  if(Reader->GetIsPlayer())
+  if(Reader->IsPlayer())
     {
       if(game::GetGod(GetDivineMaster())->GetKnown())
 	{
@@ -674,7 +674,7 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
       RemoveFromSlot();
       SetExists(false);
-      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetExplosivePower());
+      LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -718,7 +718,7 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
 
 	lsquare* CurrentSquare = game::GetCurrentLevel()->GetLSquare(CurrentPos + game::GetMoveVector(Direction));
 
-	if(!(CurrentSquare->GetOLTerrain()->GetIsWalkable()))
+	if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
 	  {
 	    BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
 	    break;
@@ -772,7 +772,7 @@ bool holybook::ReceiveDamage(character*, short, uchar Type)
 
 bool oillamp::Apply(character* Applier)
 {
-  if(Applier->GetIsPlayer())
+  if(Applier->IsPlayer())
     ADD_MESSAGE("You rub %s.", CHARNAME(DEFINITE));
 
   if(GetInhabitedByGenie())
@@ -787,7 +787,7 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Genie) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
+	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Genie) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	    {
 	      game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
@@ -805,7 +805,7 @@ bool oillamp::Apply(character* Applier)
 	    }
 	  else
 	    {
-	      if(Applier->GetIsPlayer())
+	      if(Applier->IsPlayer())
 		{
 		  Genie->SetTeam(Applier->GetTeam());
 		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. Its your choice.\"", Genie->CHARNAME(INDEFINITE));
@@ -819,7 +819,7 @@ bool oillamp::Apply(character* Applier)
 		      while(true)
 			{
 			  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-			  item* TempItem = protosystem::CreateItem(Temp, Applier->GetIsPlayer());
+			  item* TempItem = protosystem::CreateItem(Temp, Applier->IsPlayer());
 
 			  if(TempItem)
 			    {
@@ -842,14 +842,14 @@ bool oillamp::Apply(character* Applier)
 	}
       else
 	{
-	  if(Applier->GetIsPlayer())
+	  if(Applier->IsPlayer())
 	    ADD_MESSAGE("You feel that it is warmer.");
 
 	  delete Genie;
 	}
     }
   else
-    if(Applier->GetIsPlayer())
+    if(Applier->IsPlayer())
       {
 	ADD_MESSAGE("Nothing happens.");
       }
@@ -936,7 +936,7 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
 {
   if(!(RAND() % 3))
     {
-      if(Stepper->GetIsPlayer())
+      if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHARNAME(INDEFINITE));
       else
 	if(Stepper->GetSquareUnder()->CanBeSeen())
@@ -968,7 +968,7 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
 
 bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
 { 
-  if(!Where->GetOTerrain()->GetIsWalkable() || Where->GetCharacter())
+  if(!Where->GetOTerrain()->IsWalkable() || Where->GetCharacter())
     {
       Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 20 + RAND() % 5 - RAND() % 5);
       return true;
@@ -1247,7 +1247,7 @@ bool bodypart::ReceiveDamage(character*, short Damage, uchar)
       if(GetHP() <= 0)
 	return true;
       else
-	if(GetMaster()->GetIsPlayer())
+	if(GetMaster()->IsPlayer())
 	  if(GetHP() == 1 && BHP >= 2)
 	    {
 	      game::Beep();
@@ -1303,7 +1303,7 @@ bool mine::GetStepOnEffect(character* Stepper)
 {
   if(GetCharged())
     {
-      if(Stepper->GetIsPlayer())
+      if(Stepper->IsPlayer())
 	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
       else if(Stepper->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
@@ -1367,7 +1367,7 @@ bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
 
 bool key::Apply(character* User)
 {
-  if(User->GetIsPlayer())
+  if(User->IsPlayer())
     {
       uchar Dir = game::DirectionQuestion("What door do you wish to lock or unlock? [press a direction key or space]", 0xFF, false);
 
@@ -1436,7 +1436,7 @@ void arm::Be()
 	{
 	  character* Master = ((characterslot*)Slot)->GetMaster();
 
-	  if(Master->GetIsPlayer())
+	  if(Master->IsPlayer())
 	    for(stackiterator j = Master->GetStack()->GetBottomSlot(); j != Master->GetStack()->GetSlotAboveTop(); ++j)
 	      if((*i)->GetID() == (**j)->GetID())
 		{
@@ -1537,8 +1537,8 @@ void can::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new iron, new bananaflesh); break;
-    case 1: InitMaterials(new iron, new schoolfood); break;
+    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(BANANAFLESH)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(SCHOOLFOOD)); break;
     }
 }
 
@@ -1548,8 +1548,8 @@ void lump::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new bananaflesh); break;
-    case 1: InitMaterials(new schoolfood); break;
+    case 0: InitMaterials(MAKE_MATERIAL(BANANAFLESH)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(SCHOOLFOOD)); break;
     }
 }
 
@@ -1559,10 +1559,10 @@ void potion::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new glass, 0); break;
-    case 1: InitMaterials(new glass, new water); break;
-    case 2: InitMaterials(new glass, new healingliquid); break;
-    case 3: InitMaterials(new diamond, new omleurine); break;
+    case 0: InitMaterials(MAKE_MATERIAL(GLASS), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(WATER)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(HEALINGLIQUID)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(DIAMOND), MAKE_MATERIAL(OMLEURINE)); break;
     }
 }
 
@@ -1572,9 +1572,9 @@ void loaf::GenerateMaterials()
 
   switch(femath::WeightedRand(3, Possibility))
     {
-    case 0: InitMaterials(new beef); break;
-    case 1: InitMaterials(new pork); break;
-    case 2: InitMaterials(new bread); break;
+    case 0: InitMaterials(MAKE_MATERIAL(BEEF)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(PORK)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(BREAD)); break;
     }
 }
 
@@ -1584,10 +1584,10 @@ void longsword::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new wood, new wood, 0); break;
-    case 1: InitMaterials(new bronze, new bronze, 0); break;
-    case 2: InitMaterials(new iron, new iron, 0); break;
-    case 3: InitMaterials(new mithril, new mithril, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(WOOD), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(BRONZE), 0); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
     }
 }
 
@@ -1597,8 +1597,8 @@ void twohandedsword::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new iron, new iron, 0); break;
-    case 1: InitMaterials(new mithril, new mithril, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
     }
 }
 
@@ -1608,8 +1608,8 @@ void curvedtwohandedsword::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new iron, new iron, 0); break;
-    case 1: InitMaterials(new mithril, new mithril, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(IRON), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0); break;
     }
 }
 
@@ -1619,10 +1619,10 @@ void axe::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new copper, new wood, 0); break;
-    case 1: InitMaterials(new bronze, new wood, 0); break;
-    case 2: InitMaterials(new iron, new wood, 0); break;
-    case 3: InitMaterials(new mithril, new wood, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
     }
 }
 
@@ -1632,10 +1632,10 @@ void pickaxe::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new copper, new wood, 0); break;
-    case 1: InitMaterials(new bronze, new wood, 0); break;
-    case 2: InitMaterials(new iron, new wood, 0); break;
-    case 3: InitMaterials(new mithril, new wood, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
     }
 }
 
@@ -1645,12 +1645,12 @@ void spear::GenerateMaterials()
 
   switch(femath::WeightedRand(6, Possibility))
     {
-    case 0: InitMaterials(new wood, new wood, 0); break;
-    case 1: InitMaterials(new bone, new wood, 0); break;
-    case 2: InitMaterials(new copper, new wood, 0); break;
-    case 3: InitMaterials(new bronze, new wood, 0); break;
-    case 4: InitMaterials(new iron, new wood, 0); break;
-    case 5: InitMaterials(new mithril, new wood, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(WOOD), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BONE), MAKE_MATERIAL(WOOD), 0); break;
+    case 2: InitMaterials(MAKE_MATERIAL(COPPER), MAKE_MATERIAL(WOOD), 0); break;
+    case 3: InitMaterials(MAKE_MATERIAL(BRONZE), MAKE_MATERIAL(WOOD), 0); break;
+    case 4: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
+    case 5: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
     }
 }
 
@@ -1660,9 +1660,9 @@ void platemail::GenerateMaterials()
 
   switch(femath::WeightedRand(3, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new bronze); break;
-    case 2: InitMaterials(new iron); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
     }
 }
 
@@ -1672,9 +1672,9 @@ void chainmail::GenerateMaterials()
 
   switch(femath::WeightedRand(3, Possibility))
     {
-    case 0: InitMaterials(new bronze); break;
-    case 1: InitMaterials(new iron); break;
-    case 2: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }
 
@@ -1684,8 +1684,8 @@ void poleaxe::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new iron, new wood, 0); break;
-    case 1: InitMaterials(new mithril, new wood, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
     }
 }
 
@@ -1695,8 +1695,8 @@ void spikedmace::GenerateMaterials()
 
   switch(femath::WeightedRand(2, Possibility))
     {
-    case 0: InitMaterials(new iron, new wood, 0); break;
-    case 1: InitMaterials(new mithril, new wood, 0); break;
+    case 0: InitMaterials(MAKE_MATERIAL(IRON), MAKE_MATERIAL(WOOD), 0); break;
+    case 1: InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0); break;
     }
 }
 
@@ -1706,10 +1706,10 @@ void brokenplatemail::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new bronze); break;
-    case 2: InitMaterials(new iron); break;
-    case 3: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }
 
@@ -1719,11 +1719,11 @@ void astone::GenerateMaterials()
 
   switch(femath::WeightedRand(5, Possibility))
     {
-    case 0: InitMaterials(new silver); break;
-    case 1: InitMaterials(new gold); break;
-    case 2: InitMaterials(new sapphire); break;
-    case 3: InitMaterials(new ruby); break;
-    case 4: InitMaterials(new diamond); break;
+    case 0: InitMaterials(MAKE_MATERIAL(SILVER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(GOLD)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(SAPPHIRE)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(RUBY)); break;
+    case 4: InitMaterials(MAKE_MATERIAL(DIAMOND)); break;
     }
 }
 
@@ -1733,11 +1733,11 @@ void shield::GenerateMaterials()
 
   switch(femath::WeightedRand(5, Possibility))
     {
-    case 0: InitMaterials(new wood); break;
-    case 1: InitMaterials(new copper); break;
-    case 2: InitMaterials(new bronze); break;
-    case 3: InitMaterials(new iron); break;
-    case 4: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(WOOD)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(COPPER)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 4: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }
 
@@ -1747,9 +1747,9 @@ void cloak::GenerateMaterials()
 
   switch(femath::WeightedRand(3, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new cloth); break;
-    case 2: InitMaterials(new fabric); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(CLOTH)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(FABRIC)); break;
     }
 }
 
@@ -1759,10 +1759,10 @@ void boot::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new bronze); break;
-    case 2: InitMaterials(new iron); break;
-    case 3: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }
 
@@ -1772,10 +1772,10 @@ void gauntlet::GenerateMaterials()
 
   switch(femath::WeightedRand(4, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new bronze); break;
-    case 2: InitMaterials(new iron); break;
-    case 3: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }
 
@@ -1785,9 +1785,9 @@ void belt::GenerateMaterials()
 
   switch(femath::WeightedRand(3, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new cloth); break;
-    case 2: InitMaterials(new fabric); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(CLOTH)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(FABRIC)); break;
     }
 }
 
@@ -1797,12 +1797,12 @@ void belt::GenerateMaterials()
 
   switch(femath::WeightedRand(6, Possibility))
     {
-    case 0: InitMaterials(new leather); break;
-    case 1: InitMaterials(new bone); break;
-    case 2: InitMaterials(new copper); break;
-    case 3: InitMaterials(new bronze); break;
-    case 4: InitMaterials(new iron); break;
-    case 5: InitMaterials(new mithril); break;
+    case 0: InitMaterials(MAKE_MATERIAL(LEATHER)); break;
+    case 1: InitMaterials(MAKE_MATERIAL(BONE)); break;
+    case 2: InitMaterials(MAKE_MATERIAL(COPPER)); break;
+    case 3: InitMaterials(MAKE_MATERIAL(BRONZE)); break;
+    case 4: InitMaterials(MAKE_MATERIAL(IRON)); break;
+    case 5: InitMaterials(MAKE_MATERIAL(MITHRIL)); break;
     }
 }*/
 
@@ -1823,7 +1823,7 @@ std::string corpse::PostFix() const
   return "of " + GetDeceased()->Name(INDEFINITE);
 }
 
-bool corpse::Consume(character* Eater, float Amount)
+bool corpse::Consume(character* Eater, long Amount)
 {
   return GetDeceased()->GetTorso()->Consume(Eater, Amount);
 }
@@ -2301,12 +2301,12 @@ material* corpse::GetMaterial(ushort Index) const
     }
 }
 
-ushort materialcontainer::GetMaterialColor1(ushort) const
+ushort materialcontainer::GetMaterialColor1(ushort Frame) const
 {
   if(GetContainedMaterial())
     return GetContainedMaterial()->GetColor();
   else
-    return 0;
+    return GetMaterialColor0(Frame);
 }
 
 ushort meleeweapon::GetMaterialColor1(ushort) const
@@ -2359,7 +2359,7 @@ bool corpse::RaiseTheDead(character* Summoner)
 {
   RemoveFromSlot();
 
-  if(Summoner->GetIsPlayer())
+  if(Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
   GetLSquareUnder()->AddCharacter(GetDeceased());
@@ -2405,112 +2405,131 @@ bool leftleg::FitsBodyPartIndex(uchar c, character*) const
   return c == LEFTLEGINDEX;
 }
 
-void banana::VirtualConstructor()
+void banana::VirtualConstructor(bool Load)
 {
-  materialcontainer::VirtualConstructor();
+  materialcontainer::VirtualConstructor(Load);
   SetCharges(6);
 }
 
-void lantern::VirtualConstructor()
+void lantern::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
+  item::VirtualConstructor(Load);
   SetOnWall(false);
 }
 
-void wand::VirtualConstructor()
+void wand::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
+  item::VirtualConstructor(Load);
   SetTimesUsed(0);
 }
 
-void wandofpolymorph::VirtualConstructor()
+void wandofpolymorph::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void wandofstriking::VirtualConstructor()
+void wandofstriking::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void holybook::VirtualConstructor()
+void holybook::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
+  item::VirtualConstructor(Load);
 
   /* Don't use SetDivineMaster, since it calls UpdatePicture()! */
 
-  DivineMaster = 1 + RAND() % (game::GetGods() - 1);
+  if(!Load)
+    DivineMaster = 1 + RAND() % (game::GetGods() - 1);
 }
 
-void oillamp::VirtualConstructor()
+void oillamp::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
-  SetInhabitedByGenie(!(rand() % 2));
+  item::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetInhabitedByGenie(!(RAND() % 2));
 }
 
-void wandoffireballs::VirtualConstructor()
+void wandoffireballs::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(1 + RAND() % 3);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(1 + RAND() % 3);
 }
 
-void wandofteleportation::VirtualConstructor()
+void wandofteleportation::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void mine::VirtualConstructor()
+void mine::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
-  SetCharged(RAND() % 5 ? true : false);
+  item::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharged(RAND() % 5 ? true : false);
 }
 
-void wandofhaste::VirtualConstructor()
+void wandofhaste::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void wandofslow::VirtualConstructor()
+void wandofslow::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void key::VirtualConstructor()
+void key::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor();
-  SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+  item::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
 }
 
-void bodypart::VirtualConstructor()
+void bodypart::VirtualConstructor(bool Load)
 {
-  materialcontainer::VirtualConstructor();
+  materialcontainer::VirtualConstructor(Load);
   SetUnique(false);
   SetRegenerationCounter(0);
 }
 
-void head::VirtualConstructor()
+void head::VirtualConstructor(bool Load)
 {
-  bodypart::VirtualConstructor();
+  bodypart::VirtualConstructor(Load);
   HelmetSlot.Init(this);
   AmuletSlot.Init(this);
 }
 
-void humanoidtorso::VirtualConstructor()
+void humanoidtorso::VirtualConstructor(bool Load)
 {
-  torso::VirtualConstructor();
+  torso::VirtualConstructor(Load);
   BodyArmorSlot.Init(this);
   CloakSlot.Init(this);
   BeltSlot.Init(this);
 }
 
-void arm::VirtualConstructor()
+void arm::VirtualConstructor(bool Load)
 {
-  bodypart::VirtualConstructor();
+  bodypart::VirtualConstructor(Load);
   WieldedSlot.Init(this);
   GauntletSlot.Init(this);
   RingSlot.Init(this);
@@ -2518,20 +2537,25 @@ void arm::VirtualConstructor()
   SetHasBe(true);
 }
 
-void leg::VirtualConstructor()
+void leg::VirtualConstructor(bool Load)
 {
-  bodypart::VirtualConstructor();
+  bodypart::VirtualConstructor(Load);
   BootSlot.Init(this);
 }
 
-void wandoflocking::VirtualConstructor()
+void wandoflocking::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(2 + RAND() % 5);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }
 
-void wandofresurrection::VirtualConstructor()
+void wandofresurrection::VirtualConstructor(bool Load)
 {
-  wand::VirtualConstructor();
-  SetCharges(1 + RAND() % 2);
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(1 + RAND() % 2);
 }
+

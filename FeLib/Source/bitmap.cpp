@@ -237,7 +237,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	break;
       }
 
-    case ROTATE_90:
+    case ROTATE:
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -246,7 +246,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	break;
       }
 
-    case (MIRROR | ROTATE_90):
+    case (MIRROR | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -255,7 +255,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	break;
       }
 
-    case (FLIP | ROTATE_90):
+    case (FLIP | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -264,7 +264,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	break;
       }
 
-    case (MIRROR | FLIP | ROTATE_90):
+    case (MIRROR | FLIP | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -362,7 +362,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	break;
       }
 
-    case ROTATE_90:
+    case ROTATE:
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -371,7 +371,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	break;
       }
 
-    case (MIRROR | ROTATE_90):
+    case (MIRROR | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -380,7 +380,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	break;
       }
 
-    case (FLIP | ROTATE_90):
+    case (FLIP | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -389,7 +389,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	break;
       }
 
-    case (MIRROR | FLIP | ROTATE_90):
+    case (MIRROR | FLIP | ROTATE):
       {
 	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
@@ -618,12 +618,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *(ushort*)(Buffer + (XSize << 1));
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
 	    *(ushort*)Buffer = Color;
 
 	  Buffer += XSize << 1;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
+	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
 	    *(ushort*)Buffer = Color;
 
 	  LastColor = NextColor;
@@ -639,12 +639,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *(ushort*)(Buffer + 2);
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !x) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == DEFAULTTRANSPARENT || !x) && NextColor != DEFAULTTRANSPARENT)
 	    *(ushort*)Buffer = Color;
 
 	  Buffer += 2;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || x == XSize - 2))
+	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || x == XSize - 2))
 	    *(ushort*)Buffer = Color;
 
 	  LastColor = NextColor;
@@ -657,7 +657,7 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
   if(!IsIndependent)
     ABORT("Subbitmap outline bitmap creation request detected!");
 
-  Bitmap->Fill(DEFAULT_TRANSPARENT);
+  Bitmap->Fill(DEFAULTTRANSPARENT);
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -670,13 +670,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	{
 	  ushort NextColor = *(ushort*)(SrcBuffer + (XSize << 1));
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == DEFAULTTRANSPARENT || !y) && NextColor != DEFAULTTRANSPARENT)
 	    *(ushort*)DestBuffer = Color;
 
 	  SrcBuffer += XSize << 1;
 	  DestBuffer += Bitmap->XSize << 1;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
+	  if(LastColor != DEFAULTTRANSPARENT && (NextColor == DEFAULTTRANSPARENT || y == YSize - 2))
 	    *(ushort*)DestBuffer = Color;
 
 	  LastColor = NextColor;
@@ -695,13 +695,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	  ushort NextSrcColor = *(ushort*)(SrcBuffer + 2);
 	  ushort NextDestColor = *(ushort*)(DestBuffer + 2);
 
-	  if((LastSrcColor == DEFAULT_TRANSPARENT || !x) && (NextSrcColor != DEFAULT_TRANSPARENT || NextDestColor != DEFAULT_TRANSPARENT))
+	  if((LastSrcColor == DEFAULTTRANSPARENT || !x) && (NextSrcColor != DEFAULTTRANSPARENT || NextDestColor != DEFAULTTRANSPARENT))
 	    *(ushort*)DestBuffer = Color;
 
 	  SrcBuffer += 2;
 	  DestBuffer += 2;
 
-	  if((LastSrcColor != DEFAULT_TRANSPARENT || LastDestColor != DEFAULT_TRANSPARENT) && (NextSrcColor == DEFAULT_TRANSPARENT || x == XSize - 2))
+	  if((LastSrcColor != DEFAULTTRANSPARENT || LastDestColor != DEFAULTTRANSPARENT) && (NextSrcColor == DEFAULTTRANSPARENT || x == XSize - 2))
 	    *(ushort*)DestBuffer = Color;
 
 	  LastSrcColor = NextSrcColor;

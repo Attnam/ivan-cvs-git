@@ -6,6 +6,7 @@
 #endif
 
 #include <list>
+#include <map>
 
 #include "typedef.h"
 

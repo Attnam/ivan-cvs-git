@@ -24,12 +24,12 @@ dungeon::~dungeon()
 
 void dungeon::Initialize()
 {
-  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = scriptsystem::GetGameScript()->GetDungeon().find(Index);
+  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
 
-  if(DungeonIterator != scriptsystem::GetGameScript()->GetDungeon().end())
+  if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
     DungeonScript = DungeonIterator->second;
   else
-    DungeonScript = scriptsystem::GetGameScript()->GetDungeonDefault();
+    DungeonScript = game::GetGameScript()->GetDungeonDefault();
 
   Level = new level*[GetLevels()];
   Generated = new bool[GetLevels()];
@@ -71,14 +71,13 @@ levelscript* dungeon::GetLevelScript(ushort Index)
 void dungeon::PrepareLevel(ushort Index)
 {
   if(Generated[Index])
-    {
-      LoadLevel(game::SaveName(), Index);
-    }
+    LoadLevel(game::SaveName(), Index);
   else
     {
-      iosystem::TextScreen("Generating level...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
       Level[Index] = new level;
-      Level[Index]->Generate(GetLevelScript(Index));
+      Level[Index]->SetLevelScript(GetLevelScript(Index));
+      iosystem::TextScreen("Generating " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
+      Level[Index]->Generate();
       Generated[Index] = true;
       game::BusyAnimation();
 
@@ -165,3 +164,4 @@ inputfile& operator>>(inputfile& SaveFile, dungeon*& Dungeon)
 
   return SaveFile;
 }
+

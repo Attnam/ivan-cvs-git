@@ -16,9 +16,10 @@
 #include "igraph.h"
 #include "main.h"
 #include "femath.h"
-#include "felibdef.h"
 #include "proto.h"
 #include "script.h"
+#include "database.h"
+#include "felibdef.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -58,8 +59,10 @@ int Main(int argc, char **argv)
 
   protosystem::GenerateCodeNameMaps();
   femath::SetSeed(time(0));
+  game::InitGlobalValueMap();
+  databasesystem::Initialize();
   game::InitLuxTable();
-  scriptsystem::Initialize();
+  game::InitScript();
   configuration::Load();
 
 #ifdef WIN32
@@ -75,7 +78,7 @@ int Main(int argc, char **argv)
   globalwindowhandler::SetControlLoop(game::AnimationController);
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
       {
       case 0:
 	game::Init();
@@ -119,3 +122,4 @@ int Main(int argc, char **argv)
 	return 0;
       }
 }
+

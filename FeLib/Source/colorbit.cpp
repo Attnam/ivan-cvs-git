@@ -105,7 +105,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    {
 	      ushort ThisColor = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 
-	      if(ThisColor != DEFAULT_TRANSPARENT)
+	      if(ThisColor != DEFAULTTRANSPARENT)
 		((ushort*)DestBuffer)[DestX + x] = ThisColor;
 	    }
 	}

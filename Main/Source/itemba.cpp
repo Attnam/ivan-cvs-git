@@ -18,7 +18,7 @@
 #include "materba.h"
 #include "save.h"
 
-item::item() : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
+item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
 {
 }
 
@@ -61,7 +61,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
       if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
       lsquare* JustHit = game::GetCurrentLevel()->GetLSquare(Pos + game::GetMoveVector(Direction));
-      if(!(JustHit->GetOLTerrain()->GetIsWalkable()))
+      if(!(JustHit->GetOLTerrain()->IsWalkable()))
 	{
 	  Breaks = true;
 	  JustHit->HasBeenHitBy(this, Speed, Direction, JustHit->CanBeSeen());
@@ -114,7 +114,7 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
 
   if(Dude->DodgesFlyingItem(this, Speed)) 
     {
-      if(Dude->GetIsPlayer())
+      if(Dude->IsPlayer())
 	ADD_MESSAGE("%s misses you.", CHARNAME(DEFINITE));
       else
 	if(Dude->GetLSquareUnder()->CanBeSeen())
@@ -147,7 +147,7 @@ void item::DrawToTileBuffer(bool Animate) const
 
 bool item::Apply(character* Applier)
 {
-  if(Applier->GetIsPlayer())
+  if(Applier->IsPlayer())
     ADD_MESSAGE("You can't apply this!");
 
   return false;
@@ -165,11 +165,11 @@ bool item::Polymorph(stack* CurrentStack)
   return true;
 }
 
-bool item::Consume(character* Eater, float Amount)
+bool item::Consume(character* Eater, long Amount)
 {
   GetConsumeMaterial()->EatEffect(Eater, Amount, GetNPModifier());
 
-  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
+  if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
@@ -196,6 +196,7 @@ void item::Save(outputfile& SaveFile) const
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
+  InstallDataBase();
   game::PopItemID(ID);
   SaveFile >> Cannibalised >> Size >> ID;
 }
@@ -356,7 +357,7 @@ void item::GenerateLeftOvers(character*)
 
 item* item::TryToOpen(character* Char)
 {
-  if(Char->GetIsPlayer())
+  if(Char->IsPlayer())
     ADD_MESSAGE("You can't open %s.", CHARNAME(DEFINITE));
 
   return 0;
@@ -364,7 +365,7 @@ item* item::TryToOpen(character* Char)
 
 item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 {
-  item* Item = Clone(false);
+  item* Item = Clone(0, false, true);
   Item->Load(SaveFile);
   return Item;
 }
@@ -374,16 +375,39 @@ void item::LoadDataBaseStats()
   SetSize(GetDefaultSize());
 }
 
-void item::Initialize(bool CallGenerateMaterials)
+void item::Initialize(uchar NewConfig, bool CallGenerateMaterials, bool Load)
 {
-  LoadDataBaseStats();
-  VirtualConstructor();
+  if(!Load)
+    {
+      Config = NewConfig;
+      InstallDataBase();
+      LoadDataBaseStats();
+    }
 
-  if(CallGenerateMaterials)
+  VirtualConstructor(Load);
+
+  if(!Load && CallGenerateMaterials)
     GenerateMaterials();
 }
 
-itemprototype::itemprototype()
+itemprototype::itemprototype(itemprototype* Base) : Base(Base)
 {
   Index = protocontainer<item>::Add(this);
 }
+
+void item::InstallDataBase()
+{
+  if(!Config)
+    DataBase = GetProtoType()->GetDataBase();
+  else
+    {
+      const item::databasemap& Configs = GetProtoType()->GetConfig();
+      item::databasemap::const_iterator i = Configs.find(Config);
+
+      if(i != Configs.end())
+	DataBase = &i->second;
+      else
+	ABORT("Undefined item configuration #%d sought!", Config);
+    }
+}
+
