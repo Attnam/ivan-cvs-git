@@ -926,13 +926,13 @@ void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
     case DID_NO_DAMAGE:
       EditExperience(ARM_STRENGTH, StrExp, 1 << 9);
 
-      if(THW)
+      if(THW && GetPairArm())
 	GetPairArm()->EditExperience(ARM_STRENGTH, StrExp, 1 << 9);
 
     case HAS_DODGED:
       EditExperience(DEXTERITY, DexExp, 1 << 9);
 
-      if(THW)
+      if(THW && GetPairArm())
 	GetPairArm()->EditExperience(DEXTERITY, DexExp, 1 << 9);
     }
 }
