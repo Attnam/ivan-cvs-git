@@ -418,7 +418,7 @@ void game::DrawPanel()
 	if(GetWizardMode())
 	{
 		FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "NP: %d", Player->GetNP());
-		FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "Danger: %d", Player->Danger());
+		FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "Danger: %d", Player->CurrentDanger());
 	}
 
 	if(GetInWilderness())
@@ -800,7 +800,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-	float Base = game::GetPlayer()->Danger() * (0.1f + float(GetCurrent()) / 25);
+	float Base = game::GetPlayer()->MaxDanger() * (0.1f + float(GetCurrent()) / 25);
 
 	while(true)
 	{

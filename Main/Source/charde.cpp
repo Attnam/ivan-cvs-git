@@ -19,6 +19,7 @@
 #include "team.h"
 #include "lterraba.h"
 #include "rand.h"
+
 perttu::~perttu()
 {
 	game::SetPerttu(0);
@@ -709,7 +710,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasHeadOfElpuri())
 	{
-		if(game::GetGod(1)->GetRelation() >= 0 && Talker->Danger() >= 100000)
+		if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 100000)
 		{
 			ADD_MESSAGE("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog!");
 			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
@@ -985,7 +986,7 @@ void ivan::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	if(GetTeam() == Talker->GetTeam() || Talker->Danger() < 50000)
+	if(GetTeam() == Talker->GetTeam() || Talker->MaxDanger() < 50000)
 	{
 		static uchar LastSaid = 0xFF, ToSay;
 		while((ToSay = RAND() % 11) == LastSaid);
@@ -1404,38 +1405,33 @@ void femaleslave::CreateInitialEquipment()
 
 void ivan::MoveRandomly()
 {
-	char ToTry = rand() % 8;
 	switch(RAND() % 200)
 	{
 		case 0:
 			Engrave("The weapons with which the bourgeoisie felled feudalism to the ground are now turned against the bourgeoisie itself.");
-		break;
-
+			break;
 		case 1:
 			Engrave("Proletarians of all countries, unite!");
-		break;
-		
+			break;
 		case 2:
 			Engrave("Capital is therefore not only personal; it is a social power.");
-		break;
+			break;
 		default:
+		{
+			char ToTry = rand() % 8;
+
 			if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 				TryMove(GetPos() + game::GetMoveVector(ToTry), false);
+		}
 	}
 }
-
 
 void zombie::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-	{
 		ADD_MESSAGE("\"Need brain!!\"");
-		return;
-	}
 	else
-	{
 		ADD_MESSAGE("\"Need brain, but not your brain.\"");
-	}
 }
 
 void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
@@ -1443,6 +1439,7 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 	if(!game::GetInWilderness()) 
 	{
 		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 10, 40);
+
 		if(!(RAND() % 10)) 
 			game::GetCurrentLevel()->GetLevelSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
 	}

@@ -10,7 +10,7 @@
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
-felist globalmessagingsystem::MessageHistory(200, false, true);
+felist globalmessagingsystem::MessageHistory(100, false, true);
 
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {

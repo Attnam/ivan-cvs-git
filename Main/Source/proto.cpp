@@ -41,7 +41,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
 		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
 
-		float Danger = Monster->Danger(), Difficulty = game::Difficulty();
+		float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
 
 		if(c == 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
 		{

@@ -465,7 +465,7 @@ public:
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " is transformed into a crumpled heap of bones."; }
 	virtual vector2d GetBitmapPos() const RETV(112,0)
-	virtual std::string NameSingular() const RET("fallen valpurist")
+	virtual std::string NameSingular() const RET("skeleton")
 	virtual void CreateCorpse();
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(1000)
@@ -707,7 +707,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(288,0)
-	virtual std::string NameSingular() const RET("donkey")
+	virtual std::string NameSingular() const RET("mutant donkey")
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))

@@ -178,7 +178,7 @@ void dulcis::PrayGoodEffect()
 
 		if(Char)
 			if(Char->Charmable())
-				if(Char->Danger() * 2 < game::GetPlayer()->Danger())
+				if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
 				{
 					if(Char->GetTeam() == game::GetPlayer()->GetTeam())
 						ADD_MESSAGE("%s seems to be very happy.", Char->CNAME(DEFINITE));

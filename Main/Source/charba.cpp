@@ -2818,9 +2818,14 @@ float character::GetDodgeValue() const
 	return (GetMeleeAttributeModifier() << 1) / sqrt(GetSize());
 }
 
-ulong character::Danger() const
+ulong character::CurrentDanger() const
 {
 	return ulong(GetAttackStrength() * GetStrength() * GetHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+}
+
+ulong character::MaxDanger() const
+{
+	return ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
 }
 
 bool character::RaiseGodRelations()
@@ -2861,7 +2866,7 @@ bool character::GainDivineKnowledge()
 
 bool character::Displace(character* Who)
 {
-	if(Danger() > Who->Danger() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
+	if(CurrentDanger() > Who->CurrentDanger() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
 	{
 		if(GetIsPlayer())
 			if(GetSquareUnder()->CanBeSeen() || Who->GetSquareUnder()->CanBeSeen())

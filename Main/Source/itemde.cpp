@@ -14,6 +14,7 @@
 #include "feio.h"
 #include "team.h"
 #include "rand.h"
+
 void can::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);

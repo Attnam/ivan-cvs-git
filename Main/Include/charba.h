@@ -132,7 +132,8 @@ public:
 	virtual uchar GetBurdenState(ulong = 0) const;
 	virtual uchar GetSex() const { return UNDEFINED; }
 	virtual uchar TakeHit(character*, short);
-	virtual ulong Danger() const;
+	virtual ulong CurrentDanger() const;
+	virtual ulong MaxDanger() const;
 	virtual ulong GetBloodColor() const;
 	virtual ushort CalculateArmorModifier() const;
 	virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }

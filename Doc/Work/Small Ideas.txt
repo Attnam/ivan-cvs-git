@@ -52,3 +52,4 @@ Some variety to death messages, e.g. some messages influenced by the cause of de
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 Replacing rand().
 Description of wands should show how many times it has been used.
+Uranium weapons should turn monsters to mutants.
