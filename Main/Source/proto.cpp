@@ -209,7 +209,7 @@ item* protosystem::BalancedCreateItem(long MinPrice, long MaxPrice, long Require
 	    }
 	}
 
-      if(c0 == 100 && RequiredGod)
+      if(c0 == 25 && RequiredGod)
 	return 0;
 
       MinPrice = MinPrice * 3 >> 2;

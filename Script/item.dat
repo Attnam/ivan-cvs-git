@@ -886,7 +886,7 @@ bodyarmor /* armor-> */
 		InElasticityPenaltyModifier = 40;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
-		Price = 250;
+		Price = 500;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = SEGES;
 	}

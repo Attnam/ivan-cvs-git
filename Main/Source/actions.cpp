@@ -225,8 +225,8 @@ void dig::Handle()
 
   int Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
   Terrain->EditHP(-Max(Damage, 1));
-  Actor->EditExperience(ARM_STRENGTH, 150, 1 << 5);
-  Actor->EditAP(-100000 / APBonus(Actor->GetAttribute(DEXTERITY)));
+  Actor->EditExperience(ARM_STRENGTH, 200, 1 << 5);
+  Actor->EditAP(-200000 / APBonus(Actor->GetAttribute(DEXTERITY)));
   Actor->EditNP(-500);
 
   if(Terrain->GetHP() <= 0)

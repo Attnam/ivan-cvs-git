@@ -1348,7 +1348,7 @@ liquid
 	Config PEA_SOUP;
 	{
 		StrengthValue = 5;
-		NutritionValue = 250;
+		NutritionValue = 500;
 		Color = rgb16(0, 200, 0);
 		NameStem = "pea soup";
 		Effect = EFFECT_PEA_SOUP;
@@ -1671,6 +1671,7 @@ flesh
 	{
 		NameStem = "orc flesh";
 		AttachedGod = MORTIFER;
+		NutritionValue = 15;
 	}
 
 	Config OSTRICH_FLESH;

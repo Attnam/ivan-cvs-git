@@ -913,8 +913,8 @@ void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
   if(Wielded)
     {
       long Weight = Wielded->GetWeight();
-      StrExp = Limit(Weight / 200L, 50L, 200L);
-      DexExp = Weight ? Limit(500L / Weight, 50L, 200L) : 200;
+      StrExp = Limit(15 * Weight / 2000L, 75L, 300L);
+      DexExp = Weight ? Limit(75000L / Weight, 75L, 300L) : 300;
       THW = TwoHandWieldIsActive();
     }
 

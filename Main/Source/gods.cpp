@@ -740,7 +740,7 @@ void valpurus::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, 100, true);
-      PLAYER->EditExperience(WISDOM, 300, 1 << 11);
+      PLAYER->EditExperience(WISDOM, 400, 1 << 11);
 
       if(Relation > 250 && !(RAND() % 2))
 	{
@@ -784,7 +784,7 @@ void mortifer::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, 100, true);
-      PLAYER->EditExperience(WISDOM, 300, 1 << 11);
+      PLAYER->EditExperience(WISDOM, 400, 1 << 11);
 
       if(Relation > 250 && !(RAND() % 2))
 	{
@@ -864,27 +864,27 @@ void nefas::PrayGoodEffect()
 	      }
 	  }
     }
-  else if(RAND() & 7)
+  /*else if(RAND() & 7)
+    {*/
+  mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
+  vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
+
+  if(Where == ERROR_VECTOR)
     {
-      mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
-      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
-
-      if(Where == ERROR_VECTOR)
-	{
-	  if(PLAYER->CanHear())
-	    ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
-	  else
-	    ADD_MESSAGE("You feel the air vibrating.");
-
-	  delete Mistress;
-	}
+      if(PLAYER->CanHear())
+	ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
       else
-	{
-	  Mistress->SetTeam(PLAYER->GetTeam());
-	  Mistress->PutTo(Where);
-	  ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
-	}
+	ADD_MESSAGE("You feel the air vibrating.");
+
+      delete Mistress;
     }
+  else
+    {
+      Mistress->SetTeam(PLAYER->GetTeam());
+      Mistress->PutTo(Where);
+      ADD_MESSAGE("You hear a sweet voice inside your head: \"Have fun, mortal!\"");
+    }
+    /*}
   else
     {
       ADD_MESSAGE("%s wishes you to have fun with this potion.", GetName());
@@ -892,7 +892,7 @@ void nefas::PrayGoodEffect()
       Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMMEL_URINE));
       PLAYER->GetGiftStack()->AddItem(Reward);
       ADD_MESSAGE("%s drops on the ground.", Reward->CHAR_NAME(DEFINITE));
-    }
+    }*/
 }
 
 void nefas::PrayBadEffect()

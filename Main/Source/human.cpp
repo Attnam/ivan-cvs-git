@@ -1770,7 +1770,7 @@ void humanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool Force
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
-  EditExperience(AGILITY, 100, 1 << 9);
+  EditExperience(AGILITY, 150, 1 << 9);
   EditStamina(-1000, false);
   Enemy->TakeHit(this, 0, GetHead(), HitPos, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -1784,8 +1784,8 @@ void humanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
 
   if(Square->BeKicked(this, 0, KickLeg, KickLeg->GetKickDamage(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
-      KickLeg->EditExperience(LEG_STRENGTH, 50, 1 << 9);
-      KickLeg->EditExperience(AGILITY, 50, 1 << 9);
+      KickLeg->EditExperience(LEG_STRENGTH, 75, 1 << 9);
+      KickLeg->EditExperience(AGILITY, 75, 1 << 9);
     }
 }
 

@@ -126,7 +126,7 @@ bool commandsystem::GoUp(character* Char)
 
   if(Terrain->Enter(true))
     {
-      Char->EditExperience(LEG_STRENGTH, 100, 1 << 6);
+      Char->EditExperience(LEG_STRENGTH, 150, 1 << 6);
       Char->EditNP(-20);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -161,7 +161,7 @@ bool commandsystem::GoDown(character* Char)
 
   if(Terrain->Enter(false))
     {
-      Char->EditExperience(AGILITY, 100, 1 << 6);
+      Char->EditExperience(AGILITY, 150, 1 << 6);
       Char->EditNP(-10);
       Char->EditAP(-100000 / APBonus(Char->GetAttribute(AGILITY)));
       return true;
@@ -465,7 +465,7 @@ bool commandsystem::Talk(character* Char)
 	}
 
       ToTalk->BeTalkedTo();
-      Char->EditExperience(CHARISMA, 50, 1 << 7);
+      Char->EditExperience(CHARISMA, 75, 1 << 7);
       return true;
     }
   else
@@ -495,7 +495,7 @@ bool commandsystem::Talk(character* Char)
 	    }
 
 	  Dude->BeTalkedTo();
-	  Char->EditExperience(CHARISMA, 50, 1 << 7);
+	  Char->EditExperience(CHARISMA, 75, 1 << 7);
 	  return true;
 	}
       else
@@ -869,9 +869,9 @@ bool commandsystem::Throw(character* Char)
 	return false;
 
       Char->ThrowItem(Answer, Item);
-      Char->EditExperience(ARM_STRENGTH, 50, 1 << 8);
-      Char->EditExperience(DEXTERITY, 50, 1 << 8);
-      Char->EditExperience(PERCEPTION, 50, 1 << 8);
+      Char->EditExperience(ARM_STRENGTH, 75, 1 << 8);
+      Char->EditExperience(DEXTERITY, 75, 1 << 8);
+      Char->EditExperience(PERCEPTION, 75, 1 << 8);
       Char->EditNP(-50);
       Char->DexterityAction(5);
       return true;

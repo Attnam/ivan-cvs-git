@@ -347,12 +347,12 @@ void character::Hunger()
     case OVER_LOADED:
     case STRESSED:
       EditNP(-8);
-      EditExperience(LEG_STRENGTH, 100, 1 << 2);
+      EditExperience(LEG_STRENGTH, 150, 1 << 2);
       EditExperience(AGILITY, -50, 1 << 2);
       break;
     case BURDENED:
       EditNP(-2);
-      EditExperience(LEG_STRENGTH, 50, 1 << 1);
+      EditExperience(LEG_STRENGTH, 75, 1 << 1);
       EditExperience(AGILITY, -25, 1 << 1);
       break;
     case UNBURDENED:
@@ -397,7 +397,7 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
   double DodgeValue = GetDodgeValue();
 
   if(!Enemy->IsPlayer() && GetAttackWisdomLimit() != NO_LIMIT)
-    Enemy->EditExperience(WISDOM, 50, 1 << 13);
+    Enemy->EditExperience(WISDOM, 75, 1 << 13);
 
   if(!Enemy->CanBeSeenBy(this))
     ToHitValue *= 2;
@@ -435,8 +435,8 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
   if(RAND() % int(100 + ToHitValue / DodgeValue * (100 + Success)) < 100 && !Critical && !ForceHit)
     {
       Enemy->AddMissMessage(this);
-      EditExperience(AGILITY, 100, 1 << 7);
-      EditExperience(PERCEPTION, 50, 1 << 7);
+      EditExperience(AGILITY, 150, 1 << 7);
+      EditExperience(PERCEPTION, 75, 1 << 7);
 
       if(Enemy->CanBeSeenByPlayer())
 	DeActivateVoluntaryAction(CONST_S("The attack of ") + Enemy->GetName(DEFINITE) + CONST_S(" interrupts you."));
@@ -745,7 +745,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
 	    {
 	      EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) >> 1);
 	      EditNP(-24 * GetSquareUnder()->GetEntryDifficulty());
-	      EditExperience(AGILITY, 75, GetSquareUnder()->GetEntryDifficulty() << 7);
+	      EditExperience(AGILITY, 125, GetSquareUnder()->GetEntryDifficulty() << 7);
 	      int Base = 10000;
 
 	      if(IsPlayer())
@@ -768,7 +768,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove, bool Run)
 	    {
 	      EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()));
 	      EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
-	      EditExperience(AGILITY, 50, GetSquareUnder()->GetEntryDifficulty() << 7);
+	      EditExperience(AGILITY, 75, GetSquareUnder()->GetEntryDifficulty() << 7);
 	    }
 	}
 
@@ -2360,7 +2360,7 @@ bool character::Displace(character* Who, bool Forced)
       Who->PutTo(Pos);
       EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
       EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
-      EditExperience(AGILITY, 50, GetSquareUnder()->GetEntryDifficulty() << 7);
+      EditExperience(AGILITY, 75, GetSquareUnder()->GetEntryDifficulty() << 7);
 
       if(IsPlayer())
 	ShowNewPosInfo();
@@ -3919,8 +3919,8 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 	    }
 
 	  long Weight = Blocker->GetWeight();
-	  long StrExp = Limit(Weight / 200L, 50L, 200L);
-	  long DexExp = Weight ? Limit(500L / Weight, 50L, 200L) : 200;
+	  long StrExp = Limit(15 * Weight / 2000L, 75L, 300L);
+	  long DexExp = Weight ? Limit(75000L / Weight, 75L, 300L) : 300;
 	  Arm->EditExperience(ARM_STRENGTH, StrExp, 1 << 8);
 	  Arm->EditExperience(DEXTERITY, DexExp, 1 << 8);
 	  EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
@@ -4443,7 +4443,7 @@ void character::StartReading(item* Item, long Time)
 void character::DexterityAction(int Difficulty)
 {
   EditAP(-20000 * Difficulty / APBonus(GetAttribute(DEXTERITY)));
-  EditExperience(DEXTERITY, Difficulty * 10, 1 << 7);
+  EditExperience(DEXTERITY, Difficulty * 15, 1 << 7);
 }
 
 /* If Theoretically == true, range is not a factor. */
@@ -6772,7 +6772,7 @@ int character::GetSumOfAttributes() const
 void character::IntelligenceAction(int Difficulty)
 {
   EditAP(-20000 * Difficulty / APBonus(GetAttribute(INTELLIGENCE)));
-  EditExperience(INTELLIGENCE, Difficulty * 50, 1 << 7);
+  EditExperience(INTELLIGENCE, Difficulty * 15, 1 << 7);
 }
 
 struct walkabilitycontroller
@@ -7321,7 +7321,7 @@ void characterdatabase::PostProcess()
 
 void character::EditDealExperience(long Price)
 {
-  EditExperience(CHARISMA, sqrt(Price) / 10, 1 << 9);
+  EditExperience(CHARISMA, sqrt(Price) / 5, 1 << 9);
 }
 
 void character::PrintBeginLeprosyMessage() const

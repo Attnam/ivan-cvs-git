@@ -210,8 +210,8 @@ void nonhumanoid::Bite(character* Enemy, vector2d HitPos, int Direction, bool Fo
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-  EditExperience(ARM_STRENGTH, 50, 1 << 8);
-  EditExperience(AGILITY, 100, 1 << 8);
+  EditExperience(ARM_STRENGTH, 75, 1 << 8);
+  EditExperience(AGILITY, 150, 1 << 8);
   EditStamina(-10000 / GetAttribute(ARM_STRENGTH), false);
   Enemy->TakeHit(this, 0, GetTorso(), HitPos, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITE_ATTACK, Direction, !(RAND() % GetCriticalModifier()), ForceHit);
 }
@@ -224,8 +224,8 @@ void nonhumanoid::Kick(lsquare* Square, int Direction, bool ForceHit)
 
   if(Square->BeKicked(this, 0, GetTorso(), GetKickDamage(), GetKickToHitValue(), RAND() % 26 - RAND() % 26, Direction, !(RAND() % GetCriticalModifier()), ForceHit))
     {
-      EditExperience(LEG_STRENGTH, 100, 1 << 8);
-      EditExperience(AGILITY, 50, 1 << 8);
+      EditExperience(LEG_STRENGTH, 150, 1 << 8);
+      EditExperience(AGILITY, 75, 1 << 8);
     }
 }
 
@@ -313,9 +313,9 @@ void nonhumanoid::UnarmedHit(character* Enemy, vector2d HitPos, int Direction, b
     case HAS_BLOCKED:
     case HAS_DIED:
     case DID_NO_DAMAGE:
-      EditExperience(ARM_STRENGTH, 100, 1 << 8);
+      EditExperience(ARM_STRENGTH, 150, 1 << 8);
     case HAS_DODGED:
-      EditExperience(DEXTERITY, 50, 1 << 8);
+      EditExperience(DEXTERITY, 75, 1 << 8);
     }
 }
 
@@ -879,7 +879,7 @@ int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart
   if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(150 + RAND() % 150)) /* Changes for fainting 2 out of 3 */
     {
       if(!Enemy->IsPlayer())
-	Enemy->EditExperience(WISDOM, 50, 1 << 13);
+	Enemy->EditExperience(WISDOM, 75, 1 << 13);
 
       return HAS_FAILED;
     }

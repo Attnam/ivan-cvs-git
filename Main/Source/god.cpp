@@ -15,7 +15,7 @@ void god::Pray()
 	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, 10, true);
-	PLAYER->EditExperience(WISDOM, 20, 1 << 10);
+	PLAYER->EditExperience(WISDOM, 200, 1 << 10);
 
 	if(Relation > 250 && !(RAND() % 20))
 	  {
@@ -27,14 +27,14 @@ void god::Pray()
 		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
 	      }
 	  }
-	else if(Relation > 100 && !(RAND() % 20))
+	else if(Relation > 100)// && !(RAND() % 20))
 	  {
 	    long Category = RAND() & ANY_CATEGORY;
 
 	    if(!Category)
 	      Category = ANY_CATEGORY;
 
-	    item* Gift = protosystem::BalancedCreateItem(Relation / 2, Relation * 5, Category, 0, 0, GetType());
+	    item* Gift = protosystem::BalancedCreateItem(Relation / 2, Relation * 2, Category, 0, 0, GetType());
 
 	    if(Gift)
 	      {
@@ -254,7 +254,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	game::ApplyDivineAlignmentBonuses(this, -OfferValue / 5, false);
 
       if(OfferValue > 0)
-	PLAYER->EditExperience(WISDOM, 100, 1 << 7);
+	PLAYER->EditExperience(WISDOM, 150, 1 << 7);
       else
 	PLAYER->EditExperience(WISDOM, -100, 1 << 7);
 

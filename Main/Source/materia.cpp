@@ -122,7 +122,7 @@ material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / 1000);
+  Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
 
   if(IsLiquid())
     Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
@@ -234,7 +234,7 @@ void material::Initialize(int NewConfig, long InitVolume, bool Load)
 
 long material::GetTotalNutritionValue() const
 { 
-  return GetNutritionValue() * GetVolume() * 15 / 1000;
+  return GetNutritionValue() * GetVolume() / 50;
 }
 
 bool material::CanBeEatenByAI(const character* Eater) const
@@ -275,7 +275,7 @@ const materialdatabase* material::GetDataBase(int Config)
 void material::FinishConsuming(character* Consumer)
 {
   if(!Consumer->IsPlayer() && GetConsumeWisdomLimit() != NO_LIMIT)
-    Consumer->EditExperience(WISDOM, 100, 1 << 13); /** C **/
+    Consumer->EditExperience(WISDOM, 150, 1 << 13); /** C **/
 
   AddConsumeEndMessage(Consumer);
 }

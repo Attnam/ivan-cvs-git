@@ -88,7 +88,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
   ADD_MESSAGE("You feel a lost soul fly by you.");
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 100, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
 void scrollofteleportation::FinishReading(character* Reader)
@@ -101,7 +101,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->TeleportRandomly();
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 100, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
 bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
@@ -147,7 +147,7 @@ void scrollofwishing::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 400, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 600, 1 << 12);
 }
 
 void scrollofchangematerial::FinishReading(character* Reader)
@@ -250,7 +250,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 350, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 500, 1 << 12);
 }
 
 item* brokenbottle::BetterVersion() const
@@ -367,8 +367,8 @@ void holybook::FinishReading(character* Reader)
 {
   if(Reader->IsPlayer())
     {
-      PLAYER->EditExperience(INTELLIGENCE, 50, 1 << 12);
-      PLAYER->EditExperience(WISDOM, 100, 1 << 12);
+      PLAYER->EditExperience(INTELLIGENCE, 75, 1 << 12);
+      PLAYER->EditExperience(WISDOM, 150, 1 << 12);
 
       if(GetMasterGod()->IsKnown())
 	{
@@ -599,7 +599,7 @@ void scrollofcharging::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
 void bananapeels::StepOnEffect(character* Stepper)
@@ -669,7 +669,7 @@ void scrolloftaming::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
 void mine::Load(inputfile& SaveFile)
@@ -1375,7 +1375,7 @@ bool wand::Zap(character* Zapper, vector2d, int Direction)
       return true;
     }
 
-  Zapper->EditExperience(PERCEPTION, 100, 1 << 10);
+  Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
 
   beamdata Beam
   (
@@ -1579,7 +1579,7 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
-      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+      Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
     }
 }
 
@@ -1650,7 +1650,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
       RemoveFromSlot();
       SendToHell();
-      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+      Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
     }
 }
 
@@ -1816,7 +1816,7 @@ void scrollofrepair::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
 item* brokenbottle::Fix()
@@ -2249,7 +2249,7 @@ bool holybanana::Zap(character* Zapper, vector2d, int Direction)
   if(Charges > TimesUsed)
     {
       ADD_MESSAGE("BANG! You zap %s!", CHAR_NAME(DEFINITE));
-      Zapper->EditExperience(PERCEPTION, 10, 1 << 10);
+      Zapper->EditExperience(PERCEPTION, 150, 1 << 10);
 
       beamdata Beam
       (
@@ -2665,13 +2665,13 @@ void scrollofdetectmaterial::FinishReading(character* Reader)
   else if(!Squares)
     {
       ADD_MESSAGE("You feel a sudden urge to imagine the dark void of a starless night sky.");
-      Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
+      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
     }
   else
     {
       ADD_MESSAGE("You feel attracted to all things made of %s.", TempMaterial->GetName(false, false).CStr());
       game::PositionQuestion(CONST_S("Detecting material [direction keys move cursor, space exits]"), Reader->GetPos(), 0, 0, false);
-      Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+      Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
     }
 
   delete TempMaterial;
@@ -2784,7 +2784,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }
 
 void itemcontainer::SetLifeExpectancy(int Base, int RandPlus)
@@ -2881,5 +2881,5 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
   RemoveFromSlot();
   SendToHell();
-  Reader->EditExperience(INTELLIGENCE, 200, 1 << 12);
+  Reader->EditExperience(INTELLIGENCE, 300, 1 << 12);
 }

@@ -80,3 +80,6 @@ If you hit someone with one hand and either one of you teleports, you can still 
 If player tries to apply when he has no arms, the message says that there are no items to apply.
 //Leprosy can cause player to become overloaded in world map and there is no way to drop items.
 Can you see the cause of death if you don't get to highscore list?
+You can sell items mirrored.
+Border tile bug.
+Mirror + WorldMap.

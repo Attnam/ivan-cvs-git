@@ -478,4 +478,6 @@ Drinking vodka (maybe just getting confused) should improve relations with Nefas
 Items Bonefiles should spoil a bit before player enters again. 
 Equipment weight to inventory.
 Leviting mushrooms should be able to move.
-Running and levitating
+Running and levitating.
+Autovomiting should choose various squares.
+Wands show "times used" even if they come from a bone file. This shouldn't be so.
