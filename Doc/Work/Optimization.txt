@@ -3,3 +3,11 @@ level::RandomSquare()
 continent::GetRandomMember
 protosystem::BalancedCreateMonster
 spoiling & applyexperience
+reduce the number of CalculateNeighbourBitmapPoses calls
+map databases (speed N -> log N)
+panel is drawn maybe too often?
+DrawMemorized may be called too often
+Cache ability to block light
+//Removing air.
+AlterLuminance
+ChangeAlpha

@@ -1,0 +1,138 @@
+* high priority
+// done
+/ partly done or needs testing/balancing
+(r) rejected
+(s) suspended
+(d) double entry
+
+//Image flipping (more).
+//Partially converting the attribute bonuses to exp.
+//Food poisoning state.
+//Armor pictures of humanoids.
+//Cloning.
+(r) How can you change the window to the rigth size? (stickiness)
+//*Banana peals should be slippery.
+//Weapons should break.
+//Uses for vomiting.
+//CNAME should be clarified.
+//Hit rate of thrown items should be lowered.
+//You must be able to open door by throwing items.
+//List of killed monsters and list of monsters killed by pets.
+//Weapon name should be affected by dip material.
+(r) Player's difficulty level should not be influenced by the current weapon/armor?
+//*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
+//*Balancing offervalues.
+//*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
+//Donkey should be named "an ass".
+//A graphical equipment screen. (from JM)
+//*Specialities to daemon flesh.
+//*Pressing X while in WMode should give more scrolls of wishing.
+//*Random item option to script.
+//Punishment of cathedral terrain destruction.
+//Monsters that change colors.
+//*WMap terrain height should be shown in WMode.
+//*Weapon skills should affect attack AP costs as in ADOM.
+//Parasites.
+//*Savefile versions.
+//Monster data in corpses + resurrection.
+//Inventory screen could be categorised.
+(r, doesn't work) The Great Line Algorithm Idea. (GLAI)
+//"You didn't manage to get onto the high score list"
+//*Tuukka's alternative walls should be integrated.
+//Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
+//Practise dungeon? (from JM)
+//*Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
+//Elpuri's lair could be even more frightening.
+//*Fluid disappears too fast.
+//*Mommos should not leave corpses but just slime.
+//***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
+//*Dipping an empty bottle in a fountain should fill it with water.
+//*The librarian should sell scrolls of charging.
+//Double wielding. (from JM)
+//Invisible monsters. (from JM)
+//*Explosions should be stopped by walls.
+//**Message splitting.
+//Angels should carry holy books of their respective OwnerGods.
+//Breaking LTerrain in two parts.
+//Worldmap LOS disabling.
+//Symbolic inventory.
+//Symbolic god menu.
+//Lists, especially message history, should look better.
+//*Hunters must be one-armed.
+//*Copper, bronze, wooden weapons.
+(r) Nuts could be bodyparts. Or perhaps not.
+//Tame symbol.
+//Zoom to look.
+//"Need brain but you too stupid!"
+//Healing potions. (from JM)
+(r) Shine effect for jewel and valpurium items with outline. (from JM)
+//Slow and haste. (from JM)
+//Status bar with colored statuses (poisoned, flying etc). (from JM)
+//*Keys to doors. (from JM)
+//Pick-axes available in the lowest levels. (from JM)
+//Wand of locking.
+//*Satiated and bloated states.
+//*Average based difficulty!
+//*Strength and weapon weight should affect attack speed!
+//Item list to lookmode.
+//*Aliases for wishing.
+//Alphablit to bottles.
+//Chatting shouldn't be possible if you aren't intelligent.
+//Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
+//*It should be possible to use SoCM to gear.
+(r) One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
+//In script, Square, Random's Walkability should default to true.
+//The player shouldn't be able to fly over oceans if all members of his team aren't able to do it. (currently a bat and a pet dog can cross any sea without trouble)
+//*One MColor in the leg pictures should be allocated for boots (most humanoids walk barefooted now).
+//Wand of striking should also open doors.
+//Look stretch config option.
+//If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
+//Bodyparts should be rotated when they are severed.
+(r) Weight should be the fundamental character of materials, not volume?
+//Kicking should do more damage if metal boots are worn.
+//Zombies should be able to continue even without a head, maybe even without a torso.
+//*Calamus should haste the player.
+//Zombies should pick up and use heads if they lack one.
+//*Pictures to Equipment Screen.
+//*Poison effect for snake flesh.
+//Wishing shouldn't perhaps be case sensitive.
+//Werewolves should drop their equipment when they polymorph.
+//*Team waypoint setting when whistling.
+//If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
+//Random items to certain monsters' inventories.
+//NP shouldn't be consumed if polymorphed into a golem.
+//*Petrus's bodyparts should disappear when severed.
+//If a mine in the inventory is active, it should be displayed somehow.
+//*Non-living bodyparts should be immune to poison.
+//"Character attributes" option to secret knowledge.
+//*If the handle of a weapon is of the same material as the edge, change material should change it, too.
+//Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
+//There should be a one-way teleport at the bottom of the dungeon linked to the first level.
+//*Level teleport option to wizard mode.
+//*"It is too dark to read" message should be printed before selecting item, not after.
+//*Bear traps should break eventually.
+//*RDAM and similiar unclear attributes should be moved to an own screen.
+(r) When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
+//Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
+//Some way of adding things to character's inventory from the script.
+//Kevlar.
+//Lookmode should show whether a creature is panicked.
+//"Entering level number 2" in Elpuri's cave should read "Entering Elpuri's cave level number 2".
+//*Scroll of repair.
+//Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
+//Rings appearing in fountains. (shouldn't be hard with the new system...)
+//*Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
+//Dragon hide material.
+//Buffalos shouldn't be able to throw items.
+//Food in can's should spoil _much_ slower.
+//Skeletons' stomachs shouldn't be able to contain liquids.
+//Wand of door creation should create doors to walls.
+(r... damn. I thought I was onto something) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
+//The smith should fix damaged metal limbs for a fee.
+//When many same kind of items on ground the message should say "5 Xs here" not "...several items here".
+//Polymorph question should default to the monster that the player last polymorphed to.
+//When player is killed by something when he is fainting the death message should say "killed by a X while helpless".
+//*Dropping multiple items should be made more convenient.
+//Bottles should break more easily when kicked.
+//Pets should gain wisdom from trial and error.
+//Gas masks.

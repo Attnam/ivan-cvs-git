@@ -791,9 +791,7 @@ frog
 		CanBeGenerated = true;
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 100;
-		CanOpen = false;
 		AttachedGod = SCABIES;
-		CanApply = false;
 	}
 
 	Config GREATER_DARK;
@@ -855,9 +853,7 @@ frog
 		SkinColor = rgb16(32, 88, 32);
 		Adjective = "greater light";
 		CWeaponSkillHits == 200;
-		CanOpen = false;
 		AttachedGod = VALPURUS;
-		CanApply = false;
 	}
 }
 
@@ -1152,7 +1148,6 @@ mommo
 	HasHead = false;
 	AttachedGod = SCABIES;
 	ClassStates = GAS_IMMUNITY;
-	CanApply = false;
 
 	Config CONICAL;
 	{
@@ -1904,7 +1899,6 @@ bat
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
-	CanApply = false;
 	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;
@@ -3292,6 +3286,7 @@ mushroom
 	CanBeDisplaced = false;
 	CanWalk = false;
 	PanicLevel = 0;
+	CanOpen = false;
 }
 
 magicmushroom

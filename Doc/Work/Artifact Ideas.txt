@@ -30,4 +30,4 @@ scythe of undeath - raises all killed humanoids as temporary zombies
 whips
 
 //whip of thievery - steals weapon
-chameleon whip - polymorphs enemy, depends on relation to Scabies
+//chameleon whip - polymorphs enemy, depends on relation to Scabies

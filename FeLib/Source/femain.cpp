@@ -13,7 +13,8 @@
 #include "SDL.h"
 #endif
 
-#include "stdlib.h"
+#include <cstdlib>
+
 #include "error.h"
 
 int Main(int, char**);

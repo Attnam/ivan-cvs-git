@@ -3,56 +3,22 @@ lp - low priority
 // - done
 (r) - rejected
 
-//Stethoscope. (hp)
 Inhandspics of broken weapons. (lp)
 Hit symbol.
-(r) Village Elder.
-//Thief.
-//Black Mage.
-//Grave digger.
-//Short sword + broken picture.
-//Dagger + broken picture.
-(r) Halberd + broken picture.
-//Hammer and sickle + broken pictures.
-//Broken shield.
-//Morning star + broken picture.
-//Flail + broken picture.
-//Quarterstaff + broken picture.
 Scimitar + broken picture.
 Katana + broken picture.
 Broadsword + broken picture.
-//Battle axe + broken picture.
 Club + broken picture.
-//Scythe + broken picture.
-//Bastard sword + broken picture.
 Colossal morning star + broken picture.
 Great axe + broken picture.
-//Skull.
-//Elpuri's head is of wrong color.
-//Broken chain mail.
-//Jackals on gravel floor.
-//Ring of teleportation + gravel floor.
-//Smith.
 Forge.
-//Anvil. (lp)
-//Levitating ostrich.
-//M-color for boots. (hp)
-//Animation for mommos.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-//Teleport.
-//Golden Eagle Shirt's animation is really gay.
 Visible invisible stalker.
 Lada.
 Jungle bays.
-//Better helmet.
 Robe.
-//Ring of poison resistance, triangular key on a gravel floor.
-//Corpse of a black unicorn looks odd.
-//Iron dagger on a gravel floor.
-//Floating eye.
-Bunny, large bunny and mega-large bunny.
 Mouse.
 Torturing devices.
 Vacuum cleaner.
@@ -60,10 +26,5 @@ Rolling pin.
 Frying pan.
 Clothes peg.
 
-//Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
-//Small, medium and large chests (one is probably already done...)
-//The picture in the menu should be cleaned from all compression related problems. (small color variation in the places)
-//Keys are hardly visible on wooden parquet
-//Broken axe is nearly invisible on gravel floor
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

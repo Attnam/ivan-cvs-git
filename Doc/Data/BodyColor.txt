@@ -19,7 +19,7 @@ Arms
 Legs
 1. skin
 2. main color
-3. reserved
+3. boots
 4. special color
 
 Shield

@@ -3428,9 +3428,8 @@ void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool Al
 
 std::string werewolfwolf::GetKillName() const
 {
-  if(GetPolymorphBackup()->GetType() == werewolfhuman_ProtoType.GetIndex())
+  if(GetPolymorphBackup() && GetPolymorphBackup()->GetType() == werewolfhuman_ProtoType.GetIndex())
     return GetName(INDEFINITE);
+
   return humanoid::GetKillName();
 }
-
-

@@ -6,13 +6,18 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Docs have been cleaned up a bit
+
 April 2 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* CanApply value added for monsters
 	* Werewolves' KillMessage corrected
 	* Go command no longer walks through smoke
 	* Probably something completely different...
-	
+
 April 1 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a small abusable bug in the monster AI

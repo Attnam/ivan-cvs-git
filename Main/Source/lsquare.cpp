@@ -1661,5 +1661,5 @@ void lsquare::ReceiveEarthQuakeDamage()
 
 bool lsquare::IsDangerous(character* ToWhom) const
 {
-  return GetStack()->IsDangerous(ToWhom) || !(Smoke.empty());
+  return GetStack()->IsDangerous(ToWhom) || !Smoke.empty();
 }

@@ -112,3 +112,24 @@ Grid feature
 Mad cow
 
 	Eating makes the player mad, too.
+
+Pikachu
+
+	Lightning attack. Stats from pokemon.com: size 40 cm, weight 6 kg. Sometimes shouts, "The Primary Main
+	Objective is to destroy the Evil Power!"
+
+King Kong
+
+	An ape standing six meters tall.
+
+Mimic
+
+	Like in Nethack.
+
+Ent (or treant)
+
+	Like in LotR.
+
+Hydra
+
+	Attacks everyone around, like Elpuri.

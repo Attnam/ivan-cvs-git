@@ -3830,8 +3830,8 @@ void character::EndPolymorph()
 
 void character::LycanthropyHandler()
 {
-  if(!(RAND() % 2500))
-    Polymorph(new werewolfwolf, RAND() % 2500);
+  if(!(RAND() % 2000))
+    Polymorph(new werewolfwolf, 1000 + RAND() % 2000);
 }
 
 void character::SaveLife()
