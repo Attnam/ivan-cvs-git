@@ -82,6 +82,7 @@ public:
 	virtual ulong RawPrice() const { return 0; }
 	virtual bool GetIsBadFoodForAI() const { return false; }
 	virtual bool CanBeDigged() const { return true; }
+	virtual bool IsFlexible() const { return false; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }

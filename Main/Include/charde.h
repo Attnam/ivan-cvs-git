@@ -359,6 +359,7 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(20000)
 	virtual std::string TalkVerb() const { return "croaks"; }
+	virtual bool CanOpenDoors(void) const { return false; }
 );
 
 class CHARACTER
@@ -1125,11 +1126,184 @@ public:
 	virtual ushort Possibility() const RET(125)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
 	virtual std::string StandVerb() const { return "flying"; }
+	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(464,0)
 	virtual std::string NameSingular() const RET("bat")
 	virtual float GetMeleeStrength() const RET(5000)
 );
+
+
+class CHARACTER
+(
+	mistress,
+	character,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(180);
+		SetAgility(20);
+		SetStrength(25);
+		SetEndurance(50);
+		SetPerception(10);
+	},
+public:
+	virtual ushort Possibility() const RET(50)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual bool CanWield() const RET(true)
+	virtual uchar GetSex() const RET(FEMALE)
+protected:
+	virtual vector2d GetBitmapPos() const RETV(352,0)
+	virtual void CreateInitialEquipment();
+	virtual std::string NameSingular() const RET("mistress")
+);
+
+
+class CHARACTER
+(
+	werewolf,
+	human,
+	InitMaterials(new werewolfflesh),
+	{
+		SetMoney(RAND() % 30);
+		SetChangeCounter(0);
+		if(RAND() % 2) 
+			ChangeIntoHuman();
+		else
+			ChangeIntoWolf();
+	},
+public:
+	virtual void Load(inputfile&);
+	virtual void Save(outputfile&) const;
+	virtual ushort Possibility() const RET(125)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual bool HasInfraVision() const { return GetIsWolf(); }
+	virtual void ChangeIntoHuman();
+	virtual void ChangeIntoWolf();
+	virtual void Be();
+	virtual bool GetIsWolf() const { return IsWolf; } 
+	virtual void SetIsWolf(bool What) { IsWolf = What; }
+	virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
+	virtual ushort GetChangeCounter() { return ChangeCounter; }
+	virtual ulong werewolf::MaxDanger();
+	virtual bool CanWield() const { return !GetIsWolf(); } 
+protected:
+	virtual std::string NameSingular() const RET("werewolf")
+	virtual float GetMeleeStrength() const;
+	bool IsWolf;
+	unsigned short ChangeCounter;
+);
+
+
+class CHARACTER
+(
+	kobold,
+	character,
+	InitMaterials(new koboldflesh),
+	{
+		SetSize(70);
+		SetAgility(12);
+		SetStrength(8);
+		SetEndurance(6);
+		SetPerception(12);
+	},
+public:
+	virtual ushort Possibility() const RET(75)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 90000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(448,0)
+	virtual std::string NameSingular() const RET("kobold")
+	virtual float GetMeleeStrength() const RET(15000)
+);
+
+class CHARACTER	// it should be noted that I no idea what 
+(				// a gibberling is.... sooooo....
+	gibberling,
+	character,
+	InitMaterials(new gibberlingflesh),
+	{
+		SetSize(90);
+		SetAgility(5);
+		SetStrength(4);
+		SetEndurance(3);
+		SetPerception(12);
+	},
+public:
+	virtual ushort Possibility() const RET(125)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 70000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(480,0)
+	virtual std::string NameSingular() const RET("gibberling")
+	virtual float GetMeleeStrength() const RET(5000)
+);
+
+class CHARACTER	
+(				
+	largecat,
+	character,
+	InitMaterials(new catflesh),
+	{
+		SetSize(60);
+		SetAgility(23);
+		SetStrength(8);
+		SetEndurance(6);
+		SetPerception(20);
+	},
+public:
+	virtual ushort Possibility() const RET(125)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(496,0)
+	virtual std::string NameSingular() const RET("large cat")
+	virtual float GetMeleeStrength() const RET(15000)
+);
+
+
+class CHARACTER	
+(				
+	largerat,
+	character,
+	InitMaterials(new ratflesh),
+	{
+		SetSize(30);
+		SetAgility(8);
+		SetStrength(3);
+		SetEndurance(2);
+		SetPerception(10);
+	},
+public:
+	virtual ushort Possibility() const RET(150)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 3000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(512,0)
+	virtual std::string NameSingular() const RET("large rat")
+	virtual float GetMeleeStrength() const RET(4000)
+);
+
+
+
+class CHARACTER	
+(				
+	angel,
+	character,
+	InitMaterials(2, new angelflesh, new pork), // 2nd is temp material.
+	{
+		SetSize(30);
+		SetAgility(60);
+		SetStrength(70);
+		SetEndurance(80);
+		SetPerception(40);
+	},
+public:
+	virtual ushort Possibility() const RET(0)
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(432,0)
+	virtual std::string NameSingular() const RET("angel")
+	virtual float GetMeleeStrength() const RET(40000)
+);
+
+
 
 #endif
 

@@ -1434,3 +1434,114 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 	}
 }
 
+void mistress::CreateInitialEquipment()
+{
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new whip)));
+}
+
+void werewolf::ChangeIntoHuman()
+{
+	SetSize(180);
+	SetAgility(15);
+	SetStrength(12);
+	SetEndurance(14);
+	SetPerception(12);
+	SetLegType(1);
+	SetTorsoType(1);
+	SetArmType(1);		// Needs GFX
+	SetHeadType(1);
+	SetShieldType(0);
+	SetStrengthExperience(0);
+	SetEnduranceExperience(0);
+	SetAgilityExperience(0);
+	SetPerceptionExperience(0);
+	SetIsWolf(false);
+}
+
+void werewolf::ChangeIntoWolf()
+{
+	SetSize(200);
+	SetAgility(25);
+	SetStrength(22);
+	SetEndurance(24);
+	SetPerception(20);
+	SetLegType(2);		// Needs GFX
+	SetTorsoType(2);
+	SetArmType(2);
+	SetHeadType(2);
+	SetShieldType(0);
+	SetIsWolf(true);
+	SetWielded(0);
+	SetStrengthExperience(0);
+	SetEnduranceExperience(0);
+	SetAgilityExperience(0);
+	SetPerceptionExperience(0);
+}
+
+
+void werewolf::Be()
+{
+	if(ChangeCounter++ > 1000)
+	{
+		SetChangeCounter(0);
+		if(GetIsWolf())
+		{	
+			ChangeIntoHuman();
+			if(GetIsPlayer())
+				ADD_MESSAGE("You change into a human... Atleast for some time.");
+			else if(GetSquareUnder()->CanBeSeen())
+			{
+				ADD_MESSAGE("%s changes into human.", CNAME(DEFINITE));
+			}
+		}
+		else
+		{
+			ChangeIntoWolf();
+			if(GetIsPlayer())
+				ADD_MESSAGE("You change into a wolf... Atleast for some time.");
+			else if(GetSquareUnder()->CanBeSeen())
+			{
+				ADD_MESSAGE("%s changes into a wolf.", CNAME(DEFINITE));
+			}
+		}
+	}
+
+	character::Be();
+}
+
+ulong werewolf::MaxDanger()
+{
+	bool BeforeThis = GetIsWolf();
+	ChangeIntoWolf();
+	ulong AsWolf = ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+	ChangeIntoHuman();
+	ulong AsHuman = ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+	if(BeforeThis)
+		ChangeIntoWolf();
+	else
+		ChangeIntoHuman();
+	return (AsWolf + AsHuman) / 2;
+}
+
+float werewolf::GetMeleeStrength() const
+{
+	if(GetIsWolf())
+		return 9000;
+	else
+		return 1000;
+}
+
+
+void werewolf::Save(outputfile& SaveFile) const
+{
+	humanoid::Save(SaveFile);
+
+	SaveFile << IsWolf << ChangeCounter;
+}
+
+void werewolf::Load(inputfile& SaveFile)
+{
+	humanoid::Load(SaveFile);
+
+	SaveFile >> IsWolf >> ChangeCounter;
+}

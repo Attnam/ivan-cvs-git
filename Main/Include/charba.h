@@ -135,8 +135,8 @@ public:
 	virtual uchar GetBurdenState(ulong = 0) const;
 	virtual uchar GetSex() const { return UNDEFINED; }
 	virtual uchar TakeHit(character*, short);
-	virtual ulong CurrentDanger() const;
-	virtual ulong MaxDanger() const;
+	virtual ulong CurrentDanger();
+	virtual ulong MaxDanger();
 	virtual ulong GetBloodColor() const;
 	virtual ushort CalculateArmorModifier() const;
 	virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
@@ -256,6 +256,7 @@ public:
 	virtual std::string StandVerb() const { return "standing"; }
 	virtual stack* GetGiftStack() const;
 	virtual void MoveRandomlyInRoom();
+	virtual bool CanOpenDoors(void) const { return true; }
 	virtual void GoHandler();
 	virtual void EndGoing();
 	virtual bool Go();
@@ -263,6 +264,7 @@ public:
 	virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
 	virtual void SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 	virtual bool CanBeDisplaced() const { return true; }
+
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

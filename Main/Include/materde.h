@@ -579,6 +579,7 @@ public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
+	virtual bool IsFlexible() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "leather"; }
 );
@@ -686,6 +687,80 @@ public:
 	virtual short NutritionValue() const			{ return 350; }
 protected:
 	virtual std::string NameStem() const	{ return "bat flesh"; }
+);
+
+class MATERIAL
+(
+	werewolfflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 13; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
+	virtual short NutritionValue() const			{ return 350; }
+protected:
+	virtual std::string NameStem() const	{ return "werewolf flesh"; }
+);
+
+
+
+class MATERIAL
+(
+	koboldflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 14; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
+	virtual short NutritionValue() const			{ return 400; }
+protected:
+	virtual std::string NameStem() const	{ return "kobold flesh"; }
+);
+
+class MATERIAL
+(
+	gibberlingflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 12; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
+	virtual short NutritionValue() const			{ return 405; }
+protected:
+	virtual std::string NameStem() const	{ return "gibberling flesh"; }
+);
+
+class MATERIAL
+(
+	catflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 12; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(0, 0, 0); }
+	virtual short NutritionValue() const			{ return 405; }
+protected:
+	virtual std::string NameStem() const	{ return "cat flesh"; }
+);
+
+class MATERIAL
+(
+	ratflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 8; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(0, 0, 0); }
+	virtual short NutritionValue() const			{ return 405; }
+protected:
+	virtual std::string NameStem() const	{ return "rat flesh"; }
+);
+
+class MATERIAL
+(
+	angelflesh,
+	flesh,
+public:
+	virtual ushort OfferValue() const				{ return 8; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(200, 200, 200); }
+	virtual short NutritionValue() const			{ return 405; }
+protected:
+	virtual std::string NameStem() const	{ return "angel flesh"; }
 );
 
 #endif

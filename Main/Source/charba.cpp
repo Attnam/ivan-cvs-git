@@ -2634,18 +2634,20 @@ bool character::CheckForEnemies()
 
 bool character::CheckForDoors()
 {
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
+	if(CanOpenDoors())
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
-			else
-				ADD_MESSAGE("Something opens the door.");
+		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
+		{
+			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s opens the door.", CNAME(DEFINITE));
+				else
+					ADD_MESSAGE("Something opens the door.");
 
-		return true;
-	})
-
+			return true;
+		})
+	}
 	return false;
 }
 
@@ -2835,12 +2837,12 @@ float character::GetDodgeValue() const
 	return (GetMeleeAttributeModifier() << 1) / sqrt(GetSize());
 }
 
-ulong character::CurrentDanger() const
+ulong character::CurrentDanger()
 {
 	return ulong(GetAttackStrength() * GetStrength() * GetHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
 }
 
-ulong character::MaxDanger() const
+ulong character::MaxDanger()
 {
 	return ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
 }
@@ -3110,6 +3112,7 @@ void character::GoHandler()
 
 		if(!TryMove(MoveToSquare->GetPos()) || GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLevelSquareUnder()->GetStack()->GetItems())
 			EndGoing();
+
 	}
 }
 

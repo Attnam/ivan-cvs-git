@@ -993,5 +993,24 @@ protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
 
+class ITEM
+(
+	whip,
+	meleeweapon,
+	InitMaterials(new leather),
+	{
+		SetSize(150);
+	},
+public:
+	virtual ushort Possibility() const RET(25)
+	virtual vector2d GetInHandsPic() const RET(vector2d(160,224))
+	virtual std::string NameSingular() const RET("whip")
+	virtual float OfferModifier() const RET(0.5)
+	virtual vector2d GetBitmapPos() const RETV(32,0)
+	virtual uchar GetWeaponCategory() const { return WHIPS; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 240; default: return 0; } }
+protected:
+	virtual ushort GetFormModifier() const;
+);
 #endif
 
