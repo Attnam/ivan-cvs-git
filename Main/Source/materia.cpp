@@ -68,6 +68,7 @@ bool material::Effect(character* Eater, ulong Amount)
     case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
     case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); return true;
     case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); return true;
+    case EFFECT_MAGIC_VAPOUR: Eater->ActivateRandomState(Amount); return true;
     default: return false;
     }
 }

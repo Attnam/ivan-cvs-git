@@ -16,6 +16,7 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 
 #undef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DEFINITIONS__
 
+#include <algorithm>
 #include <ctime>
 
 #include "char.h"

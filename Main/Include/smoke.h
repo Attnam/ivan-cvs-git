@@ -1,6 +1,10 @@
 #ifndef __SMOKE_H__
 #define __SMOKE_H__
 
+#ifdef VC
+#pragma warning(disable : 4786)
+#endif
+
 #include <vector>
 
 #include "entity.h"
@@ -15,8 +19,8 @@ class outputfile;
 class smoke : public entity
 {
  public:
-  smoke(gas*, lsquare*);
   smoke();
+  smoke(gas*, lsquare*);
   virtual ~smoke();
   virtual void Be();
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
@@ -33,6 +37,7 @@ class smoke : public entity
   material* Gas;
   std::vector<bitmap*> Picture;
   lsquare* LSquareUnder;
+  uchar Alpha;
 };
 
 outputfile& operator<<(outputfile&, const smoke*);

@@ -81,9 +81,15 @@ class level : public area
   void SetDungeon(dungeon* What) { Dungeon = What; }
   uchar GetIndex() const { return Index; }
   void SetIndex(uchar What) { Index = What; }
-  bool DrawExplosion(const explosion&) const;
+  bool DrawExplosion(const explosion*) const;
   ushort TriggerExplosions(ushort);
   lsquare*** GetMap() const { return Map; }
+  vector2d GetNearestFreeSquare(const character*, vector2d) const;
+  vector2d FreeSquareSeeker(const character*, vector2d, vector2d, uchar) const;
+  vector2d GetFreeAdjacentSquare(const character*, vector2d,bool) const;
+  static void (level::*GetBeamEffectVisualizer(ushort))(const rect&, ushort) const;
+  void ParticleVisualizer(const rect&, ushort) const;
+  void LightningVisualizer(const rect&, ushort) const;
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
@@ -97,7 +103,7 @@ class level : public area
   uchar Difficulty;
   dungeon* Dungeon;
   uchar Index;
-  std::vector<explosion> ExplosionQueue;
+  std::vector<explosion*> ExplosionQueue;
   std::vector<bool> PlayerHurt;
 };
 

@@ -77,7 +77,28 @@ bool commandsystem::GoUp(character* Char)
       return false;
     }
 
-  if(Char->GetSquareUnder()->GetOTerrain()->Enter(true))
+  if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() >= 1)
+    if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() - 1, RANDOM, true))
+      return true;
+
+  oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
+
+  if(!Terrain)
+    {
+      if(game::IsInWilderness())
+	{
+	  if(!Char->CanFly())
+	    ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+	  else
+	    ADD_MESSAGE("You fly around for some time.");
+	}
+      else
+	ADD_MESSAGE("You can't go up.");
+
+      return false;
+    }
+
+  if(Terrain->Enter(true))
     {
       Char->EditExperience(LEG_STRENGTH, 50);
       Char->EditNP(-20);
@@ -96,7 +117,23 @@ bool commandsystem::GoDown(character* Char)
       return false;
     }
 
-  if(Char->GetSquareUnder()->GetOTerrain()->Enter(false))
+  if(!game::IsInWilderness() && game::WizardModeIsActive() && game::GetCurrentLevelIndex() < game::GetLevels() - 1)
+    if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() + 1, RANDOM, true))
+      return true;
+
+  oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
+
+  if(!Terrain)
+    {
+      if(game::IsInWilderness())
+	ADD_MESSAGE("There seems to be nothing of interest here.");
+      else
+	ADD_MESSAGE("You can't go down.");
+
+      return false;
+    }
+
+  if(Terrain->Enter(false))
     {
       Char->EditExperience(AGILITY, 25);
       Char->EditNP(-10);
@@ -186,13 +223,18 @@ bool commandsystem::Eat(character* Char)
       return true;
     }
 
-  if(!game::IsInWilderness() && Char->GetLSquareUnder()->GetOLTerrain()->HasEatEffect())
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasEatEffect())
     {
-      if(Char->GetLSquareUnder()->GetOLTerrain()->Eat(Char))
+      if(Square->GetOLTerrain()->Eat(Char))
 	return true;
     }
 
-  if((game::IsInWilderness() || !Char->GetStackUnder()->SortedItems(Char, &item::EatableSorter)) && !Char->GetStack()->SortedItems(Char, &item::EatableSorter))
+  stack* Inventory = Char->GetStack();
+  stack* StackUnder = Square->GetStack();
+
+  if((game::IsInWilderness() || !StackUnder->SortedItems(Char, &item::EatableSorter)) && !Inventory->SortedItems(Char, &item::EatableSorter))
     {
       ADD_MESSAGE("You have nothing to eat!");
       return false;
@@ -200,10 +242,10 @@ bool commandsystem::Eat(character* Char)
 
   itemvector Item;
 
-  if(!game::IsInWilderness() && Char->GetStackUnder()->SortedItems(Char, &item::EatableSorter))
-    Char->GetStack()->DrawContents(Item, Char->GetStackUnder(), Char, "What do you wish to eat?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::EatableSorter);
+  if(!game::IsInWilderness() && StackUnder->SortedItems(Char, &item::EatableSorter))
+    Inventory->DrawContents(Item, StackUnder, Char, "What do you wish to eat?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::EatableSorter);
   else
-    Char->GetStack()->DrawContents(Item, Char, "What do you wish to eat?", NO_MULTI_SELECT, &item::EatableSorter);
+    Inventory->DrawContents(Item, Char, "What do you wish to eat?", NO_MULTI_SELECT, &item::EatableSorter);
 
   return !Item.empty() ? Char->ConsumeItem(Item[0]) : false;
 }
@@ -216,13 +258,18 @@ bool commandsystem::Drink(character* Char)
       return true;
     }
 
-  if(!game::IsInWilderness() && Char->GetLSquareUnder()->GetOLTerrain()->HasDrinkEffect())
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(!game::IsInWilderness() && Square->GetOLTerrain() && Square->GetOLTerrain()->HasDrinkEffect())
     {
-      if(Char->GetLSquareUnder()->GetOLTerrain()->Drink(Char))
+      if(Square->GetOLTerrain()->Drink(Char))
 	return true;
     }
 
-  if((game::IsInWilderness() || !Char->GetStackUnder()->SortedItems(Char, &item::DrinkableSorter)) && !Char->GetStack()->SortedItems(Char, &item::DrinkableSorter))
+  stack* Inventory = Char->GetStack();
+  stack* StackUnder = Square->GetStack();
+
+  if((game::IsInWilderness() || !StackUnder->SortedItems(Char, &item::DrinkableSorter)) && !Inventory->SortedItems(Char, &item::DrinkableSorter))
     {
       ADD_MESSAGE("You have nothing to drink!");
       return false;
@@ -230,10 +277,10 @@ bool commandsystem::Drink(character* Char)
 
   itemvector Item;
 
-  if(!game::IsInWilderness() && Char->GetStackUnder()->SortedItems(Char, &item::DrinkableSorter))
-    Char->GetStack()->DrawContents(Item, Char->GetStackUnder(), Char, "What do you wish to drink?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::DrinkableSorter);
+  if(!game::IsInWilderness() && StackUnder->SortedItems(Char, &item::DrinkableSorter))
+    Inventory->DrawContents(Item, StackUnder, Char, "What do you wish to drink?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::DrinkableSorter);
   else
-    Char->GetStack()->DrawContents(Item, Char, "What do you wish to drink?", NO_MULTI_SELECT, &item::DrinkableSorter);
+    Inventory->DrawContents(Item, Char, "What do you wish to drink?", NO_MULTI_SELECT, &item::DrinkableSorter);
 
   return !Item.empty() ? Char->ConsumeItem(Item[0]) : false;
 }
@@ -386,6 +433,7 @@ bool commandsystem::Talk(character* Char)
 
   return false;
 }
+
 bool commandsystem::NOP(character* Char)
 {
   Char->EditExperience(DEXTERITY, -10);
@@ -718,7 +766,9 @@ bool commandsystem::Offer(character* Char)
   if(!Char->CheckOffer())
     return false;
 
-  if(Char->GetLSquareUnder()->GetOLTerrain()->AcceptsOffers())
+  lsquare* Square = Char->GetLSquareUnder();
+
+  if(Square->GetOLTerrain() && Square->GetOLTerrain()->AcceptsOffers())
     {
       if(!Char->GetStack()->GetItems())
 	{
@@ -730,7 +780,7 @@ bool commandsystem::Offer(character* Char)
 
       if(Item)
 	{
-	  if(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->ReceiveOffer(Item))
+	  if(game::GetGod(Square->GetDivineMaster())->ReceiveOffer(Item))
 	    {
 	      Item->RemoveFromSlot();
 	      Item->SendToHell();
@@ -868,7 +918,11 @@ bool commandsystem::RestUntilHealed(character* Char)
       return false;
     }
 
-  Char->GetSquareUnder()->GetOTerrain()->ShowRestMessage(Char);
+  oterrain* Terrain = Char->GetSquareUnder()->GetOTerrain();
+
+  if(Terrain)
+    Terrain->ShowRestMessage(Char);
+
   rest* Rest = new rest(Char);
   Rest->SetGoalHP(HPToRest);
   Char->SetAction(Rest);
@@ -917,10 +971,8 @@ bool commandsystem::GainDivineKnowledge(character*)
 
 bool commandsystem::Sit(character* Char)
 {
-  if(Char->GetLSquareUnder()->GetOLTerrain()->SitOn(Char))
-    return true;
-  else
-    return Char->GetLSquareUnder()->GetGLTerrain()->SitOn(Char);
+  lsquare* Square = Char->GetLSquareUnder();
+  return (Square->GetOLTerrain() && Square->GetOLTerrain()->SitOn(Char)) || Square->GetGLTerrain()->SitOn(Char);
 }
 
 bool commandsystem::Go(character* Char)
@@ -942,7 +994,7 @@ bool commandsystem::Go(character* Char)
 
   for(ushort d = 0; d < 8; ++d)
     {
-      square* Square = Char->GetNeighbourSquare(d);
+      lsquare* Square = Char->GetNeighbourLSquare(d);
 
       if(Square && Square->IsWalkable(Char))
 	++OKDirectionsCounter;

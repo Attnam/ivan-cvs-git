@@ -38,9 +38,6 @@ character* protosystem::BalancedCreateMonster()
 		if(PLAYER->GetMaxHP() < i->second.HPRequirementForGeneration)
 		  continue;
 
-		if(!i->second.IsUnique && RAND() % 3)
-		  continue;
-
 		Possible.push_back(ConfigID);
 	      }
 	}
@@ -54,7 +51,7 @@ character* protosystem::BalancedCreateMonster()
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen.Type);
 	  character* Monster = Proto->Clone(Chosen.Config);
 
-	   if(c >= 100 || (Monster->GetTimeToKill(PLAYER, true) > 7500 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
+	   if(c >= 100 || ((Monster->GetFrequency() == 10000 || Monster->GetFrequency() > RAND() % 10000) && Monster->GetTimeToKill(PLAYER, true) > 7500 && (Monster->IsUnique() || PLAYER->GetTimeToKill(Monster, true) < 75000)))
 	    {
 	      game::SignalGeneration(Chosen);
 	      Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -63,74 +60,6 @@ character* protosystem::BalancedCreateMonster()
 	  else
 	    delete Monster;
 	}
-
-	  /*ushort ChosenType;
-	  ushort ChosenConfig;
-	  std::pair<ushort, ushort> Chosen;
-	  const character::prototype* Proto;
-	  const character::databasemap* Config;
-
-	  if(c < 100 || Illegal.size() < 3)
-	    {
-	      Chosen.first = ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-	      Proto = protocontainer<character>::GetProto(ChosenType);
-	      Config = &Proto->GetConfig();
-	      Chosen.second = ChosenConfig = RAND() % Config->size();
-
-	      if(c < 100 && std::find(Illegal.begin(), Illegal.end(), Chosen) != Illegal.end())
-		continue;
-	    }
-	  else
-	    {
-	      Chosen = Illegal[RAND() % Illegal.size()];
-	      ChosenType = Chosen.first;
-	      ChosenConfig = Chosen.second;
-	      Proto = protocontainer<character>::GetProto(ChosenType);
-	      Config = &Proto->GetConfig();
-	    }
-
-	  for(character::databasemap::const_iterator i = Config->begin(); i != Config->end(); ++i)
-	    if(!ChosenConfig--)
-	      {
-		if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
-		  {
-		    const dangerid& DangerId = game::GetDangerMap().find(configid(ChosenType, i->first))->second;
-
-		    if(i->second.IsUnique && DangerId.HasBeenGenerated)
-		      break;
-
-		    if(c < 100 && !i->second.IgnoreDanger)
-		      {
-			float DangerModifier = DangerId.Danger * 100 / i->second.DangerModifier;
-
-			if(DangerModifier > Difficulty * 5 || DangerModifier < Difficulty / 5)
-			  break;
-		      }
-
-		    if(c < 100 && PLAYER->GetMaxHP() < i->second.HPRequirementForGeneration)
-		      break;
-
-		    if(c < 100 && !i->second.IsUnique && RAND() % 3)
-		      {
-			Illegal.push_back(Chosen);
-			break;
-		      }
-
-		    character* Monster = Proto->Clone(i->first);
-
-		     if(c >= 100 || (Monster->GetTimeToKill(PLAYER, true) > 10000 && (i->second.IsUnique || PLAYER->GetTimeToKill(Monster, true) < 100000)))
-		      {
-			game::SignalGeneration(ChosenType, i->first);
-			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-			return Monster;
-		      }
-		    else
-		      delete Monster;
-		  }
-
-		break;
-	      }
-	}*/
     }
 
   /* This line is never reached, but it prevents warnings given by some (stupid) compilers. */
@@ -298,6 +227,11 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!i->second.IsAbstract)
 	  {
+	    bool BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != std::string::npos;
+
+	    if(BrokenRequested != ((i->first & BROKEN) != 0))
+	      continue;
+
 	    std::pair<ushort, ushort> Correct = CountCorrectNameLetters<type>(i->second, Identifier);
 
 	    if(Correct == Best)

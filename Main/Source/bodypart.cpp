@@ -40,6 +40,8 @@ uchar leftleg::GetSpecialFlags() const { return SpecialFlags|ST_LEFT_LEG; }
 vector2d eddytorso::GetBitmapPos(ushort Frame) const { return torso::GetBitmapPos(Frame) + vector2d((Frame&0x6) << 3, 0); }
 vector2d mommotorso::GetBitmapPos(ushort Frame) const { return Frame >> 4 ? torso::GetBitmapPos(Frame) : torso::GetBitmapPos(Frame) + vector2d((Frame&0xE) << 3, 0); }
 
+head* corpse::Behead() { return Deceased->Behead(); }
+
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -2531,4 +2533,15 @@ bool corpse::IsStupidToConsume() const
 	return true;
     }
   return false;
+}
+
+head* head::Behead()
+{
+  RemoveFromSlot();
+  return this;
+}
+
+bool corpse::CanBeCloned() const
+{
+  return GetDeceased()->CanBeCloned();
 }

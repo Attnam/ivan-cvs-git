@@ -75,7 +75,7 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
 
       lsquare* JustHit = GetNearLSquare(Pos + DirVector);
 
-      if(!JustHit->GetOLTerrain()->IsWalkable())
+      if(!JustHit->IsFlyable())
 	{
 	  Breaks = true;
 	  JustHit->GetOLTerrain()->HasBeenHitByItem(Thrower, this, ushort(BaseDamage * sqrt(RangeLeft)));
@@ -203,7 +203,11 @@ void item::Load(inputfile& SaveFile)
 
 void item::TeleportRandomly()
 {
-  MoveTo(GetNearLSquare(GetLevel()->GetRandomSquare())->GetStack());
+  lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
+  MoveTo(Square->GetStack());
+
+  if(Square->CanBeSeenByPlayer())
+    ADD_MESSAGE("Suddenly %s appears!", CHAR_NAME(INDEFINITE));
 }
 
 ushort item::GetStrengthValue() const
@@ -507,6 +511,11 @@ void itemdatabase::InitDefaults(ushort Config)
       FormModifier >>= 2;
       StrengthModifier >>= 1;
     }
+
+  /* TERRIBLE gum solution! */
+
+  if(Config & DEVOUT)
+    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
 }
 
 void item::AddAttackInfo(felist& List) const

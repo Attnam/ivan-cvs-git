@@ -9,6 +9,7 @@
 #include "level.h"
 #include "dungeon.h"
 #include "felibdef.h"
+#include "lterra.h"
 
 #ifndef LIGHT_BORDER
 #define LIGHT_BORDER 80
@@ -73,8 +74,8 @@ class lsquare : public square
   void Draw();
   void UpdateMemorized();
   bool CanBeDug() const;
-  virtual gterrain* GetGTerrain() const;
-  virtual oterrain* GetOTerrain() const;
+  virtual gterrain* GetGTerrain() const { return GLTerrain; }
+  virtual oterrain* GetOTerrain() const { return OLTerrain; }
   glterrain* GetGLTerrain() const { return GLTerrain; }
   olterrain* GetOLTerrain() const { return OLTerrain; }
   void ChangeLTerrain(glterrain*, olterrain*);
@@ -90,7 +91,7 @@ class lsquare : public square
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void MoveCharacter(lsquare*);
   ulong GetRawLuminance() const;
-  void StepOn(character*, square*);
+  void StepOn(character*, lsquare*);
   uchar GetRoomIndex() const { return RoomIndex; }
   void SetRoomIndex(uchar What) { RoomIndex = What; }
   void SwapCharacter(lsquare*);
@@ -99,8 +100,8 @@ class lsquare : public square
   void SetTemporaryEmitation(ulong);
   ulong GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
-  void DrawParticles(ulong);
-  vector2d DrawLightning(vector2d, ulong, uchar);
+  void DrawParticles(ulong, bool = true);
+  vector2d DrawLightning(vector2d, ulong, uchar, bool = true);
   fluid* GetFluid() const { return Fluid; }
   void SetFluid(fluid* What) { Fluid = What; }
   void RemoveFluid();
@@ -138,13 +139,17 @@ class lsquare : public square
   uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
   bool CheckKick(const character*) const;
-  void GetHitByExplosion(const explosion&);
-  ushort GetSpoiledItemsNear() const;
+  void GetHitByExplosion(const explosion*);
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   bool LowerEnchantment(character*, const std::string&, uchar);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
+  bool IsFlyable() const { return !OLTerrain || OLTerrain->IsWalkable(); }
+  bool IsTransparent() const { return (!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175; }
+  bool IsWalkable(const character* Char = 0) const { return (!OLTerrain || OLTerrain->IsWalkable(Char)) && GLTerrain->IsWalkable(Char); }
+  virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
+  void SignalSmokeAlphaChange(short);
   void ShowSmokeMessage() const;
  protected:
   glterrain* GLTerrain;
@@ -162,7 +167,8 @@ class lsquare : public square
   bitmap* Memorized;
   bool MemorizedUpdateRequested;
   ulong LastExplosionID;
-  std::vector<smoke*> Smoke; 
+  std::vector<smoke*> Smoke;
+  ushort SmokeAlphaSum;
 };
 
 inline bool lsquare::IsDark() const

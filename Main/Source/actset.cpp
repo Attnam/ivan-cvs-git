@@ -12,7 +12,6 @@ valuemap protocontainer<action>::CodeNameMap;
 
 #include "message.h"
 #include "char.h"
-#include "lterra.h"
 #include "materia.h"
 #include "game.h"
 

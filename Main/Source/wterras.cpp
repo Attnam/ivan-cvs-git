@@ -28,9 +28,6 @@ vector2d evergreenforest::GetBitmapPos(ushort) const { return vector2d(352, 16);
 std::string steppe::GetNameStem() const { return "steppe"; }
 vector2d steppe::GetBitmapPos(ushort) const { return vector2d(160, 16); }
 
-std::string atmosphere::GetNameStem() const { return ""; }
-vector2d atmosphere::GetBitmapPos(ushort) const { return vector2d(0, 0); }
-
 std::string attnam::GetNameStem() const { return "migthy cathedral reaching the clouds"; }
 vector2d attnam::GetBitmapPos(ushort) const { return vector2d(0, 48); }
 uchar attnam::GetAttachedDungeon() const { return ATTNAM; }

@@ -25,8 +25,6 @@ ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0
 bool backpack::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 ulong backpack::GetTotalExplosivePower() const { return GetContainedMaterial() ? GetContainedMaterial()->GetTotalExplosivePower() : 0; }
 
-void holybook::AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
-
 ulong stone::GetTruePrice() const { return GetMainMaterial()->GetRawPrice() << 1; }
 
 ushort whistle::GetMaterialColorB(ushort) const { return MakeRGB16(80, 32, 16); }
@@ -71,7 +69,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(GetArea()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Monster) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
+      if(GetArea()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  GetNearLSquare(TryToCreate)->AddCharacter(Monster);
 
@@ -160,23 +158,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer() && !game::BoolQuestion("Are you sure you want to break " + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
-  if(Terrorist->IsPlayer())
-    ADD_MESSAGE("%s breaks in two and then explodes!", CHAR_NAME(DEFINITE));
-  else if(Terrorist->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
-  else if(GetSquareUnder()->CanBeSeenByPlayer())
-    ADD_MESSAGE("Something explodes!");
-
-  RemoveFromSlot();
-  SendToHell();
-  std::string DeathMsg;
-
-  if(Terrorist->IsPlayer())
-    DeathMsg = "exploded himself by breaking a wand";
-  else
-    DeathMsg = "kamikazed by " + Terrorist->GetKillName();
-
-  Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 50);
+  BreakEffect(Terrorist, "killed by breaking " + GetName(INDEFINITE));
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -501,21 +483,12 @@ void holybook::FinishReading(character* Reader)
 
 bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if((Type == FIRE || Type == ENERGY) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
+  if((Type == FIRE || Type == ENERGY || Type == PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
-      std::string DeathMsg = "killed by an explosion of ";
-      AddName(DeathMsg, INDEFINITE);
-
-      if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
-
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
-      lsquare* Square = GetLSquareUnder();
-      RemoveFromSlot();
-      SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 50);
+      BreakEffect(Damager, "killed by an exploding " + GetName(UNARTICLED));
       return true;
     }
 
@@ -592,7 +565,7 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(GetArea()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Genie) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
+	  if(GetArea()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Genie) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
 	    {
 	      GetNearSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
@@ -741,7 +714,7 @@ void bananapeels::StepOnEffect(character* Stepper)
       /* Do damage against any random bodypart except legs */
 
       Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
-      Stepper->CheckDeath("slipped on a banana peel.", 0);
+      Stepper->CheckDeath("slipped on a banana peel", 0);
       Stepper->EditAP(-500);
     }
 }
@@ -2116,6 +2089,7 @@ void beartrap::Search(const character* Char, ushort Perception)
       DiscoveredByTeam.insert(ViewerTeam);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
+      game::AskForKeyPress("Trap found! [press any key to continue]");
       ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
     }
 }
@@ -2129,6 +2103,7 @@ void mine::Search(const character* Char, ushort Perception)
       DiscoveredByTeam.insert(ViewerTeam);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
+      game::AskForKeyPress("Trap found! [press any key to continue]");
       ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
     }
 }
@@ -2144,6 +2119,23 @@ void mine::SetIsActive(bool What)
 {
   Active = What;
   DiscoveredByTeam.clear();
+}
+
+void wand::BreakEffect(character* Terrorist, const std::string& DeathMsg)
+{
+  vector2d Pos = GetPos();
+  level* Level = GetLevel();
+  RemoveFromSlot();
+
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, Level->GetBorder(), Pos, GetBreakEffectRange());
+  (Level->*level::GetBeamEffectVisualizer(GetBeamStyle()))(Rect, GetBeamColor());
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      (Level->GetLSquare(x, y)->*lsquare::GetBeamEffect(GetBeamEffect()))(Terrorist, DeathMsg, YOURSELF);
+
+  SendToHell();
 }
 
 bool beartrap::ReceiveDamage(character* Damager, ushort Damage, uchar Type)

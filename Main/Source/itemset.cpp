@@ -20,7 +20,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "message.h"
 #include "database.h"
 #include "stack.h"
-#include "lterra.h"
 #include "wskill.h"
 #include "felist.h"
 #include "festring.h"

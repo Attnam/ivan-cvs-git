@@ -37,12 +37,8 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
       if(VisibleItems > 1)
 	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 0, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 
-      for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-	if(i->IsDangerous() && i->CanBeSeenBy(Viewer))
-	  {
-	    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 160, 16, Pos, 16, 16, configuration::GetContrastLuminance());
-	    break;
-	  }
+      if(IsDangerous(Viewer))
+	igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 160, 16, Pos, 16, 16, configuration::GetContrastLuminance());
     }
 }
 
@@ -278,12 +274,12 @@ void stack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       ItemVector[c]->ReceiveDamage(Damager, Damage, Type);
 }
 
-void stack::TeleportRandomly()
+void stack::TeleportRandomly(ushort Amount)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);
 
-  for(ushort c = 0; c < ItemVector.size(); ++c)
+  for(ushort c = 0; c < ItemVector.size() && c < Amount; ++c)
     if(ItemVector[c]->Exists())
       ItemVector[c]->TeleportRandomly();
 }
@@ -826,4 +822,13 @@ void stack::Search(const character* Char, ushort Perception)
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->Search(Char, Perception);
+}
+
+bool stack::IsDangerous(const character* Viewer) const
+{
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->IsDangerous() && i->CanBeSeenBy(Viewer))
+      return true;
+
+  return false;
 }

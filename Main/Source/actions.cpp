@@ -213,47 +213,57 @@ void dig::Load(inputfile& SaveFile)
 
 void dig::Handle()
 {
-  if(!GetActor()->GetMainWielded())
+  character* Actor = GetActor();
+  item* Digger = Actor->GetMainWielded();
+
+  if(!Digger)
     {
       Terminate(false);
       return;
     }
 
-  lsquare* Square = GetActor()->GetNearLSquare(SquareDug);
-  ushort Damage = GetActor()->GetAttribute(ARM_STRENGTH) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / 500;
-  Square->GetOLTerrain()->EditHP(-Max<ushort>(Damage, 1));
-  GetActor()->EditExperience(ARM_STRENGTH, 10);
-  GetActor()->EditAP(-100000 / APBonus(GetActor()->GetAttribute(DEXTERITY)));
-  GetActor()->EditNP(-30);
+  lsquare* Square = Actor->GetNearLSquare(SquareDug);
+  olterrain* Terrain = Square->GetOLTerrain();
 
-  if(Square->GetOLTerrain()->GetHP() <= 0)
+  if(!Terrain || !Terrain->CanBeDestroyed() || !Terrain->GetMainMaterial()->CanBeDug(Digger->GetMainMaterial()))
+    {
+      Terminate(false);
+      return;
+    }
+
+  ushort Damage = Actor->GetAttribute(ARM_STRENGTH) * Digger->GetMainMaterial()->GetStrengthValue() / 500;
+  Terrain->EditHP(-Max<ushort>(Damage, 1));
+  Actor->EditExperience(ARM_STRENGTH, 10);
+  Actor->EditAP(-100000 / APBonus(Actor->GetAttribute(DEXTERITY)));
+  Actor->EditNP(-30);
+
+  if(Terrain->GetHP() <= 0)
     {
       if(Square->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s", Square->GetOLTerrain()->GetDigMessage().c_str());
+	ADD_MESSAGE("%s", Terrain->GetDigMessage().c_str());
 
-      character* Actor = GetActor();
-      Square->GetOLTerrain()->Break();
+      Terrain->Break();
 
       /* If the door was boobytrapped etc. and the character is dead, Action has already been deleted */
 
       if(!Actor->IsEnabled())
 	return;
 
-      if(GetActor()->GetMainWielded())
-	GetActor()->GetMainWielded()->MoveTo(GetActor()->GetStack());
+      if(Actor->GetMainWielded())
+	Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
       if(GetRightBackup())
 	{
 	  item* RB = GetRightBackup();
 	  RB->RemoveFromSlot();
-	  GetActor()->SetRightWielded(RB);
+	  Actor->SetRightWielded(RB);
 	}
 
       if(GetLeftBackup())
 	{
 	  item* LB = GetLeftBackup();
 	  LB->RemoveFromSlot();
-	  GetActor()->SetLeftWielded(LB);
+	  Actor->SetLeftWielded(LB);
 	}
 
       Terminate(true);

@@ -10,7 +10,6 @@
 #include <direct.h>
 #endif
 
-#include "lterra.h"
 #include "whandler.h"
 #include "festring.h"
 #include "hscore.h"
@@ -345,7 +344,7 @@ bool game::LevelLOSHandler(long X, long Y)
 {
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->SetLastSeen(LOSTurns);
-  return Square->GetOLTerrain()->IsTransparent();
+  return Square->IsTransparent();
 }
 
 void game::UpdateCameraX()
@@ -602,14 +601,14 @@ bool game::EmitationHandler(long X, long Y)
 
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->AlterLuminance(CurrentEmitterPos, Emit);
-  return Square->GetOLTerrain()->IsTransparent();
+  return Square->IsTransparent();
 }
 
 bool game::NoxifyHandler(long X, long Y)
 {
   lsquare* Square = CurrentLSquareMap[X][Y];
   Square->NoxifyEmitter(CurrentEmitterPos);
-  return Square->GetOLTerrain()->IsTransparent();
+  return Square->IsTransparent();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -690,7 +689,7 @@ vector2d game::GetDirectionVectorForKey(int Key)
 
 bool game::EyeHandler(long X, long Y)
 {
-  return CurrentLSquareMap[X][Y]->GetOLTerrain()->IsTransparent();
+  return CurrentLSquareMap[X][Y]->IsTransparent();
 }
 
 long game::GodScore()
@@ -935,15 +934,15 @@ void game::CreateTeams()
   const std::list<std::pair<uchar, teamscript> >& TeamScript = GetGameScript()->GetTeam();
 
   for(std::list<std::pair<uchar, teamscript> >::const_iterator i = TeamScript.begin(); i != TeamScript.end(); ++i)
-  {
-    for(ushort c = 0; c < i->second.GetRelation().size(); ++c)
-      GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);
+    {
+      for(ushort c = 0; c < i->second.GetRelation().size(); ++c)
+	GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);
 
-    const ushort* KillEvilness = i->second.GetKillEvilness();
+      const ushort* KillEvilness = i->second.GetKillEvilness();
 
-    if(KillEvilness)
-      GetTeam(i->first)->SetKillEvilness(*KillEvilness);
-  }
+      if(KillEvilness)
+	GetTeam(i->first)->SetKillEvilness(*KillEvilness);
+    }
 }
 
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
@@ -1337,7 +1336,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	    lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
 	    stack* Stack = LSquare->GetStack();
 
-	    if(LSquare->GetOLTerrain()->IsTransparent() && Stack->GetVisibleItems(PLAYER))
+	    if(LSquare->IsTransparent() && Stack->GetVisibleItems(PLAYER))
 	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
 	    else
 	      ADD_MESSAGE("You see no items here.");
@@ -1869,8 +1868,8 @@ std::string game::GetGameDir()
 bool game::ExplosionHandler(long X, long Y)
 {
   lsquare* Square = CurrentLSquareMap[X][Y];
-  Square->GetHitByExplosion(*CurrentExplosion);
-  return Square->GetOLTerrain()->IsWalkable();
+  Square->GetHitByExplosion(CurrentExplosion);
+  return Square->IsFlyable();
 }
 
 level* game::GetLevel(ushort Index)

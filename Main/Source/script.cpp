@@ -446,8 +446,10 @@ void contentscript<olterrain>::InitDataMap()
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
-  olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
+  if(!ContentType)
+    return 0;
 
+  olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
   const uchar* VisualEffects = GetVisualEffects();
 
   if(VisualEffects)

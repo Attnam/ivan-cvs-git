@@ -275,9 +275,8 @@ class ITEM
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual bool Zap(character*, vector2d, uchar);
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
-  virtual bool IsExplosive() const { return true; }
-  virtual ulong GetTotalExplosivePower() const { return 40; }
   virtual ulong GetPrice() const;
+  void BreakEffect(character*, const std::string&);
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -352,7 +351,6 @@ class ITEM
   virtual void FinishReading(character*);
  protected:
   virtual ushort GetMaterialColorA(ushort) const;
-  virtual void AddPostFix(std::string&) const;
   virtual bool ShowMaterial() const { return false; }
 );
 

@@ -11,10 +11,10 @@ bool nonhumanoid::IsAlive() const { return GetTorso()->IsAlive(); }
 
 bool elpuri::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
-std::string billswill::FirstPersonUnarmedHitVerb() const { return "emit psi waves at"; }
-std::string billswill::FirstPersonCriticalUnarmedHitVerb() const { return "emit powerful psi waves at"; }
-std::string billswill::ThirdPersonUnarmedHitVerb() const { return "emits psi waves at"; }
-std::string billswill::ThirdPersonCriticalUnarmedHitVerb() const { return "emits powerful psi waves at"; }
+std::string billswill::FirstPersonBiteHitVerb() const { return "emit psi waves at"; }
+std::string billswill::FirstPersonCriticalBiteHitVerb() const { return "emit powerful psi waves at"; }
+std::string billswill::ThirdPersonBiteHitVerb() const { return "emits psi waves at"; }
+std::string billswill::ThirdPersonCriticalBiteHitVerb() const { return "emits powerful psi waves at"; }
 
 bodypart* mommo::MakeBodyPart(ushort) const { return new mommotorso(0, NO_MATERIALS); }
 std::string mommo::FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
@@ -28,6 +28,16 @@ uchar dolphin::GetSpecialBodyPartFlags(ushort) const { return RAND() & (MIRROR|R
 ushort chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
 bodypart* eddy::MakeBodyPart(ushort) const { return new eddytorso(0, NO_MATERIALS); }
+
+std::string ghost::FirstPersonBiteHitVerb() const { return "touch"; }
+std::string ghost::FirstPersonCriticalBiteHitVerb() const { return "awfully touch"; }
+std::string ghost::ThirdPersonBiteHitVerb() const { return "touches"; }
+std::string ghost::ThirdPersonCriticalBiteHitVerb() const { return "awfully touches"; }
+
+std::string magpie::FirstPersonBiteVerb() const { return "peck"; }
+std::string magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
+std::string magpie::ThirdPersonBiteVerb() const { return "pecks"; }
+std::string magpie::ThirdPersonCriticalBiteVerb() const { return "critically peck"; }
 
 bool elpuri::Hit(character* Enemy, bool ForceHit)
 {
@@ -215,17 +225,6 @@ void nonhumanoid::Kick(lsquare* Square, bool ForceHit)
 
 bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 {
-  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
-    return false;
-
-  if(GetBurdenState() == OVER_LOADED)
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("You cannot fight while carrying so much.");
-
-      return false;
-    }
-
   /* Behold this Terrible Father of Gum Solutions! */
 
   uchar AttackStyle = GetAttackStyle();
@@ -924,13 +923,14 @@ void ostrich::GetAICommand()
 	  ItemVector[c]->SendToHell();
 	}
 
-      vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(45, 0));
+      vector2d Where = GetLevel()->GetNearestFreeSquare(this, vector2d(45, 0));
 
       if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
       RestoreHP();
+      ResetStates();
       TemporaryState = 0;
 
       if(CanBeSeenByPlayer())
@@ -1012,7 +1012,7 @@ void mommo::CreateCorpse(lsquare* Square)
     {
       lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
 
-      if(NeighbourSquare && NeighbourSquare->GetOLTerrain()->IsWalkable())
+      if(NeighbourSquare && NeighbourSquare->IsFlyable())
 	NeighbourSquare->SpillFluid(RAND() % 20, GetBloodColor(), 5, 60);
     }
 
@@ -1044,8 +1044,37 @@ void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
   Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
+void floatingeye::Save(outputfile& SaveFile) const
+{
+  nonhumanoid::Save(SaveFile);
+  SaveFile << WayPoints << NextWayPoint;
+}
+
+void floatingeye::Load(inputfile& SaveFile)
+{
+  nonhumanoid::Load(SaveFile);
+  SaveFile >> WayPoints >> NextWayPoint;
+}
+
+void floatingeye::VirtualConstructor(bool Load)
+{
+  nonhumanoid::VirtualConstructor(Load);
+  NextWayPoint = 0;
+}
+
 void floatingeye::GetAICommand()
 {
+  if(WayPoints.size() && WayPoint.X == -1)
+    {
+      if(GetPos() == WayPoints[NextWayPoint])
+	if(NextWayPoint < WayPoints.size() - 1)
+	  ++NextWayPoint;
+	else
+	  NextWayPoint = 0;
+
+      WayPoint = WayPoints[NextWayPoint];
+    }
+
   SeekLeader();
 
   if(CheckForEnemies(false, false))
@@ -1141,7 +1170,9 @@ bool eddy::Hit(character* Enemy, bool)
   if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
     return false;
 
-  if(RAND() % 2)
+  Hostility(Enemy);
+
+  if(RAND() & 1)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You engulf %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -1173,7 +1204,6 @@ void mushroom::GetAICommand()
 {
   character* CharNear[8];
   ushort CharIndex = 0;
-  ushort NearMushrooms = 0;
 
   for(ushort d = 0; d < 8; ++d)
     {
@@ -1183,62 +1213,93 @@ void mushroom::GetAICommand()
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && (GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED)))
-	    CharNear[CharIndex++] = Char;
-	  if(Square->GetCharacter() && Square->GetCharacter()->GetSpecies() == GetSpecies())
-	    ++NearMushrooms;
+	  if(Char)
+	    {
+	      if(GetRelation(Char) == HOSTILE || StateIsActivated(CONFUSED))
+		CharNear[CharIndex++] = Char;
+	    }
 	}
     }
 
   if(CharIndex)
     Hit(CharNear[RAND() % CharIndex]);
 
-  ushort SpoiledItems = GetLSquareUnder()->GetSpoiledItemsNear();
+  lsquare* CradleSquare = GetNeighbourLSquare(RAND() % 8);
 
-  if((SpoiledItems && !(RAND() % 1000)) || !(RAND() % ((NearMushrooms + 1) * 1000)))
-  {
-      Reproduce();
-  }
+  if(CradleSquare && !CradleSquare->GetCharacter() && CradleSquare->IsWalkable())
+    {
+      ushort SpoiledItems = 0;
+      ushort MushroomsNear = 0;
+
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  lsquare* Square = CradleSquare->GetNeighbourLSquare(d);
+
+	  if(Square)
+	    {
+	      character* Char = Square->GetCharacter();
+
+	      if(Char && Char->IsMushroom())
+		++MushroomsNear;
+
+	      SpoiledItems += Square->GetSpoiledItems();
+	    }
+	}
+
+      if((SpoiledItems && MushroomsNear < 5 && !RAND_N(25)) || (MushroomsNear < 3 && !RAND_N((1 + MushroomsNear) * 50)))
+	{
+	  mushroom* Child = static_cast<mushroom*>(GetProtoType()->Clone(GetConfig()));
+	  Child->SetSpecies(Species);
+	  Child->SetTeam(GetTeam());
+	  CradleSquare->AddCharacter(Child);
+
+	  if(Child->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
+	}
+    }
+
   EditAP(-1000);
   return;
-}
-
-void mushroom::Reproduce()
-{
-  vector2d Where = GetArea()->GetFreeAdjacentSquare(this, GetPos(), false);
-  if(Where == ERROR_VECTOR)
-    return;
-  mushroom* Child = GetChildMushroom();
-  Child->SetSpecies(GetSpecies());
-  Child->SetTeam(GetTeam());
-  game::GetCurrentLevel()->GetLSquare(Where)->AddCharacter(Child);
-
-  if(Child->CanBeSeenByPlayer())
-    {
-      ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
-    }
 }
 
 void mushroom::VirtualConstructor(bool Load)
 {
   nonhumanoid::VirtualConstructor(Load);
+
   if(!Load)
-    {
-      SetSpecies(MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100));
-    }
+    switch(RAND() % 3)
+      {
+      case 0: SetSpecies(MakeRGB16(125 + RAND() % 125, RAND() % 100, RAND() % 100)); break;
+      case 1: SetSpecies(MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100)); break;
+      case 2: SetSpecies(MakeRGB16(RAND() % 100, RAND() % 100, 125 + RAND() % 125)); break;
+      }
 }
 
-void mutatedmushroom::GetAICommand()
+void magicmushroom::GetAICommand()
 {
-  if(!(RAND() % 300))
-    TeleportRandomly();
+  if(!(RAND() % 200))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
+      TeleportRandomly();
+      EditAP(-1000);
+    }
+  else if(!(RAND() % 50))
+    {
+      lsquare* Square = GetNeighbourLSquare(RAND() % 8);
+
+      if(Square && Square->IsFlyable())
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s releases odd-looking gas.", CHAR_NAME(DEFINITE));
+
+	  Square->AddSmoke(new gas(MAGIC_VAPOUR, 1000));
+	  EditAP(-1000);
+	}
+    }
   else
     mushroom::GetAICommand();
-}
-
-ushort mushroom::GetTorsoMainColor() const
-{
-  return Species;
 }
 
 void mushroom::SetSpecies(ushort What)
@@ -1247,38 +1308,28 @@ void mushroom::SetSpecies(ushort What)
   UpdatePictures();
 }
 
-
-mushroom* mushroom::GetChildMushroom() const
-{
-  return new mushroom;
-}
-
-mushroom* mutatedmushroom::GetChildMushroom() const
-{
-  return new mutatedmushroom;
-}
-
-void ghost::GetAICommand()
-{
-  SeekLeader();
-
-  if(FollowLeader())
-    return;
-
-  if(CheckForEnemies(true, true))
-    return;
-  MoveRandomly();
-}
-
-
 bool twoheadedmoose::Hit(character* Enemy, bool ForceHit)
 {
-  nonhumanoid::Hit(Enemy, ForceHit);
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
+    return false;
+
+  if(GetBurdenState() == OVER_LOADED)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You cannot fight while carrying so much.");
+
+      return false;
+    }
+
+  Hostility(Enemy);
+  msgsystem::EnterBigMessageMode();
+  Bite(Enemy, ForceHit);
   character* ToBeHit = GetRandomNeighbour(HOSTILE);
 
   if(ToBeHit)
-    nonhumanoid::Hit(ToBeHit, ForceHit);
+    Bite(ToBeHit, ForceHit);
 
+  msgsystem::LeaveBigMessageMode();
   return true;
 }
 
@@ -1288,70 +1339,106 @@ bool magpie::IsRetreating() const
     return true;
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-    {
-      if((*i)->IsSparkling())
-	return true;
-    }
+    if((*i)->IsSparkling())
+      return true;
+
   return false;
 }
 
 void magpie::GetAICommand()
 {
   character* Char = GetRandomNeighbour();
+
   if(Char)
     {
       std::vector<item*> Sparkling;
+
       for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
 	{
-	  if((*i)->IsSparkling() && !(MakesBurdened((*i)->GetWeight())))
+	  if((*i)->IsSparkling() && !MakesBurdened((*i)->GetWeight()))
 	    Sparkling.push_back(*i);
 	}
+
       if(!Sparkling.empty())
 	{
 	  item* ToSteal = Sparkling[RAND() % Sparkling.size()];
 	  ToSteal->RemoveFromSlot();
 	  GetStack()->AddItem(ToSteal);
+
 	  if(Char->IsPlayer())
-	    {
-	      ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
-	    }
+	    ADD_MESSAGE("%s steals your %s.", CHAR_NAME(DEFINITE), ToSteal->CHAR_NAME(UNARTICLED));
+
 	  EditAP(-500);
 	  return;
 	}
     }
+
   nonhumanoid::GetAICommand();
 }
 
-
-bool eddy::MoveRandomly()
+void eddy::GetAICommand()
 {
   if(!(RAND() % 500))
     {
       decoration* Couch = new decoration(COUCH);
+
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s spits out %s.", CHAR_NAME(DEFINITE), Couch->CHAR_NAME(INDEFINITE));
+
       GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Couch);
-      return true;
+      EditAP(-1000);
+      return;
     }
-  else
-    return character::MoveRandomly();
+
+  if(GetStackUnder()->GetItems() && !(RAND() % 10))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s engulfs something under it.", CHAR_NAME(DEFINITE));
+
+      GetStackUnder()->TeleportRandomly(3);
+      EditAP(-1000);
+      return;
+    }
+
+  if(!(RAND() % 100))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s engulfs itself.", CHAR_NAME(DEFINITE));
+
+      TeleportRandomly();
+      EditAP(-1000);
+      return;
+    }
+
+  nonhumanoid::GetAICommand();
 }
 
 void skunk::GetAICommand()
 {
   if(!IsRetreating())
     {
-      character* Char = GetRandomNeighbour(HOSTILE);
-      if(Char)
+      if(!RAND_N(3))
 	{
-	  Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 1000));
-	  EditAP(-1000);
-	  return;
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
+
+	  character* Char = GetRandomNeighbour(HOSTILE);
+
+	  if(Char)
+	    {
+	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 1000));
+	      EditAP(-1000);
+	      return;
+	    }
 	}
     }
-  else
+  else if(RAND_N(3))
     {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
+
       GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 500));
     }
+
   nonhumanoid::GetAICommand();
 }

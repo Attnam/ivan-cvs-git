@@ -113,10 +113,10 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual std::string FirstPersonUnarmedHitVerb() const;
-  virtual std::string FirstPersonCriticalUnarmedHitVerb() const;
-  virtual std::string ThirdPersonUnarmedHitVerb() const;
-  virtual std::string ThirdPersonCriticalUnarmedHitVerb() const;
+  virtual std::string FirstPersonBiteHitVerb() const;
+  virtual std::string FirstPersonCriticalBiteHitVerb() const;
+  virtual std::string ThirdPersonBiteHitVerb() const;
+  virtual std::string ThirdPersonCriticalBiteHitVerb() const;
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
@@ -302,8 +302,14 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool);
   virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual void SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
  protected:
+  virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
+  std::vector<vector2d> WayPoints;
+  ushort NextWayPoint;
 );
 
 class CHARACTER
@@ -313,9 +319,9 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool = false);
   virtual bool IsAnimated() const { return true; }
-  virtual bool MoveRandomly();
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
+  virtual void GetAICommand();
 );
 
 class CHARACTER
@@ -325,24 +331,22 @@ class CHARACTER
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SetSpecies(ushort);
-  virtual ushort GetSpecies() const { return Species; }
+  void SetSpecies(ushort);
+  ushort GetSpecies() const { return Species; }
+  virtual bool IsMushroom() const { return true; }
  protected:
   virtual void GetAICommand();
-  virtual mushroom* GetChildMushroom() const;
-  virtual ushort GetTorsoMainColor() const;
+  virtual ushort GetTorsoMainColor() const { return Species; }
   virtual void VirtualConstructor(bool);
-  virtual void Reproduce();
   ushort Species;
 );
 
 class CHARACTER
 (
-  mutatedmushroom,
+  magicmushroom,
   mushroom,
  protected:
   virtual void GetAICommand();
-  virtual mushroom* GetChildMushroom() const;
 );
 
 class CHARACTER
@@ -350,7 +354,10 @@ class CHARACTER
   ghost,
   nonhumanoid,
  protected:
-  virtual void GetAICommand();
+  virtual std::string FirstPersonBiteHitVerb() const;
+  virtual std::string FirstPersonCriticalBiteHitVerb() const;
+  virtual std::string ThirdPersonBiteHitVerb() const;
+  virtual std::string ThirdPersonCriticalBiteHitVerb() const;
 );
 
 class CHARACTER
@@ -368,6 +375,11 @@ class CHARACTER
  public:
   virtual void GetAICommand();
   virtual bool IsRetreating() const;
+ protected:
+  virtual std::string FirstPersonBiteVerb() const;
+  virtual std::string FirstPersonCriticalBiteVerb() const;
+  virtual std::string ThirdPersonBiteVerb() const;
+  virtual std::string ThirdPersonCriticalBiteVerb() const;
 );
 
 class CHARACTER

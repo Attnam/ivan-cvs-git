@@ -29,7 +29,6 @@ olterrain
 	SitMessage = "You sit for some time. Nothing happens.";
 	/* Obligatory: DigMessage */
 	CanBeDestroyed = false;
-	IsSafeToDestroy = false;
 	RestModifier = 1;
 	RestMessage = "";
 	DefaultMainVolume = 10000000;
@@ -268,16 +267,6 @@ decoration
 		BitmapPos = 16, 432;
 		HPModifier = 25;
 	}
-}
-
-empty /* olterrain-> */
-{
-	DigMessage = "The square you are trying to dig is empty.";
-	IsSafeToDestroy = true;
-	MainMaterialConfig == AIR;
-	NameSingular = "";
-	BitmapPos = 0, 480;
-	IsSafeToCreateDoor = true;
 }
 
 door /* olterrain-> */

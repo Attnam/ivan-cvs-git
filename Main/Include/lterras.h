@@ -33,15 +33,6 @@ class GLTERRAIN
 
 class OLTERRAIN
 (
-  empty,
-  olterrain,
- public:
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const { }
-  virtual void UpdatePictures() { }
-);
-
-class OLTERRAIN
-(
   door,
   olterrain,
  public:
@@ -124,8 +115,6 @@ class OLTERRAIN
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
- protected:
-  virtual void AddPostFix(std::string&) const;
 );
 
 class OLTERRAIN

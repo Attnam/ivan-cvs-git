@@ -5,6 +5,12 @@ olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cl
 const glterraindatabase& glterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 const olterraindatabase& olterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
+square* lterrain::GetSquareUnderEntity() const { return LSquareUnder; }
+level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
+lsquare* lterrain::GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
+lsquare* lterrain::GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
+room* lterrain::GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+
 void glterrain::InstallDataBase() { ::database<glterrain>::InstallDataBase(this); }
 void olterrain::InstallDataBase() { ::database<olterrain>::InstallDataBase(this); }
 uchar glterrain::GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
@@ -63,7 +69,7 @@ bool lterrain::SitOn(character* Sitter)
 
 void olterrain::Break()
 {
-  GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(new empty);
+  GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(0);
 }
 
 glterrain* glterrainprototype::CloneAndLoad(inputfile& SaveFile) const
@@ -152,20 +158,6 @@ void lterrain::SignalEmitationDecrease(ulong EmitationUpdate)
 
 bool olterrain::Enter(bool DirectionUp) const
 {
-  /* "Temporary" gum solutions */
-
-  if(game::WizardModeIsActive())
-    if(!DirectionUp && game::GetCurrentLevelIndex() < game::GetLevels() - 1)
-      {
-	if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() + 1, RANDOM, true))
-	  return true;
-      }
-    else if(DirectionUp && game::GetCurrentLevelIndex() >= 1)
-      {
-	if(game::TryTravel(game::GetCurrentDungeonIndex(), game::GetCurrentLevelIndex() - 1, RANDOM, true))
-	  return true;
-      }
-
   if(DirectionUp)
     ADD_MESSAGE("You can't go up.");
   else
@@ -220,4 +212,14 @@ uchar glterrain::GetAttachedGod() const
 uchar olterrain::GetAttachedGod() const
 {
   return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
+}
+
+void terraindatabase::InitDefaults(ushort Config)
+{
+  IsAbstract = false;
+
+  /* TERRIBLE gum solution! */
+
+  if(Config & DEVOUT)
+    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
 }

@@ -27,7 +27,6 @@ vector2d housewife::GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6)
 bool zombie::BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
 
 bool angel::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
-void angel::AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
 
 bool genie::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
 
@@ -140,6 +139,7 @@ bool golem::MoveRandomly()
   if(!(RAND() % 500))
     {
       Engrave("Golem Needs Master");
+      EditAP(-1000);
       return true;
     }
   else
@@ -2766,7 +2766,7 @@ void bananagrower::GetAICommand()
       for(ushort c = 0; c < 10; ++c)
 	GetStack()->AddItem(new banana);
 
-      vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(0, 45));
+      vector2d Where = GetLevel()->GetNearestFreeSquare(this, vector2d(0, 45));
 
       if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
@@ -2775,6 +2775,7 @@ void bananagrower::GetAICommand()
       Profession = RAND() & 7;
       RestoreBodyParts();
       RestoreHP();
+      ResetStates();
       TemporaryState = 0;
 
       if(CanBeSeenByPlayer())
@@ -2863,6 +2864,7 @@ void encourager::GetAICommand()
 	      if(Char && Char->GetTeam()->GetID() == NEW_ATTNAM_TEAM && Hit(Char, true))
 		{
 		  LastHit = game::GetTicks();
+		  WayPoint = vector2d(-1, -1);
 		  return;
 		}
 	    }
@@ -3075,40 +3077,181 @@ const std::string& humanoid::GetStandVerb() const
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
 
-void darkwizard::GetAICommand()
+void darkmage::GetAICommand()
 {
-  bool HostileCharsNear = false;
-  character* NearestChar = 0;
-  ulong NearestDistance = 0xFFFFFFFF;
+  SeekLeader();
+
+  if(FollowLeader())
+    return;
+
+  character* NearestEnemy = 0;
+  ulong NearestEnemyDistance = 0xFFFFFFFF;
+  character* RandomFriend = 0;
+  std::vector<character*> Friend;
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
-    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
-      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled())
-	  {
-	    ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
-
-	    if(ThisDistance <= GetLOSRangeSquare())
-	      HostileCharsNear = true;
-
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, true) && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
-	      {
-		NearestChar = *i;
-		NearestDistance = ThisDistance;
-	      }
-	  }
-
-  if(NearestChar && NearestDistance <= 49)
     {
-      if(!(RAND() % 4))
-	NearestChar->GetLSquareUnder()->Strike(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
-      else if(!(RAND() % 4))
-	NearestChar->GetLSquareUnder()->Lightning(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
-      else
-	NearestChar->GetLSquareUnder()->LowerEnchantment(this, "killed by the spells of " + GetName(INDEFINITE), YOURSELF);
-      EditAP(-1000);
+      if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+	{
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    if((*i)->IsEnabled())
+	      {
+		ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
+
+		if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+		  {
+		    NearestEnemy = *i;
+		    NearestEnemyDistance = ThisDistance;
+		  }
+	      }
+	}
+      else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
+	{
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
+	      Friend.push_back(*i);
+	}
+    }
+
+  if(NearestEnemy && ((Config != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3 && MoveTowards((GetPos() << 1) - NearestEnemy->GetPos()))
+    return;
+
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(GetPos()) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy))
+    return;
+
+  if(Friend.size() && (!NearestEnemy || !(RAND() & 3)))
+    {
+      RandomFriend = Friend[RAND() % Friend.size()];
+      NearestEnemy = 0;
+    }
+
+  std::string DeathMsg = "killed by the spells of " + GetName(INDEFINITE);
+
+  if(NearestEnemy)
+    {
+      lsquare* Square = NearestEnemy->GetLSquareUnder();
+      EditAP(-2000);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+      switch(Config)
+	{
+	case APPRENTICE:
+	  Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
+	  Square->Lightning(this, DeathMsg, YOURSELF);
+	  break;
+	case BATTLE_MAGE:
+	  if(RAND() % 20)
+	    {
+	      Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
+	      Square->Lightning(this, DeathMsg, YOURSELF);
+	    }
+	  else
+	    {
+	      Square->DrawParticles(RED);
+	      Square->LowerEnchantment(this, DeathMsg, YOURSELF);
+	    }
+
+	  break;
+	case ELDER:
+	  switch(RAND() % 20)
+	    {
+	    case 0:
+	    case 1:
+	    case 2: Square->DrawParticles(RED); Square->Strike(this, DeathMsg, YOURSELF); break;
+	    case 3: Square->DrawParticles(RED); Square->FireBall(this, DeathMsg, YOURSELF); break;
+	    case 4:
+	    case 5:
+	    case 6: Square->DrawParticles(RED); Square->Slow(this, DeathMsg, YOURSELF); break;
+	    case 7: Square->DrawParticles(RED); Square->Teleport(this, DeathMsg, YOURSELF); break;
+	    case 8:
+	    case 9:
+	    case 10: Square->DrawParticles(RED); Square->LowerEnchantment(this, DeathMsg, YOURSELF); break;
+	    default: Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF); Square->Lightning(this, DeathMsg, YOURSELF); break;
+	    }
+
+	  break;
+	case ARCH_MAGE:
+	  switch(RAND() % 20)
+	    {
+	    case 0:
+	    case 1:
+	    case 2: Square->DrawParticles(RED); Square->FireBall(this, DeathMsg, YOURSELF); break;
+	    case 3:
+	    case 4:
+	    case 5: Square->DrawParticles(RED); Square->Slow(this, DeathMsg, YOURSELF); break;
+	    case 6: Square->DrawParticles(RED); Square->Teleport(this, DeathMsg, YOURSELF); break;
+	    case 7:
+	    case 8:
+	    case 9: Square->DrawParticles(RED); Square->LowerEnchantment(this, DeathMsg, YOURSELF); break;
+	    case 10:
+	      {
+		golem* Golem = new golem(ARCANITE);
+		vector2d Where = GetLevel()->GetNearestFreeSquare(Golem, Square->GetPos());
+
+		if(Where == ERROR_VECTOR)
+		  {
+		    if(CanBeSeenByPlayer())
+		      ADD_MESSAGE("Nothing happens.");
+
+		    delete Golem;
+		  }
+		else
+		  {
+		    Golem->SetTeam(GetTeam());
+		    GetLevel()->GetLSquare(Where)->AddCharacter(Golem);
+
+		    if(Golem->CanBeSeenByPlayer())
+		      ADD_MESSAGE("Suddenly %s materializes!", Golem->CHAR_NAME(DEFINITE));
+
+		    Golem->GetLSquareUnder()->DrawParticles(RED); 
+		  }
+
+		break;
+	      }
+	    default: Square->DrawParticles(RED); Square->Strike(this, DeathMsg, YOURSELF); break;
+	    }
+
+	  break;
+	}
+
       return;
     }
+
+  if(RandomFriend)
+    {
+      lsquare* Square = RandomFriend->GetLSquareUnder();
+      EditAP(-2000);
+      Square->DrawParticles(RED);
+
+      switch(Config)
+	{
+	case APPRENTICE:
+	case BATTLE_MAGE:
+	  Square->Haste(this, DeathMsg, YOURSELF);
+	  break;
+	case ARCH_MAGE:
+	  if(!(RAND() & 7))
+	    {
+	      RandomFriend->CloneToNearestSquare(this);
+	      return;
+	    }
+	case ELDER:
+	  if(RAND() & 1)
+	    Square->Invisibility(this, DeathMsg, YOURSELF);
+	  else
+	    Square->Haste(this, DeathMsg, YOURSELF);
+
+	  break;
+	}
+
+      return;
+    }
+
+  if(CheckForDoors())
+    return;
+
   if(MoveRandomly())
     return;
 
@@ -3120,18 +3263,32 @@ void zombie::GetAICommand()
   if(!GetBodyPart(HEAD_INDEX))
     {
       for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
-	if(i->GetBodyPartIndex() == HEAD_INDEX)
-	  {
-	    if(CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s takes %s and it magically attaches itself to the torso of %s.", CHAR_NAME(DEFINITE), i->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
-	    i->RemoveFromSlot();
-	    AttachBodyPart((bodypart*)(*i));
-	    EditAP(-1000);
-	    break;
-	  }
+	{
+	  head* Head = i->Behead();
+
+	  if(Head)
+	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s takes %s and attaches it to its torso.", CHAR_NAME(DEFINITE), Head->CHAR_NAME(INDEFINITE));
+
+	      Head->RemoveFromSlot();
+	      AttachBodyPart(Head);
+	      Head->SetHP(1);
+	      EditAP(-1000);
+	      return;
+	    }
+	}
     }
+
   humanoid::GetAICommand();
 }
 
+head* humanoid::Behead()
+{
+  head* Head = GetHead();
 
+  if(Head)
+    SevereBodyPart(HEAD_INDEX);
 
+  return Head;
+}

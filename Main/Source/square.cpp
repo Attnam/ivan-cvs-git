@@ -58,14 +58,9 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
     }
 }
 
-bool square::IsWalkable(const character* Char) const
-{
-  return GetOTerrain()->IsWalkable(Char) && GetGTerrain()->IsWalkable(Char);
-}
-
 std::string square::SurviveMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable(Char))
+  if(GetOTerrain() && !GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->SurviveMessage();
   else
     return GetGTerrain()->SurviveMessage();
@@ -73,7 +68,7 @@ std::string square::SurviveMessage(character* Char) const
 
 std::string square::MonsterSurviveMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable(Char))
+  if(GetOTerrain() && !GetOTerrain()->IsWalkable(Char))
     return Char->GetName(DEFINITE) + " " + GetOTerrain()->MonsterSurviveMessage();
   else
     return Char->GetName(DEFINITE) + " " + GetGTerrain()->MonsterSurviveMessage();
@@ -81,7 +76,7 @@ std::string square::MonsterSurviveMessage(character* Char) const
 
 std::string square::DeathMessage(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable(Char))
+  if(GetOTerrain() && !GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->DeathMessage();
   else
     return GetGTerrain()->DeathMessage();
@@ -89,7 +84,7 @@ std::string square::DeathMessage(character* Char) const
 
 std::string square::MonsterDeathVerb(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable(Char))
+  if(GetOTerrain() && !GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->MonsterDeathVerb();
   else
     return GetGTerrain()->MonsterDeathVerb();
@@ -97,7 +92,7 @@ std::string square::MonsterDeathVerb(character* Char) const
 
 std::string square::ScoreEntry(character* Char) const
 {
-  if(!GetOTerrain()->IsWalkable(Char))
+  if(GetOTerrain() && !GetOTerrain()->IsWalkable(Char))
     return GetOTerrain()->ScoreEntry();
   else
     return GetGTerrain()->ScoreEntry();
@@ -105,7 +100,7 @@ std::string square::ScoreEntry(character* Char) const
 
 bool square::IsFatalToStay() const
 {
-  return GetGTerrain()->IsFatalToStay() || GetOTerrain()->IsFatalToStay();
+  return GetGTerrain()->IsFatalToStay() || (GetOTerrain() && GetOTerrain()->IsFatalToStay());
 }
 
 uchar square::GetEntryDifficulty() const
@@ -115,7 +110,7 @@ uchar square::GetEntryDifficulty() const
 
 uchar square::GetRestModifier() const
 {
-  return GetOTerrain()->GetRestModifier();
+  return GetOTerrain() ? GetOTerrain()->GetRestModifier() : 1;
 }
 
 bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const

@@ -42,6 +42,11 @@
 #define PHOENIX_FEATHER (MATERIAL_ID + 35)
 #define GOLDEN_EAGLE_FEATHER (MATERIAL_ID + 36)
 #define ICE (MATERIAL_ID + 37)
+#define DRAGON_HIDE (MATERIAL_ID + 38)
+#define METEORIC_STEEL (MATERIAL_ID + 39)
+#define ARCANITE (MATERIAL_ID + 40)
+#define ILLITHIUM (MATERIAL_ID + 41)
+#define ADAMANT (MATERIAL_ID + 42)
 
 #define ORGANIC_SUBSTANCE_ID (4096 << 1)
 
@@ -61,6 +66,8 @@
 #define MAGICAL_AIR (GAS_ID + 2)
 #define SMOKE (GAS_ID + 3)
 #define SKUNK_SMELL (GAS_ID + 4)
+#define GHOST (GAS_ID + 5)
+#define MAGIC_VAPOUR (GAS_ID + 6)
 
 #define LIQUID_ID (4096 << 2)
 
@@ -118,6 +125,7 @@
 #define SNOW (POWDER_ID + 2)
 
 #define BROKEN 256
+#define DEVOUT 512
 
 #define LONG_SWORD 1
 #define TWO_HANDED_SWORD 2
@@ -133,6 +141,7 @@
 #define BASTARD_SWORD 12
 #define BATTLE_AXE 13
 #define SCYTHE 14
+#define QUARTER_STAFF 15
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
@@ -231,6 +240,11 @@
 #define OFFICER 3
 #define GENERAL 4
 #define MARSHAL 5
+
+#define APPRENTICE 1
+#define BATTLE_MAGE 2
+#define ELDER 3
+#define ARCH_MAGE 4
 
 #define PARQUET 1
 #define FLOOR 2

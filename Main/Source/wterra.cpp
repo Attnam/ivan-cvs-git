@@ -101,13 +101,11 @@ bool owterrain::Enter(bool DirectionUp) const
 {
   if(DirectionUp)
     {
-      ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
-      return false;
-    }
+      if(!PLAYER->CanFly())
+	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+      else
+	ADD_MESSAGE("You fly around for some time.");
 
-  if(!GetAttachedDungeon())
-    {
-      ADD_MESSAGE("There seems to be nothing of interest here.");
       return false;
     }
 

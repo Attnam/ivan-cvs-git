@@ -93,11 +93,6 @@ void id::AddLockPostFix(std::string& String, uchar LockType) const
   String << " with a " << game::GetLockDescription(LockType) << " lock";
 }
 
-void id::AddDivineMasterDescription(std::string& String, uchar DivineMaster) const
-{
-  String << " of " << game::GetGod(DivineMaster)->GetName();
-}
-
 uchar id::GetArticleMode() const
 {
   return NORMAL_ARTICLE;

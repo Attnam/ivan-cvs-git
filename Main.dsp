@@ -362,6 +362,10 @@ SOURCE=.\Main\Source\slotset.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\smoke.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\square.cpp
 # PROP Exclude_From_Build 1
 # End Source File
@@ -563,6 +567,10 @@ SOURCE=.\Main\Include\script.h
 # Begin Source File
 
 SOURCE=.\Main\Include\slot.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\smoke.h
 # End Source File
 # Begin Source File
 

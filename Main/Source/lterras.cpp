@@ -7,8 +7,6 @@ vector2d door::GetBitmapPos(ushort) const { return vector2d(0, Opened ? 48 : 176
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
-void altar::AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
-
 void fountain::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
 void fountain::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
 void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
@@ -795,6 +793,7 @@ bool link::Enter(bool DirectionUp) const
     else
       {
 	ADD_MESSAGE("An unknown magical force pushes you back.");
+	PLAYER->EditAP(-1000);
 	return true;
       }
 

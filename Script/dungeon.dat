@@ -133,7 +133,7 @@ Dungeon ELPURI_CAVE;
 			Size = 4:11,4:11;
 			AltarPossible = true;
 			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			DoorSquare = solidterrain(PARQUET),STONE door;
 			GenerateDoor = true;
 			DivineMaster = 0;
@@ -234,6 +234,36 @@ Dungeon ELPURI_CAVE;
 				auw
 				auw
 				.s.
+			}
+		}
+	}
+
+	RandomLevel 1:4;
+	{
+		Room
+		{
+			Size = 9,9;
+			AltarPossible = false;
+			GenerateFountains = false;
+
+			OTerrainMap
+			{
+				Size = 3,3;
+				Pos = 3,3;
+				Types
+				{
+					# = STEEL wall(BRICK_OLD);
+				}
+			}
+			{
+				###
+				#.#
+				###
+			}
+
+			Square, Pos 4,4;
+			{
+				Items = { 2, beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }, itemcontainer(CHEST) { ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } } }
 			}
 		}
 	}
@@ -470,7 +500,7 @@ Dungeon ELPURI_CAVE;
 			Size = 7,7;
 			AltarPossible = false;
 			WallSquare = solidterrain(GROUND),IRON wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			DoorSquare = solidterrain(PARQUET),IRON door;
 
 			Square, Pos 3,3;
@@ -506,7 +536,7 @@ Dungeon ELPURI_CAVE;
 			Size = 9,9;
 			AltarPossible = false;
 			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			GenerateDoor = false;
 			DivineMaster = MORTIFER;
 			GenerateFountains = false;
@@ -561,7 +591,7 @@ Dungeon ATTNAM;
 	{
 		Description = Attnam;
 		ShortDescription = Attnam;
-		FillSquare = solidterrain(SNOW_TERRAIN),empty;
+		FillSquare = solidterrain(SNOW_TERRAIN), 0;
 		Size = 61, 62;
 		GenerateMonsters = false;
 		Rooms = 20:25;
@@ -578,7 +608,7 @@ Dungeon ATTNAM;
 			Size = 4:11,4:11;
 			AltarPossible = false;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			DoorSquare = solidterrain(PARQUET),door;
 			GenerateDoor = true;
 			DivineMaster = 0;
@@ -635,8 +665,8 @@ Dungeon ATTNAM;
 		{
 			Pos = 10,10;
 			Size = 41,42;
-			WallSquare = solidterrain(SNOW_TERRAIN),STONE wall(BRICK_FINE);
-			FloorSquare = solidterrain(SNOW_TERRAIN),empty;
+			WallSquare = solidterrain(SNOW_TERRAIN), STONE wall(BRICK_FINE);
+			FloorSquare = solidterrain(SNOW_TERRAIN), 0;
 			GenerateDoor = false;
 			DivineMaster = VALPURUS;
 			GenerateLanterns = false;
@@ -644,22 +674,22 @@ Dungeon ATTNAM;
 
 			Square, Pos 1, 1;
 			{
-				Character = guard(PATROL) { WayPoint = { 4, 11, 11, 49, 11, 49, 50, 11, 50; } }
+				Character = floatingeye { WayPoint = { 4, 11, 11, 49, 11, 49, 50, 11, 50; } }
 			}
 
 			Square, Pos 19, 41;
 			{
-				OTerrain = empty;
+				OTerrain = 0;
 			}
 
 			Square, Pos 20, 41;
 			{
-				OTerrain = empty;
+				OTerrain = 0;
 			}
 
 			Square, Pos 21, 41;
 			{
-				OTerrain = empty;
+				OTerrain = 0;
 			}
 			
 			GTerrainMap
@@ -926,7 +956,7 @@ Dungeon ATTNAM;
 			Pos=32,53;
 			Size = 7,6;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			GenerateDoor = false;
 			DivineMaster = MELLIS;
 			Type = ROOM_SHOP;
@@ -995,7 +1025,7 @@ Dungeon ATTNAM;
 			Pos=27,1;
 			Size = 7,6;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			GenerateDoor = false;
 			DivineMaster = SOPHOS;
 			Type = ROOM_LIBRARY;
@@ -1065,7 +1095,7 @@ Dungeon ATTNAM;
 			Size = 7,6;
 			AltarPossible = false;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR), 0;
 			DoorSquare = solidterrain(FLOOR), door;
 			GenerateDoor = false;
 			DivineMaster = LORICATUS;
@@ -1115,21 +1145,21 @@ Dungeon ATTNAM;
 
 		Room
 		{
-			FloorSquare = solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR), 0;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room
 		{
-			FloorSquare = solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR), 0;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room
 		{
-			FloorSquare = solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR), 0;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
@@ -1146,7 +1176,7 @@ Dungeon NEW_ATTNAM;
 		LevelMessage = "You hear someone shouting: \"Faster! Faster! The Empire wants yer bananas!\"";
 		Description = "New Attnam";
 		ShortDescription = "New Attnam";
-		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		FillSquare = solidterrain(GRASS_TERRAIN), 0;
 		Size = 55, 55;
 		GenerateMonsters = false;
 		Rooms = 5:7;
@@ -1164,7 +1194,7 @@ Dungeon NEW_ATTNAM;
 			Size = 4:6,4:6;
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_PRIMITIVE);
-			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
+			FloorSquare = solidterrain(GRASS_TERRAIN), 0;
 			DoorSquare = solidterrain(GRASS_TERRAIN), door;
 			GenerateDoor = true;
 			DivineMaster = 0;
@@ -1182,7 +1212,7 @@ Dungeon NEW_ATTNAM;
 			Pos = 4,4;
 			Size = 17,19;
 			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
-			FloorSquare = solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR), 0;
 			GenerateDoor = false;
 			DivineMaster = SILVA;
 			GenerateLanterns = false;
@@ -1279,7 +1309,7 @@ Dungeon NEW_ATTNAM;
 			Pos = 44, 44;
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),decoration(PALM);
-			FloorSquare = solidterrain(LANDING_SITE),empty;
+			FloorSquare = solidterrain(LANDING_SITE), 0;
 			GenerateDoor = false;
 			GenerateTunnel = false;
 			GenerateLanterns = false;
@@ -1408,7 +1438,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			Size = 4:11,4:11;
 			AltarPossible = true;
 			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			DoorSquare = solidterrain(PARQUET),door;
 			GenerateDoor = true;
 			DivineMaster = 0;
@@ -1539,7 +1569,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Size = 5,5;
 			Pos = 3*XSize/4:XSize/4-5,2:YSize-5;
-			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
+			FloorSquare = solidterrain(GRASS_TERRAIN), 0;
 			GenerateFountains = false;
 			AltarPossible = false;
 			GenerateLanterns = false;
@@ -1577,7 +1607,7 @@ Dungeon MONDEDR;
 	{
 		Description = "Mondedr";
 		ShortDescription = "Mondedr";
-		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		FillSquare = solidterrain(GRASS_TERRAIN), 0;
 		Size = 60, 60;
 		GenerateMonsters = false;
 		Rooms = 0;
@@ -1594,7 +1624,7 @@ Dungeon MONDEDR;
 			Size = 4:11,4:11;
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			DoorSquare = solidterrain(PARQUET),door;
 			GenerateDoor = true;
 			DivineMaster = 0;
@@ -1641,7 +1671,7 @@ Dungeon MONDEDR;
 			Size = 9,9;
 			AltarPossible = false;
 			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
-			FloorSquare = solidterrain(PARQUET),empty;
+			FloorSquare = solidterrain(PARQUET), 0;
 			GenerateDoor = false;
 			DivineMaster = MORTIFER;
 			GenerateFountains = false;

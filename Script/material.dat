@@ -86,7 +86,7 @@ material
 		StrengthValue = 40;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
-		Color = rgb16(144, 144, 144);
+		Color = rgb16(160, 160, 160);
 		NameStem = "gravel";
 		CanBeWished = false;
 		AttachedGod = TERRA;
@@ -97,7 +97,7 @@ material
 		StrengthValue = 30;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
-		Color = rgb16(111, 74, 37);
+		Color = rgb16(100, 60, 30);
 		NameStem = "moraine";
 		CanBeWished = false;
 		DigProductMaterial = STONE;
@@ -401,7 +401,7 @@ material
 
 	Config SPIDER_SILK;
 	{
-		StrengthValue = 160;
+		StrengthValue = 180;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 300;
 		Color = rgb16(160, 160, 160);
@@ -526,6 +526,77 @@ material
 		NameStem = "ice";
 		Alpha = 150;
 		AttachedGod = TERRA;
+	}
+
+	Config DRAGON_HIDE;
+	{
+		StrengthValue = 160;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 2500;
+		Color = rgb16(160, 60, 32);
+		NameStem = "dragon hide";
+		Flexibility = 5;
+		CanBeWished = false;
+		IsGolemMaterial = true;
+		AttachedGod = CRUENTUS;
+	}
+
+	Config METEORIC_STEEL;
+	{
+		StrengthValue = 150;
+		ConsumeType = CT_METAL;
+		Density = 7000;
+		Color = rgb16(160, 160, 160);
+		IsGolemMaterial = true;
+		PriceModifier = 250;
+		NameStem = "meteoric steel";
+		IsMetal = true;
+		AttachedGod = LORICATUS;
+	}
+
+	Config ARCANITE;
+	{
+		StrengthValue = 180;
+		ConsumeType = CT_METAL;
+		Density = 4000;
+		Color = rgb16(224, 224, 160);
+		IsGolemMaterial = true;
+		PriceModifier = 2500;
+		Article = "an";
+		NameStem = "arcanite";
+		IsMetal = true;
+		AttachedGod = SOPHOS;
+		Flexibility = 3;
+	}
+
+	Config ILLITHIUM;
+	{
+		StrengthValue = 225;
+		ConsumeType = CT_METAL;
+		Density = 6000;
+		Color = rgb16(200, 200, 240);
+		IsGolemMaterial = true;
+		PriceModifier = 5000;
+		Article = "an";
+		NameStem = "illithium";
+		IsMetal = true;
+		AttachedGod = LEGIFER;
+	}
+
+	Config ADAMANT;
+	{
+		StrengthValue = 350;
+		ConsumeType = CT_METAL;
+		Density = 10000;
+		Color = rgb16(220, 220, 240);
+		IsGolemMaterial = true;
+		PriceModifier = 6000;
+		Article = "an";
+		NameStem = "adamant";
+		AdjectiveStem = "adamantine";
+		IsMetal = true;
+		AttachedGod = LORICATUS;
+		IsSparkling = true;
 	}
 }
 
@@ -685,14 +756,16 @@ gas
 		IsAlive = true;
 		AttachedGod = SOPHOS;
 	}
+
 	Config SMOKE;
 	{
-		Color = rgb16(40, 40, 40);
+		Color = rgb16(60, 60, 60);
 		NameStem = "smoke";
-		Alpha = 200;
+		Alpha = 255;
 		AttachedGod = LORICATUS;
 		Effect = EFFECT_NOTHING;
 	}
+
 	Config SKUNK_SMELL;
 	{
 		Color = rgb16(20, 60, 20);
@@ -702,6 +775,26 @@ gas
 		EffectStrength = 10;
 		Effect = EFFECT_SKUNK_SMELL;
 		BreatheMessage = "It smells really bad here.";
+	}
+
+	Config GHOST;
+	{
+		Color = rgb16(255, 255, 255);
+		NameStem = "ghost";
+		Alpha = 150;
+		IsAlive = true;
+		AttachedGod = MORTIFER;
+	}
+
+	Config MAGIC_VAPOUR;
+	{
+		Color = rgb16(200, 60, 200);
+		NameStem = "raw vapourized magic";
+		Alpha = 200;
+		AttachedGod = SOPHOS;
+		/*EffectStrength = 10;*/
+		Effect = EFFECT_MAGIC_VAPOUR;
+		BreatheMessage = "The air is filled with tiny magical bubbles.";
 	}
 }
 
@@ -1016,7 +1109,7 @@ flesh
 	Config KOBOLD_FLESH;
 	{
 		NutritionValue = 100;
-		ConsumeWisdomLimit = 7;
+		ConsumeWisdomLimit = 6;
 		NameStem = "kobold flesh";
 		Effect = EFFECT_KOBOLD_FLESH;
 		ConsumeEndMessage = CEM_KOBOLD_FLESH;
@@ -1152,23 +1245,27 @@ flesh
 		Effect = EFFECT_CONFUSE;
 		ConsumeWisdomLimit = 5;
 		AttachedGod = NEFAS;
+		EffectStrength = 20;
 	}
+
 	Config MOOSE_FLESH;
 	{
 		NameStem = "moose flesh";
 		AttachedGod = MORTIFER;
 	}
+
 	Config MAGPIE_FLESH;
 	{
 		NameStem = "moose flesh";
 		AttachedGod = MORTIFER;
 	}
+
 	Config SKUNK_FLESH;
 	{
 		NameStem = "skunk flesh";
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_POISON;
-		EffectStrength = 10;
+		EffectStrength = 5;
 		ConsumeWisdomLimit = 4;
 	}
 }

@@ -120,72 +120,6 @@ void area::MoveCharacter(vector2d From, vector2d To)
   GetSquare(To)->AddCharacter(Backup);
 }
 
-vector2d area::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance) const
-{
-  ushort c;
-
-  for(c = 0; c < 8; ++c)
-    {
-      vector2d Pos = StartPos + game::GetMoveVector(c);
-
-      if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char) && !GetSquare(Pos)->GetCharacter() && Pos != Prohibited)
-	return Pos;
-    }
-
-  if(MaxDistance)
-    for(c = 0; c < 8; ++c)
-      {
-	vector2d Pos = StartPos + game::GetMoveVector(c);
-
-	if(IsValidPos(Pos))
-	  {
-	    if(GetSquare(Pos)->IsWalkable(Char) && Pos != Prohibited)
-	      {
-		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
-
-		if(Pos != ERROR_VECTOR)
-		  return Pos;
-	      }
-	  }
-      }
-
-  return ERROR_VECTOR;
-}
-
-/* Returns ERROR_VECTOR if no free square was found */
-
-vector2d area::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
-{
-  if(GetSquare(StartPos)->IsWalkable(Char) && !GetSquare(StartPos)->GetCharacter())
-    return StartPos;
-
-  ushort c;
-
-  for(c = 0; c < 8; ++c)
-    {
-      vector2d Pos = StartPos + game::GetMoveVector(c);
-
-      if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char) && !GetSquare(Pos)->GetCharacter())
-	return Pos;
-    }
-
-  for(ushort Dist = 0; Dist < 5; ++Dist)
-    for(c = 0; c < 8; ++c)
-      {
-	vector2d Pos = StartPos + game::GetMoveVector(c);
-
-	if(IsValidPos(Pos) && GetSquare(Pos)->IsWalkable(Char))
-	  {
-	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
-
-	    if(Pos != ERROR_VECTOR)
-	      return Pos;
-	  }
-      }
-
-  return ERROR_VECTOR;
-}
-
 square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
 {
   Pos += game::GetMoveVector(Index);
@@ -199,20 +133,4 @@ square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
 void area::SetEntryPos(uchar Index, vector2d Pos)
 {
   EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
-}
-
-vector2d area::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, bool AllowCharacter) const
-{
-  ushort PossibleDir[8];
-  ushort Index = 0;
-
-  for(ushort d = 0; d < 8; ++d)
-    {
-      square* Square = GetSquare(StartPos)->GetNeighbourSquare(d);
-
-      if(Square && Square->IsWalkable(Char) && (AllowCharacter || !Square->GetCharacter()))
-	PossibleDir[Index++] = d;
-    }
-
-  return Index ? StartPos + game::GetMoveVector(PossibleDir[RAND() % Index]) : ERROR_VECTOR;
 }

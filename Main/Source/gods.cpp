@@ -341,7 +341,7 @@ void silva::PrayGoodEffect()
 	      {
 		lsquare* Square = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
 
-		if(Square && Square->GetOLTerrain()->IsWalkable())
+		if(Square && Square->IsFlyable())
 		  {
 		    Correct = true;
 		    break;
@@ -350,7 +350,7 @@ void silva::PrayGoodEffect()
 
 	    if(Correct)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new empty);
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(0);
 
 		for(ushort p = 0; p < 4; ++p)
 		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
@@ -368,7 +368,7 @@ void silva::PrayGoodEffect()
 	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
 	    character* Char = Square->GetCharacter();
 
-	    if(!Square->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
+	    if(Square->GetOLTerrain() || (Char && (Char->IsPlayer() || PLAYER->GetRelation(Char) != HOSTILE)))
 	      continue;
 
 	    ushort Walkables = 0;
@@ -377,7 +377,7 @@ void silva::PrayGoodEffect()
 	      {
 		lsquare* NearSquare = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
 
-		if(NearSquare && NearSquare->GetOLTerrain()->IsWalkable())
+		if(NearSquare && NearSquare->IsFlyable())
 		  ++Walkables;
 	      }
 

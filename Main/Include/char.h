@@ -27,7 +27,7 @@ inline long APBonus(long Attribute) { return Attribute >= 10 ? 90 + Attribute : 
 
 struct characterdatabase
 {
-  void InitDefaults(ushort) { IsAbstract = false; }
+  void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return CanBeGenerated && !IsUnique; }
   ushort DefaultArmStrength;
   ushort DefaultLegStrength;
@@ -446,6 +446,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(IsUnique);
   DATA_BASE_VALUE(uchar, AttachedGod);
   DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
+  DATA_BASE_VALUE(ushort, Frequency);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -558,6 +559,8 @@ class character : public entity, public id
   square* GetNearSquare(ushort x, ushort y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
   lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
+  wsquare* GetNearWSquare(vector2d) const;
+  wsquare* GetNearWSquare(ushort, ushort) const;
   vector2d GetPos() const { return GetSquareUnder()->GetPos(); }
   square* GetSquareUnder() const { return !MotherEntity ? SquareUnder : MotherEntity->GetSquareUnderEntity(); }
   virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
@@ -694,15 +697,17 @@ class character : public entity, public id
   virtual void RaiseStats();
   virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
-  void GetHitByExplosion(const explosion&, ushort);
+  void GetHitByExplosion(const explosion*, ushort);
   bool AllowPoisoned() const { return IsAlive(); }
   bool AllowParasitized() const { return IsAlive(); }
-  virtual ushort GetSpecies() const { return 0; }
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   character* GetRandomNeighbourEnemy() const;
   void Search(ushort);
   character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
   virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
+  virtual bool IsMushroom() const { return false; }
+  void ResetStates();
+  virtual head* Behead() { return 0; }
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
  protected:

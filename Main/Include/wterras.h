@@ -97,16 +97,6 @@ class GWTERRAIN
 
 class OWTERRAIN
 (
-  atmosphere,
-  owterrain,
- public:
-  virtual std::string GetNameStem() const;
-  virtual vector2d GetBitmapPos(ushort) const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const { }
-);
-
-class OWTERRAIN
-(
   attnam,
   owterrain,
  public:

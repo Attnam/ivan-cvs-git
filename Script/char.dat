@@ -176,9 +176,9 @@ petrus
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
 	BodyArmor = DIAMOND bodyarmor(PLATE_MAIL) { Enchantment = 4; }
 	Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
-	Belt = RUBY belt { Enchantment = 4; }
+	Belt = ILLITHIUM belt { Enchantment = 4; }
 	RightWielded = justifier;
-	RightGauntlet = MITHRIL gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
+	RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 4; }
 	RightRing = ring(RING_OF_FIRE_RESISTANCE);
 	LeftRing = ring(RING_OF_POISON_RESISTANCE);
 	RightBoot = PHOENIX_FEATHER boot(BOOT_OF_AGILITY) { Enchantment = 4; }
@@ -377,13 +377,13 @@ guard
 	{
 		AttributeBonus = 40;
 		TotalVolume = 120000;
-		Helmet = DIAMOND helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
+		Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 3; }
 		Amulet = amulet(AMULET_OF_ESP);
-		BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 3; }
+		BodyArmor = ILLITHIUM bodyarmor(PLATE_MAIL) { Enchantment = 3; }
 		RightWielded = VALPURIUM VALPURIUM meleeweapon(LONG_SWORD) { Enchantment = 3; }
 		LeftWielded = VALPURIUM shield { Enchantment = 3; }
 		RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
-		RightBoot = MITHRIL boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
+		RightBoot = SAPPHIRE boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
 		Adjective = "master";
 		CWeaponSkillHits = { 2, 2000, 2000; }
 		RightSWeaponSkillHits = 200;
@@ -554,7 +554,7 @@ oree
 	ClassStates = INVISIBLE|INFRA_VISION|ESP;
 	Helmet = DIAMOND helmet { Enchantment = 3; }
 	Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
-	Belt = RUBY belt { Enchantment = 3; }
+	Belt = ARCANITE belt { Enchantment = 3; }
 	BodyArmor = goldeneagleshirt;
 	RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
 	RightBoot = OMMEL_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 3; }
@@ -891,10 +891,10 @@ billswill
 	NameSingular = "mass";
 	NamePlural = "masses";
 	PostFix = "of Bill's will";
-	BaseUnarmedStrength = 3000;
+	BaseBiteStrength = 3000;
 	CanBeGenerated = true;
 	ClassStates = HASTE|ESP;
-	KnownCWeaponSkills == UNARMED;
+	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 	BaseEmitation = rgb24(110, 110, 130);
 	HostileReplies == "\"You will install the One OS. Resistance is futile. Prepare to be assimilited.\"";
@@ -966,11 +966,11 @@ skeleton
 	Config WAR_LORD;
 	{
 		AttributeBonus = 200;
-		Helmet = MITHRIL helmet(FULL_HELMET);
+		Helmet = METEORIC_STEEL helmet(FULL_HELMET);
 		Cloak = PHOENIX_FEATHER cloak;
-		BodyArmor = RUBY bodyarmor(BROKEN|CHAIN_MAIL);
+		BodyArmor = ILLITHIUM bodyarmor(BROKEN|CHAIN_MAIL);
 		RightWielded = RUBY RUBY flamingsword { Enchantment = 0; }
-		LeftWielded = RUBY shield;
+		LeftWielded = ARCANITE shield;
 		RightGauntlet = SPIDER_SILK gauntlet;
 		RightRing = ring(RING_OF_INFRA_VISION);
 		RightBoot = MITHRIL boot;
@@ -1075,7 +1075,7 @@ goblin
 		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
 		LeftWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
 		RightRing = ring(RING_OF_TELEPORTATION);
-		RightGauntlet = STEEL gauntlet { Enchantment = 1; }
+		RightGauntlet = DRAGON_HIDE gauntlet { Enchantment = 1; }
 		RightBoot = STEEL boot { Enchantment = 1; }
 		TotalVolume = 50000;
 		CWeaponSkillHits == 200;
@@ -1202,7 +1202,6 @@ golem
 	Config SPIDER_SILK;
 	{
 		DefaultName = "experiment ZQ-29";
-		Frequency = 500;
 		DangerModifier = 1500;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
@@ -1320,7 +1319,7 @@ jackal
 	DefaultWisdom = 5;
 	DefaultCharisma = 7;
 	DefaultMana = 0;
-	TotalVolume = 20000;
+	TotalVolume = 15000;
 	TorsoBitmapPos = 304, 0;
 	HostileReplies == "@Dd howls in fury.";
 	FriendlyReplies == "@Dd howls happily.";
@@ -1991,9 +1990,9 @@ mistress
 		BodyArmor = ANGEL_HAIR bodyarmor(PLATE_MAIL) { Enchantment = 4; }
 		Amulet = amulet(AMULET_OF_LIFE_SAVING);
 		Cloak = SPIDER_SILK cloak { Enchantment = 4; }
-		Belt = ANGEL_HAIR belt { Enchantment = 4; }
+		Belt = DRAGON_HIDE belt { Enchantment = 4; }
 		RightGauntlet = PHOENIX_FEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-		RightBoot = ANGEL_HAIR boot { Enchantment = 4; }
+		RightBoot = DRAGON_HIDE boot { Enchantment = 4; }
 		RightWielded = SPIDER_SILK whipofthievery { Enchantment = 5; }
 		LeftWielded = SPIDER_SILK chameleonwhip { Enchantment = 5; }
 		RightRing = ring(RING_OF_FIRE_RESISTANCE);
@@ -2013,7 +2012,7 @@ mistress
 		CanBeWished = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
-		Inventory = { 6, scrolloftaming, scrolloftaming, wand(WAND_OF_HASTE), wand(WAND_OF_HASTE), scrollofwishing, scrollofwishing; }
+		Inventory = { 4, scrolloftaming, scrolloftaming, wand(WAND_OF_HASTE), wand(WAND_OF_HASTE); }
 	}
 }
 
@@ -2150,8 +2149,8 @@ kobold
 	Config PATRIARCH;
 	{
 		AttributeBonus = 120;
-		Helmet = STEEL helmet;
-		BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
+		Helmet = METEORIC_STEEL helmet;
+		BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL);
 		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
 		Belt = TROLL_HIDE belt;
 		Cloak = TROLL_HIDE cloak;
@@ -2343,7 +2342,7 @@ kamikazedwarf
 	DeathMessage = "@Dd dies smiling.";
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 80;
-	Frequency = 1000;
+	Frequency = 100;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	AttachedGod = NONE;
 	FriendlyReplies =
@@ -2384,6 +2383,7 @@ mammoth
 	CanBeWished = false;
 	FleshMaterial = MAMMOTH_FLESH;
 	AttachedGod = SILVA;
+	Frequency = 2500;
 }
 
 unicorn
@@ -2582,6 +2582,7 @@ buffalo
 	FleshMaterial = BUFFALO_FLESH;
 	DeathMessage = "@Dd snarls one last time.";
 	AttachedGod = SILVA;
+	Frequency = 2500;
 }
 
 snake
@@ -2746,13 +2747,13 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 100;
-		Helmet = SAPPHIRE helmet(FULL_HELMET) { Enchantment = 2; }
+		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 2; }
-		BodyArmor = MITHRIL bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
+		BodyArmor = DRAGON_HIDE bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
 		RightWielded = DIAMOND meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
 		LeftWielded = 0;
-		Belt = DIAMOND belt { Enchantment = 2; }
-		RightGauntlet = MITHRIL gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
+		Belt = RUBY belt { Enchantment = 2; }
+		RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
 		RightBoot = SPIDER_SILK boot { Enchantment = 2; }
 		LeftWielded = 0;
 		KnownCWeaponSkills == POLE_ARMS;
@@ -3162,7 +3163,7 @@ floatingeye
 	FleshMaterial = FLOATING_EYE_FLESH;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 0;
-	Frequency = 1000;
+	Frequency = 2500;
 	TorsoBitmapPos = 32, 0;
 	SkinColor = rgb16(180,180,180);
 	ClothColor = rgb16(0, 0, 160); /* eye color */
@@ -3174,14 +3175,14 @@ floatingeye
 	UsesNutrition = false;
 	AttackWisdomLimit = 10;
 	AttachedGod = LEGIFER;
-	ClassStates == SEARCHING|GAS_IMMUNITY;
+	ClassStates = INFRA_VISION|SEARCHING|GAS_IMMUNITY;
 }
 
 eddy
 {
 	DefaultArmStrength = 1;
-	DefaultAgility = 8;
-	DefaultEndurance = 2;
+	DefaultAgility = 10;
+	DefaultEndurance = 3;
 	DefaultPerception = 12;
 	DefaultIntelligence = 1;
 	DefaultWisdom = 1;
@@ -3202,8 +3203,8 @@ eddy
 	HasFeet = false;
 	CanBeGenerated = true;
 	IgnoreDanger = true;
-	HPRequirementForGeneration = 0;
-	Frequency = 500;
+	HPRequirementForGeneration = 50;
+	Frequency = 1000;
 	PanicLevel = 0;
 	StandVerb = "twirling";
 	UsesNutrition = false;
@@ -3218,16 +3219,17 @@ eddy
 mushroom
 {
 	DefaultArmStrength = 4;
-	DefaultAgility = 1;
+	DefaultAgility = 2;
 	DefaultEndurance = 10;
 	DefaultPerception = 5;
-	DefaultIntelligence = 3;
-	DefaultWisdom = 3;
+	DefaultIntelligence = 2;
+	DefaultWisdom = 2;
 	DefaultCharisma = 8;
 	DefaultMana = 4;
-	TotalVolume = 375; 
+	TotalVolume = 6250; 
 	TorsoBitmapPos = 208, 16;
-	TotalSize = 30;
+	TotalSize = 40;
+	Adjective = "giant";
 	NameSingular = "mushroom";
 	HasEyes = false;
 	HasHead = false;
@@ -3235,25 +3237,28 @@ mushroom
 	UsesNutrition = false;
 	SpillsBlood = false;
 	FleshMaterial = MUSHROOM_FLESH;
-	SkinColor = rgb16(200,200,200);
+	SkinColor = rgb16(180, 180, 180);
 	CanBeGenerated = true;
 	AttachedGod = NEFAS;
+	DeathMessage = "@Dd is squashed.";
+	BaseUnarmedStrength = 200;
+	CanBeDisplaced = false;
 }
 
-mutatedmushroom
+magicmushroom
 {
-	DefaultArmStrength = 7;
+	DefaultArmStrength = 6;
 	DefaultAgility = 3;
-	DefaultEndurance = 15;
-	DefaultPerception = 20;
-	DefaultIntelligence = 8;
-	DefaultWisdom = 10;
-	DefaultCharisma = 9;
-	DefaultMana = 15;
-	TotalVolume = 375; 
+	DefaultEndurance = 20;
+	DefaultPerception = 7;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 3;
+	DefaultCharisma = 10;
+	DefaultMana = 7;
+	TotalVolume = 10000;
 	TorsoBitmapPos = 192, 16;
 	TotalSize = 60;
-	Adjective = "mutated";
+	Adjective = "magical";
 	NameSingular = "mushroom";
 	HasEyes = false;
 	HasHead = false;
@@ -3261,41 +3266,144 @@ mutatedmushroom
 	UsesNutrition = false;
 	SpillsBlood = false;
 	FleshMaterial = MUSHROOM_FLESH;
-	SkinColor = rgb16(220,190,190);
+	SkinColor = rgb16(200, 170, 170);
 	CanBeGenerated = true;
 	AttachedGod = SCABIES;
+	BaseUnarmedStrength = 300;
+	KnownCWeaponSkills == UNARMED;
+	CWeaponSkillHits == 20;
 }
 
-darkwizard
+darkmage
 {
-	DefaultArmStrength = 8;
-	DefaultLegStrength = 8;
-	DefaultDexterity = 15;
-	DefaultAgility = 8;
-	DefaultEndurance = 10;
-	DefaultPerception = 30;
-	DefaultIntelligence = 30;
-	DefaultWisdom = 30;
-	DefaultCharisma = 15;
-	DefaultMana = 50;
 	HeadBitmapPos = 112, 304;
 	TorsoBitmapPos = 48, 224;
 	ArmBitmapPos = 80, 64;
 	LegBitmapPos = 16, 160;
 	ClothColor = rgb16(50, 50, 50);
-	TotalVolume = 90000;
-	TotalSize = 185;
 	CanRead = true;
-	NameSingular = "dark wizard";
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION;
 	HostileReplies == "@Dd yells: \"Prepare to meet your maker!\"";
 	FriendlyReplies == "\"Death awaits our foes.\"";
 	IgnoreDanger = true;
-	HPRequirementForGeneration = 80;
-	Frequency = 500;
-	IsExtraCoward = true;
 	AttachedGod = INFUSCOR;
+	IsAbstract = true;
+
+	Config APPRENTICE;
+	{
+		DefaultArmStrength = 15;
+		DefaultLegStrength = 15;
+		DefaultDexterity = 15;
+		DefaultAgility = 21;
+		DefaultEndurance = 15;
+		DefaultPerception = 21;
+		DefaultIntelligence = 20;
+		DefaultWisdom = 10;
+		DefaultCharisma = 10;
+		DefaultMana = 20;
+		Adjective = "apprentice";
+		NameSingular = "dark mage";
+		TotalVolume = 60000;
+		TotalSize = 180;
+		ClothColor = rgb16(80, 80, 80);
+		BeltColor = rgb16(80, 80, 80);
+		Cloak = LEATHER cloak { Enchantment = 2; }
+		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
+		HPRequirementForGeneration = 200;
+		Frequency = 1000;
+		PanicLevel = 75;
+	}
+
+	Config BATTLE_MAGE;
+	{
+		DefaultArmStrength = 12;
+		DefaultLegStrength = 12;
+		DefaultDexterity = 20;
+		DefaultAgility = 18;
+		DefaultEndurance = 15;
+		DefaultPerception = 18;
+		DefaultIntelligence = 30;
+		DefaultWisdom = 15;
+		DefaultCharisma = 15;
+		DefaultMana = 30;
+		Adjective = "dark";
+		NameSingular = "battlemage";
+		TotalVolume = 70000;
+		TotalSize = 170;
+		HairColor = rgb16(180, 40, 40);
+		CapColor = rgb16(180, 40, 40);
+		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
+		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
+		HPRequirementForGeneration = 300;
+		Frequency = 750;
+		PanicLevel = 25;
+	}
+
+	Config ELDER;
+	{
+		DefaultArmStrength = 9;
+		DefaultLegStrength = 9;
+		DefaultDexterity = 25;
+		DefaultAgility = 15;
+		DefaultEndurance = 15;
+		DefaultPerception = 15;
+		DefaultIntelligence = 40;
+		DefaultWisdom = 20;
+		DefaultCharisma = 20;
+		DefaultMana = 40;
+		Adjective = "elder";
+		NameSingular = "dark mage";
+		ClassStates = INFRA_VISION|ESP;
+		TotalVolume = 80000;
+		TotalSize = 160;
+		HairColor = rgb16(140, 140, 140);
+		CapColor = rgb16(80, 80, 160);
+		Cloak = OMMEL_HAIR cloak { Enchantment = 4; }
+		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 5; MainMaterial = ARCANITE { Volume = 100; } SecondaryMaterial = ARCANITE { Volume = 400; } }
+		HPRequirementForGeneration = 350;
+		Frequency = 500;
+		PanicLevel = 10;
+	}
+
+	Config ARCH_MAGE;
+	{
+		DefaultArmStrength = 6;
+		DefaultLegStrength = 6;
+		DefaultDexterity = 30;
+		DefaultAgility = 12;
+		DefaultEndurance = 15;
+		DefaultPerception = 12;
+		DefaultIntelligence = 50;
+		DefaultWisdom = 25;
+		DefaultCharisma = 25;
+		DefaultMana = 50;
+		Adjective = "dark";
+		NameSingular = "archmage";
+		DefaultName = "Ischaldirh";
+		ClassStates = INFRA_VISION|ESP;
+		TotalVolume = 100000;
+		TotalSize = 150;
+		IsUnique = true;
+		PanicLevel = 0;
+		IsCharmable = false;
+		IsNameable = false;
+		CanBeWished = false;
+		CanBeCloned = false;
+		IsPolymorphable = false;
+		HairColor = rgb16(200, 200, 200);
+		EyeColor = rgb16(0, 0, 0);
+		ClothColor = rgb16(30, 30, 30);
+		CapColor = rgb16(50, 50, 50);
+		BodyArmor = ARCANITE bodyarmor(CHAIN_MAIL) { Enchantment = 5; }
+		Cloak = DRAGON_HIDE cloak { Enchantment = 5; }
+		Belt = ANGEL_HAIR belt { Enchantment = 5; }
+		RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
+		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 6; MainMaterial = RUBY { Volume = 100; } SecondaryMaterial = RUBY { Volume = 400; } }
+		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
+		HPRequirementForGeneration = 400;
+		PanicLevel = 0;
+	}
 }
 
 ghost
@@ -3303,50 +3411,50 @@ ghost
 	DefaultArmStrength = 5;
 	DefaultAgility = 20;
 	DefaultEndurance = 8;
-	DefaultPerception = 30;
-	DefaultIntelligence = 10;
+	DefaultPerception = 24;
+	DefaultIntelligence = 15;
 	DefaultWisdom = 10;
 	DefaultCharisma = 10;
 	DefaultMana = 15;
 	StandVerb = "hovering";
-	Frequency = 100;
-	DangerModifier = 250;
+	Frequency = 5000;
+	DangerModifier = 50;
 	CanFly = true;
-	TotalVolume = 500000;
+	TotalVolume = 300000;
 	TorsoBitmapPos = 112, 16;
 	TotalSize = 100;
 	NameSingular = "ghost";
-	BaseUnarmedStrength = 1500;
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY;
-	KnownCWeaponSkills == UNARMED;
+	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 	BaseEmitation = rgb24(110, 110, 110);
 	HostileReplies == "\"Boo!\"";
 	FriendlyReplies == "\"A very good Boo to you, my friend.\"";
 	PanicLevel = 0;
 	HasFeet = false;
-	FleshMaterial = MAGICAL_AIR;
-	DeathMessage = "@Dd vanishes from existence.";
+	FleshMaterial = GHOST;
+	DeathMessage = "@Dd returns to hell.";
 	SpillsBlood = false;
 	UsesNutrition = false;
 	CanWalkThroughWalls = true;
 	AttachedGod = MORTIFER;
 	BodyPartsDisappearWhenSevered = true;
+	BaseBiteStrength = 1000;
 }
 
 twoheadedmoose
 {
-	DefaultArmStrength = 20;
-	DefaultAgility = 15;
-	DefaultEndurance = 17;
-	DefaultPerception = 28;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
+	DefaultArmStrength = 25;
+	DefaultAgility = 20;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
 	DefaultCharisma = 3;
 	DefaultMana = 0;
 	TotalVolume = 200000;
-	TorsoBitmapPos = 176,16;
+	TorsoBitmapPos = 176, 16;
 	HostileReplies == "Both heads of the moose snarl angrily at you.";
 	FriendlyReplies == "Both heads of the moose nod at you.";
 	TotalSize = 250;
@@ -3356,39 +3464,43 @@ twoheadedmoose
 	Adjective = "two-headed";
 	AttackStyle = USE_HEAD;
 	CanBeGenerated = true;
-	KnownCWeaponSkills = { 1, BITE; }
-	CWeaponSkillHits = { 1, 50; }
-	PanicLevel = 25;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 100;
 	FleshMaterial = MOOSE_FLESH;
-	DeathMessage = "@Dd collapses and dies.";
+	DeathMessage = "@Dd dies both heads snarling bitterly.";
 	AttachedGod = SCABIES;
+	BaseBiteStrength = 300;
+	CanKick = true;
+	DangerModifier = 50;
 }
 
 magpie
 {
 	DefaultArmStrength = 2;
-	DefaultAgility = 40;
+	DefaultAgility = 35;
 	DefaultEndurance = 10;
-	DefaultPerception = 15;
-	DefaultIntelligence = 4;
-	DefaultWisdom = 4;
+	DefaultPerception = 20;
+	DefaultIntelligence = 6;
+	DefaultWisdom = 5;
 	DefaultCharisma = 6;
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
 	CanFly = true;
-	TotalVolume = 1000;
+	TotalVolume = 500;
 	TorsoBitmapPos = 560, 0;
 	HostileReplies == "@Dd peeps evilly.";
 	FriendlyReplies == "@Dd chirps happily.";
 	TotalSize = 20;
 	SkinColor = rgb16(64, 64, 64);
+	TorsoMainColor = rgb16(180, 180, 180);
+	Adjective = "giant";
 	NameSingular = "magpie";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 150;
+	BaseBiteStrength = 400;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
-	CWeaponSkillHits == 20;
+	CWeaponSkillHits == 50;
 	PanicLevel = 75;
 	FleshMaterial = MAGPIE_FLESH;
 	DangerModifier = 50;
@@ -3397,30 +3509,32 @@ magpie
 
 skunk
 {
-	DefaultArmStrength = 3;
-	DefaultAgility = 14;
-	DefaultEndurance = 6;
+	DefaultArmStrength = 6;
+	DefaultAgility = 10;
+	DefaultEndurance = 9;
 	DefaultPerception = 18;
 	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	TotalVolume = 20000;
+	TotalVolume = 10000;
 	TorsoBitmapPos = 128, 0;
 	HostileReplies == "@Dd grawls.";
 	FriendlyReplies == "@Dd discusses philosophy with you.";
-	TotalSize = 80;
-	SkinColor = rgb16(20, 20, 20);
+	TotalSize = 50;
+	SkinColor = rgb16(80, 80, 80);
+	Adjective = "big";
 	NameSingular = "skunk";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 300;
+	BaseBiteStrength = 350;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
-	CWeaponSkillHits == 50;
+	CWeaponSkillHits == 100;
 	FleshMaterial = SKUNK_FLESH;
 	AttachedGod = SILVA;
 	PanicLevel = 85;
-	TorsoMainColor = rgb16(255, 255, 255); 
+	TorsoMainColor = rgb16(220, 220, 220); 
 	PoisonResistance = 10;
+	DangerModifier = 50;
 	ClassStates = GAS_IMMUNITY;
 }

@@ -143,6 +143,7 @@ Odd monsters seem to be able to apply.
 Dipping to corpses doesn't work.
 (this may not be a bug, but it is a problem) Go and heal commands might be too fast on a very fast machine (> 1 GHz or something like that)
 Does using a two-handed weapon yield exp to only one arm?
+Guards in the library.
 
 
 Game always crashes when one door is kicked with this trace.

@@ -133,7 +133,7 @@ void god::PlayerVomitedOnAltar()
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
   AdjustRelation(-200);
   PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
-  PLAYER->CheckDeath("chocked to death by own vomit", 0);
+  PLAYER->CheckDeath("choked to death by own vomit", 0);
 
   if(!(RAND() % 50))
     {

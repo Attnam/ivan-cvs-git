@@ -50,7 +50,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
 		typedatabase TempDataBase(DataBase);
-		TempDataBase.InitDefaults(c);
+		TempDataBase.InitDefaults(DEVOUT|c);
 		TempDataBase.AttachedGod = c;
 		Proto->Config.insert(std::pair<ushort, typedatabase>(c, TempDataBase));
 	      }
@@ -309,6 +309,7 @@ template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::stri
   ANALYZE_DATA(BeamStyle);
   ANALYZE_DATA(WearWisdomLimit);
   ANALYZE_DATA(AttachedGod);
+  ANALYZE_DATA(BreakEffectRange);
 
   return Found;
 }
@@ -376,7 +377,6 @@ template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std:
 
   ANALYZE_DATA(DigMessage);
   ANALYZE_DATA(CanBeDestroyed);
-  ANALYZE_DATA(IsSafeToDestroy);
   ANALYZE_DATA(RestModifier);
   ANALYZE_DATA(RestMessage);
   ANALYZE_DATA(IsUpLink);

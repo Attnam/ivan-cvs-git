@@ -87,10 +87,11 @@ bool pickaxe::Apply(character* User)
     return false;
 
   lsquare* Square = GetNearLSquare(User->GetPos() + Temp);
+  olterrain* Terrain = Square->GetOLTerrain();
 
-  if(Square->CanBeDug())
-    if(Square->GetOLTerrain()->CanBeDestroyed())
-      if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+  if(Square->CanBeDug() && Terrain)
+    if(Terrain->CanBeDestroyed())
+      if(Terrain->GetMainMaterial()->CanBeDug(GetMainMaterial()))
 	{
 	  uchar RoomNumber = Square->GetRoomIndex();
 
@@ -106,7 +107,7 @@ bool pickaxe::Apply(character* User)
       else
 	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
     else
-      ADD_MESSAGE(Square->GetOLTerrain()->GetDigMessage().c_str());
+      ADD_MESSAGE(Terrain->GetDigMessage().c_str());
 
   return false;
 }

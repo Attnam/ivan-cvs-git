@@ -61,7 +61,7 @@ class stack
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const { return static_cast<lsquare*>(GetSquareTrulyUnder()); }
   void ReceiveDamage(character*, ushort, uchar);
-  void TeleportRandomly();
+  void TeleportRandomly(ushort = 0xFFFF);
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, const character*, const std::string&, uchar, bool (*)(const item*, const character*)) const;
   ushort SearchChosen(itemvector&, const character*, ushort, ushort, uchar, bool (*)(const item*, const character*) = 0) const;
@@ -100,6 +100,7 @@ class stack
   ushort GetSpoiledItems() const;
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0) const;
   void Search(const character*, ushort);
+  bool stack::IsDangerous(const character*) const;
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

@@ -7,14 +7,20 @@
 
 #include "object.h"
 #include "terra.h"
-#include "lsquare.h"
 
+class glterrain;
+class olterrain;
+class item;
+class level;
+class lsquare;
+class stack;
+class room;
 template <class type> class contentscript;
 template <class type> class database;
 
 struct terraindatabase
 {
-  void InitDefaults(ushort) { IsAbstract = false; }
+  void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return true; }
   vector2d BitmapPos;
   std::string Article;
@@ -62,18 +68,18 @@ class lterrain : public object
   bool CanBeSeenBy(character*) const;
   virtual const std::string& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-  virtual square* GetSquareUnderEntity() const { return LSquareUnder; }
+  virtual square* GetSquareUnderEntity() const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  level* GetLevel() const { return LSquareUnder->GetLevel(); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
+  level* GetLevel() const;
+  lsquare* GetNearLSquare(vector2d) const;
+  lsquare* GetNearLSquare(ushort, ushort) const;
   virtual void CalculateAll() { CalculateEmitation(); }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   virtual bool HasKeyHole() const { return CanBeOpened(); }
   virtual bool IsOnGround() const { return true; }
-  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+  room* GetRoom() const;
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -151,7 +157,6 @@ struct olterraindatabase : public terraindatabase
 {
   std::string DigMessage;
   bool CanBeDestroyed;
-  bool IsSafeToDestroy;
   uchar RestModifier;
   std::string RestMessage;
   bool IsUpLink;
@@ -233,7 +238,6 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_BOOL(ShowMaterial);
   virtual DATA_BASE_VALUE(const std::string&, DigMessage);
   virtual DATA_BASE_BOOL(CanBeDestroyed);
-  virtual DATA_BASE_BOOL(IsSafeToDestroy);
   virtual DATA_BASE_VALUE(uchar, RestModifier);
   virtual DATA_BASE_VALUE(const std::string&, RestMessage);
   virtual DATA_BASE_BOOL(IsUpLink);

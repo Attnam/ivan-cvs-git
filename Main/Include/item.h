@@ -12,6 +12,7 @@
 #include "slot.h"
 
 class felist;
+class head;
 template <class type> class contentscript;
 template <class type> class database;
 
@@ -98,6 +99,7 @@ struct itemdatabase
   uchar BeamStyle;
   ushort WearWisdomLimit;
   uchar AttachedGod;
+  uchar BreakEffectRange;
 };
 
 class itemprototype
@@ -291,7 +293,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
   DATA_BASE_VALUE(ulong, StorageVolume);
   DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
-  DATA_BASE_BOOL(CanBeCloned);
+  virtual DATA_BASE_BOOL(CanBeCloned);
   DATA_BASE_VALUE(ushort, BeamRange);
   DATA_BASE_BOOL(CanBeUsedBySmith);
   DATA_BASE_VALUE(uchar, DamageDivider);
@@ -301,6 +303,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamEffect);
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
+  DATA_BASE_VALUE(uchar, BreakEffectRange);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -389,6 +392,7 @@ class item : public object
   virtual void Search(const character*, ushort) { }
   virtual bool IsSparkling() const;
   virtual bool IsStupidToConsume() const;
+  virtual head* Behead() { return 0; }
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

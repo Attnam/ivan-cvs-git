@@ -28,7 +28,9 @@ void wsquare::Draw()
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
       ulong RealLuminance = configuration::ApplyContrastTo(Luminance);
       GWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
-      OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+
+      if(OWTerrain)
+	OWTerrain->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
       if(Character && Character->CanBeSeenByPlayer())
 	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
@@ -45,20 +47,20 @@ void wsquare::ChangeWTerrain(gwterrain* NewGround, owterrain* NewOver)
 
 void wsquare::ChangeGWTerrain(gwterrain* NewGround)
 {
-  if(GetGWTerrain()->IsAnimated())
+  if(GWTerrain->IsAnimated())
     DecAnimatedEntities();
 
-  delete GetGWTerrain();
+  delete GWTerrain;
   SetGWTerrain(NewGround);
   DescriptionChanged = NewDrawRequested = true;
 }
 
 void wsquare::ChangeOWTerrain(owterrain* NewOver)
 {
-  if(GetOWTerrain()->IsAnimated())
+  if(OWTerrain && OWTerrain->IsAnimated())
     DecAnimatedEntities();
 
-  delete GetOWTerrain();
+  delete OWTerrain;
   SetOWTerrain(NewOver);
   DescriptionChanged = NewDrawRequested = true;
 }
@@ -101,7 +103,7 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
     {
       MemorizedDescription.resize(0);
 
-      if(OWTerrain->GetNameStem().length())
+      if(OWTerrain)
 	{
 	  OWTerrain->AddName(MemorizedDescription, INDEFINITE);
 	  MemorizedDescription << " surrounded by ";
@@ -140,4 +142,9 @@ void wsquare::CalculateLuminance()
 {
   uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0f))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
+}
+
+bool wsquare::IsWalkable(const character* Char) const
+{
+  return (!OWTerrain || OWTerrain->IsWalkable(Char)) && GWTerrain->IsWalkable(Char);
 }

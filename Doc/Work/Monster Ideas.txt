@@ -96,3 +96,7 @@ Hedgehog
 ?
 
 	Guy who severs bodyparts from any corpse he encounters and laughs diabolically.
+
+Butterfly of storms
+
+	Causes small tornadoes and thunderstorms around the level by flapping its wings.

@@ -142,6 +142,7 @@ class ABSTRACT_CHARACTER
   virtual item* GetPairEquipment(ushort) const;
   virtual bool HasHead() const { return GetHead() != 0; }
   virtual const std::string& GetStandVerb() const;
+  virtual head* Behead();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -434,7 +435,6 @@ class CHARACTER
   virtual ushort GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
   virtual void CreateInitialEquipment(ushort);
-  virtual void AddPostFix(std::string&) const;
   virtual void GetAICommand();
   ushort LastHealed;
 );
@@ -539,7 +539,7 @@ class CHARACTER
 
 class CHARACTER
 (
-  darkwizard,
+  darkmage,
   humanoid,
  public:
   virtual void GetAICommand();

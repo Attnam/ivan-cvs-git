@@ -63,7 +63,7 @@ std::string character::FirstPersonBiteVerb() const { return "bite"; }
 std::string character::FirstPersonCriticalBiteVerb() const { return "critically bite"; }
 std::string character::ThirdPersonBiteVerb() const { return "bites"; }
 std::string character::ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
-std::string character::UnarmedHitNoun() const { return "hit"; }
+std::string character::UnarmedHitNoun() const { return "attack"; }
 std::string character::KickNoun() const { return "kick"; }
 std::string character::BiteNoun() const { return "attack"; }
 uchar character::GetSpecialBodyPartFlags(ushort) const { return ST_NORMAL; }
@@ -72,6 +72,8 @@ const std::list<ulong>& character::GetOriginalBodyPartID(ushort Index) const { r
 wsquare* character::GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(Index); }
 wsquare* character::GetWSquareUnder() const { return static_cast<wsquare*>(GetSquareUnder()); }
 god* character::GetMasterGod() const { return game::GetGod(GetConfig()); }
+wsquare* character::GetNearWSquare(vector2d Pos) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
+wsquare* character::GetNearWSquare(ushort x, ushort y) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
@@ -190,7 +192,7 @@ ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float To
   float DodgeValue = GetDodgeValue();
 
   if(!Enemy->IsPlayer() && GetAttackWisdomLimit() != NO_LIMIT)
-    Enemy->EditExperience(WISDOM, 100);
+    Enemy->EditExperience(WISDOM, 200);
 
   if(!Enemy->CanBeSeenBy(this))
     ToHitValue *= 2;
@@ -628,7 +630,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		{
 		  olterrain* Terrain = MoveToSquare->GetOLTerrain();
 
-		  if(IsPlayer() && Terrain->CanBeOpened())
+		  if(IsPlayer() && Terrain && Terrain->CanBeOpened())
 		    {
 		      if(CanOpen())
 			{
@@ -680,11 +682,11 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
     }
   else
     {
-      if(GetArea()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
+      if(GetArea()->IsValidPos(MoveTo) && (GetNearWSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
 	{
 	  if(!game::GoThroughWallsCheatIsActive())
 	    for(ushort c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
-	      if(!GetNearSquare(MoveTo)->IsWalkable(game::GetWorldMap()->GetPlayerGroup()[c]))
+	      if(!GetNearWSquare(MoveTo)->IsWalkable(game::GetWorldMap()->GetPlayerGroup()[c]))
 		{
 		  ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
 		  return false;
@@ -736,6 +738,7 @@ void character::Die(const std::string& Msg, bool ForceMsg)
 	    {
 	      RestoreBodyParts();
 	      RestoreHP();
+	      ResetStates();
 	      SetNP(SATIATED_LEVEL);
 	      GetSquareUnder()->SendNewDrawRequest();
 	      return;
@@ -1597,8 +1600,9 @@ bool character::CheckBalance(float KickDamage)
 void character::FallTo(character* GuiltyGuy, vector2d Where)
 {
   EditAP(-500);
+  olterrain* Terrain = GetNearLSquare(Where)->GetOLTerrain();
 
-  if(GetNearLSquare(Where)->GetOLTerrain()->IsWalkable(this))
+  if(!Terrain || Terrain->IsWalkable(this))
     {
       if(!GetNearSquare(Where)->GetCharacter())
 	Move(Where, true);
@@ -1801,7 +1805,7 @@ bool character::CheckForDoors()
     {
       lsquare* Square = GetNeighbourLSquare(d);
 
-      if(Square && Square->GetOLTerrain()->CanBeOpenedByAI() && OpenPos(Square->GetPos()))
+      if(Square && Square->GetOLTerrain() && Square->GetOLTerrain()->Open(this))
 	return true;
     }
 
@@ -1891,7 +1895,7 @@ bool character::Displace(character* Who, bool Forced)
       return true;
     }
 
-  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()) && GetSquareUnder()->IsWalkable(Who))
+  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()) && GetLSquareUnder()->IsWalkable(Who))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -1970,7 +1974,7 @@ void character::ShowNewPosInfo() const
 
 void character::Hostility(character* Enemy)
 {
-  if(Enemy == this || !Enemy)
+  if(Enemy == this || !Enemy || !Team || !Enemy->Team)
     return;
 
   if(GetTeam()->GetID() != Enemy->GetTeam()->GetID())
@@ -1998,8 +2002,13 @@ bool character::MoveRandomlyInRoom()
     {
       vector2d ToTry = GetPos() + game::GetMoveVector(RAND() & 7);
 
-      if(GetLevel()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->IsDangerousForAIToStepOn(this) && !GetNearLSquare(ToTry)->GetOLTerrain()->IsDoor() && TryMove(ToTry, false))
-	return true;
+      if(GetLevel()->IsValidPos(ToTry))
+	{
+	  lsquare* Square = GetNearLSquare(ToTry);
+
+	  if(!Square->IsDangerousForAIToStepOn(this) && (!Square->GetOLTerrain() || !Square->GetOLTerrain()->IsDoor()) && TryMove(ToTry, false))
+	    return true;
+	}
     }
 
   return false;
@@ -2015,7 +2024,9 @@ void character::GoOn(go* Go)
 
   lsquare* MoveToSquare = GetNearLSquare(GetPos() + game::GetMoveVector(Go->GetDirection()));
 
-  if(!MoveToSquare->IsWalkable(this) || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam()))
+  if(!MoveToSquare->IsWalkable(this)
+  || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam())
+  ||  MoveToSquare->GetStack()->IsDangerous(this))
     {
       Go->Terminate(false);
       return;
@@ -2025,7 +2036,7 @@ void character::GoOn(go* Go)
 
   for(ushort d = 0; d < 8; ++d)
     {
-      square* Square = GetNeighbourSquare(d);
+      lsquare* Square = GetNeighbourLSquare(d);
 
       if(Square && Square->IsWalkable(this))
 	++OKDirectionsCounter;
@@ -2139,7 +2150,7 @@ void character::DisplayInfo(std::string& Msg)
 
 void character::TestWalkability()
 {
-  if(GetSquareUnder()->IsFatalToStay() && !GetSquareUnder()->IsWalkable(this))
+  if(GetSquareUnder()->IsFatalToStay() && !GetSquareUnder()->SquareIsWalkable(this))
     {
       bool Alive = false;
 
@@ -2147,7 +2158,7 @@ void character::TestWalkability()
 	{
 	  square* Square = GetNeighbourSquare(d);
 
-	  if(Square && Square->IsWalkable(this) && !Square->GetCharacter())
+	  if(Square && Square->SquareIsWalkable(this) && !Square->GetCharacter())
 	    {
 	      if(IsPlayer())
 		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this).c_str());
@@ -2266,6 +2277,9 @@ void character::TeleportRandomly()
     }
 
   Move(GetLevel()->GetRandomSquare(this), true);
+
+  if(!IsPlayer() && CanBeSeenByPlayer())
+    ADD_MESSAGE("%s appears.", CHAR_NAME(INDEFINITE));
 }
 
 void character::RestoreHP()
@@ -2351,7 +2365,7 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	{
 	  lsquare* Square = GetNeighbourLSquare(d);
 
-	  if(Square && Square->GetOLTerrain()->IsWalkable())
+	  if(Square && Square->IsFlyable())
 	    BodyPart->SpillBlood(2 + (RAND() & 1), Square->GetPos());
 	}
     }
@@ -2379,11 +2393,10 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	  else
 	    GetStack()->AddItem(Severed);
 
-      Severed->DropEquipment();
+	  Severed->DropEquipment();
 	}
-      else
-	if(IsPlayer())
-	  ADD_MESSAGE("It vanishes.");
+      else if(IsPlayer() || CanBeSeenByPlayer())
+	ADD_MESSAGE("It vanishes.");
 
       if(IsPlayer())
 	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
@@ -2667,17 +2680,23 @@ bool character::RaiseTheDead(character*)
   bool Useful = false;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c) && CanCreateBodyPart(c))
-      {
-	CreateBodyPart(c)->SetHP(1);
+    {
+      bodypart* BodyPart = GetBodyPart(c);
 
-	if(IsPlayer())
-	  ADD_MESSAGE("Suddenly you grow a new %s.", GetBodyPartName(c).c_str());
-	else if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), GetBodyPartName(c).c_str());
+      if(!BodyPart && CanCreateBodyPart(c))
+	{
+	  CreateBodyPart(c)->SetHP(1);
 
-	Useful = true;
-      }
+	  if(IsPlayer())
+	    ADD_MESSAGE("Suddenly you grow a new %s.", GetBodyPartName(c).c_str());
+	  else if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), GetBodyPartName(c).c_str());
+
+	  Useful = true;
+	}
+      else if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < 1)
+	BodyPart->SetHP(1);
+    }
 
   if(!Useful)
     {
@@ -2938,7 +2957,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
 
 bool character::TeleportNear(character* Caller)
 {
-  vector2d Where = GetArea()->GetNearestFreeSquare(this, Caller->GetPos());
+  vector2d Where = GetLevel()->GetNearestFreeSquare(this, Caller->GetPos());
 
   if(Where == ERROR_VECTOR)
     return false;
@@ -3374,7 +3393,7 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 	      AddBlockMessage(Enemy, Blocker, Enemy->UnarmedHitNoun(), NewDamage != 0);
 	      break;
 	    case WEAPON_ATTACK:
-	      AddBlockMessage(Enemy, Blocker, "hit", NewDamage != 0);
+	      AddBlockMessage(Enemy, Blocker, "attack", NewDamage != 0);
 	      break;
 	    case KICK_ATTACK:
 	      AddBlockMessage(Enemy, Blocker, Enemy->KickNoun(), NewDamage != 0);
@@ -3789,6 +3808,7 @@ void character::SaveLife()
 
   RestoreBodyParts();
   RestoreHP();
+  ResetStates();
 
   if(GetNP() < SATIATED_LEVEL)
     SetNP(SATIATED_LEVEL);
@@ -4642,9 +4662,8 @@ bool character::TryToConsume(item* Item)
   if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
     {
       if(Item->IsStupidToConsume())
-	{
-	  EditExperience(WISDOM, 200);
-	}
+	EditExperience(WISDOM, 500);
+
       ConsumeItem(Item);
       return true;
     }
@@ -4695,7 +4714,7 @@ void character::CheckPanic(ushort Ticks)
 
 character* character::CloneToNearestSquare(character*) const
 {
-  vector2d Where = GetArea()->GetNearestFreeSquare(this, GetPos());
+  vector2d Where = GetLevel()->GetNearestFreeSquare(this, GetPos());
 
   if(Where == ERROR_VECTOR)
     {
@@ -5074,11 +5093,12 @@ void character::PrintEndConfuseMessage() const
 
 vector2d character::ApplyStateModification(vector2d TryDirection) const
 {
-  if(!StateIsActivated(CONFUSED) || RAND() & 1)
+  if(!StateIsActivated(CONFUSED) || RAND() & 1 || game::IsInWilderness())
     return TryDirection;
   else
     {
-      vector2d To = GetArea()->GetFreeAdjacentSquare(this, GetPos(), true);
+      vector2d To = GetLevel()->GetFreeAdjacentSquare(this, GetPos(), true);
+
       if(To == ERROR_VECTOR)
 	return TryDirection;
       else
@@ -5276,6 +5296,7 @@ void character::ParasitizedHandler()
 	ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
 
       ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
+      CheckDeath("killed by a vile parasite", 0);
     }
 }
 
@@ -5437,27 +5458,27 @@ bool character::CheckThrow() const
   return true;
 }
 
-void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
+void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
 {
-  uchar DamageDirection = GetPos() == Explosion.Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion.Pos);
+  uchar DamageDirection = GetPos() == Explosion->Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion->Pos);
 
-  if(Explosion.Terrorist)
-    Explosion.Terrorist->Hostility(this);
+  if(Explosion->Terrorist)
+    Explosion->Terrorist->Hostility(this);
 
-  GetTorso()->SpillBlood((8 - Explosion.Size + RAND() % (8 - Explosion.Size)) >> 1);
+  GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);
   vector2d SpillPos = GetPos() + game::GetMoveVector(DamageDirection);
 
   if(GetArea()->IsValidPos(SpillPos))
-    GetTorso()->SpillBlood((8 - Explosion.Size + RAND() % (8 - Explosion.Size)) >> 1, SpillPos);
+    GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1, SpillPos);
 
   if(IsPlayer())
     ADD_MESSAGE("You are hit by the explosion!");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s is hit by the explosion.", CHAR_NAME(DEFINITE));
   
-  ReceiveDamage(Explosion.Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
-  ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-  CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
+  ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
+  ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
+  CheckDeath(Explosion->DeathMsg, Explosion->Terrorist);
 }
 
 void character::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
@@ -5499,27 +5520,54 @@ void character::Search(ushort Perception)
 }
 
 // surprisingly returns 0 if fails
+
 character* character::GetRandomNeighbour(uchar RelationFlags) const
 {
-  std::vector<character*> Chars;
-  character* Char;
-  lsquare* LSquare;
+  character* Chars[8];
+  ushort Index = 0;
+
   for(ushort c = 0; c < 8; ++c)
     {
-      LSquare = GetNeighbourLSquare(c);
+      lsquare* LSquare = GetNeighbourLSquare(c);
+
       if(LSquare) 
 	{
-	  Char = LSquare->GetCharacter();
+	  character* Char = LSquare->GetCharacter();
+
 	  if(Char && (GetRelation(Char) & RelationFlags))
-	    Chars.push_back(Char);
+	    Chars[Index++] = Char;
 	}
     }
-  if(!Chars.empty())
-    return Chars[RAND() % Chars.size()];
-  else
-    return 0;
+
+  return Index ? Chars[RAND() % Index] : 0;
 }
 
+void character::ResetStates()
+{
+  for(ushort c = 0; c < STATES; ++c)
+    if(1 << c != POLYMORPHED && TemporaryStateIsActivated(1 << c) && TemporaryStateCounter[c] != PERMANENT)
+      {
+	TemporaryState &= ~(1 << c);
+
+	if(EndStateHandler[c])
+	  {
+	    (this->*EndStateHandler[c])();
+
+	    if(!IsEnabled())
+	      return;
+	  }
+      }
+}
+
+void characterdatabase::InitDefaults(ushort Config)
+{
+  IsAbstract = false;
+
+  /* TERRIBLE gum solution! */
+
+  if(Config & DEVOUT)
+    PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
+}
 
 void character::PrintBeginGasImmunityMessage() const
 {
@@ -5532,3 +5580,4 @@ void character::PrintEndGasImmunityMessage() const
   if(IsPlayer())
     ADD_MESSAGE("Yuck! The world smells bad again.");
 }
+

@@ -26,7 +26,7 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
     for(ushort y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new wsquare(this, vector2d(x, y));
-	Map[x][y]->SetWTerrain(new ocean, new atmosphere);
+	Map[x][y]->SetGWTerrain(new ocean);
       }
 
   TypeBuffer = Alloc2D<ushort>(XSize, YSize);
@@ -434,7 +434,7 @@ void worldmap::SmoothClimate()
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      Map[x][y]->ChangeWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
+      Map[x][y]->ChangeGWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Clone());
 }
 
 /* Evil... */

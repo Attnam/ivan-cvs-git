@@ -14,7 +14,6 @@
 #include "felist.h"
 #include "hscore.h"
 #include "whandler.h"
-#include "lterra.h"
 #include "message.h"
 #include "stack.h"
 #include "miscitem.h"

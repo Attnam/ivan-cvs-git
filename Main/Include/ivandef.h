@@ -259,6 +259,7 @@
 #define EFFECT_POLYMORPH 11
 #define EFFECT_ESP 12
 #define EFFECT_SKUNK_SMELL 13
+#define EFFECT_MAGIC_VAPOUR 14
 
 /* CEM = Consume End Message */
 
@@ -437,5 +438,7 @@
 #define STAIRS_DOWN 2
 
 #define NO_LIMIT 0xFFFF
+
+#define ALL_ITEMS 0xFFFF
 
 #endif

@@ -206,7 +206,7 @@ void level::GenerateTunnel(ushort FromX, ushort FromY, ushort TargetX, ushort Ta
 	    if(!(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE))
 	      {
 		FlagMap[x][y] |= ON_POSSIBLE_ROUTE|PREFERRED;
-		Map[x][y]->ChangeOLTerrain(new empty);
+		Map[x][y]->ChangeOLTerrain(0);
 	      }
 
 	    for(ushort X = 0; X < XSize; ++X)
@@ -408,17 +408,15 @@ bool level::MakeRoom(const roomscript* RoomScript)
   if(*RoomScript->GenerateTunnel() && !Door.empty())
     {
       game::BusyAnimation();
-
       vector2d OutsideDoorPos = Door[RAND() % Door.size()]; // An other room
 
       if(OKForDoor.empty())
 	ABORT("The Doors - You are strange.");
 
       vector2d InsideDoorPos = OKForDoor[RAND() % OKForDoor.size()]; // this door
-
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
-      if(!(RAND() % 5) && *RoomScript->AllowLockedDoors())
+      if(Door && !(RAND() % 5) && *RoomScript->AllowLockedDoors())
 	{
 	  if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
 	    Door->CreateBoobyTrap();
@@ -434,7 +432,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= PREFERRED;
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
-      if(!(RAND() % 5) && *RoomScript->AllowLockedDoors())
+      if(Door && !(RAND() % 5) && *RoomScript->AllowLockedDoors())
 	{
 	  if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
 	    Door->CreateBoobyTrap();
@@ -789,17 +787,18 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
         break;
       }
 
-  ExplosionQueue.resize(ExplosionQueue.size() + 1);
   PlayerHurt.resize(PlayerHurt.size() + 1);
-  explosion& E = ExplosionQueue.back();
-  E.Terrorist = Terrorist;
-  E.DeathMsg = DeathMsg;
-  E.Pos = Pos;
-  E.ID = game::CreateNewExplosionID();
-  E.Strength = Strength;
-  E.RadiusSquare = (8 - Size) * (8 - Size);
-  E.Size = Size;
-  E.HurtNeutrals = HurtNeutrals;
+  explosion* E = new explosion;
+  E->Terrorist = Terrorist;
+  E->DeathMsg = DeathMsg;
+  E->Pos = Pos;
+  E->ID = game::CreateNewExplosionID();
+  E->Strength = Strength;
+  E->RadiusSquare = (8 - Size) * (8 - Size);
+  E->Size = Size;
+  E->HurtNeutrals = HurtNeutrals;
+
+  ExplosionQueue.push_back(E);
 
   if(ExplosionQueue.size() == 1)
     {
@@ -812,23 +811,26 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
 	  for(c = Explosions; c < NewExplosions; ++c)
 	    if(PlayerHurt[c])
-	      PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c].Strength / ((PLAYER->GetPos() - ExplosionQueue[c].Pos).GetLengthSquare() + 1));
+	      PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
 
 	  Explosions = NewExplosions;
 	}
+
+      for(ushort c = 0; c < ExplosionQueue.size(); ++c)
+	delete ExplosionQueue[c];
 
       ExplosionQueue.clear();
       PlayerHurt.clear();
     }
 }
 
-bool level::DrawExplosion(const explosion& Explosion) const
+bool level::DrawExplosion(const explosion* Explosion) const
 {
   static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
-  vector2d BPos = game::CalculateScreenCoordinates(Explosion.Pos) - vector2d((6 - Explosion.Size) << 4, (6 - Explosion.Size) << 4);
-  vector2d SizeVect(16 + ((6 - Explosion.Size) << 5), 16 + ((6 - Explosion.Size) << 5));
+  vector2d BPos = game::CalculateScreenCoordinates(Explosion->Pos) - vector2d((6 - Explosion->Size) << 4, (6 - Explosion->Size) << 4);
+  vector2d SizeVect(16 + ((6 - Explosion->Size) << 5), 16 + ((6 - Explosion->Size) << 5));
   vector2d OldSizeVect = SizeVect;
-  vector2d PicPos = StrengthPicPos[Explosion.Size];
+  vector2d PicPos = StrengthPicPos[Explosion->Size];
 
   if(short(BPos.X) < 0)
     if(short(BPos.X) + SizeVect.X <= 0)
@@ -881,10 +883,10 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      ushort EmitChange = Min(150 + ExplosionQueue[c].Strength, 255);
-      GetLSquare(ExplosionQueue[c].Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
+      ushort EmitChange = Min(150 + ExplosionQueue[c]->Strength, 255);
+      GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
 
-      if(!GetSquare(ExplosionQueue[c].Pos)->CanBeSeenByPlayer())
+      if(!GetSquare(ExplosionQueue[c]->Pos)->CanBeSeenByPlayer())
 	++NotSeen;
     }
 
@@ -899,7 +901,7 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      GetLSquare(ExplosionQueue[c].Pos)->SetTemporaryEmitation(0);
+      GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(0);
 
       if(DrawExplosion(ExplosionQueue[c]))
 	Drawn = true;
@@ -915,27 +917,30 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      explosion Explosion(ExplosionQueue[c]);
-      ushort Radius = 8 - Explosion.Size;
-      game::SetCurrentExplosion(&Explosion);
+      explosion* Explosion = ExplosionQueue[c];
+      ushort Radius = 8 - Explosion->Size;
+      game::SetCurrentExplosion(Explosion);
       game::SetPlayerWasHurtByExplosion(false);
 
       rect Rect;
-      femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Explosion.Pos, Radius);
+      femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Explosion->Pos, Radius);
 
       for(ushort x = Rect.X1; x <= Rect.X2; ++x)
 	{
-	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, x, Rect.Y1, game::ExplosionHandler);
-	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, x, Rect.Y2, game::ExplosionHandler);
+	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y1, game::ExplosionHandler);
+	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, x, Rect.Y2, game::ExplosionHandler);
 	}
 
       for(ushort y = Rect.Y1 + 1; y < Rect.Y2; ++y)
 	{
-	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, Rect.X1, y, game::ExplosionHandler);
-	  femath::DoLine(Explosion.Pos.X, Explosion.Pos.Y, Rect.X2, y, game::ExplosionHandler);
+	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X1, y, game::ExplosionHandler);
+	  femath::DoLine(Explosion->Pos.X, Explosion->Pos.Y, Rect.X2, y, game::ExplosionHandler);
 	}
 
       PlayerHurt[c] = game::PlayerWasHurtByExplosion();
+
+      if(GetLSquare(Explosion->Pos)->IsFlyable())
+	GetLSquare(Explosion->Pos)->AddSmoke(new gas(SMOKE, 1000));
     }
 
   return LastExplosion;
@@ -1090,6 +1095,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	      GenerateLanterns(x, Pos.Y + Size.Y - 1, UP);
 	    }
 	}
+
       Border.push_back(vector2d(x, Pos.Y));
       Border.push_back(vector2d(x, Pos.Y + Size.Y - 1));
     }
@@ -1165,7 +1171,7 @@ void level::ParticleBeam(character* BeamOwner, const std::string& DeathMsg, vect
 
 	  lsquare* CurrentSquare = GetLSquare(CurrentPos);
 
-	  if(!CurrentSquare->GetOLTerrain()->IsWalkable())
+	  if(!CurrentSquare->IsFlyable())
 	    {
 	      (CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
 	      break;
@@ -1225,7 +1231,7 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
 
       lsquare* CurrentSquare = GetLSquare(CurrentPos);
 
-      if(!CurrentSquare->GetOLTerrain()->IsWalkable())
+      if(!CurrentSquare->IsFlyable())
 	{
 	  if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
 	    break;
@@ -1235,8 +1241,8 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
 	  switch(Direction)
 	    {
 	    case 0:
-	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->GetOLTerrain()->IsWalkable();
-	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->GetOLTerrain()->IsWalkable();
+	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->IsFlyable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->IsFlyable();
 
 	      if(W1 == W2)
 		Direction = 7;
@@ -1254,8 +1260,8 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
 	      break;
 	    case 1: Direction = 6; StartPos.Y = 0; break;
 	    case 2:
-	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->GetOLTerrain()->IsWalkable();
-	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->GetOLTerrain()->IsWalkable();
+	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->IsFlyable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->IsFlyable();
 
 	      if(W1 == W2)
 		Direction = 5;
@@ -1274,8 +1280,8 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
 	    case 3: Direction = 4; StartPos.X = 0; break;
 	    case 4: Direction = 3; StartPos.X = 15; break;
 	    case 5:
-	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->GetOLTerrain()->IsWalkable();
-	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->GetOLTerrain()->IsWalkable();
+	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->IsFlyable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->IsFlyable();
 
 	      if(W1 == W2)
 		Direction = 2;
@@ -1293,8 +1299,8 @@ void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vec
 	      break;
 	    case 6: Direction = 1; StartPos.Y = 15; break;
 	    case 7:
-	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->GetOLTerrain()->IsWalkable();
-	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->GetOLTerrain()->IsWalkable();
+	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->IsFlyable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->IsFlyable();
 
 	      if(W1 == W2)
 		Direction = 0;
@@ -1409,3 +1415,117 @@ void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vect
   return Beam[Index];
 }
 
+vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance) const
+{
+  ushort c;
+
+  for(c = 0; c < 8; ++c)
+    {
+      vector2d Pos = StartPos + game::GetMoveVector(c);
+
+      if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char) && !GetLSquare(Pos)->GetCharacter() && Pos != Prohibited)
+	return Pos;
+    }
+
+  if(MaxDistance)
+    for(c = 0; c < 8; ++c)
+      {
+	vector2d Pos = StartPos + game::GetMoveVector(c);
+
+	if(IsValidPos(Pos))
+	  {
+	    if(GetLSquare(Pos)->IsWalkable(Char) && Pos != Prohibited)
+	      {
+		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
+
+		if(Pos != ERROR_VECTOR)
+		  return Pos;
+	      }
+	  }
+      }
+
+  return ERROR_VECTOR;
+}
+
+/* Returns ERROR_VECTOR if no free square was found */
+
+vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
+{
+  if(GetLSquare(StartPos)->IsWalkable(Char) && !GetLSquare(StartPos)->GetCharacter())
+    return StartPos;
+
+  ushort c;
+
+  for(c = 0; c < 8; ++c)
+    {
+      vector2d Pos = StartPos + game::GetMoveVector(c);
+
+      if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char) && !GetLSquare(Pos)->GetCharacter())
+	return Pos;
+    }
+
+  for(ushort Dist = 0; Dist < 5; ++Dist)
+    for(c = 0; c < 8; ++c)
+      {
+	vector2d Pos = StartPos + game::GetMoveVector(c);
+
+	if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char))
+	  {
+	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
+
+	    if(Pos != ERROR_VECTOR)
+	      return Pos;
+	  }
+      }
+
+  return ERROR_VECTOR;
+}
+
+vector2d level::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, bool AllowCharacter) const
+{
+  ushort PossibleDir[8];
+  ushort Index = 0;
+  lsquare* Origo = GetLSquare(StartPos);
+
+  for(ushort d = 0; d < 8; ++d)
+    {
+      lsquare* Square = Origo->GetNeighbourLSquare(d);
+
+      if(Square && Square->IsWalkable(Char) && (AllowCharacter || !Square->GetCharacter()))
+	PossibleDir[Index++] = d;
+    }
+
+  return Index ? StartPos + game::GetMoveVector(PossibleDir[RAND() % Index]) : ERROR_VECTOR;
+}
+
+void (level::*level::GetBeamEffectVisualizer(ushort Index))(const rect&, ushort) const
+{
+  static void (level::*Visualizer[BEAM_STYLES])(const rect&, ushort) const = { &level::ParticleVisualizer, &level::LightningVisualizer, &level::ParticleVisualizer };
+  return Visualizer[Index];
+}
+
+void level::ParticleVisualizer(const rect& Rect, ushort BeamColor) const
+{
+  clock_t StartTime = clock();
+  game::DrawEverythingNoBlit();
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      Map[x][y]->DrawParticles(BeamColor, false);
+
+  graphics::BlitDBToScreen();
+  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+}
+
+void level::LightningVisualizer(const rect& Rect, ushort BeamColor) const
+{
+  clock_t StartTime = clock();
+  game::DrawEverythingNoBlit();
+
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+      Map[x][y]->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF, false);
+
+  graphics::BlitDBToScreen();
+  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+}

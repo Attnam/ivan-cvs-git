@@ -147,6 +147,7 @@ class ITEM
   virtual void CalculateAPCost();
   void ShowBiteInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
+  virtual head* Behead();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
@@ -449,6 +450,8 @@ class ITEM
   virtual bool Consume(character*, long);
   virtual material* GetMaterial(ushort) const;
   virtual bool IsStupidToConsume() const;
+  virtual head* Behead();
+  virtual bool CanBeCloned() const;
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual void GenerateMaterials() { }
