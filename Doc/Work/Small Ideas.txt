@@ -436,3 +436,4 @@ Detonator and starting explosive. When applied the detonator explodes the small 
 Vesana and other big monsters should also vomit much more than smaller creatures.
 Doing evil/good deads should have greater effect on the god on whose altar room the deed is done.
 Faster scrolling for look mode. (maybe when shift is pressed)
+Petrus' birthday (petrus gives player 1 banana).

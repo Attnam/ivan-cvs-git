@@ -6876,3 +6876,9 @@ void character::PutTo(lsquare* To)
 {
   PutTo(To->GetPos());
 }
+
+ushort character::RandomizeBabyAttribute(ushort SumA)
+{
+  return Limit<short>((SumA & 3 ? (SumA >> 2) + (RAND() % (SumA & 3) ? 1 : 0) : SumA >> 2) + (RAND() & 1) - (RAND() & 1), 0, 100);
+}
+

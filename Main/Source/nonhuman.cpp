@@ -966,6 +966,8 @@ void mushroom::GetAICommand()
 	  Child->SetSpecies(Species);
 	  Child->SetTeam(GetTeam());
 	  Child->PutTo(CradleSquare->GetPos());
+	  for(ushort c = 0; c < BASE_ATTRIBUTES; ++c)
+	    Child->BaseAttribute[c] = RandomizeBabyAttribute(BaseAttribute[c] * 4);
 
 	  if(Child->CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s pops out from the ground.", Child->CHAR_NAME(INDEFINITE));
@@ -1760,11 +1762,6 @@ bool bunny::CheckForMatePartner()
     }
 
   return false;
-}
-
-ushort bunny::RandomizeBabyAttribute(ushort SumA)
-{
-  return Limit<short>((SumA & 3 ? (SumA >> 2) + (RAND() % (SumA & 3) ? 1 : 0) : SumA >> 2) + (RAND() & 1) - (RAND() & 1), 0, 100);
 }
 
 bool bunny::Catches(item* Thingy)

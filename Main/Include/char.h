@@ -865,6 +865,7 @@ class character : public entity, public id
   virtual bool AttackMayDamageArmor() const { return true; }
   virtual ushort GetSpecialBodyPartFlags(ushort, bool = false) const;
   void AttackAdjacentEnemyAI();
+  ushort RandomizeBabyAttribute(ushort);
   stack* Stack;
   long NP, AP;
   bool Player;

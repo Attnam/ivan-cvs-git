@@ -463,7 +463,6 @@ class CHARACTER
   virtual bool Catches(item*);
  protected:
   bool CheckForMatePartner();
-  ushort RandomizeBabyAttribute(ushort);
   virtual void GetAICommand();
 );
 

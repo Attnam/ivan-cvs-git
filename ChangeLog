@@ -6,10 +6,12 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
-August xx 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+August 31 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	
 	* Now compiles with gcc
 	* Added necromancers
+	* Mushrooms inherit their stats.
+	* Atavus gives player a banana at XMas. Banana should probably be changed to something else.
 
 August 14 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

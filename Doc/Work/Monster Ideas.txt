@@ -174,3 +174,8 @@ Deep sea blowfish (Singularis minutia gigantica)
 	its normal size. The bloat poison can be extracted from its body.
 
 Flying squirrel
+
+Carpenter 
+
+	  Sells wood stuff and asks the player: "How much wood would a 
+	  wood-chuck chuck if a wood-chuck chucked wood?"

@@ -254,6 +254,13 @@ bool game::Init(const festring& Name)
 	WizardMode = false;
 	SeeWholeMapCheatMode = MAP_HIDDEN;
 	GoThroughWallsCheat = false;
+	if(game::IsXMas())
+	  {
+	    item* Present = new banana;
+	    game::GetPlayer()->GetStack()->AddItem(Present);
+	    ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
+	    
+	  }
 	return true;
       }
     default:
@@ -2294,4 +2301,11 @@ bool game::TweraifIsFree()
       return false;
 
   return true;
+}
+
+bool game::IsXMas() // returns true if date is christmaseve or day
+{
+  time_t Time = time(0);
+  struct tm* TM = localtime(&Time);
+  return (TM->tm_mon == 11 && (TM->tm_mday == 24 || TM->tm_mday == 25));
 }

@@ -289,6 +289,7 @@ class game
   static long GetScore();
   static void SetMoveType(uchar What) { MoveType = What; }
   static bool TweraifIsFree();
+  static bool IsXMas();
  private:
   static const char* const Alignment[];
   static god** God;
