@@ -1523,6 +1523,8 @@ void potion::Break(character* Breaker)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
+  else
+    ADD_MESSAGE("You hear something shattering.", CHAR_NAME(DEFINITE));
 
   if(Breaker && IsOnGround())
     {

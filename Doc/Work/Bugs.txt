@@ -42,3 +42,5 @@ The bone file code doesn't handle shops correctly. (but there are never shops in
 The head of Ivan is left in bone levels.
 "You faint. You hit the floating eye! It is not hurt."
 Kamikaze dwarves die smiling even if headless.
+"You feel a slight tingling in your hands." when armless.
+Mirage dogs.

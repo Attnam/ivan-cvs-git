@@ -750,11 +750,18 @@ organicsubstance /* substances that spoil but are not flesh */
 
 	Config CARROT_FLESH;
 	{
+		StrengthValue = 3;
+		ConsumeType = CT_FRUIT;
 		NameStem = "carrot flesh";
 		Effect = EFFECT_TRAIN_PERCEPTION;
-		EffectStrength = 2000;
+		EffectStrength = 1000;
 		AttachedGod = SILVA;
 		Color = rgb16(220, 120, 0);
+		Density = 1200;
+		NutritionValue = 1000;
+		CanBeWished = true;
+		PriceModifier = 600;
+		Flexibility = 5;
 	}
 }
 

@@ -2949,11 +2949,17 @@ void character::PrintInfo() const
 bool character::CompleteRiseFromTheDead()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	GetBodyPart(c)->ResetSpoiling();
-	GetBodyPart(c)->SetHP(1);
-      }
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	{
+	  BodyPart->ResetSpoiling();
+
+	  if(BodyPart->IsAlive() || BodyPart->GetHP() < 1)
+	    BodyPart->SetHP(1);
+	}
+    }
 
   return true;
 }
@@ -4398,11 +4404,9 @@ void character::DisplayStethoscopeInfo(character* Viewer) const
     Info.AddEntry(festring(GetAction()->GetDescription()).CapitalizeCopy(), LIGHT_GRAY);
 
   for(ushort c = 0; c < STATES; ++c)
-    if(!(StateData[c].Flags & SECRET) && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
+    if(StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
       Info.AddEntry(StateData[c].Description, LIGHT_GRAY);
 
-  ushort Danger = ushort(GetRelativeDanger(Viewer) * 100);
-  Info.AddEntry(CONST_S("Danger: ") + GetDangerDescription(Danger), GetDangerDescriptionColor(Danger));
   game::SetStandardListAttributes(Info);
   Info.Draw();
 }
@@ -4500,13 +4504,17 @@ void character::CalculateVolumeAndWeight()
   CarriedWeight = Weight;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	BodyVolume += GetBodyPart(c)->GetBodyPartVolume();
-	Volume += GetBodyPart(c)->GetVolume();
-	CarriedWeight += GetBodyPart(c)->GetCarriedWeight();
-	Weight += GetBodyPart(c)->GetWeight();
-      }
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	{
+	  BodyVolume += BodyPart->GetBodyPartVolume();
+	  Volume += BodyPart->GetVolume();
+	  CarriedWeight += BodyPart->GetCarriedWeight();
+	  Weight += BodyPart->GetWeight();
+	}
+    }
 }
 
 void character::SignalVolumeAndWeightChange()
@@ -5766,8 +5774,12 @@ void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
   ushort c, AnimationFrames = 1;
 
   for(c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->GetAnimationFrames() > AnimationFrames)
-      AnimationFrames = GetBodyPart(c)->GetAnimationFrames();
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->GetAnimationFrames() > AnimationFrames)
+	AnimationFrames = BodyPart->GetAnimationFrames();
+    }
 
   Bitmap.resize(AnimationFrames);
 
@@ -5837,16 +5849,20 @@ void character::AddDefenceInfo(felist& List) const
   festring Entry;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	Entry = CONST_S("   ");
-	Entry << GetBodyPart(c)->GetBodyPartName();
-	Entry.Resize(60, ' ');
-	Entry << GetBodyPart(c)->GetMaxHP();
-	Entry.Resize(70, ' ');
-	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICAL_DAMAGE);
-	List.AddEntry(Entry, LIGHT_GRAY);
-      }
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	{
+	  Entry = CONST_S("   ");
+	  Entry << BodyPart->GetBodyPartName();
+	  Entry.Resize(60, ' ');
+	  Entry << BodyPart->GetMaxHP();
+	  Entry.Resize(70, ' ');
+	  Entry << BodyPart->GetTotalResistance(PHYSICAL_DAMAGE);
+	  List.AddEntry(Entry, LIGHT_GRAY);
+	}
+    }
 }
 
 void character::DetachBodyPart()
@@ -6036,38 +6052,4 @@ item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
       return *i;
 
   return 0;
-}
-
-const char* character::GetDangerDescription(ushort Danger)
-{
-  if(Danger < 5)
-    return "harmless";
-  else if(Danger < 10)
-    return "mostly harmless";
-  else if(Danger < 25)
-    return "bad for health";
-  else if(Danger < 75)
-    return "dangerous but still weaker than you";
-  else if(Danger < 150)
-    return "equal opponent";
-  else if(Danger < 250)
-    return "tougher than you";
-  else if(Danger < 1000)
-    return "very dangerous";
-  else if(Danger < 9900)
-    return "impossible";
-  else
-    return "RUN!!!";
-}
-
-ushort character::GetDangerDescriptionColor(ushort Danger)
-{
-  if(Danger < 10)
-    return LIGHT_GRAY;
-  else if(Danger < 75)
-    return MakeRGB16(180, 120, 120);
-  else if(Danger < 150)
-    return MakeRGB16(180, 0, 0);
-  else
-    return MakeRGB16(140, 0, 0);
 }

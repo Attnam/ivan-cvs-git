@@ -93,7 +93,7 @@ lantern
 	DefaultSize = 30;
 	Possibility = 100;
 	Category = TOOL;
-	DefaultMainVolume = 600;
+	DefaultMainVolume = 400;
 	StrengthModifier = 50;
 	FormModifier = 20;
 	Price = 50;
@@ -309,7 +309,7 @@ meleeweapon
 	Config HALBERD;
 	{
 		DefaultSize = 170;
-		Possibility = 200;
+		Possibility = 150;
 		WeaponCategory = POLE_ARMS;
 		DefaultMainVolume = 375;
 		DefaultSecondaryVolume = 1800;
@@ -1244,6 +1244,7 @@ avatarofvalpurus
 	StrengthModifier = 500;
 	BitmapPos = 0, 320;
 	FormModifier = 15;
+	Article = "an";
 	NameSingular = "Avatar";
 	PostFix = "of Valpurus";
 	ArticleMode = DEFINITE_ARTICLE;
@@ -1409,8 +1410,8 @@ oillamp
 	BitmapPos = 32, 48;
 	FormModifier = 20;
 	BaseEmitation = rgb24(110, 110, 90);
-	NameSingular = "oil lamp";
 	Article = "an";
+	NameSingular = "oil lamp";
 	MainMaterialConfig == GOLD;
 	Roundness = 40;
 	CanBePiled = false; /* otherwise you could summon a genie only from the first piled item */
@@ -1791,8 +1792,8 @@ amulet
 	StrengthModifier = 100;
 	BitmapPos = 32, 400;
 	FormModifier = 10;
-	NameSingular = "amulet";
 	Article = "an";
+	NameSingular = "amulet";
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
@@ -2646,8 +2647,7 @@ carrot
 {
 	Possibility = 150;
 	WeaponCategory = BLUNT_WEAPONS;
-	DefaultMainVolume = 40;
-	DefaultContainedVolume = 150;
+	DefaultMainVolume = 60;
 	StrengthModifier = 75;
 	Category = FOOD;
 	BitmapPos = 64, 272;

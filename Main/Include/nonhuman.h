@@ -359,6 +359,7 @@ class CHARACTER
   virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool SpecialEnemySightedReaction(character*);
   void SetIsActive(bool What) { Active = What; }
+  virtual bool IsPolymorphable() const { return MaxHP < 100; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual const char* FirstPersonBiteVerb() const;

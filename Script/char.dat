@@ -1221,6 +1221,7 @@ golem
 	AttachedGod = NONE;
 	ClassStates = GAS_IMMUNITY;
 	Frequency = 2500;
+	CanTalk = false;
 
 	Config VALPURIUM;
 	{

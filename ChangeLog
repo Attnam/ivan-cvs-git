@@ -9,6 +9,18 @@ is also provided AS IS and is probably completely unreadable.
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Ghosts with >= 100 HPs can no longer be polymorphed
+	* Carrots' weights and NP values are now more realistic
+	* Carrot flesh plate mails are no longer allowed since eating them gave 10
+	  perception
+	* Metal bodyparts are now resurrected correctly
+	* Potions shattering inside damaged chests now give a message
+	* Lanterns' weight decreased to 1 kg
+	* Stethoscope is again useless
+	* The player can no longer talk if he is a golem
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Vomiting on the altar of Valpurus in Attnam is now punished with death
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>

@@ -427,7 +427,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const festring&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_BOOL(CanZap);
-  DATA_BASE_BOOL(IsPolymorphable);
+  virtual DATA_BASE_BOOL(IsPolymorphable);
   DATA_BASE_VALUE(ulong, BaseUnarmedStrength);
   DATA_BASE_VALUE(ulong, BaseBiteStrength);
   DATA_BASE_VALUE(ulong, BaseKickStrength);
@@ -761,8 +761,6 @@ class character : public entity, public id
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*) { return false; }
   virtual bool MustBeRemovedFromBone() const;
-  static const char* GetDangerDescription(ushort);
-  static ushort GetDangerDescriptionColor(ushort);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

@@ -1479,6 +1479,7 @@ bool humanoid::CompleteRiseFromTheDead()
 		  item* Item = *i1;
 		  Item->RemoveFromSlot();
 		  AttachBodyPart(static_cast<bodypart*>(Item));
+		  GetBodyPart(c)->SetHP(1);
 		  break;
 		}
 
@@ -1489,14 +1490,18 @@ bool humanoid::CompleteRiseFromTheDead()
 
   for(c = 0; c < GetBodyParts(); ++c)
     {
-      if(BodyPartIsVital(c) && !GetBodyPart(c))
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPartIsVital(c) && !BodyPart)
 	if(!HandleNoBodyPart(c))
 	  return false;
 
-      if(GetBodyPart(c))
+      if(BodyPart)
 	{
-	  GetBodyPart(c)->ResetSpoiling();
-	  GetBodyPart(c)->SetHP(1);
+	  BodyPart->ResetSpoiling();
+
+	  if(BodyPart->IsAlive() || BodyPart->GetHP() < 1)
+	    BodyPart->SetHP(1);
 	}
     }
 
@@ -2492,28 +2497,32 @@ void smith::BeTalkedTo()
     }
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(PLAYER->GetBodyPart(c))
-      {
-	if(!PLAYER->GetBodyPart(c)->GetMainMaterial()->IsMetal())
-	  continue;
-	
-	if(PLAYER->GetBodyPart(c)->GetHP() >= PLAYER->GetBodyPart(c)->GetMaxHP())
-	  continue;
+    {
+      bodypart* BodyPart = PLAYER->GetBodyPart(c);
 
-	if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= PLAYER->GetBodyPart(c)->GetMainMaterial()->GetStrengthValue())
-	  {
-	    ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", PLAYER->GetBodyPart(c)->GetBodyPartName().CStr(), GetMainWielded()->CHAR_NAME(UNARTICLED));
+      if(BodyPart)
+	{
+	  if(!BodyPart->GetMainMaterial()->IsMetal())
 	    continue;
-	  }
+	  
+	  if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
+	    continue;
 
-	ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", PLAYER->GetBodyPart(c)->GetBodyPartName().CStr()); 
-	
-	if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
-	  {
-	    PLAYER->GetBodyPart(c)->RestoreHP();
-	    PLAYER->EditMoney(-25);
-	  }	
-      }
+	  if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= BodyPart->GetMainMaterial()->GetStrengthValue())
+	    {
+	      ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", BodyPart->GetBodyPartName().CStr(), GetMainWielded()->CHAR_NAME(UNARTICLED));
+	      continue;
+	    }
+
+	  ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
+	  
+	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
+	    {
+	      BodyPart->RestoreHP();
+	      PLAYER->EditMoney(-25);
+	    }	
+	}
+    }
 
   if(PLAYER->GetStack()->SortedItems(this, &item::FixableBySmithSorter))
     {
