@@ -8,6 +8,7 @@ std::vector<character*>			protocontainer<character>::ProtoData;
 std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 
 #include "femath.h"
+#include "itemde.h"
 #include "charde.h"
 
 #undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
@@ -2622,4 +2623,25 @@ bool humanoid::CheckOffer() const
     default:
       return true;
     }
+}
+
+void carnivorousplant::GetAICommand()
+{
+  character* Char;
+  DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+			if((Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter()))
+  {
+    if(GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE)
+      {
+	Hit(Char);
+	return;
+      }
+  })
+}
+
+void carnivorousplant::CreateTorso()
+{
+  character::CreateTorso();
+  GetTorso()->SetColor(1, MAKE_RGB(40 + RAND() % 100, 40 + RAND() % 100, 40 + RAND() % 100));
+  GetTorso()->UpdatePicture();
 }

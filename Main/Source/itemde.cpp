@@ -1059,7 +1059,7 @@ bool scrollofcharging::Read(character* Reader)
       return false;
     }
 
-  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", item::ChargeableSorter);
+  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", &item::ChargeableSorter);
 
   if(!Item)
     return false;

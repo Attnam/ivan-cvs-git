@@ -1668,9 +1668,9 @@ class ITEM
   },
  public:
   virtual ushort GetMaterialColor0() const { return item::GetMaterialColor0(); }
-  virtual ushort GetMaterialColor1() const { return item::GetMaterialColor1(); }
+  /*  virtual ushort GetMaterialColor1() const { return item::GetMaterialColor1(); }
   virtual ushort GetMaterialColor2() const { return item::GetMaterialColor2(); }
-  virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }
+  virtual ushort GetMaterialColor3() const { return item::GetMaterialColor3(); }*/
   virtual uchar GetGraphicsContainerIndex() const { return GRCHARACTER; }
   virtual ushort GetArmoredStrengthValue() const;
 );

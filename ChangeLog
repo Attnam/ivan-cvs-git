@@ -1,3 +1,8 @@
+2002-04-26  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* charde.cpp/h: Added lion, buffalo and carnivorousplant
+	* charba.cpp, itemde.cpp: Added & marks to functions calls for xSorter functions. (didn't compile with gcc without them)
+
 April 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Equipment menu works somehow.

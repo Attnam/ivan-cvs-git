@@ -700,6 +700,9 @@ Dungeon 1;
 					F = kobold;
 					G = ennerbeast;
 					H = darkknight;
+					I = carnivorousplant;
+					J = lion;
+					K = buffalo;
 				}
 			}
 			{
@@ -736,7 +739,7 @@ Dungeon 1;
 				# . . . . 4 . 6 . # . . . . . . . . . . . . . # . . . . . . . . #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # . . . # #
 				. # # 2 . # . . . . . . . . . . . . . . . . . . . . . # . . # # .
-				. . # # # # A B C D E F . H . . . . . . . . . . . . . # # # # . .
+				. . # # # # A B C D E F I H J K . . . . . . . . . . . # # # # . .
 			}
 		}
 

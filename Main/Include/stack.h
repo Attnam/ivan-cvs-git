@@ -65,7 +65,7 @@ class stack
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
   lsquare* GetLSquareUnder() const;
-  bool SortedItems(character*, bool (item::*)(character*) const) const;
+  bool SortedItems(character*, bool (item::*jipii)(character*) const) const;
   void DrawItemData(ushort, ushort) const;
   void DeletePointers();
   void Kick(ushort, bool, uchar);

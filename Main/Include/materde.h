@@ -1068,5 +1068,28 @@ class MATERIAL
   virtual std::string NameStem() const { return "bronze"; }
 );
 
+class MATERIAL
+(
+  lionflesh,
+  flesh,
+ public:
+  virtual ushort OfferValue() const { return 15; }
+  virtual ushort GetColor() const { return MAKE_RGB(140, 110, 80); }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
+ protected:
+  virtual std::string NameStem() const { return "lion flesh"; }
+);
+
+class MATERIAL
+(
+  buffaloflesh,
+  flesh,
+ public:
+  virtual ushort OfferValue() const { return 15; }
+  virtual ushort GetColor() const { return MAKE_RGB(60, 55, 50); }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
+ protected:
+  virtual std::string NameStem() const { return "buffalo flesh"; }
+);
 #endif
 

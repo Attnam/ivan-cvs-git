@@ -463,7 +463,7 @@ bool character::Consume()
 	return true;
     }
 
-  if((!game::GetInWilderness || !GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter)) && !GetStack()->SortedItems(this, item::ConsumableSorter))
+  if((!game::GetInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter)) && !GetStack()->SortedItems(this, &item::ConsumableSorter))
     {
       ADD_MESSAGE("You have nothing to consume!");
       return false;
@@ -471,10 +471,10 @@ bool character::Consume()
 
   item* Item;
 
-  if(!game::GetInWilderness && GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter))
-      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to consume?", "Items in your inventory", "Items on ground", item::ConsumableSorter);
+  if(!game::GetInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter))
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to consume?", "Items in your inventory", "Items on ground", &item::ConsumableSorter);
   else
-      Item = GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
+      Item = GetStack()->DrawContents(this, "What do you wish to consume?", &item::ConsumableSorter);
 
   if(Item)
     {
@@ -962,7 +962,7 @@ void character::Die(bool ForceMsg)
 
 bool character::OpenItem()
 {
-  item* Item = Stack->DrawContents(this, "What do you want to open?", item::OpenableSorter);
+  item* Item = Stack->DrawContents(this, "What do you want to open?", &item::OpenableSorter);
 
   if(Item)
     if(Item->TryToOpen(this))
@@ -1240,7 +1240,7 @@ bool character::Read()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to read?", item::ReadableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to read?", &item::ReadableSorter);
 
   if(Item)
     return ReadItem(Item);
@@ -1298,17 +1298,17 @@ uchar character::GetBurdenState(ulong Mass) const
 
 bool character::Dip()
 {
-  if(!GetStack()->SortedItems(this, item::DippableSorter))
+  if(!GetStack()->SortedItems(this, &item::DippableSorter))
     {
       ADD_MESSAGE("You have nothing to dip!");
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", item::DippableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", &item::DippableSorter);
 
   if(Item)
     {
-      bool HasDipDestination = GetStack()->SortedItems(this, item::DipDestinationSorter);
+      bool HasDipDestination = GetStack()->SortedItems(this, &item::DipDestinationSorter);
 
       if(!HasDipDestination || game::BoolQuestion("Do you wish to dip in a nearby square? [y/N]"))
 	{
@@ -1337,7 +1337,7 @@ bool character::Dip()
 	      return false;
 	    }
 
-	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", item::DipDestinationSorter);
+	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", &item::DipDestinationSorter);
 
 	  if(DipTo && Item != DipTo)
 	    {
@@ -2163,7 +2163,7 @@ bool character::Apply()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", item::AppliableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", &item::AppliableSorter);
 
   if(Item)
     {
@@ -2196,7 +2196,7 @@ bool character::Zap()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", item::ZappableSorter);
+  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", &item::ZappableSorter);
 
   if(Item)
     {
