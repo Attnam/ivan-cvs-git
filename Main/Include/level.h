@@ -30,7 +30,6 @@ public:
 	virtual ~level() {}
 	virtual void Generate(levelscript*);
 	virtual vector2d RandomSquare(bool, bool = false) const;
-	virtual void Draw() const;
 	virtual void FastAddCharacter(vector2d, character*);
 	virtual void HandleCharacters();
 	virtual levelsquare* GetLevelSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }

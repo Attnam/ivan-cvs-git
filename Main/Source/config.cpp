@@ -9,7 +9,7 @@
 #include "message.h"
 #include "area.h"
 
-uchar configuration::Contrast = 90;
+uchar configuration::Contrast = 100;
 bool configuration::BeepOnCritical = false;
 std::string configuration::DefaultName;
 bool configuration::AutodropLeftOvers = true;
@@ -25,12 +25,12 @@ void configuration::Save()
 		return;
 
 	SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
-	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";";
+	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
 	SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
 	SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
-	SaveFile << "OutlineItems = " << OutlineItems << ";\n";
+	SaveFile << "OutlineItems = " << OutlineItems << ";";
 }
 
 void configuration::Load()

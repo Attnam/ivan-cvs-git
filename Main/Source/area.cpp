@@ -11,6 +11,7 @@
 #include "error.h"
 #include "femath.h"
 #include "rand.h"
+
 area::area(ushort InitXSize, ushort InitYSize)
 {
 	Initialize(InitXSize, InitYSize);
@@ -162,4 +163,22 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 	ABORT("No room for character. Character unhappy.");
 
 	return vector2d(0xFFFF, 0xFFFF);
+}
+
+void area::Draw() const
+{
+	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
+	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
+
+	if(!game::GetSeeWholeMapCheat())
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
+					Map[x][y]->Draw();
+				else
+					Map[x][y]->DrawMemorized();
+	else
+		for(ushort x = game::GetCamera().X; x < XMax; ++x)
+			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
+				Map[x][y]->Draw();
 }

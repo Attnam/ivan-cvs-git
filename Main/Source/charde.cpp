@@ -1352,7 +1352,7 @@ void librarian::BeTalkedTo(character* Talker)
 		}
 		else
 		{
-			ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can enchant your weapons' material.\"");
+			ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can enchant thine weapons' material.\"");
 			break;
 		}
 	case 5:
@@ -1386,7 +1386,7 @@ void librarian::BeTalkedTo(character* Talker)
 		}
 	case 8:
 		ADD_MESSAGE("\"If thou shall ever encounter an Enner Beast, now this: It is a horrible foe.");
-		ADD_MESSAGE("It may shatter your items and armor with its scream that penetrates iron and stone.");
+		ADD_MESSAGE("It may shatter thine items and armor with its scream that penetrates iron and stone.");
 		ADD_MESSAGE("Thou should not engage it in melee. Kill it from afar.\"");
 		break;
 	}

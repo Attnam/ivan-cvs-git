@@ -22,7 +22,6 @@ public:
 	worldmap() {}
 	virtual ~worldmap();
 	virtual void Generate();
-	virtual void Draw() const;
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual worldmapsquare* GetWorldMapSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}

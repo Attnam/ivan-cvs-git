@@ -187,20 +187,10 @@ uchar character::TakeHit(character* Enemy, short Success)
 void character::Be()
 {
 	if(game::GetPlayerBackup() != this)
-	{
-		for(uchar c = 0; c < STATES; ++c)
-			if(StateIsActivated(c))
-				(this->*StateHandler[c])();
-			
+	{		
 		if(!game::Flag)
 		{
 			ApplyExperience();
-
-			if(GetHP() < GetMaxHP() / 3)
-				SpillBlood(RAND() % 2);
-
-			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
-				Faint();
 
 			switch(GetBurdenState())
 			{
@@ -215,6 +205,16 @@ void character::Be()
 				SetAP(GetAP() + 50 + (GetAgility() >> 2));
 			break;
 			}
+
+			for(uchar c = 0; c < STATES; ++c)
+				if(StateIsActivated(c))
+					(this->*StateHandler[c])();
+
+			if(GetHP() < GetMaxHP() / 3)
+				SpillBlood(RAND() % 2);
+
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+				Faint();
 		}
 		else
 			game::Flag = false;
@@ -2564,7 +2564,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 
 void character::StateAutoDeactivation()
 {
-	if(!StateIsActivated(CONSUMING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING))
+	if(!StateIsActivated(CONSUMING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING) && !StateIsActivated(GOING))
 		return;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),
@@ -3051,38 +3051,67 @@ void character::EndGoing()
 bool character::Go()
 {
 	vector2d Temp;
+
 	if((Temp = game::AskForDirectionVector("What direction do you want to go?")) != vector2d(0,0))
 	{
 		ActivateState(GOING);
 		StateVariables.Going.Direction = game::GetDirectionForVector(Temp);
-		StateVariables.Going.FirstSquare = true;
+
+		uchar OKDirectionsCounter = 0;
+
+		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+		{
+			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+				OKDirectionsCounter++;	
+		});
+
+		StateVariables.Going.WalkingInOpen = OKDirectionsCounter > 2 ? true : false;
 		return true;
 	}
+
 	return false;
 }
 
 void character::GoHandler()
 {
-	levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
-	uchar OKDirectionsCounter = 0;
-
-	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	if(GetAP() >= 1000)
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
-			OKDirectionsCounter++;	
-	});
+		if(!game::IsValidPos(GetPos() + game::GetMoveVector(StateVariables.Going.Direction)))
+		{
+			EndGoing();
+			return;
+		}
 
-	if((!MoveToSquare->GetOverTerrain()->GetIsWalkable()
-	 || MoveToSquare->GetLuminance() < LIGHT_BORDER
-	 || OKDirectionsCounter > 2
-	 || MoveToSquare->GetCharacter()
-	 || MoveToSquare->GetStack()->GetItems())
-	 && !StateVariables.Going.FirstSquare)
-		EndGoing();
-	else
-	{
-		StateVariables.Going.FirstSquare = false;
-		TryMove(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
+		levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
+
+		if(!MoveToSquare->GetOverTerrain()->GetIsWalkable() || MoveToSquare->GetCharacter())
+		{
+			EndGoing();
+			return;
+		}
+
+		uchar OKDirectionsCounter = 0;
+
+		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+		{
+			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverTerrain()->GetIsWalkable())
+				OKDirectionsCounter++;	
+		});
+
+		if(!StateVariables.Going.WalkingInOpen)
+		{
+			if(OKDirectionsCounter > 2)
+			{
+				EndGoing();
+				return;
+			}
+		}
+		else
+			if(OKDirectionsCounter <= 2)
+				StateVariables.Going.WalkingInOpen = false;
+
+		if(!TryMove(MoveToSquare->GetPos()) || GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLevelSquareUnder()->GetStack()->GetItems())
+			EndGoing();
 	}
 }
 

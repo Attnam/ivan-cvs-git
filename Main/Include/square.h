@@ -23,7 +23,7 @@ public:
 	virtual ~square();
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
-	virtual void DrawMemorized() const;
+	virtual void DrawMemorized();
 	virtual void Draw() = 0;
 	virtual void UpdateMemorized() = 0;
 	virtual bool DrawTerrain() const = 0;

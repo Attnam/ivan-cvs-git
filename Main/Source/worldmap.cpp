@@ -88,24 +88,6 @@ void worldmap::Load(inputfile& SaveFile)
 	SaveFile >> Continent >> PlayerGroup;
 }
 
-void worldmap::Draw() const
-{
-	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
-	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
-
-	if(!game::GetSeeWholeMapCheat())
-		for(ushort x = game::GetCamera().X; x < XMax; ++x)
-			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-					Map[x][y]->Draw();
-				else
-					Map[x][y]->DrawMemorized();
-	else
-		for(ushort x = game::GetCamera().X; x < XMax; ++x)
-			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-				Map[x][y]->Draw();
-}
-
 void worldmap::Generate()
 {
 	while(true)

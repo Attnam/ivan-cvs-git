@@ -213,7 +213,7 @@ public:
 	area(ushort, ushort);
 	area() {}
 	virtual ~area();
-	virtual void Draw() const = 0;
+	virtual void Draw() const;
 	virtual void AddCharacter(vector2d, character*);
 	virtual void RemoveCharacter(vector2d);
 	virtual void Save(outputfile&) const;

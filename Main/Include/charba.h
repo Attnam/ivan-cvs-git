@@ -21,11 +21,11 @@
 
 #define STATES			6
 
-#define FAINTED		0
+#define FAINTED			0
 #define CONSUMING		1
 #define POLYMORPHED		2
-#define RESTING		3
-#define DIGGING		4
+#define RESTING			3
+#define DIGGING			4
 #define GOING			5
 
 
@@ -315,7 +315,8 @@ protected:
 		struct going
 		{
 			uchar Direction;
-			bool FirstSquare;
+			//bool FirstSquare;
+			bool WalkingInOpen;
 		} Going;
 	} StateVariables;
 	ulong Money;
