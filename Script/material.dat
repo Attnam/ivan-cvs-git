@@ -84,7 +84,7 @@ material
 		StrengthValue = 40;
 		ConsumeType = CT_MINERAL;
 		Density = 2500;
-		Color = rgb16(112, 112, 112);
+		Color = rgb16(144, 144, 144);
 		NameStem = "gravel";
 		CanBeWished = false;
 	}

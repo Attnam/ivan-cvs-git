@@ -1352,8 +1352,8 @@ belt /* armor-> */
 	StrengthModifier = 75;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
-	MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
-	MaterialConfigChances = { 5, 200, 100, 50, 20, 10; }
+	MainMaterialConfig = { 4, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 4, 150, 50, 20, 10; }
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
 

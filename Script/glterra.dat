@@ -41,8 +41,7 @@ solidterrain /* glterrain-> */
 	Config PARQUET;
 	{
 		MainMaterialConfig == WOOD;
-		NameSingular = "parquet";
-		NamePlural = "parquette";
+		NameSingular = "floor";
 		BitmapPos = 32, 0;
 	}
 
