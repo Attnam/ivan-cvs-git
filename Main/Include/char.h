@@ -785,4 +785,3 @@ protected:
 FINISH_PROTOTYPING(character)
 
 #endif
-

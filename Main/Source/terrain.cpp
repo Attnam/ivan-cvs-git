@@ -1,5 +1,4 @@
 #include "terrain.h"
-//#include "save.h"
 
 void overterrain::Save(std::ofstream& SaveFile) const
 {
@@ -10,6 +9,3 @@ void overterrain::Load(std::ifstream& SaveFile)
 {
 	SaveFile.read((char*)&IsWalkable, sizeof(IsWalkable));
 }
-
-
-

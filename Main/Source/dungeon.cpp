@@ -14,9 +14,6 @@ dungeon::dungeon(uchar Levels) : Levels(Levels)
 
 	for(uchar c = 0; c < Levels; c++)
 		Fill2D(BlockMap[c], 0, 0, 36, 36, c);
-
-	//for(c = 0; c < Levels; c++)
-	//	Level[c] = 0;
 }
 
 dungeon::~dungeon(void)
@@ -49,7 +46,6 @@ void dungeon::Generate(void)
 	Level[0]->SetUpStairs(PerttuPos);
 
 	Level[0]->GetLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
-	//Level[0]->PutPlayerAround(PerttuPos);
 
 	vector Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
 

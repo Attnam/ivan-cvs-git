@@ -3,6 +3,7 @@
 
 #include "area.h"
 #include "wterrain.h"
+
 class worldmapsquare;
 
 class worldmap : public area
@@ -24,4 +25,3 @@ protected:
 };
 
 #endif
-

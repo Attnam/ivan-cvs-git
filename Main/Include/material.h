@@ -573,4 +573,3 @@ protected:
 FINISH_PROTOTYPING(material)
 
 #endif
-

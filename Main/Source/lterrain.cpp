@@ -329,4 +329,3 @@ levelsquare* levelterrain::GetLevelSquareUnder(void) const
 {
 	return dynamic_cast<levelsquare*>(SquareUnder);
 }
-

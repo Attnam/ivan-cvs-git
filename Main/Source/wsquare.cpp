@@ -6,7 +6,6 @@
 #include "proto.h"
 #include "material.h"
 #include "bitmap.h"
-//#include "save.h"
 
 worldmapsquare::worldmapsquare(worldmap* MotherWorldMap, vector Pos) : square(MotherWorldMap, Pos)
 {

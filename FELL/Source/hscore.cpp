@@ -112,4 +112,3 @@ void highscore::Load(std::string File)
 		Entry.Add(LoadedEntry);
 	}
 }
-

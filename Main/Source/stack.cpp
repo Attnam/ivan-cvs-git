@@ -8,7 +8,6 @@
 #include "game.h"
 #include "proto.h"
 #include "message.h"
-//#include "save.h"
 
 stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {
@@ -51,9 +50,8 @@ ushort stack::AddItem(item* ToBeAdded)
 	else
 		SetItems(GetItems() + 1);
 
-	//GGG
-	//if(GetLevelSquareUnder()->CanBeSeen())
-	//	GetLevelSquareUnder()->UpdateItemMemory();
+	if(GetSquareUnder()->CanBeSeen())
+		GetSquareUnder()->UpdateMemorizedDescription();
 
 	return GetItems() - 1;
 }

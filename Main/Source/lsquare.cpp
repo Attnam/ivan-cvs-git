@@ -79,7 +79,7 @@ void levelsquare::DrawToTileBuffer(void) const
 	GetGroundLevelTerrain()->DrawToTileBuffer();
 
 	if(Fluided)
-		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, GetLuminance());//ushort(256 - TimeFromSpill));
+		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, GetLuminance());
 
 	GetOverLevelTerrain()->DrawToTileBuffer();
 	GetStack()->PositionedDrawToTileBuffer();
@@ -317,7 +317,7 @@ void levelsquare::Save(std::ofstream& SaveFile) const
 
 	SaveFile.write((char*)&Emitation, sizeof(Emitation));
 	SaveFile.write((char*)&DivineOwner, sizeof(DivineOwner));
-	SaveFile << Engraved;// << RememberedItems;
+	SaveFile << Engraved;
 }
 
 void levelsquare::Load(std::ifstream& SaveFile)
@@ -353,7 +353,7 @@ void levelsquare::Load(std::ifstream& SaveFile)
 	SaveFile.read((char*)&Emitation, sizeof(Emitation));
 	SaveFile.read((char*)&DivineOwner, sizeof(DivineOwner));
 
-	SaveFile >> Engraved;// >> RememberedItems;
+	SaveFile >> Engraved;
 }
 
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -450,8 +450,6 @@ void levelsquare::RemoveCharacter(void)
 
 void levelsquare::UpdateMemorizedDescription(void)
 {
-	//SetRememberedItems("");
-
 	bool Anything = false;
 
 	if(GetOverTerrain()->Name(UNARTICLED) != "air atmosphere")
@@ -462,9 +460,6 @@ void levelsquare::UpdateMemorizedDescription(void)
 
 	if(GetStack()->GetItems())
 	{
-		//if(Anything)
-		//	SetMemorizedDescription(GetMemorizedDescription() + " and ");
-
 		if(Anything)
 			if(GetStack()->GetItems() == 1)
 				SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
@@ -502,11 +497,6 @@ void levelsquare::UpdateMemorizedDescription(void)
 				SetMemorizedDescription(GetGroundTerrain()->Name(INDEFINITE));
 
 			SetMemorizedDescription(GetMemorizedDescription() + " and many items on the wall");
-
-			/*if(Anything)
-				SetMemorizedDescription(GetRememberedItems());
-			else
-				SetMemorizedDescription("some items");*/
 		}
 	}
 
@@ -523,11 +513,6 @@ bool levelsquare::CanBeSeenFrom(vector FromPos) const
 {
 	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
 }
-
-/*void levelsquare::SetRememberedItems(std::string What)
-{
-	RememberedItems = What; 
-}*/
 
 bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {

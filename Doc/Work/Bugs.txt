@@ -1,8 +1,6 @@
 Luxify?
 Noxify?
 Sokeaksi tuleminen pepsistä bugittaa.
-Unknown substance.
-Kloonaus. (mitähän tämä tarkoitti? :)
 Stackien potkiminen.
 Savekansion autoluonti.
 Stringquestion näyttää törkeältä jos se tulee scrollien päälle.

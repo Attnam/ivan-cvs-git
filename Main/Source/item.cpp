@@ -128,7 +128,8 @@ bool scroll::CanBeRead(character* Reader) const
 bool scrollofcreatemonster::Read(character* Reader)
 {
 	vector TryToCreate;
-	for(;;) // Bug bug bug!
+
+	for(;;) // Bug bug bug! This can cause an infinite loop if there's no walkable squares around.
 	{
 		TryToCreate = (Reader->GetPos() + game::GetMoveVector(rand() % DIRECTION_COMMAND_KEYS));
 		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable())

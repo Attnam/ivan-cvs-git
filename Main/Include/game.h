@@ -88,7 +88,6 @@ public:
 	static bool KeyIsOK(char);
 	static void SetCurrent(ushort What) { Current = What; }
 	static ushort GetCurrent(void) { return Current; }
-	//static ushort GetLevels(void) { return Levels; }
 	static int GetMoveCommandKey(vector, vector);
 	static void DrawEverythingNoBlit(bool = true);
 	static god* GetGod(uchar Index) { return God[Index]; }
@@ -140,8 +139,6 @@ private:
 	static std::string Alignment[];
 	static god* God[];
 	static unsigned int CountChars(char cSF,std::string sSH); // (MENU)
-	//static level** Level;
-	//static ushort Levels, Current;
 	static ushort Current;
 	static int MoveCommandKey[DIRECTION_COMMAND_KEYS];
 	static const vector MoveVector[DIRECTION_COMMAND_KEYS];

@@ -1436,59 +1436,6 @@ bool character::Dip(void)
         return false;
 }
 
-/*void character::Save(std::ofstream& SaveFile) const
-{
-	object::Save(SaveFile);
-
-	SaveFile << Stack;
-	SaveFile << ushort(Wielded ? Stack->SearchItem(Wielded) : 0xFFFF);
-	SaveFile << Strength << Endurance << Agility << Perception;
-	SaveFile << RegenerationCounter;
-	SaveFile << HP << NP << AP;
-	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << HasActed;
-	SaveFile << Relations;
-	SaveFile << Fainted, EatingCurrently, APsToBeEaten, Dead;
-}
-
-void character::Load(std::ifstream& SaveFile)
-{
-	object::Load(SaveFile);
-
-	SaveFile >> Stack;
-
-	ushort Index;
-	SaveFile >> Index;
-	Wielded = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
-
-	SaveFile >> Strength >> Endurance >> Agility >> Perception;
-	SaveFile >> RegenerationCounter;
-	SaveFile >> HP >> NP >> AP;
-	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> HasActed;
-	SaveFile >> Relations;
-	SaveFile >> Fainted, EatingCurrently, APsToBeEaten, Dead;
-}
-
-void humanoid::Save(std::ofstream& SaveFile) const
-{
-	character::Save(SaveFile);
-
-	SaveFile << ushort(Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF);
-	SaveFile << ArmType << HeadType << LegType << TorsoType;
-}
-
-void humanoid::Load(std::ifstream& SaveFile)
-{
-	character::Load(SaveFile);
-
-	ushort Index;
-	SaveFile >> Index;
-	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
-
-	SaveFile >> ArmType >> HeadType >> LegType >> TorsoType;
-}*/
-
 void character::Save(std::ofstream& SaveFile) const
 {
 	object::Save(SaveFile);
@@ -1785,41 +1732,6 @@ bool character::Look(void)
 				Msg = "You remember here ";
 
 			Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
-
-			/*bool Anything = false;
-
-			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverLevelTerrain()->Name(INDEFINITE) != "an air atmosphere")
-			{
-				Msg += game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetOverLevelTerrain()->Name(INDEFINITE);
-	
-				Anything = true;
-			}
-
-			if((game::GetSeeWholeMapCheat() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CanBeSeen()) && game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetCharacter())
-			{
-				if(Anything)
-					if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems() != "")
-						Msg += std::string(", ");
-					else
-						Msg += std::string(" and ");
-
-				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetCharacter()->Name(INDEFINITE));
-
-				Anything = true;
-			}
-
-			if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems() != "")
-			{
-				if(Anything)
-					Msg += std::string(" and ");
-
-				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems()) + " on " + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE);
-			}
-			else
-				if(Anything)
-					Msg += std::string(" on ") + game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE);
-				else
-					Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetGroundLevelTerrain()->Name(INDEFINITE));*/
 
 			ADD_MESSAGE("%s.", Msg.c_str());
 
@@ -2310,20 +2222,6 @@ void perttu::Load(std::ifstream& SaveFile)
 
 	SaveFile.read((char*)&HealTimer, sizeof(HealTimer));
 }
-
-/*void perttu::Save(std::ofstream& SaveFile) const
-{
-	humanoid::Save(SaveFile);
-
-	SaveFile << HealTimer;
-}
-
-void perttu::Load(std::ifstream& SaveFile)
-{
-	humanoid::Load(SaveFile);
-
-	SaveFile >> HealTimer;
-}*/
 
 bool character::ScreenShot(void)
 {

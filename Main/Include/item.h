@@ -828,7 +828,7 @@ class ITEM
 	InitMaterials(new glass(100)),
 	{
 		SetSize(10);
-		SetCharge(2);
+		SetCharge(rand() % 6);
 	},
 public:
 	virtual ushort Possibility(void) const RET(3)
@@ -842,4 +842,3 @@ public:
 FINISH_PROTOTYPING(item)
 
 #endif
-

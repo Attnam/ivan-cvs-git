@@ -95,4 +95,3 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
-

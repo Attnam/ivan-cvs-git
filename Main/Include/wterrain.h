@@ -123,6 +123,17 @@ BEGIN_PROTOTYPING(groundworldmapterrain)
 
 class GROUNDWORLDMAPTERRAIN
 (
+	ocean,
+	groundworldmapterrain,
+	{
+	},
+	virtual std::string NameStem(void) const { return "ocean"; }
+	virtual std::string Article(void) const { return "an"; }
+	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
+);
+
+class GROUNDWORLDMAPTERRAIN
+(
 	glacier,
 	groundworldmapterrain,
 	{
@@ -190,17 +201,6 @@ class GROUNDWORLDMAPTERRAIN
 	virtual std::string NameStem(void) const { return "evergreen forest"; }
 	virtual std::string Article(void) const { return "an"; }
 	virtual vector GetBitmapPos(void) const { return vector(352, 16); }
-);
-
-class GROUNDWORLDMAPTERRAIN
-(
-	ocean,
-	groundworldmapterrain,
-	{
-	},
-	virtual std::string NameStem(void) const { return "ocean"; }
-	virtual std::string Article(void) const { return "an"; }
-	virtual vector GetBitmapPos(void) const { return vector(208, 64); }
 );
 
 class GROUNDWORLDMAPTERRAIN

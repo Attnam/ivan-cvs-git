@@ -21,8 +21,7 @@
 #include "proto.h"
 #include "dungeon.h"
 
-//level** game::Level;
-ushort /*game::Levels = 10, */game::Current;
+ushort game::Current;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
@@ -166,10 +165,6 @@ void game::Init(std::string Name)
 
 		Dungeon->Generate();
 
-		/*Current = 0;
-
-		Level[0]->Luxify();*/
-
 		UpDateCameraX();
 		UpDateCameraY();
 
@@ -191,11 +186,9 @@ void game::Init(std::string Name)
 
 void game::DeInit(void)
 {
-	/*for(ushort c = 0; c < Dungeon->GetLevels(); c++)
-		delete Level[c];
+	if(GetPlayerBackup())
+		delete GetPlayerBackup();
 
-	delete [] Level;*/
-	if(GetPlayerBackup()) delete GetPlayerBackup();
 	delete WorldMap;
 	delete Dungeon;
 
@@ -207,14 +200,6 @@ void game::Run(void)
 	while(GetRunning())
 	{
 		game::GetPlayer()->Act();
- 
-		/*if(!GetRunning())
-			break;
-
-		if(!InWilderness)
-			Dungeon->GetLevel(Current)->HandleCharacters();
-		else
-			game::GetPlayer()->SetHasActed(false);*/
 
 		if(!InWilderness)
 			Dungeon->GetLevel(Current)->HandleCharacters();	// Temporary
@@ -302,7 +287,6 @@ bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX =
 	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
 		return false;
 
-	//Dungeon->GetLevel(Current)->GetLevelSquare(vector(CX, CY))->SetFlag();
 	GetCurrentArea()->GetSquare(vector(CX, CY))->SetFlag();
 	GetCurrentArea()->GetSquare(vector(CX, CY))->UpdateMemorizedDescription();
 
@@ -404,7 +388,6 @@ void game::panel::Draw(void) const
 	FONTW->PrintfToDB(320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
 	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
-	//FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
 	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
 	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
 	FONTW->PrintfToDB(600, 564, "Turns: %d", game::GetTurns());
@@ -629,7 +612,6 @@ bool game::Save(std::string SaveName)
 		return false;
 
 	SaveFile << PlayerName;
-	//SaveFile.write((char*)&Levels, sizeof(Levels));
 	SaveFile.write((char*)&Current, sizeof(Current));
 	SaveFile.write((char*)&Camera, sizeof(Camera));
 	SaveFile.write((char*)&WizardMode, sizeof(WizardMode));
@@ -678,7 +660,6 @@ bool game::Load(std::string SaveName)
 		return false;
 
 	SaveFile >> PlayerName;
-	//SaveFile.read((char*)&Levels, sizeof(Levels));
 	SaveFile.read((char*)&Current, sizeof(Current));
 	SaveFile.read((char*)&Camera, sizeof(Camera));
 	SaveFile.read((char*)&WizardMode, sizeof(WizardMode));
@@ -695,15 +676,8 @@ bool game::Load(std::string SaveName)
 	SaveFile.read((char*)&Time, sizeof(Time));
 	srand(Time);
 
-	//Level = new level*[Levels];
-
 	Dungeon = new dungeon;
 	Dungeon->Load(SaveFile);
-
-	/*{
-	for(ushort c = 0; c < Levels; c++)
-		Level[c] = 0;
-	}*/
 
 	if(InWilderness)
 	{

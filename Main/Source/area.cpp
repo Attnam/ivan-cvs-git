@@ -36,13 +36,6 @@ void area::Save(std::ofstream& SaveFile) const
 	SaveFile.write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
-/*void area::Save(std::ofstream& SaveFile) const
-{
-	SaveFile << XSize << YSize;
-
-	SaveFile.write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
-}*/
-
 void area::Load(std::ifstream& SaveFile)
 {
 	game::SetAreaInLoad(this);
@@ -59,22 +52,6 @@ void area::Load(std::ifstream& SaveFile)
 
 	Memorized = new bitmap(XSize << 4, YSize << 4);
 }
-
-/*void area::Load(std::ifstream& SaveFile)
-{
-	SaveFile.SetAreaInLoad(this);
-
-	SaveFile >> XSize >> YSize;
-
-	XSizeTimesYSize = XSize * YSize;
-
-	Alloc2D(Map, XSize, YSize);
-	Alloc2D(FlagMap, XSize, YSize);
-
-	SaveFile.read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
-
-	Memorized = new bitmap(XSize << 4, YSize << 4);
-}*/
 
 void area::RemoveCharacter(vector Pos)
 {
@@ -103,4 +80,3 @@ void area::EmptyFlags(void)
 		for(ushort y = 0; y < YSize; y++)
 			Map[x][y]->EmptyFlag();
 }
-

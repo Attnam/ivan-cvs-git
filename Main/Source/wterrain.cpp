@@ -57,4 +57,3 @@ worldmapsquare* worldmapterrain::GetWorldMapSquareUnder(void) const
 {
 	return dynamic_cast<worldmapsquare*>(SquareUnder);
 }
-
