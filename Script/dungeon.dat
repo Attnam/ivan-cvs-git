@@ -1191,6 +1191,7 @@ Dungeon ELPURI_CAVE;
 		Room
 		{
 			Size = 9,9;
+			DivineMaster = MORTIFER;
 
 			Square, Pos 4,1;
 			{
@@ -2886,6 +2887,16 @@ Dungeon UNDER_WATER_TUNNEL;
 			}*/
 		}
 
+		Room
+		{
+			DivineMaster = TERRA;
+
+			Square, Random HAS_NO_OTERRAIN;
+			{
+				OTerrain = BASALT altar(TERRA);
+			}
+		}
+
 		Square, Random HAS_NO_OTERRAIN;
 		{
 			OTerrain = decoration(SHARD);
@@ -2908,11 +2919,6 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Items == stone;
 			Times = 0:10;
-		}
-
-		Square, Random IN_ROOM|HAS_NO_OTERRAIN;
-		{
-			OTerrain = BASALT altar(TERRA);
 		}
 
 		Square, Random IN_ROOM;

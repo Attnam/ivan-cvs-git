@@ -162,7 +162,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
   else
   {
     const int SpecialFlags = GI.SpecialFlags;
-    const int BodyPartFlags = SpecialFlags & 0x38;
+    const int BodyPartFlags = SpecialFlags & 0x78;
     const int RotateFlags = SpecialFlags & 0x7;
     const int Frame = GI.Frame;
     v2 SparklePos = v2(GI.SparklePosX, GI.SparklePosY);

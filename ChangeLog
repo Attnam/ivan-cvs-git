@@ -7,22 +7,32 @@
 
 -----------------------------------------------------------------------------
 
+October 16 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* BugFix: offering on the Silva's altar in UT4 crashed
+	* BugFix: endurance exp wasn't gained if the player had a non-living
+	  bodypart and his binary was compiled with VC, due to a bug in
+	  the latter
+	* Corrected many problems in bodypart special effect draw order
+	* Angels might be a little more intelligent now
+	* Gods may be a little wiser when choosing gift bodypart materials
+
 October 13 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* Decreased the amount of Attnam's polar bears to one, because their
-		shadows had a noticable negative effect to performance
+	  shadows had a noticable negative effect to performance
 	* BugFix: charming a tourist and leaving New Attnam crashed
 	* Halved the speed materials spoil
 	* Spoil and mirror item vanish messages are now more informative
 	* BugFix: equipment slots were shown in the panel when polymorphed into
-		a golem
+	  a golem
 	* BugFix: removed the stairs to not-yet-done UT5
 	* Webs of giant spiders are a little weaker
 	* The big trap room of GC changed into a dwarven mine field
 	* Monsters are no longer generated in the mine field or vault rooms
 	* Corrected a bug in the lantern code which could prevent items on the
-		ground from being animated if the square once had a wall & attached
-		lantern
+	  ground from being animated if the square once had a wall & attached
+	  lantern
 	* Fixed many problems with messages
 
 October 8 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
@@ -31,18 +41,18 @@ October 8 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 	* BugFix: armor pictures were not always updated correctly when
 	  polymorphing
 	* BugFix: polymorphing into a nonhumanoid while wearing a belt of
-		levitation crashed
+	  levitation crashed
 	* Founders.jpg added to Doc/Data
 	* Hunters now have unique science talk particles
 	* The body of science talk msgs ("You have a rather pleasant chat...")
-		is now more vivid, having ten different forms
+	  is now more vivid, having ten different forms
 	* Removed the scroll of create monster; it was never used for anything
-		sensible save abuse
+	  sensible save abuse
 	* The game now displays more informative break/destroy msgs, eg.
-		"something on the ground explodes", "the slave's leather armor breaks",
-		etc.
+	  "something on the ground explodes", "the slave's leather armor breaks",
+	  etc.
 	* The game now says "xxx stabs/strikes/slashes" instead of "xxx hits"
-		if xxx is armed; the verb depends on the weapon
+	  if xxx is armed; the verb depends on the weapon
 	*	Some other msgs changed, but there are still problems with these
 
 October 3 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
@@ -50,7 +60,7 @@ October 3 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 	* Some mind worms added to char.pcx by Kahvi
 	* Corrected a rather nasty bug, which eg. made infravision useless
 	* Enemies might retreat from invisible creatures a bit more effectively
-		(again, there's bugs in this also; I'll fix them later)
+	  (again, there's bugs in this also; I'll fix them later)
 
 September 31 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
@@ -69,7 +79,7 @@ September 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 	* Mistresses and dogs now have unique random science talk particles
 	* For in-house testing sessions, there's now a BONUS_LIVES #define in
 	  define.dat which determines how many bonus amulets of life saving
-		the player gets when he starts a game
+	  the player gets when he starts a game
 	* Disabled the time test in the panel
 	* Spiders' flesh and blood are now poisonous
 	* The game no longer crashes if an NPC wearing a belt of levitation steps
@@ -282,7 +292,7 @@ December 16 2003 Timo Kiviluoto <firstname.lastname@hut.fi>
 	* Scroll of repair can now remove rust
 	* Renamed class human to playerkind
 	* Rewrote the player's armor drawing code; it was probably the most horrible
-		gum solution in the entire game
+	  gum solution in the entire game
 	* Added several item database members to control which armor pictures
 	  are to be drawn
 	* Added (half-accidentally) support for armor picture animations

@@ -1025,7 +1025,6 @@ class character : public entity, public id
   virtual int GetBodyPartSparkleFlags(int) const;
   virtual long GetBodyPartSize(int, int) const;
   virtual long GetBodyPartVolume(int) const;
-  void JustUpdateTheDamnBodyPartPicture(int I) { UpdateBodyPartPicture(I, false); }
   void UpdateBodyPartPicture(int I, truth);
   int ChooseBodyPartToReceiveHit(double, double);
   virtual void CreateBodyParts(int);

@@ -104,3 +104,7 @@ One has no way to use stairs covered by sticky slime.
 //Spider corpses are not poisonous.
 Charmed guards often block hallways when guarding them and the player who can't displace them has to dig a path around them.
 //Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
+Small chest X fits in small chest Y, even though Y fits in X as well.
+Invisible golems block light.
+You can create a human flesh golem from your head, without even dying :-o
+You get stuck to slime even when flying.

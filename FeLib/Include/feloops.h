@@ -15,100 +15,118 @@
 
 #include "typedef.h"
 
-template <class objectptr, class routine>
-void DoIndexParameterRoutine(objectptr O, routine F, int A)
+template <class objecttype, class elementtype>
+struct combinepredicates
 {
-  for(int c = 0; c < A; ++c)
-    (O->*F)(c);
-}
-
-template <truth OrBit, class element, class objectptr,
-	  class extractor, class routine>
-inline truth CombinePredicates(objectptr O, extractor X, routine F, int A)
-{
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef truth (elementtype::*routine)() const;
+  truth operator()(objecttype* O, extractor X, routine F, int A, truth OrBit) const
   {
-    element E = (O->*X)(c);
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
 
-    if(E && !(E->*F)() == !OrBit)
-      return OrBit;
+      if(E && !(E->*F)() == !OrBit)
+	return OrBit;
+    }
+
+    return !OrBit;
   }
+};
 
-  return !OrBit;
-}
-
-template <truth OrBit, class element, class objectptr,
-	  class extractor, class routine, class param>
-inline truth CombinePredicates(objectptr O, extractor X,
-			      routine F, param P, int A)
+template <class objecttype, class elementtype, class param>
+struct combinepredicateswithparam
 {
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef truth (elementtype::*routine)(param) const;
+  truth operator()(objecttype* O, extractor X, routine F, param P, int A, truth OrBit) const
   {
-    element E = (O->*X)(c);
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
 
-    if(E && !(E->*F)(P) == !OrBit)
-      return OrBit;
+      if(E && !(E->*F)(P) == !OrBit)
+	return OrBit;
+    }
+
+    return !OrBit;
   }
+};
 
-  return !OrBit;
-}
-
-template <class element, class objectptr, class extractor, class routine>
-inline void DoForElements(objectptr O, extractor X, routine F, int A)
+template <class objecttype, class elementtype>
+struct doforelements
 {
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef void (elementtype::*routine)();
+  void operator()(objecttype* O, extractor X, routine F, int A) const
   {
-    element E = (O->*X)(c);
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
 
-    if(E)
-      (E->*F)();
+      if(E)
+	(E->*F)();
+    }
   }
-}
+};
 
-template <class element, class objectptr, class extractor,
-	  class routine, class param>
-inline void DoForElements(objectptr O, extractor X,
-			  routine F, param P, int A)
+template <class objecttype, class elementtype, class param>
+struct doforelementswithparam
 {
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef void (elementtype::*routine)(param);
+  void operator()(objecttype* O, extractor X,
+			  routine F, param P, int A) const
   {
-    element E = (O->*X)(c);
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
 
-    if(E)
-      (E->*F)(P);
+      if(E)
+	(E->*F)(P);
+    }
   }
-}
+};
 
-template <class element, class objectptr, class extractor, class routine>
-inline int SumProperties(objectptr O, extractor X, routine F, int A)
+template <class objecttype, class elementtype>
+struct sumproperties
 {
-  int Sum = 0;
-
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef int (elementtype::*routine)() const;
+  int operator()(objecttype* O, extractor X, routine F, int A) const
   {
-    element E = (O->*X)(c);
+    int Sum = 0;
 
-    if(E)
-      Sum += (E->*F)();
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
+
+      if(E)
+	Sum += (E->*F)();
+    }
+
+    return Sum;
   }
+};
 
-  return Sum;
-}
-
-template <class element, class objectptr, class extractor,
-	  class routine, class param>
-inline element FindElement(objectptr O, extractor X,
-			   routine F, param P, int A)
+template <class objecttype, class elementtype, class param>
+struct findelement
 {
-  for(int c = 0; c < A; ++c)
+  typedef elementtype* (objecttype::*extractor)(int) const;
+  typedef truth (elementtype::*routine)(param) const;
+  elementtype* operator()(objecttype* O, extractor X,
+			   routine F, param P, int A) const
   {
-    element E = (O->*X)(c);
+    for(int c = 0; c < A; ++c)
+    {
+      elementtype* E = (O->*X)(c);
 
-    if(E && (E->*F)(P))
-      return E;
+      if(E && (E->*F)(P))
+	return E;
+    }
+
+    return 0;
   }
-
-  return 0;
-}
+};
 
 #endif

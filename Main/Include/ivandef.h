@@ -689,8 +689,8 @@ const v2 SILHOUETTE_SIZE(48, 64);
 
 #define ARMOR_OUTLINE_PRIORITY ((7 << 4) + 7)
 #define CLOAK_PRIORITY ((8 << 4) + 7)
-#define DRIP_PRIORITY ((9 << 4) + 9)
-#define FLUID_PRIORITY ((9 << 4) + 9)
+/*#define DRIP_PRIORITY ((9 << 4) + 9)
+#define FLUID_PRIORITY ((9 << 4) + 9)*/
 
 #define BODY_ARMOR_PARTS 6
 

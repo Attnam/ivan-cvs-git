@@ -60,9 +60,6 @@ class square
   }
   void DecStaticAnimatedEntities()
   {
-    if(Pos == v2(58, 31))
-      int esko = 2;
-
     if(!StaticAnimatedEntities)
       int esko = esko = 2;
 

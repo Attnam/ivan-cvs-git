@@ -1128,9 +1128,6 @@ void stack::MoveItemsTo(itemvector& ToVector, int RequiredSquarePosition)
 
 void stack::DropSideItems()
 {
-    if(GetPos() == v2(58, 31))
-      int esko = 2;
-
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
   {
     int SquarePosition = i->GetSquarePosition();

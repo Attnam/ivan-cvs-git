@@ -1311,12 +1311,12 @@ truth beartrap::Apply(character* User)
     else if(User->CanBeSeenByPlayer())
       ADD_MESSAGE("%s somehow traps %sself in %s.", User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
+    RemoveFromSlot();
+    User->GetStackUnder()->AddItem(this);
     TrapData.VictimID = User->GetID();
     TrapData.BodyParts = 1 << UserBodyPart;
     User->AddTrap(GetTrapID(), 1 << UserBodyPart);
     SendNewDrawAndMemorizedUpdateRequest();
-    RemoveFromSlot();
-    User->GetStackUnder()->AddItem(this);
 
     if(User->IsPlayer())
       game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));

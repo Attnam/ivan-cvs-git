@@ -365,7 +365,7 @@ int material::GetHardenedMaterial(const item* Item) const
 
 int material::GetHardenModifier(const item* Item) const
 {
-  int M = GetFlexibility();
+  int M = GetFlexibility() << 2;
 
   if(!Item || !Item->FlexibilityIsEssential())
     M += GetStrengthValue();

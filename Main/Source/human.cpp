@@ -2384,7 +2384,7 @@ truth humanoid::IsUsingHead() const
 void humanoid::CalculateBattleInfo()
 {
   CalculateDodgeValue();
-  DoForBodyParts(this, &bodypart::CalculateAttackInfo);
+  doforbodyparts()(this, &bodypart::CalculateAttackInfo);
 }
 
 item* skeleton::SevereBodyPart(int BodyPartIndex, truth ForceDisappearance, stack* EquipmentDropStack)
@@ -2572,7 +2572,7 @@ int humanoid::GetSWeaponSkillLevel(const item* Item) const
 
 truth humanoid::UseMaterialAttributes() const
 {
-  return CombineBodyPartPredicates<0>(this, &bodypart::UseMaterialAttributes);
+  return combinebodypartpredicates()(this, &bodypart::UseMaterialAttributes, 0);
 }
 
 col24 angel::GetBaseEmitation() const
@@ -4122,7 +4122,7 @@ bodypart* playerkind::MakeBodyPart(int I) const
 
 truth golem::AddAdjective(festring& String, truth Articled) const
 {
-  int TotalRustLevel = SumBodyPartProperties(this, &bodypart::GetMainMaterialRustLevel);
+  int TotalRustLevel = sumbodypartproperties()(this, &bodypart::GetMainMaterialRustLevel);
 
   if(!TotalRustLevel)
     return humanoid::AddAdjective(String, Articled);

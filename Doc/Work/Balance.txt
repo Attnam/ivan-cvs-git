@@ -10,3 +10,4 @@ Dagger is "somewhat difficult to use" if one has 9 strength.
 //Wand of cloning is too frequent.
 Golems yield too much score.
 Phoenix feather shields may be too good.
+The patrol guard's helmet is too good considering how easily he can be tamed or killed by tricks.

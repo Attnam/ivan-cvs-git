@@ -36,6 +36,7 @@ fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, tru
   if(UseImage())
   {
     Image.Picture->InitRandMap();
+    Image.Picture->InitPriorityMap(AVERAGE_PRIORITY);
     Image.ShadowPos = MotherItem->GetBitmapPos(0);
     Image.SpecialFlags = MotherItem->GetSpecialFlags();
   }
@@ -166,7 +167,7 @@ void fluid::Load(inputfile& SaveFile)
       GearImage[c].Load(SaveFile);
       GearImage[c].Picture->InitRandMap();
       GearImage[c].Picture->CalculateRandMap();
-      GearImage[c].Picture->InitPriorityMap(FLUID_PRIORITY);
+      //GearImage[c].Picture->InitPriorityMap(AVERAGE_PRIORITY);
     }
   }
 }
@@ -186,11 +187,12 @@ void fluid::Draw(blitdata& BlitData) const
 
   if(SpecialFlags & 0x7)
   {
+    /* Priority Bug!!! */
     Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
     igraph::GetFlagBuffer()->AlphaLuminanceBlit(BlitData);
   }
   else
-    Picture->AlphaLuminanceBlit(BlitData);
+    Picture->AlphaPriorityBlit(BlitData);
 
   if(MotherItem && BlitData.CustomData & ALLOW_ANIMATE)
     Image.Animate(BlitData, SpecialFlags);
@@ -382,7 +384,7 @@ void fluid::CheckGearPicture(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
   ImagePtr->ShadowPos = ShadowPos;
   ImagePtr->SpecialFlags = SpecialFlags;
   ImagePtr->Picture->InitRandMap();
-  ImagePtr->Picture->InitPriorityMap(FLUID_PRIORITY);
+  ImagePtr->Picture->InitPriorityMap(AVERAGE_PRIORITY);
 
   if(Pixels)
     ImagePtr->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(),

@@ -950,6 +950,12 @@ truth character::MoveTowardsTarget(truth Run)
   if(RAND() & 1)
     Swap(MoveTo[1], MoveTo[2]);
 
+  if(Pos.IsAdjacent(TPos))
+  {
+    TerminateGoingTo();
+    return false;
+  }
+
   if((Pos + MoveTo[1] - TPos).GetManhattanLength() <= L
      && TryMove(ApplyStateModification(MoveTo[1]), true, Run))
     return true;
@@ -1356,7 +1362,7 @@ void character::Die(const character* Killer, const festring& Msg, ulong DeathFla
     {
       stack* StackUnder = LSquareUnder[0]->GetStack();
       GetStack()->MoveItemsTo(StackUnder);
-      DoForBodyParts(this, &bodypart::DropEquipment, StackUnder);
+      doforbodypartswithparam<stack*>()(this, &bodypart::DropEquipment, StackUnder);
     }
     else
     {
@@ -1513,7 +1519,7 @@ truth character::HasHeadOfElpuri() const
     if(i->IsHeadOfElpuri())
       return true;
 
-  return CombineEquipmentPredicates<1>(this, &item::IsHeadOfElpuri);
+  return combineequipmentpredicates()(this, &item::IsHeadOfElpuri, 1);
 }
 
 truth character::HasPetrussNut() const
@@ -1522,7 +1528,7 @@ truth character::HasPetrussNut() const
     if(i->IsPetrussNut())
       return true;
 
-  return CombineEquipmentPredicates<1>(this, &item::IsPetrussNut);
+  return combineequipmentpredicates()(this, &item::IsPetrussNut, 1);
 }
 
 truth character::HasGoldenEagleShirt() const
@@ -1531,7 +1537,7 @@ truth character::HasGoldenEagleShirt() const
     if(i->IsGoldenEagleShirt())
       return true;
 
-  return CombineEquipmentPredicates<1>(this, &item::IsGoldenEagleShirt);
+  return combineequipmentpredicates()(this, &item::IsGoldenEagleShirt, 1);
 }
 
 truth character::RemoveEncryptedScroll()
@@ -2432,7 +2438,7 @@ truth character::FollowLeader(character* Leader)
   if(!Leader || Leader == this || !IsEnabled())
     return false;
 
-  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this))
+  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this) && Leader->SquareUnderCanBeSeenBy(this, true))
   {
     v2 Distance = GetPos() - GoingTo;
 
@@ -2457,7 +2463,7 @@ truth character::FollowLeader(character* Leader)
 void character::SeekLeader(const character* Leader)
 {
   if(Leader && Leader != this)
-    if(Leader->CanBeSeenBy(this))
+    if(Leader->CanBeSeenBy(this) && (Leader->SquareUnderCanBeSeenBy(this, true) || !IsGoingSomeWhere()))
     {
       if(CommandFlags & FOLLOW_LEADER)
 	SetGoingTo(Leader->GetPos());
@@ -3049,7 +3055,7 @@ void character::TeleportRandomly(truth Intentional)
 
 void character::RestoreHP()
 {
-  DoForBodyParts(this, &bodypart::FastRestoreHP);
+  doforbodyparts()(this, &bodypart::FastRestoreHP);
   HP = MaxHP;
 }
 
@@ -3602,7 +3608,8 @@ void character::RestoreBodyParts()
 void character::UpdatePictures()
 {
   if(!PictureUpdatesAreForbidden())
-    DoIndexParameterRoutine(this, &character::JustUpdateTheDamnBodyPartPicture, BodyParts);
+    for(int c = 0; c < BodyParts; ++c)
+      UpdateBodyPartPicture(c, false);
 }
 
 bodypart* character::MakeBodyPart(int I) const
@@ -3628,7 +3635,7 @@ bodypart* character::CreateBodyPart(int I, int SpecialFlags)
   BodyPart->InitSpecialAttributes();
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
-    JustUpdateTheDamnBodyPartPicture(I);
+    UpdateBodyPartPicture(I, false);
 
   if(!IsInitializing())
   {
@@ -4937,7 +4944,7 @@ void character::PoisonedHandler()
 
 truth character::IsWarm() const
 {
-  return CombineBodyPartPredicates<1>(this, &bodypart::IsWarm);
+  return combinebodypartpredicates()(this, &bodypart::IsWarm, 1);
 }
 
 void character::BeginInvisibility()
@@ -5281,17 +5288,17 @@ void character::CalculateAll()
 
 void character::CalculateHP()
 {
-  HP = SumBodyPartProperties(this, &bodypart::GetHP);
+  HP = sumbodypartproperties()(this, &bodypart::GetHP);
 }
 
 void character::CalculateMaxHP()
 {
-  MaxHP = SumBodyPartProperties(this, &bodypart::GetMaxHP);
+  MaxHP = sumbodypartproperties()(this, &bodypart::GetMaxHP);
 }
 
 void character::CalculateBodyPartMaxHPs(ulong Flags)
 {
-  DoForBodyParts(this, &bodypart::CalculateMaxHP, Flags);
+  doforbodypartswithparam<ulong>()(this, &bodypart::CalculateMaxHP, Flags);
   CalculateMaxHP();
   CalculateHP();
 }
@@ -5465,7 +5472,7 @@ festring character::GetBodyPartName(int I, truth Articled) const
 
 item* character::SearchForItem(ulong ID) const
 {
-  item* Equipment = FindEquipment(this, &item::HasID, ID);
+  item* Equipment = findequipment<ulong>()(this, &item::HasID, ID);
 
   if(Equipment)
     return Equipment;
@@ -5753,7 +5760,7 @@ int character::GetRelation(const character* Who) const
 
 void character::CalculateAttributeBonuses()
 {
-  DoForBodyParts(this, &bodypart::CalculateAttributeBonuses);
+  doforbodyparts()(this, &bodypart::CalculateAttributeBonuses);
   int BackupBonus[BASE_ATTRIBUTES];
   int BackupCarryingBonus = CarryingBonus;
   CarryingBonus = 0;
@@ -6025,7 +6032,7 @@ void character::DamageAllItems(character* Damager, int Damage, int Type)
 
 truth character::Equips(const item* Item) const
 {
-  return CombineEquipmentPredicates<1>(this, &item::HasID, Item->GetID());
+  return combineequipmentpredicateswithparam<ulong>()(this, &item::HasID, Item->GetID(), 1);
 }
 
 void character::PrintBeginConfuseMessage() const
@@ -6467,7 +6474,7 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
 void character::SortAllItems(const sortdata& SortData)
 {
   GetStack()->SortAllItems(SortData);
-  DoForEquipments(this, &item::SortAllItems, SortData);
+  doforequipmentswithparam<const sortdata&>()(this, &item::SortAllItems, SortData);
 }
 
 void character::PrintBeginSearchingMessage() const
@@ -6568,7 +6575,7 @@ void character::ShowAdventureInfo() const
     for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
       i->DrawContents(this);
 
-    DoForEquipments(this, &item::DrawContents, this);
+    doforequipmentswithparam<const character*>()(this, &item::DrawContents, this);
   }
 
   if(game::TruthQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
@@ -6718,8 +6725,8 @@ truth character::PreProcessForBone()
   ResetStates();
   RemoveTraps();
   GetStack()->PreProcessForBone();
-  DoForEquipments(this, &item::PreProcessForBone);
-  DoForBodyParts(this, &bodypart::PreProcessForBone);
+  doforequipments()(this, &item::PreProcessForBone);
+  doforbodyparts()(this, &bodypart::PreProcessForBone);
   game::RemoveCharacterID(ID);
   ID = -ID;
   game::AddCharacterID(this, ID);
@@ -6765,8 +6772,8 @@ truth character::PostProcessForBone()
   }
 
   GetStack()->PostProcessForBone();
-  DoForEquipments(this, &item::PostProcessForBone);
-  DoForBodyParts(this, &bodypart::PostProcessForBone);
+  doforequipments()(this, &item::PostProcessForBone);
+  doforbodyparts()(this, &bodypart::PostProcessForBone);
   return true;
 }
 
@@ -6774,7 +6781,7 @@ void character::FinalProcessForBone()
 {
   Flags &= ~C_PLAYER;
   GetStack()->FinalProcessForBone();
-  DoForEquipments(this, &item::FinalProcessForBone);
+  doforequipments()(this, &item::FinalProcessForBone);
   int c;
 
   for(c = 0; c < BodyParts; ++c)
@@ -6810,7 +6817,7 @@ void character::SetSoulID(ulong What)
 
 truth character::SearchForItem(const item* Item) const
 {
-  if(CombineEquipmentPredicates<1>(this, &item::HasID, Item->GetID()))
+  if(combineequipmentpredicateswithparam<ulong>()(this, &item::HasID, Item->GetID(), 1))
     return true;
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
@@ -7274,12 +7281,12 @@ truth character::IsAlly(const character* Char) const
 
 void character::ResetSpoiling()
 {
-  DoForBodyParts(this, &bodypart::ResetSpoiling);
+  doforbodyparts()(this, &bodypart::ResetSpoiling);
 }
 
 item* character::SearchForItem(const character* Char, sorter Sorter) const
 {
-  item* Equipment = FindEquipment(this, Sorter, Char);
+  item* Equipment = findequipment<const character*>()(this, Sorter, Char);
 
   if(Equipment)
     return Equipment;
@@ -7294,8 +7301,8 @@ item* character::SearchForItem(const character* Char, sorter Sorter) const
 truth character::DetectMaterial(const material* Material) const
 {
   return GetStack()->DetectMaterial(Material)
-    || CombineBodyPartPredicates<1>(this, &bodypart::DetectMaterial, Material)
-    || CombineEquipmentPredicates<1>(this, &item::DetectMaterial, Material);
+    || combinebodypartpredicateswithparam<const material*>()(this, &bodypart::DetectMaterial, Material, 1)
+    || combineequipmentpredicateswithparam<const material*>()(this, &item::DetectMaterial, Material, 1);
 }
 
 truth character::DamageTypeDestroysBodyPart(int Type)
@@ -8150,12 +8157,12 @@ truth character::HornOfFearWorks() const
 
 void character::BeginLeprosy()
 {
-  DoForBodyParts(this, &bodypart::SetIsInfectedByLeprosy, true);
+  doforbodypartswithparam<truth>()(this, &bodypart::SetIsInfectedByLeprosy, true);
 }
 
 void character::EndLeprosy()
 {
-  DoForBodyParts(this, &bodypart::SetIsInfectedByLeprosy, false);
+  doforbodypartswithparam<truth>()(this, &bodypart::SetIsInfectedByLeprosy, false);
 }
 
 truth character::IsSameAs(const character* What) const
@@ -8527,7 +8534,7 @@ truth character::CanMove() const
 
 void character::CalculateEnchantments()
 {
-  DoForEquipments(this, &item::CalculateEnchantment);
+  doforequipments()(this, &item::CalculateEnchantment);
   GetStack()->CalculateEnchantments();
 }
 
@@ -8991,7 +8998,7 @@ void character::RemoveTrap(ulong ID)
 {
   trapdata*& T = ListFind(TrapData, trapidcomparer(ID));
   T = T->Next;
-  DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
+  doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 void character::AddTrap(ulong ID, ulong BodyParts)
@@ -9003,7 +9010,7 @@ void character::AddTrap(ulong ID, ulong BodyParts)
   else
     T = new trapdata(ID, GetID(), BodyParts);
 
-  DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
+  doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 truth character::IsStuckToTrap(ulong ID) const
@@ -9030,7 +9037,7 @@ void character::RemoveTraps()
   }
 
   TrapData = 0;
-  DoForBodyParts(this, &bodypart::SignalPossibleUsabilityChange);
+  doforbodyparts()(this, &bodypart::SignalPossibleUsabilityChange);
 }
 
 void character::RemoveTraps(int BodyPartIndex)
@@ -9244,7 +9251,7 @@ int character::GetBodyPartSparkleFlags(int) const
 
 truth character::IsAnimated() const
 {
-  return CombineBodyPartPredicates<1>(this, &bodypart::IsAnimated);
+  return combinebodypartpredicates()(this, &bodypart::IsAnimated, 1);
 }
 
 double character::GetNaturalExperience(int Identifier) const
@@ -9257,7 +9264,7 @@ truth character::HasBodyPart(sorter Sorter) const
   if(Sorter == 0)
     return true;
 
-  return CombineBodyPartPredicates<1>(this, Sorter, this);
+  return combinebodypartpredicateswithparam<const character*>()(this, Sorter, this, 1);
 }
 
 truth character::PossessesItem(sorter Sorter) const
@@ -9266,8 +9273,8 @@ truth character::PossessesItem(sorter Sorter) const
     return true;
 
   return (GetStack()->SortedItems(this, Sorter)
-	  || CombineEquipmentPredicates<1>(this, Sorter, this)
-	  || CombineBodyPartPredicates<1>(this, Sorter, this));
+	  || combinebodypartpredicateswithparam<const character*>()(this, Sorter, this, 1)
+	  || combineequipmentpredicateswithparam<const character*>()(this, Sorter, this, 1));
 }
 
 /* 0 <= I <= 1 */

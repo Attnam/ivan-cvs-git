@@ -128,7 +128,7 @@ character
 	IsEnormous = false;
 	ScienceTalkAdjectiveAttribute =
 	{
-		142,
+		143,
 		"", "applied", "recent", "dark", "linear",
 		"molecular", "theoretical", "classical", "the future of", "queer",
 		"multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
@@ -162,7 +162,7 @@ character
 		"sentient", "silksteel", "dead", "temporal", "transcendent",
 		"unified", "the threshold of", "finite", "postmodern", "selective",
 		"arctic", "the proofs of", "mortal", "teleological", "hybrid",
-		"the principle of", "the art of";
+		"the principle of", "the art of", "sick";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
@@ -2582,7 +2582,7 @@ mistress
 	}
 	ScienceTalkAdjectiveAttribute =
 	{
-		51,
+		52,
 		"applied", "theoretical", "classical", "the future of", "queer",
 		"practical", "the secrets of", "ancient", "empirical", "statistical",
 		"the axioms of", "forbidden", "popular", "obscene", "ceremonial",
@@ -2594,7 +2594,8 @@ mistress
 		"the history of", "creative uses of", "chaotic", "erotic", "arctic",
 		"experimental", "lewd", "clinical", "electrical", "nymphomaniacal",
 		"intellectual", "the origin of", "hot", "frictionless", "lesbian",
-		"the art of";
+
+		"the art of", "sick";
 	}
 	ScienceTalkSubstantiveAttribute =
 	{
@@ -2742,7 +2743,7 @@ werewolfhuman
 	HostileReplies == "@Dd screams in fury.";
 	FriendlyReplies == "@Dd screams in a friendly manner.";
 	TotalSize = 170;
-	NameSingular = "werewolf1";
+	NameSingular = "werewolf";
 	NamePlural = "werewolves";
 	AttackStyle = USE_ARMS;
 	CanBeGenerated = true;
