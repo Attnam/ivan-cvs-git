@@ -21,7 +21,7 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Hex's buggy messages.
 //Pressing esc in stringquestion crashes game!!!
 Background problem with config screen.
-Wishing for corpse or any bodypart crashes.
+Wishing for corpse or any bodypart in WMode crashes.
 Can one eat a can MADE of bananaflesh?
 //Dos-prompt bug.
 //Walls & moving light.
@@ -98,7 +98,7 @@ Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
 (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 Bear trap + level change crashes.
-Polymorphing while wearing a ring of infravision crashes.
+//Polymorphing while wearing a ring of infravision crashes.
 //Message history may crash if many many very long messages are successively printed.
 Unicorns kicking items in shop.
 //Seges and others may give genies and angels a groin and legs.

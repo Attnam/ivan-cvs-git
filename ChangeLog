@@ -1,5 +1,21 @@
 November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Decreased exp gain for being burdened/stressed
+	* Decresed endurance exp rate
+	* Loricatus now gives a steel hand instead of a mithril arm and Cruentus an iron one
+	  instead of a steel one
+	* Fainting from kobold flesh works again
+	* The game no longer crashes if character wearing a ring of infravision is polymorphed
+	* If needed, the game now asks whether the player wants to wield a weapon which he is
+	  too weak to use
+	* Inventory entries of weapons and shields are now more informative
+	* Gravel, moraine, grass and school food can no longer be wished
+	* Integrated Kahvi's new chest pictures
+	* Corrected a bug that sometimes allowed small spoiled corpses to trigger a permanent
+	  confused state
+
+November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Some bones and skulls added to the enner beast level
 	* Skulls severed from skeletons no longer weight eight kilograms
 	* A dying skeleton now always drops a skull if it has a head

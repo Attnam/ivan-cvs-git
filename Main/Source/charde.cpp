@@ -506,7 +506,7 @@ void petrus::BeTalkedTo()
 				"Valpurus the Creator and all His manifestations and are followed by a canticle of\n"
 				"Saint Petrus the Lion-Hearted lasting roughly three thousand words. Finally there\n"
 				"are some sentences actually concerning your mission:\n\n"
-				"\"Alas, I fear dirty tongues have spread lies to my Lord's Ears. I assure all tales\n"
+				"\"Alas, I fear dirty tongues have spread lies to my Lord's ears. I assure all tales\n"
 				"of treasures here in New Attnam are but mythic legends. There is nothing of value here.\n"
 				"The taxes are already an unbearable burden and I can't possibly pay more. However I do\n"
 				"not question the wisdom of the government's decisions. I will contribute what I can:\n"
@@ -3916,4 +3916,10 @@ void elpuri::VirtualConstructor(bool Load)
 {
   nonhumanoid::VirtualConstructor(Load);
   Active = false;
+}
+
+bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
+{
+  return (Index == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy())
+      || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy());
 }

@@ -379,9 +379,9 @@ void loricatus::PrayGoodEffect()
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
+      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s that is made of mithril.", NewBodyPart->GetBodyPartName().c_str());
+      ADD_MESSAGE("You grow a new %s that is made of steel.", NewBodyPart->GetBodyPartName().c_str());
       return;
     }
 	
@@ -759,9 +759,9 @@ void cruentus::PrayGoodEffect()
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
+      NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(IRON));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s, which seems to be made of steel.", NewBodyPart->GetBodyPartName().c_str()); 
+      ADD_MESSAGE("You grow a new %s, which seems to be made of iron.", NewBodyPart->GetBodyPartName().c_str()); 
       return;
     }
 

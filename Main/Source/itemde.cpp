@@ -3324,7 +3324,7 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", SR " << GetStrengthRequirement() << ", BV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", THV " << GetBaseToHitValue() << ", SV " << GetStrengthValue() << ", SR " << GetStrengthRequirement() + 1;
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3364,7 +3364,7 @@ void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, SR " << GetStrengthRequirement()  << ", BV " << GetBaseBlockValue() << ", SV " << GetStrengthValue();
+      Entry << " [" << GetWeight() << "g, BC " << GetStrengthValue() << ", BV " << GetBaseBlockValue() << ", SR " << GetStrengthRequirement() + 1;
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -4249,7 +4249,7 @@ void arm::ShowWieldedAttackInfo() const
 
   Info.AddEntry("To hit value: determines your chance to hit", LIGHT_GRAY);
   Info.AddEntry("", LIGHT_GRAY);
-  Info.AddEntry(std::string("Base: ") + (50 * GetWielded()->GetBonus() / (500 + GetWielded()->GetWeight())), LIGHT_GRAY);
+  Info.AddEntry(std::string("Base: ") + GetWielded()->GetBaseToHitValue(), LIGHT_GRAY);
 
   if(HitStrength - Requirement < 10)
     Info.AddEntry(std::string("Strength penalty: ") + ((HitStrength - Requirement) * 10 - 100) + '%', LIGHT_GRAY);
@@ -4880,4 +4880,32 @@ bool encryptedscroll::Read(character*)
 long itemcontainer::GetScore() const
 {
   return item::GetScore() + GetContained()->GetScore();
+}
+
+bool arm::CheckIfWeaponTooHeavy() const
+{
+  ushort HitStrength = GetAttribute(ARM_STRENGTH);
+  ushort Requirement = GetWielded()->GetStrengthRequirement();
+
+  if(TwoHandWieldIsActive())
+    {
+      HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
+      Requirement >>= 1;
+
+      if(HitStrength <= Requirement)
+	{
+	  ADD_MESSAGE("You cannot use this weapon. Wielding it with two hands requires %d strength.", (Requirement >> 1) + 1);
+	  return !game::BoolQuestion("Continue anyway? [y/N]");
+	}
+    }
+  else
+    {
+      if(HitStrength <= Requirement)
+	{
+	  ADD_MESSAGE("You cannot use this weapon. Wielding it with one hand requires %d strength.", Requirement + 1);
+	  return !game::BoolQuestion("Continue anyway? [y/N]");
+	}
+    }
+
+  return false;
 }

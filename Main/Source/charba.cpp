@@ -125,14 +125,14 @@ void character::Hunger()
       break;
     case BURDENED:
       EditNP(-2);
-      EditExperience(LEG_STRENGTH, 2);
-      EditExperience(AGILITY, -2);
+      EditExperience(LEG_STRENGTH, 1);
+      EditExperience(AGILITY, -1);
       break;
     case STRESSED:
     case OVER_LOADED:
       EditNP(-4);
-      EditExperience(LEG_STRENGTH, 4);
-      EditExperience(AGILITY, -4);
+      EditExperience(LEG_STRENGTH, 2);
+      EditExperience(AGILITY, -2);
       break;
     }
 
@@ -317,7 +317,7 @@ void character::Be()
       if(IsPlayer())
 	{
 	  if(GetHungerState() == STARVING && !(RAND() % 50))
-	    Faint();
+	    Faint(true);
 
 	  if(!Action || Action->AllowFoodConsumption())
 	    Hunger();
@@ -2185,7 +2185,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   InNoMsgMode = NewForm->InNoMsgMode = true;
   GetSquareUnder()->RemoveCharacter();
   GetSquareUnder()->AddCharacter(NewForm);
-  SetSquareUnder(0);
+  //SetSquareUnder(0);
   NewForm->SetAssignedName(GetAssignedName());
   NewForm->ActivateTemporaryState(POLYMORPHED);
   NewForm->SetTemporaryStateCounter(POLYMORPHED, Counter);
@@ -2227,6 +2227,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
 
+  SetSquareUnder(0);
   InNoMsgMode = NewForm->InNoMsgMode = false;
   NewForm->CalculateAll();
 
@@ -2313,11 +2314,11 @@ void character::StandIdleAI()
   EditAP(-1000);
 }
 
-void character::Faint()
+void character::Faint(bool HungerFaint)
 {
   if(GetAction())
     {
-      if(!GetAction()->AllowFaint())
+      if(HungerFaint && !GetAction()->AllowFaint())
 	return;
       else
 	GetAction()->Terminate(false);
@@ -3508,6 +3509,9 @@ bool character::EquipmentScreen()
 	    {
 	      Item->RemoveFromSlot();
 	      SetEquipment(Chosen, Item);
+
+	      if(CheckIfEquipmentIsNotUsable(Chosen))
+		Item->MoveTo(GetStack());
 	    }
 	}
     }
@@ -3640,7 +3644,7 @@ void character::Regenerate()
 
       RegenerationCounter -= 600000;
       GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
-      EditExperience(ENDURANCE, Max(10000 / MaxHP, 1));
+      EditExperience(ENDURANCE, Max(5000 / MaxHP, 1));
       ++HP;
     }
 }

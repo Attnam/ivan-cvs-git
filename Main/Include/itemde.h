@@ -981,6 +981,7 @@ class ABSTRACT_ITEM
   void ShowDefenceInfo() const;
   void ShowUnarmedInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
+  bool CheckIfWeaponTooHeavy() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;

@@ -337,6 +337,7 @@ class item : public object
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
   ushort GetBaseMaxDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 1.25f) + 1; }
+  ushort GetBaseToHitValue() const { return 50 * GetBonus() / (500 + GetWeight()); }
   ushort GetBaseBlockValue() const { return ushort(GetBlockModifier() * GetBonus() / (100000 + 200 * GetWeight())); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddAttackInfo(felist&) const;

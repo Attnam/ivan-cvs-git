@@ -1,1 +1,3 @@
 Confuse effects for scrolls.
+Attaching each item to some god.
+Route code.

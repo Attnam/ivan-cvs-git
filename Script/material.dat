@@ -84,6 +84,7 @@ material
 		Density = 2500;
 		Color = rgb16(112, 112, 112);
 		NameStem = "gravel";
+		CanBeWished = false;
 	}
 
 	Config MORAINE;
@@ -93,6 +94,7 @@ material
 		Density = 2500;
 		Color = rgb16(111, 74, 37);
 		NameStem = "moraine";
+		CanBeWished = false;
 	}
 
 	Config WOOD;
@@ -191,6 +193,7 @@ material
 		NameStem = "grass";
 		AdjectiveStem = "grassy";
 		Flexibility = 15;
+		CanBeWished = false;
 	}
 
 	Config LEATHER;
@@ -516,6 +519,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_SCHOOL_FOOD;
 		HitMessage = HM_SCHOOL_FOOD;
 		Flexibility = 5;
+		CanBeWished = false;
 	}
 
 	Config BANANA_PEEL;
@@ -969,13 +973,14 @@ flesh
 
 powder
 {
+	CanBeWished = false;
+
 	Config GUN_POWDER;
 	{
 		StrengthValue = 2;
 		ConsumeType = CT_MINERAL;
 		Density = 250;
 		Color = rgb16(30, 30, 30);
-		CanBeWished = false;
 		IsExplosive = true;
 		PriceModifier = 600;
 		NameStem = "gunpowder";
@@ -989,7 +994,6 @@ powder
 		ConsumeType = CT_MINERAL; /* add something appropriate for this */
 		Density = 500;
 		Color = rgb16(200, 200, 200);
-		CanBeWished = false;
 		NameStem = "snow";
 		AdjectiveStem = "snowy";
 		Flexibility = 40;

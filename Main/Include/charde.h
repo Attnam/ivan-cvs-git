@@ -152,6 +152,7 @@ class ABSTRACT_CHARACTER
   virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return true; }
+  virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);

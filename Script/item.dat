@@ -1681,7 +1681,6 @@ itemcontainer
 	FormModifier = 15;
 	MainMaterialConfig == WOOD;
 	Roundness = 60;
-	BitmapPos = 48, 80;
 	CanBePiled = false;
 	IsAbstract = true;
 	IsPolymorphSpawnable = false;
@@ -1697,6 +1696,7 @@ itemcontainer
 		Possibility = 100;
 		MaxGeneratedContainedItems = 3;
 		StrengthModifier = 100;
+		BitmapPos = 64, 48;
 	}
 
 	Config CHEST;
@@ -1709,6 +1709,7 @@ itemcontainer
 		Possibility = 50;
 		MaxGeneratedContainedItems = 5;
 		StrengthModifier = 500;
+		BitmapPos = 48, 80;
 	}
 
 	Config LARGE_CHEST;
@@ -1722,6 +1723,7 @@ itemcontainer
 		Possibility = 10;
 		MaxGeneratedContainedItems = 10;
 		StrengthModifier = 1000;
+		BitmapPos = 48, 64;
 	}
 
 	Config STRONG_BOX;

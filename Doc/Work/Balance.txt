@@ -1,3 +1,9 @@
-Lion appearing on first level.
+* high priority
+// done
+/ partly done or needs testing
+(r) rejected
+(s) suspended
+
+(r) Lion appearing on first level.
 //Bone helmet is too weak with 1 ap.
-Banana peels can be abused.
+//Banana peels can be abused.

@@ -21,8 +21,8 @@
 //Efektien läpikäyminen. (timo)
 //Miina kuntoon. (timo)
 //Lookmoden messaget kuntoon. (timo)
-Bodypartien ja actioneiden scoret. (timo)
-(s) Luut kuntoon. (timo)
+//Bodypartien ja actioneiden scoret. (timo)
+(r) Luut kuntoon. (timo)
 (r) BloodColorin animaatiostuktuuri. (timo)
 //Paniikki. (hex)
 //Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
@@ -157,7 +157,7 @@ Checking throw balance.
 //?Penalty for eating spoiled food.
 //Pets shouldn't eat the player's bodyparts.
 ?Village duelist.
-?olterraincontainer
+//?olterraincontainer
 Smith prices.
 ?Kamikaze dwarf generation.
 Renaming "single weapon skills".

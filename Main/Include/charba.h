@@ -291,7 +291,7 @@ class character : public entity, public id
   bool TemporaryStateIsActivated(ushort What) const { return (TemporaryState & What) != 0; }	
   bool EquipmentStateIsActivated(ushort What) const { return (EquipmentState & What) != 0; }
   bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual void Faint();
+  virtual void Faint(bool = false);
   void SetTemporaryStateCounter(ushort, ushort);
   void DeActivateVoluntaryAction(const std::string& = "");
   void ActionAutoTermination();
@@ -738,6 +738,7 @@ class character : public entity, public id
   virtual bool IsHumanoid() const { return false; }
   virtual long GetStuffScore() const;
   virtual bool IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
+  virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
