@@ -134,7 +134,7 @@ public:
 	virtual uchar GetSex(void) const { return UNDEFINED; }
 	virtual uchar TakeHit(ushort, short, float, character*);
 	virtual ulong Danger(void) const = 0;
-	virtual ulong GetBloodColor(void) const { return MAKE_RGB(100,0,0); }
+	virtual ulong GetBloodColor(void) const { return MAKE_RGB(75,0,0); }
 	virtual ushort CalculateArmorModifier(void) const;
 	virtual ushort CRegenerationCounter(void) const { return RegenerationCounter; }
 	virtual ushort GetAgility(void) const					{ return Agility; }

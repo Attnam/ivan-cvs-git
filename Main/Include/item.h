@@ -839,6 +839,41 @@ public:
 	virtual bool Zap(vector, uchar);
 );
 
+class ITEM
+(
+	arrow,
+	item,
+	InitMaterials(2, new wood(100), new iron(4)),
+	{
+		SetSize(100);
+	},
+public:
+	virtual ushort Possibility(void) const RET(40)
+	virtual std::string NameSingular(void) const RET("arrow")
+	virtual std::string NamePlural(void) const RET("arrows")
+	virtual float OfferModifier(void) const RET(0.5f)
+	virtual vector GetBitmapPos(void) const RETV(0,64)
+protected:
+	virtual ushort GetFormModifier(void) const RET(70)
+);
+
+
+class ITEM
+(
+	headofennerbeast,
+	head,
+	InitMaterials(new ennerbeastflesh(7000)),
+	{
+		SetSize(50);
+	},
+public:
+	virtual ushort Possibility(void) const RET(0)
+	virtual std::string Name(uchar Case) const RET(NameNormal(Case, "a"))
+	virtual std::string NameSingular(void) const RET("head of enner beast")
+	virtual std::string NamePlural(void) const RET("heads of enner beast")
+	virtual long Score(void) const RET(3);
+	virtual vector GetBitmapPos(void) const RETV(176,0)
+);
 FINISH_PROTOTYPING(item)
 
 #endif

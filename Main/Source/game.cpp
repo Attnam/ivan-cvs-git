@@ -142,7 +142,7 @@ void game::Init(std::string Name)
 	}
 	else
 	{
-		StoryScreen("On this evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his office and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thee hast succeeded.\"");
+		StoryScreen("On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
 
 		StoryScreen("Generating game...\n\nThis may take some time, please wait.", false);
 
@@ -426,7 +426,7 @@ void game::UpDateCameraY(void)
 
 const char* game::Insult(void)
 {
-switch(rand()%11)
+switch(rand()%16)
 	{
 	case 0  : return "you moron";
 	case 1  : return "silly";
@@ -439,6 +439,10 @@ switch(rand()%11)
         case 8  : return "potatoes-for-eyes";
         case 9  : return "lamer";
         case 10 : return "mommo-for-brains";
+	   case 11 : return "pinhead";
+	   case 12 : return "you stupid-headed person";
+	   case 13 : return "you software abuser";
+	   case 14 : return "loser";
         default : return "hugger-mugger";
 	}
 }
