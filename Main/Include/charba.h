@@ -249,14 +249,13 @@ class character : public entity, public id
   virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
   virtual void HasBeenHitByItem(character*, item*, float);
-  virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveNutrition(long);
   virtual void ReceiveOmleUrine(long);
   virtual void ReceivePepsi(long);
-  virtual void ReceivePoison(long);
+  virtual void ReceiveSchoolFood(long);
   void Regenerate();
   void SetAP(long What) { AP = What; }
   void SetIsPlayer(bool What) { Player = What; }
@@ -281,8 +280,8 @@ class character : public entity, public id
   void SetTemporaryStateCounter(ushort, ushort);
   virtual void DeActivateVoluntaryAction(const std::string& = "");
   virtual void ActionAutoTermination();
-  virtual team* GetTeam() const { return Team; }
-  virtual void SetTeam(team*);
+  team* GetTeam() const { return Team; }
+  void SetTeam(team*);
   virtual void ChangeTeam(team*);
   virtual bool RestUntilHealed();
   virtual bool OutlineCharacters();
@@ -375,7 +374,6 @@ class character : public entity, public id
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
-  virtual void TalkTo(character*);
   virtual bool ClosePos(vector2d);
   virtual ushort GetResistance(uchar) const;
   virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
@@ -402,7 +400,7 @@ class character : public entity, public id
   virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
-  virtual void CreateBodyPart(ushort);
+  virtual bodypart* CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return CanUseEquipment() && Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype* GetProtoType() const { return &character_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
@@ -536,7 +534,7 @@ class character : public entity, public id
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
   long GetStateAPGain(long) const;
-  virtual long GetMoveAPRequirement(uchar Difficulty) const { return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20; }
+  virtual long GetMoveAPRequirement(uchar Difficulty) const { return (long(GetAttribute(AGILITY)) - 200) * Difficulty * 500 / GetMoveEase(); }
   virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
@@ -568,7 +566,7 @@ class character : public entity, public id
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
   virtual void StartReading(item*, ulong);
   virtual void DexterityAction(ushort);
-  virtual void CharacterSpeciality() { }
+  virtual void SingleWeaponSkillTick() { }
   virtual void PrintBeginInvisibilityMessage() const;
   virtual void PrintEndInvisibilityMessage() const;
   virtual void PrintBeginInfraVisionMessage() const;
@@ -579,13 +577,10 @@ class character : public entity, public id
   virtual bool CanBeSeenBy(character*) const;
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
-  virtual void AttachBodyPart(bodypart*, ushort);
+  virtual void AttachBodyPart(bodypart*);
   virtual bool HasAllBodyParts() const;
-  virtual stackiterator FindRandomOwnBodyPart();
+  virtual bodypart* FindRandomOwnBodyPart() const;
   virtual bodypart* GenerateRandomBodyPart();
-  virtual std::vector<character*> GetFriendsAround() const;
-  virtual bodypart* TryAttachRandomOldBodyPart();
-  virtual bodypart* AttachOldBodyPartFromStack(stackiterator, stack*);
   virtual void PrintBeginPoisonedMessage() const;
   virtual void PrintEndPoisonedMessage() const;
   virtual bool IsWarm() const;
@@ -653,12 +648,15 @@ class character : public entity, public id
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
   virtual float GetRelativeDanger(const character*, bool = false) const;
-  virtual float GetDurability(ushort, float, bool) const;
+  virtual float GetTimeToDie(ushort, float, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
   virtual bool HasFeet() const { return true; }
   float GetDangerModifier() const;
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
   virtual bool ReloadDatafiles();
+  virtual std::string GetBodyPartName(ushort, bool = false) const;
+  virtual item* SearchForItemWithID(ulong) const;
+  virtual std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }

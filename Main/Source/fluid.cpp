@@ -36,15 +36,15 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
 	    for(ushort x = 0; x < 3; ++x)
 	      Change[x] = RAND() % Variation - RAND() % Variation;
 
-	    if(short(GET_RED(Color) + Change[0]) < 0) Change[0] = -GET_RED(Color);
-	    if(short(GET_GREEN(Color) + Change[1]) < 0) Change[1] = -GET_GREEN(Color);
-	    if(short(GET_BLUE(Color) + Change[2]) < 0) Change[2] = -GET_BLUE(Color);
+	    if(short(GetRed(Color) + Change[0]) < 0) Change[0] = -GetRed(Color);
+	    if(short(GetGreen(Color) + Change[1]) < 0) Change[1] = -GetGreen(Color);
+	    if(short(GetBlue(Color) + Change[2]) < 0) Change[2] = -GetBlue(Color);
 
-	    if(short(GET_RED(Color) + Change[0]) > 255) Change[0] = 255 - GET_RED(Color);
-	    if(short(GET_GREEN(Color) + Change[1]) > 255) Change[1] = 255 - GET_GREEN(Color);
-	    if(short(GET_BLUE(Color) + Change[2]) > 255) Change[2] = 255 - GET_BLUE(Color);
+	    if(short(GetRed(Color) + Change[0]) > 255) Change[0] = 255 - GetRed(Color);
+	    if(short(GetGreen(Color) + Change[1]) > 255) Change[1] = 255 - GetGreen(Color);
+	    if(short(GetBlue(Color) + Change[2]) > 255) Change[2] = 255 - GetBlue(Color);
 
-	    GetPicture()->PutPixel(Cords + game::GetMoveVector(d), MAKE_RGB(GET_RED(Color) + Change[0], GET_GREEN(Color) + Change[1], GET_BLUE(Color) + Change[2]));
+	    GetPicture()->PutPixel(Cords + game::GetMoveVector(d), MakeRGB(GetRed(Color) + Change[0], GetGreen(Color) + Change[1], GetBlue(Color) + Change[2]));
 	    GetPicture()->SetAlpha(Cords + game::GetMoveVector(d), 50 + RAND() % 206);
 	  }
     }
@@ -107,3 +107,4 @@ inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
 
   return SaveFile;
 }
+

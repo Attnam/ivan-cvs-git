@@ -59,7 +59,7 @@ class stack
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(character*, bool (*)(item*, character*)) const;
   void DeletePointers();
-  void BeKicked(character*, float);
+  void BeKicked(character*, ushort);
   long Score() const;
   void Polymorph();
   void CheckForStepOnEffect(character*);

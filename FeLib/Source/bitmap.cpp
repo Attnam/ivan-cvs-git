@@ -202,7 +202,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(Flags & ROTATE && Width != Height)
     ABORT("Blit error: FeLib supports only square rotating!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   Flags &= 0x7;
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
@@ -303,7 +304,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
@@ -333,7 +335,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   if(Flags & ROTATE && Width != Height)
     ABORT("MaskedBlit error: FeLib supports only square rotating!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   Flags &= 0x7;
 
@@ -435,7 +438,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
@@ -467,7 +471,8 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ush
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
@@ -502,7 +507,8 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   if(!Width || !Height)
     ABORT("Zero-sized bitmap alpha blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   Flags &= 0x7;
 
@@ -875,9 +881,9 @@ void bitmap::FillWithGradient(ushort X, ushort Y, ushort Width, ushort Height, u
       {
 	float Multiplier = (float(x) / Width + float(y) / Height) / 2;
 
-	PutPixel(X + x, Y + y, MAKE_RGB(ushort(GET_RED(Color1) * (1.0f - Multiplier) + GET_RED(Color2) * Multiplier),
-					ushort(GET_GREEN(Color1) * (1.0f - Multiplier) + GET_GREEN(Color2) * Multiplier),
-					ushort(GET_BLUE(Color1) * (1.0f - Multiplier) + GET_BLUE(Color2) * Multiplier)));
+	PutPixel(X + x, Y + y, MakeRGB(ushort(GetRed(Color1) * (1.0f - Multiplier) + GetRed(Color2) * Multiplier),
+					ushort(GetGreen(Color1) * (1.0f - Multiplier) + GetGreen(Color2) * Multiplier),
+					ushort(GetBlue(Color1) * (1.0f - Multiplier) + GetBlue(Color2) * Multiplier)));
       }
 }
 
@@ -898,7 +904,8 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap stretch blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   if(Stretch > 1)
     {
@@ -1011,7 +1018,8 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   if(!Width || !Height)
     ABORT("Zero-sized bitmap power blit attempt detected!");
 
-  ClipParameters(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
 
   ushort** SrcImage = GetImage();
   ushort** DestImage = Bitmap->GetImage();
@@ -1028,7 +1036,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
 	  {
-	    ushort Red = GET_RED(*SrcPtr) + Luminance;
+	    ushort Red = GetRed(*SrcPtr) + Luminance;
 
 	    if(Red & 0x8000)
 	      Red = 0;
@@ -1036,7 +1044,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Red > 0xFF)
 	      Red = 0xFF;
 
-	    ushort Green = GET_GREEN(*SrcPtr) + Luminance;
+	    ushort Green = GetGreen(*SrcPtr) + Luminance;
 
 	    if(Green & 0x8000)
 	      Green = 0;
@@ -1044,7 +1052,7 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Green > 0xFF)
 	      Green = 0xFF;
 
-	    ushort Blue = GET_BLUE(*SrcPtr) + Luminance;
+	    ushort Blue = GetBlue(*SrcPtr) + Luminance;
 
 	    if(Blue & 0x8000)
 	      Blue = 0;
@@ -1052,54 +1060,11 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	    if(Blue > 0xFF)
 	      Blue = 0xFF;
 
-	    *DestPtr = ((Red * (*AlphaPtr) + GET_RED(*DestPtr) * (255 - (*AlphaPtr))) & 0xF800)
-		     | ((Green * (*AlphaPtr) + GET_GREEN(*DestPtr) * (255 - (*AlphaPtr))) >> 5 & 0x7E0)
-		     | ((Blue * (*AlphaPtr) + GET_BLUE(*DestPtr) * (255 - (*AlphaPtr))) >> 11);
+	    *DestPtr = ((Red * (*AlphaPtr) + GetRed(*DestPtr) * (255 - (*AlphaPtr))) & 0xF800)
+		     | ((Green * (*AlphaPtr) + GetGreen(*DestPtr) * (255 - (*AlphaPtr))) >> 5 & 0x7E0)
+		     | ((Blue * (*AlphaPtr) + GetBlue(*DestPtr) * (255 - (*AlphaPtr))) >> 11);
 	  }
     }
-}
-
-void bitmap::ClipParameters(bitmap* Bitmap, ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY, ushort& Width, ushort& Height) const
-{
-  if(short(SourceX) < 0)
-    {
-      Width += SourceX;
-      DestX -= SourceX;
-      SourceX = 0;
-    }
-
-  if(short(SourceY) < 0)
-    {
-      Height += SourceY;
-      DestY -= SourceY;
-      SourceY = 0;
-    }
-
-  if(short(DestX) < 0)
-    {
-      Width += DestX;
-      SourceX -= DestX;
-      DestX = 0;
-    }
-
-  if(short(DestY) < 0)
-    {
-      Height += DestY;
-      SourceY -= DestY;
-      DestY = 0;
-    }
-
-  if(short(SourceX) + Width > XSize)
-    Width = XSize - SourceX;
-
-  if(short(SourceY) + Height > YSize)
-    Height = YSize - SourceY;
-
-  if(short(DestX) + Width > Bitmap->XSize)
-    Width = Bitmap->XSize - DestX;
-
-  if(short(DestY) + Height > Bitmap->YSize)
-    Height = Bitmap->YSize - DestY;
 }
 
 void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
@@ -1135,12 +1100,13 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 		{
 		  MaxDist = FlameLowestPoint[x] - Top;
 		  RelPos = y - Top;
-		  PutPixel(x,y, MAKE_RGB((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
+		  PutPixel(x,y, MakeRGB((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
 		}
 	    }
 	  else if(RAND() & 1)
-	    PutPixel(x,0, MAKE_RGB(0,255,0));
+	    PutPixel(x,0, MakeRGB(0,255,0));
 	}
     }
   femath::SetSeed(time(0));
 }
+

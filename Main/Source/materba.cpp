@@ -50,13 +50,14 @@ void material::Effect(character* Eater, long Amount)
 {
   switch(GetEffect())
     {
-    case EPOISON: Eater->ReceivePoison(Amount); break;
+    case EPOISON: Eater->BeginTemporaryState(POISON, Amount / 10); break;
     case EDARKNESS: Eater->ReceiveDarkness(Amount); break;
     case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); break;
     case EPEPSI: Eater->ReceivePepsi(Amount); break;
     case EKOBOLDFLESH: Eater->ReceiveKoboldFlesh(Amount); break;
     case EHEAL: Eater->ReceiveHeal(Amount); break;
     case ELYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount / 10); break;
+    case ESCHOOLFOOD: Eater->ReceiveSchoolFood(Amount); break;
     }
 }
 

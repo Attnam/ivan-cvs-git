@@ -1013,46 +1013,30 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 bool level::CollectCreatures(std::vector<character*>& CharacterArray, character* Leader, bool AllowHostiles)
 {
   if(!AllowHostiles)
-    {
-      rect Rect;
-      femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Leader->GetPos(), Leader->LOSRange());
-
-      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-	  {
-	    character* Char = GetLSquare(x, y)->GetCharacter();
-
-	    if(Char)
-	      if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->CanBeSeenBy(Leader))
-		{
-		  ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
-		  return false;
-		}
-	  }
-    }
-
-  rect Rect;
-  femath::CalculateEnvironmentRectangle(Rect, GetBorder(), Leader->GetPos(), Leader->LOSRange());
-
-  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
-    for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
-      {
-	character* Char = GetLSquare(x, y)->GetCharacter();
-
-	if(Char)
-	  if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->CanBeSeenBy(Leader))
+    for(ushort c = 0; c < game::GetTeams(); ++c)
+      if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i))
 	    {
-	      if(Char->GetAction() && Char->GetAction()->IsVoluntary())
-		Char->GetAction()->Terminate(false);
-
-	      if(!Char->GetAction())
-		{
-		  ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
-		  CharacterArray.push_back(Char);
-		  game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
-		}
+	      ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
+	      return false;
 	    }
-      }
+
+  for(ushort c = 0; c < game::GetTeams(); ++c)
+    if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled() && *i != Leader && Leader->CanBeSeenBy(*i))
+	  {
+	    if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
+	      (*i)->GetAction()->Terminate(false);
+
+	    if(!(*i)->GetAction())
+	      {
+		ADD_MESSAGE("%s follows you.", (*i)->CHARNAME(DEFINITE));
+		CharacterArray.push_back(*i);
+		Leader->GetLevelUnder()->RemoveCharacter((*i)->GetPos());
+	      }
+	  }
 
   return true;
 }

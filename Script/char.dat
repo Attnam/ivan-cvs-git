@@ -158,9 +158,10 @@ petrus
 	RightRing = ring(RINGOFFIRERESISTANCE);
 	LeftRing = ring(RINGOFPOISONRESISTANCE);
 	RightBoot = GOLD boot(BOOTOFSPEED);
-	KnownCategoryWeaponSkills == LARGE_SWORDS;
-	CategoryWeaponSkillHits == 5000;
+	KnownCategoryWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; } /* He must not become too easy just if disarmed */
+	CategoryWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
 	RightSingleWeaponSkillHits = 5000;
+	ClassStates = INFRAVISION;
 }
 
 farmer
@@ -307,15 +308,19 @@ oree
 	CanRead = true;
 	NameSingular = "Blood Daemon King";
 	IsPolymorphable = false;
-	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 30000;
+	AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
+	BaseUnarmedStrength = 10000;
+	BaseKickStrength = 20000;
+	BaseBiteStrength = 200000;
 	CanBeWished = false;
 	Alias == "Oree";
-	ClassStates = INFRAVISION;
+	ClassStates = INVISIBLE|INFRAVISION|ESP;
+	Helmet = DIAMOND helmet;
 	BodyArmor = goldeneagleshirt;
+	RightGauntlet = DIAMOND gauntlet;
 	RightBoot = DIAMOND boot(BOOTOFSPEED);
-	/*KnownCategoryWeaponSkills == BITE;
-	CategoryWeaponSkillHits == 50;*/
+	KnownCategoryWeaponSkills = { 3, UNARMED, KICK, BITE; }
+	CategoryWeaponSkillHits = { 3, 2000, 2000, 2000; }
 }
 
 darkknight
@@ -343,6 +348,7 @@ darkknight
 	CanBeGenerated = true;
 	IsAbstract = true;
 	KnownCategoryWeaponSkills == LARGE_SWORDS;
+	ClassStates = INFRAVISION;
 
 	Config ROOKIE;
 	{
@@ -444,6 +450,7 @@ frog
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 30000;
 	CanSwim = true;
+	KnownCategoryWeaponSkills == BITE;
 }
 
 darkfrog
@@ -464,6 +471,7 @@ darkfrog
 	Adjective = "dark";
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
+	CategoryWeaponSkillHits == 100;
 }
 
 elpuri
@@ -490,6 +498,7 @@ elpuri
 	CanBeGenerated = false;
 	CanBeWished = false;
 	Alias == "Elpuri";
+	CategoryWeaponSkillHits == 500;
 }
 
 billswill
@@ -514,6 +523,8 @@ billswill
 	BaseUnarmedStrength = 50000;
 	CanBeGenerated = true;
 	ClassStates = ESP;
+	KnownCategoryWeaponSkills == UNARMED;
+	CategoryWeaponSkillHits == 100;
 }
 
 skeleton
@@ -547,8 +558,8 @@ skeleton
 	Helmet = helmet;
 	RightWielded = meleeweapon(AXE);
 	KnownCategoryWeaponSkills == AXES;
-	CategoryWeaponSkillHits == 50;
-	RightSingleWeaponSkillHits = 20;
+	CategoryWeaponSkillHits == 20;
+	RightSingleWeaponSkillHits = 10;
 
 	Config WARRIOR;
 	{
@@ -563,7 +574,6 @@ skeleton
 	Config WARLORD;
 	{
 		AttributeBonus = 200;
-		Helmet = STEEL helmet;
 		BodyArmor = STEEL brokenplatemail;
 		RightWielded = STEEL flamingsword;
 		LeftWielded = STEEL shield;
@@ -664,6 +674,8 @@ mommo
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 
 	Config CONICAL;
 	{
@@ -720,6 +732,8 @@ golem
 	CreateSolidMaterialConfigurations = true;
 	IsAbstract = true;
 	BaseUnarmedStrength = 5000;
+	KnownCategoryWeaponSkills == UNARMED;
+	CategoryWeaponSkillHits == 50;
 }
 
 wolf
@@ -742,6 +756,8 @@ wolf
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 200;
 }
 
 dog
@@ -764,6 +780,8 @@ dog
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 }
 
 spider
@@ -788,6 +806,8 @@ spider
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 50;
 }
 
 jackal
@@ -809,6 +829,8 @@ jackal
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 50;
 }
 
 donkey
@@ -831,6 +853,8 @@ donkey
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 2500;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 }
 
 communist /* Ivan */
@@ -924,6 +948,8 @@ polarbear
 	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 15000;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 100;
 }
 
 dolphin
@@ -970,6 +996,7 @@ lightfrog
 	TotalSize = 25;
 	SkinColor = rgb(32, 88, 32);
 	Adjective = "light";
+	CategoryWeaponSkillHits == 100;
 }
 
 slave
@@ -994,8 +1021,8 @@ slave
 	TotalVolume = 60000;
 	TotalSize = 160;
 	NameSingular = "slave";
-	KnownCategoryWeaponSkills == CLUBS;
-	CategoryWeaponSkillHits == 200;
+	KnownCategoryWeaponSkills = { 2, UNARMED, CLUBS; }
+	CategoryWeaponSkillHits = { 2, 100, 100; }
 }
 
 petrusswife
@@ -1047,7 +1074,7 @@ petrusswife
 
 	Config 4;
 	{
-		DefaultIntelligence = 7;
+		DefaultIntelligence = 7; /* she's blond */
 		HairColor = rgb(200, 96, 0);
 		HeadBitmapPos = 112, 32;
 		PostFix = "number 4";
@@ -1093,6 +1120,8 @@ housewife
 	TotalSize = 160;
 	CanRead = true;
 	NameSingular = "housewife";
+	KnownCategoryWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
+	CategoryWeaponSkillHits = { 2, 50, 50; }
 }
 
 femaleslave
@@ -1197,6 +1226,8 @@ imp
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
 	CanUseEquipment = false;
+	KnownCategoryWeaponSkills == UNARMED;
+	CategoryWeaponSkillHits == 50;
 }
 
 bat
@@ -1222,6 +1253,8 @@ bat
 	BaseBiteStrength = 15000;
 	CanBeGenerated = true;
 	ClassStates = INFRAVISION;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 }
 
 mistress
@@ -1256,6 +1289,7 @@ mistress
 	CategoryWeaponSkillHits == 200;
 	RightSingleWeaponSkillHits = 200;
 	LeftSingleWeaponSkillHits = 200;
+	ClassStates = INFRAVISION;
 
 	Config TORTURINGCHIEF;
 	{
@@ -1326,6 +1360,8 @@ werewolfhuman
 	CanBeGenerated = true;
 	CanRead = true;
 	ClassStates = LYCANTHROPY;
+	KnownCategoryWeaponSkills == UNARMED;
+	CategoryWeaponSkillHits == 100;
 }
 
 werewolfwolf
@@ -1438,6 +1474,8 @@ gibberling
 	Sex = UNDEFINED;
 	CanUseEquipment = false;
 	CanTalk = false;
+	KnownCategoryWeaponSkills == UNARMED;
+	CategoryWeaponSkillHits == 50;
 }
 
 largecat
@@ -1460,6 +1498,8 @@ largecat
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 50;
 }
 
 largerat
@@ -1483,6 +1523,8 @@ largerat
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 }
 
 angel
@@ -1576,6 +1618,8 @@ mammoth
 	BaseBiteStrength = 7500;
 	CanBeGenerated = true;
 	CanKick = true;
+	KnownCategoryWeaponSkills = { 2, KICK, BITE; }
+	CategoryWeaponSkillHits = { 2, 50, 50; }
 }
 
 unicorn
@@ -1600,6 +1644,8 @@ unicorn
 	CanKick = true;
 	IsAbstract = true;
 	TorsoMainColor = rgb(200, 200, 200); /* the horn */
+	KnownCategoryWeaponSkills = { 2, KICK, BITE; }
+	CategoryWeaponSkillHits = { 2, 50, 50; }
 
 	Config GOOD;
 	{
@@ -1668,6 +1714,8 @@ lion
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 20000;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 200;
 }
 
 carnivorousplant
@@ -1694,6 +1742,8 @@ carnivorousplant
 	/* TorsoSpecialColor (the flower) is random */
 	CanWalk = false;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 20;
 }
 
 buffalo
@@ -1718,6 +1768,8 @@ buffalo
 	BaseBiteStrength = 7500;
 	CanKick = true;
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills = { 2, KICK, BITE; }
+	CategoryWeaponSkillHits = { 2, 50, 50; }
 }
 
 snake
@@ -1741,6 +1793,9 @@ snake
 	CanKick = false;
 	StandVerb = "lying";
 	CanBeGenerated = true;
+	KnownCategoryWeaponSkills == BITE;
+	CategoryWeaponSkillHits == 100;
+	ClassStates = INFRAVISION;
 }
 
 orc
@@ -1774,6 +1829,7 @@ orc
 	KnownCategoryWeaponSkills == AXES;
 	CategoryWeaponSkillHits == 20;
 	RightSingleWeaponSkillHits = 10;
+	ClassStates = INFRAVISION;
 
 	Config SLAUGHTERER;
 	{

@@ -303,7 +303,10 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       if(Word == "rgb")
 	{
-	  Value = MAKE_RGB(ReadNumber(ValueMap), ReadNumber(ValueMap), ReadNumber(ValueMap));
+	  ushort Red = ReadNumber(ValueMap);
+	  ushort Green = ReadNumber(ValueMap);
+	  ushort Blue = ReadNumber(ValueMap);
+	  Value = MakeRGB(Red, Green, Blue);
 	  continue;
 	}
 
@@ -484,3 +487,4 @@ ulong inputfile::TellLineOfPos(long Pos)
 
   return Line;
 }
+

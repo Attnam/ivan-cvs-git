@@ -8,5 +8,15 @@ Village Elder.
 Thief.
 Black Mage.
 Grave digger.
+Short sword + broken and in hands picture.
+Dagger + broken and in hands picture.
+Halberd + broken and in hands picture.
+Hammer and sickle + broken and in hands pictures.
+Dagger + broken and in hands picture.
+Broken shield.
+Mace + broken and in hands picture.
+Flail + broken and in hands picture.
+Staff + broken and in hands picture.
+Skull.
 
 Fabrick belts and whips seem are not clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)

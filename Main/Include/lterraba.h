@@ -197,7 +197,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Load(inputfile&);
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual void BeKicked(character*, float) { }
+  virtual void BeKicked(character*, ushort) { }
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
   virtual bool HasDrinkEffect() const { return false; } 

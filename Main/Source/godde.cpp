@@ -116,20 +116,20 @@ void seges::PrayGoodEffect()
     }
   else
     {
-      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+      bodypart* OldBodyPart = game::GetPlayer()->FindRandomOwnBodyPart();
 
-      if(OldOwnBodyPartIterator != 0)
+      if(OldBodyPart != 0)
 	{
-	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
-	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
+	  OldBodyPart->RemoveFromSlot();
+	  game::GetPlayer()->AttachBodyPart(OldBodyPart);
+	  OldBodyPart->SetHP(OldBodyPart->GetMaxHP());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
 	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
 	  NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
 	}
     }
 }
@@ -155,10 +155,8 @@ void atavus::PrayGoodEffect()
   else
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      
-      ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str());
+      ADD_MESSAGE("You gives you a new %s as a gift between friends.", NewBodyPart->GetBodyPartName().c_str());
     }
 }
 
@@ -200,21 +198,22 @@ void silva::PrayGoodEffect()
 {
   if(!game::GetPlayer()->HasAllBodyParts())
     {
-      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+      bodypart* OldBodyPart = game::GetPlayer()->FindRandomOwnBodyPart();
 
-      if(OldOwnBodyPartIterator != 0)
+      if(OldBodyPart != 0)
 	{
-	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
-	  OldOwnBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
+	  OldBodyPart->RemoveFromSlot();
+	  game::GetPlayer()->AttachBodyPart(OldBodyPart);
+	  OldBodyPart->SetHP(1);
+	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
 	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
 	  NewBodyPart->SetHP(1);
-	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetNameSingular().c_str()); 
+	  ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
 	}
+
       return;
     }
 
@@ -420,10 +419,9 @@ void loricatus::PrayGoodEffect()
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(MITHRIL));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s that is made from mithril.", NewBodyPart->GetNameSingular().c_str());
+      ADD_MESSAGE("You grow a new %s that is made of mithril.", NewBodyPart->GetBodyPartName().c_str());
       return;
     }
 	
@@ -695,22 +693,24 @@ void scabies::PrayGoodEffect()
 {
   if(!game::GetPlayer()->HasAllBodyParts())
     {
-      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+      bodypart* OldBodyPart = game::GetPlayer()->FindRandomOwnBodyPart();
 
-      if(OldOwnBodyPartIterator != 0)
+      if(OldBodyPart != 0)
 	{
-	  bodypart* OldOwnBodyPart = game::GetPlayer()->AttachOldBodyPartFromStack(OldOwnBodyPartIterator, game::GetPlayer()->GetStack());
-	  OldOwnBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldOwnBodyPart->GetNameSingular().c_str());
+	  OldBodyPart->RemoveFromSlot();
+	  game::GetPlayer()->AttachBodyPart(OldBodyPart);
+	  OldBodyPart->SetHP(1);
+	  OldBodyPart->Mutate();
+	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
 	  bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-	  game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
 	  NewBodyPart->SetHP(1);
 	  NewBodyPart->Mutate();
-	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetNameSingular().c_str()); 
+	  ADD_MESSAGE("You grow a new %s, which seems to be a bit strange.", NewBodyPart->GetBodyPartName().c_str()); 
 	}
+
       return;
     }
 
@@ -754,14 +754,12 @@ void cruentus::PrayGoodEffect()
   if(!game::GetPlayer()->HasAllBodyParts())
     {
       bodypart* NewBodyPart = game::GetPlayer()->GenerateRandomBodyPart();
-      if(!NewBodyPart)
-	ABORT("Cruentus does not like wierdness.");
-      game::GetPlayer()->AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
       NewBodyPart->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
       NewBodyPart->SetHP(NewBodyPart->GetMaxHP());
-      ADD_MESSAGE("You grow a new %s, which seems to be made from steel.", NewBodyPart->GetNameSingular().c_str()); 
+      ADD_MESSAGE("You grow a new %s, which seems to be made of steel.", NewBodyPart->GetBodyPartName().c_str()); 
       return;
     }
+
   ADD_MESSAGE("Cruentus recommends you to its master, Erado.");
   game::GetGod(16)->AdjustRelation(100);
 

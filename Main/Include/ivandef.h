@@ -8,7 +8,7 @@
  *
  * List of macros that should be gathered here:
  * 1. all numeric defines used in multiple source files
- * 2. all functional macros used in multiple source files and independent enough (do not require other headers)
+ * 2. all inline functions used in multiple source files and independent enough (do not require other headers)
  * 3. class construction macros used in multiple header files
  *
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
@@ -75,11 +75,11 @@
 #define HEAD 2
 #define RIGHTARM 4
 #define LEFTARM 8
-#define ARMS RIGHTARM|LEFTARM
+#define ARMS (RIGHTARM|LEFTARM)
 #define GROIN 16
 #define RIGHTLEG 32
 #define LEFTLEG 64
-#define LEGS RIGHTLEG|LEFTLEG
+#define LEGS (RIGHTLEG|LEFTLEG)
 #define OTHER 128
 #define ALL 255
 
@@ -158,12 +158,12 @@
 #define GRSYMBOL 3
 #define GRMENU 4
 
-#define STNORMAL 0 << 3
-#define STRIGHTARM 1 << 3
-#define STLEFTARM 2 << 3
-#define STGROIN 3 << 3
-#define STRIGHTLEG 4 << 3
-#define STLEFTLEG 5 << 3
+#define STNORMAL (0 << 3)
+#define STRIGHTARM (1 << 3)
+#define STLEFTARM (2 << 3)
+#define STGROIN (3 << 3)
+#define STRIGHTLEG (4 << 3)
+#define STLEFTLEG (5 << 3)
 #define STFLAME 64 
 
 #define SILHOUETTE_X_SIZE 64
@@ -253,6 +253,7 @@
 #define EKOBOLDFLESH 5
 #define EHEAL 6
 #define ELYCANTHROPY 7
+#define ESCHOOLFOOD 8
 
 #define CEM_NOTHING 0
 #define CEM_SCHOOLFOOD 1
@@ -325,6 +326,7 @@
 #define HEALINGLIQUID FIRSTLIQUID + 4
 #define BLOOD FIRSTLIQUID + 5
 #define BROWNSLIME FIRSTLIQUID + 6
+#define POISONLIQUID FIRSTLIQUID + 7
 
 #define FIRSTFLESH 4096 * 5
 

@@ -47,8 +47,8 @@ void configuration::Save()
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
-  SaveFile << "CharacterOutlineColor = " << GET_RED(CharacterOutlineColor) << ", " << GET_GREEN(CharacterOutlineColor) << ", " << GET_BLUE(CharacterOutlineColor) << ";\n";
-  SaveFile << "ItemOutlineColor = " << GET_RED(ItemOutlineColor) << ", " << GET_GREEN(ItemOutlineColor) << ", " << GET_BLUE(ItemOutlineColor) << ";\n";
+  SaveFile << "CharacterOutlineColor = " << GetRed(CharacterOutlineColor) << ", " << GetGreen(CharacterOutlineColor) << ", " << GetBlue(CharacterOutlineColor) << ";\n";
+  SaveFile << "ItemOutlineColor = " << GetRed(ItemOutlineColor) << ", " << GetGreen(ItemOutlineColor) << ", " << GetBlue(ItemOutlineColor) << ";\n";
   SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
 }
@@ -91,7 +91,7 @@ void configuration::Load()
 	  uchar Green = SaveFile.ReadNumber();
 	  uchar Blue = SaveFile.ReadNumber();
 
-	  SetCharacterOutlineColor(MAKE_RGB(Red, Green, Blue));
+	  SetCharacterOutlineColor(MakeRGB(Red, Green, Blue));
 	}
 
       if(Word == "ItemOutlineColor")
@@ -100,7 +100,7 @@ void configuration::Load()
 	  uchar Green = SaveFile.ReadNumber();
 	  uchar Blue = SaveFile.ReadNumber();
 
-	  SetItemOutlineColor(MAKE_RGB(Red, Green, Blue));
+	  SetItemOutlineColor(MakeRGB(Red, Green, Blue));
 	}
 
       if(Word == "BeepOnCritical")
@@ -152,7 +152,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
 #endif
 
-      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MAKE_RGB(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
+      Chosen = List.Draw(vector2d(game::IsRunning() ? 26 : 10, game::IsRunning() ? 42 : 10), game::IsRunning() ? 652 : 780, 20, game::IsRunning() ? MakeRGB(0, 0, 16) : BLACK, true, false, game::IsRunning(), !game::IsRunning() && !BoolChange);
 
       switch(Chosen)
 	{
@@ -241,3 +241,4 @@ void configuration::ContrastHandler(long Value)
       game::DrawEverythingNoBlit();
     }
 }
+

@@ -104,7 +104,7 @@ class ABSTRACT_CHARACTER
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
   virtual void Bite(character*);
-  virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH); }
+  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEGSTRENGTH), 1); }
   virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
   virtual bool AddSpecialSkillInfo(felist&) const;
@@ -121,7 +121,7 @@ class ABSTRACT_CHARACTER
   virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
   virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
   virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
-  virtual void CharacterSpeciality();
+  virtual void SingleWeaponSkillTick();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
@@ -140,6 +140,7 @@ class ABSTRACT_CHARACTER
   virtual bool HasFeet() const;
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
   virtual void CreateInitialEquipment();
+  virtual std::string GetBodyPartName(ushort, bool = false) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -174,14 +175,14 @@ class ABSTRACT_CHARACTER
   virtual void CalculateKickAPCost();
   virtual void CalculateBiteAPCost();
   float GetUnarmedDamage() const { return UnarmedDamage; }
-  ushort GetUnarmedMinDamage() const { return UnarmedDamage * 0.75f; }
-  ushort GetUnarmedMaxDamage() const { return UnarmedDamage * 1.25f + 1; }
+  ushort GetUnarmedMinDamage() const { return ushort(UnarmedDamage * 0.75f); }
+  ushort GetUnarmedMaxDamage() const { return ushort(UnarmedDamage * 1.25f + 1); }
   float GetKickDamage() const { return KickDamage; }
-  ushort GetKickMinDamage() const { return KickDamage * 0.75f; }
-  ushort GetKickMaxDamage() const { return KickDamage * 1.25f + 1; }
+  ushort GetKickMinDamage() const { return ushort(KickDamage * 0.75f); }
+  ushort GetKickMaxDamage() const { return ushort(KickDamage * 1.25f + 1); }
   float GetBiteDamage() const { return BiteDamage; }
-  ushort GetBiteMinDamage() const { return BiteDamage * 0.75f; }
-  ushort GetBiteMaxDamage() const { return BiteDamage * 1.25f + 1; }
+  ushort GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
+  ushort GetBiteMaxDamage() const { return ushort(BiteDamage * 1.25f + 1); }
   float GetUnarmedToHitValue() const { return UnarmedToHitValue; }
   float GetKickToHitValue() const { return KickToHitValue; }
   float GetBiteToHitValue() const { return BiteToHitValue; }
@@ -202,7 +203,7 @@ class ABSTRACT_CHARACTER
   virtual void Bite(character*);
   virtual bool RaiseStats();
   virtual bool LowerStats();
-  virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH) << 1; }
+  virtual ushort GetCarryingStrength() const { return Max<ushort>(GetAttribute(LEGSTRENGTH) << 1, 1); }
   virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   virtual void CalculateUnarmedAttackInfo();
@@ -246,7 +247,7 @@ class CHARACTER
   virtual ~petrus();
   virtual void Load(inputfile&);
   virtual void BeTalkedTo(character*);
-  virtual void HealFully(character*);
+  bool HealFully(character*);
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() const { return HealTimer; }
   virtual void Save(outputfile&) const;
@@ -515,7 +516,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
  protected:
-  virtual void CreateBodyPart(ushort);
+  virtual void CreateBodyParts();
 );
 
 class CHARACTER
@@ -696,7 +697,7 @@ class CHARACTER
   virtual bool AttachBodyPartsOfFriendsNear(); 
   virtual void SetHealTimer(ushort What) { HealTimer = What; }
   virtual ushort GetHealTimer() const { return HealTimer; }
-  virtual void CreateBodyPart(ushort);
+  virtual void CreateBodyParts();
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
  protected:
@@ -770,7 +771,7 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  virtual void CreateBodyPart(ushort);
+  virtual void CreateBodyParts();
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
  protected:

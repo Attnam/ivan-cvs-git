@@ -456,8 +456,8 @@ potion /* materialcontainer-> */
 	OfferModifier = 1000;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 4, 0, WATER, HEALINGLIQUID, OMLEURINE; }
-	MaterialConfigChances = { 4, 100, 100, 50, 10; }
+	ContainedMaterialConfig = { 5, 0, WATER, HEALINGLIQUID, OMLEURINE, POISONLIQUID; }
+	MaterialConfigChances = { 5, 100, 100, 50, 10, 50; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 }

@@ -30,9 +30,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	  ushort ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	  const character::prototype* Proto = protocontainer<character>::GetProto(ChosenType);
 	  const character::databasemap& Config = Proto->GetConfig();
-
 	  ushort ChosenConfig = RAND() % Config.size();
-	  character* Monster = 0;
 
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	    if(!ChosenConfig--)

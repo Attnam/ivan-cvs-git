@@ -105,7 +105,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  break;
 	}
 
-      if(Selectable && Pressed == 0x148)
+      if(Selectable && Pressed == KEYUP)
 	{
 	  if(Selected)
 	    {
@@ -137,7 +137,7 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  continue;
 	}
 
-      if(Selectable && Pressed == 0x150)
+      if(Selectable && Pressed == KEYDOWN)
 	{
 	  if(!AtTheEnd || Selected != Selectables - 1)
 	    {
@@ -164,13 +164,13 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  continue;
 	}
 
-      if(Selectable && Pressed == 0x0D)
+      if(Selectable && Pressed == KEYENTER)
 	{
 	  Return = Selected;
 	  break;
 	}
 
-      if(Pressed == 0x1B || (AtTheEnd && !InverseMode) || (!PageBegin && InverseMode))
+      if(Pressed == KEYESC || (AtTheEnd && !InverseMode) || (!PageBegin && InverseMode))
 	{
 	  Return = 0xFFFF;
 	  break;
@@ -187,7 +187,6 @@ ushort felist::Draw(vector2d DrawPos, ushort DrawWidth, ushort DrawPageLength, u
 	  if(Selectable)
 	    Selected = PageBegin;
 	}
-
     }
 
   if(!Fade)
@@ -307,7 +306,7 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
       ushort Color = Entry[c + Selected].Color;
 
       if(PageLength > 1)
-	Color = MAKE_RGB((GET_RED(Color) + GET_RED(Color) * 3 * Index / (PageLength - 1)) >> 2, (GET_GREEN(Color) + GET_GREEN(Color) * 3 * Index / (PageLength - 1)) >> 2, (GET_BLUE(Color) + GET_BLUE(Color) * 3 * Index / (PageLength - 1)) >> 2);
+	Color = MakeRGB((GetRed(Color) + GetRed(Color) * 3 * Index / (PageLength - 1)) >> 2, (GetGreen(Color) + GetGreen(Color) * 3 * Index / (PageLength - 1)) >> 2, (GetBlue(Color) + GetBlue(Color) * 3 * Index / (PageLength - 1)) >> 2);
 
       FONT->Printf(DOUBLEBUFFER, Pos.X + 13, LastBottom, Color, "%s", Entry[c + Selected].String.c_str());
     }
@@ -319,7 +318,7 @@ void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, ushort Color, us
     return;
 
   for(ushort c = 0; c < PageLength; ++c)
-    Font->CreateFontCache(MAKE_RGB((GET_RED(Color) + GET_RED(Color) * 3 * c / (PageLength - 1)) >> 2, (GET_GREEN(Color) + GET_GREEN(Color) * 3 * c / (PageLength - 1)) >> 2, (GET_BLUE(Color) + GET_BLUE(Color) * 3 * c / (PageLength - 1)) >> 2));
+    Font->CreateFontCache(MakeRGB((GetRed(Color) + GetRed(Color) * 3 * c / (PageLength - 1)) >> 2, (GetGreen(Color) + GetGreen(Color) * 3 * c / (PageLength - 1)) >> 2, (GetBlue(Color) + GetBlue(Color) * 3 * c / (PageLength - 1)) >> 2));
 }
 
 void felist::Empty()
@@ -410,3 +409,4 @@ void felist::PrintToFile(const std::string& FileName)
       SaveFile << Entry[c].String << std::endl;
     }
 }
+

@@ -1346,7 +1346,12 @@ bool key::Apply(character* User)
 
 float arm::GetUnarmedDamage() const
 {
-  return float(GetBaseUnarmedStrength()) * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
+  float WeaponStrength = GetBaseUnarmedStrength();
+
+  if(GetGauntlet())
+    WeaponStrength += GetGauntlet()->GetWeaponStrength();
+
+  return WeaponStrength * GetAttribute(ARMSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() / 5000000;
 }
 
 float arm::GetUnarmedToHitValue() const
@@ -1361,6 +1366,9 @@ long arm::GetUnarmedAPCost() const
 
 void arm::CalculateDamage()
 {
+  if(!Master)
+    return;
+
   if(GetWielded())
     Damage = GetWieldedDamage();
   else if(PairArmAllowsMelee())
@@ -1371,6 +1379,9 @@ void arm::CalculateDamage()
 
 void arm::CalculateToHitValue()
 {
+  if(!Master)
+    return;
+
   if(GetWielded())
     ToHitValue = GetWieldedToHitValue();
   else if(PairArmAllowsMelee())
@@ -1381,6 +1392,9 @@ void arm::CalculateToHitValue()
 
 void arm::CalculateAPCost()
 {
+  if(!Master)
+    return;
+
   if(GetWielded())
     APCost = GetWieldedAPCost();
   else if(PairArmAllowsMelee())
@@ -1464,11 +1478,25 @@ long arm::GetWieldedAPCost() const
 
 void head::CalculateDamage()
 {
+  if(!Master)
+    return;
+
   BiteDamage = float(GetBaseBiteStrength()) * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetEffectBonus() / 500000;
+}
+
+void head::CalculateToHitValue()
+{
+  if(!Master)
+    return;
+
+  BiteToHitValue = float((Master->GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
 }
 
 void head::CalculateAPCost()
 {
+  if(!Master)
+    return;
+
   BiteAPCost = long(float(GetMaster()->GetCategoryWeaponSkill(BITE)->GetAPBonus()) * (200 - GetMaster()->GetAttribute(AGILITY)) * 5 / GetMaster()->GetMoveEase());
 
   if(BiteAPCost < 100)
@@ -1477,16 +1505,30 @@ void head::CalculateAPCost()
 
 void leg::CalculateDamage()
 {
-  KickDamage = float(GetBaseKickStrength()) * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() / 5000000;
+  if(!Master)
+    return;
+
+  float WeaponStrength = GetBaseKickStrength();
+
+  if(GetBoot())
+    WeaponStrength += GetBoot()->GetWeaponStrength();
+
+  KickDamage = WeaponStrength * GetAttribute(LEGSTRENGTH) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() / 5000000;
 }
 
 void leg::CalculateToHitValue()
 {
+  if(!Master)
+    return;
+
   KickToHitValue = float((GetAttribute(AGILITY) << 2) + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 20000;
 }
 
 void leg::CalculateAPCost()
 {
+  if(!Master)
+    return;
+
   KickAPCost = long(float(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus()) * (200 - GetAttribute(AGILITY)) * 10 / GetMaster()->GetMoveEase());
 
   if(KickAPCost < 100)
@@ -1919,7 +1961,7 @@ ushort banana::GetMaterialColorA(ushort Frame) const
   if(!Frame)
     return Color;
   else
-    return MAKE_RGB(GET_RED(Color) * Frame / 20, GET_GREEN(Color) * Frame / 20, GET_BLUE(Color) * Frame / 20);
+    return MakeRGB(GetRed(Color) * Frame / 20, GetGreen(Color) * Frame / 20, GetBlue(Color) * Frame / 20);
 }
 
 bool wandofresurrection::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
@@ -2833,21 +2875,21 @@ bool beartrap::IsPickable(character* Picker) const
 
 void bodypart::Mutate()
 {
-  GetMainMaterial()->SetVolume(ulong(GetVolume() * ((1.1 - (RAND() % 2000 / 1000)))));
+  GetMainMaterial()->SetVolume(ulong(GetVolume() * (1.5f - float(RAND() % 1000) / 1000)));
 }
 
 void leg::Mutate()
 {
   bodypart::Mutate();
-  SetAgility(ulong(GetAgility() * ((1.1 - (RAND() % 2000 / 1000)))));
-  SetStrength(ulong(GetStrength() * ((1.1 - (RAND() % 2000 / 1000)))));
+  SetAgility(ushort(GetAgility() * (1.5f - float(RAND() % 1000) / 1000)));
+  SetStrength(ushort(GetStrength() * (1.5f - float(RAND() % 1000) / 1000)));
 }
 
 void arm::Mutate()
 {
   bodypart::Mutate();
-  SetStrength(ulong(GetStrength() * ((1.1 - (RAND() % 2000 / 1000)))));
-  SetDexterity(ulong(GetDexterity() * ((1.1 - (RAND() % 2000 / 1000)))));
+  SetStrength(ulong(GetStrength() * (1.5f - float(RAND() % 1000) / 1000)));
+  SetDexterity(ulong(GetDexterity() * (1.5f - float(RAND() % 1000) / 1000)));
 }
 
 arm* rightarm::GetPairArm() const
@@ -3170,7 +3212,7 @@ bool arm::TwoHandWieldIsActive() const
     return false;
 }
 
-float bodypart::GetDurability(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
 {
   float Durability;
   short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
@@ -3192,7 +3234,7 @@ float bodypart::GetDurability(ushort Damage, float ToHitValue, bool UseMaxHP) co
   return Durability;
 }
 
-float torso::GetDurability(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float torso::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
 {
   float Durability;
   short TrueDamage = Damage - GetTotalResistance(PHYSICALDAMAGE);
@@ -3244,3 +3286,20 @@ void spearofvermis::ReceiveHitEffect(character* Enemy, character* Hitter)
       ADD_MESSAGE("EVIL EVIL EVIL! FIX FIX FIX!");
     }
 }
+
+void bodypart::RandomizePosition()
+{
+  for(ushort c = 0; c < SpecialFlags.size(); ++c)
+    SpecialFlags[c] |= 1 + RAND() % 7;
+
+  UpdatePictures();
+}
+
+void bodypart::ResetPosition()
+{
+  for(ushort c = 0; c < SpecialFlags.size(); ++c)
+    SpecialFlags[c] &= ~0x7;
+
+  UpdatePictures();
+}
+

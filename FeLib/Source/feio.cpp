@@ -149,14 +149,14 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 		
       switch(k)
 	{	
-	case 0x148:
+	case KEYUP:
 	  if(iSelected > 0)
 	    --iSelected;
 	  else
 	    iSelected = (CountChars('\r',sMS)-1);
 	  break;
 
-	case 0x150:
+	case KEYDOWN:
 	  if(iSelected < (CountChars('\r',sMS)-1))
 	    ++iSelected;
 	  else
@@ -205,13 +205,13 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 
       graphics::BlitDBToScreen();
 		
-      while(!(LastKey >= 0x20 || LastKey == 0x08 || LastKey == 0x0D || LastKey == 0x1B))
+      while(!(LastKey >= 0x20 || LastKey == KEYBACKSPACE || LastKey == KEYENTER || LastKey == KEYESC))
 	LastKey = GETKEY(false);
 
-      if(LastKey == 0x1B && AllowExit)
+      if(LastKey == KEYESC && AllowExit)
 	return "";
 		
-      if(LastKey == 0x08)
+      if(LastKey == KEYBACKSPACE)
 	{
 	  if(Input.length())
 	    Input.resize(Input.length() - 1);
@@ -219,7 +219,7 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 	  continue;
 	}
 
-      if(LastKey == 0x0D)
+      if(LastKey == KEYENTER)
 	if(Input.length() >= MinLetters)
 	  break;
 	else

@@ -13,7 +13,7 @@ done nor understood by anyone else than the writer.
 //*Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 //Tilojen luokittaminen.
 //*Tuonpuoleisen prototyypitys.
-Tasovaihdosten funktionaalisuuden kohotus.
+*Tasovaihdosten funktionaalisuuden kohotus.
 //Syöntisallimusten liputtaminen.
 (r) Karakterin atribuuttien kollektivointi?
 (r) Karakterin atribuuttien luokitus.
@@ -37,7 +37,8 @@ Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
 *Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
 Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
-Värimakrojen sisärivittäminen.
+//Värimakrojen sisärivittäminen.
 Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 //AP-hintojen negaatio.
 *Selitepohjainen ja itsetaipuva viestijärjestelmä.
+Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.

@@ -8,6 +8,7 @@
 #include "bitmap.h"
 #include "graphics.h"
 #include "save.h"
+#include "femath.h"
 
 colorizablebitmap::colorizablebitmap(const std::string& FileName)
 {
@@ -91,6 +92,9 @@ void colorizablebitmap::Save(const std::string& FileName)
 
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
+
   uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
   ulong DestBuffer = ulong(Bitmap->GetImage()[DestY]);
 
@@ -104,8 +108,8 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 	      float Gradient = float(PaletteElement % 16) / 8;
-	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[DestX + x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
+	      ((ushort*)DestBuffer)[DestX + x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
 	    {
@@ -149,8 +153,8 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	    {
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
 	      float Gradient = float(Buffer[x] % 16) / 8;
-	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
+	      ((ushort*)DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 	      if(UseAlpha)
 		((uchar*)AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
@@ -197,8 +201,8 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
 	      float Gradient = float(PaletteElement % 16) / 8;
-	      ushort Red = ushort(GET_RED(ThisColor) * Gradient), Blue = ushort(GET_BLUE(ThisColor) * Gradient), Green = ushort(GET_GREEN(ThisColor) * Gradient);
-	      ((ushort*)DestBuffer)[x] = MAKE_RGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
+	      ((ushort*)DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 	      if(UseAlpha)
 		((uchar*)AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
@@ -228,7 +232,7 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
 
   if(Iterator == FontCache.end())
     {
-      ushort ShadeCol = MAKE_SHADE_COL(Color);
+      ushort ShadeCol = MakeShadeColor(Color);
 
       for(ushort c = 0; c < strlen(Buffer); ++c)
 	{
@@ -258,7 +262,7 @@ void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort C
 
   if(Iterator == FontCache.end())
     {
-      Color = MAKE_SHADE_COL(Color);
+      Color = MakeShadeColor(Color);
 
       for(ushort c = 0; c < strlen(Buffer); ++c)
 	MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8, &Color);
@@ -385,7 +389,7 @@ void colorizablebitmap::CreateFontCache(ushort Color)
   if(FontCache.find(Color) != FontCache.end())
     return;
 
-  ushort ShadeColor = MAKE_SHADE_COL(Color);
+  ushort ShadeColor = MakeShadeColor(Color);
   bitmap* Font = new bitmap(XSize, YSize);
   Font->Fill(0, 0, 1, YSize, DEFAULTTRANSPARENT);
   Font->Fill(0, 0, XSize, 1, DEFAULTTRANSPARENT);
@@ -394,3 +398,4 @@ void colorizablebitmap::CreateFontCache(ushort Color)
   MaskedBlit(Font, &Color);
   FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, ShadeFont);
 }
+

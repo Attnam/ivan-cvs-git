@@ -167,7 +167,7 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
       MoveTo->FastAddItem(***Iterator);
       FastRemoveItem(Iterator);
 
-      if(SquarePosition != HIDDEN)
+      if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
 	{
 	  if(GetLSquareTrulyUnder())
 	    {
@@ -177,10 +177,7 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
 
 	  if(GetSquareUnder())
 	    GetSquareUnder()->SetDescriptionChanged(true);
-	}
 
-      if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
-	{
 	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeenByPlayer())
 	    GetLSquareUnder()->UpdateMemorizedDescription();
 
@@ -205,7 +202,7 @@ void stack::Save(outputfile& SaveFile) const
 void stack::Load(inputfile& SaveFile)
 {
   SaveFile >> *Item >> SquarePosition;
-  Volume = Weight = 0;
+  Volume = Weight = Emitation = 0;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
@@ -213,6 +210,9 @@ void stack::Load(inputfile& SaveFile)
       (*i)->SetMotherStack(this);
       Volume += (**i)->GetVolume();
       Weight += (**i)->GetWeight();
+
+      if((**i)->GetEmitation() > Emitation)
+	Emitation = (**i)->GetEmitation();
     }
 }
 
@@ -245,7 +245,7 @@ void stack::DeletePointers()
     FastRemoveItem(GetBottomSlot());
 }
 
-void stack::BeKicked(character* Kicker, float KickDamage)
+void stack::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(KickDamage >= 25000)
     {
@@ -416,7 +416,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
     MergeStack->AddContentsToList(ItemNames, Viewer, ThatDesc, SelectItem, SorterFunction);
 
   AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
-  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, MAKE_RGB(0, 0, 16), SelectItem, false);
+  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, 12, MakeRGB(0, 0, 16), SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;

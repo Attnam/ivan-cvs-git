@@ -50,7 +50,7 @@ class felist
   void AddEntry(const std::string&, ushort, bitmap* = 0, bool = true);
   void AddEntry(const std::string&, ushort, const std::vector<bitmap*>&, bool = true);
   void AddDescription(const std::string&, ushort = 0xFFFF);
-  ushort Draw(vector2d, ushort, ushort = 20, ushort = MAKE_RGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false, bool = false);
+  ushort Draw(vector2d, ushort, ushort = 20, ushort = MakeRGB(0, 0, 16), bool = true, bool = true, bool = true, bool = false, bool = false);
   void QuickDraw(vector2d, ushort, ushort = 20) const;
   void Empty();
   std::string GetEntry(ushort Index) const { return Entry[Index].String; }

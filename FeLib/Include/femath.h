@@ -33,6 +33,7 @@ public:
   static ushort WeightedRand(const std::vector<long>&);
   static float CalculateAngle(vector2d);
   static void CalculateEnvironmentRectangle(rect&, const rect&, vector2d, ushort);
+  static bool Clip(ushort&, ushort&, ushort&, ushort&, ushort&, ushort&, ushort, ushort, ushort, ushort);
 protected:
   static ulong mt[];
   static long mti;

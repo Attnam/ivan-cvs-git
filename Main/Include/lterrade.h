@@ -49,7 +49,7 @@ class OLTERRAIN
   virtual bool Open(character*);
   virtual bool Close(character*);
   virtual bool CanBeOpened() const { return !IsWalkable(); }
-  virtual void BeKicked(character*, float);
+  virtual void BeKicked(character*, ushort);
   virtual void SetIsOpened(bool What) { Opened = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -108,7 +108,7 @@ class OLTERRAIN
  public:
   virtual bool AcceptsOffers() const { return true; }
   virtual void StepOn(character*);
-  virtual void BeKicked(character*, float);
+  virtual void BeKicked(character*, ushort);
   virtual void ReceiveVomit(character*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
@@ -167,7 +167,7 @@ class OLTERRAIN
   brokendoor,
   door,
  public:
-  virtual void BeKicked(character*, float);
+  virtual void BeKicked(character*, ushort);
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual void HasBeenHitBy(item*, float, uchar);
  protected:

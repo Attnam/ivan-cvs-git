@@ -116,9 +116,17 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
   uchar Dir = Type == BITEATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = GetDodgeValue();
 
+  if(!Enemy->CanBeSeenBy(this))
+    ToHitValue *= 2;
+
+  if(!CanBeSeenBy(Enemy))
+    DodgeValue *= 2;
+
+  WayPoint = Enemy->GetPos();
+
   if(Critical)
     {
-      Damage = Damage * (100 + Success) / 50 + (RAND() % 3 ? 2 : 1);
+      ushort TrueDamage = ushort(Damage * (100 + Success) / 50) + (RAND() % 3 ? 2 : 1);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
@@ -137,7 +145,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 	  break;
 	}
 
-      ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
+      ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir, false, true);
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
 	return HASDIED;
@@ -149,7 +157,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 
   if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) >= 100)
     {
-      Damage = Damage * (100 + Success) / 100 + (RAND() % 3 ? 1 : 0);
+      ushort TrueDamage = ushort(Damage * (100 + Success) / 100) + (RAND() % 3 ? 1 : 0);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
@@ -169,12 +177,12 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 	}
 
       if(Enemy->AttackIsBlockable(Type))
-	Damage = CheckForBlock(Enemy, Weapon, ToHitValue, Damage, Success, Type);
+	TrueDamage = CheckForBlock(Enemy, Weapon, ToHitValue, TrueDamage, Success, Type);
 
-      if(!Damage)
+      if(!TrueDamage)
 	return HASBLOCKED;
 
-      if(!ReceiveBodyPartDamage(Enemy, Damage, PHYSICALDAMAGE, BodyPart, Dir))
+      if(!ReceiveBodyPartDamage(Enemy, TrueDamage, PHYSICALDAMAGE, BodyPart, Dir))
 	  {
 	    if(IsPlayer())
 	      ADD_MESSAGE("You are not hurt.");
@@ -254,14 +262,14 @@ void character::Be()
       if(HP < MaxHP / 3)
 	SpillBlood(RAND() & 1);
 
-      ushort c;
+      if(GetTeam() == game::GetPlayer()->GetTeam())
+	{
+	  for(ushort c = 0; c < AllowedWeaponSkillCategories; ++c)
+	    if(CategoryWeaponSkill[c]->Tick())
+	      CategoryWeaponSkill[c]->AddLevelDownMessage();
 
-      for(c = 0; c < AllowedWeaponSkillCategories; ++c)
-	if(CategoryWeaponSkill[c]->Tick() && IsPlayer())
-	  CategoryWeaponSkill[c]->AddLevelDownMessage();
-
-      Regenerate();
-      CharacterSpeciality();
+	  SingleWeaponSkillTick();
+	}
 
       if(IsPlayer())
 	{
@@ -271,6 +279,9 @@ void character::Be()
 	  if(!Action || Action->AllowFoodConsumption())
 	    Hunger();
 	}
+
+      if(HP != MaxHP)
+	Regenerate();
 
       if(Action && AP >= 1000)
 	ActionAutoTermination();
@@ -995,7 +1006,7 @@ void character::AddBlockMessage(character* Enemy, item* Blocker, const std::stri
 void character::AddPrimitiveHitMessage(character* Enemy, const std::string& FirstPersonHitVerb, const std::string& ThirdPersonHitVerb, uchar BodyPart) const
 {
   std::string Msg;
-  std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in " + Enemy->GetBodyPart(BodyPart)->GetName(DEFINITE) : "";
+  std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
 
   if(Enemy->IsPlayer())
     Msg << GetDescription(DEFINITE) << " " << ThirdPersonHitVerb << " you" << BodyPartDescription << "!";
@@ -1012,7 +1023,7 @@ void character::AddPrimitiveHitMessage(character* Enemy, const std::string& Firs
 void character::AddWeaponHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bool Critical) const
 {
   std::string Msg;
-  std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in " + Enemy->GetBodyPart(BodyPart)->GetName(DEFINITE) : "";
+  std::string BodyPartDescription = BodyPart && Enemy->CanBeSeenByPlayer() ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
 
   if(Enemy->IsPlayer())
     {
@@ -1080,7 +1091,8 @@ bool character::Talk()
     }
   else if(Characters == 1)
     {
-      TalkTo(ToTalk);
+      ToTalk->BeTalkedTo(this);
+      EditAP(-1000);
       return true;
     }
   else
@@ -1101,7 +1113,7 @@ bool character::Talk()
 
       if(Char)
 	{
-	  TalkTo(Char);
+	  Char->BeTalkedTo(this);
 	  EditAP(-1000);
 	  return true;
 	}
@@ -1110,14 +1122,6 @@ bool character::Talk()
     }
 
   return false;
-}
-
-void character::TalkTo(character* Who)
-{
-  if(Who->GetTeam()->GetRelation(GetTeam()) != HOSTILE)
-    Who->EditAP(-1000);
-
-  Who->BeTalkedTo(this);
 }
 
 bool character::NOP()
@@ -1596,7 +1600,7 @@ bool character::ShowKeyLayout()
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
 
-  List.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
+  List.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
   return false;
 }
 
@@ -2932,7 +2936,7 @@ bool character::SecretKnowledge()
   List.AddEntry("Character attack info", LIGHTGRAY);
   List.AddEntry("Character defence info", LIGHTGRAY);
   List.AddEntry("Character danger values", LIGHTGRAY);
-  ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MAKE_RGB(0, 0, 16));
+  ushort c, Chosen = List.Draw(vector2d(26, 42), 652, 10, MakeRGB(0, 0, 16));
   List.Empty();
 
   if(Chosen < 3)
@@ -3013,7 +3017,7 @@ bool character::SecretKnowledge()
 	  break;
 	}
 
-      List.Draw(vector2d(26, 42), 652, PageLength, MAKE_RGB(0, 0, 16), false);
+      List.Draw(vector2d(26, 42), 652, PageLength, MakeRGB(0, 0, 16), false);
       List.PrintToFile(GAME_DIR + "secret" + Chosen + ".txt");
       ADD_MESSAGE("Info written also to %ssecret%d.txt.", GAME_DIR.c_str(), Chosen);
 
@@ -3145,6 +3149,8 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
   BodyPart->SetUnique(GetArticleMode() != NORMALARTICLE || AssignedName.length());
   BodyPart->RemoveFromSlot();
+  BodyPart->RandomizePosition();
+  CalculateBattleInfo();
   return BodyPart;
 }
 
@@ -3190,7 +3196,9 @@ bool character::AssignName()
 
 std::string character::GetDescription(uchar Case) const
 {
-  if(CanBeSeenByPlayer())
+  if(IsPlayer())
+    return "you";
+  else if(CanBeSeenByPlayer())
     return GetName(Case);
   else
     return "something";
@@ -3198,7 +3206,9 @@ std::string character::GetDescription(uchar Case) const
 
 std::string character::GetPersonalPronoun() const
 {
-  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  if(IsPlayer())
+    return "you";
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
   else if(GetSex() == MALE)
     return "he";
@@ -3208,7 +3218,9 @@ std::string character::GetPersonalPronoun() const
 
 std::string character::GetPossessivePronoun() const
 {
-  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  if(IsPlayer())
+    return "your";
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "its";
   else if(GetSex() == MALE)
     return "his";
@@ -3218,7 +3230,9 @@ std::string character::GetPossessivePronoun() const
 
 std::string character::GetObjectPronoun() const
 {
-  if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
+  if(IsPlayer())
+    return "you";
+  else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::GetSeeWholeMapCheat()))
     return "it";
   else if(GetSex() == MALE)
     return "him";
@@ -3284,21 +3298,22 @@ bool character::EquipmentScreen()
 	  std::string Entry = EquipmentName(c) + ":";
 	  Entry.resize(20, ' ');
 
-	  if(!GetBodyPartOfEquipment(c))
-	    Entry += "can't use";
-	  else if(!GetEquipment(c))
-	    Entry += "-";
-	  else
+	  if(GetEquipment(c))
 	    {
 	      GetEquipment(c)->AddName(Entry, INDEFINITE);
 	      AddSpecialEquipmentInfo(Entry, c);
+	      List.AddEntry(Entry, LIGHTGRAY, GetEquipment(c)->GetPicture());
 	    }
-
-	  List.AddEntry(Entry, LIGHTGRAY);
+	  else
+	    {
+	      Entry += GetBodyPartOfEquipment(c) ? "-" : "can't use";
+	      bitmap Black(16, 16, BLACK);
+	      List.AddEntry(Entry, LIGHTGRAY, &Black);
+	    }
 	}
 
       game::DrawEverythingNoBlit();
-      Chosen = List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), true, false);
+      Chosen = List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), true, false);
 
       if(Chosen >= EquipmentSlots())
 	break;
@@ -3440,7 +3455,7 @@ void character::PrintInfo() const
 
       for(c = 0; c < GetBodyParts(); ++c)
 	if(GetBodyPart(c))
-	  Info.AddEntry(GetBodyPart(c)->GetName(UNARTICLED) + " armor value: " + GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE), LIGHTGRAY);
+	  Info.AddEntry(GetBodyPartName(c) + " armor value: " + GetBodyPart(c)->GetTotalResistance(PHYSICALDAMAGE), LIGHTGRAY);
     }
 
   for(c = 0; c < EquipmentSlots(); ++c)
@@ -3463,7 +3478,7 @@ void character::PrintInfo() const
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHARNAME(DEFINITE));
   else
-    Info.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
+    Info.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
 }
 
 void character::CompleteRiseFromTheDead()
@@ -3573,10 +3588,24 @@ bodypart* character::MakeBodyPart(ushort Index)
     }
 }
 
-void character::CreateBodyPart(ushort Index)
+bodypart* character::CreateBodyPart(ushort Index)
 {
   bodypart* BodyPart = MakeBodyPart(Index);
-  AttachBodyPart(BodyPart,Index);
+  BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
+  BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
+  SetBodyPart(Index, BodyPart);
+  BodyPart->InitSpecialAttributes();
+  UpdateBodyPartPicture(Index);
+
+  if(!Initializing)
+    {
+      CalculateBattleInfo();
+
+      if(GetSquareUnder())
+	GetSquareUnder()->SendNewDrawRequest();
+    }
+
+  return BodyPart;
 }
 
 vector2d character::GetBodyPartBitmapPos(ushort Index, ushort Frame)
@@ -3792,25 +3821,24 @@ void character::ReceiveHeal(long Amount)
 
   for(c = 0; c < GetBodyParts(); ++c)
     {
-      if(!GetBodyPart(c) && Amount > 1000)
+      if(!GetBodyPart(c) && Amount >= 500)
 	{
-	  bodypart* NewBodyPart = GenerateRandomBodyPart();
-	  AttachBodyPart(NewBodyPart, NewBodyPart->GetBodyPartIndex());
-	  NewBodyPart->SetHP(1);
-	  Amount -= 1000;
+	  GenerateRandomBodyPart()->SetHP(1);
+	  Amount -= 500;
 	}
     }
 
-  for(c = 0; c < GetBodyParts(); ++c)
-    {
-      if(GetBodyPart(c))
-	{
-	  if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
-	    GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
-	  else
-	    GetBodyPart(c)->EditHP(Amount / GetBodyParts());
-	}
-    }
+  if(Amount)
+    for(c = 0; c < GetBodyParts(); ++c)
+      {
+	if(GetBodyPart(c))
+	  {
+	    if(GetBodyPart(c)->GetHP() + Amount / GetBodyParts() > GetBodyPart(c)->GetMaxHP())
+	      GetBodyPart(c)->SetHP(GetBodyPart(c)->GetMaxHP());
+	    else
+	      GetBodyPart(c)->EditHP(Amount / GetBodyParts());
+	  }
+      }
 }
 
 void character::AddHealingLiquidConsumeEndMessage() const
@@ -3821,7 +3849,7 @@ void character::AddHealingLiquidConsumeEndMessage() const
     ADD_MESSAGE("%s looks healthier.", CHARNAME(DEFINITE));
 }
 
-void character::ReceivePoison(long SizeOfEffect)
+void character::ReceiveSchoolFood(long SizeOfEffect)
 {
   SizeOfEffect += RAND() % SizeOfEffect;
   Vomit(SizeOfEffect / 250);
@@ -4257,7 +4285,7 @@ bool character::ShowWeaponSkills()
     Something = true;
 
   if(Something)
-    List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
+    List.Draw(vector2d(26, 42), 652, 20, MakeRGB(0, 0, 16), false);
   else
     ADD_MESSAGE("You are not experienced in any weapon skill yet!");
 
@@ -4757,105 +4785,58 @@ bool character::DetachBodyPart()
   return false;
 }
 
-void character::AttachBodyPart(bodypart* BodyPart, ushort Index)
+void character::AttachBodyPart(bodypart* BodyPart)
 {
-  BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
-  BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
-  SetBodyPart(Index, BodyPart);
-  BodyPart->InitSpecialAttributes();
-  UpdateBodyPartPicture(Index);
+  SetBodyPart(BodyPart->GetBodyPartIndex(), BodyPart);
+  BodyPart->ResetPosition();
+  CalculateBattleInfo();
+  GetSquareUnder()->SendNewDrawRequest();
 }
+
+/* Returns true if the character has all body parts else false */ 
 
 bool character::HasAllBodyParts() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
+    if(!GetBodyPart(c))
       return false;
+
   return true;
 }
 
-/* Returns false if the character has all body parts else true */ 
 bodypart* character::GenerateRandomBodyPart()
 {
   std::vector<ushort> NeededBodyParts;
+
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
-      {
-	NeededBodyParts.push_back(c);
-      }
+      NeededBodyParts.push_back(c);
 
   if(NeededBodyParts.empty())
     return 0;
 
-  ushort NewBodyPartsIndex = NeededBodyParts[RAND() % NeededBodyParts.size()];
-  bodypart* NewBodyPart = MakeBodyPart(NewBodyPartsIndex);
-  return NewBodyPart;
+  return CreateBodyPart(NeededBodyParts[RAND() % NeededBodyParts.size()]);
 }
 
 /* searched for character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
-stackiterator character::FindRandomOwnBodyPart()
+
+bodypart* character::FindRandomOwnBodyPart() const
 {
-  std::vector<stackiterator> LostAndFound;
+  std::vector<bodypart*> LostAndFound;
+
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
       {
-	for(stackiterator ii = GetStack()->GetBottomSlot(); ii != GetStack()->GetSlotAboveTop(); ++ii)
-	  {
-	    if(GetOriginalBodyPartID(c) == (**ii)->GetID())
-	      LostAndFound.push_back(ii);
-	  }
+	item* Found = SearchForItemWithID(GetOriginalBodyPartID(c));
+
+	if(Found)
+	  LostAndFound.push_back(static_cast<bodypart*>(Found));
       }
 
   if(LostAndFound.empty())
     return 0;
   else
     return LostAndFound[RAND() % LostAndFound.size()];
-}
-
-/* This piece of infernally unesthetic code returns a vector with pointers to all friendly characters in neighbouring squares */
-
-std::vector<character*> character::GetFriendsAround() const
-{
-  std::vector<character*> ToBeReturned;
-
-  for(ushort d = 0; d < 8; ++d)
-    {
-      square* Square = GetNeighbourSquare(d);
-
-      if(Square)
-	{
-	  character* Char = Square->GetCharacter();
-
-	  if(Char && Char->GetTeam()->GetRelation(GetTeam()) == FRIEND)
-	    ToBeReturned.push_back(Char);
-	}
-    }
-
-  return ToBeReturned;
-}
-
-/* returns a 0 pointer if no RandomBodyPart can be found else it returns the pointer to the bodypart that was attached back to its place */
-
-bodypart* character::TryAttachRandomOldBodyPart()
-{
-  stackiterator Returned = FindRandomOwnBodyPart();
-  if(Returned != 0)
-    return AttachOldBodyPartFromStack(Returned, GetStack());
-  else
-    return 0;
-}
-
-/* Attaches the OldOwnBodyPartIterator back to its place and removes it from FromStack. FromStack is the stack where the item currently is */ 
-
-bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIterator, stack*)
-{
-  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
-  if(!OldOwnBodyPart)
-    ABORT("character::AttachOldBodyPartFromStack doesn't take 0 as the first argument. Sorry. Programmer's bad.");
-	  
-  AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
-  GetStack()->RemoveItem(OldOwnBodyPartIterator);
-  return OldOwnBodyPart;  
 }
 
 void character::PrintBeginPoisonedMessage() const
@@ -5041,7 +5022,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
   Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHTGRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHTGRAY);
-  Info.Draw(vector2d(26, 42), 652, 30, MAKE_RGB(0, 0, 16), false);
+  Info.Draw(vector2d(26, 42), 652, 30, MakeRGB(0, 0, 16), false);
 }
 
 bool character::CanUseStethoscope(bool PrintReason) const
@@ -5339,14 +5320,14 @@ material* character::CreateBodyPartFlesh(ushort, ulong Volume) const
     }
 }
 
-float character::GetDurability(ushort Damage, float ToHitValue, bool UseMaxHP) const
+float character::GetTimeToDie(ushort Damage, float ToHitValue, bool UseMaxHP) const
 {
   float MinHits = 1000;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(BodyPartVital(c) && GetBodyPart(c))
       {
-	float Hits = GetBodyPart(c)->GetDurability(Damage, ToHitValue, UseMaxHP);
+	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, UseMaxHP);
 
 	if(Hits < MinHits)
 	  MinHits = Hits;
@@ -5370,4 +5351,28 @@ bool character::ReloadDatafiles()
 {
   databasesystem::Initialize();
   return false;
+}
+
+std::string character::GetBodyPartName(ushort Index, bool Articled) const
+{
+  if(Index == TORSOINDEX)
+    return Articled ? "a torso" : "torso";
+  else
+    {
+      ABORT("Illegal character bodypart name request!");
+      return 0;
+    }
+}
+
+item* character::SearchForItemWithID(ulong ID) const
+{
+  for(ushort c = 0; c < EquipmentSlots(); ++c)
+    if(GetEquipment(c) && GetEquipment(c)->GetID() == ID)
+      return GetEquipment(c);
+
+  for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
+    if((**i)->GetID() == ID)
+      return ***i;
+
+  return 0;
 }

@@ -1,5 +1,44 @@
 July 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Hostile and neutral NPCs no longer forget weapon skills like the player and
+	  his team
+	* Corrected a lot of warnings given by the gcc compilation
+	* Gauntlets and boots now increase unarmed and kicking damage, respectively
+	* The AI now fights invisible enemies correctly if they have attacked first and
+	  have not moved anywhere
+	* DodgeValue is now doubled if the hitter can't see the dodger
+	* ToHitValue is likewise multiplied by two if the hitter is invisible to the
+	  dodger
+	* Added poison material that has an effect of activating the poisoned state
+	* RestoreBodyParts() doesn't crash anymore, I think
+	* Priests, gods, Petrus and angels now detect the original bodypart even if
+	  it is wielded
+	* Corrected many smaller bugs in Hex's bodypart healing codes
+	* Fixed a minor bug in the item drop code
+	* Bodyparts are now randomly rotated, flipped and/or mirrored when severed
+	* Macros transformed to inline functions:
+	  * GET_RED -> GetRed, GET_GREEN -> GetGreen, GET_BLUE -> GetBlue
+	  * MAKE_RGB -> MakeRGB
+	  * MAKE_SHADE_COL -> MakeShadeColor
+	* level::CollectCreatures() now test whether the monsters and pets can see
+	  the player, not vice versa like before, which was illogical and made
+	  leaving the dungeon nearly impossible if ESP was active
+	* Corrected the Colossal Giant of Seven League Legs Bug
+	* CarryingStrength has now a minimum of one so that effectively 2500 grams
+	  can be carried even without legs
+	* Blitting no longer crashes when width or height is <= zero after clipping
+	  (this happened occasionally if HP didn't fit onto the panel due to WMode
+	  cheating)
+	* colorizablebitmap::MaskedBlit() is now clipped, too
+	* Added move AP cost (MAPC) to the info panel
+	* Being burderned, stressed or overloaded no longer makes you move faster :)
+	* Added proper replies for orc and cossack
+	* Fixed a bug that allowed one to paralyze creatures by talking to them
+	* Emitation is again calculated correctly after load
+	* Added item pictures to the equipment menu
+
+July 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Added orc, orc slaughterer, orc squad leader, orc officer and orc general
 	* Added cossack
 	* Goblins look slightly better over wooden parquet

@@ -52,10 +52,10 @@ Ruumiinosien hoitotavat:
 //* Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
 //Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
 //Avaimelle kuva. (kahvi)
-Helmet. (hex)
+/Helmet. (hex)
 //BaseEmitationit toimintaan. (timo)
 //Pertun nutin wishaaminen. (timo)
-Orc.
+//Orc.
 Prices. (timo)
 OfferModifiers. (timo)
 NPModifiers. (timo)
@@ -89,8 +89,10 @@ Items inside chests carried by player at death should be shown.
 Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
 Glitter effect.
-Fire effect.
+//Fire effect.
 Monster mine triggering should be limited.
 Boots and gauntlets should be generated in pairs of two.
 Re-enable Golden Eagle Quest danger requirement.
 Prevent escape from Oree.
+Configurations should be visually separated with colors.
+Blocking and visibility should be considered when calculating relative danger.

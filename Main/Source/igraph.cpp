@@ -116,24 +116,17 @@ tile igraph::AddUser(graphic_id GI)
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
 
-      if(GI.SpecialFlags & 0x7)
-	{
-	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
-	  delete Bitmap;
-	  Bitmap = Temp;
-	}
-
-      if(GI.SpecialFlags == STRIGHTARM)
+      if((GI.SpecialFlags & 0x38) == STRIGHTARM)
 	{
 	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialFlags == STLEFTARM)
+      if((GI.SpecialFlags & 0x38) == STLEFTARM)
 	{
 	  Bitmap->Fill(0, 0, 8, 16, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialFlags == STGROIN)
+      if((GI.SpecialFlags & 0x38) == STGROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -148,7 +141,7 @@ tile igraph::AddUser(graphic_id GI)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
 
-      if(GI.SpecialFlags == STRIGHTLEG)
+      if((GI.SpecialFlags & 0x38) == STRIGHTLEG)
 	{
 	  /* Right leg from the character's, NOT the player's point of view */
 
@@ -161,7 +154,7 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
 
-      if(GI.SpecialFlags == STLEFTLEG)
+      if((GI.SpecialFlags & 0x38) == STLEFTLEG)
 	{
 	  /* Left leg from the character's, NOT the player's point of view */
 
@@ -173,11 +166,18 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
 	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
+
+      if(GI.SpecialFlags & 0x7)
+	{
+	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
+	  delete Bitmap;
+	  Bitmap = Temp;
+	}
+
       if(GI.SpecialFlags & STFLAME)
 	{
 	  Bitmap->DrawFlames(GI.Frame, TRANSPARENTCOL);
 	}
-
 
       tile Tile(Bitmap);
       TileMap[GI] = Tile;

@@ -617,7 +617,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the cloak can be calculated somehow
   virtual bool IsCloak(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(111, 64, 37); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(111, 64, 37); }
 );
 
 class ITEM
@@ -656,7 +656,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsRing(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(200, 200, 200); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(200, 200, 200); }
 );
 
 class ITEM
@@ -667,7 +667,7 @@ class ITEM
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsAmulet(const character*) const { return true; }
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(111, 64, 37); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(111, 64, 37); }
 );
 
 class ABSTRACT_ITEM
@@ -697,8 +697,6 @@ class ABSTRACT_ITEM
   void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
   void EditRegenerationCounter(long What) { RegenerationCounter += What; }
   void Regenerate();
-  //virtual ushort DangerWeight() const = 0;
-  //virtual ushort Danger(ulong, bool) const;
   virtual void DropEquipment() { }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
@@ -728,7 +726,10 @@ class ABSTRACT_ITEM
   virtual void CalculateToHitValue() { }
   virtual void CalculateAPCost() { }
   void CalculateAttackInfo();
-  virtual float GetDurability(ushort, float, bool) const;
+  virtual float GetTimeToDie(ushort, float, bool) const;
+  const std::string& GetBodyPartName() const { return GetNameSingular(); }
+  void RandomizePosition();
+  void ResetPosition();
  protected:
   virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
@@ -770,13 +771,12 @@ class ITEM
   item* GetHelmet() const { return *HelmetSlot; }
   void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
   item* GetAmulet() const { return *AmuletSlot; }
-  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
   float GetBiteDamage() const { return BiteDamage; }
-  ushort GetBiteMinDamage() const { return BiteDamage * 0.75f; }
-  ushort GetBiteMaxDamage() const { return BiteDamage * 1.25f + 1; }
-  float GetBiteToHitValue() const { return 1.0f; }
+  ushort GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
+  ushort GetBiteMaxDamage() const { return ushort(BiteDamage * 1.25f + 1); }
+  float GetBiteToHitValue() const { return BiteToHitValue; }
   long GetBiteAPCost() const { return BiteAPCost; }
   virtual void InitSpecialAttributes();
   virtual item* GetEquipment(ushort) const;
@@ -784,12 +784,14 @@ class ITEM
   ulong GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(ulong What) { BaseBiteStrength = What; }
   virtual void CalculateDamage();
+  virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
   gearslot AmuletSlot;
   ulong BaseBiteStrength;
+  float BiteToHitValue;
   float BiteDamage;
   long BiteAPCost;
 );
@@ -799,9 +801,8 @@ class ABSTRACT_ITEM
   torso,
   bodypart,
  public:
-  //virtual ushort DangerWeight() const;
   virtual uchar GetBodyPartIndex() const { return TORSOINDEX; }
-  virtual float GetDurability(ushort, float, bool) const;
+  virtual float GetTimeToDie(ushort, float, bool) const;
  protected:
   virtual bool ReceiveDamage(character*, ushort, uchar);
 );
@@ -858,7 +859,6 @@ class ABSTRACT_ITEM
   item* GetGauntlet() const { return *GauntletSlot; }
   void SetRing(item* What) { RingSlot.PutInItem(What); }
   item* GetRing() const { return *RingSlot; }
-  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   float GetUnarmedToHitValue() const;
   float GetUnarmedDamage() const;
@@ -887,8 +887,8 @@ class ABSTRACT_ITEM
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
   float GetDamage() const { return Damage; }
-  ushort GetMinDamage() const { return Damage * 0.75f; }
-  ushort GetMaxDamage() const { return Damage * 1.25f + 1; }
+  ushort GetMinDamage() const { return ushort(Damage * 0.75f); }
+  ushort GetMaxDamage() const { return ushort(Damage * 1.25f + 1); }
   float GetToHitValue() const { return ToHitValue; }
   long GetAPCost() const { return APCost; }
   bool PairArmAllowsMelee() const;
@@ -920,7 +920,7 @@ class ITEM
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort) const { return STRIGHTARM; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STRIGHTARM; }
 );
 
 class ITEM
@@ -933,7 +933,7 @@ class ITEM
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort) const { return STLEFTARM; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STLEFTARM; }
 );
 
 class ITEM
@@ -942,10 +942,9 @@ class ITEM
   bodypart,
  public:
   virtual ushort GetTotalResistance(uchar) const;
-  //virtual ushort DangerWeight() const;
   virtual uchar GetBodyPartIndex() const { return GROININDEX; }
  protected:
-  virtual uchar GetSpecialFlags(ushort) const { return STGROIN; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STGROIN; }
 );
 
 class ABSTRACT_ITEM
@@ -959,12 +958,11 @@ class ABSTRACT_ITEM
   virtual ushort GetTotalResistance(uchar) const;
   void SetBoot(item* What) { BootSlot.PutInItem(What); }
   item* GetBoot() const { return *BootSlot; }
-  //virtual ushort DangerWeight() const;
   virtual void DropEquipment();
   float GetKickToHitValue() const { return KickToHitValue; }
   float GetKickDamage() const { return KickDamage; }
-  ushort GetKickMinDamage() const { return KickDamage * 0.75f; }
-  ushort GetKickMaxDamage() const { return KickDamage * 1.25f + 1; }
+  ushort GetKickMinDamage() const { return ushort(KickDamage * 0.75f); }
+  ushort GetKickMaxDamage() const { return ushort(KickDamage * 1.25f + 1); }
   ushort GetAttribute(ushort) const;
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
@@ -1006,7 +1004,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort) const { return STRIGHTLEG; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STRIGHTLEG; }
 );
 
 class ITEM
@@ -1017,7 +1015,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual uchar GetSpecialFlags(ushort) const { return STLEFTLEG; }
+  virtual uchar GetSpecialFlags(ushort Frame) const { return bodypart::GetSpecialFlags(Frame)|STLEFTLEG; }
 );
 
 class ITEM
@@ -1138,7 +1136,7 @@ class ITEM
   virtual bool FitsIn(item*) const;
   virtual void CalculateVolumeAndWeight();
  protected:
-  virtual ushort GetMaterialColorB(ushort) const { return MAKE_RGB(80, 80, 80); }
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;

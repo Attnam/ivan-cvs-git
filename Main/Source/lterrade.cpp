@@ -214,7 +214,7 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
     }
 }
 
-void door::BeKicked(character*, float KickDamage)
+void door::BeKicked(character*, ushort KickDamage)
 {
   if(!IsWalkable()) 
     {
@@ -336,7 +336,7 @@ bool throne::SitOn(character* Sitter)
   return true;
 }
 
-void altar::BeKicked(character* Kicker, float)
+void altar::BeKicked(character* Kicker, ushort)
 {
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
@@ -526,7 +526,7 @@ void fountain::DryOut()
     }
 }
 
-void brokendoor::BeKicked(character*, float KickDamage)
+void brokendoor::BeKicked(character*, ushort KickDamage)
 {
   if(!IsWalkable())
     if(IsLocked())

@@ -439,7 +439,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Color = rgb(111, 74, 37);
 		IsBadFoodForAI = true;
 		NameStem = "school food";
-		Effect = EPOISON;
+		Effect = ESCHOOLFOOD;
 		ConsumeEndMessage = CEM_SCHOOLFOOD;
 		HitMessage = HM_SCHOOLFOOD;
 		Flexibility = 5;
@@ -599,6 +599,19 @@ liquid
 		NameStem = "brown slime";
 		Alpha = 200;
 		Flexibility = 10;
+	}
+
+	Config POISONLIQUID;
+	{
+		StrengthValue = 1;
+		OfferModifier = 5;
+		Alignment = EVIL;
+		NutritionValue = 10;
+		Color = rgb(0, 128, 0);
+		IsBadFoodForAI = true;
+		NameStem = "poison";
+		Effect = EPOISON;
+		Alpha = 150;
 	}
 }
 

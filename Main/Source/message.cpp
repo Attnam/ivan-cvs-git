@@ -116,7 +116,7 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
-  MessageHistory.Draw(vector2d(26, 42), 652, 32, MAKE_RGB(0, 0, 16), false, true, true, false, true);
+  MessageHistory.Draw(vector2d(26, 42), 652, 32, MakeRGB(0, 0, 16), false, true, true, false, true);
 }
 
 void msgsystem::Format()

@@ -168,7 +168,7 @@ void petrus::GetAICommand()
 {
   SetHealTimer(GetHealTimer() + 1);
 
-  if(GetHealTimer() > 100)
+  if(GetHealTimer() > 16384)
     for(ushort d = 0; d < 8; ++d)
       {
 	square* Square = GetNeighbourSquare(d);
@@ -177,44 +177,58 @@ void petrus::GetAICommand()
 	  {
 	    character* Char = Square->GetCharacter();
 
-	    if(Char && GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3)
-	      {
-		HealFully(Char);
-		return;
-	      }
+	    if(Char && GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && HealFully(Char))
+	      return;
 	  }
       }
 
   StandIdleAI();
 }
 
-void petrus::HealFully(character* ToBeHealed)
+bool petrus::HealFully(character* ToBeHealed)
 {
-  SetHealTimer(0);
+  bool DidSomething = false;
 
-  ToBeHealed->RestoreHP();
+  for(ushort c = 0; c < ToBeHealed->GetBodyParts(); ++c)
+    if(!ToBeHealed->GetBodyPart(c))
+      {
+	bodypart* BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItemWithID(ToBeHealed->GetOriginalBodyPartID(c)));
 
-  if(ToBeHealed->IsPlayer())
-    ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
-  else
-    ADD_MESSAGE("%s heals %s fully.", CHARDESCRIPTION(DEFINITE), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+	if(!BodyPart)
+	  continue;
 
-  if(!ToBeHealed->HasAllBodyParts())
+	BodyPart->RemoveFromSlot();
+	ToBeHealed->AttachBodyPart(BodyPart);
+	BodyPart->SetHP(BodyPart->GetMaxHP());
+
+	if(ToBeHealed->IsPlayer())
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), BodyPart->GetBodyPartName().c_str());
+	else if(CanBeSeenByPlayer())
+	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHARNAME(DEFINITE), BodyPart->GetBodyPartName().c_str(), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+
+	DidSomething = true;
+      }
+
+  if(ToBeHealed->GetHP() < ToBeHealed->GetMaxHP() / 3)
     {
-      stackiterator OldOwnBodyPartIterator = game::GetPlayer()->FindRandomOwnBodyPart();
+      ToBeHealed->RestoreHP();
 
-      if(OldOwnBodyPartIterator != 0)
-	{
-	  bodypart* OldOwnBodyPart = dynamic_cast<bodypart*>(***OldOwnBodyPartIterator);
-	  if(!OldOwnBodyPart)
-	    ABORT("character::FindRandomOwnBodyPart seems to be returning odd iterators...");
-	  
-	  game::GetPlayer()->AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
-	  game::GetPlayer()->GetStack()->RemoveItem(OldOwnBodyPartIterator);
-	  OldOwnBodyPart->SetHP(OldOwnBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHARNAME(DEFINITE), OldOwnBodyPart->GetNameSingular().c_str());
-	}
+      if(ToBeHealed->IsPlayer())
+	ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s heals %s fully.", CHARDESCRIPTION(DEFINITE), ToBeHealed->CHARDESCRIPTION(DEFINITE));
+
+      DidSomething = true;
     }
+
+  if(DidSomething)
+    {
+      SetHealTimer(0);
+      DexterityAction(5);
+      return true;
+    }
+  else
+    return false;
 }
 
 void petrus::Save(outputfile& SaveFile) const
@@ -439,7 +453,7 @@ void petrus::BeTalkedTo(character* Talker)
 	    {
 	      std::vector<ushort>& SkinColor = ((flesh*)GetHead()->GetMainMaterial())->GetSkinColorVector();
 	      SkinColor.clear();
-	      SkinColor.push_back(MAKE_RGB(255, 75, 50));
+	      SkinColor.push_back(MakeRGB(255, 75, 50));
 	    }
 
 	  GetHead()->UpdatePictures();
@@ -559,9 +573,7 @@ void guard::BeTalkedTo(character* Talker)
       if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
       else
-        {
-	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
-        }
+        ADD_MESSAGE("\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
       break;
     case 4:
       if(GetLevelUnder()->GetOnGround())
@@ -597,7 +609,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
       if(GetLevelUnder()->GetOnGround())
 	ADD_MESSAGE("\"You truly can't find better prices in this city! Indeed, you can't find ANY prices, since my store is a monopoly.\"");
       else
-	ADD_MESSAGE("\"The topmost reason why I work here is that monsters devour tax collectors.\"");
+	ADD_MESSAGE("\"The topmost reason why I work here is that the monsters devour tax collectors.\"");
       break;
     case 3:
       if(GetLevelUnder()->GetOnGround())
@@ -619,57 +631,56 @@ void priest::BeTalkedTo(character* Talker)
   for(ushort c = 0; c < Talker->GetBodyParts(); ++c)
     if(!Talker->GetBodyPart(c))
       {
-	ushort OriginalID = Talker->GetOriginalBodyPartID(c);
-	for(stackiterator ii = Talker->GetStack()->GetBottomSlot(); ii != Talker->GetStack()->GetSlotAboveTop(); ++ii)
-	  if(OriginalID == (**ii)->GetID())
-	    {
-	      /* Now attach the old BodyPart (**ii) to slot c */
-	      if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
-		{
-		  if(game::BoolQuestion("Would you like me to put your old " + (**ii)->GetNameSingular() + " back in exchange for " + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR + " gold? [y,N]"))
-		    {
-		      ((bodypart*)***ii)->SetHP(1);
-		      Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
-		      SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
-		      bodypart* OldBodyPart = dynamic_cast<bodypart*>(***ii);
-		      if(!OldBodyPart)
-			ABORT("Priest is asked to but odd object in place of BodyPart");
-		      if(OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
-			{
-			  Talker->AttachBodyPart(OldBodyPart,c);
-			  Talker->GetStack()->RemoveItem(ii);
-			}
-		      else
-			{
-			  ADD_MESSAGE("Sorry I cannot help you, because your old %s doesn't seem to fit anymore.", (***ii)->GetNameSingular().c_str());   
-			}
-		    }
-		  else
-		    ADD_MESSAGE("\"Help yourself and get some money and we'll help you too.\"");
-		}
-	      return;
-	    }
-	bodypart* NewBodyPart = Talker->MakeBodyPart(c);
-	NewBodyPart->SetHP(1);
-	ADD_MESSAGE("You seem to be missing %s %s.", NewBodyPart->GetArticle().c_str(), NewBodyPart->GetNameSingular().c_str());
-	if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+	bool HasOld;
+	bodypart* OldBodyPart = static_cast<bodypart*>(Talker->SearchForItemWithID(Talker->GetOriginalBodyPartID(c)));
+
+	if(OldBodyPart)
 	  {
-	    ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one.", NewBodyPart->GetNameSingular().c_str());
-	    if(game::BoolQuestion(std::string("And this would cost you only ") + PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR +std::string(" gold. Agreed? [y,N]")))
+	    HasOld = true;
+
+	    if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR)
+	      {
+		if(!OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
+		  ADD_MESSAGE("Sorry, I cannot put back your severed %s, because it doesn't seem to fit properly.", Talker->GetBodyPartName(c).c_str());
+		else
+		  {
+		    ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+
+		    if(game::BoolQuestion("Do you agree? [y/N]"))
+		      {
+			OldBodyPart->SetHP(1);
+			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+			OldBodyPart->RemoveFromSlot();
+			Talker->AttachBodyPart(OldBodyPart);
+			return;
+		      }
+		  }
+	      }
+	    else
+	      ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and we'll help you too.\"", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_IN_ALTAR);
+	  }
+	else
+	  HasOld = false;
+
+	if(Talker->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR)
+	  {
+	    if(HasOld)
+	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+	    else
+	      ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
+
+	    if(game::BoolQuestion("Agreed? [y/N]"))
 	      {
 		Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
 		SetMoney(GetMoney() + PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
-		Talker->AttachBodyPart(NewBodyPart, c);
-	      }
-	    else
-	      {
-		ADD_MESSAGE("Since you don't have your original %s with you, I could summon up %s %s, but I am not a communist and you haven't got %d gold.", NewBodyPart->GetNameSingular().c_str(), NewBodyPart->GetArticle().c_str(), NewBodyPart->GetNameSingular().c_str(), PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
-		delete NewBodyPart;
+		Talker->CreateBodyPart(c);
+		Talker->GetBodyPart(c)->SetHP(1);
 		return;
 	      }
 	  }
-
-
+	else if(!HasOld)
+	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but %s is not a communist and you need %dgp first.\"", Talker->GetBodyPartName(c).c_str(), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GOD_NAME, PRICE_TO_ATTACH_NEW_LIMB_IN_ALTAR);
       }
 
   if(!HomeRoom)
@@ -716,16 +727,17 @@ void elpuri::BeTalkedTo(character*)
 
 void billswill::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("\"Windows XP is coming. You will install it. Resistance is futile. Prepare to be assimilited.\"");
+  ADD_MESSAGE("\"You will install Windows. Resistance is futile. Prepare to be assimilited.\"");
 }
 
 void skeleton::BeTalkedTo(character* Talker)
 {
-  if(!GetBodyPart(HEAD))
+  if(!GetHead())
     {
-      ADD_MESSAGE("The headless %s remains silent.", Talker->CHARNAME(UNARTICLED));
+      ADD_MESSAGE("The headless %s remains silent.", Talker->CHARDESCRIPTION(UNARTICLED));
       return;
     }
+
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
     ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHARDESCRIPTION(DEFINITE));
   else
@@ -1216,15 +1228,17 @@ bool communist::MoveRandomly()
 void zombie::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    if(RAND() % 5)
-      {
-	if(GetBodyPart(HEADINDEX))
-	  ADD_MESSAGE("\"Need brain!!\"");
-	else
-	  ADD_MESSAGE("\"Need head with brain!!\"");
-      }
-    else
-      ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
+    {
+      if(RAND() % 5)
+	{
+	  if(GetHead())
+	    ADD_MESSAGE("\"Need brain!!\"");
+	  else
+	    ADD_MESSAGE("\"Need head with brain!!\"");
+	}
+      else
+	ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
+    }
   else
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }
@@ -1284,17 +1298,23 @@ void angel::CreateInitialEquipment()
     case GOOD:
       SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(DIAMOND)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(DIAMOND)));
+      GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(2000);
+      GetCurrentRightSingleWeaponSkill()->AddHit(2000);
       break;
     case NEUTRAL:
       SetMainWielded(new meleeweapon(POLEAXE, MAKE_MATERIAL(SAPPHIRE)));
       SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(SAPPHIRE)));
+      GetCategoryWeaponSkill(AXES)->AddHit(2000);
+      GetCurrentRightSingleWeaponSkill()->AddHit(2000);
       break;
     case EVIL:
       {
 	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, false);
-	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
+	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(RUBY), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
+	GetCategoryWeaponSkill(MACES)->AddHit(2000);
+	GetCurrentRightSingleWeaponSkill()->AddHit(2000);
 	break;
       }
     }
@@ -1475,12 +1495,10 @@ ushort humanoid::GetSize() const
 
   if(GetLeftLeg() && GetRightLeg())
     Size += Max(GetLeftLeg()->GetSize(), GetRightLeg()->GetSize());
-  else
-    if(GetLeftLeg())
-      Size += GetLeftLeg()->GetSize();
-    else
-      if(GetRightLeg())
-	Size += GetRightLeg()->GetSize();
+  else if(GetLeftLeg())
+    Size += GetLeftLeg()->GetSize();
+  else if(GetRightLeg())
+    Size += GetRightLeg()->GetSize();
 
   return Size;
 }
@@ -1923,16 +1941,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetRightArm())
-    Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetLeftArm())
-    Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetTorso())
-    Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
@@ -1940,13 +1958,13 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
     Color[c] = 0;
 
   if(GetGroin())
-    Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetRightLeg())
-    Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
@@ -2186,7 +2204,8 @@ void human::VirtualConstructor(bool Load)
       EditAttribute(CHARISMA, (RAND() & 1) - (RAND() & 1));
       EditAttribute(MANA, (RAND() & 1) - (RAND() & 1));
       SetMoney(GetMoney() + RAND() % 101);
-      SetSize(character::GetTotalSize() + RAND() % 51);
+      SetTotalSize(character::GetTotalSize() + RAND() % 51);
+      SetSize(GetTotalSize());
     }
 }
 
@@ -2197,7 +2216,7 @@ void petrus::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      SetHealTimer(100);
+      SetHealTimer(16384);
       SetStoryState(0);
       SetAssignedName("Petrus");
     }
@@ -2503,10 +2522,10 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingArms())
     {
       if(GetRightArm() && GetRightArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetDurability(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), UseMaxHP) * GetRightArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetRightArm()->GetDamage()), GetRightArm()->GetToHitValue(), UseMaxHP) * GetRightArm()->GetAPCost());
 
       if(GetLeftArm() && GetLeftArm()->GetDamage())
-	Effectivity += 1 / (Enemy->GetDurability(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), UseMaxHP) * GetLeftArm()->GetAPCost());
+	Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetLeftArm()->GetDamage()), GetLeftArm()->GetToHitValue(), UseMaxHP) * GetLeftArm()->GetAPCost());
 
       ++AttackStyles;
     }
@@ -2514,13 +2533,13 @@ float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
-      Effectivity += 1 / (Enemy->GetDurability(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), UseMaxHP) * KickLeg->GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(KickLeg->GetKickDamage()), KickLeg->GetKickToHitValue(), UseMaxHP) * KickLeg->GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetDurability(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), UseMaxHP) * GetHead()->GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetHead()->GetBiteDamage()), GetHead()->GetBiteToHitValue(), UseMaxHP) * GetHead()->GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2536,19 +2555,19 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
   if(IsUsingArms())
     {
-      Effectivity += 1 / (Enemy->GetDurability(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), UseMaxHP) * GetUnarmedAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetUnarmedDamage()), GetUnarmedToHitValue(), UseMaxHP) * GetUnarmedAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingLegs())
     {
-      Effectivity += 1 / (Enemy->GetDurability(ushort(GetKickDamage()), GetKickToHitValue(), UseMaxHP) * GetKickAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetKickDamage()), GetKickToHitValue(), UseMaxHP) * GetKickAPCost());
       ++AttackStyles;
     }
 
   if(IsUsingHead())
     {
-      Effectivity += 1 / (Enemy->GetDurability(ushort(GetBiteDamage()), GetBiteToHitValue(), UseMaxHP) * GetBiteAPCost());
+      Effectivity += 1 / (Enemy->GetTimeToDie(ushort(GetBiteDamage()), GetBiteToHitValue(), UseMaxHP) * GetBiteAPCost());
       ++AttackStyles;
     }
 
@@ -2833,6 +2852,7 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
     }
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
 
   /*if(game::WizardModeActivated())
     {
@@ -2888,6 +2908,7 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
     }
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "DV: %.0f", GetDodgeValue());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "MAPC: %d", -GetMoveAPRequirement(1));
 
   /*if(game::WizardModeActivated())
     {
@@ -2948,16 +2969,16 @@ bool humanoid::CheckBalance(float KickDamage)
 long humanoid::GetMoveAPRequirement(uchar Difficulty) const
 {
   if(CanFly())
-    return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20;
+    return (long(GetAttribute(AGILITY)) - 200) * Difficulty * 500 / GetMoveEase();
 
   switch(GetLegs())
     {
     case 0:
-      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 2;
+      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * 5000 / GetMoveEase();
     case 1:
-      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() * 3 / 20;
+      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * 1500 / GetMoveEase();
     case 2:
-      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20;
+      return (long(GetAttribute(AGILITY)) - 200) * Difficulty * 500 / GetMoveEase();
     default:
       ABORT("A %d legged humanoid invaded the dungeon!", GetLegs());
       return 0;
@@ -2981,12 +3002,13 @@ bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
   return true;
 }
 
-void hunter::CreateBodyPart(ushort Index)
+void hunter::CreateBodyParts()
 {
-  if(Index != LEFTARMINDEX)
-    character::CreateBodyPart(Index);
-  else
-    SetLeftArm(0);
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
+    if(c != LEFTARMINDEX)
+      CreateBodyPart(c);
+    else
+      SetLeftArm(0);
 }
 
 bool humanoid::EquipmentEasilyRecognized(ushort Index) const
@@ -3083,11 +3105,11 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
   CalculateBattleInfo();
 }
 
-void humanoid::CharacterSpeciality()
+void humanoid::SingleWeaponSkillTick()
 {
   for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
     {
-      if((*i)->Tick() && IsPlayer())
+      if((*i)->Tick())
 	{
 	  for(stackiterator j = GetStack()->GetBottomSlot(); j != GetStack()->GetSlotAboveTop(); ++j)
 	    if((*i)->GetID() == (**j)->GetID())
@@ -3159,68 +3181,55 @@ void angel::GetAICommand()
   SetHealTimer(GetHealTimer() + 1);
 
   if(GetHealTimer() > LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP && AttachBodyPartsOfFriendsNear())
-    {
-      SetHealTimer(0);
-      return;
-    }
+    return;
 
   humanoid::GetAICommand();
 }
 
 /* Returns true if the angel finds somebody near to heal else false */
+
 bool angel::AttachBodyPartsOfFriendsNear()
 {
-  std::vector<character*> HurtFriends = GetFriendsAround();
-  std::vector<character*> Temp;
+  character* HurtOne = 0;
+  bodypart* SeveredOne = 0;
 
-  /* 
-     Now analyze HurtFriendsAround for really hurt friends and delete unhurt ones and 
-     check whether the HurtFriends are curable (ie. they have one of their bodyparts in their stack)
-   */
-
-  std::vector<character*>::iterator i;
-
-  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
-    if(!(*i)->HasAllBodyParts() && (*i)->FindRandomOwnBodyPart() != 0)
-      Temp.push_back(*i);
-
-  HurtFriends.swap(Temp);
- 
-  /* Now if there are no friends left return false */
-  if(HurtFriends.empty())
-    return false;
-
-  /* Check whether the player is in the list */
-  character* TheOneWhoWillBeCured = 0;
-
-  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
-    if(!(*i)->IsPlayer())
-      {
-	TheOneWhoWillBeCured = *i;
-	break;
-      }
-
-  /* If no player found, take one friend at random */
-  if(!TheOneWhoWillBeCured)
-    TheOneWhoWillBeCured = HurtFriends[RAND() % HurtFriends.size()];
-
-  bodypart* JustCreated = TheOneWhoWillBeCured->TryAttachRandomOldBodyPart();
-  if(JustCreated)
+  for(ushort d = 0; d < 8; ++d)
     {
-      if(TheOneWhoWillBeCured->IsPlayer())
-	ADD_MESSAGE("%s puts %s back to its place.", CHARNAME(DEFINITE), JustCreated->CHARNAME(DEFINITE));
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s helps %s by putting %s in its old place.", CHARNAME(DEFINITE), TheOneWhoWillBeCured->CHARNAME(DEFINITE), JustCreated->CHARNAME(DEFINITE));
-	
-      JustCreated->SetHP(1);
+      square* Square = GetNeighbourSquare(d);
 
+      if(Square)
+	{
+	  character* Char = Square->GetCharacter();
+
+	  if(Char && (!HurtOne || Char->IsPlayer()) && Char->GetTeam()->GetRelation(GetTeam()) == FRIEND && !Char->HasAllBodyParts())
+	    {
+	      bodypart* BodyPart = Char->FindRandomOwnBodyPart();
+
+	      if(BodyPart)
+		{
+		  HurtOne = Char;
+		  SeveredOne = BodyPart;
+		}
+	    }
+	}
+    }
+
+  if(HurtOne)
+    {
+      if(HurtOne->IsPlayer())
+	ADD_MESSAGE("%s puts your %s back to its place.", CHARDESCRIPTION(DEFINITE), SeveredOne->GetBodyPartName().c_str());
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s helps %s by putting %s %s in its old place.", CHARDESCRIPTION(DEFINITE), HurtOne->CHARDESCRIPTION(DEFINITE), HurtOne->GetPossessivePronoun().c_str(), SeveredOne->GetBodyPartName().c_str());
+	
+      SeveredOne->SetHP(1);
+      SeveredOne->RemoveFromSlot();
+      HurtOne->AttachBodyPart(SeveredOne);
+      SetHealTimer(0);
+      DexterityAction(5);
       return true;
     }
   else
-    {
-      ABORT("Dark forces attack angel. Too Bad. Sorry.");
-      return false;
-    }
+    return false;
 }
 
 void angel::VirtualConstructor(bool Load)
@@ -3295,25 +3304,27 @@ ushort angel::GetArmMainColor(ushort) const
   return GetMasterGod()->GetColor();
 }
 
-void angel::CreateBodyPart(ushort Index)
+void angel::CreateBodyParts()
 {
-  if(Index == GROININDEX || Index == RIGHTLEGINDEX || Index == LEFTLEGINDEX)
-    SetBodyPart(Index, 0);
-  else
-    character::CreateBodyPart(Index);
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
+    if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
+      SetBodyPart(c, 0);
+    else
+      CreateBodyPart(c);
 }
 
-void genie::CreateBodyPart(ushort Index)
+void genie::CreateBodyParts()
 {
-  if(Index == GROININDEX || Index == RIGHTLEGINDEX || Index == LEFTLEGINDEX)
-    SetBodyPart(Index, 0);
-  else
-    character::CreateBodyPart(Index);
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
+    if(c == GROININDEX || c == RIGHTLEGINDEX || c == LEFTLEGINDEX)
+      SetBodyPart(c, 0);
+    else
+      CreateBodyPart(c);
 }
 
 ushort housewife::GetHairColor(ushort) const
 {
-  static ushort HouseWifeHairColor[] = { MAKE_RGB(48, 40, 8), MAKE_RGB(60, 48, 24),  MAKE_RGB(200, 0, 0) };
+  static ushort HouseWifeHairColor[] = { MakeRGB(48, 40, 8), MakeRGB(60, 48, 24),  MakeRGB(200, 0, 0) };
   return HouseWifeHairColor[RAND() % 3];
 }
 
@@ -3521,6 +3532,7 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->SendToHell();
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
+  CalculateBattleInfo();
   return Bone;  
 }
 
@@ -3578,15 +3590,16 @@ void humanoid::CreateInitialEquipment()
 void orc::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ;
+    ADD_MESSAGE("\"Has you seen any elf or dwarf? Me hungry.\"");
   else
-    ;
+    ADD_MESSAGE("\"Nice scalp! Me want it!\"");
 }
 
 void cossack::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
+      ADD_MESSAGE("%s shouts wildly: \"For Tataria!\"", CHARDESCRIPTION(DEFINITE));
       return;
     }
 
@@ -3595,12 +3608,35 @@ void cossack::BeTalkedTo(character* Talker)
   switch(RandomizeReply(4, Said))
     {
     case 0:
+      ADD_MESSAGE("\"Graah! Eating raw flesh makes one feel so masculine and powerful! (and sick)\"");
       break;
     case 1:
+      ADD_MESSAGE("\"It surely is cold on this island. Remembers me of my six years in Siberia after the burglary of that pub's booze cellar...\"");
       break;
     case 2:
+      ADD_MESSAGE("\"What, why have I no horse? Er, I lost it in poker.\"");
       break;
     case 3:
+      ADD_MESSAGE("\"Women are odd. No matter how many times I take them to hunt wild beasts of the Steppe or show them my collection of old vodka bottles, none of them still likes me.\"");
       break;
+    }
+}
+
+std::string humanoid::GetBodyPartName(ushort Index, bool Articled) const
+{
+  std::string Article = Articled ? "a" : "";
+
+  switch(Index)
+    {
+    case HEADINDEX: return Article + "head";
+    case TORSOINDEX: return Article + "torso";
+    case RIGHTARMINDEX: return Article + "right arm";
+    case LEFTARMINDEX: return Article + "left arm";
+    case GROININDEX: return Article + "groin";
+    case RIGHTLEGINDEX: return Article + "right leg";
+    case LEFTLEGINDEX: return Article + "left leg";
+    default:
+      ABORT("Illegal humanoid bodypart name request!");
+      return 0;
     }
 }

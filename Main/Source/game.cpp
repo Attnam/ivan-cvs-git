@@ -992,7 +992,6 @@ void game::Hostility(team* Attacker, team* Defender)
 	case FRIEND:
 	  {
 	    GetTeam(c)->SetRelation(Attacker, HOSTILE);
-
 	    break;
 	  }
 	default:
@@ -1191,7 +1190,7 @@ void game::BusyAnimation(bitmap* Buffer)
 
   if(!ElpuriLoaded)
     {
-      ushort Color = MAKE_RGB(60, 60, 60);
+      ushort Color = MakeRGB(60, 60, 60);
       igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
       ElpuriLoaded = true;
     }
@@ -1209,10 +1208,10 @@ void game::BusyAnimation(bitmap* Buffer)
       ushort x;
 
       for(x = 0; x < 10; ++x)
-	Buffer->DrawPolygon(Pos, 100, 5, MAKE_RGB(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
+	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
 
       for(x = 0; x < 4; ++x)
-	Buffer->DrawPolygon(Pos, 100 + x, 50, MAKE_RGB(255 - 12 * x,0,0));
+	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB(255 - 12 * x,0,0));
 
       if(Buffer == DOUBLEBUFFER)
 	graphics::BlitDBToScreen();
@@ -1259,7 +1258,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	  break;
 	}
 
-      if(Key == 0x1B)
+      if(Key == KEYESC)
 	{
 	  Return = vector2d(-1, -1);
 	  break;

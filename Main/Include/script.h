@@ -48,7 +48,7 @@ template <class type> class datamembertemplate : public datamemberbase
  public:
   virtual ~datamembertemplate();
   datamembertemplate() : Base(0), Member(0) { }
-  datamembertemplate(const datamembertemplate& Data) : Base(Data.Base), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  datamembertemplate(const datamembertemplate& Data) : datamemberbase(Data), Base(Data.Base), Member(Data.Member ? new type(*Data.Member) : 0) {  }
   datamembertemplate& operator=(const datamembertemplate&);
   type* GetMember(bool) const;
   void SetMember(type* What) { Member = What; }

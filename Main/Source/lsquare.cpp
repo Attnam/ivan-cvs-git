@@ -694,12 +694,12 @@ void lsquare::BeKicked(character* Kicker, float KickDamage, float KickToHitValue
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
 
-  GetStack()->BeKicked(Kicker, KickDamage);
+  GetStack()->BeKicked(Kicker, ushort(KickDamage));
 
   if(GetCharacter())
     GetCharacter()->BeKicked(Kicker, KickDamage, KickToHitValue, Success, Critical);
 
-  GetOLTerrain()->BeKicked(Kicker, KickDamage);
+  GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage));
 }
 
 bool lsquare::CanBeDug() const
@@ -931,7 +931,7 @@ void lsquare::SwapCharacter(lsquare* With)
 
 void lsquare::ReceiveVomit(character* Who)
 {
-  SpillFluid(1, MAKE_RGB(10,230,10),5,60);
+  SpillFluid(1, MakeRGB(10,230,10),5,60);
   GetOLTerrain()->ReceiveVomit(Who);
 }
 

@@ -112,7 +112,7 @@ Elemental damage. (from JM)
 Consummo should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
 Fix wear-time AV inconsistency. (very difficult)
-*Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
+//*Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
 Elpuri's lair could be even more frightening.
 Fluid should handle melded metals.
@@ -277,4 +277,5 @@ Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
 "Bang your head at" command.
 Whips should sometimes remove the helmet of the target.
-*Pictures to Equipment Screen.
+//*Pictures to Equipment Screen.
+Page up should work correctly in felists.
