@@ -382,6 +382,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ScienceTalkWisdomRequirement);
   ADD_MEMBER(IsExtraFragile);
   ADD_MEMBER(AllowUnconsciousness);
+  ADD_MEMBER(CanChoke);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

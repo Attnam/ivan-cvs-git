@@ -205,6 +205,7 @@ struct characterdatabase : public databasebase
   int ScienceTalkWisdomRequirement;
   bool IsExtraFragile;
   bool AllowUnconsciousness;
+  bool CanChoke;
 };
 
 class characterprototype
@@ -977,6 +978,7 @@ class character : public entity, public id
   virtual bool AllowUnconsciousness() const;
   virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
+  DATA_BASE_BOOL(CanChoke);
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -6788,7 +6788,7 @@ void character::FinalProcessForBone()
 
 bool character::HasRepairableBodyParts() const
 {
-  return CombineBodyPartPredicates<true>(this, bodypart::IsRepairable);
+  return CombineBodyPartPredicates<true>(this, &bodypart::IsRepairable);
   /*for(int c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c) && GetBodyPart(c)->IsRepairable())
       return true;

@@ -24,6 +24,10 @@ int protocontainer<trap>::Size;
 
 #include "lsquare.h"
 #include "game.h"
+#include "char.h"
+#include "message.h"
+#include "lsquare.h"
+
 
 #include "trap.cpp"
 #include "traps.cpp"

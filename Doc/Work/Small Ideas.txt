@@ -505,5 +505,9 @@ Magic carpet.
 Lobotomised state.
 Geysirs.
 Damaged bodyparts should work less well. (ie. when arms are damaged armstrength should go down)
+zorkmid
+(Hacker dictionary)
+/zork'mid/ n. The canonical unit of currency in hacker-written games. This originated in zork but has spread to nethack and is referred to in several other games.
 Wand of Polymorph to X (where X is a monster)
 Magic hassel which causes invisible. (from Henri Kiviluoto)
+Hattifatter should receive max hp when zapped with wand of lightning

@@ -2535,7 +2535,7 @@ bool humanoid::UseMaterialAttributes() const
 	return false;
     }*/
 
-  return CombineBodyPartPredicates<false>(this, bodypart::UseMaterialAttributes);
+  return CombineBodyPartPredicates<false>(this, &bodypart::UseMaterialAttributes);
 }
 
 color24 angel::GetBaseEmitation() const
@@ -4099,7 +4099,7 @@ bodypart* playerkind::MakeBodyPart(int I) const
 
 bool golem::AddAdjective(festring& String, bool Articled) const
 {
-  int TotalRustLevel = SumBodyPartProperties(this, bodypart::GetMainMaterialRustLevel);
+  int TotalRustLevel = SumBodyPartProperties(this, &bodypart::GetMainMaterialRustLevel);
 
   /*for(int c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c))

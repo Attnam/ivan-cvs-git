@@ -23,10 +23,15 @@ class TRAP
   web,
   trap,
  public:
-  
+  bool TryToUnStick(character*, vector2d);
+  int GetTrapBaseModifier() const { return Strength; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void StepOnEffect(character*);
  protected:
   virtual void VirtualConstructor(bool);
-  trapdata* TrapData;
+  trapdata TrapData;
+  int Strength; /* must be more than 0 */
 );
 
 #endif

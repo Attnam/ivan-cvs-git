@@ -3194,7 +3194,7 @@ void head::SignalPossibleUsabilityChange()
   ulong OldFlags = Flags;
   UpdateFlags();
 
-  if(Flags & BADLY_HURT)
+  if(Flags & BADLY_HURT && !Master->IsInitializing())
     Master->LoseConsciousness(1);
 }
 
@@ -3203,7 +3203,7 @@ void arm::SignalPossibleUsabilityChange()
   ulong OldFlags = Flags;
   UpdateFlags();
 
-  if(Flags != OldFlags)
+  if(Flags != OldFlags && !Master->IsInitializing())
     Master->CalculateBattleInfo();
 }
 
@@ -3212,7 +3212,7 @@ void leg::SignalPossibleUsabilityChange()
   ulong OldFlags = Flags;
   UpdateFlags();
 
-  if(Flags != OldFlags)
+  if(Flags != OldFlags && !Master->IsInitializing())
     Master->CalculateBattleInfo();
 }
 

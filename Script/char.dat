@@ -245,13 +245,14 @@ character
 
 		"lobotomy", "squaring the circle", "trisecting the angle", "cosmetics";
 	}
-  ScienceTalkPossibility = 0;
-  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
-  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomModifier */
-  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceRequirement */
-  /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomRequirement */
+	ScienceTalkPossibility = 0;
+	/* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
+	/* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomModifier */
+	/* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceRequirement */
+	/* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomRequirement */
 	IsExtraFragile = false;
 	AllowUnconsciousness = true;
+	CanChoke = true;
 }
 
 humanoid
@@ -1227,6 +1228,7 @@ frog
 	PanicLevel = 50;
 	MoveType = WALK|SWIM;
 	CanRead = true;
+	CanChoke = false;
 
 	Config DARK;
 	{
@@ -1437,6 +1439,7 @@ billswill
 	BiteCapturesBodyPart = false;
 	ClassStates = HASTE|ESP|GAS_IMMUNITY|LEVITATION;
 	MoveType = ETHEREAL;
+	CanChoke = false;
 }
 
 skeleton
@@ -1479,6 +1482,7 @@ skeleton
 	ClassStates = GAS_IMMUNITY;
 	WieldedPosition = 0, -1;
 	IsExtraFragile = true;
+	CanChoke = false;
 
 	Config WARRIOR;
 	{
@@ -1673,6 +1677,7 @@ mommo
 	VomitMaterial = BROWN_SLIME;
 	IgnoreDanger = true;
 	ForceVomitMessage = "You spurt some brown slime from your body.";
+	CanChoke = false;
 
 	Config CONICAL;
 	{
@@ -1756,6 +1761,7 @@ golem
 	/*IsImmuneToLeprosy = true;*/
 	AlwaysUseMaterialAttributes = true;
 	IsEnormous = true;
+	CanChoke = false;
 
 	Config VALPURIUM;
 	{
@@ -2515,7 +2521,8 @@ imp
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
 	FireResistance = 1000;
-	WillCarryItems = false;
+	WillCarryItems = false
+	CanChoke = false;
 }
 
 bat
@@ -3003,6 +3010,7 @@ angel
 	ScienceTalkWisdomModifier = 100;
 	ScienceTalkIntelligenceRequirement = 10;
 	ScienceTalkWisdomRequirement = 20;
+	CanChoke = false;
 }
 
 kamikazedwarf
@@ -3176,6 +3184,7 @@ genie
 	BodyPartsDisappearWhenSevered = true;
 	ClassStates = GAS_IMMUNITY|LEVITATION;
 	WieldedPosition = -1, -3;
+	CanChoke = false;
 }
 
 lion
@@ -3244,6 +3253,7 @@ carnivorousplant
 	IsPlant = true;
 	IsRooted = true;
 	AllowUnconsciousness = false;
+	CanChoke = false;
 
 	Config GREATER;
 	{
@@ -3914,6 +3924,7 @@ floatingeye
 	MoveType = FLY;
 	CanHear = false;
 	AllowUnconsciousness = false;
+	CanChoke = false;
 }
 
 eddy
@@ -3958,6 +3969,7 @@ eddy
 	BaseBiteStrength = 0;
 	IsCharmable = false;
 	CanHear = false;
+	CanChoke = false;
 }
 
 mushroom
@@ -3993,6 +4005,7 @@ mushroom
 	StandVerb = "rooted";
 	IsRooted = true;
 	AllowUnconsciousness = false;
+	CanChoke = false;
 }
 
 magicmushroom
@@ -4024,6 +4037,7 @@ magicmushroom
 	Frequency = 5000;
 	DangerModifier = 75;
 	StandVerb = "wobbling";
+	CanChoke = false;
 }
 
 darkmage
@@ -4242,6 +4256,7 @@ ghost
 	AttackStyle = USE_HEAD;
 	BiteCapturesBodyPart = false;
 	MoveType = ETHEREAL;
+	CanChoke = false;
 }
 
 twoheadedmoose
@@ -4637,6 +4652,7 @@ hattifattener
 	Sweats = false;
 	Alias == "Hattivatti";
 	AllowUnconsciousness = false;
+	CanChoke = false;
 }
 
 necromancer
@@ -4979,6 +4995,7 @@ archangel
 	ScienceTalkIntelligenceRequirement = 20;
 	ScienceTalkWisdomRequirement = 40;
 	AllowUnconsciousness = false;
+	CanChoke = false;
 
 	Config VALPURUS;
 	{
@@ -5110,6 +5127,7 @@ mysticfrog
 	IsPolymorphable = false;
 	IsAbstract = true;
 	ScienceTalkPossibility = 100;
+	CanChoke = false;
 
 	Config DARK;
 	{
