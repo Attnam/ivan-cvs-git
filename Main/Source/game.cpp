@@ -887,44 +887,6 @@ void game::InitDungeons()
     }
 }
 
-void game::DoGoodDeed(ushort Amount)
-{
-  if(!Amount)
-    return;
-	
-  for(ushort c = 1; c < game::GetGods(); ++c)
-    {
-      short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
-
-      if(!IsInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
-	if(GetGod(c)->GetRelation() + Change * 2 < -750)
-	  {
-	    if(GetGod(c)->GetRelation() > -750)
-	      GetGod(c)->SetRelation(-750);
-	  }
-	else if(GetGod(c)->GetRelation() + Change * 2 > 750)
-	  {
-	    if(GetGod(c)->GetRelation() < 750)
-	      GetGod(c)->SetRelation(750);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change * 2);
-      else
-	if(GetGod(c)->GetRelation() + Change < -500)
-	  {
-	    if(GetGod(c)->GetRelation() > -500)
-	      GetGod(c)->SetRelation(-500);
-	  }
-	else if(GetGod(c)->GetRelation() + Change > 500)
-	  {
-	    if(GetGod(c)->GetRelation() < 500)
-	      GetGod(c)->SetRelation(500);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change);
-    }
-}
-
 void game::DoEvilDeed(ushort Amount)
 {
   if(!Amount)

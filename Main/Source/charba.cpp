@@ -928,6 +928,12 @@ void character::Die(bool ForceMsg)
   if(!IsEnabled())
     return;
 
+  if(StuckToBodyPart != NONE_INDEX)
+    {
+      StuckToBodyPart = NONE_INDEX;
+      StuckTo = 0;
+    }
+
   if(IsPlayer())
     {
       ADD_MESSAGE("You die.");
@@ -1291,7 +1297,7 @@ void character::ApplyExperience(bool Edited)
   if(CheckForAttributeIncrease(BaseAttribute[CHARISMA], BaseExperience[CHARISMA]))
     {
       if(IsPlayer())
-	ADD_MESSAGE("You feel very confident of your appearance.");
+	ADD_MESSAGE("You feel very confident of your social skills.");
       else if(CanBeSeenByPlayer())
 	{
 	  if(GetAttribute(CHARISMA) <= 15)
@@ -1430,8 +1436,17 @@ bool character::ReadItem(item* ToBeRead)
 	{
 	  if(StateIsActivated(CONFUSED))
 	    {
-	      ActivateRandomState(1000 + RAND() % 1500);
-	      ADD_MESSAGE("%s is too confusing. Or perhaps you are just too confused?", ToBeRead->CHAR_NAME(DEFINITE));
+	      if(!ToBeRead->IsDestroyable())
+		ADD_MESSAGE("You read some words of %s and understand exactly nothing.", ToBeRead->CHAR_NAME(DEFINITE));
+	      else
+		{
+		  ADD_MESSAGE("%s is very confusing. Or perhaps you are just too confused?", ToBeRead->CHAR_NAME(DEFINITE));
+		  ActivateRandomState(1000 + RAND() % 1500);
+		  ToBeRead->RemoveFromSlot();
+		  ToBeRead->SendToHell();
+		}
+
+	      EditAP(-1000);
 	      return true;
 	    }
 
@@ -2195,7 +2210,7 @@ bool character::Zap()
 
       if(Item->Zap(this, GetPos(), Answer))
 	{
-	  EditExperience(PERCEPTION, 50);
+	  EditExperience(PERCEPTION, 250);
 	  EditAP(-100000 / APBonus(GetAttribute(PERCEPTION)));
 	  return true;
 	}
@@ -2212,6 +2227,12 @@ bool character::Polymorph(character* NewForm, ushort Counter)
     {
       delete NewForm;
       return false;
+    }
+
+  if(StuckToBodyPart != NONE_INDEX)
+    {
+      StuckToBodyPart = NONE_INDEX;
+      StuckTo = 0;
     }
 
   if(GetAction())
@@ -2828,6 +2849,12 @@ bool character::MoveRandomlyInRoom()
 
 bool character::Go()
 {
+  if(StateIsActivated(CONFUSED))
+    {
+      ADD_MESSAGE("In this mental state you would forget your destination immediately.");
+      return false;
+    }
+
   uchar Dir = game::DirectionQuestion("In what direction do you want to go? [press a direction key]", false);
 
   if(Dir == DIR_ERROR)
@@ -4095,6 +4122,9 @@ void character::ReceiveOmmelUrine(long Amount)
   EditExperience(ARM_STRENGTH, Amount << 3);
   EditExperience(LEG_STRENGTH, Amount << 3);
   RestoreHP();
+
+  if(IsPlayer())
+    game::DoEvilDeed(Amount / 25);
 }
 
 void character::AddOmmelUrineConsumeEndMessage() const
@@ -4788,6 +4818,12 @@ void character::EndPolymorph()
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s returns to %s true form.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
 
+  if(StuckToBodyPart != NONE_INDEX)
+    {
+      StuckToBodyPart = NONE_INDEX;
+      StuckTo = 0;
+    }
+
   if(GetAction())
     GetAction()->Terminate(false);
 
@@ -5223,14 +5259,13 @@ void character::PrintEndTeleportControlMessage() const
 void character::DisplayStethoscopeInfo(character*) const
 {
   felist Info("Information about " + GetName(DEFINITE));
+  AddSpecialStethoscopeInfo(Info);
   Info.AddEntry(std::string("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
   Info.AddEntry(std::string("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
   Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
   Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
-  Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHT_GRAY);
-  Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHT_GRAY);
-  Info.AddEntry(std::string("HP: ") + GetHP() + "/" + GetMaxHP(), LIGHT_GRAY);
+  Info.AddEntry(std::string("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
   game::SetStandardListAttributes(Info);
   Info.Draw();
 }

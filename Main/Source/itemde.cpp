@@ -2388,6 +2388,13 @@ std::string corpse::GetConsumeVerb() const
 
 bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 {
+  if(IsBroken())
+    {
+      Victim->SetStuckTo(0);
+      Victim->SetStuckToBodyPart(NONE_INDEX);
+      return true;
+    }
+
   if(!(RAND() % 3))
     {
       if(Victim->IsPlayer())
@@ -2409,6 +2416,20 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 	ADD_MESSAGE("You manage to free yourself from %s.", CHAR_NAME(DEFINITE));
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s manages to free %sself from %s.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
+
+      return true;
+    }
+
+  if(!(RAND() % 10))
+    {
+      Victim->SetStuckTo(0);
+      Victim->SetStuckToBodyPart(NONE_INDEX);
+      Break();
+
+      if(Victim->IsPlayer())
+	ADD_MESSAGE("You are freed.");
+      else if(Victim->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s is freed.", Victim->CHAR_NAME(DEFINITE));
 
       return true;
     }
@@ -2438,7 +2459,7 @@ void beartrap::VirtualConstructor(bool)
 
 void beartrap::StepOnEffect(character* Stepper)
 {
-  if(IsActive() && !Stepper->IsStuck())
+  if(IsActive() && !Stepper->IsStuck() && !IsBroken())
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
@@ -3141,6 +3162,14 @@ bool mine::Apply(character* User)
 
 bool beartrap::Apply(character* User)
 {
+  if(IsBroken())
+    {
+      if(User->IsPlayer())
+	ADD_MESSAGE("%s is useless.", CHAR_NAME(DEFINITE));
+
+      return false;
+    }
+
   if(User->IsPlayer())
     ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
 
@@ -3194,12 +3223,12 @@ void arm::WieldedSkillHit()
     }
 }
 
-vector2d beartrap::GetBitmapPos(ushort) const
+vector2d beartrap::GetBitmapPos(ushort Frame) const
 {
-  if(IsActive())
-    return vector2d(32, 304);
+  if(!IsBroken())
+    return IsActive() ? vector2d(32, 304) : vector2d(32, 320);
   else
-    return vector2d(32, 320);
+    return item::GetBitmapPos(Frame);
 }
 
 bool mine::WillExplode(const character* Stepper) const
@@ -4221,7 +4250,7 @@ void arm::ShowWieldedAttackInfo() const
 	  Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
 	}
 
-      Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+      Info.AddEntry(std::string("Accustomization bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
     }
 
   Info.AddEntry("", LIGHT_GRAY);
@@ -4359,7 +4388,7 @@ void arm::ShowDefenceInfo() const
 	  Info.AddEntry("Bonuses common to all values:", LIGHT_GRAY);
 	}
 
-      Info.AddEntry(std::string("Single weapon skill bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
+      Info.AddEntry(std::string("Accustomization bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
     }
 
   Info.AddEntry("", LIGHT_GRAY);

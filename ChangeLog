@@ -1,5 +1,28 @@
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Cloak and ring of invisibility can no more be wished, since they were so
+	  much more powerful than any other wishable items
+	* Charisma now affects shop prices (both buying and selling)
+	* Dealing with shopkeepers now trains charisma
+	* Drinking ommel urine is now eeevil
+	* Go command is now disabled if confuse state is active
+	* Reading when confused is no longer very buggy and abusable
+	* Stethoscope info is now somewhat more useful
+	* Since killing the enner beast is so difficult, I added a horn of fear to its
+	  inventory as a reward for the trouble
+	* Petrus and priests can now cure poison
+	* Petrus's and angels' heal counters now work correctly even if the player is not
+	  always on the same level as they
+	* "Single weapon skills" have been renamed as "accustomizations"
+	* Bear traps now occasionally break
+	* Corrected a fatal bug that caused a crash if a monster killed by a bear trap was
+	  resurrected
+	* Polymorphing when caught in a bear trap no longer crashes when the polymorph ends
+	* Corrected a memory leak in the book shelf code
+	* Digging and exploding a book shelf now works a little more correctly
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Removed the Mega-Monstrous Equipment of Cursed Hands Bug Named IVAN's Doom -5
 	* Destroyed the Infamous Infralight Eating Bug Fiend Covered With Blood -3
 	* Corrected a memory leak in the wall breaking/stone creation code
@@ -31,7 +54,7 @@ December 7 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Nefas can now confuse enemies and give the player a pet mistress
 	* Scabies can now polymorph the player
 	* Mithril can no longer be wished; equipment made of it made the game boring,
-	  since no updating was virtually impossible
+	  since updating was virtually impossible
 	* Decreased phoenix feather's SV to make the choice between steel and it more interesting
 	* Corrected the possibilities of broken helmets
 	* Decreased the overall difficulty values in the game by 25%

@@ -593,9 +593,6 @@
 #define PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR 50
 #define PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR 100
 
-/* How many turns it takes for a angel to attach a bodypart again */
-#define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
-
 /* Hard-coded teams */
 #define PLAYER_TEAM 0
 #define MONSTER_TEAM 1

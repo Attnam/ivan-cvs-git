@@ -748,6 +748,7 @@ class character : public entity, public id
   bool LeftOversAreUnique() const { return GetArticleMode() != NORMAL_ARTICLE || AssignedName.length(); }
   std::string GetKillName() const;
   std::string GetPanelName() const;
+  virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }

@@ -152,6 +152,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
+  virtual void AddSpecialStethoscopeInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -225,6 +226,7 @@ class ABSTRACT_CHARACTER
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
   virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddSpecialStethoscopeInfo(felist&) const;
  protected:
   ushort Strength;
   ushort Agility;
@@ -265,15 +267,13 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void BeTalkedTo();
   bool HealFully(character*);
-  void SetHealTimer(ushort What) { HealTimer = What; }
-  ushort GetHealTimer() const { return HealTimer; }
   uchar GetStoryState() const { return StoryState; }
   void SetStoryState(uchar What) { StoryState = What; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual void CreateCorpse();
   virtual void GetAICommand();
-  ushort HealTimer;
+  ushort LastHealed;
   uchar StoryState;
 );
 
@@ -645,8 +645,6 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool AttachBodyPartsOfFriendsNear(); 
-  void SetHealTimer(ushort What) { HealTimer = What; }
-  ushort GetHealTimer() const { return HealTimer; }
   virtual void CreateBodyParts(ushort);
   virtual bool BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
   virtual ushort GetAttribute(ushort) const;
@@ -660,7 +658,7 @@ class CHARACTER
   virtual void CreateCorpse() { SendToHell(); }
   virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
   virtual void GetAICommand();
-  ushort HealTimer;
+  ushort LastHealed;
 );
 
 class CHARACTER

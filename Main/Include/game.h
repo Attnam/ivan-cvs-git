@@ -163,7 +163,6 @@ class game
   static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
-  static void DoGoodDeed(ushort);
   static void DoEvilDeed(ushort);
   static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
   static void LoadWorldMap(const std::string& = SaveName(""));

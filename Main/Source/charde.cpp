@@ -177,9 +177,7 @@ void ennerbeast::GetAICommand()
 
 void petrus::GetAICommand()
 {
-  SetHealTimer(GetHealTimer() + 1);
-
-  if(GetHealTimer() > 16384)
+  if(!LastHealed || game::GetTicks() - LastHealed > 16384)
     for(ushort d = 0; d < 8; ++d)
       {
 	square* Square = GetNeighbourSquare(d);
@@ -219,30 +217,39 @@ bool petrus::HealFully(character* ToBeHealed)
 	BodyPart->RemoveFromSlot();
 	ToBeHealed->AttachBodyPart(BodyPart);
 	BodyPart->SetHP(BodyPart->GetMaxHP());
+	DidSomething = true;
 
 	if(ToBeHealed->IsPlayer())
 	  ADD_MESSAGE("%s attaches your old %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str());
 	else if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s attaches the old %s of %s back and heals it.", CHAR_NAME(DEFINITE), BodyPart->GetBodyPartName().c_str(), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
-
-	DidSomething = true;
       }
 
   if(ToBeHealed->IsInBadCondition())
     {
       ToBeHealed->RestoreHP();
+      DidSomething = true;
 
       if(ToBeHealed->IsPlayer())
 	ADD_MESSAGE("%s heals you fully.", CHAR_DESCRIPTION(DEFINITE));
       else if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s heals %s fully.", CHAR_DESCRIPTION(DEFINITE), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
+    }
 
+  if(ToBeHealed->TemporaryStateIsActivated(POISONED))
+    {
+      ToBeHealed->DeActivateTemporaryState(POISONED);
       DidSomething = true;
+
+      if(ToBeHealed->IsPlayer())
+	ADD_MESSAGE("%s removes the foul poison in your body.", CHAR_DESCRIPTION(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s removes the foul poison in %s's body.", CHAR_DESCRIPTION(DEFINITE), ToBeHealed->CHAR_DESCRIPTION(DEFINITE));
     }
 
   if(DidSomething)
     {
-      SetHealTimer(0);
+      LastHealed = game::GetTicks();
       DexterityAction(5);
       return true;
     }
@@ -253,13 +260,13 @@ bool petrus::HealFully(character* ToBeHealed)
 void petrus::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << HealTimer << StoryState;
+  SaveFile << LastHealed << StoryState;
 }
 
 void petrus::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> HealTimer >> StoryState;
+  SaveFile >> LastHealed >> StoryState;
   game::SetPetrus(this);
 }
 
@@ -402,7 +409,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
   if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
       List.AddEntry("", LIGHT_GRAY);
-      std::string Buffer = "right single weapon skill:  ";
+      std::string Buffer = "right accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentRightSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -425,7 +432,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       if(!Something)
 	List.AddEntry("", LIGHT_GRAY);
 
-      std::string Buffer = "left single weapon skill:  ";
+      std::string Buffer = "left accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -566,6 +573,25 @@ void priest::BeTalkedTo()
     {
       ADD_MESSAGE("\"Sinner! My hands shall pour Dinive Wrath upon thee!\"");
       return;
+    }
+
+  if(game::GetPlayer()->TemporaryStateIsActivated(POISONED))
+    {
+      if(game::GetPlayer()->GetMoney() >= 25)
+	{
+	  ADD_MESSAGE("\"You seem to be rather ill. I could give you a small dose of antidote for 25 gold pieces.\"");
+
+	  if(game::BoolQuestion("Do you agree? [y/N]"))
+	    {
+	      ADD_MESSAGE("You feel better.");
+	      game::GetPlayer()->DeActivateTemporaryState(POISONED);
+	      game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - 25);
+	      SetMoney(GetMoney() + 25);
+	      return;
+	    }
+	}
+      else
+	ADD_MESSAGE("\"You seem to be rather ill. Get 25 gold pieces and I'll fix that.\"");
     }
 
   for(ushort c = 0; c < game::GetPlayer()->GetBodyParts(); ++c)
@@ -886,13 +912,13 @@ void zombie::BeTalkedTo()
 void angel::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << HealTimer;
+  SaveFile << LastHealed;
 }
 
 void angel::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> HealTimer;
+  SaveFile >> LastHealed;
 }
 
 void angel::CreateInitialEquipment(ushort SpecialFlags)
@@ -1701,8 +1727,8 @@ void petrus::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      SetHealTimer(16384);
-      SetStoryState(0);
+      LastHealed = 0;
+      StoryState = 0;
     }
 }
 
@@ -2442,9 +2468,7 @@ bool humanoid::DetachBodyPart()
 
 void angel::GetAICommand()
 {
-  SetHealTimer(GetHealTimer() + 1);
-
-  if(GetHealTimer() > LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP && AttachBodyPartsOfFriendsNear())
+  if((LastHealed || game::GetTicks() - LastHealed > 10000) && AttachBodyPartsOfFriendsNear())
     return;
 
   humanoid::GetAICommand();
@@ -2488,7 +2512,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
       SeveredOne->SetHP(1);
       SeveredOne->RemoveFromSlot();
       HurtOne->AttachBodyPart(SeveredOne);
-      SetHealTimer(0);
+      LastHealed = game::GetTicks();
       DexterityAction(5);
       return true;
     }
@@ -2499,7 +2523,7 @@ bool angel::AttachBodyPartsOfFriendsNear()
 void angel::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
-  SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
+  LastHealed = 0;
 }
 
 void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
@@ -4048,4 +4072,18 @@ void genetrixvesana::CreateCorpse()
     GetStackUnder()->AddItem(new pineapple);
 
   carnivorousplant::CreateCorpse();
+}
+
+void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
+{
+  Info.AddEntry(std::string("Arm strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(std::string("Leg strength: ") + GetAttribute(LEG_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(std::string("Dexterity: ") + GetAttribute(DEXTERITY), LIGHT_GRAY);
+  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
+}
+
+void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
+{
+  Info.AddEntry(std::string("Strength: ") + GetAttribute(ARM_STRENGTH), LIGHT_GRAY);
+  Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }

@@ -43,9 +43,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
     return true;
 
-  /* This should depend on charisma */
-
-  ulong Price = ForSale->GetPrice() * Amount;
+  ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
@@ -53,6 +51,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(-Price);
 	Master->EditMoney(Price);
+	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
@@ -83,6 +82,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	    {
 	      Customer->EditMoney(-Price);
 	      Master->EditMoney(+Price);
+	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
 	  else
@@ -113,9 +113,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
     return true;
 
-  /* This should depend on charisma */
-
-  ulong Price = (ForSale->GetPrice() >> 1) * Amount;
+  ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
@@ -123,6 +121,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(Price);
 	Master->EditMoney(-Price);
+	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
@@ -156,6 +155,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	    {
 	      Customer->SetMoney(Customer->GetMoney() + Price);
 	      Master->SetMoney(Master->GetMoney() - Price);
+	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
 	  else
@@ -403,9 +403,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
     return true;
 
-  /* This should depend on charisma */
-
-  ulong Price = ForSale->GetPrice() * Amount;
+  ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
 
   if(!Customer->IsPlayer())
     {
@@ -414,6 +412,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	  Customer->EditMoney(-Price);
 	  Master->EditMoney(Price);
+	  Customer->EditExperience(CHARISMA, Price);
 	  return true;
 	}
       else
@@ -445,6 +444,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	    {
 	      Customer->EditMoney(-Price);
 	      Master->EditMoney(Price);
+	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
 	  else
@@ -475,9 +475,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
     return true;
 
-  /* This should depend on charisma */
-
-  ulong Price = (ForSale->GetPrice() >> 1) * Amount;
+  ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
     if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
@@ -485,6 +483,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	Master->SetMoney(Master->GetMoney() - Price);
+	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
@@ -507,9 +506,8 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
       if(Master->GetMoney() != 0)
 	{
 	  if(Master->GetMoney() < Price)
-	    {
-	      Price = Master->GetMoney();
-	    }
+	    Price = Master->GetMoney();
+
 	  if(Amount == 1)
 	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
 	  else
@@ -519,6 +517,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	    {
 	      Customer->EditMoney(Price);
 	      Master->EditMoney(-Price);
+	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
 	  else

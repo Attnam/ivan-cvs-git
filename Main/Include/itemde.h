@@ -238,7 +238,7 @@ class ITEM
   bodyarmor,
   armor,
  public:
-  virtual ulong GetPrice() const { return (armor::GetPrice() << 2) + GetEnchantedPrice(Enchantment); }
+  virtual ulong GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
   virtual bool IsBodyArmor(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == BODY_ARMOR_INDEX; }
  protected:
@@ -1293,6 +1293,7 @@ class ITEM
   virtual bool DangerousToStepOn(const character*) const { return true; } 
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
+  virtual bool ReceiveDamage(character*, ushort, uchar) { return false; } // gum solution; all StuckTo code sucks
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;

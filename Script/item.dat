@@ -651,7 +651,7 @@ bodyarmor /* armor-> */
 		InElasticityPenaltyModifier = 25;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
-		Price = 200;
+		Price = 250;
 		PriceIsProportionalToEnchantment = true;
 	}
 
@@ -1240,6 +1240,7 @@ cloak /* armor-> */
 		GearStates = INVISIBLE;
 		PostFix = "of invisibility";
 		Price = 2500;
+		CanBeWished = false;
 	}
 }
 
@@ -1317,7 +1318,7 @@ gauntlet /* armor-> */
 		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
 		AffectsArmStrength = true;
-		Price = 100;
+		Price = 75;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 	}
@@ -1329,7 +1330,7 @@ gauntlet /* armor-> */
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
 		AffectsDexterity = true;
-		Price = 75;
+		Price = 100;
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 	}
@@ -1445,6 +1446,7 @@ ring
 		MainMaterialConfig == GOLD;
 		GearStates = INVISIBLE;
 		Price = 2500;
+		CanBeWished = false;
 	}
 }
 
@@ -1747,6 +1749,13 @@ beartrap
 	Roundness = 30;
 	Price = 10;
 	CanBePiled = false;
+	CanBeBroken = true;
+
+	Config BROKEN;
+	{
+		Possibility = 10;
+		BitmapPos = 48, 48;
+	}
 }
 
 wandofinvisibility /* wand-> */
@@ -1813,7 +1822,7 @@ helmet
 		MainMaterialConfig == GLASS;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
-		Price = 50;
+		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 	}
 
@@ -1836,7 +1845,7 @@ helmet
 		MainMaterialConfig == UNICORN_HORN;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
-		Price = 50;
+		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 	}
 
@@ -1859,7 +1868,7 @@ helmet
 		MainMaterialConfig == MITHRIL;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
-		Price = 50;
+		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 	}
 
@@ -1882,7 +1891,7 @@ helmet
 		MainMaterialConfig == GOLD;
 		MaterialConfigChances == 100;
 		DefaultEnchantment = 1;
-		Price = 50;
+		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 	}
 
