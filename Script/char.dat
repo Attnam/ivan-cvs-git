@@ -135,7 +135,7 @@ human
 	NameSingular = "human";
 	Inventory == encryptedscroll;
 
-	/*DefaultArmStrength = 45;
+	DefaultArmStrength = 45;
 	DefaultLegStrength = 45;
 	DefaultDexterity = 35;
 	DefaultAgility = 35;
@@ -159,7 +159,7 @@ human
 	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
 	RightSWeaponSkillHits = 500;
 	LeftSWeaponSkillHits = 500;
-	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }*/
+	Inventory = { 7, wandofstriking, wandoffireballs, wandofhaste, mine, beartrap, stethoscope, oillamp; }
 }
 
 petrus

@@ -6122,7 +6122,7 @@ bool character::SummonMonster()
   while(!Summoned)
     Summoned = protosystem::CreateMonster(game::StringQuestion("Summon which monster?", vector2d(16, 6), WHITE, 0, 80, false));
 
-  Summoned->SetTeam(game::GetTeam(PLAYER_TEAM));//MONSTER_TEAM));
+  Summoned->SetTeam(game::GetTeam(MONSTER_TEAM));
   vector2d Where = GetLevelUnder()->GetNearestFreeSquare(Summoned, GetPos());
 
   if(Where == DIR_ERROR_VECTOR)
