@@ -75,7 +75,7 @@ public:
 	virtual void SitOn(character*);
 	virtual bool HasConsumeEffect() const { return false; } 
 	virtual std::string GetConsumeQuestion() const { return std::string("Do you want to consume ") + Name(DEFINITE) + std::string("?"); }
-	virtual void Consume() {}
+	virtual void Consume(character*) {}
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

@@ -395,7 +395,7 @@ bool character::Consume()
 {
 	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetOverLevelTerrain()->HasConsumeEffect() && game::BoolQuestion(GetLevelSquareUnder()->GetOverLevelTerrain()->GetConsumeQuestion() + std::string(" [y/N]")))
 	{
-		GetLevelSquareUnder()->GetOverLevelTerrain()->Consume();
+		GetLevelSquareUnder()->GetOverLevelTerrain()->Consume(this);
 		return true;
 	
 	}
@@ -3187,4 +3187,46 @@ void character::ReceiveKoboldFleshEffect(long SizeOfEffect)
 	}
 	else
 		ADD_MESSAGE("This stuff tastes really funny.");
+}
+
+bool character::ChangeRandomStat(short HowMuch)
+{
+	// Strength, Endurance, Agility, Perception
+	for(ushort c = 0; c < 15; c++)
+		switch(RAND() % 4)
+		{
+		case 0:
+			if(GetStrength() > -HowMuch + 1)
+			{
+				SetStrength(GetStrength() + HowMuch);
+				return true;
+			}
+		break;
+
+		case 1:
+			if(GetEndurance() > -HowMuch + 1)
+			{
+				SetEndurance(GetEndurance() + HowMuch);
+				return true;
+			}
+		break;
+
+		case 2:
+			if(GetAgility() > -HowMuch + 1)
+			{
+				SetAgility(GetAgility() + HowMuch);
+				return true;
+			}
+		break;
+
+		case 3:
+			if(GetPerception() > -HowMuch + 1)
+			{
+				SetPerception(GetPerception() + HowMuch);
+				return true;
+			}
+		break;
+		}
+	
+	return false; // No stat could be lowered (tried randomly 15 times)
 }

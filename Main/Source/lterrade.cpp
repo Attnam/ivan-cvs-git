@@ -392,7 +392,37 @@ void doublebed::SitOn(character*)
 	ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
 }
 
-void fountain::Consume()
+void fountain::Consume(character* Drinker)
 {
-	ADD_MESSAGE("You feel that the coders have not yet coded this.");
+	switch(RAND() % 3)
+	{
+	case 0:
+		ADD_MESSAGE("The water tastes good.");
+		Drinker->SetNP(Drinker->GetNP() + 30);
+	break;
+
+	case 1:
+		ADD_MESSAGE("The water is contaminated!");
+		Drinker->SetNP(Drinker->GetNP() + 5);
+		Drinker->ChangeRandomStat(-1);
+
+		if(!(RAND() % 5))
+			Drinker->Polymorph(protosystem::CreateMonster(false));
+	break;
+	
+	case 2:
+		ADD_MESSAGE("The water tasted very good.");
+		Drinker->SetNP(Drinker->GetNP() + 50);
+		Drinker->ChangeRandomStat(1);
+	default:
+		DryOut(); 
+		// fountain no longer exists: don't do anything here.
+	}
+}
+
+
+void fountain::DryOut()
+{
+	ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
+	GetLevelSquareUnder()->SetOverLevelTerrain(new empty);
 }
