@@ -1,6 +1,11 @@
+December 06 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* I mixed to gods in last entry, so now that is fixed...
+	* Cleptia now gives invisibility state if haste is already activated. If even invisibility is active, then it adds time to one of the activated states. 
+
 December 05 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
-	 * Cleptis' effect changed
+	 * Infuscor's effect changed
 	 * Corrected bug with Beartraps and CheckDeath
 	
 December 5 2002 Timo Kiviluoto <sonor@phpoint.fi>

@@ -455,8 +455,21 @@ void loricatus::PrayBadEffect()
 
 void cleptia::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
-  game::GetPlayer()->BeginTemporaryState(HASTE, 250);
+  if(!game::GetPlayer()->StateIsActivated(HASTE))
+    {
+      ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
+      game::GetPlayer()->BeginTemporaryState(HASTE, 250);
+      return;
+    }
+  if(!game::GetPlayer()->StateIsActivated(INVISIBLE))
+    {
+      ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GOD_NAME);
+      game::GetPlayer()->BeginTemporaryState(INVISIBLE, 250);
+      return;
+    }
+  ADD_MESSAGE("Cleptia helps you, but you really don't know how.");  
+  ushort StateToActivate = RAND() % 2 ? HASTE : INVISIBLE;
+  game::GetPlayer()->BeginTemporaryState(StateToActivate, 250);
 }
 
 void cleptia::PrayBadEffect()
