@@ -142,7 +142,7 @@ class ITEM
 		SetSize(150);
 	},
 public:
-	virtual ushort Possibility() const RET(0)
+	virtual ushort Possibility() const RET(25)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,16))
 	virtual std::string NameSingular() const RET("long sword")
 	virtual float OfferModifier() const RET(0.5)
@@ -536,7 +536,7 @@ class ITEM
 		SetSize(0);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(5)
 	virtual std::string NameSingular() const RET("nut")
 	virtual float OfferModifier() const RET(10)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 25; default: return 0; } }
@@ -698,7 +698,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(5)
 	virtual std::string NameSingular() const RET("cheap copy of the left nut of Perttu")
 	virtual std::string NamePlural() const RET("cheap copies of the left nut of Perttu")
 	virtual long Score() const RET(1)
@@ -768,7 +768,7 @@ class ITEM
 		SetSize(50);
 	},
 public:
-	virtual ushort Possibility() const RET(10)
+	virtual ushort Possibility() const RET(5)
 	virtual std::string Name(uchar Case) const RET(NameNormal(Case, "a"))
 	virtual std::string NameSingular() const RET("head of an Enner Beast")
 	virtual long Score() const RET(250);
