@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Lookmode now shows if a monster has panicked.
+	
 January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Intact and broken battle-axe, bastard sword, scythe and club pictures added

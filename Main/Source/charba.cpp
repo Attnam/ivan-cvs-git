@@ -3003,18 +3003,22 @@ void character::DisplayInfo(std::string& Msg)
 	Msg << " is at danger level " << DangerLevel() << " and";*/
 
       if(GetTeam() == game::GetPlayer()->GetTeam())
-	Msg << " is tame.";
+	Msg << " is tame";
       else
 	{
 	  uchar Relation = GetRelation(game::GetPlayer());
 
 	  if(Relation == HOSTILE)
-	    Msg << " is hostile.";
+	    Msg << " is hostile";
 	  else if(Relation == UNCARING)
-	    Msg << " does not care about you.";
+	    Msg << " does not care about you";
 	  else
-	    Msg << " is friendly.";
+	    Msg << " is friendly";
 	}
+      if(StateIsActive(PANIC))
+	Msg << " and panicked.";
+      else
+	Msg << '.';
     }
 }
 
