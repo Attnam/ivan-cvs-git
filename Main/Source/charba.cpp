@@ -3015,7 +3015,7 @@ void character::DisplayInfo(std::string& Msg)
 	  else
 	    Msg << " is friendly";
 	}
-      if(StateIsActive(PANIC))
+      if(StateIsActivated(PANIC))
 	Msg << " and panicked.";
       else
 	Msg << '.';
