@@ -1,4 +1,4 @@
-Programmers (in order of actual code completed):
+Programming (in order of actual code completed):
 	Timo Kiviluoto
 	Heikki Sairanen
 	Ilari Kaartinen
