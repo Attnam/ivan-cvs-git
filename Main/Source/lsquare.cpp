@@ -2,23 +2,19 @@
 #include "igraph.h"
 #include "lsquare.h"
 #include "stack.h"
-#include "strover.h"
 #include "lterrain.h"
 #include "level.h"
 #include "item.h"
 #include "proto.h"
 #include "message.h"
+#include "strover.h"
 
 levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), Emitation(0), DivineOwner(0), Fluided(false)
 {
 	Stack = new stack(this);
-	GetStack()->SetSquareUnder(this);
 
 	for(ushort c = 0; c < 4; c++)	//Is there a better way to do this? Only Stroustrup knows...
-	{
 		SideStack[c] = new stack(this);
-		SideStack[c]->SetSquareUnder(this);
-	}
 }
 
 levelsquare::~levelsquare(void)
@@ -120,7 +116,7 @@ void levelsquare::UpdateMemorizedAndDraw(void)
 	if(game::GetSeeWholeMapCheat())
 		RealLuminance = 256;
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4), RealLuminance);
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), RealLuminance);
 }
 
 void levelsquare::Emitate(void)
@@ -292,12 +288,9 @@ bool levelsquare::Close(character* Closer)
 	}
 }
 
-void levelsquare::Save(std::ofstream* SaveFile) const
+void levelsquare::Save(std::ofstream& SaveFile) const
 {
 	square::Save(SaveFile);
-
-	GetGroundLevelTerrain()->Save(SaveFile);
-	GetOverLevelTerrain()->Save(SaveFile);
 
 	GetStack()->Save(SaveFile);
 
@@ -308,31 +301,27 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 
 	ushort EmitterLength = Emitter.Length();
 
-	SaveFile->write((char*)&EmitterLength, sizeof(EmitterLength));
+	SaveFile.write((char*)&EmitterLength, sizeof(EmitterLength));
 
 	for(ushort c = 0; c < Emitter.Length(); c++)
 	{
-		SaveFile->write((char*)&Emitter.Access(c).Pos, sizeof(Emitter.Access(c).Pos));
-		SaveFile->write((char*)&Emitter.Access(c).DilatedEmitation, sizeof(Emitter.Access(c).DilatedEmitation));
+		SaveFile.write((char*)&Emitter.Access(c).Pos, sizeof(Emitter.Access(c).Pos));
+		SaveFile.write((char*)&Emitter.Access(c).DilatedEmitation, sizeof(Emitter.Access(c).DilatedEmitation));
 	}
 
-	SaveFile->write((char*)&Fluided, sizeof(Fluided));
+	SaveFile.write((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
 		GetMotherLevel()->GetFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	SaveFile->write((char*)&Emitation, sizeof(Emitation));
-	SaveFile->write((char*)&DivineOwner, sizeof(DivineOwner));
-	*SaveFile += Engraved;
-	*SaveFile += RememberedItems;
+	SaveFile.write((char*)&Emitation, sizeof(Emitation));
+	SaveFile.write((char*)&DivineOwner, sizeof(DivineOwner));
+	SaveFile << Engraved << RememberedItems;
 }
 
-void levelsquare::Load(std::ifstream* SaveFile)
+void levelsquare::Load(std::ifstream& SaveFile)
 {
 	square::Load(SaveFile);
-
-	SetGroundLevelTerrain(prototypesystem::LoadGroundLevelTerrain(SaveFile));
-	SetOverLevelTerrain(prototypesystem::LoadOverLevelTerrain(SaveFile));
 
 	Stack->Load(SaveFile);
 
@@ -343,27 +332,27 @@ void levelsquare::Load(std::ifstream* SaveFile)
 
 	ushort EmitterLength;
 
-	SaveFile->read((char*)&EmitterLength, sizeof(EmitterLength));
+	SaveFile.read((char*)&EmitterLength, sizeof(EmitterLength));
 
 	for(ushort c = 0; c < EmitterLength; c++)
 	{
 		vector EPos;
 		ushort DilatedEmitation;
-		SaveFile->read((char*)&EPos, sizeof(EPos));
-		SaveFile->read((char*)&DilatedEmitation, sizeof(DilatedEmitation));
+		SaveFile.read((char*)&EPos, sizeof(EPos));
+		SaveFile.read((char*)&DilatedEmitation, sizeof(DilatedEmitation));
 		emitter E(EPos, DilatedEmitation);
 		Emitter.Add(E);
 	}
 
-	SaveFile->read((char*)&Fluided, sizeof(Fluided));
+	SaveFile.read((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
 		GetMotherLevel()->GetFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	SaveFile->read((char*)&Emitation, sizeof(Emitation));
-	SaveFile->read((char*)&DivineOwner, sizeof(DivineOwner));
-	*SaveFile -= Engraved;
-	*SaveFile -= RememberedItems;
+	SaveFile.read((char*)&Emitation, sizeof(Emitation));
+	SaveFile.read((char*)&DivineOwner, sizeof(DivineOwner));
+
+	SaveFile >> Engraved >> RememberedItems;
 }
 
 void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
@@ -396,7 +385,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 				if(long(GET_GREEN(Color) + Change[1]) > 255) Change[1] = 255 - GET_GREEN(Color);
 				if(long(GET_BLUE(Color) + Change[2]) > 255) Change[2] = 255 - GET_BLUE(Color);
 
-				game::GetCurrentLevel()->GetFluidBuffer()->PutPixel(Cords.X + game::CMoveVector()[d].X, Cords.Y + game::CMoveVector()[d].Y,
+				game::GetCurrentLevel()->GetFluidBuffer()->PutPixel(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y,
 				MAKE_RGB(GET_RED(Color) + Change[0],
 				GET_GREEN(Color) + Change[1],
 				GET_BLUE(Color) + Change[2]) );
@@ -578,7 +567,7 @@ void levelsquare::SetGroundLevelTerrain(groundlevelterrain* What)
 	GroundTerrain = What;
 
 	if(What)
-		What->SetLevelSquareUnder(this);
+		What->SetSquareUnder(this);
 }
 
 void levelsquare::SetOverLevelTerrain(overlevelterrain* What)
@@ -586,7 +575,7 @@ void levelsquare::SetOverLevelTerrain(overlevelterrain* What)
 	OverTerrain = What;
 
 	if(What)
-		What->SetLevelSquareUnder(this);
+		What->SetSquareUnder(this);
 }
 
 groundlevelterrain* levelsquare::GetGroundLevelTerrain(void) const
@@ -598,3 +587,4 @@ overlevelterrain* levelsquare::GetOverLevelTerrain(void) const
 {
 	return (overlevelterrain*)OverTerrain;
 }
+

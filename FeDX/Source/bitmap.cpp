@@ -121,7 +121,7 @@ bitmap::~bitmap(void)
 			graphics::BitmapContainer.erase(graphics::BitmapContainer.begin() + c);
 }
 
-void bitmap::Save(std::ofstream* SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
+void bitmap::Save(std::ofstream& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -131,12 +131,12 @@ void bitmap::Save(std::ofstream* SaveFile, ushort XPos, ushort YPos, ushort XSiz
 	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
 
 	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile->write((char*)Buffer, XSize << 1);
+		SaveFile.write((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
-void bitmap::Load(std::ifstream* SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
+void bitmap::Load(std::ifstream& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
 {
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -146,7 +146,7 @@ void bitmap::Load(std::ifstream* SaveFile, ushort XPos, ushort YPos, ushort XSiz
 	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
 
 	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile->read((char*)Buffer, XSize << 1);
+		SaveFile.read((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
@@ -182,8 +182,6 @@ void bitmap::Save(std::string FileName) const
 		}
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	SaveFile.close();
 }
 
 void bitmap::PutPixel(ushort X, ushort Y, ushort Color)

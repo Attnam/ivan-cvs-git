@@ -11,7 +11,7 @@
 #define	INDEFINITE		6	//0000110
 
 #include <string>
-#include <fstream>
+#include <ivanfstr.h>
 
 #include "typedef.h"
 #include "vector.h"
@@ -20,7 +20,7 @@ class independency
 {
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-	virtual void Save(std::ofstream*) const;
+	virtual void Save(std::ofstream&) const;
 	virtual void DrawToTileBuffer(void) const = 0;
 	virtual std::string GetNameSingular(void) const { return NameSingular(); }
 	virtual std::string GetNamePlural(void) const { return NamePlural(); }
@@ -34,3 +34,4 @@ protected:
 };
 
 #endif
+

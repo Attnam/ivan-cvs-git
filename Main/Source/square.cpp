@@ -17,36 +17,34 @@ square::~square(void)
 	delete Flyer;
 }
 
-void square::Save(std::ofstream* SaveFile) const
+void square::Save(std::ofstream& SaveFile) const
 {
-	if(Character)
-		Character->Save(SaveFile);
-	else
-	{
-		ushort Type = 0;
+	SaveFile << GroundTerrain << OverTerrain;
 
-		SaveFile->write((char*)&Type, sizeof(Type));
-	}
+	SaveFile << Character;
 
-	SaveFile->write((char*)&Known, sizeof(Known));
+	SaveFile.write((char*)&Known, sizeof(Known));
 
 	if(Known)
 		GetMotherArea()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	SaveFile->write((char*)&Flag, sizeof(Flag));
+	SaveFile.write((char*)&Flag, sizeof(Flag));
 }
 
-void square::Load(std::ifstream* SaveFile)
+void square::Load(std::ifstream& SaveFile)
 {
-	Character = prototypesystem::LoadCharacter(SaveFile);
-	if(Character) Character->SetSquareUnder(this);
+	game::SetSquareInLoad(this);
 
-	SaveFile->read((char*)&Known, sizeof(Known));
+	SaveFile >> GroundTerrain >> OverTerrain;
+
+	SaveFile >> Character;
+
+	SaveFile.read((char*)&Known, sizeof(Known));
 
 	if(Known)
 		GetMotherArea()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	SaveFile->read((char*)&Flag, sizeof(Flag));
+	SaveFile.read((char*)&Flag, sizeof(Flag));
 }
 
 void square::DrawCheat(void) const
@@ -56,7 +54,7 @@ void square::DrawCheat(void) const
 	if(CCharacter())
 		CCharacter()->DrawToTileBuffer();
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4));
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 }
 
 void square::DrawMemorized(void) const
@@ -64,7 +62,7 @@ void square::DrawMemorized(void) const
 	if(GetKnown())
 	{
 		MotherArea->GetMemorized()->Blit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
-		igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4));
+		igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 	}
 }
 
@@ -78,3 +76,4 @@ void square::RemoveCharacter(void)
 {
 	SetCharacter(0);
 }
+

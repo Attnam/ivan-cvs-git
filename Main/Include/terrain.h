@@ -3,18 +3,18 @@
 
 #include <fstream>
 
-class groundterrain
+#include "typeable.h"
+#include "drawable.h"
+
+class groundterrain : virtual public typeable, virtual public drawable
 {
-public:
-	virtual void DrawToTileBuffer(void) const = 0;
 };
 
-class overterrain
+class overterrain : virtual public typeable, virtual public drawable
 {
 public:
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
-	virtual void DrawToTileBuffer(void) const = 0;
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void SetIsWalkable(bool What)			{ IsWalkable = What; }
 	virtual bool GetIsWalkable(void) const			{ return IsWalkable; }
 protected:
@@ -22,3 +22,4 @@ protected:
 };
 
 #endif
+

@@ -6,6 +6,7 @@
 #include "level.h"
 #include "material.h"
 #include "proto.h"
+//#include "save.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -23,7 +24,7 @@ worldmap::~worldmap(void)
 {
 }
 
-void worldmap::Save(std::ofstream* SaveFile) const
+void worldmap::Save(std::ofstream& SaveFile) const
 {
 	area::Save(SaveFile);
 
@@ -31,7 +32,7 @@ void worldmap::Save(std::ofstream* SaveFile) const
 		Map[0][c]->Save(SaveFile);
 }
 
-void worldmap::Load(std::ifstream* SaveFile)
+void worldmap::Load(std::ifstream& SaveFile)
 {
 	area::Load(SaveFile);
 
@@ -47,12 +48,12 @@ void worldmap::Load(std::ifstream* SaveFile)
 
 void worldmap::Draw(void) const
 {
-	ushort XMax = GetXSize() < game::CCamera().X + 50 ? GetXSize() : game::CCamera().X + 50;
-	ushort YMax = GetYSize() < game::CCamera().Y + 30 ? GetYSize() : game::CCamera().Y + 30;
+	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
+	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
 	if(game::GetSeeWholeMapCheat())
-		for(ushort x = game::CCamera().X; x < XMax; x++)
-			for(ushort y = game::CCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; x++)
+			for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			{
 				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
@@ -62,8 +63,8 @@ void worldmap::Draw(void) const
 					Map[x][y]->DrawCheat();
 			}
 	else
-		for(ushort x = game::CCamera().X; x < XMax; x++)
-			for(ushort y = game::CCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; x++)
+			for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			{
 				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
@@ -104,7 +105,7 @@ void worldmap::Generate(void)
 				ulong HeightNear = 0;
 				for(uchar c = 0; c < 8; c++)
 				{
-					vector Temp(vector(x,y) + game::CMoveVector()[c]);
+					vector Temp(vector(x,y) + game::GetMoveVector(c));
 						if(short(Temp.X) < XSize && short(Temp.Y) < YSize && short(Temp.X) > 0 && short(Temp.Y) > 0) 
 							HeightNear += Data[Temp.X][Temp.Y];
 					Buffer[x][y] = HeightNear >> 3;
@@ -224,7 +225,4 @@ void worldmap::GenerateTerrain(void)
 	     	}
 		}
 }
-
-
-
 

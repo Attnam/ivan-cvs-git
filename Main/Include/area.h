@@ -158,13 +158,13 @@ class area
 public:
 	area(ushort, ushort);
 	area(void) {}
-	~area(void);
+	virtual ~area(void);
 	virtual void Generate(void) = 0;
 	virtual void Draw(void) const = 0;
 	virtual void AddCharacter(vector, character*);
 	virtual void RemoveCharacter(vector);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual ushort GetFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
 	virtual square* operator [] (vector Pos) const { return Map[Pos.X][Pos.Y]; }
 	virtual square* GetSquare(vector Pos) const { return Map[Pos.X][Pos.Y]; }
@@ -182,3 +182,4 @@ protected:
 };
 
 #endif
+

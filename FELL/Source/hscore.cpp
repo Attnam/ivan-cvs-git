@@ -86,10 +86,8 @@ void highscore::Save(std::string File) const
 	{
 		HighScore.write((char*)&Score.Access(c), sizeof(Score.Access(c)));
 
-		HighScore += Entry.Access(c);
+		HighScore << Entry.Access(c);
 	}
-
-	HighScore.close();
 }
 
 void highscore::Load(std::string File)
@@ -110,9 +108,8 @@ void highscore::Load(std::string File)
 		Score.Add(LoadedScore);
 
 		std::string LoadedEntry;
-		HighScore -= LoadedEntry;
+		HighScore >> LoadedEntry;
 		Entry.Add(LoadedEntry);
 	}
-
-	HighScore.close();
 }
+

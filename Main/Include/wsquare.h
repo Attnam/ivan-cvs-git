@@ -16,9 +16,9 @@ class worldmapsquare : public square
 {
 public:
 	worldmapsquare(worldmap*, vector);
-	~worldmapsquare(void);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual ~worldmapsquare(void);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void DrawToTileBuffer(void) const;
 	virtual void UpdateMemorizedAndDraw(void);
 	virtual void SetGroundWorldMapTerrain(groundworldmapterrain*);
@@ -30,12 +30,10 @@ public:
 	virtual void SAltitude(short What) { Altitude = What; }
 	virtual worldmap* GetMotherWorldMap(void) const { return (worldmap*)MotherArea; }
 	virtual void SetMotherWorldMap(worldmap* What) { MotherArea = (area*)What; }
-	virtual groundworldmapterrain* CGroundWorldMapTerrain(void) { return GroundWorldMapTerrain; }
 protected:
 	worldmap* MotherWorldMap;
-	groundworldmapterrain* GroundWorldMapTerrain;
-	overworldmapterrain* OverWorldMapTerrain;
 	short Altitude;
 };
 
 #endif
+

@@ -8,6 +8,7 @@
 #include "game.h"
 #include "proto.h"
 #include "message.h"
+//#include "save.h"
 
 stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {
@@ -159,7 +160,7 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 	return ToBeReturned;
 }
 
-void stack::Optimize(ushort OptimizeBoundary) // Optimizes the inventory
+void stack::Optimize(ushort OptimizeBoundary)
 {
 	if(CNonExistent() > OptimizeBoundary)
 	{
@@ -233,29 +234,31 @@ ulong stack::SumOfMasses(void) const
 	return Sum;
 }
 
-void stack::Save(std::ofstream* SaveFile) const
+void stack::Save(std::ofstream& SaveFile) const
 {
-	SaveFile->write((char*)&Items, sizeof(Items));
+	SaveFile.write((char*)&Items, sizeof(Items));
 
 	for(ushort c = 0; c < Items; c++)
-		Item[c]->Save(SaveFile);
+		SaveFile << Item[c];
 }
 
-void stack::Load(std::ifstream* SaveFile)
+void stack::Load(std::ifstream& SaveFile)
 {
-	SaveFile->read((char*)&Items, sizeof(Items));
+	SaveFile.read((char*)&Items, sizeof(Items));
 
 	if(Items)
 	{
 		Item = new item*[Items];
 
 		for(ushort c = 0; c < Items; c++)
-			Item[c] = prototypesystem::LoadItem(SaveFile);
+			SaveFile >> Item[c];
 	}
 	else
 		Item = 0;
 
 	NonExistent = 0;
+
+	SquareUnder = game::GetSquareInLoad();
 }
 
 ushort stack::SearchItem(item* ToBeSearched) const
@@ -356,3 +359,4 @@ void stack::SetSquareUnder(square* Square)
 {
 	SquareUnder = Square;
 }
+

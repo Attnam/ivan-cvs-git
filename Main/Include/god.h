@@ -38,8 +38,8 @@ public:
 	virtual void AdjustRelation(god*, bool);
 	virtual void AdjustRelation(short Amount);
 	virtual void AdjustTimer(long Amount);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void SetRelation(short Value) { Relation = Value; }
 	virtual void SetTimer(long Value) { Timer = Value; }
 	virtual bool ReceiveOffer(item*);
@@ -250,3 +250,4 @@ protected:
 };
 
 #endif
+

@@ -19,8 +19,8 @@ public:
 	bitmap(const char*);
 	bitmap(ushort, ushort);
 	~bitmap(void);
-	void Save(std::ofstream*, ushort, ushort, ushort, ushort) const;
-	void Load(std::ifstream*, ushort, ushort, ushort, ushort);
+	void Save(std::ofstream&, ushort, ushort, ushort, ushort) const;
+	void Load(std::ifstream&, ushort, ushort, ushort, ushort);
 	void Save(std::string) const;
 	void PutPixel(ushort, ushort, ushort);
 	ushort GetPixel(ushort, ushort) const;

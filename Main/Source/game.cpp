@@ -17,12 +17,16 @@
 #include "lterrain.h"
 #include "worldmap.h"
 #include "message.h"
+#include "pool.h"
+#include "proto.h"
 
 level** game::Level;
 ushort game::Levels = 10, game::Current;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
+area* game::AreaInLoad;
+square* game::SquareInLoad;
 
 bool game::Flag;
 
@@ -142,7 +146,6 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		//WorldMap = new worldmap(128, 128);
 		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
 
@@ -219,13 +222,13 @@ void game::Init(std::string Name)
 		Level[6]->GetLevelSquare(Pos)->FastAddCharacter(new elpuri);
 
 		{
-		for(ushort c = 1; c < Levels; c++)
+		for(ushort c = 0; c < Levels; c++)
 			SaveLevel(SaveName(), c);
 		}
 
-		Current = 0;
+		/*Current = 0;
 
-		Level[0]->Luxify();
+		Level[0]->Luxify();*/
 
 		UpDateCameraX();
 		UpDateCameraY();
@@ -264,13 +267,21 @@ void game::Run(void)
 	{
 		game::GetPlayer()->Act();
  
-		if(!GetRunning())
+		/*if(!GetRunning())
 			break;
 
 		if(!InWilderness)
 			Level[Current]->HandleCharacters();
 		else
-			game::GetPlayer()->SetHasActed(false);
+			game::GetPlayer()->SetHasActed(false);*/
+
+		if(!InWilderness)
+			Level[Current]->HandleCharacters();	// Temporary
+
+		objectpool::Be();
+
+		if(!GetRunning())
+			break;
 
 		BurnHellsContents();
 	}
@@ -453,7 +464,7 @@ void game::panel::Draw(void) const
 	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->GetAttackStrength());
 	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
 	FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
-	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::CCurrent() + 1);
+	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
 	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
 	FONTW->PrintfToDB(600, 564, "Turns: %d", game::GetTurns());
 	if(Player->GetNP() < CRITICALHUNGERLEVEL) FONTR->PrintfToDB(600, 574, "Fainting");
@@ -671,32 +682,32 @@ void game::StoryScreen(const char* Text, bool GKey)
 
 bool game::Save(std::string SaveName)
 {
-	std::ofstream* SaveFile = new std::ofstream((SaveName + ".sav").c_str(), std::ios::out | std::ios::binary);
+	std::ofstream SaveFile((SaveName + ".sav").c_str(), std::ios::out | std::ios::binary);
 
-	*SaveFile += PlayerName;
-
-	if(!SaveFile->is_open())
+	if(!SaveFile.is_open())
 		return false;
 
-	SaveFile->write((char*)&Levels, sizeof(Levels));
-	SaveFile->write((char*)&Current, sizeof(Current));
-	SaveFile->write((char*)&Camera, sizeof(Camera));
-	SaveFile->write((char*)&WizardMode, sizeof(WizardMode));
-	SaveFile->write((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
-	SaveFile->write((char*)&Gamma, sizeof(Gamma));
-	SaveFile->write((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
-	SaveFile->write((char*)&BaseScore, sizeof(BaseScore));
-	SaveFile->write((char*)&Turns, sizeof(Turns));
-	SaveFile->write((char*)&SoftGamma, sizeof(SoftGamma));
-	SaveFile->write((char*)&InWilderness, sizeof(InWilderness));
+	SaveFile << PlayerName;
+	SaveFile.write((char*)&Levels, sizeof(Levels));
+	SaveFile.write((char*)&Current, sizeof(Current));
+	SaveFile.write((char*)&Camera, sizeof(Camera));
+	SaveFile.write((char*)&WizardMode, sizeof(WizardMode));
+	SaveFile.write((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
+	SaveFile.write((char*)&Gamma, sizeof(Gamma));
+	SaveFile.write((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
+	SaveFile.write((char*)&BaseScore, sizeof(BaseScore));
+	SaveFile.write((char*)&Turns, sizeof(Turns));
+	SaveFile.write((char*)&SoftGamma, sizeof(SoftGamma));
+	SaveFile.write((char*)&InWilderness, sizeof(InWilderness));
 
 	time_t Time = time(0);
 	srand(Time);
-	SaveFile->write((char*)&Time, sizeof(Time));
+	SaveFile.write((char*)&Time, sizeof(Time));
 
-	WorldMap->Save(SaveFile);
-
-	SaveLevel(SaveName, Current, false);
+	if(InWilderness)
+		WorldMap->Save(SaveFile);
+	else
+		SaveLevel(SaveName, Current, false);
 
 	{
 	for(ushort c = 1; GetGod(c); c++)
@@ -705,43 +716,37 @@ bool game::Save(std::string SaveName)
 
 	vector Pos = game::GetPlayer()->GetPos();
 
-	SaveFile->write((char*)&Pos, sizeof(Pos));
+	SaveFile.write((char*)&Pos, sizeof(Pos));
 
 	for(ushort c = 0; c < GetLevels(); c++)
-		*SaveFile += LevelMsg[c];
-
-	SaveFile->close();
+		SaveFile << LevelMsg[c];
 
 	return true;
 }
 
 bool game::Load(std::string SaveName)
 {
-	std::ifstream* SaveFile = new std::ifstream((SaveName + ".sav").c_str(), std::ios::in | std::ios::binary);
+	std::ifstream SaveFile((SaveName + ".sav").c_str(), std::ios::in | std::ios::binary);
 
-	if(!SaveFile->is_open())
+	if(!SaveFile.is_open())
 		return false;
 
-	*SaveFile -= PlayerName;
-
-	SaveFile->read((char*)&Levels, sizeof(Levels));
-	SaveFile->read((char*)&Current, sizeof(Current));
-	SaveFile->read((char*)&Camera, sizeof(Camera));
-	SaveFile->read((char*)&WizardMode, sizeof(WizardMode));
-	SaveFile->read((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
-	SaveFile->read((char*)&Gamma, sizeof(Gamma));
-	SaveFile->read((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
-	SaveFile->read((char*)&BaseScore, sizeof(BaseScore));
-	SaveFile->read((char*)&Turns, sizeof(Turns));
-	SaveFile->read((char*)&SoftGamma, sizeof(SoftGamma));
-	SaveFile->read((char*)&InWilderness, sizeof(InWilderness));
+	SaveFile >> PlayerName;
+	SaveFile.read((char*)&Levels, sizeof(Levels));
+	SaveFile.read((char*)&Current, sizeof(Current));
+	SaveFile.read((char*)&Camera, sizeof(Camera));
+	SaveFile.read((char*)&WizardMode, sizeof(WizardMode));
+	SaveFile.read((char*)&SeeWholeMapCheat, sizeof(SeeWholeMapCheat));
+	SaveFile.read((char*)&Gamma, sizeof(Gamma));
+	SaveFile.read((char*)&GoThroughWallsCheat, sizeof(GoThroughWallsCheat));
+	SaveFile.read((char*)&BaseScore, sizeof(BaseScore));
+	SaveFile.read((char*)&Turns, sizeof(Turns));
+	SaveFile.read((char*)&SoftGamma, sizeof(SoftGamma));
+	SaveFile.read((char*)&InWilderness, sizeof(InWilderness));
 
 	time_t Time;
-	SaveFile->read((char*)&Time, sizeof(Time));
+	SaveFile.read((char*)&Time, sizeof(Time));
 	srand(Time);
-
-	WorldMap = new worldmap;
-	WorldMap->Load(SaveFile);
 
 	Level = new level*[Levels];
 
@@ -750,7 +755,13 @@ bool game::Load(std::string SaveName)
 		Level[c] = 0;
 	}
 
-	LoadLevel(SaveName);
+	if(InWilderness)
+	{
+		WorldMap = new worldmap;
+		WorldMap->Load(SaveFile);
+	}
+	else
+		LoadLevel(SaveName);
 
 	{
 	for(ushort c = 1; GetGod(c); c++)
@@ -759,14 +770,12 @@ bool game::Load(std::string SaveName)
 
 	vector Pos;
 
-	SaveFile->read((char*)&Pos, sizeof(Pos));
+	SaveFile.read((char*)&Pos, sizeof(Pos));
 
 	SetPlayer(GetCurrentArea()->GetSquare(Pos)->CCharacter());
 
 	for(ushort c = 0; c < GetLevels(); c++)
-		*SaveFile -= LevelMsg[c];
-
-	SaveFile->close();
+		SaveFile >> LevelMsg[c];
 
 	return true;
 }
@@ -877,7 +886,7 @@ int game::GetMoveCommandKey(vector A, vector B)
 {
 	for(uchar c = 0; c < 8; c++)
 	{
-		if((A + game::CMoveVector()[c]) == B)
+		if((A + game::GetMoveVector(c)) == B)
 			return game::MoveCommandKey[c];
 	}
 	return 0xFF;
@@ -914,8 +923,8 @@ void game::SendToHell(character* PassedAway)
 vector game::GetDirectionVectorForKey(ushort Key)
 {
 	for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-		if(Key == game::GetMoveCommandKey()[c])
-			return game::CMoveVector()[c];
+		if(Key == game::GetMoveCommandKey(c))
+			return game::GetMoveVector(c);
 
 	return vector(0,0);
 }
@@ -1017,10 +1026,10 @@ float game::Difficulty(void)
 
 void game::ShowLevelMessage(void)
 {
-	if(LevelMsg[CCurrent()].length())
-		ADD_MESSAGE(LevelMsg[CCurrent()].c_str());
+	if(LevelMsg[GetCurrent()].length())
+		ADD_MESSAGE(LevelMsg[GetCurrent()].c_str());
 
-	LevelMsg[CCurrent()] = "";
+	LevelMsg[GetCurrent()] = "";
 }
 
 void game::TriggerQuestForMaakotkaShirt(void)
@@ -1105,7 +1114,7 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 		int Key = GETKEY();
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::GetMoveCommandKey()[c])
+			if(Key == game::GetMoveCommandKey(c))
 				return c;
 
 		if(DefaultAnswer < 8) return DefaultAnswer;
@@ -1116,16 +1125,12 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 
 void game::SaveLevel(std::string SaveName, ushort Index, bool DeleteAfterwards)
 {
-	std::ofstream* SaveFile = new std::ofstream((SaveName + ".l" + Index).c_str(), std::ios::out | std::ios::binary);
+	std::ofstream SaveFile((SaveName + ".l" + Index).c_str(), std::ios::out | std::ios::binary);
 
-	if(!SaveFile->is_open())
+	if(!SaveFile.is_open())
 		ABORT("Level lost!");
 
 	Level[Index]->Save(SaveFile);
-
-	SaveFile->close();
-
-	delete SaveFile;
 
 	if(DeleteAfterwards)
 	{
@@ -1136,17 +1141,13 @@ void game::SaveLevel(std::string SaveName, ushort Index, bool DeleteAfterwards)
 
 void game::LoadLevel(std::string SaveName, ushort Index)
 {
-	std::ifstream* SaveFile = new std::ifstream((SaveName + ".l" + Index).c_str(), std::ios::in | std::ios::binary);
+	std::ifstream SaveFile((SaveName + ".l" + Index).c_str(), std::ios::in | std::ios::binary);
 
-	if(!SaveFile->is_open())
+	if(!SaveFile.is_open())
 		ABORT("Level gone!");
 
 	Level[Index] = new level;
 	Level[Index]->Load(SaveFile);
-
-	SaveFile->close();
-
-	delete SaveFile;
 }
 
 void game::RemoveSaves(void)
@@ -1168,3 +1169,4 @@ void game::SetPlayer(character* NP)
 	if(Player)
 		Player->SetIsPlayer(true);
 }
+

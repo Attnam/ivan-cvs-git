@@ -2,45 +2,50 @@
 #include "error.h"
 #include "proto.h"
 #include "material.h"
+#include "pool.h"
+
+object::object(bool AddToPool) : InPool(AddToPool)
+{
+	if(AddToPool)
+		SetPoolIterator(objectpool::Add(this));
+}
 
 object::~object(void)
 {
 	EraseMaterials();
+
+	if(InPool)
+		objectpool::Remove(GetPoolIterator());
 }
 
-void object::Save(std::ofstream* SaveFile) const
+void object::Save(std::ofstream& SaveFile) const
 {
-	ushort TypeVar = Type();
-
-	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
+	typeable::Save(SaveFile);
 
 	ushort Materials = Material.size();
 
-	SaveFile->write((char*)&Materials, sizeof(Materials));
+	SaveFile.write((char*)&Materials, sizeof(Materials));
 
 	for(ushort c = 0; c < Materials; c++)
-		if(Material[c])
-			Material[c]->Save(SaveFile);
-		else
-		{
-			ushort TypeVar = 0;
+		SaveFile << Material[c];
 
-			SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
-		}
-
-	SaveFile->write((char*)&Size, sizeof(Size));
+	SaveFile.write((char*)&Size, sizeof(Size));
 }
 
-void object::Load(std::ifstream* SaveFile)
+void object::Load(std::ifstream& SaveFile)
 {
+	typeable::Load(SaveFile);
+
 	ushort Materials;
 
-	SaveFile->read((char*)&Materials, sizeof(Materials));
+	SaveFile.read((char*)&Materials, sizeof(Materials));
+
+	Material.resize(Materials);
 
 	for(ushort c = 0; c < Materials; c++)
-		Material.push_back(prototypesystem::LoadMaterial(SaveFile));
+		SaveFile >> Material[c];
 
-	SaveFile->read((char*)&Size, sizeof(Size));
+	SaveFile.read((char*)&Size, sizeof(Size));
 }
 
 void object::InitMaterials(ushort Materials, ...)
@@ -104,8 +109,8 @@ std::string object::NameArtifact(uchar Case, uchar DefaultMaterial) const
 {
 	std::string Temp;
 
-	if(!CMaterial(0)->IsType(DefaultMaterial))
-		Temp = CMaterial(0)->Name() + " " + NameSingular();
+	if(!GetMaterial(0)->IsType(DefaultMaterial))
+		Temp = GetMaterial(0)->Name() + " " + NameSingular();
 	else
 		Temp = NameSingular();
 
@@ -143,7 +148,7 @@ std::string object::NameWithMaterial(uchar Case) const
 
 std::string object::NameHandleDefaultMaterial(uchar Case, std::string Article, uchar DefaultMaterial) const
 {
-	if(!CMaterial(0)->IsType(DefaultMaterial))
+	if(!GetMaterial(0)->IsType(DefaultMaterial))
 		return NameWithMaterial(Case);
 	else
 		return NameNormal(Case, Article);
@@ -151,43 +156,43 @@ std::string object::NameHandleDefaultMaterial(uchar Case, std::string Article, u
 
 std::string object::NameContainer(uchar Case) const
 {
-	if(!CMaterial(1))
+	if(!GetMaterial(1))
 	{
 		if(!(Case & PLURAL))
 			if(!(Case & DEFINEBIT))
-				return std::string("empty ") + CMaterial(0)->Name() + " " + NameSingular();
+				return std::string("empty ") + GetMaterial(0)->Name() + " " + NameSingular();
 			else
 				if(!(Case & INDEFINEBIT))
-					return std::string("the empty ") + CMaterial(0)->Name() + " " + NameSingular();
+					return std::string("the empty ") + GetMaterial(0)->Name() + " " + NameSingular();
 				else
-					return std::string("an empty ") + CMaterial(0)->Name() + " " + NameSingular();
+					return std::string("an empty ") + GetMaterial(0)->Name() + " " + NameSingular();
 		else
 			if(!(Case & DEFINEBIT))
-				return std::string("empty ") + CMaterial(0)->Name() + " " + NamePlural();
+				return std::string("empty ") + GetMaterial(0)->Name() + " " + NamePlural();
 			else
 				if(!(Case & INDEFINEBIT))
-					return std::string("the empty ") + CMaterial(0)->Name() + " " + NamePlural();
+					return std::string("the empty ") + GetMaterial(0)->Name() + " " + NamePlural();
 				else
-					return std::string("empty ") + CMaterial(0)->Name() + " " + NamePlural();
+					return std::string("empty ") + GetMaterial(0)->Name() + " " + NamePlural();
 	}
 	else
 	{
 		if(!(Case & PLURAL))
 			if(!(Case & DEFINEBIT))
-				return CMaterial(0)->Name() + " " + NameSingular() + " full of " + CMaterial(1)->Name();
+				return GetMaterial(0)->Name() + " " + NameSingular() + " full of " + GetMaterial(1)->Name();
 			else
 				if(!(Case & INDEFINEBIT))
-					return std::string("the ") + CMaterial(0)->Name() + " " + NameSingular() + " full of " + CMaterial(1)->Name();
+					return std::string("the ") + GetMaterial(0)->Name() + " " + NameSingular() + " full of " + GetMaterial(1)->Name();
 				else
-					return CMaterial(0)->Name(INDEFINITE) + " " + NameSingular() + " full of " + CMaterial(1)->Name();
+					return GetMaterial(0)->Name(INDEFINITE) + " " + NameSingular() + " full of " + GetMaterial(1)->Name();
 		else
 			if(!(Case & DEFINEBIT))
-				return CMaterial(0)->Name() + " " + NamePlural() + " full of " + CMaterial(1)->Name();
+				return GetMaterial(0)->Name() + " " + NamePlural() + " full of " + GetMaterial(1)->Name();
 			else
 				if(!(Case & INDEFINEBIT))
-					return std::string("the ") + CMaterial(0)->Name() + " " + NamePlural() + " full of " + CMaterial(1)->Name();
+					return std::string("the ") + GetMaterial(0)->Name() + " " + NamePlural() + " full of " + GetMaterial(1)->Name();
 				else
-					return CMaterial(0)->Name() + " " + NamePlural() + " full of " + CMaterial(1)->Name();
+					return GetMaterial(0)->Name() + " " + NamePlural() + " full of " + GetMaterial(1)->Name();
 	}
 }
 
@@ -221,20 +226,20 @@ std::string object::NameThingsThatAreLikeLumps(uchar Case, std::string Article) 
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
-			return NameSingular() + " of " + CMaterial(0)->Name();
+			return NameSingular() + " of " + GetMaterial(0)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NameSingular() + " of " + CMaterial(0)->Name();
+				return std::string("the ") + NameSingular() + " of " + GetMaterial(0)->Name();
 			else
-				return Article + " " + NameSingular() + " of " + CMaterial(0)->Name();
+				return Article + " " + NameSingular() + " of " + GetMaterial(0)->Name();
 	else
 		if(!(Case & DEFINEBIT))
-			return NamePlural() + " of " + CMaterial(0)->Name();
+			return NamePlural() + " of " + GetMaterial(0)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NamePlural() + " of " + CMaterial(0)->Name();
+				return std::string("the ") + NamePlural() + " of " + GetMaterial(0)->Name();
 			else
-				return NamePlural() + " of " + CMaterial(0)->Name();
+				return NamePlural() + " of " + GetMaterial(0)->Name();
 }
 
 void object::EraseMaterials(void)
@@ -244,3 +249,4 @@ void object::EraseMaterials(void)
 
 	Material.resize(0);
 }
+

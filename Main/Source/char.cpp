@@ -18,7 +18,7 @@
 #include "proto.h"
 #include "message.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
 	SetConsumingCurrently(0xFFFF);
 
@@ -331,6 +331,9 @@ bool character::GoDown(void)
 		game::GetCurrentArea()->RemoveCharacter(GetPos());
 		game::SetInWilderness(false);
 		game::SetCurrent(0);
+		delete game::GetWorldMap();
+		game::SetWorldMap(0);
+		game::LoadLevel();
 		game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
@@ -359,8 +362,8 @@ bool character::Open(void)
 			return false;
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::GetMoveCommandKey()[c])
-				return OpenPos(GetPos() + game::CMoveVector()[c]);
+			if(Key == game::GetMoveCommandKey(c))
+				return OpenPos(GetPos() + game::GetMoveVector(c));
 	}
 }
 
@@ -373,7 +376,6 @@ bool character::Close(void)
 	EMPTY_MESSAGES();
 
 	graphics::BlitDBToScreen();
-	//GGG DOUBLEBUFFER->Blit(SCREEN, 0, 0, 0, 0, 800, 16);
 
 	while(true)
 	{
@@ -383,8 +385,8 @@ bool character::Close(void)
 			return false;
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::GetMoveCommandKey()[c])
-				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::CMoveVector()[c])->Close(this))
+			if(Key == game::GetMoveCommandKey(c))
+				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->Close(this))
 				{
 					SetAgilityExperience(GetAgilityExperience() + 25);
 					SetNP(GetNP() - 1);
@@ -576,10 +578,10 @@ void character::Move(vector MoveTo, bool TeleportMove)
 
 		if(GetIsPlayer())
 		{
-			if(GetPos().X < game::CCamera().X + 2 || GetPos().X > game::CCamera().X + 48)
+			if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + 48)
 				game::UpDateCameraX();
 
-			if(GetPos().Y < game::CCamera().Y + 2 || GetPos().Y > game::CCamera().Y + 27)
+			if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
 				game::UpDateCameraY();
 
 			game::GetCurrentArea()->UpdateLOS();
@@ -926,7 +928,7 @@ bool character::Quit(void)
 
 void character::CreateCorpse(void)
 {
-	GetLevelSquareUnder()->GetStack()->AddItem(new corpse(CMaterial(0)));
+	GetLevelSquareUnder()->GetStack()->AddItem(new corpse(GetMaterial(0)));
 
 	SetMaterial(0, 0);
 }
@@ -1196,11 +1198,11 @@ bool character::Talk(void)
 				CorrectKey = true;
 
 			for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-				if(k == game::GetMoveCommandKey()[c] || (k ^ 32) == game::GetMoveCommandKey()[c])
+				if(k == game::GetMoveCommandKey(c) || (k ^ 32) == game::GetMoveCommandKey(c))
 				{
-					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::CMoveVector()[c])->CCharacter())
+					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->CCharacter())
 					{
-						game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::CMoveVector()[c])->CCharacter()->BeTalkedTo(this);
+						game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->CCharacter()->BeTalkedTo(this);
 
 						return true;
 					}
@@ -1219,9 +1221,13 @@ bool character::Talk(void)
 
 }
 
+#include <iostream>
+
 bool character::NOP(void)
 {
 	SetAgilityExperience(GetAgilityExperience() - 5);
+
+	std::cerr << "Kalle!" << std::endl;
 
 	return true;
 }
@@ -1421,7 +1427,60 @@ bool character::Dip(void)
         return false;
 }
 
-void character::Save(std::ofstream* SaveFile) const
+/*void character::Save(std::ofstream& SaveFile) const
+{
+	object::Save(SaveFile);
+
+	SaveFile << Stack;
+	SaveFile << ushort(Wielded ? Stack->SearchItem(Wielded) : 0xFFFF);
+	SaveFile << Strength << Endurance << Agility << Perception;
+	SaveFile << RegenerationCounter;
+	SaveFile << HP << NP << AP;
+	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
+	SaveFile << HasActed;
+	SaveFile << Relations;
+	SaveFile << Fainted, EatingCurrently, APsToBeEaten, Dead;
+}
+
+void character::Load(std::ifstream& SaveFile)
+{
+	object::Load(SaveFile);
+
+	SaveFile >> Stack;
+
+	ushort Index;
+	SaveFile >> Index;
+	Wielded = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
+
+	SaveFile >> Strength >> Endurance >> Agility >> Perception;
+	SaveFile >> RegenerationCounter;
+	SaveFile >> HP >> NP >> AP;
+	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
+	SaveFile >> HasActed;
+	SaveFile >> Relations;
+	SaveFile >> Fainted, EatingCurrently, APsToBeEaten, Dead;
+}
+
+void humanoid::Save(std::ofstream& SaveFile) const
+{
+	character::Save(SaveFile);
+
+	SaveFile << ushort(Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF);
+	SaveFile << ArmType << HeadType << LegType << TorsoType;
+}
+
+void humanoid::Load(std::ifstream& SaveFile)
+{
+	character::Load(SaveFile);
+
+	ushort Index;
+	SaveFile >> Index;
+	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
+
+	SaveFile >> ArmType >> HeadType >> LegType >> TorsoType;
+}*/
+
+void character::Save(std::ofstream& SaveFile) const
 {
 	object::Save(SaveFile);
 
@@ -1429,29 +1488,29 @@ void character::Save(std::ofstream* SaveFile) const
 
 	ushort Index = Wielded ? Stack->SearchItem(Wielded) : 0xFFFF;
 
-	SaveFile->write((char*)&Index, sizeof(Index));
+	SaveFile.write((char*)&Index, sizeof(Index));
 
-	SaveFile->write((char*)&Strength, sizeof(Strength));
-	SaveFile->write((char*)&Endurance, sizeof(Endurance));
-	SaveFile->write((char*)&Agility, sizeof(Agility));
-	SaveFile->write((char*)&Perception, sizeof(Perception));
-	SaveFile->write((char*)&RegenerationCounter, sizeof(RegenerationCounter));
-	SaveFile->write((char*)&HP, sizeof(HP));
-	SaveFile->write((char*)&NP, sizeof(NP));
-	SaveFile->write((char*)&AP, sizeof(AP));
-	SaveFile->write((char*)&StrengthExperience, sizeof(StrengthExperience));
-	SaveFile->write((char*)&EnduranceExperience, sizeof(EnduranceExperience));
-	SaveFile->write((char*)&AgilityExperience, sizeof(AgilityExperience));
-	SaveFile->write((char*)&PerceptionExperience, sizeof(PerceptionExperience));
-	SaveFile->write((char*)&HasActed, sizeof(HasActed));
-	SaveFile->write((char*)&Relations, sizeof(Relations));
-	SaveFile->write((char*)&Fainted, sizeof(Fainted));
-	SaveFile->write((char*)&EatingCurrently, sizeof(EatingCurrently));
-	SaveFile->write((char*)&APsToBeEaten, sizeof(APsToBeEaten));
-	SaveFile->write((char*)&Dead, sizeof(Dead)); // ?
+	SaveFile.write((char*)&Strength, sizeof(Strength));
+	SaveFile.write((char*)&Endurance, sizeof(Endurance));
+	SaveFile.write((char*)&Agility, sizeof(Agility));
+	SaveFile.write((char*)&Perception, sizeof(Perception));
+	SaveFile.write((char*)&RegenerationCounter, sizeof(RegenerationCounter));
+	SaveFile.write((char*)&HP, sizeof(HP));
+	SaveFile.write((char*)&NP, sizeof(NP));
+	SaveFile.write((char*)&AP, sizeof(AP));
+	SaveFile.write((char*)&StrengthExperience, sizeof(StrengthExperience));
+	SaveFile.write((char*)&EnduranceExperience, sizeof(EnduranceExperience));
+	SaveFile.write((char*)&AgilityExperience, sizeof(AgilityExperience));
+	SaveFile.write((char*)&PerceptionExperience, sizeof(PerceptionExperience));
+	SaveFile.write((char*)&HasActed, sizeof(HasActed));
+	SaveFile.write((char*)&Relations, sizeof(Relations));
+	SaveFile.write((char*)&Fainted, sizeof(Fainted));
+	SaveFile.write((char*)&EatingCurrently, sizeof(EatingCurrently));
+	SaveFile.write((char*)&APsToBeEaten, sizeof(APsToBeEaten));
+	SaveFile.write((char*)&Dead, sizeof(Dead)); // ?
 }
 
-void character::Load(std::ifstream* SaveFile)
+void character::Load(std::ifstream& SaveFile)
 {
 	object::Load(SaveFile);
 
@@ -1460,58 +1519,58 @@ void character::Load(std::ifstream* SaveFile)
 
 	ushort Index;
 
-	SaveFile->read((char*)&Index, sizeof(Index));
+	SaveFile.read((char*)&Index, sizeof(Index));
 
 	Wielded = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 
-	SaveFile->read((char*)&Strength, sizeof(Strength));
-	SaveFile->read((char*)&Endurance, sizeof(Endurance));
-	SaveFile->read((char*)&Agility, sizeof(Agility));
-	SaveFile->read((char*)&Perception, sizeof(Perception));
-	SaveFile->read((char*)&RegenerationCounter, sizeof(RegenerationCounter));
-	SaveFile->read((char*)&HP, sizeof(HP));
-	SaveFile->read((char*)&NP, sizeof(NP));
-	SaveFile->read((char*)&AP, sizeof(AP));
-	SaveFile->read((char*)&StrengthExperience, sizeof(StrengthExperience));
-	SaveFile->read((char*)&EnduranceExperience, sizeof(EnduranceExperience));
-	SaveFile->read((char*)&AgilityExperience, sizeof(AgilityExperience));
-	SaveFile->read((char*)&PerceptionExperience, sizeof(PerceptionExperience));
-	SaveFile->read((char*)&HasActed, sizeof(HasActed));
-	SaveFile->read((char*)&Relations, sizeof(Relations));
-	SaveFile->read((char*)&Fainted, sizeof(Fainted));
-	SaveFile->read((char*)&EatingCurrently, sizeof(EatingCurrently));
-	SaveFile->read((char*)&APsToBeEaten, sizeof(APsToBeEaten));
-	SaveFile->read((char*)&Dead, sizeof(Dead)); // ?
+	SaveFile.read((char*)&Strength, sizeof(Strength));
+	SaveFile.read((char*)&Endurance, sizeof(Endurance));
+	SaveFile.read((char*)&Agility, sizeof(Agility));
+	SaveFile.read((char*)&Perception, sizeof(Perception));
+	SaveFile.read((char*)&RegenerationCounter, sizeof(RegenerationCounter));
+	SaveFile.read((char*)&HP, sizeof(HP));
+	SaveFile.read((char*)&NP, sizeof(NP));
+	SaveFile.read((char*)&AP, sizeof(AP));
+	SaveFile.read((char*)&StrengthExperience, sizeof(StrengthExperience));
+	SaveFile.read((char*)&EnduranceExperience, sizeof(EnduranceExperience));
+	SaveFile.read((char*)&AgilityExperience, sizeof(AgilityExperience));
+	SaveFile.read((char*)&PerceptionExperience, sizeof(PerceptionExperience));
+	SaveFile.read((char*)&HasActed, sizeof(HasActed));
+	SaveFile.read((char*)&Relations, sizeof(Relations));
+	SaveFile.read((char*)&Fainted, sizeof(Fainted));
+	SaveFile.read((char*)&EatingCurrently, sizeof(EatingCurrently));
+	SaveFile.read((char*)&APsToBeEaten, sizeof(APsToBeEaten));
+	SaveFile.read((char*)&Dead, sizeof(Dead)); // ?
 }
 
-void humanoid::Save(std::ofstream* SaveFile) const
+void humanoid::Save(std::ofstream& SaveFile) const
 {
 	character::Save(SaveFile);
 
 	ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
-	SaveFile->write((char*)&Index, sizeof(Index));
+	SaveFile.write((char*)&Index, sizeof(Index));
 
-	SaveFile->write((char*)&ArmType, sizeof(ArmType));
-	SaveFile->write((char*)&HeadType, sizeof(HeadType));
-	SaveFile->write((char*)&LegType, sizeof(LegType));
-	SaveFile->write((char*)&TorsoType, sizeof(TorsoType));
+	SaveFile.write((char*)&ArmType, sizeof(ArmType));
+	SaveFile.write((char*)&HeadType, sizeof(HeadType));
+	SaveFile.write((char*)&LegType, sizeof(LegType));
+	SaveFile.write((char*)&TorsoType, sizeof(TorsoType));
 }
 
-void humanoid::Load(std::ifstream* SaveFile)
+void humanoid::Load(std::ifstream& SaveFile)
 {
 	character::Load(SaveFile);
 
 	ushort Index;
 
-	SaveFile->read((char*)&Index, sizeof(Index));
+	SaveFile.read((char*)&Index, sizeof(Index));
 
 	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 
-	SaveFile->read((char*)&ArmType, sizeof(ArmType));
-	SaveFile->read((char*)&HeadType, sizeof(HeadType));
-	SaveFile->read((char*)&LegType, sizeof(LegType));
-	SaveFile->read((char*)&TorsoType, sizeof(TorsoType));
+	SaveFile.read((char*)&ArmType, sizeof(ArmType));
+	SaveFile.read((char*)&HeadType, sizeof(HeadType));
+	SaveFile.read((char*)&LegType, sizeof(LegType));
+	SaveFile.read((char*)&TorsoType, sizeof(TorsoType));
 }
 
 bool character::WizardMode(void)
@@ -1567,8 +1626,8 @@ bool character::LowerStats(void)
 bool character::GainAllItems(void)
 {
 	if(game::GetWizardMode())
-		for(ushort c = 1; prototypesystem::GetItemPrototype(c); c++)
-			Stack->AddItem(prototypesystem::GetItemPrototype(c)->Clone());
+		for(ushort c = item::GetProtoIndexBegin(); c < item::GetProtoIndexEnd(); c++)
+			Stack->AddItem(GetProtoType<item>(c)->Clone()); //GGG
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
 
@@ -1631,7 +1690,8 @@ ushort character::GetEmitation(void) const
 
 void character::SetSquareUnder(square* Square)
 {
-	SquareUnder = Square; Stack->SetSquareUnder(Square);
+	typeable::SetSquareUnder(Square);
+	Stack->SetSquareUnder(Square);
 }
 
 bool character::WalkThroughWalls(void)
@@ -1680,9 +1740,9 @@ bool character::Look(void)
 
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::GetMoveCommandKey()[c])
+			if(Key == game::GetMoveCommandKey(c))
 				{
-				CursorPos += game::CMoveVector()[c];
+				CursorPos += game::GetMoveVector(c);
 
 				if (short(CursorPos.X) > game::GetCurrentLevel()->GetXSize()-1)	CursorPos.X = 0;
 				if (short(CursorPos.X) < 0)					CursorPos.X = game::GetCurrentLevel()->GetXSize()-1;
@@ -1692,10 +1752,10 @@ bool character::Look(void)
 
 			if(GetIsPlayer())
 			{
-				if(CursorPos.X < game::CCamera().X + 2 || CursorPos.X > game::CCamera().X + 48)
+				if(CursorPos.X < game::GetCamera().X + 2 || CursorPos.X > game::GetCamera().X + 48)
 					game::UpdateCameraXWithPos(CursorPos.X);
 
-				if(CursorPos.Y < game::CCamera().Y + 2 || CursorPos.Y > game::CCamera().Y + 27)
+				if(CursorPos.Y < game::GetCamera().Y + 2 || CursorPos.Y > game::GetCamera().Y + 27)
 					game::UpdateCameraYWithPos(CursorPos.Y);
 
 			}
@@ -1759,7 +1819,7 @@ bool character::Look(void)
 			game::GetCurrentLevel()->GetLevelSquare(CursorPos)->SetRememberedItems(OldMemory);
 
 		game::DrawEverythingNoBlit();
-		igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (CursorPos.X - game::CCamera().X) << 4, (CursorPos.Y - game::CCamera().Y + 2) << 4, 16, 16);
+		igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16);
 		FONTW->PrintfToDB(16, 514, "Press direction keys to move cursor or esc to exit from the mode.");
 		graphics::BlitDBToScreen();
 		EMPTY_MESSAGES();
@@ -1771,7 +1831,7 @@ bool character::Look(void)
 
 float golem::GetMeleeStrength(void) const
 {
-	return 75 * CMaterial(0)->GetHitValue();
+	return 75 * GetMaterial(0)->GetHitValue();
 }
 
 float character::GetDifficulty(void) const
@@ -1801,16 +1861,16 @@ void character::MoveRandomly(void)
 {
 	ushort ToTry = rand() % 8;
 
-	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::CMoveVector()[ToTry])->CCharacter());
-		TryMove(GetPos() + game::CMoveVector()[ToTry]);
+	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->CCharacter());
+		TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 
 ushort golem::CalculateArmorModifier(void) const
 {
-	if(CMaterial(0)->GetArmorValue() / 2 > 90)
+	if(GetMaterial(0)->GetArmorValue() / 2 > 90)
 		return 10;
 	else
-		return 100 - CMaterial(0)->GetArmorValue() / 2;
+		return 100 - GetMaterial(0)->GetArmorValue() / 2;
 }
 
 void golem::MoveRandomly(void)
@@ -1822,8 +1882,8 @@ void golem::MoveRandomly(void)
 			Engrave("Golem Needs Master");
 	}
 	else
-	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::CMoveVector()[ToTry])->CCharacter())
-		TryMove(GetPos() + game::CMoveVector()[ToTry]);
+	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->CCharacter())
+		TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 
 
@@ -2207,7 +2267,7 @@ bool character::Kick(void)
 	{
 		for(uchar c = 0; c < 8; c++)
 		{
-			if(KickPos == game::CMoveVector()[c])
+			if(KickPos == game::GetMoveVector(c))
 				Direction = c;
 		}
 		game::GetCurrentLevel()->GetLevelSquare(GetPos() + KickPos)->Kick(GetStrength(), Direction);
@@ -2217,20 +2277,33 @@ bool character::Kick(void)
 	return false;
 }
 
-
-void perttu::Save(std::ofstream* SaveFile) const
+void perttu::Save(std::ofstream& SaveFile) const
 {
 	humanoid::Save(SaveFile);
 
-	SaveFile->write((char*)&HealTimer, sizeof(HealTimer));
+	SaveFile.write((char*)&HealTimer, sizeof(HealTimer));
 }
 
-void perttu::Load(std::ifstream* SaveFile)
+void perttu::Load(std::ifstream& SaveFile)
 {
 	humanoid::Load(SaveFile);
 
-	SaveFile->read((char*)&HealTimer, sizeof(HealTimer));
+	SaveFile.read((char*)&HealTimer, sizeof(HealTimer));
 }
+
+/*void perttu::Save(std::ofstream& SaveFile) const
+{
+	humanoid::Save(SaveFile);
+
+	SaveFile << HealTimer;
+}
+
+void perttu::Load(std::ifstream& SaveFile)
+{
+	humanoid::Load(SaveFile);
+
+	SaveFile >> HealTimer;
+}*/
 
 bool character::ScreenShot(void)
 {
@@ -2504,9 +2577,9 @@ void character::GetPlayerCommand(void)
 
 		{
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::GetMoveCommandKey()[c])
+			if(Key == game::GetMoveCommandKey(c))
 			{
-				HasActed = TryMove(GetPos() + game::CMoveVector()[c]);
+				HasActed = TryMove(GetPos() + game::GetMoveVector(c));
 				ValidKeyPressed = true;
 			}
 		}
@@ -2650,3 +2723,4 @@ bool character::ForceVomit(void)
 	SetAP(GetAP() - 100);
 	return true;
 }
+

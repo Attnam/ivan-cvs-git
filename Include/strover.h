@@ -1,4 +1,5 @@
 #ifndef __STROVER_H__
+#define __STROVER_H__
 
 #include <cstdio>
 #include <fstream>
@@ -28,38 +29,37 @@ inline std::string& operator+= (std::string& String, const int& Int)
 	return String;
 }
 
-inline std::ofstream& operator+= (std::ofstream& File, const std::string& String)
+inline std::ofstream& operator<<(std::ofstream& SaveFile, std::string String)
 {
-	ulong Length = String.length();
+	uchar Length = String.length();
 
-	File.write((char*)&Length, sizeof(Length));
+	SaveFile.put(Length);
 
 	if(Length)
-		File.write(String.c_str(), Length);
+		SaveFile.write(String.c_str(), Length);
 
-	return File;
+	return SaveFile;
 }
 
-inline std::string& operator-= (std::ifstream& File, std::string& String)
+inline std::ifstream& operator>>(std::ifstream& SaveFile, std::string& String)
 {
-	ulong Length;
+	char Buffer[256];
 
-	File.read((char*)&Length, sizeof(Length));
+	uchar Length;
+
+	Length = SaveFile.get();
 
 	if(Length)
 	{
-		char* Buffer = new char[Length + 1];
-		File.read((char*)Buffer, Length);
+		SaveFile.read(Buffer, Length);
 		Buffer[Length] = 0;
 		String = Buffer;
-		delete [] Buffer;
 	}
 	else
 		String = "";
 
-	return String;
+	return SaveFile;
 }
 
 #endif
-
 

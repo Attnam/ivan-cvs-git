@@ -6,6 +6,7 @@
 #include "proto.h"
 #include "material.h"
 #include "bitmap.h"
+//#include "save.h"
 
 worldmapsquare::worldmapsquare(worldmap* MotherWorldMap, vector Pos) : square(MotherWorldMap, Pos)
 {
@@ -17,20 +18,14 @@ worldmapsquare::~worldmapsquare(void)
 	delete GetOverWorldMapTerrain();
 }
 
-void worldmapsquare::Save(std::ofstream* SaveFile) const
+void worldmapsquare::Save(std::ofstream& SaveFile) const
 {
 	square::Save(SaveFile);
-
-	GetGroundWorldMapTerrain()->Save(SaveFile);
-	GetOverWorldMapTerrain()->Save(SaveFile);
 }
 
-void worldmapsquare::Load(std::ifstream* SaveFile)
+void worldmapsquare::Load(std::ifstream& SaveFile)
 {
 	square::Load(SaveFile);
-
-	SetGroundWorldMapTerrain(prototypesystem::LoadGroundWorldMapTerrain(SaveFile));
-	SetOverWorldMapTerrain(prototypesystem::LoadOverWorldMapTerrain(SaveFile));
 }
 
 void worldmapsquare::DrawToTileBuffer(void) const
@@ -51,7 +46,7 @@ void worldmapsquare::UpdateMemorizedAndDraw(void)
 	if(CCharacter())
 		CCharacter()->DrawToTileBuffer();
 
-	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4));
+	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 }
 
 void worldmapsquare::ChangeWorldMapTerrain(groundworldmapterrain* NewGround, overworldmapterrain* NewOver)
@@ -67,7 +62,7 @@ void worldmapsquare::SetGroundWorldMapTerrain(groundworldmapterrain* What)
 	GroundTerrain = What;
 
 	if(What)
-		What->SetWorldMapSquareUnder(this);
+		What->SetSquareUnder(this);
 }
 
 void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
@@ -75,7 +70,7 @@ void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
 	OverTerrain = What;
 
 	if(What)
-		What->SetWorldMapSquareUnder(this);
+		What->SetSquareUnder(this);
 }
 
 groundworldmapterrain* worldmapsquare::GetGroundWorldMapTerrain(void) const
@@ -87,3 +82,4 @@ overworldmapterrain* worldmapsquare::GetOverWorldMapTerrain(void) const
 {
 	return (overworldmapterrain*)OverTerrain;
 }
+

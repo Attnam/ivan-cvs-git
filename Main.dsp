@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O1 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /O1 /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -72,7 +72,7 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /I /" " /c
+# ADD CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Include" /I "Main/Include" /I "FeDX/Include" /I "FEEL/Include" /I "FELL/Include" /I "FeWin/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /FR /YX /FD /I /" " /c
 # SUBTRACT CPP /X
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
@@ -152,6 +152,10 @@ SOURCE=.\Main\Source\object.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\pool.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\proto.cpp
 # End Source File
 # Begin Source File
@@ -165,6 +169,10 @@ SOURCE=.\Main\Source\stack.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\terrain.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Source\typeable.cpp
 # End Source File
 # Begin Source File
 
@@ -193,6 +201,10 @@ SOURCE=.\Main\Include\char.h
 # Begin Source File
 
 SOURCE=.\Main\Include\command.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\drawable.h
 # End Source File
 # Begin Source File
 
@@ -236,6 +248,10 @@ SOURCE=.\Main\Include\object.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\pool.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\proto.h
 # End Source File
 # Begin Source File
@@ -249,6 +265,10 @@ SOURCE=.\Main\Include\stack.h
 # Begin Source File
 
 SOURCE=.\Main\Include\terrain.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\typeable.h
 # End Source File
 # Begin Source File
 

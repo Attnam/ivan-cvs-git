@@ -18,9 +18,9 @@ class square
 {
 public:
 	square(area*, vector);
-	~square(void);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual ~square(void);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void DrawCheat(void) const;
 	virtual void DrawMemorized(void) const;
 	virtual void UpdateMemorizedAndDraw(void) = 0;
@@ -51,3 +51,4 @@ protected:
 };
 
 #endif
+

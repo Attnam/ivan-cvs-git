@@ -1,10 +1,10 @@
 #include "independ.h"
 
-void independency::Save(std::ofstream* SaveFile) const
+void independency::Save(std::ofstream& SaveFile) const
 {
 	ushort TypeVar = Type();
 
-	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
+	SaveFile.write((char*)&TypeVar, sizeof(TypeVar));
 }
 
 std::string independency::NameNormal(uchar Case, std::string Article) const
@@ -34,3 +34,4 @@ std::string independency::NameProperNoun(uchar Case) const
 	else
 		return NamePlural();
 }
+

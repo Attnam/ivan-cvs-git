@@ -29,12 +29,8 @@
 #include "typedef.h"
 #include "vector.h"
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
-
-	#include "proto.h"
-	#include "material.h"
-
-#endif
+#include "proto.h"
+#include "material.h"
 
 class square;
 class bitmap;
@@ -49,11 +45,11 @@ class levelsquare;
 class character : public object
 {
 public:
-	character(bool = true, bool = true, bool = true);
-	~character(void);
+	character(bool, bool, bool, bool = true);
+	virtual ~character(void);
 	virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual bool CanRead(void) const { return true; }
 	virtual bool CanWear(void) const { return false; }
 	virtual bool CanWield(void) const { return false; }
@@ -132,7 +128,6 @@ public:
 	virtual long GetPerceptionExperience(void) const { return PerceptionExperience; }
 	virtual long GetStrengthExperience(void) const { return StrengthExperience; }
 	virtual short GetHP(void) const					{ return HP; }
-	virtual square* GetSquareUnder(void) const { return SquareUnder; }
 	virtual stack* GetStack(void) const				{ return Stack; }
 	virtual uchar GetBurdenState(ulong = 0) const;
 	virtual uchar GetRelations(void) const { return Relations; }
@@ -199,6 +194,10 @@ public:
 	virtual void SpillBlood(uchar);
 	virtual void StopEating(void);
 	virtual void Vomit(ushort);
+	virtual void Be(void) { HasActed = false; Act(); }
+	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 protected:
 	virtual void CreateCorpse(void);
 	virtual std::string DeathMessage(void) { return Name(DEFINITE) + " dies screaming."; }
@@ -225,7 +224,6 @@ protected:
 	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits extremely acidous brown slime at" : "vomits brown slime at"; }
 	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit extremely stale pepsi at" : "vomit pepsi at"; }
 	virtual std::string ThirdPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomits extremely stale pepsi at" : "vomits pepsi at"; }
-	square* SquareUnder;
 	stack* Stack;
 	item* Wielded;
 	ushort Strength, Endurance, Agility, Perception, RegenerationCounter;
@@ -239,6 +237,7 @@ protected:
 	long APsToBeEaten;
 	bool Dead;
 	bool IsPlayer;
+	static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -248,29 +247,30 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool = true, bool = true, bool = true);\
-		name(material*, bool= true, bool = true);\
+		name(bool = true, bool = true, bool = true, bool = true);\
+		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool = true, bool = true, bool = true) const;\
+		virtual typeable* CloneAndLoad(std::ifstream&) const;\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
 	\
-	class proto_##name\
+	class name##_protoinstaller\
 	{\
 	public:\
-		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false, false, false))) {}\
+		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false, false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
-	} static Proto_##name;\
+	} static name##_ProtoInstaller;\
 	\
-	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-	name::name(material* Material, bool SetStats, bool CreateEquipment) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
+	typeable* name::CloneAndLoad(std::ifstream& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
 	void name::SetDefaultStats(void) { setstats }\
-	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
+	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -279,9 +279,10 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool = true, bool = true, bool = true);\
-		name(material*, bool= true, bool = true);\
+		name(bool = true, bool = true, bool = true, bool = true);\
+		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool = true, bool = true, bool = true) const;\
+		virtual typeable* CloneAndLoad(std::ifstream&) const;\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -295,16 +296,18 @@ protected:
 name : public base\
 {\
 public:\
-	name(bool CreateMaterials, bool SetStats, bool CreateEquipment) : base(CreateMaterials, SetStats, CreateEquipment) {}\
+	name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(CreateMaterials, SetStats, CreateEquipment, AddToPool) {}\
 	data\
 };
+
+BEGIN_PROTOTYPING(character)
 
 class ABSTRACT_CHARACTER
 (
 	humanoid,
 	character,
 public:
-	virtual void Load(std::ifstream*);
+	virtual void Load(std::ifstream&);
 	virtual void DrawToTileBuffer(void) const;
 	virtual bool WearArmor(void);
 	virtual item* GetTorsoArmor(void) const RET(Armor.Torso)
@@ -312,7 +315,7 @@ public:
 	virtual ushort CalculateArmorModifier(void) const;
 	virtual bool Drop(void);
 	virtual bool Wield(void);
-	virtual void Save(std::ofstream*) const;
+	virtual void Save(std::ofstream&) const;
 	virtual bool Throw(void);
 	virtual uchar GetArmType(void) const RET(ArmType)
 	virtual uchar GetHeadType(void) const RET(HeadType)
@@ -388,7 +391,7 @@ class CHARACTER
 		SetHealTimer(100);
 	},
 public:
-	virtual void Load(std::ifstream*);
+	virtual void Load(std::ifstream&);
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void BeTalkedTo(character*);
 	virtual ushort GetEmitation(void) const RET(333)
@@ -396,7 +399,7 @@ public:
 	virtual void SetHealTimer(ushort What) { HealTimer = What; }
 	virtual ushort GetHealTimer(void) RET(HealTimer)
 	virtual void ReceiveFireDamage(long) {}
-	virtual void Save(std::ofstream*) const;
+	virtual void Save(std::ofstream&) const;
 	virtual ulong Danger(void) const RET(150000)
 	virtual bool Charmable(void) const RET(false)
 	virtual ushort Possibility(void) const RET(0)
@@ -764,4 +767,7 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 );
 
+FINISH_PROTOTYPING(character)
+
 #endif
+

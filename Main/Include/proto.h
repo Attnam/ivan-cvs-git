@@ -14,23 +14,19 @@ class overlevelterrain;
 class groundworldmapterrain;
 class overworldmapterrain;
 
-template <class ProtoType> class prototypecontainer
-{
-public:
-	prototypecontainer(void) { ProtoData.push_back(0); ProtoData.push_back(0); }
-	ushort Add(ProtoType*);
-	const ProtoType* const Access(ushort Index) const { return ProtoData[Index]; }
-	const ProtoType* const operator [] (ushort Index) const { return ProtoData[Index]; }
-private:
-	std::vector<ProtoType*> ProtoData;
-};
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-template <class ProtoType> inline ushort prototypecontainer<ProtoType>::Add(ProtoType* Proto)
-{
-	ProtoData.insert(ProtoData.end() - 1, Proto);
+	#define BEGIN_PROTOTYPING(protoclass) ushort protoclass::ProtoIndexBegin = prototypesystem::GetNextProtoIndex();
+	#define FINISH_PROTOTYPING(protoclass) ushort protoclass::ProtoIndexEnd = prototypesystem::GetNextProtoIndex();
 
-	return ProtoData.size() - 2;
-}
+#else
+
+	#define BEGIN_PROTOTYPING(protoclass)
+	#define FINISH_PROTOTYPING(protoclass)
+
+#endif
+
+class typeable;
 
 class prototypesystem
 {
@@ -43,37 +39,41 @@ public:
 	static material*		CreateRandomSolidMaterial(ulong);
 	static material*		CreateMaterial(ushort, ulong);
 
-	static material*		LoadMaterial(std::ifstream*);
-	static character*		LoadCharacter(std::ifstream*);
-	static item*			LoadItem(std::ifstream*);
-	static groundlevelterrain*	LoadGroundLevelTerrain(std::ifstream*);
-	static overlevelterrain*	LoadOverLevelTerrain(std::ifstream*);
-	static groundworldmapterrain*	LoadGroundWorldMapTerrain(std::ifstream*);
-	static overworldmapterrain*	LoadOverWorldMapTerrain(std::ifstream*);
-
-	static const material*			const	GetMaterialPrototype(ushort Index)		{ return MaterialPrototype[Index]; }
-	static const character*			const	GetCharacterPrototype(ushort Index)		{ return CharacterPrototype[Index]; }
-	static const item*			const	GetItemPrototype(ushort Index)			{ return ItemPrototype[Index]; }
-	static const groundlevelterrain*	const	GetGroundLevelTerrainPrototype(ushort Index)	{ return GroundLevelTerrainPrototype[Index]; }
-	static const overlevelterrain*		const	GetOverLevelTerrainPrototype(ushort Index)	{ return OverLevelTerrainPrototype[Index]; }
-	static const groundworldmapterrain*	const	GetGroundWorldMapTerrainPrototype(ushort Index)	{ return GroundWorldMapTerrainPrototype[Index]; }
-	static const overworldmapterrain*	const	GetOverWorldMapTerrainPrototype(ushort Index)	{ return OverWorldMapTerrainPrototype[Index]; }
-
-	static ushort AddProtoType(material*);
-	static ushort AddProtoType(character*);
-	static ushort AddProtoType(item*);
-	static ushort AddProtoType(groundlevelterrain*);
-	static ushort AddProtoType(overlevelterrain*);
-	static ushort AddProtoType(groundworldmapterrain*);
-	static ushort AddProtoType(overworldmapterrain*);
+	static ushort Add(typeable*);
+	static const typeable* const Access(ushort Index) { return ProtoData[Index]; }
+	static ushort GetNextProtoIndex(void) { return ProtoData.size() - 1; }
 private:
-	static prototypecontainer<material> MaterialPrototype;
-	static prototypecontainer<character> CharacterPrototype;
-	static prototypecontainer<item> ItemPrototype;
-	static prototypecontainer<groundlevelterrain> GroundLevelTerrainPrototype;
-	static prototypecontainer<overlevelterrain> OverLevelTerrainPrototype;
-	static prototypecontainer<groundworldmapterrain> GroundWorldMapTerrainPrototype;
-	static prototypecontainer<overworldmapterrain> OverWorldMapTerrainPrototype;
+	static std::vector<typeable*> ProtoData;
 };
+
+template <class ProtoType> const ProtoType* const GetProtoType(ushort Index)
+{
+	return dynamic_cast<const ProtoType* const>(prototypesystem::Access(Index));
+}
+
+template <class Class> inline std::ofstream& operator<<(std::ofstream& SaveFile, Class* ClassPtr)
+{
+	if(ClassPtr)
+		ClassPtr->Save(SaveFile);
+	else
+	{
+		SaveFile.put(0);
+		SaveFile.put(0);
+	}
+
+	return SaveFile;
+}
+
+template <class Class> inline std::ifstream& operator>>(std::ifstream& SaveFile, Class*& ClassPtr)
+{
+	ushort Type;
+
+	Type = SaveFile.get() | SaveFile.get() << 8;
+
+	if(Type)
+		ClassPtr = dynamic_cast<Class*>(prototypesystem::Access(Type)->CloneAndLoad(SaveFile));
+
+	return SaveFile;
+}
 
 #endif

@@ -22,7 +22,7 @@ class level : public area
 public:
 	level(ushort, ushort, ushort);
 	level(void) {}
-	~level(void);
+	virtual ~level(void);
 	virtual void Generate(void);
 	virtual vector RandomSquare(bool) const;
 	virtual void Draw(void) const;
@@ -35,8 +35,8 @@ public:
 	virtual void PutStairs(vector);
 	virtual void ExpandPossibleRoute(vector, vector, bool);
 	virtual void ExpandStillPossibleRoute(vector, vector, bool);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void Luxify(void);
 	virtual ushort GetPopulation(void) const { return Population; }
 	virtual ushort CIdealPopulation(void) const { return 25; }
@@ -62,3 +62,4 @@ protected:
 };
 
 #endif
+

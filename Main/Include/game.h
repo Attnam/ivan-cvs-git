@@ -28,6 +28,7 @@ class god;
 class item;
 class command;
 class worldmap;
+class square;
 
 /* Presentation of the game class */
 
@@ -38,8 +39,8 @@ public:
 	static void DeInit(void);
 	static void Run(void);
 	static int Menu(std::string sMS); // hihi :-) (MENU)
-	static int* GetMoveCommandKey(void)	{ return MoveCommandKey; }
-	static const vector* CMoveVector(void)	{ return MoveVector; }
+	static int GetMoveCommandKey(uchar Index)	{ return MoveCommandKey[Index]; }
+	static const vector GetMoveVector(uchar Index)	{ return MoveVector[Index]; }
 	static area* GetCurrentArea(void)	{ return !InWilderness ? (area*)Level[Current] : (area*)WorldMap; }
 	static level* GetCurrentLevel(void)	{ return Level[Current]; }
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
@@ -55,7 +56,7 @@ public:
 	static void Quit(void);
 	static character* GetPlayer(void) { return Player; }
 	static void SetPlayer(character*);
-	static vector CCamera(void) { return Camera; }
+	static vector GetCamera(void) { return Camera; }
 	static void UpDateCameraX(void);
 	static void UpDateCameraY(void);
 	static bool Flag;
@@ -85,7 +86,7 @@ public:
 	static std::string StringQuestion(const char*, ushort);
 	static bool KeyIsOK(char);
 	static void SetCurrent(ushort What) { Current = What; }
-	static ushort CCurrent(void) { return Current; }
+	static ushort GetCurrent(void) { return Current; }
 	static ushort GetLevels(void) { return Levels; }
 	static int GetMoveCommandKey(vector, vector);
 	static void DrawEverythingNoBlit(bool = true);
@@ -118,12 +119,17 @@ public:
 	static std::string GetAutoSaveFileName(void) { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true);
 	static command* GetCommand(ushort Index) { return Command[Index]; }
-	static void SaveLevel(std::string = SaveName(), ushort = CCurrent(), bool = true);
-	static void LoadLevel(std::string = SaveName(), ushort = CCurrent());
+	static void SaveLevel(std::string = SaveName(), ushort = GetCurrent(), bool = true);
+	static void LoadLevel(std::string = SaveName(), ushort = GetCurrent());
 	static void RemoveSaves(void);
 	static bool GetInWilderness(void) { return InWilderness; }
 	static void SetInWilderness(bool What) { InWilderness = What; }
 	static worldmap* GetWorldMap(void) { return WorldMap; }
+	static void SetWorldMap(worldmap* What) { WorldMap = What; }
+	static void SetAreaInLoad(area* What) { AreaInLoad = What; }
+	static void SetSquareInLoad(square* What) { SquareInLoad = What; }
+	static area* GetAreaInLoad(void) { return AreaInLoad; }
+	static square* GetSquareInLoad(void) { return SquareInLoad; }
 private:
 	static dynarray<character*> Hell;
 	static std::string Alignment[];
@@ -152,6 +158,8 @@ private:
 	static command* Command[];
 	static bool InWilderness;
 	static worldmap* WorldMap;
+	static area* AreaInLoad;
+	static square* SquareInLoad;
 };
 
 #endif

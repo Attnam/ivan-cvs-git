@@ -7,11 +7,7 @@
 #include "object.h"
 #include "material.h"
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
-
-	#include "proto.h"
-
-#endif
+#include "proto.h"
 
 class bitmap;
 class character;
@@ -25,7 +21,7 @@ class stack;
 class item : public object
 {
 public:
-	item(bool = true, bool = true);
+	item(bool, bool, bool = true);
 	virtual float GetWeaponStrength(void) const;
 	virtual void DrawToTileBuffer(void) const;
 	virtual void PositionedDrawToTileBuffer(uchar) const;
@@ -66,9 +62,13 @@ public:
 	virtual bool CanBeWished(void) const { return true; }
 	virtual item* CreateWishedItem(void) const;
 	virtual bool Apply(character*);
+	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort GetFormModifier(void) const { return 0; }
+	static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -78,27 +78,28 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool = true, bool = true);\
+		name(bool = true, bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
 	\
-	class proto_##name\
+	class name##_protoinstaller\
 	{\
 	public:\
-		proto_##name(void) : Index(prototypesystem::AddProtoType(new name(false, false))) {}\
+		name##_protoinstaller(void) : Index(prototypesystem::Add(new name(false, false, false))) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
-	} static Proto_##name;\
+	} static name##_ProtoInstaller;\
 	\
-	name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
 	void name::SetDefaultStats(void) { setstats }\
-	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
+	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -107,9 +108,10 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool = true, bool = true);\
+		name(bool = true, bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
 	protected:\
 		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
@@ -123,9 +125,11 @@ protected:
 name : public base\
 {\
 public:\
-	name(bool CreateMaterials, bool SetStats) : base(CreateMaterials, SetStats) {}\
+	name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) {}\
 	data\
 };
+
+BEGIN_PROTOTYPING(item)
 
 class ABSTRACT_ITEM
 (
@@ -800,4 +804,7 @@ public:
 	virtual vector GetBitmapPos(void) const RETV(144,208)
 );
 
+FINISH_PROTOTYPING(item)
+
 #endif
+

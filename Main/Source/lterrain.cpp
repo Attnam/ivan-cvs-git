@@ -6,15 +6,16 @@
 #include "level.h"
 #include "lsquare.h"
 #include "message.h"
+#include "proto.h"
 
 bool overlevelterrain::GoUp(character* Who) // Try to go up
 {
-	if(game::CCurrent() != 0 && game::CCurrent() != 9 && game::GetWizardMode())
+	if(game::GetCurrent() != 0 && game::GetCurrent() != 9 && game::GetWizardMode())
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SetCurrent(game::CCurrent() - 1);
+		game::SetCurrent(game::GetCurrent() - 1);
 		game::LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -31,12 +32,12 @@ bool overlevelterrain::GoUp(character* Who) // Try to go up
 
 bool overlevelterrain::GoDown(character* Who) // Try to go down
 {
-	if(game::CCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
+	if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SetCurrent(game::CCurrent() + 1);
+		game::SetCurrent(game::GetCurrent() + 1);
 		game::LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -51,27 +52,27 @@ bool overlevelterrain::GoDown(character* Who) // Try to go down
 	}
 }
 
-void levelterrain::Save(std::ofstream* SaveFile) const
+void levelterrain::Save(std::ofstream& SaveFile) const
 {
 	object::Save(SaveFile);
 
-	SaveFile->write((char*)&VisualFlags, sizeof(VisualFlags));
+	SaveFile.write((char*)&VisualFlags, sizeof(VisualFlags));
 }
 
-void levelterrain::Load(std::ifstream* SaveFile)
+void levelterrain::Load(std::ifstream& SaveFile)
 {
 	object::Load(SaveFile);
 
-	SaveFile->read((char*)&VisualFlags, sizeof(VisualFlags));
+	SaveFile.read((char*)&VisualFlags, sizeof(VisualFlags));
 }
 
-void overlevelterrain::Save(std::ofstream* SaveFile) const
+void overlevelterrain::Save(std::ofstream& SaveFile) const
 {
 	levelterrain::Save(SaveFile);
 	overterrain::Save(SaveFile);
 }
 
-void overlevelterrain::Load(std::ifstream* SaveFile)
+void overlevelterrain::Load(std::ifstream& SaveFile)
 {
 	levelterrain::Load(SaveFile);
 	overterrain::Load(SaveFile);
@@ -79,26 +80,26 @@ void overlevelterrain::Load(std::ifstream* SaveFile)
 
 void groundlevelterrain::DrawToTileBuffer(void) const
 {
-	igraph::GetLevelTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetLevelTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
 void overlevelterrain::DrawToTileBuffer(void) const
 {
-	igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16, GetVisualFlags());
+	igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16, GetVisualFlags());
 }
 
 bool stairsup::GoUp(character* Who)  // Try to go up
 {
-	if(game::CCurrent())
+	if(game::GetCurrent())
 	{
-		if(game::CCurrent() == 9)
+		if(game::GetCurrent() == 9)
 			if(!game::BoolQuestion("Somehow you get the feeling you cannot return. Continue anyway? [y/N]"))
 				return false;
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SetCurrent(game::CCurrent() - 1);
+		game::SetCurrent(game::GetCurrent() - 1);
 		game::LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -160,9 +161,9 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 
 bool stairsdown::GoDown(character* Who)  // Try to go down
 {
-	if(game::CCurrent() != game::GetLevels() - 1)
+	if(game::GetCurrent() != game::GetLevels() - 1)
 	{
-		if(game::CCurrent() == 8)
+		if(game::GetCurrent() == 8)
 		{
 			if(!game::BoolQuestion("Something with ultimate sinister power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
 				return false;
@@ -173,7 +174,7 @@ bool stairsdown::GoDown(character* Who)  // Try to go down
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SetCurrent(game::CCurrent() + 1);
+		game::SetCurrent(game::GetCurrent() + 1);
 		game::LoadLevel();
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -274,45 +275,40 @@ std::string altar::Name(uchar Case) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
-			return CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
+			return GetMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
+				return std::string("the ") + GetMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 			else
-				return CMaterial(0)->Name(INDEFINITE)  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
+				return GetMaterial(0)->Name(INDEFINITE)  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 	else
 		if(!(Case & DEFINEBIT))
-			return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
+			return GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
+				return std::string("the ") + GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 			else
-				return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
-}
-
-void levelterrain::SetLevelSquareUnder(levelsquare* Square)
-{
-	LevelSquareUnder = Square;
+				return GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 }
 
 void altar::DrawToTileBuffer(void) const
 {
-	igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetLevelTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (GetMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 	igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetOwnerGod() << 4, 0, 0, 0, 16, 16);
 }
 
-void altar::Load(std::ifstream* SaveFile)
+void altar::Load(std::ifstream& SaveFile)
 {
 	overlevelterrain::Load(SaveFile);
 
-	SaveFile->read((char*)&OwnerGod, sizeof(OwnerGod));
+	SaveFile.read((char*)&OwnerGod, sizeof(OwnerGod));
 }
 
-void altar::Save(std::ofstream* SaveFile) const
+void altar::Save(std::ofstream& SaveFile) const
 {
 	overlevelterrain::Save(SaveFile);
 
-	SaveFile->write((char*)&OwnerGod, sizeof(OwnerGod));
+	SaveFile.write((char*)&OwnerGod, sizeof(OwnerGod));
 }
 
 void levelterrain::HandleVisualEffects(void)
@@ -325,3 +321,9 @@ void levelterrain::HandleVisualEffects(void)
 
 	SetVisualFlags(Flags);
 }
+
+levelsquare* levelterrain::GetLevelSquareUnder(void) const
+{
+	return dynamic_cast<levelsquare*>(SquareUnder);
+}
+

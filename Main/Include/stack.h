@@ -27,7 +27,7 @@ class stack
 public:
 	stack(square* = 0);
 	~stack(void);
-	void Load(std::ifstream*);
+	void Load(std::ifstream&);
 	void PositionedDrawToTileBuffer(uchar = CENTER) const;
 	ushort AddItem(item*);
 	ushort FastAddItem(item*);
@@ -43,7 +43,7 @@ public:
 	vector GetPos(void) const;
 	void Clean(void);
 	ulong SumOfMasses(void) const;
-	void Save(std::ofstream*) const;
+	void Save(std::ofstream&) const;
 	ushort SearchItem(item*) const;
 	void Move(levelsquare*);
 	square* GetSquareUnder(void) const { return SquareUnder; }
@@ -68,3 +68,4 @@ private:
 };
 
 #endif
+

@@ -39,13 +39,16 @@
 
 #include "typedef.h"
 
+#include "typeable.h"
+#include "proto.h"
+
 /* Presentation of material class */
 
 class character;
 class item;
 class object;
 
-class material 
+class material : public typeable
 {
 public: 
 	virtual ~material(void)					{}
@@ -58,8 +61,8 @@ public:
 	virtual ulong GetWeight(void) const			{ return ulong(float(Volume) * GetDensity() / 1000); }
 	virtual ushort GetDensity(void) const = 0;
 	virtual ushort TakeDipVolumeAway(void);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual ushort GetArmorValue(void) const { return GetHitValue(); }
 	virtual void SetVolume(ulong What) { Volume = What; }
 	virtual ushort GetEmitation(void) const { return 0; }
@@ -73,12 +76,16 @@ public:
 	virtual material* Clone(void) const = 0;
 	virtual bool IsType(ushort QType) const { return Type() == QType; }
 	virtual bool IsSolid(void) const { return false; }
+	virtual void Be(void) {}
+	static ushort GetProtoIndexBegin(void) { return ProtoIndexBegin; }
+	static ushort GetProtoIndexEnd(void) { return ProtoIndexEnd; }
+	static ushort GetProtoAmount(void) { return ProtoIndexEnd - ProtoIndexBegin; }
 protected:
 	virtual std::string NameStem(void) const = 0;
 	virtual std::string Article(void) const { return "a"; }
 	virtual void NormalFoodEffect(character*, float, float);
-	virtual ushort Type(void) const = 0;
 	ulong Volume;
+	static ushort ProtoIndexBegin, ProtoIndexEnd;
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -92,23 +99,24 @@ protected:
 		name(void) {}\
 		virtual material* Clone(ulong Volume) const { return new name(Volume); }\
 		virtual material* Clone(void) const { return new name; }\
+		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
 		static ushort StaticType(void);\
 	protected:\
 		virtual ushort Type(void) const;\
 		data\
 	};\
 	\
-	class proto_##name\
+	class name##_protoinstaller\
 	{\
 	public:\
-		proto_##name(void) : Index(prototypesystem::AddProtoType(new name)) {}\
+		name##_protoinstaller(void) : Index(prototypesystem::Add(new name)) {}\
 		ushort GetIndex(void) const { return Index; }\
 	private:\
 		ushort Index;\
-	} static Proto_##name;\
+	} static name##_ProtoInstaller;\
 	\
-	ushort name::StaticType(void) { return Proto_##name.GetIndex(); }\
-	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
+	ushort name::StaticType(void) { return name##_ProtoInstaller.GetIndex(); }\
+	ushort name::Type(void) const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -121,6 +129,7 @@ protected:
 		name(void) {}\
 		virtual material* Clone(ulong Volume) const { return new name(Volume); }\
 		virtual material* Clone(void) const { return new name; }\
+		virtual typeable* CloneAndLoad(std::ifstream& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
 		static ushort StaticType(void);\
 	protected:\
 		virtual ushort Type(void) const;\
@@ -128,6 +137,8 @@ protected:
 	};
 
 #endif
+
+BEGIN_PROTOTYPING(material)
 
 class MATERIAL
 (
@@ -560,4 +571,7 @@ protected:
 	virtual std::string NameStem(void) const	{ return "mithril"; }
 );
 
+FINISH_PROTOTYPING(material)
+
 #endif
+

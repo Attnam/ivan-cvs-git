@@ -1,6 +1,9 @@
 #ifndef __LSQUARE_H__
 #define __LSQUARE_H__
 
+#include <string>
+#include <fstream>
+
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector.h"
@@ -26,7 +29,7 @@ class levelsquare : public square
 public:
 	friend class level;
 	levelsquare(level*, vector);
-	~levelsquare(void);
+	virtual ~levelsquare(void);
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
 	virtual void HandleCharacters(void);
@@ -39,8 +42,8 @@ public:
 	virtual void Clean(void);
 	virtual bool Open(character*);
 	virtual bool Close(character*);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void SpillFluid(uchar, ulong, ushort = 3, ushort = 32);
 	virtual ushort GetLuminance(void) const;
 	virtual void SignalEmitationIncrease(ushort);
@@ -88,10 +91,12 @@ protected:
 	dynarray<emitter> Emitter;
 	stack* Stack, * SideStack[4];
 	ushort Emitation;
-	std::string Engraved, RememberedItems;
+	std::string Engraved;
+	std::string RememberedItems;
 	uchar DivineOwner;
 	bool Fluided;
 	ushort TimeFromSpill;
 };
 
 #endif
+

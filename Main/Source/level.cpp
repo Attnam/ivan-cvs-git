@@ -34,20 +34,20 @@ level::~level(void)
 	for(ushort x = 0; x < XSize; x++)				\
 		for(ushort y = 0; y < YSize; y++)			\
 		{						\
-			Map[x][y]->GetGroundLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
-			Map[x][y]->GetOverLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetGroundLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetOverLevelTerrain()->Draw(DOUBLEBUFFER, vector((x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4), 256);			\
 																					\
 			if(FlagMap[x][y] & FORBIDDEN)															\
-				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 0);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4, 16, 16, 0);	\
 																					\
 			if(FlagMap[x][y] & ON_POSSIBLE_ROUTE)														\
-				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 128);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4, 16, 16, 128);	\
 																					\
 			if(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE)													\
-				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 256);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4, 16, 16, 256);	\
 																					\
 			if(FlagMap[x][y] & PREFERRED)															\
-				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 511);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::GetCamera().X) << 4, (y - game::GetCamera().Y + 1) << 4, 16, 16, 511);	\
 		}						\
 								\
 	graphics::BlitToDBToScreen()				\
@@ -546,20 +546,18 @@ void level::HandleCharacters(void)
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
 		{
-			Map[x][y]->HandleCharacters();
+			//Map[x][y]->HandleCharacters();
 			
 			Population += Map[x][y]->GetPopulation();
 
 			Map[x][y]->HandleFluids();
-			if(!game::GetRunning())
-				return;
 		}
 	}
 
-	for(ushort x = 0; x < XSize; x++)
+	/*for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
 			if(Map[x][y]->CCharacter())
-				Map[x][y]->CCharacter()->SetHasActed(false);
+				Map[x][y]->CCharacter()->SetHasActed(false);*/
 
 	if(Population < CIdealPopulation() && LevelIndex != 9)
 		GenerateNewMonsters(CIdealPopulation() - Population);
@@ -576,7 +574,7 @@ void level::PutPlayerAround(vector Pos)
 	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
 }
 
-void level::Save(std::ofstream* SaveFile) const
+void level::Save(std::ofstream& SaveFile) const
 {
 	area::Save(SaveFile);
 
@@ -587,24 +585,24 @@ void level::Save(std::ofstream* SaveFile) const
 
 	ushort Length = KeyPoint.Length();
 
-	SaveFile->write((char*)&Length, sizeof(Length));
+	SaveFile.write((char*)&Length, sizeof(Length));
 
 	for(ushort c = 0; c < Length; c++)
-		SaveFile->write((char*)&KeyPoint.Access(c), sizeof(KeyPoint.Access(c)));
+		SaveFile.write((char*)&KeyPoint.Access(c), sizeof(KeyPoint.Access(c)));
 
 	Length = Door.Length();
 
-	SaveFile->write((char*)&Length, sizeof(Length));
+	SaveFile.write((char*)&Length, sizeof(Length));
 
 	for(c = 0; c < Length; c++)
-		SaveFile->write((char*)&Door.Access(c), sizeof(Door.Access(c)));
+		SaveFile.write((char*)&Door.Access(c), sizeof(Door.Access(c)));
 
-	SaveFile->write((char*)&LevelIndex, sizeof(LevelIndex));
-	SaveFile->write((char*)&UpStairs, sizeof(UpStairs));
-	SaveFile->write((char*)&DownStairs, sizeof(DownStairs));
+	SaveFile.write((char*)&LevelIndex, sizeof(LevelIndex));
+	SaveFile.write((char*)&UpStairs, sizeof(UpStairs));
+	SaveFile.write((char*)&DownStairs, sizeof(DownStairs));
 }
 
-void level::Load(std::ifstream* SaveFile)
+void level::Load(std::ifstream& SaveFile)
 {
 	area::Load(SaveFile);
 
@@ -621,31 +619,31 @@ void level::Load(std::ifstream* SaveFile)
 
 	ushort Length;
 
-	SaveFile->read((char*)&Length, sizeof(Length));
+	SaveFile.read((char*)&Length, sizeof(Length));
 
 	for(ushort c = 0; c < Length; c++)
 	{
 		vector Pos;
 
-		SaveFile->read((char*)&Pos, sizeof(Pos));
+		SaveFile.read((char*)&Pos, sizeof(Pos));
 
 		KeyPoint.Add(Pos);
 	}
 
-	SaveFile->read((char*)&Length, sizeof(Length));
+	SaveFile.read((char*)&Length, sizeof(Length));
 
 	for(c = 0; c < Length; c++)
 	{
 		vector Pos;
 
-		SaveFile->read((char*)&Pos, sizeof(Pos));
+		SaveFile.read((char*)&Pos, sizeof(Pos));
 
 		Door.Add(Pos);
 	}
 
-	SaveFile->read((char*)&LevelIndex, sizeof(LevelIndex));
-	SaveFile->read((char*)&UpStairs, sizeof(UpStairs));
-	SaveFile->read((char*)&DownStairs, sizeof(DownStairs));
+	SaveFile.read((char*)&LevelIndex, sizeof(LevelIndex));
+	SaveFile.read((char*)&UpStairs, sizeof(UpStairs));
+	SaveFile.read((char*)&DownStairs, sizeof(DownStairs));
 }
 
 void level::Luxify(void)
@@ -662,12 +660,12 @@ void level::FastAddCharacter(vector Pos, character* Guy)
 
 void level::Draw(void) const
 {
-	ushort XMax = GetXSize() < game::CCamera().X + 50 ? GetXSize() : game::CCamera().X + 50;
-	ushort YMax = GetYSize() < game::CCamera().Y + 30 ? GetYSize() : game::CCamera().Y + 30;
+	ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
+	ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
 
 	if(game::GetSeeWholeMapCheat())
-		for(ushort x = game::CCamera().X; x < XMax; x++)
-			for(ushort y = game::CCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; x++)
+			for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			{
 				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
@@ -677,8 +675,8 @@ void level::Draw(void) const
 					Map[x][y]->DrawCheat();
 			}
 	else
-		for(ushort x = game::CCamera().X; x < XMax; x++)
-			for(ushort y = game::CCamera().Y; y < YMax; y++)
+		for(ushort x = game::GetCamera().X; x < XMax; x++)
+			for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			{
 				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
@@ -720,3 +718,4 @@ vector level::RandomSquare(bool Walkablility) const
 
 	return Pos;
 }
+

@@ -1,6 +1,7 @@
 #include "char.h"
 #include "material.h"
 #include "message.h"
+#include "proto.h"
 
 std::string material::Name(uchar Case) const
 {
@@ -19,16 +20,16 @@ ushort material::TakeDipVolumeAway(void)
 	return Amount;
 }
 
-void material::Save(std::ofstream* SaveFile) const
+void material::Save(std::ofstream& SaveFile) const
 {
 	ushort TypeVar = Type();
-	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
-	SaveFile->write((char*)&Volume, sizeof(Volume));
+	SaveFile.write((char*)&TypeVar, sizeof(TypeVar));
+	SaveFile.write((char*)&Volume, sizeof(Volume));
 }
 
-void material::Load(std::ifstream* SaveFile)
+void material::Load(std::ifstream& SaveFile)
 {
-	SaveFile->read((char*)&Volume, sizeof(Volume));
+	SaveFile.read((char*)&Volume, sizeof(Volume));
 }
 
 void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier)
@@ -94,3 +95,4 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
+

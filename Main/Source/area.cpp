@@ -4,12 +4,12 @@
 #include "bitmap.h"
 #include "char.h"
 #include "material.h"
+#include "proto.h"
 
 area::area(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize)
 {
-	Map = Alloc2D<square*>(XSize, YSize);
-
-	FlagMap = Alloc2D<ushort>(XSize, YSize);
+	Alloc2D(Map, XSize, YSize);
+	Alloc2D(FlagMap, XSize, YSize);
 
 	for(ulong c = 0; c < XSizeTimesYSize; c++)
 		FlagMap[0][c] = 0;
@@ -28,29 +28,53 @@ area::~area(void)
 	delete Memorized;
 }
 
-void area::Save(std::ofstream* SaveFile) const
+void area::Save(std::ofstream& SaveFile) const
 {
-	SaveFile->write((char*)&XSize, sizeof(XSize));
-	SaveFile->write((char*)&YSize, sizeof(YSize));
+	SaveFile.write((char*)&XSize, sizeof(XSize));
+	SaveFile.write((char*)&YSize, sizeof(YSize));
 
-	SaveFile->write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 }
 
-void area::Load(std::ifstream* SaveFile)
+/*void area::Save(std::ofstream& SaveFile) const
 {
-	SaveFile->read((char*)&XSize, sizeof(XSize));
-	SaveFile->read((char*)&YSize, sizeof(YSize));
+	SaveFile << XSize << YSize;
+
+	SaveFile.write((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+}*/
+
+void area::Load(std::ifstream& SaveFile)
+{
+	game::SetAreaInLoad(this);
+
+	SaveFile.read((char*)&XSize, sizeof(XSize));
+	SaveFile.read((char*)&YSize, sizeof(YSize));
 
 	XSizeTimesYSize = XSize * YSize;
 
-	Map = Alloc2D<square*>(XSize, YSize);
+	Alloc2D(Map, XSize, YSize);
+	Alloc2D(FlagMap, XSize, YSize);
 
-	FlagMap = Alloc2D<ushort>(XSize, YSize);
-
-	SaveFile->read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+	SaveFile.read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
 
 	Memorized = new bitmap(XSize << 4, YSize << 4);
 }
+
+/*void area::Load(std::ifstream& SaveFile)
+{
+	SaveFile.SetAreaInLoad(this);
+
+	SaveFile >> XSize >> YSize;
+
+	XSizeTimesYSize = XSize * YSize;
+
+	Alloc2D(Map, XSize, YSize);
+	Alloc2D(FlagMap, XSize, YSize);
+
+	SaveFile.read((char*)FlagMap[0], sizeof(ushort) * XSizeTimesYSize);
+
+	Memorized = new bitmap(XSize << 4, YSize << 4);
+}*/
 
 void area::RemoveCharacter(vector Pos)
 {
@@ -79,3 +103,4 @@ void area::EmptyFlags(void)
 		for(ushort y = 0; y < YSize; y++)
 			Map[x][y]->EmptyFlag();
 }
+

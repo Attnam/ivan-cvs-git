@@ -17,4 +17,9 @@ template <class Type> inline Type** Alloc2D(ulong XSize, ulong YSize)
 	return Map;
 }
 
+template <class Type> inline void Alloc2D(Type**& Map, ulong XSize, ulong YSize)
+{
+	Map = Alloc2D<Type>(XSize, YSize);
+}
+
 #endif

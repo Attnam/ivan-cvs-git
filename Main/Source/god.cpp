@@ -5,6 +5,7 @@
 #include "item.h"
 #include "stack.h"
 #include "message.h"
+#include "proto.h"
 
 void god::Pray(void)
 {
@@ -304,7 +305,7 @@ void loricatus::PrayGoodEffect(void)
 	if(game::GetPlayer()->GetWielded())
 	{
 		OldName = game::GetPlayer()->GetWielded()->Name(INDEFINITE);
-		game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->CMaterial(0)->GetVolume()));
+		game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
 		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	}
 }
@@ -315,7 +316,7 @@ void loricatus::PrayBadEffect(void)
 	if(game::GetPlayer()->GetWielded())
 	{
 		OldName = game::GetPlayer()->GetWielded()->Name(INDEFINITE);
-		game::GetPlayer()->GetWielded()->SetMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->CMaterial(0)->GetVolume()));
+		game::GetPlayer()->GetWielded()->SetMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
 		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
 	}
 	else
@@ -340,16 +341,16 @@ void calamus::PrayBadEffect(void)
 		ADD_MESSAGE("Suprisingly you feel nothing.");
 }
 
-void god::Save(std::ofstream* SaveFile) const
+void god::Save(std::ofstream& SaveFile) const
 {
-	SaveFile->write((char*)&Relation, sizeof(Relation));
-	SaveFile->write((char*)&Timer, sizeof(Timer));
+	SaveFile.write((char*)&Relation, sizeof(Relation));
+	SaveFile.write((char*)&Timer, sizeof(Timer));
 }
 
-void god::Load(std::ifstream* SaveFile)
+void god::Load(std::ifstream& SaveFile)
 {
-	SaveFile->read((char*)&Relation, sizeof(Relation));
-	SaveFile->read((char*)&Timer, sizeof(Timer));
+	SaveFile.read((char*)&Relation, sizeof(Relation));
+	SaveFile.read((char*)&Timer, sizeof(Timer));
 }
 
 void erado::PrayGoodEffect(void)
@@ -659,3 +660,4 @@ void god::PrintRelation(void) const
 
 	ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
 }
+

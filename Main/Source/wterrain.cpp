@@ -4,13 +4,7 @@
 #include "bitmap.h"
 #include "object.h"
 #include "material.h"
-
-void worldmapterrain::Save(std::ofstream* SaveFile) const
-{
-	ushort TypeVar = Type();
-
-	SaveFile->write((char*)&TypeVar, sizeof(TypeVar));
-}
+#include "proto.h"
 
 std::string worldmapterrain::Name(uchar Case) const
 {
@@ -47,14 +41,20 @@ void overworldmapterrain::DrawToTileBuffer(void) const
 	igraph::GetWorldMapTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
-void overworldmapterrain::Save(std::ofstream* SaveFile) const
+void overworldmapterrain::Save(std::ofstream& SaveFile) const
 {
-	worldmapterrain::Save(SaveFile);
+	typeable::Save(SaveFile);
 	overterrain::Save(SaveFile);
 }
 
-void overworldmapterrain::Load(std::ifstream* SaveFile)
+void overworldmapterrain::Load(std::ifstream& SaveFile)
 {
-	worldmapterrain::Load(SaveFile);
+	typeable::Load(SaveFile);
 	overterrain::Load(SaveFile);
 }
+
+worldmapsquare* worldmapterrain::GetWorldMapSquareUnder(void) const
+{
+	return dynamic_cast<worldmapsquare*>(SquareUnder);
+}
+

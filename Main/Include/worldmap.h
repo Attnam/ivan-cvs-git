@@ -10,17 +10,17 @@ class worldmap : public area
 public:
 	worldmap(ushort, ushort);
 	worldmap(void) {}
-	~worldmap(void);
+	virtual ~worldmap(void);
 	virtual void Generate(void);
 	virtual void Draw(void) const;
-	virtual void Save(std::ofstream*) const;
+	virtual void Save(std::ofstream&) const;
 	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual void GenerateTerrain(void);
-	virtual void Load(std::ifstream*);
-//	virtual groundworldmapterrain* WhatTerrainIsMostCommonNear(ushort, ushort);
+	virtual void Load(std::ifstream&);
 protected:
 	worldmapsquare*** Map;
 	friend class worldmapterrain;
 };
 
 #endif
+

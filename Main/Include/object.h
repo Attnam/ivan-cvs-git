@@ -13,31 +13,37 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <list>
 
 #include "typedef.h"
+
+#include "typeable.h"
+#include "drawable.h"
 
 class material;
 class vector;
 
-class object
+class object : virtual public typeable, virtual public drawable
 {
 public:
-	object(void) {}
-	~object(void);
-	virtual void Save(std::ofstream*) const;
-	virtual void Load(std::ifstream*);
+	object(bool);
+	virtual ~object(void);
+	virtual void Save(std::ofstream&) const;
+	virtual void Load(std::ifstream&);
 	virtual void InitMaterials(ushort, ...);
 	virtual void InitMaterials(material*);
-	virtual material* CMaterial(ushort Index) const { return Material[Index]; }
+	virtual material* GetMaterial(ushort Index) const { return Material[Index]; }
 	virtual ushort GetEmitation(void) const;
 	virtual void SetSize(ushort Value) { Size = Value; }
 	virtual ushort GetSize(void) const { return Size; }
 	virtual void EraseMaterials(void);
 	virtual ushort GetMaterials(void) const { return Material.size(); }
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-	virtual void DrawToTileBuffer(void) const = 0;
 	virtual std::string GetNameSingular(void) const { return NameSingular(); }
 	virtual std::string GetNamePlural(void) const { return NamePlural(); }
+	virtual void Be(void) {}
+	virtual std::list<object*>::iterator GetPoolIterator(void) { return PoolIterator; }
+	virtual void SetPoolIterator(std::list<object*>::iterator What) { PoolIterator = What; }
 protected:
 	virtual std::string NameSingular(void) const = 0;
 	virtual std::string NamePlural(void) const = 0;
@@ -49,10 +55,11 @@ protected:
 	virtual std::string NameContainer(uchar) const;
 	virtual std::string NameSized(uchar, std::string, ushort, ushort) const;
 	virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
-	virtual ushort Type(void) const = 0;
-	virtual vector GetBitmapPos(void) const = 0;
 	std::vector<material*> Material;
+	std::list<object*>::iterator PoolIterator;
 	ushort Size;
+	bool InPool;
 };
 
 #endif
+
