@@ -535,6 +535,7 @@ CHARACTER(imperialist, humanoid)
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void BeTalkedTo();
+  virtual void DisplayStethoscopeInfo(character*) const;
 };
 
 CHARACTER(smith, humanoid)

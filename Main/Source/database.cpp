@@ -230,6 +230,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(DefaultPerception);
   ADD_MEMBER(DefaultIntelligence);
   ADD_MEMBER(DefaultWisdom);
+  ADD_MEMBER(DefaultWillPower);
   ADD_MEMBER(DefaultCharisma);
   ADD_MEMBER(DefaultMana);
   ADD_MEMBER(DefaultMoney);
@@ -447,6 +448,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(AffectsPerception);
   ADD_MEMBER(AffectsIntelligence);
   ADD_MEMBER(AffectsWisdom);
+  ADD_MEMBER(AffectsWillPower);
   ADD_MEMBER(AffectsCharisma);
   ADD_MEMBER(AffectsMana);
   ADD_MEMBER(BaseEnchantment);

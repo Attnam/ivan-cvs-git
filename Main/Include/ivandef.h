@@ -116,7 +116,7 @@ const name##prototype name::ProtoType
 #define BLOATED 5
 #define OVER_FED 6
 
-#define STATES 20
+#define STATES 21
 
 #define POLYMORPHED (1 << 0)
 #define HASTE (1 << 1)
@@ -403,25 +403,27 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define USE_LEGS 2
 #define USE_HEAD 4
 
-#define ATTRIBUTES 10
-#define BASE_ATTRIBUTES 6
+#define ATTRIBUTES 11
+#define BASE_ATTRIBUTES 7
 
 #define ENDURANCE 0
 #define PERCEPTION 1
 #define INTELLIGENCE 2
 #define WISDOM 3
-#define CHARISMA 4
-#define MANA 5
+#define WILL_POWER 4
+#define CHARISMA 5
+#define MANA 6
 
-#define ARM_STRENGTH 6
-#define LEG_STRENGTH 7
-#define DEXTERITY 8
-#define AGILITY 9
+#define ARM_STRENGTH 7
+#define LEG_STRENGTH 8
+#define DEXTERITY 9
+#define AGILITY 10
 
 #define F_ENDURANCE (1 << ENDURANCE)
 #define F_PERCEPTION (1 << PERCEPTION)
 #define F_INTELLIGENCE (1 << INTELLIGENCE)
 #define F_WISDOM (1 << WISDOM)
+#define F_WILL_POWER (1 << WILL_POWER)
 #define F_CHARISMA (1 << CHARISMA)
 #define F_MANA (1 << MANA)
 

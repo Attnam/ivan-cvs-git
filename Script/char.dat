@@ -275,6 +275,7 @@ character
   RunDescriptionLineTwo = "";
   VomittingIsUnhealthy = true;
   AllowPlayerToChangeEquipment = true;
+  DefaultWillPower = 10;
 }
 
 humanoid

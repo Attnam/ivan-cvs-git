@@ -79,6 +79,7 @@ item
   AffectsPerception = false;
   AffectsIntelligence = false;
   AffectsWisdom = false;
+  AffectsWillPower = false;
   AffectsCharisma = false;
   AffectsMana = false;
   BaseEnchantment = 0;

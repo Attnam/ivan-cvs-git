@@ -1,5 +1,5 @@
-Version 0.50
-------------
+Version 0.50, released 10th December 2004
+-----------------------------------------
 
 - fluids can now cover items and characters and interact with them
 - items made of iron alloys can now rust
@@ -34,8 +34,8 @@ Version 0.50
 - added leprosy, a nasty disease which causes your limbs to drop off
   randomly
 
-Version 0.430
--------------
+Version 0.430, released 5th August 2003
+---------------------------------------
 
 - certain monsters and their corpses are now larger than one square
 - thirteen new monsters added, including electric hattifatteners and
@@ -46,8 +46,8 @@ Version 0.430
 - added an alternative keyboard layout to ease playing on some laptops
 - score system simplified
 
-Version 0.420
--------------
+Version 0.420, released 11th May 2003
+-------------------------------------
 
 - you can now find a level where you died in a former game (a bonefile)
 - added one new monster, a few items and several materials
@@ -60,8 +60,8 @@ Version 0.420
 - the game's compile speed increased greatly
 - lots of monster AI and graphics routine optimizations
 
-Version 0.410
--------------
+Version 0.410, released 27th March 2003
+---------------------------------------
 
 - added smoke effects
 - added eleven new monsters
@@ -74,8 +74,8 @@ Version 0.410
 - breaking wands now all have unique effects
 - dipping to corpses is again possible
 
-Version 0.401
--------------
+Version 0.401, released 5th February 2003
+-----------------------------------------
 
 - added lightning effects
 - added several new artifact and regular weapons
@@ -88,8 +88,8 @@ Version 0.401
 - decreased IVAN's RAM usage greatly
 - doubled IVAN's compile speed
 
-Version 0.40
-------------
+Version 0.40, released 10th December 2002
+-----------------------------------------
 
 - bodyparts added
 - animations added
@@ -101,17 +101,17 @@ Version 0.40
 - tripled the amount of items
 - added many equipable items (gauntlets, boots, cloaks etc)
 
-Version 0.311
--------------
+Version 0.311, released 25th February 2002
+------------------------------------------
 
 - a few fatal bugs fixed
 - some non-fatal bugs fixed
 - lots of optimization
 
-Version 0.310
--------------
+Version 0.310, released 4th February 2002
+-----------------------------------------
 
-Added stuff after version 0.301:
+Added stuff after version 0.301, released 10th December 2001:
 
 - Linux and DOS ports
 - fountain effects

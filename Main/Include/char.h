@@ -105,6 +105,7 @@ struct characterdatabase : public databasebase
   int DefaultPerception;
   int DefaultIntelligence;
   int DefaultWisdom;
+  int DefaultWillPower;
   int DefaultCharisma;
   int DefaultMana;
   int DefaultArmStrength;
@@ -427,6 +428,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, DefaultPerception);
   DATA_BASE_VALUE(int, DefaultIntelligence);
   DATA_BASE_VALUE(int, DefaultWisdom);
+  DATA_BASE_VALUE(int, DefaultWillPower);
   DATA_BASE_VALUE(int, DefaultCharisma);
   DATA_BASE_VALUE(int, DefaultMana);
   DATA_BASE_VALUE(int, DefaultArmStrength);
@@ -648,7 +650,7 @@ class character : public entity, public id
   void PolymorphHandler();
   void PrintEndPolymorphMessage() const;
   void PrintBeginPolymorphMessage() const;
-  void DisplayStethoscopeInfo(character*) const;
+  virtual void DisplayStethoscopeInfo(character*) const;
   virtual truth CanUseStethoscope(truth) const;
   virtual truth IsUsingArms() const;
   virtual truth IsUsingLegs() const;
@@ -752,6 +754,7 @@ class character : public entity, public id
   void SetPerception(int);
   void SetIntelligence(int);
   void SetWisdom(int);
+  void SetWillPower(int);
   void SetCharisma(int);
   void SetMana(int);
   void DamageAllItems(character*, int, int);

@@ -5005,3 +5005,7 @@ void kamikazedwarf::SingRandomSong()
     ADD_MESSAGE("You hear someone sing: \"%s\"", Song.CStr());
 }
 
+void imperialist::DisplayStethoscopeInfo(character*) const
+{
+  ADD_MESSAGE("You hear coins clinking inside.");
+}

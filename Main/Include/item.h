@@ -89,6 +89,7 @@ struct itemdatabase : public databasebase
   truth AffectsPerception;
   truth AffectsIntelligence;
   truth AffectsWisdom;
+  truth AffectsWillPower;
   truth AffectsCharisma;
   truth AffectsMana;
   truth PriceIsProportionalToEnchantment;
@@ -334,6 +335,7 @@ class item : public object
   DATA_BASE_TRUTH(AffectsPerception);
   DATA_BASE_TRUTH(AffectsIntelligence);
   DATA_BASE_TRUTH(AffectsWisdom);
+  DATA_BASE_TRUTH(AffectsWillPower);
   DATA_BASE_TRUTH(AffectsCharisma);
   DATA_BASE_TRUTH(AffectsMana);
   DATA_BASE_TRUTH(AffectsCarryingCapacity);

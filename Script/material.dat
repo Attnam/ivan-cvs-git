@@ -1213,6 +1213,7 @@ organic /* substances that spoil but are not flesh */
     ConsumeEndMessage = CEM_OMMEL_BONE;
     NameFlags = Base|USE_AN;
     CategoryFlags = Base|IS_GOLEM_MATERIAL;
+    HardenedMaterial = OMMEL_TOOTH;
   }
 
   Config OMMEL_TOOTH;

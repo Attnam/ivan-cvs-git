@@ -237,7 +237,7 @@ statedata StateData[STATES] =
     &character::LeprosyHandler,
     0,
     &character::LeprosySituationDangerModifier
-  }/*, {
+  }, {
     "Hiccups",
     SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_FLAGS,
     &character::PrintBeginHiccupsMessage,
@@ -247,7 +247,7 @@ statedata StateData[STATES] =
     &character::HiccupsHandler,
     0,
     &character::HiccupsSituationDangerModifier
-  }*/
+  }
 };
 
 characterprototype::characterprototype(const characterprototype* Base,
@@ -282,6 +282,8 @@ void character::SetIntelligence(int What)
 { BaseExperience[INTELLIGENCE] = What * EXP_MULTIPLIER; }
 void character::SetWisdom(int What)
 { BaseExperience[WISDOM] = What * EXP_MULTIPLIER; }
+void character::SetWillPower(int What)
+{ BaseExperience[WILL_POWER] = What * EXP_MULTIPLIER; }
 void character::SetCharisma(int What)
 { BaseExperience[CHARISMA] = What * EXP_MULTIPLIER; }
 void character::SetMana(int What)
@@ -4170,6 +4172,7 @@ void character::DrawPanel(truth AnimationDraw) const
   PrintAttribute("Per", PERCEPTION, PanelPosX, PanelPosY++);
   PrintAttribute("Int", INTELLIGENCE, PanelPosX, PanelPosY++);
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
+  PrintAttribute("Wil", WILL_POWER, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10), WHITE, "Siz  %d", GetSize());
   FONT->Printf(DOUBLE_BUFFER, v2(PanelPosX, PanelPosY++ * 10),
@@ -5229,6 +5232,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(CONST_S("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
+  //Info.AddEntry(CONST_S("Willpower: ") + GetAttribute(WILL_POWER), LIGHT_GRAY);
   Info.AddEntry(CONST_S("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
   Info.AddEntry(CONST_S("HP: ") + GetHP() + "/" + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
 
@@ -5930,6 +5934,9 @@ void character::CalculateAttributeBonuses()
     if(Equipment->AffectsWisdom())
       AttributeBonus[WISDOM] += Equipment->GetEnchantment();
 
+    if(Equipment->AffectsWillPower())
+      AttributeBonus[WILL_POWER] += Equipment->GetEnchantment();
+
     if(Equipment->AffectsCharisma())
       AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
 
@@ -5983,6 +5990,9 @@ void character::ApplyEquipmentAttributeBonuses(item* Equipment)
 
   if(Equipment->AffectsWisdom())
     AttributeBonus[WISDOM] += Equipment->GetEnchantment();
+
+  if(Equipment->AffectsWillPower())
+    AttributeBonus[WILL_POWER] += Equipment->GetEnchantment();
 
   if(Equipment->AffectsCharisma())
     AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
@@ -7674,6 +7684,7 @@ int characterdatabase::* ExpPtr[ATTRIBUTES] =
   &characterdatabase::DefaultPerception,
   &characterdatabase::DefaultIntelligence,
   &characterdatabase::DefaultWisdom,
+  &characterdatabase::DefaultWillPower,
   &characterdatabase::DefaultCharisma,
   &characterdatabase::DefaultMana,
   &characterdatabase::DefaultArmStrength,
