@@ -2846,6 +2846,7 @@ vector character::CPos(void)
 }
 
 // Valpuri r0xx
+// Valpuri Is Lord
 
 bool character::ForceVomit(void)
 {
