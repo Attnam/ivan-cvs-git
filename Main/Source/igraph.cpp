@@ -179,14 +179,14 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       if(RotateFlags)
       {
 	ColorizeBuffer[1]->Clear();
-	RotateTile(RawBitmap, ColorizeBuffer[1], RawPos, SparklePos, RotateFlags);
+	SparklePos = RotateTile(RawBitmap, ColorizeBuffer[1], RawPos, SparklePos, RotateFlags);
 	RawBitmap = ColorizeBuffer[1];
       }
     }
     else if(RotateFlags)
     {
       ColorizeBuffer[0]->Clear();
-      RotateTile(RawBitmap, ColorizeBuffer[0], RawPos, SparklePos, RotateFlags);
+      SparklePos = RotateTile(RawBitmap, ColorizeBuffer[0], RawPos, SparklePos, RotateFlags);
       RawBitmap = ColorizeBuffer[0];
       RawPos.X = RawPos.Y = 0;
     }
@@ -481,12 +481,12 @@ void igraph::CreateBackGround(int ColorType)
   int Side = 1025;
   int** Map;
   Alloc2D(Map, Side, Side);
-  femath::GenerateFractalMap(Map, Side, Side - 1, 1000);
+  femath::GenerateFractalMap(Map, Side, Side - 1, 800);
 
   for(int x = 0; x < RES.X; ++x)
     for(int y = 0; y < RES.Y; ++y)
     {
-      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 75);
+      int E = Limit<int>(abs(Map[1024 - x][1024 - (RES.Y - y)]) / 30, 0, 100);
       BackGround->PutPixel(x, y, GetBackGroundColor(E));
     }
 
@@ -516,5 +516,6 @@ void igraph::BlitBackGround(v2 Pos, v2 Border)
 		  0,
 		  0,
 		  0 };
+
   BackGround->NormalBlit(B);
 }

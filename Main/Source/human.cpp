@@ -48,7 +48,7 @@ truth genie::BodyPartIsVital(int I) const { return I == TORSO_INDEX || I == HEAD
 
 material* golem::CreateBodyPartMaterial(int, long Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
 
-truth sumowrestler::CanUseEquipment(int I) const { return I == BELT_INDEX && character::CanUseEquipment(I); }
+truth sumowrestler::EquipmentIsAllowed(int I) const { return I == BELT_INDEX; }
 
 petrus::~petrus()
 {
@@ -1526,9 +1526,10 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 		  ALLOW_ANIMATE };
 
   v2 Where(RES.X - SILHOUETTE_SIZE.X - 39, 53);
+  const int Equipments = GetEquipments();
 
-  for(c = 0; c < GetEquipments(); ++c)
-    if(CanUseEquipment(c))
+  for(c = 0; c < Equipments; ++c)
+    if(GetBodyPartOfEquipment(c) && EquipmentIsAllowed(c))
     {
       v2 Pos = Where + GetEquipmentPanelPos(c);
 
@@ -1537,7 +1538,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 
       item* Equipment = GetEquipment(c);
 
-      if(Equipment)
+      if(Equipment && (!AnimationDraw || Equipment->IsAnimated()))
       {
 	igraph::BlitBackGround(Pos, TILE_V2);
 	B1.Dest = Pos;
@@ -1550,15 +1551,16 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
       }
     }
 
-  blitdata B2 = { DOUBLE_BUFFER,
-		  { 0, 0 },
-		  { Where.X + 8, Where.Y },
-		  { SILHOUETTE_SIZE.X, SILHOUETTE_SIZE.Y },
-		  0,
-		  0,
-		  0 };
-
   if(!AnimationDraw)
+  {
+    blitdata B2 = { DOUBLE_BUFFER,
+		    { 0, 0 },
+		    { Where.X + 8, Where.Y },
+		    { SILHOUETTE_SIZE.X, SILHOUETTE_SIZE.Y },
+		    0,
+		    0,
+		    0 };
+
     for(int c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
@@ -1570,6 +1572,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 	Cache->NormalMaskedBlit(B2);
       }
     }
+  }
 }
 
 int humanoid::GetGlobalResistance(int Type) const

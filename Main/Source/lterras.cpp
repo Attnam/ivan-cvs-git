@@ -852,7 +852,7 @@ void stairs::Load(inputfile& SaveFile)
 
 truth stairs::Enter(truth DirectionUp) const
 {
-  if(DirectionUp != IsUpLink())
+  if(!DirectionUp != !IsUpLink())
     return olterrain::Enter(DirectionUp);
 
   /* "Temporary" gum solutions */

@@ -65,7 +65,7 @@ class felist
   void SetDownKey(uint What) { DownKey = What; }
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
  private:
-  void DrawDescription(bitmap*, v2, uint, col16) const;
+  void DrawDescription(bitmap*) const;
   std::vector<felistentry*> Entry;
   std::vector<felistdescription*> Description;
   uint PageBegin;

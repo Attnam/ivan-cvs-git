@@ -304,7 +304,7 @@ static festring Str;
 truth felist::DrawPage(bitmap* Buffer) const
 {
   uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
-  DrawDescription(Buffer, Pos, Width, BackColor);
+  DrawDescription(Buffer);
 
   uint c, i; // c == entry index, i == selectable index
 
@@ -425,8 +425,7 @@ truth felist::DrawPage(bitmap* Buffer) const
   return c == Entry.size() - 1;
 }
 
-void felist::DrawDescription(bitmap* Buffer, v2 Pos,
-			     uint Width, col16 BackColor) const
+void felist::DrawDescription(bitmap* Buffer) const
 {
   Buffer->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20, BackColor);
 

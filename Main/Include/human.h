@@ -567,7 +567,7 @@ CHARACTER(sumowrestler, humanoid)
   virtual void BeTalkedTo();
   virtual truth CheckIfSatiated() { return GetNP() > BLOATED_LEVEL; }
   virtual truth IsSumoWrestler() const { return true; }
-  virtual truth CanUseEquipment(int) const;
+  virtual truth EquipmentIsAllowed(int) const;
  protected:
   virtual void GetAICommand();
 };

@@ -1103,7 +1103,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
     SmokeAlphaSum = 0;
   }
 
-  if(WasTransparent == !CalculateIsTransparent())
+  if(!WasTransparent == !!CalculateIsTransparent())
   {
     if(Noxified)
       GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);

@@ -394,13 +394,13 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  int Size = strlen(Buffer);
+  //int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
   {
     packcol16 ShadeCol = MakeShadeColor(Color);
 
-    for(int c = 0; c < Size; ++c)
+    for(int c = 0; Buffer[c]; ++c)
     {
       const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3) + 1, Pos.Y + 1), v2(8, 8), &ShadeCol);
@@ -409,10 +409,19 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
   }
   else
   {
-    for(int c = 0; c < Size; ++c)
+    blitdata B = { Bitmap,
+		   { 0, 0 },
+		   { Pos.X, Pos.Y },
+		   { 9, 9 },
+		   0,
+		   TRANSPARENT_COLOR,
+		   0 };
+
+    for(int c = 0; Buffer[c]; ++c, B.Dest.X += 8)
     {
-      const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
-      Iterator->second.first->PrintCharacter(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y));
+      B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
+      B.Src.Y = (Buffer[c] - 0x20) & 0xF0;
+      Iterator->second.first->PrintCharacter(B);
     }
   }
 }
@@ -427,11 +436,11 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  int Size = strlen(Buffer);
+  //int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
   {
-    for(int c = 0; c < Size; ++c)
+    for(int c = 0; Buffer[c]; ++c)
     {
       const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
       MaskedBlit(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y), v2(8, 8), &Color);
@@ -439,10 +448,19 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
   }
   else
   {
-    for(int c = 0; c < Size; ++c)
+    blitdata B = { Bitmap,
+		   { 0, 0 },
+		   { Pos.X, Pos.Y },
+		   { 9, 9 },
+		   0,
+		   TRANSPARENT_COLOR,
+		   0 };
+
+    for(int c = 0; Buffer[c]; ++c, B.Dest.X += 8)
     {
-      const v2 F(((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0);
-      Iterator->second.second->PrintCharacter(Bitmap, F, v2(Pos.X + (c << 3), Pos.Y));
+      B.Src.X = ((Buffer[c] - 0x20) & 0xF) << 4;
+      B.Src.Y = (Buffer[c] - 0x20) & 0xF0;
+      Iterator->second.second->PrintCharacter(B);
     }
   }
 }

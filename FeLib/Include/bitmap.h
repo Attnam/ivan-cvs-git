@@ -191,7 +191,7 @@ class cachedfont : public bitmap
   cachedfont(v2);
   cachedfont(v2, col16);
   ~cachedfont() { delete [] MaskMap; }
-  void PrintCharacter(bitmap*, v2, v2) const;
+  void PrintCharacter(const blitdata) const;
   void CreateMaskMap();
  private:
   packcol16** MaskMap;

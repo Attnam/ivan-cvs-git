@@ -242,7 +242,7 @@ std::list<character*>::iterator character::GetTeamIterator() { return TeamIterat
 void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 void character::CreateInitialEquipment(int SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
 void character::EditAP(long What) { AP = Limit<long>(AP + What, -12000, 1200); }
-truth character::CanUseEquipment(int I) const { return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I); }
+//truth character::CanUseEquipment(int I) const { return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I); }
 int character::GetRandomStepperBodyPart() const { return TORSO_INDEX; }
 void character::GainIntrinsic(long What) { BeginTemporaryState(What, PERMANENT); }
 truth character::IsUsingArms() const { return GetAttackStyle() & USE_ARMS; }
@@ -1821,15 +1821,15 @@ truth character::CheckDeath(const festring& Msg, const character* Murderer, ulon
 
     if(Murderer == this)
     {
-      SEARCH_N_REPLACE(NewMsg, "@k", GetObjectPronoun(false) + "self");
-      SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + GetObjectPronoun(false) + "self");
       SEARCH_N_REPLACE(NewMsg, "@bkp", CONST_S("by ") + GetPossessivePronoun(false) + " own");
+      SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + GetObjectPronoun(false) + "self");
+      SEARCH_N_REPLACE(NewMsg, "@k", GetObjectPronoun(false) + "self");
     }
     else
     {
-      SEARCH_N_REPLACE(NewMsg, "@k", CONST_S("by ") + Murderer->GetName(INDEFINITE));
-      SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + Murderer->GetName(INDEFINITE));
       SEARCH_N_REPLACE(NewMsg, "@bkp", CONST_S("by ") + Murderer->GetName(INDEFINITE) + "'s");
+      SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + Murderer->GetName(INDEFINITE));
+      SEARCH_N_REPLACE(NewMsg, "@k", CONST_S("by ") + Murderer->GetName(INDEFINITE));
     }
 
     if(SpecifierParts)
@@ -4156,7 +4156,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 
 long character::GetStateAPGain(long BaseAPGain) const
 {
-  if(StateIsActivated(HASTE) == StateIsActivated(SLOW))
+  if(!StateIsActivated(HASTE) == !StateIsActivated(SLOW))
     return BaseAPGain;
   else if(StateIsActivated(HASTE))
     return (BaseAPGain * 5) >> 2;
@@ -5525,7 +5525,7 @@ truth character::TryToEquip(item* Item)
     return false;
 
   for(int e = 0; e < GetEquipments(); ++e)
-    if(CanUseEquipment(e))
+    if(GetBodyPartOfEquipment(e) && EquipmentIsAllowed(e))
     {
       sorter Sorter = EquipmentSorter(e);
 
@@ -7562,6 +7562,11 @@ int character::CalculateWeaponSkillHits(const character* Enemy) const
   }
   else
     return Min(int(GetRelativeDanger(Enemy, true) * 2000), 1000);
+}
+
+truth character::CanUseEquipment(int I) const
+{
+  return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I) && EquipmentIsAllowed(I);
 }
 
 /* Target mustn't have any equipment */

@@ -47,7 +47,7 @@ We recommend that you use at least a:
 3. General gameplay
 
 IVAN works pretty much in the same way as other roguelikes. The player
-controls a character. The player moves and attacks from the direction keys.
+controls a character, which moves and attacks from the direction keys.
 All other commands can be found by pressing ?-key in the game.
 
 -----------------------------

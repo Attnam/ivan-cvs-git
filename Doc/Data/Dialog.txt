@@ -2517,6 +2517,31 @@ Ivan free from stench of GIMP the annoying smiling putrifier animal.
 Ivan taste work with mitrhil Deluxe Paint 2 +3 (in both hands)! Gimp the 
 small wuss idiot animal become T-34 roadkill.
 
+Ivan on September 14 2004
+-------------------------
+
+Ivan perform damage with jolliness:
+
+Point increases chance of critical hit by +50%
+Cut and blunt damage simultaneous
+Long weakens against small enemies and improves against large, short 
+works inversely
+
+POINT CUT BLUNT | ACCURACY DURABILITY BLOCK | special
+
+Spear             P8 C0 B2 | A8 D1 Blo6 | long, 2hand, throw
+Quarterstaff      P3 C0 B2 | A6 D1 Blo6 | long, 2hand
+Bastard sword     P4 C6 B4 | A4 D7 Blo5 |
+Short sword       P6 C4 B2 | A6 D8 Blo7 | short, 1hand
+Longsword         P6 C5 B2 | A7 D6 Blo8 | 1hand
+2-handed sword    P1 C7 B7 | A4 D6 Blo6 | long, 2hand
+Axe               P0 C6 B5 | A2 D4 Blo4 |
+Battle-axe        P0 C7 B6 | A4 D6 Blo5 |
+Halberd           P7 C8 B8 | A4 D4 Blo5 | long, 2hand
+Poleaxe           P0 C8 B8 | A4 D4 Blo4 | long, 2hand
+Mace              P0 C0 B6 | A4 D4 Blo5 |
+Dagger            P6 C2 B0 | A8 D2 Blo1 | short, 1hand
+
 ----------------------------------------------------------------------------
 
 End of document.

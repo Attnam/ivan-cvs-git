@@ -414,7 +414,8 @@ class character : public entity, public id
   virtual truth TryToRiseFromTheDead();
   virtual truth RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
-  virtual truth CanUseEquipment(int) const;
+  virtual truth EquipmentIsAllowed(int) const { return true; }
+  truth CanUseEquipment(int) const;
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(int) { }
   double GetNaturalExperience(int Identifier) const { return DataBase->NaturalExperience[Identifier]; }

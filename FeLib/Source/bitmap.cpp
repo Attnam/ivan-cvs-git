@@ -2192,34 +2192,25 @@ cachedfont::cachedfont(v2 Size, col16 Color) : bitmap(Size, Color)
   Alloc2D(MaskMap, Size.Y, Size.X);
 }
 
-void cachedfont::PrintCharacter(bitmap* Bitmap, v2 Src, v2 Dest) const
+void cachedfont::PrintCharacter(const blitdata B) const
 {
-  if(Dest.X < 0 || Dest.Y < 0 || Dest.X + 10 >= Bitmap->Size.X || Dest.Y + 9 >= Bitmap->Size.Y)
+  if(B.Dest.X < 0 || B.Dest.Y < 0 || B.Dest.X + 10 >= B.Bitmap->Size.X || B.Dest.Y + 9 >= B.Bitmap->Size.Y)
   {
-    blitdata B = { Bitmap,
-		   { Src.X, Src.Y },
-		   { Dest.X, Dest.Y },
-		   { 9, 9 },
-		   0,
-		   0,
-		   0 };
-
     NormalMaskedBlit(B);
     return;
-    //NormalMaskedBlit(Bitmap, Src.X, Src.Y, Dest.X, Dest.Y, 9, 9, 0, 0);
   }
 
-  packcol16** SrcLine = &Image[Src.Y];
+  packcol16** SrcLine = &Image[B.Src.Y];
   packcol16** EndLine = SrcLine + 9;
-  packcol16** SrcMaskLine = &MaskMap[Src.Y];
-  packcol16** DestLine = &Bitmap->Image[Dest.Y];
+  packcol16** SrcMaskLine = &MaskMap[B.Src.Y];
+  packcol16** DestLine = &B.Bitmap->Image[B.Dest.Y];
 
   for(; SrcLine != EndLine; ++SrcLine, ++SrcMaskLine, ++DestLine)
   {
-    const ulong* FontPtr = reinterpret_cast<const ulong*>(*SrcLine + Src.X);
+    const ulong* FontPtr = reinterpret_cast<const ulong*>(*SrcLine + B.Src.X);
     const ulong* EndPtr = FontPtr + 5;
-    const ulong* MaskPtr = reinterpret_cast<const ulong*>(*SrcMaskLine + Src.X);
-    ulong* DestPtr = reinterpret_cast<ulong*>(*DestLine + Dest.X);
+    const ulong* MaskPtr = reinterpret_cast<const ulong*>(*SrcMaskLine + B.Src.X);
+    ulong* DestPtr = reinterpret_cast<ulong*>(*DestLine + B.Dest.X);
 
     for(; FontPtr != EndPtr; ++DestPtr, ++MaskPtr, ++FontPtr)
       *DestPtr = *DestPtr & *MaskPtr | *FontPtr;
