@@ -13,6 +13,12 @@
 
 December 9 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
+  * Broken gauntlet pic modified by Kahvi
+  * BugFix: Killing a unicorn could crash
+  * Great War in Attnam is active
+
+December 9 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
   * Fixed some minor "problems" reported by Valgrind
   * Thaumic bomb and empty/full dwarven gas grenades added to item.pcx
     by Kahvi

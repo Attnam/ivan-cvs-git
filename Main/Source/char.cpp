@@ -2827,7 +2827,7 @@ void character::Hostility(character* Enemy)
     if(Enemy->CanBeSeenByPlayer())
       ADD_MESSAGE("%s becomes enraged.", Enemy->CHAR_NAME(DEFINITE));
 
-    Enemy->ChangeTeam(game::GetTeam(MONSTER_TEAM));
+    Enemy->ChangeTeam(game::GetTeam(BETRAYED_TEAM));
   }
 }
 
@@ -9490,7 +9490,7 @@ void character::PrintEndHiccupsMessage() const
 
 void character::HiccupsHandler()
 {
-  if(!(RAND() % 2000))
+  /*if(!(RAND() % 2000))
   {
     if(IsPlayer())
       ADD_MESSAGE("");
@@ -9500,7 +9500,7 @@ void character::HiccupsHandler()
       ADD_MESSAGE("");
 
     game::CallForAttention(GetPos(), 400);
-  }
+  }*/
 }
 
 void character::HiccupsSituationDangerModifier(double& Danger) const
@@ -9508,7 +9508,8 @@ void character::HiccupsSituationDangerModifier(double& Danger) const
   Danger *= 1.25;
 }
 
-bool character::IsConscious() const {
+bool character::IsConscious() const
+{
   return !Action || !Action->IsUnconsciousness();
 }
 

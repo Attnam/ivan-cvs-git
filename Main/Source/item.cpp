@@ -1183,9 +1183,6 @@ void item::RemoveFluid(fluid* ToBeRemoved)
 
 void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, truth IsInside)
 {
-  if(!ToBeAdded->GetVolume())
-    int esko = 2;
-
   truth WasAnimated = IsAnimated();
 
   if(Fluid)

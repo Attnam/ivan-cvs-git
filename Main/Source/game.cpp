@@ -482,25 +482,25 @@ void game::Run()
 
 	GlobalRainLiquid->SetVolumeNoSignals(NewVolume);
 
-	/*{
+	{
 	  item* Item;
 
 	  if(!RAND_N(2))
-	  Item = new wand(1 + RAND_N(12));
+	  Item = wand::Spawn(1 + RAND_N(12));
 	  else if(!RAND_N(2))
 	  {
-	  Item = new beartrap;
+	  Item = beartrap::Spawn();
 	  Item->SetIsActive(true);
 	  Item->SetTeam(MONSTER_TEAM);
 	  }
 	  else if(!RAND_N(2))
 	  {
-	  Item = new mine;
+	  Item = mine::Spawn();
 	  Item->SetIsActive(true);
 	  Item->SetTeam(MONSTER_TEAM);
 	  }
 	  else
-	  Item = new holybanana;
+	  Item = holybanana::Spawn();
 
 	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(Item);
 	  }
@@ -516,65 +516,65 @@ void game::Run()
 	  {
 	  character* Char;
 	  if(!RAND_N(5))
-	  Char = new spider;
+	  Char = spider::Spawn(GIANT);
 	  else if(!RAND_N(5))
-	  Char = new darkmage(1 + RAND_N(4));
+	  Char = darkmage::Spawn(1 + RAND_N(4));
 	  else if(!RAND_N(5))
-	  Char = new necromancer(1 + RAND_N(2));
+	  Char = necromancer::Spawn(1 + RAND_N(2));
 	  else if(!RAND_N(5))
-	  Char = new chameleon;
+	  Char = chameleon::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new kamikazedwarf(1 + RAND_N(GODS));
+	  Char = kamikazedwarf::Spawn(1 + RAND_N(GODS));
 	  else if(!RAND_N(5))
-	  Char = new mommo(1 + RAND_N(2));
+	  Char = mommo::Spawn(1 + RAND_N(2));
 	  else if(!RAND_N(3))
-	  Char = new bunny(RAND_2 ? ADULT_MALE : ADULT_FEMALE);
+	  Char = bunny::Spawn(RAND_2 ? ADULT_MALE : ADULT_FEMALE);
 	  else if(!RAND_N(3))
-	  Char = new eddy;
+	  Char = eddy::Spawn();
 	  else if(!RAND_N(3))
-	  Char = new magicmushroom;
+	  Char = magicmushroom::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new mushroom;
+	  Char = mushroom::Spawn();
 	  else if(!RAND_N(3))
-	  Char = new blinkdog;
+	  Char = blinkdog::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new tourist(1 + RAND_N(3));
+	  Char = tourist::Spawn(1 + RAND_N(3));
 	  else if(!RAND_N(5))
-	  Char = new hattifattener;
+	  Char = hattifattener::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new genetrixvesana;
+	  Char = genetrixvesana::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new skunk;
+	  Char = skunk::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new ennerbeast;
+	  Char = ennerbeast::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new werewolfhuman;
+	  Char = werewolfhuman::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new unicorn(1 + RAND_N(3));
+	  Char = unicorn::Spawn(1 + RAND_N(3));
 	  else if(!RAND_N(5))
-	  Char = new floatingeye;
+	  Char = floatingeye::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new zombie;
+	  Char = zombie::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new magpie;
+	  Char = magpie::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new elpuri;
+	  Char = elpuri::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new vladimir;
+	  Char = vladimir::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new billswill;
+	  Char = billswill::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new ghost;
+	  Char = ghost::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new dolphin;
+	  Char = dolphin::Spawn();
 	  else if(!RAND_N(5))
-	  Char = new cossack;
+	  Char = cossack::Spawn();
 	  else
-	  Char = new invisiblestalker;
+	  Char = invisiblestalker::Spawn();
 
 	  Char->SetTeam(GetTeam(RAND() % Teams));
 	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
-	  }*/
+	  }
       }
     }
 
@@ -1128,7 +1128,8 @@ void game::Hostility(team* Attacker, team* Defender)
   for(int c = 0; c < Teams; ++c)
     if(GetTeam(c) != Attacker && GetTeam(c) != Defender
        && GetTeam(c)->GetRelation(Defender) == FRIEND
-       && c != NEW_ATTNAM_TEAM) // gum solution
+       && c != NEW_ATTNAM_TEAM
+       && c != TOURIST_GUIDE_TEAM) // gum solution
       GetTeam(c)->SetRelation(Attacker, HOSTILE);
 }
 

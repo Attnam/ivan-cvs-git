@@ -38,6 +38,11 @@ int team::GetRelation(const team* AnotherTeam) const
 
 void team::Hostility(team* Enemy)
 {
+  /* We're testing if the game works better this way... */
+
+  if(ID != PLAYER_TEAM)
+    return;
+
   if(this != Enemy && GetRelation(Enemy) != HOSTILE)
   {
     if(ID == PLAYER_TEAM && game::IsSumoWrestling())

@@ -1926,8 +1926,8 @@ int unicorn::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v2
   if(Return != HAS_DIED
      && (StateIsActivated(PANIC)
 	 || (RAND() & 1 && IsInBadCondition())
-	 || !(RAND() & 7)));
-  MonsterTeleport("neighs in terror");
+	 || !(RAND() & 7)))
+    MonsterTeleport("neighs in terror");
 
   return Return;
 }

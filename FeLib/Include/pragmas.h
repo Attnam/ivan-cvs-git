@@ -18,10 +18,10 @@
 
 #ifdef VC
 #pragma warning(disable : 4786 4146)
-#pragma optimize("g", on)
-#pragma intrinsic(abs, fabs, labs, memcmp, memcpy, memset)
+//#pragma optimize("g", on)
+/*#pragma intrinsic(abs, fabs, labs, memcmp, memcpy, memset)
 #pragma intrinsic(strcat, strcmp, strcpy, strlen, pow)
-#pragma intrinsic(exp, log, sin, cos, tan, atan, sqrt)
+#pragma intrinsic(exp, log, sin, cos, tan, atan, sqrt)*/
 #endif
 
 #endif

@@ -467,6 +467,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define COLONIST_TEAM 8
 #define TOURIST_GUIDE_TEAM 9
 #define TOURIST_TEAM 10
+#define BETRAYED_TEAM 11
 #define NO_TEAM 0xFFFF
 
 #define LOAD 1

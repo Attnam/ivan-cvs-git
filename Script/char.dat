@@ -4527,7 +4527,7 @@ elpuri
   ClassStates = INFRA_VISION|TELEPORT_CONTROL;
   BaseBiteStrength = 1500;
   FleshMaterial = ELPURI_FLESH;
-  DeathMessage = "@Dd groans horribly and drops @pp head.";
+  DeathMessage = "@Dd groans horribly and drops @sp head.";
   AttachedGod = SCABIES;
   CanTalk = true;
   CanBeConfused = false;

@@ -22,7 +22,7 @@
 /* Team and dungeon data for the game */
 
 Dungeons = 4;
-Teams = 11;
+Teams = 12;
 
 /*
  * Description of hard-coded teams:
@@ -34,6 +34,7 @@ Teams = 11;
  * 8 == COLONIST_TEAM == colonists of New Attnam
  * 9 == TOURIST_GUIDE_TEAM == dummy team which holds the village elder, who tourists follow
  * 10 == TOURIST_TEAM == tourists of New Attnam
+ * 11 == BETRAYED_TEAM == pets which the player has angered
  */
 
 Team ATTNAM_TEAM;
@@ -85,6 +86,12 @@ Team TOURIST_TEAM;
 {
   Relation 7, FRIEND;
   Relation 8, FRIEND;
+  KillEvilness = 10;
+}
+
+Team BETRAYED_TEAM;
+{
+  Relation 0, HOSTILE;
   KillEvilness = 10;
 }
 
@@ -1898,7 +1905,7 @@ Dungeon ATTNAM;
       DoorSquare = solidterrain(FLOOR), door;
     }
 
-    /*Square, Random;
+    Square, Random;
     {
       Character = communist { Team = IVAN_TEAM; }
       Times = 3;
@@ -2004,7 +2011,7 @@ Dungeon ATTNAM;
     {
       Character = spider { Team = MONSTER_TEAM; }
       Times = 3;
-    }*/
+    }
   }
 }
 
