@@ -107,7 +107,7 @@ float game::SoftGamma = 1;
 
 void game::InitScript()
 {
-	srand(time(0));
+	srand(7);//time(0));
 	inputfile ScriptFile("Script/Dungeon.dat");
 	GameScript.ReadFrom(ScriptFile);
 }
@@ -133,7 +133,7 @@ void game::Init(std::string Name)
 	InWilderness = false;
 	PlayerBackup = 0;
 	PolymorphCounter = 0xFFFF;
-	srand(time(0));
+	srand(7);//time(0));
 	game::CalculateGodNumber();
 
 	if(Name == "")
@@ -537,7 +537,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
 
 	time_t Time = time(0);
-	srand(Time);
+	srand(7);//Time);
 	SaveFile << Time;
 
 	SaveFile << Dungeon;

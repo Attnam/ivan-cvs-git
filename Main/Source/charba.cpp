@@ -1474,7 +1474,6 @@ float character::GetAttackStrength() const
 bool character::Engrave(std::string What)
 {
 	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(What);
-
 	return true;
 }
 
@@ -1491,7 +1490,8 @@ void character::MoveRandomly()
 	for(uchar c = 0; c < 10 && !OK; ++c)
 	{
 		ushort ToTry = rand() % 8;
-		if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
+
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry));
 	}
 }

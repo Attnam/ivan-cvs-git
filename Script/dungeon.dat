@@ -248,14 +248,17 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -283,22 +286,7 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -308,6 +296,7 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -317,6 +306,7 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -326,12 +316,31 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
+
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
 		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
 
 		Square, Pos 31,63;
 		{

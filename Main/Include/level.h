@@ -60,6 +60,7 @@ public:
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
 	virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
 	virtual bool GetOnGround() const;
+	virtual bool IsValid(vector2d Vector) const { return Vector.X < XSize ? Vector.Y < YSize ? true : false : false; }
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;
