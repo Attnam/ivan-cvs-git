@@ -90,6 +90,14 @@ item* protosystem::CreateItem(std::string What)
 	return 0;
 }
 
+material* protosystem::CreateMaterial(std::string What, ulong Volume)
+{
+	for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
+		if(protocontainer<material>::GetProto(c)->CanBeWished() && protocontainer<material>::GetProto(c)->Name() == What)
+			return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
+
+	return 0;
+}
 material* protosystem::CreateRandomSolidMaterial(ulong Volume)
 {
 	for(ushort c = 1 + rand() % protocontainer<material>::GetProtoAmount();; c = 1 + rand() % protocontainer<material>::GetProtoAmount())

@@ -769,4 +769,20 @@ protected:
 	virtual ushort GetFormModifier() const RET(55)
 );
 
+class ITEM
+(
+	scrollofchangematerial,
+	scroll,
+	InitMaterials(new parchment(205)),
+	{
+		SetSize(30);
+	},
+public:
+	virtual ushort Possibility() const RET(2)
+	virtual std::string NameSingular() const RET("scroll of change material")
+	virtual std::string NamePlural() const RET("scrolls of change material")
+	virtual float OfferModifier() const RET(40)
+	virtual vector2d GetBitmapPos() const RETV(144,176)
+	virtual bool Read(character*);
+);
 #endif

@@ -67,6 +67,8 @@ public:
 	virtual bool Polymorph(stack*);
 	virtual bool ReceiveSound(float, bool, stack*) { return false; }
 	virtual uchar GetGraphicsContainerIndex() const { return GITEM; }
+	virtual bool IsMaterialChangeable() const { return true; }
+	virtual void ChangeMainMaterial(material*);
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -190,3 +190,8 @@ bool item::Polymorph(stack* CurrentStack)
 	SetExists(false);
 	return true;
 }
+
+void item::ChangeMainMaterial(material* NewMaterial)
+{
+	SetMaterial(0, NewMaterial);
+}

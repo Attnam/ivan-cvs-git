@@ -86,6 +86,8 @@ public:
 	virtual bool IsSolid() const { return false; }
 	virtual void Be() {}
 	virtual ushort GetColor() const = 0;
+	virtual bool CanBeWished() const { return true; }
+	virtual material* CreateWishedMaterial(ulong) const;
 	virtual bool IsFlesh() { return false; }
 protected:
 	virtual std::string NameStem() const = 0;

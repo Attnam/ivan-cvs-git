@@ -411,3 +411,42 @@ bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 	return false;
 	
 }
+
+bool scrollofchangematerial::Read(character* Reader)
+{
+	ushort Index;
+	if(!Reader->CanRead())
+	{
+		ADD_MESSAGE("This monster can not read anything.");
+		return false;
+	}
+	if((Index = Reader->GetStack()->DrawContents("What item do you wish to change?")) == 0xFFFF)
+	{
+		ADD_MESSAGE("You have nothing to change.");
+		return false;
+	}
+	if(Index == 0xFFFE)
+		return false;
+	else
+		if(!(Index < Reader->GetStack()->GetItems()))
+			return false;
+	if(Reader->GetStack()->GetItem(Index) == this || !Reader->GetStack()->GetItem(Index)->IsMaterialChangeable())
+	{
+		ADD_MESSAGE("You can't change that!");
+		return false;
+	}
+	
+	std::string Temp = iosystem::StringQuestion(FONTW, "What material do you want to wish for?", vector2d(7,7), 0, 256);
+
+	material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());
+	
+	if(TempMaterial)
+		Reader->GetStack()->GetItem(Index)->ChangeMainMaterial(TempMaterial);
+	else
+	{
+		ADD_MESSAGE("There is no such material.");
+		return false;
+	}
+
+	return true;
+}

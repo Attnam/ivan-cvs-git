@@ -66,6 +66,7 @@ public:
 	static item*			CreateItem(std::string);
 	static material*		CreateRandomSolidMaterial(ulong);
 	static material*		CreateMaterial(ushort, ulong);
+	static material*		CreateMaterial(std::string, ulong);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)

@@ -35,6 +35,7 @@ public:
 	virtual ushort GetEmitation() const { return 320; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(255, 255, 255); }
+	virtual bool CanBeWished() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "valpurium"; }
 );
@@ -291,6 +292,7 @@ public:
 	virtual short NutritionValue() const			{ return 50; }
 	virtual uchar GetItemColor() const			{ return YELLOW; }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 255, 0); }
+	virtual bool CanBeWished() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "Omle urine"; }
 	virtual std::string Article() const { return "an"; }

@@ -34,3 +34,8 @@ void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier
 {
 	Eater->ReceiveNutrition(long(NutritionValue() * GetWeight() * NPModifier) * Amount / 100);
 }
+
+material* material::CreateWishedMaterial(ulong OldVolume) const
+{
+	return protocontainer<material>::GetProto(Type())->Clone(OldVolume);
+}
