@@ -3919,7 +3919,7 @@ int character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, do
 	    }
 
 	  long Weight = Blocker->GetWeight();
-	  long StrExp = Limit(15 * Weight / 2000L, 75L, 300L);
+	  long StrExp = Limit(15 * Weight / 200L, 75L, 300L);
 	  long DexExp = Weight ? Limit(75000L / Weight, 75L, 300L) : 300;
 	  Arm->EditExperience(ARM_STRENGTH, StrExp, 1 << 8);
 	  Arm->EditExperience(DEXTERITY, DexExp, 1 << 8);
