@@ -3546,6 +3546,7 @@ magpie
 	PanicLevel = 75;
 	FleshMaterial = MAGPIE_FLESH;
 	AttachedGod = CLEPTIA;
+	ClassStates = INFRA_VISION; /* So that invisible player doesn't screw the AI */
 }
 
 skunk
