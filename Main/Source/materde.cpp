@@ -57,8 +57,6 @@ void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	if(Amount >= Volume)
 	{
-		Eater->SetTeam(game::GetPlayer()->GetTeam());
-
 		if(Eater == game::GetPlayer())
 			ADD_MESSAGE("You feel like a hippie.");
 		else

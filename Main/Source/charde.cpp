@@ -492,9 +492,11 @@ bool dog::Catches(item* Thingy, float)
 		if(GetIsPlayer())
 			ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
 		else
+		{
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
-
+			SetTeam(game::GetPlayer()->GetTeam());
+		}
 		ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack());
 		return true;
 	}
