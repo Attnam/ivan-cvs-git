@@ -64,7 +64,7 @@ public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 175; }
-	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(250, 250, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "banana flesh"; }
 );
@@ -288,7 +288,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return ODD; }
 	virtual ushort GetDensity() const				{ return 500; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(250, 250, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "banana peal"; }
 );

@@ -222,24 +222,35 @@ Dungeon 1;
 		FillSquare=floor,empty;
 		Size=64,64;
 		GenerateMonsters=false;
-		Rooms=2;
+		Rooms=25 + rand() % 5;
 		Items=0;
 		ReCalculate=false;
 		GenerateUpStairs=false;
 		GenerateDownStairs=false;
 		DivineOwner=0;
 		OnGround=true;
+		
 		RoomDefault
 		{
-			GenerateTunnel = false;
+			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
+			Size=4+rand%8,4+rand%8;
+			AltarPossible=false;
+			WallSquare=floor,wall;
+			FloorSquare=parquet,empty;
+			DoorSquare=parquet,door;
+			GenerateDoor=true;
+			ReCalculate=true;
+			DivineOwner=0;
+			GenerateTunnel=true;
 		}
+
 		Square, Pos 31,63;
 		{
 			IsWorldMapEntry=true;
 		}
 		Room 0;
 		{
-			Pos=25,47;
+			Pos=34,48;
 			Size=7,5;
 			AltarPossible=false;
 			WallSquare=floor,wall;
@@ -284,50 +295,61 @@ Dungeon 1;
 
 		Room 1;
 		{
-			Pos=7,10;
-			Size=18,17;
+			Pos=15,15;
+			Size=27,25;
 			AltarPossible=false;
 			WallSquare=floor,wall;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=1;
-			Square, Pos 9,16;
+			
+			Square, Pos 12, 24;
 			{
 				OverTerrain = empty;
 			}
-			Square, Pos 8,16;
+			Square, Pos 13, 24;
 			{
 				OverTerrain = empty;
 			}
+			Square, Pos 14, 24;
+			{
+				OverTerrain = empty;
+			}
+			
 			GroundTerrainMap
 			{
-				Pos = 3,3;
-				Size = 12,11;
-				
+				Pos = 5,3;
+				Size = 17,17;
 				Types
 				{
-					m = marble floor;
+					- = marble floor;
 				}
 			}
 			{
-				...mmmmmm...
-				.mmmmmmmmmm.
-				.mmmmmmmmmm.
-				mmmmmmmmmmmm
-				mmmmmmmmmmmm
-				mmmmmmmmmmmm
-				mmmmmmmmmmmm
-				mmmmmmmmmmmm
-				.mmmmmmmmmm.
-				.mmmmmmmmmm.
-				...mmmmmm...
+				......-----......
+				....---------....
+				...-----------...
+				..-------------..
+				.---------------.
+				.---------------.
+				-----------------
+				-----------------
+				-----------------
+				-----------------
+				-----------------
+				.---------------.
+				.---------------.
+				..-------------..
+				...-----------...
+				....---------....
+				......-----......
 			}
 			
 			OverTerrainMap
 			{
-				Pos = 3,3;
-				Size = 12,11;
+				Pos = 5,3;
+				Size = 17,17;
 				
 				Types
 				{
@@ -336,23 +358,29 @@ Dungeon 1;
 				}
 			}
 			{
-				...vvvvvv...
-				.vvv....vvv.
-				.v........v.
-				vv........vv
-				v..........v
-				v....tt....v
-				v..........v
-				vv........vv
-				.v........v.
-				.vvv....vvv.
-				...vv..vv...
+				......vvvvv......
+				....vvv...vvv....
+				...vv.......vv...
+				..vv.........vv..
+				.vv...........vv.
+				.v.............v.
+				vv.............vv
+				v...............v
+				v......t.t......v
+				v...............v
+				vv.............vv
+				.v.............v.
+				.vv...........vv.
+				..vv.........vv..
+				...vv.......vv...
+				....vvv...vvv....
+				......v...v......
 			}
 			
 			CharacterMap
 			{
-				Pos = 3,3;
-				Size = 12,11;
+				Pos = 5,3;
+				Size = 17,17;
 				
 				Types
 				{
@@ -362,23 +390,29 @@ Dungeon 1;
 				}
 			}
 			{
-				............
-				............
-				.....f..f...
-				...f........
-				....ssss....
-				..f.sp.s..f.
-				....s..s.f..
-				....s..s....
-				....s..s....
-				....s..s....
-				............
+				.................
+				.................
+				.................
+				.................
+				.......f.........
+				.................
+				...f..sssss....f.
+				......sp..s......
+				......s...s......
+				......s...s......
+				......s...s......
+				......s...s......
+				......s...s......
+				......s...s......
+				......s...s......
+				.................
+				.................
 			}
 			
 			ItemMap
 			{
-				Pos = 3,3;
-				Size = 12,11;
+				Pos = 5,3;
+				Size = 17,17;
 				
 				Types
 				{
@@ -387,17 +421,23 @@ Dungeon 1;
 				}
 			}
 			{
-				............
-				............
-				............
-				............
-				............
-				......a.....
-				.....bb.....
-				.....bb.....
-				.....bb.....
-				.....bb.....
-				............
+				.................
+				.................
+				.................
+				.................
+				.................
+				.................
+				.................
+				.........a.......
+				........b........
+				........b........
+				........b........
+				........b........
+				........b........
+				........b........
+				........b........
+				.................
+				.................
 			}
 			
 		}
