@@ -27,9 +27,9 @@ void highscore::Add(long NewScore, std::string NewEntry)
 
 	if(Score.size() < 100)
 	{
+		LastAdd = Score.size();
 		Entry.push_back(NewEntry);
 		Score.push_back(NewScore);
-		LastAdd = 99;
 	}
 }
 
