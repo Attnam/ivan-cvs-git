@@ -170,7 +170,7 @@ class item : public object
   virtual ushort GetSize() const { return Size; }
   ulong GetID() const { return ID; }
   void SetID(ulong What) { ID = What; }
-  void TeleportRandomly();
+  virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot(ushort Index = 0) const { return Slot[Index]; }
   void SetMainSlot(slot* What) { Slot[0] = What; }

@@ -30,7 +30,7 @@ Kamikaze dwarves die smiling even if headless.
 Odd pentagram missing bug.
 A puppy can polymorph into a puppy.
 (s) Do new bodyparts of player clones work properly? (no)
-Chests in inventory cannot be unlocked.
+//Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
 Mistresses like shields more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
@@ -39,10 +39,10 @@ Broken thunder hammer emits light.
 While in read-mode player can find mines.
 Squares near should be redrawn when digged. (bad edge tiles)
 //Creating doors doesn't update the lookmode description.
-Do teleported, activated and seen mines still say seen by player?
+Teleported, activated mines can be seen by player.
 Angels shouldn't eat
 //Squares near should be redrawn when digged. (bad edge tiles)
 //Creating doors doesn't update the lookmode description.
-Dying + being resurrected doesn't eliminate poison.
+//Dying + being resurrected doesn't eliminate poison.
 Teleport control can be used to detect walls.
 //RED ommel urine ALERT!

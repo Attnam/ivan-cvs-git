@@ -422,6 +422,7 @@ class ITEM
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
   virtual void FinalProcessForBone();
+  virtual void TeleportRandomly();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
@@ -544,6 +545,7 @@ class ITEM
   virtual bool IsStuck() const;
   virtual void Fly(character*, uchar, ushort);
   virtual void FinalProcessForBone();
+  virtual void TeleportRandomly();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);

@@ -324,7 +324,7 @@ class character : public entity, public id
   virtual void SetSecondaryWielded(item*) { }
   uchar GetHungerState() const;
   bool ConsumeItem(item*);
-  bool CanConsume(material*) const;
+  virtual bool CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
   virtual void SwitchToDig(item*, vector2d) { }

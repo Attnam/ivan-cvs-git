@@ -138,6 +138,7 @@ class ABSTRACT_CHARACTER
   void EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*&, const item*);
   virtual ulong GetSumOfAttributes() const;
   virtual bool CheckConsume(const festring&) const;
+  virtual bool CanConsume(material*) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;

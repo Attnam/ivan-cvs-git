@@ -354,6 +354,7 @@
 #define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8
+#define NO_TEAM 0xFFFF
 
 #define LOAD 1
 #define NO_PIC_UPDATE 2

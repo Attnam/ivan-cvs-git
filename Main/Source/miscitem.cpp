@@ -2507,3 +2507,17 @@ bool carrot::BunnyWillCatchAndConsume() const
 {
   return GetConsumeMaterial()->GetConfig() == CARROT_FLESH && GetConsumeMaterial()->GetSpoilLevel() == 0;
 }
+
+void beartrap::TeleportRandomly()
+{
+  Team = NO_TEAM;
+  DiscoveredByTeam.clear();
+  item::TeleportRandomly();
+}
+
+void mine::TeleportRandomly()
+{
+  Team = NO_TEAM;
+  DiscoveredByTeam.clear();
+  item::TeleportRandomly();
+}

@@ -3945,3 +3945,8 @@ bool humanoid::CheckConsume(const festring& Verb) const
 
   return character::CheckConsume(Verb);
 }
+
+bool humanoid::CanConsume(material* Material) const
+{
+  return HasHead() && character::CanConsume(Material);
+}

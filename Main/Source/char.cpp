@@ -3194,7 +3194,7 @@ bool character::CompleteRiseFromTheDead()
 	    BodyPart->SetHP(1);
 	}
     }
-
+  ResetStates();
   return true;
 }
 

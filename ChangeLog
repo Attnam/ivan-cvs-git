@@ -6,7 +6,11 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Stupidity in my bug correction (zombies eating headless) corrected
+
+	
 July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
 	* Entering Corey's dungeon is now more difficult
@@ -15,6 +19,10 @@ July 30 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
 	* Action system implemented in a slightly different way, which corrects
 	  some strange bugs appearing when eating multi-tiled corpses
+
+July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Temporary states (such as poisoned) are deactivated when monster is resurrected. 
 
 July 30 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
