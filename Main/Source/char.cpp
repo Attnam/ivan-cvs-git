@@ -299,7 +299,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   CWeaponSkill = new cweaponskill[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];
 
-  if(SquaresUnder)
+  if(SquaresUnder == 1)
     *SquareUnder = 0;
   else
     memset(SquareUnder, 0, SquaresUnder * sizeof(square*));
@@ -1340,30 +1340,6 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	    }
 	}
     }
-  /*else
-    {
-      / Drops the equipment to the character's stack /
-
-      for(int c = 0; c < BodyParts; ++c)
-	{
-	  bodypart* BodyPart = GetBodyPart(c);
-
-	  if(BodyPart)
-	    BodyPart->DropEquipment();
-	}
-
-      if(GetAction())
-	{
-	  delete GetAction();
-	  SetAction(0);
-	}
-
-      while(GetStack()->GetItems())
-	{
-	  GetStack()->GetBottom()->SendToHell();
-	  GetStack()->GetBottom()->RemoveFromSlot();
-	}
-    }*/
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(0);
@@ -1376,7 +1352,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 
       if(!game::IsInWilderness())
 	{
-	  Ghost->PutTo(GetPos());
+	  Ghost->PutTo(LSquareUnder[0]->GetPos());
 	  Ghost->Enable();
 	  game::CreateBone();
 	}
@@ -3607,7 +3583,7 @@ void character::Initialize(int NewConfig, int SpecialFlags)
   CWeaponSkill = new cweaponskill[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];
 
-  if(SquaresUnder)
+  if(SquaresUnder == 1)
     *SquareUnder = 0;
   else
     memset(SquareUnder, 0, SquaresUnder * sizeof(square*));
@@ -4505,7 +4481,10 @@ character* character::PolymorphRandomly(int MinDanger, int MaxDanger, int Time)
   if(StateIsActivated(POLYMORPH_CONTROL))
     {
       if(IsPlayer())
-	NewForm = GetNewFormForPolymorphWithControl();
+	{
+	  if(!GetNewFormForPolymorphWithControl(NewForm))
+	    return NewForm;
+	}
       else
 	NewForm = protosystem::CreateMonster(MinDanger * 10, MaxDanger * 10, NO_EQUIPMENT);  
     }
@@ -4550,8 +4529,8 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
 {
   if(IsEnabled() && !game::IsGenerating())
     {
-      bool MayBeESPSeen = !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
-      bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
+      bool MayBeESPSeen = PLAYER->IsEnabled() && !IgnoreESP && PLAYER->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+      bool MayBeInfraSeen = PLAYER->IsEnabled() && PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
       bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
       if(game::IsInWilderness())
@@ -4578,8 +4557,8 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
     {
       if(IsEnabled() && !game::IsGenerating())
 	{
-	  bool MayBeESPSeen = !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
-	  bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
+	  bool MayBeESPSeen = Who->IsEnabled() && !IgnoreESP && Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5;
+	  bool MayBeInfraSeen = Who->IsEnabled() && Who->StateIsActivated(INFRA_VISION) && IsWarm();
 	  bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
 	  if(game::IsInWilderness())
@@ -4602,17 +4581,21 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
 bool character::SquareUnderCanBeSeenByPlayer(bool IgnoreDarkness) const
 {
   int S1 = SquaresUnder, S2 = PLAYER->SquaresUnder;
-  int LOSRangeSquare = PLAYER->GetLOSRangeSquare();
 
   if(S1 == 1 && S2 == 1)
     {
       if(GetSquareUnder()->CanBeSeenByPlayer(IgnoreDarkness))
 	return true;
 
-      if(IgnoreDarkness && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= LOSRangeSquare)
+      if(IgnoreDarkness)
 	{
-	  eyecontroller::Map = GetLevel()->GetMap();
-	  return mapmath<eyecontroller>::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, SKIP_FIRST);
+	  int LOSRangeSquare = PLAYER->GetLOSRangeSquare();
+
+	  if((GetPos() - PLAYER->GetPos()).GetLengthSquare() <= LOSRangeSquare)
+	    {
+	      eyecontroller::Map = GetLevel()->GetMap();
+	      return mapmath<eyecontroller>::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, SKIP_FIRST);
+	    }
 	}
 
       return false;
@@ -4628,6 +4611,7 @@ bool character::SquareUnderCanBeSeenByPlayer(bool IgnoreDarkness) const
 	  else if(IgnoreDarkness)
 	    {
 	      vector2d Pos = Square->GetPos();
+	      int LOSRangeSquare = PLAYER->GetLOSRangeSquare();
 
 	      for(int c2 = 0; c2 < S2; ++c2)
 		{
@@ -4854,22 +4838,23 @@ void character::EndInvisibility()
 
 void character::EndInfraVision()
 {
-  if(IsPlayer())
+  if(IsPlayer() && IsEnabled())
     GetArea()->SendNewDrawRequest();
 }
 
 void character::EndESP()
 {
-  if(IsPlayer())
+  if(IsPlayer() && IsEnabled())
     GetArea()->SendNewDrawRequest();
 }
 
 void character::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int SquareIndex, bool AllowAnimate) const
 {
-  if((PLAYER->StateIsActivated(ESP)
-   && GetAttribute(INTELLIGENCE) >= 5
-   && (PLAYER->GetPos() - GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())
-  || (PLAYER->StateIsActivated(INFRA_VISION) && IsWarm()))
+  if(PLAYER->IsEnabled()
+  && ((PLAYER->StateIsActivated(ESP)
+    && GetAttribute(INTELLIGENCE) >= 5
+    && (PLAYER->GetPos() - GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())
+   || (PLAYER->StateIsActivated(INFRA_VISION) && IsWarm())))
     Luminance = ivanconfig::GetContrastLuminance();
 
   DrawBodyParts(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
@@ -5604,7 +5589,7 @@ character* character::DuplicateToNearestSquare(character* Cloner, ulong Flags)
   if(!NewlyCreated)
     return 0;
 
-  if(Flags & CHANGE_TEAM)
+  if(Flags & CHANGE_TEAM && Cloner)
     NewlyCreated->ChangeTeam(Cloner->GetTeam());
 
   NewlyCreated->PutNear(GetPos());
@@ -6815,8 +6800,12 @@ void character::SendNewDrawRequest() const
 bool character::IsOver(vector2d Pos) const
 {
   for(int c = 0; c < SquaresUnder; ++c)
-    if(GetPos(c) == Pos)
-      return true;
+    {
+      square* Square = GetSquareUnder(c);
+
+      if(Square && Square->GetPos() == Pos)
+	return true;
+    }
 
   return false;
 }
@@ -7704,7 +7693,21 @@ void character::EditStamina(int Amount, bool CanCauseFaint)
 void character::RegenerateStamina()
 {
   if(GetTirednessState() != UNTIRED)
-    EditExperience(ENDURANCE, 50, 1);
+    {
+      EditExperience(ENDURANCE, 50, 1);
+
+      if(Sweats() && TorsoIsAlive() && !RAND_N(30) && !game::IsInWilderness())
+	{
+	  long Volume = long(.05 * sqrt(GetBodyVolume()));
+
+	  if(GetTirednessState() == FAINTING)
+	    Volume <<= 1;
+
+	  for(int c = 0; c < SquaresUnder; ++c)
+	    GetLSquareUnder(c)->SpillFluid(0, CreateSweat(Volume), false, false);
+	}
+	  
+    }
 
   int Bonus = 1;
 
@@ -8432,10 +8435,10 @@ void character::CalculateEnchantments()
   GetStack()->CalculateEnchantments();
 }
 
-character* character::GetNewFormForPolymorphWithControl()
+bool character::GetNewFormForPolymorphWithControl(character*& NewForm)
 {
   festring Topic, Temp;
-  character* NewForm = 0;
+  NewForm = 0;
 
   while(!NewForm)
     {
@@ -8450,13 +8453,15 @@ character* character::GetNewFormForPolymorphWithControl()
 	    {
 	      delete NewForm;
 	      ADD_MESSAGE("You choose not to polymorph.");
-	      return this;
+	      NewForm = this;
+	      return false;
 	    }
 
 	  if(PolymorphBackup && NewForm->IsSameAs(PolymorphBackup))
 	    {
 	      delete NewForm;
-	      return ForceEndPolymorph();
+	      NewForm = ForceEndPolymorph();
+	      return false;
 	    }
 
 	  if(NewForm->GetPolymorphIntelligenceRequirement()
@@ -8472,5 +8477,10 @@ character* character::GetNewFormForPolymorphWithControl()
 	}
     }
 
-  return NewForm;
+  return true;
+}
+
+liquid* character::CreateSweat(long Volume) const
+{
+  return new liquid(GetSweatMaterial(), Volume);
 }

@@ -189,6 +189,8 @@ struct characterdatabase : public databasebase
   ulong ConstantCommandFlags;
   bool WillCarryItems;
   festring ForceVomitMessage;
+  int SweatMaterial;
+  bool Sweats;
 };
 
 class characterprototype
@@ -502,6 +504,8 @@ class character : public entity, public id
   DATA_BASE_BOOL(AutomaticallySeen);
   DATA_BASE_VALUE(ulong, DefaultCommandFlags);
   DATA_BASE_BOOL(WillCarryItems);
+  DATA_BASE_VALUE(int, SweatMaterial);
+  DATA_BASE_BOOL(Sweats);
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -916,7 +920,8 @@ class character : public entity, public id
   DATA_BASE_VALUE(festring, ForceVomitMessage);
   virtual bool CanMove() const;
   void CalculateEnchantments();
-  character* GetNewFormForPolymorphWithControl();
+  bool GetNewFormForPolymorphWithControl(character*&);
+  liquid* CreateSweat(long) const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

@@ -162,9 +162,6 @@ void lsquare::UpdateMemorized()
 
 void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance, bool RealDraw) const
 {
-  if(this->Pos == vector2d(25, 15))
-    int esko = esko = 2;
-
   if(RealDraw && !AnimatedEntities && Memorized && !game::GetSeeWholeMapCheatMode())
     {
       Memorized->LuminanceBlit(Bitmap, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
@@ -204,6 +201,9 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, color24 Luminance
 
 void lsquare::Draw()
 {
+  //if(!Character)
+    //return;
+
   if(Flags & NEW_DRAW_REQUEST || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
@@ -524,6 +524,8 @@ void lsquare::Save(outputfile& SaveFile) const
   SaveLinkedList(SaveFile, Rain);
 }
 
+template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove);
+
 void lsquare::Load(inputfile& SaveFile)
 {
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
@@ -550,6 +552,21 @@ void lsquare::Load(inputfile& SaveFile)
       Memorized->FastBlit(FowMemorized);
       igraph::GetFOWGraphic()->NormalMaskedBlit(FowMemorized, 0, 0);
     }
+
+  /*if(Character && Character->GetAssignedName() != "Jarno")
+    {
+      Character->SendToHell();
+      Character->Remove();
+    }
+
+  while(Fluid)
+    {
+      fluid* F = Fluid;
+      RemoveLinkedListElement(Fluid, F);
+      F->SendToHell();
+    }
+
+  Stack->Clean();*/
 }
 
 void lsquare::CalculateLuminance()
@@ -1163,6 +1180,9 @@ void lsquare::SignalSeen(ulong Tick)
 
 void lsquare::DrawMemorized()
 {
+  //if(!Character)
+    //return;
+
   LastSeen = 0;
   Flags &= ~STRONG_NEW_DRAW_REQUEST;
   vector2d BitPos = game::CalculateScreenCoordinates(Pos);

@@ -118,6 +118,7 @@
 #define OMMEL_SWEAT (LIQUID_ID + 19)
 #define OMMEL_TEARS (LIQUID_ID + 20)
 #define OMMEL_SNOT (LIQUID_ID + 21)
+#define SWEAT (LIQUID_ID + 22)
 
 #define FLESH_ID (5 << 12)
 

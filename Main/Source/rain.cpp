@@ -128,7 +128,7 @@ void rain::Be()
 
       if(Rand < 1 || !(RAND() % Rand))
 	{
-	  long DropVolume = Min(Volume, 100L);
+	  long DropVolume = Min(Volume, 50L);
 	  /* Gum */
 	  LSquareUnder->SpillFluid(Team == PLAYER_TEAM ? PLAYER : 0, Liquid->CloneLiquid(DropVolume), true, OwnLiquid);
 

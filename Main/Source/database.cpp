@@ -367,6 +367,8 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ConstantCommandFlags);
   ADD_MEMBER(WillCarryItems);
   ADD_MEMBER(ForceVomitMessage);
+  ADD_MEMBER(SweatMaterial);
+  ADD_MEMBER(Sweats);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

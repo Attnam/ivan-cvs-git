@@ -112,12 +112,14 @@ character
 	HasSecondaryMaterial = false;
 	IsImmuneToLeprosy = true;
 	PolymorphIntelligenceRequirement = DEPENDS_ON_ATTRIBUTES;
-	AutomaticallySeen = true;
+	AutomaticallySeen = false;
 	CanHear = true;
 	DefaultCommandFlags = FOLLOW_PLAYER|DONT_CONSUME_ANYTHING_VALUABLE;
 	ConstantCommandFlags = 0;
 	WillCarryItems = false;
 	ForceVomitMessage = "You push your fingers down to your throat and vomit.";
+	SweatMaterial = SWEAT;
+	Sweats = true;
 }
 
 humanoid
@@ -703,6 +705,7 @@ oree
 	BiteCapturesBodyPart = false;
 	VomitMaterial = ACIDOUS_BLOOD;
 	BloodMaterial = ACIDOUS_BLOOD;
+	SweatMaterial = ACIDOUS_BLOOD;
 }
 
 darkknight
@@ -1053,6 +1056,7 @@ billswill
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
+	Sweats = false;
 	HasHead = false;
 	UsesNutrition = false;
 	AttachedGod = MELLIS;
@@ -1098,6 +1102,7 @@ skeleton
 	FleshMaterial = BONE;
 	DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
 	SpillsBlood = false;
+	Sweats = false;
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
@@ -2740,6 +2745,7 @@ genie
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
+	Sweats = false;
 	AttachedGod = ATAVUS;
 	BodyPartsDisappearWhenSevered = true;
 	ClassStates = GAS_IMMUNITY|LEVITATION;
@@ -2806,6 +2812,7 @@ carnivorousplant
 	FleshMaterial = PLANT_FIBER;
 	DeathMessage = "@Dd is destroyed.";
 	SpillsBlood = false;
+	Sweats = false;
 	StandVerb = "rooted";
 	AttachedGod = SILVA;
 	IsPlant = true;
@@ -3485,6 +3492,7 @@ eddy
 	StandVerb = "twirling";
 	UsesNutrition = false;
 	SpillsBlood = false;
+	Sweats = false;
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd disappears.";
 	AttachedGod = SOPHOS;
@@ -3516,6 +3524,7 @@ mushroom
 	HasFeet = false;
 	UsesNutrition = false;
 	SpillsBlood = false;
+	Sweats = false;
 	FleshMaterial = MUSHROOM_FLESH;
 	SkinColor = rgb16(180, 180, 180);
 	CanBeGenerated = true;
@@ -3548,7 +3557,6 @@ magicmushroom
 	HasHead = false;
 	HasFeet = false;
 	UsesNutrition = false;
-	SpillsBlood = false;
 	FleshMaterial = MAGIC_MUSHROOM_FLESH;
 	SkinColor = rgb16(200, 170, 170);
 	CanBeGenerated = true;
@@ -3749,6 +3757,7 @@ ghost
 	FleshMaterial = GHOST;
 	DeathMessage = "@Dd is sucked into hell.";
 	SpillsBlood = false;
+	Sweats = false;
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
 	BodyPartsDisappearWhenSevered = true;
@@ -3975,6 +3984,7 @@ genetrixvesana
 	ClassStates = INFRA_VISION;
 	HasFeet = false;
 	SpillsBlood = false;
+	Sweats = false;
 	StandVerb = "rooted";
 	IsRooted = true;
 }
@@ -4142,6 +4152,7 @@ hattifattener
 	DeathMessage = "@Dd explodes in a burst of electricity!";
 	BaseEmitation = rgb24(130, 130, 130);
 	SpillsBlood = false;
+	Sweats = false;
 	Alias == "Hattivatti";
 }
 

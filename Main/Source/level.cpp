@@ -649,12 +649,8 @@ void level::Save(outputfile& SaveFile) const
   SaveFile << Room << GlobalRainLiquid << GlobalRainSpeed;
 
   for(int x = 0; x < XSize; ++x)
-    {
-      SaveFile.ReOpen();
-
-      for(int y = 0; y < YSize; ++y)
-	Map[x][y]->Save(SaveFile);
-    }
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->Save(SaveFile);
 
   SaveFile << Door << LevelMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
   SaveFile << SunLightEmitation << SunLightDirection << AmbientLuminance << NightAmbientLuminance;
@@ -2774,6 +2770,7 @@ int level::AddRadiusToSquareStack(vector2d Center, long RadiusSquare) const
 }
 
 /* Any fountain is good that is not dry and is NOT Except */ 
+
 olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
 {
   std::vector<olterrain*> Found;

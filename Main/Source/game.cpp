@@ -296,7 +296,7 @@ bool game::Init(const festring& Name)
 
 	Player->SetMoney(Player->GetMoney() + RAND() % 11);
 	// ///
-	Player->GainIntrinsic(LEPROSY);
+	//Player->GainIntrinsic(LEPROSY);
 	// ///
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
@@ -330,7 +330,7 @@ bool game::Init(const festring& Name)
 	SeeWholeMapCheatMode = MAP_HIDDEN;
 	GoThroughWallsCheat = false;
 	SumoWrestling = false;
-	GlobalRainTimeModifier = RAND() & 8191;
+	GlobalRainTimeModifier = 2048 - (RAND() & 4095);
 	PlayerSumoChampion = false;
 	protosystem::InitCharacterDataBaseFlags();
 	memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
@@ -435,8 +435,8 @@ void game::Run()
 	      if(!RAND_N(10))
 		{
 		  character* Char = protosystem::CreateMonster(0, 1000000);
-		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 		  Char->ChangeTeam(GetTeam(RAND() % Teams));
+		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 		}
 
 	      if(!RAND_N(5))
@@ -498,8 +498,8 @@ void game::Run()
 		  else
 		    Char = new invisiblestalker;
 
-		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 		  Char->SetTeam(GetTeam(RAND() % Teams));
+		  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
 		}*/
 	    }
 	}
@@ -2230,7 +2230,7 @@ void game::SignalDeath(const character* Ghost, const character* Murderer, const 
       ++i->second.Amount;
       i->second.DangerSum += Ghost->GetGenerationDanger();
       std::vector<killreason>& Reason = i->second.Reason;
-      int c;
+      uint c;
 
       for(c = 0; c < Reason.size(); ++c)
 	if(Reason[c].String == DeathMsg)
@@ -2312,7 +2312,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 	}
       else
 	{
-	  for(int c = 0; c < Reason.size(); ++c)
+	  for(uint c = 0; c < Reason.size(); ++c)
 	    Details.push_back(CONST_S("") + Reason[c].Amount + ' ' + Reason[c].String);
 
 	  std::sort(Details.begin(), Details.end(), ignorecaseorderer());
@@ -2379,7 +2379,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
       for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2, ++Counter)
 	if(Counter == Chosen)
 	  {
-	    for(int c = 0; c < i2->Details.size(); ++c)
+	    for(uint c = 0; c < i2->Details.size(); ++c)
 	      SubList.AddEntry(i2->Details[c], LIGHT_GRAY);
 
 	    break;
@@ -2452,7 +2452,7 @@ bool game::PrepareRandomBone(int LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen())// && !(RAND() & 7))
+      if(BoneFile.IsOpen() && !(RAND() & 7))
 	{
 	  if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
 	    {

@@ -2596,6 +2596,7 @@ void bananagrower::VirtualConstructor(bool Load)
 
   if(!Load)
     {
+      Stamina = MaxStamina / 5;
       Profession = RAND() & 7;
       HasDroppedBananas = FeedingSumo = false;
     }
@@ -2802,7 +2803,7 @@ void bananagrower::GetAICommand()
       Profession = RAND() & 7;
       RestoreBodyParts();
       RestoreHP();
-      RestoreStamina();
+      Stamina = MaxStamina / 5;
       ResetStates();
       TemporaryState = 0;
 

@@ -28,8 +28,8 @@ outputfile::~outputfile()
 
 void outputfile::ReOpen()
 {
-  /*fclose(Buffer);
-  Buffer = fopen(FileName.CStr(), "wba");*/
+  fclose(Buffer);
+  Buffer = fopen(FileName.CStr(), "ab");
 }
 
 inputfile::inputfile(const festring& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.CStr(), "rb")), FileName(FileName), ValueMap(ValueMap)

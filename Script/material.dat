@@ -1496,6 +1496,16 @@ liquid
 		Density = 800;
 		IsValuable = true;
 	}
+
+	Config SWEAT;
+	{
+		StrengthValue = 2;
+		NutritionValue = 50;
+		Color = rgb16(144, 144, 240);
+		NameStem = "sweat";
+		Alpha = 175;
+		AttachedGod = SILVA;
+	}
 }
 
 flesh
