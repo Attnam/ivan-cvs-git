@@ -1,0 +1,11 @@
+pe"p"e+4*5+/*tästä tulee 32*/8;
+"\""Terve"\""="tru"e;"Esko=""55";
+
+->
+
+32
+"Terve"
+=
+1
+Esko=55
+;

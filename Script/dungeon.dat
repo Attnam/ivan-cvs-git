@@ -1,0 +1,146 @@
+Dungeons=2;
+
+Dungeon 0;
+{
+	Levels=10;
+
+	LevelDefault
+	{
+		RoomDefault
+		{
+			Size=4+rand%8,4+rand%8;
+			AltarPossible=true;
+			WallSquare=floor,wall;
+			FloorSquare=parquet,empty;
+			DoorSquare=floor,door;
+			GenerateDoor=true;
+		}
+
+		FillSquare=floor,earth;
+
+		Size=36,36;
+		Rooms=5+rand%16;
+		Items=40;
+		GenerateMonsters=true;
+	}
+
+	Level 0;
+	{
+		RoomDefault
+		{
+			AltarPossible=false;
+		}
+
+		Room 0;
+		{
+			Size=5,5;
+
+			Square, Pos 2,2;
+			{
+				OverTerrain=stairsup;
+				Character=perttu;
+			}
+		}
+	}
+
+	Level 3;
+	{
+		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
+
+		Square, Random { Walkable=true; }
+		{
+			Character=ennerbeast;
+		}
+	}
+
+	Level 6;
+	{
+		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+
+		Square, Random { Walkable=true; }
+		{
+			Character=elpuri;
+		}
+	}
+
+	Level 8;
+	{
+		/*Speciality=AboveOreeLair;*/
+
+		Room 0;
+		{
+			Size=7,7;
+			AltarPossible=false;
+			WallSquare=pepsi floor,pepsi wall;
+			FloorSquare=pepsi parquet,air empty;
+
+			Square, Pos 3,3;
+			{
+				OverTerrain=pepsi stairsdown;
+			}
+		}
+	}
+
+	Level 9;
+	{
+		/*Speciality=OreeLair;*/
+
+		LevelMessage="You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
+		FillSquare=pepsi floor,pepsi earth;
+		Rooms=1;
+
+		Room 0;
+		{
+			Size=7,7;
+			AltarPossible=false;
+			WallSquare=pepsi floor,pepsi wall;
+			FloorSquare=pepsi parquet,air empty;
+			GenerateDoor=false;
+
+			Square, Pos 3,5;
+			{
+				OverTerrain=pepsi stairsup;
+			}
+
+			/*CharacterMap
+			{
+				O=oree;
+				B=swatcommando;
+				G=pepsi golem;
+			}
+			{
+				.......
+				...O...
+				..BBB..
+				.GB.BG.
+				..BBB..
+				...G...
+				.......
+			}*/
+		}
+	}
+}
+
+Dungeon 1;
+{
+	Levels=1;
+
+	Level 0;
+	{
+		FillSquare=gravel floor,air empty;
+		Size=64,64;
+		GenerateMonsters=false;
+		Rooms=0;
+
+		Room 0;
+		{
+			Pos=2,2;
+			Size=rand%(SizeX-3),rand%(SizeY-3);
+			AltarPossible=false;
+			WallSquare=gravel floor,stone wall;
+			FloorSquare=wood parquet,air empty;
+			DoorSquare=gravel floor,stone door;
+			GenerateDoor=false;
+		}
+	}
+}

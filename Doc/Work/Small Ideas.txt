@@ -53,3 +53,4 @@ Increase/decrease god relations as option to WMode.
 Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
+Do you want to see your inventory... Message history...

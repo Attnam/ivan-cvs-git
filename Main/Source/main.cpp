@@ -21,9 +21,9 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	GS.ReadFrom(Input, std::map<std::string, long>());*/
 
-	char Buffer[128];
+	char Buffer[256];
 
-	sprintf(Buffer, "Iter Vehemens ad Necem v. 0.240 alpha\nLast build %s at %s.\n\nAntivalpuri is rising and dark times are ahead;\nDark frogs pillage towns and tomatoes are growing.\nBut fortunately, there is hope, you!", __DATE__, __TIME__);
+	sprintf(Buffer, "Iter Vehemens ad Necem v. 0.240 alpha\n\nLast build %s at %s.\n\nAntivalpuri is rising and dark times are ahead;\nDark frogs pillage towns and tomatoes are growing.\nBut fortunately, there is hope, you!", __DATE__, __TIME__);
 
 	iosystem::TextScreen(FONTW, Buffer);
 
