@@ -87,39 +87,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "LibTest"=.\LibTest.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name FEEL
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FeDX
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FeWin
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FELL
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FeMath
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FeIO
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name FeFile
-    End Project Dependency
-}}}
-
-###############################################################################
-
 Project: "Main"=.\Main.dsp - Package Owner=<4>
 
 Package=<5>
