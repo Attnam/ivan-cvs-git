@@ -145,6 +145,7 @@ struct characterdatabase
   ushort AttackWisdomLimit;
   bool CanWalkThroughWalls;
   uchar AttachedGod;
+  bool BodyPartsDisappearWhenSevered;
 };
 
 class characterprototype
@@ -695,6 +696,7 @@ class character : public entity, public id
   virtual ushort GetSpecies() const { return 0; }
   virtual void SortAllItems(std::vector<item*>&, const character* = 0, bool (*)(const item*, const character*) = 0);
   virtual character* GetRandomNeighbourEnemy() const;
+  DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

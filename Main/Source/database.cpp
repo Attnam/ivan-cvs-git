@@ -222,6 +222,7 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
   ANALYZE_DATA(AttackWisdomLimit);
   ANALYZE_DATA(CanWalkThroughWalls);
   ANALYZE_DATA(AttachedGod);
+  ANALYZE_DATA(BodyPartsDisappearWhenSevered);
 
   return Found;
 }

@@ -2347,19 +2347,25 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->GetBodyPartName().c_str());
 
       item* Severed = SevereBodyPart(BodyPartIndex);
-      GetSquareUnder()->SendNewDrawRequest();
-
-      if(!game::IsInWilderness())
+      if(Severed)
 	{
-	  GetStackUnder()->AddItem(Severed);
+	  GetSquareUnder()->SendNewDrawRequest();
 
-	  if(Direction != YOURSELF)
-	    Severed->Fly(0, Direction, Damage);
-	}
-      else
-	  GetStack()->AddItem(Severed);
+	  if(!game::IsInWilderness())
+	    {
+	      GetStackUnder()->AddItem(Severed);
+	      
+	      if(Direction != YOURSELF)
+		Severed->Fly(0, Direction, Damage);
+	    }
+	  else
+	    GetStack()->AddItem(Severed);
 
       Severed->DropEquipment();
+	}
+      else
+	if(IsPlayer())
+	  ADD_MESSAGE("It vanishes.");
 
       if(IsPlayer())
 	game::AskForKeyPress("Bodypart severed! [press any key to continue]");
@@ -2373,23 +2379,36 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
   return Damage;
 }
 
+/* Returns 0 if bodypart dissappears */
 item* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
-  BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
-  BodyPart->SetIsUnique(LeftOversAreUnique());
-  BodyPart->RemoveFromSlot();
-  BodyPart->RandomizePosition();
-  CalculateAttributeBonuses();
-  CalculateBattleInfo();
 
-  if(StuckToBodyPart == BodyPartIndex)
+  if(BodyPartsDisappearWhenSevered())
     {
-      StuckToBodyPart = NONE_INDEX;
-      StuckTo = 0;
+      BodyPart->RemoveFromSlot();
+      CalculateAttributeBonuses();
+      CalculateBattleInfo();
+      BodyPart->SendToHell();
+      return 0;
     }
+  else
+    {
+      BodyPart->SetOwnerDescription("of " + GetName(INDEFINITE));
+      BodyPart->SetIsUnique(LeftOversAreUnique());
+      BodyPart->RemoveFromSlot();
+      BodyPart->RandomizePosition();
+      CalculateAttributeBonuses();
+      CalculateBattleInfo();
 
-  return BodyPart;
+      if(StuckToBodyPart == BodyPartIndex)
+	{
+	  StuckToBodyPart = NONE_INDEX;
+	  StuckTo = 0;
+	}
+
+      return BodyPart;
+    }
 }
 
 /* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
@@ -4121,6 +4140,8 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
       else
 	{
 	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
+	  if(SeveredBodyPart)
+	    {
 	  GetNearLSquare(GetLevel()->GetRandomSquare())->AddItem(SeveredBodyPart);
 	  SeveredBodyPart->DropEquipment();
 
@@ -4128,6 +4149,14 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	    ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).c_str());
 	  else if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
+	    }
+	  else
+	    {
+	      if(IsPlayer())
+		ADD_MESSAGE("Your %s disappears.", GetBodyPartName(RandomBodyPart).c_str());
+	      else if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s %s dissappears.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
+	    }
 	}	
     }
 }

@@ -823,7 +823,7 @@ bool communist::MoveRandomly()
 
 void zombie::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) == HOSTILE)
+  if(GetRelation(PLAYER) == HOSTILE && PLAYER->GetAttribute(INTELLIGENCE) > 5)
     {
       if(RAND() % 5)
 	{
@@ -3112,4 +3112,22 @@ void darkwizard::GetAICommand()
     return;
 
   EditAP(-1000);
+}
+
+void zombie::GetAICommand()
+{
+  if(!GetBodyPart(HEAD_INDEX))
+    {
+      for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
+	if(i->GetBodyPartIndex() == HEAD_INDEX)
+	  {
+	    if(CanBeSeenByPlayer())
+	      ADD_MESSAGE("%s takes %s and it magically attaches itself to the torso of %s.", CHAR_NAME(DEFINITE), i->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+	    i->RemoveFromSlot();
+	    AttachBodyPart((bodypart*)(*i));
+	    EditAP(-1000);
+	    break;
+	  }
+    }
+  humanoid::GetAICommand();
 }

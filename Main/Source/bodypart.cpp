@@ -1554,10 +1554,16 @@ void corpse::SignalSpoil(material*)
 	    if(!TorsoSpoiled && CanBeSeenByPlayer())
 	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHAR_NAME(DEFINITE));
 
-	    GetDeceased()->SevereBodyPart(c)->SendToHell();
+	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
+	    if(BodyPart)
+	      BodyPart->SendToHell();
 	  }
 	else if(TorsoSpoiled)
-	  GetSlot()->AddFriendItem(GetDeceased()->SevereBodyPart(c));
+	  {
+	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
+	    if(BodyPart)
+	      GetSlot()->AddFriendItem(BodyPart);
+	  }
     }
 
   if(TorsoSpoiled)

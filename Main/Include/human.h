@@ -368,6 +368,7 @@ class CHARACTER
   virtual item* SevereBodyPart(ushort);
  protected:
   virtual void CreateCorpse(lsquare*);
+  virtual void GetAICommand();
 );
 
 class CHARACTER
