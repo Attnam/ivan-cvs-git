@@ -477,7 +477,7 @@ bool game::BoolQuestion(const std::string& String, int DefaultAnswer, int OtherK
   else if(DefaultAnswer != REQUIRES_ANSWER)
     ABORT("Illegal BoolQuestion DefaultAnswer send!");
   
-  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 6, 'y', 'Y, 'n', 'N', OtherKeyForTrue);
+  int FromKeyQuestion = KeyQuestion(String, DefaultAnswer, 5, 'y', 'Y', 'n', 'N', OtherKeyForTrue);
   return FromKeyQuestion == 'y' || FromKeyQuestion == 'Y' || FromKeyQuestion == OtherKeyForTrue;
 }
 
