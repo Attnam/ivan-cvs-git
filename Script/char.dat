@@ -85,6 +85,7 @@ character
 	UsesNutrition = true;
 	AttackWisdomLimit = NO_LIMIT;
 	CanWalkThroughWalls = false;
+	BodyPartsDisappearWhenSevered = false;
 }
 
 humanoid
@@ -189,6 +190,7 @@ petrus
 	DeathMessage = "The high priest disappears in a bright light and only his left nut is left behind.";
 	/* Replies overridden */
 	AttachedGod = VALPURUS;
+	BodyPartsDisappearWhenSevered = true;
 }
 
 farmer
@@ -2292,6 +2294,7 @@ angel
 	DeathMessage = "@Dd leaves this mortal plane behind.";
 	StandVerb = "flying";
 	AttachedGod = NONE;
+	BodyPartsDisappearWhenSevered = true;
 }
 
 kamikazedwarf
@@ -2457,6 +2460,7 @@ genie
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
 	AttachedGod = ATAVUS;
+	BodyPartsDisappearWhenSevered = true;
 }
 
 lion
