@@ -361,7 +361,7 @@ bool commandsystem::PickUp(character* Char)
       }
     else
       {
-	ADD_MESSAGE("%s too large to big up!", PileVector[0].size() == 1 ? "It is" : "They are");
+	ADD_MESSAGE("%s too large to pick up!", PileVector[0].size() == 1 ? "It is" : "They are");
 	return false;
       }
 
@@ -389,7 +389,7 @@ bool commandsystem::PickUp(character* Char)
 	    }
 	}
       else
-	ADD_MESSAGE("%s too large to big up!", ToPickup.size() == 1 ? "It is" : "They are");
+	ADD_MESSAGE("%s too large to pick up!", ToPickup.size() == 1 ? "It is" : "They are");
     }
 
   if(Success)

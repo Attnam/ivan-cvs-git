@@ -111,6 +111,21 @@ Q: I just lost a leg. How do I get it back?
 
 A: Certain gods, potions and special characters may help you.
 
+Q: How is score calculated?
+
+A: First the kills of the player and his pets are merged to a single
+list. Then for every monster type, the score is calculated with the
+following formula
+
+Score = sqrt(a) * b * b
+
+sqrt(a) = square root of the number of killed monster of this type
+b = Sum of the attributes of a monster of this type
+
+The individual scores of the monster types are then added
+together. You also get a high bonus for winning, depending on your 
+victory type.
+
 Q: How can I compile IVAN source code?
 
 A: See INSTALL.

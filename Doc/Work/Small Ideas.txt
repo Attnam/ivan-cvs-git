@@ -419,7 +419,10 @@ There could be possibility to revive pet by praying (from shvagier (?))
 Better mines.
 wand/scroll of fire barrier (from shvagier (?))
 Petrification state.
+One armed characters should get discounts in Attnamian stores.
+Confuse should affect throwing also.
 There should be a special effect for selling empty potions.
 Polymorph beam should change engraved messages to random gibberish.
 Breaking a staff of wondrous smells should result in a lot of erupting gas.
 Leather should have several possible colors. For instance mistress should wear black leather.
+Polymorphing from nonhumanoid back to humanoid should autoequip items.
