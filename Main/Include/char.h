@@ -985,6 +985,7 @@ class character : public entity, public id
   bool CanPanic() const;
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }
+  virtual bool BrainsHurt() const { return false; }
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

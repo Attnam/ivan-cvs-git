@@ -7550,6 +7550,10 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
 int character::GetAttribute(int Identifier, bool AllowBonus) const
 {
   int A = int(BaseExperience[Identifier] * EXP_DIVISOR);
+
+  if(AllowBonus && Identifier == INTELLIGENCE && BrainsHurt())
+    return Max(A / 3 + AttributeBonus[INTELLIGENCE], 1);
+
   return A && AllowBonus ? Max(A + AttributeBonus[Identifier], 1) : A;
 }
 

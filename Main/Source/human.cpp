@@ -4865,3 +4865,9 @@ bool humanoid::CanChokeOnWeb(web* Trap) const
 {
   return CanChoke() && Trap->IsStuckToBodyPart(HEAD_INDEX);
 }
+
+bool humanoid::BrainsHurt() const
+{
+  head* Head = GetHead();
+  return !Head || Head->IsBadlyHurt();
+}

@@ -166,6 +166,7 @@ class ABSTRACT_CHARACTER
   virtual bool AllowUnconsciousness() const;
   //virtual bool IsTooHurtToRegainConsciousness() const;
   virtual bool CanChokeOnWeb(web*) const;
+  virtual bool BrainsHurt() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
