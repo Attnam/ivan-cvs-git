@@ -375,3 +375,11 @@ void lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	//delete this;
 	SetExists(false);
 }
+
+vector2d can::GetBitmapPos() const
+{
+	if(GetMaterial(1)) 
+		RETV(144,288)	
+	else
+		RETV(144,304)
+}

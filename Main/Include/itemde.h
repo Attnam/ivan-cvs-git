@@ -98,7 +98,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))
 	virtual float OfferModifier() const RET(0.5)
 	virtual ushort PrepareForConsuming(character*, stack*);
-	virtual vector2d GetBitmapPos() const RETV(144,288)
+	virtual vector2d GetBitmapPos() const;
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );

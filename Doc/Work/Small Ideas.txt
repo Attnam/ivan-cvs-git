@@ -1,6 +1,5 @@
 Characterin funktioiden paloittelu.
 Kuvien flippailu (lis‰‰).
-Avatut cannit.
 Lowscore.
 Teamit.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
