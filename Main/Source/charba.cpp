@@ -1762,6 +1762,8 @@ void character::ReceivePepsiEffect(long SizeOfEffect)
 	if(short(GetPerception() - short(sqrt(SizeOfEffect / 20))) > 0)
 		SetPerception(GetPerception() - short(sqrt(SizeOfEffect / 20)));
 	else SetPerception(1);
+	if(GetIsPlayer())
+		game::DoEvilDeed(SizeOfEffect / 10);
 }
 
 void character::Darkness(long SizeOfEffect)
@@ -1777,6 +1779,12 @@ void character::Darkness(long SizeOfEffect)
 	else SetAgility(1);
 	if(GetHP() - x / 10 > 1) SetHP(GetHP() - x / 10);
 	else SetHP(1);
+	if(GetIsPlayer())
+	{
+		game::DoEvilDeed(short(SizeOfEffect / 2));
+		if(game::GetWizardMode())
+			ADD_MESSAGE("Change in relation %d", short(SizeOfEffect / 2));
+	}
 }
 
 bool character::Kick()
@@ -2251,4 +2259,9 @@ void character::FallTo(vector2d Where, bool OnScreen)
 		SetHP(GetHP() - rand() % 2);
 		CheckDeath("killed by hitting a wall");
 	}	
+}
+
+bool character::CheckCannibalism(ushort What)
+{ 
+	return (GetMaterial(0)->GetType() == What); 
 }

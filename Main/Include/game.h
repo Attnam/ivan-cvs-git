@@ -133,6 +133,9 @@ public:
 	static void InitDungeons();
 	static bool OnScreen(vector2d);
 	static gamescript& GetGameScript() { return GameScript; }
+	static void DoGoodDeed(short);
+	static void DoNeutralDeed(short);
+	static void DoEvilDeed(short);
 private:
 	static std::string Alignment[];
 	static god* God[];

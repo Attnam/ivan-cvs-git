@@ -198,6 +198,7 @@ public:
 	virtual bool CanKick() const RET(false)
 	virtual void BeKicked(ushort, bool, uchar, character*);
 	virtual void FallTo(vector2d, bool);
+	virtual bool CheckCannibalism(ushort);
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }

@@ -41,6 +41,12 @@ bool corpse::Consume(character* Eater, float Amount)
 	}
 
 	GetMaterial(0)->EatEffect(Eater, Amount, 0.10f);
+	if(Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+	{
+		game::DoEvilDeed(10);
+		ADD_MESSAGE("You feel that this was a evil deed.");
+	}
+
 	return (Amount > 99);
 }
 

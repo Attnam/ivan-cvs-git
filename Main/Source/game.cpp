@@ -860,3 +860,29 @@ void game::InitDungeons()
 		Dungeon[c]->SetIndex(c);
 	}
 }
+
+void game::DoGoodDeed(short Amount)
+{
+	if(!Amount) return;
+	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
+	{
+		float Change = Amount - float(2 * Amount / 10) * GetGod(c)->Alignment();
+		GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) );
+	}
+}
+
+void game::DoEvilDeed(short Amount)
+{
+	if(!Amount) return;
+	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
+	{
+		float Change = - Amount + float(2 * Amount / 10) * GetGod(c)->Alignment();
+		GetGod(c)->SetRelation( GetGod(c)->GetRelation()  + short(Change) );
+	}
+}
+
+void game::DoNeutralDeed(short Amount)
+{
+	if(!Amount) return;
+	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
+}
