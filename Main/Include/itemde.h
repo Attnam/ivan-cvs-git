@@ -69,7 +69,7 @@ public:
 	virtual std::string NameSingular() const RET("lamp")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 160))
 	virtual float OfferModifier() const RET(1)
-	virtual vector2d GetBitmapPos() const;
+	virtual vector2d GetBitmapPos() const { return vector2d(0, OnWall ? 192 : 256); }
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
@@ -101,7 +101,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))
 	virtual float OfferModifier() const RET(0.5)
 	virtual item* PrepareForConsuming(character*, stack*);
-	virtual vector2d GetBitmapPos() const;
+	virtual vector2d GetBitmapPos() const { return vector2d(16, GetMaterial(1) ? 288 : 304); }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 500; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 protected:
@@ -934,6 +934,7 @@ class ITEM
 		SetSize(9);
 	},
 public:
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", fruitflesh::StaticType()))
 	virtual ushort Possibility() const RET(20)
 	virtual std::string NameSingular() const RET("fruit")
 	virtual float OfferModifier() const RET(0.4f)
@@ -955,6 +956,7 @@ class ITEM
 		SetSize(16);
 	},
 public:
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", pineappleflesh::StaticType()))
 	virtual ushort Possibility() const RET(25)
 	virtual std::string NameSingular() const RET("pineapple")
 	virtual vector2d GetBitmapPos() const RETV(0,368)

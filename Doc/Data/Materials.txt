@@ -36,3 +36,4 @@ donkeyflesh	1200		10
 marble		3000		50
 gold		20000		30
 grass		100		2
+leather		500		10

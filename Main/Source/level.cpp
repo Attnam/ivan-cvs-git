@@ -299,7 +299,16 @@ void level::Generate(levelscript* GenLevelScript)
 		vector2d Pos;
 
 		if(Square->GetPosScript()->GetRandom())
-			Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+		{
+			if(Square->GetPosScript()->GetIsInRoom(false))
+				for(Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable()))
+				{
+					if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
+						break;
+				}
+			else
+				Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+		}
 		else
 			Pos = *Square->GetPosScript()->GetVector();
 

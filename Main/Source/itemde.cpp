@@ -22,11 +22,9 @@ void can::PositionedDrawToTileBuffer(uchar) const
 item* can::TryToOpen(stack* Stack)
 {
 	item* x = new lump(GetMaterial(1));
-
 	Stack->AddItem(x);
-
 	SetMaterial(1,0);
-
+	UpdatePicture();
 	return x;
 }
 
@@ -61,7 +59,6 @@ bool banana::Consume(character* Eater, float Amount)
 bool lump::Consume(character* Eater, float Amount)
 {
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
-
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
@@ -396,14 +393,6 @@ bool lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	return true;
 }
 
-vector2d can::GetBitmapPos() const
-{
-	if(GetMaterial(1)) 
-		RETV(16,288)	
-	else
-		RETV(16,304)
-}
-
 bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
 	if(!(rand() % 75) && Strength > 10 + rand() % 10)
@@ -648,9 +637,3 @@ void lamp::Load(inputfile& SaveFile)
 
 	SaveFile >> OnWall;
 }
-
-vector2d lamp::GetBitmapPos() const
-{
-	return vector2d(0, OnWall ? 192 : 256);
-}
-

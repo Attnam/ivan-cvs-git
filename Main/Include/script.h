@@ -58,14 +58,16 @@ protected:
 class posscript : public script
 {
 public:
-	posscript() : Vector(0), IsWalkable(0) {}
+	posscript() : Vector(0), IsWalkable(0), IsInRoom(0) {}
 	void ReadFrom(inputfile&);
 	vector2d* GetVector(bool AOE = true) const { SCRIPT_RETURN(Vector) }
 	bool* GetIsWalkable(bool AOE = true) const { SCRIPT_RETURN(IsWalkable) }
+	bool* GetIsInRoom(bool AOE = true) const { SCRIPT_RETURN(IsInRoom) }
 	bool GetRandom() const { return Random; }
 protected:
 	vector2d* Vector;
 	bool* IsWalkable;
+	bool* IsInRoom;
 	bool Random;
 };
 

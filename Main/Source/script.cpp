@@ -51,6 +51,16 @@ void posscript::ReadFrom(inputfile& SaveFile)
 
 				continue;
 			}
+
+			if(Word == "InRoom")
+			{
+				if(!IsInRoom)
+					IsInRoom = new bool;
+
+				*IsInRoom = SaveFile.ReadBool();
+
+				continue;
+			}
 		}
 	}
 }

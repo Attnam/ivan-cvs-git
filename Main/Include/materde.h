@@ -425,7 +425,7 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual short NutritionValue() const			{ return 400; }
-	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
 	virtual bool IsFlesh() { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "pepsi"; }
@@ -562,6 +562,21 @@ public:
 	virtual ushort GetColor() const				{ return MAKE_RGB(225, 225, 225); }
 protected:
 	virtual std::string NameStem() const	{ return "pineapple flesh"; }
+);
+
+class MATERIAL
+(
+	leather,
+	material,
+public:
+	virtual ushort GetHitValue() const 				{ return 10; }
+	virtual uchar GetConsumeType() const				{ return ODD; }
+	virtual ushort GetDensity() const				{ return 500; }
+	virtual ushort OfferValue() const				{ return 10; }
+	virtual bool IsSolid() const { return true; }
+	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
+protected:
+	virtual std::string NameStem() const	{ return "leather"; }
 );
 
 #endif

@@ -6,6 +6,7 @@ D-single weapon's name not updated (Timo)
 D-wrath of Seges (Timo)
 D-score bug with polymorph (Timo)
 D-money is temporarily lost in polymorph (Timo)
+ -altar of level 10 bugs (Timo)
  -others that may be found (Hex or Timo)
 
 -adding new essential features
@@ -31,19 +32,19 @@ D-removing the polymorph feature that multiplies items (Timo)
  -making plate mails much less fragile when they are kicked (Hex)
 
 -fixing buggy graphics that are buggy due to code
- -can (Timo)
- -fallen valpurist (Timo)
- -Oree (Timo)
- -froggoblin (Timo)
+D-can (Timo)
+D-fallen valpurist (Timo)
+D-Oree (Timo)
+D-froggoblin (Timo)
  -earth (Hex)
  -seats (Hex)
- -arrow (Timo)
  -stairs (Timo)
  -corpse (Timo)
  -others that may be found (Timo)
 
 -fixing buggy graphics that are buggy due to overuse of material colors
 D-many items and some terrains (Tuukka)
+ -open can (Tuukka)
 
 -creating new graphics (to make Attnam a little less ugly)
  -grass (Tuukka)

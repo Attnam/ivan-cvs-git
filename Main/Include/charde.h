@@ -254,7 +254,7 @@ class CHARACTER
 (
 	oree,
 	character,
-	InitMaterials(new pepsi),
+	InitMaterials(2, new pepsi, new leather),
 	{
 		SetSize(225);
 		SetAgility(50);
@@ -433,7 +433,7 @@ class CHARACTER
 (
 	fallenvalpurist,
 	character,
-	InitMaterials(new bone),
+	InitMaterials(2, new bone, new leather),
 	{
 		SetSize(150);
 		SetAgility(10);
@@ -461,7 +461,7 @@ class CHARACTER
 (
 	froggoblin,
 	character,
-	InitMaterials(new goblinoidflesh),
+	InitMaterials(2, new goblinoidflesh, new leather),
 	{
 		SetSize(100);
 		SetAgility(15);
