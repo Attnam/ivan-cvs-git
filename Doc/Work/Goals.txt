@@ -18,7 +18,7 @@ Garbage monsters.
 *New material color system.
 Ääriviivat itemeille ja monsuille.
 Space should = esc in the inventory.
-Help should be organised.
+////Help should be organised.
 ////*Do you really want to pray to somebody.
 Pick-axejen sääteleminen (kesto, expat, valot).
 *Mellis abuse.

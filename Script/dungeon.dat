@@ -6,8 +6,19 @@ Dungeon 0;
 
 	LevelDefault
 	{
+		FillSquare=floor,earth;
+
+		Size=36,36;
+		Rooms=5+rand%16;
+		Items=40;
+		GenerateMonsters=true;
+		ReCalculate=true;
+		GenerateUpStairs=true;
+		GenerateDownStairs=true;
+
 		RoomDefault
 		{
+			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
 			AltarPossible=true;
 			WallSquare=floor,wall;
@@ -16,18 +27,12 @@ Dungeon 0;
 			GenerateDoor=true;
 			ReCalculate=true;
 		}
-
-		FillSquare=floor,earth;
-
-		Size=36,36;
-		Rooms=5+rand%16;
-		Items=40;
-		GenerateMonsters=true;
-		ReCalculate=true;
 	}
 
 	Level 0;
 	{
+		GenerateUpStairs=false;
+
 		RoomDefault
 		{
 			AltarPossible=false;
@@ -58,6 +63,7 @@ Dungeon 0;
 	Level 6;
 	{
 		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+		GenerateDownStairs=false;
 
 		Square, Random { Walkable=true; }
 		{
@@ -133,17 +139,21 @@ Dungeon 1;
 		Size=64,64;
 		GenerateMonsters=false;
 		Rooms=0;
+		Items=0;
+		ReCalculate=false;
+		GenerateUpStairs=false;
+		GenerateDownStairs=false;
 
-		Room 0;
+		/*Room 0;
 		{
 			Pos=2,2;
-			Size=rand%(SizeX-3),rand%(SizeY-3);
+			Size=rand%(XSize-3),rand%(YSize-3);
 			AltarPossible=false;
 			WallSquare=gravel floor,stone wall;
 			FloorSquare=wood parquet,air empty;
 			DoorSquare=gravel floor,stone door;
 			GenerateDoor=false;
 			ReCalculate=true;
-		}
+		}*/
 	}
 }

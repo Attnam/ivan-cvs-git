@@ -510,19 +510,26 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 			game::GetCurrentArea()->UpdateLOS();
 
-			if(!game::GetInWilderness() && game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
-				ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+			if(!game::GetInWilderness())
+			{
+				if(GetLevelSquareUnder()->GetLuminance() < 64)
+					ADD_MESSAGE("It's dark in here!");
+
+				if(GetLevelSquareUnder()->GetStack()->GetItems() > 0)
+				{
+					if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
+						ADD_MESSAGE("Several items are lying here.");
+					else
+						ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
+				}
+
+				if(game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
+					ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+			}
 		}
 
 		SetNP(GetNP() - 1);
 		SetAgilityExperience(GetAgilityExperience() + 10);
-
-		if(!game::GetInWilderness() && GetIsPlayer() && GetLevelSquareUnder()->GetStack()->GetItems() > 0)
-		{
-			if (GetLevelSquareUnder()->GetStack()->GetItems() > 1)
-			ADD_MESSAGE("Several items are lying here.");
-			else	ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
-		}
 	}
 }
 
@@ -1437,7 +1444,7 @@ bool character::Look()
 		game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 		FONTW->Printf(DOUBLEBUFFER, 16, 514, "Press direction keys to move cursor or esc to exit from the mode.");
 		graphics::BlitDBToScreen();
-		DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16);
+		DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 		EMPTY_MESSAGES();
 
 		Key = GETKEY();

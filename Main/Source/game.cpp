@@ -22,6 +22,7 @@
 #include "save.h"
 #include "feio.h"
 #include "graphics.h"
+#include "script.h"
 
 ushort game::Current;
 long game::BaseScore;
@@ -33,6 +34,8 @@ std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
 ushort game::PolymorphCounter = 0xFFFF;
 uchar game::CurrentDungeon;
+
+gamescript game::GameScript;
 
 bool game::Flag;
 
@@ -125,9 +128,12 @@ void game::Init(std::string Name)
 	srand(time(0));
 	game::CalculateGodNumber();
 
+	inputfile ScriptFile("Script/Dungeon.dat");
+	GameScript.ReadFrom(ScriptFile);
+
 	if(Name == "")
 	{
-		DOUBLEBUFFER->ClearToColor(0); //GGG
+		DOUBLEBUFFER->ClearToColor(0);
 		SetPlayerName(iosystem::StringQuestion(FONTW, "What is your name?", vector2d(30, 50), 3, 30));
 	}
 	else
@@ -156,7 +162,7 @@ void game::Init(std::string Name)
 
 		InitDungeons();
 
-		WorldMap = new worldmap(50,50);
+		WorldMap = new worldmap(128, 128);
 		WorldMap->Generate();
 
 		InWilderness = true;
@@ -348,7 +354,7 @@ bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, u
 
 void game::panel::Draw() const
 {
-	DOUBLEBUFFER->ClearToColor(0, 512, 800, 88);
+	DOUBLEBUFFER->ClearToColor(0, 512, 800, 88, 0);
 
 	character* Player = game::GetPlayer();
 
@@ -745,17 +751,18 @@ void game::TriggerQuestForMaakotkaShirt()
 	ADD_MESSAGE("The dungeon underneath vibrates violently.");
 
 	GetCurrentDungeon()->LoadLevel(SaveName(), 6);
-	GetCurrentDungeon()->LoadLevel(SaveName(), 7);
+	//GetCurrentDungeon()->LoadLevel(SaveName(), 7);
 
-	vector2d Pos = GetLevel(6)->CreateDownStairs();
+	GetLevel(6)->CreateStairs(false);
+	//GetLevel(7)->CreateStairs(true);
 
-	GetLevel(7)->PutStairs(Pos);
-	GetLevel(7)->AttachPos(Pos);
+	//GetLevel(7)->PutStairs(Pos);
+	//GetLevel(7)->AttachPos(Pos);
 
 	GetCurrentDungeon()->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
 
 	GetCurrentDungeon()->SaveLevel(SaveName(), 6);
-	GetCurrentDungeon()->SaveLevel(SaveName(), 7);
+	//GetCurrentDungeon()->SaveLevel(SaveName(), 7);
 }
 
 void game::CalculateGodNumber()
@@ -849,7 +856,7 @@ void game::InitDungeons()
 
 	for(uchar c = 0; c < Dungeon.size(); ++c)
 	{
-		Dungeon[c] = new dungeon;
+		Dungeon[c] = new dungeon(c);
 		Dungeon[c]->SetIndex(c);
 	}
 }

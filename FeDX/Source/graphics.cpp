@@ -53,7 +53,7 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
 			ABORT("I see many colors...");
 
-	DoubleBuffer = new bitmap(DXDisplay->GetBackBuffer());
+	DoubleBuffer = new bitmap(DXDisplay->GetBackBuffer(), NewXRes, NewYRes);
 
 	XRes = NewXRes;
 	YRes = NewYRes;
@@ -225,7 +225,7 @@ void graphics::SwitchMode()
 	for(ulong c = 0; c < BitmapContainer.size(); ++c)
 		BitmapContainer[c]->Backup();
 
-	DoubleBuffer->Backup(XRes, YRes, false);
+	DoubleBuffer->Backup(false);
 
 	delete DXDisplay;
 
@@ -246,12 +246,12 @@ void graphics::SwitchMode()
 		ShowCursor(true);
 	}
 
-	DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer());
+	DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer(), XRes, YRes);
+
+	DoubleBuffer->Restore(false);
+
+	BlitDBToScreen();
 
 	for(c = 0; c < BitmapContainer.size(); ++c)
 		BitmapContainer[c]->Restore();
-
-	DoubleBuffer->Restore(XRes, YRes, false);
-
-	BlitDBToScreen();
 }

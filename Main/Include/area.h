@@ -252,7 +252,7 @@ public:
 	area(ushort, ushort);
 	area() {}
 	virtual ~area();
-	virtual void Generate() = 0;
+	//virtual void Generate() {}
 	virtual void Draw() const = 0;
 	virtual void AddCharacter(vector2d, character*);
 	virtual void RemoveCharacter(vector2d);
@@ -267,6 +267,7 @@ public:
 	virtual void UpdateLOS();
 	virtual void EmptyFlags();
 	virtual void SendNewDrawRequest();
+	virtual void Initialize(ushort, ushort);
 protected:
 	square*** Map;
 	ushort** FlagMap;

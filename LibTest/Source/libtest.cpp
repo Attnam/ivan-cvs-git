@@ -52,21 +52,19 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 		graphics::BlitDBToScreen();
 	}
 
-	for(float a = 30, b = -100, d = -10, e = 100, c = 0; c < 4; c += 0.0005f)
+	ushort LastX, LastY;
+
+	for(float a = 30, b = -100, d = -10, e = 100, c = 0; c < 4; c += 0.01f)
 	{
 		ushort x = ushort(400 + c * 100), y = ushort(300 - (c * c * c * c * a + c * c * c * b + c * c * d + c * e));
 
-		if(y < 600)
-			DOUBLEBUFFER->PutPixel(x, y, 0);
+		if(c)
+			DOUBLEBUFFER->DrawLine(LastX, LastY, x, y, 0);
 
-		static ushort p = 0;
+		LastX = x;
+		LastY = y;
 
-		if(p++ == 10)
-		{
-			graphics::BlitDBToScreen();
-
-			p = 0;
-		}
+		graphics::BlitDBToScreen();
 	}
 
 	outputfile O("p.bmp");

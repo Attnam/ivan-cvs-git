@@ -19,18 +19,16 @@ class bitmap
 {
 public:
 	friend class graphics;
-	bitmap(const char*);
+	bitmap(std::string);
 	bitmap(ushort, ushort);
 	~bitmap();
 	void Save(outputfile&) const;
 	void Load(inputfile&);
-	void Save(outputfile&, ushort, ushort, ushort, ushort) const;
-	void Load(inputfile&, ushort, ushort, ushort, ushort);
 	void Save(std::string) const;
 	void PutPixel(ushort, ushort, ushort);
 	ushort GetPixel(ushort, ushort) const;
-	void ClearToColor(ushort = 0);
-	void ClearToColor(ushort, ushort, ushort, ushort, ushort = 0);
+	void ClearToColor(ushort);
+	void ClearToColor(ushort, ushort, ushort, ushort, ushort);
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
 	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
@@ -38,15 +36,15 @@ public:
 	void FastBlit(bitmap*) const;
 	void FastMaskedBlit(bitmap*) const;
 	void Printf(bitmap*, ushort, ushort, const char*, ...) const;
+	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
 protected:
-	bitmap(IDirectDrawSurface7*);
-	void AttachSurface(IDirectDrawSurface7*);
-	void Backup(ushort = 0, ushort = 0, bool = true);
-	void Restore(ushort = 0, ushort = 0, bool = true);
+	bitmap(IDirectDrawSurface7*, ushort, ushort);
+	void AttachSurface(IDirectDrawSurface7*, ushort, ushort);
+	void Backup(bool = true);
+	void Restore(bool = true);
 	CSurface* GetDXSurface() { return DXSurface; }
-	static char BMPHeader[];
 	CSurface* DXSurface;
 	ushort XSize, YSize;
 	ushort* BackupBuffer;

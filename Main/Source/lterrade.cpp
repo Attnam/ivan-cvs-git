@@ -96,11 +96,11 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 				return false;
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		vector2d Pos = Who->GetPos();
+		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
-		game::GetCurrentDungeon()->LoadLevel();
-		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentDungeon()->PrepareLevel();
+		game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();
@@ -172,11 +172,11 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		}
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		vector2d Pos = Who->GetPos();
+		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
-		game::GetCurrentDungeon()->LoadLevel();
-		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentDungeon()->PrepareLevel();
+		game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();
 		game::GetCurrentLevel()->SendNewDrawRequest();

@@ -15,16 +15,19 @@ class area;
 class bitmap;
 class outputfile;
 class inputfile;
+class levelscript;
+class roomscript;
 
 /* Presentation of the level class */
 
 class level : public area
 {
 public:
-	level(ushort, ushort, ushort);
+	//level(ushort, ushort, ushort);
 	level() {}
+	//level(ushort Index) : LevelIndex(Index) {}
 	virtual ~level() {}
-	virtual void Generate();
+	virtual void Generate(levelscript*);
 	virtual vector2d RandomSquare(bool) const;
 	virtual void Draw() const;
 	virtual void FastAddCharacter(vector2d, character*);
@@ -34,7 +37,7 @@ public:
 	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector2d Pos);
 	virtual void GenerateTunnel(vector2d, vector2d, bool);
-	virtual void PutStairs(vector2d);
+	//virtual void PutStairs(vector2d);
 	virtual void ExpandPossibleRoute(vector2d, vector2d, bool);
 	virtual void ExpandStillPossibleRoute(vector2d, vector2d, bool);
 	virtual void Save(outputfile&) const;
@@ -47,8 +50,9 @@ public:
 	virtual void CreateRandomTunnel();
 	virtual void CreateItems(ushort);
 	virtual void CreateMonsters(ushort);
-	virtual vector2d CreateDownStairs();
-	virtual bool MakeRoom(vector2d, vector2d, bool = true, uchar = 0);
+	virtual void CreateStairs(bool);
+	//virtual bool MakeRoom(vector2d, vector2d, bool = true, uchar = 0);
+	virtual bool MakeRoom(roomscript*);
 	virtual vector2d GetUpStairs() { return UpStairs; }
 	virtual vector2d GetDownStairs() { return DownStairs; }
 	virtual void SetUpStairs(vector2d What) { UpStairs = What; }
@@ -58,10 +62,11 @@ public:
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
 protected:
 	levelsquare*** Map;
+	levelscript* LevelScript;
 	std::string LevelMessage;
 	dynarray<vector2d, uchar> KeyPoint, Door;
 	vector2d UpStairs, DownStairs;
-	ushort LevelIndex;
+	//ushort LevelIndex;
 	ushort Population;
 };
 

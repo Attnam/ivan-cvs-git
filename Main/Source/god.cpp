@@ -303,22 +303,26 @@ void atavus::PrayBadEffect()
 void loricatus::PrayGoodEffect()
 {
 	std::string OldName;
+
 	if(game::GetPlayer()->GetWielded())
 	{
-		OldName = game::GetPlayer()->GetWielded()->Name(INDEFINITE);
+		OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
 		game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
+		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
 	}
+	else
+		ADD_MESSAGE("You feel a loss.");
 }
 
 void loricatus::PrayBadEffect()
 {
 	std::string OldName;
+
 	if(game::GetPlayer()->GetWielded())
 	{
-		OldName = game::GetPlayer()->GetWielded()->Name(INDEFINITE);
+		OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
 		game::GetPlayer()->GetWielded()->SetMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
+		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
 	}
 	else
 		ADD_MESSAGE("You feel a loss.");

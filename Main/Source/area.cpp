@@ -8,8 +8,18 @@
 #include "save.h"
 #include "graphics.h"
 
-area::area(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize)
+area::area(ushort InitXSize, ushort InitYSize)
 {
+	Initialize(InitXSize, InitYSize);
+}
+
+void area::Initialize(ushort InitXSize, ushort InitYSize)
+{
+	XSize = InitXSize;
+	YSize = InitYSize;
+
+	XSizeTimesYSize = XSize * YSize;
+
 	Alloc2D(Map, XSize, YSize);
 	Alloc2D(FlagMap, XSize, YSize);
 
@@ -84,5 +94,5 @@ void area::SendNewDrawRequest()
 		for(ushort y = game::GetCamera().Y; y < YMax; y++)
 			Map[x][y]->SendNewDrawRequest();
 
-	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480);
+	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480, 0);
 }

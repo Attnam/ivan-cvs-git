@@ -6,40 +6,30 @@
 #include "error.h"
 #include "save.h"
 
-char bitmap::BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
-				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
-				 char(0x00), char(0x00), char(0x28), char(0x00), char(0x00), char(0x00),
-				 char(0x20), char(0x03), char(0x00), char(0x00), char(0xF4), char(0x01),
-				 char(0x00), char(0x00), char(0x01), char(0x00), char(0x18), char(0x00),
-				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x80), char(0x4F),
-				 char(0x12), char(0x00), char(0x33), char(0x0B), char(0x00), char(0x00),
-				 char(0x33), char(0x0B), char(0x00), char(0x00), char(0x00), char(0x00),
-				 char(0x00), char(0x00), char(0x00), char(0x00), char(0x00), char(0x00)};
-
-bitmap::bitmap(const char* FileName) : BackupBuffer(0)
+bitmap::bitmap(std::string FileName) : BackupBuffer(0)
 {
-	FILE* Handle = fopen(FileName, "rb");
+	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
-	if(!Handle)
+	if(!File.is_open())
 		ABORT("Bitmap %s not found!", FileName);
 
-	fseek(Handle, -768, SEEK_END);
+	File.seekg(-768, std::ios::end);
 
 	uchar Palette[768];
 
 	for(ulong c = 0; c < 768; ++c)
-		Palette[c] = fgetc(Handle);
+		Palette[c] = File.get();
 
-	fseek(Handle, 8, SEEK_SET);
+	File.seekg(8, std::ios::beg);
 
-	XSize  =  fgetc(Handle);
-	XSize += (fgetc(Handle) << 8) + 1;
-	YSize  =  fgetc(Handle);
-	YSize += (fgetc(Handle) << 8) + 1;
+	XSize  =  File.get();
+	XSize += (File.get() << 8) + 1;
+	YSize  =  File.get();
+	YSize += (File.get() << 8) + 1;
 
 	graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
 
-	fseek(Handle, 128, SEEK_SET);
+	File.seekg(128, std::ios::beg);
 
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -52,11 +42,11 @@ bitmap::bitmap(const char* FileName) : BackupBuffer(0)
 	{
 		for(ushort x = 0; x < XSize; x++)
 		{
-			int Char1 = fgetc(Handle);
+			int Char1 = File.get();
 
 			if(Char1 > 192)
 			{
-				int Char2 = fgetc(Handle);
+				int Char2 = File.get();
 
 				x--;
 
@@ -81,8 +71,6 @@ bitmap::bitmap(const char* FileName) : BackupBuffer(0)
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
 
-	fclose(Handle);
-
 	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
 	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
 
@@ -102,7 +90,7 @@ bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupB
 	graphics::BitmapContainer.push_back(this);
 }
 
-bitmap::bitmap(IDirectDrawSurface7* DDSurface) : BackupBuffer(0)
+bitmap::bitmap(IDirectDrawSurface7* DDSurface, ushort XSize, ushort YSize) : BackupBuffer(0), XSize(XSize), YSize(YSize)
 {
 	DXSurface = new CSurface;
 
@@ -111,9 +99,6 @@ bitmap::bitmap(IDirectDrawSurface7* DDSurface) : BackupBuffer(0)
 	DDSURFACEDESC2 ddsd;
 
 	DDSurface->GetSurfaceDesc(&ddsd);
-
-	XSize = ddsd.dwWidth;
-	YSize = ddsd.dwHeight;
 
 	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
 	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
@@ -159,38 +144,18 @@ void bitmap::Load(inputfile& SaveFile)
 	DXSurface->GetDDrawSurface()->Unlock(NULL); 
 }
 
-void bitmap::Save(outputfile& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize) const
-{
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
-
-	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-}
-
-void bitmap::Load(inputfile& SaveFile, ushort XPos, ushort YPos, ushort XSize, ushort YSize)
-{
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	ulong Buffer = ulong(ddsd.lpSurface) + YPos * ddsd.lPitch + (XPos << 1);
-
-	for(ushort y = YPos; y < YPos + YSize; y++, Buffer += ddsd.lPitch)
-		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-}
-
 void bitmap::Save(std::string FileName) const
 {
+	static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
+					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
+					 char(0x00), char(0x00), char(0x28), char(0x00), char(0x00), char(0x00),
+					 char(0x20), char(0x03), char(0x00), char(0x00), char(0xF4), char(0x01),
+					 char(0x00), char(0x00), char(0x01), char(0x00), char(0x18), char(0x00),
+					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x80), char(0x4F),
+					 char(0x12), char(0x00), char(0x33), char(0x0B), char(0x00), char(0x00),
+					 char(0x33), char(0x0B), char(0x00), char(0x00), char(0x00), char(0x00),
+					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x00), char(0x00)};
+
 	outputfile SaveFile(FileName);
 
 	DDSURFACEDESC2 ddsd;
@@ -1093,12 +1058,208 @@ void bitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, const char* Format, ...)
 	}
 }
 
-void bitmap::Backup(ushort X, ushort Y, bool DestroySurface)
+void bitmap::DrawLine(ushort FromX, ushort FromY, ushort ToX, ushort ToY, ushort Color)
 {
-	if(!X) X = XSize;
-	if(!Y) Y = YSize;
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 
-	BackupBuffer = new ushort[X * Y];
+	ushort ThisXSize = XSize, ThisYSize = YSize, DistaX, DistaY, BTemp;
+
+	ulong Pitch = ddsd.lPitch, Surface = ulong(ddsd.lpSurface);
+
+	__asm
+	{
+		push	ax
+		push	bx
+		push	cx
+		push	dx
+		xor	eax,	eax
+		xor	ebx,	ebx
+		mov	bx,	FromX
+		mov	ax,	FromY
+		mov	dx,	ToX
+		mov	cx,	ToY
+		cmp	bx,	dx
+		jnz	LineNotVertical
+		cmp	ax,	cx
+		jl	VerticalLinePlus
+		jg	VerticalLineMinus
+		jmp	LineQuickEnd
+	VerticalLinePlus:
+		call	NPutPixel
+		inc	ax
+		cmp	ax,	cx
+		jl	VerticalLinePlus
+		jmp	LineQuickEnd
+	VerticalLineMinus:
+		call	NPutPixel
+		dec	ax
+		cmp	ax,	cx
+		jg	VerticalLineMinus
+		jmp	LineQuickEnd
+	LineNotVertical:	
+		cmp	ax,	cx
+		jnz	LineNotHorizontal
+		cmp	ax,	dx
+		jl	LineHorizontalPlus
+		jg	LineHorizontalMinus
+	LineHorizontalPlus:
+		call	NPutPixel
+		inc	bx
+		cmp	bx,	dx
+		jl	LineHorizontalPlus
+		jmp	LineQuickEnd
+	LineHorizontalMinus:
+		call	NPutPixel
+		dec	bx
+		cmp	bx,	dx
+		jg	LineHorizontalMinus
+	LineQuickEnd:
+		call	NPutPixel
+		pop	dx
+		pop	cx
+		pop	bx
+		pop	ax
+		jmp	End
+	LineNotHorizontal:
+		push	si
+		push	di
+		cmp	dx,	bx
+		jl	LineXSwapNeeded
+		sub	dx,	bx
+		mov	si,	0x0001
+		jmp	LineNext1
+	LineXSwapNeeded:
+		push	bx
+		sub	bx,	dx
+		mov	dx,	bx
+		pop	bx
+		mov	si,	0xFFFF
+	LineNext1:
+		cmp	cx,	ax
+		jl	LineYSwapNeeded
+		sub	cx,	ax
+		mov	di,	0x0001
+		jmp	LineNext2
+	LineYSwapNeeded:
+		push	ax
+		sub	ax,	cx
+		mov	cx,	ax
+		pop	ax
+		mov	di,	0xFFFF
+	LineNext2:
+		cmp	dx,	cx
+		jl	LineXYSwap
+		mov	DistaX,	dx
+		mov	DistaY,	cx
+		mov	bx,	FromX
+		mov	ax,	FromY
+		xor	cl,	cl
+		jmp	LineXYNoSwap
+	LineXYSwap:
+		mov	DistaY,	dx
+		mov	DistaX,	cx
+		mov	ax,	FromX
+		mov	bx,	FromY
+		mov	dx,	ToX
+		mov	cx,	ToY
+		mov	ToY,	dx
+		mov	ToX,	cx
+		mov	cx,	si
+		mov	dx,	di
+		mov	di,	cx
+		mov	si,	dx
+		mov	dx,	DistaX
+		mov	cl,	0x01
+	LineXYNoSwap:
+		shr	dx,	0x01
+		inc	dx
+		mov	BTemp,	dx
+		mov	dh,	cl
+		xor	cx,	cx
+		jmp	LineLoopBegin
+	LineXPlus:
+		add	cx,	DistaY
+	LineLoopBegin:
+		cmp	cx,	BTemp
+		jl	LineNotYPlus
+		sub	cx,	DistaX
+		add	ax,	di
+	LineNotYPlus:
+		call	SPutPixel
+		add	bx,	si
+		cmp	bx,	ToX
+		jnz	LineXPlus
+		add	cx,	DistaY
+		cmp	cx,	BTemp
+		jl	LineEnd
+		add	ax,	di
+	LineEnd:call	SPutPixel
+		pop	di
+		pop	si
+		pop	dx
+		pop	cx
+		pop	bx
+		pop	ax
+		jmp	End
+
+	NPutPixel:
+		cmp	bx,	ThisXSize
+		jae	NPutPixelEnd
+		cmp	ax,	ThisYSize
+		jae	NPutPixelEnd
+		push	eax
+		push	ebx
+		push	edx
+		mul	Pitch
+		add	eax,	Surface
+		shl	ebx,	0x01
+		add	eax,	ebx
+		mov	ebx,	eax
+		mov	ax,	Color
+		mov	[ebx],	ax
+		pop	edx
+		pop	ebx
+		pop	eax
+	NPutPixelEnd:
+		ret
+
+	SPutPixel:
+		push	eax
+		push	ebx
+		or	dh,	dh
+		jz	SPutPixelNoSwap
+		xchg	ax,	bx
+	SPutPixelNoSwap:
+		cmp	bx,	ThisXSize
+		jae	SPutPixelEnd
+		cmp	ax,	ThisYSize
+		jae	SPutPixelEnd
+		push	edx
+		mul	Pitch
+		add	eax,	Surface
+		shl	ebx,	0x01
+		add	eax,	ebx
+		mov	ebx,	eax
+		mov	ax,	Color
+		mov	[ebx],	ax
+		pop	edx
+	SPutPixelEnd:
+		pop	ebx
+		pop	eax
+		ret
+
+	End:
+	}
+
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+}
+
+void bitmap::Backup(bool DestroySurface)
+{
+	BackupBuffer = new ushort[XSize * YSize];
 
 	DDSURFACEDESC2 ddsd;
 	ZeroMemory( &ddsd,sizeof(ddsd) );
@@ -1108,12 +1269,12 @@ void bitmap::Backup(ushort X, ushort Y, bool DestroySurface)
 	ulong SrcBuffer = ulong(ddsd.lpSurface);
 	ulong DestBuffer = ulong(BackupBuffer);
 
-	for(ushort y = 0; y < Y; y++)
+	for(ushort y = 0; y < YSize; y++)
 	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, X << 1);
+		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
 
 		SrcBuffer += ddsd.lPitch;
-		DestBuffer += X << 1;
+		DestBuffer += XSize << 1;
 	}
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
@@ -1122,11 +1283,8 @@ void bitmap::Backup(ushort X, ushort Y, bool DestroySurface)
 		delete DXSurface;
 }
 
-void bitmap::Restore(ushort X, ushort Y, bool CreateSurface)
+void bitmap::Restore(bool CreateSurface)
 {
-	if(!X) X = XSize;
-	if(!Y) Y = YSize;
-
 	if(CreateSurface)
 	{
 		graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
@@ -1142,11 +1300,11 @@ void bitmap::Restore(ushort X, ushort Y, bool CreateSurface)
 	ulong SrcBuffer = ulong(BackupBuffer);
 	ulong DestBuffer = ulong(ddsd.lpSurface);
 
-	for(ushort y = 0; y < Y; y++)
+	for(ushort y = 0; y < YSize; y++)
 	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, X << 1);
+		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
 
-		SrcBuffer += X << 1;
+		SrcBuffer += XSize << 1;
 		DestBuffer += ddsd.lPitch;
 	}
 
@@ -1157,7 +1315,7 @@ void bitmap::Restore(ushort X, ushort Y, bool CreateSurface)
 	BackupBuffer = 0;
 }
 
-void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface)
+void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface, ushort NewXSize, ushort NewYSize)
 {
 	DXSurface->Create(DDSurface);
 
@@ -1165,6 +1323,6 @@ void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface)
 
 	DDSurface->GetSurfaceDesc(&ddsd);
 
-	XSize = ddsd.dwWidth;
-	YSize = ddsd.dwHeight;
+	XSize = NewXSize;
+	YSize = NewYSize;
 }

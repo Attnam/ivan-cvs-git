@@ -4,9 +4,6 @@
 #include "hscore.h"
 #include "feio.h"
 
-#include "script.h"
-#include "save.h"
-
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
 	__asm _emit(1 << 0x04)|(1 << 0x07);
@@ -14,12 +11,6 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 	igraph::Init(hInstance, hWnd);
 
 	game::InitLuxTable();
-
-	inputfile Input("Script/dungeon.dat");
-
-	gamescript GS;
-
-	GS.ReadFrom(Input, std::map<std::string, long>());
 
 	char Buffer[256];
 

@@ -9,32 +9,122 @@
 #include "error.h"
 #include "save.h"
 #include "materde.h"
-#include "feio.h"
-#include "igraph.h"
+//#include "feio.h"
+//#include "igraph.h"
+#include "script.h"
+
+dungeon::dungeon(uchar Index) : Index(Index)
+{
+	//if(Initialized)
+	//	return;
+
+	//iosystem::TextScreen(FONTW, "Generating dungeon...\n\nThis may take some time, please wait.", false);
+
+	/*std::map<uchar, dungeonscript*>::iterator DungeonIterator = game::GetGameScript().GetDungeon().find(Index);
+
+	//dungeonscript* DungeonScript;
+
+	if(DungeonIterator != game::GetGameScript().GetDungeon().end())
+		DungeonScript = DungeonIterator->second;
+	else
+		DungeonScript = game::GetGameScript().GetDungeonDefault();
+
+	//Levels = *DungeonScript->GetLevels();
+
+	Level = new level*[GetLevels()];
+	Generated = new bool[GetLevels()];
+
+	for(uchar c = 0; c < GetLevels(); ++c)
+	{
+		Level[c] = 0;
+		Generated[c] = false;
+	}*/
+
+	Initialize();
+
+	for(uchar c = 0; c < GetLevels(); ++c)
+		Generated[c] = false;
+
+	//Initialized = true;
+}
 
 dungeon::~dungeon()
 {
-	if(Generated)
-	{
-		delete [] BlockMap;
+	//if(Initialized)
+	//{
+		//delete [] BlockMap;
 
 		for(ushort c = 0; c < GetLevels(); ++c)
 			delete Level[c];
 
 		delete [] Level;
-	}
+	//}
 }
 
-void dungeon::Generate(uchar Type) //Temporary
+void dungeon::Initialize()
 {
-	iosystem::TextScreen(FONTW, "Generating dungeon...\n\nThis may take some time, please wait.", false);
+	std::map<uchar, dungeonscript*>::iterator DungeonIterator = game::GetGameScript().GetDungeon().find(Index);
 
-	switch(Type)
+	//dungeonscript* DungeonScript;
+
+	if(DungeonIterator != game::GetGameScript().GetDungeon().end())
+		DungeonScript = DungeonIterator->second;
+	else
+		DungeonScript = game::GetGameScript().GetDungeonDefault();
+
+	//Levels = *DungeonScript->GetLevels();
+
+	Level = new level*[GetLevels()];
+	Generated = new bool[GetLevels()];
+
+	for(uchar c = 0; c < GetLevels(); ++c)
+		Level[c] = 0;
+}
+
+void dungeon::PrepareLevel(ushort Index)
+{
+	if(Generated[Index])
+	{
+		LoadLevel(game::SaveName(), Index);
+	}
+	else
+	{
+		std::map<uchar, levelscript*>::iterator LevelIterator = DungeonScript->GetLevel().find(Index);
+
+		levelscript* LevelScript;
+
+		if(LevelIterator != DungeonScript->GetLevel().end())
+		{
+			LevelScript = LevelIterator->second;
+
+			if(*LevelScript->GetReCalculate())
+			{
+				inputfile ScriptFile("Script/Dungeon.dat");
+				LevelScript->ReadFrom(ScriptFile, true);
+			}
+		}
+		else
+		{
+			LevelScript = DungeonScript->GetLevelDefault();
+
+			if(*LevelScript->GetReCalculate())
+			{
+				inputfile ScriptFile("Script/Dungeon.dat");
+				LevelScript->ReadFrom(ScriptFile, true);
+			}
+		}
+
+		Level[Index] = new level;
+		Level[Index]->Generate(LevelScript);
+
+		Generated[Index] = true;
+	}
+	//SaveLevel(game::SaveName(), c);
+
+	/*switch(Index)
 	{
 	case 0:
 	{
-
-	/***/
 
 	Levels = 10;
 
@@ -117,17 +207,13 @@ void dungeon::Generate(uchar Type) //Temporary
 			SaveLevel(game::SaveName(), c);
 	}
 
-	/***/
-
-	Generated = true;
+	Initialized = true;
 
 	break;
 	}
 
 	case 1:
 	{
-
-	/***/
 
 	Levels = 1;
 
@@ -163,15 +249,13 @@ void dungeon::Generate(uchar Type) //Temporary
 			SaveLevel(game::SaveName(), c);
 	}
 
-	Generated = true;
-
-	/***/
+	Initialized = true;
 
 	break;
 	}
 	default:
 		ABORT("Digging prohibited");
-	}
+	}*/
 }
 
 void dungeon::SaveLevel(std::string SaveName, ushort Number, bool DeleteAfterwards)
@@ -203,23 +287,37 @@ void dungeon::LoadLevel(std::string SaveName, ushort Number)
 
 void dungeon::Save(outputfile& SaveFile) const
 {
-	SaveFile << Levels << Generated << Index;
+	SaveFile << Index;
+
+	for(uchar c = 0; c < GetLevels(); ++c)
+		SaveFile << Generated[c];
 }
 
 void dungeon::Load(inputfile& SaveFile)
 {
-	SaveFile >> Levels >> Generated >> Index;
+	SaveFile >> Index;
 
-	if(Generated)
-	{
-		Alloc3D(BlockMap, Levels, 36, 36, uchar(0));
+	Initialize();
+
+	//if(Initialized)
+	//{
+		/*Alloc3D(BlockMap, Levels, 36, 36, uchar(0));
 
 		for(uchar c = 0; c < Levels; ++c)
-			Fill2D(BlockMap[c], 0, 0, 36, 36, c);
+			Fill2D(BlockMap[c], 0, 0, 36, 36, c);*/
 
-		Level = new level*[Levels];
+		//Level = new level*[GetLevels()];
+		//Generated = new bool[GetLevels()];
 
-		for(c = 0; c < Levels; ++c)
-			Level[c] = 0;
-	}
+		for(uchar c = 0; c < GetLevels(); ++c)
+		{
+			//Level[c] = 0;
+			SaveFile >> Generated[c];
+		}
+	//}
+}
+
+uchar dungeon::GetLevels() const
+{
+	return *DungeonScript->GetLevels();
 }

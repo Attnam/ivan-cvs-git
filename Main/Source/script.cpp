@@ -6,7 +6,7 @@
 #include "lterraba.h"
 #include "charba.h"
 
-void posscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void posscript::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -18,7 +18,11 @@ void posscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueM
 	if(Word == "Pos")
 	{
 		Random = false;
-		Vector = SaveFile.ReadVector2d(ValueMap);
+
+		if(!Vector)
+			Vector = new vector2d;
+
+		*Vector = SaveFile.ReadVector2d(ValueMap);
 	}
 
 	if(Word == "Random")
@@ -32,14 +36,18 @@ void posscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueM
 		{
 			if(Word == "Walkable")
 			{
-				IsWalkable = SaveFile.ReadBool();
-				OverrideMap |= 1;
+				if(!IsWalkable)
+					IsWalkable = new bool;
+
+				*IsWalkable = SaveFile.ReadBool();
+
+				continue;
 			}
 		}
 	}
 }
 
-void groundterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void groundterrainscript::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -50,15 +58,21 @@ void groundterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, lo
 
 	if(Index = protocontainer<material>::SearchCodeName(Word))
 	{
-		MaterialType = Index;
-		OverrideMap |= 1;
+		if(!MaterialType)
+			MaterialType = new ushort;
+
+		*MaterialType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
 	if(Index = protocontainer<groundlevelterrain>::SearchCodeName(Word))
 	{
-		TerrainType = Index;
-		OverrideMap |= 2;
+		if(!TerrainType)
+			TerrainType = new ushort;
+
+		*TerrainType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
@@ -66,7 +80,25 @@ void groundterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, lo
 		ABORT("Script error in groundterrain script!");
 }
 
-void overterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+groundlevelterrain* groundterrainscript::Instantiate() const
+{
+	if(!TerrainType)
+		ABORT("Illegal groundterrainscript instantiation!");
+
+	groundlevelterrain* Instance;
+
+	if(MaterialType)
+	{
+		Instance = protocontainer<groundlevelterrain>::GetProto(*TerrainType)->Clone(false);
+		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
+	}
+	else
+		Instance = protocontainer<groundlevelterrain>::GetProto(*TerrainType)->Clone();
+
+	return Instance;
+}
+
+void overterrainscript::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -77,16 +109,21 @@ void overterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long
 
 	if(Index = protocontainer<material>::SearchCodeName(Word))
 	{
-		MaterialType = Index;
-		OverrideMap |= 1;
+		if(!MaterialType)
+			MaterialType = new ushort;
+
+		*MaterialType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
-
 	if(Index = protocontainer<overlevelterrain>::SearchCodeName(Word))
 	{
-		TerrainType = Index;
-		OverrideMap |= 2;
+		if(!TerrainType)
+			TerrainType = new ushort;
+
+		*TerrainType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
@@ -94,7 +131,25 @@ void overterrainscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long
 		ABORT("Script error in overterrain script!");
 }
 
-void characterscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+overlevelterrain* overterrainscript::Instantiate() const
+{
+	if(!TerrainType)
+		ABORT("Illegal overterrainscript instantiation!");
+
+	overlevelterrain* Instance;
+
+	if(MaterialType)
+	{
+		Instance = protocontainer<overlevelterrain>::GetProto(*TerrainType)->Clone(false);
+		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
+	}
+	else
+		Instance = protocontainer<overlevelterrain>::GetProto(*TerrainType)->Clone();
+
+	return Instance;
+}
+
+void characterscript::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -105,16 +160,21 @@ void characterscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> 
 
 	if(Index = protocontainer<material>::SearchCodeName(Word))
 	{
-		MaterialType = Index;
-		OverrideMap |= 1;
+		if(!MaterialType)
+			MaterialType = new ushort;
+
+		*MaterialType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
-
 	if(Index = protocontainer<character>::SearchCodeName(Word))
 	{
-		CharacterType = Index;
-		OverrideMap |= 2;
+		if(!CharacterType)
+			CharacterType = new ushort;
+
+		*CharacterType = Index;
+
 		Word = SaveFile.ReadWord();
 	}
 
@@ -122,7 +182,25 @@ void characterscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> 
 		ABORT("Script error in character script!");
 }
 
-void squarescript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+character* characterscript::Instantiate() const
+{
+	if(!CharacterType)
+		ABORT("Illegal characterscript instantiation!");
+
+	character* Instance;
+
+	if(MaterialType)
+	{
+		Instance = protocontainer<character>::GetProto(*CharacterType)->Clone(false);
+		Instance->InitMaterials(protocontainer<material>::GetProto(*MaterialType)->Clone());
+	}
+	else
+		Instance = protocontainer<character>::GetProto(*CharacterType)->Clone();
+
+	return Instance;
+}
+
+void squarescript::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -130,7 +208,11 @@ void squarescript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Val
 	{
 		SaveFile.GetBuffer().seekg(-Word.length(), std::ios::cur);
 
-		PosScript.ReadFrom(SaveFile, ValueMap);
+		if(!PosScript)
+			PosScript = new posscript;
+
+		PosScript->SetValueMap(ValueMap);
+		PosScript->ReadFrom(SaveFile);
 
 		if(SaveFile.ReadWord() != "{")
 			ABORT("Bracket missing in square script!");
@@ -139,45 +221,76 @@ void squarescript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Val
 		{
 			if(Word == "GroundTerrain")
 			{
-				GroundTerrain.ReadFrom(SaveFile, ValueMap);
+				if(!GroundTerrain)
+					GroundTerrain = new groundterrainscript;
 
-				if(GroundTerrain.OverrideMap)
-					OverrideMap |= 1;
+				GroundTerrain->SetValueMap(ValueMap);
+				GroundTerrain->ReadFrom(SaveFile);
+
+				continue;
 			}
 
 			if(Word == "OverTerrain")
 			{
-				OverTerrain.ReadFrom(SaveFile, ValueMap);
+				if(!OverTerrain)
+					OverTerrain = new overterrainscript;
 
-				if(OverTerrain.OverrideMap)
-					OverrideMap |= 2;
+				OverTerrain->SetValueMap(ValueMap);
+				OverTerrain->ReadFrom(SaveFile);
+
+				continue;
 			}
 
 			if(Word == "Character")
 			{
-				Character.ReadFrom(SaveFile, ValueMap);
+				if(!Character)
+					Character = new characterscript;
 
-				if(Character.OverrideMap)
-					OverrideMap |= 4;
+				Character->SetValueMap(ValueMap);
+				Character->ReadFrom(SaveFile);
+
+				continue;
 			}
 		}
 	}
 	else
 	{
-		GroundTerrain.ReadFrom(SaveFile, ValueMap);
+		if(!GroundTerrain)
+			GroundTerrain = new groundterrainscript;
 
-		if(GroundTerrain.OverrideMap)
-			OverrideMap |= 1;
+		GroundTerrain->SetValueMap(ValueMap);
+		GroundTerrain->ReadFrom(SaveFile);
 
-		OverTerrain.ReadFrom(SaveFile, ValueMap);
+		if(!OverTerrain)
+			OverTerrain = new overterrainscript;
 
-		if(OverTerrain.OverrideMap)
-			OverrideMap |= 2;
+		OverTerrain->SetValueMap(ValueMap);
+		OverTerrain->ReadFrom(SaveFile);
 	}
 }
 
-void roomscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
+	bool ReCalculating = false;
+
+	if(ReRead)
+	{
+		if(Base)
+			if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
+				Base->ReadFrom(SaveFile, true);
+
+		if(ReCalculate && *ReCalculate)
+		{
+			SaveFile.GetBuffer().clear();
+			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
+			ReCalculating = true;
+		}
+		else
+			return;
+	}
+	else
+		BufferPos = SaveFile.GetBuffer().tellg();
+
 	if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in room script!");
 
@@ -185,69 +298,126 @@ void roomscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Value
 	{
 		if(Word == "Square")
 		{
-			squarescript SS;
+			squarescript* SS = new squarescript;
 
-			SS.ReadFrom(SaveFile, ValueMap);
+			SS->SetValueMap(ValueMap);
+			SS->ReadFrom(SaveFile);
 
-			Square.push_back(SS);
+			if(ReCalculating)
+				Square.push_back(SS);
+			else
+				delete SS;
+
+			continue;
 		}
 
 		if(Word == "WallSquare")
 		{
-			WallSquare.ReadFrom(SaveFile, ValueMap);
+			if(!WallSquare)
+				WallSquare = new squarescript;
 
-			if(WallSquare.OverrideMap)
-				OverrideMap |= 1;
+			WallSquare->SetValueMap(ValueMap);
+			WallSquare->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "FloorSquare")
 		{
-			FloorSquare.ReadFrom(SaveFile, ValueMap);
+			if(!FloorSquare)
+				FloorSquare = new squarescript;
 
-			if(FloorSquare.OverrideMap)
-				OverrideMap |= 2;
+			FloorSquare->SetValueMap(ValueMap);
+			FloorSquare->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "DoorSquare")
 		{
-			DoorSquare.ReadFrom(SaveFile, ValueMap);
+			if(!DoorSquare)
+				DoorSquare = new squarescript;
 
-			if(DoorSquare.OverrideMap)
-				OverrideMap |= 4;
+			DoorSquare->SetValueMap(ValueMap);
+			DoorSquare->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "Size")
 		{
-			Size = SaveFile.ReadVector2d(ValueMap);
+			if(!Size)
+				Size = new vector2d;
 
-			OverrideMap |= 8;
+			*Size = SaveFile.ReadVector2d(ValueMap);
+
+			continue;
 		}
 
 		if(Word == "AltarPossible")
 		{
-			AltarPossible = SaveFile.ReadBool();
+			if(!AltarPossible)
+				AltarPossible = new bool;
 
-			OverrideMap |= 16;
+			*AltarPossible = SaveFile.ReadBool();
+
+			continue;
 		}
 
 		if(Word == "GenerateDoor")
 		{
-			GenerateDoor = SaveFile.ReadBool();
+			if(!GenerateDoor)
+				GenerateDoor = new bool;
 
-			OverrideMap |= 32;
+			*GenerateDoor = SaveFile.ReadBool();
+
+			continue;
+		}
+
+		if(Word == "Pos")
+		{
+			if(!Pos)
+				Pos = new vector2d;
+
+			*Pos = SaveFile.ReadVector2d(ValueMap);
+
+			continue;
 		}
 
 		if(Word == "ReCalculate")
 		{
-			ReCalculate = SaveFile.ReadBool();
+			if(!ReCalculate)
+				ReCalculate = new bool;
 
-			OverrideMap |= 64;
+			*ReCalculate = SaveFile.ReadBool();
+
+			continue;
 		}
 	}
 }
 
-void levelscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
+	bool ReCalculating = false;
+
+	if(ReRead)
+	{
+		if(Base)
+			if(Base->GetReCalculate(false) && *Base->GetReCalculate(false))
+				Base->ReadFrom(SaveFile, true);
+
+		if(ReCalculate && *ReCalculate)
+		{
+			SaveFile.GetBuffer().clear();
+			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
+			ReCalculating = true;
+		}
+		else
+			return;
+	}
+	else
+		BufferPos = SaveFile.GetBuffer().tellg();
+
 	if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in level script!");
 
@@ -255,94 +425,160 @@ void levelscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Valu
 	{
 		if(Word == "Square")
 		{
-			squarescript SS;
+			squarescript* SS = new squarescript;
 
-			SS.ReadFrom(SaveFile, ValueMap);
+			SS->SetValueMap(ValueMap);
+			SS->ReadFrom(SaveFile);
 
-			Square.push_back(SS);
+			if(ReCalculating)
+				Square.push_back(SS);
+			else
+				delete SS;
+
+			continue;
 		}
 
 		if(Word == "Room")
 		{
 			uchar Index = SaveFile.ReadNumber(ValueMap);
 
-			roomscript RS;
+			std::map<uchar, roomscript*>::iterator Iterator = Room.find(Index);
 
-			RS.ReadFrom(SaveFile, ValueMap);
+			roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
+
+			RS->SetValueMap(ValueMap);
+
+			if(RoomDefault)
+				RS->SetBase(RoomDefault);
+			else
+				if(Base)
+					RS->SetBase(Base->GetRoomDefault(false));
+
+			RS->ReadFrom(SaveFile);
 
 			Room[Index] = RS;
+
+			continue;
 		}
 
 		if(Word == "RoomDefault")
 		{
-			RoomDefault.ReadFrom(SaveFile, ValueMap);
+			if(!RoomDefault)
+				RoomDefault = new roomscript;
 
-			if(RoomDefault.OverrideMap)
-				OverrideMap |= 1;
+			RoomDefault->SetValueMap(ValueMap);
+
+			if(Base)
+				RoomDefault->SetBase(Base->GetRoomDefault(false));
+
+			RoomDefault->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "FillSquare")
 		{
-			FillSquare.ReadFrom(SaveFile, ValueMap);
+			if(!FillSquare)
+				FillSquare = new squarescript;
 
-			if(FillSquare.OverrideMap)
-				OverrideMap |= 2;
+			FillSquare->SetValueMap(ValueMap);
+			FillSquare->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "LevelMessage")
 		{
 			SaveFile.ReadWord();
 
-			LevelMessage = SaveFile.ReadWord();
+			if(!LevelMessage)
+				LevelMessage = new std::string;
+
+			*LevelMessage = SaveFile.ReadWord();
 
 			SaveFile.ReadWord();
 
-			OverrideMap |= 4;
+			continue;
 		}
 
 		if(Word == "Size")
 		{
 			SaveFile.ReadWord();
 
-			Size = SaveFile.ReadVector2d(ValueMap);
+			if(!Size)
+				Size = new vector2d;
 
-			ValueMap["SizeX"] = Size.X;
-			ValueMap["SizeY"] = Size.Y;
+			*Size = SaveFile.ReadVector2d(ValueMap);
 
-			OverrideMap |= 8;
+			ValueMap["XSize"] = Size->X;
+			ValueMap["YSize"] = Size->Y;
+
+			continue;
 		}
 
 		if(Word == "Items")
 		{
-			Items = SaveFile.ReadNumber(ValueMap);
+			if(!Items)
+				Items = new ushort;
 
-			OverrideMap |= 16;
+			*Items = SaveFile.ReadNumber(ValueMap);
+
+			continue;
 		}
 
 		if(Word == "Rooms")
 		{
-			Rooms = SaveFile.ReadNumber(ValueMap);
+			if(!Rooms)
+				Rooms = new uchar;
 
-			OverrideMap |= 32;
+			*Rooms = SaveFile.ReadNumber(ValueMap);
+
+			continue;
 		}
 
 		if(Word == "GenerateMonsters")
 		{
-			GenerateMonsters = SaveFile.ReadBool();
+			if(!GenerateMonsters)
+				GenerateMonsters = new bool;
 
-			OverrideMap |= 64;
+			*GenerateMonsters = SaveFile.ReadBool();
+
+			continue;
 		}
 
 		if(Word == "ReCalculate")
 		{
-			ReCalculate = SaveFile.ReadBool();
+			if(!ReCalculate)
+				ReCalculate = new bool;
 
-			OverrideMap |= 128;
+			*ReCalculate = SaveFile.ReadBool();
+
+			continue;
+		}
+
+		if(Word == "GenerateUpStairs")
+		{
+			if(!GenerateUpStairs)
+				GenerateUpStairs = new bool;
+
+			*GenerateUpStairs = SaveFile.ReadBool();
+
+			continue;
+		}
+
+		if(Word == "GenerateDownStairs")
+		{
+			if(!GenerateDownStairs)
+				GenerateDownStairs = new bool;
+
+			*GenerateDownStairs = SaveFile.ReadBool();
+
+			continue;
 		}
 	}
 }
 
-void dungeonscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void dungeonscript::ReadFrom(inputfile& SaveFile)
 {
 	if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in dungeon script!");
@@ -353,31 +589,53 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Va
 		{
 			uchar Index = SaveFile.ReadNumber(ValueMap);
 
-			levelscript LS;
+			std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 
-			LS.ReadFrom(SaveFile, ValueMap);
+			levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
+
+			LS->SetValueMap(ValueMap);
+
+			if(LevelDefault)
+				LS->SetBase(LevelDefault);
+			else
+				if(Base)
+					LS->SetBase(Base->GetLevelDefault(false));
+
+			LS->ReadFrom(SaveFile);
 
 			Level[Index] = LS;
+
+			continue;
 		}
 
 		if(Word == "LevelDefault")
 		{
-			LevelDefault.ReadFrom(SaveFile, ValueMap);
+			if(!LevelDefault)
+				LevelDefault = new levelscript;
 
-			if(LevelDefault.OverrideMap)
-				OverrideMap |= 1;
+			LevelDefault->SetValueMap(ValueMap);
+
+			if(Base)
+				LevelDefault->SetBase(Base->GetLevelDefault(false));
+
+			LevelDefault->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "Levels")
 		{
-			Levels = SaveFile.ReadNumber(ValueMap);
+			if(!Levels)
+				Levels = new uchar;
 
-			OverrideMap |= 2;
+			*Levels = SaveFile.ReadNumber(ValueMap);
+
+			continue;
 		}
 	}
 }
 
-void gamescript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> ValueMap)
+void gamescript::ReadFrom(inputfile& SaveFile)
 {
 	for(std::string Word = SaveFile.ReadWord(false); !SaveFile.GetBuffer().eof(); Word = SaveFile.ReadWord(false))
 	{
@@ -385,26 +643,38 @@ void gamescript::ReadFrom(inputfile& SaveFile, std::map<std::string, long> Value
 		{
 			uchar Index = SaveFile.ReadNumber(ValueMap);
 
-			dungeonscript DS;
+			std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
 
-			DS.ReadFrom(SaveFile, ValueMap);
+			dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
+
+			DS->SetValueMap(ValueMap);
+			DS->SetBase(DungeonDefault);
+			DS->ReadFrom(SaveFile);
 
 			Dungeon[Index] = DS;
+
+			continue;
 		}
 
-		if(Word == "DefaultDungeon")
+		if(Word == "DungeonDefault")
 		{
-			DefaultDungeon.ReadFrom(SaveFile, ValueMap);
+			if(!DungeonDefault)
+				DungeonDefault = new dungeonscript;
 
-			if(DefaultDungeon.OverrideMap)
-				OverrideMap |= 1;
+			DungeonDefault->SetValueMap(ValueMap);
+			DungeonDefault->ReadFrom(SaveFile);
+
+			continue;
 		}
 
 		if(Word == "Dungeons")
 		{
-			Dungeons = SaveFile.ReadNumber(ValueMap);
+			if(!Dungeons)
+				Dungeons = new uchar;
 
-			OverrideMap |= 2;
+			*Dungeons = SaveFile.ReadNumber(ValueMap);
+
+			continue;
 		}
 	}
 }

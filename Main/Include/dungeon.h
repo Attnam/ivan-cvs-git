@@ -13,28 +13,33 @@
 class level;
 class outputfile;
 class inputfile;
+class dungeonscript;
 
 class dungeon
 {
 public:
-	dungeon() : Generated(false) {};
+	dungeon() {}
+	dungeon(uchar);// : Generated(false) {};
 	~dungeon();
-	void Generate(uchar);
+	void PrepareLevel(ushort = game::GetCurrent());
 	void SaveLevel(std::string = game::SaveName(), ushort = game::GetCurrent(), bool = true);
 	void LoadLevel(std::string = game::SaveName(), ushort = game::GetCurrent());
 	level* GetLevel(uchar Index) const { return Level[Index]; }
-	uchar GetLevels() const { return Levels; }
+	uchar GetLevels() const;
 	void Save(outputfile&) const;
 	void Load(inputfile&);
-	void GenerateIfNeeded() { if(!Generated) Generate(Index); }
+	//void GenerateIfNeeded() { if(!Generated) Generate(); }
 	void SetIndex(uchar What) { Index = What; }
 	uchar GetIndex() { return Index; }
 private:
-	uchar*** BlockMap;
+	void Initialize();
+	//uchar*** BlockMap;
+	dungeonscript* DungeonScript;
 	level** Level;
-	uchar Levels;
-	bool Generated;
+	//uchar Levels;
+	//bool Generated;
 	uchar Index;
+	bool* Generated;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)

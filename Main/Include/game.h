@@ -30,6 +30,7 @@ class square;
 class dungeon;
 class outputfile;
 class inputfile;
+class gamescript;
 
 /* Presentation of the game class */
 
@@ -131,6 +132,7 @@ public:
 	static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
 	static void InitDungeons();
 	static bool OnScreen(vector2d);
+	static gamescript& GetGameScript() { return GameScript; }
 private:
 	static std::string Alignment[];
 	static god* God[];
@@ -161,6 +163,7 @@ private:
 	static character* PlayerBackup;
 	static ushort PolymorphCounter;
 	static std::vector<dungeon*> Dungeon;
+	static gamescript GameScript;
 };
 
 #endif
