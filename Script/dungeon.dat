@@ -548,7 +548,7 @@ Dungeon 1;
 				{
 					# = 0;
 					P = perttu;
-					c = cityguard;
+					c = guard;
 					p = priest;
 					d = dolphin;
 					i = ivan;
