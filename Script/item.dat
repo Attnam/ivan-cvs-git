@@ -605,7 +605,6 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 3, 150, 50, 10; }
-		
 		InElasticityPenaltyModifier = 10;
 	}
 
@@ -628,7 +627,6 @@ bodyarmor /* armor-> */
 		FlexibleNameSingular = "armor";
 		MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BRONZE, IRON; }
 		MaterialConfigChances = { 5, 150, 75, 25, 25, 10; }
-		Alias == "armor"; /* wishing doesn't yet support FlexibleNameSingular */
 		InElasticityPenaltyModifier = 20;
 	}
 
@@ -638,6 +636,31 @@ bodyarmor /* armor-> */
 		StrengthModifier = 75;
 		BitmapPos = 0, 352;
 		FormModifier = 20;
+	}
+
+	Config ARMOR_OF_GREAT_HEALTH;
+	{
+		StrengthModifier = 150; 
+		DefaultSize = 80; 
+		DefaultMainVolume = 5000; 
+		BitmapPos = 16, 128;
+		Possibility = 25;
+		NameSingular = "armor";
+		PostFix = "of great health";
+		MainMaterialConfig = { 3, LEATHER, HARDENED_LEATHER, TROLL_HIDE; }
+		MaterialConfigChances = { 3, 150, 75, 50; }
+		InElasticityPenaltyModifier = 25;
+		AffectsEndurance = true;
+		DefaultEnchantment = 1;
+	}
+
+	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
+	{
+		Possibility = 3;
+		StrengthModifier = 60;
+		BitmapPos = 0, 352;
+		FormModifier = 20;
+		AffectsEndurance = false;
 	}
 }
 

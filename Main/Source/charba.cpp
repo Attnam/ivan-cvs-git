@@ -255,7 +255,6 @@ struct svpriorityelement
 
 uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 {
-  return 1;
   if(GetBodyParts() == 1)
     return 0;
 
@@ -351,8 +350,7 @@ void character::Be()
 	      Timer = 0;
 	    }
 
-	  for(ushort c = 0; c < 2; ++c)
-	    game::CalculateNextDanger();
+	  game::CalculateNextDanger();
 
 	  if(!GetAction())
 	    GetPlayerCommand();
@@ -2521,7 +2519,7 @@ bool character::OutlineItems()
   return false;
 }
 
-uchar character::GetMoveEase() const
+ushort character::GetMoveEase() const
 {
   switch(GetBurdenState())
     {
@@ -3097,7 +3095,12 @@ bool character::SecretKnowledge()
 	      Entry.resize(47, ' ');
 	      Entry << int(Character[c]->GetRelativeDanger(this, true) * 100);
 	      Entry.resize(57, ' ');
-	      Entry << int(Character[c]->GetDangerModifier() * 100);
+
+	      if(Character[c]->CanBeGenerated())
+		Entry << int(Character[c]->GetDangerModifier() * 100);
+	      else
+		Entry << '-';
+
 	      Pic.Fill(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
@@ -3620,41 +3623,10 @@ void character::Regenerate()
 void character::PrintInfo() const
 {
   felist Info("Information about " + GetName(DEFINITE));
-  ushort c;
 
-  if(game::WizardModeActivated())
-    {
-      Info.AddEntry(std::string("Relative danger: ") + int(GetRelativeDanger(game::GetPlayer(), true) * 100), LIGHT_GRAY);
-      Info.AddEntry(std::string("HP: ") + GetHP() + '/' + GetMaxHP(), IsInBadCondition() ? RED : LIGHT_GRAY);
-      Info.AddEntry(std::string("Endurance: ") + GetAttribute(ENDURANCE), LIGHT_GRAY);
-      Info.AddEntry(std::string("Perception: ") + GetAttribute(PERCEPTION), LIGHT_GRAY);
-      Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHT_GRAY);
-      Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHT_GRAY);
-      Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
-      Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight(), LIGHT_GRAY);
-      Info.AddEntry(std::string("Total weight: ") + GetWeight(), LIGHT_GRAY);
-
-      for(c = 0; c < GetBodyParts(); ++c)
-	if(GetBodyPart(c))
-	  Info.AddEntry(GetBodyPartName(c) + " armor value: " + GetBodyPart(c)->GetTotalResistance(PHYSICAL_DAMAGE), LIGHT_GRAY);
-    }
-
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    if((EquipmentEasilyRecognized(c) && GetEquipment(c)) || game::WizardModeActivated())
-      {
-	std::string Entry = EquipmentName(c) + ": ";
-
-	if(!GetBodyPartOfEquipment(c))
-	  Entry << "can't use";
-	else if(!GetEquipment(c))
-	  Entry << "-";
-	else
-	  GetEquipment(c)->AddName(Entry, INDEFINITE);
-
-	Info.AddEntry(Entry, LIGHT_GRAY);
-      }
-
-  AddInfo(Info);
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if((EquipmentEasilyRecognized(c) || game::WizardModeActivated()) && GetEquipment(c))
+      Info.AddEntry(EquipmentName(c) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture());
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -4297,7 +4269,17 @@ void character::DrawPanel(bool AnimationDraw) const
   FONT->Printf(DOUBLE_BUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", CHAR_NAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
 
   ushort PanelPosX = RES.X - 96;
-  ushort PanelPosY = DrawStats(false) + 1;
+  ushort PanelPosY = DrawStats(false);
+
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+  ++PanelPosY;
 
   if(game::IsInWilderness())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Worldmap");
@@ -4418,7 +4400,7 @@ bool character::ShowWeaponSkills()
   felist List("Your experience in weapon categories");
 
   List.AddDescription("");
-  List.AddDescription("Category name                 Level     Points    Needed    DAM/THV   APC");
+  List.AddDescription("Category name                 Level     Points    Needed    Battle bonus");
 
   bool Something = false;
 
@@ -4439,9 +4421,7 @@ bool character::ShowWeaponSkills()
 	  Buffer << '-';
 
 	Buffer.resize(60, ' ');
-	Buffer << '+' << int(GetCWeaponSkill(c)->GetEffectBonus() - 100) << '%';
-	Buffer.resize(70, ' ');
-	Buffer << '-' << int(100 - GetCWeaponSkill(c)->GetAPBonus()) << '%';
+	Buffer << '+' << int(GetCWeaponSkill(c)->GetBonus() - 100) << '%';
 	List.AddEntry(Buffer, LIGHT_GRAY);
 	Something = true;
       }
@@ -4488,10 +4468,10 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 		  if(!InNoMsgMode)
 		    (this->*PrintBeginStateMessage[c])();
 
+		  EquipmentState |= 1 << c;
+
 		  if(BeginStateHandler[c])
 		    (this->*BeginStateHandler[c])();
-
-		  EquipmentState |= 1 << c;
 		}
 	      else
 		EquipmentState |= 1 << c;
@@ -4633,7 +4613,7 @@ void character::LoseIntrinsic(ushort What)
 void character::PrintBeginPolymorphControlMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel very controlled.");
+    ADD_MESSAGE("You feel your mind has total control over your body.");
 }
 
 void character::PrintEndPolymorphControlMessage() const
@@ -5150,13 +5130,14 @@ void character::InstallDataBase()
 
 void character::PrintBeginTeleportMessage() const
 {
-
+  if(IsPlayer())
+    ADD_MESSAGE("You feel jumpy.");
 }
 
 void character::PrintEndTeleportMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel more solid.");
+    ADD_MESSAGE("You suddenly realize you've always preferred walking to jumping.");
 }
 
 void character::TeleportHandler()
@@ -5167,13 +5148,14 @@ void character::TeleportHandler()
 
 void character::PrintBeginPolymorphMessage() const
 {
-
+  if(IsPlayer())
+    ADD_MESSAGE("An unconfortable uncertainty of who you really are overwhelms you.");
 }
 
 void character::PrintEndPolymorphMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel more solid.");
+    ADD_MESSAGE("You feel you are you and no one else.");
 }
 
 void character::PolymorphHandler()
@@ -5184,12 +5166,14 @@ void character::PolymorphHandler()
 
 void character::PrintBeginTeleportControlMessage() const
 {
-
+  if(IsPlayer())
+    ADD_MESSAGE("You feel very controlled.");
 }
 
 void character::PrintEndTeleportControlMessage() const
 {
-
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your control slipping.");
 }
 
 void character::DisplayStethoscopeInfo(character*) const
@@ -5370,7 +5354,6 @@ void character::CalculateAll()
   CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
   CalculateEmitation();
-  CalculateHP();
   CalculateBodyPartMaxHPs();
   CalculateBurdenState();
   CalculateBattleInfo();
@@ -5402,6 +5385,7 @@ void character::CalculateBodyPartMaxHPs()
       GetBodyPart(c)->CalculateMaxHP();
 
   CalculateMaxHP();
+  CalculateHP();
 }
 
 bool character::EditAttribute(ushort Identifier, short Value)
@@ -5962,16 +5946,6 @@ bool character::IsDead() const
   return false;
 }
 
-bool character::ShowBattleInfo()
-{
-  felist Info("Your battle info");
-  //static_cast<arm*>(GetBodyPart(RIGHT_ARM_INDEX))->AddWieldedBattleInfo(Info);
-  //static_cast<arm*>(GetBodyPart(LEFT_ARM_INDEX))->AddWieldedBattleInfo(Info);
-  game::SetStandardListAttributes(Info);
-  Info.Draw();
-  return false;
-}
-
 void character::SignalSpoilLevelChange()
 {
   /* Add support for spoiling zombies! */
@@ -5986,4 +5960,10 @@ void character::AddOriginalBodyPartID(ushort Index, ulong What)
 
   if(OriginalBodyPartID[Index].size() > 100)
     OriginalBodyPartID[Index].erase(OriginalBodyPartID[Index].begin());
+}
+
+void character::AddToInventory(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+{
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    GetStack()->AddItem(ItemVector[c].Instantiate(SpecialFlags));
 }

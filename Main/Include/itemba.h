@@ -12,6 +12,7 @@
 #include "object.h"
 #include "lsquare.h"
 #include "slot.h"
+#include "script.h"
 
 class felist;
 class bitmap;
@@ -326,7 +327,7 @@ class item : public object
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
   ushort GetBaseMaxDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 1.25f) + 1; }
-  ushort GetBaseBlockValue() const { return ushort(12.5f * GetBlockModifier() / (2500 + float(GetWeight() - 500))); }
+  ushort GetBaseBlockValue() const { return ushort(GetBlockModifier() * GetBonus() / (100000 + 200 * GetWeight())); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddAttackInfo(felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
@@ -348,8 +349,7 @@ class item : public object
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
   virtual void SignalEnchantmentChange();
-  virtual ushort GetEffectBonus() const { return 100; }
-  virtual ushort GetAPBonus() const { return 100; }
+  virtual ushort GetBonus() const { return 100; }
   virtual void DrawContents(const character*) { }
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
@@ -364,6 +364,7 @@ class item : public object
   virtual uchar GetFlyAmount() const;
   virtual void SignalSpoilLevelChange(material*);
   virtual void ResetSpoiling();
+  virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort) { }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

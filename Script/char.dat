@@ -137,15 +137,15 @@ human
 	Helmet = MITHRIL helmet(HELM_OF_PERCEPTION) { Enchantment = 5; }
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
 	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 5; }
-	Cloak = OMMEL_HAIR cloak(CLOAK_OF_INVISIBILITY);
-	Belt = STEEL belt;
+	Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_INVISIBILITY);
+	Belt = PHOENIX_FEATHER belt;
 	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 5; }
-	RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
+	RightGauntlet = SPIDER_SILK gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
 	RightRing = ring(RING_OF_INFRA_VISION);
 	LeftRing = ring(RING_OF_TELEPORT_CONTROL);
 	RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 3; }
-	KnownCWeaponSkills == LARGE_SWORDS;
-	CWeaponSkillHits == 2000;
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 2, 2000, 2000; }
 	RightSWeaponSkillHits = 1000;*/
 }
 
@@ -1714,8 +1714,8 @@ mammoth
 	SkinColor = rgb16(100, 130, 160);
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
-	BaseKickStrength = 20000;
-	BaseBiteStrength = 10000;
+	BaseKickStrength = 400000;
+	BaseBiteStrength = 100000;
 	CanBeGenerated = true;
 	CanKick = true;
 	KnownCWeaponSkills = { 2, KICK, BITE; }
@@ -1747,6 +1747,7 @@ unicorn
 	TorsoMainColor = rgb16(200, 200, 200); /* the horn */
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
+	Inventory = { 2, stone { Chance = 50; }, stone { Chance = 50; } }
 
 	Config GOOD;
 	{
@@ -1895,7 +1896,6 @@ snake
 	NameSingular = "snake";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 10000;
-	CanKick = false;
 	StandVerb = "lying";
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;

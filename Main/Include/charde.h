@@ -92,7 +92,6 @@ class ABSTRACT_CHARACTER
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(uchar) const;
-  virtual void AddInfo(felist&) const;
   virtual void CompleteRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
   virtual bool CheckWearEquipment() const { return true; }
@@ -146,6 +145,7 @@ class ABSTRACT_CHARACTER
   virtual void AddDefenceInfo(felist&) const;
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
+  virtual bool ShowBattleInfo();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -195,7 +195,6 @@ class ABSTRACT_CHARACTER
   long GetKickAPCost() const { return KickAPCost; }
   long GetBiteAPCost() const { return BiteAPCost; }
   virtual void Kick(lsquare*);
-  virtual void AddInfo(felist&) const;
   virtual bool Hit(character*);
   virtual void UnarmedHit(character*);
   virtual void InitSpecialAttributes();
@@ -215,6 +214,10 @@ class ABSTRACT_CHARACTER
   virtual void CalculateKickAttackInfo();
   virtual void CalculateBiteAttackInfo();
   virtual bool IsAlive() const { return GetTorso()->IsAlive(); }
+  virtual bool ShowBattleInfo();
+  void AddUnarmedInfo(felist&) const;
+  void AddKickInfo(felist&) const;
+  void AddBiteInfo(felist&) const;
  protected:
   ushort Strength;
   ushort Agility;
@@ -765,7 +768,6 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool SpecialEnemySightedReaction(character*);
-  virtual void CreateInitialEquipment(ushort);
  protected:
   virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartFlesh(ushort, ulong) const;

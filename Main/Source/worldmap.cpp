@@ -109,7 +109,7 @@ void worldmap::Generate()
       std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
       for(ushort c = 1; c < Continent.size(); ++c)
-	if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 300 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
+	if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000 && Continent[c]->GetGTerrainAmount(evergreenforest::StaticType()) && Continent[c]->GetGTerrainAmount(snow::StaticType()))
 	  PerfectForAttnam.push_back(Continent[c]);
 
       if(!PerfectForAttnam.size())
@@ -118,14 +118,14 @@ void worldmap::Generate()
       vector2d AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
       bool Correct = false;
 
-      for(ushort c1 = 0; c1 < 50; ++c1)
+      for(ushort c1 = 0; c1 < 25; ++c1)
 	{
 	  game::BusyAnimation();
 	  continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 	  AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::StaticType());
 	  ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());
 
-	  for(ushort c2 = 1; c2 < 25; ++c2)
+	  for(ushort c2 = 1; c2 < 50; ++c2)
 	    {
 	      TunnelExit = PetrusLikes->GetMember(RAND() % PetrusLikes->GetSize());
 

@@ -58,6 +58,9 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
 
 void stack::AddItem(item* ToBeAdded)
 {
+  if(!ToBeAdded)
+    return;
+
   AddElement(ToBeAdded);
 
   if(SquarePosition == HIDDEN)

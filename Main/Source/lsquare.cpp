@@ -775,29 +775,33 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 	Room->HandleInstantiatedCharacter(Char);
     }
 
-  if(SquareScript->GetItem(false))
-    {
-      stack* Stack;
-      item* Item = SquareScript->GetItem()->Instantiate();
-      uchar* SideStackIndex = SquareScript->GetItem()->GetSideStackIndex(false);
+  if(SquareScript->GetItems(false))
+    for(ushort c = 0; c < SquareScript->GetItems()->size(); ++c)
+      {
+	stack* Stack;
+	item* Item = (*SquareScript->GetItems())[c].Instantiate();
 
-      if(!SideStackIndex)
-	Stack = GetStack();
-      else
-	{
-	  Item->SignalSquarePositionChange(*SideStackIndex);
-	  Stack = GetSideStack(*SideStackIndex);
-	}
+	if(Item)
+	  {
+	    uchar* SideStackIndex = (*SquareScript->GetItems())[c].GetSideStackIndex(false);
 
-      Stack->AddItem(Item);
-    }
+	    if(!SideStackIndex)
+	      Stack = GetStack();
+	    else
+	      {
+		Item->SignalSquarePositionChange(*SideStackIndex);
+		Stack = GetSideStack(*SideStackIndex);
+	      }
+
+	    Stack->AddItem(Item);
+	  }
+      }
 
   if(SquareScript->GetGTerrain(false))
     ChangeGLTerrain(SquareScript->GetGTerrain()->Instantiate());
 
   if(SquareScript->GetOTerrain(false))
     {
-      Clean();
       olterrain* Terrain = SquareScript->GetOTerrain()->Instantiate();
       ChangeOLTerrain(Terrain);
 

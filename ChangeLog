@@ -1,3 +1,25 @@
+October 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The extremely uninformative battle information of the panel removed
+	* Added show battle info command ('B') which reveals them instead
+	* Item pictures are now shown when looking at people
+	* Worldmap generation is now faster
+	* Added armor of great health which increases endurance but is heavier, clumsier
+	  and weaker than plate mail
+	* Invisible monsters seen by infravision are again transparent
+	* Generation modifiers are no longer calculated for monsters that can't be generated
+	* Game balancing:
+	  * Body armor now increases head's AV somewhat (let's say it protects the neck)
+	  * Body armor's effect on limb AVs increased (now 3/4)
+	  * Damage needed for breaking items doubled
+	* New script features:
+	  * Items can now be added to character inventories both in dungeon.dat and char.dat
+	  * Items can be added to the ground much more conveniently
+	  * Chest contents can be defined in the script (even chests inside chests inside chests
+	    and so on are possible)
+	  * One can now define items in the script that have an arbitrary chance to occur in a
+	    given place (inventory, ground, equipment etc.)
+
 October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Original bodypart system is now a lot better

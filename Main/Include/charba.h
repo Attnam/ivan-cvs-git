@@ -150,6 +150,7 @@ struct characterdatabase
   ushort LeftSWeaponSkillHits;
   uchar PanicLevel;
   bool CanBeCloned;
+  std::vector<contentscript<item> > Inventory;
 };
 
 class characterprototype
@@ -292,7 +293,7 @@ class character : public entity, public id
   virtual bool RestUntilHealed();
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
-  virtual uchar GetMoveEase() const;
+  virtual ushort GetMoveEase() const;
   float GetDodgeValue() const { return DodgeValue; }
   virtual bool RaiseGodRelations();
   virtual bool LowerGodRelations();
@@ -317,7 +318,7 @@ class character : public entity, public id
   virtual void ReceiveKoboldFlesh(long);
   virtual bool ChangeRandomStat(short);
   virtual uchar RandomizeReply(uchar, bool*);
-  virtual void CreateInitialEquipment(ushort) { }
+  virtual void CreateInitialEquipment(ushort SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
   virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual void TestWalkability();
@@ -395,7 +396,6 @@ class character : public entity, public id
   virtual void AddKoboldFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshHitMessage() const;
   virtual void AddBoneConsumeEndMessage() const;
-  virtual void AddInfo(felist&) const = 0;
   virtual void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
@@ -697,8 +697,9 @@ class character : public entity, public id
   virtual void ReceiveAntidote(long);
   virtual void AddAntidoteConsumeEndMessage() const;
   virtual bool IsDead() const;
-  virtual bool ShowBattleInfo();
+  virtual bool ShowBattleInfo() = 0;
   void AddOriginalBodyPartID(ushort, ulong);
+  void AddToInventory(const std::vector<contentscript<item> >&, ushort);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

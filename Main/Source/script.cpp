@@ -135,7 +135,10 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 {
   std::string Word = SaveFile.ReadWord();
 
-  if(Word == "=")
+  if(Word == ",")
+    int esko = 2;
+
+  if(Word == "=" || Word == ",")
     Word = SaveFile.ReadWord();
 
   valuemap::const_iterator Iterator = ValueMap.find(Word);
@@ -199,7 +202,7 @@ template <class type> const std::string& contentscripttemplate<type>::GetClassId
   return protocontainer<type>::GetMainClassId();
 }
 
-template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount, ushort SpecialFlags) const
+template <class type> void contentscripttemplate<type>::BasicInstantiate(std::vector<type*>& Instance, ulong Amount, ushort SpecialFlags, uchar Chance) const
 {
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
   Instance.resize(Amount, 0);
@@ -209,42 +212,53 @@ template <class type> void contentscripttemplate<type>::BasicInstantiate(std::ve
       const typename type::databasemap& Config = Proto->GetConfig();
 
       for(ulong c = 0; c < Amount; ++c)
-	{
-	  ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
+	if(Chance >= 100 || Chance > RAND() % 100)
+	  {
+	    ushort ChosenConfig = 1 + RAND() % (Config.size() - 1);
 
-	  for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	    if(!ChosenConfig--)
-	      {
-		Instance[c] = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
-		break;
-	      }
-	}
+	    for(typename type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	      if(!ChosenConfig--)
+		{
+		  Instance[c] = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+		  break;
+		}
+	  }
+	else
+	  Instance[c] = 0;
     }
   else
     {
       for(ulong c = 0; c < Amount; ++c)
-	Instance[c] = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
+	if(Chance >= 100 || Chance > RAND() % 100)
+	  Instance[c] = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
+	else
+	  Instance[c] = 0;
     }
 
   if(GetParameters(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetParameters(*GetParameters());
+      if(Instance[c])
+	Instance[c]->SetParameters(*GetParameters());
 
   if(GetMainMaterial(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      if(Instance[c])
+	Instance[c]->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(GetSecondaryMaterial(false) && Instance[0]->HasSecondaryMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      if(Instance[c])
+	Instance[c]->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(GetContainedMaterial(false) && Instance[0]->HasContainedMaterial())
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      if(Instance[c])
+	Instance[c]->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->UpdatePictures();
+      if(Instance[c])
+	Instance[c]->UpdatePictures();
 }
 
 template <class type> ushort contentscripttemplate<type>::SearchCodeName(const std::string& Word) const
@@ -255,6 +269,7 @@ template <class type> ushort contentscripttemplate<type>::SearchCodeName(const s
 datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(Team);
+  ANALYZE_MEMBER(Inventory);
   return contentscripttemplate<character>::GetData(Identifier);
 }
 
@@ -267,10 +282,17 @@ void contentscript<character>::Instantiate(std::vector<character*>& Instance, ul
 
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
+      if(Instance[c])
+	Instance[c]->SetTeam(game::GetTeam(*GetTeam()));
+
+  if(GetInventory(false))
+    for(ulong c = 0; c < Amount; ++c)
+      if(Instance[c])
+	Instance[c]->AddToInventory(*GetInventory(), SpecialFlags);
 
   for(ulong c = 0; c < Amount; ++c)
-    Instance[c]->RestoreHP();
+    if(Instance[c])
+      Instance[c]->RestoreHP();
 }
 
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
@@ -292,11 +314,15 @@ datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(MinPrice);
   ANALYZE_MEMBER(MaxPrice);
   ANALYZE_MEMBER(Category);
+  ANALYZE_MEMBER(ItemsInside);
+  ANALYZE_MEMBER(Chance);
   return contentscripttemplate<item>::GetData(Identifier);
 }
 
 void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount, ushort SpecialFlags) const
 {
+  uchar Chance = GetChance(false) ? *GetChance() : 100;
+
   if(Random)
     {
       Instance.resize(Amount, 0);
@@ -305,22 +331,33 @@ void contentscript<item>::Instantiate(std::vector<item*>& Instance, ulong Amount
       ulong Category = GetCategory(false) ? *GetCategory() : ANY_CATEGORY;
 
       for(ulong c = 0; c < Amount; ++c)
-	Instance[c] = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
+	if(Chance >= 100 || Chance > RAND() % 100)
+	  Instance[c] = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
+	else
+	  Instance[c] = 0;
     }
   else
-    contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags);
+    contentscripttemplate<item>::BasicInstantiate(Instance, Amount, SpecialFlags, Chance);
 
   if(GetTeam(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetTeam(*GetTeam());
+      if(Instance[c])
+	Instance[c]->SetTeam(*GetTeam());
 
   if(GetActive(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetIsActive(*GetActive());
+      if(Instance[c])
+	Instance[c]->SetIsActive(*GetActive());
 
   if(GetEnchantment(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetEnchantment(*GetEnchantment());
+      if(Instance[c])
+	Instance[c]->SetEnchantment(*GetEnchantment());
+
+  if(GetItemsInside(false))
+    for(ulong c = 0; c < Amount; ++c)
+      if(Instance[c])
+	Instance[c]->AddItemsInside(*GetItemsInside(), SpecialFlags);
 }
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
@@ -368,18 +405,21 @@ void contentscript<olterrain>::Instantiate(std::vector<olterrain*>& Instance, ul
 
   if(GetVisualEffects(false))
     for(ulong c = 0; c < Amount; ++c)
-      {
-	Instance[c]->SetVisualEffects(*GetVisualEffects());
-	Instance[c]->UpdatePictures();
-      }
+      if(Instance[c])
+	{
+	  Instance[c]->SetVisualEffects(*GetVisualEffects());
+	  Instance[c]->UpdatePictures();
+	}
 
   if(GetAttachedArea(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetAttachedArea(*GetAttachedArea());
+      if(Instance[c])
+	Instance[c]->SetAttachedArea(*GetAttachedArea());
 
   if(GetAttachedEntry(false))
     for(ulong c = 0; c < Amount; ++c)
-      Instance[c]->SetAttachedEntry(*GetAttachedEntry());
+      if(Instance[c])
+	Instance[c]->SetAttachedEntry(*GetAttachedEntry());
 }
 
 olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
@@ -396,7 +436,7 @@ datamemberbase* squarescript::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(Position);
   ANALYZE_MEMBER(Character);
-  ANALYZE_MEMBER(Item);
+  ANALYZE_MEMBER(Items);
   ANALYZE_MEMBER(GTerrain);
   ANALYZE_MEMBER(OTerrain);
   ANALYZE_MEMBER(Times);
@@ -428,35 +468,35 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
     }
 }
 
-template <class type> datamemberbase* contentmap<type>::GetData(const std::string& Identifier)
+template <class type, class contenttype> datamemberbase* contentmap<type, contenttype>::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(Size);
   ANALYZE_MEMBER(Pos);
   return 0;
 }
 
-template <class type> void contentmap<type>::DeleteContents()
+template <class type, class contenttype> void contentmap<type, contenttype>::DeleteContents()
 {
   for(ushort y1 = 0; y1 < GetSize()->Y; ++y1)
     for(ushort x1 = 0; x1 < GetSize()->X; ++x1)
       {
-	contentscript<type>* CS = ContentScriptMap[x1][y1];
+	contenttype* CS = ContentMap[x1][y1];
 
 	for(ushort y2 = 0; y2 < GetSize()->Y; ++y2)
 	  for(ushort x2 = 0; x2 < GetSize()->X; ++x2)
-	    if(ContentScriptMap[x2][y2] == CS)
-	      ContentScriptMap[x2][y2] = 0;
+	    if(ContentMap[x2][y2] == CS)
+	      ContentMap[x2][y2] = 0;
 
 	delete CS;
       }
 }
 
-template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
+template <class type, class contenttype> void contentmap<type, contenttype>::ReadFrom(inputfile& SaveFile, bool)
 {
   if(SaveFile.ReadWord() != "{")
     ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
-  std::map<char, contentscript<type>*> SymbolMap;
+  std::map<char, contenttype*> SymbolMap;
 
   SymbolMap['.'] = 0;
 
@@ -469,16 +509,15 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
 
 	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	    {
-	      contentscript<type>* ContentScript = new contentscript<type>;
-	      ContentScript->SetValueMap(ValueMap);
-	      ContentScript->ReadFrom(SaveFile);
+	      contenttype* Content = new contenttype;
+	      ReadData(*Content, SaveFile, ValueMap);
 
-	      if(ContentScript->IsValid())
-		SymbolMap[Word[0]] = ContentScript;
+	      if(IsValidScript(*Content))
+		SymbolMap[Word[0]] = Content;
 	      else
 		{
 		  SymbolMap[Word[0]] = 0;
-		  delete ContentScript;
+		  delete Content;
 		}
 	    }
 
@@ -489,8 +528,8 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
 	ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
     }
 
-  if(!ContentScriptMap)
-    Alloc2D(ContentScriptMap, GetSize()->X, GetSize()->Y);
+  if(!ContentMap)
+    Alloc2D(ContentMap, GetSize()->X, GetSize()->Y);
   else
     DeleteContents();
 
@@ -501,10 +540,10 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile, bool)
     for(ushort x = 0; x < GetSize()->X; ++x)
       {
 	char Char = SaveFile.ReadLetter();
-	typename std::map<char, contentscript<type>*>::iterator Iterator = SymbolMap.find(Char);
+	typename std::map<char, contenttype*>::iterator Iterator = SymbolMap.find(Char);
 
 	if(Iterator != SymbolMap.end())
-	  ContentScriptMap[x][y] = Iterator->second;
+	  ContentMap[x][y] = Iterator->second;
 	else
 	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
       }

@@ -116,7 +116,7 @@ command* game::Command[] =
   new command(&character::Save, "save game", 's', true),
   new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
-  new command(&character::ShowBattleInfo, "show battle info", 'b', true),
+  new command(&character::ShowBattleInfo, "show battle info", 'B', true),
   new command(&character::ShowConfigScreen, "show config screen", '\\', true),
   new command(&character::ShowInventory, "show inventory", 'i', true),
   new command(&character::ShowKeyLayout, "show key layout", '?', true),
@@ -1553,7 +1553,7 @@ void game::InitDangerMap()
       const character::databasemap& Config = Proto->GetConfig();
 
       for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!i->second.IsAbstract)
+	if(!i->second.IsAbstract && i->second.CanBeGenerated)
 	  {
 	    if(First)
 	      {
@@ -1586,7 +1586,7 @@ void game::CalculateNextDanger()
       delete Char;
 
       for(++ConfigIterator; ConfigIterator != Config.end(); ++ConfigIterator)
-	if(!ConfigIterator->second.IsAbstract)
+	if(!ConfigIterator->second.IsAbstract && ConfigIterator->second.CanBeGenerated)
 	  {
 	    NextDangerId.Config = ConfigIterator->first;
 	    return;
@@ -1602,7 +1602,7 @@ void game::CalculateNextDanger()
 	  const character::databasemap& Config = protocontainer<character>::GetProto(NextDangerId.Type)->GetConfig();
 
 	  for(ConfigIterator = Config.begin(); ConfigIterator != Config.end(); ++ConfigIterator)
-	    if(!ConfigIterator->second.IsAbstract)
+	    if(!ConfigIterator->second.IsAbstract && ConfigIterator->second.CanBeGenerated)
 	      {
 		NextDangerId.Config = ConfigIterator->first;
 		return;

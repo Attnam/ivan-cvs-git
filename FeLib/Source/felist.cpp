@@ -30,6 +30,9 @@ felist::~felist()
 
 ushort felist::Draw()
 {
+  while(Entry.size() && Entry[LastEntryIndex()].String.empty())
+    Entry.pop_back();
+
   if(!Entry.size())
     return 0xFFFF;
 
@@ -212,6 +215,8 @@ bool felist::DrawPage(bitmap* Buffer) const
   for(c = 0, i = 0; i != PageBegin; ++c)
     if(Entry[c].Selectable)
       ++i;
+
+  while(!Entry[c].Selectable && Entry[c].String.empty()) ++c;
 
   for(;;)
     {

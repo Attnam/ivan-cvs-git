@@ -65,19 +65,19 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
-			Item = stone;
+			Items == stone;
 			Times = 25+rand%25;
 		}
 
                 Square, Random;
 		{
-			Item = mine { Team = MONSTER_TEAM; Active = true; }
+			Items == mine { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%4;
 		}
 
 		Square, Random;
 		{
-			Item = beartrap { Team = MONSTER_TEAM; Active = true; }
+			Items == beartrap { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%4;
 		}
 
@@ -128,12 +128,12 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 3, 3;
 			{
-				Item = scrollofenchantarmor;
+				Items == scrollofenchantarmor;
 			}
 
 			Square, Pos 3, 3;
 			{
-				Item = scrollofenchantweapon;
+				Items == scrollofenchantweapon;
 			}
 
 			CharacterMap
@@ -198,14 +198,12 @@ Dungeon ELPURI_CAVE;
 
 			Square, Pos 2,1;
 			{
-				Item = IRON gauntlet;
-				Times = 2;
+                                Items = { 2, IRON gauntlet, IRON gauntlet; }
 			}
 
 			Square, Pos 3,2;
 			{
-				Item = IRON boot;
-				Times = 2;
+                                Items = { 2, IRON boot, IRON boot; }
 			}
 
 			ItemMap
@@ -215,12 +213,12 @@ Dungeon ELPURI_CAVE;
 
 				Types
 				{
-					a = Random { MinPrice = 100; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
-					d = Random { MinPrice = 100; MaxPrice = 10000; Category = RING|AMULET; }
-					w = Random { MinPrice = 100; MaxPrice = 10000; Category = WEAPON|SHIELD; }
-					e = Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
-					u = Random { MinPrice = 100; MaxPrice = 10000; Category = WAND|TOOL; }
-					s = wandofstriking;
+					a == Random { MinPrice = 100; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					d == Random { MinPrice = 100; MaxPrice = 10000; Category = RING|AMULET; }
+					w == Random { MinPrice = 100; MaxPrice = 10000; Category = WEAPON|SHIELD; }
+					e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
+					u == Random { MinPrice = 100; MaxPrice = 10000; Category = WAND|TOOL; }
+					s == wandofstriking;
 				}
 			}
 			{
@@ -492,7 +490,6 @@ Dungeon ATTNAM;
 		{
 			Pos=10,10;
 			Size=41,42;
-			AltarPossible=false;
 			WallSquare=solidterrain(GRASS_TERRAIN),STONE wall(BRICK_FINE);
 			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
 			GenerateDoor=false;
@@ -500,7 +497,7 @@ Dungeon ATTNAM;
 			DivineMaster=valpurus;
 			GenerateLanterns=false;
 			Type=cathedral;
-			
+
 			Square, Pos 19, 41;
 			{
 				OTerrain = empty;
@@ -651,35 +648,35 @@ Dungeon ATTNAM;
 				Size=33,34;
 				Types
 				{
-					# = 0;
-					a = avatarofvalpurus;
-					b = banana;
-					k = kiwi;
-					p = pineapple;
-					o = IRON meleeweapon(HALBERD);
-					l = MITHRIL MITHRIL meleeweapon(LONG_SWORD);
-					t = IRON IRON meleeweapon(TWO_HANDED_SWORD);
-					m = IRON meleeweapon(MACE);
-					s = IRON meleeweapon(SPEAR);
-					c = bodyarmor(CHAIN_MAIL);
-					e = backpack;
-					g = GOLD stone;
-					i = SILVER stone;
-					h = SAPPHIRE stone;
-					r = RUBY stone;
-					d = DIAMOND stone;
-					C = RUBY chest;
-					W = wandofpolymorph;
-					1 = lantern { SideStackIndex = UP; }
-					2 = lantern { SideStackIndex = DOWN; }
-					3 = lantern { SideStackIndex = RIGHT; }
-					4 = lantern { SideStackIndex = LEFT; }
-					R = ring(RING_OF_FIRE_RESISTANCE); 
-					I = ring(RING_OF_INVISIBILITY);
-					E = amulet(AMULET_OF_ESP);
-					S = GOLD meleeweapon(LONG_SWORD);
-					H = DIAMOND helmet(HELM_OF_UNDERSTANDING);
-					G = GOLD banana;
+					# == 0;
+					a == avatarofvalpurus;
+					b == banana;
+					k == kiwi;
+					p == pineapple;
+					o == IRON meleeweapon(HALBERD);
+					l == MITHRIL MITHRIL meleeweapon(LONG_SWORD);
+					t == IRON IRON meleeweapon(TWO_HANDED_SWORD);
+					m == IRON meleeweapon(MACE);
+					s == IRON meleeweapon(SPEAR);
+					c == bodyarmor(CHAIN_MAIL);
+					e == backpack;
+					g == GOLD stone;
+					i == SILVER stone;
+					h == SAPPHIRE stone;
+					r == RUBY stone;
+					d == DIAMOND stone;
+					C == RUBY chest;
+					W == wandofpolymorph;
+					1 == lantern { SideStackIndex = UP; }
+					2 == lantern { SideStackIndex = DOWN; }
+					3 == lantern { SideStackIndex = RIGHT; }
+					4 == lantern { SideStackIndex = LEFT; }
+					R == ring(RING_OF_FIRE_RESISTANCE); 
+					I == ring(RING_OF_INVISIBILITY);
+					E == amulet(AMULET_OF_ESP);
+					S == GOLD meleeweapon(LONG_SWORD);
+					H == DIAMOND helmet(HELM_OF_UNDERSTANDING);
+					G == GOLD banana;
 				}
 			}
 			{
@@ -783,7 +780,6 @@ Dungeon ATTNAM;
 		{
 			Pos=32,54;
 			Size=7,5;
-			AltarPossible=false;
 			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
@@ -813,14 +809,14 @@ Dungeon ATTNAM;
 				Size=5,3;
 				Types
 				{
-					a = Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
-					d = Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
-					w = Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
-					e = Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
-					u = Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
-					f = WOLF_FLESH lump;
-					i = can { ContainedMaterial = POLAR_BEAR_FLESH; }
-					l = lantern;
+					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					d == Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
+					w == Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
+					e == Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
+					u == Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
+					f == WOLF_FLESH lump;
+					i == can { ContainedMaterial = POLAR_BEAR_FLESH; }
+					l == lantern;
 				}
 			}
 			{
@@ -938,7 +934,6 @@ Dungeon ATTNAM;
 		{
 			Pos=22,54;
 			Size=7,5;
-			AltarPossible=false;
 			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
 			FloorSquare=solidterrain(PARQUET),empty;
 			GenerateDoor=false;
@@ -965,7 +960,7 @@ Dungeon ATTNAM;
 
 				Types
 				{
-					r = Random { MaxPrice = 500; Category = SCROLL|BOOK; }
+					r == Random { MaxPrice = 500; Category = SCROLL|BOOK; }
 				}
 			}
 			{
@@ -1031,7 +1026,7 @@ Dungeon NEW_ATTNAM;
 		ReCalculate=false;
 		OnGround=true;
 		TeamDefault=2;
-		AmbientLight=rgb24(120, 120, 120);
+		AmbientLight=rgb24(130, 130, 130);
 		LOSModifier=48;
 		IgnoreDefaultSpecialSquares = false;
 
@@ -1054,11 +1049,11 @@ Dungeon NEW_ATTNAM;
 			AllowBoobyTrappedDoors=false;
 			Shape = ROUND_CORNERS;
 		}
+
 		Room 0;
 		{
 			Pos=10,10;
 			Size=20,20;
-			AltarPossible=false;
 			WallSquare=solidterrain(FLOOR),STONE wall(BRICK_FINE);
 			FloorSquare=solidterrain(FLOOR),empty;
 			GenerateDoor=true;
@@ -1195,7 +1190,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random;
 		{
-			Item = beartrap { Team = MONSTER_TEAM; Active = true; }
+			Items == beartrap { Team = MONSTER_TEAM; Active = true; }
 			Times = rand%2;
 		}
 
@@ -1203,7 +1198,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		{
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
 			Size=4+rand%8,4+rand%8;
-			AltarPossible=false;
+			AltarPossible=true;
 			WallSquare=solidterrain(GROUND),wall(BRICK_OLD);
 			FloorSquare=solidterrain(PARQUET),empty;
 			DoorSquare=solidterrain(PARQUET),door;
@@ -1214,9 +1209,9 @@ Dungeon UNDER_WATER_TUNNEL;
 			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=true;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
-			Shape = 1 + rand%2;
+			AllowLockedDoors=true;
+			AllowBoobyTrappedDoors=true;
+			Shape = RECTANGLE;
 		}
 	}
 
@@ -1227,6 +1222,8 @@ Dungeon UNDER_WATER_TUNNEL;
 		RoomDefault
 		{
 			AltarPossible=false;
+			AllowLockedDoors=false;
+			AllowBoobyTrappedDoors=false;
 		}
 
 		Square, Random;
@@ -1263,7 +1260,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,1;
 			{
-				Item=lantern;
+                                Items==lantern;
 				/*Character=mistress(QUEEN);*/
 			}
 		}

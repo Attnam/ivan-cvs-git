@@ -128,8 +128,7 @@ class ITEM
   virtual void EditEnchantment(char);
   virtual float GetWeaponStrength() const;
   virtual ushort GetStrengthValue() const;
-  virtual ushort GetEffectBonus() const { return 100 + 5 * Enchantment; }
-  virtual ushort GetAPBonus() const { return 2000 / (20 + Enchantment); }
+  virtual ushort GetBonus() const { return 100 + 5 * Enchantment; }
   virtual uchar GetFlyAmount() const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -648,7 +647,7 @@ class ITEM
   virtual ulong GetPrice() const;
   virtual bool IsShield(const character*) const { return true; }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
-  virtual ushort GetEffectBonus() const { return 100 + 10 * Enchantment; }
+  virtual ushort GetBonus() const { return 100 + 10 * Enchantment; }
 );
 
 class ITEM
@@ -843,6 +842,7 @@ class ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
+  void AddBiteInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot HelmetSlot;
@@ -962,9 +962,11 @@ class ABSTRACT_ITEM
   void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
   short GetWieldedHitStrength() const;
-  void AddWieldedBattleInfo(felist&) const;
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyDexterityPenalty(item*);
+  void AddBattleInfo(felist&) const;
+  void AddWieldedInfo(felist&) const;
+  void AddUnarmedInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -1063,6 +1065,7 @@ class ABSTRACT_ITEM
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
+  void AddKickInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -1229,6 +1232,7 @@ class ITEM
   virtual void DrawContents(const character*);
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
+  virtual void AddItemsInside(const std::vector<contentscript<item> >&, ushort);
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }

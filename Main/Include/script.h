@@ -33,6 +33,15 @@ class room;
 class material;
 class script;
 
+template <class type> inline bool IsValidScript(const std::vector<type>& Vector)
+{
+  for(ushort c = 0; c < Vector.size(); ++c)
+    if(IsValidScript(Vector[c]))
+      return true;
+
+  return false;
+}
+
 class datamemberbase
 {
  public:
@@ -121,6 +130,12 @@ class script
   script* Base;
 };
 
+inline void ReadData(script& Type, inputfile& SaveFile, const valuemap& ValueMap)
+{
+  Type.SetValueMap(ValueMap);
+  Type.ReadFrom(SaveFile);
+}
+
 class posscript : public script
 {
  public:
@@ -166,11 +181,13 @@ class basecontentscript : public script
   bool Random;
 };
 
+inline bool IsValidScript(const basecontentscript& S) { return S.IsValid(); }
+
 template <class type> class contentscripttemplate : public basecontentscript
 {
  protected:
   virtual const std::string& GetClassId() const;
-  void BasicInstantiate(std::vector<type*>&, ulong, ushort) const;
+  void BasicInstantiate(std::vector<type*>&, ulong, ushort, uchar = 100) const;
   virtual ushort SearchCodeName(const std::string&) const;
 };
 
@@ -184,6 +201,7 @@ class contentscript<character> : public contentscripttemplate<character>
   virtual datamemberbase* GetData(const std::string&);
  protected:
   DATAMEMBER(ushort, Team);
+  DATAMEMBER(std::vector<contentscript<item> >, Inventory);
 };
 
 class contentscript<item> : public contentscripttemplate<item>
@@ -200,6 +218,8 @@ class contentscript<item> : public contentscripttemplate<item>
   DATAMEMBER(ulong, MinPrice);
   DATAMEMBER(ulong, MaxPrice);
   DATAMEMBER(ulong, Category);
+  DATAMEMBER(std::vector<contentscript<item> >, ItemsInside);
+  DATAMEMBER(uchar, Chance);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
@@ -229,7 +249,7 @@ class squarescript : public script
  protected:
   DATAMEMBER(posscript, Position);
   DATAMEMBER(contentscript<character>, Character);
-  DATAMEMBER(contentscript<item>, Item);
+  DATAMEMBER(std::vector<contentscript<item> >, Items);
   DATAMEMBER(contentscript<glterrain>, GTerrain);
   DATAMEMBER(contentscript<olterrain>, OTerrain);
   DATAMEMBER(uchar, Times);
@@ -237,20 +257,25 @@ class squarescript : public script
   DATAMEMBER(uchar, EntryIndex);
 };
 
-template <class type> class contentmap : public script
+template <class type, class contenttype = contentscript<type> > class contentmap : public script
 {
  public:
-  contentmap() : ContentScriptMap(0) { }
+  contentmap() : ContentMap(0) { }
   virtual ~contentmap() { DeleteContents(); }
   virtual void ReadFrom(inputfile&, bool = false);
   void DeleteContents();
-  const contentscript<type>* GetContentScript(ushort X, ushort Y) const { return ContentScriptMap[X][Y]; }
+  const contenttype* GetContentScript(ushort X, ushort Y) const { return ContentMap[X][Y]; }
   virtual datamemberbase* GetData(const std::string&);
  protected:
-  contentscript<type>*** ContentScriptMap;
+  contenttype*** ContentMap;
   DATAMEMBER(vector2d, Size);
   DATAMEMBER(vector2d, Pos);
 };
+
+typedef contentmap<item, std::vector<contentscript<item> > > itemcontentmap;
+typedef contentmap<character> charactercontentmap;
+typedef contentmap<glterrain> glterraincontentmap;
+typedef contentmap<olterrain> olterraincontentmap;
 
 class roomscript : public script
 {
@@ -262,10 +287,10 @@ class roomscript : public script
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
-  DATAMEMBER(contentmap<character>, CharacterMap);
-  DATAMEMBER(contentmap<item>, ItemMap);
-  DATAMEMBER(contentmap<glterrain>, GTerrainMap);
-  DATAMEMBER(contentmap<olterrain>, OTerrainMap);
+  DATAMEMBER(charactercontentmap, CharacterMap);
+  DATAMEMBER(itemcontentmap, ItemMap);
+  DATAMEMBER(glterraincontentmap, GTerrainMap);
+  DATAMEMBER(olterraincontentmap, OTerrainMap);
   DATAMEMBER(squarescript, WallSquare);
   DATAMEMBER(squarescript, FloorSquare);
   DATAMEMBER(squarescript, DoorSquare);

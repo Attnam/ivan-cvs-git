@@ -525,7 +525,7 @@ bool level::MakeRoom(roomscript* RoomScript)
   if(RoomScript->GetItemMap(false))
     {
       vector2d ItemPos(XPos + RoomScript->GetItemMap()->GetPos()->X, YPos + RoomScript->GetItemMap()->GetPos()->Y);
-      const contentscript<item>* ItemScript;
+      const std::vector<contentscript<item> >* ItemScript;
 
       for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
 	{
@@ -533,20 +533,26 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  for(y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
 	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
-	      {
-		stack* Stack;
-		item* Item = ItemScript->Instantiate();
-		uchar* SideStackIndex = ItemScript->GetSideStackIndex(false);
+	      for(c = 0; c < ItemScript->size(); ++c)
+		{
+		  stack* Stack;
+		  item* Item = (*ItemScript)[c].Instantiate();
 
-		if(!SideStackIndex)
-		  Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
-		else
-		  {
-		    Item->SignalSquarePositionChange(*SideStackIndex);
-		    Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
-		  }
-		Stack->AddItem(Item);
-	      }
+		  if(Item)
+		    {
+		      uchar* SideStackIndex = (*ItemScript)[c].GetSideStackIndex(false);
+
+		      if(!SideStackIndex)
+			Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
+		      else
+			{
+			  Item->SignalSquarePositionChange(*SideStackIndex);
+			  Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
+			}
+
+		      Stack->AddItem(Item);
+		    }
+		}
 	}
     }
 

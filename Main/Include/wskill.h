@@ -43,8 +43,7 @@ class cweaponskill : public weaponskill
   virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   const std::string& Name() const { return SkillName[Index]; }
-  uchar GetEffectBonus() const { return 100 + 10 * Level; }
-  uchar GetAPBonus() const { return 100 - 5 * Level; }
+  ushort GetBonus() const { return 100 + 10 * Level; }
   void AddLevelUpMessage() const;
   void AddLevelDownMessage() const;
  private:
@@ -73,8 +72,7 @@ class sweaponskill : public weaponskill
   virtual ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   virtual ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   virtual ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
-  uchar GetEffectBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
-  uchar GetAPBonus() const { return Level ? 93 - 2 * (Level - 1) : 100; }
+  ushort GetBonus() const { return Level ? 115 + 5 * (Level - 1) : 100; }
   void AddLevelUpMessage(const std::string&) const;
   void AddLevelDownMessage(const std::string&) const;
   virtual void Save(outputfile&) const;

@@ -13,6 +13,7 @@
 
 #include "vector2d.h"
 #include "femath.h"
+#include "error.h"
 
 typedef std::map<std::string, long> valuemap;
 
@@ -74,16 +75,6 @@ template <class type> inline type ReadType(inputfile& SaveFile)
   return Variable;
 }
 
-/*
- * Reads a formatted data variable Type and initializes it.
- */
-
-template <class type> inline void ReadData(type& Type, inputfile& SaveFile, const valuemap& ValueMap)
-{
-  Type.SetValueMap(ValueMap);
-  Type.ReadFrom(SaveFile);
-}
-
 inline void ReadData(bool& Type, inputfile& SaveFile, const valuemap&) { Type = SaveFile.ReadBool(); }
 inline void ReadData(char& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
 inline void ReadData(uchar& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
@@ -96,6 +87,37 @@ inline void ReadData(rect& Type, inputfile& SaveFile, const valuemap& ValueMap) 
 void ReadData(std::string&, inputfile&, const valuemap&);
 void ReadData(std::vector<long>&, inputfile&, const valuemap&);
 void ReadData(std::vector<std::string>&, inputfile&, const valuemap&);
+
+template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+{
+  Vector.clear();
+  std::string Word;
+  SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    SaveFile.ReadWord(Word);
+
+  if(Word == "=")
+    {
+      Vector.push_back(type());
+      ReadData(Vector[0], SaveFile, ValueMap);
+      return;
+    }
+
+  if(Word != "{")
+    ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+
+  ushort Size = SaveFile.ReadNumber(ValueMap);
+
+  for(ushort c = 0; c < Size; ++c)
+    {
+      Vector.push_back(type());
+      ReadData(Vector.back(), SaveFile, ValueMap);
+    }
+
+  if(SaveFile.ReadWord() != "}")
+    ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+}
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {

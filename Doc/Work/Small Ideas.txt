@@ -358,3 +358,4 @@ Money unit and its plural and symbol should be possible to define from config.
 Scoll of harden material.
 Broken bananas should spoil faster than intact ones.
 Wand of resurrection shouldn't work on golem corpses.
+Lookmode should show whether a creature is panicked.
