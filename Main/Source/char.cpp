@@ -7708,3 +7708,5 @@ void character::LeprosyHandler()
   EditExperience(ENDURANCE, -25, 1 << 1);
   EditExperience(CHARISMA, -25, 1 << 1);
 }
+
+

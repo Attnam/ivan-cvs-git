@@ -301,6 +301,7 @@ class olterrain : public lterrain, public oterrain
   virtual void BeDestroyed() { Break(); }
   virtual void ReceiveAcid(material*, long);
   virtual void SignalRustLevelChange();
+  virtual bool IsFountainWithWater() const { return false; }
  protected:
   virtual vector2d GetBitmapPos(int) const;
   virtual void ModifyAnimationFrames(int&) const;

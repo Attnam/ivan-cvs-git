@@ -414,6 +414,7 @@ struct databasebase { int Config; };
 #define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define VESANA_LEVEL 2
+#define CRYSTAL_LEVEL 3
 #define ENNER_BEAST_LEVEL 4
 #define IVAN_LEVEL 5
 #define DARK_LEVEL 6
@@ -490,6 +491,7 @@ struct databasebase { int Config; };
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
+#define FOUNTAIN 0xFFFF
 
 #define NO_LIMIT 0xFFFF
 

@@ -37,6 +37,7 @@ class dungeon
   level* LoadLevel(inputfile&, int);
   bool IsGenerated(int I) const { return Generated[I]; }
   void SetIsGenerated(int I, bool What) { Generated[I] = What; }
+  int GetLevelTeleportDestination(int) const;
  private:
   void Initialize();
   const dungeonscript* DungeonScript;

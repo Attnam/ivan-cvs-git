@@ -166,6 +166,7 @@ class level : public area
   void BlurMemory();
   void CalculateLuminances();
   int AddRadiusToSquareStack(vector2d, long) const;
+  olterrain* GetRandomFountainWithWater(olterrain*) const;
  protected:
   bool GenerateLanterns(int, int, int) const;
   bool GenerateWindows(int, int) const;

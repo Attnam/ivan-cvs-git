@@ -1116,6 +1116,21 @@ void level::Draw(bool AnimationDraw) const
 
 vector2d level::GetEntryPos(const character* Char, int I) const
 {
+  if(I == FOUNTAIN)
+    {
+      std::vector<vector2d> Fountains;
+      for(int x = 0; x < XSize; ++x)
+	for(int y = 0; y < YSize; ++y)
+	  {
+	    if(GetLSquare(x,y)->GetOLTerrain() && GetLSquare(x,y)->GetOLTerrain()->IsFountainWithWater())
+	      Fountains.push_back(vector2d(x,y));
+	  }
+
+      if(Fountains.empty())
+	return GetRandomSquare();
+      
+      return Fountains[RAND_N(Fountains.size())];
+    }
   std::map<int, vector2d>::const_iterator i = EntryMap.find(I);
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
@@ -2720,4 +2735,21 @@ int level::AddRadiusToSquareStack(vector2d Center, long RadiusSquare) const
   areacontroller::RadiusSquare = RadiusSquare;
   mapmath<areacontroller>::DoArea();
   return stackcontroller::StackIndex;
+}
+
+/* Any fountain is good that is not dry and is NOT Except */ 
+olterrain* level::GetRandomFountainWithWater(olterrain* Except) const
+{
+  std::vector<olterrain*> Found;
+  olterrain* OLTerrain;
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      {
+	OLTerrain = GetLSquare(x,y)->GetOLTerrain();
+	if(OLTerrain && OLTerrain != Except && OLTerrain->IsFountainWithWater())
+	  Found.push_back(OLTerrain);
+      }
+  if(Found.empty())
+    return 0;
+  return Found[RAND_N(Found.size())];
 }

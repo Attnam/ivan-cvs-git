@@ -159,6 +159,7 @@ class OLTERRAIN
   virtual int GetMaterials() const { return 2; }
   virtual material* GetMaterial(int) const;
   virtual void InitMaterials(const materialscript*, const materialscript*, bool);
+  virtual bool IsFountainWithWater() const;
  protected:
   virtual bool IsSparkling(int) const;
   virtual void GenerateMaterials();

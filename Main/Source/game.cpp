@@ -1626,11 +1626,11 @@ void game::CalculateNextDanger()
     ABORT("It is dangerous to go ice fishing in the summer.");
 }
 
-bool game::TryTravel(int Dungeon, int Area, int EntryIndex, bool AllowHostiles)
+bool game::TryTravel(int Dungeon, int Area, int EntryIndex, bool AllowHostiles, bool AlliesFollow)
 {
   charactervector Group;
 
-  if(LeaveArea(Group, AllowHostiles))
+  if(LeaveArea(Group, AllowHostiles, AlliesFollow))
     {
       CurrentDungeonIndex = Dungeon;
       EnterArea(Group, Area, EntryIndex);
@@ -1640,11 +1640,11 @@ bool game::TryTravel(int Dungeon, int Area, int EntryIndex, bool AllowHostiles)
     return false;
 }
 
-bool game::LeaveArea(charactervector& Group, bool AllowHostiles)
+bool game::LeaveArea(charactervector& Group, bool AllowHostiles, bool AlliesFollow)
 {
   if(!IsInWilderness())
     {
-      if(!GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
+      if(AlliesFollow && !GetCurrentLevel()->CollectCreatures(Group, Player, AllowHostiles))
 	return false;
 
       Player->Remove();

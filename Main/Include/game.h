@@ -229,8 +229,8 @@ class game
   static int Menu(bitmap*, vector2d, const festring&, const festring&, color16, const festring& = "", const festring& = "");
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
-  static bool TryTravel(int, int, int, bool = false);
-  static bool LeaveArea(charactervector&, bool);
+  static bool TryTravel(int, int, int, bool = false, bool = true);
+  static bool LeaveArea(charactervector&, bool, bool);
   static void EnterArea(charactervector&, int, int);
   static int CompareLights(color24, color24);
   static int CompareLightToInt(color24, color24);

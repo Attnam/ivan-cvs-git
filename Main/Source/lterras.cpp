@@ -338,7 +338,8 @@ bool fountain::Drink(character* Drinker)
 
 	  Drinker->EditAP(-1000);
 
-	  switch(RAND() % 9)
+	  //	  switch(RAND() % 10)
+	  switch(RAND_2 + 7)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");
@@ -453,7 +454,44 @@ bool fountain::Drink(character* Drinker)
 
 		  break;
 		}
+	    case 7:
+	      {
+		olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
+		if(Drinker->IsStuck())
+		  {
+		    Drinker->SetStuckTo(0);
+		    Drinker->SetStuckToBodyPart(NONE_INDEX);
+		  }
 
+		if(Found)
+		  {
+		    ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+		    Found->GetLSquareUnder()->KickAnyoneStandingHereAway();
+		    Drinker->Move(Found->GetPos(), true);
+		  }
+		else
+		  {
+		    int To = GetLSquareUnder()->GetDungeon()->GetLevelTeleportDestination(GetLevel()->GetIndex());
+		    int From = GetLevel()->GetIndex();
+		    if(To == From)
+		      game::TryTravel(game::GetCurrentDungeonIndex(), To, RANDOM, true, false);		   
+		    else
+		      game::TryTravel(game::GetCurrentDungeonIndex(), To, FOUNTAIN, true, false);
+
+		      
+		    olterrain* OLTerrain = Drinker->GetLSquareUnder()->GetOLTerrain();
+		    if(OLTerrain && OLTerrain->IsFountainWithWater() && To != From)
+		      {
+			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels and end up coming out from an other fountain.");
+		      }
+		    else
+		      {
+			ADD_MESSAGE("The fountain sucks you in. You are thrown through a network of tunnels. Suddenly the wall of the tunnel bursts open and you fly out with the water.");
+			Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 10000 + RAND() % 5001), false, false);
+		      }
+		  }
+	      }
+	      break;
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
 	      Drinker->EditNP(500);
@@ -1152,4 +1190,9 @@ vector2d earth::GetBitmapPos(int I) const
 void door::BeDestroyed()
 {
   olterrain::Break();
+}
+
+bool fountain::IsFountainWithWater() const
+{
+  return GetSecondaryMaterial();
 }
