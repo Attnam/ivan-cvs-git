@@ -14,7 +14,7 @@ public:
 	virtual ushort GetDensity() const				{ return 8000; }
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 96); }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 protected:
 	virtual std::string NameStem() const	{ return "iron"; }
 	virtual std::string Article() const { return "an"; }
@@ -333,7 +333,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 30; }
 	virtual uchar Alignment() const				{ return EVIL; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); }
 protected:
 	virtual std::string NameStem() const	{ return "human flesh"; }
 );
@@ -400,7 +400,7 @@ public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual ushort GetDensity() const				{ return 1800; }
 	virtual ushort OfferValue() const				{ return 5; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(90, 64, 64); }
 protected:
 	virtual std::string NameStem() const	{ return "Enner Beast flesh"; }
 	virtual std::string Article() const { return "an"; }
