@@ -3,8 +3,8 @@
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
  */
 
-Dungeons = 4;
-Teams = 10;
+Dungeons = 5;
+Teams = 11;
 
 /*
  * Description of hard-coded teams:
@@ -65,6 +65,11 @@ Team COLONIST_TEAM;
 	Relation 8, FRIEND;
 }
 
+Team 10; /* Residents of Mondedr */
+{
+	Relation 4, HOSTILE;
+}
+
 Dungeon ELPURI_CAVE;
 {
 	Levels = 10;
@@ -81,7 +86,7 @@ Dungeon ELPURI_CAVE;
 		Items = 25+rand%26;
 		GenerateMonsters = true;
 		ReCalculate = true;
-		OnGround = false;
+		IsOnGround = false;
 		TeamDefault = MONSTER_TEAM;
 		AmbientLight = 0;
 		LOSModifier = 16;
@@ -101,13 +106,13 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random;
 		{
-			Items == mine { Team = MONSTER_TEAM; Active = true; }
+			Items == mine { Team = MONSTER_TEAM; IsActive = true; }
 			Times = rand%4;
 		}
 
 		Square, Random;
 		{
-			Items == beartrap { Team = MONSTER_TEAM; Active = true; }
+			Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
 			Times = rand%4;
 		}
 
@@ -225,7 +230,7 @@ Dungeon ELPURI_CAVE;
 					e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
 					u == Random { MinPrice = 200; MaxPrice = 10000; Category = WAND|TOOL; }
 					r == Random { MinPrice = 200; MaxPrice = 10000; Category = SCROLL|BOOK; }
-					s == wandofstriking;
+					s == wand(WAND_OF_STRIKING);
 				}
 			}
 			{
@@ -320,13 +325,13 @@ Dungeon ELPURI_CAVE;
 
 			Square, Random;
 			{
-				Items == mine { Team = MONSTER_TEAM; Active = true; Chance = 50; }
+				Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
 				Times = 2;
 			}
 
 			Square, Random;
 			{
-				Items == beartrap { Team = MONSTER_TEAM; Active = true; Chance = 50; }
+				Items == beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 50; }
 				Times = 2;
 			}
 
@@ -575,7 +580,7 @@ Dungeon ATTNAM;
 		Rooms = 20 + rand % 6;
 		Items = 0;
 		ReCalculate = false;
-		OnGround = true;
+		IsOnGround = true;
 		TeamDefault = ATTNAM_TEAM;
 		AmbientLight = rgb24(95, 95, 95);
 		LOSModifier = 48;
@@ -829,7 +834,7 @@ Dungeon ATTNAM;
 					L == oillamp;
 					P == GOLD bodyarmor(PLATE_MAIL);
 					O == GOLD cloak;
-					W == wandofpolymorph;
+					W == wand(WAND_OF_POLYMORPH);
 				}
 			}
 			{
@@ -1158,7 +1163,7 @@ Dungeon NEW_ATTNAM;
 		Rooms = 5 + rand % 3;
 		Items = 0;
 		ReCalculate = false;
-		OnGround = true;
+		IsOnGround = true;
 		TeamDefault = NEW_ATTNAM_TEAM;
 		AmbientLight = rgb24(118, 118, 118);
 		LOSModifier = 48;
@@ -1399,7 +1404,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		Items = 15+rand%16;
 		GenerateMonsters = true;
 		ReCalculate = true;
-		OnGround = false;
+		IsOnGround = false;
 		TeamDefault = MONSTER_TEAM;
 		AmbientLight = 0;
 		LOSModifier = 16;
@@ -1412,7 +1417,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random;
 		{
-			Items == beartrap { Team = MONSTER_TEAM; Active = true; }
+			Items == beartrap { Team = MONSTER_TEAM; IsActive = true; }
 			Times = rand%4;
 		}
 
@@ -1580,6 +1585,55 @@ Dungeon UNDER_WATER_TUNNEL;
 				cgc
 				.c.
 			}
+		}
+	}
+}
+
+Dungeon MONDEDR;
+{
+	Levels = 1;
+	Variable XSize = 60;
+	Variable YSize = 60;
+
+	Level 0;
+	{
+		Description = "Mondedr";
+		ShortDescription = "Mondedr";
+		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		Size = XSize, YSize;
+		GenerateMonsters = false;
+		Rooms = 0;
+		Items = 0;
+		ReCalculate = false;
+		IsOnGround = true;
+		TeamDefault = NEW_ATTNAM_TEAM;
+		AmbientLight = rgb24(110, 110, 110);
+		LOSModifier = 48;
+		IgnoreDefaultSpecialSquares = false;
+
+		RoomDefault
+		{
+			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Size = 4+rand%8,4+rand%8;
+			AltarPossible = false;
+			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare = solidterrain(PARQUET),empty;
+			DoorSquare = solidterrain(PARQUET),door;
+			GenerateDoor = true;
+			ReCalculate = true;
+			DivineMaster = 0;
+			GenerateTunnel = false;
+			GenerateLanterns = true;
+			Type = ROOM_NORMAL;
+			GenerateFountains = false;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
+			Shape = RECTANGLE;
+		}
+
+		Square, Pos 0, 0;
+		{
+			EntryIndex = STAIRS_UP;
 		}
 	}
 }

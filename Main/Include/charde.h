@@ -122,7 +122,6 @@ class ABSTRACT_CHARACTER
   virtual void Load(inputfile&);
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  virtual uchar GetBodyParts() const { return HUMANOID_BODYPARTS; }
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
   virtual bool CanUseStethoscope(bool) const;
   virtual bool IsUsingArms() const;
@@ -154,8 +153,8 @@ class ABSTRACT_CHARACTER
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(ushort) const;
-  virtual bool HasHead() const { return GetHead(); }
-  virtual const std::string& humanoid::GetStandVerb() const;
+  virtual bool HasHead() const { return GetHead() != 0; }
+  virtual const std::string& GetStandVerb() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort);
@@ -274,7 +273,7 @@ class CHARACTER
   void SetStoryState(uchar What) { StoryState = What; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
   virtual void GetAICommand();
   ushort LastHealed;
   uchar StoryState;
@@ -311,7 +310,6 @@ class CHARACTER
   shopkeeper,
   humanoid,
  public:
-  virtual bool CanFollow() const { return false; }
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand() { StandIdleAI(); }
 );
@@ -376,7 +374,7 @@ class CHARACTER
  protected:
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
   bool Active;
 );
 
@@ -385,7 +383,7 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual void CreateCorpse() { SendToHell(); }
+  virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual std::string FirstPersonUnarmedHitVerb() const { return "emit psi waves at"; }
   virtual std::string FirstPersonCriticalUnarmedHitVerb() const { return "emit powerful psi waves at"; }
   virtual std::string ThirdPersonUnarmedHitVerb() const { return "emits psi waves at"; }
@@ -403,7 +401,7 @@ class CHARACTER
   virtual bool BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
   virtual ulong GetBodyPartVolume(ushort) const;
  protected:
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
 );
 
 class CHARACTER
@@ -423,7 +421,7 @@ class CHARACTER
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
   virtual std::string BiteNoun() const { return "slime"; }
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
 );
 
 class CHARACTER
@@ -461,7 +459,7 @@ class CHARACTER
  public:
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
  protected:
-  virtual void CreateCorpse() { SendToHell(); }
+  virtual void CreateCorpse(lsquare*) { SendToHell(); }
 );
 
 class CHARACTER
@@ -511,7 +509,7 @@ class CHARACTER
   dolphin,
   nonhumanoid,
  protected:
-  virtual uchar GetSpecialBodyPartFlags(ushort) const { return (RAND() % 8)&~FLIP; }
+  virtual uchar GetSpecialBodyPartFlags(ushort) const { return RAND() & (MIRROR|ROTATE); }
   virtual void SpecialTurnHandler() { UpdatePictures(); }
 );
 
@@ -574,7 +572,7 @@ class CHARACTER
   virtual void CreateBodyParts(ushort);
   virtual item* SevereBodyPart(ushort);
  protected:
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
 );
 
 class CHARACTER
@@ -596,7 +594,7 @@ class CHARACTER
   mistress,
   humanoid,
  public:
-  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
 );
 
@@ -662,7 +660,7 @@ class CHARACTER
   virtual ushort GetArmMainColor() const;
   virtual void VirtualConstructor(bool);
   virtual void CreateInitialEquipment(ushort);
-  virtual void CreateCorpse() { SendToHell(); }
+  virtual void CreateCorpse(lsquare*) { SendToHell(); }
   virtual void AddPostFix(std::string& String) const { AddDivineMasterDescription(String, GetConfig()); }
   virtual void GetAICommand();
   ushort LastHealed;
@@ -710,7 +708,7 @@ class CHARACTER
   virtual ushort GetAttribute(ushort) const;
   virtual bool CanCreateBodyPart(ushort) const;
  protected:
-  virtual void CreateCorpse() { SendToHell(); }
+  virtual void CreateCorpse(lsquare*) { SendToHell(); }
 );
 
 class CHARACTER
@@ -727,7 +725,7 @@ class CHARACTER
  protected:
   virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
 );
 
 class CHARACTER
@@ -801,7 +799,7 @@ class CHARACTER
  protected:
   virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
 );
 
 class CHARACTER
@@ -855,8 +853,9 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Hit(character*, bool);
-  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
  protected:
   virtual void GetAICommand();
 );
+
 #endif

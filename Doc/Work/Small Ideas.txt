@@ -175,8 +175,7 @@ High level priests should be able to summon angels.
 Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
 //Healing potions. (from JM)
 Pet priest. (from JM)
-Weakening the enner beast. (from JM)
-Shine effect for jewel and valpurium items with outline. (from JM)
+(r) Shine effect for jewel and valpurium items with outline. (from JM)
 Sword of Fire/Frost/Ligthning. (from JM)
 Frozen state to monsters. (from JM)
 Dialogs. (from JM)
@@ -229,7 +228,7 @@ If the player has enormous amounts of items in his backpack, some of them could 
 Moving diagonally should use sqrt(2) times more AP.
 Msghistory max length to conf.
 Opening a can should be more difficult with less hands.
-Fly function for character!
+Fly function for character.
 Item category "rubbish" which would contain bananapeals and roubles.
 Cumulative comments to script.
 Material-colored cursor.
@@ -237,10 +236,10 @@ Material-colored cursor.
 Wand levels.
 Talking to oneself should abuse intelligence.
 If you are illiterate you shouldn't be able to read engraved messages.
-Chatting shouldn't be possible if you aren't intelligent.
+//Chatting shouldn't be possible if you aren't intelligent.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
-Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
+//Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
 //*It should be possible to use SoCM to gear.
 Explosions could be m-colored: this way magical explosions could look different.
 WoDC should clone its own material to created doors.
@@ -267,7 +266,7 @@ We could show a scroll bar during reading, digging etc. that would show the rema
 //Look stretch config option.
 //If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
 //Bodyparts should be rotated when they are severed.
-Weight should be the fundamental character of materials, not volume?
+(r) Weight should be the fundamental character of materials, not volume?
 //Kicking should do more damage if metal boots are worn.
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
 //Zombies should be able to continue even without a head, maybe even without a torso.
@@ -295,14 +294,14 @@ A special message should be printed when zapping a WoR at a bone or a skull.
 Hallucination state.
 Random items to certain monsters' inventories.
 NP shouldn't be consumed if polymorphed into a golem.
-Petrus's bodyparts should disappear when severed.
+*Petrus's bodyparts should disappear when severed.
 "There is no door to close, silly."
 Bodypart state system.
 Poisoned bodypart state.
 Bleeding bodypart state.
 It should be possible for a critical hit to sever a lump flesh.
-If a mine in the inventory is active, it should be displayed somehow.
-Non-living bodyparts should be immune to poison.
+(r) If a mine in the inventory is active, it should be displayed somehow.
+*Non-living bodyparts should be immune to poison.
 Gold golems should be immune to acid.
 Mommos should do acid damage.
 "Character attributes" option to secret knowledge.
@@ -321,7 +320,7 @@ Corrosion for materials.
 Acid blobs. (needs corrosion, might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
-Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
+//Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
 //There should be a one-way teleport at the bottom of the dungeon linked to the first level.
 //*Level teleport option to wizard mode.
 Dobbelganger.
@@ -330,7 +329,7 @@ Bulimia state.
 It should be possible to slip on a bloody floor.
 Fluids could spill also over character pictures.
 Spruces should block light.
-"It is too dark to read" message should be printed before selecting item, not after.
+*"It is too dark to read" message should be printed before selecting item, not after.
 Reading holy books should aggravate certain monsters.
 Time bomb.
 Prohibit vomiting over the Avatar.
@@ -338,7 +337,7 @@ Monster that only sees in red, green or blue light.
 Page up, page down, home and end should work with message panel.
 If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him and scream "NOOOOOOOOOH!"
 Monsters that have died of poisoning should be poisoned when eaten.
-*Bear traps should break eventually.
+//*Bear traps should break eventually.
 Carrot that would increase perception a little.
 //*RDAM and similiar unclear attributes should be moved to an own screen.
 When picking up multiple gauntlets and boots, the default value of the inventory slider should maybe be 2.
@@ -349,7 +348,7 @@ Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
 Picking up VERY heavy items should be prohibited.
 If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
 New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
-Some way of adding things to character's inventory from the script.
+//Some way of adding things to character's inventory from the script.
 In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.
 When picking up many items with the New Great System the overall weight of the items should be displayed.   
 The smith of Attnam should have a golden statue of a woman in his closet. (A Kalevala reference)
@@ -367,7 +366,7 @@ Reflecting items (mirror and shield of reflection).
 //*Scroll of repair.
 //Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
 Mellis could act as a small shop when prayed to.
-Rings appearing in fountains. (shouldn't be hard with the new system...)
+//Rings appearing in fountains. (shouldn't be hard with the new system...)
 //*Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
 Msg from hit should depend more on weapon and there should be more variation. ("the monsters STABS you with its wooden spear").
 Some monster types should taunt the player.
@@ -396,8 +395,8 @@ Petrus should offer a small meal for player when he first visits him.
 //Food in can's should spoil _much_ slower.
 Skeletons' stomachs shouldn't be able to contain liquids.
 Unlike their colleagues, Nefas's angels should have a groin.
-Priests, Petrus and angels should be able to resurrect dead pets.
-Wand of door creation should create doors to walls.
+*Priests, Petrus and angels should be able to resurrect dead pets.
+//Wand of door creation should create doors to walls.
 Mushrooms in forest. Cause odd effects when eaten.
 (r... damn. I thought I was onto something) Etta Nenialoha in forest looking for mushrooms. (with usual ethanol drinks in stack)
 Movement modes (walk, run, stealth)
@@ -405,11 +404,15 @@ Movement modes (walk, run, stealth)
 Flaming sword should burn the player if he doesn't have gauntlets. 
 Items inside shelves should take damage from explosions.
 When many same kind of items on ground the message should say "5 Xs here" not "...several items here".
-(d) There should be many types of attack damage with physical object. (eg blunt, sting, chop)
 Lanterns inside glass chests should still emit light.
 Axes should also be used for going through doors. (a la Shining)
 Golems' corpses should be somehow useful. (eg parchment golems should give out parchment scrolls)
 The smith should fix damaged metal limbs for a fee.
 Finding Attnam in the map can be difficult if the distance is long.  
 Make golem scroll.
+Weapons should become covered with blood when monsters are killed with them.
+Thunderbird feather material.
+If a player vomits in a shop after eating an item bought there, the shopkeeper should say something like "No returns".
 Zapping food with wand of slow/haste should slow/fasten the spoiling time.
+Enchantments should increase thunder hammer's lightning possibility or lightning damage.
+One should be able to fix non-living bodyparts with a scroll of repair.

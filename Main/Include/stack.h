@@ -11,6 +11,7 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "ivandef.h"
+#include "entity.h"
 #include "lsquare.h"
 #include "slot.h"
 
@@ -62,7 +63,7 @@ class stack
   void Clean(bool = false);
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
-  square* GetSquareUnder() const;
+  square* GetSquareUnder() const { return !MotherEntity ? MotherSquare : MotherEntity->GetSquareUnderEntity(); }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
   void BeKicked(character*, ushort);
@@ -86,8 +87,8 @@ class stack
   ulong GetWeight() const { return Weight; }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  area* GetAreaUnder() const { return GetSquareUnder()->GetAreaUnder(); }
-  square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
+  area* GetArea() const { return GetSquareUnder()->GetArea(); }
+  square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
   ulong GetEmitation() const { return Emitation; }
   void SignalEmitationIncrease(ulong);
   void SignalEmitationDecrease(ulong);
@@ -125,3 +126,4 @@ class stack
 };
 
 #endif
+

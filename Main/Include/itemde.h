@@ -8,10 +8,10 @@
 #include "felist.h"
 #include "itemba.h"
 #include "materde.h"
-#include "wskill.h"
 #include "slot.h"
 
 class felist;
+class sweaponskill;
 
 class ABSTRACT_ITEM
 (
@@ -29,7 +29,7 @@ class ABSTRACT_ITEM
   virtual material* GetConsumeMaterial() const { return ContainedMaterial; }
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetContainedMaterial(NewMaterial, SpecialFlags); }
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
-  virtual uchar GetMaterials() const { return 2; }
+  virtual ushort GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetPrice() const { return GetContainedMaterial() ? GetContainedMaterial()->GetRawPrice() + item::GetPrice() : item::GetPrice(); }
@@ -111,7 +111,7 @@ class ITEM
   void InitMaterials(material* M1, material* M2, material* M3, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), ContainedMaterial, M3, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetMaterials() const { return 3; }
+  virtual ushort GetMaterials() const { return 3; }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
@@ -191,6 +191,8 @@ class ITEM
 (
   neercseulb,
   meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
@@ -383,7 +385,7 @@ class ITEM
   ;
 );
 
-class ABSTRACT_ITEM
+class ITEM
 (
   wand,
   item,
@@ -395,8 +397,6 @@ class ABSTRACT_ITEM
   virtual void SetCharges(uchar What) { Charges = What; }
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
-  virtual void Beam(character*, const std::string&, uchar, uchar);
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*) { return false; }
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool IsZappable(const character*) const { return true; }
@@ -408,20 +408,9 @@ class ABSTRACT_ITEM
   virtual ulong GetTotalExplosivePower() const { return 40; }
   virtual ulong GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
  protected:
-  virtual ushort GetBeamColor() const { return WHITE; }
   virtual void VirtualConstructor(bool);
   uchar Charges;
   uchar TimesUsed;
-);
-
-class ITEM
-(
-  wandofpolymorph,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return BLUE; }
 );
 
 class ITEM
@@ -441,16 +430,6 @@ class ITEM
   virtual void Be() { }
   virtual bool IsTheAvatar() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
-);
-
-class ITEM
-(
-  wandofstriking,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return WHITE; }
 );
 
 class ITEM
@@ -483,7 +462,6 @@ class ITEM
   meleeweapon,
  public:
   virtual bool IsWhip() const { return true; }
-  virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
  protected:
   virtual ushort GetFormModifier() const;
 );
@@ -556,31 +534,11 @@ class ITEM
 
 class ITEM
 (
-  wandoffireballs,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return YELLOW; }
-);
-
-class ITEM
-(
   scrolloftaming,
   scroll,
  public:
   virtual bool Read(character*);
   virtual void FinishReading(character*);
-);
-
-class ITEM
-(
-  wandofteleportation,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return GREEN; }
 );
 
 class ITEM
@@ -607,26 +565,6 @@ class ITEM
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
-);
-
-class ITEM
-(
-  wandofhaste,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return RED; }
-);
-
-class ITEM
-(
-  wandofslow,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return GREEN; }
 );
 
 class ITEM
@@ -1162,7 +1100,7 @@ class ITEM
   virtual long GetScore() const;
   virtual bool IsDestroyable() const;
   virtual ulong GetPrice() const;
-  virtual uchar GetMaterials() const { return 2; }
+  virtual ushort GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
   virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
@@ -1186,26 +1124,6 @@ class ITEM
   virtual ushort GetSize() const;
   virtual uchar GetArticleMode() const;
   character* Deceased;
-);
-
-class ITEM
-(
-  wandoflocking,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return WHITE; }
-);
-
-class ITEM
-(
-  wandofresurrection,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return BLACK; }
 );
 
 class ITEM
@@ -1296,24 +1214,6 @@ class ITEM
   virtual void VirtualConstructor(bool);
   bool Active;
   ushort Team;
-); 
-
-class ITEM
-(
-  wandofdoorcreation,
-  wand,
- public:
-  virtual bool Zap(character*, vector2d, uchar);
-);
-
-class ITEM
-(
-  wandofinvisibility,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return WHITE; }
 );
 
 class ITEM
@@ -1335,7 +1235,6 @@ class ITEM
  public:
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; };
-  virtual bool ListenTo(lsquare*,character*);
 );
 
 class ITEM
@@ -1380,16 +1279,6 @@ class ITEM
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
  protected:
   virtual bool CleptiaHelps(const character*, const character*) const;
-);
-
-class ITEM
-(
-  wandofcloning,
-  wand,
- public:
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
- protected:
-  virtual ushort GetBeamColor() const { return GREEN; }
 );
 
 class ITEM
@@ -1469,6 +1358,23 @@ class ITEM
  protected:
   virtual void VirtualConstructor(bool);
   ulong LastUsed;
+);
+
+class ITEM
+(
+  thunderhammer,
+  meleeweapon,
+ public:
+  virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual uchar GetSpecialFlags() const { return !IsBroken() ? ST_LIGHTNING : 0; }
+  virtual bool ReceiveDamage(character*, ushort, uchar);
+);
+
+class ITEM
+(
+  saalthul,
+  meleeweapon,
+  ;
 );
 
 #endif

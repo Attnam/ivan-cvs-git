@@ -20,15 +20,15 @@ class dungeon
   dungeon() { }
   dungeon(uchar);
   ~dungeon();
-  bool PrepareLevel(ushort = game::GetCurrent(), bool = true);
-  void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent(), bool = true);
-  void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent());
+  bool PrepareLevel(ushort = game::GetCurrentLevelIndex(), bool = true);
+  void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrentLevelIndex(), bool = true);
+  void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrentLevelIndex());
   level* GetLevel(ushort Index) const { return Level[Index]; }
   ushort GetLevels() const;
   void Save(outputfile&) const;
   void Load(inputfile&);
   void SetIndex(uchar What) { Index = What; }
-  uchar GetIndex() { return Index; }
+  uchar GetIndex() const { return Index; }
   levelscript* GetLevelScript(ushort);
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }

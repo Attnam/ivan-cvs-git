@@ -16,8 +16,8 @@ colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
-std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerrain.pcx", "Graphics/OLTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
-std::string igraph::GraphicFileName[] = { "Graphics/WTerrain.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
+std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
+std::string igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
 tilemap igraph::TileMap;
 
 #ifdef WIN32
@@ -69,7 +69,7 @@ void igraph::Init()
       for(c = 0; c < GRAPHIC_TYPES; ++c)
 	Graphic[c] = new bitmap(GAME_DIR + GraphicFileName[c]);
 
-      Graphic[GR_TRANSPARENT_TILE] = new bitmap(16, 16, TRANSPARENT_COLOR);
+      Graphic[GR_TRANSPARENT_COLOR_TILE] = new bitmap(16, 16, TRANSPARENT_COLOR);
 
       TileBuffer = new bitmap(16, 16);
       OutlineBuffer = new bitmap(16, 16);
@@ -172,7 +172,7 @@ tile igraph::AddUser(graphicid GI)
 	Bitmap->CreateSparkle(GI.SparklePos, GI.Frame - GI.SparkleTime);
 
       if(GI.FlyAmount)
-	Bitmap->CreateFlies(GI.FlySeed, GI.Frame, GI.FlyAmount);
+	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
 
       if(GI.SpecialFlags & 0x7) /* Do we need rotating/flipping? */
 	{
@@ -182,7 +182,10 @@ tile igraph::AddUser(graphicid GI)
 	}
 
       if(GI.SpecialFlags & ST_FLAME)
-	Bitmap->DrawFlames(GI.Frame, TRANSPARENT_COLOR);
+	Bitmap->CreateFlames(GI.Frame);
+
+      if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 2) & 7))
+	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
 
       tile Tile(Bitmap);
       TileMap[GI] = Tile;

@@ -154,11 +154,11 @@ void object::UpdatePictures()
   uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
-  ulong FlySeed = 0;
+  ulong Seed = 0;
   uchar FlyAmount = GetFlyAmount(); 
   bool Sparkling = false;
 
-  if(!(SpecialFlags & ST_FLAME))
+  if(!(SpecialFlags & (ST_FLAME|ST_LIGHTNING)))
     {
       bool MColorSparkling[4] = { false, false, false, false };
 
@@ -169,7 +169,7 @@ void object::UpdatePictures()
       if(Sparkling)
 	{
 	  static ushort SeedModifier = 1;
-	  long NewSeed = RAND(); 
+	  ulonglong OldSeed = femath::GetSeed(); 
 	  vector2d BPos = GetBitmapPos(0);
 	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
@@ -178,7 +178,7 @@ void object::UpdatePictures()
 
 	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(BPos, vector2d(16, 16), MColorSparkling);
 	  SparkleTime = ((RAND() & 3) << 5) + (RAND() & 0xF);
-	  femath::SetSeed(NewSeed);
+	  femath::SetSeed(OldSeed);
 
 	  if(AnimationFrames <= 128)
 	    AnimationFrames = 128;
@@ -188,7 +188,7 @@ void object::UpdatePictures()
 	{
 	  static ushort SeedModifier = 1;
 	  vector2d BPos = GetBitmapPos(0);
-	  FlySeed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
+	  Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
 
 	  if(++SeedModifier > 0x10)
 	    SeedModifier = 1;
@@ -197,8 +197,20 @@ void object::UpdatePictures()
 	    AnimationFrames = 32;
 	}
     }
-  else if(AnimationFrames <= 16)
+  else if(SpecialFlags & ST_FLAME && AnimationFrames <= 16)
     AnimationFrames = 16;
+  else if(SpecialFlags & ST_LIGHTNING)
+    {
+      static ushort SeedModifier = 1;
+      vector2d BPos = GetBitmapPos(0);
+      Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 0x42;
+
+      if(++SeedModifier > 0x10)
+	SeedModifier = 1;
+
+      if(AnimationFrames <= 128)
+	AnimationFrames = 128;
+    }
 
   ushort c;
 
@@ -208,48 +220,49 @@ void object::UpdatePictures()
   GraphicId.resize(AnimationFrames);
   Picture.resize(AnimationFrames);
 
-  for(c = 0; c < GraphicId.size(); ++c)
+  for(c = 0; c < AnimationFrames; ++c)
     {
-      GraphicId[c].Color[0] = GetMaterialColorA(c);
-      GraphicId[c].Color[1] = GetMaterialColorB(c);
-      GraphicId[c].Color[2] = GetMaterialColorC(c);
-      GraphicId[c].Color[3] = GetMaterialColorD(c);
+      graphicid& GI = GraphicId[c];
+      GI.Color[0] = GetMaterialColorA(c);
+      GI.Color[1] = GetMaterialColorB(c);
+      GI.Color[2] = GetMaterialColorC(c);
+      GI.Color[3] = GetMaterialColorD(c);
       ushort MaxAlpha = GetMaxAlpha(c);
-      GraphicId[c].BaseAlpha = GetBaseAlpha(c);
+      GI.BaseAlpha = GetBaseAlpha(c);
 
-      if(GraphicId[c].BaseAlpha > MaxAlpha)
-	GraphicId[c].BaseAlpha = MaxAlpha;
+      if(GI.BaseAlpha > MaxAlpha)
+	GI.BaseAlpha = MaxAlpha;
 
-      GraphicId[c].Alpha[0] = GetAlphaA(c);
+      GI.Alpha[0] = GetAlphaA(c);
 
-      if(GraphicId[c].Alpha[0] > MaxAlpha)
-	GraphicId[c].Alpha[0] = MaxAlpha;
+      if(GI.Alpha[0] > MaxAlpha)
+	GI.Alpha[0] = MaxAlpha;
 
-      GraphicId[c].Alpha[1] = GetAlphaB(c);
+      GI.Alpha[1] = GetAlphaB(c);
 
-      if(GraphicId[c].Alpha[1] > MaxAlpha)
-	GraphicId[c].Alpha[1] = MaxAlpha;
+      if(GI.Alpha[1] > MaxAlpha)
+	GI.Alpha[1] = MaxAlpha;
 
-      GraphicId[c].Alpha[2] = GetAlphaC(c);
+      GI.Alpha[2] = GetAlphaC(c);
 
-      if(GraphicId[c].Alpha[2] > MaxAlpha)
-	GraphicId[c].Alpha[2] = MaxAlpha;
+      if(GI.Alpha[2] > MaxAlpha)
+	GI.Alpha[2] = MaxAlpha;
 
-      GraphicId[c].Alpha[3] = GetAlphaD(c);
+      GI.Alpha[3] = GetAlphaD(c);
 
-      if(GraphicId[c].Alpha[3] > MaxAlpha)
-	GraphicId[c].Alpha[3] = MaxAlpha;
+      if(GI.Alpha[3] > MaxAlpha)
+	GI.Alpha[3] = MaxAlpha;
 
-      GraphicId[c].BitmapPos = GetBitmapPos(c);
-      GraphicId[c].FileIndex = GraphicsContainerIndex;
-      GraphicId[c].SpecialFlags = SpecialFlags;
-      GraphicId[c].Frame = c;
-      GraphicId[c].SparklePos = Sparkling && c >= SparkleTime && c < SparkleTime + 16 ? SparklePos : BITMAP_ERROR_VECTOR;
-      GraphicId[c].SparkleTime = SparkleTime;
-      GraphicId[c].OutlineColor = GetOutlineColor(c);
-      GraphicId[c].FlySeed = FlySeed;
-      GraphicId[c].FlyAmount = FlyAmount;
-      Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
+      GI.BitmapPos = GetBitmapPos(c);
+      GI.FileIndex = GraphicsContainerIndex;
+      GI.SpecialFlags = SpecialFlags;
+      GI.Frame = c;
+      GI.SparklePos = Sparkling && c >= SparkleTime && c < SparkleTime + 16 ? SparklePos : BITMAP_ERROR_VECTOR;
+      GI.SparkleTime = SparkleTime;
+      GI.OutlineColor = GetOutlineColor(c);
+      GI.Seed = Seed;
+      GI.FlyAmount = FlyAmount;
+      Picture[c] = igraph::AddUser(GI).Bitmap;
     }
 }
 
@@ -313,20 +326,7 @@ void object::RandomizeVisualEffects()
   uchar AcceptedFlags = GetOKVisualEffects();
 
   if(AcceptedFlags)
-    {
-      uchar Flags = RAND() & 0x7;
-
-      if(!(AcceptedFlags & MIRROR))
-	Flags &= ~MIRROR;
-
-      if(!(AcceptedFlags & FLIP))
-	Flags &= ~FLIP;
-
-      if(!(AcceptedFlags & ROTATE))
-	Flags &= ~ROTATE;
-
-      SetVisualEffects(Flags | GetForcedVisualEffects());
-    }
+    SetVisualEffects(RAND() & 0x7 & AcceptedFlags | GetForcedVisualEffects());
   else
     SetVisualEffects(GetForcedVisualEffects());
 }

@@ -27,7 +27,7 @@ class wterrain
   vector2d GetPos() const { return WSquareUnder->GetPos(); }
   wsquare* GetWSquareUnder() const { return WSquareUnder; }
   void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
-  worldmap* GetWorldMapUnder() const { return GetWSquareUnder()->GetWorldMapUnder(); }
+  worldmap* GetWorldMap() const { return GetWSquareUnder()->GetWorldMap(); }
   void AddName(std::string&, uchar) const;
   std::string GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
@@ -139,3 +139,4 @@ WTERRAIN(\
 );
 
 #endif
+

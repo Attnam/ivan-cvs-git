@@ -104,7 +104,7 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 
   for(ushort d = 0; d < 8; ++d)
     {
-      wsquare* NeighbourSquare = GetWorldMapUnder()->GetNeighbourWSquare(GetPos(), d);
+      wsquare* NeighbourSquare = GetWorldMap()->GetNeighbourWSquare(GetPos(), d);
 
       if(NeighbourSquare)
 	{
@@ -143,10 +143,11 @@ bool owterrain::Enter(bool DirectionUp) const
 
   if(game::LeaveWorldMap(Group))
     {
-      game::SetCurrentDungeon(AttachedDungeon);
+      game::SetCurrentDungeonIndex(AttachedDungeon);
       game::EnterArea(Group, AttachedArea, AttachedEntry);
       return true;
     }
   else
     return false;
 }
+

@@ -16,7 +16,7 @@
 #define ANALYZE_MEMBER(name)\
 {\
   if(Identifier == #name)\
-    return &name;\
+    return &name##Holder;\
 }
 
 bool script::LoadData(inputfile& SaveFile, const std::string& Word)
@@ -48,20 +48,20 @@ void posscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "Pos")
     {
       Random = false;
-      Vector.Load(SaveFile, ValueMap);
+      VectorHolder.Load(SaveFile, ValueMap);
     }
 
   if(Word == "Random")
     {
       Random = true;
-      Flags.Load(SaveFile, ValueMap);
+      FlagsHolder.Load(SaveFile, ValueMap);
     }
 
   if(Word == "BoundedRandom")
     {
       Random = true;
-      Borders.Load(SaveFile, ValueMap);
-      Flags.Load(SaveFile, ValueMap);
+      BordersHolder.Load(SaveFile, ValueMap);
+      FlagsHolder.Load(SaveFile, ValueMap);
     }
 }
 
@@ -97,7 +97,7 @@ void materialscript::ReadFrom(inputfile& SaveFile, bool)
 material* materialscript::Instantiate() const
 {
   material* Instance = MAKE_MATERIAL(Config);
-  ulong* Volume = GetVolume(false);
+  ulong* Volume = GetVolume();
 
   if(Volume)
     Instance->SetVolume(*Volume);
@@ -125,8 +125,8 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 
   if(Iterator != ValueMap.end())
     {
-      if(!GetMainMaterial(false))
-	MainMaterial.SetMember(new materialscript);
+      if(!GetMainMaterial())
+	MainMaterialHolder.SetMember(new materialscript);
 
       GetMainMaterial()->SetConfig(Iterator->second);
       Word = SaveFile.ReadWord();
@@ -134,8 +134,8 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 
       if(Iterator != ValueMap.end())
 	{
-	  if(!GetSecondaryMaterial(false))
-	    SecondaryMaterial.SetMember(new materialscript);
+	  if(!GetSecondaryMaterial())
+	    SecondaryMaterialHolder.SetMember(new materialscript);
 
 	  GetSecondaryMaterial()->SetConfig(Iterator->second);
 	  Word = SaveFile.ReadWord();
@@ -193,22 +193,22 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   else
     Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
 
-  ulong* Parameters = GetParameters(false);
+  ulong* Parameters = GetParameters();
 
   if(Parameters)
     Instance->SetParameters(*Parameters);
 
-  materialscript* MainMaterial = GetMainMaterial(false);
+  materialscript* MainMaterial = GetMainMaterial();
 
   if(MainMaterial)
     Instance->ChangeMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  materialscript* SecondaryMaterial = GetSecondaryMaterial(false);
+  materialscript* SecondaryMaterial = GetSecondaryMaterial();
 
   if(SecondaryMaterial)
     Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  materialscript* ContainedMaterial = GetContainedMaterial(false);
+  materialscript* ContainedMaterial = GetContainedMaterial();
 
   if(ContainedMaterial)
     Instance->ChangeContainedMaterial(ContainedMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
@@ -247,17 +247,17 @@ datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 {
   character* Instance = contentscripttemplate<character>::BasicInstantiate(SpecialFlags);
-  ushort* Team = GetTeam(false);
+  ushort* Team = GetTeam();
 
   if(Team)
     Instance->SetTeam(game::GetTeam(*Team));
 
-  std::vector<contentscript<item> >* Inventory = GetInventory(false);
+  std::vector<contentscript<item> >* Inventory = GetInventory();
 
   if(Inventory)
     Instance->AddToInventory(*Inventory, SpecialFlags);
 
-  std::vector<vector2d>* WayPoint = GetWayPoint(false);
+  std::vector<vector2d>* WayPoint = GetWayPoint();
 
   if(WayPoint)
     Instance->SetWayPoints(*WayPoint);
@@ -269,7 +269,7 @@ character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(Team);
-  ANALYZE_MEMBER(Active);
+  ANALYZE_MEMBER(IsActive);
   ANALYZE_MEMBER(SideStackIndex);
   ANALYZE_MEMBER(Enchantment);
   ANALYZE_MEMBER(MinPrice);
@@ -282,7 +282,7 @@ datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 {
-  uchar* Chance = GetChance(false);
+  uchar* Chance = GetChance();
 
   if(Chance && *Chance <= RAND() % 100)
     return 0;
@@ -291,30 +291,30 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 
   if(Random)
     {
-      ulong* MinPrice = GetMinPrice(false);
-      ulong* MaxPrice = GetMaxPrice(false);
-      ulong* Category = GetCategory(false);
+      ulong* MinPrice = GetMinPrice();
+      ulong* MaxPrice = GetMaxPrice();
+      ulong* Category = GetCategory();
       Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY);
     }
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
 
-  ushort* Team = GetTeam(false);
+  ushort* Team = GetTeam();
 
   if(Team)
     Instance->SetTeam(*Team);
 
-  bool* Active = GetActive(false);
+  bool* Active = IsActive();
 
   if(Active)
     Instance->SetIsActive(*Active);
 
-  short* Enchantment = GetEnchantment(false);
+  short* Enchantment = GetEnchantment();
 
   if(Enchantment)
     Instance->SetEnchantment(*Enchantment);
 
-  std::vector<contentscript<item> >* ItemsInside = GetItemsInside(false);
+  std::vector<contentscript<item> >* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -336,7 +336,7 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
   olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
 
-  uchar* VisualEffects = GetVisualEffects(false);
+  uchar* VisualEffects = GetVisualEffects();
 
   if(VisualEffects)
     {
@@ -344,22 +344,22 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
       Instance->UpdatePictures();
     }
 
-  uchar* AttachedArea = GetAttachedArea(false);
+  uchar* AttachedArea = GetAttachedArea();
 
   if(AttachedArea)
     Instance->SetAttachedArea(*AttachedArea);
 
-  uchar* AttachedEntry = GetAttachedEntry(false);
+  uchar* AttachedEntry = GetAttachedEntry();
 
   if(AttachedEntry)
     Instance->SetAttachedEntry(*AttachedEntry);
 
-  std::string* Text = GetText(false);
+  std::string* Text = GetText();
 
   if(Text)
     Instance->SetText(*Text);
 
-  std::vector<contentscript<item> >* ItemsInside = GetItemsInside(false);
+  std::vector<contentscript<item> >* ItemsInside = GetItemsInside();
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
@@ -387,7 +387,7 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
 
   if(Word != "=")
     {
-      Position.Load(SaveFile, ValueMap);
+      PositionHolder.Load(SaveFile, ValueMap);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in square script line %d!", SaveFile.TellLine());
@@ -398,8 +398,8 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
     }
   else
     {
-      GTerrain.Load(SaveFile, ValueMap);
-      OTerrain.Load(SaveFile, ValueMap);
+      GTerrainHolder.Load(SaveFile, ValueMap);
+      OTerrainHolder.Load(SaveFile, ValueMap);
     }
 }
 
@@ -531,18 +531,18 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
       if(RoomBase)
 	{
-	  bool* ReCalculate = RoomBase->GetReCalculate(false);
+	  bool* ReCalculateBool = RoomBase->ReCalculate();
 
-	  if(ReCalculate && *ReCalculate)
+	  if(ReCalculateBool && *ReCalculateBool)
 	    RoomBase->ReadFrom(SaveFile, true);
 	}
 
-      bool* ReCalculate = GetReCalculate(false);
+      bool* ReCalculateBool = ReCalculate();
 
-      if(ReCalculate && *ReCalculate)
+      if(ReCalculateBool && *ReCalculateBool)
 	{
 	  SaveFile.ClearFlags();
-	  SaveFile.SeekPosBeg(BufferPos);
+	  SaveFile.SeekPosBegin(BufferPos);
 	}
       else
 	return;
@@ -586,7 +586,7 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(Rooms);
   ANALYZE_MEMBER(GenerateMonsters);
   ANALYZE_MEMBER(ReCalculate);
-  ANALYZE_MEMBER(OnGround);
+  ANALYZE_MEMBER(IsOnGround);
   ANALYZE_MEMBER(TeamDefault);
   ANALYZE_MEMBER(AmbientLight);
   ANALYZE_MEMBER(Description);
@@ -620,18 +620,18 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
       if(LevelBase)
 	{
-	  bool* ReCalculate = LevelBase->GetReCalculate(false);
+	  bool* ReCalculateBool = LevelBase->ReCalculate();
 
-	  if(ReCalculate && *ReCalculate)
+	  if(ReCalculateBool && *ReCalculateBool)
 	    LevelBase->ReadFrom(SaveFile, true);
 	}
 
-      bool* ReCalculate = GetReCalculate(false);
+      bool* ReCalculateBool = ReCalculate();
 
-      if(ReCalculate && *ReCalculate)
+      if(ReCalculateBool && *ReCalculateBool)
 	{
 	  SaveFile.ClearFlags();
-	  SaveFile.SeekPosBeg(BufferPos);
+	  SaveFile.SeekPosBegin(BufferPos);
 	}
       else
 	return;
@@ -667,7 +667,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
 
 	  RS->SetValueMap(ValueMap);
-	  roomscript* RoomDefault = GetRoomDefault(false);
+	  roomscript* RoomDefault = GetRoomDefault();
 
 	  if(RoomDefault)
 	    RS->SetBase(RoomDefault);
@@ -690,8 +690,8 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
   levelscript* LevelBase = static_cast<levelscript*>(Base);
 
-  if(LevelBase && RoomDefault.GetMember())
-    RoomDefault.GetMember()->SetBase(LevelBase->RoomDefault.GetMember());
+  if(LevelBase && RoomDefaultHolder.GetMember())
+    RoomDefaultHolder.GetMember()->SetBase(LevelBase->RoomDefaultHolder.GetMember());
 }
 
 datamemberbase* dungeonscript::GetData(const std::string& Identifier)
@@ -724,7 +724,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 	  std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 	  levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
 	  LS->SetValueMap(ValueMap);
-	  levelscript* LevelDefault = GetLevelDefault(false);
+	  levelscript* LevelDefault = GetLevelDefault();
 
 	  if(LevelDefault)
 	    LS->SetBase(LevelDefault);
@@ -744,11 +744,6 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
       if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in dungeon script line %d!", Word.c_str(), SaveFile.TellLine());
     }
-
-  dungeonscript* DungeonBase = static_cast<dungeonscript*>(Base);
-
-  if(DungeonBase && LevelDefault.GetMember())
-    LevelDefault.GetMember()->SetBase(DungeonBase->LevelDefault.GetMember());
 }
 
 datamemberbase* teamscript::GetData(const std::string& Identifier)
@@ -782,7 +777,6 @@ void teamscript::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* gamescript::GetData(const std::string& Identifier)
 {
-  ANALYZE_MEMBER(DungeonDefault);
   ANALYZE_MEMBER(Dungeons);
   ANALYZE_MEMBER(Teams);
   return 0;
@@ -809,7 +803,6 @@ void gamescript::ReadFrom(inputfile& SaveFile, bool)
 	  std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
 	  dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
 	  DS->SetValueMap(ValueMap);
-	  DS->SetBase(GetDungeonDefault(false));
 	  DS->ReadFrom(SaveFile);
 	  Dungeon[Index] = DS;
 	  continue;

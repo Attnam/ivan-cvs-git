@@ -34,13 +34,9 @@ character
 	CanWalk = true;
 	CanSwim = false;
 	CanFly = false;
-	PhysicalDamageResistance = 0;
-	SoundResistance = 0;
-	EnergyResistance = 0;
-	AcidResistance = 0;
 	FireResistance = 0;
 	PoisonResistance = 0;
-	BulimiaResistance = 0;
+	ElectricityResistance = 0;
 	IsUnique = false;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED;
 	/* Obligatory: TotalVolume */
@@ -137,27 +133,27 @@ human
 	NameSingular = "human";
 	Inventory == encryptedscroll;
 
-	/*DefaultArmStrength = 15;
-	DefaultLegStrength = 15;
-	DefaultDexterity = 15;
-	DefaultAgility = 15;
-	DefaultEndurance = 15;
+	/*DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 20;
+	DefaultAgility = 20;
+	DefaultEndurance = 20;
 	DefaultPerception = 10;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
 	DefaultCharisma = 10;
 	DefaultMana = 10;
-	Helmet = BRONZE helmet;
-	BodyArmor = IRON bodyarmor(CHAIN_MAIL);
-	Cloak = TROLL_HIDE cloak;
-	Belt = TROLL_HIDE belt;
-	RightWielded = IRON meleeweapon(MACE);
-	RightGauntlet = TROLL_HIDE gauntlet;
-	RightBoot = BRONZE boot;
-	KnownCWeaponSkills == MACES;
-	CWeaponSkillHits == 50;
-	RightSWeaponSkillHits = 50;
-	LeftSWeaponSkillHits = 50;*/
+	Helmet = MITHRIL helmet;
+	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL);
+	Cloak = PHOENIX_FEATHER cloak;
+	Belt = STEEL belt;
+	RightWielded = saalthul;
+	LeftWielded = saalthul;
+	RightGauntlet = PHOENIX_FEATHER gauntlet;
+	RightBoot = MITHRIL boot;
+	KnownCWeaponSkills = { 7, SMALL_SWORDS, LARGE_SWORDS, BLUNT_WEAPONS, AXES, POLE_ARMS, WHIPS, SHIELDS; }
+	CWeaponSkillHits = { 7, 2000, 2000, 2000, 2000, 2000, 2000, 2000; }
+	Inventory = { 5, mjolak, turox, vermis, whipofthievery, shield { MainMaterial = VALPURIUM; } }*/
 }
 
 petrus
@@ -203,7 +199,6 @@ petrus
 	KnownCWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; }
 	CWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
 	RightSWeaponSkillHits = 2000;
-	ClassStates = INFRA_VISION;
 	PanicLevel = 0;
 	CanBeCloned = false;
 	DefaultName = "Petrus";
@@ -522,7 +517,7 @@ priest
 	RightWielded = MITHRIL meleeweapon(MACE) { Enchantment = 3; }
 	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
 	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
-	KnownCWeaponSkills == MACES;
+	KnownCWeaponSkills == BLUNT_WEAPONS;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
 	CanBeCloned = false;
@@ -951,7 +946,7 @@ skeleton
 	{
 		AttributeBonus = 100;
 		RightWielded = meleeweapon(MACE) { Enchantment = -1; }
-		KnownCWeaponSkills == MACES;
+		KnownCWeaponSkills == BLUNT_WEAPONS;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		PostFix = "warrior";
@@ -985,7 +980,7 @@ skeleton
 		TotalVolume = 40000;
 		EyeColor = rgb16(255, 255, 0);
 		ClothColor = rgb16(100, 0, 0);
-		Inventory == wandofresurrection;
+		Inventory == wand(WAND_OF_RESURRECTION);
 	}
 }
 
@@ -1195,7 +1190,7 @@ golem
 		Frequency = 500;
 		DangerModifier = 1500;
 		IsUnique = true;
-		Inventory = { 6, wandofinvisibility, wandofteleportation, wandofcloning, scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
+		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL) { Enchantment = 2; } }
 		ClassStates = HASTE|INFRA_VISION|INVISIBLE;
 		IsNameable = false;
 		CanBeWished = false;
@@ -1380,8 +1375,8 @@ communist /* Ivan */
 	Belt = NYMPH_HAIR belt { Enchantment = 1; }
 	RightWielded = gorovitshammer;
 	LeftWielded = gorovitssickle;
-	KnownCWeaponSkills = { 7, UNARMED, CLUBS, HAMMERS, MACES, FLAILS, AXES, POLE_ARMS; }
-	CWeaponSkillHits = { 7, 200, 200, 500, 500, 200, 500, 200; }
+	KnownCWeaponSkills = { 5, UNARMED, SMALL_SWORDS, BLUNT_WEAPONS, AXES, POLE_ARMS; }
+	CWeaponSkillHits = { 5, 200, 500, 500, 200, 200; }
 	RightSWeaponSkillHits = 200;
 	LeftSWeaponSkillHits = 200;
 	RightGauntlet = HARDENED_LEATHER gauntlet { Enchantment = 1; }
@@ -1436,7 +1431,7 @@ hunter
 	RightGauntlet = LEATHER gauntlet;
 	LeftGauntlet = 0;
 	RightBoot = HARDENED_LEATHER boot;
-	KnownCWeaponSkills == SPEARS;
+	KnownCWeaponSkills == POLE_ARMS;
 	CWeaponSkillHits == 200;
 	RightSWeaponSkillHits = 200;
 	PanicLevel = 20;
@@ -1532,7 +1527,7 @@ slave
 	TotalVolume = 60000;
 	TotalSize = 160;
 	NameSingular = "slave";
-	KnownCWeaponSkills = { 2, UNARMED, CLUBS; }
+	KnownCWeaponSkills = { 2, UNARMED, BLUNT_WEAPONS; }
 	CWeaponSkillHits = { 2, 100, 100; }
 	FriendlyReplies = /* used only if the slave has been bought */
 	{
@@ -1976,7 +1971,7 @@ mistress
 		CanBeWished = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
-		Inventory = { 6, scrolloftaming, scrolloftaming, wandofhaste, wandofhaste, scrollofwishing, scrollofwishing; }
+		Inventory = { 6, scrolloftaming, scrolloftaming, wand(WAND_OF_HASTE), wand(WAND_OF_HASTE), scrollofwishing, scrollofwishing; }
 	}
 }
 
@@ -2076,7 +2071,7 @@ kobold
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
 	RightWielded = WOOD meleeweapon(SPEAR);
-	KnownCWeaponSkills == SPEARS;
+	KnownCWeaponSkills == POLE_ARMS;
 	CWeaponSkillHits == 5;
 	RightSWeaponSkillHits = 0;
 	PanicLevel = 66;
@@ -2130,7 +2125,7 @@ kobold
 		TotalSize = 120;
 		ClothColor = rgb16(144, 0, 144);
 		LegMainColor = rgb16(111, 74, 37);
-		Inventory == wandofpolymorph;
+		Inventory == wand(WAND_OF_POLYMORPH);
 	}
 }
 
@@ -2483,7 +2478,7 @@ carnivorousplant
 	FleshMaterial = PLANT_FIBER;
 	DeathMessage = "@Dd is destroyed.";
 	SpillsBlood = false;
-	StandVerb = "is rooted";
+	StandVerb = "rooted";
 
 	Config GREATER;
 	{
@@ -2876,7 +2871,7 @@ smith
 	RightRing = ring(RING_OF_FIRE_RESISTANCE);
 	LeftRing = ring(RING_OF_FIRE_RESISTANCE);
 	RightBoot = STEEL boot { Enchantment = 1; }
-	KnownCWeaponSkills == HAMMERS;
+	KnownCWeaponSkills == BLUNT_WEAPONS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
 	LeftSWeaponSkillHits = 200;
@@ -3071,25 +3066,24 @@ chameleon
 	IsExtraCoward = true;
 }
 
-
 floatingeye
 {
 	DefaultArmStrength = 1; 
 	DefaultAgility = 3;
-	DefaultEndurance = 4;
-	DefaultPerception = 40;
+	DefaultEndurance = 8;
+	DefaultPerception = 50;
 	DefaultIntelligence = 2;
 	DefaultWisdom = 2;
 	DefaultCharisma = 8;
 	DefaultMana = 0;
 	CanOpen = false;
-	TotalVolume = 14000;
+	TotalVolume = 30000;
 	HostileReplies == "@du stares at you.";
 	FriendlyReplies == "@du stares at you.";
-	TotalSize = 15;
-	/* SkinColor overridden */
-	NameSingular = "floating eye";
-	AttackStyle = USE_HEAD; /* shouldn't really ever use this */
+	TotalSize = 40;
+	Adjective = "floating";
+	NameSingular = "eye";
+	/* AttackStyle is not used */
 	BaseBiteStrength = 1;
 	CanBeGenerated = true;
 	FleshMaterial = FLOATING_EYE_FLESH;
@@ -3097,8 +3091,11 @@ floatingeye
 	HPRequirementForGeneration = 0;
 	Frequency = 1000;
 	TorsoBitmapPos = 32, 0;
-	SkinColor = rgb16(140,140,140);
-	ClothColor = rgb16(0, 0, 100); /* eye color */
+	SkinColor = rgb16(180,180,180);
+	ClothColor = rgb16(0, 0, 160); /* eye color */
+	StandVerb = "levitating";
+	HasFeet = false;
+	CanRead = true;
+	CanFly = true;
 	HasHead = false;
-	StandVerb = "floating";
 }

@@ -40,12 +40,9 @@ struct itemdatabase
   bool IsPolymorphSpawnable;
   bool IsAutoInitializable;
   ulong Category;
-  ushort SoundResistance;
-  ushort EnergyResistance;
-  ushort AcidResistance;
   ushort FireResistance;
   ushort PoisonResistance;
-  ushort BulimiaResistance;
+  ushort ElectricityResistance;
   ushort StrengthModifier;
   ushort FormModifier;
   ulong NPModifier;
@@ -105,6 +102,9 @@ struct itemdatabase
   uchar DamageDivider;
   bool HandleInPairs;
   bool CanBeEnchanted;
+  ulong BeamColor;
+  uchar BeamEffect;
+  uchar BeamStyle;
 };
 
 class itemprototype
@@ -243,12 +243,9 @@ class item : public object
   DATA_BASE_VALUE(uchar, WeaponCategory);
   DATA_BASE_BOOL(IsAutoInitializable);
   DATA_BASE_VALUE(ulong, Category);
-  DATA_BASE_VALUE(ushort, SoundResistance);
-  DATA_BASE_VALUE(ushort, EnergyResistance);
-  DATA_BASE_VALUE(ushort, AcidResistance);
   DATA_BASE_VALUE(ushort, FireResistance);
   DATA_BASE_VALUE(ushort, PoisonResistance);
-  DATA_BASE_VALUE(ushort, BulimiaResistance);
+  DATA_BASE_VALUE(ushort, ElectricityResistance);
   DATA_BASE_VALUE(ushort, StrengthModifier);
   virtual DATA_BASE_VALUE(ushort, FormModifier);
   DATA_BASE_VALUE(ulong, NPModifier);
@@ -306,6 +303,9 @@ class item : public object
   DATA_BASE_VALUE(uchar, DamageDivider);
   DATA_BASE_BOOL(HandleInPairs);
   virtual DATA_BASE_BOOL(CanBeEnchanted);
+  virtual DATA_BASE_VALUE(ulong, BeamColor);
+  virtual DATA_BASE_VALUE(uchar, BeamEffect);
+  virtual DATA_BASE_VALUE(uchar, BeamStyle);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -317,15 +317,16 @@ class item : public object
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
   std::string GetDescription(uchar) const;
-  virtual square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
+  virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
+  square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
-  level* GetLevelUnder() const { return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder()); }
-  area* GetAreaUnder() const { return Slot->GetSquareUnder()->GetAreaUnder(); }
+  level* GetLevel() const { return static_cast<level*>(Slot->GetSquareUnder()->GetArea()); }
+  area* GetArea() const { return Slot->GetSquareUnder()->GetArea(); }
   vector2d GetPos() const { return Slot->GetSquareUnder()->GetPos(); }
-  square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
-  square* GetNearSquare(ushort x, ushort y) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(x, y); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos)); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(x, y)); }
+  square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetArea()->GetSquare(Pos); }
+  square* GetNearSquare(ushort x, ushort y) const { return Slot->GetSquareUnder()->GetArea()->GetSquare(x, y); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetArea()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetArea()->GetSquare(x, y)); }
   virtual void SignalVolumeAndWeightChange();
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
@@ -342,8 +343,8 @@ class item : public object
   virtual void SetIsActive(bool) { }
   ushort GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
   ushort GetBaseMaxDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 1.25f) + 1; }
-  ushort GetBaseToHitValue() const { return 50 * GetBonus() / (500 + GetWeight()); }
-  ushort GetBaseBlockValue() const { return ushort(GetBlockModifier() * GetBonus() / (100000 + 200 * GetWeight())); }
+  ushort GetBaseToHitValue() const { return 100 * GetBonus() / (1000 + GetWeight()); }
+  ushort GetBaseBlockValue() const { return ushort(GetBlockModifier() * GetBonus() / (100000 + 100 * GetWeight())); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddAttackInfo(felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
@@ -384,6 +385,7 @@ class item : public object
   virtual bool IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_INDEX || Index == LEFT_WIELDED_INDEX; }
   bool IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(Slot)->GetEquipmentIndex()); }
   ushort GetEquipmentIndex() const { return static_cast<gearslot*>(Slot)->GetEquipmentIndex(); }
+  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
@@ -439,3 +441,4 @@ name : public base\
 }; ITEM_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
+

@@ -21,14 +21,14 @@
 #include "felist.h"
 #include "festring.h"
 
-const std::string item::ToHitValueDescription[] = { "unbelievably inaccurate", "inaccurate", "decently accurate", "accurate","highly accurate","extremely accurate","unbelievably accurate" };
+const std::string item::ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
 const std::string item::StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
 {
 }
 
-item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
+item::item(donothing) : Slot(0), Cannibalised(false)
 {
 }
 
@@ -59,7 +59,7 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
     return;
 
   if(Direction == RANDOM_DIR)
-    Direction = RAND() % 8;
+    Direction = RAND() & 7;
 
   vector2d StartingPos = GetPos();
   vector2d Pos = StartingPos;
@@ -71,19 +71,19 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
     {
       ushort Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 100;
       BaseDamage = sqrt(5e-10f * GetWeaponStrength() * Force / Range) * Bonus;
-      BaseToHitValue = 3 * GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8f * Thrower->GetAttribute(PERCEPTION)) / Range;
+      BaseToHitValue = GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8f * Thrower->GetAttribute(PERCEPTION)) / Range;
     }
   else
     {
       BaseDamage = sqrt(5e-6f * GetWeaponStrength() * Force / Range);
-      BaseToHitValue = 30 * GetBonus() / (500 + GetWeight()) / Range;
+      BaseToHitValue = 10 * GetBonus() / (500 + GetWeight()) / Range;
     }
 
   ushort RangeLeft;
 
   for(RangeLeft = Range; RangeLeft != 0; --RangeLeft)
     {
-      if(!GetLevelUnder()->IsValidPos(Pos + DirVector))
+      if(!GetLevel()->IsValidPos(Pos + DirVector))
 	break;
 
       lsquare* JustHit = GetNearLSquare(Pos + DirVector);
@@ -211,14 +211,12 @@ void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
-  game::CombineLights(Emitation, GetBaseEmitation()); // what does this do?
-  game::PopItemID(ID);
   SaveFile >> Cannibalised >> Size >> ID;
 }
 
 void item::TeleportRandomly()
 {
-  MoveTo(GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack());
+  MoveTo(GetNearLSquare(GetLevel()->GetRandomSquare())->GetStack());
 }
 
 ushort item::GetStrengthValue() const
@@ -277,12 +275,15 @@ ushort item::GetResistance(uchar Type) const
   switch(Type)
     {
     case PHYSICAL_DAMAGE: return GetStrengthValue();
-    case SOUND: return GetSoundResistance();
-    case ENERGY: return GetEnergyResistance();
-    case ACID: return GetAcidResistance();
+    case SOUND:
+    case ENERGY:
+    case ACID:
+    case BULIMIA:
+    case DRAIN:
+      return 0;
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
-    case BULIMIA: return GetBulimiaResistance();
+    case ELECTRICITY: return GetElectricityResistance();
     default:
       ABORT("Resistance lack detected!");
       return 0;
@@ -325,6 +326,7 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
   if(!(SpecialFlags & LOAD))
     {
+      ID = game::CreateNewItemID();
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
@@ -654,6 +656,7 @@ ulong item::GetEnchantedPrice(char Enchantment) const
 item* item::Fix()
 {
   item* Fixed = 0;
+
   if(IsBroken())
     {
       Fixed = RawDuplicate();
@@ -662,6 +665,7 @@ item* item::Fix()
       DonateSlotTo(Fixed);
       SendToHell();
     }
+
   return Fixed;
 }
 
@@ -689,8 +693,9 @@ bool item::AllowSpoil() const
 {
   if(IsOnGround())
     {
-      uchar RoomNumber = GetLSquareUnder()->GetRoom();
-      return !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->AllowSpoil(this);
+      lsquare* Square = GetLSquareUnder();
+      uchar RoomNumber = Square->GetRoomIndex();
+      return !RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->AllowSpoil(this);
     }
   else
     return true;
@@ -705,10 +710,10 @@ void item::ResetSpoiling()
 
 const std::string& item::GetBaseToHitValueDescription() const
 {
-  if(GetBaseToHitValue() < 6)
-    return ToHitValueDescription[GetBaseToHitValue()];
+  if(GetBaseToHitValue() < 10)
+    return ToHitValueDescription[Min<ushort>(GetBaseToHitValue(), 6)];
   else
-    return ToHitValueDescription[6];
+    return ToHitValueDescription[7];
 }
 
 const std::string& item::GetStrengthValueDescription() const

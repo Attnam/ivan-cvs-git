@@ -40,7 +40,7 @@ class inputfile
   void ReadWord(std::string&, bool = true);
   char ReadLetter(bool = true);
   long ReadNumber(const valuemap&, uchar = 0xFF);
-  long ReadNumber();
+  long ReadNumber() { return ReadNumber(valuemap()); }
   vector2d ReadVector2d(const valuemap&);
   rect ReadRect(const valuemap&);
   bool ReadBool();
@@ -49,8 +49,8 @@ class inputfile
   bool IsOpen() { return Buffer != 0; }
   bool Eof();
   void ClearFlags() { clearerr(Buffer); }
-  void SeekPosBeg(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
-  void SeekPosCur(long Offset) { fseek(Buffer, Offset, SEEK_CUR); }
+  void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
+  void SeekPosCurrent(long Offset) { fseek(Buffer, Offset, SEEK_CUR); }
   void SeekPosEnd(long Offset) { fseek(Buffer, Offset, SEEK_END); }
   long TellPos() { return ftell(Buffer); }
   int Peek();
@@ -202,6 +202,30 @@ inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, longlong Value)
+{
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, longlong& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, ulonglong Value)
+{
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, ulonglong& Value)
 {
   SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;

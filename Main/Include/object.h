@@ -44,7 +44,7 @@ class object : public entity, public id
   virtual void ChangeSecondaryMaterial(material*, ushort = 0);
   virtual void SetContainedMaterial(material*, ushort = 0);
   virtual void ChangeContainedMaterial(material*, ushort = 0);
-  virtual uchar GetMaterials() const { return 1; }
+  virtual ushort GetMaterials() const { return 1; }
   material* GetMaterial(ushort Index) const { return const_cast<object*>(this)->GetMaterialReference(Index); }
   const std::vector<bitmap*>& GetPicture() const { return Picture; }
   bitmap* GetPicture(ushort Index) const { return Picture[Index]; }

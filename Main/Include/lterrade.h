@@ -109,7 +109,7 @@ class OLTERRAIN
   link,
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
-  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame % 32) << 3)&~8), 0); } // gum solution, should come from script
+  virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 );
 
 class OLTERRAIN
@@ -173,7 +173,7 @@ class OLTERRAIN
   void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetMaterials() const { return 2; }
+  virtual ushort GetMaterials() const { return 2; }
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual material*& GetMaterialReference(ushort);

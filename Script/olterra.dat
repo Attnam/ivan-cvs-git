@@ -40,12 +40,14 @@ olterrain
 	CreateDivineConfigurations = false;
 	StorageVolume = 0;
 	HPModifier = 100;
+	IsSafeToCreateDoor = false;
 }
 
 wall
 {
 	IsAbstract = true;
 	CanBeDestroyed = true;
+	IsSafeToCreateDoor = true;
 
 	Config BRICK_FINE;
 	{
@@ -273,6 +275,7 @@ empty /* olterrain-> */
 	MainMaterialConfig == AIR;
 	NameSingular = "";
 	BitmapPos = 0, 480;
+	IsSafeToCreateDoor = true;
 }
 
 door /* olterrain-> */

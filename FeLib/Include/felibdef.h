@@ -34,7 +34,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define FLIP 2
 #define ROTATE 4
 
-#define DEFAULT_TRANSPARENT 0xF81F
+#define TRANSPARENT_COLOR 0xF81F
 
 #define RED MakeRGB16(255, 0, 0)
 #define GREEN MakeRGB16(0, 255, 0)
@@ -86,5 +86,18 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define ESCAPED 0xFFFE
 #define NOTHING_SELECTED 0xFFFD
 
+#define NO_LIMIT 0xFFFF
+
+/* This multiplier was obtained from Knuth, D.E., "The Art of
+   Computer Programming," Vol 2, Seminumerical Algorithms, Third
+   Edition, Addison-Wesley, 1998, p. 106 (line 26) & p. 108 */
+
+#ifdef GCC
+#define RAND_MULTIPLIER 6364136223846793005ULL
 #endif
 
+#ifdef VC
+#define RAND_MULTIPLIER 6364136223846793005
+#endif
+
+#endif

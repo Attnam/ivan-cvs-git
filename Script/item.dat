@@ -19,12 +19,9 @@ item
 	IsPolymorphSpawnable = true;
 	IsAutoInitializable = true;
 	Category = MISC;
-	SoundResistance = 0;
-	EnergyResistance = 0;
-	AcidResistance = 0;
 	FireResistance = 0;
 	PoisonResistance = 0;
-	BulimiaResistance = 0;
+	ElectricityResistance = 0;
 	StrengthModifier = 0;
 	/* Obligatory: FormModifier */
 	NPModifier = 10000;
@@ -78,6 +75,9 @@ item
 	AffectsCarryingCapacity = false;
 	HandleInPairs = false;
 	CanBeEnchanted = true;
+	/* Obligatory if wand: BeamColor */
+	/* Obligatory if wand: BeamEffect */
+	BeamStyle = PARTICLE_BEAM;
 }
 
 materialcontainer
@@ -208,7 +208,7 @@ meleeweapon
 
 	Config BROKEN|TWO_HANDED_SWORD;
 	{
-		Possibility = 5;
+		Possibility = 25;
 		BitmapPos = 32, 80;
 	}
 
@@ -222,7 +222,7 @@ meleeweapon
 		DefaultSecondaryVolume = 150;
 		StrengthModifier = 175;
 		BitmapPos = 0, 16;
-		FormModifier = 140;
+		FormModifier = 160;
 		Adjective = "two-handed";
 		NameSingular = "scimitar";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -234,7 +234,7 @@ meleeweapon
 
 	Config BROKEN|TWO_HANDED_SCIMITAR;
 	{
-		Possibility = 1;
+		Possibility = 5;
 		BitmapPos = 32, 96;
 	}
 
@@ -243,7 +243,7 @@ meleeweapon
 		DefaultSize = 190;
 		Possibility = 800;
 		InHandsPic = 160, 96;
-		WeaponCategory = SPEARS;
+		WeaponCategory = POLE_ARMS;
 		StrengthModifier = 70;
 		BitmapPos = 16, 144;
 		FormModifier = 85;
@@ -324,7 +324,7 @@ meleeweapon
 		BitmapPos = 0, 32;
 		Possibility = 400;
 		InHandsPic = 160, 192;
-		WeaponCategory = MACES;
+		WeaponCategory = BLUNT_WEAPONS;
 		NameSingular = "mace";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
@@ -344,7 +344,7 @@ meleeweapon
 		DefaultSize = 60;
 		Possibility = 400;
 		InHandsPic = 176, 16;
-		WeaponCategory = HAMMERS;
+		WeaponCategory = BLUNT_WEAPONS;
 		DefaultMainVolume = 250;
 		DefaultSecondaryVolume = 500;
 		StrengthModifier = 110;
@@ -369,8 +369,8 @@ meleeweapon
 	{
 		DefaultSize = 40;
 		Possibility = 50;
-		InHandsPic = 160, 64; /* fix */
-		WeaponCategory = AXES;
+		InHandsPic = 0, 0; /* fix */
+		WeaponCategory = SMALL_SWORDS;
 		DefaultMainVolume = 100;
 		DefaultSecondaryVolume = 50;
 		BitmapPos = 48, 144;
@@ -380,7 +380,7 @@ meleeweapon
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 100, 10; }
-		Roundness = 50;
+		Roundness = 20;
 	}
 
 	Config BROKEN|SICKLE;
@@ -394,11 +394,11 @@ meleeweapon
 		DefaultSize = 40;
 		Possibility = 300;
 		InHandsPic = 160, 32;
-		WeaponCategory = DAGGERS;
+		WeaponCategory = SMALL_SWORDS;
 		DefaultMainVolume = 25;
 		DefaultSecondaryVolume = 25;
 		BitmapPos = 48, 256;
-		FormModifier = 70;
+		FormModifier = 65;
 		StrengthModifier = 50;
 		NameSingular = "dagger";
 		MainMaterialConfig = { 2, IRON, MITHRIL; }
@@ -419,8 +419,8 @@ meleeweapon
 		Possibility = 200;
 		InHandsPic = 160, 16;
 		WeaponCategory = SMALL_SWORDS;
-		DefaultMainVolume = 90;
-		DefaultSecondaryVolume = 35;
+		DefaultMainVolume = 70;
+		DefaultSecondaryVolume = 30;
 		BitmapPos = 48, 240;
 		FormModifier = 80;
 		StrengthModifier = 90;
@@ -437,13 +437,113 @@ meleeweapon
 		Possibility = 20;
 		BitmapPos = 48, 272;
 	}
+
+	Config BASTARD_SWORD;
+	{
+		DefaultSize = 130;
+		Possibility = 75;
+		InHandsPic = 160, 16;
+		WeaponCategory = LARGE_SWORDS;
+		DefaultMainVolume = 225;
+		DefaultSecondaryVolume = 100;
+		StrengthModifier = 150;
+		BitmapPos = 64, 160;
+		FormModifier = 115;
+		NameSingular = "bastard sword";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 15;
+		IsTwoHanded = true;
+	}
+
+	Config BROKEN|BASTARD_SWORD;
+	{
+		Possibility = 8;
+		BitmapPos = 64, 192;
+	}
+
+	Config BATTLE_AXE;
+	{
+		DefaultSize = 110;
+		Possibility = 200;
+		InHandsPic = 160, 176;
+		WeaponCategory = AXES;
+		DefaultMainVolume = 250;
+		DefaultSecondaryVolume = 400;
+		StrengthModifier = 100;
+		BitmapPos = 64, 80;
+		FormModifier = 85;
+		NameSingular = "battle-axe";
+		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 4, 50, 75, 50, 10; }
+		Roundness = 30;
+		IsTwoHanded = true;
+	}
+
+	Config BROKEN|BATTLE_AXE;
+	{
+		Possibility = 20;
+		BitmapPos = 64, 96;
+	}
+
+	Config SCYTHE;
+	{
+		DefaultSize = 200;
+		Possibility = 50;
+		InHandsPic = 0, 0; /* fix */
+		WeaponCategory = POLE_ARMS;
+		DefaultMainVolume = 150;
+		DefaultSecondaryVolume = 1800;
+		BitmapPos = 64, 112;
+		FormModifier = 60;
+		StrengthModifier = 40;
+		NameSingular = "scythe";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 10;
+		IsTwoHanded = true;
+	}
+
+	Config BROKEN|SCYTHE;
+	{
+		Possibility = 5;
+		BitmapPos = 64, 128;
+	}
+
+	/*Config MORNING_STAR;
+	{
+		StrengthModifier = 150; 
+		FormModifier = 65; 
+		DefaultSize = 55; 
+		DefaultMainVolume = 450;
+		DefaultSecondaryVolume = 300;
+		BitmapPos = 48, 384;
+		Possibility = 300;
+		InHandsPic = 160, 192;
+		WeaponCategory = SPIKED_WEAPONS;
+		NameSingular = "morning star";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 20;
+		IsTwoHanded = true;
+	}
+
+	Config BROKEN|MORNING_STAR;
+	{
+		Possibility = 30;
+		BitmapPos = 64, 384;
+	}*/
 }
 
 banana /* materialcontainer-> */
 {
 	Possibility = 150;
 	InHandsPic = 160, 112;
-	WeaponCategory = CLUBS;
+	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 40;
 	DefaultSecondaryVolume = 150;
 	StrengthModifier = 75;
@@ -489,6 +589,7 @@ holybanana /* materialcontainer->banana-> */
 		Possibility = 0;
 		BitmapPos = 32, 272;
 		Price = 500;
+		Score = 250;
 	}
 }
 
@@ -519,6 +620,7 @@ justifier /* meleeweapon-> */
 	CanBeBroken = false;
 	DefaultEnchantment = 16;
 	CanBeEnchanted = false;
+	GearStates = HASTE|INFRA_VISION|ESP|POLYMORPH_CONTROL|TELEPORT_CONTROL;
 }
 
 neercseulb /* meleeweapon-> */
@@ -531,7 +633,7 @@ neercseulb /* meleeweapon-> */
 	CanBeWished = false;
 	BitmapPos = 0, 32;
 	InHandsPic = 160, 192;
-	WeaponCategory = MACES;
+	WeaponCategory = BLUNT_WEAPONS;
 	IsMaterialChangeable = false;
 	DefaultMainVolume = 800;
 	DefaultSecondaryVolume = 500;
@@ -646,12 +748,12 @@ bodyarmor /* armor-> */
 		DefaultSize = 80;
 		DefaultMainVolume = 5000; 
 		BitmapPos = 16, 128;
-		Possibility = 20;
+		Possibility = 10;
 		NameSingular = "armor";
 		PostFix = "of great health";
 		MainMaterialConfig = { 3, LEATHER, HARDENED_LEATHER, TROLL_HIDE; }
 		MaterialConfigChances = { 3, 150, 75, 50; }
-		InElasticityPenaltyModifier = 30;
+		InElasticityPenaltyModifier = 50;
 		AffectsEndurance = true;
 		DefaultEnchantment = 1;
 		Price = 250;
@@ -660,11 +762,12 @@ bodyarmor /* armor-> */
 
 	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
 	{
-		Possibility = 3;
+		Possibility = 1;
 		StrengthModifier = 75;
 		BitmapPos = 0, 352;
 		FormModifier = 20;
 		Price = 50;
+		AffectsEndurance = false;
 	}
 }
 
@@ -695,7 +798,7 @@ potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
 	Possibility = 750;
-	WeaponCategory = CLUBS;
+	WeaponCategory = BLUNT_WEAPONS;
 	InHandsPic = 160, 128;
 	Category = POTION;
 	DefaultMainVolume = 60;
@@ -725,6 +828,7 @@ bananapeels
 	NameSingular = "banana peel";
 	MainMaterialConfig == BANANA_PEEL;
 	Roundness = 10;
+	WeaponCategory = WHIPS;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -819,7 +923,7 @@ bone
 {
 	DefaultSize = 50;
 	Possibility = 250;
-	WeaponCategory = CLUBS;
+	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 500;
 	StrengthModifier = 80;
 	BitmapPos = 16, 240;
@@ -835,7 +939,7 @@ loaf
 {
 	DefaultSize = 40;
 	Possibility = 400;
-	WeaponCategory = CLUBS;
+	WeaponCategory = BLUNT_WEAPONS;
 	InHandsPic = 160, 128;
 	Category = FOOD;
 	DefaultMainVolume = 500;
@@ -888,18 +992,155 @@ wand
 	IsAbstract = true;
 	Roundness = 5;
 	CanBePiled = false;
-}
 
-wandofpolymorph /* wand-> */
-{
-	Possibility = 25;
-	Price = 500;
-	IsPolymorphSpawnable = false;
-	PostFix = "of polymorph";
-	MainMaterialConfig == UNICORN_HORN;
-	BeamRange = 5;
-	MinCharges = 2;
-	MaxCharges = 5;
+	Config WAND_OF_POLYMORPH;
+	{
+		Possibility = 25;
+		Price = 500;
+		IsPolymorphSpawnable = false;
+		PostFix = "of polymorph";
+		MainMaterialConfig == UNICORN_HORN;
+		BeamRange = 5;
+		MinCharges = 2;
+		MaxCharges = 5;
+		BeamColor = RANDOM_COLOR;
+		BeamEffect = BEAM_POLYMORPH;
+	}
+
+	Config WAND_OF_STRIKING;
+	{
+		Possibility = 50;
+		Price = 500;
+		PostFix = "of striking";
+		MainMaterialConfig == IRON;
+		BeamRange = 15;
+		MinCharges = 2;
+		MaxCharges = 5;
+		BeamColor = WHITE;
+		BeamEffect = BEAM_STRIKE;
+	}
+
+	Config WAND_OF_FIRE_BALLS;
+	{
+		Possibility = 50;
+		Price = 500;
+		PostFix = "of fireballs";
+		MainMaterialConfig == BRONZE;
+		BeamRange = 50;
+		MinCharges = 1;
+		MaxCharges = 4;
+		BeamColor = YELLOW;
+		BeamEffect = BEAM_FIRE_BALL;
+	}
+
+	Config WAND_OF_TELEPORTATION;
+	{
+		Possibility = 75;
+		Price = 500;
+		PostFix = "of teleportation";
+		MainMaterialConfig == SILVER;
+		Alias == "wand of teleport";
+		BeamRange = 5;
+		MinCharges = 3;
+		MaxCharges = 6;
+		BeamColor = GREEN;
+		BeamEffect = BEAM_TELEPORT;
+	}
+
+	Config WAND_OF_HASTE;
+	{
+		Possibility = 50;
+		Price = 500;
+		PostFix = "of haste";
+		MainMaterialConfig == TIN;
+		BeamRange = 5;
+		MinCharges = 3;
+		MaxCharges = 6;
+		BeamColor = RED;
+		BeamEffect = BEAM_HASTE;
+	}
+
+	Config WAND_OF_SLOW;
+	{
+		Possibility = 50;
+		Price = 500;
+		PostFix = "of slow";
+		MainMaterialConfig == STONE;
+		BeamRange = 5;
+		MinCharges = 3;
+		MaxCharges = 6;
+		BeamColor = BLUE;
+		BeamEffect = BEAM_SLOW;
+	}
+
+	Config WAND_OF_RESURRECTION;
+	{
+		Possibility = 25;
+		Price = 500;
+		PostFix = "of resurrection";
+		MainMaterialConfig == BONE;
+		BeamRange = 5;
+		MinCharges = 1;
+		MaxCharges = 3;
+		BeamColor = BLACK;
+		BeamEffect = BEAM_RESURRECT;
+	}
+
+	Config WAND_OF_DOOR_CREATION;
+	{
+		Possibility = 50;
+		Price = 200;
+		PostFix = "of door creation";
+		MainMaterialConfig == WOOD;
+		/* BeamRange has no effect */
+		MinCharges = 3;
+		MaxCharges = 6;
+		BeamColor = LIGHT_GRAY;
+		BeamEffect = BEAM_DOOR_CREATION;
+		BeamStyle = SHIELD_BEAM;
+	}
+
+	Config WAND_OF_INVISIBILITY;
+	{
+		Possibility = 50;
+		Price = 250;
+		PostFix = "of invisibility";
+		MainMaterialConfig == GLASS;
+		BeamRange = 10;
+		MinCharges = 3;
+		MaxCharges = 6;
+		BeamColor = TRANSPARENT_COLOR; /* invisible */
+		BeamEffect = BEAM_INVISIBILITY;
+	}
+
+	Config WAND_OF_CLONING;
+	{
+		Possibility = 25;
+		Price = 1000;
+		IsPolymorphSpawnable = false;
+		PostFix = "of cloning";
+		MainMaterialConfig == MARBLE;
+		BeamRange = 5;
+		MinCharges = 1;
+		MaxCharges = 3;
+		CanBeCloned = false;
+		BeamColor = PINK;
+		BeamEffect = BEAM_CLONE;
+	}
+
+	Config WAND_OF_LIGHTNING;
+	{
+		Possibility = 50;
+		Price = 500;
+		PostFix = "of lightning";
+		MainMaterialConfig == GOLD;
+		BeamRange = 15;
+		MinCharges = 2;
+		MaxCharges = 5;
+		BeamColor = WHITE;
+		BeamEffect = BEAM_LIGHTNING;
+		BeamStyle = LIGHTNING_BEAM;
+	}
 }
 
 scrollofchangematerial /* scroll-> */
@@ -931,17 +1172,6 @@ avatarofvalpurus
 	IsPolymorphable = false;
 	Roundness = 80;
 	CanBeCloned = false;
-}
-
-wandofstriking /* wand-> */
-{
-	Possibility = 50;
-	Price = 500;
-	PostFix = "of striking";
-	MainMaterialConfig == IRON;
-	BeamRange = 15;
-	MinCharges = 2;
-	MaxCharges = 5;
 }
 
 kiwi
@@ -1094,6 +1324,7 @@ oillamp
 	CanBePiled = false; /* otherwise you could summon a genie only from the first piled item */
 	Price = 100;
 	Alias == "lamp";
+	WeaponCategory = BLUNT_WEAPONS;
 }
 
 stone
@@ -1113,34 +1344,11 @@ stone
 	Roundness = 90;
 }
 
-wandoffireballs /* wand-> */
-{
-	Possibility = 50;
-	Price = 500;
-	PostFix = "of fireballs";
-	MainMaterialConfig == BRONZE;
-	BeamRange = 50;
-	MinCharges = 1;
-	MaxCharges = 4;
-}
-
 scrolloftaming /* scroll-> */
 {
 	Possibility = 25;
 	Price = 500;
 	PostFix = "of taming";
-}
-
-wandofteleportation /* wand-> */
-{
-	Possibility = 75;
-	Price = 500;
-	PostFix = "of teleportation";
-	MainMaterialConfig == SILVER;
-	Alias == "wand of teleport";
-	BeamRange = 5;
-	MinCharges = 3;
-	MaxCharges = 6;
 }
 
 mine /*materialcontainer-> */
@@ -1158,28 +1366,6 @@ mine /*materialcontainer-> */
 	ContainedMaterialConfig == GUN_POWDER;
 	Roundness = 100;
 	IsTwoHanded = true;
-}
-
-wandofhaste /* wand-> */
-{
-	Possibility = 50;
-	Price = 500;
-	PostFix = "of haste";
-	MainMaterialConfig == TIN;
-	BeamRange = 5;
-	MinCharges = 3;
-	MaxCharges = 6;
-}
-
-wandofslow /* wand-> */
-{
-	Possibility = 50;
-	Price = 500;
-	PostFix = "of slow";
-	MainMaterialConfig == STONE;
-	BeamRange = 5;
-	MinCharges = 3;
-	MaxCharges = 6;
 }
 
 key
@@ -1384,7 +1570,7 @@ ring
 	Config RING_OF_FIRE_RESISTANCE;
 	{
 		Possibility = 50;
-		FireResistance = 10;
+		FireResistance = 15;
 		PostFix = "of fire resistance";
 		MainMaterialConfig == DIAMOND;
 		Price = 250;
@@ -1439,7 +1625,7 @@ ring
 	Config RING_OF_POISON_RESISTANCE;
 	{
 		Possibility = 40;
-		PoisonResistance = 1;
+		PoisonResistance = 2;
 		PostFix = "of poison resistance";
 		MainMaterialConfig == TIN;
 		Price = 250;
@@ -1453,6 +1639,15 @@ ring
 		GearStates = INVISIBLE;
 		Price = 2500;
 		CanBeWished = false;
+	}
+
+	Config RING_OF_ELECTRICITY_RESISTANCE;
+	{
+		Possibility = 30;
+		ElectricityResistance = 20;
+		PostFix = "of electricity resistance";
+		MainMaterialConfig == GLASS;
+		Price = 250;
 	}
 }
 
@@ -1534,6 +1729,7 @@ arm /* bodypart-> */
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 15;
+	WeaponCategory = BLUNT_WEAPONS;
 }
 
 rightarm /* bodypart->arm-> */
@@ -1560,6 +1756,7 @@ leg /* bodypart-> */
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 20;
+	WeaponCategory = BLUNT_WEAPONS;
 }
 
 rightleg /* bodypart->leg-> */
@@ -1611,28 +1808,6 @@ corpse
 	IsTwoHanded = true;
 	CanBeWished = false; /* temporary */
 	IsMaterialChangeable = false;
-}
-
-wandoflocking /* wand-> */
-{
-	Possibility = 50;
-	Price = 100;
-	PostFix = "of locking";
-	MainMaterialConfig == COPPER;
-	BeamRange = 10;
-	MinCharges = 3;
-	MaxCharges = 6;
-}
-
-wandofresurrection /* wand-> */
-{
-	Possibility = 25;
-	Price = 500;
-	PostFix = "of resurrection";
-	MainMaterialConfig == BONE;
-	BeamRange = 5;
-	MinCharges = 1;
-	MaxCharges = 3;
 }
 
 whistle
@@ -1735,16 +1910,6 @@ itemcontainer
 	}
 }
 
-wandofdoorcreation /* wand-> */
-{
-	Possibility = 50;
-	Price = 200;
-	PostFix = "of door creation";
-	MainMaterialConfig == WOOD;
-	MinCharges = 3;
-	MaxCharges = 6;
-}
-
 beartrap
 {
 	MainMaterialConfig == IRON;
@@ -1765,17 +1930,6 @@ beartrap
 		Possibility = 10;
 		BitmapPos = 48, 48;
 	}
-}
-
-wandofinvisibility /* wand-> */
-{
-	Possibility = 50;
-	Price = 250;
-	PostFix = "of invisibility";
-	MainMaterialConfig == GLASS;
-	BeamRange = 10;
-	MinCharges = 3;
-	MaxCharges = 6;
 }
 
 helmet
@@ -1839,6 +1993,8 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 1;
+		Price = 20;
+		AffectsPerception = false;
 	}
 
 	Config HELM_OF_UNDERSTANDING;
@@ -1862,6 +2018,8 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 1;
+		Price = 20;
+		AffectsWisdom = false;
 	}
 
 	Config HELM_OF_BRILLIANCE;
@@ -1885,6 +2043,8 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 1;
+		Price = 20;
+		AffectsIntelligence = false;
 	}
 
 	Config HELM_OF_ATTRACTIVITY;
@@ -1908,6 +2068,8 @@ helmet
 	{
 		BitmapPos = 64, 32;
 		Possibility = 1;
+		Price = 20;
+		AffectsCharisma = false;
 	}
 }
 
@@ -1963,8 +2125,8 @@ mjolak /* meleeweapon-> */
 	DefaultSecondaryVolume = 2000;
 	StrengthModifier = 200;
 	BitmapPos = 0, 80;
-	FormModifier = 225;
-	MainMaterialConfig == STEEL;
+	FormModifier = 200;
+	MainMaterialConfig == MITHRIL;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 20;
 	IsTwoHanded = true;
@@ -1981,7 +2143,7 @@ mjolak /* meleeweapon-> */
 	{
 		Possibility = 0;
 		BitmapPos = 32, 144;
-		Price = 0;
+		Price = 150;
 	}
 }
 
@@ -1990,12 +2152,13 @@ vermis /* meleeweapon-> */
 	DefaultSize = 220;
 	Possibility = 5;
 	InHandsPic = 160, 96;
-	WeaponCategory = SPEARS;
+	WeaponCategory = POLE_ARMS;
 	StrengthModifier = 100;
 	BitmapPos = 16, 144;
 	FormModifier = 250;
-	DefaultMainVolume = 100;
-	DefaultSecondaryVolume = 1800;
+	DefaultMainVolume = 60;
+	DefaultSecondaryVolume = 1600;
+	Adjective = "runed";
 	NameSingular = "spear";
 	PostFix = "named Vermis";
 	MainMaterialConfig == DIAMOND;
@@ -2012,7 +2175,7 @@ vermis /* meleeweapon-> */
 	{
 		Possibility = 0;
 		BitmapPos = 32, 224;
-		Price = 0;
+		Price = 100;
 	}
 }
 
@@ -2026,10 +2189,10 @@ turox /* meleeweapon-> */
 	InHandsPic = 160, 192;
 	DefaultMainVolume = 800;
 	DefaultSecondaryVolume = 600;
-	WeaponCategory = MACES;
+	WeaponCategory = BLUNT_WEAPONS;
 	NameSingular = "mace";
 	PostFix = "named Turox";
-	MainMaterialConfig == STEEL;
+	MainMaterialConfig == MITHRIL;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 30; /* we count the handle, too */
 	IsTwoHanded = true;
@@ -2043,7 +2206,7 @@ turox /* meleeweapon-> */
 	{
 		Possibility = 0;
 		BitmapPos = 32, 112;
-		Price = 0;
+		Price = 50;
 	}
 }
 
@@ -2062,19 +2225,6 @@ whipofthievery /* meleeweapon->whip-> */
 	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
 	CanBeCloned = false;
 	Price = 1000;
-}
-
-wandofcloning /* wand-> */
-{
-	Possibility = 25;
-	Price = 1000;
-	IsPolymorphSpawnable = false;
-	PostFix = "of cloning";
-	MainMaterialConfig == MARBLE;
-	BeamRange = 5;
-	MinCharges = 1;
-	MaxCharges = 3;
-	CanBeCloned = false;
 }
 
 scrollofenchantweapon /* scroll-> */
@@ -2099,7 +2249,6 @@ skull
 	Roundness = 65;
 	DefaultSize = 20;
 	Possibility = 30;
-	WeaponCategory = UNCATEGORIZED;
 	DefaultMainVolume = 600;
 	BitmapPos = 48, 112;
 	Category = MISC;
@@ -2113,7 +2262,7 @@ gorovitshammer
 	DefaultSize = 90;
 	Possibility = 0;
 	InHandsPic = 176, 16;
-	WeaponCategory = HAMMERS;
+	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 300;
 	DefaultSecondaryVolume = 600;
 	StrengthModifier = 125;
@@ -2138,7 +2287,7 @@ gorovitssickle
 	DefaultSize = 60;
 	Possibility = 0;
 	InHandsPic = 160, 64; /* fix */
-	WeaponCategory = AXES;
+	WeaponCategory = SMALL_SWORDS;
 	DefaultMainVolume = 125;
 	DefaultSecondaryVolume = 50;
 	BitmapPos = 48, 144;
@@ -2183,7 +2332,7 @@ horn
 	Roundness = 40;
 	DefaultSize = 30;
 	Possibility = 10;
-	WeaponCategory = CLUBS;
+	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 400;
 	BitmapPos = 48, 304;
 	Category = TOOL;
@@ -2202,5 +2351,66 @@ horn
 	{
 		MainMaterialConfig == STONE;
 		PostFix = "of fear";
+	}
+}
+
+thunderhammer /* meleeweapon-> */
+{
+	DefaultSize = 50;
+	Possibility = 5;
+	InHandsPic = 176, 16;
+	WeaponCategory = BLUNT_WEAPONS;
+	DefaultMainVolume = 200;
+	DefaultSecondaryVolume = 400;
+	StrengthModifier = 150;
+	BitmapPos = 48, 160;
+	FormModifier = 110;
+	NameSingular = "thunder hammer";
+	MainMaterialConfig == GOLD;
+	SecondaryMaterialConfig == WOOD;
+	Roundness = 20;
+	IsTwoHanded = true;
+	CanBeUsedBySmith = true;
+	Price = 500;
+	BaseEmitation = rgb24(130, 130, 130);
+
+	Config BROKEN;
+	{
+		Possibility = 0;
+		BitmapPos = 48, 192;
+		Price = 100;
+	}
+}
+
+saalthul
+{
+	DefaultSize = 70;
+	Possibility = 3;
+	InHandsPic = 160, 16;
+	WeaponCategory = SMALL_SWORDS;
+	DefaultMainVolume = 60;
+	DefaultSecondaryVolume = 20;
+	BitmapPos = 48, 240;
+	FormModifier = 225;
+	StrengthModifier = 135;
+	Adjective = "short";
+	NameSingular = "sword";
+	PostFix = "named Saal'thul";
+	MainMaterialConfig == MITHRIL;
+	SecondaryMaterialConfig == MITHRIL;
+	Roundness = 10;
+	Score = 500;
+	Price = 500;
+	GearStates = INVISIBLE;
+	ArticleMode = DEFINITE_ARTICLE;
+	CanBeCloned = false;
+	Alias == "Saal'thul";
+
+	Config BROKEN;
+	{
+		Possibility = 0;
+		BitmapPos = 48, 272;
+		Price = 100;
+		GearStates = 0;
 	}
 }

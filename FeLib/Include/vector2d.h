@@ -15,6 +15,7 @@ struct vector2d
   vector2d& operator +=  (vector2d H)	      { X += H.X; Y += H.Y; return *this; }
   vector2d  operator -   (vector2d H) const   { return vector2d(X - H.X, Y - H.Y); }
   vector2d& operator -=  (vector2d H)	      { X -= H.X; Y -= H.Y; return *this; }
+  vector2d  operator -   () const	      { return vector2d(-X, -Y); }
   vector2d  operator *   (short H) const      { return vector2d(X * H, Y * H); }
   vector2d& operator *=  (short H)	      { X *= H; Y *= H; return *this; }
   vector2d  operator /   (short H) const      { return vector2d(X / H, Y / H); }

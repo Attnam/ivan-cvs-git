@@ -117,11 +117,12 @@ void worldmap::Generate()
 
       vector2d AttnamPos, ElpuriCavePos, NewAttnamPos, TunnelEntry, TunnelExit;
       bool Correct = false;
+      continent* PetrusLikes;
 
       for(ushort c1 = 0; c1 < 25; ++c1)
 	{
 	  game::BusyAnimation();
-	  continent* PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
+	  PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
 	  AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::StaticType());
 	  ElpuriCavePos = PetrusLikes->GetRandomMember(snow::StaticType());
 
@@ -137,7 +138,7 @@ void worldmap::Generate()
 
 		      if(IsValidPos(Pos) && AltitudeBuffer[Pos.X][Pos.Y] <= 0)
 			{
-			  ushort Distance = 3 + RAND() % 4;
+			  ushort Distance = 3 + (RAND() & 3);
 			  bool Error = false;
 			  TunnelEntry = Pos;
 
@@ -199,7 +200,7 @@ void worldmap::Generate()
 			  GetWSquare(TunnelEntry)->ChangeGWTerrain(new jungle);
 			  ushort NewAttnamIndex;
 
-			  for(NewAttnamIndex = RAND() % 8; NewAttnamIndex == 7 - d1; NewAttnamIndex = RAND() % 8);
+			  for(NewAttnamIndex = RAND() & 7; NewAttnamIndex == 7 - d1; NewAttnamIndex = RAND() & 7);
 
 			  NewAttnamPos = TunnelEntry + game::GetMoveVector(NewAttnamIndex);
 			  static ushort DiagonalDir[4] = { 0, 2, 5, 7 };
@@ -243,6 +244,15 @@ void worldmap::Generate()
 
       if(!Correct)
 	continue;
+
+      vector2d MondedrPos;
+
+      do
+	MondedrPos = PetrusLikes->GetMember(RAND() % PetrusLikes->GetSize());
+      while(MondedrPos == AttnamPos || MondedrPos == ElpuriCavePos || MondedrPos == TunnelExit);
+
+      GetWSquare(MondedrPos)->ChangeOWTerrain(new mondedr);
+      SetEntryPos(MONDEDR, MondedrPos);
 
       GetWSquare(AttnamPos)->ChangeOWTerrain(new attnam);
       SetEntryPos(ATTNAM, AttnamPos);

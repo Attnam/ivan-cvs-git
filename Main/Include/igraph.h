@@ -41,7 +41,7 @@ struct graphicid
   vector2d SparklePos NO_ALIGNMENT;
   uchar SparkleTime NO_ALIGNMENT;
   ushort OutlineColor NO_ALIGNMENT;
-  ulong FlySeed NO_ALIGNMENT;
+  ulong Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
 };
 
@@ -86,7 +86,7 @@ class igraph
   static bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
   static bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetMenuGraphic() { return Graphic[GR_MENU]; }
-  static bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_TILE]; }
+  static bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_COLOR_TILE]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
   static tile GetTile(graphicid);
@@ -107,4 +107,3 @@ class igraph
 };
 
 #endif
-

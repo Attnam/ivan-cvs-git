@@ -12,6 +12,7 @@
 #include "square.h"
 #include "level.h"
 #include "game.h"
+#include "dungeon.h"
 
 class bitmap;
 class character;
@@ -80,8 +81,8 @@ class lsquare : public square
   glterrain* GetGLTerrain() const { return GLTerrain; }
   olterrain* GetOLTerrain() const { return OLTerrain; }
   void ChangeLTerrain(glterrain*, olterrain*);
-  level* GetLevelUnder() const { return (level*)AreaUnder; }
-  void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
+  level* GetLevel() const { return static_cast<level*>(AreaUnder); }
+  void SetLevelUnder(level* What) { AreaUnder = What; }
   void ChangeGLTerrain(glterrain*);
   void ChangeOLTerrain(olterrain*);
   void SetLTerrain(glterrain*, olterrain*);
@@ -93,24 +94,20 @@ class lsquare : public square
   void MoveCharacter(lsquare*);
   ulong GetRawLuminance() const;
   void StepOn(character*, square*);
-  uchar GetRoom() const { return Room; }
-  void SetRoom(uchar What) { Room = What; }
+  uchar GetRoomIndex() const { return RoomIndex; }
+  void SetRoomIndex(uchar What) { RoomIndex = What; }
   void SwapCharacter(lsquare*);
   void ReceiveVomit(character*, ushort);
-  room* GetRoomClass() const;
+  room* GetRoom() const { return RoomIndex ? GetLevel()->GetRoom(RoomIndex) : 0; }
   void SetTemporaryEmitation(ulong);
   ulong GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
-  void DrawParticles(ushort, uchar);
-  void PolymorphEverything(character*);
-  void StrikeEverything(character*, const std::string&, ushort, uchar);
+  void DrawParticles(ulong);
+  vector2d DrawLightning(vector2d, ulong, uchar);
   fluid* GetFluid() const { return Fluid; }
   void SetFluid(fluid* What) { Fluid = What; }
   void RemoveFluid();
-  void TeleportEverything(character*);
   bool DipInto(item*, character*);
-  bool LockEverything(character*);
-  bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   void SetLastSeen(ulong);
   void CalculateLuminance();
@@ -121,12 +118,30 @@ class lsquare : public square
   lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
   bool IsDangerousForAIToStepOn(const character*) const;
-  bool CloneEverything(character*);
   stack* GetSideStackOfAdjacentSquare(ushort) const;
   void KickAnyoneStandingHereAway();
   void SpillFluid(character*, material*, ushort);
   bool IsDark() const;
+  void AddItem(item*);
+  static bool (lsquare::*GetBeamEffect(ushort Index))(character*, const std::string&, uchar) { return BeamEffect[Index]; }
+  bool Polymorph(character*, const std::string&, uchar);
+  bool Strike(character*, const std::string&, uchar);
+  bool FireBall(character*, const std::string&, uchar);
+  bool Teleport(character*, const std::string&, uchar);
+  bool Haste(character*, const std::string&, uchar);
+  bool Slow(character*, const std::string&, uchar);
+  bool Resurrect(character*, const std::string&, uchar);
+  bool Invisibility(character*, const std::string&, uchar);
+  bool Clone(character*, const std::string&, uchar);
+  bool Lightning(character*, const std::string&, uchar);
+  bool DoorCreation(character*, const std::string&, uchar);
+  stack* GetFirstSideStackUnderAttack(uchar) const;
+  stack* GetSecondSideStackUnderAttack(uchar) const;
+  uchar GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
+  uchar GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
+  dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }
  protected:
+  static bool (lsquare::*BeamEffect[BEAM_EFFECTS])(character*, const std::string&, uchar);
   glterrain* GLTerrain;
   olterrain* OLTerrain;
   void CalculateEmitation();
@@ -136,7 +151,7 @@ class lsquare : public square
   ulong Emitation;
   std::string Engraved;
   uchar DivineMaster;
-  uchar Room;
+  uchar RoomIndex;
   ulong TemporaryEmitation;
   fluid* Fluid;
   bitmap* Memorized;
@@ -144,3 +159,4 @@ class lsquare : public square
 };
 
 #endif
+

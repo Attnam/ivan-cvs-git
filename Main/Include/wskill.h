@@ -8,6 +8,7 @@
 #include <string>
 
 #include "typedef.h"
+#include "ivandef.h"
 
 class outputfile;
 class inputfile;
@@ -50,7 +51,7 @@ class cweaponskill : public weaponskill
   static ushort LevelMap[];
   static ulong UnuseTickMap[];
   static ushort UnusePenaltyMap[];
-  static std::string SkillName[];
+  static std::string SkillName[WEAPON_SKILL_CATEGORIES];
   uchar Index;
 };
 

@@ -91,7 +91,7 @@ void gearslot::AddFriendItem(item* Item) const
   Item->RemoveFromSlot();
 
   if(!game::IsInWilderness())
-    GetBodyPart()->GetLSquareUnder()->GetStack()->AddItem(Item);
+    GetBodyPart()->GetLSquareUnder()->AddItem(Item);
   else
     GetBodyPart()->GetMaster()->GetStack()->AddItem(Item);
 }

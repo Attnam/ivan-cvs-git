@@ -178,12 +178,12 @@ void material::SetVolume(ulong What)
     MotherEntity->SignalVolumeAndWeightChange();
 }
 
-void material::SetConfig(ushort NewConfig)
+/*void material::SetConfig(ushort NewConfig)
 {
   Config = NewConfig;
   InstallDataBase();
   CalculateWeight();
-}
+}*/
 
 void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
 {

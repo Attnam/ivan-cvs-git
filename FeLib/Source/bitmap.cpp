@@ -9,6 +9,9 @@
 #include "femath.h"
 #include "blit.h"
 
+bitmap* bitmap::CurrentSprite;
+std::vector<vector2d> bitmap::CurrentPixelVector;
+
 bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
 {
   SetAlphaMap(0);
@@ -20,12 +23,12 @@ bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
   uchar Palette[768];
   File.SeekPosEnd(-768);
   File.Read(reinterpret_cast<char*>(Palette), 768);
-  File.SeekPosBeg(8);
+  File.SeekPosBegin(8);
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
   YSize  =  File.Get();
   YSize += (File.Get() << 8) + 1;
-  File.SeekPosBeg(128);
+  File.SeekPosBegin(128);
   SetImage(Alloc2D<ushort>(YSize, XSize));
   ushort* Buffer = GetImage()[0];
 
@@ -175,6 +178,9 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
       GetMotherBitmap()->Fill(GetXPos() + X, GetYPos() + Y, Width, Height, Color);
       return;
     }
+
+  if(X > XSize || Y > YSize)
+    return;
 
   if(X + Width > XSize)
     Width = XSize - X;
@@ -729,12 +735,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *reinterpret_cast<ushort*>(Buffer + (XSize << 1));
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += XSize << 1;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
+	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
@@ -750,12 +756,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *reinterpret_cast<ushort*>(Buffer + 2);
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !x) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == TRANSPARENT_COLOR || !x) && NextColor != TRANSPARENT_COLOR)
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  Buffer += 2;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || x == XSize - 2))
+	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || x == XSize - 2))
 	    *reinterpret_cast<ushort*>(Buffer) = Color;
 
 	  LastColor = NextColor;
@@ -768,7 +774,7 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
   if(!IsIndependent)
     ABORT("Subbitmap outline bitmap creation request detected!");
 
-  Bitmap->Fill(DEFAULT_TRANSPARENT);
+  Bitmap->Fill(TRANSPARENT_COLOR);
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -780,13 +786,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	{
 	  ushort NextColor = *reinterpret_cast<ushort*>(SrcBuffer + (XSize << 1));
 
-	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
+	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += XSize << 1;
 	  DestBuffer += Bitmap->XSize << 1;
 
-	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
+	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastColor = NextColor;
@@ -805,13 +811,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	  ushort NextSrcColor = *reinterpret_cast<ushort*>(SrcBuffer + 2);
 	  ushort NextDestColor = *reinterpret_cast<ushort*>(DestBuffer + 2);
 
-	  if((LastSrcColor == DEFAULT_TRANSPARENT || !x) && (NextSrcColor != DEFAULT_TRANSPARENT || NextDestColor != DEFAULT_TRANSPARENT))
+	  if((LastSrcColor == TRANSPARENT_COLOR || !x) && (NextSrcColor != TRANSPARENT_COLOR || NextDestColor != TRANSPARENT_COLOR))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  SrcBuffer += 2;
 	  DestBuffer += 2;
 
-	  if((LastSrcColor != DEFAULT_TRANSPARENT || LastDestColor != DEFAULT_TRANSPARENT) && (NextSrcColor == DEFAULT_TRANSPARENT || x == XSize - 2))
+	  if((LastSrcColor != TRANSPARENT_COLOR || LastDestColor != TRANSPARENT_COLOR) && (NextSrcColor == TRANSPARENT_COLOR || x == XSize - 2))
 	    *reinterpret_cast<ushort*>(DestBuffer) = Color;
 
 	  LastSrcColor = NextSrcColor;
@@ -938,7 +944,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
 
-	      if(Pixel != DEFAULT_TRANSPARENT)
+	      if(Pixel != TRANSPARENT_COLOR)
 		for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
 		  for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
 		    Bitmap->GetImage()[y2][x2] = Pixel;
@@ -959,7 +965,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 	    {
 	      ushort Pixel = GetImage()[y1][x1];
 
-	      if(Pixel != DEFAULT_TRANSPARENT)
+	      if(Pixel != TRANSPARENT_COLOR)
 		Bitmap->GetImage()[ty][tx] = Pixel;
 	    }
 	}
@@ -1088,11 +1094,11 @@ void bitmap::PowerBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
     }
 }
 
-void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
+void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 {
   ushort* FlameLowestPoint = new ushort[XSize];
   ushort x,y, Top, MaxDist, RelPos;
-  long NewSeed = RAND(); 
+  ulonglong OldSeed = femath::GetSeed();
   femath::SetSeed((Frame & 15) + 1); /* We want flame animation loops to be same in every session */
 
   for(x = 0; x < XSize; ++x)
@@ -1129,7 +1135,7 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
 	}
     }
 
-  femath::SetSeed(NewSeed);
+  femath::SetSeed(OldSeed);
 }
 
 void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
@@ -1153,7 +1159,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 
 void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
 {
-  long NewSeed = RAND();
+  ulonglong OldSeed = femath::GetSeed();
   femath::SetSeed(Seed);
 
   for(uchar c = 0; c < FlyAmount; ++c)
@@ -1171,18 +1177,112 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
       SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(0, 0, 0));
     }
 
-  femath::SetSeed(NewSeed);
+  femath::SetSeed(OldSeed);
 }
 
-void bitmap::CreateLightning()
+void bitmap::CreateLightning(ulong Seed, ushort Color)
 {
-  vector2d Pos[4];
-  Pos[0] = vector2d(7 + RAND() % 2 ,1 + RAND() % 2);
-  Pos[1] = vector2d(3 + RAND() % 2,7 + RAND() % 2);
-  Pos[2] = vector2d(12 + RAND() % 2,6 + RAND() % 2);
-  Pos[3] = vector2d(7 + RAND() % 2,14 + RAND() % 2);
-  for(ushort c = 0; c < 3; ++c)
+  ulonglong OldSeed = femath::GetSeed();
+  femath::SetSeed(Seed);
+  vector2d StartPos;
+  vector2d Direction(0, 0);
+
+  do
     {
-      DrawLine(Pos[c].X, Pos[c].Y, Pos[c + 1].X, Pos[c + 1].Y, MakeRGB16(192 + RAND() % 64, 192 + RAND() % 64, 192 + RAND() % 64), false);
+      do
+	{
+	  if(RAND() & 1)
+	    {
+	      if(RAND() & 1)
+		{
+		  StartPos.X = 0;
+		  Direction.X = 1;
+		}
+	      else
+		{
+		  StartPos.X = XSize - 1;
+		  Direction.X = -1;
+		}
+
+	      StartPos.Y = RAND() % YSize;
+	    }
+	  else
+	    {
+	      if(RAND() & 1)
+		{
+		  StartPos.Y = 0;
+		  Direction.Y = 1;
+		}
+	      else
+		{
+		  StartPos.Y = YSize - 1;
+		  Direction.Y = -1;
+		}
+
+	      StartPos.X = RAND() % XSize;
+	    }
+	}
+      while(GetPixel(StartPos) != TRANSPARENT_COLOR);
     }
+  while(!CreateLightning(StartPos, Direction, NO_LIMIT, Color));
+
+  femath::SetSeed(OldSeed);
+}
+
+bool bitmap::CreateLightning(vector2d StartPos, vector2d Direction, ushort MaxLength, ushort Color)
+{
+  CurrentSprite = this;
+  CurrentPixelVector.clear();
+  vector2d LastMove(0, 0);
+  ushort Counter = 0;
+
+  while(true)
+    {
+      vector2d Move(1 + (RAND() & 3), 1 + (RAND() & 3));
+
+      if(Direction.X < 0 || (!Direction.X && RAND() & 1))
+	Move.X = -Move.X;
+
+      if(Direction.Y < 0 || (!Direction.Y && RAND() & 1))
+	Move.Y = -Move.Y;
+
+      Move.X = Limit<short>(Move.X, -StartPos.X, XSize - StartPos.X - 1);
+      Move.Y = Limit<short>(Move.Y, -StartPos.Y, XSize - StartPos.Y - 1);
+
+      if(Counter < 10 && ((!Move.Y && !LastMove.Y) || (Move.Y && LastMove.Y && (Move.X << 10) / Move.Y == (LastMove.X << 10) / LastMove.Y)))
+	{
+	  ++Counter;
+	  continue;
+	}
+
+      Counter = 0;
+
+      if(!femath::DoLine(StartPos.X, StartPos.Y, StartPos.X + Move.X, StartPos.Y + Move.Y, PixelVectorHandler) || MaxLength <= CurrentPixelVector.size())
+	{
+	  ushort Limit = Min<ushort>(CurrentPixelVector.size(), MaxLength);
+
+	  for(ushort c = 0; c < Limit; ++c)
+	    PutPixel(CurrentPixelVector[c], Color);
+
+	  CurrentPixelVector.clear();
+	  return true;
+	}
+
+      StartPos += Move;
+      LastMove = Move;
+
+      if((Direction.X && (!StartPos.X || StartPos.X == XSize - 1)) || (Direction.Y && (!StartPos.Y || StartPos.Y == XSize - 1)))
+	return false;
+    }
+}
+
+bool bitmap::PixelVectorHandler(long X, long Y)
+{
+  if(CurrentSprite->GetPixel(X, Y) == TRANSPARENT_COLOR)
+    {
+      CurrentPixelVector.push_back(vector2d(X, Y));
+      return true;
+    }
+  else
+    return false;
 }

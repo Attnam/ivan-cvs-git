@@ -31,7 +31,7 @@ class entity
   void SetIsEnabled(bool What) { if(What) Enable(); else Disable(); }
   void Enable();
   void Disable();
-  virtual square* GetSquareUnder() const = 0;
+  virtual square* GetSquareUnderEntity() const = 0;
   virtual void SignalVolumeAndWeightChange() { }
   ulong GetEmitation() const { return Emitation; }
   virtual void SignalEmitationIncrease(ulong) { }

@@ -32,8 +32,8 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Multiple message boxes.
 (s) It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 //Petrus's wives' corpses use indefinite article.
-(s) Entering a dungeon and loading an autosave saves some time.
-(s) Skeletons are probably seen by infravision.
+Entering a dungeon and loading an autosave saves some time.
+Skeletons are probably seen by infravision.
 //ESP + Wmode look bugs.
 //Wishing for ring of teleport bugs.
 //Teleportation in Attnam bugs.
@@ -87,7 +87,7 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Oree's blood golems' HPs' are incorrect.
 //(In Linux) push X-button, then cancel
 //Skeletons' health bugs. Some have over 20000 hps.
-(s) "Valpurus shall not carry more continents!"
+"Valpurus shall not carry more continents!"
 //Going down from underwater tunnel level 3 in WMode crashes.
 //"Stone stones"
 //Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.
@@ -98,12 +98,12 @@ Screenshots don't work in the DOS port. //(do they in Linux?)
 //Bear trap + level change crashes.
 //Polymorphing while wearing a ring of infravision crashes.
 //Message history may crash if many many very long messages are successively printed.
-Unicorns kicking items in shop.
+//Unicorns kicking items in shop.
 //Seges and others may give genies and angels a groin and legs.
 //You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
   (doesn't exists and hasn't; changing only works in WMode)
 //Teleportation state works in the wilderness.
-(s) Golden plate mails are worth less than iron ones.
+Golden plate mails are worth less than iron ones.
 //The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
 //When walking towards locked door there's a bad message: "The closed, locked stone door with triangular lock is locked"
 //Skulls are insanely heavy (8 kg).
@@ -124,7 +124,7 @@ Unicorns kicking items in shop.
   A funny side note: a kamikaze dwarf had just blown up his wives, which would perhaps be a humane reason for his actions :)
 //Lanterns put inside itemcontainers still emit light.
 //Digging book shelves probably doesn't work correctly.
-(s) It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 //Can angry Atavus or Cruentus destroy a quest artifact inside a container?
 //Items left on shop floor do not spoil even if the shopkeeper is dead.
 //"A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
@@ -133,4 +133,4 @@ Unicorns kicking items in shop.
 //You can fill a potion with ice.
 The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
 //Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
-(s) Putting mines in Attnam is considered OK by guards.
+Putting mines in Attnam is considered OK by guards.

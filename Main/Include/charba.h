@@ -41,6 +41,7 @@ class cweaponskill;
 class stackslot;
 class god;
 template <class type> class database;
+struct homedata;
 
 inline long APBonus(long Attribute) { return Attribute >= 10 ? 90 + Attribute : 50 + Attribute * 5; }
 
@@ -72,13 +73,9 @@ struct characterdatabase
   bool CanWalk;
   bool CanSwim;
   bool CanFly;
-  ushort PhysicalDamageResistance;
-  ushort SoundResistance;
-  ushort EnergyResistance;
-  ushort AcidResistance;
   ushort FireResistance;
   ushort PoisonResistance;
-  ushort BulimiaResistance;
+  ushort ElectricityResistance;
   bool IsUnique;
   ushort ConsumeFlags;
   ulong TotalVolume;
@@ -257,14 +254,14 @@ class character : public entity, public id
   stack* GetStack() const { return Stack; }
   uchar GetBurdenState() const { return BurdenState; }
   bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
-  virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
+  virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
   ushort LOSRange() const;
   ushort LOSRangeSquare() const;
   ushort ESPRange() const;
   ushort ESPRangeSquare() const;
   virtual void AddMissMessage(const character*) const;
-  virtual void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, uchar) const;
-  virtual void AddWeaponHitMessage(const character*, const item*, uchar, bool = false) const;
+  virtual void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, ushort) const;
+  virtual void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   virtual void ReceiveDarkness(long);
@@ -295,7 +292,7 @@ class character : public entity, public id
   bool TemporaryStateIsActivated(ushort What) const { return (TemporaryState & What) != 0; }	
   bool EquipmentStateIsActivated(ushort What) const { return (EquipmentState & What) != 0; }
   bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual void Faint(bool = false);
+  virtual void Faint(ushort, bool = false);
   void SetTemporaryStateCounter(ushort, ushort);
   void DeActivateVoluntaryAction(const std::string& = "");
   void ActionAutoTermination();
@@ -313,8 +310,6 @@ class character : public entity, public id
   ulong GetMoney() const { return Money; }
   void SetMoney(ulong What) { Money = What; }
   void EditMoney(long What) { Money += What; }
-  void SetHomeRoom(uchar What) { HomeRoom = What; }
-  uchar GetHomeRoom() const { return HomeRoom; }
   bool Displace(character*, bool = false);
   virtual bool Sit();
   virtual long GetStatScore() const;
@@ -351,7 +346,8 @@ class character : public entity, public id
   void ChangeContainedMaterial(material*, ushort = 0);
   virtual void Teleport(vector2d);
   virtual bool SecretKnowledge();
-  virtual void RestoreHP();
+  void RestoreHP();
+  void RestoreLivingHP();
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
   virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartIsVital(ushort) const { return true; }
@@ -442,13 +438,9 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanWalk);
   DATA_BASE_BOOL(CanSwim);
   DATA_BASE_BOOL(CanFly);
-  DATA_BASE_VALUE(ushort, PhysicalDamageResistance);
-  DATA_BASE_VALUE(ushort, SoundResistance);
-  DATA_BASE_VALUE(ushort, EnergyResistance);
-  DATA_BASE_VALUE(ushort, AcidResistance);
   DATA_BASE_VALUE(ushort, FireResistance);
   DATA_BASE_VALUE(ushort, PoisonResistance);
-  DATA_BASE_VALUE(ushort, BulimiaResistance);
+  DATA_BASE_VALUE(ushort, ElectricityResistance);
   virtual DATA_BASE_VALUE(ushort, ConsumeFlags);
   virtual DATA_BASE_VALUE(ulong, TotalVolume);
   virtual DATA_BASE_VALUE(vector2d, HeadBitmapPos);
@@ -509,6 +501,8 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(const std::string&, DeathMessage);
   DATA_BASE_BOOL(IsExtraCoward);
   DATA_BASE_BOOL(SpillsBlood);
+  DATA_BASE_BOOL(HasEyes);
+  virtual DATA_BASE_BOOL(HasHead);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -587,7 +581,7 @@ class character : public entity, public id
   virtual bodypart* MakeBodyPart(ushort);
   void AttachBodyPart(bodypart*);
   virtual bool HasAllBodyParts() const;
-  virtual bodypart* FindRandomOwnBodyPart() const;
+  virtual bodypart* FindRandomOwnBodyPart(bool = false) const;
   virtual bodypart* GenerateRandomBodyPart();
   virtual void PrintBeginPoisonedMessage() const;
   virtual void PrintEndPoisonedMessage() const;
@@ -595,7 +589,6 @@ class character : public entity, public id
   void CalculateEquipmentState();
   void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool) const;
-  void SetConfig(ushort);
   god* GetMasterGod() const;
   void PoisonedHandler();
   void PrintBeginTeleportMessage() const;
@@ -612,22 +605,23 @@ class character : public entity, public id
   virtual bool IsUsingLegs() const { return (GetAttackStyle() & USE_LEGS) != 0; }
   virtual bool IsUsingHead() const { return (GetAttackStyle() & USE_HEAD) != 0; }
   virtual void AddAttackInfo(felist&) const = 0;
-  level* GetLevelUnder() const { return static_cast<level*>(SquareUnder->GetAreaUnder()); }
-  area* GetAreaUnder() const { return SquareUnder->GetAreaUnder(); }
-  square* GetNeighbourSquare(ushort Index) const { return SquareUnder->GetNeighbourSquare(Index); }
-  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<lsquare*>(SquareUnder)->GetNeighbourLSquare(Index); }
-  wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(SquareUnder)->GetNeighbourWSquare(Index); }
-  stack* GetStackUnder() const { return static_cast<lsquare*>(SquareUnder)->GetStack(); }
-  square* GetNearSquare(vector2d Pos) const { return SquareUnder->GetAreaUnder()->GetSquare(Pos); }
-  square* GetNearSquare(ushort x, ushort y) const { return SquareUnder->GetAreaUnder()->GetSquare(x, y); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(Pos)); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(x, y)); }
-  vector2d GetPos() const { return SquareUnder->GetPos(); }
-  virtual square* GetSquareUnder() const;
+  level* GetLevel() const { return static_cast<level*>(GetSquareUnder()->GetArea()); }
+  area* GetArea() const { return GetSquareUnder()->GetArea(); }
+  square* GetNeighbourSquare(ushort Index) const { return GetSquareUnder()->GetNeighbourSquare(Index); }
+  lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<lsquare*>(GetSquareUnder())->GetNeighbourLSquare(Index); }
+  wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(Index); }
+  stack* GetStackUnder() const { return static_cast<lsquare*>(GetSquareUnder())->GetStack(); }
+  square* GetNearSquare(vector2d Pos) const { return GetSquareUnder()->GetArea()->GetSquare(Pos); }
+  square* GetNearSquare(ushort x, ushort y) const { return GetSquareUnder()->GetArea()->GetSquare(x, y); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
+  vector2d GetPos() const { return GetSquareUnder()->GetPos(); }
+  square* GetSquareUnder() const { return !MotherEntity ? SquareUnder : MotherEntity->GetSquareUnderEntity(); }
+  virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
   void SetSquareUnder(square* What) { SquareUnder = What; }
-  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
-  wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(SquareUnder); }
-  uchar GetRandomNonVitalBodyPart();
+  lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
+  wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(GetSquareUnder()); }
+  ushort GetRandomNonVitalBodyPart();
   void TeleportSomePartsAway(ushort);
   virtual void SignalVolumeAndWeightChange();
   void CalculateVolumeAndWeight();
@@ -675,7 +669,7 @@ class character : public entity, public id
   virtual void WeaponSkillHit(item*, uchar);
   virtual void AddDefenceInfo(felist&) const;
   character* Duplicate() const;
-  room* GetRoomUnder() const { return GetLSquareUnder()->GetRoomClass(); }
+  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
   bool TryToEquip(item*);
   bool TryToConsume(item*);
   void UpdateESPLOS() const;
@@ -737,8 +731,6 @@ class character : public entity, public id
   virtual long GetStuffScore() const;
   virtual bool IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
-  void SetHomePos(vector2d What) { HomePos = What; }
-  vector2d GetHomePos() const { return HomePos; }
   bool MoveTowardsHomePos();
   virtual void SetWayPoints(const std::vector<vector2d>&) { }
   virtual bool WieldInRightArm();
@@ -753,9 +745,14 @@ class character : public entity, public id
   std::string GetPanelName() const;
   virtual void AddSpecialStethoscopeInfo(felist&) const = 0;
   virtual item* GetPairEquipment(ushort) const { return 0; }
-  DATA_BASE_BOOL(HasEyes);
-  virtual void AddESPConsumeMessage() const;  
-  virtual DATA_BASE_BOOL(HasHead);
+  bool HealHitPoint();
+  void CreateHomeData();
+  room* GetHomeRoom() const;
+  bool HomeDataIsValid() const { return HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex() && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex(); }
+  void SetHomePos(vector2d Pos) { HomeData->Pos = Pos; }
+  void RemoveHomeData();
+  ulong GetID() const { return ID; }
+  virtual void AddESPConsumeMessage() const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
@@ -771,7 +768,7 @@ class character : public entity, public id
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort) const;
   void UpdateBodyPartPicture(ushort);
-  uchar ChooseBodyPartToReceiveHit(float, float);
+  ushort ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
   virtual bool ShowClassDescription() const { return true; }
@@ -781,7 +778,7 @@ class character : public entity, public id
   bool CheckForEnemies(bool, bool, bool = true);
   bool FollowLeader();
   void StandIdleAI();
-  virtual void CreateCorpse();
+  virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
   virtual void GetAICommand();
   bool MoveTowards(vector2d);
@@ -810,7 +807,6 @@ class character : public entity, public id
   team* Team;
   vector2d WayPoint;
   ulong Money;
-  uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
   characterslot* BodyPartSlot;
   std::string AssignedName;
@@ -852,7 +848,8 @@ class character : public entity, public id
   ulong RegenerationCounter;
   short AttributeBonus[BASE_ATTRIBUTES];
   short CarryingBonus;
-  vector2d HomePos;
+  homedata* HomeData;
+  ulong ID;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
@@ -890,3 +887,4 @@ name : public base\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
+

@@ -9,6 +9,7 @@
 #include <string>
 
 #include "vector2d.h"
+#include "game.h"
 
 class outputfile;
 class inputfile;
@@ -36,7 +37,7 @@ class room
 {
  public:
   typedef roomprototype prototype;
-  room(donothing) : Master(0) { }
+  room(donothing) : MasterID(0) { }
   virtual ~room() { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -45,12 +46,10 @@ class room
   void SetPos(vector2d What) { Pos = What; }
   vector2d GetSize() const { return Size; }
   void SetSize(vector2d What) { Size = What; }
-  void HandleInstantiatedCharacter(character*);
-  void HandleInstantiatedOLTerrain(olterrain*);
   void SetIndex(uchar What) { Index = What; }
   uchar GetIndex() const { return Index; }
-  character* GetMaster() const { return Master; }
-  void SetMaster(character* What) { Master = What; }
+  character* GetMaster() const { return game::SearchCharacter(MasterID); }
+  void SetMasterID(ulong What) { MasterID = What; }
   virtual bool PickupItem(character*, item*, ushort) { return true; }
   virtual bool DropItem(character*, item*, ushort) { return true; }
   uchar GetDivineMaster() const { return DivineMaster; }
@@ -70,11 +69,11 @@ class room
   virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual short GetGodRelationAdjustment() const { return -50; }
   virtual bool AllowKick(const character*) const { return true; }
+  bool MasterIsActive() const;
  protected:
   virtual void VirtualConstructor(bool) { }
-  std::vector<vector2d> Door;
   vector2d Pos, Size;
-  character* Master;
+  ulong MasterID;
   uchar Index, DivineMaster;
 };
 

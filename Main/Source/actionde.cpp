@@ -35,7 +35,7 @@ void faint::Load(inputfile& SaveFile)
 
 void faint::Handle()
 {
-  if(!(Counter--))
+  if(!Counter--)
     Terminate(true);
   else
     {

@@ -406,7 +406,7 @@ void graphics::SwitchMode()
 
       if(DDPixelFormat.dwRGBBitCount != ColorDepth)
 	{
-	  MessageBox(NULL, "This alpha release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
+	  MessageBox(NULL, "This release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
 	  FullScreen = !FullScreen;
 
 	  if(SwitchModeHandler)

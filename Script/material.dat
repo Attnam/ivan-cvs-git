@@ -1042,6 +1042,7 @@ flesh
 		Effect = EFFECT_POLYMORPH;
 		PriceModifier = 1000;
 	}
+
 	Config FLOATING_EYE_FLESH;
 	{
 		NameStem = "floating eye flesh";

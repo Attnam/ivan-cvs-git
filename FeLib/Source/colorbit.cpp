@@ -1,6 +1,5 @@
 #include <cstdarg>
 #include <cstdio>
-#include <fstream>
 #include <memory.h>
 
 #include "colorbit.h"
@@ -20,12 +19,12 @@ colorizablebitmap::colorizablebitmap(const std::string& FileName)
   File.SeekPosEnd(-768);
   Palette = new uchar[768];
   File.Read(reinterpret_cast<char*>(Palette), 768);
-  File.SeekPosBeg(8);
+  File.SeekPosBegin(8);
   XSize  =  File.Get();
   XSize += (File.Get() << 8) + 1;
   YSize  =  File.Get();
   YSize += (File.Get() << 8) + 1;
-  File.SeekPosBeg(128);
+  File.SeekPosBegin(128);
   PaletteBuffer = new uchar[XSize * YSize];
   uchar* Buffer = PaletteBuffer;
 
@@ -106,21 +105,23 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 
 	  if(PaletteElement >= 192)
 	    {
-	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
-	      float Gradient = float(PaletteElement % 16) / 8;
-	      ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+	      ushort ThisColor = Color[(PaletteElement - 192) >> 4];
+	      ushort Index = PaletteElement & 15;
+	      ushort Red = (GetRed16(ThisColor) * Index) >> 3;
+	      ushort Blue = (GetBlue16(ThisColor) * Index) >> 3;
+	      ushort Green = (GetGreen16(ThisColor) * Index) >> 3;
 	      reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 	    }
 	  else
 	    {
 	      ushort ThisColor = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 
-	      if(ThisColor != DEFAULT_TRANSPARENT)
+	      if(ThisColor != TRANSPARENT_COLOR)
 		reinterpret_cast<ushort*>(DestBuffer)[DestX + x] = ThisColor;
 	    }
 	}
 
-      DestBuffer += (Bitmap->XSize << 1);
+      DestBuffer += Bitmap->XSize << 1;
       Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 }
@@ -151,19 +152,21 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	{
 	  if(Buffer[x] >= 192)
 	    {
-	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
+	      ushort ThisColor = Color[(Buffer[x] - 192) >> 4];
 
-	      if(ThisColor != DEFAULT_TRANSPARENT)
+	      if(ThisColor != TRANSPARENT_COLOR)
 		{
-		  float Gradient = float(Buffer[x] % 16) / 8;
-		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+		  ushort Index = Buffer[x] & 15;
+		  ushort Red = (GetRed16(ThisColor) * Index) >> 3;
+		  ushort Blue = (GetBlue16(ThisColor) * Index) >> 3;
+		  ushort Green = (GetGreen16(ThisColor) * Index) >> 3;
 		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 		  if(UseAlpha)
-		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
+		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) >> 4];
 		}
 	      else
-		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULT_TRANSPARENT;
+		reinterpret_cast<ushort*>(DestBuffer)[x] = TRANSPARENT_COLOR;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
@@ -205,19 +208,19 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 
 	  if(PaletteElement >= 192)
 	    {
-	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
+	      ushort ThisColor = Color[(PaletteElement - 192) >> 4];
 
-	      if(ThisColor != DEFAULT_TRANSPARENT)
+	      if(ThisColor != TRANSPARENT_COLOR)
 		{
-		  float Gradient = float(PaletteElement % 16) / 8;
+		  float Gradient = float(PaletteElement & 15) / 8;
 		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
 		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 		  if(UseAlpha)
-		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
+		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) >> 4];
 		}
 	      else
-		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULT_TRANSPARENT;
+		reinterpret_cast<ushort*>(DestBuffer)[x] = TRANSPARENT_COLOR;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
@@ -402,8 +405,8 @@ void colorizablebitmap::CreateFontCache(ushort Color)
 
   ushort ShadeColor = MakeShadeColor(Color);
   bitmap* Font = new bitmap(XSize, YSize);
-  Font->Fill(0, 0, 1, YSize, DEFAULT_TRANSPARENT);
-  Font->Fill(0, 0, XSize, 1, DEFAULT_TRANSPARENT);
+  Font->Fill(0, 0, 1, YSize, TRANSPARENT_COLOR);
+  Font->Fill(0, 0, XSize, 1, TRANSPARENT_COLOR);
   bitmap* ShadeFont = Colorize(&ShadeColor);
   ShadeFont->Blit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1);
   MaskedBlit(Font, &Color);

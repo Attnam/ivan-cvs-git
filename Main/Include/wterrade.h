@@ -171,4 +171,14 @@ class OWTERRAIN
   virtual uchar GetAttachedArea() const { return 2; }
 );
 
+class OWTERRAIN
+(
+  mondedr,
+  owterrain,
+ public:
+  virtual std::string GetNameStem() const { return "very unattractive place"; }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, 64); }
+  virtual uchar GetAttachedDungeon() const { return MONDEDR; }
+);
+
 #endif

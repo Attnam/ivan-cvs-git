@@ -24,11 +24,11 @@ valuemap protocontainer<room>::CodeNameMap;
 void shop::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
-    if(Master)
+    if(MasterIsActive())
       {
-	if(Master->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(Master))
-	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CHAR_NAME(DEFINITE));
+	if(GetMaster()->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(GetMaster()))
+	  if(GetMaster()->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s welcomes you warmly to the shop.", GetMaster()->CHAR_NAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("Something welcomes you warmly to the shop.");
       }
@@ -40,7 +40,7 @@ void shop::Enter(character* Customer)
 
 bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 {
-  if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
@@ -50,14 +50,14 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
       {
 	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(-Price);
-	Master->EditMoney(Price);
+	GetMaster()->EditMoney(Price);
 	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
       return false;
 
-  if(Customer->CanBeSeenBy(Master))
+  if(Customer->CanBeSeenBy(GetMaster()))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
@@ -81,7 +81,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->EditMoney(-Price);
-	      Master->EditMoney(+Price);
+	      GetMaster()->EditMoney(+Price);
 	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
@@ -101,7 +101,7 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   else
     if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
       {
-	Customer->Hostility(Master);
+	Customer->Hostility(GetMaster());
 	return true;
       }
     else
@@ -110,24 +110,24 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
 
 bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 {
-  if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
-    if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
+    if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->EditMoney(Price);
-	Master->EditMoney(-Price);
+	GetMaster()->EditMoney(-Price);
 	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
       return false;
 
-  if(Customer->CanBeSeenBy(Master))
+  if(Customer->CanBeSeenBy(GetMaster()))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
@@ -141,10 +141,10 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
 
-      if(Master->GetMoney() != 0)
+      if(GetMaster()->GetMoney() != 0)
 	{
-	  if(Master->GetMoney() < Price)
-	    Price = Master->GetMoney();
+	  if(GetMaster()->GetMoney() < Price)
+	    Price = GetMaster()->GetMoney();
 
 	  if(Amount == 1)
 	    ADD_MESSAGE("\"What a fine %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
@@ -154,7 +154,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->SetMoney(Customer->GetMoney() + Price);
-	      Master->SetMoney(Master->GetMoney() - Price);
+	      GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
 	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
@@ -177,11 +177,11 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 void temple::Enter(character* Pilgrim)
 {
   if(Pilgrim->IsPlayer())
-    if(Master)
+    if(MasterIsActive())
       {
-	if(Master->GetRelation(Pilgrim) != HOSTILE && Pilgrim->CanBeSeenBy(Master))
-	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHAR_NAME(DEFINITE), Master->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
+	if(GetMaster()->GetRelation(Pilgrim) != HOSTILE && Pilgrim->CanBeSeenBy(GetMaster()))
+	  if(GetMaster()->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->Name().c_str());
       }
@@ -191,22 +191,22 @@ void temple::Enter(character* Pilgrim)
 
 void shop::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(Master))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
-      Infidel->Hostility(Master);
+      Infidel->Hostility(GetMaster());
     }
 }
 
 bool shop::ConsumeItem(character* Customer, item*, ushort)
 {
-  if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   if(!Customer->IsPlayer())
     return false;
 
-  if(Customer->CanBeSeenBy(Master))
+  if(Customer->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"Buy that first, please.\"");
       return false;
@@ -214,7 +214,7 @@ bool shop::ConsumeItem(character* Customer, item*, ushort)
   else
     if(game::BoolQuestion("It's illegal to eat property of others. Are you sure you sure? [y/N]"))
       {
-	Customer->Hostility(Master);
+	Customer->Hostility(GetMaster());
 	return true;
       }
     else
@@ -338,10 +338,10 @@ bool cathedral::Drink(character* Thirsty) const
 
 void shop::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(Master))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
-      Infidel->Hostility(Master);
+      Infidel->Hostility(GetMaster());
     }
 }
 
@@ -386,11 +386,11 @@ void cathedral::VirtualConstructor(bool)
 void library::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
-    if(Master)
+    if(MasterIsActive())
       {
-	if(Master->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(Master))
-	  if(Master->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s looks at you suspiciously. \"Feel free to open the shelves, but be quiet in the library!\" %s whispers.", Master->CHAR_NAME(DEFINITE), Master->GetPersonalPronoun().c_str());
+	if(GetMaster()->GetRelation(Customer) != HOSTILE && Customer->CanBeSeenBy(GetMaster()))
+	  if(GetMaster()->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Feel free to open the shelves, but be quiet in the library!\" %s whispers.", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPersonalPronoun().c_str());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }
@@ -400,7 +400,7 @@ void library::Enter(character* Customer)
 
 bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 {
-  if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   ulong Price = ForSale->GetPrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
@@ -411,7 +411,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	{
 	  ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	  Customer->EditMoney(-Price);
-	  Master->EditMoney(Price);
+	  GetMaster()->EditMoney(Price);
 	  Customer->EditExperience(CHARISMA, Price);
 	  return true;
 	}
@@ -419,7 +419,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	return false;
     }
 
-  if(Customer->CanBeSeenBy(Master))
+  if(Customer->CanBeSeenBy(GetMaster()))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
@@ -427,7 +427,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  return true;
 	}
 
-      if(!Price || !ForSale->CanBeSoldInLibrary(Master))
+      if(!Price || !ForSale->CanBeSoldInLibrary(GetMaster()))
 	{
 	  ADD_MESSAGE("\"Thank you for cleaning that junk out of my floor.\"");
 	  return true;
@@ -443,7 +443,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 	  if(game::BoolQuestion("Do you accept this deal? [y/N]"))
 	    {
 	      Customer->EditMoney(-Price);
-	      Master->EditMoney(Price);
+	      GetMaster()->EditMoney(Price);
 	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
@@ -463,7 +463,7 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
   else
     if(game::BoolQuestion("Are you sure you want to commit this thievery? [y/N]"))
       {
-	Customer->Hostility(Master);
+	Customer->Hostility(GetMaster());
 	return true;
       }
     else
@@ -472,24 +472,24 @@ bool library::PickupItem(character* Customer, item* ForSale, ushort Amount)
 
 bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 {
-  if(!Master || Customer == Master || Master->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   ulong Price = ForSale->GetPrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
-    if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
+    if(Price && Customer->CanBeSeenByPlayer() && GetMaster()->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s sells %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).c_str());
 	Customer->SetMoney(Customer->GetMoney() + Price);
-	Master->SetMoney(Master->GetMoney() - Price);
+	GetMaster()->SetMoney(GetMaster()->GetMoney() - Price);
 	Customer->EditExperience(CHARISMA, Price);
 	return true;
       }
     else
       return false;
 
-  if(Customer->CanBeSeenBy(Master))
+  if(Customer->CanBeSeenBy(GetMaster()))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar() || ForSale->IsEncryptedScroll())
 	{
@@ -497,16 +497,16 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
 
-      if(!Price || !ForSale->CanBeSoldInLibrary(Master))
+      if(!Price || !ForSale->CanBeSoldInLibrary(GetMaster()))
 	{
 	  ADD_MESSAGE("\"Sorry, but I don't think %s into my collection.\"", Amount == 1 ? "that fits" : "those fit");
 	  return false;
 	}
       
-      if(Master->GetMoney() != 0)
+      if(GetMaster()->GetMoney() != 0)
 	{
-	  if(Master->GetMoney() < Price)
-	    Price = Master->GetMoney();
+	  if(GetMaster()->GetMoney() < Price)
+	    Price = GetMaster()->GetMoney();
 
 	  if(Amount == 1)
 	    ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHAR_NAME(UNARTICLED), Price);
@@ -516,7 +516,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  if(game::BoolQuestion(std::string("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
 	    {
 	      Customer->EditMoney(Price);
-	      Master->EditMoney(-Price);
+	      GetMaster()->EditMoney(-Price);
 	      Customer->EditExperience(CHARISMA, Price);
 	      return true;
 	    }
@@ -538,10 +538,10 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 
 void library::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(Master))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You book vandal!\"");
-      Infidel->Hostility(Master);
+      Infidel->Hostility(GetMaster());
     }
 }
 
@@ -552,10 +552,10 @@ bool library::ConsumeItem(character*, item*, ushort)
 
 void library::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(Master))
+  if(Square->GetStack()->GetItems() && MasterIsActive() && Infidel != GetMaster() && GetMaster()->GetRelation(Infidel) != HOSTILE && Square->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You book hater!\"");
-      Infidel->Hostility(Master);
+      Infidel->Hostility(GetMaster());
     }
 }
 
@@ -638,10 +638,11 @@ void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
 
 bool shop::AllowSpoil(const item* Item) const
 {
-  return !Master || !Item->GetPrice();
+  character* Master = GetMaster();
+  return !Master || !Master->IsEnabled() || !Item->GetPrice();
 }
 
 bool shop::AllowKick(const character* Char) const // gum solution
 {
-  return !Master || Master->GetRelation(Char) == HOSTILE;
+  return !MasterIsActive() || GetMaster()->GetRelation(Char) == HOSTILE;
 }

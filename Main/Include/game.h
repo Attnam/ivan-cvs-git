@@ -32,6 +32,17 @@ class petrus;
 class gamescript;
 class guard;
 
+struct homedata
+{
+  vector2d Pos;
+  uchar Dungeon;
+  uchar Level;
+  uchar Room;
+};
+
+outputfile& operator<<(outputfile&, homedata*);
+inputfile& operator>>(inputfile&, homedata*&);
+
 #ifdef VC
 #pragma pack(1)
 #endif
@@ -82,6 +93,7 @@ inline inputfile& operator>>(inputfile& SaveFile, dangerid& Value)
 }
 
 typedef std::map<configid, dangerid> dangermap;
+typedef std::map<ulong, character*> characteridmap;
 
 class game
 {
@@ -126,8 +138,8 @@ class game
   static void UpdateCameraXWithPos(ushort);
   static void UpdateCameraYWithPos(ushort);
   static bool KeyIsOK(char);
-  static void SetCurrent(ushort What) { Current = What; }
-  static ushort GetCurrent() { return Current; }
+  static void SetCurrentLevelIndex(ushort What) { CurrentLevelIndex = What; }
+  static uchar GetCurrentLevelIndex() { return CurrentLevelIndex; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
   static god* GetGod(ushort Index) { return God[Index]; }
@@ -159,17 +171,18 @@ class game
   static area* GetAreaInLoad() { return AreaInLoad; }
   static square* GetSquareInLoad() { return SquareInLoad; }
   static ushort GetLevels();
-  static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
+  static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeonIndex]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
-  static void SetCurrentDungeon(uchar What) { CurrentDungeon = What; }
+  static uchar GetCurrentDungeonIndex() { return CurrentDungeonIndex; }
+  static void SetCurrentDungeonIndex(uchar What) { CurrentDungeonIndex = What; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoEvilDeed(ushort);
   static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
   static void LoadWorldMap(const std::string& = SaveName(""));
   static void UpdateCamera();
+  static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID() { return NextItemID++; }
-  static void PopItemID(ulong ID) { if(NextItemID == ID + 1) --NextItemID; }
   static team* GetTeam(ushort Index) { return Team[Index]; }
   static uchar GetTeams() { return Team.size(); }
   static void Hostility(team*, team*);
@@ -193,7 +206,7 @@ class game
   static void CreateGods();
   static vector2d GetScreenSize() { return ScreenSize; }
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
-  static vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
+  static vector2d CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
   static void BusyAnimation(bitmap* = DOUBLE_BUFFER);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
   static void LookHandler(vector2d);
@@ -241,11 +254,14 @@ class game
   static void CallForAttention(vector2d, ushort);
   static guard* GetHaedlac() { return Haedlac; }
   static void SetHaedlac(guard* What) { Haedlac = What; }
+  static character* SearchCharacter(ulong);
+  static void AddCharacterID(character* Char, ulong ID) { CharacterIDMap[ID] = Char; }
+  static void RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
-  static ushort Current;
-  static uchar CurrentDungeon;
+  static uchar CurrentLevelIndex;
+  static uchar CurrentDungeonIndex;
   static int MoveCommandKey[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
@@ -266,6 +282,7 @@ class game
   static area* AreaInLoad;
   static square* SquareInLoad;
   static std::vector<dungeon*> Dungeon;
+  static ulong NextCharacterID;
   static ulong NextItemID;
   static std::vector<team*> Team;
   static ulong LOSTurns;
@@ -292,7 +309,7 @@ class game
   static float AveragePlayerDexterity;
   static float AveragePlayerAgility;
   static guard* Haedlac;
+  static characteridmap CharacterIDMap;
 };
 
 #endif
-

@@ -111,7 +111,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
     }\
 }
 
-bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
+template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -141,13 +141,9 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(CanWalk);
   ANALYZE_DATA(CanSwim);
   ANALYZE_DATA(CanFly);
-  ANALYZE_DATA(PhysicalDamageResistance);
-  ANALYZE_DATA(SoundResistance);
-  ANALYZE_DATA(EnergyResistance);
-  ANALYZE_DATA(AcidResistance);
   ANALYZE_DATA(FireResistance);
   ANALYZE_DATA(PoisonResistance);
-  ANALYZE_DATA(BulimiaResistance);
+  ANALYZE_DATA(ElectricityResistance);
   ANALYZE_DATA(IsUnique);
   ANALYZE_DATA(ConsumeFlags);
   ANALYZE_DATA(TotalVolume);
@@ -235,7 +231,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   return Found;
 }
 
-bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database& DataBase)
+template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -250,12 +246,9 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(IsPolymorphSpawnable);
   ANALYZE_DATA(IsAutoInitializable);
   ANALYZE_DATA(Category);
-  ANALYZE_DATA(SoundResistance);
-  ANALYZE_DATA(EnergyResistance);
-  ANALYZE_DATA(AcidResistance);
   ANALYZE_DATA(FireResistance);
   ANALYZE_DATA(PoisonResistance);
-  ANALYZE_DATA(BulimiaResistance);
+  ANALYZE_DATA(ElectricityResistance);
   ANALYZE_DATA(StrengthModifier);
   ANALYZE_DATA(FormModifier);
   ANALYZE_DATA(NPModifier);
@@ -315,11 +308,14 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(DamageDivider);
   ANALYZE_DATA(HandleInPairs);
   ANALYZE_DATA(CanBeEnchanted);
+  ANALYZE_DATA(BeamColor);
+  ANALYZE_DATA(BeamEffect);
+  ANALYZE_DATA(BeamStyle);
 
   return Found;
 }
 
-bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database& DataBase)
+template<> bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -351,7 +347,7 @@ bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   return Found;
 }
 
-bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database& DataBase)
+template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
@@ -388,11 +384,12 @@ bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(IsUpLink);
   ANALYZE_DATA(StorageVolume);
   ANALYZE_DATA(HPModifier);
+  ANALYZE_DATA(IsSafeToCreateDoor);
 
   return Found;
 }
 
-bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database& DataBase)
+template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database& DataBase)
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;

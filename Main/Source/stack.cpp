@@ -254,22 +254,22 @@ square* stack::GetSquareTrulyUnder() const
   switch(SquarePosition)
     {
     case DOWN:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, 1)))
+      if(GetArea()->IsValidPos(GetPos() + vector2d(0, 1)))
 	return GetNearSquare(GetPos() + vector2d(0, 1));
       else
 	return 0;
     case LEFT:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(-1, 0)))
+      if(GetArea()->IsValidPos(GetPos() + vector2d(-1, 0)))
 	return GetNearSquare(GetPos() + vector2d(-1, 0));
       else
 	return 0;
     case UP:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(0, -1)))
+      if(GetArea()->IsValidPos(GetPos() + vector2d(0, -1)))
 	return GetNearSquare(GetPos() + vector2d(0, -1));
       else
 	return 0;
     case RIGHT:
-      if(GetAreaUnder()->IsValidPos(GetPos() + vector2d(1, 0)))
+      if(GetArea()->IsValidPos(GetPos() + vector2d(1, 0)))
 	return GetNearSquare(GetPos() + vector2d(1, 0));
       else
 	return 0;
@@ -513,14 +513,6 @@ item* stack::GetBottomVisibleItem(const character* Viewer) const
   return 0;
 }
 
-square* stack::GetSquareUnder() const
-{
-  if(MotherEntity)
-    return MotherEntity->GetSquareUnder();
-  else
-    return MotherSquare;
-}
-
 void stack::SignalVolumeAndWeightChange()
 {
   CalculateVolumeAndWeight();
@@ -739,7 +731,7 @@ bool stack::TakeSomethingFrom(character* Opener, const std::string ContainerName
     }
 
   bool Success = false;
-  room* Room = GetLSquareUnder()->GetRoomClass();
+  room* Room = GetLSquareUnder()->GetRoom();
   SetSelected(0);
 
   for(;;)
@@ -773,7 +765,7 @@ bool stack::PutSomethingIn(character* Opener, const std::string ContainerName, u
     }
 
   bool Success = false;
-  room* Room = GetLSquareUnder()->GetRoomClass();
+  room* Room = GetLSquareUnder()->GetRoom();
   stack::SetSelected(0);
 
   for(;;)
@@ -823,3 +815,4 @@ bool stack::IsOnGround() const
 {
   return !MotherEntity || MotherEntity->IsOnGround();
 }
+

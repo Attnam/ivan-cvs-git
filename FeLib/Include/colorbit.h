@@ -22,7 +22,7 @@ class colorizablebitmap
  public:
   colorizablebitmap(const std::string&);
   ~colorizablebitmap();
-  void colorizablebitmap::Save(const std::string&);
+  void Save(const std::string&);
 
   void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
   void MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
@@ -63,7 +63,7 @@ class colorizablebitmap
 
   void CreateFontCache(ushort);
   static bool IsMaterialColor(uchar Color) { return Color >= 192; }
-  static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) / 16; }
+  static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) >> 4; }
   uchar GetPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
   vector2d RandomizeSparklePos(vector2d, vector2d, bool*) const;
  protected:

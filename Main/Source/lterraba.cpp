@@ -178,14 +178,14 @@ bool olterrain::Enter(bool DirectionUp) const
   std::vector<character*> Group;
 
   if(game::WizardModeIsActive())
-    if(!DirectionUp && game::GetCurrent() < game::GetLevels() - 1 && game::LeaveLevel(Group, true))
+    if(!DirectionUp && game::GetCurrentLevelIndex() < game::GetLevels() - 1 && game::LeaveLevel(Group, true))
       {
-	game::EnterArea(Group, game::GetCurrent() + 1, RANDOM);
+	game::EnterArea(Group, game::GetCurrentLevelIndex() + 1, RANDOM);
 	return true;
       }
-    else if(DirectionUp && game::GetCurrent() >= 1 && game::LeaveLevel(Group, true))
+    else if(DirectionUp && game::GetCurrentLevelIndex() >= 1 && game::LeaveLevel(Group, true))
       {
-	game::EnterArea(Group, game::GetCurrent() - 1, RANDOM);
+	game::EnterArea(Group, game::GetCurrentLevelIndex() - 1, RANDOM);
 	return true;
       }
 
@@ -216,7 +216,7 @@ void olterrain::ReceiveDamage(character* Villain, ushort What, uchar)
 
       if(HP <= 0)
 	{
-	  room* Room = GetLSquareUnder()->GetRoomClass();
+	  room* Room = GetLSquareUnder()->GetRoom();
 
 	  if(Room)
 	    Room->DestroyTerrain(Villain, this);
@@ -234,3 +234,4 @@ void olterrain::CalculateHP()
       HP = SV * SV * GetHPModifier() / 5000;
     }
 }
+

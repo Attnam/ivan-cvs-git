@@ -83,7 +83,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(GetAreaUnder()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Monster) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
+      if(GetArea()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Monster) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  GetNearLSquare(TryToCreate)->AddCharacter(Monster);
 
@@ -206,22 +206,18 @@ bool pickaxe::Apply(character* User)
 
   vector2d Temp = game::GetMoveVector(Dir);
 
-  if(Dir == DIR_ERROR || !GetAreaUnder()->IsValidPos(User->GetPos() + Temp))
+  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(User->GetPos() + Temp))
     return false;
 
   lsquare* Square = GetNearLSquare(User->GetPos() + Temp);
-
-  /*if(Square->GetCharacter())
-    if(User->Hit(Square->GetCharacter()))
-      return true;*/
 
   if(Square->CanBeDug())
     if(Square->GetOLTerrain()->CanBeDestroyed())
       if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
 	{
-	  uchar RoomNumber = Square->GetRoom();
+	  uchar RoomNumber = Square->GetRoomIndex();
 
-	  if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->CheckDestroyTerrain(User, Square->GetOLTerrain()))
+	  if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User, Square->GetOLTerrain()))
 	    {
 	      User->SwitchToDig(this, User->GetPos() + Temp);
 	      User->DexterityAction(5);
@@ -259,7 +255,7 @@ bool wand::Apply(character* Terrorist)
   else
     DeathMsg = "kamikazed by " + Terrorist->GetKillName();
 
-  Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 50);
+  Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 50);
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -340,15 +336,22 @@ void scrollofchangematerial::FinishReading(character* Reader)
 		}
 
 	      std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-	      material* TempMaterial = protosystem::CreateMaterial(Temp, Item[0]->GetMainMaterial()->GetVolume());
+	      material* TempMaterial = protosystem::CreateMaterial(Temp);
 
 	      if(TempMaterial)
 		{
+		  material* MainMaterial = Item[0]->GetMainMaterial();
+		  material* SecondaryMaterial = Item[0]->GetSecondaryMaterial();
+
 		  if(Item.size() == 1)
 		    {
-		      if(!Item[0]->GetMainMaterial()->IsSameAs(TempMaterial))
+		      if(!MainMaterial->IsSameAs(TempMaterial))
 			{
 			  ADD_MESSAGE("Suddenly your %s is consumed in roaring magical flames. As you lift it again it looks greatly altered.", Item[0]->CHAR_NAME(UNARTICLED));
+
+			  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+			    Item[0]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
 			  Item[0]->ChangeMainMaterial(TempMaterial);
 			}
 		      else
@@ -356,9 +359,14 @@ void scrollofchangematerial::FinishReading(character* Reader)
 		    }
 		  else
 		    {
-		      if(!Item[0]->GetMainMaterial()->IsSameAs(TempMaterial))
+		      if(!MainMaterial->IsSameAs(TempMaterial))
 			{
 			  ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames. As you lift them again they look greatly altered.", Item[0]->CHAR_NAME(PLURAL));
+
+			  if(SecondaryMaterial && SecondaryMaterial->IsSameAs(MainMaterial))
+			    for(ushort c = 0; c < Item.size(); ++c)
+			      Item[c]->ChangeSecondaryMaterial(TempMaterial->Clone());
+
 			  Item[0]->ChangeMainMaterial(TempMaterial);
 
 			  for(ushort c = 1; c < Item.size(); ++c)
@@ -541,7 +549,7 @@ bool backpack::Apply(character* Terrorist)
 	DeathMsg = "kamikazed by " + Terrorist->GetKillName();
 
       Terrorist->DexterityAction(5);
-      Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
   else if(Terrorist->IsPlayer())
@@ -603,7 +611,7 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), 50);
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), 50);
       return true;
     }
 
@@ -626,7 +634,7 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -645,58 +653,6 @@ bool scroll::ReceiveDamage(character*, ushort Damage, uchar Type)
       return true;
     }
 
-  return false;
-}
-
-void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction, uchar Range)
-{
-  vector2d CurrentPos = Zapper->GetPos();
-
-  if(Direction != YOURSELF)
-    {
-      for(ushort Length = 0; Length < Range; ++Length)
-	{
-	  if(!GetAreaUnder()->IsValidPos(CurrentPos + game::GetMoveVector(Direction)))
-	    break;
-
-	  lsquare* CurrentSquare = GetNearLSquare(CurrentPos + game::GetMoveVector(Direction));
-
-	  if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
-	    {
-	      BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
-	      break;
-	    }
-	  else
-	    {	
-	      CurrentPos += game::GetMoveVector(Direction);
-
-	      if(BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare))
-		break;
-
-	      if(CurrentSquare->CanBeSeenByPlayer(true))
-		CurrentSquare->DrawParticles(GetBeamColor(), Direction);
-	    }
-	}
-    }
-  else
-    {
-      lsquare* Where = Zapper->GetLSquareUnder();
-      BeamEffect(Zapper, DeathMsg, Direction, Where);
-
-      if(Where->CanBeSeenByPlayer(true))
-	Where->DrawParticles(GetBeamColor(), Direction);
-    }
-}
-
-bool wandofpolymorph::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
-{
-  LSquare->PolymorphEverything(Zapper);
-  return false;
-}
-
-bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uchar Dir, lsquare* Where) 
-{ 
-  Where->StrikeEverything(Who, DeathMsg, 50 + RAND() % 21 - RAND() % 21, Dir); 
   return false;
 }
 
@@ -732,7 +688,7 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(GetAreaUnder()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Genie) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
+	  if(GetArea()->IsValidPos(TryToCreate) && GetNearSquare(TryToCreate)->IsWalkable(Genie) && GetNearSquare(TryToCreate)->GetCharacter() == 0)
 	    {
 	      GetNearSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
@@ -778,7 +734,7 @@ bool oillamp::Apply(character* Applier)
 			    }
 			}
 
-		      GetLevelUnder()->RemoveCharacter(TryToCreate);
+		      GetLevel()->RemoveCharacter(TryToCreate);
 		      delete Genie;
 		      Applier->EditAP(-1000);
 		      return true;
@@ -911,17 +867,6 @@ void bananapeels::StepOnEffect(character* Stepper)
     }
 }
 
-bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
-{ 
-  if(!Where->GetOTerrain()->IsWalkable() || Where->GetCharacter())
-    {
-      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 60 + RAND() % 11 - RAND() % 11);
-      return true;
-    }
-
-  return false;
-}
-
 bool scrolloftaming::Read(character* Reader)
 {
   Reader->StartReading(this, 100);
@@ -938,7 +883,7 @@ void scrolloftaming::FinishReading(character* Reader)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
 
-      if(GetAreaUnder()->IsValidPos(Test))
+      if(GetArea()->IsValidPos(Test))
 	{
 	  character* CharacterInSquare = GetNearSquare(Test)->GetCharacter();
 
@@ -989,12 +934,6 @@ void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> BloodColor;
-}
-
-bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
-{ 
-  Where->TeleportEverything(Who);
-  return false;
 }
 
 ushort bodypart::GetStrengthValue() const
@@ -1159,7 +1098,7 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-bool bodypart::ReceiveDamage(character*, ushort Damage, uchar Type)
+bool bodypart::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if(Master)
     {
@@ -1172,6 +1111,10 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar Type)
 	return false;
 
       EditHP(-Damage);
+
+      if(Type == DRAIN && IsAlive())
+	for(ushort c = 0; c < Damage; ++c)
+	  Damager->HealHitPoint();
 
       if(HP <= 0)
 	return true;
@@ -1232,7 +1175,7 @@ bool mine::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
 
@@ -1261,27 +1204,7 @@ void mine::StepOnEffect(character* Stepper)
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
-  Square->GetLevelUnder()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
-}
-
-bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
-{
-  character* Dude = LSquare->GetCharacter();
-
-  if(Dude)
-    Dude->BeginTemporaryState(HASTE, 500 + RAND() % 1000);
-
-  return false;
-}
-
-bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
-{
-  character* Dude = LSquare->GetCharacter();
-
-  if(Dude)
-    Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
-
-  return false;
+  Square->GetLevel()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
 }
 
 bool key::Apply(character* User)
@@ -1295,7 +1218,7 @@ bool key::Apply(character* User)
 
       vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
 
-      if(GetAreaUnder()->IsValidPos(ApplyPos))
+      if(GetArea()->IsValidPos(ApplyPos))
 	{
 	  GetNearLSquare(ApplyPos)->TryKey(this, User);
 	  User->DexterityAction(5);
@@ -1404,7 +1327,7 @@ float arm::GetWieldedToHitValue() const
     return 0;
 
   const item* Wielded = GetWielded();
-  float Base = 1e-7f * Min<short>(HitStrength, 10) * Wielded->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() / (500 + Wielded->GetWeight());
+  float Base = 2e-7f * Min<short>(HitStrength, 10) * Wielded->GetBonus() * GetHumanoidMaster()->GetCWeaponSkill(Wielded->GetWeaponCategory())->GetBonus() * GetCurrentSWeaponSkill()->GetBonus() * Master->GetMoveEase() / (1000 + Wielded->GetWeight());
   float ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5f * Master->GetAttribute(PERCEPTION));
   const arm* PairArm = GetPairArm();
 
@@ -1746,11 +1669,6 @@ bool corpse::Consume(character* Eater, long Amount)
   return GetDeceased()->GetTorso()->Consume(Eater, Amount);
 }
 
-bool wandoflocking::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where)
-{
-  return Where->LockEverything(Who);
-}
-
 void materialcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -1841,11 +1759,6 @@ ushort bodypart::GetMaterialColorA(ushort) const
     return GetMainMaterial()->GetSkinColor();
   else
     return 0;
-}
-
-bool wandofresurrection::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* LSquare)
-{
-  return LSquare->RaiseTheDead(Zapper);
 }
 
 bool corpse::RaiseTheDead(character* Summoner)
@@ -2221,7 +2134,7 @@ ushort arm::GetAttribute(ushort Identifier) const
       if(IsAlive())
 	return Max(Dexterity + DexterityBonus, 1);
       else
-	return Max((GetMainMaterial()->GetFlexibility() << 1) + DexterityBonus, 1);
+	return Max((GetMainMaterial()->GetFlexibility() << 2) + DexterityBonus, 1);
     }
   else
     {
@@ -2273,7 +2186,7 @@ ushort leg::GetAttribute(ushort Identifier) const
       if(IsAlive())
 	return Max(Agility + AgilityBonus, 1);
       else
-	return Max((GetMainMaterial()->GetFlexibility() << 1) + AgilityBonus, 1);
+	return Max((GetMainMaterial()->GetFlexibility() << 2) + AgilityBonus, 1);
     }
   else
     {
@@ -2462,7 +2375,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHAR_NAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, 2 + RAND() % 2, PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->ReceiveBodyPartDamage(0, 2 + (RAND() & 1), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
       Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE), 0);
       return false;
     }
@@ -2560,84 +2473,6 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   return true;
 }
 
-bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Zapper->EditExperience(PERCEPTION, 250);
-  vector2d Pos[3];
-  Pos[0] = game::GetMoveVector(Direction);
-
-  switch(Direction)
-    {
-    case 0:
-      Pos[1] = vector2d(-1, 0);
-      Pos[2] = vector2d(0, -1);
-      break;
-    case 1:
-      Pos[1] = vector2d(-1, -1);
-      Pos[2] = vector2d(1, -1);
-      break;
-    case 2:
-      Pos[1] = vector2d(0, -1);
-      Pos[2] = vector2d(1, 0);
-      break;
-    case 3:
-      Pos[1] = vector2d(-1, -1);
-      Pos[2] = vector2d(-1, 1);
-      break;
-    case 4:
-      Pos[1] = vector2d(1, -1);
-      Pos[2] = vector2d(1, 1);
-      break;
-    case 5:
-      Pos[1] = vector2d(-1, 0);
-      Pos[2] = vector2d(0, 1);
-      break;
-    case 6:
-      Pos[1] = vector2d(-1, 1);
-      Pos[2] = vector2d(1, 1);
-      break;
-    case 7:
-      Pos[1] = vector2d(0, 1);
-      Pos[2] = vector2d(1, 0);
-      break;
-    case 8:
-      ADD_MESSAGE("You suddenly feel like a door.");
-      return false;
-    }
-
-  bool Succeeded = false;
-
-  for(ushort c = 0; c < 3; ++c)
-    if(GetAreaUnder()->IsValidPos(Zapper->GetPos() + Pos[c]))
-      {
-	lsquare* Square = GetNearLSquare(Zapper->GetPos() + Pos[c]);
-
-	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
-	  {
-	    door* Door = new door(0, NO_MATERIALS);
-	    Door->InitMaterials(MAKE_MATERIAL(IRON));
-	    Door->Lock();
-	    Square->ChangeOLTerrainAndUpdateLights(Door);
-	    Succeeded = true;
-	  }
-      }
-
-  if(!Succeeded)
-    {
-      ADD_MESSAGE("The spell is wasted.");
-      return true;
-    }
-
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 void bodypart::SignalEquipmentAdd(gearslot* Slot)
 {
   if(GetMaster())
@@ -2721,14 +2556,6 @@ uchar bodypart::GetMaxAlpha(ushort) const
     return 255;
 }
 
-bool wandofinvisibility::BeamEffect(character*, const std::string&, uchar, lsquare* Where) 
-{
-  if(Where->GetCharacter())
-    Where->GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
-
-  return false;
-}
-
 uchar lantern::GetSpecialFlags() const
 {
   switch(SquarePosition)
@@ -2752,6 +2579,9 @@ void bodypart::AddPostFix(std::string& String) const
 
 bool stethoscope::Apply(character* Doctor) 
 {
+  if(!Doctor->CanUseStethoscope(true))
+    return false;
+
   if(!Doctor->IsPlayer())
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
@@ -2761,28 +2591,17 @@ bool stethoscope::Apply(character* Doctor)
     return false;
 
   Doctor->DexterityAction(2);
-  return ListenTo(GetNearLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
-} 
+  character* Char = GetNearSquare(GetPos() + game::GetMoveVector(Dir))->GetCharacter();
 
-/* Returns true if successful else false */
-
-bool stethoscope::ListenTo(lsquare* Square, character* Listener)
-{
-  if(!Listener->CanUseStethoscope(true))
-    return false;
-
-  character* Char = Square->GetCharacter();
   if(!Char)
     {
-      if(Listener->IsPlayer())
-	ADD_MESSAGE("There's no-one here.");
+      ADD_MESSAGE("There's no-one here.");
       return false;
     }
 
-
-  Char->DisplayStethoscopeInfo(Listener);
+  Char->DisplayStethoscopeInfo(Doctor);
   return true;
-}
+} 
 
 void itemcontainer::CalculateVolumeAndWeight()
 {
@@ -3116,8 +2935,11 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 3))
     {
+      if(Hitter->IsPlayer())
+	game::DoEvilDeed(10);
+
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
@@ -3131,7 +2953,7 @@ bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
@@ -3147,13 +2969,13 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      std::string DeathMSG = "killed by " + Enemy->GetKillName(); 
-      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
+      std::string DeathMSG = "killed by " + Hitter->GetKillName(); 
+      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
       return true;
     }
   else
@@ -3164,7 +2986,7 @@ bool whipofthievery::HitEffect(character* Enemy, character* Hitter, uchar BodyPa
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(IsBroken()) && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
+  if(!IsBroken() && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));
@@ -3370,6 +3192,11 @@ oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
 
 bool whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
+  /* Gum solution! */
+
+  if(game::GetPetrus() == Enemy)
+    return false;
+
   if(!Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)
     return false;
 
@@ -3378,10 +3205,10 @@ bool whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitte
       if(game::GetGod(10)->GetRelation() < 0)
 	return false;
       else
-	return !(RAND() % (7 - game::GetGod(10)->GetRelation() / 200));
+	return !(RAND() % (10 - game::GetGod(10)->GetRelation() / 200));
     }
   else
-    return !(RAND() % 5);
+    return !(RAND() % 10);
 }
 
 bool wand::Zap(character* Zapper, vector2d, uchar Direction)
@@ -3394,14 +3221,9 @@ bool wand::Zap(character* Zapper, vector2d, uchar Direction)
 
   Zapper->EditExperience(PERCEPTION, 250);
   std::string DeathMSG = "killed by " + GetName(INDEFINITE);
-  Beam(Zapper, DeathMSG, Direction, GetBeamRange());
+  (GetLevel()->*level::GetBeam(GetBeamStyle()))(Zapper, DeathMSG, Zapper->GetPos(), GetBeamColor(), GetBeamEffect(), Direction, GetBeamRange());
   SetTimesUsed(GetTimesUsed() + 1);
   return true;
-}
-
-bool wandofcloning::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* Where)
-{
-  return Where->CloneEverything(Zapper);
 }
 
 void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
@@ -3410,7 +3232,10 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription() << ", " << GetStrengthValueDescription();
+      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
+
+      if(!IsBroken() && !IsWhip())
+	Entry << ", " << GetStrengthValueDescription();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -3425,24 +3250,6 @@ void meleeweapon::AddInventoryEntry(const character* Viewer, std::string& Entry,
 void banana::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
 {
   item::AddInventoryEntry(Viewer, Entry, Amount, ShowSpecialInfo);
-}
-
-void whip::AddInventoryEntry(const character* Viewer, std::string& Entry, ushort, bool ShowSpecialInfo) const // never piled
-{
-  AddName(Entry, INDEFINITE);
-
-  if(ShowSpecialInfo)
-    {
-      Entry << " [" << GetWeight() << "g, DAM " << GetBaseMinDamage() << "-" << GetBaseMaxDamage() << ", " << GetBaseToHitValueDescription();
-
-      uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
-      uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
-
-      if(CWeaponSkillLevel || SWeaponSkillLevel)
-	Entry << ", skill " << CWeaponSkillLevel << '/' << SWeaponSkillLevel;
-
-      Entry << "]";
-    }
 }
 
 void armor::AddInventoryEntry(const character*, std::string& Entry, ushort Amount, bool ShowSpecialInfo) const
@@ -3465,7 +3272,10 @@ void shield::AddInventoryEntry(const character* Viewer, std::string& Entry, usho
 
   if(ShowSpecialInfo)
     {
-      Entry << " [" << GetWeight() << "g, "  << GetBaseToHitValueDescription() << ", " << GetStrengthValueDescription();
+      Entry << " [" << GetWeight() << "g, "  << GetBaseToHitValueDescription();
+
+      if(!IsBroken())
+	Entry << ", " << GetStrengthValueDescription();
 
       uchar CWeaponSkillLevel = Viewer->GetCWeaponSkillLevel(this);
       uchar SWeaponSkillLevel = Viewer->GetSWeaponSkillLevel(this);
@@ -4961,7 +4771,7 @@ bool mine::CheckPickUpEffect(character*)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(0, "tried to pick up an active land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return false;
     }
 
@@ -5134,7 +4944,7 @@ bool horn::Apply(character* Blower)
 	ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
 
       rect Rect;
-      femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), GetPos(), 10);
+      femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 10);
 
       for(ushort x = Rect.X1; x <= Rect.X2; ++x)
 	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
@@ -5207,7 +5017,7 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
       SendToHell();
-      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
   else
@@ -5218,3 +5028,45 @@ uchar corpse::GetArticleMode() const
 {
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
+
+bool neercseulb::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
+    {
+      if(Hitter->IsPlayer())
+	game::DoEvilDeed(10);
+
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s Neerc Se-ulb's life-draining energies swallow %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+      return Enemy->ReceiveBodyPartDamage(Hitter, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction) != 0 || BaseSuccess;
+    }
+  else
+    return BaseSuccess;
+}
+
+bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
+{
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!IsBroken() && Enemy->IsEnabled() && !(RAND() % 5))
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s hammer shoots a lightning bolt at %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+      std::string DeathMSG = "killed by " + Hitter->GetKillName();
+      GetLevel()->LightningBeam(Hitter, DeathMSG, GetPos(), WHITE, BEAM_LIGHTNING, Direction, 10);
+      return true;
+    }
+  else
+     return BaseSuccess;
+}
+
+bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+{
+  return Type != ELECTRICITY ? meleeweapon::ReceiveDamage(Damager, Damage, Type) : false;
+}
+
+

@@ -9,23 +9,12 @@
 void room::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
-  SaveFile << Pos << Size << Door << Index << DivineMaster;
+  SaveFile << Pos << Size << Index << DivineMaster << MasterID;
 }
 
 void room::Load(inputfile& SaveFile)
 {
-  SaveFile >> Pos >> Size >> Door >> Index >> DivineMaster;
-}
-
-void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
-{
-  if(Terrain->IsDoor())
-    Door.push_back(Terrain->GetPos());
-}
-
-void room::HandleInstantiatedCharacter(character* Character)
-{
-  Character->SetHomeRoom(Index);
+  SaveFile >> Pos >> Size >> Index >> DivineMaster >> MasterID;
 }
 
 room* roomprototype::CloneAndLoad(inputfile& SaveFile) const
@@ -42,8 +31,8 @@ roomprototype::roomprototype(room* (*Cloner)(bool), const std::string& ClassId) 
 
 void room::DestroyTerrain(character* Who, olterrain*)
 {
-  if(Who && Master)
-    Who->Hostility(Master);
+  if(Who && MasterIsActive())
+    Who->Hostility(GetMaster());
 
   if(DivineMaster)
     game::GetGod(DivineMaster)->AdjustRelation(GetGodRelationAdjustment());
@@ -53,10 +42,10 @@ void room::DestroyTerrain(character* Who, olterrain*)
 
 bool room::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
 {
-  if(!Master || Infidel == Master || Master->GetRelation(Infidel) == HOSTILE)
+  if(!MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE)
     return true;
 
-  ADD_MESSAGE("%s might not like this.", Master->CHAR_NAME(DEFINITE));
+  ADD_MESSAGE("%s might not like this.", GetMaster()->CHAR_NAME(DEFINITE));
 
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
@@ -65,4 +54,10 @@ bool room::CheckDestroyTerrain(character* Infidel, olterrain* Terrain)
     }
   else
     return false; 
+}
+
+bool room::MasterIsActive() const
+{
+  character* Master = GetMaster();
+  return Master && Master->IsEnabled();
 }

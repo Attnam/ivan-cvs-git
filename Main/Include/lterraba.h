@@ -74,17 +74,18 @@ class lterrain : public object
   bool CanBeSeenBy(character*) const;
   virtual const std::string& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
-  virtual square* GetSquareUnder() const { return LSquareUnder; }
+  virtual square* GetSquareUnderEntity() const { return LSquareUnder; }
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }
-  level* GetLevelUnder() const { return LSquareUnder->GetLevelUnder(); }
-  lsquare* GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevelUnder()->GetLSquare(Pos); }
-  lsquare* GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevelUnder()->GetLSquare(x, y); }
+  level* GetLevel() const { return LSquareUnder->GetLevel(); }
+  lsquare* GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
   virtual void CalculateAll() { CalculateEmitation(); }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   virtual bool HasKeyHole() const { return CanBeOpened(); }
   virtual bool IsOnGround() const { return true; }
+  room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -170,6 +171,7 @@ struct olterraindatabase : public terraindatabase
   bool IsUpLink;
   ulong StorageVolume;
   uchar HPModifier;
+  bool IsSafeToCreateDoor;
 };
 
 class olterrainprototype
@@ -252,6 +254,7 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_BOOL(IsUpLink);
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   DATA_BASE_VALUE(uchar, HPModifier);
+  virtual DATA_BASE_BOOL(IsSafeToCreateDoor);
   static olterrain* Clone(ushort, ushort) { return 0; }
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
@@ -309,3 +312,4 @@ LTERRAIN(\
 );
 
 #endif
+

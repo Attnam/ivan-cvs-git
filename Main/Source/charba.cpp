@@ -47,7 +47,7 @@ std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Sl
 bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false };
 bool character::StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false };
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), HomePos(HomePos)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -82,10 +82,12 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   for(c = 0; c < AllowedWeaponSkillCategories; ++c)
     CWeaponSkill[c] = new cweaponskill(*Char.CWeaponSkill[c]);
 
+  HomeData = Char.HomeData ? new homedata(*Char.HomeData) : 0;
+  ID = game::CreateNewCharacterID(this);
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -115,6 +117,8 @@ character::~character()
     delete CWeaponSkill[c];
 
   delete [] CWeaponSkill;
+  delete HomeData;
+  game::RemoveCharacterID(ID);
 }
 
 void character::Hunger() 
@@ -149,7 +153,7 @@ void character::Hunger()
   CheckStarvationDeath("starved to death");
 }
 
-uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+ushort character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
   uchar Dir = Type == BITE_ATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = GetDodgeValue();
@@ -181,7 +185,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
       ++TrueDamage;
     }
 
-  uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
+  ushort BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
   if(Critical)
     {
@@ -255,13 +259,13 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
 
 struct svpriorityelement
 {
-  svpriorityelement(uchar BodyPart, uchar StrengthValue) : BodyPart(BodyPart), StrengthValue(StrengthValue) { }
+  svpriorityelement(ushort BodyPart, ushort StrengthValue) : BodyPart(BodyPart), StrengthValue(StrengthValue) { }
   bool operator<(const svpriorityelement& AnotherPair) const { return StrengthValue > AnotherPair.StrengthValue; }
-  uchar BodyPart;
+  ushort BodyPart;
   ushort StrengthValue;
 };
 
-uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
+ushort character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 {
   if(GetBodyParts() == 1)
     return 0;
@@ -322,7 +326,7 @@ void character::Be()
       if(IsPlayer())
 	{
 	  if(GetHungerState() == STARVING && !(RAND() % 50))
-	    Faint(true);
+	    Faint(500 + RAND() % 500, true);
 
 	  if(!Action || Action->AllowFoodConsumption())
 	    Hunger();
@@ -447,7 +451,7 @@ bool character::Open()
 
       vector2d DirVect = game::GetDirectionVectorForKey(Key);
 
-      if(DirVect != DIR_ERROR_VECTOR && GetAreaUnder()->IsValidPos(GetPos() + DirVect))
+      if(DirVect != DIR_ERROR_VECTOR && GetArea()->IsValidPos(GetPos() + DirVect))
 	return OpenPos(GetPos() + DirVect);
     }
   else
@@ -462,7 +466,7 @@ bool character::Close()
     {
       uchar Dir = game::DirectionQuestion("What do you wish to close?  [press a direction key]", false);
 
-      if(Dir != DIR_ERROR && GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
+      if(Dir != DIR_ERROR && GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
 	return ClosePos(GetPos() + game::GetMoveVector(Dir));
     }
   else
@@ -485,7 +489,7 @@ bool character::Drop()
   if(ToDrop.empty())
     return false;
 
-  if(!GetRoomUnder() || GetRoomUnder()->DropItem(this, ToDrop[0], ToDrop.size()))
+  if(!GetRoom() || GetRoom()->DropItem(this, ToDrop[0], ToDrop.size()))
     {
       for(ushort c = 0; c < ToDrop.size(); ++c)
 	ToDrop[c]->MoveTo(GetStackUnder());
@@ -574,7 +578,7 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
   if(GetBurdenState() != OVER_LOADED || TeleportMove)
     {
-      GetAreaUnder()->MoveCharacter(GetPos(), MoveTo);
+      GetArea()->MoveCharacter(GetPos(), MoveTo);
 
       if(IsPlayer())
 	ShowNewPosInfo();
@@ -714,7 +718,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 {
   if(!game::IsInWilderness())
     {
-      if(GetLevelUnder()->IsValidPos(MoveTo))
+      if(GetLevel()->IsValidPos(MoveTo))
 	{
 	  lsquare* MoveToSquare = GetNearLSquare(MoveTo);
 	  character* Character = MoveToSquare->GetCharacter();
@@ -791,7 +795,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	}
       else
 	{
-	  if(IsPlayer() && !IsStuck() && GetLevelUnder()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
+	  if(IsPlayer() && !IsStuck() && GetLevel()->IsOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()) + "? [y/N]"))
 	    {
 	      if(HasPetrussNut() && !HasGoldenEagleShirt())
 		{
@@ -815,7 +819,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
     }
   else
     {
-      if(GetAreaUnder()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
+      if(GetArea()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
 	{
 	  if(!game::GoThroughWallsCheatIsActive())
 	    for(ushort c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
@@ -862,7 +866,7 @@ bool character::PickUp()
       if(!Amount)
 	return false;
 
-      if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(this))
+      if((!GetRoom() || GetRoom()->PickupItem(this, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(this))
 	{
 	  for(ushort c = 0; c < Amount; ++c)
 	    PileVector[0][c]->MoveTo(GetStack());
@@ -887,7 +891,7 @@ bool character::PickUp()
       if(ToPickup.empty())
 	break;
 
-      if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(this))
+      if((!GetRoom() || GetRoom()->PickupItem(this, ToPickup[0], ToPickup.size())) && ToPickup[0]->CheckPickUpEffect(this))
 	{
 	  for(ushort c = 0; c < ToPickup.size(); ++c)
 	    ToPickup[c]->MoveTo(GetStack());
@@ -918,11 +922,11 @@ bool character::Quit()
     return false;
 }
 
-void character::CreateCorpse()
+void character::CreateCorpse(lsquare* Square)
 {
   corpse* Corpse = new corpse(0, NO_MATERIALS);
   Corpse->SetDeceased(this);
-  GetStackUnder()->AddItem(Corpse);
+  Square->AddItem(Corpse);
   Disable();
 }
 
@@ -974,13 +978,20 @@ void character::Die(bool ForceMsg)
   if(IsPlayer())
     game::RemoveSaves();
 
-  if(HomeRoom && GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
-    GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(0);
-
   GetSquareUnder()->RemoveCharacter();
 
   if(!game::IsInWilderness())
-    CreateCorpse();
+    {
+      if(!StateIsActivated(POLYMORPHED))
+	CreateCorpse(GetLSquareUnder());
+      else
+	{
+	  GetPolymorphBackup()->CreateCorpse(GetLSquareUnder());
+	  GetPolymorphBackup()->SetPolymorphed(false);
+	  SetPolymorphBackup(0);
+	  SendToHell();
+	}
+    }
 
   if(IsPlayer())
     {
@@ -1093,7 +1104,7 @@ void character::AddBlockMessage(const character* Enemy, const item* Blocker, con
   ADD_MESSAGE("%s", Msg.c_str());
 }
 
-void character::AddPrimitiveHitMessage(const character* Enemy, const std::string& FirstPersonHitVerb, const std::string& ThirdPersonHitVerb, uchar BodyPart) const
+void character::AddPrimitiveHitMessage(const character* Enemy, const std::string& FirstPersonHitVerb, const std::string& ThirdPersonHitVerb, ushort BodyPart) const
 {
   std::string Msg;
   std::string BodyPartDescription = BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()) ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
@@ -1110,7 +1121,7 @@ void character::AddPrimitiveHitMessage(const character* Enemy, const std::string
   ADD_MESSAGE("%s", Msg.c_str());
 }
 
-void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, uchar BodyPart, bool Critical) const
+void character::AddWeaponHitMessage(const character* Enemy, const item* Weapon, ushort BodyPart, bool Critical) const
 {
   std::string Msg;
   std::string BodyPartDescription = BodyPart && (Enemy->CanBeSeenByPlayer() || Enemy->IsPlayer()) ? " in the " + Enemy->GetBodyPartName(BodyPart) : "";
@@ -1180,7 +1191,7 @@ bool character::Talk()
     {
       uchar Dir = game::DirectionQuestion("To whom do you wish to talk to? [press a direction key]", false, true);
 
-      if(Dir == DIR_ERROR || !GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
+      if(Dir == DIR_ERROR || !GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
 	return false;
 
       if(Dir == YOURSELF)
@@ -1521,7 +1532,7 @@ bool character::Dip()
 	{
 	  uchar Dir = game::DirectionQuestion("Where do you want to dip " + Item->GetName(DEFINITE) + "? [press a direction key or '.']", false, true);
 
-	  if(Dir == DIR_ERROR || !GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
+	  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
 	    return false;
 	  
 	  return GetNearLSquare(GetPos() + game::GetMoveVector(Dir))->DipInto(Item, this);
@@ -1551,24 +1562,18 @@ void character::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   Stack->Save(SaveFile);
-
+  SaveFile << ID;
   ushort c;
 
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config << RegenerationCounter;
-  SaveFile << IsEnabled() << Polymorphed << HomePos;
+  SaveFile << TemporaryState << EquipmentState << Money << WayPoint << Config << RegenerationCounter;
+  SaveFile << IsEnabled() << Polymorphed << HomeData;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
-
-  if(HomeRoom)
-    if(!game::IsInWilderness() && GetSquareUnder() && GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
-      SaveFile << bool(true);
-    else
-      SaveFile << bool(false);
 
   SaveFile << Action;
 
@@ -1603,23 +1608,20 @@ void character::Load(inputfile& SaveFile)
 {
   SquareUnder = game::GetSquareInLoad();
   Stack->Load(SaveFile);
-
+  SaveFile >> ID;
+  game::AddCharacterID(this, ID);
   ushort c;
 
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config >> RegenerationCounter;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> WayPoint >> Config >> RegenerationCounter;
   SetIsEnabled(ReadType<bool>(SaveFile));
-  SaveFile >> Polymorphed >> HomePos;
+  SaveFile >> Polymorphed >> HomeData;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
-
-  if(HomeRoom)
-    if(ReadType<bool>(SaveFile))
-      GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
 
   SaveFile >> Action;
 
@@ -1811,9 +1813,9 @@ bool character::MoveRandomly()
 {
   for(ushort c = 0; c < 10; ++c)
     {
-      vector2d ToTry = GetPos() + game::GetMoveVector(RAND() % 8);
+      vector2d ToTry = GetPos() + game::GetMoveVector(RAND() & 7);
 
-      if(GetLevelUnder()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->IsDangerousForAIToStepOn(this) && TryMove(ToTry, false))
+      if(GetLevel()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->IsDangerousForAIToStepOn(this) && TryMove(ToTry, false))
 	return true;
     }
 
@@ -1919,7 +1921,7 @@ bool character::Kick()
 
   uchar Dir = game::DirectionQuestion("In what direction do you wish to kick? [press a direction key]", false);
 
-  if(Dir == DIR_ERROR || !GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
+  if(Dir == DIR_ERROR || !GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Dir)))
     return false;
 
   lsquare* Square = GetNearLSquare(GetPos() + game::GetMoveVector(Dir));
@@ -1994,7 +1996,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
       Desc << ", " << Description;
 
       if(AddEndLevel)
-	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
+	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()));
 
       HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
       HScore.Save();
@@ -2089,7 +2091,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, ushort Damage
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s hits %s.", Thingy->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
-  uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
+  ushort BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
   ushort DoneDamage = ReceiveBodyPartDamage(Thrower, Damage, PHYSICAL_DAMAGE, BodyPart, Direction);
   bool Succeeded = (GetBodyPart(BodyPart) && HitEffect(Thrower, Thingy, THROW_ATTACK, BodyPart, Direction, !DoneDamage)) || DoneDamage;
 
@@ -2252,7 +2254,6 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   InNoMsgMode = NewForm->InNoMsgMode = true;
   GetSquareUnder()->RemoveCharacter();
   GetSquareUnder()->AddCharacter(NewForm);
-  //SetSquareUnder(0);
   NewForm->SetAssignedName(GetAssignedName());
   NewForm->ActivateTemporaryState(POLYMORPHED);
   NewForm->SetTemporaryStateCounter(POLYMORPHED, Counter);
@@ -2323,7 +2324,7 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 	  else if(Kicker->IsPlayer())
 	    ADD_MESSAGE("The kick throws %s off balance.", CHAR_DESCRIPTION(DEFINITE));
 
-	  if(GetAreaUnder()->IsValidPos((GetPos() << 1) - Kicker->GetPos()))
+	  if(GetArea()->IsValidPos((GetPos() << 1) - Kicker->GetPos()))
 	    FallTo(Kicker, (GetPos() << 1) - Kicker->GetPos());
 	}
     }
@@ -2387,7 +2388,7 @@ void character::StandIdleAI()
   EditAP(-1000);
 }
 
-void character::Faint(bool HungerFaint)
+void character::Faint(ushort Counter, bool HungerFaint)
 {
   if(GetAction())
     {
@@ -2403,7 +2404,7 @@ void character::Faint(bool HungerFaint)
     ADD_MESSAGE("%s faints.", CHAR_NAME(DEFINITE));
 
   faint* Faint = new faint(this);
-  Faint->SetCounter(100 + RAND() % 101);
+  Faint->SetCounter(Counter);
   SetAction(Faint);
 }
 
@@ -2612,7 +2613,7 @@ bool character::RestUntilHealed()
       return false;
     }
 
-  long HPToRest = game::NumberQuestion("How many hit points you desire?", vector2d(16, 6), WHITE);
+  long HPToRest = game::ScrollBarQuestion("How many hit points you desire?", vector2d(16, 6), GetMaxHP(), 1, 0, GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
   if(HPToRest <= GetHP())
     {
@@ -2631,7 +2632,7 @@ bool character::OutlineCharacters()
 {
   configuration::SetOutlineCharacters(!configuration::GetOutlineCharacters());
   configuration::Save();
-  GetAreaUnder()->SendNewDrawRequest();
+  GetArea()->SendNewDrawRequest();
   return false;
 }
 
@@ -2639,7 +2640,7 @@ bool character::OutlineItems()
 {
   configuration::SetOutlineItems(!configuration::GetOutlineItems());
   configuration::Save();
-  GetAreaUnder()->SendNewDrawRequest();
+  GetArea()->SendNewDrawRequest();
   return false;
 }
 
@@ -2676,7 +2677,7 @@ bool character::LowerGodRelations()
 ushort character::LOSRange() const
 {
   if(!game::IsInWilderness())
-    return GetAttribute(PERCEPTION) * GetLevelUnder()->GetLOSModifier() / 48;
+    return GetAttribute(PERCEPTION) * GetLevel()->GetLOSModifier() / 48;
   else
     return 3;
 }
@@ -2685,7 +2686,7 @@ ushort character::LOSRangeSquare() const
 {
   if(!game::IsInWilderness())
     {
-      ulong LOSModifier = GetLevelUnder()->GetLOSModifier();
+      ulong LOSModifier = GetLevel()->GetLOSModifier();
       return GetAttribute(PERCEPTION) * GetAttribute(PERCEPTION) * LOSModifier * LOSModifier / 2304;
     }
   else
@@ -2715,7 +2716,7 @@ bool character::Displace(character* Who, bool Forced)
   if(GetBurdenState() == OVER_LOADED)
     {
       if(IsPlayer())
-	ADD_MESSAGE("You try to use your claws to crawl forward. But your load is too heavy.");
+	ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
 
       return true;
     }
@@ -2829,7 +2830,7 @@ void character::Hostility(character* Enemy)
 
 stack* character::GetGiftStack() const
 {
-  if(GetLSquareUnder()->GetRoom() && !GetLSquareUnder()->GetRoomClass()->AllowDropGifts())
+  if(GetLSquareUnder()->GetRoomIndex() && !GetLSquareUnder()->GetRoom()->AllowDropGifts())
     return GetStack();
   else
     return GetStackUnder();
@@ -2839,9 +2840,9 @@ bool character::MoveRandomlyInRoom()
 {
   for(ushort c = 0; c < 10; ++c)
     {
-      vector2d ToTry = GetPos() + game::GetMoveVector(RAND() % 8);
+      vector2d ToTry = GetPos() + game::GetMoveVector(RAND() & 7);
 
-      if(GetLevelUnder()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->IsDangerousForAIToStepOn(this) && !GetNearLSquare(ToTry)->GetOLTerrain()->IsDoor() && TryMove(ToTry, false))
+      if(GetLevel()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->IsDangerousForAIToStepOn(this) && !GetNearLSquare(ToTry)->GetOLTerrain()->IsDoor() && TryMove(ToTry, false))
 	return true;
     }
 
@@ -2881,7 +2882,7 @@ bool character::Go()
 
 void character::GoOn(go* Go)
 {
-  if(!GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(Go->GetDirection())))
+  if(!GetArea()->IsValidPos(GetPos() + game::GetMoveVector(Go->GetDirection())))
     {
       Go->Terminate(false);
       return;
@@ -2984,7 +2985,7 @@ ushort character::RandomizeReply(std::vector<bool>& Said)
     for(ushort c = 0; c < Said.size(); ++c)
       Said[c] = false;
 
-  uchar ToSay;
+  ushort ToSay;
   while(Said[ToSay = RAND() % Said.size()]);
   Said[ToSay] = true;
   return ToSay;
@@ -3145,7 +3146,7 @@ void character::TeleportRandomly()
 	}
     }
 
-  Move(GetLevelUnder()->GetRandomSquare(this), true);
+  Move(GetLevel()->GetRandomSquare(this), true);
 }
 
 bool character::SecretKnowledge()
@@ -3301,8 +3302,30 @@ bool character::SecretKnowledge()
 void character::RestoreHP()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->RestoreHP();
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->RestoreHP();
+    }
+
+  HP = MaxHP;
+}
+
+void character::RestoreLivingHP()
+{
+  HP = 0;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsAlive())
+	{
+	  BodyPart->RestoreHP();
+	  HP += BodyPart->GetHP();
+	}
+    }
 
   HP = MaxHP;
 }
@@ -3317,11 +3340,13 @@ bool character::AllowDamageTypeBloodSpill(uchar Type) const
       return true;
     case ACID:
     case FIRE:
+    case DRAIN:
     case POISON:
     case BULIMIA:
+    case ELECTRICITY:
       return false;
     default:
-      ABORT("Unknown blood effect destroyed dungeon!");
+      ABORT("Unknown blood effect destroyed the dungeon!");
       return false;
     }
 }
@@ -3629,13 +3654,16 @@ ushort character::GetResistance(uchar Type) const
 {
   switch(Type)
     {
-    case PHYSICAL_DAMAGE: return GetPhysicalDamageResistance();
-    case SOUND: return GetSoundResistance();
-    case ENERGY: return GetEnergyResistance();
-    case ACID: return GetAcidResistance();
+    case PHYSICAL_DAMAGE:
+    case SOUND:
+    case ENERGY:
+    case ACID:
+    case DRAIN:
+    case BULIMIA:
+      return 0;
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
-    case BULIMIA: return GetBulimiaResistance();
+    case ELECTRICITY: return GetElectricityResistance();
     default:
       ABORT("Resistance lack detected!");
       return 0;
@@ -3687,23 +3715,11 @@ void character::Regenerate()
 
   while(RegenerationCounter > 600000)
     {
-      uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
-
-      for(ushort c = 0; c < BodyParts; ++c)
-	{
-	  bodypart* BodyPart = GetBodyPart(c);
-
-	  if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
-	    NeedHealIndex[NeedHeal++] = c;
-	}
-
-      if(!NeedHeal)
+      if(!HealHitPoint())
 	break;
 
       RegenerationCounter -= 600000;
-      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
       EditExperience(ENDURANCE, Max(5000 / MaxHP, 1));
-      ++HP;
     }
 }
 
@@ -3972,6 +3988,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
 
   if(!(SpecialFlags & LOAD))
     {
+      ID = game::CreateNewCharacterID(this);
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
@@ -4014,7 +4031,7 @@ characterprototype::characterprototype(characterprototype* Base, character* (*Cl
 
 bool character::TeleportNear(character* Caller)
 {
-  vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, Caller->GetPos());
+  vector2d Where = GetArea()->GetNearestFreeSquare(this, Caller->GetPos());
 
   if(Where == DIR_ERROR_VECTOR)
     return false;
@@ -4042,23 +4059,7 @@ void character::ReceiveHeal(long Amount)
   ushort c;
 
   for(c = 0; c < Amount / 15; ++c)
-    {
-      uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
-
-      for(ushort b = 0; b < BodyParts; ++b)
-	{
-	  bodypart* BodyPart = GetBodyPart(b);
-
-	  if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
-	    NeedHealIndex[NeedHeal++] = b;
-	}
-
-      if(!NeedHeal)
-	break;
-
-      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
-      ++HP;
-    }
+    HealHitPoint();
 
   Amount -= c * 15;
 
@@ -4128,7 +4129,7 @@ void character::ReceiveOmmelUrine(long Amount)
 {
   EditExperience(ARM_STRENGTH, Amount << 3);
   EditExperience(LEG_STRENGTH, Amount << 3);
-  RestoreHP();
+  RestoreLivingHP();
 
   if(IsPlayer())
     game::DoEvilDeed(Amount / 25);
@@ -4190,7 +4191,7 @@ void character::ReceiveKoboldFlesh(long)
       if(IsPlayer())
 	ADD_MESSAGE("You lose control of your legs and fall down.");
 
-      Faint();
+      Faint(250 + RAND() % 250);
     }
 }
 
@@ -4375,7 +4376,7 @@ void character::DrawPanel(bool AnimationDraw) const
   if(game::IsInWilderness())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Worldmap");
   else
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrent())).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex())).c_str());
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Time: %d", game::GetTicks() / 10);
 
@@ -4417,7 +4418,7 @@ void character::DrawPanel(bool AnimationDraw) const
 
 void character::CalculateDodgeValue()
 {
-  DodgeValue = 0.1f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
+  DodgeValue = 0.05f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
   if(CanFly())
     DodgeValue *= 2;
@@ -4434,10 +4435,12 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
     case ENERGY:
     case ACID:
     case FIRE:
+    case ELECTRICITY:
       return true;
     case PHYSICAL_DAMAGE:
     case POISON:
     case BULIMIA:
+    case DRAIN:
       return false;
     default:
       ABORT("Unknown reaping effect destroyed dungeon!");
@@ -5065,7 +5068,7 @@ bodypart* character::GenerateRandomBodyPart()
 
 /* searched for character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
 
-bodypart* character::FindRandomOwnBodyPart() const
+bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
 {
   std::vector<bodypart*> LostAndFound;
 
@@ -5073,10 +5076,10 @@ bodypart* character::FindRandomOwnBodyPart() const
     if(!GetBodyPart(c))
       for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end(); ++i)
 	{
-	  item* Found = SearchForItemWithID(*i);
+	  bodypart* Found = static_cast<bodypart*>(SearchForItemWithID(*i));
 
-	  if(Found)
-	    LostAndFound.push_back(static_cast<bodypart*>(Found));
+	  if(Found && (AllowNonLiving || Found->IsAlive()))
+	    LostAndFound.push_back(Found);
 	}
 
   if(LostAndFound.empty())
@@ -5104,7 +5107,7 @@ void character::PrintEndPoisonedMessage() const
 void character::PoisonedHandler()
 {
   if(!(RAND() % 100))
-    Vomit(2 + RAND() % 2);
+    Vomit(2 + (RAND() & 1));
 
   ushort Damage = 0;
 
@@ -5139,13 +5142,13 @@ void character::BeginInvisibility()
 void character::BeginInfraVision()
 {
   if(IsPlayer())
-    GetAreaUnder()->SendNewDrawRequest();
+    GetArea()->SendNewDrawRequest();
 }
 
 void character::BeginESP()
 {
   if(IsPlayer())
-    GetAreaUnder()->SendNewDrawRequest();
+    GetArea()->SendNewDrawRequest();
 }
 
 void character::EndInvisibility()
@@ -5157,13 +5160,13 @@ void character::EndInvisibility()
 void character::EndInfraVision()
 {
   if(IsPlayer())
-    GetAreaUnder()->SendNewDrawRequest();
+    GetArea()->SendNewDrawRequest();
 }
 
 void character::EndESP()
 {
   if(IsPlayer())
-    GetAreaUnder()->SendNewDrawRequest();
+    GetArea()->SendNewDrawRequest();
 }
 
 void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
@@ -5193,12 +5196,12 @@ void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, boo
   GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 }
 
-void character::SetConfig(ushort NewConfig)
+/*void character::SetConfig(ushort NewConfig)
 {
   Config = NewConfig;
   InstallDataBase();
   CalculateAll();
-}
+}*/
 
 god* character::GetMasterGod() const
 {
@@ -5294,7 +5297,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 {
   for(ushort c = 0; c < NumberToTeleport; ++c)
     {
-      uchar RandomBodyPart = GetRandomNonVitalBodyPart();
+      ushort RandomBodyPart = GetRandomNonVitalBodyPart();
 
       if(RandomBodyPart == NONE_INDEX)
 	{
@@ -5310,7 +5313,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      lump* Lump = new lump(0, NO_MATERIALS); 
 	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
 	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
-	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack());
+	      Lump->MoveTo(GetNearLSquare(GetLevel()->GetRandomSquare())->GetStack());
 
 	      if(IsPlayer())
 		ADD_MESSAGE("Parts of you teleport away.");
@@ -5321,7 +5324,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
       else
 	{
 	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
-	  GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack()->AddItem(SeveredBodyPart);
+	  GetNearLSquare(GetLevel()->GetRandomSquare())->AddItem(SeveredBodyPart);
 	  SeveredBodyPart->DropEquipment();
 
 	  if(IsPlayer())
@@ -5334,23 +5337,16 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 
 /* Returns an index of a random bodypart that is not vital. If no non-vital bodypart is found returns NONE_INDEX */
 
-uchar character::GetRandomNonVitalBodyPart()
+ushort character::GetRandomNonVitalBodyPart()
 {
   ushort OKBodyPart[MAX_BODYPARTS];
   ushort OKBodyParts = 0;
-  ushort c;
-  for(c = 0; c < GetBodyParts(); ++c)
-    {
-      if(GetBodyPart(c) && !BodyPartIsVital(c))
-	{
-	  OKBodyPart[OKBodyParts] = c;
-	  ++OKBodyParts;
-	}
-    }
-  if(OKBodyParts)
-    return OKBodyPart[RAND() % OKBodyParts];
-  else
-    return NONE_INDEX;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c) && !BodyPartIsVital(c))
+      OKBodyPart[OKBodyParts++] = c;
+
+  return OKBodyParts ? OKBodyPart[RAND() % OKBodyParts] : NONE_INDEX;
 }
 
 void character::CalculateVolumeAndWeight()
@@ -5758,13 +5754,13 @@ bool character::TryToEquip(item* Item)
 	  {
 	    if(NewDanger > Danger)
 	      {
-		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item, 1))
+		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s drops %s %s and equips %s instead.", CHAR_NAME(DEFINITE), CHAR_POSSESSIVE_PRONOUN, OldEquipment->CHAR_NAME(UNARTICLED), Item->CHAR_NAME(INDEFINITE));
 
-		    if(GetRoomUnder())
-		      GetRoomUnder()->DropItem(this, OldEquipment, 1);
+		    if(GetRoom())
+		      GetRoom()->DropItem(this, OldEquipment, 1);
 
 		    OldEquipment->MoveTo(GetStackUnder());
 		    Item->RemoveFromSlot();
@@ -5778,7 +5774,7 @@ bool character::TryToEquip(item* Item)
 	  {
 	    if(NewDanger > Danger || (NewDanger == Danger && e != RIGHT_WIELDED_INDEX && e != LEFT_WIELDED_INDEX))
 	      {
-		if(!GetRoomUnder() || GetRoomUnder()->PickupItem(this, Item, 1))
+		if(!GetRoom() || GetRoom()->PickupItem(this, Item, 1))
 		  {
 		    if(CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s picks up and equips %s.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(INDEFINITE));
@@ -5797,7 +5793,7 @@ bool character::TryToEquip(item* Item)
 
 bool character::TryToConsume(item* Item)
 {
-  if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoomUnder() || GetRoomUnder()->ConsumeItem(this, Item, 1)))
+  if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
     {
       ConsumeItem(Item);
       return true;
@@ -5849,7 +5845,7 @@ void character::CheckPanic(ushort Ticks)
 
 character* character::CloneToNearestSquare(character*) const
 {
-  vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, GetPos());
+  vector2d Where = GetArea()->GetNearestFreeSquare(this, GetPos());
 
   if(Where == DIR_ERROR_VECTOR)
     {
@@ -5862,7 +5858,7 @@ character* character::CloneToNearestSquare(character*) const
   if(!NewlyCreated)
     return 0;
   
-  GetLevelUnder()->GetLSquare(Where)->AddCharacter(NewlyCreated);
+  GetLevel()->GetLSquare(Where)->AddCharacter(NewlyCreated);
   return NewlyCreated;
 }
 
@@ -5872,11 +5868,6 @@ void character::SignalSpoil()
 
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoil(0);
-}
-
-square* character::GetSquareUnder() const
-{
-  return !MotherEntity ? SquareUnder : MotherEntity->GetSquareUnder();
 }
 
 bool character::CanHeal() const
@@ -6143,10 +6134,10 @@ bool character::SummonMonster()
     Summoned = protosystem::CreateMonster(game::StringQuestion("Summon which monster?", vector2d(16, 6), WHITE, 0, 80, false));
 
   Summoned->SetTeam(game::GetTeam(MONSTER_TEAM));
-  vector2d Where = GetLevelUnder()->GetNearestFreeSquare(Summoned, GetPos());
+  vector2d Where = GetLevel()->GetNearestFreeSquare(Summoned, GetPos());
 
   if(Where == DIR_ERROR_VECTOR)
-    Where = GetLevelUnder()->GetRandomSquare(Summoned);
+    Where = GetLevel()->GetRandomSquare(Summoned);
 
   GetNearLSquare(Where)->AddCharacter(Summoned);
   return false;
@@ -6257,7 +6248,7 @@ bool character::LevelTeleport()
       return false;
     }
 
-  if(Level == game::GetCurrent() + 1)
+  if(Level == game::GetCurrentLevelIndex() + 1)
     {
       ADD_MESSAGE("You are already here, %s!", game::Insult());
       return false;
@@ -6418,7 +6409,7 @@ long character::GetStuffScore() const
 
 bool character::MoveTowardsHomePos()
 {
-  return (HomePos.X != -1 && MoveTowards(HomePos)) || (!GetPos().IsAdjacent(HomePos) && MoveRandomly());
+  return HomeDataIsValid() && (MoveTowards(HomeData->Pos) || (!GetPos().IsAdjacent(HomeData->Pos) && MoveRandomly()));
 }
 
 bool character::WieldInRightArm()
@@ -6546,6 +6537,52 @@ std::string character::GetPanelName() const
 long character::GetMoveAPRequirement(uchar Difficulty) const
 {
   return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
+}
+
+bool character::HealHitPoint()
+{
+  uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
+
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+	NeedHealIndex[NeedHeal++] = c;
+    }
+
+  if(NeedHeal)
+    {
+      GetBodyPart(NeedHealIndex[RAND() % NeedHeal])->IncreaseHP();
+      ++HP;
+      return true;
+    }
+  else
+    return false;
+}
+
+void character::CreateHomeData()
+{
+  HomeData = new homedata;
+  lsquare* Square = GetLSquareUnder();
+  HomeData->Pos = Square->GetPos();
+  HomeData->Dungeon = Square->GetDungeonIndex();
+  HomeData->Level = Square->GetLevelIndex();
+  HomeData->Room = Square->GetRoomIndex();
+}
+
+room* character::GetHomeRoom() const
+{
+  if(HomeDataIsValid() && HomeData->Room)
+    return GetLevel()->GetRoom(HomeData->Room);
+  else
+    return 0;
+}
+
+void character::RemoveHomeData()
+{ 
+  delete HomeData;
+  HomeData = 0;
 }
 
 void character::AddESPConsumeMessage() const

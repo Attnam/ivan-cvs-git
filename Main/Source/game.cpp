@@ -47,7 +47,7 @@
 #include "wsquare.h"
 #include "allocate.h"
 
-#define SAVE_FILE_VERSION 110 // Increment this if changes make savefiles incompatible
+#define SAVE_FILE_VERSION 111 // Increment this if changes make savefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -55,14 +55,15 @@
 
 class quitrequest { };
 
-ushort game::Current;
+uchar game::CurrentLevelIndex;
 long game::BaseScore;
 bool game::InWilderness = false;
 worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
-uchar game::CurrentDungeon;
+uchar game::CurrentDungeonIndex;
+ulong game::NextCharacterID = 1;
 ulong game::NextItemID = 1;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
@@ -172,8 +173,9 @@ bool KeyIsOK(char);
 ulong game::Ticks;
 gamescript* game::GameScript = 0;
 valuemap game::GlobalValueMap;
-std::map<configid, dangerid> game::DangerMap;
+dangermap game::DangerMap;
 configid game::NextDangerId;
+characteridmap game::CharacterIDMap;
 
 void game::InitScript()
 {
@@ -348,7 +350,7 @@ void game::Run()
 
 	  if(++Counter == 10)
 	    {
-	      GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
+	      GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GenerateMonsters(); // Temporary place
 	      Counter = 0;
 	    }
 	}
@@ -397,7 +399,7 @@ bool game::WorldMapLOSHandler(long X, long Y)
 
 bool game::LevelLOSHandler(long X, long Y)
 {
-  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
   Square->SetLastSeen(LOSTurns);
   return Square->GetOLTerrain()->IsWalkable();
 }
@@ -534,19 +536,16 @@ bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << ushort(SAVE_FILE_VERSION);
-  SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
-  SaveFile << LOSTurns;
-  ulong Time = time(0);
-  femath::SetSeed(Time);
-  SaveFile << Time;
+  SaveFile << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
+  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
+  SaveFile << LOSTurns << femath::GetSeed();
   SaveFile << God << Dungeon << Team;
   SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
 
   if(InWilderness)
     SaveWorldMap(SaveName);
   else
-    GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
+    GetCurrentDungeon()->SaveLevel(SaveName, CurrentLevelIndex, false);
 
   SaveFile << game::GetPlayer()->GetPos();
   msgsystem::Save(SaveFile);
@@ -572,12 +571,10 @@ uchar game::Load(const std::string& SaveName)
 	return BACK;
     }
 
-  SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextItemID;
+  SaveFile >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheat;
+  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
-  ulong Time;
-  SaveFile >> Time;
-  femath::SetSeed(Time);
+  femath::SetSeed(ReadType<ulonglong>(SaveFile));
   SaveFile >> God >> Dungeon >> Team;
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
 
@@ -630,14 +627,14 @@ bool game::EmitationHandler(long X, long Y)
       Emit = MakeRGB24(Red, Green, Blue);
     }
 
-  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
   Square->AlterLuminance(CurrentEmitterPos, Emit);
   return Square->GetOLTerrain()->IsWalkable();
 }
 
 bool game::NoxifyHandler(long X, long Y)
 {
-  lsquare* Square = GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y);
+  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
   Square->NoxifyEmitter(CurrentEmitterPos);
   return Square->GetOLTerrain()->IsWalkable();
 }
@@ -717,7 +714,7 @@ vector2d game::GetDirectionVectorForKey(int Key)
 
 bool game::EyeHandler(long X, long Y)
 {
-  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
+  return GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
 }
 
 long game::GodScore()
@@ -769,28 +766,11 @@ float game::Difficulty()
 
 void game::ShowLevelMessage()
 {
-  if(GetLevel(GetCurrent())->GetLevelMessage().length())
-    ADD_MESSAGE(GetLevel(GetCurrent())->GetLevelMessage().c_str());
+  if(GetLevel(GetCurrentLevelIndex())->GetLevelMessage().length())
+    ADD_MESSAGE(GetLevel(GetCurrentLevelIndex())->GetLevelMessage().c_str());
 
-  GetLevel(GetCurrent())->SetLevelMessage("");
+  GetLevel(GetCurrentLevelIndex())->SetLevelMessage("");
 }
-
-/*void game::TriggerQuestForGoldenEagleShirt()
-{
-  BusyAnimationDisabled = true;
-  GetDungeon(ELPURI_CAVE)->PrepareLevel(DARK_LEVEL, false);
-  BusyAnimationDisabled = false;
-  level* DarkLevel = GetDungeon(ELPURI_CAVE)->GetLevel(DARK_LEVEL);
-  olterrain* Stairs = new link(STAIRS_DOWN);
-  Stairs->SetAttachedArea(DARK_LEVEL + 1);
-  vector2d Pos = DarkLevel->GetRandomSquare(0, IN_ROOM);
-  DarkLevel->GetLSquare(Pos)->ChangeOLTerrain(Stairs);
-
-  if(!DarkLevel->GetLevelMessage().length())
-    DarkLevel->SetLevelMessage("You feel something has changed since you were last here...");
-
-  GetDungeon(ELPURI_CAVE)->SaveLevel(SaveName(), DARK_LEVEL);
-}*/
 
 uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
 {
@@ -853,12 +833,12 @@ void game::SetPlayer(character* NP)
 
 area* game::GetCurrentArea()
 {
-  return !InWilderness ? (area*)GetCurrentDungeon()->GetLevel(Current) : (area*)WorldMap;
+  return !InWilderness ? static_cast<area*>(GetCurrentDungeon()->GetLevel(CurrentLevelIndex)) : static_cast<area*>(WorldMap);
 }
 
 level* game::GetCurrentLevel()
 {
-  return GetCurrentDungeon()->GetLevel(Current);
+  return GetCurrentDungeon()->GetLevel(CurrentLevelIndex);
 }
 
 level* game::GetLevel(ushort Index)
@@ -998,7 +978,7 @@ void game::CreateTeams()
     for(ushort i = 0; i < GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
       GetTeam(GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GetGameScript()->GetTeam()[c].first), GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
 
-    ushort* KillEvilness = GetGameScript()->GetTeam()[c].second->GetKillEvilness(false);
+    ushort* KillEvilness = GetGameScript()->GetTeam()[c].second->GetKillEvilness();
 
     if(KillEvilness)
       GetTeam(GetGameScript()->GetTeam()[c].first)->SetKillEvilness(*KillEvilness);
@@ -1558,7 +1538,7 @@ void game::InitDangerMap()
 
 void game::CalculateNextDanger()
 {
-  if(IsInWilderness() || !*GetCurrentLevel()->GetLevelScript()->GetGenerateMonsters())
+  if(IsInWilderness() || !*GetCurrentLevel()->GetLevelScript()->GenerateMonsters())
     return;
 
   const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerId.Type);
@@ -1625,7 +1605,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
   if(Area != WORLD_MAP)
     {
       SetIsInWilderness(false);
-      SetCurrent(Area);
+      SetCurrentLevelIndex(Area);
       bool New = !GetCurrentDungeon()->PrepareLevel(Area);
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
@@ -1642,7 +1622,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
 	}
 
-      bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->GetAutoReveal(false);
+      bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
 
       if(New && AutoReveal && *AutoReveal)
 	GetCurrentLevel()->Reveal();
@@ -1836,4 +1816,41 @@ void game::CallForAttention(vector2d Pos, ushort Range)
 		(*i)->SetWayPoint(Pos);
 	    }
     }
+}
+
+outputfile& operator<<(outputfile& SaveFile, homedata* HomeData)
+{
+  if(HomeData)
+    {
+      SaveFile.Put(1);
+      SaveFile << HomeData->Pos << HomeData->Dungeon << HomeData->Level << HomeData->Room;
+    }
+  else
+    SaveFile.Put(0);
+
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, homedata*& HomeData)
+{
+  if(SaveFile.Get())
+    {
+      HomeData = new homedata;
+      SaveFile >> HomeData->Pos >> HomeData->Dungeon >> HomeData->Level >> HomeData->Room;
+    }
+
+  return SaveFile;
+}
+
+ulong game::CreateNewCharacterID(character* NewChar)
+{
+  ulong ID = NextCharacterID++;
+  CharacterIDMap[ID] = NewChar;
+  return ID;
+}
+
+character* game::SearchCharacter(ulong ID)
+{
+  characteridmap::iterator Iterator = CharacterIDMap.find(ID);
+  return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
 }

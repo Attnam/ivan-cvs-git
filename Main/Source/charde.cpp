@@ -51,7 +51,7 @@ bool ennerbeast::Hit(character*, bool)
     ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHAR_DESCRIPTION(DEFINITE));
 
   rect Rect;
-  femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), GetPos(), 30);
+  femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), GetPos(), 30);
 
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
@@ -88,33 +88,33 @@ bool ennerbeast::Hit(character*, bool)
   return true;
 }
 
-void skeleton::CreateCorpse()
+void skeleton::CreateCorpse(lsquare* Square)
 {
   if(GetHead())
     {
       item* Skull = SevereBodyPart(HEAD_INDEX);
-      GetStackUnder()->AddItem(Skull);
+      Square->AddItem(Skull);
       Skull->DropEquipment();
     }
 
-  ushort Amount = 2 + RAND() % 4;
+  ushort Amount = 2 + (RAND() & 3);
 
   for(ushort c = 0; c < Amount; ++c)
-    GetStackUnder()->AddItem(new bone);
+    Square->AddItem(new bone);
 
   SendToHell();
 }
 
-void petrus::CreateCorpse()
+void petrus::CreateCorpse(lsquare* Square)
 {
-  GetStackUnder()->AddItem(new leftnutofpetrus);
+  Square->AddItem(new leftnutofpetrus);
   SendToHell();
 }
 
-void elpuri::CreateCorpse()
+void elpuri::CreateCorpse(lsquare* Square)
 {
-  character::CreateCorpse();
-  GetStackUnder()->AddItem(new headofelpuri);
+  character::CreateCorpse(Square);
+  Square->AddItem(new headofelpuri);
 }
 
 void humanoid::Save(outputfile& SaveFile) const
@@ -211,7 +211,7 @@ bool petrus::HealFully(character* ToBeHealed)
 	      break;
 	  }
 
-	if(!BodyPart)
+	if(!BodyPart || !BodyPart->IsAlive())
 	  continue;
 
 	BodyPart->RemoveFromSlot();
@@ -227,7 +227,7 @@ bool petrus::HealFully(character* ToBeHealed)
 
   if(ToBeHealed->IsInBadCondition())
     {
-      ToBeHealed->RestoreHP();
+      ToBeHealed->RestoreLivingHP();
       DidSomething = true;
 
       if(ToBeHealed->IsPlayer())
@@ -555,7 +555,7 @@ void petrus::BeTalkedTo()
 	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
 	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
 	      game::SaveWorldMap();
-	      GetAreaUnder()->SendNewDrawRequest();
+	      GetArea()->SendNewDrawRequest();
 	      ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
 	      StoryState = 1;
 	    }
@@ -609,8 +609,8 @@ void priest::BeTalkedTo()
 
 		if(game::GetPlayer()->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 		  {
-		    if(!OldBodyPart->GetMainMaterial()->IsSameAs(game::GetPlayer()->GetTorso()->GetMainMaterial()))
-		      ADD_MESSAGE("Sorry, I cannot put back your severed %s, because it doesn't seem to fit properly.", game::GetPlayer()->GetBodyPartName(c).c_str());
+		    if(!OldBodyPart->IsAlive())
+		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).c_str(), game::GetPlayer()->GetBodyPartName(c).c_str());
 		    else
 		      {
 			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
@@ -648,13 +648,13 @@ void priest::BeTalkedTo()
 	      }
 	  }
 	else if(!HasOld)
-	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but %s is not a communist and you need %dgp first.\"", game::GetPlayer()->GetBodyPartName(c).c_str(), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GOD_NAME, PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	  ADD_MESSAGE("\"You don't have your orginal %s with you. I could create you a new one, but my Divine Employer is not a communist and you need %dgp first.\"", game::GetPlayer()->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
       }
 
-  if(!HomeRoom)
+  if(!GetHomeRoom())
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    ADD_MESSAGE("%s talks to you: %s", CHAR_DESCRIPTION(DEFINITE), game::GetGod(GetLevelUnder()->GetRoom(HomeRoom)->GetDivineMaster())->GetPriestMessage().c_str());
+    ADD_MESSAGE("%s talks to you: %s", CHAR_DESCRIPTION(DEFINITE), game::GetGod(GetHomeRoom()->GetDivineMaster())->GetPriestMessage().c_str());
 }
 
 void skeleton::BeTalkedTo()
@@ -694,10 +694,12 @@ void slave::BeTalkedTo()
       return;
     }
 
-  character* Master;
+  room* Room = GetHomeRoom();
 
-  if(HomeRoom && (Master = GetLevelUnder()->GetRoom(HomeRoom)->GetMaster()))
+  if(Room && Room->MasterIsActive())
     {
+      character* Master = Room->GetMaster();
+
       if(game::GetPlayer()->GetMoney() >= 50)
 	{
 	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 gold pieces. I work very hard.\"", CHAR_DESCRIPTION(DEFINITE));
@@ -707,7 +709,7 @@ void slave::BeTalkedTo()
 	      game::GetPlayer()->SetMoney(game::GetPlayer()->GetMoney() - 50);
 	      Master->SetMoney(Master->GetMoney() + 50);
 	      ChangeTeam(game::GetPlayer()->GetTeam());
-	      SetHomeRoom(0);
+	      RemoveHomeData();
 	    }
 	}
       else
@@ -718,10 +720,8 @@ void slave::BeTalkedTo()
 
   if(GetTeam() == game::GetPlayer()->GetTeam())
     {
-      /* What if the whip is in the off hand? */
-
-      if(game::GetPlayer()->GetMainWielded() && game::GetPlayer()->GetMainWielded()->IsWhip())
-	ADD_MESSAGE("\"Don't hit me! I work! I obey! I not think!\"");
+      if((game::GetPlayer()->GetMainWielded() && game::GetPlayer()->GetMainWielded()->IsWhip()) || (game::GetPlayer()->GetSecondaryWielded() && game::GetPlayer()->GetSecondaryWielded()->IsWhip()))
+	ADD_MESSAGE("\"Don't hit me! I work! I obey! I don't think!\"");
       else
 	character::BeTalkedTo();
     }
@@ -745,9 +745,9 @@ void slave::GetAICommand()
   if(CheckForDoors())
     return;
 
-  if(!HomeRoom || !GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
+  if(!GetHomeRoom() || !GetHomeRoom()->MasterIsActive())
     {
-      HomeRoom = 0;
+      RemoveHomeData();
 
       if(MoveRandomly())
 	return;
@@ -963,7 +963,7 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetLeftWielded(Weapon);
-      GetCWeaponSkill(HAMMERS)->AddHit(500);
+      GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500);
       GetCurrentRightSWeaponSkill()->AddHit(200);
       GetCurrentLeftSWeaponSkill()->AddHit(200);
       SetEndurance(40);
@@ -1047,7 +1047,7 @@ bool largecat::Catches(item* Thingy)
 
 void kamikazedwarf::GetAICommand()
 {
-  if(HomeRoom)
+  if(GetHomeRoom())
     StandIdleAI();
   else
     character::GetAICommand();
@@ -1060,7 +1060,7 @@ bool unicorn::SpecialEnemySightedReaction(character*)
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s disappears!", CHAR_NAME(DEFINITE));
 
-    Move(GetLevelUnder()->GetRandomSquare(this), true);
+    Move(GetLevel()->GetRandomSquare(this), true);
 
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("Suddenly %s appears from nothing!", CHAR_NAME(INDEFINITE));
@@ -1872,7 +1872,7 @@ bool nonhumanoid::Hit(character* Enemy, bool ForceHit)
 
   if(AttackStyle & USE_LEGS)
     {
-      room* Room = Enemy->GetLSquareUnder()->GetRoomClass();
+      room* Room = Enemy->GetLSquareUnder()->GetRoom();
 
       if(Room && !Room->AllowKick(this))
 	AttackStyle &= ~USE_LEGS;
@@ -2170,7 +2170,7 @@ ushort nonhumanoid::GetAttribute(ushort Identifier) const
       if(IsAlive())
 	return Agility >> 1;
       else
-	return (GetTorso()->GetMainMaterial()->GetFlexibility() << 1);
+	return (GetTorso()->GetMainMaterial()->GetFlexibility() << 2);
     }
   else
     {
@@ -2696,6 +2696,7 @@ bool humanoid::CanUseStethoscope(bool PrintReason) const
 
       return false;
     }
+
   return true;
 }
 
@@ -3097,7 +3098,7 @@ void bananagrower::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      Profession = RAND() % 8;
+      Profession = RAND() & 7;
       HasBeenOnLandingSite = false;
     }
 }
@@ -3519,7 +3520,7 @@ void humanoid::AddSpecialMovePenaltyInfo(felist& Info) const
 
 void humanoid::CalculateDodgeValue()
 {
-  DodgeValue = 0.1f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
+  DodgeValue = 0.05f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
   if(CanFly())
     DodgeValue *= 2;
@@ -3557,7 +3558,7 @@ void genetrixvesana::GetAICommand()
 	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
 	    if((*i)->IsEnabled())
 	      {
-		lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() % 8);
+		lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() & 7);
 
 		if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
 		  {
@@ -3673,13 +3674,13 @@ void bananagrower::GetAICommand()
       for(ushort c = 0; c < 10; ++c)
 	GetStack()->AddItem(new banana);
 
-      vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, vector2d(0, 45));
+      vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(0, 45));
 
       if(Where == DIR_ERROR_VECTOR)
-	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
+	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
-      Profession = RAND() % 8;
+      Profession = RAND() & 7;
       RestoreBodyParts();
       RestoreHP();
       TemporaryState = 0;
@@ -3745,10 +3746,10 @@ void ostrich::GetAICommand()
 	  ItemVector[c]->SendToHell();
 	}
 
-      vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, vector2d(45, 0));
+      vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(45, 0));
 
       if(Where == DIR_ERROR_VECTOR)
-	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
+	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
       RestoreHP();
@@ -3954,14 +3955,14 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your another wielded item"));
 }
 
-void mommo::CreateCorpse()
+void mommo::CreateCorpse(lsquare* Square)
 {
   for(ushort d = 0; d < 9; ++d)
     {
-      lsquare* Square = GetNeighbourLSquare(d);
+      lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
 
-      if(Square && Square->GetOLTerrain()->IsWalkable())
-	Square->SpillFluid(RAND() % 20, GetBloodColor(), 5, 60);
+      if(NeighbourSquare && NeighbourSquare->GetOLTerrain()->IsWalkable())
+	NeighbourSquare->SpillFluid(RAND() % 20, GetBloodColor(), 5, 60);
     }
 
   SendToHell();  
@@ -3980,9 +3981,9 @@ void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, b
     }
 }
 
-uchar mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+ushort mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
-  uchar Return = humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+  ushort Return = humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
 
   if(Return == HAS_HIT && Critical)
     {
@@ -4082,23 +4083,23 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
   return Success;
 }
 
-void carnivorousplant::CreateCorpse()
+void carnivorousplant::CreateCorpse(lsquare* Square)
 {
   ushort Amount = !Config ? (RAND() & 1 ? 0 : (RAND() % 3 ? 1 : 2))
 			  : (RAND() & 1 ? 1 : (RAND() & 1 ? 2 : (RAND() & 1 ? 3 : 4)));
 
   for(ushort c = 0; c < Amount; ++c)
-    GetStackUnder()->AddItem(new kiwi);
+    Square->AddItem(new kiwi);
 
-  nonhumanoid::CreateCorpse();
+  nonhumanoid::CreateCorpse(Square);
 }
 
-void genetrixvesana::CreateCorpse()
+void genetrixvesana::CreateCorpse(lsquare* Square)
 {
   for(ushort c = 0; c < 3; ++c)
-    GetStackUnder()->AddItem(new pineapple);
+    Square->AddItem(new pineapple);
 
-  nonhumanoid::CreateCorpse();
+  nonhumanoid::CreateCorpse(Square);
 }
 
 void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
@@ -4115,11 +4116,11 @@ void nonhumanoid::AddSpecialStethoscopeInfo(felist& Info) const
   Info.AddEntry(std::string("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
-void zombie::CreateCorpse()
+void zombie::CreateCorpse(lsquare* Square)
 {
   corpse* Corpse = new corpse(0, NO_MATERIALS);
   Corpse->SetDeceased(this);
-  GetStackUnder()->AddItem(Corpse);
+  Square->AddItem(Corpse);
   Disable();
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
@@ -4158,44 +4159,38 @@ void floatingeye::GetAICommand()
 {
   SeekLeader();
 
-  for(ushort c = 0;; ++c)
-    {
-      if(c == 8)
-	{
-	  MoveRandomly();
-	  return;
-	}
-      if(GetNeighbourLSquare(c)->GetCharacter() && GetNeighbourLSquare(c)->GetCharacter()->GetRelation(this) == HOSTILE)
-	break;
-    }
-  EditAP(-1000);  
-}
+  if(CheckForEnemies(false, false))
+    return;
 
-bool floatingeye::Hit(character* Enemy, bool ForceHit)
-{
-  if(IsPlayer())
-    {
-      ADD_MESSAGE("You stare at %s.", Enemy->CHAR_NAME(DEFINITE));
-      return true;
-    }
-  else if(Enemy->IsPlayer())
-    {
-      ADD_MESSAGE("%s stares at you.", CHAR_NAME(DEFINITE));
-      return true;
-    }
+  if(FollowLeader())
+    return;
+
+  if(MoveRandomly())
+    return;
+
   EditAP(-1000);
 }
 
-uchar floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+bool floatingeye::Hit(character* Enemy, bool)
 {
-  uchar Return = nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+  if(IsPlayer())
+    ADD_MESSAGE("You stare at %s.", Enemy->CHAR_NAME(DEFINITE));
+  else if(Enemy->IsPlayer())
+    ADD_MESSAGE("%s stares at you.", CHAR_NAME(DEFINITE));
 
-  if(Return != HAS_DIED && Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
+  EditAP(-1000);
+  return true;
+}
+
+ushort floatingeye::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
+{
+  if(Enemy->HasEyes() && RAND() % 3) /* Changes for fainting 2 out of 3 */
     {
-      Enemy->Faint();
+      Enemy->Faint(250 + RAND() % 250);
+      return HAS_FAILED;
     }
 
-  return Return;
+  return nonhumanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
 }
 
 const std::string& humanoid::GetStandVerb() const

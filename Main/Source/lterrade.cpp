@@ -112,7 +112,7 @@ void door::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(!IsWalkable()) 
     {
-      room* Room = GetLSquareUnder()->GetRoomClass();
+      room* Room = GetLSquareUnder()->GetRoom();
 
       if(Room)
 	Room->DestroyTerrain(Kicker, this);
@@ -251,7 +251,7 @@ bool throne::SitOn(character* Sitter)
 
 void altar::BeKicked(character* Kicker, ushort)
 {
-  room* Room = GetLSquareUnder()->GetRoomClass();
+  room* Room = GetLSquareUnder()->GetRoom();
 
   if(Room)
     Room->DestroyTerrain(Kicker, this);
@@ -312,11 +312,10 @@ bool fountain::Drink(character* Drinker)
     {
       if(GetContainedMaterial()->GetConfig() == WATER) 
 	{
-	  if(GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
-	    {
-	      if(!GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->Drink(Drinker))
-		return false;
-	    }
+	  room* Room = GetRoom();
+
+	  if(Room && Room->HasDrinkHandler() && !Room->Drink(Drinker))
+	    return false;
 	  else
 	    {
 	      if(!game::BoolQuestion("Do you want to drink from the fountain? [y/N]"))
@@ -395,7 +394,7 @@ bool fountain::Drink(character* Drinker)
 		bool Created = false;
 		character* Monster = 0;
 
-		switch(RAND() % 4)
+		switch(RAND() & 3)
 		  {
 		  case 0:
 		    Monster = new snake;
@@ -415,7 +414,7 @@ bool fountain::Drink(character* Drinker)
 		  {
 		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-		    if(GetLevelUnder()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
+		    if(GetLevel()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
 		      {
 			Created = true;
 			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
@@ -440,7 +439,7 @@ bool fountain::Drink(character* Drinker)
 	      if(!(RAND() % 5))
 		{
 		  item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
-		  GetLSquareUnder()->GetStack()->AddItem(ToBeCreated);
+		  GetLSquareUnder()->AddItem(ToBeCreated);
 
 		  if(ToBeCreated->CanBeSeenByPlayer())
 		    ADD_MESSAGE("There's something sparkling in the water.");
@@ -488,7 +487,7 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(!IsWalkable()) 
     {
-      room* Room = GetLSquareUnder()->GetRoomClass();
+      room* Room = GetLSquareUnder()->GetRoom();
 
       if(Room)
 	Room->DestroyTerrain(Kicker, this);
@@ -539,7 +538,6 @@ bool altar::Polymorph(character*)
     NewGod = 1 + RAND() % (game::GetGods() - 1);
 
   SetConfig(NewGod);
-
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   return true;	
@@ -615,7 +613,7 @@ void door::ActivateBoobyTrap()
 	ADD_MESSAGE("%s is booby trapped!", CHAR_NAME(DEFINITE));
 
       BoobyTrap = 0;
-      GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
+      GetLevel()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
       break;
     case 0:
       break;
@@ -840,9 +838,9 @@ void link::VirtualConstructor(bool Load)
   if(!Load)
     if(Config == STAIRS_UP)
       {
-	if(game::GetCurrent())
+	if(game::GetCurrentLevelIndex())
 	  {
-	    AttachedArea = game::GetCurrent() - 1;
+	    AttachedArea = game::GetCurrentLevelIndex() - 1;
 	    AttachedEntry = STAIRS_DOWN;
 	  }
 	else
@@ -853,7 +851,7 @@ void link::VirtualConstructor(bool Load)
       }
     else if(Config == STAIRS_DOWN)
       {
-	AttachedArea = game::GetCurrent() + 1;
+	AttachedArea = game::GetCurrentLevelIndex() + 1;
 	AttachedEntry = STAIRS_UP;
       }
 }
@@ -869,7 +867,7 @@ void boulder::Break()
       StonesMaterial->SetVolume(1000);
       item* Stone = new stone(0, NO_MATERIALS);
       Stone->InitMaterials(StonesMaterial);
-      GetLSquareUnder()->GetStack()->AddItem(Stone);
+      GetLSquareUnder()->AddItem(Stone);
       
     }
   olterrain::Break();
@@ -968,7 +966,7 @@ void wall::Break()
 	{
 	  item* Stone = new stone(0, NO_MATERIALS);
 	  Stone->InitMaterials(MAKE_MATERIAL(DigProduct, 1000));
-	  GetLSquareUnder()->GetStack()->AddItem(Stone);
+	  GetLSquareUnder()->AddItem(Stone);
 	}
     }
 
@@ -997,7 +995,7 @@ void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
 
       if(LockBreaks || HP <= 0)
 	{
-	  room* Room = GetLSquareUnder()->GetRoomClass();
+	  room* Room = GetLSquareUnder()->GetRoom();
 
 	  if(Room)
 	    Room->DestroyTerrain(Villain, this);
@@ -1040,7 +1038,7 @@ void brokendoor::ReceiveDamage(character* Villain, ushort Damage, uchar)
 
       if(LockBreaks || HP <= 0)
 	{
-	  room* Room = GetLSquareUnder()->GetRoomClass();
+	  room* Room = GetLSquareUnder()->GetRoom();
 
 	  if(Room)
 	    Room->DestroyTerrain(Villain, this);
@@ -1073,3 +1071,4 @@ bool fountain::IsDipDestination() const
 {
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
+

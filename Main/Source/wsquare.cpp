@@ -127,8 +127,8 @@ void wsquare::UpdateMemorizedDescription(bool Cheat)
 
       if(Cheat)
 	{
-	  std::string Continent = GetWorldMapUnder()->GetContinentUnder(Pos) ? ", continent " + GetWorldMapUnder()->GetContinentUnder(Pos)->GetName() : "";
-	  MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << Continent << ", height " << GetWorldMapUnder()->GetAltitude(Pos) << " m)";
+	  std::string Continent = GetWorldMap()->GetContinentUnder(Pos) ? ", continent " + GetWorldMap()->GetContinentUnder(Pos)->GetName() : "";
+	  MemorizedDescription << " (pos " << Pos.X << ":" << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
 	}
 
       DescriptionChanged = false;
@@ -153,10 +153,7 @@ void wsquare::SetLastSeen(ulong What)
 
 void wsquare::CalculateLuminance()
 {
-  /*short Altitude = GetWorldMapUnder()->GetAltitude(Pos);
-  ushort Element = Min(128 - ushort(37.5f * log(1.0f + (Altitude < 0 ? -0.0005f * Altitude : 0.002f * Altitude))), 255);
-  Luminance = MakeRGB24(Element, Element, Element);*/
-
-  uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))), 255);
+  uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0f))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
+

@@ -18,6 +18,8 @@
 #include "game.h"
 #include "save.h"
 
+void (level::*level::Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
+
 #define FORBIDDEN 1
 #define ON_POSSIBLE_ROUTE 2
 #define STILL_ON_POSSIBLE_ROUTE 4
@@ -241,12 +243,12 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = reinterpret_cast<lsquare***>(area::Map);
-  std::string* Msg = LevelScript->GetLevelMessage(false);
+  std::string* Msg = LevelScript->GetLevelMessage();
 
   if(Msg)
     LevelMessage = *Msg;
 
-  if(*LevelScript->GetGenerateMonsters())
+  if(*LevelScript->GenerateMonsters())
     {
       MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
       IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
@@ -285,7 +287,7 @@ void level::Generate(ushort Index)
 	    {
 	      RoomScript = RoomIterator->second;
 
-	      if(*RoomScript->GetReCalculate())
+	      if(*RoomScript->ReCalculate())
 		RoomScript->ReadFrom(ScriptFile, true);
 
 	      if(MakeRoom(RoomScript))
@@ -301,7 +303,7 @@ void level::Generate(ushort Index)
 	    {
 	      RoomScript = LevelScript->GetRoomDefault();
 
-	      if(*RoomScript->GetReCalculate())
+	      if(*RoomScript->ReCalculate())
 		RoomScript->ReadFrom(ScriptFile, true);
 
 	      if(MakeRoom(RoomScript))
@@ -312,7 +314,7 @@ void level::Generate(ushort Index)
 
   game::BusyAnimation();
 
-  if(!*LevelScript->GetIgnoreDefaultSpecialSquares())
+  if(!*LevelScript->IgnoreDefaultSpecialSquares())
     {
       /* Gum solution */
 
@@ -339,7 +341,7 @@ void level::Generate(ushort Index)
 
 void level::ApplyLSquareScript(squarescript* Script)
 {
-  uchar* ScriptTimes = Script->GetTimes(false);
+  uchar* ScriptTimes = Script->GetTimes();
   uchar Times = ScriptTimes ? *ScriptTimes : 1;
 
   for(ushort c = 0; c < Times; ++c)
@@ -347,7 +349,7 @@ void level::ApplyLSquareScript(squarescript* Script)
       vector2d Pos;
 
       if(Script->GetPosition()->GetRandom())
-	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders(false));
+	Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), Script->GetPosition()->GetBorders());
       else
 	Pos = *Script->GetPosition()->GetVector();
 
@@ -410,10 +412,10 @@ bool level::MakeRoom(roomscript* RoomScript)
   GenerateRectangularRoom(OKForDoor, Inside, Border, RoomScript, RoomClass, vector2d(XPos, YPos), vector2d(Width, Height));
   game::BusyAnimation();
 
-  if(*RoomScript->GetGenerateFountains() && !(RAND() % 10))
+  if(*RoomScript->GenerateFountains() && !(RAND() % 10))
     GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new fountain);
 
-  if(*RoomScript->GetAltarPossible() && !(RAND() % 5))
+  if(*RoomScript->AltarPossible() && !(RAND() % 5))
     {
       uchar Owner = 1 + RAND() % (game::GetGods() - 1);
       GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(new altar(Owner));
@@ -425,7 +427,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	GetLSquare(Border[c])->SetDivineMaster(Owner);
     }
 
-  if(*RoomScript->GetGenerateTunnel() && !Door.empty())
+  if(*RoomScript->GenerateTunnel() && !Door.empty())
     {
       game::BusyAnimation();
 
@@ -438,9 +440,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
-      if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
+      if(!(RAND() % 5) && *RoomScript->AllowLockedDoors())
 	{
-	  if(*RoomScript->GetAllowBoobyTrappedDoors() && !(RAND() % 5))
+	  if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
 	    Door->CreateBoobyTrap();
 
 	  Door->Lock();
@@ -454,9 +456,9 @@ bool level::MakeRoom(roomscript* RoomScript)
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= PREFERRED;
       Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate();
 
-      if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
+      if(!(RAND() % 5) && *RoomScript->AllowLockedDoors())
 	{
-	  if(*RoomScript->GetAllowBoobyTrappedDoors() && !(RAND() % 5))
+	  if(*RoomScript->AllowBoobyTrappedDoors() && !(RAND() % 5))
 	    Door->CreateBoobyTrap();
 
 	  Door->Lock();
@@ -471,7 +473,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] &= ~PREFERRED;
     }
 
-  if(*RoomScript->GetGenerateDoor())
+  if(*RoomScript->GenerateDoor())
     {
       game::BusyAnimation();
       vector2d DoorPos;
@@ -482,14 +484,14 @@ bool level::MakeRoom(roomscript* RoomScript)
       DoorPos = OKForDoor[RAND() % OKForDoor.size()];
       Door.push_back(DoorPos);
 
-      if(!*RoomScript->GetGenerateTunnel())
+      if(!*RoomScript->GenerateTunnel())
 	{
 	  Map[DoorPos.X][DoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate());
 	  Map[DoorPos.X][DoorPos.Y]->Clean();
 	}
     }
 
-  charactercontentmap* CharacterMap = RoomScript->GetCharacterMap(false);
+  charactercontentmap* CharacterMap = RoomScript->GetCharacterMap();
 
   if(CharacterMap)
     {
@@ -509,17 +511,16 @@ bool level::MakeRoom(roomscript* RoomScript)
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
 		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
-		Char->SetHomePos(vector2d(CharPos.X + x, CharPos.Y + y));
-		RoomClass->HandleInstantiatedCharacter(Char);
-		bool* IsMaster = CharacterScript->GetIsMaster(false);
+		Char->CreateHomeData();
+		bool* IsMaster = CharacterScript->IsMaster();
 
 		if(IsMaster && *IsMaster)
-		  RoomClass->SetMaster(Char);
+		  RoomClass->SetMasterID(Char->GetID());
 	      }
 	}
     }
 
-  itemcontentmap* ItemMap = RoomScript->GetItemMap(false);
+  itemcontentmap* ItemMap = RoomScript->GetItemMap();
 
   if(ItemMap)
     {
@@ -539,7 +540,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		  if(Item)
 		    {
-		      uchar* SideStackIndex = (*ItemScript)[c].GetSideStackIndex(false);
+		      uchar* SideStackIndex = (*ItemScript)[c].GetSideStackIndex();
 
 		      if(!SideStackIndex)
 			Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
@@ -556,7 +557,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  glterraincontentmap* GTerrainMap = RoomScript->GetGTerrainMap(false);
+  glterraincontentmap* GTerrainMap = RoomScript->GetGTerrainMap();
 
   if(GTerrainMap)
     {
@@ -573,7 +574,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  olterraincontentmap* OTerrainMap = RoomScript->GetOTerrainMap(false);
+  olterraincontentmap* OTerrainMap = RoomScript->GetOTerrainMap();
 
   if(OTerrainMap)
     {
@@ -589,7 +590,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 	      {
 		olterrain* Terrain = OTerrainScript->Instantiate();
 		Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
-		RoomClass->HandleInstantiatedOLTerrain(Terrain);
 	      }
 	}
     }
@@ -598,7 +598,7 @@ bool level::MakeRoom(roomscript* RoomScript)
     {
       game::BusyAnimation();
       squarescript* Script = RoomScript->GetSquare()[c];
-      uchar* ScriptTimes = Script->GetTimes(false);
+      uchar* ScriptTimes = Script->GetTimes();
       uchar Times = ScriptTimes ? *ScriptTimes : 1;
 
       for(ushort t = 0; t < Times; ++t)
@@ -607,7 +607,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  if(Script->GetPosition()->GetRandom())
 	    {
-	      rect* ScriptBorders = Script->GetPosition()->GetBorders(false);
+	      rect* ScriptBorders = Script->GetPosition()->GetBorders();
 	      rect Borders = ScriptBorders ? *ScriptBorders + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
 	      Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
 	    }
@@ -639,12 +639,12 @@ void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort 
   if(DivineMaster)
     Map[X][Y]->SetDivineMaster(DivineMaster);
 
-  Map[X][Y]->SetRoom(Room);
+  Map[X][Y]->SetRoomIndex(Room);
 }
 
 void level::GenerateMonsters()
 {
-  if(*LevelScript->GetGenerateMonsters()
+  if(*LevelScript->GenerateMonsters()
   && game::GetTeam(MONSTER_TEAM)->GetEnabledMembers() < IdealPopulation
   && !(RAND() % MonsterGenerationInterval))
     GenerateNewMonsters(1);
@@ -689,9 +689,6 @@ void level::FiatLux()
       }
 }
 
-#include <fstream>
-#include <iostream>
-
 void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
@@ -714,7 +711,8 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     }
 }
 
-/* example of the usage: GetRandomSquare() gives out a random walkable square* */
+/* example of the usage: GetRandomSquare() gives out a random walkable square */
+
 vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
   for(ushort c = 0;; ++c)
@@ -745,8 +743,8 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
 
       uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
-      if((RoomFlags == IN_ROOM && !Map[Pos.X][Pos.Y]->GetRoom())
-	 || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoom()))
+      if((RoomFlags == IN_ROOM && !Map[Pos.X][Pos.Y]->GetRoomIndex())
+	 || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoomIndex()))
 	continue;
 
       return Pos;
@@ -760,9 +758,9 @@ void level::ParticleTrail(vector2d StartPos, vector2d EndPos)
   // NEEDS SOME WORK!
 }
 
-bool level::GetOnGround() const
+bool level::IsOnGround() const
 {
-  return *LevelScript->GetOnGround();
+  return *LevelScript->IsOnGround();
 }
 
 void level::MoveCharacter(vector2d From, vector2d To)
@@ -854,7 +852,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
       game::DrawEverythingNoBlit();
 
-      uchar Flags = RAND() % 8;
+      uchar Flags = RAND() & 7;
 
       if(!Flags || SizeVect != OldSizeVect)
 	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLE_BUFFER, PicPos, BPos, SizeVect, configuration::GetContrastLuminance());
@@ -971,7 +969,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 	      {
 		ADD_MESSAGE("%s follows you.", (*i)->CHAR_NAME(DEFINITE));
 		CharacterArray.push_back(*i);
-		Leader->GetLevelUnder()->RemoveCharacter((*i)->GetPos());
+		Leader->GetLevel()->RemoveCharacter((*i)->GetPos());
 	      }
 	  }
 
@@ -1019,9 +1017,9 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
   uchar Room = RoomClass->GetIndex();
   ulong Counter = 0;
-  uchar* ScriptDivineMaster = RoomScript->GetDivineMaster(false);
+  uchar* ScriptDivineMaster = RoomScript->GetDivineMaster();
   uchar DivineMaster = ScriptDivineMaster ? *ScriptDivineMaster : 0;
-  bool AllowLanterns = *RoomScript->GetGenerateLanterns();
+  bool AllowLanterns = *RoomScript->GenerateLanterns();
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();
 
@@ -1058,6 +1056,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
 	{
 	  OKForDoor.push_back(vector2d(x,Pos.Y));
 	  OKForDoor.push_back(vector2d(x,Pos.Y + Size.Y - 1));
+
 	  if(AllowLanterns)
 	    {
 	      GenerateLanterns(x, Pos.Y, DOWN);
@@ -1125,3 +1124,242 @@ void level::Reveal()
 	Map[x][y]->UpdateMemorizedDescription();
       }
 }
+
+void level::ParticleBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+{
+  if(Direction != YOURSELF)
+    {
+      for(ushort Length = 0; Length < Range; ++Length)
+	{
+	  CurrentPos += game::GetMoveVector(Direction);
+
+	  if(!IsValidPos(CurrentPos))
+	    break;
+
+	  lsquare* CurrentSquare = GetLSquare(CurrentPos);
+
+	  if(!CurrentSquare->GetOLTerrain()->IsWalkable())
+	    {
+	      (CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+	      break;
+	    }
+	  else
+	    {
+	      CurrentSquare->DrawParticles(BeamColor);
+
+	      if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+		break;
+	    }
+	}
+    }
+  else
+    {
+      lsquare* Where = GetLSquare(CurrentPos);
+      Where->DrawParticles(BeamColor);
+      (Where->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+    }
+}
+
+/* Note: You will most likely need some help from supernatural entities to comprehend this code. Sorry. */
+
+void level::LightningBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar Range)
+{
+  if(Direction == YOURSELF)
+    {
+      lsquare* Where = GetLSquare(CurrentPos);
+
+      for(ushort c = 0; c < 4; ++c)
+	Where->DrawLightning(vector2d(8, 8), BeamColor, YOURSELF);
+
+      (Where->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      return;
+    }
+
+  vector2d StartPos;
+
+  switch(Direction)
+    {
+    case 0: StartPos = vector2d(15, 15); break;
+    case 1: StartPos = vector2d(RAND() & 15, 15); break;
+    case 2: StartPos = vector2d(0, 15); break;
+    case 3: StartPos = vector2d(15, RAND() & 15); break;
+    case 4: StartPos = vector2d(0, RAND() & 15); break;
+    case 5: StartPos = vector2d(15, 0); break;
+    case 6: StartPos = vector2d(RAND() & 15, 0); break;
+    case 7: StartPos = vector2d(0, 0); break;
+    }
+
+  for(ushort Length = 0; Length < Range; ++Length)
+    {
+      CurrentPos += game::GetMoveVector(Direction);
+
+      if(!IsValidPos(CurrentPos))
+	break;
+
+      lsquare* CurrentSquare = GetLSquare(CurrentPos);
+
+      if(!CurrentSquare->GetOLTerrain()->IsWalkable())
+	{
+	  if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+	    break;
+
+	  bool W1, W2;
+
+	  switch(Direction)
+	    {
+	    case 0:
+	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->GetOLTerrain()->IsWalkable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->GetOLTerrain()->IsWalkable();
+
+	      if(W1 == W2)
+		Direction = 7;
+	      else if(W1)
+		{
+		  ++CurrentPos.Y;
+		  Direction = 2;
+		}
+	      else
+		{
+		  ++CurrentPos.X;
+		  Direction = 5;
+		}
+
+	      break;
+	    case 1: Direction = 6; StartPos.Y = 0; break;
+	    case 2:
+	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->GetOLTerrain()->IsWalkable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, 1))->GetOLTerrain()->IsWalkable();
+
+	      if(W1 == W2)
+		Direction = 5;
+	      else if(W1)
+		{
+		  ++CurrentPos.Y;
+		  Direction = 0;
+		}
+	      else
+		{
+		  --CurrentPos.X;
+		  Direction = 7;
+		}
+
+	      break;
+	    case 3: Direction = 4; StartPos.X = 0; break;
+	    case 4: Direction = 3; StartPos.X = 15; break;
+	    case 5:
+	      W1 = GetLSquare(CurrentPos + vector2d(1, 0))->GetOLTerrain()->IsWalkable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->GetOLTerrain()->IsWalkable();
+
+	      if(W1 == W2)
+		Direction = 2;
+	      else if(W1)
+		{
+		  --CurrentPos.Y;
+		  Direction = 7;
+		}
+	      else
+		{
+		  ++CurrentPos.X;
+		  Direction = 0;
+		}
+
+	      break;
+	    case 6: Direction = 1; StartPos.Y = 15; break;
+	    case 7:
+	      W1 = GetLSquare(CurrentPos + vector2d(-1, 0))->GetOLTerrain()->IsWalkable();
+	      W2 = GetLSquare(CurrentPos + vector2d(0, -1))->GetOLTerrain()->IsWalkable();
+
+	      if(W1 == W2)
+		Direction = 0;
+	      else if(W1)
+		{
+		  --CurrentPos.Y;
+		  Direction = 5;
+		}
+	      else
+		{
+		  --CurrentPos.X;
+		  Direction = 2;
+		}
+
+	      break;
+	    }
+
+	  switch(Direction)
+	    {
+	    case 0: StartPos = vector2d(15, 15); break;
+	    case 2: StartPos = vector2d(0, 15); break;
+	    case 5: StartPos = vector2d(15, 0); break;
+	    case 7: StartPos = vector2d(0, 0); break;
+	    }
+	}
+      else
+	{
+	  StartPos = CurrentSquare->DrawLightning(StartPos, BeamColor, Direction);
+
+	  if((CurrentSquare->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction))
+	    break;
+	}
+    }
+}
+
+void level::ShieldBeam(character* BeamOwner, const std::string& DeathMsg, vector2d CurrentPos, ulong BeamColor, uchar BeamEffect, uchar Direction, uchar)
+{
+  vector2d Pos[3];
+
+  switch(Direction)
+    {
+    case 0:
+      Pos[0] = vector2d(-1, 0);
+      Pos[1] = vector2d(-1, -1);
+      Pos[2] = vector2d(0, -1);
+      break;
+    case 1:
+      Pos[0] = vector2d(-1, -1);
+      Pos[1] = vector2d(0, -1);
+      Pos[2] = vector2d(1, -1);
+      break;
+    case 2:
+      Pos[0] = vector2d(0, -1);
+      Pos[1] = vector2d(1, -1);
+      Pos[2] = vector2d(1, 0);
+      break;
+    case 3:
+      Pos[0] = vector2d(-1, 1);
+      Pos[1] = vector2d(-1, 0);
+      Pos[2] = vector2d(-1, -1);
+      break;
+    case 4:
+      Pos[0] = vector2d(1, -1);
+      Pos[1] = vector2d(1, 0);
+      Pos[2] = vector2d(1, 1);
+      break;
+    case 5:
+      Pos[0] = vector2d(0, 1);
+      Pos[1] = vector2d(-1, 1);
+      Pos[2] = vector2d(-1, 0);
+      break;
+    case 6:
+      Pos[0] = vector2d(1, 1);
+      Pos[1] = vector2d(0, 1);
+      Pos[2] = vector2d(-1, 1);
+      break;
+    case 7:
+      Pos[0] = vector2d(1, 0);
+      Pos[1] = vector2d(1, 1);
+      Pos[2] = vector2d(0, 1);
+      break;
+    case 8:
+      GetLSquare(CurrentPos)->DrawParticles(BeamColor);
+      (GetLSquare(CurrentPos)->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      return;
+    }
+
+  for(ushort c = 0; c < 3; ++c)
+    if(IsValidPos(CurrentPos + Pos[c]))
+      {
+	GetLSquare(CurrentPos + Pos[c])->DrawParticles(BeamColor);
+	(GetLSquare(CurrentPos + Pos[c])->*lsquare::GetBeamEffect(BeamEffect))(BeamOwner, DeathMsg, Direction);
+      }
+}
+

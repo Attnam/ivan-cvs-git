@@ -13,7 +13,7 @@
 void god::Pray()
 {
   if(!Timer)
-    if(Relation >= -(RAND() % 500))
+    if(Relation >= -RAND_N(500))
       {
 	ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
 	PrayGoodEffect();
@@ -42,7 +42,7 @@ void god::Pray()
 	game::GetPlayer()->EditExperience(WISDOM, -250);
       }
   else
-    if(Relation > RAND() % 500)
+    if(Relation > RAND_N(500))
       {
 	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GOD_NAME);
 	PrayGoodEffect();
@@ -273,6 +273,3 @@ godprototype::godprototype(god* (*Cloner)(bool), const std::string& ClassId) : C
 {
   Index = protocontainer<god>::Add(this);
 }
-
-
-

@@ -29,7 +29,10 @@ void dungeon::Initialize()
   if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
     DungeonScript = DungeonIterator->second;
   else
-    DungeonScript = game::GetGameScript()->GetDungeonDefault();
+    {
+      ABORT("Unknown dungeon #%d requested!", int(Index));
+      return;
+    }
 
   Level = new level*[GetLevels()];
   Generated = new bool[GetLevels()];
@@ -48,7 +51,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
     {
       LevelScript = LevelIterator->second;
 
-      if(*LevelScript->GetReCalculate())
+      if(*LevelScript->ReCalculate())
 	{
 	  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 	  LevelScript->ReadFrom(ScriptFile, true);
@@ -58,7 +61,7 @@ levelscript* dungeon::GetLevelScript(ushort Index)
     {
       LevelScript = DungeonScript->GetLevelDefault();
 
-      if(*LevelScript->GetReCalculate())
+      if(*LevelScript->ReCalculate())
 	{
 	  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
 	  LevelScript->ReadFrom(ScriptFile, true);
@@ -80,6 +83,8 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
   else
     {
       Level[Index] = new level;
+      Level[Index]->SetDungeon(this);
+      Level[Index]->SetIndex(Index);
       Level[Index]->SetLevelScript(GetLevelScript(Index));
 
       if(Visual)
@@ -90,7 +95,7 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
       Generated[Index] = true;
       game::BusyAnimation();
 
-      if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
+      if(*Level[Index]->GetLevelScript()->GenerateMonsters())
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 
       game::SetIsGenerating(false);
@@ -114,6 +119,8 @@ void dungeon::LoadLevel(const std::string& SaveName, ushort Number)
 {
   inputfile SaveFile(SaveName + "." + Index + Number);
   SaveFile >> Level[Number];
+  Level[Number]->SetDungeon(this);
+  Level[Number]->SetIndex(Number);
   Level[Number]->SetLevelScript(GetLevelScript(Number));
 }
 
@@ -128,7 +135,6 @@ void dungeon::Save(outputfile& SaveFile) const
 void dungeon::Load(inputfile& SaveFile)
 {
   SaveFile >> Index >> WorldMapPos;
-
   Initialize();
 
   for(ushort c = 0; c < GetLevels(); ++c)
@@ -142,7 +148,7 @@ ushort dungeon::GetLevels() const
 
 std::string dungeon::GetLevelDescription(ushort Index)
 {
-  if(GetLevel(Index)->GetLevelScript()->GetDescription(false))
+  if(GetLevel(Index)->GetLevelScript()->GetDescription())
     return *GetLevel(Index)->GetLevelScript()->GetDescription();
   else
     return *DungeonScript->GetDescription() + " level " + (Index + 1);
@@ -150,7 +156,7 @@ std::string dungeon::GetLevelDescription(ushort Index)
 
 std::string dungeon::GetShortLevelDescription(ushort Index)
 {
-  if(GetLevel(Index)->GetLevelScript()->GetShortDescription(false))
+  if(GetLevel(Index)->GetLevelScript()->GetShortDescription())
     return *GetLevel(Index)->GetLevelScript()->GetShortDescription();
   else
     return *DungeonScript->GetShortDescription() + " level " + (Index + 1);

@@ -7,6 +7,74 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Intact and broken battle-axe, bastard sword, scythe and club pictures added
+	  to item.pcx by Kahvi
+	* Ghost of Brezhnev added to char.pcx by Kahvi
+	* New basic weapons added: bastard sword, battle-axe and scythe
+	* Implemented an AD&D style weapon categorization, which I found much more
+	  balanced than our old one
+	* If the handle of a weapon is made of same material as the edge, SoCM alters
+	  it, too
+	* Added a gum solution to prevent whips of thievery from stealing the
+	  Justifier; this was a too easy way to get rid of Petrus
+	* For clarity, polymorphed monsters now leave the corpse of the original form
+	* Seges and Petrus no longer cure non-living bodyparts
+	* Gods, Petrus and angels no longer put back non-living bodyparts
+	* When trying to use a stethoscope without hands, the game now behaves a
+	  little less idiotically
+	* Restructured all wand code: beam colors and beam effect & style indices now
+	  come from the script and the actual effect code is located in level.cpp and
+	  lsquare.cpp
+	* All wand specializations are now configurations of wand
+	* Removed wands of locking; they were completely useless
+	* Wand of invisibility's beam is now invisible
+	* Wand of polymorph's beam now changes color all the time
+	* Wand of door creation can now create doors to walls
+	* Added wand of lightning which uses a special lightning beam which bounces
+	  from walls
+	* Rewrote the (formelly unused) lightning animation code
+	* Added thunder hammer which uses lightning animation and occasionally shoots
+	  lightning bolts
+	* Added ring of electricity resistance
+	* Removed several unused and useless resistances like bulimia resistance
+	* Added drain and electricity damage types
+	* Neerc Se-ulb now drains HPs from living enemies every now and then
+	* Removed most magical benefits from broken items
+	* Added short sword named Saal'thul which makes its master invisible
+	* Pet floating eyes now follow the player correctly
+	* Floating eyes no longer crash on world map or on level borders
+	* Floating eyes now "levitate", not "stand"
+	* Saving dead script-generated monsters no longer crashes
+	* Golems' agilities and dexterities doubled
+	* Modified hit chance constants in favour of low accuracy hits
+	* Decreased weight's effect on weapon accuracy
+	* Script optimizations
+	* Boolean value retrieval functions of script now honor the IvanDev Naming
+	  Standard
+	* Changed RAND() algorithm from Nishimura's & Mashumoto's mammoth function
+	  to a simpler linear congruential RNG; I know Hex doesn't like these so
+	  I feel I must present a few arguments to justify my decision:
+	  * I ensured that it doesn't have the low-order bit problems abundant in the
+	    32-bit versions by using a 64-bit seed and discarding the possibly cycling
+		bits
+	  * It is easier to understand
+	  * It is a one line function so it can be inlined
+	  * It is three times faster
+	  * It's seed can be retrieved unlike the old one's
+	  * No independent observer did notice any positive effect on gameplay when
+	    we switched the RNG in ancient times (well, there weren't any players :)
+	  * I dare to suspect that Nishimura's & Mashumoto's RNG may be responsible
+	    for the odd improbabilities happening all the time in item generation,
+		increasing the gameplay's dependance on luck considerably
+	* Corrected many gcc warnings given by -pedantic
+	* Shortened the names of terrain graphics files because the old ones were
+	  too long for the DOS version
+	* Decreased AoGH's InElasticityPenaltyModifier and Possibility
+	* Broken items' inventory entries no longer show durability
+	* Corrected a fatal bug in the high score display code
+
 December 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Eating Floating eye corpses gives ESP
@@ -16,7 +84,7 @@ December 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 December 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added floating eye
-	
+
 December 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Teleport control is now more user-friendly

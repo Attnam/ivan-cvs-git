@@ -31,7 +31,7 @@ class square
   ulong GetLastSeen() const { return LastSeen; }
   vector2d GetPos() const { return Pos; }
   ushort GetPopulation() const { return Character ? 1 : 0; }
-  area* GetAreaUnder() const { return AreaUnder; }
+  area* GetArea() const { return AreaUnder; }
   virtual gterrain* GetGTerrain() const = 0;
   virtual oterrain* GetOTerrain() const = 0;
   std::string GetMemorizedDescription() { return MemorizedDescription; }
@@ -67,10 +67,11 @@ class square
   bool DescriptionChanged;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, square* Square)
+/*inline outputfile& operator<<(outputfile& SaveFile, square* Square)
 {
   Square->Save(SaveFile);
   return SaveFile;
-}
+}*/
 
 #endif
+

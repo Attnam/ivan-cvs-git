@@ -12,6 +12,7 @@
 #include "vector2d.h"
 #include "area.h"
 #include "roomba.h"
+#include "ivandef.h"
 
 class lsquare;
 class character;
@@ -51,7 +52,7 @@ class level : public area
   std::string GetLevelMessage() { return LevelMessage; }
   void SetLevelMessage(const std::string& What) { LevelMessage = What; }
   void SetLevelScript(levelscript* What) { LevelScript = What; }
-  bool GetOnGround() const;
+  bool IsOnGround() const;
   levelscript* GetLevelScript() const { return LevelScript; }
   virtual void MoveCharacter(vector2d, vector2d);
   virtual ushort GetLOSModifier() const;
@@ -67,7 +68,16 @@ class level : public area
   vector2d GetEntryPos(const character*, uchar) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, roomscript*, room*, vector2d, vector2d);
   void Reveal();
+  static void (level::*GetBeam(ushort Index))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) { return Beam[Index]; }
+  void ParticleBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
+  void LightningBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
+  void ShieldBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
+  dungeon* GetDungeon() const { return Dungeon; }
+  void SetDungeon(dungeon* What) { Dungeon = What; }
+  uchar GetIndex() const { return Index; }
+  void SetIndex(uchar What) { Index = What; }
  protected:
+  static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
   lsquare*** Map;
@@ -78,6 +88,8 @@ class level : public area
   uchar IdealPopulation;
   uchar MonsterGenerationInterval;
   uchar Difficulty;
+  dungeon* Dungeon;
+  uchar Index;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, level* Level)

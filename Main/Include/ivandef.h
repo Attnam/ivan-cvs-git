@@ -15,7 +15,7 @@
  */
 
 #ifndef VERSION
-#define VERSION "0.40"
+#define VERSION "0.401"
 #endif
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
@@ -41,6 +41,7 @@
 #define HAS_DODGED 2
 #define HAS_DIED 3
 #define DID_NO_DAMAGE 4
+#define HAS_FAILED 5
 
 #define BLOATED_LEVEL 150000
 #define SATIATED_LEVEL 100000
@@ -92,10 +93,12 @@
 #define PHYSICAL_DAMAGE 1
 #define SOUND 2
 #define ACID 3
-#define ENERGY 4
-#define FIRE 5
-#define POISON 6
-#define BULIMIA 7
+#define FIRE 4
+#define ELECTRICITY 5
+#define ENERGY 6
+#define POISON 7
+#define DRAIN 8
+#define BULIMIA 9
 
 #define UNDEFINED 0
 #define MALE 1
@@ -164,7 +167,7 @@
 #define GR_CURSOR 2
 #define GR_SYMBOL 3
 #define GR_MENU 4
-#define GR_TRANSPARENT_TILE 5
+#define GR_TRANSPARENT_COLOR_TILE 5
 
 #define ST_NORMAL (0 << 3)
 #define ST_RIGHT_ARM (1 << 3)
@@ -172,7 +175,8 @@
 #define ST_GROIN (3 << 3)
 #define ST_RIGHT_LEG (4 << 3)
 #define ST_LEFT_LEG (5 << 3)
-#define ST_FLAME 64 
+#define ST_FLAME 64
+#define ST_LIGHTNING 128
 
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64
@@ -235,24 +239,19 @@
 #define FRIEND 2
 
 #define MARTIAL_SKILL_CATEGORIES 3
-#define WEAPON_SKILL_CATEGORIES 16
+#define WEAPON_SKILL_CATEGORIES 11
 
 #define UNARMED 0
 #define KICK 1
 #define BITE 2
 #define UNCATEGORIZED 3
-#define DAGGERS 4
-#define SMALL_SWORDS 5
-#define LARGE_SWORDS 6
-#define CLUBS 7
-#define HAMMERS 8
-#define MACES 9
-#define FLAILS 10
-#define AXES 11
-#define POLE_ARMS 12
-#define SPEARS 13
-#define WHIPS 14
-#define SHIELDS 15
+#define SMALL_SWORDS 4
+#define LARGE_SWORDS 5
+#define BLUNT_WEAPONS 6
+#define AXES 7
+#define POLE_ARMS 8
+#define WHIPS 9
+#define SHIELDS 10
 
 #define LOCKED 1
 
@@ -439,7 +438,7 @@
 #define DIR_ERROR 0xFF
 #define DIR_ERROR_VECTOR vector2d(-666, -666)
 
-#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 25.0f
+#define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0f
 
 #define HELMET_INDEX 0
 #define AMULET_INDEX 1
@@ -468,10 +467,25 @@
 #define SICKLE 9
 #define DAGGER 10
 #define SHORT_SWORD 11
+#define BASTARD_SWORD 12
+#define BATTLE_AXE 13
+#define SCYTHE 14
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2
 #define ARMOR_OF_GREAT_HEALTH 3
+
+#define WAND_OF_POLYMORPH 1
+#define WAND_OF_STRIKING 2
+#define WAND_OF_FIRE_BALLS 3
+#define WAND_OF_TELEPORTATION 4
+#define WAND_OF_HASTE 5
+#define WAND_OF_SLOW 6
+#define WAND_OF_RESURRECTION 7
+#define WAND_OF_DOOR_CREATION 8
+#define WAND_OF_INVISIBILITY 9
+#define WAND_OF_CLONING 10
+#define WAND_OF_LIGHTNING 11
 
 #define RUNED_WHIP 1
 
@@ -492,6 +506,7 @@
 #define RING_OF_POLYMORPH 6
 #define RING_OF_POISON_RESISTANCE 7
 #define RING_OF_INVISIBILITY 8
+#define RING_OF_ELECTRICITY_RESISTANCE 9
 
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
@@ -621,7 +636,8 @@
 #define ATTNAM 2
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
-#define UNDER_WATER_TUNNEL_EXIT 5
+#define MONDEDR 5
+#define UNDER_WATER_TUNNEL_EXIT -1
 
 #define DARK_LEVEL 6
 #define OREE_LAIR 9
@@ -671,5 +687,27 @@
 #define ROOM_CATHEDRAL 4
 #define ROOM_LIBRARY 5
 #define ROOM_LANDING_SITE 6
+
+#define BEAM_EFFECTS 11
+
+#define BEAM_POLYMORPH 0
+#define BEAM_STRIKE 1
+#define BEAM_FIRE_BALL 2
+#define BEAM_TELEPORT 3
+#define BEAM_HASTE 4
+#define BEAM_SLOW 5
+#define BEAM_RESURRECT 6
+#define BEAM_INVISIBILITY 7
+#define BEAM_CLONE 8
+#define BEAM_LIGHTNING 9
+#define BEAM_DOOR_CREATION 10
+
+#define BEAM_STYLES 3
+
+#define PARTICLE_BEAM 0
+#define LIGHTNING_BEAM 1
+#define SHIELD_BEAM 2
+
+#define RANDOM_COLOR 0x10000
 
 #endif

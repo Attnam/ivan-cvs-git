@@ -268,7 +268,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       if(Word == ";" || Word == "," || Word == ")")
 	{
 	  if(CallLevel != 0xFF && (Word != ")" || CallLevel != 4))
-	    SeekPosCur(-1);
+	    SeekPosCurrent(-1);
 
 	  return Value;
 	}
@@ -285,7 +285,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  }\
 	else\
 	  {\
-	    SeekPosCur(-1);\
+	    SeekPosCurrent(-1);\
 	    return Value;\
 	  }
 
@@ -296,7 +296,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
       if(Word == "(")
 	if(NumberCorrect)
 	  {
-	    SeekPosCur(-1);
+	    SeekPosCurrent(-1);
 	    return Value;
 	  }
 	else
@@ -308,7 +308,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       if(Word == "rand")
 	{
-	  Value = RAND();
+	  Value = RAND() & 0x7FFFFFFF;
 	  NumberCorrect = true;
 	  continue;
 	}
@@ -352,7 +352,7 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       if(Word == "#") // for #defines
 	{
-	  SeekPosCur(-1);
+	  SeekPosCurrent(-1);
 	  return Value;
 	}
 
@@ -433,13 +433,6 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
   return SaveFile;
 }
 
-/* Little easier-to-call version of the ReadNumber routine */
-
-long inputfile::ReadNumber()
-{
-  return ReadNumber(valuemap());
-}
-
 void ReadData(std::string& String, inputfile& SaveFile, const valuemap&)
 {
   SaveFile.ReadWord(String);
@@ -518,14 +511,14 @@ ulong inputfile::TellLineOfPos(long Pos)
 {
   ulong Line = 1;
   long BackupPos = TellPos();
-  SeekPosBeg(0);
+  SeekPosBegin(0);
 
   while(TellPos() != Pos)
     if(Get() == '\n')
       ++Line;
 
   if(TellPos() != BackupPos)
-    SeekPosBeg(BackupPos);
+    SeekPosBegin(BackupPos);
 
   return Line;
 }

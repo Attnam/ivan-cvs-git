@@ -57,7 +57,7 @@ void valpurus::PrayGoodEffect()
 void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
-  game::GetPlayer()->ReceiveDamage(0, 10, PHYSICAL_DAMAGE, HEAD, RAND() % 8);
+  game::GetPlayer()->ReceiveDamage(0, 10, PHYSICAL_DAMAGE, HEAD, RAND() & 7);
   game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name(), 0);
 }
 
@@ -140,7 +140,7 @@ void seges::PrayGoodEffect()
   if(game::GetPlayer()->IsInBadCondition())
     {
       ADD_MESSAGE("%s cures your wounds.", GOD_NAME);
-      game::GetPlayer()->RestoreHP();
+      game::GetPlayer()->RestoreLivingHP();
       return;
     }
 
@@ -247,7 +247,7 @@ void silva::PrayGoodEffect()
       game::GetPlayer()->SetNP(SATIATED_LEVEL);
     }
 
-  if(!*game::GetCurrentLevel()->GetLevelScript()->GetOnGround())
+  if(!game::GetCurrentLevel()->IsOnGround())
     {
       ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
       ushort c, Tunnels = 2 + RAND() % 3;
@@ -291,25 +291,25 @@ void silva::PrayGoodEffect()
 	for(ushort i = 0; i < 50; ++i)
 	  {
 	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
+	    character* Char = Square->GetCharacter();
 
-	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
-
-	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || game::GetPlayer()->GetRelation(Char) != HOSTILE)))
+	    if(!Square->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || game::GetPlayer()->GetRelation(Char) != HOSTILE)))
 	      continue;
 
 	    ushort Walkables = 0;
 
 	    for(ushort d = 0; d < 8; ++d)
 	      {
-		lsquare* Square = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
+		lsquare* NearSquare = game::GetCurrentLevel()->GetNeighbourLSquare(Pos, d);
 
-		if(Square && Square->GetOLTerrain()->IsWalkable())
+		if(NearSquare && NearSquare->GetOLTerrain()->IsWalkable())
 		  ++Walkables;
 	      }
 
 	    if(Walkables > 6)
 	      {
-		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new wall(EARTH));
+		Square->ChangeOLTerrainAndUpdateLights(new wall(EARTH));
 
 		if(Char)
 		  {
@@ -320,14 +320,14 @@ void silva::PrayGoodEffect()
 		    Char->CheckDeath("killed by an earthquake", 0);
 		  }
 
-		game::GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+		Square->KickAnyoneStandingHereAway();
 
 		ushort p;
 
 		for(p = 0; p < 4; ++p)
-		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
+		  Square->GetSideStack(p)->Clean();
 
-		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
+		Square->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICAL_DAMAGE);
 		break;
 	      }
 	  }
@@ -661,7 +661,7 @@ void valpurus::Pray()
 
 void atavus::Pray()
 {
-  if(!Timer && Relation > 500 + RAND() % 500)
+  if(!Timer && Relation > 500 + RAND_N(500))
     {
       ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
       PrayGoodEffect();
@@ -750,7 +750,7 @@ void mortifer::Pray()
 void infuscor::PrayBadEffect()
 {
   ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
-  game::GetPlayer()->Faint();
+  game::GetPlayer()->Faint(1000 + RAND() % 1000);
 }
 
 void nefas::PrayGoodEffect()
@@ -1034,7 +1034,7 @@ void cruentus::PrayBadEffect()
   else
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
-      game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() % 8);
+      game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() & 7);
       game::GetPlayer()->CheckDeath("destroyed by " + Name(), 0);
     }
 }
