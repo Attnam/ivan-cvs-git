@@ -73,7 +73,7 @@ More realistic hungriness
 Cats should have seven lives
 *Wand recharging
 Uses for the librarian
-*Dolphin pools should be bigger
+//*Dolphin pools should be bigger
 Special eat effect for werewolf corpses
 //*"Times used" value to wand description
 //*Inventory weight should be shown

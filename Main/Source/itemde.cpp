@@ -899,85 +899,105 @@ material* loaf::CreateLoafMaterials()
 
 bool oillamp::Apply(character* Applier, stack*)
 {
+  if(Applier->GetIsPlayer())
+    ADD_MESSAGE("You rub %s.", CNAME(DEFINITE));
+
   if(GetInhabitedByGenie())
     {
-      character* Genie;
+      character* Genie = new genie;
       vector2d TryToCreate;
       bool FoundPlace = false;
+
       /*
 	First try to create a genie nearby (10 tries - if all of them fail then stop trying)
       */
+
       for(ushort c = 0; c < 10 && !FoundPlace; c++)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetIsWalkable(Genie) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 	    {
-	      Genie = new genie;
 	      game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;
 	      SetInhabitedByGenie(false);
+	      break;
 	    }
 	}
 
-
       if(FoundPlace)
 	{
-	  if(rand() % 5 == 0)
+	  ADD_MESSAGE("You see a puff of smoke, and %s appears.", Genie->CNAME(INDEFINITE));
+	  ADD_MESSAGE("\"For centuries I have been imprisoned in this lamp. But at last you have freed me!");
+
+	  if(!(RAND() % 5))
 	    {
-	      Genie->SetTeam(game::GetTeam(4));
-	      ADD_MESSAGE("You have freed %s who is angry!", Genie->CNAME(INDEFINITE));
-	      return true;
+	      Genie->SetTeam(game::GetTeam(1));
+	      ADD_MESSAGE("As a reward, I will kill you.\"");
 	    }
 	  else
 	    {
 	      if(Applier->GetIsPlayer())
 		{
 		  Genie->SetTeam(Applier->GetTeam());
-		  ADD_MESSAGE("You have freed a genie that grants you a wish. You may wish for an item. - press any key -");
+		  ADD_MESSAGE("I am deeply grateful. You deserve a generous reward.");
+		  ADD_MESSAGE("I may serve you for 1001 days or grant you a wish. Its your choice.\"");
 		  game::DrawEverything();
 		  GETKEY();
 
-		  while(true)
+		  if(game::BoolQuestion("Do you want to wish? [Y/n]"))
 		    {
-		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
-		      item* TempItem = protosystem::CreateItem(Temp, Applier->GetIsPlayer());
+		      ADD_MESSAGE("You may wish for an item. - press any key -");
+		      game::DrawEverything();
+		      GETKEY();
 
-		      if(TempItem)
+		      while(true)
 			{
-			  Applier->GetStack()->AddItem(TempItem);
-			  ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CNAME(INDEFINITE));
-			  break;
+			  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+			  item* TempItem = protosystem::CreateItem(Temp, Applier->GetIsPlayer());
+
+			  if(TempItem)
+			    {
+			      Applier->GetStack()->AddItem(TempItem);
+			      ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CNAME(INDEFINITE));
+			      break;
+			    }
+			  else
+			    {
+			      ADD_MESSAGE("You may try again. - press any key -");
+			      DRAW_MESSAGES();
+			      game::DrawEverything();
+			      GETKEY();
+			    }
 			}
-		      else
-			{
-			  ADD_MESSAGE("You may try again. - press any key -");
-			  DRAW_MESSAGES();
-			  game::DrawEverything();
-			  GETKEY();
-			}
+
+			game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
+			delete Genie;
+			return true;
 		    }
 		}
-	      game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
-	      delete Genie;
 	    }
-		
-	      
-	
+
+	    item* Sword = new curvedtwohandedsword;
+	    ADD_MESSAGE("%s whishes for %s.", Genie->CNAME(DEFINITE), Sword->CNAME(INDEFINITE));
+	    ADD_MESSAGE("%s appears from nothing.", Sword->CNAME(INDEFINITE));
+	    ADD_MESSAGE("%s wields %s.", Genie->CNAME(DEFINITE), Sword->CNAME(DEFINITE));
+	    Genie->SetWielded(Sword);
 	}
       else
 	{
 	  if(Applier->GetIsPlayer())
-	    ADD_MESSAGE("You rub the oil lamp and you feel that the lamp is warmer.");
+	    ADD_MESSAGE("You feel that it is warmer.");
+
+	  delete Genie;
 	}
-
-
     }
   else
     if(Applier->GetIsPlayer())
       {
-	ADD_MESSAGE("You rub the lamp, but nothing happens.");
+	ADD_MESSAGE("Nothing happens.");
       }
+
   return true;
 }
 

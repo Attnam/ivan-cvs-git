@@ -237,7 +237,7 @@ class ITEM
 (
   axe,
   meleeweapon,
-  InitMaterials(3, RAND() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
+  InitMaterials(3, RAND() % 5 ? (material*)new stone : RAND() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
   {
     SetSize(125);
   },
@@ -277,7 +277,7 @@ class ITEM
 (
   spear,
   meleeweapon,
-  InitMaterials(3, RAND() % 5 ? (material*)new stone : rand() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
+  InitMaterials(3, RAND() % 5 ? (material*)new stone : RAND() % 20 ? (material*)new iron : (material*)new mithril, new wood, 0),
   {
     SetSize(200);
   },
@@ -1123,15 +1123,15 @@ class ITEM
   InitMaterials(new gold),
   {
     SetSize(30);
-    SetInhabitedByGenie(!(rand() % 4));
+    SetInhabitedByGenie(!(RAND() % 4));
   },
  public:
   virtual ushort Possibility() const { return 2; }
   virtual ushort GetEmitation() const { return 256; }
   virtual std::string NameSingular() const { return "oil lamp"; }
   virtual float OfferModifier() const { return 1; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
-  virtual ulong Price() const { return 80; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
+  virtual ulong Price() const { return 100; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }

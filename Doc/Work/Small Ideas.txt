@@ -53,7 +53,6 @@ Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
 Cube-like screenshot system.
-*Drinking from the fountains of the Cathedral should be prohibited.
 *Loaf of bread.
 Atavus should do something special on Christmas.
 A graphical equipment screen.
@@ -67,7 +66,6 @@ Random item option to script.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit.
 Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.
 Punishment of cathedral terrain destruction.
-*Fountains should dry out, not disappear.
 Ivan should break doors.
 Monsters that change colors.
 Drugs.
@@ -81,7 +79,9 @@ Monsters should pray and occasionaly be punished by the gods for praying too oft
 *Effect for Venius's firestorm.
 *Killed by an explosion.
 WMap terrain height should be shown in WMode.
-*KDwarves should shout.
 Special "enemy sighted" rections.
 Attnam could be resized again?
 Vampires should be able to polymorph into a bat.
+*Drowning.
+Material adjectives.
+Kicking a throne should yield precious stones.

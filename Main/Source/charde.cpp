@@ -1750,8 +1750,15 @@ bool kamikazedwarf::Hit(character* Enemy)
     {
       for(ushort c = 0; c < GetStack()->GetItems(); ++c)
 	if(GetStack()->GetItem(c)->IsExplosive())
-	  if(GetStack()->GetItem(c)->Apply(this, GetStack()))
-	    return true;
+	  {
+	    if(RAND() % 2)
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
+	    else
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
+
+	    if(GetStack()->GetItem(c)->Apply(this, GetStack()))
+	      return true;
+	  }
 
       humanoid::Hit(Enemy);
     }
@@ -1871,10 +1878,10 @@ void kamikazedwarf::GetAICommand()
 
 void genie::BeTalkedTo(character* Talker)
 {
-  /*if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    ADD_MESSAGE("\"Need brain!!\"");
+  if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+    ADD_MESSAGE("\"Fall, you puny Prime Material Plane dweller!\"");
   else
-    ADD_MESSAGE("\"Need brain, but not your brain.\"");*/
+    ADD_MESSAGE("\"You know, it's not fun to stay in an oil lamp for three centuries...\"");
 }
 
 bool unicorn::SpecialEnemySightedReaction(character* Enemy)
