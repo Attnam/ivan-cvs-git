@@ -150,8 +150,8 @@ class item : public object
   virtual material* CreateDipMaterial() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual short GetOfferValue(char) const;
-  virtual bool Fly(character*, uchar, ushort);
-  virtual bool HitCharacter(character*, character*, float);
+  bool Fly(character*, uchar, ushort);
+  bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar) { return false; }
@@ -167,10 +167,10 @@ class item : public object
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
-  virtual void SetSize(ushort Value) { Size = Value; }
+  void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
-  virtual ulong GetID() const { return ID; }
-  virtual void SetID(ulong What) { ID = What; }
+  ulong GetID() const { return ID; }
+  void SetID(ulong What) { ID = What; }
   virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot() const { return Slot; }
@@ -222,14 +222,12 @@ class item : public object
   virtual bool IsWeapon(const character*) const { return false; }
   virtual bool IsArmor(const character*) const { return false; }
   virtual bool IsOnGround() const { return GetSlot()->IsOnGround(); }
-  virtual ushort GetResistance(uchar) const;
+  ushort GetResistance(uchar) const;
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
-  virtual bool RemoveMaterial(uchar) { return true; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool ReceiveDamage(character*, ushort, uchar);
   virtual void AddConsumeEndMessage(character*) const;
-  virtual bool IsEqual(item*) const { return false; }
   virtual bool RaiseTheDead(character*) { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const { return &item_ProtoType; }
@@ -239,20 +237,19 @@ class item : public object
   virtual DATA_BASE_VALUE(vector2d, InHandsPic);
   virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
-  virtual DATA_BASE_BOOL(CanBeWished);
-  virtual DATA_BASE_BOOL(IsMaterialChangeable);
+  DATA_BASE_BOOL(IsMaterialChangeable);
   DATA_BASE_VALUE(uchar, WeaponCategory);
-  virtual DATA_BASE_BOOL(IsAutoInitializable);
+  DATA_BASE_BOOL(IsAutoInitializable);
   DATA_BASE_VALUE(ulong, Category);
-  virtual DATA_BASE_VALUE(ushort, SoundResistance);
-  virtual DATA_BASE_VALUE(ushort, EnergyResistance);
-  virtual DATA_BASE_VALUE(ushort, AcidResistance);
-  virtual DATA_BASE_VALUE(ushort, FireResistance);
-  virtual DATA_BASE_VALUE(ushort, PoisonResistance);
-  virtual DATA_BASE_VALUE(ushort, BulimiaResistance);
-  virtual DATA_BASE_VALUE(ushort, StrengthModifier);
+  DATA_BASE_VALUE(ushort, SoundResistance);
+  DATA_BASE_VALUE(ushort, EnergyResistance);
+  DATA_BASE_VALUE(ushort, AcidResistance);
+  DATA_BASE_VALUE(ushort, FireResistance);
+  DATA_BASE_VALUE(ushort, PoisonResistance);
+  DATA_BASE_VALUE(ushort, BulimiaResistance);
+  DATA_BASE_VALUE(ushort, StrengthModifier);
   virtual DATA_BASE_VALUE(ushort, FormModifier);
-  virtual DATA_BASE_VALUE(ulong, NPModifier);
+  DATA_BASE_VALUE(ulong, NPModifier);
   DATA_BASE_VALUE(ushort, DefaultSize);
   DATA_BASE_VALUE(ulong, DefaultMainVolume);
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
@@ -276,13 +273,13 @@ class item : public object
   virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
   virtual DATA_BASE_BOOL(CanBeGeneratedInContainer);
   virtual DATA_BASE_VALUE(uchar, ForcedVisualEffects);
-  virtual DATA_BASE_VALUE(uchar, Roundness);
-  virtual DATA_BASE_VALUE(ushort, GearStates);
-  virtual DATA_BASE_BOOL(IsTwoHanded);
-  virtual DATA_BASE_BOOL(CanBeBroken);
+  DATA_BASE_VALUE(uchar, Roundness);
+  DATA_BASE_VALUE(ushort, GearStates);
+  DATA_BASE_BOOL(IsTwoHanded);
+  DATA_BASE_BOOL(CanBeBroken);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
   virtual DATA_BASE_VALUE(const std::string&, FlexibleNameSingular);
-  virtual DATA_BASE_BOOL(CanBePiled);
+  DATA_BASE_BOOL(CanBePiled);
   DATA_BASE_BOOL(AffectsArmStrength);
   DATA_BASE_BOOL(AffectsLegStrength);
   DATA_BASE_BOOL(AffectsDexterity);
@@ -310,19 +307,21 @@ class item : public object
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
-  virtual ulong GetBlockModifier() const;
-  virtual bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
+  ulong GetBlockModifier() const;
+  bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
-  virtual std::string GetDescription(uchar) const;
+  std::string GetDescription(uchar) const;
   virtual square* GetSquareUnder() const { return Slot ? Slot->GetSquareUnder() : 0; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(Slot->GetSquareUnder()); }
   level* GetLevelUnder() const { return static_cast<level*>(Slot->GetSquareUnder()->GetAreaUnder()); }
   area* GetAreaUnder() const { return Slot->GetSquareUnder()->GetAreaUnder(); }
   vector2d GetPos() const { return Slot->GetSquareUnder()->GetPos(); }
   square* GetNearSquare(vector2d Pos) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos); }
+  square* GetNearSquare(ushort x, ushort y) const { return Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(x, y); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(Pos)); }
+  lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(Slot->GetSquareUnder()->GetAreaUnder()->GetSquare(x, y)); }
   virtual void SignalVolumeAndWeightChange();
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
@@ -344,7 +343,7 @@ class item : public object
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddAttackInfo(felist&) const;
   virtual void AddMiscellaneousInfo(felist&) const;
-  virtual ulong GetNutritionValue() const;
+  ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
   bool CarriedByPlayer() const;
@@ -364,7 +363,7 @@ class item : public object
   virtual char GetEnchantment() const { return 0; }
   virtual ulong GetEnchantedPrice(char) const;
   virtual item* Fix();
-  virtual ushort GetStrengthRequirement() const;
+  ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
   virtual bool IsFixableBySmith(const character*) const { return false; }
   virtual ulong GetFixPrice() const { return 100; } 
@@ -378,7 +377,7 @@ class item : public object
   virtual bool IsEncryptedScroll() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;
-  virtual void LoadDataBaseStats();
+  void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ushort);
   virtual void InstallDataBase();

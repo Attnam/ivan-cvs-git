@@ -93,7 +93,7 @@ lantern
 	StrengthModifier = 50;
 	FormModifier = 20;
 	Price = 50;
-	BaseEmitation = rgb24(135, 135, 125);
+	BaseEmitation = rgb24(120, 120, 110);
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
 	Alias == "light";
@@ -560,6 +560,7 @@ neercseulb /* meleeweapon-> */
 
 pickaxe /* meleeweapon-> */
 {
+	Category = TOOL;
 	DefaultSize = 75;
 	Possibility = 100;
 	InHandsPic = 160, 64;
@@ -711,8 +712,8 @@ potion /* materialcontainer-> */
 	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
-	MaterialConfigChances = { 6, 100, 75, 50, 75, 1, 75; }
+	ContainedMaterialConfig = { 8, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD; }
+	MaterialConfigChances = { 8, 100, 75, 50, 75, 1, 75, 5, 25; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
@@ -1221,7 +1222,7 @@ shield /* armor-> */
 	Possibility = 250;
 	Category = SHIELD;
 	DefaultMainVolume = 500;
-	StrengthModifier = 200;
+	StrengthModifier = 150;
 	BitmapPos = 32, 336;
 	FormModifier = 15;
 	NameSingular = "shield";
@@ -1785,19 +1786,48 @@ wandofinvisibility /* wand-> */
 helmet
 {
 	DefaultSize = 30;
-	Possibility = 250;
+	Possibility = 300;
 	Category = HELMET;
-	DefaultMainVolume = 200;
+	DefaultMainVolume = 150;
 	StrengthModifier = 100;
 	BitmapPos = 16, 384;
 	FormModifier = 10;
 	NameSingular = "helmet";
 	MainMaterialConfig = { 12, LEATHER, HARDENED_LEATHER, TROLL_HIDE, WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
-	MaterialConfigChances = { 12, 50, 75, 30, 40, 30, 50, 20, 125, 100, 75, 20, 10; }
+	MaterialConfigChances = { 12, 50, 75, 30, 40, 30, 50, 10, 75, 50, 25, 10, 5; }
 	Roundness = 60;
+	CanBeBroken = true;
+
+	Config BROKEN;
+	{
+		BitmapPos = 64, 64;
+	}
+
+	Config FULL_HELMET;
+	{
+		DefaultSize = 40;
+		DefaultMainVolume = 250;
+		StrengthModifier = 150;
+		FormModifier = 25;
+		BitmapPos = 48, 32;
+		Possibility = 100;
+		Adjective = "full";
+		MainMaterialConfig = { 5, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
+		MaterialConfigChances = { 5, 125, 100, 75, 25, 5; }
+	}
+
+	Config BROKEN|FULL_HELMET;
+	{
+		BitmapPos = 64, 32;
+	}
 
 	Config HELM_OF_PERCEPTION;
 	{
+		DefaultSize = 40;
+		DefaultMainVolume = 250;
+		StrengthModifier = 150;
+		FormModifier = 25;
+		BitmapPos = 48, 32;
 		Possibility = 25;
 		PostFix = "of piercing perception";
 		AffectsPerception = true;
@@ -1808,8 +1838,18 @@ helmet
 		PriceIsProportionalToEnchantment = true;
 	}
 
+	Config BROKEN|HELM_OF_PERCEPTION;
+	{
+		BitmapPos = 64, 32;
+	}
+
 	Config HELM_OF_UNDERSTANDING;
 	{
+		DefaultSize = 40;
+		DefaultMainVolume = 250;
+		StrengthModifier = 150;
+		FormModifier = 25;
+		BitmapPos = 48, 32;
 		Possibility = 25;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
@@ -1820,8 +1860,18 @@ helmet
 		PriceIsProportionalToEnchantment = true;
 	}
 
+	Config BROKEN|HELM_OF_UNDERSTANDING;
+	{
+		BitmapPos = 64, 32;
+	}
+
 	Config HELM_OF_BRILLIANCE;
 	{
+		DefaultSize = 40;
+		DefaultMainVolume = 250;
+		StrengthModifier = 150;
+		FormModifier = 25;
+		BitmapPos = 48, 32;
 		Possibility = 25;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
@@ -1832,8 +1882,18 @@ helmet
 		PriceIsProportionalToEnchantment = true;
 	}
 
+	Config BROKEN|HELM_OF_BRILLIANCE;
+	{
+		BitmapPos = 64, 32;
+	}
+
 	Config HELM_OF_ATTRACTIVITY;
 	{
+		DefaultSize = 40;
+		DefaultMainVolume = 250;
+		StrengthModifier = 150;
+		FormModifier = 25;
+		BitmapPos = 48, 32;
 		Possibility = 25;
 		PostFix = "of attractivity";
 		AffectsCharisma = true;
@@ -1842,6 +1902,11 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 50;
 		PriceIsProportionalToEnchantment = true;
+	}
+
+	Config BROKEN|HELM_OF_ATTRACTIVITY;
+	{
+		BitmapPos = 64, 32;
 	}
 }
 
@@ -2043,11 +2108,9 @@ skull
 	WeaponCategory = UNCATEGORIZED;
 	DefaultMainVolume = 600;
 	BitmapPos = 48, 112;
-	FormModifier = 70;
 	Category = MISC;
 	NameSingular = "skull";
 	MainMaterialConfig == BONE;
-	Roundness = 20;
 	IsTwoHanded = true;
 }
 
@@ -2116,3 +2179,32 @@ encryptedscroll /* scroll-> */
 	CanBeCloned = false;
 }
 
+horn
+{
+	InHandsPic = 160, 128;
+	StrengthModifier = 70;
+	FormModifier = 30;
+	Roundness = 40;
+	DefaultSize = 30;
+	Possibility = 10;
+	WeaponCategory = CLUBS;
+	DefaultMainVolume = 400;
+	BitmapPos = 48, 304;
+	Category = TOOL;
+	NameSingular = "horn";
+	IsAbstract = true;
+	Price = 500;
+	CanBePiled = false;
+
+	Config BRAVERY;
+	{
+		MainMaterialConfig == SILVER;
+		PostFix = "of bravery";
+	}
+
+	Config FEAR;
+	{
+		MainMaterialConfig == STONE;
+		PostFix = "of fear";
+	}
+}

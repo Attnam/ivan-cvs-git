@@ -1804,7 +1804,7 @@ bool corpse::RaiseTheDead(character* Summoner)
 
   GetLSquareUnder()->AddCharacter(GetDeceased());
   RemoveFromSlot();
-  GetDeceased()->SetHasBe(true);
+  GetDeceased()->Enable();
   GetDeceased()->SetMotherEntity(0);
   GetDeceased()->CompleteRiseFromTheDead();
   Deceased = 0;
@@ -1929,27 +1929,16 @@ void whistle::BlowEffect(character* Whistler)
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce an interesting sound.");
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s blows %s and produces an interesting sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a whistle playing.");
 
-  for(ushort c = 0; c < game::GetTeams(); ++c)
-    {
-      if(game::GetTeam(c)->HasEnemy())
-	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled())
-	    {
-	      ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
-
-	      if(ThisDistance <= GetRange())
-		(*i)->SetWayPoint(GetPos());
-	    }
-    }
+  game::CallForAttention(GetPos(), GetRange());
 }
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed != 0 && game::GetTicks() - LastUsed < 1000)
+  if(LastUsed != 0 && game::GetTicks() - LastUsed < 2500)
     {
       whistle::BlowEffect(Whistler);
       return;
@@ -1960,7 +1949,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce a peculiar sound.");
   else if(Whistler->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s blows %s and produces a peculiar sound.", Whistler->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
   else 
     ADD_MESSAGE("You hear a strange tune playing.");
 
@@ -1969,6 +1958,8 @@ void magicalwhistle::BlowEffect(character* Whistler)
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
     if((*i)->IsEnabled() && Whistler != *i)
       (*i)->TeleportNear(Whistler);
+
+  game::CallForAttention(GetPos(), GetRange());
 }
 
 void itemcontainer::VirtualConstructor(bool Load)
@@ -4886,7 +4877,7 @@ long itemcontainer::GetScore() const
   return item::GetScore() + GetContained()->GetScore();
 }
 
-bool arm::CheckIfWeaponTooHeavy() const
+bool arm::CheckIfWeaponTooHeavy(const std::string& WeaponDescription) const
 {
   ushort HitStrength = GetAttribute(ARM_STRENGTH);
   ushort Requirement = GetWielded()->GetStrengthRequirement();
@@ -4896,20 +4887,137 @@ bool arm::CheckIfWeaponTooHeavy() const
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
       Requirement >>= 1;
 
-      if(HitStrength <= Requirement)
+      if(HitStrength - Requirement < 10)
 	{
-	  ADD_MESSAGE("You cannot use this weapon. Wielding it with two hands requires %d strength.", (Requirement >> 1) + 1);
+	  if(HitStrength <= Requirement)
+	    ADD_MESSAGE("You cannot use %s. Wielding it with two hands requires %d strength.", WeaponDescription.c_str(), (Requirement >> 1) + 1);
+	  else if(HitStrength - Requirement < 4)
+	    ADD_MESSAGE("Using %s even with two hands is extremely difficult.", WeaponDescription.c_str());
+	  else if(HitStrength - Requirement < 7)
+	    ADD_MESSAGE("You have much trouble using %s even with two hands.", WeaponDescription.c_str());
+	  else
+	    ADD_MESSAGE("It is somewhat difficult to use %s even with two hands.", WeaponDescription.c_str());
+
 	  return !game::BoolQuestion("Continue anyway? [y/N]");
 	}
     }
   else
     {
-      if(HitStrength <= Requirement)
+      if(HitStrength - Requirement < 10)
 	{
-	  ADD_MESSAGE("You cannot use this weapon. Wielding it with one hand requires %d strength.", Requirement + 1);
+	  std::string HandInfo;
+
+	  if(GetWielded()->IsTwoHanded())
+	    HandInfo = " with one hand";
+
+	  if(HitStrength <= Requirement)
+	    ADD_MESSAGE("You cannot use %s. Wielding it%s requires %d strength.", WeaponDescription.c_str(), HandInfo.c_str(), Requirement + 1);
+	  else if(HitStrength - Requirement < 4)
+	    ADD_MESSAGE("Using %s%s is extremely difficult.", WeaponDescription.c_str(), HandInfo.c_str());
+	  else if(HitStrength - Requirement < 7)
+	    ADD_MESSAGE("You have much trouble using %s%s.", WeaponDescription.c_str(), HandInfo.c_str());
+	  else
+	    ADD_MESSAGE("It is somewhat difficult to use %s%s.", WeaponDescription.c_str(), HandInfo.c_str());
+
 	  return !game::BoolQuestion("Continue anyway? [y/N]");
 	}
     }
 
   return false;
 }
+
+bool horn::Apply(character* Blower) 
+{
+  if(LastUsed == 0 || game::GetTicks() - LastUsed >= 2500)
+    {
+      LastUsed = game::GetTicks();
+      const char* SoundDescription = Config == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
+
+      if(Blower->IsPlayer())
+	ADD_MESSAGE("You produce a %s sound.", SoundDescription);
+      else if(Blower->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s blows %s and produces a %s sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE), SoundDescription);
+      else 
+	ADD_MESSAGE("You hear a %s sound echoing everywhere.", SoundDescription);
+
+      rect Rect;
+      femath::CalculateEnvironmentRectangle(Rect, GetLevelUnder()->GetBorder(), GetPos(), 10);
+
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	  {
+	    character* Audience = GetNearSquare(x, y)->GetCharacter();
+
+	    if(Audience)
+	      {
+		if(Config == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID() && Audience->GetPanicLevel() <= RAND() % 100)
+		  {
+		    if(Audience->IsPlayer())
+		      ADD_MESSAGE("You calm down.");
+		    else if(CanBeSeenByPlayer())
+		      ADD_MESSAGE("%s calms down.", Audience->CHAR_NAME(DEFINITE));
+
+		    Audience->DeActivateTemporaryState(PANIC);
+		  }
+		else if(Config == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 100)
+		  Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+	      }
+	  }
+
+    }
+  else
+    {
+      if(Blower->IsPlayer())
+	ADD_MESSAGE("You produce a mighty sound.");
+      else if(Blower->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s blows %s and produces a mighty sound.", Blower->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
+      else 
+	ADD_MESSAGE("You hear a horn being blown.");
+    }
+
+  game::CallForAttention(GetPos(), 30 * 30);
+  Blower->EditAP(-1000);
+  return true;
+}
+
+void horn::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << LastUsed;
+}
+
+void horn::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> LastUsed;
+}
+
+void horn::VirtualConstructor(bool Load)
+{
+  item::VirtualConstructor(Load);
+  LastUsed = 0;
+}
+
+bool potion::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+{
+  if(Type == FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
+    {
+      std::string DeathMsg = "explosion of ";
+      AddName(DeathMsg, INDEFINITE);
+
+      if(Damager)
+	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
+
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+
+      lsquare* Square = GetLSquareUnder();
+      RemoveFromSlot();
+      SendToHell();
+      Square->GetLevelUnder()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      return true;
+    }
+  else
+    return item::ReceiveDamage(Damager, Damage, Type);
+}
+

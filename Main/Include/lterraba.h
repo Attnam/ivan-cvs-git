@@ -71,8 +71,8 @@ class lterrain : public object
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
   virtual bool TryKey(item*, character*) { return false; }
-  virtual bool CanBeSeenByPlayer() const;
-  virtual bool CanBeSeenBy(character*) const;
+  bool CanBeSeenByPlayer() const;
+  bool CanBeSeenBy(character*) const;
   virtual const std::string& GetSitMessage() const = 0;
   virtual bool SitOn(character*);
   virtual square* GetSquareUnder() const { return LSquareUnder; }
@@ -216,9 +216,9 @@ class olterrain : public lterrain, public oterrain
   virtual void CreateBoobyTrap() { }
   virtual void HasBeenHitBy(item*, float, uchar) { }
   virtual void Break();
-  virtual short GetHP() const { return HP; }
-  virtual void SetHP(short What) { HP = What; }
-  virtual void EditHP(short What) { HP += What; }
+  short GetHP() const { return HP; }
+  void SetHP(short What) { HP = What; }
+  void EditHP(short What) { HP += What; }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const { return &olterrain_ProtoType; }
   const database* GetDataBase() const { return DataBase; }

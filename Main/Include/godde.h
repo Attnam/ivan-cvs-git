@@ -219,7 +219,6 @@ class GOD
   virtual std::string Name() const { return "Cruentus"; }
   virtual std::string Description() const { return "god of war and blood"; }
   virtual uchar Alignment() const { return ACM; }
-  virtual void Pray();
   virtual uchar BasicAlignment() const { return EVIL; }
   virtual ushort GetColor() const { return MakeRGB16(200, 0, 0); }
  protected:

@@ -127,3 +127,4 @@ Lanterns put inside itemcontainers still emit light.
 Digging book shelves probably doesn't work correctly.
 It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 Can angry Atavus or Cruentus destroy a quest artifact inside a container?
+Items left on shop floor do not spoil even if the shopkeeper is dead.

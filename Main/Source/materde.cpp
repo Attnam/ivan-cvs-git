@@ -97,7 +97,12 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount, float NPModifie
   Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / (100000 * (GetSpoilLevel() + 1))));
 
   if(GetSpoilLevel() > 0)
-    Eater->BeginTemporaryState(CONFUSED, Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500);
+    {
+      Eater->BeginTemporaryState(CONFUSED, Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500);
+
+      if(CanHaveParasite() && !(RAND() % (5000 / GetSpoilLevel())))
+	Eater->GainIntrinsic(PARASITIZED);
+    }
 
   if(GetSpoilLevel() > 4)
     Eater->BeginTemporaryState(POISONED, Amount * (GetSpoilLevel() - 4) * sqrt(NPModifier) / 2500);

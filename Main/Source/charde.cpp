@@ -3929,8 +3929,10 @@ void elpuri::VirtualConstructor(bool Load)
 
 bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
 {
-  return (Index == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy())
-      || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy());
+  return (Index == RIGHT_WIELDED_INDEX && GetRightArm()->CheckIfWeaponTooHeavy("this item"))
+      || (Index == LEFT_WIELDED_INDEX && GetLeftArm()->CheckIfWeaponTooHeavy("this item"))
+      || (Index == RIGHT_WIELDED_INDEX && GetLeftWielded() && GetLeftWielded()->IsTwoHanded() && GetLeftArm()->CheckIfWeaponTooHeavy("your another wielded item"))
+      || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your another wielded item"));
 }
 
 void mommo::CreateCorpse()
@@ -3960,22 +3962,19 @@ void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, b
 
 uchar mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
-  humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue,Success, Type, Critical, ForceHit);
-  if(Critical && IsAlive())
+  uchar Return = humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
+
+  if(Return == HAS_HIT && Critical)
     {
       if(IsPlayer())
-	{
-	  ADD_MESSAGE("Aahhh. The pain feels unbelievably good.");
-	}
+	ADD_MESSAGE("Aahhh. The pain feels unbelievably good.");
       else if(CanBeSeenByPlayer())
-	{
-	  ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
-	}
+	ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
       else
-	{
-	  ADD_MESSAGE("You hear a scream: \"Oh the delightful pain!");
-	}
+	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!");
     }
+
+  return Return;
 }
 
 void chameleon::GetAICommand()
@@ -4043,3 +4042,19 @@ void guard::GetAICommand()
   StandIdleAI();
 }
 
+bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
+{
+  bool Success = humanoid::ReceiveDamage(Damager, Damage, Type, TargetFlags, Direction, Divide, PenetrateArmor, Critical, ShowMsg);
+
+  if(Type == SOUND && Success && !(RAND() & 7))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Aahhh. The pain feels unbelievably good.");
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s screams: \"Oh the delightful pain!\"", CHAR_NAME(DEFINITE));
+      else
+	ADD_MESSAGE("You hear someone screaming: \"Oh the delightful pain!");
+    }
+
+  return Success;
+}

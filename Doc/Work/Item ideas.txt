@@ -1,9 +1,10 @@
 Misc:
 
-horn of bravery - cures panic of friendly creatures
-horn of fear - causes panic to enemies
+//horn of bravery - cures panic of friendly creatures
+//horn of fear - causes panic to enemies
 wand of petrification - has a chance of changing the material of every item and monster it hits to stone
 is - these things are expensive but their amount is every now and then cut to half (mockery of Adom's si :)
+ring of conflict
 
 Weapons:
 
@@ -27,9 +28,9 @@ armor of great health - +x end
 //helm of innovation - +x intelligence
 //helm of attractivity - +x charisma
 helm of ESP
-spiked boots - more kicking damage
+//boots of kicking - more kicking damage
 sandals of Hermes - flying
-girdle of carrying - +x% carrying strength
+//girdle of carrying - +x% carrying strength
 amulet of improbability - causes odd improbabilities
 
 Other equipment:

@@ -55,3 +55,4 @@ Tiedostojen tekijätiedottaminen.
 Hyökkäyslajien olioiminen.
 Markkinatalouden yhdenmukaistaminen.
 Potentiaali konfiguraatioiden ekplisiittiseen periyttämiseen.
+Eliöiden totuusarvojen yhteensulauttaminen.

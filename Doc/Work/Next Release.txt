@@ -101,7 +101,7 @@ Things thrown at doors.
 //Spiders must not trigger mines.
 Hit effects of thrown items.
 (s) Applying wielded item should be possible.
-?Vodka.
+//?Vodka.
 //Splitting lines in highscores.
 //Calamus and whip of Calamus should work together.
 //Treasure room to the right arm of the Cathedral.
@@ -109,7 +109,7 @@ Hit effects of thrown items.
 //Village and tunnel.
 Kick system should be checked. (timo)
 //Kamikaze dwarves should be separated by colours.
-?Manual.
+(s) ?Manual.
 //Item possibilities. (timo)
 //Skull. (hex)
 //Wand of cloning. (hex)
@@ -147,7 +147,7 @@ Checking throw balance.
 //Weapon volumes should be more realistic.
 //?Flaming effect for holy banana.
 //?Solving the iron cloak conundrum.
-?Broad tapeworm.
+//?Broad tapeworm.
 //Imperialist quest.
 //Moving the lamp room to the tunnel.
 //New background story.
@@ -159,7 +159,7 @@ Checking throw balance.
 ?Village duelist.
 //?olterraincontainer
 Smith prices.
-?Kamikaze dwarf generation.
+//?Kamikaze dwarf generation.
 Renaming "single weapon skills".
 //?Scroll of repair.
 Prices of golden items.
@@ -170,4 +170,4 @@ Bear traps should break eventually.
 //More color states to silhouette.
 Digging walls should yield stones.
 Abort messages should tell the user to e-mail ivan-users@sourceforge.net. Remember to tell the user to state their version number/OS etc.
-?Zombie flesh should already be spoiled when a zombie dies
+?Zombie flesh should already be spoiled when a zombie dies.

@@ -41,11 +41,6 @@ std::string wterrain::GetName(uchar Case) const
   return Name;
 }
 
-vector2d wterrain::GetPos() const
-{
-  return GetWSquareUnder()->GetPos();
-}
-
 void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
@@ -57,11 +52,6 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool A
 void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool, bool AllowAnimate) const
 {
   igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
-}
-
-worldmap* wterrain::GetWorldMapUnder() const
-{
-  return GetWSquareUnder()->GetWorldMapUnder();
 }
 
 void wterrain::Load(inputfile&)

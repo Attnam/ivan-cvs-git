@@ -52,6 +52,7 @@ struct materialdatabase
   bool IsSparkling;
   ushort EffectStrength;
   bool IsMetal;
+  bool CanHaveParasite;
   ushort DigProductMaterial;
 };
 
@@ -130,6 +131,7 @@ class material
   DATA_BASE_VALUE(ushort, SpoilModifier);
   DATA_BASE_BOOL(IsSparkling);
   DATA_BASE_BOOL(IsMetal);
+  DATA_BASE_BOOL(CanHaveParasite);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }

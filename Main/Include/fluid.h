@@ -13,7 +13,7 @@ class bitmap;
 class fluid : public entity
 {
  public:
-  fluid() : entity(true) { }
+  fluid() : entity(HAS_BE) { }
   fluid(square*);
   virtual ~fluid();
   void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);

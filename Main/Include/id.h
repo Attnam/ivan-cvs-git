@@ -28,7 +28,7 @@ class id
   virtual bool AddAdjective(std::string&, bool) const;
   virtual const std::string& GetAdjective() const = 0;
   virtual const std::string& GetAdjectiveArticle() const = 0;
-  virtual bool AddMaterialDescription(std::string&, bool) const = 0;
+  virtual bool AddMaterialDescription(std::string&, bool) const { return false; }
   virtual const std::string& GetPostFix() const = 0;
   virtual void AddPostFix(std::string&) const;
   virtual uchar GetArticleMode() const { return NORMAL_ARTICLE; }

@@ -37,14 +37,14 @@
  * doesn't need one.
  */
 
-void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage };
-void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage };
-void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0 };
-void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0 };
-void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0 };
-std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused" };
-bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false };
-bool character::StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true };
+void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage, &character::PrintBeginPanicMessage, &character::PrintBeginConfuseMessage, &character::PrintBeginParasitizedMessage };
+void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage, &character::PrintEndPanicMessage, &character::PrintEndConfuseMessage, &character::PrintEndParasitizedMessage };
+void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0, 0, 0, 0 };
+void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0, 0, 0, 0 };
+void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0, 0, 0, &character::ParasitizedHandler };
+std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleporting", "Polymorphing", "TeleControl", "Panic", "Confused", "Parasitized" };
+bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false, false };
+bool character::StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true, false };
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), HomePos(HomePos)
 {
@@ -84,7 +84,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(true), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -906,7 +906,7 @@ void character::CreateCorpse()
   corpse* Corpse = new corpse(0, NO_MATERIALS);
   Corpse->SetDeceased(this);
   GetStackUnder()->AddItem(Corpse);
-  SetHasBe(false);
+  Disable();
 }
 
 void character::Die(bool ForceMsg)
@@ -1527,7 +1527,7 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << NP << AP;
   SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config << RegenerationCounter;
-  SaveFile << HasBe() << Polymorphed << HomePos;
+  SaveFile << IsEnabled() << Polymorphed << HomePos;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1579,7 +1579,7 @@ void character::Load(inputfile& SaveFile)
 
   SaveFile >> NP >> AP;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config >> RegenerationCounter;
-  SetHasBe(ReadType<bool>(SaveFile));
+  SetIsEnabled(ReadType<bool>(SaveFile));
   SaveFile >> Polymorphed >> HomePos;
 
   for(c = 0; c < BodyParts; ++c)
@@ -2113,7 +2113,15 @@ void character::Vomit(ushort Amount)
 
   EditExperience(ARM_STRENGTH, -50);
   EditExperience(LEG_STRENGTH, -50);
-  EditNP(-200 - RAND() % 201);
+  EditNP(-2000 - RAND() % 2001);
+
+  if(StateIsActivated(PARASITIZED) && !(RAND() & 3))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You notice a dead broad tapeworm among your former stomach contents.");
+
+      DeActivateTemporaryState(PARASITIZED);
+    }
 
   if(!game::IsInWilderness())
     GetLSquareUnder()->ReceiveVomit(this, Amount);
@@ -2208,7 +2216,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
     {
       NewForm->SetPolymorphBackup(this);
       SetPolymorphed(true);
-      SetHasBe(false);
+      Disable();
     }
 
   GetStack()->MoveItemsTo(NewForm->GetStack());
@@ -3428,13 +3436,6 @@ std::string character::GetObjectPronoun(bool PlayersView) const
     return "her";
 }
 
-bool character::AddMaterialDescription(std::string& String, bool Articled) const
-{
-  GetTorso()->GetMainMaterial()->AddName(String, Articled);
-  String << " ";
-  return true;
-}
-
 void character::AddName(std::string& String, uchar Case) const
 {
   if(!(Case & PLURAL) && AssignedName.length())
@@ -3969,6 +3970,15 @@ void character::Teleport(vector2d Pos)
 
 void character::ReceiveHeal(long Amount)
 {
+  if(Amount >= 100 && StateIsActivated(PARASITIZED))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
+
+      DeActivateTemporaryState(PARASITIZED);
+      Amount -= 100;
+    }
+
   ushort c;
 
   for(c = 0; c < Amount / 15; ++c)
@@ -3990,7 +4000,7 @@ void character::ReceiveHeal(long Amount)
       ++HP;
     }
 
-  Amount -= c * 50;
+  Amount -= c * 15;
 
   for(c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c) && CanCreateBodyPart(c) && RAND() & 1 && Amount >= 500)
@@ -4609,30 +4619,6 @@ void character::HandleStates()
     }
 }
 
-void character::LoseIntrinsic(ushort What)
-{
-  ushort Index;
-
-  for(Index = 0; Index < STATES; ++Index)
-    if(1 << Index == What)
-      break;
-
-  TemporaryState &= ~What;
-
-  if(!(EquipmentState & What))
-    {
-      if(EndStateHandler[Index])
-	{
-	  (this->*EndStateHandler[Index])();
-
-	  if(!IsEnabled())
-	    return;
-	}
-
-      (this->*PrintEndStateMessage[Index])();
-    }
-}
-
 void character::PrintBeginPolymorphControlMessage() const
 {
   if(IsPlayer())
@@ -4785,7 +4771,7 @@ void character::EndPolymorph()
   InNoMsgMode = Char->InNoMsgMode = true;
   SetPolymorphBackup(0);
   GetSquareUnder()->AddCharacter(Char);
-  Char->SetHasBe(true);
+  Char->Enable();
   Char->SetPolymorphed(false);
   GetStack()->MoveItemsTo(Char->GetStack());
 
@@ -5051,7 +5037,7 @@ void character::PoisonedHandler()
   ushort Damage = 0;
 
   for(ushort Used = 0; Used < GetTemporaryStateCounter(POISONED); Used += 100)
-    if(!(RAND() % 60))
+    if(!(RAND() % 100))
       ++Damage;
 
   if(Damage)
@@ -5940,14 +5926,27 @@ void character::ReceiveAntidote(long Amount)
   if(StateIsActivated(POISONED))
     {
       if(GetTemporaryStateCounter(POISONED) > Amount)
-	EditTemporaryStateCounter(POISONED, -Amount);
+	{
+	  EditTemporaryStateCounter(POISONED, -Amount);
+	  Amount = 0;
+	}
       else
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("Aaaah... You feel much better.");
 
+	  Amount -= GetTemporaryStateCounter(POISONED);
 	  DeActivateTemporaryState(POISONED);
 	}
+    }
+
+  if(Amount >= 100 && StateIsActivated(PARASITIZED))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Something in your belly didn't seem to like this stuff.");
+
+      DeActivateTemporaryState(PARASITIZED);
+      Amount -= 100;
     }
 }
 
@@ -6372,5 +6371,30 @@ bool character::TryToChangeEquipment(ushort Chosen)
 	}
 
       return Item != OldEquipment;
+    }
+}
+
+void character::PrintBeginParasitizedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel you are no longer alone.");
+}
+
+void character::PrintEndParasitizedMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("A feeling of long welcome emptiness overwhelms you.");
+}
+
+void character::ParasitizedHandler()
+{
+  EditNP(-1);
+
+  if(!(RAND() % 500))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Ugh. You feel something violently carving its way through your intestines.");
+
+      ReceiveDamage(0, 1, POISON, TORSO, 8, false, false, false, false);
     }
 }

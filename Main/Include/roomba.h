@@ -41,20 +41,20 @@ class room
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Enter(character*) { }
-  virtual vector2d GetPos() const { return Pos; }
-  virtual void SetPos(vector2d What) { Pos = What; }
-  virtual vector2d GetSize() const { return Size; }
-  virtual void SetSize(vector2d What) { Size = What; }
+  vector2d GetPos() const { return Pos; }
+  void SetPos(vector2d What) { Pos = What; }
+  vector2d GetSize() const { return Size; }
+  void SetSize(vector2d What) { Size = What; }
   void HandleInstantiatedCharacter(character*);
   void HandleInstantiatedOLTerrain(olterrain*);
-  virtual void SetIndex(uchar What) { Index = What; }
-  virtual uchar GetIndex() const { return Index; }
-  virtual character* GetMaster() const { return Master; }
-  virtual void SetMaster(character* What) { Master = What; }
+  void SetIndex(uchar What) { Index = What; }
+  uchar GetIndex() const { return Index; }
+  character* GetMaster() const { return Master; }
+  void SetMaster(character* What) { Master = What; }
   virtual bool PickupItem(character*, item*, ushort) { return true; }
   virtual bool DropItem(character*, item*, ushort) { return true; }
-  virtual uchar GetDivineMaster() const { return DivineMaster; }
-  virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
+  uchar GetDivineMaster() const { return DivineMaster; }
+  void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void KickSquare(character*, lsquare*) { }
   virtual bool ConsumeItem(character*, item*, ushort) { return true; }
   virtual bool AllowDropGifts() const { return true; }
@@ -65,7 +65,7 @@ class room
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void DestroyTerrain(character*, olterrain*);
+  void DestroyTerrain(character*, olterrain*);
   virtual bool AllowSpoil() const { return true; }
   virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual short GetGodRelationAdjustment() const { return -50; }

@@ -5,6 +5,7 @@
 #include "femath.h"
 #include "wterraba.h"
 #include "save.h"
+#include "charba.h"
 
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;

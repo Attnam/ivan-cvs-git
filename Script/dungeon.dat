@@ -1004,138 +1004,6 @@ Dungeon ATTNAM;
 
 		Room 2;
 		{
-			Pos=54,55;
-			Size = 5,5;
-			WallSquare = solidterrain(SNOW_TERRAIN),STEEL wall(BRICK_FINE);
-			GenerateDoor = false;
-			DivineMaster = LEGIFER;
-			Type = temple;
-			GenerateLanterns = false;
-			ReCalculate = false;
-
-			Square, Pos 2, 0;
-			{
-				GTerrain = solidterrain(PARQUET);
-				OTerrain = STEEL door;
-			}
-
-			Square, Pos 3, 0;
-			{
-				Items == lantern { SideStackIndex = DOWN; }
-			}
-
-			Square, Pos 2, 2;
-			{
-				OTerrain = STEEL altar(LEGIFER);
-			}
-
-			Square, Pos 2, 3;
-			{
-				Character = priest { IsMaster = true; }
-			}
-		}
-
-		Room 3;
-		{
-			Pos=2,55;
-			Size = 5,5;
-			WallSquare = solidterrain(SNOW_TERRAIN),MARBLE wall(BRICK_FINE);
-			GenerateDoor = false;
-			DivineMaster = DULCIS;
-			Type = temple;
-			GenerateLanterns = false;
-			ReCalculate = false;
-
-			Square, Pos 4, 2;
-			{
-				GTerrain = solidterrain(PARQUET);
-				OTerrain = MARBLE door;
-			}
-
-			Square, Pos 4, 3;
-			{
-				Items == lantern { SideStackIndex = LEFT; }
-			}
-
-			Square, Pos 2, 2;
-			{
-				OTerrain = MARBLE altar(DULCIS);
-			}
-
-			Square, Pos 1, 2;
-			{
-				Character = priest { IsMaster = true; }
-			}
-		}
-
-		Room 4;
-		{
-			Pos=54,2;
-			Size = 5,5;
-			WallSquare = solidterrain(SNOW_TERRAIN),WOOD wall(BRICK_FINE);
-			GenerateDoor = false;
-			DivineMaster = SEGES;
-			Type = temple;
-			GenerateLanterns = false;
-			ReCalculate = false;
-
-			Square, Pos 0, 2;
-			{
-				GTerrain = solidterrain(PARQUET);
-				OTerrain = WOOD door;
-			}
-
-			Square, Pos 0, 1;
-			{
-				Items == lantern { SideStackIndex = RIGHT; }
-			}
-
-			Square, Pos 2, 2;
-			{
-				OTerrain = WOOD altar(SEGES);
-			}
-
-			Square, Pos 3, 2;
-			{
-				Character = priest { IsMaster = true; }
-			}
-		}
-
-		Room 5;
-		{
-			Pos=2,2;
-			Size = 5,5;
-			WallSquare = solidterrain(SNOW_TERRAIN),PARCHMENT wall(BRICK_FINE);
-			GenerateDoor = false;
-			DivineMaster = SOPHOS;
-			Type = temple;
-			GenerateLanterns = false;
-			ReCalculate = false;
-
-			Square, Pos 1, 4;
-			{
-				Items == lantern { SideStackIndex = UP; }
-			}
-
-			Square, Pos 2, 4;
-			{
-				GTerrain = solidterrain(PARQUET);
-				OTerrain = PARCHMENT door;
-			}
-
-			Square, Pos 2, 2;
-			{
-				OTerrain = PARCHMENT altar(SOPHOS);
-			}
-
-			Square, Pos 2, 1;
-			{
-				Character = priest { IsMaster = true; }
-			}
-		}
-
-		Room 6;
-		{
 			Pos=27,1;
 			Size = 7,6;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
@@ -1194,13 +1062,14 @@ Dungeon ATTNAM;
 			}
 		}
 
-		Room 7;
+		Room 3;
 		{
 			Pos=22,53;
 			Size = 7,6;
 			AltarPossible = false;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
-			FloorSquare = STONE solidterrain(FLOOR),empty;
+			FloorSquare = solidterrain(FLOOR),empty;
+			DoorSquare = solidterrain(FLOOR), door;
 			GenerateDoor = false;
 			DivineMaster = LORICATUS;
 			GenerateLanterns = false;
@@ -1248,21 +1117,21 @@ Dungeon ATTNAM;
 			}
 		}
 
-		Room 8;
+		Room 4;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
-		Room 9;
+		Room 5;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
 
-		Room 10;
+		Room 6;
 		{
 			FloorSquare = solidterrain(FLOOR),empty;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);

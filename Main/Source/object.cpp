@@ -90,7 +90,7 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
   if(Material)
     {
       if(Material->HasBe())
-	SetHasBe(true);
+	Enable();
 
       if(!Material->GetVolume())
 	Material->SetVolume(DefaultVolume);
@@ -111,9 +111,9 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
   Material = NewMaterial;
 
   if((!OldMaterial || !OldMaterial->HasBe()) && NewMaterial && NewMaterial->HasBe())
-    SetHasBe(true);
+    Enable();
   else if(OldMaterial && OldMaterial->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
-    SetHasBe(CalculateHasBe());
+    SetIsEnabled(CalculateHasBe());
 
   if(NewMaterial)
     {
@@ -338,7 +338,7 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
   if(Material)
     {
       if(Material->HasBe())
-	SetHasBe(true);
+	Enable();
 
       Material->SetMotherEntity(this);
       game::CombineLights(Emitation, Material->GetEmitation());

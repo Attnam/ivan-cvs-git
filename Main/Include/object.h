@@ -25,7 +25,7 @@ class god;
 class object : public entity, public id
 {
  public:
-  object() : entity(false), MainMaterial(0), AnimationFrames(1) { }
+  object() : entity(0), MainMaterial(0), AnimationFrames(1) { }
   object(const object&);
   virtual ~object();
   virtual void Save(outputfile&) const;

@@ -5,21 +5,21 @@
 #include "materba.h"
 #include "proto.h"
 
-entity::entity(const entity& Entity) : ExistsBool(Entity.ExistsBool), HasBeBool(Entity.HasBeBool), Emitation(Entity.Emitation)
+entity::entity(const entity& Entity) : Emitation(Entity.Emitation), EntityFlags(Entity.EntityFlags)
 {
-  if(HasBeBool)
+  if(EntityFlags & HAS_BE)
     PoolIterator = pool::Add(this);
 }
 
-entity::entity(bool HasBeBool) : ExistsBool(true), HasBeBool(HasBeBool), Emitation(0)
+entity::entity(uchar EntityFlags) : Emitation(0), EntityFlags(EntityFlags|EXISTS)
 {
-  if(HasBeBool)
+  if(EntityFlags & HAS_BE)
     PoolIterator = pool::Add(this);
 }
 
 entity::~entity()
 {
-  if(HasBeBool)
+  if(EntityFlags & HAS_BE)
     pool::Remove(PoolIterator);
 }
 
@@ -32,35 +32,39 @@ entity::~entity()
 
 void entity::SendToHell()
 {
-  if(ExistsBool)
+  if(EntityFlags & EXISTS)
     {
       hell::Add(this);
-      ExistsBool = false;
+      EntityFlags ^= EXISTS;
 
-      if(HasBeBool)
+      if(EntityFlags & HAS_BE)
 	{
 	  pool::Remove(PoolIterator);
-	  HasBeBool = false;
+	  EntityFlags ^= HAS_BE;
 	}
     }
 }
 
 /*
- * Tells the poolsystem whether the Be() function of the entity ought to be called
- * during each tick, thus allowing it to alter itself independently.
- * If the entity is stabile, set this to false, since it speeds up the game.
+ * These functions tells the poolsystem whether the Be() function of the entity
+ * ought to be called during each tick, thus allowing it to alter itself independently.
+ * If the entity is stabile, use Disable(), since it speeds up the game.
  */
 
-void entity::SetHasBe(bool What)
+void entity::Enable()
 {
-  if(What && !HasBeBool)
+  if(!(EntityFlags & HAS_BE))
     {
       PoolIterator = pool::Add(this);
-      HasBeBool = true;
+      EntityFlags |= HAS_BE;
     }
-  else if(!What && HasBeBool)
+}
+
+void entity::Disable()
+{
+  if(EntityFlags & HAS_BE)
     {
       pool::Remove(PoolIterator);
-      HasBeBool = false;
+      EntityFlags ^= HAS_BE;
     }
 }

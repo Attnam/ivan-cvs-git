@@ -10,6 +10,7 @@
 #include "ivandef.h"
 #include "terra.h"
 #include "vector2d.h"
+#include "wsquare.h"
 
 class wsquare;
 class worldmap;
@@ -23,12 +24,12 @@ class wterrain
   wterrain() : WSquareUnder(0), AnimationFrames(1) { }
   virtual ~wterrain() { }
   virtual void Load(inputfile&);
-  virtual vector2d GetPos() const;
-  virtual wsquare* GetWSquareUnder() const { return WSquareUnder; }
-  virtual void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
-  virtual worldmap* GetWorldMapUnder() const;
-  virtual void AddName(std::string&, uchar) const;
-  virtual std::string GetName(uchar) const;
+  vector2d GetPos() const { return WSquareUnder->GetPos(); }
+  wsquare* GetWSquareUnder() const { return WSquareUnder; }
+  void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
+  worldmap* GetWorldMapUnder() const { return GetWSquareUnder()->GetWorldMapUnder(); }
+  void AddName(std::string&, uchar) const;
+  std::string GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
   virtual std::string GetNameStem() const = 0; // should be const std::string&
@@ -60,7 +61,7 @@ class gwterrain : public wterrain, public gterrain
   typedef gwterrainprototype prototype;
   gwterrain(donothing) { }
   virtual void Save(outputfile&) const;
-  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual uchar Priority() const = 0;
   virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;

@@ -194,7 +194,10 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 			ushort Danger = ushort(Monster->GetRelativeDanger(game::GetPlayer()) * 100.0f);
 
 			if(Danger < MinDanger || Danger > MaxDanger)
-			  break;
+			  {
+			    delete Monster;
+			    break;
+			  }
 		      }
 
 		    game::SignalGeneration(Chosen, i->first);

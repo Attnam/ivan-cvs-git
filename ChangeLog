@@ -1,3 +1,28 @@
+December 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added parasitized state which increases food consumption, can be activated
+	  by eating spoiled flesh and cured by healing liquid, antidote and sometimes
+	  by vomiting
+	* Decreased poison's effect more
+	* Numerous devirtualizations
+	* Equipment screen now warns about low strength more often
+	* Added horn of bravery and horn of fear items
+	* Added vodka material
+	* Vodka and Valdemar are now explosive
+	* The mistress pain message Hex added (but did not mention) is now occasionally
+	  printed if she is hit by the enner beast's scream
+	* Corrected a fatal bug in the chameleon polymorph code
+	* Broken helmet pictures added to item.pcx by Kahvi added modified by me
+	* Ring picture in item.pcx remade by Kahvi
+	* Added full helmet
+	* Helmets can now break
+	* Added troll blood material which acts like weakened healing liquid
+	* Cruentus's pray effect is now better
+	* Shields' BCs have been decreased a bit
+	* Removed the smaller temples of Attnam
+	* Valpurus's pray effect is now a little less superior
+	* Show battle info is henceforth a WMode command
+
 December 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* chests can now by unlocked from same square with key
@@ -77,7 +102,7 @@ November 30 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 November 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Decreased exp gain for being burdened/stressed
-	* Decresed endurance exp rate
+	* Decreased endurance exp rate
 	* Loricatus now gives a steel hand instead of a mithril arm and Cruentus an iron one
 	  instead of a steel one
 	* Fainting from kobold flesh works again

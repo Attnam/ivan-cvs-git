@@ -121,7 +121,6 @@ command* game::Command[] =
   new command(&character::Save, "save game", 's', true),
   new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
   new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
-  new command(&character::ShowBattleInfo, "show battle info", 'B', true),
   new command(&character::ShowConfigScreen, "show config screen", '\\', true),
   new command(&character::ShowInventory, "show inventory", 'i', true),
   new command(&character::ShowKeyLayout, "show key layout", '?', true),
@@ -149,6 +148,7 @@ command* game::Command[] =
   new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
   new command(&character::DetachBodyPart, "detach a limb", '0', true, true),
   new command(&character::ReloadDatafiles, "reload datafiles", 'R', true, true),
+  new command(&character::ShowBattleInfo, "show battle info", '%', true, true),
   new command(&character::SummonMonster, "summon monster", '&', false, true),
   new command(&character::LevelTeleport, "level teleport", '|', false, true),
   0
@@ -1864,5 +1864,21 @@ void game::UpdatePlayerAttributeAverage()
     {
       AveragePlayerLegStrength = (49 * AveragePlayerLegStrength + PlayerLegStrength / Legs) / 50;
       AveragePlayerAgility = (49 * AveragePlayerAgility + PlayerAgility / Legs) / 50;
+    }
+}
+
+void game::CallForAttention(vector2d Pos, ushort Range)
+{
+  for(ushort c = 0; c < GetTeams(); ++c)
+    {
+      if(GetTeam(c)->HasEnemy())
+	for(std::list<character*>::const_iterator i = GetTeam(c)->GetMember().begin(); i != GetTeam(c)->GetMember().end(); ++i)
+	  if((*i)->IsEnabled())
+	    {
+	      ulong ThisDistance = HypotSquare(long((*i)->GetPos().X) - Pos.X, long((*i)->GetPos().Y) - Pos.Y);
+
+	      if(ThisDistance <= Range)
+		(*i)->SetWayPoint(Pos);
+	    }
     }
 }

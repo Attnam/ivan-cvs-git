@@ -36,6 +36,7 @@ material
 	IsSparkling = false;
 	IsMetal = false;
 	EffectStrength = 100;
+	CanHaveParasite = false;
 	/* DigProductMaterial defaults to Config */
 
 	Config IRON;
@@ -108,7 +109,7 @@ material
 		Color = rgb16(140, 96, 48);
 		NameStem = "wood";
 		AdjectiveStem = "wooden";
-		DigProductMaterial == 0;
+		DigProductMaterial = 0;
 	}
 
 	Config GLASS;
@@ -746,6 +747,8 @@ liquid
 		NameStem = "Valdemar";
 		Effect = EFFECT_CONFUSE;
 		Alpha = 200;
+		IsExplosive = true;
+		ExplosivePower = 4000;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -759,6 +762,36 @@ liquid
 		ConsumeEndMessage = CEM_ANTIDOTE;
 		HitMessage = HM_ANTIDOTE;
 		Alpha = 170;
+		EffectStrength = 50;
+	}
+
+	Config VODKA;
+	{
+		StrengthValue = 1;
+		NutritionValue = 8;
+		Color = rgb16(144, 144, 144);
+		IsBadFoodForAI = true;
+		NameStem = "vodka";
+		Effect = EFFECT_CONFUSE;
+		Alpha = 150;
+		EffectStrength = 200;
+		IsExplosive = true;
+		ExplosivePower = 20000;
+	}
+
+	Config TROLL_BLOOD;
+	{
+		StrengthValue = 1;
+		NutritionValue = 50;
+		Color = rgb16(160, 0, 0);
+		CanBeWished = false;
+		Alignment = EVIL;
+		NameStem = "troll blood";
+		Alpha = 175;
+		Flexibility = 40;
+		Effect = EFFECT_HEAL;
+		ConsumeEndMessage = CEM_HEALING_LIQUID;
+		HitMessage = HM_HEALING_LIQUID;
 		EffectStrength = 50;
 	}
 }
@@ -775,6 +808,7 @@ flesh
 	Flexibility = 5;
 	SpoilModifier = 10000;
 	PriceModifier = 600;
+	CanHaveParasite = true;
 
 	Config GOBLINOID_FLESH;
 	{
@@ -791,6 +825,7 @@ flesh
 		NameStem = "pork";
 		SpoilModifier = 20000;
 		PriceModifier = 800;
+		CanHaveParasite = false;
 	}
 
 	Config BEEF;
@@ -799,6 +834,7 @@ flesh
 		NameStem = "beef";
 		SpoilModifier = 20000;
 		PriceModifier = 800;
+		CanHaveParasite = false;
 	}
 
 	Config FROG_FLESH;
@@ -876,7 +912,7 @@ flesh
 	{
 		NameStem = "mutant ass flesh";
 		Effect = EFFECT_POLYMORPH;
-		EffectStrength = 1;
+		EffectStrength = 6;
 		Emitation = rgb24(140, 100, 100);
 	}
 
@@ -996,7 +1032,6 @@ flesh
 	{
 		NameStem = "chameleon flesh";
 		Effect = EFFECT_POLYMORPH;
-		EffectStrength = 20;
 	}
 }
 

@@ -207,7 +207,6 @@ class ITEM
  public:
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const;
-  ;
 );
 
 class ABSTRACT_ITEM
@@ -270,6 +269,8 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual void Break();
   virtual bool IsDipDestination(const character*) const { return true; }
+  virtual bool IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
+  virtual bool ReceiveDamage(character*, ushort, uchar);
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
@@ -981,7 +982,7 @@ class ABSTRACT_ITEM
   void ShowDefenceInfo() const;
   void ShowUnarmedInfo() const;
   virtual bool DamageArmor(character*, ushort, uchar);
-  bool CheckIfWeaponTooHeavy() const;
+  bool CheckIfWeaponTooHeavy(const std::string&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -1313,6 +1314,8 @@ class ITEM
  public:
   virtual ulong GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
   virtual bool IsHelmet(const character*) const { return true; }
+ protected:
+  virtual ushort GetMaterialColorB(ushort) const { return MakeRGB16(140, 70, 70); }
 );
 
 class ITEM
@@ -1444,5 +1447,18 @@ class ITEM
   virtual bool IsEncryptedScroll() const { return true; }
 );
 
+class ITEM
+(
+  horn,
+  item,
+ public:
+  virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  virtual bool Apply(character*);
+  virtual bool IsAppliable(const character*) const { return true; }
+ protected:
+  virtual void VirtualConstructor(bool);
+  ulong LastUsed;
+);
 
 #endif

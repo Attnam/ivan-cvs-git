@@ -239,6 +239,7 @@ class game
   static float GetAveragePlayerAgility() { return AveragePlayerAgility; }
   static void InitPlayerAttributeAverage();
   static void UpdatePlayerAttributeAverage();
+  static void CallForAttention(vector2d, ushort);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

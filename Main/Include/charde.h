@@ -590,7 +590,7 @@ class CHARACTER
   humanoid,
  public:
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool, bool);
-  ;
+  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
 );
 
 class CHARACTER

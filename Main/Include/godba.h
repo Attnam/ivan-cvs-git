@@ -41,26 +41,26 @@ class god
   virtual std::string Name() const = 0;
   virtual std::string Description() const = 0;
   virtual uchar Alignment() const = 0;
-  virtual std::string CompleteDescription() const;
-  virtual void ApplyDivineTick(ushort Turns) { Timer -= Turns; if(Timer < 0) Timer = 0; }
-  virtual void AdjustRelation(god*, bool, short = 25);
-  virtual void AdjustRelation(short Amount);
-  virtual void AdjustTimer(long Amount);
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual void SetRelation(short Value) { Relation = Value; }
-  virtual void SetTimer(long Value) { Timer = Value; }
-  virtual bool ReceiveOffer(item*);
+  std::string CompleteDescription() const;
+  void ApplyDivineTick(ushort Turns) { Timer -= Turns; if(Timer < 0) Timer = 0; }
+  void AdjustRelation(god*, bool, short = 25);
+  void AdjustRelation(short Amount);
+  void AdjustTimer(long Amount);
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  void SetRelation(short Value) { Relation = Value; }
+  void SetTimer(long Value) { Timer = Value; }
+  bool ReceiveOffer(item*);
   virtual uchar BasicAlignment() const { return NEUTRAL; }
-  virtual short GetRelation() const { return Relation; }
-  virtual void PrintRelation() const;
-  virtual void SetKnown(bool What) { Known = What; }
-  virtual bool GetKnown() const { return Known; }
+  short GetRelation() const { return Relation; }
+  void PrintRelation() const;
+  void SetKnown(bool What) { Known = What; }
+  bool GetKnown() const { return Known; }
   virtual std::string GetPriestMessage() const;
-  virtual void PlayerKickedAltar() { AdjustRelation(-100); }
-  virtual void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
+  void PlayerKickedAltar() { AdjustRelation(-100); }
+  void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
   virtual void PlayerVomitedOnAltar();
-  virtual character* CreateAngel();
+  character* CreateAngel();
   virtual ushort GetColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }

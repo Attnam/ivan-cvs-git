@@ -9,6 +9,7 @@
 
 #include "typedef.h"
 #include "pool.h"
+#include "ivandef.h"
 
 class square;
 class lsquare;
@@ -20,15 +21,16 @@ class character;
 class entity
 {
  public:
-  entity(bool);
+  entity(uchar);
   entity(const entity&);
   virtual ~entity();
   virtual void Be() { }
-  bool Exists() const { return ExistsBool; }
+  bool Exists() const { return (EntityFlags & EXISTS) != 0; }
   void SendToHell();
-  bool HasBe() const { return HasBeBool; }
-  void SetHasBe(bool);
-  bool IsEnabled() const { return Exists() && HasBe(); }
+  bool IsEnabled() const { return (EntityFlags & HAS_BE) != 0; }
+  void SetIsEnabled(bool What) { if(What) Enable(); else Disable(); }
+  void Enable();
+  void Disable();
   virtual square* GetSquareUnder() const = 0;
   virtual void SignalVolumeAndWeightChange() { }
   ulong GetEmitation() const { return Emitation; }
@@ -41,9 +43,8 @@ class entity
   virtual bool IsOnGround() const = 0;
  protected:
   std::list<entity*>::iterator PoolIterator;
-  bool ExistsBool;
-  bool HasBeBool;
   ulong Emitation;
+  uchar EntityFlags;
 };
 
 #endif

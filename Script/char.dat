@@ -1337,7 +1337,7 @@ communist /* Ivan */
 	RightGauntlet = HARDENED_LEATHER gauntlet { Enchantment = 1; }
 	RightBoot = HARDENED_LEATHER boot { Enchantment = 1; }
 	PanicLevel = 10;
-	Inventory == fiftymillionroubles;
+	Inventory = { 3, fiftymillionroubles, potion { ContainedMaterial = VODKA; }, potion { ContainedMaterial = VODKA; } }
 	IsUnique = true;
 	DefaultName = "Ivan";
 	DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";

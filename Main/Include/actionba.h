@@ -38,8 +38,8 @@ class action
   virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
-  virtual character* GetActor() const { return Actor; }
-  virtual void SetActor(character* What) { Actor = What; }
+  character* GetActor() const { return Actor; }
+  void SetActor(character* What) { Actor = What; }
   virtual bool IsVoluntary() const { return true; }
   virtual bool AllowFaint() const { return true; }
   virtual bool AllowFoodConsumption() const { return true; }

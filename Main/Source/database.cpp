@@ -419,6 +419,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZE_DATA(IsSparkling);
   ANALYZE_DATA(EffectStrength);
   ANALYZE_DATA(IsMetal);
+  ANALYZE_DATA(CanHaveParasite);
   ANALYZE_DATA(DigProductMaterial);
 
   return Found;

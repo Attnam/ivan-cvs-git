@@ -38,10 +38,20 @@ void sophos::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
-  meleeweapon* Weapon = new meleeweapon(TWO_HANDED_SWORD);
-  Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0);
-  game::GetPlayer()->GetGiftStack()->AddItem(Weapon);
+  if(RAND() & 7)
+    {
+      ADD_MESSAGE("You hear booming voice: \"THIS WILL PROTECT THEE FROM MORTIFER, MY PALADIN!\" A shield glittering with holy might appears from nothing.");
+      shield* Shield = new shield;
+      Shield->InitMaterials(MAKE_MATERIAL(VALPURIUM));
+      game::GetPlayer()->GetGiftStack()->AddItem(Shield);
+    }
+  else
+    {
+      ADD_MESSAGE("You hear booming voice: \"DEFEAT MORTIFER WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
+      meleeweapon* Weapon = new meleeweapon(TWO_HANDED_SWORD);
+      Weapon->InitMaterials(MAKE_MATERIAL(VALPURIUM), MAKE_MATERIAL(VALPURIUM), 0);
+      game::GetPlayer()->GetGiftStack()->AddItem(Weapon);
+    }
 }
 
 void valpurus::PrayBadEffect()
@@ -773,9 +783,65 @@ void cruentus::PrayGoodEffect()
       return;
     }
 
-  ADD_MESSAGE("Cruentus recommends you to its master, Mortifer.");
-  game::GetGod(15)->AdjustRelation(100);
+  rect Rect;
+  femath::CalculateEnvironmentRectangle(Rect, game::GetCurrentLevel()->GetBorder(), game::GetPlayer()->GetPos(), 10);
+  bool AudiencePresent = false;
 
+  for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+    {
+      for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	{
+	  character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+	  if(Audience && Audience->CanBeSeenByPlayer() && !Audience->TemporaryStateIsActivated(PANIC) && game::GetPlayer()->GetRelation(Audience) == HOSTILE)
+	    {
+	      AudiencePresent = true;
+	      break;
+	    }
+	}
+
+      if(AudiencePresent)
+	break;
+    }
+
+  if(AudiencePresent)
+    {
+      ADD_MESSAGE("The thundering voice of a godly battle drum shakes everything around you.");
+
+      for(ushort x = Rect.X1; x <= Rect.X2; ++x)
+	for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
+	  {
+	    character* Audience = game::GetCurrentLevel()->GetSquare(x, y)->GetCharacter();
+
+	    if(Audience && !Audience->TemporaryStateIsActivated(PANIC) && game::GetPlayer()->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 100)
+	      Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
+	  }
+
+      return;
+    }
+
+  item* Weapon = game::GetPlayer()->GetMainWielded();
+
+  if(!Weapon || !Weapon->IsWeapon(game::GetPlayer()))
+    Weapon = game::GetPlayer()->GetSecondaryWielded();
+
+  if(Weapon && Weapon->IsWeapon(game::GetPlayer()) && !(RAND() % 10))
+    {
+      ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
+      Weapon->EditEnchantment(1);
+    }
+  else if(RAND() & 3)
+    {
+      ADD_MESSAGE("Your inventory feels heavier.");
+      potion* Bottle = new potion(0, NO_MATERIALS);
+      Bottle->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(TROLL_BLOOD));
+      game::GetPlayer()->GetGiftStack()->AddItem(Bottle);
+    }
+  else
+    {
+      ADD_MESSAGE("Cruentus recommends you to his master, Mortifer.");
+      game::GetGod(MORTIFER)->AdjustRelation(100);
+    }
 }
 
 void cruentus::PrayBadEffect()
@@ -785,78 +851,32 @@ void cruentus::PrayBadEffect()
   if(ToBe)
     {
       if(!ToBe->IsDestroyable())
-      {
-	ToBe = game::GetPlayer()->GetSecondaryWielded();
+	{
+	  ToBe = game::GetPlayer()->GetSecondaryWielded();
 
-	if(!ToBe)
-	  ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, game::GetPlayer()->GetMainWielded()->CHAR_NAME(UNARTICLED));
-	else
-	  if(!ToBe->IsDestroyable())
-	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHAR_NAME(UNARTICLED));
-      }
+	  if(!ToBe || !ToBe->IsDestroyable())
+	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, game::GetPlayer()->GetMainWielded()->CHAR_NAME(UNARTICLED));
+	}
     }
   else
     {
-	ToBe = game::GetPlayer()->GetSecondaryWielded();
+      ToBe = game::GetPlayer()->GetSecondaryWielded();
 
-	if(ToBe && !ToBe->IsDestroyable())
-	  ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHAR_NAME(UNARTICLED));
+      if(ToBe && !ToBe->IsDestroyable())
+	ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHAR_NAME(UNARTICLED));
     }
 
   if(ToBe && ToBe->IsDestroyable())
     {
       ADD_MESSAGE("%s destroys your weapon.", GOD_NAME);
-
       ToBe->RemoveFromSlot();
       ToBe->SendToHell();
     }
   else
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
-      game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, PHYSICAL_DAMAGE, ALL, RAND() % 8);
+      game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() % 8);
       game::GetPlayer()->CheckDeath("destroyed by " + Name());
-    }
-}
-
-void cruentus::Pray()
-{
-  if(!Timer && Relation > 500 + RAND() % 500)
-    {
-      ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
-      PrayGoodEffect();
-      AdjustTimer(50000);
-      AdjustRelation(-250);
-      game::ApplyDivineAlignmentBonuses(this, true);
-
-      if(Relation > 500 && !(RAND() % 10))
-	{
-	  character* Angel = CreateAngel();
-
-	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
-	    }
-	}
-    }
-  else
-    {
-      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
-      PrayBadEffect();
-      AdjustTimer(50000);
-      AdjustRelation(-100);
-      game::ApplyDivineAlignmentBonuses(this, false);
-
-      if(Relation < -500 && !(RAND() % 10))
-	{
-	  character* Angel = CreateAngel();
-
-	  if(Angel)
-	    {
-	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
-	    }
-	}
     }
 }
 

@@ -58,7 +58,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 15
+#define STATES 16
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -75,6 +75,7 @@
 #define TELEPORT_CONTROL 4096
 #define PANIC 8192
 #define CONFUSED 16384
+#define PARASITIZED 32768
 
 #define TORSO 1
 #define HEAD 2
@@ -360,6 +361,8 @@
 #define POISON_LIQUID (LIQUID_ID + 7)
 #define VALDEMAR (LIQUID_ID + 8)
 #define ANTITODE_LIQUID (LIQUID_ID + 9)
+#define VODKA (LIQUID_ID + 10)
+#define TROLL_BLOOD (LIQUID_ID + 11)
 
 #define FLESH_ID (4096 * 5)
 
@@ -490,10 +493,11 @@
 #define AMULET_OF_LIFE_SAVING 1
 #define AMULET_OF_ESP 2
 
-#define HELM_OF_PERCEPTION 1
-#define HELM_OF_UNDERSTANDING 2
-#define HELM_OF_BRILLIANCE 3
-#define HELM_OF_ATTRACTIVITY 4
+#define FULL_HELMET 1
+#define HELM_OF_PERCEPTION 2
+#define HELM_OF_UNDERSTANDING 3
+#define HELM_OF_BRILLIANCE 4
+#define HELM_OF_ATTRACTIVITY 5
 
 #define BELT_OF_CARRYING 1
 
@@ -501,6 +505,9 @@
 #define CHEST 2
 #define LARGE_CHEST 3
 #define STRONG_BOX 4
+
+#define BRAVERY 1
+#define FEAR 2
 
 #define ROOKIE 1
 #define VETERAN 2
@@ -649,5 +656,8 @@
 #define MAX_PRICE 4294967295UL
 
 #define PERMANENT 0xFFFF
+
+#define EXISTS 1
+#define HAS_BE 2
 
 #endif
