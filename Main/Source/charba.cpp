@@ -794,6 +794,8 @@ void character::CreateCorpse()
 
 void character::Die()
 {
+	/* Not for programmers: This function MUST NOT delete any objects! */
+
 	if(!Exists)
 		return;
 
@@ -817,12 +819,20 @@ void character::Die()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
 
-	while(GetStack()->GetItems())
-		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
+	if(!game::GetInWilderness())
+		while(GetStack()->GetItems())
+			GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
+	else
+		while(GetStack()->GetItems())
+		{
+			GetStack()->GetItem(0)->SetExists(false);
+			GetStack()->RemoveItem(0);
+		}
 	
-	GetLevelSquareUnder()->RemoveCharacter();
+	GetSquareUnder()->RemoveCharacter();
 
-	CreateCorpse();
+	if(!game::GetInWilderness())
+		CreateCorpse();
 
 	SetExists(false);
 

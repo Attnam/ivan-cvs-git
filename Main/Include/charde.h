@@ -52,10 +52,10 @@ protected:
 	{
 		armor();
 		item* Torso;
-		item* Legs;
+		/*item* Legs;
 		item* Hands;
 		item* Head;
-		item* Feet;
+		item* Feet;*/
 	} Armor;
 	gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
 	std::vector<sweaponskill*> SingleWeaponSkill;
@@ -66,7 +66,7 @@ protected:
 	uchar TorsoType;
 );
 
-inline humanoid::armor::armor() : Torso(0), Legs(0), Hands(0), Head(0), Feet(0) {}
+inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ {}
 
 class CHARACTER
 (

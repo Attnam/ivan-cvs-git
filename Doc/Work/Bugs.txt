@@ -9,10 +9,10 @@ Dying in the worldmap crashes the game.
 Fullscreen + F10.
 Ligths go off when polymorph happens.
 Ligths should be updated when terrain changes.
-If a monster is hitting you and your HPs are low (HP < 4) and you try to run back to world map the game crashes.
 Material volume is undefined in script created instances.
 Messagebuffer is resized from the wrong direction.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+Show messages may show the same page twice. (not sure if this exists anymore)
 Various graphics have become buggy after the Material Color Change.
 "You can't apply something that you wield!"
 Game crashes when a brokable item hits a monster.
@@ -26,3 +26,5 @@ Throwing things outside Attnam's borders results in a horrible crash.
 Residents of Attnam grunt when talked to.
 Omle urine effect is applied twice.
 Single weapon skill's name isn't updated when the name of the item changes.
+Increasing perception in Wizard Mode doesn't update LOS correctly.
+Doggie eating message is shown even if not on LOS.

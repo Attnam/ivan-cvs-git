@@ -95,10 +95,10 @@ item* stack::RemoveItem(ushort Index)
 
 		Optimize(0);
 
-		if(IEmit > GetEmitation() && GetSquareUnder())
+		if(!game::GetInWilderness() && IEmit > GetEmitation() && GetSquareUnder())
 			GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
 
-		if(GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
+		if(!game::GetInWilderness() && GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
 			GetLevelSquareUnder()->UpdateMemorizedDescription();
 
 		if(GetSquareUnder())
@@ -362,11 +362,19 @@ void stack::StackMerge(stack* ToBeMerged)
 void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 {
 	if(Strength > 3)
-		for(ushort c = 0; c < GetItems(); ++c)
-		{
-			GetItem(c)->ImpactDamage(Strength >> 1, ShowOnScreen, this);
-			GetItem(c)->Fly(Direction, Strength, this, true);
-		}
+	{
+		/* This may jam if an item is destroyed but doesn't leave anything behind */
+
+		for(ushort c = 0; c < GetItems();)
+			if(!GetItem(c)->ImpactDamage(Strength >> 1, ShowOnScreen, this))
+				++c;
+
+		if(GetItems())
+			GetItem(0)->Fly(Direction, Strength, this, true);
+
+		if(GetItems() && rand() % 2)
+			GetItem(0)->Fly(Direction, Strength, this, true);
+	}
 	else
 		if(ShowOnScreen) ADD_MESSAGE("Your weak kick does no damage.");
 }

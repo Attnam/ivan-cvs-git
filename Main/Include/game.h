@@ -143,6 +143,7 @@ public:
 	static team* GetTeam(ushort Index) { return Team[Index]; }
 	static void Hostility(team*, team*);
 	static void CreateTeams();
+	static bool IsValidPos(vector2d);
 private:
 	static std::string Alignment[];
 	static god* God[];

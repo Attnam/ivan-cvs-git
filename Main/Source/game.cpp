@@ -1000,3 +1000,11 @@ void game::CreateTeams()
 		if(c != 1)
 			GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
 }
+
+bool game::IsValidPos(vector2d Pos)
+{
+	if(Pos.X < GetCurrentArea()->GetXSize() && Pos.Y < GetCurrentArea()->GetYSize())
+		return true;
+	else
+		return false;
+}

@@ -47,7 +47,7 @@ public:
 	virtual bool CanBeWorn() const { return false; }
 	virtual bool Consumable(character*) const;
 	virtual item* BetterVersion() const { return 0; }
-	virtual void ImpactDamage(ushort, bool, stack*) {};
+	virtual bool ImpactDamage(ushort, bool, stack*) { return false; }
 	virtual short CalculateOfferValue(char) const;
 	virtual float OfferModifier() const { return 0; }
 	virtual long Score() const { return 0; }

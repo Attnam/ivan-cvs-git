@@ -77,7 +77,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 128))
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(0,192)
-	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(30)
@@ -298,7 +298,7 @@ public:
 	virtual std::string NamePlural() const RET("plate mails")
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,128)
-	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
 );
 
@@ -385,7 +385,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
 	virtual std::string NameSingular() const RET("bottle")
 	virtual std::string NamePlural() const RET("bottles")
-	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual float OfferModifier() const RET(0.1f)
 	virtual vector2d GetBitmapPos() const RETV(0,144)

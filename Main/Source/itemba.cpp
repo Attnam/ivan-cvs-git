@@ -92,6 +92,9 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 
 	for(;;)
 	{
+		if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
+			break;
+
 		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
 		{
 			Breaks = true;
@@ -117,8 +120,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 					game::GetPlayer()->GetTeam()->Hostility(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->GetTeam());
 
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
-					break;
-				
+					break;	
 			}
 
 			while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);

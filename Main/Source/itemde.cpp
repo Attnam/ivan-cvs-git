@@ -166,14 +166,14 @@ material* lump::BeDippedInto()
 	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
 }
 
-void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	ushort Index = game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
+	ushort Index = ItemStack->AddItem(new brokenbottle);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	SetExists(false);
+	return true;
 }
-
 
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
@@ -346,12 +346,13 @@ bool scrollofwishing::Read(character* Reader)
 	return false;
 }
 
-void lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+bool lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
 	ItemStack->AddItem(new brokenlamp);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The lamp shatters to pieces.");
 	SetExists(false);
+	return true;
 }
 
 vector2d can::GetBitmapPos() const
@@ -513,7 +514,7 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 	
 }
 
-void platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+bool platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
 	if (IsShown)
 		ADD_MESSAGE("%s is damaged.", CNAME(DEFINITE));
@@ -524,4 +525,5 @@ void platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	ItemStack->AddItem(Plate);
 	SetMaterial(0,0);
 	SetExists(false);
+	return true;
 }
