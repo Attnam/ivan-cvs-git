@@ -1943,7 +1943,7 @@ int blinkdog::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, v
 
     if((RAND() & 1 && StateIsActivated(PANIC))
        || (!(RAND() & 3) && IsInBadCondition())
-       || !(RAND() & 15));
+       || !(RAND() & 15))
     MonsterTeleport("terrified yelp");
   }
 
