@@ -2226,6 +2226,14 @@ const ProtoType* const operator [] (ushort Index) const
 	Returns the prototype of specified Index, so that inspectors
 	like cloning functions and such may be called through it.
 
+worldmapsquare (wsquare.h)
+--------------------------
+
+A square that appears on the worldmap only and WILL have some
+special routines like handling border tiles while drawing terrain
+etc. that its sister, levelsquare, doesn't have. Functions
+are so highly under construction that they won't be documented.
+
 stack (stack.h)
 ---------------
 
