@@ -128,27 +128,15 @@ void olterrain::DrawToTileBuffer(bool Animate) const
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
 }
 
-bool lterrain::Open(character*)
-{
-  return false;
-}
-
-bool lterrain::Close(character* Closer)
-{
-  if(Closer->IsPlayer())
-    ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
-
-  return false;
-}
-
 vector2d lterrain::GetPos() const
 {
   return GetLSquareUnder()->GetPos();
 }
 
-bool glterrain::SitOn(character*)
+bool glterrain::SitOn(character* Sitter)
 {
   ADD_MESSAGE("You sit for some time. Nothing happens.");
+  Sitter->EditAP(-1000);
   return true;
 }
 
@@ -198,3 +186,15 @@ olterrainprototype::olterrainprototype()
   Index = protocontainer<olterrain>::Add(this);
 }
 
+bool lterrain::CanBeSeenByPlayer() const
+{
+  return GetSquareUnder()->CanBeSeenByPlayer();
+}
+
+bool lterrain::CanBeSeenBy(character* Who) const
+{
+  if(Who->IsPlayer())
+    return CanBeSeenByPlayer();
+  else
+    return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+}

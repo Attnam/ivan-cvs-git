@@ -900,7 +900,7 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
     GetLevelUnder()->SetWorldMapEntry(Pos);
 }
 
-bool lsquare::CanBeSeen(bool IgnoreDarkness) const
+bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 {
   if((IgnoreDarkness || GetLuminance() >= LIGHT_BORDER) && GetLastSeen() == game::GetLOSTurns())
     return true;
@@ -919,7 +919,7 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
       character* Char = GetCharacter();
 
       if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
-	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
+	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeenByPlayer(true);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
     }
@@ -1050,6 +1050,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   if(WasWalkable != GetOLTerrain()->IsWalkable())
     {
       ForceEmitterEmitation();
+      CalculateLuminance();
 
       if(GetLastSeen() == game::GetLOSTurns())
 	{
@@ -1088,10 +1089,9 @@ void lsquare::DrawParticles(ushort Color, uchar)
     DOUBLEBUFFER->PutPixel(BitPos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   graphics::BlitDBToScreen();
-
   NewDrawRequested = true; // Clean the pixels from the screen afterwards
 
-  if(CanBeSeen())
+  if(CanBeSeenByPlayer())
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
@@ -1155,9 +1155,9 @@ void lsquare::RemoveFluid()
     }
 }
 
-void lsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+void lsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection)
 {
-  GetOLTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
+  GetOLTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection);
 }
 
 void lsquare::TeleportEverything(character* Teleporter)

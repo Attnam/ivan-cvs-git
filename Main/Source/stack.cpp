@@ -46,7 +46,7 @@ void stack::AddItem(item* ToBeAdded)
     {
       GetSquareUnder()->SetDescriptionChanged(true);
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(GetSquareUnder()->CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorizedDescription();
     }
 
@@ -60,7 +60,7 @@ void stack::AddItem(item* ToBeAdded)
 	  GetSquareTrulyUnder()->SendNewDrawRequest();
 	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
-	  if(GetSquareTrulyUnder()->CanBeSeen())
+	  if(GetSquareTrulyUnder()->CanBeSeenByPlayer())
 	    GetLSquareTrulyUnder()->UpdateMemorized();
 
 	  if(ToBeAdded->IsAnimated())
@@ -94,7 +94,7 @@ void stack::RemoveItem(stackiterator Iterator)
     {
       GetSquareUnder()->SetDescriptionChanged(true);
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(GetSquareUnder()->CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorizedDescription();
     }
 
@@ -108,7 +108,7 @@ void stack::RemoveItem(stackiterator Iterator)
 	  GetSquareTrulyUnder()->SendNewDrawRequest();
 	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
-	  if(GetSquareTrulyUnder()->CanBeSeen())
+	  if(GetSquareTrulyUnder()->CanBeSeenByPlayer())
 	    GetLSquareTrulyUnder()->UpdateMemorized();
 
 	  if(WasAnimated)
@@ -171,10 +171,10 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
 
       if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
 	{
-	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeenByPlayer())
 	    GetLSquareUnder()->UpdateMemorizedDescription();
 
-	  if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+	  if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeenByPlayer())
 	    GetLSquareTrulyUnder()->UpdateMemorized();
 	}
     }

@@ -40,7 +40,7 @@ class square
   virtual oterrain* GetOTerrain() const = 0;
   std::string GetMemorizedDescription() { return MemorizedDescription; }
   void SetMemorizedDescription(const std::string& What) { MemorizedDescription = What; }
-  virtual bool CanBeSeen(bool = false) const;
+  virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
   bitmap* GetMemorized() const { return Memorized; }
@@ -52,11 +52,12 @@ class square
   std::string DeathMessage(character*) const;
   std::string MonsterDeathVerb(character*) const;
   std::string ScoreEntry(character*) const;
-  ushort GetEntryAPRequirement() const;
+  uchar GetEntryDifficulty() const;
   uchar RestModifier() const;
   ushort GetAnimatedEntities() const { return AnimatedEntities; }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
+  bool CanBeSeenBy(character*) const;
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

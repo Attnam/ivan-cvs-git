@@ -40,7 +40,7 @@ void faint::Handle()
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You wake up.");
       else
-	if(GetActor()->GetLSquareUnder()->CanBeSeen())
+	if(GetActor()->CanBeSeenByPlayer())
 	  ADD_MESSAGE("%s wakes up.", GetActor()->CHARNAME(DEFINITE));
 
       Terminate(true);
@@ -56,7 +56,7 @@ void faint::Terminate(bool Finished)
 {
   if(GetActor()->IsPlayer())
     ADD_MESSAGE("You wake up.");
-  else if(GetActor()->GetSquareUnder()->CanBeSeen())
+  else if(GetActor()->CanBeSeenByPlayer())
     ADD_MESSAGE("%s wakes up.", GetActor()->CHARNAME(DEFINITE));
 
   action::Terminate(Finished);
@@ -79,10 +79,12 @@ void consume::Load(inputfile& SaveFile)
 void consume::Handle()
 {
   if(!*Consuming)
-    Terminate(false);
+    {
+      Terminate(false);
+      return;
+    }
 
   SetHasEaten(true);
-
   character* Actor = GetActor();
 
   /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
@@ -97,7 +99,7 @@ void consume::Terminate(bool Finished)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You finish %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
 
       if(HasEaten())
@@ -109,7 +111,7 @@ void consume::Terminate(bool Finished)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
 
       if(HasEaten())
@@ -126,7 +128,7 @@ void consume::Terminate(bool Finished)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop %s.", Consuming->GetConsumeVerb().c_str());
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
     }
 
@@ -173,14 +175,14 @@ void rest::Terminate(bool Finished)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You finish resting.");
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s finishes resting.", GetActor()->CHARNAME(DEFINITE));
     }
   else
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop resting.");
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops resting.", GetActor()->CHARNAME(DEFINITE));
     }
 
@@ -206,14 +208,17 @@ void dig::Load(inputfile& SaveFile)
 void dig::Handle()
 {
   if(!GetActor()->GetMainWielded())
-    Terminate(false);
+    {
+      Terminate(false);
+      return;
+    }
 
   lsquare* Square = GetActor()->GetLSquareUnder()->GetLevelUnder()->GetLSquare(SquareDug);
   Square->GetOLTerrain()->EditHP(-long(GetActor()->GetAttribute(ARMSTRENGTH)) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
     {
-      if(Square->CanBeSeen())
+      if(Square->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s", Square->GetOLTerrain()->DigMessage().c_str());
 
       character* Actor = GetActor();
@@ -224,13 +229,23 @@ void dig::Handle()
       if(!Actor->IsEnabled())
 	return;
 
-      GetActor()->GetMainWielded()->MoveTo(GetActor()->GetStack());
-      item* RB = GetRightBackup();
-      RB->RemoveFromSlot();
-      GetActor()->SetRightWielded(RB);
-      item* LB = GetLeftBackup();
-      LB->RemoveFromSlot();
-      GetActor()->SetLeftWielded(LB);
+      if(GetActor()->GetMainWielded())
+	GetActor()->GetMainWielded()->MoveTo(GetActor()->GetStack());
+
+      if(GetRightBackup())
+	{
+	  item* RB = GetRightBackup();
+	  RB->RemoveFromSlot();
+	  GetActor()->SetRightWielded(RB);
+	}
+
+      if(GetLeftBackup())
+	{
+	  item* LB = GetLeftBackup();
+	  LB->RemoveFromSlot();
+	  GetActor()->SetLeftWielded(LB);
+	}
+
       Terminate(true);
     }
 }
@@ -241,7 +256,7 @@ void dig::Terminate(bool Finished)
     {
       if(GetActor()->IsPlayer())
 	ADD_MESSAGE("You stop digging.");
-      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+      else if(GetActor()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stops digging.", GetActor()->CHARNAME(DEFINITE));
     }
 
@@ -371,3 +386,114 @@ void dig::VirtualConstructor()
   LeftBackup.Init(this);
 }
 
+void read::Handle()
+{
+  if(!*Literature || (GetActor()->GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat()))
+    {
+      Terminate(false);
+      return;
+    }
+
+  if(GetActor()->GetLSquareUnder()->GetLuminance() < 225)
+    GetActor()->EditExperience(PERCEPTION, -1);
+
+  if(!Counter)
+    {
+      Terminate(true);
+      return;
+    }
+
+  if(GetActor()->GetAttribute(INTELLIGENCE) >= Counter)
+    Counter = 0;
+  else
+    Counter -= GetActor()->GetAttribute(INTELLIGENCE);
+}
+
+void read::Terminate(bool Finished)
+{
+  if(Finished)
+    {
+      if(GetActor()->IsPlayer())
+	ADD_MESSAGE("You finish reading %s.", Literature->CHARNAME(DEFINITE));
+      else if(GetActor()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s finishes reading %s.", GetActor()->CHARNAME(DEFINITE), Literature->CHARNAME(DEFINITE));
+
+      character* Actor = GetActor();
+      Literature->FinishReading(Actor);
+
+      /* Actor may have died and Action may have been deleted, check needed */
+
+      if(!Actor->IsEnabled())
+	return;
+
+      if(GetLiterature())
+	Literature->MoveTo(GetActor()->GetStack());
+    }
+  else if(GetLiterature())
+    {
+      if(GetActor()->IsPlayer())
+	ADD_MESSAGE("You stop reading %s.", Literature->CHARNAME(DEFINITE));
+      else if(GetActor()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s stops reading %s.", GetActor()->CHARNAME(DEFINITE), Literature->CHARNAME(DEFINITE));
+
+      Literature->MoveTo(GetActor()->GetStack());
+    }
+  else
+    {
+      if(GetActor()->IsPlayer())
+	ADD_MESSAGE("You stop reading.");
+      else if(GetActor()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s stops reading.", GetActor()->CHARNAME(DEFINITE));
+    }
+
+  action::Terminate(Finished);
+}
+
+
+void read::Save(outputfile& SaveFile) const
+{
+  action::Save(SaveFile);
+  SaveFile << Counter;
+  SaveFile << Literature;
+}
+
+void read::Load(inputfile& SaveFile)
+{
+  action::Load(SaveFile);
+  SaveFile >> Counter;
+  LoadActionSlot(SaveFile, Literature);
+}
+
+void read::DropUsedItems()
+{
+  if(GetLiterature())
+    if(!game::IsInWilderness())
+      GetLiterature()->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+    else
+      GetLiterature()->MoveTo(GetActor()->GetStack());
+}
+
+void read::DeleteUsedItems()
+{
+  if(GetLiterature())
+    GetLiterature()->SendToHell();
+}
+
+item* read::GetLiterature() const
+{
+  return *Literature;
+}
+
+void read::SetLiterature(item* What)
+{
+  if(!What)
+    ABORT("Reading nothing!");
+
+  What->RemoveFromSlot();
+  What->PlaceToSlot(&Literature);
+}
+
+void read::VirtualConstructor()
+{
+  Literature.Init(this);
+}

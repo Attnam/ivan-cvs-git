@@ -73,7 +73,7 @@ void square::RemoveCharacter()
   NewDrawRequested = true;
 }
 
-bool square::CanBeSeen(bool) const
+bool square::CanBeSeenByPlayer(bool) const
 {
   if(GetLastSeen() == game::GetLOSTurns())
     return true;
@@ -92,7 +92,7 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkn
       character* Char = GetCharacter();
 
       if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
-	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeen(IgnoreDarkness);
+	return GetAreaUnder()->GetSquare(FromPos)->CanBeSeenByPlayer(true);
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
     }
@@ -144,9 +144,9 @@ std::string square::ScoreEntry(character*) const
     return GetGTerrain()->ScoreEntry();
 }
 
-ushort square::GetEntryAPRequirement() const
+uchar square::GetEntryDifficulty() const
 {
-  return GetGTerrain()->GetEntryAPRequirement();
+  return GetGTerrain()->GetEntryDifficulty();
 }
 
 uchar square::RestModifier() const
@@ -154,3 +154,10 @@ uchar square::RestModifier() const
   return GetOTerrain()->RestModifier();
 }
 
+bool square::CanBeSeenBy(character* Who) const
+{
+  if(Who->IsPlayer())
+    return CanBeSeenByPlayer();
+  else
+    return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+}

@@ -1,3 +1,15 @@
+June 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* AP system remade: it is now the actions' duty to decrease AP, not Be()'s
+	* Added read action, thus allowing reading times longer than one turn,
+	  read interupts
+	* Lookmode's messages and information keys work far better now
+	* Fixed a minor bug in the lookmode zoom code
+	* Removed the cursor from the zoom screen (exception: over the player it remains)
+	* Petrus's PostFix is now shown correctly
+	* Petrus's wife number 4 is now dumper than the others, since she's blond
+	* Invisibility and see invisible states added, but they don't work yet
+
 June 16 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Atavus, Seges and Silva now fix players BodyParts

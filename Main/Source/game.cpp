@@ -67,7 +67,7 @@ std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 bool game::AnimationControllerActive = true;
-vector2d game::CursorPos;
+vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
 ushort game::CurrentEmitterEmitation;
 long game::CurrentEmitterPosX;
@@ -495,6 +495,9 @@ void game::DrawEverythingNoBlit()
   if(LOSUpdateRequested)
     GetCurrentArea()->UpdateLOS();
 
+  if(OnScreen(CursorPos))
+    GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+
   GetCurrentArea()->Draw();
 
   if(OnScreen(GetPlayer()->GetPos()))
@@ -502,6 +505,16 @@ void game::DrawEverythingNoBlit()
 
   GetPlayer()->DrawPanel();
   msgsystem::Draw();
+
+  if(OnScreen(CursorPos))
+    {
+      vector2d ScreenCordinates = CalculateScreenCoordinates(CursorPos);
+
+      if(DoZoom())
+	DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
+
+      igraph::DrawCursor(ScreenCordinates);
+    }
 }
 
 bool game::Save(const std::string& SaveName)
@@ -1049,6 +1062,7 @@ bool game::IsValidPos(vector2d Pos)
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
   DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
@@ -1057,6 +1071,7 @@ std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort 
 long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
   DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
   return Return;
@@ -1242,16 +1257,15 @@ int game::AskForKeyPress(const std::string& Topic)
 
 /* 
    Handler is called when the key has been identified as a movement key 
-   BadKeyHandler is called when the key has NOT been identified as a movement key
+   KeyHandler is called when the key has NOT been identified as a movement key
    Both can be deactivated by passing 0 as parameter
  */  
 
-vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*BadKeyHandler)(vector2d, int), bool Zoom)
+vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
   graphics::BlitDBToScreen();
-  globalwindowhandler::InstallControlLoop(PositionQuestionController);
+  //globalwindowhandler::InstallControlLoop(PositionQuestionController);
   SetDoZoom(Zoom);
   vector2d Return;
 
@@ -1284,9 +1298,12 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	  if(short(CursorPos.X) < 0) CursorPos.X = GetCurrentArea()->GetXSize() - 1;
 	  if(short(CursorPos.Y) > GetCurrentArea()->GetYSize() - 1) CursorPos.Y = 0;
 	  if(short(CursorPos.Y) < 0) CursorPos.Y = GetCurrentArea()->GetYSize() - 1;
+
+	  if(Handler)
+	    Handler(CursorPos);
 	}
-      else if(BadKeyHandler)
-	BadKeyHandler(CursorPos, Key);
+      else if(KeyHandler)
+	KeyHandler(CursorPos, Key);
 
       if(CursorPos.X < GetCamera().X + 2 || CursorPos.X > GetCamera().X + GetScreenSize().X - 2)
 	UpdateCameraXWithPos(CursorPos.X);
@@ -1294,33 +1311,34 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y > GetCamera().Y + GetScreenSize().Y - 2)
 	UpdateCameraYWithPos(CursorPos.Y);
 
-      if(Handler)
-	Handler(CursorPos);
-
-      DrawEverythingNoBlit();
+      FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
       SetCursorPos(CursorPos);
-      PositionQuestionController();
+      DrawEverythingNoBlit();
+      //PositionQuestionController();
       graphics::BlitDBToScreen();
       Key = GETKEY();
     }
 
   DOUBLEBUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
   DOUBLEBUFFER->Fill(RES.X - 96, RES.Y - 96, 80, 80, BLACK);
-  globalwindowhandler::DeInstallControlLoop(PositionQuestionController);
+  //globalwindowhandler::DeInstallControlLoop(PositionQuestionController);
+  SetDoZoom(false);
+  SetCursorPos(vector2d(-1, -1));
   DrawEverythingNoBlit();
   return Return;
 }
 
-bool game::PositionQuestionController()
+/*bool game::PositionQuestionController()
 {
+  GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
   vector2d ScreenCordinates = CalculateScreenCoordinates(GetCursorPos());
-  igraph::DrawCursor(ScreenCordinates);
 
   if(DoZoom())
     DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates, RES.X - 96, RES.Y - 96, 16, 16, 5);
 
+  igraph::DrawCursor(ScreenCordinates);
   return true;
-}
+}*/
 
 void game::LookHandler(vector2d CursorPos)
 {
@@ -1336,43 +1354,34 @@ void game::LookHandler(vector2d CursorPos)
 	GetCurrentLevel()->GetLSquare(CursorPos)->UpdateMemorizedDescription(true);
     }
 
+  std::string Msg;
+
   if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::GetSeeWholeMapCheat())
     {
-      std::string Msg;
-
-      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen(true) || game::GetSeeWholeMapCheat())
+      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || game::GetSeeWholeMapCheat())
 	Msg = "You see here ";
       else
 	Msg = "You remember here ";
 
-      Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
-
-      ADD_MESSAGE("%s.", Msg.c_str());
-
+      Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() + ".";
       character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-      if(Character && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
-	Character->DisplayInfo();
-
-      if(!IsInWilderness())
-	{
-	  lsquare* LSquare = game::GetCurrentLevel()->GetLSquare(CursorPos);
-
-	  if(LSquare->CanBeSeen() && LSquare->GetStack()->GetItems() > 1)
-	    ADD_MESSAGE("[press i to see all items]");
-	}
+      if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+	Character->DisplayInfo(Msg);
     }
   else
-    ADD_MESSAGE("You have no idea what might lie here.");
+    Msg = "You have no idea what might lie here.";
+
+  if(game::WizardModeActivated())
+    Msg += std::string(" (") + CursorPos.X + ", " + CursorPos.Y + ")";
+
+  ADD_MESSAGE("%s", Msg.c_str());
 
   if(game::GetSeeWholeMapCheat())
     {
       game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
-      game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
+      //game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
     }
-
-  if(game::WizardModeActivated())
-    ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
 }
 
 bool game::AnimationController()
@@ -1452,23 +1461,65 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
   return Return;
 }
 
-void game::LookBadKeyHandler(vector2d CursorPos, int Key)
+void game::LookKeyHandler(vector2d CursorPos, int Key)
 {
   switch(Key)
     {
     case 'i':
-      if(!IsInWilderness() && (GetCurrentLevel()->GetLSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat()))
-	{
-	  stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
+      if(!IsInWilderness())
+	if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat())
+	  {
+	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
-	  if(Stack->GetItems() > 1)
-	    {
+	    if(Stack->GetItems())
 	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
+	    else
+	      ADD_MESSAGE("You see no items here.");
+	  }
+	else
+	  ADD_MESSAGE("You should perhaps move a bit closer.");
+
+      break;
+    case 'c':
+      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat())
+	{
+	  character* Char = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+
+	  if(Char && Char->CanBeSeenByPlayer())
+	    Char->PrintInfo();
+	  else
+	    ADD_MESSAGE("You see no one here.");
+	}
+      else
+	ADD_MESSAGE("You should perhaps move a bit closer.");
+
+      break;
+    }
+}
+
+void game::NameKeyHandler(vector2d CursorPos, int Key)
+{
+  switch(Key)
+    {
+    case 'n':
+      character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+
+      if(Character && Character->CanBeSeenByPlayer())
+	{
+	  if(Character->GetTeam() != GetPlayer()->GetTeam())
+	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHARNAME(DEFINITE), Character->PersonalPronoun().c_str());
+	  else if(!Character->IsNameable())
+	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHARNAME(DEFINITE), Character->CHARNAME(DEFINITE));
+	  else
+	    {
+	      std::string Topic = "What name will you give to " + Character->GetName(UNARTICLED) + "?";
+	      std::string Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
+
+	      if(Name != "")
+		Character->SetAssignedName(Name);
 	    }
 	}
-      break;
-    default:
-      /* Bad Key */
+
       break;
     }
 }

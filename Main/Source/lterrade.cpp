@@ -46,25 +46,26 @@ bool door::Open(character* Opener)
 
 	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("You open the door.");
-	  else if(GetLSquareUnder()->CanBeSeen())
+	  else if(CanBeSeenByPlayer())
 	    {
-	      if(Opener->GetLSquareUnder()->CanBeSeen())
+	      if(Opener->CanBeSeenByPlayer())
 		ADD_MESSAGE("%s opens the door.", Opener->CHARNAME(DEFINITE));
 	      else
 		ADD_MESSAGE("Something opens the door.");
 	    }
-	  return true;
 	}
       else
 	{
 	  if(Opener->IsPlayer())
 	    ADD_MESSAGE("The door resists.");
-	  else if(GetLSquareUnder()->CanBeSeen())
-	    if(Opener->GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s fails to open the door.", Opener->CHARNAME(DEFINITE));
+	  else if(CanBeSeenByPlayer() && Opener->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s fails to open the door.", Opener->CHARNAME(DEFINITE));
+
 	  ActivateBoobyTrap();
-	  return true;
 	}
+
+      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
+      return true;
     }
   else
     {
@@ -77,20 +78,22 @@ bool door::Close(character* Closer)
 {
   if(Closer->IsPlayer())
     if(IsWalkable())
-      if(RAND() % 20 < Closer->GetAttribute(ARMSTRENGTH))
-	ADD_MESSAGE("You close the door.");
-      else
-	{
+      {
+	if(RAND() % 20 < Closer->GetAttribute(ARMSTRENGTH))
+	  {
+	    ADD_MESSAGE("You close the door.");
+	    MakeNotWalkable();
+	  }
+	else
 	  ADD_MESSAGE("The door resists!");
-	  return true;
-	}
+      }
     else
       {
 	ADD_MESSAGE("The door is already closed, %s.", game::Insult());
 	return false;
       }
 
-  MakeNotWalkable();
+  Closer->DexterityAction(Closer->OpenMultiplier() * 5);
   return true;
 }
 
@@ -227,7 +230,7 @@ void door::BeKicked(character*, float KickStrength)
     {
       if(!IsLocked() && KickStrength > RAND() % 100000)
 	{
-	  if(GetSquareUnder()->CanBeSeen())
+	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The door opens.");
 
 	  MakeWalkable();
@@ -236,21 +239,21 @@ void door::BeKicked(character*, float KickStrength)
 	{
 	  if(IsLocked() && RAND() % 2)	// _can't really think of a good formula for this... 
 	    {				//Strength isn't everything
-	      if(GetSquareUnder()->CanBeSeen())
+	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
 
 	      SetIsLocked(false);
 	    }
 	  else
 	    {
-	      if(GetSquareUnder()->CanBeSeen())
+	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("The door is damaged.");
 	    }
 
 	  Break();
 	}
       else
-	if(GetSquareUnder()->CanBeSeen())
+	if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("The door won't budge!");
 
       // The door may have been destroyed here, so don't do anything!
@@ -317,6 +320,8 @@ void altar::StepOn(character* Stepper)
 
 bool throne::SitOn(character* Sitter)
 {
+  Sitter->EditAP(-1000);
+
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() != 1000)
     {
       ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
@@ -351,7 +356,7 @@ void altar::BeKicked(character* Kicker, float)
 {
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
-  else if(Kicker->GetSquareUnder()->CanBeSeen())
+  else if(Kicker->CanBeSeenByPlayer())
     ADD_MESSAGE("%s looks like a sinner.", Kicker->CHARNAME(DEFINITE));
 
   if(Kicker->IsPlayer())
@@ -387,15 +392,17 @@ std::string door::GetAdjective(bool Articled) const
   return Adj;
 }
 
-bool couch::SitOn(character*)
+bool couch::SitOn(character* Sitter)
 {
   ADD_MESSAGE("The couch is extremely soft and confortable. You relax well.");
+  Sitter->EditAP(-1000);
   return true;
 }
 
-bool poolterrain::SitOn(character*)
+bool poolterrain::SitOn(character* Sitter)
 {
   ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
+  Sitter->EditAP(-1000);
   return true;
 }
 
@@ -411,26 +418,29 @@ void stairsdown::StepOn(character* Stepper)
     ADD_MESSAGE("There is stairway leading downwards here.");
 }
 
-bool bookcase::SitOn(character*)
+bool bookcase::SitOn(character* Sitter)
 {
   ADD_MESSAGE("The bookcase is very unconfortable to sit on.");
+  Sitter->EditAP(-1000);
   return true;
 }
 
-bool fountain::SitOn(character* Char)
+bool fountain::SitOn(character* Sitter)
 {
   if(GetContainedMaterial())
     {
       ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
+      Sitter->EditAP(-1000);
       return true;
     }
   else
-    return olterrain::SitOn(Char);
+    return olterrain::SitOn(Sitter);
 }
 
-bool doublebed::SitOn(character*)
+bool doublebed::SitOn(character* Sitter)
 {
   ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
+  Sitter->EditAP(-1000);
   return true;
 }
 
@@ -452,6 +462,8 @@ bool fountain::Consume(character* Drinker)
 		  return false;
 		}
 	    }
+
+	  Drinker->EditAP(-1000);
 
 	  switch(RAND() % 5)
 	    {
@@ -528,13 +540,13 @@ void fountain::DryOut()
     {
       GetSquareUnder()->SetDescriptionChanged(true);
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorizedDescription();
 
       GetSquareUnder()->SendNewDrawRequest();
       GetSquareUnder()->SendMemorizedUpdateRequest();
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	GetLSquareUnder()->UpdateMemorized();
     }
 }
@@ -546,7 +558,7 @@ void brokendoor::BeKicked(character*, float KickStrength)
       {
 	if(KickStrength > RAND() % 150000)
 	  {
-	    if(GetSquareUnder()->CanBeSeen())
+	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The door opens from the force of your kick.");
 
 	    SetIsLocked(false);
@@ -554,25 +566,25 @@ void brokendoor::BeKicked(character*, float KickStrength)
 	  }
 	else if(KickStrength > RAND() % 100000)
 	  {
-	    if(GetSquareUnder()->CanBeSeen())
+	    if(CanBeSeenByPlayer())
 	      ADD_MESSAGE("The lock breaks from the force of your kick.");
 
 	    SetIsLocked(false);
 	  }
 	else
-	  if(GetSquareUnder()->CanBeSeen())
+	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The door won't budge!");
       }
     else
       if(KickStrength > RAND() % 100000)
 	{
-	  if(GetSquareUnder()->CanBeSeen())
+	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The broken door opens.");
 
 	  MakeWalkable();
 	}
       else
-	if(GetSquareUnder()->CanBeSeen())
+	if(CanBeSeenByPlayer())
 	  ADD_MESSAGE("The door resists.");
 }
 
@@ -580,14 +592,14 @@ bool door::ReceiveDamage(character*, short, uchar)
 {
   if(RAND() % 2)
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
 
       Break();
     }
   else
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 		
       MakeWalkable();
@@ -601,7 +613,7 @@ bool brokendoor::ReceiveDamage(character*, short, uchar)
 {
   if(RAND() % 2)
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 
       MakeWalkable();
@@ -613,7 +625,7 @@ bool brokendoor::ReceiveDamage(character*, short, uchar)
 
 bool altar::Polymorph(character*)
 {
-  if(GetSquareUnder()->CanBeSeen())
+  if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s glows briefly.", CHARNAME(DEFINITE));
 	
   uchar OldGod = DivineMaster;
@@ -625,7 +637,7 @@ bool altar::Polymorph(character*)
   GetSquareUnder()->SendMemorizedUpdateRequest();
   GetSquareUnder()->SetDescriptionChanged(true);
 
-  if(GetSquareUnder()->CanBeSeen())
+  if(CanBeSeenByPlayer())
     {
       GetLSquareUnder()->UpdateMemorizedDescription();
       GetLSquareUnder()->UpdateMemorized();
@@ -634,7 +646,7 @@ bool altar::Polymorph(character*)
   return true;	
 }
 
-bool altar::SitOn(character*)
+bool altar::SitOn(character* Sitter)
 {
   ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(DivineMaster)->GOD_NAME);
 
@@ -661,6 +673,7 @@ bool altar::SitOn(character*)
 	game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true);
       }
 
+  Sitter->EditAP(-1000);
   return true;
 }
 
@@ -679,21 +692,23 @@ void doublebed::ShowRestMessage(character*) const
   ADD_MESSAGE("You lay yourself on the confortable bed.");
 }
 
-void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
+void door::HasBeenHitBy(item* Hitter, float Speed, uchar)
 {
   if(!IsWalkable())
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
-      if(Visible && game::WizardModeActivated())
+      if(CanBeSeenByPlayer() && game::WizardModeActivated())
 	{
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
 	}
+
       if(Energy > 1000)
 	{
 	  // The door opens
 	  MakeWalkable();
-	  if(Visible)
+
+	  if(CanBeSeenByPlayer())
 	    {
 	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
@@ -704,7 +719,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	  if(IsLocked())
 	    SetIsLocked(RAND() % 2 ? true : false);
 
-	  if(Visible)
+	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
 	  Break();
@@ -712,7 +727,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
       else
 	{
 	  // Nothing happens
-	  if(Visible)
+	  if(CanBeSeenByPlayer())
 	    {
 	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
@@ -720,13 +735,13 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     }
 }
 
-void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
+void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar)
 {
   if(!IsWalkable())
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // I hear Newton screaming in his grave.
-      if(Visible && game::WizardModeActivated())
+      if(CanBeSeenByPlayer() && game::WizardModeActivated())
 	{
 	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
 	}
@@ -734,7 +749,8 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	{
 	  // The door opens
 	  MakeWalkable();
-	  if(Visible)
+
+	  if(CanBeSeenByPlayer())
 	    {
 	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
@@ -742,7 +758,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
       else
 	{
 	  // Nothing happens
-	  if(Visible)
+	  if(CanBeSeenByPlayer())
 	    {
 	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
@@ -771,7 +787,7 @@ void door::ActivateBoobyTrap()
     {
     case 1:
       // Explosion
-      if(GetLSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
 
       BoobyTrap = 0;
@@ -879,7 +895,7 @@ bool door::TryKey(item* Thingy, character* Applier)
 	  else
 	    ADD_MESSAGE("You lock the door.");
 	}
-      else if(Applier->GetLSquareUnder()->CanBeSeen())
+      else if(Applier->CanBeSeenByPlayer())
 	{
 	  if(IsLocked())
 	    ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));

@@ -73,28 +73,6 @@ void banana::GenerateLeftOvers(character* Eater)
 
 void potion::GenerateLeftOvers(character* Eater)
 {
-  /*ushort Emit = GetEmitation();
-
-  if(!GetConsumeMaterial()->GetVolume())
-    ChangeMaterial(GetConsumeMaterialIndex(), 0);
-
-  if(GetSquareUnder())
-    {
-      GetSquareUnder()->SetDescriptionChanged(true);
-
-      if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
-
-      if(!game::IsInWilderness())
-	GetLSquareUnder()->SignalEmitationDecrease(Emit);
-
-      GetSquareUnder()->SendNewDrawRequest();
-      GetSquareUnder()->SendMemorizedUpdateRequest();
-
-      if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorized();
-    }*/
-
   ChangeConsumeMaterial(0);
 
   if(!game::IsInWilderness() && (!Eater->IsPlayer() || configuration::GetAutoDropLeftOvers()))
@@ -132,12 +110,17 @@ bool scroll::CanBeRead(character* Reader) const
 
 bool scrollofcreatemonster::Read(character* Reader)
 {
+  Reader->StartReading(this, 200);
+  return true;
+}
+
+void scrollofcreatemonster::FinishReading(character* Reader)
+{
   vector2d TryToCreate;
 
   for(ushort c = 0; c < 100; ++c)
     {
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-
       character* Monster = protosystem::CreateMonster();
 
       if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Monster) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
@@ -145,38 +128,52 @@ bool scrollofcreatemonster::Read(character* Reader)
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Monster);
 
 	  if(Reader->IsPlayer())
-	    ADD_MESSAGE("As you read the scroll a monster appears.");
-	  else
-	    if(Reader->GetSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("The %s reads %s. A monster appears!", Reader->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
-
-	  return true;
+	    {
+	      if(Monster->CanBeSeenByPlayer())
+		ADD_MESSAGE("%s appears.", Monster->CHARNAME(INDEFINITE));
+	      else
+		ADD_MESSAGE("You notice no effect.");
+	    }
+	  else if(Reader->CanBeSeenByPlayer())
+	    {
+	      if(Monster->CanBeSeenByPlayer())
+		ADD_MESSAGE("%s summons %s!", Reader->CHARNAME(DEFINITE), Monster->CHARNAME(INDEFINITE));
+	    }
+	  else if(Monster->CanBeSeenByPlayer())
+	    ADD_MESSAGE("Suddenly %s appears.", Monster->CHARNAME(INDEFINITE));
 	}
       else
 	delete Monster;
     }
 
   ADD_MESSAGE("You feel a lost soul fly by you.");
-  return true;
+  RemoveFromSlot();
+  SendToHell();
 }
 
 bool scrollofteleportation::Read(character* Reader)
 {
+  Reader->StartReading(this, 200);
+  return true;
+}
+
+void scrollofteleportation::FinishReading(character* Reader)
+{
   if(Reader->IsPlayer())
-    ADD_MESSAGE("After you have read the scroll you realize that you have teleported.");
-  else
-    if(Reader->GetSquareUnder()->CanBeSeen())
-      ADD_MESSAGE("The %s reads %s and disappears!", Reader->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+    ADD_MESSAGE("Suddenly you realize you have teleported.");
+  else if(Reader->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s disappears!", Reader->CHARNAME(DEFINITE));
 
   Reader->TeleportRandomly();
-  return true;
+  RemoveFromSlot();
+  SendToHell();
 }
 
 void lump::ReceiveHitEffect(character* Enemy, character*)
 {
   if(RAND() % 2)
     {
-      if(Enemy->GetSquareUnder()->CanBeSeen())
+      if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("The %s touches %s.", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
 
       GetMainMaterial()->HitEffect(Enemy);
@@ -190,7 +187,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
       if(Enemy->IsPlayer())
 	ADD_MESSAGE("The %s reacts with you!", GetContainedMaterial()->CHARNAME(UNARTICLED));
       else
-	if(Enemy->GetSquareUnder()->CanBeSeen())
+	if(Enemy->CanBeSeenByPlayer())
 	  ADD_MESSAGE("The %s reacts with %s.", GetContainedMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
 
       GetContainedMaterial()->HitEffect(Enemy);
@@ -203,6 +200,8 @@ void meleeweapon::DipInto(material* Material, character* Dipper)
 
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+
+  Dipper->DexterityAction(10);
 }
 
 material* lump::CreateDipMaterial()
@@ -222,37 +221,36 @@ bool pickaxe::Apply(character* User)
 {
   uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
 
-  if(Dir == DIR_ERROR)
+  vector2d Temp = game::GetMoveVector(Dir);
+
+  if(Dir == DIR_ERROR || !game::IsValidPos(User->GetPos() + Temp))
     return false;
 
-  vector2d Temp = game::GetMoveVector(Dir);
-	
-  if(game::IsValidPos(User->GetPos() + Temp))
-    {
-      lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
+  lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
-      if(Square->GetCharacter())
-	if(User->Hit(Square->GetCharacter()))
-	  return true;
+  if(Square->GetCharacter())
+    if(User->Hit(Square->GetCharacter()))
+      return true;
 
-      if(Square->CanBeDug())
-	if(Square->GetOLTerrain()->CanBeDug())
-	  if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+  if(Square->CanBeDug())
+    if(Square->GetOLTerrain()->CanBeDug())
+      if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+	{
+	  uchar RoomNumber = Square->GetRoom();
+
+	  if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->DestroyTerrain(User, Square->GetOLTerrain()))
 	    {
-	      uchar RoomNumber = Square->GetRoom();
-	      if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->DestroyTerrain(User, Square->GetOLTerrain()))
-		{
-		  User->SwitchToDig(this, User->GetPos() + Temp);
-		  return true;
-		}
-	      else
-		return false;
+	      User->SwitchToDig(this, User->GetPos() + Temp);
+	      User->DexterityAction(10);
+	      return true;
 	    }
 	  else
-	    ADD_MESSAGE("%s is too hard to dig.", Square->GetOLTerrain()->CHARNAME(DEFINITE));
-	else
-	  ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
-    }
+	    return false;
+	}
+      else
+	ADD_MESSAGE("%s is too hard to dig with %s.", Square->GetOLTerrain()->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+    else
+      ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
 
   return false;
 }
@@ -262,7 +260,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CHARNAME(DEFINITE));
   else
-    if(Terrorist->GetSquareUnder()->CanBeSeen())
+    if(Terrorist->CanBeSeenByPlayer())
       ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
   RemoveFromSlot();
@@ -276,6 +274,7 @@ bool wand::Apply(character* Terrorist)
     DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
   Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), 40);
+  Terrorist->DexterityAction(5);
   return true;
 }
 
@@ -289,8 +288,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
+  //Zapper->EditAP(500);
   return true;
 }
 
@@ -308,27 +306,33 @@ void wand::Load(inputfile& SaveFile)
 
 bool scrollofwishing::Read(character* Reader)
 {
-  game::DrawEverythingNoBlit();
-  std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+  Reader->StartReading(this, 2500);
+  return true;
+}
 
-  item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
-
-  if(TempItem)
+void scrollofwishing::FinishReading(character* Reader)
+{
+  while(true)
     {
-      Reader->GetStack()->AddItem(TempItem);
-      ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHARNAME(INDEFINITE));
-      Reader->EditAP(-2500); // very difficult to read
-      return true;
-    }
+      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+      item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
 
-  return false;
+      if(TempItem)
+	{
+	  Reader->GetStack()->AddItem(TempItem);
+	  ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CHARNAME(INDEFINITE));
+	  RemoveFromSlot();
+	  SendToHell();
+	  return;
+	}
+    }
 }
 
 bool lantern::ReceiveDamage(character*, short Damage, uchar)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
 
       brokenlantern* Lantern = new brokenlantern(0, false);
@@ -346,7 +350,7 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
 {
   if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
 
       if(GetContainedMaterial()) 
@@ -364,42 +368,48 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
 
 bool scrollofchangematerial::Read(character* Reader)
 {
-  if(!Reader->GetStack()->GetItems())
+  if(Reader->GetStack()->GetItems() <= 1) // that 1 is the scroll itself
     {
       ADD_MESSAGE("You have nothing to change.");
       return false;
     }
-
-  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
-
-  if(!Item)
-    return false;
-
-  if(Item == this)
-    {
-      ADD_MESSAGE("That would be rather insane.");
-      return false;
-    }
-
-  if(!Item->IsMaterialChangeable())
-    {
-      ADD_MESSAGE("Your magic is not powerful enough to affect %s .", Item->CHARNAME(DEFINITE));
-      return false;
-    }
-
-  game::DrawEverythingNoBlit();
-  std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
-
-  material* TempMaterial = protosystem::CreateMaterial(Temp, Item->GetMainMaterial()->GetVolume());
-	
-  if(TempMaterial)
-    Item->ChangeMainMaterial(TempMaterial);
   else
     {
-      return false;
+      Reader->StartReading(this, 1000);
+      return true;
     }
+}
 
-  return true;
+void scrollofchangematerial::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->GetItems())
+    ADD_MESSAGE("You notice you have lost anything you wished to alter.");
+  else
+    while(true)
+      {
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
+
+	if(Item)
+	  {
+	    if(!Item->IsMaterialChangeable())
+	      {
+		ADD_MESSAGE("You cast the spell, but the magic is not powerful enough to affect %s!", Item->CHARNAME(DEFINITE));
+		break;
+	      }
+
+	    std::string Temp = game::StringQuestion("What material do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+	    material* TempMaterial = protosystem::CreateMaterial(Temp, Item->GetMainMaterial()->GetVolume());
+
+	    if(TempMaterial)
+	      {
+		Item->ChangeMainMaterial(TempMaterial);
+		break;
+	      }
+	  }
+      }
+
+  RemoveFromSlot();
+  SendToHell();
 }
 
 item* brokenbottle::BetterVersion() const
@@ -427,8 +437,6 @@ bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of striking", Direction, 15);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -436,7 +444,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
 {
   if(Damage > 2500.0f / GetStrengthValue() + RAND() % 11 - RAND() % 11)
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
 
       item* Plate = new brokenplatemail(0, false);
@@ -457,17 +465,15 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
-	  else
-	    if(Stepper->GetSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CHARNAME(DEFINITE));
+	  else if(Stepper->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s steps on sharp glass splinters and is hurt.", Stepper->CHARNAME(DEFINITE));
 	}
       else
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Some glass splinters are shattered under your feet.");
-	  else
-	    if(Stepper->GetSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
+	  else if(Stepper->CanBeSeenByPlayer())
+	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
 	}
 
       //Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
@@ -490,6 +496,8 @@ void potion::DipInto(material* Material, character* Dipper)
 
   if(Dipper->IsPlayer())
     ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+
+  Dipper->DexterityAction(10);
 }
 
 ulong meleeweapon::Price() const
@@ -579,9 +587,8 @@ bool backpack::Apply(character* Terrorist)
     {
       if(Terrorist->IsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
-      else
-	if(Terrorist->GetSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+      else if(Terrorist->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       RemoveFromSlot();
       SendToHell();
@@ -593,6 +600,7 @@ bool backpack::Apply(character* Terrorist)
       else
 	DeathMsg = "kamikazed by " + Terrorist->GetName(INDEFINITE);
 
+      Terrorist->DexterityAction(5);
       Terrorist->GetLSquareUnder()->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
@@ -622,6 +630,12 @@ bool holybook::CanBeRead(character* Reader) const
 
 bool holybook::Read(character* Reader)
 {
+  Reader->StartReading(this, 1000);
+  return true;
+}
+
+void holybook::FinishReading(character* Reader)
+{
   if(Reader->IsPlayer())
     {
       if(game::GetGod(GetDivineMaster())->GetKnown())
@@ -630,20 +644,19 @@ bool holybook::Read(character* Reader)
 	  game::GetGod(DivineMaster)->AdjustRelation(75);
 	  game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true);
 
-	  if(RAND() % 3)
-	    return false;
-	  else
+	  if(!(RAND() % 3))
 	    {
 	      ADD_MESSAGE("But then it disappears.");
-	      return true;
+	      RemoveFromSlot();
+	      SendToHell();
 	    }
 	}
-
-      game::GetGod(GetDivineMaster())->SetKnown(true);
-      ADD_MESSAGE("You read the book through and feel that you master the magical rites of %s.", game::GetGod(DivineMaster)->GOD_NAME);
+      else
+	{
+	  game::GetGod(GetDivineMaster())->SetKnown(true);
+	  ADD_MESSAGE("You feel you master the magical rites of %s.", game::GetGod(DivineMaster)->GOD_NAME);
+	}
     }
-
-  return false;
 }
 
 bool wand::ReceiveDamage(character* Damager, short, uchar Type)
@@ -657,7 +670,7 @@ bool wand::ReceiveDamage(character* Damager, short, uchar Type)
       else
 	DeathMsg += GetName(INDEFINITE);
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
@@ -681,7 +694,7 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
       else
 	DeathMsg += GetName(INDEFINITE);
 
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
@@ -708,7 +721,7 @@ bool scroll::ReceiveDamage(character*, short, uchar Type)
 {
   if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
     {
-      if(GetLSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
@@ -742,7 +755,7 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
 	    if(BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare))
 	      break;
 
-	    if(CurrentSquare->CanBeSeen(true))
+	    if(CurrentSquare->CanBeSeenByPlayer(true))
 	      CurrentSquare->DrawParticles(GetBeamColor(), Direction);
 	  }
       }
@@ -751,7 +764,7 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
       lsquare* Where = Zapper->GetLSquareUnder();
       BeamEffect(Zapper, DeathMsg, Direction, Where);
 
-      if(Where->CanBeSeen(true))
+      if(Where->CanBeSeenByPlayer(true))
 	Where->DrawParticles(GetBeamColor(), Direction);
     }
 }
@@ -772,7 +785,7 @@ bool holybook::ReceiveDamage(character*, short, uchar Type)
 {
   if(Type == FIRE && !(RAND() % 2) && GetMainMaterial()->IsFlammable())
     {
-      if(GetSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
@@ -842,9 +855,9 @@ bool oillamp::Apply(character* Applier)
 			    }
 			}
 
-			game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
-			delete Genie;
-			return true;
+		      game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
+		      delete Genie;
+		      return true;
 		    }
 		}
 	    }
@@ -863,10 +876,9 @@ bool oillamp::Apply(character* Applier)
     }
   else
     if(Applier->IsPlayer())
-      {
-	ADD_MESSAGE("Nothing happens.");
-      }
+      ADD_MESSAGE("Nothing happens.");
 
+  Applier->EditAP(-1000);
   return true;
 }
 
@@ -895,27 +907,38 @@ ushort holybook::GetMaterialColor0(ushort) const
 
 bool scrollofcharging::Read(character* Reader)
 {
-  if(Reader->GetStack()->GetItems())
+  if(Reader->GetStack()->GetItems() > 1) // that 1 is the scroll itself
     {
       ADD_MESSAGE("You have nothing to charge.");
       return false;
     }
-
-  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", &item::ChargeableSorter);
-
-  if(!Item)
-    return false;
-
-  if(Item == this)
+  else
     {
-      ADD_MESSAGE("This would cause a rift to appear in the space-time continuum which wouldn't be nice.");
-      return false;
+      Reader->StartReading(this, 500);
+      return true;
     }
+}
 
-  game::DrawEverythingNoBlit();
-  Item->ChargeFully(Reader);
-  ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHARNAME(DEFINITE));
-  return true;
+void scrollofcharging::FinishReading(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter))
+    ADD_MESSAGE("You have lost whatever you wished to charge.");
+  else
+    while(true)
+      {
+	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", &item::ChargeableSorter);
+
+	if(Item)
+	  {
+	    game::DrawEverythingNoBlit();
+	    Item->ChargeFully(Reader);
+	    ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHARNAME(DEFINITE));
+	    break;
+	  }
+      }
+
+  RemoveFromSlot();
+  SendToHell();
 }
 
 void banana::Save(outputfile& SaveFile) const
@@ -942,7 +965,6 @@ bool banana::Zap(character* Zapper, vector2d, uchar)
       ADD_MESSAGE("Click!");
     }
 
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -952,14 +974,13 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHARNAME(INDEFINITE));
-      else
-	if(Stepper->GetSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
-      Stepper->EditAP(1000);
+      else if(Stepper->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+
       /* Do damage against any random bodypart except legs */
       Stepper->ReceiveDamage(0, 1 + RAND() % 2, PHYSICALDAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("stepped on a banana peal.");
-      Stepper->EditAP(-500);
+      Stepper->EditAP(-1000);
     }
   
   return false;
@@ -975,8 +996,6 @@ bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of fireballs", Direction, 200);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -993,33 +1012,59 @@ bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uc
 
 bool scrolloftaming::Read(character* Reader)
 {
+  Reader->StartReading(this, 100);
+  return true;
+}
+
+void scrolloftaming::FinishReading(character* Reader)
+{
   // First find all characters in the squares around Reader
+
   std::vector<character*> CharactersNearBy;
 
   for(ushort c = 0; c < 8; ++c)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
+
       if(game::IsValidPos(Test))
 	{
 	  character* CharacterInSquare = game::GetCurrentLevel()->GetLSquare(Test)->GetCharacter();
+
 	  if(CharacterInSquare && CharacterInSquare->IsCharmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
 	    CharactersNearBy.push_back(CharacterInSquare);
 	}
     }
   
   // Then pick one of the characters and set it to the same team as Reader
+
   if(CharactersNearBy.empty())
     {
-      ADD_MESSAGE("The scroll burns, but nothing happens.");
+      if(Reader->IsPlayer() || Reader->CanBeSeenByPlayer())
+	ADD_MESSAGE("The scroll burns, but nothing happens.");
     }
   else
     {
       character* ToBeTamed = CharactersNearBy[RAND() % CharactersNearBy.size()];
       ToBeTamed->ChangeTeam(Reader->GetTeam());
-      ADD_MESSAGE("The scroll burns and suddenly %s looks friendly.", ToBeTamed->CHARNAME(DEFINITE));
+
+      if(Reader->IsPlayer())
+	{
+	  if(ToBeTamed->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s looks much friendlier.", ToBeTamed->CHARNAME(INDEFINITE));
+	  else
+	    ADD_MESSAGE("You notice no effect.");
+	}
+      else if(Reader->CanBeSeenByPlayer())
+	{
+	  if(ToBeTamed->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s seems to like %s far more.", ToBeTamed->CHARNAME(INDEFINITE), Reader->CHARNAME(DEFINITE));
+	}
+      else if(ToBeTamed->CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s looks like having fallen in love with something nearby.", ToBeTamed->CHARNAME(INDEFINITE));
     }
 
-  return true;
+  RemoveFromSlot();
+  SendToHell();
 }
 
 void bodypart::Save(outputfile& SaveFile) const
@@ -1044,8 +1089,6 @@ bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the teleportation code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -1219,7 +1262,7 @@ void humanoidtorso::Load(inputfile& SaveFile)
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << SingleWeaponSkill << UnarmedStrength;
+  SaveFile << /*SingleWeaponSkill << */UnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot;
   SaveFile << GauntletSlot;
@@ -1229,20 +1272,20 @@ void arm::Save(outputfile& SaveFile) const
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> SingleWeaponSkill >> UnarmedStrength;
+  SaveFile >> /*SingleWeaponSkill >> */UnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   LoadGearSlot(SaveFile, WieldedSlot);
   LoadGearSlot(SaveFile, GauntletSlot);
   LoadGearSlot(SaveFile, RingSlot);
-  SetCurrentSingleWeaponSkill(0);
+  //SetCurrentSingleWeaponSkill(0);
 
-  if(GetWielded())
+  /*if(GetWielded())
     for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
       if((*i)->GetID() == GetWielded()->GetID())
 	{
 	  SetCurrentSingleWeaponSkill(*i);
 	  break;
-	}
+	}*/
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -1301,13 +1344,13 @@ bool bodypart::ReceiveDamage(character*, short Damage, uchar)
 void mine::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> Charged;
+  SaveFile >> Charged >> Visible;
 }
 
 void mine::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << Charged;
+  SaveFile << Charged << Visible;
 }
 
 bool mine::ReceiveDamage(character* Damager, short, uchar Type)
@@ -1321,7 +1364,7 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
       else
 	DeathMsg += GetName(INDEFINITE);
 
-      if(GetLSquareUnder()->CanBeSeen())
+      if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
@@ -1340,8 +1383,9 @@ bool mine::GetStepOnEffect(character* Stepper)
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
-      else if(Stepper->GetSquareUnder()->CanBeSeen())
+      else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+
       Stepper->GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by a land mine", Stepper->GetPos(), 30);
     }
 
@@ -1369,8 +1413,6 @@ bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the haste code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -1395,8 +1437,6 @@ bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the slow code", Direction, 5);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -1412,17 +1452,18 @@ bool key::Apply(character* User)
       vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
 
       if(game::IsValidPos(ApplyPos))
-	game::GetCurrentLevel()->GetLSquare(ApplyPos)->TryKey(this, User);
+	{
+	  game::GetCurrentLevel()->GetLSquare(ApplyPos)->TryKey(this, User);
+	  User->DexterityAction(5);
+	}
       else
 	return false;
-
-      User->EditAP(500);
     }
 
   return true;
 }
 
-void arm::SetWielded(item* Item)
+/*void arm::SetWielded(item* Item)
 {
   WieldedSlot.PutInItem(Item);
 
@@ -1473,57 +1514,111 @@ void arm::Be()
 
       ++i;
     }
-}
-
-float arm::CalculateWieldedStrength(bool OneHanded) const
-{
-  if(GetWielded()->IsShield(GetMaster()))
-    return 0;
-
-  float Strength = GetWielded()->GetWeaponStrength() * this->Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus();
-
-  if(OneHanded)
-    Strength *= float(100 - GetWielded()->GetOneHandedStrengthPenalty(GetMaster())) / 100;
-
-  return Strength;
-}
+}*/
 
 float arm::CalculateUnarmedStrength() const
 {
-  return GetUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus();
-}
-
-float leg::CalculateKickStrength() const
-{
-  return GetKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetBonus();
-}
-
-float head::CalculateBiteStrength() const
-{
-  return GetBiteStrength() * 10 * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetBonus();
-}
-
-float arm::CalculateWieldedToHitValue(bool OneHanded) const
-{
-  if(!OneHanded && GetWielded()->IsShield(GetMaster()))
-    OneHanded = true;
-
-  float ToHit = GetMaster()->GetBattleAttributeModifier() * ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
-
-  if(OneHanded)
-    ToHit *= float(100 - GetWielded()->GetOneHandedToHitPenalty(GetMaster())) / 100;
-
-  return ToHit;
+  return GetUnarmedStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus();
 }
 
 float arm::CalculateUnarmedToHitValue() const
 {
-  return GetMaster()->GetBattleAttributeModifier() * ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus() / 2;
+  return ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetEffectBonus() * GetMaster()->GetMoveEase() / 100;
+}
+
+long arm::CalculateUnarmedAPCost() const
+{
+  return long(GetMaster()->GetCategoryWeaponSkill(UNARMED)->GetAPBonus() * (float(Dexterity) - 200) * 500 / GetMaster()->GetMoveEase());
+}
+
+float arm::CalculateWieldedStrength() const
+{
+  if(GetWielded()->IsShield(GetMaster()))
+    return 0;
+
+  arm* PairArm = GetPairArm();
+  float HitStrength = Strength;
+
+  if(GetWielded()->IsTwoHanded() && PairArm && !PairArm->GetWielded())
+    HitStrength += PairArm->Strength;
+
+  return HitStrength * GetWielded()->GetWeaponStrength() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus();
+}
+
+float arm::CalculateWieldedToHitValue() const
+{
+  arm* PairArm = GetPairArm();
+  float Weight = GetWielded()->GetWeight();
+
+  if(Weight < 500)
+    Weight = 500;
+
+  float Bonus = GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetEffectBonus() * GetCurrentSingleWeaponSkill()->GetEffectBonus() * GetMaster()->GetMoveEase() / (100 + (Weight - 500) / 25);
+  float ThisToHit = ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION));
+
+  if(PairArm)
+    {
+      if(!PairArm->GetWielded())
+	{
+	  if(GetWielded()->IsTwoHanded())
+	    return Bonus * (ThisToHit + ((PairArm->Dexterity << 2) + PairArm->Strength + GetMaster()->GetAttribute(PERCEPTION))) / 2;
+	}
+      else
+	{
+	  float Weight = GetPairArm()->GetWielded()->GetWeight();
+
+	  if(Weight < 500)
+	    Weight = 500;
+
+	  return Bonus * ThisToHit / (1 + (Weight - 500) / 10000);
+	}
+    }
+
+  return Bonus * ThisToHit;
+}
+
+long arm::CalculateWieldedAPCost() const
+{
+  arm* PairArm = GetPairArm();
+  float SkillPenalty = GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetAPBonus() * GetCurrentSingleWeaponSkill()->GetAPBonus() * 100 / GetMaster()->GetMoveEase();
+
+  if(PairArm)
+    {
+      if(!PairArm->GetWielded())
+	{
+	  if(GetWielded()->IsTwoHanded())
+	    return long(SkillPenalty * ((float(Dexterity + PairArm->Dexterity) - 400) * 2.5f - GetWielded()->GetWeight() / 50));
+	}
+      else
+	return long(SkillPenalty * ((float(Dexterity) - 200) * 5 - (GetWielded()->GetWeight() + GetPairArm()->GetWielded()->GetWeight()) / 50));
+    }
+
+  return long(SkillPenalty * ((float(Dexterity) - 200) * 5 - GetWielded()->GetWeight() / 50));
+}
+
+float head::CalculateBiteStrength() const
+{
+  return GetBiteStrength() * 10 * GetHumanoidMaster()->GetCategoryWeaponSkill(BITE)->GetEffectBonus();
+}
+
+long head::CalculateBiteAPCost() const
+{
+  return long(GetMaster()->GetCategoryWeaponSkill(BITE)->GetAPBonus() * (float(GetMaster()->GetAttribute(AGILITY)) - 200) * 500 / GetMaster()->GetMoveEase());
+}
+
+float leg::CalculateKickStrength() const
+{
+  return GetKickStrength() * Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus();
 }
 
 float leg::CalculateKickToHitValue() const
 {
-  return GetMaster()->GetBattleAttributeModifier() * ((Agility << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(UNARMED)->GetBonus() / 4;
+  return ((Agility << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(KICK)->GetEffectBonus() * GetMaster()->GetMoveEase() / 200;
+}
+
+long leg::CalculateKickAPCost() const
+{
+  return long(GetMaster()->GetCategoryWeaponSkill(KICK)->GetAPBonus() * (float(Agility) - 200) * 1000 / GetMaster()->GetMoveEase());
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -1896,7 +1991,7 @@ void corpse::AddConsumeEndMessage(character* Eater) const
   GetDeceased()->GetTorso()->AddConsumeEndMessage(Eater);
 }
 
-bool arm::AddCurrentSingleWeaponSkillInfo(felist& List) const
+/*bool arm::AddCurrentSingleWeaponSkillInfo(felist& List) const
 {
   if(CurrentSingleWeaponSkill && CurrentSingleWeaponSkill->GetHits())
     {
@@ -1919,7 +2014,7 @@ bool arm::AddCurrentSingleWeaponSkillInfo(felist& List) const
     }
   else
     return false;
-}
+}*/
 
 head::~head()
 {
@@ -2034,8 +2129,6 @@ bool wandoflocking::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a bug in the wand locking code", Direction, 10);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -2161,8 +2254,6 @@ bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
 
   Beam(Zapper, "killed by a wand of resurrection", Direction, 15);
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -2255,7 +2346,10 @@ void mine::VirtualConstructor(bool Load)
   item::VirtualConstructor(Load);
   
   if(!Load)
-    SetCharged(RAND() % 5 ? true : false);
+    {
+      SetCharged(true);
+      Visible = true;
+    }
 }
 
 void wandofhaste::VirtualConstructor(bool Load)
@@ -2307,8 +2401,8 @@ void humanoidtorso::VirtualConstructor(bool Load)
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  SetCurrentSingleWeaponSkill(0);
-  SetHasBe(true);
+  //SetCurrentSingleWeaponSkill(0);
+  //SetHasBe(true);
 
   if(!Load)
     StrengthExperience = DexterityExperience = 0;
@@ -2377,6 +2471,7 @@ std::string platemail::GetNameSingular() const
 bool whistle::Apply(character* Whistler) 
 {
   BlowEffect(Whistler);
+  Whistler->EditAP(-1000);
   return true;
 } 
 
@@ -2384,10 +2479,10 @@ void whistle::BlowEffect(character* Whistler)
 {
   if(Whistler->IsPlayer())
     ADD_MESSAGE("You produce an interesting sound.");
-  else if(Whistler->GetSquareUnder()->CanBeSeen())
+  else if(Whistler->CanBeSeenByPlayer())
     ADD_MESSAGE("%s blows to his whistle and produces an odd sound.", Whistler->CHARNAME(DEFINITE));
   else 
-    ADD_MESSAGE("You hear a whistle.");
+    ADD_MESSAGE("You hear a whistle playing.");
 }
 
 void magicalwhistle::BlowEffect(character* Whistler)
@@ -2430,16 +2525,16 @@ bool chest::TryKey(item* Key, character* Applier)
       if(IsLocked())
 	{
 	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("You unlock %s.", CHARNAME(DEFINITE));
-	  else if(Applier->GetSquareUnder()->CanBeSeen())
-	    ADD_MESSAGE("%s unlocks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	    ADD_MESSAGE("You unlock %s.", CHARDESCRIPTION(DEFINITE));
+	  else if(Applier->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s unlocks %s.", Applier->CHARNAME(DEFINITE), CHARDESCRIPTION(DEFINITE));
 	}
       else
 	{
 	  if(Applier->IsPlayer())
-	    ADD_MESSAGE("You lock %s.", CHARNAME(DEFINITE));
-	  else if(Applier->GetSquareUnder()->CanBeSeen())
-	    ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	    ADD_MESSAGE("You lock %s.", CHARDESCRIPTION(DEFINITE));
+	  else if(Applier->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s locks %s.", Applier->CHARNAME(DEFINITE), CHARDESCRIPTION(DEFINITE));
 	}
 
       SetIsLocked(!IsLocked());
@@ -2448,7 +2543,7 @@ bool chest::TryKey(item* Key, character* Applier)
     {
       if(Applier->IsPlayer())
 	ADD_MESSAGE("%s doesn't fit in the lock.", Key->CHARNAME(DEFINITE));
-      else if(Applier->GetSquareUnder()->CanBeSeen())
+      else if(Applier->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s tries to fit %s in the lock, but fails.", Applier->CHARNAME(DEFINITE), Key->CHARNAME(DEFINITE));
     }
 
@@ -2477,7 +2572,7 @@ void arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
     }
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
@@ -2485,7 +2580,7 @@ void arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
     }
 
@@ -2494,7 +2589,7 @@ void arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels quite dextrous.", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks quite dextrous.", GetMaster()->CHARNAME(DEFINITE));
     }
   else if(GetMaster()->CheckForAttributeDecrease(Dexterity, DexterityExperience))
@@ -2502,7 +2597,7 @@ void arm::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels clumsy.", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks clumsy.", GetMaster()->CHARNAME(DEFINITE));
     }
 }
@@ -2514,7 +2609,7 @@ void leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels stronger!", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks stronger.", GetMaster()->CHARNAME(DEFINITE));
     }
   else if(GetMaster()->CheckForAttributeDecrease(Strength, StrengthExperience))
@@ -2522,7 +2617,7 @@ void leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels weaker.", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks weaker.", GetMaster()->CHARNAME(DEFINITE));
     }
 
@@ -2531,7 +2626,7 @@ void leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels very agile!", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks very agile.", GetMaster()->CHARNAME(DEFINITE));
     }
   else if(GetMaster()->CheckForAttributeDecrease(Agility, AgilityExperience))
@@ -2539,7 +2634,7 @@ void leg::ApplyExperience()
       if(GetMaster()->IsPlayer())
 	ADD_MESSAGE("Your %s feels slower.", CHARNAME(UNARTICLED));
       else
-	if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+	if(game::IsInWilderness() || CanBeSeenByPlayer())
 	  ADD_MESSAGE("Suddenly %s looks sluggish.", GetMaster()->CHARNAME(DEFINITE));
     }
 }
@@ -2568,6 +2663,7 @@ void arm::Hit(character* Enemy, float AttackStrength, float ToHitValue)
     case HASDODGED:
       EditExperience(DEXTERITY, 25);
     }
+
 }
 
 ushort arm::GetAttribute(ushort Identifier) const
@@ -2723,6 +2819,7 @@ bool chest::TakeSomethingFrom(character* Opener)
   if(ToBeTaken && (!RoomNumber || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
     {
       ToBeTaken->MoveTo(Opener->GetStack());
+      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
       return true;
     }
   else
@@ -2749,6 +2846,7 @@ bool chest::PutSomethingIn(character* Opener)
 	  if(FitsIn(ToBePut))
 	    {
 	      ToBePut->MoveTo(GetContained());
+	      Opener->DexterityAction(Opener->OpenMultiplier() * 5);
 	      return true;
 	    }
 	  else
@@ -2896,8 +2994,9 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPart(BodyPart)->CHARNAME(UNARTICLED));
-      else if(GetLSquareUnder()->CanBeSeen())
+      else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s", Victim->CHARNAME(DEFINITE), Victim->PossessivePronoun().c_str(), Victim->GetBodyPart(BodyPart)->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+
       Victim->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
       std::string DeathMessage = "died while trying to escape from " + GetName(DEFINITE) + ".";
       Victim->CheckDeath(DeathMessage);
@@ -2907,13 +3006,15 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONEINDEX);
+
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to free yourself from %s", CHARNAME(DEFINITE));
-      else if(Victim->GetLSquareUnder()->CanBeSeen())
+      else if(Victim->CanBeSeenByPlayer())
 	{
 	  std::string msg = Victim->GetName(DEFINITE) + " manages to free " + Victim->PersonalPronoun() + "self from " + GetName(DEFINITE) + ".";
 	  ADD_MESSAGE("%s", msg.c_str());
 	}
+
       return true;
     }
   ADD_MESSAGE("You are unable to escape from %s", CHARNAME(DEFINITE));
@@ -2923,19 +3024,24 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 void beartrap::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> IsActivated;
+  SaveFile >> IsActivated >> Visible;
 }
 
 void beartrap::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << IsActivated;
+  SaveFile << IsActivated << Visible;
 }
 
 void beartrap::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  IsActivated = RAND() % 2 ? true : false;
+
+  if(!Load)
+    {
+      IsActivated = true;
+      Visible = true;
+    }
 }
 
 bool beartrap::GetStepOnEffect(character* Stepper)
@@ -2951,7 +3057,7 @@ bool beartrap::GetStepOnEffect(character* Stepper)
       Stepper->SetStuckToBodyPart(StepperBodyPart);
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You step in %s and it traps your %s. ", CHARNAME(INDEFINITE), Stepper->GetBodyPart(Stepper->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
-      else if(GetLSquareUnder()->CanBeSeen())
+      else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is trapped in %s", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       Stepper->ReceiveBodyPartDamage(0,RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
@@ -3084,7 +3190,7 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
     GetMaster()->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
 }
 
-void arm::SignalEquipmentRemoval(gearslot* Slot)
+/*void arm::SignalEquipmentRemoval(gearslot* Slot)
 {
   bodypart::SignalEquipmentRemoval(Slot);
 
@@ -3101,9 +3207,35 @@ void arm::SignalEquipmentRemoval(gearslot* Slot)
 
       SetCurrentSingleWeaponSkill(0);
     }
-}
+}*/
 
 bool beartrap::IsPickable(character* Picker) const
 {
   return Picker->GetStuckTo() != (item*)this;
+}
+
+arm* rightarm::GetPairArm() const
+{
+  if(GetHumanoidMaster())
+    return GetHumanoidMaster()->GetLeftArm();
+  else
+    return 0;
+}
+
+arm* leftarm::GetPairArm() const
+{
+  if(GetHumanoidMaster())
+    return GetHumanoidMaster()->GetRightArm();
+  else
+    return 0;
+}
+
+sweaponskill* rightarm::GetCurrentSingleWeaponSkill() const
+{
+  return GetHumanoidMaster()->GetCurrentRightSingleWeaponSkill();
+}
+
+sweaponskill* leftarm::GetCurrentSingleWeaponSkill() const
+{
+  return GetHumanoidMaster()->GetCurrentLeftSingleWeaponSkill();
 }

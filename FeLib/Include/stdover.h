@@ -97,4 +97,18 @@ template <class type> std::vector<type>& operator<<(std::vector<type>& Vector, c
   return Vector;
 }
 
+inline std::string CapitalizeCopy(std::string String)
+{
+  if(String[0] > 0x60 && String[0] < 0x7B)
+    String[0] &= ~0x20;
+
+  return String;
+}
+
+inline void Capitalize(std::string& String)
+{
+  if(String[0] > 0x60 && String[0] < 0x7B)
+    String[0] &= ~0x20;
+}
+
 #endif

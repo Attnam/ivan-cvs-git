@@ -88,7 +88,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 6
+#define STATES 8
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -96,6 +96,8 @@
 #define POLYMORPH_CONTROL 8
 #define LIFE_SAVED 16
 #define LYCANTHROPY 32
+#define INVISIBLE 64
+#define SEE_INVISIBLE 128
 
 #define TORSO 1
 #define HEAD 2

@@ -54,7 +54,7 @@ class gwterrain : public wterrain, public gterrain
   virtual void Save(outputfile&) const;
   virtual void DrawToTileBuffer(bool) const;
   virtual uchar Priority() const = 0;
-  virtual ushort GetEntryAPRequirement() const { return 10000; }
+  virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
 };

@@ -13,7 +13,12 @@ void action::Terminate(bool)
 
 void action::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
+  SaveFile << GetType() << DNDMode;
+}
+
+void action::Load(inputfile& SaveFile)
+{
+  SaveFile >> DNDMode;
 }
 
 action* actionprototype::CloneAndLoad(inputfile& SaveFile) const

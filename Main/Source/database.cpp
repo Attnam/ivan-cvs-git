@@ -81,6 +81,9 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
 
+  if(Word == "PostFix")
+    int esko = 2;
+
   ANALYZEDATA(DefaultArmStrength);
   ANALYZEDATA(DefaultLegStrength);
   ANALYZEDATA(DefaultDexterity);
@@ -185,8 +188,6 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(WeaponCategory);
   ANALYZEDATA(IsPolymorphSpawnable);
   ANALYZEDATA(IsAutoInitializable);
-  ANALYZEDATA(OneHandedStrengthPenalty);
-  ANALYZEDATA(OneHandedToHitPenalty);
   ANALYZEDATA(Category);
   ANALYZEDATA(SoundResistance);
   ANALYZEDATA(EnergyResistance);
@@ -224,6 +225,7 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(ForcedVisualEffects);
   ANALYZEDATA(Roundness);
   ANALYZEDATA(GearStates);
+  ANALYZEDATA(IsTwoHanded);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

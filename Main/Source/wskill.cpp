@@ -2,33 +2,33 @@
 #include "message.h"
 #include "save.h"
 
-ushort gweaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
-ushort gweaponskill::UnuseTickMap[] = { 50000, 50000, 50000, 40000, 30000, 15000, 10000, 8000, 4000, 2000, 1000 };
-ushort gweaponskill::UnusePenaltyMap[] = { 5, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
+ushort gweaponskill::LevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 65535 };
+ulong gweaponskill::UnuseTickMap[] = { 500000, 250000, 200000, 150000, 50000, 30000, 25000, 20000, 15000, 12500, 10000 };
+ushort gweaponskill::UnusePenaltyMap[] = { 10, 15, 25, 50, 75, 100, 200, 600, 1000, 2500, 3000 };
 
 std::string gweaponskill::SkillName[] = { "unarmed combat", "kicking", "biting", "uncategorized", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears", "whips" };
 
-ushort sweaponskill::LevelMap[] = { 0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 65535 };
-ushort sweaponskill::UnuseTickMap[] = { 50000, 25000, 15000, 10000, 5000, 5000, 5000, 2500, 1250, 500, 250 };
-ushort sweaponskill::UnusePenaltyMap[] = { 1, 5, 10, 20, 25, 100, 200, 250, 500, 500, 500 };
+ushort sweaponskill::LevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 65535 };
+ulong sweaponskill::UnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
+ushort sweaponskill::UnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
 
-weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0), HitMultiplier(1.0f)
+weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0)
 {
 }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
-  SaveFile << Level << Hits << HitCounter << HitMultiplier;
+  SaveFile << Level << Hits << HitCounter;
 }
 
 void weaponskill::Load(inputfile& SaveFile)
 {
-  SaveFile >> Level >> Hits >> HitCounter >> HitMultiplier;
+  SaveFile >> Level >> Hits >> HitCounter;
 }
 
-bool weaponskill::Turn(ushort Turns)
+bool weaponskill::Tick(ushort Ticks)
 {
-  HitCounter += Turns;
+  HitCounter += Ticks;
   bool LevelChange = false;
 
   while(HitCounter >= GetUnuseTickMap(Level))
@@ -46,8 +46,8 @@ bool weaponskill::AddHit()
 {
   HitCounter = 0;
 
-  if(Hits != 0xFFDC)
-    if(++Hits == ulong(GetLevelMap(Level + 1) * HitMultiplier))
+  if(Hits != 50000)
+    if(++Hits == GetLevelMap(Level + 1))
       {
 	++Level;
 	return true;
@@ -56,18 +56,18 @@ bool weaponskill::AddHit()
   return false;
 }
 
-bool weaponskill::AddHit(ulong AddHits)
+bool weaponskill::AddHit(ushort AddHits)
 {
   HitCounter = 0;
 
-  if(Hits <= 0xFFDC - AddHits)
+  if(Hits <= 50000 - AddHits)
     Hits += AddHits;
   else
-    Hits = 0xFFDC;
+    Hits = 50000;
 
   uchar OldLevel = Level;
 
-  while(Hits >= ulong(GetLevelMap(Level + 1) * HitMultiplier))
+  while(Hits >= GetLevelMap(Level + 1))
     ++Level;
 
   if(Level != OldLevel)
@@ -82,10 +82,9 @@ bool weaponskill::SubHit()
     {
       --Hits;
 
-      if(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
+      if(Level && Hits < GetLevelMap(Level))
 	{
 	  --Level;
-	  HitCounter = 0;
 	  return true;
 	}
     }
@@ -93,7 +92,7 @@ bool weaponskill::SubHit()
   return false;
 }
 
-bool weaponskill::SubHit(ulong SubHits)
+bool weaponskill::SubHit(ushort SubHits)
 {
   if(Hits >= SubHits)
     Hits -= SubHits;
@@ -102,11 +101,8 @@ bool weaponskill::SubHit(ulong SubHits)
 
   uchar OldLevel = Level;
 
-  while(Level && Hits < ulong(GetLevelMap(Level) * HitMultiplier))
-    {
-      --Level;
-      HitCounter = 0;
-    }
+  while(Level && Hits < GetLevelMap(Level))
+    --Level;
 
   if(Level != OldLevel)
     return true;

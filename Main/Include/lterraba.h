@@ -27,8 +27,8 @@ class item;
 class lterrain : public object
 {
  public:
-  virtual bool Open(character* Opener);
-  virtual bool Close(character* Closer);
+  virtual bool Open(character*) { return false; }
+  virtual bool Close(character*) { return false; }
   virtual vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool CanBeOffered() const { return false; }
@@ -41,6 +41,8 @@ class lterrain : public object
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
   virtual bool TryKey(item*, character*) { return false; }
+  virtual bool CanBeSeenByPlayer() const;
+  virtual bool CanBeSeenBy(character*) const;
  protected:
   virtual void GenerateMaterials() = 0;
   virtual void Initialize(uchar, bool, bool);
@@ -68,7 +70,7 @@ class glterrain : public lterrain, public gterrain
   glterrain(donothing) { }
   virtual void Save(outputfile&) const;
   virtual bool SitOn(character*);
-  virtual ushort GetEntryAPRequirement() const { return 1000; }
+  virtual uchar GetEntryDifficulty() const { return 1; }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void DrawToTileBuffer(bool) const;
@@ -107,7 +109,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Lock() { }
   virtual bool IsLocked() const { return false; }
   virtual void CreateBoobyTrap() { }
-  virtual void HasBeenHitBy(item*, float, uchar, bool) { }
+  virtual void HasBeenHitBy(item*, float, uchar) { }
   virtual void Break();
   virtual short GetHP() const { return HP; }
   virtual void SetHP(short What) { HP = What; }

@@ -300,6 +300,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -308,6 +309,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -316,6 +318,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -375,6 +378,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -439,6 +443,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -530,6 +535,7 @@ class ITEM
   virtual bool Read(character*);
   virtual bool IsReadable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
+  virtual void FinishReading(character*);
  protected:
   virtual void VirtualConstructor(bool);
   virtual ushort GetMaterialColor0(ushort) const;
@@ -588,6 +594,7 @@ class ITEM
   scroll,
  public:
   virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 class ITEM
@@ -614,9 +621,12 @@ class ITEM
   virtual bool GetStepOnEffect(character *);
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, short, uchar);
+  virtual bool IsVisible() const { return Visible; }
+  virtual void SetIsVisible(bool What) { Visible = What; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Charged;
+  bool Visible;
 );
 
 class ITEM
@@ -817,6 +827,7 @@ class ITEM
   virtual uchar GetBodyPartIndex() const { return HEADINDEX; }
   virtual float CalculateBiteToHitValue() const { return 1.0f; }
   virtual float CalculateBiteStrength() const;
+  virtual long CalculateBiteAPCost() const;
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
  protected:
@@ -881,15 +892,15 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetTotalResistance(uchar) const;
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
+  /*virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
   virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
   virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
   virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
-  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
-  virtual void Be();
-  virtual float CalculateWieldedStrength(bool) const;
-  virtual float CalculateWieldedToHitValue(bool) const;
-  virtual void SetWielded(item*);
+  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }*/
+  //virtual void Be();
+  virtual float CalculateWieldedStrength() const;
+  virtual float CalculateWieldedToHitValue() const;
+  virtual void SetWielded(item* What) { WieldedSlot.PutInItem(What); }
   virtual item* GetWielded() const { return *WieldedSlot; }
   virtual void SetGauntlet(item* What) { GauntletSlot.PutInItem(What); }
   virtual item* GetGauntlet() const { return *GauntletSlot; }
@@ -899,7 +910,7 @@ class ABSTRACT_ITEM
   virtual ushort DangerWeight() const;
   //virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
-  virtual bool AddCurrentSingleWeaponSkillInfo(felist&) const;
+  //virtual bool AddCurrentSingleWeaponSkillInfo(felist&) const;
   virtual float CalculateUnarmedToHitValue() const;
   virtual float CalculateUnarmedStrength() const;
   virtual void Hit(character*, float, float);
@@ -913,15 +924,18 @@ class ABSTRACT_ITEM
   virtual void SetDexterity(ushort What) { Dexterity = What; }
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
-  //virtual arm* GetPairArm() const = 0;
-  virtual void SignalEquipmentRemoval(gearslot*);
+  virtual arm* GetPairArm() const = 0;
+  //virtual void SignalEquipmentRemoval(gearslot*);
+  virtual sweaponskill* GetCurrentSingleWeaponSkill() const = 0;
+  virtual long CalculateWieldedAPCost() const;
+  virtual long CalculateUnarmedAPCost() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
   gearslot GauntletSlot;
   gearslot RingSlot;
-  std::vector<sweaponskill*> SingleWeaponSkill;
-  sweaponskill* CurrentSingleWeaponSkill;
+  /*std::vector<sweaponskill*> SingleWeaponSkill;
+  sweaponskill* CurrentSingleWeaponSkill;*/
   ushort Strength;
   ushort Dexterity;
   long StrengthExperience;
@@ -935,7 +949,8 @@ class ITEM
   arm,
  public:
   virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
-  //virtual arm* GetPairArm() const;
+  virtual arm* GetPairArm() const;
+  virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STRIGHTARM; }
@@ -947,7 +962,8 @@ class ITEM
   arm,
  public:
   virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
-  //virtual arm* GetPairArm() const;
+  virtual arm* GetPairArm() const;
+  virtual sweaponskill* GetCurrentSingleWeaponSkill() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STLEFTARM; }
@@ -994,6 +1010,7 @@ class ABSTRACT_ITEM
   //virtual void SignalEquipmentAdd(gearslot*);
   //virtual void SignalEquipmentRemoval(gearslot*);
   //virtual leg* GetPairLeg() const = 0;
+  virtual long CalculateKickAPCost() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -1186,9 +1203,12 @@ class ITEM
   virtual bool TryToUnstuck(character*, ushort, vector2d);
   virtual bool CheckPickUpEffect(character*);
   virtual bool IsPickable(character*) const;
+  virtual bool IsVisible() const { return Visible; }
+  virtual void SetIsVisible(bool What) { Visible = What; }
  protected:
   virtual void VirtualConstructor(bool);
   bool IsActivated;
+  bool Visible;
 ); 
 
 class ITEM

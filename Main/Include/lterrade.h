@@ -123,7 +123,7 @@ class OLTERRAIN
   virtual bool CanBeOpenedByAI() { return !IsLocked() && CanBeOpened(); }
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual bool CanBeDug() const { return true; }
-  virtual void HasBeenHitBy(item*, float, uchar, bool);
+  virtual void HasBeenHitBy(item*, float, uchar);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
   virtual void SetLockType(uchar What) { LockType = What; }
@@ -377,7 +377,7 @@ class OLTERRAIN
   virtual void BeKicked(character*, float);
   virtual bool ReceiveDamage(character*, short, uchar);
   virtual bool CanBeDug() const { return true; }
-  virtual void HasBeenHitBy(item*, float, uchar, bool);
+  virtual void HasBeenHitBy(item*, float, uchar);
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(STONE), false); }
   virtual std::string GetNameSingular() const { return "broken door"; }

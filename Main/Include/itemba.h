@@ -34,8 +34,6 @@ struct itemdatabase
   uchar WeaponCategory;
   bool IsPolymorphSpawnable;
   bool IsAutoInitializable;
-  ushort OneHandedStrengthPenalty;
-  ushort OneHandedToHitPenalty;
   uchar Category;
   ushort SoundResistance;
   ushort EnergyResistance;
@@ -73,6 +71,7 @@ struct itemdatabase
   uchar ForcedVisualEffects;
   uchar Roundness;
   ushort GearStates;
+  bool IsTwoHanded;
 };
 
 class itemprototype
@@ -126,6 +125,7 @@ class item : public object
   virtual bool IsGoldenEagleShirt() const { return false; }
   virtual bool CanBeRead(character*) const { return false; }
   virtual bool Read(character*) { return false; }
+  virtual void FinishReading(character*) { }
   virtual void ReceiveHitEffect(character*, character*) { }
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
@@ -223,8 +223,6 @@ class item : public object
   DATABASEVALUE(uchar, WeaponCategory);
   DATABASEBOOL(IsPolymorphSpawnable);
   DATABASEBOOL(IsAutoInitializable);
-  DATABASEVALUEWITHPARAMETER(ushort, OneHandedStrengthPenalty, character*);
-  DATABASEVALUEWITHPARAMETER(ushort, OneHandedToHitPenalty, character*);
   DATABASEVALUE(uchar, Category);
   DATABASEVALUE(ushort, SoundResistance);
   DATABASEVALUE(ushort, EnergyResistance);
@@ -261,6 +259,7 @@ class item : public object
   DATABASEVALUE(uchar, ForcedVisualEffects);
   DATABASEVALUE(uchar, Roundness);
   DATABASEVALUE(ushort, GearStates);
+  DATABASEBOOL(IsTwoHanded);
 
   //virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
@@ -282,6 +281,11 @@ class item : public object
   virtual void SetCarriedWeight(ulong What) { CarriedWeight = What; }
   virtual bool IsSimiliarTo(item*) const;
   virtual bool IsPickable(character*) const { return true; }
+  virtual bool CanBeSeenByPlayer() const;
+  virtual bool CanBeSeenBy(character*) const;
+  virtual std::string Description(uchar) const;
+  virtual bool IsVisible() const { return true; }
+  virtual void SetIsVisible(bool) { }
 
  protected:
   virtual void LoadDataBaseStats();

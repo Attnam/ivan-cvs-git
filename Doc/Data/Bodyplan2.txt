@@ -1,17 +1,17 @@
-Potkiminen onnistuu vain kahdella jalalla.
-Jos molemmat kädet on poissa, voi vain purra.
-Liikkuminen on 3 kertaa hitaampaa jos on vain yksi jalka.
-Liikkuminen on 10 kertaa hitaampaa jos ei ole jalkoja.
-Dodgaus on vaikeampaa jos on vähemmän jalkoja.
+//Potkiminen onnistuu vain kahdella jalalla.
+//Jos molemmat kädet on poissa, voi vain purra.
+//Liikkuminen on 3 kertaa hitaampaa jos on vain yksi jalka.
+//Liikkuminen on 10 kertaa hitaampaa jos ei ole jalkoja.
+//Dodgaus on vaikeampaa jos on vähemmän jalkoja.
 Oven avaaminen/sulkeminen on 3 kertaa hitaampaa ilman käsiä.
 Diggaaminen vaatii käden.
 Heittäminen vaatii käden.
 Zappaaminen vaatii käden.
 Dippaaminen vaatii käden.
 Uhraaminen vaatii käden.
-Wieldaaminen vaatii käden.
+//Wieldaaminen vaatii käden.
 
-Wieldattuja tavaroita on kaksi: oikea ja vasen.
+//Wieldattuja tavaroita on kaksi: oikea ja vasen.
 Osumistarkkuus kärsii jos kaksi asetta on wieldattuna; se puolitetaan.
 Tätä voi myöhemmin parantaa two weapon style skillillä.
 Kilvilläkin on category "weapon" skill ja single weapon skill.

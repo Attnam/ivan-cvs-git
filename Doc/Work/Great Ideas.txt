@@ -11,7 +11,7 @@ Ghost-Überpriestit.
 Thougth Control.
 Mikroaaltouuni.
 Different types of item enchantments.
-Random gods.
+(r) Random gods.
 Ego monsters. (also named ones)
 Monster, item and god memories.
 The Saveloader.
@@ -35,3 +35,4 @@ Family. And lost siblings that can be found by digging in the World Map.
 The Reaper.
 Script event system.
 Intergame pets.
+Player god.

@@ -94,7 +94,7 @@ class lsquare : public square
   void SetGLTerrain(glterrain*);
   void SetOLTerrain(olterrain*);
   void ApplyScript(squarescript*, room*);
-  virtual bool CanBeSeen(bool = false) const;
+  virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void MoveCharacter(lsquare*);
   ushort GetRawLuminance() const;
@@ -113,7 +113,7 @@ class lsquare : public square
   fluid* GetFluid() const { return Fluid; }
   void SetFluid(fluid* What) { Fluid = What; }
   void RemoveFluid();
-  void HasBeenHitBy(item*, float, uchar, bool);
+  void HasBeenHitBy(item*, float, uchar);
   void TeleportEverything(character*);
   bool DipInto(item*, character*);
   void DrawCharacterSymbols();

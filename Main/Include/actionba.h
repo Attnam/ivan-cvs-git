@@ -31,8 +31,8 @@ class action
 {
  public:
   typedef actionprototype prototype;
-  action() : Actor(0), Volume(0), Weight(0) { }
-  action(character* Actor) : Actor(Actor), Volume(0), Weight(0) { }
+  action() : Actor(0), Volume(0), Weight(0), DNDMode(false) { }
+  action(character* Actor) : Actor(Actor), Volume(0), Weight(0), DNDMode(false) { }
   virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
@@ -43,7 +43,7 @@ class action
   virtual bool AllowFoodConsumption() const { return true; }
   virtual bool AllowDisplace() const { return true; }
   virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&) { }
+  virtual void Load(inputfile&);
   virtual bool GetRestRegenerationBonus() const { return false; }
   //virtual ulong GetWeight() const { return 0; }
   virtual void DropUsedItems() { }
@@ -59,12 +59,15 @@ class action
   void SetVolume(ulong What) { Volume = What; }
   ulong GetWeight() const { return Weight; }
   void SetWeight(ulong What) { Weight = What; }
+  bool InDNDMode() const { return DNDMode; }
+  void SetInDNDMode(bool What) { DNDMode = What; }
 
  protected:
   virtual void VirtualConstructor() { }
   character* Actor;
   ulong Volume;
   ulong Weight;
+  bool DNDMode;
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__

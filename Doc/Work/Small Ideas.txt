@@ -37,7 +37,7 @@ Vomiting in a shop should have a special effect.
 Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
-Wood types. (wood is a _bit_ generic)
+Wood and stone types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 List of killed monsters and list of monsters killed by pets.
@@ -214,7 +214,7 @@ Bananas should act as boomerangs when thrown.
 Zombies should spoil.
 Kicking bodyparts and corpses on the ground should spill blood.
 *Average based difficulty!
-*Strength and weapon weight should affect attack speed!
+//*Strength and weapon weight should affect attack speed!
 One must be able to use a stethoscope on doors.
 //Item list to lookmode.
 Jammed bananas.
@@ -246,3 +246,6 @@ WoDC should clone its own material to created doors.
 One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
 Wishing for corpse should give something.
 In script, Square, Random's Walkability should default to true.
+Poison should spread from bodypart from bodypart.
+Titles and bonuses.
+Information pictures to message pannel

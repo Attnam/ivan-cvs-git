@@ -19,6 +19,7 @@ valuemap protocontainer<room>::CodeNameMap;
 #include "team.h"
 #include "game.h"
 #include "save.h"
+#include "lterraba.h"
 
 void shop::HandleInstantiatedCharacter(character* Character)
 {
@@ -31,8 +32,8 @@ void shop::Enter(character* Customer)
   if(Customer->IsPlayer())
     if(Master)
       {
-	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
-	  if(Master->GetSquareUnder()->CanBeSeenFrom(Customer->GetSquareUnder()->GetPos(), Customer->LOSRangeSquare()))
+	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->CanBeSeenBy(Master))
+	  if(Master->CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CHARNAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("Something welcomes you warmly to the shop.");
@@ -40,26 +41,30 @@ void shop::Enter(character* Customer)
     else
       ADD_MESSAGE("The shop appears to be deserted.");
 }
+
 /* item* ForSale can also be in chest or other container, so don't assume anything else in this function */
+
 bool shop::PickupItem(character* Customer, item* ForSale)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
+  /* This should depend on charisma */
+
   ulong Price = ForSale->GetPrice();
 
   if(!Customer->IsPlayer())
-    if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
+    if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
-	Customer->SetMoney(Customer->GetMoney() - Price);
-	Master->SetMoney(Master->GetMoney() + Price);
+	Customer->EditMoney(-Price);
+	Master->EditMoney(Price);
 	return true;
       }
     else
       return false;
 
-  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Customer->CanBeSeenBy(Master))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 	{
@@ -79,8 +84,8 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
 	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
 	    {
-	      Customer->SetMoney(Customer->GetMoney() - Price);
-	      Master->SetMoney(Master->GetMoney() + Price);
+	      Customer->EditMoney(-Price);
+	      Master->EditMoney(+Price);
 	      return true;
 	    }
 	  else
@@ -107,20 +112,22 @@ bool shop::DropItem(character* Customer, item* ForSale)
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
+  /* This should depend on charisma */
+
   ulong Price = (ForSale->GetPrice() >> 1);
 
   if(!Customer->IsPlayer())
-    if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
+    if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
-	Customer->SetMoney(Customer->GetMoney() + Price);
-	Master->SetMoney(Master->GetMoney() - Price);
+	Customer->EditMoney(Price);
+	Master->EditMoney(-Price);
 	return true;
       }
     else
       return false;
 
-  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Customer->CanBeSeenBy(Master))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 	{
@@ -168,8 +175,8 @@ void temple::Enter(character* Pilgrim)
   if(Pilgrim->IsPlayer())
     if(Master)
       {
-	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
-	  if(Master->GetSquareUnder()->CanBeSeenFrom(Pilgrim->GetSquareUnder()->GetPos(), Pilgrim->LOSRangeSquare()))
+	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->CanBeSeenBy(Master))
+	  if(Master->CanBeSeenByPlayer())
 	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->PossessivePronoun().c_str(), game::GetGod(DivineMaster)->Name().c_str());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->Name().c_str());
@@ -180,25 +187,22 @@ void temple::Enter(character* Pilgrim)
 
 void shop::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(!Master)
-    return;
-
-  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetTeam()->GetRelation(Infidel->GetTeam()) != HOSTILE && Square->CanBeSeenBy(Master))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Infidel->Hostility(Master);
     }
 }
 
-bool shop::ConsumeItem(character* Customer, item*)
+bool shop::ConsumeItem(character* Customer, item* Item)
 {
-  if(!Master)
+  if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
   if(!Customer->IsPlayer())
     return false;
 
-  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Customer->CanBeSeenBy(Master))
     {
       ADD_MESSAGE("\"Buy that first, please.\"");
       return false;
@@ -223,6 +227,7 @@ void cathedral::Enter(character* Visitor)
 }
 
 /* Item can also be in a chest, so don't assume anything else... */
+
 bool cathedral::PickupItem(character* Visitor, item* Item)
 {
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
@@ -273,7 +278,6 @@ void cathedral::KickSquare(character* Kicker, lsquare* Square)
   if(Kicker->IsPlayer() && Square->GetStack()->GetItems())
     {
       ADD_MESSAGE("You have harmed the property of the Cathedral!");
-
       Kicker->GetTeam()->Hostility(game::GetTeam(2));
     }
 }
@@ -330,10 +334,7 @@ bool cathedral::Drink(character* Thirsty) const
 
 void shop::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(!Master)
-    return;
-
-  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetTeam()->GetRelation(Infidel->GetTeam()) != HOSTILE && Square->CanBeSeenBy(Master))
     {
       ADD_MESSAGE("\"You infidel!\"");
       Infidel->Hostility(Master);
@@ -391,9 +392,9 @@ void library::Enter(character* Customer)
   if(Customer->IsPlayer())
     if(Master)
       {
-	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
-	  if(Master->GetSquareUnder()->CanBeSeenFrom(Customer->GetSquareUnder()->GetPos(), Customer->LOSRangeSquare()))
-	    ADD_MESSAGE("%s looks at you suspiciously.", Master->CHARNAME(DEFINITE));
+	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->CanBeSeenBy(Master))
+	  if(Master->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s looks at you suspiciously. \"Be quiet in the library!\" %s whispers.", Master->CHARNAME(DEFINITE), Master->PersonalPronoun().c_str());
 	  else
 	    ADD_MESSAGE("You feel somebody staring at you.");
       }
@@ -406,21 +407,24 @@ bool library::PickupItem(character* Customer, item* ForSale)
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
+  /* This should depend on charisma */
+
   ulong Price = ForSale->GetPrice();
 
   if(!Customer->IsPlayer())
     {
-      if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
+      if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
 	{
 	  ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
-	  Customer->SetMoney(Customer->GetMoney() - Price);
-	  Master->SetMoney(Master->GetMoney() + Price);
+	  Customer->EditMoney(-Price);
+	  Master->EditMoney(Price);
 	  return true;
 	}
       else
 	return false;
     }
-  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+
+  if(Customer->CanBeSeenBy(Master))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 	{
@@ -440,8 +444,8 @@ bool library::PickupItem(character* Customer, item* ForSale)
 
 	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
 	    {
-	      Customer->SetMoney(Customer->GetMoney() - Price);
-	      Master->SetMoney(Master->GetMoney() + Price);
+	      Customer->EditMoney(-Price);
+	      Master->EditMoney(Price);
 	      return true;
 	    }
 	  else
@@ -468,10 +472,12 @@ bool library::DropItem(character* Customer, item* ForSale)
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
     return true;
 
+  /* This should depend on charisma */
+
   ulong Price = (ForSale->GetPrice() >> 1);
 
   if(!Customer->IsPlayer())
-    if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
+    if(Price && Customer->CanBeSeenByPlayer() && Master->GetMoney() >= Price)
       {
 	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
 	Customer->SetMoney(Customer->GetMoney() + Price);
@@ -481,7 +487,7 @@ bool library::DropItem(character* Customer, item* ForSale)
     else
       return false;
 
-  if(Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Customer->CanBeSeenBy(Master))
     {
       if(ForSale->IsHeadOfElpuri() || ForSale->IsGoldenEagleShirt() || ForSale->IsPetrussNut() || ForSale->IsTheAvatar())
 	{
@@ -497,12 +503,12 @@ bool library::DropItem(character* Customer, item* ForSale)
 
       if(Master->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"What a interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
+	  ADD_MESSAGE("\"What an interesting %s. I'll pay %d gold pieces for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
-	      Customer->SetMoney(Customer->GetMoney() + Price);
-	      Master->SetMoney(Master->GetMoney() - Price);
+	      Customer->EditMoney(Price);
+	      Master->EditMoney(-Price);
 	      return true;
 	    }
 	  else
@@ -520,12 +526,9 @@ bool library::DropItem(character* Customer, item* ForSale)
 
 void library::KickSquare(character* Infidel, lsquare* Square)
 {
-  if(!Master)
-    return;
-
-  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetTeam()->GetRelation(Infidel->GetTeam()) != HOSTILE && Square->CanBeSeenBy(Master))
     {
-      ADD_MESSAGE("\"You book hater!\"");
+      ADD_MESSAGE("\"You book vandal!\"");
       Infidel->Hostility(Master);
     }
 }
@@ -537,10 +540,7 @@ bool library::ConsumeItem(character*, item*)
 
 void library::TeleportSquare(character* Infidel, lsquare* Square)
 {
-  if(!Master)
-    return;
-
-  if(Square->GetStack()->GetItems() && Infidel->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
+  if(Square->GetStack()->GetItems() && Master && Infidel != Master && Master->GetTeam()->GetRelation(Infidel->GetTeam()) != HOSTILE && Square->CanBeSeenBy(Master))
     {
       ADD_MESSAGE("\"You book hater!\"");
       Infidel->Hostility(Master);
@@ -548,47 +548,57 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
 }
 
 /* returns true if player agrees to continue */
-bool library::DestroyTerrain(character* Infidel, olterrain*) 
+
+bool library::DestroyTerrain(character* Infidel, olterrain* Terrain) 
 { 
+  if(!Master || Infidel == Master || Master->GetTeam()->GetRelation(Infidel->GetTeam()) == HOSTILE || !Terrain->CanBeSeenBy(Master))
+    return true;
+
   ADD_MESSAGE("The librarian might not like this.");
+
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
-      if(Master)
-	{
-	  /* The libarian is telepathic and senses the attack and that may not be the perfect way to handle this */
-	  ADD_MESSAGE("\"You book hater!\"");
-	  Infidel->Hostility(Master);
-	}
+      ADD_MESSAGE("\"You book worm!\"");
+      Infidel->Hostility(Master);
       return true;
     }
-  return false; 
+  else
+    return false; 
 }
 
 /* returns true if player agrees to continue */
+
 bool cathedral::DestroyTerrain(character* Infidel, olterrain*) 
-{ 
+{
+  if(game::GetTeam(2)->GetRelation(Infidel->GetTeam()) == HOSTILE)
+    return true;
+
   ADD_MESSAGE("This is prohibited in the cathedral.");
+
   if(game::BoolQuestion("Are you sure? [y/N]"))
     {
       Infidel->GetTeam()->Hostility(game::GetTeam(2));
       return true;
     }
-  return false; 
+  else
+    return false; 
 }
 
 /* returns true if player agrees to continue */
-bool shop::DestroyTerrain(character* Infidel, olterrain*) 
-{ 
+
+bool shop::DestroyTerrain(character* Infidel, olterrain* Terrain) 
+{
+  if(!Master || Infidel == Master || Master->GetTeam()->GetRelation(Infidel->GetTeam()) == HOSTILE || !Terrain->CanBeSeenBy(Master))
+    return true;
+
   ADD_MESSAGE("The shopkeeper might not like this.");
+
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
-      if(Master)
-	{
-	  /* The libarian is telepathic and senses the attack and that may not be the perfect way to handle this */
-	  ADD_MESSAGE("\"You communist!\"");
-	  Infidel->Hostility(Master);
-	}
+      ADD_MESSAGE("\"You communist!\"");
+      Infidel->Hostility(Master);
       return true;
     }
-  return false; 
+  else
+    return false; 
 }

@@ -14,8 +14,6 @@ item
 	WeaponCategory = UNCATEGORIZED;
 	IsPolymorphSpawnable = true;
 	IsAutoInitializable = true;
-	OneHandedStrengthPenalty = 0;
-	OneHandedToHitPenalty = 0;
 	Category = MISC;
 	SoundResistance = 0;
 	EnergyResistance = 0;
@@ -51,6 +49,7 @@ item
 	CanBeGeneratedInContainer = true;
 	/* Obligatory: Roundness */
 	GearStates = 0;
+	IsTwoHanded = false;
 }
 
 materialcontainer
@@ -198,6 +197,7 @@ meleeweapon
 		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 15;
+		IsTwoHanded = true;
 	}
 
 	Config CURVEDTWOHANDEDSWORD;
@@ -219,6 +219,7 @@ meleeweapon
 		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
 		MaterialConfigChances = { 2, 250, 10; }
 		Roundness = 15;
+		IsTwoHanded = true;
 	}
 
 	Config SPEAR;
@@ -238,6 +239,7 @@ meleeweapon
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
 		Roundness = 10;
+		IsTwoHanded = true;
 	}
 
 	Config AXE;
@@ -258,6 +260,7 @@ meleeweapon
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 4, 100, 100, 50, 10; }
 		Roundness = 20;
+		IsTwoHanded = true;
 	}
 
 	Config POLEAXE;
@@ -276,6 +279,7 @@ meleeweapon
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 50, 10; }
 		Roundness = 20;
+		IsTwoHanded = true;
 	}
 
 	Config SPIKEDMACE;
@@ -296,6 +300,7 @@ meleeweapon
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 2, 100, 10; }
 		Roundness = 30; /* we count the handle, too */
+		IsTwoHanded = true;
 	}
 }
 
@@ -353,6 +358,7 @@ neercseulb /* meleeweapon-> */
 	IsPolymorphable = false;
 	Alias == "Neerc Se-ulb";
 	Roundness = 35;
+	IsTwoHanded = true;
 }
 
 pickaxe /* meleeweapon-> */
@@ -373,6 +379,7 @@ pickaxe /* meleeweapon-> */
 	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
+	IsTwoHanded = true;
 }
 
 bodyarmor
@@ -382,6 +389,7 @@ bodyarmor
 	FormModifier = 20;
 	IsAbstract = true;
 	Roundness = 70;
+	IsTwoHanded = true;
 
 	Config CHAINMAIL;
 	{
@@ -569,6 +577,7 @@ bone
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
 	Roundness = 20;
+	IsTwoHanded = true;
 }
 
 loaf
@@ -724,6 +733,7 @@ pineapple
 	NameSingular = "pineapple";
 	MainMaterialConfig == PINEAPPLEFLESH;
 	Roundness = 90;
+	IsTwoHanded = true;
 }
 
 palmbranch
@@ -740,6 +750,7 @@ palmbranch
 	NameSingular = "palm branch";
 	MainMaterialConfig == PALMLEAF;
 	Roundness = 80;
+	IsTwoHanded = true;
 }
 
 whip /* meleeweapon-> */
@@ -777,6 +788,7 @@ backpack /* materialcontainer-> */
 	ContainedMaterialConfig == GUNPOWDER;
 	Alias == "explosives";
 	Roundness = 70;
+	IsTwoHanded = true;
 }
 
 holybook
@@ -796,6 +808,7 @@ holybook
 	MainMaterialConfig == PARCHMENT;
 	Price = 200;
 	Roundness = 70;
+	IsTwoHanded = true;
 }
 
 fiftymillionroubles
@@ -889,6 +902,7 @@ mine /*materialcontainer-> */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig == GUNPOWDER;
 	Roundness = 100;
+	IsTwoHanded = true;
 }
 
 wandofhaste /* wand-> */
@@ -953,6 +967,7 @@ cloak
 	MainMaterialConfig = { 3, LEATHER, FABRIC, CLOTH; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
 	Roundness = 60;
+	IsTwoHanded = true;
 }
 
 boot
@@ -1069,6 +1084,7 @@ bodypart
 	IsAutoInitializable = false;
 	NPModifier = 100;
 	IsAbstract = true;
+	IsTwoHanded = true;
 }
 
 head /* bodypart-> */
@@ -1159,6 +1175,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	MainMaterialConfig == ELPURIFLESH;
 	IsPolymorphable = false;
 	Roundness = 80;
+	IsTwoHanded = true;
 }
 
 corpse
@@ -1176,6 +1193,7 @@ corpse
 	NameSingular = "corpse";
 	OKVisualEffects = ROTATE|MIRROR|FLIP;
 	Roundness = 50;
+	IsTwoHanded = true;
 }
 
 wandoflocking /* wand-> */
@@ -1220,6 +1238,7 @@ chest
 	Possibility = 100;
 	CanBeGeneratedInContainer = false;
 	Roundness = 60;
+	IsTwoHanded = true;
 }
 
 wandofdoorcreation /* wand-> */
@@ -1235,7 +1254,8 @@ beartrap
 	MainMaterialConfig == IRON;
 	NameSingular = "bear trap";
 	Possibility = 100;
-	CanBeGeneratedInContainer = false; /* Activated code might cause problems other wise */
+	CanBeGeneratedInContainer = false; /* Activated code might cause problems otherwise */
 	IsPickableByAI = false;
-	BitmapPos = 32,304;
+	BitmapPos = 32, 304;
+	IsTwoHanded = true;
 }

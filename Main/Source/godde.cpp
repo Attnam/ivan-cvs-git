@@ -286,7 +286,7 @@ void silva::PrayGoodEffect()
 
 		if(Char)
 		  {
-		    if(Char->GetSquareUnder()->CanBeSeen())
+		    if(Char->CanBeSeenByPlayer())
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHARNAME(DEFINITE));
 
 		    Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);

@@ -241,6 +241,21 @@ character* contentscript<character>::Instantiate() const
   return Instance;
 }
 
+contentscript<item>::contentscript<item>()
+{
+  INITMEMBER(IsVisible);
+}
+
+item* contentscript<item>::Instantiate() const
+{
+  item* Instance = contentscripttemplate<item>::Instantiate();
+
+  if(GetIsVisible(false))
+    Instance->SetIsVisible(*GetIsVisible());
+
+  return Instance;
+}
+
 contentscript<olterrain>::contentscript<olterrain>()
 {
   INITMEMBER(VisualEffects);

@@ -290,13 +290,14 @@ class character : public entity, public id
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
   virtual short GetMaxHP() const;
-  virtual float GetBattleAttributeModifier() const;
+  virtual uchar GetMoveEase() const;
   virtual float CalculateDodgeValue() const;
   virtual bool RaiseGodRelations();
   virtual bool LowerGodRelations();
   virtual bool GainDivineKnowledge();
   virtual ulong GetMoney() const { return Money; }
   virtual void SetMoney(ulong What) { Money = What; }
+  virtual void EditMoney(long What) { Money += What; }
   virtual void SetHomeRoom(uchar What) { HomeRoom = What; }
   virtual uchar GetHomeRoom() const { return HomeRoom; }
   virtual bool Displace(character*);
@@ -318,10 +319,10 @@ class character : public entity, public id
   virtual uchar RandomizeReply(uchar, bool*);
   virtual ushort DangerLevel() const;
   virtual void CreateInitialEquipment() { }
-  virtual void DisplayInfo();
+  virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual void TestWalkability();
-  virtual void EditAP(long What) { AP += What; }
+  virtual void EditAP(long What) { AP += What; if(AP > 1200) AP = 1200; }
   virtual void EditNP(long What) { NP += What; }
   virtual void SetSize(ushort);
   virtual ushort GetSize() const;
@@ -378,10 +379,9 @@ class character : public entity, public id
   virtual void SetLeftWielded(item*) { }
   virtual void GoOn(go*);
   virtual bool CheckKick() const;
-  virtual short GetLengthOfOpen(vector2d) const { return -1000; }
-  virtual short GetLengthOfClose(vector2d) const { return -1000; }
+  virtual uchar OpenMultiplier() const { return 2; }
+  virtual uchar CloseMultiplier() const { return 2; }
   virtual bool CheckThrow() const { return true; }  
-  virtual bool CheckApply() const { return true; }
   virtual bool CheckOffer() const { return true; }
   virtual ushort GetTemporaryStateCounter(uchar) const;
   virtual void EditTemporaryStateCounter(uchar, short);
@@ -553,7 +553,7 @@ class character : public entity, public id
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
   virtual long CalculateStateAPGain(long) const;
-  virtual long CalculateMoveAPRequirement(long What) const { return What; }
+  virtual long CalculateMoveAPRequirement(uchar Difficulty) const { return (long(GetAttribute(AGILITY)) - 200) * Difficulty * GetMoveEase() / 20; }
   virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
@@ -578,6 +578,16 @@ class character : public entity, public id
   virtual void LycanthropyHandler();
   virtual void SaveLife();
   virtual void PolymorphRandomly(ushort);
+  virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
+  virtual void StartReading(item*, ulong);
+  virtual void DexterityAction(ushort);
+  virtual void CharacterSpeciality() { }
+  virtual void PrintBeginInvisibilityMessage() const;
+  virtual void PrintEndInvisibilityMessage() const;
+  virtual void PrintBeginSeeInvisibleMessage() const;
+  virtual void PrintEndSeeInvisibleMessage() const;
+  virtual bool CanBeSeenByPlayer() const;
+  virtual bool CanBeSeenBy(character*) const;
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   virtual void AttachBodyPart(bodypart*, ushort);

@@ -147,7 +147,7 @@ petrus
 	TotalSize = 225;
 	BaseEmitation = 333;
 	CanRead = true;
-	NameSingular = "high priest"
+	NameSingular = "high priest";
 	PostFix = "of the Great Frog";
 	IsPolymorphable = false;
 	CanBeWished = false;
@@ -719,8 +719,8 @@ dolphin
 	DefaultAgility = 30;
 	DefaultEndurance = 10;
 	DefaultPerception = 30;
-	DefaultIntelligence = 99;
-	DefaultWisdom = 99;
+	DefaultIntelligence = 100;
+	DefaultWisdom = 100;
 	DefaultCharisma = 30;
 	DefaultMana = 0;
 	StandVerb = "swimming";
@@ -791,7 +791,7 @@ petrusswife
 	DefaultAgility = 7;
 	DefaultEndurance = 5;
 	DefaultPerception = 21;
-	DefaultIntelligence = 7;
+	DefaultIntelligence = 10;
 	DefaultWisdom = 10;
 	DefaultCharisma = 80;
 	DefaultMana = 20;
@@ -832,6 +832,7 @@ petrusswife
 
 	Config 4;
 	{
+		DefaultIntelligence = 7;
 		HairColor = rgb(200, 96, 0);
 		HeadBitmapPos = 112, 32;
 		PostFix = "number 4";

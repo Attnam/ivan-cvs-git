@@ -26,10 +26,8 @@ void msgsystem::AddMessage(const char* Format, ...)
   vsprintf(Message, Format, AP);
   va_end(AP);
 
-  if(Message[0] > 0x60 && Message[0] < 0x7B)
-    Message[0] &= ~0x20; // Very guru and odd. Capitalizes the first letter!
-
   std::string Buffer(Message);
+  Capitalize(Buffer);
 
   ushort c;
 

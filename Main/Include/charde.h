@@ -67,6 +67,8 @@ class ABSTRACT_CHARACTER
   virtual float CalculateLeftAttackStrength() const;
   virtual float CalculateRightToHitValue() const;
   virtual float CalculateLeftToHitValue() const;
+  virtual long CalculateRightAPCost() const;
+  virtual long CalculateLeftAPCost() const;
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
@@ -89,8 +91,8 @@ class ABSTRACT_CHARACTER
   virtual uchar GetArms() const;
   virtual bool CheckKick() const;
   //virtual float GetAPStateMultiplier() const;
-  virtual short GetLengthOfOpen(vector2d) const;
-  virtual short GetLengthOfClose(vector2d) const;
+  virtual uchar OpenMultiplier() const;
+  virtual uchar CloseMultiplier() const;
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
   virtual void SetHelmet(item*);
@@ -127,12 +129,29 @@ class ABSTRACT_CHARACTER
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
   virtual bool AddSpecialSkillInfo(felist&) const;
   virtual bool CheckBalance(float);
-  virtual long CalculateMoveAPRequirement(long) const;
+  virtual long CalculateMoveAPRequirement(uchar) const;
   virtual bool EquipmentHasNoPairProblems(ushort) const;
   virtual bool DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
+  virtual bool EquipmentEasilyRecognized(ushort) const;
+
+  virtual sweaponskill* GetCurrentRightSingleWeaponSkill() const { return CurrentRightSingleWeaponSkill; }
+  virtual void SetCurrentRightSingleWeaponSkill(sweaponskill* What) { CurrentRightSingleWeaponSkill = What; }
+  virtual sweaponskill* GetCurrentLeftSingleWeaponSkill() const { return CurrentLeftSingleWeaponSkill; }
+  virtual void SetCurrentLeftSingleWeaponSkill(sweaponskill* What) { CurrentLeftSingleWeaponSkill = What; }
+
+  virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
+  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
+  virtual ushort GetSingleWeaponSkills() const { return SingleWeaponSkill.size(); }
+  virtual void CharacterSpeciality();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void SignalEquipmentAdd(ushort);
+  virtual void SignalEquipmentRemoval(ushort);
+
   virtual uchar BodyParts() const { return 7; }
  protected:
+  virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
   virtual ushort GetBodyPartColor2(ushort, ushort);
@@ -144,6 +163,9 @@ class ABSTRACT_CHARACTER
   virtual bodypart* MakeBodyPart(ushort);
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
   virtual uchar AllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
+  std::vector<sweaponskill*> SingleWeaponSkill;
+  sweaponskill* CurrentRightSingleWeaponSkill;
+  sweaponskill* CurrentLeftSingleWeaponSkill;
 );
 
 class ABSTRACT_CHARACTER
@@ -159,6 +181,9 @@ class ABSTRACT_CHARACTER
   virtual float CalculateUnarmedToHitValue() const;
   virtual float CalculateKickToHitValue() const;
   virtual float CalculateBiteToHitValue() const;
+  virtual long CalculateUnarmedAPCost() const;
+  virtual long CalculateKickAPCost() const;
+  virtual long CalculateBiteAPCost() const;
   virtual void Kick(lsquare*);
   virtual void AddInfo(felist&) const;
   //virtual float CalculateTotalAttackStrength() const;

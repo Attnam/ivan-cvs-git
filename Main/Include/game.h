@@ -167,9 +167,10 @@ class game
   static void SetCursorPos(vector2d What) { CursorPos = What; }
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
-  static bool PositionQuestionController();
+  //static bool PositionQuestionController();
   static int KeyQuestion(const std::string&, int, int, ...);
-  static void LookBadKeyHandler(vector2d, int);
+  static void LookKeyHandler(vector2d, int);
+  static void NameKeyHandler(vector2d, int);
   static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);

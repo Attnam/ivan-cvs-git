@@ -8,17 +8,17 @@ Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
 //Menua vasemmalle.
 Damage estimate kuntoon. (timo)
 //Werewolfit kuntoon. (timo)
-Paneeli kuntoon:
+//Paneeli kuntoon:
 //* Uusi siluetti. (kahvi)
-* Itemit sen ymp‰rille.
+//* Itemit sen ymp‰rille.
 //* Attribuutit ja status alle.
 Efektien l‰pik‰yminen. (timo)
 Miina kuntoon. (timo)
-Lookmoden messaget kuntoon. (timo)
-Bodypartien ja actioneiden scoret. (timo)
-Luut kuntoon. (timo)
-BloodColorin animaatiostuktuuri. (timo)
-Paniikki. (timo)
+//Lookmoden messaget kuntoon. (timo)
+(s) Bodypartien ja actioneiden scoret. (timo)
+(s) Luut kuntoon. (timo)
+(s) BloodColorin animaatiostuktuuri. (timo)
+(s) Paniikki. (timo)
 Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
 //Leather armorin nimi kuntoon. (hex)
 Taistelun tasapainotus. (timo)
@@ -69,4 +69,9 @@ Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
 Shirt.
 Kamikaze dwarves.
-Naming hostile monsters.
+//Naming hostile monsters.
+The flight of wielded item and amulet.
+Cats & rat corpses.
+Things thrown at doors.
+%s"
+CollectCreatures

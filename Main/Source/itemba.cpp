@@ -60,11 +60,13 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
     {
       if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
+
       lsquare* JustHit = game::GetCurrentLevel()->GetLSquare(Pos + game::GetMoveVector(Direction));
+
       if(!(JustHit->GetOLTerrain()->IsWalkable()))
 	{
 	  Breaks = true;
-	  JustHit->HasBeenHitBy(this, Speed, Direction, JustHit->CanBeSeen());
+	  JustHit->HasBeenHitBy(this, Speed, Direction);
 	  break;
 	}
       else
@@ -116,9 +118,8 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
     {
       if(Dude->IsPlayer())
 	ADD_MESSAGE("%s misses you.", CHARNAME(DEFINITE));
-      else
-	if(Dude->GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s misses %s.", CHARNAME(DEFINITE), Dude->CHARNAME(DEFINITE));
+      else if(Dude->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s misses %s.", CHARNAME(DEFINITE), Dude->CHARNAME(DEFINITE));
 
       return false;
     }
@@ -505,4 +506,25 @@ void item::DrawTo(bitmap* Bitmap, vector2d Pos, bool Animate) const
     Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
   else
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
+}
+
+bool item::CanBeSeenByPlayer() const
+{
+  return GetSquareUnder()->CanBeSeenByPlayer();
+}
+
+bool item::CanBeSeenBy(character* Who) const
+{
+  if(Who->IsPlayer())
+    return CanBeSeenByPlayer();
+  else
+    return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+}
+
+std::string item::Description(uchar Case) const
+{
+  if(CanBeSeenByPlayer())
+    return GetName(Case);
+  else
+    return "something";
 }

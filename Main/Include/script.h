@@ -171,8 +171,12 @@ class contentscript<character> : public contentscripttemplate<character>
 
 class contentscript<item> : public contentscripttemplate<item>
 {
+ public:
+  contentscript<item>();
+  virtual item* Instantiate() const;
  protected:
   virtual std::string ClassName() const { return "item"; }
+  DATAMEMBER(bool, IsVisible);
 };
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>

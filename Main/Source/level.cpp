@@ -990,7 +990,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	      if(game::IsValidPos(vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection)))
 		Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, vector2d(XPointer, YPointer) + game::GetMoveVector(DamageDirection));
 
-	      if(Square->CanBeSeen())
+	      if(Char->CanBeSeenByPlayer())
 		ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
 
 	      Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
@@ -1032,7 +1032,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
       character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
       if(Char)
-	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && ((Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+	if(Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE && Char->CanBeSeenBy(Leader))
 	  {
 	    ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	    return false;
@@ -1044,7 +1044,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     character* Char = GetLSquare(XPointer, YPointer)->GetCharacter();
 
     if(Char)
-      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->IsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
+      if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && Char->CanBeSeenBy(Leader))
 	{
 	  if(Char->GetAction() && Char->GetAction()->IsVoluntary())
 	    Char->GetAction()->Terminate(false);

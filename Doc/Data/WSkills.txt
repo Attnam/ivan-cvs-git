@@ -21,19 +21,19 @@ Category experience chart:
 Level	Succesful hits	Unuse penalty	Idle Turns for	Bonus
 	needed				level minus	%
 						
-0	0		0		-		0/0
-1	20		10/10000	50000		10/-5
-2	50		25/5000		30000		20/-10
-3	100		40/4000		25000		30/-15
-4	200		75/3000		20000		40/-20
-5	500		150/1500	15000		50/-25
-6	1000		200/1000	12500		60/-30
-7	2000		400/800		10000		70/-35
-8	4000		800/400		7500		80/-40
-9	10000		1000/200	5000		90/-45
-10	20000		1000/200	1600		100/-50
+0	0		10/50000	-		0/0
+1	20		15/25000	50000		10/-5
+2	50		25/20000	40000		20/-10
+3	100		50/15000	30000		30/-15
+4	200		75/5000		20000		40/-20
+5	500		100/3000	15000		50/-25
+6	1000		200/2500	12500		60/-30
+7	2000		600/2000	10000		70/-35
+8	5000		1000/1500	7500		80/-40
+9	10000		2500/1250	5000		90/-45
+10	20000		3000/1000	10000		100/-50
 
-Hit limit is 65500. Skill level confers a bonus of +10% per level to damage
+Hit limit is 50000. Skill level confers a bonus of +10% per level to damage
 and THV and -5% to AP cost.
 
 Single weapon experience chart:
@@ -41,17 +41,17 @@ Single weapon experience chart:
 Level	Succesful hits	Unuse penalty	Idle Turns for	Bonus
 	needed				level minus	%
 						
-0	0		0		-		0/0
-1	5		5/2500		5000		15/-7
-2	10		10/1500		3000		20/-9
-3	20		20/1000		2500		25/-11
-4	50		25/500		2000		30/-13
-5	100		100/500		1500		35/-15
-6	200		200/500		1250		40/-17
-7	500		250/250		1000		45/-19
-8	1000		500/125		750		50/-21
-9	2000		500/50		500		55/-23
-10	5000		500/25		160		60/-25
+0	0		5/10000		-		0/0
+1	5		5/10000		10000		15/-7
+2	10		5/4000		8000		20/-9
+3	20		15/3000		6000		25/-11
+4	50		25/2000		4000		30/-13
+5	100		50/1500		3000		35/-15
+6	200		150/1000	2000		40/-17
+7	500		250/750		1500		45/-19
+8	1000		500/500		1000		50/-21
+9	2000		1000/250	750		55/-23
+10	5000		1500/200	6000		60/-25
 
-Hit limit is 65500. Skill level confers a bonus of +15% to damage and THV
+Hit limit is 50000. Skill level confers a bonus of +15% to damage and THV
 and -7% to AP cost in the first level and +5%/-2% per level thereafter.
