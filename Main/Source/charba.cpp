@@ -1121,7 +1121,7 @@ void character::ApplyExperience()
 	if(GetAgilityExperience() > pow(1.18, long(GetAgility())) * 193)
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("Your agility challenges even the Valpuri's angels!");
+			ADD_MESSAGE("Your agility challenges even Valpuri's angels!");
 		else
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks faster.", CNAME(DEFINITE));
@@ -2366,6 +2366,7 @@ void character::EndPolymorph()
 
 		GetSquareUnder()->RemoveCharacter();
 		GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+		SetSquareUnder(0);
 
 		while(GetStack()->GetItems())
 			GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());

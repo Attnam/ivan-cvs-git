@@ -66,3 +66,5 @@ Money should weight something.
 AI should not practise cannibalism.
 !!!Silva must have pray effects.
 You should be able to read in dark when in WMode.
+Applying a pick-axe on a monster should be an attack.
+SWAT commandos shouldn't be burdened.
