@@ -10,7 +10,7 @@
 #include "colorbit.h"
 #include "strover.h"
 
-felist msgsystem::MessageHistory("Message history", WHITE, 100, true);
+felist msgsystem::MessageHistory("Message history", WHITE, 200, true);
 std::string msgsystem::LastMessage;
 ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;

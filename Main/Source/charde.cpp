@@ -169,23 +169,14 @@ void skeleton::CreateCorpse()
 
   for(ushort c = 0; c < Amount; ++c)
     GetLSquareUnder()->GetStack()->AddItem(new abone);
-}
 
-void elpuri::CreateCorpse()
-{
-  character::CreateCorpse();
-  GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
+  SetExists(false);
 }
 
 void petrus::CreateCorpse()
 {
   GetLSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
-}
-
-void ennerbeast::CreateCorpse()
-{
-  character::CreateCorpse();
-  GetLSquareUnder()->GetStack()->AddItem(new headofennerbeast);
+  SetExists(false);
 }
 
 void humanoid::Save(outputfile& SaveFile) const
@@ -2643,8 +2634,20 @@ void humanoid::AddInfo(felist& Info) const
   Info.AddEntry(std::string("Main attack strength: ") + int(GetMainAttackStrength()), LIGHTGRAY);
   Info.AddEntry(std::string("Secondary attack strength: ") + int(GetSecondaryAttackStrength()), LIGHTGRAY);
   Info.AddEntry(std::string("Main to hit value: ") + int(GetMainToHitValue()), LIGHTGRAY);
-  Info.AddEntry(std::string("Secondary to hit value: ") + int(GetSecondaryToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Secondary to hit value: ") + int(GetSecondaryToHitValue()), LIGHTGRAY);  
+}
 
-  
+void elpuri::CreateHead()
+{
+  /*SetHead(new headofelpuri);
+  GetHead()->PlaceToSlot(GetHeadSlot());
+  GetHead()->SetSize(HeadSize(TotalSize()));*/
+}
+
+void ennerbeast::CreateHead()
+{
+  /*SetHead(new headofennerbeast);
+  GetHead()->PlaceToSlot(GetHeadSlot());
+  GetHead()->SetSize(HeadSize(TotalSize()));*/
 }
 

@@ -1350,6 +1350,7 @@ bool character::WizardMode()
       if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [y/N]"))
 	{
 	  game::EnableWizardMode();
+	  ADD_MESSAGE("Wizard mode activated.");
 
 	  for(ushort x = 0; x < 5; ++x)
 	    GetStack()->AddItem(new scrollofwishing);
@@ -1357,6 +1358,8 @@ bool character::WizardMode()
     }
   else
     {
+      ADD_MESSAGE("Got some scrolls of wishing.");
+
       for(ushort x = 0; x < 5; ++x)
 	GetStack()->AddItem(new scrollofwishing);
     }
@@ -1788,11 +1791,10 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
     return ToBeThrown->Fly(this, Direction, GetStrength());
 }
 
-void character::HasBeenHitByItem(item* Thingy, float Speed)
+void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
 {
-  /*ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000.0f) + (RAND() % 5 ? 1 : 0);
-
-  SetHP(GetHP() - Damage);
+  ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * sqrt(Speed) / 5000000000.0f) + (RAND() % 5 ? 1 : 0);
+  ReceiveDamage(Thrower, Damage, PHYSICALDAMAGE, ALL);
 
   if(GetIsPlayer())
     ADD_MESSAGE("%s hits you.", Thingy->CHARNAME(DEFINITE));
@@ -1804,7 +1806,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
     ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 
   SpillBlood(1 + RAND() % 1);
-  CheckDeath(std::string("died by thrown ") + Thingy->CHARNAME(INDEFINITE) );*/
+  CheckDeath(std::string("died by a flying ") + Thingy->CHARNAME(UNARTICLED));
 }
 
 bool character::DodgesFlyingItem(item*, float Speed)

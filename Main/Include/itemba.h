@@ -90,7 +90,7 @@ class item : public object
   virtual long Score() const { return 0; }
   virtual bool Destroyable() const { return true; }
   virtual bool Fly(character*, uchar, ushort);
-  virtual bool HitCharacter(character*, float, character*);
+  virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual item* PrepareForConsuming(character*);
   virtual item* Clone(bool = true, bool = true) const = 0;

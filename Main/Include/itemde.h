@@ -1934,6 +1934,7 @@ class ITEM
   virtual void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual void AddConsumeEndMessage(character*) const;
  protected:
   virtual ushort GetMaterialColor0() const;
   virtual ushort GetMaterialColor1() const;

@@ -1324,7 +1324,7 @@ void game::BusyAnimation(bitmap* Buffer)
     {
       vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
-      Rotation += 0.01;
+      Rotation += 0.02;
 
       if(Rotation > 2 * PI)
 	Rotation -= 2 * PI;

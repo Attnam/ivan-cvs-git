@@ -2359,3 +2359,7 @@ void leg::DropEquipment()
   if(GetBoot())
     GetSlot()->AddFriendItem(GetBoot());
 }
+
+void corpse::AddConsumeEndMessage(character* Eater) const
+{
+}

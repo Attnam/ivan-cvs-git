@@ -118,9 +118,7 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 
 	  if(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter())
 	    {
-	      Thrower->Hostility(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
-
-	      if(HitCharacter(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter(), Speed, game::GetPlayer()))
+	      if(HitCharacter(Thrower, game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter(), Speed))
 		{
 		  Breaks = true;
 		  break;
@@ -142,10 +140,12 @@ bool item::Fly(character* Thrower, uchar Direction, ushort Force)
     return true;
 }
 
-bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
+bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
 {
   if(Dude->Catches(this, Speed))
     return true;
+
+  Thrower->Hostility(Dude);
 
   if(Dude->DodgesFlyingItem(this, Speed)) 
     {
@@ -158,11 +158,10 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
       return false;
     }
 
-  if(RAND() % 2) 
-    ReceiveHitEffect(Dude, Hitter);
+  if(RAND() % 2)
+    ReceiveHitEffect(Dude, Thrower);
 
-  Dude->HasBeenHitByItem(this, Speed);
-
+  Dude->HasBeenHitByItem(Thrower, this, Speed);
   return true;
 }
 

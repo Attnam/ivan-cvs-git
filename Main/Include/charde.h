@@ -514,6 +514,7 @@ class CHARACTER
   virtual ulong CurrentDanger() const { return character::CurrentDanger() * 5; }
   virtual ulong MaxDanger() const { return character::MaxDanger() * 5; }
  protected:
+  virtual void CreateHead();
   virtual std::string Article() const { return "an"; }
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new ennerbeastflesh(Volume); }
@@ -522,7 +523,6 @@ class CHARACTER
   virtual std::string NameSingular() const { return "enner beast"; }
   virtual float GetMeleeStrength() const { return 100000; }
   virtual void GetAICommand();
-  virtual void CreateCorpse();
   virtual ushort TotalSize() const { return 150; }
 );
 
@@ -584,12 +584,12 @@ class CHARACTER
   virtual bool CanBeAssignedAName() const { return false; }
   virtual bool CanOpen() const { return true; }
  protected:
+  virtual void CreateHead();
   virtual ulong TotalVolume() const { return 277500; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new elpuriflesh(Volume); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + PossessivePronoun() + " head."; }
   virtual vector2d GetBitmapPos() const { return vector2d(64,0); }
   virtual std::string NameSingular() const { return "Master Dark Frog"; }
-  virtual void CreateCorpse();
   virtual ushort TotalSize() const { return 300; }
 );
 
@@ -617,7 +617,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(48,0); }
   virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
   virtual std::string NamePlural() const { return "pure masses of Bill's will"; }
-  virtual void CreateCorpse() { }
+  virtual void CreateCorpse() { SetExists(false); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonPSIVerb(Critical); }
@@ -845,7 +845,7 @@ class CHARACTER
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() { }
+  virtual void CreateCorpse() { SetExists(false); }
   virtual std::string TalkVerb() const { return "says nothing"; }
   virtual ushort TotalSize() const { return 10; }
 );
@@ -1535,7 +1535,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(432,0); }
   virtual std::string NameSingular() const { return "angel"; }
   virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() { }
+  virtual void CreateCorpse() { SetExists(false); }
   virtual ushort TotalSize() const { return 180; }
   virtual std::string Article() const { return "an"; }
   virtual bool ShowPostFix() const { return true; }
@@ -1663,7 +1663,7 @@ class CHARACTER
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new air(Volume); } // temporary
   virtual vector2d GetBitmapPos() const { return vector2d(416,0); }
   virtual std::string NameSingular() const { return "genie"; }
-  virtual void CreateCorpse() { }
+  virtual void CreateCorpse() { SetExists(false); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
   virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 250; }

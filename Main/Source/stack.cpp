@@ -274,28 +274,6 @@ void stack::Polymorph()
       break;
 }
 
-/*void stack::ReceiveSound(float Strength)
-{
-  itemvector ItemVector;
-
-  FillItemVector(ItemVector);
-
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
-      ItemVector[c]->ReceiveSound(Strength);
-}*/
-
-/*void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
-{
-  itemvector ItemVector;
-
-  FillItemVector(ItemVector);
-
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
-      ItemVector[c]->StruckByWandOfStriking(Zapper, DeathMsg);
-}*/
-
 void stack::CheckForStepOnEffect(character* Stepper)
 {
   itemvector ItemVector;
@@ -335,17 +313,6 @@ square* stack::GetSquareTrulyUnder() const
       return GetSquareUnder();
     }
 }
-
-/*void stack::ImpactDamage(ushort Strength)
-{
-  itemvector ItemVector;
-
-  FillItemVector(ItemVector);
-
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->GetExists())
-      ItemVector[c]->ImpactDamage(Strength);
-}*/
 
 void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
 {

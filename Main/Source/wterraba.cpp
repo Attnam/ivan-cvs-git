@@ -74,14 +74,12 @@ worldmap* wterrain::GetWorldMapUnder() const
 bool owterrain::GoUp(character*) const
 {
   ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
-
   return false;
 }
 
 bool owterrain::GoDown(character*) const
 {
   ADD_MESSAGE("There seems to be nothing of interest here.");
-
   return false;
 }
 

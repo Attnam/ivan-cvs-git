@@ -196,7 +196,7 @@ class character : public entity, public id
   virtual void Darkness(long);
   virtual void Die(bool = false);
   virtual void DrawToTileBuffer() const;
-  virtual void HasBeenHitByItem(item*, float);
+  virtual void HasBeenHitByItem(character*, item*, float);
   virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
   virtual void Move(vector2d, bool = false);
