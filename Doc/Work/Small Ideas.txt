@@ -153,6 +153,7 @@ Beard item.
 Monsters that eat other monsters alive, like Nethack's purple worm.
 Explosion level.
 Mirages.
+Mirrors.
 Breaking LTerrain in two parts.
 Worldmap LOS disabling.
 Symbolic inventory.
@@ -218,3 +219,4 @@ One must be able to use a stethoscope on doors.
 Item list to lookmode.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
+Skeleton bone flight.

@@ -11,3 +11,4 @@ Screenshots don't work in the DOS port. (do they in Linux?)
 The White Screen Bug.
 DarkLevel monsters.
 Bats get damage from splinters.
+Potion name bugs.
