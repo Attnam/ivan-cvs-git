@@ -102,8 +102,13 @@ item* stack::RemoveItem(ushort Index)
 
 		Optimize(0);
 
+		if(!game::GetInWilderness() && IEmit > GetEmitation() && GetSquareUnder())
+			GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
+
+
 		//if(!game::GetInWilderness() && GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
 		//	GetLevelSquareUnder()->UpdateMemorizedDescription();
+
 
 		if(GetSquareUnder())
 		{
@@ -440,4 +445,11 @@ void stack::StruckByWandOfStriking(void)
 {
 	for(int x = 0; x < GetItems(); ++x)
 		GetItem(x)->StruckByWandOfStriking(this);
+}
+
+void stack::CheckForStepOnEffect(character* Stepper, bool Teleported)
+{
+	for(ushort c = 0; c < GetItems(); c++)
+		if(!(rand() % 10))
+			GetItem(c)->GetStepOnEffect(Stepper, Teleported);
 }

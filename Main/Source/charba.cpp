@@ -519,9 +519,11 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 					else
 						ADD_MESSAGE("%s is lying here.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
 				}
-
+				
 				if(game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
 					ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+
+				GetLevelSquareUnder()->GetStack()->CheckForStepOnEffect(this, TeleportMove);
 			}
 		}
 
@@ -811,6 +813,8 @@ void character::Die()
 
 	if(!Exists)
 		return;
+	if(!game::GetInWilderness())
+		CreateCorpse();
 
 	if(GetIsPlayer())
 	{
@@ -832,6 +836,23 @@ void character::Die()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
 
+	
+	GetSquareUnder()->RemoveCharacter();
+
+
+	SetExists(false);
+
+	if(GetIsPlayer())
+	{
+		game::DrawEverything();
+		if(game::BoolQuestion("Do you want to see your inventory? [Y/N]", 2))
+			GetStack()->DrawContents("Your inventory");
+
+		if(game::BoolQuestion("Do you want to see your message history? [Y/N]", 2))
+			DrawMessageHistory();
+
+	}
+
 	if(!game::GetInWilderness())
 		while(GetStack()->GetItems())
 			GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
@@ -841,24 +862,9 @@ void character::Die()
 			GetStack()->GetItem(0)->SetExists(false);
 			GetStack()->RemoveItem(0);
 		}
-	
-	GetSquareUnder()->RemoveCharacter();
-
-	if(!game::GetInWilderness())
-		CreateCorpse();
-
-	SetExists(false);
-
 	if(GetIsPlayer())
 	{
 		game::Quit();
-
-		if(!game::GetWizardMode())
-		{
-			game::DrawEverything();
-
-			GETKEY();
-		}
 
 		iosystem::TextScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
 
@@ -2583,4 +2589,22 @@ float character::GetThrowStrengthModifier() const
 		return GetWielded()->GetThrowStrengthModifier();
 	else
 		return 1;
+}
+
+bool character::RaiseGodRelations(void)
+{
+	for(ushort c = 1;;c++)
+	{
+		game::GetGod(c)->AdjustRelation(50);
+	}
+	return false;
+}
+
+bool character::LowerGodRelations(void)
+{
+	for(ushort c = 1;;c++)
+	{
+		game::GetGod(c)->AdjustRelation(-50);
+	}
+	return false;
 }

@@ -227,6 +227,8 @@ public:
 	virtual bool OutlineCharacters();
 	virtual bool OutlineItems();
 	virtual float GetThrowStrengthModifier() const;
+	virtual bool RaiseGodRelations(void);
+	virtual bool LowerGodRelations(void);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

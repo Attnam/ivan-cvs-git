@@ -76,6 +76,7 @@ public:
 	virtual void StruckByWandOfStriking(stack*);
 	virtual float GetThrowStrengthModifier() const { return 1; }
 	virtual bool UseThrowStrengthModifier() const { return false; }
+	virtual void GetStepOnEffect(character*, bool) {}
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

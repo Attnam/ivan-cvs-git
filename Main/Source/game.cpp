@@ -72,6 +72,7 @@ command* game::Command[] = {	0,
 				new command(&character::Quit, "quit", 'q', true),
 				new command(&character::RaiseStats, "raise stats", 'R', true),
 				new command(&character::Read, "read", 'r', false),
+				new command(&character::RestUntilHealed, "rest until fully healed", 'h', true),
 				new command(&character::Save, "save", 's', true),
 				new command(&character::SeeWholeMap, "see whole map", 'Y', true),
 				new command(&character::ShowInventory, "show inventory", 'i', true),
@@ -87,7 +88,8 @@ command* game::Command[] = {	0,
 				new command(&character::Wield, "wield", 'w', true),
 				new command(&character::WizardMode, "wizard mode", 'X', true),
 				new command(&character::Zap, "zap", 'z', false),
-				new command(&character::RestUntilHealed, "rest until fully healed", 'h', true),
+				new command(&character::RaiseGodRelations, "raise your relations to the gods", 'P', true),
+				new command(&character::LowerGodRelations, "lower your relations to the gods", 'P', true),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};

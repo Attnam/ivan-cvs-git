@@ -545,3 +545,21 @@ bool platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 	SetExists(false);
 	return true;
 }
+
+
+void brokenbottle::GetStepOnEffect(character* Stepper, bool)
+{
+	if(Stepper->GetIsPlayer())
+	{
+		
+		ADD_MESSAGE("Auch. You step on %s", CNAME(INDEFINITE));
+	}
+	else if(Stepper->GetSquareUnder()->CanBeSeen())
+	{
+		ADD_MESSAGE("%s steps on %s and is hurt.", Stepper->CNAME(DEFINITE), CNAME(INDEFINITE));
+	}
+
+	Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
+	Stepper->CheckDeath("stepped on a broken bottle.");
+
+}

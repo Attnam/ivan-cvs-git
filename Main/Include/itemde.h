@@ -450,6 +450,7 @@ public:
 	virtual float OfferModifier() const RET(0)
 	virtual vector2d GetBitmapPos() const RETV(16,160)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; default: return 0; } }
+	virtual void GetStepOnEffect(character*, bool); 
 protected:
 	virtual ushort GetFormModifier() const RET(60)
 );
