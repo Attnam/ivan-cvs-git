@@ -618,7 +618,7 @@ class MATERIAL
 	leaf,
 	material,
 public:
-	virtual ushort GetHitValue() const 				{ return 10; }
+	virtual ushort GetHitValue() const 				{ return 3; }
 	virtual uchar GetConsumeType() const				{ return ODD; }
 	virtual ushort GetDensity() const				{ return 500; }
 	virtual ushort OfferValue() const				{ return 10; }
@@ -654,5 +654,13 @@ public:
 protected:
 	virtual std::string NameStem() const	{ return "water"; }
 );
-	
+
+class MATERIAL
+(
+	palmleaf,
+	leaf,
+protected:
+	virtual std::string NameStem() const	{ return "palm leaf"; }
+);
+
 #endif

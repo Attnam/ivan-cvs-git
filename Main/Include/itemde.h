@@ -972,4 +972,22 @@ protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
 
+class ITEM
+(
+	palmbranch,
+	item,
+	InitMaterials(new palmleaf),
+	{
+		SetSize(80);
+	},
+public:
+	virtual vector2d GetBitmapPos() const RETV(0,240)
+	virtual std::string Name(uchar Case) const RET(NameHandleDefaultMaterial(Case, "a", palmleaf::StaticType()))
+	virtual ushort Possibility() const RET(10)
+	virtual std::string NameSingular() const RET("palm branch")
+	virtual float OfferModifier() const RET(0.3f)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 4000; default: return 0; } }
+protected:
+	virtual ushort GetFormModifier() const RET(50)
+);
 #endif
