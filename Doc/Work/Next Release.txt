@@ -129,6 +129,6 @@ Balancing Loricatus.
 ?Charges for magic whistle.
 Smithy to Attnam.
 Cut down the size of Elpuri's cave.
-Mana should be hidden.
+//Mana should be hidden.
 Solving the Elpuri Cave distance problem.
-Apply + chests.
+//Apply + chests.

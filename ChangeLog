@@ -1,5 +1,22 @@
 October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Optimized the generation of characters somewhat by disallowing
+	  a few unnecessary cache recalculations
+	* Mana is now hidden
+	* Finally added a working equipment attribute bonus system
+	* Added gauntlets of strength and dexterity
+	* Added boots of strength
+	* Boots of speed replaced with boots of agility which increase
+	  the attribute instead of hasting the user; this way wands of
+	  haste and Cleptia are useful even if the boots are equipped
+	* Added helmets of piercing perception, understanding, brilliance
+	  and attractivity
+	* Added DefaultEnchantment database value for items
+	* The game now says "Entering level x" instead of "Generating
+	  level x"
+
+October 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Using felist is now perhaps a bit easier
 	* Picking up multiple items is now more convenient
 	* Chest usage is now easier

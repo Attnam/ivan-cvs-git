@@ -159,11 +159,11 @@ petrus
 	BodyArmor = DIAMOND bodyarmor(PLATEMAIL) { Enchantment = 5; }
 	Cloak = FABRIC cloak { Enchantment = 5; }
 	Belt = LEATHER belt { Enchantment = 5; }
-	RightWielded = justifier { Enchantment = 16; }
+	RightWielded = justifier;
 	RightGauntlet = MITHRIL gauntlet { Enchantment = 5; }
 	RightRing = ring(RINGOFFIRERESISTANCE);
 	LeftRing = ring(RINGOFPOISONRESISTANCE);
-	RightBoot = GOLD boot(BOOTOFSPEED) { Enchantment = 5; }
+	RightBoot = GOLD boot(BOOTOFAGILITY) { Enchantment = 5; }
 	KnownCWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; } /* He must not become too easy just if disarmed */
 	CWeaponSkillHits = { 4, 2000, 2000, 2000, 2000; }
 	RightSWeaponSkillHits = 2000;
@@ -334,9 +334,9 @@ oree
 	Alias == "Oree";
 	ClassStates = INVISIBLE|INFRAVISION|ESP;
 	Helmet = MITHRIL helmet { Enchantment = 6; }
-	BodyArmor = goldeneagleshirt { Enchantment = 23; }
+	BodyArmor = goldeneagleshirt;
 	RightGauntlet = MITHRIL gauntlet { Enchantment = 6; }
-	RightBoot = MITHRIL boot(BOOTOFSPEED) { Enchantment = 6; }
+	RightBoot = MITHRIL boot(BOOTOFAGILITY) { Enchantment = 6; }
 	KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
 	PanicLevel = 0;
@@ -1385,7 +1385,7 @@ mistress
 		HairColor = rgb16(35, 35, 35);
 		AttributeBonus = 100;
 		BodyArmor = SAPPHIRE bodyarmor(CHAINMAIL) { Enchantment = 10; }
-		RightBoot = SAPPHIRE boot(BOOTOFSPEED) { Enchantment = 10; }
+		RightBoot = SAPPHIRE boot(BOOTOFAGILITY) { Enchantment = 10; }
 		RightWielded = whipofcleptia { Enchantment = 10; }
 		LeftWielded = LEATHER whip { Enchantment = 10; }
 		CWeaponSkillHits == 5000;

@@ -505,7 +505,7 @@ class character : public entity, public id
   virtual bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*) = 0;
-  virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier]; }
+  virtual ushort GetAttribute(ushort Identifier) const { return BaseAttribute[Identifier] + AttributeBonus[Identifier]; }
   virtual bool EditAttribute(ushort, short);
   virtual void EditExperience(ushort, long);
   virtual bool CheckForAttributeIncrease(ushort&, long&, bool = false);
@@ -692,6 +692,8 @@ class character : public entity, public id
   virtual void SetWayPoint(vector2d What) { WayPoint = What; }
   virtual void ReceiveFluidSpill(material*, ushort);
   virtual uchar GetRelation(const character*) const;
+  virtual void CalculateAttributeBonuses();
+  virtual void ApplyEquipmentAttributeBonuses(item*);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -792,6 +794,7 @@ class character : public entity, public id
   bool Polymorphed;
   bool InNoMsgMode;
   ulong RegenerationCounter;
+  short AttributeBonus[BASEATTRIBUTES];
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

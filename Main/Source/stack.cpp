@@ -80,8 +80,8 @@ void stack::AddItem(item* ToBeAdded)
 
 void stack::RemoveItem(stackslot* Slot)
 {
-  bool WasAnimated = (*Slot)->IsAnimated();
-  ulong Emit = (*Slot)->GetEmitation();
+  bool WasAnimated = Slot->GetItem()->IsAnimated();
+  ulong Emit = Slot->GetItem()->GetEmitation();
   RemoveElement(Slot);
   SignalVolumeAndWeightChange();
   SignalEmitationDecrease(Emit);
@@ -112,13 +112,13 @@ void stack::Clean(bool LastClean)
 
   while(Slot)
     {
-      if(SquarePosition != HIDDEN && (*Slot)->IsAnimated() && SquareUnder)
+      if(SquarePosition != HIDDEN && Slot->GetItem()->IsAnimated() && SquareUnder)
 	SquareUnder->DecAnimatedEntities();
 
       if(LastClean)
-	delete **Slot;
+	delete Slot->GetItem();
       else
-	(*Slot)->SendToHell();
+	Slot->GetItem()->SendToHell();
 
       stackslot* Rubbish = Slot;
       Slot = Slot->Next;
@@ -136,7 +136,7 @@ void stack::Clean(bool LastClean)
 
 item* stack::MoveItem(stackslot* Slot, stack* MoveTo)
 {
-  item* Item = **Slot;
+  item* Item = Slot->GetItem();
   Item->RemoveFromSlot();
   MoveTo->AddItem(Item);
   return Item;

@@ -2698,7 +2698,6 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
@@ -2772,7 +2771,6 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
@@ -2957,7 +2955,8 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 	}
     }
 
-  CalculateBattleInfo();
+  if(!Initializing)
+    CalculateBattleInfo();
 }
 
 void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
@@ -2975,7 +2974,8 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
       SetCurrentLeftSWeaponSkill(0);
     }
 
-  CalculateBattleInfo();
+  if(!Initializing)
+    CalculateBattleInfo();
 }
 
 void humanoid::SWeaponSkillTick()
@@ -3364,11 +3364,7 @@ void humanoid::CalculateBattleInfo()
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
-      {
-	GetBodyPart(c)->CalculateDamage();
-	GetBodyPart(c)->CalculateToHitValue();
-	GetBodyPart(c)->CalculateAPCost();
-      }
+      GetBodyPart(c)->CalculateAttackInfo();
 }
 
 void nonhumanoid::CalculateBattleInfo()
@@ -3427,6 +3423,7 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->SendToHell();
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
+  CalculateAttributeBonuses();
   CalculateBattleInfo();
 
   if(StuckToBodyPart == BodyPartIndex)

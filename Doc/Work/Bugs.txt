@@ -75,8 +75,8 @@ Consummo message.
 //Turox etc. + poison  doesn't work.
 Bear trap + displace.
 Attnam + Elpuri.
-Headless zombies + Chat.
-Mesages after teleport.
+Headless player zombie + Chat.
+Messages after teleport.
 Panic + vital bodypart.
 Poison + poison resistance message.
 (7x) the werewolf resists.

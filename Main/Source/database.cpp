@@ -281,6 +281,17 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(CanBePiled);
   ANALYZEDATA(StorageVolume);
   ANALYZEDATA(MaxGeneratedContainedItems);
+  ANALYZEDATA(AffectsArmStrength);
+  ANALYZEDATA(AffectsLegStrength);
+  ANALYZEDATA(AffectsDexterity);
+  ANALYZEDATA(AffectsAgility);
+  ANALYZEDATA(AffectsEndurance);
+  ANALYZEDATA(AffectsPerception);
+  ANALYZEDATA(AffectsIntelligence);
+  ANALYZEDATA(AffectsWisdom);
+  ANALYZEDATA(AffectsCharisma);
+  ANALYZEDATA(AffectsMana);
+  ANALYZEDATA(DefaultEnchantment);
 
   return Found;
 }

@@ -610,10 +610,10 @@ short item::GetOfferValue(char) const
   return short(sqrt(GetPrice()));
 }
 
-void item::SignalAttackInfoChange()
+void item::SignalEnchantmentChange()
 {
   if(Slot)
-    Slot->SignalAttackInfoChange();
+    Slot->SignalEnchantmentChange();
 }
 
 

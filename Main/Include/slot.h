@@ -38,7 +38,7 @@ class slot
   virtual void SignalEmitationDecrease(ulong) = 0;
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const = 0;
-  virtual void SignalAttackInfoChange() { }
+  virtual void SignalEnchantmentChange() { }
  protected:
   item* Item;
 };
@@ -100,7 +100,7 @@ class gearslot : public slot
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   virtual bool CanBeSeenBy(const character*) const;
-  virtual void SignalAttackInfoChange();
+  virtual void SignalEnchantmentChange();
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;

@@ -122,6 +122,7 @@ class ITEM
   virtual bool HasContainedMaterial() const { return true; }
   virtual void Be();
   virtual bool IsWeapon(const character*) const { return true; }
+  virtual char GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(char);
   virtual void EditEnchantment(char);
   virtual float GetWeaponStrength() const;
@@ -129,7 +130,7 @@ class ITEM
   virtual float GetToHitValueBonus() const { return (20 + Enchantment) / 20.0f; }
   virtual float GetAPBonus() const { return 20.0f / (20 + Enchantment); }
  protected:
-  virtual void VirtualConstructor(bool) { Enchantment = 0; }
+  virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
   virtual void AddPostFix(std::string&) const;
   virtual material*& GetMaterialReference(ushort);
@@ -215,13 +216,14 @@ class ABSTRACT_ITEM
   virtual void Load(inputfile&);
   virtual bool IsWeapon(const character*) const { return true; }
   virtual bool IsArmor(const character*) const { return true; }
+  virtual char GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(char);
   virtual void EditEnchantment(char);
   virtual ushort GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
   virtual void AddPostFix(std::string&) const;
-  virtual void VirtualConstructor(bool) { Enchantment = 0; }
+  virtual void VirtualConstructor(bool);
   char Enchantment;
 );
 
@@ -777,6 +779,9 @@ class ABSTRACT_ITEM
   void SetMaterialColorB(ushort What) { ColorB = What; }
   void SetMaterialColorC(ushort What) { ColorC = What; }
   void SetMaterialColorD(ushort What) { ColorD = What; }
+  virtual void ApplyEquipmentAttributeBonuses(item*) { }
+  virtual void CalculateAttributeBonuses() { }
+  virtual void SignalEnchantmentChange();
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -949,7 +954,9 @@ class ABSTRACT_ITEM
   void WieldedSkillHit();
   float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
   void AddDefenceInfo(felist&) const;
-  void SignalAttackInfoChange();
+  virtual void ApplyEquipmentAttributeBonuses(item*);
+  virtual void CalculateAttributeBonuses();
+  virtual void CalculateAll();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -963,6 +970,8 @@ class ABSTRACT_ITEM
   float Damage;
   float ToHitValue;
   long APCost;
+  short StrengthBonus;
+  short DexterityBonus;
 );
 
 class ITEM
@@ -1041,6 +1050,9 @@ class ABSTRACT_ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
+  virtual void ApplyEquipmentAttributeBonuses(item*);
+  virtual void CalculateAttributeBonuses();
+  virtual void CalculateAll();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -1052,6 +1064,8 @@ class ABSTRACT_ITEM
   float KickDamage;
   float KickToHitValue;
   long KickAPCost;
+  short StrengthBonus;
+  short AgilityBonus;
 );
 
 class ITEM

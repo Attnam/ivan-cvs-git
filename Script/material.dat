@@ -243,7 +243,7 @@ material
 		StrengthValue = 200;
 		ConsumeType = MISC_ORGANIC;
 		Density = 2000;
-		Color = rgb16(180, 180, 180);
+		Color = rgb16(200, 200, 200);
 		NameStem = "unicorn horn";
 	}
 

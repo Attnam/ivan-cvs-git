@@ -3270,6 +3270,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->SetUnique(GetArticleMode() != NORMALARTICLE || AssignedName.length());
   BodyPart->RemoveFromSlot();
   BodyPart->RandomizePosition();
+  CalculateAttributeBonuses();
   CalculateBattleInfo();
 
   if(StuckToBodyPart == BodyPartIndex)
@@ -3616,7 +3617,6 @@ void character::PrintInfo() const
       Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHTGRAY);
       Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHTGRAY);
       Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHTGRAY);
-      Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
       Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight(), LIGHTGRAY);
       Info.AddEntry(std::string("Total weight: ") + GetWeight(), LIGHTGRAY);
 
@@ -4457,35 +4457,39 @@ long character::GetStateAPGain(long BaseAPGain) const
 
 void character::SignalEquipmentAdd(ushort EquipmentIndex)
 {
+  item* Equipment = GetEquipment(EquipmentIndex);
+
   if(EquipmentHasNoPairProblems(EquipmentIndex))
     {
-      ushort AddedStates = GetEquipment(EquipmentIndex)->GetGearStates();
+      ushort AddedStates = Equipment->GetGearStates();
 
-      if(!AddedStates)
-	return;
+      if(AddedStates)
+	for(ushort c = 0; c < STATES; ++c)
+	  if(AddedStates & (1 << c))
+	    {
+	      if(!StateIsActivated(1 << c))
+		{
+		  if(!InNoMsgMode)
+		    (this->*PrintBeginStateMessage[c])();
 
-      for(ushort c = 0; c < STATES; ++c)
-	if(AddedStates & (1 << c))
-	  {
-	    if(!StateIsActivated(1 << c))
-	      {
-		if(!InNoMsgMode)
-		  (this->*PrintBeginStateMessage[c])();
+		  if(BeginStateHandler[c])
+		    (this->*BeginStateHandler[c])();
 
-		if(BeginStateHandler[c])
-		  (this->*BeginStateHandler[c])();
-
+		  EquipmentState |= 1 << c;
+		}
+	      else
 		EquipmentState |= 1 << c;
-	      }
-	    else
-	      EquipmentState |= 1 << c;
-	  }
+	    }
     }
+
+  if(!Initializing)
+    ApplyEquipmentAttributeBonuses(Equipment);
 }
 
-void character::SignalEquipmentRemoval(ushort)
+void character::SignalEquipmentRemoval(ushort EquipmentIndex)
 {
   CalculateEquipmentState();
+  CalculateAttributeBonuses();
 }
 
 void character::CalculateEquipmentState()
@@ -5179,7 +5183,6 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Intelligence: ") + GetAttribute(INTELLIGENCE), LIGHTGRAY);
   Info.AddEntry(std::string("Wisdom: ") + GetAttribute(WISDOM), LIGHTGRAY);
   Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHTGRAY);
-  Info.AddEntry(std::string("Mana: ") + GetAttribute(MANA), LIGHTGRAY);
   Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHTGRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHTGRAY);
   game::SetStandardListAttributes(Info);
@@ -5287,13 +5290,16 @@ void character::CalculateVolumeAndWeight()
 
 void character::SignalVolumeAndWeightChange()
 {
-  CalculateVolumeAndWeight();
+  if(!Initializing)
+    {
+      CalculateVolumeAndWeight();
 
-  if(IsEnabled())
-    CalculateBurdenState();
+      if(IsEnabled())
+	CalculateBurdenState();
 
-  if(MotherEntity)
-    MotherEntity->SignalVolumeAndWeightChange();
+      if(MotherEntity)
+	MotherEntity->SignalVolumeAndWeightChange();
+    }
 }
 
 void character::SignalEmitationIncrease(ulong EmitationUpdate)
@@ -5342,12 +5348,15 @@ void character::CalculateEmitation()
 
 void character::CalculateAll()
 {
+  Initializing = true;
+  CalculateAttributeBonuses();
   CalculateVolumeAndWeight();
   CalculateEmitation();
   CalculateHP();
   CalculateBodyPartMaxHPs();
   CalculateBurdenState();
   CalculateBattleInfo();
+  Initializing = false;
 }
 
 void character::CalculateHP()
@@ -5631,6 +5640,7 @@ character* character::Duplicate() const
 {
   if(!CanBeCloned())
     return 0;
+
   character* Char = RawDuplicate();
   Char->CalculateAll();
   return Char;
@@ -5808,4 +5818,85 @@ void character::ReceiveFluidSpill(material* Liquid, ushort HitPercent)
 uchar character::GetRelation(const character* Who) const
 {
   return GetTeam()->GetRelation(Who->GetTeam());
+}
+
+void character::CalculateAttributeBonuses()
+{
+  short BackupBonus[BASEATTRIBUTES];
+  ushort c;
+
+  for(c = 0; c < BASEATTRIBUTES; ++c)
+    {
+      BackupBonus[c] = AttributeBonus[c];
+      AttributeBonus[c] = 0;
+    }
+
+  for(c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(!Equipment)
+	continue;
+
+      if(Equipment->AffectsEndurance())
+	AttributeBonus[ENDURANCE] += Equipment->GetEnchantment();
+
+      if(Equipment->AffectsPerception())
+	AttributeBonus[PERCEPTION] += Equipment->GetEnchantment();
+
+      if(Equipment->AffectsIntelligence())
+	AttributeBonus[INTELLIGENCE] += Equipment->GetEnchantment();
+
+      if(Equipment->AffectsWisdom())
+	AttributeBonus[WISDOM] += Equipment->GetEnchantment();
+
+      if(Equipment->AffectsCharisma())
+	AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
+
+      if(Equipment->AffectsMana())
+	AttributeBonus[MANA] += Equipment->GetEnchantment();
+    }
+
+    if(!Initializing && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
+      CalculateBodyPartMaxHPs();
+
+    if(IsPlayer() && !Initializing && AttributeBonus[PERCEPTION] != BackupBonus[PERCEPTION])
+      game::SendLOSUpdateRequest();
+
+    if(IsPlayer() && !Initializing && AttributeBonus[INTELLIGENCE] != BackupBonus[INTELLIGENCE])
+      UpdateESPLOS();
+}
+
+void character::ApplyEquipmentAttributeBonuses(item* Equipment)
+{
+  if(Equipment->AffectsEndurance())
+    {
+      AttributeBonus[ENDURANCE] += Equipment->GetEnchantment();
+      CalculateBodyPartMaxHPs();
+    }
+
+  if(Equipment->AffectsPerception())
+    {
+      AttributeBonus[PERCEPTION] += Equipment->GetEnchantment();
+
+      if(IsPlayer())
+	game::SendLOSUpdateRequest();
+    }
+
+  if(Equipment->AffectsIntelligence())
+    {
+      AttributeBonus[INTELLIGENCE] += Equipment->GetEnchantment();
+
+      if(IsPlayer())
+	UpdateESPLOS();
+    }
+
+  if(Equipment->AffectsWisdom())
+    AttributeBonus[WISDOM] += Equipment->GetEnchantment();
+
+  if(Equipment->AffectsCharisma())
+    AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
+
+  if(Equipment->AffectsMana())
+    AttributeBonus[MANA] += Equipment->GetEnchantment();
 }

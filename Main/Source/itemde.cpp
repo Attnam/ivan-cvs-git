@@ -1873,7 +1873,7 @@ void arm::VirtualConstructor(bool Load)
   bodypart::VirtualConstructor(Load);
 
   if(!Load)
-    StrengthExperience = DexterityExperience = 0;
+    StrengthBonus = DexterityBonus = StrengthExperience = DexterityExperience = 0;
 }
 
 void rightarm::VirtualConstructor(bool Load)
@@ -1897,7 +1897,7 @@ void leg::VirtualConstructor(bool Load)
   bodypart::VirtualConstructor(Load);
 
   if(!Load)
-    StrengthExperience = AgilityExperience = 0;
+    StrengthBonus = AgilityBonus = StrengthExperience = AgilityExperience = 0;
 }
 
 void rightleg::VirtualConstructor(bool Load)
@@ -2153,16 +2153,16 @@ ushort arm::GetAttribute(ushort Identifier) const
   if(Identifier == ARMSTRENGTH)
     {
       if(IsAlive())
-	return Strength;
+	return Strength + StrengthBonus;
       else
-	return GetMainMaterial()->GetStrengthValue();
+	return GetMainMaterial()->GetStrengthValue() + StrengthBonus;
     }
   else if(Identifier == DEXTERITY)
     {
       if(IsAlive())
-	return Dexterity;
+	return Dexterity + DexterityBonus;
       else
-	return GetMainMaterial()->GetFlexibility();
+	return GetMainMaterial()->GetFlexibility() + DexterityBonus;
     }
   else
     {
@@ -2205,16 +2205,16 @@ ushort leg::GetAttribute(ushort Identifier) const
   if(Identifier == LEGSTRENGTH)
     {
       if(IsAlive())
-	return Strength;
+	return Strength + StrengthBonus;
       else
-	return GetMainMaterial()->GetStrengthValue();
+	return GetMainMaterial()->GetStrengthValue() + StrengthBonus;
     }
   else if(Identifier == AGILITY)
     {
       if(IsAlive())
-	return Agility;
+	return Agility + AgilityBonus;
       else
-	return GetMainMaterial()->GetFlexibility();
+	return GetMainMaterial()->GetFlexibility() + AgilityBonus;
     }
   else
     {
@@ -2633,12 +2633,16 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
 
 void bodypart::SignalEquipmentAdd(gearslot* Slot)
 {
+  ApplyEquipmentAttributeBonuses(Slot->GetItem());
+
   if(GetMaster())
     GetMaster()->SignalEquipmentAdd(Slot->GetEquipmentIndex());
 }
 
 void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 {
+  CalculateAttributeBonuses();
+
   if(GetMaster())
     GetMaster()->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
 }
@@ -3737,6 +3741,7 @@ ulong shield::GetPrice() const /* temporary... */
 ulong whipofcleptia::GetPrice() const
 {
   /* If not broken but not flexible enough to work, special thievery bonus must be removed */
+
   return GetMainMaterial()->GetFlexibility() > 5 || IsBroken() ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
 
@@ -3856,25 +3861,25 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 void meleeweapon::SetEnchantment(char Amount)
 {
   Enchantment = Amount;
-  SignalAttackInfoChange();
+  SignalEnchantmentChange();
 }
 
 void armor::SetEnchantment(char Amount)
 {
   Enchantment = Amount;
-  SignalAttackInfoChange();
+  SignalEnchantmentChange();
 }
 
 void meleeweapon::EditEnchantment(char Amount)
 {
   Enchantment += Amount;
-  SignalAttackInfoChange();
+  SignalEnchantmentChange();
 }
 
 void armor::EditEnchantment(char Amount)
 {
   Enchantment += Amount;
-  SignalAttackInfoChange();
+  SignalEnchantmentChange();
 }
 
 float meleeweapon::GetWeaponStrength() const
@@ -3892,12 +3897,15 @@ ushort armor::GetStrengthValue() const
   return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() * (10 + Enchantment) / 10000;
 }
 
-void arm::SignalAttackInfoChange()
+void bodypart::SignalEnchantmentChange()
 {
-  item::SignalAttackInfoChange();
+  CalculateAttributeBonuses();
 
   if(GetMaster() && !GetMaster()->IsInitializing())
-    CalculateAttackInfo();
+    {
+      GetMaster()->CalculateAttributeBonuses();
+      GetMaster()->CalculateBattleInfo();
+    }
 }
 
 bool chest::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
@@ -3943,4 +3951,77 @@ void backpack::ReceiveFluidSpill(material* Liquid)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s gets wet.", CHARNAME(DEFINITE));
     }
+}
+
+void arm::ApplyEquipmentAttributeBonuses(item* Item)
+{
+  if(Item->AffectsArmStrength())
+    StrengthBonus += Item->GetEnchantment();
+
+  if(Item->AffectsDexterity())
+    DexterityBonus += Item->GetEnchantment();
+}
+
+void leg::ApplyEquipmentAttributeBonuses(item* Item)
+{
+  if(Item->AffectsLegStrength())
+    {
+      StrengthBonus += Item->GetEnchantment();
+
+      if(GetMaster())
+	GetMaster()->CalculateBurdenState();
+    }
+
+  if(Item->AffectsAgility())
+    AgilityBonus += Item->GetEnchantment();
+}
+
+void arm::CalculateAttributeBonuses()
+{
+  StrengthBonus = DexterityBonus = 0;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	ApplyEquipmentAttributeBonuses(Equipment);
+    }
+}
+
+void leg::CalculateAttributeBonuses()
+{
+  StrengthBonus = AgilityBonus = 0;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	ApplyEquipmentAttributeBonuses(Equipment);
+    }
+}
+
+void arm::CalculateAll()
+{
+  item::CalculateAll();
+  CalculateAttributeBonuses();
+}
+
+void leg::CalculateAll()
+{
+  item::CalculateAll();
+  CalculateAttributeBonuses();
+}
+
+void meleeweapon::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    Enchantment = GetDefaultEnchantment();
+}
+
+void armor::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    Enchantment = GetDefaultEnchantment();
 }

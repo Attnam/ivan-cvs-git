@@ -272,7 +272,7 @@ bool actionslot::CanBeSeenBy(const character* Viewer) const
   return GetAction()->GetActor()->CanBeSeenBy(Viewer);
 }
 
-void gearslot::SignalAttackInfoChange()
+void gearslot::SignalEnchantmentChange()
 {
-  GetBodyPart()->SignalAttackInfoChange();
+  GetBodyPart()->SignalEnchantmentChange();
 }

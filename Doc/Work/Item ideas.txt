@@ -18,13 +18,14 @@ Armor:
 
 cloak of displacement - when the owner is being hit, this occasionally displaces him
 reflector shield - reverses the direction of beams
-gauntlets of strength - +x arm str
-gauntlets of dexterity - +x dexterity
+//gauntlets of strength - +x arm str
+//gauntlets of dexterity - +x dexterity
 armor of great health - +x end
-helm of piercing perception - +x per
-helm of understanding - +x wisdom
-helm of innovation - +x intelligence
-helm of attractivity - +x charisma
+//helm of piercing perception - +x per
+//helm of understanding - +x wisdom
+//helm of innovation - +x intelligence
+//helm of attractivity - +x charisma
+helm of ESP
 spiked boots - more kicking damage
 sandals of Hermes - flying
 girdle of carrying - +x% carrying strength

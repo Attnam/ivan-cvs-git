@@ -57,6 +57,17 @@ item
 	CanBePiled = true;
 	StorageVolume = 0;
 	MaxGeneratedContainedItems = 0;
+	AffectsArmStrength = false;
+	AffectsLegStrength = false;
+	AffectsDexterity = false;
+	AffectsAgility = false;
+	AffectsEndurance = false;
+	AffectsPerception = false;
+	AffectsIntelligence = false;
+	AffectsWisdom = false;
+	AffectsCharisma = false;
+	AffectsMana = false;
+	DefaultEnchantment = 0;
 }
 
 materialcontainer
@@ -398,6 +409,7 @@ justifier /* meleeweapon-> */
 	Roundness = 20;
 	CanBeCloned = false;
 	CanBeBroken = false;
+	DefaultEnchantment = 16;
 
 	Config BROKEN; /* for future */
 	{
@@ -434,6 +446,7 @@ neercseulb /* meleeweapon-> */
 	IsTwoHanded = true;
 	CanBeCloned = false;
 	CanBeBroken = false;
+	DefaultEnchantment = 13;
 
 	Config BROKEN; /* for future */
 	{
@@ -547,6 +560,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	IsPolymorphable = false;
 	CanBeBroken = false;
 	CanBeCloned = false;
+	DefaultEnchantment = 23;
 } 
 
 potion /* materialcontainer-> */
@@ -1110,14 +1124,26 @@ boot /* armor-> */
 	Roundness = 50;
 	CanBePiled = true;
 
-	Config BOOTOFSPEED;
+	Config BOOTOFSTRENGTH;
 	{
-		Possibility = 5;
-		PostFix = "of speed";
-		MainMaterialConfig == DIAMOND;
+		Possibility = 25;
+		PostFix = "of strength";
+		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
-		GearStates = HASTE;
+		AffectsLegStrength = true;
 		Price = 1000;
+		DefaultEnchantment = 1;
+	}
+
+	Config BOOTOFAGILITY;
+	{
+		Possibility = 25;
+		PostFix = "of agility";
+		MainMaterialConfig == LEATHER;
+		MaterialConfigChances == 100;
+		AffectsAgility = true;
+		Price = 1000;
+		DefaultEnchantment = 1;
 	}
 }
 
@@ -1135,6 +1161,28 @@ gauntlet /* armor-> */
 	MaterialConfigChances = { 4, 200, 100, 50, 20; }
 	Roundness = 60;
 	CanBePiled = true;
+
+	Config GAUNTLETOFSTRENGTH;
+	{
+		Possibility = 25;
+		PostFix = "of strength";
+		MainMaterialConfig == IRON;
+		MaterialConfigChances == 100;
+		AffectsArmStrength = true;
+		Price = 250; /* bug */
+		DefaultEnchantment = 1;
+	}
+
+	Config GAUNTLETOFDEXTERITY;
+	{
+		Possibility = 25;
+		PostFix = "of dexterity";
+		MainMaterialConfig == LEATHER;
+		MaterialConfigChances == 100;
+		AffectsDexterity = true;
+		Price = 250; /* bug */
+		DefaultEnchantment = 1;
+	}
 }
 
 belt /* armor-> */
@@ -1539,6 +1587,46 @@ helmet
 	MainMaterialConfig = 	{ 10, 	LEATHER,BRONZE, IRON, 	STONE,	MITHRIL,BONE, 	WOOD, 	TIN, 	STEEL, 	COPPER; }
 	MaterialConfigChances = { 10, 	30,	30,	10,	10,	2,	4,	20,	5,	3,	30; }
 	Roundness = 60;
+
+	Config HELMOFPERCEPTION;
+	{
+		Possibility = 25;
+		PostFix = "of piercing perception";
+		AffectsPerception = true;
+		MainMaterialConfig == GLASS;
+		MaterialConfigChances == 100;
+		DefaultEnchantment = 1;
+	}
+
+	Config HELMOFUNDERSTANDING;
+	{
+		Possibility = 25;
+		PostFix = "of understanding";
+		AffectsWisdom = true;
+		MainMaterialConfig == UNICORNHORN;
+		MaterialConfigChances == 100;
+		DefaultEnchantment = 1;
+	}
+
+	Config HELMOFBRILLIANCE;
+	{
+		Possibility = 25;
+		PostFix = "of brilliance";
+		AffectsIntelligence = true;
+		MainMaterialConfig == MITHRIL;
+		MaterialConfigChances == 100;
+		DefaultEnchantment = 1;
+	}
+
+	Config HELMOFATTRACTIVITY;
+	{
+		Possibility = 25;
+		PostFix = "of attractivity";
+		AffectsCharisma = true;
+		MainMaterialConfig == GOLD;
+		MaterialConfigChances == 100;
+		DefaultEnchantment = 1;
+	}
 }
 
 stethoscope

@@ -41,10 +41,11 @@ Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.
 Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 //AP-hintojen negaatio.
 *Selitepohjainen ja itsetaipuva viestijärjestelmä. (<-nimivälimuisti)
-Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
+//Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
 *Nimivälimuisti.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
 Charba.cpp:n resplittaus (kontrollit erilleen?).
-Lukufunktioden generalisoiminen.
+Lukufunktioiden generalisoiminen.
 Säiliöluokka.
 Piirron deasmaus.
+Repliikkien datafilesaatio.

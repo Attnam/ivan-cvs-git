@@ -281,7 +281,7 @@ Whips should sometimes remove the helmet of the target.
 Page up should work correctly in felists.
 If a melee hit is blocker with a weapon, the attacking arm should take damage.
 *Poison effect for snake flesh.
-Wishing shouldn't perhaps be case sensitive.
+//Wishing shouldn't perhaps be case sensitive.
 Werewolves should drop their equipment when they polymorph.
 Mistresses should not exchange their whips for any other weapons.
 Some monsters should be generated in groups.
@@ -345,3 +345,4 @@ When picking up multiple gauntlets and boots, the default value of the inventory
 Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time)
+Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.

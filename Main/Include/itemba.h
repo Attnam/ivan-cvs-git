@@ -84,6 +84,17 @@ struct itemdatabase
   bool CanBePiled;
   ulong StorageVolume;
   ushort MaxGeneratedContainedItems;
+  bool AffectsArmStrength;
+  bool AffectsLegStrength;
+  bool AffectsDexterity;
+  bool AffectsAgility;
+  bool AffectsEndurance;
+  bool AffectsPerception;
+  bool AffectsIntelligence;
+  bool AffectsWisdom;
+  bool AffectsCharisma;
+  bool AffectsMana;
+  char DefaultEnchantment;
 };
 
 class itemprototype
@@ -265,6 +276,17 @@ class item : public object
   virtual DATABASEVALUEWITHPARAMETER(vector2d, WallBitmapPos, ushort);
   virtual DATABASEVALUE(const std::string&, FlexibleNameSingular);
   virtual DATABASEBOOL(CanBePiled);
+  DATABASEBOOL(AffectsArmStrength);
+  DATABASEBOOL(AffectsLegStrength);
+  DATABASEBOOL(AffectsDexterity);
+  DATABASEBOOL(AffectsAgility);
+  DATABASEBOOL(AffectsEndurance);
+  DATABASEBOOL(AffectsPerception);
+  DATABASEBOOL(AffectsIntelligence);
+  DATABASEBOOL(AffectsWisdom);
+  DATABASEBOOL(AffectsCharisma);
+  DATABASEBOOL(AffectsMana);
+  virtual DATABASEVALUE(char, DefaultEnchantment);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
@@ -318,7 +340,7 @@ class item : public object
   void Empty();
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
-  void SignalAttackInfoChange();
+  virtual void SignalEnchantmentChange();
   virtual float GetToHitValueBonus() const { return 1.0f; }
   virtual float GetAPBonus() const { return 1.0f; }
   virtual void DrawContents(const character*) { }
@@ -326,6 +348,7 @@ class item : public object
   virtual DATABASEVALUE(ushort, MaxGeneratedContainedItems);
   bool IsBroken() const { return Config & BROKEN != 0; }
   virtual void ReceiveFluidSpill(material*) {}
+  virtual char GetEnchantment() const { return 0; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();
