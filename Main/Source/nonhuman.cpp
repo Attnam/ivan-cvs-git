@@ -561,14 +561,14 @@ void genetrixvesana::GetAICommand()
 			character* NewPlant;
 			ulong RandomValue = RAND() % TurnsExisted;
 
-			if(RandomValue < 100)
+			if(RandomValue < 250)
 			  NewPlant = new carnivorousplant;
-			else if(RandomValue < 1000)
+			else if(RandomValue < 1500)
 			  NewPlant = new carnivorousplant(GREATER);
 			else
 			  NewPlant = new carnivorousplant(GIANT);
 
-			for(ushort c = 2; c < TurnsExisted / 500; ++c)
+			for(ushort c = 3; c < TurnsExisted / 500; ++c)
 			  NewPlant->EditAllAttributes(1);
 
 			NewPlant->SetTeam(GetTeam());

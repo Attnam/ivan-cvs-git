@@ -119,12 +119,11 @@ following formula
 
 Score = sqrt(a) * b * b
 
-sqrt(a) = square root of the number of killed monster of this type
+sqrt(a) = Square root of the number of killed monsters of this type
 b = Sum of the attributes of a monster of this type
 
-The individual scores of the monster types are then added
-together. You also get a high bonus for winning, depending on your 
-victory type.
+The individual scores of the monster types are then added together.
+You also get a high bonus for winning, depending on your victory type.
 
 Q: How can I compile IVAN source code?
 

@@ -920,8 +920,6 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
 	}
     }
 
-
-
   if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);
 }
