@@ -1,0 +1,23 @@
+****<LIGHT SIDE>****
+L++ King of Gods, Valpuri the Great Frog						valpurium curved two-handed sword
+
+L+  Sd'Lavrot Sun-il, light god of paladins and holy fire.				holy fire hits every enemy around player
+L+  Su-alc Atnas, light god of gifts.							mithril plate mail
+L   Neno Sokokin, light goddess of music.						every monster around becomes neutral
+L   Neno T'lepasev, light goddess of prophecies and dreams.				gives hints and not-so-hints
+L   Reworh Tei'peht, light goddess of health and nutrition.				increases nutrition
+L-  Otou Livik-omit, light god of knowledge, wisdom and understanding.			teleport
+
+****<NEUTRALS>****
+N=  Nenitra Akirali, god of fire, machines and weaponry.				changes wielded item into mithril
+N-  Nenaria Si'kkieh, god of money, trade and politics.					trades items
+
+****<DARK SIDE>****
+C+  Okrepatri Vakkuut, god of assassins, thieves and other secretive activities.	agility++
+C   Nenaria Senner, chaos god of pain, misery and annoying noise.			endurance++ ja head
+C   Reml Labevets, chaos god of greed and forbidden pleasures.				Omle urine
+C   Irasse Vukkris, chaos goddess of mutations, deseases and famine.			school food
+C-  Swodniwt-fo Sorcim, chaos goddess of wrong knowledge and vile magic.		scrolls
+C-  Rerolp Xetenretni, chaos god of war and blood.					curved two-handed sword
+
+C-- Destroyer of worlds, Seta Gl'lib							

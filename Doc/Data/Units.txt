@@ -1,0 +1,12 @@
+Character
+
+	[Weight] = 1 g
+	[Size] = 0.01 m
+
+Item
+
+	[Weight] = 1 g
+	[Size] = 0.01 m
+
+
+	
