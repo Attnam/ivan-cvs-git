@@ -21,6 +21,15 @@ SYSTEM_SPECIALIZATIONS(gwterrain) SYSTEM_SPECIALIZATIONS(owterrain)
 
 #undef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__
 
+const int OceanType = ocean::ProtoType.GetIndex();
+const int SnowType = snow::ProtoType.GetIndex();
+const int GlacierType = glacier::ProtoType.GetIndex();
+const int EGForestType = evergreenforest::ProtoType.GetIndex();
+const int LForestType = leafyforest::ProtoType.GetIndex();
+const int SteppeType = steppe::ProtoType.GetIndex();
+const int DesertType = desert::ProtoType.GetIndex();
+const int JungleType = jungle::ProtoType.GetIndex();
+
 #include <algorithm>
 
 #include "allocate.h"

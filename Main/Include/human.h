@@ -163,6 +163,7 @@ CHARACTER(humanoid, character)
   virtual truth CanChokeOnWeb(web*) const;
   virtual truth BrainsHurt() const;
   virtual const char* GetRunDescriptionLine(int) const;
+  virtual const char* GetNormalDeathMessage() const;
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;

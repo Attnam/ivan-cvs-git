@@ -426,6 +426,8 @@ Reef stonefish (Synanceia verrucosa)
 	A quite poisonous species that is camouflaged so it looks like a
 	rock, and its spines inject venom to anyone unfortunate to step
 	on one.
+	(I recall seeing one in the Seattle Aquarium and it looked...
+	stony - holybanana)
 
 Black mamba (Dendroaspis polylepis)
 
@@ -452,8 +454,19 @@ Programmer
 
 Banana Slug
 
-http://en.wikipedia.org/wiki/Banana_slug
+	http://en.wikipedia.org/wiki/Banana_slug
 
-example: 
+	example:
 
-Salt is harmful to all slugs; it causes the slug to dehydrate. Blood rushes to the surface of the skin to dilute the salt. This process is only effective with small quantities of salt.
+	Salt is harmful to all slugs; it causes the slug to dehydrate.
+	Blood rushes to the surface of the skin to dilute the salt. This
+	process is only effective with small quantities of salt.
+
+Monkey, version II
+
+	Engraves sequences of random characters in the ground. Occasionally
+	produces Shakespeare quotes.
+
+Giant anteater (Myrmecophaga tridactyla)
+
+	Eats ants. See Wikipedia for the boring details.

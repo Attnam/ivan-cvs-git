@@ -234,7 +234,17 @@ statedata StateData[STATES] =
     &character::LeprosyHandler,
     0,
     &character::LeprosySituationDangerModifier
-  }
+  }/*, {
+    "Hiccups",
+    SRC_FOUNTAIN|SRC_CONFUSE_READ|DUR_FLAGS,
+    &character::PrintBeginHiccupsMessage,
+    &character::PrintEndHiccupsMessage,
+    0,
+    0,
+    &character::HiccupsHandler,
+    0,
+    &character::HiccupsSituationDangerModifier
+  }*/
 };
 
 characterprototype::characterprototype(const characterprototype* Base, characterspawner Spawner, charactercloner Cloner, const char* ClassID) : Base(Base), Spawner(Spawner), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<character>::Add(this); }
@@ -295,6 +305,7 @@ festring character::GetZombieDescription() const { return " of " + GetName(INDEF
 truth character::BodyPartCanBeSevered(int I) const { return I; }
 truth character::HasBeenSeen() const { return DataBase->Flags & HAS_BEEN_SEEN; }
 truth character::IsTemporary() const { return GetTorso()->GetLifeExpectancy(); }
+const char* character::GetNormalDeathMessage() const { return "killed @k"; }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_V2), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), RegenerationCounter(Char.RegenerationCounter), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags), WarnFlags(0), ScienceTalks(Char.ScienceTalks), TrapData(0)
 {
@@ -581,7 +592,7 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
     return DID_NO_DAMAGE;
   }
 
-  if(CheckDeath(CONST_S("killed @k"), Enemy, Enemy->IsPlayer() ? FORCE_MSG : 0))
+  if(CheckDeath(GetNormalDeathMessage(), Enemy, Enemy->IsPlayer() ? FORCE_MSG : 0))
     return HAS_DIED;
 
   if(Enemy->CanBeSeenByPlayer())
@@ -4685,7 +4696,7 @@ void character::DexterityAction(int Difficulty)
   EditExperience(DEXTERITY, Difficulty * 15, 1 << 7);
 }
 
-/* If Theoretically == true, range is not a factor. */
+/* If Theoretically != false, range is not a factor. */
 
 truth character::CanBeSeenByPlayer(truth Theoretically, truth IgnoreESP) const
 {
@@ -9345,7 +9356,34 @@ const character* character::FindCarrier() const
   return this; //check
 }
 
-/*
-§12345678990+´
-½!"#¤%&/()=?`*/
+void character::PrintBeginHiccupsMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Your diaphragm is spasming vehemently.");
+}
 
+void character::PrintEndHiccupsMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel your annoying hiccoughs have finally subsided.");
+}
+
+void character::HiccupsHandler()
+{
+  if(!(RAND() % 2000))
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("");
+    else if((PLAYER->GetPos() - GetPos()).GetLengthSquare() <= 400)
+      ADD_MESSAGE("");
+
+    game::CallForAttention(GetPos(), 400);
+  }
+}
+
+void character::HiccupsSituationDangerModifier(double& Danger) const
+{
+  Danger *= 1.25;
+}

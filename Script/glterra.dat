@@ -25,125 +25,125 @@
 
 glterrain
 {
-	/* Obligatory: BitmapPos */
-	UsesLongArticle = false;
-	Adjective = "";
-	UsesLongAdjectiveArticle = false;
-	/* Obligatory: NameSingular */
-	/* NameSingular + "s" by default: NamePlural */
-	PostFix = "";
-	ArticleMode = 0;
-	/* Obligatory: MainMaterialConfig */
-	/* Obligatory: SecondaryMaterialConfig */
-	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
-	IsAbstract = true; /* This is false by default and does not inherit! */
-	OKVisualEffects = NONE;
-	MaterialColorB = 0;
-	MaterialColorC = 0;
-	MaterialColorD = 0;
-	SitMessage = "You sit for some time. Nothing happens.";
-	ShowMaterial = true;
-	AttachedGod = NONE;
-	HasSecondaryMaterial = false;
-	UseBorderTiles = false;
-	BorderTilePriority = 0;
+  /* Obligatory: BitmapPos */
+  UsesLongArticle = false;
+  Adjective = "";
+  UsesLongAdjectiveArticle = false;
+  /* Obligatory: NameSingular */
+  /* NameSingular + "s" by default: NamePlural */
+  PostFix = "";
+  ArticleMode = 0;
+  /* Obligatory: MainMaterialConfig */
+  /* Obligatory: SecondaryMaterialConfig */
+  /* Obligatory if multiple material configurations defined: MaterialConfigChances */
+  IsAbstract = true; /* This is false by default and does not inherit! */
+  OKVisualEffects = NONE;
+  MaterialColorB = 0;
+  MaterialColorC = 0;
+  MaterialColorD = 0;
+  SitMessage = "You sit for some time. Nothing happens.";
+  ShowMaterial = true;
+  AttachedGod = NONE;
+  HasSecondaryMaterial = false;
+  UseBorderTiles = false;
+  BorderTilePriority = 0;
 }
 
 solidterrain /* glterrain-> */
 {
-	Walkability = WALK|FLY|ETHEREAL;
+  Walkability = WALK|FLY|ETHEREAL;
 
-	IsAbstract = true;
+  IsAbstract = true;
 
-	Config PARQUET;
-	{
-		MainMaterialConfig == FIR_WOOD;
-		NameSingular = "floor";
-		BitmapPos = 32, 0;
-		BorderTilePriority = 100;
-	}
+  Config PARQUET;
+  {
+    MainMaterialConfig == FIR_WOOD;
+    NameSingular = "floor";
+    BitmapPos = 32, 0;
+    BorderTilePriority = 100;
+  }
 
-	Config FLOOR;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == GRAVEL;
-		NameSingular = "floor";
-		BitmapPos = 0, 0;
-	}
+  Config FLOOR;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == GRAVEL;
+    NameSingular = "floor";
+    BitmapPos = 0, 0;
+  }
 
-	Config GROUND;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == GRAVEL;
-		NameSingular = "floor";
-		BitmapPos = 0, 0;
-	}
+  Config GROUND;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == GRAVEL;
+    NameSingular = "floor";
+    BitmapPos = 0, 0;
+  }
 
-	Config GRASS_TERRAIN;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == GRASS;
-		NameSingular = "ground";
-		BitmapPos = 16, 16;
-	}
+  Config GRASS_TERRAIN;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == GRASS;
+    NameSingular = "ground";
+    BitmapPos = 16, 16;
+  }
 
-	Config LANDING_SITE;
-	{
-		MainMaterialConfig == GRASS;
-		MaterialColorB = rgb16(230, 230, 230);
-		UsesLongAdjectiveArticle = true;
-		Adjective = "ostrich";
-		NameSingular = "landing site";
-		BitmapPos = 32, 16;
-		ShowMaterial = false;
-	}
+  Config LANDING_SITE;
+  {
+    MainMaterialConfig == GRASS;
+    MaterialColorB = rgb16(230, 230, 230);
+    UsesLongAdjectiveArticle = true;
+    Adjective = "ostrich";
+    NameSingular = "landing site";
+    BitmapPos = 32, 16;
+    ShowMaterial = false;
+  }
 
-	Config SNOW_TERRAIN;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == SNOW;
-		NameSingular = "ground";
-		BitmapPos = 16, 16;
-	}
+  Config SNOW_TERRAIN;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == SNOW;
+    NameSingular = "ground";
+    BitmapPos = 16, 16;
+  }
 
-	Config DARK_GRASS_TERRAIN;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == DARK_GRASS;
-		NameSingular = "ground";
-		BitmapPos = 16, 16;
-	}
+  Config DARK_GRASS_TERRAIN;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == DARK_GRASS;
+    NameSingular = "ground";
+    BitmapPos = 16, 16;
+  }
 
-	Config SAND_TERRAIN;
-	{
-		OKVisualEffects = MIRROR|FLIP|ROTATE;
-		MainMaterialConfig == SAND;
-		NameSingular = "ground";
-		BitmapPos = 32, 32;
-	}
+  Config SAND_TERRAIN;
+  {
+    OKVisualEffects = MIRROR|FLIP|ROTATE;
+    MainMaterialConfig == SAND;
+    NameSingular = "ground";
+    BitmapPos = 32, 32;
+  }
 }
 
 liquidterrain /* glterrain-> */
 {
-	MainMaterialConfig == WATER;
-	/*BitmapPos = 16, 0;*/
-	IsAbstract = true;
-	Walkability = SWIM|FLY|ETHEREAL;
-	ShowMaterial = false;
+  MainMaterialConfig == WATER;
+  /*BitmapPos = 16, 0;*/
+  IsAbstract = true;
+  Walkability = SWIM|FLY|ETHEREAL;
+  ShowMaterial = false;
 
-	Config POOL;
-	{
-		NameSingular = "pool";
-		SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
-	}
+  Config POOL;
+  {
+    NameSingular = "pool";
+    SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";
+  }
 
-	Config UNDERGROUND_LAKE;
-	{
-		UsesLongAdjectiveArticle = true;
-		Adjective = "underground";
-		NameSingular = "lake";
-		/*SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";*/
-		UseBorderTiles = true;
-		BorderTilePriority = 10;
-	}
+  Config UNDERGROUND_LAKE;
+  {
+    UsesLongAdjectiveArticle = true;
+    Adjective = "underground";
+    NameSingular = "lake";
+    /*SitMessage = "You sit on the pool. Oddly enough, you sink. You feel stupid.";*/
+    UseBorderTiles = true;
+    BorderTilePriority = 10;
+  }
 }

@@ -138,6 +138,7 @@ const name##prototype name::ProtoType
 #define GAS_IMMUNITY (1 << 17)
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
+#define HICCUPS (1 << 20)
 
 #define TORSO 1
 #define HEAD 2
@@ -603,7 +604,7 @@ const v2 SILHOUETTE_SIZE(48, 64);
 #define SRC_EVIL 128
 #define SRC_GOOD 256
 #define SRC_FLAGS (8|16|32|64|128|256)
-#define RANDOMIZABLE (2|4|8|16|32|64|128|256)
+#define RANDOMIZABLE (DUR_FLAGS|SRC_FLAGS)
 
 #define MAP_HIDDEN 0
 #define SHOW_MAP_IN_TRUE_LIGHT 1

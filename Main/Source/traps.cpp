@@ -22,7 +22,9 @@ web::web()
     bitmap Temp(TILE_V2, TRANSPARENT_COLOR);
     Temp.ActivateFastFlag();
     packcol16 Color = MakeRGB16(250, 250, 250);
-    igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, v2(RAND_2 ? 64 : 80, 32), ZERO_V2, TILE_V2, &Color);
+    const rawbitmap* Effect = igraph::GetRawGraphic(GR_EFFECT);
+    Effect->MaskedBlit(&Temp, v2(RAND_2 ? 64 : 80, 32),
+		       ZERO_V2, TILE_V2, &Color);
     Temp.NormalBlit(Picture, Flags);
   }
 }
@@ -35,7 +37,9 @@ web::~web()
 truth web::TryToUnStick(character* Victim, v2)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = 7 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
+  int Modifier = 7 * GetTrapBaseModifier()
+		 / Max(Victim->GetAttribute(DEXTERITY)
+		       + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(!RAND_N(Max(Modifier, 2)))
   {
@@ -45,7 +49,8 @@ truth web::TryToUnStick(character* Victim, v2)
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to free yourself from the web.");
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s manages to free %sself from the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+      ADD_MESSAGE("%s manages to free %sself from the web.",
+		  Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
     Victim->EditAP(-500);
     return true;
@@ -67,14 +72,17 @@ truth web::TryToUnStick(character* Victim, v2)
     return true;
   }
 
-  Modifier = GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75;
+  Modifier = GetTrapBaseModifier()
+	     * (Victim->GetAttribute(DEXTERITY)
+		+ Victim->GetAttribute(ARM_STRENGTH)) / 75;
 
   if(Victim->CanChokeOnWeb(this) && !RAND_N(Max(Modifier << 3, 2)))
   {
     if(Victim->IsPlayer())
       ADD_MESSAGE("You manage to choke yourself on the web.");
     else if(Victim->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+      ADD_MESSAGE("%s chokes %sself on the web.",
+		  Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
 
     Victim->LoseConsciousness(250 + RAND_N(250));
     Victim->EditAP(-1000);
@@ -83,7 +91,8 @@ truth web::TryToUnStick(character* Victim, v2)
 
   if(!RAND_N(Max(Modifier, 2)))
   {
-    int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
+    int VictimBodyPart = Victim->GetRandomBodyPart(ALL_BODYPART_FLAGS
+						   &~TrapData.BodyParts);
 
     if(VictimBodyPart != NONE_INDEX)
     {
@@ -91,9 +100,14 @@ truth web::TryToUnStick(character* Victim, v2)
       Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You fail to free yourself from the web and your %s is stuck in it in the attempt.", Victim->GetBodyPartName(VictimBodyPart).CStr());
+	ADD_MESSAGE("You fail to free yourself from the web "
+		    "and your %s is stuck in it in the attempt.",
+		    Victim->GetBodyPartName(VictimBodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s tries to free %sself from the web but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN);
+	ADD_MESSAGE("%s tries to free %sself from the web "
+		    "but is stuck more tightly in it in the attempt.",
+		    Victim->CHAR_NAME(DEFINITE),
+		    Victim->CHAR_OBJECT_PRONOUN);
 
       Victim->EditAP(-1000);
       return true;
@@ -135,7 +149,9 @@ void web::StepOnEffect(character* Stepper)
   Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You try to step through the web but your %s sticks in it.", Stepper->GetBodyPartName(StepperBodyPart).CStr());
+    ADD_MESSAGE("You try to step through the web "
+		"but your %s sticks in it.",
+		Stepper->GetBodyPartName(StepperBodyPart).CStr());
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s gets stuck in the web.", Stepper->CHAR_NAME(DEFINITE));
 }
@@ -180,7 +196,8 @@ void web::Destroy()
 
 truth web::CanBeSeenBy(const character* Who) const
 {
-  return GetLSquareUnder()->CanBeSeenBy(Who) && Who->GetAttribute(WISDOM) > 4;
+  return (GetLSquareUnder()->CanBeSeenBy(Who)
+	  && Who->GetAttribute(WISDOM) > 4);
 }
 
 void web::PreProcessForBone()

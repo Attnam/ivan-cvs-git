@@ -12,21 +12,23 @@
 
 /* Compiled through wmapset.cpp */
 
-#define MAX_TEMPERATURE			27		//increase for more tropical world
-#define LATITUDE_EFFECT			40		//increase for more effect
-#define ALTITUDE_EFFECT			0.02
+#define MAX_TEMPERATURE	  27		//increase for a warmer world
+#define LATITUDE_EFFECT	  40		//increase for more effect
+#define ALTITUDE_EFFECT	  0.02
 
-#define COLD				10
-#define MEDIUM				12
-#define WARM				17
-#define HOT				19
+#define COLD		  10
+#define MEDIUM		  12
+#define WARM		  17
+#define HOT		  19
 
 int DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 int DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
 worldmap::worldmap() { }
-continent* worldmap::GetContinentUnder(v2 Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
-v2 worldmap::GetEntryPos(const character*, int I) const { return EntryMap.find(I)->second; }
+continent* worldmap::GetContinentUnder(v2 Pos) const
+{ return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+v2 worldmap::GetEntryPos(const character*, int I) const
+{ return EntryMap.find(I)->second; }
 continent* worldmap::GetContinent(int I) const { return Continent[I]; }
 int worldmap::GetAltitude(v2 Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
 charactervector& worldmap::GetPlayerGroup() { return PlayerGroup; }
@@ -69,9 +71,12 @@ worldmap::~worldmap()
 void worldmap::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
-  SaveFile.Write(reinterpret_cast<char*>(TypeBuffer[0]), XSizeTimesYSize * sizeof(uchar));
-  SaveFile.Write(reinterpret_cast<char*>(AltitudeBuffer[0]), XSizeTimesYSize * sizeof(short));
-  SaveFile.Write(reinterpret_cast<char*>(ContinentBuffer[0]), XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Write(reinterpret_cast<char*>(TypeBuffer[0]),
+		 XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Write(reinterpret_cast<char*>(AltitudeBuffer[0]),
+		 XSizeTimesYSize * sizeof(short));
+  SaveFile.Write(reinterpret_cast<char*>(ContinentBuffer[0]),
+		 XSizeTimesYSize * sizeof(uchar));
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
@@ -86,9 +91,12 @@ void worldmap::Load(inputfile& SaveFile)
   Alloc2D(TypeBuffer, XSize, YSize);
   Alloc2D(AltitudeBuffer, XSize, YSize);
   Alloc2D(ContinentBuffer, XSize, YSize);
-  SaveFile.Read(reinterpret_cast<char*>(TypeBuffer[0]), XSizeTimesYSize * sizeof(uchar));
-  SaveFile.Read(reinterpret_cast<char*>(AltitudeBuffer[0]), XSizeTimesYSize * sizeof(short));
-  SaveFile.Read(reinterpret_cast<char*>(ContinentBuffer[0]), XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Read(reinterpret_cast<char*>(TypeBuffer[0]),
+		XSizeTimesYSize * sizeof(uchar));
+  SaveFile.Read(reinterpret_cast<char*>(AltitudeBuffer[0]),
+		XSizeTimesYSize * sizeof(short));
+  SaveFile.Read(reinterpret_cast<char*>(ContinentBuffer[0]),
+		XSizeTimesYSize * sizeof(uchar));
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
@@ -124,7 +132,9 @@ void worldmap::Generate()
     std::vector<continent*> PerfectForAttnam, PerfectForNewAttnam;
 
     for(uint c = 1; c < Continent.size(); ++c)
-      if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000 && Continent[c]->GetGTerrainAmount(evergreenforest::ProtoType.GetIndex()) && Continent[c]->GetGTerrainAmount(snow::ProtoType.GetIndex()))
+      if(Continent[c]->GetSize() > 25 && Continent[c]->GetSize() < 1000
+	 && Continent[c]->GetGTerrainAmount(EGForestType)
+	 && Continent[c]->GetGTerrainAmount(SnowType))
 	PerfectForAttnam.push_back(Continent[c]);
 
     if(!PerfectForAttnam.size())
@@ -138,8 +148,8 @@ void worldmap::Generate()
     {
       game::BusyAnimation();
       PetrusLikes = PerfectForAttnam[RAND() % PerfectForAttnam.size()];
-      AttnamPos = PetrusLikes->GetRandomMember(evergreenforest::ProtoType.GetIndex());
-      ElpuriCavePos = PetrusLikes->GetRandomMember(snow::ProtoType.GetIndex());
+      AttnamPos = PetrusLikes->GetRandomMember(EGForestType);
+      ElpuriCavePos = PetrusLikes->GetRandomMember(SnowType);
 
       for(int c2 = 1; c2 < 50; ++c2)
       {
@@ -161,7 +171,8 @@ void worldmap::Generate()
 	      {
 		TunnelEntry += game::GetMoveVector(d1);
 
-		if(!IsValidPos(TunnelEntry) || AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] > 0)
+		if(!IsValidPos(TunnelEntry)
+		   || AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] > 0)
 		{
 		  Error = true;
 		  break;
@@ -176,9 +187,13 @@ void worldmap::Generate()
 
 	      for(x = TunnelEntry.X - 3; x <= TunnelEntry.X + 3; ++x)
 	      {
-		for(y = TunnelEntry.Y - 3; y <= TunnelEntry.Y + 3; ++y, ++Counter)
-		  if(Counter != 0 && Counter != 6 && Counter != 42 && Counter != 48
-		     &&(!IsValidPos(x, y) || AltitudeBuffer[x][y] > 0 || AltitudeBuffer[x][y] < -350))
+		for(y = TunnelEntry.Y - 3; y <= TunnelEntry.Y + 3;
+		    ++y, ++Counter)
+		  if(Counter != 0 && Counter != 6
+		     && Counter != 42 && Counter != 48
+		     && (!IsValidPos(x, y)
+			 || AltitudeBuffer[x][y] > 0
+			 || AltitudeBuffer[x][y] < -350))
 		  {
 		    Error = true;
 		    break;
@@ -194,7 +209,7 @@ void worldmap::Generate()
 	      Error = true;
 
 	      for(x = 0; x < XSize; ++x)
-		if(TypeBuffer[x][TunnelEntry.Y] == jungle::ProtoType.GetIndex())
+		if(TypeBuffer[x][TunnelEntry.Y] == JungleType)
 		{
 		  Error = false;
 		  break;
@@ -206,40 +221,53 @@ void worldmap::Generate()
 	      Counter = 0;
 
 	      for(x = TunnelEntry.X - 2; x <= TunnelEntry.X + 2; ++x)
-		for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2; ++y, ++Counter)
-		  if(Counter != 0 && Counter != 4 && Counter != 20 && Counter != 24)
+		for(y = TunnelEntry.Y - 2; y <= TunnelEntry.Y + 2;
+		    ++y, ++Counter)
+		  if(Counter != 0 && Counter != 4
+		     && Counter != 20 && Counter != 24)
 		    AltitudeBuffer[x][y] /= 2;
 
 	      AltitudeBuffer[TunnelEntry.X][TunnelEntry.Y] = 1 + RAND() % 50;
-	      TypeBuffer[TunnelEntry.X][TunnelEntry.Y] = jungle::ProtoType.GetIndex();
+	      TypeBuffer[TunnelEntry.X][TunnelEntry.Y] = JungleType;
 	      GetWSquare(TunnelEntry)->ChangeGWTerrain(jungle::Spawn());
 	      int NewAttnamIndex;
 
-	      for(NewAttnamIndex = RAND() & 7; NewAttnamIndex == 7 - d1; NewAttnamIndex = RAND() & 7);
+	      for(NewAttnamIndex = RAND() & 7;
+		  NewAttnamIndex == 7 - d1;
+		  NewAttnamIndex = RAND() & 7);
 
-	      NewAttnamPos = TunnelEntry + game::GetMoveVector(NewAttnamIndex);
+	      NewAttnamPos = TunnelEntry
+			     + game::GetMoveVector(NewAttnamIndex);
 	      static int DiagonalDir[4] = { 0, 2, 5, 7 };
 	      static int NotDiagonalDir[4] = { 1, 3, 4, 6 };
-	      static int AdjacentDir[4][2] = { { 0, 1 }, { 0, 2 }, { 1, 3 }, { 2, 3 } };
+	      static int AdjacentDir[4][2] = { { 0, 1 }, { 0, 2 },
+					       { 1, 3 }, { 2, 3 } };
 	      truth Raised[] = { false, false, false, false };
 	      int d2;
 
 	      for(d2 = 0; d2 < 4; ++d2)
-		if(NotDiagonalDir[d2] != 7 - d1 && (NotDiagonalDir[d2] == NewAttnamIndex || !(RAND() & 2)))
+		if(NotDiagonalDir[d2] != 7 - d1
+		   && (NotDiagonalDir[d2] == NewAttnamIndex
+		       || !(RAND() & 2)))
 		{
-		  v2 Pos = TunnelEntry + game::GetMoveVector(NotDiagonalDir[d2]);
+		  v2 Pos = TunnelEntry
+			   + game::GetMoveVector(NotDiagonalDir[d2]);
 		  AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
-		  TypeBuffer[Pos.X][Pos.Y] = jungle::ProtoType.GetIndex();
+		  TypeBuffer[Pos.X][Pos.Y] = JungleType;
 		  GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
 		  Raised[d2] = true;
 		}
 
 	      for(d2 = 0; d2 < 4; ++d2)
-		if(DiagonalDir[d2] != 7 - d1 && (DiagonalDir[d2] == NewAttnamIndex || (Raised[AdjacentDir[d2][0]] && Raised[AdjacentDir[d2][1]] && !(RAND() & 2))))
+		if(DiagonalDir[d2] != 7 - d1
+		   && (DiagonalDir[d2] == NewAttnamIndex
+		       || (Raised[AdjacentDir[d2][0]]
+			   && Raised[AdjacentDir[d2][1]] && !(RAND() & 2))))
 		{
-		  v2 Pos = TunnelEntry + game::GetMoveVector(DiagonalDir[d2]);
+		  v2 Pos = TunnelEntry
+			   + game::GetMoveVector(DiagonalDir[d2]);
 		  AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
-		  TypeBuffer[Pos.X][Pos.Y] = jungle::ProtoType.GetIndex();
+		  TypeBuffer[Pos.X][Pos.Y] = JungleType;
 		  GetWSquare(Pos)->ChangeGWTerrain(jungle::Spawn());
 		}
 
@@ -369,13 +397,15 @@ void worldmap::GenerateClimate()
   for(int y = 0; y < YSize; ++y)
   {
     double DistanceFromEquator = fabs(double(y) / YSize - 0.5);
-    truth LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45);
+    truth LatitudeRainy = DistanceFromEquator <= 0.05
+			  || (DistanceFromEquator > 0.25
+			      && DistanceFromEquator <= 0.45);
 
     for(int x = 0; x < XSize; ++x)
     {
       if(AltitudeBuffer[x][y] <= 0)
       {
-	TypeBuffer[x][y] = ocean::ProtoType.GetIndex();
+	TypeBuffer[x][y] = OceanType;
 	continue;
       }
 
@@ -393,38 +423,21 @@ void worldmap::GenerateClimate()
 	  }
 	}
 
-      int Temperature = int(MAX_TEMPERATURE - DistanceFromEquator * LATITUDE_EFFECT - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
+      int Temperature = int(MAX_TEMPERATURE
+			    - DistanceFromEquator * LATITUDE_EFFECT
+			    - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
       int Type = 0;
 
       if(Temperature <= COLD)
-	if(Rainy)
-	  Type = snow::ProtoType.GetIndex();
-	else
-	  Type = glacier::ProtoType.GetIndex();
-
-      if(Temperature > COLD && Temperature <= MEDIUM)
-	if(Rainy)
-	  Type = evergreenforest::ProtoType.GetIndex();
-	else
-	  Type = snow::ProtoType.GetIndex();
-
-      if(Temperature > MEDIUM && Temperature <= WARM)
-	if(Rainy)
-	  Type = leafyforest::ProtoType.GetIndex();
-	else
-	  Type = steppe::ProtoType.GetIndex();
-
-      if(Temperature > WARM && Temperature <= HOT)
-	if(Rainy)
-	  Type = leafyforest::ProtoType.GetIndex();
-	else
-	  Type = desert::ProtoType.GetIndex();
-
-      if(Temperature > HOT)
-	if(Rainy)
-	  Type = jungle::ProtoType.GetIndex();
-	else
-	  Type = desert::ProtoType.GetIndex();
+	Type = Rainy ? SnowType : GlacierType;
+      else if(Temperature <= MEDIUM)
+	Type = Rainy ? EGForestType : SnowType;
+      else if(Temperature <= WARM)
+	Type = Rainy ? LForestType : SteppeType;
+      else if(Temperature <= HOT)
+	Type = Rainy ? LForestType : DesertType;
+      else
+	Type = Rainy ? JungleType : DesertType;
 
       TypeBuffer[x][y] = Type;
     }
@@ -439,7 +452,7 @@ void worldmap::SmoothClimate()
 
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
-	if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::ProtoType.GetIndex())
+	if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != OceanType)
 	  TypeBuffer[x][y] = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y);
   }
 
@@ -447,7 +460,8 @@ void worldmap::SmoothClimate()
 
   for(int x = 0; x < XSize; ++x)
     for(int y = 0; y < YSize; ++y)
-      Map[x][y]->ChangeGWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Spawn());
+      Map[x][y]->ChangeGWTerrain
+	(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Spawn());
 }
 
 /* Evil... */
@@ -500,7 +514,7 @@ int worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSqu
   int MostCommon = 0;
 
   for(c = 1; c < u; ++c)
-    if(TypeAmount[c] > TypeAmount[MostCommon] && UsedType[c] != ocean::ProtoType.GetIndex())
+    if(TypeAmount[c] > TypeAmount[MostCommon] && UsedType[c] != OceanType)
       MostCommon = c;
 
   return UsedType[MostCommon];
@@ -527,20 +541,28 @@ void worldmap::CalculateContinents()
 	{
 	  v2 Pos = v2(x, y) + game::GetMoveVector(d);
 
-	  if(IsValidPos(Pos) && ContinentBuffer[Pos.X][Pos.Y])
+	  if(IsValidPos(Pos))
 	  {
-	    if(ContinentBuffer[x][y])
-	    {
-	      if(ContinentBuffer[x][y] != ContinentBuffer[Pos.X][Pos.Y])
-		if(Continent[ContinentBuffer[x][y]]->GetSize() < Continent[ContinentBuffer[Pos.X][Pos.Y]]->GetSize())
-		  Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[Pos.X][Pos.Y]]);
-		else
-		  Continent[ContinentBuffer[Pos.X][Pos.Y]]->AttachTo(Continent[ContinentBuffer[x][y]]);
-	    }
-	    else
-	      Continent[ContinentBuffer[Pos.X][Pos.Y]]->Add(v2(x, y));
+	    const int NearCont = ContinentBuffer[Pos.X][Pos.Y];
 
-	    Attached = true;
+	    if(NearCont)
+	    {
+	      const int ThisCont = ContinentBuffer[x][y];
+
+	      if(ThisCont)
+	      {
+		if(ThisCont != NearCont)
+		  if(Continent[ThisCont]->GetSize()
+		     < Continent[NearCont]->GetSize())
+		    Continent[ThisCont]->AttachTo(Continent[NearCont]);
+		  else
+		    Continent[NearCont]->AttachTo(Continent[ThisCont]);
+	      }
+	      else
+		Continent[NearCont]->Add(v2(x, y));
+
+	      Attached = true;
+	    }
 	  }
 	}
 
@@ -606,7 +628,8 @@ void worldmap::Draw(truth) const
       BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
       wsquare** Square = &Map[x][YMin];
 
-      for(int y = YMin; y < YMax; ++y, ++Square, BlitData.Dest.Y += TILE_SIZE)
+      for(int y = YMin; y < YMax;
+	  ++y, ++Square, BlitData.Dest.Y += TILE_SIZE)
 	if((*Square)->LastSeen)
 	  (*Square)->Draw(BlitData);
     }
@@ -618,7 +641,8 @@ void worldmap::Draw(truth) const
       BlitData.Dest = game::CalculateScreenCoordinates(v2(x, YMin));
       wsquare** Square = &Map[x][YMin];
 
-      for(int y = YMin; y < YMax; ++y, ++Square, BlitData.Dest.Y += TILE_SIZE)
+      for(int y = YMin; y < YMax;
+	  ++y, ++Square, BlitData.Dest.Y += TILE_SIZE)
 	(*Square)->Draw(BlitData);
     }
   }

@@ -12,8 +12,14 @@
 
 /* Compiled through wmapset.cpp */
 
-gwterrainprototype::gwterrainprototype(gwterrainspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
-owterrainprototype::owterrainprototype(owterrainspawner Spawner, const char* ClassID) : Spawner(Spawner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
+gwterrainprototype::gwterrainprototype(gwterrainspawner Spawner,
+				       const char* ClassID)
+: Spawner(Spawner), ClassID(ClassID)
+{ Index = protocontainer<gwterrain>::Add(this); }
+owterrainprototype::owterrainprototype(owterrainspawner Spawner,
+				       const char* ClassID)
+: Spawner(Spawner), ClassID(ClassID)
+{ Index = protocontainer<owterrain>::Add(this); }
 
 int gwterrain::GetWalkability() const { return ANY_MOVE&~SWIM; }
 int owterrain::GetWalkability() const { return ANY_MOVE; }
@@ -103,7 +109,8 @@ owterrain* owterrainprototype::SpawnAndLoad(inputfile& SaveFile) const
   return Terrain;
 }
 
-truth DrawOrderer(const std::pair<v2, int>& Pair1, const std::pair<v2, int>& Pair2)
+truth DrawOrderer(const std::pair<v2, int>& Pair1,
+		  const std::pair<v2, int>& Pair2)
 {
   return Pair1.second < Pair2.second;
 }
@@ -126,7 +133,8 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 
       if(NeighbourPriority > Priority)
       {
-	Neighbour[Index].first = DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(d) << 4);
+	Neighbour[Index].first = DoNeighbour->GetBitmapPos(0)
+				 - (game::GetMoveVector(d) << 4);
 	Neighbour[Index].second = NeighbourPriority;
 	++Index;
       }
@@ -144,12 +152,15 @@ truth owterrain::Enter(truth DirectionUp) const
   if(DirectionUp)
   {
     if(!PLAYER->IsFlying())
-      ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+      ADD_MESSAGE("You jump into the air. For some "
+		  "reason you don't get too far above.");
     else
       ADD_MESSAGE("You fly around for some time.");
 
     return false;
   }
 
-  return game::TryTravel(GetAttachedDungeon(), GetAttachedArea(), GetAttachedEntry());
+  return game::TryTravel(GetAttachedDungeon(),
+			 GetAttachedArea(),
+			 GetAttachedEntry());
 }

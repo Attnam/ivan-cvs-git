@@ -269,7 +269,7 @@ truth game::Init(const festring& Name)
       SetForceJumpToPlayerBe(true);
       GetCurrentArea()->SendNewDrawRequest();
       SendLOSUpdateRequest();
-      ADD_MESSAGE("Game loaded successfully.");
+      /***ADD_MESSAGE("Game loaded successfully.");*/
       return true;
     }
    case NEW_GAME:

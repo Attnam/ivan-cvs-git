@@ -306,6 +306,7 @@ It should be possible to change materials of golems and other monsters.
 //Windows on walls.
 One should be able to wish for a new limb.
 Ring of conflict should cause two-headed mooses to kill themselves.
+Confused two-headed mooses should occasionally bite themselves.
 //You should be able to wish for anything. (Very problematic, I know)
 Leash.
 Cows that eat plant fiber.
@@ -537,3 +538,4 @@ There should be a way of getting a verbal hint whether a god's pray timer allows
 There could be a more interesting effect for trying to teleport over a monster; perhaps the player's and the monster's souls could be swapped (ie. they would polymorph into each other for some time) or their bodyparts could get randomly mixed.
 Drinkin _lots_ of water should maybe help poisonings.
 Shopkeepers should dislike Cleptia. (for example they shouldn't buy or sell holy books of cleptia)
+Petrus's wives should wear chastity belts.

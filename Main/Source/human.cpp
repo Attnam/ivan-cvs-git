@@ -4967,7 +4967,7 @@ void slave::PostConstruct()
 }
 
 const int TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
-const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.5, 1.5, 1.5, 1.5, 1.25, 1.25, 1.25, 1.25 };
+const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25 };
 
 double playerkind::GetNaturalExperience(int Identifier) const
 {
@@ -5003,4 +5003,14 @@ const char* humanoid::GetRunDescriptionLine(int I) const
     return !I ? "Hopping" : "very fast";
 
   return !I ? "Running" : "";
+}
+
+const char* humanoid::GetNormalDeathMessage() const
+{
+  if(BodyPartIsVital(HEAD_INDEX) && (!GetHead() || GetHead()->GetHP() <= 0))
+    return "beheaded @k";
+  else if(BodyPartIsVital(GROIN_INDEX) && (!GetGroin() || GetGroin()->GetHP() <= 0))
+    return "killed @bkp dirty attack below the belt";
+  else
+    return "killed @k";
 }

@@ -35,7 +35,7 @@ class highscore
   truth Add(long, const festring&);
   void Draw() const;
   void Save(const festring& = HIGH_SCORE_FILENAME) const;
-  truth Load(const festring& = HIGH_SCORE_FILENAME);
+  void Load(const festring& = HIGH_SCORE_FILENAME);
   truth LastAddFailed() const;
   void AddToFile(highscore*) const;
   truth MergeToFile(highscore*) const;

@@ -758,7 +758,7 @@ void festring::PostProcessForFebot()
     else if((Char1 == '.' || Char1 == '!' || Char1 == '?')
 	    && (c == Size - 2 || Data[c + 2] == ' ' || Data[c + 2] == '\t'))
       CapitalizeNextChar = true;
-    /* Erase() guarantees that OwnsData == true && REFS(Data) == 0 */
+    /* Erase() guarantees that OwnsData != false && REFS(Data) == 0 */
     else if(CapitalizeNextChar)
     {
       if(Char1 > 0x60 && Char1 < 0x7B)

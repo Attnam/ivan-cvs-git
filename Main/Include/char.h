@@ -596,6 +596,8 @@ class character : public entity, public id
   void PrintEndSlowMessage() const;
   void PrintBeginSearchingMessage() const;
   void PrintEndSearchingMessage() const;
+  void PrintBeginHiccupsMessage() const;
+  void PrintEndHiccupsMessage() const;
   void EndPolymorph();
   character* ForceEndPolymorph();
   void LycanthropyHandler();
@@ -607,6 +609,7 @@ class character : public entity, public id
   void EndInvisibility();
   void EndInfraVision();
   void EndESP();
+  void HiccupsHandler();
   character* PolymorphRandomly(int, int, int);
   virtual truth EquipmentEasilyRecognized(int) const { return true; }
   void StartReading(item*, long);
@@ -977,6 +980,7 @@ class character : public entity, public id
   void ConfusedSituationDangerModifier(double&) const;
   void ParasitizedSituationDangerModifier(double&) const;
   void LeprosySituationDangerModifier(double&) const;
+  void HiccupsSituationDangerModifier(double&) const;
   truth TryToTalkAboutScience();
   truth IsUsingWeaponOfCategory(int) const;
   virtual truth IsKamikazeDwarf() const { return false; }
@@ -1009,6 +1013,7 @@ class character : public entity, public id
   virtual truth SpecialSaveLife() { return false; }
   void RemoveLifeSavers();
   virtual const character* FindCarrier() const;
+  virtual const char* GetNormalDeathMessage() const;
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

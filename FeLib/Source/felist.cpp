@@ -440,7 +440,7 @@ void felist::DrawDescription(bitmap* Buffer) const
 	       Width - 6, 10, BackColor);
 }
 
-/* We suppose InverseMode == true here */
+/* We suppose InverseMode != false here */
 
 void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
 {

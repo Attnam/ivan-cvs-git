@@ -115,5 +115,7 @@ You can probably give commands to unconscious monsters.
 Scroll of golem creation destroys chest contents.
 //"The magic mushroom grunts happily."
 //Mammoth's corpse's weight is negative.
+Danger sensed when a bunny panics.
+I think these might be a problem in bonefile names which could cause the eleventh+ bone of GC11/12 to appear in place of GC2.
 Damaged gear shouldn't rise dexterity but lower it. (think about it. At least this is the most probable outcome)
 Do you get strength bonus for digging?

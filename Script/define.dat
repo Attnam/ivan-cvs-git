@@ -60,6 +60,7 @@
 #define GAS_IMMUNITY (1 << 17)
 #define LEVITATION (1 << 18)
 #define LEPROSY (1 << 19)
+#define HICCUPS (1 << 20)
 
 #define HEAD 1
 #define TORSO 2

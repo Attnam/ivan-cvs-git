@@ -12,7 +12,8 @@
 
 /* Compiled through wmapset.cpp */
 
-wsquare::wsquare(worldmap* WorldMapUnder, v2 Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
+wsquare::wsquare(worldmap* WorldMapUnder, v2 Pos)
+: square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
 
 wsquare::~wsquare()
 {
@@ -48,7 +49,8 @@ void wsquare::Draw(blitdata& BlitData)
     if(Character && Character->CanBeSeenByPlayer())
     {
       BlitData.Luminance = ivanconfig::GetContrastLuminance();
-      BlitData.CustomData = Character->GetSquareIndex(Pos)|ALLOW_ANIMATE|ALLOW_ALPHA;
+      BlitData.CustomData = Character->GetSquareIndex(Pos)
+			    |ALLOW_ANIMATE|ALLOW_ALPHA;
       Character->Draw(BlitData);
     }
 
@@ -134,9 +136,12 @@ void wsquare::UpdateMemorizedDescription(truth Cheat)
       festring Continent;
 
       if(GetWorldMap()->GetContinentUnder(Pos))
-	Continent << ", continent " << GetWorldMap()->GetContinentUnder(Pos)->GetName();
+	Continent << ", continent "
+		  << GetWorldMap()->GetContinentUnder(Pos)->GetName();
 
-      MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y << Continent << ", height " << GetWorldMap()->GetAltitude(Pos) << " m)";
+      MemorizedDescription << " (pos " << Pos.X << ':' << Pos.Y
+			   << Continent << ", height "
+			   << GetWorldMap()->GetAltitude(Pos) << " m)";
     }
 
     Flags &= ~DESCRIPTION_CHANGE;
@@ -162,13 +167,16 @@ truth wsquare::SignalSeen()
 
 void wsquare::CalculateLuminance()
 {
-  int Element = Min((128 - int(37.5 * log(1.0 + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0))), 255);
+  double T = log(1. + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.);
+  int Element = Min((128 - int(37.5 * T)), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
 
 int wsquare::GetWalkability() const 
 { 
-  return OWTerrain ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability() : GWTerrain->GetWalkability(); 
+  return (OWTerrain
+	  ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability()
+	  : GWTerrain->GetWalkability()); 
 }
 
 truth wsquare::CanBeSeenByPlayer(truth) const

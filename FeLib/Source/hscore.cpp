@@ -106,18 +106,18 @@ void highscore::Save(const festring& File) const
 }
 
 /* This function needs much more error handling */
-truth highscore::Load(const festring& File)
+void highscore::Load(const festring& File)
 {
   {
     inputfile HighScore(File, 0, false);
 
     if(!HighScore.IsOpen())
-      return false;
+      return;
 
     HighScore.Get();
 
     if(HighScore.Eof())
-      return true; 
+      return; 
   }
 
   inputfile HighScore(File, 0, false);

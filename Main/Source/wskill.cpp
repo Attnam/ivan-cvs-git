@@ -15,17 +15,23 @@
 #include "save.h"
 #include "item.h"
 
-int CWeaponSkillLevelMap[] = { 0, 1500, 2000, 3000, 5000, 7500, 10000, 15000,
-			       20000, 30000, 50000, 75000, 100000, 150000,
-			       200000, 300000, 500000, 750000, 1000000,
-			       1500000, 2000000 };
-ulong CWeaponSkillUnuseTickMap[] = { 500000, 400000, 300000, 250000, 200000,
-				     150000, 125000, 100000, 80000, 62500,
-				     50000, 40000, 30000, 25000, 20000,
-				     15000, 12500, 10000, 8000, 6250, 5000 };
-int CWeaponSkillUnusePenaltyMap[] = { 100, 125, 150, 200, 250, 300, 400, 500,
-				      625, 800, 1000, 1250, 1500, 2000, 2500,
-				      3000, 4000, 5000, 6250, 8000, 10000 };
+int CWeaponSkillLevelMap[]
+= { 0, 1500, 2000, 3000, 5000, 7500, 10000, 15000,
+    20000, 30000, 50000, 75000, 100000, 150000,
+    200000, 300000, 500000, 750000, 1000000,
+    1500000, 2000000 };
+
+ulong CWeaponSkillUnuseTickMap[]
+= { 500000, 400000, 300000, 250000, 200000,
+    150000, 125000, 100000, 80000, 62500,
+    50000, 40000, 30000, 25000, 20000,
+    15000, 12500, 10000, 8000, 6250, 5000 };
+
+int CWeaponSkillUnusePenaltyMap[]
+= { 100, 125, 150, 200, 250, 300, 400, 500,
+    625, 800, 1000, 1250, 1500, 2000, 2500,
+    3000, 4000, 5000, 6250, 8000, 10000 };
+
 const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
 = { "unarmed combat",
     "kicking",
@@ -40,30 +46,41 @@ const char* CWeaponSkillName[WEAPON_SKILL_CATEGORIES]
     "shields"
 };
 
-int SWeaponSkillLevelMap[] = { 0, 500, 750, 1000, 1500, 2000, 3000, 5000,
-			       7500, 10000, 15000, 20000, 30000, 50000,
-			       75000, 100000, 150000, 200000, 300000,
-			       500000, 750000 };
-ulong SWeaponSkillUnuseTickMap[] = { 250000, 200000, 150000, 125000, 100000,
-				     80000, 62500, 50000, 40000, 30000,
-				     25000, 20000, 15000, 12500, 10000,
-				     8000, 6250, 5000, 4000, 3000, 2500 };
-int SWeaponSkillUnusePenaltyMap[] = { 250, 300, 400, 500, 625, 800, 1000,
-				      1250, 1500, 2000, 2500, 3000, 4000,
-				      5000, 6250, 8000, 10000, 12500, 15000,
-				      20000, 25000 };
+int SWeaponSkillLevelMap[]
+= { 0, 500, 750, 1000, 1500, 2000, 3000, 5000,
+    7500, 10000, 15000, 20000, 30000, 50000,
+    75000, 100000, 150000, 200000, 300000,
+    500000, 750000 };
 
-int cweaponskill::GetLevelMap(int I) const { return CWeaponSkillLevelMap[I]; }
-ulong cweaponskill::GetUnuseTickMap(int I) const { return CWeaponSkillUnuseTickMap[I]; }
-int cweaponskill::GetUnusePenaltyMap(int I) const { return CWeaponSkillUnusePenaltyMap[I]; }
-const char* cweaponskill::GetName(int Category) const { return CWeaponSkillName[Category]; }
+ulong SWeaponSkillUnuseTickMap[]
+= { 250000, 200000, 150000, 125000, 100000,
+    80000, 62500, 50000, 40000, 30000,
+    25000, 20000, 15000, 12500, 10000,
+    8000, 6250, 5000, 4000, 3000, 2500 };
 
-sweaponskill::sweaponskill(const item* Item) : ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
-int sweaponskill::GetLevelMap(int I) const { return SWeaponSkillLevelMap[I]; }
-ulong sweaponskill::GetUnuseTickMap(int I) const { return SWeaponSkillUnuseTickMap[I]; }
-int sweaponskill::GetUnusePenaltyMap(int I) const { return SWeaponSkillUnusePenaltyMap[I]; }
-truth sweaponskill::IsSkillOf(const item* Item) const { return ID == Item->GetID() && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
-truth sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const { return ID == CMID && Weight == Item->GetWeight() && Config == Item->GetConfig(); }
+int SWeaponSkillUnusePenaltyMap[]
+= { 250, 300, 400, 500, 625, 800, 1000,
+    1250, 1500, 2000, 2500, 3000, 4000,
+    5000, 6250, 8000, 10000, 12500, 15000,
+    20000, 25000 };
+
+int cweaponskill::GetLevelMap(int I) const
+{ return CWeaponSkillLevelMap[I]; }
+ulong cweaponskill::GetUnuseTickMap(int I) const
+{ return CWeaponSkillUnuseTickMap[I]; }
+int cweaponskill::GetUnusePenaltyMap(int I) const
+{ return CWeaponSkillUnusePenaltyMap[I]; }
+const char* cweaponskill::GetName(int Category) const
+{ return CWeaponSkillName[Category]; }
+
+sweaponskill::sweaponskill(const item* Item)
+: ID(Item->GetID()), Weight(Item->GetWeight()), Config(Item->GetConfig()) { }
+int sweaponskill::GetLevelMap(int I) const
+{ return SWeaponSkillLevelMap[I]; }
+ulong sweaponskill::GetUnuseTickMap(int I) const
+{ return SWeaponSkillUnuseTickMap[I]; }
+int sweaponskill::GetUnusePenaltyMap(int I) const
+{ return SWeaponSkillUnusePenaltyMap[I]; }
 
 void weaponskill::Save(outputfile& SaveFile) const
 {
@@ -115,22 +132,27 @@ truth weaponskill::SubHit(int SubHits)
 
 void cweaponskill::AddLevelUpMessage(int Category) const
 {
-  ADD_MESSAGE("You advance to skill level %d with %s!", Level, CWeaponSkillName[Category]);
+  ADD_MESSAGE("You advance to skill level %d with %s!",
+	      Level, CWeaponSkillName[Category]);
 }
 
 void cweaponskill::AddLevelDownMessage(int Category) const
 {
-  ADD_MESSAGE("You have not practised enough with %s lately. Your skill level is reduced to %d!", CWeaponSkillName[Category], Level);
+  ADD_MESSAGE("You have not practised enough with %s lately. "
+	      "Your skill level is reduced to %d!",
+	      CWeaponSkillName[Category], Level);
 }
 
 void sweaponskill::AddLevelUpMessage(const char* WeaponName) const
 {
-  ADD_MESSAGE("You advance to skill level %d with your %s!", Level, WeaponName);
+  ADD_MESSAGE("You advance to skill level %d with your %s!",
+	      Level, WeaponName);
 }
 
 void sweaponskill::AddLevelDownMessage(const char* WeaponName) const
 {
-  ADD_MESSAGE("You have not practised enough with your %s lately. Your skill level is reduced to %d!", WeaponName, Level);
+  ADD_MESSAGE("You have not practised enough with your %s lately. "
+	      "Your skill level is reduced to %d!", WeaponName, Level);
 }
 
 void sweaponskill::Save(outputfile& SaveFile) const
@@ -158,4 +180,16 @@ truth weaponskill::Tick()
   return false;
 }
 
+truth sweaponskill::IsSkillOf(const item* Item) const
+{
+  return (ID == Item->GetID()
+	  && Weight == Item->GetWeight()
+	  && Config == Item->GetConfig());
+}
 
+truth sweaponskill::IsSkillOfCloneMother(const item* Item, ulong CMID) const
+{
+  return (ID == CMID
+	  && Weight == Item->GetWeight()
+	  && Config == Item->GetConfig());
+}
