@@ -1587,7 +1587,7 @@ class ABSTRACT_ITEM
   virtual void Regenerate(ushort);
   virtual ushort DangerWeight() const = 0;
   virtual ushort Danger(ulong, bool) const;
-  virtual ulong GetTotalWeight() const { return GetWeight(); }
+  virtual ulong GetTotalWeight() const { return 0; }
   virtual void DropEquipment() { }
  protected:
   virtual std::string PostFix() const { return GetOwnerDescription(); }

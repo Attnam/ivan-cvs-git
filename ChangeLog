@@ -1,5 +1,10 @@
 May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Monster can move again
+	* Some list tweaks
+
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Pentagram moved from menu to generation screen
 	* Proto and macro systems remade
 	* Some obviously shared virtual functions of proto-using classes made static

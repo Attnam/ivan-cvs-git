@@ -1459,7 +1459,7 @@ bool character::ShowKeyLayout()
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
 
-  List.Draw(vector2d(10, 42), 780, 30, false);
+  List.Draw(vector2d(26, 42), 652, 30, false);
 
   return false;
 }
@@ -1572,7 +1572,7 @@ bool character::Pray()
     else
       ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
 
-  ushort Select = Panthenon.Draw(vector2d(10, 42), 780);
+  ushort Select = Panthenon.Draw(vector2d(26, 42), 652);
 
   if(Select & 0x8000)
     return false;
@@ -3027,7 +3027,7 @@ bool character::SecretKnowledge()
 	delete Item;
       }
 
-  List.Draw(vector2d(10, 42), 780, 10);
+  List.Draw(vector2d(26, 42), 652, 10);
   return false;
 }
 
@@ -3419,7 +3419,7 @@ bool character::EqupmentScreen()
 	}
 
       List.SetSelected(Chosen);
-      Chosen = List.Draw(vector2d(10, 42), 780, 20, true, false);
+      Chosen = List.Draw(vector2d(26, 42), 652, 20, true, false);
 
       if(Chosen >= EquipmentSlots())
 	break;

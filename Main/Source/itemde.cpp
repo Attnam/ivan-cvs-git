@@ -2268,7 +2268,7 @@ ushort bodypart::Danger(ulong DangerEstimate, bool MaxDanger) const
 
 ulong head::GetTotalWeight() const
 {
-  ulong Weight = GetWeight();
+  ulong Weight = 0;//GetWeight();
 
   if(GetHelmet())
     Weight += GetHelmet()->GetWeight();
@@ -2281,7 +2281,7 @@ ulong head::GetTotalWeight() const
 
 ulong humanoidtorso::GetTotalWeight() const
 {
-  ulong Weight = GetWeight();
+  ulong Weight = 0;//GetWeight();
 
   if(GetBodyArmor())
     Weight += GetBodyArmor()->GetWeight();
@@ -2297,7 +2297,7 @@ ulong humanoidtorso::GetTotalWeight() const
 
 ulong arm::GetTotalWeight() const
 {
-  ulong Weight = GetWeight();
+  ulong Weight = 0;//GetWeight();
 
   if(GetWielded())
     Weight += GetWielded()->GetWeight();
@@ -2313,7 +2313,7 @@ ulong arm::GetTotalWeight() const
 
 ulong leg::GetTotalWeight() const
 {
-  ulong Weight = GetWeight();
+  ulong Weight = 0;//GetWeight();
 
   if(GetBoot())
     Weight += GetBoot()->GetWeight();

@@ -563,7 +563,7 @@ bool humanoid::ShowWeaponSkills()
 	  List.AddEntry(Buffer + '-', RED);
       }*/
 
-    List.Draw(vector2d(10, 42), 780, 20, false);
+    List.Draw(vector2d(26, 42), 652, 20, false);
   }
 
   return false;
