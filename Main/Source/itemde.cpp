@@ -878,3 +878,17 @@ bool backpack::StruckByWandOfStriking(character* Striker, stack* MotherStack)
 		return false;
 }
 
+material* loaf::CreateLoafMaterials(void)
+{
+  switch(RAND() % 3)
+    {
+    case 0:
+      return new bread;
+
+    case 1:
+      return new pork;
+
+    default:
+      return new beef;
+    }
+}

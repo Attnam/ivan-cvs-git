@@ -691,10 +691,12 @@ class ITEM
 (
 	loaf,
 	item,
-	InitMaterials(switch(RAND() % 3) { case 0: (material*)new pork break; case 1: (material*)new beef break; default: (material*)new bread }),
-	{
+	InitMaterials(CreateLoafMaterials()),
+        {
 		SetSize(40);
 	},
+	
+
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual std::string Name(uchar Case) const RET(NameThingsThatAreLikeLumps(Case, "a")) 

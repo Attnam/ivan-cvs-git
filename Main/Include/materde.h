@@ -882,7 +882,7 @@ class MATERIAL
 	material,
 public:
 	virtual ushort GetHitValue() const				{ return 10; }
-	virtual uchar GetConsumeType() const				{ return FLESH; }
+	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort GetDensity() const				{ return 200; }
 	virtual ushort OfferValue() const				{ return 7; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -895,3 +895,10 @@ protected:
 );
  
 #endif
+
+
+
+
+
+
+
