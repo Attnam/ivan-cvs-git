@@ -250,13 +250,13 @@ bool commandsystem::Drop(character* Char)
 	  for(uint c = 0; c < ToDrop.size(); ++c)
 	    {
 	      if(game::BoolQuestion(CONST_S("Are you sure? You will never see ") + ToDrop[c]->CHAR_NAME(DEFINITE)
-				    + CONST_S(" again! [y/N]")))
-	      {
+				    + " again! [y/N]"))
+		{
 
-		ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
-		ToDrop[c]->RemoveFromSlot();
-		ToDrop[c]->SendToHell();
-	      }
+		  ADD_MESSAGE("You drop %s.", ToDrop[c]->CHAR_NAME(DEFINITE));
+		  ToDrop[c]->RemoveFromSlot();
+		  ToDrop[c]->SendToHell();
+		}
 	    }
 	}
       else if(!Char->GetRoom() || Char->GetRoom()->DropItem(Char, ToDrop[0], ToDrop.size()))

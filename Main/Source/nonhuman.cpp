@@ -1528,7 +1528,10 @@ void largecreature::PutTo(vector2d Pos)
 void largecreature::Remove()
 {
   for(int c = 0; c < 4; ++c)
-    GetSquareUnder(c)->RemoveCharacter();
+    {
+      SquareUnder[c]->RemoveCharacter();
+      SquareUnder[c] = 0;
+    }
 }
 
 void largecreature::CreateCorpse(lsquare* Square)
@@ -1593,7 +1596,7 @@ void hattifattener::GetAICommand()
 void hattifattener::CreateCorpse(lsquare* Square)
 {
   level* Level = Square->GetLevel();
-  ulong StackSize = Level->AddRadiusToSquareStack(GetPos(), 9);
+  ulong StackSize = Level->AddRadiusToSquareStack(Square->GetPos(), 9);
   lsquare** SquareStack = Level->GetSquareStack();
   ulong c;
 

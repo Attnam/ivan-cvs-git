@@ -147,6 +147,7 @@ class stack
   void DropSideItems();
   bool DetectMaterial(const material*) const;
   void SetLifeExpectancy(int, int);
+  bool Necromancy(character*);
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, const character*, const festring&, int, int, sorter) const;

@@ -181,6 +181,7 @@ class lsquare : public square
   bool Lightning(const beamdata&);
   bool DoorCreation(const beamdata&);
   bool AcidRain(const beamdata&);
+  bool Necromancy(const beamdata&);
   int GetLevelIndex() const { return static_cast<level*>(AreaUnder)->GetIndex(); }
   int GetDungeonIndex() const { return static_cast<level*>(AreaUnder)->GetDungeon()->GetIndex(); }
   dungeon* GetDungeon() const { return static_cast<level*>(AreaUnder)->GetDungeon(); }

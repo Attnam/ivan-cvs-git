@@ -1265,7 +1265,7 @@ wand
 		Possibility = 20;
 		Price = 750;
 		PostFix = "of resurrection";
-		MainMaterialConfig == BONE;
+		MainMaterialConfig == HUMAN_FLESH;
 		BeamRange = 5;
 		MinCharges = 1;
 		MaxCharges = 3;
@@ -1366,6 +1366,20 @@ wand
 		BeamEffect = BEAM_DUPLICATE; /* difference from cloning overridden */
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
+	}
+
+	Config WAND_OF_NECROMANCY;
+	{
+		Possibility = 30;
+		Price = 500;
+		PostFix = "of necromancy";
+		MainMaterialConfig == BONE;
+		BeamRange = 5;
+		MinCharges = 2;
+		MaxCharges = 5;
+		BeamColor = BLACK;
+		BeamEffect = BEAM_NECROMANCY;
+		AttachedGod = INFUSCOR;
 	}
 }
 

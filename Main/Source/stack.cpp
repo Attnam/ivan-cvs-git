@@ -1155,3 +1155,15 @@ void stack::SetLifeExpectancy(int Base, int RandPlus)
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->SetLifeExpectancy(Base, RandPlus);
 }
+
+bool stack::Necromancy(character* Necromancer)
+{
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(uint c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Necromancy(Necromancer))
+      return true;
+
+  return false;
+}

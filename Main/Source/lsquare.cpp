@@ -1427,10 +1427,8 @@ bool lsquare::Resurrect(const beamdata& Beam)
 {
   if(GetCharacter())
     return GetCharacter()->RaiseTheDead(Beam.Owner);
-  else if(GetStack()->RaiseTheDead(Beam.Owner))
-    return true;
   else
-    return false;
+    return GetStack()->RaiseTheDead(Beam.Owner);
 }
 
 bool lsquare::Invisibility(const beamdata&) 
@@ -1520,7 +1518,8 @@ bool (lsquare::*BeamEffect[BEAM_EFFECTS])(const beamdata&) =
   &lsquare::Duplicate,
   &lsquare::Lightning,
   &lsquare::DoorCreation,
-  &lsquare::AcidRain
+  &lsquare::AcidRain,
+  &lsquare::Necromancy
 };
 
 bool (lsquare::*lsquare::GetBeamEffect(int I))(const beamdata&)
@@ -2433,4 +2432,9 @@ void lsquare::SwapMemorized(lsquare* Square)
   Swap(Memorized, Square->Memorized);
   Swap(FowMemorized, Square->FowMemorized);
   MemorizedDescription.SwapData(Square->MemorizedDescription);
+}
+
+bool lsquare::Necromancy(const beamdata& Beam)
+{
+  return GetStack()->Necromancy(Beam.Owner);
 }

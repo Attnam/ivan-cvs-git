@@ -623,7 +623,7 @@ bool game::OnScreen(vector2d Pos)
 
 void game::DrawEverythingNoBlit(bool AnimationDraw)
 {
-  if(LOSUpdateRequested)
+  if(LOSUpdateRequested && Player->IsEnabled())
     if(!IsInWilderness())
       GetCurrentLevel()->UpdateLOS();
     else
@@ -660,8 +660,13 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
       igraph::DrawCursor(ScreenCordinates);
     }
 
-  if(OnScreen(GetPlayer()->GetPos()))
-    igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
+  if(Player->IsEnabled())
+    {
+      vector2d Pos = Player->GetPos();
+
+      if(OnScreen(Pos))
+	igraph::DrawCursor(CalculateScreenCoordinates(Pos));
+    }
 }
 
 bool game::Save(const festring& SaveName)

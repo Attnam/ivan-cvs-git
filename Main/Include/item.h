@@ -362,7 +362,7 @@ class item : public object
   virtual void SignalEmitationIncrease(color24);
   virtual void SignalEmitationDecrease(color24);
   void CalculateAll();
-  virtual void DropEquipment() { }
+  virtual void DropEquipment(stack* = 0) { }
   virtual bool IsDangerousForAI(const character*) const { return false; } 
   virtual bool IsDangerous() const { return false; } 
   void WeaponSkillHit(int);
@@ -483,6 +483,7 @@ class item : public object
   bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   bool IsVeryCloseToSpoiling() const;
   virtual bool IsValuable() const;
+  virtual bool Necromancy(character*) { return false; }
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

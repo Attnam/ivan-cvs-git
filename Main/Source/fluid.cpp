@@ -23,7 +23,7 @@ fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), L
   AddLiquid(Liquid->GetVolume());
 }
 
-fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, bool IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(!UseImage()), GearImage(0), Flags(0), LocationName(LocationName)
+fluid::fluid(liquid* Liquid, item* MotherItem, const festring& LocationName, bool IsInside) : entity(HAS_BE), Next(0), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), Image(false), GearImage(0), Flags(0), LocationName(LocationName)
 {
   if(UseImage())
     {

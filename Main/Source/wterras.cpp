@@ -13,6 +13,7 @@ vector2d ocean::GetBitmapPos(int Frame) const { return vector2d(48 + ((Frame << 
 const char* ocean::SurviveMessage() const { return "you manage to reach the shore"; }
 const char* ocean::MonsterSurviveMessage() const { return "manages to reach the shore"; }
 const char* ocean::DeathMessage() const { return "you drown"; }
+const char* ocean::MonsterDeathVerb() const { return "drowns"; }
 const char* ocean::ScoreEntry() const { return "drowned"; }
 
 const char* glacier::GetNameStem() const { return "glacier"; }

@@ -194,10 +194,10 @@ statedata StateData[STATES] =
   }, {
     "Levitating",
     RANDOMIZABLE&~SRC_EVIL,
-    &character::PrintBeginLevitatingMessage,
-    &character::PrintEndLevitatingMessage,
+    &character::PrintBeginLevitationMessage,
+    &character::PrintEndLevitationMessage,
     0,
-    0,
+    &character::EndLevitation,
     0,
     0
   }, {
@@ -295,7 +295,11 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];
-  *SquareUnder = 0;
+
+  if(SquaresUnder)
+    *SquareUnder = 0;
+  else
+    memset(SquareUnder, 0, SquaresUnder * sizeof(square*));
 
   for(c = 0; c < BodyParts; ++c)
     {
@@ -1138,12 +1142,29 @@ bool character::TryMove(vector2d MoveVector, bool Important, bool Run)
        || game::GoThroughWallsCheatIsActive()))
 	{
 	  if(!game::GoThroughWallsCheatIsActive())
-	    for(uint c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
-	      if(!game::GetWorldMap()->GetPlayerGroup()[c]->CanMoveOn(GetNearWSquare(MoveTo)))
-		{
-		  ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
-		  return false;
-		}
+	    {
+	      charactervector& V = game::GetWorldMap()->GetPlayerGroup();
+	      bool Discard = false;
+
+	      for(uint c = 0; c < V.size(); ++c)
+		if(!V[c]->CanMoveOn(GetNearWSquare(MoveTo)))
+		  {
+		    if(!Discard)
+		      {
+			ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
+
+			if(!game::BoolQuestion("Discard them? [y/N]"))
+			  return false;
+
+			Discard = true;
+		      }
+
+		      if(Discard)
+			delete V[c];
+
+		      V.erase(V.begin() + c--);
+		  }
+	    }
 
 	  Move(MoveTo, false);
 	  return true;
@@ -1226,8 +1247,17 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	}
     }
 
+  square* SquareUnder[MAX_SQUARES_UNDER];
+  lsquare** LSquareUnder = reinterpret_cast<lsquare**>(SquareUnder);
+  memset(SquareUnder, 0, sizeof(SquareUnder));
+
   if(IsPlayer() || !game::IsInWilderness())
-    Remove();
+    {
+      for(int c = 0; c < SquaresUnder; ++c)
+	SquareUnder[c] = GetSquareUnder(c);
+
+      Remove();
+    }
   else
     {
       charactervector& V = game::GetWorldMap()->GetPlayerGroup();
@@ -1242,7 +1272,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	    game::SignalDeath(this, Killer);
 
 	  if(AllowCorpse)
-	    CreateCorpse(GetLSquareUnder());
+	    CreateCorpse(LSquareUnder[0]);
 	  else
 	    SendToHell();
 	}
@@ -1251,7 +1281,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	  if(!IsPlayer())
 	    game::SignalDeath(GetPolymorphBackup(), Killer);
 
-	  GetPolymorphBackup()->CreateCorpse(GetLSquareUnder());
+	  GetPolymorphBackup()->CreateCorpse(LSquareUnder[0]);
 	  GetPolymorphBackup()->SetPolymorphed(false);
 	  SetPolymorphBackup(0);
 	  SendToHell();
@@ -1264,33 +1294,47 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
     {
       if(!game::IsInWilderness())
 	for(int c = 0; c < GetSquaresUnder(); ++c)
-	  GetLSquareUnder(c)->SetTemporaryEmitation(GetEmitation());
+	  LSquareUnder[c]->SetTemporaryEmitation(GetEmitation());
 
       ShowAdventureInfo();
 
       if(!game::IsInWilderness())
 	for(int c = 0; c < GetSquaresUnder(); ++c)
-	  GetLSquareUnder(c)->SetTemporaryEmitation(0);
+	  LSquareUnder[c]->SetTemporaryEmitation(0);
     }
 
   if(!game::IsInWilderness())
     {
       if(GetSquaresUnder() == 1)
-	GetStack()->MoveItemsTo(GetLSquareUnder()->GetStack());
-      else while(GetStack()->GetItems())
-	GetStack()->GetBottom()->MoveTo(GetLSquareUnder(RAND_N(GetSquaresUnder()))->GetStack());
-
-      for(int c = 0; c < BodyParts; ++c)
 	{
-	  bodypart* BodyPart = GetBodyPart(c);
+	  stack* StackUnder = LSquareUnder[0]->GetStack();
+	  GetStack()->MoveItemsTo(StackUnder);
 
-	  if(BodyPart)
-	    BodyPart->DropEquipment();
+	  for(int c = 0; c < BodyParts; ++c)
+	    {
+	      bodypart* BodyPart = GetBodyPart(c);
+
+	      if(BodyPart)
+		BodyPart->DropEquipment(StackUnder);
+	    }
+	}
+      else
+	{
+	  while(GetStack()->GetItems())
+	    GetStack()->GetBottom()->MoveTo(LSquareUnder[RAND_N(GetSquaresUnder())]->GetStack());
+
+	  for(int c = 0; c < BodyParts; ++c)
+	    {
+	      bodypart* BodyPart = GetBodyPart(c);
+
+	      if(BodyPart)
+		BodyPart->DropEquipment(LSquareUnder[RAND_N(GetSquaresUnder())]->GetStack());
+	    }
 	}
     }
-  else
+  /*else
     {
-      /* Drops the equipment to the character's stack */
+      / Drops the equipment to the character's stack /
 
       for(int c = 0; c < BodyParts; ++c)
 	{
@@ -1311,7 +1355,7 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	  GetStack()->GetBottom()->SendToHell();
 	  GetStack()->GetBottom()->RemoveFromSlot();
 	}
-    }
+    }*/
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(0);
@@ -1923,8 +1967,9 @@ bool character::Polymorph(character* NewForm, int Counter)
     ADD_MESSAGE("%s glows in a crimson light and %s transforms into %s!", CHAR_NAME(DEFINITE), GetPersonalPronoun().CStr(), NewForm->CHAR_NAME(INDEFINITE));
 
   InNoMsgMode = NewForm->InNoMsgMode = true;
+  vector2d Pos = GetPos();
   Remove();
-  NewForm->PutToOrNear(GetPos());
+  NewForm->PutToOrNear(Pos);
   NewForm->SetAssignedName(GetAssignedName());
   NewForm->ActivateTemporaryState(POLYMORPHED);
   NewForm->SetTemporaryStateCounter(POLYMORPHED, Counter);
@@ -1972,7 +2017,7 @@ void character::BeKicked(character* Kicker, item* Boot, bodypart* Leg, vector2d 
     case HAS_HIT:
     case HAS_BLOCKED:
     case DID_NO_DAMAGE:
-      if(!CheckBalance(KickDamage))
+      if(IsEnabled() && !CheckBalance(KickDamage))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("The kick throws you off balance.");
@@ -2208,6 +2253,9 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    }
 	  else
 	    {
+	      if(!IsEnabled())
+		return true;
+
 	      if(GetPos() == GoingTo)
 		TerminateGoingTo();
 
@@ -2389,10 +2437,11 @@ bool character::Displace(character* Who, bool Forced)
       for(c = 0; c < Who->GetSquaresUnder(); ++c)
 	OldSquareUnder2[c] = Who->GetLSquareUnder(c);
 
+      vector2d Pos = GetPos();
+      vector2d WhoPos = Who->GetPos();
       Remove();
       Who->Remove();
-      vector2d Pos = GetPos();
-      PutTo(Who->GetPos());
+      PutTo(WhoPos);
       Who->PutTo(Pos);
       EditAP(-GetMoveAPRequirement(GetSquareUnder()->GetEntryDifficulty()) - 500);
       EditNP(-12 * GetSquareUnder()->GetEntryDifficulty());
@@ -2715,26 +2764,33 @@ void character::DisplayInfo(festring& Msg)
 
 void character::TestWalkability()
 {
-  if(GetSquareUnder()->IsFatalToStay() && !CanMoveOn(GetSquareUnder()))
+  if(!IsEnabled())
+    return;
+
+  square* SquareUnder = !game::IsInWilderness()
+		      ? GetSquareUnder() : PLAYER->GetSquareUnder();
+
+  if(SquareUnder->IsFatalToStay() && !CanMoveOn(SquareUnder))
     {
       bool Alive = false;
 
-      for(int d = 0; d < GetNeighbourSquares(); ++d)
-	{
-	  square* Square = GetNeighbourSquare(d);
+      if(!game::IsInWilderness() || IsPlayer())
+	for(int d = 0; d < GetNeighbourSquares(); ++d)
+	  {
+	    square* Square = GetNeighbourSquare(d);
 
-	  if(Square && CanMoveOn(Square) && IsFreeForMe(Square))
-	    {
-	      if(IsPlayer())
-		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this));
-	      else if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterSurviveMessage(this));
+	    if(Square && CanMoveOn(Square) && IsFreeForMe(Square))
+	      {
+		if(IsPlayer())
+		  ADD_MESSAGE("%s.", SquareUnder->SurviveMessage(this));
+		else if(CanBeSeenByPlayer())
+		  ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), SquareUnder->MonsterSurviveMessage(this));
 
-	      Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
-	      Alive = true;
-	      break;
-	    }
-	}
+		Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
+		Alive = true;
+		break;
+	      }
+	  }
 
       if(!Alive)
 	{
@@ -2742,16 +2798,16 @@ void character::TestWalkability()
 	    {
 	      Remove();
 	      SendToHell();
-	      game::AskForKeyPress(festring(GetSquareUnder()->DeathMessage(this)) + '.');
-	      PLAYER->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
+	      game::AskForKeyPress(festring(SquareUnder->DeathMessage(this)) + ". [press any key to continue]");
+	      PLAYER->AddScoreEntry(SquareUnder->ScoreEntry(this));
 	      game::End();
 	    }
 	  else
 	    {
 	      if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetSquareUnder()->MonsterDeathVerb(this));
+		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), SquareUnder->MonsterDeathVerb(this));
 
-	      Die();
+	      Die(0, SquareUnder->ScoreEntry(this), false, true, false);
 	    }
 	}
     }
@@ -3014,7 +3070,7 @@ int character::ReceiveBodyPartDamage(character* Damager, int Damage, int Type,in
 
 /* Returns 0 if bodypart disappears */
 
-item* character::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
+item* character::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance, stack* EquipmentDropStack)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
@@ -3032,15 +3088,15 @@ item* character::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
   || StateIsActivated(POLYMORPHED)
   || game::AllBodyPartsVanish())
     {
+      BodyPart->DropEquipment(EquipmentDropStack);
       BodyPart->RemoveFromSlot();
 
-      if(game::IsInWilderness())
+      /*if(game::IsInWilderness())
 	GetStack()->AddItem(BodyPart);
       else
-	GetStackUnder()->AddItem(BodyPart);
+	GetStackUnder()->AddItem(BodyPart);*/
 
-      BodyPart->DropEquipment();
-      BodyPart->RemoveFromSlot();
+      //BodyPart->RemoveFromSlot();
       CalculateAttributeBonuses();
       CalculateBattleInfo();
       BodyPart->SendToHell();
@@ -3531,7 +3587,11 @@ void character::Initialize(int NewConfig, int SpecialFlags)
   OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill[AllowedWeaponSkillCategories];
   SquareUnder = new square*[SquaresUnder];
-  *SquareUnder = 0;
+
+  if(SquaresUnder)
+    *SquareUnder = 0;
+  else
+    memset(SquareUnder, 0, SquaresUnder * sizeof(square*));
 
   int c;
 
@@ -4031,17 +4091,17 @@ void character::SignalEquipmentAdd(int EquipmentIndex)
 
 void character::SignalEquipmentRemoval(int)
 {
-  bool CouldFly = !!(GetMoveType() & FLY);
+  //bool CouldFly = !!(GetMoveType() & FLY);
   CalculateEquipmentState();
   CalculateAttributeBonuses();
 
-  if(CouldFly && !(GetMoveType() & FLY))
+  /*if(CouldFly && !(GetMoveType() & FLY))
     {
       if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
 	SignalStepFrom(0);
 
       TestWalkability();
-    }
+    }*/
 }
 
 void character::CalculateEquipmentState()
@@ -4136,7 +4196,8 @@ void character::HandleStates()
 			return;
 		    }
 
-		  (this->*StateData[c].PrintEndMessage)();
+		  if(!TemporaryStateCounter[c])
+		    (this->*StateData[c].PrintEndMessage)();
 		}
 	    }
 	}
@@ -4294,7 +4355,11 @@ character* character::ForceEndPolymorph()
   if(IsPlayer())
     ADD_MESSAGE("You return to your true form.");
   else if(game::IsInWilderness())
-    return this; // fast gum solution, state ends when the player enters a dungeon
+    {
+      ActivateTemporaryState(POLYMORPHED);
+      SetTemporaryStateCounter(POLYMORPHED, 10);
+      return this; // fast gum solution, state ends when the player enters a dungeon
+    }
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s returns to %s true form.", CHAR_NAME(DEFINITE), GetPossessivePronoun().CStr());
 
@@ -4307,12 +4372,13 @@ character* character::ForceEndPolymorph()
   if(GetAction())
     GetAction()->Terminate(false);
 
+  vector2d Pos = GetPos();
   SendToHell();
   Remove();
   character* Char = GetPolymorphBackup();
   InNoMsgMode = Char->InNoMsgMode = true;
   SetPolymorphBackup(0);
-  Char->PutToOrNear(GetPos());
+  Char->PutToOrNear(Pos);
   Char->Enable();
   Char->SetPolymorphed(false);
   GetStack()->MoveItemsTo(Char->GetStack());
@@ -4496,8 +4562,12 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
       bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
       bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-      if((game::IsInWilderness() && Visible)
-	 || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare())))
+      if(game::IsInWilderness())
+	return Visible;
+
+      if(MayBeESPSeen
+      && (Theoretically
+       || GetDistanceSquareFrom(PLAYER) <= PLAYER->GetESPRangeSquare()))
 	return true;
       else if(!Visible)
 	return false;
@@ -4520,8 +4590,12 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
 	  bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
 	  bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-	  if((game::IsInWilderness() && Visible)
-	  || (MayBeESPSeen && (Theoretically || GetDistanceSquareFrom(Who) <= Who->GetESPRangeSquare())))
+	  if(game::IsInWilderness())
+	    return Visible;
+
+	  if(MayBeESPSeen
+	  && (Theoretically
+	   || GetDistanceSquareFrom(Who) <= Who->GetESPRangeSquare()))
 	    return true;
 	  else if(!Visible)
 	    return false;
@@ -6723,6 +6797,7 @@ void character::PutTo(vector2d Pos)
 void character::Remove()
 {
   SquareUnder[0]->RemoveCharacter();
+  SquareUnder[0] = 0;
 }
 
 void character::SendNewDrawRequest() const
@@ -7189,7 +7264,7 @@ bool character::CheckIfTooScaredToHit(const character* Enemy) const
   return false;
 }
 
-void character::PrintBeginLevitatingMessage() const
+void character::PrintBeginLevitationMessage() const
 {
   if(!(GetMoveType() & FLY))
     if(IsPlayer())
@@ -7198,7 +7273,7 @@ void character::PrintBeginLevitatingMessage() const
       ADD_MESSAGE("%s begins to float.", CHAR_NAME(DEFINITE));
 }
 
-void character::PrintEndLevitatingMessage() const
+void character::PrintEndLevitationMessage() const
 {
   if(!(GetMoveType() & FLY))
     if(IsPlayer())
@@ -7988,7 +8063,10 @@ ulong character::GetPossibleCommandFlags() const
   ulong Flags = ALL_COMMAND_FLAGS;
 
   if(!CanMove() || Int < 4)
-    Flags &= ~(FOLLOW_LEADER|FLEE_FROM_ENEMIES);
+    Flags &= ~FOLLOW_LEADER;
+
+  if(!CanMove() || Int < 6)
+    Flags &= ~FLEE_FROM_ENEMIES;
 
   if(!CanUseEquipment() || Int < 8)
     Flags &= ~DONT_CHANGE_EQUIPMENT;
@@ -8275,4 +8353,15 @@ color16 character::GetVerbalBurdenStateColor() const
 int character::GetAttributeAverage() const
 {
   return GetSumOfAttributes() / 7;
+}
+
+void character::EndLevitation()
+{
+  if(!(GetMoveType() & FLY))
+    {
+      if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
+	SignalStepFrom(0);
+
+      TestWalkability();
+    }
 }

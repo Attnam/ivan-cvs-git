@@ -452,7 +452,7 @@ Bananas should return when thrown (they are boomerang-shaped).
 How much a monster can eat should depend on its volume (pet rats eat exactly as much as mammoths before they become bloated and stop).
 When seasons are integrated, bears should hibernate through winter.
 (hs) Loricatus should change weak golems to steel.
-(hs+) Statistics about the real time spent on a game.
+(hs+) Statistics about the real time spent on a game and the average spend on a turn.
 New über-artifact: The Holy Grail.
 New über-artifact: The Lance of Longinus.
 //Scroll of detect material.
@@ -485,12 +485,13 @@ Running and levitating.
 Wands show "times used" even if they come from a bone file. This shouldn't be so.
 Hunter (hunts with bear traps).
 Taxidermy.
-Hunters should have stuffed heads of random monsters.
+Hunters should carry stuffed heads of random animals.
 Crown item for the goblin king.
 Pets should be able to drink from fountains.
 The message which informs that an item has been broken should indicate who carries the item.
-There should be a possibility to examine an item (show materials etc.) in the inventory screen.
+(hs) There should be a possibility to examine an item (show materials etc.) in the inventory screen.
 Goblins should be generated tame if goblin king belongs to the player team.
 Kill reasons to the "killed by other reasons" list.
 If the player is poisoned, he should be able to slow the poison's effect by standing still. (from Henri Kiviluoto)
 He should be also able to call 112/911.  (from Henri Kiviluoto)
+The pictures of mirrored creatures should also be mirrored and their limbs swapped.

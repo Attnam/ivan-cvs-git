@@ -607,43 +607,90 @@ void corpse::SetDeceased(character* What)
   Enable();
 }
 
-void head::DropEquipment()
+void head::DropEquipment(stack* Stack)
 {
-  if(GetHelmet())
-    GetSlot()->AddFriendItem(GetHelmet());
+  if(Stack)
+    {
+      if(GetHelmet())
+	GetHelmet()->MoveTo(Stack);
 
-  if(GetAmulet())
-    GetSlot()->AddFriendItem(GetAmulet());
+      if(GetAmulet())
+	GetAmulet()->MoveTo(Stack);
+    }
+  else
+    {
+      if(GetHelmet())
+	GetSlot()->AddFriendItem(GetHelmet());
+
+      if(GetAmulet())
+	GetSlot()->AddFriendItem(GetAmulet());
+    }
 }
 
-void humanoidtorso::DropEquipment()
+void humanoidtorso::DropEquipment(stack* Stack)
 {
-  if(GetBodyArmor())
-    GetSlot()->AddFriendItem(GetBodyArmor());
+  if(Stack)
+    {
+      if(GetBodyArmor())
+	GetBodyArmor()->MoveTo(Stack);
 
-  if(GetCloak())
-    GetSlot()->AddFriendItem(GetCloak());
+      if(GetCloak())
+	GetCloak()->MoveTo(Stack);
 
-  if(GetBelt())
-    GetSlot()->AddFriendItem(GetBelt());
+      if(GetBelt())
+	GetBelt()->MoveTo(Stack);
+    }
+  else
+    {
+      if(GetBodyArmor())
+	GetSlot()->AddFriendItem(GetBodyArmor());
+
+      if(GetCloak())
+	GetSlot()->AddFriendItem(GetCloak());
+
+      if(GetBelt())
+	GetSlot()->AddFriendItem(GetBelt());
+    }
 }
 
-void arm::DropEquipment()
+void arm::DropEquipment(stack* Stack)
 {
-  if(GetWielded())
-    GetSlot()->AddFriendItem(GetWielded());
+  if(Stack)
+    {
+      if(GetWielded())
+	GetWielded()->MoveTo(Stack);
 
-  if(GetGauntlet())
-    GetSlot()->AddFriendItem(GetGauntlet());
+      if(GetGauntlet())
+	GetGauntlet()->MoveTo(Stack);
 
-  if(GetRing())
-    GetSlot()->AddFriendItem(GetRing());
+      if(GetRing())
+	GetRing()->MoveTo(Stack);
+    }
+  else
+    {
+      if(GetWielded())
+	GetSlot()->AddFriendItem(GetWielded());
+
+      if(GetGauntlet())
+	GetSlot()->AddFriendItem(GetGauntlet());
+
+      if(GetRing())
+	GetSlot()->AddFriendItem(GetRing());
+    }
 }
 
-void leg::DropEquipment()
+void leg::DropEquipment(stack* Stack)
 {
-  if(GetBoot())
-    GetSlot()->AddFriendItem(GetBoot());
+  if(Stack)
+    {
+      if(GetBoot())
+	GetBoot()->MoveTo(Stack);
+    }
+  else
+    {
+      if(GetBoot())
+	GetSlot()->AddFriendItem(GetBoot());
+    }
 }
 
 head::~head()
@@ -1361,9 +1408,10 @@ void bodypart::SignalVolumeAndWeightChange()
       CalculateMaxHP();
       Master->CalculateMaxHP();
       Master->SignalBodyPartVolumeAndWeightChange();
+      square* SquareUnder = GetSquareUnder();
 
-      if(UpdateArmorPictures())
-	GetSquareUnder()->SendNewDrawRequest();
+      if(SquareUnder && UpdateArmorPictures())
+	SquareUnder->SendNewDrawRequest();
     }
 }
 
@@ -1641,7 +1689,8 @@ void corpse::SignalDisappearance()
 
 bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
 {
-  return item::CanBePiledWith(Item, Viewer) && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
+  return item::CanBePiledWith(Item, Viewer)
+      && OwnerDescription == static_cast<const bodypart*>(Item)->OwnerDescription;
 }
 
 bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -3082,4 +3131,33 @@ bool corpse::IsValuable() const
     }
 
   return false;
+}
+
+bool corpse::Necromancy(character* Necromancer)
+{
+  if(Necromancer && Necromancer->IsPlayer())
+    game::DoEvilDeed(50);
+
+  character* Zombie = GetDeceased()->CreateZombie();
+
+  if(Zombie)
+    {
+      Zombie->PutToOrNear(GetPos());
+      RemoveFromSlot();
+      SendToHell();
+      Zombie->ChangeTeam(Necromancer->GetTeam());
+
+      if(Zombie->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s rises back to cursed undead life.", Zombie->CHAR_DESCRIPTION(INDEFINITE));
+
+      Zombie->SignalStepFrom(0);
+      return true;
+    }
+  else
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s vibrates for some time.", CHAR_NAME(DEFINITE));
+
+      return false;
+    }
 }

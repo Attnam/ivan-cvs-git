@@ -42,7 +42,7 @@ class ABSTRACT_ITEM
   void SetOwnerDescription(const festring& What) { OwnerDescription = What; }
   bool IsUnique() const { return Unique; }
   void SetIsUnique(bool What) { Unique = What; }
-  virtual void DropEquipment() { }
+  virtual void DropEquipment(stack* = 0) { }
   //virtual bool ApplyExperience() { return false; }
   virtual void InitSpecialAttributes() { }
   virtual void SignalEquipmentAdd(gearslot*);
@@ -168,7 +168,7 @@ class ITEM
   item* GetHelmet() const { return *HelmetSlot; }
   void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
   item* GetAmulet() const { return *AmuletSlot; }
-  virtual void DropEquipment();
+  virtual void DropEquipment(stack* = 0);
   virtual int GetBodyPartIndex() const;
   double GetBiteDamage() const { return BiteDamage; }
   int GetBiteMinDamage() const;
@@ -231,7 +231,7 @@ class ITEM
   item* GetCloak() const { return *CloakSlot; }
   void SetBelt(item* What) { BeltSlot.PutInItem(What); }
   item* GetBelt() const { return *BeltSlot; }
-  virtual void DropEquipment();
+  virtual void DropEquipment(stack* = 0);
   virtual item* GetEquipment(int) const;
   virtual int GetEquipmentSlots() const { return 3; }
   virtual void SignalEquipmentAdd(gearslot*);
@@ -264,7 +264,7 @@ class ABSTRACT_ITEM
   item* GetGauntlet() const { return *GauntletSlot; }
   void SetRing(item* What) { RingSlot.PutInItem(What); }
   item* GetRing() const { return *RingSlot; }
-  virtual void DropEquipment();
+  virtual void DropEquipment(stack* = 0);
   double GetUnarmedToHitValue() const;
   double GetUnarmedDamage() const;
   void Hit(character*, vector2d, int, bool = false);
@@ -395,7 +395,7 @@ class ABSTRACT_ITEM
   virtual int GetTotalResistance(int) const;
   void SetBoot(item* What) { BootSlot.PutInItem(What); }
   item* GetBoot() const { return *BootSlot; }
-  virtual void DropEquipment();
+  virtual void DropEquipment(stack* = 0);
   double GetKickToHitValue() const { return KickToHitValue; }
   double GetKickDamage() const { return KickDamage; }
   int GetKickMinDamage() const;
@@ -511,6 +511,7 @@ class ITEM
   virtual void SignalDisappearance();
   virtual bool IsValuable() const;
   virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
+  virtual bool Necromancy(character*);
  protected:
   virtual bool IsSparkling(int) const;
   virtual void GenerateMaterials() { }

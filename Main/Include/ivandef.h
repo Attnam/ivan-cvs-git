@@ -478,7 +478,7 @@ struct databasebase { int Config; };
 #define HIT 1
 #define CATCHED 2
 
-#define BEAM_EFFECTS 12
+#define BEAM_EFFECTS 13
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -492,6 +492,7 @@ struct databasebase { int Config; };
 #define BEAM_LIGHTNING 9
 #define BEAM_DOOR_CREATION 10
 #define BEAM_ACID_RAIN 11
+#define BEAM_NECROMANCY 12
 
 #define BEAM_STYLES 3
 

@@ -28,6 +28,7 @@ class GWTERRAIN
   virtual const char* SurviveMessage() const;
   virtual const char* MonsterSurviveMessage() const;
   virtual const char* DeathMessage() const;
+  virtual const char* MonsterDeathVerb() const;
   virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
   virtual int GetWalkability() const;

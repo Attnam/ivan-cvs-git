@@ -378,7 +378,7 @@ class character : public entity, public id
   void AddKoboldFleshHitMessage() const;
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
-  virtual item* SevereBodyPart(int, bool = false);
+  virtual item* SevereBodyPart(int, bool = false, stack* = 0);
   virtual bool TryToRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(int, int = 0);
@@ -843,8 +843,8 @@ class character : public entity, public id
   virtual bool CanAttack() const { return true; }
   bool DetectMaterial(const material*) const;
   bool CheckIfTooScaredToHit(const character*) const;
-  void PrintBeginLevitatingMessage() const;
-  void PrintEndLevitatingMessage() const;
+  void PrintBeginLevitationMessage() const;
+  void PrintEndLevitationMessage() const;
   void EditDealExperience(long);
   int RawEditExperience(double&, double, double, double) const;
   virtual void LeprosyHandler();
@@ -905,6 +905,7 @@ class character : public entity, public id
   const char* GetVerbalBurdenState() const;
   color16 GetVerbalBurdenStateColor() const;
   virtual int GetAttributeAverage() const;
+  void EndLevitation();
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

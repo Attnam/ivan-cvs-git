@@ -124,7 +124,7 @@ class ABSTRACT_CHARACTER
   virtual void CreateInitialEquipment(int);
   virtual festring GetBodyPartName(int, bool = false) const;
   virtual void CreateBlockPossibilityVector(blockvector&, double) const;
-  virtual item* SevereBodyPart(int, bool = false);
+  virtual item* SevereBodyPart(int, bool = false, stack* = 0);
   virtual int GetSWeaponSkillLevel(const item*) const;
   virtual bool UseMaterialAttributes() const;
   virtual void CalculateDodgeValue();
@@ -308,7 +308,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo();
-  virtual item* SevereBodyPart(int, bool = false);
+  virtual item* SevereBodyPart(int, bool = false, stack* = 0);
   virtual bool BodyPartIsVital(int) const;
   virtual long GetBodyPartVolume(int) const;
  protected:

@@ -103,7 +103,7 @@ void skeleton::CreateCorpse(lsquare* Square)
 {
   if(GetHead())
     {
-      item* Skull = SevereBodyPart(HEAD_INDEX);
+      item* Skull = SevereBodyPart(HEAD_INDEX, false, Square->GetStack());
       Square->AddItem(Skull);
     }
 
@@ -2329,7 +2329,7 @@ leg* humanoid::GetRandomLeg() const
     return GetLeftLeg();
 }
 
-item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
+item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance, stack* EquipmentDropStack)
 {
   if(BodyPartIndex == RIGHT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
@@ -2347,13 +2347,13 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
 	Bone = new bone(0, NO_MATERIALS);
 
       Bone->InitMaterials(BodyPart->GetMainMaterial());
-      BodyPart->DropEquipment();
+      BodyPart->DropEquipment(EquipmentDropStack);
       BodyPart->RemoveFromSlot();
       BodyPart->SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
     }
   else
     {
-      BodyPart->DropEquipment();
+      BodyPart->DropEquipment(EquipmentDropStack);
       BodyPart->RemoveFromSlot();
     }
 
@@ -2475,14 +2475,14 @@ void humanoid::CreateBlockPossibilityVector(blockvector& Vector, double ToHitVal
     Vector.push_back(std::pair<double, int>(LeftBlockChance * (1 - RightBlockChance), LeftBlockCapability));
 }
 
-item* humanoid::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance)
+item* humanoid::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance, stack* EquipmentDropStack)
 {
   if(BodyPartIndex == RIGHT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentRightSWeaponSkill, 0);
   else if(BodyPartIndex == LEFT_ARM_INDEX)
     EnsureCurrentSWeaponSkillIsCorrect(CurrentLeftSWeaponSkill, 0);
 
-  return character::SevereBodyPart(BodyPartIndex, ForceDisappearance);
+  return character::SevereBodyPart(BodyPartIndex, ForceDisappearance, EquipmentDropStack);
 }
 
 humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
@@ -3969,7 +3969,7 @@ bool necromancer::TryToRaiseZombie()
 	  if(Zombie)
 	    {
 	      if(Zombie->CanBeSeenByPlayer())
-		ADD_MESSAGE("%s calls %s back to life.", CHAR_DESCRIPTION(DEFINITE), Zombie->CHAR_NAME(INDEFINITE));
+		ADD_MESSAGE("%s calls %s back to cursed undead life.", CHAR_DESCRIPTION(DEFINITE), Zombie->CHAR_NAME(INDEFINITE));
 	      else if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s casts a spell, but you notice no effect.", CHAR_NAME(DEFINITE));
 
@@ -4255,6 +4255,16 @@ character* humanoid::CreateZombie() const
 	    }
 	}
     }
+
+  for(c = 0; c < Zombie->AllowedWeaponSkillCategories; ++c)
+    Zombie->CWeaponSkill[c] = CWeaponSkill[c];
+
+  Zombie->SWeaponSkill.resize(SWeaponSkill.size());
+  std::list<sweaponskill*>::iterator i1 = Zombie->SWeaponSkill.begin();
+  std::list<sweaponskill*>::const_iterator i2 = SWeaponSkill.begin();
+
+  for(; i2 != SWeaponSkill.end(); ++i1, ++i2)
+    *i1 = new sweaponskill(**i2);
 
   memcpy(Zombie->BaseExperience,
 	 BaseExperience,
