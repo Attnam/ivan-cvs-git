@@ -425,11 +425,6 @@ ushort levelsquare::CLuminance(void)
 	return Luminance < 511 ? Luminance : 511;
 }
 
-void stack::SSquareUnder(square* Square)
-{
-	SquareUnder = Square;
-}
-
 void levelsquare::AddCharacter(character* Guy)
 {
 	Character = Guy;

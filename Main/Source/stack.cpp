@@ -370,3 +370,8 @@ long stack::Score(void)
 
 	return Score;
 }
+
+void stack::SSquareUnder(square* Square)
+{
+	SquareUnder = Square;
+}
