@@ -14,8 +14,8 @@ class configuration
  public:
   static std::string GetDefaultName() { return DefaultName; }
   static void SetDefaultName(std::string);
-  static ushort GetAutosaveInterval() { return AutosaveInterval; }
-  static void SetAutosaveInterval(long);
+  static ushort GetAutoSaveInterval() { return AutoSaveInterval; }
+  static void SetAutoSaveInterval(long);
   static void EditContrast(char);
   static uchar GetContrast() { return Contrast; }
   static void SetContrast(long);
@@ -39,7 +39,7 @@ class configuration
   static void SwitchModeHandler();
  private:
   static std::string DefaultName;
-  static ushort AutosaveInterval;
+  static ushort AutoSaveInterval;
   static uchar Contrast;
   static bool AutodropLeftOvers;
   static bool OutlineCharacters;
@@ -51,3 +51,4 @@ class configuration
 };
 
 #endif
+

@@ -1,4 +1,4 @@
-#include "lterraba.h"
+#include "lterrade.h"
 #include "level.h"
 #include "charba.h"
 #include "dungeon.h"
@@ -22,7 +22,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutosaveInterval())
+      if(configuration::GetAutoSaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
@@ -47,7 +47,7 @@ bool olterrain::GoUp(character* Who) const // Try to go up
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
 	    game::GetCurrentArea()->UpdateLOS();
-	    if(configuration::GetAutosaveInterval())
+	    if(configuration::GetAutoSaveInterval())
 	      game::Save(game::GetAutoSaveFileName().c_str());
 	    return true;
 	  }
@@ -77,7 +77,7 @@ bool olterrain::GoDown(character* Who) const // Try to go down
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutosaveInterval())
+      if(configuration::GetAutoSaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
@@ -93,15 +93,25 @@ bool olterrain::GoDown(character* Who) const // Try to go down
 void lterrain::Save(outputfile& SaveFile) const
 {
   object::Save(SaveFile);
-
   SaveFile << VisualFlags;
 }
 
 void lterrain::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
-
   SaveFile >> VisualFlags;
+}
+
+void olterrain::Save(outputfile& SaveFile) const
+{
+  lterrain::Save(SaveFile);
+  SaveFile << HP;
+}
+
+void olterrain::Load(inputfile& SaveFile)
+{
+  lterrain::Load(SaveFile);
+  SaveFile >> HP;
 }
 
 void glterrain::DrawToTileBuffer() const
@@ -151,3 +161,9 @@ bool glterrain::SitOn(character*)
   ADD_MESSAGE("You sit for some time. Nothing happens.");
   return true;
 }
+
+void olterrain::Break()
+{
+  GetLSquareUnder()->ChangeOLTerrain(new empty);
+}
+

@@ -11,7 +11,18 @@
 
 /* ConsumeTypes */
 
-#define ODD     0
+#define ODD 0
+#define FRUIT 1
+#define MEAT 2
+#define METAL 4
+#define MINERAL 8
+#define LIQUID 16
+#define BONE 32
+#define PROCESSED 64
+#define MISC_ORGANIC 128
+#define GAS 256
+
+/*#define ODD     0
 #define FRUIT     1
 #define MEAT     2
 #define SPOILED   3
@@ -26,7 +37,7 @@
 #define EOMLEURINE    3
 #define EDARKNESS    4
 #define EFIRE      5
-#define EPEPSI      6
+#define EPEPSI      6*/
 
 #include <string>
 
@@ -57,7 +68,7 @@ class material : public type
   virtual std::string Name(bool = false, bool = true) const;
   //virtual const char* CHARNAME(uchar Case = 0, bool Adjective = true) const { return Name(Case, Adjective).c_str(); }
   virtual ushort GetStrengthValue() const = 0;
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const = 0;
   virtual ulong GetVolume() const { return Volume; }
   virtual ulong GetWeight() const { return ulong(float(Volume) * GetDensity() / 1000); }
   virtual ushort GetDensity() const = 0;
@@ -84,7 +95,7 @@ class material : public type
   virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ulong RawPrice() const { return 0; }
   virtual bool GetIsBadFoodForAI() const { return false; }
-  virtual bool CanBeDigged(material*) const;
+  virtual bool CanBeDug(material*) const;
   virtual bool IsFlexible() const { return false; }
   virtual bool IsExplosive() const { return false; }
   virtual ushort ExplosivePower() const { return 0; }

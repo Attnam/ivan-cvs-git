@@ -31,7 +31,7 @@ class ABSTRACT_CHARACTER
   virtual uchar GetSex() const { return MALE; }
   //virtual ushort CalculateArmorModifier() const;
   virtual void Save(outputfile&) const;
-  //virtual bool CanWield() const { return true; }
+  virtual bool CanWield() const { return true; }
   virtual bool CanWear() const { return true; }
   virtual bool CanKick() const { return true; }
   //virtual float GetAttackStrength() const;
@@ -122,6 +122,9 @@ class ABSTRACT_CHARACTER
   virtual item* GetRightBoot() const;
   virtual item* GetLeftBoot() const;
   virtual bool VirtualEquipmentScreen();
+  virtual void SwitchToDig(item*, vector2d);
+  virtual void SetRightWielded(item*);
+  virtual void SetLeftWielded(item*);
   virtual uchar GetLegs() const;
   virtual uchar GetArms() const;
   virtual bool CheckKick();
@@ -622,6 +625,7 @@ class CHARACTER
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
+  virtual uchar GetSex() const { return MALE + RAND() % 2; }
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(144, 144, 144); }
   virtual ushort EyeColor() const { return MAKE_RGB(100, 0, 0); }
@@ -652,18 +656,15 @@ class CHARACTER
   virtual bool CanBeGenerated() const { return true; }
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
+  virtual uchar GetSex() const { return UNDEFINED; }
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(0, 128, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(111,74,37); } 
-
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 48); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32,112); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 144); }
   virtual vector2d GetLegBitmapPos() const { return vector2d(16, 64); }
-
   virtual ulong TotalVolume() const { return 25000; }
-
-
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new goblinoidflesh(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(144,0); }
   virtual std::string NameSingular() const { return "goblin"; }
@@ -789,7 +790,6 @@ class CHARACTER
   },
  public:
   virtual bool Catches(item*, float);
-  virtual bool ConsumeItemType(uchar) const;
  protected:
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new dogflesh(Volume); }
@@ -801,6 +801,7 @@ class CHARACTER
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string TalkVerb() const { return "barks"; }
   virtual ushort TotalSize() const { return 70; }
+  virtual ushort GetEatFlags() const { return character::GetEatFlags()|BONE; }
 );
 
 class CHARACTER
@@ -1242,6 +1243,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void SpillBlood(uchar, vector2d);
   virtual float GetMeleeStrength() const { return 1500; }
+  virtual uchar GetSex() const { return UNDEFINED; }
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(0, 120, 120); }
   virtual ushort EyeColor() const { return MAKE_RGB(200, 0, 0); }
@@ -1266,20 +1268,14 @@ class CHARACTER
     SetEndurance(10);
     SetPerception(15);
   },
+ public:
+  virtual uchar GetSex() const { return UNDEFINED; }
  protected:
-<<<<<<< charde.h
   //  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
   virtual ushort SkinColor() const { return MAKE_RGB(128, 0, 0); }
   virtual ushort EyeColor() const { return MAKE_RGB(150, 80, 0); }
-=======
-  virtual ushort SkinColor() const { return MAKE_RGB(144, 144, 144); }
-  virtual ushort EyeColor() const { return MAKE_RGB(150, 150, 0); }
->>>>>>> 1.119
   virtual ushort ClothColor() const { return MAKE_RGB(111,74,37); }
-<<<<<<< charde.h
   virtual ushort CapColor() const { return MAKE_RGB(30,0,0); }
-=======
->>>>>>> 1.119
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 16); } 
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 112); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 32); }
@@ -1372,7 +1368,8 @@ class CHARACTER
   virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
   virtual ushort GetChangeCounter() { return ChangeCounter; }
   virtual ulong MaxDanger();
-  //virtual bool CanWield() const { return !GetIsWolf(); } 
+  //virtual bool CanWield() const { return !GetIsWolf(); }
+  virtual uchar GetSex() const { return IsWolf ? UNDEFINED : MALE; }
  protected:
   virtual ushort SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(); }
   virtual ushort EyeColor() const { return MAKE_RGB(160, 0, 0); }
@@ -1402,14 +1399,11 @@ class CHARACTER
     SetPerception(12);
   },
  public:
+  virtual uchar GetSex() const { return UNDEFINED; }
   virtual bool CanBeGenerated() const { return true; }
   virtual void CreateInitialEquipment();
  protected:
-<<<<<<< charde.h
-  virtual ushort SkinColor() const { return MAKE_RGB(30, 100, 110); }
-=======
   virtual ushort SkinColor() const { return MAKE_RGB(40, 140, 150); }
->>>>>>> 1.119
   virtual ushort HairColor() const { return MAKE_RGB(35, 35, 35); }
   virtual ushort ClothColor() const { return MAKE_RGB(111, 74, 37); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 208); }
@@ -1434,6 +1428,8 @@ class CHARACTER
     SetEndurance(5);
     SetPerception(15);
   },
+ public:
+  virtual uchar GetSex() const { return UNDEFINED; }
  protected:
   virtual ushort SkinColor() const { return MAKE_RGB(100, 100, 200); }
   virtual ushort HairColor() const { return MAKE_RGB(50, 20, 80); }

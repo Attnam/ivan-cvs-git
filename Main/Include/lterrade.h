@@ -61,7 +61,6 @@ class GLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
  protected:
   virtual std::string NameSingular() const { return "ground"; }
   virtual vector2d GetBitmapPos() const { return vector2d(16, 336); }
@@ -76,7 +75,7 @@ class OLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR | FLIP | ROTATE_90; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The ground is fairly easy to dig."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
@@ -94,7 +93,7 @@ class OLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return 0; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "The wall is pretty hard, but you still manage to go through it."; }
   virtual bool GetIsWalkable() const { return false; }
  protected:
@@ -127,25 +126,25 @@ class OLTERRAIN
     SetBoobyTrap(0);
     UpdatePicture();
     SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+    SetHP(500);
   },
  public:
   virtual bool Open(character*);
   virtual bool Close(character*);
   virtual bool CanBeOpened() const { return !GetIsWalkable(); }
-  virtual std::string DigMessage() const { return "The chop the door down."; }
+  virtual std::string DigMessage() const { return "The break the door."; }
   virtual void Kick(ushort, bool, uchar);
   virtual void SetIsOpen(bool What) { IsOpen = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool GetIsWalkable() const { return IsOpen; }
   virtual bool IsDoor() const { return true; }
-  //virtual std::string Name(uchar) const;
   virtual void SetIsLocked(bool What) { IsLocked = What; }
   virtual bool GetIsLocked() const { return IsLocked; }
   virtual bool CanBeOpenedByAI() { return !GetIsLocked() && CanBeOpened(); }
   virtual bool ReceiveStrike();
   virtual void Lock() { SetIsLocked(true); }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
@@ -155,7 +154,7 @@ class OLTERRAIN
  protected:
   virtual std::string Adjective(bool) const;
   virtual bool ShowAdjective() const { return true; }
-  virtual void Break(bool);
+  virtual void Break();
   virtual std::string NameSingular() const { return "door"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
   virtual void MakeWalkable();
@@ -179,7 +178,6 @@ class OLTERRAIN
   virtual bool GoUp(character*) const;
   virtual uchar OKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
-  //virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
   virtual void StepOn(character*);
  protected:
   virtual ushort GetMaterialColor1() const { return MAKE_RGB(160, 64, 0); }
@@ -199,7 +197,6 @@ class OLTERRAIN
   virtual bool GoDown(character*) const;
   virtual uchar OKVisualEffects() const { return 0; }
   virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
-  //virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(160, 64, 0); }
   virtual void StepOn(character*);
  protected:
   virtual ushort GetMaterialColor1() const { return MAKE_RGB(160, 64, 0); }
@@ -218,7 +215,6 @@ class OLTERRAIN
   },
  public:
   virtual bool CanBeOffered() const { return true; }
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case) + OwnerGodDescription(OwnerGod); }
   virtual void DrawToTileBuffer() const;
   virtual uchar GetOwnerGod() const { return OwnerGod; }
   virtual void SetOwnerGod(uchar What) { OwnerGod = What; }
@@ -264,9 +260,8 @@ class OLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "pine"; }
@@ -282,9 +277,8 @@ class OLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "spruce"; }
@@ -300,9 +294,8 @@ class OLTERRAIN
   },
  public:
   virtual uchar OKVisualEffects() const { return MIRROR; }
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual std::string DigMessage() const { return "You chop the tree down."; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "lovely linden"; }
@@ -333,7 +326,7 @@ class OLTERRAIN
  public:
   virtual std::string DigMessage() const { return "The destroy the couch."; }
   virtual bool SitOn(character*);
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual uchar RestModifier() const { return 2; }
   virtual void ShowRestMessage(character*) const;
  protected:
@@ -350,9 +343,8 @@ class OLTERRAIN
   },
  public:
   virtual std::string DigMessage() const { return "You smash the bookcase into pieces."; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool SitOn(character*);
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
  protected:
   virtual bool ShowMaterial() const { return false; }
   virtual std::string NameSingular() const { return "bookcase"; }
@@ -368,13 +360,12 @@ class OLTERRAIN
   },
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
-  //virtual std::string Name(uchar) const;
   virtual bool SitOn(character*);
   virtual bool Consume(character*);
   virtual bool HasConsumeEffect() const { return true; } 
   virtual void DryOut();
-  virtual bool ReceiveDip(item*, character*);
-  virtual bool HasDipEffect() const { return true; }
+  virtual bool DipInto(item*, character*);
+  virtual bool IsDipDestination() const { return true; }
  protected:
   virtual std::string PostFix() const { return ContainerPostFix(); }
   virtual bool ShowPostFix() const { return GetContainedMaterial() ? true : false; }
@@ -393,9 +384,8 @@ class OLTERRAIN
   },
  public:
   virtual std::string DigMessage() const { return "You smash the bed into pieces."; }
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool SitOn(character*);
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual uchar RestModifier() const { return 5; }
   virtual void ShowRestMessage(character*) const;
  protected:
@@ -412,12 +402,13 @@ class OLTERRAIN
   {
     SetIsOpen(false);
     UpdatePicture();
+    SetHP(500);
   },
  public:
   virtual std::string DigMessage() const { return "You destroy the broken door."; }
   virtual void Kick(ushort, bool, uchar);
   virtual bool ReceiveStrike();
-  virtual bool CanBeDigged() const { return true; }
+  virtual bool CanBeDug() const { return true; }
   virtual void HasBeenHitBy(item*, float, uchar, bool);
  protected:
   virtual std::string NameSingular() const { return "broken door"; }
@@ -432,7 +423,6 @@ class GLTERRAIN
   {
   },
  public:
-  //virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool GetIsWalkable(character*) const;
   virtual bool SitOn(character*);
   virtual std::string SurviveMessage() const { return "you manage to get out of the pool"; }

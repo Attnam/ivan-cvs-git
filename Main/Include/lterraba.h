@@ -32,28 +32,27 @@ class lterrain : public object
 {
  public:
   lterrain(bool AddToPool) : object(AddToPool, false) { }
+  virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Open(character* Opener);
   virtual bool Close(character* Closer);
   virtual vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool CanBeOffered() const { return false; }
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
-  virtual bool CanBeDigged() const { return false; }
+  virtual bool CanBeDug() const { return false; }
   virtual uchar OKVisualEffects() const { return 0; }
   virtual uchar GetVisualFlags() const { return VisualFlags; }
   virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   virtual void HandleVisualEffects();
-  virtual void Save(outputfile&) const;
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool ReceiveStrike() { return false; }
   virtual bool GetIsLocked() const { return false; }
   virtual bool Polymorph(character*) { return false; }
-  virtual bool ReceiveApply(item*,character*) { return false; }
-  virtual bool ReceiveDip(item*,character*) { return false; }
-  virtual bool HasDipEffect() const { return false; }
+  virtual bool ReceiveApply(item*, character*) { return false; }
+  virtual bool DipInto(item*, character*) { return false; }
+  virtual bool IsDipDestination() const { return false; }
  protected:
   virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   virtual bool ShowMaterial() const { return true; }
@@ -66,7 +65,6 @@ class glterrain : public lterrain, public gterrain
   glterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
   virtual glterrain* Clone(bool = true, bool = true) const = 0;
-  //virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
 };
@@ -74,14 +72,15 @@ class glterrain : public lterrain, public gterrain
 class olterrain : public lterrain, public oterrain
 {
  public:
-  olterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
+  olterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool), HP(1000) { }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual void DrawToTileBuffer() const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
   virtual uchar GetOwnerGod() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual olterrain* Clone(bool = true, bool = true) const = 0;
-  //virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual void Kick(ushort, bool, uchar) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
@@ -89,7 +88,13 @@ class olterrain : public lterrain, public oterrain
   virtual bool Consume(character*) { return false; }
   virtual void Lock() { }
   virtual void CreateBoobyTrap() { }
-  virtual void HasBeenHitBy(item*, float, uchar, bool) {}
+  virtual void HasBeenHitBy(item*, float, uchar, bool) { }
+  virtual void Break();
+  virtual short GetHP() const { return HP; }
+  virtual void SetHP(short What) { HP = What; }
+  virtual void EditHP(short What) { HP += What; }
+ protected:
+  short HP;
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__

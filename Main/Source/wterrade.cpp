@@ -55,7 +55,7 @@ bool attnam::GoDown(character* Who) const
       game::GetPetrus()->SetStoryState(3);
     }
 
-  if(configuration::GetAutosaveInterval())
+  if(configuration::GetAutoSaveInterval())
     game::Save(game::GetAutoSaveFileName().c_str());
 
   return true;
@@ -84,7 +84,7 @@ bool elpuricave::GoDown(character* Who) const
   game::UpdateCamera();
   game::GetCurrentArea()->UpdateLOS();
 
-  if(configuration::GetAutosaveInterval())
+  if(configuration::GetAutoSaveInterval())
     game::Save(game::GetAutoSaveFileName().c_str());
 
   return true;

@@ -58,7 +58,7 @@ gamescript game::GameScript;
 bool game::IsLoading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
-std::string game::AutoSaveFileName = SAVE_DIR + "Autosave";
+std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 std::vector<god*> game::God;
 
@@ -429,9 +429,9 @@ void game::DrawPanel()
 
   FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Time: %d", GetTicks() / 10);
 
-  if(Player->StateIsActivated(FAINTED))
-    FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
-  else if(Player->GetHungerState() == VERYHUNGRY)
+  //if(Player->StateIsActivated(FAINTED))
+    //FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
+  /*else */if(Player->GetHungerState() == VERYHUNGRY)
     FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
   else
     if(Player->GetHungerState() == HUNGRY)

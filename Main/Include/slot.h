@@ -17,6 +17,7 @@ class outputfile;
 class inputfile;
 class stack;
 class bodypart;
+class action;
 
 typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -29,13 +30,14 @@ class slot
   void Save(outputfile&) const;
   void Load(inputfile&);
   item* GetItem() const { return Item; }
-  void SetItem(item* What) { Item = What; }
+  void SetItem(item*);
   item* operator->() const { return Item; }
   item* operator*() const { return Item; }
   virtual void MoveItemTo(stack*) = 0;
+  virtual bool IsStackSlot() const { return false; }
   virtual bool IsCharacterSlot() const { return false; }
   virtual bool IsGearSlot() const { return false; }
-  void PutInItem(item*);
+  virtual void AddFriendItem(item*) const = 0;
  protected:
   item* Item;
 };
@@ -50,6 +52,8 @@ class stackslot : public slot
   std::list<stackslot*>::iterator GetStackIterator() const { return StackIterator; }
   void SetStackIterator(std::list<stackslot*>::iterator What) { StackIterator = What; }
   virtual void MoveItemTo(stack*);
+  virtual bool IsStackSlot() const { return true; }
+  virtual void AddFriendItem(item*) const;
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;
@@ -77,6 +81,7 @@ class characterslot : public slot
   void SetMaster(character* What) { Master = What; }
   virtual void MoveItemTo(stack*);
   virtual bool IsCharacterSlot() const { return true; }
+  virtual void AddFriendItem(item*) const;
  protected:
   character* Master;
 };
@@ -102,6 +107,7 @@ class gearslot : public slot
   void SetBodyPart(bodypart* What) { BodyPart = What; }
   virtual void MoveItemTo(stack*);
   virtual bool IsGearSlot() const { return true; }
+  virtual void AddFriendItem(item*) const;
   void Init(bodypart*);
  protected:
   bodypart* BodyPart;
@@ -116,6 +122,33 @@ inline outputfile& operator<<(outputfile& SaveFile, gearslot GearSlot)
 inline inputfile& operator>>(inputfile& SaveFile, gearslot& GearSlot)
 {
   GearSlot.Load(SaveFile);
+  return SaveFile;
+}
+
+class actionslot : public slot
+{
+ public:
+  virtual void Empty();
+  virtual void FastEmpty();
+  action* GetAction() const { return Action; }
+  void SetAction(action* What) { Action = What; }
+  virtual void MoveItemTo(stack*);
+  virtual bool IsActionSlot() const { return true; }
+  virtual void AddFriendItem(item*) const;
+  void Init(action*);
+ protected:
+  action* Action;
+};
+
+inline outputfile& operator<<(outputfile& SaveFile, actionslot ActionSlot)
+{
+  ActionSlot.Save(SaveFile);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, actionslot& ActionSlot)
+{
+  ActionSlot.Load(SaveFile);
   return SaveFile;
 }
 

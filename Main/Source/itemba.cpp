@@ -37,9 +37,12 @@ ulong item::GetWeight() const
   return TotalWeight;
 }
 
-bool item::Consumable(character* Eater) const
+bool item::IsConsumable(character* Eater) const
 {
-  return Eater->ConsumeItemType(GetConsumeType());
+  if(!GetConsumeMaterial())
+    return false;
+  else
+    return Eater->CanEat(GetConsumeMaterial());
 }
 
 ushort item::GetEmitation() const
@@ -172,7 +175,7 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
   return true;
 }
 
-item* item::PrepareForConsuming(character*, stack*)
+item* item::PrepareForConsuming(character*)
 {
   return this;
 }
@@ -229,9 +232,9 @@ bool item::StruckByWandOfStriking(character*, std::string)
 
 bool item::Consume(character* Eater, float Amount)
 {
-  GetMainMaterial()->EatEffect(Eater, Amount, NPModifier());
+  GetConsumeMaterial()->EatEffect(Eater, Amount, NPModifier());
 
-  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMainMaterial()->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
@@ -243,10 +246,10 @@ bool item::Consume(character* Eater, float Amount)
 
 bool item::IsBadFoodForAI(character* Eater) const
 {
-  if(Eater->CheckCannibalism(GetMainMaterial()->GetType()))
+  if(Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     return true;
   else
-    return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
+    return GetConsumeMaterial()->GetIsBadFoodForAI();
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -339,7 +342,7 @@ void item::MoveTo(stack* Stack)
 
 void item::DonateSlotTo(item* Item)
 {
-  Item->SetSlot(GetSlot());
+  //Item->SetSlot(GetSlot());
   GetSlot()->SetItem(Item);
   SetSlot(0);
 }

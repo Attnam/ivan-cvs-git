@@ -223,4 +223,7 @@ Skeleton bone flight.
 Mutant monster.
 WhatToLoad menu could show danger level & dungeon level.
 Pocket pick-axe.
-Alias.
+Aliases for wishing.
+Dipping to oceans.
+If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
+Moving diagonally should use sqrt(2) times more AP.

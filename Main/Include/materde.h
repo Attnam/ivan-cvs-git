@@ -14,7 +14,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 100; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 8000; }
   virtual ushort OfferValue() const { return 10; }
   virtual bool IsSolid() const { return true; }
@@ -31,7 +31,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 400; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 100; }
   virtual uchar Alignment() const { return GOOD; }
@@ -50,7 +50,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 60; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 5; }
   virtual bool IsSolid() const { return true; }
@@ -65,7 +65,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return FRUIT; }
+  virtual ushort GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 10; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -83,7 +83,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 40; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 1; }
   virtual ushort GetColor() const { return MAKE_RGB(72, 72, 72); }
@@ -97,7 +97,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 20; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 2; }
   virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
@@ -111,7 +111,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return SCHOOLFOOD; }
+  virtual ushort GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 1500; }
   virtual ushort OfferValue() const { return 20; }
   virtual uchar Alignment() const { return EVIL; }
@@ -134,6 +134,7 @@ class MATERIAL
   virtual ushort GetDensity() const { return 1; }
   virtual ushort OfferValue() const { return 0; }
   virtual ushort GetColor() const { return MAKE_RGB(112, 112, 200); }
+  virtual ushort GetConsumeType() const { return GAS; }
  protected:
   virtual std::string NameStem() const { return "air"; }
   virtual std::string Article() const { return "an"; }
@@ -145,7 +146,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 30; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 5; }
   virtual bool IsSolid() const { return true; }
@@ -161,7 +162,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 10; }
-  virtual uchar GetConsumeType() const { return MEAT; }
+  virtual ushort GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 15; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -218,7 +219,7 @@ class MATERIAL
   virtual ushort GetStrengthValue() const { return 30; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return BONE; }
+  virtual ushort GetConsumeType() const { return BONE; }
   virtual void EatEffect(character*, float, float);
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(144, 144, 144); }
@@ -271,7 +272,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 30; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 5; }
   virtual bool IsSolid() const { return true; }
@@ -286,7 +287,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 1; }
-  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 100; }
   virtual void EatEffect(character*, float, float);
@@ -307,7 +308,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 10; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 1; }
   virtual ushort GetColor() const { return MAKE_RGB(176, 176, 0); }
@@ -322,7 +323,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 15; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 600; }
   virtual ushort OfferValue() const { return 5; }
   virtual bool IsSolid() const { return true; }
@@ -338,7 +339,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 100; }
   virtual ushort OfferValue() const { return 5; }
   virtual bool IsSolid() const { return true; }
@@ -366,7 +367,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 2; }
-  virtual uchar GetConsumeType() const { return MEAT; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 400; }
   virtual ushort OfferValue() const { return 1; }
   virtual short NutritionValue() const { return 100; }
@@ -382,7 +383,6 @@ class MATERIAL
   brownslime,
   slime,
  public:
-  virtual uchar GetConsumeType() const { return MEAT; }
   virtual ushort OfferValue() const { return 1; }
   virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
  protected:
@@ -434,7 +434,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 200; }
-  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1500; }
   virtual ushort OfferValue() const { return 50; }
   virtual uchar Alignment() const { return EVIL; }
@@ -453,7 +453,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 200; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 5000; }
   virtual ushort OfferValue() const { return 25; }
   virtual bool IsSolid() const { return true; }
@@ -504,7 +504,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 50; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 7; }
   virtual bool IsSolid() const { return true; }
@@ -519,7 +519,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 30; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 20000; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
@@ -537,7 +537,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 2; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 100; }
   virtual ushort OfferValue() const { return 2; }
   virtual ushort GetColor() const { return MAKE_RGB(32, 96, 32); }
@@ -553,7 +553,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return FRUIT; }
+  virtual ushort GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 11; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -571,7 +571,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 10; }
-  virtual uchar GetConsumeType() const { return FRUIT; }
+  virtual ushort GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 12; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -589,7 +589,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 10; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
   virtual bool IsSolid() const { return true; }
@@ -637,7 +637,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
   virtual bool IsSolid() const { return true; }
@@ -666,7 +666,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 1; }
-  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 1; }
   virtual short NutritionValue() const { return 10; }
@@ -691,7 +691,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 50; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 10; }
   virtual bool IsSolid() const { return true; }
@@ -833,7 +833,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 5; }
-  virtual uchar GetConsumeType() const { return ODD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 250; }
   virtual ushort OfferValue() const { return 5; }
   virtual ushort GetColor() const { return MAKE_RGB(30, 30, 30); }
@@ -861,7 +861,7 @@ class MATERIAL
   material, // should be "liquid"
  public:
   virtual ushort GetStrengthValue() const { return 200; }
-  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 50; }
   virtual short NutritionValue() const { return 10; }
@@ -890,7 +890,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 10; }
-  virtual uchar GetConsumeType() const { return MEAT; }
+  virtual ushort GetConsumeType() const { return PROCESSED; }
   virtual ushort GetDensity() const { return 200; }
   virtual ushort OfferValue() const { return 7; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
@@ -908,7 +908,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 125; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MISC_ORGANIC; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 10; }
   virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
@@ -959,7 +959,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 300; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
@@ -975,7 +975,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 50; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 10500; }
   virtual ushort OfferValue() const { return 30; }
   virtual bool IsSolid() const { return true; }
@@ -992,7 +992,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 250; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
@@ -1008,7 +1008,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 250; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return MINERAL; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
   virtual bool IsSolid() const { return true; }
@@ -1024,7 +1024,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 1; }
-  virtual uchar GetConsumeType() const { return LIQUID; }
+  virtual ushort GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1100; }
   virtual ushort OfferValue() const { return 70; }
   virtual void EatEffect(character*, float, float);
@@ -1042,7 +1042,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 80; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 8300; } 
   virtual ushort OfferValue() const { return 10; }
   virtual bool IsSolid() const { return true; }
@@ -1058,7 +1058,7 @@ class MATERIAL
   material,
  public:
   virtual ushort GetStrengthValue() const { return 60; }
-  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetConsumeType() const { return METAL; }
   virtual ushort GetDensity() const { return 9000; } // rounded from 8920
   virtual ushort OfferValue() const { return 10; } 
   virtual bool IsSolid() const { return true; }

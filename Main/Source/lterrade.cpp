@@ -102,15 +102,13 @@ void altar::DrawToTileBuffer() const
 
 void altar::Load(inputfile& SaveFile)
 {
-  lterrain::Load(SaveFile);
-
+  olterrain::Load(SaveFile);
   SaveFile >> OwnerGod;
 }
 
 void altar::Save(outputfile& SaveFile) const
 {
-  lterrain::Save(SaveFile);
-
+  olterrain::Save(SaveFile);
   SaveFile << OwnerGod;
 }
 
@@ -141,7 +139,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutosaveInterval())
+      if(configuration::GetAutoSaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
@@ -165,7 +163,7 @@ bool stairsup::GoUp(character* Who) const // Try to go up
 	  game::SendLOSUpdateRequest();
 	  game::UpdateCamera();
 	  game::GetCurrentArea()->UpdateLOS();
-	  if(configuration::GetAutosaveInterval())
+	  if(configuration::GetAutoSaveInterval())
 	    game::Save(game::GetAutoSaveFileName().c_str());
 	  return true;
 	}
@@ -210,7 +208,7 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
       game::GetCurrentArea()->UpdateLOS();
-      if(configuration::GetAutosaveInterval())
+      if(configuration::GetAutoSaveInterval())
 	game::Save(game::GetAutoSaveFileName().c_str());
       return true;
     }
@@ -234,22 +232,20 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 	}
       else if(Strength > RAND() % 40)
 	{
-	  bool NewLockedStatus;
-
 	  if(IsLocked && RAND() % 2) // _can't really think of a good formula for this... 
 	    {			//Strength isn't everything
 	      if(ShowOnScreen)
 		ADD_MESSAGE("The lock breaks and the door is damaged.");
-	      NewLockedStatus = false;
+
+	      SetIsLocked(false);
 	    }
 	  else
 	    {
 	      if(ShowOnScreen)
 		ADD_MESSAGE("The door is damaged.");
-	      NewLockedStatus = IsLocked;
 	    }
 
-	  Break(NewLockedStatus);
+	  Break();
 	}
       else
 	if(ShowOnScreen)
@@ -261,18 +257,14 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 
 void door::Save(outputfile& SaveFile) const
 {
-  lterrain::Save(SaveFile);
-
-  SaveFile << IsOpen;
-  SaveFile << IsLocked;
+  olterrain::Save(SaveFile);
+  SaveFile << IsOpen << IsLocked;
 }
 
 void door::Load(inputfile& SaveFile)
 {
-  lterrain::Load(SaveFile);
-
-  SaveFile >> IsOpen;
-  SaveFile >> IsLocked;
+  olterrain::Load(SaveFile);
+  SaveFile >> IsOpen >> IsLocked;
 }
 
 void door::MakeWalkable()
@@ -551,7 +543,6 @@ bool fountain::Consume(character* Drinker)
 	  ADD_MESSAGE("You don't dare to drink from this fountain.");
 	  return false;
 	}
-
     }
   else
     {
@@ -592,7 +583,7 @@ void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 	    if(ShowOnScreen)
 	      ADD_MESSAGE("The doors opens from the force of your kick.");
 
-	    IsLocked = false;
+	    SetIsLocked(false);
 	    MakeWalkable();
 	  }
 	else if(Strength > RAND() % 20)
@@ -600,7 +591,7 @@ void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 	    if(ShowOnScreen)
 	      ADD_MESSAGE("The lock breaks from the force of your kick.");
 
-	    IsLocked = false;
+	    SetIsLocked(false);
 	  }
 	else
 	  if(ShowOnScreen)
@@ -623,12 +614,10 @@ bool door::ReceiveStrike()
 {
   if(RAND() % 2)
     {
-      bool NewLockedStatus = IsLocked;
-
       if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("The wand strikes the door and the door breaks.");
 
-      Break(NewLockedStatus);
+      Break();
     }
   else
     {
@@ -753,18 +742,13 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
       else if(Energy > 500)
 	{
 	  // The door breaks
-	  bool NewLockedStatus;
 	  if(GetIsLocked())
-	    NewLockedStatus = RAND() % 2 ? true : false;
-	  else
-	    NewLockedStatus = false;
+	    SetIsLocked(RAND() % 2 ? true : false);
 
 	  if(Visible)
-	    {
-	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
-	    }
+	    ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 
-	  Break(NewLockedStatus);
+	  Break();
 	} 
       else
 	{
@@ -807,20 +791,18 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     }
 }
 
-void door::Break(bool NewLockedStatus)
+void door::Break()
 {
   if(BoobyTrap)
-  {
     ActivateBoobyTrap();
-  }
   else
-  {
-    brokendoor* Temp = new brokendoor(false);
-    Temp->InitMaterials(GetMaterial(0));
-    PreserveMaterial(0);
-    GetLSquareUnder()->ChangeOLTerrain(Temp);
-    Temp->SetIsLocked(NewLockedStatus);  
-  }
+    {
+      brokendoor* Temp = new brokendoor(false);
+      Temp->InitMaterials(GetMaterial(0));
+      PreserveMaterial(0);
+      Temp->SetIsLocked(GetIsLocked());
+      GetLSquareUnder()->ChangeOLTerrain(Temp);
+    }
 }
 
 void door::ActivateBoobyTrap()
@@ -848,7 +830,7 @@ void door::CreateBoobyTrap()
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
-  if(Thingy->GetType() == key::StaticType())
+  if(Thingy->GetType() == key::StaticType()) // What the? EEEEEEEVVVVVVVVIIIIIIILLLLLLL HEX!!!
     {
       if(IsOpen)
 	return false;
@@ -874,7 +856,7 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
       else
 	{
 	  if(Applier->GetIsPlayer())
-	    ADD_MESSAGE("The key doesen't fit into the lock.");
+	    ADD_MESSAGE("%s doesn't fit into the lock.", Thingy->CHARNAME(DEFINITE));
 
 	}
       return true;
@@ -883,8 +865,14 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
     return false;
 }
 
-bool fountain::ReceiveDip(item* ToBeDipped, character* Who)
+bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  /* The dipping system suck, so can't really do this better without major code rewrites and yes... I am lazy */ 
-  return ToBeDipped->HasBeenDippedInFountain(Who, this);
+  if(GetContainedMaterial())
+    {
+      ToBeDipped->DipInto(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()), Who);
+      return true;
+    }
+  else
+    return false;
 }
+

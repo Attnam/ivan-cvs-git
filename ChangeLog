@@ -1,3 +1,11 @@
+April 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added new action system
+	* Added Stack sorting
+	* Remade dig & some other action systems
+	* Consume system temporarily disabled
+	* Some bugs corrected and many added
+
 2002-25-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* charde.cpp: Added CheckKick(), GetLengthOfOpen(), CheckApply(), CheckOffer() to humanoid also added GetArms(), GetLegs() and GetAPMultiplier()

@@ -42,6 +42,8 @@ class object : public type, public unit, public id
   virtual material* GetMainMaterial() const { return GetMaterial(GetMainMaterialIndex()); }
   virtual uchar GetContainedMaterialIndex() const { return 1; }
   virtual material* GetContainedMaterial() const { return GetMaterial(GetContainedMaterialIndex()); }
+  virtual uchar GetConsumeMaterialIndex() const { return 0; }
+  virtual material* GetConsumeMaterial() const { return GetMaterial(GetConsumeMaterialIndex()); }
  protected:
   virtual uchar GetSpecialType() const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex() const = 0;

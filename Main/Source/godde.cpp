@@ -513,7 +513,7 @@ void mellis::PrayGoodEffect()
 		  ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHARNAME(DEFINITE), NewVersion->CHARNAME(INDEFINITE));
 		  //if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
 		  //if(ToBeDeleted == game::GetPlayer()->GetBodyArmor()) game::GetPlayer()->SetBodyArmor(0);
-		  delete ToBeDeleted;
+		  ToBeDeleted->SetExists(false);
 		  Cont = true;
 		  break;
 		}

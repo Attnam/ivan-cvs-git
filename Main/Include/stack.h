@@ -27,6 +27,7 @@ class square;
 class outputfile;
 class inputfile;
 class stackslot;
+class felist;
 
 typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -51,8 +52,10 @@ class stack
   item* GetBottomItem() const;
   ushort GetItems() const { return Item->size(); }
   void SetSquareUnder(square*);
-  item* DrawContents(character*, std::string, bool (item::*)(character*) = 0) const;
-  item* DrawContents(character*, std::string, bool (item::*)(character*), bool) const;
+  item* DrawContents(character*, std::string, bool (item::*)(character*) const = 0) const;
+  item* DrawContents(character*, std::string, bool, bool (item::*)(character*) const = 0) const;
+  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool (item::*)(character*) const = 0) const;
+  item* DrawContents(stack*, character*, std::string, std::string, std::string, bool, bool (item::*)(character*) const = 0) const;
   item* MoveItem(stackiterator, stack*);
   ushort GetEmitation() const;
   vector2d GetPos() const;
@@ -62,9 +65,8 @@ class stack
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
   lsquare* GetLSquareUnder() const;
-  bool ConsumableItems(character*);
+  bool SortedItems(character*, bool (item::*)(character*) const) const;
   void DrawItemData(ushort, ushort) const;
-  //item* DrawConsumableContents(character*, std::string) const;
   void DeletePointers();
   void Kick(ushort, bool, uchar);
   long Score() const;
@@ -78,6 +80,8 @@ class stack
   void ReceiveFireDamage(character*, std::string, long);
   void Teleport();
   void FillItemVector(itemvector&) const;
+  void AddContentsToList(felist&, character*, std::string, bool, bool (item::*)(character*) const) const;
+  item* SearchChosen(ushort&, ushort, character*, bool (item::*)(character*) const) const;
  private:
   stacklist* Item;
   square* SquareUnder;

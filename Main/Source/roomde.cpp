@@ -362,6 +362,8 @@ bool cathedral::Dip(character* Thirsty) const
 
   if(Thirsty->GetIsPlayer())
     {
+      /* What if it's not water? */
+
       ADD_MESSAGE("Stealing the precious water of the Cathedral is prohibited.");
 
       if(game::BoolQuestion("Are you sure you want to dip? [y/N]"))

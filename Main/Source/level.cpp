@@ -13,6 +13,7 @@
 #include "config.h"
 #include "femath.h"
 #include "message.h"
+#include "actionba.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -1012,9 +1013,9 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
 //<<<<<<< level.cpp
-	//if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMainMaterial()->CanBeDigged())
+	//if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->CanBeDug())
 //=======
-	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
+	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
 //>>>>>>> 1.94
 	  Square->ChangeOLTerrainAndUpdateLights(new empty);
       }
@@ -1066,13 +1067,19 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     if(Char)
       if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	{
-	  ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
+	  if(Char->GetAction() && Char->GetAction()->IsVoluntary())
+	    Char->GetAction()->Terminate(false);
 
-	  if(Char->StateIsActivated(CONSUMING)) 
-	    Char->EndConsuming();
+	  if(!Char->GetAction())
+	    {
+	      ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
 
-	  CharacterArray.push_back(Char);
-	  game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
+	      //if(Char->StateIsActivated(CONSUMING)) 
+		//Char->EndConsuming();
+
+	      CharacterArray.push_back(Char);
+	      game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
+	    }
 	}
   });
 

@@ -30,6 +30,7 @@ std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 #include "error.h"
 #include "config.h"
 #include "slot.h"
+#include "actionde.h"
 
 petrus::~petrus()
 {
@@ -302,7 +303,7 @@ bool dog::Catches(item* Thingy, float)
 {
   if(Thingy->DogWillCatchAndConsume())
     {
-      if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
+      if(ConsumeItem(Thingy))
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
 	else
@@ -323,44 +324,6 @@ bool dog::Catches(item* Thingy, float)
     }
   else
     return false;
-}
-
-bool dog::ConsumeItemType(uchar Type) const // We need a better system for this... Writing this to every F***ing character that needs one
-{					  // is Stoo-bit
-  switch(Type)
-    {
-    case LIQUID:
-      return true;
-      break;	
-    case ODD:
-      return false;
-      break;
-    case FRUIT:
-      return true;
-      break;
-    case MEAT:
-      return true;
-      break;
-    case SPOILED:
-      return true;
-      break;
-    case HARD:
-      return false;
-      break;
-    case SCHOOLFOOD:
-      return true;
-      break;
-    case CONTAINER:
-      return false;
-      break;
-    case BONE:	// Bone is an odd item, cause it actually can be opened, but not always...
-      // Comment for the comment: a banana can be opened also.
-      return true;
-      break;
-    default:
-      ADD_MESSAGE("ERRRRORRRRRR in dog::Consumeitemtype.");
-      return false;
-    }
 }
 
 float humanoid::GetMainAttackStrength() const
@@ -1717,7 +1680,7 @@ bool largecat::Catches(item* Thingy, float)
 {
   if(Thingy->CatWillCatchAndConsume())
     {
-      if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
+      if(ConsumeItem(Thingy))
 	if(GetIsPlayer())
 	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
 	else
@@ -2493,6 +2456,34 @@ bool humanoid::VirtualEquipmentScreen()
   return EquipmentChanged;
 }
 
+void humanoid::SwitchToDig(item* DigItem, vector2d Square)
+{
+  dig* Dig = new dig(this);
+
+  if(GetRightArm())
+      Dig->SetRightBackup(GetRightArm()->GetWielded());
+
+  if(GetLeftArm())
+      Dig->SetRightBackup(GetLeftArm()->GetWielded());
+
+  DigItem->RemoveFromSlot();
+  GetMainArm()->SetWielded(DigItem);
+  Dig->SetSquareDug(Square);
+  SetAction(Dig);
+}
+
+void humanoid::SetRightWielded(item* Item)
+{
+  if(GetRightArm())
+    GetRightArm()->SetWielded(Item);
+}
+
+void humanoid::SetLeftWielded(item* Item)
+{
+  if(GetLeftArm())
+    GetLeftArm()->SetWielded(Item);
+}
+
 bool humanoid::CheckKick()
 {
   if(!CanKick())
@@ -2544,7 +2535,7 @@ float humanoid::GetAPStateMultiplier() const
   switch(GetLegs())
     {
     case 0:
-      Multiplier = 0.1;
+      Multiplier = 0.1f;
       break;
     case 1:
       Multiplier = 1/3;
@@ -2560,7 +2551,6 @@ float humanoid::GetAPStateMultiplier() const
   
   return Multiplier;
 }
-
 
 short humanoid::GetLengthOfOpen(vector2d) const
 { 

@@ -53,10 +53,9 @@ class item : public object
   virtual void DrawToTileBuffer() const;
   virtual void DrawToTileBuffer(vector2d Pos) const;
   virtual void PositionedDrawToTileBuffer(uchar) const;
-  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual ushort GetEmitation() const;
   virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
-  virtual item* TryToOpen(character*, stack*) { return 0; }
+  virtual item* TryToOpen(character*) { return 0; }
   virtual ulong GetWeight() const;
   virtual bool Consume(character*, float);
   //virtual ushort GetArmorValue() const { return 100; }
@@ -66,12 +65,10 @@ class item : public object
   virtual bool CanBeRead(character*) const { return false; }
   virtual bool Read(character*) { return false; }
   virtual void ReceiveHitEffect(character*, character*) { }
-  virtual bool CanBeDippedInto(item*) const { return false; }
-  virtual void DipInto(item*) { }
-  virtual material* BeDippedInto() { return 0; }
-  virtual bool CanBeDipped() const { return false; }
+  virtual void DipInto(material*, character*) { }
+  virtual material* CreateDipMaterial() { return 0; }
   virtual bool CanBeWorn() const { return false; }
-  virtual bool Consumable(character*) const;
+  //virtual bool Consumable(character*) const;
   virtual item* BetterVersion() const { return 0; }
   virtual bool ImpactDamage(ushort) { return false; }
   virtual short CalculateOfferValue(char) const;
@@ -81,8 +78,7 @@ class item : public object
   virtual bool Fly(uchar, ushort, stack*, bool = true);
   virtual bool HitCharacter(character*, float, character*);
   virtual bool DogWillCatchAndConsume() const { return false; }
-  virtual uchar GetDipMaterialNumber() const { return GetMaterials() - 1; }
-  virtual item* PrepareForConsuming(character*, stack*); // Stack where the item IS
+  virtual item* PrepareForConsuming(character*);
   virtual item* Clone(bool = true, bool = true) const = 0;
   virtual ushort Possibility() const = 0;
   virtual bool CanBeWished() const { return true; }
@@ -103,10 +99,8 @@ class item : public object
   virtual ulong Price() const { return 0; }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(bool) { }
-  virtual ulong ConsumeLimit() const { return GetMainMaterial()->GetVolume(); }
-  virtual uchar GetConsumeType() const { return GetMainMaterial()->GetConsumeType(); }
+  virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
   virtual bool IsBadFoodForAI(character*) const;
-  virtual uchar GetConsumeMaterial() const { return 0; }
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }
   virtual bool PolymorphSpawnable() const { return true; }
   virtual bool IsExplosive() const { return false; }
@@ -122,7 +116,6 @@ class item : public object
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport();
   virtual ushort GetStrengthValue() const;
-  //virtual uchar SurfaceMaterial() const { return 0; }
   virtual bool AutoInitializable() const { return true; }
   virtual ulong GetVolume() const;
   virtual slot* GetSlot() const { return Slot; }
@@ -131,13 +124,28 @@ class item : public object
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
   virtual uchar GetLockType() const { return 0; }
-  virtual bool HasBeenDippedInFountain(character*,fountain*) { return false; }
   virtual void DonateSlotTo(item*);
   virtual ushort GetOneHandedStrengthPenalty(character*) { return 0; }
   virtual ushort GetOneHandedToHitPenalty(character*) { return 0; }
   virtual uchar GetCategory() const = 0;
   static uchar ItemCategories() { return 18; }
   static std::string ItemCategoryName(uchar);
+  bool ConsumableSorter(character* Char) const { return IsConsumable(Char); }
+  bool OpenableSorter(character* Char) const { return IsOpenable(Char); }
+  bool ReadableSorter(character* Char) const { return IsReadable(Char); }
+  bool DippableSorter(character* Char) const { return IsDippable(Char); }
+  bool DipDestinationSorter(character* Char) const { return IsDipDestination(Char); }
+  bool AppliableSorter(character* Char) const { return IsAppliable(Char); }
+  bool ZappableSorter(character* Char) const { return IsZappable(Char); }
+  bool ChargeableSorter(character* Char) const { return IsChargeable(Char); }
+  virtual bool IsConsumable(character*) const;
+  virtual bool IsOpenable(character*) const { return false; }
+  virtual bool IsReadable(character*) const { return false; }
+  virtual bool IsDippable(character*) const { return false; }
+  virtual bool IsDipDestination(character*) const { return false; }
+  virtual bool IsAppliable(character*) const { return false; }
+  virtual bool IsZappable(character*) const { return false; }
+  virtual bool IsChargeable(character*) const { return false; }
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }

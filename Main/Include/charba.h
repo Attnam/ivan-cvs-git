@@ -33,16 +33,20 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES      8
+#define STATES      3
 
-#define FAINTED      0
+/*#define FAINTED      0
 #define CONSUMING    1
 #define POLYMORPHED    2
 #define RESTING      3
 #define DIGGING      4
 #define GOING      5
 #define HASTE 6
-#define SLOW 7
+#define SLOW 7*/
+
+#define POLYMORPHED 1
+#define HASTE 2
+#define SLOW 4
 
 #define HEAD 0
 #define TORSO 1
@@ -73,6 +77,7 @@
 #include "vector2d.h"
 #include "igraph.h"
 #include "id.h"
+#include "materba.h"
 
 class square;
 class bitmap;
@@ -89,6 +94,8 @@ class torso;
 class humanoidtorso;
 class bodypart;
 class characterslot;
+class action;
+class go;
 
 /* Presentation of the character class */
 
@@ -102,14 +109,12 @@ class character : public type, public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanRead() const { return true; }
   virtual bool CanWear() const { return false; }
-  //virtual bool CanWield() const { return false; }
+  virtual bool CanWield() const { return false; }
   virtual bool Charmable() const { return true; }
   virtual bool Catches(item*, float) { return false; }
   virtual bool CheckBulimia() const;
   virtual bool CheckDeath(std::string, bool = false);
   //virtual bool CheckIfConsumable(item*) const;
-  virtual bool ConsumeItem(item*, stack*);
-  virtual bool ConsumeItemType(uchar) const;
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*);
   virtual bool OpenItem();
@@ -177,7 +182,7 @@ class character : public type, public entity, public id
   virtual ulong GetBloodColor() const;
   virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
   virtual ushort GetAgility() const { return Agility; }
-  virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
+  //virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
   virtual ushort GetEmitation() const;
   virtual ushort GetEndurance() const { return Endurance; }
   virtual ushort GetPerception() const { return Perception; }
@@ -210,7 +215,7 @@ class character : public type, public entity, public id
   virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; if(Agility > 99) Agility = 99; }
   virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
   virtual void SetAP(long What) { AP = What; }
-  virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
+  //virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
   virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
   virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
   virtual void SetIsPlayer(bool What) { IsPlayer = What; }
@@ -233,33 +238,33 @@ class character : public type, public entity, public id
   virtual bool CheckCannibalism(ushort);
   virtual void VirtualConstructor() { }
   virtual void CharacterSpeciality(ushort = 1) { }
-  virtual void ActivateState(uchar Index) { State |= 1 << Index; }
-  virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
-  virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }
+  virtual void ActivateState(uchar What) { State |= What; }
+  virtual void DeActivateState(uchar What) { State &= ~What; }
+  virtual bool StateIsActivated(uchar What) const { return State & What ? true : false; }
   virtual void Faint();
-  virtual void FaintHandler();
-  virtual void ConsumeHandler();
+  //virtual void FaintHandler();
+  //virtual void ConsumeHandler();
   virtual void PolymorphHandler();
-  virtual void SetStateCounter(uchar Index, ushort What) { StateCounter[Index] = What; }
-  virtual bool CanMove();
+  virtual void SetStateCounter(uchar, ushort);
+  //virtual bool CanMove();
   virtual void DeActivateVoluntaryStates(std::string = "");
-  virtual void EndFainted();
-  virtual void EndConsuming();
+  //virtual void EndFainted();
+  //virtual void EndConsuming();
   virtual void EndPolymorph();
   virtual void StruckByWandOfStriking(character*, std::string);
-  virtual void StateAutoDeactivation();
+  virtual void ActionAutoTermination();
   virtual team* GetTeam() const { return Team; }
   virtual void SetTeam(team*);
   virtual void ChangeTeam(team*);
   virtual bool RestUntilHealed();
-  virtual void RestHandler();
-  virtual void EndRest();
-  virtual void DigHandler();
-  virtual void EndDig();
+  //virtual void RestHandler();
+  //virtual void EndRest();
+  //virtual void DigHandler();
+  //virtual void EndDig();
   //virtual void SetOldWieldedItem(item* What) { StateVariables.Digging.OldWieldedItem = What; }
-  virtual void SetSquareBeingDigged(vector2d What) { StateVariables.Digging.SquareBeingDiggedX = What.X; StateVariables.Digging.SquareBeingDiggedY = What.Y; }
+  //virtual void SetSquareBeingDug(vector2d What) { StateVariables.Digging.SquareBeingDugX = What.X; StateVariables.Digging.SquareBeingDugY = What.Y; }
   //virtual item* GetOldWieldedItem() const { return StateVariables.Digging.OldWieldedItem; }
-  virtual vector2d GetSquareBeingDigged() const { return vector2d(StateVariables.Digging.SquareBeingDiggedX, StateVariables.Digging.SquareBeingDiggedY); }
+  //virtual vector2d GetSquareBeingDug() const { return vector2d(StateVariables.Digging.SquareBeingDugX, StateVariables.Digging.SquareBeingDugY); }
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
   virtual float GetThrowGetStrengthModifier() const;
@@ -289,8 +294,8 @@ class character : public type, public entity, public id
   virtual stack* GetGiftStack() const;
   virtual bool MoveRandomlyInRoom();
   virtual bool CanOpenDoors() const { return true; }
-  virtual void GoHandler();
-  virtual void EndGoing();
+  //virtual void GoHandler();
+  //virtual void EndGoing();
   virtual bool Go();
   virtual bool ShowConfigScreen();
   virtual std::list<character*>::iterator GetTeamIterator() { return TeamIterator; }
@@ -361,13 +366,24 @@ class character : public type, public entity, public id
   virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
   virtual characterslot* GetBodyPartSlot(ushort) const;
   virtual bool VirtualEquipmentScreen();
+  virtual bool ConsumeItem(item*);
+  virtual bool CanEat(material*);
+  virtual action* GetAction() const { return Action; }
+  virtual void SetAction(action* What) { Action = What; }
+  virtual void SwitchToDig(item*, vector2d) { }
+  virtual void SetRightWielded(item*) { }
+  virtual void SetLeftWielded(item*) { }
+  virtual void GoOn(go*);
   //  virtual uchar GetLegs() const;
   virtual bool CheckKick();
   virtual short GetLengthOfOpen(vector2d) const { return -500; }
   virtual bool CheckThrow() const { return true; }  
   virtual bool CheckApply() const { return true; }
   virtual bool CheckOffer() const { return true; }
+  virtual ushort GetStateCounter(uchar);
+  virtual void EditStateCounter(uchar, short);
  protected:
+  virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
   virtual void CreateBodyParts();
@@ -418,10 +434,10 @@ class character : public type, public entity, public id
   bool IsPlayer;
   uchar State;
   short StateCounter[STATES];
-  void (character::*StateHandler[STATES])();
+  static void (character::*StateHandler[STATES])();
   team* Team;
   vector2d WayPoint;
-  union statevariables
+  /*union statevariables
   {
     struct consuming
     {
@@ -429,8 +445,8 @@ class character : public type, public entity, public id
     } Consuming;
     struct digging
     {
-      ushort SquareBeingDiggedX;
-      ushort SquareBeingDiggedY;
+      ushort SquareBeingDugX;
+      ushort SquareBeingDugY;
       //item* OldWieldedItem;
     } Digging;
     struct going
@@ -438,12 +454,13 @@ class character : public type, public entity, public id
       uchar Direction;
       bool WalkingInOpen;
     } Going;
-  } StateVariables;
+  } StateVariables;*/
   ulong Money;
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
   characterslot* BodyPartSlot;
   std::string AssignedName;
+  action* Action;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

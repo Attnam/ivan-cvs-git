@@ -49,7 +49,8 @@ void material::EatEffect(character*, float, float)
   ABORT("Calling material that does not have eat effect!");
 }
 
-bool material::CanBeDigged(material* ShovelMaterial) const
+bool material::CanBeDug(material* ShovelMaterial) const
 {
   return ShovelMaterial->GetStrengthValue() > GetStrengthValue();
 }
+

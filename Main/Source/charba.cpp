@@ -22,20 +22,27 @@
 #include "femath.h"
 #include "strover.h"
 #include "slot.h"
+#include "actionde.h"
 
-character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : entity(AddToPool, true), Stack(new stack), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
+void (character::*character::StateHandler[STATES])() = { &character::PolymorphHandler, &character::HasteHandler, &character::SlowHandler };
+
+character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts, bool AddToPool) : entity(AddToPool, true), Stack(new stack), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
 {
   if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
     ABORT("BOOO!");
 
-  StateHandler[FAINTED] = &character::FaintHandler;
+  /*StateHandler[0] = &character::PolymorphHandler;
+  StateHandler[1] = &character::HasteHandler;
+  StateHandler[2] = &character::SlowHandler;*/
+
+  /*StateHandler[FAINTED] = &character::FaintHandler;
   StateHandler[CONSUMING] = &character::ConsumeHandler;
   StateHandler[POLYMORPHED] = &character::PolymorphHandler;
   StateHandler[RESTING] = &character::RestHandler;
   StateHandler[DIGGING] = &character::DigHandler;
   StateHandler[GOING] = &character::GoHandler;
   StateHandler[HASTE] = &character::HasteHandler;
-  StateHandler[SLOW] = &character::SlowHandler;
+  StateHandler[SLOW] = &character::SlowHandler;*/
 }
 
 character::~character()
@@ -87,7 +94,6 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
     SetBodyArmor(GetStack()->GetItem(GetStack()->AddItem(TorsoStack.RemoveItem(0))));*/
 
   CheckDeath("killed by an Enner Beast's scream");
-  //CheckGearExistence();
 }
 
 void character::Hunger(ushort Turns) 
@@ -135,13 +141,8 @@ bool character::Hit(character* Enemy)
     {
     case HAS_HIT:
     case HAS_BLOCKED:
-      //if(GetWielded())
-	//GetWielded()->ReceiveHitEffect(Enemy, this);
     case HAS_DIED:
       EditStrengthExperience(50);
-      /*if(GetWielded())
-	if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLSquareUnder()->CanBeSeen(), GetStack()))
-	  SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));*/
     case HAS_DODGED:
       EditAgilityExperience(25);
     }
@@ -153,7 +154,7 @@ bool character::Hit(character* Enemy)
 
 uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, float ToHitValue, short Success, bool Critical)
 {
-  DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
+  DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile.");
 
   uchar Dir = game::GetDirectionForVector(GetPos() - Enemy->GetPos());
 
@@ -206,30 +207,6 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 	return HAS_DIED;
 
       return HAS_HIT;
-
-      /*if(!Damage)
-	{
-	  Enemy->AddFailToHurtMessage(this);
-
-	  EditStrengthExperience(50);
-	  EditEnduranceExperience(50);
-
-	  return HAS_BLOCKED;
-	}
-      else
-	{
-	  Enemy->AddHitMessage(this);
-
-	  if(game::GetWizardMode() && GetLSquareUnder()->CanBeSeen(true))
-	    ADD_MESSAGE("(damage: %d)", Damage);
-
-	  SetHP(GetHP() - Damage);
-
-	  if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE), Enemy->GetIsPlayer()))
-	    return HAS_DIED;
-
-	  return HAS_HIT;
-	}*/
     }
   else
     {
@@ -313,21 +290,27 @@ void character::Be()
 	    if(StateIsActivated(c))
 	      (this->*StateHandler[c])();
 
+	  if(GetAction())
+	    GetAction()->Handle();
+
 	  if(!GetExists())
 	    return;
 
 	  if(GetHP() < GetMaxHP() / 3)
 	    SpillBlood(RAND() % 2);
 
-	  if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+	  if(GetIsPlayer() && GetHungerState() == VERYHUNGRY && !(RAND() % 50) && (!GetAction() || GetAction()->AllowFaint()))
 	    {
-	      DeActivateVoluntaryStates();
+	      //DeActivateVoluntaryStates();
+	      if(GetAction())
+		GetAction()->Terminate(false);
+
 	      Faint();
 	    }
 	}
 
       if(GetAP() >= 0)
-	StateAutoDeactivation();
+	ActionAutoTermination();
 
       if(GetAP() >= 0)
 	{
@@ -335,25 +318,25 @@ void character::Be()
 	    {
 	      static ushort Timer = 0;
 
-	      if(configuration::GetAutosaveInterval() && CanMove() && ++Timer >= configuration::GetAutosaveInterval())
+	      if(configuration::GetAutoSaveInterval() && !GetAction() && ++Timer >= configuration::GetAutoSaveInterval())
 		{
 		  game::Save(game::GetAutoSaveFileName().c_str());
 		  Timer = 0;
 		}
 
-	      if(CanMove())
+	      if(!GetAction())
 		GetPlayerCommand();
 	      else
 		{
 		  game::DrawEverything(false);
 
-		  if(READKEY())
-		    DeActivateVoluntaryStates();
+		  if(READKEY() && GetAction()->IsVoluntary())
+		    GetAction()->Terminate(false);
 		}
 	    }
 	  else
 	    {
-	      if(CanMove() && !game::GetInWilderness())
+	      if(!GetAction() && !game::GetInWilderness())
 		GetAICommand();
 	    }
 
@@ -365,7 +348,7 @@ void character::Be()
 
       if(GetIsPlayer())
 	{
-	  if(!StateIsActivated(CONSUMING))
+	  if(!GetAction() || GetAction()->AllowFoodConsumption())
 	    Hunger();
 	}
     }
@@ -476,18 +459,12 @@ bool character::Drop()
 
   item* Item = GetStack()->DrawContents(this, "What do you want to drop?");
 
-  //if(Index < GetStack()->GetItems() && GetStack()->GetItem(Index))
   if(Item)
-    /*if(Item == GetWielded())
-      ADD_MESSAGE("You can't drop something you wield!");
-    else if(Item == GetBodyArmor())
-      ADD_MESSAGE("You can't drop something you wear!");
-    else*/
-      if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->DropItem(this, Item)))
-	{
-	  Item->MoveTo(GetLSquareUnder()->GetStack());
-	  return true;
-	}
+    if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->DropItem(this, Item)))
+      {
+	Item->MoveTo(GetLSquareUnder()->GetStack());
+	return true;
+      }
 
   return false;
 }
@@ -500,11 +477,10 @@ bool character::Consume()
 	return true;
     }
 
-  if(!game::GetInWilderness() && GetLSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
+  /*if(!game::GetInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
     {
-      item* Item = GetLSquareUnder()->GetStack()->DrawContents(this, "What do you wish to consume?");
+      item* Item = GetLSquareUnder()->GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
 
-      //if(Index < GetLSquareUnder()->GetStack()->GetItems())
       if(Item)
 	{
 	  if(GetLSquareUnder()->GetRoom() && !GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, Item))
@@ -523,40 +499,66 @@ bool character::Consume()
 	}
       else
 	return false;
+    }*/
+
+  if((!game::GetInWilderness || !GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter)) && !GetStack()->SortedItems(this, item::ConsumableSorter))
+    {
+      ADD_MESSAGE("You have nothing to consume!");
+      return false;
     }
 
-  if(GetStack()->ConsumableItems(this))
+  item* Item;
+
+  if(!game::GetInWilderness && GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter))
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to consume?", "Items in your inventory", "Items on ground", item::ConsumableSorter);
+  else
+      Item = GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
+
+  //if(GetStack()->SortedItems(this, item::ConsumableSorter))
+    //{
+      //item* Item = GetStack()->DrawContents(this, "What do you wish to consume?", item::ConsumableSorter);
+
+  if(Item)
     {
-      item* Item = GetStack()->DrawContents(this, "What do you wish to consume?");
+      if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
+	return false;
 
-      //if(Index < GetStack()->GetItems())
-      if(Item)
+      ConsumeItem(Item);
+      return true;
+
+      /*if(ConsumeItem(Item))
 	{
-	  /*if(!CheckIfConsumable(Item))
-	    {
-	      ADD_MESSAGE("You can't consume items in your gear!");
-	      return false;
-	    }*/
-
-	  if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
-	    return false;
-
-	  if(ConsumeItem(Item, GetStack()))
-	    {
-	      ReceiveBulimiaDamage();
-	      return true;
-	    }
-	  else
-	    return false;
+	  ReceiveBulimiaDamage();
+	  return true;
 	}
+      else
+	return false;*/
+    }
+	/*}
       else
 	return false;
     }
 
-  if(GetIsPlayer() && (game::GetInWilderness() || !GetLSquareUnder()->GetStack()->ConsumableItems(this)) && !GetStack()->ConsumableItems(this))
-    ADD_MESSAGE("You have nothing to consume!");
+  if(GetIsPlayer() && (game::GetInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, item::ConsumableSorter)) && !GetStack()->SortedItems(this, item::ConsumableSorter))
+    ADD_MESSAGE("You have nothing to consume!");*/
 
   return false;
+}
+
+bool character::ConsumeItem(item* Item)
+{
+  Item = Item->PrepareForConsuming(this);
+
+  if(!Item)
+    return false;
+
+  //SetConsumingCurrently(Item);
+  //ActivateState(CONSUMING);
+  //StateCounter[CONSUMING] = 0;
+  consume* Consume = new consume(this);
+  Consume->SetConsuming(Item);
+  SetAction(Consume);
+  return true;
 }
 
 bool character::CheckBulimia() const
@@ -578,67 +580,6 @@ void character::ReceiveBulimiaDamage()
 
       CheckDeath("died of bulimia");
     }*/
-}
-
-/*bool character::CheckIfConsumable(item* Item) const
-{
-  return true;(GetBodyArmor() != Item && GetWielded() != Item);
-}*/
-
-bool character::ConsumeItem(item* ToBeEaten, stack* ItemsStack)
-{
-  if(ConsumeItemType(ToBeEaten->GetConsumeType()))
-    {
-      if((ToBeEaten = ToBeEaten->PrepareForConsuming(this, ItemsStack)))
-	{
-	  SetConsumingCurrently(ToBeEaten);
-	  ActivateState(CONSUMING);
-	  StateCounter[CONSUMING] = 0;
-	  return true;
-	}
-    }
-  else
-    if(GetIsPlayer())
-      ADD_MESSAGE("You can't consume this.");
-
-  return false;
-}
-
-bool character::ConsumeItemType(uchar Type) const
-{
-  switch(Type)
-    {
-    case LIQUID:
-      return true;
-      break;	
-    case ODD:
-      return false;
-      break;
-    case FRUIT:
-      return true;
-      break;
-    case MEAT:
-      return true;
-      break;
-    case SPOILED:
-      return true;
-      break;
-    case HARD:
-      return false;
-      break;
-    case SCHOOLFOOD:
-      return true;
-      break;
-    case CONTAINER:
-      return false;
-      break;
-    case BONE:
-      return false;
-      break;
-    default:
-      ADD_MESSAGE("ERRRRORRRRRR in Consumeitemtype."); //All hail SpykoS! He is the author of this file, and his might is over that of PMGR!!!
-      return false;
-    }
 }
 
 void character::Move(vector2d MoveTo, bool TeleportMove)
@@ -664,43 +605,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::DrawToTileBuffer() const
 {
-  //Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
   if(GetTorso())
     GetTorso()->DrawToTileBuffer();
 }
-
-/*bool character::Wield()
-{
-  if(!CanWield())
-    {
-      ADD_MESSAGE("This monster can not wield anything.");
-      return false;
-    }
-
-  if(!GetStack()->GetItems())
-    {
-      ADD_MESSAGE("You have nothing to wield!");
-      return false;
-    }
-
-  item* Item = GetStack()->DrawContents(this, "What do you want to wield? or press '-' for hands");
-
-  if(Index == 0xFFFE)
-    SetWielded(0);
-  else
-    if(Index < GetStack()->GetItems())
-      if(GetStack()->GetItem(Index) != GetBodyArmor())
-	SetWielded(GetStack()->GetItem(Index));
-      else
-	{
-	  ADD_MESSAGE("You can't wield something that you wear!");
-	  return false;
-	}
-    else
-      return false;
-
-  return true;
-}*/
 
 void character::GetAICommand()	// Freedom is slavery. Love is hate. War is peace.
 				// Shouldn't it be "Ignorance is strength", not "Love is hate"?
@@ -907,7 +814,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    game::SendLOSUpdateRequest();
 	    game::UpdateCamera();
 	    game::GetCurrentArea()->UpdateLOS();
-	    if(configuration::GetAutosaveInterval())
+	    if(configuration::GetAutoSaveInterval())
 	      game::Save(game::GetAutoSaveFileName().c_str());
 	    return true;
 	  }
@@ -929,7 +836,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 
 bool character::ShowInventory()
 {
-  GetStack()->DrawContents(this, "Your inventory", 0, false);
+  GetStack()->DrawContents(this, "Your inventory", false);
   return false;
 }
 
@@ -1071,7 +978,7 @@ void character::Die(bool ForceMsg)
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
-	  GetStack()->DrawContents(this, "Your inventory", 0, false);
+	  GetStack()->DrawContents(this, "Your inventory", false);
 
       if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 	DrawMessageHistory();
@@ -1115,10 +1022,10 @@ void character::Die(bool ForceMsg)
 
 bool character::OpenItem()
 {
-  item* Item = Stack->DrawContents(this, "What do you want to open?");
+  item* Item = Stack->DrawContents(this, "What do you want to open?", item::OpenableSorter);
 
   if(Item)
-    if(Item->TryToOpen(this, Stack))
+    if(Item->TryToOpen(this))
       {
 	EditAgilityExperience(25);
 	EditNP(-10);
@@ -1155,24 +1062,6 @@ void character::Regenerate(ushort Turns)
     }*/
 }
 
-/*bool character::WearArmor()
-{
-  ADD_MESSAGE("This monster type can't use armor.");
-  return false;
-}*/
-
-/*std::string character::GetFailToHurtMessage(character* Enemy, uchar BodyPart) const
-{
-  if(Enemy->GetIsPlayer())
-    return Description(DEFINITE) + " fails to hurt you!";
-  else if(GetIsPlayer())
-    return std::string("You fail to hurt ") + Enemy->Description(DEFINITE) + "!";
-  else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
-    return Description(DEFINITE) + " fails to hurt " + Enemy->Description(DEFINITE) + "!";
-  else
-    return "";
-}*/
-
 void character::AddMissMessage(character* Enemy) const
 {
   std::string Msg;
@@ -1187,15 +1076,6 @@ void character::AddMissMessage(character* Enemy) const
     Msg = "";
 
   ADD_MESSAGE("%s", Msg.c_str());
-
-  /*if(Enemy->GetIsPlayer())
-    return std::string("You dodge ") + Description(DEFINITE) + "!";
-  else if(GetIsPlayer())
-    return Enemy->Description(DEFINITE) + " dodges you!";
-  else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
-    return Enemy->Description(DEFINITE) + " dodges " + Description(DEFINITE) + "!";
-  else
-    return "";*/
 }
 
 void character::AddHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bool Critical) const
@@ -1368,7 +1248,6 @@ void character::ApplyExperience()
 
 bool character::HasHeadOfElpuri() const
 {
-  //for(ushort c = 0; c < GetStack()->GetItems(); ++c)
   for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
     if((**i)->IsHeadOfElpuri())
       return true;
@@ -1378,7 +1257,6 @@ bool character::HasHeadOfElpuri() const
 
 bool character::HasPetrussNut() const
 {
-  //for(ushort c = 0; c < GetStack()->GetItems(); ++c)
   for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
     if((**i)->IsPetrussNut())
       return true;
@@ -1422,7 +1300,7 @@ bool character::Read()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to read?");
+  item* Item = GetStack()->DrawContents(this, "What do you want to read?", item::ReadableSorter);
 
   if(Item)
     return ReadItem(Item);
@@ -1432,12 +1310,6 @@ bool character::Read()
 
 bool character::ReadItem(item* ToBeRead)
 {
-  /*if(ToBeRead == GetBodyArmor())
-    {
-      ADD_MESSAGE("You can't read items that you wear!");
-      return false;
-    }*/
-
   if(ToBeRead->CanBeRead(this))
     if(GetLSquareUnder()->GetLuminance() >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
       {
@@ -1452,7 +1324,6 @@ bool character::ReadItem(item* ToBeRead)
 	      SetPerceptionExperience(-25);
 	  }
 
-	//CheckGearExistence();
 	return true;
       }
     else
@@ -1487,45 +1358,52 @@ uchar character::GetBurdenState(ulong Mass) const
 
 bool character::Dip()
 {
-  if(!GetStack()->GetItems())
+  if(!GetStack()->SortedItems(this, item::DippableSorter))
     {
       ADD_MESSAGE("You have nothing to dip!");
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to dip?");
+  item* Item = GetStack()->DrawContents(this, "What do you want to dip?", item::DippableSorter);
 
   if(Item)
     {
-      if(Item->CanBeDipped())
+      bool HasDipDestination = GetStack()->SortedItems(this, item::DipDestinationSorter);
+
+      if(!HasDipDestination || game::BoolQuestion("Do you wish to dip in a nearby square? [y/N]"))
 	{
-	  game::DrawEverythingNoBlit();
-	  if(game::BoolQuestion("Do you wish to dip in a nearby square? [y,n]", 2))
-	    {
-	      vector2d VectorDir;
-	      std::string Question = std::string("Where do you want to dip ") + Item->Name(DEFINITE) + std::string("? [press a cursor key or . for the current square]");
-	      uchar Dir = game::DirectionQuestion(Question, 0,true,true);
+	  vector2d VectorDir;
+	  std::string Question = std::string("Where do you want to dip ") + Item->Name(DEFINITE) + std::string("? [press a cursor key or . for the current square]");
+	  uchar Dir = game::DirectionQuestion(Question, 0,true,true);
 
-	      if(Dir == '.')
-		VectorDir = vector2d(0,0);
-	      else
-		VectorDir = game::GetMoveVector(Dir);
-	      
-	      return game::GetCurrentLevel()->GetLSquare(GetPos() + VectorDir)->ReceiveDip(Item, this);
-	    }
+	  if(Dir == '.')
+	    VectorDir = vector2d(0,0);
 	  else
-	    {
-	      item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?");
+	    VectorDir = game::GetMoveVector(Dir);
 
-	      if(DipTo && Item != DipTo)
-		if(Item->CanBeDippedInto(DipTo)) /* Bug! */
-		  {
-		    Item->DipInto(DipTo);
-		    return true;
-		  }
+	  if(!game::IsValidPos(GetPos() + VectorDir))
+	    {
+	      ADD_MESSAGE("Invalid square!");
+	      return false;
+	    }
+	  
+	  return game::GetCurrentLevel()->GetLSquare(GetPos() + VectorDir)->DipInto(Item, this);
+	}
+      else
+	{
+	  if(!HasDipDestination)
+	    {
+	      ADD_MESSAGE("You have nothing to dip into!");
+	      return false;
 	    }
 
-	  ADD_MESSAGE("Invalid selection!");
+	  item* DipTo = GetStack()->DrawContents(this, "Into what do you wish to dip it?", item::DipDestinationSorter);
+
+	  if(DipTo && Item != DipTo)
+	    {
+	      Item->DipInto(DipTo->CreateDipMaterial(), this);
+	      return true;
+	    }
 	}
     }
 
@@ -1555,7 +1433,9 @@ void character::Save(outputfile& SaveFile) const
     else
       SaveFile << bool(false);
 
-  if(StateIsActivated(CONSUMING))
+  SaveFile << Action;
+
+  /*if(StateIsActivated(CONSUMING))
     SaveFile << GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
   else
     SaveFile << ushort(0);
@@ -1564,10 +1444,10 @@ void character::Save(outputfile& SaveFile) const
     {
       SaveFile << uchar(1);
       //SaveFile << GetStack()->SearchItem(GetOldWieldedItem());
-      SaveFile << StateVariables.Digging.SquareBeingDiggedX << StateVariables.Digging.SquareBeingDiggedY;
+      SaveFile << StateVariables.Digging.SquareBeingDugX << StateVariables.Digging.SquareBeingDugY;
     }
   else
-    SaveFile << uchar(0);
+    SaveFile << uchar(0);*/
 
   for(c = 0; c < STATES; ++c)
     SaveFile << StateCounter[c];
@@ -1580,7 +1460,7 @@ void character::Save(outputfile& SaveFile) const
   else
     SaveFile << uchar(0);
 
-  if(StateIsActivated(CONSUMING))
+  /*if(StateIsActivated(CONSUMING))
     {
       ushort Index = GetStack()->SearchItem(GetConsumingCurrently());
 
@@ -1598,7 +1478,7 @@ void character::Save(outputfile& SaveFile) const
 	}
     }
   else
-    SaveFile << uchar(0);
+    SaveFile << uchar(0);*/
 
   if(GetTeam() && GetTeam()->GetLeader() == this)
     SaveFile << uchar(1);
@@ -1639,7 +1519,9 @@ void character::Load(inputfile& SaveFile)
 	GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
     }
 
-  ushort Index;
+  SaveFile >> Action;
+
+  /*ushort Index;
 
   SaveFile >> Index;
 
@@ -1651,10 +1533,10 @@ void character::Load(inputfile& SaveFile)
 
   if(Digging)
     {
-      /*SaveFile >> Index;
-      SetOldWieldedItem(GetStack()->GetItem(Index));*/
-      SaveFile >> StateVariables.Digging.SquareBeingDiggedX >> StateVariables.Digging.SquareBeingDiggedY;
-    }
+      /SaveFile >> Index;
+      SetOldWieldedItem(GetStack()->GetItem(Index));/
+      SaveFile >> StateVariables.Digging.SquareBeingDugX >> StateVariables.Digging.SquareBeingDugY;
+    }*/
 
   for(c = 0; c < STATES; ++c)
     SaveFile >> StateCounter[c];
@@ -1670,7 +1552,7 @@ void character::Load(inputfile& SaveFile)
       SetTeam(game::GetTeam(TeamID));
     }
 
-  uchar Stacky;
+  /*uchar Stacky;
 
   SaveFile >> Stacky;
 
@@ -1683,7 +1565,7 @@ void character::Load(inputfile& SaveFile)
 
       if(Stacky == 2)
 	SetConsumingCurrently(GetLSquareUnder()->GetStack()->GetItem(Index));
-    }
+    }*/
 
   uchar Leader;
 
@@ -1725,7 +1607,6 @@ bool character::RaiseStats()
   Perception += 10;
   RestoreHP();
   game::SendLOSUpdateRequest();
-
   return false;
 }
 
@@ -1737,7 +1618,6 @@ bool character::LowerStats()
   Perception -= 10;
   RestoreHP();
   game::SendLOSUpdateRequest();
-
   return false;
 }
 
@@ -2166,23 +2046,10 @@ bool character::Offer()
 
       if(Item)
 	{
-	  /*if(Item == GetWielded())
-	    {
-	      ADD_MESSAGE("You can't offer something that you wield.");
-	      return false;
-	    }
-
-	  if(Item == GetBodyArmor())
-	    {
-	      ADD_MESSAGE("You can't offer something that you wear.");
-	      return false;
-	    }*/
-
 	  if(game::GetGod(GetLSquareUnder()->GetOLTerrain()->GetOwnerGod())->ReceiveOffer(Item))
 	    {
 	      Item->RemoveFromSlot();
 	      Item->SetExists(false);
-	      //delete GetStack()->RemoveItem(Index);
 	      return true;
 	    }
 	  else
@@ -2282,19 +2149,10 @@ bool character::Throw()
 
   if(Item)
     {
-      /*if(Item == GetBodyArmor())
-	{
-	  ADD_MESSAGE("You can't throw something that you wear.");
-	  return false;
-	}*/
-
       uchar Answer = game::DirectionQuestion("In what direction do you wish to throw?  [press a direction key or space]", 8, false);
 
       if(Answer == 0xFF)
 	return false;
-
-      /*if(Item == GetWielded())
-	SetWielded(0);*/
 
       ThrowItem(Answer, Item);
 
@@ -2431,21 +2289,12 @@ bool character::Apply()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to apply?");
+  item* Item = GetStack()->DrawContents(this, "What do you want to apply?", item::AppliableSorter);
 
   if(Item)
     {
-      /*if(Item == GetBodyArmor())
-	{
-	  ADD_MESSAGE("You can't apply something that you wear.");
-	  return false;
-	}*/
-
       if(!Item->Apply(this))
 	return false;
-
-      /*if(GetWielded() && !GetWielded()->GetExists()) 
-	SetWielded(0);*/
 
       return true;
     }
@@ -2473,7 +2322,7 @@ bool character::Zap()
       return false;
     }
 
-  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?");
+  item* Item = GetStack()->DrawContents(this, "What do you want to zap with?", item::ZappableSorter);
 
   if(Item)
     {
@@ -2667,11 +2516,14 @@ void character::Faint()
     if(GetLSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s faints.", CHARNAME(DEFINITE));
 
-  ActivateState(FAINTED);
-  StateCounter[FAINTED] = 100 + RAND() % 101;
+  //ActivateState(FAINTED);
+  //StateCounter[FAINTED] = 100 + RAND() % 101;
+  faint* Faint = new faint(this);
+  Faint->SetCounter(100 + RAND() % 101);
+  SetAction(Faint);
 }
 
-void character::FaintHandler()
+/*void character::FaintHandler()
 {
   if(!(StateCounter[FAINTED]--))
     {
@@ -2687,9 +2539,9 @@ void character::FaintHandler()
     {
       EditStrengthExperience(-3);
     }
-}
+}*/
 
-void character::ConsumeHandler()
+/*void character::ConsumeHandler()
 {
   if(ulong(++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
     {
@@ -2703,42 +2555,45 @@ void character::ConsumeHandler()
 
       return;
     }
-}
+}*/
 
 void character::PolymorphHandler()
 {
-  if(!(StateCounter[POLYMORPHED]--))
+  if(!GetStateCounter(POLYMORPHED))
     {
       ADD_MESSAGE("You return to your true form.");
       EndPolymorph();
     }
+
+  EditStateCounter(POLYMORPHED, -1);
 }
 
-void character::EndFainted()
+/*void character::EndFainted()
 {
   if(StateIsActivated(FAINTED))
     DeActivateState(FAINTED);
-}
+}*/
 
-void character::EndConsuming()
+/*void character::EndConsuming()
 {
   if(StateIsActivated(CONSUMING))
     {
       if(GetConsumingCurrently()->Consume(this, StateCounter[CONSUMING] * 500))
 	{
 	  GetConsumingCurrently()->RemoveFromSlot();
-	  /*item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
+	  /item* ToBeDeleted = GetStack()->RemoveItem(GetStack()->SearchItem(GetConsumingCurrently()));
 
 	  if(!ToBeDeleted)
-	    ToBeDeleted = GetLSquareUnder()->GetStack()->RemoveItem(GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));*/
+	    ToBeDeleted = GetLSquareUnder()->GetStack()->RemoveItem(GetLSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));/
 
 	  GetConsumingCurrently()->SetExists(false);
 	}
 
+      ReceiveBulimiaDamage();
       DeActivateState(CONSUMING);
       SetConsumingCurrently(0);
     }
-}
+}*/
 
 void character::EndPolymorph()
 {
@@ -2778,17 +2633,25 @@ void character::EndPolymorph()
     }
 }
 
-bool character::CanMove()
+/*bool character::CanMove()
 {
   if(StateIsActivated(FAINTED) || StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING))
     return false;
   else
     return true;
-}
+}*/
 
 void character::DeActivateVoluntaryStates(std::string Reason)
 {
-  if(GetIsPlayer())
+  if(GetAction() && GetAction()->IsVoluntary())
+    {
+      if(GetIsPlayer() && Reason != "")
+	ADD_MESSAGE("%s.", Reason.c_str());
+
+      GetAction()->Terminate(false);
+    }
+
+  /*if(GetIsPlayer())
     {
       if((StateIsActivated(CONSUMING) || StateIsActivated(RESTING) || StateIsActivated(DIGGING) || StateIsActivated(GOING)) && Reason != "")
 	ADD_MESSAGE("%s.", Reason.c_str());
@@ -2812,12 +2675,12 @@ void character::DeActivateVoluntaryStates(std::string Reason)
       EditAP(-250);
     }
 
-  EndGoing();
+  EndGoing();*/
 }
 
-void character::StateAutoDeactivation()
+void character::ActionAutoTermination()
 {
-  if(!StateIsActivated(CONSUMING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING) && !StateIsActivated(GOING))
+  if(!GetAction() || !GetAction()->IsVoluntary())
     return;
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
@@ -2825,7 +2688,8 @@ void character::StateAutoDeactivation()
       for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->GetExists() && ((GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && (*i)->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare(), HasInfraVision()))))
 	  {
-	    DeActivateVoluntaryStates((*i)->Name(DEFINITE) + " seems to be hostile");
+	    ADD_MESSAGE("%s seems to be hostile", (*i)->CHARNAME(DEFINITE));
+	    GetAction()->Terminate(false);
 	    return;
 	  }
 }
@@ -2917,7 +2781,7 @@ bool character::CheckForUsefulItemsOnGround()
 {
   for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottomSlot(); i != GetLSquareUnder()->GetStack()->GetSlotAboveTop(); ++i)
     {
-//<<<<<<< charba.cpp
+//<<<charba.cpp
       /*if(CanWear() && (**i)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + (**i)->GetWeight() - (GetBodyArmor() ? GetBodyArmor()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, ***i))
 	  {
@@ -2927,26 +2791,26 @@ bool character::CheckForUsefulItemsOnGround()
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
 	{
 	item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
->>>>>>> 1.202
+>>1.202
 
 
 	    if(GetBodyArmor())
 	      GetStack()->MoveItem(GetStack()->SearchItem(GetBodyArmor()), GetLSquareUnder()->GetStack());
-=======
+==
 	if(GetTorsoArmor())
 	GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLSquareUnder()->GetStack());
->>>>>>> 1.202
+>> 1.202
 
 
 	    SetBodyArmor(ToWear);
-=======
+=
 	SetTorsoArmor(ToWear);
 
 
-<<<<<<< charba.cpp
+<< charba.cpp
 	    if(GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s picks up and wears %s.", CHARNAME(DEFINITE), ToWear->CHARNAME(DEFINITE));
-=======
+=
 	if(GetLSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
 
@@ -2972,14 +2836,13 @@ bool character::CheckForUsefulItemsOnGround()
 	    return true;
 	  }*/
 
-      if((**i)->Consumable(this) && !(**i)->IsBadFoodForAI(this))
+      if((**i)->IsConsumable(this) && !(**i)->IsBadFoodForAI(this))
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->ConsumeItem(this, ***i))
 	  {
 	    if(GetLSquareUnder()->CanBeSeen())
 	      ADD_MESSAGE("%s eats %s.", CHARNAME(DEFINITE), (**i)->CHARNAME(DEFINITE));
 
-	    ConsumeItem(***i, GetLSquareUnder()->GetStack());
-
+	    ConsumeItem(***i);
 	    return true;
 	  }
     }
@@ -3032,13 +2895,16 @@ bool character::RestUntilHealed()
 
   GetSquareUnder()->GetOTerrain()->ShowRestMessage(this);
   DRAW_MESSAGES();
-  StateCounter[RESTING] = HPToRest;
-  ActivateState(RESTING);
+  //StateCounter[RESTING] = HPToRest;
+  //ActivateState(RESTING);
+  rest* Rest = new rest(this);
+  Rest->SetGoalHP(HPToRest);
+  SetAction(Rest);
   return true;
 }
 
 
-void character::RestHandler()
+/*void character::RestHandler()
 {
   if(GetHP() >= StateCounter[RESTING] || GetHP() == GetMaxHP())
     EndRest();
@@ -3046,14 +2912,14 @@ void character::RestHandler()
     {
       EditAgilityExperience(-1 * GetSquareUnder()->RestModifier());
     }
-}
+}*/
 
-void character::EndRest()
+/*void character::EndRest()
 {
   DeActivateState(RESTING);
-}
+}*/
 
-void character::DigHandler()
+/*void character::DigHandler()
 {
   if(StateCounter[DIGGING] > 0)
     {
@@ -3072,13 +2938,13 @@ void character::EndDig()
     {
       if(StateCounter[DIGGING] == 0)
 	{
-	  //game::GetCurrentLevel()->GetLSquare(GetSquareBeingDigged())->Dig(this, GetWielded());
+	  //game::GetCurrentLevel()->GetLSquare(GetSquareBeingDug())->Dig(this, GetWielded());
 	  //SetWielded(GetOldWieldedItem());
 	}
 
       DeActivateState(DIGGING);
     }
-}
+}*/
 
 bool character::OutlineCharacters()
 {
@@ -3120,10 +2986,7 @@ ushort character::GetMeleeAttributeModifier() const
 
 float character::GetToHitValue() const
 {
-  /*if(GetWielded())
-    return GetMeleeAttributeModifier() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
-  else*/
-    return GetMeleeAttributeModifier() >> 1;
+  return GetMeleeAttributeModifier() >> 1;
 }
 
 float character::GetDodgeValue() const
@@ -3187,7 +3050,7 @@ bool character::Displace(character* Who)
       return true;
     }
 
-  if(CurrentDanger() > Who->CurrentDanger() && Who->CanBeDisplaced() && !Who->StateIsActivated(CONSUMING) && !Who->StateIsActivated(RESTING) && !Who->StateIsActivated(DIGGING))
+  if(CurrentDanger() > Who->CurrentDanger() && Who->CanBeDisplaced() && (!Who->GetAction() || Who->GetAction()->AllowDisplace()))
     {
       if(GetIsPlayer())
 	if(GetSquareUnder()->CanBeSeen() || Who->GetSquareUnder()->CanBeSeen())
@@ -3322,11 +3185,11 @@ bool character::MoveRandomlyInRoom()
   return OK;
 }
 
-void character::EndGoing()
+/*void character::EndGoing()
 {
   DeActivateState(GOING);
   game::GetCurrentArea()->SendNewDrawRequest();
-}
+}*/
 
 bool character::Go()
 {
@@ -3334,8 +3197,11 @@ bool character::Go()
 
   if((Temp = game::AskForDirectionVector("What direction do you want to go?")) != vector2d(0,0))
     {
-      ActivateState(GOING);
-      StateVariables.Going.Direction = game::GetDirectionForVector(Temp);
+      //ActivateState(GOING);
+      //StateVariables.Going.Direction = game::GetDirectionForVector(Temp);
+      go* Go = new go(this);
+
+      Go->SetDirection(game::GetDirectionForVector(Temp));
 
       uchar OKDirectionsCounter = 0;
 
@@ -3345,38 +3211,42 @@ bool character::Go()
 	  OKDirectionsCounter++;	
       });
 
-      StateVariables.Going.WalkingInOpen = OKDirectionsCounter > 2 ? true : false;
+      Go->SetWalkingInOpen(OKDirectionsCounter > 2 ? true : false);
 
-      square* OldSquare = GetSquareUnder();
+      //square* OldSquare = GetSquareUnder();
 
-      GoHandler();
+      SetAction(Go);
+      Go->Handle();
 
-      return OldSquare != GetSquareUnder();
+      return GetAction() ? true : false;
     }
 
   return false;
 }
 
-void character::GoHandler()
+void character::GoOn(go* Go)
 {
   if(GetAP() >= 0)
     {
-      StateAutoDeactivation();
+      ActionAutoTermination();
 
-      if(!StateIsActivated(GOING))
+      //if(!StateIsActivated(GOING))
+	//return;
+
+      if(!GetAction())
 	return;
 
-      if(!game::IsValidPos(GetPos() + game::GetMoveVector(StateVariables.Going.Direction)))
+      if(!game::IsValidPos(GetPos() + game::GetMoveVector(Go->GetDirection())))
 	{
-	  EndGoing();
+	  Go->Terminate(false);
 	  return;
 	}
 
-      lsquare* MoveToSquare = game::GetCurrentLevel()->GetLSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
+      lsquare* MoveToSquare = game::GetCurrentLevel()->GetLSquare(GetPos() + game::GetMoveVector(Go->GetDirection()));
 
       if(!MoveToSquare->GetIsWalkable(this) || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam()))
 	{
-	  EndGoing();
+	  Go->Terminate(false);
 	  return;
 	}
 
@@ -3388,23 +3258,23 @@ void character::GoHandler()
 	  OKDirectionsCounter++;	
       });
 
-      if(!StateVariables.Going.WalkingInOpen)
+      if(!Go->GetWalkingInOpen())
 	{
 	  if(OKDirectionsCounter > 2)
 	    {
-	      EndGoing();
+	      Go->Terminate(false);
 	      return;
 	    }
 	}
       else
 	if(OKDirectionsCounter <= 2)
-	  StateVariables.Going.WalkingInOpen = false;
+	  Go->SetWalkingInOpen(false);
 
       square* BeginSquare = GetSquareUnder();
 
       if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLSquareUnder()->GetStack()->GetItems())
 	{
-	  EndGoing();
+	  Go->Terminate(false);
 	  return;
 	}
     }
@@ -3488,12 +3358,6 @@ bool character::ChangeRandomStat(short HowMuch)
 	
   return false; // No stat could be lowered (tried randomly 15 times)
 }
-
-/*void character::CheckGearExistence()
-{
-  if(GetWielded() && !GetWielded()->GetExists())
-    SetWielded(0);
-}*/
 
 uchar character::RandomizeReply(uchar Replies, bool* Said)
 {
@@ -3686,8 +3550,6 @@ void character::CreateTorso()
   SetTorso(new normaltorso(false));
   GetTorso()->SetBitmapPos(GetBitmapPos());
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
-  /*GetTorso()->SetMaster(this);
-  GetTorso()->SetAttached(true);*/
   GetTorso()->PlaceToSlot(GetTorsoSlot());
   GetTorso()->SetSize(TorsoSize());
 }
@@ -3816,7 +3678,6 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
 
       BodyPart->SetOwnerDescription(std::string("of ") + Name(INDEFINITE));
       BodyPart->SetUnique(ForceDefiniteArticle() || AssignedName != "");
-      //SetBodyPart(BodyPartIndex, 0); // light update!!!
       BodyPart->RemoveFromSlot();
       GetSquareUnder()->SendNewDrawRequest();
 
@@ -3875,20 +3736,6 @@ bool character::AssignName()
     }
   return false;
 }
-
-/*std::string character::Name(uchar Case) const
-{
-  if(AssignedName.size())
-    {
-      if(ShowClassName()) 
-	return AssignedName + " " + NameNormal(DEFINITE, Article(), Adjective());
-      else
-	return AssignedName;
-    }
-  else
-    return NameNormal(Case, Article(), Adjective());
-<<<<<<< charba.cpp
-}*/
 
 bool character::ReceiveBodyPartEffect(short Amount, uchar Type, uchar BodyPart, uchar Direction, bool PenetrateArmor, bool Critical)
 {
@@ -4015,7 +3862,7 @@ void character::Haste(ushort Counter)
 
 void character::HasteHandler()
 {
-  if(!(StateCounter[HASTE]--))
+  if(!GetStateCounter(HASTE))
     {
       if(GetIsPlayer())
 	ADD_MESSAGE("Time seems to go by at the normal rate now.");
@@ -4023,6 +3870,8 @@ void character::HasteHandler()
 	ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
       EndHaste();
     }
+
+  EditStateCounter(HASTE, -1);
 }
 
 void character::EndHaste()
@@ -4057,7 +3906,7 @@ void character::Slow(ushort Counter)
 
 void character::SlowHandler()
 {
-  if(!(StateCounter[SLOW]--))
+  if(!GetStateCounter(SLOW))
     {
       if(GetIsPlayer())
 	ADD_MESSAGE("Time seems to go by at the normal rate now.");
@@ -4065,6 +3914,8 @@ void character::SlowHandler()
 	ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
       EndHaste();
     }
+
+  EditStateCounter(SLOW, -1);
 }
 
 void character::EndSlow()
@@ -4087,14 +3938,11 @@ uchar character::GetHungerState() const
 {
   if(GetNP() > BLOATEDLEVEL)
     return BLOATED;
-
-  if(GetNP() > SATIATEDLEVEL)
+  else if(GetNP() > SATIATEDLEVEL)
     return SATIATED;
-  
-  if(GetNP() > NOTHUNGERLEVEL)
+  else if(GetNP() > NOTHUNGERLEVEL)
     return NOTHUNGRY;
-
-  if(GetNP() > HUNGERLEVEL)
+  else if(GetNP() > HUNGERLEVEL)
     return HUNGRY;
   else
     return VERYHUNGRY;
@@ -4134,6 +3982,35 @@ characterslot* character::GetBodyPartSlot(ushort Index) const
   return &BodyPartSlot[Index];
 }
 
+bool character::CanEat(material* Material)
+{
+  return GetEatFlags() & Material->GetConsumeType() ? true : false;
+}
+
+void character::SetStateCounter(uchar State, ushort What)
+{
+  for(ushort c = 0; c < STATES; ++c)
+    if((1 << c) & State)
+      StateCounter[c] = What;
+}
+
+void character::EditStateCounter(uchar State, short What)
+{
+  for(ushort c = 0; c < STATES; ++c)
+    if((1 << c) & State)
+      StateCounter[c] += What;
+}
+
+ushort character::GetStateCounter(uchar State)
+{
+  for(ushort c = 0; c < STATES; ++c)
+    if((1 << c) & State)
+      return StateCounter[c];
+
+  ABORT("Illegal GetStateCounter request!");
+  return 0;
+}
+
 bool character::CheckKick()
 {
   if(!CanKick())
@@ -4141,4 +4018,6 @@ bool character::CheckKick()
       ADD_MESSAGE("This monster type can not kick.");
       return false;
     }
+  else
+    return true;
 }

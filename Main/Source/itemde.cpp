@@ -31,17 +31,20 @@ void can::PositionedDrawToTileBuffer(uchar) const
   Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-item* can::TryToOpen(character* Opener, stack* Stack)
+item* can::TryToOpen(character* Opener)
 {
   if(Opener->GetStrength() > RAND() % 30)
     {
       item* Item = new lump(GetContainedMaterial());
-      Stack->AddItem(Item);
-      SetMaterial(GetContainedMaterialIndex(), 0);
-      UpdatePicture();
+      DonateSlotTo(Item);
 
       if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
-	  MoveTo(Opener->GetLSquareUnder()->GetStack());
+	  Opener->GetLSquareUnder()->GetStack()->AddItem(this);
+      else
+	  Item->GetSlot()->AddFriendItem(this);
+
+      SetMaterial(GetContainedMaterialIndex(), 0);
+      UpdatePicture();
 
       return Item;
     }
@@ -56,16 +59,16 @@ item* can::TryToOpen(character* Opener, stack* Stack)
 
 bool banana::Consume(character* Eater, float Amount)
 {
-  GetContainedMaterial()->EatEffect(Eater, Amount, NPModifier());
+  GetConsumeMaterial()->EatEffect(Eater, Amount, NPModifier());
 
-  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetContainedMaterial()->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
       Cannibalised = true;
     }
 
-  if(!GetContainedMaterial()->GetVolume())
+  if(!GetConsumeMaterial()->GetVolume())
     {
       item* Peals = new bananapeals(false);
       Peals->InitMaterials(GetMaterial(0));
@@ -77,14 +80,14 @@ bool banana::Consume(character* Eater, float Amount)
 	Eater->GetStack()->AddItem(Peals);
     }
 
-  return GetContainedMaterial()->GetVolume() ? false : true;
+  return GetConsumeMaterial()->GetVolume() ? false : true;
 }
 
 bool potion::Consume(character* Eater, float Amount)
 {
-  GetContainedMaterial()->EatEffect(Eater, Amount, NPModifier());
+  GetConsumeMaterial()->EatEffect(Eater, Amount, NPModifier());
 
-  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetContainedMaterial()->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
@@ -93,8 +96,8 @@ bool potion::Consume(character* Eater, float Amount)
 
   ushort Emit = GetEmitation();
 
-  if(!GetContainedMaterial()->GetVolume())
-    ChangeMaterial(GetContainedMaterialIndex(), 0);
+  if(!GetConsumeMaterial()->GetVolume())
+    ChangeMaterial(GetConsumeMaterialIndex(), 0);
 
   if(!game::GetInWilderness() && configuration::GetAutodropLeftOvers())
       MoveTo(Eater->GetLSquareUnder()->GetStack());
@@ -211,13 +214,15 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
     }
 }
 
-void meleeweapon::DipInto(item* DipTo)
+void meleeweapon::DipInto(material* Material, character* Dipper)
 {
-  ChangeMaterial(2, DipTo->BeDippedInto());
-  ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), GetMaterial(GetMaterials() - 1)->CHARNAME(UNARTICLED));
+  ChangeMaterial(2, Material);
+
+  if(Dipper->GetIsPlayer())
+    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
-material* lump::BeDippedInto()
+material* lump::CreateDipMaterial()
 {
   return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
 }
@@ -241,10 +246,10 @@ void potion::PositionedDrawToTileBuffer(uchar) const
   Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-item* can::PrepareForConsuming(character* Consumer, stack* Stack)
+item* can::PrepareForConsuming(character* Consumer)
 {
   if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CHARNAME(DEFINITE) + " before eating it? [Y/n]", 'y'))
-    return TryToOpen(Consumer, Stack);
+    return TryToOpen(Consumer);
   else
     return 0;
 }
@@ -278,26 +283,30 @@ item* leftnutofpetrus::CreateWishedItem() const
 
 bool pickaxe::Apply(character* User)
 {
-  vector2d Temp;
-
-  if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
+  vector2d Temp = game::AskForDirectionVector("What direction do you want to dig?");
+	
+  if(Temp != vector2d(0,0) && game::IsValidPos(User->GetPos() + Temp))
     {
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
-      if(Square->CanBeDigged(User, this))
-	if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDigged(GetMainMaterial()))
-	  {
-	    User->SetSquareBeingDigged(User->GetPos() + Temp);
-	    //User->SetOldWieldedItem(User->GetWielded());
-	    User->SetMainWielded(this);
-	    User->ActivateState(DIGGING);
-	    User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? 4 * (50 - User->GetStrength()) / (1 - Square->GetOLTerrain()->GetMaterial(0)->GetStrengthValue() / GetMaterial(0)->GetStrengthValue()) : 3);
-	    return true;
-	  }
+      if(Square->CanBeDug())
+	if(Square->GetOLTerrain()->CanBeDug())
+	  if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
+	    {
+	      User->SwitchToDig(this, User->GetPos() + Temp);
+	      //((dig* Dig = new dig(User);
+	      //((Dig->SetRightBackup();
+	      //User->SetSquareBeingDug();
+	      //User->SetOldWieldedItem(User->GetWielded());
+	      //User->SetMainWielded(this);
+	      //User->ActivateState(DIGGING);
+	      //User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? 4 * (50 - User->GetStrength()) / (1 - Square->GetOLTerrain()->GetMaterial(0)->GetStrengthValue() / GetMaterial(0)->GetStrengthValue()) : 3);
+	      return true;
+	    }
+	  else
+	    ADD_MESSAGE("%s is too hard to dig.", Square->GetOLTerrain()->CHARNAME(DEFINITE));
 	else
-	  ADD_MESSAGE("%s is too hard to dig.", Square->GetOLTerrain()->CHARNAME(DEFINITE));
-      else
-	ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
+	  ADD_MESSAGE(Square->GetOLTerrain()->DigMessage().c_str());
     }
 
   return false;
@@ -582,9 +591,22 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
   return false;
 }
 
-material* corpse::BeDippedInto()
+material* corpse::CreateDipMaterial()
 {
   return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
+}
+
+material* potion::CreateDipMaterial()
+{
+  return GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
+}
+
+void potion::DipInto(material* Material, character* Dipper)
+{
+  ChangeMaterial(1, Material);
+
+  if(Dipper->GetIsPlayer())
+    ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
 }
 
 /*void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
@@ -1089,7 +1111,7 @@ bool scrollofcharging::Read(character* Reader)
       return false;
     }
 
-  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?");
+  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", item::ChargeableSorter);
 
   if(!Item)
     return false;
@@ -1129,7 +1151,7 @@ bool banana::Zap(character* Zapper, vector2d, uchar)
 {
   if(Charges)
     {
-      ADD_MESSAGE("BANG! You zap the banana!");
+      ADD_MESSAGE("BANG! You zap %s!", CHARNAME(DEFINITE));
       --Charges;
     }
   else
@@ -1151,7 +1173,6 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
 	if(Stepper->GetSquareUnder()->CanBeSeen())
 	  ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
       Stepper->EditAP(1000);
-      //Stepper->SetHP(Stepper->GetHP() - RAND() % 2);
       /* Do damage against any random bodypart except legs */
       Stepper->ReceiveEffect(1 + RAND() % 2, PHYSICALDAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("stepped on a banana peal.");
@@ -1410,6 +1431,7 @@ void arm::Load(inputfile& SaveFile)
   GauntletSlot.SetBodyPart(this);
   RingSlot.SetBodyPart(this);
   SaveFile >> SingleWeaponSkill;
+  SetCurrentSingleWeaponSkill(0);
 
   if(GetWielded())
     for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
@@ -1524,10 +1546,11 @@ bool mine::GetStepOnEffect(character* Stepper)
 
 void potion::GeneratePotionMaterials()
 { 
-  switch(RAND() % 2) 
+  switch(RAND() % 3) 
     {
-    case 0: InitMaterials(2, new glass, new omleurine); break;
-    case 1: InitMaterials(2, new glass, new healingliquid); break;
+    case 0: InitMaterials(2, new glass, 0); break;
+    case 1: InitMaterials(2, new glass, new omleurine); break;
+    case 2: InitMaterials(2, new glass, new healingliquid); break;
     }
 }
 
@@ -1602,28 +1625,35 @@ bool key::Apply(character* User)
   return true;
 }
 
-bool potion::HasBeenDippedInFountain(character* Dipper,fountain* Fountain)
+/*bool potion::HasBeenDippedInFountain(character* Dipper, fountain* Fountain)
 {
   if(Dipper->GetIsPlayer())
-      ADD_MESSAGE("You dip %s in %s and it fills with water.", CHARNAME(DEFINITE), Fountain->CHARNAME(DEFINITE));
+      ADD_MESSAGE("You dip %s in %s. It is filled with %s.", CHARNAME(DEFINITE), Fountain->CHARNAME(DEFINITE));
 
   ChangeMaterial(1, new water);
   return true;
+}*/
+
+void arm::SignalGearUpdate()
+{
+  if(!GetWielded() && GetCurrentSingleWeaponSkill())
+    {
+      if(!GetCurrentSingleWeaponSkill()->GetHits())
+	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+	  if(*i == GetCurrentSingleWeaponSkill())
+	    {
+	      delete *i;
+	      SingleWeaponSkill.erase(i);
+	      break;
+	    }
+
+      SetCurrentSingleWeaponSkill(0);
+    }
 }
 
 void arm::SetWielded(item* Item)
 {
-  if(GetWielded() && !GetCurrentSingleWeaponSkill()->GetHits())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-      if(*i == GetCurrentSingleWeaponSkill())
-	{
-	  delete *i;
-	  SingleWeaponSkill.erase(i);
-	  break;
-	}
-
-  SetCurrentSingleWeaponSkill(0);
-  WieldedSlot.PutInItem(Item);
+  WieldedSlot.SetItem(Item);
 
   if(Item)
     {
@@ -1779,3 +1809,9 @@ characterslot* bodypart::GetCharacterSlot() const
 {
   return (characterslot*)GetSlot();
 }
+
+bool pickaxe::IsAppliable(character* Who) const
+{
+  return Who->CanWield();
+}
+

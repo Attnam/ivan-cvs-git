@@ -71,7 +71,7 @@ class lsquare : public square
   virtual bool DrawCharacters() const;
   virtual void Draw();
   virtual void UpdateMemorized();
-  virtual bool CanBeDigged(character*, item*) const;
+  virtual bool CanBeDug() const;
   virtual bool Dig(character*, item*);
   virtual gterrain* GetGTerrain() const;
   virtual oterrain* GetOTerrain() const;
@@ -105,7 +105,7 @@ class lsquare : public square
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual void TeleportEverything(character*);
   virtual bool ReceiveApply(item*, character*);
-  virtual bool ReceiveDip(item*, character*);
+  virtual bool DipInto(item*, character*);
   virtual void DrawCharacterSymbols(vector2d, ushort);
  protected:
   glterrain* GLTerrain;

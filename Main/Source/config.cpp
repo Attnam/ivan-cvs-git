@@ -21,7 +21,7 @@
 #endif
 
 std::string configuration::DefaultName;
-ushort configuration::AutosaveInterval = 500;
+ushort configuration::AutoSaveInterval = 500;
 uchar configuration::Contrast = 100;
 bool configuration::AutodropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
@@ -39,7 +39,7 @@ void configuration::Save()
     return;
 
   SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
-  SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
+  SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
   SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
   SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
@@ -65,8 +65,8 @@ void configuration::Load()
 	  SetDefaultName(SaveFile.ReadWord());
 	}
 
-      if(Word == "AutosaveInterval")
-	SetAutosaveInterval(SaveFile.ReadNumber());
+      if(Word == "AutoSaveInterval")
+	SetAutoSaveInterval(SaveFile.ReadNumber());
 
       if(Word == "Contrast")
 	SetContrast(SaveFile.ReadNumber());
@@ -140,7 +140,7 @@ void configuration::ShowConfigScreen()
       List.AddDescription("Setting                                    Value");
 
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
-      List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", LIGHTGRAY);
+      List.AddEntry(std::string("AutoSave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);
@@ -160,7 +160,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  continue;
 	case 1:
-	  SetAutosaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::GetRunning()));
+	  SetAutoSaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::GetRunning()));
 	  BoolChange = false;
 	  continue;
 	case 2:
@@ -206,12 +206,12 @@ void configuration::SetDefaultName(std::string What)
     DefaultName = "";
 }
 
-void configuration::SetAutosaveInterval(long What)
+void configuration::SetAutoSaveInterval(long What)
 {
   if(What < 0) What = 0;
   if(What > 50000) What = 50000;
 
-  AutosaveInterval = What;
+  AutoSaveInterval = What;
 }
 
 void configuration::SetContrast(long What)
@@ -226,3 +226,4 @@ void configuration::SwitchModeHandler()
 {
   SetFullScreenMode(!GetFullScreenMode());
 }
+

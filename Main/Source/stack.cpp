@@ -211,42 +211,14 @@ vector2d stack::GetPos() const
   return GetLSquareUnder()->GetPos();
 }
 
-bool stack::ConsumableItems(character* Eater)
+bool stack::SortedItems(character* Viewer, bool (item::*SorterFunction)(character*) const) const
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->Consumable(Eater))
+    if(((***i)->*SorterFunction)(Viewer))
       return true;
 
   return false;
 }
-
-/*item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
-{
-  return 0;
-  stack ConsumableStack(GetSquareUnder());
-  item* TheItem;
-  ushort Key;
-
-  //for(ushort c = 0; c < GetItems(); ++c)
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    {
-      if((**i)->Consumable(Eater))
-	ConsumableStack.FastAddItem((**i));
-    }
-
-  Key = ConsumableStack.DrawContents(Eater, Topic);
-
-  if(Key == 0xFFFF || Key == 0x1B || Key > ConsumableStack.GetItems())
-    {
-      ConsumableStack.DeletePointers();
-      return 0xFFFF;
-    }
-
-  TheItem = ConsumableStack.GetItem(Key);
-  ConsumableStack.DeletePointers();
-  return SearchItem(TheItem);
-
-}*/
 
 void stack::DeletePointers()
 {
@@ -447,47 +419,85 @@ stackiterator stack::GetSlotAboveTop() const
   return Item->end();
 }
 
-/*
- * Default parameter for SelectItem didn't work for some very odd reason!
- */
-
-item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*)) const
+item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*) const) const
 {
-  return DrawContents(Viewer, Topic, SorterFunction, true);
+  return DrawContents(0, Viewer, Topic, "", "", true, SorterFunction);
 }
 
-item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*), bool SelectItem) const
+item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool (item::*SorterFunction)(character*) const) const
 {
-  if(!GetItems()) return 0;
+  return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, SorterFunction);
+}
+
+item* stack::DrawContents(character* Viewer, std::string Topic, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+{
+  return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
+}
+
+item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topic, std::string ThisDesc, std::string ThatDesc, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+{
   felist ItemNames(Topic, WHITE, 0);
 
   ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + " grams");
+  ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + (MergeStack ? MergeStack->SumOfMasses() : 0) + " grams");
   ItemNames.AddDescription("");
 
   std::string Buffer = "Icon  Name                                             Weight     AV    Str";
   Viewer->AddSpecialItemInfoDescription(Buffer);
   ItemNames.AddDescription(Buffer);
 
-  stackiterator i;
-  ushort c;
+  if(MergeStack)
+    MergeStack->AddContentsToList(ItemNames, Viewer, ThatDesc, SelectItem, SorterFunction);
 
-  bool UseSorterFunction = SorterFunction ? true : false;
+  AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
 
-  for(c = 0; c < item::ItemCategories(); ++c)
+  ushort Chosen = ItemNames.Draw(vector2d(10, 42), 780, MergeStack ? 12 : 15, SelectItem, false);
+
+  if(Chosen & 0x8000)
+    return 0;
+
+  ushort Pos = 0;
+
+  item* Item;
+
+  if(MergeStack)
     {
-      bool DescDrawn = false;
+      Item = MergeStack->SearchChosen(Pos, Chosen, Viewer, SorterFunction);
 
-      for(i = Item->begin(); i != Item->end(); ++i)
+      if(Item)
+	return Item;
+    }
+
+  Item = SearchChosen(Pos, Chosen, Viewer, SorterFunction);
+  return Item;
+}
+
+void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string Desc, bool SelectItem, bool (item::*SorterFunction)(character*) const) const
+{
+  bool UseSorterFunction = SorterFunction ? true : false;
+  bool DescDrawn = false;
+
+  for(ushort c = 0; c < item::ItemCategories(); ++c)
+    {
+      bool CatDescDrawn = false;
+
+      for(stackiterator i = Item->begin(); i != Item->end(); ++i)
 	if((**i)->GetCategory() == c && (!UseSorterFunction || ((***i)->*SorterFunction)(Viewer)))
 	  {
-	    if(!DescDrawn)
+	    if(!DescDrawn && Desc != "")
 	      {
-		ItemNames.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, false);
-		DescDrawn = true;
+		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
+		ItemNames.AddEntry(Desc, LIGHTGRAY, 0, false);
+		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
 	      }
 
-	    Buffer = (**i)->Name(INDEFINITE);
+	    if(!CatDescDrawn)
+	      {
+		ItemNames.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, false);
+		CatDescDrawn = true;
+	      }
+
+	    std::string Buffer = (**i)->Name(INDEFINITE);
 	    Buffer.resize(49,' ');
 	    Buffer += int((**i)->GetWeight());
 	    Buffer.resize(60, ' ');
@@ -502,17 +512,15 @@ item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*Sor
 	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture());
 	  }
     }
+}
 
-  ushort Chosen = ItemNames.Draw(vector2d(10, 42), 780, 10, SelectItem, false);
+item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (item::*SorterFunction)(character*) const) const
+{
+  bool UseSorterFunction = SorterFunction ? true : false;
 
-  if(Chosen & 0x8000)
-    return 0;
-
-  ushort j = 0;
-
-  for(c = 0; c < item::ItemCategories(); ++c)
-    for(i = Item->begin(); i != Item->end(); ++i)
-      if((**i)->GetCategory() == c && j++ == Chosen)
+  for(ushort c = 0; c < item::ItemCategories(); ++c)
+    for(stackiterator i = Item->begin(); i != Item->end(); ++i)
+      if((**i)->GetCategory() == c && (!UseSorterFunction || ((***i)->*SorterFunction)(Viewer)) && Pos++ == Chosen)
 	return ***i;
 
   return 0;

@@ -751,15 +751,15 @@ bool lsquare::Dig(character*, item*) // early prototype. Probably should include
   return true;
 }
 
-bool lsquare::CanBeDigged(character*, item*) const
+bool lsquare::CanBeDug() const
 {
   if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
     {
       ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
       return false;
     }
-
-  return GetOLTerrain()->CanBeDigged();
+  else
+    return true;
 }
 
 void lsquare::ChangeLTerrain(glterrain* NewGround, olterrain* NewOver)
@@ -1091,32 +1091,32 @@ bool lsquare::ReceiveApply(item* Thingy, character* Applier)
     }
 }
 
-bool lsquare::ReceiveDip(item* Thingy, character* Dipper)
+bool lsquare::DipInto(item* Thingy, character* Dipper)
 {
-  if(GetGLTerrain()->HasDipEffect() || GetOLTerrain()->HasDipEffect())
+  if(GetGLTerrain()->IsDipDestination() || GetOLTerrain()->IsDipDestination())
     {
-    	  if(GetRoom() && GetLevelUnder()->GetRoom(GetRoom())->HasDipHandler())
+      if(GetRoom() && GetLevelUnder()->GetRoom(GetRoom())->HasDipHandler())
+	{
+	  if(!GetLevelUnder()->GetRoom(GetRoom())->Dip(Dipper))
+	    return false;
+	}
+      /*else
+	{
+	  if(!game::BoolQuestion("Do you want to dip? [y/N]"))
 	    {
-	      if(!GetLevelUnder()->GetRoom(GetRoom())->Dip(Dipper))
-		return false;
+	      return false;
 	    }
-	  else
-	    {
-	      if(!game::BoolQuestion("Do you still want to dip? [y/N]"))
-		{
-		  return false;
-		}
-	    }
+	}*/
     }
   
-  if(GetGLTerrain()->ReceiveDip(Thingy, Dipper) || GetOLTerrain()->ReceiveDip(Thingy,Dipper))
+  if(GetGLTerrain()->DipInto(Thingy, Dipper) || GetOLTerrain()->DipInto(Thingy, Dipper))
     {
       return true;
     }
   else
     {
       if(Dipper->GetIsPlayer())
-	ADD_MESSAGE("You cannot dip that on this!");
+	ADD_MESSAGE("You cannot dip %s on that square!", Thingy->CHARNAME(DEFINITE));
 
       return false;
     }
@@ -1140,3 +1140,4 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 	}*/
     }
 }
+

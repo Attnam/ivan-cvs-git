@@ -9,3 +9,5 @@ Broken inhandspics.
 ?Bodypart items
 //Tame symbol.
 Silhouettes.
+Angel and genie splitting.
+Key item.
