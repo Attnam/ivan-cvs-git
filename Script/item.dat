@@ -1329,7 +1329,7 @@ beartrap
 	NameSingular = "bear trap";
 	Possibility = 100;
 	CanBeGeneratedInContainer = false; /* Activated code might cause problems otherwise */
-	BitmapPos = 32, 304;
+	/* Program overrides BitmapPos always */
 	IsTwoHanded = true;
 	DefaultSize = 30;
 	DefaultMainVolume = 500;

@@ -129,7 +129,7 @@ uchar square::GetRestModifier() const
   return GetOTerrain()->GetRestModifier();
 }
 
-bool square::CanBeSeenBy(character* Who) const
+bool square::CanBeSeenBy(const character* Who) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer();

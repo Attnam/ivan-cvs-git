@@ -123,21 +123,21 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance,
 
   if(OLTerrain->IsWalkable())
     {
-      Stack->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+      Stack->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       #define NS(D, S) GetNearLSquare(GetPos() + D)->GetSideStack(S)
 
       if(GetPos().X)
-	NS(vector2d(-1, 0), 1)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	NS(vector2d(-1, 0), 1)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       if(GetPos().X < GetLevelUnder()->GetXSize() - 1)
-	NS(vector2d(1, 0), 3)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	NS(vector2d(1, 0), 3)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       if(GetPos().Y)
-	NS(vector2d(0, -1), 2)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	NS(vector2d(0, -1), 2)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
 
       if(GetPos().Y < GetLevelUnder()->GetYSize() - 1)
-	NS(vector2d(0, 1), 0)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+	NS(vector2d(0, 1), 0)->Draw(game::GetPlayer(), Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
     }
 }
 
@@ -464,7 +464,7 @@ bool lsquare::Open(character* Opener)
 
 bool lsquare::Close(character* Closer)
 {
-  if(!GetStack()->GetVisibleItems() && !Character)
+  if(!GetStack()->GetVisibleItems(Closer) && !Character)
     return GetOLTerrain()->Close(Closer);
   else
     {
@@ -621,7 +621,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		  Anything = true;
 		}
 
-	      ushort VisibleItems = GetStack()->GetVisibleItems();
+	      ushort VisibleItems = GetStack()->GetVisibleItems(game::GetPlayer());
 
 	      if(VisibleItems)
 		{
@@ -629,7 +629,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		    MemorizedDescription << " and ";
 
 		  if(VisibleItems == 1)
-		    GetStack()->GetBottomVisibleItem()->AddName(MemorizedDescription, INDEFINITE);
+		    GetStack()->GetBottomVisibleItem(game::GetPlayer())->AddName(MemorizedDescription, INDEFINITE);
 		  else
 		    MemorizedDescription = "many items";
 
@@ -647,12 +647,12 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	      bool HasManyItems = false;
 
 	      for(ushort c = 0; c < 4; ++c)
-		if(SideStack[c]->GetVisibleItems())
+		if(SideStack[c]->GetVisibleItems(game::GetPlayer()))
 		  {
 		    if(++HasItems > 1)
 		      break;
 
-		    if(SideStack[c]->GetVisibleItems() > 1)
+		    if(SideStack[c]->GetVisibleItems(game::GetPlayer()) > 1)
 		      {
 			HasManyItems = true;
 			break;
@@ -667,9 +667,9 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	      else if(HasItems == 1)
 		{
 		  for(ushort c = 0; c < 4; ++c)
-		    if(SideStack[c]->GetVisibleItems())
+		    if(SideStack[c]->GetVisibleItems(game::GetPlayer()))
 		      {
-			SideStack[c]->GetBottomVisibleItem()->AddName(MemorizedDescription, INDEFINITE);
+			SideStack[c]->GetBottomVisibleItem(game::GetPlayer())->AddName(MemorizedDescription, INDEFINITE);
 			MemorizedDescription << " on ";
 			OLTerrain->AddName(MemorizedDescription, INDEFINITE);
 			break;

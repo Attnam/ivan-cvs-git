@@ -304,8 +304,8 @@ class character : public entity, public id
   virtual uchar GetHomeRoom() const { return HomeRoom; }
   virtual bool Displace(character*);
   virtual bool Sit();
-  virtual void AddSpecialItemInfo(std::string&, item*) { }
-  virtual void AddSpecialItemInfoDescription(std::string&) { }
+  virtual void AddSpecialItemInfo(std::string&, item*) const { }
+  virtual void AddSpecialItemInfoDescription(std::string&) const { }
   virtual long GetStatScore() const;
   virtual bool CheckStarvationDeath(const std::string&);
   virtual void ShowNewPosInfo() const;
@@ -387,7 +387,7 @@ class character : public entity, public id
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
   virtual ushort EquipmentSlots() const { return 0; }
-  virtual bool (*EquipmentSorter(ushort) const)(item*, character*) { return 0; }
+  virtual bool (*EquipmentSorter(ushort) const)(item*, const character*) { return 0; }
   virtual void SetEquipment(ushort, item*) { }
   virtual bool ScrollMessagesDown();
   virtual bool ScrollMessagesUp();
@@ -579,7 +579,7 @@ class character : public entity, public id
   virtual void PrintBeginESPMessage() const;
   virtual void PrintEndESPMessage() const;
   virtual bool CanBeSeenByPlayer() const;
-  virtual bool CanBeSeenBy(character*) const;
+  virtual bool CanBeSeenBy(const character*) const;
   virtual bool DetachBodyPart();
   virtual bodypart* MakeBodyPart(ushort);
   virtual void AttachBodyPart(bodypart*);
@@ -661,6 +661,8 @@ class character : public entity, public id
   virtual bool ReloadDatafiles();
   virtual std::string GetBodyPartName(ushort, bool = false) const;
   virtual item* SearchForItemWithID(ulong) const;
+  virtual std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
+  virtual bool ContentsCanBeSeenBy(const character*) const;
   std::string GetBeVerb() const { return IsPlayer() ? "are" : "is"; }
   virtual void CreateBlockPossibilityVector(blockvector&, float) const { }
   virtual bool SpecialUnarmedEffect(character*, uchar, uchar, bool) { return false; }

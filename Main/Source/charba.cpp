@@ -783,7 +783,7 @@ bool character::PickUp()
 {
   bool ToBeReturned = false;
 
-  ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems();
+  ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
 
   if(VisibleItemsOnGround > 0)
     if(VisibleItemsOnGround > 1)
@@ -805,7 +805,7 @@ bool character::PickUp()
 		  return false;
 	      }
 
-	    if(!Item || !GetStackUnder()->GetVisibleItems())
+	    if(!Item || !GetStackUnder()->GetVisibleItems(this))
 	      break;
 
 	    game::DrawEverythingNoBlit();
@@ -813,7 +813,7 @@ bool character::PickUp()
       }
     else
       {
-	item* Item = GetStackUnder()->GetBottomVisibleItem();
+	item* Item = GetStackUnder()->GetBottomVisibleItem(this);
 
 	if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item)))
 	  {
@@ -2594,14 +2594,14 @@ void character::ShowNewPosInfo() const
       if(GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
 	ADD_MESSAGE("It's dark in here!");
 
-      ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems();
+      ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
 
       if(VisibleItemsOnGround > 0)
 	{
 	  if(VisibleItemsOnGround > 1)
 	    ADD_MESSAGE("Several items are lying here.");
 	  else
-	    ADD_MESSAGE("%s is lying here.", GetStackUnder()->GetBottomVisibleItem()->CHARNAME(INDEFINITE));
+	    ADD_MESSAGE("%s is lying here.", GetStackUnder()->GetBottomVisibleItem(this)->CHARNAME(INDEFINITE));
 	}
 		
       if(GetNearLSquare(GetPos())->GetEngraved().length())
@@ -2711,7 +2711,7 @@ void character::GoOn(go* Go)
 
   square* BeginSquare = GetSquareUnder();
 
-  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetStackUnder()->GetVisibleItems())
+  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetStackUnder()->GetVisibleItems(this))
     {
       Go->Terminate(false);
       return;
@@ -4777,7 +4777,7 @@ bool character::CanBeSeenByPlayer() const
     return GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
 }
 
-bool character::CanBeSeenBy(character* Who) const
+bool character::CanBeSeenBy(const character* Who) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer();
@@ -5390,6 +5390,11 @@ item* character::SearchForItemWithID(ulong ID) const
       return ***i;
 
   return 0;
+}
+
+bool character::ContentsCanBeSeenBy(const character* Viewer) const
+{
+  return Viewer == this;
 }
 
 bool character::HitEffect(character* Enemy, item* Weapon, uchar Type, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)

@@ -15,6 +15,7 @@ class lsquare;
 class outputfile;
 class inputfile;
 class material;
+class character;
 
 class entity
 {
@@ -32,6 +33,7 @@ class entity
   ushort GetEmitation() const { return Emitation; }
   virtual void SignalEmitationIncrease(ushort) { }
   virtual void SignalEmitationDecrease(ushort) { }
+  virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool InPool;

@@ -375,15 +375,15 @@ ulong item::GetBlockModifier(const character* User) const
 
 bool item::CanBeSeenByPlayer() const
 {
-  return GetSquareUnder()->CanBeSeenByPlayer();
+  return CanBeSeenBy(game::GetPlayer());
 }
 
-bool item::CanBeSeenBy(character* Who) const
+bool item::CanBeSeenBy(const character* Who) const
 {
-  if(Who->IsPlayer())
-    return CanBeSeenByPlayer();
+  if(Slot)
+    return Slot->CanBeSeenBy(Who);
   else
-    return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
+    return false;
 }
 
 std::string item::GetDescription(uchar Case) const
@@ -446,10 +446,10 @@ void item::CalculateAll()
   CalculateVolumeAndWeight();
   CalculateEmitation();
 }
-
 /* Somewhat temporary. */
 
 void item::WeaponSkillHit()
 {
   static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
+

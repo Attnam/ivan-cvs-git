@@ -51,7 +51,7 @@ class square
   ushort GetAnimatedEntities() const { return AnimatedEntities; }
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
-  bool CanBeSeenBy(character*) const;
+  bool CanBeSeenBy(const character*) const;
   ushort GetLuminance() const { return Luminance; }
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }

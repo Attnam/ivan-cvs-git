@@ -149,23 +149,23 @@ class item : public object
   virtual void RemoveFromSlot();
   virtual void MoveTo(stack*);
   static std::string ItemCategoryName(uchar);
-  static bool EatableSorter(item* Item, character* Char) { return Item->IsEatable(Char); }
-  static bool DrinkableSorter(item* Item, character* Char) { return Item->IsDrinkable(Char); }
-  static bool OpenableSorter(item* Item, character* Char) { return Item->IsOpenable(Char); }
-  static bool ReadableSorter(item* Item, character* Char) { return Item->IsReadable(Char); }
-  static bool DippableSorter(item* Item, character* Char) { return Item->IsDippable(Char); }
-  static bool DipDestinationSorter(item* Item, character* Char) { return Item->IsDipDestination(Char); }
-  static bool AppliableSorter(item* Item, character* Char) { return Item->IsAppliable(Char); }
-  static bool ZappableSorter(item* Item, character* Char) { return Item->IsZappable(Char); }
-  static bool ChargeableSorter(item* Item, character* Char) { return Item->IsChargeable(Char); }
-  static bool HelmetSorter(item* Item, character* Char) { return Item->IsHelmet(Char); }
-  static bool AmuletSorter(item* Item, character* Char) { return Item->IsAmulet(Char); }
-  static bool CloakSorter(item* Item, character* Char) { return Item->IsCloak(Char); }
-  static bool BodyArmorSorter(item* Item, character* Char) { return Item->IsBodyArmor(Char); }
-  static bool RingSorter(item* Item, character* Char) { return Item->IsRing(Char); }
-  static bool GauntletSorter(item* Item, character* Char) { return Item->IsGauntlet(Char); }
-  static bool BeltSorter(item* Item, character* Char) { return Item->IsBelt(Char); }
-  static bool BootSorter(item* Item, character* Char) { return Item->IsBoot(Char); }
+  static bool EatableSorter(item* Item, const character* Char) { return Item->IsEatable(Char); }
+  static bool DrinkableSorter(item* Item, const character* Char) { return Item->IsDrinkable(Char); }
+  static bool OpenableSorter(item* Item, const character* Char) { return Item->IsOpenable(Char); }
+  static bool ReadableSorter(item* Item, const character* Char) { return Item->IsReadable(Char); }
+  static bool DippableSorter(item* Item, const character* Char) { return Item->IsDippable(Char); }
+  static bool DipDestinationSorter(item* Item, const character* Char) { return Item->IsDipDestination(Char); }
+  static bool AppliableSorter(item* Item, const character* Char) { return Item->IsAppliable(Char); }
+  static bool ZappableSorter(item* Item, const character* Char) { return Item->IsZappable(Char); }
+  static bool ChargeableSorter(item* Item, const character* Char) { return Item->IsChargeable(Char); }
+  static bool HelmetSorter(item* Item, const character* Char) { return Item->IsHelmet(Char); }
+  static bool AmuletSorter(item* Item, const character* Char) { return Item->IsAmulet(Char); }
+  static bool CloakSorter(item* Item, const character* Char) { return Item->IsCloak(Char); }
+  static bool BodyArmorSorter(item* Item, const character* Char) { return Item->IsBodyArmor(Char); }
+  static bool RingSorter(item* Item, const character* Char) { return Item->IsRing(Char); }
+  static bool GauntletSorter(item* Item, const character* Char) { return Item->IsGauntlet(Char); }
+  static bool BeltSorter(item* Item, const character* Char) { return Item->IsBelt(Char); }
+  static bool BootSorter(item* Item, const character* Char) { return Item->IsBoot(Char); }
   virtual bool IsConsumable(const character*) const;
   virtual bool IsEatable(const character*) const;
   virtual bool IsDrinkable(const character*) const;
@@ -258,7 +258,7 @@ class item : public object
   virtual bool IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
   virtual bool IsPickable(character*) const { return true; }
   virtual bool CanBeSeenByPlayer() const;
-  virtual bool CanBeSeenBy(character*) const;
+  virtual bool CanBeSeenBy(const character*) const;
   virtual std::string GetDescription(uchar) const;
   virtual bool IsVisible() const { return true; }
   virtual void SetIsVisible(bool) { }
@@ -277,6 +277,7 @@ class item : public object
   virtual void SignalEmitationDecrease(ushort);
   virtual void CalculateAll();
   virtual void DropEquipment() { }
+  virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
  protected:
   virtual void LoadDataBaseStats();

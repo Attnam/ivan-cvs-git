@@ -910,7 +910,7 @@ bool bananapeals::StepOnEffect(character* Stepper)
 
       /* Do damage against any random bodypart except legs */
       Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
-      Stepper->CheckDeath("stepped on a banana peal.");
+      Stepper->CheckDeath("slipped on a banana peal.");
       Stepper->EditAP(-1000);
     }
   
@@ -1224,13 +1224,13 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
 void mine::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> Charged >> Visible;
+  SaveFile >> Active >> Team;
 }
 
 void mine::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << Charged << Visible;
+  SaveFile << Active << Team;
 }
 
 bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
@@ -1258,20 +1258,19 @@ bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
 
 bool mine::StepOnEffect(character* Stepper)
 {
-  if(GetCharged())
-    {
-      if(Stepper->IsPlayer())
-	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
-      else if(Stepper->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+  if(GetContainedMaterial()->GetTotalExplosivePower() == 0)
+    return false;
 
-      lsquare* Square = GetLSquareUnder();
-      RemoveFromSlot();
-      SendToHell();
-      Square->GetLevelUnder()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
-    }
+  if(Stepper->IsPlayer())
+    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
+  else if(Stepper->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
-  return false;
+  lsquare* Square = GetLSquareUnder();
+  RemoveFromSlot();
+  SendToHell();
+  Square->GetLevelUnder()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+  return true;
 }
 
 bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
@@ -2067,8 +2066,8 @@ void mine::VirtualConstructor(bool Load)
   
   if(!Load)
     {
-      SetCharged(true);
-      Visible = true;
+      Team = MONSTER_TEAM;
+      Active = true;
     }
 }
 
@@ -2690,13 +2689,13 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 void beartrap::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> IsActivated >> Visible;
+  SaveFile >> Active >> Team;
 }
 
 void beartrap::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << IsActivated << Visible;
+  SaveFile << Active << Team;
 }
 
 void beartrap::VirtualConstructor(bool Load)
@@ -2705,15 +2704,15 @@ void beartrap::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      IsActivated = true;
-      Visible = true;
+      Active = true;
+      Team = MONSTER_TEAM;
     }
 }
 
 bool beartrap::StepOnEffect(character* Stepper)
 {
   SetIsVisible(true);
-  if(IsActivated)
+  if(IsActive())
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
@@ -2729,7 +2728,7 @@ bool beartrap::StepOnEffect(character* Stepper)
 
       Stepper->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
       Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE) + ".");
-      IsActivated = false;
+      SetIsActive(false);
     }
   else
     {
@@ -2750,7 +2749,7 @@ bool beartrap::CheckPickUpEffect(character* Picker)
       return false;
     }
 
-  IsActivated = false; /* Just in case something wierd is going on */
+  SetIsActive(false); /* Just in case something wierd is going on */
   return true;
 }
 
@@ -2980,7 +2979,7 @@ bool stethoscope::Apply(character* Doctor)
   uchar Dir = game::DirectionQuestion("What do you want to inspect? [press a direction key]", false,true);  
   if(Dir == DIR_ERROR)
     return false;
-
+  Doctor->DexterityAction(2);
   return ListenTo(GetNearLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
 } 
 
@@ -3336,6 +3335,41 @@ void bodypart::ResetPosition()
   UpdatePictures();
 }
 
+bool chest::ContentsCanBeSeenBy(const character* Viewer) const
+{
+  return GetMainMaterial()->IsTransparent() && CanBeSeenBy(Viewer);
+}
+
+bool mine::CanBeSeenBy(const character* Viewer) const 
+{ 
+  return ((Viewer->GetTeam()->GetID() == Team) || !IsActive()) && materialcontainer::CanBeSeenBy(Viewer); 
+}
+
+bool beartrap::CanBeSeenBy(const character* Viewer) const 
+{ 
+  return ((Viewer->GetTeam()->GetID() == Team) || !IsActive()) && item::CanBeSeenBy(Viewer); 
+}
+
+bool mine::Apply(character* User)
+{
+  Team = User->GetTeam()->GetID();
+  if(IsActive())
+    SetIsActive(false);
+  else
+    SetIsActive(true);
+  User->DexterityAction(10);
+}
+
+bool beartrap::Apply(character* User)
+{
+  Team = User->GetTeam()->GetID();
+  if(IsActive())
+    SetIsActive(false);
+  else
+    SetIsActive(true);
+  User->DexterityAction(10);
+}
+
 float arm::GetBlockChance(float EnemyToHitValue) const
 {
   return GetWielded() ? Min(1.0f / (1 + EnemyToHitValue / (GetToHitValue() * GetWielded()->GetBlockModifier(Master)) * 10000), 1.0f) : 0;
@@ -3365,3 +3399,10 @@ void arm::WieldedSkillHit()
     }
 }
 
+vector2d beartrap::GetBitmapPos(ushort) const
+{
+  if(IsActive())
+    return vector2d(32,304);
+  else
+    return vector2d(32,320);
+}

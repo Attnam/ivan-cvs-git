@@ -24,12 +24,12 @@ stack::~stack()
   delete Item;
 }
 
-void stack::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
+void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate, bool AllowOutline) const
 {
   ushort VisibleItems = 0;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->IsVisible() || game::GetSeeWholeMapCheat())
+    if((**i)->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
       {
 	(**i)->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 	++VisibleItems;
@@ -40,7 +40,7 @@ void stack::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha
       igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->IsVisible() || game::GetSeeWholeMapCheat())
+	if((**i)->CanBeSeenBy(Viewer) || game::GetSeeWholeMapCheat())
 	  (**i)->Draw(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
 
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
@@ -221,18 +221,18 @@ vector2d stack::GetPos() const
   return GetSquareUnder()->GetPos();
 }
 
-bool stack::SortedItems(character* Viewer, bool (*SorterFunction)(item*, character*)) const
+bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
 {
   if(SorterFunction == 0)
     {
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->IsVisible())
+	if((**i)->CanBeSeenBy(Viewer))
 	  return true;
     }
   else
     {
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if(SorterFunction(***i, Viewer) && (**i)->IsVisible())
+	if(SorterFunction(***i, Viewer) && (**i)->CanBeSeenBy(Viewer))
 	  return true;
     }
 
@@ -258,7 +258,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
 	  (*Item->back())->Fly(Kicker, game::GetDirectionForVector(GetPos() - Kicker->GetPos()), KickDamage);
     }
   else
-    if(GetVisibleItems() && Kicker->IsPlayer())
+    if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
       ADD_MESSAGE("Your weak kick has no effect.");
 }
 
@@ -385,22 +385,22 @@ stackiterator stack::GetSlotAboveTop() const
   return Item->end();
 }
 
-item* stack::DrawContents(character* Viewer, const std::string& Topic, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool (*SorterFunction)(item*, const character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", true, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool (*SorterFunction)(item*, const character*)) const
 {
   return DrawContents(MergeStack, Viewer, Topic, ThisDesc, ThatDesc, true, SorterFunction);
 }
 
-item* stack::DrawContents(character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(const character* Viewer, const std::string& Topic, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
   return DrawContents(0, Viewer, Topic, "", "", SelectItem, SorterFunction);
 }
 
-item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+item* stack::DrawContents(stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
   felist ItemNames(Topic, WHITE, 0);
 
@@ -436,7 +436,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
   return Item;
 }
 
-void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, character*)) const
+void stack::AddContentsToList(felist& ItemNames, const character* Viewer, const std::string& Desc, bool SelectItem, bool (*SorterFunction)(item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
   bool DescDrawn = false;
@@ -446,7 +446,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
       bool CatDescDrawn = false;
 
       for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->IsVisible())
+	if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->CanBeSeenBy(Viewer))
 	  {
 	    if(!DescDrawn && Desc.length())
 	      {
@@ -489,13 +489,13 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
     }
 }
 
-item* stack::SearchChosen(ushort& Pos, ushort Chosen, character* Viewer, bool (*SorterFunction)(item*, character*)) const
+item* stack::SearchChosen(ushort& Pos, ushort Chosen, const character* Viewer, bool (*SorterFunction)(item*, const character*)) const
 {
   bool UseSorterFunction = SorterFunction != 0;
 
   for(ushort c = 0; c < ITEM_CATEGORIES; ++c)
     for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-      if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->IsVisible() && Pos++ == Chosen)
+      if((**i)->GetCategory() == c && (!UseSorterFunction || SorterFunction(***i, Viewer)) && (**i)->CanBeSeenBy(Viewer) && Pos++ == Chosen)
 	return ***i;
 
   return 0;
@@ -515,7 +515,7 @@ bool stack::RaiseTheDead(character* Summoner)
 bool stack::TryKey(item* Key, character* Applier)
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->IsVisible())
+    if((**i)->CanBeSeenBy(Applier))
       {
 	if((**i)->TryKey(Key, Applier))
 	  return true;
@@ -540,21 +540,21 @@ void stack::MoveAll(stack* ToStack)
     MoveItem(GetBottomSlot(), ToStack);
 }
 
-ushort stack::GetVisibleItems() const
+ushort stack::GetVisibleItems(const character* Viewer) const
 {
   ushort VisibleItems = 0;
 
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->IsVisible())
+    if((**i)->CanBeSeenBy(Viewer))
       ++VisibleItems;
 
   return VisibleItems;
 }
 
-item* stack::GetBottomVisibleItem() const
+item* stack::GetBottomVisibleItem(const character* Viewer) const
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    if((**i)->IsVisible())
+    if((**i)->CanBeSeenBy(Viewer))
       return ***i;
 
   return 0;
@@ -622,3 +622,10 @@ void stack::CalculateEmitation()
       Emitation = (**i)->GetEmitation();
 }
 
+bool stack::CanBeSeenBy(const character* Viewer) const
+{
+  if(MotherEntity)
+    return MotherEntity->ContentsCanBeSeenBy(Viewer);
+  else
+    return MotherSquare->CanBeSeenBy(Viewer);
+}

@@ -544,17 +544,18 @@ class ITEM
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual uchar GetCharged() const { return Charged; }
-  virtual void SetCharged(bool What) { Charged = What; }
   virtual bool StepOnEffect(character *);
-  virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, uchar);
-  virtual bool IsVisible() const { return Visible; }
-  virtual void SetIsVisible(bool What) { Visible = What; }
+  virtual bool IsActive() const { return Active; }
+  virtual void SetIsActive(bool What) { Active = What; }
+  virtual bool CanBeSeenBy(const character*) const;
+  virtual bool Apply(character* User);
+  virtual bool IsAppliable(const character*) const { return true; }
+  virtual bool DangerousToStepOn(const character* What) const { return CanBeSeenBy(What); } 
  protected:
   virtual void VirtualConstructor(bool);
-  bool Charged;
-  bool Visible;
+  bool Active;
+  ushort Team;
 );
 
 class ITEM
@@ -1139,6 +1140,7 @@ class ITEM
   virtual bool Polymorph(stack*);
   virtual bool FitsIn(item*) const;
   virtual void CalculateVolumeAndWeight();
+  virtual bool ContentsCanBeSeenBy(const character*) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const { return MakeRGB(80, 80, 80); }
   virtual void AddPostFix(std::string& String) const { AddLockPostFix(String, LockType); }
@@ -1160,12 +1162,17 @@ class ITEM
   virtual bool TryToUnstuck(character*, ushort, vector2d);
   virtual bool CheckPickUpEffect(character*);
   virtual bool IsPickable(character*) const;
-  virtual bool IsVisible() const { return Visible; }
-  virtual void SetIsVisible(bool What) { Visible = What; }
+  virtual bool IsActive() const { return Active; }
+  virtual void SetIsActive(bool What) { Active = What; UpdatePictures(); }
+  virtual bool CanBeSeenBy(const character*) const;
+  virtual bool Apply(character*);
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual bool IsAppliable(const character*) const { return true; }
+  virtual bool DangerousToStepOn(const character* What) const { return CanBeSeenBy(What); } 
  protected:
   virtual void VirtualConstructor(bool);
-  bool IsActivated;
-  bool Visible;
+  bool Active;
+  ushort Team;
 ); 
 
 class ITEM

@@ -760,7 +760,7 @@ void golem::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
 
-void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
+void humanoid::AddSpecialItemInfo(std::string& Description, item* Item) const
 {
   Description.resize(62, ' ');
   Description << GetCWeaponSkill(Item->GetWeaponCategory())->GetLevel();
@@ -779,7 +779,7 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
     Description << 0;
 }
 
-void humanoid::AddSpecialItemInfoDescription(std::string& Description)
+void humanoid::AddSpecialItemInfoDescription(std::string& Description) const
 {
   Description.resize(68, ' ');
   Description += "GS";
@@ -1689,7 +1689,7 @@ std::string humanoid::EquipmentName(ushort Index) const
     }
 }
 
-bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, character*)
+bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, const character*)
 {
   switch(Index)
     {

@@ -43,6 +43,7 @@ class slot
   virtual void SignalEmitationIncrease(ushort) = 0;
   virtual void SignalEmitationDecrease(ushort) = 0;
   virtual void DonateTo(item*);
+  virtual bool CanBeSeenBy(const character*) const = 0;
  protected:
   item* Item;
 };
@@ -64,6 +65,7 @@ class stackslot : public slot
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
   virtual void DonateTo(item*);
+  virtual bool CanBeSeenBy(const character*) const;
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;
@@ -97,6 +99,7 @@ class characterslot : public slot
   virtual void SignalEmitationDecrease(ushort);
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
+  virtual bool CanBeSeenBy(const character*) const;
  protected:
   character* Master;
 };
@@ -130,6 +133,7 @@ class gearslot : public slot
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
+  virtual bool CanBeSeenBy(const character*) const;
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;
@@ -162,6 +166,7 @@ class actionslot : public slot
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalEmitationIncrease(ushort);
   virtual void SignalEmitationDecrease(ushort);
+  virtual bool CanBeSeenBy(const character*) const;
  protected:
   action* Action;
 };

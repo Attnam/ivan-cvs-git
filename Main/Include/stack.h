@@ -33,7 +33,7 @@ class stack
   stack(square*, entity*, uchar);
   ~stack();
   void Load(inputfile&);
-  void Draw(bitmap*, vector2d, ushort, bool, bool, bool) const;
+  void Draw(const character*, bitmap*, vector2d, ushort, bool, bool, bool) const;
   void AddItem(item*);
   void FastAddItem(item*);
   void RemoveItem(stackiterator);
@@ -42,14 +42,14 @@ class stack
   stackiterator GetBottomSlot() const;
   stackiterator GetSlotAboveTop() const;
   item* GetBottomItem() const;
-  item* GetBottomVisibleItem() const;
+  item* GetBottomVisibleItem(const character*) const;
   ushort GetItems() const { return Item->size(); }
-  ushort GetVisibleItems() const;
+  ushort GetVisibleItems(const character*) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
-  item* DrawContents(character*, const std::string&, bool (*)(item*, character*) = 0) const;
-  item* DrawContents(character*, const std::string&, bool, bool (*)(item*, character*) = 0) const;
-  item* DrawContents(stack*, character*, const std::string&, const std::string&, const std::string&, bool (*)(item*, character*) = 0) const;
-  item* DrawContents(stack*, character*, const std::string&, const std::string&, const std::string&, bool, bool (*)(item*, character*) = 0) const;
+  item* DrawContents(const character*, const std::string&, bool (*)(item*, const character*) = 0) const;
+  item* DrawContents(const character*, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
+  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool (*)(item*, const character*) = 0) const;
+  item* DrawContents(stack*, const character*, const std::string&, const std::string&, const std::string&, bool, bool (*)(item*, const character*) = 0) const;
   item* MoveItem(stackiterator, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);
@@ -57,7 +57,7 @@ class stack
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const;
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(GetSquareUnder()); }
-  bool SortedItems(character*, bool (*)(item*, character*)) const;
+  bool SortedItems(const character*, bool (*)(item*, const character*)) const;
   void DeletePointers();
   void BeKicked(character*, ushort);
   long Score() const;
@@ -68,8 +68,8 @@ class stack
   void ReceiveDamage(character*, ushort, uchar);
   void TeleportRandomly();
   void FillItemVector(itemvector&) const;
-  void AddContentsToList(felist&, character*, const std::string&, bool, bool (*)(item*, character*)) const;
-  item* SearchChosen(ushort&, ushort, character*, bool (*)(item*, character*)) const;
+  void AddContentsToList(felist&, const character*, const std::string&, bool, bool (*)(item*, const character*)) const;
+  item* SearchChosen(ushort&, ushort, const character*, bool (*)(item*, const character*)) const;
   bool IsOnGround() const { return SquarePosition != HIDDEN; }
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
@@ -87,6 +87,7 @@ class stack
   void SignalEmitationIncrease(ushort);
   void SignalEmitationDecrease(ushort);
   void CalculateEmitation();
+  bool CanBeSeenBy(const character*) const;
  private:
   stacklist* Item;
   square* MotherSquare;

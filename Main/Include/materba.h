@@ -140,6 +140,7 @@ class material
   bool IsSameAs(material* What) const { return What->GetConfig() == GetConfig(); }
   void SetConfig(ushort);
   static material* Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
+  bool IsTransparent() const { return GetAlpha() != 255; }
  protected:
   void Initialize(ushort, ulong, bool);
   void InstallDataBase();

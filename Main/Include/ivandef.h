@@ -496,4 +496,7 @@
 /* Sorry about the name. This means how many turns it takes for a angel to attach a bodypart again */
 #define LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP 2500
 
+/* Hard-coded Teams */
+#define MONSTER_TEAM 0
+#define PLAYER_TEAM 1
 #endif

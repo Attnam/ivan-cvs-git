@@ -27,8 +27,8 @@ class ABSTRACT_CHARACTER
  public:
   virtual bool CanWield() const;
   virtual bool Hit(character*);
-  virtual void AddSpecialItemInfo(std::string&, item*);
-  virtual void AddSpecialItemInfoDescription(std::string&);
+  virtual void AddSpecialItemInfo(std::string&, item*) const;
+  virtual void AddSpecialItemInfoDescription(std::string&) const;
   virtual ushort GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEADINDEX]); }
   rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHTARMINDEX]); }
@@ -89,7 +89,7 @@ class ABSTRACT_CHARACTER
   virtual uchar CloseMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 2; }
   virtual bool CheckThrow() const;
   virtual bool CheckOffer() const;
-  virtual bool (*EquipmentSorter(ushort) const)(item*, character*);
+  virtual bool (*EquipmentSorter(ushort) const)(item*, const character*);
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
   virtual ushort GlobalResistance(uchar) const;

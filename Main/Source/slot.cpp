@@ -312,3 +312,23 @@ void stackslot::DonateTo(item* Item) // could be optimized
   AddFriendItem(Item);
   Empty();
 }
+
+bool stackslot::CanBeSeenBy(const character* Viewer) const
+{
+  return GetMotherStack()->CanBeSeenBy(Viewer);
+}
+
+bool characterslot::CanBeSeenBy(const character* Viewer) const
+{
+  return GetMaster()->CanBeSeenBy(Viewer);
+}
+
+bool gearslot::CanBeSeenBy(const character* Viewer) const
+{
+  return GetBodyPart()->CanBeSeenBy(Viewer);
+}
+
+bool actionslot::CanBeSeenBy(const character* Viewer) const
+{
+  return GetAction()->GetActor()->CanBeSeenBy(Viewer);
+}
