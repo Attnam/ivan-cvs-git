@@ -11,7 +11,7 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 {
 	MessageBox(NULL, "Running IVAN Library Collection Test", "Message from FEP", MB_OK);
 
-	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, true);
+	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
 
 	DOUBLEBUFFER->ClearToColor(0xF81F);

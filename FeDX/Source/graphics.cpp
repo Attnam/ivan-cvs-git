@@ -232,7 +232,7 @@ void graphics::SwitchMode()
 {
 	FullScreen = !FullScreen;
 
-	DXDisplay->GetDirectDraw()->RestoreAllSurfaces();
+	BlitDBToScreen();
 
 	std::list<bitmap*>::iterator i;
 
@@ -260,29 +260,13 @@ void graphics::SwitchMode()
 
 	DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer(), XRes, YRes);
 
-	BlitDBToScreen();
-
 	for(i = BitmapContainer.begin(); i != BitmapContainer.end(); ++i)
 		(*i)->Restore();
+
+	BlitDBToScreen();
 }
 
 void graphics::LoadDefaultFont(std::string FileName)
 {
 	DefaultFont = new colorizablebitmap(FileName);
-}
-
-void graphics::Backup()
-{
-	DXDisplay->GetDirectDraw()->RestoreAllSurfaces();
-
-	for(std::list<bitmap*>::iterator i = BitmapContainer.begin(); i != BitmapContainer.end(); ++i)
-		(*i)->Backup();
-}
-
-void graphics::Restore()
-{
-	//for(std::list<bitmap*>::iterator i = BitmapContainer.begin(); i != BitmapContainer.end(); ++i)
-	//	(*i)->Restore();
-
-	DXDisplay->GetDirectDraw()->RestoreAllSurfaces();
 }

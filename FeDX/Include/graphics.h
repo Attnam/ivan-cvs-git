@@ -47,8 +47,6 @@ public:
 	static void SwitchMode();
 	static void LoadDefaultFont(std::string);
 	static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
-	static void Backup();
-	static void Restore();
 	static bool GetFullScreen() { return FullScreen; }
 private:
 	static HWND hWnd;

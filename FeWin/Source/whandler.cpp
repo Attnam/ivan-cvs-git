@@ -9,10 +9,8 @@ bool globalwindowhandler::InGetKey = false;
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static bool Active = true;
-
-	switch (uMsg)									// Check For Windows Messages
-	{	
+	switch (uMsg)
+	{
 		case WM_SIZE:
 			if(wParam == SIZE_MAXIMIZED)
 			{
@@ -20,63 +18,43 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				break;
 			}
 
-			/*if(wParam == SIZE_MAXHIDE || wParam == SIZE_MINIMIZED)
-			{
-				if(graphics::GetFullScreen())
-				{
-					//graphics::Backup();
-				}
-	
-				Active = false;
-				break;
-			}
-			else
-				Active = true;*/
-
-			/*if(wParam == SIZE_RESTORED)
-			{
-				if(!Active)
-				{
-					if(graphics::GetFullScreen())
-					{
-						//graphics::Restore();
-						//graphics::BlitDBToScreen();
-					}
-
-					Active = true;
-				}
-				break;
-			}*/
 		case WM_MOVE:
+		{
 			graphics::UpdateBounds();
+
 			if(InGetKey)
 				graphics::BlitDBToScreen();
+
 			break;
+		}
 
 		case WM_PAINT:
+		{
 			if(InGetKey)
 				graphics::BlitDBToScreen();
 
 			break;
+		}
 
-		case WM_SYSCOMMAND:							// Intercept System Commands
+		case WM_SYSCOMMAND:
 		{
-			switch (wParam)							// Check System Calls
+			switch (wParam)
 			{
-				case SC_SCREENSAVE:					// Screensaver Trying To Start?
-				case SC_MONITORPOWER:				// Monitor Trying To Enter Powersave?
-				return 0;							// Prevent From Happening
+				case SC_SCREENSAVE:
+				case SC_MONITORPOWER:
+					return 0;
 			}
-			break;									// Exit
+
+			break;
 		}
 
-		case WM_CLOSE:								// Did We Receive A Close Message?
+		case WM_CLOSE:
 		{
-			PostQuitMessage(0);						// Send A Quit Message
-			return 0;								// Jump Back
+			PostQuitMessage(0);
+			return 0;
 		}
 
-		case WM_KEYDOWN:							// Is A Key Being Held Down?
+		case WM_KEYDOWN:
 		{
 			if(wParam == VK_F4)
 				graphics::SwitchMode();
@@ -86,10 +64,10 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				KeyBuffer.Add(wParam);
 			}
 
-			return 0;								// Jump Back
+			return 0;
 		}
 
-		case WM_KEYUP:								// Has A Key Been Released?
+		case WM_KEYUP:
 		{
 			ushort Index = KeyBuffer.Search(wParam);
 
@@ -99,44 +77,37 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 			if(!KeyBuffer.Length())
 				KeyPressed = false;
 
-			return 0;								// Jump Back
+			return 0;
 		}
 	}
 
-	// Pass All Unhandled Messages To DefWindowProc
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
 int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 {	
-	bool Shift = false;
 	if(EmptyBuffer)
 		while(KeyBuffer.Length())
-			KeyBuffer.Remove(0); // Shift-key == 0x10
+			KeyBuffer.Remove(0);	// Shift-key == 0x10
 						// So what?
 
 	KeyPressed = false;
-
-	MSG		msg;
-
 	InGetKey = true;
 
-	while(true)										// Loop That Runs While done=FALSE
-	{
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
-		{
-			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
-			{
+	MSG msg;
+
+	while(true)
+		if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+			if(msg.message == WM_QUIT)
 				exit(0);
-			}
-			else									// If Not, Deal With Window Messages
+			else
 			{
-				TranslateMessage(&msg);				// Translate The Message
-				DispatchMessage(&msg);				// Dispatch The Message
+				TranslateMessage(&msg);
+
+				if(msg.message != WM_SYSKEYUP)
+					DispatchMessage(&msg);
 			}
-		}
-		else										// If There Are No Messages
-		{
+		else
 			if(KeyBuffer.Length())
 			{
 				int Key =  KeyBuffer.Remove(0);
@@ -165,8 +136,6 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 					if(AcceptCommandKeys)
 						return 0;
 			}
-		}
-	}
 }
 
 void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
@@ -174,7 +143,6 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	WNDCLASS wc;
 	HWND hWnd;
 
-	// Register the Window Class
 	wc.lpszClassName = Title;
 	wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
 	wc.style         = CS_OWNDC;
@@ -189,7 +157,6 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	if(!RegisterClass( &wc ))
 		ABORT("No Window register.");
 
-	// Create and show the main window
 	hWnd = CreateWindowEx(NULL, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInst, NULL );
 
 	if(!hWnd)
@@ -208,15 +175,15 @@ int globalwindowhandler::ReadKey()
 {
 	MSG msg;
 
-	if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-		if (msg.message==WM_QUIT)
-		{
+	if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+		if(msg.message == WM_QUIT)
 			exit(0);
-		}
 		else
 		{
 			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+
+			if(msg.message != WM_SYSKEYUP)
+				DispatchMessage(&msg);
 		}
 
 	if(KeyBuffer.Length())
