@@ -244,7 +244,8 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 			GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
 			Temp->SetIsLocked(NewLockedStatus);
 		}
-		// Door may have been destroyed here, so don't do anything
+
+		// The door may have been destroyed here, so don't do anything!
 	}
 }
 
@@ -361,8 +362,6 @@ void altar::Kick(ushort, bool ShowOnScreen, uchar)
 	if(GetLevelSquareUnder()->GetDivineOwner() > 1)
 		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
 
-	/* What the hell does this do? */
-
 	if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber())
 		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
 }
@@ -458,15 +457,12 @@ void fountain::Consume(character* Drinker)
 		if(!(RAND() % 5))
 		{
 			ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
-			DRAW_MESSAGES();
 			game::DrawEverything();
 			GETKEY();
+
 			while(true)
 			{
-				EMPTY_MESSAGES();
-				game::DrawEverythingNoBlit();
 				std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
-
 				item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
 
 				if(TempItem)
@@ -497,7 +493,6 @@ void fountain::DryOut()
 	ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
 	GetLevelSquareUnder()->ChangeOverLevelTerrain(new empty);
 }
-
 
 void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
@@ -568,5 +563,4 @@ bool brokendoor::ReceiveStrike()
 	else
 		ADD_MESSAGE("The wand strikes the door, but the door won't budge.");
 	return true;
-
 }

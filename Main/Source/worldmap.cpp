@@ -337,7 +337,7 @@ void worldmap::CalculateContinents()
 						RemoveEmptyContinents();
 
 						if(Continent.size() == 255)
-							ABORT("Valpuri shall not carry more continents!");
+							ABORT("Valpurus shall not carry more continents!");
 					}
 
 					continent* NewContinent = new continent(Continent.size());

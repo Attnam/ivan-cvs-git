@@ -56,13 +56,8 @@ colorizablebitmap::~colorizablebitmap()
 
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
-	/*DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );*/
-
 	uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
-	ulong DestBuffer = ulong(Bitmap->Data[DestY]);//ulong(ddsd.lpSurface) + ddsd.lPitch * DestY;
+	ulong DestBuffer = ulong(Bitmap->Data[DestY]);
 
 	for(ushort y = 0; y < Height; ++y)
 	{
@@ -89,24 +84,16 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 			}
 		}
 
-		DestBuffer += (Bitmap->XSize << 1);//ddsd.lPitch;
+		DestBuffer += (Bitmap->XSize << 1);
 		Buffer = (uchar*)(ulong(Buffer) + XSize);
 	}
-
-	//Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 bitmap* colorizablebitmap::Colorize(ushort* Color) const
 {
 	bitmap* Bitmap = new bitmap(XSize, YSize);
-
-	/*DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );*/
-
 	uchar* Buffer = PaletteBuffer;
-	ulong DestBuffer = ulong(Bitmap->Data[0]);//ddsd.lpSurface);
+	ulong DestBuffer = ulong(Bitmap->Data[0]);
 
 	for(ushort y = 0; y < YSize; ++y)
 	{
@@ -124,11 +111,9 @@ bitmap* colorizablebitmap::Colorize(ushort* Color) const
 				((ushort*)DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
 		}
 
-		DestBuffer += (Bitmap->XSize << 1);//ddsd.lPitch;
+		DestBuffer += (Bitmap->XSize << 1);
 		Buffer = (uchar*)(ulong(Buffer) + XSize);
 	}
-
-	//Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 
 	return Bitmap;
 }
@@ -136,12 +121,6 @@ bitmap* colorizablebitmap::Colorize(ushort* Color) const
 bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color) const
 {
 	bitmap* Bitmap = new bitmap(Size.X, Size.Y);
-
-	/*DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );*/
-
 	uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
 	ulong DestBuffer = ulong(Bitmap->Data[0]);
 
@@ -165,11 +144,9 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color) 
 				((ushort*)DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 		}
 
-		DestBuffer += (Bitmap->XSize << 1);//ddsd.lPitch;
+		DestBuffer += (Bitmap->XSize << 1);
 		Buffer = (uchar*)(ulong(Buffer) + XSize);
 	}
-
-	//Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 
 	return Bitmap;
 }

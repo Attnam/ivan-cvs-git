@@ -50,7 +50,7 @@ petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
-god* game::God[] = {0, new valpuri, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
+god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 
 command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
@@ -149,7 +149,7 @@ void game::Init(std::string Name)
 		if(configuration::GetDefaultName() == "")
 		{
 			DOUBLEBUFFER->Fill(0);
-			SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20));
+			SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true));
 		}
 		else
 			SetPlayerName(configuration::GetDefaultName());
@@ -174,7 +174,7 @@ void game::Init(std::string Name)
 					"to advertise itself as a perfect place for adventurous tourists who\n"
 					"seek to face an untouched nature. Unfortunately you were among those\n"
 					"few who didn't understand they really meant what they said.\n\n"
-					"You have arrived at Attnam, the Holy City of Valpuri the Great Frog.\n"
+					"You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
 					"And you know nothing about the adventures that await you here.");
 
 		Running = true;
@@ -1124,14 +1124,14 @@ std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, 
 {
 	EMPTY_MESSAGES();
 	DrawEverythingNoBlit();
-	return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters);
+	return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false);
 }
 
 long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 {
 	EMPTY_MESSAGES();
 	DrawEverythingNoBlit();
-	return iosystem::NumberQuestion(Topic, Pos, Color);
+	return iosystem::NumberQuestion(Topic, Pos, Color, false);
 }
 
 void game::LOSTurn()

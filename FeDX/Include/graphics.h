@@ -44,7 +44,6 @@ public:
 	static ushort GetXRes() { return XRes; }
 	static ushort GetYRes() { return YRes; }
 	static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
-	//static CDisplay* GetDXDisplay() { return DXDisplay; }
 	static void UpdateBounds();
 	static void SwitchMode();
 	static void LoadDefaultFont(std::string);
@@ -58,7 +57,6 @@ private:
 	static ushort XRes;
 	static ushort YRes;
 	static uchar ColorDepth;
-	//static std::list<bitmap*> BitmapContainer;
 	static colorizablebitmap* DefaultFont;
 };
 

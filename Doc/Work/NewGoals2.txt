@@ -12,7 +12,7 @@ Great Jobs:
 *&Gcc port.
 Block AI system.
 *Renewed god system.
-*&Fixing the Great Surface Destruction Bug by remaking FeDX.
+//*&Fixing the Great Surface Destruction Bug by remaking FeDX.
 *&Relatively complete in-code documentation.
 *Food spoiling and cooking.
 Many new items and monsters with special effects for each.
@@ -27,7 +27,7 @@ Manual.
 *Money item.
 Secret Knowledge Command.
 *Manual rest/go termination.
-Graphic effects for rays.
+/Graphic effects for rays.
 Dungeon shops.
 Smithy to Attnam.
 Monster names.
@@ -52,7 +52,7 @@ Chemical warfare from afar
 ?Golems shouldn't talk
 Attacking Attnamians should be chaotic
 *Alignment to panel
-Possibility to break armor on criticals
+/Possibility to break armor on criticals
 //*Some realism to lampfighting
 Prohibition of WoS vandalism
 Forbidding shop polypiles

@@ -68,10 +68,10 @@ inline outputfile& operator<<(outputfile& SaveFile, god* God)
 	return SaveFile;
 }
 
-class valpuri : public god
+class valpurus : public god
 {
 public:
-	virtual std::string Name() const { return "Valpuri"; }
+	virtual std::string Name() const { return "Valpurus"; }
 	virtual std::string Description() const { return "king of gods"; }
 	virtual uchar Alignment() const { return ALPP; }
 	virtual void Pray();

@@ -85,6 +85,7 @@ void configuration::EditContrast(char Change)
 void configuration::ShowConfigScreen()
 {
 	vector2d QuestionPos = game::GetRunning() ? vector2d(7, 7) : vector2d(30, 46);
+	bool BoolChange = false;
 
 	while(true)
 	{
@@ -109,31 +110,38 @@ void configuration::ShowConfigScreen()
 		List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), BLUE);
 
-		switch(List.Draw(false))
+		switch(List.Draw(false, !game::GetRunning() && !BoolChange))
 		{
 		case 0:
-			SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20));
+			SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::GetRunning()));
+			BoolChange = false;
 			continue;
 		case 1:
-			SetAutosaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE));
+			SetAutosaveInterval(iosystem::NumberQuestion("Set new autosave interval (1-50000 turns, 0 for never):", QuestionPos, WHITE, !game::GetRunning()));
+			BoolChange = false;
 			continue;
 		case 2:
-			SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE));
+			SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::GetRunning()));
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+			BoolChange = false;
 			continue;
 		case 3:
 			SetBeepOnCritical(!GetBeepOnCritical());
+			BoolChange = true;
 			continue;
 		case 4:
 			SetAutodropLeftOvers(!GetAutodropLeftOvers());
+			BoolChange = true;
 			continue;
 		case 5:
 			SetOutlineCharacters(!GetOutlineCharacters());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+			BoolChange = true;
 			continue;
 		case 6:
 			SetOutlineItems(!GetOutlineItems());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+			BoolChange = true;
 			continue;
 		}
 

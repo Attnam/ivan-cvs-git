@@ -210,7 +210,7 @@ protected:
 
 class ITEM
 (
-	valpurijustifier,
+	valpurusjustifier,
 	longsword,
 	InitMaterials(3, new valpurium, new valpurium, 0),
 	{
@@ -219,7 +219,7 @@ class ITEM
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, valpurium::StaticType()))
-	virtual std::string NameSingular() const RET("holy broadsword \"Valpuri's Justifier\"")
+	virtual std::string NameSingular() const RET("holy broadsword \"Valpurus's Justifier\"")
 	virtual float OfferModifier() const RET(0.5)
 	virtual long Score() const RET(1000)
 	virtual vector2d GetBitmapPos() const RETV(0,64)
@@ -874,7 +874,7 @@ public:
 
 class ITEM
 (
-	avatarofvalpuri,
+	avatarofvalpurus,
 	item,
 	InitMaterials(new valpurium),
 	{
@@ -884,7 +884,7 @@ public:
 	virtual bool IsTheAvatar() const RET(true)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, valpurium::StaticType()))
 	virtual ushort Possibility() const RET(0)
-	virtual std::string NameSingular() const RET("Avatar of Valpuri")
+	virtual std::string NameSingular() const RET("Avatar of Valpurus")
 	virtual vector2d GetBitmapPos() const RETV(0,320)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
@@ -1089,27 +1089,24 @@ protected:
 	uchar OwnerGod;
 );
 
-
-
-
 class ITEM
 (
-	millionsofroubles,
+	fiftymillionroubles,
 	item,
-	InitMaterials(new iron),
+	InitMaterials(new parchment),
 	{
-		SetSize(15);
+		SetSize(20);
 	},
 public:
-	virtual vector2d GetBitmapPos() const RETV(0,304)
-	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, iron::StaticType()))
+	virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", parchment::StaticType()); }
+	virtual vector2d GetBitmapPos() const RETV(0,336)
 	virtual ushort Possibility() const RET(0)
-	virtual std::string NameSingular() const RET("50 million roubles")
+	virtual std::string NameSingular() const RET("pile of 50 million roubles")
 	virtual float OfferModifier() const RET(0.01f)
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 75; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual ulong Price() const { return 2; }
 protected:
-	virtual ushort GetFormModifier() const RET(40)
+	virtual ushort GetFormModifier() const RET(20)
 );
-
 
 #endif

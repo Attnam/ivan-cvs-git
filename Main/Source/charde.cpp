@@ -41,7 +41,7 @@ humanoid::~humanoid()
 
 void petrus::CreateInitialEquipment()
 {
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurijustifier)));
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurusjustifier)));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail(new valpurium))));
 }
 
@@ -682,7 +682,7 @@ void petrus::BeTalkedTo(character* Talker)
 	if(Talker->HasMaakotkaShirt())
 	{
 		ADD_MESSAGE("Petrus smiles.");
-		ADD_MESSAGE("\"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
+		ADD_MESSAGE("\"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life!");
 		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power!");
 		ADD_MESSAGE("Return it now, please.\"");
 
@@ -704,7 +704,7 @@ void petrus::BeTalkedTo(character* Talker)
 		else
 		{
 			ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
-			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpuri bless him who is better.\"");
+			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 			Talker->GetTeam()->Hostility(GetTeam());
 			return;
 		}
@@ -754,7 +754,7 @@ void petrus::BeTalkedTo(character* Talker)
 			iosystem::TextScreen(	"Petrus raises his hand as a salutation, and talks:\n"
 						"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
 						"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
-						"Valpuri hast told that this vile beast can be found in a nearby cave.\n"
+						"Valpurus hast told that this vile beast can be found in a nearby cave.\n"
 						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
 			game::GetCurrentArea()->SendNewDrawRequest();
@@ -1051,7 +1051,7 @@ void ivan::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace(new iron))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail)));
-	GetStack()->FastAddItem(new millionsofroubles);
+	GetStack()->FastAddItem(new fiftymillionroubles);
 }
 
 void hunter::BeTalkedTo(character* Talker)
@@ -1734,4 +1734,9 @@ bool largecat::Catches(item* Thingy, float)
 	}
 	else
 		return false;
+}
+
+void human::CreateInitialEquipment()
+{
+	//SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
 }

@@ -100,10 +100,7 @@ bool character::Hit(character* Enemy)
 	case HAS_HIT:
 	case HAS_BLOCKED:
 		if(GetWielded())
-		{
 			GetWielded()->ReceiveHitEffect(Enemy, this);
-			
-		}
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
 		if(GetWielded()) 
@@ -137,8 +134,9 @@ uchar character::TakeHit(character* Enemy, short Success)
 			ADD_MESSAGE("(damage: %d)", Damage);
 
 		SetHP(GetHP() - Damage);
+
 		if(GetTorsoArmor() && RAND() % 2 && GetTorsoArmor()->ImpactDamage(float(Enemy->GetAttackStrength()) / 10000 + RAND() % 10 - RAND() % 10, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
-				SetTorsoArmor(GetStack()->GetItem(GetStack()->GetItems() - 1));
+			SetTorsoArmor(GetStack()->GetItem(GetStack()->GetItems() - 1));
 
 		SpillBlood(3 + RAND() % 3);
 
@@ -1173,7 +1171,7 @@ void character::ApplyExperience()
 	if(GetEnduranceExperience() > pow(1.18, long(GetEndurance())) * 193)
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("You feel Valpuri's toughness around you!");
+			ADD_MESSAGE("You feel Valpurus's toughness around you!");
 		else
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks tougher.", CNAME(DEFINITE));
@@ -1199,7 +1197,7 @@ void character::ApplyExperience()
 	if(GetAgilityExperience() > pow(1.18, long(GetAgility())) * 193)
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("Your agility challenges even Valpuri's angels!");
+			ADD_MESSAGE("Your agility challenges even Valpurus's angels!");
 		else
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("Suddenly %s looks faster.", CNAME(DEFINITE));
@@ -1704,23 +1702,25 @@ bool character::Look()
 					ADD_MESSAGE("You are %s here.", Character->StandVerb().c_str());
 				else
 				{
+					ADD_MESSAGE("%s is %s here.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
+
+					std::string Msg = game::PersonalPronoun(Character->GetSex());
+
 					if(Character->GetWielded())
-						ADD_MESSAGE("%s is %s here and wielding %s.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str(), Character->GetWielded()->CNAME(INDEFINITE));
-					else
-						ADD_MESSAGE("%s is %s here and wielding nothing.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
+						Msg += std::string(" is wielding ") + Character->GetWielded()->CNAME(INDEFINITE) + " and";
 
 					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
-						ADD_MESSAGE("%s is tame.", game::PersonalPronoun(Character->GetSex()));
+						ADD_MESSAGE("%s is tame.", Msg.c_str());
 					else
 					{
 						uchar Relation = Character->GetTeam()->GetRelation(game::GetPlayer()->GetTeam());
 
 						if(Relation == HOSTILE)
-							ADD_MESSAGE("%s is hostile.", game::PersonalPronoun(Character->GetSex()));
+							ADD_MESSAGE("%s is hostile.", Msg.c_str());
 						else if(Relation == NEUTRAL)
-							ADD_MESSAGE("%s does not care about you.", game::PersonalPronoun(Character->GetSex()));
+							ADD_MESSAGE("%s does not care about you.", Msg.c_str());
 						else
-							ADD_MESSAGE("%s is friendly.", game::PersonalPronoun(Character->GetSex()));
+							ADD_MESSAGE("%s is friendly.", Msg.c_str());
 					}
 				}
 

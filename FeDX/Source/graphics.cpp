@@ -14,7 +14,6 @@ bitmap*			graphics::DoubleBuffer;
 ushort			graphics::XRes;
 ushort			graphics::YRes;
 uchar			graphics::ColorDepth;
-//std::list<bitmap*>	graphics::BitmapContainer;
 colorizablebitmap*	graphics::DefaultFont = 0;
 
 extern DWORD GetDXVersion();
@@ -55,10 +54,8 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 			ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewXRes, NewYRes, NewColorDepth);
 	}
 	else
-	{
 		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
 			ABORT("This system does not support %dx%dx%d in window mode!", NewXRes, NewYRes, NewColorDepth);
-	}
 
 	DoubleBuffer = new bitmap(NewXRes, NewYRes);
 
@@ -88,7 +85,11 @@ void graphics::BlitDBToScreen()
 		DDSURFACEDESC2 ddsd;
 		ZeroMemory(&ddsd,sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
-		DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+
+		if(FullScreen)
+			DXDisplay->GetFrontBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
+		else
+			DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
 
 		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
 		ulong TrueSourceXMove = 0;
@@ -121,14 +122,13 @@ void graphics::BlitDBToScreen()
 			popad
 		}
 
-		DXDisplay->GetBackBuffer()->Unlock(NULL);
-
-		/*HRESULT hr = */DXDisplay->Present();
-
-		//if(hr == DDERR_SURFACELOST)
-		//	DXDisplay->GetDirectDraw()->RestoreAllSurfaces();
-
-		DXDisplay->Present();
+		if(FullScreen)
+			DXDisplay->GetFrontBuffer()->Unlock(NULL);
+		else
+		{
+			DXDisplay->GetBackBuffer()->Unlock(NULL);
+			DXDisplay->Present();
+		}
 	}
 }
 
@@ -181,7 +181,8 @@ HRESULT CDisplay::CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth,
 	UpdateBounds();
 
 	DWORD dwStyle = GetWindowLong( hWnd, GWL_STYLE );
-	dwStyle &= ~WS_SYSMENU;
+	dwStyle |= WS_POPUP;
+	dwStyle &= ~(WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
 	SetWindowLong( hWnd, GWL_STYLE, dwStyle );
 
 	return S_OK;
@@ -292,13 +293,6 @@ void graphics::SwitchMode()
 
 	FullScreen = !FullScreen;
 
-	BlitDBToScreen();
-
-	std::list<bitmap*>::iterator i;
-
-	/*for(i = BitmapContainer.begin(); i != BitmapContainer.end(); ++i)
-		(*i)->Backup();*/
-
 	delete DXDisplay;
 
 	DXDisplay = new CDisplay();
@@ -316,10 +310,7 @@ void graphics::SwitchMode()
 			ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
 
 		ShowCursor(true);
-	}
 
-	if(!FullScreen)
-	{
 		DDPIXELFORMAT DDPixelFormat;
 		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
 		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
@@ -342,11 +333,6 @@ void graphics::SwitchMode()
 			ShowCursor(false);
 		}
 	}
-
-	/*DoubleBuffer->AttachSurface(DXDisplay->GetBackBuffer(), XRes, YRes);
-
-	for(i = BitmapContainer.begin(); i != BitmapContainer.end(); ++i)
-		(*i)->Restore();*/
 
 	BlitDBToScreen();
 

@@ -1,12 +1,13 @@
 #include <string>
 #include <cmath>
+#include <ctime>
 
 #include "bitmap.h"
 #include "graphics.h"
-#include "ddutil.h"
 #include "error.h"
 #include "save.h"
 #include "allocate.h"
+#include "femath.h"
 
 bitmap::bitmap(std::string FileName) : AlphaMap(0)
 {
@@ -125,19 +126,8 @@ void bitmap::Save(std::string FileName) const
 		}
 }
 
-/*void bitmap::Fill(ushort Color)
-{
-
-	for(ulong c = 0; c < XSize * YSize; ++c)
-		Data[0][c] = Color;
-}*/
-
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
-	/*bitmap Temp(SizeX, SizeY);
-	Temp.ClearToColor(Color);
-	Temp.Blit(this, 0,0, DestX, DestY, SizeX, SizeY);*/
-
 	ulong TrueOffset = ulong(&Data[Y][X]);
 	ulong TrueXMove = (XSize - Width) << 1;
 
@@ -464,14 +454,14 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
-	if(!Width || !Height)
-		ABORT("Zero-sized bitmap blit attempt detected!");
-
 	if(Luminance == 256)
 	{
 		Blit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
 		return;
 	}
+
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
 
 	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
 	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
@@ -555,7 +545,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	}
 }
 
-void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
 	if(!Width || !Height)
 		ABORT("Zero-sized bitmap blit attempt detected!");
@@ -591,7 +581,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, Width
 			MaskedLoop55:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip2
 				stosw
 				dec cx
@@ -638,7 +628,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, Width
 			MaskedLoop2:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip1
 				std
 				stosw
@@ -687,7 +677,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, Width
 			MaskedLoop557:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip27
 				stosw
 				dec cx
@@ -734,7 +724,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, Width
 			MaskedLoop7:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip3
 				std
 				stosw
@@ -784,7 +774,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, dx
 			MaskedLoop5:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip4
 				mov [edi], ax
 			MaskSkip4:
@@ -824,7 +814,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, dx
 			MaskedLoop9:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip5
 				mov [edi], ax
 			MaskSkip5:
@@ -864,7 +854,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, dx
 			MaskedLoop11:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip6
 				mov [edi], ax
 			MaskSkip6:
@@ -904,7 +894,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				mov cx, dx
 			MaskedLoop13:
 				lodsw
-				cmp ax, 0xF81F
+				cmp ax, MaskColor
 				je MaskSkip7
 				mov [edi], ax
 			MaskSkip7:
@@ -922,16 +912,16 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	}
 }
 
-void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance, ushort MaskColor) const
 {
-	if(!Width || !Height)
-		ABORT("Zero-sized bitmap blit attempt detected!");
-
 	if(Luminance == 256)
 	{
-		MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
+		MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
 		return;
 	}
+
+	if(!Width || !Height)
+		ABORT("Zero-sized bitmap blit attempt detected!");
 
 	ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
 	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
@@ -955,7 +945,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		mov cx, Width
 	MaskedLoop2:
 		lodsw
-		cmp ax, 0xF81F
+		cmp ax, MaskColor
 		je MaskSkip
 		mov bx, ax
 		and bx, 0x1F
@@ -1027,8 +1017,14 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	}
 }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha) const
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
 {
+	if(Alpha == 255)
+	{
+		MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
+		return;
+	}
+
 	if(!Width || !Height)
 		ABORT("Zero-sized bitmap blit attempt detected!");
 
@@ -1053,7 +1049,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		mov cx, Width
 	MaskedLoop2:
 		lodsw
-		cmp ax, 0xF81F
+		cmp ax, MaskColor
 		je MaskSkip
 		mov bx, [edi]
 		mov DColor, bx
@@ -1130,7 +1126,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	}
 }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskColor) const
 {
 	if(!AlphaMap)
 		ABORT("AlphaMap not available!");
@@ -1160,7 +1156,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY) const
 		mov dl, [ebx]
 		inc ebx
 		push ebx
-		cmp ax, 0xF81F
+		cmp ax, MaskColor
 		je MaskSkip
 		mov bx, [edi]
 		mov DColor, bx
@@ -1441,7 +1437,8 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 	
 	for(ushort c = 0; c < NumberOfSides; ++c)
 	{
-		double PosX =  sin((2 * 3.1415926535897932384626433832795 / NumberOfSides) * c + Rotation) * Radius, PosY = cos((2 * 3.1415926535897932384626433832795 / NumberOfSides) * c + Rotation) * Radius;
+		float PosX = sin((2 * PI / NumberOfSides) * c + Rotation) * Radius;
+		float PosY = cos((2 * PI / NumberOfSides) * c + Rotation) * Radius;
 		Points.push_back(vector2d(PosX, PosY) + Center);
 	}
 
@@ -1465,25 +1462,44 @@ void bitmap::CreateAlphaMap(uchar InitialValue)
 	Alloc2D<uchar>(AlphaMap, YSize, XSize, InitialValue);
 }
 
-bool bitmap::FadeAlpha(uchar Amount)
+bool bitmap::ChangeAlpha(char Amount)
 {
+	if(!Amount)
+		return false;
+
 	bool Changes = false;
 
 	if(!AlphaMap)
 		ABORT("No alpha map to fade.");
 
-	for(ushort c = 0; c < XSize * YSize; ++c)
-		if(AlphaMap[0][c] >= Amount)
-		{
-			AlphaMap[0][c] -= Amount;
-			Changes = true;
-		}
-		else
-			if(AlphaMap[0][c])
+	if(Amount > 0)
+	{
+		for(ulong c = 0; c < XSize * YSize; ++c)
+			if(AlphaMap[0][c] < 255 - Amount)
 			{
-				AlphaMap[0][c] = 0;
+				AlphaMap[0][c] += Amount;
 				Changes = true;
 			}
+			else
+				if(AlphaMap[0][c] != 255)
+				{
+					AlphaMap[0][c] = 255;
+					Changes = true;
+				}
+	}
+	else
+		for(ulong c = 0; c < XSize * YSize; ++c)
+			if(AlphaMap[0][c] > -Amount)
+			{
+				AlphaMap[0][c] += Amount;
+				Changes = true;
+			}
+			else
+				if(AlphaMap[0][c])
+				{
+					AlphaMap[0][c] = 0;
+					Changes = true;
+				}
 
 	return Changes;
 }
@@ -1593,4 +1609,23 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 			LastDestColor = NextDestColor;
 		}
 	}
+}
+
+void bitmap::FadeToScreen()
+{
+	bitmap Backup(XRES, YRES);
+	DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
+
+	for(uchar c = 0; c <= 5; ++c)
+	{
+		clock_t StartTime = clock();
+		Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(255 - c * 50), 0);
+		AlphaBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(c * 50), 0);
+		graphics::BlitDBToScreen();
+		while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+	}
+
+	DOUBLEBUFFER->Fill(0);
+	MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, uchar(0), 0);
+	graphics::BlitDBToScreen();
 }

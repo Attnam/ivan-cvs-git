@@ -4,37 +4,43 @@
 #include "whandler.h"
 #include "colorbit.h"
 
-ushort felist::Draw(bool BlitBackroundAfterwards) const
+ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
 {
 	if(!Entry.size())
 		return 0xFFFF;
 
-	bitmap BackGround(XRES, YRES);
+	bitmap Buffer(XRES, YRES);
 
-	DOUBLEBUFFER->Blit(&BackGround, 0, 0, 0, 0, XRES, YRES);
+	if(Fade)
+		Buffer.Fill(0);
+	else
+		DOUBLEBUFFER->Blit(&Buffer, 0, 0, 0, 0, XRES, YRES);
 
-	DrawDescription();
+	DrawDescription(Fade ? &Buffer : DOUBLEBUFFER);
 
 	ushort Return;
 
 	for(ushort Min = 0, c = 0;; ++c)
 	{
-		DOUBLEBUFFER->Fill(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
+		(Fade ? &Buffer : DOUBLEBUFFER)->Fill(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
 
 		if(DrawLetters)
-			FONT->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%c: %s", 'A' + c - Min, Entry[c].String.c_str());
+			FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%c: %s", 'A' + c - Min, Entry[c].String.c_str());
 		else
-			FONT->Printf(DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%s", Entry[c].String.c_str());
+			FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%s", Entry[c].String.c_str());
 
 		if(c - Min == 19 && c != Entry.size() - 1)
 		{
-			DOUBLEBUFFER->Fill(20, 266 + Description.size() * 10, 758, 20, 128);
-			FONT->Printf(DOUBLEBUFFER, 30, 266 + Description.size() * 10, WHITE, "- Press SPACE to continue, ESC to exit -");
+			(Fade ? &Buffer : DOUBLEBUFFER)->Fill(20, 266 + Description.size() * 10, 758, 20, 128);
+			FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 266 + Description.size() * 10, WHITE, "- Press SPACE to continue, ESC to exit -");
 		}
 
 		if(c - Min == 19 || c == Entry.size() - 1)
 		{
-			graphics::BlitDBToScreen();
+			if(Fade)
+				Buffer.FadeToScreen();
+			else
+				graphics::BlitDBToScreen();
 
 			int Pressed = GETKEY();
 
@@ -69,32 +75,39 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 			}
 			else
 			{
-				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				DrawDescription();
+				if(!Fade)
+				//	DOUBLFEBUFFER->Fill(0);
+				//else
+					Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+				DrawDescription(Fade ? &Buffer : DOUBLEBUFFER);
 				Min += 20;
 			}
 		}
 	}
 
-	BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+	if(!Fade)
+	{
+		Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 
-	if(BlitBackroundAfterwards)
-		graphics::BlitDBToScreen();
+		if(BlitBackroundAfterwards)
+			graphics::BlitDBToScreen();
+	}
 
 	return Return;
 }
 
-void felist::DrawDescription() const
+void felist::DrawDescription(bitmap* Buffer) const
 {
-	DOUBLEBUFFER->Fill(20, 36, 758, 20, 128);
+	Buffer->Fill(20, 36, 758, 20, 128);
 
 	for(ushort c = 0; c < Description.size(); ++c)
 	{
-		DOUBLEBUFFER->Fill(20, 46 + c * 10, 758, 10, 128);
-		FONT->Printf(DOUBLEBUFFER, 30, 46 + c * 10, Description[c].Color, Description[c].String.c_str());
+		Buffer->Fill(20, 46 + c * 10, 758, 10, 128);
+		FONT->Printf(Buffer, 30, 46 + c * 10, Description[c].Color, Description[c].String.c_str());
 	}
 
-	DOUBLEBUFFER->Fill(20, 46 + Description.size() * 10, 758, 10, 128);
+	Buffer->Fill(20, 46 + Description.size() * 10, 758, 10, 128);
 }
 
 void felist::Empty()

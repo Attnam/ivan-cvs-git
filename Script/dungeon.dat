@@ -347,7 +347,7 @@ Dungeon 1;
 		Square, Random { Walkable=true; }
 		{
 			Character=kamikazedwarf;
-			Times=250;
+			Times=0;
 		}
 
 		Square, Pos 30,61;
@@ -487,10 +487,10 @@ Dungeon 1;
 				b . . # . . . . s . s . # b . . b . . . . . b . . b # . . . . . . . . # . . b
 				. b . # # . . . # # # # # . b b . . b . b . . b b . # # # # # . . . # # . b .
 				b . . b # # s . # b . b . . . . . . f . f . . . . . . b . b # . . # # b . . b
-				. . . . b # # # # . . . . b . . . . f . f . . . . b . . . . # # # # b . . . .
-				b . b . . . b . . . b . . . . . . . b f b . . . . . . . b . . . b . . . b . b
-				. . . . . . . . . . . . . . . b b . f f f . b b . . . . . . . . . . . . . . .
-				b . b . b . b . b . b . b . b . . b f f f b . . b . b . b . b . b . b . b . b
+				. . . . b # # # # . . . . b . . . . . . . . . . . b . . . . # # # # b . . . .
+				b . b . . . b . . . b . . . . . . . b . b . . . . . . . b . . . b . . . b . b
+				. . . . . . . . . . . . . . . b b . . . . . b b . . . . . . . . . . . . . . .
+				b . b . b . b . b . b . b . b . . b . . . b . . b . b . b . b . b . b . b . b
 			}
 
 			ItemMap
@@ -500,7 +500,7 @@ Dungeon 1;
 				Types
 				{
 					# = 0;
-					a = avatarofvalpuri;
+					a = avatarofvalpurus;
 					b = banana;
 					k = kiwi;
 					p = pineapple;

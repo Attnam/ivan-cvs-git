@@ -108,6 +108,7 @@ class CHARACTER
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 protected:
+	virtual void CreateInitialEquipment();
 	virtual std::string NameSingular() const RET("human")
 );
                       
@@ -615,8 +616,8 @@ class CHARACTER
 	{
 		SetSize(70);
 		SetAgility(15);
-		SetStrength(8);
-		SetEndurance(8);
+		SetStrength(5);
+		SetEndurance(5);
 		SetPerception(21);
 	},
 public:
@@ -669,8 +670,8 @@ class CHARACTER
 	{
 		SetSize(80);
 		SetAgility(10);
-		SetStrength(5);
-		SetEndurance(5);
+		SetStrength(3);
+		SetEndurance(3);
 		SetPerception(18);
 	},
 public:

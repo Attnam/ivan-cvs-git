@@ -12,7 +12,9 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 {
 	MessageBox(NULL, "Running IVAN Library Collection Test", "Message from FEP", MB_OK);
 
-	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false);
+	clock_t STim = clock();
+
+	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, true);
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
 
 	DOUBLEBUFFER->Fill(0xF81F);
@@ -73,15 +75,15 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	CharGreen->AlphaBlit(DOUBLEBUFFER, 384, 356);
 	CharBlue->AlphaBlit(DOUBLEBUFFER, 416, 356);
 
-	for(ushort z = 0; z <= 256; ++z)
+	for(ushort z = 0; z <= 128; ++z)
 	{
-		Enner->MaskedBlit(DOUBLEBUFFER, 0, 0, 392, 292, 16, 16, z);
+		Enner->MaskedBlit(DOUBLEBUFFER, 0, 0, 392, 292, 16, 16, ushort(z * 2));
 		graphics::BlitDBToScreen();
 	}
 
 	ushort LastX, LastY;
 
-	for(float a = 30, b = -100, d = -10, e = 100, c = 0; c < 4; c += 0.01f)
+	for(float a = 30, b = -100, d = -10, e = 100, c = 0; c < 4; c += 0.02f)
 	{
 		ushort x = ushort(400 + c * 100), y = ushort(300 - (c * c * c * c * a + c * c * c * b + c * c * d + c * e));
 
@@ -119,18 +121,20 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 			DOUBLEBUFFER->PutPixel(x, y, MAKE_RGB(255 - Depth, 255 - Depth, 255 - Depth));
 		}
 
-		Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, 800, 600);
+		Backup.MaskedBlit(DOUBLEBUFFER, 0, y, 0, y, 800, 1);
 		graphics::BlitDBToScreen();
 
 		if(READKEY())
 			return 0;
 	}
 
-	GETKEY();
+	graphics::SwitchMode();
 
-	graphics::BlitDBToScreen();
+	char Buffer[100];
 
-	GETKEY();
+	sprintf(Buffer, "Time: %.2f seconds.", float(clock() - STim) / CLOCKS_PER_SEC);
+
+	MessageBox(NULL, Buffer, "Message from FEP", MB_OK);
 
 	return 0;
 }

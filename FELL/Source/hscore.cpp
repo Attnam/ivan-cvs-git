@@ -37,9 +37,10 @@ void highscore::Add(long NewScore, std::string NewEntry)
 
 void highscore::Draw() const
 {
-	DOUBLEBUFFER->Fill(0);
+	bitmap Buffer(XRES, YRES);
+	Buffer.Fill(0);
 
-	FONT->Printf(DOUBLEBUFFER, 30, 30,  WHITE, "Adventurers' Hall of Fame");
+	FONT->Printf(&Buffer, 30, 30,  WHITE, "Adventurers' Hall of Fame");
 
 	ushort Min = 0;
 
@@ -49,16 +50,16 @@ void highscore::Draw() const
 		{
 			Min += 50;
 
-			FONT->Printf(DOUBLEBUFFER, 30, 560, WHITE, "-- Press ESC to exit, any other key for next page --");
+			FONT->Printf(&Buffer, 30, 560, WHITE, "-- Press ESC to exit, any other key for next page --");
 
-			graphics::BlitDBToScreen();
+			Buffer.FadeToScreen();
 
 			if(GETKEY() == 0x1B)
 				return;
 
-			DOUBLEBUFFER->Fill(0);
+			Buffer.Fill(0);
 
-			FONT->Printf(DOUBLEBUFFER, 30, 30, WHITE, "Adventurers' Hall of Fame");
+			FONT->Printf(&Buffer, 30, 30, WHITE, "Adventurers' Hall of Fame");
 		}
 
 		std::string Desc;
@@ -73,10 +74,10 @@ void highscore::Draw() const
 
 		Desc += Entry[c];
 
-		FONT->Printf(DOUBLEBUFFER, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : BLUE, "%s", Desc.c_str());
+		FONT->Printf(&Buffer, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : BLUE, "%s", Desc.c_str());
 	}
 
-	graphics::BlitDBToScreen();
+	Buffer.FadeToScreen();
 
 	GETKEY();
 }

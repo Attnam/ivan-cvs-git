@@ -209,7 +209,7 @@ void cathedral::Enter(character* Visitor)
 {
 	if(Visitor->GetIsPlayer() && !Entered)
 	{
-		ADD_MESSAGE("The majestetic Cathedral of Valpuri looms before you. You watch it with utter respect.");
+		ADD_MESSAGE("The majestetic Cathedral of Valpurus looms before you. You watch it with utter respect.");
 		Entered = true;
 	}
 }

@@ -13,11 +13,6 @@
 #include "typedef.h"
 #include "vector2d.h"
 
-class CSurface;
-struct IDirectDrawSurface7;
-struct _DDSURFACEDESC2;
-typedef _DDSURFACEDESC2 DDSURFACEDESC2;
-
 class outputfile;
 class inputfile;
 
@@ -38,20 +33,21 @@ public:
 	void Fill(ushort, ushort, ushort, ushort, ushort);
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
 	void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
-	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort) const;
-	void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar) const;
-	void AlphaBlit(bitmap*, ushort, ushort) const;
+	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0, ushort = 0xF81F) const;
+	void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort, ushort = 0xF81F) const;
+	void AlphaBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar, ushort = 0xF81F) const;
+	void AlphaBlit(bitmap*, ushort, ushort, ushort = 0xF81F) const;
 	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF, bool = false);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
 	void DrawPolygon(vector2d, ushort, ushort, ushort, bool = false, double = 0);
 	void CreateAlphaMap(uchar);
-	bool FadeAlpha(uchar);
+	bool ChangeAlpha(char);
 	void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[Y][X] = Alpha; }
 	uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[Y][X]; }
 	void Outline(ushort);
 	void CreateOutlineBitmap(bitmap*, ushort);
+	void FadeToScreen();
 protected:
 	ushort** Data;
 	ushort XSize, YSize;

@@ -7,6 +7,7 @@
 #include "charde.h"
 #include "rand.h"
 #include "config.h"
+#include "bitmap.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {
@@ -30,6 +31,8 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 			"Antivalpuri is rising and dark times are ahead;\n"
 			"Dark frogs pillage towns and tomatoes are growing.\n"
 			"But fortunately, there is hope, you!", __DATE__, __TIME__);
+
+	DOUBLEBUFFER->Fill(0);
 
 	iosystem::TextScreen(Buffer);
 

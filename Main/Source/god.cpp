@@ -152,7 +152,7 @@ void consummo::PrayBadEffect()
 	game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
 
-void valpuri::PrayGoodEffect()
+void valpurus::PrayGoodEffect()
 {
 	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
 	ADD_MESSAGE("A sword glittering with holy might appears from nothing.");
@@ -160,9 +160,9 @@ void valpuri::PrayGoodEffect()
 	game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(new valpurium));
 }
 
-void valpuri::PrayBadEffect()
+void valpurus::PrayBadEffect()
 {
-	ADD_MESSAGE("Valpuri smites you with a small hammer.");
+	ADD_MESSAGE("Valpurus smites you with a small hammer.");
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
 	game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
 }
@@ -649,7 +649,7 @@ void pestifer::PrayBadEffect()
 	ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
 
-void valpuri::Pray()
+void valpurus::Pray()
 {
 	if(!Timer && Relation == 1000)
 	{
@@ -1036,7 +1036,7 @@ void scabies::PlayerVomitedOnAltar()
 	AdjustRelation(1);
 }
 
-void valpuri::AddPriestMessage() const
+void valpurus::AddPriestMessage() const
 {
 	ADD_MESSAGE("\"%s the Great Frog is the highest of all gods.", GOD_NAME);
 	ADD_MESSAGE("In the ancient times the World and its deities were born from His eggs.");

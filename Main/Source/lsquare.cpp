@@ -588,7 +588,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	{
 		vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
 		GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
-		GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y, 200 + RAND() % 56);
+		GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y, 150 + RAND() % 106);
 
 		for(ushort d = 0; d < 8; ++d)
 			if(RAND() % Lumpiness)
@@ -609,7 +609,7 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 				GetFluidBuffer()->PutPixel(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y,
 				MAKE_RGB(GET_RED(Color) + Change[0], GET_GREEN(Color) + Change[1], GET_BLUE(Color) + Change[2]));
 
-				GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y, 200 + RAND() % 56);
+				GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y, 50 + RAND() % 206);
 			}
 	}
 }
@@ -803,7 +803,7 @@ void levelsquare::HandleFluids()
 {
 	if(Fluided && !(RAND() % 10))
 	{
-		if(!GetFluidBuffer()->FadeAlpha(1))
+		if(!GetFluidBuffer()->ChangeAlpha(-1))
 		{
 			Fluided = false;
 			delete FluidBuffer;

@@ -12,6 +12,7 @@
 class colorizablebitmap;
 class inputfile;
 class outputfile;
+class bitmap;
 
 struct felistentry
 {
@@ -28,8 +29,8 @@ public:
 	felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
 	void AddEntry(std::string, ushort);
 	void AddDescription(std::string Str, ushort Color = 0xFFFF) { Description.push_back(felistentry(Str, Color)); }
-	void DrawDescription() const;
-	ushort Draw(bool = true) const;
+	void DrawDescription(bitmap*) const;
+	ushort Draw(bool = true, bool = false) const;
 	void Empty();
 	std::string GetEntry(ushort Index) { return Entry[Index].String; }
 	ushort Length() const { return Entry.size(); }
