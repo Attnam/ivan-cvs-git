@@ -14,6 +14,7 @@ struct IDirectDrawSurface7;
 
 class outputfile;
 class inputfile;
+class vector2d;
 
 class bitmap
 {
@@ -39,6 +40,7 @@ public:
 	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
+	void DrawPolygon(ushort, vector2d, bool, double = 0, ushort = 255, ushort = 100);
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);
 	void AttachSurface(IDirectDrawSurface7*, ushort, ushort);

@@ -1,11 +1,12 @@
 #include <io.h>
+#include <windows.h>
 
 #include "graphics.h"
 #include "bitmap.h"
 #include "feio.h"
 #include "whandler.h"
 #include "list.h"
-
+#define PENT_WIDTH 70
 void iosystem::TextScreen(bitmap* Font, std::string Text, bool GKey)
 {
 	char Line[200];
@@ -62,12 +63,22 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 
 	bool bReady = false;
 	unsigned int iSelected = 0;
-
+	double Rotation = 0;
 	while(!bReady)
 	{
-		std::string sCopyOfMS = sMS;
+		if(Rotation == 2 * 3.141)
+			Rotation = 0;
+		else
+			Rotation += 0.003;
 		DOUBLEBUFFER->ClearToColor(0);
-
+		for(int x = 0; x < 40; x++)
+			DOUBLEBUFFER->DrawPolygon(5,vector2d(200,200), true, Rotation + double(x) / 400, MAKE_RGB(int(255 - 6.375 * (40 - x)),0,0), 100);
+		
+		std::string sCopyOfMS = sMS;
+		
+		
+		for(x = 0; x < 5; x++)
+			DOUBLEBUFFER->DrawPolygon(50,vector2d(200,200), false, 0, MAKE_RGB(255,0,0), 100 + x);
 		for(unsigned int i = 0; i < CountChars('\r',sMS); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
@@ -77,8 +88,25 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 
 		graphics::BlitDBToScreen();
 		int k;
-		switch(k = GETKEY())
+
+		MSG		msg;
+
+		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
+			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
+			{
+				exit(0);
+			}
+			else									// If Not, Deal With Window Messages
+			{
+				TranslateMessage(&msg);				// Translate The Message
+				DispatchMessage(&msg);				// Dispatch The Message
+			}
+		}
+		
+		switch(k = globalwindowhandler::ReadKey())
+		{
+			
 			case 0x148:
 				if (iSelected > 0)
 					--iSelected;
@@ -96,11 +124,14 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 			case 0x00D:
 				bReady = true;
 				break;
-
+			case 0:
+			
+			break;
 			default:
 				if(k > 0x30 && k < int(0x31 + CountChars('\r',sMS)))
 					return signed(k - 0x31);
 		}
+		//globalwindowhandler::ClearKeyBuffer();
 	}
 
 	return signed(iSelected);

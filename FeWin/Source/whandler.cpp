@@ -77,12 +77,13 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-int globalwindowhandler::GetKey()
+int globalwindowhandler::GetKey(bool EmptyBuffer)
 {	
 	bool Shift = false;
-	while(KeyBuffer.Length())
-		KeyBuffer.Remove(0); // Shift-key == 0x10
-				     // So what?
+	if(EmptyBuffer)
+		while(KeyBuffer.Length())
+			KeyBuffer.Remove(0); // Shift-key == 0x10
+						// So what?
 
 	KeyPressed = false;
 
@@ -168,4 +169,12 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 	*phWnd = hWnd;
 
 	GetKeyboardLayoutName(KeyboardLayoutName);
+}
+
+int globalwindowhandler::ReadKey()
+{
+	if(KeyBuffer.Length())
+		return GetKey(false);
+	else
+		return 0;
 }
