@@ -382,7 +382,7 @@ void silva::PrayGoodEffect()
 						if(Char->GetSquareUnder()->CanBeSeen())
 							ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CNAME(DEFINITE));
 
-						Char->SetHP(Char->GetHP() - 50 - rand() % 51);
+						Char->SetHP(Char->GetHP() - 20 - rand() % 21);
 						Char->CheckDeath("killed by an earthquake");
 					}
 

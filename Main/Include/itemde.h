@@ -399,7 +399,7 @@ class ITEM
 (
 	potion,
 	item,
-	InitMaterials(2, new glass, rand() % 2 ? 0 : new omleurine),
+	InitMaterials(2, new glass, rand() % 2 ? (material*)new water : (material*)new omleurine),
 	{
 		SetSize(30);
 	},

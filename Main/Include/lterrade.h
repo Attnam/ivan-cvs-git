@@ -328,10 +328,10 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 304); }
 );
 
-class GROUNDLEVELTERRAIN
+class OVERLEVELTERRAIN
 (
 	bookcase,
-	groundlevelterrain,
+	overlevelterrain,
 	InitMaterials(new wood),
 	{
 	},
@@ -342,11 +342,11 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 272); }
 );
 
-class GROUNDLEVELTERRAIN
+class OVERLEVELTERRAIN
 (
 	fountain,
-	groundlevelterrain,
-	InitMaterials(2, new marble, new stone),
+	overlevelterrain,
+	InitMaterials(2, new marble, new water),
 	{
 	},
 public:
@@ -356,17 +356,17 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 288); }
 );
 
-class GROUNDLEVELTERRAIN
+class OVERLEVELTERRAIN
 (
 	doublebed,
-	groundlevelterrain,
+	overlevelterrain,
 	InitMaterials(2, new gold, new expensivefabric),
 	{
 	},
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 protected:
-	virtual std::string NameSingular() const				{ return "double bed"; }
+	virtual std::string NameSingular() const				{ return "luxurious double bed"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }
 );
 
