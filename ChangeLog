@@ -26,6 +26,7 @@ March 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Reimplemented the old Mersenne Twister RNG with seed save ability
 	* Disabled Mondedr again
 	* Eddies and mommos are now animated in the SecretKnowledge screens, too
+	* The new powerful materials can no longer be wished, except for meteoric steel
 
 March 22 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
@@ -63,6 +64,7 @@ March 21 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Prison doors can now be seen through
 	* Dipping into an empty bottle no longer crashes
 	* It is no longer possible to dip a potion to the ice fountains of Attnam
+	* One may now dip potions to the dolphin pool and die
 	* Falling roofs now destroys smoke
 	* Earthquake now damages doors
 
