@@ -1945,14 +1945,10 @@ bool character::Apply()
 
 	if(Index < GetStack()->GetItems())
 	{
-		if(GetStack()->GetItem(Index) == GetWielded())
-		{
-			ADD_MESSAGE("You can't throw something that you wield.");
+		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
 			return false;
-		}
-
-		if(!GetStack()->GetItem(Index)->Apply(this))
-			return false;
+		if(!GetWielded()->GetExists()) 
+			SetWielded(0);
 	}
 	else
 		return false;

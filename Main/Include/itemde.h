@@ -247,7 +247,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 64))
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,96)
-	virtual bool Apply(character*);
+	virtual bool Apply(character*, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -700,7 +700,7 @@ class ABSTRACT_ITEM
 	wand,
 	item,
 public:
-	virtual bool Apply(character*);
+	virtual bool Apply(character*, stack*);
 	virtual bool CanBeZapped() const RET(true)
 	virtual uchar GetCharge() const { return Charge; } 
 	virtual void SetCharge(uchar What) { Charge = What; }

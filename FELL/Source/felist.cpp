@@ -104,7 +104,7 @@ void felist::AddString(std::string S, bool WriteToEnd)
 	else
 		String.Put(S, 0);
 	if(Maximum && String.Length() > Maximum)
-		String.Remove(0);
+		String.Remove(String.Length() - 1);
 }
 
 void felist::Save(outputfile& Temp) const

@@ -527,19 +527,16 @@ bool humanoid::Apply()
 
 	if(Index < GetStack()->GetItems())
 	{
-		if(GetStack()->GetItem(Index) == GetWielded())
-		{
-			ADD_MESSAGE("You can't apply something that you wield.");
-			return false;
-		}
 		if(GetStack()->GetItem(Index) == GetTorsoArmor())
 		{
 			ADD_MESSAGE("You can't apply something that you wear.");
 			return false;
 		}
 		
-		if(!GetStack()->GetItem(Index)->Apply(this))
+		if(!GetStack()->GetItem(Index)->Apply(this, GetStack()))
 			return false;
+		if(GetWielded() && !GetWielded()->GetExists()) 
+			SetWielded(0);
 	}
 	else
 		return false;

@@ -206,7 +206,7 @@ item* leftnutofperttu::CreateWishedItem() const
 	return new cheapcopyofleftnutofperttu;
 }
 
-bool pickaxe::Apply(character* User)
+bool pickaxe::Apply(character* User, stack*)
 {
 	vector2d Temp;
 	
@@ -250,13 +250,15 @@ ushort chainmail::GetArmorValue() const
 	return ushort(Base);
 }
 
-bool wand::Apply(character* StupidPerson)
+bool wand::Apply(character* StupidPerson, stack* MotherStack)
 {
 	if(StupidPerson->GetIsPlayer())
 		ADD_MESSAGE("The wand brakes in two and then explodes.");
 	else
 		if(StupidPerson->GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s brakes a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
+	MotherStack->RemoveItem(MotherStack->SearchItem(this));
+	SetExists(false);	
 
 	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
 
@@ -267,8 +269,8 @@ bool wand::Apply(character* StupidPerson)
 	})
 
 	StupidPerson->ReceiveFireDamage(10);
-	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
 	
+	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
 	return true;
 }
 

@@ -179,7 +179,7 @@ item* item::CreateWishedItem() const
 	return protocontainer<item>::GetProto(Type())->Clone();
 }
 
-bool item::Apply(character*)
+bool item::Apply(character*, stack*)
 {
 	ADD_MESSAGE("You can't apply this!");
 
