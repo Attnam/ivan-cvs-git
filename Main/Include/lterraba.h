@@ -46,6 +46,8 @@ public:
 	virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
 	virtual void ReceiveVomit(character*) {}
+	virtual bool CanBeOpenedByAI() { return false; }
+	virtual bool ReceiveStrike() { return false; }
 protected:
 	uchar VisualFlags;
 };

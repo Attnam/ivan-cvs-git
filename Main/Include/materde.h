@@ -321,6 +321,7 @@ public:
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(176, 176, 176); }
+	virtual bool IsFlammable() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "parchment"; }
 );
@@ -336,6 +337,7 @@ public:
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 160); }
+	virtual bool IsFlammable() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "cloth"; }
 );
@@ -534,6 +536,7 @@ public:
 	virtual ushort GetDensity() const				{ return 100; }
 	virtual ushort OfferValue() const				{ return 2; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 96, 32); }
+	virtual bool IsFlammable() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "grass"; }
 );
@@ -627,6 +630,7 @@ public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 160, 0); }
+	virtual bool IsFlammable() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "leaf"; }
 );
@@ -637,6 +641,7 @@ class MATERIAL
 	cloth,
 public:
 	virtual ushort GetColor() const { return MAKE_RGB(176, 0, 0); }
+	virtual bool IsFlammable() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "expensive fabric"; }
 	virtual std::string Article() const { return "an"; }

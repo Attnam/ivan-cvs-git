@@ -320,41 +320,13 @@ bool wand::Apply(character* Terrorist, stack* MotherStack)
 
 bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
-	vector2d CurrentPos = Pos;
-
 	if(GetCharges() <= GetTimesUsed())
 	{
 		ADD_MESSAGE("Nothing happens.");
 		return true;
 	}
 
-	if(Direction != '.')
-		for(ushort Length = 0; Length < 5; ++Length)
-		{
-			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
-				break;
-			else
-			{	
-				CurrentPos += game::GetMoveVector(Direction);
-
-				character* Character;			
-
-				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
-				{
-					Zapper->Hostility(Character);
-					Character->Polymorph(protosystem::CreateMonster(false));
-				}
-
-				game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
-			}
-		}
-	else
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph(protosystem::CreateMonster(false));
-		
-		game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
-	}
+	Beam(Zapper, Direction, 5);
 
 	SetTimesUsed(GetTimesUsed() + 1);
 	return true;
@@ -500,44 +472,13 @@ item* brokenbottle::BetterVersion(void) const
 
 bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
-	vector2d CurrentPos = Pos;
-	
 	if(GetCharges() <= GetTimesUsed())
 	{
 		ADD_MESSAGE("Nothing happens.");
 		return true;
 	}
-
-	if(Direction != '.')
-		for(ushort Length = 0; Length < 15; ++Length)
-		{
-			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
-				break;
-			else
-			{
-				CurrentPos += game::GetMoveVector(Direction);
-
-				character* Character;			
-
-				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
-				{
-					Zapper->Hostility(Character);
-					Character->StruckByWandOfStriking();
-				}
-
-				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
-					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
-			}
-		}
-	else
-	{
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
-			game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->StruckByWandOfStriking();
-		
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems())
-			game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
-	}
-
+	Beam(Zapper, Direction, 15);
+	
 	SetTimesUsed(GetTimesUsed() + 1);
 
 	return true;
@@ -794,4 +735,61 @@ std::string wand::Name(uchar Case) const
 		return NameWithMaterial(Case) + " (used 1 time)"; 
 	else
 		return NameWithMaterial(Case) + " (used " + TimesUsed + " times)";
+}
+
+bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect)
+{
+	if(SizeOfEffect > 1 + RAND() % 10 && GetMaterial(0)->IsFlammable())
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s catches fire!", CNAME(DEFINITE));
+
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+	//	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+		return true;
+	}
+	else
+		return false;
+}
+
+
+void wand::Beam(character* Zapper, uchar Direction, uchar Range)
+{
+	vector2d CurrentPos = Zapper->GetPos();
+	if(Direction != '.')
+		for(ushort Length = 0; Length < Range; ++Length)
+		{
+			if(!game::GetCurrentLevel()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
+				break;
+			levelsquare* Temp = game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction));
+			if(!(Temp->GetOverLevelTerrain()->GetIsWalkable()))
+			{
+				BeamEffect(Zapper, Direction, Temp);
+				break;
+			}
+			else
+			{	
+				CurrentPos += game::GetMoveVector(Direction);
+				BeamEffect(Zapper, Direction, Temp);
+				Temp->DrawParticles(GetBeamColor(), Direction);
+			}
+		}
+	else
+	{
+		levelsquare* Where = Zapper->GetLevelSquareUnder();
+		BeamEffect(Zapper, Direction, Where);
+		Where->DrawParticles(GetBeamColor(), Direction);
+	}
+}
+
+
+void wandofpolymorph::BeamEffect(character* Zapper, uchar Direction, levelsquare* LevelSquare)
+{
+	LevelSquare->PolymorphEverything(Zapper);
+}
+
+void wandofstriking::BeamEffect(character* Who, uchar Dir, levelsquare* Where) 
+{ 
+	Where->StrikeEverything(Who, Dir); 
 }

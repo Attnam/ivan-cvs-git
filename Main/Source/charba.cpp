@@ -2686,7 +2686,7 @@ bool character::CheckForDoors()
 	if(CanOpenDoors())
 	{
 		DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
+		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetOverLevelTerrain()->CanBeOpenedByAI() && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->Open(this))
 		{
 			if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->CanBeSeen())
 				if(GetLevelSquareUnder()->CanBeSeen())

@@ -118,6 +118,7 @@ class OVERLEVELTERRAIN
 	InitMaterials(new stone),
 	{
 		SetIsOpen(false);
+		SetIsLocked(IsOpen ? false : !(RAND() % 5));
 		UpdatePicture();
 	},
 public:
@@ -132,12 +133,17 @@ public:
 	virtual bool GetIsWalkable() const { return IsOpen; }
 	virtual bool IsDoor() const { return true; }
 	virtual std::string Name(uchar) const;
+	virtual void SetIsLocked(bool What) { IsLocked = What; }
+	virtual bool GetIsLocked() const { return IsLocked; }
+	virtual bool CanBeOpenedByAI() { return !GetIsLocked() && CanBeOpened(); }
+	virtual bool ReceiveStrike();
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }
 	virtual void MakeWalkable();
 	virtual void MakeNotWalkable();
 	bool IsOpen;
+	bool IsLocked;
 );
 
 class OVERLEVELTERRAIN
@@ -391,6 +397,7 @@ class OVERLEVELTERRAIN
 public:
 	virtual std::string DigMessage() const { return "The broken door is too hard to dig."; }
 	virtual void Kick(ushort, bool, uchar);
+	virtual bool ReceiveStrike();
 protected:
 	virtual std::string NameSingular() const	{ return "broken door"; }
 	virtual vector2d GetBitmapPos() const		{ return vector2d(0, GetIsWalkable() ? 48 : 160); }

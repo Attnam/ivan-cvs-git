@@ -1,3 +1,6 @@
+#include <ctime>
+#include <cmath>
+
 #include "charba.h"
 #include "igraph.h"
 #include "lsquare.h"
@@ -1006,4 +1009,57 @@ void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTer
 	for(uchar c = 0; c < 4; ++c)
 		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
 			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
+}
+
+
+void levelsquare::PolymorphEverything(character* Zapper)
+{
+	character* Character;			
+
+	if(Character = GetCharacter())
+	{
+		if(Character != Zapper)
+			Zapper->Hostility(Character);
+
+		Character->Polymorph(protosystem::CreateMonster(false));
+	}
+
+	GetStack()->Polymorph();
+}
+
+
+void levelsquare::DrawParticles(ushort Color, uchar)
+{						
+	clock_t StartTime = clock();
+
+	vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
+
+	for(ushort c = 0; c < 20; c++)
+	{
+		DOUBLEBUFFER->PutPixel(BitPos.X + RAND() % 16, BitPos.Y + RAND() % 16, Color);
+	}
+	graphics::BlitDBToScreen();
+
+
+	NewDrawRequested = true; // Clean the pixels from the screen afterwards
+	if(CanBeSeen())
+		while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
+}
+
+void levelsquare::StrikeEverything(character* Zapper, uchar)
+{
+	if(GetCharacter())
+	{
+		if(GetCharacter()->GetIsPlayer())
+			ADD_MESSAGE("The wand hits you!");
+		else
+			Zapper->Hostility(GetCharacter());
+
+
+		if(CanBeSeen()) ADD_MESSAGE("The wand hits %s", GetCharacter()->CNAME(DEFINITE));
+		
+		GetCharacter()->SetHP(GetCharacter()->GetHP() - RAND() % 5 - 1);
+		GetCharacter()->CheckDeath("killed by a wand of striking.");
+	}
+	GetOverLevelTerrain()->ReceiveStrike();	
 }

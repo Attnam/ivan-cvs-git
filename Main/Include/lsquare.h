@@ -95,6 +95,9 @@ public:
 	virtual void SetTemporaryEmitation(ushort);
 	virtual ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
 	virtual void ChangeOverLevelTerrainAndUpdateLights(overlevelterrain*);
+	virtual void DrawParticles(ushort, uchar);
+	virtual void PolymorphEverything(character*);
+	virtual void StrikeEverything(character*, uchar);
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

@@ -21,7 +21,13 @@ bool door::Open(character* Opener)
 {
 	if(!GetIsWalkable())
 	{
-		if(Opener == game::GetPlayer())
+		if(IsLocked)
+		{
+			if(Opener == game::GetPlayer())
+				ADD_MESSAGE("The door is locked.");
+			return true;
+		}
+		else if(Opener == game::GetPlayer())
 			ADD_MESSAGE("You open the door.");
 	}
 	else
@@ -209,19 +215,34 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 	}
 }
 
-void door::Kick(ushort, bool ShowOnScreen, uchar)
+void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
 	if(!GetIsWalkable()) 
 	{
-		if(RAND() % 2)
+		if(Strength > RAND() % 20)
 		{
 			if(ShowOnScreen) ADD_MESSAGE("The door opens.");
 			MakeWalkable();
+			IsLocked = false;
 		}
 		else
 		{
-			if(ShowOnScreen) ADD_MESSAGE("The door breaks.");
-			GetLevelSquareUnder()->ChangeOverLevelTerrain(new brokendoor);
+			//if(ShowOnScreen) ADD_MESSAGE("The door breaks.");
+			bool NewLockedStatus;
+			if(IsLocked && RAND() % 2) // _can't really think of a good formula for this... 
+			{			//Strength isn't everything
+				if(ShowOnScreen) ADD_MESSAGE("The lock breaks.");
+				NewLockedStatus = false;
+			}
+			else
+			{
+				if(ShowOnScreen)
+					ADD_MESSAGE("The door is damaged.");
+				NewLockedStatus = IsLocked;
+			}
+			brokendoor* Temp;
+			GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
+			Temp->SetIsLocked(NewLockedStatus);
 		}
 		// Door may have been destroyed here, so don't do anything
 	}
@@ -232,6 +253,7 @@ void door::Save(outputfile& SaveFile) const
 	levelterrain::Save(SaveFile);
 
 	SaveFile << IsOpen;
+	SaveFile << IsLocked;
 }
 
 void door::Load(inputfile& SaveFile)
@@ -239,6 +261,7 @@ void door::Load(inputfile& SaveFile)
 	levelterrain::Load(SaveFile);
 
 	SaveFile >> IsOpen;
+	SaveFile >> IsLocked;
 }
 
 void door::MakeWalkable()
@@ -432,7 +455,7 @@ void fountain::Consume(character* Drinker)
 	break;
 
 	case 3:
-		if(!(RAND() % 5)) // TEMP
+		if(!(RAND() % 5))
 		{
 			ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
 			DRAW_MESSAGES();
@@ -476,13 +499,74 @@ void fountain::DryOut()
 }
 
 
-void brokendoor::Kick(ushort, bool ShowOnScreen, uchar)
+void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
 	if(!GetIsWalkable()) 
 	{
-		if(ShowOnScreen) 
-			ADD_MESSAGE("The broken door opens.");
-		MakeWalkable();
-	
+		if(IsLocked) 
+		{
+			if(Strength > RAND() % 50)
+			{
+				if(ShowOnScreen)
+					ADD_MESSAGE("The doors opens from the force of your kick.");
+				IsLocked = false;
+				MakeWalkable();
+			}
+			else if(Strength > RAND() % 20)
+			{
+				ADD_MESSAGE("The lock breaks from the force of your kick.");
+				IsLocked = false;
+			}
+			else
+				ADD_MESSAGE("The door won't budge!");
+		}
+		else
+			if(Strength > RAND() % 100)
+			{
+				ADD_MESSAGE("The broken door opens.");
+				MakeWalkable();
+			}
+			else
+			{
+				ADD_MESSAGE("The door resists.");
+			}
 	}
+}
+
+
+bool door::ReceiveStrike()
+{
+	if(RAND() % 2)
+	{
+		bool NewLockedStatus = IsLocked;
+		if(GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The wand strikes the door and the door breaks.");
+		brokendoor* Temp;
+		GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
+		Temp->SetIsLocked(NewLockedStatus);
+	}
+	else
+	{
+		if(GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The wand strikes the door and the door opens.");
+		
+		MakeWalkable();
+		IsLocked = false;
+	}
+	return true;
+}
+
+bool brokendoor::ReceiveStrike()
+{
+	if(RAND() % 2)
+	{
+		MakeWalkable();
+		IsLocked = false;
+		if(GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("The wand strikes the door and the door opens.");
+	}
+	else
+		ADD_MESSAGE("The wand strikes the door, but the door won't budge.");
+	return true;
+
 }

@@ -87,6 +87,7 @@ public:
 	virtual bool IsFlexible() const { return false; }
 	virtual bool IsExplosive() const { return false; }
 	virtual ushort ExplosivePower() const { return 0; }
+	virtual bool IsFlammable() const { return false; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }

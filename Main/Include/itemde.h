@@ -482,6 +482,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } }
 	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
+	virtual bool ReceiveFireDamage(character*, stack*, long);
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
@@ -762,6 +763,9 @@ public:
 	virtual void SetCharges(uchar What) { Charges = What; }
 	virtual uchar GetTimesUsed() const { return TimesUsed; }
 	virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
+	virtual void Beam(character*, uchar, uchar);
+	virtual void BeamEffect(character*, uchar, levelsquare*) {};
+	virtual ushort GetBeamColor() const { return MAKE_RGB(128,128,128); }
 protected:
 	virtual ushort GetFormModifier() const RET(80)
 	uchar Charges;
@@ -786,6 +790,8 @@ public:
 	virtual bool Zap(character*, vector2d, uchar);
 	virtual ulong Price() const { return 500; }
 	virtual bool PolymorphSpawnable() const { return false; }
+	virtual void BeamEffect(character*, uchar, levelsquare*);
+	virtual ushort GetBeamColor() const { return MAKE_RGB(255,0,255); }
 );
 
 /*class ITEM
@@ -908,6 +914,8 @@ public:
 	virtual float OfferModifier() const RET(10)
 	virtual bool Zap(character*, vector2d, uchar);
 	virtual ulong Price() const { return 500; }
+	virtual ushort GetBeamColor() const { return MAKE_RGB(255,255,255); }
+	virtual void BeamEffect(character*, uchar, levelsquare*);
 );
 
 class ITEM

@@ -241,11 +241,15 @@ ushort stack::DrawContents(character* Viewer, std::string Topic) const 	// Draws
 {									// Displays Topic on the screen also...
 	if(!GetItems()) return 0xFFFF;
 	felist ItemNames(Topic, WHITE, 0, true);
-	ItemNames.AddDescription("");
+	//ItemNames.AddDescription("");
+	
+	
+	ItemNames.AddDescription(std::string("Overall Weight: ") + SumOfMasses());
+	//ItemNames.AddDescription("");
 	std::string Buffer = "Name                                                 Weight       AV     Str";
 	Viewer->AddSpecialItemInfoDescription(Buffer);
 	ItemNames.AddDescription(Buffer);
-
+	
 	for(ushort c = 0; c < GetItems(); ++c)
 	{
 		Buffer = GetItem(c)->Name(INDEFINITE);
