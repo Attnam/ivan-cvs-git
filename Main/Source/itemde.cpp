@@ -137,7 +137,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 	{
 		TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+		if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 		{
 			game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster(5));
 

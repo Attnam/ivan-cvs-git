@@ -36,7 +36,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	{
 		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 
-		if(!protocontainer<character>::GetProto(Chosen)->Possibility())
+		if(!protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
 			continue;
 
 		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);

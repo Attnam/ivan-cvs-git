@@ -53,7 +53,7 @@ void priest::CreateInitialEquipment()
 
 void oree::CreateInitialEquipment()
 {
-	GetStack()->FastAddItem(new maakotkashirt);
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new maakotkashirt)));
 
 	for(ushort c = 0; c < 6; ++c)
 	{
@@ -74,7 +74,7 @@ void darkknight::CreateInitialEquipment()
 		SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(DoomsDay)));
 	}
 
-	GetStack()->FastAddItem(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril))));
 }
 
 void skeleton::CreateInitialEquipment()
@@ -138,7 +138,7 @@ void golem::DrawToTileBuffer() const
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-void humanoid::DrawToTileBuffer() const
+void complexhumanoid::DrawToTileBuffer() const
 {	
 	vector2d InHandsPic, LegPos, TorsoPos, ArmPos, HeadPos, ShieldPos;
 
@@ -274,7 +274,7 @@ void humanoid::Save(outputfile& SaveFile) const
 
 	ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
-	SaveFile << Index << ArmType << HeadType << LegType << TorsoType << ShieldType << SingleWeaponSkill;
+	SaveFile << Index << SingleWeaponSkill;
 
 	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
 		SaveFile << GetCategoryWeaponSkill(c);
@@ -286,7 +286,7 @@ void humanoid::Load(inputfile& SaveFile)
 
 	ushort Index;
 
-	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType >> ShieldType >> SingleWeaponSkill;
+	SaveFile >> Index >> SingleWeaponSkill;
 
 	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
 
@@ -300,6 +300,20 @@ void humanoid::Load(inputfile& SaveFile)
 				SetCurrentSingleWeaponSkill(*i);
 				break;
 			}
+}
+
+void complexhumanoid::Save(outputfile& SaveFile) const
+{
+	humanoid::Save(SaveFile);
+
+	SaveFile << ArmType << HeadType << LegType << TorsoType << ShieldType;
+}
+
+void complexhumanoid::Load(inputfile& SaveFile)
+{
+	humanoid::Load(SaveFile);
+
+	SaveFile >> ArmType >> HeadType >> LegType >> TorsoType >> ShieldType;
 }
 
 float golem::GetMeleeStrength() const
@@ -383,14 +397,14 @@ void petrus::HealFully(character* ToBeHealed)
 
 void petrus::Save(outputfile& SaveFile) const
 {
-	humanoid::Save(SaveFile);
+	complexhumanoid::Save(SaveFile);
 
 	SaveFile << HealTimer << StoryState;
 }
 
 void petrus::Load(inputfile& SaveFile)
 {
-	humanoid::Load(SaveFile);
+	complexhumanoid::Load(SaveFile);
 
 	SaveFile >> HealTimer >> StoryState;
 
@@ -831,12 +845,12 @@ void shopkeeper::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
-		ADD_MESSAGE("%s sighs: \"Mutant school food mushrooms ate the last caravan.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
 		break;
 	case 2:
 		ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
-		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since I have a monopoly.\"");
+		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
 		break;
 	case 3:
 		ADD_MESSAGE("\"Don't try anything. The Überpriest is a LAN friend of mine.\"");
@@ -868,7 +882,7 @@ void oree::BeTalkedTo(character*)
 
 void darkknight::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s yells: \"Microsoft powaah! Die Unix!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s yells: \"For Erado I shall slay you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 }
 
 void ennerbeast::BeTalkedTo(character*)

@@ -148,7 +148,7 @@ public:
 	virtual ushort GetStrength() const					{ return Strength; }
 	virtual ushort LOSRange() const;
 	virtual ushort LOSRangeSquare() const;
-	virtual ushort Possibility() const = 0;
+	virtual bool CanBeGenerated() const { return true; }
 	virtual vector2d GetPos() const;
 	virtual void AddBlockMessage(character*) const;
 	virtual void AddDodgeMessage(character*) const;

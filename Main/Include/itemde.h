@@ -163,7 +163,7 @@ public:
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,336)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2400; case 1: return 100; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2400; case 1: return 100; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -182,7 +182,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float OfferModifier() const RET(0.25)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(175)
 );
@@ -200,7 +200,7 @@ public:
 	virtual std::string NameSingular() const RET("curved two-handed sword")
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,16)
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5500; case 1: return 250; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -222,7 +222,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,64)
 	virtual bool CanBeWished() const RET(false)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6700; case 1: return 300; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6700; case 1: return 300; case 2: return 100; default: return 0; } }
 	virtual bool IsMaterialChangeable() const { return false; }
 	virtual bool Polymorph(stack*) { return false; }
 protected:
@@ -244,7 +244,7 @@ public:
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(16,256)
 	virtual uchar GetWeaponCategory() const { return AXES; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1400; case 1: return 1600; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1400; case 1: return 1600; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -264,7 +264,7 @@ public:
 	virtual float OfferModifier() const RET(0.25)
 	virtual vector2d GetBitmapPos() const RETV(0,96)
 	virtual bool Apply(character*, stack*);
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; case 1: return 2000; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1500; case 1: return 2000; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -284,7 +284,7 @@ public:
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const RETV(16,144)
 	virtual uchar GetWeaponCategory() const { return SPEARS; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; case 1: return 1600; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; case 1: return 1600; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -634,7 +634,7 @@ public:
 	virtual std::string NameSingular() const RET("poleaxe")
 	virtual float OfferModifier() const RET(0.25f)
 	virtual vector2d GetBitmapPos() const RETV(0,80)
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2500; case 1: return 2000; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2500; case 1: return 2000; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -654,7 +654,7 @@ public:
 	virtual float OfferModifier() const RET(0.125f)
 	virtual vector2d GetBitmapPos() const RETV(0,32)
 	virtual uchar GetWeaponCategory() const { return MACES; }
-	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; case 1: return 2000; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; case 1: return 2000; case 2: return 100; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const RET(125)
 );

@@ -213,6 +213,9 @@ void character::Be()
 				if(StateIsActivated(c))
 					(this->*StateHandler[c])();
 
+			if(!GetExists())
+				return;
+
 			if(GetHP() < GetMaxHP() / 3)
 				SpillBlood(RAND() % 2);
 
@@ -1349,7 +1352,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << State << Money << HomeRoom << WayPoint;
 
 	if(HomeRoom)
-		if(GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
+		if(!game::GetInWilderness() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
 			SaveFile << bool(true);
 		else
 			SaveFile << bool(false);
@@ -2298,7 +2301,7 @@ bool character::Polymorph(character* NewForm)
 	if(NewForm->CanWear())
 		NewForm->SetTorsoArmor(GetTorsoArmor());
 
-	NewForm->SetTeam(GetTeam());
+	NewForm->ChangeTeam(GetTeam());
 
 	if(GetTeam()->GetLeader() == this)
 		GetTeam()->SetLeader(NewForm);
@@ -2601,7 +2604,7 @@ bool character::CheckForEnemies()
 	for(uchar c = 0; c < game::GetTeams(); ++c)
 		if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 			for(std::list<character*>::iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-				if((*i)->GetExists())
+				if((*i)->GetExists() && *i != game::GetPlayerBackup())
 				{
 					ulong ThisDistance = GetHypotSquare(long((*i)->GetPos().X) - GetPos().X, long((*i)->GetPos().Y) - GetPos().Y);
 
