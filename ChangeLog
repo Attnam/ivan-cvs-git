@@ -7,12 +7,20 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Mushroom spawning rate tuned down
+	* Skunks no longer release their smell inside walls
+	* Step on pile messages are now more informative
+	* Random polymorph targets are now somewhat limited
+	* Flying monsters are now drawn over smoke
+
 March 13 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Floating eyes' attackwisdom limit changed from 10 to 8
 	* Ivan's wisdom from 5 to 6
 	* Added a puff of smoke to Genie creation
-	
+
 March 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Empty and atmosphere terrains have been removed; null pointers are used in

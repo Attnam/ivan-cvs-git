@@ -120,10 +120,25 @@ void lsquare::Draw()
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
-	    Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+	    {
+	      if(Character->CanFly())
+		{
+		  for(ushort c = 0; c < Smoke.size(); ++c)
+		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
-	  for(ushort c = 0; c < Smoke.size(); ++c)
-	    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		}
+	      else
+		{
+		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+
+		  for(ushort c = 0; c < Smoke.size(); ++c)
+		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		}
+	    }
+	  else
+	    for(ushort c = 0; c < Smoke.size(); ++c)
+	      Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 	}
       else
 	{
@@ -1245,7 +1260,7 @@ bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
       if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
-      Character->PolymorphRandomly(0, 10000, 5000 + RAND() % 5000);
+      Character->PolymorphRandomly(1, 9999, 5000 + RAND() % 5000);
     }
 
   return false;

@@ -1957,16 +1957,13 @@ void character::ShowNewPosInfo() const
       if(GetLSquareUnder()->IsDark() && !game::SeeWholeMapCheatIsActive())
 	ADD_MESSAGE("It's dark in here!");
       GetLSquareUnder()->ShowSmokeMessage();
-	
-      ushort VisibleItemsOnGround = GetStackUnder()->GetVisibleItems(this);
+      std::vector<itemvector> PileVector;
+      GetStackUnder()->Pile(PileVector, this);
 
-      if(VisibleItemsOnGround > 0)
-	{
-	  if(VisibleItemsOnGround > 1)
-	    ADD_MESSAGE("Several items are lying here.");
-	  else
-	    ADD_MESSAGE("%s is lying here.", GetStackUnder()->GetBottomVisibleItem(this)->CHAR_NAME(INDEFINITE));
-	}
+      if(PileVector.size() == 1)
+	ADD_MESSAGE("%s %s lying here.", PileVector[0][0]->GetName(INDEFINITE, PileVector[0].size()).c_str(), PileVector[0].size() == 1 ? "is" : "are");
+      else
+	ADD_MESSAGE("Several items are lying here.");
 		
       if(GetNearLSquare(GetPos())->GetEngraved().length())
 	ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().c_str());
@@ -4116,7 +4113,7 @@ void character::PrintEndPolymorphMessage() const
 void character::PolymorphHandler()
 {
   if(!(RAND() % 1500))
-    PolymorphRandomly(0, 10000, 200 + RAND() % 800);
+    PolymorphRandomly(1, 9999, 200 + RAND() % 800);
 }
 
 void character::PrintBeginTeleportControlMessage() const

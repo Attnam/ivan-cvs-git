@@ -1246,7 +1246,7 @@ void mushroom::GetAICommand()
 	    }
 	}
 
-      if((SpoiledItems && MushroomsNear < 5 && !RAND_N(25)) || (MushroomsNear < 3 && !RAND_N((1 + MushroomsNear) * 50)))
+      if((SpoiledItems && MushroomsNear < 5 && !RAND_N(50)) || (MushroomsNear < 3 && !RAND_N((1 + MushroomsNear) * 100)))
 	{
 	  mushroom* Child = static_cast<mushroom*>(GetProtoType()->Clone(GetConfig()));
 	  Child->SetSpecies(Species);
@@ -1419,13 +1419,13 @@ void skunk::GetAICommand()
     {
       if(!RAND_N(3))
 	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
-
 	  character* Char = GetRandomNeighbour(HOSTILE);
 
-	  if(Char)
+	  if(Char && Char->GetLSquareUnder()->IsFlyable())
 	    {
+	      if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
+
 	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 1000));
 	      EditAP(-1000);
 	      return;

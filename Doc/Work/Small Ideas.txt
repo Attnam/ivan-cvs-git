@@ -448,5 +448,5 @@ You should be able to kick an eating dog to teach it not to eat that thing again
 Guillotine.
 Eating only unspoiled food should require a bit of wisdom.
 Iron and other "good" materials should become more probable for items.
-Monsters with ESP should be seen from a longer distance with ESP
-Pets should also be seen from a longer distance with ESP   
+Monsters with ESP should be seen from a longer distance with ESP.
+Pets should also be seen from a longer distance with ESP.

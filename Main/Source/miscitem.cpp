@@ -576,7 +576,8 @@ bool oillamp::Apply(character* Applier)
 
       if(FoundPlace)
 	{
-	  Genie->GetLSquareUnder()->AddSmoke(new gas(MAGICAL_AIR, 1000));
+	  Genie->GetLSquareUnder()->AddSmoke(new gas(SMOKE, 1000));
+
 	  if(!(RAND() % 5))
 	    {
 	      Genie->SetTeam(game::GetTeam(MONSTER_TEAM));
@@ -2153,10 +2154,13 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	  if(IsActive())
 	    {
 	      ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
-	      SetIsActive(false);	  
+	      SetIsActive(false);
+	      GetLSquareUnder()->SendMemorizedUpdateRequest();
+	      GetLSquareUnder()->SendNewDrawRequest();	  
 	      return true;
 	    }
 	}
     }
+
   return false;
 }

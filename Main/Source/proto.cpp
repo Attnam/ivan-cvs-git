@@ -174,8 +174,8 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 	      }
 	}
 
-      MinDanger = MinDanger * 3 >> 2;
-      MaxDanger = MaxDanger * 5 >> 2;
+      MinDanger = MinDanger > 0 ? Max<ushort>(MinDanger * 3 >> 2, 1) : 0;
+      MaxDanger = MaxDanger < 10000 ? Min<ushort>(MaxDanger * 5 >> 2, 9999) : 10000;
     }
 }
 
