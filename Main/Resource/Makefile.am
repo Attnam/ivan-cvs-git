@@ -1,1 +1,1 @@
-EXTRA_dist = Logo.ico Main.rc resource.h
+EXTRA_DIST = Logo.ico Main.rc resource.h
