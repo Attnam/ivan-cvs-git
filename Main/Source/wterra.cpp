@@ -14,7 +14,7 @@
 gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
 
-int gwterrain::GetWalkability() const { return ANY_MOVE; }
+int gwterrain::GetWalkability() const { return ANY_MOVE&~SWIM; }
 int owterrain::GetWalkability() const { return ANY_MOVE; }
 int owterrain::GetAttachedEntry() const { return STAIRS_UP; }
 

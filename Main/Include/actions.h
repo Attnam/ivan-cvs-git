@@ -21,7 +21,7 @@
 
 class ACTION
 (
-  faint,
+  unconsciousness,
   action,
  public:
   virtual void Save(outputfile&) const;
@@ -30,11 +30,12 @@ class ACTION
   void SetCounter(int What) { Counter = What; }
   virtual bool IsVoluntary() const { return false; }
   virtual void Terminate(bool);
-  virtual bool AllowFaint() const { return false; }
+  virtual bool AllowUnconsciousness() const { return false; }
   virtual const char* GetDescription() const;
   virtual const char* GetDeathExplanation() const;
   virtual bool CanBeTalkedTo() const { return false; }
-  virtual bool IsFaint() const { return true; }
+  virtual bool IsUnconsciousness() const { return true; }
+  void RaiseCounterTo(int);
  protected:
   int Counter;
 );
@@ -49,7 +50,7 @@ class ACTION
   virtual void Handle();
   virtual void Terminate(bool);
   void SetConsumingID(ulong What) { ConsumingID = What; }
-  virtual bool AllowFaint() const { return false; }
+  virtual bool AllowUnconsciousness() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual const char* GetDescription() const;
   virtual void SetDescription(const festring&);

@@ -218,7 +218,7 @@ class item : public object
   slot* GetSlot(int I = 0) const { return Slot[I]; }
   void SetMainSlot(slot* What) { Slot[0] = What; }
   void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
-  void RemoveFromSlot();
+  virtual void RemoveFromSlot();
   void MoveTo(stack*);
   bool IsMainSlot(const slot* What) const { return Slot[0] == What; }
   static const char* GetItemCategoryName(long);
@@ -351,7 +351,7 @@ class item : public object
   DATA_BASE_VALUE(int, DamageFlags);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
-  virtual bool TryToUnstuck(character*, int, vector2d) { return false; }
+  //virtual bool TryToUnstuck(character*, int, vector2d) { return false; }
   long GetBlockModifier() const;
   bool IsSimiliarTo(item*) const;
   virtual bool IsPickable(character*) const { return true; }
@@ -504,6 +504,8 @@ class item : public object
   virtual bool AllowFluids() const { return false; }
   int GetHinderVisibilityBonus(const character*) const;
   virtual DATA_BASE_BOOL(IsKamikazeWeapon);
+  virtual void AddTrapName(festring&, int) const;
+  int GetMainMaterialRustLevel() const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

@@ -46,6 +46,7 @@ void item::Cannibalize() { Flags |= CANNIBALIZED; }
 void item::SetMainMaterial(material* NewMaterial, int SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::ChangeMainMaterial(material* NewMaterial, int SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void item::InitMaterials(const materialscript* M, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), CUP); }
+int item::GetMainMaterialRustLevel() const { return MainMaterial->GetRustLevel(); }
 
 item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), CloneMotherID(Item.CloneMotherID), Fluid(0), SquaresUnder(Item.SquaresUnder), LifeExpectancy(Item.LifeExpectancy)
 {
@@ -81,8 +82,7 @@ item::~item()
 
 void item::Fly(character* Thrower, int Direction, int Force)
 {
-
-  int Range = Force * 25UL / Max<long>(long(sqrt(GetWeight())), 1);
+  int Range = Force * 25 / Max(long(sqrt(GetWeight())), 1L);
 
   lsquare* LSquareUnder = GetLSquareUnder();
   RemoveFromSlot();
@@ -285,7 +285,7 @@ void item::Save(outputfile& SaveFile) const
   SaveFile << (ushort)GetType();
   object::Save(SaveFile);
   SaveFile << (ushort)GetConfig();
-  SaveFile << (uchar)Flags;
+  SaveFile << (ushort)Flags;
   SaveFile << Size << ID << CloneMotherID << LifeExpectancy;
 
   if(Fluid)
@@ -303,7 +303,7 @@ void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   databasecreator<item>::InstallDataBase(this, ReadType<ushort>(SaveFile));
-  Flags |= ReadType<uchar>(SaveFile) & ~ENTITY_FLAGS;
+  Flags |= ReadType<ushort>(SaveFile) & ~ENTITY_FLAGS;
   SaveFile >> Size >> ID >> CloneMotherID >> LifeExpectancy;
 
   if(LifeExpectancy)
@@ -1463,7 +1463,19 @@ long item::GetFixPrice() const
 {
   item* Clone = RawDuplicate();
   Clone = Clone->Fix();
+  Clone->RemoveRust();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
   return Max(long(5 * sqrt(FixPrice)), 10L);
+}
+
+void item::AddTrapName(festring& String, int Amount) const
+{
+  if(Amount == 1)
+    AddName(String, DEFINITE);
+  else
+    {
+      String << Amount << ' ';
+      AddName(String, PLURAL);
+    }
 }

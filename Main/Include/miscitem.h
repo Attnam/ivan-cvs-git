@@ -19,6 +19,8 @@
 #include <set>
 
 #include "item.h"
+#include "game.h" /// check
+#include "trap.h"
 
 class ABSTRACT_ITEM
 (
@@ -134,11 +136,10 @@ class ITEM
 (
   lump,
   item,
- /*public:
-  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);*/
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
+  virtual bool WeightIsIrrelevant() const { return true; }
 );
 
 class ITEM
@@ -536,10 +537,11 @@ class ITEM
   beartrap,
   item,
  public:
+  beartrap(const beartrap&);
+  ~beartrap();
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void StepOnEffect(character*);
-  virtual bool TryToUnstuck(character*, int, vector2d);
   virtual bool CheckPickUpEffect(character*);
   virtual bool IsPickable(character*) const;
   virtual bool IsActive() const { return Active; }
@@ -548,23 +550,29 @@ class ITEM
   virtual bool Apply(character*);
   virtual vector2d GetBitmapPos(int) const;
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool IsDangerousForAI(const character*) const { return IsActive(); }
+  virtual bool IsDangerousForAI(const character*) const { return Active; }
   virtual int GetTeam() const { return Team; }
   virtual void SetTeam(int What) { Team = What; }
   virtual bool ReceiveDamage(character*, int, int, int);
   virtual void Search(const character*, int);
   virtual bool IsDangerous() const { return IsActive(); }
-  virtual bool IsStuck() const;
   virtual void Fly(character*, int, int);
   virtual void FinalProcessForBone();
   virtual void TeleportRandomly();
+  virtual ulong GetTrapID() const { return TrapData.TrapID; }
+  virtual ulong GetVictimID() const { return TrapData.VictimID; }
+  virtual void UnStick() { TrapData.VictimID = 0; }
+  virtual bool TryToUnStick(character*, vector2d);
+  virtual void RemoveFromSlot();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
+  bool IsStuck() const { return !!TrapData.VictimID; }
   int GetBaseTrapDamage() const;
-  bool Active;
   int Team;
   std::set<int> DiscoveredByTeam;
+  trapdata TrapData;
+  bool Active;
 );
 
 class ITEM

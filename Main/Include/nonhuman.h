@@ -54,7 +54,7 @@ class ABSTRACT_CHARACTER
   virtual void UnarmedHit(character*, vector2d, int, bool = false);
   virtual void InitSpecialAttributes();
   virtual double GetTimeToKill(const character*, bool) const;
-  virtual int GetAttribute(int) const;
+  virtual int GetAttribute(int, bool = true) const;
   virtual bool EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
   virtual int DrawStats(bool) const;
@@ -419,6 +419,8 @@ class ABSTRACT_CHARACTER
   virtual bool CreateRoute();
   virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
   virtual int GetFlySymbolSquareIndex() const { return 1; }
+  virtual int GetSwimmingSymbolSquareIndex() const { return 3; }
+  virtual int GetUnconsciousSymbolSquareIndex() const { return 2; }
   virtual bool PlaceIsIllegal(vector2d, vector2d) const;
   bool PartCanMoveOn(const lsquare*) const;
  protected:
@@ -437,7 +439,6 @@ class CHARACTER
   virtual bool Hit(character*, vector2d, int, bool = false);
   virtual int ReceiveBodyPartDamage(character*, int, int, int, int = 8, bool = false, bool = false, bool = true, bool = false);
   virtual bool SpecialEnemySightedReaction(character*);
-  virtual bool Faint(int, bool = false) { return false; }
   virtual bool MustBeRemovedFromBone() const;
   virtual bool TryToRiseFromTheDead();
  protected:

@@ -288,4 +288,20 @@ inline int femath::LoopRoll(int ContinueChance, int Max)
   return R;
 }
 
+template <class type, class predicate>
+type*& ListFind(type*& Start, predicate Predicate)
+{
+  type** E;
+  for(E = &Start; *E && !Predicate(*E); E = &(*E)->Next);
+  return *E;
+}
+
+template <class type>
+struct pointercomparer
+{
+  pointercomparer(const type* Element) : Element(Element) { }
+  bool operator()(const type* E) const { return E == Element; }
+  const type* Element;
+};
+
 #endif

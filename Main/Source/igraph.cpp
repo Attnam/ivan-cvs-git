@@ -31,11 +31,13 @@ tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
 bitmap* igraph::Menu;
-bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
+bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
 rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(16, 16), new rawbitmap(16, 16) };
 bitmap* igraph::Cursor[CURSOR_TYPES];
-color16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(255, 0, 0), MakeRGB16(0, 0, 40),
-					      MakeRGB16(0, 0, 255) };
+color16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(40, 40, 40),
+					      MakeRGB16(255, 0, 0),
+					      MakeRGB16(100, 100, 255),
+					      MakeRGB16(200, 200, 0) };
 bitmap* igraph::BackGround;
 int igraph::CurrentColorType = -1;
 
@@ -431,7 +433,7 @@ void igraph::UnLoadMenu()
 void igraph::CreateSilhouetteCaches()
 {
   int BodyPartSilhouetteMColorIndex[HUMANOID_BODYPARTS] = { 3, 0, 1, 2, 1, 2, 3 };
-  color24 ConditionColor[CONDITION_COLORS] = { MakeRGB16(32, 32, 32),
+  color24 ConditionColor[CONDITION_COLORS] = { MakeRGB16(48, 48, 48),
 					       MakeRGB16(120, 0, 0),
 					       MakeRGB16(180, 0, 0),
 					       MakeRGB16(180, 120, 120),
@@ -447,12 +449,18 @@ void igraph::CreateSilhouetteCaches()
 	{
 	  packedcolor16 Color[4] = { 0, 0, 0, 0 };
 	  Color[BodyPartSilhouetteMColorIndex[c1]] = ConditionColor[c2];
-	  SilhouetteCache[c1][c2] = new bitmap(SILHOUETTE_X_SIZE,
-					       SILHOUETTE_Y_SIZE, 0);
-	  RawGraphic[GR_CHARACTER]->MaskedBlit(SilhouetteCache[c1][c2],
-					       X, Y, 0, 0,
-					       SILHOUETTE_X_SIZE,
-					       SILHOUETTE_Y_SIZE, Color);
+
+	  for(int c3 = 0; c3 < SILHOUETTE_TYPES; ++c3)
+	    {
+	      SilhouetteCache[c1][c2][c3] = new bitmap(SILHOUETTE_X_SIZE,
+						       SILHOUETTE_Y_SIZE, 0);
+	      RawGraphic[GR_CHARACTER]->MaskedBlit(SilhouetteCache[c1][c2][c3],
+						   X, Y, 0, 0,
+						   SILHOUETTE_X_SIZE,
+						   SILHOUETTE_Y_SIZE, Color);
+	    }
+
+	  SilhouetteCache[c1][c2][SILHOUETTE_INTER_LACED]->InterLace();
 	}
     }
 }
@@ -468,17 +476,14 @@ void igraph::CreateBackGround(int ColorType)
   int Side = 1025;
   int** Map;
   Alloc2D(Map, Side, Side);
-  //femath::SaveSeed();
-  //femath::SetSeed(666); //37
   femath::GenerateFractalMap(Map, Side, Side - 1, 1000);
-  //femath::LoadSeed();
   int XPlus = (1025 - RES_X) >> 1;
   int YPlus = (1025 - RES_Y) >> 1;
 
   for(int x = 0; x < RES_X; ++x)
     for(int y = 0; y < RES_Y; ++y)
       {
-	int E = Limit<int>(abs(Map[1024 - x][1024 - (RES_Y - y)]) / 50, 0, 50);
+	int E = Limit<int>(abs(Map[1024 - x][1024 - (RES_Y - y)]) / 30, 0, 75);
 	BackGround->PutPixel(x, y, GetBackGroundColor(E));
      }
 
@@ -490,10 +495,10 @@ color16 igraph::GetBackGroundColor(int Element)
   switch(CurrentColorType)
     {
     case GRAY_FRACTAL: return MakeRGB16(Element, Element, Element);
-    case RED_FRACTAL: return MakeRGB16(Element << 1, 0, 0);
-    case GREEN_FRACTAL: return MakeRGB16(0, Element << 1, 0);
-    case BLUE_FRACTAL: return MakeRGB16(Element, Element, Element << 1);
-    case YELLOW_FRACTAL: return MakeRGB16(Element << 1, Element << 1, 0);
+    case RED_FRACTAL: return MakeRGB16(Element, Element / 3, Element / 3);
+    case GREEN_FRACTAL: return MakeRGB16(Element / 3, Element, Element / 3);
+    case BLUE_FRACTAL: return MakeRGB16(Element / 3, Element / 3, Element);
+    case YELLOW_FRACTAL: return MakeRGB16(Element, Element, Element / 3);
     }
 
   return 0;

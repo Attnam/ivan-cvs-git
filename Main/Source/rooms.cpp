@@ -204,7 +204,7 @@ void shop::KickSquare(character* Infidel, lsquare* Square)
 
 bool shop::ConsumeItem(character* Customer, item*, int)
 {
-  if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
+  if(!MasterIsActive() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
   if(!Customer->IsPlayer())

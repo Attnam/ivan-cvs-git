@@ -12,6 +12,7 @@
 /* Compiled through materset.cpp */
 
 smoke::smoke() : entity(HAS_BE), Next(0) { }
+square* smoke::GetSquareUnderEntity(int) const { return LSquareUnder; }
 
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Next(0), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
@@ -83,11 +84,6 @@ void smoke::Be()
 
   if(Char && !Char->StateIsActivated(GAS_IMMUNITY))
     Gas->BreatheEffect(Char);
-}
-
-square* smoke::GetSquareUnderEntity(int) const
-{ 
-  return LSquareUnder;
 }
 
 void smoke::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const

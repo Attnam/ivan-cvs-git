@@ -140,7 +140,7 @@ void bodypartslot::PutInItem(item* What)
 	{
 	  SignalVolumeAndWeightChange();
 	  SignalEmitationIncrease(Item->GetEmitation());
-	  static_cast<bodypart*>(Item)->CalculateMaxHP(false);
+	  static_cast<bodypart*>(Item)->CalculateMaxHP(0);
 	  GetMaster()->CalculateHP();
 	  GetMaster()->CalculateMaxHP();
 	}

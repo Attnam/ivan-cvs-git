@@ -110,6 +110,8 @@ struct databasebase { int Config; };
 #define FEMALE 2
 #define TRANSSEXUAL 3
 
+#define ALL_BODYPART_FLAGS 0x7F
+
 /* The maximum bodyparts a character can have */
 
 #define MAX_BODYPARTS 7
@@ -553,6 +555,12 @@ struct databasebase { int Config; };
 #define SQUARE_POSITION_BITS (16|32|64)
 #define SQUARE_POSITION_SHIFT 4
 
+/* bodypart flags */
+
+#define UNIQUE 128
+#define BADLY_HURT 256
+#define STUCK 512
+
 #define NO_BROKEN 1
 #define IGNORE_BROKEN_PRICE 2
 
@@ -780,11 +788,12 @@ struct databasebase { int Config; };
 
 #define NO_PARAMETERS 0xFF
 
-#define CURSOR_TYPES 3
+#define CURSOR_TYPES 4
 
-#define NORMAL_CURSOR 0
-#define DARK_CURSOR 1
+#define DARK_CURSOR 0
+#define RED_CURSOR 1
 #define BLUE_CURSOR 2
+#define YELLOW_CURSOR 3
 #define FLASH 0x4000
 #define TARGET 0x8000
 
@@ -797,5 +806,21 @@ struct databasebase { int Config; };
 #define BLUNT 1
 #define SLASH 2
 #define PIERCE 4
+
+#define SILHOUETTE_TYPES 2
+
+#define SILHOUETTE_NORMAL 0
+#define SILHOUETTE_INTER_LACED 1
+
+#define WARNED 1
+#define HAS_CAUSED_PANIC 2
+
+#define AND_BOOLS false
+#define OR_BOOLS true
+
+/* MaxHP calculation flags */
+
+#define MAY_CHANGE_HPS 1
+#define CHECK_USABILITY 2
 
 #endif

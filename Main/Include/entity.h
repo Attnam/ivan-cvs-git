@@ -27,6 +27,8 @@
 class square;
 class material;
 class character;
+class festring;
+struct vector2d;
 
 class entity
 {
@@ -57,6 +59,12 @@ class entity
   virtual character* TryNecromancy(character*) { return 0; }
   virtual void SignalDisappearance() { }
   virtual void SpecialEatEffect(character*, int) { }
+  virtual ulong GetTrapID() const { return 0; }
+  virtual ulong GetVictimID() const { return 0; }
+  virtual void AddTrapName(festring&, int) const { }
+  virtual void UnStick() { }
+  virtual bool TryToUnStick(character*, vector2d);
+  virtual int GetTrapType() const { return 0; }
  protected:
   color24 Emitation;
   ulong Flags;

@@ -368,10 +368,10 @@ double nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   return AttackStyles / Effectivity;
 }
 
-int nonhumanoid::GetAttribute(int Identifier) const
+int nonhumanoid::GetAttribute(int Identifier, bool AllowBonus) const
 {
   if(Identifier < BASE_ATTRIBUTES)
-    return character::GetAttribute(Identifier);
+    return character::GetAttribute(Identifier, AllowBonus);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
       if(!UseMaterialAttributes())
@@ -468,9 +468,8 @@ int nonhumanoid::DrawStats(bool AnimationDraw) const
     return 3;
 
   int PanelPosX = RES_X - 96, PanelPosY = 3;
-
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(ARM_STRENGTH), "Str %d", GetAttribute(ARM_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(AGILITY), "Agi %d", GetAttribute(AGILITY));
+  PrintAttribute("Str", ARM_STRENGTH, PanelPosX, PanelPosY++);
+  PrintAttribute("Agi", AGILITY, PanelPosX, PanelPosY++);
   return PanelPosY;
 }
 
@@ -634,7 +633,8 @@ void ostrich::GetAICommand()
 
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->IsBanana() && ItemVector[c]->CanBeSeenBy(this)
-    && ItemVector[c]->IsPickable(this) && !MakesBurdened(GetCarriedWeight() + ItemVector[c]->GetWeight()))
+    && ItemVector[c]->IsPickable(this)
+    && !MakesBurdened(GetCarriedWeight() + ItemVector[c]->GetWeight()))
       {
 	ItemVector[c]->MoveTo(GetStack());
 	++BananasPicked;
@@ -851,7 +851,7 @@ bool floatingeye::Hit(character* Enemy, vector2d, int, bool)
 
 int floatingeye::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, vector2d HitPos, double Damage, double ToHitValue, int Success, int Type, int Direction, bool Critical, bool ForceHit)
 {
-  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->Faint(150 + RAND() % 150)) /* Changes for fainting 2 out of 3 */
+  if(CanBeSeenBy(Enemy) && Enemy->HasEyes() && RAND() % 3 && Enemy->LoseConsciousness(150 + RAND_N(150))) /* Changes for fainting 2 out of 3 */
     {
       if(!Enemy->IsPlayer())
 	Enemy->EditExperience(WISDOM, 75, 1 << 13);

@@ -30,6 +30,7 @@ bool msgsystem::Enabled = true;
 bool msgsystem::BigMessageMode = false;
 bool msgsystem::MessagesChanged = true;
 bitmap* msgsystem::QuickDrawCache = 0;
+int msgsystem::LastMessageLines;
 
 void msgsystem::AddMessage(const char* Format, ...)
 {
@@ -70,7 +71,8 @@ void msgsystem::AddMessage(const char* Format, ...)
 
   if(Buffer == LastMessage)
     {
-      while(MessageHistory.GetLength() && MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
+      //while(MessageHistory.GetLength() && MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
+      for(int c = 0; c < LastMessageLines; ++c)
 	MessageHistory.Pop();
 
       ++Times;
@@ -78,8 +80,8 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      for(int c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
-	MessageHistory.SetColor(c, LIGHT_GRAY);
+      //for(int c = MessageHistory.GetLastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
+	//MessageHistory.SetColor(c, LIGHT_GRAY);
 
       Times = 1;
       Begin = End = vector2d(Time.Hour, Time.Min);
@@ -118,6 +120,7 @@ void msgsystem::AddMessage(const char* Format, ...)
     MessageHistory.AddEntry(Chapter[c], WHITE);
 
   MessageHistory.SetSelected(MessageHistory.GetLastEntryIndex());
+  LastMessageLines = Chapter.size();
   MessagesChanged = true;
 }
 
@@ -204,4 +207,13 @@ void msgsystem::Init()
   QuickDrawCache->ActivateFastFlag();
   game::SetStandardListAttributes(MessageHistory);
   MessageHistory.AddFlags(INVERSE_MODE);
+}
+
+void msgsystem::ThyMessagesAreNowOld()
+{
+  if(MessageHistory.GetColor(MessageHistory.GetLastEntryIndex()) == WHITE)
+    MessagesChanged = true;
+
+  for(int c = 0; c < MessageHistory.GetLength(); ++c)
+    MessageHistory.SetColor(c, LIGHT_GRAY);
 }

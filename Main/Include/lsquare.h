@@ -36,6 +36,7 @@ class gas;
 class bodypart;
 class liquid;
 class rain;
+class trap;
 
 typedef std::vector<item*> itemvector;
 typedef bool (item::*sorter)(const character*) const;
@@ -266,6 +267,7 @@ class lsquare : public square
   fluid* Fluid;
   smoke* Smoke;
   rain* Rain;
+  trap* Trap;
   emittervector Emitter;
   sunemittervector SunEmitter;
   glterrain* GLTerrain;

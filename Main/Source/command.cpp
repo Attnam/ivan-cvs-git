@@ -115,7 +115,7 @@ bool commandsystem::GoUp(character* Char)
 {
   if(Char->IsStuck())
     {
-      ADD_MESSAGE("You unable to go up with %s stuck to you.", Char->GetStuckTo()->CHAR_NAME(INDEFINITE));
+      ADD_MESSAGE("You unable to go up when caught in %s.", Char->GetTrapDescription().CStr());
       return false;
     }
 
@@ -155,7 +155,7 @@ bool commandsystem::GoDown(character* Char)
 {
   if(Char->IsStuck())
     {
-      ADD_MESSAGE("You unable to go down with %s stuck to you.", Char->GetStuckTo()->CHAR_NAME(INDEFINITE));
+      ADD_MESSAGE("You unable to go down when caught in %s.", Char->GetTrapDescription().CStr());
       return false;
     }
 

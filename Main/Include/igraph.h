@@ -116,7 +116,7 @@ class igraph
   static const bitmap* GetMenuGraphic() { return Menu; }
   static void LoadMenu();
   static void UnLoadMenu();
-  static bitmap* GetSilhouetteCache(int I1, int I2) { return SilhouetteCache[I1][I2]; }
+  static bitmap* GetSilhouetteCache(int I1, int I2, int I3) { return SilhouetteCache[I1][I2][I3]; }
   static const bitmap* GetBackGround() { return BackGround; }
   static void BlitBackGround(int, int, int, int);
   static void CreateBackGround(int);
@@ -136,7 +136,7 @@ class igraph
   static bitmap* FlagBuffer;
   static int** BodyBitmapValidityMap;
   static bitmap* Menu;
-  static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
+  static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS][SILHOUETTE_TYPES];
   static rawbitmap* ColorizeBuffer[2];
   static bitmap* Cursor[CURSOR_TYPES];
   static color16 CursorColor[CURSOR_TYPES];

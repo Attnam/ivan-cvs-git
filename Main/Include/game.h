@@ -49,6 +49,7 @@ class bitmap;
 class festring;
 class rain;
 class liquid;
+class entity;
 class olterrain;
 struct explosion;
 
@@ -131,6 +132,7 @@ inputfile& operator>>(inputfile&, killdata&);
 typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
 typedef std::map<ulong, item*> itemidmap;
+typedef std::map<ulong, entity*> trapidmap;
 typedef std::map<configid, killdata> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
 typedef std::vector<item*> itemvector;
@@ -210,6 +212,7 @@ class game
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID(item*);
+  static ulong CreateNewTrapID(entity*);
   static team* GetTeam(int I) { return Team[I]; }
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
@@ -273,11 +276,15 @@ class game
   static void CallForAttention(vector2d, int);
   static character* SearchCharacter(ulong);
   static item* SearchItem(ulong);
+  static entity* SearchTrap(ulong);
   static void AddCharacterID(character*, ulong);
   static void RemoveCharacterID(ulong);
   static void AddItemID(item*, ulong);
   static void RemoveItemID(ulong);
   static void UpdateItemID(item*, ulong);
+  static void AddTrapID(entity*, ulong);
+  static void RemoveTrapID(ulong);
+  static void UpdateTrapID(entity*, ulong);
   static int GetStoryState() { return StoryState; }
   static void SetStoryState(int What) { StoryState = What; }
   static void SetIsInGetCommand(bool What) { InGetCommand = What; }
@@ -382,6 +389,8 @@ class game
   static double GetGameSituationDanger();
   static olterrain* GetMonsterPortal() { return MonsterPortal; }
   static void SetMonsterPortal(olterrain* What) { MonsterPortal = What; }
+  static bool GetCausePanicFlag() { return CausePanicFlag; }
+  static void SetCausePanicFlag(bool What) { CausePanicFlag = What; }
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
@@ -407,6 +416,7 @@ class game
   static dungeon** Dungeon;
   static ulong NextCharacterID;
   static ulong NextItemID;
+  static ulong NextTrapID;
   static team** Team;
   static ulong LOSTick;
   static bool LOSUpdateRequested;
@@ -426,6 +436,7 @@ class game
   static double AveragePlayerAgilityExperience;
   static characteridmap CharacterIDMap;
   static itemidmap ItemIDMap;
+  static trapidmap TrapIDMap;
   static int Teams;
   static int Dungeons;
   static int StoryState;
@@ -476,6 +487,7 @@ class game
   static int NecroCounter;
   static int CursorData;
   static olterrain* MonsterPortal;
+  static bool CausePanicFlag;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

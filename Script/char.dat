@@ -84,7 +84,7 @@ character
 	HostileReplies == "@Dd grunts angrily.";
 	FriendlyReplies == "@Dd grunts happily.";
 	CanZap = false;
-	HasFeet = true;
+	HasALeg = true;
 	DeathMessage = "@Dd is slain.";
 	IgnoreDanger = false;
 	HPRequirementForGeneration = 0;
@@ -125,18 +125,18 @@ character
 	IsEnormous = false;
 	ScienceTalkAttribute =
 	{
-		140,
+		155,
 		"", "applied", "recent", "dark", "linear",
 		"molecular", "theoretical", "classical", "the future of", "queer",
 		"multilinear", "fundamental", "mythical", "nuclear", "loop quantum",
-		"higher", "primary", "secondary", "tertiary", "probabilistic",
+		"higher", "terrible", "mad", "tertiary", "probability",
 		"elementary", "practical", "artificial", "existential", "quantum",
 
 		"modern", "ancient", "empirical", "statistical", "the axioms of",
 		"hypothetical", "organic", "the principle of", "revolutionary", "dialectical",
 		"communal", "general", "special", "the theory of", "elliptical",
 		"heuristical", "urban", "spontaneous", "forbidden", "invisible",
-		"popular", "the current state of", "liberal", "new age", "ceremonial",
+		"popular", "the current state of", "liberal", "New Age", "ceremonial",
 
 		"good", "bad", "environmental", "the code of", "horseback",
 		"explosive", "educational", "recreational", "democratic", "military",
@@ -145,37 +145,44 @@ character
 		"jurassic", "synthetic", "integrated", "chaotic", "strategic",
 
 		"tropical", "corrupted", "diplomatic", "political", "experimental",
-		"happy", "concentration", "natural", "heroic", "hexagonal",
+		"happy", "the purpose of", "natural", "heroic", "hexagonal",
 		"wrong", "orthogonal", "paraller", "infinite", "the solvability of",
 		"last century", "orthodox", "the history of", "soft", "hard",
 		"space", "comical", "collective", "optical", "intellectual",
 
 		"creative uses of", "global", "the origin of", "royal", "clinical",
-		"evolutionary", "tachyon", "singularity", "psi", "plasma",
+		"evolutionary", "tachyon", "singularity", "psychic", "plasma",
 		"neutronium", "antimatter", "hypnotic", "polymorphic", "controlled",
 		"doctrine:", "frictionless", "the conservation of", "ideal", "crystal",
 		"retroviral", "orbital", "nonlinear", "the secrets of", "self-aware",
 
 		"sentient", "silksteel", "superstring", "temporal", "transcendent",
 		"unified", "the threshold of", "finite", "postmodern", "selective",
-		"arctic", "the proofs of", "mortal", "teleological", "illegitimate";
+		"arctic", "the proofs of", "mortal", "teleological", "illegitimate",
+		"hybrid", "moral", "wicked", "black", "erotic",
+		"dead", "commercial", "nerd", "alien", "nautical",
+
+		"mental", "compressed", "punishment", "public", "the implementation of";
 	}
 	ScienceTalkPrefix =
 	{
-		38,
+		51,
+		"", "", "", "", "",
 		"", "", "", "", "",
 		"macro", "nano", "neuro", "semi", "hemi",
 		"cryo", "eroto", "ethno", "hyper", "trans",
 		"bio", "beta", "gamma", "geo", "mega",
-		"radio", "cosmo", "post", "photo", "tele",
 
+		"radio", "cosmo", "post", "photo", "tele",
 		"meta", "neo", "para", "micro", "necro",
 		"super", "auto", "laser", "ego", "eco",
-		"gyro", "sub", "multi";
+		"gyro", "sub", "multi", "cyber", "xeno",
+		"aero", "pyro", "helio", "caco", "pseudo",
+		"thermo";
 	}
 	ScienceTalkName =
 	{
-		182,
+		254,
 		"sanitation", "relativity", "physics", "mathematics", "philosophy",
 		"numerology", "slavery", "mechanics", "magicks", "architecture",
 		"archaeology", "logic", "fiction", "questions", "theology",
@@ -186,9 +193,9 @@ character
 		"culture", "forestry", "engineering", "journalism", "agriculture",
 		"ergonomics", "sagas", "pedagogy", "apiculture", "aquaculture",
 		"horticulture", "silviculture", "law", "dentistry", "surgery",
-		"hematology", "cardiology", "pharmacy", "dogmatics", "cartography",
+		"rocketry", "fission", "pharmacy", "dogmatics", "cartography",
 
-		"gerontology", "formalism", "feminism", "communism", "stenography",
+		"gerontology", "formalism", "feminism", "communism", "flight",
 		"cricket", "rhetorics", "navigation", "sculpture", "literature",
 		"shamanism", "painting", "utilitarism", "grammar", "arithmetic",
 		"algebra", "marxism", "capitalism", "behaviorism", "causality",
@@ -196,7 +203,7 @@ character
 
 		"herecy", "programming", "gaming", "spheres", "curves",
 		"shapes", "speciesism", "feudalism", "bananas", "poker",
-		"meteorology", "pornography", "waves", "legends", "torture",
+		"meteorology", "pornography", "waves", "anarchy", "torture",
 		"accidents", "activity", "theathre", "runes", "writing",
 		"masonry", "pottery", "religions", "burial", "working",
 
@@ -204,28 +211,47 @@ character
 		"medicine", "tradition", "chivalry", "righteousness", "banking",
 		"gravity", "metallurgy", "magnetism", "nationalism", "industry",
 		"pollution", "espionage", "corporations", "particles", "transportation",
-		"refining", "combustion", "parts", "steel", "materials",
+		"refining", "combustion", "colonization", "steel", "materials",
 
-		"flight", "broomsticks", "rocketry", "fission", "fusion",
-		"power", "computers", "conductors", "fibers", "defence",
-		"weapons", "colonization", "civilizations", "anarchy", "fruits",
-		"camping", "resistance", "chauvinism", "simulation", "universes",
-		"diseases", "taxonomy", "taxidermy", "viruses", "bacteria",
+		"hallucinations", "armours", "trance", "afterlife", "paradigms",
+		"customer support", "virginity", "zoology", "witchcraft", "wine",
+		"claustrophobia", "eddies", "vegetables", "mobility", "eudaimoia",
+		"ablutophobia", "palindromes", "jokes", "materialism", "surfaces",
+		"acarophobia", "energy", "momentum", "mushrooms", "brains",
 
-		"travel", "meditation", "systems", "algorithms", "death",
-		"balls", "states", "levitation", "tubes", "structures",
-		"virtue", "immortality", "elevators", "everything", "paradigms",
-		"armours", "trance", "afterlife", "eudaimoia", "splicing",
-		"flexibility", "initiative", "loyalty", "mobility", "surfaces",
+		"selenophobia", "alloys", "equations", "bombs", "fashion",
+		"taurophobia", "naturism", "nirvana", "drugs", "everything",
+		"ranidaphobia", "horror", "sightseeing", "marriage", "mirages",
+		"phronemophobia", "cancer", "scrofula", "depression", "air power",
+		"phallophobia", "romance", "bondage", "interfaces", "software",
 
-		"energy", "momentum", "materialism", "interfaces", "software",
-		"alloys", "equations";
+		"pentheraphobia", "nations", "levitation", "tubes", "structures",
+		"peladophobia", "travel", "meditation", "systems", "algorithms",
+		"lachanophobia", "taxonomy", "taxidermy", "viruses", "bacteria",
+		"epistaxiophobia", "camping", "resistance", "chauvinism", "fruits",
+		"ephebiphobia", "simulation", "computers", "conductors", "fibers",
+
+		"coulrophobia", "defence", "broomsticks", "fusion", "power",
+		"arachnophobia", "balls", "diseases", "universes", "weapons",
+		"virtue", "immortality", "elevators", "marketing", "civilizations",
+		"dreams", "anatomy", "reproduction", "calligraphy", "chess",
+		"Go", "cooking", "altruism", "anomalities", "fishing",
+
+		"crime", "nonsense", "monsters", "thought control", "euthanasia",
+		"genocide", "cremation", "waste disposal", "breeding", "eugenics",
+		"minds", "lottery", "sterilization", "utopias", "perpetual motion",
+		"dynamics", "entropy", "skepticism", "hoaxes", "creationism",
+		"cold fusion", "execution",  "warfare", "miracles", "the truth",
+
+		"lobotomy", "squaring the circle", "trisecting the angle", "cosmetics";
 	}
   ScienceTalkPossibility = 0;
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceModifier */
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomModifier */
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkIntelligenceRequirement */
   /* Obligatory if ScienceTalkPossibility != 0: ScienceTalkWisdomRequirement */
+	IsExtraFragile = false;
+	AllowUnconsciousness = true;
 }
 
 humanoid
@@ -491,6 +517,7 @@ petrus
 	EnergyResistance = 50;
 	IsImmuneToLeprosy = true;
 	IsImmuneToItemTeleport = true;
+	AllowUnconsciousness = false;
 }
 
 farmer
@@ -753,6 +780,7 @@ guard
 			"\"The house of Galladon has served Petrus ever since he took over.\"";
 		}
 		IsImmuneToItemTeleport = true;
+		AllowUnconsciousness = false;
 	}
 }
 
@@ -999,6 +1027,7 @@ oree
 	BloodMaterial = ACIDOUS_BLOOD;
 	SweatMaterial = ACIDOUS_BLOOD;
 	IsImmuneToItemTeleport = true;
+	AllowUnconsciousness = false;
 }
 
 darkknight
@@ -1030,6 +1059,7 @@ darkknight
 	HostileReplies == "@Dd yells: \"For Mortifer I shall slay you!\"";
 	FriendlyReplies == "\"Don't bother me unless you need help to die.\"";
 	AttachedGod = CRUENTUS;
+	IsExtraFragile = true;
 
 	Config ROOKIE;
 	{
@@ -1123,6 +1153,8 @@ darkknight
 		ElectricityResistance = 30;
 		EnergyResistance = 30;
 		IsImmuneToItemTeleport = true;
+		IsExtraFragile = false;
+		AllowUnconsciousness = false;
 	}
 }
 
@@ -1391,7 +1423,7 @@ billswill
 	FriendlyReplies == "\"Praise the Corporation!\"";
 	Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
 	PanicLevel = 0;
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = MAGICAL_AIR;
 	DeathMessage = "@Dd vanishes from existence.";
 	SpillsBlood = false;
@@ -1446,6 +1478,7 @@ skeleton
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
 	WieldedPosition = 0, -1;
+	IsExtraFragile = true;
 
 	Config WARRIOR;
 	{
@@ -1495,6 +1528,7 @@ skeleton
 		EnergyResistance = 100;
 		ClassStates = GAS_IMMUNITY|TELEPORT_CONTROL;
 		IsImmuneToItemTeleport = true;
+		IsExtraFragile = false;
 	}
 }
 
@@ -1628,7 +1662,7 @@ mommo
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
 	BaseEmitation = rgb24(90, 110, 90);
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = BROWN_SLIME;
 	DeathMessage = "@Dd turns into lifeless goo.";
 	HasEyes = false;
@@ -1791,7 +1825,7 @@ dog
 	DefaultAgility = 15;
 	DefaultEndurance = 8;
 	DefaultPerception = 18;
-	DefaultIntelligence = 7;
+	DefaultIntelligence = 5;
 	DefaultWisdom = 5;
 	DefaultCharisma = 15;
 	DefaultMana = 0;
@@ -2130,7 +2164,7 @@ dolphin
 	PostFix = "in season";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 200;
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = DOLPHIN_FLESH;
 	AttachedGod = SOPHOS;
 	ForceVomitMessage = "You push your fin down to your throat and vomit.";
@@ -2216,6 +2250,7 @@ petrusswife
 	}
 	AttachedGod = DULCIS;
 	WillCarryItems = false;
+	IsExtraFragile = true;
 
 	Config 1;
 	{
@@ -2447,6 +2482,7 @@ zombie
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
 	WieldedPosition = -1, -2;
+	IsExtraFragile = true;
 }
 
 imp
@@ -2650,6 +2686,7 @@ mistress
 		ElectricityResistance = 40;
 		EnergyResistance = 40;
 		IsImmuneToItemTeleport = true;
+		AllowUnconsciousness = false;
 	}
 }
 
@@ -2760,6 +2797,7 @@ kobold
 	DeathMessage = "@Dd dies yelling like a tortured hyena.";
 	AttachedGod = CRUENTUS;
 	WieldedPosition = 0, -1;
+	IsExtraFragile = true;
 
 	Config CHIEFTAIN;
 	{
@@ -2814,6 +2852,7 @@ kobold
 		FireResistance = 20;
 		ElectricityResistance = 20;
 		EnergyResistance = 20;
+		IsExtraFragile = false;
 	}
 }
 
@@ -2854,6 +2893,7 @@ gibberling
 	HostileReplies == "@Dd gibbers diabolically.";
 	FriendlyReplies == "@Dd gibbers joyfully.";
 	WillCarryItems = false;
+	IsExtraFragile = true;
 }
 
 largecat
@@ -3194,7 +3234,7 @@ carnivorousplant
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
 	ClassStates = INFRA_VISION;
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = PLANT_FIBER;
 	DeathMessage = "@Dd is destroyed.";
 	SpillsBlood = false;
@@ -3203,6 +3243,7 @@ carnivorousplant
 	AttachedGod = SILVA;
 	IsPlant = true;
 	IsRooted = true;
+	AllowUnconsciousness = false;
 
 	Config GREATER;
 	{
@@ -3285,7 +3326,7 @@ snake
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 	ClassStates = INFRA_VISION;
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = SNAKE_FLESH;
 	DangerModifier = 75;
 	CanOpen = false;
@@ -3468,6 +3509,7 @@ orc
 		EnergyResistance = 30;
 		IsImmuneToItemTeleport = true;
 		IsEnormous = true;
+		AllowUnconsciousness = false;
 	}
 }
 
@@ -3753,6 +3795,7 @@ elder
 	ScienceTalkWisdomModifier = 100;
 	ScienceTalkIntelligenceRequirement = 10;
 	ScienceTalkWisdomRequirement = 15;
+	IsExtraFragile = true;
 }
 
 encourager
@@ -3859,7 +3902,7 @@ floatingeye
 	SkinColor = rgb16(180,180,180);
 	ClothColor = rgb16(0, 0, 160); /* eye color */
 	StandVerb = "levitating";
-	HasFeet = false;
+	HasALeg = false;
 	CanRead = true;
 	HasHead = false;
 	UsesNutrition = false;
@@ -3870,6 +3913,7 @@ floatingeye
 	BaseBiteStrength = 0;
 	MoveType = FLY;
 	CanHear = false;
+	AllowUnconsciousness = false;
 }
 
 eddy
@@ -3894,7 +3938,7 @@ eddy
 	CanBeGenerated = true;
 	HasEyes = false;
 	HasHead = false;
-	HasFeet = false;
+	HasALeg = false;
 	CanBeGenerated = true;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 50;
@@ -3933,7 +3977,7 @@ mushroom
 	NameSingular = "mushroom";
 	HasEyes = false;
 	HasHead = false;
-	HasFeet = false;
+	HasALeg = false;
 	UsesNutrition = false;
 	SpillsBlood = false;
 	Sweats = false;
@@ -3948,6 +3992,7 @@ mushroom
 	CanOpen = false;
 	StandVerb = "rooted";
 	IsRooted = true;
+	AllowUnconsciousness = false;
 }
 
 magicmushroom
@@ -3967,7 +4012,7 @@ magicmushroom
 	NameSingular = "mushroom";
 	HasEyes = false;
 	HasHead = false;
-	HasFeet = false;
+	HasALeg = false;
 	UsesNutrition = false;
 	FleshMaterial = MAGIC_MUSHROOM_FLESH;
 	SkinColor = rgb16(200, 170, 170);
@@ -3997,6 +4042,7 @@ darkmage
 	AttachedGod = INFUSCOR;
 	IsAbstract = true;
 	KnownCWeaponSkills == BLUNT_WEAPONS;
+	IsExtraFragile = true;
 
 	Config APPRENTICE;
 	{
@@ -4156,6 +4202,8 @@ darkmage
 		EnergyResistance = 40;
 		PolymorphIntelligenceRequirement = 50;
 		IsImmuneToItemTeleport = true;
+		IsExtraFragile = false;
+		AllowUnconsciousness = false;
 	}
 }
 
@@ -4182,7 +4230,7 @@ ghost
 	HostileReplies == "\"Boo!\"";
 	FriendlyReplies == "\"A very good Boo to you, my friend.\"";
 	PanicLevel = 0;
-	HasFeet = false;
+	HasALeg = false;
 	FleshMaterial = GHOST;
 	DeathMessage = "@Dd is sucked into hell.";
 	SpillsBlood = false;
@@ -4374,6 +4422,7 @@ elpuri
 	KnownCWeaponSkills == BITE;
 	MoveType = WALK|SWIM; 
 	DestroysWalls = true;
+	AllowUnconsciousness = false;
 }
 
 genetrixvesana
@@ -4413,11 +4462,12 @@ genetrixvesana
 	HostileReplies == "@Dd is silent.";
 	FriendlyReplies == "@Dd is silent.";
 	ClassStates = INFRA_VISION;
-	HasFeet = false;
+	HasALeg = false;
 	SpillsBlood = false;
 	Sweats = false;
 	StandVerb = "rooted";
 	IsRooted = true;
+	AllowUnconsciousness = false;
 }
 
 hedgehog
@@ -4461,6 +4511,7 @@ bunny
 	FriendlyReplies == "@Dd squeals happily.";
 	SkinColor = rgb16(90, 70, 60);
 	NameSingular = "bunny";
+	NamePlural = "bunnies";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 650;
 	CanBeGenerated = true;
@@ -4585,6 +4636,7 @@ hattifattener
 	SpillsBlood = false;
 	Sweats = false;
 	Alias == "Hattivatti";
+	AllowUnconsciousness = false;
 }
 
 necromancer
@@ -4607,6 +4659,7 @@ necromancer
 	IsAbstract = true;
 	KnownCWeaponSkills == BLUNT_WEAPONS;
 	NameSingular = "necromancer";
+	IsExtraFragile = true;
 
 	Config APPRENTICE_NECROMANCER;
 	{
@@ -4743,6 +4796,7 @@ tourist
 	DefaultCommandFlags = FOLLOW_PLAYER|FLEE_FROM_ENEMIES;
 	ConstantCommandFlags = DONT_CONSUME_ANYTHING_VALUABLE;
 	WillCarryItems = false;
+	IsExtraFragile = true;
 
 	Config HUSBAND;
 	{
@@ -4924,6 +4978,7 @@ archangel
 	ScienceTalkWisdomModifier = 250;
 	ScienceTalkIntelligenceRequirement = 20;
 	ScienceTalkWisdomRequirement = 40;
+	AllowUnconsciousness = false;
 
 	Config VALPURUS;
 	{

@@ -11,6 +11,7 @@
 
 #include "entity.h"
 #include "pool.h"
+#include "vector2d.h"
 
 #include "entity.cpp"
 #include "pool.cpp"

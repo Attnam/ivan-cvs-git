@@ -62,6 +62,7 @@ dungeon** game::Dungeon;
 int game::CurrentDungeonIndex;
 ulong game::NextCharacterID = 1;
 ulong game::NextItemID = 1;
+ulong game::NextTrapID = 1;
 team** game::Team;
 ulong game::LOSTick;
 vector2d game::CursorPos(-1, -1);
@@ -101,6 +102,7 @@ int game::NewAttribute[ATTRIBUTES];
 int game::LastAttributeChangeTick[ATTRIBUTES];
 int game::NecroCounter;
 int game::CursorData;
+bool game::CausePanicFlag;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -132,6 +134,7 @@ int game::NextDangerIDType;
 int game::NextDangerIDConfigIndex;
 characteridmap game::CharacterIDMap;
 itemidmap game::ItemIDMap;
+trapidmap game::TrapIDMap;
 bool game::PlayerHurtByExplosion;
 area* game::CurrentArea;
 level* game::CurrentLevel;
@@ -177,6 +180,23 @@ void game::UpdateItemID(item* Item, ulong ID) {
 if(ItemIDMap.find(ID) == ItemIDMap.end())
   int esko = esko = 2;
 ItemIDMap.find(ID)->second = Item;
+}
+void game::AddTrapID(entity* Trap, ulong ID) {
+if(TrapIDMap.find(ID) != TrapIDMap.end())
+  int esko = esko = 2;
+TrapIDMap.insert(std::pair<ulong, entity*>(ID, Trap));
+}
+void game::RemoveTrapID(ulong ID)
+{
+if(ID && TrapIDMap.find(ID) == TrapIDMap.end())
+  int esko = esko = 2;
+
+if(ID) TrapIDMap.erase(TrapIDMap.find(ID));
+}
+void game::UpdateTrapID(entity* Trap, ulong ID) {
+if(TrapIDMap.find(ID) == TrapIDMap.end())
+  int esko = esko = 2;
+TrapIDMap.find(ID)->second = Trap;
 }
 const dangermap& game::GetDangerMap() { return DangerMap; }
 void game::ClearItemDrawVector() { ItemDrawVector.clear(); }
@@ -229,6 +249,7 @@ bool game::Init(const festring& Name)
 
   LOSTick = 2;
   DangerFound = 0;
+  CausePanicFlag = false;
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -282,6 +303,7 @@ bool game::Init(const festring& Name)
 	igraph::CreateBackGround(GRAY_FRACTAL);
 	NextCharacterID = 1;
 	NextItemID = 1;
+	NextTrapID = 1;
 	InitScript();
 	CreateTeams();
 	CreateGods();
@@ -300,7 +322,7 @@ bool game::Init(const festring& Name)
 
 	Player->SetMoney(Player->GetMoney() + RAND() % 11);
 	// ///
-	//Player->GainIntrinsic(LEPROSY);
+	//Player->GainIntrinsic(PARASITIZED);
 	// ///
 	GetTeam(0)->SetLeader(Player);
 	InitDangerMap();
@@ -341,6 +363,7 @@ bool game::Init(const festring& Name)
 	PlayerRunning = false;
 	InitAttributeMemory();
 	NecroCounter = 0;
+	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
 
 	if(game::IsXMas())
 	  {
@@ -348,7 +371,7 @@ bool game::Init(const festring& Name)
 	    game::GetPlayer()->GetStack()->AddItem(Present);
 	    ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
 	  }
-	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, > to enter a square and ? to view other commands.");
+
 	return true;
       }
     default:
@@ -728,7 +751,7 @@ bool game::Save(const festring& SaveName)
   SaveFile << int(SAVE_FILE_VERSION);
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
-  SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NecroCounter;
+  SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NextTrapID << NecroCounter;
   SaveFile << SumoWrestling << PlayerSumoChampion << GlobalRainTimeModifier;
   long Seed = RAND();
   femath::SetSeed(Seed);
@@ -789,7 +812,7 @@ int game::Load(const festring& SaveName)
 
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
-  SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID >> NecroCounter;
+  SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID >> NextTrapID >> NecroCounter;
   SaveFile >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<long>(SaveFile));
   SaveFile >> AveragePlayerArmStrengthExperience;
@@ -1337,7 +1360,7 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
   int Key = 0;
   SetDoZoom(Zoom);
   vector2d Return;
-  CursorData = NORMAL_CURSOR;
+  CursorData = RED_CURSOR;
 
   if(Handler)
     Handler(CursorPos);
@@ -1910,7 +1933,7 @@ void game::InitPlayerAttributeAverage()
   humanoid* Player = static_cast<humanoid*>(GetPlayer());
   int Arms = 0;
   int Legs = 0;
-  rightarm* RightArm = Player->GetRightArm();
+  arm* RightArm = Player->GetRightArm();
 
   if(RightArm && !RightArm->UseMaterialAttributes())
     {
@@ -1919,7 +1942,7 @@ void game::InitPlayerAttributeAverage()
       ++Arms;
     }
 
-  leftarm* LeftArm = Player->GetLeftArm();
+  arm* LeftArm = Player->GetLeftArm();
 
   if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
@@ -1928,7 +1951,7 @@ void game::InitPlayerAttributeAverage()
       ++Arms;
     }
 
-  rightleg* RightLeg = Player->GetRightLeg();
+  leg* RightLeg = Player->GetRightLeg();
 
   if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
@@ -1937,7 +1960,7 @@ void game::InitPlayerAttributeAverage()
       ++Legs;
     }
 
-  leftleg* LeftLeg = Player->GetLeftLeg();
+  leg* LeftLeg = Player->GetLeftLeg();
 
   if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
@@ -1971,7 +1994,7 @@ void game::UpdatePlayerAttributeAverage()
   double PlayerAgilityExperience = 0;
   int Arms = 0;
   int Legs = 0;
-  rightarm* RightArm = Player->GetRightArm();
+  arm* RightArm = Player->GetRightArm();
 
   if(RightArm && !RightArm->UseMaterialAttributes())
     {
@@ -1980,7 +2003,7 @@ void game::UpdatePlayerAttributeAverage()
       ++Arms;
     }
 
-  leftarm* LeftArm = Player->GetLeftArm();
+  arm* LeftArm = Player->GetLeftArm();
 
   if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
@@ -1989,7 +2012,7 @@ void game::UpdatePlayerAttributeAverage()
       ++Arms;
     }
 
-  rightleg* RightLeg = Player->GetRightLeg();
+  leg* RightLeg = Player->GetRightLeg();
 
   if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
@@ -1998,7 +2021,7 @@ void game::UpdatePlayerAttributeAverage()
       ++Legs;
     }
 
-  leftleg* LeftLeg = Player->GetLeftLeg();
+  leg* LeftLeg = Player->GetLeftLeg();
 
   if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
@@ -2084,6 +2107,19 @@ if(ItemIDMap.find(ID) != ItemIDMap.end())
   return ID;
 }
 
+ulong game::CreateNewTrapID(entity* NewTrap)
+{
+  ulong ID = NextTrapID++;
+
+if(TrapIDMap.find(ID) != TrapIDMap.end())
+  int esko = esko = 2;
+
+  if(NewTrap)
+    TrapIDMap.insert(std::pair<ulong, entity*>(ID, NewTrap));
+
+  return ID;
+}
+
 character* game::SearchCharacter(ulong ID)
 {
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
@@ -2094,6 +2130,12 @@ item* game::SearchItem(ulong ID)
 {
   itemidmap::iterator Iterator = ItemIDMap.find(ID);
   return Iterator != ItemIDMap.end() ? Iterator->second : 0;
+}
+
+entity* game::SearchTrap(ulong ID)
+{
+  trapidmap::iterator Iterator = TrapIDMap.find(ID);
+  return Iterator != TrapIDMap.end() ? Iterator->second : 0;
 }
 
 outputfile& operator<<(outputfile& SaveFile, const configid& Value)
@@ -3129,9 +3171,9 @@ void game::PetHandler(vector2d CursorPos)
   character* Char = CurrentArea->GetSquare(CursorPos)->GetCharacter();
 
   if(Char && Char->CanBeSeenByPlayer() && Char->IsPet() && !Char->IsPlayer())
-    CursorData = NORMAL_CURSOR|TARGET;
+    CursorData = RED_CURSOR|TARGET;
   else
-    CursorData = NORMAL_CURSOR;
+    CursorData = RED_CURSOR;
 
   if(Char && !Char->IsPlayer() && Char->IsPet())
     LastPetUnderCursor = Char;
@@ -3338,7 +3380,7 @@ void game::TeleportHandler(vector2d CursorPos)
   if((CursorPos - Player->GetPos()).GetLengthSquare() > Player->GetTeleportRangeSquare())
     CursorData = BLUE_CURSOR|TARGET;
   else
-    CursorData = NORMAL_CURSOR|TARGET;
+    CursorData = RED_CURSOR|TARGET;
 }
 
 double game::GetGameSituationDanger()

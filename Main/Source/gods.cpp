@@ -594,7 +594,7 @@ void loricatus::PrayGoodEffect()
     }
   else
     {
-      if(PLAYER->GetArms())
+      if(PLAYER->GetUsableArms())
 	ADD_MESSAGE("You feel a slight tingling in your hands.");
       else
 	ADD_MESSAGE("You feel a slight tingle.");
@@ -630,7 +630,7 @@ void loricatus::PrayBadEffect()
       ADD_MESSAGE("%s emits strange light but remain unchanged.", MainWielded->CHAR_NAME(DEFINITE));
   else
     {
-      if(PLAYER->GetArms())
+      if(PLAYER->GetUsableArms())
 	ADD_MESSAGE("You feel a slight tingling in your hands.");
       else
 	ADD_MESSAGE("You feel a slight tingle.");
@@ -819,7 +819,7 @@ void mortifer::Pray()
 void infuscor::PrayBadEffect()
 {
   ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
-  PLAYER->Faint(1000 + RAND() % 1000);
+  PLAYER->LoseConsciousness(1000 + RAND_N(1000));
 }
 
 void nefas::PrayGoodEffect()

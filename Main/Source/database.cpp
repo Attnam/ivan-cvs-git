@@ -333,7 +333,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(HostileReplies);
   ADD_MEMBER(CanZap);
   ADD_MEMBER(FleshMaterial);
-  ADD_MEMBER(HasFeet);
+  ADD_MEMBER(HasALeg);
   ADD_MEMBER(DeathMessage);
   ADD_MEMBER(IgnoreDanger);
   ADD_MEMBER(HPRequirementForGeneration);
@@ -380,6 +380,8 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ScienceTalkWisdomModifier);
   ADD_MEMBER(ScienceTalkIntelligenceRequirement);
   ADD_MEMBER(ScienceTalkWisdomRequirement);
+  ADD_MEMBER(IsExtraFragile);
+  ADD_MEMBER(AllowUnconsciousness);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

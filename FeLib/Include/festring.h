@@ -83,6 +83,7 @@ class festring
   void SwapData(festring&);
   void ExtractWord(festring&);
   long GetCheckSum() const;
+  void EnsureOwnsData();
  private:
   static void InstallIntegerMap();
   static void DeInstallIntegerMap();
@@ -214,7 +215,7 @@ inline int festring::Compare(const festring& Str) const
 	return Comp;
     }
 
-  return ThisSize < StrSize ? -1 : ThisSize == StrSize ? 0 : 1;
+  return ThisSize < StrSize ? -1 : ThisSize != StrSize;
 }
 
 inline const char* festring::CStr() const

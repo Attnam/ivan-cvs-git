@@ -273,7 +273,7 @@ void fluid::AddFluidInfo(const fluid* Fluid, festring& String)
       if(!Blood || OneBlood)
 	String << Show[0]->GetName(false, false);
       else
-	String << "blood";
+	String << "different types of blood";
 
       if(Index == 2)
 	String << " and " << Show[1]->GetName(false, false);

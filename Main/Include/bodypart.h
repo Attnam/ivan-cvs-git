@@ -38,13 +38,13 @@ class ABSTRACT_ITEM
   void SetHP(int);
   int GetHP() const { return HP; }
   void EditHP(int);
-  void IncreaseHP() { ++HP; }
+  void IncreaseHP();
   virtual int GetTotalResistance(int) const = 0;
   virtual bool ReceiveDamage(character*, int, int, int);
   const festring& GetOwnerDescription() const { return OwnerDescription; }
   void SetOwnerDescription(const festring& What) { OwnerDescription = What; }
-  bool IsUnique() const { return Unique; }
-  void SetIsUnique(bool What) { Unique = What; }
+  bool IsUnique() const { return !!(BodyPartFlags & UNIQUE); }
+  void SetIsUnique(bool);
   virtual void DropEquipment(stack* = 0) { }
   //virtual bool ApplyExperience() { return false; }
   virtual void InitSpecialAttributes() { }
@@ -57,9 +57,9 @@ class ABSTRACT_ITEM
   virtual int GetEquipmentSlots() const { return 0; }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
-  virtual void CalculateMaxHP(bool = true);
+  void CalculateMaxHP(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   virtual void SignalVolumeAndWeightChange();
-  void RestoreHP() { HP = MaxHP; }
+  void RestoreHP();
   virtual void CalculateDamage() { }
   virtual void CalculateToHitValue() { }
   virtual void CalculateAPCost() { }
@@ -76,8 +76,6 @@ class ABSTRACT_ITEM
   void SpillBlood(int);
   void SpillBlood(int, vector2d);
   virtual void Be();
-  bool IsInBadCondition() const { return (HP << 1) + HP < MaxHP || (HP == 1 && MaxHP != 1); }
-  bool IsInBadCondition(int HP) const { return (HP << 1) + HP < MaxHP || (HP == 1 && MaxHP != 1); }
   int GetConditionColorIndex() const;
   void SetBitmapPos(vector2d What) { BitmapPos = What; }
   void SetSpecialFlags(int What) { SpecialFlags = What; }
@@ -90,7 +88,7 @@ class ABSTRACT_ITEM
   virtual void SignalSpoilLevelChange(material*);
   virtual bool CanBeEatenByAI(const character*) const;
   virtual bool DamageArmor(character*, int, int) { return false; }
-  bool CannotBeSevered(int);
+  bool CanBeSevered(int) const;
   virtual bool EditAllAttributes(int) { return false; }
   virtual void Draw(bitmap*, vector2d, color24, int, bool, bool) const;
   void SetIsSparklingB(bool What) { IsSparklingB = What; }
@@ -125,6 +123,10 @@ class ABSTRACT_ITEM
   virtual void SpecialEatEffect(character*, int);
   virtual character* GetBodyPartMaster() const { return Master; }
   virtual bool AllowFluids() const { return true; }
+  bool IsBadlyHurt() const { return !!(Flags & BADLY_HURT); }
+  bool IsStuck() const { return !!(Flags & STUCK); }
+  bool IsUsable() const { return !(Flags & (BADLY_HURT|STUCK)); }
+  virtual void SignalPossibleUsabilityChange() { }
  protected:
   virtual bool IsSparkling(int) const;
   virtual alpha GetMaxAlpha() const;
@@ -141,6 +143,7 @@ class ABSTRACT_ITEM
   virtual int GetWobbleData() const { return WobbleData; }
   void UpdateArmorPicture(graphicdata&, item*, int, vector2d (item::*)(int) const, bool = false) const;
   void DrawEquipment(const graphicdata&, bitmap*, vector2d, color24, bool) const;
+  void UpdateFlags();
   festring OwnerDescription;
   vector2d BitmapPos;
   color16 ColorB;
@@ -150,7 +153,6 @@ class ABSTRACT_ITEM
   int WobbleData;
   int HP;
   int MaxHP;
-  bool Unique;
   long CarriedWeight;
   long BodyPartVolume;
   character* Master;
@@ -159,6 +161,7 @@ class ABSTRACT_ITEM
   bool IsSparklingD;
   int BloodMaterial;
   uchar SpillBloodCounter;
+  ulong BodyPartFlags;
 );
 
 class ITEM
@@ -193,6 +196,7 @@ class ITEM
   virtual bool DamageArmor(character*, int, int);
   virtual head* Behead();
   virtual item* GetArmorToReceiveFluid(bool) const;
+  virtual void SignalPossibleUsabilityChange();
  protected:
   void UpdateHeadArmorPictures(graphicdata&) const;
   virtual void VirtualConstructor(bool);
@@ -278,13 +282,10 @@ class ABSTRACT_ITEM
   int GetAttribute(int, bool = true) const;
   bool EditAttribute(int, int);
   void EditExperience(int, double, double);
-  //virtual bool ApplyExperience();
   void SetStrength(int What) { StrengthExperience = What * EXP_MULTIPLIER; }
   void SetDexterity(int What) { DexterityExperience = What * EXP_MULTIPLIER; }
   virtual void InitSpecialAttributes();
   virtual void Mutate();
-  /*int GetDexterity() const { return Dexterity; }
-  int GetStrength() const { return Strength; }*/
   virtual arm* GetPairArm() const = 0;
   long GetWieldedAPCost() const;
   long GetUnarmedAPCost() const;
@@ -327,6 +328,7 @@ class ABSTRACT_ITEM
   virtual void CopyAttributes(const bodypart*);
   double GetStrengthExperience() const { return StrengthExperience; }
   double GetDexterityExperience() const { return DexterityExperience; }
+  virtual void SignalPossibleUsabilityChange();
  protected:
   virtual sweaponskill*& GetCurrentSWeaponSkill() const = 0;
   virtual void VirtualConstructor(bool);
@@ -334,8 +336,6 @@ class ABSTRACT_ITEM
   gearslot WieldedSlot;
   gearslot GauntletSlot;
   gearslot RingSlot;
-  /*int Strength;
-  int Dexterity;*/
   double StrengthExperience;
   double DexterityExperience;
   int BaseUnarmedStrength;
@@ -410,11 +410,6 @@ class ABSTRACT_ITEM
   int GetAttribute(int, bool = true) const;
   bool EditAttribute(int, int);
   void EditExperience(int, double, double);
-  //virtual bool ApplyExperience();
-  /*void SetStrength(int What) { Strength = What; }
-  void SetAgility(int What) { Agility = What; }
-  int GetAgility() const { return Agility; }
-  int GetStrength() const { return Strength; }*/
   virtual void InitSpecialAttributes();
   virtual void Mutate();
   long GetKickAPCost() const { return KickAPCost; }
@@ -437,12 +432,11 @@ class ABSTRACT_ITEM
   virtual void CopyAttributes(const bodypart*);
   double GetStrengthExperience() const { return StrengthExperience; }
   double GetAgilityExperience() const { return AgilityExperience; }
+  virtual void SignalPossibleUsabilityChange();
  protected:
   virtual void VirtualConstructor(bool);
   void UpdateLegArmorPictures(graphicdata&, graphicdata&, int) const;
   gearslot BootSlot;
-  /*int Strength;
-  int Agility;*/
   double StrengthExperience;
   double AgilityExperience;
   int BaseKickStrength;

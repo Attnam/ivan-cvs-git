@@ -31,11 +31,11 @@ class ABSTRACT_CHARACTER
   virtual bool Hit(character*, vector2d, int, bool = false);
   virtual int GetSize() const;
   head* GetHead() const { return static_cast<head*>(*BodyPartSlot[HEAD_INDEX]); }
-  rightarm* GetRightArm() const { return static_cast<rightarm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
-  leftarm* GetLeftArm() const { return static_cast<leftarm*>(*BodyPartSlot[LEFT_ARM_INDEX]); }
+  arm* GetRightArm() const { return static_cast<arm*>(*BodyPartSlot[RIGHT_ARM_INDEX]); }
+  arm* GetLeftArm() const { return static_cast<arm*>(*BodyPartSlot[LEFT_ARM_INDEX]); }
   groin* GetGroin() const { return static_cast<groin*>(*BodyPartSlot[GROIN_INDEX]); }
-  rightleg* GetRightLeg() const { return static_cast<rightleg*>(*BodyPartSlot[RIGHT_LEG_INDEX]); }
-  leftleg* GetLeftLeg() const { return static_cast<leftleg*>(*BodyPartSlot[LEFT_LEG_INDEX]); }
+  leg* GetRightLeg() const { return static_cast<leg*>(*BodyPartSlot[RIGHT_LEG_INDEX]); }
+  leg* GetLeftLeg() const { return static_cast<leg*>(*BodyPartSlot[LEFT_LEG_INDEX]); }
   item* GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
   item* GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
   item* GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }
@@ -69,15 +69,13 @@ class ABSTRACT_CHARACTER
   virtual bool BodyPartCanBeSevered(int) const;
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
-  virtual void SetMainWielded(item*);
-  virtual void SetSecondaryWielded(item*);
   virtual const char* GetEquipmentName(int) const;
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
   virtual int GetEquipmentSlots() const { return 13; }
   virtual void SwitchToDig(item*, vector2d);
-  virtual int GetLegs() const;
-  virtual int GetArms() const;
+  virtual int GetUsableLegs() const;
+  virtual int GetUsableArms() const;
   virtual bool CheckKick() const;
   virtual int OpenMultiplier() const;
   virtual int CloseMultiplier() const;
@@ -91,7 +89,7 @@ class ABSTRACT_CHARACTER
   virtual bool HandleNoBodyPart(int);
   virtual void Kick(lsquare*, int, bool = false);
   virtual double GetTimeToKill(const character*, bool) const;
-  virtual int GetAttribute(int) const;
+  virtual int GetAttribute(int, bool = true) const;
   virtual bool EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
   virtual int DrawStats(bool) const;
@@ -119,10 +117,9 @@ class ABSTRACT_CHARACTER
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
   virtual void CalculateBattleInfo();
-  leg* GetRandomLeg() const;
   virtual void CalculateBodyParts();
   virtual void CalculateAllowedWeaponSkillCategories();
-  virtual bool HasFeet() const;
+  virtual bool HasALeg() const { return HasAUsableLeg(); }
   virtual void AddSpecialEquipmentInfo(festring&, int) const;
   virtual void CreateInitialEquipment(int);
   virtual festring GetBodyPartName(int, bool = false) const;
@@ -162,10 +159,12 @@ class ABSTRACT_CHARACTER
   virtual int GetAttributeAverage() const;
   virtual bool CanVomit() const;
   virtual bool CheckApply() const;
-  virtual bool HasArm() const;
-  virtual bool CanForceVomit() const { return TorsoIsAlive() && HasArm(); }
+  virtual bool CanForceVomit() const { return TorsoIsAlive() && HasAUsableArm(); }
   virtual bool IsTransparent() const;
   virtual void ModifySituationDanger(double&) const;
+  virtual int RandomizeTryToUnStickBodyPart(ulong) const;
+  virtual bool AllowUnconsciousness() const;
+  virtual bool IsTooHurtToRegainConsciousness() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
@@ -180,6 +179,14 @@ class ABSTRACT_CHARACTER
   virtual bodypart* MakeBodyPart(int) const;
   virtual const festring& GetDeathMessage() const;
   virtual vector2d GetDrawDisplacement(int) const { return vector2d(0, 0); }
+  bool HasAUsableArm() const;
+  bool HasAUsableLeg() const;
+  bool HasTwoUsableLegs() const;
+  bool CanAttackWithAnArm() const;
+  bool RightArmIsUsable() const;
+  bool LeftArmIsUsable() const;
+  bool RightLegIsUsable() const;
+  bool LeftLegIsUsable() const;
   std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
@@ -435,7 +442,6 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual festring GetZombieDescription() const;
-  virtual bool CanForceVomit() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual void AddPostFix(festring&) const;
@@ -499,7 +505,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual bool AttachBodyPartsOfFriendsNear(); 
   virtual bool BodyPartIsVital(int) const;
-  virtual int GetAttribute(int) const;
+  virtual int GetAttribute(int, bool = true) const;
   virtual color24 GetBaseEmitation() const;
   virtual bool CanCreateBodyPart(int) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
@@ -538,7 +544,7 @@ class CHARACTER
   humanoid,
  public:
   virtual bool BodyPartIsVital(int) const;
-  virtual int GetAttribute(int) const;
+  virtual int GetAttribute(int, bool = true) const;
   virtual bool CanCreateBodyPart(int) const;
   virtual const festring& GetStandVerb() const { return character::GetStandVerb(); }
 );

@@ -11,8 +11,8 @@
 
 /* Compiled through actset.cpp */
 
-const char* faint::GetDeathExplanation() const { return " while helpless"; }
-const char* faint::GetDescription() const { return "fainted"; }
+const char* unconsciousness::GetDeathExplanation() const { return " while unconscious"; }
+const char* unconsciousness::GetDescription() const { return "unconscious"; }
 const char* consume::GetDescription() const { return Description.CStr(); }
 void consume::SetDescription(const festring& What) { Description = What; }
 const char* rest::GetDescription() const { return "resting"; }
@@ -20,30 +20,33 @@ const char* dig::GetDescription() const { return "digging"; }
 const char* go::GetDescription() const { return "going"; }
 const char* study::GetDescription() const { return "reading"; }
 
-void faint::Save(outputfile& SaveFile) const
+void unconsciousness::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
   SaveFile << Counter;
 }
 
-void faint::Load(inputfile& SaveFile)
+void unconsciousness::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
   SaveFile >> Counter;
 }
 
-void faint::Handle()
+void unconsciousness::Handle()
 {
-  if(!Counter--)
+  if(Counter == 1 && !Actor->IsTooHurtToRegainConsciousness())
     Terminate(true);
   else
     {
-      GetActor()->EditExperience(ARM_STRENGTH, -50, 1 << 2);
-      GetActor()->EditExperience(LEG_STRENGTH, -50, 1 << 2);
+      if(Counter != 1)
+	--Counter;
+
+      Actor->EditExperience(ARM_STRENGTH, -50, 1 << 2);
+      Actor->EditExperience(LEG_STRENGTH, -50, 1 << 2);
     }
 }
 
-void faint::Terminate(bool Finished)
+void unconsciousness::Terminate(bool Finished)
 {
   if(Flags & TERMINATING)
     return;
@@ -405,4 +408,10 @@ bool go::TryDisplace()
 void dig::VirtualConstructor(bool)
 {
   RightBackupID = LeftBackupID = 0;
+}
+
+void unconsciousness::RaiseCounterTo(int What)
+{
+  if(Counter < What)
+    Counter = What;
 }

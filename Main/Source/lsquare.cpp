@@ -747,6 +747,16 @@ void lsquare::GetSideItemDescription(festring& String, bool Cheat) const
 
 bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double KickDamage, double KickToHitValue, int Success, int Direction, bool Critical, bool ForceHit)
 {
+  bool Return;
+
+  if(GetCharacter())
+    {
+      GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
+      Return = true;
+    }
+  else
+    Return = false;
+
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->KickSquare(Kicker, this);
 
@@ -755,13 +765,7 @@ bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, double Kick
   if(GetOLTerrain())
     GetOLTerrain()->BeKicked(Kicker, int(KickDamage * (100 + Success) / 100), Direction);
 
-  if(GetCharacter())
-    {
-      GetCharacter()->BeKicked(Kicker, Boot, Leg, Pos, KickDamage, KickToHitValue, Success, Direction, Critical, ForceHit);
-      return true;
-    }
-  else
-    return false;
+  return Return;
 }
 
 bool lsquare::CanBeDug() const
@@ -1890,7 +1894,7 @@ int lsquare::GetWalkability() const
     return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
 }
 
-template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove)
+/*template <class type> void RemoveLinkedListElement(type*& Element, const type* ToRemove)
 {
   type* E = Element;
 
@@ -1909,17 +1913,41 @@ template <class type> void RemoveLinkedListElement(type*& Element, const type* T
 
       LE->Next = E->Next;
     }
-}
+}*/
+
+
 
 void lsquare::RemoveFluid(fluid* ToRemove)
 {
-  RemoveLinkedListElement(Fluid, ToRemove);
+  //RemoveLinkedListElement(Fluid, ToRemove);
+  fluid*& F = ListFind(Fluid, pointercomparer<fluid>(ToRemove));
+  F = F->Next;
   SignalEmitationDecrease(ToRemove->GetEmitation());
 }
 
+struct fluidcomparer
+{
+  fluidcomparer(const liquid* Liquid) : Liquid(Liquid) { }
+  bool operator()(const fluid* F) const { return Liquid->IsSameAs(F->GetLiquid()); }
+  const liquid* Liquid;
+};
+
 void lsquare::AddFluid(liquid* ToBeAdded)
 {
-  fluid* F = Fluid;
+  fluid*& F = ListFind(Fluid, fluidcomparer(ToBeAdded));
+
+  if(F)
+    {
+      F->AddLiquidAndVolume(ToBeAdded->GetVolume());
+      delete ToBeAdded;
+    }
+  else
+    {
+      F = new fluid(ToBeAdded, this);
+      SignalEmitationIncrease(ToBeAdded->GetEmitation());
+    }
+
+  /*fluid* F = Fluid;
 
   if(!F)
     Fluid = new fluid(ToBeAdded, this);
@@ -1931,8 +1959,7 @@ void lsquare::AddFluid(liquid* ToBeAdded)
 	{
 	  if(ToBeAdded->IsSameAs(F->GetLiquid()))
 	    {
-	      F->AddLiquidAndVolume(ToBeAdded->GetVolume());
-	      delete ToBeAdded;
+
 	      goto end;
 	    }
 
@@ -1942,10 +1969,8 @@ void lsquare::AddFluid(liquid* ToBeAdded)
       while(F);
 
       LF->Next = new fluid(ToBeAdded, this);
-    }
+    }*/
 
-  SignalEmitationIncrease(ToBeAdded->GetEmitation());
-end:
   SendNewDrawRequest();
   SendMemorizedUpdateRequest();
 }

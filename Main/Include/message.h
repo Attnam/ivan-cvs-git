@@ -42,6 +42,8 @@ class msgsystem
   static void EnterBigMessageMode() { BigMessageMode = true; }
   static void LeaveBigMessageMode();
   static void Init();
+  static void InitMessagesSinceLastKeyScan();
+  static void ThyMessagesAreNowOld();
  private:
   static felist MessageHistory;
   static festring LastMessage;
@@ -52,6 +54,7 @@ class msgsystem
   static bool BigMessageMode;
   static bool MessagesChanged;
   static bitmap* QuickDrawCache;
+  static int LastMessageLines;
 };
 
 #endif

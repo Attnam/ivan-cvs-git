@@ -13,7 +13,7 @@
 
 int bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 long bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
-int bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
+int bodypart::GetArticleMode() const { return IsUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 color16 bodypart::GetMaterialColorA(int) const { return GetMainMaterial()->GetSkinColor(); }
@@ -70,7 +70,7 @@ void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << BitmapPos << ColorB << ColorC << ColorD << (int)SpecialFlags << WobbleData << HP;
-  SaveFile << OwnerDescription << Unique << BloodMaterial;
+  SaveFile << OwnerDescription << BloodMaterial;
   SaveFile << IsSparklingB << IsSparklingC << IsSparklingD;
 }
 
@@ -78,7 +78,7 @@ void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> (int&)SpecialFlags >> WobbleData >> HP;
-  SaveFile >> OwnerDescription >> Unique >> BloodMaterial;
+  SaveFile >> OwnerDescription >> BloodMaterial;
   SaveFile >> IsSparklingB >> IsSparklingC >> IsSparklingD;
 }
 
@@ -255,7 +255,7 @@ bool bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
 
       int BHP = HP;
 
-      if(HP <= Damage && CannotBeSevered(Type))
+      if(HP <= Damage && !CanBeSevered(Type))
 	Damage = GetHP() - 1;
 
       if(!Damage)
@@ -266,6 +266,8 @@ bool bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
       if(Type & DRAIN && IsAlive())
 	for(int c = 0; c < Damage; ++c)
 	  Damager->HealHitPoint();
+
+      bool WasBadlyHurt = IsBadlyHurt();
 
       if(HP <= 0)
 	return true;
@@ -280,7 +282,7 @@ bool bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
 	    if(Master->BodyPartIsVital(GetBodyPartIndex()))
 	      game::AskForKeyPress(CONST_S("Vital bodypart in serious danger! [press any key to continue]"));
 	  }
-	else if(IsInBadCondition() && !IsInBadCondition(BHP))
+	else if(IsBadlyHurt() && !WasBadlyHurt)
 	  {
 	    if(IsAlive())
 	      ADD_MESSAGE("Your %s bleeds.", GetBodyPartName().CStr());
@@ -290,14 +292,24 @@ bool bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
 	    if(Master->BodyPartIsVital(GetBodyPartIndex()))
 	      game::AskForKeyPress(CONST_S("Vital bodypart in danger! [press any key to continue]"));
 	  }
+
+      SignalPossibleUsabilityChange();
     }
 
   return false;
 }
 
-bool bodypart::CannotBeSevered(int Type)
+bool bodypart::CanBeSevered(int Type) const
 {
-  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (Master->GetTorso()->HP == Master->GetTorso()->MaxHP && Master->GetTorso()->MaxHP != 1))) || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX);
+  if((HP == MaxHP && HP != 1 && !Master->IsExtraFragile())
+  || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX))
+    return false;
+
+  if(!Master->BodyPartIsVital(GetBodyPartIndex()) || Master->IsExtraFragile())
+    return true;
+
+  torso* Torso = Master->GetTorso();
+  return Torso->HP != Torso->MaxHP || Torso->HP == 1;
 }
 
 double arm::GetUnarmedDamage() const
@@ -344,7 +356,9 @@ void arm::CalculateDamage()
   if(!Master)
     return;
 
-  if(GetWielded())
+  if(!IsUsable())
+    Damage = 0;
+  else if(GetWielded())
     Damage = GetWieldedDamage();
   else if(PairArmAllowsMelee())
     Damage = GetUnarmedDamage();
@@ -383,7 +397,8 @@ void arm::CalculateAPCost()
 bool arm::PairArmAllowsMelee() const
 {
   const arm* PairArm = GetPairArm();
-  return !PairArm || !PairArm->GetWielded() || PairArm->GetWielded()->IsShield(Master);
+  return !PairArm || !PairArm->IsUsable() || !PairArm->GetWielded()
+      || PairArm->GetWielded()->IsShield(Master);
 }
 
 double arm::GetWieldedDamage() const
@@ -427,7 +442,7 @@ double arm::GetWieldedToHitValue() const
   double ThisToHit = GetAttribute(DEXTERITY) * sqrt(2.5 * Master->GetAttribute(PERCEPTION));
   const arm* PairArm = GetPairArm();
 
-  if(PairArm)
+  if(PairArm && PairArm->IsUsable())
     {
       const item* PairWielded = PairArm->GetWielded();
 
@@ -840,7 +855,6 @@ bool corpse::RaiseTheDead(character* Summoner)
 void bodypart::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  Unique = false;
   Master = 0;
 }
 
@@ -949,7 +963,7 @@ int arm::GetAttribute(int Identifier, bool AllowBonus) const
       if(AllowBonus)
 	Base += StrengthBonus;
 
-      return Max(Base, 1);
+      return Max(!IsBadlyHurt() || !AllowBonus ? Base : Base / 3, 1);
     }
   else if(Identifier == DEXTERITY)
     {
@@ -960,7 +974,7 @@ int arm::GetAttribute(int Identifier, bool AllowBonus) const
       if(AllowBonus)
 	Base += DexterityBonus;
 
-      return Max(Base, 1);
+      return Max(IsUsable() || !AllowBonus ? Base : Base / 3, 1);
     }
   else
     {
@@ -1056,7 +1070,7 @@ int leg::GetAttribute(int Identifier, bool AllowBonus) const
       if(AllowBonus)
 	Base += StrengthBonus;
 
-      return Max(Base, 1);
+      return Max(!IsBadlyHurt() || !AllowBonus ? Base : Base / 3, 1);
     }
   else if(Identifier == AGILITY)
     {
@@ -1067,7 +1081,7 @@ int leg::GetAttribute(int Identifier, bool AllowBonus) const
       if(AllowBonus)
 	Base += AgilityBonus;
 
-      return Max(Base, 1);
+      return Max(IsUsable() || !AllowBonus ? Base : Base / 3, 1);
     }
   else
     {
@@ -1232,18 +1246,12 @@ void leg::Mutate()
 
 arm* rightarm::GetPairArm() const
 {
-  if(GetHumanoidMaster())
-    return GetHumanoidMaster()->GetLeftArm();
-  else
-    return 0;
+  return GetHumanoidMaster() ? GetHumanoidMaster()->GetLeftArm() : 0;
 }
 
 arm* leftarm::GetPairArm() const
 {
-  if(GetHumanoidMaster())
-    return GetHumanoidMaster()->GetRightArm();
-  else
-    return 0;
+  return GetHumanoidMaster() ? GetHumanoidMaster()->GetRightArm() : 0;
 }
 
 sweaponskill*& rightarm::GetCurrentSWeaponSkill() const
@@ -1354,7 +1362,7 @@ void bodypart::CalculateEmitation()
     }
 }
 
-void bodypart::CalculateMaxHP(bool MayChangeHPs)
+void bodypart::CalculateMaxHP(ulong Flags)
 {
   int HPDelta = MaxHP - HP;
   MaxHP = 0;
@@ -1375,8 +1383,11 @@ void bodypart::CalculateMaxHP(bool MayChangeHPs)
       if(MaxHP < 1)
 	MaxHP = 1;
 
-      if(MayChangeHPs)
+      if(Flags & MAY_CHANGE_HPS)
 	HP = Max(MaxHP - HPDelta, 1);
+
+      if(Flags & CHECK_USABILITY)
+	SignalPossibleUsabilityChange();
     }
 }
 
@@ -1401,7 +1412,10 @@ void bodypart::SetHP(int What)
   HP = What;
 
   if(Master)
-    Master->CalculateHP();
+    {
+      Master->CalculateHP();
+      SignalPossibleUsabilityChange();
+    }
 }
 
 void bodypart::EditHP(int What)
@@ -1409,7 +1423,10 @@ void bodypart::EditHP(int What)
   HP += What;
 
   if(Master)
-    Master->CalculateHP();
+    {
+      Master->CalculateHP();
+      SignalPossibleUsabilityChange();
+    }
 }
 
 void arm::SignalVolumeAndWeightChange()
@@ -1475,7 +1492,7 @@ bool arm::TwoHandWieldIsActive() const
   if(Wielded->IsTwoHanded() && !Wielded->IsShield(Master))
     {
       arm* PairArm = GetPairArm();
-      return PairArm && !PairArm->GetWielded();
+      return PairArm && PairArm->IsUsable() && !PairArm->GetWielded();
     }
   else
     return false;
@@ -1714,7 +1731,7 @@ void bodypart::Be()
 	{
 	  if(Master->IsEnabled())
 	    {
-	      if(IsInBadCondition() && !Master->IsPolymorphed() && !(RAND() & 3))
+	      if(IsBadlyHurt() && !Master->IsPolymorphed() && !(RAND() & 3))
 		SpillBlood(1);
 	    }
 	  else if(!Master->IsPolymorphed() && !(RAND() & 3))
@@ -2074,6 +2091,12 @@ int bodypart::GetConditionColorIndex() const
 
 bool arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
 {
+  if(!IsUsable())
+    {
+      ADD_MESSAGE("Your %s is not usable.", GetBodyPartName().CStr());
+      return !game::BoolQuestion(CONST_S("Continue anyway? [y/N]"));
+    }
+
   int HitStrength = GetAttribute(ARM_STRENGTH);
   int Requirement = GetWielded()->GetStrengthRequirement();
 
@@ -2100,19 +2123,25 @@ bool arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
     {
       if(HitStrength - Requirement < 10)
 	{
+	  const char* OtherHandInfo = "";
 	  const char* HandInfo = "";
 
 	  if(GetWielded()->IsTwoHanded())
-	    HandInfo = " with one hand";
+	    {
+	      if(GetPairArm() && !GetPairArm()->IsUsable())
+		OtherHandInfo = "Your other arm is unusable. ";
+
+	      HandInfo = " with one hand";
+	    }
 
 	  if(HitStrength <= Requirement)
-	    ADD_MESSAGE("You cannot use %s. Wielding it%s requires %d strength.", WeaponDescription, HandInfo, Requirement + 1);
+	    ADD_MESSAGE("%sYou cannot use %s. Wielding it%s requires %d strength.", OtherHandInfo, WeaponDescription, HandInfo, Requirement + 1);
 	  else if(HitStrength - Requirement < 4)
-	    ADD_MESSAGE("Using %s%s is extremely difficult.", WeaponDescription, HandInfo);
+	    ADD_MESSAGE("%sUsing %s%s is extremely difficult.", OtherHandInfo, WeaponDescription, HandInfo);
 	  else if(HitStrength - Requirement < 7)
-	    ADD_MESSAGE("You have much trouble using %s%s.", WeaponDescription, HandInfo);
+	    ADD_MESSAGE("%sYou have much trouble using %s%s.", OtherHandInfo, WeaponDescription, HandInfo);
 	  else
-	    ADD_MESSAGE("It is somewhat difficult to use %s%s.", WeaponDescription, HandInfo);
+	    ADD_MESSAGE("%sIt is somewhat difficult to use %s%s.", OtherHandInfo, WeaponDescription, HandInfo);
 
 	  return !game::BoolQuestion(CONST_S("Continue anyway? [y/N]"));
 	}
@@ -3145,4 +3174,64 @@ color16 mysticfrogtorso::GetOutlineColor(int Frame) const
     }
 
   return TRANSPARENT_COLOR;
+}
+
+void bodypart::UpdateFlags()
+{
+  if((HP << 1) + HP < MaxHP || (HP == 1 && MaxHP != 1))
+    Flags |= BADLY_HURT;
+  else
+    Flags &= ~BADLY_HURT;
+
+  if(Master->BodyPartIsStuck(GetBodyPartIndex()))
+    Flags |= STUCK;
+  else
+    Flags &= ~STUCK;
+}
+
+void head::SignalPossibleUsabilityChange()
+{
+  ulong OldFlags = Flags;
+  UpdateFlags();
+
+  if(Flags & BADLY_HURT)
+    Master->LoseConsciousness(1);
+}
+
+void arm::SignalPossibleUsabilityChange()
+{
+  ulong OldFlags = Flags;
+  UpdateFlags();
+
+  if(Flags != OldFlags)
+    Master->CalculateBattleInfo();
+}
+
+void leg::SignalPossibleUsabilityChange()
+{
+  ulong OldFlags = Flags;
+  UpdateFlags();
+
+  if(Flags != OldFlags)
+    Master->CalculateBattleInfo();
+}
+
+void bodypart::IncreaseHP()
+{
+  ++HP;
+  SignalPossibleUsabilityChange();
+}
+
+void bodypart::RestoreHP()
+{
+  HP = MaxHP;
+  SignalPossibleUsabilityChange();
+}
+
+void bodypart::SetIsUnique(bool What)
+{
+  if(What)
+    Flags |= UNIQUE;
+  else
+    Flags &=  ~UNIQUE;
 }

@@ -2176,3 +2176,12 @@ void bitmap::MoveLineHorizontally(int Y, int Delta)
 	PowerPutPixel(x, Y, TRANSPARENT_COLOR, 255, AVERAGE_PRIORITY);
     }
 }
+
+void bitmap::InterLace()
+{
+  for(int y = 0; y < YSize; ++y)
+    if(!(y % 3))
+      for(int x = 0; x < XSize; ++x)
+	if(Image[y][x] != 0)
+	  Image[y][x] = 1;
+}

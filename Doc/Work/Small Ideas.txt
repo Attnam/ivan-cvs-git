@@ -506,3 +506,4 @@ Lobotomised state.
 Geysirs.
 Damaged bodyparts should work less well. (ie. when arms are damaged armstrength should go down)
 Wand of Polymorph to X (where X is a monster)
+Magic hassel which causes invisible. (from Henri Kiviluoto)

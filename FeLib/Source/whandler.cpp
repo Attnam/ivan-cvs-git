@@ -281,3 +281,4 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 }
 
 #endif
+

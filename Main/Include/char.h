@@ -34,6 +34,7 @@ class cweaponskill;
 class action;
 class characterprototype;
 struct homedata;
+struct trapdata;
 
 typedef std::vector<std::pair<double, int> > blockvector;
 typedef bool (item::*sorter)(const character*) const;
@@ -70,7 +71,7 @@ struct characterdatabase : public databasebase
   bool CreateGolemMaterialConfigurations;
   bool CanBeCloned;
   bool CanZap;
-  bool HasFeet;
+  bool HasALeg;
   bool IgnoreDanger;
   bool IsExtraCoward;
   bool SpillsBlood;
@@ -202,6 +203,8 @@ struct characterdatabase : public databasebase
   int ScienceTalkWisdomModifier;
   int ScienceTalkIntelligenceRequirement;
   int ScienceTalkWisdomRequirement;
+  bool IsExtraFragile;
+  bool AllowUnconsciousness;
 };
 
 class characterprototype
@@ -302,7 +305,7 @@ class character : public entity, public id
   bool TemporaryStateIsActivated(long What) const { return !!(TemporaryState & What); }	
   bool EquipmentStateIsActivated(long What) const { return !!(EquipmentState & What); }
   bool StateIsActivated(long What) const { return TemporaryState & What || EquipmentState & What; }
-  virtual bool Faint(int, bool = false);
+  virtual bool LoseConsciousness(int, bool = false);
   void SetTemporaryStateCounter(long, int);
   void DeActivateVoluntaryAction(const festring& = CONST_S(""));
   void ActionAutoTermination();
@@ -360,8 +363,6 @@ class character : public entity, public id
   void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
-  virtual void SetMainWielded(item*) { }
-  virtual void SetSecondaryWielded(item*) { }
   int GetHungerState() const;
   bool ConsumeItem(item*, const festring&);
   virtual bool CanConsume(material*) const;
@@ -479,7 +480,6 @@ class character : public entity, public id
   DATA_BASE_VALUE(long, ClassStates);
   DATA_BASE_VALUE(const fearray<festring>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
-  //DATA_BASE_VALUE(int, AttributeBonus);
   DATA_BASE_VALUE(const fearray<long>&, KnownCWeaponSkills);
   DATA_BASE_VALUE(const fearray<long>&, CWeaponSkillHits);
   DATA_BASE_VALUE(int, RightSWeaponSkillHits);
@@ -490,7 +490,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(const fearray<festring>&, FriendlyReplies);
   DATA_BASE_VALUE(const fearray<festring>&, HostileReplies);
   DATA_BASE_VALUE(int, FleshMaterial);
-  virtual DATA_BASE_BOOL(HasFeet);
+  virtual DATA_BASE_BOOL(HasALeg);
   virtual DATA_BASE_VALUE(const festring&, DeathMessage);
   DATA_BASE_VALUE(int, HPRequirementForGeneration);
   DATA_BASE_BOOL(IsExtraCoward);
@@ -531,27 +531,20 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, ScienceTalkWisdomModifier);
   DATA_BASE_VALUE(int, ScienceTalkIntelligenceRequirement);
   DATA_BASE_VALUE(int, ScienceTalkWisdomRequirement);
+  DATA_BASE_BOOL(IsExtraFragile);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(bool = false);
   bool TeleportNear(character*);
-  bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*, int, bool = false) = 0;
-  virtual int GetAttribute(int) const;
+  virtual int GetAttribute(int, bool = true) const;
   virtual bool EditAttribute(int, int);
   virtual void EditExperience(int, double, double);
-  /*bool CheckForAttributeIncrease(int&, long&, bool = false);
-  bool CheckForAttributeDecrease(int&, long&, bool = false);*/
   bool RawEditAttribute(double&, int) const;
   void DrawPanel(bool) const;
   virtual int DrawStats(bool) const = 0;
   virtual int GetCarryingStrength() const = 0;
   static bool DamageTypeAffectsInventory(int);
-  void SetStuckTo(item* What) { StuckTo = What; }
-  item* GetStuckTo() const { return StuckTo; }
-  void SetStuckToBodyPart(int What) { StuckToBodyPart = What; }
-  int GetStuckToBodyPart() const { return StuckToBodyPart; }
-  bool TryToUnstuck(vector2d);
   virtual int GetRandomStepperBodyPart() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
@@ -666,7 +659,7 @@ class character : public entity, public id
   void CalculateMaxHP();
   int GetHP() const { return HP; }
   int GetMaxHP() const { return MaxHP; }
-  void CalculateBodyPartMaxHPs(bool = true);
+  void CalculateBodyPartMaxHPs(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
   bool IsInitializing() const { return Initializing; }
   bool IsInNoMsgMode() const { return InNoMsgMode; }
   bool ActivateRandomState(int, int, long = 0);
@@ -808,7 +801,7 @@ class character : public entity, public id
   virtual bool MustBeRemovedFromBone() const;
   bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
-  virtual int GetArms() const { return 0; }
+  virtual int GetUsableArms() const { return 0; }
   bool IsPet() const;
   virtual void PutTo(vector2d);
   void PutTo(lsquare*);
@@ -854,6 +847,8 @@ class character : public entity, public id
   virtual bool CheckConsume(const festring&) const;
   virtual int GetTameSymbolSquareIndex() const { return 0; }
   virtual int GetFlySymbolSquareIndex() const { return 0; }
+  virtual int GetSwimmingSymbolSquareIndex() const { return 0; }
+  virtual int GetUnconsciousSymbolSquareIndex() const { return 0; }
   virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
   liquid* CreateBlood(long) const;
   void SpillFluid(character*, liquid*, int = 0);
@@ -967,6 +962,21 @@ class character : public entity, public id
   bool IsUsingWeaponOfCategory(int) const;
   virtual bool IsKamikazeDwarf() const { return false; }
   void AddRandomScienceName(festring&) const;
+  bool IsStuck() const { return !!TrapData; }
+  festring GetTrapDescription() const;
+  bool TryToUnStickTraps(vector2d);
+  void RemoveTrap(ulong);
+  void AddTrap(ulong, ulong);
+  bool IsStuckToTrap(ulong) const;
+  void RemoveTraps();
+  void RemoveTraps(int);
+  int RandomizeHurtBodyPart(ulong) const;
+  virtual int RandomizeTryToUnStickBodyPart(ulong) const { return NONE_INDEX; }
+  bool BodyPartIsStuck(int) const;
+  void PrintAttribute(const char*, int, int, int) const;
+  virtual bool AllowUnconsciousness() const;
+  virtual bool IsTooHurtToRegainConsciousness() const;
+  bool CanPanic() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -987,7 +997,8 @@ class character : public entity, public id
   virtual bool BodyPartColorDIsSparkling(int, bool = false) const;
   virtual long GetBodyPartSize(int, int) const;
   virtual long GetBodyPartVolume(int) const;
-  void UpdateBodyPartPicture(int, bool = false);
+  void JustUpdateTheDamnBodyPartPicture(int I) { UpdateBodyPartPicture(I, false); }
+  void UpdateBodyPartPicture(int I, bool);
   int ChooseBodyPartToReceiveHit(double, double);
   virtual void CreateBodyParts(int);
   virtual material* CreateBodyPartMaterial(int, long) const;
@@ -1042,9 +1053,6 @@ class character : public entity, public id
   festring AssignedName;
   action* Action;
   const database* DataBase;
-  int StuckToBodyPart;
-  item* StuckTo; // Bad naming. Sorry.
-  //int BaseAttribute[BASE_ATTRIBUTES];
   double BaseExperience[BASE_ATTRIBUTES];
   std::list<ulong>* OriginalBodyPartID;
   entity* MotherEntity;
@@ -1080,9 +1088,77 @@ class character : public entity, public id
   int BlocksSinceLastTurn;
   double GenerationDanger;
   ulong CommandFlags;
-  bool HasBeenWarned;
+  ulong WarnFlags;
   int ScienceTalks;
+  trapdata* TrapData;
 };
+
+template <class objectptr, class routine>
+void DoIndexParameterRoutine(objectptr Object, routine Routine, int Amount)
+{
+  for(int c = 0; c < Amount; ++c)
+    (Object->*Routine)(c);
+}
+
+template <class charptr, class dummy>
+inline void DoForBodyParts(charptr C, dummy (bodypart::*F)())
+{
+  int BodyParts = C->GetBodyParts();
+
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BP = C->GetBodyPart(c);
+
+      if(BP)
+        (BP->*F)();
+    }
+}
+
+template <class charptr, class dummy, class param>
+inline void DoForBodyParts(charptr C, dummy (bodypart::*F)(param), param P)
+{
+  int BodyParts = C->GetBodyParts();
+
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BP = C->GetBodyPart(c);
+
+      if(BP)
+        (BP->*F)(P);
+    }
+}
+
+template <bool OrBit, class charptr, class routine>
+inline bool CombineBodyPartPredicates(charptr C, routine F)
+{
+  int BodyParts = C->GetBodyParts();
+
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BP = C->GetBodyPart(c);
+
+      if(BP && (BP->*F)() == OrBit)
+	return OrBit;
+    }
+
+  return !OrBit;
+}
+
+template<class routine>
+inline int SumBodyPartProperties(const character* C, routine F)
+{
+  int Sum = 0, BodyParts = C->GetBodyParts();
+
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* B = C->GetBodyPart(c);
+
+      if(B)
+	Sum += (B->*F)();
+    }
+
+  return Sum;
+}
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 #define CHARACTER_PROTOTYPE(name, base, baseproto)\

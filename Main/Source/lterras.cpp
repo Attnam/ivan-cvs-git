@@ -403,13 +403,13 @@ bool fountain::Drink(character* Drinker)
 		bool Created = false;
 		character* Monster = 0;
 
-		switch(RAND() % 5)
+		switch(RAND_N(5))
 		  {
 		  case 0:
 		    Monster = new snake;
 		    break;
 		  case 1:
-		    Monster = new mommo(RAND() & 1 ? CONICAL : FLAT);
+		    Monster = new mommo(RAND_2 ? CONICAL : FLAT);
 		    break;
 		  case 2:
 		    Monster = new spider;
@@ -418,7 +418,7 @@ bool fountain::Drink(character* Drinker)
 		    if(!RAND_N(50))
 		      Monster = new dolphin;
 		    else
-		      Monster = new frog(RAND() % 5 ? DARK : RAND() % 5 ? GREATER_DARK : GIANT_DARK);
+		      Monster = new frog(RAND_N(5) ? DARK : RAND_N(5) ? GREATER_DARK : GIANT_DARK);
 
 		    break;
 		  case 4:
@@ -436,7 +436,7 @@ bool fountain::Drink(character* Drinker)
 		      {
 			Created = true;
 
-			if(RAND() % 5)
+			if(RAND_N(3))
 			  Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
 			else
 			  Monster->SetTeam(game::GetTeam(PLAYER_TEAM));
@@ -489,12 +489,7 @@ bool fountain::Drink(character* Drinker)
 		if(!RAND_N(2))
 		  {
 		    olterrain* Found = GetLevel()->GetRandomFountainWithWater(this);
-
-		    if(Drinker->IsStuck())
-		      {
-			Drinker->SetStuckTo(0);
-			Drinker->SetStuckToBodyPart(NONE_INDEX);
-		      }
+		    Drinker->RemoveTraps();
 
 		    if(Found)
 		      {

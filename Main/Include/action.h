@@ -48,7 +48,7 @@ class action
   character* GetActor() const { return Actor; }
   void SetActor(character* What) { Actor = What; }
   virtual bool IsVoluntary() const { return true; }
-  virtual bool AllowFaint() const { return true; }
+  virtual bool AllowUnconsciousness() const { return true; }
   virtual bool AllowFoodConsumption() const { return true; }
   virtual bool TryDisplace() { return true; }
   virtual void Save(outputfile&) const;
@@ -62,7 +62,7 @@ class action
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
   virtual bool CanBeTalkedTo() const { return true; }
-  virtual bool IsFaint() const { return false; }
+  virtual bool IsUnconsciousness() const { return false; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

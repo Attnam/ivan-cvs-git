@@ -2220,7 +2220,7 @@ ring
 		GearStates == POLYMORPH_CONTROL;
 		Price = 750;
 		AttachedGod = SCABIES;
-		Alias == "ring of polycontrol";
+		Alias == "polycontrol";
 	}
 
 	Config RING_OF_INFRA_VISION;
@@ -2254,7 +2254,7 @@ ring
 		Price = 500;
 		AttachedGod = SOPHOS;
 		TeleportPriority = 1000;
-		Alias == "ring of telecontrol";
+		Alias == "telecontrol";
 	}
 
 	Config RING_OF_POLYMORPH;

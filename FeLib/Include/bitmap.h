@@ -203,6 +203,7 @@ class bitmap
   void Wobble(int, int, bool);
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
+  void InterLace();
  protected:
   int XSize, YSize;
   ulong XSizeTimesYSize : 31;

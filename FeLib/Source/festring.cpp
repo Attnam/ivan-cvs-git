@@ -783,7 +783,15 @@ void festring::SwapData(festring& Str)
 long festring::GetCheckSum() const
 {
   long Counter = 0;
+
   for(ushort c = 0; c < GetSize(); ++c)
     Counter = long(Data[c]);
+
   return Counter;
+}
+
+void festring::EnsureOwnsData()
+{
+  if(!OwnsData)
+    CreateOwnData(Data, Size);
 }

@@ -11,6 +11,8 @@
 
 /* Compiled through coreset.cpp */
 
+bool entity::TryToUnStick(character*, vector2d) { return false; }
+
 entity::entity(const entity& Entity) : Emitation(Entity.Emitation), Flags(Entity.Flags)
 {
   if(Flags & HAS_BE)

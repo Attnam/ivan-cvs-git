@@ -125,7 +125,7 @@ material* organic::EatEffect(character* Eater, long Amount)
     {
       Eater->BeginTemporaryState(CONFUSED, int(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
 
-      if(CanHaveParasite() && !(RAND() % (500 / GetSpoilLevel())))
+      if(CanHaveParasite() && !(RAND() % (250 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 
@@ -205,30 +205,6 @@ int ironalloy::GetStrengthValue() const
 
   return 0; /* not possible */
 }
-
-/*void ironalloy::AddName(festring& Name, bool Articled, bool Adjective) const
-{
-  if(Articled)
-    if(GetRustLevel() == NOT_RUSTED)
-      Name << GetArticle() << ' ';
-    else
-      Name << "a ";
-
-  switch(GetRustLevel())
-    {
-    case SLIGHTLY_RUSTED:
-      Name << "sligthly rusted ";
-      break;
-    case RUSTED:
-      Name << "rusted ";
-      break;
-    case VERY_RUSTED:
-      Name << "very rusted ";
-      break;
-    }
-
-  Name << (Adjective ? GetAdjectiveStem() : GetNameStem());
-}*/
 
 bool ironalloy::AddRustLevelDescription(festring& Name, bool Articled) const
 {
@@ -310,7 +286,7 @@ bool ironalloy::TryToRust(long Modifier, long Volume)
       if(!Volume)
 	Volume = GetVolume();
 
-      long Chance = long(5000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
+      long Chance = long(10000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
 
       if(Chance <= 1 || !(RAND() % Chance))
 	return true;

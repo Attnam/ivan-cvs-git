@@ -1103,6 +1103,7 @@ organic /* substances that spoil but are not flesh */
 		AttachedGod = SCABIES;
 		PriceModifier = 600;
 		CanBeMirrored = false;
+		SpoilModifier = 100000;
 	}
 
 	Config BANANA_PEEL;
@@ -1408,7 +1409,7 @@ liquid
 	Density = 1000;
 	Flexibility = 50;
 	IsWarm = false;
-	RustModifier = 100;
+	RustModifier = 25;
 
 	Config OMMEL_URINE;
 	{

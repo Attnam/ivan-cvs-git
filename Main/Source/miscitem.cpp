@@ -32,9 +32,9 @@ bool potion::AddAdjective(festring& String, bool Articled) const { return AddEmp
 bool potion::EffectIsGood() const { return GetSecondaryMaterial() && GetSecondaryMaterial()->EffectIsGood(); }
 bool potion::IsDipDestination(const character*) const { return SecondaryMaterial && SecondaryMaterial->IsLiquid(); }
 
-bool bananapeels::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
+bool bananapeels::IsDangerousForAI(const character* Stepper) const { return Stepper->HasALeg(); }
 
-bool brokenbottle::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
+bool brokenbottle::IsDangerousForAI(const character* Stepper) const { return Stepper->HasALeg(); }
 
 long wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
@@ -105,12 +105,14 @@ void scrollofcreatemonster::FinishReading(character* Reader)
 
 void scrollofteleportation::FinishReading(character* Reader)
 {
-  if(Reader->IsPlayer())
-    ADD_MESSAGE("Suddenly you realize you have teleported.");
-  else if(Reader->CanBeSeenByPlayer())
+  if(!Reader->IsPlayer() && Reader->CanBeSeenByPlayer())
     ADD_MESSAGE("%s disappears!", Reader->CHAR_NAME(DEFINITE));
 
   Reader->TeleportRandomly(true);
+
+  if(Reader->IsPlayer())
+    ADD_MESSAGE("Suddenly you realize you have teleported.");
+
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
@@ -259,7 +261,7 @@ item* brokenbottle::BetterVersion() const
 
 void brokenbottle::StepOnEffect(character* Stepper)
 {
-  if(Stepper->HasFeet() && !(RAND() % 5))
+  if(Stepper->HasALeg() && !(RAND() % 5))
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. You step on sharp glass splinters.");
@@ -604,7 +606,7 @@ void scrollofcharging::FinishReading(character* Reader)
 
 void bananapeels::StepOnEffect(character* Stepper)
 {
-  if(Stepper->HasFeet() && !(RAND() % 5))
+  if(Stepper->HasALeg() && !(RAND() % 5))
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHAR_NAME(INDEFINITE));
@@ -1072,21 +1074,21 @@ itemcontainer::~itemcontainer()
   delete Contained;
 }
 
-/* Victim is the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
-
-bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
+beartrap::beartrap(const beartrap& Trap) : item(Trap), Team(Trap.Team), DiscoveredByTeam(Trap.DiscoveredByTeam), Active(Trap.Active)
 {
-  if(IsBroken())
-    {
-      Victim->SetStuckTo(0);
-      Victim->SetStuckToBodyPart(NONE_INDEX);
-      return true;
-    }
+  TrapData.TrapID = game::CreateNewTrapID(this);
+  TrapData.VictimID = 0;
+}
 
-  if(!(RAND() % (GetBaseTrapDamage() << 1)))
+bool beartrap::TryToUnStick(character* Victim, vector2d)
+{
+  ulong TrapID = GetTrapID();
+  int Modifier = GetBaseTrapDamage() * 20 / Max(Victim->GetAttribute(DEXTERITY), 1);
+
+  if(Modifier <= 1 || !RAND_N(Modifier))
     {
-      Victim->SetStuckTo(0);
-      Victim->SetStuckToBodyPart(NONE_INDEX);
+      Victim->RemoveTrap(TrapID);
+      TrapData.VictimID = 0;
 
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to free yourself from %s.", CHAR_NAME(DEFINITE));
@@ -1097,10 +1099,10 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % (GetBaseTrapDamage() << 2)))
+  if(!Modifier || !RAND_N(Modifier << 1))
     {
-      Victim->SetStuckTo(0);
-      Victim->SetStuckToBodyPart(NONE_INDEX);
+      Victim->RemoveTrap(TrapID);
+      TrapData.VictimID = 0;
       Break(Victim);
 
       if(Victim->IsPlayer())
@@ -1112,8 +1114,12 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       return true;
     }
 
-  if(!(RAND() % 3))
+  Modifier = Max(Victim->GetAttribute(DEXTERITY) * 3 / 10, 2);
+
+  if(!RAND_N(Modifier))
     {
+      int BodyPart = Victim->RandomizeHurtBodyPart(TrapData.BodyParts);
+
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).CStr());
       else if(Victim->CanBeSeenByPlayer())
@@ -1123,6 +1129,27 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
       Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
       Victim->EditAP(-1000);
       return false;
+    }
+
+  if(!RAND_N(Modifier << 1))
+    {
+      int VictimBodyPart = Victim->RandomizeTryToUnStickBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
+
+      if(VictimBodyPart != NONE_INDEX)
+	{
+	  TrapData.BodyParts |= 1 << VictimBodyPart;
+	  Victim->AddTrap(GetTrapID(), 1 << VictimBodyPart);
+
+	  if(Victim->IsPlayer())
+	    ADD_MESSAGE("You fail to free yourself from %s and your %s is stuck in it in the attempt.", CHAR_NAME(DEFINITE), Victim->GetBodyPartName(VictimBodyPart).CStr());
+	  else if(Victim->CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s tries to free %sself from %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
+
+	  Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, VictimBodyPart, YOURSELF, false, false, false);
+	  Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
+	  Victim->EditAP(-1000);
+	  return true;
+	}
     }
 
   if(Victim->IsPlayer())
@@ -1135,31 +1162,43 @@ bool beartrap::TryToUnstuck(character* Victim, int BodyPart, vector2d)
 void beartrap::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> Active >> Team >> DiscoveredByTeam;
+  SaveFile >> Active >> Team >> TrapData >> DiscoveredByTeam;
+  game::AddTrapID(this, TrapData.TrapID);
 }
 
 void beartrap::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << Active << Team << DiscoveredByTeam;
+  SaveFile << Active << Team << TrapData << DiscoveredByTeam;
 }
 
-void beartrap::VirtualConstructor(bool)
+void beartrap::VirtualConstructor(bool Load)
 {
-  Active = false; /* this must be false */
+  if(!Load)
+    {
+      TrapData.TrapID = game::CreateNewTrapID(this);
+      TrapData.VictimID = 0;
+      Active = false; /* this must be false */
+    }
+}
+
+beartrap::~beartrap()
+{
+  game::RemoveTrapID(TrapData.TrapID);
 }
 
 void beartrap::StepOnEffect(character* Stepper)
 {
-  if(IsActive() && !Stepper->IsStuck() && !IsBroken())
+  if(IsActive() && !IsBroken())
     {
       int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
       if(StepperBodyPart == NONE_INDEX)
 	return;
 
-      Stepper->SetStuckTo(this);
-      Stepper->SetStuckToBodyPart(StepperBodyPart);
+      TrapData.VictimID = Stepper->GetID();
+      TrapData.BodyParts = 1 << StepperBodyPart;
+      Stepper->AddTrap(GetTrapID(), 1 << StepperBodyPart);
 
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("You step in %s and it traps your %s.", CHAR_NAME(INDEFINITE), Stepper->GetBodyPartName(StepperBodyPart).CStr());
@@ -1172,17 +1211,17 @@ void beartrap::StepOnEffect(character* Stepper)
       if(Stepper->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-      Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
       Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0);
     }
 }
 
 bool beartrap::CheckPickUpEffect(character* Picker)
 {
-  if(Picker->IsStuck() && Picker->GetStuckTo()->GetID() == GetID())
+  if(Picker->IsStuckToTrap(GetTrapID()))
     {
       if(Picker->IsPlayer())
-	ADD_MESSAGE("%s is tightly stuck to your %s.", CHAR_NAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).CStr());
+	ADD_MESSAGE("You are tightly stuck in %s.", CHAR_NAME(DEFINITE));
 
       return false;
     }
@@ -1287,14 +1326,6 @@ bool mine::Apply(character* User)
 
 bool beartrap::Apply(character* User)
 {
-  if(User->IsPlayer() && !game::BoolQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
-    return false;
-
-  room* Room = GetRoom();
-
-  if(Room)
-    Room->HostileAction(User);
-
   if(IsBroken())
     {
       if(User->IsPlayer())
@@ -1303,17 +1334,27 @@ bool beartrap::Apply(character* User)
       return false;
     }
 
-  if(User->GetAttribute(DEXTERITY) < RAND() % 15)
+  if(User->IsPlayer()
+  && !game::BoolQuestion(CONST_S("Are you sure you want to plant ") + GetName(DEFINITE) + "? [y/N]")) 
+    return false;
+
+  room* Room = GetRoom();
+
+  if(Room)
+    Room->HostileAction(User);
+
+  if(User->GetAttribute(DEXTERITY) < femath::LoopRoll(90, 1000))
     {
-      int StepperBodyPart = User->GetRandomApplyBodyPart();
+      int UserBodyPart = User->GetRandomApplyBodyPart();
 
       if(User->IsPlayer())
-	ADD_MESSAGE("Somehow you manage to trap your %s in %s.", User->GetBodyPartName(StepperBodyPart).CStr(), CHAR_NAME(DEFINITE));
+	ADD_MESSAGE("Somehow you manage to trap your %s in %s.", User->GetBodyPartName(UserBodyPart).CStr(), CHAR_NAME(DEFINITE));
       else if(User->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s somehow traps %sself in %s.", User->CHAR_NAME(DEFINITE), User->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
-      User->SetStuckTo(this);
-      User->SetStuckToBodyPart(StepperBodyPart);
+      TrapData.VictimID = User->GetID();
+      TrapData.BodyParts = 1 << UserBodyPart;
+      User->AddTrap(GetTrapID(), 1 << UserBodyPart);
       SendNewDrawAndMemorizedUpdateRequest();
       RemoveFromSlot();
       User->GetStackUnder()->AddItem(this);
@@ -1321,7 +1362,7 @@ bool beartrap::Apply(character* User)
       if(User->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
-      User->ReceiveBodyPartDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, User->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      User->ReceiveBodyPartDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, UserBodyPart, YOURSELF, false, false, false);
       User->CheckDeath(CONST_S("died failing to set ") + GetName(INDEFINITE), 0);
     }
   else
@@ -1846,6 +1887,7 @@ bool horn::Apply(character* Blower)
     {
       if(Blower->IsPlayer())
 	ADD_MESSAGE("You need a head to do this.");
+
       return false;
     }
 
@@ -1948,7 +1990,7 @@ item* bananapeels::BetterVersion() const
 
 bool beartrap::IsPickable(character* Picker) const
 {
-  return !IsActive() && (!Picker->GetStuckTo() || Picker->GetStuckTo()->GetID() != GetID());
+  return !IsActive() && !Picker->IsStuckToTrap(GetTrapID());
 }
 
 void banana::Save(outputfile& SaveFile) const
@@ -2142,7 +2184,7 @@ void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
 
 bool beartrap::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if(!IsStuck() && !IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
+  if(!IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
@@ -2204,11 +2246,11 @@ bool potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
   return item::ReceiveDamage(Damager, Damage, Type, Dir);
 }
 
-bool beartrap::IsStuck() const
+/*bool beartrap::IsStuck() const
 {
   character* Char = GetLSquareUnder()->GetCharacter();
   return Char && Char->GetStuckTo() && Char->GetStuckTo()->GetID() == GetID();
-}
+}*/
 
 void beartrap::Fly(character* Thrower, int Direction, int Force)
 {
@@ -2672,7 +2714,7 @@ int beartrap::GetBaseTrapDamage() const
   int Modifier = GetMainMaterial()->GetStrengthValue() / 50;
   Modifier *= Modifier;
   Modifier >>= 1;
-  return Modifier ? Modifier + RAND() % Modifier : 1;
+  return Modifier ? Modifier + RAND_N(Modifier) : 1;
 }
 
 void scrollofhardenmaterial::FinishReading(character* Reader)
@@ -2902,4 +2944,15 @@ bool bananapeels::RaiseTheDead(character*)
   RemoveFromSlot();
   SendToHell();
   return true;  
+}
+
+void beartrap::RemoveFromSlot()
+{
+  character* Char = game::SearchCharacter(GetVictimID());
+
+  if(Char)
+    Char->RemoveTrap(GetTrapID());
+
+  TrapData.VictimID = 0;
+  item::RemoveFromSlot();
 }

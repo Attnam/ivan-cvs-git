@@ -50,7 +50,7 @@ void god::Pray()
 		PLAYER->GetStack()->AddItem(Gift);
 
 		if(Gift->IsBroken())
-		  Gift->Fix();
+		  Gift = Gift->Fix();
 
 		if(Relation == 1000)
 		  Gift->EditEnchantment(3);
