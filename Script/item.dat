@@ -31,6 +31,32 @@
     ulong DefaultContainedVolume; (0)
     vector2d BitmapPos; (*)
     ulong Price; (0)
+
+-----------------------------------------------
+
+Preset values for the obligatory members
+    uchar Category = 0; 
+    StrengthModifier = 0; 
+    FormModifier = 0; 
+    DefaultSize = 0 ; 
+    DefaultMainVolume = 0; 
+    BitmapPos = 0,0;
+
+
+----
+
+/*
+meleeweapon
+{
+	Category = WEAPON;
+    	StrengthModifier = 0; 
+    	FormModifier = 0; 
+    	DefaultSize =  0; 
+    	DefaultMainVolume = 0; 
+    	BitmapPos  = 0,0; 
+}
+*/
+
 */
 
 banana
@@ -45,4 +71,848 @@ banana
 	BitmapPos = 0, 112;
 	FormModifier = 50;
 	DefaultSize = 20;
+}
+
+holybanana
+{
+	Possibility = 5;
+	InHandsPic = 160, 112;
+	WeaponCategory = CLUBS;
+	DefaultMainVolume = 400;
+	DefaultContainedVolume = 1500;
+	StrengthModifier = 250;
+	Category = FOOD;
+	BitmapPos = 0, 112;
+	FormModifier = 200;
+	DefaultSize = 20;
+	Score = 250;
+	Price = 1000;
+}
+
+lantern
+{
+	DefaultSize = 30;
+	Possibility = 50;
+	InHandsPic = 160, 160;
+	Category = TOOL;
+	DefaultMainVolume = 1000;
+	StrengthModifier = 50;
+/*	BitmapPos is depended on being on the wall or not */
+	FormModifier = 30;
+	Price = 50;
+	BaseEmitation = 300;
+}
+
+can
+{
+	DefaultSize = 10;
+	Possibility = 200;
+	InHandsPic = 160, 144;
+	Category = FOOD;
+	DefaultMainVolume = 50;
+	DefaultContainedVolume = 500;
+	StrengthModifier = 50;
+	/* BitmapPos depends on being full or not */
+	FormModifier = 30;
+}
+
+lump
+{
+	DefaultSize = 10;
+	Possibility = 200;
+	InHandsPic = 160, 112;
+	Category = FOOD;
+	DefaultMainVolume = 500;
+	StrengthModifier = 75;
+	BitmapPos = 16, 48;
+	FormModifier = 15;
+}
+
+longsword
+{
+	Category = WEAPON;
+	DefaultSize = 150;
+	Possibility = 25;
+	InHandsPic = 160, 16;
+	WeaponCategory = LARGE_SWORDS;
+	DefaultMainVolume = 2400;
+	DefaultSecondaryVolume = 100;
+	BitmapPos = 16, 336;
+	FormModifier = 150;
+}
+
+twohandedsword
+{
+	InHandsPic = 160, 16;
+	Category = WEAPON;
+	DefaultSize = 175;
+	Possibility = 3;
+	WeaponCategory = LARGE_SWORDS;
+	DefaultMainVolume = 1500;
+	DefaultSecondaryVolume = 250;
+	StrengthModifier = 250;
+	BitmapPos = 0, 0;
+	FormModifier = 175;	
+}
+
+curvedtwohandedsword
+{
+	InHandsPic = 160, 16;
+	Category = WEAPON;
+	DefaultSize = 175;
+	Possibility = 0;
+	WeaponCategory = LARGE_SWORDS;
+	DefaultMainVolume = 5500;
+	DefaultSecondaryVolume = 250;
+	StrengthModifier = 250;
+	BitmapPos = 0, 16;
+	FormModifier = 200;	
+}
+
+valpurusjustifier
+{
+	Category = WEAPON;
+	DefaultSize = 200;
+	Possibility = 0;
+	InHandsPic = 160, 16;
+	WeaponCategory = LARGE_SWORDS;
+	DefaultMainVolume = 6700;
+	DefaultSecondaryVolume = 300;
+	BitmapPos = 0, 64;
+	FormModifier = 400;
+	Score = 1000;
+	CanBeWished = false;
+	IsMaterialChangeable = false;
+	StrengthModifier = 400;
+}
+
+axe
+{
+	Category = WEAPON;
+	DefaultSize = 125;
+	Possibility = 100;
+	InHandsPic = 160, 176;
+	WeaponCategory = AXES;
+	DefaultMainVolume = 1400;
+	SecondaryVolume = 1600;
+	StrengthModifier = 150;
+	BitmapPos = 16, 256;
+	FormModifier = 150;
+}
+
+pickaxe
+{
+	Category = WEAPON;
+	DefaultSize = 150;
+	Possibility = 50;
+	InHandsPic = 160, 64;
+	WeaponCategory = AXES;
+	DefaultMainVolume = 1500;
+	SecondaryVolume = 2000;
+	StrengthModifier = 150;
+	BitmapPos = 0, 96;
+	FormModifier = 100;
+}
+
+spear
+{
+	Category = WEAPON;
+	DefaultSize = 200;
+	Possibility = 100;
+	InHandsPic = 160, 96;
+	WeaponCategory = SPEARS;
+	StrengthModifier = 75;
+	BitmapPos = 16, 144;
+	FormModifier = 200;
+	DefaultMainVolume = 200;
+	DefaultSecondaryVolume = 1600;
+}
+
+/*bodyarmor
+{
+	InHandsPic = 160, 144;
+	Category = BODYARMOR;
+	FormModifier = 20;
+/* The following are not set in the old itemde.h, so they are rather stupid here */
+	StrengthModifier = 0; 
+	DefaultSize = 0 ; 
+	DefaultMainVolume = 0; 
+	BitmapPos = 0,0;
+} */
+
+platemail
+{
+	InHandsPic = 160, 144;
+	Category = BODYARMOR;
+	FormModifier = 20;
+	StrengthModifier = 200; 
+	DefaultSize = 75; 
+	DefaultMainVolume = 4000; 
+	BitmapPos = 16,128;
+	Possibility = 50;
+}
+
+chainmail
+{
+	InHandsPic = 160, 144;
+	Category = BODYARMOR;
+	FormModifier = 20;
+	Possibility = 25;
+	StrengthModifier = 100; 
+	DefaultSize = 75; 
+	DefaultMainVolume = 2000; 
+	BitmapPos = 16,96;
+}
+
+/*shirt
+{
+	InHandsPic = 160, 144;
+	Category = BODYARMOR;
+	FormModifier = 20;
+/* The following are not set in the old itemde.h, so they are rather stupid here */
+	StrengthModifier = 0; 
+	DefaultSize = 0 ; 
+	DefaultMainVolume = 0; 
+	BitmapPos = 0,0;
+} */
+
+goldeneagleshirt
+{
+	InHandsPic = 160, 144;
+	Category = BODYARMOR;
+	FormModifier = 20;
+	StrengthModifier = 50; 
+	DefaultSize = 0 ; 
+	DefaultMainVolume = 0; 
+	BitmapPos = 16,112;
+	Possibility = 0;
+	Score = 2500;
+	CanBeWished = false;
+	Destroyable = false;
+	IsMaterialChangeable = false;
+	DefaultMainVolume = 1000;
+	BaseEmitation = 333;
+} 
+
+potion
+{
+	SetSize = 30;
+	Possibility = 100;
+	WeaponCategory = CLUBS;
+	InHandsPic = 160,128;
+	Category = POTION;
+	DefaultMainVolume = 60;
+	DefaultContainedVolume = 1500;
+	StrengthModifier = 50;
+	BitmapPos = 0, 160;
+	FormModifier = 40;
+}
+
+bananapeals
+{
+	DefaultSize = 20;
+	Possibility = 50;
+	InHandsPic = 160, 112;
+	Category = MISC;
+	DefaultMainVolume = 40;
+	StrengthModifier = 50;
+	BitmapPos = 0, 128;
+	FormModifier = 70;
+}
+
+brokenbottle
+{
+	DefaultSize(10);
+	Possibility = 50;
+	InHandsPic = 160, 128;
+	Category = MISC;
+	DefaultMainVolume = 60;
+	StrengthModifier = 50;
+	BitmapPos = 16, 160;
+	FormModifier = 100;
+}
+
+/*
+scroll
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+}
+*/
+
+scrollofcreatemonster
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	Possibility = 50;
+	DefaultSize = 30;
+}
+
+scrollofteleport
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+	Possibility = 50;
+}
+
+
+scrollofcharging
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+	Possibility = 5;
+}
+
+nut
+{
+	DefaultSize = 2; 
+	Possibility = 5;
+	InHandsPic = 160, 128;
+	Category = FOOD;
+	DefaultMainVolume = 25;
+	StrengthModifier = 50;
+	BitmapPos = 16, 208;
+	FormModifier = 20;
+}
+
+leftnutofpetrus
+{
+	DefaultSize = 10;
+	Possibility = 0;
+	InHandsPic = 160, 128;
+	Category = FOOD;
+	DefaultMainVolume = 500;
+	StrengthModifier = 2500;
+	BitmapPos = 16, 208;
+	FormModifier = 20;
+	Score = 5000;
+	Destroyable = false;
+	Category = MISC;
+	BaseEmitation = 333;
+}
+
+abone
+{
+	DefaultSize = 50;
+	Possibility = 100;
+	WeaponCategory = CLUBS;
+	DefaultMainVolume = 1500;
+	StrengthModifier = 100;
+	BitmapPos = 16, 240;
+	FormModifier = 70;
+}
+
+
+poleaxe
+{
+	Category = WEAPON;
+	DefaultSize = 225;
+	Possibility = 50;
+	InHandsPic = 160, 176;
+	WeaponCategory = AXES;
+	DefaultMainVolume = 2500;
+	SecondaryVolume = 2000;
+	StrengthModifier = 150;
+	BitmapPos = 0, 80;
+	FormModifier = 150;
+}
+
+spikedmace
+{
+	Category = WEAPON;
+    	StrengthModifier = 400; 
+    	FormModifier = 125; 
+    	DefaultSize =  150; 
+    	DefaultMainVolume = 5000; 
+    	BitmapPos  = 0,32; 
+	Possibility = 20;
+	InHandsPic = 160, 192;
+	DefaultSecondaryVolume = 2000;
+	WeaponCategory = MACES;
+}
+
+neercseulb
+{
+	Category = WEAPON;
+    	StrengthModifier = 600; 
+    	FormModifier = 150; 
+    	DefaultSize =  200; 
+    	DefaultMainVolume = 5000; 
+    	BitmapPos  = 0,32; 
+	Possibility = 0;
+	InHandsPic = 160, 192;
+	DefaultSecondaryVolume = 2000;
+	WeaponCategory = MACES;
+	Score = 1000;
+	CanBeWished = false;
+	IsMaterialChangeable = false;
+	DefaultSecondaryVolume = 6000;
+	DefaultContainedVolume = 2500;
+}
+
+loaf
+{
+	DefaultSize = 40;
+	Possibility = 100;
+	WeaponCategory = CLUBS;
+	InHandsPic = 160, 128;
+	Category = FOOD;
+	DefaultMainVolume = 500;
+	StrengthModifier = 100;
+	BitmapPos = 0, 272;
+	FormModifier = 30;
+}	
+
+scrollofwishing
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+	Possibility = 1;
+	CanBeWished = false;
+	Price = 2000;
+	PolymorphSpawnable = false;
+}
+
+cheapcopyofleftnutofpetrus
+{
+	DefaultSize = 10;
+	Possibility = 5;
+	Score = 1;	
+	Price = 500;
+	Category = MISC;
+	StrengthModifier = 50;
+}
+
+/*
+wand
+{
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+}
+*/
+
+wandofpolymorph
+{
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	DefaultSize = 30;
+	Possibility = 20;
+	Price = 500;
+	PolymorphSpawnable = false;
+}
+
+lantern
+{
+	DefaultSize = 15;
+	Possibility = 25;
+	InHandsPic = 160, 128;
+	Category = TOOL;
+	DefaultMainVolume = 1000;
+	StrengthModifier = 50;
+/*	BitmapPos is depended on being on the wall or not */
+	FormModifier = 80;
+	Price = 50;
+	BaseEmitation = 0;
+}
+
+scrollofchangematerial
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+	Possibility = 3;
+	Price = 500;
+}
+
+avatarofvalpurus
+{
+	DefaultSize = 10;
+	Possibility = 0;
+	CanBeWished = false;
+	Destroyable = false;
+	InHandsPic = 160, 112;
+	IsMaterialChangeable = false;
+	Price = 2000000000;
+	Category = MISC;
+	DefaultMainVolume = 250;
+	StrengthModifier = 400;
+	BitmapPos = 0, 320;
+	FormModifier = 20;
+}
+
+wandofstriking
+{
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	DefaultSize = 30;
+	Possibility = 20;
+	Price = 500;
+}
+
+brokenplatemail
+{
+	Category = BODYARMOR;
+	DefaultSize = 70;
+	Possibility = 10;
+	InHandsPic = 160, 144;
+	DefaultMainVolume = 4000;
+	StrengthModifier = 75;
+	BitmapPos = 0, 352;
+	FormModifier = 30;
+}
+
+kiwi
+{
+	DefaultSize = 10;
+	Possibiliity = 25;
+	Category = FOOD;
+	DefaultMainVolume = 50;
+	StrengthModifier = 50;
+	BitmapPos = 0, 384;
+	FormModifier = 20;
+}
+
+
+pineapple
+{
+	DefaultSize = 20;
+	Possibility = 25;
+	Category = FOOD;
+	DefaultMainVolume = 1000;
+	StrengthModifier = 100;
+	BitmapPos = 0, 368;
+	FormModifier = 20;
+}
+
+palmbranch
+{
+	DefaultSize = 80;
+	Possibility = 10;
+	InHandsPic = 160, 208;
+	Category = MISC;
+	DefaultMainVolume = 4000;
+	StrengthModifier = 50;
+	BitmapPos = 0, 240;
+	FormModifier = 50;
+}
+
+whip
+{
+	DefaultSize = 200;
+	Possibility = 25;
+	InHandsPic = 160, 224;
+	WeaponCategory = WHIPS;
+	DefaultMainVolume = 1000;
+	DefaultSecondaryVolume = 200;
+	StrengthModifier = 50;
+	BitmapPos = 32, 0;
+	FormModifier = 0; // not needed
+}
+
+backpack
+{
+	DefaultSize = 80;
+	Possibilty = 10;
+	InHandsPic = 160, 144;
+	Category = TOOL;
+	DefaultMainVolume = 1000;
+	DefaultContainedVolume = 10000;
+	StrengthModifier = 200;
+	BitmapPos = 32, 16;
+	FormModifier = 20;
+}
+
+holybook
+{
+	DefaultSize = 25;
+	InHandsPic = 160, 128;
+	Possibility = 25;
+	Category = BOOK;
+	DefaultMainVolume = 2000;
+	StrengthModifier = 100;
+	BitmapPos = 32, 32;
+	FormModifier = 30;
+}
+
+fiftymillionroubles
+{
+	DefaultSize = 20;
+	Possibility = 0;
+	Price = 2;
+	Category = VALUABLE;
+	DefaultMainVolume = 1000;
+	StrengthModifier = 25;
+	BitmapPos = 0, 336;
+	FormModifier = 20;
+	CanBeWished = false;
+}
+
+oillamp
+{
+	DefaultSize = 30;
+	Possibility = 25;
+	CanBeWished = false;
+	Category = TOOL;
+	DefaultMainVolume = 150;
+	StrengthModifier = 50;
+	BitmapPos = 32, 48;
+	FormModifier = 30;
+	BaseEmitation = 256;
+}
+
+astone
+{
+	DefaultSize = 30;
+	Possibility = 5;
+	InHandsPic = 160, 112;
+	Category = VALUABLE;
+	DefaultMainVolume = 100;
+	StrengthModifier = 100;
+	BitmapPos = 0, 48;
+	Modifier = 45;
+}
+
+wandoffireballs
+{
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	DefaultSize = 30;
+	Possibility = 20;
+	Price = 500;
+}
+
+scrolloftaming
+{
+	InHandsPic = 160, 128;
+	Category = SCROLL;
+	DefaultMainVolume = 250;
+	StrengthModifier = 25;
+	BitmapPos = 16, 176;
+	FormModifier = 40;
+	DefaultSize = 30;
+	Possibily = 5;
+	DefaultSize = 30;
+	Price = 350;
+}
+
+wandofteleportation
+{
+	Category = WAND;
+	DefaultMainVolume = 200;
+	DefaultSize = 30;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	Price = 500;
+}
+
+
+mine
+{
+	DefaultSize = 5;
+	Possibility = 20;
+	Category = TOOL;
+	DefaultMainVolume = 100;
+	DefaultSecondaryVolume = 10000;
+	StrengthModifier = 50;
+	BitmapPos = 32, 288;
+	FormModifier = 30;
+}
+
+wandofhaste
+{
+	DefaultSize = 30;
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	Possibility = 30;
+}
+
+wandofslow
+{
+	DefaultSize = 30;
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+	Possibility = 30;
+}
+
+key
+{
+	DefaultSize = 10;
+	Possibility = 50;
+	Price = 10;
+	Category = TOOL;
+	DefaultMainVolume = 15;
+	StrengthModifier = 50;
+	BitmapPos = 16, 48;
+	FormModifier = 40;
+}
+
+shield
+{
+	DefaultSize = 80;
+	Possibility = 30;
+	Category = SHIELD;
+	DefaultMainVolume = 1500;
+	StrengthModifier= 200;
+	BitmapPos = 32, 336;
+	FormModifier = 30;
+}
+
+cloak
+{
+	DefaultSize = 200;
+	Possibility = 40;
+	Category = CLOAK;
+	DefaultMainVolume = 4000;
+	StrengthModifier = 100;
+	BitmapPos = 32, 352;
+	FormModifier = 20;
+}
+
+boot
+{
+	DefaultSize = 30;
+	Possibility = 40;
+	Category = BOOT;
+	DefaultMainVolume = 600;
+	StrengthModifier = 100;
+	BitmapPos = 0, 400;
+	FormModifier = 20;
+}
+
+gauntlet
+{
+	DefaultSize = 30;
+	Possibility = 40;
+	Category = GAUNTLET;
+	DefaultMainVolume = 400;
+	StrenthModifier = 75;
+	BitmapPos = 32, 368;
+	FormModifier = 20;
+}
+
+belt
+{
+	DefaultSize = 150;
+	Possibility = 40;
+	WeaponCategory = WHIPS;
+	Category = BELT;
+	DefaultMainVolume = 250;
+	StrengthModifier = 50;
+	BitmapPos = 32, 384;
+}
+
+ring
+{
+	DefaultSize = 2;
+	Possibility = 20;
+	Category = RING;
+	DefaultMainVolume = 3;
+	StrengthModifier = 100;
+	BitmapPos = 16, 400;
+	FormModifier = 20;
+}
+
+amulet
+{
+	DefaultSize = 20;
+	Possibility = 10;
+	Category = AMULET;
+	DefaultMainVolume = 100;
+	StrengthModifier = 100;
+	BitmapPos = 32, 400;
+	FormModifier = 50;
+}
+
+corpse
+{
+	Possibility = 0;
+	Category = FOOD;
+	CanBeWished = false;
+	IsAutoInitilizable = false;
+	IsPolymorphSpawnable = false;
+	StrengthModifier = 100;
+	FormModifier = 15;
+}
+
+wandoflocking
+{
+	DefaultSize = 30;
+	Possibility = 20;
+	Price = 70;
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+}
+
+wandofresurrection
+{
+	DefaultSize = 30;
+	Possibility = 20;
+	Price = 400;
+	Category = WAND;
+	DefaultMainVolume = 200;
+	StrengthModfier = 50;
+	BitmapPos = 0, 288;
+	FormModifier = 80;
+}
+
+ringoffireresistance
+{
+	DefaultSize = 3;
+	Possibility = 15;
+	Category = RING;
+	DefaultMainVolume = 3;
+	StrengthModifier = 100;
+	BitmapPos = 16, 400;
+	FormModifier = 20;
+	FireReistance = 10;
 }
