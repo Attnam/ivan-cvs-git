@@ -43,8 +43,8 @@ void worldmapsquare::UpdateMemorizedAndDraw(void)
 	igraph::GetTileBuffer()->MaskedBlit(MotherArea->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
 	igraph::GetFOWGraphic()->MaskedBlit(MotherArea->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	if(CCharacter())
-		CCharacter()->DrawToTileBuffer();
+	if(GetCharacter())
+		GetCharacter()->DrawToTileBuffer();
 
 	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 }

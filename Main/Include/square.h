@@ -28,7 +28,7 @@ public:
 	virtual void SetCharacter(character* What ) { Character = What; }
 	virtual void AddCharacter(character* Guy);
 	virtual void RemoveCharacter(void);
-	virtual character* CCharacter(void) const		{ return Character; }
+	virtual character* GetCharacter(void) const		{ return Character; }
 	virtual bool GetKnown(void) const				{ return Known; }
 	virtual vector GetPos(void) const			{ return Pos; }
 	virtual void SetKnown(bool What) { Known = What; }

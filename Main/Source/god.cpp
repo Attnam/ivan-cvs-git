@@ -118,7 +118,7 @@ void consummo::PrayGoodEffect(void)
 	{
 		Pos = game::GetCurrentLevel()->RandomSquare(true);
 
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter() == 0)
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter() == 0)
 			break;
 	}
 
@@ -153,10 +153,10 @@ void venius::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge divine fire sweeps the surrounding area.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
 	{
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->ReceiveFireDamage(20);
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->ReceiveFireDamage(20);
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 	})
 }
 
@@ -171,16 +171,16 @@ void dulcis::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("A beatiful melody echoes through the dungeon.");
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter();
+	character* Char = game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter();
 	if(Char && Char->GetRelations() == 0)
 	{
 		if(Char->Charmable())
 		{
 			Char->SetRelations(1);
-			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->CNAME(DEFINITE));
+			ADD_MESSAGE("%s stops fighting.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
 		}
 		else
-			ADD_MESSAGE("%s seems not affected.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->CNAME(DEFINITE));
+			ADD_MESSAGE("%s seems not affected.", game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CNAME(DEFINITE));
 	})
 }
 

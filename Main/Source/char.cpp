@@ -223,7 +223,7 @@ bool ennerbeast::Hit(character*)
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 100,
 	                    {
-					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->CCharacter();
+					character* Char = game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->GetCharacter();
 
 					if(Char && Char != this)
 						Char->ReceiveSound(Message, rand() % 26 - rand() % 26, GetMeleeStrength() * GetStrength() / GetHypotSquare<float>(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer));
@@ -815,9 +815,9 @@ bool character::TryMove(vector MoveTo)
 {
 	if(!game::GetInWilderness())
 		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
-			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter())
-				if(GetIsPlayer() || (!GetRelations() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations() > 0) || (GetRelations() > 0 && !game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter()->GetRelations()))
-					return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->CCharacter());
+			if(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter())
+				if(GetIsPlayer() || (!GetRelations() && game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetRelations() > 0) || (GetRelations() > 0 && !game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter()->GetRelations()))
+					return Hit(game::GetCurrentLevel()->GetLevelSquare(MoveTo)->GetCharacter());
 				else
 					return false;
 			else
@@ -1200,9 +1200,9 @@ bool character::Talk(void)
 			for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
 				if(k == game::GetMoveCommandKey(c) || (k ^ 32) == game::GetMoveCommandKey(c))
 				{
-					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->CCharacter())
+					if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
 					{
-						game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->CCharacter()->BeTalkedTo(this);
+						game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter()->BeTalkedTo(this);
 
 						return true;
 					}
@@ -1784,7 +1784,7 @@ bool character::Look(void)
 				Anything = true;
 			}
 
-			if((game::GetSeeWholeMapCheat() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CanBeSeen()) && game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CCharacter())
+			if((game::GetSeeWholeMapCheat() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CanBeSeen()) && game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetCharacter())
 			{
 				if(Anything)
 					if(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetRememberedItems() != "")
@@ -1792,7 +1792,7 @@ bool character::Look(void)
 					else
 						Msg += std::string(" and ");
 
-				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->CCharacter()->Name(INDEFINITE));
+				Msg += std::string(game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetCharacter()->Name(INDEFINITE));
 
 				Anything = true;
 			}
@@ -1861,7 +1861,7 @@ void character::MoveRandomly(void)
 {
 	ushort ToTry = rand() % 8;
 
-	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->CCharacter());
+	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
 		TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 
@@ -1882,7 +1882,7 @@ void golem::MoveRandomly(void)
 			Engrave("Golem Needs Master");
 	}
 	else
-	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->CCharacter())
+	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 		TryMove(GetPos() + game::GetMoveVector(ToTry));
 }
 
@@ -1956,8 +1956,8 @@ void character::NeutralAICommand(void)
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer,YPointer))->CCharacter())
-			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->CCharacter());
+		if(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer,YPointer))->GetCharacter())
+			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->GetCharacter());
 	});
 
 	for(ushort c = 0; c < SeenCharacters.Length(); c++)
@@ -2055,8 +2055,8 @@ void character::HostileAICommand(void)
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer,YPointer))->CCharacter())
-			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->CCharacter());
+		if(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer,YPointer))->GetCharacter())
+			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector(XPointer, YPointer))->GetCharacter());
 	});
 
 	ushort NumberFor;
@@ -2181,15 +2181,15 @@ void perttu::NeutralAICommand(void)
 {
 	SetHealTimer(GetHealTimer() + 1);
 	DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
 	{
-		if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter() == game::GetPlayer())
+		if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter() == game::GetPlayer())
 		{
-			if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->GetHP() < (game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->GetEndurance() << 1) / 3 && game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter() == game::GetPlayer() && GetHealTimer() > 100)
+			if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->GetHP() < (game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->GetEndurance() << 1) / 3 && game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter() == game::GetPlayer() && GetHealTimer() > 100)
 				HealFully(game::GetPlayer());
 		}
 		else
-			Hit(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter());
+			Hit(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter());
 	})
 }
 
@@ -2729,3 +2729,4 @@ bool character::Zap(void)
 	ADD_MESSAGE("Under construction.");
 	return true;
 }
+

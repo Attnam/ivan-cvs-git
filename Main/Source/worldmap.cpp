@@ -122,7 +122,7 @@ void worldmap::Generate(void)
 	for(x = 0; x < XSize; x++)
 		for(int y = 0; y < YSize; y++)
 		{
-			Map[x][y]->SAltitude(Data[x][y]);
+			Map[x][y]->SetAltitude(Data[x][y]);
 		}
 
 
@@ -177,16 +177,16 @@ void worldmap::GenerateClimate(void)
 			{
 				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, 
 				{
-					if(Map[DoX][DoY]->CAltitude() < 0) WaterNear++;
+					if(Map[DoX][DoY]->GetAltitude() < 0) WaterNear++;
 				});
-				if(Map[x][y]->CAltitude() < 0) WaterNear++;
+				if(Map[x][y]->GetAltitude() < 0) WaterNear++;
 			}
 
 			if (WaterNear) rainfall = 1;
 
-			temperature = (short)(MAX_TEMPERATURE - distance_from_equator * LATITUDE_EFFECT - Map[x][y]->CAltitude() * ALTITUDE_EFFECT);
+			temperature = (short)(MAX_TEMPERATURE - distance_from_equator * LATITUDE_EFFECT - Map[x][y]->GetAltitude() * ALTITUDE_EFFECT);
 
-			if (Map[x][y]->CAltitude() <= 0)
+			if (Map[x][y]->GetAltitude() <= 0)
 			{
 /*				if (Data[x][y].Height <= BORDER_OF_DARKNESS)
 					Data[x][y].Terrain = DARK_OCEAN;
@@ -235,7 +235,7 @@ void worldmap::GenerateClimate(void)
 		ushort x = rand() % XSize;
 		ushort y = rand() % YSize;
 		ushort Counter = 0, Biggest = -1;	
-		if(Map[x][y]->CAltitude() > 0)
+		if(Map[x][y]->GetAltitude() > 0)
 		{
 			ushort NumberOfTypes = groundworldmapterrain::GetProtoAmount();
 												

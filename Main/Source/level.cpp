@@ -556,8 +556,8 @@ void level::HandleCharacters(void)
 
 	/*for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-			if(Map[x][y]->CCharacter())
-				Map[x][y]->CCharacter()->SetHasActed(false);*/
+			if(Map[x][y]->GetCharacter())
+				Map[x][y]->GetCharacter()->SetHasActed(false);*/
 
 	if(Population < CIdealPopulation() && LevelIndex != 9)
 		GenerateNewMonsters(CIdealPopulation() - Population);

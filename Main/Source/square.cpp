@@ -51,8 +51,8 @@ void square::DrawCheat(void) const
 {
 	DrawToTileBuffer();
 
-	if(CCharacter())
-		CCharacter()->DrawToTileBuffer();
+	if(GetCharacter())
+		GetCharacter()->DrawToTileBuffer();
 
 	igraph::BlitTileBuffer(vector((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 }

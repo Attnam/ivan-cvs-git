@@ -30,8 +30,8 @@ levelsquare::~levelsquare(void)
 
 void levelsquare::HandleCharacters(void)
 {
-	if(CCharacter() && CCharacter() != game::GetPlayer())
-		CCharacter()->Act();
+	if(GetCharacter() && GetCharacter() != game::GetPlayer())
+		GetCharacter()->Act();
 }
 
 void levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
@@ -68,8 +68,8 @@ ushort levelsquare::CalculateEmitation(void) const
 		if(NE(vector(0, 1), 0) > Emitation)
 			Emitation = NE(vector(0, 1), 0);
 
-	if(CCharacter() && CCharacter()->GetEmitation() > Emitation)
-		Emitation = CCharacter()->GetEmitation();
+	if(GetCharacter() && GetCharacter()->GetEmitation() > Emitation)
+		Emitation = GetCharacter()->GetEmitation();
 
 	return Emitation;
 }
@@ -110,8 +110,8 @@ void levelsquare::UpdateMemorizedAndDraw(void)
 	igraph::GetTileBuffer()->MaskedBlit(game::GetCurrentLevel()->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16, RealLuminance);
 	igraph::GetFOWGraphic()->MaskedBlit(game::GetCurrentLevel()->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
 
-	if(CCharacter())
-		CCharacter()->DrawToTileBuffer();
+	if(GetCharacter())
+		GetCharacter()->DrawToTileBuffer();
 
 	if(game::GetSeeWholeMapCheat())
 		RealLuminance = 256;

@@ -135,7 +135,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 			break;
 	}
 
-	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->CCharacter() == 0)
+	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 	{
 		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(prototypesystem::BalancedCreateMonster());
 
@@ -155,7 +155,7 @@ bool scrollofteleport::Read(character* Reader)
 	for(;;)
 	{
 		Pos = game::GetCurrentLevel()->RandomSquare(true);
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter() == 0)
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter() == 0)
 			break;
 	}
 	if(Reader == game::GetPlayer())
@@ -303,11 +303,11 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 			game::DrawEverything(false);
 			Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
 
-			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter())
+			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
 			{
 				if(Hostile)
-					game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter()->SetRelations(HOSTILE);
-				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter(), Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen()))
+					game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->SetRelations(HOSTILE);
+				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen()))
 					break;
 			}
 			while(clock() - StartTime < 0.2 * CLOCKS_PER_SEC)
@@ -456,10 +456,10 @@ bool wand::Apply(character* StupidPerson)
 {
 	if(StupidPerson == game::GetPlayer()) ADD_MESSAGE("The wand brakes in two and then explodes.");
 	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter())
 	{
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->ReceiveFireDamage(5);
-		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
 	})
 
 	StupidPerson->ReceiveFireDamage(10);
@@ -467,3 +467,4 @@ bool wand::Apply(character* StupidPerson)
 	
 	return true;
 }
+

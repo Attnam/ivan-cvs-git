@@ -147,7 +147,7 @@ void game::Init(std::string Name)
 
 		GetPlayer()->SetRelations(2);
 
-		WorldMap = new worldmap(128, 128);
+		WorldMap = new worldmap(400, 400);
 		WorldMap->Generate();
 
 		Level = new level*[Levels];
@@ -773,7 +773,7 @@ bool game::Load(std::string SaveName)
 
 	SaveFile.read((char*)&Pos, sizeof(Pos));
 
-	SetPlayer(GetCurrentArea()->GetSquare(Pos)->CCharacter());
+	SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
 	for(ushort c = 0; c < GetLevels(); c++)
 		SaveFile >> LevelMsg[c];
