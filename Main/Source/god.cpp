@@ -38,7 +38,7 @@ void god::Pray()
 	PLAYER->EditExperience(WISDOM, -250);
       }
   else
-    if(Relation > RAND_N(500))
+    if(Relation > RAND_N(500) && Timer < RAND_N(500000))
       {
 	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
 	PrayGoodEffect();

@@ -48,7 +48,7 @@ struct materialdatabase
   uchar Alpha;
   bool CreateDivineConfigurations;
   ushort Flexibility;
-  ulong SpoilModifier;
+  ushort SpoilModifier;
   bool IsSparkling;
   ushort EffectStrength;
   bool IsMetal;
@@ -135,7 +135,7 @@ class material
   DATA_BASE_VALUE(ulong, ExplosivePower);
   DATA_BASE_VALUE(uchar, Alpha);
   DATA_BASE_VALUE(ushort, Flexibility);
-  DATA_BASE_VALUE(ulong, SpoilModifier);
+  DATA_BASE_VALUE(ushort, SpoilModifier);
   DATA_BASE_BOOL(IsSparkling);
   DATA_BASE_BOOL(IsMetal);
   DATA_BASE_BOOL(CanHaveParasite);

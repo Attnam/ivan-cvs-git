@@ -404,3 +404,4 @@ Sometimes when taking (really bad) damage the player might receive permanent wou
 If one monster can see an invisible player, then it should reveal his location his comrades, too.
 //*HEALING SHOULD STOP IF A MAGE ATTACKS!!!
 Cave paintings.
+List of dead friends.

@@ -869,7 +869,7 @@ frog
 
 elpuri
 {
-	DefaultArmStrength = 75;
+	DefaultArmStrength = 80;
 	DefaultAgility = 20;
 	DefaultEndurance = 20;
 	DefaultPerception = 40;
@@ -881,7 +881,7 @@ elpuri
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
-	TotalVolume = 750000;
+	TotalVolume = 1000000;
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 250;
 	NameSingular = "Master Dark Frog";
@@ -2684,7 +2684,7 @@ snake
 	ClassStates = INFRA_VISION;
 	HasFeet = false;
 	FleshMaterial = SNAKE_FLESH;
-	DangerModifier = 50;
+	DangerModifier = 75;
 	CanOpen = false;
 	AttachedGod = MELLIS;
 }
@@ -2730,6 +2730,7 @@ orc
 	FleshMaterial = ORC_FLESH;
 	AttachedGod = CRUENTUS;
 	WieldedPosition = -1, -1;
+	DangerModifier = 75;
 
 	Config SLAUGHTERER;
 	{

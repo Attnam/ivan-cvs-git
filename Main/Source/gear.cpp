@@ -288,11 +288,13 @@ meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW), Enchantment(MW.Encha
   CopyMaterial(MW.ContainedMaterial, ContainedMaterial);
 }
 
+extern character::prototype petrus_ProtoType;
+
 bool whipofthievery::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
-  /* Gum solution! */
+  /* TERRIBLE gum solution! */
 
-  if(game::GetPetrus() == Enemy)
+  if(Enemy->GetType() == petrus_ProtoType.GetIndex())
     return false;
 
   if(!Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)

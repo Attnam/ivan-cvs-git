@@ -1635,7 +1635,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 	NewMsg << " while" << PolyMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
-	ADD_MESSAGE("Death message: %s.", NewMsg.CStr());
+	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), GetScore() - game::GetBaseScore());
 
       Die(Murderer, NewMsg, ForceMsg);
       return true;
@@ -3466,7 +3466,7 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
     return false;
 
   if(!IsPlayer())
-    Experience <<= 2;
+    Experience <<= 1;
 
   bool Effect = false;
 
@@ -3503,7 +3503,7 @@ bool character::CheckForAttributeIncrease(ushort& Attribute, long& Experience, b
     }
 
   if(!IsPlayer())
-    Experience >>= 2;
+    Experience >>= 1;
 
   return Effect;
 }
