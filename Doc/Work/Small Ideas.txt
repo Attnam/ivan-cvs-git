@@ -54,3 +54,4 @@ Hit rate of thrown items should be lowered.
 Do you want to see your inventory... Message history...
 You must be able to open door by throwing items.
 Lamps should be white.
+Name too short.

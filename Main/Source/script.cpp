@@ -303,7 +303,7 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			SS->SetValueMap(ValueMap);
 			SS->ReadFrom(SaveFile);
 
-			if(ReCalculating)
+			if(!ReCalculating)
 				Square.push_back(SS);
 			else
 				delete SS;
@@ -430,7 +430,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			SS->SetValueMap(ValueMap);
 			SS->ReadFrom(SaveFile);
 
-			if(ReCalculating)
+			if(!ReCalculating)
 				Square.push_back(SS);
 			else
 				delete SS;

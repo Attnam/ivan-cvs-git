@@ -15,6 +15,7 @@ class groundterrain;
 class overterrain;
 class outputfile;
 class inputfile;
+class squarescript;
 
 class square
 {

@@ -60,6 +60,7 @@ public:
 	virtual void ParticleTrail(vector2d, vector2d);
 	virtual std::string GetLevelMessage() { return LevelMessage; }
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
+	virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

@@ -10,6 +10,7 @@
 #include "strover.h"
 #include "save.h"
 #include "graphics.h"
+#include "script.h"
 
 levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0)
 {
@@ -645,4 +646,16 @@ void levelsquare::DrawCheat()
 
 		NewDrawRequested = false;
 	}
+}
+
+void levelsquare::ApplyScript(squarescript* SquareScript)
+{
+	if(SquareScript->GetGroundTerrain(false))
+		ChangeGroundLevelTerrain(SquareScript->GetGroundTerrain()->Instantiate());
+
+	if(SquareScript->GetOverTerrain(false))
+		ChangeOverLevelTerrain(SquareScript->GetOverTerrain()->Instantiate());
+
+	if(SquareScript->GetCharacter(false))
+		FastAddCharacter(SquareScript->GetCharacter()->Instantiate());
 }

@@ -386,6 +386,20 @@ void level::Generate(levelscript* GenLevelScript)
 
 	CreateItems(*LevelScript->GetItems());
 
+	for(c = 0; c < LevelScript->GetSquare().size(); ++c)
+	{
+		squarescript* Square = LevelScript->GetSquare()[c];
+
+		vector2d Pos;
+
+		if(Square->GetPosScript()->GetRandom())
+			Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+		else
+			Pos = *Square->GetPosScript()->GetVector();
+
+		Map[Pos.X][Pos.Y]->ApplyScript(Square);
+	}
+
 	/*DRAW;
 
 	ushort Rooms = 5 + rand() % 16;
@@ -498,6 +512,8 @@ void level::CreateStairs(bool Up)
 bool level::MakeRoom(roomscript* RoomScript)
 {
 	ushort XPos = RoomScript->GetPos()->X, YPos = RoomScript->GetPos()->Y, Width = RoomScript->GetSize()->X, Height = RoomScript->GetSize()->Y;
+
+	ushort BXPos = XPos, BYPos = YPos;
 
 	if(XPos + Width > XSize - 2)
 		Width = XSize - XPos - 2;
@@ -644,6 +660,21 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
 
 	Door.Add(vector2d(XPos, YPos));
+
+	for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)
+	{
+		squarescript* Square = RoomScript->GetSquare()[c];
+
+		vector2d Pos;
+
+		if(Square->GetPosScript()->GetRandom())
+			//Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
+			ABORT("Illegal command: Random square positioning not supported in roomscript!");
+		else
+			Pos = *Square->GetPosScript()->GetVector();
+
+		Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square);
+	}
 
 	return true;
 }

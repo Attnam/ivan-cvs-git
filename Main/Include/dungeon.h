@@ -14,6 +14,7 @@ class level;
 class outputfile;
 class inputfile;
 class dungeonscript;
+class levelscript;
 
 class dungeon
 {
@@ -31,6 +32,7 @@ public:
 	//void GenerateIfNeeded() { if(!Generated) Generate(); }
 	void SetIndex(uchar What) { Index = What; }
 	uchar GetIndex() { return Index; }
+	levelscript* GetLevelScript(ushort);
 private:
 	void Initialize();
 	//uchar*** BlockMap;

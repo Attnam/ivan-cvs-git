@@ -81,6 +81,36 @@ void dungeon::Initialize()
 		Level[c] = 0;
 }
 
+levelscript* dungeon::GetLevelScript(ushort Index)
+{
+	std::map<uchar, levelscript*>::iterator LevelIterator = DungeonScript->GetLevel().find(Index);
+
+	levelscript* LevelScript;
+
+	if(LevelIterator != DungeonScript->GetLevel().end())
+	{
+		LevelScript = LevelIterator->second;
+
+		if(*LevelScript->GetReCalculate())
+		{
+			inputfile ScriptFile("Script/Dungeon.dat");
+			LevelScript->ReadFrom(ScriptFile, true);
+		}
+	}
+	else
+	{
+		LevelScript = DungeonScript->GetLevelDefault();
+
+		if(*LevelScript->GetReCalculate())
+		{
+			inputfile ScriptFile("Script/Dungeon.dat");
+			LevelScript->ReadFrom(ScriptFile, true);
+		}
+	}
+
+	return LevelScript;
+}
+
 void dungeon::PrepareLevel(ushort Index)
 {
 	if(Generated[Index])
@@ -89,33 +119,8 @@ void dungeon::PrepareLevel(ushort Index)
 	}
 	else
 	{
-		std::map<uchar, levelscript*>::iterator LevelIterator = DungeonScript->GetLevel().find(Index);
-
-		levelscript* LevelScript;
-
-		if(LevelIterator != DungeonScript->GetLevel().end())
-		{
-			LevelScript = LevelIterator->second;
-
-			if(*LevelScript->GetReCalculate())
-			{
-				inputfile ScriptFile("Script/Dungeon.dat");
-				LevelScript->ReadFrom(ScriptFile, true);
-			}
-		}
-		else
-		{
-			LevelScript = DungeonScript->GetLevelDefault();
-
-			if(*LevelScript->GetReCalculate())
-			{
-				inputfile ScriptFile("Script/Dungeon.dat");
-				LevelScript->ReadFrom(ScriptFile, true);
-			}
-		}
-
 		Level[Index] = new level;
-		Level[Index]->Generate(LevelScript);
+		Level[Index]->Generate(GetLevelScript(Index));
 
 		Generated[Index] = true;
 	}
@@ -283,6 +288,7 @@ void dungeon::LoadLevel(std::string SaveName, ushort Number)
 
 	Level[Number] = new level;
 	Level[Number]->Load(SaveFile);
+	Level[Number]->SetLevelScript(GetLevelScript(Number));
 }
 
 void dungeon::Save(outputfile& SaveFile) const

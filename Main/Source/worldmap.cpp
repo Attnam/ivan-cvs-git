@@ -139,16 +139,16 @@ void worldmap::RandomizeAltitude()
 {
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
-			AltitudeBuffer[x][y] = rand() % 3001 - rand() % 3000;
+			AltitudeBuffer[x][y] = rand() % 5001 - rand() % 5000;
 }
 
 void worldmap::SmoothAltitude()
 {
 	short** OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
 
-	for(uchar c = 0; c < 6; ++c)
+	for(uchar c = 0; c < 10; ++c)
 	{
-		if(c < 4)
+		if(c < 8)
 		{
 			for(uchar c1 = 0; c1 < rand() % 20; c1++)
 			{
@@ -171,6 +171,9 @@ void worldmap::SmoothAltitude()
 				DO_FOR_SQUARES_AROUND_IN_TWO_PARTS(x, y, XSize, YSize, HeightNear += OldAltitudeBuffer[DoX][DoY], HeightNear += AltitudeBuffer[DoX][DoY], SquaresNear++)
 
 				AltitudeBuffer[x][y] = HeightNear / SquaresNear;
+
+				if(c < 8)
+					AltitudeBuffer[x][y] += rand() % 100 - rand() % 100;
 			}
 	}
 

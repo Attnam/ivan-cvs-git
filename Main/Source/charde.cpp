@@ -175,8 +175,6 @@ void elpuri::CreateCorpse()
 
 void perttu::CreateCorpse()
 {
-	character::CreateCorpse();
-
 	GetLevelSquareUnder()->GetStack()->AddItem(new leftnutofperttu);
 }
 

@@ -2144,7 +2144,7 @@ bool character::Polymorph()
 		return true;
 	}
 
-	character* NewForm = protosystem::BalancedCreateMonster(2);
+	character* NewForm = protosystem::BalancedCreateMonster(5);
 
 	GetSquareUnder()->AddCharacter(NewForm);
 

@@ -79,6 +79,7 @@ public:
 	virtual void ChangeGroundLevelTerrain(groundlevelterrain*);
 	virtual void ChangeOverLevelTerrain(overlevelterrain*);
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
+	virtual void ApplyScript(squarescript*);
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;
