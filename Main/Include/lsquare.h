@@ -125,7 +125,7 @@ class lsquare : public square
   bool CloneEverything(character*);
   stack* GetSideStackOfAdjacentSquare(ushort) const;
   void KickAnyoneStandingHereAway();
-  void SpillFluid(material*, ushort, character*);
+  void SpillFluid(character*, material*, ushort);
   bool IsDark() const;
  protected:
   glterrain* GLTerrain;

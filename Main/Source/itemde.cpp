@@ -1482,11 +1482,6 @@ void corpse::AddPostFix(std::string& String) const
   GetDeceased()->AddName(String, INDEFINITE);
 }
 
-bool corpse::Consume(character* Eater, long Amount)
-{
-  return GetDeceased()->GetTorso()->Consume(Eater, Amount);
-}
-
 void corpse::GenerateLeftOvers(character* Eater)
 {
   GetDeceased()->GetTorso()->GenerateLeftOvers(Eater);
@@ -1676,26 +1671,27 @@ ulong corpse::GetPrice() const
   return Price;
 }
 
-item* corpse::PrepareForConsuming(character*)
+bool corpse::Consume(character* Eater, long Amount)
 {
   for(ushort c = GetDeceased()->GetBodyParts() - 1; c != 0; --c)
     {
-      bodypart* BPart = GetDeceased()->GetBodyPart(c);
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
 
-      if(BPart)
+      if(BodyPart)
 	{
-	  GetDeceased()->SevereBodyPart(c);
-	  GetSlot()->AddFriendItem(BPart);
-	  return BPart;
+	  if(BodyPart->Consume(Eater, Amount))
+	    BodyPart->GenerateLeftOvers(Eater);
+
+	  return false;
 	}
     }
 
-  return this;
+  return GetDeceased()->GetTorso()->Consume(Eater, Amount);
 }
 
-bool wandoflocking::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
-{ 
-  return Where->LockEverything(Who); 
+bool wandoflocking::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where)
+{
+  return Where->LockEverything(Who);
 }
 
 void materialcontainer::Save(outputfile& SaveFile) const
@@ -3710,13 +3706,13 @@ void potion::Break()
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("The %s shatters to pieces.", CHAR_NAME(DEFINITE));
 
-  if(GetContainedMaterial()) 
-    GetLSquareUnder()->SpillFluid(GetContainedMaterial()->Clone(), 70, 0);
-
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
   DonateSlotTo(Remains);
   SendToHell();
+
+  if(GetContainedMaterial()) 
+    Remains->GetLSquareUnder()->SpillFluid(0, GetContainedMaterial()->Clone(), 70);
 
   if(game::GetPlayer()->Equips(Remains))
     game::AskForKeyPress("Equipment broken! [press any key to continue]");

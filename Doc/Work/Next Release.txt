@@ -132,13 +132,13 @@ Balancing Loricatus.
 Solving the Elpuri Cave distance problem.
 //Apply + chests.
 Stats of summoned bodyparts must be made more intelligent.
-Ergonomification of corpse consumption.
+//Ergonomification of corpse consumption.
 //RDAM and similiar unclear attributes should be moved to an own screen.
 //?Snake flesh should be poisonous.
 //?Some special effect for daemon flesh.
 Checking throw balance.
 //Pick-axe available in the lowest levels.
-Boot m-color.
+//Boot m-color.
 //?Look stretch config option.
 (r) ?If a mine in the inventory is active, it should be displayed somehow.
 //Potion full of antidote.

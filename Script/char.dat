@@ -125,6 +125,7 @@ human
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
+	/*Inventory = { 128, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels, bananapeels; }*/
 	/*Inventory == wandofpolymorph;
 	RightRing = ring(RING_OF_POLYMORPH_CONTROL);*/
 	/*Helmet = LEATHER helmet;
@@ -1186,7 +1187,7 @@ goblin
 		PostFix = "king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -2153,7 +2154,7 @@ kobold
 	Config PATRIARCH;
 	{
 		AttributeBonus = 90;
-		Helmet = BRONZE helmet;
+		Helmet = IRON helmet;
 		BodyArmor = TROLL_HIDE bodyarmor(PLATE_MAIL);
 		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
 		Belt = TROLL_HIDE belt;
@@ -2165,7 +2166,7 @@ kobold
 		PostFix = "patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 1000;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 50000;

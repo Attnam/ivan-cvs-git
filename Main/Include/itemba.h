@@ -152,7 +152,6 @@ class item : public object
   virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, character*, float);
   virtual bool DogWillCatchAndConsume() const { return false; }
-  virtual item* PrepareForConsuming(character*) { return this; }
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar) { return false; }
   virtual bool Polymorph(stack*);

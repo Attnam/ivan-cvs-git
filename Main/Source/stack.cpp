@@ -239,7 +239,12 @@ void stack::CheckForStepOnEffect(character* Stepper)
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists())
-      ItemVector[c]->StepOnEffect(Stepper);
+      {
+	ItemVector[c]->StepOnEffect(Stepper);
+
+	if(!Stepper->IsEnabled())
+	  return;
+      }
 }
 
 square* stack::GetSquareTrulyUnder() const

@@ -259,14 +259,6 @@ bool game::Init(const std::string& Name)
 	InWilderness = true;
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
-
-	GetGod(1)->SetKnown(true);
-	GetGod(2)->SetKnown(true);
-	GetGod(4)->SetKnown(true);
-	GetGod(5)->SetKnown(true);
-	GetGod(6)->SetKnown(true);
-	GetGod(9)->SetKnown(true);
-
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();

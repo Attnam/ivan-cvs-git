@@ -326,7 +326,7 @@ class character : public entity, public id
   virtual void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   virtual void TestWalkability();
-  void EditAP(long What) { AP += What; if(AP > 1200) AP = 1200; }
+  void EditAP(long What) { AP = Limit<long>(AP + What, -12000, 1200); }
   void EditNP(long What) { NP += What; }
   virtual void SetSize(ushort);
   virtual ushort GetSize() const;

@@ -470,21 +470,20 @@ void mellis::PrayGoodEffect()
       uchar GodNumber = game::GetGods();
       uchar* Possible = new uchar[GodNumber]; 
       ushort PossibleSize = 0;
+
       for(uchar c = 1; c < GodNumber; ++c)
 	if(!game::GetGod(c)->GetKnown())
-	  Possible[++PossibleSize - 1] = c;
+	  Possible[PossibleSize++] = c;
 
-      if(!PossibleSize)
+      if(PossibleSize)
 	{
-	  ADD_MESSAGE("Nothing happens.");
+	  uchar NewKnownGod = Possible[RAND() % PossibleSize];
+	  game::GetGod(NewKnownGod)->SetKnown(true);
+	  ADD_MESSAGE("%s shares his knowledge of %s the %s.", GOD_NAME, game::GetGod(NewKnownGod)->Name().c_str(), game::GetGod(NewKnownGod)->Description().c_str());
 	  return;
 	}
-      uchar NewKnownGod = Possible[RAND() % PossibleSize];
-      
-      game::GetGod(NewKnownGod)->SetKnown(true);
-      ADD_MESSAGE("%s shares his knowledge of %s the %s.", GOD_NAME, game::GetGod(NewKnownGod)->Name().c_str(), game::GetGod(NewKnownGod)->Description().c_str());
-      return;
     }
+
   ADD_MESSAGE("Nothing happens.");
 }
 
@@ -691,7 +690,7 @@ void scabies::PrayGoodEffect()
 	  if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
 	    {
 	      ADD_MESSAGE("%s throws poison on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
-	      Square->SpillFluid(MAKE_MATERIAL(POISON_LIQUID, 500), 100, game::GetPlayer());
+	      Square->SpillFluid(game::GetPlayer(), MAKE_MATERIAL(POISON_LIQUID, 500), 100);
 	    }
 	}
     }

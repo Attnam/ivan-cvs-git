@@ -1,5 +1,14 @@
 November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Water *really* makes gunpowder useless
+	* Selecting a pile in the eat menu doesn't open a scroll bar question
+	  anymore
+	* Corpse consumption is now more ergonomic
+	* Item weights are now correctly updated when eating
+	* The player now knows no gods when he begins the game
+
+November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* The default answer of drop and pickup amount question is now the number
 	  of items, instead of one
 	* Merka is now the shopkeeper of the dungeon, not one of his guards

@@ -486,9 +486,9 @@ bool character::Eat()
   std::vector<item*> Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::EatableSorter))
-    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", 0, &item::EatableSorter);
+    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to eat?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::EatableSorter);
   else
-    GetStack()->DrawContents(Item, this, "What do you wish to eat?", 0, &item::EatableSorter);
+    GetStack()->DrawContents(Item, this, "What do you wish to eat?", NO_MULTI_SELECT, &item::EatableSorter);
 
   return !Item.empty() ? ConsumeItem(Item[0]) : false;
 }
@@ -510,9 +510,9 @@ bool character::Drink()
   std::vector<item*> Item;
 
   if(!game::IsInWilderness() && GetStackUnder()->SortedItems(this, &item::DrinkableSorter))
-    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", 0, &item::DrinkableSorter);
+    GetStack()->DrawContents(Item, GetStackUnder(), this, "What do you wish to drink?", "Items in your inventory", "Items on the ground", NO_MULTI_SELECT, &item::DrinkableSorter);
   else
-    GetStack()->DrawContents(Item, this, "What do you wish to drink?", 0, &item::DrinkableSorter);
+    GetStack()->DrawContents(Item, this, "What do you wish to drink?", NO_MULTI_SELECT, &item::DrinkableSorter);
 
   return !Item.empty() ? ConsumeItem(Item[0]) : false;
 }
@@ -520,11 +520,6 @@ bool character::Drink()
 bool character::ConsumeItem(item* Item)
 {
   if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
-    return false;
-
-  Item = Item->PrepareForConsuming(this);
-
-  if(!Item)
     return false;
 
   if(IsPlayer())
@@ -5799,6 +5794,7 @@ bool character::CanHeal() const
 void character::ReceiveFluidSpill(material* Liquid, ushort HitPercent)
 {
   Liquid->Effect(this, Liquid->GetVolume() * HitPercent / 100);
+  GetStack()->ReceiveFluidSpill(Liquid);
 }
 
 uchar character::GetRelation(const character* Who) const

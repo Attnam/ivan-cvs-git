@@ -1134,7 +1134,6 @@ class ITEM
  public:
   corpse(const corpse&);
   virtual ~corpse();
-  virtual bool Consume(character*, long);
   virtual bool IsConsumable(const character*) const;
   virtual short GetOfferValue(char) const;
   virtual float GetWeaponStrength() const;
@@ -1151,7 +1150,6 @@ class ITEM
   virtual long Score() const;
   virtual bool IsDestroyable() const;
   virtual ulong GetPrice() const;
-  virtual item* PrepareForConsuming(character*);
   virtual uchar GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
@@ -1162,6 +1160,7 @@ class ITEM
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual uchar GetFlyAmount() const;
+  virtual bool Consume(character*, long);
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual material*& GetMaterialReference(ushort);
