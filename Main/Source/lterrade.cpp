@@ -167,55 +167,6 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		}
 
 		return false;
-
-		/*if(Who == game::GetPlayer())
-			if(Who->HasPerttusNut())
-			{
-				if(Who->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
-				{
-					iosystem::TextScreen(FONTW, "A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Perttu, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
-					game::RemoveSaves();
-					game::Quit();
-
-					if(!game::GetWizardMode())
-					{
-						game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
-						highscore HScore;
-						HScore.Draw();
-					}
-					return true;
-				}
-				else
-				{
-					iosystem::TextScreen(FONTW, "As you ascend, an undead and sinister voice greets you:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
-					game::RemoveSaves();
-					game::Quit();
-
-					if(!game::GetWizardMode())
-					{
-						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
-						highscore HScore;
-						HScore.Draw();
-					}
-					return true;
-				}
-			}
-			else
-			{
-				iosystem::TextScreen(FONTW, "Thou escaped from the dungeon and were executed for not obeying the Überpriest!\n\nGame Over.");
-				game::RemoveSaves();
-				game::Quit();
-
-				if(!game::GetWizardMode())
-				{
-					game::GetPlayer()->AddScoreEntry("escaped from the dungeon and was executed for cowardice");
-					highscore HScore;
-					HScore.Draw();
-				}
-				return true;
-			}
-
-		return false;*/
 	}
 }
 

@@ -238,7 +238,6 @@ void ennerbeast::CreateCorpse()
 	GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 }
 
-
 bool humanoid::WearArmor()
 {
 	ushort Index;
@@ -646,35 +645,6 @@ bool humanoid::ShowWeaponSkills()
 		List.Draw();
 	}
 
-	/*if(SingleWeaponSkill.size())
-	{
-		felist List("Your experience in single weapons");
-
-		List.AddDescription("");
-		List.AddDescription("Weapon name         Level     Points    To next level");
-
-		for(uchar c = 0; c < SingleWeaponSkill.size(); ++c)
-		{
-			std::string Buffer;
-
-			Buffer += GetSingleWeaponSkill(c)->Name();
-			Buffer.resize(20, ' ');
-
-			Buffer += GetSingleWeaponSkill(c)->GetLevel();
-			Buffer.resize(30, ' ');
-
-			Buffer += int(GetSingleWeaponSkill(c)->GetHits());
-			Buffer.resize(40, ' ');
-
-			if(GetSingleWeaponSkill(c)->GetLevel() != 10)
-				List.AddEntry(Buffer + (GetSingleWeaponSkill(c)->GetLevelMap(GetSingleWeaponSkill(c)->GetLevel() + 1) - GetSingleWeaponSkill(c)->GetHits()), RED);
-			else
-				List.AddEntry(Buffer + '-', RED);
-		}
-
-		List.Draw();
-	}*/
-
 	return false;
 }
 
@@ -845,7 +815,7 @@ void farmer::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 4)
+	switch(rand() % 400 / 100)
 	{
 	case 0:
 		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because summer lasts two weeks.\"");
@@ -870,7 +840,7 @@ void cityguard::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 4)
+	switch(rand() % 400 / 100)
 	{
 	case 0:
 		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", CNAME(DEFINITE));
@@ -895,7 +865,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	switch(rand() % 4)
+	switch(rand() % 400 / 100)
 	{
 	case 0:
 		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CNAME(DEFINITE));
@@ -943,7 +913,7 @@ void swatcommando::BeTalkedTo(character*)
 
 void ennerbeast::BeTalkedTo(character*)
 {
-	switch(rand() % 4)
+	switch(rand() % 400 / 100)
 	{
 	case 0:
 		ADD_MESSAGE("\"Fishing is fun! Do you fish?\"");

@@ -865,8 +865,9 @@ bool character::Quit()
 
 void character::CreateCorpse()
 {
-	GetLevelSquareUnder()->GetStack()->AddItem(new corpse(GetMaterial(0)));
-
+	corpse* Corpse = new corpse(GetMaterial(0));
+	Corpse->SetBloodColor(GetBloodColor());
+	GetLevelSquareUnder()->GetStack()->AddItem(Corpse);
 	SetMaterial(0, 0);
 }
 

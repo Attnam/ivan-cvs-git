@@ -104,12 +104,12 @@ void levelterrain::Load(inputfile& SaveFile)
 
 void groundlevelterrain::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
 void overlevelterrain::DrawToTileBuffer() const
 {
-	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
+	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
 }
 
 bool levelterrain::Open(character* Opener)

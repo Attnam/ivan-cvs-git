@@ -162,14 +162,17 @@ void game::Init(std::string Name)
 	}
 	else
 	{
-		iosystem::TextScreen(	"Your legs are numbed after a long journey across a cold and gloomy forest.\n"
-					"You should have never believed those that adviced you to seek adventure here,\n"
-					"outside of all civilization. The next ship will arrive on the coast in eight\n"
-					"months. Before that you must make yourself comfortable here.\n\n"
-					"Finally your eyes catch your destination among the ocean of pines. A small\n"
-					"settlement of a few houses build around a round, shining tower rises ahead\n"
-					"of you. This is Attnam, the Holy City of Valpuri the Great Frog. And it is\n"
-					"desperately seeking adventurers like you.");
+		iosystem::TextScreen(	"For many days you have wandered through a thick and gloomy forest.\n"
+					"Constantly you have had to fight against ultra-violent bears and frog\n"
+					"goblins that roam freely in this area. Screams of Enner Beasts have\n"
+					"wailed in the distance and the cold air has almost freezed your body.\n"
+					"But now your eyes catch the destination: A small settlement of a few\n"
+					"houses build around a round, shining tower. The town has recently tried\n"
+					"to advertise itself as a perfect place for adventurous tourists who\n"
+					"seek to face an untouched nature. Unfortunately you were among those\n"
+					"few who didn't understand they really meant what they said.\n\n"
+					"You have arrived at Attnam, the Holy City of Valpuri the Great Frog.\n"
+					"And you know nothing about the adventures that await you here.");
 
 		iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 
@@ -476,7 +479,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult()
 {
-switch(rand()%15)
+	switch(rand() % 1500 / 100)
 	{
 	case 0  : return "moron";
 	case 1  : return "silly";

@@ -637,3 +637,10 @@ void lamp::Load(inputfile& SaveFile)
 
 	SaveFile >> OnWall;
 }
+
+void corpse::SetBloodColor(ushort Color)
+{
+	igraph::RemoveUser(GraphicId);
+	GraphicId.Color[1] = Color;
+	Picture = igraph::AddUser(GraphicId).Bitmap;
+}

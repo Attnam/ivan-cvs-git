@@ -308,102 +308,102 @@ Dungeon 1;
 			Type=normalroom;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
 		}
 
-		Square, Random { Walkable=true; }
+		Square, Random { Walkable=true; InRoom=false;  }
 		{
 			Character=farmer;
 		}
@@ -518,9 +518,9 @@ Dungeon 1;
 				.................
 				.................
 				.................
-				.......f.........
 				.................
-				...f..sssss...f..
+				.................
+				......sssss......
 				......sp..s......
 				......s...s......
 				......s...s......

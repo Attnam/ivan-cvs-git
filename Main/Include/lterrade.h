@@ -51,7 +51,7 @@ class OVERLEVELTERRAIN
 (
 	earth,
 	overlevelterrain,
-	InitMaterials(new moraine),
+	InitMaterials(2, new moraine, new stone),
 	{
 	},
 public:
@@ -134,6 +134,7 @@ public:
 	virtual bool GoUp(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
+	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(180, 180, 0); }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway upwards"; }
 	virtual std::string NamePlural() const					{ return "stairways upwards"; }
@@ -151,6 +152,7 @@ public:
 	virtual bool GoDown(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "The stairs are too hard to dig."; }
+	virtual void ColorChangeSpeciality(uchar, bool) { GraphicId.Color[1] = MAKE_RGB(180, 180, 0); }
 protected:
 	virtual std::string NameSingular() const				{ return "stairway downwards"; }
 	virtual std::string NamePlural() const					{ return "stairways downwards"; }
@@ -188,7 +190,7 @@ class OVERLEVELTERRAIN
 (
 	throne,
 	overlevelterrain,
-	InitMaterials(new gold),
+	InitMaterials(2, new gold, new gold),
 	{
 	},
 public:

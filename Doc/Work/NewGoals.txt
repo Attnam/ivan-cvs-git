@@ -38,8 +38,8 @@ D-Oree (Timo)
 D-froggoblin (Timo)
  -earth (Hex)
  -seats (Hex)
- -stairs (Timo)
- -corpse (Timo)
+D-stairs (Timo)
+D-corpse (Timo)
  -others that may be found (Timo)
 
 -fixing buggy graphics that are buggy due to overuse of material colors

@@ -50,7 +50,7 @@ public:
 	virtual ushort GetDensity() const				{ return 3000; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
 protected:
 	virtual std::string NameStem() const	{ return "stone"; }
 );
@@ -66,7 +66,7 @@ public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 200; }
-	virtual ushort GetColor() const { return MAKE_RGB(225, 225, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
 	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "banana flesh"; }

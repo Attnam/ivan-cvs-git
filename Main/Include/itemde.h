@@ -373,6 +373,7 @@ class ITEM
 	InitMaterials(new humanflesh),
 	{
 		SetSize(0);
+		SetBloodColor(MAKE_RGB(75,0,0));
 	},
 public:
 	virtual ushort Possibility() const RET(10)
@@ -387,6 +388,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
 	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
 	virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
+	virtual void SetBloodColor(ushort);
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 	virtual float NPModifier() const { return 0.01f; }
