@@ -115,9 +115,10 @@ void materialscript::ReadFrom(inputfile& SaveFile, bool)
 material* materialscript::Instantiate() const
 {
   material* Instance = MAKE_MATERIAL(Config);
+  ulong* Volume = GetVolume(false);
 
-  if(GetVolume(false))
-    Instance->SetVolume(*GetVolume());
+  if(Volume)
+    Instance->SetVolume(*Volume);
 
   return Instance;
 }
@@ -215,17 +216,25 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   else
     Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
 
-  if(GetParameters(false))
-    Instance->SetParameters(*GetParameters());
+  ulong* Parameters = GetParameters(false);
 
-  if(GetMainMaterial(false))
-    Instance->ChangeMainMaterial(GetMainMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+  if(Parameters)
+    Instance->SetParameters(*Parameters);
 
-  if(GetSecondaryMaterial(false))
-    Instance->ChangeSecondaryMaterial(GetSecondaryMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+  materialscript* MainMaterial = GetMainMaterial(false);
 
-  if(GetContainedMaterial(false))
-    Instance->ChangeContainedMaterial(GetContainedMaterial()->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+  if(MainMaterial)
+    Instance->ChangeMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+
+  materialscript* SecondaryMaterial = GetSecondaryMaterial(false);
+
+  if(SecondaryMaterial)
+    Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+
+  materialscript* ContainedMaterial = GetContainedMaterial(false);
+
+  if(ContainedMaterial)
+    Instance->ChangeContainedMaterial(ContainedMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
     Instance->UpdatePictures();
@@ -248,18 +257,27 @@ datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(Team);
   ANALYZE_MEMBER(Inventory);
   ANALYZE_MEMBER(IsMaster);
+  ANALYZE_MEMBER(WayPoint);
   return contentscripttemplate<character>::GetData(Identifier);
 }
 
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
 {
   character* Instance = contentscripttemplate<character>::BasicInstantiate(SpecialFlags);
+  ushort* Team = GetTeam(false);
 
-  if(GetTeam(false))
-    Instance->SetTeam(game::GetTeam(*GetTeam()));
+  if(Team)
+    Instance->SetTeam(game::GetTeam(*Team));
 
-  if(GetInventory(false))
-    Instance->AddToInventory(*GetInventory(), SpecialFlags);
+  std::vector<contentscript<item> >* Inventory = GetInventory(false);
+
+  if(Inventory)
+    Instance->AddToInventory(*Inventory, SpecialFlags);
+
+  std::vector<vector2d>* WayPoint = GetWayPoint(false);
+
+  if(WayPoint)
+    Instance->SetWayPoints(*WayPoint);
 
   Instance->RestoreHP();
   return Instance;
@@ -281,32 +299,42 @@ datamemberbase* contentscript<item>::GetData(const std::string& Identifier)
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 {
-  if(GetChance(false) && *GetChance() <= RAND() % 100)
+  uchar* Chance = GetChance(false);
+
+  if(Chance && *Chance <= RAND() % 100)
     return 0;
 
   item* Instance;
 
   if(Random)
     {
-      ulong MinPrice = GetMinPrice(false) ? *GetMinPrice() : 0;
-      ulong MaxPrice = GetMaxPrice(false) ? *GetMaxPrice() : MAX_PRICE;
-      ulong Category = GetCategory(false) ? *GetCategory() : ANY_CATEGORY;
-      Instance = protosystem::BalancedCreateItem(MinPrice, MaxPrice, Category);
+      ulong* MinPrice = GetMinPrice(false);
+      ulong* MaxPrice = GetMaxPrice(false);
+      ulong* Category = GetCategory(false);
+      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY);
     }
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);
 
-  if(GetTeam(false))
-    Instance->SetTeam(*GetTeam());
+  ushort* Team = GetTeam(false);
 
-  if(GetActive(false))
-    Instance->SetIsActive(*GetActive());
+  if(Team)
+    Instance->SetTeam(*Team);
 
-  if(GetEnchantment(false))
-    Instance->SetEnchantment(*GetEnchantment());
+  bool* Active = GetActive(false);
 
-  if(GetItemsInside(false))
-    Instance->SetItemsInside(*GetItemsInside(), SpecialFlags);
+  if(Active)
+    Instance->SetIsActive(*Active);
+
+  short* Enchantment = GetEnchantment(false);
+
+  if(Enchantment)
+    Instance->SetEnchantment(*Enchantment);
+
+  std::vector<contentscript<item> >* ItemsInside = GetItemsInside(false);
+
+  if(ItemsInside)
+    Instance->SetItemsInside(*ItemsInside, SpecialFlags);
 
   return Instance;
 }
@@ -325,23 +353,33 @@ olterrain* contentscript<olterrain>::Instantiate(ushort SpecialFlags) const
 {
   olterrain* Instance = contentscripttemplate<olterrain>::BasicInstantiate(SpecialFlags);
 
-  if(GetVisualEffects(false))
+  uchar* VisualEffects = GetVisualEffects(false);
+
+  if(VisualEffects)
     {
-      Instance->SetVisualEffects(*GetVisualEffects());
+      Instance->SetVisualEffects(*VisualEffects);
       Instance->UpdatePictures();
     }
 
-  if(GetAttachedArea(false))
-    Instance->SetAttachedArea(*GetAttachedArea());
+  uchar* AttachedArea = GetAttachedArea(false);
 
-  if(GetAttachedEntry(false))
-    Instance->SetAttachedEntry(*GetAttachedEntry());
+  if(AttachedArea)
+    Instance->SetAttachedArea(*AttachedArea);
 
-  if(GetText(false))
-    Instance->SetText(*GetText());
+  uchar* AttachedEntry = GetAttachedEntry(false);
 
-  if(GetItemsInside(false))
-    Instance->SetItemsInside(*GetItemsInside(), SpecialFlags);
+  if(AttachedEntry)
+    Instance->SetAttachedEntry(*AttachedEntry);
+
+  std::string* Text = GetText(false);
+
+  if(Text)
+    Instance->SetText(*Text);
+
+  std::vector<contentscript<item> >* ItemsInside = GetItemsInside(false);
+
+  if(ItemsInside)
+    Instance->SetItemsInside(*ItemsInside, SpecialFlags);
 
   return Instance;
 }
@@ -504,10 +542,16 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
       roomscript* RoomBase = static_cast<roomscript*>(Base);
 
       if(RoomBase)
-	if(RoomBase->GetReCalculate(false) && *RoomBase->GetReCalculate(false))
-	  RoomBase->ReadFrom(SaveFile, true);
+	{
+	  bool* ReCalculate = RoomBase->GetReCalculate(false);
 
-      if(GetReCalculate(false) && *GetReCalculate(false))
+	  if(ReCalculate && *ReCalculate)
+	    RoomBase->ReadFrom(SaveFile, true);
+	}
+
+      bool* ReCalculate = GetReCalculate(false);
+
+      if(ReCalculate && *ReCalculate)
 	{
 	  SaveFile.ClearFlags();
 	  SaveFile.SeekPosBeg(BufferPos);
@@ -587,10 +631,16 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
       levelscript* LevelBase = static_cast<levelscript*>(Base);
 
       if(LevelBase)
-	if(LevelBase->GetReCalculate(false) && *LevelBase->GetReCalculate(false))
-	  LevelBase->ReadFrom(SaveFile, true);
+	{
+	  bool* ReCalculate = LevelBase->GetReCalculate(false);
 
-      if(GetReCalculate(false) && *GetReCalculate())
+	  if(ReCalculate && *ReCalculate)
+	    LevelBase->ReadFrom(SaveFile, true);
+	}
+
+      bool* ReCalculate = GetReCalculate(false);
+
+      if(ReCalculate && *ReCalculate)
 	{
 	  SaveFile.ClearFlags();
 	  SaveFile.SeekPosBeg(BufferPos);
@@ -629,9 +679,10 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	  roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
 
 	  RS->SetValueMap(ValueMap);
+	  roomscript* RoomDefault = GetRoomDefault(false);
 
-	  if(GetRoomDefault(false))
-	    RS->SetBase(GetRoomDefault());
+	  if(RoomDefault)
+	    RS->SetBase(RoomDefault);
 
 	  RS->ReadFrom(SaveFile, ReRead);
 	  Room[Index] = RS;
@@ -685,9 +736,10 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 	  std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 	  levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
 	  LS->SetValueMap(ValueMap);
+	  levelscript* LevelDefault = GetLevelDefault(false);
 
-	  if(GetLevelDefault(false))
-	    LS->SetBase(GetLevelDefault());
+	  if(LevelDefault)
+	    LS->SetBase(LevelDefault);
 
 	  LS->ReadFrom(SaveFile);
 	  Level[Index] = LS;

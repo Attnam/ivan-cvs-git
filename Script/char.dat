@@ -79,6 +79,9 @@ character
 	CanZap = false;
 	HasFeet = true;
 	DeathMessage = "@Dd is slain.";
+	IgnoreDanger = false;
+	HPRequirementForGeneration = 0;
+	IsExtraCoward = false;
 }
 
 humanoid
@@ -270,6 +273,28 @@ guard
 		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
 		LeftWielded = IRON shield;
 		Adjective = "veteran";
+		CWeaponSkillHits = { 2, 100, 100; }
+		RightSWeaponSkillHits = 10;
+		LeftSWeaponSkillHits = 10;
+		PanicLevel = 20;
+		FriendlyReplies =
+		{
+			5,
+			"@Dd says gravely: \"You don't have a life. Get it in the army.\"",
+			"@Dd seems very suspicious. \"Don't even think of breaking rules.\"",
+			"\"The high priest is my idol. I would want a sword as big as his!\"",
+			"\"Can you imagine how cold this winter is if you wear only a rusty plate mail?\"",
+			"@Dd sighs. \"Fighting bears bores me. Why can't an amazon army attack us for a change?\"";
+		}
+	}
+
+	Config PATROL; /* make more unique */
+	{
+		Helmet = IRON helmet;
+		BodyArmor = IRON bodyarmor(PLATE_MAIL);
+		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
+		LeftWielded = IRON shield;
+		Adjective = "patrol";
 		CWeaponSkillHits = { 2, 100, 100; }
 		RightSWeaponSkillHits = 10;
 		LeftSWeaponSkillHits = 10;
@@ -1168,7 +1193,7 @@ dog
 {
 	DefaultArmStrength = 5;
 	DefaultAgility = 15;
-	DefaultEndurance = 7;
+	DefaultEndurance = 8;
 	DefaultPerception = 18;
 	DefaultIntelligence = 7;
 	DefaultWisdom = 5;
@@ -1266,8 +1291,10 @@ ass
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
-	FleshMaterial = ASS_FLESH;
+	FleshMaterial = MUTANT_ASS_FLESH;
 	DeathMessage = "@Dd neighs one last time and dies.";
+	BaseEmitation = rgb24(140, 100, 100);
+	Alias == "donkey";
 }
 
 communist /* Ivan */
@@ -1309,7 +1336,7 @@ communist /* Ivan */
 	LeftSWeaponSkillHits = 200;
 	RightGauntlet = HARDENED_LEATHER gauntlet { Enchantment = 1; }
 	RightBoot = HARDENED_LEATHER boot { Enchantment = 1; }
-	PanicLevel = 0;
+	PanicLevel = 10;
 	Inventory == fiftymillionroubles;
 	IsUnique = true;
 	DefaultName = "Ivan";
@@ -1495,6 +1522,7 @@ petrusswife
 	IsAbstract = true;
 	PanicLevel = 95;
 	BaseUnarmedStrength = 200;
+	IsExtraCoward = true;
 	HostileReplies == "\"Murderer! Just wait until Petrus finds you!\"";
 	FriendlyReplies =
 	{
@@ -1578,6 +1606,7 @@ housewife
 	KnownCWeaponSkills = { 2, UNARMED, UNCATEGORIZED; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	BaseUnarmedStrength = 200;
+	IsExtraCoward = true;
 	HostileReplies == "\"Face my rolling pin! Graah!\"";
 	FriendlyReplies =
 	{
@@ -1616,6 +1645,7 @@ femaleslave
 	BaseUnarmedStrength = 200;
 	HostileReplies == "\"Yikes!\"";
 	IsAbstract = true;
+	IsExtraCoward = true;
 
 	Config ATTNAM;
 	{
@@ -2208,6 +2238,9 @@ kamikazedwarf
 	Inventory == backpack;
 	FleshMaterial = DWARF_FLESH;
 	DeathMessage = "@Dd dies smiling.";
+	IgnoreDanger = true;
+	HPRequirementForGeneration = 80;
+	Frequency = 1000;
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	FriendlyReplies =
 	{
@@ -2460,6 +2493,7 @@ snake
 	ClassStates = INFRA_VISION;
 	HasFeet = false;
 	FleshMaterial = SNAKE_FLESH;
+	DangerModifier = 33;
 }
 
 orc
@@ -2827,6 +2861,8 @@ genetrixvesana
 	IsUnique = true;
 	CanBeWished = false;
 	DeathMessage = "@Dd is brutally destroyed.";
+	BaseEmitation = rgb24(140, 100, 100);
+	FleshMaterial = MUTANT_PLANT_FIBER;
 }
 
 ostrich
@@ -2923,7 +2959,7 @@ encourager
 	TotalSize = 170;
 	NameSingular = "banana grower encourager";
 	Belt = LEATHER belt;
-	RightWielded = whip;
+	RightWielded = LEATHER whip;
 	RightBoot = HARDENED_LEATHER boot;
 	KnownCWeaponSkills = { 2, KICK, WHIPS; }
 	CWeaponSkillHits = { 2, 100, 100; }
@@ -2939,4 +2975,34 @@ encourager
 		"@Dd screams at your face: \"Me talented shouter. That made everyone in Attnam jealous. Me was sent here and told to never come back.\"",
 		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouragering workers.\"";
 	}
+}
+
+chameleon
+{
+	DefaultArmStrength = 4;
+	DefaultAgility = 20;
+	DefaultEndurance = 12;
+	DefaultPerception = 12;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 8;
+	DefaultMana = 0;
+	CanOpen = false;
+	TotalVolume = 4500;
+	TorsoBitmapPos = 16, 0;
+	HostileReplies == "The skin of @du is blood red for a moment.";
+	FriendlyReplies == "The skin of @du is white for a moment.";
+	TotalSize = 30;
+	/* SkinColor overridden */
+	NameSingular = "chameleon";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 300;
+	CanBeGenerated = true;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 20;
+	FleshMaterial = CHAMELEON_FLESH;
+	IgnoreDanger = true;
+	HPRequirementForGeneration = 80;
+	Frequency = 1000;
+	IsExtraCoward = true;
 }

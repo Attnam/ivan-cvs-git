@@ -93,7 +93,7 @@ Carnivorous plants spill blood.
 "Stone stones"
 //Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.
 //Consuming chests probably crashes the game.
-Go seems to be slower than manual walking.
+//Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
 (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 Bear trap + level change crashes.
@@ -118,4 +118,12 @@ It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more
 //Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
 Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
 //The Hideous RAM Boulder Monster Spawn Error.
-Lanterns put inside itemcontainers still emit light
+"The severed right leg of Petrus's wife number 6 hits the open, locked iron door with a triangular lock and the open, locked iron door with a triangular lock opens."
+Polymorphed into a mistress warlady and wielding the Justifier, I attacked Attnam. After killing a dozen citizens inside
+  and outside the Cathedral, I noticed odd lagging, activated the see whole map cheat and discovered Petrus had gone mad
+  and was killing everyone. I suppose some item kicked by guard hit him and he thought Attnam's folk had started a rebellion?
+  A funny side note: a kamikaze dwarf had just blown up his wives, which would perhaps be a humane reason for his actions :)
+Lanterns put inside itemcontainers still emit light.
+Digging book shelves probably doesn't work correctly.
+It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+Can angry Atavus or Cruentus destroy a quest artifact inside a container?

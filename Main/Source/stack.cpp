@@ -331,14 +331,14 @@ item* stack::DrawContents(const character* Viewer, const std::string& Topic, uch
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
-void stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(std::vector<item*>& ReturnVector, const character* Viewer, const std::string& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
-  DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
+  return DrawContents(ReturnVector, 0, Viewer, Topic, "", "", Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
 
-void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
+ushort stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, const character* Viewer, const std::string& Topic, const std::string& ThisDesc, const std::string& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   felist Contents(Topic);
 
@@ -365,19 +365,21 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
   if(Flags & REMEMBER_SELECTED)
     Contents.SetSelected(GetSelected());
 
-  Selected = Contents.Draw();
+  ushort Chosen = Contents.Draw();
 
-  if(Selected & FELIST_ERROR_BIT)
+  if(Chosen & FELIST_ERROR_BIT)
     {
       Selected = 0;
-      return;
+      return Chosen;
     }
+  else
+    Selected = Chosen;
 
   ushort Pos = 0;
 
   if(Flags & NONE_AS_CHOICE)
     if(!Selected)
-      return;
+      return 0;
     else
       ++Pos;
 
@@ -386,10 +388,11 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
       Pos = MergeStack->SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, SorterFunction);
 
       if(!ReturnVector.empty())
-	return;
+	return 0;
     }
 
   SearchChosen(ReturnVector, Viewer, Pos, Selected, Flags, SorterFunction);
+  return 0;
 }
 
 /* fix selectitem warning! */

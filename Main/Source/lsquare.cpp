@@ -756,39 +756,50 @@ oterrain* lsquare::GetOTerrain() const
 
 void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
-  if(SquareScript->GetAttachRequired(false) && *SquareScript->GetAttachRequired())
-    GetLevelUnder()->AttachPos(GetPos());
+  bool* AttachRequired = SquareScript->GetAttachRequired(false);
 
-  if(SquareScript->GetEntryIndex(false))
-    GetLevelUnder()->SetEntryPos(*SquareScript->GetEntryIndex(), GetPos());
+  if(AttachRequired && *AttachRequired)
+    GetLevelUnder()->AttachPos(Pos);
 
-  if(SquareScript->GetCharacter(false))
+  uchar* EntryIndex = SquareScript->GetEntryIndex(false);
+
+  if(EntryIndex)
+    GetLevelUnder()->SetEntryPos(*EntryIndex, Pos);
+
+  contentscript<character>* CharacterScript = SquareScript->GetCharacter(false);
+
+  if(CharacterScript)
     {
-      character* Char = SquareScript->GetCharacter()->Instantiate();
+      character* Char = CharacterScript->Instantiate();
 
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevelUnder()->GetLevelScript()->GetTeamDefault()));
 
       AddCharacter(Char);
+      Char->SetHomePos(Pos);
 
       if(Room)
 	{
 	  Room->HandleInstantiatedCharacter(Char);
 
-	  if(SquareScript->GetCharacter()->GetIsMaster(false) && *SquareScript->GetCharacter()->GetIsMaster())
+	  bool* IsMaster = CharacterScript->GetIsMaster(false);
+
+	  if(IsMaster && *IsMaster)
 	    Room->SetMaster(Char);
 	}
     }
 
-  if(SquareScript->GetItems(false))
-    for(ushort c = 0; c < SquareScript->GetItems()->size(); ++c)
+  std::vector<contentscript<item> >* Items = SquareScript->GetItems(false);
+
+  if(Items)
+    for(ushort c = 0; c < Items->size(); ++c)
       {
 	stack* Stack;
-	item* Item = (*SquareScript->GetItems())[c].Instantiate();
+	item* Item = (*Items)[c].Instantiate();
 
 	if(Item)
 	  {
-	    uchar* SideStackIndex = (*SquareScript->GetItems())[c].GetSideStackIndex(false);
+	    uchar* SideStackIndex = (*Items)[c].GetSideStackIndex(false);
 
 	    if(!SideStackIndex)
 	      Stack = GetStack();
@@ -802,12 +813,16 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 	  }
       }
 
-  if(SquareScript->GetGTerrain(false))
-    ChangeGLTerrain(SquareScript->GetGTerrain()->Instantiate());
+  contentscript<glterrain>* GLTerrainScript = SquareScript->GetGTerrain(false);
 
-  if(SquareScript->GetOTerrain(false))
+  if(GLTerrainScript)
+    ChangeGLTerrain(GLTerrainScript->Instantiate());
+
+  contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain(false);
+
+  if(OLTerrainScript)
     {
-      olterrain* Terrain = SquareScript->GetOTerrain()->Instantiate();
+      olterrain* Terrain = OLTerrainScript->Instantiate();
       ChangeOLTerrain(Terrain);
 
       if(Room)
@@ -825,18 +840,6 @@ bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDark
   return (GetPos() - FromPos).Length() <= MaxDistance && (IgnoreDarkness || !IsDark())
       && ((Character && Character->IsPlayer() && GetNearSquare(FromPos)->CanBeSeenByPlayer(true))
       || femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler));
-
-  /*ulong Distance = (GetPos() - FromPos).Length();
-
-  if(Distance > MaxDistance || (!IgnoreDarkness && IsDark()))
-    return false;
-  else
-    {
-      if(Character && Character->IsPlayer() && GetNearSquare(FromPos)->CanBeSeenByPlayer(true))
-	return true;
-      else
-	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
-    }*/
 }
 
 void lsquare::MoveCharacter(lsquare* To)
@@ -983,7 +986,7 @@ void lsquare::PolymorphEverything(character* Zapper)
       if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 	Zapper->Hostility(Character);
 
-      Character->PolymorphRandomly(500 + RAND() % 500);
+      Character->PolymorphRandomly(0, 10000, 5000 + RAND() % 5000);
     }
 }
 

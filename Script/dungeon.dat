@@ -577,7 +577,7 @@ Dungeon ATTNAM;
 		ReCalculate = false;
 		OnGround = true;
 		TeamDefault = ATTNAM_TEAM;
-		AmbientLight = 0;
+		AmbientLight = rgb24(100, 100, 100);
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
 
@@ -599,6 +599,11 @@ Dungeon ATTNAM;
 			AllowLockedDoors = false;
 			AllowBoobyTrappedDoors = false;
 			Shape = RECTANGLE;
+		}
+
+		Square, Pos 0, 0;
+		{
+			Character = guard(PATROL) { WayPoint = { 4, 0, 0, XSize - 1, 0, XSize - 1, YSize - 1, 0, YSize - 1; } }
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -647,6 +652,11 @@ Dungeon ATTNAM;
 			DivineMaster = VALPURUS;
 			GenerateLanterns = false;
 			Type = cathedral;
+
+			Square, Pos 1, 1;
+			{
+				Character = guard(PATROL) { WayPoint = { 4, 11, 11, 49, 11, 49, 50, 11, 50; } }
+			}
 
 			Square, Pos 19, 41;
 			{
@@ -1126,7 +1136,7 @@ Dungeon ATTNAM;
 
 		Room 6;
 		{
-			Pos=27,2;
+			Pos=27,1;
 			Size = 7,6;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
 			FloorSquare = solidterrain(PARQUET),empty;
@@ -1229,7 +1239,7 @@ Dungeon ATTNAM;
 
 			Square, Pos 3, 2;
 			{
-				Character = smith { Team = 6; IsMaster = true; }
+				Character = smith { IsMaster = true; }
 			}
 		}
 
@@ -1568,25 +1578,25 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			Character = spider;
-			Times = 3;
+			Times = 2;
 		}
 
 		Square, Random;
 		{
 			Character = kobold;
-			Times = 3;
+			Times = 2;
 		}
 
 		Square, Random;
 		{
 			Character = zombie;
-			Times = 3;
+			Times = 2;
 		}
 
 		Square, Random;
 		{
 			Character = carnivorousplant;
-			Times = 3;
+			Times = 2;
 		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1663,6 +1673,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
 			GenerateFountains = false;
 			AltarPossible = false;
+			GenerateLanterns = false;
 
 			Square, Pos 2,2;
 			{

@@ -570,6 +570,19 @@ organicsubstance /* substances that spoil but are not flesh */
 		SpoilModifier = 20000;
 	}
 
+	Config MUTANT_PLANT_FIBER;
+	{
+		StrengthValue = 5;
+		ConsumeType = CT_MISC_ORGANIC;
+		Density = 500;
+		Color = rgb16(111, 64, 37);
+		IsFlammable = true;
+		NameStem = "mutant plant fiber";
+		Flexibility = 10;
+		SpoilModifier = 10000;
+		Emitation = rgb24(140, 100, 100);
+	}
+
 	Config BONE;
 	{
 		StrengthValue = 40;
@@ -740,7 +753,10 @@ liquid
 		Color = rgb16(128, 0, 128);
 		NameStem = "antidote liquid";
 		Effect = EFFECT_ANTIDOTE;
+		ConsumeEndMessage = CEM_ANTIDOTE;
+		HitMessage = HM_ANTIDOTE;
 		Alpha = 170;
+		EffectStrength = 50;
 	}
 }
 
@@ -853,9 +869,12 @@ flesh
 		NameStem = "jackal flesh";
 	}
 
-	Config ASS_FLESH;
+	Config MUTANT_ASS_FLESH;
 	{
-		NameStem = "donkey flesh";
+		NameStem = "mutant ass flesh";
+		Effect = EFFECT_POLYMORPH;
+		EffectStrength = 1;
+		Emitation = rgb24(140, 100, 100);
 	}
 
 	Config BAT_FLESH;
@@ -968,6 +987,13 @@ flesh
 	Config OSTRICH_FLESH;
 	{
 		NameStem = "ostrich flesh";
+	}
+
+	Config CHAMELEON_FLESH;
+	{
+		NameStem = "chameleon flesh";
+		Effect = EFFECT_POLYMORPH;
+		EffectStrength = 20;
 	}
 }
 

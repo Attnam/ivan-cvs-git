@@ -494,7 +494,7 @@ bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
       if(!StrengthValue)
 	StrengthValue = 1;
 
-      if(Damage > StrengthValue << 2 && RAND() % (25 * Damage / StrengthValue) >= 100)
+      if(Damage > StrengthValue << 2 && RAND() & 1 && RAND() % (25 * Damage / StrengthValue) >= 100)
 	{
 	  Break();
 	  return true;

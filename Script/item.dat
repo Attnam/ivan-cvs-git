@@ -700,7 +700,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 potion /* materialcontainer-> */
 {
 	DefaultSize = 30;
-	Possibility = 425;
+	Possibility = 750;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = POTION;
@@ -712,7 +712,7 @@ potion /* materialcontainer-> */
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
 	ContainedMaterialConfig = { 6, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID; }
-	MaterialConfigChances = { 6, 100, 75, 50, 75, 1, 50; }
+	MaterialConfigChances = { 6, 100, 75, 50, 75, 1, 75; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
@@ -1697,6 +1697,7 @@ itemcontainer
 		MaxGeneratedContainedItems = 3;
 		StrengthModifier = 100;
 		BitmapPos = 64, 48;
+		DamageDivider = 2;
 	}
 
 	Config CHEST;
@@ -1710,6 +1711,7 @@ itemcontainer
 		MaxGeneratedContainedItems = 5;
 		StrengthModifier = 500;
 		BitmapPos = 48, 80;
+		DamageDivider = 3;
 	}
 
 	Config LARGE_CHEST;
@@ -1724,19 +1726,22 @@ itemcontainer
 		MaxGeneratedContainedItems = 10;
 		StrengthModifier = 1000;
 		BitmapPos = 48, 64;
+		DamageDivider = 4;
 	}
 
 	Config STRONG_BOX;
 	{
-		NameSingular = "strong box";
+		Adjective = "small";
+		NameSingular = "strong-box";
 		DefaultSize = 30;
-		StorageVolume = 3000;
+		StorageVolume = 5000;
 		DefaultMainVolume = 250;
-		Price = 150;
+		Price = 250;
 		Possibility = 10;
 		MaxGeneratedContainedItems = 3;
 		MainMaterialConfig == IRON;
 		BitmapPos = 48, 368;
+		DamageDivider = 5;
 	}
 }
 

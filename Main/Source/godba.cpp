@@ -199,7 +199,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 {
   short OfferValue = Sacrifice->GetOfferValue(BasicAlignment());
 
-  if(abs(OfferValue) > 5)
+  if(OfferValue)
     {
       if(!Sacrifice->IsDestroyable())
 	{

@@ -1117,21 +1117,25 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
+bool bodypart::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(GetMaster())
+  if(Master)
     {
-      ushort BHP = GetHP();
+      ushort BHP = HP;
 
-      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1 && Master->BodyPartIsVital(GetBodyPartIndex()))
+      if((HP <= Damage && HP == MaxHP && HP != 1 && Master->BodyPartIsVital(GetBodyPartIndex()))
+      || ((Type == POISON || Type == SOUND) && GetBodyPartIndex() != TORSO_INDEX))
 	Damage = GetHP() - 1;
+
+      if(!Damage)
+	return false;
 
       EditHP(-Damage);
 
-      if(GetHP() <= 0)
+      if(HP <= 0)
 	return true;
-      else if(GetMaster()->IsPlayer())
-	if(GetHP() == 1 && BHP > 1)
+      else if(Master->IsPlayer())
+	if(HP == 1 && BHP > 1)
 	  {
 	    game::Beep();
 
@@ -3910,7 +3914,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   if(Type == PHYSICAL_DAMAGE || Type == SOUND)
     {
-      Contained->ReceiveDamage(Damager, Damage / 2, Type);
+      Contained->ReceiveDamage(Damager, Damage / GetDamageDivider(), Type);
 
       if(IsLocked() && Damage > RAND() % 6)
 	{

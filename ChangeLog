@@ -1,4 +1,40 @@
-December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
+December 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* There's some light in Attnam again
+	* Puppies now have 50% more HP
+	* Tried to optimize script instantiations without noteworthy success
+	* Corrected a bug that prevented NPCs from searching unseen enemies
+	* NPCs normally standing idle now usually return to their home positions after
+	  the dangers in the level are eliminated
+	* The smith now belongs to the same team as the other Attnamians
+	* Decreased snake's DangerModifier
+	* Wand of polymorph's effect time was way too low (probably a test I'd forgotten)
+	* Added chameleon which polymorphs all the time and in the rare normal form changes
+	  color all the time
+	* Added chameleon flesh which activates the polymorphing state
+	* Mutant ass flesh now also triggers the polymorphing state
+	* Kamikaze dwarves and chameleons now use a special generation system; they both
+	  start to appear rarely (frequency 1000) after the player reaches 80 HP
+	* Added IsExtraCoward character database boolean which allows easy adding of
+	  civilian AI which panics immediately when an enemy is seen
+	* Petrus's wives, housewives, female slaves/servants and chameleons in their normal
+	  form are now extra cowards
+	* Added a special message to Petrus's wives' and housewives' SpecialEnemySightedReaction()
+	* Decreased penalties for eating spoiled bananaflesh and other high NPModifier materials
+	* ESC now works in equipment selection screen correctly
+	* Genetrix vesana, mutant asses and their materials now radiate red light
+	* Corrected a problem that slowed down the game during most actions
+	* Go is no longer 10% slower than manual walking
+	* Added quick keys 'w' and 'W' for wielding items in the right and left arm
+	* Decreased poison's effect a bit
+	* Poison and sound can't sever bodyparts anymore
+	* Tripled healing liquid's effect
+	* Items now break somewhat less often
+	* Items in strong-boxes now take very little damage and almost nothing can break
+	  an item inside a strong-box inside another container
+	* Decreased the effect of haste and slow to balance boss battles
+
+December 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a fatal bug in the monster generation code
 	* Eating spoiled food now yields less messages
@@ -6,7 +42,7 @@ December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	  inhandspics are now drawn using a gum solution function, even though the general
 	  system doesn't currently exist
 
-December 01 2002 Timo Kiviluoto <sonor@phpoint.fi>
+December 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a design flaw in the state system that occasionally caused odd permanent
 	  states to be activated

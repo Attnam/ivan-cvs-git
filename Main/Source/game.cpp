@@ -131,6 +131,8 @@ command* game::Command[] =
   new command(&character::Throw, "throw", 't', false),
   new command(&character::ForceVomit, "vomit", 'v', false),
   new command(&character::NOP, "wait", '.', true),
+  new command(&character::WieldInRightArm, "wield in right arm", 'w', true),
+  new command(&character::WieldInLeftArm, "wield in left arm", 'W', true),
   new command(&character::WizardMode, "wizard mode activation", 'X', true),
   new command(&character::Zap, "zap", 'z', false),
 
@@ -1043,8 +1045,10 @@ void game::CreateTeams()
     for(ushort i = 0; i < GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
       GetTeam(GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GetGameScript()->GetTeam()[c].first), GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
 
-    if(GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false))
-      GetTeam(GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*GetGameScript()->GetTeam()[c].second->GetAttackEvilness());
+    ushort* AttackEvilness = GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false);
+
+    if(AttackEvilness)
+      GetTeam(GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*AttackEvilness);
   }
 }
 
@@ -1683,7 +1687,9 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
 	}
 
-      if(New && GetCurrentLevel()->GetLevelScript()->GetAutoReveal(false) && *GetCurrentLevel()->GetLevelScript()->GetAutoReveal())
+      bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->GetAutoReveal(false);
+
+      if(New && AutoReveal && *AutoReveal)
 	GetCurrentLevel()->Reveal();
 
       ShowLevelMessage();

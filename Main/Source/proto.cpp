@@ -72,24 +72,33 @@ character* protosystem::BalancedCreateMonster()
 		    if(i->second.IsUnique && DangerId.HasBeenGenerated)
 		      break;
 
-		    float DangerModifier = DangerId.Danger * 100 / i->second.DangerModifier;
-
-		    if(c >= 100 || (DangerModifier < Difficulty * 5 && DangerModifier > Difficulty / 5))
+		    if(c < 100 && !i->second.IgnoreDanger)
 		      {
-			character* Monster = Proto->Clone(i->first);
+			float DangerModifier = DangerId.Danger * 100 / i->second.DangerModifier;
 
-			if(c >= 100 || (!(RAND() % 3) && Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 50000))
-			  {
-			    game::SignalGeneration(ChosenType, i->first);
-			    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-			    return Monster;
-			  }
-			else
-			  {
-			    delete Monster;
-			    Illegal.push_back(Chosen);
-			  }
+			if(DangerModifier > Difficulty * 5 || DangerModifier < Difficulty / 5)
+			  break;
 		      }
+
+		    if(c < 100 && game::GetPlayer()->GetMaxHP() < i->second.HPRequirementForGeneration)
+		      break;
+
+		    if(c < 100 && RAND() % 3)
+		      {
+			Illegal.push_back(Chosen);
+			break;
+		      }
+
+		    character* Monster = Proto->Clone(i->first);
+
+		     if(c >= 100 || i->second.IsUnique || (Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 100000))
+		      {
+			game::SignalGeneration(ChosenType, i->first);
+			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+			return Monster;
+		      }
+		    else
+		      delete Monster;
 		  }
 
 		break;
@@ -158,32 +167,47 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
     }
 }
 
-character* protosystem::CreateMonster(ushort SpecialFlags)
+character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort SpecialFlags)
 {
   while(true)
     {
-      ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-      const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
-      const character::databasemap& Config = Proto->GetConfig();
+      for(ushort c = 0; c < 100; ++c)
+	{
+	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
+	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
+	  const character::databasemap& Config = Proto->GetConfig();
+	  Chosen = RAND() % Config.size();
 
-      Chosen = RAND() % Config.size();
-
-      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	if(!Chosen--)
-	  {
-	    if(!i->second.IsAbstract
-	    && i->second.CanBeGenerated
-	    && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000)
-	    && (!i->second.IsUnique || !game::GetDangerMap().find(configid(Chosen, i->first))->second.HasBeenGenerated))
+	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	    if(!Chosen--)
 	      {
-		character* Monster = Proto->Clone(i->first, SpecialFlags);
-		game::SignalGeneration(Chosen, i->first);
-		Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
-		return Monster;
-	      }
+		if(!i->second.IsAbstract
+		&& i->second.CanBeGenerated
+		&& i->second.CanBeWished
+		&& (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000)
+		&& (!i->second.IsUnique || !game::GetDangerMap().find(configid(Chosen, i->first))->second.HasBeenGenerated))
+		  {
+		    character* Monster = Proto->Clone(i->first, SpecialFlags);
 
-	    break;
-	  }
+		    if(MinDanger > 0 || MaxDanger < 10000)
+		      {
+			ushort Danger = ushort(Monster->GetRelativeDanger(game::GetPlayer()) * 100.0f);
+
+			if(Danger < MinDanger || Danger > MaxDanger)
+			  break;
+		      }
+
+		    game::SignalGeneration(Chosen, i->first);
+		    Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+		    return Monster;
+		  }
+
+		break;
+	      }
+	}
+
+      MinDanger -= MinDanger >> 2;
+      MaxDanger += MaxDanger >> 2;
     }
 }
 

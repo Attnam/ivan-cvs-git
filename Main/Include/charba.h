@@ -14,9 +14,12 @@
 #include "script.h"
 #include "femath.h"
 
-#define CHAR_PERSONAL_PRONOUN GetPersonalPronoun().c_str()
-#define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun().c_str()
-#define CHAR_OBJECT_PRONOUN GetObjectPronoun().c_str()
+#define CHAR_PERSONAL_PRONOUN GetPersonalPronoun(true).c_str()
+#define CHAR_POSSESSIVE_PRONOUN GetPossessivePronoun(true).c_str()
+#define CHAR_OBJECT_PRONOUN GetObjectPronoun(true).c_str()
+#define CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW GetPersonalPronoun(false).c_str()
+#define CHAR_POSSESSIVE_PRONOUN_THIRD_PERSON_VIEW GetPossessivePronoun(false).c_str()
+#define CHAR_OBJECT_PRONOUN_THIRD_PERSON_VIEW GetObjectPronoun(false).c_str()
 
 typedef std::vector<std::pair<float, ushort> > blockvector;
 
@@ -153,6 +156,9 @@ struct characterdatabase
   ushort FleshMaterial;
   bool HasFeet;
   std::string DeathMessage;
+  bool IgnoreDanger;
+  ushort HPRequirementForGeneration;
+  bool IsExtraCoward;
 };
 
 class characterprototype
@@ -351,9 +357,9 @@ class character : public entity, public id
   std::string GetAssignedName() const { return AssignedName; }
   void SetAssignedName(const std::string& What) { AssignedName = What; }
   std::string GetDescription(uchar) const;
-  std::string GetPersonalPronoun() const;
-  std::string GetPossessivePronoun() const;
-  std::string GetObjectPronoun() const;
+  std::string GetPersonalPronoun(bool = true) const;
+  std::string GetPossessivePronoun(bool = true) const;
+  std::string GetObjectPronoun(bool = true) const;
   virtual bool BodyPartCanBeSevered(ushort) const;
   virtual void AddName(std::string&, uchar) const;
   virtual void ReceiveHeal(long);
@@ -500,6 +506,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(ushort, FleshMaterial);
   virtual DATA_BASE_BOOL(HasFeet);
   virtual DATA_BASE_VALUE(const std::string&, DeathMessage);
+  virtual DATA_BASE_BOOL(IsExtraCoward);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -563,7 +570,7 @@ class character : public entity, public id
   virtual void EndInvisibility();
   virtual void EndInfraVision();
   virtual void EndESP();
-  virtual void PolymorphRandomly(ushort);
+  virtual character* PolymorphRandomly(ushort, ushort, ushort);
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
   virtual void StartReading(item*, ulong);
   virtual void DexterityAction(ushort);
@@ -729,6 +736,13 @@ class character : public entity, public id
   virtual long GetStuffScore() const;
   virtual bool IsOnGround() const { return MotherEntity && MotherEntity->IsOnGround(); }
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
+  void SetHomePos(vector2d What) { HomePos = What; }
+  vector2d GetHomePos() const { return HomePos; }
+  bool MoveTowardsHomePos();
+  virtual void SetWayPoints(const std::vector<vector2d>&) { }
+  virtual bool WieldInRightArm();
+  virtual bool WieldInLeftArm();
+  virtual bool TryToChangeEquipment(ushort);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual void SpecialTurnHandler() { }
@@ -752,7 +766,7 @@ class character : public entity, public id
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
   virtual bool CheckForDoors();
-  virtual bool CheckForEnemies(bool, bool, bool = false);
+  virtual bool CheckForEnemies(bool, bool, bool = true);
   virtual bool FollowLeader();
   virtual void StandIdleAI();
   virtual void CreateCorpse();
@@ -826,6 +840,7 @@ class character : public entity, public id
   ulong RegenerationCounter;
   short AttributeBonus[BASE_ATTRIBUTES];
   short CarryingBonus;
+  vector2d HomePos;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
@@ -863,4 +878,3 @@ name : public base\
 }; CHARACTER_PROTOTYPE(name, &base##_ProtoType);
 
 #endif
-

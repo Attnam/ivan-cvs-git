@@ -293,7 +293,14 @@ class CHARACTER
   guard,
   humanoid,
  public:
-  virtual void GetAICommand() { StandIdleAI(); }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual void GetAICommand();
+  virtual void SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+ protected:
+  virtual void VirtualConstructor(bool);
+  std::vector<vector2d> WayPoints;
+  ushort NextWayPoint;
 );
 
 class CHARACTER
@@ -519,12 +526,15 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
+  virtual bool SpecialEnemySightedReaction(character*);
 );
 
 class CHARACTER
 (
   housewife,
   humanoid,
+ public:
+  virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetHairColor() const;
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) * 16); }
@@ -818,6 +828,16 @@ class CHARACTER
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   ulong LastHit;
+);
+
+class CHARACTER  
+(
+  chameleon,
+  nonhumanoid,
+ protected:
+  virtual ushort GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
+  virtual void SpecialTurnHandler() { UpdatePictures(); }
+  virtual void GetAICommand();
 );
 
 #endif

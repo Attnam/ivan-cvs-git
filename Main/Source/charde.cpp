@@ -726,6 +726,8 @@ void slave::GetAICommand()
       if(MoveRandomly())
 	return;
     }
+  else if(MoveTowardsHomePos())
+    return;
 
   EditAP(-1000);
 }
@@ -3847,6 +3849,9 @@ void encourager::GetAICommand()
 	}
     }
 
+  if(MoveTowardsHomePos())
+    return;
+
   EditAP(-1000);
 }
 
@@ -3951,4 +3956,69 @@ void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, b
       Temp->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
       delete Temp;
     }
+}
+
+void chameleon::GetAICommand()
+{
+  if(HP != MaxHP || !(RAND() % 10))
+    {
+      character* NewForm = PolymorphRandomly(10, 250, 1000 + RAND() % 1000);
+      NewForm->GainIntrinsic(POLYMORPH);
+    }
+  else
+    character::GetAICommand();
+}
+
+bool petrusswife::SpecialEnemySightedReaction(character* Char)
+{
+  item* Weapon = Char->GetMainWielded();
+
+  if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 20))
+    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().c_str(), Weapon->GetNameSingular().c_str());
+
+  return false;
+}
+
+bool housewife::SpecialEnemySightedReaction(character* Char)
+{
+  item* Weapon = Char->GetMainWielded();
+
+  if(Weapon && Weapon->IsWeapon(Char) && !(RAND() % 5))
+    ADD_MESSAGE("%s screams: \"Oh my Frog, %s's got %s %s!\"", CHAR_DESCRIPTION(DEFINITE), Char->CHAR_PERSONAL_PRONOUN_THIRD_PERSON_VIEW, Weapon->GetArticle().c_str(), Weapon->GetNameSingular().c_str());
+
+  return false;
+}
+
+void guard::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << WayPoints << NextWayPoint;
+}
+
+void guard::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> WayPoints >> NextWayPoint;
+}
+
+void guard::VirtualConstructor(bool Load)
+{
+  humanoid::VirtualConstructor(Load);
+  NextWayPoint = 0;
+}
+
+void guard::GetAICommand()
+{
+  if(WayPoints.size() && WayPoint.X == -1)
+    {
+      if(GetPos() == WayPoints[NextWayPoint])
+	if(NextWayPoint < WayPoints.size() - 1)
+	  ++NextWayPoint;
+	else
+	  NextWayPoint = 0;
+
+      WayPoint = WayPoints[NextWayPoint];
+    }
+
+  StandIdleAI();
 }

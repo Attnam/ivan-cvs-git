@@ -54,8 +54,8 @@ class stack
   ushort GetItems(const character*, bool) const;
   void SetMotherSquare(square* What) { MotherSquare = What; }
   item* DrawContents(const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  void DrawContents(std::vector<item*>&, const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
-  void DrawContents(std::vector<item*>&, stack*, const character*, const std::string&, const std::string&, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(std::vector<item*>&, const character*, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
+  ushort DrawContents(std::vector<item*>&, stack*, const character*, const std::string&, const std::string&, const std::string&, uchar = 0, bool (*)(const item*, const character*) = 0) const;
   item* MoveItem(stackslot*, stack*);
   vector2d GetPos() const;
   void Clean(bool = false);

@@ -330,6 +330,7 @@ void go::Load(inputfile& SaveFile)
 
 void go::Handle()
 {
+  GetActor()->EditAP(GetActor()->GetStateAPGain(100)); // gum solution
   GetActor()->GoOn(this);
 }
 

@@ -241,9 +241,10 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = reinterpret_cast<lsquare***>(area::Map);
+  std::string* Msg = LevelScript->GetLevelMessage(false);
 
-  if(LevelScript->GetLevelMessage(false))
-    LevelMessage = *LevelScript->GetLevelMessage();
+  if(Msg)
+    LevelMessage = *Msg;
 
   if(*LevelScript->GetGenerateMonsters())
     {
@@ -338,7 +339,8 @@ void level::Generate(ushort Index)
 
 void level::ApplyLSquareScript(squarescript* Script)
 {
-  uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
+  uchar* ScriptTimes = Script->GetTimes(false);
+  uchar Times = ScriptTimes ? *ScriptTimes : 1;
 
   for(ushort c = 0; c < Times; ++c)
     {
@@ -487,17 +489,19 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  if(RoomScript->GetCharacterMap(false))
+  charactercontentmap* CharacterMap = RoomScript->GetCharacterMap(false);
+
+  if(CharacterMap)
     {
-      vector2d CharPos(XPos + RoomScript->GetCharacterMap()->GetPos()->X, YPos + RoomScript->GetCharacterMap()->GetPos()->Y);
+      vector2d CharPos(XPos + CharacterMap->GetPos()->X, YPos + CharacterMap->GetPos()->Y);
       const contentscript<character>* CharacterScript;
 
-      for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
+      for(ushort x = 0; x < CharacterMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
-	  for(y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
-	    if((CharacterScript = RoomScript->GetCharacterMap()->GetContentScript(x, y)))
+	  for(y = 0; y < CharacterMap->GetSize()->Y; ++y)
+	    if((CharacterScript = CharacterMap->GetContentScript(x, y)))
 	      {
 		character* Char = CharacterScript->Instantiate();
 
@@ -505,25 +509,29 @@ bool level::MakeRoom(roomscript* RoomScript)
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
 		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
+		Char->SetHomePos(vector2d(CharPos.X + x, CharPos.Y + y));
 		RoomClass->HandleInstantiatedCharacter(Char);
+		bool* IsMaster = CharacterScript->GetIsMaster(false);
 
-		if(CharacterScript->GetIsMaster(false) && *CharacterScript->GetIsMaster())
+		if(IsMaster && *IsMaster)
 		  RoomClass->SetMaster(Char);
 	      }
 	}
     }
 
-  if(RoomScript->GetItemMap(false))
+  itemcontentmap* ItemMap = RoomScript->GetItemMap(false);
+
+  if(ItemMap)
     {
-      vector2d ItemPos(XPos + RoomScript->GetItemMap()->GetPos()->X, YPos + RoomScript->GetItemMap()->GetPos()->Y);
+      vector2d ItemPos(XPos + ItemMap->GetPos()->X, YPos + ItemMap->GetPos()->Y);
       const std::vector<contentscript<item> >* ItemScript;
 
-      for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
+      for(ushort x = 0; x < ItemMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
-	  for(y = 0; y < RoomScript->GetItemMap()->GetSize()->Y; ++y)
-	    if((ItemScript = RoomScript->GetItemMap()->GetContentScript(x, y)))
+	  for(y = 0; y < ItemMap->GetSize()->Y; ++y)
+	    if((ItemScript = ItemMap->GetContentScript(x, y)))
 	      for(c = 0; c < ItemScript->size(); ++c)
 		{
 		  stack* Stack;
@@ -547,32 +555,36 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  if(RoomScript->GetGTerrainMap(false))
+  glterraincontentmap* GTerrainMap = RoomScript->GetGTerrainMap(false);
+
+  if(GTerrainMap)
     {
-      vector2d GTerrainPos(XPos + RoomScript->GetGTerrainMap()->GetPos()->X, YPos + RoomScript->GetGTerrainMap()->GetPos()->Y);
+      vector2d GTerrainPos(XPos + GTerrainMap->GetPos()->X, YPos + GTerrainMap->GetPos()->Y);
       const contentscript<glterrain>* GTerrainScript;
 
-      for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
+      for(ushort x = 0; x < GTerrainMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
-	  for(y = 0; y < RoomScript->GetGTerrainMap()->GetSize()->Y; ++y)
-	    if((GTerrainScript = RoomScript->GetGTerrainMap()->GetContentScript(x, y)))
+	  for(y = 0; y < GTerrainMap->GetSize()->Y; ++y)
+	    if((GTerrainScript = GTerrainMap->GetContentScript(x, y)))
 	      Map[GTerrainPos.X + x][GTerrainPos.Y + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
 	}
     }
 
-  if(RoomScript->GetOTerrainMap(false))
+  olterraincontentmap* OTerrainMap = RoomScript->GetOTerrainMap(false);
+
+  if(OTerrainMap)
     {
-      vector2d OTerrainPos(XPos + RoomScript->GetOTerrainMap()->GetPos()->X, YPos + RoomScript->GetOTerrainMap()->GetPos()->Y);
+      vector2d OTerrainPos(XPos + OTerrainMap->GetPos()->X, YPos + OTerrainMap->GetPos()->Y);
       const contentscript<olterrain>* OTerrainScript;
 
-      for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
+      for(ushort x = 0; x < OTerrainMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
-	  for(y = 0; y < RoomScript->GetOTerrainMap()->GetSize()->Y; ++y)
-	    if((OTerrainScript = RoomScript->GetOTerrainMap()->GetContentScript(x, y)))
+	  for(y = 0; y < OTerrainMap->GetSize()->Y; ++y)
+	    if((OTerrainScript = OTerrainMap->GetContentScript(x, y)))
 	      {
 		olterrain* Terrain = OTerrainScript->Instantiate();
 		Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
@@ -585,7 +597,8 @@ bool level::MakeRoom(roomscript* RoomScript)
     {
       game::BusyAnimation();
       squarescript* Script = RoomScript->GetSquare()[c];
-      uchar Times = Script->GetTimes(false) ? *Script->GetTimes() : 1;
+      uchar* ScriptTimes = Script->GetTimes(false);
+      uchar Times = ScriptTimes ? *ScriptTimes : 1;
 
       for(ushort t = 0; t < Times; ++t)
 	{
@@ -593,7 +606,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	  if(Script->GetPosition()->GetRandom())
 	    {
-	      rect Borders = Script->GetPosition()->GetBorders(false) ? *Script->GetPosition()->GetBorders() + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
+	      rect* ScriptBorders = Script->GetPosition()->GetBorders(false);
+	      rect Borders = ScriptBorders ? *ScriptBorders + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
 	      Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
 	    }
 	  else
@@ -1010,7 +1024,8 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
   uchar Room = RoomClass->GetIndex();
   ulong Counter = 0;
-  uchar DivineMaster = RoomScript->GetDivineMaster(false) ? *RoomScript->GetDivineMaster() : 0;
+  uchar* ScriptDivineMaster = RoomScript->GetDivineMaster(false);
+  uchar DivineMaster = ScriptDivineMaster ? *ScriptDivineMaster : 0;
   bool AllowLanterns = *RoomScript->GetGenerateLanterns();
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();

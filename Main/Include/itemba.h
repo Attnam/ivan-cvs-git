@@ -102,6 +102,7 @@ struct itemdatabase
   uchar InElasticityPenaltyModifier;
   bool CanBeUsedBySmith;
   bool AffectsCarryingCapacity;
+  uchar DamageDivider;
 };
 
 class itemprototype
@@ -303,6 +304,7 @@ class item : public object
   virtual DATA_BASE_BOOL(CanBeCloned);
   virtual DATA_BASE_VALUE(ushort, BeamRange);
   virtual DATA_BASE_BOOL(CanBeUsedBySmith);
+  DATA_BASE_VALUE(uchar, DamageDivider);
   static item* Clone(ushort, ushort) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }

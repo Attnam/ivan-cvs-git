@@ -46,7 +46,7 @@ std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Sl
 bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, true, true, false, false, false };
 bool character::StateCanBeRandomlyActivated[STATES] = { false, true, true, true, false, true, true, true, true, false, true, true, true, false, true };
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), HomeRoom(Char.HomeRoom), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), HomePos(HomePos)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -84,7 +84,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(true), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0)
+character::character(donothing) : entity(true), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomePos(-1, -1)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -360,14 +360,23 @@ void character::Be()
 	  if(!StateIsActivated(POLYMORPHED))
 	    game::UpdatePlayerAttributeAverage();
 
-	  if(!GetAction())
+	  if(!Action)
 	    GetPlayerCommand();
 	  else
 	    {
-	      game::DrawEverything();
+	      if(Action->ShowEnvironment())
+		{
+		  static ushort Counter = 0;
 
-	      if(READ_KEY() && GetAction()->IsVoluntary())
-		GetAction()->Terminate(false);
+		  if(++Counter == 10)
+		    {
+		      game::DrawEverything();
+		      Counter = 0;
+		    }
+		}
+
+	      if(Action->IsVoluntary() && READ_KEY())
+		Action->Terminate(false);
 	    }
 	}
       else
@@ -1175,8 +1184,9 @@ bool character::Talk()
 
 bool character::NOP()
 {
+  EditExperience(DEXTERITY, -10);
   EditExperience(AGILITY, -10);
-  EditAP(-1000);
+  EditAP(-GetStateAPGain(1000));
   return true;
 }
 
@@ -1517,7 +1527,7 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << NP << AP;
   SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config << RegenerationCounter;
-  SaveFile << HasBe() << Polymorphed;
+  SaveFile << HasBe() << Polymorphed << HomePos;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1570,7 +1580,7 @@ void character::Load(inputfile& SaveFile)
   SaveFile >> NP >> AP;
   SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config >> RegenerationCounter;
   SetHasBe(ReadType<bool>(SaveFile));
-  SaveFile >> Polymorphed;
+  SaveFile >> Polymorphed >> HomePos;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
@@ -2061,11 +2071,9 @@ void character::GetPlayerCommand()
   while(!HasActed)
     {
       game::DrawEverything();
-
       game::SetIsInGetCommand(true);
       int Key = GET_KEY();
       game::SetIsInGetCommand(false);
-
       bool ValidKeyPressed = false;
       ushort c;
 
@@ -2311,6 +2319,9 @@ void character::StandIdleAI()
   if(CheckForDoors())
     return;
 
+  if(MoveTowardsHomePos())
+    return;
+
   EditAP(-1000);
 }
 
@@ -2407,6 +2418,14 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
       if(SpecialEnemySightedReaction(NearestChar))
 	return true;
 
+      if(IsExtraCoward() && !StateIsActivated(PANIC) && NearestChar->GetRelativeDanger(this) >= 0.5f)
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s sees %s.", CHAR_NAME(DEFINITE), NearestChar->CHAR_DESCRIPTION(DEFINITE));
+
+	  BeginTemporaryState(PANIC, 500 + RAND() % 500);
+	}
+
       if(StateIsActivated(PANIC))
 	{
 	  if(!MoveTowards((GetPos() << 1) - NearestChar->GetPos()))
@@ -2430,7 +2449,12 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	      return false;
 	    }
 	  else
-	    return true;
+	    {
+	      if(GetPos() == WayPoint)
+		WayPoint.X = -1;
+
+	      return true;
+	    }
 	}
       else
 	{
@@ -2838,6 +2862,8 @@ void character::GoOn(go* Go)
       Go->Terminate(false);
       return;
     }
+
+  game::DrawEverything();
 }
 
 bool character::ShowConfigScreen()
@@ -3366,9 +3392,9 @@ std::string character::GetDescription(uchar Case) const
     return "something";
 }
 
-std::string character::GetPersonalPronoun() const
+std::string character::GetPersonalPronoun(bool PlayersView) const
 {
-  if(IsPlayer())
+  if(IsPlayer() && PlayersView)
     return "you";
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "it";
@@ -3378,9 +3404,9 @@ std::string character::GetPersonalPronoun() const
     return "she";
 }
 
-std::string character::GetPossessivePronoun() const
+std::string character::GetPossessivePronoun(bool PlayersView) const
 {
-  if(IsPlayer())
+  if(IsPlayer() && PlayersView)
     return "your";
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "its";
@@ -3390,9 +3416,9 @@ std::string character::GetPossessivePronoun() const
     return "her";
 }
 
-std::string character::GetObjectPronoun() const
+std::string character::GetObjectPronoun(bool PlayersView) const
 {
-  if(IsPlayer())
+  if(IsPlayer() && PlayersView)
     return "you";
   else if(GetSex() == UNDEFINED || (!CanBeSeenByPlayer() && !game::SeeWholeMapCheatIsActive()))
     return "it";
@@ -3481,40 +3507,11 @@ bool character::EquipmentScreen()
       if(Chosen >= GetEquipmentSlots())
 	break;
 
-      if(!GetBodyPartOfEquipment(Chosen))
-	{
-	  ADD_MESSAGE("Bodypart missing!");
-	  continue;
-	}
-
-      item* OldEquipment = GetEquipment(Chosen);
-
-      if(OldEquipment)
-	GetEquipment(Chosen)->MoveTo(GetStack());
-
-      if(!GetStack()->SortedItems(this, EquipmentSorter(Chosen)))
-	{
-	  ADD_MESSAGE("You haven't got any item that could be used for this purpose.");
-	  continue;
-	}
-      else
-	{
-	  game::DrawEverythingNoBlit();
-	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", NONE_AS_CHOICE, EquipmentSorter(Chosen));
-
-	  if(Item != OldEquipment)
-	    EquipmentChanged = true;
-
-	  if(Item)
-	    {
-	      Item->RemoveFromSlot();
-	      SetEquipment(Chosen, Item);
-
-	      if(CheckIfEquipmentIsNotUsable(Chosen))
-		Item->MoveTo(GetStack());
-	    }
-	}
+      EquipmentChanged = TryToChangeEquipment(Chosen);
     }
+
+  if(EquipmentChanged)
+    DexterityAction(5);
 
   return EquipmentChanged;
 }
@@ -3974,7 +3971,7 @@ void character::ReceiveHeal(long Amount)
 {
   ushort c;
 
-  for(c = 0; c < Amount / 50; ++c)
+  for(c = 0; c < Amount / 15; ++c)
     {
       uchar NeedHeal = 0, NeedHealIndex[MAX_BODYPARTS];
 
@@ -4067,7 +4064,7 @@ void character::ReceiveOmmelUrine(long Amount)
 void character::AddOmmelUrineConsumeEndMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("You feel a primitive Force coursing through your veins.");
+    ADD_MESSAGE("You feel a primitive force coursing through your veins.");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("Suddenly %s looks more powerful.", CHAR_NAME(DEFINITE));
 }
@@ -4466,13 +4463,12 @@ bool character::ShowWeaponSkills()
 
 long character::GetStateAPGain(long BaseAPGain) const
 {
-  if(StateIsActivated(HASTE))
-    BaseAPGain <<= 1;
-
-  if(StateIsActivated(SLOW))
-    BaseAPGain >>= 1;
-
-  return BaseAPGain;
+  if(StateIsActivated(HASTE) == StateIsActivated(SLOW))
+    return BaseAPGain;
+  else if(StateIsActivated(HASTE))
+    return (BaseAPGain * 5) >> 2;
+  else
+    return (BaseAPGain << 2) / 5;
 }
 
 void character::SignalEquipmentAdd(ushort EquipmentIndex)
@@ -4791,7 +4787,6 @@ void character::EndPolymorph()
   GetSquareUnder()->AddCharacter(Char);
   Char->SetHasBe(true);
   Char->SetPolymorphed(false);
-  SetSquareUnder(0);
   GetStack()->MoveItemsTo(Char->GetStack());
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
@@ -4816,6 +4811,7 @@ void character::EndPolymorph()
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(Char);
 
+  SetSquareUnder(0);
   InNoMsgMode = Char->InNoMsgMode = false;
   Char->CalculateAll();
 
@@ -4878,7 +4874,7 @@ void character::SaveLife()
   GetSquareUnder()->SendNewDrawRequest();
 }
 
-void character::PolymorphRandomly(ushort Time)
+character* character::PolymorphRandomly(ushort MinDanger, ushort MaxDanger, ushort Time)
 {
   character* NewForm = 0;
 
@@ -4901,9 +4897,10 @@ void character::PolymorphRandomly(ushort Time)
 	}
     }
   else
-    NewForm = protosystem::CreateMonster(NO_EQUIPMENT);
+    NewForm = protosystem::CreateMonster(MinDanger, MaxDanger, NO_EQUIPMENT);
 
   Polymorph(NewForm, Time);
+  return NewForm;
 }
 
 /* In reality, the reading takes Time / (Intelligence * 10) turns */
@@ -5054,7 +5051,7 @@ void character::PoisonedHandler()
   ushort Damage = 0;
 
   for(ushort Used = 0; Used < GetTemporaryStateCounter(POISONED); Used += 100)
-    if(!(RAND() % 50))
+    if(!(RAND() % 60))
       ++Damage;
 
   if(Damage)
@@ -5193,7 +5190,7 @@ void character::PrintEndPolymorphMessage() const
 void character::PolymorphHandler()
 {
   if(!(RAND() % 1500))
-    PolymorphRandomly(200 + RAND() % 800);
+    PolymorphRandomly(0, 10000, 200 + RAND() % 800);
 }
 
 void character::PrintBeginTeleportControlMessage() const
@@ -5942,12 +5939,8 @@ void character::ReceiveAntidote(long Amount)
 {
   if(StateIsActivated(POISONED))
     {
-      long Left = GetTemporaryStateCounter(POISONED);
-
-      if(Left > Amount)
-	{
-	  EditTemporaryStateCounter(POISONED, -Amount);
-	}
+      if(GetTemporaryStateCounter(POISONED) > Amount)
+	EditTemporaryStateCounter(POISONED, -Amount);
       else
 	{
 	  if(IsPlayer())
@@ -6299,4 +6292,85 @@ long character::GetStuffScore() const
     Score += GetAction()->GetScore();
 
   return Score;
+}
+
+bool character::MoveTowardsHomePos()
+{
+  return (HomePos.X != -1 && MoveTowards(HomePos)) || (!GetPos().IsAdjacent(HomePos) && MoveRandomly());
+}
+
+bool character::WieldInRightArm()
+{
+  if(!CanUseEquipment())
+    ADD_MESSAGE("You cannot wield anything.");
+  else if(TryToChangeEquipment(RIGHT_WIELDED_INDEX))
+    {
+      DexterityAction(5);
+      return true;
+    }
+
+  return false;
+}
+
+bool character::WieldInLeftArm()
+{
+  if(!CanUseEquipment())
+    ADD_MESSAGE("You cannot wield anything.");
+  else if(TryToChangeEquipment(LEFT_WIELDED_INDEX))
+    {
+      DexterityAction(5);
+      return true;
+    }
+
+  return false;
+}
+
+bool character::TryToChangeEquipment(ushort Chosen)
+{
+  if(!GetBodyPartOfEquipment(Chosen))
+    {
+      ADD_MESSAGE("Bodypart missing!");
+      return false;
+    }
+
+  item* OldEquipment = GetEquipment(Chosen);
+
+  if(OldEquipment)
+    GetEquipment(Chosen)->MoveTo(GetStack());
+
+  if(!GetStack()->SortedItems(this, EquipmentSorter(Chosen)))
+    {
+      ADD_MESSAGE("You haven't got any item that could be used for this purpose.");
+      return false;
+    }
+  else
+    {
+      game::DrawEverythingNoBlit();
+      std::vector<item*> ItemVector;
+      ushort Return = GetStack()->DrawContents(ItemVector, this, "Choose " + EquipmentName(Chosen) + ":", NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
+
+      if(Return == ESCAPED)
+	{
+	  if(OldEquipment)
+	    {
+	      OldEquipment->RemoveFromSlot();
+	      SetEquipment(Chosen, OldEquipment);
+	    }
+
+	  return false;
+	}
+
+      item* Item = ItemVector.empty() ? 0 : ItemVector[0];
+
+      if(Item)
+	{
+	  Item->RemoveFromSlot();
+	  SetEquipment(Chosen, Item);
+
+	  if(CheckIfEquipmentIsNotUsable(Chosen))
+	    Item->MoveTo(GetStack());
+	}
+
+      return Item != OldEquipment;
+    }
 }

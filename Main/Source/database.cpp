@@ -225,6 +225,9 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(FleshMaterial);
   ANALYZE_DATA(HasFeet);
   ANALYZE_DATA(DeathMessage);
+  ANALYZE_DATA(IgnoreDanger);
+  ANALYZE_DATA(HPRequirementForGeneration);
+  ANALYZE_DATA(IsExtraCoward);
 
   return Found;
 }
@@ -306,6 +309,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(InElasticityPenaltyModifier);
   ANALYZE_DATA(CanBeUsedBySmith);
   ANALYZE_DATA(AffectsCarryingCapacity);
+  ANALYZE_DATA(DamageDivider);
 
   return Found;
 }

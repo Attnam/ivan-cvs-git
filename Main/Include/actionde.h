@@ -121,6 +121,7 @@ class ACTION
   virtual void SetWalkingInOpen(bool What) { WalkingInOpen = What; }
   virtual bool AllowDisplace() const { return false; }
   virtual std::string GetDescription() const { return "going"; }
+  virtual bool ShowEnvironment() const { return false; }
  protected:
   uchar Direction;
   bool WalkingInOpen;

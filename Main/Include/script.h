@@ -202,6 +202,7 @@ class contentscript<character> : public contentscripttemplate<character>
   DATA_MEMBER(ushort, Team);
   DATA_MEMBER(std::vector<contentscript<item> >, Inventory);
   DATA_MEMBER(bool, IsMaster);
+  DATA_MEMBER(std::vector<vector2d>, WayPoint);
 };
 
 class contentscript<item> : public contentscripttemplate<item>

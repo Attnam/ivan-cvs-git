@@ -32,7 +32,7 @@ MS-koodin poisajo grafiikkakirjastosta (SDL myös Windozeen?).
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
-Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
+*Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
 Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
 //*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
@@ -45,13 +45,13 @@ Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 *Nimivälimuisti.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
 Charba.cpp:n resplittaus (kontrollit erilleen?).
-Lukufunktioiden generalisoiminen.
-Säiliöluokka.
+Kirjallisen yliluonnollisuuden epäfunktioittaminen.
+//Säiliöluokat.
 Piirron deasmaus.
 Repliikkien datafilesaatio.
-Raajarajapinta.
+Raajarajapinta. (täh?)
 Jumalten arrayttäminen.
 Tiedostojen tekijätiedottaminen.
 Hyökkäyslajien olioiminen.
 Markkinatalouden yhdenmukaistaminen.
-Kirjallisen yliluonnollisuuden epäfunktioittaminen.
+Potentiaali konfiguraatioiden ekplisiittiseen periyttämiseen.

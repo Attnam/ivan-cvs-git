@@ -63,6 +63,7 @@ bool material::Effect(character* Eater, long Amount)
     case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
     case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
     case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); return true;
+    case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
     default: return false;
     }
 }

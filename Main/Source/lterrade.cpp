@@ -308,7 +308,7 @@ bool fountain::Drink(character* Drinker)
 	      Drinker->EditNP(50);
 
 	      if(!(RAND() % 5))
-		Drinker->PolymorphRandomly(2500 + RAND() % 2500);
+		Drinker->PolymorphRandomly(0, 10000, 2500 + RAND() % 2500);
 	      else
 		Drinker->ChangeRandomStat(-1);
 
