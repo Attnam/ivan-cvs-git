@@ -58,6 +58,7 @@ class action
   virtual long GetScore() const { return 0; }
   virtual bool ShowEnvironment() const { return true; }
   virtual const char* GetDeathExplanation() const { return ""; }
+  virtual bool CanBeTalkedTo() const { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

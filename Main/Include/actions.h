@@ -24,6 +24,7 @@ class ACTION
   virtual bool AllowFaint() const { return false; }
   virtual const char* GetDescription() const;
   virtual const char* GetDeathExplanation() const;
+  virtual bool CanBeTalkedTo() const { return false; }
  protected:
   ushort Counter;
 );

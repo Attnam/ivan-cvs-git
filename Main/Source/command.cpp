@@ -442,6 +442,11 @@ bool commandsystem::Talk(character* Char)
     }
   else if(Characters == 1)
     {
+      if(ToTalk->GetAction() && !ToTalk->GetAction()->CanBeTalkedTo())
+	{
+	  ADD_MESSAGE("%s is silent.", ToTalk->CHAR_NAME(DEFINITE));
+	  return true;
+	}
       ToTalk->BeTalkedTo();
       Char->EditExperience(CHARISMA, 5);
       Char->EditAP(-1000);
@@ -466,6 +471,11 @@ bool commandsystem::Talk(character* Char)
 
       if(Dude)
 	{
+	  if(Dude->GetAction() && !Dude->GetAction()->CanBeTalkedTo())
+	    {
+	      ADD_MESSAGE("%s is silent.", Dude->CHAR_NAME(DEFINITE));
+	      return true;
+	    }
 	  Dude->BeTalkedTo();
 	  Char->EditExperience(CHARISMA, 5);
 	  Char->EditAP(-1000);
@@ -864,7 +874,7 @@ bool commandsystem::Zap(character* Char)
       return false;
     }
 
-  item* Item = Char->GetStack()->DrawContents(Char, CONST_S("What do you want to zap with?"), 0, &item::ZappableSorter);
+  item* Item = Char->SelectFromPossessions(CONST_S("What do you want to zap with?"), &item::ZappableSorter);
 
   if(Item)
     {
