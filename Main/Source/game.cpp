@@ -184,7 +184,7 @@ void game::Init(std::string Name)
 
 		CreateTeams();
 
-		SetPlayer(new werewolf);
+		SetPlayer(new human);
 
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
