@@ -25,6 +25,7 @@ class highscore
   void Save(const std::string& = HIGH_SCORE_FILENAME) const;
   void Load(const std::string& = HIGH_SCORE_FILENAME);
   bool LastAddFailed() const { return LastAdd == 100; }
+  void AddToFile(highscore*) const;
  private:
   std::vector<std::string> Entry;
   std::vector<long> Score;

@@ -97,3 +97,11 @@ void highscore::Load(const std::string& File)
   if(HVersion == HIGH_SCORE_VERSION)
     HighScore >> Score >> Entry >> LastAdd;
 }
+
+void highscore::AddToFile(highscore* To) const
+{
+  for(ushort c = 0; c < Score.size(); ++c)
+    {
+      To->Add(Score[c], Entry[c]); 
+    }
+}
