@@ -1,4 +1,3 @@
-Characterin funktioiden paloittelu.
 Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
@@ -7,7 +6,7 @@ Hiscoreihin p‰iv‰m‰‰r‰.
 Listan voisi (jos haluaa) sorttia p‰iv‰m‰‰r‰n mukaan.
 Verest‰ voisi myˆs tehd‰ valuvaa.
 Jumalille pit‰‰ olla muuten muitakin efektej‰ kuin vain nuo kaksi.
-Jumalten roolien miettiminen.
+Jumalten roolin miettiminen.
 Valoja irti sein‰st‰.
 Attribuuttibonusten osittainen expoittaminen.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
@@ -28,8 +27,6 @@ Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
 You must be able to open door by throwing items.
-Lamps should be white.
-!!!Name too short message.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
 Teleport disabling.
@@ -44,29 +41,14 @@ Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 Golems shouldn't be able to eat anything else.
-!!!Mellis should fill also intact empty bottles and empty cans.
 List of killed monsters and list of monsters killed by pets.
 Prepare bug-report functions that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
-Dogs ought to be possible to name.
+Dogs and other pets ought to be possible to name.
 A program which would translate a pcx file into a script content map.
-Player's difficulty level should not be influenced by the current weapon/armor
- but the strongest player-obtainable weapon/armor ever generated?
+Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
-!!!Cannibalism and navastating should have relation effect limits.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-A special effect for selling empty potions (it's exemplary recycling after all).
-!!!Money should affect score.
-!!!Higher victory types should be reimplemented.
-NP shouldn't affect score.
-Money should weight something.
-AI should not practise cannibalism.
-!!!Silva must have pray effects.
-You should be able to read in dark when in WMode.
-Applying a pick-axe on a monster should be an attack.
-SWAT commandos shouldn't be burdened.
-Attnam should be smaller.
-Nothing happens should take a turn.

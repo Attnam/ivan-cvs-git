@@ -3,7 +3,6 @@ Tutoriaali.
 Sid Meier.
 Joulupukki. (Renneltä)
 Hiirivetoisuus.
-Config-ruutu.
 Vuorokaudenajat.
 Vuodenajat.
 Moniruutuiset oliot.
@@ -12,6 +11,7 @@ Ghost-Überpriestit.
 Thougth Control.
 Mikroaaltouuni.
 In-code documentation!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Item enchantments.
+Different types of item enchantments.
 Random gods.
 Ego monsters.
+Monster, item and god memories.

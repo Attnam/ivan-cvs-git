@@ -70,7 +70,6 @@ ushort felist::Draw(bool BlitBackroundAfterwards) const
 			else
 			{
 				BackGround.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-				graphics::BlitDBToScreen();
 				DrawDescription();
 				Min += 20;
 			}

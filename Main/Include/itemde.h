@@ -220,6 +220,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6700; case 1: return 300; default: return 0; } }
+	virtual bool IsMaterialChangeable() const { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(400)
 );
@@ -348,6 +349,7 @@ class ITEM
 		SetSize(60);
 	},
 public:
+	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, cloth::StaticType()))
 	virtual ushort Possibility() const RET(0)
 	virtual ushort GetArmorValue() const RET(10)
 	virtual std::string NameSingular() const RET("Maakotka shirt")
@@ -359,6 +361,7 @@ public:
 	virtual bool Destroyable() const { return false; }
 	virtual ushort GetEmitation() const RET(333)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual bool IsMaterialChangeable() const { return false; }
 );
 
 class ITEM
@@ -660,6 +663,7 @@ public:
 	virtual long Score() const RET(1000)
 	virtual bool CanBeWished() const RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 12000; case 1: return 6000; case 2: return 2500; default: return 0; } }
+	virtual bool IsMaterialChangeable() const { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -853,6 +857,7 @@ public:
 	virtual bool Destroyable() const { return false; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,112))
+	virtual bool IsMaterialChangeable() const { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
@@ -947,6 +952,5 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,368)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1100; default: return 0; } }
 );
-
 
 #endif

@@ -980,3 +980,17 @@ void golem::BeTalkedTo(character* Talker)
 	else
 		ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
+
+long humanoid::Score() const
+{
+	long SkillScore = 0;
+	ushort c;
+
+	for(c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		SkillScore += GetCategoryWeaponSkill(c)->GetHits();
+
+	for(c = 0; c < SingleWeaponSkill.size(); ++c)
+		SkillScore += SingleWeaponSkill[c]->GetHits();
+
+	return (SkillScore >> 2) + character::Score();
+}

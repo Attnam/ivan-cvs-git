@@ -45,6 +45,7 @@ public:
 	virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
 	virtual float GetToHitValue() const;
 	virtual void ReceiveSound(char*, short, float);
+	virtual long Score() const;
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(1000)

@@ -308,7 +308,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	if(!GetCharge())
 	{
 		ADD_MESSAGE("Nothing happens.");
-		return false;
+		return true;
 	}
 
 	if(Direction != '.')
@@ -342,7 +342,6 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	}
 
 	SetCharge(GetCharge() - 1);
-
 	return true;
 }
 
@@ -443,9 +442,16 @@ bool scrollofchangematerial::Read(character* Reader)
 	else
 		if(!(Index < Reader->GetStack()->GetItems()))
 			return false;
-	if(Reader->GetStack()->GetItem(Index) == this || !Reader->GetStack()->GetItem(Index)->IsMaterialChangeable())
+
+	if(Reader->GetStack()->GetItem(Index) == this)
 	{
-		ADD_MESSAGE("You can't change that!");
+		ADD_MESSAGE("That would be rather insane.");
+		return false;
+	}
+
+	if(!Reader->GetStack()->GetItem(Index)->IsMaterialChangeable())
+	{
+		ADD_MESSAGE("Your magic is not powerful enough to affect %s .", Reader->GetStack()->GetItem(Index)->CNAME(DEFINITE));
 		return false;
 	}
 
@@ -489,7 +495,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 	if(!GetCharge())
 	{
 		ADD_MESSAGE("Nothing happens.");
-		return false;
+		return true;
 	}
 
 	if(Direction != '.')

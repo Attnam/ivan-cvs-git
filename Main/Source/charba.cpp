@@ -1916,10 +1916,9 @@ bool character::Offer()
 
 long character::Score() const
 {
-	long Score = GetHP() * 5 + GetNP() / 10 + GetEndurance() * 30 + (GetStrength() + GetAgility() + GetPerception()) * 40;
+	long Score = GetHP() * 5 + GetEndurance() * 30 + (GetStrength() + GetAgility() + GetPerception()) * 40 + GetMoney();
 
 	Score += Stack->Score();
-
 	Score += game::GodScore();
 
 	return Score;

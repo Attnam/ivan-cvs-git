@@ -229,7 +229,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 	while(Check > 0xFFFD)
 	{
 		DOUBLEBUFFER->ClearToColor(0);
-		Check = Buffer.Draw();
+		Check = Buffer.Draw(false);
 	}
 
 	if(Check == 0xFFFD)
