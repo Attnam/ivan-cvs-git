@@ -38,52 +38,6 @@ worldmap::~worldmap()
 	delete [] ContinentBuffer;
 }
 
-/*void worldmap::Save(std::string SaveName) const
-{
-	outputfile SaveFile(SaveName + ".wm");
-
-	area::Save(SaveFile);
-
-	for(ulong c = 0; c < XSizeTimesYSize; ++c)
-		Map[0][c]->Save(SaveFile);
-
-	SaveFile.GetBuffer().write((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.GetBuffer().write((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.GetBuffer().write((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
-
-	SaveFile << Continent;	 
-}
-
-void worldmap::Load(std::string SaveName)
-{
-	inputfile SaveFile(SaveName + ".wm");
-
-	area::Load(SaveFile);
-
-	Map = (worldmapsquare***)area::Map;
-
-	for(ushort x = 0; x < XSize; x++)
-		for(ulong y = 0; y < YSize; y++)
-		{
-			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
-			Map[x][y]->Load(SaveFile);
-		}
-
-	TypeBuffer = Alloc2D<ushort>(XSize, YSize);
-	AltitudeBuffer = Alloc2D<short>(XSize, YSize);
-	ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
-
-	SaveFile.GetBuffer().read((char*)TypeBuffer[0], sizeof(ushort) * XSizeTimesYSize);
-	SaveFile.GetBuffer().read((char*)AltitudeBuffer[0], sizeof(short) * XSizeTimesYSize);
-	SaveFile.GetBuffer().read((char*)ContinentBuffer[0], sizeof(uchar) * XSizeTimesYSize);
-
-	continent::TypeBuffer = TypeBuffer;
-	continent::AltitudeBuffer = AltitudeBuffer;
-	continent::ContinentBuffer = ContinentBuffer;
-
-	SaveFile >> Continent;
-}*/
-
 void worldmap::Save(outputfile& SaveFile) const
 {
 	area::Save(SaveFile);

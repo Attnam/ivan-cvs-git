@@ -272,6 +272,16 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 				continue;
 			}
+
+			if(Word == "IsWorldMapEntry")
+			{
+				if(!IsWorldMapEntry)
+					IsWorldMapEntry = new bool;
+
+				*IsWorldMapEntry = SaveFile.ReadBool();
+
+				continue;
+			}
 		}
 	}
 	else

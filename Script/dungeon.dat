@@ -46,9 +46,9 @@ Dungeon 0;
 
 			Square, Pos 2,2;
 			{
-				IsUpStairs=true;
+				IsWorldMapEntry=true;
 				OverTerrain=stairsup;
-				Character=perttu;
+				/*Character=perttu;*/
 			}
 		}
 	}
@@ -231,5 +231,10 @@ Dungeon 1;
 		GenerateDownStairs=false;
 		DivineOwner=0;
 		OnGround=true;
+
+		Square, Pos 31,63;
+		{
+			IsWorldMapEntry=true;
+		}
 	}
 }

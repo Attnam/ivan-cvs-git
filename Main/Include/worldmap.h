@@ -24,8 +24,6 @@ public:
 	virtual void Draw() const;
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
-//	virtual void Save(std::string) const;
-//	virtual void Load(std::string);
 	virtual worldmapsquare* GetWorldMapSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual worldmapsquare* GetWorldMapSquare(ushort x, ushort y) const {return Map[x][y];}
 	virtual void GenerateClimate();

@@ -193,5 +193,5 @@ bool item::Polymorph(stack* CurrentStack)
 
 void item::ChangeMainMaterial(material* NewMaterial)
 {
-	SetMaterial(0, NewMaterial);
+	ChangeMaterial(0, NewMaterial);
 }

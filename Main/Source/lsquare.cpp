@@ -670,4 +670,7 @@ void levelsquare::ApplyScript(squarescript* SquareScript)
 
 	if(SquareScript->GetIsDownStairs(false) && *SquareScript->GetIsDownStairs())
 		GetLevelUnder()->SetDownStairs(Pos);
+
+	if(SquareScript->GetIsWorldMapEntry(false) && *SquareScript->GetIsWorldMapEntry())
+		GetLevelUnder()->SetWorldMapEntry(Pos);
 }

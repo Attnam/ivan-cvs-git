@@ -18,7 +18,8 @@ bool attnam::GoDown(character* Who) const
 	game::SetCurrent(0);
 	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
-	game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
+	//game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetWorldMapEntry());
+	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	game::GetCurrentLevel()->Luxify();
 	game::GetCurrentLevel()->UpdateLOS();
 	game::UpDateCameraX();
@@ -36,7 +37,8 @@ bool elpuricave::GoDown(character* Who) const
 	game::SetCurrent(0);
 	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
-	game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
+	//game::GetCurrentLevel()->PutPlayer(game::GetCurrentLevel()->GetWorldMapEntry());
+	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	game::GetCurrentLevel()->Luxify();
 	game::GetCurrentLevel()->UpdateLOS();
 	game::UpDateCameraX();

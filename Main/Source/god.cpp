@@ -321,7 +321,7 @@ void loricatus::PrayBadEffect()
 	if(game::GetPlayer()->GetWielded())
 	{
 		OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
-		game::GetPlayer()->GetWielded()->SetMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
+		game::GetPlayer()->GetWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
 		ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
 	}
 	else

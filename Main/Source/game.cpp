@@ -388,8 +388,13 @@ void game::panel::Draw() const
 	FONTW->Printf(DOUBLEBUFFER, 600, 544, "Dungeon level: %d", game::GetCurrent() + 1);
 	FONTW->Printf(DOUBLEBUFFER, 600, 554, "NP: %d", Player->GetNP());
 	FONTW->Printf(DOUBLEBUFFER, 600, 564, "Turns: %d", game::GetTurns());
-	if(Player->GetNP() < CRITICALHUNGERLEVEL) FONTR->Printf(DOUBLEBUFFER, 600, 574, "Fainting");
-	else if(Player->GetNP() < HUNGERLEVEL) FONTB->Printf(DOUBLEBUFFER, 600, 574, "Hungry");
+
+	if(Player->GetNP() < CRITICALHUNGERLEVEL)
+		FONTR->Printf(DOUBLEBUFFER, 600, 574, "Fainting");
+	else
+		if(Player->GetNP() < HUNGERLEVEL)
+			FONTB->Printf(DOUBLEBUFFER, 600, 574, "Hungry");
+
 	switch(Player->GetBurdenState())
 	{
 		case OVERLOADED:
@@ -852,6 +857,7 @@ void game::InitDungeons()
 void game::DoGoodDeed(short Amount)
 {
 	if(!Amount) return;
+
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
 		float Change = Amount - float(2 * Amount / 10) * GetGod(c)->Alignment();
@@ -862,6 +868,7 @@ void game::DoGoodDeed(short Amount)
 void game::DoEvilDeed(short Amount)
 {
 	if(!Amount) return;
+
 	for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
 	{
 		float Change = - Amount + float(2 * Amount / 10) * GetGod(c)->Alignment();
@@ -872,6 +879,7 @@ void game::DoEvilDeed(short Amount)
 void game::DoNeutralDeed(short Amount)
 {
 	if(!Amount) return;
+
 	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
 }
 

@@ -110,7 +110,7 @@ protected:
 class squarescript : public script
 {
 public:
-	squarescript() : PosScript(0), GroundTerrain(0), OverTerrain(0), Character(0), IsUpStairs(0), IsDownStairs(0) {}
+	squarescript() : PosScript(0), GroundTerrain(0), OverTerrain(0), Character(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0) {}
 	void ReadFrom(inputfile&);
 	posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
 	groundterrainscript* GetGroundTerrain(bool AOE = true) const { SCRIPT_RETURN(GroundTerrain) }
@@ -118,6 +118,7 @@ public:
 	characterscript* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
 	bool* GetIsUpStairs(bool AOE = true) const { SCRIPT_RETURN(IsUpStairs) }
 	bool* GetIsDownStairs(bool AOE = true) const { SCRIPT_RETURN(IsDownStairs) }
+	bool* GetIsWorldMapEntry(bool AOE = true) const { SCRIPT_RETURN(IsWorldMapEntry) }
 protected:
 	posscript* PosScript;
 	groundterrainscript* GroundTerrain;
@@ -125,6 +126,7 @@ protected:
 	characterscript* Character;
 	bool* IsUpStairs;
 	bool* IsDownStairs;
+	bool* IsWorldMapEntry;
 };
 
 class charactermap : public script

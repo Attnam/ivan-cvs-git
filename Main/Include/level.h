@@ -51,8 +51,10 @@ public:
 	virtual bool MakeRoom(roomscript*);
 	virtual vector2d GetUpStairs() { return UpStairs; }
 	virtual vector2d GetDownStairs() { return DownStairs; }
+	virtual vector2d GetWorldMapEntry() { return WorldMapEntry; }
 	virtual void SetUpStairs(vector2d What) { UpStairs = What; }
 	virtual void SetDownStairs(vector2d What) { DownStairs = What; }
+	virtual void SetWorldMapEntry(vector2d What) { WorldMapEntry = What; }
 	virtual void ParticleTrail(vector2d, vector2d);
 	virtual std::string GetLevelMessage() { return LevelMessage; }
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
@@ -63,7 +65,7 @@ protected:
 	levelscript* LevelScript;
 	std::string LevelMessage;
 	dynarray<vector2d, uchar> KeyPoint, Door;
-	vector2d UpStairs, DownStairs;
+	vector2d UpStairs, DownStairs, WorldMapEntry;
 	ushort Population;
 };
 

@@ -91,11 +91,10 @@ bool potion::Consume(character* Eater, float Amount)
 	}
 
 	GetMaterial(1)->EatEffect(Eater, Amount);
+
 	if(Amount == 100)
-	{
-		delete Material[1];
-		SetMaterial(1,0);
-	}	
+		ChangeMaterial(1,0);
+	
 	return false;
 }
 
@@ -173,7 +172,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 
 void meleeweapon::DipInto(item* DipTo)
 {
-	SetMaterial(2, DipTo->BeDippedInto());
+	ChangeMaterial(2, DipTo->BeDippedInto());
 	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), GetMaterial(2)->CNAME(UNARTICLED));
 }
 
