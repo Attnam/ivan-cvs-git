@@ -712,6 +712,7 @@ public:
 	virtual ushort GetColor() const				{ return MAKE_RGB(100, 100, 90); }
 	virtual short NutritionValue() const			{ return 100; }
 	virtual void EatEffect(character*, float, float);
+	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "kobold flesh"; }
 );

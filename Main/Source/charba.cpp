@@ -2654,6 +2654,7 @@ bool character::CheckForDoors()
 			return true;
 		})
 	}
+
 	return false;
 }
 

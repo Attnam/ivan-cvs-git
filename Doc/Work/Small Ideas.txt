@@ -54,11 +54,8 @@ Description of wands should show how many times it has been used.
 Uranium weapons should turn monsters to mutants.
 A god effect that gives the player some free turns.
 The inventory screen should show the total weigth of items and burdened/stressed weigth limits.
-Some more variation to death messages.
 The librarian could charge wands or sell scrolls?
-Swatcommando, froggoblin, skeleton, Oree, etc. should be humanoids.
 There should be an option to show all text in the game in tengwar font.
 Scroll of charging.
-CanOpenDoors.
-Check polymorph!!!
 A priests of Attnam should kick the player if he vomits on their altars.
+Golems should drop lumps of their respective material when critically hit.
