@@ -40,6 +40,7 @@ public:
 	virtual gweaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
 	virtual void CharacterSpeciality();
 	virtual bool ShowWeaponSkills();
+	virtual void ReceiveSound(char*, short, float);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(2000)

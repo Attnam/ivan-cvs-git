@@ -298,6 +298,8 @@ public:
 	virtual std::string NamePlural() const RET("plate mails")
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(16,128)
+	virtual void ImpactDamage(ushort, bool, stack*);
+	virtual bool ReceiveSound(float, bool, stack*);
 );
 
 class ITEM
@@ -836,5 +838,24 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual bool Zap(vector2d, uchar);
 );
+
+
+class ITEM
+(
+	brokenplatemail,
+	item,
+	InitMaterials(new iron(4000)),
+	{
+		SetSize(75);
+	},
+public:
+	virtual ushort Possibility() const RET(1)
+	virtual std::string NameSingular() const RET("broken plate mail")
+	virtual std::string NamePlural() const RET("broken plate mails")
+	virtual float OfferModifier() const RET(0.1f)
+	virtual vector2d GetBitmapPos() const RETV(16,128)
+);
+
+
 
 #endif

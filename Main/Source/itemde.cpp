@@ -202,7 +202,7 @@ material* lump::BeDippedInto()
 
 void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
+	ushort Index = game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	SetExists(false);
@@ -538,4 +538,33 @@ bool wandofstriking::Zap(vector2d Pos, uchar Direction)
 	SetCharge(GetCharge() - 1);
 
 	return true;
+}
+
+bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
+{
+	if(Strength > 20000 + rand() % 40000)
+	{
+		character* Wearer = ItemsStack->GetSquareUnder()->GetCharacter();
+		if(Wearer && Wearer->GetTorsoArmor() == this)
+		{
+			Wearer->SetTorsoArmor(0);
+		}
+		ImpactDamage(ushort(Strength), false, ItemsStack);
+
+
+		
+		if(Shown)
+			ADD_MESSAGE("The plate mail is damaged by the loud sound.");
+		return true;
+	}
+	return false;
+	
+}
+
+void platemail::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+{
+	ItemStack->RemoveItem(ItemStack->SearchItem(this));
+	ItemStack->AddItem(new brokenplatemail);
+	if (IsShown) ADD_MESSAGE("The plate mail is damaged.");
+	SetExists(false);
 }

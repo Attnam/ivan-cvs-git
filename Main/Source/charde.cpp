@@ -590,3 +590,11 @@ bool humanoid::ShowWeaponSkills()
 	return false;
 }
 
+
+void humanoid::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
+{
+	character::ReceiveSound(Pointer, Success, ScreamStrength);
+	if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
+		SetTorsoArmor(0);
+}
+

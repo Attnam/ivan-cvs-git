@@ -47,6 +47,8 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 	SetHP(HP - Damage);
 	GetStack()->ReceiveSound(ScreamStrength);
 	CheckDeath("killed by an Enner Beast's scream");
+	if(GetWielded() && !GetWielded()->GetExists())
+		SetWielded(0);
 }
 
 void character::Hunger(ushort Turns) 
@@ -969,13 +971,11 @@ bool character::Talk()
 				if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter())
 				{
 					game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->GetCharacter()->BeTalkedTo(this);
-
 					return true;
 				}
 				else
 				{
 					ADD_MESSAGE("There is no one in that square.");
-
 					return false;
 				}
 
