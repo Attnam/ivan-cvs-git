@@ -36,12 +36,14 @@ extern materialpredicate TrueMaterialPredicate;
 
 struct sortdata
 {
-  sortdata(itemvector& AllItems, const character* Character, sorter Sorter)
+  sortdata(itemvector& AllItems, const character* Character, truth Recurse, sorter Sorter)
   : AllItems(AllItems),
     Character(Character),
+    Recurse(Recurse),
     Sorter(Sorter) { }
   itemvector& AllItems;
   const character* Character;
+  truth Recurse;
   sorter Sorter;
 };
 
@@ -529,7 +531,7 @@ class item : public object
   virtual character* GetBodyPartMaster() const { return 0; }
   virtual truth AllowFluids() const { return false; }
   int GetHinderVisibilityBonus(const character*) const;
-  virtual DATA_BASE_TRUTH(IsKamikazeWeapon);
+  virtual DATA_BASE_TRUTH_WITH_PARAMETER(IsKamikazeWeapon, const character*);
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
   truth HasID(ulong What) const { return ID == What; }

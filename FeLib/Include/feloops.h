@@ -30,7 +30,7 @@ inline truth CombinePredicates(objectptr O, extractor X, routine F, int A)
   {
     element E = (O->*X)(c);
 
-    if(E && (E->*F)() == OrBit)
+    if(E && !(E->*F)() == !OrBit)
       return OrBit;
   }
 
@@ -46,7 +46,7 @@ inline truth CombinePredicates(objectptr O, extractor X,
   {
     element E = (O->*X)(c);
 
-    if(E && (E->*F)(P) == OrBit)
+    if(E && !(E->*F)(P) == !OrBit)
       return OrBit;
   }
 

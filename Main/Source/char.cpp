@@ -464,8 +464,15 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
   if(!ForceHit)
   {
-    SetGoingTo(Enemy->GetPos());
-    Enemy->SetGoingTo(GetPos());
+    if(!IsRetreating())
+      SetGoingTo(Enemy->GetPos());
+    else
+      SetGoingTo(GetPos() - ((Enemy->GetPos() - GetPos()) << 4));
+
+    if(!Enemy->IsRetreating())
+      Enemy->SetGoingTo(GetPos());
+    else
+      Enemy->SetGoingTo(Enemy->GetPos() - ((GetPos() - Enemy->GetPos()) << 4));
   }
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
@@ -944,11 +951,11 @@ truth character::MoveTowardsTarget(truth Run)
   if(RAND() & 1)
     Swap(MoveTo[1], MoveTo[2]);
 
-  if((Pos + MoveTo[1] - TPos).GetManhattanLength() < L
+  if((Pos + MoveTo[1] - TPos).GetManhattanLength() <= L
      && TryMove(ApplyStateModification(MoveTo[1]), true, Run))
     return true;
 
-  if((Pos + MoveTo[2] - TPos).GetManhattanLength() < L
+  if((Pos + MoveTo[2] - TPos).GetManhattanLength() <= L
      && TryMove(ApplyStateModification(MoveTo[2]), true, Run))
     return true;
 
@@ -2311,7 +2318,7 @@ truth character::CheckForEnemies(truth CheckDoors, truth CheckGround, truth MayM
       SetGoingTo(NearestChar->GetPos());
     }
     else
-      SetGoingTo((Pos << 1) - NearestChar->GetPos());
+      SetGoingTo(Pos - ((NearestChar->GetPos() - Pos) << 4));
 
     return MoveTowardsTarget(true);
   }

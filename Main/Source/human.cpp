@@ -1097,19 +1097,24 @@ void kamikazedwarf::CreateInitialEquipment(int SpecialFlags)
 truth kamikazedwarf::Hit(character* Enemy, v2 HitPos, int Direction, truth ForceHit)
 {
   if(!IsPlayer())
-    for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
-      if(i->IsKamikazeWeapon())
-      {
-	if(IsElite() && RAND() & 1)
-	  ADD_MESSAGE("%s shouts: \"This time I won't fail, O Great %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
-	else if(RAND() & 1)
-	  ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
-	else
-	  ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+  {
+    itemvector KamikazeWeapon;
+    sortdata SortData(KamikazeWeapon, this, false, &item::IsKamikazeWeapon);
+    SortAllItems(SortData);
 
-	if(i->Apply(this))
-	  return true;
-      }
+    if(!KamikazeWeapon.empty())
+    {
+      if(IsElite() && RAND() & 1)
+	ADD_MESSAGE("%s shouts: \"This time I won't fail, O Great %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+      else if(RAND() & 1)
+	ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+      else
+	ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
+
+      if(KamikazeWeapon[RAND_N(KamikazeWeapon.size())]->Apply(this))
+	return true;
+    }
+  }
 
   return humanoid::Hit(Enemy, HitPos, Direction, ForceHit);
 }

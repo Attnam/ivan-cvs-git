@@ -127,7 +127,7 @@ truth wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer())
     ADD_MESSAGE("You bend %s with all your strength.", CHAR_DESCRIPTION(DEFINITE));
   else if(Terrorist->CanBeSeenByPlayer())
-    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
+    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(INDEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
 
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s %s.", CHAR_DESCRIPTION(DEFINITE), GetBreakMsg().CStr());
@@ -2084,7 +2084,9 @@ alpha lantern::GetAlphaD(int Frame) const
 void itemcontainer::SortAllItems(const sortdata& SortData) const
 {
   item::SortAllItems(SortData);
-  GetContained()->SortAllItems(SortData);
+
+  if(SortData.Recurse)
+    GetContained()->SortAllItems(SortData);
 }
 
 int materialcontainer::GetAttachedGod() const

@@ -142,7 +142,7 @@ ITEM(potion, materialcontainer)
   virtual truth ReceiveDamage(character*, int, int, int);
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
   virtual truth EffectIsGood() const;
-  virtual truth IsKamikazeWeapon() const { return IsExplosive(); }
+  virtual truth IsKamikazeWeapon(const character*) const { return IsExplosive(); }
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;

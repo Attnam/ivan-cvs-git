@@ -1712,7 +1712,7 @@ truth lsquare::LowerEnchantment(const beamdata& Beam)
 {
   character* Char = GetCharacter();
   itemvector AllItems;
-  sortdata SortData(AllItems, Beam.Owner, &item::IsEnchantable);
+  sortdata SortData(AllItems, Beam.Owner, true, &item::IsEnchantable);
   SortAllItems(SortData);
   item* RandomItem;
 

@@ -7,17 +7,24 @@
 
 -----------------------------------------------------------------------------
 
-August 31 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+October 3 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* Some mind worms added to char.pcx by Kahvi
+	* Corrected a rather nasty bug, which eg. made infravision useless
+	* Enemies might retreat from invisible creatures a bit more effectively
+		(again, there's bugs in this also; I'll fix them later)
+
+September 31 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* Fixed a typo in the anti-explosive magical field code
 	* Added distinct break messages for wands (this probably has bugs now,
-	  I'll fix them later tonight)
+	  I'll fix them later)
 
-August 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+September 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* Corrected a minor bug in characters' special effect draw order
 
-August 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+September 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* My sincerest apologies for not updating ChangeLog for a loooooooooong
 	  while. Henceforth, however, I wow to resume this healthful habit

@@ -1314,7 +1314,7 @@ wand
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
 		IsKamikazeWeapon = true;
-		BreakMsg = "turns into a fiery ball of rapidly expanding plasma.";
+		BreakMsg = "turns into a fiery ball of rapidly expanding plasma";
 	}
 
 	Config WAND_OF_TELEPORTATION;
@@ -1376,7 +1376,7 @@ wand
 		BeamColor = BLACK;
 		BeamEffect = BEAM_RESURRECT;
 		AttachedGod = SEGES;
-		BreakMsg = "breaks, releasing countless green rays of highly compressed life";
+		BreakMsg = "breaks, releasing countless green rays of highly compressed life energy";
 	}
 
 	Config WAND_OF_DOOR_CREATION;
@@ -1392,7 +1392,7 @@ wand
 		BeamEffect = BEAM_DOOR_CREATION;
 		BeamStyle = SHIELD_BEAM;
 		AttachedGod = LORICATUS;
-		BreakMsg = "releases its powers, causing a number of highly unexpected effects around itself";
+		BreakMsg = "releases its powers, causing a number of highly unexpected effects to occur around itself";
 	}
 
 	Config WAND_OF_INVISIBILITY;
@@ -1407,7 +1407,7 @@ wand
 		BeamColor = TRANSPARENT_COLOR; /* invisible */
 		BeamEffect = BEAM_INVISIBILITY;
 		AttachedGod = CLEPTIA;
-		BreakMsg = "vanishes";
+		BreakMsg = "becomes increasingly transparent and then vanishes abruptly";
 	}
 
 	Config WAND_OF_CLONING;
@@ -1460,7 +1460,7 @@ wand
 		AttachedGod = SCABIES;
 		BreakEffectRangeSquare = 1;
 		IsKamikazeWeapon = true;
-		BreakMsg = "vaporizes in an instant, unleashing a deadly rainstorm of acid";
+		BreakMsg = "vaporizes in an instant, unleashing a deadly rainstorm of polluted acid";
 	}
 
 	Config WAND_OF_MIRRORING;
