@@ -915,7 +915,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
 		  Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
 		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-		  Char->CheckDeath(DeathMsg);
+		  Char->CheckDeath(DeathMsg, Terrorist);
 		}
 
 	    Square->GetStack()->ReceiveDamage(Terrorist, Damage / 2, FIRE);
@@ -948,7 +948,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
       ADD_MESSAGE("You are hit by the explosion!");
       game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
       game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-      game::GetPlayer()->CheckDeath(DeathMsg);
+      game::GetPlayer()->CheckDeath(DeathMsg, Terrorist);
     }
 }
 

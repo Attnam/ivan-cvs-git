@@ -381,7 +381,7 @@ void brokenbottle::StepOnEffect(character* Stepper)
 	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHAR_NAME(DEFINITE));
 	}
 
-      Stepper->CheckDeath("stepped on a broken bottle");
+      Stepper->CheckDeath("stepped on a broken bottle", 0);
     }
 }
 
@@ -864,7 +864,7 @@ void bananapeels::StepOnEffect(character* Stepper)
       /* Do damage against any random bodypart except legs */
 
       Stepper->ReceiveDamage(0, 1 + (RAND() & 3), PHYSICAL_DAMAGE, ALL&~LEGS);
-      Stepper->CheckDeath("slipped on a banana peel.");
+      Stepper->CheckDeath("slipped on a banana peel.", 0);
       Stepper->EditAP(-1000);
     }
 }
@@ -2401,7 +2401,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHAR_NAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0, 2 + RAND() % 2, PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE));
+      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE), 0);
       return false;
     }
 
@@ -2460,7 +2460,7 @@ void beartrap::StepOnEffect(character* Stepper)
 
       SetIsActive(false);
       Stepper->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICAL_DAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
-      Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE));
+      Stepper->CheckDeath("died by stepping to " + GetName(INDEFINITE), 0);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
     }

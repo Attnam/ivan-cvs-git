@@ -249,7 +249,7 @@ guard
 	Config ROOKIE;
 	{
 		AttributeBonus = -20;
-		Helmet = BRONZE helmet;
+		Helmet = BRONZE helmet(FULL_HELMET);
 		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
 		RightWielded = BRONZE BRONZE meleeweapon(LONG_SWORD);
 		LeftWielded = BRONZE shield;
@@ -268,7 +268,7 @@ guard
 
 	Config VETERAN;
 	{
-		Helmet = IRON helmet;
+		Helmet = IRON helmet(FULL_HELMET);
 		BodyArmor = IRON bodyarmor(PLATE_MAIL);
 		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
 		LeftWielded = IRON shield;
@@ -290,7 +290,7 @@ guard
 
 	Config PATROL; /* make more unique */
 	{
-		Helmet = IRON helmet;
+		Helmet = IRON helmet(FULL_HELMET);
 		BodyArmor = IRON bodyarmor(PLATE_MAIL);
 		RightWielded = IRON IRON meleeweapon(LONG_SWORD);
 		LeftWielded = IRON shield;
@@ -312,7 +312,7 @@ guard
 
 	Config SHOP;
 	{
-		Helmet = STEEL helmet { Enchantment = 1; }
+		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
 		LeftWielded = STEEL shield { Enchantment = 1; }
@@ -335,7 +335,7 @@ guard
 	Config ELITE;
 	{
 		AttributeBonus = 20;
-		Helmet = MITHRIL helmet { Enchantment = 2; }
+		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
 		RightWielded = MITHRIL MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
 		LeftWielded = MITHRIL shield { Enchantment = 2; }
@@ -386,7 +386,7 @@ guard
 		{
 			5,
 			"\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
-			"\"My grand-grand-father Haedlac Galladon IV once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
+			"\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
 			"\"In addition to all my other responsibilities, I am the head of the Attnamian Bureau of Investigation (ABI). By the way, mangos are your favorite fruit.\"",
 			"\"See the amulet? Don't think badly of the Government.\"",
 			"\"The house of Galladon has served Petrus ever since he took over.\"";
@@ -534,9 +534,9 @@ oree
 	CanBeWished = false;
 	Alias == "Oree";
 	ClassStates = INVISIBLE|INFRA_VISION|ESP;
-	Helmet = RUBY helmet { Enchantment = 3; }
+	Helmet = DIAMOND helmet { Enchantment = 3; }
 	Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
-	Belt = SAPPHIRE belt { Enchantment = 3; }
+	Belt = RUBY belt { Enchantment = 3; }
 	BodyArmor = goldeneagleshirt;
 	RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 3; }
 	RightBoot = OMMEL_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 3; }
@@ -583,7 +583,7 @@ darkknight
 	Config ROOKIE;
 	{
 		AttributeBonus = -20;
-		Helmet = BRONZE helmet;
+		Helmet = BRONZE helmet(FULL_HELMET);
 		BodyArmor = BRONZE bodyarmor(PLATE_MAIL);
 		RightWielded = IRON  meleeweapon(LONG_SWORD);
 		LeftWielded = BRONZE shield;
@@ -596,7 +596,7 @@ darkknight
 
 	Config VETERAN;
 	{
-		Helmet = IRON helmet { Enchantment = 1; }
+		Helmet = IRON helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
 		LeftWielded = IRON shield { Enchantment = 1; }
@@ -612,7 +612,7 @@ darkknight
 	Config ELITE;
 	{
 		AttributeBonus = 20;
-		Helmet = STEEL helmet { Enchantment = 2; }
+		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 2; }
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 2; }
 		RightWielded = MITHRIL MITHRIL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 2; }
 		RightGauntlet = STEEL gauntlet { Enchantment = 2; }
@@ -629,10 +629,10 @@ darkknight
 	{
 		AttributeBonus = 40;
 		TotalVolume = 150000;
-		Helmet = DIAMOND helmet { Enchantment = 3; }
+		Helmet = RUBY helmet(FULL_HELMET) { Enchantment = 3; }
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
-		Belt = RUBY belt { Enchantment = 3; }
+		Belt = SAPPHIRE belt { Enchantment = 3; }
 		RightWielded = DIAMOND DIAMOND meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
 		RightGauntlet = RUBY gauntlet { Enchantment = 3; }
 		RightBoot = RUBY boot { Enchantment = 3; }
@@ -916,7 +916,7 @@ skeleton
 	Config WAR_LORD;
 	{
 		AttributeBonus = 200;
-		Helmet = MITHRIL helmet;
+		Helmet = MITHRIL helmet(FULL_HELMET);
 		Cloak = PHOENIX_FEATHER cloak;
 		BodyArmor = RUBY bodyarmor(BROKEN|CHAIN_MAIL);
 		RightWielded = RUBY RUBY flamingsword { Enchantment = 0; }
@@ -1000,7 +1000,7 @@ goblin
 	Config PRINCE;
 	{
 		AttributeBonus = 75;
-		Helmet = BRONZE helmet;
+		Helmet = BRONZE helmet(FULL_HELMET);
 		BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL);
 		RightWielded = STEEL STEEL meleeweapon(SHORT_SWORD) { Enchantment = 1; }
 		LeftWielded = STEEL STEEL meleeweapon(SHORT_SWORD) { Enchantment = 1; }
@@ -1017,7 +1017,7 @@ goblin
 	Config KING;
 	{
 		AttributeBonus = 100;
-		Helmet = STEEL helmet { Enchantment = 1; }
+		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
 		Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
 		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
@@ -2557,7 +2557,7 @@ orc
 		HeadBitmapPos = 112, 176;
 		TorsoBitmapPos = 48, 48;
 		AttributeBonus = 40;
-		Helmet = IRON helmet;
+		Helmet = IRON helmet(FULL_HELMET);
 		BodyArmor = IRON bodyarmor(CHAIN_MAIL);
 		RightWielded = IRON meleeweapon(HALBERD);
 		LeftWielded = 0;
@@ -2579,7 +2579,7 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 60;
-		Helmet = STEEL helmet;
+		Helmet = STEEL helmet(FULL_HELMET);
 		BodyArmor = STEEL bodyarmor(CHAIN_MAIL);
 		RightWielded = STEEL meleeweapon(HALBERD) { Enchantment = 1; }
 		LeftWielded = 0;
@@ -2601,7 +2601,7 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 80;
-		Helmet = MITHRIL helmet { Enchantment = 1; }
+		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
 		RightWielded = MITHRIL meleeweapon(HALBERD) { Enchantment = 2; }
 		LeftWielded = 0;
@@ -2623,7 +2623,7 @@ orc
 		ArmBitmapPos = 80, 16;
 		LegBitmapPos = 0, 224;
 		AttributeBonus = 100;
-		Helmet = SAPPHIRE helmet { Enchantment = 2; }
+		Helmet = SAPPHIRE helmet(FULL_HELMET) { Enchantment = 2; }
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 2; }
 		BodyArmor = MITHRIL bodyarmor(ARMOR_OF_GREAT_HEALTH) { Enchantment = 2; }
 		RightWielded = DIAMOND meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }

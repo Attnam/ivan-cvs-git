@@ -538,6 +538,7 @@ bool game::Save(const std::string& SaveName)
   femath::SetSeed(Time);
   SaveFile << Time;
   SaveFile << God << Dungeon << Team;
+  SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
 
   if(InWilderness)
     SaveWorldMap(SaveName);
@@ -575,6 +576,7 @@ uchar game::Load(const std::string& SaveName)
   SaveFile >> Time;
   femath::SetSeed(Time);
   SaveFile >> God >> Dungeon >> Team;
+  SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
 
   if(InWilderness)
     LoadWorldMap(SaveName);
@@ -958,14 +960,6 @@ void game::DoEvilDeed(ushort Amount)
     }
 }
 
-void game::DoNeutralDeed(ushort Amount)
-{
-  if(!Amount)
-    return;
-
-  ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed!");
-}
-
 void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + ".wm");
@@ -982,14 +976,6 @@ void game::LoadWorldMap(const std::string& SaveName)
 {
   inputfile SaveFile(SaveName + ".wm");
   SaveFile >> WorldMap;
-}
-
-ulong game::CreateNewItemID()
-{
-  if(NextItemID == 0xFFFFFFFF)
-    ABORT("Suddenly the Universe ends!");
-
-  return NextItemID++;
 }
 
 void game::Hostility(team* Attacker, team* Defender)
@@ -1045,10 +1031,10 @@ void game::CreateTeams()
     for(ushort i = 0; i < GetGameScript()->GetTeam()[c].second->GetRelation().size(); ++i)
       GetTeam(GetGameScript()->GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GetGameScript()->GetTeam()[c].first), GetGameScript()->GetTeam()[c].second->GetRelation()[i].second);
 
-    ushort* AttackEvilness = GetGameScript()->GetTeam()[c].second->GetAttackEvilness(false);
+    ushort* KillEvilness = GetGameScript()->GetTeam()[c].second->GetKillEvilness(false);
 
-    if(AttackEvilness)
-      GetTeam(GetGameScript()->GetTeam()[c].first)->SetAttackEvilness(*AttackEvilness);
+    if(KillEvilness)
+      GetTeam(GetGameScript()->GetTeam()[c].first)->SetKillEvilness(*KillEvilness);
   }
 }
 

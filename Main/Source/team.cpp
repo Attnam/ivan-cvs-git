@@ -44,9 +44,6 @@ void team::Hostility(team* Enemy)
 	      ADD_MESSAGE("You hear an alarm ringing.");
 	    }
 
-	  if(Enemy->GetAttackEvilness())
-	    game::DoEvilDeed(Enemy->GetAttackEvilness());
-
 	  ADD_MESSAGE("You have a feeling this wasn't a good idea...");
 	}
 
@@ -56,12 +53,12 @@ void team::Hostility(team* Enemy)
 
 void team::Save(outputfile& SaveFile) const
 {
-  SaveFile << ID << Relation << AttackEvilness;
+  SaveFile << ID << Relation << KillEvilness;
 }
 
 void team::Load(inputfile& SaveFile)
 {
-  SaveFile >> ID >> Relation >> AttackEvilness;
+  SaveFile >> ID >> Relation >> KillEvilness;
 }
 
 bool team::HasEnemy() const

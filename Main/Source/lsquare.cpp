@@ -1056,7 +1056,7 @@ void lsquare::StrikeEverything(character* Zapper, const std::string& DeathMsg, u
 
       Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
       Zapper->Hostility(Char);
-      Char->CheckDeath("killed by a burst of energy");
+      Char->CheckDeath("killed by a burst of energy", Zapper);
     }
 
   GetOLTerrain()->ReceiveDamage(Zapper, Damage, ENERGY);	

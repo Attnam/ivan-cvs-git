@@ -18,7 +18,7 @@ class team
 {
  public:
   team() : Leader(0) { }
-  team(ushort ID) : Leader(0), ID(ID), AttackEvilness(0) { }
+  team(ushort ID) : Leader(0), ID(ID), KillEvilness(0) { }
   void SetRelation(team*, uchar);
   uchar GetRelation(const team*) const;
   void Hostility(team*);
@@ -31,8 +31,8 @@ class team
   std::list<character*>::iterator Add(character* Char) { return Member.insert(Member.end(), Char); }
   void Remove(std::list<character*>::iterator Iterator) { Member.erase(Iterator); }
   const std::list<character*>& GetMember() const { return Member; }
-  ushort GetAttackEvilness() const { return AttackEvilness; }
-  void SetAttackEvilness(ushort What) { AttackEvilness = What; }
+  ushort GetKillEvilness() const { return KillEvilness; }
+  void SetKillEvilness(ushort What) { KillEvilness = What; }
   bool HasEnemy() const;
   ushort GetMembers() const { return Member.size(); }
   ushort GetEnabledMembers() const;
@@ -41,7 +41,7 @@ class team
   std::map<ulong, uchar> Relation;
   std::list<character*> Member;
   ushort ID;
-  ushort AttackEvilness;
+  ushort KillEvilness;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, team* Team)

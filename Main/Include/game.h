@@ -164,12 +164,11 @@ class game
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoGoodDeed(ushort);
-  static void DoNeutralDeed(ushort);
   static void DoEvilDeed(ushort);
   static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
   static void LoadWorldMap(const std::string& = SaveName(""));
   static void UpdateCamera();
-  static ulong CreateNewItemID();
+  static ulong CreateNewItemID() { return NextItemID++; }
   static void PopItemID(ulong ID) { if(NextItemID == ID + 1) --NextItemID; }
   static team* GetTeam(ushort Index) { return Team[Index]; }
   static uchar GetTeams() { return Team.size(); }

@@ -33,7 +33,7 @@ void sophos::PrayBadEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   game::GetPlayer()->TeleportSomePartsAway(RAND() % 2 + 1);
-  game::GetPlayer()->CheckDeath("shattered to pieces by the wrath of " + Name());
+  game::GetPlayer()->CheckDeath("shattered to pieces by the wrath of " + Name(), 0);
 }
 
 void valpurus::PrayGoodEffect()
@@ -58,7 +58,7 @@ void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
   game::GetPlayer()->ReceiveDamage(0, 10, PHYSICAL_DAMAGE, HEAD, RAND() % 8);
-  game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name());
+  game::GetPlayer()->CheckDeath("faced the hammer of Justice from the hand of " + Name(), 0);
 }
 
 void legifer::PrayGoodEffect()
@@ -71,7 +71,7 @@ void legifer::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
-  game::GetPlayer()->CheckDeath("burned to death by the wrath of " + Name());
+  game::GetPlayer()->CheckDeath("burned to death by the wrath of " + Name(), 0);
 }
 
 void dulcis::PrayGoodEffect()
@@ -111,7 +111,7 @@ void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
   game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
-  game::GetPlayer()->CheckDeath("became insane by listening " + Name() + " too much");
+  game::GetPlayer()->CheckDeath("became insane by listening " + Name() + " too much", 0);
 }
 
 void seges::PrayGoodEffect()
@@ -296,7 +296,7 @@ void silva::PrayGoodEffect()
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHAR_NAME(DEFINITE));
 
 		    Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
-		    Char->CheckDeath("killed by an earthquake");
+		    Char->CheckDeath("killed by an earthquake", 0);
 		  }
 
 		game::GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
@@ -478,7 +478,7 @@ void mortifer::PrayBadEffect()
   game::GetPlayer()->EditAttribute(AGILITY, -1);
   game::GetPlayer()->EditAttribute(ARM_STRENGTH, -1);
   game::GetPlayer()->EditAttribute(ENDURANCE, -1);
-  game::GetPlayer()->CheckDeath("obliterated by the unholy power of " + Name());
+  game::GetPlayer()->CheckDeath("obliterated by the unholy power of " + Name(), 0);
 }
 
 void mellis::PrayGoodEffect()
@@ -690,7 +690,7 @@ void nefas::PrayBadEffect()
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   game::GetPlayer()->ReceiveDamage(0, 2 + RAND() % 7, PHYSICAL_DAMAGE, HEAD);
   game::GetPlayer()->GetStackUnder()->AddItem(new brokenbottle);
-  game::GetPlayer()->CheckDeath("killed while enjoying the company of " + Name());
+  game::GetPlayer()->CheckDeath("killed while enjoying the company of " + Name(), 0);
 }
 
 void scabies::PrayGoodEffect()
@@ -876,7 +876,7 @@ void cruentus::PrayBadEffect()
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
       game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() % 8);
-      game::GetPlayer()->CheckDeath("destroyed by " + Name());
+      game::GetPlayer()->CheckDeath("destroyed by " + Name(), 0);
     }
 }
 

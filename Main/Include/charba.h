@@ -199,7 +199,7 @@ class character : public entity, public id
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*, float) { return false; }
   virtual bool CheckBulimia() const { return GetHungerState() == BLOATED; }
-  virtual bool CheckDeath(const std::string&, bool = false);
+  bool CheckDeath(const std::string&, character*, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, bool = false) = 0;
   virtual bool OpenItem();

@@ -19,7 +19,7 @@ Teams = 10;
 Team ATTNAM_TEAM;
 {
 	Relation 0, FRIEND;
-	AttackEvilness = 250;
+	KillEvilness = 50;
 }
 
 /* Script defined teams: */
@@ -42,20 +42,20 @@ Team 6; /* Dungeon shopkeepers */
 {
 	Relation 1, UNCARING;
 	Relation 4, HOSTILE;
-	AttackEvilness = 100;
+	KillEvilness = 100;
 }
 
 Team 7; /* Ivan */
 {
 	Relation 4, HOSTILE;
-	AttackEvilness = 100;
+	KillEvilness = 100;
 }
 
 Team NEW_ATTNAM_TEAM;
 {
 	Relation 0, FRIEND;
 	Relation 4, HOSTILE;
-	AttackEvilness = 200;
+	KillEvilness = 50;
 }
 
 Team COLONIST_TEAM;

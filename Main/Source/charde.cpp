@@ -72,7 +72,7 @@ bool ennerbeast::Hit(character*, bool)
 		  ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
 
 		Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
-		Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
+		Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream", this);
 		msgsystem::LeaveBigMessageMode();
 	      }
 

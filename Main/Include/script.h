@@ -368,7 +368,7 @@ class teamscript : public script
   virtual datamemberbase* GetData(const std::string&);
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
-  DATA_MEMBER(ushort, AttackEvilness);
+  DATA_MEMBER(ushort, KillEvilness);
 };
 
 class gamescript : public script

@@ -245,7 +245,7 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float Damage, float ToH
       return DID_NO_DAMAGE;
     }
 
-  if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
+  if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy, Enemy->IsPlayer()))
     return HAS_DIED;
 
   DeActivateVoluntaryAction("The attack of " + Enemy->GetName(DEFINITE) + " interupts you.");
@@ -1964,7 +1964,7 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
     ADD_MESSAGE("Death message: %s.", Description.c_str());
 }
 
-bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
+bool character::CheckDeath(const std::string& Msg, character* Murderer, bool ForceMsg)
 {
   if(!IsEnabled())
     return true;
@@ -1973,6 +1973,9 @@ bool character::CheckDeath(const std::string& Msg, bool ForceMsg)
     {
       if(IsPlayer())
 	AddScoreEntry(Msg);
+
+      if(Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
+	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
       Die(ForceMsg);
       return true;
@@ -2050,7 +2053,7 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
     ADD_MESSAGE("%s hits %s.", Thingy->CHAR_NAME(DEFINITE), CHAR_NAME(DEFINITE));
 
   ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE, ALL);
-  CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED));
+  CheckDeath("killed by a flying " + Thingy->GetName(UNARTICLED), Thrower);
 }
 
 bool character::DodgesFlyingItem(item*, float Speed)
@@ -2300,7 +2303,7 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 	ADD_MESSAGE("%s hits %s head on the wall.", CHAR_NAME(DEFINITE), GetPossessivePronoun().c_str());
 
       ReceiveDamage(GuiltyGuy, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD);
-      CheckDeath("killed by hitting a wall");
+      CheckDeath("killed by hitting a wall", GuiltyGuy);
     }
 
   // Place code that handles characters bouncing to each other here
@@ -4058,7 +4061,7 @@ void character::ReceiveNutrition(long SizeOfEffect)
   if(GetHungerState() == BLOATED)
     {
       ReceiveDamage(0, SizeOfEffect / 1000 ? SizeOfEffect / 1000 : 1, BULIMIA, TORSO);
-      CheckDeath("choked on his food");
+      CheckDeath("choked on his food", 0);
     }
 
   EditNP(SizeOfEffect);
@@ -4084,7 +4087,7 @@ void character::ReceivePepsi(long SizeOfEffect)
   ReceiveDamage(0, SizeOfEffect / 100, POISON, TORSO);
   EditExperience(PERCEPTION, SizeOfEffect << 3);
 
-  if(CheckDeath("was poisoned by pepsi"))
+  if(CheckDeath("was poisoned by pepsi", 0))
     return;
 
   if(IsPlayer())
@@ -5043,7 +5046,7 @@ void character::PoisonedHandler()
   if(Damage)
     {
       ReceiveDamage(0, Damage, POISON, ALL, 8, false, false, false, false);
-      CheckDeath("died of acute poisoning");
+      CheckDeath("died of acute poisoning", 0);
     }
 }
 

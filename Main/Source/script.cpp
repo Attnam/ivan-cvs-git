@@ -765,7 +765,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
 
 datamemberbase* teamscript::GetData(const std::string& Identifier)
 {
-  ANALYZE_MEMBER(AttackEvilness);
+  ANALYZE_MEMBER(KillEvilness);
   return 0;
 }
 

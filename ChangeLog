@@ -1,3 +1,10 @@
+December 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a major bug in the score system
+	* Attacking civilians doesn't raise relations to evil gods anymore, but
+	  killing does
+	* Full helmets are now used by several monsters formely wearing a normal helmet
+
 December 4 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added parasitized state which increases food consumption, can be activated
