@@ -914,13 +914,13 @@ bool scrollofcharging::Read(character* Reader)
 
 void banana::Save(outputfile& SaveFile) const
 {
-  item::Save(SaveFile);
+  materialcontainer::Save(SaveFile);
   SaveFile << Charges;
 }
 
 void banana::Load(inputfile& SaveFile)
 {
-  item::Load(SaveFile);
+  materialcontainer::Load(SaveFile);
   SaveFile >> Charges;
 }
 
@@ -989,6 +989,7 @@ bool scrolloftaming::Read(character* Reader)
 {
   // First find all characters in the squares around Reader
   std::vector<character*> CharactersNearBy;
+
   for(ushort c = 0; c < 8; c++)
     {
       vector2d Test = Reader->GetPos() + game::GetMoveVector(c);
@@ -1899,7 +1900,8 @@ ulong corpse::GetVolume() const
 
 corpse::~corpse()
 {
-  GetDeceased()->SetExists(false);
+  if(GetDeceased())
+    GetDeceased()->SetExists(false);
 }
 
 void corpse::SetMainMaterial(material* NewMaterial)
@@ -1950,7 +1952,7 @@ ushort corpse::GetSize() const
 void corpse::SetDeceased(character* What)
 {
   Deceased = What;
-  UpdatePictures();
+  UpdatePictures(false);
 }
 
 void bodypart::Regenerate(ushort Turns)
@@ -2276,7 +2278,7 @@ void meleeweapon::Save(outputfile& SaveFile) const
   SaveFile << SecondaryMaterial << ContainedMaterial;
 }
 
-material* materialcontainer::GetMaterial(uchar Index) const
+material* materialcontainer::GetMaterial(ushort Index) const
 {
   switch(Index)
     {
@@ -2286,7 +2288,7 @@ material* materialcontainer::GetMaterial(uchar Index) const
     }
 }
 
-material* meleeweapon::GetMaterial(uchar Index) const
+material* meleeweapon::GetMaterial(ushort Index) const
 {
   switch(Index)
     {
@@ -2297,7 +2299,7 @@ material* meleeweapon::GetMaterial(uchar Index) const
     }
 }
 
-material* corpse::GetMaterial(uchar Index) const
+material* corpse::GetMaterial(ushort Index) const
 {
   switch(Index)
     {
@@ -2363,14 +2365,16 @@ bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
 
 bool corpse::RaiseTheDead(character* Summoner)
 {
+  RemoveFromSlot();
+
   if(Summoner->GetIsPlayer())
     game::DoEvilDeed(50);
+
   GetLSquareUnder()->AddCharacter(GetDeceased());
   GetDeceased()->SetHasBe(true);
   GetDeceased()->CompleteRiseFromTheDead();
-  SetDeceased(0);
+  Deceased = 0;
   SetExists(false);
-  RemoveFromSlot();
   return true;
 }
 

@@ -850,7 +850,7 @@ void fountain::Save(outputfile& SaveFile) const
   SaveFile << ContainedMaterial;
 }
 
-material* fountain::GetMaterial(uchar Index) const
+material* fountain::GetMaterial(ushort Index) const
 {
   switch(Index)
     {

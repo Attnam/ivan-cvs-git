@@ -24,6 +24,7 @@ class square;
 class object : public entity, public id
 {
  public:
+  object() : MainMaterial(0) { }
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -45,8 +46,9 @@ class object : public entity, public id
   virtual void SetContainedMaterial(material*);
   virtual void ChangeContainedMaterial(material*);
   virtual uchar GetMaterials() const { return 1; }
-  virtual material* GetMaterial(uchar Index) const { return Index ? 0 : MainMaterial; }
+  virtual material* GetMaterial(ushort Index) const { return Index ? 0 : MainMaterial; }
   virtual bool IsAnimated() const { return false; }
+  virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
  protected:
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong);
   virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong);

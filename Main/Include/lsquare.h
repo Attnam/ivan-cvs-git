@@ -40,7 +40,7 @@ class lsquare : public square
   virtual void AlterLuminance(vector2d, ushort);
   virtual void Emitate();
   virtual void ReEmitate();
-  virtual stack* GetSideStack(uchar Index) const { return SideStack[Index]; }
+  virtual stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
   virtual void Clean();
   virtual bool Open(character*);
   virtual bool Close(character*);

@@ -2068,7 +2068,7 @@ void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(6, What); }
 humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(0); }
 void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(0, What); }
 
-bool humanoid::BodyPartVital(uchar Index)
+bool humanoid::BodyPartVital(ushort Index)
 {
   if(Index == 0 || Index == 1 || Index == 4)
     return true;
@@ -2076,7 +2076,7 @@ bool humanoid::BodyPartVital(uchar Index)
     return false;
 }
 
-bool humanoid::BodyPartCanBeSevered(uchar Index) const
+bool humanoid::BodyPartCanBeSevered(ushort Index) const
 {
   if(!GetBodyPart(Index) || Index == 0 || Index == 4)
     return false;
@@ -2218,7 +2218,7 @@ bool humanoid::CanWieldInSecondaryHand() const
   return GetSecondaryArm() ? true : false;
 }
 
-std::string humanoid::EquipmentName(uchar Index) const
+std::string humanoid::EquipmentName(ushort Index) const
 {
   switch(Index)
     {
@@ -2239,7 +2239,7 @@ std::string humanoid::EquipmentName(uchar Index) const
     }
 }
 
-bool (*humanoid::EquipmentSorter(uchar Index) const)(item*, character*)
+bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, character*)
 {
   switch(Index)
     {
@@ -2260,7 +2260,7 @@ bool (*humanoid::EquipmentSorter(uchar Index) const)(item*, character*)
     }
 }
 
-bodypart* humanoid::GetBodyPartOfEquipment(uchar Index) const
+bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
 {
   switch(Index)
     {
@@ -2288,7 +2288,7 @@ bodypart* humanoid::GetBodyPartOfEquipment(uchar Index) const
     }
 }
 
-item* humanoid::GetEquipment(uchar Index) const
+item* humanoid::GetEquipment(ushort Index) const
 {
   switch(Index)
     {
@@ -2323,7 +2323,7 @@ item* humanoid::GetLeftGauntlet() const { return GetLeftArm() ? GetLeftArm()->Ge
 item* humanoid::GetRightBoot() const { return GetRightLeg() ? GetRightLeg()->GetBoot() : 0; }
 item* humanoid::GetLeftBoot() const { return GetLeftLeg() ? GetLeftLeg()->GetBoot() : 0; }
 
-void humanoid::SetEquipment(uchar Index, item* What)
+void humanoid::SetEquipment(ushort Index, item* What)
 {
   switch(Index)
     {
@@ -2647,7 +2647,7 @@ void humanoid::CompleteRiseFromTheDead()
     }
 }
 
-bool humanoid::HandleNoBodyPart(uchar Index)
+bool humanoid::HandleNoBodyPart(ushort Index)
 {
   switch(Index)
     {
@@ -2666,9 +2666,9 @@ bool humanoid::HandleNoBodyPart(uchar Index)
   return false;
 }
 
-void humanoid::CreateBodyPart(uchar c)
+void humanoid::CreateBodyPart(ushort Index)
 {
-  switch(c)
+  switch(Index)
     {
     case TORSO_INDEX:
       CreateTorso();

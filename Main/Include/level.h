@@ -65,8 +65,8 @@ class level : public area
   virtual void MoveCharacter(vector2d, vector2d);
   virtual ushort GetLOSModifier() const;
   virtual ushort CalculateMinimumEmitationRadius(ushort) const;
-  virtual room* GetRoom(uchar) const;
-  virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
+  virtual room* GetRoom(ushort) const;
+  virtual void SetRoom(ushort Index, room* What) { Room[Index] = What; }
   virtual void AddRoom(room*);
   virtual void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
   virtual bool CollectCreatures(std::vector<character*>&, character*, bool);

@@ -31,7 +31,7 @@ class ABSTRACT_ITEM
   virtual void SetConsumeMaterial(material* NewMaterial) { SetContainedMaterial(NewMaterial); }
   virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeContainedMaterial(NewMaterial); }
   virtual uchar GetMaterials() const { return 2; }
-  virtual material* GetMaterial(uchar) const;
+  virtual material* GetMaterial(ushort) const;
  protected:
   virtual ushort GetMaterialColor1(ushort) const;
   material* ContainedMaterial;
@@ -223,7 +223,7 @@ class ABSTRACT_ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 3; }
-  virtual material* GetMaterial(uchar) const;
+  virtual material* GetMaterial(ushort) const;
  protected:
   virtual ushort GetMaterialColor1(ushort) const;
   material* SecondaryMaterial;
@@ -1694,6 +1694,9 @@ class ABSTRACT_ITEM
   virtual ushort Danger(ulong, bool) const;
   virtual ulong GetTotalWeight() const { return 0; }
   virtual void DropEquipment() { }
+  virtual material* GetConsumeMaterial() const { return MainMaterial; }
+  virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
+  virtual void ChangeConsumeMaterial(material* NewMaterial) { ChangeMainMaterial(NewMaterial); }
  protected:
   virtual std::string PostFix() const { return GetOwnerDescription(); }
   virtual bool ShowPostFix() const { return !GetMaster(); }
@@ -2063,7 +2066,7 @@ class ITEM
   virtual ulong Price() const;
   virtual item* PrepareForConsuming(character*);
   virtual uchar GetMaterials() const { return 2; }
-  virtual material* GetMaterial(uchar) const;
+  virtual material* GetMaterial(ushort) const;
   virtual bool RaiseTheDead(character*);
  protected:
   virtual ushort GetMaterialColor0(ushort) const;

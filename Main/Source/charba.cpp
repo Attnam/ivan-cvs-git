@@ -3235,7 +3235,7 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
   return true;
 }
 
-bodypart* character::SevereBodyPart(uchar BodyPartIndex)
+bodypart* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->SetOwnerDescription("of " + Name(INDEFINITE));
@@ -3249,7 +3249,7 @@ bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, ucha
   return ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical);
 }
 
-bool character::BodyPartVital(uchar Index)
+bool character::BodyPartVital(ushort Index)
 {
   if(Index == 0)
     return true;
@@ -3257,7 +3257,7 @@ bool character::BodyPartVital(uchar Index)
     return false;
 }
 
-bool character::BodyPartCanBeSevered(uchar Index) const
+bool character::BodyPartCanBeSevered(ushort Index) const
 {
   if(Index == 0)
     return false;
@@ -3902,10 +3902,9 @@ bool character::RaiseTheDead(character*)
   return true;
 }
 
-
-void character::CreateBodyPart(uchar c)
+void character::CreateBodyPart(ushort Index)
 {
-  switch(c)
+  switch(Index)
     {
     case TORSO_INDEX:
       CreateTorso();

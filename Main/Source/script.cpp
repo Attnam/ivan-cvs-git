@@ -589,7 +589,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
       if(Word == "Room")
 	{
-	  uchar Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber(ValueMap);
 	  std::map<uchar, roomscript*>::iterator Iterator = Room.find(Index);
 	  roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
 
@@ -647,7 +647,7 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
     {
       if(Word == "Level")
 	{
-	  uchar Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber(ValueMap);
 	  std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 	  levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
 	  LS->SetValueMap(ValueMap);
@@ -736,7 +736,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
     {
       if(Word == "Dungeon")
 	{
-	  uchar Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber(ValueMap);
 	  std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
 	  dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
 	  DS->SetValueMap(ValueMap);
@@ -909,6 +909,21 @@ void database<material>::Apply()
 	}
       else
 	{
+	  /* Remove these! */
+
+	  material_database* DataBase = protocontainer<material>::GetProto(c)->GetDataBase();
+	  DataBase->PriceModifier = 0;
+	  DataBase->IsSolid = false;
+	  DataBase->Emitation = 0;
+	  DataBase->CanBeWished = true;
+	  DataBase->Alignment = NEUTRAL;
+	  DataBase->NutritionValue = 0;
+	  DataBase->IsAlive = false;
+	  DataBase->IsBadFoodForAI = false;
+	  DataBase->ExplosivePower = 0;
+	  DataBase->IsFlammable = false;
+	  DataBase->IsFlexible = false;
+	  DataBase->IsExplosive = false;
 	}
     }
 }

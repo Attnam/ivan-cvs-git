@@ -498,7 +498,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, const std::s
 	    if(!SelectItem)
 	      Buffer = "   " + Buffer;
 
-	    ItemNames.AddEntry(Buffer, LIGHTGRAY, 0);//(**i)->GetMainPicture());
+	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture(0));
 	  }
     }
 }

@@ -72,8 +72,8 @@ class game
   static void Init(const std::string& = "");
   static void DeInit();
   static void Run();
-  static int GetMoveCommandKey(uchar Index) { return MoveCommandKey[Index]; }
-  static const vector2d GetMoveVector(uchar Index) { return MoveVector[Index]; }
+  static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
+  static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
   static bool LOSHandler(vector2d, vector2d);
@@ -112,9 +112,9 @@ class game
   static ushort GetCurrent() { return Current; }
   static int GetMoveCommandKey(vector2d, vector2d);
   static void DrawEverythingNoBlit();
-  static god* GetGod(uchar Index) { return God[Index]; }
+  static god* GetGod(ushort Index) { return God[Index]; }
   static uchar GetGods() { return God.size(); }
-  static std::string CAlignment(uchar Index) { return Alignment[Index]; }
+  static std::string GetAlignment(ushort Index) { return Alignment[Index]; }
   static void ApplyDivineTick(ushort = 1);
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(int);

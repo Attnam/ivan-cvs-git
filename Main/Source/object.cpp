@@ -5,6 +5,7 @@
 #include "game.h"
 #include "godba.h"
 #include "save.h"
+#include "proto.h"
 
 object::~object()
 {
@@ -16,13 +17,13 @@ void object::Save(outputfile& SaveFile) const
 {
   SaveFile << Type();
   entity::Save(SaveFile);
-  SaveFile << GraphicId;
+  SaveFile << GraphicId << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
   entity::Load(SaveFile);
-  SaveFile >> GraphicId;
+  SaveFile >> GraphicId >> MainMaterial;
 
   Picture.resize(GraphicId.size());
 

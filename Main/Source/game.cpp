@@ -277,8 +277,8 @@ void game::Init(const std::string& Name)
 	Angel->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Angel);*/
 
-	for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
-	  Player->GetStack()->AddItem(new oillamp(protocontainer<material>::GetProto(c)->Clone()));
+	/*for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
+	  Player->GetStack()->AddItem(new oillamp(protocontainer<material>::GetProto(c)->Clone()));*/
 
 	ADD_MESSAGE("Game generated successfully.");
 	break;

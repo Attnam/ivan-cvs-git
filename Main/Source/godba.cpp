@@ -71,7 +71,7 @@ void god::Pray()
 
 std::string god::CompleteDescription() const
 {
-  std::string Desc = game::CAlignment(Alignment());
+  std::string Desc = game::GetAlignment(Alignment());
 
   Desc.resize(4, ' ');
   Desc += Name();

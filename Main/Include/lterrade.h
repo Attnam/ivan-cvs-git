@@ -385,7 +385,7 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
-  virtual material* GetMaterial(uchar) const;
+  virtual material* GetMaterial(ushort) const;
  protected:
   virtual ushort GetMaterialColor1(ushort) const;
   virtual ulong DefaultContainedVolume() const { return 10000; }

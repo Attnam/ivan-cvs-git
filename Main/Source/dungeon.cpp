@@ -133,7 +133,7 @@ uchar dungeon::GetLevels() const
   return *DungeonScript->GetLevels();
 }
 
-std::string dungeon::GetLevelDescription(uchar Index)
+std::string dungeon::GetLevelDescription(ushort Index)
 {
   if(GetLevel(Index)->GetLevelScript()->GetDescription(false))
     return *GetLevel(Index)->GetLevelScript()->GetDescription();

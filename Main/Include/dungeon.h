@@ -25,7 +25,7 @@ class dungeon
   void PrepareLevel(ushort = game::GetCurrent());
   void SaveLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent(), bool = true);
   void LoadLevel(const std::string& = game::SaveName(), ushort = game::GetCurrent());
-  level* GetLevel(uchar Index) const { return Level[Index]; }
+  level* GetLevel(ushort Index) const { return Level[Index]; }
   uchar GetLevels() const;
   void Save(outputfile&) const;
   void Load(inputfile&);
@@ -34,7 +34,7 @@ class dungeon
   levelscript* GetLevelScript(ushort);
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
-  std::string GetLevelDescription(uchar);
+  std::string GetLevelDescription(ushort);
  private:
   void Initialize();
   dungeonscript* DungeonScript;

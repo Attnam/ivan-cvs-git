@@ -325,7 +325,7 @@ class character : public entity, public id
   virtual void RestoreHP();
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool ReceiveBodyPartDamage(character*, short, uchar, uchar, uchar = 8, bool = false, bool = false);
-  virtual bool BodyPartVital(uchar);
+  virtual bool BodyPartVital(ushort);
   virtual void RestoreBodyParts();
   virtual bool AssignName();
   virtual std::string GetAssignedName() const { return AssignedName; }
@@ -335,7 +335,7 @@ class character : public entity, public id
   virtual std::string PersonalPronoun() const;
   virtual std::string PossessivePronoun() const;
   virtual std::string ObjectPronoun() const;
-  virtual bool BodyPartCanBeSevered(uchar) const;
+  virtual bool BodyPartCanBeSevered(ushort) const;
   virtual std::string Name(uchar) const;
   virtual void ReceiveHeal(long);
   virtual void Haste(ushort);
@@ -390,11 +390,11 @@ class character : public entity, public id
   virtual void SetDivineMaster(uchar);
   virtual bool CheckWearEquipment() const;
   virtual bool CanUseEquipment() const { return false; }
-  virtual std::string EquipmentName(uchar) const { return ""; }
-  virtual bodypart* GetBodyPartOfEquipment(uchar) const { return 0; }
-  virtual item* GetEquipment(uchar) const { return 0; }
+  virtual std::string EquipmentName(ushort) const { return ""; }
+  virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
+  virtual item* GetEquipment(ushort) const { return 0; }
   virtual ushort EquipmentSlots() const { return 0; }
-  virtual bool (*EquipmentSorter(uchar) const)(item*, character*) { return 0; }
+  virtual bool (*EquipmentSorter(ushort) const)(item*, character*) { return 0; }
   virtual void SetEquipment(uchar, item*) { }
   virtual bool ScrollMessagesDown();
   virtual bool ScrollMessagesUp();
@@ -408,12 +408,12 @@ class character : public entity, public id
   virtual ulong GetTotalWeight() const;
   virtual void AddInfo(felist&) const;
   virtual void PrintInfo() const;
-  virtual bodypart* SevereBodyPart(uchar);
+  virtual bodypart* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
   virtual bool IsUnique() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
-  virtual void CreateBodyPart(uchar);
+  virtual void CreateBodyPart(ushort);
  protected:
   virtual ushort GetEatFlags() const { return FRUIT|MEAT|LIQUID|PROCESSED; }
   virtual ushort TotalSize() const = 0;

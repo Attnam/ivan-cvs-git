@@ -35,7 +35,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanWear() const { return true; }
   virtual bool CanKick() const { return true; }
   virtual bool Hit(character*);
-  virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
+  virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
   virtual void CharacterSpeciality(ushort = 1);
   virtual bool ShowWeaponSkills();
   virtual long StatScore() const;
@@ -69,10 +69,10 @@ class ABSTRACT_CHARACTER
 
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
 
-  virtual bool BodyPartVital(uchar);
+  virtual bool BodyPartVital(ushort);
   virtual void RestoreBodyParts();
 
-  virtual bool BodyPartCanBeSevered(uchar) const;
+  virtual bool BodyPartCanBeSevered(ushort) const;
 
   virtual item* GetMainWielded() const;
   virtual item* GetSecondaryWielded() const;
@@ -101,9 +101,9 @@ class ABSTRACT_CHARACTER
   virtual characterslot* GetRightLegSlot() const { return GetBodyPartSlot(5); }
   virtual characterslot* GetLeftLegSlot() const { return GetBodyPartSlot(6); }
 
-  virtual std::string EquipmentName(uchar) const;
-  virtual bodypart* GetBodyPartOfEquipment(uchar) const;
-  virtual item* GetEquipment(uchar) const;
+  virtual std::string EquipmentName(ushort) const;
+  virtual bodypart* GetBodyPartOfEquipment(ushort) const;
+  virtual item* GetEquipment(ushort) const;
   virtual ushort EquipmentSlots() const { return 13; }
 
   virtual item* GetHelmet() const;
@@ -143,15 +143,15 @@ class ABSTRACT_CHARACTER
   virtual void SetRightBoot(item*);
   virtual void SetLeftBoot(item*);
 
-  virtual bool (*EquipmentSorter(uchar) const)(item*, character*);
-  virtual void SetEquipment(uchar, item*);
+  virtual bool (*EquipmentSorter(ushort) const)(item*, character*);
+  virtual void SetEquipment(ushort, item*);
   virtual bool DrawSilhouette(bitmap*, vector2d);
   virtual ushort GlobalResistance(uchar) const;
   virtual bool CanUseEquipment() const { return true; }
   virtual void AddInfo(felist&) const;
   virtual void CompleteRiseFromTheDead();
-  virtual void CreateBodyPart(uchar);
-  virtual bool HandleNoBodyPart(uchar);
+  virtual void CreateBodyPart(ushort);
+  virtual bool HandleNoBodyPart(ushort);
  protected:
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
