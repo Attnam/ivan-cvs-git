@@ -38,6 +38,7 @@ Burial.
 Wars.
 Homes.
 Family. And lost siblings that can be found by digging in the World Map.
+Diapers which can be applied to babies to prevent them from spilling yellow and brown fluids to the floor.
 The Reaper.
 Script event system.
 Intergame pets.

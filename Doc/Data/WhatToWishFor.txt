@@ -1,4 +1,4 @@
-(The following document is valid with version 0.411 of IVAN.)
+(The following document is valid with version 0.420 of IVAN.)
 
 This guide deals with the following issue
 
@@ -46,5 +46,5 @@ are a good idea to wish for.
 * magical whistle: Handling more than two pets is almost impossible
   without this.
 
-* Mjolak, Turox, Vermis, Saal'thul: Way more powerful than any unnamed
-  weapons. Saal'thul also grants invisibility
+* Mjolak, Turox, Saal'thul, thunder hammer: Way more powerful than
+  normal weapons. Saal'thul also grants invisibility

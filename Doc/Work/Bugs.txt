@@ -15,14 +15,14 @@ Entering a dungeon and loading an autosave saves some time.
 Skeletons are probably seen by infravision.
 (s) Messages after teleport.
 (s) Bear trap in shop.
-"Valpurus shall not carry more continents!"
+(s) "Valpurus shall not carry more continents!"
 (s) Strength bonus is shown in the battle info screen even for Bill's wills.
 (s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 (s) Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
-It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
+//It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 /Putting mines in Attnam is considered OK by guards.
 Skeletons can be poisoned.
-Does using a two-handed weapon yield exp to only one arm?
+//Does using a two-handed weapon yield exp to only one arm?
 I think one can get a score of hundreds of thousands by cloning vast amounts of wands of resurrection and repeatedly killing and resurrecting Elpuri and collecting the dropped heads, each worth 2000p.
 'G'oing on the the ostrich landing site and interrupting a banana grower may sometimes make New Attnam hostile.
 The player often becomes burdened, stressed or overloaded when he eats big corpses.
@@ -31,4 +31,8 @@ It is possible to chat with fainted creatures.
 Wielded items can't be eaten.
 AI monsters don't mind about smokes.
 Panicking monsters can eat.
-Pet ghosts don't gain any strength exp.
+//Pet ghosts don't gain any strength exp.
+Throwing a potion of water at a wall in a shop makes the guards hostile.
+Ghosts can be poisoned.
+If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.
+"You hit something! Something manages to block the attack with its steel sword +1!"

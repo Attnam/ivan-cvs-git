@@ -145,3 +145,7 @@ Mummy
 Spider queen
 
 	Named.
+
+Sumo wrestler
+
+	Very fat.
