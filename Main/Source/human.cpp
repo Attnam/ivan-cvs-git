@@ -3307,8 +3307,8 @@ vector2d human::GetBodyPartBitmapPos(ushort Index) const
     {
     case TORSO_INDEX: return vector2d(GetBelt() ? 32 : 48, NoChainMailGraphics ? GetCloak() ? 320 : 288 : GetCloak() ? 336 : 304);
     case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? 112 : 160 : 0);
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return vector2d(64, GetBodyArmor() ? NoChainMailGraphics ? 288 : 304 : 0);
+    case RIGHT_ARM_INDEX: return vector2d(GetRightGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
+    case LEFT_ARM_INDEX: return vector2d(GetLeftGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return vector2d(0, NoChainMailGraphics ? 288 : 304);
@@ -3323,8 +3323,8 @@ ushort human::GetBodyPartColorA(ushort Index) const
   switch(Index)
     {
     case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
-    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->GetColor() : GetSkinColor();
-    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX:
     case HEAD_INDEX:
     case GROIN_INDEX: return GetSkinColor();
     case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
@@ -3342,7 +3342,7 @@ ushort human::GetBodyPartColorB(ushort Index) const
     case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->GetColor() : 0;
     case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : 0;
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : 0;
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetClothColor();
@@ -3358,8 +3358,8 @@ ushort human::GetBodyPartColorC(ushort Index) const
     {
     case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->GetColor() : 0;
     case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : GetHairColor();
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX:
+    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->GetColor() : 0;
+    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->GetColor() : 0;
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return 0;
