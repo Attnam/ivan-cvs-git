@@ -1,5 +1,5 @@
 Inhandspics.
-Messages.
+//Messages.
 Multi-tiled creatures.
 New team system.
 Corpses.
@@ -7,3 +7,5 @@ Lines & words.
 Healing.
 Danger values.
 Name system.
+Vector based humanoid read.
+Throw flipping.

@@ -209,3 +209,4 @@ Spiders should make webs.
 Wand of locking.
 Scroll of gold detection that would identify every unit made of gold.
 Bananas should act as boomerangs when thrown.
+*Satiated and bloated states.
