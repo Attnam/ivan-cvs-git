@@ -68,7 +68,7 @@ Poisonous snake. (hex)
 //Biting shouldn't make bodyparts fly.
 People shouldn't "die screaming" if their heads are not present.
 //Shields. (timo)
-Lower all unarmed to hit values. (timo)
+(r) Lower all unarmed to hit values. (timo)
 Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns

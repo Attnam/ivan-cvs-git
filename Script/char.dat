@@ -1271,7 +1271,7 @@ mistress
 	DefaultMana = 15;
 	Sex = FEMALE;
 	SkinColor = rgb(255, 212, 192);
-	HairColor = rgb(35, 35, 35);
+	HairColor = rgb(200, 200, 200);
 	ClothColor = rgb(35, 35, 35);
 	HeadBitmapPos = 112, 240;
 	TorsoBitmapPos = 48, 96;
@@ -1293,6 +1293,7 @@ mistress
 
 	Config TORTURINGCHIEF;
 	{
+		HairColor = rgb(200, 200, 0);
 		AttributeBonus = 25;
 		BodyArmor = IRON bodyarmor(CHAINMAIL);
 		CategoryWeaponSkillHits == 500;
@@ -1303,6 +1304,7 @@ mistress
 
 	Config WHIPCHAMPION;
 	{
+		HairColor = rgb(200, 0, 0);
 		AttributeBonus = 50;
 		BodyArmor = STEEL bodyarmor(CHAINMAIL);
 		CategoryWeaponSkillHits == 1000;
@@ -1313,6 +1315,7 @@ mistress
 
 	Config WARLADY;
 	{
+		HairColor = rgb(80, 64, 32);
 		AttributeBonus = 75;
 		BodyArmor = MITHRIL bodyarmor(CHAINMAIL);
 		CategoryWeaponSkillHits == 2000;
@@ -1323,6 +1326,7 @@ mistress
 
 	Config QUEEN;
 	{
+		HairColor = rgb(35, 35, 35);
 		AttributeBonus = 100;
 		BodyArmor = DIAMOND bodyarmor(CHAINMAIL);
 		CategoryWeaponSkillHits == 5000;
@@ -1814,13 +1818,15 @@ orc
 	EyeColor = rgb(200, 200, 0);
 	ClothColor = rgb(180, 120, 80);
 	BeltColor = rgb(72, 60, 24);
-	LegMainColor = rgb(100, 96, 64);
+	LegMainColor = rgb(96, 80, 48);
 	HeadBitmapPos = 112, 192;
-	TorsoBitmapPos = 48, 48;
+	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 80, 32;
 	LegBitmapPos = 0, 240;
+
 	TotalVolume = 90000;
 	TotalSize = 180;
+	Article = "an";
 	NameSingular = "orc";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
@@ -1833,6 +1839,7 @@ orc
 
 	Config SLAUGHTERER;
 	{
+		TorsoBitmapPos = 48, 48;
 		AttributeBonus = 25;
 		Helmet = LEATHER helmet;
 		BodyArmor = COPPER bodyarmor(CHAINMAIL);
@@ -1845,6 +1852,9 @@ orc
 
 	Config SQUADLEADER;
 	{
+		HairColor = rgb(200, 0, 0);
+		HeadBitmapPos = 112, 176;
+		TorsoBitmapPos = 48, 48;
 		AttributeBonus = 50;
 		Helmet = BRONZE helmet;
 		BodyArmor = BRONZE bodyarmor(CHAINMAIL);
@@ -1857,11 +1867,19 @@ orc
 
 	Config OFFICER;
 	{
+		HairColor = rgb(200, 0, 0);
+		ClothColor = rgb(72, 72, 72);
+		LegMainColor = rgb(48, 48, 48);
+		LegSpecialColor = rgb(96, 64, 32);
+		HeadBitmapPos = 112, 176;
+		TorsoBitmapPos = 48, 32;
+		ArmBitmapPos = 80, 16;
+		LegBitmapPos = 0, 224;
 		AttributeBonus = 75;
 		Helmet = IRON helmet;
 		BodyArmor = IRON bodyarmor(CHAINMAIL);
-		RightWielded = IRON meleeweapon(LONGSWORD);
-		KnownCategoryWeaponSkills == LARGE_SWORDS;
+		RightWielded = IRON meleeweapon(POLEAXE);
+		KnownCategoryWeaponSkills == AXES;
 		CategoryWeaponSkillHits == 200;
 		RightSingleWeaponSkillHits = 100;
 		PostFix = "officer";
@@ -1869,7 +1887,7 @@ orc
 
 	Config GENERAL;
 	{
-		HairColor = rgb(200, 0, 0);
+		HairColor = rgb(200, 0, 200);
 		ClothColor = rgb(72, 72, 72);
 		LegMainColor = rgb(48, 48, 48);
 		LegSpecialColor = rgb(96, 64, 32);
