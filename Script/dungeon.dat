@@ -1578,16 +1578,42 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room
 		{
-			Pos = 2:XSize-5,2:YSize-5;
 			Size = 11,11;
 			AllowLockedDoors = true;
 			AllowBoobyTrappedDoors = true;
 			GenerateFountains = false;
+			Shape = ROUND_CORNERS;
+			WallSquare = solidterrain(GROUND), earth;
+			FloorSquare = solidterrain(GROUND), 0;
+			GenerateDoor = false;
+
+			OTerrainMap
+			{
+				Pos = 3,3;
+				Size = 5,5;
+				Types
+				{
+					# = earth;
+				}
+			}
+			{
+				..#..
+				.###.
+				##.##
+				.###.
+				..#..
+			}
 
 			Square, Pos 5,5;
 			{
 				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
 				EntryIndex = 100;
+			}
+
+			Square, Pos 5,0;
+			{
+				OTerrain = 0;
+				AttachRequired = true;
 			}
 		}
 	}
