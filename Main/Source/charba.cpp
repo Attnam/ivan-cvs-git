@@ -24,6 +24,7 @@
 #include "script.h"
 #include "config.h"
 #include "femath.h"
+#include "strover.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
 {
@@ -1717,11 +1718,11 @@ bool character::Look()
 				{
 					ADD_MESSAGE("%s is %s here.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
 
-					std::string Msg = game::PersonalPronoun(Character->GetSex());
+					std::string Msg = std::string(game::PersonalPronoun(Character->GetSex())) + " is at danger level " + Character->DangerLevel();
 
 					if(Character->GetWielded())
 					{
-						Msg += std::string(" is wielding ") + Character->GetWielded()->CNAME(INDEFINITE);
+						Msg += std::string(" and is wielding ") + Character->GetWielded()->CNAME(INDEFINITE);
 
 						if(Character->GetTorsoArmor())
 						{
@@ -1733,7 +1734,9 @@ bool character::Look()
 						Msg += " and";
 					}
 					else if(Character->GetTorsoArmor())
-						Msg += std::string(" is wearing ") + Character->GetTorsoArmor()->CNAME(INDEFINITE) + " and";
+						Msg += std::string(", is wearing ") + Character->GetTorsoArmor()->CNAME(INDEFINITE) + " and";
+          else
+            Msg += " and";
 
 					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
 						ADD_MESSAGE("%s is tame.", Msg.c_str());
@@ -3333,4 +3336,13 @@ uchar character::RandomizeReply(uchar Replies, bool* Said)
 	Said[ToSay] = true;
 
 	return ToSay;
+}
+
+ushort character::DangerLevel()
+{
+  static ulong DangerPointMinimum[] = { 0, 100, 500, 2500, 10000, 50000, 250000, 1000000, 5000000, 25000000 };
+
+  for(ushort c = 9;; --c)
+    if(CurrentDanger() >= DangerPointMinimum[c])
+      return c;
 }

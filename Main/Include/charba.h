@@ -271,6 +271,7 @@ public:
 	virtual void CheckGearExistence();
 	virtual uchar RandomizeReply(uchar, bool*);
 	virtual ushort Frequency() const { return 10000; }
+  virtual ushort DangerLevel();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

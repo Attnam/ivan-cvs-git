@@ -60,7 +60,7 @@ void groundworldmapterrain::DrawToTileBuffer() const
 
 		if(DoNeighbour->Priority() > Priority())
 			Neighbour.push(prioritypair(DoNeighbour->Priority(), DoNeighbour->GetBitmapPos() - (game::GetMoveVector(DoIndex) << 4)));
-	})
+	});
 
 	while(Neighbour.size())
 	{

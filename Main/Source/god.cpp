@@ -183,7 +183,7 @@ void venius::PrayGoodEffect()
 			Char->ReceiveFireDamage(game::GetPlayer(), 20);
 			Char->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 		}
-	})
+	});
 }
 
 void venius::PrayBadEffect()
@@ -217,7 +217,7 @@ void dulcis::PrayGoodEffect()
 					ADD_MESSAGE("%s resists its charming call.", Char->CNAME(DEFINITE));
 			else
 				ADD_MESSAGE("%s seems not affected.", Char->CNAME(DEFINITE));
-	})
+	});
 }
 
 void dulcis::PrayBadEffect()

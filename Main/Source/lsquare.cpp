@@ -285,7 +285,7 @@ void levelsquare::Emitate()
 	{
 		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
-	})
+	});
 }
 
 void levelsquare::ReEmitate()
@@ -307,7 +307,7 @@ void levelsquare::ReEmitate()
 	{
 		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::EmitationHandler);
-	})
+	});
 }
 
 void levelsquare::Noxify()
@@ -323,7 +323,7 @@ void levelsquare::Noxify()
 	{
 		if(ulong(GetHypotSquare(long(GetPos().X) - XPointer, long(GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(GetPos().X, GetPos().Y, XPointer, YPointer, RadiusSquare, game::NoxifyHandler);
-	})
+	});
 }
 
 void levelsquare::ForceEmitterNoxify()

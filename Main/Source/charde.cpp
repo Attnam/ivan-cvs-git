@@ -18,6 +18,7 @@
 #include "team.h"
 #include "lterraba.h"
 #include "femath.h"
+#include "error.h"
 
 petrus::~petrus()
 {
@@ -1225,7 +1226,7 @@ bool elpuri::Hit(character* Enemy)
 		for(uchar c = 0; c < 4; ++c)
 			if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
 				Square->GetSideStack(c)->ImpactDamage(GetStrength(), Square->CanBeSeen());
-	})
+	});
 
 	return true;
 }
@@ -1774,7 +1775,6 @@ void human::CreateInitialEquipment()
 void dwarf::DrawLegs(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y + 1, 0, 0, 16, 15); }
 void dwarf::DrawHead(vector2d Pos) const { igraph::GetHumanGraphic()->MaskedBlit(igraph::GetTileBuffer(), Pos.X, Pos.Y, 0, 1, 16, 15); }
 
-
 void unicorn::RandomizeFleshMaterial()
 {
   SetAlignment(RAND() % 3);
@@ -1815,5 +1815,15 @@ std::string unicorn::NameSingular() const
     case GOOD:
       return "white unicorn";
     }
+
   ABORT("Unicorns do not exist.");
+  return "";
+}
+
+void kamikazedwarf::GetAICommand()
+{
+  if(HomeRoom)
+    StandIdleAI();
+  else
+    character::GetAICommand();
 }

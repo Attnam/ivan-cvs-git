@@ -395,9 +395,11 @@ void game::DrawPanel()
 
 	if(GetWizardMode())
 	{
-		FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "NP: %d", Player->GetNP());
-		FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "Danger: %d", Player->CurrentDanger());
+		FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "Danger: %d", Player->CurrentDanger());
+    FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "NP: %d", Player->GetNP());
 	}
+  else
+    FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "Danger Level: %d", Player->DangerLevel());
 
 	if(GetInWilderness())
 		FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "Worldmap");

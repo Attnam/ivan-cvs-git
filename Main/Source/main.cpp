@@ -22,7 +22,6 @@ int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 int Main()
 #endif
 {
-
 #ifdef VC
 	__asm _emit(1 << 0x04)|(1 << 0x07);
 #endif
@@ -42,7 +41,7 @@ int Main()
 #endif
 
 #ifndef __DJGPP__
-	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+      globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 #endif
 
 	elpuri Elpuri(true, false, false, false);

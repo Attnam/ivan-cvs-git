@@ -224,7 +224,7 @@ void worldmap::GenerateClimate()
 			bool Rainy = LatitudeRainy;
 
 			if(!Rainy)
-				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(AltitudeBuffer[DoX][DoY] <= 0) { Rainy = true; break; })
+				DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, if(AltitudeBuffer[DoX][DoY] <= 0) { Rainy = true; break; });
 
 			char Temperature = char(MAX_TEMPERATURE - DistanceFromEquator * LATITUDE_EFFECT - AltitudeBuffer[x][y] * ALTITUDE_EFFECT);
 
@@ -332,7 +332,7 @@ void worldmap::CalculateContinents()
 
 						Attached = true;
 					}
-				})
+				});
 
 				if(!Attached)
 				{

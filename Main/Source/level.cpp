@@ -1010,7 +1010,7 @@ void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
 			if(Damage >= 20 && Square->GetOverLevelTerrain()->CanBeDigged() && Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
 				Square->ChangeOverLevelTerrainAndUpdateLights(new empty);
 		}
-	})
+	});
 
 	if(PlayerHurt)
 	{
@@ -1049,7 +1049,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 					ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 					return false;
 				}
-		})
+		});
 
 	DO_FILLED_RECTANGLE(Leader->GetPos().X, Leader->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Leader->LOSRange(),
 	{
@@ -1066,7 +1066,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 				CharacterArray.push_back(Char);
 				game::GetCurrentLevel()->RemoveCharacter(Char->GetPos());
 			}
-	})
+	});
 
 	return true;
 }

@@ -1352,6 +1352,7 @@ public:
 	virtual void SetMaster(uchar What) { Master = What; }
 	virtual uchar GetMaster() const { return Master; }
 	virtual bool CheckForUsefulItemsOnGround() { return false; }
+  virtual void GetAICommand();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(400,0)
 	virtual void CreateInitialEquipment();

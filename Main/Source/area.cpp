@@ -81,7 +81,7 @@ void area::UpdateLOS()
 	{
 		if(ulong(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer)) <= RadiusSquare)
 			femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, RadiusSquare, game::LOSHandler);
-	})
+	});
 
 	game::RemoveLOSUpdateRequest();
 }
@@ -113,7 +113,7 @@ vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar Ma
 
 		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter() && Vector != Prohibited)
 			return Vector;
-	})
+	});
 
 	if(MaxDistance)
 		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
@@ -127,7 +127,7 @@ vector2d area::FreeSquareSeeker(vector2d StartPos, vector2d Prohibited, uchar Ma
 				if(Vector.X != -1)
 					return Vector;
 			}
-		})
+		});
 
 	return vector2d(-1, -1);
 }
@@ -143,7 +143,7 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 
 		if(GetSquare(Vector)->GetOverTerrain()->GetIsWalkable() && !GetSquare(Vector)->GetCharacter())
 			return Vector;
-	})
+	});
 
 	for(ushort c = 0; c < 20; ++c)
 		DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize(), GetYSize(),
@@ -157,7 +157,7 @@ vector2d area::GetNearestFreeSquare(vector2d StartPos)
 				if(Vector.X != -1)
 					return Vector;
 			}
-		})
+		});
 
 	ABORT("No room for character. Character unhappy.");
 
