@@ -128,7 +128,7 @@ void worldmap::Generate(void)
 
 	delete [] Buffer;
 	delete [] Data;
-	GenerateTerrain();
+	GenerateClimate();
 }
 
 #define CLIMATE_RANDOMNESS		0.8		//1 = mathematic, 0 = random
@@ -145,10 +145,11 @@ void worldmap::Generate(void)
 
 #define CLIMATE_SMOOTHING		20
 
-void worldmap::GenerateTerrain(void)
+void worldmap::GenerateClimate(void)
 {
 	char rainfall = 0;
-
+	short** Buffer;
+	Buffer = Alloc2D<short>(XSize, YSize);
 	short temperature;
 
 	float altsum = 0, distance_from_equator;
@@ -223,6 +224,49 @@ void worldmap::GenerateTerrain(void)
 				if (temperature > HOT && rainfall == 1)
 					Map[x][y]->ChangeWorldMapTerrain(new jungle, new atmosphere);
 	     	}
+			
 		}
+	for(x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; y++)
+			Buffer[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType();
+
+	for(ushort c = 0; c < 1000; c++)
+	{
+		ushort x = rand() % XSize;
+		ushort y = rand() % YSize;
+		ushort Counter = 0, Biggest = -1;	
+		if(Map[x][y]->CAltitude() > 0)
+		{
+			ushort NumberOfTypes = groundworldmapterrain::GetProtoAmount();
+												
+			ushort* Types = new ushort[NumberOfTypes];
+			for(ushort n = 0; n < NumberOfTypes; n++)
+				Types[n] = 0;
+			DO_FOR_SQUARES_AROUND(x, y, XSize, YSize, 
+			{
+				Types[Buffer[DoX][DoX]]++;	
+			});
+			for(n = 0; n < NumberOfTypes; n++)
+			{
+				if(Biggest < Types[n] || (Biggest == Types[n] && rand() % 2))
+				{
+					Biggest = Types[n];
+					Counter = n;
+				}
+				
+
+			}
+			Buffer[x][y] = n;
+		}
+	}
+		
+	
+	for(x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; y++)
+		{
+			Map[x][y]->ChangeWorldMapTerrain(GetProtoType<groundworldmapterrain>(Buffer[x][y])->Clone(), new atmosphere);
+		}
+	delete [] Buffer;
+
 }
 

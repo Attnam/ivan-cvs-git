@@ -15,7 +15,7 @@ public:
 	virtual void Draw(void) const;
 	virtual void Save(std::ofstream&) const;
 	virtual worldmapsquare* GetWorldMapSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
-	virtual void GenerateTerrain(void);
+	virtual void GenerateClimate(void);
 	virtual void Load(std::ifstream&);
 protected:
 	worldmapsquare*** Map;
