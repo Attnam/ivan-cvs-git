@@ -66,7 +66,7 @@ gamescript game::GameScript;
 bool game::IsLoading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 
-std::string game::AutoSaveFileName = SAVE_DIR + "/Autosave";
+std::string game::AutoSaveFileName = SAVE_DIR + "Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 
@@ -866,10 +866,22 @@ void game::RemoveSaves(bool RealSavesAlso)
   for(ushort i = 0; i < Dungeon.size(); ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
-	if(RealSavesAlso)
-	  remove((SaveName() + "." + i + c).c_str());
+	/*
+	 * This looks very odd. And it is very odd.
+	 * Indeed, gcc is very odd to not compile this correctly with -O3
+	 * if it is written in a less odd way.
+	 */
 
-	remove((AutoSaveFileName + "." + i + c).c_str());
+	std::string File = SaveName() + "." + i;
+	File += c;
+
+	if(RealSavesAlso)
+	  remove(File.c_str());
+
+	File = AutoSaveFileName + "." + i;
+	File += c;
+
+	remove(File.c_str());
       }
 }
 

@@ -414,11 +414,11 @@ bool character::Consume()
 {
   if(!game::GetInWilderness() && GetLevelSquareUnder()->GetOverLevelTerrain()->HasConsumeEffect())
     {
-      GetLevelSquareUnder()->GetOverLevelTerrain()->Consume(this);
-      return true;
-	
+      if(GetLevelSquareUnder()->GetOverLevelTerrain()->Consume(this))
+	return true;
     }
-  else if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
+
+  if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
     {
       ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
 
@@ -957,6 +957,8 @@ void character::Die(bool ForceMsg)
       GetLevelSquareUnder()->SetTemporaryEmitation(GetEmitation());
 
       game::DrawEverything(false);
+
+      GetLevelSquareUnder()->SetTemporaryEmitation(0);
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))

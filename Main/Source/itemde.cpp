@@ -1108,7 +1108,7 @@ void banana::Load(inputfile& SaveFile)
   SaveFile >> Charges;
 }
 
-bool banana::Zap(character* Zapper, vector2d, uchar Direction)
+bool banana::Zap(character*, vector2d, uchar)
 {
   if(Charges)
     {

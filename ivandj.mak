@@ -1,6 +1,6 @@
 # Iter Vehemens ad Necem makefile for DJGPP environment
 
-# Copyrights (C) Timo Kiviluoto / IvanDev 2002
+# Copyrights (C) Timo Kiviluoto / IvanDev 2000-2002
 
 AR       = ar rs
 CC       = gcc -o

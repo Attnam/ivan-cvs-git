@@ -443,14 +443,24 @@ bool doublebed::SitOn(character*)
   return true;
 }
 
-void fountain::Consume(character* Drinker)
+bool fountain::Consume(character* Drinker)
 {
   if(GetMaterial(1))
     {
       if(GetMaterial(1)->GetType() == water::StaticType()) 
 	{
-	  if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->Drink(Drinker))
-	    return;
+	  if(GetLevelSquareUnder()->GetRoom() && GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->HasDrinkHandler())
+	    {
+	      if(!GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->Drink(Drinker))
+		return false;
+	    }
+	  else
+	    {
+	      if(!game::BoolQuestion("Do you still want to drink from the fountain? [y/N]"))
+		{
+		  return false;
+		}
+	    }
 
 	  switch(RAND() % 5)
 	    {
@@ -511,19 +521,19 @@ void fountain::Consume(character* Drinker)
 
 	  // fountain might have dried out: don't do anything here.
 
-	  return;
+	  return true;
 	}
       else
 	{
-	  ADD_MESSAGE("You don't dare to drink this stuff.");
-	  return;
+	  ADD_MESSAGE("You don't dare to drink from this fountain.");
+	  return false;
 	}
 
     }
   else
     {
       ADD_MESSAGE("The fountain has dried out.");
-      return;
+      return false;
     }
 }
 

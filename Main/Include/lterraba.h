@@ -81,7 +81,7 @@ class overlevelterrain : public levelterrain, public overterrain
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
   virtual bool HasConsumeEffect() const { return false; } 
-  virtual void Consume(character*) {}
+  virtual bool Consume(character*) { return false; }
   virtual void Lock() {}
 };
 

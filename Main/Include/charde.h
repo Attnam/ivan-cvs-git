@@ -1413,6 +1413,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void RandomizeFleshMaterial();
   virtual bool SpecialEnemySightedReaction(character*);
+  virtual void CreateInitialEquipment();
  protected:
   uchar Alignment;
 );

@@ -1899,3 +1899,8 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 
   return false;
 }
+
+void unicorn::CreateInitialEquipment()
+{
+  GetStack()->FastAddItem(new astone);
+}

@@ -355,7 +355,7 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
   virtual std::string Name(uchar) const;
   virtual bool SitOn(character*);
-  virtual void Consume(character*);
+  virtual bool Consume(character*);
   virtual bool HasConsumeEffect() const { return true; } 
   virtual void DryOut();
  protected:

@@ -117,11 +117,6 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	  }
 
 	return 0;
-
-	/*ushort Index = KeyBuffer.Search(wParam);
-
-	if(Index == 0xFFFF)
-	  KeyBuffer.Add(wParam);*/
       }
 
     case WM_CHAR:
@@ -135,15 +130,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
     case WM_KEYUP:
       {
 	if(wParam == VK_SNAPSHOT)
-	  {
 	    DOUBLEBUFFER->Save("Scrshot.bmp");
-	    return 0;
-	  }
-
-	/*ushort Index = KeyBuffer.Search(wParam);
-
-	if(Index != 0xFFFF)
-	  KeyBuffer.Remove(Index);*/
 
 	return 0;
       }
@@ -176,35 +163,6 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     if(Active && KeyBuffer.Length())
       {
 	return KeyBuffer.Remove(0);
-
-	/*int Key =  KeyBuffer.Remove(0);
-
-	HKL MappedVirtualKey = LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE );
-
-	ulong ScanCode = MapVirtualKeyEx(Key, 0, MappedVirtualKey);
-	ushort ToBeReturned;	
-	uchar KeyboardBuffer[256];
-
-	if(Key == VK_LEFT || Key == VK_NUMPAD4) return 0x14B;
-	if(Key == VK_HOME || Key == VK_NUMPAD7) return 0x147;
-	if(Key == VK_UP || Key == VK_NUMPAD8) return 0x148;
-	if(Key == VK_PRIOR || Key == VK_NUMPAD9) return 0x149;	// page up! Believe it, or not!
-	if(Key == VK_RIGHT || Key == VK_NUMPAD6) return 0x14D;
-	if(Key == VK_NEXT || Key == VK_NUMPAD3) return 0x151;	// page down! Believe it, or not!
-	if(Key == VK_DOWN || Key == VK_NUMPAD2) return 0x150;
-	if(Key == VK_END || Key == VK_NUMPAD1) return 0x14F;
-	if(Key == VK_NUMPAD5) return '.';
-
-	if(!GetKeyboardState(KeyboardBuffer))
-	  return 'x';
-
-	ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, MappedVirtualKey);
-
-	if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
-	  return ToBeReturned;
-	else
-	  if(AcceptCommandKeys)
-	    return 0;*/
       }
     else
       if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))

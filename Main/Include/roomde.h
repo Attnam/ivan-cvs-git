@@ -61,6 +61,7 @@ class ROOM
   virtual void Load(inputfile&);
   virtual bool AllowDropGifts() const { return false; }
   virtual bool Drink(character*) const;
+  virtual bool HasDrinkHandler() const { return true; }
  protected:
   bool Entered;
 );
