@@ -388,4 +388,3 @@ public:\
 };
 
 #endif
-

@@ -172,4 +172,3 @@ overterrain* worldmapsquare::GetOverTerrain() const
 {
 	return OverWorldMapTerrain;
 }
-

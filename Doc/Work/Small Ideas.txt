@@ -50,13 +50,3 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
-Description of wands should show how many times it has been used.
-Uranium weapons should turn monsters to mutants.
-A god effect that gives the player some free turns.
-The inventory screen should show the total weigth of items and burdened/stressed weigth limits.
-The librarian could charge wands or sell scrolls?
-There should be an option to show all text in the game in tengwar font.
-Scroll of charging.
-A priests of Attnam should kick the player if he vomits on their altars.
-Golems should drop lumps of their respective material when critically hit.
-Dolphin pools should be bigger.

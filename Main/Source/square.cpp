@@ -102,4 +102,3 @@ void square::KickAnyoneStandingHereAway()
 		RemoveCharacter();
 	}
 }
-

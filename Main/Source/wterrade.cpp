@@ -72,4 +72,3 @@ bool elpuricave::GoDown(character* Who) const
 	game::UpdateCamera();
 	return true;
 }
-

@@ -26,6 +26,7 @@ private:
 	static char KeyboardLayoutName[KL_NAMELENGTH];
 	static bool Initialized;
 	static bool (*QuitMessageHandler)();
+	static bool Active;
 };
 
 #endif

@@ -8,16 +8,24 @@ dynarray<int> globalwindowhandler::KeyBuffer;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
+bool globalwindowhandler::Active = false;
 
 LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
 		case WM_SIZE:
-			if(wParam == SIZE_MAXIMIZED)
+			if(wParam == SIZE_MAXHIDE || wParam == SIZE_MINIMIZED)
+				Active = false;
+			else
 			{
-				graphics::SwitchMode();
-				break;
+				Active = true;
+
+				if(wParam == SIZE_MAXIMIZED)
+				{
+					graphics::SwitchMode();
+					break;
+				}
 			}
 
 		case WM_MOVE:
@@ -113,7 +121,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 	}
 
 	while(true)
-		if(KeyBuffer.Length())
+		if(Active && KeyBuffer.Length())
 		{
 			int Key =  KeyBuffer.Remove(0);
 			int BackUp = Key;
@@ -156,6 +164,8 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 					if(msg.message != WM_SYSKEYUP)
 						DispatchMessage(&msg);
 				}
+			else
+				WaitMessage();
 }
 
 void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
@@ -197,16 +207,24 @@ int globalwindowhandler::ReadKey()
 {
 	MSG msg;
 
-	while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-		if(msg.message == WM_QUIT)
-			exit(0);
-		else
-		{
-			TranslateMessage(&msg);
+	while(true)
+	{
+		while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+			if(msg.message == WM_QUIT)
+				exit(0);
+			else
+			{
+				TranslateMessage(&msg);
 
-			if(msg.message != WM_SYSKEYUP)
-				DispatchMessage(&msg);
-		}
+				if(msg.message != WM_SYSKEYUP)
+					DispatchMessage(&msg);
+			}
+
+		if(Active)
+			break;
+		else
+			WaitMessage();
+	}
 
 	if(KeyBuffer.Length())
 		return GetKey(false, true);

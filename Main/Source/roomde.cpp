@@ -301,4 +301,3 @@ void cathedral::Load(inputfile& SaveFile)
 
 	SaveFile >> Entered;
 }
-

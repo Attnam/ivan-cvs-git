@@ -1199,4 +1199,3 @@ uchar game::GetDirectionForVector(vector2d Vector)
 
 	return DIRECTION_COMMAND_KEYS;
 }
-

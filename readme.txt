@@ -15,16 +15,16 @@ Iter Vehems ad Necem (0.301)
 
 1. Description
 
-Iter Vehemens ad Necem (IVAN) is a graphical roguelike game. 
-IVAN has been ported to Windows and DOS and a Linux port is 
-more than likely. The most innovative parts at the moment 
-are the material handling system and the lighting system.
+Iter Vehemens ad Necem (IVAN) is a graphical roguelike game.
+IVAN currently runs in Windows but a Linux port is more than
+likely. Its most innovative parts at the moment are the
+material handling system and the lighting system.
 
 -----------------------------
 
 2. System requirements
 
-The game *works* in quite slow machines, but we recommend that
+The game *works* on quite slow systems, but we recommend that
 use atleast a:
 
 	Pentium 233 MHz

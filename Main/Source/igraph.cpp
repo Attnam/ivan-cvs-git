@@ -101,4 +101,3 @@ void igraph::RemoveUser(graphic_id GI)
 			TileMap.erase(Iterator);
 		}
 }
-

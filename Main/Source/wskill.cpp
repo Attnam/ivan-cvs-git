@@ -146,4 +146,3 @@ void sweaponskill::Load(inputfile& SaveFile)
 
 	SaveFile >> ID;
 }
-

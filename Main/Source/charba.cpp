@@ -2304,7 +2304,7 @@ bool character::Polymorph(character* NewForm)
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);
-		NewForm->SetStateCounter(POLYMORPHED, 1000);
+		NewForm->SetStateCounter(POLYMORPHED, 10000);
 		NewForm->GetLevelSquareUnder()->GetLevelUnder()->UpdateLOS();
 	}
 	else

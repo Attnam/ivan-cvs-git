@@ -998,4 +998,3 @@ room* levelsquare::GetRoomClass() const
 	else
 		return 0;
 }
-

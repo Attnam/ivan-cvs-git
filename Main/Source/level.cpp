@@ -854,4 +854,3 @@ room* level::GetRoom(uchar Index) const
 
 	return Room[Index];
 }
-
