@@ -184,27 +184,25 @@
   }\
 }
 
-#define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat)\
+#define DO_FILLED_RECTANGLE(CenterX, CenterY, ClipLeft, ClipTop, ClipRight, ClipBottom, Radius, DoWhat)\
 {\
   long	Left    = (CenterX) - (Radius),\
 	Top     = (CenterY) - (Radius),\
-	Rigth   = (CenterX) + (Radius),\
+	Right   = (CenterX) + (Radius),\
 	Bottom  = (CenterY) + (Radius);\
   \
   if(Left   < (ClipLeft))   Left   = (ClipLeft);\
   if(Top    < (ClipTop))    Top    = (ClipTop);\
-  if(Rigth  > (ClipRigth))  Rigth  = (ClipRigth);\
+  if(Right  > (ClipRight))  Right  = (ClipRight);\
   if(Bottom > (ClipBottom)) Bottom = (ClipBottom);\
   \
-  if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop))\
+  if(Left <= (ClipRight) && Top <= (ClipBottom) && Right >= (ClipLeft) && Bottom >= (ClipTop))\
   {\
-    ushort XPointer, YPointer;\
-    \
-    for(XPointer = Left; XPointer <= Rigth; ++XPointer)\
-      for(YPointer = Top; YPointer <= Bottom; ++YPointer)\
-      {\
-        DoWhat;\
-      }\
+    for(long XPointer = Left; XPointer <= Right; ++XPointer)\
+      for(long YPointer = Top; YPointer <= Bottom; ++YPointer)\
+	{\
+	  DoWhat;\
+	}\
   }\
 }
 
@@ -217,7 +215,7 @@ class femath
 public: 
   static long Rand();
   static void SetSeed(ulong);
-  static bool DoLine(long, long, long, long, bool (*Proc)(vector2d, vector2d));
+  static bool DoLine(long, long, long, long, bool (*Proc)(long, long));
   static ushort WeightedRand(const std::vector<long>&);
   static float CalculateAngle(vector2d);
 protected:

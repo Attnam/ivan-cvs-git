@@ -24,13 +24,13 @@ item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()
 
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
-  if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
-  else
+  if(!Animate || AnimationFrames == 1)
     Picture[0]->AlphaBlit(igraph::GetTileBuffer());
+  else
+    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
 }
 
-bool item::IsConsumable(character* Eater) const
+bool item::IsConsumable(const character* Eater) const
 {
   if(!GetConsumeMaterial())
     return false;
@@ -168,7 +168,7 @@ bool item::Polymorph(stack* CurrentStack)
     {
       CurrentStack->AddItem(protosystem::BalancedCreateItem());
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       return true;
     }
 }
@@ -197,6 +197,7 @@ bool item::IsBadFoodForAI(character* Eater) const
 
 void item::Save(outputfile& SaveFile) const
 {
+  SaveFile << GetType();
   object::Save(SaveFile);
   SaveFile << Cannibalised << Size << ID;
 }
@@ -205,6 +206,10 @@ void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
+
+  if(GetBaseEmitation() > Emitation)
+    Emitation = GetBaseEmitation();
+
   game::PopItemID(ID);
   SaveFile >> Cannibalised >> Size >> ID;
 }
@@ -246,10 +251,10 @@ void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
       BlitSize.Y = 16 - Pos.Y;
     }
 
-  if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
+  if(!Animate || AnimationFrames == 1)
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
   else
-    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
+    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
 }
 
 ushort item::GetStrengthValue() const
@@ -259,8 +264,7 @@ ushort item::GetStrengthValue() const
 
 void item::PlaceToSlot(slot* Slot)
 {
-  SetSlot(Slot);
-  Slot->SetItem(this);
+  Slot->PutInItem(this);
 }
 
 void item::RemoveFromSlot()
@@ -282,8 +286,9 @@ void item::MoveTo(stack* Stack)
 
 void item::DonateSlotTo(item* Item)
 {
-  GetSlot()->SetItem(Item);
-  SetSlot(0);
+  slot* Slot = GetSlot();
+  RemoveFromSlot();
+  Item->PlaceToSlot(Slot);
 }
 
 std::string item::ItemCategoryName(uchar Category)
@@ -342,7 +347,7 @@ void item::Be()
     if(GetMaterial(c) && !GetMaterial(c)->Be() && RemoveMaterial(c))
       {
 	RemoveFromSlot();
-	SetExists(false);
+	SendToHell();
 	break;
       }
 }
@@ -360,7 +365,7 @@ void item::AddConsumeEndMessage(character* Eater) const
 void item::GenerateLeftOvers(character*)
 {
   RemoveFromSlot();
-  SetExists(false);
+  SendToHell();
 }
 
 bool item::Open(character* Char)
@@ -380,6 +385,7 @@ item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 
 void item::LoadDataBaseStats()
 {
+  SetEmitation(GetBaseEmitation());
   SetSize(GetDefaultSize());
 }
 
@@ -454,4 +460,28 @@ void item::InitChosenMaterial(material*& Material, const std::vector<long>& Mate
 std::string item::GetConsumeVerb() const
 {
   return GetConsumeMaterial()->GetConsumeVerb();
+}
+
+void item::EditVolume(long What)
+{
+  Volume += What;
+
+  if(GetSlot())
+    GetSlot()->EditVolume(What);
+}
+
+void item::EditWeight(long What)
+{
+  Weight += What;
+
+  if(GetSlot())
+    GetSlot()->EditWeight(What);
+}
+
+ulong item::GetBlockModifier(const character* User) const
+{
+  if(!IsShield(User))
+    return GetSize() * GetRoundness();
+  else
+    return GetSize() * GetRoundness() << 1;
 }

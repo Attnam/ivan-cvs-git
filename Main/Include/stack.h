@@ -22,6 +22,7 @@ class outputfile;
 class inputfile;
 class stackslot;
 class felist;
+class entity;
 
 typedef std::list<stackslot*> stacklist;
 typedef std::list<stackslot*>::iterator stackiterator;
@@ -32,7 +33,7 @@ typedef std::vector<item*> itemvector;
 class stack
 {
  public:
-  stack(square* = 0, uchar = CENTER);
+  stack(square* = 0, entity* = 0, uchar = CENTER);
   ~stack();
   void Load(inputfile&);
   bool DrawToTileBuffer(bool) const;
@@ -53,8 +54,8 @@ class stack
   item* MoveItem(stackiterator, stack*);
   ushort GetEmitation() const;
   vector2d GetPos() const;
-  void Clean();
-  ulong GetTotalWeight() const;
+  void Clean(bool = true);
+  //ulong GetTotalWeight() const;
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
@@ -77,12 +78,28 @@ class stack
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   bool Open(character*);
-  ulong GetTotalVolume() const;
+  //ulong GetTotalVolume() const;
   void MoveAll(stack*);
+
+  ulong GetVolume() const { return Volume; }
+  void SetVolume(ulong What) { Volume = What; }
+  ulong GetWeight() const { return Weight; }
+  void SetWeight(ulong What) { Weight = What; }
+
+  void EditVolume(long);
+  void EditWeight(long);
+
+  entity* GetMotherEntity() const { return MotherEntity; }
+  void SetMotherEntity(entity* What) { MotherEntity = What; }
+
  private:
   stacklist* Item;
   square* SquareUnder;
   uchar SquarePosition;
+
+  ulong Volume;
+  ulong Weight;
+  entity* MotherEntity;
 };
 
 #endif

@@ -13,6 +13,7 @@ class character;
 class action;
 class outputfile;
 class inputfile;
+class actionslot;
 
 class actionprototype
 {
@@ -30,6 +31,8 @@ class action
 {
  public:
   typedef actionprototype prototype;
+  action() : Actor(0), Volume(0), Weight(0) { }
+  action(character* Actor) : Actor(Actor), Volume(0), Weight(0) { }
   virtual ~action() { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
@@ -42,15 +45,26 @@ class action
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&) { }
   virtual bool GetRestRegenerationBonus() const { return false; }
-  virtual ulong GetWeight() const { return 0; }
+  //virtual ulong GetWeight() const { return 0; }
   virtual void DropUsedItems() { }
   virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual std::string GetDescription() const = 0;
+  void EditVolume(long);
+  void EditWeight(long);
+  void LoadActionSlot(inputfile&, actionslot&);
+
+  ulong GetVolume() const { return Volume; }
+  void SetVolume(ulong What) { Volume = What; }
+  ulong GetWeight() const { return Weight; }
+  void SetWeight(ulong What) { Weight = What; }
+
  protected:
   virtual void VirtualConstructor() { }
   character* Actor;
+  ulong Volume;
+  ulong Weight;
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
@@ -77,7 +91,7 @@ class action
 name : public base\
 {\
  public:\
-  name(character* Actor = 0) { SetActor(Actor); VirtualConstructor(); }\
+  name(character* Actor = 0) : base(Actor) { VirtualConstructor(); }\
   virtual const prototype* GetProtoType() const;\
   data\
 }; ACTION_PROTOTYPE(name);

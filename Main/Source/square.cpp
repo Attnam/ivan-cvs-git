@@ -34,8 +34,6 @@ void square::Save(outputfile& SaveFile) const
 
 void square::Load(inputfile& SaveFile)
 {
-  game::SetSquareInLoad(this);
-
   SaveFile >> Character >> LastSeen >> DescriptionChanged >> AnimatedEntities;
 
   if(LastSeen)
@@ -59,9 +57,9 @@ void square::AddCharacter(character* Guy)
 
 void square::DrawMemorized()
 {
-  if(GetLastSeen() && (NewDrawRequested || GetLastSeen() == game::GetLOSTurns() - 1))
+  if(LastSeen && (NewDrawRequested || LastSeen == game::GetLOSTurns() - 1))
     {	
-      GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, game::CalculateScreenCoordinates(GetPos()), vector2d(16, 16), ushort(256.0f * configuration::GetContrast() / 100));
+      GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, game::CalculateScreenCoordinates(Pos), 16, 16, ushort((configuration::GetContrast() << 8) / 100));
       NewDrawRequested = false;
     }
 }
@@ -98,19 +96,6 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkn
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
     }
-}
-
-void square::SetLastSeen(ulong What)
-{
-  if(!GetLastSeen())
-    Memorized = new bitmap(16, 16);
-
-  if(GetLastSeen() < What - 1 || !GetOTerrain()->IsWalkable())
-    SendNewDrawRequest();
-
-  UpdateMemorized();
-  UpdateMemorizedDescription();
-  LastSeen = What;
 }
 
 void square::KickAnyoneStandingHereAway()

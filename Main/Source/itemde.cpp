@@ -68,7 +68,7 @@ void banana::GenerateLeftOvers(character* Eater)
     Eater->GetStack()->AddItem(Peals);
 
   RemoveFromSlot();
-  SetExists(false);
+  SendToHell();
 }
 
 void potion::GenerateLeftOvers(character* Eater)
@@ -105,7 +105,7 @@ void potion::GenerateLeftOvers(character* Eater)
 
 void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
 {
-  bitmap* Bitmap = Animate ? Picture[globalwindowhandler::GetTick() % GetAnimationFrames()] : Picture[0];
+  bitmap* Bitmap = !Animate || AnimationFrames == 1 ? Picture[0] : Picture[globalwindowhandler::GetTick() % AnimationFrames];
 
   switch(LSquarePosition)
     {
@@ -266,7 +266,7 @@ bool wand::Apply(character* Terrorist)
       ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
   RemoveFromSlot();
-  SetExists(false);
+  SendToHell();
 
   std::string DeathMsg;
 
@@ -335,7 +335,7 @@ bool lantern::ReceiveDamage(character*, short Damage, uchar)
       Lantern->InitMaterials(GetMainMaterial());
       Lantern->SignalSquarePositionChange(OnWall);
       DonateSlotTo(Lantern);
-      SetExists(false);
+      SendToHell();
       return true;
     }
 
@@ -355,7 +355,7 @@ bool potion::ReceiveDamage(character*, short Damage, uchar)
       item* Remains = new brokenbottle(0, false);
       Remains->InitMaterials(GetMainMaterial());
       DonateSlotTo(Remains);
-      SetExists(false);
+      SendToHell();
       return true;
     }
 
@@ -442,7 +442,7 @@ bool platemail::ReceiveDamage(character*, short Damage, uchar)
       item* Plate = new brokenplatemail(0, false);
       Plate->InitMaterials(GetMainMaterial());
       DonateSlotTo(Plate);
-      SetExists(false);
+      SendToHell();
       return true;
     }
 
@@ -584,7 +584,7 @@ bool backpack::Apply(character* Terrorist)
 	  ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
 
       std::string DeathMsg;
 
@@ -662,7 +662,7 @@ bool wand::ReceiveDamage(character* Damager, short, uchar Type)
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), 40);
       return true;
     }
@@ -686,7 +686,7 @@ bool backpack::ReceiveDamage(character* Damager, short, uchar Type)
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
@@ -712,7 +712,7 @@ bool scroll::ReceiveDamage(character*, short, uchar Type)
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       return true;
     }
 
@@ -776,7 +776,7 @@ bool holybook::ReceiveDamage(character*, short, uchar Type)
 	ADD_MESSAGE("%s catches fire!", CHARNAME(DEFINITE));
 
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       return true;
     }
 
@@ -1025,13 +1025,13 @@ bool scrolloftaming::Read(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << Color1 << Color2 << Color3 << HP << OwnerDescription << Unique << RegenerationCounter << AnimationFrames;
+  SaveFile << BitmapPos << Color1 << Color2 << Color3 << HP << OwnerDescription << Unique << RegenerationCounter;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> Color1 >> Color2 >> Color3 >> HP >> OwnerDescription >> Unique >> RegenerationCounter >> AnimationFrames;
+  SaveFile >> BitmapPos >> Color1 >> Color2 >> Color3 >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
 }
 
 bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1172,50 +1172,68 @@ ushort leg::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
+void bodypart::LoadGearSlot(inputfile& SaveFile, gearslot& GearSlot)
+{
+  SaveFile >> GearSlot;
+  GearSlot.SetBodyPart(this);
+
+  if(*GearSlot)
+    {
+      EditVolume(GearSlot->GetVolume());
+      EditWeight(GearSlot->GetWeight());
+    }
+}
+
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << HelmetSlot << AmuletSlot << BiteStrength;
+  SaveFile << BiteStrength;
+  SaveFile << HelmetSlot;
+  SaveFile << AmuletSlot;
 }
 
 void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> HelmetSlot >> AmuletSlot >> BiteStrength;
-  HelmetSlot.SetBodyPart(this);
-  AmuletSlot.SetBodyPart(this);
+  SaveFile >> BiteStrength;
+  LoadGearSlot(SaveFile, HelmetSlot);
+  LoadGearSlot(SaveFile, AmuletSlot);
 }
 
 void humanoidtorso::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BodyArmorSlot << CloakSlot << BeltSlot;
+  SaveFile << BodyArmorSlot;
+  SaveFile << CloakSlot;
+  SaveFile << BeltSlot;
 }
 
 void humanoidtorso::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BodyArmorSlot >> CloakSlot >> BeltSlot;
-  BodyArmorSlot.SetBodyPart(this);
-  CloakSlot.SetBodyPart(this);
-  BeltSlot.SetBodyPart(this);
+  LoadGearSlot(SaveFile, BodyArmorSlot);
+  LoadGearSlot(SaveFile, CloakSlot);
+  LoadGearSlot(SaveFile, BeltSlot);
 }
 
 void arm::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << WieldedSlot << GauntletSlot << RingSlot << SingleWeaponSkill << UnarmedStrength;
+  SaveFile << SingleWeaponSkill << UnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
+  SaveFile << WieldedSlot;
+  SaveFile << GauntletSlot;
+  SaveFile << RingSlot;
 }
 
 void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot >> SingleWeaponSkill >> UnarmedStrength;
+  SaveFile >> SingleWeaponSkill >> UnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
-  WieldedSlot.SetBodyPart(this);
-  GauntletSlot.SetBodyPart(this);
-  RingSlot.SetBodyPart(this);
+  LoadGearSlot(SaveFile, WieldedSlot);
+  LoadGearSlot(SaveFile, GauntletSlot);
+  LoadGearSlot(SaveFile, RingSlot);
   SetCurrentSingleWeaponSkill(0);
 
   if(GetWielded())
@@ -1230,16 +1248,15 @@ void arm::Load(inputfile& SaveFile)
 void leg::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
-  SaveFile << BootSlot << KickStrength;
-  SaveFile << Strength << StrengthExperience << Agility << AgilityExperience;
+  SaveFile << KickStrength << Strength << StrengthExperience << Agility << AgilityExperience;
+  SaveFile << BootSlot;
 }
 
 void leg::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
-  SaveFile >> BootSlot >> KickStrength;
-  SaveFile >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
-  BootSlot.SetBodyPart(this);
+  SaveFile >> KickStrength >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
+  LoadGearSlot(SaveFile, BootSlot);
 }
 
 bool torso::ReceiveDamage(character* Damager, short Damage, uchar Type)
@@ -1309,7 +1326,7 @@ bool mine::ReceiveDamage(character* Damager, short, uchar Type)
 
       level* LevelUnder = GetLSquareUnder()->GetLevelUnder();
       RemoveFromSlot();
-      SetExists(false);
+      SendToHell();
       LevelUnder->Explosion(Damager, DeathMsg, GetLSquareUnder()->GetPos(), 30);
       return true;
     }
@@ -1424,7 +1441,7 @@ void arm::SignalGearUpdate()
 
 void arm::SetWielded(item* Item)
 {
-  WieldedSlot.SetItem(Item);
+  WieldedSlot.PutInItem(Item);
 
   if(Item)
     {
@@ -1477,6 +1494,9 @@ void arm::Be()
 
 float arm::CalculateWieldedStrength(bool OneHanded) const
 {
+  if(GetWielded()->IsShield(GetMaster()))
+    return 0;
+
   float Strength = GetWielded()->GetWeaponStrength() * this->Strength * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus();
 
   if(OneHanded)
@@ -1502,6 +1522,9 @@ float head::CalculateBiteStrength() const
 
 float arm::CalculateWieldedToHitValue(bool OneHanded) const
 {
+  if(!OneHanded && GetWielded()->IsShield(GetMaster()))
+    OneHanded = true;
+
   float ToHit = GetMaster()->GetBattleAttributeModifier() * ((Dexterity << 2) + Strength + GetMaster()->GetAttribute(PERCEPTION)) * GetHumanoidMaster()->GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
 
   if(OneHanded)
@@ -1546,7 +1569,7 @@ characterslot* bodypart::GetCharacterSlot() const
   return (characterslot*)GetSlot();
 }
 
-bool pickaxe::IsAppliable(character* Who) const
+bool pickaxe::IsAppliable(const character* Who) const
 {
   return Who->CanWield();
 }
@@ -1588,6 +1611,9 @@ void corpse::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
   SaveFile >> Deceased;
+  Deceased->SetMotherEntity(this);
+  EditVolume(Deceased->GetVolume());
+  EditWeight(Deceased->GetWeight());
 }
 
 std::string corpse::GetPostFix() const
@@ -1604,7 +1630,7 @@ void corpse::GenerateLeftOvers(character* Eater)
 {
   GetDeceased()->GetTorso()->GenerateLeftOvers(Eater);
   RemoveFromSlot();
-  SetExists(false);
+  SendToHell();
 }
 
 ushort corpse::GetEmitation() const
@@ -1612,7 +1638,7 @@ ushort corpse::GetEmitation() const
   return GetDeceased()->GetEmitation();
 }
 
-bool corpse::IsConsumable(character* Eater) const
+bool corpse::IsConsumable(const character* Eater) const
 {
   for(ushort c = 0; c < GetDeceased()->BodyParts(); ++c)
     if(GetDeceased()->GetBodyPart(c) && GetDeceased()->GetBodyPart(c)->IsConsumable(Eater))
@@ -1651,7 +1677,7 @@ ushort corpse::GetStrengthValue() const
   return ulong(GetStrengthModifier()) * GetDeceased()->GetTorso()->GetMainMaterial()->GetStrengthValue() / 1000;
 }
 
-ulong corpse::GetVolume() const
+/*ulong corpse::GetVolume() const
 {
   ulong Volume = 0;
 
@@ -1660,12 +1686,12 @@ ulong corpse::GetVolume() const
       Volume += GetDeceased()->GetBodyPart(c)->GetVolume();
 
   return Volume;
-}
+}*/
 
 corpse::~corpse()
 {
   if(GetDeceased())
-    GetDeceased()->SetExists(false);
+    GetDeceased()->SendToHell();
 }
 
 void corpse::SetMainMaterial(material* NewMaterial)
@@ -1721,6 +1747,9 @@ ushort corpse::GetSize() const
 void corpse::SetDeceased(character* What)
 {
   Deceased = What;
+  Deceased->SetMotherEntity(this);
+  EditVolume(Deceased->GetVolume());
+  EditWeight(Deceased->GetWeight());
   UpdatePictures();
 }
 
@@ -1785,7 +1814,7 @@ ushort bodypart::Danger(ulong DangerEstimate, bool MaxDanger) const
   return HP / (Damage - GetResistance(PHYSICALDAMAGE));
 }
 
-ulong head::GetTotalWeight() const
+/*ulong head::GetTotalWeight() const
 {
   ulong Weight = GetWeight();
 
@@ -1838,7 +1867,7 @@ ulong leg::GetTotalWeight() const
     Weight += GetBoot()->GetWeight();
 
   return Weight;
-}
+}*/
 
 void head::DropEquipment()
 {
@@ -1908,40 +1937,40 @@ void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
 head::~head()
 {
   if(GetHelmet())
-    GetHelmet()->SetExists(false);
+    GetHelmet()->SendToHell();
 
   if(GetAmulet())
-    GetAmulet()->SetExists(false);
+    GetAmulet()->SendToHell();
 }
 
 humanoidtorso::~humanoidtorso()
 {
   if(GetBodyArmor())
-    GetBodyArmor()->SetExists(false);
+    GetBodyArmor()->SendToHell();
 
   if(GetCloak())
-    GetCloak()->SetExists(false);
+    GetCloak()->SendToHell();
 
   if(GetBelt())
-    GetBelt()->SetExists(false);
+    GetBelt()->SendToHell();
 }
 
 arm::~arm()
 {
   if(GetWielded())
-    GetWielded()->SetExists(false);
+    GetWielded()->SendToHell();
 
   if(GetGauntlet())
-    GetGauntlet()->SetExists(false);
+    GetGauntlet()->SendToHell();
 
   if(GetRing())
-    GetRing()->SetExists(false);
+    GetRing()->SendToHell();
 }
 
 leg::~leg()
 {
   if(GetBoot())
-    GetBoot()->SetExists(false);
+    GetBoot()->SendToHell();
 }
 
 long corpse::Score() const
@@ -1975,7 +2004,7 @@ ulong corpse::Price() const
   return Price;
 }
 
-ulong corpse::GetWeight() const
+/*ulong corpse::GetWeight() const
 {
   ulong Weight = 0;
 
@@ -1984,7 +2013,7 @@ ulong corpse::GetWeight() const
       Weight += GetDeceased()->GetBodyPart(c)->GetWeight();
 
   return Weight;
-}
+}*/
 
 item* corpse::PrepareForConsuming(character*)
 {
@@ -2023,28 +2052,30 @@ bool wandoflocking::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-void materialcontainer::Load(inputfile& SaveFile)
-{
-  item::Load(SaveFile);
-  SaveFile >> ContainedMaterial;
-}
-
 void materialcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
   SaveFile << ContainedMaterial;
 }
 
-void meleeweapon::Load(inputfile& SaveFile)
+void materialcontainer::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> SecondaryMaterial >> ContainedMaterial;
+  LoadMaterial(SaveFile, ContainedMaterial);
 }
 
 void meleeweapon::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << SecondaryMaterial << ContainedMaterial;
+  SaveFile << SecondaryMaterial;
+  SaveFile << ContainedMaterial;
+}
+
+void meleeweapon::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  LoadMaterial(SaveFile, SecondaryMaterial);
+  LoadMaterial(SaveFile, ContainedMaterial);
 }
 
 material* materialcontainer::GetMaterial(ushort Index) const
@@ -2159,13 +2190,14 @@ bool corpse::RaiseTheDead(character* Summoner)
   GetDeceased()->SetHasBe(true);
   GetDeceased()->CompleteRiseFromTheDead();
   Deceased = 0;
-  SetExists(false);
+  SendToHell();
   return true;
 }
 
 void banana::VirtualConstructor(bool Load)
 {
   materialcontainer::VirtualConstructor(Load);
+  SetAnimationFrames(20);
   SetCharges(6);
 }
 
@@ -2359,7 +2391,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
 void chest::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  Contained = new stack(0, HIDDEN);
+  Contained = new stack(0, this, HIDDEN);
 
   if(!Load)
     {
@@ -2733,10 +2765,10 @@ void chest::Load(inputfile& SaveFile)
   SaveFile >> StorageVolume >> LockType >> Locked;
 }
 
-ulong chest::GetWeight() const
+/*ulong chest::GetWeight() const
 {
-  return item::GetWeight() + GetContained()->GetTotalWeight();
-}
+  return item::GetWeight() + GetContained()->GetWeight();
+}*/
 
 bool chest::Polymorph(stack* CurrentStack)
 {
@@ -2747,7 +2779,7 @@ bool chest::Polymorph(stack* CurrentStack)
 
 bool chest::FitsIn(item* ToBePut) const
 {
-  return GetContained()->GetTotalVolume() + ToBePut->GetVolume() <= GetStorageVolume();
+  return GetContained()->GetVolume() + ToBePut->GetVolume() <= GetStorageVolume();
 }
 
 chest::~chest()
@@ -2843,4 +2875,97 @@ void chest::SetSquareUnder(square* Square)
 {
   item::SetSquareUnder(Square);
   GetContained()->SetSquareUnder(Square);
+}
+
+/*bool wandofdoorcreation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
+{ 
+  return Where->LockEverything(Who); 
+}*/
+
+bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  vector2d Pos[3];
+
+  Pos[0] = game::GetMoveVector(Direction);
+
+  switch(Direction)
+    {
+    case 0:
+      Pos[1] = vector2d(-1, 0);
+      Pos[2] = vector2d(0, -1);
+      break;
+    case 1:
+      Pos[1] = vector2d(-1, -1);
+      Pos[2] = vector2d(1, -1);
+      break;
+    case 2:
+      Pos[1] = vector2d(0, -1);
+      Pos[2] = vector2d(1, 0);
+      break;
+    case 3:
+      Pos[1] = vector2d(-1, -1);
+      Pos[2] = vector2d(-1, 1);
+      break;
+    case 4:
+      Pos[1] = vector2d(1, -1);
+      Pos[2] = vector2d(1, 1);
+      break;
+    case 5:
+      Pos[1] = vector2d(-1, 0);
+      Pos[2] = vector2d(0, 1);
+      break;
+    case 6:
+      Pos[1] = vector2d(-1, 1);
+      Pos[2] = vector2d(1, 1);
+      break;
+    case 7:
+      Pos[1] = vector2d(0, 1);
+      Pos[2] = vector2d(1, 0);
+      break;
+    case 8:
+      ADD_MESSAGE("You suddenly feel like a door.");
+      return false;
+    }
+
+  bool Succeeded = false;
+
+  for(ushort c = 0; c < 3; ++c)
+    if(game::IsValidPos(Zapper->GetPos() + Pos[c]))
+      {
+	lsquare* Square = GetLSquareUnder()->GetLevelUnder()->GetLSquare(Zapper->GetPos() + Pos[c]);
+
+	if(Square->GetOLTerrain()->IsSafeToDestroy() && !Square->GetCharacter())
+	  {
+	    door* Door = new door(0, false);
+	    Door->InitMaterials(MAKE_MATERIAL(IRON));
+	    Door->Lock();
+	    Square->ChangeOLTerrainAndUpdateLights(Door);
+	    Succeeded = true;
+	  }
+      }
+
+  if(!Succeeded)
+    {
+      ADD_MESSAGE("The spell is wasted.");
+      return true;
+    }
+
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditExperience(PERCEPTION, 50);
+  Zapper->EditAP(500);
+  return true;
+}
+
+void wandofdoorcreation::VirtualConstructor(bool Load)
+{
+  wand::VirtualConstructor(Load);
+  
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
 }

@@ -44,7 +44,7 @@ class ACTION
   virtual void SetHasEaten(bool What) { Eaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
-  virtual ulong GetWeight() const;
+  //virtual ulong GetWeight() const;
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return Description; }
@@ -90,7 +90,7 @@ class ACTION
   virtual item* GetLeftBackup() const;
   virtual void SetLeftBackup(item*);
   virtual bool AllowDisplace() const { return false; }
-  virtual ulong GetWeight() const;
+  //virtual ulong GetWeight() const;
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual std::string GetDescription() const { return "digging"; }

@@ -18,9 +18,13 @@
 #define VERSION "0.40d"
 #endif
 
-#define DATABASEVALUE(type, data) virtual type Get##data() const { return GetDataBase()->data; }
-#define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return GetDataBase()->data; }
-#define DATABASEBOOL(data) virtual bool data() const { return GetDataBase()->data; }
+#define DATABASEVALUE(type, data) virtual type Get##data() const { return DataBase->data; }
+#define DATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return DataBase->data; }
+#define DATABASEBOOL(data) virtual bool data() const { return DataBase->data; }
+
+#define PROTODATABASEVALUE(type, data) virtual type Get##data() const { return DataBase.data; }
+#define PROTODATABASEVALUEWITHPARAMETER(type, data, param) virtual type Get##data(param) const { return DataBase.data; }
+#define PROTODATABASEBOOL(data) virtual bool data() const { return DataBase.data; }
 
 #define DATAVALUE(type, data)\
  public:\

@@ -58,22 +58,22 @@ humanoid::~humanoid()
   /* Do not delete these! */
 
   if(GetHead())
-    GetHead()->SetExists(false);
+    GetHead()->SendToHell();
 
   if(GetRightArm())
-    GetRightArm()->SetExists(false);
+    GetRightArm()->SendToHell();
 
   if(GetLeftArm())
-    GetLeftArm()->SetExists(false);
+    GetLeftArm()->SendToHell();
 
   if(GetGroin())
-    GetGroin()->SetExists(false);
+    GetGroin()->SendToHell();
 
   if(GetRightLeg())
-    GetRightLeg()->SetExists(false);
+    GetRightLeg()->SendToHell();
 
   if(GetLeftLeg())
-    GetLeftLeg()->SetExists(false);
+    GetLeftLeg()->SendToHell();
 }
 
 void petrus::CreateInitialEquipment()
@@ -174,13 +174,13 @@ void skeleton::CreateCorpse()
   for(ushort c = 0; c < Amount; ++c)
     GetLSquareUnder()->GetStack()->AddItem(new bone);
 
-  SetExists(false);
+  SendToHell();
 }
 
 void petrus::CreateCorpse()
 {
   GetLSquareUnder()->GetStack()->AddItem(new leftnutofpetrus);
-  SetExists(false);
+  SendToHell();
 }
 
 void elpuri::CreateCorpse()
@@ -351,7 +351,7 @@ float humanoid::CalculateRightAttackStrength() const
     if(GetRightArm()->GetWielded())
       return GetRightArm()->CalculateWieldedStrength(!GetLeftArm() || GetLeftArm()->GetWielded());
     else
-      if(GetLeftArm() && GetLeftArm()->GetWielded())
+      if(GetLeftArm() && GetLeftArm()->GetWielded() && !GetLeftArm()->GetWielded()->IsShield(this))
 	return 0;
       else
 	return GetRightArm()->CalculateUnarmedStrength();
@@ -365,7 +365,7 @@ float humanoid::CalculateLeftAttackStrength() const
     if(GetLeftArm()->GetWielded())
       return GetLeftArm()->CalculateWieldedStrength(!GetRightArm() || GetRightArm()->GetWielded());
     else
-      if(GetRightArm() && GetRightArm()->GetWielded())
+      if(GetRightArm() && GetRightArm()->GetWielded() && !GetRightArm()->GetWielded()->IsShield(this))
 	return 0;
       else
 	return GetLeftArm()->CalculateUnarmedStrength();
@@ -379,7 +379,7 @@ float humanoid::CalculateRightToHitValue() const
     if(GetRightArm()->GetWielded())
       return GetRightArm()->CalculateWieldedToHitValue(!GetLeftArm() || GetLeftArm()->GetWielded());
     else
-      if(GetLeftArm() && GetLeftArm()->GetWielded())
+      if(GetLeftArm() && GetLeftArm()->GetWielded() && !GetLeftArm()->GetWielded()->IsShield(this))
 	return 0;
       else
 	return GetRightArm()->CalculateUnarmedToHitValue();
@@ -393,7 +393,7 @@ float humanoid::CalculateLeftToHitValue() const
     if(GetLeftArm()->GetWielded())
       return GetLeftArm()->CalculateWieldedToHitValue(!GetRightArm() || GetRightArm()->GetWielded());
     else
-      if(GetRightArm() && GetRightArm()->GetWielded())
+      if(GetRightArm() && GetRightArm()->GetWielded() && !GetRightArm()->GetWielded()->IsShield(this))
 	return 0;
       else
 	return GetLeftArm()->CalculateUnarmedToHitValue();
@@ -2600,14 +2600,6 @@ void kamikazedwarf::VirtualConstructor(bool Load)
     SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
 }
 
-/*void unicorn::VirtualConstructor(bool Load)
-{
-  character::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetAlignment(RAND() % 3);
-}*/
-
 void unicorn::CreateBodyParts()
 {
   SetAlignment(RAND() % 3);
@@ -3076,12 +3068,31 @@ ushort humanoid::DrawStats() const
 
   ++PanelPosY;
 
-  if(GetAttackStyle() & USE_ARMS && (CalculateRightAttackStrength() || CalculateLeftAttackStrength()))
+  if(GetAttackStyle() & USE_ARMS)
     {
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAS %.0f", CalculateRightAttackStrength() / 1000);
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", CalculateRightToHitValue());
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAS %.0f", CalculateLeftAttackStrength() / 1000);
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", CalculateLeftToHitValue());
+      if(GetRightArm())
+	if(GetRightWielded() && GetRightWielded()->IsShield(this))
+	  {
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDS %d", GetRightWielded()->GetStrengthValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RDV %.0f", CalculateRightToHitValue() * GetRightWielded()->GetBlockModifier(this) / 10000);
+	  }
+	else
+	  {
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RAS %.0f", CalculateRightAttackStrength() / 1000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RTHV %.0f", CalculateRightToHitValue());
+	  }
+
+      if(GetLeftArm())
+	if(GetLeftWielded() && GetLeftWielded()->IsShield(this))
+	  {
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDS %d", GetLeftWielded()->GetStrengthValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LDV %.0f", CalculateLeftToHitValue() * GetLeftWielded()->GetBlockModifier(this) / 10000);
+	  }
+	else
+	  {
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LAS %.0f", CalculateLeftAttackStrength() / 1000);
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LTHV %.0f", CalculateLeftToHitValue());
+	  }
     }
 
   if((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && !CalculateRightAttackStrength() && !CalculateLeftAttackStrength())) && GetRightLeg() && GetLeftLeg())
@@ -3166,3 +3177,13 @@ ushort nonhumanoid::DrawStats() const
   return PanelPosY;
 }
 
+ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
+{
+  if(GetRightWielded())
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, CalculateRightToHitValue(), Damage, Success, Type);
+
+  if(Damage && GetLeftWielded())
+    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, CalculateLeftToHitValue(), Damage, Success, Type);
+
+  return Damage;
+}

@@ -24,7 +24,6 @@ class wterrain
   virtual void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   virtual worldmap* GetWorldMapUnder() const;
   virtual std::string Name(uchar) const;
-  virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool IsAnimated() const { return false; }
  protected:
@@ -32,7 +31,7 @@ class wterrain
   virtual std::string GetNameStem() const = 0;
   virtual std::string GetArticle() const { return "a"; }
   virtual vector2d GetBitmapPos(ushort) const = 0;
-  virtual ushort GetType() const = 0;
+  //virtual ushort GetType() const = 0;
   wsquare* WSquareUnder;
 };
 
@@ -52,11 +51,12 @@ class gwterrain : public wterrain, public gterrain
 {
  public:
   typedef gwterrainprototype prototype;
+  virtual void Save(outputfile&) const;
   virtual void DrawToTileBuffer(bool) const;
   virtual uchar Priority() const = 0;
   virtual ushort GetEntryAPRequirement() const { return 10000; }
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
 class owterrainprototype
@@ -75,11 +75,12 @@ class owterrain : public wterrain, public oterrain
 {
  public:
   typedef owterrainprototype prototype;
+  virtual void Save(outputfile&) const;
   virtual void DrawToTileBuffer(bool) const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__

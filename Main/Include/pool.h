@@ -9,23 +9,15 @@
 
 class entity;
 
-struct entityinfo
-{
-  entityinfo(entity* Entity) : Entity(Entity), Exists(true), HasBe(false) { }
-  entity* Entity;
-  bool Exists;
-  bool HasBe;
-};
-
-class entitypool
+class pool
 {
  public:
-  static std::list<entityinfo>::iterator Add(entity* Entity) { return Pool.insert(Pool.end(), entityinfo(Entity)); }
-  static void Remove(std::list<entityinfo>::iterator Iterator) { Pool.erase(Iterator); }
+  static std::list<entity*>::iterator Add(entity* Entity) { return Pool.insert(Pool.end(), Entity); }
+  static void Remove(std::list<entity*>::iterator);
   static void Be();
-  static void BurnTheDead();
  private:
-  static std::list<entityinfo> Pool;
+  static std::list<entity*> Pool;
+  static std::list<entity*>::iterator CurrentEntity;
 };
 
 #endif

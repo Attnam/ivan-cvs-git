@@ -66,14 +66,31 @@ void area::AddCharacter(vector2d Pos, character* Guy)
 void area::UpdateLOS()
 {
   game::LOSTurn();
-
   ushort Radius = game::GetPlayer()->LOSRange();
   ulong RadiusSquare = Radius * Radius;
+  long PosX = game::GetPlayer()->GetPos().X;
+  long PosY = game::GetPlayer()->GetPos().Y;
 
-  DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
+  ushort MaxDist = PosX;
+
+  if(PosY > MaxDist)
+    MaxDist = PosY;
+
+  if(GetXSize() - PosX - 1 > MaxDist)
+    MaxDist = GetXSize() - PosX - 1;
+
+  if(GetYSize() - PosY - 1 > MaxDist)
+    MaxDist = GetYSize() - PosY - 1;
+
+  if(Radius > MaxDist)
+    Radius = MaxDist;
+
+  bool (*LOSHandler)(long, long) = game::IsInWilderness() ? game::WorldMapLOSHandler : game::LevelLOSHandler;
+
+  DO_FILLED_RECTANGLE(PosX, PosY, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
   {
-    if(ulong(GetHypotSquare(long(game::GetPlayer()->GetPos().X) - XPointer, long(game::GetPlayer()->GetPos().Y) - YPointer)) <= RadiusSquare)
-      femath::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, YPointer, game::LOSHandler);
+    if(ulong(GetHypotSquare(PosX - XPointer, PosY - YPointer)) <= RadiusSquare)
+      femath::DoLine(PosX, PosY, XPointer, YPointer, LOSHandler);
   });
 
   game::RemoveLOSUpdateRequest();
@@ -81,11 +98,8 @@ void area::UpdateLOS()
 
 void area::SendNewDrawRequest()
 {
-  ushort XMax = GetXSize() < game::GetCamera().X + game::GetScreenSize().X ? GetXSize() : game::GetCamera().X + game::GetScreenSize().X;
-  ushort YMax = GetYSize() < game::GetCamera().Y + game::GetScreenSize().Y ? GetYSize() : game::GetCamera().Y + game::GetScreenSize().Y;
-
-  for(ushort x = game::GetCamera().X; x < XMax; ++x)
-    for(ushort y = game::GetCamera().Y; y < YMax; ++y)
+  for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+    for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
       Map[x][y]->SendNewDrawRequest();
 
   DOUBLEBUFFER->Fill(0);
@@ -157,25 +171,5 @@ vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
     });
 
   ABORT("No room for character. Character unhappy.");
-
   return vector2d(-1, -1);
 }
-
-void area::Draw() const
-{
-  ushort XMax = GetXSize() < game::GetCamera().X + game::GetScreenSize().X ? GetXSize() : game::GetCamera().X + game::GetScreenSize().X;
-  ushort YMax = GetYSize() < game::GetCamera().Y + game::GetScreenSize().Y ? GetYSize() : game::GetCamera().Y + game::GetScreenSize().Y;
-
-  if(!game::GetSeeWholeMapCheat())
-    for(ushort x = game::GetCamera().X; x < XMax; ++x)
-      for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-	if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-	  Map[x][y]->Draw();
-	else
-	  Map[x][y]->DrawMemorized();
-  else
-    for(ushort x = game::GetCamera().X; x < XMax; ++x)
-      for(ushort y = game::GetCamera().Y; y < YMax; ++y)
-	Map[x][y]->Draw();
-}
-

@@ -33,6 +33,7 @@ void material::Load(inputfile& SaveFile)
 {
   SaveFile >> Volume >> Config;
   InstallDataBase();
+  CalculateWeight();
 }
 
 void material::Effect(character* Eater, long Amount)
@@ -182,5 +183,19 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
     default:
       ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
       return 0;
+    }
+}
+
+void material::SetVolume(ulong What)
+{
+  ulong OldVolume = Volume;
+  ulong OldWeight = Weight;
+  Volume = What;
+  CalculateWeight();
+
+  if(MotherEntity)
+    {
+      MotherEntity->EditVolume(long(Volume) - OldVolume);
+      MotherEntity->EditWeight(long(Weight) - OldWeight);
     }
 }

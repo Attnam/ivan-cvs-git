@@ -215,6 +215,7 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(OKVisualEffects);
   ANALYZEDATA(CanBeGeneratedInContainer);
   ANALYZEDATA(ForcedVisualEffects);
+  ANALYZEDATA(Roundness);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

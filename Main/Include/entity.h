@@ -14,31 +14,37 @@ class square;
 class lsquare;
 class outputfile;
 class inputfile;
+class material;
 
 class entity
 {
  public:
-  entity();
+  entity(bool);
   virtual ~entity();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
+  void Load(inputfile&);
   virtual void Be() { }
-  virtual std::list<entityinfo>::iterator GetPoolIterator() const { return PoolIterator; }
-  virtual void SetPoolIterator(std::list<entityinfo>::iterator What) { PoolIterator = What; }
-  virtual bool Exists() const;
-  virtual void SetExists(bool);
-  virtual void DrawToTileBuffer(bool) const = 0;
-  virtual square* GetSquareUnder() const { return SquareUnder; }
+  bool Exists() const { return ExistsBool; }
+  void SendToHell();
+  square* GetSquareUnder() const { return SquareUnder; }
   virtual void SetSquareUnder(square* What) { SquareUnder = What; }
-  virtual lsquare* GetLSquareUnder() const;
-  virtual void SetLSquareUnder(lsquare*);
-  virtual bool HasBe() const;
-  virtual void SetHasBe(bool);
-  virtual bool IsEnabled() const { return Exists() && HasBe(); }
+  lsquare* GetLSquareUnder() const;
+  bool HasBe() const { return HasBeBool; }
+  void SetHasBe(bool);
+  bool IsEnabled() const { return Exists() && HasBe(); }
+  ulong GetVolume() const { return Volume; }
+  void SetVolume(ulong What) { Volume = What; }
+  virtual void EditVolume(long What) { Volume += What; }
+  ulong GetWeight() const { return Weight; }
+  void SetWeight(ulong What) { Weight = What; }
+  virtual void EditWeight(long What) { Weight += What; }
  protected:
-  std::list<entityinfo>::iterator PoolIterator;
+  std::list<entity*>::iterator PoolIterator;
   bool InPool;
   square* SquareUnder;
+  bool ExistsBool;
+  bool HasBeBool;
+  ulong Volume;
+  ulong Weight;
 };
 
 #endif

@@ -13,14 +13,14 @@ class fluid : public entity
  public:
   fluid();
   virtual ~fluid();
-  virtual void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
+  void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
   virtual void Be();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual void DrawToTileBuffer(bool) const;
-  virtual ushort GetEmitation() const;
-  virtual bitmap* GetPicture() const { return Picture; }
-  virtual material* GetMaterial() const { return Material; }
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  void DrawToTileBuffer(bool) const;
+  ushort GetEmitation() const;
+  bitmap* GetPicture() const { return Picture; }
+  material* GetMaterial() const { return Material; }
  protected:
   bitmap* Picture;
   material* Material;

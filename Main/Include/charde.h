@@ -124,6 +124,7 @@ class ABSTRACT_CHARACTER
   virtual ushort DrawStats() const;
   virtual void Bite(character*);
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH); }
+  virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -197,16 +198,6 @@ class CHARACTER
 (
   petrus,
   humanoid,
-  /*{
-    SetAgility(75);
-    SetStrength(75);
-    SetEndurance(75);
-    SetPerception(75);
-    SetHealTimer(100);
-    SetStoryState(0);
-    game::SetPetrus(this);
-    SetAssignedName("Petrus");
-  },*/
  public:
   virtual ~petrus();
   virtual void Load(inputfile&);
@@ -232,13 +223,6 @@ class CHARACTER
 (
   farmer,
   humanoid,
-  /*{
-    SetAgility(10);
-    SetStrength(15);
-    SetEndurance(20);
-    SetPerception(18);
-    SetMoney(20);
-  },*/
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
@@ -254,12 +238,6 @@ class CHARACTER
 (
   guard,
   humanoid,
-  /*{
-    SetAgility(15);
-    SetStrength(20);
-    SetEndurance(20);
-    SetPerception(24);
-  },*/
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
@@ -281,10 +259,6 @@ class CHARACTER
   shopkeeper,
   humanoid,
   /*{
-    SetAgility(10);
-    SetStrength(30);
-    SetEndurance(25);
-    SetPerception(30);
     SetMoney(3000 + RAND() % 2001);
   },*/
  public:
@@ -308,12 +282,6 @@ class CHARACTER
 (
   priest,
   humanoid,
-  /*{
-    SetAgility(10);
-    SetStrength(20);
-    SetEndurance(15);
-    SetPerception(18);
-  },*/
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
@@ -335,13 +303,6 @@ class CHARACTER
 (
   oree,
   humanoid,
-  /*{
-    SetAgility(50);
-    SetStrength(30);
-    SetEndurance(30);
-    SetPerception(30);
-    SetAssignedName("Oree");
-  },*/
  public:
   virtual bool Charmable() const { return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
@@ -375,6 +336,7 @@ class CHARACTER
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
+  virtual std::string BiteNoun() const { return "liquid"; }
   virtual ushort TotalSize() const { return 225; }
 );
 
@@ -382,12 +344,6 @@ class CHARACTER
 (
   darkknight,
   humanoid,
-  /*{
-    SetAgility(30);
-    SetStrength(30);
-    SetEndurance(30);
-    SetPerception(30);
-  },*/
  public:
   //static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
@@ -410,12 +366,6 @@ class CHARACTER
 (
   ennerbeast,
   humanoid,
-  /*{
-    SetAgility(10);
-    SetStrength(10);
-    SetEndurance(25);
-    SetPerception(12);
-  },*/
  public:
   virtual bool CanOpen() const { return false; }
   //static bool CanBeGenerated() { return false; }
@@ -454,12 +404,6 @@ class CHARACTER
 (
   darkfrog,
   frog,
-  /*{
-    SetAgility(30);
-    SetStrength(5);
-    SetEndurance(5);
-    SetPerception(18);
-  },*/
  public:
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual bool HasInfraVision() const { return true; }
@@ -475,13 +419,6 @@ class CHARACTER
 (
   elpuri,
   darkfrog,
-  /*{
-    SetAgility(10);
-    SetStrength(30);
-    SetEndurance(50);
-    SetPerception(30);
-    SetAssignedName("Elpuri");
-  },*/
  public:
   virtual void VirtualConstructor(bool);
   //static bool CanBeGenerated() { return false; }
@@ -507,12 +444,6 @@ class CHARACTER
 (
   billswill,
   nonhumanoid,
-  /*{
-    SetAgility(40);
-    SetStrength(5);
-    SetEndurance(20);
-    SetPerception(27);
-  },*/
  public:
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
@@ -527,7 +458,7 @@ class CHARACTER
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(48,0); }
   //virtual std::string NameSingular() const { return "pure mass of Bill's will"; }
   //virtual std::string NamePlural() const { return "pure masses of Bill's will"; }
-  virtual void CreateCorpse() { SetExists(false); }
+  virtual void CreateCorpse() { SendToHell(); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
   //virtual float GetMeleeStrength() const { return 20000; }
   /*virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonPSIVerb(Critical); }
@@ -538,18 +469,13 @@ class CHARACTER
   virtual std::string ThirdPersonUnarmedHitVerb() const { return "emits psi waves at"; }
   virtual std::string ThirdPersonCriticalUnarmedHitVerb() const { return "emits powerful psi waves at"; }
   virtual ushort TotalSize() const { return 100; }
+  virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
 class CHARACTER
 (
   skeleton,
   humanoid,
-  /*{
-    SetAgility(10);
-    SetStrength(5);
-    SetEndurance(10);
-    SetPerception(15);
-  },*/
  public:
   //static bool CanBeGenerated() { return true; }
   virtual void SpillBlood(uchar) { }
@@ -577,12 +503,6 @@ class CHARACTER
 (
   goblin,
   humanoid,
-  /*{
-    SetAgility(15);
-    SetStrength(10);
-    SetEndurance(15);
-    SetPerception(18);
-  },*/
  public:
   //static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
@@ -616,10 +536,11 @@ class ABSTRACT_CHARACTER
   /*virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBrownSlimeVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBrownSlimeVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBrownSlimeVerb(Critical); }*/
-  virtual std::string FirstPersonUnarmedHitVerb() const { return "vomit acidous slime at"; }
-  virtual std::string FirstPersonCriticalUnarmedHitVerb() const { return "vomit very acidous slime at"; }
-  virtual std::string ThirdPersonUnarmedHitVerb() const { return "vomits acidous slime at"; }
-  virtual std::string ThirdPersonCriticalUnarmedHitVerb() const { return "vomits very acidous slime at"; }
+  virtual std::string FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
+  virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous slime at"; }
+  virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
+  virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
+  virtual std::string BiteNoun() const { return "slime"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "vibrates oddly"; }
 );
@@ -761,7 +682,7 @@ class CHARACTER
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }*/
   //virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() { SetExists(false); }
+  virtual void CreateCorpse() { SendToHell(); }
   virtual std::string TalkVerb() const { return "says nothing"; }
   virtual ushort TotalSize() const { return 10; }
 );
@@ -1001,84 +922,6 @@ class CHARACTER
   //virtual bool ShowArticle() const { return false; }
   //virtual uchar GetArticleMode() const { return NOARTICLE; }
 );
-
-/*class CHARACTER
-(
-  petrusswife1,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 0); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
-);
-
-class CHARACTER
-(
-  petrusswife2,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, 16); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
-);
-
-class CHARACTER
-(
-  petrusswife3,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,0); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
-);
-
-class CHARACTER
-(
-  petrusswife4,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(200, 96, 0); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,48); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
-);
-
-class CHARACTER
-(
-  petrusswife5,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(80, 64, 32); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,64); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
-);
-
-class CHARACTER
-(
-  petrusswife6,
-  petrusswife,
-  {
-    petrusswife::SetDefaultStats();
-  },
- protected:
-  virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112,80); }
-  //virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
-);*/
 
 class CHARACTER
 (
@@ -1450,7 +1293,7 @@ class CHARACTER
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(432,0); }
   //virtual std::string NameSingular() const { return "angel"; }
   //virtual float GetMeleeStrength() const { return 10000; }
-  virtual void CreateCorpse() { SetExists(false); }
+  virtual void CreateCorpse() { SendToHell(); }
   virtual ushort TotalSize() const { return 180; }
   //virtual std::string GetArticle() const { return "an"; }
   virtual std::string GetPostFix() const { return GetDivineMasterDescription(DivineMaster); }
@@ -1580,7 +1423,7 @@ class CHARACTER
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); } // temporary
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(416,0); }
   //virtual std::string NameSingular() const { return "genie"; }
-  virtual void CreateCorpse() { SetExists(false); }
+  virtual void CreateCorpse() { SendToHell(); }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " vanishes from existence."; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 250; }

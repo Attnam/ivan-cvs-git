@@ -23,6 +23,12 @@
 #define STILL_ON_POSSIBLE_ROUTE 4
 #define PREFERRED 8
 
+level::~level()
+{
+  for(ushort c = 0; c < Room.size(); ++c)
+    delete Room[c];
+}
+
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
   #define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
@@ -767,6 +773,7 @@ void level::Load(inputfile& SaveFile)
     for(ushort y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
+	game::SetSquareInLoad(Map[x][y]);
 	Map[x][y]->Load(SaveFile);
       }
 
@@ -777,7 +784,10 @@ void level::Luxify()
 {
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      Map[x][y]->Emitate();
+      {
+	Map[x][y]->CalculateLuminance();
+	Map[x][y]->Emitate();
+      }
 }
 
 void level::FastAddCharacter(vector2d Pos, character* Guy)
@@ -877,7 +887,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
   GetLSquare(Pos)->SetTemporaryEmitation(EmitChange);
 
-  ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
+  ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
 
   static ushort StrengthLimit[6] = { 150, 100, 75, 50, 25, 10 };
   static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
@@ -991,7 +1001,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
 
 	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
-	  Square->ChangeOLTerrainAndUpdateLights(new empty);
+	  Square->GetOLTerrain()->Break();
       }
   });
 
@@ -1057,4 +1067,19 @@ bool level::IsValid(vector2d Vector) const
     return true;
   else
     return false;
+}
+
+void level::Draw() const
+{
+  if(!game::GetSeeWholeMapCheat())
+    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
+	  Map[x][y]->Draw();
+	else
+	  Map[x][y]->DrawMemorized();
+  else
+    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	Map[x][y]->Draw();
 }

@@ -20,22 +20,22 @@ class area
   area(ushort, ushort);
   area() { }
   virtual ~area();
-  virtual void Draw() const;
-  virtual void AddCharacter(vector2d, character*);
-  virtual void RemoveCharacter(vector2d);
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual ushort GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
-  virtual square* GetSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
-  virtual square* GetSquare(ushort x, ushort y) const { return Map[x][y]; }
-  virtual ushort GetXSize() const { return XSize; }
-  virtual ushort GetYSize() const { return YSize; }
-  virtual void UpdateLOS();
-  virtual void SendNewDrawRequest();
-  virtual void Initialize(ushort, ushort);
+  virtual void Draw() const = 0;
+  void AddCharacter(vector2d, character*);
+  void RemoveCharacter(vector2d);
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  ushort GetFlag(vector2d Pos) const { return FlagMap[Pos.X][Pos.Y]; }
+  square* GetSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
+  square* GetSquare(ushort x, ushort y) const { return Map[x][y]; }
+  ushort GetXSize() const { return XSize; }
+  ushort GetYSize() const { return YSize; }
+  void UpdateLOS();
+  void SendNewDrawRequest();
+  void Initialize(ushort, ushort);
   virtual void MoveCharacter(vector2d, vector2d);
-  virtual vector2d GetNearestFreeSquare(character*, vector2d);
-  virtual vector2d FreeSquareSeeker(character*, vector2d, vector2d, uchar);
+  vector2d GetNearestFreeSquare(character*, vector2d);
+  vector2d FreeSquareSeeker(character*, vector2d, vector2d, uchar);
   virtual ushort GetLOSModifier() const { return 16; }
  protected:
   square*** Map;
@@ -43,12 +43,6 @@ class area
   ushort XSize, YSize;
   ulong XSizeTimesYSize;
 };
-
-inline outputfile& operator<<(outputfile& SaveFile, area* Area)
-{
-  Area->Save(SaveFile);
-  return SaveFile;
-}
 
 #endif
 

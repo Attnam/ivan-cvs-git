@@ -35,12 +35,16 @@ void characterslot::Empty()
 {
   /* add light update */
 
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
 }
 
 void characterslot::FastEmpty()
 {
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
 }
 
 void stackslot::MoveItemTo(stack* Stack)
@@ -54,25 +58,21 @@ void characterslot::MoveItemTo(stack* Stack)
   Empty();
 }
 
-void slot::SetItem(item* Item)
-{
-  this->Item = Item;
-
-  if(Item)
-    Item->SetSlot(this);
-}
-
 void gearslot::Empty()
 {
   /* add light update? */
 
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
   GetBodyPart()->SignalGearUpdate();
 }
 
 void gearslot::FastEmpty()
 {
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
   GetBodyPart()->SignalGearUpdate();
 }
 
@@ -85,19 +85,22 @@ void gearslot::MoveItemTo(stack* Stack)
 void gearslot::Init(bodypart* BodyPart)
 {
   SetBodyPart(BodyPart);
-  SetItem(0);
 }
 
 void actionslot::Empty()
 {
   /* add light update? */
 
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
 }
 
 void actionslot::FastEmpty()
 {
-  SetItem(0);
+  EditVolume(-Item->GetVolume());
+  EditWeight(-Item->GetWeight());
+  Item = 0;
 }
 
 void actionslot::MoveItemTo(stack* Stack)
@@ -109,7 +112,6 @@ void actionslot::MoveItemTo(stack* Stack)
 void actionslot::Init(action* Action)
 {
   SetAction(Action);
-  SetItem(0);
 }
 
 void stackslot::AddFriendItem(item* Item) const
@@ -149,3 +151,54 @@ bool stackslot::IsOnGround() const
   return GetMotherStack()->IsOnGround();
 }
 
+void stackslot::EditVolume(long What)
+{
+  GetMotherStack()->EditVolume(What);
+}
+
+void stackslot::EditWeight(long What)
+{
+  GetMotherStack()->EditWeight(What);
+}
+
+void characterslot::EditVolume(long What)
+{
+  GetMaster()->EditVolume(What);
+}
+
+void characterslot::EditWeight(long What)
+{
+  GetMaster()->EditWeight(What);
+}
+
+void gearslot::EditVolume(long What)
+{
+  GetBodyPart()->EditVolume(What);
+}
+
+void gearslot::EditWeight(long What)
+{
+  GetBodyPart()->EditWeight(What);
+}
+
+void actionslot::EditVolume(long What)
+{
+  GetAction()->EditVolume(What);
+}
+
+void actionslot::EditWeight(long What)
+{
+  GetAction()->EditWeight(What);
+}
+
+void slot::PutInItem(item* What)
+{
+  Item = What;
+
+  if(Item)
+    {
+      Item->SetSlot(this);
+      EditVolume(Item->GetVolume());
+      EditWeight(Item->GetWeight());
+    }
+}

@@ -2,6 +2,7 @@
 #include "graphics.h"
 
 controlvector globalwindowhandler::ControlLoop;
+ulong globalwindowhandler::Tick = 0;
 
 void globalwindowhandler::InstallControlLoop(bool (*What)())
 {
@@ -30,10 +31,21 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
   while(!kbhit())
     if(ControlLoop.size())
       {
-	for(ushort c = 0; c < ControlLoop.size(); ++c)
-	  ControlLoop[c]();
+	static ulong LastTick = 0;
+	Tick = uclock() * 20 / UCLOCKS_PER_SEC;
 
-	graphics::BlitDBToScreen();
+	if(LastTick != Tick)
+	  {
+	    LastTick = Tick;
+	    bool Draw = false;
+
+	    for(ushort c = 0; c < ControlLoop.size(); ++c)
+	      if(ControlLoop[c]())
+		Draw = true;
+
+	    if(Draw)
+	      graphics::BlitDBToScreen();
+	  }
       }
 
   return getkey();			
@@ -47,11 +59,6 @@ int globalwindowhandler::ReadKey()
     return 0;
 }
 
-ulong globalwindowhandler::GetTick()
-{
-  return uclock() * 20 / UCLOCKS_PER_SEC;
-}
-
 #else
 
 #include <algorithm>
@@ -63,11 +70,6 @@ ulong globalwindowhandler::GetTick()
 std::vector<int> globalwindowhandler::KeyBuffer;
 bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
-
-ulong globalwindowhandler::GetTick()
-{
-  return clock() * 20 / CLOCKS_PER_SEC;
-}
 
 #ifdef WIN32
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
@@ -212,16 +214,23 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	{
 	  if(Active && ControlLoop.size())
 	    {
-	      bool Draw = false;
+	      static ulong LastTick = 0;
+	      Tick = clock() * 20 / CLOCKS_PER_SEC;
 
-	      for(ushort c = 0; c < ControlLoop.size(); ++c)
-		if(ControlLoop[c]())
-		  Draw = true;
+	      if(LastTick != Tick)
+		{
+		  LastTick = Tick;
+		  bool Draw = false;
 
-	      if(Draw)
-		graphics::BlitDBToScreen();
+		  for(ushort c = 0; c < ControlLoop.size(); ++c)
+		    if(ControlLoop[c]())
+		      Draw = true;
 
-	      Sleep(10);
+		  if(Draw)
+		    graphics::BlitDBToScreen();
+		}
+
+	      Sleep(5);
 	    }
 	  else
 	    WaitMessage();
@@ -331,16 +340,23 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  {
 	    if(SDL_APPACTIVE && ControlLoop.size())
 	      {
-		bool Draw = false;
+		static ulong LastTick = 0;
+		Tick = clock() * 20 / CLOCKS_PER_SEC;
 
-		for(ushort c = 0; c < ControlLoop.size(); ++c)
-		  if(ControlLoop[c]())
-		    Draw = true;
+		if(LastTick != Tick)
+		  {
+		    LastTick = Tick;
+		    bool Draw = false;
 
-		if(Draw)
-		  graphics::BlitDBToScreen();
+		    for(ushort c = 0; c < ControlLoop.size(); ++c)
+		      if(ControlLoop[c]())
+			Draw = true;
 
-		SDL_Delay(10);
+		    if(Draw)
+		      graphics::BlitDBToScreen();
+
+		    SDL_Delay(5);
+		  }
 	      }
 	    else
 	      {

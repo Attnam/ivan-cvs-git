@@ -42,6 +42,8 @@
 #include "command.h"
 #include "save.h"
 #include "stack.h"
+#include "hell.h"
+#include "wsquare.h"
 
 #define SAVEFILE_VERSION 110 // Increment this if changes make savefiles incompatible
 
@@ -67,6 +69,10 @@ vector2d game::ScreenSize(42, 26);
 bool game::AnimationControllerActive = true;
 vector2d game::CursorPos;
 bool game::Zoom;
+ushort game::CurrentEmitterEmitation;
+long game::CurrentEmitterPosX;
+long game::CurrentEmitterPosY;
+vector2d game::CurrentEmitterPos;
 
 bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
@@ -232,8 +238,8 @@ void game::Init(const std::string& Name)
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
-	Player->SetAssignedName(PlayerName);
+	SetPlayer(new petrus);
+	//Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
 	Petrus = 0;
@@ -296,7 +302,8 @@ void game::DeInit()
 
   God.clear();
 
-  entitypool::BurnTheDead();
+  hell::Burn();
+  //entitypool::BurnTheDead();
 
   for(c = 0; c < Team.size(); ++c)
     delete GetTeam(c);
@@ -313,7 +320,8 @@ void game::Run()
 
       try
 	{
-	  entitypool::Be();
+	  pool::Be();
+	  hell::Burn();
 
 	  Tick();
 	  ApplyDivineTick();
@@ -375,17 +383,16 @@ void game::DeInitLuxTable()
     }
 }
 
-bool game::LOSHandler(vector2d Pos, vector2d Origo)
+bool game::WorldMapLOSHandler(long X, long Y)
 {
-  if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
-    return false;
+  GetWorldMap()->GetWSquare(X, Y)->SetLastSeen(LOSTurns);
+  return true;
+}
 
-  GetCurrentArea()->GetSquare(Pos)->SetLastSeen(LOSTurns);
-
-  if(Pos == Origo)
-    return true;
-  else
-    return GetCurrentArea()->GetSquare(Pos)->GetOTerrain()->IsWalkable();
+bool game::LevelLOSHandler(long X, long Y)
+{
+  GetCurrentLevel()->GetLSquare(X, Y)->SetLastSeen(LOSTurns);
+  return GetCurrentLevel()->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
 }
 
 void game::UpdateCameraX()
@@ -485,9 +492,9 @@ bool game::OnScreen(vector2d Pos)
 void game::DrawEverythingNoBlit()
 {
   if(LOSUpdateRequested)
-    game::GetCurrentArea()->UpdateLOS();
+    GetCurrentArea()->UpdateLOS();
 
-  game::GetCurrentArea()->Draw();
+  GetCurrentArea()->Draw();
 
   if(OnScreen(GetPlayer()->GetPos()))
     igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
@@ -595,39 +602,24 @@ std::string game::SaveName(const std::string& Base)
   return SaveName;
 }
 
-bool game::EmitationHandler(vector2d Pos, vector2d Origo)
+bool game::EmitationHandler(long X, long Y)
 {
-  if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
-    return false;
-
-  ushort Emit = GetLevel(Current)->GetLSquare(Origo)->GetEmitation();
-
+  ushort Emit = CurrentEmitterEmitation;//GetLevel(Current)->GetLSquare(Origo)->GetEmitation();
   ushort MaxSize = game::GetLuxTableSize()[Emit] >> 1;
 
-  if(long(Pos.X) - long(Origo.X) > MaxSize || long(Origo.X) - long(Pos.X) > MaxSize || long(Pos.Y) - long(Origo.Y) > MaxSize || long(Origo.Y) - long(Pos.Y) > MaxSize)
+  if(X - CurrentEmitterPosX > MaxSize || CurrentEmitterPosX - X > MaxSize || Y - CurrentEmitterPosY > MaxSize || CurrentEmitterPosY - Y > MaxSize)
     Emit = 0;
   else
-    Emit = game::GetLuxTable()[Emit][long(Pos.X) - long(Origo.X) + MaxSize][long(Pos.Y) - long(Origo.Y) + MaxSize];
+    Emit = game::GetLuxTable()[Emit][X - CurrentEmitterPosX + MaxSize][Y - CurrentEmitterPosY + MaxSize];
 
-  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->AlterLuminance(Origo, Emit);
-
-  if(Pos == Origo)
-    return true;
-  else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
+  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->AlterLuminance(CurrentEmitterPos, Emit);
+  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
 }
 
-bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
+bool game::NoxifyHandler(long X, long Y)
 {
-  if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
-    return false;
-
-  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->NoxifyEmitter(Origo);
-
-  if(Pos == Origo)
-    return true;
-  else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
+  GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->NoxifyEmitter(CurrentEmitterPos);
+  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -712,12 +704,9 @@ vector2d game::GetDirectionVectorForKey(int Key)
   return DIR_ERROR_VECTOR;
 }
 
-bool game::EyeHandler(vector2d Pos, vector2d Origo)
+bool game::EyeHandler(long X, long Y)
 {
-  if(Pos == Origo)
-    return true;
-  else
-    return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(Pos)->GetOLTerrain()->IsWalkable();
+  return GetCurrentDungeon()->GetLevel(Current)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
 }
 
 long game::GodScore()
@@ -1074,10 +1063,8 @@ long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 
 void game::LOSTurn()
 {
-  if(LOSTurns == 0xFFFFFFFF)
+  if(LOSTurns++ == 0xFFFFFFFF)
     ABORT("Suddenly the Universe explodes!");
-
-  ++LOSTurns;
 }
 
 void game::UpdateCamera()
@@ -1200,11 +1187,6 @@ void game::CreateGods()
 
   for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
     God.push_back(protocontainer<god>::GetProto(c)->Clone());
-}
-
-vector2d game::CalculateScreenCoordinates(vector2d Pos)
-{
-  return (Pos - Camera + vector2d(1, 2)) << 4;
 }
 
 void game::BusyAnimation(bitmap* Buffer)
@@ -1346,7 +1328,11 @@ void game::LookHandler(vector2d CursorPos)
   if(game::GetSeeWholeMapCheat())
     {
       OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
-      game::GetCurrentArea()->GetSquare(CursorPos)->UpdateMemorizedDescription(true);
+
+      if(IsInWilderness())
+	GetWorldMap()->GetWSquare(CursorPos)->UpdateMemorizedDescription(true);
+      else
+	GetCurrentLevel()->GetLSquare(CursorPos)->UpdateMemorizedDescription(true);
     }
 
   if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::GetSeeWholeMapCheat())
@@ -1528,4 +1514,11 @@ uchar game::CalculateRoughDirection(vector2d Vector)
     return 2;
   else
     return 4;
+}
+
+void game::SetCurrentEmitterPos(vector2d What)
+{
+  CurrentEmitterPos = What;
+  CurrentEmitterPosX = What.X;
+  CurrentEmitterPosY = What.Y;
 }

@@ -66,10 +66,11 @@ class glterrain : public lterrain, public gterrain
  public:
   typedef glterrainprototype prototype;
   glterrain(donothing) { }
+  virtual void Save(outputfile&) const;
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void DrawToTileBuffer(bool) const;
  protected:
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
@@ -113,7 +114,7 @@ class olterrain : public lterrain, public oterrain
   virtual void EditHP(short What) { HP += What; }
   virtual bool IsSafeToDestroy() const { return false; }
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool IsEmpty() const { return false; }
   virtual void DrawToTileBuffer(bool) const;
  protected:

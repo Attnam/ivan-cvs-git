@@ -96,6 +96,7 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
   virtual bool IsSafeToDestroy() const { return true; }
   virtual bool IsEmpty() const { return true; }
+  virtual void DrawToTileBuffer(bool) const { }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(AIR), false); }
   virtual std::string GetNameSingular() const { return "atmosphere"; }
@@ -331,7 +332,7 @@ class OLTERRAIN
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
-  virtual void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
+  void InitMaterials(material* M1, material* M2, bool CUP = true) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetMaterials() const { return 2; }
@@ -385,7 +386,7 @@ class OLTERRAIN
 
 class GLTERRAIN
 (
-  pool,
+  poolterrain,
   glterrain,
  public:
   virtual bool IsWalkable(character*) const;

@@ -1,3 +1,22 @@
+June 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Pool and LOS codes optimized greatly and character AI (which takes most of the processor time now) somewhat.
+	  As a result running around Attnam with debug on is about 40% faster than before
+	* Added Roundness database value for items (on scale ]0, 100])
+	* It is now possible to block attacks with any item,
+	  the possibility depending on size, roundness and To Hit Value and effect depending on StrengthValue
+	* Shields work correctly: one cannot attack with them and their block chance is doubled
+	* Doors' LockTypes and BoobyTraps are now saved correctly
+	* The game doesn't crash anymore when fluid vanishes
+	* Fixed a bug that caused a delay before the tamed symbol appeared over charmed monsters
+	* Fixed a minor bug with walls' MemorizedDescriptions
+	* The key handler *might* be smoother in Linux now
+	* Gcc 3.1 *might* compile the game with less warnings
+	* Wand of door creation added
+	* Added the following bugs:
+	  * Equipment increases HP
+	  * Walls' luminances are not updated when a lantern flies by them
+
 June 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* The New Attribute System is now working
@@ -23,7 +42,7 @@ June 11 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Added a system to determine whether a bodypart is the character's original one
 	* Gear items emitate light correctly but updating still bugs
 	* The game asks for key press when a bodypart is severed
-	* Explosion sever bodyparts and spill blood more correctly
+	* Explosions sever bodyparts and spill blood more correctly
 	* Polymorphing items works correctly
 	* Decreased the characters' global possibility to hit weaker bodyparts
 	* Corrected a bug that caused lights falling during an explosion to crash

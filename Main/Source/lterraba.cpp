@@ -93,8 +93,15 @@ bool olterrain::GoDown(character* Who) const // Try to go down
     }
 }
 
+void glterrain::Save(outputfile& SaveFile) const
+{
+  SaveFile << GetType();
+  lterrain::Save(SaveFile);
+}
+
 void olterrain::Save(outputfile& SaveFile) const
 {
+  SaveFile << GetType();
   lterrain::Save(SaveFile);
   SaveFile << HP;
 }
@@ -107,18 +114,18 @@ void olterrain::Load(inputfile& SaveFile)
 
 void glterrain::DrawToTileBuffer(bool Animate) const
 {
-  if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
-  else
+  if(!Animate || AnimationFrames == 1)
     Picture[0]->MaskedBlit(igraph::GetTileBuffer());
+  else
+    Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(igraph::GetTileBuffer());
 }
 
 void olterrain::DrawToTileBuffer(bool Animate) const
 {
-  if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
-  else
+  if(!Animate || AnimationFrames == 1)
     Picture[0]->AlphaBlit(igraph::GetTileBuffer());
+  else
+    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
 }
 
 bool lterrain::Open(character*)

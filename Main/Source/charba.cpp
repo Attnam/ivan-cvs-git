@@ -31,9 +31,9 @@ void (character::*character::StateHandler[STATES])() = { &character::PolymorphHa
 
 std::string character::StateDescription[STATES] = { "polymorphed", "hasted", "slowed" };
 
-character::character(donothing) : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), Player(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
+character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0)
 {
-  SetHasBe(true);
+  Stack = new stack(0, this, HIDDEN);
 }
 
 character::~character()
@@ -50,9 +50,10 @@ character::~character()
   delete Stack;
 
   if(GetTorso())
-    GetTorso()->SetExists(false);
+    GetTorso()->SendToHell();
 
   delete [] BodyPartSlot;
+  delete [] OriginalBodyPartID;
 }
 
 void character::Hunger(ushort Turns) 
@@ -92,22 +93,22 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
   if(Critical)
     {
-      ushort Damage = ushort(AttackStrength * (1 + float(Success) / 100) / 25000) + (RAND() % 3 ? 2 : 1);
+      ushort Damage = ushort(AttackStrength * (100 + Success) / 2500000) + (RAND() % 3 ? 2 : 1);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
 	{
 	case UNARMEDATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonCriticalUnarmedHitVerb(), ThirdPersonCriticalUnarmedHitVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonCriticalUnarmedHitVerb(), Enemy->ThirdPersonCriticalUnarmedHitVerb(), BodyPart);
 	  break;
 	case WEAPONATTACK:
           Enemy->AddWeaponHitMessage(this, Weapon, BodyPart, true);
 	  break;
 	case KICKATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonCriticalKickVerb(), ThirdPersonCriticalKickVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonCriticalKickVerb(), Enemy->ThirdPersonCriticalKickVerb(), BodyPart);
 	  break;
 	case BITEATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonCriticalBiteVerb(), ThirdPersonCriticalBiteVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonCriticalBiteVerb(), Enemy->ThirdPersonCriticalBiteVerb(), BodyPart);
 	  break;
 	}
 
@@ -124,26 +125,29 @@ uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, f
 
   if(RAND() % ushort(100 + ToHitValue / DodgeValue * (100 + Success)) >= 100)
     {
-      ushort Damage = ushort(AttackStrength * (1 + float(Success) / 100) / 50000) + (RAND() % 3 ? 1 : 0);
+      ushort Damage = ushort(AttackStrength * (100 + Success) / 5000000) + (RAND() % 3 ? 1 : 0);
       uchar BodyPart = ChooseBodyPartToReceiveHit(ToHitValue, DodgeValue);
 
       switch(Type)
 	{
 	case UNARMEDATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonUnarmedHitVerb(), ThirdPersonUnarmedHitVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonUnarmedHitVerb(), Enemy->ThirdPersonUnarmedHitVerb(), BodyPart);
 	  break;
 	case WEAPONATTACK:
           Enemy->AddWeaponHitMessage(this, Weapon, BodyPart);
 	  break;
 	case KICKATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonKickVerb(), ThirdPersonKickVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonKickVerb(), Enemy->ThirdPersonKickVerb(), BodyPart);
 	  break;
 	case BITEATTACK:
-	  Enemy->AddPrimitiveHitMessage(this, FirstPersonBiteVerb(), ThirdPersonBiteVerb(), BodyPart);
+	  Enemy->AddPrimitiveHitMessage(this, Enemy->FirstPersonBiteVerb(), Enemy->ThirdPersonBiteVerb(), BodyPart);
 	  break;
 	}
 
-      if(!ReceiveBodyPartDamage(this, Damage, PHYSICALDAMAGE, BodyPart, Dir))
+      if(Enemy->AttackIsBlockable(Type))
+	Damage = CheckForBlock(Enemy, Weapon, ToHitValue, Damage, Success, Type);
+
+      if(!Damage || !ReceiveBodyPartDamage(this, Damage, PHYSICALDAMAGE, BodyPart, Dir))
 	return HASBLOCKED;
 
       if(CheckDeath("killed by " + Enemy->GetName(INDEFINITE), Enemy->IsPlayer()))
@@ -175,18 +179,13 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 
   std::priority_queue<svpriorityelement> SVQueue;
 
-  ulong TotalVolume = 0;
-
   for(ushort c = 0; c < BodyParts(); ++c)
     if(GetBodyPart(c))
-      {
-	SVQueue.push(svpriorityelement(c, GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP()));
-	TotalVolume += GetBodyPart(c)->GetVolume();
-      }
+      SVQueue.push(svpriorityelement(c, GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP()));
 
   while(SVQueue.size())
     {
-      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetVolume() * 100 / (DodgeValue * TotalVolume));
+      ushort ToHitPercentage = ushort(GLOBAL_WEAK_BODYPART_HIT_MODIFIER * ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetVolume() * 100 / (DodgeValue * GetVolume()));
 
       if(ToHitPercentage < 1)
 	ToHitPercentage = 1;
@@ -204,6 +203,8 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 
 void character::Be()
 {
+  //if(IsPlayer())
+  {
   if(game::IsLoading())
     {
       if(!IsPlayer())
@@ -246,10 +247,10 @@ void character::Be()
 
 	  Faint();
 	}
-    }
 
-  if(GetAP() >= 0)
-    ActionAutoTermination();
+      if(GetAP() >= 0)
+	ActionAutoTermination();
+    }
 
   if(GetAP() >= 0)
     {
@@ -292,6 +293,7 @@ void character::Be()
       if(!GetAction() || GetAction()->AllowFoodConsumption())
 	Hunger();
     }
+  }
 }
 
 bool character::GoUp()
@@ -783,7 +785,7 @@ void character::Die(bool ForceMsg)
 	  game::DrawEverything();
 	  GETKEY();
 	  LifeSaver->RemoveFromSlot();
-	  LifeSaver->SetExists(false);
+	  LifeSaver->SendToHell();
 	  RestoreBodyParts();
 	  RestoreHP();
 	  SetNP(10000);
@@ -859,7 +861,7 @@ void character::Die(bool ForceMsg)
 
       while(GetStack()->GetItems())
 	{
-	  GetStack()->GetBottomItem()->SetExists(false);
+	  GetStack()->GetBottomItem()->SendToHell();
 	  GetStack()->RemoveItem(GetStack()->GetBottomSlot());
 	}
     }
@@ -902,6 +904,21 @@ void character::AddMissMessage(character* Enemy) const
     Msg = "You miss " + Enemy->Description(DEFINITE) + "!";
   else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
     Msg = Description(DEFINITE) + " misses " + Enemy->Description(DEFINITE) + "!";
+  else
+    return;
+
+  ADD_MESSAGE("%s", Msg.c_str());
+}
+
+void character::AddBlockMessage(character* Enemy, item* Blocker, const std::string& HitNoun, bool Partial) const
+{
+  std::string Msg;
+  std::string BlockVerb = (Partial ? " to partially block the " : " to block the ") + HitNoun;
+
+  if(Enemy->IsPlayer())
+    Msg = "You manage" + BlockVerb + " with your " + Blocker->GetName(UNARTICLED) + "!";
+  else if(IsPlayer() || GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
+    Msg = Description(DEFINITE) + " manages" + BlockVerb + " with " + PossessivePronoun() + " " + Blocker->GetName(UNARTICLED) + "!";
   else
     return;
 
@@ -1199,7 +1216,7 @@ bool character::ReadItem(item* ToBeRead)
 	if(ToBeRead->Read(this))
 	  {
 	    ToBeRead->RemoveFromSlot();
-	    ToBeRead->SetExists(false);
+	    ToBeRead->SendToHell();
 
 	    if(LackOfLight)
 	      EditExperience(PERCEPTION, -25);
@@ -1209,7 +1226,7 @@ bool character::ReadItem(item* ToBeRead)
       }
     else
       {
-	ADD_MESSAGE("It's too dark in here to read.");
+	ADD_MESSAGE("It's too dark here to read.");
 	return false;
       }
   else
@@ -1225,7 +1242,7 @@ uchar character::GetBurdenState(ulong Mass) const
 {
   ulong SumOfMasses;
   if(!Mass)
-    SumOfMasses = GetTotalWeight();
+    SumOfMasses = GetWeight();
   else
     SumOfMasses = Mass;
   if(SumOfMasses >= ulong(20000 * GetCarryingStrength()))
@@ -1237,19 +1254,19 @@ uchar character::GetBurdenState(ulong Mass) const
   return UNBURDENED;
 }
 
-ulong character::GetTotalWeight() const
+/*ulong character::GetTotalWeight() const
 {
   ulong Weight = GetStack()->GetTotalWeight();
 
   for(ushort c = 0; c < BodyParts(); ++c)
     if(GetBodyPart(c))
-      Weight += GetBodyPart(c)->GetTotalWeight();
+      Weight += GetBodyPart(c)->GetWeight();
 
   if(GetAction())
     Weight += GetAction()->GetWeight();
 
   return Weight;
-}
+}*/
 
 bool character::Dip()
 {
@@ -1298,7 +1315,7 @@ bool character::Dip()
 void character::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
-  entity::Save(SaveFile);
+  //entity::Save(SaveFile);
 
   Stack->Save(SaveFile);
 
@@ -1356,13 +1373,28 @@ void character::Load(inputfile& SaveFile)
   SetHasBe(ReadType<bool>(SaveFile));
 
   for(c = 0; c < BodyParts(); ++c)
+    {
       SaveFile >> BodyPartSlot[c] >> OriginalBodyPartID[c];
+
+      if(*BodyPartSlot[c])
+	{
+	  EditVolume(BodyPartSlot[c]->GetVolume());
+	  EditWeight(BodyPartSlot[c]->GetWeight());
+	}
+    }
 
   if(HomeRoom)
     if(ReadType<bool>(SaveFile))
       GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
 
   SaveFile >> Action;
+
+  if(Action)
+    {
+      Action->SetActor(this);
+      EditVolume(Action->GetVolume());
+      EditWeight(Action->GetWeight());
+    }
 
   for(c = 0; c < STATES; ++c)
     SaveFile >> StateCounter[c];
@@ -1447,7 +1479,6 @@ bool character::GainAllItems()
 bool character::SeeWholeMap()
 {
   game::SeeWholeMap();
-
   return false;
 }
 
@@ -1558,7 +1589,7 @@ bool character::MoveRandomly()
 
 bool character::TestForPickup(item* ToBeTested) const
 {
-  if(GetBurdenState(ToBeTested->GetWeight() + GetTotalWeight()) != UNBURDENED)
+  if(GetBurdenState(ToBeTested->GetWeight() + GetWeight()) != UNBURDENED)
     return false;
 
   return true;
@@ -1711,7 +1742,7 @@ bool character::Offer()
 	  if(game::GetGod(GetLSquareUnder()->GetOLTerrain()->GetDivineMaster())->ReceiveOffer(Item))
 	    {
 	      Item->RemoveFromSlot();
-	      Item->SetExists(false);
+	      Item->SendToHell();
 	      return true;
 	    }
 	  else
@@ -2008,7 +2039,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 
       if(StateIsActivated(POLYMORPHED))
 	{
-	  SetExists(false);
+	  SendToHell();
 	}
       else
 	{
@@ -2017,7 +2048,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 	}
     }
   else
-    SetExists(false);
+    SendToHell();
 
   while(GetStack()->GetItems())
     GetStack()->MoveItem(GetStack()->GetBottomSlot(), NewForm->GetStack());
@@ -2059,7 +2090,7 @@ void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue
     {
     case HASHIT:
     case HASBLOCKED:
-      if(KickStrength * 2 >= RAND() % GetTotalWeight())
+      if(KickStrength * 2 >= RAND() % GetWeight())
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("The kick throws you off balance.");
@@ -2155,7 +2186,7 @@ void character::EndPolymorph()
       if(GetAction())
 	GetAction()->Terminate(false);
 
-      SetExists(false);
+      SendToHell();
       GetSquareUnder()->RemoveCharacter();
       character* Player = game::GetPlayerBackup();
       GetSquareUnder()->AddCharacter(Player);
@@ -2735,6 +2766,10 @@ bool character::ShowConfigScreen()
 void character::SetTeam(team* What)
 {
   Team = What;
+
+  if(GetSquareUnder())
+    GetSquareUnder()->SendNewDrawRequest();
+
   SetTeamIterator(GetTeam()->Add(this));
 }
 
@@ -2744,6 +2779,7 @@ void character::ChangeTeam(team* What)
     GetTeam()->Remove(GetTeamIterator());
 
   Team = What;
+  GetSquareUnder()->SendNewDrawRequest();
 
   if(GetTeam())
     SetTeamIterator(GetTeam()->Add(this));
@@ -3094,6 +3130,8 @@ bool character::ReceiveBodyPartDamage(character* Damager, short Damage, uchar Ty
   if(!PenetrateResistance)
     Damage -= BodyPart->GetTotalResistance(Type);
 
+  //Damage = SpecialProtection(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical);
+
   if(Damage < 1)
     if(Critical)
       Damage = 1;
@@ -3269,7 +3307,7 @@ std::string character::GetName(uchar Case) const
       if(!ShowClassDescription())
 	return AssignedName;
       else
-	return AssignedName + " " + id::GetName((Case | ARTICLEBIT)&~INDEFINEBIT);
+	return AssignedName + " " + id::GetName((Case|ARTICLEBIT)&~INDEFINEBIT);
     }
   else
     return id::GetName(Case);
@@ -3476,10 +3514,8 @@ bodypart* character::GetBodyPart(ushort Index) const
 
 void character::SetBodyPart(ushort Index, bodypart* What)
 {
-  GetBodyPartSlot(Index)->SetItem(What);
-
-  if(What)
-    SetOriginalBodyPartID(Index, What->GetID());
+  BodyPartSlot[Index].PutInItem(What);
+  SetOriginalBodyPartID(Index, What->GetID());
 }
 
 characterslot* character::GetBodyPartSlot(ushort Index) const
@@ -3487,7 +3523,7 @@ characterslot* character::GetBodyPartSlot(ushort Index) const
   return &BodyPartSlot[Index];
 }
 
-bool character::CanEat(material* Material)
+bool character::CanEat(material* Material) const
 {
   return GetEatFlags() & Material->GetConsumeType() ? true : false;
 }
@@ -3583,7 +3619,7 @@ void character::PrintInfo() const
   Info.AddEntry(std::string("Endurance: ") + GetEndurance(), LIGHTGRAY);
   Info.AddEntry(std::string("Agility: ") + GetAgility(), LIGHTGRAY);
   Info.AddEntry(std::string("Perception: ") + GetPerception(), LIGHTGRAY);*/
-  Info.AddEntry(std::string("Total weight: ") + GetTotalWeight(), LIGHTGRAY);
+  Info.AddEntry(std::string("Total weight: ") + GetWeight(), LIGHTGRAY);
 
   ushort c;
 
@@ -3715,11 +3751,11 @@ bodypart* character::MakeBodyPart(ushort Index)
 
 void character::CreateBodyPart(ushort Index)
 {
-  SetBodyPart(Index, MakeBodyPart(Index));
-  GetBodyPart(Index)->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
-  GetBodyPart(Index)->PlaceToSlot(GetBodyPartSlot(Index));
-  GetBodyPart(Index)->SetSize(GetBodyPartSize(Index, GetTotalSize()));
-  GetBodyPart(Index)->InitSpecialAttributes();
+  bodypart* BodyPart = MakeBodyPart(Index);
+  BodyPart->InitMaterials(CreateBodyPartFlesh(Index, GetBodyPartVolume(Index) * (100 - GetBodyPartBonePercentile(Index)) / 100), CreateBodyPartBone(Index, GetBodyPartVolume(Index) * GetBodyPartBonePercentile(Index) / 100), false);
+  BodyPart->SetSize(GetBodyPartSize(Index, GetTotalSize()));
+  BodyPart->PlaceToSlot(GetBodyPartSlot(Index));
+  BodyPart->InitSpecialAttributes();
   UpdateBodyPartPicture(Index);
 }
 
@@ -4296,4 +4332,52 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
       ABORT("Unknown reaping effect destroyed dungeon!");
       return false;
     }
+}
+
+void character::EditVolume(long What)
+{
+  Volume += What;
+
+  if(GetMotherEntity())
+    GetMotherEntity()->EditVolume(What);
+}
+
+void character::EditWeight(long What)
+{
+  Weight += What;
+
+  if(GetMotherEntity())
+    GetMotherEntity()->EditWeight(What);
+}
+
+ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, float WeaponToHitValue, float BlockerToHitValue, ushort Damage, short Success, uchar Type)
+{
+  if(Blocker->GetStrengthValue())
+    if(RAND() % ushort(100 + WeaponToHitValue / (BlockerToHitValue * Blocker->GetBlockModifier(this)) * (100 + Success) * 10000) < 100)
+      {
+	bool Partial = Blocker->GetStrengthValue() < Damage;
+
+	switch(Type)
+	  {
+	  case UNARMEDATTACK:
+	    Enemy->AddBlockMessage(this, Blocker, UnarmedHitNoun(), Partial);
+	    break;
+	  case WEAPONATTACK:
+	    Enemy->AddBlockMessage(this, Blocker, "hit", Partial);
+	    break;
+	  case KICKATTACK:
+	    Enemy->AddBlockMessage(this, Blocker, KickNoun(), Partial);
+	    break;
+	  case BITEATTACK:
+	    Enemy->AddBlockMessage(this, Blocker, BiteNoun(), Partial);
+	    break;
+	  }
+
+	if(Partial)
+	  return Damage - Blocker->GetStrengthValue();
+	else
+	  return 0;
+      }
+
+  return Damage;
 }

@@ -141,7 +141,7 @@ void atavus::PrayBadEffect()
 	  Disappearing->RemoveFromSlot();
 	  //if(game::GetPlayer()->GetWielded() == Disappearing) game::GetPlayer()->SetWielded(0);
 	  //if(game::GetPlayer()->GetBodyArmor() == Disappearing) game::GetPlayer()->SetBodyArmor(0);
-	  Disappearing->SetExists(false);
+	  Disappearing->SendToHell();
 	}
       else
 	{
@@ -324,7 +324,7 @@ void loricatus::PrayGoodEffect()
 	  Old->RemoveFromSlot();
 	  //game::GetPlayer()->GetStack()->RemoveItem(c);
 	  ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
-	  Old->SetExists(false);
+	  Old->SendToHell();
 	  item* Plate = new platemail(false);
 	  Plate->InitMaterials(Old->GetMainMaterial());
 	  Old->PreserveMaterial(0);
@@ -346,7 +346,7 @@ void loricatus::PrayGoodEffect()
     {
       ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
       Old->RemoveFromSlot();
-      Old->SetExists(false);
+      Old->SendToHell();
       item* Plate = new platemail(0, false);
       Plate->InitMaterials(Old->GetMainMaterial());
       game::GetPlayer()->GetStack()->AddItem(Plate);
@@ -444,7 +444,7 @@ void mellis::PrayGoodEffect()
 		  game::GetPlayer()->GetStack()->AddItem(NewVersion);
 		  Success = true;
 		  ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHARNAME(DEFINITE), NewVersion->CHARNAME(INDEFINITE));
-		  ToBeDeleted->SetExists(false);
+		  ToBeDeleted->SendToHell();
 		  Cont = true;
 		  break;
 		}
@@ -688,7 +688,7 @@ void cruentus::PrayBadEffect()
       ADD_MESSAGE("%s destroys your weapon.", GOD_NAME);
 
       ToBe->RemoveFromSlot();
-      ToBe->SetExists(false);
+      ToBe->SendToHell();
     }
   else
     {

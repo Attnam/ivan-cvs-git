@@ -65,13 +65,15 @@ void faint::Terminate(bool Finished)
 void consume::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << Consuming << WasOnGround;
+  SaveFile << WasOnGround;
+  SaveFile << Consuming;
 }
 
 void consume::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> Consuming >> WasOnGround;
+  SaveFile >> WasOnGround;
+  LoadActionSlot(SaveFile, Consuming);
 }
 
 void consume::Handle()
@@ -118,7 +120,7 @@ void consume::Terminate(bool Finished)
       else
 	Consuming->MoveTo(GetActor()->GetStack());
 
-      Consuming.SetItem(0);
+      //Consuming.SetItem(0);
     }
   else
     {
@@ -138,12 +140,11 @@ item* consume::GetConsuming() const
 
 void consume::SetConsuming(item* Food)
 {
-  if(Food)
-    Food->RemoveFromSlot();
-  else
+  if(!Food)
     ABORT("Consuming nothing!");
 
-  Consuming.SetItem(Food);
+  Food->RemoveFromSlot();
+  Food->PlaceToSlot(&Consuming);
 }
 
 void rest::Save(outputfile& SaveFile) const
@@ -189,13 +190,17 @@ void rest::Terminate(bool Finished)
 void dig::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << RightBackup << LeftBackup << SquareDug;
+  SaveFile << SquareDug;
+  SaveFile << RightBackup;
+  SaveFile << LeftBackup;
 }
 
 void dig::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> RightBackup >> LeftBackup >> SquareDug;
+  SaveFile >> SquareDug;
+  LoadActionSlot(SaveFile, RightBackup);
+  LoadActionSlot(SaveFile, LeftBackup);
 }
 
 void dig::Handle()
@@ -220,10 +225,12 @@ void dig::Handle()
 	return;
 
       GetActor()->GetMainWielded()->MoveTo(GetActor()->GetStack());
-      GetActor()->SetRightWielded(GetRightBackup());
-      SetRightBackup(0);
-      GetActor()->SetLeftWielded(GetLeftBackup());
-      SetLeftBackup(0);
+      item* RB = GetRightBackup();
+      RB->RemoveFromSlot();
+      GetActor()->SetRightWielded(RB);
+      item* LB = GetLeftBackup();
+      LB->RemoveFromSlot();
+      GetActor()->SetLeftWielded(LB);
       Terminate(true);
     }
 }
@@ -255,9 +262,10 @@ item* dig::GetRightBackup() const
 void dig::SetRightBackup(item* Item)
 {
   if(Item)
-    Item->RemoveFromSlot();
-
-  RightBackup.SetItem(Item);
+    {
+      Item->RemoveFromSlot();
+      Item->PlaceToSlot(&RightBackup);
+    }
 }
 
 item* dig::GetLeftBackup() const
@@ -268,9 +276,10 @@ item* dig::GetLeftBackup() const
 void dig::SetLeftBackup(item* Item)
 {
   if(Item)
-    Item->RemoveFromSlot();
-
-  LeftBackup.SetItem(Item);
+    {
+      Item->RemoveFromSlot();
+      Item->PlaceToSlot(&LeftBackup);
+    }
 }
 
 void go::Save(outputfile& SaveFile) const
@@ -290,7 +299,7 @@ void go::Handle()
   GetActor()->GoOn(this);
 }
 
-ulong consume::GetWeight() const
+/*ulong consume::GetWeight() const
 {
   if(GetConsuming())
     return GetConsuming()->GetWeight();
@@ -309,7 +318,7 @@ ulong dig::GetWeight() const
     Weight += GetLeftBackup()->GetWeight();
 
   return Weight;
-}
+}*/
 
 void consume::DropUsedItems()
 {
@@ -323,7 +332,7 @@ void consume::DropUsedItems()
 void consume::DeleteUsedItems()
 {
   if(GetConsuming())
-    GetConsuming()->SetExists(false);
+    GetConsuming()->SendToHell();
 }
 
 void dig::DropUsedItems()
@@ -344,10 +353,10 @@ void dig::DropUsedItems()
 void dig::DeleteUsedItems()
 {
   if(GetRightBackup())
-    GetRightBackup()->SetExists(false);
+    GetRightBackup()->SendToHell();
 
   if(GetLeftBackup())
-    GetLeftBackup()->SetExists(false);
+    GetLeftBackup()->SendToHell();
 }
 
 void consume::VirtualConstructor()

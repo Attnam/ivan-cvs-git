@@ -79,28 +79,25 @@ class material
   typedef materialprototype prototype;
   typedef materialdatabase database;
   typedef std::map<ushort, materialdatabase> databasemap;
-  material(ushort Config, ulong Volume) : Volume(Volume), MotherEntity(0), Config(Config) { InstallDataBase(); }
-  material(ushort Config) : Volume(0), MotherEntity(0), Config(Config) { InstallDataBase(); }
-  material(donothing) : Volume(0), MotherEntity(0), Config(0) { }
+  material(ushort Config, ulong Volume) : MotherEntity(0), Volume(Volume), Config(Config) { InstallDataBase(); CalculateWeight(); }
+  material(ushort Config) : MotherEntity(0), Volume(0), Weight(0), Config(Config) { InstallDataBase(); }
+  material(donothing) : MotherEntity(0), Volume(0), Weight(0), Config(0) { }
   virtual ~material() { }
   virtual std::string GetName(bool = false, bool = true) const;
-  virtual ulong GetVolume() const { return Volume; }
-  virtual ulong GetWeight() const { return ulong(float(Volume) * GetDensity() / 1000); }
+  ulong GetVolume() const { return Volume; }
   virtual ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SetVolume(ulong What) { Volume = What; }
+  virtual void SetVolume(ulong);
   virtual void Effect(character*, long);
   virtual void EatEffect(character*, ulong, float = 1.0);
   virtual void HitEffect(character*);
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
-  virtual entity* GetMotherEntity() const { return MotherEntity; }
-  virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ulong RawPrice() const { return 0; }
   virtual bool CanBeDug(material*) const;
   virtual bool HasBe() const { return false; }
   virtual bool Be() { return true; }
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const;
   virtual long CalculateOfferValue(char GodAlignment) const;
 
@@ -130,21 +127,26 @@ class material
   DATABASEVALUE(uchar, Alpha);
 
   virtual const prototype* GetProtoType() const;
-  virtual const database* GetDataBase() const { return DataBase; }
-  virtual material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
-  virtual material* Clone() const { return GetProtoType()->Clone(Config); }
+  const database* GetDataBase() const { return DataBase; }
+  material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
+  material* Clone() const { return GetProtoType()->Clone(Config); }
   virtual ulong GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
-  virtual ushort GetConfig() const { return Config; }
+  ushort GetConfig() const { return Config; }
   static material* MakeMaterial(ushort);
   static material* MakeMaterial(ushort, ulong);
   virtual bool IsFlesh() const { return false; }
   virtual std::string GetConsumeVerb() const { return "eating"; }
+  ulong GetWeight() const { return Weight; }
+  void CalculateWeight() { Weight = ulong(float(Volume) * GetDensity() / 1000); }
+  entity* GetMotherEntity() const { return MotherEntity; }
+  void SetMotherEntity(entity* What) { MotherEntity = What; }
  protected:
   virtual void InstallDataBase();
-  ulong Volume;
-  entity* MotherEntity;
-  ushort Config;
   const database* DataBase;
+  entity* MotherEntity;
+  ulong Volume;
+  ulong Weight;
+  ushort Config;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
@@ -172,7 +174,7 @@ class material
 name : public base\
 {\
  public:\
-  name(ushort NewConfig, ulong InitVolume) : base(donothing()) { Config = NewConfig; InstallDataBase(); Volume = InitVolume; }\
+  name(ushort NewConfig, ulong InitVolume) : base(donothing()) { Config = NewConfig; InstallDataBase(); Volume = InitVolume; CalculateWeight(); }\
   name(ushort NewConfig) : base(donothing()) { Config = NewConfig; InstallDataBase(); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const;\

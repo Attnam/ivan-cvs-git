@@ -25,12 +25,12 @@ typedef std::list<stackslot*>::iterator stackiterator;
 class slot
 {
  public:
+  slot() : Item(0) { }
   virtual void Empty() = 0;
   virtual void FastEmpty() = 0;
   void Save(outputfile&) const;
   void Load(inputfile&);
   item* GetItem() const { return Item; }
-  void SetItem(item*);
   item* operator->() const { return Item; }
   item* operator*() const { return Item; }
   virtual void MoveItemTo(stack*) = 0;
@@ -39,6 +39,9 @@ class slot
   virtual bool IsGearSlot() const { return false; }
   virtual void AddFriendItem(item*) const = 0;
   virtual bool IsOnGround() const { return false; }
+  virtual void EditVolume(long) = 0;
+  virtual void EditWeight(long) = 0;
+  void PutInItem(item*);
  protected:
   item* Item;
 };
@@ -56,6 +59,8 @@ class stackslot : public slot
   virtual bool IsStackSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   virtual bool IsOnGround() const;
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
  protected:
   std::list<stackslot*>::iterator StackIterator;
   stack* MotherStack;
@@ -84,6 +89,8 @@ class characterslot : public slot
   virtual void MoveItemTo(stack*);
   virtual bool IsCharacterSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
  protected:
   character* Master;
 };
@@ -111,6 +118,8 @@ class gearslot : public slot
   virtual bool IsGearSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   void Init(bodypart*);
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
  protected:
   bodypart* BodyPart;
 };
@@ -138,6 +147,8 @@ class actionslot : public slot
   virtual bool IsActionSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   void Init(action*);
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
  protected:
   action* Action;
 };

@@ -12,14 +12,14 @@
 #include "game.h"
 #include "save.h"
 
-stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition)
+stack::stack(square* SquareUnder, entity* MotherEntity, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition), Volume(0), Weight(0), MotherEntity(MotherEntity)
 {
   Item = new stacklist;
 }
 
 stack::~stack()
 {
-  Clean();
+  Clean(false);
   delete Item;
 }
 
@@ -37,11 +37,9 @@ bool stack::DrawToTileBuffer(bool Animate) const
 void stack::AddItem(item* ToBeAdded)
 {
   stackslot* StackSlot = new stackslot;
-
   StackSlot->SetMotherStack(this);
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
-
   ToBeAdded->SetSquareUnder(GetSquareUnder());
 
   if(GetSquareUnder() && SquarePosition != HIDDEN)
@@ -49,7 +47,7 @@ void stack::AddItem(item* ToBeAdded)
       GetSquareUnder()->SetDescriptionChanged(true);
 
       if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
+	GetLSquareUnder()->UpdateMemorizedDescription();
     }
 
   if(GetSquareTrulyUnder())
@@ -63,7 +61,7 @@ void stack::AddItem(item* ToBeAdded)
 	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
 	  if(GetSquareTrulyUnder()->CanBeSeen())
-	    GetSquareTrulyUnder()->UpdateMemorized();
+	    GetLSquareTrulyUnder()->UpdateMemorized();
 
 	  if(ToBeAdded->IsAnimated())
 	    GetSquareTrulyUnder()->IncAnimatedEntities();
@@ -87,6 +85,8 @@ void stack::RemoveItem(stackiterator Iterator)
 {
   ushort IEmit = GetEmitation();
   bool WasAnimated = (**Iterator)->IsAnimated();
+  EditVolume(-(**Iterator)->GetVolume());
+  EditWeight(-(**Iterator)->GetWeight());
   delete *Iterator;
   Item->erase(Iterator);
 
@@ -95,7 +95,7 @@ void stack::RemoveItem(stackiterator Iterator)
       GetSquareUnder()->SetDescriptionChanged(true);
 
       if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
+	GetLSquareUnder()->UpdateMemorizedDescription();
     }
 
   if(GetSquareTrulyUnder())
@@ -109,7 +109,7 @@ void stack::RemoveItem(stackiterator Iterator)
 	  GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
 
 	  if(GetSquareTrulyUnder()->CanBeSeen())
-	    GetSquareTrulyUnder()->UpdateMemorized();
+	    GetLSquareTrulyUnder()->UpdateMemorized();
 
 	  if(WasAnimated)
 	    GetSquareTrulyUnder()->DecAnimatedEntities();
@@ -122,18 +122,26 @@ void stack::FastRemoveItem(stackiterator Iterator)
   if(SquarePosition != HIDDEN && (**Iterator)->IsAnimated() && GetSquareTrulyUnder())
     GetSquareTrulyUnder()->DecAnimatedEntities();
 
+  EditVolume(-(**Iterator)->GetVolume());
+  EditWeight(-(**Iterator)->GetWeight());
   delete *Iterator;
   Item->erase(Iterator);
 }
 
-void stack::Clean()
+void stack::Clean(bool EditVolumes)
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
+      if(EditVolumes)
+	{
+	  EditVolume(-(**i)->GetVolume());
+	  EditWeight(-(**i)->GetWeight());
+	}
+
       if(SquarePosition != HIDDEN && (**i)->IsAnimated() && GetSquareTrulyUnder())
 	GetSquareTrulyUnder()->DecAnimatedEntities();
 
-      (**i)->SetExists(false);
+      (**i)->SendToHell();
       delete *i;
     }
 
@@ -164,10 +172,10 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
       if(SquarePosition != HIDDEN || MoveTo->SquarePosition != HIDDEN)
 	{
 	  if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-	    GetSquareUnder()->UpdateMemorizedDescription();
+	    GetLSquareUnder()->UpdateMemorizedDescription();
 
 	  if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
-	    GetSquareTrulyUnder()->UpdateMemorized();
+	    GetLSquareTrulyUnder()->UpdateMemorized();
 	}
     }
   else
@@ -190,7 +198,7 @@ ushort stack::GetEmitation() const
   return Emitation;
 }
 
-ulong stack::GetTotalWeight() const
+/*ulong stack::GetTotalWeight() const
 {
   ulong Sum = 0;
 
@@ -198,7 +206,7 @@ ulong stack::GetTotalWeight() const
     Sum += (**i)->GetWeight();
 
   return Sum;
-}
+}*/
 
 void stack::Save(outputfile& SaveFile) const
 {
@@ -213,6 +221,8 @@ void stack::Load(inputfile& SaveFile)
     {
       (*i)->SetStackIterator(i);
       (*i)->SetMotherStack(this);
+      EditVolume((**i)->GetVolume());
+      EditWeight((**i)->GetWeight());
     }
 
   SquareUnder = game::GetSquareInLoad();
@@ -417,7 +427,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, const std::strin
   felist ItemNames(Topic, WHITE, 0);
 
   ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + (GetTotalWeight() + (MergeStack ? MergeStack->GetTotalWeight() : 0)) + " grams");
+  ItemNames.AddDescription(std::string("Overall weight: ") + (GetWeight() + (MergeStack ? MergeStack->GetWeight() : 0)) + " grams");
   ItemNames.AddDescription("");
 
   std::string Buffer = "Icon  Name                                         Weight SV   Str";
@@ -543,7 +553,7 @@ bool stack::Open(character* Opener)
   return ToBeOpened->Open(Opener);
 }
 
-ulong stack::GetTotalVolume() const
+/*ulong stack::GetTotalVolume() const
 {
   ulong Sum = 0;
 
@@ -551,10 +561,26 @@ ulong stack::GetTotalVolume() const
     Sum += (**i)->GetVolume();
 
   return Sum;
-}
+}*/
 
 void stack::MoveAll(stack* ToStack)
 {
   while(GetItems())
     MoveItem(GetBottomSlot(), ToStack);
+}
+
+void stack::EditVolume(long What)
+{
+  Volume += What;
+
+  if(GetMotherEntity())
+    GetMotherEntity()->EditVolume(What);
+}
+
+void stack::EditWeight(long What)
+{
+  Weight += What;
+
+  if(GetMotherEntity())
+    GetMotherEntity()->EditWeight(What);
 }

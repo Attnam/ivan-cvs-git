@@ -24,19 +24,16 @@ class square;
 class object : public entity, public id
 {
  public:
-  object() : MainMaterial(0) { }
+  object() : entity(false), MainMaterial(0), AnimationFrames(1), Emitation(0) { }
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void InitMaterials(material*, bool = true);
-  virtual void UpdatePictures();
+  void InitMaterials(material*, bool = true);
+  void UpdatePictures();
   virtual material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
   virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  virtual ulong GetWeight() const;
-  virtual ulong GetVolume() const;
-  virtual ushort GetEmitation() const;
   virtual void SetMainMaterial(material* NewMaterial) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
   virtual void ChangeMainMaterial(material* NewMaterial) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume()); }
   virtual void SetConsumeMaterial(material* NewMaterial) { SetMainMaterial(NewMaterial); }
@@ -47,26 +44,30 @@ class object : public entity, public id
   virtual void ChangeContainedMaterial(material*);
   virtual uchar GetMaterials() const { return 1; }
   virtual material* GetMaterial(ushort Index) const { return Index ? 0 : MainMaterial; }
-  virtual bool IsAnimated() const { return false; }
-  virtual const std::vector<bitmap*>& GetPicture() const { return Picture; }
-  virtual bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
+  const std::vector<bitmap*>& GetPicture() const { return Picture; }
+  bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
   virtual ushort GetBaseEmitation() const { return 0; }
-  virtual ushort GetType() const = 0;
   virtual void SetParameters(uchar) { }
   virtual uchar GetOKVisualEffects() const { return 0; }
   virtual uchar GetVisualEffects() const { return VisualEffects; }
   virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual uchar GetForcedVisualEffects() const { return 0; }
+  void SetAnimationFrames(ushort What) { AnimationFrames = What; }
+  bool IsAnimated() const { return AnimationFrames > 1; }
+  virtual void CalculateEmitation();
+  virtual ushort GetEmitation() const { return Emitation; }
+  void SetEmitation(ushort What) { Emitation = What; }
+  void LoadMaterial(inputfile&, material*&);
  protected:
-  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
-  virtual void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
+  void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
+  void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
   virtual ulong GetDefaultMainVolume() const { return 0; }
   virtual ulong GetDefaultSecondaryVolume() const { return 0; }
   virtual ulong GetDefaultContainedVolume() const { return 0; }
-  virtual void InitMaterial(material*&, material*, ulong);
-  virtual material* SetMaterial(material*&, material*, ulong);
-  virtual void ChangeMaterial(material*&, material*, ulong);
-  virtual bool CalculateHasBe() const;
+  void InitMaterial(material*&, material*, ulong);
+  material* SetMaterial(material*&, material*, ulong);
+  void ChangeMaterial(material*&, material*, ulong);
+  bool CalculateHasBe() const;
   virtual uchar GetSpecialFlags(ushort) const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex(ushort) const = 0;
   virtual ushort GetMaterialColor0(ushort) const;
@@ -79,16 +80,17 @@ class object : public entity, public id
   virtual uchar GetAlpha2(ushort) const { return 255; }
   virtual uchar GetAlpha3(ushort) const { return 255; }
   virtual std::string GetMaterialDescription(bool) const;
-  virtual std::string ContainerPostFix() const;
-  virtual std::string LumpyPostFix() const;
+  std::string ContainerPostFix() const;
+  std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
-  virtual ushort GetAnimationFrames() const { return 1; }
-  virtual void RandomizeVisualEffects();
+  void RandomizeVisualEffects();
   material* MainMaterial;
   std::vector<graphic_id> GraphicId;
   std::vector<bitmap*> Picture;
   ushort Config;
   uchar VisualEffects;
+  ushort AnimationFrames;
+  ushort Emitation;
 };
 
 #endif

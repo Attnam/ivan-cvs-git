@@ -89,14 +89,19 @@ bool owterrain::GoDown(character*) const
   return false;
 }
 
-void wterrain::Save(outputfile& SaveFile) const
+void wterrain::Load(inputfile&)
+{
+  WSquareUnder = (wsquare*)game::GetSquareInLoad();
+}
+
+void gwterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
 }
 
-void wterrain::Load(inputfile&)
+void owterrain::Save(outputfile& SaveFile) const
 {
-  WSquareUnder = (wsquare*)game::GetSquareInLoad();
+  SaveFile << GetType();
 }
 
 gwterrain* gwterrainprototype::CloneAndLoad(inputfile& SaveFile) const

@@ -18,3 +18,6 @@ Pressing esc in stringquestion crashes game!!!
 Backround problem with config screen.
 Wishing for head crashes.
 Can one eat a can MADE of bananaflesh?
+Dos-kehote.
+Walls & moving light.
+The volume bug.

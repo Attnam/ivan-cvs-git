@@ -26,23 +26,24 @@ class wsquare : public square
   virtual ~wsquare();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool DrawTerrain(bool) const;
-  virtual bool DrawCharacters(bool) const;
-  virtual void Draw();
-  virtual void UpdateMemorized();
-  virtual void SetGWTerrain(gwterrain*);
-  virtual void SetOWTerrain(owterrain*);
-  virtual gwterrain* GetGWTerrain() const { return GWTerrain; }
-  virtual owterrain* GetOWTerrain() const { return OWTerrain; }
-  virtual void ChangeWTerrain(gwterrain*, owterrain*);
-  virtual worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
-  virtual void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
-  virtual void UpdateMemorizedDescription(bool = false);
+  bool DrawTerrain(bool) const;
+  bool DrawCharacters(bool) const;
+  void Draw();
+  void UpdateMemorized();
+  void SetGWTerrain(gwterrain*);
+  void SetOWTerrain(owterrain*);
+  gwterrain* GetGWTerrain() const { return GWTerrain; }
+  owterrain* GetOWTerrain() const { return OWTerrain; }
+  void ChangeWTerrain(gwterrain*, owterrain*);
+  worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
+  void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
+  void UpdateMemorizedDescription(bool = false);
   virtual gterrain* GetGTerrain() const;
   virtual oterrain* GetOTerrain() const;
-  virtual void ChangeGWTerrain(gwterrain*);
-  virtual void ChangeOWTerrain(owterrain*);
-  virtual void SetWTerrain(gwterrain*, owterrain*);
+  void ChangeGWTerrain(gwterrain*);
+  void ChangeOWTerrain(owterrain*);
+  void SetWTerrain(gwterrain*, owterrain*);
+  void SetLastSeen(ulong);
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

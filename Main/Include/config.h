@@ -17,7 +17,7 @@ class configuration
   static ushort GetAutoSaveInterval() { return AutoSaveInterval; }
   static void SetAutoSaveInterval(long);
   static void EditContrast(char);
-  static uchar GetContrast() { return Contrast; }
+  static ushort GetContrast() { return Contrast; }
   static void SetContrast(long);
   static bool GetAutoDropLeftOvers() { return AutoDropLeftOvers; }
   static void SetAutoDropLeftOvers(bool What) { AutoDropLeftOvers = What; }

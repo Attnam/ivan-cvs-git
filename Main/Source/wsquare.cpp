@@ -78,7 +78,7 @@ void wsquare::Draw()
       vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
 
       ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
-      ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
+      ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
 
       DrawTerrain(true);
 
@@ -202,3 +202,18 @@ oterrain* wsquare::GetOTerrain() const
   return OWTerrain;
 }
 
+void wsquare::SetLastSeen(ulong What)
+{
+  if(LastSeen == What)
+    return;
+
+  if(!LastSeen)
+    Memorized = new bitmap(16, 16);
+
+  if(LastSeen < What - 1)
+    NewDrawRequested = true;
+
+  UpdateMemorized();
+  UpdateMemorizedDescription();
+  LastSeen = What;
+}

@@ -506,7 +506,7 @@ Dungeon 1;
 				{
 					# = MARBLE floor;
 					- = MARBLE floor;
-					~ = pool;
+					~ = poolterrain;
 				}
 			}
 			{

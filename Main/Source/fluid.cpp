@@ -8,9 +8,8 @@
 #include "igraph.h"
 #include "save.h"
 
-fluid::fluid() : Picture(0), Material(0)
+fluid::fluid() : entity(true), Picture(0), Material(0)
 {
-  SetHasBe(true);
   Picture = new bitmap(16, 16);
   Picture->Fill(TRANSPARENTCOL);
   Picture->CreateAlphaMap(0);
@@ -58,7 +57,7 @@ void fluid::Be()
       if(!GetPicture()->ChangeAlpha(-1))
 	{
 	  GetLSquareUnder()->RemoveFluid();
-	  SetExists(false);
+	  SendToHell();
 	}
 
       GetSquareUnder()->SendNewDrawRequest();
@@ -68,7 +67,7 @@ void fluid::Be()
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  entity::Save(SaveFile);
+  //entity::Save(SaveFile);
   SaveFile << Picture;
 }
 
@@ -109,5 +108,6 @@ inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
 
 ushort fluid::GetEmitation() const
 {
-  return GetMaterial()->GetEmitation();
+  return 0;//GetMaterial()->GetEmitation();
 }
+

@@ -49,6 +49,7 @@ item
 	IsPolymorphable = true;
 	OKVisualEffects = NONE;
 	CanBeGeneratedInContainer = true;
+	/* Obligatory: Roundness */
 }
 
 materialcontainer
@@ -73,6 +74,7 @@ banana /* materialcontainer-> */
 	MainMaterialConfig == BANANAPEAL;
 	ContainedMaterialConfig == BANANAFLESH;
 	Alias == "gun";
+	Roundness = 15;
 }
 
 holybanana /* materialcontainer->banana-> */
@@ -90,6 +92,7 @@ holybanana /* materialcontainer->banana-> */
 	PostFix = "of Liukas Vipro";
 	ArticleMode = DEFINITEARTICLE;
 	IsPolymorphable = false;
+	Roundness = 20;
 }
 
 lantern
@@ -108,6 +111,7 @@ lantern
 	NameSingular = "lantern";
 	MainMaterialConfig == GLASS;
 	Alias == "light";
+	Roundness = 75;
 }
 
 can /* materialcontainer-> */
@@ -127,6 +131,7 @@ can /* materialcontainer-> */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
+	Roundness = 60;
 }
 
 lump
@@ -144,6 +149,7 @@ lump
 	MainMaterialConfig = { 2, BANANAFLESH, SCHOOLFOOD; }
 	MaterialConfigChances = { 2, 50, 10; }
 	OKVisualEffects = MIRROR|FLIP;
+	Roundness = 75;
 }
 
 meleeweapon
@@ -171,6 +177,7 @@ longsword /* meleeweapon-> */
 	SecondaryMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 50, 150, 50, 10; }
 	Alias == "sword";
+	Roundness = 10;
 }
 
 twohandedsword /* meleeweapon->longsword-> */
@@ -187,6 +194,7 @@ twohandedsword /* meleeweapon->longsword-> */
 	MainMaterialConfig = { 2, IRON, MITHRIL; }
 	SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
 	MaterialConfigChances = { 2, 100, 10; }
+	Roundness = 15;
 }
 
 curvedtwohandedsword /* meleeweapon->longsword->twohandedsword */
@@ -196,6 +204,7 @@ curvedtwohandedsword /* meleeweapon->longsword->twohandedsword */
 	FormModifier = 200;
 	Adjective = "curved two-handed";
 	MaterialConfigChances = { 2, 250, 10; }
+	Roundness = 15;
 }
 
 valpurusjustifier /* meleeweapon->longsword-> */
@@ -220,6 +229,7 @@ valpurusjustifier /* meleeweapon->longsword-> */
 	MaterialConfigChances == 100;
 	IsPolymorphable = false;
 	Alias == "Justifier";
+	Roundness = 20;
 }
 
 axe /* meleeweapon-> */
@@ -239,6 +249,7 @@ axe /* meleeweapon-> */
 	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
+	Roundness = 20;
 }
 
 pickaxe /* meleeweapon->axe-> */
@@ -252,6 +263,7 @@ pickaxe /* meleeweapon->axe-> */
 	FormModifier = 100;
 	NameSingular = "pick-axe";
 	Alias == "pick-ax";
+	Roundness = 20;
 }
 
 spear /* meleeweapon-> */
@@ -270,6 +282,7 @@ spear /* meleeweapon-> */
 	MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
+	Roundness = 10;
 }
 
 bodyarmor
@@ -278,6 +291,7 @@ bodyarmor
 	Category = BODYARMOR;
 	FormModifier = 20;
 	IsAbstract = true;
+	Roundness = 70;
 }
 
 platemail /* bodyarmor-> */
@@ -350,6 +364,7 @@ potion /* materialcontainer-> */
 	ContainedMaterialConfig = { 4, 0, WATER, HEALINGLIQUID, OMLEURINE; }
 	MaterialConfigChances = { 4, 100, 100, 50, 10; }
 	Alias = { 2, "potion", "drink"; }
+	Roundness = 70;
 }
 
 bananapeals
@@ -365,6 +380,7 @@ bananapeals
 	OfferModifier = 0;
 	NameSingular = "banana peal";
 	MainMaterialConfig == BANANAPEAL;
+	Roundness = 10;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -381,6 +397,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	NameSingular = "bottle";
 	Adjective = "broken";
 	MainMaterialConfig == GLASS;
+	Roundness = 70;
 }
 
 scroll
@@ -395,6 +412,7 @@ scroll
 	NameSingular = "scroll";
 	MainMaterialConfig == PARCHMENT;
 	IsAbstract = true;
+	Roundness = 15;
 }
 
 scrollofcreatemonster /* scroll-> */
@@ -432,6 +450,7 @@ nut
 	OfferModifier = 100000;
 	MainMaterialConfig == HUMANFLESH;
 	NameSingular = "nut";
+	Roundness = 90;
 }
 
 leftnutofpetrus /* nut-> */
@@ -463,6 +482,7 @@ bone
 	OfferModifier = 1000;
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
+	Roundness = 20;
 }
 
 
@@ -479,6 +499,7 @@ poleaxe /* meleeweapon->axe-> */
 	MainMaterialConfig = { 2, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 2, 50, 10; }
+	Roundness = 20;
 }
 
 spikedmace /* meleeweapon-> */
@@ -498,6 +519,7 @@ spikedmace /* meleeweapon-> */
 	MainMaterialConfig = { 2, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 2, 100, 10; }
+	Roundness = 30; /* we count the handle, too */
 }
 
 neercseulb /* meleeweapon->spikedmace-> */
@@ -523,6 +545,7 @@ neercseulb /* meleeweapon->spikedmace-> */
 	MaterialConfigChances == 100;
 	IsPolymorphable = false;
 	Alias == "Neerc Se-ulb";
+	Roundness = 35;
 }
 
 loaf
@@ -542,6 +565,7 @@ loaf
 	MainMaterialConfig = { 3, BEEF, PORK, BREAD; }
 	MaterialConfigChances = { 3, 50, 50, 200; }
 	Alias == "food";
+	Roundness = 20;
 }	
 
 scrollofwishing /* scroll-> */
@@ -578,6 +602,7 @@ wand
 	DefaultSize = 30;
 	NameSingular = "wand";
 	IsAbstract = true;
+	Roundness = 5;
 }
 
 wandofpolymorph /* wand-> */
@@ -626,6 +651,7 @@ avatarofvalpurus
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
+	Roundness = 80;
 }
 
 wandofstriking /* wand-> */
@@ -658,6 +684,7 @@ kiwi
 	OfferModifier = 4000;
 	NameSingular = "kiwi";
 	MainMaterialConfig == KIWIFLESH;
+	Roundness = 80;
 }
 
 pineapple
@@ -672,6 +699,7 @@ pineapple
 	OfferModifier = 4000;
 	NameSingular = "pineapple";
 	MainMaterialConfig == PINEAPPLEFLESH;
+	Roundness = 90;
 }
 
 palmbranch
@@ -687,6 +715,7 @@ palmbranch
 	OfferModifier = 3000;
 	NameSingular = "palm branch";
 	MainMaterialConfig == PALMLEAF;
+	Roundness = 80;
 }
 
 whip /* meleeweapon-> */
@@ -704,6 +733,7 @@ whip /* meleeweapon-> */
 	NameSingular = "whip";
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
+	Roundness = 2;
 }
 
 backpack /* materialcontainer-> */
@@ -722,6 +752,7 @@ backpack /* materialcontainer-> */
 	MainMaterialConfig == LEATHER;
 	ContainedMaterialConfig == GUNPOWDER;
 	Alias == "explosives";
+	Roundness = 70;
 }
 
 holybook
@@ -739,6 +770,7 @@ holybook
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == PARCHMENT;
 	Price = 200;
+	Roundness = 70;
 }
 
 fiftymillionroubles
@@ -757,6 +789,7 @@ fiftymillionroubles
 	PostFix = "of 50 million roubles";
 	MainMaterialConfig == PARCHMENT;
 	Alias = { 2, "money", "riches"; }
+	Roundness = 60;
 }
 
 oillamp
@@ -774,6 +807,7 @@ oillamp
 	NameSingular = "oil lamp";
 	Article = "an";
 	MainMaterialConfig == GOLD;
+	Roundness = 40;
 }
 
 stone
@@ -791,6 +825,7 @@ stone
 	MainMaterialConfig = { 5, SILVER, GOLD, SAPPHIRE, RUBY, DIAMOND; }
 	MaterialConfigChances = { 5, 30, 20, 15, 10, 5; }
 	Alias == "jewel";
+	Roundness = 90;
 }
 
 wandoffireballs /* wand-> */
@@ -818,7 +853,7 @@ wandofteleportation /* wand-> */
 
 mine /*materialcontainer-> */
 {
-	DefaultSize = 5;
+	DefaultSize = 50;
 	Possibility = 20;
 	Category = TOOL;
 	DefaultMainVolume = 100;
@@ -829,6 +864,7 @@ mine /*materialcontainer-> */
 	NameSingular = "mine";
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig == GUNPOWDER;
+	Roundness = 100;
 }
 
 wandofhaste /* wand-> */
@@ -860,6 +896,7 @@ key
 	OfferModifier = 5000;
 	NameSingular = "key";
 	MainMaterialConfig == IRON;
+	Roundness = 10;
 }
 
 shield
@@ -875,6 +912,7 @@ shield
 	NameSingular = "shield";
 	MainMaterialConfig = { 5, WOOD, COPPER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 5, 250, 150, 150, 50, 10; }
+	Roundness = 80;
 }
 
 cloak
@@ -890,6 +928,7 @@ cloak
 	NameSingular = "cloak";
 	MainMaterialConfig = { 3, LEATHER, FABRIC, CLOTH; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
+	Roundness = 60;
 }
 
 boot
@@ -905,6 +944,7 @@ boot
 	NameSingular = "boot";
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 250, 100, 50, 10; }
+	Roundness = 50;
 }
 
 gauntlet
@@ -920,6 +960,7 @@ gauntlet
 	NameSingular = "gauntlet";
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 250, 100, 50, 10; }
+	Roundness = 60;
 }
 
 belt
@@ -935,6 +976,7 @@ belt
 	NameSingular = "belt";
 	MainMaterialConfig = { 3, LEATHER, CLOTH, FABRIC; }
 	MaterialConfigChances = { 3, 250, 50, 50; }
+	Roundness = 10;
 }
 
 ring
@@ -948,6 +990,7 @@ ring
 	FormModifier = 20;
 	NameSingular = "ring";
 	MainMaterialConfig == DIAMOND;
+	Roundness = 10; /* it is considered here opened */
 }
 
 amulet
@@ -961,6 +1004,7 @@ amulet
 	FormModifier = 50;
 	NameSingular = "amulet";
 	MainMaterialConfig == GOLD;
+	Roundness = 10; /* it is considered here opened */
 }
 
 bodypart
@@ -979,6 +1023,7 @@ head /* bodypart-> */
 	StrengthModifier = 150;
 	FormModifier = 20;
 	NameSingular = "head";
+	Roundness = 70;
 }
 
 torso /* bodypart-> */
@@ -987,6 +1032,7 @@ torso /* bodypart-> */
 	FormModifier = 20;
 	NameSingular = "torso";
 	IsAbstract = true;
+	Roundness = 60;
 }
 
 normaltorso /* bodypart->torso-> */
@@ -1002,6 +1048,7 @@ arm /* bodypart-> */
 	StrengthModifier = 50;
 	FormModifier = 20;
 	IsAbstract = true;
+	Roundness = 15;
 }
 
 rightarm /* bodypart->arm-> */
@@ -1019,6 +1066,7 @@ groin /* bodypart-> */
 	StrengthModifier = 100;
 	FormModifier = 20;
 	NameSingular = "groin";
+	Roundness = 40;
 }
 
 leg /* bodypart-> */
@@ -1026,6 +1074,7 @@ leg /* bodypart-> */
 	StrengthModifier = 75;
 	FormModifier = 20;
 	IsAbstract = true;
+	Roundness = 20;
 }
 
 rightleg /* bodypart->leg-> */
@@ -1054,6 +1103,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == ELPURIFLESH;
 	IsPolymorphable = false;
+	Roundness = 80;
 }
 
 corpse
@@ -1070,6 +1120,7 @@ corpse
 	OfferModifier = 100;
 	NameSingular = "corpse";
 	OKVisualEffects = ROTATE|MIRROR|FLIP;
+	Roundness = 50;
 }
 
 wandoflocking /* wand-> */
@@ -1112,6 +1163,7 @@ whistle
 	DefaultSize = 30;
 	NameSingular = "whistle";
 	MainMaterialConfig == TIN;
+	Roundness = 10;
 }
 
 magicalwhistle /* whistle-> */
@@ -1126,4 +1178,13 @@ chest
 	NameSingular = "chest";
 	Possibility = 100;
 	CanBeGeneratedInContainer = false;
+	Roundness = 60;
+}
+
+wandofdoorcreation /* wand-> */
+{
+	Possibility = 20;
+	Price = 200;
+	PostFix = "of door creation";
+	MainMaterialConfig == WOOD;
 }

@@ -96,11 +96,7 @@ bool door::Close(character* Closer)
 
 void altar::DrawToTileBuffer(bool Animate) const
 {
-  if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
-  else
-    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
-
+  olterrain::DrawToTileBuffer(Animate);
   igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 }
 
@@ -264,13 +260,13 @@ void door::BeKicked(character*, float KickStrength)
 void door::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
-  SaveFile << Opened << Locked;
+  SaveFile << Opened << Locked << LockType << BoobyTrap;
 }
 
 void door::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
-  SaveFile >> Opened >> Locked;
+  SaveFile >> Opened >> Locked >> LockType >> BoobyTrap;
 }
 
 void door::MakeWalkable()
@@ -281,6 +277,7 @@ void door::MakeWalkable()
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
   GetLSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     {
@@ -300,6 +297,7 @@ void door::MakeNotWalkable()
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
   GetLSquareUnder()->ForceEmitterEmitation();
+  GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     {
@@ -395,7 +393,7 @@ bool couch::SitOn(character*)
   return true;
 }
 
-bool pool::SitOn(character*)
+bool poolterrain::SitOn(character*)
 {
   ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
   return true;
@@ -531,13 +529,13 @@ void fountain::DryOut()
       GetSquareUnder()->SetDescriptionChanged(true);
 
       if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorizedDescription();
+	GetLSquareUnder()->UpdateMemorizedDescription();
 
       GetSquareUnder()->SendNewDrawRequest();
       GetSquareUnder()->SendMemorizedUpdateRequest();
 
       if(GetSquareUnder()->CanBeSeen())
-	GetSquareUnder()->UpdateMemorized();
+	GetLSquareUnder()->UpdateMemorized();
     }
 }
 
@@ -629,8 +627,8 @@ bool altar::Polymorph(character*)
 
   if(GetSquareUnder()->CanBeSeen())
     {
-      GetSquareUnder()->UpdateMemorizedDescription();
-      GetSquareUnder()->UpdateMemorized();
+      GetLSquareUnder()->UpdateMemorizedDescription();
+      GetLSquareUnder()->UpdateMemorized();
     }
 
   return true;	
@@ -666,7 +664,7 @@ bool altar::SitOn(character*)
   return true;
 }
 
-bool pool::IsWalkable(character* ByWho) const
+bool poolterrain::IsWalkable(character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
@@ -763,7 +761,7 @@ void door::Break()
       Temp->SetIsLocked(IsLocked());
       Temp->SetBoobyTrap(0);
       Temp->SetLockType(GetLockType());
-      GetLSquareUnder()->ChangeOLTerrain(Temp);
+      GetLSquareUnder()->ChangeOLTerrainAndUpdateLights(Temp);
     }
 }
 
@@ -800,16 +798,17 @@ bool fountain::DipInto(item* ToBeDipped, character* Who)
     return false;
 }
 
-void fountain::Load(inputfile& SaveFile)
-{
-  olterrain::Load(SaveFile);
-  SaveFile >> ContainedMaterial;
-}
-
 void fountain::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
   SaveFile << ContainedMaterial;
+}
+
+void fountain::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  LoadMaterial(SaveFile, ContainedMaterial);
+
 }
 
 material* fountain::GetMaterial(ushort Index) const

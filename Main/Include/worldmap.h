@@ -24,23 +24,24 @@ class worldmap : public area
   worldmap(ushort, ushort);
   worldmap() { }
   virtual ~worldmap();
-  virtual void Generate();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual wsquare* GetWSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
-  virtual wsquare* GetWSquare(ushort x, ushort y) const {return Map[x][y];}
-  virtual void GenerateClimate();
-  virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
-  virtual void CalculateContinents();
-  virtual void SmoothAltitude();
-  virtual void SmoothClimate();
-  virtual void RandomizeAltitude();
-  virtual continent* GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
-  virtual continent* GetContinent(ushort Index) const { return Continent[Index]; }
-  virtual void RemoveEmptyContinents();
-  virtual short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
-  virtual std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
-  virtual character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
+  void Generate();
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  wsquare* GetWSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
+  wsquare* GetWSquare(ushort x, ushort y) const { return Map[x][y]; }
+  void GenerateClimate();
+  ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
+  void CalculateContinents();
+  void SmoothAltitude();
+  void SmoothClimate();
+  void RandomizeAltitude();
+  continent* GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
+  continent* GetContinent(ushort Index) const { return Continent[Index]; }
+  void RemoveEmptyContinents();
+  short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
+  std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
+  character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
+  virtual void Draw() const;
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;
@@ -50,8 +51,18 @@ class worldmap : public area
   std::vector<character*> PlayerGroup;
 };
 
-outputfile& operator<<(outputfile&, worldmap*);
-inputfile& operator>>(inputfile&, worldmap*&);
+inline outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+{
+  WorldMap->Save(SaveFile);
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
+{
+  WorldMap = new worldmap;
+  WorldMap->Load(SaveFile);
+  return SaveFile;
+}
 
 #endif
 

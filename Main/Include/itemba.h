@@ -71,6 +71,7 @@ struct itemdatabase
   uchar OKVisualEffects;
   bool CanBeGeneratedInContainer;
   uchar ForcedVisualEffects;
+  uchar Roundness;
 };
 
 class itemprototype
@@ -85,16 +86,16 @@ class itemprototype
   ushort GetIndex() const { return Index; }
   const itemdatabase* GetDataBase() const { return &DataBase; }
   const itemprototype* GetBase() const { return Base; }
-  DATABASEBOOL(IsAutoInitializable);
-  DATABASEBOOL(CanBeWished);
-  DATABASEBOOL(IsPolymorphSpawnable);
-  DATABASEVALUE(ushort, Possibility);
-  DATABASEVALUE(const std::string&, Adjective);
-  DATABASEVALUE(const std::string&, NameSingular);
-  DATABASEVALUE(const std::string&, NamePlural);
-  DATABASEVALUE(const std::string&, PostFix);
-  DATABASEVALUE(const std::vector<std::string>&, Alias);
-  DATABASEBOOL(IsAbstract);
+  PROTODATABASEBOOL(IsAutoInitializable);
+  PROTODATABASEBOOL(CanBeWished);
+  PROTODATABASEBOOL(IsPolymorphSpawnable);
+  PROTODATABASEVALUE(ushort, Possibility);
+  PROTODATABASEVALUE(const std::string&, Adjective);
+  PROTODATABASEVALUE(const std::string&, NameSingular);
+  PROTODATABASEVALUE(const std::string&, NamePlural);
+  PROTODATABASEVALUE(const std::string&, PostFix);
+  PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
+  PROTODATABASEBOOL(IsAbstract);
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
@@ -175,28 +176,29 @@ class item : public object
   static bool GauntletSorter(item* Item, character* Char) { return Item->IsGauntlet(Char); }
   static bool BeltSorter(item* Item, character* Char) { return Item->IsBelt(Char); }
   static bool BootSorter(item* Item, character* Char) { return Item->IsBoot(Char); }
-  virtual bool IsConsumable(character*) const;
-  virtual bool IsOpenable(character*) const { return false; }
-  virtual bool IsReadable(character*) const { return false; }
-  virtual bool IsDippable(character*) const { return false; }
-  virtual bool IsDipDestination(character*) const { return false; }
-  virtual bool IsAppliable(character*) const { return false; }
-  virtual bool IsZappable(character*) const { return false; }
-  virtual bool IsChargeable(character*) const { return false; }
-  virtual bool IsHelmet(character*) const { return false; }
-  virtual bool IsAmulet(character*) const { return false; }
-  virtual bool IsCloak(character*) const { return false; }
-  virtual bool IsBodyArmor(character*) const { return false; }
-  virtual bool IsRing(character*) const { return false; }
-  virtual bool IsGauntlet(character*) const { return false; }
-  virtual bool IsBelt(character*) const { return false; }
-  virtual bool IsBoot(character*) const { return false; }
+  virtual bool IsConsumable(const character*) const;
+  virtual bool IsOpenable(const character*) const { return false; }
+  virtual bool IsReadable(const character*) const { return false; }
+  virtual bool IsDippable(const character*) const { return false; }
+  virtual bool IsDipDestination(const character*) const { return false; }
+  virtual bool IsAppliable(const character*) const { return false; }
+  virtual bool IsZappable(const character*) const { return false; }
+  virtual bool IsChargeable(const character*) const { return false; }
+  virtual bool IsHelmet(const character*) const { return false; }
+  virtual bool IsAmulet(const character*) const { return false; }
+  virtual bool IsCloak(const character*) const { return false; }
+  virtual bool IsBodyArmor(const character*) const { return false; }
+  virtual bool IsRing(const character*) const { return false; }
+  virtual bool IsGauntlet(const character*) const { return false; }
+  virtual bool IsBelt(const character*) const { return false; }
+  virtual bool IsBoot(const character*) const { return false; }
+  virtual bool IsShield(const character*) const { return false; }
   virtual bool IsOnGround() const;
   virtual ushort GetResistance(uchar) const;
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   virtual bool RemoveMaterial(uchar);
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
@@ -205,7 +207,7 @@ class item : public object
   //virtual bool FitsBodyPartIndex(uchar, character*) const { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const;
-  virtual const database* GetDataBase() const { return DataBase; }
+  const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
 
@@ -255,12 +257,17 @@ class item : public object
   DATABASEVALUE(uchar, OKVisualEffects);
   DATABASEBOOL(CanBeGeneratedInContainer);
   DATABASEVALUE(uchar, ForcedVisualEffects);
+  DATABASEVALUE(uchar, Roundness);
+
   virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual uchar GetVisualEffects() const { return VisualEffects; }
   virtual void SetVisualEffects(uchar What) { VisualEffects = What; }
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
+  virtual ulong GetBlockModifier(const character*) const;
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }

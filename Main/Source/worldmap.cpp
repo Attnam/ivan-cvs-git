@@ -72,13 +72,13 @@ void worldmap::Save(outputfile& SaveFile) const
 void worldmap::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
-
   Map = (wsquare***)area::Map;
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new wsquare(this, vector2d(x, y));
+	game::SetSquareInLoad(Map[x][y]);
 	Map[x][y]->Load(SaveFile);
       }
 
@@ -388,26 +388,17 @@ void worldmap::RemoveEmptyContinents()
 	  }
 }
 
-outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+void worldmap::Draw() const
 {
-  if(WorldMap)
-    {
-      SaveFile.Put(1);
-      WorldMap->Save(SaveFile);
-    }
+  if(!game::GetSeeWholeMapCheat())
+    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
+	  Map[x][y]->Draw();
+	else
+	  Map[x][y]->DrawMemorized();
   else
-    SaveFile.Put(0);
-
-  return SaveFile;
-}
-
-inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
-{
-  if(SaveFile.Get())
-    {
-      WorldMap = new worldmap;
-      WorldMap->Load(SaveFile);
-    }
-
-  return SaveFile;
+    for(ushort x = game::GetCamera().X; x < game::GetCamera().X + game::GetScreenSize().X; ++x)
+      for(ushort y = game::GetCamera().Y; y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+	Map[x][y]->Draw();
 }

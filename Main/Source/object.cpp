@@ -17,16 +17,15 @@ object::~object()
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << GetType();
-  entity::Save(SaveFile);
-  SaveFile << GraphicId << MainMaterial << Config << VisualEffects;
+  SaveFile << GraphicId << Config << VisualEffects;
+  SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
   entity::Load(SaveFile);
-  SaveFile >> GraphicId >> MainMaterial >> Config >> VisualEffects;
-
+  SaveFile >> GraphicId >> Config >> VisualEffects;
+  LoadMaterial(SaveFile, MainMaterial);
   Picture.resize(GraphicId.size());
 
   for(ushort c = 0; c < GraphicId.size(); ++c)
@@ -69,10 +68,15 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
       if(Material->HasBe())
 	SetHasBe(true);
 
-      Material->SetMotherEntity(this);
-
       if(!Material->GetVolume())
 	Material->SetVolume(DefaultVolume);
+
+      Material->SetMotherEntity(this);
+      EditVolume(NewMaterial->GetVolume());
+      EditWeight(NewMaterial->GetWeight());
+
+      if(NewMaterial->GetEmitation() > Emitation)
+	Emitation = NewMaterial->GetEmitation();
     }
 }
 
@@ -94,8 +98,6 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
   if(NewMaterial)
     {
-      NewMaterial->SetMotherEntity(this);
-
       if(!NewMaterial->GetVolume())
 	if(OldMaterial)
 	  NewMaterial->SetVolume(OldMaterial->GetVolume());
@@ -104,6 +106,22 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 	    NewMaterial->SetVolume(DefaultVolume);
 	  else
 	    ABORT("Singularity spawn detected!");
+
+      NewMaterial->SetMotherEntity(this);
+      EditVolume(NewMaterial->GetVolume());
+      EditWeight(NewMaterial->GetWeight());
+
+      if(NewMaterial->GetEmitation() > Emitation)
+	Emitation = NewMaterial->GetEmitation();
+    }
+
+  if(OldMaterial)
+    {
+      EditVolume(-OldMaterial->GetVolume());
+      EditWeight(-OldMaterial->GetWeight());
+
+      if(OldMaterial->GetEmitation() == Emitation)
+	CalculateEmitation();
     }
 
   UpdatePictures();
@@ -116,8 +134,8 @@ void object::UpdatePictures()
     for(ushort c = 0; c < GraphicId.size(); ++c)
       igraph::RemoveUser(GraphicId[c]);
 
-  GraphicId.resize(GetAnimationFrames());
-  Picture.resize(GetAnimationFrames());
+  GraphicId.resize(AnimationFrames);
+  Picture.resize(AnimationFrames);
 
   for(ushort c = 0; c < GraphicId.size(); ++c)
     {
@@ -160,37 +178,13 @@ std::string object::LumpyPostFix() const
   return GetMainMaterial() ? "of " + GetMainMaterial()->GetName() : "";
 }
 
-ulong object::GetWeight() const
+void object::CalculateEmitation()
 {
-  ulong Weight = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      Weight += GetMaterial(c)->GetWeight();
-
-  return Weight;
-}
-
-ulong object::GetVolume() const
-{
-  ulong Volume = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      Volume += GetMaterial(c)->GetVolume();
-
-  return Volume;
-}
-
-ushort object::GetEmitation() const
-{
-  ushort Emitation = GetBaseEmitation();
+  Emitation = GetBaseEmitation();
 
   for(ushort c = 0; c < GetMaterials(); ++c)
     if(GetMaterial(c) && GetMaterial(c)->GetEmitation() > Emitation)
       Emitation = GetMaterial(c)->GetEmitation();
-
-  return Emitation;
 }
 
 bool object::CalculateHasBe() const
@@ -240,4 +234,19 @@ void object::RandomizeVisualEffects()
       Flags |= 1 << c;
 
   SetVisualEffects(Flags | GetForcedVisualEffects());
+}
+
+void object::LoadMaterial(inputfile& SaveFile, material*& Material)
+{
+  SaveFile >> Material;
+
+  if(Material)
+    {
+      Material->SetMotherEntity(this);
+      Volume += Material->GetVolume();
+      Weight += Material->GetWeight();
+
+      if(Material->GetEmitation() > Emitation)
+	Emitation = Material->GetEmitation();
+    }
 }

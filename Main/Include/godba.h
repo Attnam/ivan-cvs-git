@@ -61,7 +61,7 @@ class god
   virtual character* CreateAngel();
   virtual ushort GetColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
  protected:
   virtual void PrayGoodEffect() = 0;
   virtual void PrayBadEffect() = 0;

@@ -205,6 +205,10 @@ SOURCE=.\Main\Source\godde.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\hell.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\id.cpp
 # End Source File
 # Begin Source File
@@ -378,6 +382,10 @@ SOURCE=.\Main\Include\godba.h
 # Begin Source File
 
 SOURCE=.\Main\Include\godde.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\hell.h
 # End Source File
 # Begin Source File
 

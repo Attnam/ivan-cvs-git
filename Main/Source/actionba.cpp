@@ -2,6 +2,8 @@
 #include "charba.h"
 #include "save.h"
 #include "proto.h"
+#include "slot.h"
+#include "itemba.h"
 
 void action::Terminate(bool)
 {
@@ -24,4 +26,32 @@ action* actionprototype::CloneAndLoad(inputfile& SaveFile) const
 actionprototype::actionprototype()
 {
   Index = protocontainer<action>::Add(this);
+}
+
+void action::EditVolume(long What)
+{
+  Volume += What;
+
+  if(GetActor())
+    GetActor()->EditVolume(What);
+}
+
+void action::EditWeight(long What)
+{
+  Weight += What;
+
+  if(GetActor())
+    GetActor()->EditWeight(What);
+}
+
+void action::LoadActionSlot(inputfile& SaveFile, actionslot& ActionSlot)
+{
+  SaveFile >> ActionSlot;
+  ActionSlot.SetAction(this);
+
+  if(*ActionSlot)
+    {
+      EditVolume(ActionSlot->GetVolume());
+      EditWeight(ActionSlot->GetWeight());
+    }
 }

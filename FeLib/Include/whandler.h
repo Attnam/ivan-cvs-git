@@ -23,11 +23,12 @@ class globalwindowhandler
  public:
   static int GetKey(bool = true, bool = false);
   static int ReadKey();
-  static ulong GetTick();
+  static ulong GetTick() { return Tick; }
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
  protected:
   static controlvector ControlLoop;
+  static ulong Tick;
 };
 
 #else
@@ -62,12 +63,13 @@ class globalwindowhandler
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
   static void SetInitialized(bool What) { Initialized = What; }
-  static ulong GetTick();
+  static ulong GetTick() { return Tick; }
  private:
   static std::vector<int> KeyBuffer;
   static bool Initialized;
   static bool (*QuitMessageHandler)();
   static controlvector ControlLoop;
+  static ulong Tick;
 #ifdef WIN32
   static bool Active;
   static char KeyboardLayoutName[KL_NAMELENGTH];

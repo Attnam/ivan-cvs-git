@@ -104,7 +104,7 @@ long femath::Rand()
 #pragma warning(disable : 4018)
 #endif
 
-bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(vector2d, vector2d))
+bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(long, long))
 {
   long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
@@ -112,7 +112,7 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(vector2d, v
     {\
       if(!D##PriC)\
 	{\
-	  Proc(vector2d(X1, Y1), vector2d(X1, Y1));\
+	  Proc(X1, Y1);\
 	  return true;\
 	}\
       \
@@ -123,9 +123,21 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(vector2d, v
       X = X1;\
       Y = Y1;\
       \
+      Proc(X, Y);\
+      \
+      if(DD SecCond 0)\
+	{\
+	  SecC SecSign##= 1;\
+	  DD += I2;\
+	}\
+      else\
+	DD += I1;\
+      \
+      PriC PriSign##= 1;\
+      \
       while(PriC PriCond PriC##2)\
 	{\
-	  if(!Proc(vector2d(X, Y), vector2d(X1, Y1)))\
+	  if(!Proc(X, Y))\
 	    return false;\
 	  \
 	  if(DD SecCond 0)\

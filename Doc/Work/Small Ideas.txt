@@ -240,3 +240,4 @@ Chatting shouldn't be possible if you aren't intelligent.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
 Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".
+It should be possible to use SoCM to gear.

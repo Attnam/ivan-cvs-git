@@ -135,9 +135,9 @@ class characterprototype
   ushort GetIndex() const { return Index; }
   const characterdatabase* GetDataBase() const { return &DataBase; }
   const characterprototype* GetBase() const { return Base; }
-  DATABASEVALUE(ushort, Frequency);
-  DATABASEBOOL(CanBeGenerated);
-  DATABASEBOOL(IsAbstract);
+  PROTODATABASEVALUE(ushort, Frequency);
+  PROTODATABASEBOOL(CanBeGenerated);
+  PROTODATABASEBOOL(IsAbstract);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
@@ -354,7 +354,7 @@ class character : public entity, public id
   virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
   virtual characterslot* GetBodyPartSlot(ushort) const;
   virtual bool ConsumeItem(item*);
-  virtual bool CanEat(material*);
+  virtual bool CanEat(material*) const;
   virtual action* GetAction() const { return Action; }
   virtual void SetAction(action* What) { Action = What; }
   virtual void SwitchToDig(item*, vector2d) { }
@@ -396,7 +396,7 @@ class character : public entity, public id
   virtual void AddKoboldFleshConsumeEndMessage() const;
   virtual void AddKoboldFleshHitMessage() const;
   virtual void AddBoneConsumeEndMessage() const;
-  virtual ulong GetTotalWeight() const;
+  //virtual ulong GetTotalWeight() const;
   virtual void AddInfo(felist&) const = 0;
   virtual void PrintInfo() const;
   virtual bodypart* SevereBodyPart(ushort);
@@ -406,7 +406,7 @@ class character : public entity, public id
   virtual void CreateBodyPart(ushort);
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const prototype* GetProtoType() const;
-  virtual const database* GetDataBase() const { return DataBase; }
+  const database* GetDataBase() const { return DataBase; }
   virtual void SetParameters(uchar) { }
 
   DATABASEVALUE(ushort, DefaultArmStrength);
@@ -492,7 +492,7 @@ class character : public entity, public id
   DATABASEVALUE(uchar, AttackStyle);
 
   virtual item* GetLifeSaver() const;
-  virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
   static character* Clone(ushort, bool, bool) { return 0; }
@@ -512,6 +512,13 @@ class character : public entity, public id
   virtual ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
   virtual void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
   virtual bool DamageTypeAffectsInventory(uchar) const;
+  entity* GetMotherEntity() const { return MotherEntity; }
+  void SetMotherEntity(entity* What) { MotherEntity = What; }
+  virtual void EditVolume(long);
+  virtual void EditWeight(long);
+  virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
+  virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, short, uchar);
+  virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
  protected:
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool);
@@ -560,6 +567,10 @@ class character : public entity, public id
   virtual std::string FirstPersonCriticalBiteVerb() const { return "critically bite"; }
   virtual std::string ThirdPersonBiteVerb() const { return "bites"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
+  virtual std::string UnarmedHitNoun() const { return "hit"; }
+  virtual std::string KickNoun() const { return "kick"; }
+  virtual std::string BiteNoun() const { return "attack"; }
+  virtual bool AttackIsBlockable(uchar) const { return true; }
   stack* Stack;
   long NP, AP;
   bool Player;
@@ -580,6 +591,7 @@ class character : public entity, public id
   long BaseExperience[BASEATTRIBUTES];
   static std::string StateDescription[STATES];
   ulong* OriginalBodyPartID;
+  entity* MotherEntity;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

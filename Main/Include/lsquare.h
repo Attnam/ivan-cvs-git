@@ -45,82 +45,84 @@ class lsquare : public square
   friend class level;
   lsquare(level*, vector2d);
   virtual ~lsquare();
-  virtual void FastAddCharacter(character* Guy);
-  virtual void AddCharacter(character* Guy);
+  void FastAddCharacter(character*);
+  virtual void AddCharacter(character*);
   virtual void RemoveCharacter();
-  virtual stack* GetStack() const { return Stack; }
-  virtual void AlterLuminance(vector2d, ushort);
-  virtual void Emitate();
-  virtual void ReEmitate();
-  virtual stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
-  virtual void Clean();
-  virtual bool Open(character*);
-  virtual bool Close(character*);
+  stack* GetStack() const { return Stack; }
+  void AlterLuminance(vector2d, ushort);
+  void Emitate();
+  void ReEmitate();
+  stack* GetSideStack(ushort Index) const { return SideStack[Index]; }
+  void Clean();
+  bool Open(character*);
+  bool Close(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
-  virtual ushort GetLuminance() const;
-  virtual void SignalEmitationIncrease(ushort);
-  virtual void SignalEmitationDecrease(ushort);
-  virtual ushort GetEmitation() const { return Emitation; }
-  virtual void ForceEmitterNoxify();
-  virtual void ForceEmitterEmitation();
-  virtual void Noxify();
-  virtual void NoxifyEmitter(vector2d);
-  virtual uchar CalculateBitMask(vector2d) const;
-  virtual std::string GetEngraved() const { return Engraved; }
-  virtual bool Engrave(const std::string& What) { Engraved = What; return true; }
-  virtual void SetEmitation(ushort What) { Emitation = What; }
-  virtual void UpdateMemorizedDescription(bool = false);
-  virtual void BeKicked(character*, float, float, short, bool);
-  virtual uchar GetDivineMaster() const { return DivineMaster; }
-  virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
-  virtual bool DrawTerrain(bool) const;
-  virtual bool DrawStacks(bool) const;
-  virtual bool DrawCharacters(bool) const;
-  virtual void Draw();
-  virtual void UpdateMemorized();
-  virtual bool CanBeDug() const;
-  virtual bool Dig(character*, item*);
+  void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
+  void SignalEmitationIncrease(ushort);
+  void SignalEmitationDecrease(ushort);
+  ushort GetEmitation() const { return Emitation; }
+  void ForceEmitterNoxify();
+  void ForceEmitterEmitation();
+  void Noxify();
+  void NoxifyEmitter(vector2d);
+  uchar CalculateBitMask(vector2d) const;
+  std::string GetEngraved() const { return Engraved; }
+  bool Engrave(const std::string& What) { Engraved = What; return true; }
+  void SetEmitation(ushort What) { Emitation = What; }
+  void UpdateMemorizedDescription(bool = false);
+  void BeKicked(character*, float, float, short, bool);
+  uchar GetDivineMaster() const { return DivineMaster; }
+  void SetDivineMaster(uchar What) { DivineMaster = What; }
+  bool DrawTerrain(bool) const;
+  bool DrawStacks(bool) const;
+  bool DrawCharacters(bool) const;
+  void Draw();
+  void UpdateMemorized();
+  bool CanBeDug() const;
+  //bool Dig(character*, item*);
   virtual gterrain* GetGTerrain() const;
   virtual oterrain* GetOTerrain() const;
-  virtual glterrain* GetGLTerrain() const { return GLTerrain; }
-  virtual olterrain* GetOLTerrain() const { return OLTerrain; }
-  virtual void ChangeLTerrain(glterrain*, olterrain*);
-  virtual level* GetLevelUnder() const { return (level*)AreaUnder; }
-  virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
-  virtual void ChangeGLTerrain(glterrain*);
-  virtual void ChangeOLTerrain(olterrain*);
-  virtual void SetLTerrain(glterrain*, olterrain*);
-  virtual void SetGLTerrain(glterrain*);
-  virtual void SetOLTerrain(olterrain*);
-  virtual void ApplyScript(squarescript*, room*);
+  glterrain* GetGLTerrain() const { return GLTerrain; }
+  olterrain* GetOLTerrain() const { return OLTerrain; }
+  void ChangeLTerrain(glterrain*, olterrain*);
+  level* GetLevelUnder() const { return (level*)AreaUnder; }
+  void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
+  void ChangeGLTerrain(glterrain*);
+  void ChangeOLTerrain(olterrain*);
+  void SetLTerrain(glterrain*, olterrain*);
+  void SetGLTerrain(glterrain*);
+  void SetOLTerrain(olterrain*);
+  void ApplyScript(squarescript*, room*);
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
-  virtual void MoveCharacter(lsquare*);
-  virtual ushort GetRawLuminance() const;
-  virtual void StepOn(character*, square*);
-  virtual uchar GetRoom() const { return Room; }
-  virtual void SetRoom(uchar What) { Room = What; }
-  virtual void SwapCharacter(lsquare*);
-  virtual void ReceiveVomit(character*);
-  virtual room* GetRoomClass() const;
-  virtual void SetTemporaryEmitation(ushort);
-  virtual ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
-  virtual void ChangeOLTerrainAndUpdateLights(olterrain*);
-  virtual void DrawParticles(ushort, uchar);
-  virtual void PolymorphEverything(character*);
-  virtual void StrikeEverything(character*, const std::string&, short, uchar);
-  virtual fluid* GetFluid() const { return Fluid; }
-  virtual void SetFluid(fluid* What) { Fluid = What; }
-  virtual void RemoveFluid();
-  virtual void HasBeenHitBy(item*, float, uchar, bool);
-  virtual void TeleportEverything(character*);
-  virtual bool DipInto(item*, character*);
-  virtual void DrawCharacterSymbols(vector2d, ushort);
-  virtual bool LockEverything(character*);
-  virtual bool RaiseTheDead(character*);
-  virtual bool TryKey(item*, character*);
+  void MoveCharacter(lsquare*);
+  ushort GetRawLuminance() const;
+  void StepOn(character*, square*);
+  uchar GetRoom() const { return Room; }
+  void SetRoom(uchar What) { Room = What; }
+  void SwapCharacter(lsquare*);
+  void ReceiveVomit(character*);
+  room* GetRoomClass() const;
+  void SetTemporaryEmitation(ushort);
+  ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
+  void ChangeOLTerrainAndUpdateLights(olterrain*);
+  void DrawParticles(ushort, uchar);
+  void PolymorphEverything(character*);
+  void StrikeEverything(character*, const std::string&, short, uchar);
+  fluid* GetFluid() const { return Fluid; }
+  void SetFluid(fluid* What) { Fluid = What; }
+  void RemoveFluid();
+  void HasBeenHitBy(item*, float, uchar, bool);
+  void TeleportEverything(character*);
+  bool DipInto(item*, character*);
+  void DrawCharacterSymbols();
+  bool LockEverything(character*);
+  bool RaiseTheDead(character*);
+  bool TryKey(item*, character*);
+  void SetLastSeen(ulong);
+  ushort GetLuminance() const { return Luminance; }
+  void CalculateLuminance();
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -134,6 +136,7 @@ class lsquare : public square
   uchar Room;
   ushort TemporaryEmitation;
   fluid* Fluid;
+  ushort Luminance;
 };
 
 #endif

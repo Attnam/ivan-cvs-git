@@ -79,7 +79,7 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
+  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos, 16, 16, ushort((configuration::GetContrast() << 8) / 100));
 }
 
 tile igraph::GetTile(graphic_id GI)

@@ -234,7 +234,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, const 
   ulong Size = List.size();
   SaveFile.Write((char*)&Size, sizeof(Size));
 
-  for(std::list<type>::const_iterator i = List.begin(); i != List.end(); ++i)
+  for(typename std::list<type>::const_iterator i = List.begin(); i != List.end(); ++i)
     SaveFile << *i;
 
   return SaveFile;
@@ -246,7 +246,7 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::lis
   SaveFile.Read((char*)&Size, sizeof(Size));
   List.resize(Size, type());
 
-  for(std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
+  for(typename std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
     SaveFile >> *i;
 
   return SaveFile;
@@ -257,7 +257,7 @@ template <class type1, class type2> inline outputfile& operator<<(outputfile& Sa
   ulong Size = Map.size();
   SaveFile.Write((char*)&Size, sizeof(Size));
 
-  for(std::map<ulong, uchar>::const_iterator i = Map.begin(); i != Map.end(); ++i)
+  for(typename std::map<ulong, uchar>::const_iterator i = Map.begin(); i != Map.end(); ++i)
     SaveFile << i->first << i->second;
 
   return SaveFile;

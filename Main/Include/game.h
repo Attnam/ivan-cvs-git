@@ -44,7 +44,9 @@ class game
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static area* GetCurrentArea();
   static level* GetCurrentLevel();
-  static bool LOSHandler(vector2d, vector2d);
+  //static bool LOSHandler(vector2d, vector2d);
+  static bool WorldMapLOSHandler(long, long);
+  static bool LevelLOSHandler(long, long);
   static ushort*** GetLuxTable() { return LuxTable; }
   static ushort* GetLuxTableSize() { return LuxTableSize; }
   static character* GetPlayer() { return Player; }
@@ -68,8 +70,8 @@ class game
   static bool WizardModeActivated() { return WizardMode; }
   static void SeeWholeMap();
   static bool GetSeeWholeMapCheat() { return SeeWholeMapCheat; }
-  static bool EmitationHandler(vector2d, vector2d);
-  static bool NoxifyHandler(vector2d, vector2d);
+  static bool EmitationHandler(long, long);
+  static bool NoxifyHandler(long, long);
   static bool GetGoThroughWallsCheat() { return GoThroughWallsCheat; }
   static void GoThroughWalls() { GoThroughWallsCheat = !GoThroughWallsCheat; }
   static void UpdateCameraXWithPos(ushort);
@@ -86,7 +88,7 @@ class game
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(int);
   static std::string SaveName(const std::string& = "");
-  static bool EyeHandler(vector2d, vector2d);
+  static bool EyeHandler(long, long);
   static long GodScore();
   static void ShowLevelMessage();
   static float Difficulty();
@@ -147,7 +149,7 @@ class game
   static void CreateGods();
   static vector2d GetScreenSize() { return ScreenSize; }
   static void SetScreenSize(vector2d What) { ScreenSize = What; }
-  static vector2d CalculateScreenCoordinates(vector2d);
+  static vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
   //static uchar GetDirectionIndexForKey(int);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
@@ -171,6 +173,8 @@ class game
   static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);
+  static void SetCurrentEmitterEmitation(ushort What) { CurrentEmitterEmitation = What; }
+  static void SetCurrentEmitterPos(vector2d);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
@@ -210,6 +214,10 @@ class game
   static vector2d CursorPos;
   static bool Zoom;
   static std::string LockDescription[];
+  static ushort CurrentEmitterEmitation;
+  static long CurrentEmitterPosX;
+  static long CurrentEmitterPosY;
+  static vector2d CurrentEmitterPos;
 };
 
 #endif

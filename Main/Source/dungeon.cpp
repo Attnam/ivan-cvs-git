@@ -84,14 +84,14 @@ void dungeon::PrepareLevel(ushort Index)
       if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 
-      game::GetCurrentArea()->SendNewDrawRequest();
+      //game::UpdateCamera();
+      //game::GetCurrentArea()->SendNewDrawRequest();
     }
 }
 
 void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteAfterwards)
 {
   outputfile SaveFile(SaveName + "." + Index + Number);
-
   SaveFile << Level[Number];
 
   if(DeleteAfterwards)
@@ -104,9 +104,7 @@ void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteA
 void dungeon::LoadLevel(const std::string& SaveName, ushort Number)
 {
   inputfile SaveFile(SaveName + "." + Index + Number);
-
-  Level[Number] = new level;
-  Level[Number]->Load(SaveFile);
+  SaveFile >> Level[Number];
   Level[Number]->SetLevelScript(GetLevelScript(Number));
 }
 
