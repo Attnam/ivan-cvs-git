@@ -2343,7 +2343,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
 
 void character::StateAutoDeactivation()
 {
-	if(!StateIsActivated(EATING) && !StateIsActivated(RESTING))
+	if(!StateIsActivated(EATING) && !StateIsActivated(RESTING) && !StateIsActivated(DIGGING))
 		return;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentArea()->GetXSize() - 1, game::GetCurrentArea()->GetYSize() - 1, LOSRange(),

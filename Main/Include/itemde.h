@@ -44,7 +44,7 @@ class ITEM
 (
 	holybananaofliukasvipro,
 	banana,
-	InitMaterials(2, new bananapeal(40), new bananaflesh(300)),
+	InitMaterials(2, new bananapeal, new bananaflesh),
 	{
 		SetSize(30);
 	},
@@ -66,7 +66,7 @@ class ITEM
 (
 	lamp,
 	item,
-	InitMaterials(new glass(850)),
+	InitMaterials(new glass),
 	{
 		SetSize(30);
 	},
@@ -90,7 +90,7 @@ class ITEM
 (
 	can,
 	item,
-	InitMaterials(2, new iron(50), rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
+	InitMaterials(2, new iron, rand() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},
@@ -115,7 +115,7 @@ class ITEM
 (
 	lump,
 	item,
-	InitMaterials(rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
+	InitMaterials(rand() % 2 ? (material*)new bananaflesh : (material*)new schoolfood),
 	{
 		SetSize(10);
 	},
@@ -142,7 +142,7 @@ class ITEM
 (
 	sword,
 	meleeweapon,
-	InitMaterials(3, new iron(2500), new iron(100), 0),
+	InitMaterials(3, new iron, new iron, 0),
 	{
 		SetSize(150);
 	},
@@ -163,7 +163,7 @@ class ITEM
 (
 	twohandedsword,
 	sword,
-	InitMaterials(3, new iron(5500), new iron(250), 0),
+	InitMaterials(3, new iron, new iron, 0),
 	{
 		SetSize(175);
 	},
@@ -183,7 +183,7 @@ class ITEM
 (
 	curvedtwohandedsword,
 	twohandedsword,
-	InitMaterials(3, new iron(5500), new iron(250), 0),
+	InitMaterials(3, new iron, new iron, 0),
 	{
 		SetSize(175);
 	},
@@ -202,7 +202,7 @@ class ITEM
 (
 	valpurijustifier,
 	sword,
-	InitMaterials(3, new valpurium(6500), new valpurium(300), 0),
+	InitMaterials(3, new valpurium, new valpurium, 0),
 	{
 		SetSize(200);
 	},
@@ -225,7 +225,7 @@ class ITEM
 (
 	axe,
 	meleeweapon,
-	InitMaterials(3, new iron(450), new iron(900), 0),
+	InitMaterials(3, new iron, new iron, 0),
 	{
 		SetSize(125);
 	},
@@ -246,7 +246,7 @@ class ITEM
 (
 	pickaxe,
 	axe,
-	InitMaterials(3, new iron(1000), new wood(1050), 0),
+	InitMaterials(3, new iron, new wood, 0),
 	{
 		SetSize(150);
 	},
@@ -267,7 +267,7 @@ class ITEM
 (
 	spear,
 	meleeweapon,
-	InitMaterials(3, new iron(150), new wood(1500), 0),
+	InitMaterials(3, new iron, new wood, 0),
 	{
 		SetSize(200);
 	},
@@ -299,7 +299,7 @@ class ITEM
 (
 	platemail,
 	torsoarmor,
-	InitMaterials(new iron(4000)),
+	InitMaterials(new iron),
 	{
 		SetSize(75);
 	},
@@ -319,7 +319,7 @@ class ITEM
 (
 	chainmail,
 	torsoarmor,
-	InitMaterials(new iron(2000)),
+	InitMaterials(new iron),
 	{
 		SetSize(75);
 	},
@@ -344,7 +344,7 @@ class ITEM
 (
 	maakotkashirt,
 	shirt,
-	InitMaterials(new cloth(1000)),
+	InitMaterials(new cloth),
 	{
 		SetSize(60);
 	},
@@ -367,7 +367,7 @@ class ITEM
 (
 	corpse,
 	item,
-	InitMaterials(new humanflesh(60000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(0);
 	},
@@ -390,7 +390,7 @@ class ITEM
 (
 	potion,
 	item,
-	InitMaterials(2, new glass(50), rand() % 3 ? 0 : new omleurine(1500)),
+	InitMaterials(2, new glass, rand() % 3 ? 0 : new omleurine),
 	{
 		SetSize(30);
 	},
@@ -416,7 +416,7 @@ class ITEM
 (
 	bananapeals,
 	item,
-	InitMaterials(new bananapeal(15)),
+	InitMaterials(new bananapeal),
 	{
 		SetSize(20);
 	},
@@ -438,7 +438,7 @@ class ITEM
 (
 	brokenbottle,
 	item,
-	InitMaterials(new glass(50)),
+	InitMaterials(new glass),
 	{
 		SetSize(10);
 	},
@@ -468,7 +468,7 @@ class ITEM
 (
 	scrollofcreatemonster,
 	scroll,
-	InitMaterials(new parchment(200)),
+	InitMaterials(new parchment),
 	{
 		SetSize(30);
 	},
@@ -486,7 +486,7 @@ class ITEM
 (
 	scrollofteleport,
 	scroll,
-	InitMaterials(new parchment(200)),
+	InitMaterials(new parchment),
 	{
 		SetSize(30);
 	},
@@ -504,7 +504,7 @@ class ITEM
 (
 	head,
 	item,
-	InitMaterials(new humanflesh(2000)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(0);
 	},
@@ -524,7 +524,7 @@ class ITEM
 (
 	headofelpuri,
 	head,
-	InitMaterials(new elpuriflesh(25000)),
+	InitMaterials(new elpuriflesh),
 	{
 		SetSize(60);
 	},
@@ -545,7 +545,7 @@ class ITEM
 (
 	nut,
 	item,
-	InitMaterials(new humanflesh(15)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(0);
 	},
@@ -564,7 +564,7 @@ class ITEM
 (
 	leftnutofperttu,
 	nut,
-	InitMaterials(new humanflesh(150)),
+	InitMaterials(new humanflesh),
 	{
 		SetSize(10);
 	},
@@ -585,7 +585,7 @@ class ITEM
 (
 	abone,
 	item,
-	InitMaterials(new bone(2000)),
+	InitMaterials(new bone),
 	{
 		SetSize(50);
 	},
@@ -609,7 +609,7 @@ class ITEM
 (
 	poleaxe,
 	axe,
-	InitMaterials(3, new iron(1500), new wood(3000), 0),
+	InitMaterials(3, new iron, new wood, 0),
 	{
 		SetSize(225);
 	},
@@ -628,7 +628,7 @@ class ITEM
 (
 	spikedmace,
 	meleeweapon,
-	InitMaterials(3, new iron(5000), new wood(3000), 0),
+	InitMaterials(3, new iron, new wood, 0),
 	{
 		SetSize(150);
 	},
@@ -649,7 +649,7 @@ class ITEM
 (
 	htaedfoneercseulb,
 	spikedmace,
-	InitMaterials(3, new mithril(15000), new iron(8000), new darkfrogflesh(1000)),
+	InitMaterials(3, new mithril, new iron, new darkfrogflesh),
 	{
 		SetSize(200);
 	},
@@ -672,7 +672,7 @@ class ITEM
 (
 	loaf,
 	item,
-	InitMaterials(rand() % 2 ? (material*)new pork(1000) : (material*)new beef(1000)),
+	InitMaterials(rand() % 2 ? (material*)new pork : (material*)new beef),
 	{
 		SetSize(40);
 	},
@@ -695,7 +695,7 @@ class ITEM
 (
 	scrollofwishing,
 	scroll,
-	InitMaterials(new parchment(200)),
+	InitMaterials(new parchment),
 	{
 		SetSize(30);
 	},
@@ -714,7 +714,7 @@ class ITEM
 (
 	cheapcopyofleftnutofperttu,
 	nut,
-	InitMaterials(new glass(150)),
+	InitMaterials(new glass),
 	{
 		SetSize(10);
 	},
@@ -747,7 +747,7 @@ class ITEM
 (
 	wandofpolymorph,
 	wand,
-	InitMaterials(new glass(100)),
+	InitMaterials(new glass),
 	{
 		SetSize(10);
 		SetCharge(2 + rand() % 4);
@@ -766,7 +766,7 @@ class ITEM
 (
 	arrow,
 	item,
-	InitMaterials(2, new wood(100), new iron(4)),
+	InitMaterials(2, new wood, new iron),
 	{
 		SetSize(100);
 	},
@@ -785,7 +785,7 @@ class ITEM
 (
 	headofennerbeast,
 	head,
-	InitMaterials(new ennerbeastflesh(7000)),
+	InitMaterials(new ennerbeastflesh),
 	{
 		SetSize(50);
 	},
@@ -804,7 +804,7 @@ class ITEM
 (
 	brokenlamp,
 	item,
-	InitMaterials(new glass(70)),
+	InitMaterials(new glass),
 	{
 		SetSize(15);
 	},
@@ -824,7 +824,7 @@ class ITEM
 (
 	scrollofchangematerial,
 	scroll,
-	InitMaterials(new parchment(205)),
+	InitMaterials(new parchment),
 	{
 		SetSize(30);
 	},
@@ -842,7 +842,7 @@ class ITEM
 (
 	avatarofvalpuri,
 	item,
-	InitMaterials(1, new gold(200)),
+	InitMaterials(1, new gold),
 	{
 		SetSize(10);
 	},
@@ -863,7 +863,7 @@ class ITEM
 (
 	wandofstriking,
 	wand,
-	InitMaterials(new gold(100)),
+	InitMaterials(new gold),
 	{
 		SetSize(12);
 		SetCharge(1 + rand() % 3);
@@ -882,7 +882,7 @@ class ITEM
 (
 	brokenplatemail,
 	item,
-	InitMaterials(new iron(4000)),
+	InitMaterials(new iron),
 	{
 		SetSize(70);
 	},
