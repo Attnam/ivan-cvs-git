@@ -1142,12 +1142,12 @@ void lsquare::SpillFluid(character* Spiller, material* Liquid, ushort HitPercent
 {
   SpillFluid(1, Liquid->GetColor(), 5, 60);
 
-  if(GetCharacter() && HitPercent + RAND() % 100 > 99)
+  if(GetCharacter() && HitPercent > RAND() % 100)
     {
       if(Spiller)
 	Spiller->Hostility(GetCharacter());
 
-      GetCharacter()->ReceiveFluidSpill(Liquid, HitPercent);
+      GetCharacter()->ReceiveFluidSpill(Liquid, RAND() % HitPercent + 1);
     }
 
   GetStack()->ReceiveFluidSpill(Liquid);

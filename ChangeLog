@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Shattering bottles with poison cause less damage to player.  
+	* Healing potions give always one random missing bodypart.
+	
 January 23 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Eating in cathedral and shop prohibited again (I found or made and found this bug)

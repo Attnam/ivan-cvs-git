@@ -2928,17 +2928,16 @@ void character::ReceiveHeal(long Amount)
   Amount -= c * 15;
 
   if(Amount >= 250)
-    for(c = 0; c < GetBodyParts(); ++c)
-      if(!GetBodyPart(c) && CanCreateBodyPart(c) && RAND() & 1)
-	{
-	  if(IsPlayer())
-	    ADD_MESSAGE("You grow a new %s!", GetBodyPartName(c).c_str());
-	  else if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s grows a new %s!", CHAR_NAME(DEFINITE), GetBodyPartName(c).c_str());
-
-	  CreateBodyPart(c)->SetHP(1);
-	  return;
-	}
+    {
+      bodypart* NewBodyPart = GenerateRandomBodyPart();
+      if(!NewBodyPart)
+	return;
+      NewBodyPart->SetHP(1);
+      if(IsPlayer())
+	ADD_MESSAGE("You grow a new %s.", NewBodyPart->GetBodyPartName().c_str()); 
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s grows a new %s.", CHAR_NAME(DEFINITE), NewBodyPart->GetBodyPartName().c_str());
+    }
 }
 
 void character::AddHealingLiquidConsumeEndMessage() const
