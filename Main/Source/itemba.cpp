@@ -193,8 +193,9 @@ bool item::Zap(character*, vector2d, uchar)
 
 bool item::Polymorph(stack* CurrentStack)
 {
-	CurrentStack->AddItem(protosystem::BalancedCreateItem());
-	CurrentStack->RemoveItem(CurrentStack->SearchItem(this));
+	if(rand() % 3)
+		CurrentStack->AddItem(protosystem::BalancedCreateItem());
+
 	SetExists(false);
 	return true;
 }

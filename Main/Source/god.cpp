@@ -543,7 +543,6 @@ void mellis::PrayGoodEffect()
 			Cont = false;
 
 			for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
-			{
 				if(game::GetPlayer()->GetStack()->GetItem(c))
 				{
 					NewVersion = game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion();
@@ -562,10 +561,11 @@ void mellis::PrayGoodEffect()
 						break;
 					}
 				}
-			}
 		}
 	}
-	if(!Success) ADD_MESSAGE("You have no good items for trade.");
+
+	if(!Success)
+		ADD_MESSAGE("You have no good items for trade.");
 }
 
 void mellis::PrayBadEffect()
@@ -860,7 +860,8 @@ void consummo::AddPriestMessage() const
 
 void god::PlayerVomitedOnAltar()
 {
-	ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction and the vomit lands on your face.");
+	ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
+	ADD_MESSAGE("The vomit lands on your face.");
 	AdjustRelation(-200);
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - rand() % 2);
 	game::GetPlayer()->CheckDeath("chocked to death by own vomit");
@@ -870,4 +871,13 @@ void scabies::PlayerVomitedOnAltar()
 {
 	ADD_MESSAGE("%s feels that you are indeed her follower.");
 	AdjustRelation(1);
+}
+
+void valpuri::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"%s the Great Frog is the highest of all gods.", GOD_NAME);
+	ADD_MESSAGE("In the ancient times the World and its deities were born from His eggs.");
+	ADD_MESSAGE("That's why this cathedral and the whole city of Attnam is dedicated to His worship.\"");
+	ADD_MESSAGE("\"In thine prayers thou must understand He is a busy god who knows His importance.");
+	ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
 }

@@ -2,6 +2,7 @@
 #include "save.h"
 #include "lterrade.h"
 #include "error.h"
+#include "charba.h"
 
 room::room(bool SetStats) : Master(0)
 {
@@ -30,4 +31,9 @@ void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
 
 	if(Terrain->GetType() == altar::StaticType())
 		((altar*)Terrain)->SetOwnerGod(DivineOwner);
+}
+
+void room::HandleInstantiatedCharacter(character* Character)
+{
+	Character->SetHomeRoom(Index);
 }

@@ -249,6 +249,7 @@ public:
 	virtual bool HasInfraVision() const { return false; }
 	virtual bool SetAutosaveInterval();
 	virtual uchar CriticalModifier() const { return 20; }
+	virtual std::string StandVerb() const { return "standing"; }
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

@@ -36,6 +36,7 @@ public:
 	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
 	virtual bool CanBeWished() const { return false; }
 	virtual ulong RawPrice() const { return GetVolume() << 2; }
+	virtual bool CanBeDigged() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "valpurium"; }
 );
@@ -332,7 +333,7 @@ public:
 	virtual ushort GetDensity() const				{ return 100; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 128); }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 160); }
 protected:
 	virtual std::string NameStem() const	{ return "cloth"; }
 );
@@ -448,6 +449,7 @@ public:
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
 	virtual ulong RawPrice() const { return GetVolume() >> 1; }
+	virtual bool CanBeDigged() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "mithril"; }
 );
@@ -513,7 +515,7 @@ public:
 	virtual ushort OfferValue() const				{ return 50; }
 	virtual uchar Alignment() const					{ return NEUTRAL; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(180, 180, 0); }
 	virtual bool CanBeWished() const { return false; }
 	virtual ulong RawPrice() const { return GetVolume() << 1; }
 protected:
@@ -631,9 +633,26 @@ class MATERIAL
 	expensivefabric,
 	cloth,
 public:
-	virtual ushort GetColor() const { return MAKE_RGB(128, 0, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(192, 0, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "expensive fabric"; }
+	virtual std::string Article() const { return "an"; }
+);
+
+class MATERIAL
+(
+	water,
+	material,
+public:
+	virtual ushort GetHitValue() const 				{ return 1; }
+	virtual uchar GetConsumeType() const				{ return LIQUID; }
+	virtual ushort GetDensity() const				{ return 1000; }
+	virtual ushort OfferValue() const				{ return 1; }
+	virtual short NutritionValue() const			{ return 10; }
+	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 192); }
+	virtual bool CanBeWished() const { return false; }
+protected:
+	virtual std::string NameStem() const	{ return "water"; }
 );
 	
 #endif

@@ -1,1 +1,3 @@
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
+Vomit on altar msg is too long.
+Parchment is too white.

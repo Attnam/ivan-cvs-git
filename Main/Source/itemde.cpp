@@ -203,16 +203,25 @@ bool pickaxe::Apply(character* User, stack*)
 	vector2d Temp;
 	
 	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector2d(0,0))
-		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->CanBeDigged(User, this))
-		{
-			User->SetSquareBeingDigged(User->GetPos() + Temp);
-			User->SetOldWieldedItem(User->GetWielded());
-			User->SetWielded(this);
-			User->ActivateState(DIGGING);
-			User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? (200 - (User->GetStrength() << 2)) : 2);
-			User->SetStrengthExperience(User->GetStrengthExperience() + 50);
-			return true;
-		}	
+	{
+		levelsquare* Square = game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp);
+
+		if(Square->CanBeDigged(User, this))
+			if(Square->GetOverLevelTerrain()->GetMaterial(0)->CanBeDigged())
+			{
+				User->SetSquareBeingDigged(User->GetPos() + Temp);
+				User->SetOldWieldedItem(User->GetWielded());
+				User->SetWielded(this);
+				User->ActivateState(DIGGING);
+				User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? (200 - (User->GetStrength() << 2)) : 2);
+				User->SetStrengthExperience(User->GetStrengthExperience() + 50);
+				return true;
+			}
+			else
+				ADD_MESSAGE("%s is too hard to dig.", Square->GetOverLevelTerrain()->CNAME(DEFINITE));
+		else
+			ADD_MESSAGE(Square->GetOverLevelTerrain()->DigMessage().c_str());
+	}
 
 	return false;
 }

@@ -122,7 +122,7 @@ public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual bool CanBeOpened() const { return !GetIsWalkable(); }
-	virtual std::string DigMessage() const { return "The door is too hard to dig through."; }
+	virtual std::string DigMessage() const { return "The door is too hard to dig."; }
 	virtual void Kick(ushort, bool, uchar);
 	virtual void SetIsOpen(bool What) { IsOpen = What; }
 	virtual void Save(outputfile&) const;
@@ -209,7 +209,6 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
-	virtual bool CanBeDigged() const { return false; }
 	virtual std::string DigMessage() const { return "The throne resists."; }
 	virtual void SitOn(character*);
 protected:
@@ -225,7 +224,10 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
+	virtual uchar OKVisualEffects() const { return MIRROR; }
+	virtual bool CanBeDigged() const { return true; }
 	virtual std::string DigMessage() const { return "You chop the tree down."; }
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 protected:
 	virtual std::string NameSingular() const				{ return "pine"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(16, 320); }
@@ -239,7 +241,10 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
+	virtual uchar OKVisualEffects() const { return MIRROR; }
+	virtual bool CanBeDigged() const { return true; }
 	virtual std::string DigMessage() const { return "You chop the tree down."; }
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 protected:
 	virtual std::string NameSingular() const				{ return "spruce"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(16, 352); }
@@ -247,15 +252,18 @@ protected:
 
 class OVERLEVELTERRAIN
 (
-	birch,
+	linden,
 	overlevelterrain,
 	InitMaterials(2, new leaf, new wood),
 	{
 	},
 public:
+	virtual uchar OKVisualEffects() const { return MIRROR; }
+	virtual bool CanBeDigged() const { return true; }
 	virtual std::string DigMessage() const { return "You chop the tree down."; }
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 protected:
-	virtual std::string NameSingular() const				{ return "birch"; }
+	virtual std::string NameSingular() const				{ return "lovely linden"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(32, 336); }
 );
 
@@ -267,11 +275,55 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
-	virtual bool CanBeDigged() const { return false; }
 	virtual std::string DigMessage() const { return "You can't force yourself to ruin this wonderful carpet."; }
 protected:
 	virtual std::string NameSingular() const				{ return "carpet"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 272); }
+);
+
+class OVERLEVELTERRAIN
+(
+	couch,
+	overlevelterrain,
+	InitMaterials(2, new expensivefabric, new gold),
+	{
+	},
+public:
+	virtual std::string DigMessage() const { return "The couch resists."; }
+	virtual void SitOn(character*);
+protected:
+	virtual std::string NameSingular() const				{ return "couch"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 400); }
+);
+
+class OVERLEVELTERRAIN
+(
+	pool,
+	overlevelterrain,
+	InitMaterials(3, new stone, new marble, new water),
+	{
+	},
+public:
+	virtual std::string DigMessage() const { return "The water splashes a bit."; }
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+	virtual void SitOn(character*);
+protected:
+	virtual std::string NameSingular() const				{ return "pool"; }
+	virtual vector2d GetBitmapPos() const					{ return vector2d(16, 304); }
+);
+
+class GROUNDLEVELTERRAIN
+(
+	tilefloor,
+	groundlevelterrain,
+	InitMaterials(2, new stone, new marble),
+	{
+	},
+public:
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+protected:
+	virtual std::string NameSingular() const				{ return "tile floor"; }
+	virtual vector2d GetBitmapPos() const						{ return vector2d(0, 304); }
 );
 
 #endif

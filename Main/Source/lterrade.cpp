@@ -368,3 +368,13 @@ std::string door::Name(uchar Case) const
 			else
 				return GetMaterial(0)->Name()  + " " + NamePlural();
 }
+
+void couch::SitOn(character*)
+{
+	ADD_MESSAGE("The couch is extremely soft and confortable. You relax well.");
+}
+
+void pool::SitOn(character*)
+{
+	ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
+}

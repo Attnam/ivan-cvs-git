@@ -66,7 +66,7 @@ public:
 	virtual bool DrawCharacters() const;
 	virtual void Draw();
 	virtual void UpdateMemorized();
-	virtual char CanBeDigged(character*, item*) const;
+	virtual bool CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids();
 	virtual void SetGroundLevelTerrain(groundlevelterrain*);

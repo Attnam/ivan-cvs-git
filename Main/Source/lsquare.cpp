@@ -773,36 +773,27 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 
 bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early prototype. Probably should include more checking with levelterrains etc
 {
-	char Result = CanBeDigged(DiggerCharacter, DiggerItem);
+	ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
 
-	if(Result != 2)
-		if(DiggerCharacter->GetIsPlayer())
-			ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
-		else 
-			Result = false;
-
-	if(Result == 1)
-	{
-		ushort Emit = GetOverLevelTerrain()->GetEmitation();
-		ChangeOverLevelTerrain(new empty);
-		SignalEmitationDecrease(Emit);
-		ForceEmitterEmitation();
-		GetLevelUnder()->UpdateLOS();
-	}
+	ushort Emit = GetOverLevelTerrain()->GetEmitation();
+	ChangeOverLevelTerrain(new empty);
+	SignalEmitationDecrease(Emit);
+	ForceEmitterEmitation();
+	GetLevelUnder()->UpdateLOS();
 
 	for(uchar c = 0; c < 4; ++c)
 		for(uchar x = 0; x < GetSideStack(c)->GetItems(); ++x)
 			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
 
-	return Result ? true : false;
+	return true;
 }
 
-char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
+bool levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
 {
 	if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1) && !*GetLevelUnder()->GetLevelScript()->GetOnGround())
 	{
 		ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
-		return 0;
+		return false;
 	}
 
 	return GetOverLevelTerrain()->CanBeDigged();

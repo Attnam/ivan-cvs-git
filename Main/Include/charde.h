@@ -390,6 +390,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 277500; else return 0; }
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual void BeTalkedTo(character*);
+	virtual ushort CalculateArmorModifier() const RET(10)
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
 	virtual vector2d GetBitmapPos() const RETV(64,0)
@@ -416,6 +417,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual bool HasInfraVision() const { return true; }
+	virtual std::string StandVerb() const { return "floating"; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(48,0)
 	virtual std::string NameSingular() const RET("pure mass of Bill's will")
@@ -486,6 +488,8 @@ class ABSTRACT_CHARACTER
 (
 	mommo,
 	character,
+public:
+	virtual std::string StandVerb() const { return "bubbling"; }
 protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBrownSlimeVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBrownSlimeVerb(Critical))
@@ -792,11 +796,13 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
+	virtual void GetAICommand() {}
+	virtual std::string StandVerb() const { return "swimming"; }
 protected:
 	virtual std::string NameSingular() const RET("female dolphin in season")
 	virtual float GetMeleeStrength() const RET(1000)
 	virtual vector2d GetBitmapPos() const RETV(320,0)
-	virtual std::string TalkVerb() const { return "is silent"; }
+	virtual std::string TalkVerb() const { return "peeps passionately to you"; }
 );
 
 class CHARACTER

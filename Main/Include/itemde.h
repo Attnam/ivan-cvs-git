@@ -49,6 +49,7 @@ public:
 	virtual long Score() const RET(250)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 400; case 1: return 1500; default: return 0; } }
 	virtual ulong Price() const { return 1000; }
+	virtual bool Polymorph(stack*) { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -223,6 +224,7 @@ public:
 	virtual uchar GetWeaponCategory() const { return LARGE_SWORDS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 6700; case 1: return 300; default: return 0; } }
 	virtual bool IsMaterialChangeable() const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(400)
 );
@@ -365,6 +367,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 	virtual bool IsMaterialChangeable() const { return false; }
 	virtual bool Consumable(character*) const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 );
 
 class ITEM
@@ -551,6 +554,7 @@ public:
 	virtual bool Destroyable() const { return false; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 25000; default: return 0; } }
 	virtual bool Consumable(character*) const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 );
 
 class ITEM
@@ -591,6 +595,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual ushort GetEmitation() const RET(333)
 	virtual bool Consumable(character*) const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 );
 
 class ITEM
@@ -670,6 +675,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 12000; case 1: return 6000; case 2: return 2500; default: return 0; } }
 	virtual bool IsMaterialChangeable() const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -863,6 +869,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,112))
 	virtual bool IsMaterialChangeable() const { return false; }
 	virtual bool Consumable(character*) const { return false; }
+	virtual bool Polymorph(stack*) { return false; }
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );

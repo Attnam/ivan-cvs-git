@@ -110,7 +110,7 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 		else
 			break;
 
-	if(Index = protocontainer<type>::SearchCodeName(Word))
+	if((Index = protocontainer<type>::SearchCodeName(Word)) || Word == "0")
 	{
 		if(!ContentType)
 			ContentType = new ushort;
@@ -297,12 +297,20 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 
 			for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 			{
+				/* This may cause a memory leak if room's ReCalculate == true!!! */
+
 				contentscript<type>* ContentScript = new contentscript<type>;
 
 				ContentScript->SetValueMap(ValueMap);
 				ContentScript->ReadFrom(SaveFile);
 
-				SymbolMap[Word[0]] = ContentScript;
+				if(*ContentScript->GetContentType())
+					SymbolMap[Word[0]] = ContentScript;
+				else
+				{
+					SymbolMap[Word[0]] = 0;
+					delete ContentScript;
+				}
 			}
 
 			continue;

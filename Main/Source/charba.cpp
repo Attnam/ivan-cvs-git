@@ -46,7 +46,7 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
 	if(GetIsPlayer())
 		ADD_MESSAGE(Pointer);
 
-	ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 20000);
+	ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 50000);
 
 	SetHP(HP - Damage);
 	GetStack()->ReceiveSound(ScreamStrength);
@@ -121,7 +121,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 	if(!(rand() % Enemy->CriticalModifier()))
 	{
-		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 3 ? 2 : 1);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2500000) + (rand() % 3 ? 2 : 1);
 
 		Enemy->AddHitMessage(this,true);
 
@@ -148,7 +148,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 	if(rand() % ushort(100 + Enemy->GetToHitValue() / GetDodgeValue() * (100 + Success)) >= 100)
 	{
-		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 2000000) + (rand() % 3 ? 1 : 0);
+		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 5000000) + (rand() % 3 ? 1 : 0);
 
 		if(!Damage)
 		{
@@ -975,7 +975,6 @@ void character::Regenerate(ushort Turns)
 bool character::WearArmor()
 {
 	ADD_MESSAGE("This monster type can't use armor.");
-
 	return false;
 }
 
@@ -985,13 +984,13 @@ void character::AddBlockMessage(character* Enemy) const
 	std::string EnemyDescription = Enemy->GetLevelSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
 
 	if(Enemy->GetIsPlayer())
-		ADD_MESSAGE("You block %s!", ThisDescription.c_str());
+		ADD_MESSAGE("%s fails to hurt you!", ThisDescription.c_str());
 	else
 		if(GetIsPlayer())
-			ADD_MESSAGE("%s blocks you!", EnemyDescription.c_str());
+			ADD_MESSAGE("You fail to hurt %s!", EnemyDescription.c_str());
 		else
 			if(GetLevelSquareUnder()->CanBeSeen() || Enemy->GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s blocks %s!", EnemyDescription.c_str(), ThisDescription.c_str());
+				ADD_MESSAGE("%s fails to hurt %s!", ThisDescription.c_str(), EnemyDescription.c_str());
 }
 
 void character::AddDodgeMessage(character* Enemy) const
@@ -1645,10 +1644,10 @@ bool character::Look()
 
 			if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
 				if(Character->GetIsPlayer())
-					ADD_MESSAGE("You are standing here.", game::PersonalPronoun(Character->GetSex()));
+					ADD_MESSAGE("You are %s here.", Character->StandVerb().c_str());
 				else
 				{
-					ADD_MESSAGE("%s is standing here.", Character->CNAME(INDEFINITE));
+					ADD_MESSAGE("%s is %s here.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
 
 					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
 						ADD_MESSAGE("%s is tame.", game::PersonalPronoun(Character->GetSex()));
@@ -2074,7 +2073,7 @@ bool character::ThrowItem(uchar Direction, item* ToBeThrown)
 
 void character::HasBeenHitByItem(item* Thingy, float Speed)
 {
-	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 2000000000) + (rand() % 5 ? 1 : 0);
+	ushort Damage = ushort(Thingy->GetWeaponStrength() * Thingy->GetWeight() * CalculateArmorModifier() * sqrt(Speed) / 5000000000) + (rand() % 5 ? 1 : 0);
 
 	SetHP(GetHP() - Damage);
 
@@ -2313,7 +2312,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 
 			FallTo(GetPos() + game::GetMoveVector(Direction), ShowOnScreen);
 
-			ushort Damage = rand() % (KickStrength / 5);
+			ushort Damage = rand() % (KickStrength / 10);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);
@@ -2331,7 +2330,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 					ADD_MESSAGE("The kick hits %s.", CNAME(DEFINITE));
 			}
 
-			ushort Damage = rand() % (KickStrength / 7);
+			ushort Damage = rand() % (KickStrength / 15);
 
 			if(ShowOnScreen && game::GetWizardMode())
 				ADD_MESSAGE("(damage: %d)", Damage);
@@ -2389,9 +2388,6 @@ void character::StandIdleAI()
 	SeekLeader();
 
 	if(CheckForEnemies())
-		return;
-
-	if(CheckForDoors())
 		return;
 
 	CheckForUsefulItemsOnGround();
@@ -2588,7 +2584,7 @@ void character::StruckByWandOfStriking()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - 20 - rand() % 21);
+	SetHP(GetHP() - 20 - rand() % 11);
 
 	CheckDeath("killed by a wand of striking");
 }

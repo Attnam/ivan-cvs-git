@@ -37,8 +37,8 @@ bool attnam::GoDown(character* Who) const
 
 	if(Who->HasMaakotkaShirt() && game::GetPerttu() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPerttu()->GetStoryState() < 3)
 	{
-		game::GetCurrentLevel()->GetSquare(vector2d(23, 36))->KickAnyoneStandingHereAway();
-		game::GetPerttu()->Move(vector2d(23, 36), true);
+		game::GetCurrentLevel()->GetSquare(vector2d(30, 52))->KickAnyoneStandingHereAway();
+		game::GetPerttu()->Move(vector2d(30, 52), true);
 		game::GetPerttu()->SetTeam(game::GetTeam(3));
 		game::GetPerttu()->SetStoryState(3);
 	}

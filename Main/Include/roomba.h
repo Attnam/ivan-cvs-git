@@ -25,7 +25,7 @@ public:
 	virtual void SetPos(vector2d What) { Pos = What; }
 	virtual vector2d GetSize() const { return Size; }
 	virtual void SetSize(vector2d What) { Size = What; }
-	virtual void HandleInstantiatedCharacter(character*) {}
+	virtual void HandleInstantiatedCharacter(character*);
 	virtual void HandleInstantiatedOverLevelTerrain(overlevelterrain*);
 	virtual void SetIndex(uchar What) { Index = What; }
 	virtual uchar GetIndex() const { return Index; }

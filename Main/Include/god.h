@@ -76,6 +76,7 @@ public:
 	virtual uchar Alignment() const { return ALPP; }
 	virtual void Pray();
 	virtual uchar BasicAlignment() const { return GOOD; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();

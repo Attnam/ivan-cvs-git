@@ -488,7 +488,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][y]->SetRoom(RoomClass->GetIndex());
 		}
 
-	if(*RoomScript->GetAltarPossible() && !(rand() % 4))
+	if(*RoomScript->GetAltarPossible() && !(rand() % 3))
 	{
 		vector2d Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
 		Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(new altar);
@@ -608,6 +608,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 						Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
 					Map[XPos + x][YPos + y]->FastAddCharacter(Char);
+					RoomClass->HandleInstantiatedCharacter(Char);
 				}
 	}
 
@@ -647,7 +648,11 @@ bool level::MakeRoom(roomscript* RoomScript)
 		for(ushort x = 0; x < RoomScript->GetOverTerrainMap()->GetSize()->X; ++x)
 			for(ushort y = 0; y < RoomScript->GetOverTerrainMap()->GetSize()->Y; ++y)
 				if(OverTerrainScript = RoomScript->GetOverTerrainMap()->GetContentScript(x, y))
-					Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(OverTerrainScript->Instantiate());
+				{
+					overlevelterrain* Terrain = OverTerrainScript->Instantiate();
+					Map[XPos + x][YPos + y]->ChangeOverLevelTerrain(Terrain);
+					RoomClass->HandleInstantiatedOverLevelTerrain(Terrain);
+				}
 	}
 
 	return true;
@@ -668,7 +673,7 @@ void level::HandleCharacters()
 	}
 
 	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
-		if(!(rand() % (2 << (10 - game::GetCurrent()))))
+		if(!(rand() % (2 << (11 - game::GetCurrent()))))
 			GenerateNewMonsters(1);
 }
 
