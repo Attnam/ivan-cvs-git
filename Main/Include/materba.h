@@ -94,7 +94,7 @@ class material
   void EatEffect(character*, ulong, float = 1.0);
   bool HitEffect(character*);
   virtual ushort GetSkinColor(ushort) const { return GetColor(); }
-  ulong RawPrice() const { return 0; }
+  ulong GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
   bool CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
   virtual bool HasBe() const { return false; }
   virtual void Be() { }

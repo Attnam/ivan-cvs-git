@@ -143,7 +143,7 @@ class OLTERRAIN
   virtual bool HasDrinkEffect() const { return true; } 
   virtual void DryOut();
   virtual bool DipInto(item*, character*);
-  virtual bool IsDipDestination() const { return true; }
+  virtual bool IsDipDestination() const { return ContainedMaterial != 0; }
   virtual material* GetContainedMaterial() const { return ContainedMaterial; }
   virtual void SetContainedMaterial(material* What) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
   virtual void ChangeContainedMaterial(material* What) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume()); }
@@ -182,9 +182,11 @@ class GLTERRAIN
  public:
   virtual bool IsWalkable(const character*) const;
   virtual std::string SurviveMessage() const { return "you manage to get out of the pool"; }
+  virtual std::string MonsterSurviveMessage() const { return "manages to get out of the pool"; }
   virtual std::string DeathMessage() const { return "you drown"; }
   virtual std::string MonsterDeathVerb() const { return "drowns"; }
   virtual std::string ScoreEntry() const { return "drowned"; }
+  virtual bool IsFatalToStay() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + Frame * 16, 0); } // gum solution, should come from script

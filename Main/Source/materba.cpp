@@ -24,11 +24,7 @@ std::string material::GetName(bool Articled, bool Adjective) const
 
 ushort material::TakeDipVolumeAway()
 {
-  ulong Amount = RAND() % 100;
-
-  if(GetVolume() < Amount)
-    Amount = RAND() % GetVolume();
-
+  ulong Amount = Min(500UL, GetVolume());
   SetVolume(GetVolume() - Amount);
   return Amount;
 }
@@ -52,7 +48,7 @@ bool material::Effect(character* Eater, long Amount)
 
   switch(GetEffect())
     {
-    case EPOISON: Eater->BeginTemporaryState(POISON, Amount / 10); return true;
+    case EPOISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
     case EDARKNESS: Eater->ReceiveDarkness(Amount); return true;
     case EOMLEURINE: Eater->ReceiveOmleUrine(Amount); return true;
     case EPEPSI: Eater->ReceivePepsi(Amount); return true;
@@ -68,7 +64,7 @@ void material::EatEffect(character* Eater, ulong Amount, float NPModifier)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(long(GetNutritionValue() * Amount * GetDensity() * NPModifier / 500000000));
+  Eater->ReceiveNutrition(long(float(GetNutritionValue()) * Amount * NPModifier / 100000));
   Volume -= Amount;
 }
 
@@ -84,7 +80,9 @@ bool material::HitEffect(character* Enemy)
     case HM_HEALINGLIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
     }
 
-  return Effect(Enemy, Volume); // should be less than Volume!
+  ulong Amount = Min(100UL, GetVolume());
+  SetVolume(GetVolume() - Amount);
+  return Effect(Enemy, Amount);
 }
 
 void material::AddConsumeEndMessage(character* Eater) const
@@ -142,17 +140,6 @@ materialprototype::materialprototype(materialprototype* Base, material* (*Cloner
 void material::InstallDataBase()
 {
   ::database<material>::InstallDataBase(this);
-
-  /*if(!Config)
-    return; // loading
-
-  const material::databasemap& Configs = GetProtoType()->GetConfig();
-  material::databasemap::const_iterator i = Configs.find(Config);
-
-  if(i != Configs.end())
-    DataBase = &i->second;
-  else
-    ABORT("Undefined material configuration #%d sought!", Config);*/
 }
 
 material* material::MakeMaterial(ushort Config)
@@ -222,5 +209,5 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
 
 ulong material::GetTotalNutritionValue(const item* What) const
 { 
-  return GetNutritionValue() * GetWeight() * What->GetNPModifier() / 500000;
+  return ulong(float(GetNutritionValue()) * GetVolume() * What->GetNPModifier() / 100000);
 }

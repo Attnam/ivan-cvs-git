@@ -97,6 +97,8 @@ class stack
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;
   void Pile(std::vector<std::vector<item*> >&, const character*, bool (*)(item*, const character*)) const;
+  ulong GetPrice() const;
+  ulong GetTotalExplosivePower() const;
  private:
   void AddElement(item*);
   void RemoveElement(stackslot*);

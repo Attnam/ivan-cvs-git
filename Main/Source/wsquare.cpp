@@ -45,7 +45,7 @@ void wsquare::Draw()
       GWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, false, true);
       OWTerrain->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
 
-      if(Character)
+      if(Character && Character->CanBeSeenByPlayer())
 	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
 
       NewDrawRequested = false;

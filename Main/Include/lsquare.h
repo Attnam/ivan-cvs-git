@@ -96,7 +96,7 @@ class lsquare : public square
   uchar GetRoom() const { return Room; }
   void SetRoom(uchar What) { Room = What; }
   void SwapCharacter(lsquare*);
-  void ReceiveVomit(character*);
+  void ReceiveVomit(character*, ushort);
   room* GetRoomClass() const;
   void SetTemporaryEmitation(ushort);
   ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
@@ -124,6 +124,7 @@ class lsquare : public square
   bool IsDangerousForAIToStepOn(const character*) const;
   bool CloneEverything(character*);
   stack* GetSideStackOfAdjacentSquare(ushort) const;
+  void KickAnyoneStandingHereAway();
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

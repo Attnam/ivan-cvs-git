@@ -39,12 +39,13 @@ class square
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void SendNewDrawRequest() { NewDrawRequested = true; }
-  void KickAnyoneStandingHereAway();
   bool IsWalkable(const character*) const;
   std::string SurviveMessage(character*) const;
+  std::string MonsterSurviveMessage(character*) const;
   std::string DeathMessage(character*) const;
   std::string MonsterDeathVerb(character*) const;
   std::string ScoreEntry(character*) const;
+  bool IsFatalToStay() const;
   uchar GetEntryDifficulty() const;
   uchar GetRestModifier() const;
   ushort GetAnimatedEntities() const { return AnimatedEntities; }

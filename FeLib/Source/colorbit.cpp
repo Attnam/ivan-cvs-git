@@ -152,12 +152,18 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	  if(Buffer[x] >= 192)
 	    {
 	      ushort ThisColor = Color[(Buffer[x] - 192) / 16];
-	      float Gradient = float(Buffer[x] % 16) / 8;
-	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
-	      if(UseAlpha)
-		reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
+	      if(ThisColor != DEFAULTTRANSPARENT)
+		{
+		  float Gradient = float(Buffer[x] % 16) / 8;
+		  ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
+		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+
+		  if(UseAlpha)
+		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(Buffer[x] - 192) / 16];
+		}
+	      else
+		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULTTRANSPARENT;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
@@ -200,12 +206,18 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	  if(PaletteElement >= 192)
 	    {
 	      ushort ThisColor = Color[(PaletteElement - 192) / 16];
-	      float Gradient = float(PaletteElement % 16) / 8;
-	      ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
-	      reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
-	      if(UseAlpha)
-		reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
+	      if(ThisColor != DEFAULTTRANSPARENT)
+		{
+		  float Gradient = float(PaletteElement % 16) / 8;
+		  ushort Red = ushort(GetRed(ThisColor) * Gradient), Blue = ushort(GetBlue(ThisColor) * Gradient), Green = ushort(GetGreen(ThisColor) * Gradient);
+		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
+
+		  if(UseAlpha)
+		    reinterpret_cast<uchar*>(AlphaMap)[x] = Alpha[(PaletteElement - 192) / 16];
+		}
+	      else
+		reinterpret_cast<ushort*>(DestBuffer)[x] = DEFAULTTRANSPARENT;
 	    }
 	  else
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);

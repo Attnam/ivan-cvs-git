@@ -69,7 +69,7 @@ class ABSTRACT_CHARACTER
   void SetLeftBoot(item* What) { GetLeftLeg()->SetBoot(What); }
   virtual arm* GetMainArm() const;
   virtual arm* GetSecondaryArm() const;
-  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX || Index == GROININDEX; }
   virtual bool BodyPartCanBeSevered(ushort Index) const { return Index != TORSOINDEX && Index != GROININDEX && GetBodyPart(Index); }
   virtual item* GetMainWielded() const;
@@ -136,7 +136,7 @@ class ABSTRACT_CHARACTER
   virtual leg* GetKickLeg() const;
   virtual void CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
-  virtual bool HasFeet() const;
+  virtual bool HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const;
   virtual void CreateInitialEquipment();
   virtual std::string GetBodyPartName(ushort, bool = false) const;
@@ -321,7 +321,7 @@ class CHARACTER
  protected:
   virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DAEMONFLESH, Volume); }
-  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + "vomits blood for one last time and then dies."; }
+  virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " vomits blood for one last time and then dies."; }
   virtual std::string FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
   virtual std::string FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
@@ -387,10 +387,9 @@ class CHARACTER
   billswill,
   nonhumanoid,
  public:
-  virtual void SpillBlood(uchar) { }
-  virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual void CalculateUnarmedDamage();
+  virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new gas(AIR, Volume); }
   virtual void CreateCorpse() { SendToHell(); }
@@ -407,8 +406,6 @@ class CHARACTER
   skeleton,
   humanoid,
  public:
-  virtual void SpillBlood(uchar) { }
-  virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual item* SevereBodyPart(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
@@ -431,6 +428,8 @@ class CHARACTER
 (
   mommo,
   nonhumanoid,
+ public:
+  virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BROWNSLIME, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " turns into lifeless goo."; }
@@ -439,7 +438,6 @@ class CHARACTER
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
   virtual std::string BiteNoun() const { return "slime"; }
-  virtual bool HasFeet() const { return false; }
 );
 
 class CHARACTER
@@ -448,8 +446,6 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  virtual void SpillBlood(uchar) { }
-  virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
  protected:
@@ -539,6 +535,8 @@ class CHARACTER
 (
   dolphin,
   nonhumanoid,
+ public:
+  virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DOLPHINFLESH, Volume); }
   virtual uchar GetSpecialBodyPartFlags(ushort, ushort) const { return (RAND() % 8)&~FLIP; }
@@ -610,7 +608,6 @@ class CHARACTER
   humanoid,
  public:
   virtual void BeTalkedTo(character*);
-  virtual void SpillBlood(uchar, vector2d);
   virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
   virtual void CreateBodyParts();
  protected:
@@ -735,8 +732,7 @@ class CHARACTER
   dwarf,
  public:
   virtual void BeTalkedTo(character*);
-  /*virtual ulong CurrentDanger() const { return character::CurrentDanger() * 50; }
-  virtual ulong MaxDanger() const { return character::MaxDanger() * 50; }*/
+  virtual float GetTimeToKill(const character*, bool) const;
   virtual bool Hit(character*);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
@@ -775,8 +771,6 @@ class CHARACTER
   genie,
   humanoid,
  public:
-  virtual void SpillBlood(uchar) { }
-  virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
   virtual void CreateBodyParts();
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
@@ -800,6 +794,8 @@ class CHARACTER
 (
   carnivorousplant,
   nonhumanoid,
+ public:
+  virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
@@ -820,6 +816,8 @@ class CHARACTER
 (
   snake,
   nonhumanoid,
+ public:
+  virtual bool HasFeet() const { return false; }
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKEFLESH, Volume); }
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool);
@@ -834,7 +832,6 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(ORCFLESH, Volume); }
 );
-
 
 class CHARACTER
 (

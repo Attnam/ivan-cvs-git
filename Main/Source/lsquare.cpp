@@ -565,18 +565,6 @@ void lsquare::AddCharacter(character* Guy)
     IncAnimatedEntities();
 }
 
-/*void lsquare::FastAddCharacter(character* Guy)
-{
-  if(Character)
-    ABORT("Overgrowth of square population detected!");
-
-  SetCharacter(Guy);
-  Guy->SetSquareUnder(this);
-
-  if(Guy->IsAnimated())
-    IncAnimatedEntities();
-}*/
-
 void lsquare::Clean()
 {
   GetStack()->Clean();
@@ -858,8 +846,7 @@ void lsquare::MoveCharacter(lsquare* To)
 	  To->IncAnimatedEntities();
 	}
 
-      if(!Movee->CanFly())
-	To->StepOn(Movee, this);
+      To->StepOn(Movee, this);
     }
 }
 
@@ -870,7 +857,9 @@ void lsquare::StepOn(character* Stepper, square* ComingFrom)
 
   GetGLTerrain()->StepOn(Stepper);
   GetOLTerrain()->StepOn(Stepper);
-  GetStack()->CheckForStepOnEffect(Stepper);
+
+  if(!Stepper->CanFly())
+    GetStack()->CheckForStepOnEffect(Stepper);
 }
 
 void lsquare::SwapCharacter(lsquare* With)
@@ -893,32 +882,29 @@ void lsquare::SwapCharacter(lsquare* With)
 	NewDrawRequested = true;
 	With->NewDrawRequested = true;
 
-      if(MoveeOne->IsAnimated())
-	{
-	  DecAnimatedEntities();
-	  With->IncAnimatedEntities();
-	}
+	if(MoveeOne->IsAnimated())
+	  {
+	    DecAnimatedEntities();
+	    With->IncAnimatedEntities();
+	  }
 
-      if(MoveeTwo->IsAnimated())
-	{
-	  IncAnimatedEntities();
-	  With->DecAnimatedEntities();
-	}
+	if(MoveeTwo->IsAnimated())
+	  {
+	    IncAnimatedEntities();
+	    With->DecAnimatedEntities();
+	  }
 
-	if(!MoveeOne->CanFly())
-	  With->StepOn(MoveeOne, this);
-
-	if(!MoveeTwo->CanFly())
-	  StepOn(MoveeTwo, With);
+	With->StepOn(MoveeOne, this);
+	StepOn(MoveeTwo, With);
       }
   else
     if(With->Character)
       With->MoveCharacter(this);
 }
 
-void lsquare::ReceiveVomit(character* Who)
+void lsquare::ReceiveVomit(character* Who, ushort Amount)
 {
-  SpillFluid(1, MakeRGB(10,230,10),5,60);
+  SpillFluid(Amount, MakeRGB(10, 230, 10), 5, 60);
   GetOLTerrain()->ReceiveVomit(Who);
 }
 
@@ -973,6 +959,8 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 
 void lsquare::PolymorphEverything(character* Zapper)
 {
+  GetStack()->Polymorph();
+  GetOLTerrain()->Polymorph(Zapper);
   character* Character = GetCharacter();
 
   if(Character)
@@ -982,9 +970,6 @@ void lsquare::PolymorphEverything(character* Zapper)
 
       Character->PolymorphRandomly(5000 + RAND() % 5000);
     }
-
-  GetStack()->Polymorph();
-  GetOLTerrain()->Polymorph(Zapper);
 }
 
 void lsquare::DrawParticles(ushort Color, uchar)
@@ -1095,9 +1080,7 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
     }
   
   if(GetGLTerrain()->DipInto(Thingy, Dipper) || GetOLTerrain()->DipInto(Thingy, Dipper))
-    {
-      return true;
-    }
+    return true;
   else
     {
       if(Dipper->IsPlayer())
@@ -1221,7 +1204,7 @@ void lsquare::DrawMemorized()
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
-  return GetStack()->IsDangerousForAIToStepOn(Who); 
+  return !Who->CanFly() && GetStack()->IsDangerousForAIToStepOn(Who); 
 } 
 
 /* returns true if clones something */
@@ -1231,12 +1214,11 @@ bool lsquare::CloneEverything(character* Cloner)
   character* Character = GetCharacter();
 
   if(Character)
-    {
-      ClonedSomething = Character->CloneToNearestSquare(Cloner);
-    }
+    ClonedSomething = Character->CloneToNearestSquare(Cloner) != 0;
 
   if(GetStack()->Clone(5))
     ClonedSomething = true;
+
   return ClonedSomething;
 }
 
@@ -1264,3 +1246,16 @@ void lsquare::SendMemorizedUpdateRequest()
     }
 }
 
+void lsquare::KickAnyoneStandingHereAway()
+{
+  if(Character)
+    {
+      vector2d Pos = GetLevelUnder()->GetNearestFreeSquare(Character, GetPos());
+
+      if(Pos == DIR_ERROR_VECTOR)
+	Pos = GetLevelUnder()->RandomSquare(Character, true);
+
+      GetLevelUnder()->AddCharacter(Pos, Character);
+      RemoveCharacter();
+    }
+}

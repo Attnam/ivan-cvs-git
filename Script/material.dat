@@ -39,7 +39,6 @@ material
 		Color = rgb(96, 96, 96);
 		PriceModifier = 40;
 		IsSolid = true;
-		PriceModifier = 40;
 		NameStem = "iron";
 		Article = "an";
 	}
@@ -51,7 +50,6 @@ material
 		Density = 3000;
 		OfferModifier = 100;
 		Color = rgb(232, 232, 232);
-		PriceModifier = 40;
 		IsSolid = true;
 		CanBeWished = false;
 		Emitation = 300;
@@ -264,10 +262,9 @@ material
 		Color = rgb(30, 30, 30);
 		CanBeWished = false;
 		IsExplosive = true;
-		/* Explosive power is not done yet. (it depends on Volume and the script doesn't support it */
 		PriceModifier = 600;
 		NameStem = "gunpowder";
-		ExplosivePower = 4000;
+		ExplosivePower = 8000;
 	}
 
 	Config UNICORNHORN;
@@ -375,10 +372,9 @@ material
 	{
 		StrengthValue = 175;
 		ConsumeType = METAL;
-		Density =  7850;
+		Density = 7500;
 		OfferModifier = 10;
 		Color = rgb(128, 128, 128);
-		PriceModifier = 40;
 		IsSolid = true;
 		PriceModifier = 40;
 		NameStem = "steel";
@@ -396,7 +392,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 1200;
 		ConsumeType = FRUIT;
 		OfferModifier = 10;
-		NutritionValue = 200;
+		NutritionValue = 100;
 		Color = rgb(240, 240, 0);
 		PriceModifier = 600;
 		NameStem = "banana flesh";
@@ -410,7 +406,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 1500;
 		OfferModifier = 20;
 		Alignment = EVIL;
-		NutritionValue = 100;
+		NutritionValue = 50;
 		Color = rgb(111, 74, 37);
 		IsBadFoodForAI = true;
 		NameStem = "school food";
@@ -439,7 +435,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = FRUIT;
 		Density = 1200;
 		OfferModifier = 11;
-		NutritionValue = 150;
+		NutritionValue = 100;
 		Color = rgb(160, 112, 32);
 		PriceModifier = 600;
 		NameStem = "kiwi flesh";
@@ -452,7 +448,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = FRUIT;
 		Density = 1200;
 		OfferModifier = 12;
-		NutritionValue = 150;
+		NutritionValue = 100;
 		Color = rgb(192, 112, 96);
 		PriceModifier = 600;
 		NameStem = "pineapple flesh";
@@ -480,7 +476,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = BONY;
 		IsSolid = true;
 		Color = rgb(180, 180, 180);
-		NutritionValue = 20;
+		NutritionValue = 50;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 25000;
@@ -492,7 +488,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		ConsumeType = PROCESSED;
 		Density = 250;
 		OfferModifier = 7;
-		NutritionValue = 200;
+		NutritionValue = 100;
 		Color = rgb(180, 96, 64);
 		PriceModifier = 600;
 		NameStem = "bread";
@@ -532,7 +528,7 @@ liquid
 		OfferModifier = 100;
 		Color = rgb(160, 160, 0);
 		CanBeWished = false;
-		NutritionValue = 30;
+		NutritionValue = 400;
 		PriceModifier = 2500;
 		NameStem = "Omle urine";
 		Article = "an";
@@ -561,7 +557,7 @@ liquid
 	{
 		StrengthValue = 1;
 		OfferModifier = 1;
-		NutritionValue = 10;
+		NutritionValue = 1;
 		Color = rgb(144, 144, 240);
 		NameStem = "water";
 		Alpha = 150;
@@ -571,7 +567,7 @@ liquid
 	{
 		StrengthValue = 1;
 		OfferModifier = 70;
-		NutritionValue = 30;
+		NutritionValue = 100;
 		Color = rgb(180, 0, 0);
 		PriceModifier = 2500;
 		NameStem = "healing liquid";
@@ -599,7 +595,7 @@ liquid
 		StrengthValue = 2;
 		Density = 400;
 		OfferModifier = 1;
-		NutritionValue = 100;
+		NutritionValue = 50;
 		Color = rgb(0, 128, 0);
 		Color = rgb(111, 74, 37);
 		NameStem = "brown slime";
@@ -640,12 +636,13 @@ flesh
 		Color = rgb(0, 128, 0);
 		PriceModifier = 600;
 		NameStem = "green flesh";
+		NutritionValue = 150;
 	}
 
 	Config PORK;
 	{
 		OfferModifier = 20;
-		NutritionValue = 400;
+		NutritionValue = 250;
 		PriceModifier = 1250;
 		NameStem = "pork";
 		SpoilModifier = 10000;
@@ -654,7 +651,7 @@ flesh
 	Config BEEF;
 	{
 		OfferModifier = 20;
-		NutritionValue = 400;
+		NutritionValue = 250;
 		PriceModifier = 1250;
 		NameStem = "beef";
 		SpoilModifier = 10000;
@@ -663,7 +660,6 @@ flesh
 	Config FROGFLESH;
 	{
 		OfferModifier = 500;
-		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
 		Effect = EDARKNESS;
@@ -675,7 +671,6 @@ flesh
 	Config ELPURIFLESH;
 	{
 		OfferModifier = 500;
-		NutritionValue = 1000;
 		Alignment = EVIL;
 		IsBadFoodForAI = true;
 		Effect = EDARKNESS;
@@ -686,6 +681,7 @@ flesh
 		OfferModifier = 1;
 		NameStem = "Elpuri's flesh";
 		Article = "an";
+		Color = rgb(60, 60, 60);
 	}
 
 	Config HUMANFLESH;
@@ -735,6 +731,7 @@ flesh
 	{
 		OfferModifier = 4;
 		NameStem = "spider flesh";
+		NutritionValue = 100;
 	}
 
 	Config JACKALFLESH;

@@ -359,7 +359,7 @@ darkknight
 	IsAbstract = true;
 	KnownCWeaponSkills == LARGE_SWORDS;
 	ClassStates = INFRAVISION;
-	PanicLevel = 0;
+	PanicLevel = 5;
 
 	Config ROOKIE;
 	{
@@ -450,7 +450,7 @@ ennerbeast
 	HairColor = rgb(64, 20, 0);
 	ClothColor = rgb(0, 0, 100);
 	LegMainColor = rgb(64, 20, 0);
-	PanicLevel = 70;
+	PanicLevel = 75;
 }
 
 frog
@@ -732,8 +732,8 @@ golem
 	DefaultAgility = 0; /* depends on material */
 	DefaultEndurance = 0; /* has no effect */
 	DefaultPerception = 12;
-	DefaultIntelligence = 5;
-	DefaultWisdom = 5;
+	DefaultIntelligence = 4;
+	DefaultWisdom = 4;
 	DefaultCharisma = 5;
 	DefaultMana = 5;
 	TotalVolume = 100000;
@@ -998,7 +998,6 @@ dolphin
 	Adjective = "female";
 	NameSingular = "dolphin";
 	PostFix = "in season";
-	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 5000;
 }
@@ -1254,7 +1253,7 @@ imp
 	CanUseEquipment = false;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 50;
-	PanicLevel = 70;
+	PanicLevel = 75;
 }
 
 bat
@@ -1282,7 +1281,7 @@ bat
 	ClassStates = INFRAVISION;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
-	PanicLevel = 70;
+	PanicLevel = 75;
 }
 
 mistress
@@ -1329,7 +1328,7 @@ mistress
 		RightSWeaponSkillHits = 500;
 		LeftSWeaponSkillHits = 500;
 		PostFix = "torturing chief";
-		PanicLevel = 0;
+		PanicLevel = 15;
 	}
 
 	Config WHIPCHAMPION;
@@ -1341,7 +1340,7 @@ mistress
 		RightSWeaponSkillHits = 1000;
 		LeftSWeaponSkillHits = 1000;
 		PostFix = "whip champion";
-		PanicLevel = 5;
+		PanicLevel = 10;
 	}
 
 	Config WARLADY;
@@ -1353,7 +1352,7 @@ mistress
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
 		PostFix = "warlady";
-		PanicLevel = 10;
+		PanicLevel = 5;
 	}
 
 	Config QUEEN;
@@ -1367,7 +1366,7 @@ mistress
 		LeftSWeaponSkillHits = 5000;
 		PostFix = "queen";
 		Frequency = 500;
-		PanicLevel = 15;
+		PanicLevel = 0;
 	}
 }
 
@@ -1615,7 +1614,7 @@ kamikazedwarf
 	DefaultLegStrength = 20;
 	DefaultDexterity = 20;
 	DefaultAgility = 20;
-	DefaultEndurance = 15;
+	DefaultEndurance = 10;
 	DefaultPerception = 24;
 	DefaultIntelligence = 10;
 	DefaultWisdom = 5;
@@ -1689,7 +1688,6 @@ unicorn
 	TorsoMainColor = rgb(200, 200, 200); /* the horn */
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
-	PanicLevel = 0;
 
 	Config GOOD;
 	{
@@ -1865,7 +1863,6 @@ orc
 	TorsoBitmapPos = 48, 0;
 	ArmBitmapPos = 80, 32;
 	LegBitmapPos = 0, 240;
-
 	TotalVolume = 90000;
 	TotalSize = 180;
 	Article = "an";

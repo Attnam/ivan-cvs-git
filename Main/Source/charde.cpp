@@ -149,7 +149,7 @@ void ennerbeast::GetAICommand()
 {
   SeekLeader();
 
-  if(RAND() % 3)
+  if(StateIsActivated(PANIC) || !(RAND() % 3))
     Hit(0);
 
   if(CheckForEnemies(false))
@@ -209,7 +209,7 @@ bool petrus::HealFully(character* ToBeHealed)
 	DidSomething = true;
       }
 
-  if(ToBeHealed->GetHP() < ToBeHealed->GetMaxHP() / 3)
+  if(ToBeHealed->IsInBadCondition())
     {
       ToBeHealed->RestoreHP();
 
@@ -760,33 +760,6 @@ void golem::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
 }
 
-/*void humanoid::AddSpecialItemInfo(std::string& Description, item* Item) const
-{
-  Description.resize(62, ' ');
-  Description << GetCWeaponSkill(Item->GetWeaponCategory())->GetLevel();
-  Description.resize(66, ' ');
-  bool Added = false;
-
-  for(ushort c = 0; c < GetSWeaponSkills(); ++c)
-    if(Item->GetID() == GetSWeaponSkill(c)->GetID())
-      {
-	Description << GetSWeaponSkill(c)->GetLevel();
-	Added = true;
-	break;
-      }
-
-  if(!Added)
-    Description << 0;
-}
-
-void humanoid::AddSpecialItemInfoDescription(std::string& Description) const
-{
-  Description.resize(68, ' ');
-  Description += "GS";
-  Description.resize(72, ' ');
-  Description += "SS";
-}*/
-
 void communist::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
@@ -1243,20 +1216,6 @@ void zombie::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }
 
-void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
-{
-  if(!HowMuch)
-    return;
-
-  if(!game::IsInWilderness()) 
-    {
-      GetNearLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
-
-      if(!(RAND() % 10)) 
-	GetNearLSquare(GetPos)->GetStack()->AddItem(new lump(MAKE_MATERIAL(HUMANFLESH, 1000)));
-    }
-}
-
 void mistress::CreateInitialEquipment()
 {
   humanoid::CreateInitialEquipment();
@@ -1455,7 +1414,7 @@ void genie::BeTalkedTo(character* Talker)
 
 bool unicorn::SpecialEnemySightedReaction(character*)
 {
-  if((RAND() % 3 && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
+  if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
@@ -1571,7 +1530,7 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
     }
 }
 
-bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
+bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
   std::vector<uchar> ChooseFrom;
 
@@ -1616,7 +1575,7 @@ bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
   else
     Affected = ReceiveBodyPartDamage(Damager, Damage, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical, false) != 0;
 
-  if(!Affected)
+  if(!Affected && ShowMsg)
     {
       if(IsPlayer())
 	ADD_MESSAGE("You are not hurt.");
@@ -1941,16 +1900,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   ushort Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[0] = GetHead()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetRightArm())
-    Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetRightArm()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetLeftArm())
-    Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetLeftArm()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetTorso())
-    Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetTorso()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 
@@ -1958,13 +1917,13 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
     Color[c] = 0;
 
   if(GetGroin())
-    Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[1] = GetGroin()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetRightLeg())
-    Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[2] = GetRightLeg()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   if(GetLeftLeg())
-    Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MakeRGB(128,0,0) : LIGHTGRAY;
+    Color[3] = GetLeftLeg()->IsInBadCondition() ? MakeRGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
@@ -2336,7 +2295,7 @@ void humanoid::Bite(character* Enemy)
 
   EditNP(-50);
   EditAP(-GetHead()->GetBiteAPCost());
-  EditExperience(AGILITY, 50);
+  EditExperience(AGILITY, 75);
   Enemy->TakeHit(this, 0, GetHead()->GetBiteDamage(), GetHead()->GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
 }
 
@@ -2344,7 +2303,7 @@ void nonhumanoid::Bite(character* Enemy)
 {
   EditNP(-50);
   EditAP(-GetBiteAPCost());
-  EditExperience(AGILITY, 50);
+  EditExperience(AGILITY, 75);
   Enemy->TakeHit(this, 0, GetBiteDamage(), GetBiteToHitValue(), RAND() % 26 - RAND() % 26, BITEATTACK, !(RAND() % GetCriticalModifier()));
 }
 
@@ -2634,23 +2593,19 @@ void humanoid::EditExperience(ushort Identifier, long Value)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARMSTRENGTH || Identifier == DEXTERITY)
     {
-      /* If the humanoid has only one arm, should the experience be doubled? */
-
       if(GetRightArm())
-	GetRightArm()->EditExperience(Identifier, Value);
+	GetRightArm()->EditExperience(Identifier, Value >> 1);
 
       if(GetLeftArm())
-	GetLeftArm()->EditExperience(Identifier, Value);
+	GetLeftArm()->EditExperience(Identifier, Value >> 1);
     }
   else if(Identifier == LEGSTRENGTH || Identifier == AGILITY)
     {
-      /* If the humanoid has only one leg, should the experience be doubled? */
-
       if(GetRightLeg())
-	GetRightLeg()->EditExperience(Identifier, Value);
+	GetRightLeg()->EditExperience(Identifier, Value >> 1);
 
       if(GetLeftLeg())
-	GetLeftLeg()->EditExperience(Identifier, Value);
+	GetLeftLeg()->EditExperience(Identifier, Value >> 1);
     }
   else
     ABORT("Illegal humanoid attribute %d experience edit request!", Identifier);
@@ -2748,7 +2703,7 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, GetHP() < GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
 
   ++PanelPosY;
@@ -2758,7 +2713,7 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
       if(GetRightArm())
 	if(GetRightWielded() && GetRightWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBS %d", GetRightArm()->GetBlockValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBS %d", GetRightArm()->GetBlockCapability());
 	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "RBV %.0f", GetRightArm()->GetBlockValue());
 	  }
 	else if(GetRightArm()->GetDamage())
@@ -2771,7 +2726,7 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
       if(GetLeftArm())
 	if(GetLeftWielded() && GetLeftWielded()->IsShield(this))
 	  {
-	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBS %d", GetLeftArm()->GetBlockValue());
+	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBS %d", GetLeftArm()->GetBlockCapability());
 	    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LBV %.0f", GetLeftArm()->GetBlockValue());
 	  }
 	else if(GetLeftArm()->GetDamage())
@@ -2830,7 +2785,7 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Man %d", GetAttribute(MANA));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, GetHP() < GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
 
   ++PanelPosY;
@@ -2872,23 +2827,25 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
 ushort humanoid::GetRandomStepperBodyPart() const
 {
-  std::vector<ushort> Possible;
+  uchar Possible = 0, PossibleArray[3];
 
   if(GetRightLeg())
-    Possible.push_back(RIGHTLEGINDEX);
+    PossibleArray[Possible++] = RIGHTLEGINDEX;
 
   if(GetLeftLeg())
-    Possible.push_back(LEFTLEGINDEX);
+    PossibleArray[Possible++] = LEFTLEGINDEX;
 
-  if(Possible.size())
-    return Possible[RAND() % Possible.size()];
-  else
-    {
-      if(GetHead() && RAND() % 3)
-	return HEADINDEX;
+  if(Possible)
+    return PossibleArray[RAND() % Possible];
 
-      return RAND() & 1 ? GROININDEX : TORSOINDEX;
-    }
+  if(GetHead())
+    PossibleArray[Possible++] = HEADINDEX;
+
+  if(GetGroin())
+    PossibleArray[Possible++] = GROININDEX;
+
+  PossibleArray[Possible++] = TORSOINDEX;
+  return PossibleArray[RAND() % Possible];
 }
 
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
@@ -2897,10 +2854,10 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
     return Damage;
 
   if(GetRightWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetRightWielded(), ToHitValue, GetRightArm()->GetToHitValue(), Damage, GetRightArm()->GetBlockCapability(), Success, Type);
+    Damage = CheckForBlockWithArm(Enemy, Weapon, GetRightArm(), ToHitValue, Damage, Success, Type);
 
-  if(Damage && GetLeftWielded())
-    Damage = CheckForBlockWithItem(Enemy, Weapon, GetLeftWielded(), ToHitValue, GetLeftArm()->GetToHitValue(), Damage, GetLeftArm()->GetBlockCapability(), Success, Type);
+  if(Damage && GetLeftWielded() && (!Weapon || Weapon->Exists()))
+    Damage = CheckForBlockWithArm(Enemy, Weapon, GetLeftArm(), ToHitValue, Damage, Success, Type);
 
   return Damage;
 }
@@ -3474,11 +3431,6 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
   return Bone;  
 }
 
-bool humanoid::HasFeet() const
-{
-  return (GetBodyPart(LEFTLEGINDEX) || GetBodyPart(RIGHTLEGINDEX));
-}
-
 void zombie::CreateBodyParts()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
@@ -3670,4 +3622,17 @@ bool humanoid::IsAlive() const
       return true;
 
   return false;
+}
+
+/* Not a particulary ingenious algorithm but better than nothing... */
+
+float kamikazedwarf::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
+{
+  short HP = UseMaxHP ? Enemy->GetMaxHP() : Enemy->GetHP();
+  short HPAfterExplosion = HP - (GetStack()->GetTotalExplosivePower() >> 1);
+
+  if(HPAfterExplosion <= 0)
+    return 1000;
+  else
+    return humanoid::GetTimeToKill(Enemy, UseMaxHP) * HPAfterExplosion / HP;
 }

@@ -63,26 +63,6 @@ inline inputfile& operator>>(inputfile& SaveFile, configid& ConfigId)
   return SaveFile;
 }
 
-/*struct dangerinfo
-{
-  dangerinfo() { }
-  dangerinfo(float DangerModifier, ulong DangerTicks) : DangerModifier(DangerModifier), DangerTicks(DangerTicks) { }
-  float DangerModifier;
-  ulong DangerTicks;
-};
-
-inline outputfile& operator<<(outputfile& SaveFile, const dangerinfo& DangerInfo)
-{
-  SaveFile << DangerInfo.DangerModifier << DangerInfo.DangerTicks;
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, dangerinfo& DangerInfo)
-{
-  SaveFile >> DangerInfo.DangerModifier >> DangerInfo.DangerTicks;
-  return SaveFile;
-}*/
-
 typedef std::map<configid, float> dangermap;
 
 class game

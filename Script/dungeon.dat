@@ -73,13 +73,13 @@ Dungeon 0;
                 Square, Random { Walkable=true; }
 		{
 			Item = mine { Team = MONSTER_TEAM; Active = true; }
-			Times = 0+rand%4;
+			Times = rand%4;
 		}
 
 		Square, Random { Walkable=true; }
 		{
 			Item = beartrap { Team = MONSTER_TEAM; Active = true; }
-			Times = 0+rand%4;
+			Times = rand%4;
 		}
 
 		RoomDefault
@@ -711,22 +711,7 @@ Dungeon 1;
 					4 = petrusswife(4);
 					5 = petrusswife(5);
 					6 = petrusswife(6);
-					k = kamikazedwarf;
-					A = angel;
 					k = kamikazedwarf(valpurus);
-					A = oree;
-					B = goblin;
-					C = skeleton;
-					D = imp;
-					E = gibberling;
-					F = kobold;
-					G = ennerbeast;
-					H = darkknight;
-					I = carnivorousplant;
-					J = lion;
-					K = buffalo;
-					S = snake;
-					z = zombie;
 				}
 			}
 			{
@@ -763,7 +748,7 @@ Dungeon 1;
 				#....4.6.#.............#........#
 				##...#####.............#####...##
 				.##2.#.....................#..##.
-				..####.........AS..........####..
+				..####.....................####..
 			}
 		}
 

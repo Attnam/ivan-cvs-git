@@ -19,10 +19,12 @@ class GWTERRAIN
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(32 + Frame * 16, 160); }
   virtual uchar Priority() const { return 10; }
-  virtual bool IsWalkable(character*) const;
+  virtual bool IsWalkable(const character*) const;
   virtual std::string SurviveMessage() const { return "you manage to reach the shore"; }
+  virtual std::string MonsterSurviveMessage() const { return "manages to reach the shore"; }
   virtual std::string DeathMessage() const { return "you drown"; }
   virtual std::string ScoreEntry() const { return "drowned"; }
+  virtual bool IsFatalToStay() const { return true; }
 );
 
 class GWTERRAIN

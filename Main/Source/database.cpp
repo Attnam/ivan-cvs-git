@@ -25,7 +25,6 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       typeprototype* Proto = protocontainer<type>::ProtoData[Index];
       Proto->Config[0] = Proto->Base ? typedatabase(Proto->Base->Config.begin()->second) : typedatabase();
       typedatabase& DataBase = Proto->Config.begin()->second;
-
       DataBase.InitDefaults(0);
 
       if(SaveFile.ReadWord() != "{")

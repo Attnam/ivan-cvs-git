@@ -93,7 +93,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
 	  return false;
 	}
     }
@@ -452,7 +452,7 @@ bool library::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d gold pieces!\"", ForSale->CHARNAME(UNARTICLED), Price);
 	  return false;
 	}
     }

@@ -124,11 +124,18 @@ bool stairsup::GoUp(character* Who) const // Try to go up
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() - 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
+      game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetDownStairs())->KickAnyoneStandingHereAway();
       game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs()), *c);
+	{
+	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetDownStairs());
+
+	  if(Pos == DIR_ERROR_VECTOR)
+	    Pos = game::GetCurrentLevel()->RandomSquare(*c, true);
+
+	  game::GetCurrentLevel()->AddCharacter(Pos, *c);
+	}
 
       game::SendLOSUpdateRequest();
       game::UpdateCamera();
@@ -191,11 +198,18 @@ bool stairsdown::GoDown(character* Who) const // Try to go down
       game::GetCurrentDungeon()->SaveLevel();
       game::SetCurrent(game::GetCurrent() + 1);
       game::GetCurrentDungeon()->PrepareLevel();
-      game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
+      game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetUpStairs())->KickAnyoneStandingHereAway();
       game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 
       for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
-	game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs()), *c);
+	{
+	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(*c, game::GetCurrentLevel()->GetUpStairs());
+
+	  if(Pos == DIR_ERROR_VECTOR)
+	    Pos = game::GetCurrentLevel()->RandomSquare(*c, true);
+
+	  game::GetCurrentLevel()->AddCharacter(Pos, *c);
+	}
 
       game::ShowLevelMessage();
       game::SendLOSUpdateRequest();
@@ -746,7 +760,7 @@ void door::ActivateBoobyTrap()
 	ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
 
       BoobyTrap = 0;
-      GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
+      GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 5 - RAND() % 5);
       break;
     case 0:
       break;

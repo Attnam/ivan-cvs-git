@@ -539,17 +539,20 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
 }
 
 /* returns true if something was cloned. Max is the cap of items to be cloned */
+
 bool stack::Clone(ushort Max)
 {
   if(!GetItems())
     return false;
+
   itemvector ItemVector;
   FillItemVector(ItemVector);
   ushort p = 0;
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->Exists() && ItemVector[c]->DuplicateToStack(this) && ++p == Max)
-      break;  
+      break;
+
   return p > 0;
 }
 
@@ -626,4 +629,25 @@ void stack::Pile(std::vector<std::vector<item*> >& PileVector, const character* 
     }
 
   std::stable_sort(PileVector.begin(), PileVector.end(), CategorySorter);
+}
+
+ulong stack::GetPrice() const
+{
+  ulong Price = 0;
+
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    Price += i->GetPrice();
+
+  return Price;
+}
+
+ulong stack::GetTotalExplosivePower() const
+{
+  ulong ExplosivePower = 0;
+
+  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
+    if(i->IsExplosive())
+      ExplosivePower += i->GetTotalExplosivePower();
+
+  return ExplosivePower;
 }

@@ -273,6 +273,9 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
 
   if(Material)
     {
+      if(Material->HasBe())
+	SetHasBe(true);
+
       Material->SetMotherEntity(this);
 
       if(Material->GetEmitation() > Emitation)

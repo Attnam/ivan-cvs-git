@@ -138,7 +138,7 @@ class item : public object
   virtual bool Zap(character*, vector2d, uchar) { return false; }
   virtual bool Polymorph(stack*);
   virtual bool CheckPickUpEffect(character*) { return true; }
-  virtual bool StepOnEffect(character*) { return false; }
+  virtual void StepOnEffect(character*) { }
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
   virtual bool IsBadFoodForAI(character*) const;
@@ -311,6 +311,9 @@ class item : public object
   virtual DATABASEVALUE(uchar, MaxCharges);
   virtual DATABASEVALUE(uchar, MinCharges);
   virtual bool CanBePiledWith(const item*, const character*) const;
+  virtual ulong GetTotalExplosivePower() const { return 0; }
+  virtual void Break();
+  void Empty();
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

@@ -33,11 +33,18 @@ bool attnam::GoDown(character* Who) const
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(1)->PrepareLevel(0);
-  game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
+  game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 	
   for(ushort c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
+    {
+      vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos());
+
+      if(Pos == DIR_ERROR_VECTOR)
+	Pos = game::GetCurrentLevel()->RandomSquare(Temp[c], true);
+
+      game::GetCurrentLevel()->AddCharacter(Pos, Temp[c]);
+    }
 
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
@@ -45,7 +52,7 @@ bool attnam::GoDown(character* Who) const
 
   if(Who->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
     {
-      game::GetCurrentLevel()->GetSquare(30, 52)->KickAnyoneStandingHereAway();
+      game::GetCurrentLevel()->GetLSquare(30, 52)->KickAnyoneStandingHereAway();
       game::GetPetrus()->Move(vector2d(30, 52), true);
       game::GetPetrus()->ChangeTeam(game::GetTeam(3));
       game::GetPetrus()->SetStoryState(3);
@@ -53,12 +60,6 @@ bool attnam::GoDown(character* Who) const
 
   if(configuration::GetAutoSaveInterval())
     game::Save(game::GetAutoSaveFileName().c_str());
-
-  /*character* Char = new goblin;
-  Char->GetBodyPart(1)->ChangeMainMaterial(MAKE_MATERIAL(DIAMOND));
-  Char->SetTeam(game::GetTeam(2));
-  game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Char, Who->GetPos()), Char);
-  Char->Die();*/
 
   return true;
 }
@@ -74,11 +75,18 @@ bool elpuricave::GoDown(character* Who) const
   game::SaveWorldMap(game::SaveName(), true);
   game::SetWorldMap(0);
   game::GetDungeon(0)->PrepareLevel(0);
-  game::GetCurrentLevel()->GetSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
+  game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->GetWorldMapEntry())->KickAnyoneStandingHereAway();
   game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetWorldMapEntry(), Who);
 
   for(ushort c = 0; c < Temp.size(); ++c)
-    game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos()), Temp[c]);
+    {
+      vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Temp[c], Who->GetPos());
+
+      if(Pos == DIR_ERROR_VECTOR)
+	Pos = game::GetCurrentLevel()->RandomSquare(Temp[c], true);
+
+      game::GetCurrentLevel()->AddCharacter(Pos, Temp[c]);
+    }
 
   game::SendLOSUpdateRequest();
   game::UpdateCamera();
@@ -90,7 +98,7 @@ bool elpuricave::GoDown(character* Who) const
   return true;
 }
 
-bool ocean::IsWalkable(character* ByWho) const
+bool ocean::IsWalkable(const character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }

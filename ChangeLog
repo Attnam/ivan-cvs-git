@@ -1,8 +1,67 @@
+August 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Kamikaze dwarves now die in the initial explosion
+	* Kamikaze dwarves' bodyparts now fly to random directions in the explosion
+	* The game now prints a "You hear an explosion." message when a square
+	  outside LOS explodes
+	* Fixed many bugs in StepOnEffects
+	* Corrected a bug in bananas' volumes
+	* Experience and nutrion values balanced
+	* Using the whip of Cleptia is now an evil deed
+	* Flaming sword's hit message was fixed
+	* Vermis, Turox and the whip of Cleptia now use a definite article
+	* Adjusted new artifact weapons' volumes, materials and hit effects
+	* Hammer, sickle, short sword and dagger added to Item.pcx by Kahvi
+	* Broken pictures of the following items added to Item.pcx by Kahvi:
+	  hammer, sickle, short sword, dagger, chain mail, shield
+	* Chain mails and shields may now break
+	* Corrected an arithmetic error in the ReceiveDamage code
+	* Inactive mines no longer explode when stepped on
+	* Inactive mines no longer explode from physical damage, only from fire
+	  and energy
+	* Mines and bear traps are now automatically dropped upon activation
+	* Bill's wills and snakes no longer slip on banana peals
+	* Corrected a bug that caused the "you wake up" message after faint to be
+	  printed twice
+	* Cured a corpse bug that caused DrinkableSorter to crash
+	* Oree doesn't "look slower" when he dies and his boots of speed are
+	  dropped to the ground
+	* Corrected a typo in Oree's death message
+	* GetNearestFreeSquare calls no longer crash if no free square was found
+	  (usually RandomSquare is used instead)
+	* Vomit amount is no longer discarded
+	* Dipping works again
+	* Severed bodyparts and corpses now bleed for some time
+	* Weapon poisoning etc. is now only temporary
+	* Meleeweapons with special hit effects now call meleeweapon::HitEffect(), too
+	* Broken artifact weapons now don't cause special hit effects
+	* Whip of Cleptia must be made of material with > 5 flexibility to work
+	* Kahvi's stethoscope picture integrated
+	* Elpuri's head is again black
+	* "Your xxx bleeds (very badly)." message is now replaced with "Your xxx is in
+	  (very bad) condition." if the bodypart is not made of living material
+	* Golem corpses aren't bloody anymore
+	* The idol which an NPC wants to become when polymorphing with polycontrol
+	  active now depends on sex (undefined -> mammoth, male -> communist, female ->
+	  mistress queen)
+	* Polymorphed creatures now drop all equipment they can't use
+	* The dolphins can now be polymorphed
+	* AskForKeyPress() now automatically capitalizes its topic
+	* Starting a new game after drowning doesn't crash anymore
+	* Ocean's IsWalkable function did not take a const parameter,
+	  which caused seas to become walkable, but this is now fixed
+	* Corrected the "...it is worth 9085104 gold pieces!" message that appeared
+	  in shops because the price was read from a random RAM address
+	* The enner beast now screams every turn if panicked
+	* Fearless creatures panic no more when their bodyparts are severed, and almost
+	  fearless less often
+	* Block strengths are now shown correctly in the panel
+
 August 18 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Wand-system's code shortened by maybe 80 % 
 	* Wand of cloning added
-	
+
 August 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added item piling

@@ -36,15 +36,7 @@ void faint::Load(inputfile& SaveFile)
 void faint::Handle()
 {
   if(!(Counter--))
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You wake up.");
-      else
-	if(GetActor()->CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s wakes up.", GetActor()->CHARNAME(DEFINITE));
-
-      Terminate(true);
-    }
+    Terminate(true);
   else
     {
       GetActor()->EditExperience(ARMSTRENGTH, -3);
@@ -84,8 +76,22 @@ void consume::Handle()
       return;
     }
 
-  SetHasEaten(true);
   character* Actor = GetActor();
+
+  if(!InDNDMode() && Actor->CheckBulimia())
+    if(Actor->IsPlayer())
+      {
+	ADD_MESSAGE("You have a really hard time getting all this down your throat.");
+
+	if(game::BoolQuestion("Continue " + GetDescription() + "? [y/N]"))
+	  SetInDNDMode(true);
+	else
+	  Terminate(false);
+      }
+    else
+      Terminate(false);
+
+  SetHasEaten(true);
 
   /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
 
@@ -164,7 +170,10 @@ void rest::Handle()
   if(GetActor()->GetHP() >= GoalHP || GetActor()->GetHP() == GetActor()->GetMaxHP())
     Terminate(true);
   else
-    GetActor()->EditExperience(AGILITY, -1);
+    {
+      GetActor()->EditExperience(DEXTERITY, -1);
+      GetActor()->EditExperience(AGILITY, -1);
+    }
 }
 
 void rest::Terminate(bool Finished)

@@ -245,7 +245,6 @@ class character : public entity, public id
   virtual uchar GetBurdenState() const { return BurdenState; }
   virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
   virtual uchar TakeHit(character*, item*, float, float, short, uchar, bool);
-  //virtual ulong MaxDanger() const;
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual ushort ESPRange() const;
@@ -258,7 +257,7 @@ class character : public entity, public id
   virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
   virtual void HasBeenHitByItem(character*, item*, float);
-  virtual void Hunger(ushort = 1);
+  virtual void Hunger();
   virtual void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   virtual void ReceiveNutrition(long);
@@ -269,8 +268,6 @@ class character : public entity, public id
   void SetAP(long What) { AP = What; }
   void SetIsPlayer(bool What) { Player = What; }
   void SetNP(long);
-  virtual void SpillBlood(uchar);
-  virtual void SpillBlood(uchar, vector2d);
   virtual void Vomit(ushort);
   virtual void Be();
   virtual bool Zap();
@@ -342,7 +339,7 @@ class character : public entity, public id
   virtual void Teleport(vector2d);
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
-  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
   virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartVital(ushort) const { return true; }
   virtual void RestoreBodyParts();
@@ -358,10 +355,8 @@ class character : public entity, public id
   virtual void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
-  virtual item* GetBodyArmor() const { return 0; }
   virtual void SetMainWielded(item*) { }
   virtual void SetSecondaryWielded(item*) { }
-  virtual void SetBodyArmor(item*) { }
   virtual uchar GetHungerState() const;
   virtual bool ConsumeItem(item*);
   virtual bool CanConsume(material*) const;
@@ -378,7 +373,6 @@ class character : public entity, public id
   virtual bool CheckOffer() const { return true; }
   ushort GetTemporaryStateCounter(ushort) const;
   void EditTemporaryStateCounter(ushort, short);
-  virtual void ResistDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
   virtual bool ClosePos(vector2d);
@@ -532,7 +526,7 @@ class character : public entity, public id
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
-  virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, ushort, short, uchar);
+  virtual ushort CheckForBlockWithArm(character*, item*, arm*, float, ushort, short, uchar);
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
   virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
   virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
@@ -621,7 +615,7 @@ class character : public entity, public id
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(Pos)); }
   lsquare* GetNearLSquare(ushort x, ushort y) const { return static_cast<lsquare*>(SquareUnder->GetAreaUnder()->GetSquare(x, y)); }
   vector2d GetPos() const { return SquareUnder->GetPos(); }
-  virtual square* GetSquareUnder() const { return SquareUnder; }
+  virtual square* GetSquareUnder() const;
   void SetSquareUnder(square* What) { SquareUnder = What; }
   lsquare* GetLSquareUnder() const { return static_cast<lsquare*>(SquareUnder); }
   wsquare* GetWSquareUnder() const { return static_cast<wsquare*>(SquareUnder); }
@@ -643,6 +637,7 @@ class character : public entity, public id
   short GetMaxHP() const { return MaxHP; }
   void CalculateBodyPartMaxHPs();
   bool IsInitializing() const { return Initializing; }
+  bool IsInNoMsgMode() const { return InNoMsgMode; }
   bool ActivateRandomState(ushort);
   ushort GetRandomNotActivatedState();
   bool GainRandomInstric();
@@ -680,13 +675,17 @@ class character : public entity, public id
   virtual uchar GetSWeaponSkillLevel(const item*) const { return 0; }
   virtual void PrintBeginPanicMessage() const;
   virtual void PrintEndPanicMessage() const;
-  virtual void CheckPanic(ulong);
+  virtual void CheckPanic(ushort);
   virtual DATABASEBOOL(CanBeCloned);
   virtual character* CloneToNearestSquare(character*) const;
   virtual void SignalSpoil();
   bool HasSecondaryMaterial() const { return false; }
   bool HasContainedMaterial() const { return true; }
   virtual bool IsAlive() const = 0;
+  bool IsPolymorphed() const { return Polymorphed; }
+  void SetPolymorphed(bool What) { Polymorphed = What; }
+  bool IsInBadCondition() const { return HP * 3 < MaxHP; }
+  bool IsInBadCondition(short HP) const { return HP * 3 < MaxHP; }
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -786,6 +785,8 @@ class character : public entity, public id
   float DodgeValue;
   uchar AllowedWeaponSkillCategories;
   uchar BodyParts;
+  bool Polymorphed;
+  bool InNoMsgMode;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

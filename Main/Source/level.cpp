@@ -771,11 +771,6 @@ void level::FiatLux()
       }
 }
 
-/*void level::FastAddCharacter(vector2d Pos, character* Guy)
-{
-  Map[Pos.X][Pos.Y]->FastAddCharacter(Guy);
-}*/
-
 void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 {
   vector2d Pos;
@@ -866,6 +861,9 @@ room* level::GetRoom(ushort Index) const
 
 void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2d Pos, ushort Strength, bool HurtNeutrals)
 {
+  if(!GetSquare(Pos)->CanBeSeenByPlayer())
+    ADD_MESSAGE("You hear an explosion.");
+
   ushort EmitChange = 300 + Strength * 2;
 
   if(EmitChange > 511)
@@ -875,7 +873,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
   ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
 
-  static ushort StrengthLimit[6] = { 150, 100, 75, 50, 25, 10 };
+  static ushort StrengthLimit[6] = { 500, 250, 100, 50, 25, 10 };
   static vector2d StrengthPicPos[7] = { vector2d(176, 176), vector2d(0, 144), vector2d(256, 32), vector2d(144, 32), vector2d(64, 32), vector2d(16, 32),vector2d(0, 32) };
 
   uchar Size = 6;
@@ -962,7 +960,7 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 	    lsquare* Square = GetLSquare(x, y);
 	    character* Char = Square->GetCharacter();
 	    ushort Damage = Strength / (DistanceSquare + 1);
-	    uchar DamageDirection = game::CalculateRoughDirection(vector2d(x, y) - Pos);
+	    uchar DamageDirection = vector2d(x, y) == Pos ? RANDOMDIR : game::CalculateRoughDirection(vector2d(x, y) - Pos);
 
 	    if(Char && (HurtNeutrals || (Terrorist && Char->GetTeam()->GetRelation(Terrorist->GetTeam()) == HOSTILE)))
 	      if(Char->IsPlayer())
@@ -975,17 +973,17 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 		  if(Terrorist)
 		    Terrorist->GetTeam()->Hostility(Char->GetTeam());
 
-		  Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+		  Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 		  vector2d SpillDirection = vector2d(x, y) + game::GetMoveVector(DamageDirection);
 
 		  if(IsValidPos(SpillDirection))
-		    Char->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, SpillDirection);
+		    Char->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, SpillDirection);
 
 		  if(Char->CanBeSeenByPlayer())
 		    ADD_MESSAGE("%s is hit by the explosion.", Char->CHARNAME(DEFINITE));
 
-		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
-		  Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true);
+		  Char->ReceiveDamage(Terrorist, Damage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
+		  Char->ReceiveDamage(Terrorist, Damage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true, false, false, false);
 		  Char->CheckDeath(DeathMsg);
 		}
 
@@ -998,19 +996,19 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 
   if(PlayerHurt)
     {
-      uchar DamageDirection = game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
+      uchar DamageDirection = game::GetPlayer()->GetPos() == Pos ? RANDOMDIR : game::CalculateRoughDirection(game::GetPlayer()->GetPos() - Pos);
 
       if(Terrorist)
 	Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
 
-      game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
+      game::GetPlayer()->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2);
 
       if(IsValidPos(game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection)))
-	game::GetPlayer()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection));
+	game::GetPlayer()->GetTorso()->SpillBlood((8 - Size + RAND() % (8 - Size)) / 2, game::GetPlayer()->GetPos() + game::GetMoveVector(DamageDirection));
 
       ADD_MESSAGE("You are hit by the explosion!");
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true);
-      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, FIRE, ALL, DamageDirection, true);
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, FIRE, ALL, DamageDirection, true, false, false, false);
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage / 2, PHYSICALDAMAGE, ALL, DamageDirection, true, false, false, false);
       game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }

@@ -129,12 +129,18 @@ bool lump::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByA
 {
   if(!BlockedByArmour && RAND() & 1)
     {
-      if(Enemy->IsPlayer())
-	ADD_MESSAGE("The %s touches you!", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
-      else if(Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s touches %s.", GetMainMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).c_str(), Enemy->CHARDESCRIPTION(DEFINITE));
 
-      return GetMainMaterial()->HitEffect(Enemy);
+      bool Success = GetMainMaterial()->HitEffect(Enemy);
+
+      if(!GetContainedMaterial()->GetVolume())
+	{
+	  RemoveFromSlot();
+	  SendToHell();
+	}
+
+      return Success;
     }
   else
     return false;
@@ -144,12 +150,15 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
 {
   if(!BlockedByArmour && GetContainedMaterial())
     {
-      if(Enemy->IsPlayer())
-	ADD_MESSAGE("The %s reacts with you!", GetContainedMaterial()->CHARNAME(UNARTICLED));
-      else if(Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s reacts with %s.", GetContainedMaterial()->CHARNAME(UNARTICLED), Enemy->CHARNAME(DEFINITE));
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).c_str(), Enemy->CHARDESCRIPTION(DEFINITE));
 
-      return GetContainedMaterial()->HitEffect(Enemy);
+      bool Success = GetContainedMaterial()->HitEffect(Enemy);
+
+      if(!GetContainedMaterial()->GetVolume())
+	Empty();
+
+      return Success;
     }
   else
     return false;
@@ -157,17 +166,24 @@ bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool Blo
 
 void meleeweapon::DipInto(material* Material, character* Dipper)
 {
-  ChangeContainedMaterial(Material);
-
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+    ADD_MESSAGE("%s is now covered with %s.", CHARNAME(DEFINITE), Material->GetName(false, false).c_str());
 
+  ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
 }
 
 material* lump::CreateDipMaterial()
 {
-  return GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
+  material* Material = GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
+
+  if(!GetMainMaterial()->GetVolume())
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
+
+  return Material;
 }
 
 bool pickaxe::Apply(character* User)
@@ -194,7 +210,7 @@ bool pickaxe::Apply(character* User)
 	  if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->DestroyTerrain(User, Square->GetOLTerrain()))
 	    {
 	      User->SwitchToDig(this, User->GetPos() + Temp);
-	      User->DexterityAction(10);
+	      User->DexterityAction(5);
 	      return true;
 	    }
 	  else
@@ -212,13 +228,13 @@ bool wand::Apply(character* Terrorist)
 {
   if(Terrorist->IsPlayer())
     ADD_MESSAGE("%s breaks in two and then explodes!", CHARNAME(DEFINITE));
-  else
-    if(Terrorist->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+  else if(Terrorist->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+  else if(GetSquareUnder()->CanBeSeenByPlayer())
+    ADD_MESSAGE("Something explodes!");
 
   RemoveFromSlot();
   SendToHell();
-
   std::string DeathMsg;
 
   if(Terrorist->IsPlayer())
@@ -265,45 +281,6 @@ void scrollofwishing::FinishReading(character* Reader)
 	  return;
 	}
     }
-}
-
-/*bool lantern::ReceiveDamage(character*, ushort Damage, uchar)
-{
-  if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
-
-      brokenlantern* Lantern = new brokenlantern(0, false);
-      Lantern->InitMaterials(GetMainMaterial());
-      SetMainMaterial(0);
-      Lantern->SignalSquarePositionChange(SquarePosition);
-      GetSlot()->DonateTo(Lantern);
-      SendToHell();
-      return true;
-    }
-
-  return false;
-}*/
-
-bool potion::ReceiveDamage(character*, ushort Damage, uchar)
-{
-  if(!(RAND() % 75) && Damage > 10 + RAND() % 10)
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
-
-      if(GetContainedMaterial()) 
-	GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
-
-      item* Remains = new brokenbottle(0, false);
-      Remains->InitMaterials(GetMainMaterial());
-      GetSlot()->DonateTo(Remains);
-      SendToHell();
-      return true;
-    }
-
-  return false;
 }
 
 bool scrollofchangematerial::Read(character* Reader)
@@ -367,11 +344,11 @@ item* brokenbottle::BetterVersion() const
   return P;
 }
 
-bool brokenbottle::StepOnEffect(character* Stepper)
+void brokenbottle::StepOnEffect(character* Stepper)
 {
   if(!(RAND() % 10))
     {
-      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, LEGS))
+      if(Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, LEGS, YOURSELF, false, false, false, false))
 	{
 	  if(Stepper->IsPlayer())
 	    ADD_MESSAGE("Auch. You step on sharp glass splinters.");
@@ -386,27 +363,38 @@ bool brokenbottle::StepOnEffect(character* Stepper)
 	    ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
 	}
 
-      //Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
       Stepper->CheckDeath("stepped on a broken bottle");
     }
+}
 
-  return false;
+material* can::CreateDipMaterial()
+{
+  material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
+
+  if(!GetContainedMaterial()->GetVolume())
+    Empty();
+
+  return Material;
 }
 
 material* potion::CreateDipMaterial()
 {
-  return GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
+  material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
+
+  if(!GetContainedMaterial()->GetVolume())
+    Empty();
+
+  return Material;
 }
 
 void potion::DipInto(material* Material, character* Dipper)
 {
   /* Add alchemy */
 
-  ChangeContainedMaterial(Material);
-
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->CHARNAME(UNARTICLED));
+    ADD_MESSAGE("%s is now filled with %s.", CHARNAME(DEFINITE), Material->GetName(false, false).c_str());
 
+  ChangeContainedMaterial(Material);
   Dipper->DexterityAction(10);
 }
 
@@ -417,10 +405,10 @@ ulong meleeweapon::GetPrice() const
   return ulong(WeaponStrengthModifier / (5000000000000.0f * sqrt(GetWeight()))) + item::GetPrice();
 }
 
-ulong bodyarmor::GetPrice() const
+ulong armor::GetPrice() const
 {
   float StrengthValue = GetStrengthValue();
-  return ulong(StrengthValue * StrengthValue * StrengthValue * 75 / sqrt(GetWeight())) + item::GetPrice();
+  return ulong(StrengthValue * StrengthValue * StrengthValue * 20 / sqrt(GetWeight()));
 }
 
 void lantern::SignalSquarePositionChange(uchar NewSquarePosition)
@@ -486,17 +474,19 @@ item* can::BetterVersion() const
 
 ushort whip::GetFormModifier() const
 {
-  return 75 * GetMainMaterial()->GetFlexibility();
+  return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
 bool backpack::Apply(character* Terrorist)
 {
-  if(GetContainedMaterial() && GetContainedMaterial()->IsExplosive())
+  if(IsExplosive())
     {
       if(Terrorist->IsPlayer())
 	ADD_MESSAGE("You light your %s. It explodes!", CHARNAME(UNARTICLED));
       else if(Terrorist->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+      else if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("Something explodes!");
 
       RemoveFromSlot();
       SendToHell();
@@ -512,9 +502,8 @@ bool backpack::Apply(character* Terrorist)
       Terrorist->GetLevelUnder()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
       return true;
     }
-  else
-    if(Terrorist->IsPlayer())
-      ADD_MESSAGE("You can't apply this!");	
+  else if(Terrorist->IsPlayer())
+    ADD_MESSAGE("You can't apply this!");	
 
   return false;
 }
@@ -565,8 +554,8 @@ bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
       if(Damager)
 	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -580,7 +569,7 @@ bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
 
 bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
 {
-  if((Type == FIRE && !(RAND() % 3)) || (Type == ENERGY && RAND() % 3))
+  if(((Type == FIRE && !(RAND() % 3)) || (Type == ENERGY && RAND() % 3)) && IsExplosive())
     {
       std::string DeathMsg = "explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -588,8 +577,8 @@ bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
       if(Damager)
 	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
 
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -621,28 +610,31 @@ void wand::Beam(character* Zapper, const std::string& DeathMsg, uchar Direction,
   vector2d CurrentPos = Zapper->GetPos();
 
   if(Direction != YOURSELF)
-    for(ushort Length = 0; Length < Range; ++Length)
-      {
-	if(!GetAreaUnder()->IsValidPos(CurrentPos + game::GetMoveVector(Direction)))
-	  break;
-
-	lsquare* CurrentSquare = GetNearLSquare(CurrentPos + game::GetMoveVector(Direction));
-
-	if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
-	  {
-	    BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
+    {
+      for(ushort Length = 0; Length < Range; ++Length)
+	{
+	  if(!GetAreaUnder()->IsValidPos(CurrentPos + game::GetMoveVector(Direction)))
 	    break;
-	  }
-	else
-	  {	
-	    CurrentPos += game::GetMoveVector(Direction);
-	    if(BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare))
-	      break;
 
-	    if(CurrentSquare->CanBeSeenByPlayer(true))
-	      CurrentSquare->DrawParticles(GetBeamColor(), Direction);
-	  }
-      }
+	  lsquare* CurrentSquare = GetNearLSquare(CurrentPos + game::GetMoveVector(Direction));
+
+	  if(!(CurrentSquare->GetOLTerrain()->IsWalkable()))
+	    {
+	      BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
+	      break;
+	    }
+	  else
+	    {	
+	      CurrentPos += game::GetMoveVector(Direction);
+
+	      if(BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare))
+		break;
+
+	      if(CurrentSquare->CanBeSeenByPlayer(true))
+		CurrentSquare->DrawParticles(GetBeamColor(), Direction);
+	    }
+	}
+    }
   else
     {
       lsquare* Where = Zapper->GetLSquareUnder();
@@ -687,7 +679,7 @@ bool oillamp::Apply(character* Applier)
 
   if(GetInhabitedByGenie())
     {
-      character* Genie = new genie;
+      genie* Genie = new genie;
       vector2d TryToCreate;
       bool FoundPlace = false;
 
@@ -741,6 +733,7 @@ bool oillamp::Apply(character* Applier)
 
 		      GetLevelUnder()->RemoveCharacter(TryToCreate);
 		      delete Genie;
+		      Applier->EditAP(-1000);
 		      return true;
 		    }
 		}
@@ -844,7 +837,7 @@ bool banana::Zap(character*, vector2d, uchar)
   return true;
 }
 
-bool bananapeals::StepOnEffect(character* Stepper)
+void bananapeals::StepOnEffect(character* Stepper)
 {
   if(Stepper->HasFeet() && !(RAND() % 3))
     {
@@ -854,12 +847,11 @@ bool bananapeals::StepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
       /* Do damage against any random bodypart except legs */
-      Stepper->ReceiveDamage(0, 1 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
+
+      Stepper->ReceiveDamage(0, 2 + (RAND() & 1), PHYSICALDAMAGE, ALL&~LEGS);
       Stepper->CheckDeath("slipped on a banana peal.");
       Stepper->EditAP(-1000);
     }
-  
-  return false;
 }
 
 bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
@@ -933,13 +925,13 @@ void scrolloftaming::FinishReading(character* Reader)
 void bodypart::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << RegenerationCounter;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << RegenerationCounter << BloodColor;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> RegenerationCounter >> BloodColor;
 }
 
 bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
@@ -988,6 +980,9 @@ ushort humanoidtorso::GetTotalResistance(uchar Type) const
       if(GetBodyArmor())
 	Resistance += GetBodyArmor()->GetResistance(Type);
 
+      if(GetBelt())
+	Resistance += GetBelt()->GetResistance(Type);
+
       return Resistance;
     }
   else
@@ -1000,8 +995,8 @@ ushort arm::GetTotalResistance(uchar Type) const
     {
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
-      if(GetMaster()->GetBodyArmor())
-	Resistance += GetMaster()->GetBodyArmor()->GetResistance(Type) / 2;
+      if(GetHumanoidMaster()->GetBodyArmor())
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) / 2;
 
       if(GetGauntlet())
 	Resistance += GetGauntlet()->GetResistance(Type);
@@ -1018,8 +1013,11 @@ ushort groin::GetTotalResistance(uchar Type) const
     {
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
-      if(GetMaster()->GetBodyArmor())
-	Resistance += GetMaster()->GetBodyArmor()->GetResistance(Type);
+      if(GetHumanoidMaster()->GetBodyArmor())
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type);
+
+      if(GetHumanoidMaster()->GetBelt())
+	Resistance += GetHumanoidMaster()->GetBelt()->GetResistance(Type);
 
       return Resistance;
     }
@@ -1033,8 +1031,8 @@ ushort leg::GetTotalResistance(uchar Type) const
     {
       ushort Resistance = GetResistance(Type) + GetMaster()->GlobalResistance(Type);
 
-      if(GetMaster()->GetBodyArmor())
-	Resistance += GetMaster()->GetBodyArmor()->GetResistance(Type) / 2;
+      if(GetHumanoidMaster()->GetBodyArmor())
+	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) / 2;
 
       if(GetBoot())
 	Resistance += GetBoot()->GetResistance(Type);
@@ -1101,40 +1099,38 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-bool torso::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
-{
-  if(GetMaster())
-    GetMaster()->GetStack()->ReceiveDamage(Damager, Damage, Type);
-
-  return bodypart::ReceiveDamage(Damager, Damage, Type);
-}
-
 bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
 {
   if(GetMaster())
     {
       ushort BHP = GetHP();
 
-      if(GetHP() <= Damage)
-	if(GetHP() == GetMaxHP() && GetHP() != 1 && GetMaster()->BodyPartVital(GetBodyPartIndex()))
-	  Damage = GetHP() - 1;
+      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1 && GetMaster()->BodyPartVital(GetBodyPartIndex()))
+	Damage = GetHP() - 1;
 
       EditHP(-Damage);
 
       if(GetHP() <= 0)
 	return true;
-      else
-	if(GetMaster()->IsPlayer())
-	  if(GetHP() == 1 && BHP >= 2)
-	    {
-	      game::Beep();
+      else if(GetMaster()->IsPlayer())
+	if(GetHP() == 1 && BHP > 1)
+	  {
+	    game::Beep();
+
+	    if(IsAlive())
 	      ADD_MESSAGE("Your %s bleeds very badly.", GetBodyPartName().c_str());
-	    }
-	  else if(GetHP() < GetMaxHP() / 3 && BHP >= GetMaxHP() / 3)
-	    {
-	      game::Beep();
+	    else
+	      ADD_MESSAGE("Your %s is in very bad condition.", GetBodyPartName().c_str());
+	  }
+	else if(IsInBadCondition() && !IsInBadCondition(BHP))
+	  {
+	    game::Beep();
+
+	    if(IsAlive())
 	      ADD_MESSAGE("Your %s bleeds.", GetBodyPartName().c_str());
-	    }
+	    else
+	      ADD_MESSAGE("Your %s is in bad condition.", GetBodyPartName().c_str());
+	  }
     }
 
   return false;
@@ -1154,16 +1150,19 @@ void mine::Save(outputfile& SaveFile) const
 
 bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
 {
-  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || (Type == PHYSICALDAMAGE))
+  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || ((Type == PHYSICALDAMAGE) && WillExplode(0)))
     {
-      std::string DeathMsg = "explosion of ";
+      std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetName(INDEFINITE);
+	{
+	  DeathMsg << " caused by ";
+	  Damager->AddName(DeathMsg, INDEFINITE);
+	}
 
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHARNAME(DEFINITE));
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHARDESCRIPTION(DEFINITE));
 
       lsquare* Square = GetLSquareUnder();
       RemoveFromSlot();
@@ -1175,21 +1174,22 @@ bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
   return false;
 }
 
-bool mine::StepOnEffect(character* Stepper)
+void mine::StepOnEffect(character* Stepper)
 {
   if(!WillExplode(Stepper))
-    return false;
+    return;
 
   if(Stepper->IsPlayer())
-    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CHARNAME(INDEFINITE));
+    ADD_MESSAGE("You hear a faint thumb. You look down. You see %s.", CHARNAME(INDEFINITE));
   else if(Stepper->CanBeSeenByPlayer())
     ADD_MESSAGE("%s steps on %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
+  else if(GetSquareUnder()->CanBeSeenByPlayer())
+    ADD_MESSAGE("Something explodes!");
 
   lsquare* Square = GetLSquareUnder();
   RemoveFromSlot();
   SendToHell();
   Square->GetLevelUnder()->Explosion(0, "killed by a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
-  return true;
 }
 
 bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
@@ -1197,12 +1197,9 @@ bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSq
   character* Dude = LSquare->GetCharacter();
 
   if(Dude)
-    {
-      Dude->BeginTemporaryState(HASTE, 500 + RAND() % 1000);
-      return true;
-    }
-  else
-    return false;
+    Dude->BeginTemporaryState(HASTE, 500 + RAND() % 1000);
+
+  return false;
 }
 
 bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
@@ -1210,12 +1207,9 @@ bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSqu
   character* Dude = LSquare->GetCharacter();
 
   if(Dude)
-    {
-      Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
-      return true;
-    }
-  else
-    return false;
+    Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+
+  return false;
 }
 
 bool key::Apply(character* User)
@@ -1439,7 +1433,7 @@ humanoid* bodypart::GetHumanoidMaster() const
 
 ushort belt::GetFormModifier() const
 {
-  return 50 * GetMainMaterial()->GetFlexibility();
+  return item::GetFormModifier() * GetMainMaterial()->GetFlexibility();
 }
 
 bool pickaxe::IsAppliable(const character* Who) const
@@ -1546,7 +1540,7 @@ uchar corpse::GetAlphaA(ushort) const
 
 ushort corpse::GetMaterialColorB(ushort) const
 {
-  return GetDeceased()->GetBloodColor();
+  return GetDeceased()->GetTorso()->IsAlive() ? GetDeceased()->GetBloodColor() : GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
 }
 
 vector2d corpse::GetBitmapPos(ushort) const
@@ -1850,13 +1844,13 @@ void banana::VirtualConstructor(bool Load)
 {
   meleeweapon::VirtualConstructor(Load);
   SetAnimationFrames(20);
+
   if(!Load)
     SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
 }
 
 void lantern::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
   SetSquarePosition(CENTER);
 }
 
@@ -1871,27 +1865,17 @@ void wand::VirtualConstructor(bool Load)
 
 void oillamp::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
-  
   if(!Load)
     SetInhabitedByGenie(RAND() & 1);
 }
 
 void mine::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
-  
-  if(!Load)
-    {
-      Team = MONSTER_TEAM;
-      Active = true;
-    }
+  Active = false; /* this must be false */
 }
 
 void key::VirtualConstructor(bool Load)
-{
-  item::VirtualConstructor(Load);
-  
+{ 
   if(!Load)
     SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
 }
@@ -1991,7 +1975,6 @@ void magicalwhistle::BlowEffect(character* Whistler)
 
 void chest::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
   Contained = new stack(0, this, HIDDEN, true);
 
   if(!Load)
@@ -2216,12 +2199,12 @@ void arm::EditExperience(ushort Identifier, long Value)
   if(Identifier == ARMSTRENGTH)
     {
       if(IsAlive())
-	StrengthExperience += Value;
+	StrengthExperience += Value << 1;
     }
   else if(Identifier == DEXTERITY)
     {
       if(IsAlive())
-	DexterityExperience += Value;
+	DexterityExperience += Value << 1;
     }
   else
     ABORT("Illegal arm attribute %d experience edit request!", Identifier);
@@ -2268,12 +2251,12 @@ void leg::EditExperience(ushort Identifier, long Value)
   if(Identifier == LEGSTRENGTH)
     {
       if(IsAlive())
-	StrengthExperience += Value;
+	StrengthExperience += Value << 1;
     }
   else if(Identifier == AGILITY)
     {
       if(IsAlive())
-	AgilityExperience += Value;
+	AgilityExperience += Value << 1;
     }
   else
     ABORT("Illegal leg attribute %d experience edit request!", Identifier);
@@ -2418,21 +2401,24 @@ const std::string& key::GetAdjective() const
 
 void head::InitSpecialAttributes()
 {
-  SetBaseBiteStrength(GetMaster()->GetBaseBiteStrength());
+  bodypart::InitSpecialAttributes();
+  BaseBiteStrength = Master->GetBaseBiteStrength();
 }
 
 void arm::InitSpecialAttributes()
 {
-  SetStrength(GetMaster()->GetDefaultArmStrength() * (100 + GetMaster()->GetAttributeBonus()) / 100);
-  SetDexterity(GetMaster()->GetDefaultDexterity() * (100 + GetMaster()->GetAttributeBonus()) / 100);
-  SetBaseUnarmedStrength(GetMaster()->GetBaseUnarmedStrength());
+  bodypart::InitSpecialAttributes();
+  Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
+  Dexterity = Master->GetDefaultDexterity() * (100 + Master->GetAttributeBonus()) / 100;
+  BaseUnarmedStrength = Master->GetBaseUnarmedStrength();
 }
 
 void leg::InitSpecialAttributes()
 {
-  SetStrength(GetMaster()->GetDefaultLegStrength() * (100 + GetMaster()->GetAttributeBonus()) / 100);
-  SetAgility(GetMaster()->GetDefaultAgility() * (100 + GetMaster()->GetAttributeBonus()) / 100);
-  SetBaseKickStrength(GetMaster()->GetBaseKickStrength());
+  bodypart::InitSpecialAttributes();
+  Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
+  Agility = Master->GetDefaultAgility() * (100 + Master->GetAttributeBonus()) / 100;
+  BaseKickStrength = Master->GetBaseKickStrength();
 }
 
 std::string corpse::GetConsumeVerb() const
@@ -2441,21 +2427,22 @@ std::string corpse::GetConsumeVerb() const
 }
 
 /* Victim is of course the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
+
 bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 {
-  if(!(RAND() % 5))
+  if(!(RAND() % 3))
     {
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to hurt your %s even more.", Victim->GetBodyPartName(BodyPart).c_str());
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHARNAME(DEFINITE), Victim->GetPossessivePronoun().c_str(), Victim->GetBodyPartName(BodyPart).c_str(), CHARNAME(DEFINITE));
 
-      Victim->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, BodyPart);
-      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE) + ".");
+      Victim->ReceiveBodyPartDamage(0, 3 + RAND() % 3, PHYSICALDAMAGE, BodyPart, YOURSELF, false, false, false);
+      Victim->CheckDeath("died while trying to escape from " + GetName(DEFINITE));
       return false;
     }
 
-  if(!(RAND() % 3))
+  if(!(RAND() % 5))
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONEINDEX);
@@ -2488,23 +2475,17 @@ void beartrap::Save(outputfile& SaveFile) const
 
 void beartrap::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
-
-  if(!Load)
-    {
-      Active = false;
-      Team = MONSTER_TEAM;
-    }
+  Active = false; /* this must be false */
 }
 
-bool beartrap::StepOnEffect(character* Stepper)
+void beartrap::StepOnEffect(character* Stepper)
 {
   if(IsActive() && !Stepper->IsStuck())
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();
 
       if(StepperBodyPart == NONEINDEX)
-	return false;
+	return;
 
       Stepper->SetStuckTo(this);
       Stepper->SetStuckToBodyPart(StepperBodyPart);
@@ -2514,19 +2495,12 @@ bool beartrap::StepOnEffect(character* Stepper)
       else if(Stepper->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHARNAME(DEFINITE), CHARNAME(INDEFINITE));
 
-      Stepper->ReceiveBodyPartDamage(0, RAND() % 3 + 1, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart());
-      Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE) + ".");
       SetIsActive(false);
+      Stepper->ReceiveBodyPartDamage(0, 4 + RAND() % 5, PHYSICALDAMAGE, Stepper->GetStuckToBodyPart(), YOURSELF, false, false, false);
+      Stepper->CheckDeath("died stepping to " + GetName(INDEFINITE));
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
     }
-  else
-    {
-      /* My English seems to be a bit rusty. It might be good to choose some other word than "active" */
-
-      if(Stepper->IsPlayer())
-	ADD_MESSAGE("You step on %s but luckily it isn't active.", CHARNAME(INDEFINITE));
-    }
-
-  return false;
 }
 
 bool beartrap::CheckPickUpEffect(character* Picker)
@@ -2534,12 +2508,12 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   if(Picker->IsStuck() && Picker->GetStuckTo()->GetID() == GetID())
     {
       if(Picker->IsPlayer())
-	ADD_MESSAGE("%s is tightly stuck to %s.", CHARNAME(DEFINITE), Picker->GetBodyPart(Picker->GetStuckToBodyPart())->CHARNAME(UNARTICLED));
+	ADD_MESSAGE("%s is tightly stuck to your %s.", CHARNAME(DEFINITE), Picker->GetBodyPartName(Picker->GetStuckToBodyPart()).c_str());
 
       return false;
     }
 
-  SetIsActive(false); /* Just in case something wierd is going on. */
+  SetIsActive(false);
   return true;
 }
 
@@ -2552,7 +2526,6 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
     }
 
   vector2d Pos[3];
-
   Pos[0] = game::GetMoveVector(Direction);
 
   switch(Direction)
@@ -2618,8 +2591,6 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
     }
 
   SetTimesUsed(GetTimesUsed() + 1);
-  Zapper->EditExperience(PERCEPTION, 50);
-  Zapper->EditAP(500);
   return true;
 }
 
@@ -2637,7 +2608,7 @@ void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 
 bool beartrap::IsPickable(character* Picker) const
 {
-  return !Picker->GetStuckTo() || Picker->GetStuckTo()->GetID() != GetID();
+  return !IsActive() && (!Picker->GetStuckTo() || Picker->GetStuckTo()->GetID() != GetID());
 }
 
 void bodypart::Mutate()
@@ -2738,13 +2709,16 @@ bool stethoscope::Apply(character* Doctor)
     ABORT("Doctor is not here, man, but these pills taste just as good anyway.");
 
   uchar Dir = game::DirectionQuestion("What do you want to inspect? [press a direction key]", false,true);  
+
   if(Dir == DIR_ERROR)
     return false;
+
   Doctor->DexterityAction(2);
   return ListenTo(GetNearLSquare(GetPos() + game::GetMoveVector(Dir)), Doctor);
 } 
 
 /* Returns true if successful else false */
+
 bool stethoscope::ListenTo(lsquare* Square, character* Listener)
 {
   if(!Listener->CanUseStethoscope(true))
@@ -2900,7 +2874,7 @@ void arm::AddAttackInfo(felist& List) const
 	  GetWielded()->AddName(Entry, UNARTICLED);
 
 	  if(TwoHandWieldIsActive())
-	    Entry << " (in both hands)";
+	    Entry << " (b)";
 	}
       else
 	Entry << "melee attack";
@@ -2924,7 +2898,7 @@ void arm::AddDefenceInfo(felist& List) const
       Entry.resize(50, ' ');
       Entry << int(GetBlockValue());
       Entry.resize(70, ' ');
-      Entry << GetBlockStrength();
+      Entry << GetBlockCapability();
       List.AddEntry(Entry, LIGHTGRAY);
     }
 }
@@ -2944,15 +2918,19 @@ void bodypart::CalculateAttackInfo()
   CalculateAPCost();
 }
 
-bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool)
+bool flamingsword::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  if(RAND() & 1)
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(Enemy->IsEnabled() && RAND() & 1)
     {
-      ADD_MESSAGE("BURN BURN BURN! FIX FIX FIX!");
-      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), FIRE, BodyPartIndex, Direction) != 0;
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s sword burns %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
+
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 3), FIRE, BodyPartIndex, Direction) != 0 || BaseSuccess;
     }
   else
-    return false;
+    return BaseSuccess;
 }
 
 void flamingsword::VirtualConstructor(bool Load)
@@ -3043,62 +3021,74 @@ meleeweapon::~meleeweapon()
   delete ContainedMaterial;
 }
 
-bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool)
+bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  if(!(RAND() % 5))
-    {
-      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 1), ENERGY, BodyPartIndex, Direction) != 0;
+  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
+
+      return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) != 0 || BaseSuccess;
     }
   else
-    return false;
+    return BaseSuccess;
 }
 
-bool vermis::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
+bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  if(RAND() & 1)
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
     {
-      if(Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
 
       Enemy->TeleportRandomly();
       return true;
     }
   else
-    return false;
+    return BaseSuccess;
 }
 
-bool turox::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
+bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  if(!(RAND() % 5))
-    {
-      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s smashes %s with the full force of Turox.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARNAME(DEFINITE));
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-      square* Square = Enemy->GetSquareUnder();
+  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
+    {
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHARPERSONALPRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHARDESCRIPTION(DEFINITE));
+
       std::string DeathMSG = "killed by " + Enemy->GetName(DEFINITE); 
-      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Square->GetPos(), 20);
+      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 20 + RAND() % 5 - RAND() % 5);
       return true;
     }
   else
-    return false;
+    return BaseSuccess;
 }
 
-bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar, uchar, bool)
+bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
 {
-  if(CleptiaHelps(Enemy, Hitter))
+  bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
+
+  if(!(Config & BROKEN) && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
-      if(Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
+      if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
+
       if(Hitter->IsPlayer())
-	game::GetGod(10)->AdjustRelation(10);
+	{
+	  game::DoEvilDeed(10);
+	  game::GetGod(10)->AdjustRelation(10);
+	}
+
       Enemy->GetMainWielded()->MoveTo(Hitter->GetStackUnder());
       return true;
     }
   else
-    return false;
+    return BaseSuccess;
 }
 
 void bodypart::RandomizePosition()
@@ -3124,35 +3114,47 @@ bool chest::ContentsCanBeSeenBy(const character* Viewer) const
 
 bool mine::CanBeSeenBy(const character* Viewer) const 
 { 
-  return ((Viewer->GetTeam()->GetID() == Team) || !IsActive()) && materialcontainer::CanBeSeenBy(Viewer); 
+  return (!IsActive() || (Viewer->GetTeam()->GetID() == Team)) && materialcontainer::CanBeSeenBy(Viewer); 
 }
 
 bool beartrap::CanBeSeenBy(const character* Viewer) const 
 { 
-  return ((Viewer->GetTeam()->GetID() == Team) || !IsActive()) && item::CanBeSeenBy(Viewer); 
+  return (!IsActive() || (Viewer->GetTeam()->GetID() == Team)) && item::CanBeSeenBy(Viewer); 
 }
 
 bool mine::Apply(character* User)
 {
-  Team = User->GetTeam()->GetID();
-  if(IsActive())
-    SetIsActive(false);
-  else
-    SetIsActive(true);
+  if(User->IsPlayer())
+    ADD_MESSAGE("%s is now %sactive.", CHARNAME(DEFINITE), IsActive() ? "in" : "");
 
+  SetIsActive(!IsActive());
   User->DexterityAction(10);
+
+  if(IsActive())
+    {
+      Team = User->GetTeam()->GetID();
+      RemoveFromSlot();
+      User->GetStackUnder()->AddItem(this);
+    }
+
   return true;
 }
 
 bool beartrap::Apply(character* User)
 {
-  Team = User->GetTeam()->GetID();
-  if(IsActive())
-    SetIsActive(false);
-  else
-    SetIsActive(true);
+  if(User->IsPlayer())
+    ADD_MESSAGE("%s is now %sactive.", CHARNAME(DEFINITE), IsActive() ? "in" : "");
 
+  SetIsActive(!IsActive());
   User->DexterityAction(10);
+
+  if(IsActive())
+    {
+      Team = User->GetTeam()->GetID();
+      RemoveFromSlot();
+      User->GetStackUnder()->AddItem(this);
+    }
+
   return true;
 }
 
@@ -3195,7 +3197,7 @@ vector2d beartrap::GetBitmapPos(ushort) const
 
 bool mine::WillExplode(const character* Stepper) const
 {
-  return GetContainedMaterial()->IsExplosive() && Stepper->GetWeight() > 500;
+  return IsActive() && GetContainedMaterial() && GetContainedMaterial()->IsExplosive() && (!Stepper || Stepper->GetWeight() > 500);
 }
 
 materialcontainer::materialcontainer(const materialcontainer& MC) : item(MC)
@@ -3271,16 +3273,15 @@ oillamp::oillamp(const oillamp& Lamp) : item(Lamp), InhabitedByGenie(false)
 
 bool whipofcleptia::CleptiaHelps(const character* Enemy, const character* Hitter) const
 {
-  if(!Hitter->GetMainWielded() || !Enemy->GetMainWielded())
+  if(!Enemy->GetMainWielded() || GetMainMaterial()->GetFlexibility() <= 5)
     return false;
+
   if(Hitter->IsPlayer())
     {
       if(game::GetGod(10)->GetRelation() < 0)
 	return false;
       else
-	{
-	  return (RAND() % (game::GetGod(10)->GetRelation() / 200 + 1)) != 0;
-	}
+	return !(RAND() % (7 - game::GetGod(10)->GetRelation() / 200));
     }
   else
     return !(RAND() % 5);
@@ -3397,6 +3398,9 @@ void wand::AddInventoryEntry(const character*, felist& List, ushort, bool ShowSp
 
 void materialcontainer::SignalSpoil(material* Material)
 {
+  if(!Exists())
+    return;
+
   if(Material == GetMainMaterial())
     {
       if(CanBeSeenByPlayer())
@@ -3424,18 +3428,15 @@ void materialcontainer::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The contents of %s spoil completely.", CHARNAME(DEFINITE));
 
-      ChangeContainedMaterial(0);
-
-      if(!game::IsInWilderness())
-	{
-	  GetLSquareUnder()->SendMemorizedUpdateRequest();
-	  GetLSquareUnder()->SendNewDrawRequest();
-	}
+      Empty();
     }
 }
 
 void banana::SignalSpoil(material* Material)
 {
+  if(!Exists())
+    return;
+
   if(Material == GetSecondaryMaterial() && !GetMainMaterial()->IsVeryCloseToSpoiling())
     {
       if(CanBeSeenByPlayer())
@@ -3453,9 +3454,12 @@ void banana::SignalSpoil(material* Material)
 
 void meleeweapon::SignalSpoil(material* Material)
 {
+  if(!Exists())
+    return;
+
   if(Material == GetContainedMaterial())
     {
-      ChangeContainedMaterial(0);
+      Empty();
 
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s seems cleaner now.", CHARNAME(DEFINITE));
@@ -3473,11 +3477,6 @@ void meleeweapon::AddPostFix(std::string& String) const
       String << " covered with ";
       GetContainedMaterial()->AddName(String, false, false);
     }
-}
-
-bool bodypart::AllowSpoil() const
-{
-  return !Master || !Master->IsEnabled();
 }
 
 void bodypart::SignalSpoil(material* Material)
@@ -3608,4 +3607,113 @@ bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
   return true;
 }
 
+ulong mine::GetPrice() const
+{
+  if(GetContainedMaterial())
+    {
+      if(GetContainedMaterial()->IsExplosive())
+	return (GetContainedMaterial()->GetRawPrice() << 1) + item::GetPrice();
+      else
+	return GetContainedMaterial()->GetRawPrice() + item::GetPrice();
+    }
+  else
+    return item::GetPrice();
+}
 
+ulong chest::GetPrice() const
+{
+  return GetContained()->GetPrice() + item::GetPrice();
+}
+
+void potion::Break()
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s shatters to pieces.", CHARNAME(DEFINITE));
+
+  if(GetContainedMaterial()) 
+    GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
+
+  item* Remains = new brokenbottle(0, false);
+  Remains->InitMaterials(GetMainMaterial());
+  SetMainMaterial(0);
+  GetSlot()->DonateTo(Remains);
+  SendToHell();
+}
+
+void bodypart::Be()
+{
+  if(Master && Master->IsPlayer())
+    int esko = 2;
+  if(Master)
+    {
+      if(Master->IsPolymorphed())
+	return;
+
+      if(Master->IsEnabled())
+	{
+	  if(IsInBadCondition() && !(RAND() & 0xF))
+	    SpillBlood(1);
+
+	  return;
+	}
+    }
+
+  if(HP < MaxHP && !(RAND() & 0xF))
+    {
+      SpillBlood(1);
+      HP += Max(((MaxHP - HP) >> 2), 1);
+    }
+
+  materialcontainer::Be();
+}
+
+void bodypart::SpillBlood(ushort HowMuch, vector2d GetPos)
+{
+  if(!HowMuch || !IsAlive())
+    return;
+
+  if(!game::IsInWilderness()) 
+    GetNearLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+}
+
+void bodypart::SpillBlood(ushort HowMuch)
+{
+  if(!HowMuch || !IsAlive())
+    return;
+
+  if(!game::IsInWilderness()) 
+    GetLSquareUnder()->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+}
+
+void materialcontainer::Be()
+{
+  MainMaterial->Be();
+
+  if(ContainedMaterial)
+    ContainedMaterial->Be();
+}
+
+void meleeweapon::Be()
+{
+  MainMaterial->Be();
+  SecondaryMaterial->Be();
+
+  if(ContainedMaterial)
+    ContainedMaterial->Be();
+}
+
+void bodypart::InitSpecialAttributes()
+{
+  BloodColor = Master->GetBloodColor();
+}
+
+ulong shield::GetPrice() const
+{
+  return item::GetPrice();
+}
+
+ulong whipofcleptia::GetPrice() const
+{
+  /* If not broken but not flexible enough to work, special thievery bonus must be removed */
+  return GetMainMaterial()->GetFlexibility() > 5 || Config & BROKEN ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
+}

@@ -53,7 +53,7 @@ void highscore::Draw() const
       Desc += Score[c];
       Desc.resize(13, ' ');
       Desc += Entry[c];
-      List.AddEntry(Desc, c == LastAdd ? DARKGRAY : LIGHTGRAY, 13);
+      List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHTGRAY, 13);
     }
 
   List.Draw(vector2d(10, 10), 780, 50, BLACK, false, false, false, true);

@@ -1222,7 +1222,7 @@ void game::BusyAnimation(bitmap* Buffer)
 int game::AskForKeyPress(const std::string& Topic)
 {
   DrawEverythingNoBlit();
-  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
   graphics::BlitDBToScreen();
   int Key = GETKEY();
   DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);

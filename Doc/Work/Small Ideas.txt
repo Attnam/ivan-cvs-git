@@ -294,3 +294,11 @@ If the player is polymorphed into a monster that can't heal, the rest command sh
 Hallucination state.
 Random items to certain monsters' inventories.
 NP shouldn't be consumed if polymorphed into a golem.
+Petrus's bodyparts should disappear when severed.
+"There is no door to close, silly."
+Bodypart state system.
+Poisoned bodypart state.
+Bleeding bodypart state.
+It should be possible for a critical hit to sever a lump flesh.
+If a mine in the inventory is active, it should be displayed somehow.
+Non-living bodyparts should be immune to poison.

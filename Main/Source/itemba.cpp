@@ -60,6 +60,9 @@ short item::GetOfferValue(char GodAlignment) const
 
 bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
+  if(Direction == RANDOMDIR)
+    Direction = RAND() % 8;
+
   vector2d StartingPos = GetPos();
   vector2d Pos = StartingPos;
   bool Breaks = false;
@@ -286,20 +289,6 @@ ushort item::GetResistance(uchar Type) const
     }
 }
 
-void item::Be()
-{
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      {
-	GetMaterial(c)->Be();
-
-	/* Item may be destroyed. */
-
-	if(!IsEnabled())
-	  break;
-      }
-}
-
 void item::AddConsumeEndMessage(character* Eater) const
 {
   GetConsumeMaterial()->AddConsumeEndMessage(Eater);
@@ -465,10 +454,12 @@ void item::WeaponSkillHit()
 }
 
 /* returns 0 if item cannot be cloned */
+
 item* item::Duplicate() const
 {
   if(!CanBeCloned())
     return 0;
+
   item* Clone = RawDuplicate();
   Clone->UpdatePictures();
   return Clone;
@@ -509,20 +500,21 @@ const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
 
 bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(CanBeBroken() && !(GetConfig() & BROKEN) && Type & (PHYSICALDAMAGE|SOUND|ENERGY) && Damage > GetStrengthValue() && RAND() % (100 * Damage / GetStrengthValue()) >= 100)
+  if(CanBeBroken() && !(GetConfig() & BROKEN) && Type & (PHYSICALDAMAGE|SOUND|ENERGY))
     {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
+      ushort StrengthValue = GetStrengthValue();
 
-      item* Broken = RawDuplicate();
-      Broken->SetConfig(GetConfig() | BROKEN);
-      Broken->SetSize(Broken->GetSize() >> 1);
-      GetSlot()->DonateTo(Broken);
-      SendToHell();
-      return true;
+      if(!StrengthValue)
+	StrengthValue = 1;
+
+      if(Damage > StrengthValue && RAND() % (100 * Damage / StrengthValue) >= 100)
+	{
+	  Break();
+	  return true;
+	}
     }
-  else
-    return false;
+
+  return false;
 }
 
 void itemdatabase::InitDefaults(ushort Config)
@@ -553,12 +545,15 @@ void item::AddMiscellaneousInfo(felist& List) const
 }
 
 ulong item::GetNutritionValue() const
-{ 
+{
   return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue(this) : 0; 
 }
 
 void item::SignalSpoil(material*)
 {
+  if(!Exists())
+    return;
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s spoils completely.", CHARNAME(DEFINITE));
 
@@ -579,6 +574,7 @@ bool item::CarriedBy(const character* Who) const
 item* item::DuplicateToStack(stack* CurrentStack)
 {
   item* Duplicated = Duplicate();
+
   if(!Duplicated)
     return 0;
 
@@ -596,3 +592,30 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item);
 }
 
+void item::Break()
+{
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
+
+  item* Broken = RawDuplicate();
+  Broken->SetConfig(GetConfig() | BROKEN);
+  Broken->SetSize(Broken->GetSize() >> 1);
+  GetSlot()->DonateTo(Broken);
+  SendToHell();
+}
+
+void item::Be()
+{
+  MainMaterial->Be();
+}
+
+void item::Empty()
+{
+  ChangeContainedMaterial(0);
+
+  if(!game::IsInWilderness())
+    {
+      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      GetLSquareUnder()->SendNewDrawRequest();
+    }
+}

@@ -73,15 +73,6 @@ bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool) const
     }
 }
 
-void square::KickAnyoneStandingHereAway()
-{
-  if(Character)
-    {
-      GetAreaUnder()->AddCharacter(GetAreaUnder()->GetNearestFreeSquare(Character, GetPos()), Character);
-      RemoveCharacter();
-    }
-}
-
 bool square::IsWalkable(const character* Char) const
 {
   return GetOTerrain()->IsWalkable() && GetGTerrain()->IsWalkable(Char);
@@ -93,6 +84,14 @@ std::string square::SurviveMessage(character*) const
     return GetOTerrain()->SurviveMessage();
   else
     return GetGTerrain()->SurviveMessage();
+}
+
+std::string square::MonsterSurviveMessage(character* Char) const
+{
+  if(!GetOTerrain()->IsWalkable())
+    return Char->GetName(DEFINITE) + " " + GetOTerrain()->MonsterSurviveMessage();
+  else
+    return Char->GetName(DEFINITE) + " " + GetGTerrain()->MonsterSurviveMessage();
 }
 
 std::string square::DeathMessage(character*) const
@@ -117,6 +116,11 @@ std::string square::ScoreEntry(character*) const
     return GetOTerrain()->ScoreEntry();
   else
     return GetGTerrain()->ScoreEntry();
+}
+
+bool square::IsFatalToStay() const
+{
+  return GetGTerrain()->IsFatalToStay() || GetOTerrain()->IsFatalToStay();
 }
 
 uchar square::GetEntryDifficulty() const
