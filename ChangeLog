@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Reduced global difficulty values by 5-10 danger points
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Corrected a bug in the reload datafiles command which made it useless
 	* The locks of the cathedral have been changed, and the master guard holds the
 	  only key
