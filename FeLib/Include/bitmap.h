@@ -114,7 +114,7 @@ class bitmap
   packalpha** GetAlphaMap() const { return AlphaMap; }
   static truth PixelVectorHandler(long, long);
   void FillAlpha(alpha);
-  void CreatePriorityMap(priority);
+  void InitPriorityMap(priority);
   void FillPriority(priority);
   void SafeSetPriority(int, int, priority);
   void SafeSetPriority(v2 Pos, priority What) { SafeSetPriority(Pos.X, Pos.Y, What); }

@@ -77,7 +77,7 @@ void igraph::Init()
     ColorizeBuffer[1]->CopyPaletteFrom(RawGraphic[0]);
     TileBuffer = new bitmap(TILE_V2);
     TileBuffer->ActivateFastFlag();
-    TileBuffer->CreatePriorityMap(0);
+    TileBuffer->InitPriorityMap(0);
     FlagBuffer = new bitmap(TILE_V2);
     FlagBuffer->ActivateFastFlag();
     FlagBuffer->CreateAlphaMap(0);
@@ -195,7 +195,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     Bitmap->ActivateFastFlag();
 
     if(BodyPartFlags)
-      Bitmap->CreatePriorityMap(SpecialFlags & ST_CLOAK ? CLOAK_PRIORITY : AVERAGE_PRIORITY);
+      Bitmap->InitPriorityMap(SpecialFlags & ST_CLOAK ? CLOAK_PRIORITY : AVERAGE_PRIORITY);
 
     if(GI.OutlineColor != TRANSPARENT_COLOR)
       Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha, BodyPartFlags != ST_WIELDED ? ARMOR_OUTLINE_PRIORITY : AVERAGE_PRIORITY);

@@ -166,6 +166,7 @@ void fluid::Load(inputfile& SaveFile)
       GearImage[c].Load(SaveFile);
       GearImage[c].Picture->InitRandMap();
       GearImage[c].Picture->CalculateRandMap();
+      GearImage[c].Picture->InitPriorityMap(FLUID_PRIORITY);
     }
   }
 }
@@ -381,6 +382,7 @@ void fluid::CheckGearPicture(v2 ShadowPos, int SpecialFlags, truth BodyArmor)
   ImagePtr->ShadowPos = ShadowPos;
   ImagePtr->SpecialFlags = SpecialFlags;
   ImagePtr->Picture->InitRandMap();
+  ImagePtr->Picture->InitPriorityMap(FLUID_PRIORITY);
 
   if(Pixels)
     ImagePtr->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(),
@@ -400,10 +402,10 @@ void fluid::DrawGearPicture(blitdata& BlitData, int SpecialFlags) const
   if(SpecialFlags & 0x7)
   {
     Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
-    igraph::GetFlagBuffer()->AlphaLuminanceBlit(BlitData);
+    igraph::GetFlagBuffer()->AlphaPriorityBlit(BlitData);
   }
   else
-    GearImage->Picture->AlphaLuminanceBlit(BlitData);
+    GearImage->Picture->AlphaPriorityBlit(BlitData);
 
   if(BlitData.CustomData & ALLOW_ANIMATE)
     GearImage->Animate(BlitData, SpecialFlags);
@@ -421,7 +423,7 @@ void fluid::DrawBodyArmorPicture(blitdata& BlitData, int SpecialFlags) const
   if(Index >= BODY_ARMOR_PARTS)
     Index = 0;
 
-  GearImage[Index].Picture->AlphaLuminanceBlit(BlitData);
+  GearImage[Index].Picture->AlphaPriorityBlit(BlitData);
 
   if(BlitData.CustomData & ALLOW_ANIMATE)
     GearImage[Index].Animate(BlitData, 0);

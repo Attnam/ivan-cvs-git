@@ -1903,12 +1903,11 @@ void bitmap::AlphaPriorityBlit(const blitdata& BlitData) const
   }
 }
 
-void bitmap::CreatePriorityMap(priority InitialValue)
+void bitmap::InitPriorityMap(priority InitialValue)
 {
-  if(PriorityMap)
-    ABORT("Priority leak detected!");
+  if(!PriorityMap)
+    Alloc2D(PriorityMap, Size.Y, Size.X);
 
-  Alloc2D(PriorityMap, Size.Y, Size.X);
   memset(PriorityMap[0], InitialValue, XSizeTimesYSize);
 }
 

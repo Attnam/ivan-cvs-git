@@ -1,11 +1,15 @@
-/* 
- * NOTICE!!!
- *
- * This file contains SPOILERS, which might ruin your IVAN experience
- * totally. Also, editing anything can DESTROY GAME BALANCE or CAUSE
- * OBSCURE BUGS if you don't know what you're doing. So from here on,
- * proceed at your own risk!
- */
+-----------------------------------------------------------------------------
+
+ >>> NOTICE!!! <<<
+
+ This file contains SPOILERS, which might ruin your IVAN experience
+ totally. The file is provided AS IS and is probably completely unreadable.
+
+-----------------------------------------------------------------------------
+
+August 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* Corrected a minor bug in characters' special effect draw order
 
 August 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
