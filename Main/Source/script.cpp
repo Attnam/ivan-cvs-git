@@ -5,6 +5,7 @@
 #include "materba.h"
 #include "lterraba.h"
 #include "charba.h"
+#include "allocate.h"
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
@@ -251,6 +252,26 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 				continue;
 			}
+
+			if(Word == "IsUpStairs")
+			{
+				if(!IsUpStairs)
+					IsUpStairs = new bool;
+
+				*IsUpStairs = SaveFile.ReadBool();
+
+				continue;
+			}
+
+			if(Word == "IsDownStairs")
+			{
+				if(!IsDownStairs)
+					IsDownStairs = new bool;
+
+				*IsDownStairs = SaveFile.ReadBool();
+
+				continue;
+			}
 		}
 	}
 	else
@@ -269,9 +290,82 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 	}
 }
 
+void charactermap::ReadFrom(inputfile& SaveFile)
+{
+	if(SaveFile.ReadWord() != "{")
+		ABORT("Bracket missing in room script!");
+
+	std::map<char, characterscript*> SymbolMap;
+
+	SymbolMap['.'] = 0;
+
+	for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+	{
+		if(Word == "Pos")
+		{
+			if(!Pos)
+				Pos = new vector2d;
+
+			*Pos = SaveFile.ReadVector2d(ValueMap);
+
+			continue;
+		}
+
+		if(Word == "Size")
+		{
+			if(!Size)
+				Size = new vector2d;
+
+			*Size = SaveFile.ReadVector2d(ValueMap);
+
+			continue;
+		}
+
+		if(Word == "Types")
+		{
+			if(SaveFile.ReadWord() != "{")
+				ABORT("Bracket missing in room script!");
+
+			for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+			{
+				characterscript* CharacterScript = new characterscript;
+
+				CharacterScript->SetValueMap(ValueMap);
+				CharacterScript->ReadFrom(SaveFile);
+
+				SymbolMap[Word[0]] = CharacterScript;
+			}
+
+			continue;
+		}
+	}
+
+	if(!CharacterScriptMap)
+		Alloc2D(CharacterScriptMap, GetSize()->X, GetSize()->Y);
+
+	if(SaveFile.ReadWord() != "{")
+		ABORT("Missing bracket in charactermap script!");
+
+	for(ushort y = 0; y < GetSize()->Y; ++y)
+		for(ushort x = 0; x < GetSize()->X; ++x)
+		{
+			char Char = SaveFile.ReadLetter();
+
+			std::map<char, characterscript*>::iterator Iterator = SymbolMap.find(Char);
+
+			if(Iterator != SymbolMap.end())
+				CharacterScriptMap[x][y] = Iterator->second;
+			else
+				ABORT("Illegal character %c in charactermap!", Char);
+		}
+
+	if(SaveFile.ReadWord() != "}")
+		ABORT("Missing bracket in charactermap script!");
+}
+
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	bool ReCalculating = false;
+	//bool ReCalculating = false;
 
 	if(ReRead)
 	{
@@ -283,7 +377,7 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 		{
 			SaveFile.GetBuffer().clear();
 			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
-			ReCalculating = true;
+			//ReCalculating = true;
 		}
 		else
 			return;
@@ -303,10 +397,21 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			SS->SetValueMap(ValueMap);
 			SS->ReadFrom(SaveFile);
 
-			if(!ReCalculating)
+			if(!ReRead)
 				Square.push_back(SS);
 			else
 				delete SS;
+
+			continue;
+		}
+
+		if(Word == "CharacterMap")
+		{
+			if(!CharacterMap)
+				CharacterMap = new charactermap;
+
+			CharacterMap->SetValueMap(ValueMap);
+			CharacterMap->ReadFrom(SaveFile);
 
 			continue;
 		}
@@ -393,12 +498,22 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 			continue;
 		}
+
+		if(Word == "DivineOwner")
+		{
+			if(!DivineOwner)
+				DivineOwner = new uchar;
+
+			*DivineOwner = SaveFile.ReadNumber(ValueMap);
+
+			continue;
+		}
 	}
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	bool ReCalculating = false;
+	//bool ReCalculating = false;
 
 	if(ReRead)
 	{
@@ -410,7 +525,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 		{
 			SaveFile.GetBuffer().clear();
 			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
-			ReCalculating = true;
+			//ReCalculating = true;
 		}
 		else
 			return;
@@ -430,7 +545,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			SS->SetValueMap(ValueMap);
 			SS->ReadFrom(SaveFile);
 
-			if(!ReCalculating)
+			if(!ReRead)
 				Square.push_back(SS);
 			else
 				delete SS;
@@ -454,7 +569,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 				if(Base)
 					RS->SetBase(Base->GetRoomDefault(false));
 
-			RS->ReadFrom(SaveFile);
+			RS->ReadFrom(SaveFile, ReRead);
 
 			Room[Index] = RS;
 
@@ -471,7 +586,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			if(Base)
 				RoomDefault->SetBase(Base->GetRoomDefault(false));
 
-			RoomDefault->ReadFrom(SaveFile);
+			RoomDefault->ReadFrom(SaveFile, ReRead);
 
 			continue;
 		}

@@ -104,6 +104,13 @@ uchar game::GodNumber;
 ulong game::Turns;
 float game::SoftGamma = 1;
 
+void game::InitScript()
+{
+	srand(time(0));
+	inputfile ScriptFile("Script/Dungeon.dat");
+	GameScript.ReadFrom(ScriptFile);
+}
+
 void game::Init(std::string Name)
 {
 	static ushort Counter = 0;
@@ -127,9 +134,6 @@ void game::Init(std::string Name)
 	PolymorphCounter = 0xFFFF;
 	srand(time(0));
 	game::CalculateGodNumber();
-
-	inputfile ScriptFile("Script/Dungeon.dat");
-	GameScript.ReadFrom(ScriptFile);
 
 	if(Name == "")
 	{

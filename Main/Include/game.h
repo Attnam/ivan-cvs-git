@@ -136,6 +136,7 @@ public:
 	static void DoGoodDeed(short);
 	static void DoNeutralDeed(short);
 	static void DoEvilDeed(short);
+	static void InitScript();
 private:
 	static std::string Alignment[];
 	static god* God[];

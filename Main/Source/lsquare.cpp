@@ -428,17 +428,23 @@ ushort levelsquare::GetLuminance() const
 
 void levelsquare::AddCharacter(character* Guy)
 {
+	if(Character)
+		ABORT("Overgrowing of square population detected!");
+
 	Character = Guy;
 	Guy->SetSquareUnder(this);
 	SignalEmitationIncrease(Guy->GetEmitation());
 	NewDrawRequested = true;
-}	//lisätkää aborttiii!!!
+}
 
 void levelsquare::FastAddCharacter(character* Guy)
 {
+	if(Character)
+		ABORT("Overgrowing of square population detected!");
+
 	SetCharacter(Guy);
 	Guy->SetSquareUnder(this);
-}	//lisätkää aborttiii!!!
+}
 
 void levelsquare::Clean()
 {
@@ -658,4 +664,10 @@ void levelsquare::ApplyScript(squarescript* SquareScript)
 
 	if(SquareScript->GetCharacter(false))
 		FastAddCharacter(SquareScript->GetCharacter()->Instantiate());
+
+	if(SquareScript->GetIsUpStairs(false) && *SquareScript->GetIsUpStairs())
+		GetLevelUnder()->SetUpStairs(Pos);
+
+	if(SquareScript->GetIsDownStairs(false) && *SquareScript->GetIsDownStairs())
+		GetLevelUnder()->SetDownStairs(Pos);
 }

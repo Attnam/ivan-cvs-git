@@ -20,9 +20,9 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	srand(time(0));
 
-	std::map<std::string, long> Map;
+	//std::map<std::string, long> Map;
 
-	Map["pepe"] = 4;
+	/*Map["pepe"] = 4;
 
 	Buffer += IFile.ReadWord();
 	Buffer += " " + IFile.ReadWord();
@@ -32,11 +32,21 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 	long Value = IFile.ReadNumber(Map);
 
 	Buffer += " " + IFile.ReadWord();
-	Buffer += " " + IFile.ReadWord(false);
+	Buffer += " " + IFile.ReadWord(false);*/
+
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
+	Buffer += IFile.ReadLetter();
 
 	DOUBLEBUFFER->ClearToColor(0xFFFF);
 	DOUBLEBUFFER->ClearToColor(50, 350, 700, 200, 0xF81F);
-	Font.Printf(DOUBLEBUFFER, 212, 16, "Valpuri rulaa!!! Ja muuten, %d * %d on %d. 0x%X %s", 42, 666, 42 * 666, Value, Buffer.c_str());
+	Font.Printf(DOUBLEBUFFER, 212, 16, "Valpuri rulaa!!! Ja muuten, %d * %d on %d.", 42, 666, 42 * 666);
 
 	for(uchar x = 0; x < 8; x++)
 	{

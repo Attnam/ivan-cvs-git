@@ -11,6 +11,7 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 	igraph::Init(hInstance, hWnd);
 
 	game::InitLuxTable();
+	game::InitScript();
 
 	char Buffer[256];
 

@@ -214,6 +214,7 @@ public:
 	virtual bool Charmable() const RET(false)
 	virtual bool Polymorph() const RET(false)
 	virtual bool CanKick() const RET(true)
+	virtual ulong GetBloodColor() const RET(MAKE_RGB(255,255,255))
 protected:
 	virtual vector2d GetBitmapPos() const RETV(208,0)
 	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
@@ -384,6 +385,7 @@ public:
 	virtual bool CanWield() const RET(true)
 	virtual ulong Danger() const RET(25)
 	virtual bool CanKick() const RET(true)
+	virtual void SpillBlood(uchar) {}
 protected:
 	virtual vector2d GetBitmapPos() const RETV(112,0)
 	virtual std::string NameSingular() const RET("fallen valpurist")

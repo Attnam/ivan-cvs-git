@@ -516,13 +516,15 @@ bool level::MakeRoom(roomscript* RoomScript)
 	ushort BXPos = XPos, BYPos = YPos;
 
 	if(XPos + Width > XSize - 2)
-		Width = XSize - XPos - 2;
+		return false;
+		//Width = XSize - XPos - 2;
 
 	if(YPos + Height > YSize - 2)
-		Height = YSize - YPos - 2;
-
-	if(Width < 3 || Height < 3)
 		return false;
+		//Height = YSize - YPos - 2;
+
+	/*if(Width < 3 || Height < 3)
+		return false;*/
 
 	{
 	for(ushort x = XPos - 1; x <= XPos + Width; x++)
@@ -554,6 +556,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
 			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(new lamp);
+
+		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
+		{
+			Map[x][YPos]->SetDivineOwner(*RoomScript->GetDivineOwner());
+			Map[x][YPos + Height - 1]->SetDivineOwner(*RoomScript->GetDivineOwner());
+		}
 	}
 	}
 
@@ -569,6 +577,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
 			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(new lamp);
+
+		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
+		{
+			Map[XPos][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
+			Map[XPos + Width - 1][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
+		}
 	}
 
 	for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
@@ -577,6 +591,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Map[x][y]->ChangeLevelTerrain(RoomScript->GetFloorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetFloorSquare()->GetOverTerrain()->Instantiate());
 
 			FlagMap[x][y] |= FORBIDDEN;
+
+			if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
+				Map[x][y]->SetDivineOwner(*RoomScript->GetDivineOwner());
 		}
 
 	if(*RoomScript->GetAltarPossible() && !(rand() % 4))
@@ -674,6 +691,19 @@ bool level::MakeRoom(roomscript* RoomScript)
 			Pos = *Square->GetPosScript()->GetVector();
 
 		Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square);
+	}
+
+	if(RoomScript->GetCharacterMap(false))
+	{
+		XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
+		YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
+
+		characterscript* CharacterScript;
+
+		for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
+			for(ushort y = 0; y < RoomScript->GetCharacterMap()->GetSize()->Y; ++y)
+				if(CharacterScript = RoomScript->GetCharacterMap()->GetCharacterScript(x, y))
+					Map[XPos + x][YPos + y]->FastAddCharacter(CharacterScript->Instantiate());
 	}
 
 	return true;
@@ -852,7 +882,9 @@ void level::PutPlayer(bool)
 
 void level::PutPlayerAround(vector2d Pos)
 {
-	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
+	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverLevelTerrain()->GetIsWalkable() && !Map[DoX][DoY]->GetCharacter()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return; });
+
+	ABORT("Perttu is too popular!");
 }
 
 void level::Save(outputfile& SaveFile) const
@@ -982,11 +1014,11 @@ void level::GenerateNewMonsters(ushort HowMany)
 	}
 }
 
-vector2d level::RandomSquare(bool Walkablility) const
+vector2d level::RandomSquare(bool Walkablility, bool HasCharacter) const
 {
 	vector2d Pos(rand() % XSize, rand() % YSize);
 
-	while(Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility)
+	while(Map[Pos.X][Pos.Y]->GetOverLevelTerrain()->GetIsWalkable() != Walkablility || (HasCharacter && !Map[Pos.X][Pos.Y]->GetCharacter()) || (!HasCharacter && Map[Pos.X][Pos.Y]->GetCharacter()))
 	{
 		Pos.X = rand() % XSize;
 		Pos.Y = rand() % YSize;

@@ -154,7 +154,6 @@ template <class Type, class SizeType> inline SizeType dynarray<Type, SizeType>::
 	return -1;
 }
 
-
 template <class Type, class SizeType> inline void dynarray<Type, SizeType>::Resize(SizeType NewSize)
 {
 	if(NewSize < Elements)

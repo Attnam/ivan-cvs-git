@@ -110,26 +110,45 @@ protected:
 class squarescript : public script
 {
 public:
-	squarescript() : PosScript(0), GroundTerrain(0), OverTerrain(0), Character(0) {}
+	squarescript() : PosScript(0), GroundTerrain(0), OverTerrain(0), Character(0), IsUpStairs(0), IsDownStairs(0) {}
 	void ReadFrom(inputfile&);
 	posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
 	groundterrainscript* GetGroundTerrain(bool AOE = true) const { SCRIPT_RETURN(GroundTerrain) }
 	overterrainscript* GetOverTerrain(bool AOE = true) const { SCRIPT_RETURN(OverTerrain) }
 	characterscript* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
+	bool* GetIsUpStairs(bool AOE = true) const { SCRIPT_RETURN(IsUpStairs) }
+	bool* GetIsDownStairs(bool AOE = true) const { SCRIPT_RETURN(IsDownStairs) }
 protected:
 	posscript* PosScript;
 	groundterrainscript* GroundTerrain;
 	overterrainscript* OverTerrain;
 	characterscript* Character;
+	bool* IsUpStairs;
+	bool* IsDownStairs;
+};
+
+class charactermap : public script
+{
+public:
+	charactermap() : CharacterScriptMap(0), Size(0), Pos(0) {}
+	void ReadFrom(inputfile&);
+	characterscript* GetCharacterScript(ushort X, ushort Y) { return CharacterScriptMap[X][Y]; }
+	vector2d* GetSize(bool AOE = true) const { SCRIPT_RETURN(Size) }
+	vector2d* GetPos(bool AOE = true) const { SCRIPT_RETURN(Pos) }
+protected:
+	characterscript*** CharacterScriptMap;
+	vector2d* Size;
+	vector2d* Pos;
 };
 
 class roomscript : public script
 {
 public:
-	roomscript() : WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), Base(0) {}
+	roomscript() : CharacterMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), DivineOwner(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
+	charactermap* GetCharacterMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(CharacterMap) }
 	squarescript* GetWallSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(WallSquare) }
 	squarescript* GetFloorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(FloorSquare) }
 	squarescript* GetDoorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DoorSquare) }
@@ -138,15 +157,18 @@ public:
 	bool* GetAltarPossible(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AltarPossible) }
 	bool* GetGenerateDoor(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDoor) }
 	bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
+	uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
+	charactermap* CharacterMap;
 	squarescript* WallSquare;
 	squarescript* FloorSquare;
 	squarescript* DoorSquare;
 	vector2d* Size;
 	vector2d* Pos;
 	bool* AltarPossible, * GenerateDoor, * ReCalculate;
+	uchar* DivineOwner;
 	roomscript* Base;
 };
 

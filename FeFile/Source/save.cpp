@@ -136,6 +136,59 @@ std::string inputfile::ReadWord(bool AbortOnEOF)
 	}
 }
 
+char inputfile::ReadLetter(bool AbortOnEOF)
+{
+	uchar Mode = 0;
+
+	for(;;)
+	{
+		if(GetBuffer().eof())
+		{
+			if(AbortOnEOF)
+				ABORT("Unexpected end of script file!");
+
+			return 0;
+		}
+
+		int Char = GetBuffer().get();
+
+		if(isalpha(Char) || isdigit(Char))
+		{
+			return Char;
+		}
+
+		if(ispunct(Char))
+		{
+			if(Char == '/')
+			{
+				if(!GetBuffer().eof())
+					if(GetBuffer().peek() == '*')
+					{
+						for(;;)
+						{
+							Char = GetBuffer().get();
+
+							if(GetBuffer().eof())
+								ABORT("Script error: Unterminated comment!");
+
+							if(Char == '*' && GetBuffer().peek() == '/')
+							{
+								GetBuffer().get();
+								break;
+							}		
+						}
+
+						continue;
+					}
+					else
+						return Char;
+			}
+			else
+				return Char;
+		}
+	}
+}
+
 long inputfile::ReadNumber(std::map<std::string, long> ValueMap, uchar CallLevel)
 {
 	long Value = 0;
