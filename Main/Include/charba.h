@@ -195,8 +195,8 @@ class character : public object
   virtual void Be();
   virtual bool Zap();
   virtual bool Polymorph(character*, ushort);
-  virtual bool SetTorsoArmor(item*) RET(false)
-  virtual bool CanKick() const RET(false)
+  virtual bool SetTorsoArmor(item*) { return false; }
+  virtual bool CanKick() const { return false; }
   virtual void BeKicked(ushort, bool, uchar, character*);
   virtual void FallTo(vector2d, bool);
   virtual bool CheckCannibalism(ushort);
@@ -274,7 +274,7 @@ class character : public object
   virtual ushort DangerLevel();
   virtual void CreateInitialEquipment() {}
   virtual void DisplayInfo();
-protected:
+ protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
   virtual bool CheckForDoors();

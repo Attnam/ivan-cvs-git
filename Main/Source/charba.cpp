@@ -820,7 +820,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	return false;
       }
   else
-    if(MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
+    if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetWorldMap()->GetXSize() && MoveTo.Y < game::GetWorldMap()->GetYSize())
       if(game::GetCurrentArea()->GetSquare(MoveTo)->GetGroundTerrain()->GetIsWalkable() || game::GetGoThroughWallsCheat())
 	{
 	  Move(MoveTo);
@@ -1637,9 +1637,6 @@ bool character::ShowKeyLayout()
 
   List.AddDescription("");
   List.AddDescription("Key       Description");
-
-  List.AddEntry("F2        take screenshot", RED);
-  List.AddEntry("F4        toggle fullscreen mode", RED);
 
   for(uchar c = 1; game::GetCommand(c); ++c)
     if(game::GetWizardMode() || !game::GetCommand(c)->GetWizardModeFunction())
@@ -2502,7 +2499,7 @@ void character::ConsumeHandler()
       return;
     }
 
-  if(StateIsActivated(CONSUMING) && StateCounter[CONSUMING] == 200)
+  /*if(StateIsActivated(CONSUMING) && StateCounter[CONSUMING] == 200)
     {
       if(GetIsPlayer())
 	ADD_MESSAGE("You have eaten for a long time now. You stop eating.");
@@ -2511,7 +2508,7 @@ void character::ConsumeHandler()
 	  ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
 
       EndConsuming();
-    }
+    }*/
 }
 
 void character::PolymorphHandler()
@@ -2519,7 +2516,6 @@ void character::PolymorphHandler()
   if(!(StateCounter[POLYMORPHED]--))
     {
       ADD_MESSAGE("You return to your true form.");
-
       EndPolymorph();
     }
 }
@@ -2545,7 +2541,6 @@ void character::EndConsuming()
 	}
 
       DeActivateState(CONSUMING);
-
       SetConsumingCurrently(0);
     }
 }
@@ -2558,11 +2553,10 @@ void character::EndPolymorph()
 
       GetSquareUnder()->RemoveCharacter();
       GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+      SetSquareUnder(0);
 
       while(GetStack()->GetItems())
 	GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
-
-      SetSquareUnder(0);
 
       if(game::GetPlayerBackup()->CanWield())
 	game::GetPlayerBackup()->SetWielded(GetWielded());

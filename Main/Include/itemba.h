@@ -79,10 +79,10 @@ class item : public object
   virtual bool UseThrowStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
   virtual ulong Price() const { return 0; }
-  virtual bool IsTheAvatar() const RET(false)
+  virtual bool IsTheAvatar() const { return false; }
     virtual void SignalSquarePositionChange(bool) {}
   virtual ulong ConsumeLimit() const { return GetMaterial(0)->GetVolume(); }
-  virtual uchar GetConsumeType() const RET(GetMaterial(0)->GetConsumeType())
+  virtual uchar GetConsumeType() const { return GetMaterial(0)->GetConsumeType(); }
     virtual bool IsBadFoodForAI(character*) const;
   virtual uchar GetConsumeMaterial() const { return 0; }
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }

@@ -21,3 +21,4 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 Aliasten klarifikaatio.
 Merkkijonoviittausten regularisoiminen.
 Merkkitaulukoiden hävittäminen.
+*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.

@@ -1731,11 +1731,6 @@ void kamikazedwarf::CreateInitialEquipment()
   GetStack()->FastAddItem(new backpack);
 }
 
-ulong kamikazedwarf::MaxDanger()
-{
-  return 20000;
-}
-
 bool kamikazedwarf::Hit(character* Enemy)
 {
   if(GetIsPlayer())

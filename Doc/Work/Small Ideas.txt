@@ -89,3 +89,4 @@ Monsters should pray and occasionaly be punished by the gods for praying too oft
 Effect for Venius's firestorm.
 Hunter's last reply should be tweaked.
 There should be an option to set the value of pi in the config menu.
+*Killed by an explosion.

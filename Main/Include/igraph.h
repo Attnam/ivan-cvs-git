@@ -113,7 +113,6 @@ inline outputfile& operator<<(outputfile& SaveFile, graphic_id GI)
 {
   SaveFile << GI.BitmapPos << GI.FileIndex;
   SaveFile << GI.Color[0] << GI.Color[1] << GI.Color[2] << GI.Color[3];
-
   return SaveFile;
 }
 
@@ -121,7 +120,6 @@ inline inputfile& operator>>(inputfile& SaveFile, graphic_id& GI)
 {
   SaveFile >> GI.BitmapPos >> GI.FileIndex;
   SaveFile >> GI.Color[0] >> GI.Color[1] >> GI.Color[2] >> GI.Color[3];
-
   return SaveFile;
 }
 

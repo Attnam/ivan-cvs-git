@@ -855,8 +855,6 @@ overterrain* levelsquare::GetOverTerrain() const
   return OverLevelTerrain;
 }
 
-#include "charde.h"
-
 void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 {
   if(SquareScript->GetCharacter(false))

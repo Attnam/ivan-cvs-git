@@ -107,7 +107,7 @@ void god::PrayBadEffect()
 
 void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
 {
-  short Adjustment = 2 * Multiplier - abs((signed char)(Alignment()) - Competitor->Alignment()) * Multiplier;
+  short Adjustment = 2 * Multiplier - abs((schar)(Alignment()) - Competitor->Alignment()) * Multiplier;
 
   if(!Good && Adjustment > 0)
     Adjustment = -Adjustment;

@@ -58,7 +58,7 @@ Attacking Attnamians should be chaotic
 Prohibition of WoS vandalism
 Forbidding shop polypiles
 //Parchment should burn
-*Verbal danger level to panel
+//*Verbal danger level to panel
 ADD_MESSAGE parameter suggestion
 Honey
 //*Pentagram safety
