@@ -1410,15 +1410,33 @@ class CHARACTER
 
 class CHARACTER
 (
- genie,
- character,
- InitMaterials(new genieflesh)
-{
-
-
-
-}
-
+	genie,
+	character,
+	InitMaterials(new air),
+	{
+		SetSize(220);
+		SetAgility(40);
+		SetStrength(40);
+		SetEndurance(40);
+		SetPerception(60);
+	},
+public:
+	virtual void SpillBlood(uchar) {}
+	virtual void SpillBlood(uchar, vector2d) {}
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 500000; else return 0; }
+	virtual void BeTalkedTo(character*);
+	virtual bool HasInfraVision() const { return true; }
+	virtual std::string StandVerb() const { return "floating"; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(48,0)
+	virtual std::string NameSingular() const RET("pure mass of Bill's will")
+	virtual std::string NamePlural() const RET("pure masses of Bill's will")
+	virtual void CreateCorpse() {}
+	virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
+	virtual float GetMeleeStrength() const RET(20000)
+	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPSIVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPSIVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPSIVerb(Critical))
 );
 #endif
 
