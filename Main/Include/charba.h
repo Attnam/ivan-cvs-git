@@ -174,7 +174,7 @@ public:
 	virtual void SetConsumingCurrently(item* What) { StateVariables.Consuming.ConsumingCurrently = What; }
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; if(Endurance > 99) Endurance = 99; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
-	virtual void SetHP(short What) { HP = What; }
+	virtual void SetHP(short);
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetNP(long);
 	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; if(Perception > 99) Perception = 99; }

@@ -1,6 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <direct.h>	// Needed for _mkdir
+#include <windows.h>
 
 #include "game.h"
 #include "level.h"
@@ -43,7 +44,7 @@ ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
-bool game::Flag;
+bool game::Flag, game::BeepOnCriticalMsg = true;
 perttu* game::Perttu = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
@@ -1150,4 +1151,9 @@ void game::HandleQuitMessage()
 {
 	if(Running)
 		RemoveSaves();
+}
+
+void game::Beep()
+{
+	::Beep(400, 1000);
 }

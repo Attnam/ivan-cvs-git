@@ -1079,6 +1079,8 @@ bool character::Talk()
 
 bool character::NOP()
 {
+	game::Beep();
+
 	SetAgilityExperience(GetAgilityExperience() - 5);
 
 	return true;
@@ -2918,16 +2920,19 @@ void character::SetNP(long What)
 
 	NP = What;
 
-	if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL)
-	{
-		ADD_MESSAGE("You are getting very hungry.");
-		DeActivateVoluntaryStates();
-	}
-	else if(GetIsPlayer() && GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL)
-	{
-		ADD_MESSAGE("You are getting hungry.");
-		DeActivateVoluntaryStates();
-	}
+	if(GetIsPlayer())
+		if(GetNP() < CRITICALHUNGERLEVEL && BNP >= CRITICALHUNGERLEVEL)
+		{
+			game::Beep();
+			ADD_MESSAGE("You are getting very hungry.");
+			DeActivateVoluntaryStates();
+		}
+		else if(GetNP() < HUNGERLEVEL && BNP >= HUNGERLEVEL)
+		{
+			game::Beep();
+			ADD_MESSAGE("You are getting hungry.");
+			DeActivateVoluntaryStates();
+		}
 }
 
 void character::ShowNewPosInfo() const
@@ -3010,4 +3015,23 @@ void character::MoveRandomlyInRoom()
 		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter() && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
+}
+
+void character::SetHP(short What)
+{
+	long BHP = GetHP();
+
+	HP = What;
+
+	if(GetIsPlayer())
+		if(GetHP() == 1 && BHP >= 2)
+		{
+			game::Beep();
+			ADD_MESSAGE("You bleed very badly.");
+		}
+		else if(GetHP() < GetMaxHP() / 3 && BHP >= GetMaxHP() / 3)
+		{
+			game::Beep();
+			ADD_MESSAGE("You bleed.");
+		}
 }

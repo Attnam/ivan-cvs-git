@@ -158,6 +158,9 @@ public:
 	static ushort GetAutosaveInterval() { return AutosaveInterval; }
 	static void SetAutosaveInterval(ushort What) { AutosaveInterval = What; }
 	static void HandleQuitMessage();
+	static bool GetBeepOnCriticalMsg() { return BeepOnCriticalMsg; }
+	static void SetBeepOnCriticalMsg(bool What) { BeepOnCriticalMsg = What; }
+	static void Beep();
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
@@ -194,6 +197,7 @@ private:
 	static bool LOSUpdateRequested;
 	static perttu* Perttu;
 	static ushort AutosaveInterval;
+	static bool BeepOnCriticalMsg;
 };
 
 #endif
