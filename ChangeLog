@@ -1,3 +1,9 @@
+2002-03-22  Heikki Sairanen  <heikki.sairanen@phpoint.net>
+
+	* FELL/Include/felist.h (class felist): DrawDescription moved to .cpp to correct an odd Linux bug.
+	* FELL/Source/felist.cpp:
+
+	
 March 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Humanoid.pcx: Some humanoids dismembered by Kahvi
