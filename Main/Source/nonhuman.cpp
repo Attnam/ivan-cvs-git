@@ -54,7 +54,7 @@ int ghost::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << W
 const char* magpie::FirstPersonBiteVerb() const { return "peck"; }
 const char* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
 const char* magpie::ThirdPersonBiteVerb() const { return "pecks"; }
-const char* magpie::ThirdPersonCriticalBiteVerb() const { return "critically peck"; }
+const char* magpie::ThirdPersonCriticalBiteVerb() const { return "critically pecks"; }
 
 bodypart* largecreature::MakeBodyPart(int) const { return largetorso::Spawn(0, NO_MATERIALS); }
 lsquare* largecreature::GetNeighbourLSquare(int I) const { return static_cast<lsquare*>(GetNeighbourSquare(I)); }
