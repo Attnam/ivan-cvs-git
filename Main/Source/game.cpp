@@ -2,7 +2,7 @@
 #include <ctime>
 
 #ifdef WIN32
-#include <direct.h>	// Needed for _mkdir
+#include <direct.h>// Needed for _mkdir
 #include <windows.h>
 #endif
 
@@ -69,53 +69,53 @@ std::string game::AutoSaveFileName = SAVE_DIR + "/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
 god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 
-command* game::Command[] = {	0,
-				new command(&character::Apply, "apply", 'a', false),
-				new command(&character::Talk, "chat", 'C', false),
-				new command(&character::Close, "close", 'c', false),
-				new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
-				new command(&character::Dip, "dip", 'D', true),
-				new command(&character::Drop, "drop", 'd', false),
-				new command(&character::Consume, "eat/drink", 'e', true),
-				new command(&character::WhatToEngrave, "engrave", 'E', false),
-				new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
-				new command(&character::GainAllItems, "give all items cheat", '8', true, true),
-				new command(&character::Go, "go", 'g', false),
-				new command(&character::GoDown, "go down", '>', true),
-				new command(&character::GoUp, "go up", '<', true),
-				new command(&character::IncreaseContrast, "increase contrast", 'b', true),
-				new command(&character::Kick, "kick", 'k', false),
-				new command(&character::Look, "look", 'l', true),
-				new command(&character::LowerStats, "lower stats cheat", '2', true, true),
-				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
-				new command(&character::Offer, "offer", 'O', false),
-				new command(&character::Open, "open", 'o', false),
-				new command(&character::OutlineCharacters, "outline characters", 'K', true),
-				new command(&character::OutlineItems, "outline items", 'I', true),
-				new command(&character::PickUp, "pick up", ',', false),
-				new command(&character::Pray, "pray", 'p', false),
-				new command(&character::Quit, "quit", 'q', true),
-				new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
-				new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
-				new command(&character::Read, "read", 'r', false),
-				new command(&character::RestUntilHealed, "rest/heal", 'h', true),
-				new command(&character::Save, "save game", 's', true),
-				new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
-				new command(&character::ShowConfigScreen, "show config screen", '\\', true),
-				new command(&character::ShowInventory, "show inventory", 'i', true),
-				new command(&character::ShowKeyLayout, "show key layout", '?', true),
-				new command(&character::DrawMessageHistory, "show message history", 'M', true),
-				new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
-				new command(&character::Sit, "sit", 'S', false),
-				new command(&character::Throw, "throw", 't', false),
-				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
-				new command(&character::ForceVomit, "vomit", 'v', false),
-				new command(&character::NOP, "wait", '.', true),
-				new command(&character::WearArmor, "wear", 'W', true),
-				new command(&character::Wield, "wield", 'w', true),
-				new command(&character::WizardMode, "wizard mode activation", 'X', true),
-				new command(&character::Zap, "zap", 'z', false),
-				0};
+command* game::Command[] = {0,
+new command(&character::Apply, "apply", 'a', false),
+new command(&character::Talk, "chat", 'C', false),
+new command(&character::Close, "close", 'c', false),
+new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
+new command(&character::Dip, "dip", 'D', true),
+new command(&character::Drop, "drop", 'd', false),
+new command(&character::Consume, "eat/drink", 'e', true),
+new command(&character::WhatToEngrave, "engrave", 'E', false),
+new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
+new command(&character::GainAllItems, "give all items cheat", '8', true, true),
+new command(&character::Go, "go", 'g', false),
+new command(&character::GoDown, "go down", '>', true),
+new command(&character::GoUp, "go up", '<', true),
+new command(&character::IncreaseContrast, "increase contrast", 'b', true),
+new command(&character::Kick, "kick", 'k', false),
+new command(&character::Look, "look", 'l', true),
+new command(&character::LowerStats, "lower stats cheat", '2', true, true),
+new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
+new command(&character::Offer, "offer", 'O', false),
+new command(&character::Open, "open", 'o', false),
+new command(&character::OutlineCharacters, "outline characters", 'K', true),
+new command(&character::OutlineItems, "outline items", 'I', true),
+new command(&character::PickUp, "pick up", ',', false),
+new command(&character::Pray, "pray", 'p', false),
+new command(&character::Quit, "quit", 'q', true),
+new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
+new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
+new command(&character::Read, "read", 'r', false),
+new command(&character::RestUntilHealed, "rest/heal", 'h', true),
+new command(&character::Save, "save game", 's', true),
+new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
+new command(&character::ShowConfigScreen, "show config screen", '\\', true),
+new command(&character::ShowInventory, "show inventory", 'i', true),
+new command(&character::ShowKeyLayout, "show key layout", '?', true),
+new command(&character::DrawMessageHistory, "show message history", 'M', true),
+new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
+new command(&character::Sit, "sit", 'S', false),
+new command(&character::Throw, "throw", 't', false),
+new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
+new command(&character::ForceVomit, "vomit", 'v', false),
+new command(&character::NOP, "wait", '.', true),
+new command(&character::WearArmor, "wear", 'W', true),
+new command(&character::Wield, "wield", 'w', true),
+new command(&character::WizardMode, "wizard mode activation", 'X', true),
+new command(&character::Zap, "zap", 'z', false),
+0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
 const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
@@ -189,17 +189,17 @@ void game::Init(std::string Name)
     }
   else
     {
-      iosystem::TextScreen(	"For many days you have wandered through a thick and gloomy forest.\n"
-				"Constantly you have had to fight against ultra-violent bears and\n"
-				"goblins that roam freely in this area. Screams of Enner Beasts have\n"
-				"wailed in the distance and the cold air has almost freezed your body.\n"
-				"But now your eyes catch the destination: A small settlement of a few\n"
-				"houses build around a frog-shaped tower. The town has recently tried\n"
-				"to advertise itself as a perfect place for adventurous tourists who\n"
-				"seek to face an untouched nature. Unfortunately you were among those\n"
-				"few who didn't understand they really meant what they said.\n\n"
-				"You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
-				"And you know nothing about the adventures that await you here.");
+      iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
+"Constantly you have had to fight against ultra-violent bears and\n"
+"goblins that roam freely in this area. Screams of Enner Beasts have\n"
+"wailed in the distance and the cold air has almost freezed your body.\n"
+"But now your eyes catch the destination: A small settlement of a few\n"
+"houses build around a frog-shaped tower. The town has recently tried\n"
+"to advertise itself as a perfect place for adventurous tourists who\n"
+"seek to face an untouched nature. Unfortunately you were among those\n"
+"few who didn't understand they really meant what they said.\n\n"
+"You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
+"And you know nothing about the adventures that await you here.");
 
       Running = true;
 
@@ -226,11 +226,11 @@ void game::Init(std::string Name)
       game::SendLOSUpdateRequest();
 
       for(ushort c = 1; GetGod(c); ++c)
-	{
-	  GetGod(c)->SetKnown(false);
-	  GetGod(c)->SetRelation(0);
-	  GetGod(c)->SetTimer(0);
-	}
+{
+  GetGod(c)->SetKnown(false);
+  GetGod(c)->SetRelation(0);
+  GetGod(c)->SetTimer(0);
+}
 
       GetGod(1)->SetKnown(true);
       GetGod(2)->SetKnown(true);
@@ -271,9 +271,9 @@ void game::DeInit()
 void game::Run()
 {
   while(GetRunning())
-    {	
+    {
       if(!InWilderness)
-	GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();	// Temporary
+GetCurrentDungeon()->GetLevel(Current)->HandleCharacters();// Temporary
 
       try { objectpool::Be(); }
       catch(quitrequest) { }
@@ -281,7 +281,7 @@ void game::Run()
       objectpool::BurnTheDead();
 
       if(!GetRunning())
-	break;
+break;
     }
 }
 
@@ -298,25 +298,25 @@ void game::InitLuxTable()
       LuxTableSize = new ushort[0x200];
 
       for(ushort c = 0; c < 0x200; ++c)
-	{
-	  ushort MaxDist = c >= 160 ? ushort(2 * sqrt(c / 5 - 32)) : 0, MaxSize = (MaxDist << 1) + 1;
+{
+  ushort MaxDist = c >= 160 ? ushort(2 * sqrt(c / 5 - 32)) : 0, MaxSize = (MaxDist << 1) + 1;
 
-	  LuxTableSize[c] = MaxSize;
+  LuxTableSize[c] = MaxSize;
 
-	  LuxTable[c] = new ushort*[MaxSize];
+  LuxTable[c] = new ushort*[MaxSize];
 
-	  for(long x = 0; x < MaxSize; ++x)
-	    {
-	      LuxTable[c][x] = new ushort[MaxSize];
+  for(long x = 0; x < MaxSize; ++x)
+    {
+      LuxTable[c][x] = new ushort[MaxSize];
 
-	      for(long y = 0; y < MaxSize; ++y)
-		{
-		  long xLevelSquare = abs((int)x - MaxDist), yLevelSquare = abs((int)y - MaxDist);
+      for(long y = 0; y < MaxSize; ++y)
+{
+  long xLevelSquare = abs((int)x - MaxDist), yLevelSquare = abs((int)y - MaxDist);
 
-		  LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 128 + 1));
-		}
-	    }
-	}
+  LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 128 + 1));
+}
+    }
+}
 
       atexit(game::DeInitLuxTable);
     }
@@ -327,12 +327,12 @@ void game::DeInitLuxTable()
   if(LuxTable)
     {
       for(ushort c = 0; c < 0x200; ++c)
-	{
-	  for(ushort x = 0; x < LuxTableSize[c]; ++x)
-	    delete [] LuxTable[c][x];
+{
+  for(ushort x = 0; x < LuxTableSize[c]; ++x)
+    delete [] LuxTable[c][x];
 
-	  delete [] LuxTable[c];
-	}
+  delete [] LuxTable[c];
+}
 
       delete [] LuxTable;
 
@@ -793,16 +793,16 @@ float game::Difficulty()
       float Dice = float(RAND() % 5);
 
       if(!Dice)
-	{
-	  Base /= 6;
-	  continue;
-	}
+{
+  Base /= 6;
+  continue;
+}
 
       if(Dice == 4)
-	{
-	  Base *= 6;
-	  continue;
-	}
+{
+  Base *= 6;
+  continue;
+}
 
       Base *= (6 + Dice) / 8;
 
@@ -831,8 +831,8 @@ void game::CalculateGodNumber()
   for(ushort c = 1;; ++c)
     if(game::GetGod(c) == 0)
       {
-	SetGodNumber(c - 1);
-	break;
+SetGodNumber(c - 1);
+break;
       }
 }
 
@@ -851,11 +851,11 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
       int Key = GETKEY();
 
       if(AcceptYourself && Key == '.')
-	return '.';
+return '.';
 
       for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-	if(Key == game::GetMoveCommandKey(c))
-	  return c;
+if(Key == game::GetMoveCommandKey(c))
+  return c;
 
       if(DefaultAnswer < 8) return DefaultAnswer;
       if(!RequireAnswer) return 0xFF;
@@ -873,8 +873,8 @@ void game::RemoveSaves()
   for(ushort i = 0; i < Dungeon.size(); ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
       {
-	remove((SaveName() + "." + i + c).c_str());
-	remove((AutoSaveFileName + "." + i + c).c_str());
+remove((SaveName() + "." + i + c).c_str());
+remove((AutoSaveFileName + "." + i + c).c_str());
       }
 }
 
@@ -928,37 +928,37 @@ void game::DoGoodDeed(ushort Amount)
 {
   if(!Amount)
     return;
-	
+
   for(uchar c = 1; c < game::GetGodNumber() + 1; ++c)
     {
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
       if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
-	if(GetGod(c)->GetRelation() + Change * 2 < -750)
-	  {
-	    if(GetGod(c)->GetRelation() > -750)
-	      GetGod(c)->SetRelation(-750);
-	  }
-	else if(GetGod(c)->GetRelation() + Change * 2 > 750)
-	  {
-	    if(GetGod(c)->GetRelation() < 750)
-	      GetGod(c)->SetRelation(750);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change * 2);
+if(GetGod(c)->GetRelation() + Change * 2 < -750)
+  {
+    if(GetGod(c)->GetRelation() > -750)
+      GetGod(c)->SetRelation(-750);
+  }
+else if(GetGod(c)->GetRelation() + Change * 2 > 750)
+  {
+    if(GetGod(c)->GetRelation() < 750)
+      GetGod(c)->SetRelation(750);
+  }
+else
+  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change * 2);
       else
-	if(GetGod(c)->GetRelation() + Change < -500)
-	  {
-	    if(GetGod(c)->GetRelation() > -500)
-	      GetGod(c)->SetRelation(-500);
-	  }
-	else if(GetGod(c)->GetRelation() + Change > 500)
-	  {
-	    if(GetGod(c)->GetRelation() < 500)
-	      GetGod(c)->SetRelation(500);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change);
+if(GetGod(c)->GetRelation() + Change < -500)
+  {
+    if(GetGod(c)->GetRelation() > -500)
+      GetGod(c)->SetRelation(-500);
+  }
+else if(GetGod(c)->GetRelation() + Change > 500)
+  {
+    if(GetGod(c)->GetRelation() < 500)
+      GetGod(c)->SetRelation(500);
+  }
+else
+  GetGod(c)->SetRelation(GetGod(c)->GetRelation() + Change);
     }
 }
 
@@ -972,31 +972,31 @@ void game::DoEvilDeed(ushort Amount)
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
       if(!GetInWilderness() && GetPlayer()->GetLevelSquareUnder()->GetDivineOwner() == c)
-	if(GetGod(c)->GetRelation() - Change * 2 < -750)
-	  {
-	    if(GetGod(c)->GetRelation() > -750)
-	      GetGod(c)->SetRelation(-750);
-	  }
-	else if(GetGod(c)->GetRelation() - Change * 2 > 750)
-	  {
-	    if(GetGod(c)->GetRelation() < 750)
-	      GetGod(c)->SetRelation(750);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change * 2);
+if(GetGod(c)->GetRelation() - Change * 2 < -750)
+  {
+    if(GetGod(c)->GetRelation() > -750)
+      GetGod(c)->SetRelation(-750);
+  }
+else if(GetGod(c)->GetRelation() - Change * 2 > 750)
+  {
+    if(GetGod(c)->GetRelation() < 750)
+      GetGod(c)->SetRelation(750);
+  }
+else
+  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change * 2);
       else
-	if(GetGod(c)->GetRelation() - Change < -500)
-	  {
-	    if(GetGod(c)->GetRelation() > -500)
-	      GetGod(c)->SetRelation(-500);
-	  }
-	else if(GetGod(c)->GetRelation() - Change > 500)
-	  {
-	    if(GetGod(c)->GetRelation() < 500)
-	      GetGod(c)->SetRelation(500);
-	  }
-	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change);
+if(GetGod(c)->GetRelation() - Change < -500)
+  {
+    if(GetGod(c)->GetRelation() > -500)
+      GetGod(c)->SetRelation(-500);
+  }
+else if(GetGod(c)->GetRelation() - Change > 500)
+  {
+    if(GetGod(c)->GetRelation() < 500)
+      GetGod(c)->SetRelation(500);
+  }
+else
+  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change);
     }
 }
 
@@ -1036,30 +1036,30 @@ void game::Hostility(team* Attacker, team* Defender)
   for(ushort c = 0; c < Team.size(); ++c)
     if(GetTeam(c) != Attacker && GetTeam(c) != Defender)
       switch(GetTeam(c)->GetRelation(Defender))
-	{
-	case HOSTILE:
-	  {
-	    if(GetTeam(c)->GetRelation(Attacker) == NEUTRAL)
-	      GetTeam(c)->SetRelation(Attacker, FRIEND);
+{
+case HOSTILE:
+  {
+    if(GetTeam(c)->GetRelation(Attacker) == NEUTRAL)
+      GetTeam(c)->SetRelation(Attacker, FRIEND);
 
-	    break;
-	  }
-	case NEUTRAL:
-	  {
-	    if(GetTeam(c)->GetRelation(Attacker) == HOSTILE)
-	      GetTeam(c)->SetRelation(Defender, FRIEND);
+    break;
+  }
+case NEUTRAL:
+  {
+    if(GetTeam(c)->GetRelation(Attacker) == HOSTILE)
+      GetTeam(c)->SetRelation(Defender, FRIEND);
 
-	    break;
-	  }
-	case FRIEND:
-	  {
-	    GetTeam(c)->SetRelation(Attacker, HOSTILE);
+    break;
+  }
+case FRIEND:
+  {
+    GetTeam(c)->SetRelation(Attacker, HOSTILE);
 
-	    break;
-	  }
-	default:
-	  ABORT("Enemy unknown!");
-	}
+    break;
+  }
+default:
+  ABORT("Enemy unknown!");
+}
 }
 
 void game::CreateTeams()
@@ -1071,7 +1071,7 @@ void game::CreateTeams()
       team* NewTeam = new team(c);
 
       for(ushort i = 0; i < Team.size(); ++i)
-	GetTeam(i)->SetRelation(NewTeam, NEUTRAL);
+GetTeam(i)->SetRelation(NewTeam, NEUTRAL);
 
       Team.push_back(NewTeam);
     }
@@ -1137,38 +1137,38 @@ bool game::HandleQuitMessage()
   if(GetRunning())
     {
       if(GetInGetCommand())
-	{
+{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
+  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
 #else
-	    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+    switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
-	      {
-	      case IDYES:
-		configuration::Save();
-		Save();
-		break;
-	      case IDCANCEL:
-		GetCurrentArea()->SendNewDrawRequest();
-		return false;
-	      default:
-		configuration::Save();
-		RemoveSaves();
-		break;
-	      }
-	}
+      {
+      case IDYES:
+configuration::Save();
+Save();
+break;
+      case IDCANCEL:
+GetCurrentArea()->SendNewDrawRequest();
+return false;
+      default:
+configuration::Save();
+RemoveSaves();
+break;
+      }
+}
       else
 #ifdef WIN32
-	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
+if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	  if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
+  if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
 #endif
-	    {
-	      configuration::Save();
-	      RemoveSaves();
-	    }
-	  else
-	    return false;
+    {
+      configuration::Save();
+      RemoveSaves();
+    }
+  else
+    return false;
     }
 
   configuration::Save();
@@ -1202,7 +1202,7 @@ std::string game::GetVerbalPlayerAlignment()
   for(uchar c = 1; game::GetGod(c); c++)
     {
       if(GetGod(c)->GetRelation() > 0)
-	Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
+Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
     }
 
   if(Sum > 15000)
@@ -1223,5 +1223,8 @@ std::string game::GetVerbalPlayerAlignment()
     return std::string("very chaotic");
 
   return std::string("extremely chaotic");
+
+int esko = 2;
 }
+
 
