@@ -69,6 +69,7 @@ public:
 	virtual std::string DigMessage() { return "The ground is too hard to dig."; }
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+	virtual void Kick(ushort, bool, uchar) {}
 protected:
 	virtual void MakeWalkable();
 	virtual void MakeNotWalkable();

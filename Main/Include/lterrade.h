@@ -98,6 +98,7 @@ public:
 	virtual bool Close(character*);
 	virtual bool CanBeOpened() const { return !GetIsWalkable(); }
 	virtual std::string DigMessage() { return "The door is too hard to dig through."; }
+	virtual void Kick(ushort, bool, uchar);
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual std::string NamePlural() const					{ return "doors"; }

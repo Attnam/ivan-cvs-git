@@ -191,3 +191,11 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		return false;
 	}
 }
+
+
+void door::Kick(ushort, bool ShowOnScreen, uchar)
+{
+	if(!GetIsWalkable() && ShowOnScreen) ADD_MESSAGE("The door opens.");
+		MakeWalkable();
+}
+

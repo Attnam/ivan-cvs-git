@@ -530,6 +530,7 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 	GetStack()->Kick(Strength, RetrieveFlag(), KickWay);
 	if(GetCharacter())
 		GetCharacter()->BeKicked(Strength, RetrieveFlag(), KickWay, Kicker);
+	GetOverLevelTerrain()->Kick(Strength, RetrieveFlag(), KickWay);
 	return true;
 }
 
