@@ -2187,18 +2187,18 @@ bool character::LoseConsciousness(int Counter, bool HungerFaint)
   action* Action = GetAction();
 
   if(Action)
-    if(Action->IsUnconsciousness())
-      {
-	static_cast<unconsciousness*>(Action)->RaiseCounterTo(Counter);
-	return true;
-      }
-    else
-      {
-	if(HungerFaint && !Action->AllowUnconsciousness())
-	  return false;
-	else
-	  Action->Terminate(false);
-      }
+    {
+      if(HungerFaint && !Action->AllowUnconsciousness())
+	return false;
+
+      if(Action->IsUnconsciousness())
+	{
+	  static_cast<unconsciousness*>(Action)->RaiseCounterTo(Counter);
+	  return true;
+	}
+      else
+	Action->Terminate(false);
+    }
 
   if(IsPlayer())
     ADD_MESSAGE("You lose consciousness.");

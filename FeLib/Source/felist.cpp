@@ -185,13 +185,17 @@ uint felist::Draw()
 
       uint Pressed = GET_KEY(false);
 
-      if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 < PageLength)
+      if(Flags & SELECTABLE && Pressed > 64
+      && Pressed < 91 && Pressed - 65 < PageLength
+      && Pressed - 65 + PageBegin < Selectables)
 	{
 	  Return = Selected = Pressed - 65 + PageBegin;
 	  break;
 	}
 
-      if(Flags & SELECTABLE && Pressed > 96 && Pressed < 123 && Pressed - 97 < PageLength)
+      if(Flags & SELECTABLE && Pressed > 96
+      && Pressed < 123 && Pressed - 97 < PageLength
+      && Pressed - 97 + PageBegin < Selectables)
 	{
 	  Return = Selected = Pressed - 97 + PageBegin;
 	  break;
@@ -269,6 +273,7 @@ uint felist::Draw()
 	  Return = ESCAPED;
 	  break;
 	}
+
       if((AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
 	{
 	  Return = NOTHING_SELECTED;

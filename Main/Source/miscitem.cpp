@@ -2773,13 +2773,30 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 	}
 
       material* TempMaterial = MAKE_MATERIAL(Config);
+      int Intelligence = Reader->GetAttribute(INTELLIGENCE);
 
-      if(TempMaterial->GetIntelligenceRequirement() > Reader->GetAttribute(INTELLIGENCE))
+      if(TempMaterial->GetIntelligenceRequirement() > Intelligence)
 	{
 	  delete TempMaterial;
 	  ADD_MESSAGE("But your mind is not yet strong enough to harden %s.", Item.size() == 1 ? "it" : "them");
 	  msgsystem::LeaveBigMessageMode();
 	  continue;
+	}
+
+      for(int NewConfig = TempMaterial->GetHardenedMaterial(), c = 1;
+	  NewConfig;
+	  NewConfig = TempMaterial->GetHardenedMaterial(), ++c)
+	{
+	  material* NewMaterial = MAKE_MATERIAL(NewConfig);
+
+	  if(NewMaterial->GetIntelligenceRequirement()
+	  <= Intelligence - c * 5)
+	    {
+	      delete TempMaterial;
+	      TempMaterial = NewMaterial;
+	    }
+	  else
+	    break;
 	}
 
       material* MainMaterial = Item[0]->GetMainMaterial();

@@ -238,7 +238,7 @@ solid
 		IsFlammable = true;
 		NameStem = "leather";
 		Flexibility = 10;
-		AttachedGod = LORICATUS;
+		AttachedGod = SILVA;
 		HardenedMaterial = HARDENED_LEATHER;
 		IntelligenceRequirement = 5;
 		CanBeTailored = true;
@@ -490,9 +490,10 @@ solid
 		IsFlammable = true;
 		NameStem = "hardened leather";
 		Flexibility = 7;
-		AttachedGod = LORICATUS;
+		AttachedGod = SILVA;
 		IntelligenceRequirement = 10;
 		CanBeTailored = true;
+		HardenedMaterial = TROLL_HIDE;
 	}
 
 	Config TROLL_HIDE;
