@@ -23,7 +23,7 @@ template <class type> class databasecreator
   typedef typename type::database database;
   typedef std::map<festring, databasememberbase<database>*> databasemembermap;
   static void ReadFrom(inputfile&);
-  static void InstallDataBase(type*);
+  static void InstallDataBase(type*, ushort);
   static void CreateDataBaseMemberMap();
  private:
   static bool AnalyzeData(inputfile&, const festring&, database&);
@@ -38,15 +38,15 @@ class databasesystem
   static void CreateDataBaseMemberMaps();
 };
 
-template <class type> inline void databasecreator<type>::InstallDataBase(type* Instance)
+template <class type> inline void databasecreator<type>::InstallDataBase(type* Instance, ushort InstanceConfig)
 {
   const typename type::databasemap& Config = Instance->GetProtoType()->GetConfig();
-  const typename type::databasemap::const_iterator i = Config.find(Instance->Config);
+  const typename type::databasemap::const_iterator i = Config.find(InstanceConfig);
 
   if(i != Config.end())
     Instance->DataBase = &i->second;
   else
-    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassID(), Instance->Config);
+    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassID(), InstanceConfig);
 }
 
 #endif

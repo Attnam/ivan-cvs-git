@@ -778,7 +778,7 @@ bool link::Enter(bool DirectionUp) const
 
   /* "Temporary" gum solutions */
 
-  if(Config == OREE_LAIR_ENTRY)
+  if(GetConfig() == OREE_LAIR_ENTRY)
     {
       ADD_MESSAGE("You sense terrible evil trembling very near under your feet. You feel you shouldn't wander any further. On the other hand you have little choice.");
 
@@ -786,7 +786,7 @@ bool link::Enter(bool DirectionUp) const
 	return false;
     }
 
-  if(Config == OREE_LAIR_EXIT)
+  if(GetConfig() == OREE_LAIR_EXIT)
     if(PLAYER->HasGoldenEagleShirt())
       {
 	ADD_MESSAGE("Somehow you get the feeling you cannot return.");
@@ -801,7 +801,7 @@ bool link::Enter(bool DirectionUp) const
 	return true;
       }
 
-  if(Config == DARK_LEVEL)
+  if(GetConfig() == DARK_LEVEL)
     {
       ADD_MESSAGE("This dark gate seems to be a one-way portal. You sense something distant but extremely dangerous on the other side. You feel you should think twice before entering.");
 
@@ -823,7 +823,7 @@ void link::VirtualConstructor(bool Load)
   olterrain::VirtualConstructor(Load);
 
   if(!Load)
-    if(Config == STAIRS_UP)
+    if(GetConfig() == STAIRS_UP)
       {
 	if(game::GetCurrentLevelIndex())
 	  {
@@ -836,7 +836,7 @@ void link::VirtualConstructor(bool Load)
 	    AttachedEntry = game::GetCurrentDungeonIndex();
 	  }
       }
-    else if(Config == STAIRS_DOWN)
+    else if(GetConfig() == STAIRS_DOWN)
       {
 	AttachedArea = game::GetCurrentLevelIndex() + 1;
 	AttachedEntry = STAIRS_UP;
@@ -1080,7 +1080,7 @@ bool door::IsWalkable(const character* Char) const
 
 bool door::IsTransparent() const
 {
-  return Opened || MainMaterial->IsTransparent() || Config == DOOR_PRISON;
+  return Opened || MainMaterial->IsTransparent() || GetConfig() == DOOR_PRISON;
 }
 
 bool liquidterrain::DipInto(item* ToBeDipped, character* Who)

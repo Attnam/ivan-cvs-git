@@ -17,7 +17,6 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  //ushort GetCounter() const { return Counter; }
   void SetCounter(ushort What) { Counter = What; }
   virtual bool IsVoluntary() const { return false; }
   virtual void Terminate(bool);
@@ -38,11 +37,8 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  //item* GetConsuming() const;
   void SetConsuming(item*);
-  //bool GetWasOnGround() const { return WasOnGround; }
   void SetWasOnGround(bool What) { WasOnGround = What; }
-  //bool HasEaten() const { return Eaten; }
   void SetHasEaten(bool What) { Eaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
@@ -88,12 +84,9 @@ class ACTION
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void Handle();
-  //vector2d GetSquareDug() const { return SquareDug; }
   void SetSquareDug(vector2d What) { SquareDug = What; }
   virtual void Terminate(bool);
-  //item* GetRightBackup() const;
   void SetRightBackup(item*);
-  //item* GetLeftBackup() const;
   void SetLeftBackup(item*);
   virtual bool AllowDisplace() const { return false; }
   virtual void DropUsedItems();
@@ -142,12 +135,10 @@ class ACTION
   virtual void Load(inputfile&);
   virtual void Handle();
   virtual void Terminate(bool);
-  //item* GetLiterature() const;
   void SetLiterature(item*);
   virtual void DropUsedItems();
   virtual void DeleteUsedItems();
   virtual const char* GetDescription() const;
-  //ushort GetCounter() const { return Counter; }
   void SetCounter(ushort What) { Counter = What; }
   virtual ulong GetVolume() const;
   virtual ulong GetWeight() const;

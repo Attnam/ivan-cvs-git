@@ -159,7 +159,7 @@ class game
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoEvilDeed(ushort);
-  static void SaveWorldMap(const festring& = SaveName(""), bool = false);
+  static void SaveWorldMap(const festring& = SaveName(""), bool = true);
   static worldmap* LoadWorldMap(const festring& = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);

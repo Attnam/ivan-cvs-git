@@ -3,7 +3,7 @@
 materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<material>::Add(this); }
 const materialdatabase& materialprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
-void material::InstallDataBase() { databasecreator<material>::InstallDataBase(this); }
+void material::InstallDataBase(ushort Config) { databasecreator<material>::InstallDataBase(this, Config); }
 ulong material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
 bool material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
 ulong material::GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
@@ -35,13 +35,14 @@ ushort material::TakeDipVolumeAway()
 void material::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
-  SaveFile << Volume << Config;
+  SaveFile << Volume;
+  SaveFile << GetConfig();
 }
 
 void material::Load(inputfile& SaveFile)
 {
-  SaveFile >> Volume >> Config;
-  InstallDataBase();
+  SaveFile >> Volume;
+  InstallDataBase(ReadType<ushort>(SaveFile));
   CalculateWeight();
 }
 
@@ -184,8 +185,7 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
 {
   if(!Load)
     {
-      Config = NewConfig;
-      InstallDataBase();
+      InstallDataBase(NewConfig);
       Volume = InitVolume;
       CalculateWeight();
     }

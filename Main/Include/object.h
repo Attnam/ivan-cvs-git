@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
-
 #include "igraph.h"
 #include "entity.h"
 #include "id.h"
@@ -37,7 +35,7 @@ class object : public entity, public id
   virtual void ChangeContainedMaterial(material*, ushort = 0);
   virtual ushort GetMaterials() const { return 1; }
   virtual material* GetMaterial(ushort) const { return MainMaterial; }
-  const std::vector<bitmap*>& GetPicture() const;
+  const bitmap*const* GetPicture() const;
   virtual ulong GetBaseEmitation() const { return 0; }
   virtual void SetParameters(uchar) { }
   virtual uchar GetOKVisualEffects() const { return 0; }
@@ -49,20 +47,18 @@ class object : public entity, public id
   bool IsAnimated() const { return AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
-  ushort GetConfig() const { return Config; }
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
   void SolidDraw(bitmap*, vector2d, ulong, bool) const;
   virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
-  virtual god* GetMasterGod() const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
-  void SetConfig(ushort);
   virtual void CalculateAll() = 0;
   virtual uchar GetSpoilLevel() const { return 0; }
   void CreateWieldedBitmap(graphicid&) const;
   virtual vector2d GetWieldedBitmapPos(ushort) const { return vector2d(); }
-  ushort UpdatePictures(std::vector<graphicid>&, std::vector<bitmap*>&, vector2d, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
+  ushort UpdatePictures(bitmap**&, tilemap::iterator*&, vector2d, ushort, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
   virtual ushort GetSpecialFlags() const;
+  static void InitSparkleValidityArrays();
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
@@ -92,7 +88,7 @@ class object : public entity, public id
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
-  virtual void InstallDataBase() = 0;
+  virtual void InstallDataBase(ushort) = 0;
   virtual ushort GetClassAnimationFrames() const { return 1; }
   void AddContainerPostFix(festring&) const;
   void AddLumpyPostFix(festring&) const;
@@ -101,9 +97,8 @@ class object : public entity, public id
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }
   material* MainMaterial;
-  std::vector<graphicid> GraphicID;
-  std::vector<bitmap*> Picture;
-  ushort Config;
+  bitmap** Picture;
+  tilemap::iterator* GraphicIterator;
   uchar VisualEffects;
   ushort AnimationFrames;
 };

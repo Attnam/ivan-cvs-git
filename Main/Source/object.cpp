@@ -8,24 +8,38 @@
 #include "bitmap.h"
 #include "save.h"
 
-object::object() : entity(0), MainMaterial(0), AnimationFrames(1) { }
+vector2d RightArmSparkleValidityArray[128];
+vector2d LeftArmSparkleValidityArray[128];
+vector2d GroinSparkleValidityArray[169];
+vector2d RightLegSparkleValidityArray[42];
+vector2d LeftLegSparkleValidityArray[45];
+vector2d NormalSparkleValidityArray[256];
+vector2d PossibleSparkleBuffer[256];
+
+object::object() : entity(0), MainMaterial(0), AnimationFrames(0) { }
 void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void object::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
 void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
 ushort object::GetSpecialFlags() const { return ST_NORMAL; }
 ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
-const std::vector<bitmap*>& object::GetPicture() const { return Picture; }
+const bitmap*const* object::GetPicture() const { return Picture; }
 
-object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects)
+object::object(const object& Object) : entity(Object), id(Object), VisualEffects(Object.VisualEffects), AnimationFrames(0)
 {
   CopyMaterial(Object.MainMaterial, MainMaterial);
 }
 
 object::~object()
 {
-  for(ushort c = 0; c < GraphicID.size(); ++c)
-    igraph::RemoveUser(GraphicID[c]);
+  if(AnimationFrames)
+    {
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	igraph::RemoveUser(GraphicIterator[c]);
+
+      delete [] Picture;
+      delete [] GraphicIterator;
+    }
 
   delete MainMaterial;
 }
@@ -43,19 +57,34 @@ void object::CopyMaterial(material* const& Source, material*& Dest)
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << GraphicID << Config << VisualEffects;
+  SaveFile << AnimationFrames;
+
+  for(ushort c = 0; c < AnimationFrames; ++c)
+    SaveFile << GraphicIterator[c]->first;
+
+  SaveFile << VisualEffects;
   SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  SaveFile >> GraphicID >> Config >> VisualEffects;
-  LoadMaterial(SaveFile, MainMaterial);
-  AnimationFrames = GraphicID.size();
-  Picture.resize(AnimationFrames);
+  SaveFile >> AnimationFrames;
 
-  for(ushort c = 0; c < AnimationFrames; ++c)
-    Picture[c] = igraph::AddUser(GraphicID[c]);
+  if(AnimationFrames)
+    {
+      Picture = new bitmap*[AnimationFrames];
+      GraphicIterator = new tilemap::iterator[AnimationFrames];
+      graphicid GraphicID;
+
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	{
+	  SaveFile >> GraphicID;
+	  Picture[c] = (GraphicIterator[c] = igraph::AddUser(GraphicID))->second.Bitmap;
+	}
+    }
+
+  SaveFile >> VisualEffects;
+  LoadMaterial(SaveFile, MainMaterial);
 }
 
 void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
@@ -154,10 +183,10 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  AnimationFrames = UpdatePictures(GraphicID, Picture, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  AnimationFrames = UpdatePictures(Picture, GraphicIterator, vector2d(0, 0), AnimationFrames, (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bitmap*>& Picture, vector2d Position, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
+ushort object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterator, vector2d Position, ushort OldAnimationFrames, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
 {
   ushort AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
@@ -185,59 +214,41 @@ ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bit
 	  if(++SeedModifier > 0x10)
 	    SeedModifier = 1;
 
-	  /* These vectors should be precalculated */
-
-	  std::vector<vector2d> ValidVector;
-	  ushort y, x;
+	  vector2d* ValidityArray;
+	  ushort ValidityArraySize;
 
 	  if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	    {
-	      for(y = 0; y < 16; ++y)
-		for(x = 0; x < 8; ++x)
-		  ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = RightArmSparkleValidityArray;
+	      ValidityArraySize = 128;
 	    }
 	  else if((SpecialFlags & 0x38) == ST_LEFT_ARM)
 	    {
-	      for(y = 0; y < 16; ++y)
-		for(x = 8; x < 16; ++x)
-		  ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = LeftArmSparkleValidityArray;
+	      ValidityArraySize = 128;
 	    }
 	  else if((SpecialFlags & 0x38) == ST_GROIN)
 	    {
-	      for(y = 0; y < 10; ++y)
-		for(x = 0; x < 16; ++x)
-		  ValidVector.push_back(vector2d(x, y));
-
-	      for(y = 10; y < 13; ++y)
-		for(x = y - 5; x < 20 - y; ++x)
-		  ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = GroinSparkleValidityArray;
+	      ValidityArraySize = 169;
 	    }
 	  else if((SpecialFlags & 0x38) == ST_RIGHT_LEG)
 	    {
-	      /* Right leg from the character's, NOT the player's point of view */
-
-	      for(y = 10; y < 16; ++y)
-		for(x = 0; x < 8; ++x)
-		  if((y != 10 || x < 5) && (y != 11 || x < 6) && (y != 12 || x < 7))
-		    ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = RightLegSparkleValidityArray;
+	      ValidityArraySize = 42;
 	    }
 	  else if((SpecialFlags & 0x38) == ST_LEFT_LEG)
 	    {
-	      /* Left leg from the character's, NOT the player's point of view */
-
-	      for(y = 10; y < 16; ++y)
-		for(x = 8; x < 16; ++x)
-		  if((y != 10 || x > 9) && (y != 11 || x > 8))
-		    ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = LeftLegSparkleValidityArray;
+	      ValidityArraySize = 45;
 	    }
 	  else
 	    {
-	      for(y = 0; y < 16; ++y)
-		for(x = 0; x < 16; ++x)
-		  ValidVector.push_back(vector2d(x, y));
+	      ValidityArray = NormalSparkleValidityArray;
+	      ValidityArraySize = 256;
 	    }
 
-	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidVector, BPos, vector2d(16, 16), MColorSparkling);
+	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, vector2d(16, 16), ValidityArraySize, MColorSparkling);
 	  SparkleTime = RAND() % 241;
 	  femath::LoadSeed();
 
@@ -280,15 +291,25 @@ ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bit
 
   ushort c;
 
-  for(c = 0; c < GraphicID.size(); ++c)
-    igraph::RemoveUser(GraphicID[c]);
+  for(c = 0; c < OldAnimationFrames; ++c)
+    igraph::RemoveUser(GraphicIterator[c]);
 
-  GraphicID.resize(AnimationFrames);
-  Picture.resize(AnimationFrames);
+  if(OldAnimationFrames != AnimationFrames)
+    {
+      if(OldAnimationFrames)
+	{
+	  delete [] Picture;
+	  delete [] GraphicIterator;
+	}
+
+      Picture = new bitmap*[AnimationFrames];
+      GraphicIterator = new tilemap::iterator[AnimationFrames];
+    }
+
+  graphicid GI;
 
   for(c = 0; c < AnimationFrames; ++c)
     {
-      graphicid& GI = GraphicID[c];
       GI.Color[0] = GetMaterialColorA(c);
       GI.Color[1] = GetMaterialColorB(c);
       GI.Color[2] = GetMaterialColorC(c);
@@ -341,7 +362,7 @@ ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bit
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
       GI.Position = Position;
-      Picture[c] = igraph::AddUser(GI);
+      Picture[c] = (GraphicIterator[c] = igraph::AddUser(GI))->second.Bitmap;
     }
 
   return AnimationFrames;
@@ -349,15 +370,12 @@ ushort object::UpdatePictures(std::vector<graphicid>& GraphicID, std::vector<bit
 
 ushort object::GetMaterialColorA(ushort) const
 {
-  if(GetMainMaterial())
-    return GetMainMaterial()->GetColor();
-  else
-    return 0;
+  return MainMaterial->GetColor();
 }
 
 bool object::AddMaterialDescription(festring& String, bool Articled) const
 {
-  GetMainMaterial()->AddName(String, Articled);
+  MainMaterial->AddName(String, Articled);
   String << ' ';
   return true;
 }
@@ -370,8 +388,7 @@ void object::AddContainerPostFix(festring& String) const
 
 void object::AddLumpyPostFix(festring& String) const
 {
-  if(GetMainMaterial())
-    GetMainMaterial()->AddName(String << " of ");
+  MainMaterial->AddName(String << " of ");
 }
 
 void object::SetSecondaryMaterial(material*, ushort)
@@ -396,10 +413,7 @@ void object::ChangeContainedMaterial(material*, ushort)
 
 uchar object::GetAlphaA(ushort) const
 {
-  if(GetMainMaterial())
-    return GetMainMaterial()->GetAlpha();
-  else
-    return 255;
+  return MainMaterial->GetAlpha();
 }
 
 void object::RandomizeVisualEffects()
@@ -444,11 +458,6 @@ void object::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnima
     Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
-god* object::GetMasterGod() const
-{
-  return game::GetGod(GetConfig());
-}
-
 ushort object::RandomizeMaterialConfiguration()
 {
   return GetMaterialConfigChances().size() > 1 ? femath::WeightedRand(GetMaterialConfigChances()) : 0;
@@ -467,14 +476,6 @@ void object::InitChosenMaterial(material*& Material, const std::vector<long>& Ma
     InitMaterial(Material, MAKE_MATERIAL(MaterialConfig[Chosen]), DefaultVolume);
   else
     ABORT("MaterialConfig array of illegal size detected!");
-}
-
-void object::SetConfig(ushort NewConfig)
-{
-  Config = NewConfig;
-  InstallDataBase();
-  CalculateAll();
-  UpdatePictures();
 }
 
 bool object::AddEmptyAdjective(festring& String, bool Articled) const
@@ -511,3 +512,47 @@ bool object::IsSparkling(ushort ColorIndex) const
   return !ColorIndex && MainMaterial->IsSparkling();
 }
 
+void object::InitSparkleValidityArrays()
+{
+  ushort y, x, Index = 0;
+
+  for(y = 0; y < 16; ++y)
+    for(x = 0; x < 8; ++x)
+      RightArmSparkleValidityArray[Index++] = vector2d(x, y);
+
+  Index = 0;
+
+  for(y = 0; y < 16; ++y)
+    for(x = 8; x < 16; ++x)
+      LeftArmSparkleValidityArray[Index++] = vector2d(x, y);
+
+  Index = 0;
+
+  for(y = 0; y < 10; ++y)
+    for(x = 0; x < 16; ++x)
+      GroinSparkleValidityArray[Index++] = vector2d(x, y);
+
+  for(y = 10; y < 13; ++y)
+    for(x = y - 5; x < 20 - y; ++x)
+      GroinSparkleValidityArray[Index++] = vector2d(x, y);
+
+  Index = 0;
+
+  for(y = 10; y < 16; ++y)
+    for(x = 0; x < 8; ++x)
+      if((y != 10 || x < 5) && (y != 11 || x < 6) && (y != 12 || x < 7))
+	RightLegSparkleValidityArray[Index++] = vector2d(x, y);
+
+  Index = 0;
+
+  for(y = 10; y < 16; ++y)
+    for(x = 8; x < 16; ++x)
+      if((y != 10 || x > 9) && (y != 11 || x > 8))
+	LeftLegSparkleValidityArray[Index++] = vector2d(x, y);
+
+  Index = 0;
+
+  for(y = 0; y < 16; ++y)
+    for(x = 0; x < 16; ++x)
+      NormalSparkleValidityArray[Index++] = vector2d(x, y);
+}

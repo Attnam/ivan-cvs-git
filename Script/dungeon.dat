@@ -1159,7 +1159,6 @@ Dungeon ATTNAM;
 			WallSquare = solidterrain(SNOW_TERRAIN), WOOD wall(BRICK_FINE);
 			DoorSquare = solidterrain(FLOOR), door;
 		}
-
 	}
 }
 

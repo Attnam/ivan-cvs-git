@@ -7,7 +7,7 @@ ushort nonhumanoid::GetKickMaxDamage() const { return ushort(KickDamage * 1.25f 
 ushort nonhumanoid::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
 ushort nonhumanoid::GetBiteMaxDamage() const { return ushort(BiteDamage * 1.25f + 1); }
 ushort nonhumanoid::GetCarryingStrength() const { return (Max<ushort>(GetAttribute(LEG_STRENGTH), 1) << 1) + CarryingBonus; }
-bool nonhumanoid::IsAlive() const { return GetTorso()->IsAlive(); }
+bool nonhumanoid::UseMaterialAttributes() const { return GetTorso()->UseMaterialAttributes(); }
 
 bool elpuri::SpecialEnemySightedReaction(character*) { return !(Active = true); }
 
@@ -352,7 +352,7 @@ float nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 
 void nonhumanoid::ApplyExperience(bool Edited)
 {
-  if(!IsAlive())
+  if(GetTorso()->UseMaterialAttributes())
     {
       character::ApplyExperience(false);
       return;
@@ -407,14 +407,14 @@ ushort nonhumanoid::GetAttribute(ushort Identifier) const
     return character::GetAttribute(Identifier);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
-      if(IsAlive())
+      if(!GetTorso()->UseMaterialAttributes())
 	return Strength >> 1;
       else
 	return GetTorso()->GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
-      if(IsAlive())
+      if(!GetTorso()->UseMaterialAttributes())
 	return Agility >> 1;
       else
 	return (GetTorso()->GetMainMaterial()->GetFlexibility() << 2);
@@ -431,9 +431,9 @@ bool nonhumanoid::EditAttribute(ushort Identifier, short Value)
   if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
-    return IsAlive() && RawEditAttribute(Strength, Value, true);
+    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(Strength, Value, true);
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    return IsAlive() && RawEditAttribute(Agility, Value, true);
+    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(Agility, Value, true);
   else
     {
       ABORT("Illegal nonhumanoid attribute %d edit request!", Identifier);
@@ -447,12 +447,12 @@ void nonhumanoid::EditExperience(ushort Identifier, long Value)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
-      if(IsAlive())
+      if(!GetTorso()->UseMaterialAttributes())
 	StrengthExperience += Value;
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
-      if(IsAlive())
+      if(!GetTorso()->UseMaterialAttributes())
 	AgilityExperience += Value;
     }
   else
@@ -584,7 +584,7 @@ void genetrixvesana::GetAICommand()
 
 ushort carnivorousplant::GetTorsoSpecialColor() const // the flower
 {
-  if(!Config)
+  if(!GetConfig())
     return MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100);
   else
     return MakeRGB16(RAND() % 100, RAND() % 100, 125 + RAND() % 125);
@@ -740,8 +740,7 @@ void mommo::CreateCorpse(lsquare* Square)
 
 void carnivorousplant::CreateCorpse(lsquare* Square)
 {
-  ushort Amount = !Config ? (RAND() % 7 ? 0 : 1)
-			  : (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3)));
+  ushort Amount = !GetConfig() ? (RAND() % 7 ? 0 : 1) : (RAND() & 1 ? 0 : (RAND() % 5 ? 1 : (RAND() % 5 ? 2 : 3)));
 
   for(ushort c = 0; c < Amount; ++c)
     Square->AddItem(new kiwi);

@@ -31,9 +31,9 @@ worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 	Map[x][y]->SetGWTerrain(new ocean);
       }
 
-  TypeBuffer = Alloc2D<ushort>(XSize, YSize);
-  AltitudeBuffer = Alloc2D<short>(XSize, YSize);
-  ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
+  Alloc2D(TypeBuffer, XSize, YSize);
+  Alloc2D(AltitudeBuffer, XSize, YSize);
+  Alloc2D(ContinentBuffer, XSize, YSize);
   continent::TypeBuffer = TypeBuffer;
   continent::AltitudeBuffer = AltitudeBuffer;
   continent::ContinentBuffer = ContinentBuffer;
@@ -71,9 +71,9 @@ void worldmap::Load(inputfile& SaveFile)
 {
   area::Load(SaveFile);
   Map = reinterpret_cast<wsquare***>(area::Map);
-  TypeBuffer = Alloc2D<ushort>(XSize, YSize);
-  AltitudeBuffer = Alloc2D<short>(XSize, YSize);
-  ContinentBuffer = Alloc2D<uchar>(XSize, YSize);
+  Alloc2D(TypeBuffer, XSize, YSize);
+  Alloc2D(AltitudeBuffer, XSize, YSize);
+  Alloc2D(ContinentBuffer, XSize, YSize);
   SaveFile.Read(reinterpret_cast<char*>(TypeBuffer[0]), sizeof(ushort) * XSizeTimesYSize);
   SaveFile.Read(reinterpret_cast<char*>(AltitudeBuffer[0]), sizeof(short) * XSizeTimesYSize);
   SaveFile.Read(reinterpret_cast<char*>(ContinentBuffer[0]), sizeof(uchar) * XSizeTimesYSize);
@@ -95,8 +95,8 @@ void worldmap::Load(inputfile& SaveFile)
 
 void worldmap::Generate()
 {
-  OldAltitudeBuffer = Alloc2D<short>(XSize, YSize);
-  OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
+  Alloc2D(OldAltitudeBuffer, XSize, YSize);
+  Alloc2D(OldTypeBuffer, XSize, YSize);
 
   while(true)
     {

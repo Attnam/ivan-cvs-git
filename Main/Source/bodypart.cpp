@@ -9,6 +9,9 @@ bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 bool bodypart::IsDipDestination(const character*) const { return MainMaterial->IsFlesh() || MainMaterial->IsLiquid(); }
 ushort bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 ushort bodypart::GetMaterialColorA(ushort) const { return GetMainMaterial()->GetSkinColor(); }
+bool bodypart::IsWarm() const { return MainMaterial->IsWarm(); }
+bool bodypart::UseMaterialAttributes() const { return MainMaterial->UseMaterialAttributes(); }
+bool bodypart::CanRegenerate() const { return MainMaterial->CanRegenerate(); }
 
 uchar head::GetBodyPartIndex() const { return HEAD_INDEX; }
 ushort head::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
@@ -21,7 +24,7 @@ uchar normaltorso::GetGraphicsContainerIndex() const { return GR_CHARACTER; }
 ushort arm::GetMinDamage() const { return ushort(Damage * 0.75f); }
 ushort arm::GetMaxDamage() const { return ushort(Damage * 1.25f + 1); }
 float arm::GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
-ushort arm::GetAnimationFrames() const { return Max<ushort>(bodypart::GetAnimationFrames(), WieldedGraphicID.size()); }
+ushort arm::GetAnimationFrames() const { return Max<ushort>(AnimationFrames, WieldedAnimationFrames); }
 
 uchar rightarm::GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
 ushort rightarm::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
@@ -62,7 +65,7 @@ void bodypart::Load(inputfile& SaveFile)
 
 ushort bodypart::GetStrengthValue() const
 {
-  if(Master && IsAlive())
+  if(Master && !UseMaterialAttributes())
     return ulong(GetStrengthModifier()) * Master->GetAttribute(ENDURANCE) / 2000;
   else
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000;
@@ -198,7 +201,10 @@ void arm::Save(outputfile& SaveFile) const
   SaveFile << BaseUnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
-  SaveFile << WieldedGraphicID;
+  SaveFile << WieldedAnimationFrames;
+
+  for(ushort c = 0; c < WieldedAnimationFrames; ++c)
+    SaveFile << WieldedGraphicIterator[c]->first;
 }
 
 void arm::Load(inputfile& SaveFile)
@@ -207,12 +213,20 @@ void arm::Load(inputfile& SaveFile)
   SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
-  SaveFile >> WieldedGraphicID;
-  ushort AnimationFrames = WieldedGraphicID.size();
-  WieldedPicture.resize(AnimationFrames);
+  SaveFile >> WieldedAnimationFrames;
 
-  for(ushort c = 0; c < AnimationFrames; ++c)
-    WieldedPicture[c] = igraph::AddUser(WieldedGraphicID[c]);
+  if(WieldedAnimationFrames)
+    {
+      WieldedPicture = new bitmap*[WieldedAnimationFrames];
+      WieldedGraphicIterator = new tilemap::iterator[WieldedAnimationFrames];
+      graphicid GraphicID;
+
+      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
+	{
+	  SaveFile >> GraphicID;
+	  WieldedPicture[c] = (WieldedGraphicIterator[c] = igraph::AddUser(GraphicID))->second.Bitmap;
+	}
+    }
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -233,7 +247,7 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(Master)
     {
-      if(!IsAlive() && Type & POISON)
+      if(Type & POISON && !IsAlive())
 	return false;
 
       ushort BHP = HP;
@@ -648,8 +662,14 @@ humanoidtorso::~humanoidtorso()
 
 arm::~arm()
 {
-  for(ushort c = 0; c < WieldedGraphicID.size(); ++c)
-    igraph::RemoveUser(WieldedGraphicID[c]);
+  if(WieldedAnimationFrames)
+    {
+      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
+	igraph::RemoveUser(WieldedGraphicIterator[c]);
+
+      delete [] WieldedPicture;
+      delete [] WieldedGraphicIterator;
+    }
 
   delete GetWielded();
   delete GetGauntlet();
@@ -738,7 +758,7 @@ bool corpse::RaiseTheDead(character* Summoner)
   GetDeceased()->SetMotherEntity(0);
   bool Success = GetDeceased()->CompleteRiseFromTheDead();
 
-  if(Success && Summoner)
+  if(Success && Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
     GetDeceased()->ChangeTeam(Summoner->GetTeam());
 
   Deceased = 0;
@@ -773,7 +793,11 @@ void arm::VirtualConstructor(bool Load)
   bodypart::VirtualConstructor(Load);
 
   if(!Load)
-    StrengthBonus = DexterityBonus = StrengthExperience = DexterityExperience = 0;
+    {
+      WieldedAnimationFrames = 0;
+      StrengthBonus = DexterityBonus = 0;
+      StrengthExperience = DexterityExperience = 0;
+    }
 }
 
 void rightarm::VirtualConstructor(bool Load)
@@ -814,7 +838,7 @@ void leftleg::VirtualConstructor(bool Load)
 
 bool arm::ApplyExperience()
 {
-  if(!IsAlive())
+  if(UseMaterialAttributes())
     return false;
 
   bool Edited = false;
@@ -862,7 +886,7 @@ bool arm::ApplyExperience()
 
 bool leg::ApplyExperience()
 {
-  if(!IsAlive())
+  if(UseMaterialAttributes())
     return false;
 
   bool Edited = false;
@@ -935,14 +959,14 @@ ushort arm::GetAttribute(ushort Identifier) const
 {
   if(Identifier == ARM_STRENGTH)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	return Max(Strength + StrengthBonus, 1);
       else
 	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == DEXTERITY)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	return Max(Dexterity + DexterityBonus, 1);
       else
 	return Max((GetMainMaterial()->GetFlexibility() << 2) + DexterityBonus, 1);
@@ -957,9 +981,9 @@ ushort arm::GetAttribute(ushort Identifier) const
 bool arm::EditAttribute(ushort Identifier, short Value)
 {
   if(Identifier == ARM_STRENGTH)
-    return IsAlive() && Master->RawEditAttribute(Strength, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(Strength, Value);
   else if(Identifier == DEXTERITY)
-    return IsAlive() && Master->RawEditAttribute(Dexterity, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(Dexterity, Value);
   else
     {
       ABORT("Illegal arm attribute %d edit request!", Identifier);
@@ -974,12 +998,12 @@ void arm::EditExperience(ushort Identifier, long Value, bool DirectCall)
 
   if(Identifier == ARM_STRENGTH)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	StrengthExperience += Value;
     }
   else if(Identifier == DEXTERITY)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	DexterityExperience += Value;
     }
   else
@@ -990,14 +1014,14 @@ ushort leg::GetAttribute(ushort Identifier) const
 {
   if(Identifier == LEG_STRENGTH)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	return Max(Strength + StrengthBonus, 1);
       else
 	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == AGILITY)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	return Max(Agility + AgilityBonus, 1);
       else
 	return Max((GetMainMaterial()->GetFlexibility() << 2) + AgilityBonus, 1);
@@ -1012,9 +1036,9 @@ ushort leg::GetAttribute(ushort Identifier) const
 bool leg::EditAttribute(ushort Identifier, short Value)
 {
   if(Identifier == LEG_STRENGTH)
-    return IsAlive() && Master->RawEditAttribute(Strength, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(Strength, Value);
   else if(Identifier == AGILITY)
-    return IsAlive() && Master->RawEditAttribute(Agility, Value);
+    return !UseMaterialAttributes() && Master->RawEditAttribute(Agility, Value);
   else
     {
       ABORT("Illegal leg attribute %d edit request!", Identifier);
@@ -1029,12 +1053,12 @@ void leg::EditExperience(ushort Identifier, long Value, bool DirectCall)
 
   if(Identifier == LEG_STRENGTH)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	StrengthExperience += Value;
     }
   else if(Identifier == AGILITY)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	AgilityExperience += Value;
     }
   else
@@ -1242,7 +1266,7 @@ void bodypart::CalculateMaxHP(bool MayChangeHPs)
 
   if(Master)
     {
-      if(IsAlive())
+      if(!UseMaterialAttributes())
 	{
 	  long Endurance = Master->GetAttribute(ENDURANCE);
 	  MaxHP = GetBodyPartVolume() * Endurance * Endurance / 200000;
@@ -1472,7 +1496,7 @@ humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : torso(Torso)
   BeltSlot.Init(this, BELT_INDEX);
 }
 
-arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
+arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength), WieldedAnimationFrames(0)
 {
 }
 
@@ -1612,14 +1636,14 @@ void bodypart::Be()
 
       if(Master->IsEnabled())
 	{
-	  if(IsInBadCondition() && !(RAND() & 0xF))
+	  if(IsInBadCondition())// && !(RAND() & 0xF))
 	    SpillBlood(1);
 
 	  return;
 	}
     }
 
-  if(HP < MaxHP && !(RAND() & 0xF))
+  if(HP < MaxHP)// && !(RAND() & 0xF))
     {
       SpillBlood(1);
       HP += Max(((MaxHP - HP) >> 2), 1);
@@ -1628,21 +1652,15 @@ void bodypart::Be()
   item::Be();
 }
 
-void bodypart::SpillBlood(ushort HowMuch, vector2d GetPos)
+void bodypart::SpillBlood(ushort HowMuch, vector2d Pos)
 {
-  if(!HowMuch || (Master && !Master->SpillsBlood()) || !IsAlive())
-    return;
-
-  if(!game::IsInWilderness()) 
-    GetNearLSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+  if(HowMuch && (!Master || (Master->IsEnabled() && Master->SpillsBlood())) && IsAlive() && !game::IsInWilderness()) 
+    GetNearLSquare(Pos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
 void bodypart::SpillBlood(ushort HowMuch)
 {
-  if(!HowMuch || (Master && !Master->SpillsBlood()) || !IsAlive())
-    return;
-
-  if(!game::IsInWilderness() && GetLSquareUnder()) 
+  if(HowMuch && (!Master || (Master->IsEnabled() && Master->SpillsBlood())) && IsAlive() && !game::IsInWilderness())
     GetLSquareUnder()->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
 }
 
@@ -1829,13 +1847,13 @@ short arm::GetWieldedHitStrength() const
 void arm::ApplyDexterityPenalty(item* Item)
 {
   if(Item)
-    DexterityBonus -= Item->GetInElasticityPenalty(IsAlive() ? Dexterity : GetMainMaterial()->GetFlexibility());
+    DexterityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? Dexterity : GetMainMaterial()->GetFlexibility());
 }
 
 void leg::ApplyAgilityPenalty(item* Item)
 {
   if(Item)
-    AgilityBonus -= Item->GetInElasticityPenalty(IsAlive() ? Agility : GetMainMaterial()->GetFlexibility());
+    AgilityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? Agility : GetMainMaterial()->GetFlexibility());
 }
 
 uchar corpse::GetSpoilLevel() const
@@ -2223,22 +2241,21 @@ void arm::UpdateWieldedPicture()
   if(Wielded && Master)
     {
       ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
-      Wielded->UpdatePictures(WieldedGraphicID, WieldedPicture, Master->GetWieldedPosition(), SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
+      WieldedAnimationFrames = Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
     }
-  else
+  else if(WieldedAnimationFrames)
     {
-      for(ushort c = 0; c < WieldedGraphicID.size(); ++c)
-        igraph::RemoveUser(WieldedGraphicID[c]);
+      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
+        igraph::RemoveUser(WieldedGraphicIterator[c]);
 
-      WieldedPicture.resize(0);
-      WieldedGraphicID.resize(0);
+      WieldedAnimationFrames = 0;
+      delete [] WieldedPicture;
+      delete [] WieldedGraphicIterator;
     }
 }
 
 void arm::DrawWielded(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  ushort WieldedAnimationFrames = WieldedPicture.size();
-
   if(WieldedAnimationFrames)
     WieldedPicture[!AllowAnimate || WieldedAnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % WieldedAnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
@@ -2299,7 +2316,7 @@ void corpse::FinalProcessForBone()
 
 bool bodypart::IsRepairable() const
 {
-  return !IsAlive() && GetHP() < GetMaxHP();
+  return !CanRegenerate() && GetHP() < GetMaxHP();
 }
 
 bool corpse::SuckSoul(character* Soul, character* Summoner)
@@ -2325,9 +2342,4 @@ bool corpse::SuckSoul(character* Soul, character* Summoner)
     }
   else
     return false;
-}
-
-bool bodypart::IsWarm() const
-{
-  return GetMainMaterial()->IsWarm();
 }

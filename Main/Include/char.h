@@ -29,6 +29,7 @@ struct characterdatabase
 {
   void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return CanBeGenerated && !IsUnique; }
+  ushort Config;
   ushort DefaultArmStrength;
   ushort DefaultLegStrength;
   ushort DefaultDexterity;
@@ -366,6 +367,7 @@ class character : public entity, public id
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(uchar) { }
+  DATA_BASE_VALUE(ushort, Config);
   DATA_BASE_VALUE(ushort, DefaultArmStrength);
   DATA_BASE_VALUE(ushort, DefaultLegStrength);
   DATA_BASE_VALUE(ushort, DefaultDexterity);
@@ -517,7 +519,6 @@ class character : public entity, public id
   virtual long GetMoveAPRequirement(uchar) const;
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  ushort GetConfig() const { return Config; }
   void BeginTemporaryState(ulong, ushort);
   void GainIntrinsic(ulong);
   void HandleStates();
@@ -659,7 +660,7 @@ class character : public entity, public id
   character* CloneToNearestSquare(character*) const;
   void SignalSpoil();
   void SignalSpoilLevelChange();
-  virtual bool IsAlive() const = 0;
+  virtual bool UseMaterialAttributes() const = 0;
   bool IsPolymorphed() const { return Polymorphed; }
   void SetPolymorphed(bool What) { Polymorphed = What; }
   bool IsInBadCondition() const { return HP * 3 < MaxHP; }
@@ -726,8 +727,8 @@ class character : public entity, public id
   void AddESPConsumeMessage() const;
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
   void GetHitByExplosion(const explosion*, ushort);
-  bool CanBePoisoned() const { return IsAlive(); }
-  bool CanBeParasitized() const { return IsAlive(); }
+  bool CanBePoisoned() const { return TorsoIsAlive(); }
+  bool CanBeParasitized() const { return TorsoIsAlive(); }
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   character* GetRandomNeighbourEnemy() const;
   void Search(ushort);
@@ -740,7 +741,7 @@ class character : public entity, public id
   void PrintEndGasImmunityMessage() const;
   bool CanMove() const { return CanWalk() || CanFly() || CanSwim(); }
   void ShowAdventureInfo() const;
-  void DrawBodyPartVector(std::vector<bitmap*>&) const;
+  ushort DrawBodyPartArray(bitmap**&, ushort) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
   virtual ushort GetRandomApplyBodyPart() const;
@@ -761,6 +762,7 @@ class character : public entity, public id
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*) { return false; }
   virtual bool MustBeRemovedFromBone() const;
+  bool TorsoIsAlive() const { return GetTorso()->IsAlive(); }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
@@ -768,7 +770,7 @@ class character : public entity, public id
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
   void LoadDataBaseStats();
-  void InstallDataBase();
+  void InstallDataBase(ushort);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
   virtual ushort GetBodyPartColorA(ushort, bool = false) const;
   virtual ushort GetBodyPartColorB(ushort, bool = false) const;
@@ -824,7 +826,6 @@ class character : public entity, public id
   characterslot* BodyPartSlot;
   festring AssignedName;
   action* Action;
-  ushort Config;
   const database* DataBase;
   ushort StuckToBodyPart;
   item* StuckTo; // Bad naming. Sorry.

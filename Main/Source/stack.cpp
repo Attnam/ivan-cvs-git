@@ -354,6 +354,7 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
   if(Flags & REMEMBER_SELECTED)
     Contents.SetSelected(GetSelected());
 
+  game::DrawEverythingNoBlit(); //prevents mirage puppies
   ushort Chosen = Contents.Draw();
 
   if(Chosen & FELIST_ERROR_BIT)
@@ -415,7 +416,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
 
       Entry.Empty();
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), true, Item->AllowAlphaEverywhere());
+      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), Item->GetAnimationFrames(), true, Item->AllowAlphaEverywhere());
     }
 }
 

@@ -7,7 +7,7 @@ itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort
 
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(Item.ID), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight) { }
 item::item(donothing) : Slot(0), Cannibalised(false) { }
-void item::InstallDataBase() { databasecreator<item>::InstallDataBase(this); }
+void item::InstallDataBase(ushort Config) { databasecreator<item>::InstallDataBase(this, Config); }
 bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 ushort item::GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
@@ -18,6 +18,7 @@ bool item::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_I
 bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(Slot)->GetEquipmentIndex()); }
 ushort item::GetEquipmentIndex() const { return static_cast<gearslot*>(Slot)->GetEquipmentIndex(); }
 uchar item::GetGraphicsContainerIndex() const { return GR_ITEM; }
+bool item::IsBroken() const { return (GetConfig() & BROKEN) != 0; }
 
 bool item::IsConsumable(const character* Eater) const
 {
@@ -170,7 +171,7 @@ bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
 	    Room->HostileAction(Polymorpher);
 	}
 
-      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, true));
+      CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, 0, true));
       RemoveFromSlot();
       SendToHell();
       return true;
@@ -203,13 +204,14 @@ void item::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   object::Save(SaveFile);
+  SaveFile << GetConfig();
   SaveFile << Cannibalised << Size << ID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
-  InstallDataBase();
+  InstallDataBase(ReadType<ushort>(SaveFile));
   SaveFile >> Cannibalised >> Size >> ID;
 }
 
@@ -329,8 +331,7 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
   if(!(SpecialFlags & LOAD))
     {
       ID = game::CreateNewItemID();
-      Config = NewConfig;
-      InstallDataBase();
+      InstallDataBase(NewConfig);
       LoadDataBaseStats();
       RandomizeVisualEffects();
 
@@ -508,11 +509,12 @@ bool item::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
   return false;
 }
 
-void itemdatabase::InitDefaults(ushort Config)
+void itemdatabase::InitDefaults(ushort NewConfig)
 {
   IsAbstract = false;
+  Config = NewConfig&~DEVOUT;
 
-  if(Config & BROKEN)
+  if(NewConfig & BROKEN)
     {
       if(Adjective.GetSize())
 	Adjective.Insert(0, "broken ");
@@ -525,8 +527,8 @@ void itemdatabase::InitDefaults(ushort Config)
 
   /* TERRIBLE gum solution! */
 
-  if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
+  if(NewConfig & DEVOUT)
+    PostFix << "of " << festring(protocontainer<god>::GetProto(NewConfig&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
 ulong item::GetNutritionValue() const
@@ -560,7 +562,7 @@ item* item::DuplicateToStack(stack* CurrentStack)
 bool item::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return GetType() == Item->GetType()
-      && Config == Item->Config
+      && GetConfig() == Item->GetConfig()
       && Weight == Item->Weight
       && MainMaterial->IsSameAs(Item->MainMaterial)
       && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
@@ -731,11 +733,6 @@ void item::SpecialGenerationHandler()
     GetSlot()->AddFriendItem(Duplicate());
 }
 
-bool item::IsBroken() const
-{
-  return (Config & BROKEN) != 0;
-}
-
 void item::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*)) const
 {
   if(Sorter == 0 || Sorter(this, Character))
@@ -826,4 +823,16 @@ void item::PostProcessForBone()
     }
   else
     ID = BI->second;
+}
+
+void item::SetConfig(ushort NewConfig)
+{
+  InstallDataBase(NewConfig);
+  CalculateAll();
+  UpdatePictures();
+}
+
+god* item::GetMasterGod() const
+{
+  return game::GetGod(GetConfig());
 }

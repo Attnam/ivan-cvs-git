@@ -240,7 +240,7 @@ bool cathedral::DropItem(character* Visitor, item* Item, ushort)
 
 void cathedral::KickSquare(character* Kicker, lsquare* Square)
 {
-  if(!AllowKick(Kicker, Square))
+  if(!AllowKick(Kicker, Square) && Kicker->IsPlayer() && game::GetTeam(ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) != HOSTILE)
     {
       ADD_MESSAGE("You have harmed the property of the Cathedral!");
       Kicker->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
@@ -549,7 +549,7 @@ bool landingsite::DropItem(character* Dropper, item* Item, ushort)
 
 void landingsite::KickSquare(character* Kicker, lsquare* Square)
 {
-  if(AllowKick(Kicker, Square))
+  if(AllowKick(Kicker, Square) && Kicker->IsPlayer() && game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) != HOSTILE)
     {
       for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
 	if(i->IsBanana())

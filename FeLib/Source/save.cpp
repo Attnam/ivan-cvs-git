@@ -424,6 +424,7 @@ inputfile& operator>>(inputfile& SaveFile, festring& String)
   uchar Length;
   SaveFile >> Length;
   RealBuffer = Length < 1024 ? StackBuffer : new char[Length + 1];
+  String.Empty();
 
   if(Length)
     {
@@ -431,8 +432,6 @@ inputfile& operator>>(inputfile& SaveFile, festring& String)
       RealBuffer[Length] = 0;
       String << RealBuffer;
     }
-  else
-    String.Empty();
 
   if(Length >= 1024)
     delete [] RealBuffer;

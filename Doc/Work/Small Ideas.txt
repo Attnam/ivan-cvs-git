@@ -390,10 +390,10 @@ Message for bottles breaking inside chests.
 Bear traps made of stronger materials should do more damage.
 If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
 Unarmed accustomization.
-(example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable)
+(example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable).
 The game should ask player whether to unlock a door with a key or not.
 Thunder hammer's power should be proportional to relation with Loricatus.
 The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
 *Blindfold.
-"walk through walls" State 
+"Walk through walls" state.

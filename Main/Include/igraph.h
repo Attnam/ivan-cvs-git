@@ -72,8 +72,8 @@ class igraph
   static bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_COLOR_TILE]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
-  static bitmap* AddUser(const graphicid&);
-  static void RemoveUser(const graphicid&);
+  static tilemap::iterator AddUser(const graphicid&);
+  static void RemoveUser(tilemap::iterator);
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
   static colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
   static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
@@ -87,6 +87,7 @@ class igraph
   static const char* GraphicFileName[];
   static tilemap TileMap;
   static bitmap* OutlineBuffer;
+  static uchar RollBuffer[256];
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "colorbit.h"
 #include "game.h"
 #include "save.h"
+#include "object.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
@@ -14,6 +15,7 @@ bitmap* igraph::OutlineBuffer;
 const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
 const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
 tilemap igraph::TileMap;
+uchar igraph::RollBuffer[256];
 
 void igraph::Init()
 {
@@ -34,6 +36,7 @@ void igraph::Init()
       FONT->CreateFontCache(LIGHT_GRAY);
       felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
       felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
+      object::InitSparkleValidityArrays();
 
       ushort c;
 
@@ -70,7 +73,7 @@ void igraph::DrawCursor(vector2d Pos)
   igraph::GetCursorGraphic()->MaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-bitmap* igraph::AddUser(const graphicid& GI)
+tilemap::iterator igraph::AddUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
@@ -78,17 +81,17 @@ bitmap* igraph::AddUser(const graphicid& GI)
     {
       tile& Tile = Iterator->second;
       ++Tile.Users;
-      return Tile.Bitmap;
+      return Iterator;
     }
   else
     {
       if(GI.Position != vector2d(0, 0))
-	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, vector2d(16, 16), GI.Position);
+	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, 16, 16, GI.Position, RollBuffer);
 
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color, GI.BaseAlpha, GI.Alpha);
 
       if(GI.Position != vector2d(0, 0))
-	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, vector2d(16, 16), -GI.Position);
+	RawGraphic[GI.FileIndex]->Roll(GI.BitmapPos, 16, 16, -GI.Position, RollBuffer);
 
       if((GI.SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
@@ -175,18 +178,12 @@ bitmap* igraph::AddUser(const graphicid& GI)
       if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
 	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
 
-      TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap)));
-      return Bitmap;
+      return TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap))).first;
     }
 }
 
-void igraph::RemoveUser(const graphicid& GI)
+void igraph::RemoveUser(tilemap::iterator Iterator)
 {
-  tilemap::iterator Iterator = TileMap.find(GI);
-
-  if(Iterator == TileMap.end())
-    int esko = 2;
-
   tile& Tile = Iterator->second;
 
   if(!--Tile.Users)

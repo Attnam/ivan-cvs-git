@@ -15,6 +15,7 @@ class ABSTRACT_CHARACTER
   friend class rightarm;
   friend class leftarm;
   humanoid(const humanoid&);
+  virtual ~humanoid();
   virtual bool CanWield() const;
   virtual bool Hit(character*, bool = false);
   virtual ushort GetSize() const;
@@ -117,7 +118,7 @@ class ABSTRACT_CHARACTER
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
   virtual item* SevereBodyPart(ushort);
   virtual uchar GetSWeaponSkillLevel(const item*) const;
-  virtual bool IsAlive() const;
+  virtual bool UseMaterialAttributes() const;
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
   virtual bool IsHumanoid() const { return true; }

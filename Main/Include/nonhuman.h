@@ -54,7 +54,7 @@ class ABSTRACT_CHARACTER
   void CalculateUnarmedAttackInfo();
   void CalculateKickAttackInfo();
   void CalculateBiteAttackInfo();
-  virtual bool IsAlive() const;
+  virtual bool UseMaterialAttributes() const;
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
   virtual void AddSpecialStethoscopeInfo(felist&) const;

@@ -201,8 +201,10 @@ bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0)
       }
 }
 
-bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), Image(Alloc2D<ushort>(YSize, XSize)), PriorityMap(0)
+bitmap::bitmap(const bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), PriorityMap(0)
 {
+  Alloc2D(Image, YSize, XSize);
+
   if(CopyAlpha && Bitmap->AlphaMap)
     {
       Alloc2D<uchar>(AlphaMap, YSize, XSize);
@@ -219,21 +221,25 @@ bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSiz
     }
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
 {
+  Alloc2D(Image, YSize, XSize);
 }
 
-bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
 {
+  Alloc2D(Image, YSize, XSize);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
 {
+  Alloc2D(Image, YSize, XSize);
   ClearToColor(Color);
 }
 
-bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
 {
+  Alloc2D(Image, YSize, XSize);
   ClearToColor(Color);
 }
 
@@ -972,7 +978,7 @@ void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, 
     }
 }
 
-void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawSides, bool DrawDiameters, double Rotation)
+void bitmap::DrawPolygon(ushort CenterX, ushort CenterY, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawSides, bool DrawDiameters, double Rotation)
 {
   if(!DrawSides && !DrawDiameters)
     return;
@@ -983,9 +989,8 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 
   for(c = 0; c < NumberOfSides; ++c)
     {
-      Point[c].X = short(sin(AngleDelta * c + Rotation) * Radius);
-      Point[c].Y = short(cos(AngleDelta * c + Rotation) * Radius);
-      Point[c] += Center;
+      Point[c].X = CenterX + short(sin(AngleDelta * c + Rotation) * Radius);
+      Point[c].Y = CenterY + short(cos(AngleDelta * c + Rotation) * Radius);
     }
 
   if(DrawDiameters)
@@ -1073,15 +1078,17 @@ void bitmap::Outline(ushort Color, uchar Alpha)
     CreateAlphaMap(255);
 
   ushort LastColor, NextColor;
+  ushort XMax = XSize;
+  ushort YMax = YSize - 1;
 
-  for(ushort x = 0; x < XSize; ++x)
+  for(ushort x = 0; x < XMax; ++x)
     {
       ushort* Buffer = &Image[0][x];
       LastColor = *Buffer;
 
-      for(ushort y = 0; y < YSize - 1; ++y)
+      for(ushort y = 0; y < YMax; ++y)
 	{
-	  NextColor = *(Buffer + XSize);
+	  NextColor = *(Buffer + XMax);
 
 	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
 	    {
@@ -1089,9 +1096,9 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	      SetAlpha(x, y, Alpha);
 	    }
 
-	  Buffer += XSize;
+	  Buffer += XMax;
 
-	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
+	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YMax - 1))
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x, y + 1, Alpha);
@@ -1101,12 +1108,15 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	}
     }
 
-  for(ushort y = 0; y < YSize; ++y)
+  --XMax;
+  ++YMax;
+
+  for(ushort y = 0; y < YMax; ++y)
     {
       ushort* Buffer = Image[y];
       LastColor = *Buffer;
 
-      for(ushort x = 0; x < XSize - 1; ++x)
+      for(ushort x = 0; x < XMax; ++x)
 	{
 	  NextColor = *(Buffer + 1);
 
@@ -1118,7 +1128,7 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 
 	  ++Buffer;
 
-	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || x == XSize - 2))
+	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || x == XMax - 1))
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x + 1, y, Alpha);

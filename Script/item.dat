@@ -791,7 +791,7 @@ bodyarmor /* armor-> */
 		DefaultSize = 80;
 		DefaultMainVolume = 5000; 
 		BitmapPos = 64, 208;
-		Possibility = 10;
+		Possibility = 5;
 		NameSingular = "armor";
 		PostFix = "of great health";
 		MainMaterialConfig = { 6, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, DRAGON_HIDE; }
@@ -806,7 +806,7 @@ bodyarmor /* armor-> */
 
 	Config BROKEN|ARMOR_OF_GREAT_HEALTH;
 	{
-		Possibility = 1;
+		Possibility = 10;
 		StrengthModifier = 75;
 		BitmapPos = 64, 224;
 		FormModifier = 20;
@@ -1212,7 +1212,7 @@ wand
 		Price = 500;
 		PostFix = "of lightning";
 		MainMaterialConfig == GOLD;
-		BeamRange = 15;
+		BeamRange = 20;
 		MinCharges = 2;
 		MaxCharges = 5;
 		BeamColor = WHITE;
@@ -1702,7 +1702,7 @@ ring
 
 	Config RING_OF_INFRA_VISION;
 	{
-		Possibility = 20;
+		Possibility = 30;
 		PostFix = "of infravision";
 		MainMaterialConfig == SILVER;
 		GearStates = INFRA_VISION;
@@ -1862,7 +1862,7 @@ humanoidtorso /* bodypart->torso-> */
 
 arm /* bodypart-> */
 {
-	StrengthModifier = 75;
+	StrengthModifier = 100;
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 15;
@@ -1891,7 +1891,7 @@ groin /* bodypart-> */
 
 leg /* bodypart-> */
 {
-	StrengthModifier = 100;
+	StrengthModifier = 125;
 	FormModifier = 15;
 	IsAbstract = true;
 	Roundness = 20;
@@ -2138,7 +2138,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 5;
+		Possibility = 1;
 		PostFix = "of piercing perception";
 		AffectsPerception = true;
 		MainMaterialConfig == ILLITHIUM;
@@ -2152,7 +2152,7 @@ helmet
 	Config BROKEN|HELM_OF_PERCEPTION;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 1;
+		Possibility = 3;
 		Price = 20;
 		AffectsPerception = false;
 	}
@@ -2164,7 +2164,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 5;
+		Possibility = 1;
 		PostFix = "of understanding";
 		AffectsWisdom = true;
 		MainMaterialConfig == UNICORN_HORN;
@@ -2178,7 +2178,7 @@ helmet
 	Config BROKEN|HELM_OF_UNDERSTANDING;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 0;
+		Possibility = 3;
 		Price = 20;
 		AffectsWisdom = false;
 	}
@@ -2190,7 +2190,7 @@ helmet
 		StrengthModifier = 150;
 		FormModifier = 25;
 		BitmapPos = 48, 32;
-		Possibility = 5;
+		Possibility = 1;
 		PostFix = "of brilliance";
 		AffectsIntelligence = true;
 		MainMaterialConfig == ARCANITE;
@@ -2203,7 +2203,7 @@ helmet
 	Config BROKEN|HELM_OF_BRILLIANCE;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 0;
+		Possibility = 3;
 		Price = 20;
 		AffectsIntelligence = false;
 	}
@@ -2229,7 +2229,7 @@ helmet
 	Config BROKEN|HELM_OF_ATTRACTIVITY;
 	{
 		BitmapPos = 64, 32;
-		Possibility = 1;
+		Possibility = 5;
 		Price = 20;
 		AffectsCharisma = false;
 	}
@@ -2276,7 +2276,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
 	DefaultSize = 120;
-	Possibility = 20;
+	Possibility = 15;
 	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 130;
 	DefaultSecondaryVolume = 45;
@@ -2296,7 +2296,7 @@ flamingsword /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 3;
+		Possibility = 10;
 		BitmapPos = 32, 208;
 		WieldedBitmapPos = 176, 80;
 	}
@@ -2305,7 +2305,7 @@ flamingsword /* meleeweapon-> */
 mjolak /* meleeweapon-> */
 {
 	DefaultSize = 180;
-	Possibility = 3;
+	Possibility = 1;
 	WeaponCategory = POLE_ARMS;
 	DefaultMainVolume = 400;
 	DefaultSecondaryVolume = 2000;
@@ -2329,7 +2329,7 @@ mjolak /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 0;
+		Possibility = 2;
 		BitmapPos = 32, 144;
 		Price = 150;
 		WieldedBitmapPos = 176, 256;
@@ -2339,7 +2339,7 @@ mjolak /* meleeweapon-> */
 vermis /* meleeweapon-> */
 {
 	DefaultSize = 220;
-	Possibility = 5;
+	Possibility = 3;
 	WeaponCategory = POLE_ARMS;
 	StrengthModifier = 100;
 	BitmapPos = 16, 144;
@@ -2363,7 +2363,7 @@ vermis /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 0;
+		Possibility = 2;
 		BitmapPos = 32, 224;
 		Price = 100;
 		WieldedBitmapPos = 176, 96;
@@ -2376,7 +2376,7 @@ turox /* meleeweapon-> */
 	FormModifier = 225;
 	DefaultSize = 90;
 	BitmapPos = 0, 32;
-	Possibility = 5;
+	Possibility = 2;
 	DefaultMainVolume = 800;
 	DefaultSecondaryVolume = 600;
 	WeaponCategory = BLUNT_WEAPONS;
@@ -2396,7 +2396,7 @@ turox /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 0;
+		Possibility = 3;
 		BitmapPos = 32, 112;
 		Price = 50;		
 		WieldedBitmapPos = 176, 192;
@@ -2563,7 +2563,7 @@ horn
 thunderhammer /* meleeweapon-> */
 {
 	DefaultSize = 50;
-	Possibility = 10;
+	Possibility = 5;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 200;
 	DefaultSecondaryVolume = 400;
@@ -2584,7 +2584,7 @@ thunderhammer /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 1;
+		Possibility = 5;
 		BitmapPos = 48, 192;
 		Price = 100;
 		WieldedBitmapPos = 176, 224;
@@ -2594,7 +2594,7 @@ thunderhammer /* meleeweapon-> */
 saalthul
 {
 	DefaultSize = 70;
-	Possibility = 3;
+	Possibility = 1;
 	WeaponCategory = SMALL_SWORDS;
 	DefaultMainVolume = 60;
 	DefaultSecondaryVolume = 20;
@@ -2618,7 +2618,7 @@ saalthul
 
 	Config BROKEN;
 	{
-		Possibility = 0;
+		Possibility = 2;
 		BitmapPos = 48, 272;
 		Price = 100;
 		GearStates = 0;

@@ -442,7 +442,7 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
       const ulong* MinPrice = GetMinPrice();
       const ulong* MaxPrice = GetMaxPrice();
       const ulong* Category = GetCategory();
-      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY);
+      Instance = protosystem::BalancedCreateItem(MinPrice ? *MinPrice : 0, MaxPrice ? *MaxPrice : MAX_PRICE, Category ? *Category : ANY_CATEGORY, SpecialFlags);
     }
   else
     Instance = contentscripttemplate<item>::BasicInstantiate(SpecialFlags);

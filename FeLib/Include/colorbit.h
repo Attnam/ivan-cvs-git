@@ -52,20 +52,20 @@ class colorizablebitmap
   void SwapColors(ushort, ushort, vector2d, uchar, uchar);
   void SwapColors(vector2d, vector2d, uchar, uchar);
 
-  void Roll(ushort, ushort, ushort, ushort, short, short);
-  void Roll(vector2d, ushort, ushort, short, short);
-  void Roll(ushort, ushort, vector2d, short, short);
-  void Roll(ushort, ushort, ushort, ushort, vector2d);
-  void Roll(vector2d, vector2d, short, short);
-  void Roll(vector2d, ushort, ushort, vector2d);
-  void Roll(ushort, ushort, vector2d, vector2d);
-  void Roll(vector2d, vector2d, vector2d);
+  void Roll(ushort, ushort, ushort, ushort, short, short, uchar*);
+  void Roll(vector2d, ushort, ushort, short, short, uchar*);
+  void Roll(ushort, ushort, vector2d, short, short, uchar*);
+  void Roll(ushort, ushort, ushort, ushort, vector2d, uchar*);
+  void Roll(vector2d, vector2d, short, short, uchar*);
+  void Roll(vector2d, ushort, ushort, vector2d, uchar*);
+  void Roll(ushort, ushort, vector2d, vector2d, uchar*);
+  void Roll(vector2d, vector2d, vector2d, uchar*);
 
   void CreateFontCache(ushort);
   static bool IsMaterialColor(uchar Color) { return Color >= 192; }
   static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) >> 4; }
   uchar GetPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
-  vector2d RandomizeSparklePos(const std::vector<vector2d>&, vector2d, vector2d, bool*) const;
+  vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, ushort, bool*) const;
  protected:
   ushort XSize, YSize;
   uchar* Palette;

@@ -24,7 +24,7 @@ class felist
   felist(const festring&, ushort = WHITE, ushort = 0);
   ~felist();
   void AddEntry(const festring&, ushort, ushort = 0, bitmap* = 0, bool = true);
-  void AddEntry(const festring&, ushort, ushort, const std::vector<bitmap*>&, bool = true, bool = false);
+  void AddEntry(const festring&, ushort, ushort, const bitmap*const*, ushort, bool = true, bool = false);
   void AddDescription(const festring&, ushort = WHITE);
   ushort Draw();
   void QuickDraw(bitmap*, ushort) const;

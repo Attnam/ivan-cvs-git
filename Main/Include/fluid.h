@@ -18,7 +18,7 @@ class fluid : public entity
   void Save(outputfile&) const;
   void Load(inputfile&);
   void Draw(bitmap*, vector2d, ulong, bool) const;
-  bitmap* GetPicture() const { return Picture; }
+  const bitmap* GetPicture() const { return Picture; }
   material* GetMaterial() const { return Material; }
   virtual square* GetSquareUnderEntity() const { return SquareUnder; }
   square* GetSquareUnder() const { return SquareUnder; }

@@ -11,8 +11,8 @@ lsquare* lterrain::GetNearLSquare(vector2d Pos) const { return LSquareUnder->Get
 lsquare* lterrain::GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
 room* lterrain::GetRoom() const { return GetLSquareUnder()->GetRoom(); }
 
-void glterrain::InstallDataBase() { databasecreator<glterrain>::InstallDataBase(this); }
-void olterrain::InstallDataBase() { databasecreator<olterrain>::InstallDataBase(this); }
+void glterrain::InstallDataBase(ushort Config) { databasecreator<glterrain>::InstallDataBase(this, Config); }
+void olterrain::InstallDataBase(ushort Config) { databasecreator<olterrain>::InstallDataBase(this, Config); }
 uchar glterrain::GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
 uchar olterrain::GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
 
@@ -28,25 +28,27 @@ void glterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   lterrain::Save(SaveFile);
+  SaveFile << GetConfig();
 }
 
 void glterrain::Load(inputfile& SaveFile)
 {
   lterrain::Load(SaveFile);
-  InstallDataBase();
+  InstallDataBase(ReadType<ushort>(SaveFile));
 }
 
 void olterrain::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   lterrain::Save(SaveFile);
+  SaveFile << GetConfig();
   SaveFile << HP;
 }
 
 void olterrain::Load(inputfile& SaveFile)
 {
   lterrain::Load(SaveFile);
-  InstallDataBase();
+  InstallDataBase(ReadType<ushort>(SaveFile));
   SaveFile >> HP;
 }
 
@@ -92,8 +94,7 @@ void lterrain::Initialize(ushort NewConfig, ushort SpecialFlags)
 {
   if(!(SpecialFlags & LOAD))
     {
-      Config = NewConfig;
-      InstallDataBase();
+      InstallDataBase(NewConfig);
       RandomizeVisualEffects();
 
       if(!(SpecialFlags & NO_MATERIALS))
@@ -236,13 +237,25 @@ uchar olterrain::GetAttachedGod() const
   return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
 }
 
-void olterraindatabase::InitDefaults(ushort Config)
+void olterraindatabase::InitDefaults(ushort NewConfig)
 {
   IsAbstract = false;
+  Config = NewConfig&~DEVOUT;
 
   /* TERRIBLE gum solution! */
 
-  if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
+  if(NewConfig & DEVOUT)
+    PostFix << "of " << festring(protocontainer<god>::GetProto(NewConfig&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
+void olterrain::SetConfig(ushort NewConfig)
+{
+  InstallDataBase(NewConfig);
+  CalculateAll();
+  UpdatePictures();
+}
+
+god* olterrain::GetMasterGod() const
+{
+  return game::GetGod(GetConfig());
+}

@@ -291,6 +291,18 @@ void femath::CalculateEnvironmentRectangle(rect& Rect, const rect& MotherRect, v
 
 bool femath::Clip(ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY, ushort& Width, ushort& Height, ushort XSize, ushort YSize, ushort DestXSize, ushort DestYSize)
 {
+  /* This sentence is usually true */
+
+  if(short(SourceX) >= 0
+  && short(SourceY) >= 0
+  && short(DestX) >= 0
+  && short(DestY) >= 0
+  && short(SourceX) + Width <= XSize
+  && short(SourceY) + Height <= YSize
+  && short(DestX) + Width <= DestXSize
+  && short(DestY) + Height <= DestYSize)
+    return true;
+
   if(short(SourceX) < 0)
     {
       Width += SourceX;

@@ -19,8 +19,8 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
   for(ushort c = 0; c < Amount; ++c)
     {
       vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
-      GetPicture()->PutPixel(Cords, Color);
-      GetPicture()->SetAlpha(Cords, 150 + RAND() % 106);
+      Picture->PutPixel(Cords, Color);
+      Picture->SetAlpha(Cords, 150 + RAND() % 106);
 
       for(ushort d = 0; d < 8; ++d)
 	if(RAND() % Lumpiness)
@@ -38,8 +38,8 @@ void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Varia
 	    if(short(GetGreen16(Color) + Change[1]) > 255) Change[1] = 255 - GetGreen16(Color);
 	    if(short(GetBlue16(Color) + Change[2]) > 255) Change[2] = 255 - GetBlue16(Color);
 
-	    GetPicture()->PutPixel(Cords + game::GetMoveVector(d), MakeRGB16(GetRed16(Color) + Change[0], GetGreen16(Color) + Change[1], GetBlue16(Color) + Change[2]));
-	    GetPicture()->SetAlpha(Cords + game::GetMoveVector(d), 50 + RAND() % 206);
+	    Picture->PutPixel(Cords + game::GetMoveVector(d), MakeRGB16(GetRed16(Color) + Change[0], GetGreen16(Color) + Change[1], GetBlue16(Color) + Change[2]));
+	    Picture->SetAlpha(Cords + game::GetMoveVector(d), 50 + RAND() % 206);
 	  }
     }
 }
@@ -48,7 +48,7 @@ void fluid::Be()
 {
   if(!(RAND() % 25))
     {
-      if(!GetPicture()->ChangeAlpha(-1))
+      if(!Picture->ChangeAlpha(-1))
 	{
 	  GetLSquareUnder()->RemoveFluid();
 	  SendToHell();

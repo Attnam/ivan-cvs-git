@@ -1894,7 +1894,7 @@ bool horn::Apply(character* Blower)
   if(LastUsed == 0 || game::GetTicks() - LastUsed >= 2500)
     {
       LastUsed = game::GetTicks();
-      const char* SoundDescription = Config == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
+      const char* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
 
       if(Blower->IsPlayer())
 	ADD_MESSAGE("You produce a %s sound.", SoundDescription);
@@ -1913,7 +1913,7 @@ bool horn::Apply(character* Blower)
 
 	    if(Audience)
 	      {
-		if(Config == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID())
+		if(GetConfig() == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID())
 		  {
 		    if(Audience->IsPlayer())
 		      ADD_MESSAGE("You calm down.");
@@ -1922,7 +1922,7 @@ bool horn::Apply(character* Blower)
 
 		    Audience->DeActivateTemporaryState(PANIC);
 		  }
-		else if(Config == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
+		else if(GetConfig() == FEAR && !Audience->TemporaryStateIsActivated(PANIC) && Blower->GetRelation(Audience) == HOSTILE && Audience->GetPanicLevel() >= RAND() % 33)
 		  Audience->BeginTemporaryState(PANIC, 500 + RAND() % 500);
 	      }
 	  }

@@ -23,6 +23,7 @@ dungeon::~dungeon()
     delete Level[c];
 
   delete [] Level;
+  delete [] Generated;
 }
 
 void dungeon::Initialize()

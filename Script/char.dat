@@ -989,6 +989,7 @@ skeleton
 		TotalVolume = 20000;
 		EyeColor = rgb16(255, 0, 0);
 		ClothColor = rgb16(32, 32, 32);
+		CanRead = true;
 	}
 
 	Config WAR_LORD;
@@ -1018,6 +1019,7 @@ skeleton
 		ClothColor = rgb16(100, 0, 0);
 		Inventory == wand(WAND_OF_RESURRECTION);
 		CanBeConfused = false;
+		CanRead = true;
 	}
 }
 
@@ -2227,8 +2229,7 @@ kobold
 gibberling
 {
 	DefaultArmStrength = 7;
-	DefaultLegStrength = 7;
-	DefaultDexterity = 5;
+	DefaultLegStrength = 7;	DefaultDexterity = 5;
 	DefaultAgility = 15;
 	DefaultEndurance = 10;
 	DefaultPerception = 15;
@@ -2517,7 +2518,6 @@ genie
 	TorsoBitmapPos = 32, 272;
 	ArmBitmapPos = 64, 272;
 	/* LegBitmapPos is not used */
-	/*RightWielded = ARCANITE ARCANITE meleeweapon(TWO_HANDED_SCIMITAR);*/
 	KnownCWeaponSkills == LARGE_SWORDS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
@@ -3226,7 +3226,7 @@ floatingeye
 	FleshMaterial = FLOATING_EYE_FLESH;
 	IgnoreDanger = true;
 	HPRequirementForGeneration = 40;
-	Frequency = 2500;
+	Frequency = 1500;
 	TorsoBitmapPos = 32, 0;
 	SkinColor = rgb16(180,180,180);
 	ClothColor = rgb16(0, 0, 160); /* eye color */
@@ -3384,7 +3384,7 @@ darkmage
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
 		HPRequirementForGeneration = 100;
-		Frequency = 1000;
+		Frequency = 1500;
 		PanicLevel = 75;
 		Inventory == lantern;
 	}
@@ -3410,7 +3410,7 @@ darkmage
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 200;
-		Frequency = 750;
+		Frequency = 1000;
 		PanicLevel = 25;
 	}
 
@@ -3616,33 +3616,33 @@ skunk
 
 invisiblestalker
 {
-	DefaultArmStrength = 30;
-	DefaultAgility = 14;
-	DefaultEndurance = 12;
+	DefaultArmStrength = 5;
+	DefaultAgility = 25;
+	DefaultEndurance = 15;
 	DefaultPerception = 24;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 5;
+	DefaultIntelligence = 8;
+	DefaultWisdom = 6;
 	DefaultCharisma = 5;
 	DefaultMana = 0;
-	TotalVolume = 20000;
+	TotalVolume = 40000;
 	TorsoBitmapPos = 224, 16;
 	FriendlyReplies == "\"Gods are away on business.\"";
 	HostileReplies == "\"Misery is the river of the world.\"";
 	TotalSize = 170;
-	SkinColor = rgb16(40, 40, 40);
 	NameSingular = "stalker";
 	NamePlural = "stalkers";
 	Adjective = "invisible";
+	AdjectiveArticle = "an";
 	AttackStyle = USE_ARMS;
 	CanBeGenerated = true;
-	KnownCWeaponSkills == ARMS;
-	CWeaponSkillHits == 150;
 	FleshMaterial = MAGICAL_AIR;
-	DeathMessage = "@Dd hisses.";
+	BaseUnarmedStrength = 750;
+	DeathMessage = "@Dd hisses and vanishes.";
 	AttachedGod = CLEPTIA;
 	CanKick = true;
+	DangerModifier = 250;
 	KnownCWeaponSkills == UNARMED;
-	CWeaponSkillHits == 350;
+	CWeaponSkillHits == 200;
 	ClassStates = INVISIBLE;
-	PanicLevel = 15; 
+	BodyPartsDisappearWhenSevered = true;
 }

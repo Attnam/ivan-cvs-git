@@ -24,7 +24,8 @@ template <class type> class databasecreator;
 
 struct materialdatabase
 {
-  void InitDefaults(ushort Config) { DigProductMaterial = Config; }
+  void InitDefaults(ushort NewConfig) { DigProductMaterial = Config = NewConfig; }
+  ushort Config;
   ushort StrengthValue;
   ushort ConsumeType;
   ushort Density;
@@ -58,6 +59,8 @@ struct materialdatabase
   festring BreatheMessage;
   bool EffectIsGood;
   bool IsWarm;
+  bool UseMaterialAttributes;
+  bool CanRegenerate;
 };
 
 class materialprototype
@@ -109,6 +112,7 @@ class material
   virtual void Be() { }
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const;
+  DATA_BASE_VALUE(ushort, Config);
   DATA_BASE_VALUE(ushort, StrengthValue);
   DATA_BASE_VALUE(ushort, ConsumeType);
   DATA_BASE_VALUE(ushort, Density);
@@ -139,12 +143,13 @@ class material
   DATA_BASE_VALUE(ushort, ConsumeWisdomLimit);
   DATA_BASE_VALUE(uchar, AttachedGod);
   DATA_BASE_BOOL(EffectIsGood);
+  DATA_BASE_BOOL(UseMaterialAttributes);
+  DATA_BASE_BOOL(CanRegenerate);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
-  material* Clone() const { return GetProtoType()->Clone(Config, GetVolume()); }
-  material* Clone(ulong Volume) const { return GetProtoType()->Clone(Config, Volume); }
+  material* Clone() const { return GetProtoType()->Clone(GetConfig(), GetVolume()); }
+  material* Clone(ulong Volume) const { return GetProtoType()->Clone(GetConfig(), Volume); }
   ulong GetTotalExplosivePower() const;
-  ushort GetConfig() const { return Config; }
   static material* MakeMaterial(ushort);
   static material* MakeMaterial(ushort, ulong);
   virtual bool IsFlesh() const { return false; }
@@ -154,7 +159,7 @@ class material
   void CalculateWeight() { Weight = Volume * GetDensity() / 1000; }
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
-  bool IsSameAs(const material* What) const { return What->Config == Config; }
+  bool IsSameAs(const material* What) const { return What->GetConfig() == GetConfig(); }
   bool IsTransparent() const { return GetAlpha() != 255; }
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue() const;
@@ -174,12 +179,11 @@ class material
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);
-  void InstallDataBase();
+  void InstallDataBase(ushort);
   const database* DataBase;
   entity* MotherEntity;
   ulong Volume;
   ulong Weight;
-  ushort Config;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__

@@ -801,7 +801,7 @@ void level::Explosion(character* Terrorist, const festring& DeathMsg, vector2d P
 	  ushort NewExplosions = c;
 
 	  for(c = Explosions; c < NewExplosions; ++c)
-	    if(PlayerHurt[c])
+	    if(PlayerHurt[c] && PLAYER->IsEnabled())
 	      PLAYER->GetHitByExplosion(ExplosionQueue[c], ExplosionQueue[c]->Strength / ((PLAYER->GetPos() - ExplosionQueue[c]->Pos).GetLengthSquare() + 1));
 
 	  Explosions = NewExplosions;

@@ -93,8 +93,10 @@ class ABSTRACT_ITEM
   void SetIsSparklingC(bool What) { IsSparklingC = What; }
   void SetIsSparklingD(bool What) { IsSparklingD = What; }
   virtual ushort GetSpecialFlags() const;
-  virtual bool IsRepairable() const;
-  virtual bool IsWarm() const;
+  bool IsRepairable() const;
+  bool IsWarm() const;
+  bool UseMaterialAttributes() const;
+  bool CanRegenerate() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual uchar GetMaxAlpha() const;
@@ -300,8 +302,9 @@ class ABSTRACT_ITEM
   long APCost;
   short StrengthBonus;
   short DexterityBonus;
-  std::vector<graphicid> WieldedGraphicID;
-  std::vector<bitmap*> WieldedPicture;
+  ushort WieldedAnimationFrames;
+  bitmap** WieldedPicture;
+  tilemap::iterator* WieldedGraphicIterator;
 );
 
 class ITEM

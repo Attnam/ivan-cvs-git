@@ -9,6 +9,7 @@ databasecreator<material>::databasemembermap databasecreator<material>::DataBase
 template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 {
   typedef typename type::prototype prototype;
+  typedef typename type::databasemap::iterator configiterator;
   festring Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -19,9 +20,17 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 	ABORT("Odd term %s encountered in %s datafile line %d!", Word.CStr(), protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
       prototype* Proto = protocontainer<type>::ProtoData[Index];
-      Proto->Config.insert(std::pair<ushort, database>(0, Proto->Base ? database(Proto->Base->Config.begin()->second) : database()));
-      database& DataBase = Proto->Config.begin()->second;
-      DataBase.InitDefaults(0);
+      database* DataBase;
+      configiterator Iterator = Proto->Config.find(0);
+
+      if(Iterator != Proto->Config.end())
+	DataBase = &Iterator->second;
+      else if(Proto->Base)
+	DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database(Proto->Base->Config.begin()->second))).first->second;
+      else
+	DataBase = &Proto->Config.insert(std::pair<ushort, database>(0, database())).first->second;
+
+      DataBase->InitDefaults(0);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
@@ -31,33 +40,45 @@ template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 	  if(Word == "Config")
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber();
-	      database TempDataBase(Proto->ChooseBaseForConfig(ConfigNumber));
-	      TempDataBase.InitDefaults(ConfigNumber);
+	      database* TempDataBase;
+	      Iterator = Proto->Config.find(ConfigNumber);
+
+	      if(Iterator != Proto->Config.end())
+		TempDataBase = &Iterator->second;
+	      else
+		TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, Proto->ChooseBaseForConfig(ConfigNumber))).first->second;
+
+	      TempDataBase->InitDefaults(ConfigNumber);
 
 	      if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassID(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
-		if(!AnalyzeData(SaveFile, Word, TempDataBase))
+		if(!AnalyzeData(SaveFile, Word, *TempDataBase))
 		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.CStr(), Proto->GetClassID(), ConfigNumber, SaveFile.TellLine());
 
-	      Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, TempDataBase));
 	      continue;
 	    }
 
-	  if(!AnalyzeData(SaveFile, Word, DataBase))
+	  if(!AnalyzeData(SaveFile, Word, *DataBase))
 	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.CStr(), Proto->GetClassID(), SaveFile.TellLine());
 	}
 
-      if(DataBase.CreateDivineConfigurations)
+      if(DataBase->CreateDivineConfigurations)
 	{
 	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
-		database TempDataBase(DataBase);
-		TempDataBase.InitDefaults(DEVOUT|c);
-		TempDataBase.AttachedGod = c;
-		Proto->Config.insert(std::pair<ushort, database>(c, TempDataBase));
+		database* TempDataBase;
+		Iterator = Proto->Config.find(c);
+
+		if(Iterator != Proto->Config.end())
+		  TempDataBase = &Iterator->second;
+		else
+		  TempDataBase = &Proto->Config.insert(std::pair<ushort, database>(c, *DataBase)).first->second;
+
+		TempDataBase->InitDefaults(DEVOUT|c);
+		TempDataBase->AttachedGod = c;
 	      }
 	}
 
@@ -449,6 +470,8 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(BreatheMessage);
   ADD_MEMBER(EffectIsGood);
   ADD_MEMBER(IsWarm);
+  ADD_MEMBER(UseMaterialAttributes);
+  ADD_MEMBER(CanRegenerate);
 }
 
 template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

@@ -50,10 +50,10 @@ ushort ring::GetMaterialColorB(ushort) const { return MakeRGB16(200, 200, 200); 
 bool amulet::IsInCorrectSlot(ushort Index) const { return Index == AMULET_INDEX; }
 ushort amulet::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 
-bool helmet::IsGorovitsFamilyRelic() const { return Config == GOROVITS_FAMILY_GAS_MASK; }
+bool helmet::IsGorovitsFamilyRelic() const { return GetConfig() == GOROVITS_FAMILY_GAS_MASK; }
 ulong helmet::GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
 bool helmet::IsInCorrectSlot(ushort Index) const { return Index == HELMET_INDEX; }
-ushort helmet::GetMaterialColorB(ushort) const { return Config != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
+ushort helmet::GetMaterialColorB(ushort) const { return GetConfig() != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
 ushort helmet::GetMaterialColorC(ushort) const { return MakeRGB16(180, 200, 180); }
 
 bool meleeweapon::HitEffect(character* Enemy, character*, uchar, uchar, bool BlockedByArmour)
@@ -254,7 +254,7 @@ bool whipofthievery::HitEffect(character* Enemy, character* Hitter, uchar BodyPa
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!IsBroken() && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
+  if(Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_POSSESSIVE_PRONOUN, Enemy->GetMainWielded()->CHAR_NAME(UNARTICLED));

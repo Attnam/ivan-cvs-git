@@ -222,7 +222,6 @@ bool game::Init(const festring& Name)
 	SetIsRunning(true);
 	iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
 	InitScript();
-	msgsystem::Format();
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
@@ -284,7 +283,7 @@ bool game::Init(const festring& Name)
 
 void game::DeInit()
 {
-  delete GetWorldMap();
+  delete WorldMap;
   WorldMap = 0;
   ushort c;
 
@@ -304,6 +303,10 @@ void game::DeInit()
 
   delete [] Team;
   delete GameScript;
+  msgsystem::Format();
+
+
+  DangerMap.clear();
 }
 
 void game::Run()
@@ -325,7 +328,6 @@ void game::Run()
 	{
 	  pool::Be();
 	  pool::BurnHell();
-
 	  Tick();
 	  ApplyDivineTick();
 	}
@@ -340,7 +342,7 @@ void game::InitLuxTable()
 {
   if(!LuxTable)
     {
-      LuxTable = Alloc3D<ushort>(256, 33, 33);
+      Alloc3D(LuxTable, 256, 33, 33);
 
       for(long c = 0; c < 0x100; ++c)
 	for(long x = 0; x < 33; ++x)
@@ -529,7 +531,7 @@ bool game::Save(const festring& SaveName)
     SaveFile << Team[c];
 
   if(InWilderness)
-    SaveWorldMap(SaveName);
+    SaveWorldMap(SaveName, false);
   else
     GetCurrentDungeon()->SaveLevel(SaveName, CurrentLevelIndex, false);
 
@@ -1134,16 +1136,16 @@ void game::CreateBusyAnimationCache()
   bitmap Circle(200, 200, TRANSPARENT_COLOR);
 
   for(ushort x = 0; x < 4; ++x)
-    Circle.DrawPolygon(vector2d(100, 100), 95 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
+    Circle.DrawPolygon(100, 100, 95 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
 
   for(ushort c = 0; c < 48; ++c)
     {
       bitmap* Bitmap = BusyAnimationCache[c] = new bitmap(200, 200, 0);
-      Elpuri.MaskedBlit(Bitmap, 0, 0, 92, 93, 16, 16);
+      Elpuri.MaskedBlit(Bitmap, 0, 0, 92, 92, 16, 16);
       double Rotation = 0.3f + c * FPI / 120;
 
       for(ushort x = 0; x < 10; ++x)
-	Bitmap->DrawPolygon(vector2d(100, 100), 95, 5, MakeRGB16(255 - 25 * (10 - x), 0, 0), false, true, Rotation + double(x) / 50);
+	Bitmap->DrawPolygon(100, 100, 95, 5, MakeRGB16(255 - 25 * (10 - x), 0, 0), false, true, Rotation + double(x) / 50);
 
       Circle.MaskedBlit(Bitmap);
     }
@@ -1594,7 +1596,7 @@ bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
     {
       GetWorldMap()->RemoveCharacter(Player->GetPos());
       GetWorldMap()->GetPlayerGroup().swap(Group);
-      SaveWorldMap(SaveName(), true);
+      SaveWorldMap();
     }
 
   return true;
@@ -1699,32 +1701,39 @@ void game::InitPlayerAttributeAverage()
   humanoid* Player = static_cast<humanoid*>(GetPlayer());
   ushort Arms = 0;
   ushort Legs = 0;
+  rightarm* RightArm = Player->GetRightArm();
 
-  if(Player->GetRightArm() && Player->GetRightArm()->IsAlive())
+  if(RightArm && !RightArm->UseMaterialAttributes())
     {
-      AveragePlayerArmStrength += Player->GetRightArm()->GetStrength();
-      AveragePlayerDexterity += Player->GetRightArm()->GetDexterity();
+      AveragePlayerArmStrength += RightArm->GetStrength();
+      AveragePlayerDexterity += RightArm->GetDexterity();
       ++Arms;
     }
 
-  if(Player->GetLeftArm() && Player->GetLeftArm()->IsAlive())
+  leftarm* LeftArm = Player->GetLeftArm();
+
+  if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
-      AveragePlayerArmStrength += Player->GetLeftArm()->GetStrength();
-      AveragePlayerDexterity += Player->GetLeftArm()->GetDexterity();
+      AveragePlayerArmStrength += LeftArm->GetStrength();
+      AveragePlayerDexterity += LeftArm->GetDexterity();
       ++Arms;
     }
 
-  if(Player->GetRightLeg() && Player->GetRightLeg()->IsAlive())
+  rightleg* RightLeg = Player->GetRightLeg();
+
+  if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
-      AveragePlayerLegStrength += Player->GetRightLeg()->GetStrength();
-      AveragePlayerAgility += Player->GetRightLeg()->GetAgility();
+      AveragePlayerLegStrength += RightLeg->GetStrength();
+      AveragePlayerAgility += RightLeg->GetAgility();
       ++Legs;
     }
 
-  if(Player->GetLeftLeg() && Player->GetLeftLeg()->IsAlive())
+  leftleg* LeftLeg = Player->GetLeftLeg();
+
+  if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
-      AveragePlayerLegStrength += Player->GetLeftLeg()->GetStrength();
-      AveragePlayerAgility += Player->GetLeftLeg()->GetAgility();
+      AveragePlayerLegStrength += LeftLeg->GetStrength();
+      AveragePlayerAgility += LeftLeg->GetAgility();
       ++Legs;
     }
 
@@ -1753,32 +1762,39 @@ void game::UpdatePlayerAttributeAverage()
   float PlayerAgility = 0;
   ushort Arms = 0;
   ushort Legs = 0;
+  rightarm* RightArm = Player->GetRightArm();
 
-  if(Player->GetRightArm() && Player->GetRightArm()->IsAlive())
+  if(RightArm && !RightArm->UseMaterialAttributes())
     {
-      PlayerArmStrength += Player->GetRightArm()->GetStrength();
-      PlayerDexterity += Player->GetRightArm()->GetDexterity();
+      PlayerArmStrength += RightArm->GetStrength();
+      PlayerDexterity += RightArm->GetDexterity();
       ++Arms;
     }
 
-  if(Player->GetLeftArm() && Player->GetLeftArm()->IsAlive())
+  leftarm* LeftArm = Player->GetLeftArm();
+
+  if(LeftArm && !LeftArm->UseMaterialAttributes())
     {
-      PlayerArmStrength += Player->GetLeftArm()->GetStrength();
-      PlayerDexterity += Player->GetLeftArm()->GetDexterity();
+      PlayerArmStrength += LeftArm->GetStrength();
+      PlayerDexterity += LeftArm->GetDexterity();
       ++Arms;
     }
 
-  if(Player->GetRightLeg() && Player->GetRightLeg()->IsAlive())
+  rightleg* RightLeg = Player->GetRightLeg();
+
+  if(RightLeg && !RightLeg->UseMaterialAttributes())
     {
-      PlayerLegStrength += Player->GetRightLeg()->GetStrength();
-      PlayerAgility += Player->GetRightLeg()->GetAgility();
+      PlayerLegStrength += RightLeg->GetStrength();
+      PlayerAgility += RightLeg->GetAgility();
       ++Legs;
     }
 
-  if(Player->GetLeftLeg() && Player->GetLeftLeg()->IsAlive())
+  leftleg* LeftLeg = Player->GetLeftLeg();
+
+  if(LeftLeg && !LeftLeg->UseMaterialAttributes())
     {
-      PlayerLegStrength += Player->GetLeftLeg()->GetStrength();
-      PlayerAgility += Player->GetLeftLeg()->GetAgility();
+      PlayerLegStrength += LeftLeg->GetStrength();
+      PlayerAgility += LeftLeg->GetAgility();
       ++Legs;
     }
 
@@ -1995,7 +2011,8 @@ struct massacresetentry
   bool operator<(const massacresetentry& MSE) const { return festring::IgnoreCaseCompare(Key, MSE.Key); }
   festring Key;
   festring String;
-  std::vector<bitmap*> Picture;
+  bitmap** Picture;
+  ushort Frames;
 };
 
 void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reason, ulong Amount)
@@ -2008,7 +2025,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
     {
       character* Victim = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
       massacresetentry Entry;
-      Victim->DrawBodyPartVector(Entry.Picture);
+      Entry.Frames = Victim->DrawBodyPartArray(Entry.Picture, 0);
 
       if(i1->second == 1)
 	{
@@ -2070,10 +2087,12 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 
   for(std::set<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
     {
-      List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture);
+      List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture, i2->Frames);
 
-      for(ushort c = 0; c < i2->Picture.size(); ++c)
+      for(ushort c = 0; c < i2->Frames; ++c)
 	delete i2->Picture[c];
+
+      delete [] i2->Picture;
     }
 
   List.Draw();

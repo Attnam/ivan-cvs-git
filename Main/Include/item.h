@@ -22,6 +22,7 @@ struct itemdatabase
 {
   void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return true; }
+  ushort Config;
   ushort Possibility;
   long Score;
   bool IsDestroyable;
@@ -232,6 +233,7 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
+  DATA_BASE_VALUE(ushort, Config);
   virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
   DATA_BASE_BOOL(IsMaterialChangeable);
@@ -400,13 +402,15 @@ class item : public object
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone() { }
   virtual bool SuckSoul(character*, character* = 0) { return false; }
+  void SetConfig(ushort);
+  god* GetMasterGod() const;
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ushort);
-  virtual void InstallDataBase();
+  virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
   virtual bool ShowMaterial() const;
   slot* Slot;

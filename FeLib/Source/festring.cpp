@@ -80,16 +80,20 @@ festring& festring::operator=(const festring& Str)
 
 festring& festring::Capitalize()
 {
-  if(!OwnsData)
-    CreateOwnData(Data, Size);
-  else if(REFS(Data))
-    {
-      --REFS(Data);
-      CreateOwnData(Data, Size);
-    }
+  char* OldPtr = Data;
 
-  if(*Data > 0x60 && *Data < 0x7B)
-    *Data ^= 0x20;
+  if(*OldPtr > 0x60 && *OldPtr < 0x7B)
+    {
+      if(!OwnsData)
+	CreateOwnData(OldPtr, Size);
+      else if(REFS(OldPtr))
+	{
+	  --REFS(OldPtr);
+	  CreateOwnData(OldPtr, Size);
+	}
+
+      *Data ^= 0x20;
+    }
 
   return *this;
 }
@@ -329,9 +333,10 @@ void festring::Erase(sizetype Pos, sizetype Length)
 		    {
 		      sizetype End = Pos + Length;
 		      memmove(OldPtr + Pos, OldPtr + End, OldSize - End);
-		      Size -= Length;
-		      return;
 		    }
+
+		  Size -= Length;
+		  return;
 		}
 	      else
 		--REFS(OldPtr);
@@ -412,7 +417,7 @@ void festring::Insert(sizetype Pos, const char* CStr, sizetype N)
 
 void festring::InstallIntegerMap()
 {
-  IntegerMap = Alloc2D<char>(1000, 3);
+  Alloc2D(IntegerMap, 1000, 3);
   char Ones = '0', Tens = '0', Hundreds = '0';
 
   for(ushort c = 0; c < 1000; ++c)

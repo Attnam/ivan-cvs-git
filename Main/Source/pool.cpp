@@ -28,4 +28,7 @@ void pool::BurnHell()
     delete *i;
 
   Hell.clear();
+
+
+  int esko = Pool.size();
 }

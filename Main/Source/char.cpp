@@ -192,7 +192,7 @@ const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { retur
 /* Plain database without preceding colons would mean
  * characterdatabase and cause a syntax error. Sorry for bad naming. */
 
-void character::InstallDataBase() { databasecreator<character>::InstallDataBase(this); }
+void character::InstallDataBase(ushort Config) { databasecreator<character>::InstallDataBase(this, Config); }
 std::list<character*>::iterator character::GetTeamIterator() { return TeamIterator; }
 void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 void character::CreateInitialEquipment(ushort SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
@@ -250,7 +250,7 @@ bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpec
 ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -699,24 +699,25 @@ void character::GetAICommand()
 bool character::MoveTowards(vector2d TPos)
 {
   vector2d MoveTo[3];
+  vector2d Pos = GetPos();
 
-  if(TPos.X < GetPos().X)
+  if(TPos.X < Pos.X)
     {
-      if(TPos.Y < GetPos().Y)
+      if(TPos.Y < Pos.Y)
 	{
 	  MoveTo[0] = vector2d(-1, -1);
 	  MoveTo[1] = vector2d(-1,  0);
 	  MoveTo[2] = vector2d( 0, -1);
 	}
 
-      if(TPos.Y == GetPos().Y)
+      if(TPos.Y == Pos.Y)
 	{
 	  MoveTo[0] = vector2d(-1,  0);
 	  MoveTo[1] = vector2d(-1, -1);
 	  MoveTo[2] = vector2d(-1,  1);
 	}
 
-      if(TPos.Y > GetPos().Y)
+      if(TPos.Y > Pos.Y)
 	{
 	  MoveTo[0] = vector2d(-1, 1);
 	  MoveTo[1] = vector2d(-1, 0);
@@ -724,19 +725,19 @@ bool character::MoveTowards(vector2d TPos)
 	}
     }
 
-  if(TPos.X == GetPos().X)
+  if(TPos.X == Pos.X)
     {
-      if(TPos.Y < GetPos().Y)
+      if(TPos.Y < Pos.Y)
 	{
 	  MoveTo[0] = vector2d( 0, -1);
 	  MoveTo[1] = vector2d(-1, -1);
 	  MoveTo[2] = vector2d( 1, -1);
 	}
 
-      if(TPos.Y == GetPos().Y)
+      if(TPos.Y == Pos.Y)
 	return false;
 
-      if(TPos.Y > GetPos().Y)
+      if(TPos.Y > Pos.Y)
 	{
 	  MoveTo[0] = vector2d( 0, 1);
 	  MoveTo[1] = vector2d(-1, 1);
@@ -744,23 +745,23 @@ bool character::MoveTowards(vector2d TPos)
 	}
     }
 
-  if(TPos.X > GetPos().X)
+  if(TPos.X > Pos.X)
     {
-      if(TPos.Y < GetPos().Y)
+      if(TPos.Y < Pos.Y)
 	{
 	  MoveTo[0] = vector2d(1, -1);
 	  MoveTo[1] = vector2d(1,  0);
 	  MoveTo[2] = vector2d(0, -1);
 	}
 
-      if(TPos.Y == GetPos().Y)
+      if(TPos.Y == Pos.Y)
 	{
 	  MoveTo[0] = vector2d(1,  0);
 	  MoveTo[1] = vector2d(1, -1);
 	  MoveTo[2] = vector2d(1,  1);
 	}
 
-      if(TPos.Y > GetPos().Y)
+      if(TPos.Y > Pos.Y)
 	{
 	  MoveTo[0] = vector2d(1, 1);
 	  MoveTo[1] = vector2d(1, 0);
@@ -768,20 +769,20 @@ bool character::MoveTowards(vector2d TPos)
 	}
     }
 
-  if(TryMove(GetPos() + ApplyStateModification(MoveTo[0]))) return true;
+  if(TryMove(Pos + ApplyStateModification(MoveTo[0]))) return true;
 
-  if(GetPos().IsAdjacent(TPos))
+  if(Pos.IsAdjacent(TPos))
     return false;
 
   if(RAND() & 1)
     {
-      if(TryMove(GetPos() + ApplyStateModification(MoveTo[1]))) return true;
-      if(TryMove(GetPos() + ApplyStateModification(MoveTo[2]))) return true;
+      if(TryMove(Pos + ApplyStateModification(MoveTo[1]))) return true;
+      if(TryMove(Pos + ApplyStateModification(MoveTo[2]))) return true;
     }
   else
     {
-      if(TryMove(GetPos() + ApplyStateModification(MoveTo[2]))) return true;
-      if(TryMove(GetPos() + ApplyStateModification(MoveTo[1]))) return true;
+      if(TryMove(Pos + ApplyStateModification(MoveTo[2]))) return true;
+      if(TryMove(Pos + ApplyStateModification(MoveTo[1]))) return true;
     }
 
   return false;
@@ -1158,7 +1159,7 @@ void character::ApplyExperience(bool Edited)
     if(GetBodyPart(c) && GetBodyPart(c)->ApplyExperience())
       Edited = true;
 
-  if(IsAlive())
+  if(!UseMaterialAttributes())
     if(CheckForAttributeIncrease(BaseAttribute[ENDURANCE], BaseExperience[ENDURANCE]))
       {
 	if(IsPlayer())
@@ -1436,7 +1437,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << TemporaryState << EquipmentState << Money << WayPoint << Config << RegenerationCounter;
+  SaveFile << TemporaryState << EquipmentState << Money << WayPoint << RegenerationCounter;
   SaveFile << IsEnabled() << Polymorphed << HomeData;
 
   for(c = 0; c < BodyParts; ++c)
@@ -1469,6 +1470,8 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << bool(true) << GetStackUnder()->SearchItem(StuckTo) << StuckToBodyPart;
   else
     SaveFile << bool(false);
+
+  SaveFile << GetConfig();
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1483,7 +1486,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> TemporaryState >> EquipmentState >> Money >> WayPoint >> Config >> RegenerationCounter;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> WayPoint >> RegenerationCounter;
 
   if(!ReadType<bool>(SaveFile))
     Disable();
@@ -1518,12 +1521,12 @@ void character::Load(inputfile& SaveFile)
       SaveFile >> StuckToBodyPart;
     }
 
-  InstallDataBase();
+  InstallDataBase(ReadType<ushort>(SaveFile));
 }
 
 bool character::Engrave(const festring& What)
 {
-  GetNearLSquare(GetPos())->Engrave(What);
+  GetLSquareUnder()->Engrave(What);
   return true;
 }
 
@@ -1718,7 +1721,7 @@ void character::GetPlayerCommand()
 
 void character::Vomit(ushort Amount)
 {
-  if(!IsAlive())
+  if(!TorsoIsAlive())
     return;
     
   if(IsPlayer())
@@ -1839,8 +1842,10 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 	  else if(Kicker->IsPlayer())
 	    ADD_MESSAGE("The kick throws %s off balance.", CHAR_DESCRIPTION(DEFINITE));
 
-	  if(GetArea()->IsValidPos((GetPos() << 1) - Kicker->GetPos()))
-	    FallTo(Kicker, (GetPos() << 1) - Kicker->GetPos());
+	  vector2d FallToPos = (GetPos() << 1) - Kicker->GetPos();
+
+	  if(GetArea()->IsValidPos(FallToPos))
+	    FallTo(Kicker, FallToPos);
 	}
     }
 }
@@ -1951,10 +1956,12 @@ void character::ActionAutoTermination()
   if(!GetAction() || !GetAction()->IsVoluntary() || GetAction()->InDNDMode())
     return;
 
+  vector2d Pos = GetPos();
+
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this, false, true) && ((*i)->CanMove() || (*i)->GetPos().IsAdjacent(GetPos())) && (*i)->CanAttack())
+	if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this, false, true) && ((*i)->CanMove() || (*i)->GetPos().IsAdjacent(Pos)) && (*i)->CanAttack())
 	  {
 	    if(IsPlayer())
 	      {
@@ -1977,13 +1984,14 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
   bool HostileCharsNear = false;
   character* NearestChar = 0;
   ulong NearestDistance = 0xFFFFFFFF;
+  vector2d Pos = GetPos();
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	if((*i)->IsEnabled() && GetAttribute(WISDOM) < (*i)->GetAttackWisdomLimit())
 	  {
-	    ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - GetPos().X), abs((*i)->GetPos().Y - GetPos().Y));
+	    ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
 
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
@@ -2011,7 +2019,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
       if(!IsRetreating())
 	WayPoint = NearestChar->GetPos();
       else
-	WayPoint = (GetPos() << 1) - NearestChar->GetPos();
+	WayPoint = (Pos << 1) - NearestChar->GetPos();
 
       return MoveTowards(WayPoint);
     }
@@ -2026,7 +2034,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    }
 	  else
 	    {
-	      if(GetPos() == WayPoint)
+	      if(Pos == WayPoint)
 		WayPoint.X = -1;
 
 	      return true;
@@ -2200,10 +2208,12 @@ void character::SetNP(long What)
 
 void character::ShowNewPosInfo() const
 {
-  if(GetPos().X < game::GetCamera().X + 3 || GetPos().X >= game::GetCamera().X + game::GetScreenXSize() - 3)
+  vector2d Pos = GetPos();
+
+  if(Pos.X < game::GetCamera().X + 3 || Pos.X >= game::GetCamera().X + game::GetScreenXSize() - 3)
     game::UpdateCameraX();
 
-  if(GetPos().Y < game::GetCamera().Y + 3 || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize() - 3)
+  if(Pos.Y < game::GetCamera().Y + 3 || Pos.Y >= game::GetCamera().Y + game::GetScreenYSize() - 3)
     game::UpdateCameraY();
 
   game::SendLOSUpdateRequest();
@@ -2255,10 +2265,10 @@ void character::ShowNewPosInfo() const
 	    }
 	}
 		
-      if(!GetNearLSquare(GetPos())->GetEngraved().IsEmpty())
+      if(!GetLSquareUnder()->GetEngraved().IsEmpty())
 	{
 	  if(CanRead())
-	    ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
+	    ADD_MESSAGE("Something has been engraved here: \"%s\"", GetLSquareUnder()->GetEngraved().CStr());
 	  else
 	    ADD_MESSAGE("Something has been engraved here.");
 	}
@@ -2272,7 +2282,7 @@ void character::Hostility(character* Enemy)
 
   if(GetTeam()->GetID() != Enemy->GetTeam()->GetID())
     GetTeam()->Hostility(Enemy->GetTeam());
-  else if(Enemy->IsEnabled() && IsPlayer())
+  else if(Enemy->IsEnabled() && IsPlayer() && !Enemy->IsPlayer()) // I believe both may be players due to polymorph feature...
     {
       if(Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s becomes enraged.", Enemy->CHAR_NAME(DEFINITE));
@@ -2596,7 +2606,7 @@ void character::RestoreLivingHP()
     {
       bodypart* BodyPart = GetBodyPart(c);
 
-      if(BodyPart && BodyPart->IsAlive())
+      if(BodyPart && BodyPart->CanRegenerate())
 	{
 	  BodyPart->RestoreHP();
 	  HP += BodyPart->GetHP();
@@ -2913,7 +2923,7 @@ void character::Regenerate()
     {
       bodypart* BodyPart = GetBodyPart(c);
 
-      if(BodyPart && BodyPart->IsAlive())
+      if(BodyPart && BodyPart->CanRegenerate())
 	{
 	  RegenerationBonus += BodyPart->GetMaxHP();
 
@@ -2948,7 +2958,7 @@ void character::PrintInfo() const
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
-      Info.AddEntry(festring(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
+      Info.AddEntry(festring(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), GetEquipment(c)->GetAnimationFrames(), true, GetEquipment(c)->AllowAlphaEverywhere());
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -2969,7 +2979,7 @@ bool character::CompleteRiseFromTheDead()
 	{
 	  BodyPart->ResetSpoiling();
 
-	  if(BodyPart->IsAlive() || BodyPart->GetHP() < 1)
+	  if(BodyPart->CanRegenerate() || BodyPart->GetHP() < 1)
 	    BodyPart->SetHP(1);
 	}
     }
@@ -2996,7 +3006,7 @@ bool character::RaiseTheDead(character*)
 
 	  Useful = true;
 	}
-      else if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < 1)
+      else if(BodyPart && BodyPart->CanRegenerate() && BodyPart->GetHP() < 1)
 	BodyPart->SetHP(1);
     }
 
@@ -3183,8 +3193,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
   if(!(SpecialFlags & LOAD))
     {
       ID = game::CreateNewCharacterID(this);
-      Config = NewConfig;
-      InstallDataBase();
+      InstallDataBase(NewConfig);
       LoadDataBaseStats();
       TemporaryState |= GetClassStates();
 
@@ -4163,12 +4172,17 @@ bool character::CanBeSeenByPlayer(bool Theoretically, bool IgnoreESP) const
   bool MayBeInfraSeen = PLAYER->StateIsActivated(INFRA_VISION) && IsWarm();
   bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-  if((game::IsInWilderness() && Visible) || (!IgnoreESP && MayBeESPSeen && (Theoretically || (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())))
+  if((game::IsInWilderness() && Visible)
+  || (!IgnoreESP && MayBeESPSeen
+  && (Theoretically || (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetESPRangeSquare())))
     return true;
   else if(!Visible)
     return false;
   else
-    return Theoretically || GetSquareUnder()->CanBeSeenByPlayer(MayBeInfraSeen || MayBeESPSeen) || ((MayBeInfraSeen || MayBeESPSeen) && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetLOSRangeSquare() && femath::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
+    return Theoretically
+	|| GetSquareUnder()->CanBeSeenByPlayer(MayBeInfraSeen || MayBeESPSeen)
+	|| ((MayBeInfraSeen || MayBeESPSeen) && (GetPos() - PLAYER->GetPos()).GetLengthSquare() <= PLAYER->GetLOSRangeSquare()
+	&& femath::DoLine(PLAYER->GetPos().X, PLAYER->GetPos().Y, GetPos().X, GetPos().Y, game::EyeHandler));
 }
 
 bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool IgnoreESP) const
@@ -4181,12 +4195,15 @@ bool character::CanBeSeenBy(const character* Who, bool Theoretically, bool Ignor
       bool MayBeInfraSeen = Who->StateIsActivated(INFRA_VISION) && IsWarm();
       bool Visible = !StateIsActivated(INVISIBLE) || MayBeESPSeen || MayBeInfraSeen;
 
-      if((game::IsInWilderness() && Visible) || (!IgnoreESP && MayBeESPSeen && (Theoretically || (GetPos() - Who->GetPos()).GetLengthSquare() <= Who->GetESPRangeSquare())))
+      if((game::IsInWilderness() && Visible)
+      || (!IgnoreESP && MayBeESPSeen
+      && (Theoretically || (GetPos() - Who->GetPos()).GetLengthSquare() <= Who->GetESPRangeSquare())))
 	return true;
       else if(!Visible)
 	return false;
       else
-	return Theoretically || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), MayBeESPSeen || MayBeInfraSeen);
+	return Theoretically
+	    || GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), MayBeESPSeen || MayBeInfraSeen);
     }
 }
 
@@ -4236,7 +4253,7 @@ bodypart* character::FindRandomOwnBodyPart(bool AllowNonLiving) const
 	{
 	  bodypart* Found = static_cast<bodypart*>(SearchForItem(*i));
 
-	  if(Found && (AllowNonLiving || Found->IsAlive()))
+	  if(Found && (AllowNonLiving || Found->CanRegenerate()))
 	    LostAndFound.push_back(Found);
 	}
 
@@ -4402,7 +4419,7 @@ void character::PrintEndTeleportControlMessage() const
     ADD_MESSAGE("You feel your control slipping.");
 }
 
-void character::DisplayStethoscopeInfo(character* Viewer) const
+void character::DisplayStethoscopeInfo(character*) const
 {
   felist Info(CONST_S("Information about ") + GetDescription(DEFINITE));
   AddSpecialStethoscopeInfo(Info);
@@ -4630,7 +4647,7 @@ void character::CalculateBodyPartMaxHPs(bool MayChangeHPs)
 
 bool character::EditAttribute(ushort Identifier, short Value)
 {
-  if(Identifier == ENDURANCE && !IsAlive())
+  if(Identifier == ENDURANCE && UseMaterialAttributes())
     return false;
 
   if(RawEditAttribute(BaseAttribute[Identifier], Value))
@@ -4655,7 +4672,7 @@ bool character::EditAttribute(ushort Identifier, short Value)
 
 void character::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier != ENDURANCE || IsAlive())
+  if(Identifier != ENDURANCE || !UseMaterialAttributes())
     BaseExperience[Identifier] += Value;
 }
 
@@ -5026,7 +5043,7 @@ bool character::CanHeal() const
     {
       bodypart* BodyPart = GetBodyPart(c);
 
-      if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+      if(BodyPart && BodyPart->CanRegenerate() && BodyPart->GetHP() < BodyPart->GetMaxHP())
 	return true;
     }
 
@@ -5365,7 +5382,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
 	Entry.Resize(20, ' ');
 	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	AddSpecialEquipmentInfo(Entry, c);
-	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
+	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture(), GetEquipment(c)->GetAnimationFrames(), true, GetEquipment(c)->AllowAlphaEverywhere());
 	Any = true;
       }
 
@@ -5559,7 +5576,7 @@ bool character::HealHitPoint()
     {
       bodypart* BodyPart = GetBodyPart(c);
 
-      if(BodyPart && BodyPart->IsAlive() && BodyPart->GetHP() < BodyPart->GetMaxHP())
+      if(BodyPart && BodyPart->CanRegenerate() && BodyPart->GetHP() < BodyPart->GetMaxHP())
 	NeedHealIndex[NeedHeal++] = c;
     }
 
@@ -5663,8 +5680,14 @@ void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
     ADD_MESSAGE("%s is hit by the explosion.", CHAR_NAME(DEFINITE));
   
   ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
-  ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-  CheckDeath(Explosion->DeathMsg, Explosion->Terrorist);
+
+  if(IsEnabled())
+    {
+      ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
+      CheckDeath(Explosion->DeathMsg, Explosion->Terrorist);
+    }
+  else
+    int esko = 2;
 }
 
 void character::SortAllItems(itemvector& AllItems, const character* Character, bool (*Sorter)(const item*, const character*))
@@ -5745,14 +5768,16 @@ void character::ResetStates()
       }
 }
 
-void characterdatabase::InitDefaults(ushort Config)
+void characterdatabase::InitDefaults(ushort NewConfig)
 {
   IsAbstract = false;
+  Config = NewConfig&~DEVOUT;
+  Alias.clear();
 
   /* TERRIBLE gum solution! */
 
-  if(Config & DEVOUT)
-    PostFix << "of " << festring(protocontainer<god>::GetProto(Config&0xFF)->GetClassID()).CapitalizeCopy();
+  if(NewConfig & DEVOUT)
+    PostFix << "of " << festring(protocontainer<god>::GetProto(NewConfig&0xFF)->GetClassID()).CapitalizeCopy();
 }
 
 void character::PrintBeginGasImmunityMessage() const
@@ -5788,7 +5813,7 @@ void character::ShowAdventureInfo() const
     game::DisplayMassacreLists();
 }
 
-void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
+ushort character::DrawBodyPartArray(bitmap**& Bitmap, ushort Frames) const
 {
   ushort c, AnimationFrames = 1;
 
@@ -5800,14 +5825,51 @@ void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
 	AnimationFrames = BodyPart->GetAnimationFrames();
     }
 
-  Bitmap.resize(AnimationFrames);
+  if(Frames > AnimationFrames)
+    {
+      bitmap** TempBitmap = new bitmap*[AnimationFrames];
+
+      for(c = 0; c < AnimationFrames; ++c)
+	{
+	  TempBitmap[c] = Bitmap[c];
+	  TempBitmap[c]->ClearToColor(0);
+	}
+
+      for(; c < Frames; ++c)
+	delete Bitmap[c];
+
+      delete [] Bitmap;
+      Bitmap = TempBitmap;
+    }
+  else if(Frames < AnimationFrames)
+    {
+      bitmap** TempBitmap = new bitmap*[AnimationFrames];
+
+      for(c = 0; c < Frames; ++c)
+	{
+	  TempBitmap[c] = Bitmap[c];
+	  TempBitmap[c]->ClearToColor(0);
+	}
+
+      for(; c < AnimationFrames; ++c)
+	TempBitmap[c] = new bitmap(16, 16, 0);
+
+      if(Frames)
+	delete [] Bitmap;
+
+      Bitmap = TempBitmap;
+    }
+  else
+    for(c = 0; c < Frames; ++c)
+      Bitmap[c]->ClearToColor(0);
 
   for(c = 0; c < AnimationFrames; ++c)
     {
-      Bitmap[c] = new bitmap(16, 16, 0);
       globalwindowhandler::SetTick(c);
       DrawBodyParts(Bitmap[c], vector2d(0, 0), NORMAL_LUMINANCE, true, false);
     }
+
+  return AnimationFrames;
 }
 
 bool character::EditAllAttributes(short Amount)

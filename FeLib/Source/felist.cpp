@@ -18,45 +18,54 @@ bool FelistDrawController()
 
 struct felistentry
 {
-  felistentry() { }
+  felistentry() : AnimationFrames(0) { }
   felistentry(const festring&, ushort, ushort, bool);
-  felistentry(const std::vector<bitmap*>&, const festring&, ushort, ushort, bool, bool);
+  felistentry(const bitmap*const*, const festring&, ushort, ushort, ushort, bool, bool);
   ~felistentry();
-  std::vector<bitmap*> Bitmap;
+  bitmap** Bitmap;
   festring String;
   ushort Color;
   ushort Marginal;
+  ushort AnimationFrames;
   bool Selectable;
 };
 
-felistentry::felistentry(const festring& String, ushort Color, ushort Marginal, bool Selectable) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable)
+felistentry::felistentry(const festring& String, ushort Color, ushort Marginal, bool Selectable) : String(String), Color(Color), Marginal(Marginal), AnimationFrames(0), Selectable(Selectable)
 {
 }
 
 felistentry::~felistentry()
 {
-  for(ushort c = 0; c < Bitmap.size(); ++c)
-    delete Bitmap[c];
+  if(AnimationFrames)
+    {
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	delete Bitmap[c];
+
+      delete Bitmap;
+    }
 }
 
-felistentry::felistentry(const std::vector<bitmap*>& BitmapVector, const festring& String, ushort Color, ushort Marginal, bool Selectable, bool AllowAlpha) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable)
+felistentry::felistentry(const bitmap*const* BitmapArray, const festring& String, ushort AnimationFrames, ushort Color, ushort Marginal, bool Selectable, bool AllowAlpha) : String(String), Color(Color), Marginal(Marginal), AnimationFrames(AnimationFrames), Selectable(Selectable)
 {
-  Bitmap.resize(BitmapVector.size());
+  if(AnimationFrames)
+    {
+      Bitmap = new bitmap*[AnimationFrames];
 
-  for(ushort c = 0; c < BitmapVector.size(); ++c)
-    Bitmap[c] = new bitmap(BitmapVector[c], 0, AllowAlpha);
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	Bitmap[c] = new bitmap(BitmapArray[c], 0, AllowAlpha);
+    }
 }
 
 outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
 {
-  SaveFile << Entry->Bitmap << Entry->String << Entry->Color << Entry->Marginal << Entry->Selectable;
+  SaveFile << Entry->String << Entry->Color << Entry->Marginal << Entry->Selectable;
   return SaveFile;
 }
 
 inputfile& operator>>(inputfile& SaveFile, felistentry*& Entry)
 {
   Entry = new felistentry;
-  SaveFile >> Entry->Bitmap >> Entry->String >> Entry->Color >> Entry->Marginal >> Entry->Selectable;
+  SaveFile >> Entry->String >> Entry->Color >> Entry->Marginal >> Entry->Selectable;
   return SaveFile;
 }
 
@@ -67,19 +76,6 @@ struct felistdescription
   festring String;
   ushort Color;
 };
-
-outputfile& operator<<(outputfile& SaveFile, const felistdescription* Desc)
-{
-  SaveFile << Desc->String << Desc->Color;
-  return SaveFile;
-}
-
-inputfile& operator>>(inputfile& SaveFile, felistdescription*& Desc)
-{
-  Desc = new felistdescription;
-  SaveFile >> Desc->String >> Desc->Color;
-  return SaveFile;
-}
 
 felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), MaskColor(TRANSPARENT_COLOR)
 {
@@ -317,6 +313,8 @@ ushort felist::Draw()
   return Return;
 }
 
+static festring Str;
+
 bool felist::DrawPage(bitmap* Buffer) const
 {
   ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
@@ -329,7 +327,6 @@ bool felist::DrawPage(bitmap* Buffer) const
       ++i;
 
   while(!Entry[c]->Selectable && Entry[c]->String.IsEmpty()) ++c;
-  festring Str;
   std::vector<festring> Chapter;
 
   for(;;)
@@ -345,12 +342,12 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       Str << Entry[c]->String;
 
-      if(Entry[c]->Bitmap.size())
+      if(Entry[c]->AnimationFrames)
 	{
 	  if(ushort(Str.GetSize()) <= (Width - 50) >> 3)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16, MaskColor);
+	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->AnimationFrames]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16, MaskColor);
 
 	      if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
 		  FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
@@ -376,7 +373,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 		  LastFillBottom += 10;
 		}
 
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, PictureTop, 16, 16, MaskColor);
+	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->AnimationFrames]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, PictureTop, 16, 16, MaskColor);
 	    }
 	}
       else
@@ -495,12 +492,12 @@ void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, bitmap
 	}
     }
   else
-    AddEntry(Str, Color, Marginal, std::vector<bitmap*>(1, Bitmap), Selectable);
+    AddEntry(Str, Color, Marginal, &Bitmap, 1, Selectable);
 }
 
-void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, const std::vector<bitmap*>& Bitmap, bool Selectable, bool AllowAlpha)
+void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, const bitmap*const* Bitmap, ushort AnimationFrames, bool Selectable, bool AllowAlpha)
 {
-  Entry.push_back(new felistentry(Bitmap, Str, Color, Marginal, Selectable, AllowAlpha));
+  Entry.push_back(new felistentry(Bitmap, Str, AnimationFrames, Color, Marginal, Selectable, AllowAlpha));
 
   if(Maximum && Entry.size() > Maximum)
     {
@@ -511,12 +508,12 @@ void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, const 
 
 void felist::Save(outputfile& SaveFile) const
 {
-  SaveFile << Entry << Description << Maximum << Selected;
+  SaveFile << Entry << Maximum << Selected;
 }
 
 void felist::Load(inputfile& SaveFile) 
 {
-  SaveFile >> Entry >> Description >> Maximum >> Selected;
+  SaveFile >> Entry >> Maximum >> Selected;
 }
 
 void felist::PrintToFile(const festring& FileName)
@@ -535,7 +532,7 @@ void felist::PrintToFile(const festring& FileName)
 
   for(c = 0; c < Entry.size(); ++c)
     {
-      if(Entry[c]->Bitmap.size())
+      if(Entry[c]->AnimationFrames)
 	SaveFile << "   ";
 
       SaveFile << Entry[c]->String.CStr() << std::endl;

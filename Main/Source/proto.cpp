@@ -13,38 +13,42 @@ character* protosystem::BalancedCreateMonster()
 	  const character::databasemap& Config = Proto->GetConfig();
 
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	    if(!i->second.IsAbstract && i->second.CanBeGenerated)
-	      {
-		configid ConfigID(Type, i->first);
-		const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+	    {
+	      const character::database& DataBase = i->second;
 
-		if(i->second.IsUnique && DangerID.HasBeenGenerated)
-		  continue;
+	      if(!DataBase.IsAbstract && DataBase.CanBeGenerated)
+		{
+		  configid ConfigID(Type, i->first);
+		  const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
 
-		if(c >= 100)
-		  {
-		    Possible.push_back(ConfigID);
+		  if(DataBase.IsUnique && DangerID.HasBeenGenerated)
 		    continue;
-		  }
 
-		if(!i->second.IgnoreDanger)
-		  {
-		    float Danger = DangerID.EquippedDanger;
-
-		    if(Danger > 99.0f || Danger < 0.01f)
+		  if(c >= 100)
+		    {
+		      Possible.push_back(ConfigID);
 		      continue;
+		    }
 
-		    float DangerModifier = i->second.DangerModifier == 100 ? Danger : Danger * 100 / i->second.DangerModifier;
+		  if(!DataBase.IgnoreDanger)
+		    {
+		      float Danger = DangerID.EquippedDanger;
 
-		    if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
-		      continue;
-		  }
+		      if(Danger > 99.0f || Danger < 0.01f || (DataBase.IsUnique && Danger < 2.0f))
+			continue;
 
-		if(PLAYER->GetMaxHP() < i->second.HPRequirementForGeneration)
-		  continue;
+		      float DangerModifier = DataBase.DangerModifier == 100 ? Danger : Danger * 100 / DataBase.DangerModifier;
 
-		Possible.push_back(ConfigID);
-	      }
+		      if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
+			continue;
+		    }
+
+		  if(PLAYER->GetMaxHP() < DataBase.HPRequirementForGeneration)
+		    continue;
+
+		  Possible.push_back(ConfigID);
+		}
+	    }
 	}
 
       if(Possible.empty())
@@ -72,7 +76,7 @@ character* protosystem::BalancedCreateMonster()
   return 0;
 }
 
-item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, bool Polymorph)
+item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Category, ushort SpecialFlags, bool Polymorph)
 {
   ulong SumOfPossibilities = 0;
 
@@ -105,7 +109,7 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 		      {
 			if(!Polymorph || i->second.IsPolymorphSpawnable)
 			  {
-			    item* Item = Proto->Clone(i->first);
+			    item* Item = Proto->Clone(i->first, SpecialFlags);
 
 			    if(MinPrice == 0 && MaxPrice == MAX_PRICE) // optimization, GetPrice() may be rather slow
 			      return Item;
@@ -148,22 +152,26 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 	  const character::databasemap& Config = Proto->GetConfig();
 
 	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	    if(!i->second.IsAbstract && i->second.CanBeGenerated && i->second.CanBeWished && !i->second.IsUnique && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
-	      {
-		configid ConfigID(Type, i->first);
+	    {
+	      const character::database& DataBase = i->second;
 
-		if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
-		  {
-		    const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
-		    float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
-		    ushort Danger = ushort(i->second.DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / i->second.DangerModifier);
+	      if(!DataBase.IsAbstract && DataBase.CanBeGenerated && DataBase.CanBeWished && !DataBase.IsUnique && (DataBase.Frequency == 10000 || DataBase.Frequency > RAND() % 10000))
+		{
+		  configid ConfigID(Type, i->first);
 
-		    if(Danger < MinDanger || Danger > MaxDanger)
-		      continue;
-		  }
+		  if((MinDanger > 0 || MaxDanger < 10000) && c < 25)
+		    {
+		      const dangerid& DangerID = game::GetDangerMap().find(ConfigID)->second;
+		      float RawDanger = SpecialFlags & NO_EQUIPMENT ? DangerID.NakedDanger : DangerID.EquippedDanger;
+		      ushort Danger = ushort(DataBase.DangerModifier == 100 ? RawDanger * 100 : RawDanger * 10000 / DataBase.DangerModifier);
 
-		Possible.push_back(ConfigID);
-	      }
+		      if(Danger < MinDanger || Danger > MaxDanger)
+			continue;
+		    }
+
+		  Possible.push_back(ConfigID);
+		}
+	    }
 	}
 
       if(Possible.empty())

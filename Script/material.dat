@@ -40,6 +40,8 @@ material
 	/* Obligatory: AttachedGod */
 	EffectIsGood = false;
 	IsWarm = false;
+	UseMaterialAttributes = true;
+	CanRegenerate = false;
 
 	Config IRON;
 	{
@@ -213,6 +215,8 @@ material
 		Flexibility = 15;
 		CanBeWished = false;
 		AttachedGod = SILVA;
+		IsAlive = true;
+		CanRegenerate = true;
 	}
 
 	Config LEATHER;
@@ -607,9 +611,8 @@ material
 
 organicsubstance /* substances that spoil but are not flesh */
 {
-	IsAlive = true;
+	UseMaterialAttributes = false;
 	SpoilModifier = 10000;
-	IsWarm = false;
 
 	Config BANANA_FLESH;
 	{
@@ -649,9 +652,9 @@ organicsubstance /* substances that spoil but are not flesh */
 		Color = rgb16(224, 224, 0);
 		NameStem = "banana peel";
 		Flexibility = 10;
-		IsAlive = false;
 		IsGolemMaterial = true;
 		AttachedGod = SILVA;
+		UseMaterialAttributes = true;
 	}
 
 	Config KIWI_FLESH;
@@ -691,6 +694,8 @@ organicsubstance /* substances that spoil but are not flesh */
 		Flexibility = 10;
 		SpoilModifier = 20000;
 		AttachedGod = MORTIFER;
+		IsAlive = true;
+		CanRegenerate = true;
 	}
 
 	Config MUTANT_PLANT_FIBER;
@@ -706,6 +711,8 @@ organicsubstance /* substances that spoil but are not flesh */
 		Emitation = rgb24(140, 100, 100);
 		AttachedGod = SCABIES;
 		IsWarm = true;
+		IsAlive = true;
+		CanRegenerate = true;
 	}
 
 	Config BONE;
@@ -776,7 +783,6 @@ gas
 	Density = 1;
 	Flexibility = 75;
 	ConsumeType = CT_GAS;
-	IsWarm = false;
 
 	Config AIR;
 	{
@@ -794,8 +800,9 @@ gas
 		Color = rgb16(180, 180, 255);
 		NameStem = "magical air";
 		Alpha = 150;
-		IsAlive = true;
+		UseMaterialAttributes = false;
 		AttachedGod = SOPHOS;
+		CanRegenerate = true;
 	}
 
 	Config SMOKE;
@@ -823,8 +830,9 @@ gas
 		Color = rgb16(255, 255, 255);
 		NameStem = "ghost";
 		Alpha = 150;
-		IsAlive = true;
+		UseMaterialAttributes = false;
 		AttachedGod = MORTIFER;
+		CanRegenerate = true;
 	}
 
 	Config MAGIC_VAPOUR;
@@ -925,7 +933,7 @@ liquid
 		NameStem = "brown slime";
 		Alpha = 200;
 		Flexibility = 30;
-		IsAlive = true;
+		UseMaterialAttributes = false;
 		AttachedGod = SCABIES;
 	}
 
@@ -1007,6 +1015,7 @@ liquid
 		PriceModifier = 500;
 		AttachedGod = CRUENTUS;
 		EffectIsGood = true;
+		IsWarm = true;
 	}
 }
 
@@ -1018,12 +1027,14 @@ flesh
 	NutritionValue = 20;
 	Color = rgb16(160, 32, 16);
 	IsAlive = true;
+	CanRegenerate = true;
 	NameStem = "flesh";
 	Flexibility = 5;
 	SpoilModifier = 10000;
 	PriceModifier = 12;
 	CanHaveParasite = true;
 	IsWarm = true;
+	UseMaterialAttributes = false;
 
 	Config GOBLINOID_FLESH;
 	{

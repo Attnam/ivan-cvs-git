@@ -58,8 +58,9 @@ class lterrain : public object
 
 struct glterraindatabase
 {
-  void InitDefaults(ushort) { }
+  void InitDefaults(ushort NewConfig) { Config = NewConfig; }
   bool AllowRandomInstantiation() const { return true; }
+  ushort Config;
   vector2d BitmapPos;
   festring Article;
   festring Adjective;
@@ -121,6 +122,7 @@ class glterrain : public lterrain, public gterrain
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
+  DATA_BASE_VALUE(ushort, Config);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
@@ -144,7 +146,7 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_BOOL(ShowMaterial);
   virtual uchar GetAttachedGod() const;
  protected:
-  virtual void InstallDataBase();
+  virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
   const database* DataBase;
 };
@@ -153,6 +155,7 @@ struct olterraindatabase
 {
   void InitDefaults(ushort);
   bool AllowRandomInstantiation() const { return true; }
+  ushort Config;
   vector2d BitmapPos;
   festring Article;
   festring Adjective;
@@ -238,6 +241,7 @@ class olterrain : public lterrain, public oterrain
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   virtual void ShowRestMessage(character*) const;
+  DATA_BASE_VALUE(ushort, Config);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BitmapPos, ushort);
   DATA_BASE_VALUE(const festring&, Article);
   DATA_BASE_VALUE(const festring&, Adjective);
@@ -278,9 +282,11 @@ class olterrain : public lterrain, public oterrain
   void CalculateHP();
   virtual bool IsTransparent() const { return true; }
   virtual uchar GetAttachedGod() const;
+  void SetConfig(ushort);
+  god* GetMasterGod() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual void InstallDataBase();
+  virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
   const database* DataBase;
   short HP;

@@ -19,7 +19,7 @@ class bitmap
 {
  public:
   bitmap(const festring&);
-  bitmap(bitmap*, uchar = 0, bool = true);
+  bitmap(const bitmap*, uchar = 0, bool = true);
   bitmap(ushort, ushort);
   bitmap(vector2d);
   bitmap(ushort, ushort, ushort);
@@ -153,7 +153,7 @@ class bitmap
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
-  void DrawPolygon(vector2d, ushort, ushort, ushort, bool = true, bool = false, double = 0);
+  void DrawPolygon(ushort, ushort, ushort, ushort, ushort, bool = true, bool = false, double = 0);
   void CreateAlphaMap(uchar);
   bool ChangeAlpha(char);
   void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[Y][X] = Alpha; }

@@ -442,14 +442,16 @@ bool commandsystem::Talk(character* Char)
     }
   else if(Characters == 1)
     {
+      Char->EditAP(-1000);
+
       if(ToTalk->GetAction() && !ToTalk->GetAction()->CanBeTalkedTo())
 	{
 	  ADD_MESSAGE("%s is silent.", ToTalk->CHAR_NAME(DEFINITE));
 	  return true;
 	}
+
       ToTalk->BeTalkedTo();
       Char->EditExperience(CHARISMA, 5);
-      Char->EditAP(-1000);
       return true;
     }
   else
@@ -471,14 +473,16 @@ bool commandsystem::Talk(character* Char)
 
       if(Dude)
 	{
+	  Char->EditAP(-1000);
+
 	  if(Dude->GetAction() && !Dude->GetAction()->CanBeTalkedTo())
 	    {
 	      ADD_MESSAGE("%s is silent.", Dude->CHAR_NAME(DEFINITE));
 	      return true;
 	    }
+
 	  Dude->BeTalkedTo();
 	  Char->EditExperience(CHARISMA, 5);
-	  Char->EditAP(-1000);
 	  return true;
 	}
       else
@@ -849,7 +853,7 @@ bool commandsystem::Apply(character* Char)
 
 bool commandsystem::ForceVomit(character* Char)
 {
-  if(Char->IsAlive())
+  if(Char->TorsoIsAlive())
     {
       ADD_MESSAGE("You push your fingers down to your throat and vomit.");
       Char->Vomit(2 + RAND() % 3);
@@ -1044,7 +1048,7 @@ bool commandsystem::EquipmentScreen(character* Char)
 	    {
 	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
 	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), true, Equipment->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), Equipment->GetAnimationFrames(), true, Equipment->AllowAlphaEverywhere());
 	    }
 	  else
 	    {
@@ -1292,6 +1296,8 @@ bool commandsystem::SecretKnowledge(character* Char)
     {
       std::vector<character*> Character;
       protosystem::CreateEveryCharacter(Character);
+      bitmap** Picture;
+      ushort Frames = 0;
 
       switch(Chosen)
 	{
@@ -1302,10 +1308,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      std::vector<bitmap*> Picture;
-	      Character[c]->DrawBodyPartVector(Picture);
+	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
 	      Character[c]->AddAttributeInfo(Entry);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
 	    }
 
 	  List.SetMaskColor(0);
@@ -1318,9 +1323,8 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      std::vector<bitmap*> Picture;
-	      Character[c]->DrawBodyPartVector(Picture);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
+	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
 	      Character[c]->AddAttackInfo(List);
 	    }
 
@@ -1338,9 +1342,8 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry << int(Character[c]->GetDodgeValue());
 	      Entry.Resize(57, ' ');
 	      Entry << Character[c]->GetMaxHP();
-	      std::vector<bitmap*> Picture;
-	      Character[c]->DrawBodyPartVector(Picture);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
+	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
 	      Character[c]->AddDefenceInfo(List);
 	    }
 
@@ -1368,15 +1371,19 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      else
 		Entry << "-         -";
 
-	      std::vector<bitmap*> Picture;
-	      Character[c]->DrawBodyPartVector(Picture);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
+	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
 	    }
 
 	  List.SetMaskColor(0);
 	  PageLength = 15;
 	  break;
 	}
+
+      for(c = 0; c < Frames; ++c)
+	delete Picture[c];
+
+      delete [] Picture;
 
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
@@ -1396,7 +1403,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddAttackInfo(List);
 	    }
 
@@ -1408,7 +1415,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddMiscellaneousInfo(List);
 	    }
 

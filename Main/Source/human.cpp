@@ -32,7 +32,7 @@ bool angel::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX ||
 
 bool genie::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX; }
 
-material* golem::CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(Config, Volume); }
+material* golem::CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(GetConfig(), Volume); }
 
 petrus::~petrus()
 {
@@ -202,7 +202,7 @@ bool petrus::HealFully(character* ToBeHealed)
 	      break;
 	  }
 
-	if(!BodyPart || !BodyPart->IsAlive())
+	if(!BodyPart || !BodyPart->CanRegenerate())
 	  continue;
 
 	BodyPart->RemoveFromSlot();
@@ -593,7 +593,7 @@ void priest::BeTalkedTo()
 
 		if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 		  {
-		    if(!OldBodyPart->IsAlive())
+		    if(!OldBodyPart->CanRegenerate())
 		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
 		    else
 		      {
@@ -1500,7 +1500,7 @@ bool humanoid::CompleteRiseFromTheDead()
 	{
 	  BodyPart->ResetSpoiling();
 
-	  if(BodyPart->IsAlive() || BodyPart->GetHP() < 1)
+	  if(BodyPart->CanRegenerate() || BodyPart->GetHP() < 1)
 	    BodyPart->SetHP(1);
 	}
     }
@@ -2397,13 +2397,13 @@ uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
   return 0;
 }
 
-bool humanoid::IsAlive() const
+bool humanoid::UseMaterialAttributes() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->IsAlive())
-      return true;
+    if(GetBodyPart(c) && !GetBodyPart(c)->UseMaterialAttributes())
+      return false;
 
-  return false;
+  return true;
 }
 
 ulong angel::GetBaseEmitation() const
@@ -2835,7 +2835,7 @@ void guard::Load(inputfile& SaveFile)
   humanoid::Load(SaveFile);
   SaveFile >> WayPoints >> NextWayPoint;
 
-  if(Config == MASTER)
+  if(GetConfig() == MASTER)
     game::SetHaedlac(this);
 }
 
@@ -2914,14 +2914,17 @@ item* humanoid::GetPairEquipment(ushort Index) const
 
 guard::~guard()
 {
-  if(Config == MASTER)
+  if(GetConfig() == MASTER)
     game::SetHaedlac(0);
 }
 
 item* zombie::SevereBodyPart(ushort BodyPartIndex)
 {
   item* BodyPart = humanoid::SevereBodyPart(BodyPartIndex);
-  BodyPart->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
+
+  if(BodyPart)
+    BodyPart->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
+
   return BodyPart;
 }
 
@@ -2942,6 +2945,7 @@ void darkmage::GetAICommand()
   ulong NearestEnemyDistance = 0xFFFFFFFF;
   character* RandomFriend = 0;
   std::vector<character*> Friend;
+  vector2d Pos = GetPos();
 
   for(ushort c = 0; c < game::GetTeams(); ++c)
     {
@@ -2950,7 +2954,7 @@ void darkmage::GetAICommand()
 	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
 	    if((*i)->IsEnabled())
 	      {
-		ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - GetPos().X), abs((*i)->GetPos().Y - GetPos().Y));
+		ulong ThisDistance = Max<ulong>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
 
 		if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
 		  {
@@ -2967,10 +2971,10 @@ void darkmage::GetAICommand()
 	}
     }
 
-  if(NearestEnemy && ((Config != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3 && MoveTowards((GetPos() << 1) - NearestEnemy->GetPos()))
+  if(NearestEnemy && ((GetConfig() != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3 && MoveTowards((Pos << 1) - NearestEnemy->GetPos()))
     return;
 
-  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(GetPos()) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy))
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos) && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy))
     return;
 
   if(Friend.size() && !(RAND() & 3))
@@ -2989,7 +2993,7 @@ void darkmage::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
 
-      switch(Config)
+      switch(GetConfig())
 	{
 	case APPRENTICE:
 	  Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF);
@@ -3079,7 +3083,7 @@ void darkmage::GetAICommand()
       EditAP(-2000);
       Square->DrawParticles(RED);
 
-      switch(Config)
+      switch(GetConfig())
 	{
 	case APPRENTICE:
 	case BATTLE_MAGE:
@@ -3744,4 +3748,10 @@ void humanoid::EnsureCurrentSWeaponSkillIsCorrect(sweaponskill*& Skill, const it
 
       Skill = 0;
     }
+}
+
+humanoid::~humanoid()
+{
+  for(std::list<sweaponskill*>::iterator i = SWeaponSkill.begin(); i != SWeaponSkill.end(); ++i)
+    delete *i;
 }
