@@ -1221,14 +1221,6 @@ bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 
 bool lsquare::IsScaryForAIToStepOn(const character* Who) const
 {
-  /* This gum is all sticky (this is for Vladimir) */
-
-  if(Who->DestroysWalls() && GetRoom())
-    {
-      if(OLTerrain && OLTerrain->CanBeDestroyed() && !GetRoom()->IsOKToDestroyWalls(Who))
-	return true;
-    }
-
   return IsScaryForAIToBreathe(Who);
 }
 

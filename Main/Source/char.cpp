@@ -8484,3 +8484,5 @@ liquid* character::CreateSweat(long Volume) const
 {
   return new liquid(GetSweatMaterial(), Volume);
 }
+
+

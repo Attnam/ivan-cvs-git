@@ -1519,7 +1519,7 @@ bool largecreature::CanMoveOn(const lsquare* LSquare) const
     {
       vector2d SquarePos = Pos + game::GetLargeMoveVector(12 + c);
 
-      if(!Level->IsValidPos(SquarePos) || !(GetMoveType() & Level->GetLSquare(SquarePos)->GetWalkability()))
+      if(!Level->IsValidPos(SquarePos) || !PartCanMoveOn(Level->GetLSquare(SquarePos)))
 	return false;
     }
 
@@ -1534,7 +1534,6 @@ bool largecreature::CanMoveOn(const square* Square) const
   for(int c = 0; c < 4; ++c)
     {
       vector2d SquarePos = Pos + game::GetLargeMoveVector(12 + c);
-
       if(!Area->IsValidPos(SquarePos) || !(GetMoveType() & Area->GetSquare(SquarePos)->GetSquareWalkability()))
 	return false;
     }
@@ -2158,4 +2157,32 @@ void carnivorousplant::GetAICommand()
     return;
 
   EditAP(-1000);
+}
+
+bool vladimir::PartCanMoveOn(const lsquare* LSquare) const
+{
+  /* This gum is all sticky */
+  if(LSquare->GetRoom())
+    {
+      olterrain* OLTerrain = LSquare->GetOLTerrain();
+
+      if(OLTerrain)
+	{
+	  if(!OLTerrain->CanBeDestroyed())
+	    return false;
+	  else if(LSquare->GetRoom())
+	    {
+		  if(!LSquare->GetRoom()->IsOKToDestroyWalls(this))
+		    return false;
+	    }
+	}
+
+    }
+  return largecreature::PartCanMoveOn(LSquare);
+}
+
+bool largecreature::PartCanMoveOn(const lsquare* LSquare) const
+{
+  level* Level = LSquare->GetLevel();
+  return (GetMoveType() & LSquare->GetWalkability());
 }

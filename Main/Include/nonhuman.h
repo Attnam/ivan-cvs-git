@@ -422,6 +422,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
   virtual int GetFlySymbolSquareIndex() const { return 1; }
   virtual bool PlaceIsIllegal(vector2d, vector2d) const;
+  virtual bool PartCanMoveOn(const lsquare*) const;
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
@@ -494,6 +495,7 @@ class CHARACTER
   virtual bool MustBeRemovedFromBone() const;
   virtual color16 GetSkinColor() const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }
+  virtual bool PartCanMoveOn(const lsquare*) const;
 );
 
 class CHARACTER
