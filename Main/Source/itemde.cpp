@@ -1110,3 +1110,21 @@ bool banana::Zap(character* Zapper, vector2d, uchar)
   Zapper->EditAP(500);
   return true;
 }
+
+bool bananapeals::GetStepOnEffect(character* Stepper)
+{
+  if(!(RAND() % 3))
+    {
+      if(Stepper->GetIsPlayer())
+	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CNAME(INDEFINITE));
+      else
+	if(Stepper->GetSquareUnder()->CanBeSeen())
+	  ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CNAME(DEFINITE), CNAME(INDEFINITE));
+      Stepper->EditAP(1000);
+      Stepper->SetHP(Stepper->GetHP() - RAND() % 2);
+      Stepper->CheckDeath("stepped on a banana peal.");
+      Stepper->EditAP(-500);
+    }
+  
+  return false;
+}

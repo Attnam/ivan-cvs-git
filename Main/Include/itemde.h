@@ -459,6 +459,7 @@ class ITEM
   virtual vector2d GetBitmapPos() const { return vector2d(0,128); }
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; default: return 0; } }
   virtual vector2d GetInHandsPic() const { return vector2d(160,112); }
+  virtual bool GetStepOnEffect(character *);
  protected:
   virtual ushort GetFormModifier() const { return 70; }
 );

@@ -1,0 +1,5 @@
+Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/Makefile.am Added entity.h and fluid.h (somehow these changes have been lost from CVS)
+	* Main/Source/Makefile.am Added entity.cpp and fluid.cpp (somehow these changes have been lost from CVS)
+	* Main/Source/itemde.cpp bananapeals::GetStepOnEffect for fall effect
