@@ -136,7 +136,7 @@ human
 
 	Helmet = MITHRIL helmet(HELM_OF_PERCEPTION) { Enchantment = 5; }
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
-	BodyArmor = goldeneagleshirt;/MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 5; }/
+	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 5; }
 	Cloak = OMMEL_HAIR cloak(CLOAK_OF_INVISIBILITY);
 	Belt = STEEL belt;
 	RightWielded = VALPURIUM meleeweapon(TWO_HANDED_SWORD) { Enchantment = 5; }

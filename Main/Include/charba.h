@@ -514,8 +514,7 @@ class character : public entity, public id
   virtual void DrawPanel(bool) const;
   virtual ushort DrawStats(bool) const = 0;
   virtual ushort GetCarryingStrength() const = 0;
-  ulong GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
-  void SetOriginalBodyPartID(ushort Index, ulong ID) { OriginalBodyPartID[Index] = ID; }
+  const std::list<ulong>& GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
   virtual bool DamageTypeAffectsInventory(uchar) const;
   virtual void SetStuckTo(item* What) { StuckTo = What; }
   virtual item* GetStuckTo() const { return StuckTo; }
@@ -699,6 +698,7 @@ class character : public entity, public id
   virtual void AddAntidoteConsumeEndMessage() const;
   virtual bool IsDead() const;
   virtual bool ShowBattleInfo();
+  void AddOriginalBodyPartID(ushort, ulong);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
@@ -770,7 +770,7 @@ class character : public entity, public id
   item* StuckTo; // Bad naming. Sorry.
   ushort BaseAttribute[BASE_ATTRIBUTES];
   long BaseExperience[BASE_ATTRIBUTES];
-  ulong* OriginalBodyPartID;
+  std::list<ulong>* OriginalBodyPartID;
   entity* MotherEntity;
   character* PolymorphBackup;
   cweaponskill** CWeaponSkill;

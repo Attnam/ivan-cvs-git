@@ -353,8 +353,8 @@ class item : public object
   virtual void DrawContents(const character*) { }
   virtual DATA_BASE_VALUE(ulong, StorageVolume);
   virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
-  bool IsBroken() const { return Config & BROKEN != 0; }
-  virtual void ReceiveFluidSpill(material*) {}
+  bool IsBroken() const { return (Config & BROKEN) != 0; }
+  virtual void ReceiveFluidSpill(material*) { }
   virtual char GetEnchantment() const { return 0; }
   virtual ulong GetEnchantedPrice(char) const;
   virtual void Fix();

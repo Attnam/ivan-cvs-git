@@ -21,7 +21,7 @@ void organicsubstance::Be()
 {
   if(MotherEntity->AllowSpoil())
     {
-      if((SpoilCounter += 10) < GetSpoilModifier())
+      if(++SpoilCounter < GetSpoilModifier())
 	{
 	  if(SpoilCounter << 1 >= GetSpoilModifier())
 	    {

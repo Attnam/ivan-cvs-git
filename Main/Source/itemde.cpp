@@ -1791,8 +1791,8 @@ bool corpse::RaiseTheDead(character* Summoner)
   GetLSquareUnder()->AddCharacter(GetDeceased());
   RemoveFromSlot();
   GetDeceased()->SetHasBe(true);
-  GetDeceased()->CompleteRiseFromTheDead();
   GetDeceased()->SetMotherEntity(0);
+  GetDeceased()->CompleteRiseFromTheDead();
   Deceased = 0;
   SendToHell();
   return true;

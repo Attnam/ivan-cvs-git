@@ -1,5 +1,10 @@
 October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Original bodypart system is now a lot better
+	* Resurrection works again correctly
+
+October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Items in shops or on the cathedral floor no longer spoil
 	* Spoil level is now symbolized by Hex's fly effect
 	* Halved all spoil rates

@@ -194,7 +194,15 @@ bool petrus::HealFully(character* ToBeHealed)
   for(ushort c = 0; c < ToBeHealed->GetBodyParts(); ++c)
     if(!ToBeHealed->GetBodyPart(c))
       {
-	bodypart* BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItemWithID(ToBeHealed->GetOriginalBodyPartID(c)));
+	bodypart* BodyPart;
+
+	for(std::list<ulong>::iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
+	  {
+	    BodyPart = static_cast<bodypart*>(ToBeHealed->SearchForItemWithID(*i));
+
+	    if(BodyPart)
+	      break;
+	  }
 
 	if(!BodyPart)
 	  continue;
@@ -634,44 +642,46 @@ void priest::BeTalkedTo(character* Talker)
   for(ushort c = 0; c < Talker->GetBodyParts(); ++c)
     if(!Talker->GetBodyPart(c))
       {
-	bool HasOld;
-	bodypart* OldBodyPart = static_cast<bodypart*>(Talker->SearchForItemWithID(Talker->GetOriginalBodyPartID(c)));
+	bool HasOld = false;
 
-	if(OldBodyPart)
+	for(std::list<ulong>::iterator i = Talker->GetOriginalBodyPartID(c).begin(); i != Talker->GetOriginalBodyPartID(c).end(); ++i)
 	  {
-	    HasOld = true;
+	    bodypart* OldBodyPart = static_cast<bodypart*>(Talker->SearchForItemWithID(*i));
 
-	    if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
+	    if(OldBodyPart)
 	      {
-		if(!OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
-		  ADD_MESSAGE("Sorry, I cannot put back your severed %s, because it doesn't seem to fit properly.", Talker->GetBodyPartName(c).c_str());
-		else
-		  {
-		    ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+		HasOld = true;
 
-		    if(game::BoolQuestion("Do you agree? [y/N]"))
+		if(Talker->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
+		  {
+		    if(!OldBodyPart->GetMainMaterial()->IsSameAs(Talker->GetTorso()->GetMainMaterial()))
+		      ADD_MESSAGE("Sorry, I cannot put back your severed %s, because it doesn't seem to fit properly.", Talker->GetBodyPartName(c).c_str());
+		    else
 		      {
-			OldBodyPart->SetHP(1);
-			Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
-			SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
-			OldBodyPart->RemoveFromSlot();
-			Talker->AttachBodyPart(OldBodyPart);
-			return;
+			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+
+			if(game::BoolQuestion("Do you agree? [y/N]"))
+			  {
+			    OldBodyPart->SetHP(1);
+			    Talker->SetMoney(Talker->GetMoney() - PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			    SetMoney(GetMoney() + PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			    OldBodyPart->RemoveFromSlot();
+			    Talker->AttachBodyPart(OldBodyPart);
+			    return;
+			  }
 		      }
 		  }
+		else
+		  ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and I'll help you too.\"", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 	      }
-	    else
-	      ADD_MESSAGE("\"You %s is severed. Help yourself and get %dgp and we'll help you too.\"", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 	  }
-	else
-	  HasOld = false;
 
 	if(Talker->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR)
 	  {
 	    if(HasOld)
 	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 	    else
-	      ADD_MESSAGE("Since you don't seem to have your orginal %s with you, I could summon up a new one for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", Talker->GetBodyPartName(c).c_str(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 
 	    if(game::BoolQuestion("Agreed? [y/N]"))
 	      {
@@ -2036,14 +2046,20 @@ void humanoid::CompleteRiseFromTheDead()
       {
 	/* Let's search for the original bodypart */
 
-	for(stackiterator i = GetStackUnder()->GetBottom(); i.HasItem(); ++i)
-	  if(i->GetID() == GetOriginalBodyPartID(c))
-	    {
-	      item* Item = *i;
-	      Item->RemoveFromSlot();
-	      AttachBodyPart(static_cast<bodypart*>(Item));
+	for(stackiterator i1 = GetStackUnder()->GetBottom(); i1.HasItem(); ++i1)
+	  {
+	    for(std::list<ulong>::iterator i2 = OriginalBodyPartID[c].begin(); i2 != OriginalBodyPartID[c].end(); ++i2)
+	      if(i1->GetID() == *i2)
+		{
+		  item* Item = *i1;
+		  Item->RemoveFromSlot();
+		  AttachBodyPart(static_cast<bodypart*>(Item));
+		  break;
+		}
+
+	    if(GetBodyPart(c))
 	      break;
-	    }
+	  }
       }
 
   for(c = 0; c < GetBodyParts(); ++c)

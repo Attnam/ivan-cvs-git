@@ -1106,8 +1106,8 @@ wandofteleportation /* wand-> */
 	MainMaterialConfig == SILVER;
 	Alias == "wand of teleport";
 	BeamRange = 5;
-	MinCharges = 2;
-	MaxCharges = 7;
+	MinCharges = 3;
+	MaxCharges = 6;
 }
 
 mine /*materialcontainer-> */
@@ -1134,7 +1134,7 @@ wandofhaste /* wand-> */
 	PostFix = "of haste";
 	MainMaterialConfig == TIN;
 	BeamRange = 5;
-	MinCharges = 2;
+	MinCharges = 3;
 	MaxCharges = 6;
 }
 
@@ -1145,7 +1145,7 @@ wandofslow /* wand-> */
 	PostFix = "of slow";
 	MainMaterialConfig == STONE;
 	BeamRange = 5;
-	MinCharges = 2;
+	MinCharges = 3;
 	MaxCharges = 6;
 }
 
@@ -1562,7 +1562,7 @@ wandoflocking /* wand-> */
 	PostFix = "of locking";
 	MainMaterialConfig == COPPER;
 	BeamRange = 10;
-	MinCharges = 2;
+	MinCharges = 3;
 	MaxCharges = 6;
 }
 
@@ -1574,7 +1574,7 @@ wandofresurrection /* wand-> */
 	MainMaterialConfig == BONE;
 	BeamRange = 15;
 	MinCharges = 1;
-	MaxCharges = 2;
+	MaxCharges = 3;
 }
 
 whistle
@@ -1656,7 +1656,7 @@ wandofdoorcreation /* wand-> */
 	Price = 200;
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
-	MinCharges = 2;
+	MinCharges = 3;
 	MaxCharges = 6;
 }
 
@@ -1682,7 +1682,7 @@ wandofinvisibility /* wand-> */
 	PostFix = "of invisibility";
 	MainMaterialConfig == GLASS;
 	BeamRange = 15;
-	MinCharges = 2;
+	MinCharges = 3;
 	MaxCharges = 6;
 }
 
@@ -1915,7 +1915,7 @@ wandofcloning /* wand-> */
 	MainMaterialConfig == MARBLE;
 	BeamRange = 5;
 	MinCharges = 1;
-	MaxCharges = 2;
+	MaxCharges = 3;
 	CanBeCloned = false;
 }
 

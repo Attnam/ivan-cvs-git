@@ -65,7 +65,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
     }
 
   BodyPartSlot = new characterslot[BodyParts];
-  OriginalBodyPartID = new ulong[BodyParts];
+  OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
 
   for(c = 0; c < BodyParts; ++c)
@@ -255,6 +255,7 @@ struct svpriorityelement
 
 uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 {
+  return 1;
   if(GetBodyParts() == 1)
     return 0;
 
@@ -3489,7 +3490,9 @@ bool character::EquipmentScreen()
 void character::SetBodyPart(ushort Index, bodypart* What)
 {
   BodyPartSlot[Index].PutInItem(What);
-  SetOriginalBodyPartID(Index, What ? What->GetID() : 0);
+
+  if(What)
+    AddOriginalBodyPartID(Index, What->GetID());
 }
 
 bool character::CanConsume(material* Material) const
@@ -3908,7 +3911,7 @@ void character::Initialize(ushort NewConfig, ushort SpecialFlags)
   CalculateBodyParts();
   CalculateAllowedWeaponSkillCategories();
   BodyPartSlot = new characterslot[BodyParts];
-  OriginalBodyPartID = new ulong[BodyParts];
+  OriginalBodyPartID = new std::list<ulong>[BodyParts];
   CWeaponSkill = new cweaponskill*[AllowedWeaponSkillCategories];
 
   ushort c;
@@ -5007,12 +5010,13 @@ bodypart* character::FindRandomOwnBodyPart() const
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c))
-      {
-	item* Found = SearchForItemWithID(GetOriginalBodyPartID(c));
+      for(std::list<ulong>::iterator i = OriginalBodyPartID[c].begin(); i != OriginalBodyPartID[c].end(); ++i)
+	{
+	  item* Found = SearchForItemWithID(*i);
 
-	if(Found)
-	  LostAndFound.push_back(static_cast<bodypart*>(Found));
-      }
+	  if(Found)
+	    LostAndFound.push_back(static_cast<bodypart*>(Found));
+	}
 
   if(LostAndFound.empty())
     return 0;
@@ -5974,4 +5978,12 @@ void character::SignalSpoilLevelChange()
 
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoilLevelChange(0);
+}
+
+void character::AddOriginalBodyPartID(ushort Index, ulong What)
+{
+  OriginalBodyPartID[Index].push_back(What);
+
+  if(OriginalBodyPartID[Index].size() > 100)
+    OriginalBodyPartID[Index].erase(OriginalBodyPartID[Index].begin());
 }
