@@ -920,6 +920,20 @@ void scabies::PrayGoodEffect()
       return;
     }
 
+  if(!RAND_N(10))
+    {
+      for(int c = 0; c < game::GetTeams(); ++c)
+	if(PLAYER->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    {
+	      character* Char = *i;
+	      if(!Char->IsImmuneToLeprosy())
+		Char->GainIntrinsic(LEPROSY);
+	    }
+      ADD_MESSAGE("You feel a a horrible disease spreading.");
+      return;
+    }
+
   if(!(RAND() % 50))
     {
       ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
@@ -964,10 +978,15 @@ void scabies::PrayBadEffect()
       PLAYER->EditAttribute(ARM_STRENGTH, -1);
       PLAYER->EditAttribute(DEXTERITY, -1);
     }
-  else
+  else if(RAND_2) 
     {
       ADD_MESSAGE("%s unleashes all her fury upon you!", GetName());
       PLAYER->BeginTemporaryState(POISONED, 600 + RAND() % 400);
+    }
+  else
+    {
+      ADD_MESSAGE("%s unleashes a horrible sickness upon you!", GetName());
+      PLAYER->GainIntrinsic(LEPROSY);
     }
 }
 

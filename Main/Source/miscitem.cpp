@@ -1835,7 +1835,7 @@ bool encryptedscroll::Read(character*)
 
 bool horn::Apply(character* Blower) 
 {
-  if(Blower->HasHead())
+  if(!Blower->HasHead())
     {
       if(Blower->IsPlayer())
 	ADD_MESSAGE("You need a head to do this.");

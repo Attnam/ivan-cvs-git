@@ -24,6 +24,7 @@ int protocontainer<god>::Size;
 #include "confdef.h"
 #include "materias.h"
 #include "save.h"
+#include "team.h"
 
 #include "god.cpp"
 #include "gods.cpp"
