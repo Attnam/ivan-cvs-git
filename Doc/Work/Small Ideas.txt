@@ -530,3 +530,4 @@ You shouldn't be able to take equipment from angels; they are sacred after all, 
 If the player is confused or has bad relations to Dulcis, using a magical whistle should sometimes fail, teleporting all monsters in the level around the player.
 When confused, stethoscope should produce very inaccurate results.
 There should be a way of getting a verbal hint whether a god's pray timer allows praying without relation penalties; maybe the relation description printed upon offering could be modified, or a special msg could be given when reading a holy book.
+There could be a more interesting effect for trying to teleport over a monster; perhaps the player's and the monster's souls could be swapped (ie. they would polymorph into each other for some time) or their bodyparts could get randomly mixed.

@@ -4129,7 +4129,7 @@ truth golem::AddAdjective(festring& String, truth Articled) const
   else
   {
     if(Articled)
-      String << 'a';
+      String << "a ";
 
     if(TotalRustLevel <= GetBodyParts())
       String << "slightly rusted ";

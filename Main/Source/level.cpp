@@ -646,8 +646,11 @@ void level::GenerateMonsters()
 {
   if(*LevelScript->GenerateMonsters()
      && game::GetTeam(MONSTER_TEAM)->GetEnabledMembers() < IdealPopulation
-     && (MonsterGenerationInterval <= 1 || !(RAND() % MonsterGenerationInterval)))
+     && (MonsterGenerationInterval <= 1 || !RAND_N(MonsterGenerationInterval)))
+  {
     GenerateNewMonsters(1);
+    ++MonsterGenerationInterval;
+  }
 }
 
 void level::Save(outputfile& SaveFile) const

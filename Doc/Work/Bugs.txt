@@ -111,3 +111,5 @@ You get stuck to slime even when flying.
 The patrol guard's AI works oddly if the player rests on one of his waypoints for a long time.
 You can probably give commands to unconscious monsters.
 Scroll of golem creation destroys chest contents.
+//"The magic mushroom grunts happily."
+//Mammoth's corpse's weight is negative.

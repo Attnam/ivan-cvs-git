@@ -186,7 +186,10 @@ class material
   truth True() const { return true; }
   void FinishConsuming(character*);
   long GetVolume() const { return Volume; }
-  long GetWeight() const { return Volume ? Volume * GetDensity() / 1000 : 0; }
+  long GetWeight() const
+  {
+    return Volume ? long(double(Volume) * GetDensity() / 1000) : 0;
+  }
   void EditVolume(long What) { SetVolume(Volume + What); }
   void SetVolume(long);
   void SetVolumeNoSignals(long What) { Volume = What; }

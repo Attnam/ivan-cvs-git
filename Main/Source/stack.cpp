@@ -327,7 +327,12 @@ void stack::TeleportRandomly(uint Amount)
 
   for(uint c = 0; c < ItemVector.size() && c < Amount; ++c)
     if(ItemVector[c]->Exists())
+    {
+      if(ItemVector[c]->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears!", ItemVector[c]->GetExtendedDescription().CStr());
+
       ItemVector[c]->TeleportRandomly();
+    }
 }
 
 /* ItemVector receives all items in the stack */

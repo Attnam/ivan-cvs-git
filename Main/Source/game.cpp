@@ -1090,7 +1090,7 @@ void game::DoEvilDeed(int Amount)
 	  GetGod(c)->SetRelation(750);
       }
       else
-	GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change << 1);
+	GetGod(c)->SetRelation(GetGod(c)->GetRelation() - (Change << 1));
     else
       if(GetGod(c)->GetRelation() - Change < -500)
       {

@@ -2990,16 +2990,18 @@ void character::ChangeSecondaryMaterial(material*, int)
 
 void character::TeleportRandomly(truth Intentional)
 {
+  v2 TelePos = ERROR_V2;
+
   if(StateIsActivated(TELEPORT_CONTROL))
   {
     if(IsPlayer())
     {
-      v2 PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), &game::TeleportHandler, 0, false);
+      v2 Input = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), &game::TeleportHandler, 0, false);
 
-      if(PlayersInput == ERROR_V2) // esc pressed
-	PlayersInput = GetPos();
+      if(Input == ERROR_V2) // esc pressed
+	Input = GetPos();
 
-      lsquare* Square = GetNearLSquare(PlayersInput);
+      lsquare* Square = GetNearLSquare(Input);
 
       if(CanMoveOn(Square) || game::GoThroughWallsCheatIsActive())
       {
@@ -3011,17 +3013,23 @@ void character::TeleportRandomly(truth Intentional)
 
 	if(IsFreeForMe(Square))
 	{
-	  if((PlayersInput - GetPos()).GetLengthSquare() <= GetTeleportRangeSquare())
+	  if((Input - GetPos()).GetLengthSquare() <= GetTeleportRangeSquare())
 	  {
 	    EditExperience(INTELLIGENCE, 100, 1 << 10);
-	    Move(PlayersInput, true);
-	    return;
+	    TelePos = Input;
 	  }
 	  else
 	    ADD_MESSAGE("You cannot concentrate yourself enough to control a teleport that far.");
 	}
 	else
-	  ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
+	{
+	  character* C = Square->GetCharacter();
+
+	  if(C)
+	    ADD_MESSAGE("For a moment you feel very much like %s.", C->CHAR_NAME(INDEFINITE));
+	  else
+	    ADD_MESSAGE("You feel that something weird has happened, but can't really tell what exactly.");
+	}
       }
       else
 	ADD_MESSAGE("You feel like having been hit by something really hard from the inside.");
@@ -3032,19 +3040,22 @@ void character::TeleportRandomly(truth Intentional)
       {
 	v2 Where = GetLevel()->GetNearestFreeSquare(this, GoingTo);
 
-	if(Where != ERROR_V2
-	   && (Where - GetPos()).GetLengthSquare() <= GetTeleportRangeSquare())
+	if(Where != ERROR_V2 && (Where - GetPos()).GetLengthSquare() <= GetTeleportRangeSquare())
 	{
 	  EditExperience(INTELLIGENCE, 100, 1 << 10);
-	  Move(Where, true);
+	  Where = TelePos;
 	}
       }
-
-      return;
     }
   }
 
-  Move(GetLevel()->GetRandomSquare(this), true);
+  if(IsPlayer())
+    ADD_MESSAGE("A rainbow-colored whirlpool twists the existence around you. You are sucked through a tunnel piercing a myriad of surreal universes. Luckily you return to this dimension in one piece.");
+
+  if(TelePos != ERROR_V2)
+    Move(TelePos, true);
+  else
+    Move(GetLevel()->GetRandomSquare(this), true);
 
   if(!IsPlayer() && CanBeSeenByPlayer())
     ADD_MESSAGE("%s appears.", CHAR_NAME(INDEFINITE));
@@ -5049,7 +5060,14 @@ void character::PrintEndTeleportMessage() const
 void character::TeleportHandler()
 {
   if(!(RAND() % 1500) && !game::IsInWilderness())
+  {
+    if(IsPlayer())
+      ADD_MESSAGE("You feel an urgent spatial relocation is now appropriate.");
+    else if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
+
     TeleportRandomly();
+  }
 }
 
 void character::PrintBeginPolymorphMessage() const

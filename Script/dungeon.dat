@@ -392,7 +392,7 @@ Dungeon ELPURI_CAVE;
 	{
 		LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
 		IgnoreDefaultSpecialSquares = true;
-		Items = 50:100;
+		Items = 35:70;
 
 		Square, Random;
 		{
@@ -448,14 +448,16 @@ Dungeon ELPURI_CAVE;
 		Rooms = 1;
 		IgnoreDefaultSpecialSquares = true;
 		MonsterAmountBase = 20;
+		LOSModifier = 24;
+		FillSquare = FLINT solidterrain(GROUND), GNEISS earth;
 
 		Room
 		{
 			Pos = 2,2;
 			Size = 60,32;
 			AltarPossible = false;
-			WallSquare = GRANITE solidterrain(GROUND), 0;
-			FloorSquare = GRANITE solidterrain(GROUND), 0;
+			WallSquare = FLINT solidterrain(GROUND), 0;
+			FloorSquare = FLINT solidterrain(GROUND), 0;
 			GenerateDoor = false;
 			GenerateTunnel = false;
 			GenerateLanterns = false;
@@ -712,8 +714,8 @@ Dungeon ELPURI_CAVE;
 		Description = "dark level";
 		ShortDescription = "DarkLevel";
 		LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare = IRON solidterrain(FLOOR), IRON wall(BRICK_OLD);
-		TunnelSquare = IRON solidterrain(FLOOR), 0;
+		FillSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
+		TunnelSquare = STEEL solidterrain(FLOOR), 0;
 		Items = 0;
 		IgnoreDefaultSpecialSquares = true;
 
@@ -726,9 +728,9 @@ Dungeon ELPURI_CAVE;
 		RoomDefault
 		{
 			AltarPossible = false;
-			FloorSquare = IRON solidterrain(PARQUET), 0;
-			WallSquare = IRON solidterrain(FLOOR), IRON wall(BRICK_OLD);
-			DoorSquare = IRON solidterrain(PARQUET), IRON door;
+			FloorSquare = STEEL solidterrain(PARQUET), 0;
+			WallSquare = STEEL solidterrain(FLOOR), STEEL wall(BRICK_OLD);
+			DoorSquare = STEEL solidterrain(PARQUET), STEEL door;
 			GenerateLanterns = false;
 			GenerateFountains = false;
 		}
@@ -922,8 +924,8 @@ Dungeon ELPURI_CAVE;
 		MonsterAmountBase = 12;
 		ItemMinPriceBase = 30;
 		Rooms = 20:40;
-		FillSquare = ROCK_CRYSTAL solidterrain(GROUND), ROCK_CRYSTAL earth;
-		TunnelSquare = ROCK_CRYSTAL solidterrain(GROUND), 0;
+		FillSquare = MILKY_QUARTZ solidterrain(GROUND), ROCK_CRYSTAL earth;
+		TunnelSquare = MILKY_QUARTZ solidterrain(GROUND), 0;
 		BackGroundType = RED_FRACTAL;
 
 		RoomDefault
@@ -973,9 +975,9 @@ Dungeon ELPURI_CAVE;
 		MonsterAmountBase = 14;
 		ItemMinPriceBase = 40;
 		Rooms = 20:40;
-		Items = 50:100;
-		FillSquare = ROCK_CRYSTAL solidterrain(GROUND), ROCK_CRYSTAL earth;
-		TunnelSquare = ROCK_CRYSTAL solidterrain(GROUND), 0;
+		Items = 35:70;
+		FillSquare = MILKY_QUARTZ solidterrain(GROUND), ROCK_CRYSTAL earth;
+		TunnelSquare = MILKY_QUARTZ solidterrain(GROUND), 0;
 		BackGroundType = BLUE_FRACTAL;
 
 		RoomDefault
@@ -1016,13 +1018,13 @@ Dungeon ELPURI_CAVE;
 
 	Level 11;
 	{
-		Size = 80,60;
+		Size = 64,36;
 		IgnoreDefaultSpecialSquares = true;
 		DifficultyBase = 80;
 		MonsterAmountBase = 100;
 		MonsterAmountDelta = 0;
 		ItemMinPriceBase = 50;
-		Items = 100:200;
+		Items = 45:90;
 		FillSquare = ARCANITE solidterrain(GROUND), ARCANITE earth;
 		TunnelSquare = ARCANITE solidterrain(GROUND), 0;
 		BackGroundType = YELLOW_FRACTAL;
@@ -1030,7 +1032,7 @@ Dungeon ELPURI_CAVE;
 		RoomDefault
 		{
 			Pos = 2:XSize-5,2:YSize-5;
-			Size = 10:30,10:30;
+			Size = 6:20,6:20;
 			WallSquare = ARCANITE solidterrain(GROUND), OCTIRON wall(BRICK_OLD);
 			FloorSquare = ARCANITE solidterrain(PARQUET), 0;
 			DoorSquare = ARCANITE solidterrain(PARQUET), OCTIRON door;

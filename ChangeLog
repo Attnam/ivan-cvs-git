@@ -7,6 +7,19 @@
 
 -----------------------------------------------------------------------------
 
+October 28 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* Corrected an annoying bug in DoEvilDeed
+	* Every generated monster decreases the approximate monster generation
+		interval of the level slightly, so infinite exping on one area becomes
+		less effective over time
+	* More messages are now generated when teleporting
+	* BugFix: the weight of a mammoth's corpse was negative
+	* BugFix: mushrooms were able to grunt
+	* TypoFix: one space was missing from rusted golems' names
+	* Changed the basic terrain materials of GC levels 6, 9, 10 and 11
+		mainly for clarity reasons
+
 October 22 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* BugFix: offering on the Silva's altar in UT4 crashed

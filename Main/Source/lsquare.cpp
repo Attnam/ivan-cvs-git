@@ -1518,12 +1518,17 @@ truth lsquare::FireBall(const beamdata& Beam)
 
 truth lsquare::Teleport(const beamdata& Beam) 
 { 
-  if(GetCharacter())
+  if(Character)
   {
     if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
       Beam.Owner->Hostility(GetCharacter());
 
-    GetCharacter()->TeleportRandomly();
+    if(Character->IsPlayer())
+      ADD_MESSAGE("You experience a forced teleportation.");
+    else if(Character->CanBeSeenByPlayer())
+      ADD_MESSAGE("%s disappears!", Character->CHAR_NAME(DEFINITE));
+
+    Character->TeleportRandomly();
   }
 
   if(RoomIndex)
