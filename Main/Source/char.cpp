@@ -7198,8 +7198,8 @@ int character::RawEditExperience(double& Exp, double NaturalExp, double Value, d
   double OldExp = Exp;
 
   if(!OldExp
-  || (Value > 0 && OldExp >= NaturalExp * (100 + Value))
-  || (Value < 0 && OldExp <= NaturalExp * (100 + Value)))
+  || (Value > 0 && OldExp >= NaturalExp * (100 + Value) / 100)
+  || (Value < 0 && OldExp <= NaturalExp * (100 + Value) / 100))
     return 0;
 
   if(!IsPlayer())

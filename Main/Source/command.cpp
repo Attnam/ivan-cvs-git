@@ -500,7 +500,7 @@ bool commandsystem::NOP(character* Char)
       Char->GetBodyPart(c)->EditHP(-Char->GetBodyPart(c)->GetHP() / 2);
   }*/
 
-  game::GetScore();
+  //game::GetScore();
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);
   Char->EditAP(-Char->GetStateAPGain(1000));
