@@ -1,3 +1,10 @@
+May 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added a lot of #include <string> s because this is somehow required by Linux's GCC.
+	* Added tin 
+	* Added whistle and magical whistle
+	* Changed Teleport() command to TeleportRandomly() in item, stack and character and made a function called Teleport(vector2d) to character.
+
 May 25 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Database configuration system added
