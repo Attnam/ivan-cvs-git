@@ -61,7 +61,7 @@ class materialprototype
  public:
   friend class database<material>;
   materialprototype(materialprototype*, material* (*)(ushort, ulong, bool), const std::string&);
-  material* Clone(ushort Config, ulong Volume) const { return Cloner(Config, Volume, false); }
+  material* Clone(ushort Config, ulong Volume = 0) const { return Cloner(Config, Volume, false); }
   material* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }

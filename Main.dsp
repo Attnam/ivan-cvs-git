@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /vd0 /GX /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -53,8 +53,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib user32.lib /nologo /version:0.402 /subsystem:windows /machine:I386 /nodefaultlib:"libc"
-# SUBTRACT LINK32 /pdb:none /nodefaultlib
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/Release/FeLib.lib user32.lib /nologo /version:0.402 /subsystem:windows /profile /machine:I386 /nodefaultlib:"libc"
+# SUBTRACT LINK32 /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
@@ -75,7 +75,7 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
 # SUBTRACT CPP /Gy
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
@@ -108,7 +108,7 @@ PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /GX /Zi /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"

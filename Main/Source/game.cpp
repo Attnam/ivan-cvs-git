@@ -61,9 +61,11 @@ ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
-ulong game::CurrentEmitterEmitation;
-long game::CurrentEmitterPosX;
-long game::CurrentEmitterPosY;
+ushort** game::CurrentRedLuxTable;
+ushort** game::CurrentGreenLuxTable;
+ushort** game::CurrentBlueLuxTable;
+long game::CurrentEmitterPosXMinus16;
+long game::CurrentEmitterPosYMinus16;
 vector2d game::CurrentEmitterPos;
 bool game::Generating = false;
 float game::AveragePlayerArmStrength;
@@ -106,6 +108,10 @@ configid game::NextDangerId;
 characteridmap game::CharacterIDMap;
 const explosion* game::CurrentExplosion;
 bool game::PlayerHurtByExplosion;
+area* game::CurrentArea;
+level* game::CurrentLevel;
+wsquare*** game::CurrentWSquareMap;
+lsquare*** game::CurrentLSquareMap;
 
 vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
@@ -113,7 +119,7 @@ void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.fin
 
 void game::InitScript()
 {
-  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
@@ -160,7 +166,7 @@ bool game::Init(const std::string& Name)
 	SetIsRunning(true);
 	SetIsLoading(true);
 	GetCurrentArea()->SendNewDrawRequest();
-	game::SendLOSUpdateRequest();
+	SendLOSUpdateRequest();
 	ADD_MESSAGE("Game loaded successfully.");
 	return true;
       }
@@ -217,11 +223,12 @@ bool game::Init(const std::string& Name)
 	Petrus = 0;
 	Haedlac = 0;
 	InitDungeons();
-	WorldMap = new worldmap(128, 128);
+	CurrentArea = WorldMap = new worldmap(128, 128);
+	CurrentWSquareMap = WorldMap->GetMap();
 	WorldMap->Generate();
 	InWilderness = true;
 	UpdateCamera();
-	game::SendLOSUpdateRequest();
+	SendLOSUpdateRequest();
 	Ticks = 0;
 	InitPlayerAttributeAverage();
 	StoryState = 0;
@@ -255,7 +262,7 @@ bool game::Init(const std::string& Name)
 void game::DeInit()
 {
   delete GetWorldMap();
-  SetWorldMap(0);
+  WorldMap = 0;
   ushort c;
 
   for(c = 1; c < Dungeons; ++c)
@@ -286,7 +293,7 @@ void game::Run()
 
 	  if(++Counter == 10)
 	    {
-	      GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GenerateMonsters(); // Temporary place
+	      CurrentLevel->GenerateMonsters(); // Temporary place
 	      Counter = 0;
 	    }
 	}
@@ -317,7 +324,7 @@ void game::InitLuxTable()
 	  for(long y = 0; y < 33; ++y)
 	    LuxTable[c][x][y] = ushort(c / (float(HypotSquare(x - 16, y - 16)) / 128 + 1));
 
-      atexit(game::DeInitLuxTable);
+      atexit(DeInitLuxTable);
     }
 }
 
@@ -329,13 +336,13 @@ void game::DeInitLuxTable()
 
 bool game::WorldMapLOSHandler(long X, long Y)
 {
-  GetWorldMap()->GetWSquare(X, Y)->SetLastSeen(LOSTurns);
+  CurrentWSquareMap[X][Y]->SetLastSeen(LOSTurns);
   return true;
 }
 
 bool game::LevelLOSHandler(long X, long Y)
 {
-  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
+  lsquare* Square = CurrentLSquareMap[X][Y];
   Square->SetLastSeen(LOSTurns);
   return Square->GetOLTerrain()->IsWalkable();
 }
@@ -429,7 +436,7 @@ void game::DrawEverything()
 
 bool game::OnScreen(vector2d Pos)
 {
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + GetScreenSize().X && Pos.Y < game::GetCamera().Y + GetScreenSize().Y)
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenSize().X && Pos.Y < GetCamera().Y + GetScreenSize().Y)
     return true;
   else
     return false;
@@ -441,13 +448,13 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
     GetCurrentArea()->UpdateLOS();
 
   if(OnScreen(CursorPos))
-    if(!IsInWilderness() || GetWorldMap()->GetSquare(CursorPos)->GetLastSeen() || SeeWholeMapCheatIsActive())
-      GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+    if(!IsInWilderness() || CurrentWSquareMap[CursorPos.X][CursorPos.Y]->GetLastSeen() || SeeWholeMapCheatIsActive())
+      CurrentArea->GetSquare(CursorPos)->SendNewDrawRequest();
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), 16, 16, 0);
 
   globalwindowhandler::UpdateTick();
-  GetCurrentArea()->Draw();
+  GetCurrentArea()->Draw(AnimationDraw);
 
   if(OnScreen(GetPlayer()->GetPos()))
     igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
@@ -543,9 +550,15 @@ uchar game::Load(const std::string& SaveName)
     SaveFile >> Team[c];
 
   if(InWilderness)
-    LoadWorldMap(SaveName);
+    {
+      CurrentArea = LoadWorldMap(SaveName);
+      CurrentWSquareMap = WorldMap->GetMap();
+    }
   else
-    GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex);
+    {
+      CurrentArea = CurrentLevel = GetCurrentDungeon()->LoadLevel(SaveName, CurrentLevelIndex);
+      CurrentLSquareMap = CurrentLevel->GetMap();
+    }
 
   vector2d Pos;
   SaveFile >> Pos;
@@ -578,27 +591,22 @@ std::string game::SaveName(const std::string& Base)
 
 bool game::EmitationHandler(long X, long Y)
 {
-  ulong Emit;
+  long XVal = X - CurrentEmitterPosXMinus16;
+  long YVal = Y - CurrentEmitterPosYMinus16;
 
-  if(X - CurrentEmitterPosX > 16 || CurrentEmitterPosX - X > 16 || Y - CurrentEmitterPosY > 16 || CurrentEmitterPosY - Y > 16)
-    Emit = 0;
-  else
-    {
-      Emit = CurrentEmitterEmitation;
-      uchar Red = LuxTable[GetRed24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
-      uchar Green = LuxTable[GetGreen24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
-      uchar Blue = LuxTable[GetBlue24(Emit)][X - CurrentEmitterPosX + 16][Y - CurrentEmitterPosY + 16];
-      Emit = MakeRGB24(Red, Green, Blue);
-    }
+  ulong Emit = XVal > 32 || XVal < 0 || YVal > 32 || YVal < 0 ? 0 :
+	       MakeRGB24(CurrentRedLuxTable[XVal][YVal],
+			 CurrentGreenLuxTable[XVal][YVal],
+			 CurrentBlueLuxTable[XVal][YVal]);
 
-  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
+  lsquare* Square = CurrentLSquareMap[X][Y];
   Square->AlterLuminance(CurrentEmitterPos, Emit);
   return Square->GetOLTerrain()->IsWalkable();
 }
 
 bool game::NoxifyHandler(long X, long Y)
 {
-  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
+  lsquare* Square = CurrentLSquareMap[X][Y];
   Square->NoxifyEmitter(CurrentEmitterPos);
   return Square->GetOLTerrain()->IsWalkable();
 }
@@ -648,8 +656,8 @@ void game::UpdateCameraYWithPos(ushort Coord)
 int game::GetMoveCommandKeyBetweenPoints(vector2d A, vector2d B)
 {
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
-    if((A + game::GetMoveVector(c)) == B)
-      return game::MoveCommandKey[c];
+    if((A + GetMoveVector(c)) == B)
+      return MoveCommandKey[c];
 
   return DIR_ERROR;
 }
@@ -673,15 +681,15 @@ vector2d game::GetDirectionVectorForKey(int Key)
     return vector2d(0,0);
 
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
-    if(Key == game::GetMoveCommandKey(c))
-      return game::GetMoveVector(c);
+    if(Key == GetMoveCommandKey(c))
+      return GetMoveVector(c);
 
   return ERROR_VECTOR;
 }
 
 bool game::EyeHandler(long X, long Y)
 {
-  return GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y)->GetOLTerrain()->IsWalkable();
+  return CurrentLSquareMap[X][Y]->GetOLTerrain()->IsWalkable();
 }
 
 long game::GodScore()
@@ -697,7 +705,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = float(GetCurrentLevel()->GetDifficulty()) / 1000;
+  float Base = float(CurrentLevel->GetDifficulty()) / 1000;
 
   while(true)
     {
@@ -733,10 +741,10 @@ float game::Difficulty()
 
 void game::ShowLevelMessage()
 {
-  if(GetLevel(GetCurrentLevelIndex())->GetLevelMessage().length())
-    ADD_MESSAGE(GetLevel(GetCurrentLevelIndex())->GetLevelMessage().c_str());
+  if(CurrentLevel->GetLevelMessage().length())
+    ADD_MESSAGE(CurrentLevel->GetLevelMessage().c_str());
 
-  GetLevel(GetCurrentLevelIndex())->SetLevelMessage("");
+  CurrentLevel->SetLevelMessage("");
 }
 
 uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool AcceptYourself)
@@ -749,7 +757,7 @@ uchar game::DirectionQuestion(const std::string& Topic, bool RequireAnswer, bool
 	return YOURSELF;
 
       for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-	if(Key == game::GetMoveCommandKey(c))
+	if(Key == GetMoveCommandKey(c))
 	  return c;
 
       if(!RequireAnswer)
@@ -797,26 +805,6 @@ void game::SetPlayer(character* NP)
 
   if(Player)
     Player->SetIsPlayer(true);
-}
-
-area* game::GetCurrentArea()
-{
-  return !InWilderness ? static_cast<area*>(GetCurrentDungeon()->GetLevel(CurrentLevelIndex)) : static_cast<area*>(WorldMap);
-}
-
-level* game::GetCurrentLevel()
-{
-  return GetCurrentDungeon()->GetLevel(CurrentLevelIndex);
-}
-
-level* game::GetLevel(ushort Index)
-{
-  return GetCurrentDungeon()->GetLevel(Index);
-}
-
-ushort game::GetLevels()
-{
-  return GetCurrentDungeon()->GetLevels();
 }
 
 void game::SeeWholeMap()
@@ -888,10 +876,11 @@ void game::SaveWorldMap(const std::string& SaveName, bool DeleteAfterwards)
     }
 }
 
-void game::LoadWorldMap(const std::string& SaveName)
+worldmap* game::LoadWorldMap(const std::string& SaveName)
 {
   inputfile SaveFile(SaveName + ".wm");
   SaveFile >> WorldMap;
+  return WorldMap;
 }
 
 void game::Hostility(team* Attacker, team* Defender)
@@ -959,27 +948,27 @@ void game::CreateTeams()
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
 long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
 long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, false, Handler);
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
@@ -1016,15 +1005,15 @@ bool game::HandleQuitMessage()
     {
       if(IsInGetCommand())
 	{
-	  switch(game::Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHT_GRAY))
+	  switch(Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHT_GRAY))
 	    {
 	    case 0:
 	      Save();
-	      game::RemoveSaves(false);
+	      RemoveSaves(false);
 	      break;
 	    case 2:
 	      GetCurrentArea()->SendNewDrawRequest();
-	      game::DrawEverything();
+	      DrawEverything();
 	      return false;
 	    default:
 	      GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
@@ -1033,12 +1022,12 @@ bool game::HandleQuitMessage()
 	    }
 	}
       else
-	if(!game::Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "You can't save at this point. Are you sure you still want to do this?\r", "Yes\rNo\r", LIGHT_GRAY))
+	if(!Menu(0, vector2d(RES_X >> 1, RES_Y >> 1), "You can't save at this point. Are you sure you still want to do this?\r", "Yes\rNo\r", LIGHT_GRAY))
 	  RemoveSaves();
 	else
 	  {
 	    GetCurrentArea()->SendNewDrawRequest();
-	    game::DrawEverything();
+	    DrawEverything();
 	    return false;
 	  }
     }
@@ -1051,7 +1040,7 @@ bool game::HandleQuitMessage()
 uchar game::GetDirectionForVector(vector2d Vector)
 {
   for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-    if(Vector == game::GetMoveVector(c))
+    if(Vector == GetMoveVector(c))
       return c;
 
   return DIR_ERROR;
@@ -1146,7 +1135,7 @@ int game::AskForKeyPress(const std::string& Topic)
   FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
   graphics::BlitDBToScreen();
   int Key = GET_KEY();
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   return Key;
 }
 
@@ -1226,9 +1215,9 @@ void game::LookHandler(vector2d CursorPos)
 {
   std::string OldMemory;
 
-  if(game::SeeWholeMapCheatIsActive())
+  if(SeeWholeMapCheatIsActive())
     {
-      OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+      OldMemory = GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
 
       if(IsInWilderness())
 	GetWorldMap()->GetWSquare(CursorPos)->UpdateMemorizedDescription(true);
@@ -1238,21 +1227,21 @@ void game::LookHandler(vector2d CursorPos)
 
   std::string Msg;
 
-  if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::SeeWholeMapCheatIsActive())
+  if(GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || SeeWholeMapCheatIsActive())
     {
-      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || game::SeeWholeMapCheatIsActive())
+      if(GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenByPlayer(true) || SeeWholeMapCheatIsActive())
 	Msg = "You see here ";
       else
 	Msg = "You remember here ";
 
-      Msg << game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() << ".";
+      Msg << GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() << ".";
     }
   else
     Msg = "You have never been here.";
 
-  character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+  character* Character = GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-  if(Character && (Character->CanBeSeenByPlayer() || game::SeeWholeMapCheatIsActive()))
+  if(Character && (Character->CanBeSeenByPlayer() || SeeWholeMapCheatIsActive()))
     Character->DisplayInfo(Msg);
 
   if(!(RAND() % 10000))
@@ -1260,8 +1249,8 @@ void game::LookHandler(vector2d CursorPos)
 
   ADD_MESSAGE("%s", Msg.c_str());
 
-  if(game::SeeWholeMapCheatIsActive())
-    game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
+  if(SeeWholeMapCheatIsActive())
+    GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 }
 
 bool game::AnimationController()
@@ -1330,7 +1319,7 @@ int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumb
 	}
     }
 
-  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
   return Return;
 }
 
@@ -1342,9 +1331,9 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
     {
     case 'i':
       if(!IsInWilderness())
-	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
+	if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || SeeWholeMapCheatIsActive())
 	  {
-	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
+	    stack* Stack = GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
 	    if(Square->GetOTerrain()->IsWalkable() && Stack->GetVisibleItems(PLAYER))
 	      Stack->DrawContents(PLAYER, "Items here", NO_SELECT|(SeeWholeMapCheatIsActive() ? 0 : NO_SPECIAL_INFO));
@@ -1356,11 +1345,11 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     case 'c':
-      if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || game::SeeWholeMapCheatIsActive())
+      if(Square->CanBeSeenByPlayer() || CursorPos == GetPlayer()->GetPos() || SeeWholeMapCheatIsActive())
 	{
 	  character* Char = Square->GetCharacter();
 
-	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || game::SeeWholeMapCheatIsActive()))
+	  if(Char && (Char->CanBeSeenByPlayer() || Char->IsPlayer() || SeeWholeMapCheatIsActive()))
 	    Char->PrintInfo();
 	  else
 	    ADD_MESSAGE("You see no one here.");
@@ -1377,7 +1366,7 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
   switch(Key)
     {
     case 'n':
-      character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+      character* Character = GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
       if(Character && Character->CanBeSeenByPlayer())
 	{
@@ -1454,13 +1443,6 @@ uchar game::CalculateRoughDirection(vector2d Vector)
     return 4;
 }
 
-void game::SetCurrentEmitterPos(vector2d What)
-{
-  CurrentEmitterPos = What;
-  CurrentEmitterPosX = What.X;
-  CurrentEmitterPosY = What.Y;
-}
-
 int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText1, const std::string& SmallText2)
 {
   globalwindowhandler::DisableControlLoops();
@@ -1475,7 +1457,7 @@ void game::InitDangerMap()
 
   for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
     {
-      game::BusyAnimation();
+      BusyAnimation();
       const character::prototype* Proto = protocontainer<character>::GetProto(c);
       const character::databasemap& Config = Proto->GetConfig();
 
@@ -1498,7 +1480,7 @@ void game::InitDangerMap()
 
 void game::CalculateNextDanger()
 {
-  if(IsInWilderness() || !*GetCurrentLevel()->GetLevelScript()->GenerateMonsters())
+  if(IsInWilderness() || !*CurrentLevel->GetLevelScript()->GenerateMonsters())
     return;
 
   const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerId.Type);
@@ -1546,8 +1528,8 @@ bool game::TryTravel(uchar Dungeon, uchar Area, uchar EntryIndex, bool AllowHost
 
   if(LeaveArea(Group, AllowHostiles))
     {
-      game::SetCurrentDungeonIndex(Dungeon);
-      game::EnterArea(Group, Area, EntryIndex);
+      CurrentDungeonIndex = Dungeon;
+      EnterArea(Group, Area, EntryIndex);
       return true;
     }
   else
@@ -1574,14 +1556,14 @@ bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
   return true;
 }
 
-/* Used when the player enters an area. */
+/* Used always when the player enters an area. */
 
 void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryIndex)
 {
   if(Area != WORLD_MAP)
     {
       SetIsInWilderness(false);
-      SetCurrentLevelIndex(Area);
+      CurrentLevelIndex = Area;
       bool New = !GetCurrentDungeon()->PrepareLevel(Area);
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
@@ -1615,6 +1597,8 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
     {
       SetIsInWilderness(true);
       LoadWorldMap();
+      CurrentArea = WorldMap;
+      CurrentWSquareMap = WorldMap->GetMap();
       GetWorldMap()->GetPlayerGroup().swap(Group);
       GetCurrentArea()->AddCharacter(GetWorldMap()->GetEntryPos(Player, EntryIndex), Player);
       SendLOSUpdateRequest();
@@ -1644,16 +1628,6 @@ char game::CompareLightToInt(ulong L, uchar Int)
     return 0;
   else
     return -1;
-}
-
-void game::CombineLights(ulong& L1, ulong L2)
-{
-  L1 = MakeRGB24(Max(GetRed24(L1), GetRed24(L2)), Max(GetGreen24(L1), GetGreen24(L2)), Max(GetBlue24(L1), GetBlue24(L2)));
-}
-
-bool game::IsDark(ulong Light)
-{
-  return !Light || (GetRed24(Light) < LIGHT_BORDER && GetGreen24(Light) < LIGHT_BORDER && GetBlue24(Light) < LIGHT_BORDER);
 }
 
 void game::SetStandardListAttributes(felist& List)
@@ -1892,8 +1866,27 @@ std::string game::GetGameDir()
 
 bool game::ExplosionHandler(long X, long Y)
 {
-  lsquare* Square = GetCurrentDungeon()->GetLevel(CurrentLevelIndex)->GetLSquare(X, Y);
+  lsquare* Square = CurrentLSquareMap[X][Y];
   Square->GetHitByExplosion(*CurrentExplosion);
   return Square->GetOLTerrain()->IsWalkable();
 }
 
+level* game::GetLevel(ushort Index)
+{
+  return GetCurrentDungeon()->GetLevel(Index);
+}
+
+ushort game::GetLevels()
+{
+  return GetCurrentDungeon()->GetLevels();
+}
+
+void game::InstallCurrentEmitter(vector2d Pos, ulong Emitation)
+{
+  CurrentEmitterPos = Pos;
+  CurrentEmitterPosXMinus16 = Pos.X - 16;
+  CurrentEmitterPosYMinus16 = Pos.Y - 16;
+  CurrentRedLuxTable = LuxTable[GetRed24(Emitation)];
+  CurrentGreenLuxTable = LuxTable[GetGreen24(Emitation)];
+  CurrentBlueLuxTable = LuxTable[GetBlue24(Emitation)];
+}

@@ -182,21 +182,21 @@ class character : public entity, public id
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
   bool CheckDeath(const std::string&, character*, bool = false);
-  virtual bool DodgesFlyingItem(item*, float);
+  bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, bool = false) = 0;
-  virtual bool OpenPos(vector2d);
-  virtual bool ReadItem(item*);
-  virtual bool TestForPickup(item*) const;
-  virtual void ThrowItem(uchar, item*);
-  virtual bool TryMove(vector2d, bool = true);
-  virtual bool HasHeadOfElpuri() const;
-  virtual bool HasGoldenEagleShirt() const;
-  virtual bool HasPetrussNut() const;
-  virtual bool HasEncryptedScroll() const;
+  bool OpenPos(vector2d);
+  bool ReadItem(item*);
+  bool TestForPickup(item*) const;
+  void ThrowItem(uchar, item*);
+  bool TryMove(vector2d, bool = true);
+  bool HasHeadOfElpuri() const;
+  bool HasGoldenEagleShirt() const;
+  bool HasPetrussNut() const;
+  bool HasEncryptedScroll() const;
   bool IsPlayer() const { return Player; }
-  virtual bool Engrave(const std::string&);
-  virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
-  virtual long GetScore() const;
+  bool Engrave(const std::string&);
+  void AddScoreEntry(const std::string&, float = 1, bool = true) const;
+  long GetScore() const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
   stack* GetStack() const { return Stack; }
@@ -207,28 +207,28 @@ class character : public entity, public id
   ushort GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
   ushort GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
   ushort GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
-  virtual void AddMissMessage(const character*) const;
-  virtual void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, ushort) const;
-  virtual void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;
+  void AddMissMessage(const character*) const;
+  void AddPrimitiveHitMessage(const character*, const std::string&, const std::string&, ushort) const;
+  void AddWeaponHitMessage(const character*, const item*, ushort, bool = false) const;
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
-  virtual void ReceiveDarkness(long);
+  void ReceiveDarkness(long);
   void Die(const std::string& = "", bool = false);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
   virtual bool MoveRandomly();
   void ReceiveNutrition(long);
-  virtual void ReceiveOmmelUrine(long);
-  virtual void ReceivePepsi(long);
-  virtual void ReceiveSchoolFood(long);
+  void ReceiveOmmelUrine(long);
+  void ReceivePepsi(long);
+  void ReceiveSchoolFood(long);
   void Regenerate();
   void SetAP(long What) { AP = What; }
   void SetIsPlayer(bool What) { Player = What; }
   void SetNP(long);
-  virtual void Vomit(ushort);
+  void Vomit(ushort);
   virtual void Be();
-  virtual bool Polymorph(character*, ushort);
+  bool Polymorph(character*, ushort);
   void BeKicked(character*, item*, float, float, short, bool, bool);
   void FallTo(character*, vector2d);
   bool CheckCannibalism(const material*) const;
@@ -252,7 +252,7 @@ class character : public entity, public id
   void SetMoney(ulong What) { Money = What; }
   void EditMoney(long What) { Money += What; }
   bool Displace(character*, bool = false);
-  virtual long GetStatScore() const;
+  long GetStatScore() const;
   bool CheckStarvationDeath(const std::string&);
   void ShowNewPosInfo() const;
   void Hostility(character*);
@@ -260,16 +260,16 @@ class character : public entity, public id
   bool MoveRandomlyInRoom();
   std::list<character*>::iterator GetTeamIterator();
   void SetTeamIterator(std::list<character*>::iterator);
-  virtual void ReceiveKoboldFlesh(long);
-  virtual bool ChangeRandomStat(short);
+  void ReceiveKoboldFlesh(long);
+  bool ChangeRandomStat(short);
   ushort RandomizeReply(ulong, ushort);
   virtual void CreateInitialEquipment(ushort);
-  virtual void DisplayInfo(std::string&);
+  void DisplayInfo(std::string&);
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   void TestWalkability();
   void EditAP(long);
   void EditNP(long What) { NP += What; }
-  virtual void SetSize(ushort);
+  void SetSize(ushort);
   virtual ushort GetSize() const;
   torso* GetTorso() const { return static_cast<torso*>(*BodyPartSlot[TORSO_INDEX]); }
   humanoidtorso* GetHumanoidTorso() const { return static_cast<humanoidtorso*>(*BodyPartSlot[TORSO_INDEX]); }
@@ -282,7 +282,7 @@ class character : public entity, public id
   void ChangeSecondaryMaterial(material*, ushort = 0);
   void SetContainedMaterial(material*, ushort = 0);
   void ChangeContainedMaterial(material*, ushort = 0);
-  virtual void Teleport(vector2d);
+  void Teleport(vector2d);
   void RestoreHP();
   void RestoreLivingHP();
   virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
@@ -297,14 +297,14 @@ class character : public entity, public id
   std::string GetObjectPronoun(bool = true) const;
   virtual bool BodyPartCanBeSevered(ushort) const;
   void AddName(std::string&, uchar) const;
-  virtual void ReceiveHeal(long);
+  void ReceiveHeal(long);
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   virtual void SetMainWielded(item*) { }
   virtual void SetSecondaryWielded(item*) { }
   uchar GetHungerState() const;
-  virtual bool ConsumeItem(item*);
-  virtual bool CanConsume(material*) const;
+  bool ConsumeItem(item*);
+  bool CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
   virtual void SwitchToDig(item*, vector2d) { }
@@ -318,9 +318,9 @@ class character : public entity, public id
   virtual bool CheckOffer() const { return true; }
   ushort GetTemporaryStateCounter(ushort) const;
   void EditTemporaryStateCounter(ushort, short);
-  bool AllowDamageTypeBloodSpill(uchar) const;
-  virtual bool ClosePos(vector2d);
-  virtual ushort GetResistance(uchar) const;
+  static bool AllowDamageTypeBloodSpill(uchar);
+  bool ClosePos(vector2d);
+  ushort GetResistance(uchar) const;
   virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
   virtual std::string GetEquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
@@ -328,20 +328,20 @@ class character : public entity, public id
   virtual ushort GetEquipmentSlots() const { return 0; }
   virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*) { return 0; }
   virtual void SetEquipment(ushort, item*) { }
-  virtual void AddHealingLiquidConsumeEndMessage() const;
-  virtual void AddSchoolFoodConsumeEndMessage() const;
-  virtual void AddSchoolFoodHitMessage() const;
-  virtual void AddOmmelUrineConsumeEndMessage() const;
-  virtual void AddPepsiConsumeEndMessage() const;
-  virtual void AddFrogFleshConsumeEndMessage() const;
-  virtual void AddKoboldFleshConsumeEndMessage() const;
-  virtual void AddKoboldFleshHitMessage() const;
-  virtual void AddBoneConsumeEndMessage() const;
-  virtual void PrintInfo() const;
+  void AddHealingLiquidConsumeEndMessage() const;
+  void AddSchoolFoodConsumeEndMessage() const;
+  void AddSchoolFoodHitMessage() const;
+  void AddOmmelUrineConsumeEndMessage() const;
+  void AddPepsiConsumeEndMessage() const;
+  void AddFrogFleshConsumeEndMessage() const;
+  void AddKoboldFleshConsumeEndMessage() const;
+  void AddKoboldFleshHitMessage() const;
+  void AddBoneConsumeEndMessage() const;
+  void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
   virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
-  virtual bool RaiseTheDead(character*);
+  bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
   bool CanUseEquipment(ushort) const;
   virtual const prototype* GetProtoType() const;
@@ -358,25 +358,24 @@ class character : public entity, public id
   DATA_BASE_VALUE(ushort, DefaultCharisma);
   DATA_BASE_VALUE(ushort, DefaultMana);
   DATA_BASE_VALUE(ulong, DefaultMoney);
-  virtual DATA_BASE_VALUE(ushort, TotalSize);
-  virtual DATA_BASE_BOOL(CanRead);
-  virtual DATA_BASE_BOOL(IsCharmable);
+  DATA_BASE_VALUE(ushort, TotalSize);
+  DATA_BASE_BOOL(CanRead);
+  DATA_BASE_BOOL(IsCharmable);
   DATA_BASE_VALUE(uchar, Sex);
-  virtual DATA_BASE_VALUE(ulong, BloodColor);
+  DATA_BASE_VALUE(ulong, BloodColor);
   DATA_BASE_BOOL(CanBeGenerated);
-  virtual DATA_BASE_VALUE(uchar, CriticalModifier);
+  DATA_BASE_VALUE(uchar, CriticalModifier);
   virtual DATA_BASE_VALUE(const std::string&, StandVerb);
-  virtual DATA_BASE_BOOL(CanOpen);
-  virtual DATA_BASE_BOOL(CanBeDisplaced);
-  virtual DATA_BASE_VALUE(ushort, Frequency);
+  DATA_BASE_BOOL(CanOpen);
+  DATA_BASE_BOOL(CanBeDisplaced);
   DATA_BASE_BOOL(CanWalk);
   DATA_BASE_BOOL(CanSwim);
   DATA_BASE_BOOL(CanFly);
   DATA_BASE_VALUE(ushort, FireResistance);
   DATA_BASE_VALUE(ushort, PoisonResistance);
   DATA_BASE_VALUE(ushort, ElectricityResistance);
-  virtual DATA_BASE_VALUE(ushort, ConsumeFlags);
-  virtual DATA_BASE_VALUE(ulong, TotalVolume);
+  DATA_BASE_VALUE(ushort, ConsumeFlags);
+  DATA_BASE_VALUE(ulong, TotalVolume);
   virtual DATA_BASE_VALUE(vector2d, HeadBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, TorsoBitmapPos);
   virtual DATA_BASE_VALUE(vector2d, ArmBitmapPos);
@@ -399,8 +398,8 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(ushort, ArmSpecialColor);
   virtual DATA_BASE_VALUE(ushort, LegMainColor);
   virtual DATA_BASE_VALUE(ushort, LegSpecialColor);
-  virtual DATA_BASE_BOOL(IsNameable);
-  virtual DATA_BASE_VALUE(ulong, BaseEmitation);
+  DATA_BASE_BOOL(IsNameable);
+  virtual DATA_BASE_VALUE(ulong, BaseEmitation); // devirtualize ASAP
   DATA_BASE_VALUE(const std::string&, Article);
   DATA_BASE_VALUE(const std::string&, Adjective);
   DATA_BASE_VALUE(const std::string&, AdjectiveArticle);
@@ -409,15 +408,15 @@ class character : public entity, public id
   DATA_BASE_VALUE(const std::string&, PostFix);
   DATA_BASE_VALUE(uchar, ArticleMode);
   DATA_BASE_BOOL(CanZap);
-  virtual DATA_BASE_BOOL(IsPolymorphable);
+  DATA_BASE_BOOL(IsPolymorphable);
   DATA_BASE_VALUE(ulong, BaseUnarmedStrength);
   DATA_BASE_VALUE(ulong, BaseBiteStrength);
   DATA_BASE_VALUE(ulong, BaseKickStrength);
   DATA_BASE_VALUE(uchar, AttackStyle);
   DATA_BASE_BOOL(CanUseEquipment);
-  virtual DATA_BASE_BOOL(CanKick);
-  virtual DATA_BASE_BOOL(CanTalk);
-  virtual DATA_BASE_VALUE(ushort, ClassStates);
+  DATA_BASE_BOOL(CanKick);
+  DATA_BASE_BOOL(CanTalk);
+  DATA_BASE_VALUE(ushort, ClassStates);
   DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
   DATA_BASE_BOOL(CreateGolemMaterialConfigurations);
   DATA_BASE_VALUE(short, AttributeBonus);
@@ -425,8 +424,8 @@ class character : public entity, public id
   DATA_BASE_VALUE(const std::vector<long>&, CWeaponSkillHits);
   DATA_BASE_VALUE(ushort, RightSWeaponSkillHits);
   DATA_BASE_VALUE(ushort, LeftSWeaponSkillHits);
-  virtual DATA_BASE_VALUE(uchar, PanicLevel);
-  virtual DATA_BASE_BOOL(CanBeCloned);
+  DATA_BASE_VALUE(uchar, PanicLevel);
+  DATA_BASE_BOOL(CanBeCloned);
   DATA_BASE_VALUE(const std::string&, DefaultName);
   DATA_BASE_VALUE(const std::vector<std::string>&, FriendlyReplies);
   DATA_BASE_VALUE(const std::vector<std::string>&, HostileReplies);
@@ -441,9 +440,9 @@ class character : public entity, public id
   DATA_BASE_BOOL(UsesNutrition);
   DATA_BASE_VALUE(ushort, AttackWisdomLimit);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void TeleportRandomly();
-  virtual bool TeleportNear(character*);
-  virtual bool IsStuck() const;
+  void TeleportRandomly();
+  bool TeleportNear(character*);
+  bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
   virtual void Kick(lsquare*, bool = false) = 0;
   virtual ushort GetAttribute(ushort) const;
@@ -451,24 +450,24 @@ class character : public entity, public id
   virtual void EditExperience(ushort, long);
   bool CheckForAttributeIncrease(ushort&, long&, bool = false);
   bool CheckForAttributeDecrease(ushort&, long&, bool = false);
-  virtual bool RawEditAttribute(ushort&, short&, bool = false);
-  virtual void DrawPanel(bool) const;
+  bool RawEditAttribute(ushort&, short&, bool = false) const;
+  void DrawPanel(bool) const;
   virtual ushort DrawStats(bool) const = 0;
   virtual ushort GetCarryingStrength() const = 0;
-  virtual bool DamageTypeAffectsInventory(uchar) const;
-  virtual void SetStuckTo(item* What) { StuckTo = What; }
-  virtual item* GetStuckTo() const { return StuckTo; }
-  virtual void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
-  virtual ushort GetStuckToBodyPart() const { return StuckToBodyPart; }
-  virtual bool TryToUnstuck(vector2d);
+  static bool DamageTypeAffectsInventory(uchar);
+  void SetStuckTo(item* What) { StuckTo = What; }
+  item* GetStuckTo() const { return StuckTo; }
+  void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
+  ushort GetStuckToBodyPart() const { return StuckToBodyPart; }
+  bool TryToUnstuck(vector2d);
   virtual ushort GetRandomStepperBodyPart() const;
   entity* GetMotherEntity() const { return MotherEntity; }
   void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
-  virtual ushort CheckForBlockWithArm(character*, item*, arm*, float, ushort, short, uchar);
-  virtual void AddBlockMessage(const character*, const item*, const std::string&, bool) const;
-  virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
-  virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
+  ushort CheckForBlockWithArm(character*, item*, arm*, float, ushort, short, uchar);
+  void AddBlockMessage(const character*, const item*, const std::string&, bool) const;
+  character* GetPolymorphBackup() const { return PolymorphBackup; }
+  void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
   cweaponskill* GetCWeaponSkill(ushort Index) const { return CWeaponSkill[Index]; }
   virtual bool AddSpecialSkillInfo(felist&) const { return false; }
   virtual bool CheckBalance(float);
@@ -480,45 +479,45 @@ class character : public entity, public id
   void BeginTemporaryState(ushort, ushort);
   void GainIntrinsic(ushort);
   void HandleStates();
-  virtual void PrintBeginPolymorphControlMessage() const;
-  virtual void PrintEndPolymorphControlMessage() const;
-  virtual void PrintBeginLifeSaveMessage() const;
-  virtual void PrintEndLifeSaveMessage() const;
-  virtual void PrintBeginLycanthropyMessage() const;
-  virtual void PrintEndLycanthropyMessage() const;
-  virtual void PrintBeginHasteMessage() const;
-  virtual void PrintEndHasteMessage() const;
-  virtual void PrintBeginSlowMessage() const;
-  virtual void PrintEndSlowMessage() const;
-  virtual void EndPolymorph();
+  void PrintBeginPolymorphControlMessage() const;
+  void PrintEndPolymorphControlMessage() const;
+  void PrintBeginLifeSaveMessage() const;
+  void PrintEndLifeSaveMessage() const;
+  void PrintBeginLycanthropyMessage() const;
+  void PrintEndLycanthropyMessage() const;
+  void PrintBeginHasteMessage() const;
+  void PrintEndHasteMessage() const;
+  void PrintBeginSlowMessage() const;
+  void PrintEndSlowMessage() const;
+  void EndPolymorph();
   void LycanthropyHandler();
-  virtual void SaveLife();
-  virtual void BeginInvisibility();
-  virtual void BeginInfraVision();
-  virtual void BeginESP();
-  virtual void EndInvisibility();
-  virtual void EndInfraVision();
-  virtual void EndESP();
-  virtual character* PolymorphRandomly(ushort, ushort, ushort);
+  void SaveLife();
+  void BeginInvisibility();
+  void BeginInfraVision();
+  void BeginESP();
+  void EndInvisibility();
+  void EndInfraVision();
+  void EndESP();
+  character* PolymorphRandomly(ushort, ushort, ushort);
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
-  virtual void StartReading(item*, ulong);
-  virtual void DexterityAction(ushort);
+  void StartReading(item*, ulong);
+  void DexterityAction(ushort);
   virtual void SWeaponSkillTick() { }
-  virtual void PrintBeginInvisibilityMessage() const;
-  virtual void PrintEndInvisibilityMessage() const;
-  virtual void PrintBeginInfraVisionMessage() const;
-  virtual void PrintEndInfraVisionMessage() const;
-  virtual void PrintBeginESPMessage() const;
-  virtual void PrintEndESPMessage() const;
+  void PrintBeginInvisibilityMessage() const;
+  void PrintEndInvisibilityMessage() const;
+  void PrintBeginInfraVisionMessage() const;
+  void PrintEndInfraVisionMessage() const;
+  void PrintBeginESPMessage() const;
+  void PrintEndESPMessage() const;
   bool CanBeSeenByPlayer(bool = false, bool = false) const;
   bool CanBeSeenBy(const character*, bool = false, bool = false) const;
   virtual void DetachBodyPart();
   void AttachBodyPart(bodypart*);
-  virtual bool HasAllBodyParts() const;
-  virtual bodypart* FindRandomOwnBodyPart(bool = false) const;
-  virtual bodypart* GenerateRandomBodyPart();
-  virtual void PrintBeginPoisonedMessage() const;
-  virtual void PrintEndPoisonedMessage() const;
+  bool HasAllBodyParts() const;
+  bodypart* FindRandomOwnBodyPart(bool = false) const;
+  bodypart* GenerateRandomBodyPart();
+  void PrintBeginPoisonedMessage() const;
+  void PrintEndPoisonedMessage() const;
   bool IsWarm() const;
   void CalculateEquipmentState();
   void Draw(bitmap*, vector2d, ulong, bool) const;
@@ -584,8 +583,8 @@ class character : public entity, public id
   virtual void CalculateAllowedWeaponSkillCategories();
   uchar GetBodyParts() const { return BodyParts; }
   uchar GetAllowedWeaponSkillCategories() const { return AllowedWeaponSkillCategories; }
-  virtual float GetRelativeDanger(const character*, bool = false) const;
-  virtual float GetTimeToDie(const character*, ushort, float, bool, bool) const;
+  float GetRelativeDanger(const character*, bool = false) const;
+  float GetTimeToDie(const character*, ushort, float, bool, bool) const;
   virtual float GetTimeToKill(const character*, bool) const = 0;
   float GetDangerModifier() const;
   virtual void AddSpecialEquipmentInfo(std::string&, ushort) const { }
@@ -597,8 +596,8 @@ class character : public entity, public id
   virtual bool SpecialUnarmedEffect(character*, uchar, uchar, bool) { return false; }
   virtual bool SpecialKickEffect(character*, uchar, uchar, bool) { return false; }
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool) { return false; }
-  virtual bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
-  virtual void WeaponSkillHit(item*, uchar);
+  bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
+  void WeaponSkillHit(item*, uchar);
   virtual void AddDefenceInfo(felist&) const;
   character* Duplicate() const;
   room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
@@ -607,12 +606,12 @@ class character : public entity, public id
   void UpdateESPLOS() const;
   uchar GetCWeaponSkillLevel(const item*) const;
   virtual uchar GetSWeaponSkillLevel(const item*) const { return 0; }
-  virtual void PrintBeginPanicMessage() const;
-  virtual void PrintEndPanicMessage() const;
-  virtual void CheckPanic(ushort);
-  virtual character* CloneToNearestSquare(character*) const;
-  virtual void SignalSpoil();
-  virtual void SignalSpoilLevelChange();
+  void PrintBeginPanicMessage() const;
+  void PrintEndPanicMessage() const;
+  void CheckPanic(ushort);
+  character* CloneToNearestSquare(character*) const;
+  void SignalSpoil();
+  void SignalSpoilLevelChange();
   virtual bool IsAlive() const = 0;
   bool IsPolymorphed() const { return Polymorphed; }
   void SetPolymorphed(bool What) { Polymorphed = What; }
@@ -623,17 +622,17 @@ class character : public entity, public id
   bool CanHeal() const;
   vector2d GetWaypoint() const { return WayPoint; }
   void SetWayPoint(vector2d What) { WayPoint = What; }
-  virtual void ReceiveFluidSpill(material*, ushort);
+  void ReceiveFluidSpill(material*, ushort);
   uchar GetRelation(const character*) const;
   void CalculateAttributeBonuses();
   void ApplyEquipmentAttributeBonuses(item*);
-  virtual void ReceiveAntidote(long);
-  virtual void AddAntidoteConsumeEndMessage() const;
+  void ReceiveAntidote(long);
+  void AddAntidoteConsumeEndMessage() const;
   bool IsDead() const;
   virtual void ShowBattleInfo() = 0;
   void AddOriginalBodyPartID(ushort, ulong);
   void AddToInventory(const std::list<contentscript<item> >&, ushort);
-  virtual void ShowDodgeAndMoveInfo() const;
+  void ShowDodgeAndMoveInfo() const;
   virtual void AddSpecialMovePenaltyInfo(felist&) const { }
   bool HasHadBodyPart(const item*) const;
   void ProcessAndAddMessage(std::string) const;
@@ -647,28 +646,28 @@ class character : public entity, public id
   void DamageAllItems(character*, ushort, uchar);
   bool Equips(const item*) const;
   virtual void AddAttributeInfo(std::string&) const;
-  virtual void PrintBeginConfuseMessage() const;
-  virtual void PrintEndConfuseMessage() const;
+  void PrintBeginConfuseMessage() const;
+  void PrintEndConfuseMessage() const;
   vector2d ApplyStateModification(vector2d) const;
-  virtual void AddConfuseHitMessage() const;
-  virtual item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
-  virtual void SelectFromPossessions(std::vector<item*>&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
-  virtual bool EquipsSomething(bool (*)(const item*, const character*) = 0);
-  virtual bool CheckTalk();
+  void AddConfuseHitMessage() const;
+  item* SelectFromPossessions(const std::string&, bool (*)(const item*, const character*) = 0);
+  void SelectFromPossessions(std::vector<item*>&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
+  bool EquipsSomething(bool (*)(const item*, const character*) = 0);
+  bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return false; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
-  virtual std::string& ProcessMessage(std::string&) const;
+  std::string& ProcessMessage(std::string&) const;
   virtual bool IsHumanoid() const { return false; }
-  virtual long GetStuffScore() const;
-  virtual bool IsOnGround() const;
+  long GetStuffScore() const;
+  bool IsOnGround() const;
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const { return false; }
   bool MoveTowardsHomePos();
   virtual void SetWayPoints(const std::vector<vector2d>&) { }
-  virtual bool TryToChangeEquipment(ushort);
-  virtual void PrintBeginParasitizedMessage() const;
-  virtual void PrintEndParasitizedMessage() const;
+  bool TryToChangeEquipment(ushort);
+  void PrintBeginParasitizedMessage() const;
+  void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
-  virtual bool CanFollow() const;
+  bool CanFollow() const;
   bool LeftOversAreUnique() const;
   std::string GetKillName() const;
   std::string GetPanelName() const;
@@ -681,7 +680,7 @@ class character : public entity, public id
   void SetHomePos(vector2d);
   void RemoveHomeData();
   ulong GetID() const { return ID; }
-  virtual void AddESPConsumeMessage() const;
+  void AddESPConsumeMessage() const;
   virtual void RaiseStats();
   virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;

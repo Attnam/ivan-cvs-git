@@ -56,6 +56,7 @@ class protosystem
   static material* CreateMaterial(const std::string&, ulong = 0, bool = true);
   static void CreateEveryCharacter(std::vector<character*>&);
   static void CreateEveryItem(std::vector<item*>&);
+  static void CreateEveryMaterial(std::vector<material*>&);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, const type* Class)

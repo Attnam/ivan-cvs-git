@@ -9,7 +9,7 @@ fluid::fluid() : entity(HAS_BE) { }
 fluid::fluid(square* SquareUnder) : entity(HAS_BE), Picture(0), Material(0), SquareUnder(SquareUnder)
 {
   Picture = new bitmap(16, 16);
-  Picture->Fill(TRANSPARENT_COLOR);
+  Picture->ClearToColor(TRANSPARENT_COLOR);
   Picture->CreateAlphaMap(0);
 }
 

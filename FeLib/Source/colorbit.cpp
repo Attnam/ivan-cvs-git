@@ -85,7 +85,7 @@ void colorizablebitmap::Save(const std::string& FileName)
 
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
-  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->GetXSize(), Bitmap->GetYSize()))
     return;
 
   uchar* Buffer = reinterpret_cast<uchar*>(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
@@ -115,7 +115,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    }
 	}
 
-      DestBuffer += Bitmap->XSize << 1;
+      DestBuffer += Bitmap->GetXSize() << 1;
       Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 }
@@ -166,8 +166,8 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
 	}
 
-      DestBuffer += (Bitmap->XSize << 1);
-      AlphaMap += Bitmap->XSize;
+      DestBuffer += (Bitmap->GetXSize() << 1);
+      AlphaMap += Bitmap->GetXSize();
       Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
 
@@ -222,8 +222,8 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 	    reinterpret_cast<ushort*>(DestBuffer)[x] = ((Palette[PaletteElement + (PaletteElement << 1)] >> 3) << 11) | ((Palette[PaletteElement + (PaletteElement << 1) + 1] >> 2) << 5) | (Palette[PaletteElement + (PaletteElement << 1) + 2] >> 3);
 	}
 
-      DestBuffer += (Bitmap->XSize << 1);
-      AlphaMap += Bitmap->XSize;
+      DestBuffer += (Bitmap->GetXSize() << 1);
+      AlphaMap += Bitmap->GetXSize();
       Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
   return Bitmap;

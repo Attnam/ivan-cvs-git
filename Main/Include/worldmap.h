@@ -35,7 +35,7 @@ class worldmap : public area
   short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
   std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
   character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
-  virtual void Draw() const;
+  virtual void Draw(bool) const;
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();
   wsquare* GetNeighbourWSquare(vector2d, ushort) const;
@@ -43,6 +43,7 @@ class worldmap : public area
   void RevealEnvironment(vector2d, ushort);
   void SafeSmooth(ushort, ushort);
   void FastSmooth(ushort, ushort);
+  wsquare*** GetMap() const { return Map; }
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

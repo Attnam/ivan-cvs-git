@@ -132,7 +132,7 @@ human
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 16;
 	TotalVolume = 80000;
-	TotalSize = 150;
+	TotalSize = 175;
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;

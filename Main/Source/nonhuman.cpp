@@ -87,33 +87,6 @@ bool dog::Catches(item* Thingy)
     return false;
 }
 
-bool largecat::Catches(item* Thingy)
-{
-  if(Thingy->CatWillCatchAndConsume())
-    {
-      if(ConsumeItem(Thingy))
-	{
-	  if(IsPlayer())
-	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
-	  else
-	    {
-	      if(CanBeSeenByPlayer())
-		ADD_MESSAGE("%s catches %s and eats it.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
-
-	      ChangeTeam(PLAYER->GetTeam());
-	    }
-	}
-      else if(IsPlayer())
-	ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHAR_NAME(DEFINITE));
-      else if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s catches %s.", CHAR_NAME(DEFINITE), Thingy->CHAR_NAME(DEFINITE));
-
-      return true;
-    }
-  else
-    return false;
-}
-
 bool unicorn::SpecialEnemySightedReaction(character*)
 {
   if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))

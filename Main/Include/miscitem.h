@@ -79,6 +79,7 @@ class ITEM
   virtual void SetSquarePosition(uchar What) { SquarePosition = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual bool HasSpecialAnimation() const { return !IsBroken(); }
   virtual ushort GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }

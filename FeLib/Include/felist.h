@@ -26,7 +26,7 @@ class felist
   felist(const std::string&, ushort = WHITE, ushort = 0);
   ~felist();
   void AddEntry(const std::string&, ushort, ushort = 0, bitmap* = 0, bool = true);
-  void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true);
+  void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true, bool = false);
   void AddDescription(const std::string&, ushort = WHITE);
   ushort Draw();
   void QuickDraw(vector2d, ushort, ushort = 20) const;

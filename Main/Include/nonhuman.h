@@ -205,8 +205,6 @@ class CHARACTER
 (        
   largecat,
   nonhumanoid,
- public:
-  virtual bool Catches(item*);
   ;
 );
 

@@ -624,16 +624,16 @@ bool commandsystem::Pray(character* Char)
       for(ushort c = 1; c <= GODS; ++c)
 	if(game::GetGod(c)->IsKnown())
 	  {
-	    bitmap Icon(igraph::GetSymbolGraphic(), c << 4, 0, 16, 16);
-	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, &Icon);
+	    igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), c << 4, 0, 0, 0, 16, 16);
+	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
 	    KnownIndex.push_back(c);
 	  }
     }
   else
     if(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->IsKnown())
       {
-	bitmap Icon(igraph::GetSymbolGraphic(), Char->GetLSquareUnder()->GetDivineMaster() << 4, 0, 16, 16);
-	Panthenon.AddEntry(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetCompleteDescription(), LIGHT_GRAY, 20, &Icon);
+	igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), Char->GetLSquareUnder()->GetDivineMaster() << 4, 0, 0, 0, 16, 16);
+	Panthenon.AddEntry(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
 	KnownIndex.push_back(Char->GetLSquareUnder()->GetDivineMaster());
       }
     else
@@ -969,6 +969,7 @@ bool commandsystem::SecretKnowledge(character* Char)
   List.AddEntry("Character danger values", LIGHT_GRAY);
   List.AddEntry("Item attack info", LIGHT_GRAY);
   List.AddEntry("Miscellaneous item info", LIGHT_GRAY);
+  List.AddEntry("Material info", LIGHT_GRAY);
   game::SetStandardListAttributes(List);
   List.AddFlags(SELECTABLE);
   ushort Chosen = List.Draw();
@@ -995,7 +996,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Pic.Fill(TRANSPARENT_COLOR);
+	      Pic.ClearToColor(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      Character[c]->AddAttributeInfo(Entry);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
@@ -1010,7 +1011,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Pic.Fill(TRANSPARENT_COLOR);
+	      Pic.ClearToColor(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	      Character[c]->AddAttackInfo(List);
@@ -1029,7 +1030,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry << int(Character[c]->GetDodgeValue());
 	      Entry.resize(57, ' ');
 	      Entry << Character[c]->GetMaxHP();
-	      Pic.Fill(TRANSPARENT_COLOR);
+	      Pic.ClearToColor(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	      Character[c]->AddDefenceInfo(List);
@@ -1053,7 +1054,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      else
 		Entry << '-';
 
-	      Pic.Fill(TRANSPARENT_COLOR);
+	      Pic.ClearToColor(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), NORMAL_LUMINANCE, false);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, &Pic);
 	    }
@@ -1080,7 +1081,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddAttackInfo(List);
 	    }
 
@@ -1092,7 +1093,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.resize(0);
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), true, Item[c]->AllowAlphaEverywhere());
 	      Item[c]->AddMiscellaneousInfo(List);
 	    }
 
@@ -1101,6 +1102,29 @@ bool commandsystem::SecretKnowledge(character* Char)
 
       for(c = 0; c < Item.size(); ++c)
 	delete Item[c];
+    }
+  else if(Chosen < 7)
+    {
+      std::vector<material*> Material;
+      protosystem::CreateEveryMaterial(Material);
+      PageLength = 30;
+      List.AddDescription("                                        Strength       Flexibility   Density");
+
+      for(c = 0; c < Material.size(); ++c)
+	{
+	  Entry.resize(0);
+	  Material[c]->AddName(Entry, false, false);
+	  Entry.resize(40, ' ');
+	  Entry << int(Material[c]->GetStrengthValue());
+	  Entry.resize(55, ' ');
+	  Entry << int(Material[c]->GetFlexibility());
+	  Entry.resize(70, ' ');
+	  Entry << int(Material[c]->GetDensity());
+	  List.AddEntry(Entry, Material[c]->GetColor());
+	}
+
+      for(c = 0; c < Material.size(); ++c)
+	delete Material[c];
     }
 
   game::SetStandardListAttributes(List);
@@ -1138,12 +1162,13 @@ bool commandsystem::EquipmentScreen(character* Char)
 	{
 	  Entry = Char->GetEquipmentName(c) + ":";
 	  Entry.resize(20, ' ');
+	  item* Equipment = Char->GetEquipment(c);
 
-	  if(Char->GetEquipment(c))
+	  if(Equipment)
 	    {
-	      Char->GetEquipment(c)->AddInventoryEntry(Char, Entry, 1, true);
+	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
 	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, Char->GetEquipment(c)->GetPicture());
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), true, Equipment->AllowAlphaEverywhere());
 	    }
 	  else
 	    {

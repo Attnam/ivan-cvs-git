@@ -10,9 +10,8 @@
 bitmap* CurrentSprite;
 std::vector<vector2d> CurrentPixelVector;
 
-bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
+bitmap::bitmap(const std::string& FileName) : AlphaMap(0)
 {
-  SetAlphaMap(0);
   inputfile File(FileName.c_str(), 0, false);
 
   if(!File.IsOpen())
@@ -26,9 +25,10 @@ bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
   XSize += (File.Get() << 8) + 1;
   YSize  =  File.Get();
   YSize += (File.Get() << 8) + 1;
+  XSizeTimesYSize = XSize * YSize;
   File.SeekPosBegin(128);
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-  ushort* Buffer = GetImage()[0];
+  Alloc2D<ushort>(Image, YSize, XSize);
+  ushort* Buffer = Image[0];
 
   for(ushort y = 0; y < YSize; ++y)
     for(ushort x = 0; x < XSize; ++x)
@@ -56,82 +56,56 @@ bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
       }
 }
 
-bitmap::bitmap(bitmap* Bitmap, uchar Flags) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), IsIndependent(true)
+bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), Image(Alloc2D<ushort>(YSize, XSize))
 {
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-
-  if(Bitmap->IsIndependent && Bitmap->GetAlphaMap())
+  if(CopyAlpha && Bitmap->AlphaMap)
     {
-      SetAlphaMap(Alloc2D<uchar>(YSize, XSize));
-      Bitmap->BlitAndCopyAlpha(this, 0, 0, 0, 0, XSize, YSize, Flags);
+      Alloc2D<uchar>(AlphaMap, YSize, XSize);
+      Bitmap->BlitAndCopyAlpha(this, Flags);
     }
   else
     {
-      SetAlphaMap(0);
-      Bitmap->Blit(this, 0, 0, 0, 0, XSize, YSize, Flags);
+      AlphaMap = 0;
+
+      if(!Flags)
+	Bitmap->FastBlit(this);
+      else
+	Bitmap->Blit(this, Flags);
     }
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndependent(true)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
 {
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-  SetAlphaMap(0);
 }
 
-bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), IsIndependent(true)
+bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
 {
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-  SetAlphaMap(0);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), IsIndependent(true)
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
 {
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-  SetAlphaMap(0);
-  Fill(Color);
+  ClearToColor(Color);
 }
 
-bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), IsIndependent(true)
+bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
 {
-  SetImage(Alloc2D<ushort>(YSize, XSize));
-  SetAlphaMap(0);
-  Fill(Color);
-}
-
-bitmap::bitmap(bitmap* MotherBitmap, ushort XPos, ushort YPos, ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndependent(false)
-{
-  SetMotherBitmap(MotherBitmap);
-  SetXPos(XPos);
-  SetYPos(YPos);
-}
-
-bitmap::bitmap(bitmap* MotherBitmap, vector2d Pos, vector2d Size) : XSize(Size.X), YSize(Size.Y), IsIndependent(false)
-{
-  SetMotherBitmap(MotherBitmap);
-  SetXPos(Pos.X);
-  SetYPos(Pos.Y);
+  ClearToColor(Color);
 }
 
 bitmap::~bitmap()
 {
-  if(IsIndependent)
-    {
-      delete [] GetImage();
-      delete [] GetAlphaMap();
-    }
+  delete [] Image;
+  delete [] AlphaMap;
 }
 
 void bitmap::Save(outputfile& SaveFile) const
 {
-  if(!IsIndependent)
-    ABORT("Subbitmap save request detected!");
+  SaveFile.Write(reinterpret_cast<char*>(Image[0]), XSizeTimesYSize << 1);
 
-  SaveFile.Write(reinterpret_cast<char*>(GetImage()[0]), (XSize * YSize) << 1);
-
-  if(GetAlphaMap())
+  if(AlphaMap)
     {
       SaveFile << uchar(1);
-      SaveFile.Write(reinterpret_cast<char*>(GetAlphaMap()[0]), XSize * YSize);
+      SaveFile.Write(reinterpret_cast<char*>(AlphaMap[0]), XSizeTimesYSize);
     }
   else
     SaveFile << uchar(0);
@@ -139,15 +113,14 @@ void bitmap::Save(outputfile& SaveFile) const
 
 void bitmap::Load(inputfile& SaveFile)
 {
-  SaveFile.Read(reinterpret_cast<char*>(GetImage()[0]), (XSize * YSize) << 1);
-
+  SaveFile.Read(reinterpret_cast<char*>(Image[0]), (XSizeTimesYSize) << 1);
   uchar Alpha;
   SaveFile >> Alpha;
 
   if(Alpha)
     {
-      SetAlphaMap(Alloc2D<uchar>(YSize, XSize));
-      SaveFile.Read(reinterpret_cast<char*>(GetAlphaMap()[0]), XSize * YSize);
+      Alloc2D<uchar>(AlphaMap, YSize, XSize);
+      SaveFile.Read(reinterpret_cast<char*>(AlphaMap[0]), XSizeTimesYSize);
     }
 }
 
@@ -180,12 +153,6 @@ void bitmap::Save(const std::string& FileName) const
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->Fill(GetXPos() + X, GetYPos() + Y, Width, Height, Color);
-      return;
-    }
-
   if(X > XSize || Y > YSize)
     return;
 
@@ -195,27 +162,25 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
   if(Y + Height > YSize)
     Height = YSize - Y;
 
-  ushort** Image = GetImage();
-
   for(ushort y = 0; y < Height; ++y)
     for(ushort* Ptr = &Image[Y + y][X], x = 0; x < Width; ++x, ++Ptr)
       *Ptr = Color;
 }
 
+void bitmap::ClearToColor(ushort Color)
+{
+  ulong Size = XSizeTimesYSize;
+  ushort* Ptr = Image[0];
+
+  if(Color >> 8 == (Color & 0xFF))
+    memset(Ptr, Color, Size << 1);
+  else
+    for(ulong c = 0; c < Size; ++c)
+      Ptr[c] = Color;
+}
+
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->Blit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      Blit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags);
-      return;
-    }
-
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
@@ -226,8 +191,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
     return;
 
   Flags &= 0x7;
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
 
   switch(Flags)
     {
@@ -235,7 +200,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
       {
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -251,7 +216,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
@@ -267,7 +232,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -284,7 +249,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
@@ -301,7 +266,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
@@ -317,7 +282,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
@@ -335,7 +300,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
@@ -352,7 +317,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
@@ -364,20 +329,16 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
     }
 }
 
+void bitmap::FastBlit(bitmap* Bitmap) const
+{
+  if(XSize != Bitmap->XSize || YSize != Bitmap->YSize)
+    ABORT("Fast blit attempt of noncongruent bitmaps detected!");
+
+  memcpy(Bitmap->Image[0], Image[0], XSizeTimesYSize << 1);
+}
+
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->Blit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Luminance);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      Blit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Luminance);
-      return;
-    }
-
   if(Luminance == NORMAL_LUMINANCE)
     {
       Blit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
@@ -390,8 +351,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
 
   ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
   ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
@@ -399,7 +360,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
   for(ushort y = 0; y < Height; ++y)
     {
-      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
       ushort* DestPtr = &DestImage[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -411,18 +372,6 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->MaskedBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      MaskedBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags, MaskColor);
-      return;
-    }
-
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
@@ -433,8 +382,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
     return;
 
   Flags &= 0x7;
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
 
   switch(Flags)
     {
@@ -442,7 +391,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
       {
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -459,7 +408,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
@@ -476,7 +425,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -494,7 +443,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr)
@@ -512,7 +461,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
@@ -529,7 +478,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove)
@@ -548,7 +497,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
@@ -566,7 +515,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove)
@@ -581,18 +530,6 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->MaskedBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      MaskedBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Luminance, MaskColor);
-      return;
-    }
-
   if(Luminance == NORMAL_LUMINANCE)
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
@@ -605,8 +542,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
 
   ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
   ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
@@ -614,7 +551,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
   for(ushort y = 0; y < Height; ++y)
     {
-      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
       ushort* DestPtr = &DestImage[DestY + y][DestX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
@@ -625,64 +562,32 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
     }
 }
 
-void bitmap::SimpleAlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
+void bitmap::SimpleAlphaBlit(bitmap* Bitmap, uchar Alpha, ushort MaskColor) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->SimpleAlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Alpha, MaskColor);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      SimpleAlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Alpha, MaskColor);
-      return;
-    }
-
   if(Alpha == 255)
     {
-      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
+      MaskedBlit(Bitmap, uchar(0), MaskColor);
       return;
     }
 
-  if(!Width || !Height)
-    ABORT("Zero-sized bitmap blit attempt detected!");
+  if(XSize != Bitmap->XSize || YSize != Bitmap->YSize)
+    ABORT("Fast simple alpha blit attempt of noncongruent bitmaps detected!");
 
-  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
-    return;
-
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
+  ulong Size = XSizeTimesYSize;
+  const ushort* SrcPtr = Image[0];
+  ushort* DestPtr = Bitmap->Image[0];
   uchar NegAlpha = 0xFF - Alpha;
 
-  for(ushort y = 0; y < Height; ++y)
-    {
-      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-      ushort* DestPtr = &DestImage[DestY + y][DestX];
-
-      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr)
-	if(*SrcPtr != MaskColor)
-	  *DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * Alpha + GetRed16(*DestPtr) * NegAlpha,
-					     GetGreen16(*SrcPtr) * Alpha + GetGreen16(*DestPtr) * NegAlpha,
-					     GetBlue16(*SrcPtr) * Alpha + GetBlue16(*DestPtr) * NegAlpha);
-    }
+  for(ulong c = 0; c < Size; ++c, ++SrcPtr, ++DestPtr)
+    if(*SrcPtr != MaskColor)
+      *DestPtr = RightShift8AndMakeRGB16(GetRed16(*SrcPtr) * Alpha + GetRed16(*DestPtr) * NegAlpha,
+					 GetGreen16(*SrcPtr) * Alpha + GetGreen16(*DestPtr) * NegAlpha,
+					 GetBlue16(*SrcPtr) * Alpha + GetBlue16(*DestPtr) * NegAlpha);
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->AlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      AlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags, MaskColor);
-      return;
-    }
-
-  if(!GetAlphaMap())
+  if(!AlphaMap)
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
       return;
@@ -698,9 +603,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
     return;
 
   Flags &= 0x7;
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
-  uchar** AlphaMap = GetAlphaMap();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
+  uchar** SrcAlphaMap = AlphaMap;
 
   switch(Flags)
     {
@@ -708,9 +613,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
       {
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -728,9 +633,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -748,9 +653,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -769,9 +674,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -790,9 +695,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -810,9 +715,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -832,9 +737,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -853,9 +758,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+	    const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
 	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+	    const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++AlphaPtr)
 	      if(*SrcPtr != MaskColor)
@@ -871,12 +776,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->DrawLine(GetXPos() + OrigFromX, GetYPos() + OrigFromY, GetXPos() + OrigToX, GetYPos() + OrigToY, Color, Wide);
-      return;
-    }
-
   if(OrigFromY == OrigToY)
     DrawHorizontalLine(OrigFromX, OrigToX, OrigFromY, Color, Wide);
 
@@ -910,9 +809,9 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 	      Swap(FromY, ToY);
 	    }
 
-	  /* FromY may be negative, so using &GetImage()[FromY][FromX] is a bad idea */
+	  /* FromY may be negative, so using &Image[FromY][FromX] is a bad idea */
 
-	  ushort* Ptr = &GetImage()[0][0] + FromY * XSize + FromX;
+	  ushort* Ptr = &Image[0][0] + FromY * XSize + FromX;
 	  short UFO = (DistaX >> 1) + 1;
 	  short YMove, PtrYMove;
 
@@ -948,9 +847,9 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 	      Swap(FromY, ToY);
 	    }
 
-	  /* FromY may be negative, so using &GetImage()[FromY][FromX] is a bad idea */
+	  /* FromY may be negative, so using &Image[FromY][FromX] is a bad idea */
 
-	  ushort* Ptr = &GetImage()[0][0] + FromY * XSize + FromX;
+	  ushort* Ptr = &Image[0][0] + FromY * XSize + FromX;
 	  short UFO = (DistaY >> 1) + 1;
 	  short XMove = FromX <= ToX ? 1 : -1;
 
@@ -972,12 +871,6 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 
 void bitmap::DrawVerticalLine(ushort OrigX, ushort OrigFromY, ushort OrigToY, ushort Color, bool Wide)
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->DrawVerticalLine(GetXPos() + OrigX, GetYPos() + OrigFromY, GetYPos() + OrigToY, Color, Wide);
-      return;
-    }
-
   static short PointX[] = { 0, -1, 1 };
   ushort Times = Wide ? 3 : 1;
 
@@ -1001,7 +894,7 @@ void bitmap::DrawVerticalLine(ushort OrigX, ushort OrigFromY, ushort OrigToY, us
 
       FromY = Max<short>(FromY, 0);
       ToY = Min<short>(ToY, YSize);
-      ushort* Ptr = &GetImage()[FromY][X];
+      ushort* Ptr = &Image[FromY][X];
 
       for(short y = FromY; y <= ToY; ++y, Ptr += XSize)
 	*Ptr = Color;
@@ -1010,12 +903,6 @@ void bitmap::DrawVerticalLine(ushort OrigX, ushort OrigFromY, ushort OrigToY, us
 
 void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, ushort Color, bool Wide)
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->DrawVerticalLine(GetXPos() + OrigFromX, GetXPos() + OrigToX, GetYPos() + OrigY, Color, Wide);
-      return;
-    }
-
   static short PointY[] = { 0, -1, 1 };
   ushort Times = Wide ? 3 : 1;
 
@@ -1039,7 +926,7 @@ void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, 
 
       FromX = Max<short>(FromX, 0);
       ToX = Min<short>(ToX, XSize);
-      ushort* Ptr = &GetImage()[Y][FromX];
+      ushort* Ptr = &Image[Y][FromX];
 
       for(short x = FromX; x <= ToX; ++x, ++Ptr)
 	*Ptr = Color;
@@ -1048,14 +935,6 @@ void bitmap::DrawHorizontalLine(ushort OrigFromX, ushort OrigToX, ushort OrigY, 
 
 void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawSides, bool DrawDiameters, double Rotation)
 {
-  if(!IsIndependent)
-    {
-      /* Note: this doesn't care about subbitmap borders! */
-
-      GetMotherBitmap()->DrawPolygon(vector2d(GetXPos(), GetYPos()) + Center, Radius, NumberOfSides, Color, DrawSides, DrawDiameters, Rotation);
-      return;
-    }
-
   if(!DrawSides && !DrawDiameters)
     return;
 
@@ -1088,54 +967,49 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 
 void bitmap::CreateAlphaMap(uchar InitialValue)
 {
-  if(!IsIndependent)
-    ABORT("Subbitmap AlphaMap creation request detected!");
-
-  if(GetAlphaMap())
+  if(AlphaMap)
     ABORT("Alpha leak detected!");
 
-  SetAlphaMap(Alloc2D<uchar>(YSize, XSize, InitialValue));
+  Alloc2D<uchar>(AlphaMap, YSize, XSize);
+  memset(AlphaMap[0], InitialValue, XSizeTimesYSize);
 }
 
 bool bitmap::ChangeAlpha(char Amount)
 {
-  if(!IsIndependent)
-    ABORT("Subbitmap alpha change request detected!");
-
   if(!Amount)
     return false;
 
   bool Changes = false;
 
-  if(!GetAlphaMap())
+  if(!AlphaMap)
     ABORT("No alpha map to fade.");
 
   if(Amount > 0)
     {
-      for(ulong c = 0; c < ulong(XSize * YSize); ++c)
-	if(GetAlphaMap()[0][c] < 255 - Amount)
+      for(ulong c = 0; c < XSizeTimesYSize; ++c)
+	if(AlphaMap[0][c] < 255 - Amount)
 	  {
-	    GetAlphaMap()[0][c] += Amount;
+	    AlphaMap[0][c] += Amount;
 	    Changes = true;
 	  }
 	else
-	  if(GetAlphaMap()[0][c] != 255)
+	  if(AlphaMap[0][c] != 255)
 	    {
-	      GetAlphaMap()[0][c] = 255;
+	      AlphaMap[0][c] = 255;
 	      Changes = true;
 	    }
     }
   else
-    for(ulong c = 0; c < ulong(XSize * YSize); ++c)
-      if(GetAlphaMap()[0][c] > -Amount)
+    for(ulong c = 0; c < XSizeTimesYSize; ++c)
+      if(AlphaMap[0][c] > -Amount)
 	{
-	  GetAlphaMap()[0][c] += Amount;
+	  AlphaMap[0][c] += Amount;
 	  Changes = true;
 	}
       else
-	if(GetAlphaMap()[0][c])
+	if(AlphaMap[0][c])
 	  {
-	    GetAlphaMap()[0][c] = 0;
+	    AlphaMap[0][c] = 0;
 	    Changes = true;
 	  }
 
@@ -1144,14 +1018,11 @@ bool bitmap::ChangeAlpha(char Amount)
 
 void bitmap::Outline(ushort Color)
 {
-  if(!IsIndependent)
-    ABORT("Subbitmap outline request detected!");
-
   ushort LastColor, NextColor;
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      ushort* Buffer = &GetImage()[0][x];
+      ushort* Buffer = &Image[0][x];
       LastColor = *Buffer;
 
       for(ushort y = 0; y < YSize - 1; ++y)
@@ -1172,7 +1043,7 @@ void bitmap::Outline(ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      ushort* Buffer = GetImage()[y];
+      ushort* Buffer = Image[y];
       LastColor = *Buffer;
 
       for(ushort x = 0; x < XSize - 1; ++x)
@@ -1194,15 +1065,12 @@ void bitmap::Outline(ushort Color)
 
 void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 {
-  if(!IsIndependent)
-    ABORT("Subbitmap outline bitmap creation request detected!");
-
-  Bitmap->Fill(TRANSPARENT_COLOR);
+  Bitmap->ClearToColor(TRANSPARENT_COLOR);
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      ushort* SrcBuffer = &GetImage()[0][x];
-      ushort* DestBuffer = &Bitmap->GetImage()[0][x];
+      const ushort* SrcBuffer = &Image[0][x];
+      ushort* DestBuffer = &Bitmap->Image[0][x];
       ushort LastColor = *SrcBuffer;
 
       for(ushort y = 0; y < YSize - 1; ++y)
@@ -1224,8 +1092,8 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      ushort* SrcBuffer = GetImage()[y];
-      ushort* DestBuffer = Bitmap->GetImage()[y];
+      const ushort* SrcBuffer = Image[y];
+      ushort* DestBuffer = Bitmap->Image[y];
       ushort LastSrcColor = *SrcBuffer;
       ushort LastDestColor = *DestBuffer;
 
@@ -1249,55 +1117,9 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
     }
 }
 
-void bitmap::ResetAlpha(ushort X, ushort Y)
+void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 {
-  if(IsIndependent)
-    {
-      uchar** AlphaMap = GetAlphaMap();
-
-      if(AlphaMap)
-	AlphaMap[Y][X] = 255;
-    }
-  else
-    GetMotherBitmap()->ResetAlpha(X + GetXPos(), Y + GetYPos());
-}
-
-void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
-{
-  if(IsIndependent)
-    GetImage()[Y][X] = Color;
-  else
-    GetMotherBitmap()->PutPixel(GetXPos() + X, GetYPos() + Y, Color);
-}
-
-ushort bitmap::GetPixel(ushort X, ushort Y) const
-{
-  if(IsIndependent)
-    return GetImage()[Y][X];
-  else
-    return GetMotherBitmap()->GetPixel(GetXPos() + X, GetYPos() + Y);
-}
-
-void bitmap::SetAlpha(ushort X, ushort Y, uchar Alpha)
-{
-  if(IsIndependent)
-    GetAlphaMap()[Y][X] = Alpha;
-  else
-    GetMotherBitmap()->SetAlpha(GetXPos() + X, GetYPos() + Y, Alpha);
-}
-
-uchar bitmap::GetAlpha(ushort X, ushort Y) const
-{
-  if(IsIndependent)
-    return GetAlphaMap()[Y][X];
-  else
-    return GetMotherBitmap()->GetAlpha(GetXPos() + X, GetYPos() + Y);
-}
-
-void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
-{
-  bitmap Backup(RES_X, RES_Y);
-  DOUBLE_BUFFER->Blit(&Backup);
+  bitmap Backup(DOUBLE_BUFFER);
 
   for(ushort c = 0; c <= 5; ++c)
     {
@@ -1313,7 +1135,7 @@ void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
       while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
     }
 
-  DOUBLE_BUFFER->Fill(0);
+  DOUBLE_BUFFER->ClearToColor(0);
 
   if(BitmapEditor)
     BitmapEditor(this);
@@ -1324,18 +1146,6 @@ void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
 
 void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, char Stretch) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->StretchBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Stretch);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      StretchBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Stretch);
-      return;
-    }
-
   if(!Width || !Height)
     ABORT("Zero-sized bitmap stretch blit attempt detected!");
 
@@ -1352,12 +1162,12 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 
 	  for(ushort y1 = SourceY; y1 < SourceY + Height; ++y1, ty += Stretch)
 	    {
-	      ushort Pixel = GetImage()[y1][x1];
+	      ushort Pixel = Image[y1][x1];
 
 	      if(Pixel != TRANSPARENT_COLOR)
 		for(ushort x2 = tx; x2 < tx + Stretch; ++x2)
 		  for(ushort y2 = ty; y2 < ty + Stretch; ++y2)
-		    Bitmap->GetImage()[y2][x2] = Pixel;
+		    Bitmap->Image[y2][x2] = Pixel;
 	    }
 	}
 
@@ -1373,10 +1183,10 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
 
 	  for(ushort y1 = SourceY; y1 < SourceY + Height; y1 -= Stretch, ++ty)
 	    {
-	      ushort Pixel = GetImage()[y1][x1];
+	      ushort Pixel = Image[y1][x1];
 
 	      if(Pixel != TRANSPARENT_COLOR)
-		Bitmap->GetImage()[ty][tx] = Pixel;
+		Bitmap->Image[ty][tx] = Pixel;
 	    }
 	}
 
@@ -1426,25 +1236,13 @@ void bitmap::DrawRectangle(ushort Left, ushort Top, ushort Right, ushort Bottom,
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->AlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      AlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Luminance, MaskColor);
-      return;
-    }
-
   if(Luminance == NORMAL_LUMINANCE)
     {
       AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
       return;
     }
 
-  if(!GetAlphaMap())
+  if(!AlphaMap)
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
       return;
@@ -1456,9 +1254,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
 
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
-  uchar** AlphaMap = GetAlphaMap();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
+  uchar** SrcAlphaMap = AlphaMap;
 
   ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
   ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
@@ -1466,9 +1264,9 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
   for(ushort y = 0; y < Height; ++y)
     {
-      ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
       ushort* DestPtr = &DestImage[DestY + y][DestX];
-      uchar* AlphaPtr = &AlphaMap[SourceY + y][SourceX];
+      uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
@@ -1671,69 +1469,44 @@ bool bitmap::PixelVectorHandler(long X, long Y)
     return false;
 }
 
-void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
+void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, uchar Flags) const
 {
-  if(!IsIndependent)
-    {
-      GetMotherBitmap()->BlitAndCopyAlpha(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags);
-      return;
-    }
-
-  if(!Bitmap->IsIndependent)
-    {
-      BlitAndCopyAlpha(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags);
-      return;
-    }
-
-  if(!GetAlphaMap() || !Bitmap->GetAlphaMap())
+  if(!AlphaMap || !Bitmap->AlphaMap)
     ABORT("Attempt to blit and copy alpha without an alpha map detected!");
 
-  if(!Width || !Height)
-    ABORT("Zero-sized bitmap blit and copy alpha attempt detected!");
-
-  if(Flags & ROTATE && Width != Height)
+  if(Flags & ROTATE && XSize != YSize)
     ABORT("Blit and copy alpha error: FeLib supports only square rotating!");
 
-  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
-    return;
+  if(XSize != Bitmap->XSize || YSize != Bitmap->YSize)
+    ABORT("Blit and copy alpha attempt of noncongruent bitmaps detected!");
 
   Flags &= 0x7;
-  ushort** SrcImage = GetImage();
-  ushort** DestImage = Bitmap->GetImage();
-  uchar** SrcAlphaMap = GetAlphaMap();
-  uchar** DestAlphaMap = Bitmap->GetAlphaMap();
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
+  uchar** SrcAlphaMap = AlphaMap;
+  uchar** DestAlphaMap = Bitmap->AlphaMap;
 
   switch(Flags)
     {
     case NONE:
       {
-	for(ushort y = 0; y < Height; ++y)
-	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY + y][DestX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++SrcAlphaPtr, ++DestAlphaPtr)
-	      {
-		*DestPtr = *SrcPtr;
-		*DestAlphaPtr = *SrcAlphaPtr;
-	      }
-	  }
-
+	memcpy(DestImage[0], SrcImage[0], XSizeTimesYSize << 1);
+	memcpy(DestAlphaMap[0], SrcAlphaMap[0], XSizeTimesYSize);
 	break;
       }
 
     case MIRROR:
       {
-	DestX += Width - 1;
+	ushort Width = XSize;
+	ushort Height = YSize;
+	ushort DestX = Width - 1;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY + y][DestX];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY + y][DestX];
+	    ushort* DestPtr = &DestImage[y][DestX];
+	    uchar* DestAlphaPtr = &DestAlphaMap[y][DestX];
 
 	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++SrcAlphaPtr, --DestAlphaPtr)
 	      {
@@ -1747,20 +1520,13 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case FLIP:
       {
-	DestY += Height - 1;
+	ushort Height = YSize;
+	ushort DestY = Height - 1;
 
 	for(ushort y = 0; y < Height; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY - y][DestX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++SrcAlphaPtr, ++DestAlphaPtr)
-	      {
-		*DestPtr = *SrcPtr;
-		*DestAlphaPtr = *SrcAlphaPtr;
-	      }
+	    memcpy(DestImage[DestY - y], SrcImage[y], XSize << 1);
+	    memcpy(DestAlphaMap[DestY - y], SrcAlphaMap[y], XSize);
 	  }
 
 	break;
@@ -1768,21 +1534,16 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case (MIRROR | FLIP):
       {
-	DestX += Width - 1;
-	DestY += Height - 1;
+	ulong Size = XSizeTimesYSize;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
+	ushort* DestPtr = &DestImage[YSize - 1][XSize - 1];
+	uchar* DestAlphaPtr = &DestAlphaMap[YSize - 1][XSize - 1];
 
-	for(ushort y = 0; y < Height; ++y)
+	for(ulong c = 0; c < Size; ++c, ++SrcPtr, --DestPtr, ++SrcAlphaPtr, --DestAlphaPtr)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY - y][DestX];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY - y][DestX];
-
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, --DestPtr, ++SrcAlphaPtr, --DestAlphaPtr)
-	      {
-		*DestPtr = *SrcPtr;
-		*DestAlphaPtr = *SrcAlphaPtr;
-	      }
+	    *DestPtr = *SrcPtr;
+	    *DestAlphaPtr = *SrcAlphaPtr;
 	  }
 
 	break;
@@ -1790,17 +1551,16 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case ROTATE:
       {
-	DestX += Width - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
+	ushort Size = XSize;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
 
-	for(ushort y = 0; y < Height; ++y)
+	for(ushort y = 0; y < Size; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY][DestX - y];
+	    ushort* DestPtr = &DestImage[0][Size - 1 - y];
+	    uchar* DestAlphaPtr = &DestAlphaMap[0][Size - 1 - y];
 
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++SrcAlphaPtr, DestAlphaPtr += TrueDestXMove)
+	    for(ushort x = 0; x < Size; ++x, ++SrcPtr, DestPtr += Size, ++SrcAlphaPtr, DestAlphaPtr += Size)
 	      {
 		*DestPtr = *SrcPtr;
 		*DestAlphaPtr = *SrcAlphaPtr;
@@ -1812,16 +1572,16 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case (MIRROR | ROTATE):
       {
-	ulong TrueDestXMove = Bitmap->XSize;
+	ushort Size = XSize;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
 
-	for(ushort y = 0; y < Height; ++y)
+	for(ushort y = 0; y < Size; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY][DestX + y];
+	    ushort* DestPtr = &DestImage[0][y];
+	    uchar* DestAlphaPtr = &DestAlphaMap[0][y];
 
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr += TrueDestXMove, ++SrcAlphaPtr, DestAlphaPtr += TrueDestXMove)
+	    for(ushort x = 0; x < Size; ++x, ++SrcPtr, DestPtr += Size, ++SrcAlphaPtr, DestAlphaPtr += Size)
 	      {
 		*DestPtr = *SrcPtr;
 		*DestAlphaPtr = *SrcAlphaPtr;
@@ -1833,18 +1593,16 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case (FLIP | ROTATE):
       {
-	DestX += Width - 1;
-	DestY += Height - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
+	ushort Size = XSize;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
 
-	for(ushort y = 0; y < Height; ++y)
+	for(ushort y = 0; y < Size; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX - y];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY][DestX - y];
+	    ushort* DestPtr = &DestImage[Size - 1][Size - 1 - y];
+	    uchar* DestAlphaPtr = &DestAlphaMap[Size - 1][Size - 1 - y];
 
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++SrcAlphaPtr, DestAlphaPtr -= TrueDestXMove)
+	    for(ushort x = 0; x < Size; ++x, ++SrcPtr, DestPtr -= Size, ++SrcAlphaPtr, DestAlphaPtr -= Size)
 	      {
 		*DestPtr = *SrcPtr;
 		*DestAlphaPtr = *SrcAlphaPtr;
@@ -1856,17 +1614,16 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, ushort SourceX, ushort SourceY, us
 
     case (MIRROR | FLIP | ROTATE):
       {
-	DestY += Height - 1;
-	ulong TrueDestXMove = Bitmap->XSize;
+	ushort Size = XSize;
+	const ushort* SrcPtr = SrcImage[0];
+	const uchar* SrcAlphaPtr = SrcAlphaMap[0];
 
-	for(ushort y = 0; y < Height; ++y)
+	for(ushort y = 0; y < Size; ++y)
 	  {
-	    ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
-	    ushort* DestPtr = &DestImage[DestY][DestX + y];
-	    uchar* SrcAlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
-	    uchar* DestAlphaPtr = &DestAlphaMap[DestY][DestX + y];
+	    ushort* DestPtr = &DestImage[Size - 1][y];
+	    uchar* DestAlphaPtr = &DestAlphaMap[Size - 1][y];
 
-	    for(ushort x = 0; x < Width; ++x, ++SrcPtr, DestPtr -= TrueDestXMove, ++SrcAlphaPtr, DestAlphaPtr -= TrueDestXMove)
+	    for(ushort x = 0; x < Size; ++x, ++SrcPtr, DestPtr -= Size, ++SrcAlphaPtr, DestAlphaPtr -= Size)
 	      {
 		*DestPtr = *SrcPtr;
 		*DestAlphaPtr = *SrcAlphaPtr;

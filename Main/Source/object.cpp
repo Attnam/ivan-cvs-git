@@ -371,6 +371,11 @@ void object::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnima
   Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
+void object::SolidDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
 god* object::GetMasterGod() const
 {
   return game::GetGod(GetConfig());

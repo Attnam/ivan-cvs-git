@@ -154,7 +154,6 @@ class item : public object
   virtual bool CanBeEatenByAI(const character*) const;
   virtual std::string GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
-  virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void ChargeFully(character*) { }
@@ -164,7 +163,7 @@ class item : public object
   void SetID(ulong What) { ID = What; }
   ulong GetBackupID() const { return BackupID; }
   void SetBackupID(ulong What) { BackupID = What; }
-  virtual void TeleportRandomly();
+  void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot() const { return Slot; }
   void SetSlot(slot* What) { Slot = What; }
@@ -227,7 +226,7 @@ class item : public object
   const database* GetDataBase() const { return DataBase; }
   virtual bool CanOpenLockType(uchar) const { return false; }
   virtual bool IsWhip() const { return false; }
-  virtual DATA_BASE_VALUE(vector2d, InHandsPic);
+  DATA_BASE_VALUE(vector2d, InHandsPic);
   virtual DATA_BASE_VALUE(long, Score);
   virtual DATA_BASE_BOOL(IsDestroyable);
   DATA_BASE_BOOL(IsMaterialChangeable);
@@ -258,17 +257,16 @@ class item : public object
   DATA_BASE_VALUE(const std::vector<long>&, SecondaryMaterialConfig);
   DATA_BASE_VALUE(const std::vector<long>&, ContainedMaterialConfig);
   DATA_BASE_VALUE(const std::vector<long>&, MaterialConfigChances);
-  virtual DATA_BASE_BOOL(IsPolymorphable);
-  virtual DATA_BASE_VALUE(const std::vector<std::string>&, Alias);
+  DATA_BASE_BOOL(IsPolymorphable);
   virtual DATA_BASE_VALUE(uchar, OKVisualEffects);
-  virtual DATA_BASE_BOOL(CanBeGeneratedInContainer);
+  DATA_BASE_BOOL(CanBeGeneratedInContainer);
   virtual DATA_BASE_VALUE(uchar, ForcedVisualEffects);
   DATA_BASE_VALUE(uchar, Roundness);
   DATA_BASE_VALUE(ushort, GearStates);
   DATA_BASE_BOOL(IsTwoHanded);
   DATA_BASE_BOOL(CanBeBroken);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
-  virtual DATA_BASE_VALUE(const std::string&, FlexibleNameSingular);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WallBitmapPos, ushort);
+  DATA_BASE_VALUE(const std::string&, FlexibleNameSingular);
   DATA_BASE_BOOL(CanBePiled);
   DATA_BASE_BOOL(AffectsArmStrength);
   DATA_BASE_BOOL(AffectsLegStrength);
@@ -282,30 +280,30 @@ class item : public object
   DATA_BASE_BOOL(AffectsMana);
   DATA_BASE_BOOL(AffectsCarryingCapacity);
   DATA_BASE_VALUE(char, DefaultEnchantment);
-  virtual DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
-  virtual DATA_BASE_VALUE(uchar, MaxCharges);
-  virtual DATA_BASE_VALUE(uchar, MinCharges);
+  DATA_BASE_BOOL(PriceIsProportionalToEnchantment);
+  DATA_BASE_VALUE(uchar, MaxCharges);
+  DATA_BASE_VALUE(uchar, MinCharges);
   DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
-  virtual DATA_BASE_VALUE(ulong, StorageVolume);
-  virtual DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
-  virtual DATA_BASE_BOOL(CanBeCloned);
-  virtual DATA_BASE_VALUE(ushort, BeamRange);
-  virtual DATA_BASE_BOOL(CanBeUsedBySmith);
+  DATA_BASE_VALUE(ulong, StorageVolume);
+  DATA_BASE_VALUE(ushort, MaxGeneratedContainedItems);
+  DATA_BASE_BOOL(CanBeCloned);
+  DATA_BASE_VALUE(ushort, BeamRange);
+  DATA_BASE_BOOL(CanBeUsedBySmith);
   DATA_BASE_VALUE(uchar, DamageDivider);
   DATA_BASE_BOOL(HandleInPairs);
-  virtual DATA_BASE_BOOL(CanBeEnchanted);
-  virtual DATA_BASE_VALUE(ulong, BeamColor);
-  virtual DATA_BASE_VALUE(uchar, BeamEffect);
-  virtual DATA_BASE_VALUE(uchar, BeamStyle);
+  DATA_BASE_BOOL(CanBeEnchanted);
+  DATA_BASE_VALUE(ulong, BeamColor);
+  DATA_BASE_VALUE(uchar, BeamEffect);
+  DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
-  virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
+  bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
   ulong GetBlockModifier() const;
   bool IsSimiliarTo(item*) const;
   virtual bool IsPickable(character*) const { return true; }
-  virtual bool CanBeSeenByPlayer() const;
+  bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(const character*) const;
   std::string GetDescription(uchar) const;
   virtual square* GetSquareUnderEntity() const { return GetSquareUnder(); }
@@ -338,7 +336,7 @@ class item : public object
   ushort GetBaseBlockValue() const;
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void AddAttackInfo(felist&) const;
-  virtual void AddMiscellaneousInfo(felist&) const;
+  void AddMiscellaneousInfo(felist&) const;
   ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
@@ -357,7 +355,7 @@ class item : public object
   virtual bool IsBroken() const;
   virtual void ReceiveFluidSpill(material*) { }
   virtual char GetEnchantment() const { return 0; }
-  virtual ulong GetEnchantedPrice(char) const;
+  ulong GetEnchantedPrice(char) const;
   virtual item* Fix();
   ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
@@ -366,18 +364,19 @@ class item : public object
   void DonateSlotTo(item*);
   virtual uchar GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
-  virtual void ResetSpoiling();
+  void ResetSpoiling();
   virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
   virtual short GetCarryingBonus() const { return 0; }
   virtual bool IsBanana() const { return false; }
   virtual bool IsEncryptedScroll() const { return false; }
-  virtual const std::string& GetStrengthValueDescription() const;
-  virtual const std::string& GetBaseToHitValueDescription() const;
+  const std::string& GetStrengthValueDescription() const;
+  const std::string& GetBaseToHitValueDescription() const;
   virtual bool IsInCorrectSlot(ushort) const;
   bool IsInCorrectSlot() const;
   ushort GetEquipmentIndex() const;
   room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
   virtual bool HasBetterVersion() const { return false; }
+  virtual bool AllowAlphaEverywhere() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();

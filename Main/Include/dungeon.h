@@ -23,7 +23,7 @@ class dungeon
   ~dungeon();
   bool PrepareLevel(ushort, bool = true);
   void SaveLevel(const std::string&, ushort, bool = true);
-  void LoadLevel(const std::string&, ushort);
+  level* LoadLevel(const std::string&, ushort);
   level* GetLevel(ushort Index) const { return Level[Index]; }
   ushort GetLevels() const;
   void Save(outputfile&) const;

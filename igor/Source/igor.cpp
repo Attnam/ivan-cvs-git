@@ -50,7 +50,7 @@ int Main(int, char**)
   graphics::Init();
   graphics::SetMode("IGOR 1.203", 0, 800, 600, true);
   graphics::LoadDefaultFont(Directory + "Font.pcx");
-  DOUBLE_BUFFER->Fill(0);
+  DOUBLE_BUFFER->ClearToColor(0);
 
   colorizablebitmap* CBitmap;
   felist List("Choose file to edit:");
@@ -183,7 +183,7 @@ int Main(int, char**)
       else if(k == 'c')
 	DrawQueue.clear();
 
-      DOUBLE_BUFFER->Fill(0);
+      DOUBLE_BUFFER->ClearToColor(0);
       DOUBLE_BUFFER->Fill(0, 0, CBitmap->GetSize(), 0xF81F);
       CBitmap->MaskedBlit(DOUBLE_BUFFER, 0, 0, 0, 0, CBitmap->GetSize(), Color);
       DOUBLE_BUFFER->DrawRectangle(RES_X - STRETCH * 16 - 12, RES_Y - STRETCH * 16 - 12, RES_X - 9, RES_Y - 9, DARK_GRAY, true);

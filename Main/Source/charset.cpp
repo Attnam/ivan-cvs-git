@@ -28,6 +28,6 @@
 #include "bitmap.h"
 #include "wterras.h"
 
+#include "team.cpp"
 #include "char.cpp"
 #include "command.cpp"
-#include "team.cpp"

@@ -20,7 +20,7 @@ struct felistentry
 {
   felistentry() { }
   felistentry(const std::string&, ushort, ushort, bool);
-  felistentry(const std::vector<bitmap*>&, const std::string&, ushort, ushort, bool);
+  felistentry(const std::vector<bitmap*>&, const std::string&, ushort, ushort, bool, bool);
   ~felistentry();
   std::vector<bitmap*> Bitmap;
   std::string String;
@@ -39,10 +39,10 @@ felistentry::~felistentry()
     delete Bitmap[c];
 }
 
-felistentry::felistentry(const std::vector<bitmap*>& BitmapVector, const std::string& String, ushort Color, ushort Marginal, bool Selectable) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable)
+felistentry::felistentry(const std::vector<bitmap*>& BitmapVector, const std::string& String, ushort Color, ushort Marginal, bool Selectable, bool AllowAlpha) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable)
 {
   for(ushort c = 0; c < BitmapVector.size(); ++c)
-    Bitmap.push_back(new bitmap(BitmapVector[c]));
+    Bitmap.push_back(new bitmap(BitmapVector[c], 0, AllowAlpha));
 }
 
 outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
@@ -152,12 +152,12 @@ ushort felist::Draw()
   if(Flags & FADE)
     {
       Buffer = new bitmap(RES_X, RES_Y, 0);
-      BackGround.Fill(0);
+      BackGround.ClearToColor(0);
     }
   else
     {
       Buffer = DOUBLE_BUFFER;
-      DOUBLE_BUFFER->Blit(&BackGround);
+      Buffer->FastBlit(&BackGround);
     }
 
   ushort c, Return, Selectables = 0;
@@ -186,7 +186,7 @@ ushort felist::Draw()
 	{
 	  if(JustSelectMove)
 	    {
-	      Buffer->Blit(DOUBLE_BUFFER);
+	      Buffer->FastBlit(DOUBLE_BUFFER);
 	      graphics::BlitDBToScreen();
 	    }
 	  else
@@ -219,7 +219,7 @@ ushort felist::Draw()
 
 	      if(Selected < PageBegin)
 		{
-		  BackGround.Blit(Buffer);
+		  BackGround.FastBlit(Buffer);
 		  PageBegin -= PageLength;
 		}
 	      else
@@ -235,7 +235,7 @@ ushort felist::Draw()
 		JustSelectMove = true;
 	      else
 		{
-		  BackGround.Blit(Buffer);
+		  BackGround.FastBlit(Buffer);
 		  PageBegin = Selected - Selected % PageLength;
 		}
 	    }
@@ -251,7 +251,7 @@ ushort felist::Draw()
 
 	      if(Selected > PageBegin + PageLength - 1)
 		{
-		  BackGround.Blit(Buffer);
+		  BackGround.FastBlit(Buffer);
 		  PageBegin += PageLength;
 		}
 	      else
@@ -262,7 +262,7 @@ ushort felist::Draw()
 	      if(!PageBegin)
 		JustSelectMove = true;
 	      else
-		BackGround.Blit(Buffer);
+		BackGround.FastBlit(Buffer);
 
 	      Selected = PageBegin = 0;
 	    }
@@ -288,7 +288,7 @@ ushort felist::Draw()
 	}
       else
 	{
-	  BackGround.Blit(Buffer);
+	  BackGround.FastBlit(Buffer);
 
 	  if(Flags & INVERSE_MODE)
 	    PageBegin -= PageLength;
@@ -303,7 +303,7 @@ ushort felist::Draw()
   if(!(Flags & FADE))
     {
       if(Flags & DRAW_BACKGROUND_AFTERWARDS)
-	BackGround.Blit(DOUBLE_BUFFER);
+	BackGround.FastBlit(DOUBLE_BUFFER);
 
       if(Flags & BLIT_AFTERWARDS)
 	graphics::BlitDBToScreen();
@@ -499,9 +499,9 @@ void felist::AddEntry(const std::string& Str, ushort Color, ushort Marginal, bit
     AddEntry(Str, Color, Marginal, std::vector<bitmap*>(1, Bitmap), Selectable);
 }
 
-void felist::AddEntry(const std::string& Str, ushort Color, ushort Marginal, const std::vector<bitmap*>& Bitmap, bool Selectable)
+void felist::AddEntry(const std::string& Str, ushort Color, ushort Marginal, const std::vector<bitmap*>& Bitmap, bool Selectable, bool AllowAlpha)
 {
-  Entry.push_back(new felistentry(Bitmap, Str, Color, Marginal, Selectable));
+  Entry.push_back(new felistentry(Bitmap, Str, Color, Marginal, Selectable, AllowAlpha));
 
   if(Maximum && Entry.size() > Maximum)
     {

@@ -347,3 +347,15 @@ void protosystem::CreateEveryItem(std::vector<item*>& Item)
 	  Item.push_back(Proto->Clone(i->first));
     }
 }
+
+void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
+{
+  for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
+    {
+      const material::prototype* Proto = protocontainer<material>::GetProto(c);
+      const material::databasemap& Config = Proto->GetConfig();
+
+      for(material::databasemap::const_iterator i = ++Config.begin(); i != Config.end(); ++i)
+	Material.push_back(Proto->Clone(i->first));
+    }
+}

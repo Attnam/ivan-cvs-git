@@ -1856,7 +1856,7 @@ void arm::ShowWieldedAttackInfo() const
 
   if(TwoHandWieldIsActive())
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture(), true, GetWielded()->AllowAlphaEverywhere());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
       Requirement >>= 2;
 
@@ -1870,7 +1870,7 @@ void arm::ShowWieldedAttackInfo() const
     }
   else
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture(), true, GetWielded()->AllowAlphaEverywhere());
 
       if(HitStrength <= Requirement)
 	{
@@ -1994,7 +1994,7 @@ void arm::ShowDefenceInfo() const
 
   if(TwoHandWieldIsActive())
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE) + " (in both hands)", MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture(), true, GetWielded()->AllowAlphaEverywhere());
       HitStrength += GetPairArm()->GetAttribute(ARM_STRENGTH);
       Requirement >>= 2;
 
@@ -2008,7 +2008,7 @@ void arm::ShowDefenceInfo() const
     }
   else
     {
-      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture());
+      Info.AddEntry("Wielded: " + GetWielded()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetWielded()->GetPicture(), true, GetWielded()->AllowAlphaEverywhere());
 
       if(HitStrength <= Requirement)
 	{
@@ -2107,7 +2107,7 @@ void arm::ShowUnarmedInfo() const
 
   if(GetGauntlet())
     {
-      Info.AddEntry("Worn: " + GetGauntlet()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetGauntlet()->GetPicture());
+      Info.AddEntry("Worn: " + GetGauntlet()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetGauntlet()->GetPicture(), true, GetGauntlet()->AllowAlphaEverywhere());
       WeaponStrength += GetGauntlet()->GetWeaponStrength();
       Info.AddEntry("", LIGHT_GRAY);
     }
@@ -2189,7 +2189,7 @@ void leg::ShowKickInfo() const
 
   if(GetBoot())
     {
-      Info.AddEntry("Worn: " + GetBoot()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetBoot()->GetPicture());
+      Info.AddEntry("Worn: " + GetBoot()->GetName(INDEFINITE), MakeRGB16(220, 220, 220), 0, GetBoot()->GetPicture(), true, GetBoot()->AllowAlphaEverywhere());
       WeaponStrength += GetBoot()->GetWeaponStrength();
       Info.AddEntry("", LIGHT_GRAY);
     }

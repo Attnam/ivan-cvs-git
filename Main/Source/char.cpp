@@ -2277,7 +2277,7 @@ void character::RestoreLivingHP()
     }
 }
 
-bool character::AllowDamageTypeBloodSpill(uchar Type) const
+bool character::AllowDamageTypeBloodSpill(uchar Type)
 {
   switch(Type)
     {
@@ -2601,7 +2601,7 @@ void character::PrintInfo() const
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
-      Info.AddEntry(GetEquipmentName(c) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture());
+      Info.AddEntry(GetEquipmentName(c) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -3182,7 +3182,7 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
   return Effect;
 }
 
-bool character::RawEditAttribute(ushort& Attribute, short& Amount, bool DoubleAttribute)
+bool character::RawEditAttribute(ushort& Attribute, short& Amount, bool DoubleAttribute) const
 {
   /* Check if attribute is disabled for creature */
 
@@ -3295,7 +3295,7 @@ void character::CalculateDodgeValue()
     DodgeValue = 1;
 }
 
-bool character::DamageTypeAffectsInventory(uchar Type) const
+bool character::DamageTypeAffectsInventory(uchar Type)
 {
   switch(Type)
     {
@@ -3994,7 +3994,7 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAn
 
   if(configuration::GetOutlineCharacters())
     {
-      igraph::GetTileBuffer()->Fill(TRANSPARENT_COLOR);
+      igraph::GetTileBuffer()->ClearToColor(TRANSPARENT_COLOR);
       DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), NORMAL_LUMINANCE, AllowAnimate);
       igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
       igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
@@ -5064,7 +5064,7 @@ void character::SelectFromPossessions(std::vector<item*>& ReturnVector, const st
 	Entry.resize(20, ' ');
 	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	AddSpecialEquipmentInfo(Entry, c);
-	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture());
+	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
 	Any = true;
       }
 

@@ -74,10 +74,10 @@ void lsquare::UpdateMemorized()
       if(!IsDark())
 	{
 	  DrawStaticContents(Memorized, vector2d(0, 0), NORMAL_LUMINANCE, false);
-	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, 0, 0, 0, 0, 16, 16, uchar(0), 0);
+	  igraph::GetFOWGraphic()->MaskedBlit(Memorized, uchar(0), 0);
 	}
       else
-	igraph::GetFOWGraphic()->Blit(Memorized);
+	igraph::GetFOWGraphic()->FastBlit(Memorized);
 
       MemorizedUpdateRequested = false;
     }
@@ -134,17 +134,16 @@ void lsquare::Draw()
 
 void lsquare::Emitate()
 {
-  if(game::IsDark(GetEmitation()))
+  if(game::IsDark(Emitation))
     return;
 
-  ushort Radius = GetLevel()->CalculateMinimumEmitationRadius(GetEmitation());
+  ushort Radius = GetLevel()->CalculateMinimumEmitationRadius(Emitation);
 
   if(!Radius)
     return;
 
   ulong RadiusSquare = Radius * Radius;
-  game::SetCurrentEmitterEmitation(GetEmitation());
-  game::SetCurrentEmitterPos(GetPos());
+  game::InstallCurrentEmitter(Pos, Emitation);
 
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), Pos, Radius);
@@ -166,8 +165,7 @@ void lsquare::ReEmitate(ulong OldEmitation)
     return;
 
   ulong RadiusSquare = Radius * Radius;
-  game::SetCurrentEmitterEmitation(GetEmitation());
-  game::SetCurrentEmitterPos(GetPos());
+  game::InstallCurrentEmitter(Pos, Emitation);
 
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), Pos, Radius);
@@ -186,7 +184,7 @@ void lsquare::Noxify()
     return;
 
   ulong RadiusSquare = Radius * Radius;
-  game::SetCurrentEmitterPos(GetPos());
+  game::InstallCurrentNoxifier(Pos);
 
   rect Rect;
   femath::CalculateEnvironmentRectangle(Rect, GetLevel()->GetBorder(), Pos, Radius);
@@ -741,7 +739,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
   const bool* AttachRequired = SquareScript->AttachRequired();
 
   if(AttachRequired && *AttachRequired)
-    GetLevel()->AttachPos(Pos);
+    GetLevel()->AttachPos(Pos.X, Pos.Y);
 
   const uchar* EntryIndex = SquareScript->GetEntryIndex();
 
@@ -1065,20 +1063,17 @@ void lsquare::SetLastSeen(ulong What)
 
 void lsquare::DrawMemorized()
 {
-  if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
-    {
-      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+  vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
-      if(LastSeen)
-	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
-      else
-	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+  if(LastSeen)
+    Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+  else
+    DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
 
-      if(Character && Character->CanBeSeenByPlayer())
-	Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+  if(Character && Character->CanBeSeenByPlayer())
+    Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
 
-      NewDrawRequested = false;
-    }
+  NewDrawRequested = false;
 }
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
@@ -1150,11 +1145,6 @@ void lsquare::SpillFluid(character* Spiller, material* Liquid, ushort HitPercent
 
   GetStack()->ReceiveFluidSpill(Liquid);
   delete Liquid;
-}
-
-bool lsquare::IsDark() const
-{
-  return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
 }
 
 void lsquare::AddItem(item* Item)
@@ -1449,13 +1439,16 @@ void lsquare::GetHitByExplosion(const explosion& Explosion)
 
 ushort lsquare::GetSpoiledItemsNear() const
 {
-  ushort Counter = 0;
-  for(ushort d = 0; d < 9; ++d)
+  ushort Counter = GetSpoiledItems();
+
+  for(ushort d = 0; d < 8; ++d)
     {
       lsquare* LSquare = GetNeighbourLSquare(d);
+
       if(LSquare)
 	Counter += LSquare->GetSpoiledItems();
     }
+
   return Counter;
 }
 

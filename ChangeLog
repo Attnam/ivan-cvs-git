@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Gcc 3.2.1 now compiles the game correctly and without warnings
+	* Optimization
+	* Removed subbitmap support from FeLib; it was complicated and useless
+	* Added some info about materials to SecretKnowledge
+	* Diamond plate mails and other objects made of transparent materials now look
+	  better in inventory and panel
+
 February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* A small bug in the key handling code fixed

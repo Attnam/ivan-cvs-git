@@ -9,6 +9,9 @@
 #define WARM				17
 #define HOT				19
 
+short DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
+short DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
 /* This can't be inlined, since then #include of char.h and cont.h should be included in worldmap.h */
 
 worldmap::worldmap() { }
@@ -284,21 +287,21 @@ void worldmap::SmoothAltitude()
       game::BusyAnimation();
       ushort x, y;
 
-      for(x = 0; x < XSize; ++x)
-	SafeSmooth(x, 0);
+      for(y = 0; y < YSize; ++y)
+	SafeSmooth(0, y);
 
-      for(y = 1; y < YSize - 1; ++y)
+      for(x = 1; x < XSize - 1; ++x)
 	{
-	  SafeSmooth(0, y);
+	  SafeSmooth(x, 0);
 
-	  for(x = 1; x < XSize - 1; ++x)
+	  for(y = 1; y < YSize - 1; ++y)
 	    FastSmooth(x, y);
 
-	  SafeSmooth(XSize - 1, y);
+	  SafeSmooth(x, YSize - 1);
 	}
 
-      for(x = 0; x < XSize; ++x)
-	SafeSmooth(x, YSize - 1);
+      for(y = 0; y < YSize; ++y)
+	SafeSmooth(XSize - 1, y);
     }
 }
 
@@ -308,16 +311,10 @@ void worldmap::FastSmooth(ushort x, ushort y)
   ushort d;
 
   for(d = 0; d < 4; ++d)
-    {
-      vector2d Vect = game::GetMoveVector(d);
-      HeightNear += OldAltitudeBuffer[x + Vect.X][y + Vect.Y];
-    }
+    HeightNear += OldAltitudeBuffer[x + DirX[d]][y + DirY[d]];
 
   for(d = 4; d < 8; ++d)
-    {
-      vector2d Vect = game::GetMoveVector(d);
-      HeightNear += AltitudeBuffer[x + Vect.X][y + Vect.Y];
-    }
+    HeightNear += AltitudeBuffer[x + DirX[d]][y + DirY[d]];
 
   OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
   AltitudeBuffer[x][y] = HeightNear >> 3;
@@ -330,9 +327,8 @@ void worldmap::SafeSmooth(ushort x, ushort y)
 
   for(d = 0; d < 4; ++d)
     {
-      vector2d Vect = game::GetMoveVector(d);
-      ushort X = x + Vect.X;
-      ushort Y = y + Vect.Y;
+      ushort X = x + DirX[d];
+      ushort Y = y + DirY[d];
 
       if(IsValidPos(X, Y))
 	{
@@ -343,9 +339,8 @@ void worldmap::SafeSmooth(ushort x, ushort y)
 
   for(d = 4; d < 8; ++d)
     {
-      vector2d Vect = game::GetMoveVector(d);
-      ushort X = x + Vect.X;
-      ushort Y = y + Vect.Y;
+      ushort X = x + DirX[d];
+      ushort Y = y + DirY[d];
 
       if(IsValidPos(X, Y))
 	{
@@ -429,8 +424,8 @@ void worldmap::SmoothClimate()
     {
       game::BusyAnimation();
 
-      for(ushort y = 0; y < YSize; ++y)
-	for(ushort x = 0; x < XSize; ++x)
+      for(ushort x = 0; x < XSize; ++x)
+	for(ushort y = 0; y < YSize; ++y)
 	  if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType())
 	    TypeBuffer[x][y] = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y);
     }
@@ -473,9 +468,8 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
   for(d = 0; d < 4; ++d)
     {
-      vector2d Vect = game::GetMoveVector(d);
-      ushort X = x + Vect.X;
-      ushort Y = y + Vect.Y;
+      ushort X = x + DirX[d];
+      ushort Y = y + DirY[d];
 
       if(IsValidPos(X, Y))
 	ANALYZE_TYPE(OldTypeBuffer[X][Y]);
@@ -483,9 +477,8 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
   for(d = 4; d < 8; ++d)
     {
-      vector2d Vect = game::GetMoveVector(d);
-      ushort X = x + Vect.X;
-      ushort Y = y + Vect.Y;
+      ushort X = x + DirX[d];
+      ushort Y = y + DirY[d];
 
       if(IsValidPos(X, Y))
 	ANALYZE_TYPE(TypeBuffer[X][Y]);
@@ -582,20 +575,33 @@ void worldmap::RemoveEmptyContinents()
 	  }
 }
 
-void worldmap::Draw() const
+void worldmap::Draw(bool) const
 {
+  ushort XMin = game::GetCamera().X;
+  ushort YMin = game::GetCamera().Y;
+  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
+  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
+
   if(!game::SeeWholeMapCheatIsActive())
     {
-      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	  if(Map[x][y]->GetLastSeen())
-	    Map[x][y]->Draw();
+      for(ushort x = XMin; x < XMax; ++x)
+	{
+	  wsquare** Square = &Map[x][YMin];
+
+	  for(ushort y = YMin; y < YMax; ++y, ++Square)
+	    if((*Square)->LastSeen)
+	      (*Square)->Draw();
+	}
     }
   else
     {
-      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	  Map[x][y]->Draw();
+      for(ushort x = XMin; x < XMax; ++x)
+	{
+	  wsquare** Square = &Map[x][YMin];
+
+	  for(ushort y = YMin; y < YMax; ++y, ++Square)
+	    (*Square)->Draw();
+	}
     }
 }
 

@@ -161,14 +161,8 @@ class CHARACTER
 (
   human,
   humanoid,
- public:
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual ushort GetTotalSize() const { return TotalSize; }
-  virtual void SetTotalSize(ushort What) { TotalSize = What; }
  protected:
   virtual void VirtualConstructor(bool);
-  ushort TotalSize;
 );
 
 class CHARACTER
@@ -450,7 +444,6 @@ class CHARACTER
   kamikazedwarf,
   humanoid,
  public:
-  virtual float GetTimeToKill(const character*, bool) const;
   virtual bool Hit(character*, bool = false);
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();

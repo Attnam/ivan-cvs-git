@@ -24,7 +24,7 @@ void igraph::Init()
       AlreadyInstalled = true;
       graphics::Init();
       graphics::SetMode("IVAN " IVAN_VERSION, (game::GetGameDir() + "Graphics/Icon.bmp").c_str(), 800, 600, configuration::GetFullScreenMode());
-      DOUBLE_BUFFER->Fill(0);
+      DOUBLE_BUFFER->ClearToColor(0);
       graphics::BlitDBToScreen();
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
       graphics::LoadDefaultFont(game::GetGameDir() + "Graphics/Font.pcx");

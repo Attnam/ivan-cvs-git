@@ -13,87 +13,87 @@ level::~level()
     delete Room[c];
 }
 
-void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
+void level::ExpandPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
 {
-#define CHECK(x, y) (!(FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & FORBIDDEN))
+#define CHECK(x, y) !(FlagMap[x][y] & (ON_POSSIBLE_ROUTE|FORBIDDEN))
 
 #define CALL_EXPAND(x, y)\
-    {\
-      ExpandPossibleRoute(vector2d(x, y), Target, XMode);\
-      \
-      if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)\
-	return;\
-    }
+  {\
+    ExpandPossibleRoute(x, y, TargetX, TargetY, XMode);\
+    \
+    if(FlagMap[TargetX][TargetY] & ON_POSSIBLE_ROUTE)\
+      return;\
+  }
 
-  FlagMap[Origo.X][Origo.Y] |= ON_POSSIBLE_ROUTE;
+  FlagMap[OrigoX][OrigoY] |= ON_POSSIBLE_ROUTE;
 
   if(XMode)
     {
-      if(Target.X < Origo.X)
-	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX < OrigoX)
+	if(CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.X > Origo.X)
-	if(CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX > OrigoX)
+	if(CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.Y < Origo.Y)
-	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY < OrigoY)
+	if(CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.Y > Origo.Y)
-	if(CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY > OrigoY)
+	if(CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.X <= Origo.X)
-	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX <= OrigoX)
+	if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.X >= Origo.X)
-	if(Origo.X > 1 && CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX >= OrigoX)
+	if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.Y <= Origo.Y)
-	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY <= OrigoY)
+	if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.Y >= Origo.Y)
-	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY >= OrigoY)
+	if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
     }
   else
     {
-      if(Target.Y < Origo.Y)
-	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY < OrigoY)
+	if(CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.Y > Origo.Y)
-	if(CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY > OrigoY)
+	if(CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.X < Origo.X)
-	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX < OrigoX)
+	if(CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.X > Origo.X)
-	if(CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX > OrigoX)
+	if(CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.Y <= Origo.Y)
-	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY <= OrigoY)
+	if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.Y >= Origo.Y)
-	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY >= OrigoY)
+	if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.X <= Origo.X)
-	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX <= OrigoX)
+	if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.X >= Origo.X)
-	if(Origo.X > 1 && CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX >= OrigoX)
+	if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
     }
 
 #undef CHECK
@@ -101,87 +101,87 @@ void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 #undef CALL_EXPAND
 }
 
-void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
+void level::ExpandStillPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
 {
-#define CHECK(x, y) (!(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE) && (FlagMap[x][y] & ON_POSSIBLE_ROUTE))
+#define CHECK(x, y) (FlagMap[x][y] & (STILL_ON_POSSIBLE_ROUTE|ON_POSSIBLE_ROUTE)) == ON_POSSIBLE_ROUTE
 
 #define CALL_EXPAND(x, y) \
-    {\
-      ExpandStillPossibleRoute(vector2d(x, y), Target, XMode);\
-      \
-      if(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE) \
-	return;\
-    }
+  {\
+    ExpandStillPossibleRoute(x, y, TargetX, TargetY, XMode);\
+    \
+    if(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE) \
+      return;\
+  }
 
-  FlagMap[Origo.X][Origo.Y] |= STILL_ON_POSSIBLE_ROUTE;
+  FlagMap[OrigoX][OrigoY] |= STILL_ON_POSSIBLE_ROUTE;
 
   if(XMode)
     {
-      if(Target.X < Origo.X)
-	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX < OrigoX)
+	if(CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.X > Origo.X)
-	if(CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX > OrigoX)
+	if(CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.Y < Origo.Y)
-	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY < OrigoY)
+	if(CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.Y > Origo.Y)
-	if(CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY > OrigoY)
+	if(CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.X <= Origo.X)
-	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX <= OrigoX)
+	if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.X >= Origo.X)
-	if(Origo.X > 1 && CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX >= OrigoX)
+	if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.Y <= Origo.Y)
-	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY <= OrigoY)
+	if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.Y >= Origo.Y)
-	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY >= OrigoY)
+	if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
     }
   else
     {
-      if(Target.Y < Origo.Y)
-	if(CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY < OrigoY)
+	if(CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.Y > Origo.Y)
-	if(CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY > OrigoY)
+	if(CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.X < Origo.X)
-	if(CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX < OrigoX)
+	if(CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
 
-      if(Target.X > Origo.X)
-	if(CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX > OrigoX)
+	if(CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.Y <= Origo.Y)
-	if(Origo.Y < YSize - 2 && CHECK(Origo.X, Origo.Y + 1))
-	  CALL_EXPAND(Origo.X, Origo.Y + 1);
+      if(TargetY <= OrigoY)
+	if(OrigoY < YSize - 2 && CHECK(OrigoX, OrigoY + 1))
+	  CALL_EXPAND(OrigoX, OrigoY + 1);
 
-      if(Target.Y >= Origo.Y)
-	if(Origo.Y > 1 && CHECK(Origo.X, Origo.Y - 1))
-	  CALL_EXPAND(Origo.X, Origo.Y - 1);
+      if(TargetY >= OrigoY)
+	if(OrigoY > 1 && CHECK(OrigoX, OrigoY - 1))
+	  CALL_EXPAND(OrigoX, OrigoY - 1);
 
-      if(Target.X <= Origo.X)
-	if(Origo.X < XSize - 2 && CHECK(Origo.X + 1, Origo.Y))
-	  CALL_EXPAND(Origo.X + 1, Origo.Y);
+      if(TargetX <= OrigoX)
+	if(OrigoX < XSize - 2 && CHECK(OrigoX + 1, OrigoY))
+	  CALL_EXPAND(OrigoX + 1, OrigoY);
 
-      if(Target.X >= Origo.X)
-	if(Origo.X > 1 && CHECK(Origo.X - 1, Origo.Y))
-	  CALL_EXPAND(Origo.X - 1, Origo.Y);
+      if(TargetX >= OrigoX)
+	if(OrigoX > 1 && CHECK(OrigoX - 1, OrigoY))
+	  CALL_EXPAND(OrigoX - 1, OrigoY);
     }
 
 #undef CHECK
@@ -189,24 +189,23 @@ void level::ExpandStillPossibleRoute(vector2d Origo, vector2d Target, bool XMode
 #undef CALL_EXPAND
 }
 
-void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
+void level::GenerateTunnel(ushort FromX, ushort FromY, ushort TargetX, ushort TargetY, bool XMode)
 {
-  FlagMap[From.X][From.Y] |= ON_POSSIBLE_ROUTE;
+  FlagMap[FromX][FromY] |= ON_POSSIBLE_ROUTE;
+  ExpandPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
 
-  ExpandPossibleRoute(From, Target, XMode);
-
-  if(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE)
+  if(FlagMap[TargetX][TargetY] & ON_POSSIBLE_ROUTE)
     for(ushort x = 0; x < XSize; ++x)
       for(ushort y = 0; y < YSize; ++y)
-	if((FlagMap[x][y] & ON_POSSIBLE_ROUTE) && !(FlagMap[x][y] & PREFERRED) && !(x == From.X && y == From.Y) && !(x == Target.X && y == Target.Y))
+	if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE && !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
 	  {
 	    FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
-	    FlagMap[From.X][From.Y] |= STILL_ON_POSSIBLE_ROUTE;
-	    ExpandStillPossibleRoute(From, Target, XMode);
+	    FlagMap[FromX][FromY] |= STILL_ON_POSSIBLE_ROUTE;
+	    ExpandStillPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
 
-	    if(!(FlagMap[Target.X][Target.Y] & STILL_ON_POSSIBLE_ROUTE))
+	    if(!(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE))
 	      {
-		FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
+		FlagMap[x][y] |= ON_POSSIBLE_ROUTE|PREFERRED;
 		Map[x][y]->ChangeOLTerrain(new empty);
 	      }
 
@@ -333,20 +332,22 @@ void level::ApplyLSquareScript(const squarescript* Script)
     }
 }
 
-void level::AttachPos(vector2d What)
+void level::AttachPos(ushort WhatX, ushort WhatY)
 {
-  vector2d Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
+  ushort PosX = 1 + RAND() % (XSize - 2);
+  ushort PosY = 1 + RAND() % (YSize - 2);
 
-  while(!(FlagMap[Pos.X][Pos.Y] & PREFERRED))
-    Pos = vector2d(1 + RAND() % (XSize - 2), 1 + RAND() % (YSize - 2));
+  while(!(FlagMap[PosX][PosY] & PREFERRED))
+    {
+      PosX = 1 + RAND() % (XSize - 2);
+      PosY = 1 + RAND() % (YSize - 2);
+    }
 
-  FlagMap[What.X][What.Y] &= ~FORBIDDEN;
-  FlagMap[What.X][What.Y] |= PREFERRED;
-
-  GenerateTunnel(What, Pos, RAND() & 1);
-
-  FlagMap[What.X][What.Y] |= FORBIDDEN;
-  FlagMap[What.X][What.Y] &= ~PREFERRED;
+  FlagMap[WhatX][WhatY] &= ~FORBIDDEN;
+  FlagMap[WhatX][WhatY] |= PREFERRED;
+  GenerateTunnel(WhatX, WhatY, PosX, PosY, RAND() & 1);
+  FlagMap[WhatX][WhatY] |= FORBIDDEN;
+  FlagMap[WhatX][WhatY] &= ~PREFERRED;
 }
 
 void level::CreateItems(ushort Amount)
@@ -443,7 +444,7 @@ bool level::MakeRoom(const roomscript* RoomScript)
 
       Map[InsideDoorPos.X][InsideDoorPos.Y]->ChangeLTerrain(RoomScript->GetDoorSquare()->GetGTerrain()->Instantiate(), Door);
       Map[InsideDoorPos.X][InsideDoorPos.Y]->Clean();
-      GenerateTunnel(vector2d(InsideDoorPos.X, InsideDoorPos.Y), vector2d(OutsideDoorPos.X, OutsideDoorPos.Y), RAND() & 1);
+      GenerateTunnel(InsideDoorPos.X, InsideDoorPos.Y, OutsideDoorPos.X, OutsideDoorPos.Y, RAND() & 1);
       FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] |= FORBIDDEN;
       FlagMap[OutsideDoorPos.X][OutsideDoorPos.Y] &= ~PREFERRED;
       FlagMap[InsideDoorPos.X][InsideDoorPos.Y] |= FORBIDDEN;
@@ -971,22 +972,53 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
   return true;
 }
 
-void level::Draw() const
+void level::Draw(bool AnimationDraw) const
 {
+  ushort XMin = game::GetCamera().X;
+  ushort YMin = game::GetCamera().Y;
+  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
+  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
+
   if(!game::SeeWholeMapCheatIsActive())
     {
-      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	  if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())
-	    Map[x][y]->Draw();
-	  else
-	    Map[x][y]->DrawMemorized();
+      if(!AnimationDraw)
+	{
+	  for(ushort x = XMin; x < XMax; ++x)
+	    {
+	      lsquare** Square = &Map[x][YMin];
+
+	      for(ushort y = YMin; y < YMax; ++y, ++Square)
+		{
+		  ulong LastSeen = (*Square)->LastSeen;
+
+		  if(LastSeen == game::GetLOSTurns())
+		    (*Square)->Draw();
+		  else if((*Square)->NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
+		    (*Square)->DrawMemorized();
+		}
+	    }
+	}
+      else
+	{
+	  for(ushort x = XMin; x < XMax; ++x)
+	    {
+	      lsquare** Square = &Map[x][YMin];
+
+	      for(ushort y = YMin; y < YMax; ++y, ++Square)
+		if((*Square)->LastSeen == game::GetLOSTurns())
+		  (*Square)->Draw();
+	    }
+	}
     }
   else
     {
-      for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-	for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
-	  Map[x][y]->Draw();
+      for(ushort x = XMin; x < XMax; ++x)
+	{
+	  lsquare** Square = &Map[x][YMin];
+
+	  for(ushort y = YMin; y < YMax; ++y, ++Square)
+	    (*Square)->Draw();
+	}
     }
 }
 

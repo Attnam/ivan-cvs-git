@@ -14,6 +14,7 @@ class owterrain;
 class wsquare : public square
 {
  public:
+  friend class worldmap;
   wsquare(worldmap*, vector2d);
   virtual ~wsquare();
   virtual void Save(outputfile&) const;

@@ -22,7 +22,7 @@ void stack::Draw(const character* Viewer, bitmap* Bitmap, vector2d Pos, ulong Lu
 
   if(VisibleItems && AllowOutline && configuration::GetOutlineItems())
     {
-      igraph::GetTileBuffer()->Fill(TRANSPARENT_COLOR);
+      igraph::GetTileBuffer()->ClearToColor(TRANSPARENT_COLOR);
 
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(i->CanBeSeenBy(Viewer) || game::SeeWholeMapCheatIsActive())
@@ -407,7 +407,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
 
       std::string Entry;
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture());
+      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), true, Item->AllowAlphaEverywhere());
     }
 }
 

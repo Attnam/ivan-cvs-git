@@ -8,6 +8,11 @@
 #include "square.h"
 #include "level.h"
 #include "dungeon.h"
+#include "felibdef.h"
+
+#ifndef LIGHT_BORDER
+#define LIGHT_BORDER 80
+#endif
 
 class stack;
 class glterrain;
@@ -149,5 +154,10 @@ class lsquare : public square
   bool MemorizedUpdateRequested;
   ulong LastExplosionID;
 };
+
+inline bool lsquare::IsDark() const
+{
+  return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);
+}
 
 #endif

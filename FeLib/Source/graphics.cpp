@@ -112,11 +112,11 @@ void graphics::BlitDBToScreen()
 
   ushort* SrcPtr = &DoubleBuffer->GetImage()[0][0];
   ushort* DestPtr = static_cast<ushort*>(Screen->pixels);
-  ulong ScreenYMove = (Screen->pitch >> 1) - ResX;
+  ulong ScreenYMove = (Screen->pitch >> 1);
+  ulong LineSize = ResX << 1;
 
-  for(ushort y = 0; y < ResY; ++y, DestPtr += ScreenYMove)
-    for(ushort x = 0; x < ResX; ++x, ++SrcPtr, ++DestPtr)
-      *DestPtr = *SrcPtr;
+  for(ushort y = 0; y < ResY; ++y, SrcPtr += ResX, DestPtr += ScreenYMove)
+    memcpy(DestPtr, SrcPtr, LineSize);
 
   if(SDL_MUSTLOCK(Screen))
     SDL_UnlockSurface(Screen);

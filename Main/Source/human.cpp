@@ -1375,10 +1375,16 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	if(!AnimationDraw)
 	  DOUBLE_BUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(16, 16), DARK_GRAY);
 
-	if(GetEquipment(c))
+	item* Equipment = GetEquipment(c);
+
+	if(Equipment)
 	  {
 	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
-	    GetEquipment(c)->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
+
+	    if(Equipment->AllowAlphaEverywhere())
+	      Equipment->Draw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
+	    else
+	      Equipment->SolidDraw(DOUBLE_BUFFER, Pos, configuration::GetContrastLuminance(), true);
 	  }
       }
 
@@ -1584,8 +1590,6 @@ void human::VirtualConstructor(bool Load)
       EditAttribute(CHARISMA, (RAND() & 1) - (RAND() & 1));
       EditAttribute(MANA, (RAND() & 1) - (RAND() & 1));
       SetMoney(GetMoney() + RAND() % 101);
-      SetTotalSize(character::GetTotalSize() + RAND() % 51);
-      SetSize(GetTotalSize());
     }
 }
 
@@ -1602,18 +1606,6 @@ void shopkeeper::VirtualConstructor(bool Load)
 
   if(!Load)
     SetMoney(GetMoney() + RAND() % 2001);
-}
-
-void human::Save(outputfile& SaveFile) const
-{
-  humanoid::Save(SaveFile);
-  SaveFile << TotalSize;
-}
-
-void human::Load(inputfile& SaveFile)
-{
-  humanoid::Load(SaveFile);
-  SaveFile >> TotalSize;
 }
 
 void humanoid::Bite(character* Enemy, bool ForceHit)
@@ -2452,19 +2444,6 @@ bool humanoid::IsAlive() const
       return true;
 
   return false;
-}
-
-/* Not a particulary ingenious algorithm but better than nothing... */
-
-float kamikazedwarf::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
-{
-  short HP = UseMaxHP ? Enemy->GetMaxHP() : Enemy->GetHP();
-  short HPAfterExplosion = HP - (GetStack()->GetTotalExplosivePower() >> 1);
-
-  if(HPAfterExplosion <= 0)
-    return 1000;
-  else
-    return humanoid::GetTimeToKill(Enemy, UseMaxHP) * HPAfterExplosion / HP;
 }
 
 ulong angel::GetBaseEmitation() const

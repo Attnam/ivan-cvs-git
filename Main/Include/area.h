@@ -21,7 +21,7 @@ class area
   area();
   area(ushort, ushort);
   virtual ~area();
-  virtual void Draw() const = 0;
+  virtual void Draw(bool) const = 0;
   void AddCharacter(vector2d, character*);
   void RemoveCharacter(vector2d);
   void Save(outputfile&) const;

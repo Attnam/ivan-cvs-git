@@ -68,21 +68,24 @@ bool dungeon::PrepareLevel(ushort Index, bool Visual)
     }
   else
     {
-      Level[Index] = new level;
-      Level[Index]->SetDungeon(this);
-      Level[Index]->SetIndex(Index);
-      Level[Index]->SetLevelScript(GetLevelScript(Index));
+      level* NewLevel = Level[Index] = new level;
+      NewLevel->SetDungeon(this);
+      NewLevel->SetIndex(Index);
+      NewLevel->SetLevelScript(GetLevelScript(Index));
+      game::SetCurrentArea(NewLevel);
+      game::SetCurrentLevel(NewLevel);
 
       if(Visual)
 	game::TextScreen("Entering " + GetLevelDescription(Index) + "...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
 
       game::SetIsGenerating(true);
-      Level[Index]->Generate(Index);
+      NewLevel->Generate(Index);
+      game::SetCurrentLSquareMap(NewLevel->GetMap());
       Generated[Index] = true;
       game::BusyAnimation();
 
-      if(*Level[Index]->GetLevelScript()->GenerateMonsters())
-	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
+      if(*NewLevel->GetLevelScript()->GenerateMonsters())
+	NewLevel->GenerateNewMonsters(NewLevel->GetIdealPopulation(), false);
 
       game::SetIsGenerating(false);
       return false;
@@ -101,13 +104,14 @@ void dungeon::SaveLevel(const std::string& SaveName, ushort Number, bool DeleteA
     }
 }
 
-void dungeon::LoadLevel(const std::string& SaveName, ushort Number)
+level* dungeon::LoadLevel(const std::string& SaveName, ushort Number)
 {
   inputfile SaveFile(SaveName + "." + Index + Number);
   SaveFile >> Level[Number];
   Level[Number]->SetDungeon(this);
   Level[Number]->SetIndex(Number);
   Level[Number]->SetLevelScript(GetLevelScript(Number));
+  return Level[Number];
 }
 
 void dungeon::Save(outputfile& SaveFile) const

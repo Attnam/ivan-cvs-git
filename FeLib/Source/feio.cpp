@@ -29,8 +29,7 @@
 
 void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
-  bitmap Buffer(RES_X, RES_Y);
-  Buffer.Fill(0);
+  bitmap Buffer(RES_X, RES_Y, 0);
   ushort c, LineNumber = 0;
 
   for(c = 0; c < Text.length(); ++c)
@@ -78,15 +77,14 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
   bool bReady = false;
   ulong iSelected = 0;
-  bitmap Backup(RES_X, RES_Y);
-  DOUBLE_BUFFER->Blit(&Backup);
+  bitmap Backup(DOUBLE_BUFFER);
   bitmap Buffer(RES_X, RES_Y);
   ushort c = 0;
 
   if(BackGround)
-    BackGround->Blit(&Buffer);
+    BackGround->FastBlit(&Buffer);
   else
-    Buffer.Fill(0);
+    Buffer.ClearToColor(0);
 
   std::string sCopyOfMS;
   std::string VeryUnGuruPrintf;
@@ -154,7 +152,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 	}
       else
 	{
-	  Buffer.Blit(DOUBLE_BUFFER);
+	  Buffer.FastBlit(DOUBLE_BUFFER);
 	  graphics::BlitDBToScreen();
 	  k = GET_KEY(false);
 	}
@@ -192,8 +190,7 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 {
   if(Fade)
     {
-      bitmap Buffer(RES_X, RES_Y);
-      Buffer.Fill(0);
+      bitmap Buffer(RES_X, RES_Y, 0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
       Buffer.FadeToScreen();
@@ -260,8 +257,7 @@ long iosystem::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Col
 {
   if(Fade)
     {
-      bitmap Buffer(RES_X, RES_Y);
-      Buffer.Fill(0);
+      bitmap Buffer(RES_X, RES_Y, 0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
       Buffer.FadeToScreen();
@@ -305,8 +301,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
 
   if(Fade)
     {
-      bitmap Buffer(RES_X, RES_Y);
-      Buffer.Fill(0);
+      bitmap Buffer(RES_X, RES_Y, 0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, TopicColor, "%s %d", Topic.c_str(), StartValue);
       FONT->Printf(&Buffer, Pos.X + (Topic.length() << 3) + 8, Pos.Y + 1, TopicColor, "_");
       Buffer.DrawHorizontalLine(Pos.X + 1, Pos.X + 201, Pos.Y + 15, Color2, false);

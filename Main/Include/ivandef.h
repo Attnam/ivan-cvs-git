@@ -110,7 +110,9 @@
 #define YOURSELF 8
 #define RANDOM_DIR 9
 
+#ifndef LIGHT_BORDER
 #define LIGHT_BORDER 80
+#endif
 
 #define ALPP 0
 #define ALP 1

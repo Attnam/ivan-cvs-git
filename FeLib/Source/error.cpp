@@ -1,4 +1,3 @@
-#include <new.h>
 #include <cstdarg>
 #include <cstring>
 #include <cstdlib>
@@ -15,6 +14,14 @@
 #include <windows.h>
 #else
 #include <iostream>
+#endif
+
+#ifdef VC
+#include <new.h>
+#define set_new_handler _set_new_handler
+#else
+#include <new>
+#define set_new_handler std::set_new_handler
 #endif
 
 #include "error.h"
@@ -34,10 +41,6 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 #ifdef __DJGPP__
 void (*globalerrorhandler::OldSignal[SIGNALS])(int);
 int globalerrorhandler::Signal[SIGNALS] = { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
-#endif
-
-#ifdef VC
-#define set_new_handler _set_new_handler
 #endif
 
 void globalerrorhandler::Install()

@@ -40,16 +40,17 @@ class level : public area
   void GenerateMonsters();
   lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }
-  void GenerateTunnel(vector2d, vector2d, bool);
-  void ExpandPossibleRoute(vector2d, vector2d, bool);
-  void ExpandStillPossibleRoute(vector2d, vector2d, bool);
+  void GenerateTunnel(ushort, ushort, ushort, ushort, bool);
+  void ExpandPossibleRoute(ushort, ushort, ushort, ushort, bool);
+  void ExpandStillPossibleRoute(ushort, ushort, ushort, ushort, bool);
   void Save(outputfile&) const;
   void Load(inputfile&);
   void FiatLux();
   ushort GetIdealPopulation() const { return IdealPopulation; }
   ushort GetDifficulty() const { return Difficulty; }
   void GenerateNewMonsters(ushort, bool = true);
-  void AttachPos(vector2d);
+  void AttachPos(ushort, ushort);
+  void AttachPos(vector2d Pos) { AttachPos(Pos.X, Pos.Y); }
   void CreateItems(ushort);
   bool MakeRoom(const roomscript*);
   void ParticleTrail(vector2d, vector2d);
@@ -67,7 +68,7 @@ class level : public area
   void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
   bool CollectCreatures(std::vector<character*>&, character*, bool);
   void ApplyLSquareScript(const squarescript*);
-  virtual void Draw() const;
+  virtual void Draw(bool) const;
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
   vector2d GetEntryPos(const character*, uchar) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, const roomscript*, room*, vector2d, vector2d);
@@ -82,6 +83,7 @@ class level : public area
   void SetIndex(uchar What) { Index = What; }
   bool DrawExplosion(const explosion&) const;
   ushort TriggerExplosions(ushort);
+  lsquare*** GetMap() const { return Map; }
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;

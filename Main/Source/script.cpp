@@ -529,7 +529,8 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Ini
 
 template <class type, class contenttype> void contentmap<type, contenttype>::ReadFrom(inputfile& SaveFile)
 {
-  typedef typename std::map<char, contenttype> maptype;
+  typedef std::map<char, contenttype> maptype;
+  typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
     ABORT("Illegal %s content map redefinition on line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
@@ -549,7 +550,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 
 	  for(Word2 = SaveFile.ReadWord(); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
-	      std::pair<maptype::iterator, bool> Return = SymbolMap.insert(std::pair<char, contenttype>(Word2[0], contenttype()));
+	      std::pair<mapiterator, bool> Return = SymbolMap.insert(std::pair<char, contenttype>(Word2[0], contenttype()));
 
 	      if(Return.second)
 		ReadData(Return.first->second, SaveFile);

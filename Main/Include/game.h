@@ -11,6 +11,11 @@
 
 #include "vector2d.h"
 #include "felibdef.h"
+#include "femath.h"
+
+#ifndef LIGHT_BORDER
+#define LIGHT_BORDER 80
+#endif
 
 #define PLAYER game::GetPlayer()
 
@@ -27,6 +32,8 @@ class inputfile;
 class worldmap;
 class god;
 class square;
+class wsquare;
+class lsquare;
 class bitmap;
 struct explosion;
 
@@ -86,8 +93,8 @@ class game
   static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static const vector2d GetRelativeMoveVector(ushort Index) { return RelativeMoveVector[Index]; }
-  static area* GetCurrentArea();
-  static level* GetCurrentLevel();
+  static area* GetCurrentArea() { return CurrentArea; }
+  static level* GetCurrentLevel() { return CurrentLevel; }
   static bool WorldMapLOSHandler(long, long);
   static bool LevelLOSHandler(long, long);
   static ushort*** GetLuxTable() { return LuxTable; }
@@ -120,7 +127,6 @@ class game
   static void UpdateCameraXWithPos(ushort);
   static void UpdateCameraYWithPos(ushort);
   static bool KeyIsOK(char);
-  static void SetCurrentLevelIndex(ushort What) { CurrentLevelIndex = What; }
   static uchar GetCurrentLevelIndex() { return CurrentLevelIndex; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
@@ -145,7 +151,6 @@ class game
   static bool IsInWilderness() { return InWilderness; }
   static void SetIsInWilderness(bool What) { InWilderness = What; }
   static worldmap* GetWorldMap() { return WorldMap; }
-  static void SetWorldMap(worldmap* What) { WorldMap = What; }
   static void SetAreaInLoad(area* What) { AreaInLoad = What; }
   static void SetSquareInLoad(square* What) { SquareInLoad = What; }
   static area* GetAreaInLoad() { return AreaInLoad; }
@@ -154,12 +159,11 @@ class game
   static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeonIndex]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
   static uchar GetCurrentDungeonIndex() { return CurrentDungeonIndex; }
-  static void SetCurrentDungeonIndex(uchar What) { CurrentDungeonIndex = What; }
   static void InitDungeons();
   static bool OnScreen(vector2d);
   static void DoEvilDeed(ushort);
   static void SaveWorldMap(const std::string& = SaveName(""), bool = false);
-  static void LoadWorldMap(const std::string& = SaveName(""));
+  static worldmap* LoadWorldMap(const std::string& = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewCharacterID(character*);
   static ulong CreateNewItemID() { return NextItemID++; }
@@ -203,8 +207,8 @@ class game
   static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);
-  static void SetCurrentEmitterEmitation(ulong What) { CurrentEmitterEmitation = What; }
-  static void SetCurrentEmitterPos(vector2d);
+  static void InstallCurrentEmitter(vector2d, ulong);
+  static void InstallCurrentNoxifier(vector2d Pos) { CurrentEmitterPos = Pos; }
   static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
@@ -245,6 +249,10 @@ class game
   static void SetCurrentExplosion(const explosion* What) { CurrentExplosion = What; }
   static bool PlayerWasHurtByExplosion() { return PlayerHurtByExplosion; }
   static void SetPlayerWasHurtByExplosion(bool What) { PlayerHurtByExplosion = What; }
+  static void SetCurrentArea(area* What) { CurrentArea = What; }
+  static void SetCurrentLevel(level* What) { CurrentLevel = What; }
+  static void SetCurrentWSquareMap(wsquare*** What) { CurrentWSquareMap = What; }
+  static void SetCurrentLSquareMap(lsquare*** What) { CurrentLSquareMap = What; }
  private:
   static std::string Alignment[];
   static god** God;
@@ -283,9 +291,11 @@ class game
   static vector2d CursorPos;
   static bool Zoom;
   static std::string LockDescription[];
-  static ulong CurrentEmitterEmitation;
-  static long CurrentEmitterPosX;
-  static long CurrentEmitterPosY;
+  static ushort** CurrentRedLuxTable;
+  static ushort** CurrentGreenLuxTable;
+  static ushort** CurrentBlueLuxTable;
+  static long CurrentEmitterPosXMinus16;
+  static long CurrentEmitterPosYMinus16;
   static vector2d CurrentEmitterPos;
   static bool Generating;
   static dangermap DangerMap;
@@ -302,6 +312,20 @@ class game
   static bool InGetCommand;
   static const explosion* CurrentExplosion;
   static bool PlayerHurtByExplosion;
+  static area* CurrentArea;
+  static level* CurrentLevel;
+  static wsquare*** CurrentWSquareMap;
+  static lsquare*** CurrentLSquareMap;
 };
+
+inline void game::CombineLights(ulong& L1, ulong L2)
+{
+  L1 = MakeRGB24(Max(GetRed24(L1), GetRed24(L2)), Max(GetGreen24(L1), GetGreen24(L2)), Max(GetBlue24(L1), GetBlue24(L2)));
+}
+
+inline bool game::IsDark(ulong Light)
+{
+  return !Light || (GetRed24(Light) < LIGHT_BORDER && GetGreen24(Light) < LIGHT_BORDER && GetBlue24(Light) < LIGHT_BORDER);
+}
 
 #endif

@@ -14,3 +14,4 @@
 //Guy with beginning stats and no equipment in gloomy cave level 2 -> Ur-Khan the orc marshal appears. (I was in WMode, but still...)
 //There's a LOT of school food in the game.
 Shields may be a little too weak.
+People shouldn't get permanently confused from fountains!
