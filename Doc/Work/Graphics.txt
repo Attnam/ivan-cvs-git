@@ -48,6 +48,7 @@ Lada.
 Jungle bays.
 Better helmet.
 Robe.
+Ring of poison resistance, triangular key on a gravel floor.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
 Small, medium and large chests (one is probably already done...)

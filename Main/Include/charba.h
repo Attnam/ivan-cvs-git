@@ -679,6 +679,7 @@ class character : public entity, public id
   virtual DATA_BASE_BOOL(CanBeCloned);
   virtual character* CloneToNearestSquare(character*) const;
   virtual void SignalSpoil();
+  virtual void SignalSpoilLevelChange();
   bool HasSecondaryMaterial() const { return false; }
   bool HasContainedMaterial() const { return true; }
   virtual bool IsAlive() const = 0;

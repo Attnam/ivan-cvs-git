@@ -2041,7 +2041,7 @@ void humanoid::CompleteRiseFromTheDead()
 	    {
 	      item* Item = *i;
 	      Item->RemoveFromSlot();
-	      SetBodyPart(c, static_cast<bodypart*>(Item));
+	      AttachBodyPart(static_cast<bodypart*>(Item));
 	      break;
 	    }
       }
@@ -2053,7 +2053,10 @@ void humanoid::CompleteRiseFromTheDead()
 	  return;
 
       if(GetBodyPart(c))
-	GetBodyPart(c)->SetHP(1);
+	{
+	  GetBodyPart(c)->ResetSpoiling();
+	  GetBodyPart(c)->SetHP(1);
+	}
     }
 }
 
@@ -2072,11 +2075,11 @@ bool humanoid::HandleNoBodyPart(ushort Index)
 	ADD_MESSAGE("The groinless body of %s vibrates violently.", CHAR_NAME(DEFINITE));
 
       Die();
-      return true;
+      return false;
     case TORSO_INDEX:
       ABORT("The corpse does not have a torso.");
     default:
-      return false;
+      return true;
     }
 }
 
@@ -3451,6 +3454,7 @@ material* humanoid::CreateBodyPartFlesh(ushort, ulong Volume) const
 item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 {
   item* Bone;
+
   if(BodyPartIndex == HEAD_INDEX)
     Bone = new skull(0, NO_MATERIALS);
   else

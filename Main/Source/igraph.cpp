@@ -170,7 +170,7 @@ tile igraph::AddUser(graphicid GI)
 	Bitmap->CreateSparkle(GI.SparklePos, GI.Frame - GI.SparkleTime);
 
       if(GI.FlyAmount)
-	Bitmap->CreateFlies(GI.FlyAmount, GI.FlySeed, GI.Frame);
+	Bitmap->CreateFlies(GI.FlySeed, GI.Frame, GI.FlyAmount);
 
       if(GI.SpecialFlags & 0x7) /* Do we need rotating/flipping? */
 	{

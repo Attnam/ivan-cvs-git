@@ -42,7 +42,7 @@ struct graphicid
   uchar SparkleTime PACKED;
   ushort OutlineColor PACKED;
   ulong FlySeed PACKED;
-  ushort FlyAmount PACKED;
+  uchar FlyAmount PACKED;
 };
 
 #ifdef VC

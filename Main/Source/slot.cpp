@@ -276,3 +276,8 @@ void gearslot::SignalEnchantmentChange()
 {
   GetBodyPart()->SignalEnchantmentChange();
 }
+
+bool stackslot::IsVisible() const
+{
+  return GetMotherStack()->IsOnGround();
+}

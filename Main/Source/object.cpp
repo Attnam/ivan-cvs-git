@@ -150,7 +150,7 @@ void object::UpdatePictures()
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
   ulong FlySeed = 0;
-  ushort FlyAmount = GetFlyAmount(); 
+  uchar FlyAmount = GetFlyAmount(); 
   bool Sparkling = false;
 
   if(!(SpecialFlags & ST_FLAME))
@@ -163,32 +163,36 @@ void object::UpdatePictures()
 
       if(Sparkling)
 	{
-	  static ushort SeedModifier = 0;
+	  static ushort SeedModifier = 1;
 	  long NewSeed = RAND(); 
 	  vector2d BPos = GetBitmapPos(0);
-	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 1);
+	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
-	  if(++SeedModifier == 0x10)
-	    SeedModifier = 0;
+	  if(++SeedModifier > 0x10)
+	    SeedModifier = 1;
 
 	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(BPos, vector2d(16, 16), MColorSparkling);
 	  SparkleTime = ((RAND() & 3) << 5) + (RAND() & 0xF);
 	  femath::SetSeed(NewSeed);
 
-	  if(AnimationFrames < 128)
+	  if(AnimationFrames <= 128)
 	    AnimationFrames = 128;
 	}
+
       if(FlyAmount)
 	{
-	  static ushort SeedModifier = 0;
+	  static ushort SeedModifier = 1;
 	  vector2d BPos = GetBitmapPos(0);
-	  FlySeed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 1;
-	  if(++SeedModifier == 0x10)
-	    SeedModifier = 0;
-	  AnimationFrames = 128;
+	  FlySeed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
+
+	  if(++SeedModifier > 0x10)
+	    SeedModifier = 1;
+
+	  if(AnimationFrames <= 32)
+	    AnimationFrames = 32;
 	}
     }
-  else if(AnimationFrames < 16)
+  else if(AnimationFrames <= 16)
     AnimationFrames = 16;
 
   ushort c;
@@ -205,9 +209,7 @@ void object::UpdatePictures()
       GraphicId[c].Color[1] = GetMaterialColorB(c);
       GraphicId[c].Color[2] = GetMaterialColorC(c);
       GraphicId[c].Color[3] = GetMaterialColorD(c);
-
       ushort MaxAlpha = GetMaxAlpha(c);
-
       GraphicId[c].BaseAlpha = GetBaseAlpha(c);
 
       if(GraphicId[c].BaseAlpha > MaxAlpha)

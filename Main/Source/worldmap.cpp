@@ -202,11 +202,26 @@ void worldmap::Generate()
 			  for(NewAttnamIndex = RAND() % 8; NewAttnamIndex == 7 - d1; NewAttnamIndex = RAND() % 8);
 
 			  NewAttnamPos = TunnelEntry + game::GetMoveVector(NewAttnamIndex);
+			  static ushort DiagonalDir[4] = { 0, 2, 5, 7 };
+			  static ushort NotDiagonalDir[4] = { 1, 3, 4, 6 };
+			  static ushort AdjacentDir[4][2] = { { 0, 1 }, { 0, 2 }, { 1, 3 }, { 2, 3 } };
+			  bool Raised[] = { false, false, false, false };
+			  ushort d2;
 
-			  for(ushort d2 = 0; d2 < 8; ++d2)
-			    if(d2 != 7 - d1 && (d2 == NewAttnamIndex || !(RAND() & 3)))
+			  for(d2 = 0; d2 < 4; ++d2)
+			    if(NotDiagonalDir[d2] != 7 - d1 && (NotDiagonalDir[d2] == NewAttnamIndex || !(RAND() & 2)))
 			      {
-				vector2d Pos = TunnelEntry + game::GetMoveVector(d2);
+				vector2d Pos = TunnelEntry + game::GetMoveVector(NotDiagonalDir[d2]);
+				AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
+				TypeBuffer[Pos.X][Pos.Y] = jungle::StaticType();
+				GetWSquare(Pos)->ChangeGWTerrain(new jungle);
+				Raised[d2] = true;
+			      }
+
+			  for(d2 = 0; d2 < 4; ++d2)
+			    if(DiagonalDir[d2] != 7 - d1 && (DiagonalDir[d2] == NewAttnamIndex || (Raised[AdjacentDir[d2][0]] && Raised[AdjacentDir[d2][1]] && !(RAND() & 2))))
+			      {
+				vector2d Pos = TunnelEntry + game::GetMoveVector(DiagonalDir[d2]);
 				AltitudeBuffer[Pos.X][Pos.Y] = 1 + RAND() % 50;
 				TypeBuffer[Pos.X][Pos.Y] = jungle::StaticType();
 				GetWSquare(Pos)->ChangeGWTerrain(new jungle);

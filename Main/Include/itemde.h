@@ -39,6 +39,7 @@ class ABSTRACT_ITEM
   virtual bool HasContainedMaterial() const { return true; }
   virtual ulong GetPrice() const { return GetContainedMaterial() ? GetContainedMaterial()->GetRawPrice() + item::GetPrice() : item::GetPrice(); }
   virtual void Be();
+  virtual uchar GetFlyAmount() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual material*& GetMaterialReference(ushort);
@@ -129,6 +130,7 @@ class ITEM
   virtual ushort GetStrengthValue() const;
   virtual ushort GetEffectBonus() const { return 100 + 5 * Enchantment; }
   virtual ushort GetAPBonus() const { return 2000 / (20 + Enchantment); }
+  virtual uchar GetFlyAmount() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
@@ -162,7 +164,6 @@ class ITEM
   virtual void SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { SetSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
-  virtual ushort GetFlyAmount() const { return 5; }
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -172,7 +173,9 @@ class ITEM
 (
   holybanana,
   banana,
-  ;
+ public:
+  virtual uchar GetSpecialFlags() const { return ST_FLAME; }
+  virtual ulong GetPrice() const { return item::GetPrice(); }
 );
 
 class ITEM
@@ -236,7 +239,7 @@ class ITEM
   virtual ulong GetPrice() const { return (armor::GetPrice() << 2) + GetEnchantedPrice(Enchantment); }
   virtual bool IsBodyArmor(const character*) const { return true; }
  protected:
-  virtual const std::string& GetNameSingular() const { return GetMainMaterial()->GetFlexibility() > 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
+  virtual const std::string& GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
 );
 
 class ITEM
@@ -761,7 +764,7 @@ class ABSTRACT_ITEM
   virtual float GetRoughChanceToHit(float, float) const;
   const std::string& GetBodyPartName() const { return GetNameSingular(); }
   void RandomizePosition();
-  void ResetPosition();
+  void ResetPosition() { SpecialFlags &= ~0x7; }
   virtual void SignalSpoil(material*);
   virtual bool IsVeryCloseToSpoiling() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
@@ -781,6 +784,7 @@ class ABSTRACT_ITEM
   void SetMaterialColorD(ushort What) { ColorD = What; }
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
+  virtual void SignalSpoilLevelChange(material*);
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -1142,6 +1146,7 @@ class ITEM
   virtual void CalculateEmitation();
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
+  virtual uchar GetFlyAmount() const;
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual material*& GetMaterialReference(ushort);

@@ -134,6 +134,8 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 
 			    if(Price >= MinPrice && Price <= MaxPrice)
 			      return Item;
+			    else
+			      delete Item;
 			  }
 
 			break;

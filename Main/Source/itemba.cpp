@@ -657,3 +657,35 @@ void item::DonateSlotTo(item* Item)
   Slot->DonateTo(Item);
   Slot = 0;
 }
+
+uchar item::GetFlyAmount() const
+{
+  return MainMaterial->GetSpoilLevel();
+}
+
+void item::SignalSpoilLevelChange(material*)
+{
+  bool NeedToInformSlot = !IsAnimated() && GetFlyAmount() && GetSquareUnder() && Slot->IsVisible();
+  UpdatePictures();
+
+  if(NeedToInformSlot)
+    Slot->GetSquareUnder()->IncAnimatedEntities();
+}
+
+bool item::AllowSpoil() const
+{
+  if(IsOnGround())
+    {
+      uchar RoomNumber = GetLSquareUnder()->GetRoom();
+      return !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->AllowSpoil();
+    }
+  else
+    return true;
+}
+
+void item::ResetSpoiling()
+{
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      GetMaterial(c)->ResetSpoiling();
+}

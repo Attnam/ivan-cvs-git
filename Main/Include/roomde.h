@@ -28,6 +28,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);
+  virtual bool AllowSpoil() const { return false; }
 );
 
 class ROOM
@@ -59,6 +60,7 @@ class ROOM
   virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool DestroyTerrain(character*, olterrain*);
+  virtual bool AllowSpoil() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;
@@ -66,9 +68,8 @@ class ROOM
 
 class ROOM
 (
- library,
- room,
- public:
+  library,
+  room,
  public:
   virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);

@@ -455,7 +455,6 @@ item* potion::BetterVersion() const
 
       potion* P = new potion(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
-
       return P;
     }
   else
@@ -475,7 +474,6 @@ item* can::BetterVersion() const
 
       can* P = new can(0, NO_MATERIALS); 
       P->InitMaterials(MAKE_MATERIAL(IRON), Stuff); 
-
       return P;
     }
   else
@@ -2962,10 +2960,17 @@ void humanoidtorso::SignalVolumeAndWeightChange()
 
   if(GetMaster() && !GetMaster()->IsInitializing())
     {
-      GetHumanoidMaster()->GetRightArm()->CalculateAttributeBonuses();
-      GetHumanoidMaster()->GetLeftArm()->CalculateAttributeBonuses();
-      GetHumanoidMaster()->GetRightLeg()->CalculateAttributeBonuses();
-      GetHumanoidMaster()->GetLeftLeg()->CalculateAttributeBonuses();
+      if(GetHumanoidMaster()->GetRightArm())
+	GetHumanoidMaster()->GetRightArm()->CalculateAttributeBonuses();
+
+      if(GetHumanoidMaster()->GetLeftArm())
+	GetHumanoidMaster()->GetLeftArm()->CalculateAttributeBonuses();
+
+      if(GetHumanoidMaster()->GetRightLeg())
+	GetHumanoidMaster()->GetRightLeg()->CalculateAttributeBonuses();
+
+      if(GetHumanoidMaster()->GetLeftLeg())
+	GetHumanoidMaster()->GetLeftLeg()->CalculateAttributeBonuses();
     }
 }
 
@@ -3147,12 +3152,6 @@ bool whipofthievery::HitEffect(character* Enemy, character* Hitter, uchar BodyPa
 void bodypart::RandomizePosition()
 {
   SpecialFlags |= 1 + RAND() % 7;
-  UpdatePictures();
-}
-
-void bodypart::ResetPosition()
-{
-  SpecialFlags &= ~0x7;
   UpdatePictures();
 }
 
@@ -3732,16 +3731,18 @@ void materialcontainer::Be()
 {
   MainMaterial->Be();
 
-  if(ContainedMaterial)
+  if(Exists() && ContainedMaterial)
     ContainedMaterial->Be();
 }
 
 void meleeweapon::Be()
 {
   MainMaterial->Be();
-  SecondaryMaterial->Be();
 
-  if(ContainedMaterial)
+  if(Exists())
+    SecondaryMaterial->Be();
+
+  if(Exists() && ContainedMaterial)
     ContainedMaterial->Be();
 }
 
@@ -4264,4 +4265,37 @@ void leg::ApplyAgilityPenalty(item* Item)
 ushort armor::GetInElasticityPenalty(ushort Attribute) const
 {
   return Attribute * GetInElasticityPenaltyModifier() / (GetMainMaterial()->GetFlexibility() * 100);
+}
+
+uchar materialcontainer::GetFlyAmount() const
+{
+  return Max<uchar>(MainMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
+}
+
+uchar meleeweapon::GetFlyAmount() const
+{
+  return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
+}
+
+uchar corpse::GetFlyAmount() const
+{
+  uchar FlyAmount = 0;
+
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && FlyAmount < BodyPart->GetFlyAmount())
+	FlyAmount = BodyPart->GetFlyAmount();
+    }
+
+  return FlyAmount;
+}
+
+void bodypart::SignalSpoilLevelChange(material* Material)
+{
+  if(GetMaster())
+    GetMaster()->SignalSpoilLevelChange();
+  else
+    item::SignalSpoilLevelChange(Material);
 }

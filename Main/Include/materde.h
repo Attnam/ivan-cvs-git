@@ -19,10 +19,13 @@ class MATERIAL
   virtual bool HasBe() const { return true; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsVeryCloseToSpoiling() const { return GetSpoilModifier() - SpoilCounter <= 10; }
+  virtual bool IsVeryCloseToSpoiling() const { return SpoilLevel == 8; }
+  virtual uchar GetSpoilLevel() const { return SpoilLevel; }
+  virtual void ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
  protected:
-  virtual void VirtualConstructor(bool) { SpoilCounter = 0; }
+  virtual void VirtualConstructor(bool);
   ushort SpoilCounter;
+  uchar SpoilLevel;
 );
 
 class MATERIAL

@@ -3665,10 +3665,11 @@ void character::PrintInfo() const
 void character::CompleteRiseFromTheDead()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    {
-      if(GetBodyPart(c))
+    if(GetBodyPart(c))
+      {
+	GetBodyPart(c)->ResetSpoiling();
 	GetBodyPart(c)->SetHP(1);
-    }
+      }
 }
 
 bool character::RaiseTheDead(character*)
@@ -4368,8 +4369,9 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
 ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm, float WeaponToHitValue, ushort Damage, short Success, uchar Type)
 {
   ushort BlockStrength = Arm->GetBlockCapability();
+  float BlockValue = Arm->GetBlockValue();
 
-  if(BlockStrength)
+  if(BlockStrength && BlockValue)
     {
       item* Blocker = Arm->GetWielded();
 
@@ -4964,12 +4966,15 @@ bool character::DetachBodyPart()
 void character::AttachBodyPart(bodypart* BodyPart)
 {
   SetBodyPart(BodyPart->GetBodyPartIndex(), BodyPart);
+  BodyPart->ResetSpoiling();
   BodyPart->ResetPosition();
+  BodyPart->UpdatePictures();
+  CalculateAttributeBonuses();
   CalculateBattleInfo();
   GetSquareUnder()->SendNewDrawRequest();
 }
 
-/* Returns true if the character has all body parts else false */ 
+/* Returns true if the character has all bodyparts, false if not. */ 
 
 bool character::HasAllBodyParts() const
 {
@@ -5221,15 +5226,16 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	    {
 	      GetTorso()->SetHP(GetTorso()->GetHP() - RAND() % 5 - 1);
 	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
+
 	      if(TorsosVolume == 0)
 		break;
 	      
 	      ulong Amount = (RAND() % TorsosVolume) + 1;
-
 	      lump* Lump = new lump(0, NO_MATERIALS); 
 	      Lump->InitMaterials(GetTorso()->GetMainMaterial()->Clone(Amount));
 	      GetTorso()->GetMainMaterial()->SetVolume(GetTorso()->GetMainMaterial()->GetVolume() - Amount);
 	      Lump->MoveTo(GetNearLSquare(GetLevelUnder()->GetRandomSquare())->GetStack());
+
 	      if(IsPlayer())
 		ADD_MESSAGE("Parts of you teleport away.");
 	      else if(CanBeSeenByPlayer())
@@ -5927,6 +5933,7 @@ void character::ReceiveAntidote(long Amount)
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("Aaaah... You feel MUCH better.");
+
 	  DeActivateTemporaryState(POISONED);
 	}
     }
@@ -5938,7 +5945,7 @@ void character::AddAntidoteConsumeEndMessage() const
 				 /* Comment: Whaaat? */
     {
       if(IsPlayer())
-	ADD_MESSAGE("Your body processes the poison in your vains with rapid speed.");
+	ADD_MESSAGE("Your body processes the poison in your veins with rapid speed.");
     }
 }
 
@@ -5959,4 +5966,12 @@ bool character::ShowBattleInfo()
   game::SetStandardListAttributes(Info);
   Info.Draw();
   return false;
+}
+
+void character::SignalSpoilLevelChange()
+{
+  /* Add support for spoiling zombies! */
+
+  if(GetMotherEntity())
+    GetMotherEntity()->SignalSpoilLevelChange(0);
 }

@@ -1712,6 +1712,6 @@ void game::SetStandardListAttributes(felist& List)
 {
   List.SetPos(vector2d(26, 42));
   List.SetWidth(652);
-  List.SetBackColor(MakeRGB16(0, 0, 16));
+  List.SetBackColor(MakeRGB16(0, 0, 32));
   List.SetFlags(BLIT_AFTERWARDS|DRAW_BACKGROUND_AFTERWARDS);
 }

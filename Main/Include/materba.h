@@ -148,7 +148,9 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
-  virtual void SetWetness(ulong) {}
+  virtual void SetWetness(ulong) { }
+  virtual uchar GetSpoilLevel() const { return 0; }
+  virtual void ResetSpoiling() { }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

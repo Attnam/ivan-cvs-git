@@ -454,7 +454,7 @@ material
 organicsubstance /* substances that spoil but are not flesh */
 {
 	IsAlive = true;
-	SpoilModifier = 5000;
+	SpoilModifier = 10000;
 
 	Config BANANA_FLESH;
 	{
@@ -529,7 +529,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		IsFlammable = true;
 		NameStem = "fiber";
 		Flexibility = 10;
-		SpoilModifier = 10000;
+		SpoilModifier = 20000;
 	}
 
 	Config BONE;
@@ -542,7 +542,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		NutritionValue = 50;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
-		SpoilModifier = 25000;
+		SpoilModifier = 50000;
 	}
 
 	Config BREAD;
@@ -555,7 +555,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		PriceModifier = 600;
 		NameStem = "bread";
 		Flexibility = 5;
-		SpoilModifier = 10000;
+		SpoilModifier = 20000;
 	}
 }
 
@@ -704,7 +704,7 @@ flesh
 	IsAlive = true;
 	NameStem = "flesh";
 	Flexibility = 5;
-	SpoilModifier = 5000;
+	SpoilModifier = 10000;
 	PriceModifier = 600;
 
 	Config GOBLINOID_FLESH;
@@ -720,7 +720,7 @@ flesh
 	{
 		NutritionValue = 250;
 		NameStem = "pork";
-		SpoilModifier = 10000;
+		SpoilModifier = 20000;
 		PriceModifier = 800;
 	}
 
@@ -728,7 +728,7 @@ flesh
 	{
 		NutritionValue = 250;
 		NameStem = "beef";
-		SpoilModifier = 10000;
+		SpoilModifier = 20000;
 		PriceModifier = 800;
 	}
 

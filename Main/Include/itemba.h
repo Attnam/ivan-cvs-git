@@ -334,7 +334,7 @@ class item : public object
   virtual DATA_BASE_BOOL(CanBeCloned);
   virtual DATA_BASE_VALUE(ushort, BeamRange);
   virtual void SignalSpoil(material*);
-  virtual bool AllowSpoil() const { return true; }
+  virtual bool AllowSpoil() const;
   bool CarriedByPlayer() const;
   bool CarriedBy(const character*) const;
   item* DuplicateToStack(stack*);
@@ -361,6 +361,9 @@ class item : public object
   virtual ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0;  }
   void DonateSlotTo(item*);
+  virtual uchar GetFlyAmount() const;
+  virtual void SignalSpoilLevelChange(material*);
+  virtual void ResetSpoiling();
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

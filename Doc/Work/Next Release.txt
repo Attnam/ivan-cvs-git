@@ -91,7 +91,7 @@ Genie's strength.
 //Glitter effect.
 //Fire effect.
 /Lightning effect.
-/Flies over spoiling items effect.
+//Flies over spoiling items effect.
 (s) Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
 (s) Re-enable Golden Eagle Quest danger requirement.
@@ -121,13 +121,13 @@ Stethoscope should show relative danger.
 Remove the school food effects of scabies (or make them a lot more seldom).
 ?Raven.
 Kicking chests.
-Prohibit spoiling in shops and on the cathedral floor.
+//Prohibit spoiling in shops and on the cathedral floor.
 ?Mellis should give information about unknown gods.
-Whips shouldn't really break when hitting armor.
+//Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
 ?Charges for magic whistle.
 Smithy to Attnam.
-Cut down the size of Elpuri's cave.
+//Cut down the size of Elpuri's cave.
 //Mana should be hidden.
 Solving the Elpuri Cave distance problem.
 //Apply + chests.
@@ -145,9 +145,13 @@ Boot m-color.
 ?Teleport to level 10.
 Selecting from gear when using SoCM/SoEW/SoEA.
 //Weapon volumes should be more realistic.
-?Flaming effect for holy banana.
+//?Flaming effect for holy banana.
 //?Solving the iron cloak conundrum.
 ?Broad tapeworm.
 Imperialist quest.
-Moving the lamp room to the tunnel.
+//Moving the lamp room to the tunnel.
 New background story.
+?Armor breaking.
+Tunnel boss.
+?Something special to tunnel level 2.
+?Config option to disable look zoom.

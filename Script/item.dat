@@ -626,8 +626,8 @@ bodyarmor /* armor-> */
 		Possibility = 250;
 		NameSingular = "plate mail";
 		FlexibleNameSingular = "armor";
-		MainMaterialConfig = { 3, LEATHER, BRONZE, IRON; }
-		MaterialConfigChances = { 3, 250, 20, 10; }
+		MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BRONZE, IRON; }
+		MaterialConfigChances = { 5, 150, 75, 25, 25, 10; }
 		Alias == "armor"; /* wishing doesn't yet support FlexibleNameSingular */
 		InElasticityPenaltyModifier = 20;
 	}
@@ -655,7 +655,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	/* StrengthModifier not used, SV == 3 * (10 + Enchantment) */
 	StrengthModifier = 150;
 	NameSingular = "Shirt of the Golden Eagle";
-	MainMaterialConfig == CLOTH;
+	MainMaterialConfig == GOLDEN_EAGLE_FEATHER;
 	ArticleMode = DEFINITE_ARTICLE;
 	IsPolymorphable = false;
 	CanBeBroken = false;

@@ -150,7 +150,6 @@ character* god::CreateAngel()
   for(ushort c = 0; c < 100; ++c)
     {
       TryToCreate = game::GetPlayer()->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
-
       angel* Angel = new angel(GetType());
 
       if(game::GetCurrentArea()->IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->IsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)

@@ -39,6 +39,7 @@ class slot
   virtual void DonateTo(item*);
   virtual bool CanBeSeenBy(const character*) const = 0;
   virtual void SignalEnchantmentChange() { }
+  virtual bool IsVisible() const = 0;
  protected:
   item* Item;
 };
@@ -60,6 +61,7 @@ class stackslot : public slot
   virtual bool CanBeSeenBy(const character*) const;
   stack* GetMotherStack() const { return MotherStack; }
   void SetMotherStack(stack* What) { MotherStack = What; }
+  virtual bool IsVisible() const;
  protected:
   stack* MotherStack;
   stackslot* Last;
@@ -80,6 +82,7 @@ class characterslot : public slot
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
   virtual bool CanBeSeenBy(const character*) const;
+  virtual bool IsVisible() const { return true; }
  protected:
   character* Master;
 };
@@ -101,6 +104,7 @@ class gearslot : public slot
   virtual void SignalEmitationDecrease(ulong);
   virtual bool CanBeSeenBy(const character*) const;
   virtual void SignalEnchantmentChange();
+  virtual bool IsVisible() const { return false; }
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;
@@ -120,6 +124,7 @@ class actionslot : public slot
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   virtual bool CanBeSeenBy(const character*) const;
+  virtual bool IsVisible() const { return false; }
  protected:
   action* Action;
 };

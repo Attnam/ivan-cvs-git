@@ -37,6 +37,7 @@ class entity
   virtual bool ContentsCanBeSeenBy(const character*) const { return false; }
   virtual bool AllowSpoil() const { return false; }
   virtual void SignalSpoil(material*) { }
+  virtual void SignalSpoilLevelChange(material*) { }
  protected:
   std::list<entity*>::iterator PoolIterator;
   bool ExistsBool;

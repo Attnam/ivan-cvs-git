@@ -19,20 +19,45 @@ MATERIAL_PROTOTYPE(material, 0);
 
 void organicsubstance::Be()
 {
-  if(MotherEntity->AllowSpoil() && ++SpoilCounter > GetSpoilModifier())
-    MotherEntity->SignalSpoil(this);
+  if(MotherEntity->AllowSpoil())
+    {
+      if((SpoilCounter += 10) < GetSpoilModifier())
+	{
+	  if(SpoilCounter << 1 >= GetSpoilModifier())
+	    {
+	      uchar NewSpoilLevel = ((SpoilCounter << 4) / GetSpoilModifier()) - 7;
+
+	      if(NewSpoilLevel != SpoilLevel)
+		{
+		  SpoilLevel = NewSpoilLevel;
+		  MotherEntity->SignalSpoilLevelChange(this);
+		}
+	    }
+	}
+      else
+	MotherEntity->SignalSpoil(this);
+    }
 }
 
 void organicsubstance::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
-  SaveFile << SpoilCounter;
+  SaveFile << SpoilCounter << SpoilLevel;
 }
 
 void organicsubstance::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
-  SaveFile >> SpoilCounter;
+  SaveFile >> SpoilCounter >> SpoilLevel;
+}
+
+void organicsubstance::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    {
+      SpoilCounter = (RAND() % GetSpoilModifier()) >> 5;
+      SpoilLevel = 0;
+    }
 }
 
 void flesh::Save(outputfile& SaveFile) const

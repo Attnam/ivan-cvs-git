@@ -67,7 +67,7 @@ class object : public entity, public id
   virtual void CalculateAll() = 0;
   virtual bool HasSecondaryMaterial() const { return false; }
   virtual bool HasContainedMaterial() const { return false; }
-  virtual ushort GetFlyAmount() const { return 0; }
+  virtual uchar GetFlyAmount() const { return 0; }
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);

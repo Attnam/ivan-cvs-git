@@ -1,3 +1,16 @@
+October 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Items in shops or on the cathedral floor no longer spoil
+	* Spoil level is now symbolized by Hex's fly effect
+	* Halved all spoil rates
+	* Fixed a bug that caused the pick up AI of limb-lacking monsters to crash
+	* Corrected a bug in the new random item code that created numerous ghost items
+	* Removed a fatal bug in the block code that resulted in a div by zero
+	* Killed a minor bug in the bodypart attachment code that prevented attribute
+	  bonuses from updating correctly
+	* Added flame effect for holy bananas
+	* Tweaked the shape of the jungle island a little
+
 October 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Weapon prices are now correct
