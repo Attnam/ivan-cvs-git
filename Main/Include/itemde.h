@@ -708,6 +708,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
 	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
+	virtual material* CreateLoafMaterials(void);
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
