@@ -1922,10 +1922,11 @@ void character::AddScoreEntry(const std::string& Description, float Multiplier, 
   if(!game::WizardModeIsActive())
     {
       highscore HScore;
-      std::string Desc = game::GetPlayer()->GetAssignedName() + ", " + Description;
+      std::string Desc = game::GetPlayer()->GetAssignedName();
+      Desc << ", " << Description;
 
       if(AddEndLevel)
-	Desc += " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
+	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()));
 
       HScore.Add(long((GetScore() - game::GetBaseScore()) * Multiplier), Desc);
       HScore.Save();
@@ -4280,7 +4281,7 @@ void character::DrawPanel(bool AnimationDraw) const
   if(game::IsInWilderness())
     FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Worldmap");
   else
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent())).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrent())).c_str());
 
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Time: %d", game::GetTicks() / 10);
 

@@ -3011,4 +3011,5 @@ ostrich
 	PanicLevel = 95;
 	FleshMaterial = OSTRICH_FLESH;
 	DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
+	StandVerb = "floating";
 }

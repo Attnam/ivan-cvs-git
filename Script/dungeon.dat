@@ -68,6 +68,8 @@ Dungeon ELPURI_CAVE;
 	Levels = 10;
 	Variable XSize = 64;
 	Variable YSize = 36;
+	Description = "gloomy cave";
+	ShortDescription = "GC";
 
 	LevelDefault
 	{
@@ -337,7 +339,8 @@ Dungeon ELPURI_CAVE;
 
 	Level DARK_LEVEL;
 	{
-		Description = DarkLevel;
+		Description = "dark level";
+		ShortDescription = "DarkLevel";
 		LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
 		FillSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Items = 0;
@@ -432,7 +435,8 @@ Dungeon ELPURI_CAVE;
 
 	Level OREE_LAIR;
 	{
-		Description = OreeLair;
+		Description = "Oree's lair";
+		ShortDescription = "OreeLair";
 		LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
 		FillSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
 		Rooms = 1;
@@ -501,6 +505,7 @@ Dungeon ATTNAM;
 	Level 0;
 	{
 		Description = Attnam;
+		ShortDescription = Attnam;
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
 		Size = XSize, YSize;
 		GenerateMonsters = false;
@@ -1139,6 +1144,7 @@ Dungeon NEW_ATTNAM;
 	Level 0;
 	{
 		Description = "New Attnam";
+		ShortDescription = "New Attnam";
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
 		Size = XSize, YSize;
 		GenerateMonsters = false;
@@ -1365,6 +1371,8 @@ Dungeon UNDER_WATER_TUNNEL;
 	Levels = 3;
 	Variable XSize = 80;
 	Variable YSize = 20;
+	Description = "underwater tunnel";
+	ShortDescription = "UT";
 
 	LevelDefault
 	{

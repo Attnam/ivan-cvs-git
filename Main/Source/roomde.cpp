@@ -168,7 +168,10 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	}
     }
   else
-    return true;
+    {
+      ADD_MESSAGE("The shopkeeper doesn't see you, so you cannot trade with him.");
+      return game::BoolQuestion(std::string("Still drop ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+    }
 }
 
 void temple::Enter(character* Pilgrim)
@@ -512,7 +515,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  else
 	    ADD_MESSAGE("\"What an interesting collection of %d %s. I'll pay %d gold pieces for it.\"", Amount, ForSale->CHAR_NAME(PLURAL), Price);
 
-	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
+	  if(game::BoolQuestion(std::string("Do you want to sell ") + (Amount == 1 ? "this item" : "these items") + "? [y/N]"))
 	    {
 	      Customer->EditMoney(Price);
 	      Master->EditMoney(-Price);
@@ -528,7 +531,10 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	}
     }
   else
-    return true;
+    {
+      ADD_MESSAGE("The librarian doesn't see you, so you cannot trade with him.");
+      return game::BoolQuestion(std::string("Still drop ") +  + (Amount == 1 ? "this item" : "these items") + "? [y/N]");
+    }
 }
 
 void library::KickSquare(character* Infidel, lsquare* Square)

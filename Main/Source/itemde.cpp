@@ -357,8 +357,8 @@ item* brokenbottle::BetterVersion() const
   else
     Stuff = MAKE_MATERIAL(OMMEL_URINE);
 
-  potion* P = new potion(0, NO_MATERIALS); 
-  P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff); 
+  potion* P = new potion(0, NO_MATERIALS);
+  P->InitMaterials(MAKE_MATERIAL(GLASS), Stuff);
   return P;
 }
 

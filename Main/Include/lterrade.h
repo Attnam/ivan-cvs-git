@@ -220,7 +220,7 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SetText(const std::string& What) { Text = What; }
-  virtual const std::string& GetText() const { return Text; }
+  virtual std::string GetText() const { return Text; }
   virtual void AddPostFix(std::string&) const;
   virtual void StepOn(character*);
  protected:

@@ -33,6 +33,7 @@ class dungeon
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
   std::string GetLevelDescription(ushort);
+  std::string GetShortLevelDescription(ushort);
  private:
   void Initialize();
   dungeonscript* DungeonScript;

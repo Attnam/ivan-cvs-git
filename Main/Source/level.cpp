@@ -676,9 +676,7 @@ void level::FiatLux()
       {
 	Map[x][y]->CalculateEmitation();
 	Map[x][y]->Emitate();
-
-	if(Map[x][y]->GetOLTerrain()->IsWalkable())
-	  Map[x][y]->CalculateLuminance();
+	Map[x][y]->CalculateLuminance();
       }
 }
 

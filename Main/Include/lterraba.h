@@ -248,7 +248,7 @@ class olterrain : public lterrain, public oterrain
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }
-  virtual const std::string& GetText() const { return ""; }
+  virtual std::string GetText() const { return ""; }
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }

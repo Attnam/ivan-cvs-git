@@ -563,6 +563,7 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(MonsterGenerationIntervalBase);
   ANALYZE_MEMBER(MonsterGenerationIntervalDelta);
   ANALYZE_MEMBER(AutoReveal);
+  ANALYZE_MEMBER(ShortDescription);
   return 0;
 }
 
@@ -641,7 +642,7 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 	}
 
       if(!LoadData(SaveFile, Word))
-	ABORT("Odd script term %s encountered in level scrip line %d!", Word.c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in level script line %d!", Word.c_str(), SaveFile.TellLine());
     }
 
   levelscript* LevelBase = static_cast<levelscript*>(Base);
@@ -654,6 +655,8 @@ datamemberbase* dungeonscript::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(LevelDefault);
   ANALYZE_MEMBER(Levels);
+  ANALYZE_MEMBER(Description);
+  ANALYZE_MEMBER(ShortDescription);
   return 0;
 }
 

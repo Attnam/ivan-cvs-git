@@ -164,7 +164,7 @@ Renaming "single weapon skills".
 ?Scroll of repair.
 Prices of golden items.
 ?If a monster is polymorphed and kills the player, this should be shown in the high score entry.
-High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
-Invisibility + selling.
+//High score entry should show the dungeon where the player died. (killed by a bat in level 1 isn't informative as there are two such levels)
+//Invisibility + selling.
 Bear traps should break eventually.
 More color states to silhouette.

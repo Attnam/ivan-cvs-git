@@ -340,6 +340,7 @@ class levelscript : public script
   DATA_MEMBER(short, MonsterGenerationIntervalBase);
   DATA_MEMBER(short, MonsterGenerationIntervalDelta);
   DATA_MEMBER(bool, AutoReveal);
+  DATA_MEMBER(std::string, ShortDescription);
 };
 
 class dungeonscript : public script
@@ -353,6 +354,8 @@ class dungeonscript : public script
   std::map<uchar, levelscript*> Level;
   DATA_MEMBER(levelscript, LevelDefault);
   DATA_MEMBER(uchar, Levels);
+  DATA_MEMBER(std::string, Description);
+  DATA_MEMBER(std::string, ShortDescription);
 };
 
 class teamscript : public script

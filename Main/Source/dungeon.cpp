@@ -145,7 +145,15 @@ std::string dungeon::GetLevelDescription(ushort Index)
   if(GetLevel(Index)->GetLevelScript()->GetDescription(false))
     return *GetLevel(Index)->GetLevelScript()->GetDescription();
   else
-    return std::string("level ") + (Index + 1);
+    return *DungeonScript->GetDescription() + " level " + (Index + 1);
+}
+
+std::string dungeon::GetShortLevelDescription(ushort Index)
+{
+  if(GetLevel(Index)->GetLevelScript()->GetShortDescription(false))
+    return *GetLevel(Index)->GetLevelScript()->GetShortDescription();
+  else
+    return *DungeonScript->GetShortDescription() + " level " + (Index + 1);
 }
 
 outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)

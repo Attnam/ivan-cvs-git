@@ -104,7 +104,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(32, 144, 32);
+		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "pine";
 		BitmapPos = 16, 320;
 	}
@@ -116,7 +116,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(32, 144, 32);
+		MaterialColorB = rgb16(32, 100, 32);
 		NameSingular = "spruce";
 		BitmapPos = 16, 352;
 	}
