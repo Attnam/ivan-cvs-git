@@ -122,3 +122,5 @@ Do you get strength bonus for digging?
 //Are the angels supposed to leave the items in a bonefile? (stupid me. They just dissappear)
 (this problem verified only with windows version) Alt+tab then return to 
 program and alt-enter screws things up.
+Should picking up items from chests require one useable hand?
+"You sense danger message" seen after genie comes up and wish is made.
