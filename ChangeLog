@@ -1,3 +1,11 @@
+September 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Monster generation *might* be a bit better again
+	* Corrected a minor outlook bug in the equipment pictures around
+	  the silhouette
+	* Corrected a minor outlook bug in the equipment screen
+	* Added colored light effects for many monsters and items
+
 September 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added parentheses around several macros in ivandef.h

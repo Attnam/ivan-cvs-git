@@ -118,13 +118,14 @@ Dungeon ELPURICAVE;
 	Level 0;
 	{
 		IgnoreDefaultSpecialSquares = true;
+		GenerateMonsters=false;
 
 		RoomDefault
 		{
 			AltarPossible=false;
 		}
 
-		Square, Random;
+		/*Square, Random;
 		{
 			Character=spider;
 			Times=20;
@@ -134,7 +135,7 @@ Dungeon ELPURICAVE;
 		{
 			Character=kobold;
 			Times=10;
-		}
+		}*/
 
 		Square, Random NOTWALKABLE|ATTACHABLE;
 		{

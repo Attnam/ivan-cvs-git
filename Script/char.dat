@@ -551,6 +551,7 @@ billswill
 	ClassStates = ESP;
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 100;
+	BaseEmitation = rgb24(110, 110, 130);
 }
 
 skeleton
@@ -709,6 +710,7 @@ mommo
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
+	BaseEmitation = rgb24(90, 110, 90);
 
 	Config CONICAL;
 	{
@@ -1644,7 +1646,6 @@ kamikazedwarf
 	DefaultWisdom = 5;
 	DefaultCharisma = 10;
 	DefaultMana = 10;
-	Frequency = 10000;
 	HeadBitmapPos = 112, 160;
 	TorsoBitmapPos = 48, 16;
 	ArmBitmapPos = 80, 0;
@@ -1760,6 +1761,7 @@ genie
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
 	PanicLevel = 0;
+	BaseEmitation = rgb24(110, 110, 130);
 }
 
 lion

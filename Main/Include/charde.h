@@ -705,6 +705,7 @@ class CHARACTER
   virtual void CreateBodyParts(ushort);
   virtual bool BodyPartVital(ushort Index) const { return Index == TORSOINDEX || Index == HEADINDEX; }
   virtual ushort GetAttribute(ushort) const;
+  virtual ulong GetBaseEmitation() const;
  protected:
   virtual ushort GetTorsoMainColor() const;
   virtual ushort GetArmMainColor() const;

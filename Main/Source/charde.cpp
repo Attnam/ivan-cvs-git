@@ -1855,10 +1855,10 @@ vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
 {
   switch(Index)
     {
-    case HELMETINDEX: return vector2d(34, -23);
-    case AMULETINDEX: return vector2d(14, -23);
-    case CLOAKINDEX: return vector2d(-6, -23);
-    case BODYARMORINDEX: return vector2d(54, -23);
+    case HELMETINDEX: return vector2d(34, -22);
+    case AMULETINDEX: return vector2d(14, -22);
+    case CLOAKINDEX: return vector2d(-6, -22);
+    case BODYARMORINDEX: return vector2d(54, -22);
     case BELTINDEX: return vector2d(24, 70);
     case RIGHTWIELDEDINDEX: return vector2d(-14, 4);
     case LEFTWIELDEDINDEX: return vector2d(62, 4);
@@ -1882,7 +1882,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 	vector2d Pos = Where + GetEquipmentPanelPos(c);
 
 	if(!AnimationDraw)
-	  DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
+	  DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(16, 16), DARKGRAY);
 
 	if(GetEquipment(c))
 	  {
@@ -3647,3 +3647,12 @@ void dog::BeTalkedTo(character* Char)
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");
 }
 
+ulong angel::GetBaseEmitation() const
+{
+  switch(GetMasterGod()->BasicAlignment())
+    {
+    case GOOD: return MakeRGB24(150, 150, 150);
+    case NEUTRAL: return MakeRGB24(120, 120, 150);
+    default: return MakeRGB24(150, 110, 110);
+    }
+}

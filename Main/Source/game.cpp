@@ -500,14 +500,13 @@ bool game::Save(const std::string& SaveName)
   ulong Time = time(0);
   femath::SetSeed(Time);
   SaveFile << Time;
-  SaveFile << Dungeon << Team;
+  SaveFile << God << Dungeon << Team;
 
   if(InWilderness)
     SaveWorldMap(SaveName);
   else
     GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
-  SaveFile << God;
   SaveFile << game::GetPlayer()->GetPos();
   msgsystem::Save(SaveFile);
   SaveFile << DangerMap << NextDangerId;
@@ -527,9 +526,9 @@ uchar game::Load(const std::string& SaveName)
   if(Version != SAVEFILE_VERSION)
     {
       if(!iosystem::Menu(0, RES >> 1, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", LIGHTGRAY))
-	  return NEWGAME;
+	return NEWGAME;
       else
-	  return BACK;
+	return BACK;
     }
 
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
@@ -538,14 +537,13 @@ uchar game::Load(const std::string& SaveName)
   ulong Time;
   SaveFile >> Time;
   femath::SetSeed(Time);
-  SaveFile >> Dungeon >> Team;
+  SaveFile >> God >> Dungeon >> Team;
 
   if(InWilderness)
     LoadWorldMap(SaveName);
   else
     GetCurrentDungeon()->LoadLevel(SaveName);
 
-  SaveFile >> God;
   vector2d Pos;
   SaveFile >> Pos;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());

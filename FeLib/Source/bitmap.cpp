@@ -1074,7 +1074,7 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
   ushort* FlameLowestPoint = new ushort[XSize];
   ushort x,y, Top, MaxDist, RelPos;
   long NewSeed = RAND(); 
-  femath::SetSeed(Frame % 16 + 1); /* We want flame animation loops to be same in every session */
+  femath::SetSeed((Frame & 15) + 1); /* We want flame animation loops to be same in every session */
 
   for(x = 0; x < XSize; ++x)
     {
@@ -1134,7 +1134,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 
 void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
 {
-  ulong NewSeed = RAND();
+  long NewSeed = RAND();
   femath::SetSeed(Seed);
   for(ushort c = 0; c < FlyAmount; ++c)
     {

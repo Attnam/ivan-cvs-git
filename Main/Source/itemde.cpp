@@ -3706,20 +3706,21 @@ bool meleeweapon::IsSparkling(ushort ColorIndex) const
 
 ushort justifier::GetOutlineColor(ushort Frame) const
 {
-  Frame %= 32;
+  Frame &= 31;
   return MakeRGB16(0, 135 + (Frame * (31 - Frame) >> 1), 0);
 }
 
 ushort neercseulb::GetOutlineColor(ushort Frame) const
 {
-  Frame %= 32;
+  Frame &= 31;
   return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
 
 ushort goldeneagleshirt::GetOutlineColor(ushort Frame) const
 {
-  Frame %= 32;
-  return MakeRGB16(0, 75 + (Frame * (31 - Frame) >> 1), 0);
+  Frame &= 31;
+  ushort Element = 135 + (Frame * (31 - Frame) >> 2);
+  return MakeRGB16(0, Element, Element);
 }
 
 void armor::Save(outputfile& SaveFile) const

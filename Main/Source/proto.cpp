@@ -27,26 +27,42 @@ character* protosystem::BalancedCreateMonster()
 
   for(ushort c = 0;; ++c)
     {
-      if(c >= 100)
-	{
-	  game::Save();
-	  ABORT("This is a temporary abort in BalancedCreateMonster() installed by Timo. Do not panic. Your game has been saved. Contact me immediately!");
-	}
-
       float Difficulty = game::Difficulty();
 
       for(ushort i = 0; i < 25; ++i)
 	{
-	  ushort ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-	  const character::prototype* Proto = protocontainer<character>::GetProto(ChosenType);
-	  const character::databasemap& Config = Proto->GetConfig();
-	  ushort ChosenConfig = RAND() % Config.size();
-	  std::pair<ushort, ushort> Chosen(ChosenType, ChosenConfig);
+	  ushort ChosenType;
+	  ushort ChosenConfig;
+	  std::pair<ushort, ushort> Chosen;
+	  const character::prototype* Proto;
+	  const character::databasemap* Config;
 
-	  if(c < 100 && std::find(Illegal.begin(), Illegal.end(), Chosen) != Illegal.end())
-	    continue;
+	  if(c < 100 || Illegal.size() < 3)
+	    {
+	      if(c >= 100)
+		{
+		  game::Save();
+		  ABORT("This is a temporary abort in BalancedCreateMonster() installed by Timo. Do not panic. Your game has been saved. Contact me immediately!");
+		}
 
-	  for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	      Chosen.first = ChosenType = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
+	      Proto = protocontainer<character>::GetProto(ChosenType);
+	      Config = &Proto->GetConfig();
+	      Chosen.second = ChosenConfig = RAND() % Config->size();
+
+	      if(c < 100 && std::find(Illegal.begin(), Illegal.end(), Chosen) != Illegal.end())
+		continue;
+	    }
+	  else
+	    {
+	      Chosen = Illegal[RAND() % Illegal.size()];
+	      ChosenType = Chosen.first;
+	      ChosenConfig = Chosen.second;
+	      Proto = protocontainer<character>::GetProto(ChosenType);
+	      Config = &Proto->GetConfig();
+	    }
+
+	  for(character::databasemap::const_iterator i = Config->begin(); i != Config->end(); ++i)
 	    if(!ChosenConfig--)
 	      {
 		if(!i->second.IsAbstract && i->second.CanBeGenerated && (i->second.Frequency == 10000 || i->second.Frequency > RAND() % 10000))
@@ -57,7 +73,7 @@ character* protosystem::BalancedCreateMonster()
 		      {
 			character* Monster = Proto->Clone(i->first);
 
-			if(c >= 100 || !(RAND() % 3) && Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 50000)
+			if(c >= 100 || (!(RAND() % 3) && Monster->GetTimeToKill(game::GetPlayer(), true) > 10000 && game::GetPlayer()->GetTimeToKill(Monster, true) < 50000))
 			  {
 			    Monster->SetTeam(game::GetTeam(1));
 			    return Monster;

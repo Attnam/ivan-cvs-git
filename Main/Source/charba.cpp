@@ -3406,7 +3406,7 @@ bool character::EquipmentScreen()
 	  else
 	    {
 	      Entry += GetBodyPartOfEquipment(c) ? "-" : "can't use";
-	      bitmap Black(16, 16, BLACK);
+	      bitmap Black(16, 16, TRANSPARENTCOL);
 	      List.AddEntry(Entry, LIGHTGRAY, 20, &Black);
 	    }
 	}
