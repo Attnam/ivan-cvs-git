@@ -271,7 +271,7 @@ protected:
 	virtual void SetDefaultStats() = 0;
 	virtual void GetPlayerCommand();
 	virtual void GetAICommand();
-	virtual void MoveTowards(vector2d);
+	virtual bool MoveTowards(vector2d);
 	virtual float GetMeleeStrength() const				{ return 0; }
 	virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const	{ return NormalThirdPersonHitVerb(Critical); }

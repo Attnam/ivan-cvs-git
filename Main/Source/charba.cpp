@@ -582,7 +582,7 @@ void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace
 	MoveRandomly();
 }
 
-void character::MoveTowards(vector2d TPos)
+bool character::MoveTowards(vector2d TPos)
 {
 	vector2d MoveTo[3];
 
@@ -619,8 +619,8 @@ void character::MoveTowards(vector2d TPos)
 			MoveTo[2] = vector2d( 1, -1);
 		}
 
-		if(TPos.Y == GetPos().Y)	//???
-			return;
+		if(TPos.Y == GetPos().Y)
+			return false;
 
 		if(TPos.Y > GetPos().Y)
 		{
@@ -654,18 +654,20 @@ void character::MoveTowards(vector2d TPos)
 		}
 	}
 
-	if(TryMove(GetPos() + MoveTo[0])) return;
+	if(TryMove(GetPos() + MoveTo[0])) return true;
 
 	if(RAND() % 2)
 	{
-		if(TryMove(GetPos() + MoveTo[1])) return;
-		if(TryMove(GetPos() + MoveTo[2])) return;
+		if(TryMove(GetPos() + MoveTo[1])) return true;
+		if(TryMove(GetPos() + MoveTo[2])) return true;
 	}
 	else
 	{
-		if(TryMove(GetPos() + MoveTo[2])) return;
-		if(TryMove(GetPos() + MoveTo[1])) return;
+		if(TryMove(GetPos() + MoveTo[2])) return true;
+		if(TryMove(GetPos() + MoveTo[1])) return true;
 	}
+
+	return false;
 }
 
 bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
@@ -2614,11 +2616,22 @@ bool character::CheckForEnemies()
 
 	if(NearestChar)
 	{
-		MoveTowards(NearestChar->GetPos());
-		return true;
+		if(!GetTeam()->GetLeader() && NearestChar->GetIsPlayer())
+			WayPoint = NearestChar->GetPos();
+
+		return MoveTowards(NearestChar->GetPos());
 	}
 	else
-		return false;
+		if(!GetTeam()->GetLeader() && WayPoint.X != 0xFFFF)
+			if(!MoveTowards(WayPoint))
+			{
+				WayPoint.X = 0xFFFF;
+				return false;
+			}
+			else
+				return true;
+		else
+			return false;
 }
 
 bool character::CheckForDoors()
@@ -2701,17 +2714,17 @@ bool character::FollowLeader()
 		if(abs(short(Distance.X)) <= 2 && abs(short(Distance.Y)) <= 2)
 			return false;
 		else
-		{
-			MoveTowards(WayPoint);
-			return true;
-		}
+			return MoveTowards(WayPoint);
 	}
 	else
-		if(WayPoint.X != 0xFFFF && WayPoint != GetPos())
-		{
-			MoveTowards(WayPoint);
-			return true;
-		}
+		if(WayPoint.X != 0xFFFF)
+			if(!MoveTowards(WayPoint))
+			{
+				WayPoint.X = 0xFFFF;
+				return false;
+			}
+			else
+				return true;
 		else
 			return false;
 }
@@ -3076,6 +3089,5 @@ void character::GoHandler()
 bool character::ShowConfigScreen()
 {
 	configuration::ShowConfigScreen();
-	//game::GetCurrentArea()->SendNewDrawRequest();
 	return true;
 }
