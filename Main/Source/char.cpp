@@ -3984,9 +3984,11 @@ void character::DrawPanel(bool AnimationDraw) const
   PrintAttribute("Int", INTELLIGENCE, PanelPosX, PanelPosY++);
   PrintAttribute("Wis", WISDOM, PanelPosX, PanelPosY++);
   PrintAttribute("Cha", CHARISMA, PanelPosX, PanelPosY++);
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz  %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, 
+	       IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);
+  ++PanelPosY;
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 
@@ -9097,7 +9099,7 @@ int character::RandomizeHurtBodyPart(ulong BodyParts) const
   int BodyPartIndex[MAX_BODYPARTS];
   int Index = 0;
 
-  for(int c = 0; c < BodyParts; ++c)
+  for(int c = 0; c < GetBodyParts(); ++c)
     if(1 << c & BodyParts)
       BodyPartIndex[Index++] = c;
 
@@ -9118,11 +9120,26 @@ bool character::BodyPartIsStuck(int I) const
 
 void character::PrintAttribute(const char* Desc, int I, int PanelPosX, int PanelPosY) const
 {
-  int AWB = GetAttribute(I);
-  int ANB = GetAttribute(I, false);
+  int Attribute = GetAttribute(I);
+  int NoBonusAttribute = GetAttribute(I, false);
   color16 C = game::GetAttributeColor(I);
-  const char* Format = AWB == ANB ? "%s %d" : "%s %d/%d";
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, Format, Desc, AWB, ANB);
+  festring Description = Desc;
+  Description.Resize(5);
+  festring ToPrint = Description + Attribute;
+  ToPrint.Resize(8);
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, ToPrint.CStr());
+
+  if(Attribute != NoBonusAttribute)
+    {
+      int Where = PanelPosX + (ToPrint.GetSize() << 3);
+      //      FONT->Printf(DOUBLE_BUFFER, Where , PanelPosY * 10, WHITE, 
+      //		   "/");      
+      FONT->Printf(DOUBLE_BUFFER, Where + 8, PanelPosY * 10, LIGHT_GRAY, 
+		   "%d", NoBonusAttribute); 
+    }
+
+  //  const char* Format = AWB == ANB ? "%s %d" : "%s %d/%d";
+  //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, Format, Desc, AWB, ANB);
 }
 
 bool character::AllowUnconsciousness() const
