@@ -22,7 +22,7 @@
 #include "lsquare.h"
 #include "level.h"
 
-character::character(material** Material2, vector, ushort Size2, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : Stack(new stack), Wielded(0), Strength(Strength), Endurance(Endurance), Agility(Agility), Perception(Perception), RegenerationCounter(0), HP(Endurance * 2), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(Relations), Dead(false)
+character::character(material** Material2, ushort Size2, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : Stack(new stack), Wielded(0), Strength(Strength), Endurance(Endurance), Agility(Agility), Perception(Perception), RegenerationCounter(0), HP(Endurance * 2), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(Relations), Dead(false)
 {
 	SConsumingCurrently(0xFFFF);
 
@@ -38,7 +38,7 @@ character::~character(void)
 	delete Stack;
 }
 
-perttu::perttu(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : human(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, 3, 15, 2, 3, Relations)
+perttu::perttu(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : human(Material, Size, Agility, Strength, Endurance, Perception, 3, 15, 2, 3, Relations)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new valpurijustifier)));
 	item* VPlate = new platemail(75, false);
@@ -48,7 +48,7 @@ perttu::perttu(material** Material, vector BitmapPos, ushort Size, ushort Agilit
 	SConsumingCurrently(0xFFFF);
 }
 
-perttu::perttu(void) : human(NewMaterial(1, new humanflesh(110000)), vector(0, 0), 200, 80, 80, 80, 80, 3, 15,2,3,1)
+perttu::perttu(void) : human(NewMaterial(1, new humanflesh(110000)), 200, 80, 80, 80, 80, 3, 15,2,3,1)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new valpurijustifier)));
 	item* VPlate = new platemail(75, false);
@@ -57,7 +57,7 @@ perttu::perttu(void) : human(NewMaterial(1, new humanflesh(110000)), vector(0, 0
 	SHealTimer(100);
 }
 
-oree::oree(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+oree::oree(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
 {
 	CStack()->FastAddItem(new maakotkashirt);
 
@@ -69,7 +69,7 @@ oree::oree(material** Material, vector BitmapPos, ushort Size, ushort Agility, u
 	}
 }
 
-oree::oree(void) : character(NewMaterial(1, new pepsi(110000)), vector(208,0), 225, 40, 40, 40, 27, 0)
+oree::oree(void) : character(NewMaterial(1, new pepsi(110000)), 225, 40, 40, 40, 27, 0)
 {
 	CStack()->FastAddItem(new maakotkashirt);
 
@@ -81,32 +81,32 @@ oree::oree(void) : character(NewMaterial(1, new pepsi(110000)), vector(208,0), 2
 	}
 }
 
-swatcommando::swatcommando(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+swatcommando::swatcommando(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new curvedtwohandedsword)));
 }
 
-swatcommando::swatcommando(void) : character(NewMaterial(1, new humanflesh(110000)), vector(128, 0), 200, 30, 20, 15, 27, 0)
+swatcommando::swatcommando(void) : character(NewMaterial(1, new humanflesh(110000)), 200, 30, 20, 15, 27, 0)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new curvedtwohandedsword)));
 }
 
-fallenvalpurist::fallenvalpurist(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+fallenvalpurist::fallenvalpurist(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new pickaxe)));
 }
 
-fallenvalpurist::fallenvalpurist(void) : character(NewMaterial(1, new bone(60000)), vector(112, 0), 150, 10, 5, 5, 15, 0)
+fallenvalpurist::fallenvalpurist(void) : character(NewMaterial(1, new bone(60000)), 150, 10, 5, 5, 15, 0)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new pickaxe)));
 }
 
-froggoblin::froggoblin(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+froggoblin::froggoblin(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new spear)));
 }
 
-froggoblin::froggoblin(void) : character(NewMaterial(1, new goblinoidflesh(25000)), vector(144, 0), 100, 15, 10, 5, 21, 0)
+froggoblin::froggoblin(void) : character(NewMaterial(1, new goblinoidflesh(25000)), 100, 15, 10, 5, 21, 0)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new spear)));
 }
@@ -1820,11 +1820,11 @@ bool character::ShowKeyLayout(void)
 }
 
 
-golem::golem(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+golem::golem(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
 {
 }
 
-golem::golem(void) : character(NewMaterial(1, game::CreateRandomSolidMaterial(100000)), vector(256, 0), 250, 5, 35, 20, 12, 0)
+golem::golem(void) : character(NewMaterial(1, game::CreateRandomSolidMaterial(100000)), 250, 5, 35, 20, 12, 0)
 {
 }
 
@@ -2042,7 +2042,7 @@ bool character::TestForPickup(item* ToBeTested)
 	return true;
 }
 
-humanoid::humanoid(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar ArmType, uchar HeadType, uchar LegType, uchar TorsoType, uchar Relations)  : character(Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations), ArmType(ArmType), HeadType(HeadType), LegType(LegType), TorsoType(TorsoType) {}
+humanoid::humanoid(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar ArmType, uchar HeadType, uchar LegType, uchar TorsoType, uchar Relations)  : character(Material, Size, Agility, Strength, Endurance, Perception, Relations), ArmType(ArmType), HeadType(HeadType), LegType(LegType), TorsoType(TorsoType) {}
 
 bool character::OpenPos(vector APos)
 {

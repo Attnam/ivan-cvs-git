@@ -57,7 +57,7 @@ class levelsquare;
 class character : public object
 {
 public:
-	character(material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations);
+	character(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations);
 	character(std::ifstream*, ushort = 1);
 	~character(void);
 	virtual void DrawToTileBuffer(void);
@@ -259,10 +259,10 @@ protected:
 #define SAVE public: virtual void Save(std::ofstream*)
 #define C_ARM_TYPE public: virtual uchar CArmType(void)
 #define C_HEAD_TYPE public: virtual uchar CHeadType(void)
-#define HUMANOID_CHILD_PARAMETERS (material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar PArmType, uchar PHeadType, uchar PLegType, uchar PTorsoType, uchar Relations)
-#define HUMANOID_BASE_PARAMETERS (Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, PArmType, PHeadType, PLegType, PTorsoType, Relations)
-#define NORMAL_CHILD_PARAMETERS (material** Material, vector BitmapPos, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations)
-#define NORMAL_BASE_PARAMETERS (Material, BitmapPos, Size, Agility, Strength, Endurance, Perception, Relations)
+#define HUMANOID_CHILD_PARAMETERS (material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar PArmType, uchar PHeadType, uchar PLegType, uchar PTorsoType, uchar Relations)
+#define HUMANOID_BASE_PARAMETERS (Material, Size, Agility, Strength, Endurance, Perception, PArmType, PHeadType, PLegType, PTorsoType, Relations)
+#define NORMAL_CHILD_PARAMETERS (material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations)
+#define NORMAL_BASE_PARAMETERS (Material, Size, Agility, Strength, Endurance, Perception, Relations)
 #define GET_MELEE_STRENGTH protected: virtual float GetMeleeStrength(void)
 #define ADD_HIT_MESSAGE protected: virtual void AddHitMessage(character* Enemy, const bool Critical = false)
 #define BE_TALKED_TO public: virtual void BeTalkedTo(character*)
@@ -470,7 +470,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	HUMANOID_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new humanflesh(80000)),
-	 vector(0, 0),
 	 150 + rand() % 51,
 	 15 + rand() % 11,
 	 10 + rand() % 6,
@@ -562,7 +561,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new ennerbeastflesh(60000)),
-	 vector(96, 0),
 	 150,
 	 10,
 	 5,
@@ -604,7 +602,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new darkfrogflesh(100)),
-	 vector(80, 0),
 	 15,
 	 20,
 	 1,
@@ -629,7 +626,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new elpuriflesh(8000000)),
-	 vector(64, 0),
 	 300,
 	 50,
 	 50,
@@ -657,7 +653,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new air(500000)),
-	 vector(48, 0),
 	 100,
 	 40,
 	 5,
@@ -737,7 +732,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new brownslime(250000)),
-	 vector(176, 0),
 	 100,
 	 1,
 	 2,
@@ -762,7 +756,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new brownslime(150000)),
-	 vector(192, 0),
 	 50,
 	 2,
 	 1,
@@ -807,7 +800,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new wolfflesh(30000)),
-	 vector(224, 0),
 	 100,
 	 20,
 	 6,
@@ -836,7 +828,6 @@ HEADER_CONSTRUCTED_CHARACTER(
 	NORMAL_BASE_PARAMETERS,
 	(
 	 NewMaterial(1, new dogflesh(20000)),
-	 vector(240, 0),
 	 75,
 	 15,
 	 4,

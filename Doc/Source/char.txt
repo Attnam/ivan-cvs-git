@@ -52,7 +52,6 @@
 
 	 (
 	  NewMaterial(1, material),
-	  vector(x, y),
 	  size,
 	  agility,
 	  strength,
@@ -63,11 +62,10 @@
 
 	4.6.1. Replace "material" with the correct material, like
 	       "new ennerbeastflesh(60000)".
-	4.6.2. Ignore x and y, they are obsolete.
-	4.6.3. Specify size, agility, strength, endurance and perception.
-	4.6.4. Specify the initial relation (0==hostile, 1==neutral,
+	4.6.2. Specify size, agility, strength, endurance and perception.
+	4.6.3. Specify the initial relation (0==hostile, 1==neutral,
 	       2==friend) to the player character. (usually this is 0)
-	4.6.5. If your character is derived from "humanoid", add the
+	4.6.4. If your character is derived from "humanoid", add the
 	       following parameters between perception and relation:
 	       index-of-arm-picture, index-of-head-picture,
 	       index-of-legs-picture, index-of-torso-picture.
