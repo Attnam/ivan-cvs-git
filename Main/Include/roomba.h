@@ -66,7 +66,7 @@ class room
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void DestroyTerrain(character*, olterrain*);
-  virtual bool AllowSpoil() const { return true; }
+  virtual bool AllowSpoil(const item*) const { return true; }
   virtual bool CheckDestroyTerrain(character*, olterrain*);
   virtual short GetGodRelationAdjustment() const { return -50; }
  protected:

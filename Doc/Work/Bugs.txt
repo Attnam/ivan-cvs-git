@@ -122,12 +122,12 @@ Unicorns kicking items in shop.
   and outside the Cathedral, I noticed odd lagging, activated the see whole map cheat and discovered Petrus had gone mad
   and was killing everyone. I suppose some item kicked by guard hit him and he thought Attnam's folk had started a rebellion?
   A funny side note: a kamikaze dwarf had just blown up his wives, which would perhaps be a humane reason for his actions :)
-Lanterns put inside itemcontainers still emit light.
+//Lanterns put inside itemcontainers still emit light.
 //Digging book shelves probably doesn't work correctly.
 It seems that due to certain bitshift rounding errors, resting causes more exp minus than pressing the NOP key.
 Can angry Atavus or Cruentus destroy a quest artifact inside a container?
-Items left on shop floor do not spoil even if the shopkeeper is dead.
-(?) "A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
+//Items left on shop floor do not spoil even if the shopkeeper is dead.
+//"A wolf looks much healthier" (weird bug, can't really trace how this happened, but it did)
 Wand of locking doesn't update memorized description correctly.
 (s) The three letter player name minimum can be avoided by adding extra spaces which will eventually be discarded.
 You can fill a potion with ice.

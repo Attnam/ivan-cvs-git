@@ -1,5 +1,18 @@
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Bats' bite strength decreased a bit
+	* Snakes can no longer open doors
+	* ToHitValues of thrown items increased
+	* Food in cans (and cans made of food) no longer spoil
+	* Worthless food now spoils even in shops
+	* All food now spoils in abandonned shops
+	* Carnivorous plants now drop kiwis
+	* Increased the possibility of food items
+	* The camera now updates a little earlier on right and bottom borders
+	* README updated
+
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Added license info to the main menu
 	* Corrected a bug in the ass corpse emitation
 	* BoolQuestion now doesn't interpret enter as "yes"

@@ -70,6 +70,7 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual material* CreateDipMaterial();
+  virtual bool AllowSpoil() const { return false; } // temporary
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }

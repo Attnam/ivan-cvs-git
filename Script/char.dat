@@ -706,7 +706,6 @@ ennerbeast
 
 frog
 {
-	CanOpen = false;
 	HostileReplies == "@Dd croaks angrily.";
 	FriendlyReplies == "@Dd croaks happily.";
 	NameSingular = "frog";
@@ -738,6 +737,7 @@ frog
 		CanBeGenerated = true;
 		ClassStates = INFRA_VISION;
 		CWeaponSkillHits == 100;
+		CanOpen = false;
 	}
 
 	Config GREATER_DARK;
@@ -797,6 +797,7 @@ frog
 		SkinColor = rgb16(32, 88, 32);
 		Adjective = "greater light";
 		CWeaponSkillHits == 200;
+		CanOpen = false;
 	}
 }
 
@@ -817,7 +818,6 @@ elpuri
 	TotalVolume = 600000;
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 250;
-	CanOpen = true;
 	NameSingular = "Master Dark Frog";
 	IsPolymorphable = false;
 	CanBeGenerated = false;
@@ -1057,7 +1057,7 @@ mommo
 {
 	DefaultEndurance = 8;
 	DefaultMana = 0;
-	CanOpen = "false";
+	CanOpen = false;
 	StandVerb = "bubbling";
 	HostileReplies == "@Dd vibrates in fury.";
 	FriendlyReplies == "@Dd vibrates oddly.";
@@ -1280,7 +1280,7 @@ jackal
 ass
 {
 	DefaultArmStrength = 20;
-	DefaultAgility = 5;
+	DefaultAgility = 4;
 	DefaultEndurance = 15;
 	DefaultPerception = 15;
 	DefaultIntelligence = 5;
@@ -1800,7 +1800,7 @@ bat
 	SkinColor = rgb16(64, 64, 64);
 	NameSingular = "bat";
 	AttackStyle = USE_HEAD;
-	BaseBiteStrength = 250;
+	BaseBiteStrength = 200;
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION;
 	KnownCWeaponSkills == BITE;
@@ -2512,6 +2512,7 @@ snake
 	HasFeet = false;
 	FleshMaterial = SNAKE_FLESH;
 	DangerModifier = 33;
+	CanOpen = false;
 }
 
 orc
@@ -2862,7 +2863,6 @@ genetrixvesana
 	DefaultWisdom = 8;
 	DefaultCharisma = 20;
 	DefaultMana = 0;
-	CanOpen = false;
 	TotalVolume = 25000;
 	TorsoBitmapPos = 80, 16;
 	TotalSize = 250;

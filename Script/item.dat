@@ -118,7 +118,7 @@ lantern
 can /* materialcontainer-> */
 {
 	DefaultSize = 10;
-	Possibility = 250;
+	Possibility = 400;
 	InHandsPic = 160, 144;
 	Category = FOOD;
 	DefaultMainVolume = 50;
@@ -137,7 +137,7 @@ can /* materialcontainer-> */
 lump
 {
 	DefaultSize = 10;
-	Possibility = 250;
+	Possibility = 400;
 	InHandsPic = 160, 112;
 	Category = FOOD;
 	DefaultMainVolume = 500;
@@ -439,7 +439,7 @@ meleeweapon
 
 banana /* materialcontainer-> */
 {
-	Possibility = 100;
+	Possibility = 150;
 	InHandsPic = 160, 112;
 	WeaponCategory = CLUBS;
 	DefaultMainVolume = 40;
@@ -830,7 +830,7 @@ bone
 loaf
 {
 	DefaultSize = 40;
-	Possibility = 250;
+	Possibility = 400;
 	WeaponCategory = CLUBS;
 	InHandsPic = 160, 128;
 	Category = FOOD;
@@ -943,7 +943,7 @@ wandofstriking /* wand-> */
 kiwi
 {
 	DefaultSize = 10;
-	Possibility = 50;
+	Possibility = 75;
 	Category = FOOD;
 	DefaultMainVolume = 50;
 	StrengthModifier = 50;
@@ -957,7 +957,7 @@ kiwi
 pineapple
 {
 	DefaultSize = 20;
-	Possibility = 50;
+	Possibility = 75;
 	Category = FOOD;
 	DefaultMainVolume = 1000;
 	StrengthModifier = 100;

@@ -1257,10 +1257,10 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       else if(KeyHandler)
 	KeyHandler(CursorPos, Key);
 
-      if(CursorPos.X < GetCamera().X + 2 || CursorPos.X > GetCamera().X + GetScreenSize().X - 2)
+      if(CursorPos.X < GetCamera().X + 2 || CursorPos.X >= GetCamera().X + GetScreenSize().X - 2)
 	UpdateCameraXWithPos(CursorPos.X);
 
-      if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y > GetCamera().Y + GetScreenSize().Y - 2)
+      if(CursorPos.Y < GetCamera().Y + 2 || CursorPos.Y >= GetCamera().Y + GetScreenSize().Y - 2)
 	UpdateCameraYWithPos(CursorPos.Y);
 
       FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.c_str());

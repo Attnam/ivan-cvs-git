@@ -635,3 +635,8 @@ void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
 	return;
       }
 }
+
+bool shop::AllowSpoil(const item* Item) const
+{
+  return !Master || !Item->GetPrice();
+}

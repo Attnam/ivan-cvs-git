@@ -26,7 +26,7 @@ class ROOM
   virtual bool ConsumeItem(character*, item*, ushort);
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual bool AllowSpoil() const { return false; }
+  virtual bool AllowSpoil(const item*) const;
 );
 
 class ROOM
@@ -56,7 +56,7 @@ class ROOM
   virtual bool Dip(character*) const;
   virtual bool HasDipHandler() const { return true; }
   virtual void TeleportSquare(character*, lsquare*);
-  virtual bool AllowSpoil() const { return false; }
+  virtual bool AllowSpoil(const item*) const { return false; }
   virtual short GetGodRelationAdjustment() const { return -150; }
  protected:
   virtual void VirtualConstructor(bool);

@@ -4066,12 +4066,22 @@ bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, ucha
   return Success;
 }
 
+void carnivorousplant::CreateCorpse()
+{
+  ushort Amount = !Config ? RAND() % 3 : 1 + (RAND() & 3);
+
+  for(ushort c = 0; c < Amount; ++c)
+    GetStackUnder()->AddItem(new kiwi);
+
+  nonhumanoid::CreateCorpse();
+}
+
 void genetrixvesana::CreateCorpse()
 {
   for(ushort c = 0; c < 3; ++c)
     GetStackUnder()->AddItem(new pineapple);
 
-  carnivorousplant::CreateCorpse();
+  nonhumanoid::CreateCorpse();
 }
 
 void humanoid::AddSpecialStethoscopeInfo(felist& Info) const

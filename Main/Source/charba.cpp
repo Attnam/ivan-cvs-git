@@ -2775,10 +2775,10 @@ void character::SetNP(long What)
 
 void character::ShowNewPosInfo() const
 {
-  if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + game::GetScreenSize().X - 2)
+  if(GetPos().X < game::GetCamera().X + 2 || GetPos().X >= game::GetCamera().X + game::GetScreenSize().X - 2)
     game::UpdateCameraX();
 
-  if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + game::GetScreenSize().Y - 2)
+  if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y >= game::GetCamera().Y + game::GetScreenSize().Y - 2)
     game::UpdateCameraY();
 
   game::SendLOSUpdateRequest();

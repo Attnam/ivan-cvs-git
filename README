@@ -1,5 +1,5 @@
-Iter Vehems ad Necem (0.4)
-----------------------------
+Iter Vehems ad Necem v0.40
+--------------------------
 
 (For news and updates view our homepage at ivan.sourceforge.net)
 
@@ -47,63 +47,68 @@ use at least a:
 
 3. General gameplay
 
-IVAN works pretty much in the same way as other roguelikes 
-(Nethack, Adom, Slash'em etc...). The player controls a 
-character. The player moves from the direction keys.
-All other commands can be found by pressing ?-key in the
-game.
+IVAN works pretty much in the same way as other roguelikes.
+The player controls a character. The player moves and attacks
+from the direction keys. All other commands can be found by
+pressing ?-key in the game.
 
 -----------------------------
 
-4. FAQ (nobody that we know of really asks these questions, but we like to 
-think that somebody does)
+4. FAQ
 
-Q: What do marks like L+, C-- mean in the pray menu?
+Q: What does "Iter Vehemens ad Necem" mean?
 
-A: All gods have a property that tells whether they are supporters
-of Law or Chaos or if they are neutral. This is however too general
-description so the plusses and minuses tell of slight differences 
-between the gods. Eg Valpurus has the letters L++ this means that
-Valpurus is extremely lawful, when Sophos has the letters L-, which in
-turn means that Sophos is lawful, but still leaning a bit towards
-neutrallity and even chaos.
+A: It's latin and means a "Violent Road to Death".
 
+Q: Why can't I make multiple saves and why is my save deleted when I die?
 
-Q: What do these strange markings like Dex, Agi mean in right sidebar?
+A: Like the creators of other roguelikes, we think this makes
+gaming much more exciting, since you must take full responsibility
+of all your actions. You have only one chance to live or die.
+Usually the latter, as the name suggests.
+
+Q: What do these strange markings like Dex, Agi mean in
+right sidebar?
 
 A: 
-	ArmStr = Arm Strength - Increases damage inflicted on enemies
-	LegStr = Leg Strength - Increases carrying capacity and kicking damage
- 	Dex = Dexterity - Increases accuracy and hit speed
-	Agi = Agility - Increase movement speed and ability to dodge attacks
-	End = Endurance - Increases Maximum health points
-	Per = Perception - Increases sight range and accuracy
-	Int = Intelligence - Increase ability to read
-	Wis = Wisdom - Increases your ability to deal with gods
-	Cha = Charisma - Increases your social skills and improves your ability to make deals  
-	Siz = Size or height
-	HP = Health Points - The sum of your bodyparts' (head, torso, groin, arms and legs) HPs
-	Gold = the money you have 
-	Time = The turns you have used in this game
-
+ArmStr = Arm Strength - Increases damage inflicted on enemies
+LegStr = Leg Strength - Increases carrying capacity and kicking damage
+Dex = Dexterity - Increases accuracy and hit speed
+Agi = Agility - Increase movement speed and ability to dodge attacks
+End = Endurance - Increases maximum health points and healing rate
+Per = Perception - Increases sight range and accuracy
+Int = Intelligence - Increases your ability to read and learn
+Wis = Wisdom - Increases your ability to deal with gods
+Cha = Charisma - Improves your ability to negotiate and make deals
+Siz = Size or height
+HP = Health Points - The sum of your bodyparts' HPs
+Gold = The amount of money you have
+Time = The turns you have used in this game
 
 Q: I had 20 HPs, but I still died. Is this a bug?
 
-A: No, this is not a bug. You will die (at least in human-form) if your HPs of your groin, 
-torso or head reach 0.
-
+A: No, this is not a bug. You will die (at least in human-form) if
+your HPs of your groin, torso or head reach 0.
 
 Q: Why do I always miss spiders with my trusty iron mace?
 
 A: Mace is far too big for hitting small creatures. Do
 you really kill spiders with large objects in real life?
 
+Q: What do marks like L+, C-- mean in the pray menu?
+
+A: All gods have a property that tells whether they are
+supporters of Law or Chaos or if they are Neutral. This is
+however too general description so the plusses and minuses
+tell of slight differences between the gods. Eg Valpurus
+has the letters L++ this means that Valpurus is extremely
+lawful, when Sophos has the letters L-, which in turn means
+that Sophos is lawful, but still leaning a bit towards
+neutrality and even chaos.
 
 Q: I just loosed a leg. How do I get it back?
 
-A: Certain gods, potions and special characters may help 
-you.
-
+A: Certain gods, potions and special characters may help you.
   
 Q: I've found a bug. What should I do?
 
@@ -115,19 +120,18 @@ this bug at Ivan's SourceForge project page:
 
 http://sourceforge.net/projects/ivan
 
-
-Q: I've got a great idea to make IVAN better! What should
-I do?
+Q: I've got a great idea to make IVAN better! What should I do?
 
 A: Describe the idea to us by sending it to 
 ivan-users@sourceforge.net or report it at Ivan's
 SourceForge project page (see above).
-
 
 Q: I'm a programmer willing to help you. What should I do?
 
 A: Code and then send us (e-mail: ivan-devel@lists.sourceforge.net)
 your diff. If we like your code we will integrate it to the next
 release. You will of course be credited for your code.
+
+-----------------------------
 
 FREE SOFTWARE FOREVER!

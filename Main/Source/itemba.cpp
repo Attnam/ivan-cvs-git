@@ -71,14 +71,16 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
     {
       ushort Bonus = Thrower->IsHumanoid() ? Thrower->GetCWeaponSkill(GetWeaponCategory())->GetBonus() : 100;
       BaseDamage = sqrt(5e-10f * GetWeaponStrength() * Force / Range) * Bonus;
-      BaseToHitValue = GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8f * Thrower->GetAttribute(PERCEPTION)) / Range;
+      BaseToHitValue = 3 * GetBonus() * Bonus * Thrower->GetMoveEase() / (500 + GetWeight()) * Thrower->GetAttribute(DEXTERITY) * sqrt(2.5e-8f * Thrower->GetAttribute(PERCEPTION)) / Range;
     }
   else
     {
       BaseDamage = sqrt(5e-6f * GetWeaponStrength() * Force / Range);
-      BaseToHitValue = 10 * GetBonus() / (500 + GetWeight()) / Range;
+      BaseToHitValue = 30 * GetBonus() / (500 + GetWeight()) / Range;
     }
+
   ushort RangeLeft;
+
   for(RangeLeft = Range; RangeLeft != 0; --RangeLeft)
     {
       if(!GetLevelUnder()->IsValidPos(Pos + DirVector))
@@ -688,7 +690,7 @@ bool item::AllowSpoil() const
   if(IsOnGround())
     {
       uchar RoomNumber = GetLSquareUnder()->GetRoom();
-      return !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->AllowSpoil();
+      return !RoomNumber || GetLevelUnder()->GetRoom(RoomNumber)->AllowSpoil(this);
     }
   else
     return true;

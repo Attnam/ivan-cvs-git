@@ -151,7 +151,7 @@ void seges::PrayGoodEffect()
       return;
     }
 
-  if(game::GetPlayer()->GetNP() < HUNGER_LEVEL)
+  if(game::GetPlayer()->GetNP() < SATIATED_LEVEL)
     {
       ADD_MESSAGE("Your stomach feels full again.");
 
@@ -239,6 +239,12 @@ void silva::PrayGoodEffect()
 	}
 
       return;
+    }
+
+  if(game::GetPlayer()->GetNP() < HUNGER_LEVEL)
+    {
+      ADD_MESSAGE("Your stomach feels full again.");
+      game::GetPlayer()->SetNP(SATIATED_LEVEL);
     }
 
   if(!*game::GetCurrentLevel()->GetLevelScript()->GetOnGround())
