@@ -141,6 +141,7 @@ class OVERLEVELTERRAIN
   virtual bool ReceiveStrike();
   virtual void Lock() { SetIsLocked(true); }
   virtual bool CanBeDigged() const { return true; }
+  virtual void HasBeenHitBy(item*, float, uchar, bool);
  protected:
   virtual std::string NameSingular() const { return "door"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 176); }
@@ -384,6 +385,7 @@ class OVERLEVELTERRAIN
   virtual void Kick(ushort, bool, uchar);
   virtual bool ReceiveStrike();
   virtual bool CanBeDigged() const { return true; }
+  virtual void HasBeenHitBy(item*, float, uchar, bool);
  protected:
   virtual std::string NameSingular() const { return "broken door"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, GetIsWalkable() ? 48 : 160); }

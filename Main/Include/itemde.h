@@ -794,7 +794,7 @@ class ABSTRACT_ITEM
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
   virtual void Beam(character*, std::string, uchar, uchar);
-  virtual void BeamEffect(character*, std::string, uchar, levelsquare*) { };
+  virtual bool BeamEffect(character*, std::string, uchar, levelsquare*) { return false; };
   virtual ushort GetBeamColor() const = 0;
   virtual bool StruckByWandOfStriking(character*, std::string, stack*);
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
@@ -823,7 +823,7 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
   virtual bool PolymorphSpawnable() const { return false; }
-  virtual void BeamEffect(character*, std::string, uchar, levelsquare*);
+  virtual bool BeamEffect(character*, std::string, uchar, levelsquare*);
   virtual ushort GetBeamColor() const { return BLUE; }
 );
 
@@ -947,8 +947,8 @@ class ITEM
   virtual float OfferModifier() const { return 10; }
   virtual bool Zap(character*, vector2d, uchar);
   virtual ulong Price() const { return 500; }
-  virtual ushort GetBeamColor() const { return YELLOW; }
-  virtual void BeamEffect(character*, std::string, uchar, levelsquare*);
+  virtual ushort GetBeamColor() const { return WHITE; }
+  virtual bool BeamEffect(character*, std::string, uchar, levelsquare*);
 );
 
 class ITEM
@@ -1195,6 +1195,27 @@ class ITEM
   virtual void GenerateStoneMaterials();
  protected:
   virtual ushort GetFormModifier() const { return 45; }
+);
+
+class ITEM
+(
+  wandoffireballs,
+  wand,
+  InitMaterials(new marble),
+  {
+    SetSize(12);
+    SetCharges(1 + RAND() % 3);
+    SetTimesUsed(0);
+  },
+ public:
+  virtual ushort Possibility() const { return 20; }
+  virtual std::string NameSingular() const { return "wand of fireballs"; }
+  virtual std::string NamePlural() const { return "wands of fireballs"; }
+  virtual float OfferModifier() const { return 15; }
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual ulong Price() const { return 500; }
+  virtual ushort GetBeamColor() const { return YELLOW; }
+  virtual bool BeamEffect(character*, std::string, uchar, levelsquare*);
 );
 
 #endif

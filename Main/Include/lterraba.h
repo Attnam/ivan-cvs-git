@@ -84,6 +84,7 @@ class overlevelterrain : public levelterrain, public overterrain
   virtual bool HasConsumeEffect() const { return false; } 
   virtual bool Consume(character*) { return false; }
   virtual void Lock() { }
+  virtual void HasBeenHitBy(item*, float, uchar, bool) {}
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__

@@ -1047,3 +1047,8 @@ void levelsquare::RemoveFluid()
       SendMemorizedUpdateRequest();
     }
 }
+
+void levelsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+{
+  GetOverLevelTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
+}

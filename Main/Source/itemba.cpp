@@ -99,10 +99,11 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
     {
       if(!game::IsValidPos(Pos + game::GetMoveVector(Direction)))
 	break;
-
-      if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
+      levelsquare* JustHit = game::GetCurrentLevel()->GetLevelSquare(Pos + game::GetMoveVector(Direction));
+      if(!(JustHit->GetOverLevelTerrain()->GetIsWalkable()))
 	{
 	  Breaks = true;
+	  JustHit->HasBeenHitBy(this, Speed, Direction, JustHit->CanBeSeen());
 	  break;
 	}
       else

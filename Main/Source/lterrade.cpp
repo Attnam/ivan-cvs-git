@@ -722,3 +722,83 @@ void doublebed::ShowRestMessage(character*) const
 {
   ADD_MESSAGE("You lay yourself on the confortable bed.");
 }
+
+void door::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+{
+  if(!GetIsWalkable())
+    {
+      float Energy = Speed * Hitter->GetWeight() / 100;  
+      // Newton is rolling in his grave. 
+      if(Visible && game::GetWizardMode())
+	{
+	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);
+	}
+      if(Energy > 1000)
+	{
+	  // The door opens
+	  MakeWalkable();
+	  if(Visible)
+	    {
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	    }
+	}
+      else if(Energy > 500)
+	{
+	  // The door breaks
+	  bool NewLockedStatus;
+	  if(GetIsLocked())
+	    NewLockedStatus = RAND() % 2;
+	  else
+	    NewLockedStatus = false;
+
+	  if(Visible)
+	    {
+	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	    }
+	  brokendoor* Temp = new brokendoor(false);
+	  Temp->InitMaterials(GetMaterial(0));
+	  PreserveMaterial(0);
+	  GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
+	  Temp->SetIsLocked(NewLockedStatus);
+	} 
+      else
+	{
+	  // Nothing happens
+	  if(Visible)
+	    {
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	    }
+	}
+    }
+}
+
+
+void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, bool Visible)
+{
+  if(!GetIsWalkable())
+    {
+      float Energy = Speed * Hitter->GetWeight() / 100;  
+      // I hear Newton screaming in his grave.
+      if(Visible && game::GetWizardMode())
+	{
+	  ADD_MESSAGE("Energy hitting the broken door: %f.", Energy);
+	}
+      if(Energy > 400)
+	{
+	  // The door opens
+	  MakeWalkable();
+	  if(Visible)
+	    {
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	    }
+	}
+      else
+	{
+	  // Nothing happens
+	  if(Visible)
+	    {
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	    }
+	}
+    }
+}

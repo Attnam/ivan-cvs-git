@@ -1581,7 +1581,10 @@ bool character::WizardMode()
 	}
     }
   else
-    ADD_MESSAGE("You have already activated Wizard Mode. It cannot be toggled off.");
+    {
+      for(ushort x = 0; x < 5; ++x)
+	GetStack()->AddItem(new scrollofwishing);
+    }
 
   return false;
 

@@ -1,5 +1,11 @@
 Wednesday, February 27 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
-	* Main/Include/Makefile.am Added entity.h and fluid.h (somehow these changes have been lost from CVS)
-	* Main/Source/Makefile.am Added entity.cpp and fluid.cpp (somehow these changes have been lost from CVS)
-	* Main/Source/itemde.cpp bananapeals::GetStepOnEffect for fall effect
+	* Main/Include/Makefile.am: Added entity.h and fluid.h (somehow these changes have been lost from CVS)
+	* Main/Source/Makefile.am: Added entity.cpp and fluid.cpp (somehow these changes have been lost from CVS)
+	* Main/Source/itemde.cpp: bananapeals::GetStepOnEffect for fall effect, Wand of Striking added. All BeamEffect functions changed to returing bool that tells the Beam function wheter the beam continues after the square in question.
+	* Main/Include/lsquare.h: levelsquare::HasBeenHitBy added 
+	* Main/Source/lsquare.cpp: levelsquare::HasBeenHitBy added
+	* Main/Include/lterraba.h: overlevelterrain::HasBeenHitBy added
+	* Main/Include/lterrade.h: door::HasBeenHitBy, brokendoor::HasBeenHitBy added
+	* Main/Source/lterrade.cpp: door::HasBeenHitBy, brokendoor::HasBeenHitBy. That open or damage the door when an item hits it.
+	* Main/Include/itemde.h: Wand of strikings color changed from yellow to white. Added Wand of fireballs

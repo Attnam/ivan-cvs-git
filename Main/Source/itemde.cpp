@@ -806,20 +806,21 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
 	if(!game::GetCurrentLevel()->IsValid(CurrentPos + game::GetMoveVector(Direction)))
 	  break;
 
-	levelsquare* Temp = game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction));
+	levelsquare* CurrentSquare = game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction));
 
-	if(!(Temp->GetOverLevelTerrain()->GetIsWalkable()))
+	if(!(CurrentSquare->GetOverLevelTerrain()->GetIsWalkable()))
 	  {
-	    BeamEffect(Zapper, DeathMsg, Direction, Temp);
+	    BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare);
 	    break;
 	  }
 	else
 	  {	
 	    CurrentPos += game::GetMoveVector(Direction);
-	    BeamEffect(Zapper, DeathMsg, Direction, Temp);
+	    if(BeamEffect(Zapper, DeathMsg, Direction, CurrentSquare))
+	      break;
 
-	    if(Temp->CanBeSeen(true))
-	      Temp->DrawParticles(GetBeamColor(), Direction);
+	    if(CurrentSquare->CanBeSeen(true))
+	      CurrentSquare->DrawParticles(GetBeamColor(), Direction);
 	  }
       }
   else
@@ -832,14 +833,16 @@ void wand::Beam(character* Zapper, std::string DeathMsg, uchar Direction, uchar 
     }
 }
 
-void wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, levelsquare* LevelSquare)
+bool wandofpolymorph::BeamEffect(character* Zapper, std::string, uchar, levelsquare* LevelSquare)
 {
   LevelSquare->PolymorphEverything(Zapper);
+  return false;
 }
 
-void wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+bool wandofstriking::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
 { 
   Where->StrikeEverything(Who, DeathMsg, Dir); 
+  return false;
 }
 
 bool holybook::ReceiveFireDamage(character*, std::string, stack* MotherStack, long)
@@ -1126,5 +1129,30 @@ bool bananapeals::GetStepOnEffect(character* Stepper)
       Stepper->EditAP(-500);
     }
   
+  return false;
+}
+
+bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a wand of fireballs", Direction, 200);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
+  return true;
+}
+
+bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar Dir, levelsquare* Where) 
+{ 
+  if(!Where->GetOverTerrain()->GetIsWalkable() || Where->GetCharacter())
+    {
+      Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 1 + RAND() % 40);
+      return true;
+    }
   return false;
 }
