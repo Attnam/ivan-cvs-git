@@ -98,6 +98,7 @@ struct itemdatabase
   bool AffectsMana;
   char DefaultEnchantment;
   bool PriceIsProportionalToEnchantment;
+  uchar InElasticityPenaltyModifier;
 };
 
 class itemprototype
@@ -315,7 +316,7 @@ class item : public object
   ulong GetWeight() const { return Weight; }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
-  virtual void CalculateAll();
+  void CalculateAll();
   virtual void DropEquipment() { }
   virtual bool DangerousToStepOn(const character*) const { return false; } 
   void WeaponSkillHit();
@@ -339,6 +340,7 @@ class item : public object
   item* DuplicateToStack(stack*);
   virtual DATA_BASE_VALUE(uchar, MaxCharges);
   virtual DATA_BASE_VALUE(uchar, MinCharges);
+  virtual DATA_BASE_VALUE(uchar, InElasticityPenaltyModifier);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break();
@@ -357,6 +359,7 @@ class item : public object
   virtual ulong GetEnchantedPrice(char) const;
   virtual void Fix();
   virtual ushort GetStrengthRequirement() const;
+  virtual ushort GetInElasticityPenalty(ushort) const { return 0;  }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

@@ -2,7 +2,6 @@ Genie
 
 	The sprit that lives in a bottle. When freed grants a wish. When the Genie becomes hostile it makes a wish and wishes for a plate mail.
 
-
 Mammoth
 	
 	Pretty normal creatures except that when they die an ivory horn. 
@@ -21,7 +20,6 @@ Hobbit
 	A Tolkien cliche, but don't mind about that. Maybe these creatures could carry more rings (especially rings of invisiblity)
 
 Gnome
-	
 
 Floating eye (or Beholder)
 
@@ -60,3 +58,5 @@ Necromancer
 Mutant tentacle
 
 	Purple skin. Low agility, but very high intelligence. Can use humanoid weapons.
+
+Evil monkeys

@@ -605,6 +605,7 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
 		MaterialConfigChances = { 3, 150, 50, 10; }
+		InElasticityPenaltyModifier = 10;
 	}
 
 	Config BROKEN|CHAIN_MAIL;
@@ -627,6 +628,7 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 3, LEATHER, BRONZE, IRON; }
 		MaterialConfigChances = { 3, 250, 20, 10; }
 		Alias == "armor"; /* wishing doesn't yet support FlexibleNameSingular */
+		InElasticityPenaltyModifier = 20;
 	}
 
 	Config BROKEN|PLATE_MAIL;
@@ -657,6 +659,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	CanBeBroken = false;
 	CanBeCloned = false;
 	DefaultEnchantment = 23;
+	InElasticityPenaltyModifier = 30;
 } 
 
 potion /* materialcontainer-> */
@@ -1198,6 +1201,7 @@ cloak /* armor-> */
 	MaterialConfigChances = { 3, 250, 50, 50; }
 	Roundness = 60;
 	IsTwoHanded = true;
+	InElasticityPenaltyModifier = 50;
 
 	Config CLOAK_OF_INVISIBILITY;
 	{
@@ -1222,6 +1226,7 @@ boot /* armor-> */
 	MaterialConfigChances = { 4, 200, 100, 50, 20; }
 	Roundness = 50;
 	CanBePiled = true;
+	InElasticityPenaltyModifier = 10;
 
 	Config BOOT_OF_STRENGTH;
 	{
@@ -1262,6 +1267,7 @@ gauntlet /* armor-> */
 	MaterialConfigChances = { 4, 200, 100, 50, 20; }
 	Roundness = 60;
 	CanBePiled = true;
+	InElasticityPenaltyModifier = 30;
 
 	Config GAUNTLET_OF_STRENGTH;
 	{

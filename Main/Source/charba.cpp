@@ -5835,8 +5835,13 @@ uchar character::GetRelation(const character* Who) const
 
 void character::CalculateAttributeBonuses()
 {
-  short BackupBonus[BASE_ATTRIBUTES];
   ushort c;
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->CalculateAttributeBonuses();
+
+  short BackupBonus[BASE_ATTRIBUTES];
 
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     {

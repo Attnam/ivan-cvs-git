@@ -28,7 +28,7 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 //Merkkitaulukoiden hävittäminen.
 //*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
-MS-koodin poisajo grafiikkakirjastosta.
+MS-koodin poisajo grafiikkakirjastosta (SDL myös Windozeen?).
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
@@ -49,3 +49,4 @@ Lukufunktioiden generalisoiminen.
 Säiliöluokka.
 Piirron deasmaus.
 Repliikkien datafilesaatio.
+Raajarajapinta.

@@ -2145,16 +2145,16 @@ ushort arm::GetAttribute(ushort Identifier) const
   if(Identifier == ARM_STRENGTH)
     {
       if(IsAlive())
-	return Strength + StrengthBonus;
+	return Max(Strength + StrengthBonus, 1);
       else
-	return GetMainMaterial()->GetStrengthValue() + StrengthBonus;
+	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
     }
   else if(Identifier == DEXTERITY)
     {
       if(IsAlive())
-	return Dexterity + DexterityBonus;
+	return Max(Dexterity + DexterityBonus, 1);
       else
-	return GetMainMaterial()->GetFlexibility() + DexterityBonus;
+	return Max(GetMainMaterial()->GetFlexibility() + DexterityBonus, 1);
     }
   else
     {
@@ -2625,16 +2625,12 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
 
 void bodypart::SignalEquipmentAdd(gearslot* Slot)
 {
-  ApplyEquipmentAttributeBonuses(Slot->GetItem());
-
   if(GetMaster())
     GetMaster()->SignalEquipmentAdd(Slot->GetEquipmentIndex());
 }
 
 void bodypart::SignalEquipmentRemoval(gearslot* Slot)
 {
-  CalculateAttributeBonuses();
-
   if(GetMaster())
     GetMaster()->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
 }
@@ -2941,8 +2937,37 @@ void arm::SignalVolumeAndWeightChange()
   bodypart::SignalVolumeAndWeightChange();
 
   if(GetMaster() && !GetMaster()->IsInitializing())
-    CalculateAttackInfo();
+    {
+      CalculateAttributeBonuses();
+      CalculateAttackInfo();
+    }
 }
+
+void leg::SignalVolumeAndWeightChange()
+{
+  bodypart::SignalVolumeAndWeightChange();
+
+  if(GetMaster() && !GetMaster()->IsInitializing())
+    {
+      CalculateAttributeBonuses();
+      CalculateAttackInfo();
+    }
+}
+
+
+void humanoidtorso::SignalVolumeAndWeightChange()
+{
+  bodypart::SignalVolumeAndWeightChange();
+
+  if(GetMaster() && !GetMaster()->IsInitializing())
+    {
+      GetHumanoidMaster()->GetRightArm()->CalculateAttributeBonuses();
+      GetHumanoidMaster()->GetLeftArm()->CalculateAttributeBonuses();
+      GetHumanoidMaster()->GetRightLeg()->CalculateAttributeBonuses();
+      GetHumanoidMaster()->GetLeftLeg()->CalculateAttributeBonuses();
+    }
+}
+
 
 void bodypart::CalculateAttackInfo()
 {
@@ -3891,8 +3916,6 @@ ushort armor::GetStrengthValue() const
 
 void bodypart::SignalEnchantmentChange()
 {
-  CalculateAttributeBonuses();
-
   if(GetMaster() && !GetMaster()->IsInitializing())
     {
       GetMaster()->CalculateAttributeBonuses();
@@ -3945,6 +3968,34 @@ void backpack::ReceiveFluidSpill(material* Liquid)
     }
 }
 
+void arm::SignalEquipmentAdd(gearslot* Slot)
+{
+  if(GetMaster())
+    {
+      ApplyEquipmentAttributeBonuses(Slot->GetItem());
+      ushort EquipmentIndex = Slot->GetEquipmentIndex();
+
+      if(EquipmentIndex == RIGHT_GAUNTLET_INDEX || EquipmentIndex == LEFT_GAUNTLET_INDEX)
+	ApplyDexterityPenalty(Slot->GetItem());
+
+      GetMaster()->SignalEquipmentAdd(EquipmentIndex);
+    }
+}
+
+void leg::SignalEquipmentAdd(gearslot* Slot)
+{
+  if(GetMaster())
+    {
+      ApplyEquipmentAttributeBonuses(Slot->GetItem());
+      ushort EquipmentIndex = Slot->GetEquipmentIndex();
+
+      if(EquipmentIndex == RIGHT_BOOT_INDEX || EquipmentIndex == LEFT_BOOT_INDEX)
+	ApplyAgilityPenalty(Slot->GetItem());
+
+      GetMaster()->SignalEquipmentAdd(EquipmentIndex);
+    }
+}
+
 void arm::ApplyEquipmentAttributeBonuses(item* Item)
 {
   if(Item->AffectsArmStrength())
@@ -3979,6 +4030,14 @@ void arm::CalculateAttributeBonuses()
       if(Equipment)
 	ApplyEquipmentAttributeBonuses(Equipment);
     }
+
+  ApplyDexterityPenalty(GetGauntlet());
+
+  if(GetMaster())
+    {
+      ApplyDexterityPenalty(GetHumanoidMaster()->GetCloak());
+      ApplyDexterityPenalty(GetHumanoidMaster()->GetBodyArmor());
+    }
 }
 
 void leg::CalculateAttributeBonuses()
@@ -3992,18 +4051,42 @@ void leg::CalculateAttributeBonuses()
       if(Equipment)
 	ApplyEquipmentAttributeBonuses(Equipment);
     }
+
+  ApplyAgilityPenalty(GetBoot());
+
+  if(GetMaster())
+    {
+      ApplyAgilityPenalty(GetHumanoidMaster()->GetCloak());
+      ApplyAgilityPenalty(GetHumanoidMaster()->GetBodyArmor());
+    }
 }
 
-void arm::CalculateAll()
+void humanoidtorso::SignalEquipmentAdd(gearslot* Slot)
 {
-  item::CalculateAll();
-  CalculateAttributeBonuses();
-}
+  if(!GetMaster())
+    return;
 
-void leg::CalculateAll()
-{
-  item::CalculateAll();
-  CalculateAttributeBonuses();
+  humanoid* Master = GetHumanoidMaster();
+  ushort EquipmentIndex = Slot->GetEquipmentIndex();
+
+  if(EquipmentIndex == CLOAK_INDEX || EquipmentIndex == BODY_ARMOR_INDEX)
+    {
+      item* Item = Slot->GetItem();
+
+      if(Master->GetRightArm())
+	Master->GetRightArm()->ApplyDexterityPenalty(Item);
+
+      if(Master->GetLeftArm())
+	Master->GetLeftArm()->ApplyDexterityPenalty(Item);
+
+      if(Master->GetRightLeg())
+	Master->GetRightLeg()->ApplyAgilityPenalty(Item);
+
+      if(Master->GetLeftLeg())
+	Master->GetLeftLeg()->ApplyAgilityPenalty(Item);
+    }
+
+  Master->SignalEquipmentAdd(EquipmentIndex);
 }
 
 void meleeweapon::VirtualConstructor(bool Load)
@@ -4163,4 +4246,21 @@ void arm::AddWieldedBattleInfo(felist& Info) const
     Info.AddEntry(std::string("Penalty for low to hit value: ") + int(GetToHitValue() * 10 - 100), LIGHT_GRAY);
 
   Info.AddEntry(std::string("Real block value: ") + int(GetBlockValue()), LIGHT_GRAY);
+}
+
+void arm::ApplyDexterityPenalty(item* Item)
+{
+  if(Item)
+    DexterityBonus -= Item->GetInElasticityPenalty(IsAlive() ? Dexterity : GetMainMaterial()->GetFlexibility());
+}
+
+void leg::ApplyAgilityPenalty(item* Item)
+{
+  if(Item)
+    AgilityBonus -= Item->GetInElasticityPenalty(IsAlive() ? Agility : GetMainMaterial()->GetFlexibility());
+}
+
+ushort armor::GetInElasticityPenalty(ushort Attribute) const
+{
+  return Attribute * GetInElasticityPenaltyModifier() / (GetMainMaterial()->GetFlexibility() * 100);
 }

@@ -221,6 +221,7 @@ class ABSTRACT_ITEM
   virtual void EditEnchantment(char);
   virtual ushort GetStrengthValue() const;
   virtual bool CanBePiledWith(const item*, const character*) const;
+  virtual ushort GetInElasticityPenalty(ushort) const;
  protected:
   virtual void AddPostFix(std::string&) const;
   virtual void VirtualConstructor(bool);
@@ -741,8 +742,8 @@ class ABSTRACT_ITEM
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
   virtual void InitSpecialAttributes();
-  void SignalEquipmentAdd(gearslot*);
-  void SignalEquipmentRemoval(gearslot*);
+  virtual void SignalEquipmentAdd(gearslot*);
+  virtual void SignalEquipmentRemoval(gearslot*);
   virtual void Mutate();
   ulong GetBodyPartVolume() const { return BodyPartVolume; }
   ulong GetCarriedWeight() const { return CarriedWeight; }
@@ -779,9 +780,8 @@ class ABSTRACT_ITEM
   void SetMaterialColorB(ushort What) { ColorB = What; }
   void SetMaterialColorC(ushort What) { ColorC = What; }
   void SetMaterialColorD(ushort What) { ColorD = What; }
-  virtual void ApplyEquipmentAttributeBonuses(item*) { }
-  virtual void CalculateAttributeBonuses() { }
   virtual void SignalEnchantmentChange();
+  virtual void CalculateAttributeBonuses() { }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -888,6 +888,8 @@ class ITEM
   virtual void DropEquipment();
   virtual item* GetEquipment(ushort) const;
   virtual ushort GetEquipmentSlots() const { return 3; }
+  virtual void SignalEquipmentAdd(gearslot*);
+  virtual void SignalVolumeAndWeightChange();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -954,11 +956,12 @@ class ABSTRACT_ITEM
   void WieldedSkillHit();
   float GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
   void AddDefenceInfo(felist&) const;
-  virtual void ApplyEquipmentAttributeBonuses(item*);
+  void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
-  virtual void CalculateAll();
   short GetWieldedHitStrength() const;
   void AddWieldedBattleInfo(felist&) const;
+  virtual void SignalEquipmentAdd(gearslot*);
+  void ApplyDexterityPenalty(item*);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -1052,9 +1055,11 @@ class ABSTRACT_ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
-  virtual void ApplyEquipmentAttributeBonuses(item*);
+  void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
-  virtual void CalculateAll();
+  virtual void SignalEquipmentAdd(gearslot*);
+  void ApplyAgilityPenalty(item*);
+  virtual void SignalVolumeAndWeightChange();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;

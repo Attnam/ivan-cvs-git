@@ -293,6 +293,7 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZE_DATA(AffectsMana);
   ANALYZE_DATA(DefaultEnchantment);
   ANALYZE_DATA(PriceIsProportionalToEnchantment);
+  ANALYZE_DATA(InElasticityPenaltyModifier);
 
   return Found;
 }

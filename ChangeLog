@@ -1,3 +1,7 @@
+October 24 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Inelastic armor now decreases dexterity and/or agility
+
 October 18 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* The danger system now takes haste and slow into account

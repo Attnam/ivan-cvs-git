@@ -47,7 +47,7 @@ struct materialdatabase
   ulong ExplosivePower;
   uchar Alpha;
   bool CreateDivineConfigurations;
-  uchar Flexibility;
+  ushort Flexibility;
   ushort SpoilModifier;
   bool IsSparkling;
 };
@@ -123,7 +123,7 @@ class material
   DATA_BASE_VALUE(uchar, HitMessage);
   DATA_BASE_VALUE(ulong, ExplosivePower);
   DATA_BASE_VALUE(uchar, Alpha);
-  DATA_BASE_VALUE(uchar, Flexibility);
+  DATA_BASE_VALUE(ushort, Flexibility);
   DATA_BASE_VALUE(ushort, SpoilModifier);
   DATA_BASE_BOOL(IsSparkling);
   virtual const prototype* GetProtoType() const { return &material_ProtoType; }
