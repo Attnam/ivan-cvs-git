@@ -65,6 +65,15 @@ Dungeon 0;
 		AmbientLight=0;
 		LOSModifier=16;
 
+		Square, Random
+		{
+			Walkable=false;						
+		}
+		{
+			Item = astone;
+			Times = 50+rand%50;
+		}
+
 		RoomDefault
 		{
 			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
@@ -104,6 +113,7 @@ Dungeon 0;
 			Character=kobold;
 			Times=5;
 		}
+
 
 		Room 0;
 		{

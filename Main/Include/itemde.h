@@ -1118,30 +1118,53 @@ class ITEM
 
 class ITEM
 (
-  oillamp,
+	oillamp,
+	item,
+	InitMaterials(new gold),
+	{
+		SetSize(30);
+		UpdatePicture();
+		SetInhabitedByGenie(!(rand() % 4));
+	},
+public:
+	virtual ushort Possibility() const { return 2; }
+	virtual ushort GetEmitation() const { return 250; }
+	virtual std::string NameSingular() const { return "oil lamp"; }
+	virtual float OfferModifier() const { return 1; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual ulong Price() const { return 80; }
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
+	virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
+	virtual bool Apply(character*, stack*);
+	virtual vector2d GetBitmapPos() const { return vector2d(32,48); }
+protected:
+	virtual ushort GetFormModifier() const { return 30; }
+	bool InhabitedByGenie;
+	);
+
+class ITEM
+(
+  astone,
   item,
-  InitMaterials(new gold),
+  GenerateStoneMaterials(),
   {
     SetSize(30);
     SetInhabitedByGenie(!(RAND() % 4));
   },
  public:
-  virtual ushort Possibility() const { return 10; }
-  virtual ushort GetEmitation() const { return 256; }
-  virtual std::string NameSingular() const { return "oil lamp"; }
-  virtual float OfferModifier() const { return 1; }
-  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 200; default: return 0; } }
-  virtual ulong Price() const { return 100; }
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
-  virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
-  virtual bool Apply(character*, stack*);
-  virtual vector2d GetBitmapPos() const { return vector2d(32,48); }
-  virtual bool CanBeWished() const { return false; }
+  virtual ushort Possibility() const { return 5; }
+  virtual std::string Name(uchar Case) const { return NameThingsThatAreLikeLumps(Case, "a"); }
+  virtual std::string NameSingular() const { return "rock"; }
+  virtual vector2d GetInHandsPic() const { return vector2d(160, 112); }
+  virtual float OfferModifier() const { return 0.7; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0,48); }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 150; default: return 0; } }
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice() * 2; }
+  virtual void GenerateStoneMaterials();
  protected:
-  virtual ushort GetFormModifier() const { return 30; }
-  bool InhabitedByGenie;
+  virtual ushort GetFormModifier() const { return 45; }
 );
-
 #endif
+

@@ -159,6 +159,7 @@ class MATERIAL
   flesh,
   material,
  public:
+
   virtual ushort GetHitValue() const { return 10; }
   virtual uchar GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 1200; }
@@ -520,7 +521,7 @@ class MATERIAL
   virtual ushort OfferValue() const { return 50; }
   virtual uchar Alignment() const { return NEUTRAL; }
   virtual bool IsSolid() const { return true; }
-  virtual ushort GetColor() const { return MAKE_RGB(180, 180, 0); }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
   virtual bool CanBeWished() const { return false; }
   virtual ulong RawPrice() const { return GetVolume() << 1; }
  protected:
@@ -942,5 +943,70 @@ class MATERIAL
   virtual std::string NameStem() const { return "white unicorn flesh"; } 
 );
 
+class MATERIAL
+(
+  diamond,
+  material,
+ public:
+  virtual ushort GetHitValue() const { return 300; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 3500; }
+  virtual ushort OfferValue() const { return 50; }
+  virtual bool IsSolid() const { return true; }
+  virtual ushort GetColor() const { return MAKE_RGB(180, 180, 180); }
+  virtual ulong RawPrice() const { return ulong(GetVolume() * 3); }
+ protected:
+  virtual std::string NameStem() const { return "diamond"; }
+);
+
+class MATERIAL
+(
+ silver,
+ material,
+ public:
+  virtual ushort GetHitValue() const { return 50; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 10500; }
+  virtual ushort OfferValue() const { return 30; }
+  virtual bool IsSolid() const { return true; }
+  virtual ushort GetColor() const { return MAKE_RGB(100, 100, 100); }
+  virtual bool CanBeWished() const { return false; }
+  virtual ulong RawPrice() const { return ulong(GetVolume() * 1.5); }
+ protected:
+  virtual std::string NameStem() const { return "silver"; }
+); 
+
+class MATERIAL
+(
+ sapphire,
+ material,
+ public:
+  virtual ushort GetHitValue() const { return 300; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 3500; }
+  virtual ushort OfferValue() const { return 50; }
+  virtual bool IsSolid() const { return true; }
+  virtual ushort GetColor() const { return MAKE_RGB(120, 120, 170); }
+  virtual ulong RawPrice() const { return ulong(GetVolume() * 2); }
+ protected:
+  virtual std::string NameStem() const { return "sapphire"; }
+ );
+
+class MATERIAL
+(
+ ruby,
+ material,
+ public:
+  virtual ushort GetHitValue() const { return 300; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 3500; }
+  virtual ushort OfferValue() const { return 50; }
+  virtual bool IsSolid() const { return true; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
+  virtual ulong RawPrice() const { return ulong(GetVolume() * 2.5); }
+ protected:
+  virtual std::string NameStem() const { return "ruby"; }
+ );
+ 
 #endif
 

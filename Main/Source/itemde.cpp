@@ -1049,3 +1049,14 @@ void holybook::SetOwnerGod(uchar NewOwnerGod)
   OwnerGod = NewOwnerGod;
 }
 
+void astone::GenerateStoneMaterials()
+{ 
+  switch(RAND() % 5) 
+    {
+    case 0: InitMaterials(new gold); break;
+    case 1: InitMaterials(new sapphire); break;
+    case 2: InitMaterials(new silver); break;
+    case 3: InitMaterials(new ruby); break;
+    case 4: InitMaterials(new diamond); break;
+    }
+}
