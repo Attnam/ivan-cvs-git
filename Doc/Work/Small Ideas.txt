@@ -1,3 +1,6 @@
+// done
+* high priority
+
 Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
@@ -81,13 +84,13 @@ Throw flipping.
 Throw speed to conf.
 Monsters that block light.
 Parasites.
-Savefile versions.
+*Savefile versions.
 Monster data in corpses + resurrection.
 Pets that resurrect the player.
 Compressed savefiles.
 Inventory screen could be categorised.
 Crash save.
-The great line algorithm idea.
+The Great Line Algorithm Idea. (GLAI)
 "You didn't manage to get onto the high score list"
 Cats and dogs should attack each other even if team comrades.
 It should be possible to unequip party members.
@@ -98,7 +101,7 @@ Oil could have other uses as well.
 Tuukka's alternative walls should be integrated.
 Fungi that grow around the player and paralyze him.
 Stat point based character generation? (from Antti & others)
-Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
+//Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
 Guilds. (from Tapani Tiilikainen)
 Option to change the size of font. (from sturmkoenig2k)
 Practise dungeon? (from JM)
@@ -106,4 +109,14 @@ Elemental damage. (from JM)
 Zombies should lose weight when they drop lumps of flesh.
 Consummo should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
-Wear inconsistency.
+Fix wear-time AV inconsistency.
+Player's ability to escape from a level shouldn't depend on his LOS but on the enemies' LOSes.
+Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
+Elpuri's lair could be even more frightening.
+Fluid should handle melded metals.
+In-game manual.
+In-game credits.
+Valpurus's altar rooms should be frog-shaped.
+When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into a donkey.")
+Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
+Intelligent polymorphed monsters should have unique replies?

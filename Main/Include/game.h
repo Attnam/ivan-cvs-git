@@ -6,6 +6,7 @@
 #endif
 
 #define VERSION			"0.311"
+#define SAVEFILE_VERSION	100	// Increment this if changes make savefiles incompatible
 
 #define DIRECTION_COMMAND_KEYS	8
 
@@ -15,6 +16,10 @@
 #define TRANSSEXUAL		3
 
 #define LIGHT_BORDER		160
+
+#define LOADED			0
+#define NEWGAME			1
+#define BACK			2
 
 #ifdef WIN32
 #define GAME_DIR std::string("")
@@ -26,11 +31,11 @@
 #define SAVE_DIR std::string("Save/")
 #endif
 
+// The program can only create directories to the deepness of one, no more...
+
 #ifdef USE_SDL
 #define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
-
 #define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))
-// The program can only create directories to the deepness of 1 no more...
 #endif
 
 #include <string>
@@ -93,7 +98,7 @@ class game
   static const char* PossessivePronoun(uchar Index);
   static void DrawEverything(bool = true);
   static bool Save(std::string = game::SaveName());
-  static bool Load(std::string = game::SaveName());
+  static uchar Load(std::string = game::SaveName());
   static bool GetRunning() { return Running; }
   static void EnableWizardMode() { WizardMode = true; }
   static bool GetWizardMode() { return WizardMode; }

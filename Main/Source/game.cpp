@@ -181,62 +181,74 @@ void game::Init(std::string Name)
   mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
 #endif
 
-  if(Load())
+  switch(Load())
     {
-      Running = true;
-      IsLoading = true;
-      GetCurrentArea()->SendNewDrawRequest();
-      game::SendLOSUpdateRequest();
-      ADD_MESSAGE("Game loaded successfully.");
-    }
-  else
-    {
-      iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
-			   "Constantly you have had to fight against ultra-violent bears and\n"
-			   "goblins that roam freely in this area. Screams of Enner Beasts have\n"
-			   "wailed in the distance and the cold air has almost freezed your body.\n"
-			   "But now your eyes catch the destination: A small settlement of a few\n"
-			   "houses build around a frog-shaped tower. The town has recently tried\n"
-			   "to advertise itself as a perfect place for adventurous tourists who\n"
-			   "seek to face an untouched nature. Unfortunately you were among those\n"
-			   "few who didn't understand they really meant what they said.\n\n"
-			   "You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
-			   "And you know nothing about the adventures that await you here.");
+    case LOADED:
+      {
+	Running = true;
+	IsLoading = true;
+	GetCurrentArea()->SendNewDrawRequest();
+	game::SendLOSUpdateRequest();
+	ADD_MESSAGE("Game loaded successfully.");
+	break;
+      }
+    case NEWGAME:
+      {
+	iosystem::TextScreen("For many days you have wandered through a thick and gloomy forest.\n"
+			     "Constantly you have had to fight against ultra-violent bears and\n"
+			     "goblins that roam freely in this area. Screams of Enner Beasts have\n"
+			     "wailed in the distance and the cold air has almost freezed your body.\n"
+			     "But now your eyes catch the destination: A small settlement of a few\n"
+			     "houses build around a frog-shaped tower. The town has recently tried\n"
+			     "to advertise itself as a perfect place for adventurous tourists who\n"
+			     "seek to face an untouched nature. Unfortunately you were among those\n"
+			     "few who didn't understand they really meant what they said.\n\n"
+			     "You have arrived at Attnam, the Holy City of Valpurus the Great Frog.\n"
+			     "And you know nothing about the adventures that await you here.");
 
-      Running = true;
-      iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
-      CreateTeams();
-      SetPlayer(new human);
-      Player->SetTeam(GetTeam(0));
-      GetTeam(0)->SetLeader(Player);
-      Petrus = 0;
-      InitDungeons();
-      WorldMap = new worldmap(128, 128);
-      WorldMap->Generate();
-      InWilderness = true;
-      UpdateCamera();
-      game::SendLOSUpdateRequest();
+	Running = true;
+	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
+	CreateTeams();
+	SetPlayer(new human);
+	Player->SetTeam(GetTeam(0));
+	GetTeam(0)->SetLeader(Player);
+	Petrus = 0;
+	InitDungeons();
+	WorldMap = new worldmap(128, 128);
+	WorldMap->Generate();
+	GetDungeon(0)->PrepareLevel(6);
+	GetDungeon(0)->SaveLevel(SaveName(), 6);
+	InWilderness = true;
+	UpdateCamera();
+	game::SendLOSUpdateRequest();
 
-      for(ushort c = 1; GetGod(c); ++c)
-	{
-	  GetGod(c)->SetKnown(false);
-	  GetGod(c)->SetRelation(0);
-	  GetGod(c)->SetTimer(0);
-	}
+	for(ushort c = 1; GetGod(c); ++c)
+	  {
+	    GetGod(c)->SetKnown(false);
+	    GetGod(c)->SetRelation(0);
+	    GetGod(c)->SetTimer(0);
+	  }
 
-      GetGod(1)->SetKnown(true);
-      GetGod(2)->SetKnown(true);
-      GetGod(4)->SetKnown(true);
-      GetGod(6)->SetKnown(true);
-      GetGod(7)->SetKnown(true);
+	GetGod(1)->SetKnown(true);
+	GetGod(2)->SetKnown(true);
+	GetGod(4)->SetKnown(true);
+	GetGod(6)->SetKnown(true);
+	GetGod(7)->SetKnown(true);
 
-      Ticks = 0;
+	Ticks = 0;
 
-      BaseScore = Player->Score();
-      dog* Doggie = new dog;
-      Doggie->SetTeam(GetTeam(0));
-      GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-      ADD_MESSAGE("Game generated successfully.");
+	BaseScore = Player->Score();
+	dog* Doggie = new dog;
+	Doggie->SetTeam(GetTeam(0));
+	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+	ADD_MESSAGE("Game generated successfully.");
+	break;
+      }
+    case BACK:
+      {
+	Running = false;
+	break;
+      }
     }
 }
 
@@ -570,7 +582,8 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
 bool game::Save(std::string SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
-  SaveFile << PlayerName;
+
+  SaveFile << ushort(SAVEFILE_VERSION) << PlayerName;
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextEntityID;
   SaveFile << LOSTurns;
@@ -596,12 +609,23 @@ bool game::Save(std::string SaveName)
   return true;
 }
 
-bool game::Load(std::string SaveName)
+uchar game::Load(std::string SaveName)
 {
   inputfile SaveFile(SaveName + ".sav", false);
 
   if(!SaveFile.IsOpen())
-    return false;
+    return NEWGAME;
+
+  ushort Version;
+  SaveFile >> Version;
+
+  if(Version != SAVEFILE_VERSION)
+    {
+      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", BLUE, WHITE, false))
+	  return NEWGAME;
+      else
+	  return BACK;
+    }
 
   SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
@@ -630,7 +654,7 @@ bool game::Load(std::string SaveName)
 
   SaveFile >> PlayerBackup;
   globalmessagingsystem::GetMessageHistory()->Load(SaveFile);
-  return true;
+  return LOADED;
 }
 
 std::string game::SaveName()

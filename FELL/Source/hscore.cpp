@@ -97,9 +97,11 @@ void highscore::Load(std::string File)
       return;
 
     HighScore.Get();
+
     if(HighScore.Eof())
       return;
   }
+
   inputfile HighScore(File, false);
 
   ushort HVersion;

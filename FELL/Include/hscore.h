@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define HIGHSCORE_VERSION 110
+#define HIGHSCORE_VERSION 110	// Increment this if changes make highscores incompatible
 
 #include <string>
 #include <vector>

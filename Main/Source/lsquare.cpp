@@ -968,7 +968,10 @@ void levelsquare::PolymorphEverything(character* Zapper)
 }
 
 void levelsquare::DrawParticles(ushort Color, uchar)
-{						
+{
+  if(GetPos().X < game::GetCamera().X || GetPos().Y < game::GetCamera().Y || GetPos().X >= game::GetCamera().X + 50 || GetPos().Y >= game::GetCamera().Y + 30)
+    return;
+
   clock_t StartTime = clock();
 
   vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);

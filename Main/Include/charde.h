@@ -151,7 +151,7 @@ class CHARACTER
   virtual void ReceiveFireDamage(character*, std::string, long) { }
   virtual void Save(outputfile&) const;
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph() { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
   virtual void AddHitMessage(character*, const bool = false) const;
   virtual uchar GetStoryState() const { return StoryState; }
@@ -245,7 +245,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100000; else return 0; }
   virtual void BeTalkedTo(character*);
-  virtual bool Polymorph() { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
   virtual std::string NameSingular() const { return "shopkeeper"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -293,7 +293,7 @@ class CHARACTER
  public:
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph() const { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 110000; else return 0; }
   virtual void BeTalkedTo(character*);
@@ -348,7 +348,7 @@ class CHARACTER
  public:
   virtual bool CanBeGenerated() const { return false; }
   virtual bool Hit(character*);
-  virtual bool Polymorph() const { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual ulong CurrentDanger() { return character::CurrentDanger() * 5; }
@@ -413,7 +413,7 @@ class CHARACTER
   virtual bool CanBeGenerated() const { return false; }
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph() const { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 277500; else return 0; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual void BeTalkedTo(character*);
@@ -824,7 +824,7 @@ class CHARACTER
   virtual bool CanOpenDoors() const { return false; }
   virtual bool CanWalk() const { return false; }
   virtual bool CanSwim() const { return true; }
-  virtual bool Polymorph() { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
   virtual std::string NameSingular() const { return "female dolphin in season"; }
   virtual float GetMeleeStrength() const { return 1000; }
@@ -1300,7 +1300,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual bool Charmable() const { return false; }
-  virtual bool Polymorph() { return false; }
+  virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual bool HasInfraVision() const { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;

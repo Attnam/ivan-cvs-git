@@ -228,7 +228,7 @@ bool cathedral::PickupItem(character* Visitor, item* Item)
 
   if(Visitor->GetIsPlayer())
     {
-      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut())
+      if(Item->IsHeadOfElpuri() || Item->IsGoldenEagleShirt() || Item->IsPetrussNut() || !Item->Price())
 	return true;
 
       ADD_MESSAGE("Picking up property of the Cathedral is prohibited.");

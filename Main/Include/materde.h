@@ -558,6 +558,7 @@ class MATERIAL
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
   virtual short NutritionValue() const { return 150; }
   virtual ushort GetColor() const { return MAKE_RGB(160, 112, 32); }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
  protected:
   virtual std::string NameStem() const { return "fruit flesh"; }
 );
@@ -836,6 +837,7 @@ class MATERIAL
   virtual bool CanBeWished() const { return false; }
   virtual bool IsExplosive() const { return true; }
   virtual ushort ExplosivePower() const { return GetVolume() / 250; }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
  protected:
   virtual std::string NameStem() const { return "gunpowder"; }
 );

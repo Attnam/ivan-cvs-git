@@ -100,11 +100,8 @@ tile igraph::AddUser(graphic_id GI)
   else
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
-
       tile Tile(Bitmap, 1);
-
       TileMap[GI] = Tile;
-
       return Tile;
     }
 

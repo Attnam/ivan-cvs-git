@@ -27,7 +27,7 @@ bool configuration::AutodropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
 ushort configuration::CharacterOutlineColor = BLUE;
-ushort configuration::ItemOutlineColor = GREEN;
+ushort configuration::ItemOutlineColor = RED;
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
 
@@ -83,10 +83,22 @@ void configuration::Load()
 	SetOutlineItems(SaveFile.ReadBool());
 
       if(Word == "CharacterOutlineColor")
-	SetCharacterOutlineColor(MAKE_RGB(SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap)));
+	{
+	  uchar Red = SaveFile.ReadNumber(ValueMap);
+	  uchar Green = SaveFile.ReadNumber(ValueMap);
+	  uchar Blue = SaveFile.ReadNumber(ValueMap);
+
+	  SetCharacterOutlineColor(MAKE_RGB(Red, Green, Blue));
+	}
 
       if(Word == "ItemOutlineColor")
-	SetItemOutlineColor(MAKE_RGB(SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap)));
+	{
+	  uchar Red = SaveFile.ReadNumber(ValueMap);
+	  uchar Green = SaveFile.ReadNumber(ValueMap);
+	  uchar Blue = SaveFile.ReadNumber(ValueMap);
+
+	  SetItemOutlineColor(MAKE_RGB(Red, Green, Blue));
+	}
 
       if(Word == "BeepOnCritical")
 	SetBeepOnCritical(SaveFile.ReadBool());
