@@ -335,11 +335,16 @@ bool god::LikesMaterial(const materialdatabase* MDB, const character*) const
   return MDB->AttachedGod == GetType();
 }
 
-bool MaterialSorter(const material* M1, const material* M2)
+struct materialsorter
 {
-  return M1->GetStrengthValue() + M1->GetFlexibility()
-       > M2->GetStrengthValue() + M2->GetFlexibility();
-}
+  materialsorter(const item* Item) : Item(Item) { }
+  bool operator()(const material* M1, const material* M2) const
+  {
+    return M1->GetHardenModifier(Item)
+	 > M2->GetHardenModifier(Item);
+  }
+  const item* Item;
+};
 
 bool god::TryToAttachBodyPart(character* Char)
 {
@@ -360,7 +365,7 @@ bool god::TryToAttachBodyPart(character* Char)
 	  BodyPart = 0;
 	  materialvector MaterialVector;
 	  protosystem::CreateEveryMaterial(MaterialVector, this, Char);
-	  std::sort(MaterialVector.begin(), MaterialVector.end(), MaterialSorter);
+	  std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(BodyPart));
 	  int c;
 
 	  for(c = 0; c < MaterialVector.size(); ++c)
@@ -425,10 +430,10 @@ bool god::TryToHardenBodyPart(character* Char)
 
   bodypart* BodyPart = PossibleBodyPart[RAND_N(Index)];
   material* OldMaterial = BodyPart->GetMainMaterial();
-  int OldModifier = OldMaterial->GetStrengthValue() + OldMaterial->GetFlexibility();
+  int OldModifier = OldMaterial->GetHardenModifier(BodyPart);
   materialvector MaterialVector;
   protosystem::CreateEveryMaterial(MaterialVector, this, Char);
-  std::sort(MaterialVector.begin(), MaterialVector.end(), MaterialSorter);
+  std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(BodyPart));
   bool Changed = false;
 
   for(c = 0; c < MaterialVector.size(); ++c)
@@ -436,7 +441,7 @@ bool god::TryToHardenBodyPart(character* Char)
       {
 	material* Material = MaterialVector[c];
 
-	if(Material->GetStrengthValue() + Material->GetFlexibility() > OldModifier
+	if(Material->GetHardenModifier(BodyPart) > OldModifier
 	&& !RAND_N(12000 / (GetRelation() + 2000))
 	&& !RAND_N(Max(Material->GetIntelligenceRequirement() - 15, 1)))
 	  {

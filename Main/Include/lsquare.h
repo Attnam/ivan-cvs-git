@@ -37,6 +37,7 @@ class bodypart;
 class liquid;
 class rain;
 class trap;
+struct sortdata;
 
 typedef std::vector<item*> itemvector;
 typedef bool (item::*sorter)(const character*) const;
@@ -197,7 +198,7 @@ class lsquare : public square
   bool CheckKick(const character*) const;
   void GetHitByExplosion(const explosion*);
   int GetSpoiledItems() const;
-  void SortAllItems(itemvector&, const character* = 0, sorter = 0);
+  void SortAllItems(const sortdata&);
   bool LowerEnchantment(const beamdata&);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);

@@ -171,7 +171,6 @@ class material
   DATA_BASE_VALUE(int, Acidicity);
   DATA_BASE_BOOL(IsImmuneToAcid);
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
-  DATA_BASE_VALUE(int, HardenedMaterial);
   DATA_BASE_VALUE(int, IntelligenceRequirement);
   DATA_BASE_BOOL(IsValuable);
   virtual const prototype* GetProtoType() const;
@@ -226,6 +225,8 @@ class material
   virtual bool IsInfectedByLeprosy() const { return false; }
   virtual void SetIsInfectedByLeprosy(bool) { }
   virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
+  int GetHardenedMaterial(const item*) const;
+  int GetHardenModifier(const item*) const;
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(int, long, bool);

@@ -26,7 +26,7 @@
 #include "wterras.h"
 #include "materia.h"
 #include "database.h"
-#include "fetime.h"
+//#include "fetime.h"
 
 #ifdef WIZARD
 #include "proto.h"
@@ -516,7 +516,7 @@ bool commandsystem::NOP(character* Char)
 
   //game::GetScore();
 
-  ADD_MESSAGE("%s", time::VerbalizeAsTimeSpent(game::GetTimeSpent()).CStr());
+  //ADD_MESSAGE("%s", time::VerbalizeAsTimeSpent(game::GetTimeSpent()).CStr());
 
   Char->EditExperience(DEXTERITY, -25, 1 << 3);
   Char->EditExperience(AGILITY, -25, 1 << 3);

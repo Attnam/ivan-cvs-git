@@ -258,14 +258,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, int 
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      festring DeathMSG;
-
-      if(Hitter->IsPlayer())
-	DeathMSG = CONST_S("burned by ") + Hitter->GetPossessivePronoun(false) + CONST_S(" own Turox's explosion");
-      else
-        DeathMSG = CONST_S("killed by ") + Hitter->GetKillName();
-
-      Enemy->GetLevel()->Explosion(Hitter, DeathMSG, HitPos, 10 + RAND() % 100);
+      Enemy->GetLevel()->Explosion(Hitter, CONST_S("burned @bkp Turox's explosion"), HitPos, 10 + RAND() % 100);
       return true;
     }
   else
@@ -472,7 +465,7 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitP
       beamdata Beam
       (
 	Hitter,
-	"",
+	CONST_S("electrocuted @bkp thunder hammer"),
 	Hitter->GetPos(),
 	WHITE,
 	BEAM_LIGHTNING,
@@ -480,11 +473,6 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitP
 	4,
 	0
       );
-
-      if(Hitter->IsPlayer())
-	Beam.DeathMsg = CONST_S("electrocuted ") + Hitter->GetObjectPronoun(false) + CONST_S("self with a thunder hammer");
-      else
-        Beam.DeathMsg = CONST_S("killed by ") + Hitter->GetKillName();
 
       GetLevel()->LightningBeam(Beam);
       return true;

@@ -2159,7 +2159,7 @@ dolphin
 	DefaultWisdom = 100;
 	DefaultCharisma = 30;
 	DefaultMana = 0;
-	StandVerb = "swimming";
+	StandVerb = "rolling"; /* only shown if not swimming */
 	CanBeDisplaced = false;
 	CanOpen = false;
 	MoveType = SWIM;

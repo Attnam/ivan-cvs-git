@@ -107,6 +107,31 @@ struct ivantime
   int Min;
 };
 
+struct massacreid
+{
+  massacreid() { }
+  massacreid(int Type, int Config, const festring& Name)
+  : Type(Type), Config(Config), Name(Name) { }
+  bool operator<(const massacreid&) const;
+  int Type;
+  int Config;
+  festring Name;
+};
+
+inline bool massacreid::operator<(const massacreid& MI) const
+{
+  if(Type != MI.Type)
+    return Type < MI.Type;
+
+  if(Config != MI.Config)
+    return Config < MI.Config;
+
+  return Name < MI.Name;
+}
+
+outputfile& operator<<(outputfile&, const massacreid&);
+inputfile& operator>>(inputfile&, massacreid&);
+
 struct killreason
 {
   killreason() { }
@@ -133,7 +158,7 @@ typedef std::map<configid, dangerid> dangermap;
 typedef std::map<ulong, character*> characteridmap;
 typedef std::map<ulong, item*> itemidmap;
 typedef std::map<ulong, entity*> trapidmap;
-typedef std::map<configid, killdata> massacremap;
+typedef std::map<massacreid, killdata> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
 typedef std::vector<item*> itemvector;
 typedef std::vector<itemvector> itemvectorvector;
@@ -303,7 +328,7 @@ class game
   static festring& GetDefaultSummonMonster() { return DefaultSummonMonster; }
   static festring& GetDefaultChangeMaterial() { return DefaultChangeMaterial; }
   static festring& GetDefaultDetectMaterial() { return DefaultDetectMaterial; }
-  static void SignalDeath(const character*, const character*, const festring&);
+  static void SignalDeath(const character*, const character*, festring);
   static void DisplayMassacreLists();
   static void DisplayMassacreList(const massacremap&, const char*, long);
   static bool MassacreListsEmpty();

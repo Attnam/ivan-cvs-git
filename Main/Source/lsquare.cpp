@@ -1596,7 +1596,8 @@ bool lsquare::LowerEnchantment(const beamdata& Beam)
 {
   character* Char = GetCharacter();
   itemvector AllItems;
-  SortAllItems(AllItems, Beam.Owner, &item::IsEnchantable);
+  sortdata SortData(AllItems, Beam.Owner, &item::IsEnchantable);
+  SortAllItems(SortData);
   item* RandomItem;
 
   if(!AllItems.empty())
@@ -1619,12 +1620,12 @@ bool lsquare::LowerEnchantment(const beamdata& Beam)
   return true;
 }
 
-void lsquare::SortAllItems(itemvector& AllItems, const character* Character, sorter Sorter)
+void lsquare::SortAllItems(const sortdata& SortData)
 {
   if(GetCharacter())
-    GetCharacter()->SortAllItems(AllItems, Character, Sorter);
+    GetCharacter()->SortAllItems(SortData);
 
-  GetStack()->SortAllItems(AllItems, Character, Sorter);
+  GetStack()->SortAllItems(SortData);
 }
 
 void lsquare::RemoveSmoke(smoke* ToBeRemoved)

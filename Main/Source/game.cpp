@@ -45,7 +45,7 @@
 #include "materias.h"
 #include "rain.h"
 #include "gear.h"
-#include "fetime.h"
+//#include "fetime.h"
 
 #define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
@@ -169,9 +169,6 @@ if(CharacterIDMap.find(ID) == CharacterIDMap.end())
 CharacterIDMap.erase(CharacterIDMap.find(ID));
 }
 void game::AddItemID(item* Item, ulong ID) {
-  if(ID == 4747)
-    int esko = 2;
-
 if(ItemIDMap.find(ID) != ItemIDMap.end())
   int esko = esko = 2;
 ItemIDMap.insert(std::pair<ulong, item*>(ID, Item));
@@ -374,7 +371,7 @@ bool game::Init(const festring& Name)
 	NecroCounter = 0;
 	GameBegan = time(0);
 	LastLoad = time(0);
-	TimePlayedBeforeLastLoad = time::ZeroTime();
+	//TimePlayedBeforeLastLoad = time::ZeroTime();
 
 	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
 
@@ -2242,8 +2239,13 @@ int game::GetLevels()
   return GetCurrentDungeon()->GetLevels();
 }
 
-void game::SignalDeath(const character* Ghost, const character* Murderer, const festring& DeathMsg)
+void game::SignalDeath(const character* Ghost, const character* Murderer, festring DeathMsg)
 {
+  if(InWilderness)
+    DeathMsg << " in the world map";
+  else
+    DeathMsg << " in " << GetCurrentDungeon()->GetLevelDescription(CurrentLevelIndex);
+
   massacremap* MassacreMap;
 
   if(!Murderer)
@@ -2267,12 +2269,12 @@ void game::SignalDeath(const character* Ghost, const character* Murderer, const 
       MassacreMap = &MiscMassacreMap;
     }
 
-  configid CI(Ghost->GetType(), Ghost->GetConfig());
-  massacremap::iterator i = MassacreMap->find(CI);
+  massacreid MI(Ghost->GetType(), Ghost->GetConfig(), Ghost->GetAssignedName());
+  massacremap::iterator i = MassacreMap->find(MI);
 
   if(i == MassacreMap->end())
     {
-      i = MassacreMap->insert(std::pair<configid, killdata>(CI, killdata(1, Ghost->GetGenerationDanger()))).first;
+      i = MassacreMap->insert(std::pair<massacreid, killdata>(MI, killdata(1, Ghost->GetGenerationDanger()))).first;
       i->second.Reason.push_back(killreason(DeathMsg, 1));
     }
   else
@@ -2323,6 +2325,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
     {
       character* Victim = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
+      Victim->SetAssignedName(i1->first.Name);
       massacresetentry Entry;
       GraveYard.push_back(Victim);
       Entry.ImageKey = AddToCharacterDrawVector(Victim);
@@ -2464,7 +2467,7 @@ void game::SeeWholeMap()
 
 void game::CreateBone()
 {
-  if(!WizardModeIsActive() && !IsInWilderness() && RAND() & 3 && GetCurrentLevel()->PreProcessForBone())
+  if(!WizardModeIsActive() && !IsInWilderness() && /*RAND() & 3 && */GetCurrentLevel()->PreProcessForBone())
     {
       int BoneIndex;
       festring BoneName;
@@ -2500,7 +2503,7 @@ bool game::PrepareRandomBone(int LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen() && !(RAND() & 7))
+      if(BoneFile.IsOpen())// && !(RAND() & 7))
 	{
 	  if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
 	    {
@@ -3481,5 +3484,17 @@ double game::GetGameSituationDanger()
 
 long game::GetTimeSpent() 
 {
-  return time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
+  return 0;//time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
+}
+
+outputfile& operator<<(outputfile& SaveFile, const massacreid& MI)
+{
+  SaveFile << MI.Type << MI.Config << MI.Name;
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, massacreid& MI)
+{
+  SaveFile >> MI.Type >> MI.Config >> MI.Name;
+  return SaveFile;
 }

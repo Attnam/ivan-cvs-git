@@ -36,6 +36,17 @@ typedef bool (item::*sorter)(const character*) const;
 
 extern materialpredicate TrueMaterialPredicate;
 
+struct sortdata
+{
+  sortdata(itemvector& AllItems, const character* Character, sorter Sorter)
+  : AllItems(AllItems),
+    Character(Character),
+    Sorter(Sorter) { }
+  itemvector& AllItems;
+  const character* Character;
+  sorter Sorter;
+};
+
 struct itemdatabase : public databasebase
 {
   typedef itemprototype prototype;
@@ -146,6 +157,7 @@ struct itemdatabase : public databasebase
   bool HasNormalPictureDirection;
   int DamageFlags;
   bool IsKamikazeWeapon;
+  bool FlexibilityIsEssential;
 };
 
 class itemprototype
@@ -349,6 +361,7 @@ class item : public object
   virtual DATA_BASE_VALUE(int, TeleportPriority);
   DATA_BASE_BOOL(HasNormalPictureDirection);
   DATA_BASE_VALUE(int, DamageFlags);
+  DATA_BASE_BOOL(FlexibilityIsEssential);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
@@ -426,7 +439,7 @@ class item : public object
   int GetEquipmentIndex() const;
   room* GetRoom(int I = 0) const { return GetLSquareUnder(I)->GetRoom(); }
   virtual bool HasBetterVersion() const { return false; }
-  virtual void SortAllItems(itemvector&, const character*, sorter) const;
+  virtual void SortAllItems(const sortdata&) const;
   virtual bool AllowAlphaEverywhere() const { return false; }
   virtual int GetAttachedGod() const;
   virtual long GetTruePrice() const;
@@ -505,6 +518,7 @@ class item : public object
   virtual DATA_BASE_BOOL(IsKamikazeWeapon);
   virtual void AddTrapName(festring&, int) const;
   int GetMainMaterialRustLevel() const;
+  bool HasID(ulong What) const { return ID == What; }
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

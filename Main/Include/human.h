@@ -72,7 +72,7 @@ class ABSTRACT_CHARACTER
   virtual const char* GetEquipmentName(int) const;
   virtual bodypart* GetBodyPartOfEquipment(int) const;
   virtual item* GetEquipment(int) const;
-  virtual int GetEquipmentSlots() const { return 13; }
+  virtual int GetEquipments() const { return 13; }
   virtual void SwitchToDig(item*, vector2d);
   virtual int GetUsableLegs() const;
   virtual int GetUsableArms() const;

@@ -342,3 +342,27 @@ item* material::CreateNaturalForm(long Volume) const
   Item->InitMaterials(Clone(Volume));
   return Item;
 }
+
+int material::GetHardenedMaterial(const item* Item) const
+{
+  const materialdatabase* DB = DataBase;
+
+  if(!Item->FlexibilityIsEssential())
+    return DB->HardenedMaterial;
+
+  while(DB->HardenedMaterial != NONE
+     && DataBase->Flexibility
+      > (DB = material::GetDataBase(DB->HardenedMaterial))->Flexibility);
+
+  return DB->HardenedMaterial;
+}
+
+int material::GetHardenModifier(const item* Item) const
+{
+  int M = GetFlexibility();
+
+  if(!Item->FlexibilityIsEssential())
+    M += GetStrengthValue();
+
+  return M;
+}

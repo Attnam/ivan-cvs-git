@@ -115,6 +115,7 @@ item
 	HasNormalPictureDirection = true;
 	DamageFlags = BLUNT;
 	IsKamikazeWeapon = false;
+	FlexibilityIsEssential = false;
 }
 
 materialcontainer
@@ -1586,6 +1587,7 @@ whip /* meleeweapon-> */
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 224;
 	EnchantmentPlusChance = 30;
+	FlexibilityIsEssential = true;
 
 	Config RUNED_WHIP;
 	{

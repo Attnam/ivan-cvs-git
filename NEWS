@@ -13,18 +13,24 @@ Version 0.50
 - added wands of acid rain, mirroring and necromancy
 - added scrolls of detect material, harden material and golem creation
 - added several new monsters, eg. powerful named archangels for each god
-  and necromancers who raise skeletons and zombies to their bidding
+  and necromancers who raise skeletons and zombies to do their bidding
 - one can now give pets tactical commands, change their equipment and
   use them to carry extra stuff (these are accessed using 'C'hat and
   'I'ssue commands keys)
 - the player can now panic if he gets hit too much
 - the player can now become exhausted if he fights for too long and/or
   uses the new r'u'n command too much
+- spiders are now able to make webs
+- badly hurt/trapped bodyparts now become unusable until they regain
+  some HP/become untrapped
 - it is now possible to browse detailed death reasons of individual
   monsters in the postgame massacre lists
+- added many new informative graphical details, for instance recently
+  altered attributes are shown with a different color for some time
 - gloomy cave is now longer and has more special levels and rooms
 - all the endgame battles are more complex
-- added leprosy, a disease which causes your limbs to drop off randomly
+- added leprosy, a nasty disease which causes your limbs to drop off
+  randomly
 
 Version 0.430
 -------------
@@ -96,25 +102,25 @@ Version 0.40
 Version 0.311
 -------------
 
--a few fatal bugs fixed
--some non-fatal bugs fixed
--lots of optimization
+- a few fatal bugs fixed
+- some non-fatal bugs fixed
+- lots of optimization
 
 Version 0.310
 -------------
 
 Added stuff after version 0.301:
 
--Linux and DOS ports
--fountain effects
--starting pet
--the first dungeon shop
--mammoth, unicorn, kamikaze dwarf and genie
--magic lamp, jewels, holy book, scroll of charging
--explosions
--doors can be locked and they can be broken by kicking
--graphical effects for wand beams
--dolphins have more living space
--danger levels and alignments added to the panel
--processor loads decreased
--ergonomic tweaks, e.g. with go, rest and look commands
+- Linux and DOS ports
+- fountain effects
+- starting pet
+- the first dungeon shop
+- mammoth, unicorn, kamikaze dwarf and genie
+- magic lamp, jewels, holy book, scroll of charging
+- explosions
+- doors can be locked and they can be broken by kicking
+- graphical effects for wand beams
+- dolphins have more living space
+- danger levels and alignments added to the panel
+- processor loads decreased
+- ergonomic tweaks, e.g. with go, rest and look commands

@@ -324,6 +324,6 @@ struct ignorecaseorderer
 
 /* This macro doesn't evaluate with if what is not found so it's often faster */
 
-#define SEARCH_N_REPLACE(what, with) if(Msg.Find(what) != festring::NPos) festring::SearchAndReplace(Msg, what, with);
+#define SEARCH_N_REPLACE(where, what, with) if(where.Find(what) != festring::NPos) festring::SearchAndReplace(where, what, with);
 
 #endif

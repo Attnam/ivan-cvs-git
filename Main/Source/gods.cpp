@@ -166,7 +166,7 @@ void valpurus::PrayBadEffect()
 void legifer::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Inlux! Inlux! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed accidentally by ") + GetName(), PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
+  game::GetCurrentLevel()->Explosion(PLAYER, CONST_S("killed by the holy fire of ") + GetName(), PLAYER->GetPos(), (300 + Max(GetRelation(), 0)) >> 3, false);
 }
 
 void legifer::PrayBadEffect()
@@ -476,7 +476,7 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  for(int c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
+  for(int c = 0; c < PLAYER->GetEquipments(); ++c)
     {
       item* Equipment = PLAYER->GetEquipment(c);
 

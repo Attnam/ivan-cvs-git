@@ -825,4 +825,13 @@ struct databasebase { int Config; };
 
 #define ITEM_TRAP 0x8000
 
+/* Death flags */
+
+#define FORCE_MSG 1
+#define FORCE_DEATH 2
+#define DISALLOW_CORPSE 4
+#define DISALLOW_MSG 8
+#define IGNORE_UNCONSCIOUSNESS 16
+#define IGNORE_TRAPS 32
+
 #endif

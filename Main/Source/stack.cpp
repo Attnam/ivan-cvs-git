@@ -996,10 +996,10 @@ int stack::GetSpoiledItems() const
 
 /* Adds all items and recursively their contents which satisfy the sorter to ItemVector */
 
-void stack::SortAllItems(itemvector& ItemVector, const character* Character, sorter Sorter) const
+void stack::SortAllItems(const sortdata& SortData) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    i->SortAllItems(ItemVector, Character, Sorter);
+    i->SortAllItems(SortData);
 }
 
 /* Search for traps and other secret items */

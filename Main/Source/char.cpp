@@ -241,7 +241,7 @@ std::list<character*>::iterator character::GetTeamIterator() { return TeamIterat
 void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 void character::CreateInitialEquipment(int SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
 void character::EditAP(long What) { AP = Limit<long>(AP + What, -12000, 1200); }
-bool character::CanUseEquipment(int I) const { return CanUseEquipment() && I < GetEquipmentSlots() && GetBodyPartOfEquipment(I); }
+bool character::CanUseEquipment(int I) const { return CanUseEquipment() && I < GetEquipments() && GetBodyPartOfEquipment(I); }
 int character::GetRandomStepperBodyPart() const { return TORSO_INDEX; }
 void character::GainIntrinsic(long What) { BeginTemporaryState(What, PERMANENT); }
 bool character::IsUsingArms() const { return !!(GetAttackStyle() & USE_ARMS); }
@@ -403,9 +403,6 @@ void character::Hunger()
       EditNP(-1);
       break;
     }
-
-  if(OldState != STARVING && GetHungerState() == STARVING)
-    DeActivateVoluntaryAction(CONST_S("You are getting extremely hungry."));
 
   switch(GetHungerState())
     {
@@ -581,9 +578,7 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
       return DID_NO_DAMAGE;
     }
 
-  festring DeathMsg = CONST_S("killed by ") + Enemy->GetKillName();
-
-  if(CheckDeath(DeathMsg, Enemy, Enemy->IsPlayer()))
+  if(CheckDeath(CONST_S("killed @k"), Enemy, Enemy->IsPlayer() ? FORCE_MSG : 0))
     return HAS_DIED;
 
   if(Enemy->CanBeSeenByPlayer())
@@ -1226,7 +1221,7 @@ void character::CreateCorpse(lsquare* Square)
     SendToHell();
 }
 
-void character::Die(const character* Killer, const festring& Msg, bool ForceMsg, bool AllowCorpse, bool AllowMsg)
+void character::Die(const character* Killer, const festring& Msg, ulong DeathFlags)
 {
   /* Note: This function musn't delete any objects, since one of these may be
      the one currently processed by pool::Be()! */
@@ -1257,9 +1252,9 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	    }
 	}
     }
-  else if(CanBeSeenByPlayer() && AllowMsg)
+  else if(CanBeSeenByPlayer() && !(DeathFlags & DISALLOW_MSG))
     ProcessAndAddMessage(GetDeathMessage());
-  else if(ForceMsg)
+  else if(DeathFlags & FORCE_MSG)
     ADD_MESSAGE("You sense the death of something.");
 
   if(StateIsActivated(LIFE_SAVED)
@@ -1304,17 +1299,17 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
     {
       if(!StateIsActivated(POLYMORPHED))
 	{
-	  if(!IsPlayer() && !IsTemporary())
+	  if(!IsPlayer() && !IsTemporary() && !Msg.IsEmpty())
 	    game::SignalDeath(this, Killer, Msg);
 
-	  if(AllowCorpse)
+	  if(!(DeathFlags & DISALLOW_CORPSE))
 	    CreateCorpse(LSquareUnder[0]);
 	  else
 	    SendToHell();
 	}
       else
 	{
-	  if(!IsPlayer() && !IsTemporary())
+	  if(!IsPlayer() && !IsTemporary() && !Msg.IsEmpty())
 	    game::SignalDeath(GetPolymorphBackup(), Killer, Msg);
 
 	  GetPolymorphBackup()->CreateCorpse(LSquareUnder[0]);
@@ -1324,7 +1319,12 @@ void character::Die(const character* Killer, const festring& Msg, bool ForceMsg,
 	}
     }
   else
-    SendToHell();
+    {
+      if(!IsPlayer() && !IsTemporary() && !Msg.IsEmpty())
+	game::SignalDeath(this, Killer, Msg);
+
+      SendToHell();
+    }
 
   if(IsPlayer())
     {
@@ -1479,11 +1479,7 @@ bool character::HasHeadOfElpuri() const
     if(i->IsHeadOfElpuri())
       return true;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->IsHeadOfElpuri())
-      return true;
-
-  return false;
+  return CombineEquipmentPredicates<true>(this, &item::IsHeadOfElpuri);
 }
 
 bool character::HasPetrussNut() const
@@ -1492,11 +1488,7 @@ bool character::HasPetrussNut() const
     if(i->IsPetrussNut())
       return true;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->IsPetrussNut())
-      return true;
-
-  return false;
+  return CombineEquipmentPredicates<true>(this, &item::IsPetrussNut);
 }
 
 bool character::HasGoldenEagleShirt() const
@@ -1505,11 +1497,7 @@ bool character::HasGoldenEagleShirt() const
     if(i->IsGoldenEagleShirt())
       return true;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->IsGoldenEagleShirt())
-      return true;
-
-  return false;
+  return CombineEquipmentPredicates<true>(this, &item::IsGoldenEagleShirt);
 }
 
 bool character::RemoveEncryptedScroll()
@@ -1523,7 +1511,7 @@ bool character::RemoveEncryptedScroll()
 	return true;
       }
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Item = GetEquipment(c);
 
@@ -1768,14 +1756,14 @@ void character::AddScoreEntry(const festring& Description, double Multiplier, bo
       Desc << ", " << Description;
 
       if(AddEndLevel)
-	Desc << " in " + (game::IsInWilderness() ? "the World map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()));
+	Desc << " in " + (game::IsInWilderness() ? "the world map" : game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrentLevelIndex()));
 
       HScore.Add(long(game::GetScore() * Multiplier), Desc);
       HScore.Save();
     }
 }
 
-bool character::CheckDeath(const festring& Msg, const character* Murderer, bool ForceMsg, bool ForceDeath, bool AllowCorpse, bool AllowMsg)
+bool character::CheckDeath(const festring& Msg, const character* Murderer, ulong DeathFlags)
 {
   if(!IsEnabled())
     return true;
@@ -1786,7 +1774,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
       return true;
     }
 
-  if(ForceDeath || IsDead())
+  if(DeathFlags & FORCE_DEATH || IsDead())
     {
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
@@ -1801,7 +1789,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 	  ++SpecifierParts;
 	}
 
-      if(IsStuck())
+      if(!(DeathFlags & IGNORE_TRAPS) && IsStuck())
 	{
 	  if(SpecifierParts++)
 	    SpecifierMsg << " and";
@@ -1809,7 +1797,9 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 	  SpecifierMsg << " caught in " << GetTrapDescription();
 	}
 
-      if(GetAction())
+      if(GetAction()
+      && !(DeathFlags & IGNORE_UNCONSCIOUSNESS
+       && GetAction()->IsUnconsciousness()))
 	{
 	  festring ActionMsg = GetAction()->GetDeathExplanation();
 
@@ -1831,13 +1821,26 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 
       festring NewMsg = Msg;
 
+      if(Murderer == this)
+	{
+	  SEARCH_N_REPLACE(NewMsg, "@k", GetObjectPronoun(false) + "self");
+	  SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + GetObjectPronoun(false) + "self");
+	  SEARCH_N_REPLACE(NewMsg, "@bkp", CONST_S("by ") + GetPossessivePronoun(false) + " own");
+	}
+      else
+	{
+	  SEARCH_N_REPLACE(NewMsg, "@k", CONST_S("by ") + Murderer->GetName(INDEFINITE));
+	  SEARCH_N_REPLACE(NewMsg, "@bk", CONST_S("by ") + Murderer->GetName(INDEFINITE));
+	  SEARCH_N_REPLACE(NewMsg, "@bkp", CONST_S("by ") + Murderer->GetName(INDEFINITE) + "'s");
+	}
+
       if(SpecifierParts)
 	NewMsg << " while" << SpecifierMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s. Score: %d.", NewMsg.CStr(), game::GetScore());
 
-      Die(Murderer, NewMsg, ForceMsg, AllowCorpse, AllowMsg);
+      Die(Murderer, NewMsg, DeathFlags);
       return true;
     }
   else
@@ -1847,7 +1850,7 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 bool character::CheckStarvationDeath(const festring& Msg)
 {
   if(GetNP() < 1 && UsesNutrition())
-    return CheckDeath(Msg, 0, false, true);
+    return CheckDeath(Msg, 0, FORCE_DEATH);
   else
     return false;
 }
@@ -2047,6 +2050,7 @@ bool character::Polymorph(character* NewForm, int Counter)
 
   if(IsPlayer())
     {
+      SetIsPlayer(false);
       game::SetPlayer(NewForm);
       game::SendLOSUpdateRequest();
       UpdateESPLOS();
@@ -2119,7 +2123,7 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 	    }
 
 	  ReceiveDamage(GuiltyGuy, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD);
-	  CheckDeath(CONST_S("killed by hitting a wall"), GuiltyGuy);
+	  CheckDeath(CONST_S("killed by hitting a wall due to being kicked @bk"), GuiltyGuy);
 	}
       else
 	{
@@ -2865,6 +2869,7 @@ void character::TestWalkability()
 		  ADD_MESSAGE("%s.", SquareUnder->SurviveMessage(this));
 		else if(CanBeSeenByPlayer())
 		  ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), SquareUnder->MonsterSurviveMessage(this));
+
 		Move(Square->GetPos(), true); // actually, this shouldn't be a teleport move
 		SquareUnder->SurviveEffect(this);
 		Alive = true;
@@ -2889,7 +2894,7 @@ void character::TestWalkability()
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), SquareUnder->MonsterDeathVerb(this));
 
-	      Die(0, SquareUnder->ScoreEntry(this), false, true, false);
+	      Die(0, SquareUnder->ScoreEntry(this), DISALLOW_MSG);
 	    }
 	}
     }
@@ -3199,7 +3204,7 @@ bool character::ReceiveDamage(character* Damager, int Damage, int Type, int, int
 
   if(DamageTypeAffectsInventory(Type))
     {
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipments(); ++c)
 	{
 	  item* Equipment = GetEquipment(c);
 
@@ -3227,7 +3232,8 @@ festring character::GetPersonalPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("you");
-  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED
+       || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("it");
   else if(GetSex() == MALE)
     return CONST_S("he");
@@ -3239,7 +3245,8 @@ festring character::GetPossessivePronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("your");
-  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED
+       || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("its");
   else if(GetSex() == MALE)
     return CONST_S("his");
@@ -3251,7 +3258,8 @@ festring character::GetObjectPronoun(bool PlayersView) const
 {
   if(IsPlayer() && PlayersView)
     return CONST_S("you");
-  else if(GetSex() == UNDEFINED || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
+  else if(GetSex() == UNDEFINED
+       || (PlayersView && !CanBeSeenByPlayer() && !game::GetSeeWholeMapCheatMode()))
     return CONST_S("it");
   else if(GetSex() == MALE)
     return CONST_S("him");
@@ -3261,7 +3269,9 @@ festring character::GetObjectPronoun(bool PlayersView) const
 
 void character::AddName(festring& String, int Case) const
 {
-  if(!(Case & PLURAL) && AssignedName.GetSize())
+  if(AssignedName.IsEmpty())
+    id::AddName(String, Case);
+  else if(!(Case & PLURAL))
     {
       if(!ShowClassDescription())
 	String << AssignedName;
@@ -3272,7 +3282,10 @@ void character::AddName(festring& String, int Case) const
 	}
     }
   else
-    id::AddName(String, Case);
+    {
+      id::AddName(String, Case);
+      String << " named " << AssignedName;
+    }
 }
 
 int character::GetHungerState() const
@@ -3420,7 +3433,7 @@ void character::PrintInfo() const
 {
   felist Info(CONST_S("Information about ") + GetName(DEFINITE));
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -4180,7 +4193,7 @@ void character::CalculateEquipmentState()
   long Back = EquipmentState;
   EquipmentState = 0;
 
-  for(c = 0; c < GetEquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -4463,6 +4476,7 @@ character* character::ForceEndPolymorph()
 
   if(IsPlayer())
     {
+      SetIsPlayer(false);
       game::SetPlayer(Char);
       game::SendLOSUpdateRequest();
       UpdateESPLOS();
@@ -4499,7 +4513,7 @@ void character::SaveLife()
     {
       item* LifeSaver = 0;
 
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipments(); ++c)
 	{
 	  item* Equipment = GetEquipment(c);
 
@@ -4919,13 +4933,10 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance, int Square
   && SquareIndex == GetTameSymbolSquareIndex())
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, 32, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 
-  if(GetMoveType() & FLY
-  && SquareIndex == GetFlySymbolSquareIndex())
+  if(GetMoveType() & FLY && SquareIndex == GetFlySymbolSquareIndex())
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, 128, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 
-  if(!(GetMoveType() & FLY)
-  && GetSquareUnder()->GetSquareWalkability() & SWIM
-  && SquareIndex == GetSwimmingSymbolSquareIndex())
+  if(IsSwimming() && SquareIndex == GetSwimmingSymbolSquareIndex())
     igraph::GetSymbolGraphic()->LuminanceMaskedBlit(Bitmap, 240, 16, Pos, 16, 16, ivanconfig::GetContrastLuminance());
 
   if(GetAction() && GetAction()->IsUnconsciousness()
@@ -5374,13 +5385,10 @@ festring character::GetBodyPartName(int I, bool Articled) const
 
 item* character::SearchForItem(ulong ID) const
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
+  item* Equipment = FindEquipment(this, &item::HasID, ID);
 
-      if(Equipment && Equipment->GetID() == ID)
-	return Equipment;
-    }
+  if(Equipment)
+    return Equipment;
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->GetID() == ID)
@@ -5479,7 +5487,7 @@ bool character::TryToEquip(item* Item)
   || Item->GetSquaresUnder() != 1)
     return false;
 
-  for(int e = 0; e < GetEquipmentSlots(); ++e)
+  for(int e = 0; e < GetEquipments(); ++e)
     if(CanUseEquipment(e))
       {
 	sorter Sorter = EquipmentSorter(e);
@@ -5665,19 +5673,11 @@ int character::GetRelation(const character* Who) const
 
 void character::CalculateAttributeBonuses()
 {
-  int c;
-
-  for(c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->CalculateAttributeBonuses();
-    }
-
+  DoForBodyParts(this, &bodypart::CalculateAttributeBonuses);
   int BackupBonus[BASE_ATTRIBUTES];
   int BackupCarryingBonus = CarryingBonus;
   CarryingBonus = 0;
+  int c;
 
   for(c = 0; c < BASE_ATTRIBUTES; ++c)
     {
@@ -5685,7 +5685,7 @@ void character::CalculateAttributeBonuses()
       AttributeBonus[c] = 0;
     }
 
-  for(c = 0; c < GetEquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -5882,25 +5882,25 @@ bool character::HasHadBodyPart(const item* Item) const
 
 festring& character::ProcessMessage(festring& Msg) const
 {
-  SEARCH_N_REPLACE("@nu", GetName(UNARTICLED));
-  SEARCH_N_REPLACE("@ni", GetName(INDEFINITE));
-  SEARCH_N_REPLACE("@nd", GetName(DEFINITE));
-  SEARCH_N_REPLACE("@du", GetDescription(UNARTICLED));
-  SEARCH_N_REPLACE("@di", GetDescription(INDEFINITE));
-  SEARCH_N_REPLACE("@dd", GetDescription(DEFINITE));
-  SEARCH_N_REPLACE("@pp", GetPersonalPronoun());
-  SEARCH_N_REPLACE("@sp", GetPossessivePronoun());
-  SEARCH_N_REPLACE("@op", GetObjectPronoun());
-  SEARCH_N_REPLACE("@Nu", GetName(UNARTICLED).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Ni", GetName(INDEFINITE).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Nd", GetName(DEFINITE).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Du", GetDescription(UNARTICLED).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Di", GetDescription(INDEFINITE).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Dd", GetDescription(DEFINITE).CapitalizeCopy());
-  SEARCH_N_REPLACE("@Pp", GetPersonalPronoun().CapitalizeCopy());
-  SEARCH_N_REPLACE("@Sp", GetPossessivePronoun().CapitalizeCopy());
-  SEARCH_N_REPLACE("@Op", GetObjectPronoun().CapitalizeCopy());
-  SEARCH_N_REPLACE("@Gd", GetMasterGod()->GetName());
+  SEARCH_N_REPLACE(Msg, "@nu", GetName(UNARTICLED));
+  SEARCH_N_REPLACE(Msg, "@ni", GetName(INDEFINITE));
+  SEARCH_N_REPLACE(Msg, "@nd", GetName(DEFINITE));
+  SEARCH_N_REPLACE(Msg, "@du", GetDescription(UNARTICLED));
+  SEARCH_N_REPLACE(Msg, "@di", GetDescription(INDEFINITE));
+  SEARCH_N_REPLACE(Msg, "@dd", GetDescription(DEFINITE));
+  SEARCH_N_REPLACE(Msg, "@pp", GetPersonalPronoun());
+  SEARCH_N_REPLACE(Msg, "@sp", GetPossessivePronoun());
+  SEARCH_N_REPLACE(Msg, "@op", GetObjectPronoun());
+  SEARCH_N_REPLACE(Msg, "@Nu", GetName(UNARTICLED).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Ni", GetName(INDEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Nd", GetName(DEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Du", GetDescription(UNARTICLED).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Di", GetDescription(INDEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Dd", GetDescription(DEFINITE).CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Pp", GetPersonalPronoun().CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Sp", GetPossessivePronoun().CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Op", GetObjectPronoun().CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@Gd", GetMasterGod()->GetName());
   return Msg;
 }
 
@@ -5934,7 +5934,7 @@ void character::DamageAllItems(character* Damager, int Damage, int Type)
 {
   GetStack()->ReceiveDamage(Damager, Damage, Type);
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -5945,15 +5945,7 @@ void character::DamageAllItems(character* Damager, int Damage, int Type)
 
 bool character::Equips(const item* Item) const
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment && Equipment->GetID() == Item->GetID())
-	return true;
-    }
-
-  return false;
+  return CombineEquipmentPredicates<true>(this, &item::HasID, Item->GetID());
 }
 
 void character::PrintBeginConfuseMessage() const
@@ -6021,7 +6013,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
   itemvector Item;
   festring Entry;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -6075,7 +6067,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
 
 bool character::EquipsSomething(sorter SorterFunction)
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -6360,27 +6352,21 @@ void character::GetHitByExplosion(const explosion* Explosion, int Damage)
     ADD_MESSAGE("You are hit by the explosion!");
   else if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s is hit by the explosion.", CHAR_NAME(DEFINITE));
-  
+
+  bool WasUnconsciouss = GetAction() && GetAction()->IsUnconsciousness();
   ReceiveDamage(Explosion->Terrorist, Damage >> 1, FIRE, ALL, DamageDirection, true, false, false, false);
 
   if(IsEnabled())
     {
       ReceiveDamage(Explosion->Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
-      CheckDeath(Explosion->DeathMsg, Explosion->Terrorist);
+      CheckDeath(Explosion->DeathMsg, Explosion->Terrorist, !WasUnconsciouss ? IGNORE_UNCONSCIOUSNESS : 0);
     }
 }
 
-void character::SortAllItems(itemvector& AllItems, const character* Character, sorter Sorter)
+void character::SortAllItems(const sortdata& SortData)
 {
-  GetStack()->SortAllItems(AllItems, Character, Sorter);
-
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	Equipment->SortAllItems(AllItems, Character, Sorter);
-    }
+  GetStack()->SortAllItems(SortData);
+  DoForEquipments(this, &item::SortAllItems, SortData);
 }
 
 void character::PrintBeginSearchingMessage() const
@@ -6481,9 +6467,7 @@ void character::ShowAdventureInfo() const
       for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
 	i->DrawContents(this);
 
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
-	if(GetEquipment(c))
-	  GetEquipment(c)->DrawContents(this);
+      DoForEquipments(this, &item::DrawContents, this);
     }
 
   if(game::BoolQuestion(CONST_S("Do you want to see your message history? [y/n]"), REQUIRES_ANSWER))
@@ -6627,24 +6611,8 @@ bool character::PreProcessForBone()
   ResetStates();
   RemoveTraps();
   GetStack()->PreProcessForBone();
-  int c;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->PreProcessForBone();
-    }
-
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	Equipment->PreProcessForBone();
-    }
-
+  DoForEquipments(this, &item::PreProcessForBone);
+  DoForBodyParts(this, &bodypart::PreProcessForBone);
   game::RemoveCharacterID(ID);
   ID = -ID;
   game::AddCharacterID(this, ID);
@@ -6690,24 +6658,8 @@ bool character::PostProcessForBone()
     }
 
   GetStack()->PostProcessForBone();
-  int c;
-
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	Equipment->PostProcessForBone();
-    }
-
-  for(c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-        BodyPart->PostProcessForBone();
-    }
-
+  DoForEquipments(this, &item::PostProcessForBone);
+  DoForBodyParts(this, &bodypart::PostProcessForBone);
   return true;
 }
 
@@ -6715,15 +6667,8 @@ void character::FinalProcessForBone()
 {
   Player = false;
   GetStack()->FinalProcessForBone();
+  DoForEquipments(this, &item::FinalProcessForBone);
   int c;
-
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	Equipment->FinalProcessForBone();
-    }
 
   for(c = 0; c < BodyParts; ++c)
     {
@@ -6758,13 +6703,8 @@ void character::SetSoulID(ulong What)
 
 bool character::SearchForItem(const item* Item) const
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment && Equipment == Item)
-	return true;
-    }
+  if(CombineEquipmentPredicates<true>(this, &item::HasID, Item->GetID()))
+    return true;
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(*i == Item)
@@ -6775,7 +6715,7 @@ bool character::SearchForItem(const item* Item) const
 
 item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -7192,7 +7132,7 @@ void character::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
   int c;
   long Modifier[MAX_BODYPARTS], ModifierSum = 0;
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     if(GetBodyPart(c))
       {
 	Modifier[c] = long(sqrt(GetBodyPart(c)->GetVolume()));
@@ -7228,20 +7168,20 @@ bool character::IsAlly(const character* Char) const
 
 void character::ResetSpoiling()
 {
-  for(int c = 0; c < BodyParts; ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->ResetSpoiling();
+  DoForBodyParts(this, &bodypart::ResetSpoiling);
 }
 
 item* character::SearchForItem(const character* Char, sorter Sorter) const
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  item* Equipment = FindEquipment(this, Sorter, Char);
+
+  /*for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
       if(Equipment && (Equipment->*Sorter)(Char))
 	return Equipment;
-    }
+    }*/
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(((*i)->*Sorter)(Char))
@@ -7252,20 +7192,9 @@ item* character::SearchForItem(const character* Char, sorter Sorter) const
 
 bool character::DetectMaterial(const material* Material) const
 {
-  if(GetStack()->DetectMaterial(Material))
-    return true;
-
-  int c;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c) && GetBodyPart(c)->DetectMaterial(Material))
-      return true;
-
-  for(c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->DetectMaterial(Material))
-      return true;
-
-  return false;
+  return GetStack()->DetectMaterial(Material)
+      || CombineBodyPartPredicates<true>(this, &bodypart::DetectMaterial, Material)
+      || CombineEquipmentPredicates<true>(this, &item::DetectMaterial, Material);
 }
 
 bool character::DamageTypeDestroysBodyPart(int Type)
@@ -7577,7 +7506,7 @@ void character::RemoveAllItems()
 {
   GetStack()->Clean();
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -7647,7 +7576,7 @@ void character::DonateEquipmentTo(character* Character)
     }
   else
     {
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipments(); ++c)
 	{
 	  item* Item = GetEquipment(c);
 
@@ -7971,7 +7900,7 @@ void character::SetLifeExpectancy(int Base, int RandPlus)
 	BodyPart->SetLifeExpectancy(Base, RandPlus);
     }
 
-  for(c = 0; c < GetEquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -7984,7 +7913,7 @@ void character::SetLifeExpectancy(int Base, int RandPlus)
 
 void character::DuplicateEquipment(character* Receiver, ulong Flags)
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -8014,7 +7943,7 @@ void character::Disappear(corpse* Corpse, const char* Verb, bool (item::*ClosePr
 
       TorsoDisappeared = true;
 
-      for(c = 0; c < GetEquipmentSlots(); ++c)
+      for(c = 0; c < GetEquipments(); ++c)
 	{
 	  item* Equipment = GetEquipment(c);
 
@@ -8078,10 +8007,10 @@ void character::Disappear(corpse* Corpse, const char* Verb, bool (item::*ClosePr
 	  Corpse->SendToHell();
 	}
       else
-	CheckDeath(festring(Verb) + "ed", 0, false, true, false, false);
+	CheckDeath(festring(Verb) + "ed", 0, FORCE_DEATH|DISALLOW_CORPSE|DISALLOW_MSG);
     }
   else
-    CheckDeath(festring(Verb) + "ed", 0, false, false, true, false);
+    CheckDeath(festring(Verb) + "ed", 0, DISALLOW_MSG);
 }
 
 void character::SignalDisappearance()
@@ -8099,24 +8028,12 @@ bool character::HornOfFearWorks() const
 
 void character::BeginLeprosy()
 {
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(true);
-    }
+  DoForBodyParts(this, &bodypart::SetIsInfectedByLeprosy, true);
 }
 
 void character::EndLeprosy()
 {
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->GetMainMaterial()->SetIsInfectedByLeprosy(false);
-    }
+  DoForBodyParts(this, &bodypart::SetIsInfectedByLeprosy, false);
 }
 
 bool character::IsSameAs(const character* What) const
@@ -8364,7 +8281,7 @@ bool character::EquipmentScreen(stack* MainStack, stack* SecStack)
 	  List.AddDescription(festring(GetDescription(DEFINITE) + " is " + GetVerbalBurdenState()).CapitalizeCopy(), GetVerbalBurdenStateColor());
 	}
 
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipments(); ++c)
 	{
 	  Entry = GetEquipmentName(c);
 	  Entry << ':';
@@ -8392,7 +8309,7 @@ bool character::EquipmentScreen(stack* MainStack, stack* SecStack)
       Chosen = List.Draw();
       game::ClearItemDrawVector();
 
-      if(Chosen >= GetEquipmentSlots())
+      if(Chosen >= GetEquipments())
 	break;
 
       EquipmentChanged = TryToChangeEquipment(MainStack, SecStack, Chosen);
@@ -8449,7 +8366,7 @@ const festring& character::GetStandVerb() const
   if(StateIsActivated(LEVITATION))
     return Hovering;
 
-  if(GetSquareUnder()->GetSquareWalkability() & SWIM)
+  if(IsSwimming())
     return Swimming;
 
   return DataBase->StandVerb;
@@ -8484,14 +8401,7 @@ bool character::CanMove() const
 
 void character::CalculateEnchantments()
 {
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
-    {
-      item* Equipment = GetEquipment(c);
-
-      if(Equipment)
-	Equipment->CalculateEnchantment();
-    }
-
+  DoForEquipments(this, &item::CalculateEnchantment);
   GetStack()->CalculateEnchantments();
 }
 
@@ -8566,7 +8476,7 @@ bool character::TeleportRandomItem(bool TryToHinderVisibility)
       TotalPossibility += Possibility;
     }
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -8916,24 +8826,32 @@ void character::RemoveTraps()
 
 void character::RemoveTraps(int BodyPartIndex)
 {
-  for(trapdata* T = TrapData; T;)
-    if(T->BodyParts & (1 << BodyPartIndex))
+  ulong Flag = 1 << BodyPartIndex;
+
+  for(trapdata** T = &TrapData; *T;)
+    if((*T)->BodyParts & Flag)
       {
-	entity* Trap = game::SearchTrap(T->TrapID);
+	entity* Trap = game::SearchTrap((*T)->TrapID);
 
-	if(Trap)
-	  Trap->UnStick();
+	if(!((*T)->BodyParts &= ~Flag))
+	  {
+	    if(Trap)
+	      Trap->UnStick();
 
-	trapdata* ToDel = T;
+	    trapdata* ToDel = *T;
+	    *T = (*T)->Next;
+	    delete ToDel;
+	  }
+	else
+	  {
+	    if(Trap)
+	      Trap->UnStick(BodyPartIndex);
 
-	if(T == TrapData)
-	  TrapData = T->Next;
-
-	T = T->Next;
-	delete ToDel;
+	    T = &(*T)->Next;
+	  }
       }
     else
-      T = T->Next;
+      T = &(*T)->Next;
 
   if(GetBodyPart(BodyPartIndex))
     GetBodyPart(BodyPartIndex)->SignalPossibleUsabilityChange();
@@ -9000,7 +8918,12 @@ int character::RandomizeHurtBodyPart(ulong BodyParts) const
 
   for(int c = 0; c < GetBodyParts(); ++c)
     if(1 << c & BodyParts)
-      BodyPartIndex[Index++] = c;
+      {
+	if(!GetBodyPart(c))
+	  int esko = 2;
+
+	BodyPartIndex[Index++] = c;
+      }
 
   if(!Index)
     int esko = 2;
@@ -9022,16 +8945,16 @@ void character::PrintAttribute(const char* Desc, int I, int PanelPosX, int Panel
   int Attribute = GetAttribute(I);
   int NoBonusAttribute = GetAttribute(I, false);
   color16 C = game::GetAttributeColor(I);
-  festring Description = Desc;
-  Description.Resize(5);
-  festring ToPrint = Description + Attribute;
-  ToPrint.Resize(8);
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, ToPrint.CStr());
+  festring String = Desc;
+  String.Resize(5);
+  String << Attribute;
+  String.Resize(8);
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY * 10, C, String.CStr());
 
   if(Attribute != NoBonusAttribute)
     {
-      int Where = PanelPosX + (ToPrint.GetSize() << 3);
-      FONT->Printf(DOUBLE_BUFFER, Where + 8, PanelPosY * 10, LIGHT_GRAY, 
+      int Where = PanelPosX + (String.GetSize() + 1 << 3);
+      FONT->Printf(DOUBLE_BUFFER, Where, PanelPosY * 10, LIGHT_GRAY, 
 		   "%d", NoBonusAttribute); 
     }
 }
@@ -9056,4 +8979,23 @@ int character::GetRandomBodyPart(ulong Possible) const
       OKBodyPart[OKBodyParts++] = c;
 
   return OKBodyParts ? OKBodyPart[RAND_N(OKBodyParts)] : NONE_INDEX;
+}
+
+void character::EditNP(long What)
+{
+  int OldState = GetHungerState();
+  NP += What;
+  int NewState = GetHungerState();
+
+  if(OldState > VERY_HUNGRY && NewState == VERY_HUNGRY)
+    DeActivateVoluntaryAction(CONST_S("You are getting really hungry."));
+
+  if(OldState > STARVING && NewState == STARVING)
+    DeActivateVoluntaryAction(CONST_S("You are getting extremely hungry."));
+}
+
+bool character::IsSwimming() const
+{
+  return !(GetMoveType() & FLY)
+      && GetSquareUnder()->GetSquareWalkability() & SWIM;
 }

@@ -123,7 +123,7 @@ bool wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer() && !game::BoolQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
-  BreakEffect(Terrorist, CONST_S("killed by breaking ") + GetName(INDEFINITE));
+  BreakEffect(Terrorist, CONST_S("killed by ") + GetName(INDEFINITE) + " broken @bk");
   Terrorist->DexterityAction(5);
   return true;
 }
@@ -341,16 +341,8 @@ bool backpack::Apply(character* Terrorist)
 
       RemoveFromSlot();
       SendToHell();
-
-      festring DeathMsg;
-
-      if(Terrorist->IsPlayer())
-	DeathMsg = CONST_S("exploded himself with ") + GetName(INDEFINITE);
-      else
-	DeathMsg = CONST_S("kamikazed by ") + Terrorist->GetKillName();
-
       Terrorist->DexterityAction(5);
-      Terrorist->GetLevel()->Explosion(Terrorist, DeathMsg, Terrorist->GetLSquareUnder()->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
+      Terrorist->GetLevel()->Explosion(Terrorist, CONST_S("kamikazed @k"), Terrorist->GetLSquareUnder()->GetPos(), GetSecondaryMaterial()->GetTotalExplosivePower());
       return true;
     }
   else if(Terrorist->IsPlayer())
@@ -396,10 +388,16 @@ bool wand::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
   if(Type & (FIRE|ENERGY|PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
+      festring DeathMsg = CONST_S("killed by an explosion of ");
+      AddName(DeathMsg, INDEFINITE);
+
+      if(Damager)
+	DeathMsg << " caused @bk";
+
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
 
-      BreakEffect(Damager, CONST_S("killed by an exploding ") + GetName(UNARTICLED));
+      BreakEffect(Damager, DeathMsg);
       return true;
     }
 
@@ -414,7 +412,7 @@ bool backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
+	DeathMsg << " caused @bk";
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -694,7 +692,7 @@ bool mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
+	DeathMsg << " caused @bk";
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -1126,7 +1124,7 @@ bool beartrap::TryToUnStick(character* Victim, vector2d)
 	ADD_MESSAGE("%s hurts %s %s more with %s.", Victim->CHAR_NAME(DEFINITE), Victim->GetPossessivePronoun().CStr(), Victim->GetBodyPartName(BodyPart).CStr(), CHAR_NAME(DEFINITE));
 
       Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage(), PHYSICAL_DAMAGE, BodyPart, YOURSELF, false, false, false);
-      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
+      Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
       Victim->EditAP(-1000);
       return false;
     }
@@ -1146,7 +1144,7 @@ bool beartrap::TryToUnStick(character* Victim, vector2d)
 	    ADD_MESSAGE("%s tries to free %sself from %s but is stuck more tightly in it in the attempt.", Victim->CHAR_NAME(DEFINITE), Victim->CHAR_OBJECT_PRONOUN, CHAR_NAME(DEFINITE));
 
 	  Victim->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, VictimBodyPart, YOURSELF, false, false, false);
-	  Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0);
+	  Victim->CheckDeath(CONST_S("died while trying to escape from ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
 	  Victim->EditAP(-1000);
 	  return true;
 	}
@@ -1212,7 +1210,7 @@ void beartrap::StepOnEffect(character* Stepper)
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
       Stepper->ReceiveBodyPartDamage(0, GetBaseTrapDamage() << 1, PHYSICAL_DAMAGE, StepperBodyPart, YOURSELF, false, false, false);
-      Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0);
+      Stepper->CheckDeath(CONST_S("died by stepping to ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
     }
 }
 
@@ -1363,7 +1361,7 @@ bool beartrap::Apply(character* User)
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
 
       User->ReceiveBodyPartDamage(0, 1 + (RAND() & 1), PHYSICAL_DAMAGE, UserBodyPart, YOURSELF, false, false, false);
-      User->CheckDeath(CONST_S("died failing to set ") + GetName(INDEFINITE), 0);
+      User->CheckDeath(CONST_S("died failing to set ") + GetName(INDEFINITE), 0, IGNORE_TRAPS);
     }
   else
     {
@@ -1424,7 +1422,7 @@ bool wand::Zap(character* Zapper, vector2d, int Direction)
   beamdata Beam
   (
     Zapper,
-    CONST_S("killed by ") + GetName(INDEFINITE),
+    CONST_S("killed by ") + GetName(INDEFINITE) + " zapped @bk",
     Zapper->GetPos(),
     GetBeamColor(),
     GetBeamEffect(),
@@ -2093,12 +2091,10 @@ alpha lantern::GetAlphaD(int Frame) const
   return (Frame * (31 - Frame) >> 3);
 }
 
-void itemcontainer::SortAllItems(itemvector& AllItems, const character* Character, sorter Sorter) const
+void itemcontainer::SortAllItems(const sortdata& SortData) const
 {
-  if(Sorter == 0 || (this->*Sorter)(Character))
-    AllItems.push_back(const_cast<itemcontainer*>(this));
-
-  GetContained()->SortAllItems(AllItems, Character, Sorter);
+  item::SortAllItems(SortData);
+  GetContained()->SortAllItems(SortData);
 }
 
 int materialcontainer::GetAttachedGod() const
@@ -2217,7 +2213,7 @@ bool potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
+	DeathMsg << " caused @bk";
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -2341,7 +2337,7 @@ bool holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
       AddName(DeathMsg, INDEFINITE);
 
       if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
+	DeathMsg << " caused @bk";
 
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -2764,7 +2760,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
       else
 	ADD_MESSAGE("Suddenly your %s are consumed in roaring magical flames.", Item[0]->CHAR_NAME(PLURAL));
 
-      int Config = Item[0]->GetMainMaterial()->GetHardenedMaterial();
+      int Config = Item[0]->GetMainMaterial()->GetHardenedMaterial(Item[0]);
 
       if(!Config)
 	{
@@ -2790,9 +2786,9 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 	  continue;
 	}
 
-      for(int NewConfig = TempMaterial->GetHardenedMaterial(), c = 1;
+      for(int NewConfig = TempMaterial->GetHardenedMaterial(Item[0]), c = 1;
 	  NewConfig;
-	  NewConfig = TempMaterial->GetHardenedMaterial(), ++c)
+	  NewConfig = TempMaterial->GetHardenedMaterial(Item[0]), ++c)
 	{
 	  material* NewMaterial = MAKE_MATERIAL(NewConfig);
 

@@ -46,6 +46,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "save.h"
 #include "database.h"
 #include "traps.h"
+#include "iloops.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

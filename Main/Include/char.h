@@ -250,7 +250,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  bool CheckDeath(const festring&, const character* = 0, bool = false, bool = false, bool = true, bool = true);
+  bool CheckDeath(const festring&, const character* = 0, ulong = 0);
   bool DodgesFlyingItem(item*, double);
   virtual bool Hit(character*, vector2d, int, bool = false) = 0;
   bool OpenPos(vector2d);
@@ -282,7 +282,7 @@ class character : public entity, public id
   void AddWeaponHitMessage(const character*, const item*, int, bool = false) const;
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
-  void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true, bool = true);
+  void Die(const character* = 0, const festring& = CONST_S(""), ulong = 0);
   void HasBeenHitByItem(character*, item*, int, double, int);
   void Hunger();
   void Move(vector2d, bool, bool = false);
@@ -336,7 +336,7 @@ class character : public entity, public id
   virtual bool SpecialEnemySightedReaction(character*) { return false; }
   void TestWalkability();
   void EditAP(long);
-  void EditNP(long What) { NP += What; }
+  void EditNP(long);
   void SetSize(int);
   virtual int GetSize() const;
   torso* GetTorso() const { return static_cast<torso*>(*BodyPartSlot[TORSO_INDEX]); }
@@ -389,7 +389,7 @@ class character : public entity, public id
   virtual const char* GetEquipmentName(int) const;
   virtual bodypart* GetBodyPartOfEquipment(int) const { return 0; }
   virtual item* GetEquipment(int) const { return 0; }
-  virtual int GetEquipmentSlots() const { return 0; }
+  virtual int GetEquipments() const { return 0; }
   virtual sorter EquipmentSorter(int) const { return 0; }
   virtual void SetEquipment(int, item*) { }
   void AddHealingLiquidConsumeEndMessage() const;
@@ -774,7 +774,7 @@ class character : public entity, public id
   void GetHitByExplosion(const explosion*, int);
   bool CanBePoisoned() const { return TorsoIsAlive(); }
   bool CanBeParasitized() const { return TorsoIsAlive(); }
-  void SortAllItems(itemvector&, const character* = 0, sorter = 0);
+  void SortAllItems(const sortdata&);
   character* GetRandomNeighbourEnemy() const;
   void Search(int);
   character* GetRandomNeighbour(int = (HOSTILE|UNCARING|FRIEND)) const;
@@ -984,6 +984,7 @@ class character : public entity, public id
   int GetRandomBodyPart(ulong = ALL_BODYPART_FLAGS) const;
   virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }
   virtual bool BrainsHurt() const { return false; }
+  bool IsSwimming() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -1099,73 +1100,6 @@ class character : public entity, public id
   int ScienceTalks;
   trapdata* TrapData;
 };
-
-template <class objectptr, class routine>
-void DoIndexParameterRoutine(objectptr Object, routine Routine, int Amount)
-{
-  for(int c = 0; c < Amount; ++c)
-    (Object->*Routine)(c);
-}
-
-template <class charptr, class dummy>
-inline void DoForBodyParts(charptr C, dummy (bodypart::*F)())
-{
-  int BodyParts = C->GetBodyParts();
-
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BP = C->GetBodyPart(c);
-
-      if(BP)
-        (BP->*F)();
-    }
-}
-
-template <class charptr, class dummy, class param>
-inline void DoForBodyParts(charptr C, dummy (bodypart::*F)(param), param P)
-{
-  int BodyParts = C->GetBodyParts();
-
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BP = C->GetBodyPart(c);
-
-      if(BP)
-        (BP->*F)(P);
-    }
-}
-
-template <bool OrBit, class charptr, class routine>
-inline bool CombineBodyPartPredicates(charptr C, routine F)
-{
-  int BodyParts = C->GetBodyParts();
-
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BP = C->GetBodyPart(c);
-
-      if(BP && (BP->*F)() == OrBit)
-	return OrBit;
-    }
-
-  return !OrBit;
-}
-
-template<class routine>
-inline int SumBodyPartProperties(const character* C, routine F)
-{
-  int Sum = 0, BodyParts = C->GetBodyParts();
-
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* B = C->GetBodyPart(c);
-
-      if(B)
-	Sum += (B->*F)();
-    }
-
-  return Sum;
-}
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__
 #define CHARACTER_PROTOTYPE(name, base, baseproto)\

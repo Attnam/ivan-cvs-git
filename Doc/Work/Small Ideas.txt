@@ -58,7 +58,7 @@ Vampires should be able to polymorph into a bat.
 Throw remake using linear extrapolation.
 Throw flipping.
 Throw speed to conf.
-Monsters that block light.
+//Monsters that block light.
 Pets that resurrect the player.
 Compressed savefiles.
 Crash save.
@@ -140,7 +140,7 @@ Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
 In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
-Spiders should make webs.
+//Spiders should make webs.
 //Scroll of gold detection that would identify every unit made of gold on the level.
 Bananas should act as boomerangs when thrown.
 //Zombies should spoil.

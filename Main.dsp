@@ -517,6 +517,10 @@ SOURCE=.\Main\Include\igraph.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\iloops.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\item.h
 # End Source File
 # Begin Source File
@@ -686,15 +690,6 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # End Target

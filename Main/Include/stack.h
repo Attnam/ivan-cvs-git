@@ -136,7 +136,7 @@ class stack
   bool PutSomethingIn(character*, const festring&, long, ulong);
   bool IsVisible() const { return !(Flags & HIDDEN); }
   int GetSpoiledItems() const;
-  void SortAllItems(itemvector&, const character* = 0, sorter = 0) const;
+  void SortAllItems(const sortdata&) const;
   void Search(const character*, int);
   bool IsDangerous(const character*) const;
   void PreProcessForBone();

@@ -53,7 +53,7 @@ class ABSTRACT_ITEM
   long GetBodyPartVolume() const { return BodyPartVolume; }
   long GetCarriedWeight() const { return CarriedWeight; }
   virtual item* GetEquipment(int) const { return 0; }
-  virtual int GetEquipmentSlots() const { return 0; }
+  virtual int GetEquipments() const { return 0; }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
   void CalculateMaxHP(ulong = MAY_CHANGE_HPS|CHECK_USABILITY);
@@ -126,6 +126,7 @@ class ABSTRACT_ITEM
   bool IsStuck() const { return !!(Flags & STUCK); }
   bool IsUsable() const { return !(Flags & (BADLY_HURT|STUCK)); }
   virtual void SignalPossibleUsabilityChange() { UpdateFlags(); }
+  void SetIsInfectedByLeprosy(bool);
  protected:
   virtual bool IsSparkling(int) const;
   virtual alpha GetMaxAlpha() const;
@@ -186,7 +187,7 @@ class ITEM
   long GetBiteAPCost() const { return BiteAPCost; }
   virtual void InitSpecialAttributes();
   virtual item* GetEquipment(int) const;
-  virtual int GetEquipmentSlots() const { return 2; }
+  virtual int GetEquipments() const { return 2; }
   int GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(long What) { BaseBiteStrength = What; }
   virtual void CalculateDamage();
@@ -243,7 +244,7 @@ class ITEM
   item* GetBelt() const { return *BeltSlot; }
   virtual void DropEquipment(stack* = 0);
   virtual item* GetEquipment(int) const;
-  virtual int GetEquipmentSlots() const { return 3; }
+  virtual int GetEquipments() const { return 3; }
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalVolumeAndWeightChange();
   virtual bool DamageArmor(character*, int, int);
@@ -289,7 +290,7 @@ class ABSTRACT_ITEM
   long GetWieldedAPCost() const;
   long GetUnarmedAPCost() const;
   virtual item* GetEquipment(int) const;
-  virtual int GetEquipmentSlots() const { return 3; }
+  virtual int GetEquipments() const { return 3; }
   int GetBaseUnarmedStrength() const { return BaseUnarmedStrength; }
   void SetBaseUnarmedStrength(long What) { BaseUnarmedStrength = What; }
   virtual void CalculateDamage();
@@ -413,7 +414,7 @@ class ABSTRACT_ITEM
   virtual void Mutate();
   long GetKickAPCost() const { return KickAPCost; }
   virtual item* GetEquipment(int) const;
-  virtual int GetEquipmentSlots() const { return 1; }
+  virtual int GetEquipments() const { return 1; }
   long GetBaseKickStrength() const { return BaseKickStrength; }
   void SetBaseKickStrength(long What) { BaseKickStrength = What; }
   virtual void CalculateDamage();

@@ -516,7 +516,7 @@ class ITEM
   virtual bool AllowContentEmitation() const { return false; }
   virtual bool IsDestroyable(const character*) const;
   virtual int GetOfferValue(int) const;
-  virtual void SortAllItems(itemvector&, const character*, sorter) const;
+  virtual void SortAllItems(const sortdata&) const;
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone();
@@ -562,6 +562,7 @@ class ITEM
   virtual ulong GetTrapID() const { return TrapData.TrapID; }
   virtual ulong GetVictimID() const { return TrapData.VictimID; }
   virtual void UnStick() { TrapData.VictimID = 0; }
+  virtual void UnStick(int I) { TrapData.BodyParts &= ~(1 << I); }
   virtual bool TryToUnStick(character*, vector2d);
   virtual void RemoveFromSlot();
   virtual int GetTrapType() const { return GetType() | ITEM_TRAP; }

@@ -37,6 +37,7 @@
 #include "miscitem.h"
 #include "confdef.h"
 #include "traps.h"
+#include "iloops.h"
 
 #include "team.cpp"
 #include "char.cpp"

@@ -905,10 +905,10 @@ void item::SpecialGenerationHandler()
     Slot[0]->AddFriendItem(Duplicate());
 }
 
-void item::SortAllItems(itemvector& AllItems, const character* Character, sorter Sorter) const
+void item::SortAllItems(const sortdata& SortData) const
 {
-  if(Sorter == 0 || (this->*Sorter)(Character))
-    AllItems.push_back(const_cast<item*>(this));
+  if(SortData.Sorter == 0 || (this->*SortData.Sorter)(SortData.Character))
+    SortData.AllItems.push_back(const_cast<item*>(this));
 }
 
 int item::GetAttachedGod() const
@@ -1403,7 +1403,7 @@ bool item::Read(character* Reader)
 
 bool item::CanBeHardened(const character*) const
 {
-  return MainMaterial->GetHardenedMaterial() != NONE;
+  return MainMaterial->GetHardenedMaterial(this) != NONE;
 }
 
 void item::SetLifeExpectancy(int Base, int RandPlus)
@@ -1462,7 +1462,7 @@ long item::GetFixPrice() const
   Clone->RemoveRust();
   long FixPrice = Clone->GetTruePrice();
   Clone->SendToHell();
-  return Max(long(5 * sqrt(FixPrice)), 10L);
+  return Max(long(3.5 * sqrt(FixPrice)), 10L);
 }
 
 void item::AddTrapName(festring& String, int Amount) const

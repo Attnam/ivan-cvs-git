@@ -86,8 +86,7 @@ bool ennerbeast::Hit(character* Enemy, vector2d, int, bool)
 		  ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
 
 		Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
-		festring DeathMsg = CONST_S("killed by ") + GetName(INDEFINITE) + "'s scream";
-		Char->CheckDeath(DeathMsg, this);
+		Char->CheckDeath(CONST_S("killed @bkp scream"), this);
 		msgsystem::LeaveBigMessageMode();
 	      }
 
@@ -1239,7 +1238,7 @@ bool humanoid::ReceiveDamage(character* Damager, int Damage, int Type, int Targe
 
   if(DamageTypeAffectsInventory(Type))
     {
-      for(int c = 0; c < GetEquipmentSlots(); ++c)
+      for(int c = 0; c < GetEquipments(); ++c)
 	{
 	  item* Equipment = GetEquipment(c);
 
@@ -1518,7 +1517,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 {
   int c;
 
-  for(c = 0; c < GetEquipmentSlots(); ++c)
+  for(c = 0; c < GetEquipments(); ++c)
     if(CanUseEquipment(c))
       {
 	vector2d Pos = Where + GetEquipmentPanelPos(c);
@@ -2330,14 +2329,7 @@ bool humanoid::IsUsingHead() const
 void humanoid::CalculateBattleInfo()
 {
   CalculateDodgeValue();
-
-  for(int c = 0; c < BodyParts; ++c)
-    {
-      bodypart* BodyPart = GetBodyPart(c);
-
-      if(BodyPart)
-	BodyPart->CalculateAttackInfo();
-    }
+  DoForBodyParts(this, &bodypart::CalculateAttackInfo);
 }
 
 item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance, stack* EquipmentDropStack)
@@ -2865,8 +2857,8 @@ bool bananagrower::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, 
 festring& bananagrower::ProcessMessage(festring& Msg) const
 {
   character::ProcessMessage(Msg);
-  SEARCH_N_REPLACE("@pd", GetProfession());
-  SEARCH_N_REPLACE("@Pd", GetProfession().CapitalizeCopy());
+  SEARCH_N_REPLACE(Msg, "@pd", GetProfession());
+  SEARCH_N_REPLACE(Msg, "@Pd", GetProfession().CapitalizeCopy());
   return Msg;
 }
 
@@ -3092,7 +3084,7 @@ const festring& humanoid::GetStandVerb() const
   if(StateIsActivated(LEVITATION))
     return Hovering;
 
-  if(GetSquareUnder()->GetSquareWalkability() & SWIM)
+  if(IsSwimming())
     return Swimming;
 
   return HasAUsableLeg() ? character::GetStandVerb() : HasntFeet;
@@ -4235,7 +4227,7 @@ character* humanoid::CreateZombie() const
   zombie* Zombie = new zombie;
   int c;
 
-  for(c = 0; c < GetBodyParts(); ++c)
+  for(c = 0; c < BodyParts; ++c)
     {
       bodypart* BodyPart = GetBodyPart(c);
 

@@ -63,6 +63,7 @@ class entity
   virtual ulong GetVictimID() const { return 0; }
   virtual void AddTrapName(festring&, int) const { }
   virtual void UnStick() { }
+  virtual void UnStick(int) { }
   virtual bool TryToUnStick(character*, vector2d);
   virtual int GetTrapType() const { return 0; }
  protected:

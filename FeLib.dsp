@@ -186,6 +186,10 @@ SOURCE=.\FeLib\Include\felist.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\feloops.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\femath.h
 # End Source File
 # Begin Source File

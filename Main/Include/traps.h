@@ -37,6 +37,7 @@ class TRAP
   virtual ulong GetVictimID() const { return TrapData.VictimID; }
   virtual void AddTrapName(festring&, int) const;
   virtual void UnStick() { TrapData.VictimID = 0; }
+  virtual void UnStick(int I) { TrapData.BodyParts &= ~(1 << I); }
   void SetStrength(int What) { Strength = What; }
   virtual void Draw(bitmap*, vector2d, color24) const;
   virtual bool IsStuckToBodyPart(int) const;

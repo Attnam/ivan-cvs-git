@@ -1328,7 +1328,7 @@ void bodypart::CalculateVolumeAndWeight()
   CarriedWeight = 0;
   BodyPartVolume = Volume;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -1351,7 +1351,7 @@ void bodypart::CalculateEmitation()
 {
   item::CalculateEmitation();
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -1879,7 +1879,7 @@ void arm::CalculateAttributeBonuses()
 {
   StrengthBonus = DexterityBonus = 0;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -1900,7 +1900,7 @@ void leg::CalculateAttributeBonuses()
 {
   StrengthBonus = AgilityBonus = 0;
 
-  for(int c = 0; c < GetEquipmentSlots(); ++c)
+  for(int c = 0; c < GetEquipments(); ++c)
     {
       item* Equipment = GetEquipment(c);
 
@@ -3263,4 +3263,9 @@ void bodypart::SetIsUnique(bool What)
     Flags |= UNIQUE;
   else
     Flags &=  ~UNIQUE;
+}
+
+void bodypart::SetIsInfectedByLeprosy(bool What)
+{
+  MainMaterial->SetIsInfectedByLeprosy(What);
 }
