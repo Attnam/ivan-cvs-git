@@ -49,7 +49,7 @@ command* game::Command[] = {	0,
 				new command(&character::Quit, "quit", 'q', true),
 				new command(&character::Drop, "drop", 'd', false),
 				new command(&character::Wield, "wield", 'w', true),
-				new command(&character::GoUp, "go up", '<', false),
+				new command(&character::GoUp, "go up", '<', true),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::Open, "open", 'o', false),
 				new command(&character::Close, "close", 'c', false),
@@ -86,7 +86,7 @@ command* game::Command[] = {	0,
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
 const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
 
-std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
+//std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
 game::panel game::Panel;
 
 ushort*** game::LuxTable;
@@ -128,9 +128,9 @@ void game::Init(std::string Name)
 	srand(time(0));
 	game::CalculateGodNumber();
 
-	LevelMsg[3] = "You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
+	/*LevelMsg[3] = "You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
 	LevelMsg[6] = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-	LevelMsg[9] = "You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
+	LevelMsg[9] = "You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";*/
 
 	if(Name == "")
 	{
@@ -766,10 +766,10 @@ float game::Difficulty()
 
 void game::ShowLevelMessage()
 {
-	if(LevelMsg[GetCurrent()].length())
-		ADD_MESSAGE(LevelMsg[GetCurrent()].c_str());
+	if(GetLevel(GetCurrent())->GetLevelMessage().length())
+		ADD_MESSAGE(GetLevel(GetCurrent())->GetLevelMessage().c_str());
 
-	LevelMsg[GetCurrent()] = "";
+	GetLevel(GetCurrent())->SetLevelMessage("");
 }
 
 void game::TriggerQuestForMaakotkaShirt()
@@ -784,7 +784,7 @@ void game::TriggerQuestForMaakotkaShirt()
 	GetLevel(7)->PutStairs(Pos);
 	GetLevel(7)->AttachPos(Pos);
 
-	LevelMsg[6] = "You feel something has changed since you were last here...";
+	GetCurrentDungeon()->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
 
 	GetCurrentDungeon()->SaveLevel(SaveName(), 6);
 	GetCurrentDungeon()->SaveLevel(SaveName(), 7);

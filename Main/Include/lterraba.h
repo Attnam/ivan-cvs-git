@@ -62,8 +62,8 @@ public:
 	overlevelterrain::overlevelterrain(bool = true, bool = true, bool AddToPool = true) : levelterrain(AddToPool) {}
 	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
-	virtual bool GoUp(character*);
-	virtual bool GoDown(character*);
+	virtual bool GoUp(character*) const;
+	virtual bool GoDown(character*) const;
 	virtual void Save(outputfile&) const;
 	virtual uchar GetOwnerGod() const { return 0; }
 	virtual std::string DigMessage() { return "The ground is too hard to dig."; }

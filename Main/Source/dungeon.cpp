@@ -50,6 +50,10 @@ void dungeon::Generate(uchar Type) //Temporary
 		Level[c] = new level(36, 36, c);
 	}
 
+	Level[3]->SetLevelMessage("You hear a wailing scream in the distance. An Enner Beast must dwell in the level!");
+	Level[6]->SetLevelMessage("You shudder as you sense a being of pure darkness nearby. Your goal is near.");
+	Level[9]->SetLevelMessage("You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.");
+
 	vector2d PerttuPos = vector2d(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
 
 	{

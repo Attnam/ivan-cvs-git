@@ -6,7 +6,7 @@
 #include "igraph.h"
 #include "lsquare.h"
 
-bool overlevelterrain::GoUp(character* Who) // Try to go up
+bool overlevelterrain::GoUp(character* Who) const // Try to go up
 {
 	if(game::GetCurrent() != 0 && game::GetCurrent() != 9 && game::GetWizardMode())
 	{
@@ -30,7 +30,7 @@ bool overlevelterrain::GoUp(character* Who) // Try to go up
 	}
 }
 
-bool overlevelterrain::GoDown(character* Who) // Try to go down
+bool overlevelterrain::GoDown(character* Who) const // Try to go down
 {
 	if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
 	{

@@ -8,15 +8,13 @@
 #include "strover.h"
 #include "save.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos), NewDrawRequested(true), Memorized(0)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Known(false), Pos(Pos), NewDrawRequested(true), Memorized(0)
 {
 }
 
 square::~square()
 {
-	delete Rider;
 	delete Character;
-	delete Flyer;
 	delete Memorized;
 }
 

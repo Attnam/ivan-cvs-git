@@ -1,6 +1,8 @@
 #ifndef __LEVEL_H__
 #define __LEVEL_H__
 
+#include <string>
+
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector2d.h"
@@ -52,8 +54,11 @@ public:
 	virtual void SetUpStairs(vector2d What) { UpStairs = What; }
 	virtual void SetDownStairs(vector2d What) { DownStairs = What; }
 	virtual void ParticleTrail(vector2d, vector2d);
+	virtual std::string GetLevelMessage() { return LevelMessage; }
+	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
 protected:
 	levelsquare*** Map;
+	std::string LevelMessage;
 	dynarray<vector2d, uchar> KeyPoint, Door;
 	vector2d UpStairs, DownStairs;
 	ushort LevelIndex;

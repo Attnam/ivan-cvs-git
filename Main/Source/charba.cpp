@@ -237,7 +237,7 @@ void character::Be()
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
-				if(Timer++ == 20)
+				if(Timer == 0)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -274,9 +274,9 @@ bool character::GoUp()
 
 bool character::GoDown()
 {
-	if(!game::GetInWilderness())
-	{
-		if(GetLevelSquareUnder()->GetOverLevelTerrain()->GoDown(this))
+	//if(!game::GetInWilderness())
+	//{
+		if(GetSquareUnder()->GetOverTerrain()->GoDown(this))
 		{
 			SetAgilityExperience(GetAgilityExperience() + 25);
 			SetNP(GetNP() - 1);
@@ -284,9 +284,10 @@ bool character::GoDown()
 		}
 		else
 			return false;
-	}
+	/*}
 	else	//gum solution
 	{
+		
 		if(GetWorldMapSquareUnder()->GetOverWorldMapTerrain()->GetLinkedDungeon())
 		{
 			GetWorldMapSquareUnder()->GetOverWorldMapTerrain()->GetLinkedDungeon()->GenerateIfNeeded();
@@ -309,7 +310,7 @@ bool character::GoDown()
 			ADD_MESSAGE("There seems to be nothing of interest here.");
 			return false;
 		}
-	}
+	}*/
 }
 
 bool character::Open()

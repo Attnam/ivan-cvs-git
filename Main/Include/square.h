@@ -51,7 +51,7 @@ public:
 protected:
 	std::string MemorizedDescription;
 	area* AreaUnder;
-	character* Rider, * Character, * Flyer;
+	character* Character;
 	vector2d Pos;
 	bool Known, Flag, NewDrawRequested;
 	bitmap* Memorized;

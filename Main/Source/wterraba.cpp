@@ -11,6 +11,7 @@
 #include "worldmap.h"
 #include "game.h"
 #include "save.h"
+#include "message.h"
 
 std::string worldmapterrain::Name(uchar Case) const
 {
@@ -91,4 +92,16 @@ worldmapsquare* worldmapterrain::GetWorldMapSquareUnder() const
 worldmap* worldmapterrain::GetWorldMapUnder() const
 {
 	return (worldmap*)AreaUnder;
+}
+
+bool overworldmapterrain::GoUp(character* Who) const
+{
+	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
+		return false;
+}
+
+bool overworldmapterrain::GoDown(character* Who) const
+{
+	ADD_MESSAGE("There seems to be nothing of interest here.");
+		return false;
 }

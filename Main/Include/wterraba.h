@@ -38,16 +38,18 @@ public:
 class overworldmapterrain : public worldmapterrain, public overterrain
 {
 public:
-	overworldmapterrain(bool = true) : LinkedDungeon(0) {}
+	overworldmapterrain(bool = true) {}
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual void DrawToTileBuffer() const;
 	virtual overworldmapterrain* Clone(bool = true) const = 0;
 	virtual std::string Name(uchar Case = 0) const { return worldmapterrain::Name(Case); }
-	virtual dungeon* GetLinkedDungeon() { return LinkedDungeon; }
+	virtual bool GoUp(character*) const;
+	virtual bool GoDown(character*) const;
+	/*virtual dungeon* GetLinkedDungeon() { return LinkedDungeon; }
 	virtual void SetLinkedDungeon(dungeon* What) { LinkedDungeon = What; }
 protected:
-	dungeon* LinkedDungeon;
+	dungeon* LinkedDungeon;*/
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

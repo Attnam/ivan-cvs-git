@@ -152,7 +152,7 @@ private:
 	static uchar Gamma;
 	static bool GoThroughWallsCheat;
 	static std::string PlayerName;
-	static std::string LevelMsg[];
+	//static std::string LevelMsg[];
 	static uchar GodNumber;
 	static long BaseScore;
 	static ulong Turns;

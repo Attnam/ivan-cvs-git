@@ -584,7 +584,7 @@ void level::Save(outputfile& SaveFile) const
 	for(c = 0; c < Length; ++c)
 		SaveFile << Door.Access(c);
 
-	SaveFile << LevelIndex << UpStairs << DownStairs;
+	SaveFile << LevelIndex << UpStairs << DownStairs << LevelMessage;
 }
 
 void level::Load(inputfile& SaveFile)
@@ -624,7 +624,7 @@ void level::Load(inputfile& SaveFile)
 		Door.Add(Pos);
 	}
 
-	SaveFile >> LevelIndex >> UpStairs >> DownStairs;
+	SaveFile >> LevelIndex >> UpStairs >> DownStairs >> LevelMessage;
 }
 
 void level::Luxify()

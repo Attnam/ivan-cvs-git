@@ -87,7 +87,7 @@ void altar::Save(outputfile& SaveFile) const
 	SaveFile << OwnerGod;
 }
 
-bool stairsup::GoUp(character* Who)  // Try to go up
+bool stairsup::GoUp(character* Who) const  // Try to go up
 {
 	if(game::GetCurrent())
 	{
@@ -159,7 +159,7 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 	}
 }
 
-bool stairsdown::GoDown(character* Who)  // Try to go down
+bool stairsdown::GoDown(character* Who) const  // Try to go down
 {
 	if(game::GetCurrent() != game::GetLevels() - 1)
 	{

@@ -113,7 +113,7 @@ class OVERLEVELTERRAIN
 		SetIsWalkable(true);
 	},
 public:
-	virtual bool GoUp(character*);
+	virtual bool GoUp(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() { return "The stairs are too hard to dig."; }
 protected:
@@ -131,7 +131,7 @@ class OVERLEVELTERRAIN
 		SetIsWalkable(true);
 	},
 public:
-	virtual bool GoDown(character*);
+	virtual bool GoDown(character*) const;
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() { return "The stairs are too hard to dig."; }
 protected:
