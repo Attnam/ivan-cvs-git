@@ -75,3 +75,7 @@ Shaman
 
 Monkey
 	(a la Nethack) Fights a short time and then steals one of your items and then tries to run away.
+
+Eddies in space-time continuum
+
+       These horrible "creatures" teleport the player randomly around and sometimes create weird couches. 

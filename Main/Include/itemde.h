@@ -289,8 +289,10 @@ class ITEM
   brokenbottle,
   item,
  public:
+  virtual bool IsBroken() const { return true; }
   virtual item* BetterVersion() const;
   virtual void StepOnEffect(character*);
+  virtual item* Fix();
 );
 
 class ABSTRACT_ITEM
@@ -1420,6 +1422,15 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+);
+
+class ITEM
+(
+  scrollofrepair,
+  scroll,
+ public:
+  virtual bool Read(character*);
+  virtual void FinishReading(character*);
 );
 
 #endif

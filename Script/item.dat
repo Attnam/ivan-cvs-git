@@ -2085,3 +2085,11 @@ gorovitssickle
 	DefaultEnchantment = 2;
 	ArticleMode = DEFINITE_ARTICLE;
 }
+
+scrollofrepair /* scroll-> */
+{
+	Possibility = 50;
+	Price = 250;
+	PostFix = "of repair";
+	Alias == "scroll of repairing";
+}

@@ -300,7 +300,22 @@ void silva::PrayGoodEffect()
 		break;
 	      }
 	  }
-
+      // Generate a few boulders in the level
+      ushort BoulderNumber = RAND() % 20;
+      for(c = 0; c < BoulderNumber; ++c)
+	{
+	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare();
+	    character* MonsterHere = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
+	    if(!MonsterHere || !MonsterHere->IsPlayer())
+	      {
+		game::GetCurrentLevel()->GetLSquare(Pos)->ChangeOLTerrainAndUpdateLights(new boulder);
+		if(MonsterHere)
+		  {
+		    MonsterHere->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE, HEAD|TORSO, 8, true);
+		  }
+		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 1 + RAND() % 5, PHYSICAL_DAMAGE);
+	      }
+	}
       // Impact damage for items in the level
 
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
@@ -336,7 +351,7 @@ void silva::PrayGoodEffect()
 	}
 
       if(!Created)
-	ADD_MESSAGE("You hear a sad howling of a wolf inprisoned in the earth.");
+	ADD_MESSAGE("You hear a sad howling of a wolf imprisoned in the earth.");
 
       if(Created == 1)
 	ADD_MESSAGE("Suddenly a tame wolf materializes beside you.");

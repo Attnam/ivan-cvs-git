@@ -39,7 +39,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 13
+#define STATES 15
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -54,6 +54,9 @@
 #define TELEPORT 1024
 #define POLYMORPH 2048
 #define TELEPORT_CONTROL 4096
+#define PANIC 8192
+#define CONFUSED 16384
+
 
 #define HEAD 1
 #define TORSO 2
@@ -228,6 +231,7 @@
 #define EFFECT_LYCANTHROPY 7
 #define EFFECT_SCHOOL_FOOD 8
 #define EFFECT_ANTIDOTE 9
+#define EFFECT_CONFUSE 10
 
 #define CEM_NOTHING 0
 #define CEM_SCHOOL_FOOD 1

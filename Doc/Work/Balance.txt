@@ -1,2 +1,3 @@
+Lion appearing on first level.
 //Bone helmet is too weak with 1 ap.
 Banana peels can be abused.

@@ -1,3 +1,13 @@
+November 23 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* scroll of repairing added
+
+November 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* snakes, frogs and spiders sometimes appear from fountains
+	* confuse state
+	* reading activates random state when confused
+	
 November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a fatal script error that sometimes caused a crash when entering Oree's lair

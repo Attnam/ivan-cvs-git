@@ -713,7 +713,7 @@ liquid
 		Color = rgb16(50, 0, 0);
 		IsBadFoodForAI = true;
 		NameStem = "Valdemar";
-		Effect = EFFECT_POISON;
+		Effect = EFFECT_CONFUSE;
 		Alpha = 200;
 	}
 

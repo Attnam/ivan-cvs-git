@@ -3993,7 +3993,7 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 
 	  return true;
 	}
-      else if(Damager->IsPlayer())
+      else if(Damager && Damager->IsPlayer())
 	ADD_MESSAGE("THUMB!");
     }
 
@@ -4881,3 +4881,41 @@ ushort gorovitssickle::GetOutlineColor(ushort Frame) const
   return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
 
+bool scrollofrepair::Read(character* Reader)
+{
+  if(!Reader->GetStack()->SortedItems(Reader, &item::IsBrokenSorter))
+    {
+      ADD_MESSAGE("You have nothing to repair.");
+      return false;
+    }
+  Reader->StartReading(this, 1000);
+  return true;
+}
+
+void scrollofrepair::FinishReading(character* Reader)
+{
+  if(game::GetPlayer()->GetStack()->SortedItems(Reader, &item::IsBrokenSorter))
+    {
+      item* Item = game::GetPlayer()->GetStack()->DrawContents(Reader, "\"What do you want to fix?\"", 0, &item::IsBrokenSorter);
+      if(!Item)
+	return;
+
+      if(Reader->IsPlayer())
+	ADD_MESSAGE("As you read the scroll, %s glows blue and fixes itself.", Item->CHAR_NAME(DEFINITE));
+
+      Item->Fix();
+    }
+  RemoveFromSlot();
+  SendToHell();  
+}
+
+item* brokenbottle::Fix()
+{
+  potion* Potion = new potion(0, NO_MATERIALS);
+  Potion->InitMaterials(GetMainMaterial(), 0);
+  DonateSlotTo(Potion);
+  SetMainMaterial(0,NO_PIC_UPDATE|NO_SIGNALS);
+  SendToHell();
+  return Potion;
+}
+  

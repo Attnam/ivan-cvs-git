@@ -704,6 +704,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     }
 }
 
+/* example of the usage: GetRandomSquare() gives out a random walkable square* */
 vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
   for(ushort c = 0;; ++c)

@@ -723,6 +723,10 @@ class character : public entity, public id
   virtual bool Equips(const item*) const;
   virtual void AddAttributeInfo(std::string&) const;
   virtual bool LevelTeleport();
+  virtual void PrintBeginConfuseMessage() const;
+  virtual void PrintEndConfuseMessage() const;
+  virtual vector2d ApplyStateModification(vector2d) const;
+  virtual void AddConfuseHitMessage() const;
   virtual item* SelectFromPossessions(const std::string&, bool (*)(item*, const character*) = 0);
   virtual bool EquipsSomething(bool (*)(item*, const character*) = 0);
  protected:

@@ -62,6 +62,7 @@ bool material::Effect(character* Eater, long Amount)
     case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount); return true;
     case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
     case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
+    case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); return true;
     default: return false;
     }
 }
@@ -85,6 +86,7 @@ bool material::HitEffect(character* Enemy)
     case HM_KOBOLD_FLESH: Enemy->AddKoboldFleshHitMessage(); break;
     case HM_HEALING_LIQUID: Enemy->AddHealingLiquidConsumeEndMessage(); break;
     case HM_ANTIDOTE: Enemy->AddAntidoteConsumeEndMessage(); break;
+    case HM_CONFUSE: Enemy->AddConfuseHitMessage();
     }
 
   ulong Amount = Min(100UL, GetVolume());

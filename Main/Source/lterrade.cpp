@@ -32,6 +32,7 @@ LTERRAIN_PROTOTYPE(olterrain, 0, olterrain);
 #include "itemba.h"
 #include "save.h"
 #include "festring.h"
+#include "charde.h"
 
 bool door::Open(character* Opener)
 {
@@ -300,7 +301,7 @@ bool fountain::Drink(character* Drinker)
 
 	  Drinker->EditAP(-1000);
 
-	  switch(RAND() % 6)
+	  switch(RAND() % 9)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");
@@ -356,10 +357,61 @@ bool fountain::Drink(character* Drinker)
 		    ADD_MESSAGE("You feel like a penguin."); /* This is rather rare, so no harm done */
 		}
 	      break;
+
+	    case 5:
+	      {
+		bool Created = false;
+
+		for(ushort c = 0; c < 3; ++c)
+		  {
+		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+		  
+		    character* Monster;
+		    switch(RAND() % 3)
+		      {
+		      case 0:
+			Monster = new snake;
+			break;
+		      case 1:
+			if(RAND() & 1)
+			  Monster = new mommo(CONICAL);
+			else
+			  Monster = new mommo(FLAT);
+			break;
+		      case 2:
+			Monster = new spider;
+			break;
+		      }
+		    lsquare* Under = GetLSquareUnder();
+		    if(Under->GetAreaUnder()->IsValidPos(TryToCreate) && Under->GetNearSquare(TryToCreate)->IsWalkable(Monster) && Under->GetNearSquare(TryToCreate)->GetCharacter() == 0)
+		      {
+			Created = true;
+			Under->GetNearLSquare(TryToCreate)->AddCharacter(Monster);
+			Monster->SetTeam(game::GetTeam(MONSTER_TEAM));
+			if(Monster->CanBeSeenByPlayer())
+			  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+		      }
+		    else
+		      delete Monster;
+		  }
+		if(!Created)
+		  ADD_MESSAGE("Weird water...");
+		return true;
+	      }
+	    case 6:
+	      {
+		item* ToBeCreated = protosystem::BalancedCreateItem(0, MAX_PRICE, RING);
+		GetLSquareUnder()->GetStack()->AddItem(ToBeCreated);
+		if(ToBeCreated->CanBeSeenByPlayer())
+		  ADD_MESSAGE("There's something sparkling in the water.");
+		break;
+	      }
+
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
 	      Drinker->EditNP(250);
 	      break;
+
 	    }
 
 	  // fountain might have dried out: don't do anything here.

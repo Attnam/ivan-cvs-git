@@ -58,7 +58,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 14
+#define STATES 15
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -74,6 +74,8 @@
 #define POLYMORPH 2048 /* Polymorph randomly every now and then */
 #define TELEPORT_CONTROL 4096
 #define PANIC 8192
+#define CONFUSED 16384
+
 
 #define TORSO 1
 #define HEAD 2
@@ -264,6 +266,7 @@
 #define EFFECT_LYCANTHROPY 7
 #define EFFECT_SCHOOL_FOOD 8
 #define EFFECT_ANTIDOTE 9
+#define EFFECT_CONFUSE 10
 
 /* CEM = Consume End Message */
 
@@ -287,6 +290,7 @@
 #define HM_KOBOLD_FLESH 5
 #define HM_HEALING_LIQUID 6
 #define HM_ANTIDOTE 7
+#define HM_CONFUSE 8
 
 #define MATERIAL_ID 4096
 

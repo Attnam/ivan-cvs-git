@@ -354,15 +354,16 @@ class item : public object
   virtual void SignalEnchantmentChange();
   virtual ushort GetBonus() const { return 100; }
   virtual void DrawContents(const character*) { }
-  bool IsBroken() const { return (Config & BROKEN) != 0; }
+  virtual bool IsBroken() const { return (Config & BROKEN) != 0; }
   virtual void ReceiveFluidSpill(material*) { }
   virtual char GetEnchantment() const { return 0; }
   virtual ulong GetEnchantedPrice(char) const;
-  virtual void Fix();
+  virtual item* Fix();
   virtual ushort GetStrengthRequirement() const;
   virtual ushort GetInElasticityPenalty(ushort) const { return 0; }
   virtual bool IsFixableBySmith(const character*) const { return false; }
   static bool IsFixableBySmithSorter(item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
+  static bool IsBrokenSorter(item* Item, const character*) { return Item->IsBroken(); }
   virtual ulong GetFixPrice() const { return 100; } 
   void DonateSlotTo(item*);
   virtual uchar GetFlyAmount() const;

@@ -367,13 +367,18 @@ Reflecting items (mirror and shield of reflection).
 //Displace should consider also displaced creatures moving ability. (example: carnivorous plants can't be displaced)
 Mellis could act as a small shop when prayed to.
 Rings appearing in fountains. (shouldn't be hard with the new system...)
+Mistresses should scream "Oh the delightful pain" when they receive a critical hit.
+Msg from hit should depend more on weapon and there should be more variation. ("the monsters STABS you with its wooden spear").
+Some monster types should taunt the player.
 Dragon scale material.
 Breaking different wands should cause different effects.
 Scroll of level teleport.
 Once implemented, game saga should show how many times the player has polymorphed.
 Buffalos shouldn't be able to throw items.
+Getting knowledge of all gods should be rewarded somehow.
 If a fireball beam doesn't hit anything, it should still explode at the end of its range.
 It should be possible to give the smith a better hammer so he could fix mithril items, too.
 SWeaponskills for gauntlets and boots.
 Deaf state in which the player can't hear explosions, can't converse and in the future can't hear footsteps etc.
 Explosions should sometimes trigger the deaf state.
+
