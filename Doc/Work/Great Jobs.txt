@@ -105,3 +105,7 @@ Zombie state.
 System for representing sounds in the game.
 
 Permanent wounds.
+
+More vague weight descriptions.
+
+Rivers.

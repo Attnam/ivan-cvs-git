@@ -54,3 +54,4 @@ AOGH can be abused.
 "You look down. You see an active mine." in the dark.
 Border tiles aren't shown in the dark.
 Vladimir doesn't destroy walls on the turn when it is created.
+Mirage puppies.

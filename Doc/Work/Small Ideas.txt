@@ -428,3 +428,4 @@ Leather should have several possible colors. For instance mistress should wear b
 Polymorphing from nonhumanoid back to humanoid should autoequip items.
 Potion of ommel spit which would increase random attribute.
 //If Vesana is slowed, plants should be created at half speed.
+Drinking and surviving a potion of poison should give some permanent poison resistance.

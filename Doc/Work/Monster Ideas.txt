@@ -163,4 +163,12 @@ The Monster guarding the Cave of Caerbannog
     teeth."
 
     Looks like a rabbit, but in reality, deadly.
-	
+
+Philosopher's stone golem
+
+	Turns everything it hits to gold.
+
+Deep sea blowfish (Singularis minutia gigantica)
+
+	Protects itself from enemies by inflating itself to many times
+	its normal size. The bloat poison can be extracted from its body.
