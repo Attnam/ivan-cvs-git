@@ -3893,15 +3893,15 @@ void character::DrawPanel(bool AnimationDraw) const
   DOUBLE_BUFFER->Fill(19 + (game::GetScreenXSize() << 4), 0, RES_X - 19 - (game::GetScreenXSize() << 4), RES_Y, 0);
   DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenYSize() << 4), game::GetScreenXSize() << 4, 9, 0);
   FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenYSize() << 4), WHITE, "%s", GetPanelName().CStr());
-
+  game::UpdateAttributeMemory();
   int PanelPosX = RES_X - 96;
   int PanelPosY = DrawStats(false);
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(ENDURANCE), "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(PERCEPTION), "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(INTELLIGENCE), "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(WISDOM), "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(CHARISMA), "Cha %d", GetAttribute(CHARISMA));
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
   FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
   //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Sta %d/%d", Stamina / 1000, MaxStamina / 1000);

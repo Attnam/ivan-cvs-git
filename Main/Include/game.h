@@ -357,6 +357,9 @@ class game
   static bool CommandAll();
   static double GetDangerFound() { return DangerFound; }
   static void SetDangerFound(double What) { DangerFound = What; }
+  static color16 GetAttributeColor(int);
+  static void UpdateAttributeMemory();
+  static void InitAttributeMemory();
  private:
   static const char* const Alignment[];
   static god** God;
@@ -444,6 +447,9 @@ class game
   static character* LastCharacterUnderCommandCursor;
   static charactervector CommandVector;
   static double DangerFound;
+  static int OldAttribute[ATTRIBUTES];
+  static int NewAttribute[ATTRIBUTES];
+  static int LastAttributeChangeTick[ATTRIBUTES];
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

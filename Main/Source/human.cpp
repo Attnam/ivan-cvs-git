@@ -1971,10 +1971,10 @@ int humanoid::DrawStats(bool AnimationDraw) const
 
   int PanelPosX = RES_X - 96, PanelPosY = 15;
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(ARM_STRENGTH), "ArmStr %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(LEG_STRENGTH), "LegStr %d", GetAttribute(LEG_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(DEXTERITY), "Dex %d", GetAttribute(DEXTERITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(AGILITY), "Agi %d", GetAttribute(AGILITY));
   return PanelPosY;
 }
 

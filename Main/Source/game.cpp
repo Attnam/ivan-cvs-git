@@ -94,6 +94,9 @@ bool game::PlayerRunning;
 character* game::LastCharacterUnderCommandCursor;
 charactervector game::CommandVector;
 double game::DangerFound;
+int game::OldAttribute[ATTRIBUTES];
+int game::NewAttribute[ATTRIBUTES];
+int game::LastAttributeChangeTick[ATTRIBUTES];
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -320,6 +323,7 @@ bool game::Init(const festring& Name)
 	protosystem::InitCharacterDataBaseFlags();
 	memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
 	PlayerRunning = false;
+	InitAttributeMemory();
 
 	if(game::IsXMas())
 	  {
@@ -376,7 +380,7 @@ void game::Run()
 	      Counter = 0;
 	    }
 
-	  if(!(game::GetTick() % 1000))
+	  if(!(GetTick() % 1000))
 	    CurrentLevel->CheckSunLight();
 
 	  if((CurrentDungeonIndex == NEW_ATTNAM
@@ -692,6 +696,9 @@ bool game::Save(const festring& SaveName)
   SaveArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
   int c;
 
+  for(c = 0; c < ATTRIBUTES; ++c)
+    SaveFile << OldAttribute[c] << NewAttribute[c] << LastAttributeChangeTick[c];
+
   for(c = 1; c < Dungeons; ++c)
     SaveFile << Dungeon[c];
 
@@ -747,6 +754,9 @@ int game::Load(const festring& SaveName)
   SaveFile >> PlayerMassacreAmount >> PetMassacreAmount >> MiscMassacreAmount;
   LoadArray(SaveFile, EquipmentMemory, MAX_EQUIPMENT_SLOTS);
   int c;
+
+  for(c = 0; c < ATTRIBUTES; ++c)
+    SaveFile >> OldAttribute[c] >> NewAttribute[c] >> LastAttributeChangeTick[c];
 
   Dungeon = new dungeon*[Dungeons];
   Dungeon[0] = 0;
@@ -3153,4 +3163,38 @@ bool game::CommandAll()
   PLAYER->EditAP(-500);
   PLAYER->EditExperience(CHARISMA, 50, 1 << 7);
   return true;
+}
+
+color16 game::GetAttributeColor(int I)
+{
+  int Delta = GetTick() - LastAttributeChangeTick[I];
+
+  if(OldAttribute[I] == NewAttribute[I]
+  || Delta >= 255)
+    return WHITE;
+  else if(OldAttribute[I] < NewAttribute[I])
+    return MakeRGB16(Delta, Delta, 255);
+  else
+    return MakeRGB16(255, Delta, Delta);
+}
+
+void game::UpdateAttributeMemory()
+{
+  for(int c = 0; c < ATTRIBUTES; ++c)
+    {
+      int A = PLAYER->GetAttribute(c);
+
+      if(A != NewAttribute[c])
+	{
+	  OldAttribute[c] = NewAttribute[c];
+	  NewAttribute[c] = A;
+	  LastAttributeChangeTick[c] = GetTick();
+	}
+    }
+}
+
+void game::InitAttributeMemory()
+{
+  for(int c = 0; c < ATTRIBUTES; ++c)
+    OldAttribute[c] = NewAttribute[c] = PLAYER->GetAttribute(c);
 }

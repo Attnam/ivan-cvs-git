@@ -513,8 +513,8 @@ int nonhumanoid::DrawStats(bool AnimationDraw) const
 
   int PanelPosX = RES_X - 96, PanelPosY = 3;
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Str %d", GetAttribute(ARM_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(ARM_STRENGTH), "Str %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, game::GetAttributeColor(AGILITY), "Agi %d", GetAttribute(AGILITY));
   return PanelPosY;
 }
 
