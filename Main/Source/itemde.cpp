@@ -636,3 +636,4 @@ void corpse::SetBloodColor(ushort Color)
 	GraphicId.Color[1] = Color;
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
+

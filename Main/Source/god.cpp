@@ -7,7 +7,7 @@
 #include "message.h"
 #include "proto.h"
 #include "save.h"
-
+#include "team.h"
 void god::Pray()
 {
 	if(!Timer)
@@ -159,7 +159,7 @@ void venius::PrayGoodEffect()
 	ADD_MESSAGE("A huge divine fire sweeps the surrounding area.");
 
 	DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
+	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter() && game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
 	{
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(20);
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("burned to death by the wrath of ") + Name());

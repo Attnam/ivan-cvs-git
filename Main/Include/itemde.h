@@ -27,6 +27,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; case 1: return 150; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1)->RawPrice(); }
 	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
+	virtual uchar GetConsumeMaterial() const { return 1; }
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -418,6 +419,7 @@ public:
 	virtual void ColorChangeSpeciality(uchar, bool);
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 	virtual ulong ConsumeLimit() const { return GetMaterial(1)->GetVolume(); }
+	virtual uchar GetConsumeMaterial() const { return 1; }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );

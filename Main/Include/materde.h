@@ -106,7 +106,7 @@ class MATERIAL
 	material,
 public:
 	virtual ushort GetHitValue() const				{ return 5; }
-	virtual uchar GetConsumeType() const				{ return SCHOOLFOOD; }
+	virtual uchar GetConsumeType() const			{ return SCHOOLFOOD; }
 	virtual ushort GetDensity() const				{ return 1500; }
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual uchar Alignment() const				{ return EVIL; }
@@ -114,6 +114,7 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
+	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "school food"; }
 );
@@ -247,6 +248,7 @@ public:
 	virtual ushort GetDensity() const				{ return 2400; }
 	virtual ushort OfferValue() const				{ return 1; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "Elpuri's flesh"; }
 	virtual std::string Article() const { return "an"; }
@@ -427,6 +429,7 @@ public:
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
 	virtual bool IsFlesh() { return true; }
+	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "pepsi"; }
 );

@@ -219,3 +219,8 @@ bool item::Consume(character* Eater, float Amount)
 	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
 	return GetMaterial(0)->GetVolume() ? false : true;
 }
+
+bool item::IsBadFoodForAI() const
+{
+	return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
+}

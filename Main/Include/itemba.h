@@ -81,6 +81,8 @@ public:
 	virtual void SignalSquarePositionChange(bool) {}
 	virtual ulong ConsumeLimit() const { return 0; }
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
+	virtual bool IsBadFoodForAI() const;
+	virtual uchar GetConsumeMaterial() const { return 0; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

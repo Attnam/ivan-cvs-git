@@ -2256,6 +2256,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 					ADD_MESSAGE("The kick throws %s off balance.", Name(DEFINITE).c_str());
 			}
 			SetHP(GetHP() - rand() % (KickStrength / 5));
+			
 			CheckDeath("kicked to death");		
 		}
 		else
@@ -2596,7 +2597,7 @@ bool character::CheckForUsefulItemsOnGround()
 				return true;
 			}
 
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
+		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this) && !GetLevelSquareUnder()->GetStack()->GetItem(c)->IsBadFoodForAI())
 			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->ConsumeItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
 			{
 				if(GetLevelSquareUnder()->CanBeSeen())
