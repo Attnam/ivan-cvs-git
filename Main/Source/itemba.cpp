@@ -343,3 +343,29 @@ void item::DonateSlotTo(item* Item)
   GetSlot()->SetItem(Item);
   SetSlot(0);
 }
+
+std::string item::ItemCategoryName(uchar Category)
+{
+  switch(Category)
+    {
+    case HELMET: return "Helmets";
+    case AMULET: return "Amulets";
+    case CLOAK: return "Cloaks";
+    case BODYARMOR: return "Body armors";
+    case WEAPON: return "Weapons";
+    case SHIELD: return "Shields";
+    case RING: return "Rings";
+    case GAUNTLET: return "Gauntlets";
+    case BELT: return "Belts";
+    case BOOT: return "Boots";
+    case FOOD: return "Food";
+    case POTION: return "Potions";
+    case SCROLL: return "Scrolls";
+    case BOOK: return "Books";
+    case WAND: return "Wands";
+    case TOOL: return "Tools";
+    case VALUABLE: return "Valuables";
+    case MISC: return "Miscellaneous items";
+    default: return "Illegal items";
+    }
+}

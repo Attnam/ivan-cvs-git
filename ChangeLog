@@ -1,3 +1,13 @@
+April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* bitmap.cpp/h, colorbit.cpp, graphics.cpp: Subbitmap support added
+	* colorbit.cpp/h, graphics.cpp: Text shading added
+	* felist.cpp/h: Added felist support for pictures, entry categories and arrow key selection
+	* hscore.cpp & all files with felist calls: List colors are now more consistent
+	* charba.cpp: Added icons for pray menu
+	* itemba.cpp/h, itemde.h, stack.cpp/h: Added icons and categories for items and added sorter support (which isn't yet used)
+	* itemde.cpp, slot.cpp, proto.h: Save works once again
+
 April 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* itemde.cpp/h, slot.cpp/h: gearslot added

@@ -11,7 +11,7 @@
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
-felist globalmessagingsystem::MessageHistory(100, false, true);
+felist globalmessagingsystem::MessageHistory("Message history", WHITE, 30, 100, false, true);
 
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {
@@ -43,15 +43,12 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
       TempBuffer[c] = Message[i];
 
     delete [] MessageBuffer;
-
     MessageBuffer = TempBuffer;
-
     BufferLength = NewLength;
   }
   else
   {
     BufferLength = strlen(Message);
-
     MessageBuffer = new char[BufferLength];
 
     for(ushort c = 0; c < BufferLength; ++c)
@@ -59,18 +56,14 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
   }
 
   sprintf(Buffer, "%d - %s", int(game::GetTicks() / 10), Message);
-
-  MessageHistory.AddEntry(Buffer, BLUE);
+  MessageHistory.AddEntry(Buffer, LIGHTGRAY);
 }
 
 void globalmessagingsystem::Draw()
 {
   DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
-
   ulong Length = BufferLength, Pointer = 0;
-
   char Buffer[99];
-
   Buffer[98] = 0;
 
   if(MessageBuffer)
@@ -84,11 +77,8 @@ void globalmessagingsystem::Draw()
             Buffer[c] = MessageBuffer[c + Pointer];
 
           Buffer[Length] = 0;
-
           FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
-
           Length = 0;
-
           break;
         }
         else
@@ -102,11 +92,8 @@ void globalmessagingsystem::Draw()
                 Buffer[c] = MessageBuffer[c + Pointer];
 
               Buffer[i] = 0;
-
               Pointer += i + 1;
-
               Length -= i + 1;
-
               break;
             }
 
@@ -116,7 +103,6 @@ void globalmessagingsystem::Draw()
               Buffer[c] = MessageBuffer[c + Pointer];
 
             Pointer += 98;
-
             Length -= 98;
           }
 
@@ -127,9 +113,7 @@ void globalmessagingsystem::Draw()
       if(Length)
       {
         graphics::BlitDBToScreen();
-
         GETKEY();
-
         DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
       }
     }
@@ -138,9 +122,7 @@ void globalmessagingsystem::Draw()
 void globalmessagingsystem::Empty()
 {
   delete [] MessageBuffer;
-
   MessageBuffer = 0;
-
   BufferLength = 0;
 }
 

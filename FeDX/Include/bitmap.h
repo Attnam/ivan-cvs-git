@@ -26,14 +26,16 @@ class bitmap
   friend class graphics;
   friend class colorizablebitmap;
   bitmap(std::string);
+  bitmap(bitmap*);
   bitmap(ushort, ushort);
   bitmap(ushort, ushort, ushort);
+  bitmap(bitmap*, ushort, ushort, ushort, ushort);
   ~bitmap();
   void Save(outputfile&) const;
   void Load(inputfile&);
   void Save(std::string) const;
-  void PutPixel(ushort X, ushort Y, ushort Color) { Data[Y][X] = Color; }
-  ushort GetPixel(ushort X, ushort Y) const { return Data[Y][X]; }
+  void PutPixel(ushort, ushort, ushort);
+  ushort GetPixel(ushort, ushort) const;
   void Fill(ushort Color) { Fill(0, 0, XSize, YSize, Color); }
   void Fill(ushort, ushort, ushort, ushort, ushort);
   void Blit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, uchar = 0) const;
@@ -48,15 +50,37 @@ class bitmap
   void DrawPolygon(vector2d, ushort, ushort, ushort, bool = true, bool = false, double = 0);
   void CreateAlphaMap(uchar);
   bool ChangeAlpha(char);
-  void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[Y][X] = Alpha; }
-  uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[Y][X]; }
+  void SetAlpha(ushort, ushort, uchar);
+  uchar GetAlpha(ushort, ushort) const;
   void Outline(ushort);
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen();
  protected:
   ushort XSize, YSize;
-  ushort** Data;
-  uchar** AlphaMap;
+  bool IsIndependent;
+  ushort** GetImage() const { return Data.Base.Image; }
+  void SetImage(ushort** What) { Data.Base.Image = What; }
+  uchar** GetAlphaMap() const { return Data.Base.AlphaMap; }
+  void SetAlphaMap(uchar** What) { Data.Base.AlphaMap = What; }
+  bitmap* GetMotherBitmap() const { return Data.Child.MotherBitmap; }
+  void SetMotherBitmap(bitmap* What) { Data.Child.MotherBitmap = What; }
+  ushort GetXPos() const { return Data.Child.XPos; }
+  void SetXPos(ushort What) { Data.Child.XPos = What; }
+  ushort GetYPos() const { return Data.Child.YPos; }
+  void SetYPos(ushort What) { Data.Child.YPos = What; }
+  union data
+  {
+    struct base
+    {
+      ushort** Image;
+      uchar** AlphaMap;
+    } Base;
+    struct child
+    {
+      bitmap* MotherBitmap;
+      ushort XPos, YPos;
+    } Child;
+  } Data;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, bitmap* Bitmap)

@@ -1376,6 +1376,8 @@ void head::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> HelmetSlot >> AmuletSlot;
+  HelmetSlot.SetBodyPart(this);
+  AmuletSlot.SetBodyPart(this);
 }
 
 void humanoidtorso::Save(outputfile& SaveFile) const
@@ -1388,6 +1390,9 @@ void humanoidtorso::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> BodyArmorSlot >> CloakSlot >> BeltSlot;
+  BodyArmorSlot.SetBodyPart(this);
+  CloakSlot.SetBodyPart(this);
+  BeltSlot.SetBodyPart(this);
 }
 
 void arm::Save(outputfile& SaveFile) const
@@ -1401,6 +1406,9 @@ void arm::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
+  WieldedSlot.SetBodyPart(this);
+  GauntletSlot.SetBodyPart(this);
+  RingSlot.SetBodyPart(this);
   SaveFile >> SingleWeaponSkill;
 
   if(GetWielded())
@@ -1422,6 +1430,7 @@ void leg::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> BootSlot;
+  BootSlot.SetBodyPart(this);
 }
 
 bool bodypart::ReceivePhysicalDamage(short Damage)
@@ -1724,14 +1733,14 @@ void boot::GenerateBootMaterials()
 { 
   switch(RAND() % 2)
     {
-    case 1: InitMaterials(new leather); break;
-    case 2: InitMaterials(new iron); break;
+    case 0: InitMaterials(new leather); break;
+    case 1: InitMaterials(new iron); break;
     }
 }
 
 void gauntlet::GenerateGauntletMaterials()
 { 
-  switch(RAND() % 3)
+  switch(RAND() % 2)
     {
     case 0: InitMaterials(new bronze); break;
     case 1: InitMaterials(new iron); break;

@@ -55,7 +55,7 @@ colorizablebitmap::~colorizablebitmap()
 void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
 {
   uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(SourceY) * XSize);
-  ulong DestBuffer = ulong(Bitmap->Data[DestY]);
+  ulong DestBuffer = ulong(Bitmap->GetImage()[DestY]);
 
   for(ushort y = 0; y < Height; ++y)
     {
@@ -91,7 +91,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color) const
 {
   bitmap* Bitmap = new bitmap(XSize, YSize);
   uchar* Buffer = PaletteBuffer;
-  ulong DestBuffer = ulong(Bitmap->Data[0]);
+  ulong DestBuffer = ulong(Bitmap->GetImage()[0]);
 
   for(ushort y = 0; y < YSize; ++y)
     {
@@ -120,7 +120,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color) 
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   uchar* Buffer = (uchar*)(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
-  ulong DestBuffer = ulong(Bitmap->Data[0]);
+  ulong DestBuffer = ulong(Bitmap->GetImage()[0]);
 
   for(ushort y = 0; y < Size.Y; ++y)
     {
@@ -158,13 +158,32 @@ ushort colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Colo
   vsprintf(Buffer, Format, AP);
   va_end(AP);
 
+  ushort ShadeCol = MAKE_SHADE_COL(Color);
+
   for(ushort c = 0; c < strlen(Buffer); ++c)
     {
       ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
-
+      MaskedBlit(Bitmap, FX, FY, X + (c << 3) + 1, Y + 1, 8, 8, &ShadeCol);
       MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
     }
 
   return strlen(Buffer);
 }
 
+ushort colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+{
+  char Buffer[256];
+
+  va_list AP;
+  va_start(AP, Format);
+  vsprintf(Buffer, Format, AP);
+  va_end(AP);
+
+  for(ushort c = 0; c < strlen(Buffer); ++c)
+    {
+      ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
+      MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
+    }
+
+  return strlen(Buffer);
+}

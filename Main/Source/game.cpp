@@ -635,7 +635,7 @@ uchar game::Load(std::string SaveName)
 
   if(Version != SAVEFILE_VERSION)
     {
-      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", BLUE, WHITE, false))
+      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
 	  return NEWGAME;
       else
 	  return BACK;
@@ -653,7 +653,7 @@ uchar game::Load(std::string SaveName)
   SaveFile >> Dungeon >> Team;
 
   if(InWilderness)
-    LoadWorldMap();
+    LoadWorldMap(SaveName);
   else
     GetCurrentDungeon()->LoadLevel(SaveName);
 
@@ -1207,7 +1207,7 @@ bool game::HandleQuitMessage()
       if(GetInGetCommand())
 	{
 #ifndef WIN32
-	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", BLUE, WHITE, false))
+	  switch(iosystem::Menu(0, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
 #else
 	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
 #endif
@@ -1239,7 +1239,7 @@ bool game::HandleQuitMessage()
 #ifdef WIN32
 	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
 #else
-	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", BLUE, WHITE, false))
+	if(iosystem::Menu(0, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
 #endif
 	  {
 	    RemoveSaves();

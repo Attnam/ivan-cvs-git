@@ -528,7 +528,7 @@ void humanoid::CharacterSpeciality(ushort Turns)
 bool humanoid::ShowWeaponSkills()
 {
   {
-    felist List("Your experience in weapon categories", 0xFFFF, 0, false);
+    felist List("Your experience in weapon categories", WHITE, 20, 0, false);
 
     List.AddDescription("");
     List.AddDescription("Category name                 Level     Points    To next level");
@@ -547,9 +547,9 @@ bool humanoid::ShowWeaponSkills()
 	Buffer.resize(50, ' ');
 
 	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-	  List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), RED);
+	  List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), LIGHTGRAY);
 	else
-	  List.AddEntry(Buffer + '-', RED);
+	  List.AddEntry(Buffer + '-', LIGHTGRAY);
       }
 
     /*if(CurrentSingleWeaponSkill)
@@ -928,9 +928,9 @@ long humanoid::StatScore() const
 
 void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 {
-  Description.resize(75, ' ');
+  Description.resize(72, ' ');
   Description += GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
-  Description.resize(80, ' ');
+  Description.resize(77, ' ');
 
   if(GetRightArm())
     {
@@ -948,7 +948,7 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 	Description += 0;
     }
 
-  Description.resize(87, ' ');
+  Description.resize(82, ' ');
 
   if(GetLeftArm())
     {
@@ -973,7 +973,7 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description)
   Description += "GS";
   Description.resize(83, ' ');
   Description += "SSR";
-  Description.resize(90, ' ');
+  Description.resize(88, ' ');
   Description += "SSL";
 }
 
@@ -2464,7 +2464,7 @@ bool humanoid::VirtualEquipmentScreen()
     {
       DOUBLEBUFFER->Fill(0);
 
-      felist List("Equipment menu", WHITE, 0);
+      felist List("Equipment menu", WHITE);
 
       for(ushort c = 0; c < EquipmentSlots(); ++c)
 	{
@@ -2478,10 +2478,10 @@ bool humanoid::VirtualEquipmentScreen()
 	  else
 	    Entry += GetEquipment(c)->Name(INDEFINITE);
 
-	  List.AddEntry(Entry, BLUE);
+	  List.AddEntry(Entry, LIGHTGRAY);
 	}
 
-      ushort Chosen = List.Draw(false, Fade);
+      ushort Chosen = List.Draw(false, false, Fade);
 
       if(Chosen >= EquipmentSlots())
 	break;

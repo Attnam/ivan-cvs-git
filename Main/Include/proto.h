@@ -84,6 +84,8 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
 
   if(Type)
     Class = dynamic_cast<type*>(protocontainer<type>::GetProto(Type)->CloneAndLoad(SaveFile));
+  else
+    Class = 0;
 
   return SaveFile;
 }

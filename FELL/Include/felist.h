@@ -9,17 +9,28 @@
 #include <vector>
 
 #include "typedef.h"
+#include "bitmap.h"
 #include "save.h"
 
 class colorizablebitmap;
 class inputfile;
 class outputfile;
-class bitmap;
 
 struct felistentry
 {
   felistentry() { }
-  felistentry(std::string String, ushort Color) : String(String), Color(Color) { }
+  felistentry(std::string String, ushort Color, bool Selectable) : Bitmap(0), String(String), Color(Color), Selectable(Selectable) { }
+  felistentry(bitmap* Bitmap, std::string String, ushort Color, bool Selectable) : Bitmap(Bitmap), String(String), Color(Color), Selectable(Selectable) { }
+  bitmap* Bitmap;
+  std::string String;
+  ushort Color;
+  bool Selectable;
+};
+
+struct felistdescription
+{
+  felistdescription() { }
+  felistdescription(std::string String, ushort Color) : String(String), Color(Color) { }
   std::string String;
   ushort Color;
 };
@@ -27,35 +38,51 @@ struct felistentry
 class felist
 {
  public:
-  felist(ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { }
-  felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort Maximum = 0, bool DrawLetters = true, bool InverseMode = false) : Maximum(Maximum), DrawLetters(DrawLetters), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
-  void AddEntry(std::string, ushort);
+  felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort PageLength = 20, ushort Maximum = 0, bool Selectable = true, bool InverseMode = false) : PageLength(PageLength), Maximum(Maximum), Selectable(Selectable), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
+  ~felist();
+  void AddEntry(std::string, ushort, bitmap* = 0, bool = true);
   void AddDescription(std::string, ushort = 0xFFFF);
   void DrawDescription(bitmap*) const;
-  ushort Draw(bool = true, bool = false) const;
+  ushort Draw(bool = true, bool = true, bool = false) const;
   void Empty();
   std::string GetEntry(ushort Index) { return Entry[Index].String; }
   ushort Length() const { return Entry.size(); }
   void Load(inputfile&);
   void Save(outputfile&) const;
   bool IsEmpty() { return (Length() == 0); }
+  void SetSelected(ushort What) { Selected = What; }
  protected:
   std::vector<felistentry> Entry;
-  std::vector<felistentry> Description;
+  std::vector<felistdescription> Description;
+  ushort PageLength;
   ushort Maximum;
-  bool DrawLetters;
+  ushort Selected;
+  bool Selectable;
   bool InverseMode;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, felistentry Entry)
 {
-  SaveFile << Entry.String << Entry.Color;
+  SaveFile << Entry.Bitmap << Entry.String << Entry.Color << Entry.Selectable;
   return SaveFile;
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, felistentry& Entry)
 {
-  SaveFile >> Entry.String >> Entry.Color;
+  Entry.Bitmap = 0;
+  SaveFile >> Entry.Bitmap >> Entry.String >> Entry.Color >> Entry.Selectable;
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, felistdescription Desc)
+{
+  SaveFile << Desc.String << Desc.Color;
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, felistdescription& Desc)
+{
+  SaveFile >> Desc.String >> Desc.Color;
   return SaveFile;
 }
 

@@ -11,6 +11,9 @@ void slot::Save(outputfile& SaveFile) const
 void slot::Load(inputfile& SaveFile)
 {
   SaveFile >> Item;
+
+  if(Item)
+    Item->SetSlot(this);
 }
 
 void stackslot::Empty()

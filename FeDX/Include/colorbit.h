@@ -21,6 +21,7 @@ class colorizablebitmap
   ~colorizablebitmap();
   void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
   ushort Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
+  ushort PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   bitmap* Colorize(ushort*) const;
   bitmap* Colorize(vector2d, vector2d, ushort*) const;
  protected:

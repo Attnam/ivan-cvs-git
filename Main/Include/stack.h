@@ -48,12 +48,12 @@ class stack
   item* GetItem(ushort) const;
   stackiterator GetBottomSlot() const;
   stackiterator GetSlotAboveTop() const;
-  item* GetBottomItem() const;// { return Item->begin(); }
+  item* GetBottomItem() const;
   ushort GetItems() const { return Item->size(); }
   void SetSquareUnder(square*);
-  item* DrawContents(character*, std::string) const;
+  item* DrawContents(character*, std::string, bool (item::*)(character*) = 0) const;
+  item* DrawContents(character*, std::string, bool (item::*)(character*), bool) const;
   item* MoveItem(stackiterator, stack*);
-  //item* MoveItem(item*, stack*);
   ushort GetEmitation() const;
   vector2d GetPos() const;
   void Clean();
@@ -62,15 +62,10 @@ class stack
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
   lsquare* GetLSquareUnder() const;
-  /*void SetItem(ushort Where, item* What) { Item[Where] = What; }
-  void SetItems(ushort What) { Items = What; }*/
-  /*ushort CNonExistent() const { return NonExistent; }
-  void SNonExistent(ushort What) { NonExistent = What; }*/
   bool ConsumableItems(character*);
   void DrawItemData(ushort, ushort) const;
-  item* DrawConsumableContents(character*, std::string) const;
+  //item* DrawConsumableContents(character*, std::string) const;
   void DeletePointers();
-  //void StackMerge(stack*);
   void Kick(ushort, bool, uchar);
   long Score() const;
   void Polymorph();
@@ -85,12 +80,8 @@ class stack
   void FillItemVector(itemvector&) const;
  private:
   stacklist* Item;
-  //void Optimize(ushort);
   square* SquareUnder;
-  //item** Item;
-  //ushort Items, NonExistent;
   uchar SquarePosition;
 };
 
 #endif
-

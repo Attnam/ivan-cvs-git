@@ -118,9 +118,13 @@ void configuration::EditContrast(char Change)
   Contrast = TContrast;
 }
 
+#include "charde.h"
+#include "itemde.h"
+
 void configuration::ShowConfigScreen()
 {
   vector2d QuestionPos = game::GetRunning() ? vector2d(7, 7) : vector2d(30, 46);
+  ushort Chosen = 0;
   bool BoolChange = false;
 
   while(true)
@@ -128,24 +132,28 @@ void configuration::ShowConfigScreen()
       if(game::GetRunning())
 	game::DrawEverythingNoBlit();
 
-      felist List("Which setting do you wish to configure?", WHITE, 0);
+      felist List("Which setting do you wish to configure?", WHITE);
+
+      List.SetSelected(Chosen);
 
       List.AddDescription("");
       List.AddDescription("Setting                                    Value");
 
-      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), BLUE);
-      List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", BLUE);
-      List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", BLUE);
-      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), BLUE);
-      List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), BLUE);
-      List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), BLUE);
+      List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
+      List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", LIGHTGRAY);
+      List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
+      List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHTGRAY);
 
 #ifdef WIN32
-      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
-      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
+      List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHTGRAY);
+      List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHTGRAY);
 #endif
 
-      switch(List.Draw(false, !game::GetRunning() && !BoolChange))
+      Chosen = List.Draw(false, game::GetRunning(), !game::GetRunning() && !BoolChange);
+
+      switch(Chosen)
 	{
 	case 0:
 	  SetDefaultName(iosystem::StringQuestion("Set new default name (3-20 letters):", QuestionPos, WHITE, 0, 20, !game::GetRunning(), true));

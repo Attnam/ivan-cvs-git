@@ -132,7 +132,11 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
 	{
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 340 - CountChars('\r', sMS) * 25 + i * 50, (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+
+	  if(i == iSelected)
+	    FONT->PrintfUnshaded(&Buffer, 401 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 341 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	  else
+	    FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 340 - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
 
       if(c < 5)
@@ -194,7 +198,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 
   bitmap Backup(XRES, YRES);
   DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
-  Backup.Fill(Pos.X, Pos.Y + 10, 8, 8, 0);
+  Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);
 
   bool TooShort = false;
 
@@ -259,7 +263,7 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 
   bitmap Backup(XRES, YRES);
   DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
-  Backup.Fill(Pos.X, Pos.Y + 10, 8, 8, 0);
+  Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);
 
   for(int LastKey = 0;; LastKey = 0)
     {
@@ -300,7 +304,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
   struct _finddata_t Found;
   long hFile;
   int Check = 0;
-  felist Buffer("Choose a file and be sorry:", TopicColor);
+  felist Buffer("Choose a file and be sorry:", TopicColor, 30);
   hFile = _findfirst((DirectoryName + "*.sav").c_str(), &Found);
 
   if(hFile == -1L)
@@ -315,9 +319,9 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
       Check = _findnext(hFile, &Found);
     }
 
-  Check = Buffer.Draw(false, true);
+  Check = Buffer.Draw(false, false, true);
 
-  if(Check >= 0xFFFD)
+  if(Check == 0xFFFF)
     return "";
 
   return Buffer.GetEntry(Check);
@@ -327,7 +331,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
   DIR* dp;
   struct dirent* ep;
   std::string Buffer;
-  felist List("Choose a file and be sorry:", TopicColor);
+  felist List("Choose a file and be sorry:", TopicColor, 30);
   dp = opendir(DirectoryName.c_str());
   if(dp)
     {
@@ -346,9 +350,9 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	}
       else
 	{
-	  int Check = List.Draw(false, true);
+	  int Check = List.Draw(false, false, true);
 
-	  if(Check >= 0xFFFD)
+	  if(Check == 0xFFFF)
 	    return "";
 
 	  return List.GetEntry(Check);
@@ -360,7 +364,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 #ifdef __DJGPP__
   struct ffblk Found;
   int Check = 0;
-  felist Buffer("Choose a file and be sorry:", TopicColor);
+  felist Buffer("Choose a file and be sorry:", TopicColor, 30);
   Check = findfirst((DirectoryName + "*.sav").c_str(), &Found, FA_HIDDEN | FA_ARCH);
 
   if(Check)
@@ -375,9 +379,9 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
       Check = findnext(&Found);
     }
 
-  Check = Buffer.Draw(false, true);
+  Check = Buffer.Draw(false, false, true);
 
-  if(Check >= 0xFFFD)
+  if(Check == 0xFFFF)
     return "";
 
   return Buffer.GetEntry(Check);

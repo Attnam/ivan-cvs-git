@@ -502,7 +502,7 @@ bool character::Consume()
 
   if(!game::GetInWilderness() && GetLSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [y/N]"))
     {
-      item* Item = GetLSquareUnder()->GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
+      item* Item = GetLSquareUnder()->GetStack()->DrawContents(this, "What do you wish to consume?");
 
       //if(Index < GetLSquareUnder()->GetStack()->GetItems())
       if(Item)
@@ -527,7 +527,7 @@ bool character::Consume()
 
   if(GetStack()->ConsumableItems(this))
     {
-      item* Item = GetStack()->DrawConsumableContents(this, "What do you wish to consume?");
+      item* Item = GetStack()->DrawContents(this, "What do you wish to consume?");
 
       //if(Index < GetStack()->GetItems())
       if(Item)
@@ -924,13 +924,12 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
       else
 	return false;
     else
-      return false;
-	
+      return false;	
 }
 
 bool character::ShowInventory()
 {
-  GetStack()->DrawContents(this, "Character's Inventory, press ESC to exit");
+  GetStack()->DrawContents(this, "Your inventory", 0, false);
   return false;
 }
 
@@ -1072,7 +1071,7 @@ void character::Die(bool ForceMsg)
 
       if(GetStack()->GetItems())
 	if(game::BoolQuestion("Do you want to see your inventory? [y/n]", 2))
-	  GetStack()->DrawContents(this, "Your inventory");
+	  GetStack()->DrawContents(this, "Your inventory", 0, false);
 
       if(game::BoolQuestion("Do you want to see your message history? [y/n]", 2))
 	DrawMessageHistory();
@@ -1540,8 +1539,6 @@ void character::Save(outputfile& SaveFile) const
 
   Stack->Save(SaveFile);
 
-  //ushort Index = Wielded ? Stack->SearchItem(Wielded) : 0xFFFF;
-
   SaveFile << Strength << Endurance << Agility << Perception << RegenerationCounter;
   SaveFile << NP << AP;
   SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
@@ -1622,12 +1619,6 @@ void character::Load(inputfile& SaveFile)
   Stack = new stack;
   Stack->Load(SaveFile);
 
-  /*ushort Index;
-
-  SaveFile >> Index;
-
-  Wielded = Index != 0xFFFF ? Stack->GetItem(Index) : 0;*/
-
   SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
   SaveFile >> NP >> AP;
   SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
@@ -1636,14 +1627,7 @@ void character::Load(inputfile& SaveFile)
   uchar c;
 
   for(c = 0; c < BodyParts(); ++c)
-    {
       SaveFile >> BodyPartSlot[c];
-      /* CHeck ThIs! */
-      /*item* I;
-      SaveFile >> I;*/
-      //BodyPart[c] = (bodypart*)I;
-      //BodyPart[c]->SetMaster(this);
-    }
 
   if(HomeRoom)
     {
@@ -1662,7 +1646,6 @@ void character::Load(inputfile& SaveFile)
   if(Index)
     SetConsumingCurrently(GetLSquareUnder()->GetStack()->GetItem(Index));
 
-  //SaveFile >> Index;
   uchar Digging;
   SaveFile >> Digging;
 
@@ -1816,7 +1799,7 @@ bool character::WalkThroughWalls()
 
 bool character::ShowKeyLayout()
 {
-  felist List("Keyboard Layout", WHITE, 0, false);
+  felist List("Keyboard Layout", WHITE, 30, 0, false);
 
   List.AddDescription("");
   List.AddDescription("Key       Description");
@@ -1827,7 +1810,7 @@ bool character::ShowKeyLayout()
 	std::string Buffer;
 	Buffer += game::GetCommand(c)->GetKey();
 	Buffer.resize(10, ' ');
-	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), RED);
+	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHTGRAY);
       }
 
   List.Draw();
@@ -1972,7 +1955,7 @@ bool character::OpenPos(vector2d APos)
 
 bool character::Pray()
 {
-  felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 0, true);
+  felist Panthenon("To Whom shall thee address thine prayers?", WHITE, 20, 0, true);
 
   std::vector<uchar> KnownIndex;
 
@@ -1981,13 +1964,17 @@ bool character::Pray()
       for(ushort c = 1; c < game::GetGods(); ++c)
 	if(game::GetGod(c)->GetKnown())
 	  {
-	    Panthenon.AddEntry(game::GetGod(c)->CompleteDescription(), RED);
+	    bitmap Icon(igraph::GetSymbolGraphic(), c << 4, 0, 16, 16);
+	    Panthenon.AddEntry(game::GetGod(c)->CompleteDescription(), LIGHTGRAY, &Icon);
 	    KnownIndex.push_back(c);
 	  }
     }
   else
     if(game::GetGod(GetLSquareUnder()->GetDivineOwner())->GetKnown())
-      Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineOwner())->CompleteDescription(), RED);
+      {
+	bitmap Icon(igraph::GetSymbolGraphic(), GetLSquareUnder()->GetDivineOwner() << 4, 0, 16, 16);
+	Panthenon.AddEntry(game::GetGod(GetLSquareUnder()->GetDivineOwner())->CompleteDescription(), LIGHTGRAY, &Icon);
+      }
     else
       ADD_MESSAGE("Somehow you feel that no deity you know can hear your prayers from this place.");
 
@@ -3726,7 +3713,7 @@ void character::Teleport()
 
 bool character::SecretKnowledge()
 {
-  felist List("Knowledge of the ancients:", WHITE, 0, true);
+  felist List("Knowledge of the ancients:", WHITE, 10, 0, true);
 
   std::string Buffer = "Name                                                 Weight       SV     Str";
   List.AddDescription(Buffer);
@@ -3742,7 +3729,7 @@ bool character::SecretKnowledge()
 	Buffer += int(Item->GetStrengthValue());
 	Buffer.resize(70, ' ');
 	Buffer += int(Item->GetWeaponStrength() / 100);
-	List.AddEntry(Buffer, RED);
+	List.AddEntry(Buffer, LIGHTGRAY);
 	delete Item;
       }
 

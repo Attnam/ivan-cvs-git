@@ -21,7 +21,6 @@
 #define SATIATEDLEVEL 30000
 #define NOTHUNGERLEVEL 5000
 #define HUNGERLEVEL 1000
-//#define CRITICALHUNGERLEVEL 0
 
 #define OVERLOADED    0
 #define STRESSED    1
@@ -44,7 +43,6 @@
 #define GOING      5
 #define HASTE 6
 #define SLOW 7
-
 
 #define HEAD 0
 #define TORSO 1
@@ -324,37 +322,25 @@ class character : public type, public entity, public identity
   virtual void SetTorso(torso* What);
   virtual bodypart* GetBodyPart(ushort) const;
   virtual void SetBodyPart(ushort, bodypart*);
-
   virtual void SetMaterial(uchar, material*);
-
   virtual void Teleport();
-
   virtual bool SecretKnowledge();
   virtual void RestoreHP();
-
   virtual bool ReceiveEffect(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool ReceiveBodyPartPhysicalDamage(short, uchar, uchar = 8, bool = false, bool = false);
-
   virtual bool BodyPartVital(uchar);
   virtual void RestoreBodyParts();
-
   virtual bool AssignName();
-
   virtual std::string GetAssignedName() const { return AssignedName; }
   virtual void SetAssignedName(std::string What) { AssignedName = What; }
-
   virtual bool CanBeAssignedAName() const { return true; }
   virtual bool ReceiveBodyPartEffect(short, uchar, uchar, uchar = 8, bool = false, bool = false);
-
   virtual std::string Description(uchar) const;
   virtual std::string PersonalPronoun() const;
   virtual std::string PossessivePronoun() const;
   virtual std::string ObjectPronoun() const;
-
   virtual bool BodyPartCanBeSevered(uchar) const;
-
   virtual std::string Name(uchar) const;
-
   virtual void ReceiveHeal(long);
   virtual void Haste(ushort);
   virtual void EndHaste();
@@ -363,32 +349,21 @@ class character : public type, public entity, public identity
   virtual void Slow(ushort);
   virtual void SlowHandler();
   virtual void EndSlow();
-
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   virtual item* GetBodyArmor() const { return 0; }
-
   virtual void SetMainWielded(item*) { }
   virtual void SetSecondaryWielded(item*) { }
   virtual void SetBodyArmor(item*) { }
-
   virtual bool CanWieldInMainHand() const { return false; }
   virtual bool CanWieldInSecondaryHand() const { return false; }
-
   virtual uchar GetHungerState() const;
-
   virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
-
   virtual characterslot* GetBodyPartSlot(ushort) const;
-
   virtual bool VirtualEquipmentScreen();
-
  protected:
-
   virtual ushort TotalSize() const = 0;
-
   virtual uchar ChooseBodyPartToReceiveHit(float, float);
-
   virtual void CreateBodyParts();
   virtual void CreateTorso();
   virtual material* CreateTorsoFlesh(ulong) const = 0;
@@ -396,18 +371,12 @@ class character : public type, public entity, public identity
   virtual uchar TorsoBonePercentile() const { return 20; }
   virtual ulong TorsoVolume() const { return TotalVolume(); }
   virtual ulong TotalVolume() const = 0;
-
   virtual uchar BodyParts() const { return 1; }
-
   virtual vector2d GetBitmapPos() const = 0;
-
   virtual void AllocateBodyPartArray();
-
   virtual ushort TorsoSize() const;
-
   virtual std::string MaterialDescription(bool) const;
   virtual bool ShowClassDescription() const { return true; }
-
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
   virtual bool CheckForDoors();

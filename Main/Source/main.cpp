@@ -65,7 +65,7 @@ int Main(int argc, char **argv)
 #endif
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_RGB(80, 80, 80), WHITE, true))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, true))
       {
       case 0:
 	game::Init();
@@ -74,7 +74,7 @@ int Main(int argc, char **argv)
 	break;
       case 1:
 	{
-	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, MAKE_RGB(80, 80, 80), SAVE_DIR);
+	  std::string LoadName = iosystem::WhatToLoadMenu(WHITE, LIGHTGRAY, SAVE_DIR);
 
 	  if(LoadName != "")
 	    {

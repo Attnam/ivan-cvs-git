@@ -34,26 +34,13 @@ bool stack::DrawToTileBuffer() const
 
 void stack::AddItem(item* ToBeAdded)
 {
-  /*item** TempItem = new item*[GetItems() + 1];
-
-  for(ushort c = 0; c < GetItems(); ++c)
-    TempItem[c] = GetItem(c);
-
-  delete [] Item;
-
-  Item = TempItem;*/
-
   stackslot* StackSlot = new stackslot;
 
   StackSlot->SetMotherStack(this);
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
 
-  //SetItem(GetItems(), ToBeAdded);
-
   ToBeAdded->SetSquareUnder(GetSquareUnder());
-
-  //SetItems(GetItems() + 1);
 
   if(GetSquareUnder())
     {
@@ -74,58 +61,22 @@ void stack::AddItem(item* ToBeAdded)
       if(GetSquareTrulyUnder()->CanBeSeen())
 	GetSquareTrulyUnder()->UpdateMemorized();
     }
-
-  //return GetItems() - 1;
 }
 
 void stack::FastAddItem(item* ToBeAdded)
 {
   stackslot* StackSlot = new stackslot;
-
   StackSlot->SetMotherStack(this);
   StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
-
-  //SetItem(GetItems(), ToBeAdded);
-
   ToBeAdded->SetSquareUnder(GetSquareUnder());
-  /*item** TempItem = new item*[Items + 1];
-
-  for(ushort c = 0; c < GetItems(); ++c)
-    TempItem[c] = GetItem(c);
-
-  delete [] Item;
-
-  Item = TempItem;
-
-  SetItem(GetItems(), ToBeAdded);
-
-  ToBeAdded->SetSquareUnder(GetSquareUnder());
-
-  SetItems(GetItems() + 1);
-
-  return GetItems() - 1;*/
 }
 
 void stack::RemoveItem(stackiterator Iterator)
 {
-  //if(Item && Index < GetItems())
-  //  {
-  
-
   ushort IEmit = GetEmitation();
-
-  //item* Removed = Iterator->Item;
   delete *Iterator;
   Item->erase(Iterator);
-
-  /*Removed = Item[Index];
-
-  Item[Index] = 0;
-
-  SNonExistent(CNonExistent() + 1);
-
-  Optimize(0);*/
 
   if(GetSquareUnder())
     {
@@ -146,25 +97,12 @@ void stack::RemoveItem(stackiterator Iterator)
       if(GetSquareTrulyUnder()->CanBeSeen())
 	GetSquareTrulyUnder()->UpdateMemorized();
     }
-
-  //return Removed;
-  /*  }
-  else
-    return 0;*/
 }
 
 void stack::FastRemoveItem(stackiterator Iterator)
 {
   delete *Iterator;
   Item->erase(Iterator);
-  /*if(Item)
-    {
-      SetItem(Index, 0);
-
-      SNonExistent(CNonExistent() + 1);
-
-      Optimize(0);
-    }*/
 }
 
 void stack::Clean()
@@ -174,28 +112,12 @@ void stack::Clean()
       (**i)->SetExists(false);
       delete *i;
     }
-  /*for(ushort c = 0; c < GetItems(); ++c)
-    if(GetItem(c))
-      Item[c]->SetExists(false);*/
-
-  //delete [] Item;
-
-  /*Item = 0;
-
-  SetItems(0);
-
-  SNonExistent(0);*/
 
   Item->clear();
 }
 
 item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
 {
-  //ushort ToBeReturned = 0;
-
-  //if(this == MoveTo)
-  //  return ***Iterator;// GetItem(Index);
-
   if(GetSquareTrulyUnder())
     {
       GetSquareTrulyUnder()->SendNewDrawRequest();
@@ -207,127 +129,48 @@ item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
 
   item* Item = ***Iterator;
 
-  //if(Item && GetItems() > Index && GetItem(Index) && MoveTo)
-    if(MoveTo->GetLSquareTrulyUnder() == GetLSquareTrulyUnder())
-      {
-	/*ToBeReturned = */MoveTo->FastAddItem(***Iterator);
-	FastRemoveItem(Iterator);
+  if(MoveTo->GetLSquareTrulyUnder() == GetLSquareTrulyUnder())
+    {
+      MoveTo->FastAddItem(***Iterator);
+      FastRemoveItem(Iterator);
 
-	if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-	  GetSquareUnder()->UpdateMemorizedDescription();
+      if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+	GetSquareUnder()->UpdateMemorizedDescription();
 
-	if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
-	  GetSquareTrulyUnder()->UpdateMemorized();
-      }
-    else
-      {
-	if(MoveTo->GetSquareTrulyUnder())
-	  {
-	    MoveTo->GetSquareTrulyUnder()->SendNewDrawRequest();
-	    MoveTo->GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
-	  }
+      if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+	GetSquareTrulyUnder()->UpdateMemorized();
+    }
+  else
+    {
+      if(MoveTo->GetSquareTrulyUnder())
+	{
+	  MoveTo->GetSquareTrulyUnder()->SendNewDrawRequest();
+	  MoveTo->GetSquareTrulyUnder()->SendMemorizedUpdateRequest();
+	}
 
-	if(MoveTo->GetSquareUnder())
-	  MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
+      if(MoveTo->GetSquareUnder())
+	MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
 
-	/*ToBeReturned = */MoveTo->AddItem(***Iterator);
-	RemoveItem(Iterator);
+      MoveTo->AddItem(***Iterator);
+      RemoveItem(Iterator);
 
-	if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-	  GetSquareUnder()->UpdateMemorizedDescription();
+      if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+	GetSquareUnder()->UpdateMemorizedDescription();
 
-	if(MoveTo->GetSquareUnder() && MoveTo->GetSquareUnder()->CanBeSeen())
-	  MoveTo->GetSquareUnder()->UpdateMemorizedDescription();
+      if(MoveTo->GetSquareUnder() && MoveTo->GetSquareUnder()->CanBeSeen())
+	MoveTo->GetSquareUnder()->UpdateMemorizedDescription();
 
-	if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
-	  GetSquareTrulyUnder()->UpdateMemorized();
-      }
+      if(GetSquareTrulyUnder() && GetSquareTrulyUnder()->CanBeSeen())
+	GetSquareTrulyUnder()->UpdateMemorized();
+    }
 
   return Item;
-
-  //return MoveTo->GetItem(ToBeReturned);
-}
-
-/*void stack::Optimize(ushort OptimizeBoundary)
-{
-  if(CNonExistent() > OptimizeBoundary)
-    {
-      if(GetItems() - CNonExistent())
-	{
-	  item** TempItem = new item*[GetItems() - NonExistent];
-
-	  for(ushort c = 0, i = 0; c < GetItems(); ++c)
-	    if(GetItem(c))
-	      TempItem[i++] = GetItem(c);
-
-	  delete [] Item;
-
-	  Item = TempItem;
-
-	  SetItems(GetItems() - NonExistent);
-	}
-      else
-	{
-	  delete [] Item;
-
-	  Item = 0;
-
-	  SetItems(0);
-	}
-
-      SNonExistent(0);
-    }
-}*/
-
-item* stack::DrawContents(character* Viewer, std::string Topic) const // Draws a list of the items in this stack on the screen
-{									// Displays Topic on the screen also...
-  if(!GetItems()) return 0;
-  felist ItemNames(Topic, WHITE, 0, true);
-
-  ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + " grams");
-  ItemNames.AddDescription("");
-
-  std::string Buffer = "Name                                                 Weight       AV     Str";
-  Viewer->AddSpecialItemInfoDescription(Buffer);
-  ItemNames.AddDescription(Buffer);
-
-  stackiterator i;
-
-  for(i = Item->begin(); i != Item->end(); ++i)
-    {
-      Buffer = (**i)->Name(INDEFINITE);
-      Buffer.resize(50,' ');
-      Buffer += int((**i)->GetWeight());
-      Buffer.resize(63, ' ');
-      Buffer += int((**i)->GetStrengthValue());
-      Buffer.resize(70, ' ');
-      Buffer += int((**i)->GetWeaponStrength() / 100);
-      Viewer->AddSpecialItemInfo(Buffer, ***i);
-
-      ItemNames.AddEntry(Buffer, RED);
-    }
-
-  ushort Chosen = ItemNames.Draw(false);
-
-  if(Chosen & 0x8000)
-    return 0;
-
-  ushort c = 0;
-
-  for(i = Item->begin(); i != Item->end(); ++i, ++c)
-    if(c == Chosen)
-      return ***i;
-
-  return 0;
 }
 
 ushort stack::GetEmitation() const // Calculates the biggest light emmision of the lsquare...
 {
   ushort Emitation = 0;
 
-  //for(ushort c = 0; c < GetItems(); ++c)
-  //  if(GetItem(c))
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     if((**i)->GetEmitation() > Emitation)
       Emitation = (**i)->GetEmitation();
@@ -348,9 +191,6 @@ ulong stack::SumOfMasses() const
 void stack::Save(outputfile& SaveFile) const
 {
   SaveFile << *Item << SquarePosition;
-
-  /*for(ushort c = 0; c < Items; ++c)
-    SaveFile << Item[c];*/
 }
 
 void stack::Load(inputfile& SaveFile)
@@ -363,29 +203,8 @@ void stack::Load(inputfile& SaveFile)
       (*i)->SetMotherStack(this);
     }
 
-  /*if(Items)
-    {
-      Item = new item*[Items];
-
-      for(ushort c = 0; c < Items; ++c)
-	SaveFile >> Item[c];
-    }
-  else
-    Item = 0;
-
-  NonExistent = 0;*/
-
   SquareUnder = game::GetSquareInLoad();
 }
-
-/*ushort stack::SearchItem(item* ToBeSearched) const
-{
-  for(ushort c = 0; c < GetItems(); ++c)
-    if(GetItem(c) == ToBeSearched)
-      return c;
-
-  return 0xFFFF;
-}*/
 
 vector2d stack::GetPos() const
 {
@@ -401,10 +220,10 @@ bool stack::ConsumableItems(character* Eater)
   return false;
 }
 
-item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
+/*item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
 {
   return 0;
-  /*stack ConsumableStack(GetSquareUnder());
+  stack ConsumableStack(GetSquareUnder());
   item* TheItem;
   ushort Key;
 
@@ -425,23 +244,15 @@ item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
 
   TheItem = ConsumableStack.GetItem(Key);
   ConsumableStack.DeletePointers();
-  return SearchItem(TheItem);*/
+  return SearchItem(TheItem);
 
-}
+}*/
 
 void stack::DeletePointers()
 {
   while(GetItems())
     FastRemoveItem(GetBottomSlot());
 }
-
-/*void stack::StackMerge(stack* ToBeMerged)
-{
-  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
-    FastAddItem(ToBeMerged->GetItem(c));
-
-  ToBeMerged->DeletePointers();
-}*/
 
 void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 {
@@ -486,20 +297,6 @@ void stack::Polymorph()
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists() && ItemVector[c]->Polymorph(this) && ++p == 5)
       break;
-
-  /*std::list<item*> TempItem = Item;
-
-
-
-  for(stackiterator i = TempItem->begin(); i != TempItem->end(); ++i)
-    if((**i)->GetExists() && (**i)->Polymorph(this) && ++p == 5)
-      break;*/
-
-  /*for(ushort c = 0, i = 0; c < GetItems() && c - i < 5; ++c)
-    if(GetItem(i)->Polymorph(this))
-      RemoveItem(i);
-    else
-      ++i;*/
 }
 
 void stack::ReceiveSound(float Strength)
@@ -511,9 +308,6 @@ void stack::ReceiveSound(float Strength)
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
       ItemVector[c]->ReceiveSound(Strength);
-
-  //for(int x = 0; x < GetItems(); ++x) // PROBLEM!!! This probably has the same problems as kick... So...
-    //GetItem(x)->ReceiveSound(Strength, GetLSquareTrulyUnder()->CanBeSeen(), this);
 }
 
 void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
@@ -621,11 +415,6 @@ item* stack::GetBottomItem() const
   return ***GetBottomSlot();
 }
 
-/*item* stack::MoveItem(item* Item, stack* To)
-{
-  return MoveItem(((stackslot*)Item->GetSlot())->GetStackIterator(), To);
-}*/
-
 item* stack::GetItem(ushort Index) const
 {
   ushort c = 0;
@@ -646,12 +435,6 @@ ushort stack::SearchItem(item* ToBeSearched) const
       return c;
 
   return 0xFFFF;
-
-  /*for(ushort c = 0; c < GetItems(); ++c)
-    if(GetItem(c) == ToBeSearched)
-      return c;
-
-  return 0xFFFF;*/
 }
 
 stackiterator stack::GetBottomSlot() const
@@ -662,4 +445,77 @@ stackiterator stack::GetBottomSlot() const
 stackiterator stack::GetSlotAboveTop() const
 {
   return Item->end();
+}
+
+/*
+ * Default parameter for SelectItem didn't work for some very odd reason!
+ */
+
+item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*)) const
+{
+  return DrawContents(Viewer, Topic, SorterFunction, true);
+}
+
+item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*SorterFunction)(character*), bool SelectItem) const
+{
+  if(!GetItems()) return 0;
+  felist ItemNames(Topic, WHITE, 10, 0, SelectItem);
+
+  ItemNames.AddDescription("");
+  ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + " grams");
+  ItemNames.AddDescription("");
+
+  std::string Buffer = "Icon  Name                                             Weight     AV    Str";
+  Viewer->AddSpecialItemInfoDescription(Buffer);
+  ItemNames.AddDescription(Buffer);
+
+  stackiterator i;
+  ushort c;
+
+  bool UseSorterFunction = SorterFunction ? true : false;
+
+  for(c = 0; c < item::ItemCategories(); ++c)
+    {
+      bool DescDrawn = false;
+
+      for(i = Item->begin(); i != Item->end(); ++i)
+	if((**i)->GetCategory() == c && (!UseSorterFunction || ((***i)->*SorterFunction)(Viewer)))
+	  {
+	    if(!DescDrawn)
+	      {
+		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
+		ItemNames.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, false);
+		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
+		DescDrawn = true;
+	      }
+
+	    Buffer = (**i)->Name(INDEFINITE);
+	    Buffer.resize(49,' ');
+	    Buffer += int((**i)->GetWeight());
+	    Buffer.resize(60, ' ');
+	    Buffer += int((**i)->GetStrengthValue());
+	    Buffer.resize(66, ' ');
+	    Buffer += int((**i)->GetWeaponStrength() / 100);
+	    Viewer->AddSpecialItemInfo(Buffer, ***i);
+
+	    if(!SelectItem)
+	      Buffer = std::string("   ") + Buffer;
+
+	    ItemNames.AddEntry(Buffer, LIGHTGRAY, (**i)->GetPicture());
+	  }
+    }
+
+  ushort Chosen = ItemNames.Draw(false);
+
+  if(Chosen & 0x8000)
+    return 0;
+
+  ushort j = 0;
+
+  for(c = 0; c < item::ItemCategories(); ++c)
+    for(i = Item->begin(); i != Item->end(); ++i)
+      if((**i)->GetCategory() == c && j++ == Chosen)
+	return ***i;
+
+  return 0;
 }

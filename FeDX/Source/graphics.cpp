@@ -177,7 +177,7 @@ void graphics::BlitDBToScreen()
       else
 	DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
 
-      ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+      ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
       ulong TrueDestOffset = ulong(ddsd.lpSurface);
       ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
       ushort Width = XRES;

@@ -76,7 +76,7 @@ void highscore::Draw() const
       Desc += int(Score[c]);
       Desc.resize(13, ' ');
       Desc += Entry[c];
-      FONT->Printf(&Buffer, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : BLUE, "%s", Desc.c_str());
+      FONT->Printf(&Buffer, 30, 50 + (c - Min) * 10, c == LastAdd ? RED : LIGHTGRAY, "%s", Desc.c_str());
     }
 
   Buffer.FadeToScreen();

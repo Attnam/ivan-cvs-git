@@ -4,7 +4,13 @@
 #include "whandler.h"
 #include "colorbit.h"
 
-ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
+felist::~felist()
+{
+  for(ushort c = 0; c < Entry.size(); ++c)
+    delete Entry[c].Bitmap;
+}
+
+ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, bool Fade) const
 {
   if(!Entry.size())
     return 0xFFFF;
@@ -16,59 +22,195 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
   else
     DOUBLEBUFFER->Blit(&Buffer, 0, 0, 0, 0, XRES, YRES);
 
-  DrawDescription(Fade ? &Buffer : DOUBLEBUFFER);
+  bitmap* Bitmap = Fade ? &Buffer : DOUBLEBUFFER;
+
+  DrawDescription(Bitmap);
 
   ushort Return;
 
-  for(ushort Min = 0, c = 0;; ++c)
+  ushort LastFillBottom = 66 + Description.size() * 10;
+
+  ushort Selected = this->Selected, Min, c, i;
+
+  Min = Selected - Selected % 20;
+
+  for(c = 0, i = 0; i != Min; ++c)
+    if(Entry[c].Selectable)
+      ++i;
+
+  bool JustSelectMove = false;
+
+  for(;;)
     {
-      (Fade ? &Buffer : DOUBLEBUFFER)->Fill(20, 56 + (c - Min + Description.size()) * 10, 758, 20, 128);
+      std::string Str;
 
-      if(DrawLetters)
-	FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%c: %s", 'A' + c - Min, Entry[c].String.c_str());
-      else
-	FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 56 + (c - Min + Description.size()) * 10, Entry[c].Color, "%s", Entry[c].String.c_str());
-
-      if(c - Min == 19 && c != Entry.size() - 1)
+      if(Selectable && Entry[c].Selectable)
 	{
-	  (Fade ? &Buffer : DOUBLEBUFFER)->Fill(20, 266 + Description.size() * 10, 758, 20, 128);
-	  FONT->Printf(Fade ? &Buffer : DOUBLEBUFFER, 30, 266 + Description.size() * 10, WHITE, "- Press SPACE to continue, ESC to exit -");
+	  Str += 'A' + (i - Min);
+	  Str += ": ";
 	}
 
-      if(c - Min == 19 || c == Entry.size() - 1)
+      Str += Entry[c].String;
+
+      if(Entry[c].Bitmap)
 	{
+          Bitmap->Fill(20, LastFillBottom, 758, 20, 128);
+	  Entry[c].Bitmap->MaskedBlit(Bitmap, 0, 0, 30, LastFillBottom, 16, 16);
+
+	  if(Selectable && Entry[c].Selectable && Selected == i)
+	      FONT->PrintfUnshaded(Bitmap, 55, LastFillBottom + 5, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	  else
+	      FONT->Printf(Bitmap, 54, LastFillBottom + 4, Entry[c].Color, "%s", Str.c_str());
+
+	  LastFillBottom += 20;
+	}
+      else
+	{
+	  Bitmap->Fill(20, LastFillBottom, 758, 10, 128);
+
+	  if(Selectable && Entry[c].Selectable && Selected == i)
+	      FONT->PrintfUnshaded(Bitmap, 31, LastFillBottom + 1, MAKE_SHADE_COL(Entry[c].Color), "%s", Str.c_str());
+	  else
+	      FONT->Printf(Bitmap, 30, LastFillBottom, Entry[c].Color, "%s", Str.c_str());
+
+	  LastFillBottom += 10;
+	}
+
+      bool p = Entry[c].Selectable;
+      std::string q = Entry[c].String;
+
+      if(c != Entry.size() - 1 && Entry[c].Selectable && i - Min == PageLength - 1)
+	{
+	  Bitmap->Fill(20, LastFillBottom, 758, 30, 128);
+	  FONT->Printf(Bitmap, 30, LastFillBottom + 10, WHITE, "- Press SPACE to continue, ESC to exit -");
+	  LastFillBottom += 30;
+	}
+
+      if(c == Entry.size() - 1 && (!Entry[c].Selectable || i - Min != PageLength - 1))
+	{
+	  Bitmap->Fill(20, LastFillBottom, 758, 10, 128);
+	  LastFillBottom += 10;
+	}
+
+      if(c == Entry.size() - 1 || (Entry[c].Selectable && i - Min == PageLength - 1))
+	{
+	  Bitmap->DrawLine(18, 44, 18, LastFillBottom + 1, DARKGRAY, true);
+	  Bitmap->DrawLine(779, 44, 779, LastFillBottom + 1, DARKGRAY, true);
+	  Bitmap->DrawLine(18, LastFillBottom + 1, 779, LastFillBottom + 1, DARKGRAY, true);
+
 	  if(Fade)
-	    Buffer.FadeToScreen();
+	    {
+	      if(JustSelectMove)
+		{
+		  Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+		  graphics::BlitDBToScreen();
+		}
+	      else
+		Buffer.FadeToScreen();
+
+	      JustSelectMove = false;
+	    }
 	  else
 	    graphics::BlitDBToScreen();
 
 	  int Pressed = GETKEY();
 
-	  if(Pressed > 64 && Pressed < 91)
+	  if(Selectable && Pressed > 64 && Pressed < 91)
 	    {
 	      Return = Pressed - 65 + Min < long(Entry.size()) ? Pressed - 65 + Min : 0xFFFF;
 	      break;
 	    }
 
-	  if(Pressed > 96 && Pressed < 123)
+	  if(Selectable && Pressed > 96 && Pressed < 123)
 	    {
 	      Return = Pressed - 97 + Min < long(Entry.size()) ? Pressed - 97 + Min : 0xFFFF;
 	      break;
 	    }
 
-	  if(Pressed == '-')
+	  if(Selectable && Pressed == 0x148)
 	    {
-	      Return = 0xFFFE;
+	      if(Selected)
+		{
+		  --Selected;
+
+		  if(Selected < Min)
+		    {
+		      if(!Fade)
+			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+		      Min -= PageLength;
+		    }
+		  else
+		    JustSelectMove = true;
+		}
+	      else
+		{
+		  for(c = 0, Selected = 0xFFFF; c < Entry.size(); ++c)
+		    if(Entry[c].Selectable)
+		      ++Selected;
+
+		  if(Min == Selected - Selected % PageLength)
+		    JustSelectMove = true;
+		  else
+		    {
+		      if(!Fade)
+			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+		      Min = Selected - Selected % PageLength;
+		    }
+		}
+
+	      for(c = 0, i = 0; i != Min; ++c)
+		if(Entry[c].Selectable)
+		  ++i;
+
+	      DrawDescription(Bitmap);
+	      LastFillBottom = 66 + Description.size() * 10;
+	      continue;
+	    }
+
+	  if(Selectable && Pressed == 0x150)
+	    {
+	      if(i != Selected || c != Entry.size() - 1)
+		{
+		  ++Selected;
+
+		  if(Selected > Min + PageLength - 1)
+		    {
+		      if(!Fade)
+			Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+		      Min += PageLength;
+		    }
+		  else
+		    JustSelectMove = true;
+
+		  for(c = 0, i = 0; i != Min; ++c)
+		    if(Entry[c].Selectable)
+		      ++i;
+		}
+	      else
+		{
+		  if(!Min)
+		    JustSelectMove = true;
+		  else if(!Fade)
+		    Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+
+		  Selected = Min = i = c = 0;
+		}
+
+	      DrawDescription(Bitmap);
+	      LastFillBottom = 66 + Description.size() * 10;
+	      continue;
+	    }
+
+	  if(Selectable && Pressed == 0x0D)
+	    {
+	      Return = Selected;
 	      break;
 	    }
 
-	  if(Pressed == 0x1B || (Pressed == 0x20 && c == Entry.size() - 1))
-	    {
-	      Return = 0xFFFD;
-	      break;
-	    }
-
-	  if(c == Entry.size() - 1)
+	  if(Pressed == 0x1B || c == Entry.size() - 1)
 	    {
 	      Return = 0xFFFF;
 	      break;
@@ -78,15 +220,21 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
 	      if(!Fade)
 		Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 
-	      DrawDescription(Fade ? &Buffer : DOUBLEBUFFER);
-	      Min += 20;
+	      DrawDescription(Bitmap);
+	      Min += PageLength;
+	      Selected = Min;
+	      LastFillBottom = 66 + Description.size() * 10;
 	    }
 	}
+
+	if(Entry[c++].Selectable)
+	  ++i;
     }
 
   if(!Fade)
     {
-      Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+      if(DrawBackroundAfterwards)
+	Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 
       if(BlitBackroundAfterwards)
 	graphics::BlitDBToScreen();
@@ -97,15 +245,16 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
 
 void felist::DrawDescription(bitmap* Buffer) const
 {
-  Buffer->Fill(20, 36, 758, 20, 128);
+  Buffer->DrawLine(18, 44, 779, 44, DARKGRAY, true);
+  Buffer->Fill(20, 46, 758, 20, 128);
 
   for(ushort c = 0; c < Description.size(); ++c)
     {
-      Buffer->Fill(20, 46 + c * 10, 758, 10, 128);
-      FONT->Printf(Buffer, 30, 46 + c * 10, Description[c].Color, Description[c].String.c_str());
+      Buffer->Fill(20, 56 + c * 10, 758, 10, 128);
+      FONT->Printf(Buffer, 30, 56 + c * 10, Description[c].Color, Description[c].String.c_str());
     }
 
-  Buffer->Fill(20, 46 + Description.size() * 10, 758, 10, 128);
+  Buffer->Fill(20, 56 + Description.size() * 10, 758, 10, 128);
 }
 
 void felist::Empty()
@@ -113,12 +262,14 @@ void felist::Empty()
   Entry.clear();
 }
 
-void felist::AddEntry(std::string Str, ushort Color)
+void felist::AddEntry(std::string Str, ushort Color, bitmap* Bitmap, bool Selectable)
 {
+  bitmap* NewBitmap = Bitmap ? new bitmap(Bitmap) : 0;
+
   if(InverseMode)
-    Entry.insert(Entry.begin(), felistentry(Str, Color));
+    Entry.insert(Entry.begin(), felistentry(NewBitmap, Str, Color, Selectable));
   else
-    Entry.push_back(felistentry(Str, Color));
+    Entry.push_back(felistentry(NewBitmap, Str, Color, Selectable));
 
   if(Maximum && Entry.size() > Maximum)
     if(InverseMode)
@@ -129,16 +280,16 @@ void felist::AddEntry(std::string Str, ushort Color)
 
 void felist::Save(outputfile& SaveFile) const
 {
-  SaveFile << Entry << Description << Maximum << InverseMode << DrawLetters;
+  SaveFile << Entry << Description << Maximum << InverseMode << Selectable << Selected;
 }
 
 void felist::Load(inputfile& SaveFile) 
 {
-  SaveFile >> Entry >> Description >> Maximum >> InverseMode >> DrawLetters;
+  SaveFile >> Entry >> Description >> Maximum >> InverseMode >> Selectable >> Selected;
 }
 
 void felist::AddDescription(std::string Str, ushort Color)
-{ 
-  Description.push_back(felistentry(Str, Color)); 
+{
+  Description.push_back(felistdescription(Str, Color)); 
 }
 

@@ -10,8 +10,10 @@
 #include "femath.h"
 #include "blit.h"
 
-bitmap::bitmap(std::string FileName) : AlphaMap(0)
+bitmap::bitmap(std::string FileName) : IsIndependent(true)
 {
+  SetAlphaMap(0);
+
   inputfile File(FileName.c_str(), false);
 
   if(!File.IsOpen())
@@ -29,9 +31,9 @@ bitmap::bitmap(std::string FileName) : AlphaMap(0)
 
   File.SeekPosBeg(128);
 
-  Alloc2D<ushort>(Data, YSize, XSize);
+  SetImage(Alloc2D<ushort>(YSize, XSize));
 
-  ushort* Buffer = Data[0];
+  ushort* Buffer = GetImage()[0];
 
   for(ushort y = 0; y < YSize; ++y)
     for(ushort x = 0; x < XSize; ++x)
@@ -60,29 +62,53 @@ bitmap::bitmap(std::string FileName) : AlphaMap(0)
       }
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), Data(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(bitmap* Bitmap) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), IsIndependent(true)
 {
+  SetImage(Alloc2D<ushort>(YSize, XSize));
+  SetAlphaMap(0);
+  Bitmap->Blit(this, 0, 0, 0, 0, XSize, YSize);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), Data(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndependent(true)
 {
+  SetImage(Alloc2D<ushort>(YSize, XSize));
+  SetAlphaMap(0);
+}
+
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), IsIndependent(true)
+{
+  SetImage(Alloc2D<ushort>(YSize, XSize));
+  SetAlphaMap(0);
   Fill(Color);
+}
+
+bitmap::bitmap(bitmap* MotherBitmap, ushort XPos, ushort YPos, ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndependent(false)
+{
+  SetMotherBitmap(MotherBitmap);
+  SetXPos(XPos);
+  SetYPos(YPos);
 }
 
 bitmap::~bitmap()
 {
-  delete [] Data;
-  delete [] AlphaMap;
+  if(IsIndependent)
+    {
+      delete [] GetImage();
+      delete [] GetAlphaMap();
+    }
 }
 
 void bitmap::Save(outputfile& SaveFile) const
 {
-  SaveFile.Write((char*)Data[0], (XSize * YSize) << 1);
+  if(!IsIndependent)
+    ABORT("Subbitmap save request detected!");
 
-  if(AlphaMap)
+  SaveFile.Write((char*)GetImage()[0], (XSize * YSize) << 1);
+
+  if(GetAlphaMap())
     {
       SaveFile << uchar(1);
-      SaveFile.Write((char*)AlphaMap[0], XSize * YSize);
+      SaveFile.Write((char*)GetAlphaMap()[0], XSize * YSize);
     }
   else
     SaveFile << uchar(0);
@@ -90,15 +116,15 @@ void bitmap::Save(outputfile& SaveFile) const
 
 void bitmap::Load(inputfile& SaveFile)
 {
-  SaveFile.Read((char*)Data[0], (XSize * YSize) << 1);
+  SaveFile.Read((char*)GetImage()[0], (XSize * YSize) << 1);
 
   uchar Alpha;
   SaveFile >> Alpha;
 
   if(Alpha)
     {
-      Alloc2D<uchar>(AlphaMap, XSize, YSize);
-      SaveFile.Read((char*)AlphaMap[0], XSize * YSize);
+      SetAlphaMap(Alloc2D<uchar>(YSize, XSize));
+      SaveFile.Read((char*)GetAlphaMap()[0], XSize * YSize);
     }
 }
 
@@ -126,14 +152,20 @@ void bitmap::Save(std::string FileName) const
   for(long y = YSize - 1; y >= 0; --y)
     for(ushort x = 0; x < XSize; ++x)
       {
-	ushort Pixel = Data[y][x];
+	ushort Pixel = GetPixel(x, y);
 	SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
       }
 }
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 {
-  ulong TrueOffset = ulong(&Data[Y][X]);
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->Fill(GetXPos() + X, GetYPos() + Y, Width, Height, Color);
+      return;
+    }
+
+  ulong TrueOffset = ulong(&GetImage()[Y][X]);
   ulong TrueXMove = (XSize - Width) << 1;
 
   ::Fill(TrueOffset, TrueXMove, Width, Height, Color);
@@ -141,19 +173,31 @@ void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->Blit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      Blit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags);
+      return;
+    }
+
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
   Flags &= 0x7;
 
-  ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
 
   switch(Flags)
     {
     case NONE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 	BlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
 	break;
@@ -161,7 +205,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case MIRROR:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 	BlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
 	break;
@@ -169,7 +213,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case FLIP:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 	BlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
 	break;
@@ -177,7 +221,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case (MIRROR | FLIP):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 	BlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
 	break;
@@ -185,7 +229,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case ROTATE_90:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 	BlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
@@ -194,7 +238,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case (MIRROR | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 	BlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
@@ -203,7 +247,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case (FLIP | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 	BlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
@@ -212,7 +256,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
     case (MIRROR | FLIP | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 	BlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
@@ -223,6 +267,18 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->Blit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Luminance);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      Blit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Luminance);
+      return;
+    }
+
   if(Luminance == 256)
     {
       Blit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height);
@@ -232,8 +288,8 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
+  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
@@ -242,19 +298,31 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->MaskedBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      MaskedBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags, MaskColor);
+      return;
+    }
+
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
   Flags &= 0x7;
 
-  ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
 
   switch(Flags)
     {
     case NONE:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 	MaskedBlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
 	break;
@@ -262,7 +330,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case MIRROR:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 	MaskedBlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
 	break;
@@ -270,7 +338,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case FLIP:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 	MaskedBlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
 	break;
@@ -278,7 +346,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case (MIRROR | FLIP):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 	MaskedBlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
 	break;
@@ -286,7 +354,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case ROTATE_90:
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 	MaskedBlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
@@ -295,7 +363,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case (MIRROR | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 	MaskedBlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
@@ -304,7 +372,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case (FLIP | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 	MaskedBlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
@@ -313,7 +381,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
     case (MIRROR | FLIP | ROTATE_90):
       {
-	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
 	ulong TrueDestXMove = Bitmap->XSize << 1;
 	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 	MaskedBlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
@@ -324,6 +392,18 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance, ushort MaskColor) const
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->MaskedBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      MaskedBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Luminance, MaskColor);
+      return;
+    }
+
   if(Luminance == 256)
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
@@ -333,8 +413,8 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
+  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
@@ -343,6 +423,18 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->AlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Alpha, MaskColor);
+      return;
+    }
+
+  if(!Bitmap->IsIndependent)
+    {
+      AlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Alpha, MaskColor);
+      return;
+    }
+
   if(Alpha == 255)
     {
       MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, uchar(0), MaskColor);
@@ -352,8 +444,8 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   if(!Width || !Height)
     ABORT("Zero-sized bitmap blit attempt detected!");
 
-  ulong TrueSourceOffset = ulong(&Data[SourceY][SourceX]);
-  ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
+  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
@@ -362,13 +454,22 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskColor) const
 {
-  if(!AlphaMap)
+  if(!IsIndependent)
+    ABORT("Illegal alphamapped subbitmap blit request detected!");
+
+  if(!Bitmap->IsIndependent)
+    {
+      AlphaBlit(Bitmap->GetMotherBitmap(), Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, MaskColor);
+      return;
+    }
+
+  if(!GetAlphaMap())
     ABORT("AlphaMap not available!");
 
-  ulong TrueSourceOffset = ulong(Data[0]);
-  ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
+  ulong TrueSourceOffset = ulong(GetImage()[0]);
+  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueDestXMove = (Bitmap->XSize - XSize) << 1;
-  ulong AlphaMapOffset = ulong(AlphaMap[0]);
+  ulong AlphaMapOffset = ulong(GetAlphaMap()[0]);
 
   ushort Width = XSize, Height = YSize;
 
@@ -377,9 +478,15 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskCo
 
 void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
 {
+  if(!IsIndependent)
+    {
+      GetMotherBitmap()->DrawLine(GetXPos() + OrigFromX, GetYPos() + OrigFromY, GetXPos() + OrigToX, GetYPos() + OrigToY, Color, Wide);
+      return;
+    }
+
   ushort ThisXSize = XSize, ThisYSize = YSize;
 
-  ulong Pitch = XSize << 1, Surface = ulong(Data[0]);
+  ulong Pitch = XSize << 1, Surface = ulong(GetImage()[0]);
 
   static vector2d Point[] = {vector2d(0, 0), vector2d(0, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(0, 1)};
 
@@ -396,6 +503,14 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 
 void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawSides, bool DrawDiameters, double Rotation)
 {
+  if(!IsIndependent)
+    {
+      /* Note: this doesn't care about subbitmap borders! */
+
+      GetMotherBitmap()->DrawPolygon(vector2d(GetXPos(), GetYPos()) + Center, Radius, NumberOfSides, Color, DrawSides, DrawDiameters, Rotation);
+      return;
+    }
+
   if(!DrawSides && !DrawDiameters)
     return;
 
@@ -429,48 +544,54 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
 
 void bitmap::CreateAlphaMap(uchar InitialValue)
 {
-  if(AlphaMap)
+  if(!IsIndependent)
+    ABORT("Subbitmap AlphaMap creation request detected!");
+
+  if(GetAlphaMap())
     ABORT("Alpha leak detected!");
 
-  Alloc2D<uchar>(AlphaMap, YSize, XSize, InitialValue);
+  SetAlphaMap(Alloc2D<uchar>(YSize, XSize, InitialValue));
 }
 
 bool bitmap::ChangeAlpha(char Amount)
 {
+  if(!IsIndependent)
+    ABORT("Subbitmap alpha change request detected!");
+
   if(!Amount)
     return false;
 
   bool Changes = false;
 
-  if(!AlphaMap)
+  if(!GetAlphaMap())
     ABORT("No alpha map to fade.");
 
   if(Amount > 0)
     {
       for(ulong c = 0; c < ulong(XSize * YSize); ++c)
-	if(AlphaMap[0][c] < 255 - Amount)
+	if(GetAlphaMap()[0][c] < 255 - Amount)
 	  {
-	    AlphaMap[0][c] += Amount;
+	    GetAlphaMap()[0][c] += Amount;
 	    Changes = true;
 	  }
 	else
-	  if(AlphaMap[0][c] != 255)
+	  if(GetAlphaMap()[0][c] != 255)
 	    {
-	      AlphaMap[0][c] = 255;
+	      GetAlphaMap()[0][c] = 255;
 	      Changes = true;
 	    }
     }
   else
     for(ulong c = 0; c < ulong(XSize * YSize); ++c)
-      if(AlphaMap[0][c] > -Amount)
+      if(GetAlphaMap()[0][c] > -Amount)
 	{
-	  AlphaMap[0][c] += Amount;
+	  GetAlphaMap()[0][c] += Amount;
 	  Changes = true;
 	}
       else
-	if(AlphaMap[0][c])
+	if(GetAlphaMap()[0][c])
 	  {
-	    AlphaMap[0][c] = 0;
+	    GetAlphaMap()[0][c] = 0;
 	    Changes = true;
 	  }
 
@@ -479,13 +600,16 @@ bool bitmap::ChangeAlpha(char Amount)
 
 void bitmap::Outline(ushort Color)
 {
+  if(!IsIndependent)
+    ABORT("Subbitmap outline request detected!");
+
   ulong Buffer;
 
   ushort LastColor, NextColor;
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      Buffer = ulong(&Data[0][x]);
+      Buffer = ulong(&GetImage()[0][x]);
 
       LastColor = *(ushort*)Buffer;
 
@@ -507,7 +631,7 @@ void bitmap::Outline(ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      Buffer = ulong(Data[y]);
+      Buffer = ulong(GetImage()[y]);
 
       LastColor = *(ushort*)Buffer;
 
@@ -530,12 +654,15 @@ void bitmap::Outline(ushort Color)
 
 void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 {
+  if(!IsIndependent)
+    ABORT("Subbitmap outline bitmap creation request detected!");
+
   Bitmap->Fill(0xF81F);
 
   for(ushort x = 0; x < XSize; ++x)
     {
-      ulong SrcBuffer = ulong(&Data[0][x]);
-      ulong DestBuffer = ulong(&Bitmap->Data[0][x]);
+      ulong SrcBuffer = ulong(&GetImage()[0][x]);
+      ulong DestBuffer = ulong(&Bitmap->GetImage()[0][x]);
 
       ushort LastColor = *(ushort*)SrcBuffer;
 
@@ -558,8 +685,8 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 
   for(ushort y = 0; y < YSize; ++y)
     {
-      ulong SrcBuffer = ulong(Data[y]);
-      ulong DestBuffer = ulong(Bitmap->Data[y]);
+      ulong SrcBuffer = ulong(GetImage()[y]);
+      ulong DestBuffer = ulong(Bitmap->GetImage()[y]);
 
       ushort LastSrcColor = *(ushort*)SrcBuffer;
       ushort LastDestColor = *(ushort*)DestBuffer;
@@ -603,3 +730,34 @@ void bitmap::FadeToScreen()
   graphics::BlitDBToScreen();
 }
 
+void bitmap::PutPixel(ushort X, ushort Y, ushort Color)
+{
+  if(IsIndependent)
+    GetImage()[Y][X] = Color;
+  else
+    GetMotherBitmap()->PutPixel(GetXPos() + X, GetYPos() + Y, Color);
+}
+
+ushort bitmap::GetPixel(ushort X, ushort Y) const
+{
+  if(IsIndependent)
+    return GetImage()[Y][X];
+  else
+    return GetMotherBitmap()->GetPixel(GetXPos() + X, GetYPos() + Y);
+}
+
+void bitmap::SetAlpha(ushort X, ushort Y, uchar Alpha)
+{
+  if(IsIndependent)
+    GetAlphaMap()[Y][X] = Alpha;
+  else
+    GetMotherBitmap()->SetAlpha(GetXPos() + X, GetYPos() + Y, Alpha);
+}
+
+uchar bitmap::GetAlpha(ushort X, ushort Y) const
+{
+  if(IsIndependent)
+    return GetAlphaMap()[Y][X];
+  else
+    return GetMotherBitmap()->GetAlpha(GetXPos() + X, GetYPos() + Y);
+}

@@ -5,6 +5,25 @@
 #pragma warning(disable : 4786)
 #endif
 
+#define HELMET	    0
+#define AMULET	    1
+#define CLOAK	    2
+#define BODYARMOR   3
+#define WEAPON	    4
+#define SHIELD	    5
+#define RING	    6
+#define GAUNTLET    7
+#define BELT	    8
+#define BOOT	    9
+#define FOOD	    10
+#define POTION	    11
+#define SCROLL	    12
+#define BOOK	    13
+#define WAND	    14
+#define TOOL	    15
+#define VALUABLE    16
+#define MISC	    17
+
 #include "typedef.h"
 #include "vector2d.h"
 
@@ -116,6 +135,9 @@ class item : public object
   virtual void DonateSlotTo(item*);
   virtual ushort GetOneHandedStrengthPenalty(character*) { return 0; }
   virtual ushort GetOneHandedToHitPenalty(character*) { return 0; }
+  virtual uchar GetCategory() const = 0;
+  static uchar ItemCategories() { return 18; }
+  static std::string ItemCategoryName(uchar);
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
