@@ -244,6 +244,95 @@ Dungeon 1;
 			GenerateTunnel=true;
 		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
+
+
+
 		Square, Pos 31,63;
 		{
 			IsWorldMapEntry=true;

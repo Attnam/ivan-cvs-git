@@ -1486,10 +1486,14 @@ bool character::WhatToEngrave()
 
 void character::MoveRandomly()
 {
-	ushort ToTry = rand() % 8;
+	bool OK = false;
 
-	if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
-		TryMove(GetPos() + game::GetMoveVector(ToTry));
+	for(uchar c = 0; c < 10 && !OK; ++c)
+	{
+		ushort ToTry = rand() % 8;
+		if(!game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
+			OK = TryMove(GetPos() + game::GetMoveVector(ToTry));
+	}
 }
 
 bool character::TestForPickup(item* ToBeTested) const
@@ -1560,6 +1564,7 @@ void character::NeutralAICommand()
 	dynarray<character*> SeenCharacters;
 
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, LOSRange(),
+	//DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), LOSRange(),
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter())
 			SeenCharacters.Add(game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter());
