@@ -340,7 +340,7 @@ void game::DrawPanel()
 
 	character* Player = GetPlayer();
 
-	FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s %s", GetPlayerName().c_str(), Player->CNAME(DEFINITE));
+	FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s the %s %s", GetPlayerName().c_str(), GetVerbalPlayerAlignment().c_str(), Player->CNAME(UNARTICLED));
 
 	FONT->Printf(DOUBLEBUFFER, 16, 534, WHITE, "Strength: %d", Player->GetStrength());
 	FONT->Printf(DOUBLEBUFFER, 16, 544, WHITE, "Endurance: %d", Player->GetEndurance());
@@ -1139,4 +1139,29 @@ uchar game::GetDirectionForVector(vector2d Vector)
 			return c;
 
 	return DIRECTION_COMMAND_KEYS;
+}
+
+
+std::string game::GetVerbalPlayerAlignment()
+{
+	long Sum = 0;
+	for(uchar c = 1; c < game::GetGodNumber(); c++)
+	{
+		if(GetGod(c)->GetRelation() > 0)
+			Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
+	}
+	if(Sum > 2000)
+		return std::string("extremely lawful");
+	if(Sum > 1000)
+		return std::string("lawful");
+	if(Sum > 500)
+		return std::string("mildly lawful");
+	if(Sum > -500)
+		return std::string("neutral");
+	if(Sum > -1000)
+		return std::string("mildly chaotic");
+	if(Sum > -2000)
+		return std::string("chaotic");
+	
+	return std::string("extremely chaotic");
 }

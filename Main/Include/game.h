@@ -157,6 +157,7 @@ public:
 	static uchar GetDirectionForVector(vector2d);
 	static void SetInGetCommand(bool What) { InGetCommand = What; }
 	static bool GetInGetCommand() { return InGetCommand; }
+	static std::string GetVerbalPlayerAlignment();
 private:
 	static std::string Alignment[];
 	static god* God[];
