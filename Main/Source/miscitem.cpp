@@ -229,7 +229,7 @@ void brokenbottle::StepOnEffect(character* Stepper)
   if(Stepper->HasALeg() && !(RAND() % 5))
   {
     if(Stepper->IsPlayer())
-      ADD_MESSAGE("Auch. You step on sharp glass splinters.");
+      ADD_MESSAGE("Ouch. You step on sharp glass splinters.");
     else if(Stepper->CanBeSeenByPlayer())
       ADD_MESSAGE("%s steps on sharp glass splinters.", Stepper->CHAR_NAME(DEFINITE));
 
@@ -563,7 +563,7 @@ void bananapeels::StepOnEffect(character* Stepper)
   if(Stepper->HasALeg() && !(RAND() % 5))
   {
     if(Stepper->IsPlayer())
-      ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHAR_NAME(INDEFINITE));
+      ADD_MESSAGE("Ouch. Your feet slip on %s and you fall down.", CHAR_NAME(INDEFINITE));
     else if(Stepper->CanBeSeenByPlayer())
       ADD_MESSAGE("%s steps on %s and falls down.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
