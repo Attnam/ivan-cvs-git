@@ -1,0 +1,19 @@
+Programmers (in order of actual code completed):
+	Timo Kiviluoto
+	Heikki Sairanen
+	Ilari Kaartinen
+	Perttu Luukko
+
+Graphics (in order of actual graphics completed):
+	Tuukka Virtaperko
+
+Bug hunting (alphabetical order):
+	Ilari Kaartinen
+	Timo Kiviluoto
+	Niko Kosonen
+	Perttu Luukko
+	Vesa Peltonen
+	Heikki Sairanen
+	Renne Sairanen
+	Tuukka Virtaperko
+	
