@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Chests can be offered now
+		
 January 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected an odd bug caused by RNG inlining

@@ -2055,3 +2055,20 @@ bool stone::ShowMaterial() const
   return GetMainMaterial()->GetConfig() != STONE; // gum solution
 }
 
+short itemcontainer::GetOfferValue(char BasicAlignment) const
+{
+  ushort Sum = 0;
+  for(ushort c = 0; c < GetContained()->GetItems(); ++c)
+    {
+      Sum += GetContained()->GetItem(c)->GetOfferValue(BasicAlignment);
+    }
+  return item::GetOfferValue(BasicAlignment) + Sum;
+}
+
+bool itemcontainer::IsDestroyable() const
+{
+  for(ushort c = 0; c < GetContained()->GetItems(); ++c)
+    if(!GetContained()->GetItem(c)->IsDestroyable())
+      return false;
+  return true;
+}

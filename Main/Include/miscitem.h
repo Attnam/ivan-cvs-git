@@ -501,6 +501,8 @@ class ITEM
   virtual void GenerateLeftOvers(character*);
   virtual long GetScore() const;
   virtual bool AllowContentEmitation() const { return false; }
+  virtual bool IsDestroyable() const;
+  virtual short GetOfferValue(char) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
   virtual void AddPostFix(std::string&) const;
