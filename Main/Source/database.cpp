@@ -162,6 +162,12 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATAWITHCOMPLEXDEFAULT(BiteStrength, UnarmedStrength, DataBase->UnarmedStrength / 2);
   ANALYZEDATAWITHCOMPLEXDEFAULT(KickStrength, UnarmedStrength, DataBase->UnarmedStrength * 2);
   ANALYZEDATA(AttackStyle);
+  ANALYZEDATA(CanUseEquipment);
+  ANALYZEDATA(CanKick);
+  ANALYZEDATA(CanTalk);
+  ANALYZEDATA(PermanentStates);
+  ANALYZEDATA(CanBeWished);
+  ANALYZEDATA(Alias);
 }
 
 void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database* DataBase)
@@ -216,6 +222,7 @@ void database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(CanBeGeneratedInContainer);
   ANALYZEDATA(ForcedVisualEffects);
   ANALYZEDATA(Roundness);
+  ANALYZEDATA(GearStates);
 }
 
 void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database* DataBase)

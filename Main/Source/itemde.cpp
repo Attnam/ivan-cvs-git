@@ -464,10 +464,10 @@ bool brokenbottle::GetStepOnEffect(character* Stepper)
       else
 	{
 	  if(Stepper->IsPlayer())
-	    ADD_MESSAGE("Some glass splinters are shatteRED under your feet.");
+	    ADD_MESSAGE("Some glass splinters are shattered under your feet.");
 	  else
 	    if(Stepper->GetSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("Some glass splinters are shatteRED under %s's feet.", Stepper->CHARNAME(DEFINITE));
+	      ADD_MESSAGE("Some glass splinters are shattered under %s's feet.", Stepper->CHARNAME(DEFINITE));
 	}
 
       //Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
@@ -1175,12 +1175,12 @@ ushort leg::GetTotalResistance(uchar Type) const
 void bodypart::LoadGearSlot(inputfile& SaveFile, gearslot& GearSlot)
 {
   SaveFile >> GearSlot;
-  GearSlot.SetBodyPart(this);
 
   if(*GearSlot)
     {
       EditVolume(GearSlot->GetVolume());
       EditWeight(GearSlot->GetWeight());
+      EditCarriedWeight(GearSlot->GetWeight());
     }
 }
 
@@ -1353,7 +1353,7 @@ bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSq
   character* Dude = LSquare->GetCharacter();
   if(Dude)
     {
-      Dude->Haste(500 + RAND() % 1000);
+      Dude->EnterTemporaryState(HASTE, 500 + RAND() % 1000);
       return true;
     }
   return false;
@@ -1379,7 +1379,7 @@ bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSqu
   character* Dude = LSquare->GetCharacter();
   if(Dude)
     {
-      Dude->Slow(500 + RAND() % 1000);
+      Dude->EnterTemporaryState(SLOW, 500 + RAND() % 1000);
       return true;
     }
   return false;
@@ -1420,23 +1420,6 @@ bool key::Apply(character* User)
     }
 
   return true;
-}
-
-void arm::SignalGearUpdate()
-{
-  if(!GetWielded() && GetCurrentSingleWeaponSkill())
-    {
-      if(!GetCurrentSingleWeaponSkill()->GetHits())
-	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-	  if(*i == GetCurrentSingleWeaponSkill())
-	    {
-	      delete *i;
-	      SingleWeaponSkill.erase(i);
-	      break;
-	    }
-
-      SetCurrentSingleWeaponSkill(0);
-    }
 }
 
 void arm::SetWielded(item* Item)
@@ -1913,9 +1896,9 @@ void corpse::AddConsumeEndMessage(character* Eater) const
   GetDeceased()->GetTorso()->AddConsumeEndMessage(Eater);
 }
 
-void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
+bool arm::AddCurrentSingleWeaponSkillInfo(felist& List) const
 {
-  if(CurrentSingleWeaponSkill)
+  if(CurrentSingleWeaponSkill && CurrentSingleWeaponSkill->GetHits())
     {
       List.AddEntry("", RED);
 
@@ -1931,7 +1914,11 @@ void arm::AddCurrentSingleWeaponSkillInfo(felist& List)
 	List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
       else
 	List.AddEntry(Buffer + '-', RED);
+
+      return true;
     }
+  else
+    return false;
 }
 
 head::~head()
@@ -2305,24 +2292,21 @@ void bodypart::VirtualConstructor(bool Load)
 void head::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  HelmetSlot.Init(this);
-  AmuletSlot.Init(this);
+  HelmetSlot.Init(this, HELMETINDEX);
+  AmuletSlot.Init(this, AMULETINDEX);
 }
 
 void humanoidtorso::VirtualConstructor(bool Load)
 {
   torso::VirtualConstructor(Load);
-  BodyArmorSlot.Init(this);
-  CloakSlot.Init(this);
-  BeltSlot.Init(this);
+  BodyArmorSlot.Init(this, BODYARMORINDEX);
+  CloakSlot.Init(this, CLOAKINDEX);
+  BeltSlot.Init(this, BELTINDEX);
 }
 
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  WieldedSlot.Init(this);
-  GauntletSlot.Init(this);
-  RingSlot.Init(this);
   SetCurrentSingleWeaponSkill(0);
   SetHasBe(true);
 
@@ -2330,13 +2314,40 @@ void arm::VirtualConstructor(bool Load)
     StrengthExperience = DexterityExperience = 0;
 }
 
+void rightarm::VirtualConstructor(bool Load)
+{
+  arm::VirtualConstructor(Load);
+  WieldedSlot.Init(this, RIGHTWIELDEDINDEX);
+  GauntletSlot.Init(this, RIGHTGAUNTLETINDEX);
+  RingSlot.Init(this, RIGHTRINGINDEX);
+}
+
+void leftarm::VirtualConstructor(bool Load)
+{
+  arm::VirtualConstructor(Load);
+  WieldedSlot.Init(this, LEFTWIELDEDINDEX);
+  GauntletSlot.Init(this, LEFTGAUNTLETINDEX);
+  RingSlot.Init(this, LEFTRINGINDEX);
+}
+
 void leg::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  BootSlot.Init(this);
 
   if(!Load)
     StrengthExperience = AgilityExperience = 0;
+}
+
+void rightleg::VirtualConstructor(bool Load)
+{
+  leg::VirtualConstructor(Load);
+  BootSlot.Init(this, RIGHTBOOTINDEX);
+}
+
+void leftleg::VirtualConstructor(bool Load)
+{
+  leg::VirtualConstructor(Load);
+  BootSlot.Init(this, LEFTBOOTINDEX);
 }
 
 void wandoflocking::VirtualConstructor(bool Load)
@@ -2924,7 +2935,7 @@ void beartrap::Save(outputfile& SaveFile) const
 void beartrap::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  IsActivated = RAND() % 2;
+  IsActivated = RAND() % 2 ? true : false;
 }
 
 bool beartrap::GetStepOnEffect(character* Stepper)
@@ -3061,7 +3072,38 @@ void wandofdoorcreation::VirtualConstructor(bool Load)
     SetCharges(2 + RAND() % 5);
 }
 
+void bodypart::SignalEquipmentAdd(gearslot* Slot)
+{
+  if(GetMaster())
+    GetMaster()->SignalEquipmentAdd(Slot->GetEquipmentIndex());
+}
+
+void bodypart::SignalEquipmentRemoval(gearslot* Slot)
+{
+  if(GetMaster())
+    GetMaster()->SignalEquipmentRemoval(Slot->GetEquipmentIndex());
+}
+
+void arm::SignalEquipmentRemoval(gearslot* Slot)
+{
+  bodypart::SignalEquipmentRemoval(Slot);
+
+  if(Slot == &WieldedSlot && GetCurrentSingleWeaponSkill())
+    {
+      if(!GetCurrentSingleWeaponSkill()->GetHits())
+	for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
+	  if(*i == GetCurrentSingleWeaponSkill())
+	    {
+	      delete *i;
+	      SingleWeaponSkill.erase(i);
+	      break;
+	    }
+
+      SetCurrentSingleWeaponSkill(0);
+    }
+}
+
 bool beartrap::IsPickable(character* Picker) const
 {
-  return Picker->GetStuckTo() != this;
+  return Picker->GetStuckTo() != (item*)this;
 }

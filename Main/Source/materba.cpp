@@ -46,6 +46,7 @@ void material::Effect(character* Eater, long Amount)
     case EPEPSI: Eater->ReceivePepsi(Amount); break;
     case EKOBOLDFLESH: Eater->ReceiveKoboldFlesh(Amount); break;
     case EHEAL: Eater->ReceiveHeal(Amount); break;
+    case ELYCANTHROPY: Eater->EnterTemporaryState(LYCANTHROPY, Amount / 10); break;
     }
 }
 

@@ -1,7 +1,7 @@
 #include <queue>
 #include <cmath>
 
-#include "charba.h"
+#include "charde.h"
 #include "stack.h"
 #include "error.h"
 #include "message.h"
@@ -27,11 +27,15 @@
 #include "proto.h"
 #include "save.h"
 
-void (character::*character::StateHandler[STATES])() = { &character::PolymorphHandler, &character::HasteHandler, &character::SlowHandler };
+void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage };
+void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage };
+void (character::*character::EnterTemporaryStateHandler[STATES])(ushort) = { 0, &character::EnterTemporaryHaste, &character::EnterTemporarySlow, 0, 0, 0 };
+void (character::*character::EndTemporaryStateHandler[STATES])() = { &character::EndTemporaryPolymorph, 0, 0, 0, 0, 0 };
+void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler };
 
-std::string character::StateDescription[STATES] = { "polymorphed", "hasted", "slowed" };
+std::string character::StateDescription[STATES] = { "polymorphed", "hasted", "slowed", "polycontrol", "life saved", "lycanthropy" };
 
-character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0)
+character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), PermanentState(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -54,6 +58,14 @@ character::~character()
 
   delete [] BodyPartSlot;
   delete [] OriginalBodyPartID;
+
+  if(PolymorphBackup)
+    PolymorphBackup->SendToHell();
+
+  for(ushort c = 0; CategoryWeaponSkill[c]; ++c)
+    delete CategoryWeaponSkill[c];
+
+  delete [] CategoryWeaponSkill;
 }
 
 void character::Hunger(ushort Turns) 
@@ -87,8 +99,8 @@ void character::Hunger(ushort Turns)
 
 uchar character::TakeHit(character* Enemy, item* Weapon, float AttackStrength, float ToHitValue, short Success, uchar Type, bool Critical)
 {
-  DeActivateVoluntaryStates(Enemy->GetName(DEFINITE) + " seems to be hostile.");
-  uchar Dir = game::GetDirectionForVector(GetPos() - Enemy->GetPos());
+  DeActivateVoluntaryAction(Enemy->GetName(DEFINITE) + " seems to be hostile.");
+  uchar Dir = Type == BITEATTACK ? YOURSELF : game::GetDirectionForVector(GetPos() - Enemy->GetPos());
   float DodgeValue = CalculateDodgeValue();
 
   if(Critical)
@@ -203,8 +215,6 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
 
 void character::Be()
 {
-  //if(IsPlayer())
-  {
   if(game::IsLoading())
     {
       if(!IsPlayer())
@@ -217,19 +227,23 @@ void character::Be()
       switch(GetBurdenState())
 	{
 	case UNBURDENED:
-	  EditAP(long((100 + (GetAttribute(AGILITY) >> 1)) * GetAPStateMultiplier()));
+	  EditAP(CalculateStateAPGain(100 + (GetAttribute(AGILITY) >> 1)));
 	  break;
 	case BURDENED:
-	  EditAP(long((75 + (GetAttribute(AGILITY) >> 1) - (GetAttribute(AGILITY) >> 2)) * GetAPStateMultiplier()));
+	  EditAP(CalculateStateAPGain(75 + (GetAttribute(AGILITY) >> 1) - (GetAttribute(AGILITY) >> 2)));
 	  break;
 	case STRESSED:
 	case OVERLOADED:
-	  EditAP(long((50 + (GetAttribute(AGILITY) >> 2)) * GetAPStateMultiplier()));
+	  EditAP(CalculateStateAPGain(50 + (GetAttribute(AGILITY) >> 2)));
 	  break;
 	}
 
-      for(ushort c = 0; c < STATES; ++c)
-	(this->*StateHandler[c])();
+      ushort c;
+
+      HandleStates();
+
+      if(!IsEnabled())
+	return;
 
       if(GetAction())
 	GetAction()->Handle();
@@ -250,6 +264,19 @@ void character::Be()
 
       if(GetAP() >= 0)
 	ActionAutoTermination();
+
+      for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+	if(GetCategoryWeaponSkill(c)->Turn(1) && IsPlayer())
+	  GetCategoryWeaponSkill(c)->AddLevelDownMessage();
+
+      //CharacterSpeciality();
+      Regenerate();
+
+      if(IsPlayer())
+	{
+	  if(!GetAction() || GetAction()->AllowFoodConsumption())
+	    Hunger();
+	}
     }
 
   if(GetAP() >= 0)
@@ -284,16 +311,6 @@ void character::Be()
 
       EditAP(-1000);
     }
-
-  CharacterSpeciality();
-  Regenerate();
-
-  if(IsPlayer())
-    {
-      if(!GetAction() || GetAction()->AllowFoodConsumption())
-	Hunger();
-    }
-  }
 }
 
 bool character::GoUp()
@@ -453,14 +470,14 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
       if(!TeleportMove)
 	{
-	  EditAP(-GetSquareUnder()->GetEntryAPRequirement() + 1000);
+	  EditAP(-CalculateMoveAPRequirement(GetSquareUnder()->GetEntryAPRequirement()) + 1000);
 	  EditNP(-10);
 	  EditExperience(AGILITY, 5);
 	}
     }
   else
     if(IsPlayer())
-      ADD_MESSAGE("You crawl forward, but your load is too heavy.");
+      ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
 }
 
 void character::DrawToTileBuffer(bool Animate) const
@@ -788,30 +805,21 @@ void character::Die(bool ForceMsg)
 	      return;
 	    }
 	}
-      item* LifeSaver = GetLifeSaver();
-      if(LifeSaver)
-	{
-	  if(IsPlayer()) ADD_MESSAGE("But wait! %s glows red, disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(DEFINITE));
-	  ADD_MESSAGE("[press a key]");  
-	  game::DrawEverything();
-	  GETKEY();
-	  LifeSaver->RemoveFromSlot();
-	  LifeSaver->SendToHell();
-	  RestoreBodyParts();
-	  RestoreHP();
-	  SetNP(10000);
-	  GetSquareUnder()->SendNewDrawRequest();
-	  return;
-	}	  
-      
-      game::RemoveSaves();
     }
   else
-    if(GetLSquareUnder()->CanBeSeen())
+    if(GetSquareUnder()->CanBeSeen())
       ADD_MESSAGE(GetDeathMessage().c_str());
-    else
-      if(ForceMsg)
-	ADD_MESSAGE("You sense the death of something.");
+    else if(ForceMsg)
+      ADD_MESSAGE("You sense the death of something.");
+
+  if(StateIsActivated(LIFE_SAVED))
+    {
+      SaveLife();
+      return;
+    }
+
+  if(IsPlayer())
+    game::RemoveSaves();
 
   if(HomeRoom && GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetMaster() == this)
     GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(0);
@@ -991,6 +999,12 @@ void character::BeTalkedTo(character*)
 
 bool character::Talk()
 {
+  if(!CanTalk())
+    {
+      ADD_MESSAGE("This race does not know the art of talking.");
+      return false;
+    }
+
   character* ToTalk = 0;
   ushort Characters = 0;
 
@@ -1256,11 +1270,11 @@ uchar character::GetBurdenState(ulong Mass) const
     SumOfMasses = GetWeight();
   else
     SumOfMasses = Mass;
-  if(SumOfMasses >= ulong(20000 * GetCarryingStrength()))
+  if(SumOfMasses >= ulong(7500 * GetCarryingStrength()))
     return OVERLOADED;
-  if(SumOfMasses >= ulong(15000 * GetCarryingStrength()))
+  if(SumOfMasses >= ulong(5000 * GetCarryingStrength()))
     return STRESSED;
-  if(SumOfMasses >= ulong(10000 * GetCarryingStrength()))
+  if(SumOfMasses >= ulong(2500 * GetCarryingStrength()))
     return BURDENED;
   return UNBURDENED;
 }
@@ -1336,7 +1350,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << State << Money << HomeRoom << WayPoint << Config;
+  SaveFile << TemporaryState << PermanentState << Money << HomeRoom << WayPoint << Config;
   SaveFile << HasBe();
 
   for(c = 0; c < BodyParts(); ++c)
@@ -1351,7 +1365,7 @@ void character::Save(outputfile& SaveFile) const
   SaveFile << Action;
 
   for(c = 0; c < STATES; ++c)
-    SaveFile << StateCounter[c];
+    SaveFile << TemporaryStateCounter[c];
 
   if(GetTeam())
     {
@@ -1366,7 +1380,11 @@ void character::Save(outputfile& SaveFile) const
   else
     SaveFile << bool(false);
 
-  SaveFile << AssignedName;
+  SaveFile << AssignedName << PolymorphBackup;
+
+  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+    SaveFile << GetCategoryWeaponSkill(c);
+
   SaveFile << StuckTo << StuckToBodyPart;
 }
 
@@ -1381,7 +1399,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> State >> Money >> HomeRoom >> WayPoint >> Config;
+  SaveFile >> TemporaryState >> PermanentState >> Money >> HomeRoom >> WayPoint >> Config;
   SetHasBe(ReadType<bool>(SaveFile));
 
   for(c = 0; c < BodyParts(); ++c)
@@ -1391,7 +1409,7 @@ void character::Load(inputfile& SaveFile)
       if(*BodyPartSlot[c])
 	{
 	  EditVolume(BodyPartSlot[c]->GetVolume());
-	  EditWeight(BodyPartSlot[c]->GetWeight());
+	  EditWeight(BodyPartSlot[c]->GetCarriedWeight());
 	}
     }
 
@@ -1409,7 +1427,7 @@ void character::Load(inputfile& SaveFile)
     }
 
   for(c = 0; c < STATES; ++c)
-    SaveFile >> StateCounter[c];
+    SaveFile >> TemporaryStateCounter[c];
 
   if(ReadType<bool>(SaveFile))
     SetTeam(game::GetTeam(ReadType<ushort>(SaveFile)));
@@ -1417,7 +1435,10 @@ void character::Load(inputfile& SaveFile)
   if(ReadType<bool>(SaveFile))
     GetTeam()->SetLeader(this);
 
-  SaveFile >> AssignedName;
+  SaveFile >> AssignedName >> PolymorphBackup;
+
+  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+    SaveFile >> GetCategoryWeaponSkill(c);
 
   SaveFile >> StuckTo >> StuckToBodyPart;
   InstallDataBase();
@@ -1772,12 +1793,17 @@ bool character::Offer()
 
 long character::GetStatScore() const
 {
-  return (GetAttribute(ARMSTRENGTH) + GetAttribute(LEGSTRENGTH) + GetAttribute(DEXTERITY) + GetAttribute(AGILITY) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 40;
+  long SkillScore = 0;
+
+  for(ushort c = 0; c < AllowedWeaponSkillCategories(); ++c)
+    SkillScore += GetCategoryWeaponSkill(c)->GetHits();
+
+  return (SkillScore >> 2) + (GetAttribute(ARMSTRENGTH) + GetAttribute(LEGSTRENGTH) + GetAttribute(DEXTERITY) + GetAttribute(AGILITY) + GetAttribute(ENDURANCE) + GetAttribute(PERCEPTION) + GetAttribute(INTELLIGENCE) + GetAttribute(WISDOM) + GetAttribute(CHARISMA) + GetAttribute(MANA)) * 40;
 }
 
 long character::GetScore() const
 {
-  return (game::GetPlayerBackup() ? game::GetPlayerBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
+  return (GetPolymorphBackup() ? GetPolymorphBackup()->GetStatScore() : GetStatScore()) + GetMoney() / 5 + Stack->Score() + game::GodScore();
 }
 
 void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
@@ -1899,10 +1925,10 @@ void character::HasBeenHitByItem(character* Thrower, item* Thingy, float Speed)
 
 bool character::DodgesFlyingItem(item*, float Speed)
 {			// Formula requires a little bit of tweaking...
-  if(!(RAND() % 20))
+  if(!(RAND() % 10))
     return RAND() % 2 ? true : false;
 
-  if(RAND() % ulong(sqrt(Speed) * GetSize() / GetAttribute(AGILITY) * 10 + 1) > 40)
+  if(!GetAttribute(AGILITY) || RAND() % ulong(sqrt(Speed) * GetSize() / GetAttribute(AGILITY) * 10 + 1) > 40)
     return false;
   else
     return true;
@@ -2027,7 +2053,7 @@ bool character::Zap()
 
 bool character::Polymorph(character* NewForm, ushort Counter)
 {
-  if(!IsPolymorphable())
+  if(!IsPolymorphable() || (!IsPlayer() && game::IsInWilderness()))
     {
       delete NewForm;
       return false;
@@ -2036,32 +2062,31 @@ bool character::Polymorph(character* NewForm, ushort Counter)
   if(GetAction())
     GetAction()->Terminate(false);
 
+  NewForm->SetAssignedName("");
+
+  if(IsPlayer())
+    ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHARNAME(INDEFINITE));
+  else if(GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s glows in a crimson light and %s transform into %s!", CHARNAME(DEFINITE), PersonalPronoun().c_str(), NewForm->CHARNAME(INDEFINITE));
+
   GetSquareUnder()->RemoveCharacter();
   GetSquareUnder()->AddCharacter(NewForm);
   SetSquareUnder(0);
+  NewForm->SetAssignedName(GetAssignedName());
+  NewForm->ActivateTemporaryState(POLYMORPHED);
+  NewForm->SetTemporaryStateCounter(POLYMORPHED, Counter);
 
-  if(IsPlayer())
+  if(TemporaryStateIsActivated(POLYMORPHED))
     {
-      ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CHARNAME(INDEFINITE));
-      game::SetPlayer(NewForm);
-      NewForm->SetAssignedName(GetAssignedName());
-      NewForm->ActivateState(POLYMORPHED);
-      NewForm->SetStateCounter(POLYMORPHED, Counter);
-      game::SendLOSUpdateRequest();
-      game::GetCurrentArea()->UpdateLOS();
-
-      if(StateIsActivated(POLYMORPHED))
-	{
-	  SendToHell();
-	}
-      else
-	{
-	  game::SetPlayerBackup(this);
-	  SetHasBe(false);
-	}
+      NewForm->SetPolymorphBackup(GetPolymorphBackup());
+      SetPolymorphBackup(0);
+      SendToHell();
     }
   else
-    SendToHell();
+    {
+      NewForm->SetPolymorphBackup(this);
+      SetHasBe(false);
+    }
 
   while(GetStack()->GetItems())
     GetStack()->MoveItem(GetStack()->GetBottomSlot(), NewForm->GetStack());
@@ -2074,7 +2099,7 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 
       if(Item)
 	{
-	  if(NewForm->CanUseEquipment(c))
+	  if(NewForm->CanUseEquipment() && NewForm->CanUseEquipment(c))
 	    {
 	      Item->RemoveFromSlot();
 	      NewForm->SetEquipment(c, Item);
@@ -2088,6 +2113,12 @@ bool character::Polymorph(character* NewForm, ushort Counter)
 
   if(GetTeam()->GetLeader() == this)
     GetTeam()->SetLeader(NewForm);
+
+  if(IsPlayer())
+    {
+      game::SetPlayer(NewForm);
+      game::SendLOSUpdateRequest();
+    }
 
   return true;
 }
@@ -2103,7 +2134,7 @@ void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue
     {
     case HASHIT:
     case HASBLOCKED:
-      if(KickStrength * 2 >= RAND() % GetWeight())
+      if(CheckBalance(KickStrength))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("The kick throws you off balance.");
@@ -2114,6 +2145,11 @@ void character::BeKicked(character* Kicker, float KickStrength, float ToHitValue
 	    FallTo(Kicker, (GetPos() << 1) - Kicker->GetPos());
 	}
     }
+}
+
+bool character::CheckBalance(float KickStrength)
+{
+  return KickStrength / 2000 >= RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -2159,11 +2195,11 @@ void character::StandIdleAI()
     return;
 }
 
-bool character::ShowWeaponSkills()
+/*bool character::ShowWeaponSkills()
 {
   ADD_MESSAGE("This race isn't capable of developing weapon skill experience!");
   return false;
-}
+}*/
 
 void character::Faint()
 {
@@ -2178,71 +2214,7 @@ void character::Faint()
   SetAction(Faint);
 }
 
-void character::PolymorphHandler()
-{
-  if(StateIsActivated(POLYMORPHED))
-    {
-      if(!GetStateCounter(POLYMORPHED))
-	{
-	  ADD_MESSAGE("You return to your true form.");
-	  EndPolymorph();
-	}
-
-      EditStateCounter(POLYMORPHED, -1);
-    }
-}
-
-void character::EndPolymorph()
-{
-  if(StateIsActivated(POLYMORPHED))
-    {
-      if(GetAction())
-	GetAction()->Terminate(false);
-
-      SendToHell();
-      GetSquareUnder()->RemoveCharacter();
-      character* Player = game::GetPlayerBackup();
-      GetSquareUnder()->AddCharacter(Player);
-      Player->SetHasBe(true);
-      SetSquareUnder(0);
-
-      while(GetStack()->GetItems())
-	GetStack()->MoveItem(GetStack()->GetBottomSlot(), Player->GetStack());
-
-      SetSquareUnder(Player->GetSquareUnder()); // might be used afterwards
-
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
-	{
-	  item* Item = GetEquipment(c);
-
-	  if(Item)
-	    {
-	      if(Player->CanUseEquipment(c))
-		{
-		  Item->RemoveFromSlot();
-		  Player->SetEquipment(c, Item);
-		}
-	      else
-		Item->MoveTo(Player->GetStack());
-	    }
-	}
-
-      Player->SetMoney(GetMoney());
-      game::SetPlayer(Player);
-      game::SetPlayerBackup(0);
-      Player->ChangeTeam(GetTeam());
-
-      if(GetTeam()->GetLeader() == this)
-	GetTeam()->SetLeader(Player);
-
-      Player->TestWalkability();
-
-      game::SendLOSUpdateRequest();
-      game::GetCurrentArea()->UpdateLOS();
-    }
-}
-
-void character::DeActivateVoluntaryStates(const std::string& Reason)
+void character::DeActivateVoluntaryAction(const std::string& Reason)
 {
   if(GetAction() && GetAction()->IsVoluntary())
     {
@@ -2621,12 +2593,12 @@ void character::SetNP(long What)
 	{
 	  game::Beep();
 	  ADD_MESSAGE("You are getting very hungry.");
-	  DeActivateVoluntaryStates();
+	  DeActivateVoluntaryAction();
 	}
       else if(GetHungerState() == HUNGRY && OldGetHungerState != HUNGRY && OldGetHungerState != VERYHUNGRY)
 	{
 	  ADD_MESSAGE("You are getting hungry.");
-	  DeActivateVoluntaryStates();
+	  DeActivateVoluntaryAction();
 	}
     }
 }
@@ -3326,117 +3298,15 @@ std::string character::GetName(uchar Case) const
     return id::GetName(Case);
 }
 
-void character::Haste(ushort Counter)
+/*float character::GetAPStateMultiplier() const
 {
   if(StateIsActivated(HASTE))
-    return;
-
-  if(StateIsActivated(SLOW))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Time seems to go by at the normal rate now.");
-      else
-	ADD_MESSAGE("%s slows down to the normal pace.", CHARNAME(DEFINITE));
-
-      EndSlow();
-    }   
+    return 2.0f;
+  else if(StateIsActivated(SLOW))
+    return 0.5f;
   else
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Time slows down to a crawl.");
-      else
-	if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s looks faster!", CHARNAME(DEFINITE));
-
-      ActivateState(HASTE);
-      SetStateCounter(HASTE, Counter);
-    }
-}
-
-void character::HasteHandler()
-{
-  if(StateIsActivated(HASTE))
-    {
-      if(!GetStateCounter(HASTE))
-      {
-	if(IsPlayer())
-	  ADD_MESSAGE("Time seems to go by at the normal rate now.");
-	else if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
-
-	EndHaste();
-      }
-
-      EditStateCounter(HASTE, -1);
-    }
-}
-
-void character::EndHaste()
-{
-  if(StateIsActivated(HASTE))
-    DeActivateState(HASTE);
-}
-
-void character::Slow(ushort Counter)
-{
-  if(StateIsActivated(SLOW))
-    return;
-
-  if(StateIsActivated(HASTE))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Time seems to go by at the normal rate now.");
-      else
-	ADD_MESSAGE("%s slows down to the normal pace.", CHARNAME(DEFINITE));
-
-      EndHaste();
-    }
-  else
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Everything seems to move much faster now.");
-      else
-	if(GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s looks slower!", CHARNAME(DEFINITE));
-
-      ActivateState(SLOW);
-      SetStateCounter(SLOW, Counter);
-    }
-}
-
-void character::SlowHandler()
-{
-  if(StateIsActivated(SLOW))
-    {
-      if(!GetStateCounter(SLOW))
-	{
-	  if(IsPlayer())
-	    ADD_MESSAGE("Time seems to go by at the normal rate now.");
-	  else
-	    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
-
-	  EndHaste();
-	}
-
-      EditStateCounter(SLOW, -1);
-    }
-}
-
-void character::EndSlow()
-{
-  if(StateIsActivated(SLOW))
-    DeActivateState(SLOW);
-}
-
-float character::GetAPStateMultiplier() const
-{
-  if(StateIsActivated(HASTE))
-    return 2;
-  if(StateIsActivated(SLOW))
-    return 0.5;
-  
-  return 1;
-}
+    return 1.0f;
+}*/
 
 uchar character::GetHungerState() const
 {
@@ -3454,8 +3324,11 @@ uchar character::GetHungerState() const
 
 bool character::EqupmentScreen()
 {
-  if(!CheckWearEquipment())
-    return false;
+  if(!CanUseEquipment())
+    {
+      ADD_MESSAGE("You cannot use equipment.");
+      return false;
+    }
 
   ushort Chosen = 0;
   bool EquipmentChanged = false;
@@ -3528,7 +3401,7 @@ bodypart* character::GetBodyPart(ushort Index) const
 void character::SetBodyPart(ushort Index, bodypart* What)
 {
   BodyPartSlot[Index].PutInItem(What);
-  SetOriginalBodyPartID(Index, What->GetID());
+  SetOriginalBodyPartID(Index, What ? What->GetID() : 0);
 }
 
 characterslot* character::GetBodyPartSlot(ushort Index) const
@@ -3541,40 +3414,39 @@ bool character::CanEat(material* Material) const
   return GetEatFlags() & Material->GetConsumeType() ? true : false;
 }
 
-void character::SetStateCounter(uchar State, ushort What)
+void character::SetTemporaryStateCounter(uchar State, ushort What)
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & State)
-      StateCounter[c] = What;
+    if((1 << c) & TemporaryState)
+      TemporaryStateCounter[c] = What;
 }
 
-void character::EditStateCounter(uchar State, short What)
+void character::EditTemporaryStateCounter(uchar State, short What)
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & State)
-      StateCounter[c] += What;
+    if((1 << c) & TemporaryState)
+      TemporaryStateCounter[c] += What;
 }
 
-ushort character::GetStateCounter(uchar State) const
+ushort character::GetTemporaryStateCounter(uchar State) const
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & State)
-      return StateCounter[c];
+    if((1 << c) & TemporaryState)
+      return TemporaryStateCounter[c];
 
-  ABORT("Illegal GetStateCounter request!");
+  ABORT("Illegal GetTemporaryStateCounter request!");
   return 0;
 }
 
 bool character::CheckKick() const
 {
-  ADD_MESSAGE("This monster type can not kick.");
-  return false;
-}
-
-bool character::CheckWearEquipment() const
-{
-  ADD_MESSAGE("This monster type can not use equipment.");
-  return false;
+  if(!CanKick())
+    {
+      ADD_MESSAGE("This race can't kick.");
+      return false;
+    }
+  else
+    return true;
 }
 
 ushort character::GetResistance(uchar Type) const
@@ -3890,7 +3762,7 @@ character* characterprototype::CloneAndLoad(inputfile& SaveFile) const
   return Char;
 }
 
-item* character::GetLifeSaver() const
+/*item* character::GetLifeSaver() const
 {
   for(ushort c = 0; c < EquipmentSlots(); ++c)
     {
@@ -3900,15 +3772,23 @@ item* character::GetLifeSaver() const
 	return Item;
     }
   return 0;
-}
+}*/
 
 void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
 {
   BodyPartSlot = new characterslot[BodyParts()];
   OriginalBodyPartID = new ulong[BodyParts()];
+  CategoryWeaponSkill = new gweaponskill*[AllowedWeaponSkillCategories() + 1];
 
-  for(ushort c = 0; c < BodyParts(); ++c)
+  ushort c;
+
+  for(c = 0; c < BodyParts(); ++c)
     GetBodyPartSlot(c)->SetMaster(this);
+
+  for(c = 0; c < AllowedWeaponSkillCategories(); ++c)
+    CategoryWeaponSkill[c] = new gweaponskill(c);
+
+  CategoryWeaponSkill[AllowedWeaponSkillCategories()] = 0;
 
   if(!Load)
     {
@@ -3917,6 +3797,7 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
       LoadDataBaseStats();
       CreateBodyParts();
       InitSpecialAttributes();
+      PermanentState |= GetPermanentStates();
     }
 
   VirtualConstructor(Load);
@@ -4301,24 +4182,24 @@ void character::DrawPanel() const
     }
 
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & State)
+    if((1 << c) & TemporaryState || (1 << c) & PermanentState)
       {
 	std::string Desc = StateDescription[c];
 	Desc[0] &= ~0x20;
-	FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", Desc.c_str());
+	FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & PermanentState ? BLUE : WHITE, "%s", Desc.c_str());
       }
 
   if(GetHungerState() == VERYHUNGRY)
-    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Fainting");
+    FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Starving");
   else
     if(GetHungerState() == HUNGRY)
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Hungry");
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Hungry");
   else 
     if(GetHungerState() == SATIATED)
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Satiated");
   else
     if(GetHungerState() == BLOATED)
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Bloated");
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Bloated");
 
   switch(GetBurdenState())
     {
@@ -4329,7 +4210,7 @@ void character::DrawPanel() const
       FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Stressed");
       break;
     case BURDENED:
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Burdened!");
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Burdened");
     case UNBURDENED:
       break;
     }
@@ -4417,4 +4298,388 @@ ushort character::CheckForBlockWithItem(character* Enemy, item*, item* Blocker, 
       }
 
   return Damage;
+}
+
+bool character::ShowWeaponSkills()
+{
+  felist List("Your experience in weapon categories", WHITE, 0);
+
+  List.AddDescription("");
+  List.AddDescription("Category name                 Level     Points    To next level");
+
+  bool Something = false;
+
+  for(ushort c = 0; c < AllowedWeaponSkillCategories(); ++c)
+    if(GetCategoryWeaponSkill(c)->GetHits())
+      {
+	std::string Buffer;
+
+	Buffer += GetCategoryWeaponSkill(c)->Name();
+	Buffer.resize(30, ' ');
+
+	Buffer += GetCategoryWeaponSkill(c)->GetLevel();
+	Buffer.resize(40, ' ');
+
+	Buffer += GetCategoryWeaponSkill(c)->GetHits();
+	Buffer.resize(50, ' ');
+
+	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
+	  List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), LIGHTGRAY);
+	else
+	  List.AddEntry(Buffer + '-', LIGHTGRAY);
+
+	Something = true;
+      }
+
+  if(AddSpecialSkillInfo(List))
+    Something = true;
+
+  if(Something)
+    List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
+  else
+    ADD_MESSAGE("You are not experienced in any weapon skill yet!");
+
+  return false;
+}
+
+long character::CalculateStateAPGain(long BaseAPGain) const
+{
+  if(StateIsActivated(HASTE))
+    BaseAPGain <<= 1;
+
+  if(StateIsActivated(SLOW))
+    BaseAPGain >>= 1;
+
+  return BaseAPGain;
+}
+
+void character::SignalEquipmentAdd(ushort EquipmentIndex)
+{
+  if(EquipmentHasNoPairProblems(EquipmentIndex))
+    PermanentState |= GetEquipment(EquipmentIndex)->GetGearStates();
+}
+
+void character::SignalEquipmentRemoval(ushort)
+{
+  CalculateEquipmentStates();
+}
+
+void character::CalculateEquipmentStates()
+{
+  PermanentState = GetPermanentStates();
+
+  for(ushort c = 0; c < EquipmentSlots(); ++c)
+    if(GetEquipment(c) && EquipmentHasNoPairProblems(c))
+      PermanentState |= GetEquipment(c)->GetGearStates();
+}
+
+void character::EnterTemporaryState(ushort State, ushort Counter)
+{
+  ushort Index;
+
+  for(Index = 0; Index < STATES; ++Index)
+    if(1 << Index == State)
+      break;
+
+  if(EnterTemporaryStateHandler[Index])
+    {
+      (this->*EnterTemporaryStateHandler[Index])(Counter);
+      return;
+    }
+
+  if(TemporaryStateIsActivated(State))
+    EditTemporaryStateCounter(State, Counter);
+  else
+    {
+      if(!PermanentStateIsActivated(State))
+	(this->*PrintBeginStateMessage[Index])();
+
+      ActivateTemporaryState(State);
+      SetTemporaryStateCounter(State, Counter);
+    }
+}
+
+void character::HandleStates()
+{
+  for(ushort c = 0; c < STATES; ++c)
+    {
+      if(TemporaryStateIsActivated(1 << c))
+	{
+	  if(!GetTemporaryStateCounter(1 << c))
+	    {
+	      if(EndTemporaryStateHandler[c])
+		{
+		  (this->*EndTemporaryStateHandler[c])();
+
+		  if(!IsEnabled())
+		    return;
+		  else
+		    continue;
+		}
+
+	      if(!PermanentStateIsActivated(1 << c))
+		(this->*PrintEndStateMessage[c])();
+
+	      DeActivateTemporaryState(1 << c);
+	    }
+
+	  EditTemporaryStateCounter(1 << c, -1);
+	}
+
+      if(StateIsActivated(1 << c))
+	if(StateHandler[c])
+	  (this->*StateHandler[c])();
+
+      if(!IsEnabled())
+	return;
+    }
+}
+
+void character::PrintBeginPolymorphControlMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel very controlled.");
+}
+
+void character::PrintEndPolymorphControlMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You are somehow uncertain of your willpower.");
+}
+
+void character::PrintBeginLifeSaveMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You hear Hell's gates being locked just now.");
+}
+
+void character::PrintEndLifeSaveMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel the Afterlife is welcoming you once again.");
+}
+
+void character::PrintBeginLycanthropyMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly notice you've always loved full moons.");
+}
+
+void character::PrintEndLycanthropyMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel the wolf inside you has had enough of your bad habits.");
+}
+
+void character::PrintBeginHasteMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Time slows down to a crawl.");
+  else if(GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s looks faster!", CHARNAME(DEFINITE));
+}
+
+void character::PrintEndHasteMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Time seems to go by at the normal rate now.");
+  else if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
+}
+
+void character::PrintBeginSlowMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Everything seems to move much faster now.");
+  else if(GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s looks slower!", CHARNAME(DEFINITE));
+}
+
+void character::PrintEndSlowMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("Time seems to go by at the normal rate now.");
+  else if(game::IsInWilderness() || GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
+}
+
+void character::EnterTemporaryHaste(ushort Counter)
+{
+  if(TemporaryStateIsActivated(SLOW))
+    {
+      if(!PermanentStateIsActivated(SLOW))
+	PrintEndSlowMessage();
+
+      DeActivateTemporaryState(SLOW);
+    }   
+  else
+    {
+      if(TemporaryStateIsActivated(HASTE))
+	{
+	  EditTemporaryStateCounter(HASTE, Counter);
+	  return;
+	}
+
+      if(!PermanentStateIsActivated(HASTE))
+	PrintBeginHasteMessage();
+
+      ActivateTemporaryState(HASTE);
+      SetTemporaryStateCounter(HASTE, Counter);
+    }
+}
+
+void character::EnterTemporarySlow(ushort Counter)
+{
+  if(TemporaryStateIsActivated(HASTE))
+    {
+      if(!PermanentStateIsActivated(HASTE))
+	PrintEndHasteMessage();
+
+      DeActivateTemporaryState(HASTE);
+    }
+  else
+    {
+      if(TemporaryStateIsActivated(SLOW))
+	{
+	  EditTemporaryStateCounter(SLOW, Counter);
+	  return;
+	}
+
+      if(!PermanentStateIsActivated(SLOW))
+	PrintBeginSlowMessage();
+
+      ActivateTemporaryState(SLOW);
+      SetTemporaryStateCounter(SLOW, Counter);
+    }
+}
+
+void character::EndTemporaryPolymorph()
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You return to your true form.");
+  else if(game::IsInWilderness())
+    return; // fast gum solution, state ends when the player enters a dungeon
+  else if(GetSquareUnder()->CanBeSeen())
+    ADD_MESSAGE("%s returns to %s true form.", CHARNAME(DEFINITE), PossessivePronoun().c_str());
+
+  if(GetAction())
+    GetAction()->Terminate(false);
+
+  SendToHell();
+  GetSquareUnder()->RemoveCharacter();
+  character* Char = GetPolymorphBackup();
+  SetPolymorphBackup(0);
+  GetSquareUnder()->AddCharacter(Char);
+  Char->SetHasBe(true);
+  SetSquareUnder(0);
+
+  while(GetStack()->GetItems())
+    GetStack()->MoveItem(GetStack()->GetBottomSlot(), Char->GetStack());
+
+  SetSquareUnder(Char->GetSquareUnder()); // might be used afterwards
+
+  for(ushort c = 0; c < EquipmentSlots(); ++c)
+    {
+      item* Item = GetEquipment(c);
+
+      if(Item)
+	{
+	  if(Char->CanUseEquipment() && Char->CanUseEquipment(c))
+	    {
+	      Item->RemoveFromSlot();
+	      Char->SetEquipment(c, Item);
+	    }
+	  else
+	    Item->MoveTo(Char->GetStack());
+	}
+    }
+
+  Char->SetMoney(GetMoney());
+  Char->ChangeTeam(GetTeam());
+
+  if(GetTeam()->GetLeader() == this)
+    GetTeam()->SetLeader(Char);
+
+  Char->TestWalkability();
+
+  if(IsPlayer())
+    {
+      game::SetPlayer(Char);
+      game::SendLOSUpdateRequest();
+    }
+}
+
+void character::LycanthropyHandler()
+{
+  if(!(RAND() % 25))
+    Polymorph(new werewolfwolf, RAND() % 25);
+}
+
+void character::SaveLife()
+{
+  item* LifeSaver;
+
+  if(!TemporaryStateIsActivated(LIFE_SAVED))
+    for(ushort c = 0; c < EquipmentSlots(); ++c)
+      if(GetEquipment(c) && EquipmentHasNoPairProblems(c) && GetEquipment(c)->GetGearStates() & LIFE_SAVED)
+	LifeSaver = GetEquipment(c);
+
+  if(!TemporaryStateIsActivated(LIFE_SAVED) && LifeSaver)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("But wait! Your %s glows briefly red and disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(UNARTICLED));
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("But wait, suddenly %s %s glows briefly red and disappears and %s seems to be in a better shape!", PossessivePronoun().c_str(), LifeSaver->CHARNAME(UNARTICLED), PersonalPronoun().c_str());
+
+      LifeSaver->RemoveFromSlot();
+      LifeSaver->SendToHell();
+    }
+  else
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("But wait! You glow briefly red and seem to be in a better shape!");
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("But wait, suddenly %s glows briefly red and seems to be in a better shape!", PersonalPronoun().c_str());
+
+      DeActivateTemporaryState(LIFE_SAVED);
+    }
+
+  if(IsPlayer())
+    game::AskForKeyPress("Life saved! [press any key to continue]");
+
+  RestoreBodyParts();
+  RestoreHP();
+
+  if(GetNP() < 10000)
+    SetNP(10000);
+
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+void character::PolymorphRandomly(ushort Time)
+{
+  character* NewForm = 0;
+
+  if(StateIsActivated(POLYMORPH_CONTROL))
+    {
+      if(IsPlayer())
+	while(!NewForm)
+	  {
+	    std::string Temp = game::StringQuestion("What do you want to become?", vector2d(16, 6), WHITE, 0, 80, false);
+	    NewForm = protosystem::CreateMonster(Temp, false);
+	  }
+      else
+	{
+	  switch(RAND() % 3)
+	    {
+	    case 0: NewForm = new communist(0, false); break;
+	    case 1: NewForm = new mistress(0, false); break;
+	    case 2: NewForm = new mammoth(0, false); break;
+	    }
+	}
+    }
+  else
+    NewForm = protosystem::CreateMonster(false);
+
+  Polymorph(NewForm, Time);
 }

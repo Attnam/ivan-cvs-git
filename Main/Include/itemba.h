@@ -72,6 +72,7 @@ struct itemdatabase
   bool CanBeGeneratedInContainer;
   uchar ForcedVisualEffects;
   uchar Roundness;
+  ushort GearStates;
 };
 
 class itemprototype
@@ -258,13 +259,14 @@ class item : public object
   DATABASEBOOL(CanBeGeneratedInContainer);
   DATABASEVALUE(uchar, ForcedVisualEffects);
   DATABASEVALUE(uchar, Roundness);
+  DATABASEVALUE(ushort, GearStates);
 
-  virtual bool SavesLifeWhenWorn() const { return false; }
+  //virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
-  virtual uchar GetVisualFlags() const { return VisualFlags; }
-  virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
+  //virtual uchar GetVisualFlags() const { return VisualFlags; }
+  //virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
   //  virtual void HandleVisualEffects();
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
   virtual uchar GetVisualEffects() const { return VisualEffects; }
@@ -272,8 +274,14 @@ class item : public object
   virtual bool TryToUnstuck(character*, ushort, vector2d) { return false; }
   virtual void EditVolume(long);
   virtual void EditWeight(long);
+  virtual void EditCarriedWeight(long);
   virtual ulong GetBlockModifier(const character*) const;
+
+  virtual ulong GetCarriedWeight() const { return CarriedWeight; }
+  virtual void SetCarriedWeight(ulong What) { CarriedWeight = What; }
+  virtual bool IsSimiliarTo(item*) const;
   virtual bool IsPickable(character*) const { return true; }
+
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor(bool) { }
@@ -290,7 +298,8 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
-  uchar VisualFlags;
+  uchar VisualEffects;
+  ulong CarriedWeight;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__

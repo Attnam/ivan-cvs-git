@@ -677,6 +677,8 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the cloak can be calculated somehow
   virtual bool IsCloak(const character*) const { return true; }
+ protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(111, 64, 37); }
 );
 
 class ITEM
@@ -723,6 +725,8 @@ class ITEM
  public:
   virtual ulong Price() const { return GetMainMaterial()->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
   virtual bool IsAmulet(const character*) const { return true; }
+ protected:
+  virtual ushort GetMaterialColor1(ushort) const { return MAKE_RGB(111, 64, 37); }
 );
 
 class ABSTRACT_ITEM
@@ -748,7 +752,7 @@ class ABSTRACT_ITEM
   virtual bool GetUnique() const { return Unique; }
   virtual void SetUnique(bool What) { Unique = What; }
   virtual characterslot* GetCharacterSlot() const;
-  virtual void SignalGearUpdate() { }
+  //virtual void SignalGearUpdate() { }
   virtual ulong GetRegenerationCounter() const { return RegenerationCounter; }
   virtual void SetRegenerationCounter(ulong What) { RegenerationCounter = What; }
   virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
@@ -770,6 +774,8 @@ class ABSTRACT_ITEM
   virtual void LowerStats() { }
   virtual void InitSpecialAttributes() { }
   virtual void LoadGearSlot(inputfile&, gearslot&);
+  virtual void SignalEquipmentAdd(gearslot*);
+  virtual void SignalEquipmentRemoval(gearslot*);
  protected:
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
@@ -888,11 +894,11 @@ class ABSTRACT_ITEM
   virtual item* GetGauntlet() const { return *GauntletSlot; }
   virtual void SetRing(item* What) { RingSlot.PutInItem(What); }
   virtual item* GetRing() const { return *RingSlot; }
-  virtual void SignalGearUpdate();
+  //virtual void SignalGearUpdate();
   virtual ushort DangerWeight() const;
   //virtual ulong GetTotalWeight() const;
   virtual void DropEquipment();
-  virtual void AddCurrentSingleWeaponSkillInfo(felist&);
+  virtual bool AddCurrentSingleWeaponSkillInfo(felist&) const;
   virtual float CalculateUnarmedToHitValue() const;
   virtual float CalculateUnarmedStrength() const;
   virtual void Hit(character*, float, float);
@@ -906,6 +912,8 @@ class ABSTRACT_ITEM
   virtual void SetDexterity(ushort What) { Dexterity = What; }
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
+  //virtual arm* GetPairArm() const = 0;
+  virtual void SignalEquipmentRemoval(gearslot*);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -926,7 +934,9 @@ class ITEM
   arm,
  public:
   virtual uchar GetBodyPartIndex() const { return RIGHTARMINDEX; }
+  //virtual arm* GetPairArm() const;
  protected:
+  virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STRIGHTARM; }
 );
 
@@ -936,7 +946,9 @@ class ITEM
   arm,
  public:
   virtual uchar GetBodyPartIndex() const { return  LEFTARMINDEX; }
+  //virtual arm* GetPairArm() const;
  protected:
+  virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STLEFTARM; }
 );
 
@@ -978,6 +990,9 @@ class ABSTRACT_ITEM
   virtual void SetAgility(ushort What) { Agility = What; }
   virtual ushort GetEmitation() const;
   virtual void InitSpecialAttributes();
+  //virtual void SignalEquipmentAdd(gearslot*);
+  //virtual void SignalEquipmentRemoval(gearslot*);
+  //virtual leg* GetPairLeg() const = 0;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -994,7 +1009,9 @@ class ITEM
   leg,
  public:
   virtual uchar GetBodyPartIndex() const { return RIGHTLEGINDEX; }
+  //virtual leg* GetPairLeg() const;
  protected:
+  virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STRIGHTLEG; }
 );
 
@@ -1004,7 +1021,9 @@ class ITEM
   leg,
  public:
   virtual uchar GetBodyPartIndex() const { return LEFTLEGINDEX; }
+  //virtual leg* GetPairLeg() const;
  protected:
+  virtual void VirtualConstructor(bool);
   virtual uchar GetSpecialFlags(ushort) const { return STLEFTLEG; }
 );
 
@@ -1101,8 +1120,7 @@ class ITEM
 (
   amuletoflifesaving,
   amulet,
- public: 
-  virtual bool SavesLifeWhenWorn() const { return true; }
+  ;
 );
 
 class ITEM
@@ -1180,6 +1198,20 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
  protected:
   virtual void VirtualConstructor(bool);
+);
+
+class ITEM
+(
+  bootofspeed,
+  boot,
+  ;
+);
+
+class ITEM
+(
+  ringofpolymorphcontrol,
+  ring,
+  ;
 );
 
 #endif

@@ -79,7 +79,6 @@ character* protosystem::CreateMonster(bool CreateItems)
   while(true)
     {
       ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
-
       const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
 
       if(!Proto->IsAbstract() && Proto->CanBeGenerated())
@@ -91,54 +90,99 @@ character* protosystem::CreateMonster(bool CreateItems)
     }
 }
 
-item* protosystem::CreateItem(const std::string& What, bool Output)
+template <class type> uchar CountCorrectNameParts(const type::database& DataBase, const std::string& Identifier)
+{
+  uchar Counter = 0;
+
+  if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1))
+    ++Counter;
+
+  if(DataBase.Adjective != "" && Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1))
+    ++Counter;
+
+  if(DataBase.PostFix != "" && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
+    ++Counter;
+
+  if(!Counter)
+    for(ushort c = 0; c < DataBase.Alias.size(); ++c)
+      if(Identifier.find(" " + DataBase.Alias[c] + " ") != ulong(-1))
+	return 0xFF;
+
+  return Counter;
+}
+
+template <class type> std::pair<const type::prototype*, ushort> SearchForProto(const std::string& What, bool Output)
 {
   std::string Identifier = " " + What + " ";
   bool Illegal = false;
+  std::pair<const type::prototype*, ushort> Id(0, 0);
+  ushort Best = 0;
 
-  for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+  for(ushort c = 1; c < protocontainer<type>::GetProtoAmount(); ++c)
     {
-      const item::prototype* Proto = protocontainer<item>::GetProto(c);
-      const item::databasemap& Config = Proto->GetConfig();
+      const type::prototype* Proto = protocontainer<type>::GetProto(c);
+      const type::databasemap& Config = Proto->GetConfig();
 
       if(!Config.size())
 	{
-	  if(!Proto->IsAbstract() && CheckWhetherItemNameCorrect(*Proto->GetDataBase(), Identifier))
+	  ushort Correct = CountCorrectNameParts<type>(*Proto->GetDataBase(), Identifier);
+
+	  if(!Proto->IsAbstract() && Correct > Best)
 	    if(Proto->CanBeWished() || game::WizardModeActivated())
-	      return Proto->Clone();
+	      {
+		Id.first = Proto;
+		Id.second = 0;
+		Best = Correct;
+	      }
 	    else
 	      Illegal = true;
 	}
       else
-	for(item::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	  if(!i->second.IsAbstract && CheckWhetherItemNameCorrect(i->second, Identifier))
-	    if(i->second.CanBeWished || game::WizardModeActivated())
-	      return Proto->Clone(i->first);
-	    else
-	      Illegal = true;
+	for(type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	  {
+	    ushort Correct = CountCorrectNameParts<type>(i->second, Identifier);
+
+	    if(!i->second.IsAbstract && Correct > Best)
+	      if(i->second.CanBeWished || game::WizardModeActivated())
+		{
+		  Id.first = Proto;
+		  Id.second = i->first;
+		  Best = Correct;
+		}
+	      else
+		Illegal = true;
+	  }
     }
 
-  if(Output)
+  if(!Best && Output)
     {
       if(Illegal)
 	ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
       else
-	ADD_MESSAGE("There is no such item.");
+	ADD_MESSAGE("What a strange wish!");
     }
 
-  return 0;
+  return Id;
 }
 
-bool protosystem::CheckWhetherItemNameCorrect(const item::database& DataBase, const std::string& Identifier)
+character* protosystem::CreateMonster(const std::string& What, bool CreateEquipment, bool Output)
 {
-  if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1) && (DataBase.Adjective == "" || Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1)) && (DataBase.PostFix == "" || Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1)))
-    return true;
-  else
-    for(ushort c = 0; c < DataBase.Alias.size(); ++c)
-      if(Identifier == " " + DataBase.Alias[c] + " ")
-	return true;
+  std::pair<const character::prototype*, ushort> Id = SearchForProto<character>(What, Output);
 
-  return false;
+  if(Id.first)
+    return Id.first->Clone(Id.second, CreateEquipment);
+  else
+    return 0;
+}
+
+item* protosystem::CreateItem(const std::string& What, bool Output)
+{
+  std::pair<const item::prototype*, ushort> Id = SearchForProto<item>(What, Output);
+
+  if(Id.first)
+    return Id.first->Clone(Id.second);
+  else
+    return 0;
 }
 
 material* protosystem::CreateMaterial(const std::string& What, ulong Volume, bool Output)

@@ -7,6 +7,7 @@
 
 #include <list>
 #include <map>
+#include <vector>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -34,6 +35,7 @@ class bodypart;
 class characterslot;
 class action;
 class go;
+class gweaponskill;
 template <class type> class database;
 
 struct characterdatabase
@@ -121,6 +123,12 @@ struct characterdatabase
   ulong BiteStrength;
   ulong KickStrength;
   uchar AttackStyle;
+  bool CanUseEquipment;
+  bool CanKick;
+  bool CanTalk;
+  ushort PermanentStates;
+  bool CanBeWished;
+  std::vector<std::string> Alias;
 };
 
 class characterprototype
@@ -138,6 +146,8 @@ class characterprototype
   PROTODATABASEVALUE(ushort, Frequency);
   PROTODATABASEBOOL(CanBeGenerated);
   PROTODATABASEBOOL(IsAbstract);
+  PROTODATABASEBOOL(CanBeWished);
+  PROTODATABASEVALUE(const std::vector<std::string>&, Alias);
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
  protected:
   ushort Index;
@@ -257,15 +267,19 @@ class character : public entity, public id
   virtual void BeKicked(character*, float, float, short, bool);
   virtual void FallTo(character*, vector2d);
   virtual bool CheckCannibalism(ushort) const;
-  virtual void CharacterSpeciality(ushort = 1) { }
-  virtual void ActivateState(uchar What) { State |= What; }
-  virtual void DeActivateState(uchar What) { State &= ~What; }
-  virtual bool StateIsActivated(uchar What) const { return State & What ? true : false; }
+  //virtual void CharacterSpeciality(ushort = 1) { }
+  virtual void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
+  virtual void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
+  virtual void ActivatePermanentState(ushort What) { PermanentState |= What; }
+  virtual void DeActivatePermanentState(ushort What) { PermanentState &= ~What; }
+  virtual bool TemporaryStateIsActivated(ushort What) const { return TemporaryState & What ? true : false; }	
+  virtual bool PermanentStateIsActivated(ushort What) const { return PermanentState & What ? true : false; }
+  virtual bool StateIsActivated(ushort What) const { return TemporaryState & What || PermanentState & What; }
   virtual void Faint();
-  virtual void PolymorphHandler();
-  virtual void SetStateCounter(uchar, ushort);
-  virtual void DeActivateVoluntaryStates(const std::string& = "");
-  virtual void EndPolymorph();
+  //virtual void TemporaryPolymorphHandler();
+  virtual void SetTemporaryStateCounter(uchar, ushort);
+  virtual void DeActivateVoluntaryAction(const std::string& = "");
+  //virtual void EndTemporaryPolymorph();
   virtual void ActionAutoTermination();
   virtual team* GetTeam() const { return Team; }
   virtual void SetTeam(team*);
@@ -337,13 +351,13 @@ class character : public entity, public id
   virtual bool BodyPartCanBeSevered(ushort) const;
   virtual std::string GetName(uchar) const;
   virtual void ReceiveHeal(long);
-  virtual void Haste(ushort);
-  virtual void EndHaste();
-  virtual void HasteHandler();
-  virtual float GetAPStateMultiplier() const;
-  virtual void Slow(ushort);
-  virtual void SlowHandler();
-  virtual void EndSlow();
+  /*virtual void TemporaryHaste(ushort);
+  virtual void EndTemporaryHaste();
+  virtual void TemporaryHasteHandler();*/
+  //virtual float GetAPStateMultiplier() const;
+  /*virtual void TemporarySlow(ushort);
+  virtual void TemporarySlowHandler();
+  virtual void EndTemporarySlow();*/
   virtual item* GetMainWielded() const { return 0; }
   virtual item* GetSecondaryWielded() const { return 0; }
   virtual item* GetBodyArmor() const { return 0; }
@@ -367,8 +381,8 @@ class character : public entity, public id
   virtual bool CheckThrow() const { return true; }  
   virtual bool CheckApply() const { return true; }
   virtual bool CheckOffer() const { return true; }
-  virtual ushort GetStateCounter(uchar) const;
-  virtual void EditStateCounter(uchar, short);
+  virtual ushort GetTemporaryStateCounter(uchar) const;
+  virtual void EditTemporaryStateCounter(uchar, short);
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
@@ -378,7 +392,6 @@ class character : public entity, public id
   virtual ushort GetResistance(uchar) const;
   virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
   virtual void SetDivineMaster(uchar);
-  virtual bool CheckWearEquipment() const;
   virtual std::string EquipmentName(ushort) const { return ""; }
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
@@ -490,8 +503,14 @@ class character : public entity, public id
   DATABASEVALUE(ulong, BiteStrength);
   DATABASEVALUE(ulong, KickStrength);
   DATABASEVALUE(uchar, AttackStyle);
+  DATABASEBOOL(CanUseEquipment);
+  DATABASEBOOL(CanKick);
+  DATABASEBOOL(CanTalk);
+  DATABASEVALUE(ushort, PermanentStates);
+  DATABASEBOOL(CanBeWished);
+  DATABASEVALUE(const std::vector<std::string>&, Alias);
 
-  virtual item* GetLifeSaver() const;
+  //virtual item* GetLifeSaver() const;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   virtual bool TeleportNear(character*);
@@ -526,7 +545,41 @@ class character : public entity, public id
   virtual ushort CheckForBlock(character*, item*, float, ushort Damage, short, uchar) { return Damage; }
   virtual ushort CheckForBlockWithItem(character*, item*, item*, float, float, ushort, short, uchar);
   virtual void AddBlockMessage(character*, item*, const std::string&, bool) const;
+  virtual character* GetPolymorphBackup() const { return PolymorphBackup; }
+  virtual void SetPolymorphBackup(character* What) { PolymorphBackup = What; }
+
+  virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
+  virtual bool AddSpecialSkillInfo(felist&) const { return false; }
+  virtual bool CheckBalance(float);
+  virtual long CalculateStateAPGain(long) const;
+  virtual long CalculateMoveAPRequirement(long What) const { return What; }
+  virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
+  virtual void SignalEquipmentAdd(ushort);
+  virtual void SignalEquipmentRemoval(ushort);
+  virtual void CalculateEquipmentStates();
+  ushort GetConfig() const { return Config; }
+
+  virtual void EnterTemporaryState(ushort, ushort);
+  virtual void HandleStates();
+  virtual void PrintBeginPolymorphControlMessage() const;
+  virtual void PrintEndPolymorphControlMessage() const;
+  virtual void PrintBeginLifeSaveMessage() const;
+  virtual void PrintEndLifeSaveMessage() const;
+  virtual void PrintBeginLycanthropyMessage() const;
+  virtual void PrintEndLycanthropyMessage() const;
+  virtual void PrintBeginHasteMessage() const;
+  virtual void PrintEndHasteMessage() const;
+  virtual void PrintBeginSlowMessage() const;
+  virtual void PrintEndSlowMessage() const;
+  virtual void EnterTemporaryHaste(ushort);
+  virtual void EnterTemporarySlow(ushort);
+  virtual void EndTemporaryPolymorph();
+  virtual void LycanthropyHandler();
+  virtual void SaveLife();
+  virtual void PolymorphRandomly(ushort);
+
  protected:
+  virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);
   virtual void VirtualConstructor(bool);
   virtual void LoadDataBaseStats();
@@ -581,9 +634,8 @@ class character : public entity, public id
   stack* Stack;
   long NP, AP;
   bool Player;
-  uchar State;
-  short StateCounter[STATES];
-  static void (character::*StateHandler[STATES])();
+  ushort TemporaryState;
+  short TemporaryStateCounter[STATES];
   team* Team;
   vector2d WayPoint;
   ulong Money;
@@ -601,6 +653,14 @@ class character : public entity, public id
   static std::string StateDescription[STATES];
   ulong* OriginalBodyPartID;
   entity* MotherEntity;
+  character* PolymorphBackup;
+  gweaponskill** CategoryWeaponSkill;
+  ushort PermanentState;
+  static void (character::*PrintBeginStateMessage[STATES])() const;
+  static void (character::*PrintEndStateMessage[STATES])() const;
+  static void (character::*EnterTemporaryStateHandler[STATES])(ushort);
+  static void (character::*EndTemporaryStateHandler[STATES])();
+  static void (character::*StateHandler[STATES])();
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__

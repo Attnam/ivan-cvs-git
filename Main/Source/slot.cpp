@@ -38,6 +38,7 @@ void characterslot::Empty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
+  GetMaster()->CalculateEquipmentStates();
 }
 
 void characterslot::FastEmpty()
@@ -45,6 +46,7 @@ void characterslot::FastEmpty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
+  GetMaster()->CalculateEquipmentStates();
 }
 
 void stackslot::MoveItemTo(stack* Stack)
@@ -65,7 +67,7 @@ void gearslot::Empty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
-  GetBodyPart()->SignalGearUpdate();
+  GetBodyPart()->SignalEquipmentRemoval(this);
 }
 
 void gearslot::FastEmpty()
@@ -73,7 +75,7 @@ void gearslot::FastEmpty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
-  GetBodyPart()->SignalGearUpdate();
+  GetBodyPart()->SignalEquipmentRemoval(this);
 }
 
 void gearslot::MoveItemTo(stack* Stack)
@@ -82,9 +84,10 @@ void gearslot::MoveItemTo(stack* Stack)
   Empty();
 }
 
-void gearslot::Init(bodypart* BodyPart)
+void gearslot::Init(bodypart* BodyPart, uchar Index)
 {
   SetBodyPart(BodyPart);
+  SetEquipmentIndex(Index);
 }
 
 void actionslot::Empty()
@@ -166,7 +169,7 @@ void characterslot::EditVolume(long What)
   GetMaster()->EditVolume(What);
 }
 
-void characterslot::EditWeight(long What)
+void characterslot::EditCarriedWeight(long What)
 {
   GetMaster()->EditWeight(What);
 }
@@ -179,6 +182,7 @@ void gearslot::EditVolume(long What)
 void gearslot::EditWeight(long What)
 {
   GetBodyPart()->EditWeight(What);
+  GetBodyPart()->EditCarriedWeight(What);
 }
 
 void actionslot::EditVolume(long What)
@@ -200,5 +204,18 @@ void slot::PutInItem(item* What)
       Item->SetSlot(this);
       EditVolume(Item->GetVolume());
       EditWeight(Item->GetWeight());
+    }
+}
+
+void gearslot::PutInItem(item* What)
+{
+  Item = What;
+
+  if(Item)
+    {
+      Item->SetSlot(this);
+      EditVolume(Item->GetVolume());
+      EditWeight(Item->GetWeight());
+      GetBodyPart()->SignalEquipmentAdd(this);
     }
 }

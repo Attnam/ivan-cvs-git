@@ -58,6 +58,11 @@ character
 	/* BiteStrength, if not defined then equals UnarmedStrength / 2 */
 	/* KickStrength, if not defined then equals UnarmedStrength * 2 */
 	AttackStyle = USE_ARMS;
+	CanUseEquipment = false;
+	CanKick = false;
+	CanTalk = false;
+	PermanentStates = 0;
+	CanBeWished = true;
 }
 
 humanoid
@@ -82,6 +87,9 @@ humanoid
 	IsAbstract = true;
 	UnarmedStrength = 2500;
 	Sex = MALE;
+	CanUseEquipment = true;
+	CanKick = true;
+	CanTalk = true;
 }
 
 nonhumanoid
@@ -139,8 +147,11 @@ petrus
 	TotalSize = 225;
 	BaseEmitation = 333;
 	CanRead = true;
-	NameSingular = "High Priest of the Great Frog";
+	NameSingular = "high priest"
+	PostFix = "of the Great Frog";
 	IsPolymorphable = false;
+	CanBeWished = false;
+	Alias == "Petrus";
 }
 
 farmer
@@ -266,6 +277,8 @@ oree
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
 	BiteStrength = 30000;
+	CanBeWished = false;
+	Alias == "Oree";
 }
 
 darkknight
@@ -290,7 +303,8 @@ darkknight
 	TorsoBitmapPos = 128, 0;
 	TotalSize = 200;
 	CanRead = true;
-	NameSingular = "dark knight";
+	Adjective = "dark";
+	NameSingular = "knight";
 	CanBeGenerated = true;
 }
 
@@ -311,11 +325,14 @@ ennerbeast
 	TorsoBitmapPos = 96, 0;
 	TotalSize = 150;
 	SkinColor = rgb(112, 112, 64);
-	NameSingular = "enner beast";
-	Article = "an";
+	Adjective = "enner";
+	NameSingular = "beast";
+	AdjectiveArticle = "an";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
 	BiteStrength = 100000;
+	CanUseEquipment = false;
+	CanBeWished = false;
 }
 
 frog
@@ -367,9 +384,12 @@ elpuri
 	TorsoBitmapPos = 64, 0;
 	TotalSize = 300;
 	CanOpen = true;
+	Adjective = "";
 	NameSingular = "Master Dark Frog";
 	IsPolymorphable = false;
 	CanBeGenerated = false;
+	CanBeWished = false;
+	Alias == "Elpuri";
 }
 
 billswill
@@ -389,8 +409,10 @@ billswill
 	TotalVolume = 500000;
 	TorsoBitmapPos = 48, 0;
 	TotalSize = 100;
-	NameSingular = "pure mass of Bill's will";
-	NamePlural = "pure masses of Bill's will";
+	Adjective = "pure";
+	NameSingular = "mass";
+	NamePlural = "masses";
+	PostFix = "of Bill's will";
 	UnarmedStrength = 20000;
 	CanBeGenerated = true;
 }
@@ -644,6 +666,7 @@ communist /* Ivan */
 	TotalSize = 230;
 	CanRead = true;
 	NameSingular = "communist";
+	Alias == "Ivan";
 }
 
 hunter
@@ -684,7 +707,8 @@ polarbear
 	TalkVerb = "growls";
 	TotalSize = 250;
 	SkinColor = rgb(128, 128, 128);
-	NameSingular = "polar bear";
+	Adjective = "polar";
+	NameSingular = "bear";
 	AttackStyle = USE_HEAD;
 	BiteStrength = 10000;
 }
@@ -709,7 +733,8 @@ dolphin
 	TalkVerb = "peeps passionately to you";
 	TotalSize = 300;
 	SkinColor = rgb(64, 64, 64);
-	NameSingular = "female dolphin";
+	Adjective = "female";
+	NameSingular = "dolphin";
 	IsPolymorphable = false;
 	AttackStyle = USE_HEAD;
 	BiteStrength = 5000;
@@ -779,7 +804,8 @@ petrusswife
 	TotalVolume = 40000;
 	TotalSize = 170;
 	CanRead = true;
-	NameSingular = "Petrus's wife";
+	Adjective = "Petrus's";
+	NameSingular = "wife";
 	ArticleMode = NOARTICLE;
 
 	Config 1;
@@ -872,7 +898,8 @@ femaleslave
 	LegBitmapPos = 0, 144;
 	TotalVolume = 40000;
 	TotalSize = 170;
-	NameSingular = "female slave";
+	Adjective = "female";
+	NameSingular = "slave";
 }
 
 librarian
@@ -1007,38 +1034,65 @@ mistress
 	CanBeGenerated = true;
 }
 
-/*werewolf
+werewolfhuman
 {
-	Load(inputfile&;
-	Save(outputfile&) const;
-	HasInfraVision = GetIsWolf(;
-	ChangeIntoHuman(;
-	ChangeIntoWolf(;
-	Be(;
-	GetIsWolf() const { return IsWolf; 
-	SetIsWolf(What) { IsWolf = What;
-	SetChangeCounter(What) { ChangeCounter = What;
-	GetChangeCounter() { return ChangeCounter;
-	MaxDanger() const;
-	//CanWield() const { return !GetIsWolf(;
-	Sex = IsWolf ? UNDEFINED : MALE;
-
-	//SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(;
-	EyeColor = rgb(160, 0, 0;
-	ClothColor = rgb(96, 64, 32;
-	GetHeadBitmapPos() const { return IsWolf ? 112, 144) : 96, 0;
-	TorsoBitmapPos = 48, 0;
-	GetArmBitmapPos() const { return IsWolf ? 80, 240) : 64, 0;
-	GetLegBitmapPos() const { return IsWolf ? 0, 192) : 0, 176;
+	DefaultArmStrength = 15;
+	DefaultLegStrength = 15;
+	DefaultDexterity = 15;
+	DefaultAgility = 15;
+	DefaultEndurance = 15;
+	DefaultPerception = 15;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 15;
+	DefaultCharisma = 15;
+	DefaultMana = 15;
 	TotalVolume = 80000;
-	material* CreateBodyPartFlesh(ushort, Volume) const { return new werewolfflesh(Volume;
-	std::string NameSingular() const { return "werewolf";
-	TalkVerb = IsWolf ? "howls" : "screams";
+	EyeColor = rgb(160, 0, 0);
+	ClothColor = rgb(94, 64, 32);
+	HeadBitmapPos = 96, 0;
+	TorsoBitmapPos = 48, 0;
+	ArmBitmapPos = 64, 0;
+	LegBitmapPos = 0, 176;
+	TalkVerb = "screams";
 	TotalSize = 170;
-	ChangeCounter;
-	IsWolf;
-	TorsoColor = rgb(90, 64, 64);
-}*/
+	NameSingular = "werewolf";
+	NamePlural = "werewolves";
+	AttackStyle = USE_ARMS;
+	CanBeGenerated = true;
+	CanRead = true;
+	PermanentStates = LYCANTHROPY;
+}
+
+werewolfwolf
+{
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 25;
+	DefaultDexterity = 35;
+	DefaultAgility = 35;
+	DefaultEndurance = 35;
+	DefaultPerception = 24;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 10;
+	DefaultCharisma = 10;
+	DefaultMana = 0;
+	TotalVolume = 80000;
+	EyeColor = rgb(160, 0, 0);
+	ClothColor = rgb(94, 64, 32);
+	HeadBitmapPos = 112, 144;
+	TorsoBitmapPos = 48, 0;
+	ArmBitmapPos = 64, 176;
+	LegBitmapPos = 0, 192;
+	TalkVerb = "howls";
+	TotalSize = 200;
+	NameSingular = "werewolf";
+	NamePlural = "werewolves";
+	AttackStyle = USE_HEAD;
+	HasInfraVision = true;
+	Sex = UNDEFINED;
+	BiteStrength = 20000;
+	CanUseEquipment = false;
+	CanBeWished = false;
+}
 
 kobold
 {
@@ -1093,6 +1147,8 @@ gibberling
 	NameSingular = "gibberling";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	CanUseEquipment = false;
+	CanTalk = false;
 }
 
 largecat
@@ -1110,7 +1166,8 @@ largecat
 	TalkVerb = "mews";
 	TotalSize = 60;
 	SkinColor = rgb(50, 50, 50);
-	NameSingular = "large cat";
+	Adjective = "large";
+	NameSingular = "cat";
 	AttackStyle = USE_HEAD;
 	BiteStrength = 20000;
 	CanBeGenerated = true;
@@ -1132,7 +1189,8 @@ largerat
 	TalkVerb = "squeaks";
 	TotalSize = 30;
 	SkinColor = rgb(180, 100, 40);
-	NameSingular = "large rat";
+	Adjective = "large";
+	NameSingular = "rat";
 	AttackStyle = USE_HEAD;
 	BiteStrength = 20000;
 	CanBeGenerated = true;
@@ -1161,6 +1219,7 @@ angel
 	SkinColor = rgb(200, 200, 200);
 	NameSingular = "angel";
 	Article = "an";
+	CanBeWished = false;
 }
 
 dwarf
@@ -1214,6 +1273,7 @@ mammoth
 	KickStrength = 10000;
 	BiteStrength = 5000;
 	CanBeGenerated = true;
+	CanKick = true;
 }
 
 unicorn
@@ -1235,6 +1295,7 @@ unicorn
 	KickStrength = 10000;
 	BiteStrength = 5000;
 	CanBeGenerated = true;
+	CanKick = true;
 
 	Config GOOD;
 	{
@@ -1312,7 +1373,8 @@ carnivorousplant
 	TalkVerb = "is silent";
 	TotalSize = 250;
 	SkinColor = rgb(0, 160, 0);
-	NameSingular = "carnivorous plant";
+	Adjective = "carnivorous";
+	NameSingular = "plant";
 	AttackStyle = USE_HEAD;
 	BiteStrength = 2500;
 }
@@ -1336,4 +1398,5 @@ buffalo
 	AttackStyle = USE_LEGS|USE_HEAD;
 	KickStrength = 10000;
 	BiteStrength = 5000;
+	CanKick = true;
 }

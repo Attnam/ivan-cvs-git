@@ -705,6 +705,7 @@ flesh
 		OfferValue = 13;
 		/*Color = rgb(90, 64, 64);*/
 		NameStem = "werewolf flesh";
+		Effect = ELYCANTHROPY;
 	}
 
 	Config KOBOLDFLESH;

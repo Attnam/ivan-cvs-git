@@ -6,7 +6,7 @@ ushort gweaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 1000
 ushort gweaponskill::UnuseTickMap[] = { 50000, 50000, 50000, 40000, 30000, 15000, 10000, 8000, 4000, 2000, 1000 };
 ushort gweaponskill::UnusePenaltyMap[] = { 5, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
 
-std::string gweaponskill::SkillName[] = { "uncategorized", "unarmed combat", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears", "whips" };
+std::string gweaponskill::SkillName[] = { "unarmed combat", "kicking", "biting", "uncategorized", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears", "whips" };
 
 ushort sweaponskill::LevelMap[] = { 0, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 65535 };
 ushort sweaponskill::UnuseTickMap[] = { 50000, 25000, 15000, 10000, 5000, 5000, 5000, 2500, 1250, 500, 250 };

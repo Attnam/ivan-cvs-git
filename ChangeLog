@@ -1,7 +1,39 @@
+June 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added a new state system that allows both temporary and permanent states
+	* Added GearStates item database value that allows one to easily add equipment that activate permanent states
+	* Added PermanentStates character database value that makes it easy to add permanent states to certain races
+	* Added boot of speed that hastes the user (but you need to have two of them equipped!)
+	* Added a bug that activates permanent states when the user wields the right piece of equipment, like a boot of speed
+	  (by the way, this bug did already exist with amulets of life saving)
+	* Monsters are now polymorphed only temporarily in the same way as the player,
+	  so you don't have to kill yourself when that goblin zaps its WoP at your ultra-trained level 8 mistress
+	  (when it someday becomes wise enough to do it)
+	* Added lycanthropy state that occasionally polymorphs the character into a werewolf (wolf form)
+	* Werewolf flesh causes lycanthropy now
+	* Remade werewolf; it is now a human-like creature that is permanently lycanthropic
+	* Added wish functions for character and CanBeWished and Alias values to its database
+	* Added polymorph control state
+	* Added ring of polymorph control
+	* Added life saving state and made amulet of life saving use it
+	  (this allows very pleased gods to grant temporary life saving, for instance)
+	* Removed the code that allowed fatness (I just couldn't work out how a gold golem can carry itself)
+	* Nonhumanoids have now a chance to train their martial skills (unarmed combat, kicking or biting)
+	* Biting doesn't make bodyparts fly anymore
+	* Fixed a bug of temporarily hasted/slowed dogs crashing on world map
+	* The wish parser is again more intelligent as it chooses the item with most correctly specified name parts,
+	  so a wish for "that holy banana thingy" gives the holy banana of Liukas Vipro and not just a banana
+	* Fixed a bug that caused golems' bodypart materials to be randomized individually,
+	  thus creating fabric legged, stone armed and bone headed golems with wooden torsos etc.
+	* Hunters are once again one armed
+	* Added some new booleans to character database: CanUseEquipment, CanKick and CanTalk
+	* Amulet's article is now correct
+	* MColor 1 of amulets and cloaks is now used correctly
+	* Corrected a bug that caused a crash when a flying bodypart ought to hit a legless humanoid
+
 June 15 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Added beartrap (which probably will need some more tweaking)
-
 
 June 14 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

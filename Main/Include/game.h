@@ -109,8 +109,8 @@ class game
   static void SetSquareInLoad(square* What) { SquareInLoad = What; }
   static area* GetAreaInLoad() { return AreaInLoad; }
   static square* GetSquareInLoad() { return SquareInLoad; }
-  static character* GetPlayerBackup() { return PlayerBackup; }
-  static void SetPlayerBackup(character* What) { PlayerBackup = What; }
+  //static character* GetPlayerBackup() { return PlayerBackup; }
+  //static void SetPlayerBackup(character* What) { PlayerBackup = What; }
   static uchar GetLevels();
   static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
   static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
@@ -198,7 +198,7 @@ class game
   static worldmap* WorldMap;
   static area* AreaInLoad;
   static square* SquareInLoad;
-  static character* PlayerBackup;
+  //static character* PlayerBackup;
   static std::vector<dungeon*> Dungeon;
   static ulong NextItemID;
   static std::vector<team*> Team;

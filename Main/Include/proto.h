@@ -13,7 +13,6 @@
 class character;
 class item;
 class material;
-struct itemdatabase;
 template <class type> class database;
 
 template <class type> class protocontainer
@@ -53,12 +52,11 @@ class protosystem
   static character* BalancedCreateMonster(float = 1.0f, bool = true);
   static item* BalancedCreateItem(bool = false);
   static character* CreateMonster(bool = true);
+  static character* CreateMonster(const std::string&, bool, bool = true);
   static item* CreateItem(const std::string&, bool = true);
   static material* CreateRandomSolidMaterial(ulong);
   static material* CreateMaterial(const std::string&, ulong, bool = true);
   static void GenerateCodeNameMaps();
- private:
-  static bool CheckWhetherItemNameCorrect(const itemdatabase&, const std::string&);
 };
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)

@@ -282,7 +282,7 @@ void door::MakeWalkable()
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     {
       game::SendLOSUpdateRequest();
-      game::GetCurrentArea()->UpdateLOS();
+      //game::GetCurrentArea()->UpdateLOS();
     }
 
   ActivateBoobyTrap();
@@ -302,7 +302,7 @@ void door::MakeNotWalkable()
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
     {
       game::SendLOSUpdateRequest();
-      game::GetCurrentArea()->UpdateLOS();
+      //game::GetCurrentArea()->UpdateLOS();
     }
 }
 
@@ -460,7 +460,7 @@ bool fountain::Consume(character* Drinker)
 	      Drinker->EditNP(50);
 
 	      if(!(RAND() % 5))
-		Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
+		Drinker->PolymorphRandomly(2500 + RAND() % 2500);
 	      else
 		Drinker->ChangeRandomStat(-1);
 

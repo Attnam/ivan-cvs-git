@@ -88,11 +88,14 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 3
+#define STATES 6
 
 #define POLYMORPHED 1
 #define HASTE 2
 #define SLOW 4
+#define POLYMORPH_CONTROL 8
+#define LIFE_SAVED 16
+#define LYCANTHROPY 32
 
 #define HEAD 1
 #define TORSO 2
@@ -240,12 +243,13 @@
 #define UNCARING 1
 #define FRIEND 2
 
-#define WEAPON_SKILL_GATEGORIES 15
+#define MARTIAL_SKILL_CATEGORIES 3
+#define WEAPON_SKILL_CATEGORIES 15
 
-#define UNCATEGORIZED 0
-#define UNARMED 1
-#define KICK 2
-#define BITE 3
+#define UNARMED 0
+#define KICK 1
+#define BITE 2
+#define UNCATEGORIZED 3
 #define DAGGERS 4
 #define SMALL_SWORDS 5
 #define LARGE_SWORDS 6
@@ -267,6 +271,7 @@
 #define EPEPSI 4
 #define EKOBOLDFLESH 5
 #define EHEAL 6
+#define ELYCANTHROPY 7
 
 #define CEM_NOTHING 0
 #define CEM_SCHOOLFOOD 1
@@ -402,5 +407,19 @@
 #define DIR_ERROR_VECTOR vector2d(666, 666)
 
 #define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 0.10f
+
+#define HELMETINDEX 0
+#define AMULETINDEX 1
+#define CLOAKINDEX 2
+#define BODYARMORINDEX 3
+#define BELTINDEX 4
+#define RIGHTWIELDEDINDEX 5
+#define LEFTWIELDEDINDEX 6
+#define RIGHTRINGINDEX 7
+#define LEFTRINGINDEX 8
+#define RIGHTGAUNTLETINDEX 9
+#define LEFTGAUNTLETINDEX 10
+#define RIGHTBOOTINDEX 11
+#define LEFTBOOTINDEX 12
 
 #endif

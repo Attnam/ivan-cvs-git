@@ -44,7 +44,7 @@ Ruumiinosien hoitotavat:
 * Potion of healing - uusi luonnollinen raaja (1 hp). (hex)
 * Enkelit (kerran 2500 vuorossa) - raaja paikoilleen (1 hp). (hex)
 * Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
-Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
+//Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
 //Avaimelle kuva. (kahvi)
 Helmet. (hex)
 //BaseEmitationit toimintaan. (timo)
@@ -59,8 +59,11 @@ Dipping to corpses, containers etc.
 Potion of poison. (hex)
 One handed penalties. (timo)
 Poisonous snake. (hex)
-Biting shouldn't make bodyparts fly.
+//Biting shouldn't make bodyparts fly.
 People shouldn't "die screaming" if their heads are not present.
-Shields. (timo)
+//Shields. (timo)
 Lower all unarmed to hit values. (timo)
 Skeleton bodyparts.
+Amuletit, cloak
+Unicorns
+Effects and exps for intelligence, wisdom, charisma and mana.

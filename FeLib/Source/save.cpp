@@ -135,7 +135,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	      Get();
 
 	      if(Eof())
-		ABORT("Script error: Unterminated comment");
+		ABORT("Script error: Unterminated string.");
 
 	      if(Peek() == '"')
 		{
@@ -148,7 +148,7 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 		  Char = Get();
 
 		  if(Eof())
-		    ABORT("Script error: Unterminated comment");
+		    ABORT("Script error: Unterminated string.");
 
 		  if(Peek() == '"')
 		    if(Char == '\\')

@@ -26,14 +26,13 @@ class ABSTRACT_CHARACTER
   character,
  public:
   virtual ~humanoid();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
-  virtual bool CanWield() const { return true; }
+  /*virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);*/
+  virtual bool CanWield() const;
   virtual bool Hit(character*);
-  virtual gweaponskill* GetCategoryWeaponSkill(ushort Index) const { return CategoryWeaponSkill[Index]; }
-  virtual void CharacterSpeciality(ushort = 1);
-  virtual bool ShowWeaponSkills();
-  virtual long GetStatScore() const;
+  //virtual void CharacterSpeciality(ushort = 1);
+  //virtual bool ShowWeaponSkills();
+  //virtual long GetStatScore() const;
   virtual void AddSpecialItemInfo(std::string&, item*);
   virtual void AddSpecialItemInfoDescription(std::string&);
   //virtual void KickHit();
@@ -89,7 +88,7 @@ class ABSTRACT_CHARACTER
   virtual uchar GetLegs() const;
   virtual uchar GetArms() const;
   virtual bool CheckKick() const;
-  virtual float GetAPStateMultiplier() const;
+  //virtual float GetAPStateMultiplier() const;
   virtual short GetLengthOfOpen(vector2d) const;
   virtual short GetLengthOfClose(vector2d) const;
   virtual bool CheckThrow() const;
@@ -126,8 +125,11 @@ class ABSTRACT_CHARACTER
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH); }
   virtual ushort GetRandomStepperBodyPart() const;
   virtual ushort CheckForBlock(character*, item*, float, ushort, short, uchar);
+  virtual bool AddSpecialSkillInfo(felist&) const;
+  virtual bool CheckBalance(float);
+  virtual long CalculateMoveAPRequirement(long) const;
+  virtual bool EquipmentHasNoPairProblems(ushort) const;
  protected:
-  virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
   virtual ushort GetBodyPartColor2(ushort, ushort);
@@ -139,7 +141,7 @@ class ABSTRACT_CHARACTER
   virtual bodypart* MakeBodyPart(ushort);
   virtual uchar BodyParts() const { return 7; }
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " dies screaming."; }
-  gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
+  virtual uchar AllowedWeaponSkillCategories() const { return WEAPON_SKILL_CATEGORIES; }
 );
 
 class ABSTRACT_CHARACTER
@@ -602,7 +604,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
  protected:
   virtual ulong TotalVolume() const { return 100000; }
-  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return protosystem::CreateRandomSolidMaterial(Volume); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong) const;
   virtual std::string GetDeathMessage() { return "The Holy Words of " + GetName(DEFINITE) + " fly away and the monster collapses."; }
   //virtual std::string NameSingular() const { return "golem"; }
   virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(256,0); }
@@ -767,7 +769,7 @@ class CHARACTER
   //virtual std::string NameSingular() const { return "communist"; }
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual ushort TotalSize() const { return 230; }
-  virtual bool ShowClassDescription() const { return false; }
+  virtual bool ShowClassDescription() const { return GetAssignedName() != "Ivan"; }
 );
 
 class CHARACTER
@@ -784,6 +786,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual void CreateBodyPart(ushort);
   virtual ushort ClothColor() const { return MAKE_RGB(128, 80, 48); }
   virtual ushort BeltColor() const { return MAKE_RGB(144, 96, 60); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 192); }
@@ -1121,49 +1124,45 @@ class CHARACTER
   virtual ushort TotalSize() const { return 180; }
 );
 
+class werewolfwolf;
+
 class CHARACTER
 (
-  werewolf,
+  werewolfhuman,
   humanoid,
-  /*{
-    SetChangeCounter(RAND() % 2500);
-
-    /if(RAND() % 2)
-      ChangeIntoHuman();
-    else
-      ChangeIntoWolf();/
-  },*/
  public:
-  //static bool CanBeGenerated() { return true; }
-  virtual void Load(inputfile&);
-  virtual void Save(outputfile&) const;
-  virtual bool HasInfraVision() const { return GetIsWolf(); }
-  virtual void ChangeIntoHuman();
-  virtual void ChangeIntoWolf();
-  virtual void Be();
-  virtual bool GetIsWolf() const { return IsWolf; } 
-  virtual void SetIsWolf(bool What) { IsWolf = What; }
-  virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
-  virtual ushort GetChangeCounter() { return ChangeCounter; }
-  virtual ulong MaxDanger() const;
-  //virtual bool CanWield() const { return !GetIsWolf(); }
-  virtual uchar GetSex() const { return IsWolf ? UNDEFINED : MALE; }
+  //virtual void Load(inputfile&);
+  //virtual void Save(outputfile&) const;
+  //virtual void Be();
+  //virtual ushort GetChangeCounter() const { return ChangeCounter; }
+  //virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
+  //virtual ulong MaxDanger() const;
+  //virtual werewolfwolf* GetWolfForm() const { return WolfForm; }
+  //virtual void SetWolfForm(werewolfwolf* What) { WolfForm = What; }
  protected:
-  //virtual ushort SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(); }
-  virtual ushort EyeColor() const { return MAKE_RGB(160, 0, 0); }
-  virtual ushort ClothColor() const { return MAKE_RGB(96, 64, 32); }
-  virtual vector2d GetHeadBitmapPos() const { return IsWolf ? vector2d(112, 144) : vector2d(96, 0); }
-  virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 0); }
-  virtual vector2d GetArmBitmapPos() const { return IsWolf ? vector2d(80, 240) : vector2d(64, 0); }
-  virtual vector2d GetLegBitmapPos() const { return IsWolf ? vector2d(0, 192) : vector2d(0, 176); }
-  virtual ulong TotalVolume() const { return 80000; }
+  //virtual void VirtualConstructor(bool);
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WEREWOLFFLESH, Volume); }
-  virtual std::string GetNameSingular() const { return "werewolf"; }
-  //virtual float GetMeleeStrength() const;
-  virtual std::string TalkVerb() const { return IsWolf ? "howls" : "screams"; }
-  virtual ushort TotalSize() const { return 170; }
-  ushort ChangeCounter;
-  bool IsWolf;
+  //ushort ChangeCounter;
+  //werewolfwolf* WolfForm;
+);
+
+class CHARACTER
+(
+  werewolfwolf,
+  humanoid,
+ public:
+  /*virtual void Load(inputfile&);
+  virtual void Save(outputfile&) const;
+  //virtual void Be();
+  virtual ushort GetChangeCounter() const { return ChangeCounter; }
+  virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
+  virtual ulong MaxDanger() const;
+  virtual werewolfhuman* GetHumanForm() const { return HumanForm; }
+  virtual void SetHumanForm(werewolfhuman* What) { HumanForm = What; }*/
+ protected:
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(WEREWOLFFLESH, Volume); }
+  //ushort ChangeCounter;
+  //werewolfhuman* HumanForm;
 );
 
 class CHARACTER

@@ -147,7 +147,7 @@ Dungeon 0;
 				Types
 				{
 					W=wolf;
-					w=werewolf;
+					w=werewolfhuman;
 				}
 			}
 			{

@@ -41,7 +41,8 @@ class slot
   virtual bool IsOnGround() const { return false; }
   virtual void EditVolume(long) = 0;
   virtual void EditWeight(long) = 0;
-  void PutInItem(item*);
+  virtual void PutInItem(item*);
+  virtual void EditCarriedWeight(long) { }
  protected:
   item* Item;
 };
@@ -90,7 +91,8 @@ class characterslot : public slot
   virtual bool IsCharacterSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
   virtual void EditVolume(long);
-  virtual void EditWeight(long);
+  virtual void EditWeight(long) { }
+  virtual void EditCarriedWeight(long);
  protected:
   character* Master;
 };
@@ -117,11 +119,15 @@ class gearslot : public slot
   virtual void MoveItemTo(stack*);
   virtual bool IsGearSlot() const { return true; }
   virtual void AddFriendItem(item*) const;
-  void Init(bodypart*);
+  void Init(bodypart*, uchar);
   virtual void EditVolume(long);
   virtual void EditWeight(long);
+  virtual uchar GetEquipmentIndex() const { return EquipmentIndex; }
+  virtual void SetEquipmentIndex(uchar What) { EquipmentIndex = What; }
+  virtual void PutInItem(item*);
  protected:
   bodypart* BodyPart;
+  uchar EquipmentIndex;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, const gearslot& GearSlot)

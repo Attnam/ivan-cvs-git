@@ -42,19 +42,8 @@ petrus::~petrus()
   game::SetPetrus(0);
 }
 
-void humanoid::VirtualConstructor(bool Load)
-{
-  character::VirtualConstructor(Load);
-
-  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    CategoryWeaponSkill[c] = new gweaponskill(c);
-}
-
 humanoid::~humanoid()
 {
-  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    delete CategoryWeaponSkill[c];
-
   /* Do not delete these! */
 
   if(GetHead())
@@ -189,12 +178,11 @@ void elpuri::CreateCorpse()
   GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
 }
 
-void humanoid::Save(outputfile& SaveFile) const
+/*void humanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
 
-  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    SaveFile << GetCategoryWeaponSkill(c);
+
 }
 
 void humanoid::Load(inputfile& SaveFile)
@@ -203,7 +191,7 @@ void humanoid::Load(inputfile& SaveFile)
 
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
-}
+}*/
 
 /*float golem::GetMeleeStrength() const
 {
@@ -465,50 +453,22 @@ bool humanoid::Hit(character* Enemy)
     }
 }
 
-void humanoid::CharacterSpeciality(ushort Turns)
+/*void humanoid::CharacterSpeciality(ushort Turns)
 {
-  for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    if(GetCategoryWeaponSkill(c)->Turn(Turns) && IsPlayer())
-      GetCategoryWeaponSkill(c)->AddLevelDownMessage();
-}
 
-bool humanoid::ShowWeaponSkills()
+}*/
+
+bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
-  {
-    felist List("Your experience in weapon categories", WHITE, 0);
+  bool Something = false;
 
-    List.AddDescription("");
-    List.AddDescription("Category name                 Level     Points    To next level");
+  if(GetRightArm() && GetRightArm()->AddCurrentSingleWeaponSkillInfo(List))
+    Something = true;
 
-    for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-      {
-	std::string Buffer;
+  if(GetLeftArm() && GetLeftArm()->AddCurrentSingleWeaponSkillInfo(List))
+    Something = true;
 
-	Buffer += GetCategoryWeaponSkill(c)->Name();
-	Buffer.resize(30, ' ');
-
-	Buffer += GetCategoryWeaponSkill(c)->GetLevel();
-	Buffer.resize(40, ' ');
-
-	Buffer += GetCategoryWeaponSkill(c)->GetHits();
-	Buffer.resize(50, ' ');
-
-	if(GetCategoryWeaponSkill(c)->GetLevel() != 10)
-	  List.AddEntry(Buffer + (GetCategoryWeaponSkill(c)->GetLevelMap(GetCategoryWeaponSkill(c)->GetLevel() + 1) - GetCategoryWeaponSkill(c)->GetHits()), LIGHTGRAY);
-	else
-	  List.AddEntry(Buffer + '-', LIGHTGRAY);
-      }
-
-    if(GetRightArm())
-      GetRightArm()->AddCurrentSingleWeaponSkillInfo(List);
-
-    if(GetLeftArm())
-      GetLeftArm()->AddCurrentSingleWeaponSkillInfo(List);
-
-    List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), false);
-  }
-
-  return false;
+  return Something;
 }
 
 void shopkeeper::CreateInitialEquipment()
@@ -800,17 +760,6 @@ void golem::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Yes, master?\"");
   else
     ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
-}
-
-long humanoid::GetStatScore() const
-{
-  long SkillScore = 0;
-  ushort c;
-
-  for(c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    SkillScore += GetCategoryWeaponSkill(c)->GetHits();
-
-  return (SkillScore >> 2) + character::GetStatScore();
 }
 
 void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
@@ -1344,114 +1293,148 @@ void mistress::CreateInitialEquipment()
   GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(10000);
 }
 
-void werewolf::ChangeIntoHuman()
+/*void werewolfhuman::Be()
 {
-  /*SetSize(170);
-  SetAgility(15);
-  SetStrength(15);
-  SetEndurance(15);
-  SetPerception(15);
-  SetIsWolf(false);
-  SetStrengthExperience(0);
-  SetEnduranceExperience(0);
-  SetAgilityExperience(0);
-  SetPerceptinExperience(0);*/
-  RestoreHP();
-  UpdateBodyPartPictures();
+  humanoid::Be();
 
-  if(GetSquareUnder())
-    GetSquareUnder()->SendNewDrawRequest();
-}
+  if(IsEnabled() && ChangeCounter++ > 2500)
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You change into a wolf... At least for some time.");
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s changes into wolf.", CHARNAME(DEFINITE));
 
-void werewolf::ChangeIntoWolf()
+      Polymorph
+    }
+}*/
+
+/*void werewolfhuman::Be()
 {
-  /*SetSize(200);
-  SetAgility(25);
-  SetStrength(25);
-  SetEndurance(25);
-  SetPerception(24);
-  SetIsWolf(true);
-  SetMainWielded(0);
-  SetSecondaryWielded(0);
-  SetStrengthExperience(0);
-  SetEnduranceExperience(0);
-  SetAgilityExperience(0);
-  SetPerceptionExperience(0);*/
-  RestoreHP();
-  UpdateBodyPartPictures();
+  humanoid::Be();
 
-  if(GetSquareUnder())
-    GetSquareUnder()->SendNewDrawRequest();
-}
-
-void werewolf::Be()
-{
-  if(ChangeCounter++ > 2500)
+  if(IsEnabled() && ChangeCounter++ > 2500)
     {
       SetChangeCounter(0);
 
-      if(GetIsWolf())
-	{	
-	  ChangeIntoHuman();
-	  if(IsPlayer())
-	    ADD_MESSAGE("You change into a human... At least for some time.");
-	  else if(GetSquareUnder()->CanBeSeen())
-	    {
-	      ADD_MESSAGE("%s changes into human.", CHARNAME(DEFINITE));
-	    }
-	}
-      else
-	{
-	  ChangeIntoWolf();
-	  if(IsPlayer())
-	    ADD_MESSAGE("You change into a wolf... At least for some time.");
-	  else if(GetSquareUnder()->CanBeSeen())
-	    {
-	      ADD_MESSAGE("%s changes into a wolf.", CHARNAME(DEFINITE));
-	    }
-	}
+      if(IsPlayer())
+	ADD_MESSAGE("You change into a wolf... At least for some time.");
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s changes into wolf.", CHARNAME(DEFINITE));
+
+      SetHasBe(false);
+      WolfForm->SetHasBe(true);
+      WolfForm->RestoreHP();
+      WolfForm->SetChangeCounter(1);
+      GetSquareUnder()->RemoveCharacter();
+      GetSquareUnder()->AddCharacter(WolfForm);
     }
-
-  character::Be();
 }
 
-ulong werewolf::MaxDanger() const
+void werewolfwolf::Be()
 {
-  /*bool BeforeThis = GetIsWolf();
+  humanoid::Be();
 
-  ChangeIntoWolf();
-  ulong AsWolf = humanoid::MaxDanger();
-  ChangeIntoHuman();
-  ulong AsHuman = humanoid::MaxDanger();
+  if(IsEnabled() && ChangeCounter++ > 2500)
+    {
+      SetChangeCounter(0);
 
-  if(BeforeThis)
-    ChangeIntoWolf();
+      if(IsPlayer())
+	ADD_MESSAGE("You change into a human... At least for some time.");
+      else if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s changes into human.", CHARNAME(DEFINITE));
 
-  return (AsWolf + AsHuman) >> 1;*/
-  return 0;
+      SetHasBe(false);
+      HumanForm->SetHasBe(true);
+      HumanForm->RestoreHP();
+      HumanForm->SetChangeCounter(1);
+      GetSquareUnder()->RemoveCharacter();
+      GetSquareUnder()->AddCharacter(HumanForm);
+    }
 }
 
-/*float werewolf::GetMeleeStrength() const
+ulong werewolfhuman::MaxDanger() const
 {
-  if(GetIsWolf())
-    return 10000;
-  else
-    return 2000;
-}*/
+  return (humanoid::MaxDanger() + WolfForm->MaxDanger()) >> 1;
+}
 
-void werewolf::Save(outputfile& SaveFile) const
+ulong werewolfwolf::MaxDanger() const
+{
+  return (humanoid::MaxDanger() + HumanForm->MaxDanger()) >> 1;
+}
+
+void werewolfhuman::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
+  SaveFile << ChangeCounter;
 
-  SaveFile << IsWolf << ChangeCounter;
+  /
+   * Only one of the forms must save the other, or there will be infinite recursion
+   * We use StateCounter == 0 to mean that the form is deactivated
+   /
+
+  if(ChangeCounter)
+    SaveFile << static_cast<character*>(WolfForm);
 }
 
-void werewolf::Load(inputfile& SaveFile)
+void werewolfhuman::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
+  SaveFile >> ChangeCounter;
 
-  SaveFile >> IsWolf >> ChangeCounter;
+  if(ChangeCounter)
+    {
+      character* Temp;
+      SaveFile >> Temp;
+      WolfForm = static_cast<werewolfwolf*>(Temp);
+      WolfForm->SetHumanForm(this);
+      
+
+      if(IsPlayer())
+	game::SetPlayer(WolfForm);
+    }
 }
+
+void werewolfwolf::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << ChangeCounter;
+
+  /
+   * Only one of the forms must save the other, or there will be infinite recursion
+   * We use StateCounter == 0 to mean that the form is deactivated
+   /
+
+  if(ChangeCounter)
+    SaveFile << static_cast<character*>(HumanForm);
+}
+
+void werewolfwolf::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> ChangeCounter;
+
+  if(ChangeCounter)
+    {
+      character* Temp;
+      SaveFile >> Temp;
+      HumanForm = static_cast<werewolfhuman*>(Temp);
+      HumanForm->SetWolfForm(this);
+    }
+}
+
+void werewolfhuman::VirtualConstructor(bool Load)
+{
+  humanoid::VirtualConstructor(Load);
+
+  if(!Load)
+    {
+      SetChangeCounter(RAND() % 5000);
+      WolfForm = new werewolfwolf;
+      WolfForm->SetHumanForm(this);
+      WolfForm->SetChangeCounter(0);
+      WolfForm->SetHasBe(false);
+    }
+}*/
 
 void kobold::CreateInitialEquipment()
 {
@@ -1776,25 +1759,25 @@ uchar humanoid::GetBodyPartBonePercentile(ushort Index)
     }
 }
 
-head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
-void humanoid::SetHead(head* What) { SetBodyPart(1, What); }
-rightarm* humanoid::GetRightArm() const { return (rightarm*)GetBodyPart(2); }
-void humanoid::SetRightArm(rightarm* What) { SetBodyPart(2, What); }
-leftarm* humanoid::GetLeftArm() const { return (leftarm*)GetBodyPart(3); }
-void humanoid::SetLeftArm(leftarm* What) { SetBodyPart(3, What); }
-groin* humanoid::GetGroin() const { return (groin*)GetBodyPart(4); }
-void humanoid::SetGroin(groin* What) { SetBodyPart(4, What); }
-rightleg* humanoid::GetRightLeg() const { return (rightleg*)GetBodyPart(5); }
-void humanoid::SetRightLeg(rightleg* What) { SetBodyPart(5, What); }
-leftleg* humanoid::GetLeftLeg() const { return (leftleg*)GetBodyPart(6); }
-void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(6, What); }
+head* humanoid::GetHead() const { return (head*)GetBodyPart(HEADINDEX); }
+void humanoid::SetHead(head* What) { SetBodyPart(HEADINDEX, What); }
+rightarm* humanoid::GetRightArm() const { return (rightarm*)GetBodyPart(RIGHTARMINDEX); }
+void humanoid::SetRightArm(rightarm* What) { SetBodyPart(RIGHTARMINDEX, What); }
+leftarm* humanoid::GetLeftArm() const { return (leftarm*)GetBodyPart(LEFTARMINDEX); }
+void humanoid::SetLeftArm(leftarm* What) { SetBodyPart(LEFTARMINDEX, What); }
+groin* humanoid::GetGroin() const { return (groin*)GetBodyPart(GROININDEX); }
+void humanoid::SetGroin(groin* What) { SetBodyPart(GROININDEX, What); }
+rightleg* humanoid::GetRightLeg() const { return (rightleg*)GetBodyPart(RIGHTLEGINDEX); }
+void humanoid::SetRightLeg(rightleg* What) { SetBodyPart(RIGHTLEGINDEX, What); }
+leftleg* humanoid::GetLeftLeg() const { return (leftleg*)GetBodyPart(LEFTLEGINDEX); }
+void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(LEFTLEGINDEX, What); }
 
-humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(0); }
-void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(0, What); }
+humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(TORSOINDEX); }
+void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(TORSOINDEX, What); }
 
 bool humanoid::BodyPartVital(ushort Index)
 {
-  if(Index == 0 || Index == 1 || Index == 4)
+  if(Index == TORSOINDEX || Index == HEADINDEX || Index == GROININDEX)
     return true;
   else
     return false;
@@ -1802,7 +1785,7 @@ bool humanoid::BodyPartVital(ushort Index)
 
 bool humanoid::BodyPartCanBeSevered(ushort Index) const
 {
-  if(!GetBodyPart(Index) || Index == 0 || Index == 4)
+  if(!GetBodyPart(Index) || Index == TORSOINDEX || Index == GROININDEX)
     return false;
   else
     return true;
@@ -1959,19 +1942,19 @@ std::string humanoid::EquipmentName(ushort Index) const
 {
   switch(Index)
     {
-    case 0: return "helmet";
-    case 1: return "amulet";
-    case 2: return "cloak";
-    case 3: return "body armor";
-    case 4: return "belt";
-    case 5: return "right hand wielded";
-    case 6: return "left hand wielded";
-    case 7: return "right ring";
-    case 8: return "left ring";
-    case 9: return "right gauntlet";
-    case 10: return "left gauntlet";
-    case 11: return "right boot";
-    case 12: return "left boot";
+    case HELMETINDEX: return "helmet";
+    case AMULETINDEX: return "amulet";
+    case CLOAKINDEX: return "cloak";
+    case BODYARMORINDEX: return "body armor";
+    case BELTINDEX: return "belt";
+    case RIGHTWIELDEDINDEX: return "right hand wielded";
+    case LEFTWIELDEDINDEX: return "left hand wielded";
+    case RIGHTRINGINDEX: return "right ring";
+    case LEFTRINGINDEX: return "left ring";
+    case RIGHTGAUNTLETINDEX: return "right gauntlet";
+    case LEFTGAUNTLETINDEX: return "left gauntlet";
+    case RIGHTBOOTINDEX: return "right boot";
+    case LEFTBOOTINDEX: return "left boot";
     default: return "forbidden piece of cloth";
     }
 }
@@ -1980,19 +1963,19 @@ bool (*humanoid::EquipmentSorter(ushort Index) const)(item*, character*)
 {
   switch(Index)
     {
-    case 0: return &item::HelmetSorter;
-    case 1: return &item::AmuletSorter;
-    case 2: return &item::CloakSorter;
-    case 3: return &item::BodyArmorSorter;
-    case 4: return &item::BeltSorter;
-    case 5:
-    case 6: return 0;
-    case 7:
-    case 8: return &item::RingSorter;
-    case 9:
-    case 10: return &item::GauntletSorter;
-    case 11:
-    case 12: return &item::BootSorter;
+    case HELMETINDEX: return &item::HelmetSorter;
+    case AMULETINDEX: return &item::AmuletSorter;
+    case CLOAKINDEX: return &item::CloakSorter;
+    case BODYARMORINDEX: return &item::BodyArmorSorter;
+    case BELTINDEX: return &item::BeltSorter;
+    case RIGHTWIELDEDINDEX:
+    case LEFTWIELDEDINDEX: return 0;
+    case RIGHTRINGINDEX:
+    case LEFTRINGINDEX: return &item::RingSorter;
+    case RIGHTGAUNTLETINDEX:
+    case LEFTGAUNTLETINDEX: return &item::GauntletSorter;
+    case RIGHTBOOTINDEX:
+    case LEFTBOOTINDEX: return &item::BootSorter;
     default: return 0;
     }
 }
@@ -2001,24 +1984,24 @@ bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
 {
   switch(Index)
     {
-    case 0:
-    case 1:
+    case HELMETINDEX:
+    case AMULETINDEX:
       return GetHead();
-    case 2:
-    case 3:
-    case 4:
+    case CLOAKINDEX:
+    case BODYARMORINDEX:
+    case BELTINDEX:
       return GetTorso();
-    case 5:
-    case 7:
-    case 9:
+    case RIGHTWIELDEDINDEX:
+    case RIGHTRINGINDEX:
+    case RIGHTGAUNTLETINDEX:
       return GetRightArm();
-    case 6:
-    case 8:
-    case 10:
+    case LEFTWIELDEDINDEX:
+    case LEFTRINGINDEX:
+    case LEFTGAUNTLETINDEX:
       return GetLeftArm();
-    case 11:
+    case RIGHTBOOTINDEX:
       return GetRightLeg();
-    case 12:
+    case LEFTBOOTINDEX:
       return GetLeftLeg();
     default:
       return 0;
@@ -2029,19 +2012,19 @@ item* humanoid::GetEquipment(ushort Index) const
 {
   switch(Index)
     {
-    case 0: return GetHelmet();
-    case 1: return GetAmulet();
-    case 2: return GetCloak();
-    case 3: return GetBodyArmor();
-    case 4: return GetBelt();
-    case 5: return GetRightWielded();
-    case 6: return GetLeftWielded();
-    case 7: return GetRightRing();
-    case 8: return GetLeftRing();
-    case 9: return GetRightGauntlet();
-    case 10: return GetLeftGauntlet();
-    case 11: return GetRightBoot();
-    case 12: return GetLeftBoot();
+    case HELMETINDEX: return GetHelmet();
+    case AMULETINDEX: return GetAmulet();
+    case CLOAKINDEX: return GetCloak();
+    case BODYARMORINDEX: return GetBodyArmor();
+    case BELTINDEX: return GetBelt();
+    case RIGHTWIELDEDINDEX: return GetRightWielded();
+    case LEFTWIELDEDINDEX: return GetLeftWielded();
+    case RIGHTRINGINDEX: return GetRightRing();
+    case LEFTRINGINDEX: return GetLeftRing();
+    case RIGHTGAUNTLETINDEX: return GetRightGauntlet();
+    case LEFTGAUNTLETINDEX: return GetLeftGauntlet();
+    case RIGHTBOOTINDEX: return GetRightBoot();
+    case LEFTBOOTINDEX: return GetLeftBoot();
     default: return 0;
     }
 }
@@ -2064,21 +2047,23 @@ void humanoid::SetEquipment(ushort Index, item* What)
 {
   switch(Index)
     {
-    case 0: SetHelmet(What); break;
-    case 1: SetAmulet(What); break;
-    case 2: SetCloak(What); break;
-    case 3: SetBodyArmor(What); break;
-    case 4: SetBelt(What); break;
-    case 5: SetRightWielded(What); break;
-    case 6: SetLeftWielded(What); break;
-    case 7: SetRightRing(What); break;
-    case 8: SetLeftRing(What); break;
-    case 9: SetRightGauntlet(What); break;
-    case 10: SetLeftGauntlet(What); break;
-    case 11: SetRightBoot(What); break;
-    case 12: SetLeftBoot(What); break;
+    case HELMETINDEX: SetHelmet(What); break;
+    case AMULETINDEX: SetAmulet(What); break;
+    case CLOAKINDEX: SetCloak(What); break;
+    case BODYARMORINDEX: SetBodyArmor(What); break;
+    case BELTINDEX: SetBelt(What); break;
+    case RIGHTWIELDEDINDEX: SetRightWielded(What); break;
+    case LEFTWIELDEDINDEX: SetLeftWielded(What); break;
+    case RIGHTRINGINDEX: SetRightRing(What); break;
+    case LEFTRINGINDEX: SetLeftRing(What); break;
+    case RIGHTGAUNTLETINDEX: SetRightGauntlet(What); break;
+    case LEFTGAUNTLETINDEX: SetLeftGauntlet(What); break;
+    case RIGHTBOOTINDEX: SetRightBoot(What); break;
+    case LEFTBOOTINDEX: SetLeftBoot(What); break;
     }
 }
+
+/* Add aborts! */
 
 void humanoid::SetHelmet(item* What) { if(GetHead()) GetHead()->SetHelmet(What); }
 void humanoid::SetAmulet(item* What) { if(GetHead()) GetHead()->SetAmulet(What); }
@@ -2112,6 +2097,12 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 
 bool humanoid::CheckKick() const
 {
+  if(!CanKick())
+    {
+      ADD_MESSAGE("This race can't kick.");
+      return false;
+    }
+
   if(GetLegs() < 2)
     {
       std::string LegNumber;
@@ -2129,8 +2120,8 @@ bool humanoid::CheckKick() const
       ADD_MESSAGE("How are you you going to do that with %s?", LegNumber.c_str());
       return false;
     }
-
-  return true;
+  else
+    return true;
 }
 
 uchar humanoid::GetLegs() const
@@ -2159,20 +2150,20 @@ uchar humanoid::GetArms() const
   return Arms;
 }
 
-float humanoid::GetAPStateMultiplier() const
+/*float humanoid::GetAPStateMultiplier() const
 {
-  float Multiplier = 1;
+  float Multiplier = 1.0f;
 
   switch(GetLegs())
     {
     case 0:
-      Multiplier = 0.1f;
+      Multiplier = 0.10f;
       break;
     case 1:
       Multiplier = 0.33f;
       break;
     case 2:
-      Multiplier = 1.0f;
+      Multiplier = 1.00f;
     }
 
   if(StateIsActivated(HASTE))
@@ -2182,7 +2173,7 @@ float humanoid::GetAPStateMultiplier() const
     Multiplier *= 0.5;
   
   return Multiplier;
-}
+}*/
 
 short humanoid::GetLengthOfOpen(vector2d) const
 { 
@@ -2355,16 +2346,6 @@ void humanoid::AddInfo(felist& Info) const
       Info.AddEntry(std::string("Left leg strength: ") + GetLeftLeg()->GetAttribute(LEGSTRENGTH), LIGHTGRAY);
       Info.AddEntry(std::string("Left leg agility: ") + GetLeftLeg()->GetAttribute(AGILITY), LIGHTGRAY);
     }
-
-  if(GetRightWielded())
-    Info.AddEntry("Right wielded: " + GetRightWielded()->GetName(INDEFINITE), LIGHTGRAY);
-  else
-    Info.AddEntry("Right wielded: nothing", LIGHTGRAY);
-
-  if(GetLeftWielded())
-    Info.AddEntry(std::string("Left wielded: ") + GetLeftWielded()->GetName(INDEFINITE), LIGHTGRAY);
-  else
-    Info.AddEntry("Left wielded: nothing", LIGHTGRAY);
 
   Info.AddEntry(std::string("Right attack strength: ") + ulong(CalculateRightAttackStrength() / 1000), LIGHTGRAY);
   Info.AddEntry(std::string("Right to hit value: ") + ulong(CalculateRightToHitValue()), LIGHTGRAY);
@@ -2688,6 +2669,9 @@ void nonhumanoid::Bite(character* Enemy)
     case HASHIT:
     case HASBLOCKED:
       SpecialBiteEffect(Enemy);
+    case HASDIED:
+      if(GetCategoryWeaponSkill(BITE)->AddHit() && IsPlayer())
+	GetCategoryWeaponSkill(BITE)->AddLevelUpMessage();
     }
 }
 
@@ -2729,6 +2713,10 @@ void humanoid::Kick(lsquare* Square)
 void nonhumanoid::Kick(lsquare* Square)
 {
   Square->BeKicked(this, CalculateKickStrength(), CalculateKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
+
+  if(GetCategoryWeaponSkill(KICK)->AddHit() && IsPlayer())
+    GetCategoryWeaponSkill(KICK)->AddLevelUpMessage();
+
   EditNP(-50);
 }
 
@@ -3197,6 +3185,7 @@ ushort humanoid::GetRandomStepperBodyPart() const
 	return HEADINDEX;
       }
 }
+
 ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue, ushort Damage, short Success, uchar Type)
 {
   if(GetRightWielded())
@@ -3208,3 +3197,64 @@ ushort humanoid::CheckForBlock(character* Enemy, item* Weapon, float ToHitValue,
   return Damage;
 }
 
+material* golem::CreateBodyPartFlesh(ushort Index, ulong Volume) const
+{
+  if(Index == TORSOINDEX)
+    return protosystem::CreateRandomSolidMaterial(Volume);
+  else
+    return GetTorso()->GetMainMaterial()->Clone(Volume);
+}
+
+bool humanoid::CanWield() const
+{
+  return CanUseEquipment() && (GetRightArm() || GetLeftArm());
+}
+
+bool humanoid::CheckBalance(float KickStrength)
+{
+  if(GetLegs() == 1)
+    return true;
+  else
+    return KickStrength / 1000 >= RAND() % GetSize();
+}
+
+long humanoid::CalculateMoveAPRequirement(long Base) const
+{
+  switch(GetLegs())
+    {
+    case 0:
+      return Base / 10;
+    case 1:
+      return Base / 3;
+    case 2:
+      return Base;
+    default:
+      ABORT("A %d legged humanoid invaded the dungeon!", GetLegs());
+      return 0;
+    }
+}
+
+bool humanoid::EquipmentHasNoPairProblems(ushort Index) const
+{
+  switch(Index)
+    {
+    case RIGHTGAUNTLETINDEX:
+      return GetLeftGauntlet() && GetLeftGauntlet()->IsSimiliarTo(GetRightGauntlet());
+    case LEFTGAUNTLETINDEX:
+      return GetRightGauntlet() && GetRightGauntlet()->IsSimiliarTo(GetLeftGauntlet());
+    case RIGHTBOOTINDEX:
+      return GetLeftBoot() && GetLeftBoot()->IsSimiliarTo(GetRightBoot());
+    case LEFTBOOTINDEX:
+      return GetRightBoot() && GetRightBoot()->IsSimiliarTo(GetLeftBoot());
+    }
+
+  return true;
+}
+
+void hunter::CreateBodyPart(ushort Index)
+{
+  if(Index != LEFTARMINDEX)
+    character::CreateBodyPart(Index);
+  else
+    SetLeftArm(0);
+}

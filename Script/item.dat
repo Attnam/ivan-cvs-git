@@ -50,6 +50,7 @@ item
 	OKVisualEffects = NONE;
 	CanBeGeneratedInContainer = true;
 	/* Obligatory: Roundness */
+	GearStates = 0;
 }
 
 materialcontainer
@@ -467,6 +468,7 @@ leftnutofpetrus /* nut-> */
 	PostFix = "of Petrus";
 	ArticleMode = DEFINITEARTICLE;
 	IsPolymorphable = false;
+	CanBeWished = false;
 }
 
 bone
@@ -647,7 +649,8 @@ avatarofvalpurus
 	StrengthModifier = 400;
 	BitmapPos = 0, 320;
 	FormModifier = 20;
-	NameSingular = "Avatar of Valpurus";
+	NameSingular = "Avatar";
+	PostFix = "of Valpurus";
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
@@ -766,7 +769,8 @@ holybook
 	BitmapPos = 32, 32;
 	FormModifier = 30;
 	OfferModifier = 4000;
-	NameSingular = "holy book";
+	Adjective = "holy";
+	NameSingular = "book";
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == PARCHMENT;
 	Price = 200;
@@ -783,7 +787,6 @@ fiftymillionroubles
 	StrengthModifier = 25;
 	BitmapPos = 0, 336;
 	FormModifier = 20;
-	CanBeWished = false;
 	OfferModifier = 100;
 	NameSingular = "pile";
 	PostFix = "of 50 million roubles";
@@ -1003,6 +1006,7 @@ amulet
 	BitmapPos = 32, 400;
 	FormModifier = 50;
 	NameSingular = "amulet";
+	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
 }
@@ -1012,7 +1016,6 @@ bodypart
 	Category = FOOD;
 	IsAutoInitializable = false;
 	NPModifier = 100;
-	CanBeWished = false;
 	IsAbstract = true;
 }
 
@@ -1151,6 +1154,7 @@ amuletoflifesaving /* amulet-> */
 {
 	PostFix = "of life saving";
 	MainMaterialConfig == GOLD;
+	GearStates = LIFE_SAVED;
 }
 
 whistle
@@ -1187,6 +1191,22 @@ wandofdoorcreation /* wand-> */
 	Price = 200;
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
+}
+
+bootofspeed /* boot-> */
+{
+	PostFix = "of speed";
+	MainMaterialConfig == DIAMOND;
+	MaterialConfigChances == 100;
+	GearStates = HASTE;
+}
+
+ringofpolymorphcontrol
+{
+	PostFix = "of polymorph control";
+	Possibility = 10;
+	MainMaterialConfig == RUBY;
+	GearStates = POLYMORPH_CONTROL;
 }
 
 beartrap

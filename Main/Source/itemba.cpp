@@ -18,7 +18,7 @@
 #include "materba.h"
 #include "save.h"
 
-item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID())
+item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()), CarriedWeight(0)
 {
 }
 
@@ -478,10 +478,23 @@ void item::EditWeight(long What)
     GetSlot()->EditWeight(What);
 }
 
+void item::EditCarriedWeight(long What)
+{
+  CarriedWeight += What;
+
+  if(GetSlot())
+    GetSlot()->EditCarriedWeight(What);
+}
+
 ulong item::GetBlockModifier(const character* User) const
 {
   if(!IsShield(User))
     return GetSize() * GetRoundness();
   else
     return GetSize() * GetRoundness() << 1;
+}
+
+bool item::IsSimiliarTo(item* Item) const
+{
+  return Item->GetType() == GetType() && Item->GetConfig() == GetConfig();
 }

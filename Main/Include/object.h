@@ -58,6 +58,7 @@ class object : public entity, public id
   virtual ushort GetEmitation() const { return Emitation; }
   void SetEmitation(ushort What) { Emitation = What; }
   void LoadMaterial(inputfile&, material*&);
+  ushort GetConfig() const { return Config; }
  protected:
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);

@@ -60,9 +60,9 @@ worldmap* game::WorldMap;
 area* game::AreaInLoad;
 square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
-character* game::PlayerBackup;
+//character* game::PlayerBackup;
 uchar game::CurrentDungeon;
-ulong game::NextItemID = 0;
+ulong game::NextItemID = 1;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
 vector2d game::ScreenSize(42, 26);
@@ -192,7 +192,7 @@ void game::Init(const std::string& Name)
   WizardMode = false;
   SeeWholeMapCheat = false;
   GoThroughWallsCheat = false;
-  PlayerBackup = 0;
+  //PlayerBackup = 0;
 
   LOSTurns = 1;
   WorldMap = 0;
@@ -238,8 +238,8 @@ void game::Init(const std::string& Name)
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new petrus);
-	//Player->SetAssignedName(PlayerName);
+	SetPlayer(new human);
+	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
 	Petrus = 0;
@@ -259,7 +259,7 @@ void game::Init(const std::string& Name)
 	Ticks = 0;
 
 	BaseScore = Player->GetScore();
-	dog* Doggie = new dog;
+	character* Doggie = new werewolfhuman;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
 
@@ -285,8 +285,8 @@ void game::Init(const std::string& Name)
 
 void game::DeInit()
 {
-  delete GetPlayerBackup();
-  SetPlayerBackup(0);
+  //delete GetPlayerBackup();
+  //SetPlayerBackup(0);
   delete GetWorldMap();
   SetWorldMap(0);
 
@@ -525,7 +525,7 @@ bool game::Save(const std::string& SaveName)
 
   SaveFile << God;
   SaveFile << game::GetPlayer()->GetPos();
-  SaveFile << PlayerBackup;
+  //SaveFile << PlayerBackup;
   msgsystem::Save(SaveFile);
   return true;
 }
@@ -571,7 +571,7 @@ uchar game::Load(const std::string& SaveName)
 
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
-  SaveFile >> PlayerBackup;
+  //SaveFile >> PlayerBackup;
   msgsystem::Load(SaveFile);
   return LOADED;
 }
