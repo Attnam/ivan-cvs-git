@@ -1,9 +1,5 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
 #include <iostream>
 #include <new.h>
-#include <windows.h>
 
 #include "error.h"
 

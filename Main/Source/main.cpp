@@ -1,12 +1,7 @@
-#include <conio.h>
-#include <windows.h>
-
 #include "graphics.h"
-#include "bitmap.h"
 #include "game.h"
 #include "igraph.h"
 #include "hscore.h"
-#include "whandler.h"
 
 int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLine, int)
 {

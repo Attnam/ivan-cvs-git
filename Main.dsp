@@ -144,6 +144,10 @@ SOURCE=.\Main\Source\material.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\message.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\object.cpp
 # End Source File
 # Begin Source File
@@ -221,6 +225,10 @@ SOURCE=.\Main\Include\lterrain.h
 # Begin Source File
 
 SOURCE=.\Main\Include\material.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\message.h
 # End Source File
 # Begin Source File
 

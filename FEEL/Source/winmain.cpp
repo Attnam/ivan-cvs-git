@@ -1,7 +1,3 @@
-#include <windows.h>
-#include <cstdlib>
-#include <iostream>
-
 #include "error.h"
 
 int Main(HINSTANCE, HINSTANCE, HWND*, LPSTR, int);

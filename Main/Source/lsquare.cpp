@@ -1,22 +1,13 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <string>
-
-#include "error.h"
 #include "char.h"
-#include "graphics.h"
 #include "igraph.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "strover.h"
 #include "lterrain.h"
-#include "whandler.h"
 #include "level.h"
-#include "bitmap.h"
 #include "item.h"
+#include "proto.h"
+#include "message.h"
 
 levelsquare::levelsquare(level* MotherLevel, vector Pos) : square(MotherLevel, Pos), Emitation(0), DivineOwner(0), Fluided(false)
 {
@@ -533,9 +524,8 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 {
 	char Result = CanBeDigged(DiggerCharacter, DiggerItem);
 	if(Result != 2)
-	{
-		GetOverLevelTerrain()->ShowDigMessage(DiggerCharacter, DiggerItem);
-	}
+		if(DiggerCharacter->GetIsPlayer())
+			ADD_MESSAGE(GetOverLevelTerrain()->DigMessage().c_str());
 	else 
 		Result = false;
 

@@ -1,30 +1,22 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
+#include <cmath>
 #include <ctime>
-#include <fstream>
-#include <string>
 #include <io.h>
 
 #include "game.h"
 #include "level.h"
 #include "char.h"
 #include "error.h"
-#include "graphics.h"
-#include "bitmap.h"
 #include "item.h"
 #include "god.h"
 #include "igraph.h"
 #include "strover.h"
 #include "list.h"
 #include "whandler.h"
-#include "command.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "lterrain.h"
-#include "wterrain.h"
 #include "worldmap.h"
-#include "wsquare.h"
+#include "message.h"
 
 level** game::Level;
 ushort game::Levels = 10, game::Current;
@@ -84,7 +76,6 @@ int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 
 const vector game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector(1, 0), vector(0, -1), vector(0, 1), vector(-1, 0), vector(-1, -1), vector(1, -1), vector(1, 1), vector(-1, 1)};
 
 std::string game::LevelMsg[] = {"", "", "", "", "", "", "", "", "", ""};
-game::globalmessagingsystem game::GlobalMessagingSystem;
 game::panel game::Panel;
 
 ushort*** game::LuxTable;
@@ -102,7 +93,6 @@ uchar game::GodNumber;
 ulong game::Turns;
 float game::SoftGamma = 1;
 
-
 void game::Init(std::string Name)
 {
 	static ushort Counter = 0;
@@ -110,7 +100,7 @@ void game::Init(std::string Name)
 	FILE* Debug = fopen("Debug.txt", "w");
 	Turns = 0;
 	EMPTY_MESSAGES();
-	game::GlobalMessagingSystem.Format();
+	globalmessagingsystem::Format();
 	ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
 
 	fprintf(Debug, "Game: %d.", Counter);
@@ -262,6 +252,8 @@ void game::DeInit(void)
 
 	delete [] Level;
 
+	delete WorldMap;
+
 	BurnHellsContents();
 }
 
@@ -281,136 +273,6 @@ void game::Run(void)
 
 		BurnHellsContents();
 	}
-}
-
-void game::globalmessagingsystem::AddMessage(const char* Format, ...)
-{
-	char Message[256];
-	char Buffer[256];
-
-	va_list AP;
-	va_start(AP, Format);
-	vsprintf(Message, Format, AP);
-	va_end(AP);
-
-	if(Message[0] > 0x60 && Message[0] < 0x7B)
-		Message[0] &= ~0x20;              // Very guru and odd. Capitalizes the first letter!
-
-	if(MessageBuffer)
-	{
-		ushort NewLength = BufferLength + strlen(Message) + 1;
-
-		char* TempBuffer = new char[NewLength];
-
-		{
-		for(ushort c = 0; c < BufferLength; c++)
-			TempBuffer[c] = MessageBuffer[c];
-		}
-
-		TempBuffer[BufferLength] = ' ';
-
-		for(ushort c = BufferLength + 1, i = 0; c < NewLength; c++, i++)
-			TempBuffer[c] = Message[i];
-
-		delete [] MessageBuffer;
-
-		MessageBuffer = TempBuffer;
-
-		BufferLength = NewLength;
-	}
-	else
-	{
-		BufferLength = strlen(Message);
-
-		MessageBuffer = new char[BufferLength];
-
-		for(ushort c = 0; c < BufferLength; c++)
-			MessageBuffer[c] = Message[c];
-	}
-
-	sprintf(Buffer, "%d - %s", int(game::GetTurns()), Message);
-
-	game::GlobalMessagingSystem.MessageHistory.AddString(Buffer);
-}
-
-void game::globalmessagingsystem::Draw(void) const
-{
-	graphics::ClearDBToColor(0, 0, 800, 32);
-
-	ulong Length = BufferLength, Pointer = 0;
-
-	char Buffer[99];
-
-	Buffer[98] = 0;
-
-	if(MessageBuffer)
-	while(Length)
-	{
-		for(ushort y = 0; y < 2; y++)
-		{
-			if(Length <= 98)
-			{
-				for(ulong c = 0; c < Length; c++)
-					Buffer[c] = MessageBuffer[c + Pointer];
-
-				Buffer[Length] = 0;
-
-				FONTW->PrintfToDB(7, 7 + y * 10, "%s", Buffer);
-
-				Length = 0;
-
-				break;
-			}
-			else
-			{
-				ulong i = 97;
-
-				for(; i; i--)
-					if(MessageBuffer[Pointer + i] == ' ')
-					{
-						for(ulong c = 0; c < i; c++)
-							Buffer[c] = MessageBuffer[c + Pointer];
-
-						Buffer[i] = 0;
-
-						Pointer += i + 1;
-
-						Length -= i + 1;
-
-						break;
-					}
-
-				if(!i)
-				{
-					for(ulong c = 0; c < 98; c++)
-						Buffer[c] = MessageBuffer[c + Pointer];
-
-					Pointer += 98;
-
-					Length -= 98;
-				}
-
-				FONTW->PrintfToDB(7, 7 + y * 10, "%s", Buffer);
-			}
-		}
-		if(Length)
-		{
-			graphics::BlitDBToScreen();
-
-			GETKEY();
-
-			graphics::ClearDBToColor(0, 0, 800, 32);
-		}
-	}
-}
-
-void game::globalmessagingsystem::Empty(void)
-{
-	delete [] MessageBuffer;
-
-	MessageBuffer = 0;
-
-	BufferLength = 0;
 }
 
 void game::InitLuxTable(void)
@@ -1225,16 +1087,6 @@ void game::WhatToLoadMenu(void) // for some _very_ strange reason "LoadMenu" occ
 	game::Init(Name);
 	game::Run();
 	game::DeInit();
-}
-
-void game::globalmessagingsystem::DrawMessageHistory(void) const
-{
-	MessageHistory.Draw(false);
-}
-
-void game::globalmessagingsystem::Format(void)
-{
-	MessageHistory.Empty();
 }
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer)

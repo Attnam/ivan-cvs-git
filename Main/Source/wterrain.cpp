@@ -3,6 +3,7 @@
 #include "igraph.h"
 #include "bitmap.h"
 #include "object.h"
+#include "material.h"
 
 void worldmapterrain::Save(std::ofstream* SaveFile) const
 {

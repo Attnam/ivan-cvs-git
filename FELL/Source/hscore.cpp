@@ -1,6 +1,3 @@
-#include <string>
-#include <fstream>
-
 #include "error.h"
 #include "graphics.h"
 #include "bitmap.h"

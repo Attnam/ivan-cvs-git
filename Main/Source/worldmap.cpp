@@ -1,8 +1,8 @@
 #include "worldmap.h"
 #include "wsquare.h"
 #include "wterrain.h"
-#include "game.h"
 #include "char.h"
+#include "material.h"
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {

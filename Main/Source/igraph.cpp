@@ -1,11 +1,6 @@
-#include <windows.h>
-#include <conio.h>
-#include <cstdlib>
-
 #include "bitmap.h"
 #include "graphics.h"
 #include "igraph.h"
-#include "whandler.h"
 #include "game.h"
 
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
@@ -39,7 +34,7 @@ void igraph::DeInit(void)
 
 void igraph::BlitTileBuffer(vector Pos, ushort Luminance)
 {
-	Luminance = ushort(Luminance * game::CSoftGamma());
+	Luminance = ushort(Luminance * game::GetSoftGamma());
 
 	if(Luminance == 256)
 		TileBuffer->BlitToDB(0, 0, Pos.X, Pos.Y, 16, 16);

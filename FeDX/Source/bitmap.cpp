@@ -1,7 +1,3 @@
-#include <cstdarg>
-#include <cstdio>
-#include <fstream>
-
 #include "bitmap.h"
 #include "graphics.h"
 #include "ddutil.h"

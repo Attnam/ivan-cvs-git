@@ -1,10 +1,9 @@
 #include "area.h"
-#include "level.h"
 #include "allocate.h"
-#include "lsquare.h"
+#include "square.h"
 #include "bitmap.h"
-#include "lterrain.h"
 #include "char.h"
+#include "material.h"
 
 area::area(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize)
 {

@@ -1,14 +1,13 @@
-#include <cstdlib>
-
-#include "graphics.h"
 #include "bitmap.h"
 #include "igraph.h"
 #include "item.h"
 #include "stack.h"
 #include "strover.h"
 #include "list.h"
-#include "whandler.h"
 #include "lsquare.h"
+#include "game.h"
+#include "proto.h"
+#include "message.h"
 
 stack::stack(square* SquareUnder) : SquareUnder(SquareUnder), Item(0), Items(0), NonExistent(0)
 {

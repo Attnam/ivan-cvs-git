@@ -1,18 +1,17 @@
-#include <cstdio>
-#include <cstring>
+#include <cmath>
+#include <ctime>
 
 #include "char.h"
 #include "error.h"
-#include "graphics.h"
-#include "bitmap.h"
 #include "item.h"
-#include "material.h"
 #include "igraph.h"
 #include "strover.h"
 #include "stack.h"
 #include "level.h"
 #include "lsquare.h"
 #include "lterrain.h"
+#include "proto.h"
+#include "message.h"
 
 item::item(bool CreateMaterials, bool SetStats)
 {
@@ -415,5 +414,40 @@ bool pickaxe::Apply(character* User)
 	return false;
 }
 
+item* item::CreateWishedItem(void) const
+{
+	return prototypesystem::GetItemPrototype(Type())->Clone();
+}
 
+bool item::Apply(character*)
+{
+	ADD_MESSAGE("You can't apply this!");
 
+	return false;
+}
+
+ushort platemail::GetArmorValue(void) const
+{
+	float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3;
+
+	if(Base < 0)
+		Base = 0;
+
+	if(Base > 100)
+		Base = 100;
+
+	return ushort(Base);
+}
+
+ushort chainmail::GetArmorValue(void) const
+{
+	float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2;
+
+	if(Base < 0)
+		Base = 0;
+
+	if(Base > 100)
+		Base = 100;
+
+	return ushort(Base);
+}

@@ -1,5 +1,4 @@
 #include "list.h"
-
 #include "graphics.h"
 #include "bitmap.h"
 #include "igraph.h"

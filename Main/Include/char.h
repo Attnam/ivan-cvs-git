@@ -23,13 +23,18 @@
 #define BURDENED		2
 #define UNBURDENED		3
 
+#include "game.h"
+#include "graphics.h"
+#include "object.h"
 #include "typedef.h"
 #include "vector.h"
 
-#include "proto.h"
-#include "graphics.h"
-#include "object.h"
-#include "game.h"
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+
+	#include "proto.h"
+	#include "material.h"
+
+#endif
 
 class square;
 class bitmap;
@@ -243,11 +248,11 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		virtual character* Clone(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
+		name(bool = true, bool = true, bool = true);\
+		name(material*, bool= true, bool = true);\
+		virtual character* Clone(bool = true, bool = true, bool = true) const;\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
@@ -261,6 +266,10 @@ protected:
 		ushort Index;\
 	} static Proto_##name;\
 	\
+	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+	name::name(material* Material, bool SetStats, bool CreateEquipment) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
+	void name::SetDefaultStats(void) { setstats }\
 	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
 
 #else
@@ -270,11 +279,11 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		virtual character* Clone(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
+		name(bool = true, bool = true, bool = true);\
+		name(material*, bool= true, bool = true);\
+		virtual character* Clone(bool = true, bool = true, bool = true) const;\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};

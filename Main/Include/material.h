@@ -35,9 +35,9 @@
 #define EFIRE			5
 #define EPEPSI			6
 
-#include "typedef.h"
+#include <string>
 
-#include "object.h"
+#include "typedef.h"
 
 /* Presentation of material class */
 
@@ -51,7 +51,7 @@ public:
 	virtual ~material(void)					{}
 	virtual uchar GetFleshColor(void) const			{ return GetItemColor(); }
 	virtual uchar GetItemColor(void) const = 0;
-	virtual std::string Name(uchar Case = 0) const		{ return Case & INDEFINEBIT ? Article() + " " + NameStem() : NameStem(); }
+	virtual std::string Name(uchar Case = 0) const;
 	virtual ushort GetHitValue(void) const = 0;
 	virtual uchar GetConsumeType(void) const			{return ODD;}
 	virtual ulong GetVolume(void) const			{return Volume;}

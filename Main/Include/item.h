@@ -1,16 +1,17 @@
 #ifndef __ITEM_H__
 #define __ITEM_H__
 
-#include <stdlib.h>
-
-#include <cmath>
-
 #include "typedef.h"
 #include "vector.h"
 
-#include "proto.h"
-#include "game.h"
 #include "object.h"
+#include "material.h"
+
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+
+	#include "proto.h"
+
+#endif
 
 class bitmap;
 class character;
@@ -63,8 +64,8 @@ public:
 	virtual item* Clone(bool = true, bool = true) const = 0;
 	virtual ushort Possibility(void) const = 0;
 	virtual bool CanBeWished(void) const { return true; }
-	virtual item* CreateWishedItem(void) const { return prototypesystem::GetItemPrototype(Type())->Clone(); }
-	virtual bool Apply(character*) { ADD_MESSAGE("You can't apply this!"); return false; }
+	virtual item* CreateWishedItem(void) const;
+	virtual bool Apply(character*);
 protected:
 	virtual void SetDefaultStats(void) = 0;
 	virtual ushort GetFormModifier(void) const {return 0;}
@@ -77,11 +78,11 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+		name(bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
@@ -95,6 +96,8 @@ protected:
 		ushort Index;\
 	} static Proto_##name;\
 	\
+	name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+	void name::SetDefaultStats(void) { setstats }\
 	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
 
 #else
@@ -104,11 +107,11 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+		name(bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); }\
 		virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};
@@ -403,7 +406,7 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility(void) const RET(3)
-	virtual ushort GetArmorValue(void) const { float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
+	virtual ushort GetArmorValue(void) const;
 	virtual std::string NameSingular(void) const RET("plate mail")
 	virtual std::string NamePlural(void) const RET("plate mails")
 	virtual float OfferModifier(void) const RET(0.5)
@@ -420,7 +423,7 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility(void) const RET(10)
-	virtual ushort GetArmorValue(void) const { float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
+	virtual ushort GetArmorValue(void) const;
 	virtual std::string NameSingular(void) const RET("chain mail")
 	virtual std::string NamePlural(void) const RET("chain mails")
 	virtual float OfferModifier(void) const RET(0.5)

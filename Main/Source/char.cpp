@@ -1,14 +1,7 @@
 #include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
 
-#include "command.h"
 #include "char.h"
 #include "error.h"
-#include "bitmap.h"
-#include "graphics.h"
-#include "game.h"
 #include "god.h"
 #include "list.h"
 #include "igraph.h"
@@ -22,8 +15,8 @@
 #include "lsquare.h"
 #include "level.h"
 #include "worldmap.h"
-#include "wsquare.h"
-#include "wterrain.h"
+#include "proto.h"
+#include "message.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false), IsPlayer(false)
 {
@@ -335,8 +328,8 @@ bool character::GoDown(void)
 	}
 	else	//gum solution
 	{
-		game::SetInWilderness(false);
 		game::GetCurrentArea()->RemoveCharacter(GetPos());
+		game::SetInWilderness(false);
 		game::SetCurrent(0);
 		game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
 		game::GetCurrentLevel()->Luxify();
@@ -2331,7 +2324,7 @@ ulong golem::Danger(void) const
 
 bool character::DrawMessageHistory(void)
 {
-	game::GlobalMessagingSystem.DrawMessageHistory();
+	globalmessagingsystem::DrawMessageHistory();
 
 	return false;
 }
@@ -2657,6 +2650,3 @@ bool character::ForceVomit(void)
 	SetAP(GetAP() - 100);
 	return true;
 }
-
-
-

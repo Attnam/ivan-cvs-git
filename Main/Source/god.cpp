@@ -1,13 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-
-#include "game.h"
 #include "god.h"
 #include "level.h"
 #include "lsquare.h"
 #include "char.h"
 #include "item.h"
 #include "stack.h"
+#include "message.h"
 
 void god::Pray(void)
 {

@@ -1,12 +1,19 @@
 #ifndef __LTERRAIN_H__
 #define __LTERRAIN_H__
 
-#include "game.h"
 #include "bitmap.h"
 #include "object.h"
 #include "terrain.h"
 #include "typedef.h"
 #include "vector.h"
+
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+
+	#include "proto.h"
+	#include "material.h"
+	#include "game.h"
+
+#endif
 
 class bitmap;
 class character;
@@ -30,7 +37,7 @@ public:
 	virtual levelsquare* GetLevelSquareUnder(void) const { return LevelSquareUnder; }
 	virtual bool CanBeOpened(void) const { return false; }
 	virtual bool CanBeOffered(void) const { return false; }
-	virtual std::string Name(uchar Case) const {return NameWithMaterial(Case);}
+	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
 	virtual bool CanBeDigged(void) const { return false; }
 	virtual uchar OKVisualEffects(void) const { return 0; }
 	virtual uchar GetVisualFlags(void) const { return VisualFlags; }
@@ -60,7 +67,7 @@ public:
 	virtual bool GoDown(character*);
 	virtual void Save(std::ofstream*) const;
 	virtual uchar GetOwnerGod(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
+	virtual std::string DigMessage(void) { return "The ground is too hard to dig."; }
 	virtual overlevelterrain* Clone(bool = true, bool = true) const = 0;
 protected:
 	virtual void MakeWalkable(void);
@@ -74,10 +81,10 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		name(bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
@@ -91,6 +98,8 @@ protected:
 		ushort Index;\
 	} static Proto_##name;\
 	\
+	name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+	void name::SetDefaultStats(void) { setstats }\
 	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
 
 #else
@@ -100,10 +109,10 @@ protected:
 	name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+		name(bool = true, bool = true);\
 		name(material* Material, bool SetStats = true) : base(false, false) { InitMaterials(Material); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};
@@ -143,10 +152,10 @@ class OVERLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects(void) const { return MIRROR | FLIP | ROTATE_90; }
 	virtual bool CanBeDigged(void) const { return true; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The ground is fairly easy to dig."); }
+	virtual std::string DigMessage(void) { return "The ground is fairly easy to dig."; }
 protected:
-	virtual std::string NameSingular() const				{return "earth";}
-	virtual std::string NamePlural() const					{return "earths";}
+	virtual std::string NameSingular() const				{ return "earth"; }
+	virtual std::string NamePlural() const					{ return "earths"; }
 	virtual vector GetBitmapPos(void) const					{ return vector(0, 336); }
 );
 
@@ -161,10 +170,10 @@ class OVERLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects(void) const { return 0; }
 	virtual bool CanBeDigged(void) const { return true; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The wall is pretty hard, but you still manage to go through it."); }
+	virtual std::string DigMessage(void) { return "The wall is pretty hard, but you still manage to go through it."; }
 protected:
-	virtual std::string NameSingular() const				{return "wall";}
-	virtual std::string NamePlural() const					{return "walls";}
+	virtual std::string NameSingular() const				{ return "wall"; }
+	virtual std::string NamePlural() const					{ return "walls"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
@@ -177,10 +186,10 @@ class OVERLEVELTERRAIN
 		SetIsWalkable(true);
 	},
 public:
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The square you are trying to dig is empty."); }
+	virtual std::string DigMessage(void) { return "The square you are trying to dig is empty."; }
 protected:
-	virtual std::string NameSingular() const				{return "atmosphere";}
-	virtual std::string NamePlural() const					{return "atmospheres";}
+	virtual std::string NameSingular() const				{ return "atmosphere"; }
+	virtual std::string NamePlural() const					{ return "atmospheres"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 480); }
 );
 
@@ -196,10 +205,10 @@ public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual bool CanBeOpened(void) const { return !GetIsWalkable(); }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The door is too hard to dig through."); }
+	virtual std::string DigMessage(void) { return "The door is too hard to dig through."; }
 protected:
-	virtual std::string NameSingular() const				{return "door";}
-	virtual std::string NamePlural() const					{return "doors";}
+	virtual std::string NameSingular() const				{ return "door"; }
+	virtual std::string NamePlural() const					{ return "doors"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, GetIsWalkable() ? 48 : 176); }
 );
 
@@ -214,10 +223,10 @@ class OVERLEVELTERRAIN
 public:
 	virtual bool GoUp(character*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
+	virtual std::string DigMessage(void) { return "The stairs are too hard to dig."; }
 protected:
-	virtual std::string NameSingular() const				{return "stairway upwards";}
-	virtual std::string NamePlural() const					{return "stairways upwards";}
+	virtual std::string NameSingular() const				{ return "stairway upwards"; }
+	virtual std::string NamePlural() const					{ return "stairways upwards"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 192); }
 );
 
@@ -232,10 +241,10 @@ class OVERLEVELTERRAIN
 public:
 	virtual bool GoDown(character*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
+	virtual std::string DigMessage(void) { return "The stairs are too hard to dig."; }
 protected:
-	virtual std::string NameSingular() const				{return "stairway downwards";}
-	virtual std::string NamePlural() const					{return "stairways downwards";}
+	virtual std::string NameSingular() const				{ return "stairway downwards"; }
+	virtual std::string NamePlural() const					{ return "stairways downwards"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 208); }
 );
 
@@ -249,8 +258,8 @@ class GROUNDLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects(void) const { return 0; }
 protected:
-	virtual std::string NameSingular() const				{return "parquet";}
-	virtual std::string NamePlural() const					{return "parquette";}
+	virtual std::string NameSingular() const				{ return "parquet"; }
+	virtual std::string NamePlural() const					{ return "parquette"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
@@ -264,8 +273,8 @@ class GROUNDLEVELTERRAIN
 public:
 	virtual uchar OKVisualEffects(void) const { return MIRROR | FLIP | ROTATE_90; }
 protected:
-	virtual std::string NameSingular() const				{return "floor";}
-	virtual std::string NamePlural() const					{return "floors";}
+	virtual std::string NameSingular() const				{ return "floor"; }
+	virtual std::string NamePlural() const					{ return "floors"; }
 	virtual vector GetBitmapPos(void) const						{ return vector(0, 352); }
 );
 
@@ -287,10 +296,10 @@ public:
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("An invisible wall stops your feeble attempt."); }
+	virtual std::string DigMessage(void) { return "An invisible wall stops your feeble attempt."; }
 protected:
-	virtual std::string NameSingular() const		{return "altar";}
-	virtual std::string NamePlural() const			{return "altars";}
+	virtual std::string NameSingular() const		{ return "altar"; }
+	virtual std::string NamePlural() const			{ return "altars"; }
 	virtual vector GetBitmapPos(void) const				{ return vector(0, 368); }
 	uchar OwnerGod;
 );

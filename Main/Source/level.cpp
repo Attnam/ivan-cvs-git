@@ -1,19 +1,11 @@
-#include <cstdlib>
-#include <fstream>
-
 #include "level.h"
 #include "char.h"
 #include "error.h"
-#include "graphics.h"
-#include "bitmap.h"
-#include "game.h"
 #include "item.h"
-#include "material.h"
-#include "igraph.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "lterrain.h"
-#include "whandler.h"
+#include "proto.h"
 
 level::level(ushort XSize, ushort YSize, ushort Index) : area(XSize, YSize), LevelIndex(Index)
 {
@@ -248,7 +240,7 @@ void level::GenerateTunnel(vector From, vector Target, bool XMode)
 	DRAW
 
 	if(!(FlagMap[Target.X][Target.Y] & ON_POSSIBLE_ROUTE))
-		globalerrorhandler::Abort("Route code error during level generate! Contact Timo!");
+		ABORT("Route code error during level generate! Contact Timo!");
 
 	{
 	for(ushort x = 0; x < XSize; x++)
@@ -612,7 +604,7 @@ void level::Save(std::ofstream* SaveFile) const
 	SaveFile->write((char*)&DownStairs, sizeof(DownStairs));
 }
 
-void level::Load(std::ifstream* SaveFile)//, ushort Index) : area(SaveFile), LevelIndex(Index)
+void level::Load(std::ifstream* SaveFile)
 {
 	area::Load(SaveFile);
 

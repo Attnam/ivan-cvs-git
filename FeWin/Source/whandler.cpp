@@ -1,5 +1,4 @@
 #include "whandler.h"
-#include "winuser.h"
 #include "graphics.h"
 #include "error.h"
 

@@ -1,6 +1,7 @@
 #include "object.h"
 #include "error.h"
 #include "proto.h"
+#include "material.h"
 
 object::~object(void)
 {

@@ -16,7 +16,6 @@ prototypecontainer<overworldmapterrain>		prototypesystem::OverWorldMapTerrainPro
 #include "lterrain.h"
 #include "wterrain.h"
 
-#include "game.h"
 #include "error.h"
 
 ushort prototypesystem::AddProtoType(material* What)			{ return MaterialPrototype.Add(What); }

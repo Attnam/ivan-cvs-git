@@ -1,10 +1,6 @@
-#include <windows.h>
-
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
-#include "ddutil.h"
-#include "error.h"
 
 int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int nCmdShow)
 {

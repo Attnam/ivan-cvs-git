@@ -1,15 +1,11 @@
-#include <cstdio>
-
 #include "char.h"
-#include "bitmap.h"
-#include "graphics.h"
-#include "game.h"
 #include "igraph.h"
 #include "lterrain.h"
 #include "god.h"
 #include "hscore.h"
 #include "level.h"
 #include "lsquare.h"
+#include "message.h"
 
 bool overlevelterrain::GoUp(character* Who) // Try to go up
 {

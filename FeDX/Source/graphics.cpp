@@ -1,7 +1,4 @@
-#include <windows.h>
 #include <windowsx.h>
-#include <cstdio>
-#include <fstream>
 
 #include "graphics.h"
 #include "bitmap.h"

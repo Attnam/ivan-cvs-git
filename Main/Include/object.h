@@ -12,12 +12,9 @@
 
 #include <string>
 #include <fstream>
-#include <cstdarg>
 #include <vector>
 
 #include "typedef.h"
-
-#include "material.h"
 
 class material;
 class vector;

@@ -1,5 +1,11 @@
 #include "char.h"
 #include "material.h"
+#include "message.h"
+
+std::string material::Name(uchar Case) const
+{
+	return Case & INDEFINEBIT ? Article() + " " + NameStem() : NameStem();
+}
 
 ushort material::TakeDipVolumeAway(void)
 {

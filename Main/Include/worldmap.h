@@ -10,7 +10,6 @@ class worldmap : public area
 public:
 	worldmap(ushort, ushort);
 	worldmap(void) {}
-	//worldmap(std::ifstream*);
 	~worldmap(void);
 	virtual void Generate(void);
 	virtual void Draw(void) const;

@@ -3,7 +3,6 @@
 
 #include <fstream>
 
-#include "game.h"
 #include "terrain.h"
 #include "vector.h"
 
@@ -54,7 +53,7 @@ public:
 	public:\
 		name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};\
@@ -68,6 +67,7 @@ public:
 		ushort Index;\
 	} static Proto_##name;\
 	\
+	void name::SetDefaultStats(void) { setstats }\
 	ushort name::Type(void) const { return Proto_##name.GetIndex(); }
 
 #else
@@ -79,7 +79,7 @@ public:
 	public:\
 		name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
 	protected:\
-		virtual void SetDefaultStats(void) { setstats }\
+		virtual void SetDefaultStats(void);\
 		virtual ushort Type(void) const;\
 		data\
 	};

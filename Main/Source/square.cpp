@@ -1,11 +1,10 @@
 #include "char.h"
 #include "square.h"
-#include "bitmap.h"
 #include "lterrain.h"
-#include "game.h"
 #include "igraph.h"
-#include "area.h"
 #include "level.h"
+#include "proto.h"
+#include "material.h"
 
 square::square(area* MotherArea, vector Pos) : MotherArea(MotherArea), OverTerrain(0), GroundTerrain(0), Rider(0), Character(0), Flyer(0), Known(false), Pos(Pos)
 {
@@ -79,7 +78,4 @@ void square::RemoveCharacter(void)
 {
 	SetCharacter(0);
 }
-
-
-
 

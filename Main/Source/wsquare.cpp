@@ -1,11 +1,11 @@
 #include "wsquare.h"
-#include "lterrain.h"
-#include "game.h"
 #include "igraph.h"
-#include "area.h"
 #include "char.h"
 #include "worldmap.h"
 #include "wterrain.h"
+#include "proto.h"
+#include "material.h"
+#include "bitmap.h"
 
 worldmapsquare::worldmapsquare(worldmap* MotherWorldMap, vector Pos) : square(MotherWorldMap, Pos)
 {

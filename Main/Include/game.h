@@ -8,20 +8,14 @@
 #define FEMALE			2
 #define TRANSSEXUAL		3
 
-#define ADD_MESSAGE game::GlobalMessagingSystem.AddMessage
-#define DRAW_MESSAGES game::GlobalMessagingSystem.Draw
-#define EMPTY_MESSAGES game::GlobalMessagingSystem.Empty
-
-#include <ctime>
 #include <string>
 #include <fstream>
+
+#include "command.h"
 
 #include "dynarray.h"
 #include "typedef.h"
 #include "vector.h"
-
-#include "command.h"
-#include "list.h"
 
 class area;
 class material;
@@ -50,20 +44,6 @@ public:
 	static level* GetCurrentLevel(void)	{ return Level[Current]; }
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
 	static bool DoLine(int, int, int, int, bool (*Proc)(ushort, ushort, ushort, ushort));
-	static class globalmessagingsystem
-	{
-	public:
-		globalmessagingsystem(void) : MessageBuffer(0), BufferLength(0), MessageHistory(200) {}
-		void AddMessage(const char*, ...);
-		void Draw(void) const;
-		void Empty(void);
-		void DrawMessageHistory(void) const;
-		void Format(void);
-	private:
-		char* MessageBuffer;
-		ushort BufferLength;
-		list MessageHistory;
-	} GlobalMessagingSystem;
 	static class panel
 	{
 	public:
@@ -131,7 +111,7 @@ public:
 	static uchar GetGodNumber(void) { return GodNumber; }
 	static long GetBaseScore(void) { return BaseScore; }
 	static void Turn(ushort Turn = 1) { Turns += Turn; }
-	static float CSoftGamma(void) { return SoftGamma; }
+	static float GetSoftGamma(void) { return SoftGamma; }
 	static void EditSoftGamma(float E) { SoftGamma += E; if(SoftGamma < 0) SoftGamma = 0; if(SoftGamma > 2) SoftGamma = 2; }
 	static void WhatToLoadMenu(void);
 	static ulong GetTurns(void) { return Turns; }
