@@ -22,9 +22,6 @@ void organic::Be()
     {
       if(MotherEntity->AllowSpoil())
 	{
-	  if(DataBase->NameStem == "ommel tooth")
-	    int esko = 2;
-
 	  if((SpoilCounter += 50) < GetSpoilModifier())
 	    {
 	      if(SpoilCounter << 1 >= GetSpoilModifier())

@@ -1631,9 +1631,6 @@ void bodypart::Be()
 {
   if(Master)
     {
-      if(IsEnabled())
-	int esko = 2;
-
       if(HP < MaxHP && ++SpillBloodCounter >= 4)
 	{
 	  if(Master->IsEnabled())

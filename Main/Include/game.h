@@ -355,6 +355,8 @@ class game
   static vector2d CommandKeyHandler(vector2d, int);
   static void CommandScreen(const festring&, ulong, ulong, ulong&, ulong&);
   static bool CommandAll();
+  static double GetDangerFound() { return DangerFound; }
+  static void SetDangerFound(double What) { DangerFound = What; }
  private:
   static const char* const Alignment[];
   static god** God;
@@ -441,6 +443,7 @@ class game
   static bool PlayerRunning;
   static character* LastCharacterUnderCommandCursor;
   static charactervector CommandVector;
+  static double DangerFound;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

@@ -1875,6 +1875,17 @@ void character::GetPlayerCommand()
   while(!HasActed)
     {
       game::DrawEverything();
+
+      if(game::GetDangerFound())
+	{
+	  if(game::GetDangerFound() > 50.)
+	    game::AskForKeyPress(CONST_S("You sense enormous danger! [press any key to continue]"));
+	  else
+	    game::AskForKeyPress(CONST_S("You sense danger! [press any key to continue]"));
+
+	  game::SetDangerFound(0);
+	}
+
       game::SetIsInGetCommand(true);
       int Key = GET_KEY();
       game::SetIsInGetCommand(false);
@@ -7503,20 +7514,18 @@ void character::CheckIfSeen()
 
 void character::SignalSeen()
 {
-  /*if(ivanconfig::GetWarnAboutDanger() && !HasBeenWarned && GetRelation(PLAYER) == HOSTILE)
+  if(ivanconfig::GetWarnAboutDanger()
+  && !HasBeenWarned
+  && GetRelation(PLAYER) == HOSTILE)
     {
       double Danger = GetRelativeDanger(PLAYER);
 
       if(Danger > 5.)
 	{
-	  if(Danger > 50.)
-	    game::AskForKeyPress(CONST_S("You sense enormous danger! [press any key to continue]"));
-	  else
-	    game::AskForKeyPress(CONST_S("You sense danger! [press any key to continue]"));
-
+	  game::SetDangerFound(Max(game::GetDangerFound(), Danger));
 	  HasBeenWarned = true;
 	}
-    }*/
+    }
 
   const_cast<database*>(DataBase)->Flags |= HAS_BEEN_SEEN;
 }

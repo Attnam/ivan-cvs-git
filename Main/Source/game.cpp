@@ -93,6 +93,7 @@ long game::Turn;
 bool game::PlayerRunning;
 character* game::LastCharacterUnderCommandCursor;
 charactervector game::CommandVector;
+double game::DangerFound;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -219,6 +220,7 @@ bool game::Init(const festring& Name)
 #endif
 
   LOSTick = 2;
+  DangerFound = 0;
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -1821,7 +1823,6 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       ShowLevelMessage();
       SendLOSUpdateRequest();
       UpdateCamera();
-      GetCurrentLevel()->UpdateLOS();
 
       /* Gum solution! */
 
@@ -1840,6 +1841,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
 	}
 
       Generating = false;
+      GetCurrentLevel()->UpdateLOS();
       Player->SignalStepFrom(0);
 
       for(c = 0; c < Group.size(); ++c)
