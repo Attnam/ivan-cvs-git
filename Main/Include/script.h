@@ -73,11 +73,11 @@ protected:
 	bool Random;
 };
 
-template <class type> class contentscript : public script
+template <class type> class basecontentscript : public script
 {
 public:
-	contentscript() : ContentType(0) {}
-	virtual ~contentscript() {}
+	basecontentscript() : ContentType(0) {}
+	virtual ~basecontentscript() {}
 	virtual void ReadFrom(inputfile&);
 	virtual void ReadParameters(inputfile&, std::string);
 	virtual ushort* GetMaterialType(ushort, bool = true) const;
@@ -89,41 +89,31 @@ protected:
 	ushort* ContentType;
 };
 
-template <class type> ushort* contentscript<type>::GetMaterialType(ushort Index, bool AOE) const
-{
-	if(Index < MaterialData.size() && MaterialData[Index].first)
-		return MaterialData[Index].first;
-	else
-	{
-		if(AOE)
-			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+template <class type> class contentscript;
 
-		return 0;
-	}
-}
-
-template <class type> ulong* contentscript<type>::GetMaterialVolume(ushort Index, bool AOE) const
-{
-	if(Index < MaterialData.size() && MaterialData[Index].second)
-		return MaterialData[Index].second;
-	else
-	{
-		if(AOE)
-			ABORT("Undefined script member MaterialData[%d] sought!", Index);
-
-		return 0;
-	}
-}
-
-class characterscript : public contentscript<character>
+class contentscript<character> : public basecontentscript<character>
 {
 public:
-	characterscript() : Team(0) {}
+	contentscript<character>() : Team(0) {}
 	virtual void ReadParameters(inputfile&, std::string);
 	virtual character* Instantiate() const;
 	virtual ushort* GetTeam(bool AOE = true) const { SCRIPT_RETURN(Team) }
 protected:
 	ushort* Team;
+};
+
+class contentscript<item> : public basecontentscript<item> { };
+class contentscript<groundlevelterrain> : public basecontentscript<groundlevelterrain> { };
+
+class contentscript<overlevelterrain> : public basecontentscript<overlevelterrain>
+{
+public:
+	contentscript<overlevelterrain>() : Locked(0) {}
+	virtual void ReadParameters(inputfile&, std::string);
+	virtual overlevelterrain* Instantiate() const;
+	virtual bool* GetLocked(bool AOE = true) const { SCRIPT_RETURN(Locked) }
+protected:
+	bool* Locked;
 };
 
 class squarescript : public script
@@ -132,7 +122,7 @@ public:
 	squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) {}
 	void ReadFrom(inputfile&);
 	posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
-	characterscript* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
+	contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
 	contentscript<item>* GetItem(bool AOE = true) const { SCRIPT_RETURN(Item) }
 	contentscript<groundlevelterrain>* GetGroundTerrain(bool AOE = true) const { SCRIPT_RETURN(GroundTerrain) }
 	contentscript<overlevelterrain>* GetOverTerrain(bool AOE = true) const { SCRIPT_RETURN(OverTerrain) }
@@ -142,7 +132,7 @@ public:
 	uchar* GetTimes(bool AOE = true) const { SCRIPT_RETURN(Times) }
 protected:
 	posscript* PosScript;
-	characterscript* Character;
+	contentscript<character>* Character;
 	contentscript<item>* Item;
 	contentscript<groundlevelterrain>* GroundTerrain;
 	contentscript<overlevelterrain>* OverTerrain;

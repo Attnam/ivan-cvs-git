@@ -47,18 +47,17 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
-Talk idea.
-Script should have an initial blood level of square option.
+*Script should have an initial blood level of square option.
 Balancing offervalues.
 Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
 Donkey should be named "an ass".
 Pet donkeys should be able to carry backpacks instead of the player.
-Full backpacks should decrease AV, but it would increase the chance of item breaking.
+Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
 Cube-like screenshot system.
 Drinking from the fountains of the Cathedral should be prohibited.
 *Loaf of bread.
-Talking to a slave while wielding a whip should cause a special effect.
+*Talking to a slave while wielding a whip should cause a special effect.
 Atavus should do something special on Christmas.
 A graphical equipment screen.
 Gurus.
@@ -69,7 +68,11 @@ Opening a banana should remove its peals.
 Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
 *High score version number.
-Kamikaze dwarves to Attnam's temples.
+*Kamikaze dwarves to Attnam's temples.
 Random item option to script.
 As Heikki suggested, when one jumps in the WMap and is strong enough, one should reach the orbit.
-Holybook color change.
+*Holybook color change.
+*Go displacement.
+*Attack alignments.
+*Chance of Bill's will generation should somehow be lowered.
+Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.

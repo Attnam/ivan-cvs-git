@@ -766,7 +766,7 @@ public:
 	virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
 	virtual void Beam(character*, uchar, uchar);
 	virtual void BeamEffect(character*, uchar, levelsquare*) {};
-	virtual ushort GetBeamColor() const { return YELLOW; }
+	virtual ushort GetBeamColor() const = 0;
 	virtual bool StruckByWandOfStriking(character*, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(80)
@@ -916,7 +916,7 @@ public:
 	virtual float OfferModifier() const RET(10)
 	virtual bool Zap(character*, vector2d, uchar);
 	virtual ulong Price() const { return 500; }
-	virtual ushort GetBeamColor() const { return MAKE_RGB(255,255,255); }
+	virtual ushort GetBeamColor() const { return YELLOW; }
 	virtual void BeamEffect(character*, uchar, levelsquare*);
 );
 
@@ -1054,7 +1054,7 @@ public:
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))
 	virtual float OfferModifier() const RET(0.5)
 	virtual vector2d GetBitmapPos() const RETV(32, 16)
-	virtual ulong GetDefaultVolume(ushort Index) const;// { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 	virtual uchar GetConsumeMaterial() const { return 1; }
 	virtual bool Apply(character*, stack*);

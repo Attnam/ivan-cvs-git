@@ -20,6 +20,7 @@ public:
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(56, 56, 56); }
 	virtual ulong RawPrice() const { return GetVolume() >> 8; }
+	virtual bool CanBeDigged() const { return false; }
 protected:
 	virtual std::string NameStem() const	{ return "iron"; }
 	virtual std::string Article() const { return "an"; }

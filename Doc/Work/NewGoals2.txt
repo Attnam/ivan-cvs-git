@@ -9,7 +9,7 @@ Goals for IVAN version 0.40 alpha
 
 Great Jobs:
 
-*&Gcc port.
+/*&Gcc port.
 Block AI system.
 *Renewed god system.
 //*&Fixing the Great Surface Destruction Bug by remaking FeDX.
@@ -27,10 +27,10 @@ Manual.
 *Money item.
 Secret Knowledge Command.
 //*Manual rest/go termination.
-/Graphic effects for rays.
-Dungeon shops.
+//Graphic effects for rays.
+//Dungeon shops.
 Smithy to Attnam.
-Monster names.
+*Monster names.
 ?Some random encounters in the wilderness.
 /*Various fountain effects & fountains to dungeons.
 Bodyparts.
@@ -42,7 +42,7 @@ Bones in chaos gods' altars
 Heavy item throwing
 A tool for combining high score files
 Throwers want justice
-*Message modes
+Message modes
 //?Wishing artifacts in WMode
 ?Sitting worshippers
 Confuse
@@ -52,12 +52,12 @@ Money should weight something
 Chemical warfare from afar
 ?Golems shouldn't talk
 Attacking Attnamians should be chaotic
-/*Alignment to panel
+//*Alignment to panel
 //Possibility to break armor on criticals
 //*Some realism to lampfighting
 Prohibition of WoS vandalism
 Forbidding shop polypiles
-Parchment should burn
+//Parchment should burn
 *Verbal danger level to panel
 ADD_MESSAGE parameter suggestion
 Honey

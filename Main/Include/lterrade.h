@@ -127,7 +127,7 @@ public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual bool CanBeOpened() const { return !GetIsWalkable(); }
-	virtual std::string DigMessage() const { return "The door is too hard to dig."; }
+	virtual std::string DigMessage() const { return "The chop the door down."; }
 	virtual void Kick(ushort, bool, uchar);
 	virtual void SetIsOpen(bool What) { IsOpen = What; }
 	virtual void Save(outputfile&) const;
@@ -140,6 +140,7 @@ public:
 	virtual bool CanBeOpenedByAI() { return !GetIsLocked() && CanBeOpened(); }
 	virtual bool ReceiveStrike();
 	virtual void Lock() { SetIsLocked(true); }
+	virtual bool CanBeDigged() const { return true; }
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }
@@ -303,8 +304,9 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
-	virtual std::string DigMessage() const { return "The couch resists."; }
+	virtual std::string DigMessage() const { return "The destroy the couch."; }
 	virtual void SitOn(character*);
+	virtual bool CanBeDigged() const { return true; }
 protected:
 	virtual std::string NameSingular() const				{ return "couch"; }
 	virtual vector2d GetBitmapPos() const					{ return vector2d(0, 400); }
@@ -348,8 +350,10 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
+	virtual std::string DigMessage() const { return "You smash the bookcase into pieces."; }
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 	virtual void SitOn(character*);
+	virtual bool CanBeDigged() const { return true; }
 protected:
 	virtual std::string NameSingular() const				{ return "bookcase"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 272); }
@@ -363,6 +367,7 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
+	virtual std::string DigMessage() const { return "The water splashes a bit."; }
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 	virtual void SitOn(character*);
 	virtual std::string GetConsumeQuestion() const { return std::string("Do want to drink from ") + Name(DEFINITE) + std::string("?"); }
@@ -382,8 +387,10 @@ class OVERLEVELTERRAIN
 	{
 	},
 public:
+	virtual std::string DigMessage() const { return "You smash the bed into pieces."; }
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 	virtual void SitOn(character*);
+	virtual bool CanBeDigged() const { return true; }
 protected:
 	virtual std::string NameSingular() const				{ return "luxurious double bed"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }
@@ -399,14 +406,14 @@ class OVERLEVELTERRAIN
 		UpdatePicture();
 	},
 public:
-	virtual std::string DigMessage() const { return "The broken door is too hard to dig."; }
+	virtual std::string DigMessage() const { return "You destroy the broken door."; }
 	virtual void Kick(ushort, bool, uchar);
 	virtual bool ReceiveStrike();
+	virtual bool CanBeDigged() const { return true; }
 protected:
 	virtual std::string NameSingular() const	{ return "broken door"; }
 	virtual vector2d GetBitmapPos() const		{ return vector2d(0, GetIsWalkable() ? 48 : 160); }
 );
-
 
 #endif
 

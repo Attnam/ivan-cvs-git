@@ -541,6 +541,7 @@ Dungeon 1;
 					c = carpet;
 					A = valpurium altar;
 					D = valpurium door;
+					L = valpurium door { Locked = true; }
 					b = linden;
 					p = pool;
 					s = couch;
@@ -580,7 +581,7 @@ Dungeon 1;
 				b . b . . b # # . . # . . . . . . . . . . . . . . . . . # . . # # b . . b . b
 				. . . . . . . # p . # . . . . . . . . . . . . . . . . . # . . # . . . . . . .
 				b . . . b . b # . . # . . . . . . . . . . . . . . . . . # . . # b . b . . . b
-				. b . . . . # # # # # D # . . . # # # D # # # . . . # D # # # # # . . . . b .
+				. b . . . . # # # # # D # . . . # # # D # # # . . . # L # # # # # . . . . b .
 				b . . # # # # . s . s . # . . . # . b . b . # . . . # . . . . . # # # # . . b
 				. . b # . d . . . . . . # # # # # . . . . . # # # # # . . . . . . . . # b . .
 				b . . # . . . . s . s . # b . . b . . . . . b . . b # . . . . . . . . # . . b
@@ -720,7 +721,7 @@ Dungeon 1;
 			DivineOwner=10;
 			Type=shop;
 			
-			Square, Pos 2, 4;
+			Square, Pos 3, 4;
 			{
 				GroundTerrain = parquet;
 				OverTerrain = door;
@@ -758,8 +759,8 @@ Dungeon 1;
 			}
 			{
 			    .spwt
-			    bLlAP
-			    .iaCt
+			    bLlCP
+			    .iAat
 			}
 		}
 

@@ -1191,18 +1191,22 @@ std::string game::GetVerbalPlayerAlignment()
 			Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());
 	}
 
-	if(Sum > 2000)
+	if(Sum > 15000)
 		return std::string("extremely lawful");
-	if(Sum > 1000)
+	if(Sum > 10000)
+		return std::string("very lawful");
+	if(Sum > 5000)
 		return std::string("lawful");
-	if(Sum > 500)
+	if(Sum > 1000)
 		return std::string("mildly lawful");
-	if(Sum > -500)
-		return std::string("neutral");
 	if(Sum > -1000)
+		return std::string("neutral");
+	if(Sum > -5000)
 		return std::string("mildly chaotic");
-	if(Sum > -2000)
+	if(Sum > -10000)
 		return std::string("chaotic");
-	
+	if(Sum > -15000)
+		return std::string("very chaotic");
+
 	return std::string("extremely chaotic");
 }

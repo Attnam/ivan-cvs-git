@@ -1015,10 +1015,10 @@ void levelsquare::PolymorphEverything(character* Zapper)
 
 	if((Character = GetCharacter()))
 	{
+		Character->Polymorph(protosystem::CreateMonster(false));
+
 		if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 			Zapper->Hostility(Character);
-
-		Character->Polymorph(protosystem::CreateMonster(false));
 	}
 
 	GetStack()->Polymorph();
@@ -1080,13 +1080,12 @@ void levelsquare::StrikeEverything(character* Zapper, uchar Direction)
 		break;
 	}
 
-	//for(uchar c = 0; c < 4; ++c)
-	//	GetSideStack(c)->StruckByWandOfStriking(Zapper);
+	character* Char;
 
-	if(GetCharacter())
+	if((Char = GetCharacter()))
 	{
-		Zapper->Hostility(GetCharacter());
-		GetCharacter()->StruckByWandOfStriking(Zapper);
+		Char->StruckByWandOfStriking(Zapper);
+		Zapper->Hostility(Char);
 	}
 
 	GetOverLevelTerrain()->ReceiveStrike();	

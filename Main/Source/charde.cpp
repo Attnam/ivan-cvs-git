@@ -787,11 +787,9 @@ void farmer::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"");
@@ -816,23 +814,34 @@ void guard::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
-		ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		else
+			ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 1:
-		ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		else
+			ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 2:
-		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+		else
+			ADD_MESSAGE("\"Yes, this is a dangerous place to work, but our boss pays us well.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
+		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
+			ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
+		else
+			ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
+			ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't make anything suspicious here.\"");
 		break;
 	}
 }
@@ -845,11 +854,9 @@ void shopkeeper::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
@@ -868,7 +875,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 			ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
 		}
 		else
-			ADD_MESSAGE("\"I once had a shop in Attnam, but the competition was too hard, so I moved.\"");
+			ADD_MESSAGE("\"The topmost reason why I work here is that the monsters around here devour tax collectors.\"");
 		break;
 	case 3:
 		if(GetLevelSquareUnder()->GetLevelUnder()->GetOnGround())
@@ -908,11 +915,9 @@ void darkknight::BeTalkedTo(character*)
 
 void ennerbeast::BeTalkedTo(character*)
 {
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"Fishing is fun! Do you fish?\"");
@@ -1017,11 +1022,9 @@ void ivan::BeTalkedTo(character* Talker)
 
 	if(GetTeam() == Talker->GetTeam() || Talker->MaxDanger() < 50000)
 	{
-		static uchar LastSaid = 0xFF, ToSay;
-		while((ToSay = RAND() % 11) == LastSaid);
-		LastSaid = ToSay;
+		static bool Said[11];
 
-		switch(ToSay)
+		switch(RandomizeReply(11, Said))
 		{
 		case 0:
 			ADD_MESSAGE("\"Da, Ivan like killing.\"");
@@ -1083,11 +1086,9 @@ void hunter::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
@@ -1145,11 +1146,9 @@ void slave::BeTalkedTo(character* Talker)
 
 	if(GetTeam() == Talker->GetTeam())
 	{
-		static uchar LastSaid = 0xFF, ToSay;
-		while((ToSay = RAND() % 4) == LastSaid);
-		LastSaid = ToSay;
+		static bool Said[4];
 
-		switch(ToSay)
+		switch(RandomizeReply(4, Said))
 		{
 		case 0:
 			ADD_MESSAGE("\"Whatever the master wants.\"");
@@ -1236,11 +1235,9 @@ void petrusswife::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"I'm so sick jealous to those dolphins...\"");
@@ -1266,11 +1263,9 @@ void housewife::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"Can you help me find my husband? He is hiding somewhere.");
@@ -1298,11 +1293,9 @@ void femaleslave::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 4) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[4];
 
-	switch(ToSay)
+	switch(RandomizeReply(4, Said))
 	{
 	case 0:
 		ADD_MESSAGE("\"Praise our lord Petrus!\"");
@@ -1327,11 +1320,9 @@ void librarian::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = RAND() % 9) == LastSaid);
-	LastSaid = ToSay;
+	static bool Said[9];
 
-	switch(ToSay)
+	switch(RandomizeReply(9, Said))
 	{
 	case 0:
 		if(game::GetPetrus() && !game::GetPetrus()->GetStoryState())

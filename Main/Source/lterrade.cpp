@@ -207,7 +207,6 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 		}
 		else if(Strength > RAND() % 40)
 		{
-			//if(ShowOnScreen) ADD_MESSAGE("The door breaks.");
 			bool NewLockedStatus;
 
 			if(IsLocked && RAND() % 2) // _can't really think of a good formula for this... 
@@ -225,8 +224,10 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 				NewLockedStatus = IsLocked;
 			}
 
-			brokendoor* Temp;
-			GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
+			brokendoor* Temp = new brokendoor(false);
+			Temp->InitMaterials(GetMaterial(0));
+			PreserveMaterial(0);
+			GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp);
 			Temp->SetIsLocked(NewLockedStatus);
 		}
 		else

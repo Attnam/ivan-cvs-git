@@ -728,8 +728,6 @@ bool holybook::Read(character* Reader)
 	return false;
 }
 
-ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
-
 bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
 	if(!(RAND() % 10))

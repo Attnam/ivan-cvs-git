@@ -2465,7 +2465,14 @@ void character::StandIdleAI()
 	if(CheckForEnemies())
 		return;
 
-	CheckForUsefulItemsOnGround();
+	if(CheckForDoors())
+		return;
+
+	if(CheckForUsefulItemsOnGround())
+		return;
+
+	if(FollowLeader())
+		return;
 }
 
 bool character::ShowWeaponSkills()
@@ -3064,7 +3071,7 @@ void character::Hostility(character* Enemy)
 {
 	if(GetTeam() != Enemy->GetTeam())
 		GetTeam()->Hostility(Enemy->GetTeam());
-	else
+	else if(Enemy->GetExists())
 	{
 		if(Enemy->GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s becomes enraged.", Enemy->CNAME(DEFINITE));
@@ -3089,7 +3096,7 @@ void character::MoveRandomlyInRoom()
 	{
 		ushort ToTry = RAND() % 8;
 
-		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry))/* && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter()*/ && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
@@ -3275,3 +3282,26 @@ void character::CheckGearExistence()
 		SetWielded(0);
 }
 
+uchar character::RandomizeReply(uchar Replies, bool* Said)
+{
+	bool NotSaid = false;
+
+	for(uchar c = 0; c < Replies; ++c)
+		if(!Said[c])
+		{
+			NotSaid = true;
+			break;
+		}
+
+	if(!NotSaid)
+		for(uchar c = 0; c < Replies; ++c)
+			Said[c] = false;
+
+	uchar ToSay;
+
+	while(Said[ToSay = RAND() % Replies]);
+
+	Said[ToSay] = true;
+
+	return ToSay;
+}

@@ -269,6 +269,7 @@ public:
 	virtual void ReceiveKoboldFleshEffect(long);
 	virtual bool ChangeRandomStat(short);
 	virtual void CheckGearExistence();
+	virtual uchar RandomizeReply(uchar, bool*);
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

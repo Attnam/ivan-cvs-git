@@ -11,17 +11,8 @@
 #include "itemba.h"
 #include "team.h"
 
-template contentscript<item>;
-template contentscript<groundlevelterrain>;
-template contentscript<overlevelterrain>;
-
 void posscript::ReadFrom(inputfile& SaveFile)
 {
-  //	std::string Word = SaveFile.ReadWord();
-
-  //	if(Word != ",")
-  //	ABORT("Colon missing in position script!");
-
 	std::string Word = SaveFile.ReadWord();
 
 	if(Word == "Pos")
@@ -67,7 +58,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
 	}
 }
 
-template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
+template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile)
 {
 	std::string Word = SaveFile.ReadWord();
 
@@ -122,10 +113,13 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 		Word = SaveFile.ReadWord();
 	}
 
+	if(Word == "{")
+		int esko = 2;
+
 	ReadParameters(SaveFile, Word);
 }
 
-template <class type> type* contentscript<type>::Instantiate() const
+template <class type> type* basecontentscript<type>::Instantiate() const
 {
 	if(!ContentType)
 		ABORT("Illegal content script instantiation of %s!", typeid(type).name());
@@ -138,13 +132,39 @@ template <class type> type* contentscript<type>::Instantiate() const
 	return Instance;
 }
 
-template <class type> void contentscript<type>::ReadParameters(inputfile&, std::string LastWord)
+template <class type> void basecontentscript<type>::ReadParameters(inputfile&, std::string LastWord)
 {
 	if(LastWord != ";" && LastWord != ",")
 		ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
 }
 
-void characterscript::ReadParameters(inputfile& SaveFile, std::string LastWord)
+template <class type> ushort* basecontentscript<type>::GetMaterialType(ushort Index, bool AOE) const
+{
+	if(Index < MaterialData.size() && MaterialData[Index].first)
+		return MaterialData[Index].first;
+	else
+	{
+		if(AOE)
+			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+
+		return 0;
+	}
+}
+
+template <class type> ulong* basecontentscript<type>::GetMaterialVolume(ushort Index, bool AOE) const
+{
+	if(Index < MaterialData.size() && MaterialData[Index].second)
+		return MaterialData[Index].second;
+	else
+	{
+		if(AOE)
+			ABORT("Undefined script member MaterialData[%d] sought!", Index);
+
+		return 0;
+	}
+}
+
+void contentscript<character>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
 	if(LastWord == "{")
 		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
@@ -159,18 +179,49 @@ void characterscript::ReadParameters(inputfile& SaveFile, std::string LastWord)
 				continue;
 			}
 
-			ABORT("Odd script term %s encountered in room script!", Word.c_str());
+			ABORT("Odd script term %s encountered in character script!", Word.c_str());
 		}
 	else
-		contentscript<character>::ReadParameters(SaveFile, LastWord);
+		basecontentscript<character>::ReadParameters(SaveFile, LastWord);
 }
 
-character* characterscript::Instantiate() const
+character* contentscript<character>::Instantiate() const
 {
-	character* Instance = contentscript<character>::Instantiate();
+	character* Instance = basecontentscript<character>::Instantiate();
 
 	if(GetTeam(false))
 		Instance->SetTeam(game::GetTeam(*GetTeam()));
+
+	return Instance;
+}
+
+void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
+{
+	if(LastWord == "{")
+		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+		{
+			if(Word == "Locked")
+			{
+				if(!Locked)
+					Locked = new bool;
+
+				*Locked = SaveFile.ReadBool();
+
+				continue;
+			}
+
+			ABORT("Odd script term %s encountered in overlevelterrain script!", Word.c_str());
+		}
+	else
+		basecontentscript<overlevelterrain>::ReadParameters(SaveFile, LastWord);
+}
+
+overlevelterrain* contentscript<overlevelterrain>::Instantiate() const
+{
+	overlevelterrain* Instance = basecontentscript<overlevelterrain>::Instantiate();
+
+	if(GetLocked(false) && *GetLocked())
+		Instance->Lock();
 
 	return Instance;
 }
@@ -181,8 +232,6 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 	if(Word != "=")
 	{
-	  //		SaveFile.GetBuffer().seekg(-Word.length(), std::ios::cur);
-	  //	SaveFile.GetBuffer().clear();
 		if(!PosScript)
 			PosScript = new posscript;
 
@@ -197,7 +246,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 			if(Word == "Character")
 			{
 				if(!Character)
-					Character = new characterscript;
+					Character = new contentscript<character>;
 
 				Character->SetValueMap(ValueMap);
 				Character->ReadFrom(SaveFile);
