@@ -266,6 +266,7 @@ protected:
 	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits extremely acidous brown slime at" : "vomits brown slime at"; }
 	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit extremely stale pepsi at" : "vomit pepsi at"; }
 	virtual std::string ThirdPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomits extremely stale pepsi at" : "vomits pepsi at"; }
+	virtual std::string TalkVerb() const { return "grunts"; }
 	stack* Stack;
 	item* Wielded;
 	ushort Strength, Endurance, Agility, Perception, RegenerationCounter;

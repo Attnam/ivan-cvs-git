@@ -1010,7 +1010,7 @@ void character::AddHitMessage(character* Enemy, const bool Critical) const
 
 void character::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("%s grunts.", CNAME(DEFINITE));
+	ADD_MESSAGE("%s %s.", CNAME(DEFINITE), TalkVerb().c_str());
 }
 
 bool character::Talk()

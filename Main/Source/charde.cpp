@@ -939,13 +939,9 @@ void ennerbeast::BeTalkedTo(character*)
 	}
 }
 
-void frog::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s croaks.", CNAME(DEFINITE));
-}
-
 void elpuri::BeTalkedTo(character*)
 {
+	ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", CNAME(DEFINITE));
 }
 
 void billswill::BeTalkedTo(character*)
@@ -969,40 +965,10 @@ void froggoblin::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s yells goblin war cries at you.", CNAME(DEFINITE));
 }
 
-void mommo::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s vibrates oddly.", CNAME(DEFINITE));
-}
-
 void golem::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
 		ADD_MESSAGE("\"Yes, master?\"");
 	else
 		ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
-}
-
-void wolf::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s howls.", CNAME(DEFINITE));
-}
-
-void dog::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s barks to you.", CNAME(DEFINITE));
-}
-
-void spider::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s is silent.", CNAME(DEFINITE));
-}
-
-void jackal::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s howls.", CNAME(DEFINITE));
-}
-
-void donkey::BeTalkedTo(character*)
-{
-	ADD_MESSAGE("%s neighs.", CNAME(DEFINITE));
 }

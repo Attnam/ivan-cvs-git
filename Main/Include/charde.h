@@ -343,7 +343,7 @@ protected:
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(20000)
-	virtual void BeTalkedTo(character*);
+	virtual std::string TalkVerb() const { return "croaks"; }
 );
 
 class CHARACTER
@@ -484,8 +484,8 @@ protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBrownSlimeVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBrownSlimeVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBrownSlimeVerb(Critical))
-	virtual void BeTalkedTo(character*);
 	virtual float GetMeleeStrength() const RET(20000)
+	virtual std::string TalkVerb() const { return "vibrates oddly"; }
 );
 
 class CHARACTER
@@ -574,7 +574,6 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(40)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
-	virtual void BeTalkedTo(character*);
 protected:
 	virtual std::string NameSingular() const RET("wolf")
 	virtual std::string NamePlural() const RET("wolves")
@@ -583,6 +582,7 @@ protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string TalkVerb() const { return "howls"; }
 );
 
 class CHARACTER
@@ -602,7 +602,6 @@ public:
 	virtual bool Catches(item*, float);
 	virtual bool ConsumeItemType(uchar) const;
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 30000; else return 0; }
-	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(240,0)
 	virtual std::string NameSingular() const RET("dog")
@@ -610,6 +609,7 @@ protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
+	virtual std::string TalkVerb() const { return "barks"; }
 );
 
 class CHARACTER
@@ -628,7 +628,6 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100; else return 0; }
 	virtual ulong GetBloodColor() const RET(BLACK)
-	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(272,0)
 	virtual std::string NameSingular() const RET("spider")
@@ -637,6 +636,7 @@ protected:
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(10000)
 	virtual void CreateCorpse() {}
+	virtual std::string TalkVerb() const { return "says nothing"; }
 );
 
 class CHARACTER
@@ -654,7 +654,6 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 20000; else return 0; }
-	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(304,0)
 	virtual std::string NameSingular() const RET("jackal")
@@ -662,6 +661,7 @@ protected:
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))																																																																																																																																													//Jackals are unoriginal
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(5000)
+	virtual std::string TalkVerb() const { return "howls"; }
 );
 
 class CHARACTER
@@ -679,7 +679,6 @@ class CHARACTER
 public:
 	virtual ushort Possibility() const RET(100)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
-	virtual void BeTalkedTo(character*);
 protected:
 	virtual vector2d GetBitmapPos() const RETV(288,0)
 	virtual std::string NameSingular() const RET("donkey")
@@ -687,6 +686,7 @@ protected:
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(1000)
+	virtual std::string TalkVerb() const { return "neighs"; }
 );
 
 #endif
