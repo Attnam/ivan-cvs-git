@@ -62,7 +62,7 @@ public:
 	virtual bool CanBeWished() const { return true; }
 	virtual item* CreateWishedItem() const;
 	virtual bool Apply(character*, stack*);
-	virtual bool Zap(vector2d, uchar);
+	virtual bool Zap(character*, vector2d, uchar);
 	virtual bool CanBeZapped() const { return false; }
 	virtual bool Polymorph(stack*);
 	virtual bool ReceiveSound(float, bool, stack*) { return false; }

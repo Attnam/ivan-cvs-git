@@ -726,7 +726,7 @@ public:
 	virtual std::string NamePlural() const RET("wands of polymorph")
 	virtual float OfferModifier() const RET(30)
 	virtual vector2d GetBitmapPos() const RETV(0,288)
-	virtual bool Zap(vector2d, uchar);
+	virtual bool Zap(character*, vector2d, uchar);
 );
 
 class ITEM
@@ -836,7 +836,7 @@ public:
 	virtual std::string NamePlural() const RET("wands of striking")
 	virtual float OfferModifier() const RET(10)
 	virtual vector2d GetBitmapPos() const RETV(0,288)
-	virtual bool Zap(vector2d, uchar);
+	virtual bool Zap(character*, vector2d, uchar);
 );
 
 class ITEM

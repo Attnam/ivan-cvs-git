@@ -32,6 +32,7 @@ class outputfile;
 class inputfile;
 class gamescript;
 class team;
+class bitmap;
 
 /* Presentation of the game class */
 
@@ -144,6 +145,8 @@ public:
 	static void Hostility(team*, team*);
 	static void CreateTeams();
 	static bool IsValidPos(vector2d);
+	static std::string StringQuestion(bitmap*, std::string, vector2d, ushort, ushort);
+	static long NumberQuestion(bitmap*, std::string, vector2d);
 private:
 	static std::string Alignment[];
 	static god* God[];

@@ -1540,9 +1540,7 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
-	EMPTY_MESSAGES();
-	game::DrawEverythingNoBlit();
-	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(iosystem::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 0, 50));
+	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 0, 50));
 	return false;
 }
 
@@ -2004,7 +2002,7 @@ bool character::Zap()
 		uchar Answer = game::DirectionQuestion("In what direction do you wish to zap? Press . to zap yourself.", 8, false, true);
 		if(Answer == 0xFF)
 			return false;
-		return GetStack()->GetItem(Index)->Zap(GetPos(), Answer);
+		return GetStack()->GetItem(Index)->Zap(this, GetPos(), Answer);
 	}
 	else
 		return false;

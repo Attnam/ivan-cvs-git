@@ -12,5 +12,4 @@ Dark frog effect is far too high.
 "The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
 Residents of Attnam grunt when talked to.
 Single weapon skill's name isn't updated when the name of the item changes.
-Doggie eating message is shown even if not on LOS.
 Polymorphing one of the residents of Attnam should be a hostile action.

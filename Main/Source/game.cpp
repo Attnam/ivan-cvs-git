@@ -1001,3 +1001,17 @@ bool game::IsValidPos(vector2d Pos)
 	else
 		return false;
 }
+
+std::string game::StringQuestion(bitmap* Font, std::string Topic, vector2d Pos, ushort MinLetters, ushort MaxLetters)
+{
+	EMPTY_MESSAGES();
+	game::DrawEverythingNoBlit();
+	return iosystem::StringQuestion(Font, Topic, Pos, MinLetters, MaxLetters);
+}
+
+long game::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
+{
+	EMPTY_MESSAGES();
+	game::DrawEverythingNoBlit();
+	return iosystem::NumberQuestion(Font, Topic, Pos);
+}

@@ -186,7 +186,7 @@ bool item::Apply(character*, stack*)
 	return false;
 }
 
-bool item::Zap(vector2d, uchar)
+bool item::Zap(character*, vector2d, uchar)
 {
 	 return false; 
 }

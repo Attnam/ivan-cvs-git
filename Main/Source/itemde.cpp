@@ -275,7 +275,7 @@ bool wand::Apply(character* StupidPerson, stack* MotherStack)
 }
 
 
-bool wandofpolymorph::Zap(vector2d Pos, uchar Direction)
+bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
 	vector2d CurrentPos = Pos;
 
@@ -291,12 +291,18 @@ bool wandofpolymorph::Zap(vector2d Pos, uchar Direction)
 			if(!game::GetCurrentLevel()->GetLevelSquare(CurrentPos + game::GetMoveVector(Direction))->GetOverLevelTerrain()->GetIsWalkable())
 				break;
 			else
-			{
-				
-				CurrentPos += game::GetMoveVector(Direction);			
+			{	
+				CurrentPos += game::GetMoveVector(Direction);
 
-				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
-					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->Polymorph();
+				character* Character;			
+
+				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
+				{
+					if(Character->GetTeam()->GetRelation(Zapper->GetTeam()) != FRIEND)
+						Zapper->GetTeam()->Hostility(Zapper->GetTeam());
+
+					Character->Polymorph();
+				}
 				
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
 					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
@@ -334,7 +340,7 @@ bool scrollofwishing::Read(character* Reader)
 {
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = iosystem::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 0, 256);
+	std::string Temp = game::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 0, 256);
 
 	item* TempItem = protosystem::CreateItem(Temp);
 
@@ -417,7 +423,7 @@ bool scrollofchangematerial::Read(character* Reader)
 
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
-	std::string Temp = iosystem::StringQuestion(FONTW, "What material do you want to wish for?", vector2d(7,7), 0, 256);
+	std::string Temp = game::StringQuestion(FONTW, "What material do you want to wish for?", vector2d(7,7), 0, 256);
 
 	material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());
 	
@@ -459,7 +465,7 @@ item* brokenbottle::BetterVersion(void) const
 }
 
 
-bool wandofstriking::Zap(vector2d Pos, uchar Direction)
+bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
 	vector2d CurrentPos = Pos;
 
