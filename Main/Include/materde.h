@@ -63,7 +63,7 @@ public:
 	virtual ushort GetDensity() const				{ return 1200; }
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
-	virtual short NutritionValue() const			{ return 175; }
+	virtual short NutritionValue() const			{ return 100; }
 	virtual ushort GetColor() const { return MAKE_RGB(250, 250, 0); }
 protected:
 	virtual std::string NameStem() const	{ return "banana flesh"; }
@@ -107,7 +107,7 @@ public:
 	virtual ushort GetDensity() const				{ return 1500; }
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual uchar Alignment() const				{ return EVIL; }
-	virtual short NutritionValue() const			{ return 75; }
+	virtual short NutritionValue() const			{ return 50; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
@@ -154,7 +154,7 @@ public:
 	virtual ushort GetDensity() const				{ return 1200; }
 	virtual ushort OfferValue() const				{ return 15; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
-	virtual short NutritionValue() const			{ return 50; }
+	virtual short NutritionValue() const			{ return 100; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 	virtual bool IsFlesh() { return true; }
 protected:
@@ -180,7 +180,7 @@ class MATERIAL
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
-	virtual short NutritionValue() const			{ return 500; }
+	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
 protected:
 	virtual std::string NameStem() const	{ return "pork"; }
@@ -193,7 +193,7 @@ class MATERIAL
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
-	virtual short NutritionValue() const			{ return 500; }
+	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
 protected:
 	virtual std::string NameStem() const	{ return "beef"; }
@@ -212,6 +212,7 @@ public:
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(96, 96, 96); }
 	virtual bool IsFlesh() { return true; }
+	virtual short NutritionValue() const			{ return 10; }
 protected:
 	virtual std::string NameStem() const	{ return "bone"; }
 );
@@ -227,6 +228,7 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual short NutritionValue() const			{ return 500; }
 protected:
 	virtual std::string NameStem() const	{ return "dark frog flesh"; }
 );
@@ -345,7 +347,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort GetDensity() const 				{ return 400; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual short NutritionValue() const			{ return 25; }
+	virtual short NutritionValue() const			{ return 50; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
 	virtual bool IsFlesh() { return true; }
@@ -360,7 +362,6 @@ class MATERIAL
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 1; }
-	virtual short NutritionValue() const			{ return 25; }
 	virtual ushort GetColor() const { return MAKE_RGB(111, 74, 37); }
 protected:
 	virtual std::string NameStem() const	{ return "brown slime"; }
@@ -374,6 +375,7 @@ public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 15; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
+	virtual short NutritionValue() const			{ return 200; }
 protected:
 	virtual std::string NameStem() const	{ return "wolf flesh"; }
 );
@@ -396,7 +398,7 @@ class MATERIAL
 	humanflesh, //???
 public:
 	virtual ushort GetHitValue() const 				{ return 30; }
-	virtual ushort GetDensity() const				{ return 2400; }
+	virtual ushort GetDensity() const				{ return 1800; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
 protected:
@@ -416,7 +418,7 @@ public:
 	virtual uchar Alignment() const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
-	virtual short NutritionValue() const			{ return 100; }
+	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(32, 32, 32); }
 	virtual bool IsFlesh() { return true; }
 protected:
@@ -457,6 +459,7 @@ class MATERIAL
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 6; }
+	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(200, 200, 200); }
 protected:
 	virtual std::string NameStem() const	{ return "jackal flesh"; }
@@ -470,6 +473,7 @@ public:
 	virtual uchar GetConsumeType() const		{ return MEAT; }
 	virtual ushort OfferValue() const			{ return 6; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual short NutritionValue() const			{ return 200; }
 protected:
 	virtual std::string NameStem() const	{ return "donkey flesh"; }
 );

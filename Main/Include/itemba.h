@@ -30,7 +30,7 @@ public:
 	virtual ushort GetEmitation() const;
 	virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
 	virtual uchar GetConsumeType() const { return ODD; }
-	virtual ushort TryToOpen(stack*) { return 0xFFFF; }
+	virtual item* TryToOpen(stack*) { return 0; }
 	virtual ulong GetWeight() const;
 	virtual bool Consume(character*, float = 100) { return false; };
 	virtual ushort GetArmorValue() const { return 100; }
@@ -56,7 +56,7 @@ public:
 	virtual bool HitCharacter(character*, float);
 	virtual bool DogWillCatchAndConsume() const { return false; }
 	virtual uchar GetDipMaterialNumber() const { return GetMaterials() - 1; }
-	virtual ushort PrepareForConsuming(character*, stack*); // Stack where the item IS
+	virtual item* PrepareForConsuming(character*, stack*); // Stack where the item IS
 	virtual item* Clone(bool = true, bool = true) const = 0;
 	virtual ushort Possibility() const = 0;
 	virtual bool CanBeWished() const { return true; }
@@ -75,6 +75,7 @@ public:
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }
+	virtual float NPModifier() const { return 1.0f; }
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

@@ -32,7 +32,7 @@ area* game::AreaInLoad;
 square* game::SquareInLoad;
 std::vector<dungeon*> game::Dungeon;
 character* game::PlayerBackup;
-ushort game::PolymorphCounter = 0xFFFF;
+//ushort game::PolymorphCounter = 0xFFFF;
 uchar game::CurrentDungeon;
 
 gamescript game::GameScript;
@@ -132,7 +132,7 @@ void game::Init(std::string Name)
 	GoThroughWallsCheat = false;
 	InWilderness = false;
 	PlayerBackup = 0;
-	PolymorphCounter = 0xFFFF;
+	//PolymorphCounter = 0xFFFF;
 	srand(time(0));
 	game::CalculateGodNumber();
 
@@ -534,7 +534,7 @@ bool game::Save(std::string SaveName)
 
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
-	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
+	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness;// << PolymorphCounter;
 
 	time_t Time = time(0);
 	srand(Time);
@@ -566,7 +566,7 @@ bool game::Load(std::string SaveName)
 
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat >> Gamma;
-	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> PolymorphCounter;
+	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness;// >> PolymorphCounter;
 
 	time_t Time;
 	SaveFile >> Time;

@@ -537,7 +537,7 @@ void scabies::PrayBadEffect()
 	for(uchar c = 0; c < 5; ++c)
 	{
 		material* SchoolFood = new schoolfood(600);
-		SchoolFood->EatEffect(game::GetPlayer());
+		SchoolFood->EatEffect(game::GetPlayer(), 600);
 		delete SchoolFood;
 	}
 
@@ -550,10 +550,9 @@ void scabies::PrayBadEffect()
 void infuscor::PrayGoodEffect()
 {
 	ADD_MESSAGE("5 scrolls drop to on the ground.");
+
 	for(uchar c = 0; c < 5; ++c)
-	{
 		game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new scrollofteleport);
-	}
 }
 
 void cruentus::PrayGoodEffect()

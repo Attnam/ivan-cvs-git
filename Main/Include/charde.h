@@ -39,7 +39,6 @@ public:
 	virtual bool Hit(character*);
 	virtual weaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
 	virtual void CharacterSpeciality();
-	//virtual bool DrawWeaponSkillList();
 	virtual bool ShowWeaponSkills();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
@@ -66,7 +65,7 @@ class CHARACTER
 (
 	human,
 	humanoid,
-	InitMaterials(new humanflesh(80000)),
+	InitMaterials(new humanflesh(60000)),
 	{
 		SetSize(150 + rand() % 51);
 		SetAgility(15 + rand() % 11);
@@ -158,7 +157,7 @@ class CHARACTER
 (
 	cityguard,
 	human,
-	InitMaterials(new humanflesh(40000)),
+	InitMaterials(new humanflesh(60000)),
 	{
 		SetSize(180);
 		SetAgility(20);
@@ -184,7 +183,7 @@ class CHARACTER
 (
 	shopkeeper,
 	human,
-	InitMaterials(new humanflesh(80000)),
+	InitMaterials(new humanflesh(100000)),
 	{
 		SetSize(160);
 		SetAgility(5);
@@ -269,7 +268,7 @@ class CHARACTER
 (
 	ennerbeast,
 	character,
-	InitMaterials(new ennerbeastflesh(60000)),
+	InitMaterials(new ennerbeastflesh(30000)),
 	{
 		SetSize(150);
 		SetAgility(10);
@@ -307,7 +306,7 @@ class CHARACTER
 (
 	darkfrog,
 	frog,
-	InitMaterials(new darkfrogflesh(100)),
+	InitMaterials(new darkfrogflesh(1000)),
 	{
 		SetSize(15);
 		SetAgility(20);
@@ -519,7 +518,7 @@ class CHARACTER
 (
 	wolf,
 	character,
-	InitMaterials(new wolfflesh(30000)),
+	InitMaterials(new wolfflesh(40000)),
 	{
 		SetSize(100);
 		SetAgility(20);
@@ -544,7 +543,7 @@ class CHARACTER
 (
 	dog,
 	character,
-	InitMaterials(new dogflesh(20000)),
+	InitMaterials(new dogflesh(30000)),
 	{
 		SetSize(75);
 		SetAgility(15);
@@ -571,7 +570,7 @@ class CHARACTER
 (
 	spider,
 	character,
-	InitMaterials(new spiderflesh(50)),
+	InitMaterials(new spiderflesh(100)),
 	{
 		SetSize(10);
 		SetAgility(4);
@@ -590,6 +589,7 @@ protected:
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
 	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual float GetMeleeStrength() const RET(2000)
+	virtual void CreateCorpse() {}
 );
 
 class CHARACTER
@@ -621,7 +621,7 @@ class CHARACTER
 (
 	donkey,
 	character,
-	InitMaterials(new donkeyflesh(83000)),
+	InitMaterials(new donkeyflesh(40000)),
 	{
 		SetSize(150);
 		SetAgility(4);

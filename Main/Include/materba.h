@@ -74,10 +74,10 @@ public:
 	virtual ushort GetEmitation() const { return 0; }
 	virtual ushort OfferValue() const = 0;
 	virtual uchar Alignment() const				{ return NEUTRAL; }
-	virtual void EatEffect(character*, float = 100, float = 1.0f)	{ }
+	virtual void EatEffect(character*, float, float = 1.0f)	{ }
 	virtual void HitEffect(character*)			{ }
 	virtual short NutritionValue() const			{ return 0; }
-	virtual void MinusAmount(float Amount)			{ SetVolume(GetVolume() - ulong(GetVolume() * Amount / 100)); }
+	virtual void MinusAmount(float Amount)			{ SetVolume(GetVolume() > Amount ? GetVolume() - Amount : 0); }
 	virtual material* Clone(ulong Volume) const = 0;
 	virtual material* Clone() const = 0;
 	virtual bool IsType(ushort QType) const { return Type() == QType; }

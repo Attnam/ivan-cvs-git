@@ -15,13 +15,19 @@
 #define NUMBER_OF_HUMAN_LEGS	6
 #define NUMBER_OF_HUMAN_TORSOS	9
 
-#define HUNGERLEVEL 		200 
+#define HUNGERLEVEL 		200
 #define CRITICALHUNGERLEVEL 	60
 
 #define OVERLOADED		0
 #define STRESSED		1
 #define BURDENED		2
 #define UNBURDENED		3
+
+#define STATES			2
+
+#define FAINTED			0
+#define EATING			1
+#define POLYMORPHED		2
 
 #include "game.h"
 #include "object.h"
@@ -58,7 +64,7 @@ public:
 	virtual bool CheckBulimia() const;
 	virtual bool CheckDeath(std::string);
 	virtual bool CheckIfConsumable(ushort) const;
-	virtual bool ConsumeItem(int, stack*);
+	virtual bool ConsumeItem(item*, stack*);
 	virtual bool ConsumeItemType(uchar) const;
 	virtual bool DodgesFlyingItem(item*, float);
 	virtual bool Hit(character*);
@@ -71,7 +77,7 @@ public:
 	virtual bool HasHeadOfElpuri() const;
 	virtual bool HasMaakotkaShirt() const;
 	virtual bool HasPerttusNut() const;
-	virtual bool GetFainted() const { return Fainted; }
+	//virtual bool GetFainted() const { return Fainted; }
 	virtual bool GetIsPlayer() const { return IsPlayer; }
 	virtual bool Apply();
 	virtual bool Close();
@@ -122,7 +128,7 @@ public:
 	virtual worldmapsquare* GetWorldMapSquareUnder() const;
 	virtual long GetAgilityExperience() const { return AgilityExperience; }
 	virtual long GetAP() const { return AP; }
-	virtual long GetAPsToBeEaten() const { return APsToBeEaten; }
+	//virtual long GetAPsToBeEaten() const { return APsToBeEaten; }
 	virtual long GetEnduranceExperience() const { return EnduranceExperience; }
 	virtual long GetNP() const					{ return NP; }
 	virtual long GetPerceptionExperience() const { return PerceptionExperience; }
@@ -138,7 +144,7 @@ public:
 	virtual ushort CalculateArmorModifier() const;
 	virtual ushort CRegenerationCounter() const { return RegenerationCounter; }
 	virtual ushort GetAgility() const					{ return Agility; }
-	virtual ushort GetConsumingCurrently() const { return EatingCurrently; }
+	virtual item* GetConsumingCurrently() const { return ConsumingCurrently; }
 	virtual ushort GetEmitation() const;
 	virtual ushort GetEndurance() const					{ return Endurance; }
 	virtual ushort GetPerception() const				{ return Perception; }
@@ -152,7 +158,7 @@ public:
 	virtual void AddHitMessage(character*, const bool = false) const;
 	virtual void ApplyExperience();
 	virtual void BeTalkedTo(character*);
-	virtual void ContinueEating();
+	//virtual void ContinueEating();
 	virtual void Darkness(long);
 	virtual void Die();
 	virtual void DrawToTileBuffer() const;
@@ -172,11 +178,11 @@ public:
 	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
 	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
 	virtual void SetAP(long What) { AP = What; }
-	virtual void SetAPsToBeEaten(long What) { APsToBeEaten = What; }
-	virtual void SetConsumingCurrently(ushort What) { EatingCurrently = What; }
+	//virtual void SetAPsToBeEaten(long What) { APsToBeEaten = What; }
+	virtual void SetConsumingCurrently(item* What) { ConsumingCurrently = What; }
 	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
 	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
-	virtual void SetFainted(bool To) { Fainted = To; }
+	//virtual void SetFainted(bool To) { Fainted = To; }
 	virtual void SetHP(short What) { HP = What; }
 	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 	virtual void SetNP(long What) { NP = What; }
@@ -189,13 +195,12 @@ public:
 	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
 	virtual void SetWielded(item* Something) { Wielded = Something; }
 	virtual void SpillBlood(uchar);
-	virtual void StopEating();
+	//virtual void StopEating();
 	virtual void Vomit(ushort);
 	virtual void Be();
 	virtual bool Zap();
 	virtual bool Polymorph();
 	virtual bool SetTorsoArmor(item* What) const RET(false)
-	virtual void ChangeBackToPlayer();
 	virtual bool CanKick() const RET(false)
 	virtual void BeKicked(ushort, bool, uchar, character*);
 	virtual void FallTo(vector2d, bool);
@@ -205,6 +210,20 @@ public:
 	virtual void VirtualConstructor() {}
 	virtual ushort GetSpeed() const;
 	virtual void CharacterSpeciality() {}
+<<<<<<< charba.h
+	virtual void ActivateState(uchar Index) { State |= 1 << Index; }
+	virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
+	virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }
+	virtual void Faint();
+	virtual void FaintHandler();
+	virtual void EatHandler();
+	virtual void PolymorphHandler();
+	virtual void SetStateCounter(uchar Index, ushort What) { StateCounter[Index] = What; }
+	virtual bool CanMove();
+	virtual void DeActivateVoluntaryStates();
+	virtual void EndFainted();
+	virtual void EndEating();
+	virtual void EndPolymorph();
 	virtual void StruckByWandOfStriking();
 protected:
 	virtual void CreateCorpse();
@@ -239,10 +258,14 @@ protected:
 	long NP, AP;
 	long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
 	uchar Relations;
-	bool Fainted;
-	ushort EatingCurrently;
-	long APsToBeEaten;
+	//bool Fainted;
+	//ushort EatingCurrently;
+	//long APsToBeEaten;
+	item* ConsumingCurrently;
 	bool IsPlayer;
+	uchar State;
+	ushort StateCounter[STATES];
+	void (character::*StateHandler[STATES])();
 };
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__

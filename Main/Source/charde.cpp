@@ -436,7 +436,7 @@ bool dog::Catches(item* Thingy, float)
 			if(GetSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
 
-		ConsumeItem(GetLevelSquareUnder()->GetStack()->SearchItem(Thingy), GetLevelSquareUnder()->GetStack());
+		ConsumeItem(Thingy, GetLevelSquareUnder()->GetStack());
 		return true;
 	}
 

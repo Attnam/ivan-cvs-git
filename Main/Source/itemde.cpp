@@ -18,11 +18,13 @@ void can::PositionedDrawToTileBuffer(uchar) const
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
 }
 
-ushort can::TryToOpen(stack* Stack)
+item* can::TryToOpen(stack* Stack)
 {
 	ADD_MESSAGE("You succeed in opening the can!");
 
-	ushort x = Stack->AddItem(new lump(GetMaterial(1)));
+	item* x = new lump(GetMaterial(1));
+
+	Stack->AddItem(x);
 
 	SetMaterial(1,0);
 
@@ -31,71 +33,76 @@ ushort can::TryToOpen(stack* Stack)
 
 bool corpse::Consume(character* Eater, float Amount)
 {
-	if(Amount > 100) Amount = 100;
-	if(Eater == game::GetPlayer())
+	/*if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}
+	}*/
 
-	GetMaterial(0)->EatEffect(Eater, Amount, 0.10f);
-	if(Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+
+	if(Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
 	{
 		game::DoEvilDeed(10);
-		ADD_MESSAGE("You feel that this was a evil deed.");
+		ADD_MESSAGE("You feel that this was an evil deed.");
+		Eater->EndEating();
 	}
 
-	return (Amount > 99);
+	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
 bool banana::Consume(character* Eater, float Amount)
 {
-	if(Amount > 100) Amount = 100;
+	/*if(Amount > 100) Amount = 100;
 	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}
-	GetMaterial(1)->EatEffect(Eater, Amount);
-	Eater->GetStack()->AddItem(new bananapeals);
-	return (Amount > 99);
+	}*/
+	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
+
+	if(!GetMaterial(1)->GetVolume())
+		Eater->GetStack()->AddItem(new bananapeals);
+
+	return GetMaterial(1)->GetVolume() ? false : true;
 }
 
 bool lump::Consume(character* Eater, float Amount)
 {
-	if(Amount > 100) Amount = 100;
+	/*if(Amount > 100) Amount = 100;
 	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}
-	GetMaterial(0)->EatEffect(Eater, Amount);
-	return (Amount > 99);
+	}*/
+	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+
+	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
 bool potion::Consume(character* Eater, float Amount)
 {
-	if(Amount > 100) Amount = 100;
+	/*if(Amount > 100) Amount = 100;
 	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You drink %s.", CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("You drink part of %s.", CNAME(DEFINITE));
-	}
+	}*/
 
-	GetMaterial(1)->EatEffect(Eater, Amount);
+	GetMaterial(1)->EatEffect(Eater, Amount, NPModifier());
 
-	if(Amount == 100)
+	if(!GetMaterial(1)->GetVolume())
 		ChangeMaterial(1,0);
 	
-	return false;
+	return GetMaterial(1)->GetVolume() ? false : true;
 }
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
@@ -197,35 +204,36 @@ void potion::PositionedDrawToTileBuffer(uchar) const
 
 bool loaf::Consume(character* Eater, float Amount)
 {
-	if(Amount > 100) Amount = 100;
+	/*if(Amount > 100) Amount = 100;
 	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
 		else
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
-	}
+	}*/
 
-	GetMaterial(0)->EatEffect(Eater, Amount, 0.25f);
-	return (Amount > 99);
+	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+	ulong p = GetMaterial(0)->GetVolume();
+	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
 bool abone::Consume(character* Consumer, float Amount)
 {
-	if(Consumer == game::GetPlayer())
+	/*if(Consumer == game::GetPlayer())
 		ADD_MESSAGE("You consume %s.", CNAME(DEFINITE));
 	else if(Consumer->GetLevelSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("%s consumes %s.", Consumer->CNAME(DEFINITE), CNAME(DEFINITE));
-	GetMaterial(0)->EatEffect(Consumer, Amount);
-	return (Amount > 99);
+		ADD_MESSAGE("%s consumes %s.", Consumer->CNAME(DEFINITE), CNAME(DEFINITE));*/
+	GetMaterial(0)->EatEffect(Consumer, Amount, NPModifier());
+	return GetMaterial(0)->GetVolume() ? false : true;
 }
 
-ushort can::PrepareForConsuming(character* Consumer, stack* Stack)
+item* can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
-	if(Consumer != game::GetPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
+	if(!Consumer->GetIsPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
 		return TryToOpen(Stack);
 	else
-		return 0xFFFF;
+		return 0;
 }
 
 item* leftnutofperttu::CreateWishedItem() const
@@ -453,30 +461,26 @@ bool scrollofchangematerial::Read(character* Reader)
 void avatarofvalpuri::CheckPickUpEffect(character* Picker)
 {
 	if(Picker->GetIsPlayer())
-	{
-	
-		//CenterX, CenterY, ClipLeft, ClipTop, ClipRigth, ClipBottom, Radius, DoWhat	
 		DO_FILLED_RECTANGLE(Picker->GetPos().X, Picker->GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1 , game::GetCurrentLevel()->GetYSize() - 1, 30, 
 		{
 			character* Temp;
 			if((Temp = game::GetCurrentLevel()->GetSquare(XPointer, YPointer)->GetCharacter()) && !Temp->GetIsPlayer())
 				Temp->SetRelations(HOSTILE);
-			
 		})
-
-	}
 }
 
 item* brokenbottle::BetterVersion(void) const
 {
 	material* Stuff;
-	if(rand() % 10) 
+
+	if(rand() % 5)
 		Stuff = new bananaflesh(1500);
 	else
 		Stuff = new omleurine(1500);
-	 
+
 	 item* P = new potion(false); 
 	 P->InitMaterials(2, new glass(50), Stuff); 
+
 	 return P;
 }
 

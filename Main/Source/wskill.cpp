@@ -5,7 +5,7 @@
 ushort weaponskill::LevelMap[] = { 0, 50, 100, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000, 65535 };
 ushort weaponskill::UnuseTurnMap[] = { 65535, 10000, 5000, 4000, 3000, 1500, 1000, 800, 400, 200, 100 };
 ushort weaponskill::UnusePenaltyMap[] = { 0, 10, 25, 40, 75, 150, 200, 400, 800, 1000, 1000 };
-std::string weaponskill::SkillName[] = { "Uncategorized", "Unarmed Combat", "Daggers", "Small Swords", "Large Swords", "Clubs", "Hammers", "Maces", "Flails", "Axes", "Halberds", "Spears" };
+std::string weaponskill::SkillName[] = { "uncategorized", "unarmed combat", "daggers", "small swords", "large swords", "clubs", "hammers", "maces", "flails", "axes", "halberds", "spears" };
 
 weaponskill::weaponskill(uchar Index, float HitMultiplier) : Index(Index), Level(0), Hits(0), HitCounter(0), HitMultiplier(HitMultiplier)
 {

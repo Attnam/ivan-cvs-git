@@ -4,7 +4,7 @@
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveSchoolFoodEffect(Volume * Amount / 100);
+	Eater->ReceiveSchoolFoodEffect(Volume > Amount ? Amount : Volume);
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -16,7 +16,7 @@ void schoolfood::HitEffect(character* Enemy)
 
 void darkfrogflesh::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->Darkness(Volume * Amount / 100);
+	Eater->Darkness(Volume > Amount ? Amount : Volume);
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -28,7 +28,7 @@ void darkfrogflesh::HitEffect(character* Enemy)
 
 void omleurine::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveOmleUrineEffect(Volume * Amount / 100);
+	Eater->ReceiveOmleUrineEffect(Volume > Amount ? Amount : Volume);
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -40,7 +40,7 @@ void omleurine::HitEffect(character* Enemy)
 
 void pepsi::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceivePepsiEffect(Volume * Amount / 100);
+	Eater->ReceivePepsiEffect(Volume > Amount ? Amount : Volume);
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }
@@ -53,10 +53,12 @@ void pepsi::HitEffect(character* Enemy)
 void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
 	Eater->SetRelations(NEUTRAL);
+
 	if(Eater == game::GetPlayer())
 		ADD_MESSAGE("You feel like a hippie.");
 	else
 		ADD_MESSAGE("%s doesn't seem to care about you anymore.", Eater->CNAME(DEFINITE));
+
 	NormalFoodEffect(Eater, Amount, NPModifier);
 	MinusAmount(Amount);
 }

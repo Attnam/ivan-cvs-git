@@ -95,13 +95,13 @@ public:
 	virtual ushort Possibility() const RET(100)
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
-	virtual ushort TryToOpen(stack*);
+	virtual item* TryToOpen(stack*);
 	virtual uchar GetConsumeType() const RET(Material[1] ? Material[1]->GetConsumeType() : ODD)
 	virtual std::string NameSingular() const RET("can")
 	virtual std::string NamePlural() const RET("cans")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))
 	virtual float OfferModifier() const RET(0.5)
-	virtual ushort PrepareForConsuming(character*, stack*);
+	virtual item* PrepareForConsuming(character*, stack*);
 	virtual vector2d GetBitmapPos() const;
 protected:
 	virtual ushort GetFormModifier() const RET(20)
@@ -365,6 +365,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 protected:
 	virtual ushort GetFormModifier() const RET(20)
+	virtual float NPModifier() const { return 0.01f; }
 );
 
 class ITEM
@@ -640,7 +641,7 @@ class ITEM
 (
 	loaf,
 	item,
-	InitMaterials(rand() % 2 ? (material*)new pork(2000) : (material*)new beef(2000)),
+	InitMaterials(rand() % 2 ? (material*)new pork(1000) : (material*)new beef(1000)),
 	{
 		SetSize(40);
 	},

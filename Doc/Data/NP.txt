@@ -1,0 +1,37 @@
+Weigth = Volume * Density / 1000
+NPBonus = NutritionValue() * Volume * Density * NPModifier / 1000000
+
+Eatable items:
+
+Name:		Material	NV	Volume cm^3	Density g/dm^3	NPModifier	Weigth g	Turns	NPBonus
+banana		bananaflesh	100	150		1200		1.0f		180		1	18
+holybanana	bananaflesh	100	300		1200		1.0f		360		1	36
+lump		bananaflesh	100	600		1200		1.0f		720		1	72
+lump		schoolfood	50	600		1500		1.0f		900		1	45
+lump		pepsi		200	330		1500		1.0f		900		1	99
+potion		omleurine	50	1500		1000		1.0f		1500		1	75
+bone		bone		10	1500		2000		1.0f		3000		1	30
+loaf		pork		200	1000		1200		1.0f		1200		1	240
+loaf		beef		200	1000		1200		1.0f		1200		1	240
+
+Corpses:
+
+player		humanflesh	100	60000		1200		0.01f		72000		6	72
+farmer		humanflesh	100	30000		1200		0.01f		36000		3	36
+cityguard	humanflesh	100	60000		1200		0.01f		72000		6	72
+shopkeeper	humanflesh	100	100000		1200		0.01f		120000		10	120
+oree		pepsi		200	110000		1500		0.01f		165000		11	330
+swatcommando	humanflesh	100	110000		1200		0.01f		132000		11	132
+ennerbeast	ennerbeastflesh	100	30000		1800		0.01f		54000		3	54
+darkfrog	darkfrogflesh	500	1000		1200		0.01f		1200		1	6
+elpuri		elpuriflesh	500	8000000		2400		0.01f		19200000	800	96000
+elpuri		pork/beef	200	8000000		2400		0.01f		19200000	800	38400
+froggoblin	goblinoidflesh	100	25000		1200		0.01f		30000		3	30
+conicalmommo	brownslime	50	250000		400		0.01f		100000		25	50
+flatmommo	brownslime	50	150000		400		0.01f		60000		15	30
+golem		bananaflesh	100	100000		1200		0.01f		120000		10	120
+golem		pork/beef	200	100000		1200		0.01f		120000		10	240
+wolf		wolfflesh	200	40000		1200		0.01f		48000		4	96
+dog		dogflesh	200	30000		1200		0.01f		36000		3	72
+jackal		jackalflesh	200	20000		1200		0.01f		24000		2	48
+donkey		donkeyflesh	200	40000		1200		0.01f		48000		4	96

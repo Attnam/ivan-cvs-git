@@ -37,7 +37,7 @@ public:
 	void SetSquareUnder(square*);
 	ushort DrawContents(const char*) const;
 	void DrawPartOfContents(ushort, ushort, bool, const char*) const;
-	ushort MoveItem(ushort, stack*);
+	item* MoveItem(ushort, stack*);
 	ushort GetEmitation() const;
 	vector2d GetPos() const;
 	void Clean();

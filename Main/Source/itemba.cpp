@@ -152,9 +152,9 @@ bool item::HitCharacter(character* Dude, float Speed)
 	return true;
 }
 
-ushort item::PrepareForConsuming(character*, stack* Stack)
+item* item::PrepareForConsuming(character*, stack* Stack)
 {
-	return Stack->SearchItem(this);
+	return this;
 }
 
 float item::GetWeaponStrength() const

@@ -137,12 +137,12 @@ void stack::Clean()
 	SNonExistent(0);
 }
 
-ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack MoveTo
+item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack MoveTo
 {
 	ushort ToBeReturned;
 
 	if(this == MoveTo)
-		return Index;
+		return GetItem(Index);
 
 	if(SquareUnder)
 		SquareUnder->SendNewDrawRequest();
@@ -171,7 +171,7 @@ ushort stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stac
 				MoveTo->GetLevelSquareUnder()->UpdateMemorizedDescription();
 		}
 
-	return ToBeReturned;
+	return MoveTo->GetItem(ToBeReturned);
 }
 
 void stack::Optimize(ushort OptimizeBoundary)

@@ -20,12 +20,16 @@
 #include "god.h"
 #include "felist.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), IsPlayer(false)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), IsPlayer(false), State(0), ConsumingCurrently(0)
 {
-	SetConsumingCurrently(0xFFFF);
+	//SetConsumingCurrently(0xFFFF);
 
 	if(CreateMaterials || SetStats || CreateEquipment)
 		ABORT("BOOO!");
+
+	StateHandler[FAINTED] = &character::FaintHandler;
+	StateHandler[EATING] = &character::EatHandler;
+	StateHandler[POLYMORPHED] = &character::PolymorphHandler;
 }
 
 character::~character()
@@ -116,7 +120,9 @@ uchar character::TakeHit(ushort Speed, short Success, float WeaponStrength, char
 {
 	if(Enemy->GetIsPlayer())
 		SetRelations(0);
-	if(GetConsumingCurrently() != 0xFFFF) StopEating();
+
+	DeActivateVoluntaryStates();
+	//if(GetConsumingCurrently() != 0xFFFF) StopEating();
 	if(!(rand() % 20))
 	{
 		ushort Damage = ushort(WeaponStrength * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 5 ? 2 : 1);
@@ -182,22 +188,23 @@ void character::Be()
 {
 	if(game::GetPlayerBackup() != this)
 	{
-		if(game::GetPlayer() == this) 
-		{
-			if(!game::GetPolymorphCounter())
-			{
-				ChangeBackToPlayer();
-				game::SetPolymorphCounter(0xFFFF);
-				return;
-			}
-			else if(game::GetPolymorphCounter() != 0xFFFF)
-				game::SetPolymorphCounter(game::GetPolymorphCounter() - 1);
-		}
+		for(uchar c = 0; c < STATES; ++c)
+			if(StateIsActivated(c))
+				(this->*StateHandler[c])();
+			//if(!(StateCounter[c]--))
+				//(this->*EndState[c])();
 			
 		if(!game::Flag)
 		{
 			ApplyExperience();
-			if(GetHP() < GetEndurance()) SpillBlood(rand() % 2);
+
+			if(GetHP() < GetEndurance())
+				SpillBlood(rand() % 2);
+
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !StateIsActivated(FAINTED))
+				Faint();
+
+			//if(CanMove())
 			switch(GetBurdenState())
 			{
 			case UNBURDENED:
@@ -212,23 +219,15 @@ void character::Be()
 			break;
 			}
 
-			if(GetConsumingCurrently() != 0xFFFF) ContinueEating();
-
-			if(GetNP() < CRITICALHUNGERLEVEL && !(rand() % 50) && !GetFainted() && GetIsPlayer())
-			{
-				ADD_MESSAGE("You faint.");
-				SetAP(GetAP() - 7000 + rand() % 10000);
-				SetStrengthExperience(GetStrengthExperience() - 100);
-				SetFainted(true);
-			}
+			//if(GetConsumingCurrently() != 0xFFFF) ContinueEating();
 		}
 		else
 			game::Flag = false;
 
 		if(GetAP() >= 1000)
 		{
-			SetConsumingCurrently(0xFFFF);
-			if(GetFainted()) SetFainted(false);
+			//SetConsumingCurrently(0xFFFF);
+			//if(GetFainted()) SetFainted(false);
 
 			if(GetIsPlayer())
 			{
@@ -239,7 +238,8 @@ void character::Be()
 					Timer = 0;
 				}
 				CharacterSpeciality();
-				GetPlayerCommand();
+				if(CanMove())
+					GetPlayerCommand();
 				Hunger();
 				Regenerate();
 				game::Turn();
@@ -359,13 +359,13 @@ bool character::Consume()
 	if(!game::GetInWilderness() && GetLevelSquareUnder()->GetStack()->ConsumableItems(this) && game::BoolQuestion("Do you wish to consume one of the items lying on the ground? [Y/N]"))
 	{
 		ushort Index = GetLevelSquareUnder()->GetStack()->DrawConsumableContents("What do you wish to consume?", this);
+
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 		{
-			if(CheckBulimia())
-				if(!game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
-					return false;
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
+				return false;
 
-			if(ConsumeItem(Index, GetLevelSquareUnder()->GetStack()))
+			if(ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(Index), GetLevelSquareUnder()->GetStack()))
 			{
 				ReceiveBulimiaDamage();
 				return true;
@@ -380,17 +380,16 @@ bool character::Consume()
 	if(GetStack()->ConsumableItems(this))
 	{
 		ushort Index = GetStack()->DrawConsumableContents("What do you wish to consume?", this);
+
 		if(Index < GetStack()->GetItems())
 		{
 			if(!CheckIfConsumable(Index))
 				return false;
 
-			if(CheckBulimia())
-				if(!game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
-					return false;
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? (Y/N)"))
+				return false;
 
-
-			if(ConsumeItem(GetStack()->MoveItem(Index, GetLevelSquareUnder()->GetStack()), GetLevelSquareUnder()->GetStack()))
+			if(ConsumeItem(GetStack()->GetItem(Index), GetStack()))
 			{
 				ReceiveBulimiaDamage();
 				return true;
@@ -402,7 +401,9 @@ bool character::Consume()
 			return false;
 	}
 
-	ADD_MESSAGE("You have nothing to eat.");
+	if(GetIsPlayer())
+		ADD_MESSAGE("You have nothing to eat.");
+
 	return false;
 }
 
@@ -428,25 +429,23 @@ bool character::CheckIfConsumable(ushort Index) const
 	return (GetTorsoArmor() != GetStack()->GetItem(Index) && GetWielded() != GetStack()->GetItem(Index));
 }
 
-bool character::ConsumeItem(int ToBeEaten, stack* ItemsStack)
+bool character::ConsumeItem(item* ToBeEaten, stack* ItemsStack)
 {
-	ushort ItemNumber;
-	if(ConsumeItemType(ItemsStack->GetItem(ToBeEaten)->GetConsumeType()))
+	if(ConsumeItemType(ToBeEaten->GetConsumeType()))
 	{
-		if((ItemNumber = ItemsStack->GetItem(ToBeEaten)->PrepareForConsuming(this, ItemsStack)) != 0xFFFF)
+		if(ToBeEaten = ToBeEaten->PrepareForConsuming(this, ItemsStack))
 		{
-			SetConsumingCurrently(ItemsStack->MoveItem(ItemNumber, GetLevelSquareUnder()->GetStack()));
-			APsToBeEaten = ItemsStack->GetItem(ToBeEaten)->GetWeight();
-			SetAP(1000 - APsToBeEaten);
+			SetConsumingCurrently(ToBeEaten);
+			ActivateState(EATING);
+			StateCounter[EATING] = 100;
 			return true;
 		}
 	}
-
-	if(GetIsPlayer())
-		ADD_MESSAGE("You can't consume this.");
+	else
+		if(GetIsPlayer())
+			ADD_MESSAGE("You can't consume this.");
 
 	return false;
-
 }
 
 bool character::ConsumeItemType(uchar Type) const
@@ -752,7 +751,7 @@ bool character::PickUp()
 					if(GetLevelSquareUnder()->GetStack()->GetItem(Index))
 					{
 						ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(Index)->CNAME(INDEFINITE));
-						GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack()))->CheckPickUpEffect(this);
+						GetLevelSquareUnder()->GetStack()->MoveItem(Index, GetStack())->CheckPickUpEffect(this);
 						ToBeReturned = true;
 					}
 
@@ -765,7 +764,7 @@ bool character::PickUp()
 		else
 		{
 			ADD_MESSAGE("%s picked up.", GetLevelSquareUnder()->GetStack()->GetItem(0)->CNAME(INDEFINITE));
-			GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack()))->CheckPickUpEffect(this);
+			GetLevelSquareUnder()->GetStack()->MoveItem(0, GetStack())->CheckPickUpEffect(this);
 			return true;
 		}
 	}
@@ -862,7 +861,7 @@ bool character::OpenItem()
 	ushort Index = Stack->DrawContents("What do you want to open?");
 
 	if(Index < GetStack()->GetItems())
-		if(GetStack()->GetItem(Index)->TryToOpen(Stack) != 0xFFFF)
+		if(GetStack()->GetItem(Index)->TryToOpen(Stack))
 		{
 			SetAgilityExperience(GetAgilityExperience() + 25);
 			SetNP(GetNP() - 1);
@@ -1198,7 +1197,15 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << Relations << Fainted << EatingCurrently << APsToBeEaten;
+	SaveFile << Relations << State;
+
+	if(ConsumingCurrently)
+		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(ConsumingCurrently);
+	else
+		SaveFile << ushort(0);
+
+	for(uchar c = 0; c < STATES; ++c)
+		SaveFile << StateCounter[c];
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1220,7 +1227,15 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
 	SaveFile >> HP >> NP >> AP;
 	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> Relations >> Fainted >> EatingCurrently >> APsToBeEaten;
+	SaveFile >> Relations >> State;
+
+	SaveFile >> Index;
+
+	if(Index)
+		SetConsumingCurrently(GetLevelSquareUnder()->GetStack()->GetItem(Index));
+
+	for(uchar c = 0; c < STATES; ++c)
+		SaveFile >> StateCounter[c];
 }
 
 bool character::WizardMode()
@@ -1599,7 +1614,7 @@ void character::NeutralAICommand()
 	{
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
 		{
-			item* ToWield = GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack()));
+			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
 			if(GetWielded())
 				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
@@ -1614,7 +1629,7 @@ void character::NeutralAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
 		{
-			item* ToWear = GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack()));
+			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
 			if(GetTorsoArmor())
 				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
@@ -1694,7 +1709,7 @@ void character::HostileAICommand()
 	{
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
 		{
-			item* ToWield = GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack()));
+			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
 			if(GetWielded())
 				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
@@ -1709,7 +1724,7 @@ void character::HostileAICommand()
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() > CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
 		{
-			item* ToWear = GetStack()->GetItem(GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack()));
+			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
 			if(GetTorsoArmor())
 				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
@@ -1747,7 +1762,7 @@ void character::ReceiveSchoolFoodEffect(long)
 	Vomit(2);
 	CheckDeath("was poisoned by school food");
 
-	if(!(rand() % 10))
+	if(!(rand() % 5))
 	{
 		if(GetIsPlayer())
 			ADD_MESSAGE("You gain a little bit of toughness for surviving this stuff.");
@@ -1758,7 +1773,7 @@ void character::ReceiveSchoolFoodEffect(long)
 
 void character::ReceiveNutrition(long SizeOfEffect)
 {
-	SetNP(GetNP() + SizeOfEffect / 1000);
+	SetNP(GetNP() + SizeOfEffect);
 }
 
 void character::ReceiveOmleUrineEffect(long)
@@ -1797,8 +1812,9 @@ void character::Darkness(long SizeOfEffect)
 	if(GetIsPlayer())
 	{
 		game::DoEvilDeed(short(SizeOfEffect / 2));
+
 		if(game::GetWizardMode())
-			ADD_MESSAGE("Change in relation %d", short(SizeOfEffect / 2));
+			ADD_MESSAGE("Change in relation: %d.", short(SizeOfEffect / 2));
 	}
 }
 
@@ -2033,7 +2049,7 @@ void character::GetPlayerCommand()
 	}
 }
 
-void character::ContinueEating()
+/*void character::ContinueEating()
 {
 	if(GetAPsToBeEaten() + GetAP() > 50000)
 	{
@@ -2068,7 +2084,7 @@ void character::StopEating()
 	game::Turn(ushort(NowEaten / 1000));
 	game::ApplyDivineTick(ushort(NowEaten / 1000));
 	SetConsumingCurrently(0xFFFF);
-}
+}*/
 
 void character::Vomit(ushort HowMuch)
 {
@@ -2153,7 +2169,7 @@ bool character::Zap()
 
 bool character::Polymorph()
 {
-	if(GetIsPlayer() && game::GetPolymorphCounter() != 0xFFFF)
+	if(GetIsPlayer() && State & POLYMORPHED)
 	{
 		ADD_MESSAGE("You shudder.");
 		return true;
@@ -2176,9 +2192,12 @@ bool character::Polymorph()
 
 	if(GetIsPlayer())
 	{
+		ADD_MESSAGE("Your body glows in a crimson ligth. You transform into %s!", NewForm->CNAME(INDEFINITE));
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
-		game::SetPolymorphCounter(1000);
+		//game::SetPolymorphCounter(1000);
+		NewForm->ActivateState(POLYMORPHED);
+		NewForm->SetStateCounter(POLYMORPHED, 1000);
 		NewForm->SetRelations(FRIEND);
 	}
 	else
@@ -2187,7 +2206,7 @@ bool character::Polymorph()
 	return true;
 }
 
-void character::ChangeBackToPlayer()
+/*void character::ChangeBackToPlayer()
 {
 	SetExists(false);
 
@@ -2199,7 +2218,7 @@ void character::ChangeBackToPlayer()
 
 	game::SetPlayer(game::GetPlayerBackup());
 	game::SetPlayerBackup(0);	
-}
+}*/
 
 worldmapsquare* character::GetWorldMapSquareUnder() const
 {
@@ -2304,7 +2323,140 @@ bool character::ShowWeaponSkills()
 
 	return false;
 }
+<<<<<<< charba.cpp
 
+void character::Faint()
+{
+	ADD_MESSAGE("You faint.");
+	SetStrengthExperience(GetStrengthExperience() - 100);
+	ActivateState(FAINTED);
+	StateCounter[FAINTED] = 100 + rand() % 101;
+}
+
+void character::FaintHandler()
+{
+	if(!(StateCounter[FAINTED]--))
+		EndFainted();
+}
+
+void character::EatHandler()
+{
+	/*if(GetAPsToBeEaten() + GetAP() > 50000)
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You have eaten for a long time now...");
+
+		StopEating();
+	}
+	else if(GetAP() >= 1000)
+	{
+		if(GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this))
+			delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
+
+		SetConsumingCurrently(0xFFFF);
+
+		Hunger(ushort(GetAPsToBeEaten() / 1000));
+		Regenerate(ushort(GetAPsToBeEaten() / 1000));
+		game::Turn(ushort(GetAPsToBeEaten() / 1000));
+		game::ApplyDivineTick(ushort(GetAPsToBeEaten() / 1000));
+	}*/
+
+	if(GetConsumingCurrently()->Consume(this, 10000))
+	{
+		//ADD_MESSAGE("The %s .", GetConsumingCurrently()->CNAME(DEFINITE));
+
+		item* ToBeDeleted = GetLevelSquareUnder()->GetStack()->RemoveItem(GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently()));
+
+		EndEating();
+
+		delete ToBeDeleted;
+	}
+
+	if(!(StateCounter[EATING]--))
+	{
+		ADD_MESSAGE("You have eaten for a long time now.");
+
+		EndEating();
+	}
+}
+
+void character::PolymorphHandler()
+{
+	if(!(StateCounter[POLYMORPHED]--))
+		EndPolymorph();
+}
+
+void character::EndFainted()
+{
+	if(StateIsActivated(FAINTED))
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You wake up.");
+
+		DeActivateState(FAINTED);
+	}
+}
+
+void character::EndEating()
+{
+	/*float NowEaten = GetAPsToBeEaten() + GetAP();
+	float Temp = (NowEaten / GetAPsToBeEaten()) * 100;
+	SetAP(1000);
+	if(GetStack()->GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this, Temp))
+		delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());
+	Hunger(ushort(NowEaten / 1000));
+	Regenerate(ushort(NowEaten / 1000));
+	game::Turn(ushort(NowEaten / 1000));
+	game::ApplyDivineTick(ushort(NowEaten / 1000));*/
+	//SetConsumingCurrently(0xFFFF);
+
+	/*float Temp = (NowEaten / GetAPsToBeEaten()) * 100;
+
+	if(GetStack()->GetLevelSquareUnder()->GetStack()->GetItem(GetConsumingCurrently())->Consume(this, Temp))
+		delete GetLevelSquareUnder()->GetStack()->RemoveItem(GetConsumingCurrently());*/
+
+	if(StateIsActivated(EATING))
+	{
+		if(GetIsPlayer())
+			ADD_MESSAGE("You finish consuming %s.", GetConsumingCurrently()->CNAME(DEFINITE));
+
+		DeActivateState(EATING);
+
+		SetConsumingCurrently(0);
+	}
+}
+
+void character::EndPolymorph()
+{
+	if(StateIsActivated(POLYMORPHED))
+	{
+		ADD_MESSAGE("You return to your true form.");
+
+		SetExists(false);
+
+		GetSquareUnder()->RemoveCharacter();
+		GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+
+		while(GetStack()->GetItems())
+			GetStack()->MoveItem(0, game::GetPlayerBackup()->GetStack());
+
+		game::SetPlayer(game::GetPlayerBackup());
+		game::SetPlayerBackup(0);
+	}
+}
+
+bool character::CanMove()
+{
+	if(StateIsActivated(FAINTED) || StateIsActivated(EATING))
+		return false;
+	else
+		return true;
+}
+
+void character::DeActivateVoluntaryStates()
+{
+	EndEating();
+}
 
 void character::StruckByWandOfStriking()
 {

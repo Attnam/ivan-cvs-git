@@ -21,10 +21,11 @@ Pimeydelle vaikutuksia.
 ////Help should be organised.
 ////*Do you really want to pray to somebody.
 Pick-axejen s‰‰teleminen (kesto, expat, valot).
-*Mellis abuse.
+////*Mellis abuse.
 %*Alpha blend.
 Rest until fully healed.
 ////Messagebuffer should be reordered.
 ////Messagebuffer should be saved.
 %*DOS-portti.
 DX lack warning.
+Last game should be highlighted in the high scores.

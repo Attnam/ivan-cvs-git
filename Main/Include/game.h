@@ -124,8 +124,8 @@ public:
 	static square* GetSquareInLoad() { return SquareInLoad; }
 	static character* GetPlayerBackup() { return PlayerBackup; }
 	static void SetPlayerBackup(character* What) { PlayerBackup = What; }
-	static ushort GetPolymorphCounter() { return PolymorphCounter; }
-	static void SetPolymorphCounter(ushort What) { PolymorphCounter = What; }
+	//static ushort GetPolymorphCounter() { return PolymorphCounter; }
+	//static void SetPolymorphCounter(ushort What) { PolymorphCounter = What; }
 	static uchar GetLevels();
 	static dungeon* GetCurrentDungeon() { return Dungeon[CurrentDungeon]; }
 	static dungeon* GetDungeon(ushort Index) { return Dungeon[Index]; }
@@ -168,7 +168,7 @@ private:
 	static area* AreaInLoad;
 	static square* SquareInLoad;
 	static character* PlayerBackup;
-	static ushort PolymorphCounter;
+	//static ushort PolymorphCounter;
 	static std::vector<dungeon*> Dungeon;
 	static gamescript GameScript;
 };
