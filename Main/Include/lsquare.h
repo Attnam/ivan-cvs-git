@@ -145,10 +145,8 @@ class lsquare : public square
   bool LowerEnchantment(character*, const festring&, uchar);
   void RemoveSmoke(smoke*);
   void AddSmoke(gas*);
-  bool IsFlyable() const { return !OLTerrain || OLTerrain->IsWalkable(); }
+  bool IsFlyable() const { return !OLTerrain || (OLTerrain->GetWalkability() & FLY); }
   bool IsTransparent() const { return (!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175; }
-  bool IsWalkable(const character* Char = 0) const { return (!OLTerrain || OLTerrain->IsWalkable(Char)) && GLTerrain->IsWalkable(Char); }
-  virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
   void SignalSmokeAlphaChange(short);
   void ShowSmokeMessage() const;
   void DisplaySmokeInfo(festring&) const;
@@ -164,6 +162,8 @@ class lsquare : public square
   void FinalProcessForBone();
   void SetIsFreezed(bool What) { Freezed = What; }
   bool IsDangerousForAIToBreathe(const character*) const;
+  uchar GetWalkability() const { return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); }
+  virtual uchar GetSquareWalkability() const { return GetWalkability(); }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

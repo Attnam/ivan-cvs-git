@@ -13,7 +13,6 @@ class OLTERRAIN
   olterrain,
  public:
   virtual void Break();
-  virtual bool IsWalkable(const character* = 0) const;
   virtual bool IsTransparent() const;
 );
 
@@ -43,7 +42,6 @@ class OLTERRAIN
   virtual void SetIsOpened(bool What) { Opened = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsWalkable(const character* = 0) const;
   virtual bool IsDoor() const { return true; }
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual bool IsLocked() const { return Locked; }
@@ -57,6 +55,7 @@ class OLTERRAIN
   virtual void Lock() { SetIsLocked(true); }
   virtual void HasBeenHitByItem(character*, item*, ushort);
   virtual bool IsTransparent() const;
+  virtual uchar GetWalkability() const;
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
@@ -190,7 +189,6 @@ class GLTERRAIN
   liquidterrain,
   glterrain,
  public:
-  virtual bool IsWalkable(const character* = 0) const;
   virtual const char* SurviveMessage() const;
   virtual const char* MonsterSurviveMessage() const;
   virtual const char* DeathMessage() const;

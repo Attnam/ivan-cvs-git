@@ -179,9 +179,6 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanOpen);
   ADD_MEMBER(CanBeDisplaced);
   ADD_MEMBER(Frequency);
-  ADD_MEMBER(CanWalk);
-  ADD_MEMBER(CanSwim);
-  ADD_MEMBER(CanFly);
   ADD_MEMBER(EnergyResistance);
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
@@ -272,7 +269,6 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanThrow);
   ADD_MEMBER(UsesNutrition);
   ADD_MEMBER(AttackWisdomLimit);
-  ADD_MEMBER(CanWalkThroughWalls);
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(BodyPartsDisappearWhenSevered);
   ADD_MEMBER(CanBeConfused);
@@ -294,6 +290,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(LegSpecialColorIsSparkling);
   ADD_MEMBER(BiteCapturesBodyPart);
   ADD_MEMBER(IsPlant);
+  ADD_MEMBER(MoveType);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -405,6 +402,7 @@ template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(CreateDivineConfigurations);
   ADD_MEMBER(ShowMaterial);
   ADD_MEMBER(AttachedGod);
+  ADD_MEMBER(Walkability);
 }
 
 template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
@@ -443,6 +441,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(HPModifier);
   ADD_MEMBER(IsSafeToCreateDoor);
   ADD_MEMBER(OpenBitmapPos);
+  ADD_MEMBER(Walkability);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

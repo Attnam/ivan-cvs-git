@@ -8,6 +8,13 @@
 level::level() : Room(1, static_cast<room*>(0)) { }
 void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
 
+node*** node::NodeMap;
+uchar node::RequiredWalkability;
+const character* node::SpecialMover;
+vector2d node::To;
+uchar** node::WalkabilityMap;
+ushort node::XSize, node::YSize;
+
 level::~level()
 {
   for(ushort c = 0; c < Room.size(); ++c)
@@ -224,9 +231,12 @@ void level::Generate(ushort Index)
 {
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
+  Alloc2D(NodeMap, XSize, YSize);
+  Alloc2D(WalkabilityMap, XSize, YSize);
+
   Map = reinterpret_cast<lsquare***>(area::Map);
 
-  ushort Type = *LevelScript->GetType() ? *LevelScript->GetType() : 0;
+  ushort Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
   switch(Type)
     {
     case 0:
@@ -633,6 +643,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 
 vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
+  lsquare* LSquare;
   for(ushort c = 0;; ++c)
     {
       if(c == 100)
@@ -653,16 +664,16 @@ vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* 
 	  Pos.X = 1 + RAND() % (XSize - 2);
 	  Pos.Y = 1 + RAND() % (YSize - 2);
 	}
-
-      if((!Map[Pos.X][Pos.Y]->IsWalkable(Char) != (Flags & NOT_WALKABLE))
-	 || (!Map[Pos.X][Pos.Y]->GetCharacter() != !(Flags & HAS_CHARACTER))
+      LSquare = Map[Pos.X][Pos.Y];
+      if(((Char ? !Char->CanMoveOn(LSquare) : !(LSquare->GetWalkability() & WALK)) != (Flags & NOT_WALKABLE))
+	 || (!LSquare->GetCharacter() != !(Flags & HAS_CHARACTER))
 	 || ((Flags & ATTACHABLE) && (FlagMap[Pos.X][Pos.Y] & FORBIDDEN)))
 	continue;
 
       uchar RoomFlags = Flags & (IN_ROOM|NOT_IN_ROOM);
 
-      if((RoomFlags == IN_ROOM && !Map[Pos.X][Pos.Y]->GetRoomIndex())
-	 || (RoomFlags == NOT_IN_ROOM && Map[Pos.X][Pos.Y]->GetRoomIndex()))
+      if((RoomFlags == IN_ROOM && !LSquare->GetRoomIndex())
+	 || (RoomFlags == NOT_IN_ROOM && LSquare->GetRoomIndex()))
 	continue;
 
       return Pos;
@@ -1373,7 +1384,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char) && !GetLSquare(Pos)->GetCharacter() && Pos != Prohibited)
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && !GetLSquare(Pos)->GetCharacter() && Pos != Prohibited)
 	return Pos;
     }
 
@@ -1384,7 +1395,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 
 	if(IsValidPos(Pos))
 	  {
-	    if(GetLSquare(Pos)->IsWalkable(Char) && Pos != Prohibited)
+	    if(Char->CanMoveOn(GetLSquare(Pos)) && Pos != Prohibited)
 	      {
 		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
 
@@ -1401,7 +1412,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 
 vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
 {
-  if(GetLSquare(StartPos)->IsWalkable(Char) && !GetLSquare(StartPos)->GetCharacter())
+  if(Char->CanMoveOn(GetLSquare(StartPos)) && !GetLSquare(StartPos)->GetCharacter())
     return StartPos;
 
   ushort c;
@@ -1410,7 +1421,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) c
     {
       vector2d Pos = StartPos + game::GetMoveVector(c);
 
-      if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char) && !GetLSquare(Pos)->GetCharacter())
+      if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)) && !GetLSquare(Pos)->GetCharacter())
 	return Pos;
     }
 
@@ -1419,7 +1430,7 @@ vector2d level::GetNearestFreeSquare(const character* Char, vector2d StartPos) c
       {
 	vector2d Pos = StartPos + game::GetMoveVector(c);
 
-	if(IsValidPos(Pos) && GetLSquare(Pos)->IsWalkable(Char))
+	if(IsValidPos(Pos) && Char->CanMoveOn(GetLSquare(Pos)))
 	  {
 	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
 
@@ -1441,7 +1452,7 @@ vector2d level::GetFreeAdjacentSquare(const character* Char, vector2d StartPos, 
     {
       lsquare* Square = Origo->GetNeighbourLSquare(d);
 
-      if(Square && Square->IsWalkable(Char) && (AllowCharacter || !Square->GetCharacter()))
+      if(Square && Char->CanMoveOn(Square) && (AllowCharacter || !Square->GetCharacter()))
 	PossibleDir[Index++] = d;
     }
 
@@ -1617,15 +1628,7 @@ void level::GenerateDungeon(ushort Index)
 
 void level::GenerateJungle()
 {
-  /*ushort **DataMap;
-  DataMap = new (ushort*)[XSize];
-  for(ushort x = 0; x < XSize; ++x)
-    DataMap[x] = new ushort[YSize];
-  
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      DataMap[x][y] = 0;
-  DataMap[2][2] = 1;
+  CreateTunnelNetwork(1,4,20, 120, vector2d(0, YSize / 2));
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -1634,13 +1637,130 @@ void level::GenerateJungle()
       for(ushort y = 0; y < YSize; ++y)
 	{
 	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  if(DataMap[x][y] != 0)
+	  if(FlagMap[x][y] != PREFERRED)
 	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), new decoration(PALM));
 	  else
 	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
 	}
     }
-  for(ushort x = 0; x < XSize; ++x)
-    delete DataMap[x];
-  delete DataMap;*/
 }
+
+
+void level::CreateTunnelNetwork(ushort MinLength, ushort MaxLength, ushort MinNodes, ushort MaxNodes, vector2d StartPos)
+{
+  vector2d Pos = StartPos, Direction;
+  ushort Length;
+  game::BusyAnimation();
+  FlagMap[Pos.X][Pos.Y] = PREFERRED;
+  for(ushort c = 0; c < MaxNodes; ++c)
+    {
+      Direction = game::GetBasicMoveVector(RAND() % 4);
+      Length = MinLength + RAND_N(MaxLength - MinLength + 1);
+      for(ushort d = 0; d < Length; ++d)
+	{
+	  if(IsValidPos(Direction + Pos))
+	    {
+	      Pos += Direction;
+	      FlagMap[Pos.X][Pos.Y] = PREFERRED;
+	    }
+	  else
+	    {
+	      if(c >= MinNodes)
+		return;
+	      break;
+	    }
+	}
+    }
+}
+
+uchar node::CalculateNextNodes()
+{
+  uchar ClosestNodeIndex = 8;
+  for(ushort c = 0; c < 8; ++c)
+    {
+      vector2d NodePos = Pos + game::GetMoveVector(c);
+      if(NodePos.X >= 0 && NodePos.Y >= 0 && NodePos.X < XSize && NodePos.Y < YSize)
+	{
+	  node* Node = NodeMap[NodePos.X][NodePos.Y];
+	  if(!Node->Processed && ((!SpecialMover && RequiredWalkability & WalkabilityMap[NodePos.X][NodePos.Y]) || (SpecialMover && SpecialMover->CanMoveOn(Square))))
+	    {
+	      Link[c] = Node;
+	      ushort Distance = To.X - NodePos.X;
+	      if(Distance < NodePos.X - To.X)
+		Distance = NodePos.X - To.X;
+
+	      if(Distance < NodePos.Y - To.Y)
+		Distance = NodePos.Y - To.Y;
+
+	      if(Distance < To.Y - NodePos.Y)
+		Distance = To.Y - NodePos.Y;
+	      Node->Distance = Distance;
+	      Node->Processed = true;
+	      Node->Last = this;
+	      Node->Index = c;
+	      if(ClosestNodeIndex == 8 || Distance < Link[ClosestNodeIndex]->Distance)
+		ClosestNodeIndex = c;
+	    }
+	  else
+	    Link[c] = 0;
+	}
+      else
+	Link[c] = 0;
+    }
+  
+  return ClosestNodeIndex;
+}
+
+uchar node::BackingFrom(uchar BackingFromIndex)
+{
+  Link[BackingFromIndex] = 0;
+  uchar ClosestNodeIndex = 8;
+  for(ushort c = 0; c < 8; ++c)
+    {
+      if(Link[c] && (ClosestNodeIndex == 8 || Link[c]->Distance < Link[ClosestNodeIndex]->Distance))
+	ClosestNodeIndex = c; 
+    }
+
+  return ClosestNodeIndex;
+}
+
+
+void level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, const character* SpecialMover)
+{
+  node::NodeMap = NodeMap;
+  node::RequiredWalkability = RequiredWalkability;
+  node::SpecialMover = SpecialMover;
+  node::To = To;
+  node::WalkabilityMap = WalkabilityMap;
+  node::XSize = XSize;
+  node::YSize = YSize;
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      NodeMap[x][y]->Processed = false;
+
+  node* Node = NodeMap[From.X][From.Y]; 
+  Node->Last = 0; 
+	  
+  uchar NodeIndex = Node->CalculateNextNodes();
+  if(NodeIndex == 8)
+    return; // return something bad
+
+  while(true)
+    {
+      if(NodeIndex == 8)
+	{
+	  NodeIndex = Node->Last->BackingFrom(Node->Index);
+	  Node = Node->Last;
+	}
+      else
+	{
+	  Node = Node->Link[NodeIndex];
+	  if(Node->Pos == To)
+	    // returns
+	  NodeIndex = Node->CalculateNextNodes();
+	  Node->Last->Next = Node;
+	}
+    }
+}
+
+

@@ -115,7 +115,7 @@ bool commandsystem::GoUp(character* Char)
     {
       if(game::IsInWilderness())
 	{
-	  if(!Char->CanFly())
+	  if(!(Char->GetMoveType() & FLY))
 	    ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
 	  else
 	    ADD_MESSAGE("You fly around for some time.");
@@ -998,7 +998,7 @@ bool commandsystem::Go(character* Char)
     {
       lsquare* Square = Char->GetNeighbourLSquare(d);
 
-      if(Square && Square->IsWalkable(Char))
+      if(Square && Char->CanMoveOn(Square))
 	++OKDirectionsCounter;
     }
 

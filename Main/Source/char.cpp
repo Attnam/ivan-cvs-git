@@ -806,7 +806,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		  if(GetTeam() != Character->GetTeam())
 		    return Hit(Character);
 		  else
-		    if(DisplaceAllowed && (MoveToSquare->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
+		    if(DisplaceAllowed && (CanMoveOn(MoveToSquare) || game::GoThroughWallsCheatIsActive()))
 		      {
 			if(!Displace(Character))
 			  EditAP(-1000);
@@ -821,7 +821,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		  if(GetRelation(Character) == HOSTILE)
 		    return Hit(Character);
 		  else
-		    if(GetTeam() == Character->GetTeam() && DisplaceAllowed && MoveToSquare->IsWalkable(this))
+		    if(GetTeam() == Character->GetTeam() && DisplaceAllowed && CanMoveOn(MoveToSquare))
 		      return Displace(Character);
 		    else
 		      return HandleCharacterBlockingTheWay(Character);
@@ -829,7 +829,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	    }
 	  else
 	    {
-	      if(MoveToSquare->IsWalkable(this) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
+	      if(CanMoveOn(MoveToSquare) || (game::GoThroughWallsCheatIsActive() && IsPlayer()))
 		{
 		  Move(MoveTo);
 		  return true;
@@ -893,11 +893,11 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
     }
   else
     {
-      if(GetArea()->IsValidPos(MoveTo) && (GetNearWSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
+      if(GetArea()->IsValidPos(MoveTo) && CanMoveOn(GetNearWSquare(MoveTo)) || game::GoThroughWallsCheatIsActive())
 	{
 	  if(!game::GoThroughWallsCheatIsActive())
 	    for(ushort c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
-	      if(!GetNearWSquare(MoveTo)->IsWalkable(game::GetWorldMap()->GetPlayerGroup()[c]))
+	      if(!game::GetWorldMap()->GetPlayerGroup()[c]->CanMoveOn(GetNearWSquare(MoveTo)))
 		{
 		  ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
 		  return false;
@@ -1871,7 +1871,7 @@ void character::BeKicked(character* Kicker, item* Boot, float KickDamage, float 
 
 bool character::CheckBalance(float KickDamage)
 {
-  return !CanWalk() || !KickDamage || IsStuck() || KickDamage * 5 < RAND() % GetSize();
+  return !(GetMoveType() & WALK) || !KickDamage || IsStuck() || KickDamage * 5 < RAND() % GetSize();
 }
 
 void character::FallTo(character* GuiltyGuy, vector2d Where)
@@ -1879,7 +1879,7 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
   EditAP(-500);
   olterrain* Terrain = GetNearLSquare(Where)->GetOLTerrain();
 
-  if(!Terrain || Terrain->IsWalkable(this))
+  if(!Terrain || CanMoveOn(Terrain))
     {
       if(!GetNearSquare(Where)->GetCharacter())
 	Move(Where, true);
@@ -2013,7 +2013,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	    if(ThisDistance <= GetLOSRangeSquare())
 	      HostileCharsNear = true;
 
-	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !CanWalkThroughWalls()))
+	    if((ThisDistance < NearestDistance || (ThisDistance == NearestDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this, false, !(GetMoveType() & WALK_THROUGH_WALLS)))
 	      {
 		NearestChar = *i;
 		NearestDistance = ThisDistance;
@@ -2176,7 +2176,7 @@ bool character::Displace(character* Who, bool Forced)
       return true;
     }
 
-  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && GetLSquareUnder()->IsWalkable(Who))
+  if((Forced || (GetRelativeDanger(Who) > 1.0f && Who->CanBeDisplaced())) && !IsStuck() && !Who->IsStuck() && (!Who->GetAction() || Who->GetAction()->TryDisplace()) && Who->CanMoveOn(GetLSquareUnder()))
     {
       if(IsPlayer())
 	ADD_MESSAGE("You displace %s!", Who->CHAR_DESCRIPTION(DEFINITE));
@@ -2345,7 +2345,7 @@ void character::GoOn(go* Go, bool FirstStep)
   ushort OldRoomIndex = GetLSquareUnder()->GetRoomIndex();
   ushort CurrentRoomIndex = MoveToSquare->GetRoomIndex();
 
-  if(!MoveToSquare->IsWalkable(this)
+  if(!CanMoveOn(MoveToSquare)
   || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam())
   ||  MoveToSquare->IsDangerous(this) || ((OldRoomIndex && (CurrentRoomIndex != OldRoomIndex)) && !FirstStep))
     {
@@ -2359,7 +2359,7 @@ void character::GoOn(go* Go, bool FirstStep)
     {
       lsquare* Square = GetNeighbourLSquare(d);
 
-      if(Square && Square->IsWalkable(this))
+      if(Square && CanMoveOn(Square))
 	++OKDirectionsCounter;
     }
 
@@ -2471,7 +2471,7 @@ void character::DisplayInfo(festring& Msg)
 
 void character::TestWalkability()
 {
-  if(GetSquareUnder()->IsFatalToStay() && !GetSquareUnder()->SquareIsWalkable(this))
+  if(GetSquareUnder()->IsFatalToStay() && !CanMoveOn(GetSquareUnder()))
     {
       bool Alive = false;
 
@@ -2479,7 +2479,7 @@ void character::TestWalkability()
 	{
 	  square* Square = GetNeighbourSquare(d);
 
-	  if(Square && Square->SquareIsWalkable(this) && !Square->GetCharacter())
+	  if(Square && CanMoveOn(Square) && !Square->GetCharacter())
 	    {
 	      if(IsPlayer())
 		ADD_MESSAGE("%s.", GetSquareUnder()->SurviveMessage(this));
@@ -2573,7 +2573,7 @@ void character::TeleportRandomly()
 	{
 	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
 
-	  if(GetNearLSquare(PlayersInput)->IsWalkable(this) || game::GoThroughWallsCheatIsActive())
+	  if(CanMoveOn(GetNearLSquare(PlayersInput)) || game::GoThroughWallsCheatIsActive())
 	    {
 	      if(GetNearLSquare(PlayersInput)->GetPos() == GetPos())
 		{
@@ -3656,7 +3656,7 @@ void character::CalculateDodgeValue()
 {
   DodgeValue = 0.05f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
-  if(CanFly())
+  if(GetMoveType() & FLY)
     DodgeValue *= 2;
 
   if(DodgeValue < 1)
@@ -4411,7 +4411,7 @@ void character::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAn
   if(GetTeam() == PLAYER->GetTeam() && !IsPlayer())
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 
-  if(CanFly())
+  if(GetMoveType() & FLY)
     igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 128, 16, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
@@ -5647,7 +5647,7 @@ void character::ParasitizedHandler()
 
 bool character::CanFollow() const
 {
-  return CanWalk() && !IsRetreating();
+  return CanMove() && !IsRetreating();
 }
 
 festring character::GetKillName() const
@@ -6276,4 +6276,24 @@ item* character::SearchForItem(const sweaponskill* SWeaponSkill) const
       return *i;
 
   return 0;
+}
+
+bool character::CanMoveOn(const lsquare* LSquare) const
+{
+  return (GetMoveType() & LSquare->GetWalkability()) != 0;
+}
+
+bool character::CanMoveOn(const square* Square) const
+{
+  return (GetMoveType() & Square->GetSquareWalkability()) != 0;
+}
+
+bool character::CanMoveOn(const olterrain* OLTerrain) const
+{
+  return (GetMoveType() & OLTerrain->GetWalkability()) != 0;
+}
+
+bool character::CanMoveOn(const oterrain* OTerrain) const
+{
+  return (GetMoveType() & OTerrain->GetWalkability()) != 0;
 }

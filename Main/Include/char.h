@@ -52,9 +52,6 @@ struct characterdatabase
   bool CanOpen;
   bool CanBeDisplaced;
   ushort Frequency;
-  bool CanWalk;
-  bool CanSwim;
-  bool CanFly;
   ushort EnergyResistance;
   ushort FireResistance;
   ushort PoisonResistance;
@@ -145,7 +142,6 @@ struct characterdatabase
   bool CanThrow;
   bool UsesNutrition;
   ushort AttackWisdomLimit;
-  bool CanWalkThroughWalls;
   uchar AttachedGod;
   bool BodyPartsDisappearWhenSevered;
   bool CanBeConfused;
@@ -167,6 +163,7 @@ struct characterdatabase
   bool LegSpecialColorIsSparkling;
   bool BiteCapturesBodyPart;
   bool IsPlant;
+  uchar MoveType;
 };
 
 class characterprototype
@@ -391,9 +388,6 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(const festring&, StandVerb);
   DATA_BASE_BOOL(CanOpen);
   DATA_BASE_BOOL(CanBeDisplaced);
-  DATA_BASE_BOOL(CanWalk);
-  DATA_BASE_BOOL(CanSwim);
-  DATA_BASE_BOOL(CanFly);
   DATA_BASE_VALUE(ushort, EnergyResistance);
   DATA_BASE_VALUE(ushort, FireResistance);
   DATA_BASE_VALUE(ushort, PoisonResistance);
@@ -463,7 +457,6 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanThrow);
   DATA_BASE_BOOL(UsesNutrition);
   DATA_BASE_VALUE(ushort, AttackWisdomLimit);
-  DATA_BASE_BOOL(CanWalkThroughWalls);
   DATA_BASE_BOOL(IsUnique);
   DATA_BASE_VALUE(uchar, AttachedGod);
   DATA_BASE_BOOL(BodyPartsDisappearWhenSevered);
@@ -744,7 +737,7 @@ class character : public entity, public id
   virtual head* Behead() { return 0; }
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
-  bool CanMove() const { return CanWalk() || CanFly() || CanSwim(); }
+  bool CanMove() const { return GetMoveType() != 0; }
   void ShowAdventureInfo() const;
   ushort DrawBodyPartArray(bitmap**&, ushort) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
@@ -771,6 +764,11 @@ class character : public entity, public id
   bool PictureUpdatesAreForbidden() const { return PictureUpdatesForbidden; }
   virtual uchar GetArms() const { return 0; }
   bool IsPet() const;
+  virtual bool CanMoveOn(const lsquare*) const;
+  virtual bool CanMoveOn(const square*) const;
+  virtual bool CanMoveOn(const olterrain*) const;
+  virtual bool CanMoveOn(const oterrain*) const;
+  DATA_BASE_VALUE(uchar, MoveType);  
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

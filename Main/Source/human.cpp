@@ -1955,12 +1955,12 @@ bool humanoid::CanWield() const
 
 bool humanoid::CheckBalance(float KickDamage)
 {
-  return !CanWalk() || !KickDamage || IsStuck() || (GetLegs() != 1 && KickDamage * 10 < RAND() % GetSize());
+  return !(GetMoveType() & WALK) || !KickDamage || IsStuck() || (GetLegs() != 1 && KickDamage * 10 < RAND() % GetSize());
 }
 
 long humanoid::GetMoveAPRequirement(uchar Difficulty) const
 {
-  if(CanFly())
+  if(GetMoveType() & FLY)
     return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
 
   switch(GetLegs())
@@ -2642,7 +2642,7 @@ void humanoid::CalculateDodgeValue()
 {
   DodgeValue = 0.05f * GetMoveEase() * GetAttribute(AGILITY) / sqrt(GetSize());
 
-  if(CanFly())
+  if(GetMoveType() & FLY)
     DodgeValue *= 2;
   else
     {

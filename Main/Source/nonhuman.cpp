@@ -545,7 +545,7 @@ void genetrixvesana::GetAICommand()
 		  {
 		    lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() & 7);
 
-		    if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
+		    if(LSquare && (LSquare->GetWalkability() & WALK) && !LSquare->GetCharacter())
 		      {
 			character* NewPlant = new carnivorousplant(RAND() & 3 ? 0 : GREATER);
 			NewPlant->SetTeam(GetTeam());
@@ -945,7 +945,7 @@ void mushroom::GetAICommand()
 
   lsquare* CradleSquare = GetNeighbourLSquare(RAND() % 8);
 
-  if(CradleSquare && !CradleSquare->GetCharacter() && CradleSquare->IsWalkable())
+  if(CradleSquare && !CradleSquare->GetCharacter() && (CradleSquare->GetWalkability() & WALK))
     {
       ushort SpoiledItems = 0;
       ushort MushroomsNear = 0;

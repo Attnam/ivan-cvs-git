@@ -36,8 +36,8 @@ class wsquare : public square
   void SetLastSeen(ulong);
   void CalculateLuminance();
   wsquare* GetNeighbourWSquare(ushort Index) const { return static_cast<worldmap*>(AreaUnder)->GetNeighbourWSquare(Pos, Index); }
-  bool IsWalkable(const character* = 0) const;
-  virtual bool SquareIsWalkable(const character* Char = 0) const { return IsWalkable(Char); }
+  uchar GetWalkability() const;
+  virtual uchar GetSquareWalkability() const { return GetWalkability(); }
  protected:
   gwterrain* GWTerrain;
   owterrain* OWTerrain;

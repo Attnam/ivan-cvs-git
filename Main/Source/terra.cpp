@@ -6,7 +6,5 @@ const char* terrain::DeathMessage() const { return "strangely enough, you die"; 
 const char* terrain::MonsterDeathVerb() const { return "dies"; }
 const char* terrain::ScoreEntry() const { return "died on unfriendly terrain"; }
 
-bool gterrain::IsWalkable(const character* ByWho) const
-{
-  return !ByWho || ByWho->CanWalk() || ByWho->CanFly();
-}
+
+

@@ -25,17 +25,16 @@ class terrain
 class gterrain : public terrain
 {
  public:
-  virtual bool IsWalkable(const character* = 0) const;
   virtual uchar GetEntryDifficulty() const = 0;
 };
 
 class oterrain : public terrain
 {
  public:
-  virtual bool IsWalkable(const character* = 0) const { return true; }
   virtual bool Enter(bool) const = 0;
   virtual uchar GetRestModifier() const { return 1; }
   virtual void ShowRestMessage(character*) const { }
+  virtual uchar GetWalkability() const = 0;
 };
 
 #endif

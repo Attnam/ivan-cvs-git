@@ -131,7 +131,7 @@ void lsquare::Draw()
 
 	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheatMode()))
 	    {
-	      if(Character->CanFly())
+	      if(Character->GetMoveType() & FLY)
 		{
 		  for(ushort c = 0; c < Smoke.size(); ++c)
 		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
@@ -909,7 +909,7 @@ void lsquare::StepOn(character* Stepper, lsquare* ComingFrom)
   if(OLTerrain)
     OLTerrain->StepOn(Stepper);
 
-  if(!Stepper->CanFly())
+  if(!(Stepper->GetMoveType() & FLY))
     GetStack()->CheckForStepOnEffect(Stepper);
 }
 
@@ -1162,7 +1162,7 @@ void lsquare::DrawMemorizedCharacter()
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
 {
-  return (!Who->CanFly() && Stack->IsDangerousForAIToStepOn(Who)) || IsDangerousForAIToBreathe(Who);
+  return (!(Who->GetMoveType() & FLY) && Stack->IsDangerousForAIToStepOn(Who)) || IsDangerousForAIToBreathe(Who);
 }
 
 stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
@@ -1710,7 +1710,7 @@ bool lsquare::IsDangerous(character* ToWhom) const
 
 bool lsquare::CanBeFeltByPlayer() const
 {
-  return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
+  return OLTerrain && !PLAYER->CanMoveOn(this) && Pos.IsAdjacent(PLAYER->GetPos());
 }
 
 void lsquare::PreProcessForBone()
@@ -1776,3 +1776,5 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
 
   return false;
 }
+
+

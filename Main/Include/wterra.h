@@ -57,6 +57,7 @@ class gwterrain : public wterrain, public gterrain
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void CalculateNeighbourBitmapPoses();
+  virtual uchar GetWalkability() const;
  protected:
   std::pair<vector2d, uchar> Neighbour[8];
 };
@@ -88,6 +89,7 @@ class owterrain : public wterrain, public oterrain
   virtual uchar GetAttachedArea() const { return 0; }
   virtual uchar GetAttachedEntry() const;
   virtual bool Enter(bool) const;
+  virtual uchar GetWalkability() const;
 };
 
 #ifdef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DEFINITIONS__

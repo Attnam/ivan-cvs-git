@@ -41,6 +41,7 @@ olterrain
 	HPModifier = 100;
 	IsSafeToCreateDoor = false;
 	AttachedGod = NONE;
+	Walkability = ANY_MOVE;
 }
 
 wall
@@ -48,6 +49,7 @@ wall
 	IsAbstract = true;
 	CanBeDestroyed = true;
 	IsSafeToCreateDoor = true;
+	Walkability = WALK_THROUGH_WALLS;
 
 	Config BRICK_FINE;
 	{

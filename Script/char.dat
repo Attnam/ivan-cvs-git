@@ -31,9 +31,6 @@ character
 	CanOpen = true;
 	CanBeDisplaced = true;
 	Frequency = 10000;
-	CanWalk = true;
-	CanSwim = false;
-	CanFly = false;
 	EnergyResistance = 0;
 	FireResistance = 0;
 	PoisonResistance = 0;
@@ -85,7 +82,6 @@ character
 	CanThrow = false;
 	UsesNutrition = true;
 	AttackWisdomLimit = NO_LIMIT;
-	CanWalkThroughWalls = false;
 	/* Obligatory: AttachedGod */
 	BodyPartsDisappearWhenSevered = false;
 	CanBeConfused = true;
@@ -106,6 +102,7 @@ character
 	LegSpecialColorIsSparkling = false;
 	BiteCapturesBodyPart = true;
 	IsPlant = false;
+	MoveType = WALK;
 }
 
 humanoid
@@ -341,7 +338,7 @@ guard
 			"@Dd sighs: \"Why didn't I choose an office work...\"",
 			"@Dd seems very suspicious. \"Do you have the papers?\"",
 			"\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
-			"\"Again I'm all white! The master guard doesn't me bringing snow in the barracks...\"";
+			"\"Again I'm all white! The master guard doesn't like me bringing snow in the barracks...\"";
 		}
 	}
 
@@ -522,7 +519,6 @@ priest
 	DefaultWisdom = 25;
 	DefaultCharisma = 20;
 	DefaultMana = 20;
-	CanSwim = true;
 	CapColor = rgb16(180, 0, 80);
 	HeadBitmapPos = 96, 128;
 	TorsoBitmapPos = 32, 16;
@@ -546,6 +542,7 @@ priest
 	IsCharmable = false;
 	/* Replies overridden */
 	AttachedGod = VALPURUS; /* there is only one now */
+	MoveType = WALK|SWIM;
 }
 
 oree
@@ -777,10 +774,10 @@ frog
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 750;
-	CanSwim = true;
 	KnownCWeaponSkills == BITE;
 	FleshMaterial = FROG_FLESH;
 	PanicLevel = 50;
+	MoveType = WALK|SWIM;
 
 	Config DARK;
 	{
@@ -917,7 +914,6 @@ billswill
 	StandVerb = "floating";
 	Frequency = 250;
 	DangerModifier = 500;
-	CanFly = true;
 	TotalVolume = 500000;
 	TorsoBitmapPos = 48, 0;
 	TotalSize = 100;
@@ -946,7 +942,7 @@ billswill
 	AttackStyle = USE_HEAD;
 	BiteCapturesBodyPart = false;
 	ClassStates = HASTE|ESP|GAS_IMMUNITY;
-	CanWalkThroughWalls = true;
+	MoveType = FLY|WALK_THROUGH_WALLS;
 }
 
 skeleton
@@ -1567,8 +1563,7 @@ dolphin
 	StandVerb = "swimming";
 	CanBeDisplaced = false;
 	CanOpen = false;
-	CanWalk = false;
-	CanSwim = true;
+	MoveType = SWIM;
 	TotalVolume = 150000;
 	TorsoBitmapPos = 320, 0;
 	HostileReplies == "@Dd peeps diabolically to you.";
@@ -1931,7 +1926,6 @@ bat
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
-	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;
 	HostileReplies == "@Dd squeaks evilly.";
@@ -1949,6 +1943,7 @@ bat
 	FleshMaterial = BAT_FLESH;
 	AttachedGod = INFUSCOR;
 	BiteCapturesBodyPart = false;
+	MoveType = FLY;
 }
 
 mistress
@@ -1996,7 +1991,7 @@ mistress
 	{
 		3,
 		"\"What? You want more whip?\"",
-		"\"Even participated in the weekly orgy at Nefas's High Temple? I guess not. You woudn't have survived.\"",
+		"\"Ever participated in the weekly orgy at Nefas's High Temple? I guess not. You wouldn't have survived.\"",
 		"\"If you think I'm rough, you should avoid Sherarax, my queen. No man has ever lived through a night with her.\"";
 	}
 
@@ -2331,9 +2326,9 @@ largerat
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	ClassStates = INFRA_VISION;
-	CanSwim = true;
 	FleshMaterial = RAT_FLESH;
 	AttachedGod = SCABIES;
+	MoveType = WALK|SWIM;
 }
 
 angel
@@ -2350,7 +2345,6 @@ angel
 	DefaultMana = 35;
 	IsCharmable = false;
 	Sex = FEMALE;
-	CanFly = true;
 	TotalVolume = 60000;
 	TorsoBitmapPos = 432, 0;
 	TotalSize = 200;
@@ -2379,6 +2373,7 @@ angel
 	BodyPartsDisappearWhenSevered = true;
 	CanBeConfused = false;
 	WieldedPosition = 0, -2;
+	MoveType = FLY;
 }
 
 kamikazedwarf
@@ -2525,7 +2520,6 @@ genie
 	DefaultCharisma = 20;
 	DefaultMana = 50;
 	StandVerb = "floating";
-	CanFly = true;
 	TotalVolume = 200000;
 	TotalSize = 250;
 	CanRead = true;
@@ -2550,6 +2544,7 @@ genie
 	BodyPartsDisappearWhenSevered = true;
 	ClassStates = GAS_IMMUNITY;
 	WieldedPosition = -1, -3;
+	MoveType = FLY;
 }
 
 lion
@@ -2602,7 +2597,6 @@ carnivorousplant
 	SkinColor = rgb16(111, 64, 37);
 	TorsoMainColor = rgb16(0, 160, 0); /* the leaves */
 	/* TorsoSpecialColor (the flower) is random */
-	CanWalk = false;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
@@ -2615,6 +2609,7 @@ carnivorousplant
 	StandVerb = "rooted";
 	AttachedGod = SILVA;
 	IsPlant = true;
+	MoveType = NO_MOVE;
 
 	Config GREATER;
 	{
@@ -3097,13 +3092,13 @@ ostrich
 	BaseBiteStrength = 200;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
-	CanFly = true;
 	PanicLevel = 95;
 	FleshMaterial = OSTRICH_FLESH;
 	DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
 	StandVerb = "floating";
 	IsCharmable = false; /* AI will go insane if it leaves New Attnam */
 	AttachedGod = SILVA;
+	MoveType = FLY;
 }
 
 elder
@@ -3253,7 +3248,6 @@ floatingeye
 	StandVerb = "levitating";
 	HasFeet = false;
 	CanRead = true;
-	CanFly = true;
 	HasHead = false;
 	UsesNutrition = false;
 	AttackWisdomLimit = 8;
@@ -3262,6 +3256,7 @@ floatingeye
 	CanAttack = false;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 0;
+	MoveType = FLY;
 }
 
 eddy
@@ -3332,9 +3327,9 @@ mushroom
 	DeathMessage = "@Dd is squashed.";
 	BaseUnarmedStrength = 200;
 	CanBeDisplaced = false;
-	CanWalk = false;
 	PanicLevel = 0;
 	CanOpen = false;
+	MoveType = NO_MOVE;
 }
 
 magicmushroom
@@ -3530,7 +3525,6 @@ ghost
 	DefaultMana = 15;
 	StandVerb = "hovering";
 	Frequency = 5000;
-	CanFly = true;
 	TotalVolume = 300000;
 	TorsoBitmapPos = 112, 16;
 	TotalSize = 100;
@@ -3547,12 +3541,12 @@ ghost
 	DeathMessage = "@Dd is sucked into hell.";
 	SpillsBlood = false;
 	UsesNutrition = false;
-	CanWalkThroughWalls = true;
 	AttachedGod = MORTIFER;
 	BodyPartsDisappearWhenSevered = true;
 	BaseBiteStrength = 1000;
 	AttackStyle = USE_HEAD;
 	BiteCapturesBodyPart = false;
+	MoveType = FLY|WALK_THROUGH_WALLS;
 }
 
 twoheadedmoose
@@ -3598,7 +3592,6 @@ magpie
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
-	CanFly = true;
 	TotalVolume = 500;
 	TorsoBitmapPos = 560, 0;
 	HostileReplies == "@Dd peeps evilly.";
@@ -3618,6 +3611,7 @@ magpie
 	AttachedGod = CLEPTIA;
 	ClassStates = INFRA_VISION; /* So that invisible player doesn't screw the AI */
 	BiteCapturesBodyPart = false;
+	MoveType = FLY;
 }
 
 skunk

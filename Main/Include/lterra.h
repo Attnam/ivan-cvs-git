@@ -85,6 +85,7 @@ struct glterraindatabase
   bool CreateDivineConfigurations;
   bool ShowMaterial;
   uchar AttachedGod;
+  uchar Walkability; 
 };
 
 class glterrainprototype
@@ -145,6 +146,7 @@ class glterrain : public lterrain, public gterrain
   DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
   virtual uchar GetAttachedGod() const;
+  DATA_BASE_VALUE(uchar, Walkability);
  protected:
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
@@ -189,6 +191,7 @@ struct olterraindatabase
   uchar HPModifier;
   bool IsSafeToCreateDoor;
   vector2d OpenBitmapPos;
+  uchar Walkability; 
 };
 
 class olterrainprototype
@@ -285,6 +288,7 @@ class olterrain : public lterrain, public oterrain
   void SetConfig(ushort);
   god* GetMasterGod() const;
   virtual void SetLockType(uchar) { }
+  virtual DATA_BASE_VALUE(uchar, Walkability);
  protected:
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase(ushort);

@@ -48,7 +48,7 @@ class square
   ulong GetLuminance() const { return Luminance; }
   square* GetNeighbourSquare(ushort Index) const { return AreaUnder->GetNeighbourSquare(Pos, Index); }
   square* GetNearSquare(vector2d Pos) const { return AreaUnder->GetSquare(Pos); }
-  virtual bool SquareIsWalkable(const character* = 0) const = 0;
+  virtual uchar GetSquareWalkability() const = 0;
  protected:
   festring MemorizedDescription;
   area* AreaUnder;

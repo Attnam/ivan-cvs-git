@@ -9,6 +9,7 @@ knuckles
 Weapons:
 
 baseball bat
+Machete
 
 Armor:
 

@@ -17,12 +17,12 @@ class GWTERRAIN
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const;
   virtual ushort GetPriority() const { return 10; }
-  virtual bool IsWalkable(const character* = 0) const;
   virtual const char* SurviveMessage() const;
   virtual const char* MonsterSurviveMessage() const;
   virtual const char* DeathMessage() const;
   virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
+  virtual uchar GetWalkability() const;
 );
 
 class GWTERRAIN

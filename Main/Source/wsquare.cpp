@@ -1,5 +1,6 @@
 /* Compiled through wmapset.cpp */
 
+
 wsquare::wsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), GWTerrain(0), OWTerrain(0) { }
 
 wsquare::~wsquare()
@@ -148,7 +149,8 @@ void wsquare::CalculateLuminance()
   Luminance = MakeRGB24(Element, Element, Element);
 }
 
-bool wsquare::IsWalkable(const character* Char) const
-{
-  return (!OWTerrain || OWTerrain->IsWalkable(Char)) && GWTerrain->IsWalkable(Char);
+
+uchar wsquare::GetWalkability() const 
+{ 
+  return OWTerrain ? OWTerrain->GetWalkability() & GWTerrain->GetWalkability() : GWTerrain->GetWalkability(); 
 }

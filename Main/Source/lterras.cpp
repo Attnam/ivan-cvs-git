@@ -412,7 +412,7 @@ bool fountain::Drink(character* Drinker)
 		  {
 		    vector2d TryToCreate = Drinker->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-		    if(GetLevel()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && !GetNearLSquare(TryToCreate)->GetCharacter())
+		    if(GetLevel()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && !GetNearLSquare(TryToCreate)->GetCharacter())
 		      {
 			Created = true;
 			GetNearLSquare(TryToCreate)->AddCharacter(Monster);
@@ -590,11 +590,6 @@ bool altar::SitOn(character* Sitter)
 
   Sitter->EditAP(-1000);
   return true;
-}
-
-bool liquidterrain::IsWalkable(const character* ByWho) const
-{
-  return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
 
 void door::Break()
@@ -1064,19 +1059,14 @@ bool fountain::IsDipDestination() const
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
 
-bool wall::IsWalkable(const character* Char) const
-{
-  return Char && Char->CanWalkThroughWalls();
-}
-
 bool wall::IsTransparent() const
 {
   return MainMaterial->IsTransparent();
 }
 
-bool door::IsWalkable(const character* Char) const
+uchar door::GetWalkability() const
 {
-  return Opened || (Char && Char->CanWalkThroughWalls());
+  return Opened ? ANY_MOVE : ANY_MOVE&~(WALK|FLY);
 }
 
 bool door::IsTransparent() const

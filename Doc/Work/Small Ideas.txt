@@ -403,3 +403,5 @@ Kiss command.
 Cloak of fire resistance should protect items in the inventory from fire.
 Eyeglasses.
 Shift + direction should act as go command.
+Flying monsters can fly over jungle...
+Jussi The tenant farmer wielding a hoe on some swamp.

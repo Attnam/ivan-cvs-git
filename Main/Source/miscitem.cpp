@@ -73,7 +73,7 @@ void scrollofcreatemonster::FinishReading(character* Reader)
       TryToCreate = Reader->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
       character* Monster = protosystem::CreateMonster();
 
-      if(GetArea()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Monster) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
+      if(GetArea()->IsValidPos(TryToCreate) && Monster->CanMoveOn(GetNearLSquare(TryToCreate)) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
 	{
 	  GetNearLSquare(TryToCreate)->AddCharacter(Monster);
 
@@ -555,7 +555,7 @@ bool oillamp::Apply(character* Applier)
 	{	  
 	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
 
-	  if(GetArea()->IsValidPos(TryToCreate) && GetNearLSquare(TryToCreate)->IsWalkable(Genie) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
+	  if(GetArea()->IsValidPos(TryToCreate) && Genie->CanMoveOn(GetNearLSquare(TryToCreate)) && GetNearLSquare(TryToCreate)->GetCharacter() == 0)
 	    {
 	      GetNearSquare(TryToCreate)->AddCharacter(Genie);
 	      FoundPlace = true;

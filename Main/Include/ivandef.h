@@ -490,4 +490,11 @@
 #define TUNDRA 6
 #define GLACIER 7
 
+#define NO_MOVE 0
+#define WALK 1
+#define SWIM 2
+#define FLY  4
+#define WALK_THROUGH_WALLS 8
+#define ANY_MOVE 15
+
 #endif

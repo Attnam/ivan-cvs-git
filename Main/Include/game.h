@@ -97,6 +97,7 @@ class game
   static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static const vector2d GetRelativeMoveVector(ushort Index) { return RelativeMoveVector[Index]; }
+  static const vector2d GetBasicMoveVector(ushort Index) { return BasicMoveVector[Index]; }
   static area* GetCurrentArea() { return CurrentArea; }
   static level* GetCurrentLevel() { return CurrentLevel; }
   static bool WorldMapLOSHandler(long, long);
@@ -288,6 +289,7 @@ class game
   static const int MoveCommandKey[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
+  static const vector2d BasicMoveVector[];
   static ushort*** LuxTable;
   static ushort* LuxTableSize;
   static bool Running;

@@ -3,6 +3,9 @@
 gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<gwterrain>::Add(this); }
 owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassID) : Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<owterrain>::Add(this); }
 
+uchar gwterrain::GetWalkability() const { return ANY_MOVE; }
+uchar owterrain::GetWalkability() const { return ANY_MOVE; }
+
 void wterrain::AddName(festring& String, uchar Case) const
 {
   if(!(Case & PLURAL))
@@ -113,7 +116,7 @@ bool owterrain::Enter(bool DirectionUp) const
 {
   if(DirectionUp)
     {
-      if(!PLAYER->CanFly())
+      if(!(PLAYER->GetMoveType() & FLY))
 	ADD_MESSAGE("You jump into the air. For some reason you don't get too far above.");
       else
 	ADD_MESSAGE("You fly around for some time.");
@@ -128,3 +131,4 @@ uchar owterrain::GetAttachedEntry() const
 {
   return STAIRS_UP;
 }
+

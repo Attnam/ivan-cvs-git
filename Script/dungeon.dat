@@ -1670,7 +1670,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		}
 		Square, Random IN_ROOM;
 		{
-		    OTerrain = stairs(STAIRS_UP) { AttachedArea = VESANA_LEVEL; AttachedEntry = 100; }
+		    OTerrain = stairs(STAIRS_UP) { AttachedArea = 1; AttachedEntry = 100; }
 		    EntryIndex = 200;
 		}
 

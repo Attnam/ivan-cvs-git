@@ -7,6 +7,16 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
+
+	* The new path-finding (or actually checking whether a path exists...) algorithm added
+	* Few spelling mistakes in char.dat corrected
+		
+May 21 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
+
+	* Dungeons work again.
+	* A pathfinding algorithm. (That is not yet finished)   
+	
 May 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added second version of Corey's crystal level

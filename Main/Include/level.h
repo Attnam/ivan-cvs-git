@@ -19,6 +19,26 @@ class dungeon;
 class lsquare;
 class room;
 
+struct node
+{
+  node* Link[8];
+  ushort Distance;
+  vector2d Pos;
+  uchar CalculateNextNodes();
+  bool Processed;
+  static node*** NodeMap;
+  static uchar RequiredWalkability;
+  static const character* SpecialMover;
+  static vector2d To;
+  static uchar** WalkabilityMap;
+  node* Last;
+  node* Next;
+  lsquare* Square;
+  uchar BackingFrom(uchar);
+  uchar Index;
+  static ushort XSize, YSize;
+};
+
 struct explosion
 {
   character* Terrorist;
@@ -102,6 +122,9 @@ class level : public area
   void GenerateEvergreenForest() {}
   void GenerateTundra() {}
   void GenerateGlacier() {}
+  void CreateTunnelNetwork(ushort, ushort, ushort, ushort, vector2d);
+  void SetWalkability(ushort x, ushort y, uchar What) { WalkabilityMap[x][y] = What; }
+  void FindRoute(vector2d, vector2d, uchar, const character* = 0);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
@@ -117,6 +140,8 @@ class level : public area
   uchar Index;
   std::vector<explosion*> ExplosionQueue;
   std::vector<bool> PlayerHurt;
+  node*** NodeMap;
+  uchar** WalkabilityMap;
 };
 
 outputfile& operator<<(outputfile&, const level*);
