@@ -105,7 +105,7 @@ void bitmap::Load(inputfile& SaveFile)
 
 void bitmap::Save(std::string FileName) const
 {
-#ifdef WIN32
+
 	static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
 					 char(0x00), char(0x00), char(0x28), char(0x00), char(0x00), char(0x00),
@@ -131,7 +131,7 @@ void bitmap::Save(std::string FileName) const
 			ushort Pixel = Data[y][x];
 			SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
 		}
-#endif
+
 }
 
 void bitmap::Fill(ushort X, ushort Y, ushort Width, ushort Height, ushort Color)

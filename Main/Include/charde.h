@@ -1380,6 +1380,26 @@ protected:
 	virtual std::string TalkVerb() const { return "roars"; }
 );
 
+class CHARACTER
+(
+ unicorn,
+ character,
+ InitMaterials(2, new unicornflesh, new unicornhorn)
+{
+  SetSize();
+  SetAgility(50);
+  SetStrength(2);
+  SetEndurance(5);
+  SetPerception(30);
+},
+ public:
+ virtual GetDefaultVolume(ushort Index) const { if(!Index) return 1; else return 0; }
+ virtual vector2d GetBitmapPos() const RETV(540, 0)
+ virtual std::string NameSingular() const RET("unicorn")
+ virtual float GetMeleeStrength() const RET(1200)
+ virtual std::string TalkVerb() const { return "neigh"; }
+ );
+
 #endif
 
 
