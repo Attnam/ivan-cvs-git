@@ -1697,9 +1697,9 @@ bitmap* CFluidBuffer()
 levelsquare (lsquare.h)
 -----------------------
 
-A rectangular area on the level, the smallest indivisible place where
-individual terrains, characters and such can be contained. Derived
-from square.
+A square that appears in levels only and has some special procedures
+like ligthing that plain squares don't have a chance to enjoy of.
+Derived from square.
 
 Functions:
 
@@ -1888,7 +1888,6 @@ Terrain includes every terrain type from walls to altars. The class is divided
 to two larger sub-classes overterrain and groundterrain.
 
 Functions:
-----------
 
 bool CanBeDigged()
 
@@ -1958,6 +1957,8 @@ overterrain (terrain.h)
 This is positioned above groundterrain during the draw. I will list
 differences to terrain.
 
+Functions:
+
 CIsWalkable()
 
 	Returns true if the square is walkable, else false.
@@ -1985,6 +1986,11 @@ ShowDigMessage(character* Who, item*)
 
 square (square.h)
 -------------------
+
+A rectangular area on the level, the smallest indivisible place where
+individual terrains, characters and such can be contained.
+
+Functions:
 
 square(area* MotherArea, vector Pos)
 
@@ -2044,128 +2050,152 @@ vector CPos(void)
 	Return the potion of the square as a vector.
 
 SKnown(bool What)
+
 	Changes the Known-status of the square to What. If Known is false,
 	the square will not be drawn on the screen.
 
 SOverTerrain(overterrain* What)
-	Changes the OverTerrain to What
+
+	Changes the OverTerrain to What.
 
 ushort CPopulation(void)
-	returns the amount of characters in the square. (currently 1 or 0)
+
+	Returns the amount of characters in the square. (currently 1 or 0)
 
 SGroundTerrain(groundterrain* What)
+
 	Changes the GroundTerrain to What.
 
-area* CMotherArea(void)
-	return the pointer to the mother area of the square
-
 SOverTerrain(overterrain* What)
+
 	Changes the OverTerrain to What.
 
 area* CMotherArea(void)
+
 	Return the pointer to the area where the square is.
-
-ushort CPopulation(void)
-	Returns the amount of characters in the square. (currently 1 or 0)
-
 
 material (material.h)
 ---------------------
+
+Material is a class for handling effects that depend on the material type
+and amount of some part of an individual object.
+
+Functions:
+
 material(ulong Volume)
+
 	Constructor of material. Volume is volume of the material to be created.
 
 material(std::ifstream* SaveFile)
-	Constructor of material. 
+
+	Loads material's data from SaveFile. 
 
 uchar CFleshColor(void)
-	returns the color of the material when it is used as flesh.
+
+	Returns the color of the material when it is used as flesh.
 
 uchar CItemColor(void)
-	returns the color of the material when it is used as a material for an item.
 
-std::string Name(uchar Case)
+	Returns the color of the material when it is used as a material for an item.
+
+std::string Name(uchar Case = 0)
+
 	Returns the whole name of the material, according to
-	Case, which can be one of the following:
+	Case, which can be either of the following:
 
 	UNARTICLED (0)	no article is ever added
-	DEFINITE   (2)	"the" is (usually) added to the name
 	INDEFINITE (6)	"a" or "an" is (usually) added to the name
 
-	You can also specify the flag PLURAL (1) if you wish to. 
+ushort GetHitValue()
 
-ushort GetHitValue()	
-	Returns the hitvalue of the item.
+	Returns the hitvalue of the item, which increses the weaponstrength of
+	an item made of it.
 
 uchar CConsumeType()
+
 	Returns the consume type of the item.
 
 ulong CVolume()
+
 	Returns the volume of the material.
 
 ulong CWeight()
+
 	Returns the weight of the material.
 
 ushort GetDensity()
-	Returns the Density of the material.
+
+	Returns the density of the material.
 
 uchar EffectType()
+
 	Returns the type of effect this material has on a character.
 
 ushort Type()
-	Return the type of the item.
+
+	Return the type of the item. Note: this is evil, so don't use this
+	outside the save system if possible.
 
 ushort TakeDipVolumeAway()
+
 	Takes some of the volume of the item away and then returns
 	the volume of the material that has been taken away.
 
 void Save(std::ofstream* SaveFile)
+
 	Saves the material into SaveFile.
 
 ushort CArmorValue(void)
-	returns the armor value of the material.
+
+	Returns the armor value of the material. See item::GetArmorValue().
 
 SVolume(ulong What)
+
 	Volume of the material is set to What.
 
 ushort CEmitation(void)
-	Returns the light emitation of the material.
+
+	Returns the light emitation of the material. See "ligth.txt".
 
 ushort OfferValue(void)
+
 	The value of offering this material a gram.
 
 uchar Alignment(void)
-	Returns the alignment of this material.
+
+	Returns the alignment of this material. Affects value of offers.
 	Possible alignments are:
 		GOOD    (1)
 		NEUTRAL (2)
 		EVIL    (3)
 
-EatEffect(character* Eater, float Amount, float NPModifier)
-	Eater recives an eat effect of this material.
-	Amount is the percent of the whole Volume that 
-	the character has eaten. NPModifier is a number
-	that is used to multiply the actual amount, which
-	is used by some items.
+EatEffect(character* Eater, float Amount = 100, float NPModifier = 1.0f)
+
+	Eater receives an eat effect of this material. Amount is the percent
+	of the whole Volume that the character has eaten. NPModifier is a
+	number that is used to multiply the actual amount, which is used by
+	some items.
 
 HitEffect(character* Enemy)
-	If the material somehow affects the Enemy then this 
-	function handles it.
+
+	If the material somehow affects the Enemy then this function handles
+	it.
 
 short NutritionValue()
+
 	Returns the nutrion value of the item. The amount is
-	in NPs per 100 grams. 
+	in NPs per 1000 grams. 
 
 MinusAmount(float Amount)
-	decreases the volume of the material by Amount percent.
+
+	Decreases the volume of the material by Amount percent.
 
 NormalFoodEffect(character* Eater, float Amount, float NPModifier)
-	Eater reseaves the normal food effect. Amount is the percent
-	of the volume that is going to be eaten and NPModifier is 
-	floating point number that is used to multiply this volume.
-	NPModifier is used by some items.
 
-
-
+	Eater reseives the normal food effect. Amount is the percent of the
+	volume that is going to be eaten and NPModifier is floating point
+	number that is used to multiply this volume. NPModifier is used by
+	some items.
 
 ----------------------------------------------------------------------------
 
