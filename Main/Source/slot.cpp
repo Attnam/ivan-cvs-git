@@ -144,7 +144,7 @@ void characterslot::PutInItem(item* What)
 	{
 	  SignalVolumeAndWeightChange();
 	  SignalEmitationIncrease(Item->GetEmitation());
-	  static_cast<bodypart*>(Item)->CalculateMaxHP();
+	  static_cast<bodypart*>(Item)->CalculateMaxHP(false);
 	  GetMaster()->CalculateHP();
 	  GetMaster()->CalculateMaxHP();
 	}

@@ -36,6 +36,7 @@ ulong cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPric
 bool cloak::IsInCorrectSlot(ushort Index) const { return Index == CLOAK_INDEX; }
 ushort cloak::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 const char* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
+bool cloak::ReceiveDamage(character* Damager, ushort Damage, ushort Type) { return armor::ReceiveDamage(Damager, Damage >> 1, Type); }
 
 ulong boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 bool boot::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_BOOT_INDEX || Index == LEFT_BOOT_INDEX; }

@@ -5309,10 +5309,13 @@ void character::SignalSpoilLevelChange()
 
 void character::AddOriginalBodyPartID(ushort Index, ulong What)
 {
-  OriginalBodyPartID[Index].push_back(What);
+  if(std::find(OriginalBodyPartID[Index].begin(), OriginalBodyPartID[Index].end(), What) == OriginalBodyPartID[Index].end())
+    {
+      OriginalBodyPartID[Index].push_back(What);
 
-  if(OriginalBodyPartID[Index].size() > 100)
-    OriginalBodyPartID[Index].erase(OriginalBodyPartID[Index].begin());
+      if(OriginalBodyPartID[Index].size() > 100)
+	OriginalBodyPartID[Index].erase(OriginalBodyPartID[Index].begin());
+    }
 }
 
 void character::AddToInventory(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)

@@ -3533,7 +3533,6 @@ ghost
 	TorsoBitmapPos = 112, 16;
 	TotalSize = 100;
 	NameSingular = "ghost";
-	CanBeGenerated = true;
 	ClassStates = INFRA_VISION|ESP|GAS_IMMUNITY;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;

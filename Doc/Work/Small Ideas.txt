@@ -405,3 +405,5 @@ If one monster can see an invisible player, then it should reveal his location h
 //*HEALING SHOULD STOP IF A MAGE ATTACKS!!!
 Cave paintings.
 List of dead friends.
+New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
+New fountain effect: random level teleport.

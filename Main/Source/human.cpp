@@ -594,10 +594,10 @@ void priest::BeTalkedTo()
 		if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR)
 		  {
 		    if(!OldBodyPart->CanRegenerate())
-		      ADD_MESSAGE("Sorry, I cannot put back bodyparts made of %s, not even your severed %s.", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
+		      ADD_MESSAGE("\"Sorry, I cannot put back bodyparts made of %s, not even your severed %s.\"", OldBodyPart->GetMainMaterial()->GetName(false, false).CStr(), PLAYER->GetBodyPartName(c).CStr());
 		    else
 		      {
-			ADD_MESSAGE("I could put your old %s back in exchange for %d gold.", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
+			ADD_MESSAGE("\"I could put your old %s back in exchange for %d gold.\"", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR);
 
 			if(game::BoolQuestion(CONST_S("Do you agree? [y/N]")))
 			  {
@@ -618,9 +618,9 @@ void priest::BeTalkedTo()
 	if(PLAYER->GetMoney() >= PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR)
 	  {
 	    if(HasOld)
-	      ADD_MESSAGE("I could still summon up a new one for %d gold.", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	      ADD_MESSAGE("\"I could still summon up a new one for %d gold.\"", PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 	    else
-	      ADD_MESSAGE("Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
+	      ADD_MESSAGE("\"Since you don't seem to have your original %s with you, I could summon up a new one for %d gold.\"", PLAYER->GetBodyPartName(c).CStr(), PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR);
 
 	    if(game::BoolQuestion(CONST_S("Agreed? [y/N]")))
 	      {

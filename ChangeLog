@@ -9,6 +9,13 @@ is also provided AS IS and is probably completely unreadable.
 
 May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Cloaks break less often now
+	* Ghosts are no longer normally generated
+	* Corrected a strange bug concerning partly eaten bodyparts
+	* Fixed a small bug in the original bodypart id code
+
+May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Reduced global difficulty values by 5-10 danger points
 
 May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
@@ -29,6 +36,7 @@ May 10 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	  most likely had existed since v0.40
 	* Magical mushrooms teleport a little less often now
 	* Thunder hammer is bit less überpowerful now
+	* Bonefiles are loaded less often now
 
 May 10 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

@@ -85,7 +85,7 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '7', true, true),
   new command(&GainAllItems, "gain all items", '8', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '9', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '9', true, false),
   new command(&DetachBodyPart, "detach a limb", '0', true, true),
   new command(&ReloadDatafiles, "reload datafiles", 'R', true, true),
   new command(&SummonMonster, "summon monster", '&', false, true),

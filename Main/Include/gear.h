@@ -268,6 +268,7 @@ class ITEM
   virtual ulong GetPrice() const;
   virtual bool IsCloak(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
+  virtual bool ReceiveDamage(character*, ushort, ushort);
  protected:
   virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
