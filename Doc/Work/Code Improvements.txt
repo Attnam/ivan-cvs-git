@@ -28,7 +28,7 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 //Merkkitaulukoiden hävittäminen.
 //*Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
 //Protopilkonta.
-(s) MS-koodin poisajo grafiikkakirjastosta.
+MS-koodin poisajo grafiikkakirjastosta.
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
@@ -44,6 +44,7 @@ Tilainformaation strukturalisaatio visuaalisen vastenmielisyyden vähentämiseksi.
 Listaimplementaation piirtokutsujen yliparametrisaation lieventäminen.
 *Nimivälimuisti.
 Tietovarastojen ja prototyyppien yleisyliluokat ja/tai perustemplaatti.
-Charba.cpp:n resplittaus (controllit erilleen?).
+Charba.cpp:n resplittaus (kontrollit erilleen?).
 Lukufunktioden generalisoiminen.
 Säiliöluokka.
+Piirron deasmaus.

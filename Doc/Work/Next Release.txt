@@ -22,7 +22,7 @@
 //Miina kuntoon. (timo)
 //Lookmoden messaget kuntoon. (timo)
 Bodypartien ja actioneiden scoret. (timo)
-Luut kuntoon. (timo)
+(s) Luut kuntoon. (timo)
 (r) BloodColorin animaatiostuktuuri. (timo)
 //Paniikki. (hex)
 //Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
@@ -32,10 +32,10 @@ Luut kuntoon. (timo)
 //Amulet of life saving. (hex)
 //Amulet of ESP.
 //Ring of polymorph. (hex)
-Ring of strength.
+(s) Ring of strength.
 //Ring of infravision. (timo)
 //Ring of teleportation. (hex)
-Potion of invisibility. (hex)
+?Potion of invisibility. (hex)
 //Magic whistlen kuva. (kahvi)
 //Magic whistle. (hex)
 (s) Inhandspicit kuntoon. (timo)
@@ -73,11 +73,12 @@ Dipping to corpses, containers etc.
 //Amuletit, cloak
 //Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
-Shirt.
+Mana should be hidden.
+?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
-The flight of wielded item and amulet.
-Cats & rat corpses.
+?The flight of wielded item and amulet.
+?Cats & rat corpses.
 Things thrown at doors.
 %s"
 //CollectCreatures
@@ -91,38 +92,38 @@ Items inside chests carried by player at death should be shown. (hex)
 //Glitter effect.
 //Fire effect.
 /Lightning effect.
-Flies over spoiling items effect.
+/Flies over spoiling items effect.
 (s) Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
-Re-enable Golden Eagle Quest danger requirement.
+(s) Re-enable Golden Eagle Quest danger requirement.
 Prevent escape from Oree.
-Configurations should be visually separated with colors.
+?Configurations should be visually separated with colors.
 //Blocking and visibility should be considered when calculating relative danger.
 //Spiders must not trigger mines.
 Hit effects of thrown items.
 Applying wielded item should be possible.
-Vodka.
+?Vodka.
 //Splitting lines in highscores.
 //Calamus and whip of Calamus should work together.
-Treasure room to the right arm of the Cathedral.
-Artifact vault.
+?Treasure room to the right arm of the Cathedral.
+?Artifact vault.
 Village and tunnel.
-Kick system should be checked. (timo)
+/Kick system should be checked. (timo)
 //Kamikaze dwarves should be separated by colours.
-Manual.
+?Manual.
 //Item possibilities. (timo)
 //Skull. (hex)
 //Wand of cloning. (hex)
 Water should make gunpowder useless!
-Temporary invisibility should be cancelled if the character hits something.
+?Temporary invisibility should be cancelled if the character hits something.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.
 Stethoscope should show relative danger.
 Remove the school food effects of scabies (or make them a lot more seldom).
-Raven.
+?Raven.
 Kicking chests.
 Prohibit spoiling in shops and on the cathedral floor.
-Mellis should give information about unknown gods.
+?Mellis should give information about unknown gods.
 Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
-/Flies should tell about spoilage.
+?Charges for magic whistle.

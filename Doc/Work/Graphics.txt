@@ -35,6 +35,7 @@ Harp.
 Nuts shouldn't be peeled.
 Teleport.
 Golden Eagle Shirt's animation is really gay.
+Visible invisible stalker.
 
 Fabrick belts and whips seem to not be clearly visible from a wooden parquet. (might have something to do with my red-green color blindness though)
 Small, medium and large chests (one is probably already done...)

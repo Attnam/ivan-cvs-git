@@ -69,7 +69,7 @@ Alpha + rotate doesn't work.
 //Beartraps + groinless creatures.
 Zapping is possible without arms.
 Hit effects of flying items.
-Head of Elpuri, Shirt of the Golden Eagle and the Left Nut of Petrus aren't recognized by the storyline if they are equipped.
+//Head of Elpuri, Shirt of the Golden Eagle and the Left Nut of Petrus aren't recognized by the storyline if they are equipped.
 Consummo message.
 //Picking up a bear trap.
 //Turox etc. + poison  doesn't work.
@@ -86,3 +86,4 @@ Omle urine doesn't really work.
 Infravision range.
 Carnivorous plants spill blood.
 Oree's blood golems' HPs' are incorrect.
+Skeletons' health bugs. Some have over 20000 hps.
