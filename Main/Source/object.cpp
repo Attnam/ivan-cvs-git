@@ -2,7 +2,7 @@
 #include "materia.h"
 #include "festring.h"
 #include "whandler.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "proto.h"
 #include "game.h"
 #include "bitmap.h"
@@ -344,6 +344,11 @@ color16 object::GetMaterialColorA(int) const
   return MainMaterial->GetColor();
 }
 
+bool object::AddRustLevelDescription(festring& String, bool Articled) const
+{
+  return MainMaterial->AddRustLevelDescription(String, Articled);
+}
+
 bool object::AddMaterialDescription(festring& String, bool Articled) const
 {
   MainMaterial->AddName(String, Articled);
@@ -354,12 +359,12 @@ bool object::AddMaterialDescription(festring& String, bool Articled) const
 void object::AddContainerPostFix(festring& String) const
 {
   if(GetSecondaryMaterial())
-    GetSecondaryMaterial()->AddName(String << " full of ");
+    GetSecondaryMaterial()->AddName(String << " full of ", false, false);
 }
 
 void object::AddLumpyPostFix(festring& String) const
 {
-  MainMaterial->AddName(String << " of ");
+  MainMaterial->AddName(String << " of ", false, false);
 }
 
 alpha object::GetAlphaA(int) const

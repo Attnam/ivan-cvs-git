@@ -11,6 +11,7 @@
 #define MAKE_MATERIAL material::MakeMaterial
 
 class entity;
+class bodypart;
 class materialprototype;
 template <class type> class databasecreator;
 
@@ -66,6 +67,8 @@ struct materialdatabase : public databasebase
   int IntelligenceRequirement;
   bool IsScary;
   bool CanBeMirrored;
+  bool AffectInside;
+  bool IsValuable;
 };
 
 class materialprototype
@@ -108,7 +111,7 @@ class material
   virtual void Load(inputfile&);
   bool Effect(character*, long);
   virtual material* EatEffect(character*, long);
-  bool HitEffect(character*);
+  bool HitEffect(character*, bodypart*);
   virtual color16 GetSkinColor() const { return GetColor(); }
   virtual void SetSkinColor(int) { }
   long GetRawPrice() const;
@@ -158,6 +161,7 @@ class material
   DATA_BASE_VALUE(const contentscript<item>&, NaturalForm);
   DATA_BASE_VALUE(int, HardenedMaterial);
   DATA_BASE_VALUE(int, IntelligenceRequirement);
+  DATA_BASE_BOOL(IsValuable);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(GetConfig(), Volume); }
@@ -187,6 +191,7 @@ class material
   DATA_BASE_VALUE(int, BreatheWisdomLimit);
   DATA_BASE_BOOL(IsScary);
   DATA_BASE_BOOL(CanBeMirrored);
+  DATA_BASE_BOOL(AffectInside);
   virtual void SetRustLevel(int) { }
   virtual int GetRustLevel() const { return NOT_RUSTED; }
   virtual int GetRustData() const { return NOT_RUSTED; }
@@ -207,6 +212,7 @@ class material
   item* CreateNaturalForm(long) const;
   virtual bool IsInfectedByLeprosy() const { return false; }
   virtual void SetIsInfectedByLeprosy(bool) { }
+  virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(int, long, bool);

@@ -70,6 +70,7 @@ class object : public entity, public id
   virtual alpha GetAlphaD(int) const { return 255; }
   virtual color16 GetOutlineColor(int) const;
   virtual alpha GetOutlineAlpha(int) const { return 255; }
+  virtual bool AddRustLevelDescription(festring&, bool) const;
   virtual bool AddMaterialDescription(festring&, bool) const;
   int RandomizeMaterialConfiguration();
   virtual int GetClassAnimationFrames() const { return 1; }

@@ -81,5 +81,6 @@ inline void Rotate(vector2d& Vect, int Size, int Flags)
 
 //const vector2d ZERO_VECTOR(0, 0);
 const vector2d ERROR_VECTOR(-0x8000, -0x8000);
+const vector2d ABORT_VECTOR(-0x7FFF, -0x7FFF);
 
 #endif

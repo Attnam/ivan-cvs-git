@@ -75,7 +75,7 @@ class stack
   void SetMotherSquare(square* What) { MotherSquare = What; }
   item* DrawContents(const character*, const festring&, int = 0, sorter = 0) const;
   int DrawContents(itemvector&, const character*, const festring&, int = 0, sorter = 0) const;
-  int DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, int = 0, sorter = 0) const;
+  int DrawContents(itemvector&, stack*, const character*, const festring&, const festring&, const festring&, const festring&, color16, int, sorter = 0) const;
   vector2d GetPos() const;
   void Clean(bool = false);
   void Save(outputfile&) const;

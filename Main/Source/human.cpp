@@ -3196,7 +3196,7 @@ void darkmage::GetAICommand()
 
 	  break;
 	case ARCH_MAGE:
-	  switch(3)//RAND() % 20)
+	  switch(RAND() % 20)
 	    {
 	    case 0:
 	    case 1:
@@ -4289,8 +4289,21 @@ int darkknight::ModifyBodyPartToHitChance(int I, int Chance) const
 
 void darkknight::SpecialBodyPartSeverReaction()
 {
-  if(!IsPlayer() && !(RAND() % 5))
-    ADD_MESSAGE("\"Bah! Just a scratch.\"");
+  if(!IsPlayer())
+    {
+      if(IsUsingHead())
+	ADD_MESSAGE("%s screams: \"I'll do you for that! I'll bite your legs off!\"", CHAR_DESCRIPTION(DEFINITE));
+      else if(!(RAND() % 5))
+	switch(RAND() % 3)
+	  {
+	  case 0:
+	    ADD_MESSAGE("%s states calmly: \"'Tis but a scratch.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+	  case 1:
+	    ADD_MESSAGE("%s states calmly: \"Just a flesh wound.\"", CHAR_DESCRIPTION(DEFINITE)); break;
+	  case 2:
+	    ADD_MESSAGE("%s shouts: \"I'm invincible!\"", CHAR_DESCRIPTION(DEFINITE)); break;
+	  }
+    }
 }
 
 void humanoid::LeprosyHandler()
@@ -4447,7 +4460,6 @@ void archangel::CreateInitialEquipment(int SpecialFlags)
     }
 }
 
-
 void zombie::VirtualConstructor(bool Load)
 {
   if(!Load && !RAND_N(3))
@@ -4462,4 +4474,46 @@ void orc::VirtualConstructor(bool Load)
     GainIntrinsic(LEPROSY);
 
   humanoid::VirtualConstructor(Load);
+}
+
+bool mistress::AllowEquipment(const item* Item, int EquipmentIndex) const
+{
+  return (EquipmentIndex != RIGHT_WIELDED_INDEX
+       && EquipmentIndex != LEFT_WIELDED_INDEX)
+       || Item->IsWhip();
+}
+
+int humanoid::GetAttributeAverage() const
+{
+  return GetSumOfAttributes() / 9;
+}
+
+void golem::CreateCorpse(lsquare* Square)
+{
+  material* Material = GetTorso()->GetMainMaterial();
+
+  if(Material->IsSolid())
+    Square->AddItem(Material->CreateNaturalForm(ItemVolume));
+
+  SendToHell();
+}
+
+void golem::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    ItemVolume = 50 + RAND_N(100);
+
+  humanoid::VirtualConstructor(Load);
+}
+
+void golem::Save(outputfile& SaveFile) const
+{
+  humanoid::Save(SaveFile);
+  SaveFile << ItemVolume;
+}
+
+void golem::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> ItemVolume;
 }

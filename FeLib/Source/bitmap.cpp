@@ -6,7 +6,7 @@
 #include "save.h"
 #include "allocate.h"
 #include "femath.h"
-#include "colorbit.h"
+#include "rawbit.h"
 
 /* Blitting must be as fast as possible, even if no optimizations are used;
  * therefore we can't use inline functions inside loops, since they may be left

@@ -106,10 +106,6 @@ SOURCE=.\FeLib\Source\bitmap.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Source\colorbit.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\FeLib\Source\config.cpp
 # End Source File
 # Begin Source File
@@ -146,6 +142,10 @@ SOURCE=.\FeLib\Source\hscore.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Source\rawbit.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Source\save.cpp
 # End Source File
 # Begin Source File
@@ -163,10 +163,6 @@ SOURCE=.\FeLib\Include\allocate.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\bitmap.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Include\colorbit.h
 # End Source File
 # Begin Source File
 
@@ -203,6 +199,10 @@ SOURCE=.\FeLib\Include\graphics.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\hscore.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeLib\Include\rawbit.h
 # End Source File
 # Begin Source File
 

@@ -102,7 +102,7 @@ class ABSTRACT_ITEM
   virtual void UpdatePictures();
   item* GetExternalBodyArmor() const;
   item* GetExternalCloak() const;
-  virtual void ReceiveAcid(material*, long);
+  virtual void ReceiveAcid(material*, const festring&, long);
   virtual bool ShowFluids() const { return false; }
   virtual void TryToRust(long);
   virtual bool AllowFluidBe() const;
@@ -501,6 +501,8 @@ class ITEM
   virtual void SetLifeExpectancy(int, int);
   virtual void Be();
   virtual void SignalDisappearance();
+  virtual bool IsValuable() const;
+  virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
  protected:
   virtual bool IsSparkling(int) const;
   virtual void GenerateMaterials() { }

@@ -1329,7 +1329,7 @@ bool lsquare::Polymorph(const beamdata& Beam)
       if(Beam.Owner && Character->GetTeam() != Beam.Owner->GetTeam())
 	Beam.Owner->Hostility(Character);
 
-      Character->PolymorphRandomly(1, 999999, 500 + RAND() % 500);
+      Character->PolymorphRandomly(1, 999999, 5000 + RAND() % 5000);
     }
 
   return false;

@@ -123,8 +123,8 @@ class ITEM
 (
   lump,
   item,
- public:
-  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);
+ /*public:
+  virtual bool HitEffect(character*, character*, vector2d, int, int, bool);*/
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }

@@ -1027,7 +1027,8 @@ bool level::CollectCreatures(charactervector& CharacterArray, character* Leader,
     for(c = 0; c < game::GetTeams(); ++c)
       if(Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 	for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
+	  if((*i)->IsEnabled() && Leader->CanBeSeenBy(*i)
+	  && Leader->SquareUnderCanBeSeenBy(*i, true) && (*i)->CanFollow())
 	    {
 	      ADD_MESSAGE("You can't escape when there are hostile creatures nearby.");
 	      return false;
@@ -1036,7 +1037,8 @@ bool level::CollectCreatures(charactervector& CharacterArray, character* Leader,
   bool TakeAll = true;
 
   for(c = 0; c < game::GetTeams(); ++c)
-    if(game::GetTeam(c)->GetEnabledMembers() && Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+    if(game::GetTeam(c)->GetEnabledMembers()
+    && Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       {
 	TakeAll = false;
 	break;
@@ -1045,7 +1047,12 @@ bool level::CollectCreatures(charactervector& CharacterArray, character* Leader,
   for(c = 0; c < game::GetTeams(); ++c)
     if(game::GetTeam(c) == Leader->GetTeam() || Leader->GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
       for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
-	if((*i)->IsEnabled() && *i != Leader && (TakeAll || (Leader->CanBeSeenBy(*i) && Leader->SquareUnderCanBeSeenBy(*i, true))) && (*i)->CanFollow())
+	if((*i)->IsEnabled() && *i != Leader
+	&& (TakeAll
+	 || (Leader->CanBeSeenBy(*i)
+	  && Leader->SquareUnderCanBeSeenBy(*i, true)))
+	&& (*i)->CanFollow()
+	&& (*i)->GetCommandFlags() & FOLLOW_LEADER)
 	  {
 	    if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
 	      (*i)->GetAction()->Terminate(false);

@@ -104,7 +104,7 @@ void scrollofteleportation::FinishReading(character* Reader)
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
 
-bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
+/*bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
 {
   if(!BlockedByArmour && RAND() & 1)
     {
@@ -115,7 +115,7 @@ bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool Bloc
     }
   else
     return false;
-}
+}*/
 
 bool wand::Apply(character* Terrorist)
 {
@@ -2852,6 +2852,10 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 
 	    int MaterialConfig = MainPossible ? Main->GetConfig() : Sec->GetConfig();
 	    golem* Golem = new golem(MaterialConfig);
+	    long Volume = MainPossible ? Sec && Sec->IsSameAs(Main)
+		        ? Main->GetVolume() + Sec->GetVolume()
+			: Main->GetVolume() : Sec->GetVolume();
+	    Golem->SetItemVolume(Volume);
 	    vector2d Where = GetLevel()->GetNearestFreeSquare(Golem, Reader->GetPos());
 	    Item[0]->RemoveFromSlot();
 	    Item[0]->SendToHell();

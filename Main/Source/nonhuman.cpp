@@ -1118,7 +1118,7 @@ bool twoheadedmoose::Hit(character* Enemy, vector2d HitPos, int Direction, bool 
 
 bool magpie::IsRetreating() const
 {
-  if(StateIsActivated(PANIC))
+  if(nonhumanoid::IsRetreating())
     return true;
 
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)

@@ -15,16 +15,17 @@ typedef bool (item::*sorter)(const character*) const;
 class command
 {
  public:
-  command(bool (*)(character*), const char*, char, bool, bool = false);
+  command(bool (*)(character*), const char*, char, char, bool, bool = false);
   bool (*GetLinkedFunction() const)(character*) { return LinkedFunction; }
   const char* GetDescription() const { return Description; }
-  char GetKey() const { return Key; }
+  char GetKey() const;
   bool IsUsableInWilderness() const { return UsableInWilderness; }
   bool IsWizardModeFunction() const { return WizardModeFunction; }
  private:
   bool (*LinkedFunction)(character*);
   const char* Description;
-  char Key;
+  char Key1;
+  char Key2;
   bool UsableInWilderness;
   bool WizardModeFunction;
 };
@@ -91,6 +92,7 @@ private:
   static bool Possess(character*);
 #endif
   static bool ToggleRunning(character*);
+  static bool IssueCommand(character*);
   static command* Command[];
 };
 

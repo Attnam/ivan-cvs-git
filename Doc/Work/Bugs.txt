@@ -4,6 +4,7 @@
 (r) rejected
 (s) suspended
 (?) not understandable
+(initials +/-) reserved for the following coder, plusses or minuses indicate priority
 
 (s) Alt+Enter twice.
 (s) Alt+Enter in config screen.
@@ -32,7 +33,7 @@ Entering a dungeon and loading an autosave saves some time.
 (s) Do new bodyparts of player clones work properly? (no)
 //Chests in inventory cannot be unlocked.
 Healing liquid penetrates chests.
-Mistresses like shields and jewels more than their whips.
+//Mistresses like shields and jewels more than their whips.
 "You manage to hurt your left leg even more" (even though leg is not hurt)
 //Headless zombies can eat.
 //Broken thunder hammer emits light.
@@ -51,25 +52,25 @@ Trying to resurrect a headless player of a bonefile when his ghost is the only l
  give the right message since the soul is temporarily sucked into the corpse and everything is dark.
  Should this be so?
 AOGH can be abused.
-"You look down. You see an active mine." in the dark.
+(hs) "You look down. You see an active mine." in the dark.
 Border tiles aren't shown in the dark.
 Vladimir doesn't destroy walls on the turn when it is created.
-NetBSD and trailing slash
+(hs+) NetBSD and trailing slash.
 Mirage puppies.
 //Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
-Still some problems with bad edge tiles.
+(s) Still some problems with bad edge tiles.
 If the whole level is full of monsters, the game won't work correctly.
-Better gentoo packages. No root should be needed.
+(hs) Better gentoo packages. No root should be needed.
 Petrus's AI goes rather insane (he just runs around his throne) if he is severely wounded.
-Headless zombies can vomit.
+(hs) Headless zombies can vomit.
 Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
-Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
-Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
-Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
-"You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
+(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
+(hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
+(hs) Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
+(hs--) "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
 Golems can be poisoned at least by poison covered weapons.
 It seems to be possible to occasionally find traps by saveloading next to them.
-Mushrooms can be kicked around.
+(hs) Mushrooms can be kicked around.
 If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.
 //Carnivorous plants can move by displacing pets.
 EditAttribute() probably doesn't update all caches correctly.
@@ -77,9 +78,11 @@ EditAttribute() probably doesn't update all caches correctly.
 If you hit someone with one hand and either one of you teleports, you can still hit the opponent with the other hand.
 //Leprosy can cause player to become overloaded in world map and there is no way to drop items.
 //Lyre of charm works on monsters that don't hear. (like headless zombie)
-If player tries to apply when he has no arms, the message says that there are no items to apply.
+(hs-) If player tries to apply when he has no arms, the message says that there are no items to apply.
 //Leprosy can cause player to become overloaded in world map and there is no way to drop items.
-Can you see the cause of death if you don't get to highscore list?
-You can sell items mirrored.
-Border tile bug.
+(hs) Can you see the cause of death if you don't get to highscore list?
+You can sell mirrored items.
+(s) Border tile bug.
 Mirror + WorldMap.
+You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
+Vladimir can destroys terrains in Attnam even if the citizens are not hostile.

@@ -1,7 +1,7 @@
 #include <cstdarg>
 
 #include "allocate.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "bitmap.h"
 #include "save.h"
 #include "femath.h"

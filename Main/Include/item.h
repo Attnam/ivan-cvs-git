@@ -46,6 +46,7 @@ struct itemdatabase : public databasebase
   int FireResistance;
   int PoisonResistance;
   int ElectricityResistance;
+  int AcidResistance;
   int StrengthModifier;
   int FormModifier;
   int DefaultSize;
@@ -127,6 +128,7 @@ struct itemdatabase : public databasebase
   bool HasSecondaryMaterial;
   bool AllowEquip;
   int ReadDifficulty;
+  bool IsValuable;
 };
 
 class itemprototype
@@ -249,6 +251,7 @@ class item : public object
   DATA_BASE_VALUE(int, FireResistance);
   DATA_BASE_VALUE(int, PoisonResistance);
   DATA_BASE_VALUE(int, ElectricityResistance);
+  DATA_BASE_VALUE(int, AcidResistance);
   DATA_BASE_VALUE(int, StrengthModifier);
   virtual DATA_BASE_VALUE(int, FormModifier);
   DATA_BASE_VALUE(int, DefaultSize);
@@ -438,14 +441,14 @@ class item : public object
   virtual void SpillFluid(character*, liquid*, int = 0);
   virtual void TryToRust(long);
   void RemoveFluid(fluid*);
-  void AddFluid(liquid*, int = 0);
+  void AddFluid(liquid*, festring, int, bool);
   virtual bool IsAnimated() const;
   const rawbitmap* GetRawPicture() const;
   void DrawFluidGearPictures(bitmap*, vector2d, color24, int, bool) const;
   void DrawFluidBodyArmorPictures(bitmap*, vector2d, color24, int, bool) const;
   void CheckFluidGearPictures(vector2d, int, bool);
   void DrawFluids(bitmap*, vector2d, color24, int, bool) const;
-  virtual void ReceiveAcid(material*, long);
+  virtual void ReceiveAcid(material*, const festring&, long);
   virtual bool ShowFluids() const { return true; }
   void DonateFluidsTo(item*);
   void Destroy(character*, int);
@@ -471,6 +474,7 @@ class item : public object
   int NeedsBe() const { return !!LifeExpectancy; }
   bool IsVeryCloseToDisappearance() const { return LifeExpectancy && LifeExpectancy < 10; }
   bool IsVeryCloseToSpoiling() const;
+  virtual bool IsValuable() const;
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

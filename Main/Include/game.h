@@ -42,6 +42,8 @@ struct explosion;
 
 typedef std::map<festring, long> valuemap;
 typedef bool (*stringkeyhandler)(int, festring&);
+typedef vector2d (*positionkeyhandler)(vector2d, int);
+typedef void (*positionhandler)(vector2d);
 
 struct homedata
 {
@@ -204,7 +206,7 @@ class game
   static vector2d CalculateScreenCoordinates(vector2d);
   static void BusyAnimation();
   static void BusyAnimation(bitmap*);
-  static vector2d PositionQuestion(const festring&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
+  static vector2d PositionQuestion(const festring&, vector2d, positionhandler = 0, positionkeyhandler = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const festring&);
   static bool AnimationController();
@@ -218,8 +220,8 @@ class game
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
   static int KeyQuestion(const festring&, int, int, ...);
-  static void LookKeyHandler(vector2d, int);
-  static void NameKeyHandler(vector2d, int);
+  static vector2d LookKeyHandler(vector2d, int);
+  static vector2d NameKeyHandler(vector2d, int);
   static void End(bool = true, bool = true);
   static int CalculateRoughDirection(vector2d);
   static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, void (*)(long) = 0);
@@ -340,6 +342,11 @@ class game
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
   static bool PlayerIsRunning() { return PlayerRunning; }
   static void SetPlayerIsRunning(bool What) { PlayerRunning = What; }
+  static bool CommandQuestion();
+  static void CommandHandler(vector2d);
+  static vector2d CommandKeyHandler(vector2d, int);
+  static void CommandScreen(const festring&, ulong, ulong, ulong&, ulong&);
+  static bool CommandAll();
  private:
   static const char* const Alignment[];
   static god** God;
@@ -424,6 +431,8 @@ class game
   static long Turn;
   static ulong EquipmentMemory[MAX_EQUIPMENT_SLOTS];
   static bool PlayerRunning;
+  static character* LastCharacterUnderCommandCursor;
+  static charactervector CommandVector;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

@@ -37,7 +37,7 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "bitmap.h"
 
 #include "fluid.h"
-#include "colorbit.h"
+#include "rawbit.h"
 
 #include "item.cpp"
 #include "bodypart.cpp"

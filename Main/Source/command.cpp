@@ -20,7 +20,9 @@
 #include "proto.h"
 #endif
 
-command::command(bool (*LinkedFunction)(character*), const char* Description, char Key, bool UsableInWilderness, bool WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key(Key), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
+command::command(bool (*LinkedFunction)(character*), const char* Description, char Key1, char Key2, bool UsableInWilderness, bool WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key1(Key1), Key2(Key2), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
+
+char command::GetKey() const { return !ivanconfig::GetUseAlternativeKeys() ? Key1 : Key2; }
 
 command* commandsystem::Command[] =
 {
@@ -28,67 +30,68 @@ command* commandsystem::Command[] =
 
   /* Sort according to description */
 
-  new command(&Apply, "apply", 'a', false),
-  new command(&Talk, "chat", 'C', false),
-  new command(&Close, "close", 'c', false),
-  new command(&Dip, "dip", '!', true),
-  new command(&Drink, "drink", 'D', true),
-  new command(&Drop, "drop", 'd', true),
-  new command(&Eat, "eat", 'e', true),
-  new command(&WhatToEngrave, "engrave", 'G', false),
-  new command(&EquipmentScreen, "equipment menu", 'E', true),
-  new command(&Go, "go", 'g', false),
-  new command(&GoDown, "go down/enter area", '>', true),
-  new command(&GoUp, "go up", '<', true),
-  new command(&Kick, "kick", 'K', false),
-  new command(&Look, "look", 'L', true),
-  new command(&AssignName, "name", 'n', false),
-  new command(&Offer, "offer", 'f', false),
-  new command(&Open, "open", 'O', false),
-  new command(&PickUp, "pick up", ',', false),
-  new command(&Pray, "pray", 'p', false),
-  new command(&Quit, "quit", 'Q', true),
-  new command(&Read, "read", 'r', false),
-  new command(&Rest, "rest/heal", 'h', true),
-  new command(&Save, "save game", 'S', true),
-  new command(&ScrollMessagesDown, "scroll messages down", '+', true),
-  new command(&ScrollMessagesUp, "scroll messages up", '-', true),
-  new command(&ShowConfigScreen, "show config screen", '\\', true),
-  new command(&ShowInventory, "show inventory", 'i', true),
-  new command(&ShowKeyLayout, "show key layout", '?', true),
-  new command(&DrawMessageHistory, "show message history", 'M', true),
-  new command(&ShowWeaponSkills, "show weapon skills", '@', true),
-  new command(&Search, "search", 's', false),
-  new command(&Sit, "sit", '_', false),
-  new command(&Throw, "throw", 't', false),
-  new command(&ToggleRunning, "toggle running", 'u', true),
-  new command(&ForceVomit, "vomit", 'V', false),
-  new command(&NOP, "wait", '.', true),
-  new command(&WieldInRightArm, "wield in right arm", 'w', true),
-  new command(&WieldInLeftArm, "wield in left arm", 'W', true),
+  new command(&Apply, "apply", 'a', 'a', false),
+  new command(&Talk, "chat", 'C', 'C', false),
+  new command(&Close, "close", 'c', 'c', false),
+  new command(&Dip, "dip", '!', '!', true),
+  new command(&Drink, "drink", 'D', 'D', true),
+  new command(&Drop, "drop", 'd', 'd', true),
+  new command(&Eat, "eat", 'e', 'e', true),
+  new command(&WhatToEngrave, "engrave", 'G', 'G', false),
+  new command(&EquipmentScreen, "equipment menu", 'E', 'E', true),
+  new command(&Go, "go", 'g', 'g', false),
+  new command(&GoDown, "go down/enter area", '>', '>', true),
+  new command(&GoUp, "go up", '<', '<', true),
+  new command(&IssueCommand, "issue command(s) to team member(s)", 'I', 'I', false),
+  new command(&Kick, "kick", 'k', 'K', false),
+  new command(&Look, "look", 'l', 'L', true),
+  new command(&AssignName, "name", 'n', 'n', false),
+  new command(&Offer, "offer", 'O', 'f', false),
+  new command(&Open, "open", 'o', 'O', false),
+  new command(&PickUp, "pick up", ',', ',', false),
+  new command(&Pray, "pray", 'p', 'p', false),
+  new command(&Quit, "quit", 'Q', 'Q', true),
+  new command(&Read, "read", 'r', 'r', false),
+  new command(&Rest, "rest/heal", 'h', 'h', true),
+  new command(&Save, "save game", 'S', 'S', true),
+  new command(&ScrollMessagesDown, "scroll messages down", '+', '+', true),
+  new command(&ScrollMessagesUp, "scroll messages up", '-', '-', true),
+  new command(&ShowConfigScreen, "show config screen", '\\', '\\', true),
+  new command(&ShowInventory, "show inventory", 'i', 'i', true),
+  new command(&ShowKeyLayout, "show key layout", '?', '?', true),
+  new command(&DrawMessageHistory, "show message history", 'M', 'M', true),
+  new command(&ShowWeaponSkills, "show weapon skills", '@', '@', true),
+  new command(&Search, "search", 's', 's', false),
+  new command(&Sit, "sit", '_', '_', false),
+  new command(&Throw, "throw", 't', 't', false),
+  new command(&ToggleRunning, "toggle running", 'u', 'U', true),
+  new command(&ForceVomit, "vomit", 'V', 'V', false),
+  new command(&NOP, "wait", '.', '.', true),
+  new command(&WieldInRightArm, "wield in right arm", 'w', 'w', true),
+  new command(&WieldInLeftArm, "wield in left arm", 'W', 'W', true),
 #ifdef WIZARD
-  new command(&WizardMode, "wizard mode activation", 'X', true),
+  new command(&WizardMode, "wizard mode activation", 'X', 'X', true),
 #endif
-  new command(&Zap, "zap", 'z', false),
+  new command(&Zap, "zap", 'z', 'z', false),
 
 #ifdef WIZARD
 
   /* Sort according to key */
 
-  new command(&RaiseStats, "raise stats", '1', true, true),
-  new command(&LowerStats, "lower stats", '2', true, true),
-  new command(&SeeWholeMap, "see whole map", '3', true, true),
-  new command(&WalkThroughWalls, "toggle walk through walls mode", '4', true, true),
-  new command(&RaiseGodRelations, "raise your relations to the gods", '5', true, true),
-  new command(&LowerGodRelations, "lower your relations to the gods", '6', true, true),
-  new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', true, true),
-  new command(&GainAllItems, "gain all items", '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', true, true),
-  new command(&DetachBodyPart, "detach a limb", '0', true, true),
-  new command(&ReloadDatafiles, "reload datafiles", 'R', true, true),
-  new command(&SummonMonster, "summon monster", '&', false, true),
-  new command(&LevelTeleport, "level teleport", '|', false, true),
-  new command(&Possess, "possess creature", '{', false, true),
+  new command(&RaiseStats, "raise stats", '1', '1', true, true),
+  new command(&LowerStats, "lower stats", '2', '2', true, true),
+  new command(&SeeWholeMap, "see whole map", '3', '3', true, true),
+  new command(&WalkThroughWalls, "toggle walk through walls mode", '4', '4', true, true),
+  new command(&RaiseGodRelations, "raise your relations to the gods", '5', '5', true, true),
+  new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
+  new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
+  new command(&GainAllItems, "gain all items", '$', '$', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, true),
+  new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
+  /*new command(&ReloadDatafiles, "reload datafiles", 'R', 'R', true, true),*/
+  new command(&SummonMonster, "summon monster", '&', '&', false, true),
+  new command(&LevelTeleport, "level teleport", '|', '|', false, true),
+  new command(&Possess, "possess creature", '{', '{', false, true),
 
 #endif
 
@@ -315,7 +318,7 @@ bool commandsystem::Consume(character* Char, const char* ConsumeVerb, sorter Sor
   festring Question = CONST_S("What do you wish to ") + ConsumeVerb + '?';
 
   if(!game::IsInWilderness() && StackUnder->SortedItems(Char, Sorter))
-    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"), CONST_S("Items on the ground"), NO_MULTI_SELECT, Sorter);
+    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"), CONST_S("Items on the ground"), CONST_S(""), 0, NO_MULTI_SELECT, Sorter);
   else
     Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
@@ -455,19 +458,7 @@ bool commandsystem::Talk(character* Char)
       return false;
     }
   else if(Characters == 1)
-    {
-      Char->EditAP(-1000);
-
-      if(ToTalk->GetAction() && !ToTalk->GetAction()->CanBeTalkedTo())
-	{
-	  ADD_MESSAGE("%s is silent.", ToTalk->CHAR_NAME(DEFINITE));
-	  return true;
-	}
-
-      ToTalk->BeTalkedTo();
-      Char->EditExperience(CHARISMA, 75, 1 << 7);
-      return true;
-    }
+    return ToTalk->ChatMenu();
   else
     {
       int Dir = game::DirectionQuestion(CONST_S("To whom do you wish to talk to? [press a direction key]"), false, true);
@@ -485,19 +476,7 @@ bool commandsystem::Talk(character* Char)
 	  return true;
 	}
       else if(Dude)
-	{
-	  Char->EditAP(-1000);
-
-	  if(Dude->GetAction() && !Dude->GetAction()->CanBeTalkedTo())
-	    {
-	      ADD_MESSAGE("%s is silent.", Dude->CHAR_NAME(DEFINITE));
-	      return true;
-	    }
-
-	  Dude->BeTalkedTo();
-	  Char->EditExperience(CHARISMA, 75, 1 << 7);
-	  return true;
-	}
+	return Dude->ChatMenu();
       else
 	ADD_MESSAGE("You get no response.");
     }
@@ -1063,59 +1042,7 @@ bool commandsystem::AssignName(character* Char)
 
 bool commandsystem::EquipmentScreen(character* Char)
 {
-  if(!Char->CanUseEquipment())
-    {
-      ADD_MESSAGE("You cannot use equipment.");
-      return false;
-    }
-
-  int Chosen = 0;
-  bool EquipmentChanged = false;
-  felist List(CONST_S("Equipment menu"));
-  festring Entry;
-
-  for(;;)
-    {
-      List.Empty();
-
-      for(int c = 0; c < Char->GetEquipmentSlots(); ++c)
-	{
-	  Entry = Char->GetEquipmentName(c);
-	  Entry << ':';
-	  Entry.Resize(20);
-	  item* Equipment = Char->GetEquipment(c);
-
-	  if(Equipment)
-	    {
-	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
-	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      int ImageKey = game::AddToItemDrawVector(Equipment);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, ImageKey, true);
-	    }
-	  else
-	    {
-	      Entry << (Char->GetBodyPartOfEquipment(c) ? "-" : "can't use");
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, game::AddToItemDrawVector(0));
-	    }
-	}
-
-      game::DrawEverythingNoBlit();
-      game::SetStandardListAttributes(List);
-      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
-      List.SetEntryDrawer(game::ItemEntryDrawer);
-      Chosen = List.Draw();
-      game::ClearItemDrawVector();
-
-      if(Chosen >= Char->GetEquipmentSlots())
-	break;
-
-      EquipmentChanged = Char->TryToChangeEquipment(Chosen);
-    }
-
-  if(EquipmentChanged)
-    Char->DexterityAction(5);
-
-  return EquipmentChanged;
+  return Char->EquipmentScreen(Char->GetStack(), 0);
 }
 
 bool commandsystem::ScrollMessagesDown(character*)
@@ -1192,7 +1119,7 @@ bool commandsystem::WieldInRightArm(character* Char)
 {
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
-  else if(Char->TryToChangeEquipment(RIGHT_WIELDED_INDEX))
+  else if(Char->TryToChangeEquipment(Char->GetStack(), 0, RIGHT_WIELDED_INDEX))
     {
       Char->DexterityAction(5);
       return true;
@@ -1205,7 +1132,7 @@ bool commandsystem::WieldInLeftArm(character* Char)
 {
   if(!Char->CanUseEquipment())
     ADD_MESSAGE("You cannot wield anything.");
-  else if(Char->TryToChangeEquipment(LEFT_WIELDED_INDEX))
+  else if(Char->TryToChangeEquipment(Char->GetStack(), 0, LEFT_WIELDED_INDEX))
     {
       Char->DexterityAction(5);
       return true;
@@ -1580,4 +1507,12 @@ bool commandsystem::ToggleRunning(character*)
 
   game::SetPlayerIsRunning(!game::PlayerIsRunning());
   return false;
+}
+
+bool commandsystem::IssueCommand(character* Char)
+{
+  if(!Char->CheckTalk())
+    return false;
+
+  return game::CommandQuestion();
 }

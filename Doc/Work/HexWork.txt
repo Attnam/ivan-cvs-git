@@ -6,7 +6,7 @@ pakkausalgoritmi, joka hyödyntää tätä. Kovin monimutkainen sen ei tarvitse
 olla, koska senhän pitää yhtä aikaa olla nopea (ehdotan, että autosaveja
 ei kuitenkaan pakata, vaan vain levelistä ja gamesta poistettaessa tehdyt).
 Esimerkiksi voit tehdä taulukon käytetyistä tavuista ja yhdistelmistä ja
-korvata ne lyhyemmillä bittijonoilla tai käyttää niihin RLE-pakkausta.
+korvata ne lyhyemmillä bittijonoilla ja/tai käyttää niihin RLE-pakkausta.
 Luulen, että std::map/std::set voi olla hyödyllistä muistuttaa mieleen.
 FeLibin tiedostoluokkien käyttö on mahdollista, muttei pakollista, koska
 pakkaus on erillinen toimitus. Voit tehdä omaan ohjelmaan testin tai
@@ -25,3 +25,10 @@ käyttäjän antama tai ehkä satunnainen. Databasen luominen saa olla miten
 hidasta vain, mutta sen lataaminen ja nimien tuottaminen siitä on syytä olla
 kohtuullisen tehokasta. Pääalgoritmit pitäisi tulla FeLibiin jotta molemmat
 ohjelmat pystyy käyttämään niitä.
+
+16x16 -> 32x32 tilekonvertoija
+Erillinen commandlineohjelma, joka muuntaa 256-värisen pcx-kuvan neljä
+kertaa isommaksi ja smoothaa syntynyttä tiedostoa. Voit käyttää felibin
+rawbitmap-luokkaa ja sen tallennus- ja latausrutiineja jos et parempia
+tiedä. Minkäänlaista eleganttiutta ei tarvita, koska rutiini on ilmeisen
+kertakäyttöinen.

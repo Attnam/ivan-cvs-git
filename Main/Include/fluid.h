@@ -17,7 +17,7 @@ class fluid : public entity
  public:
   fluid();
   fluid(liquid*, lsquare*);
-  fluid(liquid*, item*, bool);
+  fluid(liquid*, item*, const festring&, bool);
   virtual ~fluid();
   virtual void Be();
   void Save(outputfile&) const;
@@ -41,6 +41,9 @@ class fluid : public entity
   void Redistribute();
   virtual material* RemoveMaterial(material*);
   void Destroy();
+  const festring& GetLocationName() const { return LocationName; }
+  bool IsInside() const { return !!(Flags & FLUID_INSIDE); }
+  bool UseImage() const;
  protected:
   struct imagedata
   {
@@ -86,8 +89,8 @@ class fluid : public entity
      or weapon is unequipped. There is no real need, since the existence
      of the fluid is very temporary anyway. */
   imagedata* GearImage;
-  /* BodyArmors need six gear pictures instead of one */
-  bool HasBodyArmorPictures;
+  ulong Flags;
+  festring LocationName;
   static const long BodyArmorPartPixels[];
 };
 

@@ -268,7 +268,7 @@ festring character::GetZombieDescription() const { return " of " + GetName(INDEF
 bool character::BodyPartCanBeSevered(int I) const { return !!I; }
 bool character::HasBeenSeen() const { return !!(DataBase->Flags & HAS_BEEN_SEEN); }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgMin(0), Stamina(Char.Stamina), MaxStamina(Char.MaxStamina), BlocksSinceLastTurn(0), GenerationDanger(Char.GenerationDanger), CommandFlags(Char.CommandFlags)
 {
   Stack = new stack(0, this, HIDDEN);
 
@@ -1564,7 +1564,7 @@ void character::Save(outputfile& SaveFile) const
 
   SaveFile << NP << AP << Stamina << GenerationDanger;
   SaveFile << TemporaryState << EquipmentState << Money << GoingTo << RegenerationCounter << Route << Illegal;
-  SaveFile << IsEnabled() << Polymorphed << HomeData << BlocksSinceLastTurn;
+  SaveFile << IsEnabled() << Polymorphed << HomeData << BlocksSinceLastTurn << CommandFlags;
 
   for(c = 0; c < BodyParts; ++c)
     SaveFile << BodyPartSlot[c] << OriginalBodyPartID[c];
@@ -1617,7 +1617,7 @@ void character::Load(inputfile& SaveFile)
   if(!ReadType<bool>(SaveFile))
     Disable();
 
-  SaveFile >> Polymorphed >> HomeData >> BlocksSinceLastTurn;
+  SaveFile >> Polymorphed >> HomeData >> BlocksSinceLastTurn >> CommandFlags;
 
   for(c = 0; c < BodyParts; ++c)
     {
@@ -2243,7 +2243,7 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
-  if(IsRetreating() || !IsEnabled())
+  if(StateIsActivated(PANIC) || !IsEnabled())
     return false;
 
   itemvector ItemVector;
@@ -2252,10 +2252,12 @@ bool character::CheckForUsefulItemsOnGround()
   for(uint c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->CanBeSeenBy(this) && ItemVector[c]->IsPickable(this))
       {
-	if(TryToEquip(ItemVector[c]))
+	if(!(CommandFlags & DONT_CHANGE_EQUIPMENT)
+	&& TryToEquip(ItemVector[c]))
 	  return true;
 
-	if(UsesNutrition() && !CheckIfSatiated() && TryToConsume(ItemVector[c]))
+	if(UsesNutrition() && !CheckIfSatiated()
+	&& TryToConsume(ItemVector[c]))
 	  return true;
       }
 
@@ -2267,11 +2269,11 @@ bool character::FollowLeader(character* Leader)
   if(!Leader || Leader == this || !IsEnabled())
     return false;
 
-  if(Leader->CanBeSeenBy(this))
+  if(CommandFlags & FOLLOW_LEADER && Leader->CanBeSeenBy(this))
     {
       vector2d Distance = GetPos() - GoingTo;
 
-      if(abs(int(Distance.X)) <= 2 && abs(int(Distance.Y)) <= 2)
+      if(abs(Distance.X) <= 2 && abs(Distance.Y) <= 2)
 	return false;
       else
 	return MoveTowardsTarget(false);
@@ -2291,8 +2293,34 @@ bool character::FollowLeader(character* Leader)
 
 void character::SeekLeader(const character* Leader)
 {
-  if(Leader && Leader != this && Leader->CanBeSeenBy(this))
-    SetGoingTo(Leader->GetPos());
+  if(Leader && Leader != this)
+    if(Leader->CanBeSeenBy(this))
+      {
+	if(CommandFlags & FOLLOW_LEADER)
+	  SetGoingTo(Leader->GetPos());
+      }
+    else if(!IsGoingSomeWhere())
+      {
+	team* Team = GetTeam();
+
+	for(std::list<character*>::const_iterator i = Team->GetMember().begin();
+	    i != Team->GetMember().end(); ++i)
+	  if((*i)->IsEnabled()
+	  && (*i)->GetID() != GetID()
+	  && (CommandFlags & FOLLOW_LEADER)
+	  == ((*i)->CommandFlags & FOLLOW_LEADER)
+	  && (*i)->CanBeSeenBy(this))
+	    {
+	      vector2d Pos = (*i)->GetPos();
+	      vector2d Distance = GetPos() - Pos;
+
+	      if(abs(Distance.X) > 2 && abs(Distance.Y) > 2)
+		{
+		  SetGoingTo(Pos);
+		  break;
+		}
+	    }
+      }
 }
 
 int character::GetMoveEase() const
@@ -2331,7 +2359,7 @@ bool character::Displace(character* Who, bool Forced)
     }
 
   if(IsSmall() && Who->IsSmall() 
-   && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.0))
+   && (Forced || (Who->CanBeDisplaced() && GetRelativeDanger(Who) > 1.))
    && !IsStuck() && !Who->IsStuck()
    && (!Who->GetAction() || Who->GetAction()->TryDisplace())
    && CanMove() && Who->CanMove() && Who->CanMoveOn(GetLSquareUnder()))
@@ -2771,7 +2799,7 @@ void character::TeleportRandomly()
 	{
 	  vector2d PlayersInput = game::PositionQuestion(CONST_S("Where do you wish to teleport? [direction keys move cursor, space accepts]"), GetPos(), 0, 0, false);
 
-	  if(PlayersInput == vector2d(-1, -1)) // esc pressed
+	  if(PlayersInput == ERROR_VECTOR) // esc pressed
 	    PlayersInput = GetPos();
 
 	  lsquare* Square = GetNearLSquare(PlayersInput);
@@ -3176,13 +3204,13 @@ int character::GetResistance(int Type) const
     {
     case PHYSICAL_DAMAGE:
     case SOUND:
-    case ACID:
     case DRAIN:
       return 0;
     case ENERGY: return GetEnergyResistance();
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
     case ELECTRICITY: return GetElectricityResistance();
+    case ACID: return GetAcidResistance();
     }
 
   ABORT("Resistance lack detected!");
@@ -3244,7 +3272,7 @@ void character::Regenerate()
 
       EditNP(-Max(7500 / MaxHP, 1));
       RegenerationCounter -= 1250000;
-      EditExperience(ENDURANCE, Min(5000 * BodyPart->GetMaxHP() / (BodyPart->GetHP() * BodyPart->GetHP()), 300), 1 << 9);
+      EditExperience(ENDURANCE, Min(5000 * BodyPart->GetMaxHP() / (BodyPart->GetHP() * BodyPart->GetHP()), 300), 400);
     }
 }
 
@@ -3516,6 +3544,7 @@ void character::Initialize(int NewConfig, int SpecialFlags)
 
       CreateBodyParts(SpecialFlags | NO_PIC_UPDATE);
       InitSpecialAttributes();
+      CommandFlags = GetDefaultCommandFlags();
 
       if(!GetDefaultName().IsEmpty())
 	SetAssignedName(GetDefaultName());
@@ -3843,6 +3872,9 @@ void character::DrawPanel(bool AnimationDraw) const
     case BURDENED:
       FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Burdened");
     }
+
+  //if(GetBurdenState() != UNBURDENED)
+  //  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, GetVerbalBurdenStateColor(), "%s", festring(GetVerbalBurdenState()).Capitalize().CStr);
 
   switch(GetTirednessState())
     {
@@ -5343,7 +5375,11 @@ bool character::TryToEquip(item* Item)
       {
 	sorter Sorter = EquipmentSorter(e);
 
-	if(Sorter == 0 || (Item->*Sorter)(this))
+	if((Sorter == 0 || (Item->*Sorter)(this))
+	&& ((e != RIGHT_WIELDED_INDEX && e != LEFT_WIELDED_INDEX)
+	 || Item->IsWeapon(this)
+	 || Item->IsShield(this))
+	&& AllowEquipment(Item, e))
 	  {
 	    item* OldEquipment = GetEquipment(e);
 
@@ -5426,7 +5462,8 @@ bool character::TryToEquip(item* Item)
 
 bool character::TryToConsume(item* Item)
 {
-  if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
+  if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this)
+  && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
     {
       ConsumeItem(Item, Item->GetConsumeMaterial(this)->GetConsumeVerb());
       return true;
@@ -5968,7 +6005,7 @@ bool character::MoveTowardsHomePos()
     return false;
 }
 
-bool character::TryToChangeEquipment(int Chosen)
+bool character::TryToChangeEquipment(stack* MainStack, stack* SecStack, int Chosen)
 {
   if(!GetBodyPartOfEquipment(Chosen))
     {
@@ -5978,10 +6015,19 @@ bool character::TryToChangeEquipment(int Chosen)
 
   item* OldEquipment = GetEquipment(Chosen);
 
-  if(OldEquipment)
-    GetEquipment(Chosen)->MoveTo(GetStack());
+  if(!IsPlayer() && BoundToUse(OldEquipment, Chosen))
+    {
+      ADD_MESSAGE("%s refuses to unequip %s.", CHAR_DESCRIPTION(DEFINITE), OldEquipment->CHAR_NAME(DEFINITE));
+      return false;
+    }
 
-  if(!GetStack()->SortedItems(this, EquipmentSorter(Chosen)))
+  if(OldEquipment)
+    GetEquipment(Chosen)->MoveTo(MainStack);
+
+  sorter Sorter = EquipmentSorter(Chosen);
+
+  if(!MainStack->SortedItems(this, Sorter)
+  && (!SecStack || !SecStack->SortedItems(this, Sorter)))
     {
       ADD_MESSAGE("You haven't got any item that could be used for this purpose.");
       return false;
@@ -5990,7 +6036,18 @@ bool character::TryToChangeEquipment(int Chosen)
     {
       game::DrawEverythingNoBlit();
       itemvector ItemVector;
-      int Return = GetStack()->DrawContents(ItemVector, this, CONST_S("Choose ") + GetEquipmentName(Chosen) + ':', NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
+      //int Return = MainStack->DrawContents(ItemVector, this, CONST_S("Choose ") + GetEquipmentName(Chosen) + ':', NONE_AS_CHOICE|NO_MULTI_SELECT, Sorter);
+      int Return = MainStack->DrawContents(ItemVector,
+					   SecStack,
+					   this,
+					   CONST_S("Choose ") + GetEquipmentName(Chosen) + ':',
+					   SecStack ? CONST_S("Items in your inventory") : CONST_S(""),
+					   SecStack ? CONST_S("Items in ") + GetPossessivePronoun() + " inventory" : CONST_S(""),
+					   SecStack ? GetDescription(DEFINITE) + " is " + GetVerbalBurdenState() : CONST_S(""),
+					   GetVerbalBurdenStateColor(),
+					   NONE_AS_CHOICE|NO_MULTI_SELECT,
+					   Sorter);
+
 
       if(Return == ESCAPED)
 	{
@@ -6011,7 +6068,7 @@ bool character::TryToChangeEquipment(int Chosen)
 	  SetEquipment(Chosen, Item);
 
 	  if(CheckIfEquipmentIsNotUsable(Chosen))
-	    Item->MoveTo(GetStack());
+	    Item->MoveTo(MainStack); // small bug?
 	}
 
       return Item != OldEquipment;
@@ -6046,7 +6103,7 @@ void character::ParasitizedHandler()
 
 bool character::CanFollow() const
 {
-  return CanMove() && !IsRetreating();
+  return CanMove() && !StateIsActivated(PANIC);
 }
 
 festring character::GetKillName() const
@@ -7363,8 +7420,8 @@ void character::SignalSeen()
 
 int character::GetPolymorphIntelligenceRequirement(const character* Polymorpher) const
 {
-  if(DataBase->PolymorphIntelligenceRequirement == DEPENDS_ON_DANGER)
-    return Min(int(GetRelativeDanger(Polymorpher, true) * 10), 100);
+  if(DataBase->PolymorphIntelligenceRequirement == DEPENDS_ON_ATTRIBUTES)
+    return Max(GetAttributeAverage() - 5, 0);
   else
     return DataBase->PolymorphIntelligenceRequirement;
 }
@@ -7901,4 +7958,313 @@ bool character::IsSameAs(const character* What) const
 {
   return What->GetType() == GetType()
       && What->GetConfig() == GetConfig();
+}
+
+ulong character::GetCommandFlags() const
+{
+  return !StateIsActivated(PANIC)
+       ? CommandFlags
+       : CommandFlags|FLEE_FROM_ENEMIES;
+}
+
+ulong character::GetConstantCommandFlags() const
+{
+  return !StateIsActivated(PANIC)
+       ? DataBase->ConstantCommandFlags
+       : DataBase->ConstantCommandFlags|FLEE_FROM_ENEMIES;
+}
+
+ulong character::GetPossibleCommandFlags() const
+{
+  int Int = GetAttribute(INTELLIGENCE);
+  ulong Flags = ALL_COMMAND_FLAGS;
+
+  if(!CanMove() || Int < 4)
+    Flags &= ~(FOLLOW_LEADER|FLEE_FROM_ENEMIES);
+
+  if(!CanUseEquipment() || Int < 8)
+    Flags &= ~DONT_CHANGE_EQUIPMENT;
+
+  if(!UsesNutrition() || Int < 8)
+    Flags &= ~DONT_CONSUME_ANYTHING_VALUABLE;
+
+  return Flags;
+}
+
+bool character::IsRetreating() const
+{
+  return StateIsActivated(PANIC)
+      || (CommandFlags & FLEE_FROM_ENEMIES && IsPet());
+}
+
+bool character::ChatMenu()
+{
+  if(GetAction() && !GetAction()->CanBeTalkedTo())
+    {
+      ADD_MESSAGE("%s is silent.", CHAR_DESCRIPTION(DEFINITE));
+      PLAYER->EditAP(-200);
+      return true;
+    }
+
+  ulong ManagementFlags = GetManagementFlags();
+
+  if(ManagementFlags == CHAT_IDLY || !IsPet())
+    return ChatIdly();
+
+  static const char*const ChatMenuEntry[CHAT_MENU_ENTRIES] =
+  {
+    "Change equipment",
+    "Take items",
+    "Give items",
+    "Issue commands",
+    "Chat idly",
+  };
+
+  static const petmanagementfunction PMF[CHAT_MENU_ENTRIES] =
+  {
+    &character::ChangePetEquipment,
+    &character::TakePetItems,
+    &character::GivePetItems,
+    &character::IssuePetCommands,
+    &character::ChatIdly
+  };
+
+  felist List(CONST_S("Choose action:"));
+  game::SetStandardListAttributes(List);
+  List.AddFlags(SELECTABLE);
+  int c, i;
+
+  for(c = 0; c < CHAT_MENU_ENTRIES; ++c)
+    if(1 << c & ManagementFlags)
+      List.AddEntry(ChatMenuEntry[c], LIGHT_GRAY);
+
+  int Chosen = List.Draw();
+
+  if(Chosen & FELIST_ERROR_BIT)
+    return false;
+
+  for(c = 0, i = 0; c < CHAT_MENU_ENTRIES; ++c)
+    if(1 << c & ManagementFlags && i++ == Chosen)
+      return (this->*PMF[c])();
+
+  return false; // dummy
+}
+
+bool character::ChangePetEquipment()
+{
+  if(EquipmentScreen(PLAYER->GetStack(), GetStack()))
+    {
+      DexterityAction(3);
+      return true;
+    }
+
+  return false;
+}
+
+bool character::TakePetItems()
+{
+  bool Success = false;
+  stack::SetSelected(0);
+
+  for(;;)
+    {
+      itemvector ToTake;
+      game::DrawEverythingNoBlit();
+      GetStack()->DrawContents(ToTake,
+			       0,
+			       PLAYER,
+			       CONST_S("What do you want to take from ") + CHAR_DESCRIPTION(DEFINITE) + '?',
+			       CONST_S(""),
+			       CONST_S(""),
+			       GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
+			       GetVerbalBurdenStateColor(),
+			       REMEMBER_SELECTED);
+
+      if(ToTake.empty())
+	break;
+
+      for(uint c = 0; c < ToTake.size(); ++c)
+	ToTake[c]->MoveTo(PLAYER->GetStack());
+
+      ADD_MESSAGE("You take %s.", ToTake[0]->GetName(DEFINITE, ToTake.size()).CStr());
+      Success = true;
+    }
+
+  if(Success)
+    {
+      DexterityAction(2);
+      PLAYER->DexterityAction(2);
+    }
+
+  return Success;
+}
+
+bool character::GivePetItems()
+{
+  bool Success = false;
+  stack::SetSelected(0);
+
+  for(;;)
+    {
+      itemvector ToGive;
+      game::DrawEverythingNoBlit();
+      PLAYER->GetStack()->DrawContents(ToGive,
+				       0,
+				       this,
+				       CONST_S("What do you want to give to ") + CHAR_DESCRIPTION(DEFINITE) + '?',
+				       CONST_S(""),
+				       CONST_S(""),
+				       GetDescription(DEFINITE) + " is " + GetVerbalBurdenState(),
+				       GetVerbalBurdenStateColor(),
+				       REMEMBER_SELECTED);
+
+      if(ToGive.empty())
+	break;
+
+      for(uint c = 0; c < ToGive.size(); ++c)
+	ToGive[c]->MoveTo(GetStack());
+
+      ADD_MESSAGE("You give %s to %s.", ToGive[0]->GetName(DEFINITE, ToGive.size()).CStr(), CHAR_DESCRIPTION(DEFINITE));
+      Success = true;
+    }
+
+  if(Success)
+    {
+      DexterityAction(2);
+      PLAYER->DexterityAction(2);
+    }
+
+  return Success;
+}
+
+bool character::IssuePetCommands()
+{
+  ulong PossibleC = GetPossibleCommandFlags();
+
+  if(!PossibleC)
+    {
+      ADD_MESSAGE("%s cannot be commanded.", CHAR_DESCRIPTION(DEFINITE));
+      return false;
+    }
+
+  ulong OldC = GetCommandFlags();
+  ulong NewC = OldC, VaryFlags = 0;
+  game::CommandScreen(CONST_S("Issue commands to ") + GetDescription(DEFINITE), PossibleC, GetConstantCommandFlags(), VaryFlags, NewC);
+
+  if(NewC == OldC)
+    return false;
+
+  SetCommandFlags(NewC);
+  PLAYER->EditAP(-500);
+  PLAYER->EditExperience(CHARISMA, 25, 1 << 7);
+  return true;
+}
+
+bool character::ChatIdly()
+{
+  BeTalkedTo();
+  PLAYER->EditAP(-1000);
+  PLAYER->EditExperience(CHARISMA, 75, 1 << 7);
+  return true;
+}
+
+bool character::EquipmentScreen(stack* MainStack, stack* SecStack)
+{
+  if(!CanUseEquipment())
+    {
+      ADD_MESSAGE("%s cannot use equipment.", CHAR_DESCRIPTION(DEFINITE));
+      return false;
+    }
+
+  int Chosen = 0;
+  bool EquipmentChanged = false;
+  felist List(CONST_S("Equipment menu"));
+  festring Entry;
+
+  for(;;)
+    {
+      List.Empty();
+      List.EmptyDescription();
+
+      if(!IsPlayer())
+	{
+	  List.AddDescription(CONST_S(""));
+	  List.AddDescription(festring(GetDescription(DEFINITE) + " is " + GetVerbalBurdenState()).CapitalizeCopy(), GetVerbalBurdenStateColor());
+	}
+
+      for(int c = 0; c < GetEquipmentSlots(); ++c)
+	{
+	  Entry = GetEquipmentName(c);
+	  Entry << ':';
+	  Entry.Resize(20);
+	  item* Equipment = GetEquipment(c);
+
+	  if(Equipment)
+	    {
+	      Equipment->AddInventoryEntry(this, Entry, 1, true);
+	      AddSpecialEquipmentInfo(Entry, c);
+	      int ImageKey = game::AddToItemDrawVector(Equipment);
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, ImageKey, true);
+	    }
+	  else
+	    {
+	      Entry << (GetBodyPartOfEquipment(c) ? "-" : "can't use");
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, game::AddToItemDrawVector(0));
+	    }
+	}
+
+      game::DrawEverythingNoBlit();
+      game::SetStandardListAttributes(List);
+      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+      List.SetEntryDrawer(game::ItemEntryDrawer);
+      Chosen = List.Draw();
+      game::ClearItemDrawVector();
+
+      if(Chosen >= GetEquipmentSlots())
+	break;
+
+      EquipmentChanged = TryToChangeEquipment(MainStack, SecStack, Chosen);
+    }
+
+  if(EquipmentChanged)
+    DexterityAction(5);
+
+  return EquipmentChanged;
+}
+
+ulong character::GetManagementFlags() const
+{
+  ulong Flags = ALL_MANAGEMENT_FLAGS;
+
+  if(!CanUseEquipment())
+    Flags &= ~CHANGE_EQUIPMENT;
+
+  if(!GetStack()->GetItems())
+    Flags &= ~TAKE_ITEMS;
+
+  if(!WillCarryItems())
+    Flags &= ~GIVE_ITEMS;
+
+  if(!GetPossibleCommandFlags())
+    Flags &= ~ISSUE_COMMANDS;
+
+  return Flags;
+}
+
+const char* VerbalBurdenState[] = { "overloaded", "stressed", "burdened", "unburdened" };
+color16 VerbalBurdenStateColor[] = { RED, BLUE, BLUE, WHITE };
+
+const char* character::GetVerbalBurdenState() const
+{
+  return VerbalBurdenState[BurdenState];
+}
+
+color16 character::GetVerbalBurdenStateColor() const
+{
+  return VerbalBurdenStateColor[BurdenState];
+}
+
+int character::GetAttributeAverage() const
+{
+  return GetSumOfAttributes() / 7;
 }

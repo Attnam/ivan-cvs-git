@@ -253,7 +253,10 @@ bool item::Consume(character* Eater, long Amount)
 
 bool item::CanBeEatenByAI(const character* Eater) const
 {
-  return GetConsumeMaterial(Eater)->CanBeEatenByAI(Eater);
+  return (!Eater->IsPet()
+       || !(Eater->GetCommandFlags() & DONT_CONSUME_ANYTHING_VALUABLE)
+       || !IsValuable())
+      && GetConsumeMaterial(Eater)->CanBeEatenByAI(Eater);
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -303,7 +306,7 @@ void item::Load(inputfile& SaveFile)
 
 void item::TeleportRandomly()
 {
-  if(GetSquaresUnder() != 1) // gum solution
+  if(GetSquaresUnder() == 1) // gum solution
     {
       lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
       MoveTo(Square->GetStack());
@@ -368,12 +371,12 @@ int item::GetResistance(int Type) const
     case PHYSICAL_DAMAGE: return GetStrengthValue();
     case SOUND:
     case ENERGY:
-    case ACID:
     case DRAIN:
       return 0;
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
     case ELECTRICITY: return GetElectricityResistance();
+    case ACID: return GetAcidResistance();
     }
 
   ABORT("Resistance lack detected!");
@@ -689,6 +692,7 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && (WeightIsIrrelevant() || Weight == Item->Weight)
       && MainMaterial->IsSameAs(Item->MainMaterial)
       && MainMaterial->GetSpoilLevel() == Item->MainMaterial->GetSpoilLevel()
+      && MainMaterial->GetRustLevel() == Item->MainMaterial->GetRustLevel()
       && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item)
       && !Fluid && !Item->Fluid;
@@ -1136,7 +1140,7 @@ void item::RemoveFluid(fluid* ToBeRemoved)
   SignalVolumeAndWeightChange();
 }
 
-void item::AddFluid(liquid* ToBeAdded, int SquareIndex)
+void item::AddFluid(liquid* ToBeAdded, festring LocationName, int SquareIndex, bool IsInside)
 {
   if(Slot[0])
     {
@@ -1151,7 +1155,7 @@ void item::AddFluid(liquid* ToBeAdded, int SquareIndex)
       fluid* F = Fluid[SquareIndex];
 
       if(!F)
-	Fluid[SquareIndex] = new fluid(ToBeAdded, this, ShowFluids());
+	Fluid[SquareIndex] = new fluid(ToBeAdded, this, LocationName, IsInside);
       else
 	{
 	  fluid* LF;
@@ -1170,14 +1174,14 @@ void item::AddFluid(liquid* ToBeAdded, int SquareIndex)
 	    }
 	  while(F);
 
-	  LF->Next = new fluid(ToBeAdded, this, ShowFluids());
+	  LF->Next = new fluid(ToBeAdded, this, LocationName, IsInside);
 	}
     }
   else
     {
       Fluid = new fluid*[SquaresUnder];
       memset(Fluid, 0, SquaresUnder * sizeof(fluid*));
-      Fluid[SquareIndex] = new fluid(ToBeAdded, this, ShowFluids());
+      Fluid[SquareIndex] = new fluid(ToBeAdded, this, LocationName, IsInside);
     }
 
   UpdatePictures();
@@ -1215,7 +1219,7 @@ void item::FillFluidVector(fluidvector& Vector, int SquareIndex) const
 void item::SpillFluid(character*, liquid* Liquid, int SquareIndex)
 {
   if(AllowFluids() && Liquid->GetVolume())
-    AddFluid(Liquid, SquareIndex);
+    AddFluid(Liquid, "", SquareIndex, false);
   else
     delete Liquid;
 }
@@ -1261,7 +1265,7 @@ void item::DrawFluids(bitmap* Bitmap, vector2d Pos, color24 Luminance, int Squar
     F->Draw(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
-void item::ReceiveAcid(material*, long Modifier)
+void item::ReceiveAcid(material*, const festring&, long Modifier)
 {
   if(!GetMainMaterial()->IsImmuneToAcid())
     {
@@ -1282,7 +1286,7 @@ void item::DonateFluidsTo(item* Item)
       for(fluid* F = Fluid[c]; F; F = F->Next)
 	{
 	  liquid* Liquid = F->GetLiquid();
-	  Item->AddFluid(Liquid->CloneLiquid(Liquid->GetVolume()), c);
+	  Item->AddFluid(Liquid->CloneLiquid(Liquid->GetVolume()), F->GetLocationName(), c, F->IsInside());
 	}
 }
 
@@ -1395,4 +1399,20 @@ bool item::IsVeryCloseToSpoiling() const
       return false;
 
   return true;
+}
+
+bool item::IsValuable() const
+{
+  if(DataBase->IsValuable)
+    return true;
+
+  for(int c = 0; c < GetMaterials(); ++c)
+    {
+      material* M = GetMaterial(c);
+
+      if(M && M->IsValuable())
+	return true;
+    }
+
+  return false;
 }

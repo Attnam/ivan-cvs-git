@@ -361,3 +361,5 @@ Mind worm
 		"Our Secret War"'
 
 	(from Sid Meier's Alpha Centauri)
+
+Monster which can eat metals

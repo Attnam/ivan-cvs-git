@@ -148,6 +148,7 @@ class ABSTRACT_CHARACTER
   virtual void DropBodyPart(int);
   virtual void DuplicateEquipment(character*, ulong);
   bool IsImmuneToLeprosy() const;
+  virtual int GetAttributeAverage() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
@@ -321,9 +322,15 @@ class CHARACTER
   virtual bool MoveRandomly();
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void BeTalkedTo();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  void SetItemVolume(long What) { ItemVolume = What; }
  protected:
+  virtual void VirtualConstructor(bool);
   virtual bool AddAdjective(festring&, bool) const;
   virtual material* CreateBodyPartMaterial(int, long) const;
+  virtual void CreateCorpse(lsquare*);
+  long ItemVolume;
 );
 
 class CHARACTER
@@ -433,6 +440,7 @@ class CHARACTER
  public:
   virtual int TakeHit(character*, item*, bodypart*, vector2d, double, double, int, int, int, bool, bool);
   virtual bool ReceiveDamage(character*, int, int, int = ALL, int = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual bool AllowEquipment(const item*, int) const;
 );
 
 class CHARACTER

@@ -710,7 +710,7 @@ struct databasebase { int Config; };
 #define HAS_BEEN_GENERATED 1
 #define HAS_BEEN_SEEN 2
 
-#define DEPENDS_ON_DANGER 0xFFFF
+#define DEPENDS_ON_ATTRIBUTES 0xFFFF
 
 /* Tiredness states */
 
@@ -731,9 +731,31 @@ struct databasebase { int Config; };
 #define LE_RAND_SHIFT 18
 #define LE_RAND_RANGE 0x3FFF
 
-/* Action flags */
+/* action flags */
 
 #define IN_DND_MODE 1
 #define TERMINATING 2
+
+/* fluid flags */
+
+#define HAS_BODY_ARMOR_PICTURES 1
+#define FLUID_INSIDE 2
+
+#define COMMAND_FLAGS 4
+#define ALL_COMMAND_FLAGS (1|2|4|8)
+
+#define FOLLOW_LEADER 1
+#define FLEE_FROM_ENEMIES 2
+#define DONT_CHANGE_EQUIPMENT 4
+#define DONT_CONSUME_ANYTHING_VALUABLE 8
+
+#define CHAT_MENU_ENTRIES 5
+#define ALL_MANAGEMENT_FLAGS (1|2|4|8|16)
+
+#define CHANGE_EQUIPMENT 1
+#define TAKE_ITEMS 2
+#define GIVE_ITEMS 4
+#define ISSUE_COMMANDS 8
+#define CHAT_IDLY 16
 
 #endif

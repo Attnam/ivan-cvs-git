@@ -23,6 +23,9 @@ void id::AddName(festring& Name, int Case) const
   else
     Articled = !(Case & PLURAL) && (Case & ARTICLE_BIT) && (Case & INDEFINE_BIT) && GetArticleMode() != NO_ARTICLE;
 
+  if(AddRustLevelDescription(Name, Articled))
+    Articled = false;
+
   if(AddAdjective(Name, Articled))
     Articled = false;
 

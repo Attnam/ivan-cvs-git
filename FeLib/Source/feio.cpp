@@ -21,7 +21,7 @@
 #include "feio.h"
 #include "whandler.h"
 #include "felist.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "festring.h"
 #include "bitmap.h"
 

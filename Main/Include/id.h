@@ -24,6 +24,7 @@ class id
   virtual void AddNameSingular(festring&, bool) const;
   virtual const festring& GetNamePlural() const = 0;
   virtual const festring& GetArticle() const = 0;
+  virtual bool AddRustLevelDescription(festring&, bool) const { return false; }
   virtual bool AddAdjective(festring&, bool) const;
   virtual const festring& GetAdjective() const = 0;
   virtual const festring& GetAdjectiveArticle() const = 0;

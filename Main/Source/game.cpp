@@ -11,7 +11,7 @@
 
 #include "whandler.h"
 #include "hscore.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "message.h"
 #include "feio.h"
 #include "team.h"
@@ -82,6 +82,8 @@ bool game::PlayerSumoChampion;
 ulong game::SquarePartEmitationTick = 0;
 long game::Turn;
 bool game::PlayerRunning;
+character* game::LastCharacterUnderCommandCursor;
+charactervector game::CommandVector;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -1309,7 +1311,7 @@ int game::AskForKeyPress(const festring& Topic)
  * KeyHandler is called when the key has NOT been identified as a movement key
  * Both can be deactivated by passing 0 as parameter */  
 
-vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
+vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void (*Handler)(vector2d), positionkeyhandler KeyHandler, bool Zoom)
 {
   int Key = 0;
   SetDoZoom(Zoom);
@@ -1332,7 +1334,7 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
 
       if(Key == KEY_ESC)
 	{
-	  Return = vector2d(-1, -1);
+	  Return = ERROR_VECTOR;
 	  break;
 	}
 
@@ -1351,7 +1353,15 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
 	    Handler(CursorPos);
 	}
       else if(KeyHandler)
-	KeyHandler(CursorPos, Key);
+	{
+	  CursorPos = KeyHandler(CursorPos, Key);
+
+	  if(CursorPos == ERROR_VECTOR || CursorPos == ABORT_VECTOR)
+	    {
+	      Return = CursorPos;
+	      break;
+	    }
+	}
 
       if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
 	UpdateCameraXWithPos(CursorPos.X);
@@ -1497,7 +1507,7 @@ int game::KeyQuestion(const festring& Message, int DefaultAnswer, int KeyNumber,
   return Return;
 }
 
-void game::LookKeyHandler(vector2d CursorPos, int Key)
+vector2d game::LookKeyHandler(vector2d CursorPos, int Key)
 {
   square* Square = GetCurrentArea()->GetSquare(CursorPos);
 
@@ -1534,9 +1544,11 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 
       break;
     }
+
+  return CursorPos;
 }
 
-void game::NameKeyHandler(vector2d CursorPos, int Key)
+vector2d game::NameKeyHandler(vector2d CursorPos, int Key)
 {
   switch(Key)
     {
@@ -1563,6 +1575,8 @@ void game::NameKeyHandler(vector2d CursorPos, int Key)
 
       break;
     }
+
+  return CursorPos;
 }
 
 void game::End(bool Permanently, bool AndGoToMenu)
@@ -2883,4 +2897,240 @@ inputfile& operator>>(inputfile& SaveFile, killdata& Value)
 {
   SaveFile >> Value.Amount >> Value.DangerSum;
   return SaveFile;
+}
+
+bool DistanceOrderer(character* C1, character* C2)
+{
+  vector2d PlayerPos = PLAYER->GetPos();
+  vector2d Pos1 = C1->GetPos();
+  vector2d Pos2 = C2->GetPos();
+  int D1 = Max(abs(Pos1.X - PlayerPos.X), abs(Pos1.Y - PlayerPos.Y));
+  int D2 = Max(abs(Pos2.X - PlayerPos.X), abs(Pos2.Y - PlayerPos.Y));
+
+  if(D1 != D2)
+    return D1 < D2;
+  else if(Pos1.Y != Pos2.Y)
+    return Pos1.Y < Pos2.Y;
+  else
+    return Pos1.X < Pos2.X;
+}
+
+bool game::CommandQuestion()
+{
+  CommandVector.clear();
+  team* Team = GetTeam(PLAYER_TEAM);
+
+  for(std::list<character*>::const_iterator i = Team->GetMember().begin();
+      i != Team->GetMember().end(); ++i)
+    if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->CanBeSeenByPlayer())
+      CommandVector.push_back(*i);
+
+  if(CommandVector.empty())
+    {
+      ADD_MESSAGE("You don't detect any friends to command.");
+      return false;
+    }
+
+  character* Char;
+
+  if(CommandVector.size() == 1)
+    Char = CommandVector[0];
+  else
+    {
+      std::sort(CommandVector.begin(), CommandVector.end(), DistanceOrderer);
+      LastCharacterUnderCommandCursor = CommandVector[0];
+      vector2d Pos = CommandVector[0]->GetPos();
+      Pos = PositionQuestion(CONST_S("Whom do you wish to command? [direction keys/'+'/'-'/'a'/space/esc]"), Pos, 0, &CommandKeyHandler);
+
+      if(Pos == ERROR_VECTOR)
+	return false;
+
+      if(Pos == ABORT_VECTOR)
+	return true;
+
+      Char = CurrentArea->GetSquare(Pos)->GetCharacter();
+
+      if(!Char || !Char->CanBeSeenByPlayer())
+	{
+	  ADD_MESSAGE("You don't see anyone here to command.");
+	  return false;
+	}
+
+      if(Char->IsPlayer())
+	{
+	  ADD_MESSAGE("You do that all the time.");
+	  return false;
+	}
+
+      if(!Char->IsPet())
+	{
+	  ADD_MESSAGE("%s refuses to be commanded by you.", Char->CHAR_NAME(DEFINITE));
+	  return false;
+	}
+    }
+
+  return Char->IssuePetCommands();
+}
+
+void game::CommandHandler(vector2d CursorPos)
+{
+  character* Char = CurrentArea->GetSquare(CursorPos)->GetCharacter();
+
+  if(Char && !Char->IsPlayer() && Char->IsPet())
+    LastCharacterUnderCommandCursor = Char;
+}
+
+vector2d game::CommandKeyHandler(vector2d CursorPos, int Key)
+{
+  if(Key == '+')
+    {
+      for(int c = 0; c < CommandVector.size(); ++c)
+	if(CommandVector[c] == LastCharacterUnderCommandCursor)
+	  {
+	    if(++c == CommandVector.size())
+	      c = 0;
+
+	    LastCharacterUnderCommandCursor = CommandVector[c];
+	    return CommandVector[c]->GetPos();
+	  }
+    }
+  else if(Key == '-')
+    {
+      for(int c = 0; c < CommandVector.size(); ++c)
+	if(CommandVector[c] == LastCharacterUnderCommandCursor)
+	  {
+	    if(!c)
+	      c = CommandVector.size();
+
+	    LastCharacterUnderCommandCursor = CommandVector[--c];
+	    return CommandVector[c]->GetPos();
+	  }
+    }
+  else if(Key == 'a' || Key == 'A')
+    return CommandAll() ? ABORT_VECTOR : ERROR_VECTOR;
+
+  return CursorPos;
+}
+
+void game::CommandScreen(const festring& Topic, ulong PossibleFlags, ulong ConstantFlags, ulong& VaryFlags, ulong& Flags)
+{
+  static const char* CommandDescription[COMMAND_FLAGS] =
+  {
+    "Follow me",
+    "Flee from enemies",
+    "Don't change your equipment",
+    "Don't consume anything valuable"
+  };
+
+  felist List(Topic);
+  SetStandardListAttributes(List);
+  List.AddFlags(SELECTABLE);
+  List.AddDescription(CONST_S(""));
+  List.AddDescription(CONST_S("Command                                                        Active?"));
+
+  for(;;)
+    {
+      int c, i;
+
+      for(c = 0; c < COMMAND_FLAGS; ++c)
+	if(1 << c & PossibleFlags)
+	  {
+	    bool Changeable = !(1 << c & ConstantFlags);
+	    festring Entry;
+
+	    if(Changeable)
+	      {
+		Entry = CommandDescription[c];
+		Entry.Resize(60);
+	      }
+	    else
+	      {
+		Entry << "   " << CommandDescription[c];
+		Entry.Resize(63);
+	      }
+
+	    if(1 << c & VaryFlags)
+	      Entry << "varies";
+	    else
+	      Entry << (1 << c & Flags ? "yes" : "no");
+
+	    List.AddEntry(Entry, Changeable ? LIGHT_GRAY : DARK_GRAY, 0, NO_IMAGE, Changeable);
+	  }
+
+      int Chosen = List.Draw();
+
+      if(Chosen & FELIST_ERROR_BIT)
+	return;
+
+      for(c = 0, i = 0; c < COMMAND_FLAGS; ++c)
+	if(1 << c & PossibleFlags && !(1 << c & ConstantFlags) && i++ == Chosen)
+	  {
+	    if(1 << c & VaryFlags)
+	      {
+		VaryFlags &= ~(1 << c);
+		Flags |= 1 << c;
+	      }
+	    else
+	      Flags ^= 1 << c;
+
+	    break;
+	  }
+
+      List.Empty();
+      game::DrawEverythingNoBlit();
+    }
+}
+
+bool game::CommandAll()
+{
+  ulong PossibleFlags = 0, ConstantFlags = ALL_COMMAND_FLAGS, VaryFlags = 0, OldFlags = 0;
+  int c1, c2;
+
+  for(c1 = 0; c1 < CommandVector.size(); ++c1)
+    {
+      ConstantFlags &= CommandVector[c1]->GetConstantCommandFlags();
+      ulong C = CommandVector[c1]->GetCommandFlags();
+      ulong ThisPossible = CommandVector[c1]->GetPossibleCommandFlags();
+
+      for(c2 = 0; c2 < COMMAND_FLAGS; ++c2)
+	if(1 << c2 & PossibleFlags & ThisPossible
+	&& (1 << c2 & C) != (1 << c2 & OldFlags))
+	  VaryFlags |= 1 << c2;
+
+      PossibleFlags |= ThisPossible;
+      OldFlags |= C & ThisPossible;
+    }
+
+  if(!PossibleFlags)
+    {
+      ADD_MESSAGE("Not a single creature in your visible team can be commanded.");
+      return false;
+    }
+
+  ulong NewFlags = OldFlags;
+  CommandScreen(CONST_S("Issue commands to whole visible team"), PossibleFlags, ConstantFlags, VaryFlags, NewFlags);
+  bool Change = false;
+
+  for(c1 = 0; c1 < CommandVector.size(); ++c1)
+    {
+      character* Char = CommandVector[c1];
+      ulong OldC = Char->GetCommandFlags();
+      ulong ConstC = Char->GetConstantCommandFlags();
+      ulong ThisC = NewFlags
+		  & Char->GetPossibleCommandFlags()
+		  & ~(ConstC|VaryFlags)
+		  | (OldC & (ConstC|VaryFlags));
+
+      if(ThisC != OldC)
+	Change = true;
+
+      Char->SetCommandFlags(ThisC);
+    }
+
+  if(!Change)
+    return false;
+
+  PLAYER->EditAP(-500);
+  PLAYER->EditExperience(CHARISMA, 50, 1 << 7);
+  return true;
 }

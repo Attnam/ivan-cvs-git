@@ -66,7 +66,7 @@ color16 helmet::GetMaterialColorC(int) const { return MakeRGB16(180, 200, 180); 
 
 int wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 128 : 1; }
 
-bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
+bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, int BodyPartIndex, int, bool BlockedByArmour)
 {
   if(!BlockedByArmour && Fluid)
     {
@@ -75,7 +75,8 @@ bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, int, int, bo
       FillFluidVector(FluidVector);
 
       for(uint c = 0; c < FluidVector.size(); ++c)
-	if(FluidVector[c]->Exists() && FluidVector[c]->GetLiquid()->HitEffect(Enemy))
+	if(FluidVector[c]->Exists()
+	&& FluidVector[c]->GetLiquid()->HitEffect(Enemy, Enemy->GetBodyPart(BodyPartIndex)))
 	  Success = true;
 
       return Success;

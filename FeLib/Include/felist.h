@@ -29,6 +29,7 @@ class felist
   uint Draw();
   void QuickDraw(bitmap*, uint) const;
   void Empty();
+  void EmptyDescription();
   festring GetEntry(uint) const;
   color16 GetColor(uint) const;
   void SetColor(uint, color16);

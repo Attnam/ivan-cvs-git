@@ -2426,6 +2426,11 @@ item* arm::GetArmorToReceiveFluid(bool) const
   if(Cloak && !(RAND() % 3))
     return Cloak;
 
+  item* Wielded = GetWielded();
+
+  if(Wielded && !(RAND() % 3))
+    return Wielded;
+
   item* Gauntlet = GetGauntlet();
 
   if(Gauntlet && RAND() & 1)
@@ -2481,7 +2486,7 @@ void bodypart::SpillFluid(character* Spiller, liquid* Liquid, int SquareIndex)
       else if(GetMaster())
 	{
 	  if(Liquid->GetVolume())
-	    AddFluid(Liquid, SquareIndex);
+	    AddFluid(Liquid, "", SquareIndex, false);
 	  else
 	    delete Liquid;
 	}
@@ -2495,7 +2500,7 @@ void bodypart::StayOn(liquid* Liquid)
   item* Armor = GetArmorToReceiveFluid(true);
 
   if(Armor)
-    Liquid->TouchEffect(Armor);
+    Liquid->TouchEffect(Armor, CONST_S(""));
   else if(GetMaster())
     Liquid->TouchEffect(GetMaster(), GetBodyPartIndex());
 }
@@ -2845,7 +2850,7 @@ void playerkindtorso::SignalVolumeAndWeightChange()
     Master->UpdatePictures();
 }
 
-void bodypart::ReceiveAcid(material* Material, long Modifier)
+void bodypart::ReceiveAcid(material* Material, const festring& LocationName, long Modifier)
 {
   if(Master && !MainMaterial->IsImmuneToAcid())
     {
@@ -2868,11 +2873,15 @@ void bodypart::ReceiveAcid(material* Material, long Modifier)
 	  if(Master->GetLastAcidMsgMin() != Minute && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
 	    {
 	      Master->SetLastAcidMsgMin(Minute);
+	      const char* MName = Material->GetName(false, false).CStr();
 
 	      if(Master->IsPlayer())
-		ADD_MESSAGE("Acidous %s dissolves your %s.", Material->GetName(false, false).CStr(), GetBodyPartName().CStr());
+		{
+		  const char* TName = LocationName.IsEmpty() ? GetBodyPartName().CStr() : LocationName.CStr();
+		  ADD_MESSAGE("Acidous %s dissolves your %s.", MName, TName);
+		}
 	      else
-		ADD_MESSAGE("Acidous %s dissolves %s.", Material->GetName(false, false).CStr(), Master->CHAR_NAME(DEFINITE));
+		ADD_MESSAGE("Acidous %s dissolves %s.", MName, Master->CHAR_NAME(DEFINITE));
 	    }
 
 	  Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
@@ -3052,4 +3061,17 @@ void bodypart::SpecialEatEffect(character* Eater, int Amount)
 
       Eater->GetTorso()->SpillFluid(Eater, CreateBlood(Amount));
     }
+}
+
+bool corpse::IsValuable() const
+{
+  for(int c = 0; c < Deceased->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = Deceased->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsValuable())
+	return true;
+    }
+
+  return false;
 }

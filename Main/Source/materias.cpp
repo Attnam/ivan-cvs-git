@@ -195,7 +195,7 @@ int ironalloy::GetStrengthValue() const
   return 0; /* not possible */
 }
 
-void ironalloy::AddName(festring& Name, bool Articled, bool Adjective) const
+/*void ironalloy::AddName(festring& Name, bool Articled, bool Adjective) const
 {
   if(Articled)
     if(GetRustLevel() == NOT_RUSTED)
@@ -217,6 +217,30 @@ void ironalloy::AddName(festring& Name, bool Articled, bool Adjective) const
     }
 
   Name << (Adjective ? GetAdjectiveStem() : GetNameStem());
+}*/
+
+bool ironalloy::AddRustLevelDescription(festring& Name, bool Articled) const
+{
+  if(GetRustLevel() == NOT_RUSTED)
+    return false;
+
+  if(Articled)
+    Name << "a ";
+
+  switch(GetRustLevel())
+    {
+    case SLIGHTLY_RUSTED:
+      Name << "sligthly rusted ";
+      break;
+    case RUSTED:
+      Name << "rusted ";
+      break;
+    case VERY_RUSTED:
+      Name << "very rusted ";
+      break;
+    }
+
+  return true;
 }
 
 void ironalloy::Save(outputfile& SaveFile) const
@@ -231,13 +255,13 @@ void ironalloy::Load(inputfile& SaveFile)
   SaveFile >> RustData;
 }
 
-void liquid::TouchEffect(item* Item)
+void liquid::TouchEffect(item* Item, const festring& LocationName)
 {
   if(GetRustModifier())
     Item->TryToRust(GetRustModifier() * GetVolume());
 
   if(GetAcidicity())
-    Item->ReceiveAcid(this, Volume * GetAcidicity());
+    Item->ReceiveAcid(this, LocationName, Volume * GetAcidicity());
 }
 
 void liquid::TouchEffect(lterrain* Terrain)
@@ -251,8 +275,11 @@ void liquid::TouchEffect(lterrain* Terrain)
 
 void liquid::TouchEffect(character* Char, int BodyPartIndex)
 {
+  if(GetRustModifier())
+    Char->GetBodyPart(BodyPartIndex)->TryToRust(GetRustModifier() * GetVolume());
+
   if(GetAcidicity())
-    Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, Volume * GetAcidicity() >> 1);
+    Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, CONST_S(""), Volume * GetAcidicity() >> 1);
 }
 
 /* Doesn't do the actual rusting, just returns whether it should happen */
@@ -269,3 +296,4 @@ bool ironalloy::TryToRust(long Modifier)
 
   return false;
 }
+

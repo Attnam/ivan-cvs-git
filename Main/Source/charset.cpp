@@ -22,7 +22,7 @@
 #include "felist.h"
 #include "graphics.h"
 #include "bitmap.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "miscitem.h"
 #include "confdef.h"
 

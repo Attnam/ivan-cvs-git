@@ -18,7 +18,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "message.h"
 #include "actions.h"
 #include "wterras.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "team.h"
 #include "iconf.h"
 #include "god.h"

@@ -7,7 +7,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "feio.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "felist.h"
 
 #define STRETCH 5

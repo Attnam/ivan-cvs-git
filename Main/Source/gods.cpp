@@ -245,10 +245,7 @@ void seges::PrayGoodEffect()
   if(PLAYER->GetNP() < SATIATED_LEVEL)
     {
       ADD_MESSAGE("Your stomach feels full again.");
-
-      if(PLAYER->GetNP() < SATIATED_LEVEL)
-	PLAYER->SetNP(SATIATED_LEVEL);
-
+      PLAYER->SetNP(BLOATED_LEVEL);
       return;
     }
 
@@ -259,10 +256,11 @@ void seges::PrayGoodEffect()
       return;
     }
 
-  if(PLAYER->GetStamina() != PLAYER->GetMaxStamina())
+  if(PLAYER->GetStamina() < PLAYER->GetMaxStamina() >> 1)
     {
       ADD_MESSAGE("You don't feel a bit tired anymore.");
       PLAYER->RestoreStamina();
+      return;
     }
 }
 
@@ -1082,7 +1080,8 @@ void cruentus::PrayGoodEffect()
   if(!Weapon || !Weapon->IsWeapon(PLAYER))
     Weapon = PLAYER->GetSecondaryWielded();
 
-  if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted() && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
+  if(Weapon && Weapon->IsWeapon(PLAYER) && Weapon->CanBeEnchanted()
+  && Weapon->GetEnchantment() < 5 && !(RAND() % 10))
     {
       ADD_MESSAGE("Your %s glows briefly red. It feels very warm now.", Weapon->CHAR_NAME(UNARTICLED));
       Weapon->EditEnchantment(1);

@@ -337,19 +337,19 @@ int stack::SearchItem(item* ToBeSearched) const
 item* stack::DrawContents(const character* Viewer, const festring& Topic, int Flags, sorter SorterFunction) const
 {
   itemvector ReturnVector;
-  DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), Flags|NO_MULTI_SELECT, SorterFunction);
+  DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), CONST_S(""), 0, Flags|NO_MULTI_SELECT, SorterFunction);
   return ReturnVector.empty() ? 0 : ReturnVector[0];
 }
 
 int stack::DrawContents(itemvector& ReturnVector, const character* Viewer, const festring& Topic, int Flags, sorter SorterFunction) const
 {
-  return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), Flags, SorterFunction);
+  return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), CONST_S(""), 0, Flags, SorterFunction);
 }
 
 /* MergeStack is used for showing two stacks together. Like when eating when
    there are items on the ground and in the character's stack */
 
-int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, int Flags, sorter SorterFunction) const
+int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, const festring& SpecialDesc, color16 SpecialDescColor, int Flags, sorter SorterFunction) const
 {
   felist Contents(Topic);
   lsquare* Square = GetLSquareUnder();
@@ -360,7 +360,13 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
     for(c = 0; c < 4; ++c)
       AdjacentStack[c] = Square->GetStackOfAdjacentSquare(c);
 
-  if(!(Flags & NO_SPECIAL_INFO))
+  if(!SpecialDesc.IsEmpty())
+    {
+      Contents.AddDescription(CONST_S(""));
+      Contents.AddDescription(SpecialDesc.CapitalizeCopy(), SpecialDescColor);
+    }
+
+  /*if(!(Flags & NO_SPECIAL_INFO))
     {
       Contents.AddDescription(CONST_S(""));
       long Weight = GetWeight(Viewer, CENTER);
@@ -373,7 +379,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
 	  Weight += AdjacentStack[c]->GetWeight(Viewer, 3 - c);
 
       Contents.AddDescription(CONST_S("Overall weight: ") + Weight + " grams");
-    }
+    }*/
 
   if(Flags & NONE_AS_CHOICE)
     Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, game::AddToItemDrawVector(0));

@@ -52,6 +52,8 @@ material
 	IntelligenceRequirement = 0;
 	IsScary = false;
 	CanBeMirrored = true;
+	AffectInside = false;
+	IsValuable = false;
 }
 
 solid
@@ -71,6 +73,7 @@ solid
 		AttachedGod = VALPURUS;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 60;
+		IsValuable = true;
 	}	
 
 	Config STONE;
@@ -171,6 +174,7 @@ solid
 		IsImmuneToAcid = true;
 		HardenedMaterial = OCTIRON;
 		IntelligenceRequirement = 30;
+		IsValuable = true;
 	}
 
 	Config MARBLE;
@@ -184,6 +188,7 @@ solid
 		AttachedGod = DULCIS;
 		NaturalForm = stone;
 		IntelligenceRequirement = 10;
+		IsValuable = true;
 	}
 
 	Config GOLD;
@@ -203,6 +208,7 @@ solid
 		IsImmuneToAcid = true;
 		HardenedMaterial = RUBY;
 		IntelligenceRequirement = 35;
+		IsValuable = true;
 	}
 
 	Config GRASS;
@@ -300,6 +306,7 @@ solid
 		Color = rgb16(200, 200, 200);
 		NameStem = "unicorn horn";
 		AttachedGod = SEGES;
+		IsValuable = true;
 	}
 
 	Config DIAMOND;
@@ -317,6 +324,7 @@ solid
 		IsImmuneToAcid = true;
 		NaturalForm = stone;
 		IntelligenceRequirement = 45;
+		IsValuable = true;
 	}
 
 	Config SILVER;
@@ -334,6 +342,7 @@ solid
 		IsImmuneToAcid = true;
 		HardenedMaterial = SAPPHIRE;
 		IntelligenceRequirement = 35;
+		IsValuable = true;
 	}
 
 	Config SAPPHIRE;
@@ -352,6 +361,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = DIAMOND;
 		IntelligenceRequirement = 40;
+		IsValuable = true;
 	}
 
 	Config RUBY;
@@ -370,6 +380,7 @@ solid
 		NaturalForm = stone;
 		HardenedMaterial = DIAMOND;
 		IntelligenceRequirement = 40;
+		IsValuable = true;
 	}
 
 	Config BRONZE;
@@ -428,6 +439,7 @@ solid
 		Flexibility = 20;
 		AttachedGod = SOPHOS;
 		IntelligenceRequirement = 45;
+		IsValuable = true;
 	}
 
 	Config KEVLAR;
@@ -440,6 +452,7 @@ solid
 		Flexibility = 15;
 		AttachedGod = LORICATUS;
 		IntelligenceRequirement = 50;
+		IsValuable = true;
 	}
 
 	Config OMMEL_HAIR;
@@ -456,6 +469,7 @@ solid
 		AttachedGod = SILVA;
 		HardenedMaterial = PHOENIX_FEATHER;
 		IntelligenceRequirement = 15;
+		IsValuable = true;
 	}
 
 	Config HARDENED_LEATHER;
@@ -514,6 +528,7 @@ solid
 		AttachedGod = DULCIS;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 40;
+		IsValuable = true;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -528,6 +543,7 @@ solid
 		AttachedGod = SILVA;
 		HardenedMaterial = DRAGON_HIDE;
 		IntelligenceRequirement = 25;
+		IsValuable = true;
 	}
 
 	Config GOLDEN_EAGLE_FEATHER;
@@ -541,6 +557,7 @@ solid
 		AttachedGod = VALPURUS;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 60;
+		IsValuable = true;
 	}
 
 	Config ICE;
@@ -569,6 +586,7 @@ solid
 		AttachedGod = SILVA;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 40;
+		IsValuable = true;
 	}
 
 	Config ARCANITE;
@@ -587,6 +605,7 @@ solid
 		IsImmuneToAcid = true;
 		HardenedMaterial = MITHRIL;
 		IntelligenceRequirement = 25;
+		IsValuable = true;
 	}
 
 	Config ILLITHIUM;
@@ -603,6 +622,7 @@ solid
 		AttachedGod = LEGIFER;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 30;
+		IsValuable = true;
 	}
 
 	Config BALSA_WOOD;
@@ -697,6 +717,7 @@ solid
 		AttachedGod = SILVA;
 		NaturalForm = stick;
 		IntelligenceRequirement = 15;
+		IsValuable = true;
 	}
 
 	Config OCTIRON;
@@ -714,6 +735,7 @@ solid
 		Flexibility = 2;
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 45;
+		IsValuable = true;
 	}
 
 	Config BLUE_CRYSTAL;
@@ -736,6 +758,7 @@ solid
 		PriceModifier = 8000;
 		HardenedMaterial = GREEN_CRYSTAL;
 		IntelligenceRequirement = 25;
+		IsValuable = true;
 	}
 
 	Config PURPLE_CRYSTAL;
@@ -758,6 +781,7 @@ solid
 		PriceModifier = 8000;
 		HardenedMaterial = BLUE_CRYSTAL;
 		IntelligenceRequirement = 25;
+		IsValuable = true;
 	}
 
 	Config GREEN_CRYSTAL;
@@ -779,6 +803,7 @@ solid
 		NaturalForm = stone;
 		PriceModifier = 8000;
 		IntelligenceRequirement = 25;
+		IsValuable = true;
 	}
 
 	Config DARK_GRASS;
@@ -846,6 +871,7 @@ organic /* substances that spoil but are not flesh */
 		IsGolemMaterial = true;
 		AttachedGod = SILVA;
 		UseMaterialAttributes = true;
+		NaturalForm = bananapeels;
 	}
 
 	Config KIWI_FLESH;
@@ -949,6 +975,7 @@ organic /* substances that spoil but are not flesh */
 		CanBeWished = false;
 		IsWarm = true;
 		CanBeMirrored = false;
+		IsValuable = true;
 	}
 
 	Config CARROT_FLESH;
@@ -965,6 +992,7 @@ organic /* substances that spoil but are not flesh */
 		CanBeWished = false;
 		PriceModifier = 1000;
 		Flexibility = 5;
+		IsValuable = true;
 	}
 
 	Config OMMEL_CERUMEN;
@@ -983,6 +1011,7 @@ organic /* substances that spoil but are not flesh */
 		CanBeMirrored = false;
 		Density = 500;
 		ConsumeType = CT_PROCESSED;
+		IsValuable = true;
 	}
 }
 
@@ -1114,6 +1143,7 @@ liquid
 		EffectIsGood = true;
 		IsWarm = true;
 		CanBeMirrored = false;
+		IsValuable = true;
 	}
 
 	Config PEPSI;
@@ -1130,6 +1160,7 @@ liquid
 		AttachedGod = MELLIS;
 		RustModifier = 200;
 		Acidicity = 10;
+		IsValuable = true;
 	}
 
 	Config WATER;
@@ -1156,6 +1187,7 @@ liquid
 		Alpha = 150;
 		AttachedGod = SEGES;
 		EffectIsGood = true;
+		IsValuable = true;
 	}
 
 	Config BLOOD;
@@ -1184,6 +1216,8 @@ liquid
 		RustModifier = 200;
 		Acidicity = 100;
 		IsImmuneToAcid = true;
+		AffectInside = true;
+		ConsumeWisdomLimit = 3;
 	}
 
 	Config POISON_LIQUID;
@@ -1215,6 +1249,7 @@ liquid
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
 		EffectStrength = 150;
+		IsValuable = true;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -1231,6 +1266,7 @@ liquid
 		PriceModifier = 1000;
 		AttachedGod = SEGES;
 		EffectIsGood = true;
+		IsValuable = true;
 	}
 
 	Config VODKA;
@@ -1248,6 +1284,7 @@ liquid
 		PriceModifier = 500;
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
+		IsValuable = true;
 	}
 
 	Config TROLL_BLOOD;
@@ -1267,6 +1304,7 @@ liquid
 		EffectIsGood = true;
 		IsWarm = true;
 		IsBlood = true;
+		IsValuable = true;
 	}
 
 	Config DARK_FROG_BLOOD;
@@ -1280,6 +1318,8 @@ liquid
 		AttachedGod = CRUENTUS;
 		IsBlood = true;
 		Acidicity = 100;
+		AffectInside = true;
+		ConsumeWisdomLimit = 0;
 	}
 
 	Config SPIDER_BLOOD;
@@ -1305,6 +1345,7 @@ liquid
 		AttachedGod = SCABIES;
 		RustModifier = 200;
 		Acidicity = 10;
+		AffectInside = true;
 	}
 
 	Config ACIDOUS_BLOOD;
@@ -1319,6 +1360,8 @@ liquid
 		IsBlood = true;
 		Acidicity = 500:
 		RustModifier = 500;
+		AffectInside = true;
+		ConsumeWisdomLimit = 4;
 	}
 
 	Config SULPHURIC_ACID;
@@ -1332,6 +1375,8 @@ liquid
 		AttachedGod = SCABIES;
 		RustModifier = 400;
 		Acidicity = 400;
+		AffectInside = true;
+		ConsumeWisdomLimit = 5;
 	}
 
 	Config DOG_DROOL;
@@ -1370,6 +1415,7 @@ liquid
 		AttachedGod = SEGES;
 		EffectIsGood = true;
 		CanBeMirrored = false;
+		IsValuable = true;
 	}
 
 	Config OMMEL_TEARS;
@@ -1386,6 +1432,7 @@ liquid
 		AttachedGod = MELLIS;
 		EffectIsGood = true;
 		CanBeMirrored = false;
+		IsValuable = true;
 	}
 
 	Config OMMEL_SNOT;
@@ -1403,6 +1450,7 @@ liquid
 		EffectIsGood = true;
 		CanBeMirrored = false;
 		Density = 800;
+		IsValuable = true;
 	}
 }
 
@@ -1454,7 +1502,7 @@ flesh
 
 	Config FROG_FLESH;
 	{
-		ConsumeWisdomLimit = 7;
+		ConsumeWisdomLimit = 0;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
@@ -1465,7 +1513,7 @@ flesh
 
 	Config ELPURI_FLESH;
 	{
-		ConsumeWisdomLimit = 7;
+		ConsumeWisdomLimit = 0;
 		Effect = EFFECT_DARKNESS;
 		ConsumeEndMessage = CEM_FROG_FLESH;
 		HitMessage = HM_FROG_FLESH;
@@ -1624,6 +1672,8 @@ flesh
 		IsWarm = false;
 		Effect = EFFECT_BLACK_UNICORN_FLESH;
 		ConsumeEndMessage = CEM_BLACK_UNICORN_FLESH;
+		ConsumeWisdomLimit = 10;
+		IsValuable = true;
 	}
 
 	Config GRAY_UNICORN_FLESH;
@@ -1634,6 +1684,7 @@ flesh
 		AttachedGod = LORICATUS;
 		Effect = EFFECT_GRAY_UNICORN_FLESH;
 		ConsumeEndMessage = CEM_GRAY_UNICORN_FLESH;
+		IsValuable = true;
 	}
 
 	Config WHITE_UNICORN_FLESH;
@@ -1644,6 +1695,7 @@ flesh
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_WHITE_UNICORN_FLESH;
 		ConsumeEndMessage = CEM_WHITE_UNICORN_FLESH;
+		IsValuable = true;
 	}
 
 	Config LION_FLESH;
@@ -1672,6 +1724,7 @@ flesh
 		NameStem = "orc flesh";
 		AttachedGod = MORTIFER;
 		NutritionValue = 15;
+		ConsumeWisdomLimit = 15;
 	}
 
 	Config OSTRICH_FLESH;
@@ -1696,6 +1749,7 @@ flesh
 		Effect = EFFECT_ESP;
 		AttachedGod = LEGIFER;
 		EffectIsGood = true;
+		IsValuable = true;
 	}
 
 	Config MUSHROOM_FLESH;
@@ -1757,6 +1811,7 @@ flesh
 		NameStem = "blink dog flesh";
 		AttachedGod = MORTIFER;
 		Effect = EFFECT_TELEPORT_CONTROL;
+		IsValuable = true;
 	}
 
 	Config MAGIC_MUSHROOM_FLESH;
@@ -1788,6 +1843,7 @@ powder
 		ExplosivePower = 15000;
 		Flexibility = 35;
 		AttachedGod = CRUENTUS;
+		IsValuable = true;
 	}
 
 	Config SNOW;
@@ -1850,6 +1906,7 @@ ironalloy /* metals that rust */
 		RustModifier = 75;
 		HardenedMaterial = METEORIC_STEEL;
 		IntelligenceRequirement = 15;
+		IsValuable = true;
 	}
 
 	Config METEORIC_STEEL;
@@ -1866,6 +1923,7 @@ ironalloy /* metals that rust */
 		RustModifier = 50;
 		HardenedMaterial = ADAMANT;
 		IntelligenceRequirement = 20;
+		IsValuable = true;
 	}
 
 	Config ADAMANT;
@@ -1884,5 +1942,6 @@ ironalloy /* metals that rust */
 		IsSparkling = true;
 		RustModifier = 25;
 		IntelligenceRequirement = 45;
+		IsValuable = true;
 	}
 }

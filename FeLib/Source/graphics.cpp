@@ -12,7 +12,7 @@
 #include "bitmap.h"
 #include "whandler.h"
 #include "error.h"
-#include "colorbit.h"
+#include "rawbit.h"
 
 void (*graphics::SwitchModeHandler)();
 

@@ -53,7 +53,7 @@ class MATERIAL
  public:
   virtual const char* GetConsumeVerb() const;
   virtual bool IsLiquid() const { return true; }
-  void TouchEffect(item*);
+  void TouchEffect(item*, const festring&);
   void TouchEffect(character*, int);
   void TouchEffect(lterrain*);
   liquid* CloneLiquid(long Volume) const { return static_cast<liquid*>(Clone(Volume)); }
@@ -104,7 +104,7 @@ class MATERIAL
   ironalloy,
   solid,
  public:
-  virtual void AddName(festring&, bool = false, bool = true) const;
+  //virtual void AddName(festring&, bool = false, bool = true) const;
   virtual void SetRustLevel(int);
   virtual int GetStrengthValue() const;
   virtual int GetRustLevel() const { return RustData & 3; }
@@ -113,6 +113,7 @@ class MATERIAL
   virtual void Load(inputfile&);
   virtual int GetRustData() const { return RustData; }
   virtual bool TryToRust(long);
+  virtual bool AddRustLevelDescription(festring&, bool) const;
  protected:
   virtual void VirtualConstructor(bool) { RustData = NOT_RUSTED; }
   int RustData;

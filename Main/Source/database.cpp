@@ -245,6 +245,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
+  ADD_MEMBER(AcidResistance);
   ADD_MEMBER(IsUnique);
   ADD_MEMBER(ConsumeFlags);
   ADD_MEMBER(TotalVolume);
@@ -350,6 +351,9 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(PolymorphIntelligenceRequirement);
   ADD_MEMBER(AutomaticallySeen);
   ADD_MEMBER(CanHear);
+  ADD_MEMBER(DefaultCommandFlags);
+  ADD_MEMBER(ConstantCommandFlags);
+  ADD_MEMBER(WillCarryItems);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -365,6 +369,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(FireResistance);
   ADD_MEMBER(PoisonResistance);
   ADD_MEMBER(ElectricityResistance);
+  ADD_MEMBER(AcidResistance);
   ADD_MEMBER(StrengthModifier);
   ADD_MEMBER(FormModifier);
   ADD_MEMBER(DefaultSize);
@@ -445,6 +450,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(HasSecondaryMaterial);
   ADD_MEMBER(AllowEquip);
   ADD_MEMBER(ReadDifficulty);
+  ADD_MEMBER(IsValuable);
 }
 
 template<class type> void databasecreator<type>::CreateLTerrainDataBaseMemberMap()
@@ -547,6 +553,8 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(IntelligenceRequirement);
   ADD_MEMBER(IsScary);
   ADD_MEMBER(CanBeMirrored);
+  ADD_MEMBER(AffectInside);
+  ADD_MEMBER(IsValuable);
 }
 
 template <class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

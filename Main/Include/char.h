@@ -26,6 +26,7 @@ struct homedata;
 
 typedef std::vector<std::pair<double, int> > blockvector;
 typedef bool (item::*sorter)(const character*) const;
+typedef bool (character::*petmanagementfunction)();
 
 inline int APBonus(int Attribute)
 {
@@ -97,6 +98,7 @@ struct characterdatabase : public databasebase
   int FireResistance;
   int PoisonResistance;
   int ElectricityResistance;
+  int AcidResistance;
   int ConsumeFlags;
   long TotalVolume;
   packedvector2d HeadBitmapPos;
@@ -171,6 +173,9 @@ struct characterdatabase : public databasebase
   int BloodMaterial;
   int VomitMaterial;
   int PolymorphIntelligenceRequirement;
+  ulong DefaultCommandFlags;
+  ulong ConstantCommandFlags;
+  bool WillCarryItems;
 };
 
 class characterprototype
@@ -399,6 +404,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, FireResistance);
   DATA_BASE_VALUE(int, PoisonResistance);
   DATA_BASE_VALUE(int, ElectricityResistance);
+  DATA_BASE_VALUE(int, AcidResistance);
   DATA_BASE_VALUE(int, ConsumeFlags);
   DATA_BASE_VALUE(long, TotalVolume);
   virtual DATA_BASE_VALUE(vector2d, HeadBitmapPos);
@@ -482,6 +488,8 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, BloodMaterial);
   DATA_BASE_VALUE(int, VomitMaterial);
   DATA_BASE_BOOL(AutomaticallySeen);
+  DATA_BASE_VALUE(ulong, DefaultCommandFlags);
+  DATA_BASE_BOOL(WillCarryItems);
   int GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -704,7 +712,7 @@ class character : public entity, public id
   virtual bool CheckIfEquipmentIsNotUsable(int) const { return false; }
   virtual bool MoveTowardsHomePos();
   virtual void SetWayPoints(const fearray<packedvector2d>&) { }
-  bool TryToChangeEquipment(int);
+  bool TryToChangeEquipment(stack*, stack*, int);
   void PrintBeginParasitizedMessage() const;
   void PrintEndParasitizedMessage() const;
   void ParasitizedHandler();
@@ -730,7 +738,7 @@ class character : public entity, public id
   character* GetRandomNeighbourEnemy() const;
   void Search(int);
   character* GetRandomNeighbour(int = (HOSTILE|UNCARING|FRIEND)) const;
-  virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
+  virtual bool IsRetreating() const;
   virtual bool IsMushroom() const { return false; }
   void ResetStates();
   virtual head* Behead() { return 0; }
@@ -873,6 +881,22 @@ class character : public entity, public id
   void ReceiveOmmelTears(long);
   void ReceiveOmmelSnot(long);
   bool IsSameAs(const character*) const;
+  ulong GetCommandFlags() const;
+  void SetCommandFlags(ulong What) { CommandFlags = What; }
+  ulong GetPossibleCommandFlags() const;
+  ulong GetConstantCommandFlags() const;
+  virtual bool AllowEquipment(const item*, int) const { return true; }
+  bool ChatMenu();
+  bool ChangePetEquipment();
+  bool TakePetItems();
+  bool GivePetItems();
+  bool IssuePetCommands();
+  bool ChatIdly();
+  bool EquipmentScreen(stack*, stack*);
+  ulong GetManagementFlags() const;
+  const char* GetVerbalBurdenState() const;
+  color16 GetVerbalBurdenStateColor() const;
+  virtual int GetAttributeAverage() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -984,6 +1008,7 @@ class character : public entity, public id
   int MaxStamina;
   int BlocksSinceLastTurn;
   double GenerationDanger;
+  ulong CommandFlags;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

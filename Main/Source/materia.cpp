@@ -121,11 +121,28 @@ bool material::Effect(character* Eater, long Amount)
 material* material::EatEffect(character* Eater, long Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
-  Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount / 50);
 
-  if(IsLiquid())
-    Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
+  if(AffectInside())
+    {
+      head* Head = Eater->GetVirtualHead();
+      long NewAmount = Amount;
+
+      if(Head && Amount >= 8)
+	{
+	  Head->AddFluid(static_cast<liquid*>(Clone(Amount >> 3)), CONST_S("throat"), 0, true);
+	  NewAmount -= Amount >> 3;
+	}
+
+      Eater->GetTorso()->AddFluid(static_cast<liquid*>(Clone(NewAmount)), CONST_S("stomach"), 0, true);
+    }
+  else
+    {
+      Effect(Eater, Amount);
+
+      if(IsLiquid())
+	Eater->EditStamina(int(50. * Amount * Eater->GetMaxStamina() / Eater->GetBodyVolume()), false);
+    }
 
   if(Volume != Amount)
     {
@@ -136,7 +153,7 @@ material* material::EatEffect(character* Eater, long Amount)
     return MotherEntity->RemoveMaterial(this);
 }
 
-bool material::HitEffect(character* Enemy)
+bool material::HitEffect(character* Enemy, bodypart* BodyPart)
 {
   if(!Volume)
     return false;
@@ -155,7 +172,20 @@ bool material::HitEffect(character* Enemy)
     }
 
   long Amount = Max<long>(GetVolume() >> 1, 1);
-  bool Success = Effect(Enemy, Amount);
+  bool Success;
+
+  if(AffectInside())
+    {
+      if(BodyPart)
+	{
+	  BodyPart->AddFluid(static_cast<liquid*>(Clone(Amount)), CONST_S(""), 0, true);
+	  Success = true;
+	}
+      else
+	Success = false;
+    }
+  else
+    Success = Effect(Enemy, Amount);
 
   if(Amount != Volume)
     EditVolume(-Amount);
@@ -239,7 +269,8 @@ long material::GetTotalNutritionValue() const
 
 bool material::CanBeEatenByAI(const character* Eater) const
 {
-  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
+  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit()
+      && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
 }
 
 bool material::BreatheEffect(character* Enemy)

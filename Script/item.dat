@@ -22,6 +22,7 @@ item
 	FireResistance = 0;
 	PoisonResistance = 0;
 	ElectricityResistance = 0;
+	AcidResistance = 0;
 	StrengthModifier = 0;
 	/* Obligatory: FormModifier */
 	/* Obligatory: DefaultSize */
@@ -96,6 +97,7 @@ item
 	HasSecondaryMaterial = false;
 	AllowEquip = true;
 	/* Obligatory if scroll: ReadDifficulty */
+	IsValuable = true;
 }
 
 materialcontainer
@@ -155,6 +157,7 @@ can /* materialcontainer-> */
 	Roundness = 60;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
+	IsValuable = false;
 }
 
 lump
@@ -173,6 +176,7 @@ lump
 	Roundness = 75;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 112;
+	IsValuable = false;
 }
 
 meleeweapon
@@ -671,6 +675,7 @@ banana /* materialcontainer-> */
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 320;
 	AllowEquip = false;
+	IsValuable = false;
 
 	Config BROKEN;
 	{
@@ -702,6 +707,7 @@ holybanana /* materialcontainer->banana-> */
 	CanBeCloned = false;
 	CanBeMirrored = true; /* will create a peel */
 	AllowEquip = true;
+	IsValuable = true;
 }
 
 justifier /* meleeweapon-> */
@@ -942,14 +948,14 @@ potion /* materialcontainer-> */
 	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	SecondaryMaterialConfig = { 10, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS; }
-	MaterialConfigChances = { 10, 100, 75, 10, 75, 1, 10, 5, 25, 10, 10; }
+	SecondaryMaterialConfig = { 11, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD, OMMEL_SWEAT, OMMEL_TEARS, SULPHURIC_ACID; }
+	MaterialConfigChances = { 11, 100, 75, 10, 50, 1, 10, 5, 25, 10, 10, 25; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
 	CanBeBroken = true;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
-
+	IsValuable = false;
 }
 
 bananapeels
@@ -968,6 +974,7 @@ bananapeels
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 112;
 	AllowEquip = false;
+	IsValuable = false;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -985,6 +992,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	Roundness = 70;
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 128;
+	IsValuable = false;
 }
 
 scroll
@@ -1047,6 +1055,7 @@ nut
 	Roundness = 90;
 	AttachedGod = NEFAS;	
 	WieldedBitmapPos = 160, 368;
+	IsValuable = false;
 }
 
 leftnutofpetrus /* nut-> */
@@ -1067,6 +1076,7 @@ leftnutofpetrus /* nut-> */
 	FormModifier = 15;
 	AttachedGod = VALPURUS;
 	IsQuestItem = true;
+	IsValuable = true;
 }
 
 bone
@@ -1085,6 +1095,7 @@ bone
 	IsTwoHanded = true;
 	AttachedGod = MORTIFER;	
 	WieldedBitmapPos = 160, 336;
+	IsValuable = false;
 }
 
 loaf
@@ -1105,6 +1116,7 @@ loaf
 	Roundness = 20;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 352;
+	IsValuable = false;
 }
 
 scrollofwishing /* scroll-> */
@@ -1133,6 +1145,7 @@ cheapcopyofleftnutofpetrus /* nut-> */
 	Alias == "left nut of Petrus";
 	FormModifier = 15;
 	AttachedGod = MELLIS;
+	IsValuable = false;
 }
 
 wand
@@ -1399,6 +1412,7 @@ kiwi
 	AttachedGod = SILVA;
 	WieldedBitmapPos = 160, 368;
 	AllowEquip = false;
+	IsValuable = false;
 }
 
 pineapple
@@ -1416,6 +1430,7 @@ pineapple
 	IsTwoHanded = true;
 	AttachedGod = SILVA;
 	WieldedBitmapPos = 176, 144;
+	IsValuable = false;
 }
 
 palmbranch
@@ -1433,6 +1448,7 @@ palmbranch
 	IsTwoHanded = true;
 	AttachedGod = SILVA;
 	WieldedBitmapPos = 160, 208;
+	IsValuable = false;
 }
 
 whip /* meleeweapon-> */
@@ -1526,6 +1542,7 @@ fiftymillionroubles
 	Roundness = 60;
 	AttachedGod = MELLIS;
 	WieldedBitmapPos = 160, 128;
+	IsValuable = false;
 }
 
 oillamp
@@ -1567,6 +1584,7 @@ stone
 	Roundness = 90;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 368;
+	IsValuable = false;
 }
 
 scrolloftaming /* scroll-> */
@@ -1742,6 +1760,25 @@ cloak /* armor-> */
 		BitmapPos = 64, 304;
 		InElasticityPenaltyModifier = 25;
 		ElectricityResistance = 10;
+		Price = 150;
+		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
+		MaterialConfigChances = { 4, 300, 200, 100, 50; }
+	}
+
+	Config CLOAK_OF_ACID_RESISTANCE;
+	{
+		Possibility = 10;
+		PostFix = "of acid resistance";
+		Price = 250;
+		AcidResistance = 4;
+	}
+
+	Config BROKEN|CLOAK_OF_ACID_RESISTANCE;
+	{
+		Possibility = 1;
+		BitmapPos = 64, 304;
+		InElasticityPenaltyModifier = 25;
+		AcidResistance = 2;
 		Price = 150;
 		MainMaterialConfig = { 4, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
 		MaterialConfigChances = { 4, 300, 200, 100, 50; }
@@ -2083,7 +2120,7 @@ ring
 	{
 		Possibility = 1;
 		PostFix = "of invisibility";
-		MainMaterialConfig == GOLD;
+		MainMaterialConfig == GLASS;
 		GearStates = INVISIBLE;
 		Price = 2500;
 		AttachedGod = CLEPTIA;
@@ -2107,6 +2144,16 @@ ring
 		Price = 500;
 		AttachedGod = LEGIFER;
 		GearStates = SEARCHING;
+	}
+
+	Config RING_OF_ACID_RESISTANCE;
+	{
+		Possibility = 20;
+		AcidResistance = 2;
+		PostFix = "of acid resistance";
+		MainMaterialConfig == GOLD;
+		Price = 250;
+		AttachedGod = LORICATUS;
 	}
 }
 
@@ -2157,6 +2204,7 @@ bodypart
 	Adjective = "severed"; /* only used if severed */
 	CanBeWished = false; /* temporary */
 	AttachedGod = NONE;
+	IsValuable = false;
 }
 
 head /* bodypart-> */
@@ -2275,6 +2323,7 @@ corpse
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 144;
 	/* BitmapPos overridden */
+	IsValuable = false;
 }
 
 eddytorso /* normaltorso-> */
@@ -2461,6 +2510,7 @@ helmet
 		Possibility = 35;
 		MainMaterialConfig = { 7, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 7, 100, 25, 25, 25, 25, 10, 5; }
+		HelmetBitmapPos = 96, 448;
 	}
 
 	Config FULL_HELMET;
@@ -2484,6 +2534,7 @@ helmet
 		Possibility = 4;
 		MainMaterialConfig = { 7, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
 		MaterialConfigChances = { 7, 250, 100, 25, 25, 25, 10, 5; }
+		HelmetBitmapPos = 112, 448;
 	}
 
 	Config HELM_OF_PERCEPTION;
@@ -2512,6 +2563,7 @@ helmet
 		Possibility = 2;
 		Price = 25;
 		AffectsPerception = false;
+		HelmetBitmapPos = 112, 448;
 	}
 
 	Config HELM_OF_UNDERSTANDING;
@@ -2540,6 +2592,7 @@ helmet
 		Possibility = 2;
 		Price = 25;
 		AffectsWisdom = false;
+		HelmetBitmapPos = 112, 448;
 	}
 
 	Config HELM_OF_BRILLIANCE;
@@ -2567,6 +2620,7 @@ helmet
 		Possibility = 2;
 		Price = 25;
 		AffectsIntelligence = false;
+		HelmetBitmapPos = 112, 448;
 	}
 
 	Config HELM_OF_ATTRACTIVITY;
@@ -2595,6 +2649,7 @@ helmet
 		Possibility = 5;
 		Price = 25;
 		AffectsCharisma = false;
+		HelmetBitmapPos = 112, 448;
 	}
 
 	Config GOROVITS_FAMILY_GAS_MASK;
@@ -2823,6 +2878,7 @@ skull
 	IsTwoHanded = true;
 	AttachedGod = MORTIFER;
 	WieldedBitmapPos = 160, 128;
+	IsValuable = false;
 }
 
 gorovitshammer
@@ -3034,6 +3090,7 @@ carrot
 	CanBePiled = true;
 	AttachedGod = SEGES;
 	WieldedBitmapPos = 160, 352;
+	IsValuable = false;
 }
 
 wondersmellstaff
@@ -3146,6 +3203,7 @@ stick
 	Roundness = 10;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 352;
+	IsValuable = false;
 }
 
 scrollofhardenmaterial /* scroll-> */
@@ -3160,9 +3218,9 @@ scrollofhardenmaterial /* scroll-> */
 
 scrollofgolemcreation /* scroll-> */
 {
-	Possibility = 75;
+	Possibility = 33;
 	Price = 500;
 	PostFix = "of golem creation";
 	AttachedGod = SOPHOS;
-	ReadDifficulty = 100;
+	ReadDifficulty = 500;
 }

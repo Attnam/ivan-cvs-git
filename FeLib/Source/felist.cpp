@@ -4,7 +4,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "save.h"
 #include "festring.h"
 
@@ -52,7 +52,7 @@ struct felistdescription
   color16 Color;
 };
 
-felist::felist(const festring& Topic, color16 TopicColor, uint Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), UpKey(KEY_UP), DownKey(KEY_DOWN)
+felist::felist(const festring& Topic, color16 TopicColor, uint Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), UpKey(KEY_UP), DownKey(KEY_DOWN), EntryDrawer(0)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -503,4 +503,9 @@ void felist::PrintToFile(const festring& FileName)
 
       SaveFile << Entry[c]->String.CStr() << std::endl;
     }
+}
+
+void felist::EmptyDescription()
+{
+  Description.resize(1);
 }

@@ -22,7 +22,7 @@ const materialprototype* material::GetProtoType() const { return &material_Proto
 #include "smoke.h"
 #include "bitmap.h"
 #include "game.h"
-#include "colorbit.h"
+#include "rawbit.h"
 #include "whandler.h"
 #include "rain.h"
 

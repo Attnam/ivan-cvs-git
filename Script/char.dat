@@ -36,6 +36,7 @@ character
 	FireResistance = 0;
 	PoisonResistance = 0;
 	ElectricityResistance = 0;
+	AcidResistance = 0;
 	IsUnique = false;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED;
 	/* Obligatory: TotalVolume */
@@ -98,9 +99,12 @@ character
 	VomitMaterial = VOMIT;
 	HasSecondaryMaterial = false;
 	IsImmuneToLeprosy = true;
-	PolymorphIntelligenceRequirement = DEPENDS_ON_DANGER;
-	AutomaticallySeen = false;
+	PolymorphIntelligenceRequirement = DEPENDS_ON_ATTRIBUTES;
+	AutomaticallySeen = true;
 	CanHear = true;
+	DefaultCommandFlags = FOLLOW_PLAYER|DONT_CONSUME_ANYTHING_VALUABLE;
+	ConstantCommandFlags = 0;
+	WillCarryItems = false;
 }
 
 humanoid
@@ -126,6 +130,7 @@ humanoid
 	CanThrow = true;
 	CanApply = true;
 	IsImmuneToLeprosy = false;
+	WillCarryItems = true;
 }
 
 nonhumanoid
@@ -156,7 +161,7 @@ playerkind
 	NameSingular = "human";
 	AttachedGod = SEGES;
 	/* Replies overridden */
-	/*Inventory == scrollofteleportation { Times = 30; }*/
+	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
 }
 
 petrus
@@ -464,7 +469,7 @@ shopkeeper
 	HostileReplies == "\"Criminal! Mellis bless my efforts of removing you!\"";
 	IsAbstract = true;
 	IsUnique = true;
-	CanBeWished = true;
+	CanBeWished = false;
 	IsNameable = false;
 	CanBeCloned = false;
 	IsPolymorphable = false;
@@ -995,7 +1000,6 @@ frog
 		CWeaponSkillHits == 500;
 		AttachedGod = SCABIES;
 	}
-
 }
 
 billswill
@@ -1446,8 +1450,8 @@ spider
 	DefaultAgility = 5;
 	DefaultEndurance = 4;
 	DefaultPerception = 9;
-	DefaultIntelligence = 4;
-	DefaultWisdom = 4;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 3;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
 	BloodMaterial = SPIDER_BLOOD;
@@ -1528,6 +1532,7 @@ ass
 	Alias == "donkey";
 	AttachedGod = SCABIES;
 	AutomaticallySeen = true;
+	WillCarryItems = true;
 }
 
 communist /* Ivan */
@@ -1572,7 +1577,7 @@ communist /* Ivan */
 	RightGauntlet = PHOENIX_FEATHER gauntlet { Enchantment = 2; }
 	RightBoot = STEEL boot(BOOT_OF_AGILITY) { Enchantment = 2; }
 	PanicLevel = 33;
-	Inventory = { 4, lantern, fiftymillionroubles, potion { SecondaryMaterial = VODKA; }, potion { SecondaryMaterial = VODKA; } }
+	Inventory = { 3, lantern, fiftymillionroubles, potion { SecondaryMaterial = VODKA; Times = 5; } }
 	IsUnique = true;
 	CanBeWished = true;
 	DefaultName = "Ivan";
@@ -1590,10 +1595,11 @@ communist /* Ivan */
 		"\"Why AK not invented?\"",
 		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
 		"\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
-		"\"The vodka is strong, but the meat is rotten.\"",
+		"\"Vodka strong, but meat rotten.\"",
 		"\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"";
 	}
 	AttachedGod = LORICATUS;
+	ConstantCommandFlags = FLEE_FROM_ENEMIES;
 }
 
 hunter
@@ -1648,8 +1654,8 @@ bear
 	DefaultAgility = 15;
 	DefaultEndurance = 20;
 	DefaultPerception = 15;
-	DefaultIntelligence = 5;
-	DefaultWisdom = 7;
+	DefaultIntelligence = 8;
+	DefaultWisdom = 10;
 	DefaultCharisma = 15;
 	DefaultMana = 0;
 	TorsoBitmapPos = 336, 0;
@@ -1809,6 +1815,7 @@ petrusswife
 		"\"That head on the wall looks really scary sometimes. Just like we were watched.\"";
 	}
 	AttachedGod = DULCIS;
+	WillCarryItems = false;
 
 	Config 1;
 	{
@@ -2067,6 +2074,7 @@ imp
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
 	FireResistance = 1000;
+	WillCarryItems = false;
 }
 
 bat
@@ -2308,6 +2316,7 @@ werewolfwolf
 	PanicLevel = 0;
 	FleshMaterial = WERE_WOLF_FLESH;
 	AttachedGod = INFUSCOR;
+	WillCarryItems = true;
 }
 
 kobold
@@ -2438,6 +2447,7 @@ gibberling
 	AttachedGod = SILVA;
 	HostileReplies == "@Dd gibbers diabolically.";
 	FriendlyReplies == "@Dd gibbers joyfully.";
+	WillCarryItems = false;
 }
 
 largecat
@@ -4064,6 +4074,7 @@ vladimir
 	CanApply = true;
 	IsPolymorphable = false;
 	CanBeCloned = false;
+	ConstantCommandFlags = FLEE_FROM_ENEMIES;
 }
 
 hattifattener
@@ -4078,8 +4089,8 @@ hattifattener
 	DefaultMana = 0;
 	TotalVolume = 10000;
 	TorsoBitmapPos = 208, 0;
-	HostileReplies == "@Dd looks at you with @sp round, colourless eyes.";
-	FriendlyReplies == "@Dd emits a thousand sparkles of furious electricity.";
+	HostileReplies == "@Dd emits a thousand sparkles of furious electricity.";
+	FriendlyReplies == "@Dd looks at you with @sp round, colourless eyes.";
 	TotalSize = 80;
 	SkinColor = rgb16(255, 255, 255);
 	TorsoSpecialColor = rgb16(48, 48, 48);
@@ -4120,6 +4131,7 @@ necromancer
 	AttachedGod = INFUSCOR;
 	IsAbstract = true;
 	KnownCWeaponSkills == BLUNT_WEAPONS;
+	NameSingular = "necromancer";
 
 	Config APPRENTICE_NECROMANCER;
 	{
@@ -4135,7 +4147,6 @@ necromancer
 		DefaultMana = 20;
 		AdjectiveArticle = "an";
 		Adjective = "apprentice";
-		NameSingular = "necromancer";
 		TotalVolume = 60000;
 		TotalSize = 180;
 		Cloak = LEATHER cloak { Enchantment = 2; }
@@ -4165,7 +4176,6 @@ necromancer
 		DefaultCharisma = 15;
 		DefaultMana = 30;
 		Adjective = "master";
-		NameSingular = "necromancer";
 		TotalVolume = 70000;
 		TotalSize = 170;
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
@@ -4176,7 +4186,7 @@ necromancer
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
-		Inventory = {2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
+		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
 		CapColor = rgb16(100, 100, 200);
 		GauntletColor = rgb16(100, 100, 200);
 		PolymorphIntelligenceRequirement = 20;
@@ -4240,6 +4250,9 @@ tourist
 	SkinColor = rgb16(200, 110, 70);
 	IsExtraCoward = true;
 	AutomaticallySeen = true;
+	DefaultCommandFlags = FOLLOW_PLAYER|FLEE_FROM_ENEMIES;
+	ConstantCommandFlags = DONT_CONSUME_ANYTHING_VALUABLE;
+	WillCarryItems = false;
 
 	Config HUSBAND;
 	{
@@ -4267,11 +4280,12 @@ tourist
 		HostileReplies == "\"Violence is barbaric. Couldn't we settle this little dispute of ours in a court?\"";
 		FriendlyReplies =
 		{
-			4,
+			5,
 			"\"Don't you barbarians really eat anything but fruits? I need some greasy sausages badly!\"",
 			"\"We're from Bazaria, the great trader nation, where every coin has equal rights. Richel Decos was our fellow countryman before he bought this town from the Attnamese.\"",
 			"\"Back home I plan commercials acted during theatre play breaks.\"",
-			"\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and wellfare it has.\"";
+			"\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and wellfare it has.\"",
+			"\"I couldn't believe my eyes when the travel agent showed me the extraordinary low prices of Decos Paradise Tours Inc. I believed they were a joke until he revealed the ingenious travel method: customers levitate over the ocean after consuming magical mushrooms! Needless to say, our holiday plans were immediately decided.\"";
 		}
 	}
 
@@ -4372,7 +4386,7 @@ veterankamikazedwarf
 	AttributeBonus = 50;
 	Adjective = "veteran";
 	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
-	HPRequirementForGeneration = 160; 
+	HPRequirementForGeneration = 200;
 	Frequency = 200;
 	IsAbstract = true;
 	CreateDivineConfigurations = true;
@@ -4384,7 +4398,7 @@ veterankamikazedwarf
 		"@Dd shouts: \"Death to disbelievers!\"",
 		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
 		"@Dd seems very sorrowful. \"You can't believe how much I've been despised since that fateful mission...\"",
-		"@Dd almost sheds tears. \"I've lost all my friends and self-confidence due of the failure.\"";
+		"@Dd almost sheds tears. \"I've lost all my friends and self-confidence due to the failure.\"";
 	}
 }
 
