@@ -412,6 +412,14 @@ void silva::PrayGoodEffect()
 		break;
 	      }
 	  }
+      // Impact damage for items in the level
+      for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
+	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
+	  {
+	    game::GetCurrentLevel()->GetLevelSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLevelSquare(x,y)->CanBeSeen());
+	    for(uchar c = 0; c < 4; ++c)
+	      game::GetCurrentLevel()->GetLevelSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLevelSquare(x,y)->CanBeSeen());
+	  }
     }
   else
     {

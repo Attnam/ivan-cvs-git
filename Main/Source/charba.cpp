@@ -2008,6 +2008,12 @@ bool character::Kick()
       return false;
     }
 
+  if(GetBurdenState() == OVERLOADED)
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("You try to kick, but you collapse under your load.");
+      return true;
+    }
   ADD_MESSAGE("In what direction do you wish to kick? [press a direction key or space]");
   game::DrawEverything();
   vector2d KickPos = game::AskForDirectionVector();

@@ -1,5 +1,10 @@
 Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Main/Source/god.cpp: silva::PrayGoodEffect now also ImpactDamages all items in the level
+	* Main/Source/charba.cpp: character::Kick() added a burden state checker
+
+Friday, March 01 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Main/Source/charba.cpp: Added a burdenstate checker to Hit function 
 	* Main/Source/lterrade.cpp: Added private function Break() to door to reduce duplicated code.
 	* Main/Include/lterrade.h: Added function Break() to door
