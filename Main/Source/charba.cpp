@@ -429,7 +429,7 @@ bool character::Consume()
 				return false;
 			}
 
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst ifyou eat anything more. Force it down? [y/N]"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetStack()->GetItem(Index), GetStack()))
@@ -2556,7 +2556,7 @@ void character::EndPolymorph()
 		if(GetTeam()->GetLeader() == this)
 			GetTeam()->SetLeader(game::GetPlayer());
 
-		game::GetPlayer()->GetLevelSquareUnder()->GetLevelUnder()->UpdateLOS();
+		game::GetPlayer()->GetSquareUnder()->GetAreaUnder()->UpdateLOS();
 	}
 }
 
