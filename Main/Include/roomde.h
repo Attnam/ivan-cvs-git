@@ -25,6 +25,7 @@ public:
 	virtual bool DropItem(character*, item*);
 	virtual void KickSquare(character*, levelsquare*);
 	virtual bool ConsumeItem(character*, item*);
+	virtual bool AllowDropGifts(void) const { return false; }
 );
 
 class ROOM
@@ -54,6 +55,7 @@ public:
 	virtual void SetEntered(bool What) { Entered = What; }
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
+	virtual bool AllowDropGifts(void) const { return false; }
 protected:
 	bool Entered;
 );
