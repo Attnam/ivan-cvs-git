@@ -656,14 +656,17 @@ void levelsquare::DrawCheat()
 
 void levelsquare::ApplyScript(squarescript* SquareScript)
 {
+	if(SquareScript->GetCharacter(false))
+		FastAddCharacter(SquareScript->GetCharacter()->Instantiate());
+
+	if(SquareScript->GetItem(false))
+		GetStack()->FastAddItem(SquareScript->GetItem()->Instantiate());
+
 	if(SquareScript->GetGroundTerrain(false))
 		ChangeGroundLevelTerrain(SquareScript->GetGroundTerrain()->Instantiate());
 
 	if(SquareScript->GetOverTerrain(false))
 		ChangeOverLevelTerrain(SquareScript->GetOverTerrain()->Instantiate());
-
-	if(SquareScript->GetCharacter(false))
-		FastAddCharacter(SquareScript->GetCharacter()->Instantiate());
 
 	if(SquareScript->GetIsUpStairs(false) && *SquareScript->GetIsUpStairs())
 		GetLevelUnder()->SetUpStairs(Pos);

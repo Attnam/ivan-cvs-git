@@ -123,11 +123,31 @@ void worldmap::Generate()
 		if(Continent[c]->GetGroundTerrainAmount(evergreenforest::StaticType()) > 1)
 			PerfectForAttnam.push_back(Continent[c]);
 
-	continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
+	vector2d AttnamPos, ElpuriCavePos;
 
-	vector2d AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+	for(ushort CounterOne = 0;;)
+	{
+		continent* PerttuLikes = PerfectForAttnam[rand() % PerfectForAttnam.size()];
 
-	for(vector2d ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()); ElpuriCavePos == AttnamPos; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()));
+		AttnamPos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());
+
+		ushort CounterTwo = 0;
+
+		for(ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType());; ElpuriCavePos = PerttuLikes->GetRandomMember(evergreenforest::StaticType()))
+		{
+			if(ElpuriCavePos != AttnamPos && (ElpuriCavePos.X - AttnamPos.X) * (ElpuriCavePos.X - AttnamPos.X) + (ElpuriCavePos.Y - AttnamPos.Y) * (ElpuriCavePos.Y - AttnamPos.Y) < 50)
+				break;
+
+			if(++CounterTwo == 50)
+				break;
+		}
+
+		if(CounterTwo != 50)
+			break;
+
+		if(++CounterOne == 50)
+			ABORT("Perttu is homeless!");
+	}
 
 	GetWorldMapSquare(AttnamPos)->ChangeOverWorldMapTerrain(new attnam);
 	GetWorldMapSquare(ElpuriCavePos)->ChangeOverWorldMapTerrain(new elpuricave);
