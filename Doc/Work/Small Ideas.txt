@@ -26,7 +26,7 @@ Tuon ?-helpin voisi kyll‰ sorttia jotenkin.
 Jumalten roolien miettiminen.
 Valoja irti sein‰st‰.
 Pick-axejen s‰‰teleminen (kesto, expat, valot).
-Do you really want to pray...
+Do you really want to pray to somebody.
 Attribuuttibonusten expoittaminen.
 Skripti/editori.
 Asekokemus.
