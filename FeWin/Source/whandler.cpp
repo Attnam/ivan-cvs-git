@@ -68,8 +68,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 				return 0;
 			}
 
-			//if(InGetKey)
-				KeyBuffer.Add(wParam);
+			KeyBuffer.Add(wParam);
 
 			return 0;
 		}

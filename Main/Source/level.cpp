@@ -829,3 +829,11 @@ void level::AddRoom(room* NewRoom)
 	NewRoom->SetIndex(Room.size());
 	Room.push_back(NewRoom);
 }
+
+room* level::GetRoom(uchar Index) const
+{
+	if(!Index)
+		ABORT("Access to room zero denied!");
+
+	return Room[Index];
+}

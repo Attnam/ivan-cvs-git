@@ -50,6 +50,7 @@ public:
 	virtual void PrintRelation() const;
 	virtual void SetKnown(bool What) { Known = What; }
 	virtual bool GetKnown() const { return Known; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
@@ -84,6 +85,7 @@ public:
 	virtual std::string Description() const { return "god of paladins and holy fire"; }
 	virtual uchar Alignment() const { return ALP; }
 	virtual uchar BasicAlignment() const { return GOOD; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
@@ -109,6 +111,7 @@ public:
 	virtual std::string Description() const { return "goddess of music"; }
 	virtual uchar Alignment() const { return AL; }
 	virtual uchar BasicAlignment() const { return GOOD; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
@@ -133,6 +136,7 @@ public:
 	virtual std::string Description() const { return "goddess of health and nutrition"; }
 	virtual uchar Alignment() const { return AL; }
 	virtual uchar BasicAlignment() const { return GOOD; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
@@ -145,6 +149,7 @@ public:
 	virtual std::string Description() const { return "god of knowledge, wisdom and understanding"; }
 	virtual uchar Alignment() const { return ALM; }
 	virtual uchar BasicAlignment() const { return GOOD; }
+	virtual void AddPriestMessage() const;
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();

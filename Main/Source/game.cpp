@@ -172,7 +172,6 @@ void game::Init(std::string Name)
 
 		SetPlayer(new human);
 
-		Player->SetMoney(100 + rand() % 101);
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
 
@@ -395,9 +394,10 @@ void game::panel::Draw() const
         if(Player->GetTorsoArmor())
 		FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
 
-	FONT->Printf(DOUBLEBUFFER, 200, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength());
+	FONT->Printf(DOUBLEBUFFER, 200, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
 	FONT->Printf(DOUBLEBUFFER, 200, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
 	FONT->Printf(DOUBLEBUFFER, 200, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 26667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 16000 + 1));
+	FONT->Printf(DOUBLEBUFFER, 200, 564, WHITE, "Money: %d", Player->GetMoney());
 
 	FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());

@@ -15,6 +15,7 @@ public:
 	virtual ushort OfferValue() const				{ return 10; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
+	virtual ulong RawPrice() const { return GetVolume() >> 8; }
 protected:
 	virtual std::string NameStem() const	{ return "iron"; }
 	virtual std::string Article() const { return "an"; }
@@ -34,6 +35,7 @@ public:
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 192); }
 	virtual bool CanBeWished() const { return false; }
+	virtual ulong RawPrice() const { return GetVolume() << 2; }
 protected:
 	virtual std::string NameStem() const	{ return "valpurium"; }
 );
@@ -65,6 +67,7 @@ public:
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(225, 225, 0); }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "banana flesh"; }
 );
@@ -182,6 +185,7 @@ public:
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ulong RawPrice() const { return GetVolume() >> 3; }
 protected:
 	virtual std::string NameStem() const	{ return "pork"; }
 );
@@ -195,6 +199,7 @@ public:
 	virtual ushort OfferValue() const				{ return 20; }
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ulong RawPrice() const { return GetVolume() >> 3; }
 protected:
 	virtual std::string NameStem() const	{ return "beef"; }
 );
@@ -276,6 +281,7 @@ public:
 	virtual short NutritionValue() const			{ return 30; }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
 	virtual bool CanBeWished() const { return false; }
+	virtual ulong RawPrice() const { return GetVolume() >> 2; }
 protected:
 	virtual std::string NameStem() const	{ return "Omle urine"; }
 	virtual std::string Article() const { return "an"; }
@@ -436,6 +442,7 @@ public:
 	virtual ushort OfferValue() const				{ return 25; }
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ulong RawPrice() const { return GetVolume() >> 1; }
 protected:
 	virtual std::string NameStem() const	{ return "mithril"; }
 );
@@ -506,6 +513,7 @@ public:
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(192, 192, 0); }
 	virtual bool CanBeWished() const { return false; }
+	virtual ulong RawPrice() const { return GetVolume() << 1; }
 protected:
 	virtual std::string NameStem() const	{ return "gold"; }
 );

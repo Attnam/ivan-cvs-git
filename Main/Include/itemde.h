@@ -25,6 +25,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,112)
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 40; case 1: return 150; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(1)->RawPrice(); }
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -45,6 +46,7 @@ public:
 	virtual float OfferModifier() const RET(40)
 	virtual long Score() const RET(250)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 400; case 1: return 1500; default: return 0; } }
+	virtual ulong Price() const { return 1000; }
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -68,6 +70,7 @@ public:
 	virtual bool ImpactDamage(ushort, bool, stack*);
 	virtual bool ReceiveSound(float, bool, stack*);
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual ulong Price() const { return 50; }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -92,6 +95,7 @@ public:
 	virtual item* PrepareForConsuming(character*, stack*);
 	virtual vector2d GetBitmapPos() const;
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 500; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -118,6 +122,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,48)
 	virtual bool CanBeWished() const RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(0)->RawPrice(); }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 );
@@ -131,6 +136,7 @@ public:
 	virtual void DipInto(item*);
 	virtual bool CanBeDippedInto(item*) const RET(Material[GetMaterials()] ? false : true)
 	virtual bool CanBeDipped() const RET(true)
+	virtual ulong Price() const;
 );
 
 class ITEM
@@ -279,6 +285,7 @@ class ABSTRACT_ITEM
 public:
 	virtual bool CanBeWorn() const RET(true)
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
+	virtual ulong Price() const;
 protected:
 	virtual ushort GetFormModifier() const RET(20)
 );
@@ -368,6 +375,7 @@ public:
 	virtual material* BeDippedInto();
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60000; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
+	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
 protected:
 	virtual ushort GetFormModifier() const RET(15)
 	virtual float NPModifier() const { return 0.01f; }
@@ -396,6 +404,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; case 1: return 1500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
 	virtual void ColorChangeSpeciality(uchar, bool);
+	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
 protected:
 	virtual ushort GetFormModifier() const RET(40)
 );
@@ -469,6 +478,7 @@ public:
 	virtual std::string NamePlural() const RET("scrolls of create monster")
 	virtual float OfferModifier() const RET(5)
 	virtual bool Read(character*);
+	virtual ulong Price() const { return 20; }
 );
 
 class ITEM
@@ -485,6 +495,7 @@ public:
 	virtual std::string NamePlural() const RET("scrolls of teleportation")
 	virtual float OfferModifier() const RET(5)
 	virtual bool Read(character*);
+	virtual ulong Price() const { return 50; }
 );
 
 class ITEM
@@ -668,6 +679,7 @@ public:
 	virtual uchar GetWeaponCategory() const { return CLUBS; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
+	virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
@@ -687,6 +699,7 @@ public:
 	virtual float OfferModifier() const RET(50)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Read(character*);
+	virtual ulong Price() const { return 2000; }
 );
 
 class ITEM
@@ -703,6 +716,7 @@ public:
 	virtual std::string NamePlural() const RET("cheap copies of the left nut of Perttu")
 	virtual long Score() const RET(1)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
+	virtual ulong Price() const { return 500; }
 );
 
 class ABSTRACT_ITEM
@@ -738,6 +752,7 @@ public:
 	virtual std::string NamePlural() const RET("wands of polymorph")
 	virtual float OfferModifier() const RET(30)
 	virtual bool Zap(character*, vector2d, uchar);
+	virtual ulong Price() const { return 500; }
 );
 
 /*class ITEM
@@ -775,6 +790,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(0,176)
 	virtual bool CanBeWished() const RET(true)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 5000; default: return 0; } }
+	virtual ulong Price() const { return 100; }
 );
 
 class ITEM
@@ -811,6 +827,7 @@ public:
 	virtual std::string NamePlural() const RET("scrolls of change material")
 	virtual float OfferModifier() const RET(40)
 	virtual bool Read(character*);
+	virtual ulong Price() const { return 500; }
 );
 
 class ITEM
@@ -822,6 +839,7 @@ class ITEM
 		SetSize(10);
 	},
 public:
+	virtual bool IsTheAvatar() const RET(true)
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, valpurium::StaticType()))
 	virtual ushort Possibility() const RET(0)
 	virtual std::string NameSingular() const RET("Avatar of Valpuri")
@@ -851,6 +869,7 @@ public:
 	virtual std::string NamePlural() const RET("wands of striking")
 	virtual float OfferModifier() const RET(10)
 	virtual bool Zap(character*, vector2d, uchar);
+	virtual ulong Price() const { return 500; }
 );
 
 class ITEM

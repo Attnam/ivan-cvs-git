@@ -67,7 +67,7 @@ public:
 	virtual void MoveCharacter(vector2d, vector2d);
 	virtual ushort GetLOSModifier() const;
 	virtual ushort CalculateMinimumEmitationRadius(ushort) const;
-	virtual room* GetRoom(uchar Index) const { return Room[Index]; }
+	virtual room* GetRoom(uchar) const;
 	virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
 	virtual void AddRoom(room*);
 protected:

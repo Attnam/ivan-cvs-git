@@ -237,7 +237,7 @@ ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the item
 		Buffer.resize(63, ' ');
 		Buffer += int(GetItem(c)->GetArmorValue());
 		Buffer.resize(70, ' ');
-		Buffer += int(GetItem(c)->GetWeaponStrength());
+		Buffer += int(GetItem(c)->GetWeaponStrength() / 100);
 
 		ItemNames.AddEntry(Buffer, RED);
 	}

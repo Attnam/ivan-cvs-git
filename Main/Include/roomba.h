@@ -11,6 +11,7 @@ class inputfile;
 class character;
 class overlevelterrain;
 class item;
+class levelsquare;
 
 class room : public typeable
 {
@@ -34,6 +35,8 @@ public:
 	virtual bool DropItem(character*, item*) { return true; }
 	virtual uchar GetDivineOwner() const { return DivineOwner; }
 	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
+	virtual void KickSquare(character*, levelsquare*) { }
+	virtual bool ConsumeItem(character*, item*) { return true; }
 protected:
 	std::vector<vector2d> Door;
 	vector2d Pos, Size;

@@ -585,3 +585,15 @@ void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 		if(EmptyMaterial)
 			GraphicId.Color[Index] = GraphicId.Color[0];
 }
+
+ulong meleeweapon::Price() const
+{
+	return ulong(GetWeaponStrength() * GetWeaponStrength() * GetWeaponStrength() / (float(GetWeight()) * 1000000));
+}
+
+ulong torsoarmor::Price() const
+{
+	float ArmorModifier = 100.0f / GetArmorValue();
+
+	return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
+}

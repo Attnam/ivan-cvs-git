@@ -266,63 +266,6 @@ bool humanoid::WearArmor()
 	return false;
 }
 
-void perttu::BeTalkedTo(character* Talker)
-{
-	static bool Triggered = false;
-
-	if(Talker->HasMaakotkaShirt())
-	{
-		iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
-		game::RemoveSaves();
-		game::Quit();
-
-		if(!game::GetWizardMode())
-		{
-			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 3);
-			highscore HScore;
-			HScore.Draw();
-		}
-	}
-	else
-		if(Triggered)
-			ADD_MESSAGE("Perttu says: \"Bring me the Maakotka shirt and we'll talk.\"");
-
-	if(Talker->HasHeadOfElpuri() && !Triggered)
-	{
-		if(game::GetGod(1)->GetRelation() >= 0 && Talker->Danger() >= 100000)
-		{
-			ADD_MESSAGE("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog!");
-			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
-
-			if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
-			{
-				iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
-				game::GetCurrentArea()->SendNewDrawRequest();
-
-				game::TriggerQuestForMaakotkaShirt();
-
-				Triggered = true;
-
-				return;
-			}
-		}
-
-		iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
-		game::RemoveSaves();
-		game::Quit();
-
-		if(!game::GetWizardMode())
-		{
-			AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
-			highscore HScore;
-			HScore.Draw();
-		}
-	}
-	else
-		if(!Triggered)
-			ADD_MESSAGE("Perttu says: \"Bring me the head of Elpuri and we'll talk.\"");
-}
-
 void humanoid::Save(outputfile& SaveFile) const
 {
 	character::Save(SaveFile);
@@ -796,4 +739,258 @@ void priest::GetAICommand()
 		return;
 
 	CheckForUsefulItemsOnGround();
+}
+
+void perttu::BeTalkedTo(character* Talker)
+{
+	static bool Triggered = false;
+
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("Heretic! Dev/null is a place not worthy to receive thee!");
+		return;
+	}
+
+	if(Talker->HasMaakotkaShirt())
+	{
+		iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
+		game::RemoveSaves();
+		game::Quit();
+
+		if(!game::GetWizardMode())
+		{
+			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 3);
+			highscore HScore;
+			HScore.Draw();
+		}
+	}
+	else
+		if(Triggered)
+			ADD_MESSAGE("Perttu says: \"Bring me the Maakotka shirt and we'll talk.\"");
+
+	if(Talker->HasHeadOfElpuri() && !Triggered)
+	{
+		if(game::GetGod(1)->GetRelation() >= 0 && Talker->Danger() >= 100000)
+		{
+			ADD_MESSAGE("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog!");
+			ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
+
+			if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
+			{
+				iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+				game::GetCurrentArea()->SendNewDrawRequest();
+
+				game::TriggerQuestForMaakotkaShirt();
+
+				Triggered = true;
+
+				return;
+			}
+		}
+
+		iosystem::TextScreen("Thou hast slain Elpuri, and Perttu is happy!\n\nYou are victorious!");
+		game::RemoveSaves();
+		game::Quit();
+
+		if(!game::GetWizardMode())
+		{
+			AddScoreEntry("defeated Elpuri and continued to further adventures", 2);
+			highscore HScore;
+			HScore.Draw();
+		}
+	}
+	else
+		if(!Triggered)
+			ADD_MESSAGE("Perttu says: \"Bring me the head of Elpuri and we'll talk.\"");
+}
+
+void farmer::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Did you think I use this axe only to chop wood?\"");
+		return;
+	}
+
+	switch(rand() % 4)
+	{
+	case 0:
+		ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because summer lasts two weeks.\"");
+		break;
+	case 1:
+		ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CNAME(DEFINITE));
+		break;
+	case 2:
+		ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", CNAME(DEFINITE));
+		break;
+	case 3:
+		ADD_MESSAGE("\"The prices here are infamous. What a capitalist scum that shopkeeper is!\"");
+		break;
+	}
+}
+
+void cityguard::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"A fair trial? Hah! Prepare to be executed!\"");
+		return;
+	}
+
+	switch(rand() % 4)
+	{
+	case 0:
+		ADD_MESSAGE("%s says gravely: \"You don't have life. Get it in the army.\"", CNAME(DEFINITE));
+		break;
+	case 1:
+		ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CNAME(DEFINITE));
+		break;
+	case 2:
+		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CNAME(DEFINITE));
+		break;
+	case 3:
+		ADD_MESSAGE("\"Überpriest is my idol. I would want a sword as big as his!\"");
+		break;
+	}
+}
+
+void shopkeeper::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Criminal! Mellis bless my efforts of removing you!\"");
+		return;
+	}
+
+	switch(rand() % 4)
+	{
+	case 0:
+		ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CNAME(DEFINITE));
+		break;
+	case 1:
+		ADD_MESSAGE("%s sighs: \"Mutant school food mushrooms ate the last caravan.", CNAME(DEFINITE));
+		ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", CNAME(DEFINITE));
+		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since I have a monopoly.\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"Don't try anything. The Überpriest is a LAN friend of mine.\"");
+		break;
+	}
+}
+
+void priest::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Sinner! My hands shall pour Dinive Wrath upon thee!\"");
+		return;
+	}
+
+	if(!HomeRoom)
+		ADD_MESSAGE("\"Receive my blessings, child.\"");
+	else
+	{
+		ADD_MESSAGE("%s talks to you:", CNAME(DEFINITE));
+		game::GetGod(GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
+	}
+}
+
+void oree::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink Pepsi!\"", CNAME(DEFINITE));
+}
+
+void swatcommando::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s yells: \"Microsoft powaah! Die Unix!\"", CNAME(DEFINITE));
+}
+
+void ennerbeast::BeTalkedTo(character*)
+{
+	switch(rand() % 4)
+	{
+	case 0:
+		ADD_MESSAGE("\"Fishing is fun! Do you fish?\"");
+		break;
+	case 1:
+		ADD_MESSAGE("\"And then I got that perch weighting fifty stones...\"");
+		break;
+	case 2:
+		ADD_MESSAGE("\"What do you think of Braveheart?\"");
+		break;
+	case 3:
+		ADD_MESSAGE("\"Can you help me with this download problem?\"");
+		break;
+	}
+}
+
+void frog::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s croaks.", CNAME(DEFINITE));
+}
+
+void elpuri::BeTalkedTo(character*)
+{
+}
+
+void billswill::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("\"Windows XP is coming. You will install it. Resistance is futile. Prepare to be assimilited.\"", CNAME(DEFINITE));
+}
+
+void fallenvalpurist::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
+		ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CNAME(DEFINITE));
+	else
+		ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CNAME(DEFINITE));
+}
+
+void froggoblin::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
+		ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", CNAME(DEFINITE));
+	else
+		ADD_MESSAGE("%s yells goblin war cries at you.", CNAME(DEFINITE));
+}
+
+void mommo::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s vibrates oddly.", CNAME(DEFINITE));
+}
+
+void golem::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
+		ADD_MESSAGE("\"Yes, master?\"");
+	else
+		ADD_MESSAGE("\"Yes, master. Golem kill human. Golem then return.\"");
+}
+
+void wolf::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s howls.", CNAME(DEFINITE));
+}
+
+void dog::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s barks to you.", CNAME(DEFINITE));
+}
+
+void spider::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s is silent.", CNAME(DEFINITE));
+}
+
+void jackal::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s howls.", CNAME(DEFINITE));
+}
+
+void donkey::BeTalkedTo(character*)
+{
+	ADD_MESSAGE("%s neighs.", CNAME(DEFINITE));
 }

@@ -685,3 +685,35 @@ void god::PrintRelation() const
 
 	ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
 }
+
+void god::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"Not currently implemented.\"");
+}
+
+void venius::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"%s is the Great Protector of all Law and Order.", GOD_NAME);
+	ADD_MESSAGE("Prayeth upon, He may burn thy enemies with the Fire of Justice, if thee areth worthy.\"");
+}
+
+void dulcis::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"%s is the Creator of everything that we call Art and Beauty.", GOD_NAME);
+	ADD_MESSAGE("When thou prayeth for Her help, She may calm thine worst enemies with Her love.");
+	ADD_MESSAGE("But beware! There areth some villains that may resist even Her call!\"");
+}
+
+void seges::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"%s bringeth Life, Health and Nutrition to all who follow Her.", GOD_NAME);
+	ADD_MESSAGE("When thou calleth upon Her with an empty stomach, a miracle may indeed fill it.\"");
+}
+
+void consummo::AddPriestMessage() const
+{
+	ADD_MESSAGE("\"The Wise bow before %s, for He maketh the Universe as rational as it is.", GOD_NAME);
+	ADD_MESSAGE("Those who follow Him are not bound to place and time, since knowledge controlleth them.");
+	ADD_MESSAGE("This is why those chosen by Him may escape any danger with their wisdom.");
+	ADD_MESSAGE("Alas, beware! Soon thou may findeth thyself in an even worse situation!\"");
+}

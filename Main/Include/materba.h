@@ -79,6 +79,7 @@ public:
 	virtual bool IsFlesh() { return false; }
 	virtual object* GetMotherObject() const { return MotherObject; }
 	virtual void SetMotherObject(object* What) { MotherObject = What; }
+	virtual ulong RawPrice() const { return 0; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }

@@ -746,12 +746,16 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
 		else
 			Kicker->GetTeam()->Hostility(GetCharacter()->GetTeam());
 
+	if(Room)
+		GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
+
 	GetStack()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
 
 	if(GetCharacter())
 		GetCharacter()->BeKicked(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay, Kicker);
 
 	GetOverLevelTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
+
 	return true;
 }
 
@@ -904,7 +908,7 @@ void levelsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
 bool levelsquare::CanBeSeen() const
 {
-	if(GetLuminance() >= LIGHT_BORDER && GetLastSeen() == game::GetLOSTurns())
+	if((GetLuminance() >= LIGHT_BORDER && GetLastSeen() == game::GetLOSTurns()) || game::GetSeeWholeMapCheat())
 		return true;
 	else
 		return false;

@@ -361,6 +361,9 @@ bool character::Consume()
 
 		if(Index < GetLevelSquareUnder()->GetStack()->GetItems())
 		{
+			if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->ConsumeItem(this, GetLevelSquareUnder()->GetStack()->GetItem(Index)))
+				return false;
+
 			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst ifyou eat anything more. Force it down? [y/N]"))
 				return false;
 
@@ -689,10 +692,7 @@ bool character::TryMove(vector2d MoveTo)
 						return Hit(Character);
 					else
 						if(GetTeam() == Character->GetTeam())
-						{
-							Displace(Character);
-							return true;
-						}
+							return Displace(Character);
 						else
 							return false;
 			else
@@ -1290,7 +1290,7 @@ void character::Save(outputfile& SaveFile) const
 	SaveFile << Index << Strength << Endurance << Agility << Perception << RegenerationCounter;
 	SaveFile << HP << NP << AP;
 	SaveFile << StrengthExperience << EnduranceExperience << AgilityExperience << PerceptionExperience;
-	SaveFile << State << Money << HomeRoom;
+	SaveFile << State << Money << HomeRoom << WayPoint;
 
 	if(StateIsActivated(EATING))
 		SaveFile << GetLevelSquareUnder()->GetStack()->SearchItem(GetConsumingCurrently());
@@ -1356,7 +1356,7 @@ void character::Load(inputfile& SaveFile)
 	SaveFile >> Strength >> Endurance >> Agility >> Perception >> RegenerationCounter;
 	SaveFile >> HP >> NP >> AP;
 	SaveFile >> StrengthExperience >> EnduranceExperience >> AgilityExperience >> PerceptionExperience;
-	SaveFile >> State >> Money >> HomeRoom;
+	SaveFile >> State >> Money >> HomeRoom >> WayPoint;
 
 	if(HomeRoom)
 		GetLevelSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->SetMaster(this);
@@ -1850,24 +1850,24 @@ void character::Darkness(long SizeOfEffect)
 bool character::Kick()
 {
 	uchar Direction;
+
 	if(!CanKick())
 	{
 		ADD_MESSAGE("This monster type can not kick.");
 		return false;
 	}
+
 	ADD_MESSAGE("In what direction do you wish to kick?");
 	game::DrawEverything();
 	vector2d KickPos = game::AskForDirectionVector();
+
 	if(KickPos != vector2d(0,0))
 	{
 		for(uchar c = 0; c < 8; ++c)
-		{
 			if(KickPos == game::GetMoveVector(c))
 				Direction = c;
-		}
 		
-		return game::GetCurrentLevel()->GetLevelSquare(GetPos() + KickPos)->Kick(GetStrength(), Direction,this);
-		
+		return game::GetCurrentLevel()->GetLevelSquare(GetPos() + KickPos)->Kick(GetStrength(), Direction, this);
 	}
 
 	return false;
@@ -2508,44 +2508,47 @@ bool character::CheckForUsefulItemsOnGround()
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->CanAIPickup() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
-		{
-			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
+			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
+			{
+				item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
-			if(GetWielded())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
+				if(GetWielded())
+					GetStack()->MoveItem(GetStack()->SearchItem(GetWielded()), GetLevelSquareUnder()->GetStack());
 
-			SetWielded(ToWield);
+				SetWielded(ToWield);
 
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s picks up and wields %s.", CNAME(DEFINITE), ToWield->CNAME(DEFINITE));
 
-			return true;
-		}
+				return true;
+			}
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWear())
-		{
-			item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
+			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->PickupItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
+			{
+				item* ToWear = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
-			if(GetTorsoArmor())
-				GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
+				if(GetTorsoArmor())
+					GetStack()->MoveItem(GetStack()->SearchItem(GetTorsoArmor()), GetLevelSquareUnder()->GetStack());
 
-			SetTorsoArmor(ToWear);
+				SetTorsoArmor(ToWear);
 
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s picks up and wears %s.", CNAME(DEFINITE), ToWear->CNAME(DEFINITE));
 
-			return true;
-		}
+				return true;
+			}
 
 		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->Consumable(this))
-		{
-			if(GetLevelSquareUnder()->CanBeSeen())
-				ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
+			if(!GetLevelSquareUnder()->GetRoom() || GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->ConsumeItem(this, GetLevelSquareUnder()->GetStack()->GetItem(c)))
+			{
+				if(GetLevelSquareUnder()->CanBeSeen())
+					ADD_MESSAGE("%s eats %s.", CNAME(DEFINITE), GetLevelSquareUnder()->GetStack()->GetItem(c)->CNAME(DEFINITE));
 
-			ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
+				ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(c), GetLevelSquareUnder()->GetStack());
 
-			return true;
-		}
+				return true;
+			}
 	}
 
 	return false;
@@ -2560,7 +2563,7 @@ bool character::FollowLeader()
 	{
 		vector2d Distance = GetPos() - WayPoint;
 
-		if(abs(long(Distance.X)) <= 2 && abs(long(Distance.Y)) <= 2)
+		if(abs(short(Distance.X)) <= 2 && abs(short(Distance.Y)) <= 2)
 			return false;
 		else
 		{
@@ -2759,6 +2762,7 @@ bool character::Displace(character* Who)
 					ADD_MESSAGE("%s displaces %s!", CNAME(DEFINITE), Who->CNAME(DEFINITE));
 
 		GetLevelSquareUnder()->SwapCharacter(Who->GetLevelSquareUnder());
+		SetAP(GetAP() - 500);
 		return true;
 	}
 	else

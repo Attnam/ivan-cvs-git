@@ -78,7 +78,8 @@ public:
 	virtual bool UseThrowStrengthModifier() const { return false; }
 	virtual void GetStepOnEffect(character*) {}
 	virtual bool CanAIPickup() const { return true; }
-	virtual ulong Price() const { return 10; }
+	virtual ulong Price() const { return 0; }
+	virtual bool IsTheAvatar() const RET(false)
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -547,7 +547,7 @@ Dungeon 1;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=9;
+			DivineOwner=10;
 			Type=shop;
 			
 			Square, Pos 5, 0;
@@ -574,12 +574,13 @@ Dungeon 1;
 					l = lamp;
 					c = scrollofchangematerial;
 					b = banana;
-					l = dogflesh lump;
-					L = pork loaf;					
+					l = bananaflesh lump;
+					L = pork loaf;
+					P = potion;
 				}
 			}
 			{
-			    tsp.c
+			    tsp.P
 			    blLcl
 			    tbbbL		
 			}
