@@ -2,7 +2,7 @@
 // done
 * high priority
 
-Kuvien flippailu (lis‰‰). (items etc.)
+//Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
 Msgbuffer tiedostoon.
@@ -14,7 +14,7 @@ Jumalten roolin miettiminen.
 Attribuuttibonusten osittainen expoittaminen.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
 Humanoidin armorkuvat.
-Ehk‰ muitakin erikoisn‰pp‰imi‰ kuin F2 ja F4 toimimaan getkeyn aikana?
+Ehk‰ muitakin erikoisn‰pp‰imi‰ kuin Alt+Enter ja Print Screen toimimaan getkeyn aikana?
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieni‰ tunnistusongelmia er‰ill‰ henkilˆill‰)
 Kloonaus.
 Size of player increases from eating.
@@ -35,7 +35,6 @@ It should be possible to determine line height as a felist draw function argumen
 Vomiting in a shop should have a special effect.
 Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
-Lookmode should show item list.
 Highscores should be crypted somehow.
 Wood types. (wood is a _bit_ generic)
 Script should be crypted.
@@ -60,7 +59,7 @@ Atavus should do something special on Christmas.
 A graphical equipment screen. (from JM)
 Gurus.
 Meditation command.
-*Opening a banana should remove its peals.
+Opening a banana should remove its peals.
 *Specialities to daemon flesh.
 //*Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
@@ -86,12 +85,12 @@ Throw speed to conf.
 *Monsters that block light.
 Parasites.
 //*Savefile versions.
-Monster data in corpses + resurrection.
+//Monster data in corpses + resurrection.
 Pets that resurrect the player.
 Compressed savefiles.
-Inventory screen could be categorised.
+//Inventory screen could be categorised.
 Crash save.
-The Great Line Algorithm Idea. (GLAI)
+(r, doesn't work) The Great Line Algorithm Idea. (GLAI)
 *"You didn't manage to get onto the high score list"
 Cats and dogs should attack each other even if team comrades.
 *It should be possible to unequip party members.
@@ -124,8 +123,8 @@ Intelligent polymorphed monsters should have unique replies?
 //*Fluid disappears too fast.
 *Mommos should not leave corpses but just slime.
 ***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
-*Dipping an empty bottle in a fountain should fill it with water.
-*The librarian should sell scrolls of charging.
+/*Dipping an empty bottle in a fountain should fill it with water.
+//*The librarian should sell scrolls of charging.
 /*Wand's explosive power should depend on its charges.
 Hirelings. (from JM)
 Books of <skill>. (from JM)
@@ -134,13 +133,13 @@ Attack magic scrolls. (from JM)
 Socketed items. (from JM)
 Gambling. (from JM)
 Inns. (from JM)
-Double wielding. (from JM)
+//Double wielding. (from JM)
 Thief monsters. (from JM)
 Invisible monsters. (from JM)
 /*There should be more ways to gain pets for non-lawfuls.
 If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack full of gunpowder anymore.
-Explosions should be stopped by walls.
-**Message splitting.
+*Explosions should be stopped by walls.
+//**Message splitting.
 One should be able to buy better bodyparts somewhere in the game.
 One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
 Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
@@ -154,7 +153,7 @@ Monsters that eat other monsters alive, like Nethack's purple worm.
 Explosion level.
 Mirages.
 Mirrors.
-Breaking LTerrain in two parts.
+//Breaking LTerrain in two parts.
 Worldmap LOS disabling.
 //Symbolic inventory.
 //Symbolic god menu.
@@ -163,16 +162,16 @@ Worldmap LOS disabling.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
 Allergies.
 Special birth gifts like "big head" that gives more intelligence but increases enemies' chance to hit the head.
-*Copper, bronze, wooden weapons.
+//*Copper, bronze, wooden weapons.
 Nuts could be bodyparts. Or perhaps not.
-Tame symbol.
+//Tame symbol.
 Potion effect from fountain.
 Bananas should have black dots when spoiled.
-Zoom to look.
+//Zoom to look.
 "Need brain but you too stupid!"
 High level priests should be able to summon angels.
 Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
-Healing potions. (from JM)
+//Healing potions. (from JM)
 Pet priest. (from JM)
 Weakening the enner beast. (from JM)
 Shine effect for jewel and valpurium items with outline. (from JM)
@@ -185,7 +184,7 @@ Hunters should ask the player to aid them in a quest battle against a goblin kin
 Pits with sticks. (from JM)
 Acid pits. (from JM)
 Perception should affect chance of detecting traps. (from JM)
-Slow and haste. (from JM)
+//Slow and haste. (from JM)
 Flying monsters should be more difficult to hit. (from JM)
 Flying monsters should occasionally be displaced.
 Status bar with colored statuses (poisoned, flying etc). (from JM)
@@ -200,46 +199,43 @@ Secret doors that can be opened by whistling. (from JM)
 Heads on walls that can be talked to. (from JM)
 Scribe scroll skill. (from JM)
 Deathblow that penetrates armor. (from JM)
-*Keys to doors. (from JM)
+//*Keys to doors. (from JM)
 Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
 Pick-axes available in the lowest levels. (from JM)
 In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
 Spiders should make webs.
-Wand of locking.
-Scroll of gold detection that would identify every unit made of gold.
+/Wand of locking.
+Scroll of gold detection that would identify every unit made of gold on the level.
 Bananas should act as boomerangs when thrown.
-*Satiated and bloated states.
+//*Satiated and bloated states.
 Zombies should spoil.
-Kicking heads should spill blood.
+Kicking bodyparts and corpses on the ground should spill blood.
 *Average based difficulty!
 *Strength and weapon weight should affect attack speed!
 One must be able to use a stethoscope on doors.
-Item list to lookmode.
+//Item list to lookmode.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
-Skeleton bone flight.
-Mutant monster.
+Mutant monster that would have totally random bodyparts from any humanoid in game.
 WhatToLoad menu could show danger level & dungeon level.
 Pocket pick-axe.
-*Aliases for wishing.
+//*Aliases for wishing.
 Dipping to oceans.
 If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
 Moving diagonally should use sqrt(2) times more AP.
-Msghistory length to conf.
+Msghistory max length to conf.
 Opening a can should be more difficult with less hands.
 Fly function for character!
-Mirrors.
 Item category "rubbish" which would contain bananapeals and roubles.
 Cumulative comments to script.
 Material colored cursor.
-Alphablit to bottles.
+//Alphablit to bottles.
 Wand levels.
 Talking to oneself should abuse intelligence.
-*If you are illiterate you shouldn't be able to read engraved messages.
+If you are illiterate you shouldn't be able to read engraved messages.
 Chatting shouldn't be possible if you aren't intelligent.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
-Shields.
 Mommo slimes and armless people shouldn't "try to use their claws to crawl forward".

@@ -16,7 +16,7 @@ done (or understood) by anyone else than the writer.
 Tasovaihdosten funktionaalisuuden kohotus.
 //Syöntisallimusten liputtaminen.
 (r) Karakterin atribuuttien kollektivointi?
-Karakterin atribuuttien luokitus.
+(r) Karakterin atribuuttien luokitus.
 (r) Tarkkailijoiden tuhoaminen?
 //Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
 //Dynarrayn eliminaatio.
