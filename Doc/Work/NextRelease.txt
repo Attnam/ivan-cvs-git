@@ -1,10 +1,10 @@
-Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
+//Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
 Nostoteko‰ly.
 //Kick ja bite toimimaan, jos k‰det irti. (timo)
 //Pertun kasvot. (timo)
 //Zoom lookiin. (hex)
-V‰rien tarkistusl‰pik‰yminen.
-Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
+//V‰rien tarkistusl‰pik‰yminen.
+//Enner beast ihmiseksi + p‰‰ kuntoon. (timo)
 //Menua vasemmalle.
 Damage estimate kuntoon. (timo)
 //Werewolfit kuntoon. (timo)
@@ -77,3 +77,5 @@ Things thrown at doors.
 CollectCreatures
 //Drinking should be separated.
 //Skeleton volume.
+"snake is standing"
+Genie's strength.

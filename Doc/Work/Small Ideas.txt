@@ -3,21 +3,21 @@
 * high priority
 (r) rejected, will not be done
 
-//Kuvien flippailu (lis‰‰). (items etc.)
+//Image flipping (more).
 Lowscore.
-Monsujen atribuuttien muuntelu pelaajan tason mukaan.
-Msgbuffer tiedostoon.
-Hiscoreihin p‰iv‰m‰‰r‰.
-Listan voisi (jos haluaa) sorttia p‰iv‰m‰‰r‰n mukaan.
-Verest‰ voisi myˆs tehd‰ valuvaa.
-Jumalille pit‰‰ olla muuten muitakin efektej‰ kuin vain nuo kaksi.
-Jumalten roolin miettiminen.
-Attribuuttibonusten osittainen expoittaminen.
-Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
-Humanoidin armorkuvat.
-Ehk‰ muitakin erikoisn‰pp‰imi‰ kuin Alt+Enter ja Print Screen toimimaan getkeyn aikana?
-Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieni‰ tunnistusongelmia er‰ill‰ henkilˆill‰)
-Kloonaus.
+Altering the attributes of monsters according to the player's level.
+Write msgbuffer to a file command.
+Date to highscores.
+It should be possible to sort highscores according to date.
+Blood could flow around.
+Gods should have more than two effects.
+We should give more thought to the role of the gods.
+Partially converting the attribute bonuses to exp.
+Food poisoning state.
+Armor pictures of humanoids.
+Maybe some keys other than Alt+Enter and Print Screen should also work during getkey?
+Double-sized draw of the tiles as a switch.
+Cloning.
 Size of player increases from eating.
 How can you change the window to the rigth size? (stickiness)
 /*Banana peals should be slippery.
@@ -257,3 +257,5 @@ In my (Timo's) opinion, we should add some powerful undead monsters and maybe a 
 Wand of resurrection should behave correctly when zapped at undead.
 Werewolves (wolf form) should be nonhumanoids.
 One should be also able to wish for terrains.
+One MColor in the leg pictures should be allocated for boots (most humanoids walk barefooted now).
+It should be possible to specify the material while wishing for items and while polymorphing into a golem.

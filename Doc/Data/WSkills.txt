@@ -16,6 +16,8 @@ Halberds
 Spears
 Whips
 
+* Also available for nonhumanoids
+
 Category experience chart:
 
 Level	Succesful hits	Unuse penalty	Idle Turns for	Bonus

@@ -29,3 +29,4 @@ It is possible to protect items from explosions by putting them in hand digging,
 Chests.
 Petrus's wives' corpses use indefinite article.
 Entering a dungeon and loading an autosave saves some time.
+Skeletons are probably seen by infravision.

@@ -1,6 +1,6 @@
 This file is written in Timo-dialect (a highly modified version
 of the Finnish language), since these tasks are not meant to be
-done (or understood) by anyone else than the writer.
+done nor understood by anyone else than the writer.
 
 * high priority
 // done
@@ -32,3 +32,6 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.
+Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
+Kirjastorajapinnan organisointi systeemiriippumattomaksi.
+*Projektin kattava kompleksisten datajäsenten cachaus.

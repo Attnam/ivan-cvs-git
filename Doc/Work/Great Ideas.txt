@@ -1,15 +1,15 @@
-Pitkän matkan aseet (aluksi jousi ja nuolet).
-Tutoriaali.
+Long range weapons.
+Tutorial.
 Sid Meier.
-Joulupukki. (Renneltä)
-Hiirivetoisuus.
-Vuorokaudenajat.
-Vuodenajat.
-Moniruutuiset oliot.
+Santa Claus. (from Renne)
+Mouse control.
+Day and night.
+Seasons.
+Multi-tiled creatures.
 Smithing.
-Ghost-Überpriestit.
+Ghost-Überpriests.
 Thougth Control.
-Mikroaaltouuni.
+Microwave oven.
 Different types of item enchantments.
 (r) Random gods.
 Ego monsters. (also named ones)
