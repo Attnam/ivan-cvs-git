@@ -344,6 +344,7 @@ class OLTERRAIN
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(MARBLE), MAKE_MATERIAL(WATER)); }
   virtual ushort GetMaterialColor1(ushort) const;
+  virtual uchar GetAlpha1(ushort) const;
   virtual ulong GetDefaultContainedVolume() const { return 10000; }
   virtual std::string GetPostFix() const { return ContainerPostFix(); }
   virtual std::string GetAdjective() const { return GetContainedMaterial() ? "" : "dried out"; }

@@ -1098,4 +1098,3 @@ bool level::IsValid(vector2d Vector) const
   else
     return false;
 }
-

@@ -1,3 +1,11 @@
+May 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a bug in the corpse creation code
+	* Color tweaks
+	* Added an alpha blend transparency effect for glass and liquids,
+	  although it's hard to see when objects are so small :(
+	  But if you lay a bottle over a flickering banana, you'll certainly notice it.
+
 May 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Animations work in the lookmode

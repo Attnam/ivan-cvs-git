@@ -123,7 +123,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
       if(c < 5)
 	{
 	  Backup.MaskedBlit(DOUBLEBUFFER, ushort(255 - c * 50), 0);
-	  Buffer.AlphaBlit(DOUBLEBUFFER, uchar(c * 50), 0);
+	  Buffer.SimpleAlphaBlit(DOUBLEBUFFER, c * 50, 0);
 	  ++c;
 	  graphics::BlitDBToScreen();
 	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);

@@ -430,17 +430,17 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
   MaskedBlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance, MaskColor);
 }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
+void bitmap::SimpleAlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
 {
   if(!IsIndependent)
     {
-      GetMotherBitmap()->AlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Alpha, MaskColor);
+      GetMotherBitmap()->SimpleAlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Alpha, MaskColor);
       return;
     }
 
   if(!Bitmap->IsIndependent)
     {
-      AlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Alpha, MaskColor);
+      SimpleAlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Alpha, MaskColor);
       return;
     }
 
@@ -457,29 +457,108 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
   ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
   ulong TrueSourceXMove = (XSize - Width) << 1;
   ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
-  ::AlphaBlit(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Alpha, MaskColor);
+  ::SimpleAlphaBlit(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Alpha, MaskColor);
 }
 
-void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskColor) const
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
   if(!IsIndependent)
-    ABORT("Illegal alphamapped subbitmap blit request detected!");
+    {
+      GetMotherBitmap()->AlphaBlit(Bitmap, GetXPos() + SourceX, GetYPos() + SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
+      return;
+    }
 
   if(!Bitmap->IsIndependent)
     {
-      AlphaBlit(Bitmap->GetMotherBitmap(), Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, MaskColor);
+      AlphaBlit(Bitmap->GetMotherBitmap(), SourceX, SourceY, Bitmap->GetXPos() + DestX, Bitmap->GetYPos() + DestY, Width, Height, Flags, MaskColor);
       return;
     }
 
   if(!GetAlphaMap())
-    ABORT("AlphaMap not available!");
+    {
+      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Flags, MaskColor);
+      return;
+    }
 
-  ulong TrueSourceOffset = ulong(GetImage()[0]);
-  ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
-  ulong TrueDestXMove = (Bitmap->XSize - XSize) << 1;
-  ulong AlphaMapOffset = ulong(GetAlphaMap()[0]);
-  ushort Width = XSize, Height = YSize;
-  ::AlphaBlit(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height, MaskColor);
+  if(!Width || !Height)
+    ABORT("Zero-sized bitmap alpha blit attempt detected!");
+
+  Flags &= 0x7;
+
+  ulong TrueSourceOffset = ulong(&GetImage()[SourceY][SourceX]);
+  ulong TrueSourceXMove = (XSize - Width) << 1;
+  ulong AlphaMapOffset = ulong(&GetAlphaMap()[SourceY][SourceX]);
+
+  switch(Flags)
+    {
+    case NONE:
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
+	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
+	AlphaBlitNoFlags(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case MIRROR:
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
+	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
+	AlphaBlitMirror(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case FLIP:
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
+	ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
+	AlphaBlitFlip(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case (MIRROR | FLIP):
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
+	AlphaBlitMirrorFlip(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case ROTATE:
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX + Width - 1]);
+	ulong TrueDestXMove = Bitmap->XSize << 1;
+	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
+	AlphaBlitRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case (MIRROR | ROTATE):
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY][DestX]);
+	ulong TrueDestXMove = Bitmap->XSize << 1;
+	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
+	AlphaBlitMirrorRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case (FLIP | ROTATE):
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX + Width - 1]);
+	ulong TrueDestXMove = Bitmap->XSize << 1;
+	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
+	AlphaBlitFlipRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	break;
+      }
+
+    case (MIRROR | FLIP | ROTATE):
+      {
+	ulong TrueDestOffset = ulong(&Bitmap->GetImage()[DestY + Height - 1][DestX]);
+	ulong TrueDestXMove = Bitmap->XSize << 1;
+	ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
+	AlphaBlitMirrorFlipRotate90(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+	break;
+      }
+    }
 }
 
 void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
@@ -723,7 +802,7 @@ void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
       if(BitmapEditor)
 	BitmapEditor(this);
 
-      AlphaBlit(DOUBLEBUFFER, uchar(c * 50), 0);
+      SimpleAlphaBlit(DOUBLEBUFFER, c * 50, 0);
       graphics::BlitDBToScreen();
       while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
     }

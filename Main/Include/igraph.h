@@ -25,6 +25,7 @@ struct graphic_id
 {
   vector2d BitmapPos;
   ushort Color[4];
+  uchar Alpha[4];
   uchar FileIndex;
   uchar SpecialType;
 };
@@ -43,9 +44,6 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.SpecialType != GI2.SpecialType)
     return GI1.SpecialType < GI2.SpecialType;
 
-  if(!GI1.Color || !GI2.Color)	// This shouldn't be possible
-    return false;
-
   if(GI1.Color[0] != GI2.Color[0])
     return GI1.Color[0] < GI2.Color[0];
 
@@ -57,6 +55,18 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
 
   if(GI1.Color[3] != GI2.Color[3])
     return GI1.Color[3] < GI2.Color[3];
+
+  if(GI1.Alpha[0] != GI2.Alpha[0])
+    return GI1.Alpha[0] < GI2.Alpha[0];
+
+  if(GI1.Alpha[1] != GI2.Alpha[1])
+    return GI1.Alpha[1] < GI2.Alpha[1];
+
+  if(GI1.Alpha[2] != GI2.Alpha[2])
+    return GI1.Alpha[2] < GI2.Alpha[2];
+
+  if(GI1.Alpha[3] != GI2.Alpha[3])
+    return GI1.Alpha[3] < GI2.Alpha[3];
 
   return false;
 }

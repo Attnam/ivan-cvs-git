@@ -124,6 +124,10 @@ void object::UpdatePictures()
       GraphicId[c].Color[1] = GetMaterialColor1(c);
       GraphicId[c].Color[2] = GetMaterialColor2(c);
       GraphicId[c].Color[3] = GetMaterialColor3(c);
+      GraphicId[c].Alpha[0] = GetAlpha0(c);
+      GraphicId[c].Alpha[1] = GetAlpha1(c);
+      GraphicId[c].Alpha[2] = GetAlpha2(c);
+      GraphicId[c].Alpha[3] = GetAlpha3(c);
       GraphicId[c].BitmapPos = GetBitmapPos(c);
       GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
       GraphicId[c].SpecialType = GetSpecialType(c);
@@ -214,4 +218,12 @@ void object::SetContainedMaterial(material*)
 void object::ChangeContainedMaterial(material*)
 {
   ABORT("Illegal object::ChangeContainedMaterial call!");
+}
+
+uchar object::GetAlpha0(ushort) const
+{
+  if(GetMainMaterial())
+    return GetMainMaterial()->GetAlpha();
+  else
+    return 255;
 }

@@ -768,7 +768,7 @@ void MaskedBlitLuminated(ulong TrueSourceOffset, ulong TrueDestOffset, ulong Tru
   }
 }
 
-void AlphaBlit(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, uchar Alpha, ushort MaskColor)
+void SimpleAlphaBlit(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, uchar Alpha, ushort MaskColor)
 {
   ushort DColor, SColor;
 
@@ -863,7 +863,7 @@ void AlphaBlit(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMo
   }
 }
 
-void AlphaBlit(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueDestXMove, ushort Width, ushort Height, ushort MaskColor)
+void AlphaBlitNoFlags(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort MaskColor)
 {
   ushort DColor, SColor;
 
@@ -872,21 +872,22 @@ void AlphaBlit(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffse
     pushad
     push es
     mov ax, ds
-    mov es, ax
     mov esi, TrueSourceOffset
     mov edi, TrueDestOffset
     push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
     cld
-  AlphaBlit21:
+  AlphaLoop37:
     mov cx, Width
-  AlphaBlit22:
+  AlphaLoop557:
     lodsw
     pop ebx
     mov dl, [ebx]
     inc ebx
     push ebx
     cmp ax, MaskColor
-    je MaskSkipA2
+    je AlphaSkip27
     mov bx, [edi]
     mov DColor, bx
     mov bx, ax
@@ -942,16 +943,784 @@ void AlphaBlit(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffse
     mov ax, bx
     stosw
     dec cx
-    jnz AlphaBlit22
-    jmp MaskedNextLineA2
-  MaskSkipA2:
+    jnz AlphaLoop557
+    add esi, TrueSourceXMove
+    add edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaLoop37
+    jmp AlphaNextLine27
+  AlphaSkip27:
     add edi, 0x02
     dec cx
-    jnz AlphaBlit22
-  MaskedNextLineA2:
+    jnz AlphaLoop557
+    add esi, TrueSourceXMove
     add edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
     dec Height
-    jnz AlphaBlit21
+    jnz AlphaLoop37
+  AlphaNextLine27:
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitMirror(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitMirror1:
+    mov cx, Width
+  AlphaBlitMirror2:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip1
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    std
+    stosw
+    cld
+    dec cx
+    jnz AlphaBlitMirror2
+    add esi, TrueSourceXMove
+    add edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirror1
+    jmp AlphaNextLine1
+  AlphaSkip1:
+    sub edi, 0x02
+    dec cx
+    jnz AlphaBlitMirror2
+    add esi, TrueSourceXMove
+    add edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirror1
+  AlphaNextLine1:
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitFlip(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitFlip3:
+    mov cx, Width
+  AlphaBlitFlip55:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip2
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    stosw
+    dec cx
+    jnz AlphaBlitFlip55
+    add esi, TrueSourceXMove
+    sub edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitFlip3
+    jmp AlphaNextLine2
+  AlphaSkip2:
+    add edi, 0x02
+    dec cx
+    jnz AlphaBlitFlip55
+    add esi, TrueSourceXMove
+    sub edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitFlip3
+  AlphaNextLine2:
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitMirrorFlip(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitMirrorFlip6:
+    mov cx, Width
+  AlphaBlitMirrorFlip7:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip3
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    std
+    stosw
+    cld
+    dec cx
+    jnz AlphaBlitMirrorFlip7
+    add esi, TrueSourceXMove
+    sub edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirrorFlip6
+    jmp AlphaNextLine3
+  AlphaSkip3:
+    sub edi, 0x02
+    dec cx
+    jnz AlphaBlitMirrorFlip7
+    add esi, TrueSourceXMove
+    sub edi, TrueDestXMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirrorFlip6
+  AlphaNextLine3:
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitRotate90(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ulong TrueDestYMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitRotate904:
+    mov cx, Width
+  AlphaBlitRotate905:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip4
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    mov [edi], ax
+  AlphaSkip4:
+    add edi, TrueDestXMove
+    dec cx
+    jnz AlphaBlitRotate905
+    add esi, TrueSourceXMove
+    sub edi, TrueDestYMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitRotate904
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitMirrorRotate90(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ulong TrueDestYMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitMirrorRotate908:
+    mov cx, Width
+  AlphaBlitMirrorRotate909:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip5
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    mov [edi], ax
+  AlphaSkip5:
+    add edi, TrueDestXMove
+    dec cx
+    jnz AlphaBlitMirrorRotate909
+    add esi, TrueSourceXMove
+    sub edi, TrueDestYMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirrorRotate908
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitFlipRotate90(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ulong TrueDestYMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitFlipRotate9010:
+    mov cx, Width
+  AlphaBlitFlipRotate9011:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip6
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    mov [edi], ax
+  AlphaSkip6:
+    sub edi, TrueDestXMove
+    dec cx
+    jnz AlphaBlitFlipRotate9011
+    add esi, TrueSourceXMove
+    add edi, TrueDestYMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitFlipRotate9010
+    pop ebx
+    pop es
+    popad
+  }
+}
+
+void AlphaBlitMirrorFlipRotate90(ulong AlphaMapOffset, ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ulong TrueDestYMove, ushort Width, ushort Height, ushort MaskColor)
+{
+  ushort DColor, SColor;
+
+  __asm
+  {
+    pushad
+    push es
+    mov ax, ds
+    mov esi, TrueSourceOffset
+    mov edi, TrueDestOffset
+    push AlphaMapOffset
+    mov es, ax
+    xor ecx, ecx
+    cld
+  AlphaBlitMirrorFlipRotate9012:
+    mov cx, Width
+  AlphaBlitMirrorFlipRotate9013:
+    lodsw
+    pop ebx
+    mov dl, [ebx]
+    inc ebx
+    push ebx
+    cmp ax, MaskColor
+    je AlphaSkip7
+    mov bx, [edi]
+    mov DColor, bx
+    mov bx, ax
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    ror DColor, 0x05
+    mov ax, bx
+    and ax, 0x3F
+    shl ax, 0x02
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x3F
+    shl ax, 0x02
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0A
+    and bx, 0xFFC0
+    or bx, ax
+    ror bx, 0x06
+    ror DColor, 0x06
+    mov ax, bx
+    and ax, 0x1F
+    shl ax, 0x03
+    mul dl
+    mov SColor, ax
+    mov ax, DColor
+    and ax, 0x1F
+    shl ax, 0x03
+    not dl
+    mul dl
+    not dl
+    add ax, SColor
+    shr ax, 0x0B
+    and bx, 0xFFE0
+    or bx, ax
+    ror bx, 0x05
+    mov ax, bx
+    mov [edi], ax
+  AlphaSkip7:
+    sub edi, TrueDestXMove
+    dec cx
+    jnz AlphaBlitMirrorFlipRotate9013
+    add esi, TrueSourceXMove
+    add edi, TrueDestYMove
+
+    pop ebx
+    shl ebx, 0x01
+    add ebx, TrueSourceXMove
+    shr ebx, 0x01
+    push ebx
+
+    dec Height
+    jnz AlphaBlitMirrorFlipRotate9012
     pop ebx
     pop es
     popad

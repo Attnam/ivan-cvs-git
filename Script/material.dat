@@ -27,6 +27,7 @@ material
 	ConsumeEndMessage = CEM_NOTHING;
 	HitMessage = HM_NOTHING;
 	ExplosivePower = 0;
+	Alpha = 255;
 
 	Config IRON;
 	{
@@ -123,6 +124,7 @@ material
 		IsSolid = true;
 		Color = rgb(180, 180, 255);
 		NameStem = "glass";
+		Alpha = 150;
 	}
 
 	Config PARCHMENT;
@@ -308,6 +310,7 @@ material
 		Color = rgb(240, 240, 240);
 		PriceModifier = 30000;
 		NameStem = "diamond";
+		Alpha = 175;
 	}
 
 	Config SILVER;
@@ -333,6 +336,7 @@ material
 		Color = rgb(96, 96, 200);
 		PriceModifier = 20000;
 		NameStem = "sapphire";
+		Alpha = 200;
 	}
 
 	Config RUBY;
@@ -345,6 +349,7 @@ material
 		Color = rgb(180, 0, 0);
 		PriceModifier = 24000;
 		NameStem = "ruby";
+		Alpha = 200;
 	}
 
 	Config BRONZE;
@@ -488,6 +493,7 @@ liquid
 		Effect = EOMLEURINE;
 		ConsumeEndMessage = CEM_OMLEURINE;
 		HitMessage = HM_OMLEURINE;
+		Alpha = 150;
 	}
 
 	Config PEPSI;
@@ -512,6 +518,7 @@ liquid
 		NutritionValue = 10;
 		Color = rgb(144, 144, 240);
 		NameStem = "water";
+		Alpha = 150;
 	}
 
 	Config HEALINGLIQUID;
@@ -525,6 +532,7 @@ liquid
 		Effect = EHEAL;
 		ConsumeEndMessage = CEM_HEALINGLIQUID;
 		HitMessage = HM_HEALINGLIQUID;
+		Alpha = 150;
 	}
 
 	Config BLOOD;
@@ -536,6 +544,7 @@ liquid
 		CanBeWished = false;
 		Alignment = EVIL;
 		NameStem = "blood";
+		Alpha = 175;
 	}
 
 	Config BROWNSLIME;
@@ -547,6 +556,7 @@ liquid
 		Color = rgb(0, 128, 0);
 		Color = rgb(111, 74, 37);
 		NameStem = "brown slime";
+		Alpha = 200;
 	}
 }
 

@@ -69,6 +69,10 @@ class object : public entity, public id
   virtual ushort GetMaterialColor1(ushort) const { return 0; }
   virtual ushort GetMaterialColor2(ushort) const { return 0; }
   virtual ushort GetMaterialColor3(ushort) const { return 0; }
+  virtual uchar GetAlpha0(ushort) const;
+  virtual uchar GetAlpha1(ushort) const { return 255; }
+  virtual uchar GetAlpha2(ushort) const { return 255; }
+  virtual uchar GetAlpha3(ushort) const { return 255; }
   virtual std::string GetMaterialDescription(bool) const;
   virtual std::string ContainerPostFix() const;
   virtual std::string LumpyPostFix() const;

@@ -229,6 +229,7 @@ void database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(ConsumeEndMessage);
   ANALYZEDATA(HitMessage);
   ANALYZEDATA(ExplosivePower);
+  ANALYZEDATA(Alpha);
 }
 
 void databasesystem::Initialize()

@@ -21,8 +21,17 @@
 .globl _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl _MaskedBlitLuminated__FUlUlUlUlUsUsUsUs
-.globl _AlphaBlit__FUlUlUlUlUsUsUcUs
-.globl _AlphaBlit__FUlUlUlUlUsUsUs
+.globl _SimpleAlphaBlit__FUlUlUlUlUsUsUcUs
+.globl _AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs
+.globl _AlphaBlitMirror__FUlUlUlUlUlUsUsUs
+.globl _AlphaBlitFlip__FUlUlUlUlUlUsUsUs
+.globl _AlphaBlitMirrorFlip__FUlUlUlUlUlUsUsUs
+.globl _AlphaBlitRotate90__FUlUlUlUlUlUlUsUsUs
+.globl _AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs
+.globl _AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs
+.globl _AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs
+.globl _AlphaBlitLuminated__FUlUlUlUlUlUsUsUsUs
+
 .globl _DrawLine__FUlUlUsUsUsUsUsUsUs
 
 .globl Fill__FUlUlUsUsUs
@@ -46,8 +55,17 @@
 .globl MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl MaskedBlitLuminated__FUlUlUlUlUsUsUsUs
-.globl AlphaBlit__FUlUlUlUlUsUsUcUs
-.globl AlphaBlit__FUlUlUlUlUsUsUs
+.globl SimpleAlphaBlit__FUlUlUlUlUsUsUcUs
+.globl AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs
+.globl AlphaBlitMirror__FUlUlUlUlUlUsUsUs
+.globl AlphaBlitFlip__FUlUlUlUlUlUsUsUs
+.globl AlphaBlitMirrorFlip__FUlUlUlUlUlUsUsUs
+.globl AlphaBlitRotate90__FUlUlUlUlUlUlUsUsUs
+.globl AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs
+.globl AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs
+.globl AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs
+.globl AlphaBlitLuminated__FUlUlUlUlUlUsUsUsUs
+
 .globl DrawLine__FUlUlUsUsUsUsUsUsUs
 
 .globl __Z4Fillmmttt
@@ -71,8 +89,16 @@
 .globl __Z22MaskedBlitFlipRotate90mmmmmttt
 .globl __Z28MaskedBlitMirrorFlipRotate90mmmmmttt
 .globl __Z19MaskedBlitLuminatedmmmmtttt
-.globl __Z9AlphaBlitmmmmttht
-.globl __Z9AlphaBlitmmmmttt
+.globl __Z15SimpleAlphaBlitmmmmttht
+.globl __Z16AlphaBlitNoFlagsmmmmmttt
+.globl __Z15AlphaBlitMirrormmmmmttt
+.globl __Z13AlphaBlitFlipmmmmmttt
+.globl __Z19AlphaBlitMirrorFlipmmmmmttt
+.globl __Z17AlphaBlitRotate90mmmmmmttt
+.globl __Z23AlphaBlitMirrorRotate90mmmmmmttt
+.globl __Z21AlphaBlitFlipRotate90mmmmmmttt
+.globl __Z27AlphaBlitMirrorFlipRotate90mmmmmmttt
+
 .globl __Z8DrawLinemmttttttt
 
 .globl _Z4Fillmmttt
@@ -96,8 +122,16 @@
 .globl _Z22MaskedBlitFlipRotate90mmmmmttt
 .globl _Z28MaskedBlitMirrorFlipRotate90mmmmmttt
 .globl _Z19MaskedBlitLuminatedmmmmtttt
-.globl _Z9AlphaBlitmmmmttht
-.globl _Z9AlphaBlitmmmmttt
+.globl _Z15SimpleAlphaBlitmmmmttht
+.globl _Z16AlphaBlitNoFlagsmmmmmttt
+.globl _Z15AlphaBlitMirrormmmmmttt
+.globl _Z13AlphaBlitFlipmmmmmttt
+.globl _Z19AlphaBlitMirrorFlipmmmmmttt
+.globl _Z17AlphaBlitRotate90mmmmmmttt
+.globl _Z23AlphaBlitMirrorRotate90mmmmmmttt
+.globl _Z21AlphaBlitFlipRotate90mmmmmmttt
+.globl _Z27AlphaBlitMirrorFlipRotate90mmmmmmttt
+
 .globl _Z8DrawLinemmttttttt
 
 .text
@@ -1288,10 +1322,10 @@ MaskedNextLineL1:
 
 /*-------------------------------------*/
 
-_AlphaBlit__FUlUlUlUlUsUsUcUs:
-AlphaBlit__FUlUlUlUlUsUsUcUs:
-__Z9AlphaBlitmmmmttht:
-_Z9AlphaBlitmmmmttht:
+_SimpleAlphaBlit__FUlUlUlUlUsUsUcUs:
+SimpleAlphaBlit__FUlUlUlUlUsUsUcUs:
+__Z15SimpleAlphaBlitmmmmttht:
+_Z15SimpleAlphaBlitmmmmttht:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -1402,20 +1436,22 @@ MaskedNextLineA1:
 
 /*-------------------------------------*/
 
-_AlphaBlit__FUlUlUlUlUsUsUs:
-AlphaBlit__FUlUlUlUlUsUsUs:
-__Z9AlphaBlitmmmmttt:
-_Z9AlphaBlitmmmmttt:
+_AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs:
+AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs:
+__Z16AlphaBlitNoFlagsmmmmmttt:
+_Z16AlphaBlitNoFlagsmmmmmttt:
 	push ebp
 	mov ebp, esp
-	mov ax, [ebp+32]
+	mov ax, [ebp+36]
 	mov MaskColor, ax
-	mov ax, [ebp+28]
+	mov ax, [ebp+32]
 	mov Height, ax
-	mov ax, [ebp+24]
+	mov ax, [ebp+28]
 	mov Width, ax
-	mov eax, [ebp+20]
+	mov eax, [ebp+24]
 	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
 	mov eax, [ebp+16]
 	mov TrueDestOffset, eax
 	mov eax, [ebp+12]
@@ -1427,21 +1463,22 @@ _Z9AlphaBlitmmmmttt:
 	pusha
 	push es
 	mov ax, ds
-	mov es, ax
 	mov esi, TrueSourceOffset
 	mov edi, TrueDestOffset
-        pushd AlphaMapOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
 	cld
-AlphaBlit21:
+AlphaLoop37:
 	mov cx, Width
-AlphaBlit22:
+AlphaLoop557:
 	lodsw
 	pop ebx
 	mov dl, [ebx]
 	inc ebx
 	push ebx
 	cmp ax, MaskColor
-	je MaskSkipA2
+	je AlphaSkip27
 	mov bx, [edi]
 	mov DColor, bx
 	mov bx, ax
@@ -1497,16 +1534,925 @@ AlphaBlit22:
 	mov ax, bx
 	stosw
 	dec cx
-	jnz AlphaBlit22
-	jmp MaskedNextLineA2
-MaskSkipA2:
+	jnz AlphaLoop557
+	add esi, TrueSourceXMove
+	add edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaLoop37
+	jmp AlphaNextLine27
+AlphaSkip27:
 	add edi, 0x02
 	dec cx
-	jnz AlphaBlit22
-MaskedNextLineA2:
+	jnz AlphaLoop557
+	add esi, TrueSourceXMove
 	add edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
 	decw Height
-	jnz AlphaBlit21
+	jnz AlphaLoop37
+AlphaNextLine27:
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitMirror__FUlUlUlUlUlUsUsUs:
+AlphaBlitMirror__FUlUlUlUlUlUsUsUs:
+__Z15AlphaBlitMirrormmmmmttt:
+_Z15AlphaBlitMirrormmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+36]
+	mov MaskColor, ax
+	mov ax, [ebp+32]
+	mov Height, ax
+	mov ax, [ebp+28]
+	mov Width, ax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitMirror1:
+	mov cx, Width
+AlphaBlitMirror2:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip1
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	std
+	stosw
+	cld
+	dec cx
+	jnz AlphaBlitMirror2
+	add esi, TrueSourceXMove
+	add edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitMirror1
+	jmp AlphaNextLine1
+AlphaSkip1:
+	sub edi, 0x02
+	dec cx
+	jnz AlphaBlitMirror2
+	add esi, TrueSourceXMove
+	add edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitMirror1
+AlphaNextLine1:
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitFlip__FUlUlUlUlUlUsUsUs:
+AlphaBlitFlip__FUlUlUlUlUlUsUsUs:
+__Z13AlphaBlitFlipmmmmmttt:
+_Z13AlphaBlitFlipmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+36]
+	mov MaskColor, ax
+	mov ax, [ebp+32]
+	mov Height, ax
+	mov ax, [ebp+28]
+	mov Width, ax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitFlip3:
+	mov cx, Width
+AlphaBlitFlip55:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip2
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	stosw
+	dec cx
+	jnz AlphaBlitFlip55
+	add esi, TrueSourceXMove
+	sub edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitFlip3
+	jmp AlphaNextLine2
+AlphaSkip2:
+	add edi, 0x02
+	dec cx
+	jnz AlphaBlitFlip55
+	add esi, TrueSourceXMove
+	sub edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitFlip3
+AlphaNextLine2:
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitMirrorFlip__FUlUlUlUlUlUsUsUs:
+AlphaBlitMirrorFlip__FUlUlUlUlUlUsUsUs:
+__Z19AlphaBlitMirrorFlipmmmmmttt:
+_Z19AlphaBlitMirrorFlipmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+36]
+	mov MaskColor, ax
+	mov ax, [ebp+32]
+	mov Height, ax
+	mov ax, [ebp+28]
+	mov Width, ax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitMirrorFlip6:
+	mov cx, Width
+AlphaBlitMirrorFlip7:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip3
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	std
+	stosw
+	cld
+	dec cx
+	jnz AlphaBlitMirrorFlip7
+	add esi, TrueSourceXMove
+	sub edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitMirrorFlip6
+	jmp AlphaNextLine3
+AlphaSkip3:
+	sub edi, 0x02
+	dec cx
+	jnz AlphaBlitMirrorFlip7
+	add esi, TrueSourceXMove
+	sub edi, TrueDestXMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitMirrorFlip6
+AlphaNextLine3:
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitRotate90__FUlUlUlUlUlUlUsUsUs:
+AlphaBlitRotate90__FUlUlUlUlUlUlUsUsUs:
+__Z17AlphaBlitRotate90mmmmmmttt:
+_Z17AlphaBlitRotate90mmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+40]
+	mov MaskColor, ax
+	mov ax, [ebp+36]
+	mov Height, ax
+	mov ax, [ebp+32]
+	mov Width, ax
+	mov eax, [ebp+28]
+	mov TrueDestYMove, eax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitRotate904:
+	mov cx, Width
+AlphaBlitRotate905:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip4
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	mov [edi], ax
+AlphaSkip4:
+	add edi, TrueDestXMove
+	dec cx
+	jnz AlphaBlitRotate905
+	add esi, TrueSourceXMove
+	sub edi, TrueDestYMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitRotate904
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs:
+AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs:
+__Z23AlphaBlitMirrorRotate90mmmmmmttt:
+_Z23AlphaBlitMirrorRotate90mmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+40]
+	mov MaskColor, ax
+	mov ax, [ebp+36]
+	mov Height, ax
+	mov ax, [ebp+32]
+	mov Width, ax
+	mov eax, [ebp+28]
+	mov TrueDestYMove, eax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitMirrorRotate908:
+	mov cx, Width
+AlphaBlitMirrorRotate909:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip5
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	mov [edi], ax
+AlphaSkip5:
+	add edi, TrueDestXMove
+	dec cx
+	jnz AlphaBlitMirrorRotate909
+	add esi, TrueSourceXMove
+	sub edi, TrueDestYMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitMirrorRotate908
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs:
+AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs:
+__Z21AlphaBlitFlipRotate90mmmmmmttt:
+_Z21AlphaBlitFlipRotate90mmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+40]
+	mov MaskColor, ax
+	mov ax, [ebp+36]
+	mov Height, ax
+	mov ax, [ebp+32]
+	mov Width, ax
+	mov eax, [ebp+28]
+	mov TrueDestYMove, eax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitFlipRotate9010:
+	mov cx, Width
+AlphaBlitFlipRotate9011:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip6
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	mov [edi], ax
+AlphaSkip6:
+	sub edi, TrueDestXMove
+	dec cx
+	jnz AlphaBlitFlipRotate9011
+	add esi, TrueSourceXMove
+	add edi, TrueDestYMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+	decw Height
+	jnz AlphaBlitFlipRotate9010
+	pop ebx
+	pop es
+	popa
+	ret
+
+/*-------------------------------------*/
+
+_AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs:
+AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs:
+__Z27AlphaBlitMirrorFlipRotate90mmmmmmttt:
+_Z27AlphaBlitMirrorFlipRotate90mmmmmmttt:
+	push ebp
+	mov ebp, esp
+	mov ax, [ebp+40]
+	mov MaskColor, ax
+	mov ax, [ebp+36]
+	mov Height, ax
+	mov ax, [ebp+32]
+	mov Width, ax
+	mov eax, [ebp+28]
+	mov TrueDestYMove, eax
+	mov eax, [ebp+24]
+	mov TrueDestXMove, eax
+	mov eax, [ebp+20]
+	mov TrueSourceXMove, eax
+	mov eax, [ebp+16]
+	mov TrueDestOffset, eax
+	mov eax, [ebp+12]
+	mov TrueSourceOffset, eax
+	mov eax, [ebp+8]
+	mov AlphaMapOffset, eax
+	pop ebp
+
+	pusha
+	push es
+	mov ax, ds
+	mov esi, TrueSourceOffset
+	mov edi, TrueDestOffset
+      pushd AlphaMapOffset
+	mov es, ax
+	xor ecx, ecx
+	cld
+AlphaBlitMirrorFlipRotate9012:
+	mov cx, Width
+AlphaBlitMirrorFlipRotate9013:
+	lodsw
+	pop ebx
+	mov dl, [ebx]
+	inc ebx
+	push ebx
+	cmp ax, MaskColor
+	je AlphaSkip7
+	mov bx, [edi]
+	mov DColor, bx
+	mov bx, ax
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	rorw DColor, 0x05
+	mov ax, bx
+	and ax, 0x3F
+	shl ax, 0x02
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x3F
+	shl ax, 0x02
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0A
+	and bx, 0xFFC0
+	or bx, ax
+	ror bx, 0x06
+	rorw DColor, 0x06
+	mov ax, bx
+	and ax, 0x1F
+	shl ax, 0x03
+	mul dl
+	mov SColor, ax
+	mov ax, DColor
+	and ax, 0x1F
+	shl ax, 0x03
+	not dl
+	mul dl
+	not dl
+	add ax, SColor
+	shr ax, 0x0B
+	and bx, 0xFFE0
+	or bx, ax
+	ror bx, 0x05
+	mov ax, bx
+	mov [edi], ax
+AlphaSkip7:
+	sub edi, TrueDestXMove
+	dec cx
+	jnz AlphaBlitMirrorFlipRotate9013
+	add esi, TrueSourceXMove
+	add edi, TrueDestYMove
+
+	pop ebx
+	shl ebx, 0x01
+	add ebx, TrueSourceXMove
+	shr ebx, 0x01
+	push ebx
+
+      decw Height
+	jnz AlphaBlitMirrorFlipRotate9012
 	pop ebx
 	pop es
 	popa

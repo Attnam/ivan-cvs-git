@@ -97,9 +97,9 @@ bool door::Close(character* Closer)
 void altar::DrawToTileBuffer(bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
   else
-    Picture[0]->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer(), VisualFlags);
 
   igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 }
@@ -829,6 +829,14 @@ ushort fountain::GetMaterialColor1(ushort) const
 {
   if(GetContainedMaterial())
     return GetContainedMaterial()->GetColor();
+  else
+    return 0;
+}
+
+uchar fountain::GetAlpha1(ushort) const
+{
+  if(GetContainedMaterial())
+    return GetContainedMaterial()->GetAlpha();
   else
     return 0;
 }

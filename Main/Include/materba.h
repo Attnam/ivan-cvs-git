@@ -49,6 +49,7 @@ struct materialdatabase
   uchar ConsumeEndMessage;
   uchar HitMessage;
   ulong ExplosivePower;
+  uchar Alpha;
 };
 
 class materialprototype
@@ -126,6 +127,7 @@ class material
   DATABASEVALUE(uchar, ConsumeEndMessage);
   DATABASEVALUE(uchar, HitMessage);
   DATABASEVALUE(ulong, ExplosivePower);
+  DATABASEVALUE(uchar, Alpha);
 
   virtual const prototype* GetProtoType() const;
   virtual const database* GetDataBase() const { return DataBase; }

@@ -36,6 +36,7 @@ class ABSTRACT_ITEM
  protected:
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColor1(ushort) const;
+  virtual uchar GetAlpha1(ushort) const;
   material* ContainedMaterial;
 );
 
@@ -156,6 +157,7 @@ class ABSTRACT_ITEM
  protected:
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColor1(ushort) const;
+  virtual uchar GetAlpha1(ushort) const;
   material* SecondaryMaterial;
   material* ContainedMaterial;
 );
@@ -1212,9 +1214,10 @@ class ITEM
   virtual bool RaiseTheDead(character*);
  protected:
   //virtual std::string NameSingular() const { return "corpse"; }
-  //virtual void GenerateMaterials() { }
+  virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColor0(ushort) const;
   virtual ushort GetMaterialColor1(ushort) const;
+  virtual uchar GetAlpha0(ushort) const;
   virtual bool ShowMaterial() const { return false; }
   virtual std::string GetPostFix() const;
   virtual vector2d GetBitmapPos(ushort) const;

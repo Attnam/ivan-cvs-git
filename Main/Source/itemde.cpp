@@ -109,16 +109,16 @@ void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) co
     {
     case CENTER:
     case DOWN:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer());
+      Bitmap->AlphaBlit(igraph::GetTileBuffer());
       break;
     case LEFT:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE));
+      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(ROTATE));
       break;
     case UP:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(FLIP));
+      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(FLIP));
       break;
     case RIGHT:
-      Bitmap->MaskedBlit(igraph::GetTileBuffer(), uchar(ROTATE | MIRROR));
+      Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(ROTATE | MIRROR));
       break;
     }
 }
@@ -1922,9 +1922,14 @@ void corpse::ChangeContainedMaterial(material* NewMaterial)
   GetDeceased()->ChangeContainedMaterial(NewMaterial);
 }
 
-ushort corpse::GetMaterialColor0(ushort Frame) const
+ushort corpse::GetMaterialColor0(ushort) const
 {
-  return GetDeceased()->GetTorso()->GetMaterialColor0(Frame);
+  return GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
+}
+
+uchar corpse::GetAlpha0(ushort) const
+{
+  return GetDeceased()->GetTorso()->GetMainMaterial()->GetAlpha();
 }
 
 ushort corpse::GetMaterialColor1(ushort) const
@@ -2315,10 +2320,26 @@ ushort materialcontainer::GetMaterialColor1(ushort Frame) const
     return GetMaterialColor0(Frame);
 }
 
+uchar materialcontainer::GetAlpha1(ushort Frame) const
+{
+  if(GetContainedMaterial() && GetContainedMaterial()->GetAlpha() > GetAlpha0(Frame))
+    return GetContainedMaterial()->GetAlpha();
+  else
+    return GetAlpha0(Frame);
+}
+
 ushort meleeweapon::GetMaterialColor1(ushort) const
 {
   if(GetSecondaryMaterial())
     return GetSecondaryMaterial()->GetColor();
+  else
+    return 0;
+}
+
+uchar meleeweapon::GetAlpha1(ushort) const
+{
+  if(GetSecondaryMaterial())
+    return GetSecondaryMaterial()->GetAlpha();
   else
     return 0;
 }

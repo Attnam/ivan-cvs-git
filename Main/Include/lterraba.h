@@ -47,7 +47,6 @@ class lterrain : public object
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
   virtual void SetDivineMaster(uchar) { }
-  virtual void DrawToTileBuffer(bool) const;
   virtual bool TryKey(item*, character*) { return false; }
  protected:
   virtual void GenerateMaterials() = 0;
@@ -79,6 +78,7 @@ class glterrain : public lterrain, public gterrain
   virtual ushort GetEntryAPRequirement() const { return 1000; }
   virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
+  virtual void DrawToTileBuffer(bool) const;
  protected:
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
 };
@@ -123,6 +123,7 @@ class olterrain : public lterrain, public oterrain
   virtual const prototype* GetProtoType() const = 0;
   virtual ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool IsEmpty() const { return false; }
+  virtual void DrawToTileBuffer(bool) const;
  protected:
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }
   short HP;

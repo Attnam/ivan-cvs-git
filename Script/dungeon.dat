@@ -783,15 +783,15 @@ Dungeon 1;
 				Types
 				{
 					t = scrollofteleportation;
-					s = STONE spear;
+					s = spear;
 					p = pickaxe;
 					A = pineapple;
 					b = banana;
 					l = WOLFFLESH lump;
-					i = IRON can { ContainedMaterial = POLARBEARFLESH; }
+					i = can { ContainedMaterial = POLARBEARFLESH; }
 					L = BREAD loaf;
 					a = lantern;
-					P = GLASS potion { ContainedMaterial = OMLEURINE; }
+					P = potion { ContainedMaterial = OMLEURINE; }
 					C = chainmail;
 					w = whip;
 				}
@@ -909,27 +909,6 @@ Dungeon 1;
 
 		Room 6;
 		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
-		}
-
-		Room 7;
-		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
-		}
-
-		Room 8;
-		{
-			FloorSquare=floor,empty;
-			WallSquare=grassterrain, WOOD wall;
-			DoorSquare=floor, door;
-		}
-
-		Room 9;
-		{
 			Pos=22,54;
 			Size=7,5;
 			AltarPossible=false;
@@ -984,6 +963,27 @@ Dungeon 1;
 				=...=
 				=...=
 			}
+		}
+
+		Room 7;
+		{
+			FloorSquare=floor,empty;
+			WallSquare=grassterrain, WOOD wall;
+			DoorSquare=floor, door;
+		}
+
+		Room 8;
+		{
+			FloorSquare=floor,empty;
+			WallSquare=grassterrain, WOOD wall;
+			DoorSquare=floor, door;
+		}
+
+		Room 9;
+		{
+			FloorSquare=floor,empty;
+			WallSquare=grassterrain, WOOD wall;
+			DoorSquare=floor, door;
 		}
 	}
 }

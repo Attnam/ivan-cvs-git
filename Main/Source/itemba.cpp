@@ -25,9 +25,9 @@ item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()
 void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
   if(Animate)
-    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->MaskedBlit(igraph::GetTileBuffer());
+    Picture[globalwindowhandler::GetTick() % GetAnimationFrames()]->AlphaBlit(igraph::GetTileBuffer());
   else
-    Picture[0]->MaskedBlit(igraph::GetTileBuffer());
+    Picture[0]->AlphaBlit(igraph::GetTileBuffer());
 }
 
 bool item::IsConsumable(character* Eater) const

@@ -33,8 +33,8 @@ class colorizablebitmap
 
   ushort Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   ushort PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
-  bitmap* Colorize(ushort*) const;
-  bitmap* Colorize(vector2d, vector2d, ushort*) const;
+  bitmap* Colorize(ushort*, uchar* = 0) const;
+  bitmap* Colorize(vector2d, vector2d, ushort*, uchar* = 0) const;
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }

@@ -27,7 +27,7 @@ IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source
            $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/igraph.o\
            $(IVANDIR)/Source/id.o $(IVANDIR)/Source/slot.o $(IVANDIR)/Source/actionba.o\
            $(IVANDIR)/Source/actionde.o
-FLAGS = -IInclude -I$(FeLibDIR)/Include -W -Wall
+FLAGS = -IInclude -I$(FeLibDIR)/Include -O3 -ffast-math
 LIBS = -lstdcxx
 
 all:	$(IVANBIN)

@@ -771,5 +771,3 @@ std::string valpurus::GetPriestMessage() const
 {
   return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
 }
-
-
