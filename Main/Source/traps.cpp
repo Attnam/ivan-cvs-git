@@ -18,7 +18,7 @@ void web::VirtualConstructor(bool)
   Picture = new bitmap(16,16, TRANSPARENT_COLOR);
   bitmap Temp(16, 16, TRANSPARENT_COLOR);
   Picture->ActivateFastFlag();
-  packedcolor16 Color = packedcolor16( MakeRGB16(25,25,25));
+  packedcolor16 Color = packedcolor16( MakeRGB16(160, 160, 160));
   igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0,0,16,16, &Color);
 }
 
