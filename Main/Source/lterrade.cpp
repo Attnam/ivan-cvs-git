@@ -10,6 +10,8 @@
 #include "hscore.h"
 #include "lsquare.h"
 
+#include <vector>
+
 bool door::Open(character* Opener)
 {
 	if(!GetIsWalkable())
@@ -183,11 +185,25 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 			Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);
 		}
+		std::vector<character*> MonsterList;
+		DO_FOR_SQUARES_AROUND(Who->GetPos().X, Who->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(), 
+		{
+			character* Temp = game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter();
+			if(Temp)
+			{
+				MonsterList.push_back(Temp);
+				game::GetCurrentLevel()->RemoveCharacter(vector2d(DoX, DoY));
+			}
+		})
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
 		game::GetCurrentDungeon()->PrepareLevel();
+		for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
+		{
+			game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetUpStairs()), *c);
+		}
 		game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 		game::GetCurrentLevel()->Luxify();
 		game::GetCurrentLevel()->UpdateLOS();

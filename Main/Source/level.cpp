@@ -798,3 +798,13 @@ bool level::GetOnGround() const
 {
 	return *LevelScript->GetOnGround();
 }
+
+vector2d level::GetNearestFreeSquare(vector2d StartPos)
+{
+	DO_FOR_SQUARES_AROUND(StartPos.X, StartPos.Y, GetXSize() - 1 , GetYSize() - 1,
+	{
+		if(!GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())//&& GetLevelSquare(vector2d(DoX, DoY)->GetIsWalkable())
+			return vector2d(DoX, DoY);
+	})
+	return vector2d(0,0);
+}
