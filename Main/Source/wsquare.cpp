@@ -10,7 +10,7 @@
 #include "save.h"
 #include "graphics.h"
 
-worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0), DescriptionChanged(true)
+worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0)
 {
 }
 
@@ -57,12 +57,12 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 {
 	if(NewDrawRequested)
 	{
-		if(!GetKnown())
+		/*if(!GetKnown())
 		{
 			Memorized = new bitmap(16, 16);
 
 			SetKnown(true);
-		}
+		}*/
 
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
@@ -139,7 +139,7 @@ void worldmapsquare::SetOverWorldMapTerrain(overworldmapterrain* What)
 	}
 }
 
-void worldmapsquare::UpdateMemorizedDescription()
+void worldmapsquare::UpdateMemorizedDescription(bool)
 {
 	if(DescriptionChanged)
 	{

@@ -8,6 +8,8 @@
 #define FEMALE			2
 #define TRANSSEXUAL		3
 
+#define LIGHT_BORDER		160
+
 #include <string>
 #include <vector>
 
@@ -46,8 +48,8 @@ public:
 	static const vector2d GetMoveVector(uchar Index)	{ return MoveVector[Index]; }
 	static area* GetCurrentArea();
 	static level* GetCurrentLevel();
-	static bool FlagHandler(ushort, ushort, ushort, ushort);
-	static bool DoLine(int, int, int, int, bool (*Proc)(ushort, ushort, ushort, ushort));
+	static bool LOSHandler(vector2d, vector2d);
+	static bool DoLine(long, long, long, long, ulong, /*ushort, ushort, ushort, ushort, */bool (*Proc)(vector2d, vector2d));
 	static class panel
 	{
 	public:
@@ -78,8 +80,8 @@ public:
 	static bool GetWizardMode() { return WizardMode; }
 	static void SeeWholeMap();
 	static bool GetSeeWholeMapCheat() { return SeeWholeMapCheat; }
-	static bool EmitationHandler(ushort, ushort, ushort, ushort);
-	static bool NoxifyHandler(ushort, ushort, ushort, ushort);
+	static bool EmitationHandler(vector2d, vector2d);
+	static bool NoxifyHandler(vector2d, vector2d);
 	static bool GetGoThroughWallsCheat() { return GoThroughWallsCheat; }
 	static void GoThroughWalls() { GoThroughWallsCheat = !GoThroughWallsCheat; }
 	static void UpdateCameraXWithPos(ushort);
@@ -98,7 +100,7 @@ public:
 	static std::string GetPlayerName() { return PlayerName; }
 	static void SetPlayerName(std::string What) { PlayerName = What; }
 	static std::string SaveName();
-	static bool EyeHandler(ushort, ushort, ushort, ushort);
+	static bool EyeHandler(vector2d, vector2d);
 	static long GodScore();
 	static void ShowLevelMessage();
 	static float Difficulty();
@@ -138,9 +140,9 @@ public:
 	static void InitScript();
 	static void SaveWorldMap(std::string = SaveName(), bool = false);
 	static void LoadWorldMap(std::string = SaveName());
-	static void UpdateCamera() { UpdateCameraX(); UpdateCameraY(); }
+	static void UpdateCamera();
 	static ulong CreateNewObjectID();
-	static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) NextObjectID--; }
+	static void PopObjectID(ulong ID) { if(NextObjectID == ID + 1) --NextObjectID; }
 	static team* GetTeam(ushort Index) { return Team[Index]; }
 	static void Hostility(team*, team*);
 	static void CreateTeams();
@@ -151,6 +153,9 @@ public:
 	static void ToggleOutlineCharacters() { OutlineCharacters = !OutlineCharacters; }
 	static bool GetOutlineItems() { return OutlineItems; }
 	static bool GetOutlineCharacters() { return OutlineCharacters; }
+	static void LOSTurn();
+	static ulong GetLOSTurns() { return LOSTurns; }
+	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
@@ -183,6 +188,8 @@ private:
 	static gamescript GameScript;
 	static ulong NextObjectID;
 	static std::vector<team*> Team;
+	static ulong LOSTurns;
+	static bool LOSUpdateRequested;
 };
 
 #endif

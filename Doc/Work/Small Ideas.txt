@@ -1,5 +1,5 @@
 Characterin funktioiden paloittelu.
-Kuvien flippailu (lis‰‰).
+Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
 Monsujen atribuuttien muuntelu pelaajan tason mukaan.
 Msgbuffer tiedostoon.
@@ -13,7 +13,6 @@ Valoja irti sein‰st‰.
 Attribuuttibonusten osittainen expoittaminen.
 Pit‰‰ tehd‰ ruokamyrkytyksest‰ joku tila characterille.
 Humanoidin armorkuvat.
-Screenshot toimimaan getkeyn aikanakin, kuten F4.
 Ehk‰ muitakin n‰pp‰imi‰?
 Menujen koristelu (ehk‰ fadeja).
 Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieni‰ tunnistusongelmia er‰ill‰ henkilˆill‰)
@@ -21,25 +20,19 @@ Kloonaus.
 Size of player increases from eating.
 How can you change the window to the rigth size? (stickiness)
 Banana peals should be slippery.
-Walking on broken bottles should cause HP loss.
 Weapons should break.
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
 Blindness of pets.
 Particle Trail.
-Increase/decrease god relations as option to WMode.
 Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
-"Do you want to see your inventory?" and "...message history?" messages to death.
 You must be able to open door by throwing items.
 Lamps should be white.
 Name too short message.
-Kick should affect only the topmost stacked item.
 Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
-Lookmode of WMode should show square coordinates.
-Multiple material support to script.
 Lamps on walls option to script.
 Teleport disabling.
 Teleport should bounce back from valpurium.
@@ -48,13 +41,12 @@ Vomiting in a shop should have a special effect.
 Intelligent monsters should read scrolls of create monster.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Lookmode should show item list.
-Lookmode should show whether a monster is neutral.
 Highscores should be crypted somehow.
 Wood types. (wood is a _bit_ generic)
 Script should be crypted.
 Golems should be able to eat things made of their material to increase size and stats.
 Golems shouldn't be able to eat anything else.
-Some kind of option screen.
+Some kind of an option screen.
 Autosave interval as a user-defined option.
 Mellis should fill also intact empty bottles.
 List of killed monsters and list of monsters killed by pets.
@@ -71,3 +63,8 @@ Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 "Something dies" message would be nice when dark.
 Some variety to death messages, e.g. some messages influenced by the cause of death.
 A tool for combining high score files.
+Lamps to some monsters.
+Dying in WMode doesn't yield a high score entry, but highlighting the last non-cheated game may make the player think so. Highlightion should be removed.
+Breaking potions of Omle urine should spill green fluid on the ground.
+Blood could be spilled to adjacent squares on critical hits.
+Additional short names to some weapons, that would be used in places where string space is limited. (e.g. "Justifier" instead of "the holy broadsword named Valpuri's Justifier")

@@ -46,21 +46,22 @@ ushort stack::AddItem(item* ToBeAdded)
 
 	ToBeAdded->SetSquareUnder(GetSquareUnder());
 
-	if(!game::GetInWilderness() && ToBeAdded->GetEmitation() > GetEmitation())
-	{
-		SetItems(GetItems() + 1);
+	SetItems(GetItems() + 1);
 
-		if(GetSquareUnder())
-			GetLevelSquareUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
-	}
-	else
-		SetItems(GetItems() + 1);
-
-	if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
-		GetSquareUnder()->UpdateMemorizedDescription();
+	//if(GetSquareUnder() && GetSquareUnder()->CanBeSeen())
+	//	GetSquareUnder()->UpdateMemorizedDescription();
 
 	if(GetSquareUnder())
-		SquareUnder->SendNewDrawRequest();
+	{
+		if(!game::GetInWilderness())
+			GetLevelSquareUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());
+
+		GetSquareUnder()->SendNewDrawRequest();
+		GetSquareUnder()->SetDescriptionChanged(true);
+
+		if(GetSquareUnder()->CanBeSeen())
+			GetSquareUnder()->UpdateMemorizedDescription();
+	}
 
 	return GetItems() - 1;
 }
@@ -101,14 +102,20 @@ item* stack::RemoveItem(ushort Index)
 
 		Optimize(0);
 
-		if(!game::GetInWilderness() && IEmit > GetEmitation() && GetSquareUnder())
-			GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
-
-		if(!game::GetInWilderness() && GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
-			GetLevelSquareUnder()->UpdateMemorizedDescription();
+		//if(!game::GetInWilderness() && GetSquareUnder() && GetLevelSquareUnder()->CanBeSeen())
+		//	GetLevelSquareUnder()->UpdateMemorizedDescription();
 
 		if(GetSquareUnder())
-			SquareUnder->SendNewDrawRequest();
+		{
+			if(!game::GetInWilderness())
+				GetLevelSquareUnder()->SignalEmitationDecrease(IEmit);
+
+			GetSquareUnder()->SendNewDrawRequest();
+			GetSquareUnder()->SetDescriptionChanged(true);
+
+			if(GetSquareUnder()->CanBeSeen())
+				GetSquareUnder()->UpdateMemorizedDescription();
+		}
 
 		return Removed;
 	}
@@ -150,8 +157,11 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
 	if(this == MoveTo)
 		return GetItem(Index);
 
-	if(SquareUnder)
-		SquareUnder->SendNewDrawRequest();
+	if(GetSquareUnder())
+	{
+		GetSquareUnder()->SendNewDrawRequest();
+		GetSquareUnder()->SetDescriptionChanged(true);
+	}
 
 	if(Item && GetItems() > Index && GetItem(Index) && MoveTo)
 		if(MoveTo->GetLevelSquareUnder() == GetLevelSquareUnder())
@@ -165,7 +175,10 @@ item* stack::MoveItem(ushort Index, stack* MoveTo) // Moves item #Index to stack
 		else
 		{
 			if(MoveTo->GetSquareUnder())
-				MoveTo->SquareUnder->SendNewDrawRequest();
+			{
+				MoveTo->GetSquareUnder()->SendNewDrawRequest();
+				MoveTo->GetSquareUnder()->SetDescriptionChanged(true);
+			}
 
 			ToBeReturned = MoveTo->AddItem(GetItem(Index));
 			RemoveItem(Index);
@@ -292,23 +305,29 @@ ushort stack::SearchItem(item* ToBeSearched) const
 	return 0xFFFF;
 }
 
-void stack::Move(levelsquare* To)
+/*void stack::Move(levelsquare* To)
 {
-	if(SquareUnder)
-		SquareUnder->SendNewDrawRequest();
+	if(GetSquareUnder())
+	{
+		GetSquareUnder()->SendNewDrawRequest();
+		GetSquareUnder()->SetDescriptionChanged(true);
+	}
 
-	GetLevelSquareUnder()->SignalEmitationDecrease(GetEmitation());
+	//GetLevelSquareUnder()->SignalEmitationDecrease(GetEmitation());
 
 	SetSquareUnder(To);
 
 	for(ushort c = 0; c < GetItems(); ++c)
 		GetItem(c)->SetSquareUnder(To);
 
-	if(SquareUnder)
-		SquareUnder->SendNewDrawRequest();
+	if(GetSquareUnder())
+	{
+		GetSquareUnder()->SendNewDrawRequest();
+		GetSquareUnder()->SetDescriptionChanged(true);
+	}
 
-	GetLevelSquareUnder()->SignalEmitationIncrease(GetEmitation());
-}
+	//GetLevelSquareUnder()->SignalEmitationIncrease(GetEmitation());
+}*/
 
 vector2d stack::GetPos() const
 {

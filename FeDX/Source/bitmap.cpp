@@ -130,6 +130,15 @@ void bitmap::Save(outputfile& SaveFile) const
 		SaveFile.GetBuffer().write((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(AlphaMap)
+	{
+		SaveFile << uchar(1);
+
+		SaveFile.GetBuffer().write((char*)AlphaMap[0], XSize * YSize);
+	}
+	else
+		SaveFile << uchar(0);
 }
 
 void bitmap::Load(inputfile& SaveFile)
@@ -145,6 +154,17 @@ void bitmap::Load(inputfile& SaveFile)
 		SaveFile.GetBuffer().read((char*)Buffer, XSize << 1);
 
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	uchar Alpha;
+
+	SaveFile >> Alpha;
+
+	if(Alpha)
+	{
+		Alloc2D<uchar>(AlphaMap, XSize, YSize);
+
+		SaveFile.GetBuffer().read((char*)AlphaMap[0], XSize * YSize);
+	}
 }
 
 void bitmap::Save(std::string FileName) const
@@ -1406,7 +1426,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 		LineNotVertical:	
 			cmp	ax,	cx
 			jnz	LineNotHorizontal
-			cmp	ax,	dx
+			cmp	bx,	dx
 			jl	LineHorizontalPlus
 			jg	LineHorizontalMinus
 		LineHorizontalPlus:
@@ -1719,28 +1739,26 @@ void bitmap::Outline(ushort Color)
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
-
-
-bool bitmap::FadeAlpha(char Amount)
+bool bitmap::FadeAlpha(uchar Amount)
 {
 	bool Changes = false;
+
 	if(!AlphaMap)
 		ABORT("No alpha map to fade.");
 
-	for(ushort x = 0; x < XSize; x++)
-		for(ushort y = 0; y < YSize; y++)
+	for(ushort c = 0; c < XSize * YSize; ++c)
+		if(AlphaMap[0][c] >= Amount)
 		{
-			if(AlphaMap[x][y] > Amount)
+			AlphaMap[0][c] -= Amount;
+			Changes = true;
+		}
+		else
+			if(AlphaMap[0][c])
 			{
-				AlphaMap[x][y] -= Amount;
+				AlphaMap[0][c] = 0;
 				Changes = true;
 			}
-			else if(AlphaMap[x][y])
-			{
-					AlphaMap[x][y] = 0;
-					Changes = true;
-			}
-		}
+
 	return Changes;
 }
 

@@ -91,11 +91,15 @@ bool ennerbeast::Hit(character*)
 	DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 100,
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetCharacter();
-		float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare<float>(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
+
+		float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
+
 		if(Char && Char != this)
 			Char->ReceiveSound(Message, rand() % 26 - rand() % 26,ScreamStrength);
+
 		game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
-		for(int x = 0; x < 4; ++x)
+
+		for(uchar x = 0; x < 4; ++x)
 			game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
 	});
 
@@ -273,9 +277,10 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasHeadOfElpuri() && !Triggered)
 	{
-		if(game::GetGod(1)->GetRelation() >= 500 && Talker->GetDifficulty() >= 2500 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay in the dungeon for a while more and complete another quest for me?\" (Y/n)", 'y'))
+		if(game::GetGod(1)->GetRelation() >= 500 && Talker->GetDifficulty() >= 2500 && game::BoolQuestion("Perttu smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee. Dost thou wish to stay on duty for a while more and complete another quest for me?\" (Y/n)", 'y'))
 		{
-			iosystem::TextScreen("Champion of Law!\n\nSeek out the Master Evil: Oree the Pepsi Daemon King,\nwho hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+			iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+			game::GetCurrentArea()->SendNewDrawRequest();
 
 			game::TriggerQuestForMaakotkaShirt();
 

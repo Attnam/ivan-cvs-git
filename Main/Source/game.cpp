@@ -38,6 +38,7 @@ character* game::PlayerBackup;
 uchar game::CurrentDungeon;
 ulong game::NextObjectID = 0;
 std::vector<team*> game::Team;
+ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
@@ -94,6 +95,7 @@ const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vec
 
 game::panel game::Panel;
 
+bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable;
 ushort* game::LuxTableSize;
 bool game::Running;
@@ -138,6 +140,7 @@ void game::Init(std::string Name)
 	PlayerBackup = 0;
 	srand(time(0));
 	game::CalculateGodNumber();
+	LOSTurns = 1;
 
 	_mkdir("Save");
 
@@ -169,8 +172,6 @@ void game::Init(std::string Name)
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
 
-		BaseScore = Player->Score();
-
 		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
 
 		InitDungeons();
@@ -180,19 +181,20 @@ void game::Init(std::string Name)
 
 		InWilderness = true;
 
-		UpdateCameraX();
-		UpdateCameraY();
+		UpdateCamera();
 
-		GetCurrentArea()->UpdateLOS();
-		GetCurrentArea()->SendNewDrawRequest();
+		//GetCurrentArea()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 
 		for(ushort c = 1; GetGod(c); ++c)
 		{
-			GetGod(c)->SetRelation(0);
+			GetGod(c)->SetRelation(1000);
 			GetGod(c)->SetTimer(0);
 		}
 
 		Turns = 0;
+
+		BaseScore = Player->Score();
 
 		ADD_MESSAGE("Game generated successfully.");
 	}
@@ -242,7 +244,7 @@ void game::InitLuxTable()
 
 		for(ushort c = 0; c < 0x200; ++c)
 		{
-			ushort MaxDist = c >= 64 ? ushort(sqrt(c - 64)) : 0, MaxSize = (MaxDist << 1) + 1;
+			ushort MaxDist = c >= 160 ? ushort(2 * sqrt(c / 5 - 32)) : 0, MaxSize = (MaxDist << 1) + 1;
 
 			LuxTableSize[c] = MaxSize;
 
@@ -256,7 +258,7 @@ void game::InitLuxTable()
 				{
 					long xLevelSquare = abs(x - MaxDist), yLevelSquare = abs(y - MaxDist);
 
-					LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 64 + 1));
+					LuxTable[c][x][y] = ushort(float(c) / (float(xLevelSquare * xLevelSquare + yLevelSquare * yLevelSquare) / 128 + 1));
 				}
 			}
 		}
@@ -290,58 +292,232 @@ void game::Quit()
 	Running = false;
 }
 
-bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX = CX, CurrentY = CY
+bool game::LOSHandler(vector2d Pos, vector2d Origo) // CurrentX = CX, CurrentY = CY
 {                                                   // OrigoX = OX, OrigoY = OY
-	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+	//Pos >>= 2;
+	//Origo >>= 2;
+
+	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
-	GetCurrentArea()->GetSquare(vector2d(CX, CY))->SetFlag();
-	GetCurrentArea()->GetSquare(vector2d(CX, CY))->UpdateMemorizedDescription();
-	GetCurrentArea()->GetSquare(vector2d(CX, CY))->SendNewDrawRequest();
+	GetCurrentArea()->GetSquare(Pos)->SetLastSeen(LOSTurns);
 
-	if(CX == OX && CY == OY)
+	if(Pos == Origo)
 		return true;
 	else
-		if(!InWilderness)
-			return GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
-		else
-			return true;
+		return GetCurrentArea()->GetSquare(Pos)->GetOverTerrain()->GetIsWalkable();
 }
 
-bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, ushort, ushort))
+bool game::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, /*ushort FromX, ushort FromY, ushort ToX, ushort ToY, */bool (*Proc)(vector2d, vector2d))
 {
-	int DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
+	/*ushort X, Y, DistaX, DistaY, BTemp;
 
-	#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)		\
-	{									\
-		if(!D##PriC)							\
-		{								\
-			Proc(X1, Y1, X1, Y1);					\
-			return true;						\
-		}								\
-										\
-		I1 = D##SecC << 1;						\
-		DD = I1 - (SecSign (PriSign D##PriC));				\
-		I2 = DD - (SecSign (PriSign D##PriC));				\
-										\
-		X = X1;								\
-		Y = Y1;								\
-										\
-		while(PriC PriCond PriC##2)					\
-		{								\
-			if(!Proc(X, Y, X1, Y1))					\
-				return false;					\
-										\
-			if(DD SecCond 0)					\
-			{							\
-				SecC##SecSign##SecSign;				\
-				DD += I2;					\
-			}							\
-			else							\
-				DD += I1;					\
-										\
-			PriC##PriSign##PriSign;					\
-		}								\
+	uchar Return;
+
+	__asm
+	{
+		pushad
+		mov	bx,	FromX
+		mov	ax,	FromY
+		mov	dx,	ToX
+		mov	cx,	ToY
+		cmp	bx,	dx
+		jnz	LineNotVertical
+		cmp	ax,	cx
+		jl	VerticalLinePlus
+		jg	VerticalLineMinus
+		jmp	LineQuickEnd
+	VerticalLinePlus:
+		call	NPutPixel
+		cmp	Return,	0x00
+		jz	End
+		inc	ax
+		cmp	ax,	cx
+		jl	VerticalLinePlus
+		jmp	LineQuickEnd
+	VerticalLineMinus:
+		call	NPutPixel
+		cmp	Return,	0x00
+		jz	End
+		dec	ax
+		cmp	ax,	cx
+		jg	VerticalLineMinus
+		jmp	LineQuickEnd
+	LineNotVertical:	
+		cmp	ax,	cx
+		jnz	LineNotHorizontal
+		cmp	bx,	dx
+		jl	LineHorizontalPlus
+		jg	LineHorizontalMinus
+	LineHorizontalPlus:
+		call	NPutPixel
+		cmp	Return,	0x00
+		jz	End
+		inc	bx
+		cmp	bx,	dx
+		jl	LineHorizontalPlus
+		jmp	LineQuickEnd
+	LineHorizontalMinus:
+		call	NPutPixel
+		cmp	Return,	0x00
+		jz	End
+		dec	bx
+		cmp	bx,	dx
+		jg	LineHorizontalMinus
+	LineQuickEnd:
+		call	NPutPixel
+		mov	Return,	0x01
+		jmp	End
+	LineNotHorizontal:
+		cmp	dx,	bx
+		jl	LineXSwapNeeded
+		sub	dx,	bx
+		mov	si,	0x0001
+		jmp	LineNext1
+	LineXSwapNeeded:
+		push	bx
+		sub	bx,	dx
+		mov	dx,	bx
+		pop	bx
+		mov	si,	0xFFFF
+	LineNext1:
+		cmp	cx,	ax
+		jl	LineYSwapNeeded
+		sub	cx,	ax
+		mov	di,	0x0001
+		jmp	LineNext2
+	LineYSwapNeeded:
+		push	ax
+		sub	ax,	cx
+		mov	cx,	ax
+		pop	ax
+		mov	di,	0xFFFF
+	LineNext2:
+		cmp	dx,	cx
+		jl	LineXYSwap
+		mov	DistaX,	dx
+		mov	DistaY,	cx
+		mov	bx,	FromX
+		mov	ax,	FromY
+		xor	cl,	cl
+		jmp	LineXYNoSwap
+	LineXYSwap:
+		mov	DistaY,	dx
+		mov	DistaX,	cx
+		mov	ax,	FromX
+		mov	bx,	FromY
+		mov	dx,	ToX
+		mov	cx,	ToY
+		mov	ToY,	dx
+		mov	ToX,	cx
+		mov	cx,	si
+		mov	dx,	di
+		mov	di,	cx
+		mov	si,	dx
+		mov	dx,	DistaX
+		mov	cl,	0x01
+	LineXYNoSwap:
+		shr	dx,	0x01
+		inc	dx
+		mov	BTemp,	dx
+		mov	dh,	cl
+		xor	cx,	cx
+		jmp	LineLoopBegin
+	LineXPlus:
+		add	cx,	DistaY
+	LineLoopBegin:
+		cmp	cx,	BTemp
+		jl	LineNotYPlus
+		sub	cx,	DistaX
+		add	ax,	di
+	LineNotYPlus:
+		call	SPutPixel
+		cmp	Return,	0x00
+		jz	End
+		add	bx,	si
+		cmp	bx,	ToX
+		jnz	LineXPlus
+		add	cx,	DistaY
+		cmp	cx,	BTemp
+		jl	LineEnd
+		add	ax,	di
+	LineEnd:call	SPutPixel
+		mov	Return,	0x01
+
+	End:	popad
+	}
+
+	return Return ? true : false;
+
+	__asm
+	{
+	NPutPixel:
+		mov	X,	bx
+		mov	Y,	ax
+		pushad
+	}
+
+	Return = Proc(X, Y, FromX, FromY);
+
+	__asm
+	{
+		popad
+		ret
+
+	SPutPixel:
+		or	dh,	dh
+		jz	SPutPixelNoSwap
+		mov	X,	ax
+		mov	Y,	bx
+		jmp	SPutPixelCall
+	SPutPixelNoSwap:
+		mov	X,	bx
+		mov	Y,	ax
+	SPutPixelCall:
+		pushad
+	}
+
+	Return = Proc(X, Y, FromX, FromY);
+
+	__asm
+	{
+		popad
+		ret
+	}*/
+
+	long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
+
+	#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)			\
+	{										\
+		if(!D##PriC)								\
+		{									\
+			Proc(vector2d(X1, Y1), vector2d(X1, Y1));			\
+			return true;							\
+		}									\
+											\
+		I1 = D##SecC << 1;							\
+		DD = I1 - (SecSign (PriSign D##PriC));					\
+		I2 = DD - (SecSign (PriSign D##PriC));					\
+											\
+		X = X1;									\
+		Y = Y1;									\
+											\
+		while(PriC PriCond PriC##2)						\
+		{									\
+			if((X - X1) * (X - X1) + (Y - Y1) * (Y - Y1) > MaxDistance ||	\
+			   !Proc(vector2d(X, Y), vector2d(X1, Y1)))			\
+				return false;						\
+											\
+			if(DD SecCond 0)						\
+			{								\
+				SecC##SecSign##SecSign;					\
+				DD += I2;						\
+			}								\
+			else								\
+				DD += I1;						\
+											\
+			PriC##PriSign##PriSign;						\
+		}									\
 	}
 
 	if(DX >= 0)
@@ -405,7 +581,7 @@ void game::panel::Draw() const
 	FONT->Printf(DOUBLEBUFFER, 600, 564, WHITE, "Turns: %d", game::GetTurns());
 
 	if(Player->GetNP() < CRITICALHUNGERLEVEL)
-		FONT->Printf(DOUBLEBUFFER, 600, 574, WHITE, "Fainting");
+		FONT->Printf(DOUBLEBUFFER, 600, 574, RED, "Fainting");
 	else
 		if(Player->GetNP() < HUNGERLEVEL)
 			FONT->Printf(DOUBLEBUFFER, 600, 574, BLUE, "Hungry");
@@ -534,6 +710,12 @@ bool game::OnScreen(vector2d Pos)
 
 void game::DrawEverythingNoBlit(bool EmptyMsg)
 {
+	if(LOSUpdateRequested)
+	{
+		game::GetCurrentArea()->UpdateLOS();
+		LOSUpdateRequested = false;
+	}
+
 	game::GetCurrentArea()->Draw();
 	if(OnScreen(GetPlayer()->GetPos()))
 		igraph::DrawCursor((GetPlayer()->GetPos() - GetCamera() + vector2d(0,2)) << 4);
@@ -549,7 +731,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << NextObjectID;
-	SaveFile << OutlineItems << OutlineCharacters;
+	SaveFile << OutlineItems << OutlineCharacters << LOSTurns;
 
 	time_t Time = time(0);
 	srand(Time);
@@ -582,7 +764,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> PlayerName;
 	SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
 	SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> SoftGamma >> InWilderness >> NextObjectID;
-	SaveFile >> OutlineItems >> OutlineCharacters;
+	SaveFile >> OutlineItems >> OutlineCharacters >> LOSTurns;
 
 	time_t Time;
 	SaveFile >> Time;
@@ -623,41 +805,39 @@ std::string game::SaveName()
 	return SaveName;
 }
 
-bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+bool game::EmitationHandler(vector2d Pos, vector2d Origo)
 {
-	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
-	ushort Emit = GetLevel(Current)->GetLevelSquare(vector2d(OX, OY))->GetEmitation();
+	ushort Emit = GetLevel(Current)->GetLevelSquare(Origo)->GetEmitation();
 
 	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
 
-	if(long(CX) - long(OX) > MaxSize || long(OX) - long(CX) > MaxSize || long(CY) - long(OY) > MaxSize || long(OY) - long(CY) > MaxSize)
+	if(long(Pos.X) - long(Origo.X) > MaxSize || long(Origo.X) - long(Pos.X) > MaxSize || long(Pos.Y) - long(Origo.Y) > MaxSize || long(Origo.Y) - long(Pos.Y) > MaxSize)
 		Emit = 0;
 	else
-		Emit = game::GetLuxTable()[Emit][long(CX) - long(OX) + (game::GetLuxTableSize()[Emit] >> 1)][long(CY) - long(OY) + (game::GetLuxTableSize()[Emit] >> 1)];
+		Emit = game::GetLuxTable()[Emit][long(Pos.X) - long(Origo.X) + MaxSize][long(Pos.Y) - long(Origo.Y) + MaxSize];
 
-	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->AlterLuminance(vector2d(OX, OY), Emit);
+	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->AlterLuminance(Origo, Emit);
 
-	if(CX == OX && CY == OY)
+	if(Pos == Origo)
 		return true;
 	else
-		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
 }
 
-bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
+bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
 {
-	if(CX == 63 || CY == 63)
-		int esko = 2;
-	if(CX >= GetCurrentArea()->GetXSize() || CY >= GetCurrentArea()->GetYSize())
+	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
-	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->NoxifyEmitter(vector2d(OX, OY));
+	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->NoxifyEmitter(Origo);
 
-	if(CX == OX && CY == OY)
+	if(Pos == Origo)
 		return true;
 	else
-		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -724,12 +904,12 @@ vector2d game::AskForDirectionVector(std::string String)
 	return GetDirectionVectorForKey(GETKEY());
 }
 
-bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX = CX, CurrentY = CY
+bool game::EyeHandler(vector2d Pos, vector2d Origo)  // CurrentX = CX, CurrentY = CY
 {                                                   // OrigoX = OX, OrigoY = OY
-	if(CX == OX && CY == OY)
+	if(Pos == Origo)
 		return true;
 	else
-		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(vector2d(CX, CY))->GetOverLevelTerrain()->GetIsWalkable();
+		return GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->GetOverLevelTerrain()->GetIsWalkable();
 }
 
 long game::GodScore()
@@ -779,7 +959,7 @@ void game::ShowLevelMessage()
 
 void game::TriggerQuestForMaakotkaShirt()
 {
-	ADD_MESSAGE("The dungeon underneath vibrates violently.");
+	//ADD_MESSAGE("The dungeon underneath vibrates violently.");
 	GetDungeon(0)->PrepareLevel(6);
 	GetDungeon(0)->GetLevel(6)->CreateStairs(false);
 	GetDungeon(0)->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
@@ -1016,4 +1196,27 @@ long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 	EMPTY_MESSAGES();
 	game::DrawEverythingNoBlit();
 	return iosystem::NumberQuestion(Topic, Pos, Color);
+}
+
+void game::LOSTurn()
+{
+	if(LOSTurns == 0xFFFFFFFF)
+		ABORT("Suddenly the Universe explodes!");
+
+	++LOSTurns;
+}
+
+void game::UpdateCamera()
+{
+	if(Player->GetPos().X < 25)
+		Camera.X = 0;
+	else
+		Camera.X = Player->GetPos().X - 25;
+
+	if(Player->GetPos().Y < 18)
+		Camera.Y = 0;
+	else
+		Camera.Y = Player->GetPos().Y - 18;
+
+	GetCurrentArea()->SendNewDrawRequest();
 }

@@ -734,9 +734,9 @@ void level::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
+				//long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
-				if(Map[x][y]->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeSquare())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawCheat();
@@ -745,9 +745,9 @@ void level::Draw() const
 		for(ushort x = game::GetCamera().X; x < XMax; ++x)
 			for(ushort y = game::GetCamera().Y; y < YMax; ++y)
 			{
-				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
+				//long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
-				if(Map[x][y]->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+				if(Map[x][y]->GetLastSeen() == game::GetLOSTurns())// && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeSquare())
 					Map[x][y]->UpdateMemorizedAndDraw();
 				else
 					Map[x][y]->DrawMemorized();
@@ -856,4 +856,9 @@ vector2d level::GetNearestFreeSquare(vector2d StartPos)
 	ABORT("No room for character. Character unhappy.");
 
 	return vector2d(0xFFFF, 0xFFFF);
+}
+
+void level::MoveCharacter(vector2d From, vector2d To)
+{
+	GetLevelSquare(From)->MoveCharacter(GetLevelSquare(To));
 }

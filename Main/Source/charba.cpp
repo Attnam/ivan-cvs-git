@@ -226,7 +226,7 @@ void character::Be()
 			if(GetIsPlayer())
 			{
 				static ushort Timer = 0;
-				if(CanMove() && Timer++ == 20)
+				if(CanMove() && !game::GetInWilderness() && Timer++ == 20)
 				{
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
@@ -244,7 +244,7 @@ void character::Be()
 			{
 				StateAutoDeactivation();
 				if(CanMove())
-					GetAICommand(); //This should handle AI suicide also...
+					GetAICommand();
 				Regenerate();
 			}
 
@@ -489,9 +489,12 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 {
 	if(GetBurdenState() || TeleportMove)
 	{
-		game::GetCurrentArea()->RemoveCharacter(GetPos());
+		/* Keep this order. It prevents unnecessary description updates. */
 
-		game::GetCurrentArea()->AddCharacter(MoveTo, this);
+		//game::GetCurrentArea()->RemoveCharacter(GetPos());
+		//game::GetCurrentArea()->AddCharacter(MoveTo, this);
+		//game::GetCurrentArea()->RemoveCharacter(GetPos());
+		game::GetCurrentArea()->MoveCharacter(GetPos(), MoveTo);
 
 		if(GetIsPlayer())
 		{
@@ -501,11 +504,12 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 			if(GetPos().Y < game::GetCamera().Y + 2 || GetPos().Y > game::GetCamera().Y + 27)
 				game::UpdateCameraY();
 
-			game::GetCurrentArea()->UpdateLOS();
+			//game::GetCurrentArea()->UpdateLOS();
+			game::SendLOSUpdateRequest();
 
 			if(!game::GetInWilderness())
 			{
-				if(GetLevelSquareUnder()->GetLuminance() < 64 && !game::GetSeeWholeMapCheat())
+				if(GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
 					ADD_MESSAGE("It's dark in here!");
 
 				if(GetLevelSquareUnder()->GetStack()->GetItems() > 0)
@@ -524,6 +528,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 		SetNP(GetNP() - 1);
 		SetAgilityExperience(GetAgilityExperience() + 10);
 	}
+	else
+		if(GetIsPlayer())
+			ADD_MESSAGE("You try to use your claws to crawl forward. But your load is too heavy.");
 }
 
 void character::DrawToTileBuffer() const
@@ -696,7 +703,8 @@ bool character::TryMove(vector2d MoveTo)
 				game::LoadWorldMap();
 				game::SetInWilderness(true);
 				game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), this);
-				game::GetCurrentArea()->SendNewDrawRequest();
+				//game::GetCurrentArea()->UpdateLOS();
+				game::SendLOSUpdateRequest();
 				game::UpdateCamera();
 				return true;
 			}
@@ -1367,7 +1375,8 @@ bool character::RaiseStats()
 		Agility += 10;
 		Perception += 10;
 		HP = Endurance << 1;
-		game::GetCurrentArea()->UpdateLOS();
+		//game::GetCurrentArea()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 	}
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
@@ -1384,7 +1393,8 @@ bool character::LowerStats()
 		Agility -= 10;
 		Perception -= 10;
 		HP = Endurance << 1;
-		game::GetCurrentArea()->UpdateLOS();
+		//game::GetCurrentArea()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 	}
 	else
 		ADD_MESSAGE("Activate wizardmode to use this function.");
@@ -1522,14 +1532,14 @@ bool character::Look()
 		if(game::GetSeeWholeMapCheat())
 		{
 			OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
-			game::GetCurrentArea()->GetSquare(CursorPos)->UpdateMemorizedDescription();
+			game::GetCurrentArea()->GetSquare(CursorPos)->UpdateMemorizedDescription(true);
 		}
 
-		if(game::GetCurrentArea()->GetSquare(CursorPos)->GetKnown() || game::GetSeeWholeMapCheat())
+		if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::GetSeeWholeMapCheat())
 		{
 			std::string Msg;
 
-			if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() || game::GetSeeWholeMapCheat())
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeenIgnoreDarkness() || game::GetSeeWholeMapCheat())
 				Msg = "You see here ";
 			else
 				Msg = "You remember here ";
@@ -1538,7 +1548,7 @@ bool character::Look()
 
 			ADD_MESSAGE("%s.", Msg.c_str());
 
-			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && ((game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen()) || game::GetSeeWholeMapCheat()) && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() > 63))
+			if(game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter() && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
 				ADD_MESSAGE("%s is standing here.", game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()->CNAME(INDEFINITE));
 		}
 		else
@@ -1549,8 +1559,12 @@ bool character::Look()
 			game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
 			game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
 		}
+
 		if(game::GetWizardMode())
 			ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
+
+		//if(!game::GetInWilderness())
+		//	ADD_MESSAGE("%d", game::GetCurrentLevel()->GetLevelSquare(CursorPos)->GetLuminance());
 
 		game::DrawEverythingNoBlit();
 		igraph::DrawCursor((CursorPos - game::GetCamera() + vector2d(0,2)) << 4);
@@ -1662,7 +1676,7 @@ bool character::Pray()
 
 void character::SpillBlood(uchar HowMuch)
 {
-	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),5,40);
+	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),10,40);
 }
 
 void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
@@ -1983,7 +1997,8 @@ void character::Vomit(ushort HowMuch)
 			ADD_MESSAGE("%s vomits.", CNAME(DEFINITE));
 
 	SetNP(GetNP() - 20 - rand() % 21);
-	GetLevelSquareUnder()->SpillFluid(HowMuch, MAKE_RGB(10,230,10),3,50);
+
+	GetLevelSquareUnder()->SpillFluid(HowMuch, MAKE_RGB(10,230,10),5,50);
 }
 
 bool character::Apply()
@@ -2057,7 +2072,7 @@ bool character::Polymorph()
 	character* NewForm = protosystem::BalancedCreateMonster(5);
 
 	GetSquareUnder()->RemoveCharacter();
-	GetSquareUnder()->AddCharacter(NewForm);
+	GetSquareUnder()->AddCharacter(NewForm);	// could be optimized?
 	SetSquareUnder(0);
 
 	while(GetStack()->GetItems())
@@ -2344,7 +2359,7 @@ void character::StateAutoDeactivation()
 	{
 		character* Character = game::GetCurrentArea()->GetSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos()))))
+		if(Character && ((GetIsPlayer() && Character->GetSquareUnder()->CanBeSeen()) || (!GetIsPlayer() && Character->GetSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))))
 			if(GetTeam()->GetRelation(Character->GetTeam()) == HOSTILE)
 			{
 				DeActivateVoluntaryStates(Character->Name(DEFINITE) + " seems to be hostile");
@@ -2375,7 +2390,7 @@ bool character::CheckForEnemies()
 	{
 		character* Char = game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer,YPointer))->GetCharacter();
 
-		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+		if(Char && GetTeam()->GetRelation(Char->GetTeam()) == HOSTILE && Char->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), Char->LOSRangeSquare()))
 		{
 			ulong ThisDistance = GetHypotSquare(long(XPointer) - GetPos().X, long(YPointer) - GetPos().Y);
 
@@ -2466,7 +2481,7 @@ bool character::FollowLeader()
 	if(!GetTeam()->GetLeader())
 		return false;
 
-	if(GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+	if(GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
 	{
 		vector2d Distance = GetPos() - WayPoint;
 
@@ -2490,17 +2505,17 @@ bool character::FollowLeader()
 
 void character::SeekLeader()
 {
-	if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos()))
+	if(GetTeam()->GetLeader() && GetTeam()->GetLeader()->GetLevelSquareUnder()->CanBeSeenFrom(GetPos(), LOSRangeSquare()))
 		WayPoint = GetTeam()->GetLeader()->GetPos();
 }
 
 bool character::RestUntilHealed(void)
 {
-	long HPToRest = game::NumberQuestion("Rest until X HP", vector2d(7,7), WHITE);
+	long HPToRest = game::NumberQuestion("How many hit points you desire?", vector2d(7,7), WHITE);
 
-	if(HPToRest < GetHP())
+	if(HPToRest <= GetHP())
 	{
-		ADD_MESSAGE("Your HP is already %d", GetHP());
+		ADD_MESSAGE("Your HP is already %d.", GetHP());
 		return false;
 	}
 

@@ -43,7 +43,7 @@ public:
 	virtual bool Close(character*);
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
-	virtual void SpillFluid(uchar, ulong, ushort = 3, ushort = 32);
+	virtual void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
 	virtual ushort GetLuminance() const;
 	virtual void SignalEmitationIncrease(ushort);
 	virtual void SignalEmitationDecrease(ushort);
@@ -56,7 +56,7 @@ public:
 	virtual std::string GetEngraved() const { return Engraved; }
 	virtual bool Engrave(std::string What) { Engraved = What; return true; }
 	virtual void SetEmitation(ushort What) { Emitation = What; }
-	virtual void UpdateMemorizedDescription();
+	virtual void UpdateMemorizedDescription(bool = false);
 	virtual bool Kick(ushort,uchar, character*);
 	virtual uchar GetDivineOwner() const { return DivineOwner; }
 	virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
@@ -82,7 +82,9 @@ public:
 	virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
 	virtual void ApplyScript(squarescript*);
 	virtual bool CanBeSeen() const;
-	virtual bool CanBeSeenFrom(vector2d) const;
+	virtual bool CanBeSeenFrom(vector2d, ulong) const;
+	virtual void MoveCharacter(levelsquare*);
+	virtual bool CanBeSeenIgnoreDarkness() const;
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;
@@ -103,6 +105,8 @@ protected:
 	uchar DivineOwner;
 	bool Fluided;
 	bitmap* FluidBuffer;
+	bool Dark;
+	//ushort Luminance;
 };
 
 #endif

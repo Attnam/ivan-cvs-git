@@ -8,7 +8,7 @@
 #include "strover.h"
 #include "save.h"
 
-square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Known(false), Pos(Pos), NewDrawRequested(true), Memorized(0)
+square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true)
 {
 }
 
@@ -20,27 +20,27 @@ square::~square()
 
 void square::Save(outputfile& SaveFile) const
 {
-	SaveFile << Character << Known;
+	SaveFile << Character << LastSeen << DescriptionChanged;
 
-	if(Known)
+	if(LastSeen)
 		GetMemorized()->Save(SaveFile);
 
-	SaveFile << Flag << MemorizedDescription;
+	SaveFile << MemorizedDescription;
 }
 
 void square::Load(inputfile& SaveFile)
 {
 	game::SetSquareInLoad(this);
 
-	SaveFile >> Character >> Known;
+	SaveFile >> Character >> LastSeen >> DescriptionChanged;
 
-	if(Known)
+	if(LastSeen)
 	{
 		Memorized = new bitmap(16, 16);
 		GetMemorized()->Load(SaveFile);
 	}
 
-	SaveFile >> Flag >> MemorizedDescription;
+	SaveFile >> MemorizedDescription;
 }
 
 void square::AddCharacter(character* Guy)
@@ -52,7 +52,7 @@ void square::AddCharacter(character* Guy)
 
 void square::DrawMemorized() const
 {
-	if(GetKnown())
+	if(GetLastSeen())
 		GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, (GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4, 16, 16, ushort(256 * game::GetSoftGamma()));
 }
 
@@ -64,18 +64,26 @@ void square::RemoveCharacter()
 
 bool square::CanBeSeen() const
 {
-	if(!game::GetPlayer()->GetSquareUnder())
-		return false;
-
-	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
-
-	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
+	if(GetLastSeen() == game::GetLOSTurns())
 		return true;
 	else
 		return false;
 }
 
-bool square::CanBeSeenFrom(vector2d FromPos) const
+bool square::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance) const
 {
-	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
+	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, MaxDistance, game::EyeHandler);
+}
+
+void square::SetLastSeen(ulong What)
+{
+	if(!GetLastSeen())
+		Memorized = new bitmap(16, 16);
+
+	if(GetLastSeen() < What - 1)
+		SendNewDrawRequest();
+
+	UpdateMemorizedDescription();
+
+	LastSeen = What;
 }

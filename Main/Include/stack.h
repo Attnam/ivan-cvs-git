@@ -44,7 +44,7 @@ public:
 	ulong SumOfMasses() const;
 	void Save(outputfile&) const;
 	ushort SearchItem(item*) const;
-	void Move(levelsquare*);
+	//void Move(levelsquare*);
 	square* GetSquareUnder() const { return SquareUnder; }
 	levelsquare* GetLevelSquareUnder() const { return (levelsquare*)SquareUnder; }
 	void SetItem(ushort Where, item* What) { Item[Where] = What; }

@@ -31,8 +31,8 @@ realistic, but it works fine.
 
 When a level is generated and initialized to be playable, a function
 named levelsquare::Emitate() is called for every tile. If emitation
-is greater than or equal to 64, it creates a virtual square of tiles with
-a diameter of 2 * sqrt(Emitation - 64) + 1 (*) centered on the current
+is greater than or equal to 160, it creates a virtual square of tiles with
+a diameter of 4 * sqrt(Emitation / 5 - 32) + 1 (*) centered on the current
 square. Then via game::DoLine() it "draws" lines beginning from the center
 to each square on the edges, calls game::EmitationHandler on each square on
 the line, which adds the source square to the "emitation list" of that
@@ -53,7 +53,7 @@ the emitation. Of course, at this point it is not the same emitation
 as in the origo of the emitation square. As the laws of physics show,
 luminance is inverse to the square of distance. However this would
 produce a division by zero on the origo square, so IVAN uses a bit
-more complicated formula: Emitation / (Distance^2 / 64 + 1).
+more complicated formula: Emitation / (Distance^2 / 128 + 1).
 Of course this calculation cannot be made for every square, so it is
 precalculated in the formely mentioned game::InitLuxTable() and
 can be retrieved by the following call:
@@ -69,7 +69,7 @@ The emitation list of levelsquare is stored in a dynarray of type emitter
 named Emitter, which contains both coordinate vectors and emitation values.
 It is used by ushort levelsquare::CLuminance() to determine the actual
 luminance of the square, which is the highest emitation value of the list.
-Of course, AlterLuminance discards all emitation values less than 64,
+Of course, AlterLuminance discards all emitation values less than 160,
 the minimum luminance possible.
 
 Emitate is not called only at the beginning of the level. When light
@@ -94,7 +94,7 @@ emitation value. So there's no fear it'll bloat over time.
 ReEmitate differs from emitate only by the fact that the old emitation
 is used to determine the emitation range instead of the new one.
 So AlterLuminance is run for also those squares that are not in the
-new range, and a number less than 64 is passed to it as a parameter.
+new range, and a number less than 160 is passed to it as a parameter.
 This causes AlterLuminance to actually remove the origo square from the
 emitator list.
 
@@ -148,20 +148,18 @@ after a long journey.
 
 ----------------------------------------------------------------------------
 
-(*)	Since 64 is the minimum luminance border for square to be drawn,
+(*)	Since 160 is the minimum luminance border for square to be drawn,
 	minimum needed distance from the center can be calculated with
 	the following formula (e is emitation, r is radius):
 
-	e / (r^2 / 64 + 1) >= 64
-	e >= r^2 + 64
-	e - 64 >= r^2
-	r <= sqrt(e - 64)
+	e / (r^2 / 128 + 1) >= 160
+	e >= 1.25 * r^2 + 160
+	e - 160 >= 1.25 * r^2
+	r <= 2 * sqrt(e / 5 - 32)
 
 	This is the minimum radius. So the diameter of the square needs not
-	to be more than 2 * sqrt(e - 64) + 1.
+	to be more than 4 * sqrt(e / 5 - 32) + 1.
 
 ----------------------------------------------------------------------------
 
 End of document.
-
-

@@ -137,9 +137,9 @@ void consummo::PrayBadEffect()
 
 void valpuri::PrayGoodEffect()
 {
-	ADD_MESSAGE("A valpurium curved two-handed sword drops on to the ground.");
+	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might drops on to the ground.");
 	item* Reward = new curvedtwohandedsword(false);
-	Reward->InitMaterials(3, new valpurium(5500), new iron(250), 0);
+	Reward->InitMaterials(3, new valpurium, new iron, 0);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 }
 
@@ -262,7 +262,7 @@ void atavus::PrayGoodEffect()
 {
 	ADD_MESSAGE("A mithril platemail drops on the ground.");
 	item* Reward = new platemail(false);
-	Reward->InitMaterials(new mithril(4000));
+	Reward->InitMaterials(new mithril);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 }
 
@@ -506,7 +506,7 @@ void macellarius::PrayGoodEffect()
 {
 	ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
 	item* Reward = new potion(false);
-	Reward->InitMaterials(2, new glass(50), new omleurine(1500));
+	Reward->InitMaterials(2, new glass, new omleurine);
 	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 	ADD_MESSAGE("%s drops on the ground.", Reward->CNAME(DEFINITE));
 }
@@ -525,7 +525,7 @@ void scabies::PrayGoodEffect()
 	for(uchar c = 0; c < 5; ++c)
 	{
 		item* Reward = new can(false);
-		Reward->InitMaterials(2, new iron(50), new schoolfood(600));
+		Reward->InitMaterials(2, new iron, new schoolfood);
 		game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
 	}
 }

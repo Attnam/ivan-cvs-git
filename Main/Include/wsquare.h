@@ -31,17 +31,15 @@ public:
 	virtual void ChangeWorldMapTerrain(groundworldmapterrain*, overworldmapterrain*);
 	virtual worldmap* GetWorldMapUnder() const { return (worldmap*)AreaUnder; }
 	virtual void SetWorldMapUnder(worldmap* What) { AreaUnder = (area*)What; }
-	virtual void UpdateMemorizedDescription();
+	virtual void UpdateMemorizedDescription(bool = false);
 	virtual groundterrain* GetGroundTerrain() const;
 	virtual overterrain* GetOverTerrain() const;
 	virtual void DrawCheat();
 	virtual void ChangeGroundWorldMapTerrain(groundworldmapterrain*);
 	virtual void ChangeOverWorldMapTerrain(overworldmapterrain*);
-	virtual void SetDescriptionChanged(bool What) { DescriptionChanged = What; }
 protected:
 	groundworldmapterrain* GroundWorldMapTerrain;
 	overworldmapterrain* OverWorldMapTerrain;
-	bool DescriptionChanged;
 };
 
 #endif

@@ -113,14 +113,14 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
 		game::GetCurrentDungeon()->PrepareLevel();
-		game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
+		game::GetCurrentLevel()->FastAddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 
 		for(std::vector<character*>::iterator c = MonsterList.begin(); c != MonsterList.end(); ++c)
 			game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetDownStairs()), *c);
 
 		game::GetCurrentLevel()->Luxify();
-		game::GetCurrentLevel()->UpdateLOS();
-		game::GetCurrentLevel()->SendNewDrawRequest();
+		//game::GetCurrentLevel()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 		game::UpdateCamera();
 		return true;
 	}
@@ -133,7 +133,8 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 			game::LoadWorldMap();
 			game::SetInWilderness(true);
 			game::GetCurrentArea()->AddCharacter(game::GetCurrentDungeon()->GetWorldMapPos(), Who);
-			game::GetCurrentArea()->SendNewDrawRequest();
+			//game::GetCurrentArea()->UpdateLOS();
+			game::SendLOSUpdateRequest();
 			game::UpdateCamera();
 			return true;
 		}
@@ -226,10 +227,10 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 			game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetNearestFreeSquare(game::GetCurrentLevel()->GetUpStairs()), *c);
 
 		game::GetCurrentLevel()->Luxify();
-		game::GetCurrentLevel()->UpdateLOS();
-		game::GetCurrentLevel()->SendNewDrawRequest();
 		game::ShowLevelMessage();
 		game::UpdateCamera();
+		//game::GetCurrentLevel()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 		return true;
 	}
 	else
@@ -268,8 +269,9 @@ void door::MakeWalkable()
 	GetLevelSquareUnder()->SendNewDrawRequest();
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
-	if(GetLevelSquareUnder()->RetrieveFlag())
-		game::GetCurrentLevel()->UpdateLOS();
+	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+		//game::GetCurrentLevel()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 
 	UpdatePicture();
 }
@@ -283,8 +285,9 @@ void door::MakeNotWalkable()
 	GetLevelSquareUnder()->SendNewDrawRequest();
 	GetLevelSquareUnder()->ForceEmitterEmitation();
 
-	if(GetLevelSquareUnder()->RetrieveFlag())
-		game::GetCurrentLevel()->UpdateLOS();
+	if(GetLevelSquareUnder()->GetLastSeen() == game::GetLOSTurns())
+		//game::GetCurrentLevel()->UpdateLOS();
+		game::SendLOSUpdateRequest();
 
 	UpdatePicture();
 }

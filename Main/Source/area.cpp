@@ -69,21 +69,25 @@ void area::AddCharacter(vector2d Pos, character* Guy)
 
 void area::UpdateLOS()
 {
-	EmptyFlags();
+	//EmptyFlags();
+	game::LOSTurn();
 
-	DO_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
-			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Top,		game::FlagHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Bottom,		game::FlagHandler); },
-			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Left,	YPointer,	game::FlagHandler);
-			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Rigth,	YPointer,	game::FlagHandler); })
+	DO_FILLED_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
+			    game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);)
+
+	/*DO_RECTANGLE(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0, 0, GetXSize() - 1, GetYSize() - 1, game::GetPlayer()->LOSRange(),
+			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Top,		game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer,	Bottom,		game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler); },
+			{game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Left,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler);
+			 game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, Rigth,	YPointer,	game::GetPlayer()->LOSRangeSquare(),	game::LOSHandler); })*/
 }
 
-void area::EmptyFlags()
+/*void area::EmptyFlags()
 {
 	for(ushort x = 0; x < XSize; ++x)
 		for(ushort y = 0; y < YSize; ++y)
 			Map[x][y]->EmptyFlag();
-}
+}*/
 
 void area::SendNewDrawRequest()
 {
@@ -95,4 +99,11 @@ void area::SendNewDrawRequest()
 			Map[x][y]->SendNewDrawRequest();
 
 	DOUBLEBUFFER->ClearToColor(0, 32, 800, 480, 0);
+}
+
+void area::MoveCharacter(vector2d From, vector2d To)
+{
+	character* Backup = GetSquare(From)->GetCharacter();
+	GetSquare(From)->RemoveCharacter();
+	GetSquare(To)->AddCharacter(Backup);
 }
