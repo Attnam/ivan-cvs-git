@@ -69,7 +69,7 @@ void worldmap::Load(inputfile& SaveFile)
 	Map = (worldmapsquare***)area::Map;
 
 	for(ushort x = 0; x < XSize; ++x)
-		for(ulong y = 0; y < YSize; ++y)
+		for(ushort y = 0; y < YSize; ++y)
 		{
 			Map[x][y] = new worldmapsquare(this, vector2d(x, y));
 			Map[x][y]->Load(SaveFile);

@@ -119,50 +119,6 @@ Dungeon 0;
 		}
 	}
 
-	Level 4;
-	{
-		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
-		Rooms=10+rand%21;
-
-		Square, Random { Walkable=true; InRoom=false; }
-		{
-			Character=ennerbeast { Team=4; }
-		}
-	}
-
-	Level 5;
-	{
-		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
-		Rooms=10+rand%21;
-
-		Square, Random { Walkable=true; InRoom=true; }
-		{
-			Character=ivan { Team=7; }
-		}
-	}
-
-	Level 6;
-	{
-		Description=DarkLevel;
-		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare=floor, iron wall;
-		Items=0;
-		GenerateDownStairs=false;
-
-		RoomDefault
-		{
-			AltarPossible=false;
-			WallSquare=floor, iron wall;
-			DoorSquare=parquet,iron door;
-			GenerateLamps=false;
-		}
-
-		Square, Random { Walkable=true; InRoom=true; }
-		{
-			Character=elpuri;
-		}
-	}
-
 	Level 2+rand%2;
 	{
 		LevelMessage="You hear many wolves howling. You shiver.";
@@ -261,6 +217,50 @@ Dungeon 0;
 		}
 	}
 
+	Level 4;
+	{
+		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
+		Rooms=10+rand%21;
+
+		Square, Random { Walkable=true; InRoom=false; }
+		{
+			Character=ennerbeast { Team=4; }
+		}
+	}
+
+	Level 5;
+	{
+		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
+		Rooms=10+rand%21;
+
+		Square, Random { Walkable=true; InRoom=true; }
+		{
+			Character=ivan { Team=7; }
+		}
+	}
+
+	Level 6;
+	{
+		Description=DarkLevel;
+		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+		FillSquare=floor, iron wall;
+		Items=0;
+		GenerateDownStairs=false;
+
+		RoomDefault
+		{
+			AltarPossible=false;
+			WallSquare=floor, iron wall;
+			DoorSquare=parquet,iron door;
+			GenerateLamps=false;
+		}
+
+		Square, Random { Walkable=true; InRoom=true; }
+		{
+			Character=elpuri;
+		}
+	}
+
 	Level 5+rand%4;
 	{
 		Rooms=10+rand%21;
@@ -298,13 +298,13 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=ground,pepsi wall;
+			WallSquare=ground,iron wall;
 			FloorSquare=parquet,empty;
-			DoorSquare=parquet,pepsi door;
+			DoorSquare=parquet,iron door;
 
 			Square, Pos 3,3;
 			{
-				OverTerrain=pepsi stairsdown;
+				OverTerrain=iron stairsdown;
 			}
 
 			Square, Pos 3,5;
@@ -317,8 +317,8 @@ Dungeon 0;
 	Level 9;
 	{
 		Description=OreeLair;
-		LevelMessage="\"Welcome to my lair, mortal! Prepare to be pepsified!\" Suddenly the stairs disappear.";
-		FillSquare=pepsi ground,pepsi earth;
+		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\" Suddenly the stairs disappear.";
+		FillSquare=floor, iron wall;
 		Rooms=1;
 		GenerateMonsters=false;
 		GenerateUpStairs=false;
@@ -330,7 +330,7 @@ Dungeon 0;
 		{
 			Size=7,7;
 			AltarPossible=false;
-			WallSquare=pepsi ground,pepsi wall;
+			WallSquare=floor, iron wall;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
@@ -339,7 +339,7 @@ Dungeon 0;
 
 			Square, Pos 3,1;
 			{
-				OverTerrain = altar;
+				OverTerrain = iron altar;
 			}
 
 			Square, Pos 3,3;
@@ -349,7 +349,7 @@ Dungeon 0;
 
 			Square, Pos 3,5;
 			{
-				OverTerrain=pepsi stairsup;
+				OverTerrain=iron stairsup;
 			}
 
 			CharacterMap
@@ -361,7 +361,7 @@ Dungeon 0;
 				{
 					O=oree;
 					B=darkknight;
-					G=pepsi golem;
+					G=blood golem;
 				}
 			}
 			{

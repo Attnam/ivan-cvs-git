@@ -19,3 +19,5 @@ Random fellow adventurers.
 Indiana Jones.
 Fake gods.
 Capitalists.
+Material color editor.
+Graphical script editor.

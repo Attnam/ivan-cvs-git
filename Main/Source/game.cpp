@@ -1185,7 +1185,7 @@ std::string game::GetVerbalPlayerAlignment()
 {
 	long Sum = 0;
 
-	for(uchar c = 1; c < game::GetGodNumber(); c++)
+	for(uchar c = 1; game::GetGod(c); c++)
 	{
 		if(GetGod(c)->GetRelation() > 0)
 			Sum += GetGod(c)->GetRelation() * (5 - GetGod(c)->Alignment());

@@ -66,7 +66,13 @@ bool door::Close(character* Closer)
 {
 	if(Closer->GetIsPlayer())
 		if(GetIsWalkable())
-			ADD_MESSAGE("You close the door.");
+			if(RAND() % 20 < Closer->GetStrength())
+				ADD_MESSAGE("You close the door.");
+			else
+			{
+				ADD_MESSAGE("The door resists!");
+				return false;
+			}
 		else
 		{
 			ADD_MESSAGE("The door is already closed, %s.", game::Insult());
@@ -162,14 +168,15 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 			if(!game::BoolQuestion("Continue anyway? [y/N]"))
 				return false;
-
-			Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);
 		}
 
 		std::vector<character*> MonsterList;
 
 		if(!GetLevelSquareUnder()->GetLevelUnder()->CollectCreatures(MonsterList, Who, true))
 			return false;
+
+		if(game::GetCurrent() == 8)
+			Who->GetLevelSquareUnder()->ChangeLevelTerrain(new parquet, new empty);
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
 		game::GetCurrentDungeon()->SaveLevel();

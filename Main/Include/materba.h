@@ -80,7 +80,6 @@ public:
 	virtual ushort GetColor() const = 0;
 	virtual bool CanBeWished() const { return true; }
 	virtual material* CreateWishedMaterial(ulong) const;
-	virtual bool IsFlesh() { return false; }
 	virtual object* GetMotherObject() const { return MotherObject; }
 	virtual void SetMotherObject(object* What) { MotherObject = What; }
 	virtual ulong RawPrice() const { return 0; }

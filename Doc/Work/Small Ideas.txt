@@ -74,5 +74,7 @@ As Heikki suggested, when one jumps in the WMap and is strong enough, one should
 *Holybook color change.
 *Go displacement.
 *Attack alignments.
-*Chance of Bill's will generation should somehow be lowered.
 Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.
+Silva + shop need tweaking.
+Punishment of cathedral terrain destruction.
+*Integration of the mammoth.

@@ -166,7 +166,6 @@ public:
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue() const			{ return 200; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
-	virtual bool IsFlesh() { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "flesh"; }
 );
@@ -221,7 +220,6 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual bool IsSolid() const { return true; }
 	virtual ushort GetColor() const { return MAKE_RGB(144, 144, 144); }
-	virtual bool IsFlesh() { return true; }
 	virtual short NutritionValue() const			{ return 20; }
 protected:
 	virtual std::string NameStem() const	{ return "bone"; }
@@ -370,7 +368,6 @@ public:
 	virtual short NutritionValue() const			{ return 100; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual ushort GetColor() const { return MAKE_RGB(0, 128, 0); }
-	virtual bool IsFlesh() { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "slime"; }
 );
@@ -440,7 +437,6 @@ public:
 	virtual void HitEffect(character* Enemy);
 	virtual short NutritionValue() const			{ return 400; }
 	virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
-	virtual bool IsFlesh() { return true; }
 	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "pepsi"; }
@@ -852,7 +848,22 @@ protected:
 	virtual std::string NameStem() const	{ return "daemon flesh"; }
 );
 
+class MATERIAL
+(
+	blood,
+	material, // should be "liquid"
+public:
+	virtual ushort GetHitValue() const 				{ return 200; }
+	virtual uchar GetConsumeType() const				{ return LIQUID; }
+	virtual ushort GetDensity() const				{ return 1000; }
+	virtual ushort OfferValue() const				{ return 50; }
+	virtual short NutritionValue() const			{ return 10; }
+	virtual ushort GetColor() const { return MAKE_RGB(160, 0, 0); }
+	virtual bool CanBeWished() const { return false; }
+	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
+	virtual uchar Alignment() const				{ return EVIL; }
+protected:
+	virtual std::string NameStem() const	{ return "blood"; }
+);
+
 #endif
-
-
-

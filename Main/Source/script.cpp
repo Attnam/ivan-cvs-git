@@ -113,9 +113,6 @@ template <class type> void basecontentscript<type>::ReadFrom(inputfile& SaveFile
 		Word = SaveFile.ReadWord();
 	}
 
-	if(Word == "{")
-		int esko = 2;
-
 	ReadParameters(SaveFile, Word);
 }
 
