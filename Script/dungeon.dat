@@ -776,7 +776,7 @@ Dungeon ATTNAM;
 					s = decoration(COUCH);
 					f = fountain { ContainedMaterial = ICE; }
 					d = decoration(DOUBLE_BED);
-					B = GOLD boulder; 
+					B = GOLD boulder(1); 
 				}
 			}
 			{
@@ -1332,7 +1332,7 @@ Dungeon NEW_ATTNAM;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain = boulder;
+			OTerrain = boulder(1);
 			Times = 25;
 		}
 
@@ -1689,8 +1689,13 @@ Dungeon UNDER_WATER_TUNNEL;
 			Shape = ROUND_CORNERS;
 			Square, Random;
 			{
-				OTerrain = boulder;
-				Times = 3:10;
+				OTerrain = boulder(1);
+				Times = 1:5;
+			}
+			Square, Random;
+			{
+				OTerrain = boulder(2);
+				Times = 1:5;
 			}
 			Square, Random;
 			{
@@ -1707,8 +1712,13 @@ Dungeon UNDER_WATER_TUNNEL;
 			Shape = ROUND_CORNERS;
 			Square, Random;
 			{
-				OTerrain = boulder;
-				Times = 3:10;
+				OTerrain = boulder(1);
+				Times = 1:5;
+			}
+			Square, Random;
+			{
+				OTerrain = boulder(2);
+				Times = 1:5;
 			}
 			Square, Random;
 			{
@@ -1725,8 +1735,13 @@ Dungeon UNDER_WATER_TUNNEL;
 			Shape = ROUND_CORNERS;
 			Square, Random;
 			{
-				OTerrain = boulder;
-				Times = 3:10;
+				OTerrain = boulder(2);
+				Times = 1:5;
+			}
+			Square, Random;
+			{
+				OTerrain = boulder(1);
+				Times = 1:5;
 			}
 			Square, Random;
 			{
@@ -1737,8 +1752,13 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain = boulder;
-			Times = 10:30;
+			OTerrain = boulder(1);
+			Times = 5:15;
+		}
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain = boulder(2);
+			Times = 5:15;
 		}
 
 		Square, Random;
@@ -1792,8 +1812,13 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain = boulder;
-			Times = 10:30;
+			OTerrain = boulder(1);
+			Times = 5:15;
+		}
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain = boulder(2);
+			Times = 5:15;
 		}
 
 	}
