@@ -1042,7 +1042,7 @@ ring
 	NameSingular = "ring";
 	MainMaterialConfig == DIAMOND;
 	Roundness = 10; /* it is considered here opened */
-
+	IsAbstract = true;
 	Config RINGOFFIRERESISTANCE;
 	{
 		Possibility = 15;
@@ -1056,7 +1056,7 @@ ring
 		PostFix = "of polymorph control";
 		Possibility = 10;
 		MainMaterialConfig == RUBY;
-		GearStates = POLYMORPH_CONTROL;
+		GearStates == POLYMORPH_CONTROL;
 	}
 
 	Config RINGOFINFRAVISION;
@@ -1065,6 +1065,26 @@ ring
 		Possibility = 10;
 		MainMaterialConfig == SILVER;
 		GearStates = INFRAVISION;
+	}
+	
+	Config RINGOFTELEPORTATION;
+	{
+		PostFix = "of teleportation";
+		GearStates = TELEPORT;
+		MainMaterialConfig == IRON;
+		Alias == "ring of teleport";
+	}
+	
+	Config RINGOFTELEPORTCONTROL;
+	{
+		PostFix = "of teleport control";
+		GearStates = TELEPORT_CONTROL;
+	}
+
+	Config RINGOFPOLYMORPH;
+	{
+		PostFix = "of polymorph";
+		GearStates = POLYMORPH;
 	}
 }
 

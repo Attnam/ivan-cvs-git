@@ -600,6 +600,14 @@ class character : public entity, public id
   lsquare* GetLSquareUnder() const;
   wsquare* GetWSquareUnder() const;
   virtual void PoisonedHandler();
+  void PrintBeginTeleportMessage() const;
+  void PrintEndTeleportMessage() const;
+  void TeleportHandler();
+  void PrintEndTeleportControlMessage() const;
+  void PrintBeginTeleportControlMessage() const;
+  void PolymorphHandler();
+  void PrintEndPolymorphMessage() const;
+  void PrintBeginPolymorphMessage() const;
  protected:
   virtual void SpecialTurnHandler() { }
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }

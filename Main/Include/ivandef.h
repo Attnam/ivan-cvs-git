@@ -88,7 +88,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 10
+#define STATES 13
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -100,6 +100,10 @@
 #define INFRAVISION 128
 #define ESP 256
 #define POISONED 512
+#define TELEPORT 1024 /* Teleports every now and then */
+#define POLYMORPH 2048 /* Polymorph randomly every now and then */
+#define TELEPORT_CONTROL 4096 
+
 
 #define TORSO 1
 #define HEAD 2
@@ -447,6 +451,9 @@
 #define RINGOFFIRERESISTANCE 1
 #define RINGOFPOLYMORPHCONTROL 2
 #define RINGOFINFRAVISION 3
+#define RINGOFTELEPORTATION 4
+#define RINGOFTELEPORTCONTROL 5
+#define RINGOFPOLYMORPH 6
 
 #define AMULETOFLIFESAVING 1
 #define AMULETOFESP 2

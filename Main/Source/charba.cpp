@@ -37,13 +37,13 @@
  * doesn't need one.
  */
 
-void (character::*character::PrintBeginStateMessage[])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage };
-void (character::*character::PrintEndStateMessage[])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage };
-void (character::*character::BeginStateHandler[])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0 };
-void (character::*character::EndStateHandler[])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0 };
-void (character::*character::StateHandler[])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler };
-std::string character::StateDescription[] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned" };
-bool character::StateIsSecret[] = { false, false, false, false, true, true, false, false, false, false };
+void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage, &character::PrintBeginPoisonedMessage, &character::PrintBeginTeleportMessage, &character::PrintBeginPolymorphMessage, &character::PrintBeginTeleportControlMessage };
+void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage, &character::PrintEndPoisonedMessage, &character::PrintEndTeleportMessage, &character::PrintEndPolymorphMessage, &character::PrintEndTeleportControlMessage };
+void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP, 0, 0, 0, 0 };
+void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP, 0, 0, 0, 0 };
+void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0, &character::PoisonedHandler, &character::TeleportHandler, &character::PolymorphHandler, 0 };
+std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP", "Poisoned", "Teleport", "Polymorphing", "Telep. ctrl" };
+bool character::StateIsSecret[STATES] = { false, false, false, false, true, true, false, false, false, false, false, true };
 
 character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0)
 {
@@ -504,7 +504,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
   else
     {
       if(IsPlayer())
-	ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
+	{
+	  ADD_MESSAGE("You try very hard to crawl forward. But your load is too heavy.");
+	}
 
       EditAP(-1000);
     }
@@ -2905,6 +2907,25 @@ void character::ChangeContainedMaterial(material* NewMaterial)
 void character::TeleportRandomly()
 {
   SetStuckToBodyPart(NONEINDEX);
+  if(StateIsActivated(TELEPORT_CONTROL) && IsPlayer())
+    {
+      while(true)
+	{
+	  vector2d PlayersInput = game::PositionQuestion("Where do you wish to teleport? [direction keys]", GetPos(), 0,0,false);
+	  if(game::GetCurrentLevel()->GetLSquare(PlayersInput)->IsWalkable(this) || game::GetGoThroughWallsCheat())
+	    {
+	      if(game::GetCurrentLevel()->GetLSquare(PlayersInput)->GetCharacter())
+		{
+		  ADD_MESSAGE("You feel that something wierd has happened, but can't really tell what exactly.");
+		  break;
+		  /* break this loop and teleport randomly */
+		}
+	      Move(PlayersInput, true);
+	      return;
+	    }
+	}
+    }
+
   Move(game::GetCurrentLevel()->RandomSquare(this, true), true);
 }
 
@@ -4890,4 +4911,59 @@ lsquare* character::GetLSquareUnder() const
 wsquare* character::GetWSquareUnder() const
 {
   return static_cast<wsquare*>(SquareUnder);
+}
+
+/*void characterdatabase::characterdatabase(const characterdatabase& Base)
+{
+  *this = Base;
+  Article = AllocateCopyOf(Base.Article);
+  Adjective = AllocateCopyOf(Adjective.Article);
+  AdjectiveArticle = AllocateCopyOf(AdjectiveArticle.Article);
+  NameSingular = AllocateCopyOf(NameSingular.Article);
+  NamePlural = AllocateCopyOf(NamePlural.Article);
+  PostFix = AllocateCopyOf(PostFix.Article);
+}*/
+
+void character::PrintBeginTeleportMessage() const
+{
+
+}
+
+void character::PrintEndTeleportMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel more solid.");
+}
+
+void character::TeleportHandler()
+{
+  if(!(RAND() % 1500 + 100))
+    TeleportRandomly();
+}
+
+void character::PrintBeginPolymorphMessage() const
+{
+
+}
+
+void character::PrintEndPolymorphMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You feel more solid.");
+}
+
+void character::PolymorphHandler()
+{
+  if(!(RAND() % 400 + 400))
+    PolymorphRandomly(200 + RAND() % 800);
+}
+
+void character::PrintBeginTeleportControlMessage() const
+{
+
+}
+
+void character::PrintEndTeleportControlMessage() const
+{
+
 }

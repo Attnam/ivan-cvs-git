@@ -79,3 +79,4 @@ CollectCreatures
 //Skeleton volume.
 "snake is standing"
 Genie's strength.
+Items inside chests carried by player at death should be shown.

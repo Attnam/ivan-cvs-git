@@ -2782,6 +2782,7 @@ void beartrap::VirtualConstructor(bool Load)
 
 bool beartrap::GetStepOnEffect(character* Stepper)
 {
+  SetIsVisible(true);
   if(IsActivated)
     {
       ushort StepperBodyPart = Stepper->GetRandomStepperBodyPart();

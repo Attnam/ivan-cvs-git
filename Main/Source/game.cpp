@@ -1328,6 +1328,9 @@ void game::LookHandler(vector2d CursorPos)
 
   if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
     Character->DisplayInfo(Msg);
+  if(!(RAND() % 10000))
+    Msg << " You see here a frog eating a magnolia.";
+    
 
   if(game::WizardModeActivated())
     Msg << " (" << CursorPos.X << ", " << CursorPos.Y << ")";

@@ -1,3 +1,8 @@
+July 13 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added teleport control, teleport randomly and polymorph randomly states
+	* Added rings for all these new states.
+
 July 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Oceans and the dolphin pool are now animated
