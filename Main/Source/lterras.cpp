@@ -443,16 +443,22 @@ bool fountain::Drink(character* Drinker)
 			Monster->PutTo(TryToCreate);
 
 			if(Monster->CanBeSeenByPlayer())
-			  if(Monster->IsPet())
-			    {
-			      if(Monster->CanBeSeenByPlayer())
-				ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
-			    }
-			  else
-			    {
-			      if(Monster->CanBeSeenByPlayer())
-				ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
-			    }
+			  {
+			    if(Monster->IsPet())
+			      {
+				if(Monster->CanBeSeenByPlayer())
+				  ADD_MESSAGE("%s appears from the fountain!", Monster->CHAR_NAME(DEFINITE));
+			      }
+			    else
+			      {
+				if(Monster->CanBeSeenByPlayer())
+				  ADD_MESSAGE("%s appears from the fountain! %s seems to be friendly.", Monster->CHAR_NAME(DEFINITE), Monster->GetPersonalPronoun().CapitalizeCopy().CStr());
+			      }
+			  }
+			else
+			  {
+			    ADD_MESSAGE("You feel something moving near you.");
+			  }
 
 			break;
 		      }
@@ -517,9 +523,9 @@ bool fountain::Drink(character* Drinker)
 			    Drinker->GetLSquareUnder()->SpillFluid(Drinker, new liquid(WATER, 1000 + RAND() % 501), false, false);
 			  }
 		      }
+		    break;
 		  }
 	      }
-	      break;
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
 	      Drinker->EditNP(500);

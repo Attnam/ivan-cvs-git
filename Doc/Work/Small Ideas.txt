@@ -497,3 +497,4 @@ He should be also able to call 112/911.  (from Henri Kiviluoto)
 The pictures of mirrored creatures should also be mirrored and their limbs swapped.
 Things less dense than a liquid should float in a square full of that liquid.
 Simple protection for changing highscore files. Needed if list of best scores is done.
+Death message for team member killing each other while confused should be "X killed by confused Y"
