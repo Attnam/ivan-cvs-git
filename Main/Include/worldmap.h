@@ -54,7 +54,7 @@ class worldmap : public area
   std::vector<character*> PlayerGroup;
 };
 
-outputfile& operator<<(outputfile&, worldmap*);
+outputfile& operator<<(outputfile&, const worldmap*);
 inputfile& operator>>(inputfile&, worldmap*&);
 
 #endif

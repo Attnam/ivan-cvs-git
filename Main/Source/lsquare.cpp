@@ -736,19 +736,19 @@ oterrain* lsquare::GetOTerrain() const
   return OLTerrain;
 }
 
-void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
+void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
 {
-  bool* AttachRequired = SquareScript->AttachRequired();
+  const bool* AttachRequired = SquareScript->AttachRequired();
 
   if(AttachRequired && *AttachRequired)
     GetLevel()->AttachPos(Pos);
 
-  uchar* EntryIndex = SquareScript->GetEntryIndex();
+  const uchar* EntryIndex = SquareScript->GetEntryIndex();
 
   if(EntryIndex)
     GetLevel()->SetEntryPos(*EntryIndex, Pos);
 
-  contentscript<character>* CharacterScript = SquareScript->GetCharacter();
+  const contentscript<character>* CharacterScript = SquareScript->GetCharacter();
 
   if(CharacterScript)
     {
@@ -762,24 +762,24 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 
       if(Room)
 	{
-	  bool* IsMaster = CharacterScript->IsMaster();
+	  const bool* IsMaster = CharacterScript->IsMaster();
 
 	  if(IsMaster && *IsMaster)
 	    Room->SetMasterID(Char->GetID());
 	}
     }
 
-  std::vector<contentscript<item> >* Items = SquareScript->GetItems();
+  const std::list<contentscript<item> >* Items = SquareScript->GetItems();
 
   if(Items)
-    for(ushort c = 0; c < Items->size(); ++c)
+    for(std::list<contentscript<item> >::const_iterator i = Items->begin(); i != Items->end(); ++i)
       {
 	stack* Stack;
-	item* Item = (*Items)[c].Instantiate();
+	item* Item = i->Instantiate();
 
 	if(Item)
 	  {
-	    uchar* SideStackIndex = (*Items)[c].GetSideStackIndex();
+	    const uchar* SideStackIndex = i->GetSideStackIndex();
 
 	    if(!SideStackIndex)
 	      Stack = GetStack();
@@ -794,12 +794,12 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
 	  }
       }
 
-  contentscript<glterrain>* GLTerrainScript = SquareScript->GetGTerrain();
+  const contentscript<glterrain>* GLTerrainScript = SquareScript->GetGTerrain();
 
   if(GLTerrainScript)
     ChangeGLTerrain(GLTerrainScript->Instantiate());
 
-  contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain();
+  const contentscript<olterrain>* OLTerrainScript = SquareScript->GetOTerrain();
 
   if(OLTerrainScript)
     {

@@ -15,6 +15,7 @@
 #include "whandler.h"
 #include "hscore.h"
 #include "graphics.h"
+#include "script.h"
 
 int Main(int argc, char **argv)
 {
@@ -36,9 +37,9 @@ int Main(int argc, char **argv)
   festring::InstallIntegerMap();
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
+  scriptsystem::Initialize();
   databasesystem::Initialize();
   game::InitLuxTable();
-  game::InitScript();
   configuration::Load();
   igraph::Init();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);

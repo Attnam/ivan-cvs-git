@@ -80,7 +80,7 @@ ushort team::GetEnabledMembers() const
   return Amount;
 }
 
-outputfile& operator<<(outputfile& SaveFile, team* Team)
+outputfile& operator<<(outputfile& SaveFile, const team* Team)
 {
   Team->Save(SaveFile);
   return SaveFile;

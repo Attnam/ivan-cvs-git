@@ -367,7 +367,7 @@ class item : public object
   virtual uchar GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
   virtual void ResetSpoiling();
-  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
+  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
   virtual short GetCarryingBonus() const { return 0; }
   virtual bool IsBanana() const { return false; }
   virtual bool IsEncryptedScroll() const { return false; }

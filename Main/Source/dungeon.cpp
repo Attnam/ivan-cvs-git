@@ -26,10 +26,10 @@ dungeon::~dungeon()
 
 void dungeon::Initialize()
 {
-  std::map<uchar, dungeonscript*>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
+  std::map<uchar, dungeonscript>::const_iterator DungeonIterator = game::GetGameScript()->GetDungeon().find(Index);
 
   if(DungeonIterator != game::GetGameScript()->GetDungeon().end())
-    DungeonScript = DungeonIterator->second;
+    DungeonScript = &DungeonIterator->second;
   else
     {
       ABORT("Unknown dungeon #%d requested!", int(Index));
@@ -43,32 +43,16 @@ void dungeon::Initialize()
     Level[c] = 0;
 }
 
-levelscript* dungeon::GetLevelScript(ushort Index)
+const levelscript* dungeon::GetLevelScript(ushort Index)
 {
-  std::map<uchar, levelscript*>::const_iterator LevelIterator = DungeonScript->GetLevel().find(Index);
+  std::map<uchar, levelscript>::const_iterator LevelIterator = DungeonScript->GetLevel().find(Index);
 
-  levelscript* LevelScript;
+  const levelscript* LevelScript;
 
   if(LevelIterator != DungeonScript->GetLevel().end())
-    {
-      LevelScript = LevelIterator->second;
-
-      if(*LevelScript->ReCalculate())
-	{
-	  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &game::GetGlobalValueMap());
-	  LevelScript->ReadFrom(ScriptFile, true);
-	}
-    }
+    LevelScript = &LevelIterator->second;
   else
-    {
-      LevelScript = DungeonScript->GetLevelDefault();
-
-      if(*LevelScript->ReCalculate())
-	{
-	  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &game::GetGlobalValueMap());
-	  LevelScript->ReadFrom(ScriptFile, true);
-	}
-    }
+    LevelScript = DungeonScript->GetLevelDefault();
 
   return LevelScript;
 }
@@ -164,7 +148,7 @@ std::string dungeon::GetShortLevelDescription(ushort Index)
     return *DungeonScript->GetShortDescription() + " level " + (Index + 1);
 }
 
-outputfile& operator<<(outputfile& SaveFile, dungeon* Dungeon)
+outputfile& operator<<(outputfile& SaveFile, const dungeon* Dungeon)
 {
   if(Dungeon)
     {

@@ -242,7 +242,7 @@ class olterrain : public lterrain, public oterrain
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }
   virtual std::string GetText() const;
-  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
+  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
   ushort GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
   void CalculateHP();
@@ -295,3 +295,4 @@ LTERRAIN(\
 );
 
 #endif
+

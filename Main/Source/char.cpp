@@ -4845,12 +4845,12 @@ void character::AddOriginalBodyPartID(ushort Index, ulong What)
     OriginalBodyPartID[Index].erase(OriginalBodyPartID[Index].begin());
 }
 
-void character::AddToInventory(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+void character::AddToInventory(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)
 {
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c].IsValid())
+  for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
+    if(i->IsValid())
       {
-	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+	item* Item = i->Instantiate(SpecialFlags);
 
 	if(Item)
 	  {
@@ -5397,4 +5397,5 @@ void character::GetHitByExplosion(const explosion& Explosion, ushort Damage)
   ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE, ALL, DamageDirection, true, false, false, false);
   CheckDeath(Explosion.DeathMsg, Explosion.Terrorist);
 }
+
 

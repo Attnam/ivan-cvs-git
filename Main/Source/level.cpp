@@ -225,7 +225,7 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Map = reinterpret_cast<lsquare***>(area::Map);
-  std::string* Msg = LevelScript->GetLevelMessage();
+  const std::string* Msg = LevelScript->GetLevelMessage();
 
   if(Msg)
     LevelMessage = *Msg;
@@ -237,8 +237,8 @@ void level::Generate(ushort Index)
       Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
     }
 
-  contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
-  contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
+  const contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
+  const contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
   ulong Counter = 0;
 
   for(ushort x = 0; x < XSize; ++x)
@@ -253,44 +253,34 @@ void level::Generate(ushort Index)
     }
 
   ushort c;
-  inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &game::GetGlobalValueMap());
+  ushort Rooms = LevelScript->GetRooms()->Randomize();
+  const std::list<roomscript>& RoomList = LevelScript->GetRoom();
+  std::list<roomscript>::const_iterator Iterator = RoomList.begin();
 
-  for(c = 0; c < *LevelScript->GetRooms(); ++c)
+  for(c = 0; c < Rooms; ++c)
     {
       game::BusyAnimation();
-      std::map<uchar, roomscript*>::const_iterator RoomIterator = LevelScript->GetRoom().find(c);
-      roomscript* RoomScript;
 
-      if(RoomIterator != LevelScript->GetRoom().end())
+      if(c < RoomList.size())
 	{
 	  ushort i;
 
 	  for(i = 0; i < 1000; ++i)
-	    {
-	      RoomScript = RoomIterator->second;
-
-	      if(*RoomScript->ReCalculate())
-		RoomScript->ReadFrom(ScriptFile, true);
-
-	      if(MakeRoom(RoomScript))
-		break;
-	    }
+	    if(MakeRoom(&*Iterator))
+	      break;
 
 	  if(i == 1000)
-	    ABORT("Failed to place room #%d!", c);
+	    ABORT("Failed to place special room #%d!", c);
+
+	  ++Iterator;
 	}
       else
 	{
-	  for(ushort i = 0; i < 10; ++i)
-	    {
-	      RoomScript = LevelScript->GetRoomDefault();
+	  const roomscript* RoomScript = LevelScript->GetRoomDefault();
 
-	      if(*RoomScript->ReCalculate())
-		RoomScript->ReadFrom(ScriptFile, true);
-
-	      if(MakeRoom(RoomScript))
-		break;
-	    }
+	  for(ushort i = 0; i < 50; ++i)
+	    if(MakeRoom(RoomScript))
+	      break;
 	}
     }
 
@@ -300,31 +290,35 @@ void level::Generate(ushort Index)
     {
       /* Gum solution */
 
-      levelscript* LevelBase = static_cast<levelscript*>(LevelScript->GetBase());
+      const levelscript* LevelBase = static_cast<const levelscript*>(LevelScript->GetBase());
 
       if(LevelBase)
-	for(c = 0; c < LevelBase->GetSquare().size(); ++c)
-	  {
-	    game::BusyAnimation();
-	    squarescript* Script = LevelBase->GetSquare()[c];
-	    ApplyLSquareScript(Script);
-	  }
+	{
+	  const std::list<squarescript>& Square = LevelBase->GetSquare();
+
+	  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
+	    {
+	      game::BusyAnimation();
+	      ApplyLSquareScript(&*i);
+	    }
+	}
     }
 
-  for(c = 0; c < LevelScript->GetSquare().size(); ++c)
+  const std::list<squarescript>& Square = LevelScript->GetSquare();
+
+  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
     {
       game::BusyAnimation();
-      squarescript* Script = LevelScript->GetSquare()[c];
-      ApplyLSquareScript(Script);
+      ApplyLSquareScript(&*i);
     }
 
-  CreateItems(*LevelScript->GetItems());
+  CreateItems(LevelScript->GetItems()->Randomize());
 }
 
-void level::ApplyLSquareScript(squarescript* Script)
+void level::ApplyLSquareScript(const squarescript* Script)
 {
-  uchar* ScriptTimes = Script->GetTimes();
-  uchar Times = ScriptTimes ? *ScriptTimes : 1;
+  const interval* ScriptTimes = Script->GetTimes();
+  ushort Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
   for(ushort c = 0; c < Times; ++c)
     {
@@ -366,32 +360,33 @@ void level::CreateItems(ushort Amount)
     }
 }
 
-bool level::MakeRoom(roomscript* RoomScript)
+bool level::MakeRoom(const roomscript* RoomScript)
 {
   game::BusyAnimation();
-  ushort XPos = RoomScript->GetPos()->X, YPos = RoomScript->GetPos()->Y, Width = RoomScript->GetSize()->X, Height = RoomScript->GetSize()->Y;
+  vector2d Pos = RoomScript->GetPos()->Randomize();
+  vector2d Size = RoomScript->GetSize()->Randomize();
   ushort x, y, c;
 
-  if(XPos + Width > XSize - 2)
+  if(Pos.X + Size.X > XSize - 2)
     return false;
 
-  if(YPos + Height > YSize - 2)
+  if(Pos.Y + Size.Y > YSize - 2)
     return false;
 
-  for(x = XPos - 1; x <= XPos + Width; ++x)
-    for(y = YPos - 1; y <= YPos + Height; ++y)
+  for(x = Pos.X - 1; x <= Pos.X + Size.X; ++x)
+    for(y = Pos.Y - 1; y <= Pos.Y + Size.Y; ++y)
       if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
 	return false;
 
   room* RoomClass = protocontainer<room>::GetProto(*RoomScript->GetType())->Clone();
-  RoomClass->SetPos(vector2d(XPos, YPos));
-  RoomClass->SetSize(vector2d(Width, Height));
+  RoomClass->SetPos(Pos);
+  RoomClass->SetSize(Size);
   AddRoom(RoomClass);
   RoomClass->SetDivineMaster(*RoomScript->GetDivineMaster());
   game::BusyAnimation();
   std::vector<vector2d> OKForDoor, Inside, Border;
 
-  GenerateRectangularRoom(OKForDoor, Inside, Border, RoomScript, RoomClass, vector2d(XPos, YPos), vector2d(Width, Height));
+  GenerateRectangularRoom(OKForDoor, Inside, Border, RoomScript, RoomClass, Pos, Size);
   game::BusyAnimation();
 
   if(*RoomScript->GenerateFountains() && !(RAND() % 10))
@@ -473,11 +468,11 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  charactercontentmap* CharacterMap = RoomScript->GetCharacterMap();
+  const charactercontentmap* CharacterMap = RoomScript->GetCharacterMap();
 
   if(CharacterMap)
     {
-      vector2d CharPos(XPos + CharacterMap->GetPos()->X, YPos + CharacterMap->GetPos()->Y);
+      vector2d CharPos(Pos + *CharacterMap->GetPos());
       const contentscript<character>* CharacterScript;
 
       for(ushort x = 0; x < CharacterMap->GetSize()->X; ++x)
@@ -485,7 +480,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  game::BusyAnimation();
 
 	  for(y = 0; y < CharacterMap->GetSize()->Y; ++y)
-	    if((CharacterScript = CharacterMap->GetContentScript(x, y)))
+	    if(IsValidScript(CharacterScript = CharacterMap->GetContentScript(x, y)))
 	      {
 		character* Char = CharacterScript->Instantiate();
 
@@ -494,7 +489,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
 		Char->CreateHomeData();
-		bool* IsMaster = CharacterScript->IsMaster();
+		const bool* IsMaster = CharacterScript->IsMaster();
 
 		if(IsMaster && *IsMaster)
 		  RoomClass->SetMasterID(Char->GetID());
@@ -502,27 +497,27 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  itemcontentmap* ItemMap = RoomScript->GetItemMap();
+  const itemcontentmap* ItemMap = RoomScript->GetItemMap();
 
   if(ItemMap)
     {
-      vector2d ItemPos(XPos + ItemMap->GetPos()->X, YPos + ItemMap->GetPos()->Y);
-      const std::vector<contentscript<item> >* ItemScript;
+      vector2d ItemPos(Pos + *ItemMap->GetPos());
+      const std::list<contentscript<item> >* ItemScript;
 
       for(ushort x = 0; x < ItemMap->GetSize()->X; ++x)
 	{
 	  game::BusyAnimation();
 
 	  for(y = 0; y < ItemMap->GetSize()->Y; ++y)
-	    if((ItemScript = ItemMap->GetContentScript(x, y)))
-	      for(c = 0; c < ItemScript->size(); ++c)
+	    if(IsValidScript(ItemScript = ItemMap->GetContentScript(x, y)))
+	      for(std::list<contentscript<item> >::const_iterator i = ItemScript->begin(); i != ItemScript->end(); ++i)
 		{
 		  stack* Stack;
-		  item* Item = (*ItemScript)[c].Instantiate();
+		  item* Item = i->Instantiate();
 
 		  if(Item)
 		    {
-		      uchar* SideStackIndex = (*ItemScript)[c].GetSideStackIndex();
+		      const uchar* SideStackIndex = i->GetSideStackIndex();
 
 		      if(!SideStackIndex)
 			Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
@@ -539,11 +534,11 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  glterraincontentmap* GTerrainMap = RoomScript->GetGTerrainMap();
+  const glterraincontentmap* GTerrainMap = RoomScript->GetGTerrainMap();
 
   if(GTerrainMap)
     {
-      vector2d GTerrainPos(XPos + GTerrainMap->GetPos()->X, YPos + GTerrainMap->GetPos()->Y);
+      vector2d GTerrainPos(Pos + *GTerrainMap->GetPos());
       const contentscript<glterrain>* GTerrainScript;
 
       for(ushort x = 0; x < GTerrainMap->GetSize()->X; ++x)
@@ -551,16 +546,16 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  game::BusyAnimation();
 
 	  for(y = 0; y < GTerrainMap->GetSize()->Y; ++y)
-	    if((GTerrainScript = GTerrainMap->GetContentScript(x, y)))
+	    if(IsValidScript(GTerrainScript = GTerrainMap->GetContentScript(x, y)))
 	      Map[GTerrainPos.X + x][GTerrainPos.Y + y]->ChangeGLTerrain(GTerrainScript->Instantiate());
 	}
     }
 
-  olterraincontentmap* OTerrainMap = RoomScript->GetOTerrainMap();
+  const olterraincontentmap* OTerrainMap = RoomScript->GetOTerrainMap();
 
   if(OTerrainMap)
     {
-      vector2d OTerrainPos(XPos + OTerrainMap->GetPos()->X, YPos + OTerrainMap->GetPos()->Y);
+      vector2d OTerrainPos(Pos + *OTerrainMap->GetPos());
       const contentscript<olterrain>* OTerrainScript;
 
       for(ushort x = 0; x < OTerrainMap->GetSize()->X; ++x)
@@ -568,7 +563,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 	  game::BusyAnimation();
 
 	  for(y = 0; y < OTerrainMap->GetSize()->Y; ++y)
-	    if((OTerrainScript = OTerrainMap->GetContentScript(x, y)))
+	    if(IsValidScript(OTerrainScript = OTerrainMap->GetContentScript(x, y)))
 	      {
 		olterrain* Terrain = OTerrainScript->Instantiate();
 		Map[OTerrainPos.X + x][OTerrainPos.Y + y]->ChangeOLTerrain(Terrain);
@@ -576,27 +571,29 @@ bool level::MakeRoom(roomscript* RoomScript)
 	}
     }
 
-  for(c = 0; c < RoomScript->GetSquare().size(); ++c)
+  const std::list<squarescript> Square = RoomScript->GetSquare();
+
+  for(std::list<squarescript>::const_iterator i = Square.begin(); i != Square.end(); ++i)
     {
       game::BusyAnimation();
-      squarescript* Script = RoomScript->GetSquare()[c];
-      uchar* ScriptTimes = Script->GetTimes();
-      uchar Times = ScriptTimes ? *ScriptTimes : 1;
+      const squarescript* Script = &*i;
+      const interval* ScriptTimes = Script->GetTimes();
+      ushort Times = ScriptTimes ? ScriptTimes->Randomize() : 1;
 
       for(ushort t = 0; t < Times; ++t)
 	{
-	  vector2d Pos;
+	  vector2d SquarePos;
 
 	  if(Script->GetPosition()->GetRandom())
 	    {
-	      rect* ScriptBorders = Script->GetPosition()->GetBorders();
-	      rect Borders = ScriptBorders ? *ScriptBorders + vector2d(XPos, YPos) : rect(XPos, YPos, XPos + Width - 1, YPos + Height - 1);
-	      Pos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
+	      const rect* ScriptBorders = Script->GetPosition()->GetBorders();
+	      rect Borders = ScriptBorders ? *ScriptBorders + Pos : rect(Pos, Pos + Size - vector2d(1, 1));
+	      SquarePos = GetRandomSquare(0, *Script->GetPosition()->GetFlags(), &Borders);
 	    }
 	  else
-	    Pos = vector2d(XPos, YPos) + *Script->GetPosition()->GetVector();
+	    SquarePos = Pos + *Script->GetPosition()->GetVector();
 
-	  Map[Pos.X][Pos.Y]->ApplyScript(Script, RoomClass);
+	  Map[SquarePos.X][SquarePos.Y]->ApplyScript(Script, RoomClass);
 	}
     }
 
@@ -693,7 +690,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
     }
 }
 
-/* example of the usage: GetRandomSquare() gives out a random walkable square */
+/* Example of the usage: GetRandomSquare() gives out a random walkable square */
 
 vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
@@ -1009,13 +1006,13 @@ vector2d level::GetEntryPos(const character* Char, uchar Index) const
   return i == EntryMap.end() ? GetRandomSquare(Char) : i->second;
 }
 
-void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vector<vector2d>& Inside, std::vector<vector2d>& Border, roomscript* RoomScript, room* RoomClass, vector2d Pos, vector2d Size)
+void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vector<vector2d>& Inside, std::vector<vector2d>& Border, const roomscript* RoomScript, room* RoomClass, vector2d Pos, vector2d Size)
 {
-  contentscript<glterrain>* GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
-  contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
+  const contentscript<glterrain>* GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
+  const contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
   uchar Room = RoomClass->GetIndex();
   ulong Counter = 0;
-  uchar* ScriptDivineMaster = RoomScript->GetDivineMaster();
+  const uchar* ScriptDivineMaster = RoomScript->GetDivineMaster();
   uchar DivineMaster = ScriptDivineMaster ? *ScriptDivineMaster : 0;
   bool AllowLanterns = *RoomScript->GenerateLanterns();
   ushort x, y;
@@ -1361,7 +1358,7 @@ void level::ShieldBeam(character* BeamOwner, const std::string& DeathMsg, vector
       }
 }
 
-outputfile& operator<<(outputfile& SaveFile, level* Level)
+outputfile& operator<<(outputfile& SaveFile, const level* Level)
 {
   Level->Save(SaveFile);
   return SaveFile;

@@ -40,7 +40,7 @@ struct homedata
   uchar Room;
 };
 
-outputfile& operator<<(outputfile&, homedata*);
+outputfile& operator<<(outputfile&, const homedata*);
 inputfile& operator>>(inputfile&, homedata*&);
 
 #ifdef VC
@@ -190,7 +190,7 @@ class game
   static bool AnimationController();
   static gamescript* GetGameScript() { return GameScript; }
   static void InitScript();
-  static const valuemap& GetGlobalValueMap() { return GlobalValueMap; }
+  static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
   static void TextScreen(const std::string&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
   static vector2d GetCursorPos() { return CursorPos; }

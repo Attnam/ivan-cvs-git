@@ -40,7 +40,7 @@ class continent
   uchar Index;
 };
 
-outputfile& operator<<(outputfile&, continent*);
+outputfile& operator<<(outputfile&, const continent*);
 inputfile& operator>>(inputfile&, continent*&);
 
 #endif

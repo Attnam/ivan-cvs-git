@@ -105,4 +105,6 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 
 #define MAX_CONTROLS 0x10
 
+#define HIGHEST 0xFF
+
 #endif

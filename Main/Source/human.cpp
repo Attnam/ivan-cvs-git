@@ -512,7 +512,6 @@ void petrus::BeTalkedTo()
 				"thou hast succeeded.\"");
 
 	      game::LoadWorldMap();
-
 	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
 	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
 	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);

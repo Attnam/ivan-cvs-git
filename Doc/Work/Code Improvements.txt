@@ -32,7 +32,7 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
 //*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
-*Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
+//*Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
 //Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
 //*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.

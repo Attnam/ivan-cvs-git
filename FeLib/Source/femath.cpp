@@ -2,6 +2,7 @@
 
 #include "femath.h"
 #include "error.h"
+#include "save.h"
 
 ulonglong femath::Seed;
 
@@ -250,3 +251,47 @@ bool femath::CompareBits(const void* V1, const void* V2, ushort Size)
 }
 
 ulong femath::Rand() { return (Seed = Seed * RAND_MULTIPLIER + 1) >> 21; }
+
+void ReadData(interval& I, inputfile& SaveFile)
+{
+  I.Min = SaveFile.ReadNumber(HIGHEST, true);
+  std::string Word;
+  SaveFile.ReadWord(Word);
+
+  if(Word == ";" || Word == ",")
+    I.Max = I.Min;
+  else if(Word == ":")
+    I.Max = Max(SaveFile.ReadNumber(), I.Min);
+  else
+    ABORT("Odd interval terminator %s detected, file %s line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
+}
+
+void ReadData(region& R, inputfile& SaveFile)
+{
+  ReadData(R.X, SaveFile);
+  ReadData(R.Y, SaveFile);
+}
+
+outputfile& operator<<(outputfile& SaveFile, const interval& I)
+{
+  SaveFile.Write(reinterpret_cast<const char*>(&I), sizeof(I));
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, interval& I)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&I), sizeof(I));
+  return SaveFile;
+}
+
+outputfile& operator<<(outputfile& SaveFile, const region& R)
+{
+  SaveFile.Write(reinterpret_cast<const char*>(&R), sizeof(R));
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, region& R)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&R), sizeof(R));
+  return SaveFile;
+}

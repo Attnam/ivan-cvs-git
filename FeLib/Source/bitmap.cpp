@@ -60,7 +60,7 @@ bitmap::bitmap(bitmap* Bitmap, uchar Flags) : XSize(Bitmap->XSize), YSize(Bitmap
 {
   SetImage(Alloc2D<ushort>(YSize, XSize));
 
-  if(Bitmap->GetAlphaMap())
+  if(Bitmap->IsIndependent && Bitmap->GetAlphaMap())
     {
       SetAlphaMap(Alloc2D<uchar>(YSize, XSize));
       Bitmap->BlitAndCopyAlpha(this, 0, 0, 0, 0, XSize, YSize, Flags);
@@ -1389,7 +1389,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
     }
 }
 
-outputfile& operator<<(outputfile& SaveFile, bitmap* Bitmap)
+outputfile& operator<<(outputfile& SaveFile, const bitmap* Bitmap)
 {
   if(Bitmap)
     {

@@ -246,9 +246,9 @@ char inputfile::ReadLetter(bool AbortOnEOF)
     }
 }
 
-/* Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+rand%4" etc. */
+/* Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+Variable%4" etc. */
 
-long inputfile::ReadNumber(uchar CallLevel)
+long inputfile::ReadNumber(uchar CallLevel, bool PreserveTerminator)
 {
   long Value = 0;
   std::string Word;
@@ -267,10 +267,18 @@ long inputfile::ReadNumber(uchar CallLevel)
 
       if(Word.length() == 1)
 	{
-	  if(Word[0] == ';' || Word[0] == ',' || Word[0] == ')')
+	  if(Word[0] == ';' || Word[0] == ',' || Word[0] == ':')
 	    {
-	      if(CallLevel != 0xFF && (Word[0] != ')' || CallLevel != 4))
-		SeekPosCurrent(-1);
+	      if(CallLevel != HIGHEST || PreserveTerminator)
+		UnGet(Word[0]);
+
+	      return Value;
+	    }
+
+	  if(Word[0] == ')')
+	    {
+	      if((CallLevel != HIGHEST && CallLevel != 4) || PreserveTerminator)
+		UnGet(')');
 
 	      return Value;
 	    }
@@ -287,7 +295,7 @@ long inputfile::ReadNumber(uchar CallLevel)
 	      }\
 	    else\
 	      {\
-		SeekPosCurrent(-1);\
+		UnGet(Word[0]);\
 		return Value;\
 	      }
 
@@ -298,7 +306,7 @@ long inputfile::ReadNumber(uchar CallLevel)
 	  if(Word[0] == '(')
 	    if(NumberCorrect)
 	      {
-		SeekPosCurrent(-1);
+		UnGet('(');
 		return Value;
 	      }
 	    else
@@ -308,21 +316,14 @@ long inputfile::ReadNumber(uchar CallLevel)
 		continue;
 	      }
 
-	  if(Word[0] == '=' && CallLevel == 0xFF)
+	  if(Word[0] == '=' && CallLevel == HIGHEST)
 	    continue;
 
 	  if(Word[0] == '#') // for #defines
 	    {
-	      SeekPosCurrent(-1);
+	      UnGet('#');
 	      return Value;
 	    }
-	}
-
-      if(Word == "rand")
-	{
-	  Value = RAND() & 0x7FFFFFFF;
-	  NumberCorrect = true;
-	  continue;
 	}
 
       if(Word == "rgb")

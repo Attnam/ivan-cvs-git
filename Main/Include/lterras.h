@@ -145,7 +145,7 @@ class OLTERRAIN
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
+  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort);
   virtual void Break();
   virtual bool AllowContentEmitation() const { return false; }
  protected:
@@ -240,3 +240,4 @@ class OLTERRAIN
 );
 
 #endif
+

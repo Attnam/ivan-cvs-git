@@ -22,6 +22,9 @@
 #define RAND_128 long(femath::Rand() & 127)
 #define RAND_256 long(femath::Rand() & 255)
 
+class outputfile;
+class inputfile;
+
 template <class type> inline type HypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
 template <class type> inline const type& Max(const type& X, const type& Y) { return X >= Y ? X : Y; }
 template <class type> inline const type& Max(const type& X, const type& Y, const type& Z) { return Max(Max(X, Y), Z); }
@@ -54,5 +57,27 @@ public:
 protected:
   static ulonglong Seed;
 };
+
+struct interval
+{
+  long Randomize() const { return Min < Max ? Min + RAND() % (Max - Min + 1) : Min; }
+  long Min;
+  long Max;
+};
+
+struct region
+{
+  vector2d Randomize() const { return vector2d(X.Randomize(), Y.Randomize()); }
+  interval X;
+  interval Y;
+};
+
+void ReadData(interval&, inputfile&);
+void ReadData(region&, inputfile&);
+
+outputfile& operator<<(outputfile&, const interval&);
+inputfile& operator>>(inputfile&, interval&);
+outputfile& operator<<(outputfile&, const region&);
+inputfile& operator>>(inputfile&, region&);
 
 #endif

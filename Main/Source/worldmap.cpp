@@ -632,7 +632,7 @@ void worldmap::RevealEnvironment(vector2d Pos, ushort Radius)
       Map[x][y]->SetLastSeen(LastSeen);
 }
 
-outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+outputfile& operator<<(outputfile& SaveFile, const worldmap* WorldMap)
 {
   WorldMap->Save(SaveFile);
   return SaveFile;

@@ -38,7 +38,7 @@ class inputfile
   std::string ReadWord(bool = true);
   void ReadWord(std::string&, bool = true);
   char ReadLetter(bool = true);
-  long ReadNumber(uchar = 0xFF);
+  long ReadNumber(uchar = 0xFF, bool = false);
   vector2d ReadVector2d();
   rect ReadRect();
   bool ReadBool();
@@ -87,9 +87,9 @@ void ReadData(std::string&, inputfile&);
 void ReadData(std::vector<long>&, inputfile&);
 void ReadData(std::vector<std::string>&, inputfile&);
 
-template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile)
+template <class container, class type> inline void ReadContainerData(container& Container, inputfile& SaveFile)
 {
-  Vector.clear();
+  Container.clear();
   std::string Word;
   SaveFile.ReadWord(Word);
 
@@ -98,8 +98,8 @@ template <class type> inline void ReadData(std::vector<type>& Vector, inputfile&
 
   if(Word == "=")
     {
-      Vector.push_back(type());
-      ReadData(Vector[0], SaveFile);
+      Container.push_back(type());
+      ReadData(Container.front(), SaveFile);
       return;
     }
 
@@ -110,13 +110,16 @@ template <class type> inline void ReadData(std::vector<type>& Vector, inputfile&
 
   for(ushort c = 0; c < Size; ++c)
     {
-      Vector.push_back(type());
-      ReadData(Vector.back(), SaveFile);
+      Container.push_back(type());
+      ReadData(Container.back(), SaveFile);
     }
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 }
+
+template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile) { ReadContainerData<std::vector<type>, type>(Vector, SaveFile); }
+template <class type> inline void ReadData(std::list<type>& List, inputfile& SaveFile) { ReadContainerData<std::list<type>, type>(List, SaveFile); }
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {
@@ -254,8 +257,32 @@ inline inputfile& operator>>(inputfile& SaveFile, vector2d& Vector)
   return SaveFile;
 }
 
+inline outputfile& operator<<(outputfile& SaveFile, const rect& Rect)
+{
+  SaveFile.Write(reinterpret_cast<const char*>(&Rect), sizeof(Rect));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, rect& Rect)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Rect), sizeof(Rect));
+  return SaveFile;
+}
+
 outputfile& operator<<(outputfile&, const std::string&);
 inputfile& operator>>(inputfile&, std::string&);
+
+template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, const std::pair<type1, type2>& Pair)
+{
+  SaveFile << Pair.first << Pair.second;
+  return SaveFile;
+}
+
+template <class type1, class type2> inline inputfile& operator>>(inputfile& SaveFile, std::pair<type1, type2>& Pair)
+{
+  SaveFile >> Pair.first >> Pair.second;
+  return SaveFile;
+}
 
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, const std::vector<type>& Vector)
 {

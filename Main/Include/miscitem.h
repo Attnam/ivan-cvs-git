@@ -106,7 +106,7 @@ class ITEM
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual material* CreateDipMaterial();
   virtual bool AllowSpoil() const { return false; } // temporary
-  virtual bool HasBetterVersion() const { return true; }
+  virtual bool HasBetterVersion() const { return !ContainedMaterial; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string&, bool) const;
@@ -141,7 +141,7 @@ class ITEM
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual bool IsExplosive() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
-  virtual bool HasBetterVersion() const { return true; }
+  virtual bool HasBetterVersion() const { return !ContainedMaterial; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string&, bool) const;
@@ -512,7 +512,7 @@ class ITEM
   virtual void DrawContents(const character*);
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort);
+  virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort);
   virtual void GenerateLeftOvers(character*);
   virtual long GetScore() const;
   virtual bool AllowContentEmitation() const { return false; }

@@ -114,9 +114,9 @@ void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.fin
 void game::InitScript()
 {
   inputfile ScriptFile(game::GetGameDir() + "Script/dungeon.dat", &GlobalValueMap);
-  delete GameScript;
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
+  GameScript->RandomizeLevels();
 }
 
 /*#include "materias.h"
@@ -200,6 +200,7 @@ bool game::Init(const std::string& Name)
 	globalwindowhandler::InstallControlLoop(AnimationController);
 	SetIsRunning(true);
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
+	InitScript();
 	msgsystem::Format();
 	WizardMode = false;
 	SeeWholeMapCheat = false;
@@ -272,6 +273,7 @@ void game::DeInit()
     delete Team[c];
 
   delete [] Team;
+  delete GameScript;
 }
 
 void game::Run()
@@ -470,7 +472,7 @@ bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << ushort(SAVE_FILE_VERSION);
-  SaveFile << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
+  SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
   SaveFile << LOSTurns << femath::GetSeed();
   SaveFile << AveragePlayerArmStrength << AveragePlayerLegStrength << AveragePlayerDexterity << AveragePlayerAgility;
@@ -515,7 +517,7 @@ uchar game::Load(const std::string& SaveName)
 	return BACK;
     }
 
-  SaveFile >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheat;
+  SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheat;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
   femath::SetSeed(ReadType<ulonglong>(SaveFile));
@@ -940,17 +942,17 @@ void game::CreateTeams()
     if(c != 1)
       Team[1]->SetRelation(Team[c], HOSTILE);
 
-  const std::vector<std::pair<uchar, teamscript*> >& TeamScript = GetGameScript()->GetTeam();
+  const std::list<std::pair<uchar, teamscript> >& TeamScript = GetGameScript()->GetTeam();
 
-  for(c = 0; c < TeamScript.size(); ++c)
+  for(std::list<std::pair<uchar, teamscript> >::const_iterator i = TeamScript.begin(); i != TeamScript.end(); ++i)
   {
-    for(ushort i = 0; i < TeamScript[c].second->GetRelation().size(); ++i)
-      GetTeam(TeamScript[c].second->GetRelation()[i].first)->SetRelation(GetTeam(TeamScript[c].first), TeamScript[c].second->GetRelation()[i].second);
+    for(ushort c = 0; c < i->second.GetRelation().size(); ++c)
+      GetTeam(i->second.GetRelation()[c].first)->SetRelation(GetTeam(i->first), i->second.GetRelation()[c].second);
 
-    ushort* KillEvilness = TeamScript[c].second->GetKillEvilness();
+    const ushort* KillEvilness = i->second.GetKillEvilness();
 
     if(KillEvilness)
-      GetTeam(TeamScript[c].first)->SetKillEvilness(*KillEvilness);
+      GetTeam(i->first)->SetKillEvilness(*KillEvilness);
   }
 }
 
@@ -1596,7 +1598,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
 	}
 
-      bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
+      const bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
 
       if(New && AutoReveal && *AutoReveal)
 	GetCurrentLevel()->Reveal();
@@ -1792,7 +1794,7 @@ void game::CallForAttention(vector2d Pos, ushort Range)
     }
 }
 
-outputfile& operator<<(outputfile& SaveFile, homedata* HomeData)
+outputfile& operator<<(outputfile& SaveFile, const homedata* HomeData)
 {
   if(HomeData)
     {

@@ -13,9 +13,9 @@ uchar holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
 vector2d lantern::GetBitmapPos(ushort Frame) const { return SquarePosition == CENTER ? item::GetBitmapPos(Frame) : item::GetWallBitmapPos(Frame); }
 ushort lantern::GetMaterialColorA(ushort) const { return MakeRGB24(255, 255, 240); }
-ushort lantern::GetMaterialColorB(ushort Frame) const { return MakeRGB24(255, 255, 140); }
-ushort lantern::GetMaterialColorC(ushort Frame) const { return MakeRGB24(255, 255, 140); }
-ushort lantern::GetMaterialColorD(ushort Frame) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorB(ushort) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB24(255, 255, 140); }
+ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB24(255, 255, 140); }
 
 bool can::AddAdjective(std::string& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
@@ -1771,14 +1771,14 @@ uchar materialcontainer::GetSpoilLevel() const
   return Max<uchar>(MainMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
 }
 
-void itemcontainer::SetItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+void itemcontainer::SetItemsInside(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)
 {
   GetContained()->Clean();
 
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c].IsValid())
+  for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
+    if(i->IsValid())
       {
-	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+	item* Item = i->Instantiate(SpecialFlags);
 
 	if(Item)
 	  {
@@ -2102,3 +2102,4 @@ uchar lantern::GetAlphaD(ushort Frame) const
   Frame &= 31;
   return (Frame * (31 - Frame) >> 3);
 }
+

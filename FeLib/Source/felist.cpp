@@ -45,7 +45,7 @@ felistentry::felistentry(const std::vector<bitmap*>& BitmapVector, const std::st
     Bitmap.push_back(new bitmap(BitmapVector[c]));
 }
 
-outputfile& operator<<(outputfile& SaveFile, felistentry* Entry)
+outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
 {
   SaveFile << Entry->Bitmap << Entry->String << Entry->Color << Entry->Marginal << Entry->Selectable;
   return SaveFile;
@@ -66,7 +66,7 @@ struct felistdescription
   ushort Color;
 };
 
-outputfile& operator<<(outputfile& SaveFile, felistdescription* Desc)
+outputfile& operator<<(outputfile& SaveFile, const felistdescription* Desc)
 {
   SaveFile << Desc->String << Desc->Color;
   return SaveFile;

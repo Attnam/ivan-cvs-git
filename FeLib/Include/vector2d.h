@@ -26,12 +26,12 @@ struct vector2d
   vector2d& operator /=  (float H)	      { X = short(X / H); Y = short(Y / H); return *this; }
   bool	    operator ==  (vector2d H) const   { return X == H.X && Y == H.Y; }
   bool	    operator !=  (vector2d H) const   { return X != H.X || Y != H.Y; }
-  vector2d  operator <<  (uchar Shift) const  { return vector2d(X << Shift, Y << Shift); }
-  vector2d& operator <<= (uchar Shift)	      { X <<= Shift; Y <<= Shift; return *this; }
-  vector2d  operator >>  (uchar Shift) const  { return vector2d(X >> Shift, Y >> Shift); }
-  vector2d& operator >>= (uchar Shift)	      { X >>= Shift; Y >>= Shift; return *this; }
+  vector2d  operator <<  (uchar S) const      { return vector2d(X << S, Y << S); }
+  vector2d& operator <<= (uchar S)	      { X <<= S; Y <<= S; return *this; }
+  vector2d  operator >>  (uchar S) const      { return vector2d(X >> S, Y >> S); }
+  vector2d& operator >>= (uchar S)	      { X >>= S; Y >>= S; return *this; }
   ulong GetLengthSquare() const		      { return long(X) * long(X) + long(Y) * long(Y); }
-  bool IsAdjacent(vector2d TPos) const { return TPos.X >= X - 1 && TPos.X <= X + 1 && TPos.Y <= Y + 1 && TPos.Y >= Y - 1; } /* Also returns true if TPos == this */
+  bool IsAdjacent(vector2d V) const { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; } // Also returns true if TPos == this
   short X, Y;
 };
 

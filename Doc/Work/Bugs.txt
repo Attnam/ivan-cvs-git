@@ -131,7 +131,7 @@ It seems that due to certain bitshift rounding errors, resting causes more exp m
 //Wand of locking doesn't update memorized description correctly.
 (s) The three letter player name minimum can be avoided by adding extra spaces which will eventually be discarded.
 //You can fill a potion with ice.
-The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
+//The bad pray effect of Sophos can sometimes leave the player in a state where he has more than max HPs.
 //Hitting imperialists palm waving slaves causes no real action on the behalf of the imperialist.
 (s) Putting mines in Attnam is considered OK by guards.
 //Amulet of Life saving generates high score entry.

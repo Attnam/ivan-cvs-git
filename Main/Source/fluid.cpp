@@ -79,7 +79,7 @@ void fluid::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool) const
   Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
-outputfile& operator<<(outputfile& SaveFile, fluid* Fluid)
+outputfile& operator<<(outputfile& SaveFile, const fluid* Fluid)
 {
   if(Fluid)
     {

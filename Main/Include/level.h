@@ -51,13 +51,13 @@ class level : public area
   void GenerateNewMonsters(ushort, bool = true);
   void AttachPos(vector2d);
   void CreateItems(ushort);
-  bool MakeRoom(roomscript*);
+  bool MakeRoom(const roomscript*);
   void ParticleTrail(vector2d, vector2d);
   std::string GetLevelMessage() { return LevelMessage; }
   void SetLevelMessage(const std::string& What) { LevelMessage = What; }
-  void SetLevelScript(levelscript* What) { LevelScript = What; }
+  void SetLevelScript(const levelscript* What) { LevelScript = What; }
   bool IsOnGround() const;
-  levelscript* GetLevelScript() const { return LevelScript; }
+  const levelscript* GetLevelScript() const { return LevelScript; }
   virtual void MoveCharacter(vector2d, vector2d);
   ushort GetLOSModifier() const;
   ushort CalculateMinimumEmitationRadius(ulong) const;
@@ -66,11 +66,11 @@ class level : public area
   void AddRoom(room*);
   void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
   bool CollectCreatures(std::vector<character*>&, character*, bool);
-  void ApplyLSquareScript(squarescript*);
+  void ApplyLSquareScript(const squarescript*);
   virtual void Draw() const;
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
   vector2d GetEntryPos(const character*, uchar) const;
-  void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, roomscript*, room*, vector2d, vector2d);
+  void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, const roomscript*, room*, vector2d, vector2d);
   void Reveal();
   static void (level::*GetBeam(ushort))(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
   void ParticleBeam(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar);
@@ -86,7 +86,7 @@ class level : public area
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;
   lsquare*** Map;
-  levelscript* LevelScript;
+  const levelscript* LevelScript;
   std::string LevelMessage;
   std::vector<vector2d> Door;
   std::vector<room*> Room;
@@ -99,7 +99,7 @@ class level : public area
   std::vector<bool> PlayerHurt;
 };
 
-outputfile& operator<<(outputfile&, level*);
+outputfile& operator<<(outputfile&, const level*);
 inputfile& operator>>(inputfile&, level*&);
 
 #endif

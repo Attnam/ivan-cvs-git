@@ -76,7 +76,7 @@ class lsquare : public square
   void SetLTerrain(glterrain*, olterrain*);
   void SetGLTerrain(glterrain*);
   void SetOLTerrain(olterrain*);
-  void ApplyScript(squarescript*, room*);
+  void ApplyScript(const squarescript*, room*);
   virtual bool CanBeSeenByPlayer(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;
   void MoveCharacter(lsquare*);

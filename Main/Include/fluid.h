@@ -31,7 +31,7 @@ class fluid : public entity
   square* SquareUnder;
 };
 
-outputfile& operator<<(outputfile&, fluid*);
+outputfile& operator<<(outputfile&, const fluid*);
 inputfile& operator>>(inputfile&, fluid*&);
 
 #endif

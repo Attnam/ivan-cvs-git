@@ -61,7 +61,7 @@ vector2d continent::GetRandomMember(ushort Type)
   return TypeContainer[RAND() % TypeContainer.size()];
 }
 
-outputfile& operator<<(outputfile& SaveFile, continent* Continent)
+outputfile& operator<<(outputfile& SaveFile, const continent* Continent)
 {
   if(Continent)
     {

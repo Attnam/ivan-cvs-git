@@ -7,18 +7,29 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 17 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* A fatal bug added by the last commit corrected
+	* A fatal bug in Mellis's pray effect corrected (thanks to the anonymous
+	  SourceForge user who reported it)
+	* Created a much better way of handling random script variables; they are now
+	  presented in form "min:max" instead of "min + rand%(max-min+1)" and are
+	  calculated when needed instead of during the parsing
+	* Finally fixed the Ancient Mad Script Error of Invading Shopkeeper Clones
+	* Dark wizard added to humanoid.pcx by Kahvi
+
 February 17 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Mushrooms added 
 	
-February 15 2003 Timo Kiviluoto <sonor@phpoint.fi>
+February 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected a bug in the new C++ alpha blit code
 	* Added an alpha halo to lanterns
 	* Wave animations for both mommos added and integrated
 	* A new whistle drawn
 
-February 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
+February 13 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Removed asm
 

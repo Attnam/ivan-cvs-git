@@ -200,7 +200,7 @@ class bitmap
   } Data;
 };
 
-outputfile& operator<<(outputfile&, bitmap*);
+outputfile& operator<<(outputfile&, const bitmap*);
 inputfile& operator>>(inputfile&, bitmap*&);
 
 #endif

@@ -50,7 +50,7 @@ class cweaponskill : public weaponskill
   uchar Index;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, cweaponskill* WeaponSkill)
+inline outputfile& operator<<(outputfile& SaveFile, const cweaponskill* WeaponSkill)
 {
   WeaponSkill->Save(SaveFile);
   return SaveFile;
@@ -79,7 +79,7 @@ class sweaponskill : public weaponskill
   ulong ID;
 };
 
-inline outputfile& operator<<(outputfile& SaveFile, sweaponskill* WeaponSkill)
+inline outputfile& operator<<(outputfile& SaveFile, const sweaponskill* WeaponSkill)
 {
   WeaponSkill->Save(SaveFile);
   return SaveFile;

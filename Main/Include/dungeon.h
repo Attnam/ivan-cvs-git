@@ -30,21 +30,21 @@ class dungeon
   void Load(inputfile&);
   void SetIndex(uchar What) { Index = What; }
   uchar GetIndex() const { return Index; }
-  levelscript* GetLevelScript(ushort);
+  const levelscript* GetLevelScript(ushort);
   vector2d GetWorldMapPos() { return WorldMapPos; }
   void SetWorldMapPos(vector2d What) { WorldMapPos = What; }
   std::string GetLevelDescription(ushort);
   std::string GetShortLevelDescription(ushort);
  private:
   void Initialize();
-  dungeonscript* DungeonScript;
+  const dungeonscript* DungeonScript;
   level** Level;
   uchar Index;
   bool* Generated;
   vector2d WorldMapPos;
 };
 
-outputfile& operator<<(outputfile&, dungeon*);
+outputfile& operator<<(outputfile&, const dungeon*);
 inputfile& operator>>(inputfile&, dungeon*&);
 
 #endif

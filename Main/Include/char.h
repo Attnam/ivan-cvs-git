@@ -125,7 +125,7 @@ struct characterdatabase
   ushort LeftSWeaponSkillHits;
   uchar PanicLevel;
   bool CanBeCloned;
-  std::vector<contentscript<item> > Inventory;
+  std::list<contentscript<item> > Inventory;
   ushort DangerModifier;
   std::string DefaultName;
   std::vector<std::string> FriendlyReplies;
@@ -632,7 +632,7 @@ class character : public entity, public id
   bool IsDead() const;
   virtual void ShowBattleInfo() = 0;
   void AddOriginalBodyPartID(ushort, ulong);
-  void AddToInventory(const std::vector<contentscript<item> >&, ushort);
+  void AddToInventory(const std::list<contentscript<item> >&, ushort);
   virtual void ShowDodgeAndMoveInfo() const;
   virtual void AddSpecialMovePenaltyInfo(felist&) const { }
   bool HasHadBodyPart(const item*) const;
@@ -821,3 +821,4 @@ name : public base\
 }; ABSTRACT_CHARACTER_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
+

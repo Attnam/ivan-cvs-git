@@ -58,7 +58,7 @@ class protosystem
   static void CreateEveryItem(std::vector<item*>&);
 };
 
-template <class type> inline outputfile& operator<<(outputfile& SaveFile, type* Class)
+template <class type> inline outputfile& operator<<(outputfile& SaveFile, const type* Class)
 {
   if(Class)
     Class->Save(SaveFile);

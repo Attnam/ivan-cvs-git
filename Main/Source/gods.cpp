@@ -653,7 +653,7 @@ void mellis::PrayGoodEffect()
       OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
     }
 
-  if((Success && !(RAND() % 5) || (!Success && !(RAND() % 3))))
+  if((Success && !(RAND() % 5)) || (!Success && !(RAND() % 3)))
     {
       uchar Possible[GODS];
       ushort PossibleSize = 0;
@@ -666,7 +666,7 @@ void mellis::PrayGoodEffect()
 	{
 	  uchar NewKnownGod = Possible[RAND() % PossibleSize];
 	  game::GetGod(NewKnownGod)->SetIsKnown(true);
-	  ADD_MESSAGE("%s shares his knowledge of %s the %s.", GOD_NAME, game::GetGod(NewKnownGod)->GOD_NAME, game::GetGod(NewKnownGod)->GetDescription().c_str());
+	  ADD_MESSAGE("%s shares his knowledge of %s, the %s.", GOD_NAME, game::GetGod(NewKnownGod)->GOD_NAME, game::GetGod(NewKnownGod)->GetDescription().c_str());
 	  return;
 	}
     }

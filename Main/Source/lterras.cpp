@@ -921,14 +921,14 @@ bool olterraincontainer::Open(character* Opener)
   return Success;
 }
 
-void olterraincontainer::SetItemsInside(const std::vector<contentscript<item> >& ItemVector, ushort SpecialFlags)
+void olterraincontainer::SetItemsInside(const std::list<contentscript<item> >& ItemList, ushort SpecialFlags)
 {
   GetContained()->Clean();
 
-  for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c].IsValid())
+  for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
+    if(i->IsValid())
       {
-	item* Item = ItemVector[c].Instantiate(SpecialFlags);
+	item* Item = i->Instantiate(SpecialFlags);
 
 	if(Item)
 	  {
@@ -1055,3 +1055,4 @@ bool fountain::IsDipDestination() const
 {
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
+

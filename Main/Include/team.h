@@ -44,7 +44,7 @@ class team
   ushort KillEvilness;
 };
 
-outputfile& operator<<(outputfile&, team*);
+outputfile& operator<<(outputfile&, const team*);
 inputfile& operator>>(inputfile&, team*&);
 
 #endif
