@@ -182,3 +182,16 @@ bool web::CanBeSeenBy(const character* Who) const
 {
   return GetLSquareUnder()->CanBeSeenBy(Who) && Who->GetAttribute(WISDOM) > 4;
 }
+
+void web::PreProcessForBone()
+{
+  trap::PreProcessForBone();
+  game::RemoveTrapID(TrapData.TrapID);
+  TrapData.TrapID = 0;
+}
+
+void web::PostProcessForBone()
+{
+  trap::PostProcessForBone();
+  TrapData.TrapID = game::CreateNewTrapID(this);
+}

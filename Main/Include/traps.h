@@ -44,6 +44,8 @@ class TRAP
   virtual void Destroy();
   virtual bool IsDangerousFor(const character* Char) const { return CanBeSeenBy(Char); }
   virtual bool CanBeSeenBy(const character*) const;
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
  protected:
   virtual void VirtualConstructor(bool);
   trapdata TrapData;

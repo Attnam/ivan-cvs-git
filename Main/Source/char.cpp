@@ -6694,6 +6694,7 @@ bool character::PreProcessForBone()
 
   RestoreLivingHP();
   ResetStates();
+  RemoveTraps();
   GetStack()->PreProcessForBone();
   int c;
 

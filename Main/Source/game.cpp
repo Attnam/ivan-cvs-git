@@ -184,6 +184,8 @@ ItemIDMap.find(ID)->second = Item;
 void game::AddTrapID(entity* Trap, ulong ID) {
 if(TrapIDMap.find(ID) != TrapIDMap.end())
   int esko = esko = 2;
+
+if(ID)
 TrapIDMap.insert(std::pair<ulong, entity*>(ID, Trap));
 }
 void game::RemoveTrapID(ulong ID)
@@ -2482,7 +2484,7 @@ bool game::PrepareRandomBone(int LevelIndex)
       BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + LevelIndex + BoneIndex;
       inputfile BoneFile(BoneName, 0, false);
 
-      if(BoneFile.IsOpen() && !(RAND() & 7))
+      if(BoneFile.IsOpen())// && !(RAND() & 7))
 	{
 	  if(ReadType<int>(BoneFile) != BONE_FILE_VERSION)
 	    {
@@ -2519,6 +2521,8 @@ bool game::PrepareRandomBone(int LevelIndex)
 	  break;
 	}
     }
+
+  Generating = true;
 
   if(BoneIndex != 1000)
     {

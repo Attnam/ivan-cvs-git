@@ -2362,6 +2362,19 @@ bool holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
   return false;
 }
 
+void beartrap::PreProcessForBone()
+{
+  item::PreProcessForBone();
+  game::RemoveTrapID(TrapData.TrapID);
+  TrapData.TrapID = 0;
+}
+
+void beartrap::PostProcessForBone()
+{
+  item::PostProcessForBone();
+  TrapData.TrapID = game::CreateNewTrapID(this);
+}
+
 void itemcontainer::PreProcessForBone()
 {
   item::PreProcessForBone();

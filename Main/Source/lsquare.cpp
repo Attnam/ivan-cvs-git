@@ -1803,6 +1803,9 @@ void lsquare::PreProcessForBone()
       Character->Remove();
     }
 
+  for(trap* T = Trap; T; T = T->Next)
+    T->PreProcessForBone();
+
   GetStack()->PreProcessForBone();
 }
 
@@ -1813,6 +1816,9 @@ void lsquare::PostProcessForBone(double& DangerSum, int& Enemies)
       Character->SendToHell();
       Character->Remove();
     }
+
+  for(trap* T = Trap; T; T = T->Next)
+    T->PostProcessForBone();
 
   GetStack()->PostProcessForBone();
 }

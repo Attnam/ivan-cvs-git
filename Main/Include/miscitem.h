@@ -565,6 +565,8 @@ class ITEM
   virtual bool TryToUnStick(character*, vector2d);
   virtual void RemoveFromSlot();
   virtual int GetTrapType() const { return GetType() | ITEM_TRAP; }
+  virtual void PreProcessForBone();
+  virtual void PostProcessForBone();
  protected:
   virtual bool AddAdjective(festring&, bool) const;
   virtual void VirtualConstructor(bool);
