@@ -1,6 +1,6 @@
 Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
 Nostotekoäly.
-/Kick ja bite toimimaan, jos kädet irti. (timo)
+//Kick ja bite toimimaan, jos kädet irti. (timo)
 //Pertun kasvot. (timo)
 //Zoom lookiin. (hex)
 Värien tarkistusläpikäyminen.
@@ -55,7 +55,7 @@ OfferModifiers. (timo)
 NPModifiers. (timo)
 1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
 Dipping to corpses, containers etc.
-Aliases!!!!!!!!!!!!!! (timo)
+//Aliases!!!!!!!!!!!!!! (timo)
 Potion of poison. (hex)
 One handed penalties. (timo)
 Poisonous snake. (hex)

@@ -1,6 +1,7 @@
 / partly done, or done but needs checking/balancing
 // done
 * high priority
+(r) rejected, will not be done
 
 //Kuvien flippailu (lis‰‰). (items etc.)
 Lowscore.
