@@ -466,3 +466,16 @@ void avatarofvalpuri::CheckPickUpEffect(character* Picker)
 
 	}
 }
+
+item* brokenbottle::BetterVersion(void) const
+{
+	material* Stuff;
+	if(rand() % 10) 
+		Stuff = new bananaflesh(1500);
+	else
+		Stuff = new omleurine(1500);
+	 
+	 item* P = new potion(false); 
+	 P->InitMaterials(2, new glass(50), Stuff); 
+	 return P;
+}

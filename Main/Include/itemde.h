@@ -425,7 +425,7 @@ public:
 	virtual ushort Possibility() const RET(25)
 	virtual std::string NameSingular() const RET("broken bottle")
 	virtual std::string NamePlural() const RET("broken bottles")
-	virtual item* BetterVersion() const { item* P = new potion(false); P->InitMaterials(2, new glass(50), new bananaflesh(1500)); return P; }
+	virtual item* BetterVersion() const;
 	virtual float OfferModifier() const RET(0)
 	virtual vector2d GetBitmapPos() const RETV(16,160)
 protected:
