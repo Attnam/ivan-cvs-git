@@ -1059,4 +1059,29 @@ protected:
 	virtual void GetAICommand() { StandIdleAI(); }
 );
 
+class CHARACTER
+(
+	zombie,
+	human,
+	InitMaterials(new humanflesh),
+	{
+		SetSize(150);
+		SetAgility(10);
+		SetStrength(8);
+		SetEndurance(5);
+		SetPerception(15);
+		SetLegType(0);		// Needs GFX
+		SetTorsoType(0);	// Needs GFX
+		SetArmType(0);		// Needs GFX
+		SetHeadType(0);	// Needs GFX
+		SetShieldType(0);	// Needs GFX
+	},
+public:
+	virtual ushort Possibility() const RET(100)
+	virtual void BeTalkedTo(character*);
+	void SpillBlood(uchar, vector2d);
+protected:
+	virtual std::string NameSingular() const RET("zombie")
+);
+
 #endif

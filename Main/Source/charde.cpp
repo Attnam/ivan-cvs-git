@@ -1423,3 +1423,27 @@ void ivan::MoveRandomly()
 				TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
+
+
+void zombie::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+	{
+		ADD_MESSAGE("\"Need brain!!\"");
+		return;
+	}
+	else
+	{
+		ADD_MESSAGE("\"Need brain, but not your brain.\"");
+	}
+}
+
+void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
+{
+	if(!game::GetInWilderness()) 
+	{
+		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 10, 40);
+		if(!(RAND() % 10)) 
+			game::GetCurrentLevel()->GetLevelSquare(GetPos)->GetStack()->AddItem(new lump(new humanflesh(1000)));
+	}
+}
