@@ -78,3 +78,11 @@ Several artifact weapons with the same name can be generated.
 Check: does Ivan break doors correctly?
 "Weak kick has no chance to affect door" even if the door is sometimes affected by a second kick.
 Earthquakes drop moraine in the level even if it's inappropriate.
+Check that detecting gunpowder works.
+ESC should undo material detection etc.
+Lumps of glass are considered food.
+"the corpse of dark frog is too important for you to sacrifice"
+Cloak and armor shouldn't protect from broken bottles. (from Ighalli)
+You can bite with an unusable head.
+Petrus says that they have witnessed you leaving the tunnel even if you got here by means of levitation. (from Z)
+Crash : During the reading of a scroll of repair. See forum.

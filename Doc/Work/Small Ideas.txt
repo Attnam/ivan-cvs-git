@@ -334,7 +334,7 @@ One should get some score for pets.
 If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
 Unarmed accustomization.
 (example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable).
-The game should ask player whether to unlock a door with a key or not.
+The game should ask player whether to unlock a door or chest with a key or not.
 Thunder hammer's power should be proportional to relation with Loricatus.
 The smith should repair pet golems.
 Golems should pick up and read scrolls of repair.
@@ -554,3 +554,16 @@ If the player has very low INT, he shouldn't be able to say anything else than "
 Commented insults to savescummers above RemoveSaves() in the code.
 Installer to the Win32 version.
 A way to define default attack mode (melee/bite/kick).
+Water trap.
+New fountain effect: lots of water is splashed over the player.
+Altar rooms should somehow react to player's alignment, for instance you shouldn't be able to take a god's stuff from his/her altar room.
+Vomiting should decrease poisoning.
+Autopickup kiwis option. (from DA)
+Wield menu should only show sensible choices as default. (from DA)
+Open/close commands should be much more intelligent. (from DA)
+The screen allocation is maybe a bit wasteful considering much of it isn't used for anything except in special occasions. (from DA)
+Limbs should be shown in an extended inventory screen. Special materials are often important to know.
+You should get a bonus to your carrying capacity equal to your arms' weight (or some similiar gum), so that detached arms would be roughly as easy to carry as attached, which is imho logical.
+More funny and strange features, less swift and deadly ways to die. (from Timofei Shatrov)
+Extra blood more.
+Code improvement: char.cpp could be split in two.
