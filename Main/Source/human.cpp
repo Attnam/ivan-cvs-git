@@ -4120,13 +4120,27 @@ void sumowrestler::GetAICommand()
 {
   EditNP(-25);
 
+  SeekLeader(GetLeader());
+
+  if(CheckForEnemies(true, true, true))
+    return;
+
   if(CheckForUsefulItemsOnGround())
     return;
 
   if(CheckForFood(4))
     return;
 
-  StandIdleAI();
+  if(FollowLeader(GetLeader()))
+    return;
+
+  if(CheckForDoors())
+    return;
+
+  if(MoveTowardsHomePos())
+    return;
+
+  EditAP(-1000);
 }
 
 void sumowrestler::BeTalkedTo()

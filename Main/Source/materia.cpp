@@ -350,9 +350,13 @@ int material::GetHardenedMaterial(const item* Item) const
   if(!Item->FlexibilityIsEssential())
     return DB->HardenedMaterial;
 
-  while(DB->HardenedMaterial != NONE
-     && DataBase->Flexibility
-      > (DB = material::GetDataBase(DB->HardenedMaterial))->Flexibility);
+  while(DB->HardenedMaterial != NONE)
+    {
+      DB = material::GetDataBase(DB->HardenedMaterial);
+
+      if(DataBase->Flexibility <= DB->Flexibility)
+	return DB->Config;
+    }
 
   return DB->HardenedMaterial;
 }

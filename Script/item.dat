@@ -1578,9 +1578,9 @@ whip /* meleeweapon-> */
 	StrengthModifier = 10;
 	BitmapPos = 32, 0;
 	NameSingular = "whip";
-	MainMaterialConfig = { 5, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
+	MainMaterialConfig = { 4, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR; }
 	SecondaryMaterialConfig == EBONY_WOOD;
-	MaterialConfigChances = { 5, 75, 50, 25, 10, 5; }
+	MaterialConfigChances = { 4, 75, 50, 25, 10; }
 	Roundness = 2;
 	FormModifier = 10; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;

@@ -12,7 +12,7 @@
 /* Compiled through itemset.cpp */
 
 const char* ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
-const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
+const char* StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "strong", "very strong", "extremely strong", "almost unbreakable" };
 
 itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(int, int), const char* ClassID) : Base(Base), Cloner(Cloner), ClassID(ClassID) { Index = protocontainer<item>::Add(this); }
 
