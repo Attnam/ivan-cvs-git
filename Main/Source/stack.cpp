@@ -12,11 +12,13 @@
 
 stack::stack(square* SquareUnder, uchar SquarePosition) : SquareUnder(SquareUnder), SquarePosition(SquarePosition)
 {
+  Item = new stacklist;
 }
 
 stack::~stack()
 {
   Clean();
+  delete Item;
 }
 
 bool stack::DrawToTileBuffer() const
@@ -24,7 +26,7 @@ bool stack::DrawToTileBuffer() const
   if(!GetItems())
     return false;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     (**i)->PositionedDrawToTileBuffer(SquarePosition);
 
   return true;
@@ -44,7 +46,7 @@ void stack::AddItem(item* ToBeAdded)
   stackslot* StackSlot = new stackslot;
 
   StackSlot->SetMotherStack(this);
-  StackSlot->SetStackIterator(Item.insert(Item.end(), StackSlot));
+  StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
 
   //SetItem(GetItems(), ToBeAdded);
@@ -81,7 +83,7 @@ void stack::FastAddItem(item* ToBeAdded)
   stackslot* StackSlot = new stackslot;
 
   StackSlot->SetMotherStack(this);
-  StackSlot->SetStackIterator(Item.insert(Item.end(), StackSlot));
+  StackSlot->SetStackIterator(Item->insert(Item->end(), StackSlot));
   ToBeAdded->PlaceToSlot(StackSlot);
 
   //SetItem(GetItems(), ToBeAdded);
@@ -115,7 +117,7 @@ void stack::RemoveItem(stackiterator Iterator)
 
   //item* Removed = Iterator->Item;
   delete *Iterator;
-  Item.erase(Iterator);
+  Item->erase(Iterator);
 
   /*Removed = Item[Index];
 
@@ -154,7 +156,7 @@ void stack::RemoveItem(stackiterator Iterator)
 void stack::FastRemoveItem(stackiterator Iterator)
 {
   delete *Iterator;
-  Item.erase(Iterator);
+  Item->erase(Iterator);
   /*if(Item)
     {
       SetItem(Index, 0);
@@ -167,7 +169,7 @@ void stack::FastRemoveItem(stackiterator Iterator)
 
 void stack::Clean()
 {
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
       (**i)->SetExists(false);
       delete *i;
@@ -184,7 +186,7 @@ void stack::Clean()
 
   SNonExistent(0);*/
 
-  Item.clear();
+  Item->clear();
 }
 
 item* stack::MoveItem(stackiterator Iterator, stack* MoveTo)
@@ -292,7 +294,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic) const // Draws a
 
   stackiterator i;
 
-  for(i = Item.begin(); i != Item.end(); ++i)
+  for(i = Item->begin(); i != Item->end(); ++i)
     {
       Buffer = (**i)->Name(INDEFINITE);
       Buffer.resize(50,' ');
@@ -313,7 +315,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic) const // Draws a
 
   ushort c = 0;
 
-  for(i = Item.begin(); i != Item.end(); ++i, ++c)
+  for(i = Item->begin(); i != Item->end(); ++i, ++c)
     if(c == Chosen)
       return ***i;
 
@@ -326,7 +328,7 @@ ushort stack::GetEmitation() const // Calculates the biggest light emmision of t
 
   //for(ushort c = 0; c < GetItems(); ++c)
   //  if(GetItem(c))
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     if((**i)->GetEmitation() > Emitation)
       Emitation = (**i)->GetEmitation();
 
@@ -337,7 +339,7 @@ ulong stack::SumOfMasses() const
 {
   ulong Sum = 0;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     Sum += (**i)->GetWeight();
 
   return Sum;
@@ -345,7 +347,7 @@ ulong stack::SumOfMasses() const
 
 void stack::Save(outputfile& SaveFile) const
 {
-  SaveFile << Item << SquarePosition;
+  SaveFile << *Item << SquarePosition;
 
   /*for(ushort c = 0; c < Items; ++c)
     SaveFile << Item[c];*/
@@ -353,9 +355,9 @@ void stack::Save(outputfile& SaveFile) const
 
 void stack::Load(inputfile& SaveFile)
 {
-  SaveFile >> Item >> SquarePosition;
+  SaveFile >> *Item >> SquarePosition;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
       (*i)->SetStackIterator(i);
       (*i)->SetMotherStack(this);
@@ -392,7 +394,7 @@ vector2d stack::GetPos() const
 
 bool stack::ConsumableItems(character* Eater)
 {
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     if((**i)->Consumable(Eater))
       return true;
 
@@ -407,7 +409,7 @@ item* stack::DrawConsumableContents(character* Eater, std::string Topic) const
   ushort Key;
 
   //for(ushort c = 0; c < GetItems(); ++c)
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
       if((**i)->Consumable(Eater))
 	ConsumableStack.FastAddItem((**i));
@@ -435,7 +437,7 @@ void stack::DeletePointers()
 
 /*void stack::StackMerge(stack* ToBeMerged)
 {
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     FastAddItem(ToBeMerged->GetItem(c));
 
   ToBeMerged->DeletePointers();
@@ -448,10 +450,10 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
       ImpactDamage(Strength);
 
       if(GetItems())
-	(***Item.begin())->Fly(Direction, Strength, this, true);
+	(***Item->begin())->Fly(Direction, Strength, this, true);
 
       if(GetItems() && RAND() % 2)
-	(***Item.begin())->Fly(Direction, Strength, this, true);
+	(***Item->begin())->Fly(Direction, Strength, this, true);
     }
   else
     if(GetItems() && ShowOnScreen)
@@ -462,7 +464,7 @@ long stack::Score() const
 {
   long Score = 0;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     Score += (**i)->Score();
 
   return Score;
@@ -489,7 +491,7 @@ void stack::Polymorph()
 
 
 
-  for(stackiterator i = TempItem.begin(); i != TempItem.end(); ++i)
+  for(stackiterator i = TempItem->begin(); i != TempItem->end(); ++i)
     if((**i)->GetExists() && (**i)->Polymorph(this) && ++p == 5)
       break;*/
 
@@ -595,7 +597,7 @@ void stack::Teleport()
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
-      ItemVector[c]->Teleport(this);
+      ItemVector[c]->Teleport();
 }
 
 lsquare* stack::GetLSquareTrulyUnder() const
@@ -610,7 +612,7 @@ lsquare* stack::GetLSquareUnder() const
 
 void stack::FillItemVector(itemvector& ItemVector) const
 {
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     ItemVector.push_back(***i);
 }
 
@@ -628,7 +630,7 @@ item* stack::GetItem(ushort Index) const
 {
   ushort c = 0;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i, ++c)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i, ++c)
     if(c == Index)
       return ***i;
 
@@ -639,7 +641,7 @@ ushort stack::SearchItem(item* ToBeSearched) const
 {
   ushort c = 0;
 
-  for(stackiterator i = Item.begin(); i != Item.end(); ++i, ++c)
+  for(stackiterator i = Item->begin(); i != Item->end(); ++i, ++c)
     if(***i == ToBeSearched)
       return c;
 
@@ -654,10 +656,10 @@ ushort stack::SearchItem(item* ToBeSearched) const
 
 stackiterator stack::GetBottomSlot() const
 {
-  return Item.begin();
+  return Item->begin();
 }
 
 stackiterator stack::GetSlotAboveTop() const
 {
-  return Item.end();
+  return Item->end();
 }

@@ -265,7 +265,7 @@ void item::Load(inputfile& SaveFile)
   SaveFile >> Cannibalised >> Size >> ID;
 }
 
-void item::Teleport(stack* Start)
+void item::Teleport()
 {
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
   MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());

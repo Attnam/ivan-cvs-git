@@ -115,7 +115,7 @@ class character : public type, public entity, public identity
   virtual bool Hit(character*);
   virtual bool OpenItem();
   virtual bool OpenPos(vector2d);
-  virtual bool ReadItem(item*, stack*);
+  virtual bool ReadItem(item*);
   virtual bool TestForPickup(item*) const;
   virtual bool ThrowItem(uchar, item*);
   virtual bool TryMove(vector2d, bool = true);

@@ -261,13 +261,12 @@ uchar character::ChooseBodyPartToReceiveHit(float ToHitValue, float DodgeValue)
     if(GetBodyPart(c))
       {
 	SVQueue.push(svpriorityelement(c, GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP()));
-	int p = GetBodyPart(c)->GetStrengthValue() + GetBodyPart(c)->GetHP();
 	TotalVolume += GetBodyPart(c)->GetVolume();
       }
 
   while(SVQueue.size())
     {
-      ushort ToHitPercentage = ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetVolume() * 100 / (DodgeValue * TotalVolume);
+      ushort ToHitPercentage = ushort(ToHitValue * GetBodyPart(SVQueue.top().BodyPart)->GetVolume() * 100 / (DodgeValue * TotalVolume));
 
       if(ToHitPercentage < 1)
 	ToHitPercentage = 1;
@@ -1428,12 +1427,12 @@ bool character::Read()
   item* Item = GetStack()->DrawContents(this, "What do you want to read?");
 
   if(Item)
-    return ReadItem(Item, GetStack());
+    return ReadItem(Item);
   else
     return false;
 }
 
-bool character::ReadItem(item* ToBeRead, stack* ItemsStack)
+bool character::ReadItem(item* ToBeRead)
 {
   /*if(ToBeRead == GetBodyArmor())
     {
@@ -2931,7 +2930,7 @@ bool character::CheckForUsefulItemsOnGround()
 	  {
 	    item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
-      /*if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
+      /if(CanWear() && GetLSquareUnder()->GetStack()->GetItem(c)->GetArmorValue() < CalculateArmorModifier() && GetBurdenState(GetStack()->SumOfMasses() + GetLSquareUnder()->GetStack()->GetItem(c)->GetWeight() - (GetTorsoArmor() ? GetTorsoArmor()->GetWeight() : 0)) == UNBURDENED)
 	if(!GetLSquareUnder()->GetRoom() || GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, GetLSquareUnder()->GetStack()->GetItem(c)))
 	{
 	item* ToWear = GetLSquareUnder()->GetStack()->MoveItem(c, GetStack());
@@ -3245,7 +3244,6 @@ bool character::Sit()
 
 void character::SetNP(long What)
 {
-  long BNP = GetNP();
   uchar OldGetHungerState = GetHungerState();
   NP = What;
 
@@ -3843,7 +3841,7 @@ bool character::ReceiveBodyPartPhysicalDamage(short Damage, uchar BodyPartIndex,
   return true;
 }
 
-bool character::ReceiveEffect(short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
+bool character::ReceiveEffect(short Amount, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
   return ReceiveBodyPartEffect(Amount, Type, 0, Direction, PenetrateArmor, Critical);
 }
@@ -3926,7 +3924,7 @@ bool character::ReceiveBodyPartEffect(short Amount, uchar Type, uchar BodyPart, 
 std::string character::Description(uchar Case) const
 {
   if(GetSquareUnder()->CanBeSeen())
-    return Name(DEFINITE);
+    return Name(Case);
   else
     return "something";
 }

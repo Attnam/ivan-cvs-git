@@ -101,7 +101,7 @@ class item : public object
   virtual ushort GetSize() const { return Size; }
   virtual ulong GetID() const { return ID; }
   virtual void SetID(ulong What) { ID = What; }
-  virtual void Teleport(stack*);
+  virtual void Teleport();
   virtual ushort GetStrengthValue() const;
   //virtual uchar SurfaceMaterial() const { return 0; }
   virtual bool AutoInitializable() const { return true; }

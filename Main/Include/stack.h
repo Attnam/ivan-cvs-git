@@ -48,8 +48,8 @@ class stack
   item* GetItem(ushort) const;
   stackiterator GetBottomSlot() const;
   stackiterator GetSlotAboveTop() const;
-  item* GetBottomItem() const;// { return Item.begin(); }
-  ushort GetItems() const { return Item.size(); }
+  item* GetBottomItem() const;// { return Item->begin(); }
+  ushort GetItems() const { return Item->size(); }
   void SetSquareUnder(square*);
   item* DrawContents(character*, std::string) const;
   item* MoveItem(stackiterator, stack*);
@@ -84,7 +84,7 @@ class stack
   void Teleport();
   void FillItemVector(itemvector&) const;
  private:
-  stacklist Item;
+  stacklist* Item;
   //void Optimize(ushort);
   square* SquareUnder;
   //item** Item;

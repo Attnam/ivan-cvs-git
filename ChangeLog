@@ -1,5 +1,10 @@
 April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* charba.cpp/h, charde.cpp/h, itemba.cpp/h, itemde.cpp/h: Warning corrections
+	* game.cpp, stack.cpp/h: The game compiles again
+
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* stack.cpp: Inventory works again
 
 April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>

@@ -1943,11 +1943,11 @@ material* unicorn::CreateTorsoFlesh(ulong Volume) const
   switch(RAND() % 3)
     {
     case GOOD:
-      return new whiteunicornflesh;
+      return new whiteunicornflesh(Volume);
     case NEUTRAL:
-      return new grayunicornflesh;
+      return new grayunicornflesh(Volume);
     default:
-      return new blackunicornflesh;
+      return new blackunicornflesh(Volume);
     }
 }
 

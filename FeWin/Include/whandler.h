@@ -8,6 +8,10 @@
 #define GETKEY globalwindowhandler::GetKey
 #define READKEY globalwindowhandler::ReadKey
 
+#define FK_BACKSPACE 0x08
+#define FK_ESC 0x1b
+#define FK_ENTER 0x0d
+
 #ifdef __DJGPP__
 
 #include <pc.h>
@@ -28,11 +32,6 @@ class globalwindowhandler
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
-
-#define FK_BACKSPACE 0x08
-#define FK_ESC 0x1b
-#define FK_ENTER 0x0d
-
 
 #include "typedef.h"
 #include "dynarray.h"

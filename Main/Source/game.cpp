@@ -1310,9 +1310,10 @@ void game::CreateGods()
 }
 
 /* 
-   This function gets a position from the current map and then returns it.
-   However, if the player presses ESC then it returns vector2d(-1,-1)
-*/
+ * This function gets a position from the current map and then returns it.
+ * However, if the player presses ESC then it returns vector2d(-1,-1)
+ */
+
 vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
 {
   int Key = 0;
@@ -1350,8 +1351,5 @@ vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
       if(CurrentPos.Y < game::GetCamera().Y + 2 || CurrentPos.Y > game::GetCamera().Y + 27)
 	game::UpdateCameraYWithPos(CurrentPos.Y);
     }
-	
-
-
 }
 

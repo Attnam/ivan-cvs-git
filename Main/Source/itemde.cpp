@@ -1200,6 +1200,7 @@ bool wandoffireballs::BeamEffect(character* Who, std::string DeathMsg, uchar, ls
       Where->GetLevelUnder()->Explosion(Who, DeathMsg, Where->GetPos(), 20 + RAND() % 5 - RAND() % 5);
       return true;
     }
+
   return false;
 }
 
@@ -1517,7 +1518,7 @@ void potion::GeneratePotionMaterials()
     }
 }
 
-bool wandofhaste::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
+bool wandofhaste::BeamEffect(character*, std::string, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
   if(Dude)
@@ -1543,7 +1544,7 @@ bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-bool wandofslow::BeamEffect(character* Zapper, std::string, uchar, lsquare* LSquare)
+bool wandofslow::BeamEffect(character*, std::string, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
   if(Dude)
