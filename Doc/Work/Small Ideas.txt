@@ -233,3 +233,6 @@ Fly function for character!
 Mirrors.
 Item category "rubbish" which would contain bananapeals and roubles.
 Cumulative comments to script.
+Material colored cursor.
+Alphablit to bottles.
+Wand levels.

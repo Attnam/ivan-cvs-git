@@ -371,6 +371,7 @@ class data<character> : public basedata<character>
   DATAMEMBER(uchar, RightLegBonePercentile);
   DATAMEMBER(uchar, LeftLegBonePercentile);
   DATAMEMBER(bool, IsNameable);
+  DATAMEMBER(ushort, BaseEmitation);
 };
 
 class data<item> : public basedata<item>
@@ -407,6 +408,7 @@ class data<item> : public basedata<item>
   DATAMEMBER(ulong, DefaultContainedVolume);
   DATAMEMBER(vector2d, BitmapPos);
   DATAMEMBER(ulong, Price);
+  DATAMEMBER(ushort, BaseEmitation);
 };
 
 class data<material> : public basedata<material>

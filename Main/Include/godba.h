@@ -81,7 +81,7 @@ class god
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const god::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const god::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
@@ -97,7 +97,7 @@ name : public base\
  public:\
   virtual god* Clone() const { return new name; }\
   static ushort StaticType();\
-  static const god::prototype* const GetPrototype();\
+  static const god::prototype* const GetProtoType();\
  protected:\
   virtual ushort Type() const;\
   data\

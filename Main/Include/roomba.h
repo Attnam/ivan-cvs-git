@@ -84,7 +84,7 @@ class room
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   void name::SetDefaultStats() { setstats }\
-  const room::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const room::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
@@ -101,7 +101,7 @@ name : public base\
   name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
   virtual room* Clone() const { return new name; }\
   static ushort StaticType();\
-  static const room::prototype* const GetPrototype();\
+  static const room::prototype* const GetProtoType();\
  protected:\
   virtual ushort Type() const;\
   virtual void SetDefaultStats();\

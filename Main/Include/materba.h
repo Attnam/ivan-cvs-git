@@ -209,7 +209,7 @@ class material
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const material::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const material::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   const material_database& name::GetDataBase() const { return name##_DataBase; }
   /*material* name##_prototype::CreateWishedMaterial(ulong Volume) const { if(!name::SpecialWishedMaterial()) return Clone(Volume); else return name::CreateWishedMaterial(Volume); }*/
@@ -250,7 +250,7 @@ name : public base\
   virtual material* Clone(ulong Volume) const { return new name(Volume); }\
   virtual material* Clone() const { return new name; }\
   static ushort StaticType();\
-  static const material::prototype* const GetPrototype();\
+  static const material::prototype* const GetProtoType();\
   virtual const material_database& GetDataBase() const;\
   /*virtual ushort GetDataBaseStrengthValue() const;\
   virtual ushort GetDataBaseConsumeType() const;\

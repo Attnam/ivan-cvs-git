@@ -12,7 +12,7 @@ human
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 0;
 	TotalVolume = 60000;
-	TotalSize = 180;
+	TotalSize = 150;
 	MeleeStrength = 1000;
 }
 

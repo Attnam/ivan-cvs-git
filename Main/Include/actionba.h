@@ -62,7 +62,7 @@ class action
   \
   void name::Init() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const action::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const action::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
@@ -80,7 +80,7 @@ name : public base\
   name(character* Actor) : base(Actor) { Init(); }\
   virtual action* Clone() const { return new name; }\
   static ushort StaticType();\
-  static const action::prototype* const GetPrototype();\
+  static const action::prototype* const GetProtoType();\
  protected:\
   virtual void Init();\
   virtual ushort Type() const;\

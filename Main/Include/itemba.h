@@ -51,6 +51,7 @@ struct item_database
   ulong DefaultContainedVolume;
   vector2d BitmapPos;
   ulong Price;
+  ushort BaseEmitation;
 };
 
 class item_prototype
@@ -233,6 +234,7 @@ class item : public object
   DATABASEVALUE(ulong, DefaultContainedVolume);
   DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
   DATABASEVALUE(ulong, Price);
+  DATABASEVALUE(ushort, BaseEmitation);
 
   /*virtual ushort GetPossibility() const { return GetDataBase().Possibility; }
   virtual vector2d GetInHandsPic() const { return GetDataBase().InHandsPic; }
@@ -303,7 +305,7 @@ class item : public object
   name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMainMaterial(FirstMaterial); }\
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const item::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const item::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   /*item* name##_prototype::CreateWishedItem() const { if(!name::SpecialWishedItem()) return Clone(); else return name::CreateWishedItem(); }*/\
   const item_database& name::GetDataBase() const { return name##_DataBase; }
@@ -323,7 +325,7 @@ name : public base\
   name(material*, bool = true);\
   virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
   static ushort StaticType();\
-  static const item::prototype* const GetPrototype();\
+  static const item::prototype* const GetProtoType();\
   virtual const item_database& GetDataBase() const;\
  protected:\
   virtual void SetDefaultStats();\

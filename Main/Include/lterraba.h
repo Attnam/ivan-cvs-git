@@ -134,7 +134,7 @@ class olterrain : public lterrain, public oterrain
   name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMainMaterial(FirstMaterial); HandleVisualEffects(); }\
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const protobase::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const protobase::prototype* const name::GetProtoType() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
@@ -151,7 +151,7 @@ name : public base\
   name(bool = true, bool = true);\
   name(material*, bool = true);\
   static ushort StaticType();\
-  static const protobase::prototype* const GetPrototype();\
+  static const protobase::prototype* const GetProtoType();\
  protected:\
   virtual void SetDefaultStats();\
   virtual ushort Type() const;\

@@ -27,7 +27,6 @@ class ABSTRACT_CHARACTER
   character,
  public:
   virtual ~humanoid();
-  virtual void VirtualConstructor();
   virtual void Load(inputfile&);
   //virtual uchar GetSex() const { return MALE; }
   virtual void Save(outputfile&) const;
@@ -152,6 +151,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckWearEquipment() const { return true; }
 
  protected:
+  virtual void VirtualConstructor();
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
   virtual ushort GetBodyPartColor2(ushort, ushort);
@@ -263,15 +263,15 @@ class CHARACTER
 (
   human,
   humanoid,
-  {
+  /*{
     SetAgility(15 + RAND() % 11);
     SetStrength(10 + RAND() % 6);
     SetEndurance(10 + RAND() % 6);
     SetPerception(10 + RAND() % 6);
     SetMoney(200 + RAND() % 101);
-  },
- public:
+  },*/
  protected:
+  virtual void VirtualConstructor();
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 0); }
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(32, 0); }
   virtual vector2d GetArmBitmapPos() const { return vector2d(64, 0); }
@@ -285,7 +285,7 @@ class CHARACTER
 (
   petrus,
   humanoid,
-  {
+  /*{
     SetAgility(75);
     SetStrength(75);
     SetEndurance(75);
@@ -294,7 +294,7 @@ class CHARACTER
     SetStoryState(0);
     game::SetPetrus(this);
     SetAssignedName("Petrus");
-  },
+  },*/
  public:
   virtual ~petrus();
   virtual void Load(inputfile&);
@@ -314,6 +314,7 @@ class CHARACTER
   virtual bool CanBeAssignedAName() const { return false; }
   virtual bool IsUnique() const { return true; }
  protected:
+  virtual void VirtualConstructor();
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 144); }
@@ -335,13 +336,13 @@ class CHARACTER
 (
   farmer,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(15);
     SetEndurance(20);
     SetPerception(18);
     SetMoney(20);
-  },
+  },*/
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
@@ -361,12 +362,12 @@ class CHARACTER
 (
   guard,
   humanoid,
-  {
+  /*{
     SetAgility(15);
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
-  },
+  },*/
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
@@ -387,14 +388,15 @@ class CHARACTER
 (
   shopkeeper,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(30);
     SetEndurance(25);
     SetPerception(30);
     SetMoney(3000 + RAND() % 2001);
-  },
+  },*/
  public:
+  virtual void VirtualConstructor();
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
@@ -415,12 +417,12 @@ class CHARACTER
 (
   priest,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
     SetPerception(18);
-  },
+  },*/
  public:
   virtual void GetAICommand() { StandIdleAI(); }
   virtual void CreateInitialEquipment();
@@ -442,13 +444,13 @@ class CHARACTER
 (
   oree,
   humanoid,
-  {
+  /*{
     SetAgility(50);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(30);
     SetAssignedName("Oree");
-  },
+  },*/
  public:
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
@@ -460,6 +462,7 @@ class CHARACTER
   virtual bool CanBeAssignedAName() const { return false; }
   virtual bool IsUnique() const { return true; }
  protected:
+  virtual void VirtualConstructor();
 
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 32); } 
   virtual vector2d GetTorsoBitmapPos() const { return vector2d(48, 160); }
@@ -485,12 +488,12 @@ class CHARACTER
 (
   darkknight,
   humanoid,
-  {
+  /*{
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(30);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
@@ -513,12 +516,12 @@ class CHARACTER
 (
   ennerbeast,
   character,
-  {
+  /*{
     SetAgility(10);
     SetStrength(10);
     SetEndurance(25);
     SetPerception(12);
-  },
+  },*/
  public:
   virtual bool CanOpen() const { return false; }
   static bool CanBeGenerated() { return false; }
@@ -558,12 +561,12 @@ class CHARACTER
 (
   darkfrog,
   frog,
-  {
+  /*{
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(18);
-  },
+  },*/
  public:
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual bool HasInfraVision() const { return true; }
@@ -579,14 +582,15 @@ class CHARACTER
 (
   elpuri,
   darkfrog,
-  {
+  /*{
     SetAgility(10);
     SetStrength(30);
     SetEndurance(50);
     SetPerception(30);
     SetAssignedName("Elpuri");
-  },
+  },*/
  public:
+  virtual void VirtualConstructor();
   static bool CanBeGenerated() { return false; }
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
@@ -611,12 +615,12 @@ class CHARACTER
 (
   billswill,
   character,
-  {
+  /*{
     SetAgility(40);
     SetStrength(5);
     SetEndurance(20);
     SetPerception(27);
-  },
+  },*/
  public:
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
@@ -644,12 +648,12 @@ class CHARACTER
 (
   skeleton,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(5);
     SetEndurance(10);
     SetPerception(15);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return true; }
   virtual void SpillBlood(uchar) { }
@@ -677,12 +681,12 @@ class CHARACTER
 (
   goblin,
   humanoid,
-  {
+  /*{
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
     SetPerception(18);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
@@ -724,12 +728,12 @@ class CHARACTER
 (
   conicalmommo,
   mommo,
-  {
+  /*{
     SetAgility(2);
     SetStrength(4);
     SetEndurance(50);
     SetPerception(9);
-  },
+  },*/
  public:
   virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
  protected:
@@ -743,12 +747,12 @@ class CHARACTER
 (
   flatmommo,
   mommo,
-  {
+  /*{
     SetAgility(4);
     SetStrength(2);
     SetEndurance(25);
     SetPerception(9);
-  },
+  },*/
  public:
   virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
  protected:
@@ -762,12 +766,12 @@ class CHARACTER
 (
   golem,
   character,
-  {
+  /*{
     SetAgility(5);
     SetStrength(20);
     SetEndurance(20);
     SetPerception(12);
-  },
+  },*/
  public:
   virtual bool MoveRandomly();
   virtual void SpillBlood(uchar) { }
@@ -789,12 +793,12 @@ class CHARACTER
 (
   wolf,
   character,
-  {
+  /*{
     SetAgility(20);
     SetStrength(10);
     SetEndurance(10);
     SetPerception(24);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new wolfflesh(Volume); }
@@ -813,12 +817,12 @@ class CHARACTER
 (
   dog,
   character,
-  {
+  /*{
     SetAgility(15);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(21);
-  },
+  },*/
  public:
   virtual bool Catches(item*, float);
  protected:
@@ -839,12 +843,12 @@ class CHARACTER
 (
   spider,
   character,
-  {
+  /*{
     SetAgility(5);
     SetStrength(2);
     SetEndurance(1);
     SetPerception(9);
-  },
+  },*/
  public:
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual bool HasInfraVision() const { return true; }
@@ -867,12 +871,12 @@ class CHARACTER
 (
   jackal,
   character,
-  {
+  /*{
     SetAgility(10);
     SetStrength(3);
     SetEndurance(3);
     SetPerception(18);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 20000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new jackalflesh(Volume); }
@@ -890,12 +894,12 @@ class CHARACTER
 (
   donkey,
   character,
-  {
+  /*{
     SetAgility(5);
     SetStrength(10);
     SetEndurance(10);
     SetPerception(15);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new donkeyflesh(Volume); }
@@ -914,13 +918,13 @@ class CHARACTER
 (
   communist,
   humanoid,
-  {
+  /*{
     SetAgility(20);
     SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
     SetAssignedName("Ivan");
-  },
+  },*/
  public:
   virtual bool MoveRandomly();
   virtual void CreateInitialEquipment();
@@ -929,6 +933,7 @@ class CHARACTER
   virtual uchar CriticalModifier() const { return 4; }
   virtual bool CanBeAssignedAName() const { return false; }
  protected:
+  virtual void VirtualConstructor();
   virtual ushort BeltColor() const { return MAKE_RGB(0, 0, 0); }
   virtual ushort ArmSpecialColor() const { return MAKE_RGB(160, 0, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(64, 56, 24); }
@@ -948,12 +953,12 @@ class CHARACTER
 (
   hunter,
   humanoid,
-  {
+  /*{
     SetAgility(20);
     SetStrength(15);
     SetEndurance(15);
     SetPerception(24);
-  },
+  },*/
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
@@ -975,12 +980,12 @@ class CHARACTER
 (
   polarbear,
   character,
-  {
+  /*{
     SetAgility(10);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(24);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return false; }
  protected:
@@ -998,12 +1003,12 @@ class CHARACTER
 (
   dolphin,
   character,
-  {
+  /*{
     SetAgility(30);
     SetStrength(10);
     SetEndurance(10);
     SetPerception(30);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return false; }
   virtual std::string StandVerb() const { return "swimming"; }
@@ -1026,12 +1031,12 @@ class CHARACTER
 (
   lightfrog,
   frog,
-  {
+  /*{
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(18);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return false; }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
@@ -1048,12 +1053,12 @@ class CHARACTER
 (
   slave,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
     SetPerception(15);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   virtual void GetAICommand();
@@ -1076,12 +1081,12 @@ class CHARACTER
 (
   petrusswife,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(21);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
@@ -1100,7 +1105,7 @@ class CHARACTER
   virtual bool ShowArticle() const { return false; }
 );
 
-class CHARACTER
+/*class CHARACTER
 (
   petrusswife1,
   petrusswife,
@@ -1176,18 +1181,18 @@ class CHARACTER
   virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(112,80); }
   virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
-);
+);*/
 
 class CHARACTER
 (
   housewife,
   humanoid,
-  {
+  /*{
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
     SetPerception(24);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
@@ -1210,12 +1215,12 @@ class CHARACTER
 (
   femaleslave,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(10);
     SetEndurance(15);
     SetPerception(18);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
@@ -1239,12 +1244,12 @@ class CHARACTER
 (
   librarian,
   humanoid,
-  {
+  /*{
     SetAgility(5);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(12);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
  protected:
@@ -1266,12 +1271,12 @@ class CHARACTER
 (
   zombie,
   humanoid,
-  {
+  /*{
     SetAgility(5);
     SetStrength(10);
     SetEndurance(5);
     SetPerception(12);
-  },
+  },*/
  public:
   static bool CanBeGenerated() { return true; }
   virtual void BeTalkedTo(character*);
@@ -1296,12 +1301,12 @@ class CHARACTER
 (
   imp,
   humanoid,
-  {
+  /*{
     SetAgility(15);
     SetStrength(10);
     SetEndurance(10);
     SetPerception(15);
-  },
+  },*/
  public:
   virtual uchar GetSex() const { return UNDEFINED; }
  protected:
@@ -1325,12 +1330,12 @@ class CHARACTER
 (
   bat,
   character,
-  {
+  /*{
     SetAgility(40);
     SetStrength(2);
     SetEndurance(1);
     SetPerception(24);
-  },
+  },*/
  public:
   virtual std::string StandVerb() const { return "flying"; }
   virtual bool CanOpen() const { return false; }
@@ -1350,12 +1355,12 @@ class CHARACTER
 (
   mistress,
   humanoid,
-  {
+  /*{
     SetAgility(35);
     SetStrength(25);
     SetEndurance(50);
     SetPerception(30);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   static bool CanBeGenerated() { return true; }
@@ -1380,14 +1385,14 @@ class CHARACTER
 (
   werewolf,
   humanoid,
-  {
+  /*{
     SetChangeCounter(RAND() % 2500);
 
-    /*if(RAND() % 2)
+    /if(RAND() % 2)
       ChangeIntoHuman();
     else
-      ChangeIntoWolf();*/
-  },
+      ChangeIntoWolf();/
+  },*/
  public:
   static bool CanBeGenerated() { return true; }
   virtual void Load(inputfile&);
@@ -1425,12 +1430,12 @@ class CHARACTER
 (
   kobold,
   humanoid,
-  {
+  /*{
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(12);
-  },
+  },*/
  public:
   virtual uchar GetSex() const { return UNDEFINED; }
   static bool CanBeGenerated() { return true; }
@@ -1455,12 +1460,12 @@ class CHARACTER
 (
   gibberling,
   humanoid,
-  {
+  /*{
     SetAgility(20);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(15);
-  },
+  },*/
  public:
   virtual uchar GetSex() const { return UNDEFINED; }
  protected:
@@ -1483,12 +1488,12 @@ class CHARACTER
 (        
   largecat,
   character,
-  {
+  /*{
     SetAgility(25);
     SetStrength(5);
     SetEndurance(5);
     SetPerception(21);
-  },
+  },*/
  public:
   virtual bool Catches(item*, float);
  protected:
@@ -1505,12 +1510,12 @@ class CHARACTER
 (        
   largerat,
   character,
-  {
+  /*{
     SetAgility(10);
     SetStrength(3);
     SetEndurance(2);
     SetPerception(12);
-  },
+  },*/
  public:
   virtual bool CanOpen() const { return false; }
  protected:
@@ -1527,12 +1532,12 @@ class CHARACTER
 (        
   angel,
   humanoid,
-  {
+  /*{
     SetAgility(35);
     SetStrength(35);
     SetEndurance(35);
     SetPerception(45);
-  },
+  },*/
  public:
   virtual void BeTalkedTo(character*);
   virtual bool Charmable() const { return false; }
@@ -1572,14 +1577,15 @@ class CHARACTER
 (
   kamikazedwarf,
   dwarf,
-  {
+  /*{
     SetAgility(20);
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
     SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
-  },
+  },*/
  public:
+  virtual void VirtualConstructor();
   virtual void BeTalkedTo(character*);
   static bool CanBeGenerated() { return true; }
   //virtual float GetMeleeStrength() const { return 2000; }
@@ -1612,12 +1618,12 @@ class CHARACTER
 (        
   mammoth,
   character,
-  {
+  /*{
     SetAgility(20);
     SetStrength(80);
     SetEndurance(80);
     SetPerception(18);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 5000000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new mammothflesh(Volume); }
@@ -1632,14 +1638,15 @@ class CHARACTER
 (
   unicorn,
   character,
-  {
+  /*{
     SetAgility(40);
     SetStrength(10);
     SetEndurance(25);
     SetPerception(18);
     SetAlignment(RAND() % 3);
-  },
+  },*/
  public:
+  virtual void VirtualConstructor();
   //virtual float GetMeleeStrength() const { return 5000; }
   virtual std::string TalkVerb() const { return "neighs"; }
   virtual void SetAlignment(uchar What) { Alignment = What; }
@@ -1661,12 +1668,12 @@ class CHARACTER
 (
   genie,
   humanoid,
-  {
+  /*{
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(18);
-  },
+  },*/
  public:
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
@@ -1688,12 +1695,12 @@ class CHARACTER
 (
   lion,
   character,
-  {
+  /*{
     SetAgility(40);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(24);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 150000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new lionflesh(Volume); }
@@ -1712,12 +1719,12 @@ class CHARACTER
 (
   carnivorousplant,
   character,
-  {
+  /*{
     SetAgility(5);
     SetStrength(30);
     SetEndurance(4);
     SetPerception(5);
-  },
+  },*/
  public:
   virtual bool CanOpen() const { return false; }
  protected:
@@ -1740,12 +1747,12 @@ class CHARACTER
 (
   buffalo,
   character,
-  {
+  /*{
     SetAgility(4);
     SetStrength(3);
     SetEndurance(30);
     SetPerception(24);
-  },
+  },*/
  protected:
   virtual ulong TotalVolume() const { return 200000; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return new buffaloflesh(Volume); }

@@ -66,7 +66,6 @@ struct character_database
   bool IsUnique;
   ushort EatFlags;
   ulong TotalVolume;
-  //vector2d BitmapPos;
   ulong MeleeStrength;
   std::string TalkVerb;
   vector2d HeadBitmapPos;
@@ -100,20 +99,19 @@ struct character_database
   uchar RightLegBonePercentile;
   uchar LeftLegBonePercentile;
   bool IsNameable;
+  ushort BaseEmitation;
 };
 
 class character_prototype
 {
  public:
-  virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
-  virtual character* CloneAndLoad(inputfile&) const = 0;
+  virtual character* Clone(bool = true, bool = true) const = 0;
+  character* CloneAndLoad(inputfile&) const;
   virtual std::string ClassName() const = 0;
   ushort GetIndex() const { return Index; }
-  /*virtual bool CanBeGenerated() const = 0;
-  virtual ushort Frequency() const = 0;*/
   virtual character_database& GetDataBase() const = 0;
-  virtual ushort GetFrequency() const { return GetDataBase().Frequency; }
-  virtual bool CanBeGenerated() const { return GetDataBase().CanBeGenerated; }
+  ushort GetFrequency() const { return GetDataBase().Frequency; }
+  bool CanBeGenerated() const { return GetDataBase().CanBeGenerated; }
  protected:
   ushort Index;
 };
@@ -125,9 +123,10 @@ class character : public entity, public id
  public:
   typedef character_prototype prototype;
   friend class corpse;
-  character(bool, bool, bool, bool = true);
+  character();
+  //character(bool, bool, bool = true);
   virtual ~character();
-  virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
+  virtual character* Clone(bool = true, bool = true) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   //virtual bool CanRead() const { return true; }
@@ -248,7 +247,6 @@ class character : public entity, public id
   virtual void BeKicked(character*, ushort, uchar);
   virtual void FallTo(vector2d, bool);
   virtual bool CheckCannibalism(ushort) const;
-  virtual void VirtualConstructor() { }
   virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateState(uchar What) { State |= What; }
   virtual void DeActivateState(uchar What) { State &= ~What; }
@@ -421,6 +419,8 @@ class character : public entity, public id
   virtual bool CanUseEquipment(ushort Index) const { return Index < EquipmentSlots() && GetBodyPartOfEquipment(Index); }
   virtual const character_database& GetDataBase() const = 0;
 
+  virtual void LoadDataBaseStats();
+
   DATABASEVALUE(ushort, DefaultAgility);
   DATABASEVALUE(ushort, DefaultStrength);
   DATABASEVALUE(ushort, DefaultEndurance);
@@ -451,7 +451,6 @@ class character : public entity, public id
   DATABASEBOOL(IsUnique);
   DATABASEVALUE(ushort, EatFlags);
   DATABASEVALUE(ulong, TotalVolume);
-  //DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
   DATABASEVALUE(ulong, MeleeStrength);
   DATABASEVALUE(std::string, TalkVerb);
   DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
@@ -485,74 +484,12 @@ class character : public entity, public id
   DATABASEVALUE(uchar, RightLegBonePercentile);
   DATABASEVALUE(uchar, LeftLegBonePercentile);
   DATABASEBOOL(IsNameable);
+  DATABASEVALUE(ushort, BaseEmitation);
 
-  /*virtual ushort GetDefaultAgility() const { return GetDataBase().DefaultAgility; }
-  virtual ushort GetDefaultStrength() const { return GetDataBase().DefaultStrength; }
-  virtual ushort GetDefaultEndurance() const { return GetDataBase().DefaultEndurance; }
-  virtual ushort GetDefaultPerception() const { return GetDataBase().DefaultPerception; }
-  virtual ulong GetDefaultMoney() const { return GetDataBase().DefaultMoney; }
-  virtual ushort GetTotalSize() const { return GetDataBase().TotalSize; }
-  virtual bool CanRead() const { return GetDataBase().CanRead; }
-  virtual bool IsCharmable() const { return GetDataBase().IsCharmable; }
-  virtual uchar GetSex() const { return GetDataBase().; }
-  virtual ulong GetBloodColor() const { return GetDataBase().; }
-  virtual bool CanBeGenerated() const { return GetDataBase().; }
-  virtual bool HasInfraVision() const { return GetDataBase().; }
-  virtual uchar GetCriticalModifier() const { return GetDataBase().; }
-  virtual std::string GetStandVerb() const { return GetDataBase().; }
-  virtual bool CanOpen() const { return GetDataBase().; }
-  virtual bool CanBeDisplaced() const { return GetDataBase().; }
-  virtual ushort GetFrequency() const { return GetDataBase().; }
-  virtual bool CanWalk() const { return GetDataBase().; }
-  virtual bool CanSwim() const { return GetDataBase().; }
-  virtual bool CanFly() const { return GetDataBase().; }
-  virtual ushort GetPhysicalDamageResistance() const { return GetDataBase().; }
-  virtual ushort GetSoundResistance() const { return GetDataBase().; }
-  virtual ushort GetEnergyResistance() const { return GetDataBase().; }
-  virtual ushort GetAcidResistance() const { return GetDataBase().; }
-  virtual ushort GetFireResistance() const { return GetDataBase().; }
-  virtual ushort GetPoisonResistance() const { return GetDataBase().; }
-  virtual ushort GetBulimiaResistance() const { return GetDataBase().; }
-  virtual bool IsUnique() const { return GetDataBase().; }
-  virtual ushort GetEatFlags() const { return GetDataBase().; }
-  virtual ushort GetTotalSize() const { return GetDataBase().; }
-  virtual uchar GetTorsoBonePercentile() const { return GetDataBase().; }
-  virtual ulong GetTotalVolume() const { return GetDataBase().; }
-  virtual vector2d GetBitmapPos() const { return GetDataBase().; }
-  virtual ulong GetMeleeStrength() const { return GetDataBase().; }
-  virtual std::string GetTalkVerb() const { return GetDataBase().; }
-  virtual vector2d GetHeadBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetTorsoBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetArmBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetLegBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetRightArmBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetLeftArmBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetRightLegBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetLeftLegBitmapPos() const { return GetDataBase().; }
-  virtual vector2d GetGroinBitmapPos() const { return GetDataBase().; }
-  virtual ushort GetClothColor() const { return GetDataBase().; }
-  virtual ushort GetSkinColor() const { return GetDataBase().; }
-  virtual ushort GetCapColor() const { return GetDataBase().; }
-  virtual ushort GetHairColor() const { return GetDataBase().; }
-  virtual ushort GetEyeColor() const { return GetDataBase().; }
-  virtual ushort GetTorsoMainColor() const { return GetDataBase().; }
-  virtual ushort GetBeltColor() const { return GetDataBase().; }
-  virtual ushort GetTorsoSpecialColor() const { return GetDataBase().; }
-  virtual ushort GetArmMainColor() const { return GetDataBase().; }
-  virtual ushort GetArmSpecialColor() const { return GetDataBase().; }
-  virtual ushort GetLegMainColor() const { return GetDataBase().; }
-  virtual ushort GetLegSpecialColor() const { return GetDataBase().; }
-  virtual uchar GetHeadBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetTorsoBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetArmBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetRightArmBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetLeftArmBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetGroinBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetLegBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetRightLegBonePercentile() const { return GetDataBase().; }
-  virtual uchar GetLeftLegBonePercentile() const { return GetDataBase().; }*/
+  virtual const character::prototype* const GetProtoType() const = 0;
 
  protected:
+  virtual void VirtualConstructor() { }
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor0(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -593,7 +530,7 @@ class character : public entity, public id
   virtual void StandIdleAI();
   virtual void CreateCorpse();
   virtual std::string GetDeathMessage() { return Name(DEFINITE) + " is slain."; }
-  virtual void SetDefaultStats() = 0;
+  //virtual void SetDefaultStats() = 0;
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
@@ -634,7 +571,7 @@ class character : public entity, public id
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
-#define CHARACTER_PROTOTYPE(name, base, setstats)\
+#define CHARACTER_PROTOTYPE(name, base)\
   \
   character_database name##_DataBase;\
   \
@@ -642,23 +579,16 @@ class character : public entity, public id
   {\
    public:\
     name##_prototype() { Index = protocontainer<character>::Add(this); }\
-    virtual character* Clone(bool = true, bool = true, bool = true) const;\
-    virtual character* CloneAndLoad(inputfile&) const;\
+    virtual character* Clone(bool MakeBodyParts = true, bool CreateEquipment = true) const { return new name(MakeBodyParts, CreateEquipment); }\
     virtual std::string ClassName() const { return #name; }\
-    /*virtual bool CanBeGenerated() const { return name::CanBeGenerated(); }\
-    virtual ushort Frequency() const { return name::Frequency(); }*/\
     virtual character_database& GetDataBase() const { return name##_DataBase; }\
   } name##_ProtoType;\
   \
-  name::name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts) : base(false, false, false, false)\
+  name::name(bool MakeBodyParts, bool CreateEquipment)\
   {\
-    if(SetStats)\
-      SetDefaultStats();\
-    \
-    if(AllocBodyParts)\
-      {\
-	AllocateBodyPartArray();\
-      }\
+    LoadDataBaseStats();\
+    VirtualConstructor();\
+    AllocateBodyPartArray();\
     \
     if(MakeBodyParts)\
       {\
@@ -671,77 +601,38 @@ class character : public entity, public id
       }\
   }\
   \
-  name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false, false)\
-  {\
-    if(SetStats)\
-      SetDefaultStats();\
-    \
-    AllocateBodyPartArray();\
-    CreateBodyParts();\
-    SetMainMaterial(FirstMaterial);\
-    \
-    if(CreateEquipment)\
-      CreateInitialEquipment();\
-    \
-    RestoreHP();\
-  }\
-  \
-  character* name::Clone(bool MakeBodyParts, bool SetStats, bool CreateEquipment) const\
-  {\
-    return new name(MakeBodyParts, SetStats, CreateEquipment);\
-  }\
-  \
-  character* name##_prototype::Clone(bool MakeBodyParts, bool SetStats, bool CreateEquipment) const\
-  {\
-    return new name(MakeBodyParts, SetStats, CreateEquipment);\
-  }\
-  \
-  character* name##_prototype::CloneAndLoad(inputfile& SaveFile) const\
-  {\
-    character* Char = new name(false, false, false);\
-    Char->Load(SaveFile);\
-    return Char;\
-  }\
-  \
-  void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const character::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  const character::prototype* const name::GetProtoType() const { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   const character_database& name::GetDataBase() const { return name##_DataBase; }
 
 #else
 
-#define CHARACTER_PROTOTYPE(name, base, setstats)
+#define CHARACTER_PROTOTYPE(name, base)
 
 #endif
 
-#define CHARACTER(name, base, setstats, data)\
+#define CHARACTER(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true, bool = true, bool = true);\
-  name(material*, bool = true, bool = true);\
+  name(bool = true, bool = true);\
   static ushort StaticType();\
-  static const character::prototype* const GetPrototype();\
-  virtual character* Clone(bool = true, bool = true, bool = true) const;\
   virtual const character_database& GetDataBase() const;\
+  virtual const character::prototype* const GetProtoType() const;\
  protected:\
-  virtual void SetDefaultStats();\
   virtual ushort Type() const;\
   data\
-}; CHARACTER_PROTOTYPE(name, base, setstats)
+}; CHARACTER_PROTOTYPE(name, base)
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts) : base(MakeBodyParts, SetStats, CreateEquipment, AllocBodyParts) { VirtualConstructor(); }\
   data\
 };
 
 #endif
-
-
 

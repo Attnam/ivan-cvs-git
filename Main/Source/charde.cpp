@@ -2777,3 +2777,59 @@ ushort humanoid::GetBodyPartColor3(ushort Index, ushort Frame)
       return 0;
     }
 }
+
+void human::VirtualConstructor()
+{
+  humanoid::VirtualConstructor();
+  SetAgility(GetAgility() + RAND() % 11);
+  SetStrength(GetStrength() + RAND() % 6);
+  SetEndurance(GetEndurance() + RAND() % 6);
+  SetPerception(GetPerception() + RAND() % 6);
+  SetMoney(GetMoney() + RAND() % 101);
+  SetSize(GetSize() + RAND() % 51);
+}
+
+void petrus::VirtualConstructor()
+{
+  humanoid::VirtualConstructor();
+  SetHealTimer(100);
+  SetStoryState(0);
+  game::SetPetrus(this);
+  SetAssignedName("Petrus");
+}
+
+void shopkeeper::VirtualConstructor()
+{
+  humanoid::VirtualConstructor();
+  SetMoney(GetMoney() + RAND() % 2001);
+}
+
+void oree::VirtualConstructor()
+{
+  humanoid::VirtualConstructor();
+  SetAssignedName("Oree");
+}
+
+void elpuri::VirtualConstructor()
+{
+  character::VirtualConstructor();
+  SetAssignedName("Elpuri");
+}
+
+void communist::VirtualConstructor()
+{
+  humanoid::VirtualConstructor();
+  SetAssignedName("Ivan");
+}
+
+void kamikazedwarf::VirtualConstructor()
+{
+  dwarf::VirtualConstructor();
+  SetDivineMaster(1 + RAND() % (game::GetGods() - 1));
+}
+
+void unicorn::VirtualConstructor()
+{
+  character::VirtualConstructor();
+  SetAlignment(RAND() % 3);
+}

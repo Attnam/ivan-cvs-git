@@ -117,7 +117,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
 	  if(Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
 	    {
-	      character* Monster = Proto->Clone(true, true, CreateItems);
+	      character* Monster = Proto->Clone(true, CreateItems);
 	      float Danger = Monster->MaxDanger();
 
 	      if(c >= 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
@@ -166,7 +166,7 @@ character* protosystem::CreateMonster(bool CreateItems)
 
       if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
 	{
-	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
+	  character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, CreateItems);
 
 	  Monster->SetTeam(game::GetTeam(1));
 

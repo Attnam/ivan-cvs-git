@@ -856,6 +856,7 @@ data<character>::data<character>()
   INITMEMBER(RightLegBonePercentile);
   INITMEMBER(LeftLegBonePercentile);
   INITMEMBER(IsNameable);
+  INITMEMBER(BaseEmitation);
 }
 
 data<item>::data<item>()
@@ -889,6 +890,7 @@ data<item>::data<item>()
   INITMEMBER(DefaultContainedVolume);
   INITMEMBER(BitmapPos);
   INITMEMBER(Price);
+  INITMEMBER(BaseEmitation);
 }
 
 data<material>::data<material>()
@@ -1084,6 +1086,7 @@ void database<character>::Apply()
 	  SETDATAWITHDEFAULT(RightLegBonePercentile, DataBase.LegBonePercentile);
 	  SETDATAWITHDEFAULT(LeftLegBonePercentile, DataBase.LegBonePercentile);
 	  SETDATAWITHDEFAULT(IsNameable, true);
+	  SETDATAWITHDEFAULT(BaseEmitation, 0);
 	}
       else
 	{
@@ -1147,6 +1150,7 @@ void database<character>::Apply()
 	  DataBase.RightLegBonePercentile = DataBase.LegBonePercentile;
 	  DataBase.LeftLegBonePercentile = DataBase.LegBonePercentile;
 	  DataBase.IsNameable = true;
+	  DataBase.BaseEmitation = 0;
 	}
     }
 }
@@ -1190,6 +1194,7 @@ void database<item>::Apply()
 	  SETDATAWITHDEFAULT(DefaultContainedVolume, 0);
 	  SETDATA(BitmapPos);
 	  SETDATAWITHDEFAULT(Price, 0);
+	  SETDATAWITHDEFAULT(BaseEmitation, 0);
 	}
       else
 	{
@@ -1219,6 +1224,7 @@ void database<item>::Apply()
 	  DataBase.DefaultSecondaryVolume = 0;
 	  DataBase.DefaultContainedVolume = 0;
 	  DataBase.Price = 0;
+	  DataBase.BaseEmitation = 0;
 	}
     }
 }

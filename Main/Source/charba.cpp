@@ -29,13 +29,18 @@
 
 void (character::*character::StateHandler[STATES])() = { &character::PolymorphHandler, &character::HasteHandler, &character::SlowHandler };
 
-character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts) : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
+character::character() : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
+{
+  SetHasBe(true);
+}
+
+/*character::character(bool MakeBodyParts, bool SetStats, bool CreateEquipment, bool AllocBodyParts) : Stack(new stack(0, HIDDEN)), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0)
 {
   SetHasBe(true);
 
   if(MakeBodyParts || SetStats || CreateEquipment || AllocBodyParts)
     ABORT("BOOO!");
-}
+}*/
 
 character::~character()
 {
@@ -4126,4 +4131,25 @@ void character::UpdateBodyPartPicture(ushort Index)
 
       GetBodyPart(Index)->UpdatePictures();
     }
+}
+
+void character::LoadDataBaseStats()
+{
+  SetAgility(GetDefaultAgility());
+  SetStrength(GetDefaultStrength());
+  SetEndurance(GetDefaultEndurance());
+  SetPerception(GetDefaultPerception());
+  SetMoney(GetDefaultMoney());
+}
+
+character* character::Clone(bool MakeBodyParts, bool CreateEquipment) const
+{
+  return GetProtoType()->Clone(MakeBodyParts, CreateEquipment);
+}
+
+character* character_prototype::CloneAndLoad(inputfile& SaveFile) const
+{
+  character* Char = Clone(false, false);
+  Char->Load(SaveFile);
+  return Char;
 }

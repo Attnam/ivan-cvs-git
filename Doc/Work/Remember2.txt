@@ -1,19 +1,50 @@
-Teko‰ly.
-Kick ja bite.
-Pertun kasvot.
-V‰rit.
-Enner beast ihmiseksi.
-Menu listaksi ja vasemmalle.
-Materiaaliv‰ritetty kursori.
-Damage estimate kuntoon.
-Werewolfit.
-Ring of fire resistance.
-Wand of resurrection.
-Paneeli kuntoon.
-Efektien l‰pik‰yminen.
-Miina.
-Lookmode.
-Alphablit pulloihin.
-Bodypartien ja actioneiden scoret.
-Luut.
-define.h:t
+Datasoitujen luokkien tarkistus + erikoisyliajot. (timo)
+Nostoteko‰ly.
+Kick ja bite toimimaan, jos k‰det irti. (timo)
+Pertun kasvot. (timo)
+Zoom lookiin. (hex)
+V‰rien tarkistusl‰pik‰yminen.
+Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
+Menua vasemmalle. (hex)
+Damage estimate kuntoon. (timo)
+Werewolfit kuntoon. (timo)
+Paneeli kuntoon:
+* Uusi siluetti. (kahvi)
+* Itemit sen ymp‰rille.
+* Attribuutit ja status alle.
+Efektien l‰pik‰yminen. (timo)
+Miina kuntoon. (timo)
+Lookmoden messaget kuntoon. (timo)
+Bodypartien ja actioneiden scoret. (timo)
+Luut kuntoon. (timo)
+BloodColorin animaatiostuktuuri. (timo)
+Paniikki. (timo)
+Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
+Leather armorin nimi kuntoon. (hex)
+Taistelun tasapainotus. (timo)
+Animaatiot: Artifaktit, lamput...
+Amulet of life saving. (hex)
+Amulet of ESP.
+Ring of polymorph. (hex)
+Ring of strength.
+Ring of see invisible. (hex)
+Ring of teleportation. (hex)
+Potion of invisibility. (hex)
+Magic whistle. (hex, kuva kahvi)
+Inhandspicit kuntoon. (timo)
+Ruumiinosien hoitotavat:
+* Temppelit rahaa vastaan - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
+* Atavus - lahjaraaja (max hp). (hex)
+* Seges - raaja paikoilleen (max hp) tai uusi luonnollinen raaja (max hp). (hex)
+* Silva - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
+* Loricatus - mithril raaja (max hp). (hex)
+* Scabies - mutaatioraaja eli raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp), mutta ominaisuuksia on muuteltu satunnaisesti. (hex)
+* Cruentus - ter‰sraaja (max hp). (hex)
+* Potion of healing - uusi luonnollinen raaja (1 hp). (hex)
+* Enkelit (kerran 2500 vuorossa) - raaja paikoilleen (1 hp). (hex)
+* Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
+Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
+Avaimelle kuva. (kahvi)
+Helmet. (hex)
+BaseEmitationit toimintaan. (timo)
+Pertun nutin wishaaminen. (timo)
