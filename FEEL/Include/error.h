@@ -27,8 +27,8 @@ private:
 	static int NewHandler(size_t);
 	static int (*OldNewHandler)(size_t);
 #else
-	static void NewHandler(void);
-	static void (*OldNewHandler)(void);
+	static void NewHandler();
+	static void (*OldNewHandler)();
 #endif
 #ifdef WIN32
 	static HWND* hWnd;

@@ -1035,31 +1035,27 @@ void levelsquare::DrawParticles(ushort Color, uchar)
 
 	vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
-	for(ushort c = 0; c < 20; c++)
-	{
-		DOUBLEBUFFER->PutPixel(BitPos.X + RAND() % 16, BitPos.Y + RAND() % 16, Color);
-	}
+	game::DrawEverythingNoBlit(false);
+
+	for(ushort c = 0; c < 10; c++)
+		DOUBLEBUFFER->PutPixel(1 + BitPos.X + RAND() % 14, 1 + BitPos.Y + RAND() % 14, Color);
+
 	graphics::BlitDBToScreen();
 
-
 	NewDrawRequested = true; // Clean the pixels from the screen afterwards
+
 	if(CanBeSeen())
 		while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
 void levelsquare::StrikeEverything(character* Zapper, uchar)
 {
+	GetStack()->StruckByWandOfStriking(Zapper);
+
 	if(GetCharacter())
 	{
-		if(GetCharacter()->GetIsPlayer())
-			ADD_MESSAGE("The wand hits you!");
-		else
-			Zapper->Hostility(GetCharacter());
-
-		if(CanBeSeen()) ADD_MESSAGE("The wand hits %s.", GetCharacter()->CNAME(DEFINITE));
-		
-		GetCharacter()->SetHP(GetCharacter()->GetHP() - RAND() % 5 - 1);
-		GetCharacter()->CheckDeath("killed by a wand of striking.");
+		Zapper->Hostility(GetCharacter());
+		GetCharacter()->StruckByWandOfStriking(Zapper);
 	}
 
 	GetOverLevelTerrain()->ReceiveStrike();	

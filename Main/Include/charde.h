@@ -364,7 +364,7 @@ class ABSTRACT_CHARACTER
 	frog,
 	character,
 public:
-	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool CanOpenDoors() const { return false; }
 protected:
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
 	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBiteVerb(Critical))
@@ -658,7 +658,7 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 100; else return 0; }
 	virtual ulong GetBloodColor() const RET(BLACK)
 	virtual bool HasInfraVision() const { return true; }
-	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool CanOpenDoors() const { return false; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(272,0)
 	virtual std::string NameSingular() const RET("spider")
@@ -817,7 +817,7 @@ public:
 	virtual void GetAICommand() {}
 	virtual std::string StandVerb() const { return "swimming"; }
 	virtual bool CanBeDisplaced() const { return false; }
-	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool CanOpenDoors() const { return false; }
 protected:
 	virtual std::string NameSingular() const RET("female dolphin in season")
 	virtual float GetMeleeStrength() const RET(1000)
@@ -1122,7 +1122,7 @@ class CHARACTER
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 1000; else return 0; }
 	virtual std::string StandVerb() const { return "flying"; }
-	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool CanOpenDoors() const { return false; }
 	virtual bool HasInfraVision() const { return true; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(464,0)
@@ -1270,7 +1270,7 @@ class CHARACTER
 	},
 public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2000; else return 0; }
-	virtual bool CanOpenDoors(void) const { return false; }
+	virtual bool CanOpenDoors() const { return false; }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(512,0)
 	virtual std::string NameSingular() const RET("large rat")

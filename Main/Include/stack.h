@@ -64,7 +64,7 @@ public:
 	long Score() const;
 	bool Polymorph();
 	void ReceiveSound(float);
-	void StruckByWandOfStriking(void);
+	void StruckByWandOfStriking(character*);
 	void CheckForStepOnEffect(character*);
 	square* GetSquareTrulyUnder() const;
 	levelsquare* GetLevelSquareTrulyUnder() const { return (levelsquare*)GetSquareTrulyUnder(); }

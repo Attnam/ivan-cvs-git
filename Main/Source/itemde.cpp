@@ -463,7 +463,7 @@ bool scrollofchangematerial::Read(character* Reader)
 	return true;
 }
 
-item* brokenbottle::BetterVersion(void) const
+item* brokenbottle::BetterVersion() const
 {
 	material* Stuff;
 
@@ -531,7 +531,7 @@ bool platemail::ImpactDamage(ushort Strength, bool IsShown, stack* ItemStack)
 		return false;
 }
 
-void brokenbottle::GetStepOnEffect(character* Stepper)
+bool brokenbottle::GetStepOnEffect(character* Stepper)
 {
 	if(!(RAND() % 10))
 	{
@@ -544,6 +544,8 @@ void brokenbottle::GetStepOnEffect(character* Stepper)
 		Stepper->SetHP(Stepper->GetHP() - RAND() % 2 - 1);
 		Stepper->CheckDeath("stepped on a broken bottle");
 	}
+
+	return false;
 }
 
 material* corpse::BeDippedInto()
@@ -606,7 +608,7 @@ void corpse::SetBloodColor(ushort Color)
 	Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
-item* potion::BetterVersion(void) const
+item* potion::BetterVersion() const
 {
 	if(!GetMaterial(1))
 	{
@@ -626,7 +628,7 @@ item* potion::BetterVersion(void) const
 		return 0;
 }
 
-item* can::BetterVersion(void) const
+item* can::BetterVersion() const
 {
 	if(!GetMaterial(1))
 	{
@@ -715,24 +717,34 @@ ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: r
 
 bool wand::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
-	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("%s catches fire and explodes!", CNAME(DEFINITE));
+	if(!(RAND() % 10))
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s catches fire and explodes!", CNAME(DEFINITE));
 
-	MotherStack->RemoveItem(MotherStack->SearchItem(this));
-	SetExists(false);
-	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
-	return true;
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+		return true;
+	}
+	else
+		return false;
 }
 
 bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long)
 {
-	if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("%s explodes in the heat!", CNAME(DEFINITE));
+	if(!(RAND() % 3))
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s explodes in the heat!", CNAME(DEFINITE));
 
-	MotherStack->RemoveItem(MotherStack->SearchItem(this));
-	SetExists(false);
-	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
-	return true;
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+		return true;
+	}
+	else
+		return false;
 }
 
 std::string wand::Name(uchar Case) const 
@@ -747,7 +759,7 @@ std::string wand::Name(uchar Case) const
 
 bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect)
 {
-	if(SizeOfEffect > 1 + RAND() % 10 && GetMaterial(0)->IsFlammable())
+	if(!(RAND() % 10) && GetMaterial(0)->IsFlammable())
 	{
 		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s catches fire!", CNAME(DEFINITE));
@@ -763,6 +775,7 @@ bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect
 void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 {
 	vector2d CurrentPos = Zapper->GetPos();
+
 	if(Direction != '.')
 		for(ushort Length = 0; Length < Range; ++Length)
 		{
@@ -780,14 +793,18 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 			{	
 				CurrentPos += game::GetMoveVector(Direction);
 				BeamEffect(Zapper, Direction, Temp);
-				Temp->DrawParticles(GetBeamColor(), Direction);
+
+				if(Temp->CanBeSeen(true))
+					Temp->DrawParticles(GetBeamColor(), Direction);
 			}
 		}
 	else
 	{
 		levelsquare* Where = Zapper->GetLevelSquareUnder();
 		BeamEffect(Zapper, Direction, Where);
-		Where->DrawParticles(GetBeamColor(), Direction);
+
+		if(Where->CanBeSeen(true))
+			Where->DrawParticles(GetBeamColor(), Direction);
 	}
 }
 
@@ -800,3 +817,51 @@ void wandofstriking::BeamEffect(character* Who, uchar Dir, levelsquare* Where)
 { 
 	Where->StrikeEverything(Who, Dir); 
 }
+
+bool holybook::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect)
+{
+	if(!(RAND() % 2) && GetMaterial(0)->IsFlammable())
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s catches fire!", CNAME(DEFINITE));
+
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool wand::StruckByWandOfStriking(character* Striker, stack* MotherStack) 
+{ 
+	if(!(RAND() % 10))
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s explodes!", CNAME(DEFINITE));
+
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, MotherStack->GetLevelSquareUnder()->GetPos(), 40);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool backpack::StruckByWandOfStriking(character* Striker, stack* MotherStack) 
+{ 
+	if(RAND() % 3)
+	{
+		if(MotherStack->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s explodes!", CNAME(DEFINITE));
+
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Striker, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+		return true;
+	}
+	else
+		return false;
+}
+

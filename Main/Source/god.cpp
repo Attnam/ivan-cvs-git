@@ -25,7 +25,7 @@ void god::Pray()
 			AdjustRelation(50);
 			game::ApplyDivineAlignmentBonuses(this, true);
 
-			if(Relation > 500 && !(RAND() % 1000))
+			if(Relation > 500 && !(RAND() % 100))
 			{
 				character* Angel = CreateAngel();
 
@@ -661,7 +661,7 @@ void valpurus::Pray()
 		AdjustRelation(-500);
 		game::ApplyDivineAlignmentBonuses(this, true);
 
-		if(Relation > 500 && !(RAND() % 10))
+		if(Relation > 500 && !(RAND() % 5))
 		{
 			character* Angel = CreateAngel();
 
@@ -680,7 +680,7 @@ void valpurus::Pray()
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
 
-		if(Relation < -500 && !(RAND() % 50))
+		if(Relation < -500 && !(RAND() % 25))
 		{
 			character* Angel = CreateAngel();
 
@@ -703,7 +703,7 @@ void atavus::Pray()
 		AdjustRelation(-250);
 		game::ApplyDivineAlignmentBonuses(this, true);
 
-		if(Relation > 500 && !(RAND() % 10))
+		if(Relation > 500 && !(RAND() % 5))
 		{
 			character* Angel = CreateAngel();
 
@@ -722,7 +722,7 @@ void atavus::Pray()
 		AdjustRelation(-100);
 		game::ApplyDivineAlignmentBonuses(this, false);
 
-		if(Relation < -500 && !(RAND() % 50))
+		if(Relation < -500 && !(RAND() % 25))
 		{
 			character* Angel = CreateAngel();
 
@@ -935,7 +935,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 		PrintRelation();
 
-		if(OfferValue > 0 && Relation > 500 && !(RAND() % 500))
+		if(OfferValue > 0 && Relation > 500 && !(RAND() % 100))
 		{
 			character* Angel = CreateAngel();
 
@@ -1020,7 +1020,7 @@ void god::PlayerVomitedOnAltar()
 	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
 	game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 
-	if(!(RAND() % 500))
+	if(!(RAND() % 50))
 	{
 		character* Angel = CreateAngel();
 

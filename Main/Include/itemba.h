@@ -76,10 +76,10 @@ public:
 	virtual void ChangeMainMaterial(material*);
 	virtual void CheckPickUpEffect(character*) {}
 	virtual uchar GetWeaponCategory() const;
-	virtual void StruckByWandOfStriking(stack*);
+	virtual bool StruckByWandOfStriking(character*, stack*);
 	virtual float GetThrowStrengthModifier() const { return 1; }
 	virtual bool UseThrowStrengthModifier() const { return false; }
-	virtual void GetStepOnEffect(character*) {}
+	virtual bool GetStepOnEffect(character*) { return false; }
 	virtual ulong Price() const { return 0; }
 	virtual bool IsTheAvatar() const RET(false)
 	virtual void SignalSquarePositionChange(bool) {}

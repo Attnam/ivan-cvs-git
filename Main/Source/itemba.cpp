@@ -221,9 +221,9 @@ uchar item::GetWeaponCategory() const
 	return UNCATEGORIZED;
 }
 
-void item::StruckByWandOfStriking(stack* What) 
+bool item::StruckByWandOfStriking(character*, stack* What) 
 { 
-	ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What); 
+	return ImpactDamage(10, What->GetLevelSquareUnder()->CanBeSeen(), What);
 }
 
 bool item::Consume(character* Eater, float Amount)

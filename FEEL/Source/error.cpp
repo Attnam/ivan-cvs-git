@@ -8,7 +8,7 @@
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
 #else
-void (*globalerrorhandler::OldNewHandler)(void) = 0;
+void (*globalerrorhandler::OldNewHandler)() = 0;
 #endif
 
 #ifdef WIN32
@@ -60,7 +60,7 @@ void globalerrorhandler::Abort(const char* Format, ...)
 #ifdef VC
 int globalerrorhandler::NewHandler(size_t)
 #else
-void globalerrorhandler::NewHandler(void)
+void globalerrorhandler::NewHandler()
 #endif
 {
 #ifdef WIN32
@@ -76,3 +76,4 @@ void globalerrorhandler::NewHandler(void)
 	return 0;
 #endif
 }
+

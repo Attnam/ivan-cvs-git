@@ -218,7 +218,7 @@ public:
 	virtual void EndFainted();
 	virtual void EndConsuming();
 	virtual void EndPolymorph();
-	virtual void StruckByWandOfStriking();
+	virtual void StruckByWandOfStriking(character*);
 	virtual void StateAutoDeactivation();
 	virtual team* GetTeam() const { return Team; }
 	virtual void SetTeam(team*);
@@ -260,7 +260,7 @@ public:
 	virtual std::string StandVerb() const { return "standing"; }
 	virtual stack* GetGiftStack() const;
 	virtual void MoveRandomlyInRoom();
-	virtual bool CanOpenDoors(void) const { return true; }
+	virtual bool CanOpenDoors() const { return true; }
 	virtual void GoHandler();
 	virtual void EndGoing();
 	virtual bool Go();

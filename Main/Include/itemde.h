@@ -110,7 +110,7 @@ public:
 	virtual vector2d GetBitmapPos() const { return vector2d(16, GetMaterial(1) ? 288 : 304); }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 50; case 1: return 500; default: return 0; } }
 	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
-	virtual item* BetterVersion(void) const;
+	virtual item* BetterVersion() const;
 	virtual uchar GetConsumeMaterial() const { return 1; }
 protected:
 	virtual ushort GetFormModifier() const RET(30)
@@ -469,7 +469,7 @@ public:
 	virtual vector2d GetBitmapPos() const RETV(16,160)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))
-	virtual void GetStepOnEffect(character*);
+	virtual bool GetStepOnEffect(character*);
 protected:
 	virtual ushort GetFormModifier() const RET(100)
 );
@@ -767,6 +767,7 @@ public:
 	virtual void Beam(character*, uchar, uchar);
 	virtual void BeamEffect(character*, uchar, levelsquare*) {};
 	virtual ushort GetBeamColor() const { return MAKE_RGB(128,128,128); }
+	virtual bool StruckByWandOfStriking(character*, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(80)
 	uchar Charges;
@@ -1057,6 +1058,7 @@ public:
 	virtual bool Apply(character*, stack*);
 	virtual bool IsExplosive() const { return (GetMaterial(1) && GetMaterial(1)->IsExplosive()) ? true : false; }
 	virtual bool ReceiveFireDamage(character*, stack*, long);
+	virtual bool StruckByWandOfStriking(character*, stack*);
 protected:
 	virtual std::string NameSingular() const RET("backpack")
 	virtual ushort GetFormModifier() const RET(20)
@@ -1084,6 +1086,7 @@ public:
 	virtual uchar GetOwnerGod() const { return OwnerGod; }
 	virtual void SetOwnerGod(uchar What) { OwnerGod = What; }
 	virtual bool Read(character*);
+	virtual bool ReceiveFireDamage(character*, stack*, long);
 protected:
 	virtual std::string NameSingular() const RET("holy book")
 	virtual ushort GetFormModifier() const RET(30)

@@ -10,19 +10,19 @@ class windowhandler;
 class window
 {
  public:
-  virtual void Draw(void);
+  virtual void Draw();
   virtual void SetPos(rectangle What) { Pos = What; }
   window(rectangle Pos, unsigned short BackgroundColor, unsigned short BorderColor, unsigned short BarColor) : Pos(Pos), BackgroundColor(BackgroundColor), BorderColor(BorderColor), BarColor(BarColor) {}
-  void BringOnTop(void);
+  void BringOnTop();
   virtual void Click(vector2d);
-  virtual rectangle GetPos(void) { return Pos; }
-  window(void) {}
+  virtual rectangle GetPos() { return Pos; }
+  window() {}
   virtual void SetBackgroundColor(unsigned short What) { BackgroundColor = What; }
-  virtual void DrawBackground(void);
-  virtual vector<windowobject*>& GetWindowObjectList(void) { return WindowObjectList; }
+  virtual void DrawBackground();
+  virtual vector<windowobject*>& GetWindowObjectList() { return WindowObjectList; }
   static void Close(window*);
   virtual void MoveTo(vector2d);
-  virtual void DrawButtons(void);
+  virtual void DrawButtons();
   virtual void TryResize(vector2d);
  protected:
   vector<windowobject*> WindowObjectList;
@@ -34,13 +34,13 @@ class editorwindow : public window
 {
  public:
   editorwindow(rectangle, rectangle, toolwindow*);
-  ~editorwindow(void);
-  virtual void Draw(void);
+  ~editorwindow();
+  virtual void Draw();
   void Click(vector2d);
   virtual void SetBitmapPos(rectangle);
   virtual void DrawPixel(vector2d);
-  virtual rectangle GetBitmapPos(void) { return BitmapPos; }
-  virtual void UpdateGraphics(void);
+  virtual rectangle GetBitmapPos() { return BitmapPos; }
+  virtual void UpdateGraphics();
  protected:
   BITMAP* Data;
   rectangle BitmapPos;
@@ -50,11 +50,11 @@ class editorwindow : public window
 class chooserwindow : public window
 {
  public:
-  virtual void Draw(void);
+  virtual void Draw();
   chooserwindow(rectangle, editorwindow*);
   void Click(vector2d);
-  void ScrollUp(void) { if(Scroll.Y > 15) Scroll.Y -= 16; }
-  void ScrollDown(void) { if(Scroll.Y + Pos.Bottom - Pos.Top <  graphics::GetData()->w + 16) Scroll.Y += 16; }
+  void ScrollUp() { if(Scroll.Y > 15) Scroll.Y -= 16; }
+  void ScrollDown() { if(Scroll.Y + Pos.Bottom - Pos.Top <  graphics::GetData()->w + 16) Scroll.Y += 16; }
   void SetSelected(rectangle What) { Selected = What; }
   void SetScroll(vector2d What) { Scroll = What; }
  protected:
@@ -69,7 +69,7 @@ class toolwindow : public window
  public:
   toolwindow(rectangle);
   virtual void SetActive(unsigned char);
-  virtual unsigned char GetActive(void) const { return Active; }
+  virtual unsigned char GetActive() const { return Active; }
  protected:
   unsigned char Active;
 };
@@ -77,7 +77,7 @@ class toolwindow : public window
 class palettechooser : public window
 {
  public:
-  void Draw(void);
+  void Draw();
   
 
  protected:
@@ -87,3 +87,4 @@ class palettechooser : public window
 
 #endif
   
+

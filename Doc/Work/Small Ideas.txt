@@ -47,11 +47,8 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
-World map terrain descriptions shouldn't have an article.
 Talk idea.
-Lookmode should show wielded item.
 Script should have an initial blood level of square option.
-Check the load system.
 Balancing offervalues.
 Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
 Donkey should be named "an ass".
@@ -69,3 +66,5 @@ Meditation command.
 Opening a banana should remove its peals.
 Uses for a holybook after it's been read.
 Specialities to daemon flesh.
+Fixing level 10.
+Pressing X while in WMode should give more scrolls of wishing.

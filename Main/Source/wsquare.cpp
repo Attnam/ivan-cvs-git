@@ -154,9 +154,9 @@ void worldmapsquare::UpdateMemorizedDescription(bool)
 			SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(INDEFINITE) + Continent + ", height: " + GetWorldMapUnder()->GetAltitude(Pos) + " meters");*/
 
 		if(GetOverWorldMapTerrain()->Name(UNARTICLED) != "atmosphere")
-			SetMemorizedDescription(GetOverWorldMapTerrain()->Name(INDEFINITE) + " on " + GetGroundWorldMapTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetOverWorldMapTerrain()->Name(INDEFINITE) + " surrounded by " + GetGroundWorldMapTerrain()->Name(UNARTICLED));
 		else
-			SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(INDEFINITE));
+			SetMemorizedDescription(GetGroundWorldMapTerrain()->Name(UNARTICLED));
 
 		DescriptionChanged = false;
 	}

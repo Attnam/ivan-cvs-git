@@ -429,16 +429,24 @@ void stack::ReceiveSound(float Strength)
 		GetItem(x)->ReceiveSound(Strength, GetLevelSquareTrulyUnder()->CanBeSeen(), this);
 }
 
-void stack::StruckByWandOfStriking(void)
+void stack::StruckByWandOfStriking(character* Zapper)
 {
-	for(ushort x = 0; x < GetItems(); ++x)
-		GetItem(x)->StruckByWandOfStriking(this);
+	for(ushort c = 0; c < GetItems();)
+		if(!GetItem(c)->StruckByWandOfStriking(Zapper, this))
+			++c;
+
+	//for(ushort x = 0; x < GetItems(); ++x)
+	//	GetItem(x)->StruckByWandOfStriking(this);
 }
 
 void stack::CheckForStepOnEffect(character* Stepper)
 {
-	for(ushort c = 0; c < GetItems(); c++)
-		GetItem(c)->GetStepOnEffect(Stepper);
+	for(ushort c = 0; c < GetItems();)
+		if(!GetItem(c)->GetStepOnEffect(Stepper))
+			++c;
+
+	//for(ushort c = 0; c < GetItems(); c++)
+	//	GetItem(c)->GetStepOnEffect(Stepper);
 }
 
 square* stack::GetSquareTrulyUnder() const

@@ -149,10 +149,7 @@ void game::Init(std::string Name)
 
 	if(Name == "")
 		if(configuration::GetDefaultName() == "")
-		{
-			DOUBLEBUFFER->Fill(0);
 			SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true));
-		}
 		else
 			SetPlayerName(configuration::GetDefaultName());
 	else

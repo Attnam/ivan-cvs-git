@@ -94,9 +94,7 @@ void configuration::ShowConfigScreen()
 
 	while(true)
 	{
-		if(!game::GetRunning())
-			DOUBLEBUFFER->Fill(0);
-		else
+		if(game::GetRunning())
 		{
 			EMPTY_MESSAGES();
 			game::DrawEverythingNoBlit();

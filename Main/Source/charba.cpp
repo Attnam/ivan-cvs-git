@@ -194,42 +194,46 @@ void character::Be()
 	if(game::GetPlayerBackup() != this)
 	{		
 		if(game::GetIsLoading())
+		{
 			if(!GetIsPlayer())
 				return;
 			else
 				game::SetIsLoading(false);
-
-		ApplyExperience();
-
-		switch(GetBurdenState())
-		{
-		case UNBURDENED:
-			SetAP(GetAP() + 100 + (GetAgility() >> 1));
-		break;
-		case BURDENED:
-			SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
-		break;
-		case STRESSED:
-		case OVERLOADED:
-			SetAP(GetAP() + 50 + (GetAgility() >> 2));
-		break;
 		}
-
-		for(uchar c = 0; c < STATES; ++c)
-			if(StateIsActivated(c))
-				(this->*StateHandler[c])();
-
-		if(!GetExists())
-			return;
-
-		if(GetHP() < GetMaxHP() / 3)
-			SpillBlood(RAND() % 2);
-
-		if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+		else
 		{
-			DeActivateVoluntaryStates();
-			Faint();
-			game::DrawEverything();
+			ApplyExperience();
+
+			switch(GetBurdenState())
+			{
+			case UNBURDENED:
+				SetAP(GetAP() + 100 + (GetAgility() >> 1));
+			break;
+			case BURDENED:
+				SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
+			break;
+			case STRESSED:
+			case OVERLOADED:
+				SetAP(GetAP() + 50 + (GetAgility() >> 2));
+			break;
+			}
+
+			for(uchar c = 0; c < STATES; ++c)
+				if(StateIsActivated(c))
+					(this->*StateHandler[c])();
+
+			if(!GetExists())
+				return;
+
+			if(GetHP() < GetMaxHP() / 3)
+				SpillBlood(RAND() % 2);
+
+			if(GetIsPlayer() && GetNP() < CRITICALHUNGERLEVEL && !(RAND() % 50) && !StateIsActivated(FAINTED) && !StateIsActivated(CONSUMING))
+			{
+				DeActivateVoluntaryStates();
+				Faint();
+				game::DrawEverything();
+			}
 		}
 
 		if(GetAP() >= 1000)
@@ -244,7 +248,6 @@ void character::Be()
 					Timer = 0;
 				}
 
-				CharacterSpeciality();
 				StateAutoDeactivation();
 
 				if(CanMove())
@@ -256,6 +259,8 @@ void character::Be()
 					if(READKEY())
 						DeActivateVoluntaryStates();
 				}
+
+				CharacterSpeciality();
 
 				if(!StateIsActivated(CONSUMING))
 					Hunger();
@@ -270,6 +275,8 @@ void character::Be()
 
 				if(CanMove() && !game::GetInWilderness())
 					GetAICommand();
+
+				CharacterSpeciality();
 
 				Regenerate();
 			}
@@ -1716,7 +1723,20 @@ bool character::Look()
 					std::string Msg = game::PersonalPronoun(Character->GetSex());
 
 					if(Character->GetWielded())
-						Msg += std::string(" is wielding ") + Character->GetWielded()->CNAME(INDEFINITE) + " and";
+					{
+						Msg += std::string(" is wielding ") + Character->GetWielded()->CNAME(INDEFINITE);
+
+						if(Character->GetTorsoArmor())
+						{
+							ADD_MESSAGE("%s.", Msg.c_str());
+							
+							Msg = std::string(game::PersonalPronoun(Character->GetSex())) + " wears " + Character->GetTorsoArmor()->CNAME(INDEFINITE);
+						}
+
+						Msg += " and";
+					}
+					else if(Character->GetTorsoArmor())
+						Msg += std::string(" is wearing ") + Character->GetTorsoArmor()->CNAME(INDEFINITE) + " and";
 
 					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
 						ADD_MESSAGE("%s is tame.", Msg.c_str());
@@ -2644,13 +2664,15 @@ void character::StateAutoDeactivation()
 				}
 }
 
-void character::StruckByWandOfStriking()
+void character::StruckByWandOfStriking(character* Zapper)
 {
 	if(GetIsPlayer())
 		ADD_MESSAGE("The wand hits you.");
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand hits %s.", CNAME(DEFINITE));
+
+	GetStack()->StruckByWandOfStriking(Zapper);
 
 	SetHP(GetHP() - 20 - RAND() % 11);
 
@@ -2800,7 +2822,7 @@ void character::SeekLeader()
 		WayPoint = GetTeam()->GetLeader()->GetPos();
 }
 
-bool character::RestUntilHealed(void)
+bool character::RestUntilHealed()
 {
 	long HPToRest = game::NumberQuestion("How many hit points you desire?", vector2d(7,7), WHITE);
 
@@ -2816,18 +2838,18 @@ bool character::RestUntilHealed(void)
 }
 
 
-void character::RestHandler(void)
+void character::RestHandler()
 {
 	if(GetHP() >= StateCounter[RESTING] || GetHP() == GetMaxHP())
 		EndRest();
 }
 
-void character::EndRest(void)
+void character::EndRest()
 {
 	 DeActivateState(RESTING);
 }
 
-void character::DigHandler(void)
+void character::DigHandler()
 {
 	if(StateCounter[DIGGING] > 0)
 	{
@@ -2837,7 +2859,7 @@ void character::DigHandler(void)
 		EndDig();
 }
 
-void character::EndDig(void)
+void character::EndDig()
 {
 	if(StateIsActivated(DIGGING))
 	{
@@ -3265,3 +3287,4 @@ void character::CheckGearExistence()
 	if(GetWielded() && !GetWielded()->GetExists())
 		SetWielded(0);
 }
+

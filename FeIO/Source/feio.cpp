@@ -60,7 +60,7 @@ ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 	return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, ushort ColorNotSelected) // (MENU)
+int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
 {
 	if(CountChars('\r',sMS) < 1)
 		return (-1);
@@ -79,24 +79,27 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 	{
 		clock_t StartTime = clock();
 
-		Rotation += 0.01;
-
-		if(Rotation > 2 * PI)
-			Rotation -= 2 * PI;
-
 		Buffer.Fill(0);
 
-		uchar x;
+		if(Pentagram)
+		{
+			Rotation += 0.01;
 
-		for(x = 0; x < 10; ++x)
-			Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
-		
+			if(Rotation > 2 * PI)
+				Rotation -= 2 * PI;
+
+			uchar x;
+
+			for(x = 0; x < 10; ++x)
+				Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
+
+			for(x = 0; x < 4; ++x)
+				Buffer.DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
+
+			PentaPicture->MaskedBlit(&Buffer, 0, 0, 143, 141, 16, 16);
+		}
+
 		std::string sCopyOfMS = sMS;
-
-		for(x = 0; x < 4; ++x)
-			Buffer.DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
-
-		PentaPicture->MaskedBlit(&Buffer, 0, 0, 143, 141, 16, 16);
 
 		for(ulong i = 0; i < CountChars('\r',sMS); ++i)
 		{

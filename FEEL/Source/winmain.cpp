@@ -12,9 +12,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	globalerrorhandler::SetWindow(&hWnd);
 #else
 
-int Main(void);
+int Main();
 
-int main(void)
+int main()
 {
 #endif
 	globalerrorhandler::Install();
@@ -42,3 +42,4 @@ int main(void)
 
 	exit(0);
 }
+

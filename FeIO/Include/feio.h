@@ -19,7 +19,7 @@ public:
 	static std::string WhatToLoadMenu(ushort, ushort);
 	static std::string StringQuestion(std::string, vector2d, ushort, ushort, ushort, bool);
 	static long NumberQuestion(std::string, vector2d, ushort, bool);
-	static int Menu(bitmap*, std::string, ushort, ushort);
+	static int Menu(bitmap*, std::string, ushort, ushort, bool);
 	static void TextScreen(std::string, ushort = 0xFFFF, bool = true);
 private:
 	static ulong CountChars(char, std::string);
