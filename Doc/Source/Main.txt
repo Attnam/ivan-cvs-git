@@ -2006,9 +2006,92 @@ material(ulong Volume)
 material(std::ifstream* SaveFile)
 	Constructor of material. 
 
+uchar CFleshColor(void)
+	returns the color of the material when it is used as flesh.
 
+uchar CItemColor(void)
+	returns the color of the material when it is used as a material for an item.
 
-	
+std::string Name(uchar Case)
+	Returns the whole name of the material, according to
+	Case, which can be one of the following:
+
+	UNARTICLED (0)	no article is ever added
+	DEFINITE   (2)	"the" is (usually) added to the name
+	INDEFINITE (6)	"a" or "an" is (usually) added to the name
+
+	You can also specify the flag PLURAL (1) if you wish to. 
+
+ushort GetHitValue()	
+	Returns the hitvalue of the item.
+
+uchar CConsumeType()
+	Returns the consume type of the item.
+
+ulong CVolume()
+	Returns the volume of the material.
+
+ulong CWeight()
+	Returns the weight of the material.
+
+ushort GetDensity()
+	Returns the Density of the material.
+
+uchar EffectType()
+	Returns the type of effect this material has on a character.
+
+ushort Type()
+	Return the type of the item.
+
+ushort TakeDipVolumeAway()
+	Takes some of the volume of the item away and then returns
+	the volume of the material that has been taken away.
+
+void Save(std::ofstream* SaveFile)
+	Saves the material into SaveFile.
+
+ushort CArmorValue(void)
+	returns the armor value of the material.
+
+SVolume(ulong What)
+	Volume of the material is set to What.
+
+ushort CEmitation(void)
+	Returns the light emitation of the material.
+
+ushort OfferValue(void)
+	The value of offering this material a gram.
+
+uchar Alignment(void)
+	Returns the alignment of this material.
+	Possible alignments are:
+		GOOD    (1)
+		NEUTRAL (2)
+		EVIL    (3)
+
+EatEffect(character* Eater, float Amount, float NPModifier)
+	Eater recives an eat effect of this material.
+	Amount is the percent of the whole Volume that 
+	the character has eaten. NPModifier is a number
+	that is used to multiply the actual amount, which
+	is used by some items.
+
+HitEffect(character* Enemy)
+	If the material somehow affects the Enemy then this 
+	function handles it.
+
+short NutritionValue()
+	Returns the nutrion value of the item. The amount is
+	in NPs per 100 grams. 
+
+MinusAmount(float Amount)
+	decreases the volume of the material by Amount percent.
+
+NormalFoodEffect(character* Eater, float Amount, float NPModifier)
+	Eater reseaves the normal food effect. Amount is the percent
+	of the volume that is going to be eaten and NPModifier is 
+	floating point number that is used to multiply this volume.
+	NPModifier is used by some items.
 
 
 
