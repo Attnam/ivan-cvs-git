@@ -782,6 +782,11 @@ void billswill::BeTalkedTo(character*)
 
 void skeleton::BeTalkedTo(character* Talker)
 {
+  if(!GetBodyPart(HEAD))
+    {
+      ADD_MESSAGE("The headless %s remains silent.", Talker->CHARNAME(UNARTICLED));
+      return;
+    }
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
     ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHARDESCRIPTION(DEFINITE));
   else
@@ -1284,7 +1289,12 @@ void zombie::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     if(RAND() % 5)
-      ADD_MESSAGE("\"Need brain!!\"");
+      {
+	if(GetBodyPart(HEADINDEX))
+	  ADD_MESSAGE("\"Need brain!!\"");
+	else
+	  ADD_MESSAGE("\"Need head with brain!!\"");
+      }
     else
       ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   else
@@ -3601,4 +3611,16 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->DropEquipment();
   BodyPart->RemoveFromSlot();
   return Bone;  
+}
+
+bool humanoid::HasFeet() const
+{
+  return (GetBodyPart(LEFTLEGINDEX) || GetBodyPart(RIGHTLEGINDEX));
+}
+
+void zombie::CreateBodyParts()
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c) 
+    if(BodyPartVital(c) || RAND() % 3)
+      CreateBodyPart(c);
 }

@@ -742,6 +742,7 @@ Dungeon 1;
 					J = lion;
 					K = buffalo;
 					S = snake;
+					z = zombie;
 				}
 			}
 			{

@@ -231,8 +231,8 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new skeleton(0, false));
-	Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
+	SetPlayer(new zombie(0, false));
+	//Player->SetRightWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
 	/*Player->GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
 	static_cast<humanoid*>(Player)->GetCurrentRightSingleWeaponSkill()->AddHit(500);*/
 	Player->CalculateAll();

@@ -896,7 +896,7 @@ bool banana::Zap(character*, vector2d, uchar)
 
 bool bananapeals::StepOnEffect(character* Stepper)
 {
-  if(!(RAND() % 3))
+  if(Stepper->HasFeet() && !(RAND() % 3))
     {
       if(Stepper->IsPlayer())
 	ADD_MESSAGE("Auch. Your feet slip on %s and you fall down.", CHARNAME(INDEFINITE));

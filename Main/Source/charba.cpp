@@ -5349,3 +5349,5 @@ float character::GetDurability(short Damage, float ToHitValue, bool UseMaxHP) co
 
   return MinHits;
 }
+
+

@@ -14,9 +14,9 @@ Shopkeeper + levelchange?
 Screenshots don't work in the DOS port. //(do they in Linux?)
 (s) The White Screen Bug.
 //DarkLevel monsters.
-Bats get damage from splinters.
+//Bats get damage from splinters.
 //Potion name bugs.
-Do slimes slip down on banana peals? Or bats?
+//Do slimes slip down on banana peals? Or bats?
 //Hex's buggy messages.
 //Pressing esc in stringquestion crashes game!!!
 Backround problem with config screen.

@@ -1,5 +1,10 @@
 July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
+	* Zombies' and skeletons' heads are no longer vital
+	* Zombies are generated missing some bodyparts
+
+July 25 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
 	* Doors stay closed if closed when broken
 	* Visual bugs with close in Linux with the X-button corrected
 	* Skeletons now drop bones instead of bodyparts

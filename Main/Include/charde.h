@@ -137,6 +137,7 @@ class ABSTRACT_CHARACTER
   virtual leg* GetKickLeg() const;
   virtual void CalculateBodyParts() { BodyParts = HUMANOID_BODYPARTS; }
   virtual void CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = WEAPON_SKILL_CATEGORIES; }
+  virtual bool HasFeet() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -401,6 +402,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual void CreateInitialEquipment();
   virtual item* SevereBodyPart(ushort);
+  virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
  protected:
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is transformed into a crumpled heap of bones."; }
   virtual void CreateCorpse();
@@ -429,6 +431,7 @@ class CHARACTER
   virtual std::string ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
   virtual std::string ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
   virtual std::string BiteNoun() const { return "slime"; }
+  virtual bool HasFeet() const { return false; }
 );
 
 class CHARACTER
@@ -602,6 +605,8 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual void SpillBlood(uchar, vector2d);
+  virtual bool BodyPartVital(ushort Index) const { return Index == GROININDEX || Index == TORSOINDEX; }
+  virtual void CreateBodyParts();
  protected:
   virtual std::string GetDeathMessage() { return GetName(DEFINITE) + " is slain (again)."; }
 );

@@ -639,6 +639,7 @@ class character : public entity, public id
   virtual float GetRelativeDanger(const character* Enemy, bool UseMaxHP) const { return Enemy->GetEffectivityAgainst(this, UseMaxHP) / GetEffectivityAgainst(Enemy, UseMaxHP); }
   virtual float GetDurability(short, float, bool) const;
   virtual float GetEffectivityAgainst(const character*, bool) const = 0;
+  virtual bool HasFeet() const { return true; }
  protected:
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
