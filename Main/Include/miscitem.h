@@ -538,7 +538,7 @@ class ITEM
   item,
  public:
   beartrap(const beartrap&);
-  ~beartrap();
+  virtual ~beartrap();
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void StepOnEffect(character*);

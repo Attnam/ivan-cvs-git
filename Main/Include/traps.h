@@ -25,6 +25,7 @@ class TRAP
   web,
   trap,
  public:
+  virtual ~web();
   virtual void AddDescription(festring&) const;
   virtual bool TryToUnStick(character*, vector2d);
   virtual int GetTrapBaseModifier() const { return Strength; }

@@ -11,15 +11,22 @@
 
 /* Compiled through trapset.cpp */
 
-void web::VirtualConstructor(bool)
+web::~web()
 {
-  TrapData.TrapID = game::CreateNewTrapID(this);
-  TrapData.VictimID = 0;
-  Picture = new bitmap(16,16, TRANSPARENT_COLOR);
-  bitmap Temp(16, 16, TRANSPARENT_COLOR);
-  Picture->ActivateFastFlag();
-  packedcolor16 Color = packedcolor16( MakeRGB16(160, 160, 160));
-  igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0,0,16,16, &Color);
+  game::RemoveTrapID(TrapData.TrapID);
+}
+
+void web::VirtualConstructor(bool Load)
+{
+  if(!Load)
+    {
+      TrapData.TrapID = game::CreateNewTrapID(this);
+      TrapData.VictimID = 0;
+      Picture = new bitmap(16,16, TRANSPARENT_COLOR);
+      Picture->ActivateFastFlag();
+      packedcolor16 Color = MakeRGB16(160, 160, 160);
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0, 0, 16, 16, &Color);
+    }
 }
 
 bool web::TryToUnStick(character* Victim, vector2d)
@@ -127,7 +134,7 @@ void web::StepOnEffect(character* Stepper)
 
 void web::AddDescription(festring& Msg) const
 {
-  Msg << "A web envelops the square.";
+  Msg << ". A web envelops the square.";
 }
 
 void web::AddTrapName(festring& String, int) const
@@ -137,5 +144,5 @@ void web::AddTrapName(festring& String, int) const
 
 void web::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
 {
-  Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture->NormalMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
