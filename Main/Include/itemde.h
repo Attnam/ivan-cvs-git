@@ -1116,6 +1116,34 @@ class ITEM
   virtual ushort GetFormModifier() const { return 20; }
 );
 
+class ITEM
+(
+	oillamp,
+	item,
+	InitMaterials(new gold),
+	{
+		SetSize(30);
+		UpdatePicture();
+		SetInhabitedByGenie(!(rand() % 4));
+	},
+public:
+	virtual ushort Possibility() const { return 2; }
+	virtual ushort GetEmitation() const { return 250; }
+	virtual std::string NameSingular() const { return "oil lamp"; }
+	virtual float OfferModifier() const { return 1; }
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual ulong Price() const { return 80; }
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual bool GetInhabitedByGenie() const { return InhabitedByGenie; }
+	virtual void SetInhabitedByGenie(bool What) { InhabitedByGenie = What; }
+	virtual bool Apply(character*, stack*);
+	virtual vector2d GetBitmapPos() const { return vector2d(32,48); }
+protected:
+	virtual ushort GetFormModifier() const { return 30; }
+	bool InhabitedByGenie;
+	);
+
 #endif
 
 

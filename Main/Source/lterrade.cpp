@@ -434,67 +434,89 @@ void doublebed::SitOn(character*)
 
 void fountain::Consume(character* Drinker)
 {
-  switch(RAND() % 5)
+  if(GetMaterial(2))
     {
-    case 0:
-      ADD_MESSAGE("The water tastes good.");
-      Drinker->SetNP(Drinker->GetNP() + 30);
-      break;
-
-    case 1:
-      ADD_MESSAGE("The water is contaminated!");
-      Drinker->SetNP(Drinker->GetNP() + 5);
-      Drinker->ChangeRandomStat(-1);
-
-      if(!(RAND() % 5))
-	Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
-      break;
-	
-    case 2:
-      ADD_MESSAGE("The water tasted very good.");
-      Drinker->SetNP(Drinker->GetNP() + 50);
-      Drinker->ChangeRandomStat(1);
-      break;
-
-    case 3:
-      if(!(RAND() % 5))
+      if(GetMaterial(2)->GetType() == water::StaticType()) 
 	{
-	  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
-	  game::DrawEverything();
-	  GETKEY();
-
-	  while(true)
+	  switch(RAND() % 5)
 	    {
-	      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
-	      item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
+	    case 0:
+	      ADD_MESSAGE("The water tastes good.");
+	      Drinker->SetNP(Drinker->GetNP() + 30);
+	      break;
 
-	      if(TempItem)
+	    case 1:
+	      ADD_MESSAGE("The water is contaminated!");
+	      Drinker->SetNP(Drinker->GetNP() + 5);
+	      Drinker->ChangeRandomStat(-1);
+
+	      if(!(RAND() % 5))
+		Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
+	      break;
+	
+	    case 2:
+	      ADD_MESSAGE("The water tasted very good.");
+	      Drinker->SetNP(Drinker->GetNP() + 50);
+	      Drinker->ChangeRandomStat(1);
+	      break;
+
+	    case 3:
+	      if(!(RAND() % 5))
 		{
-		  Drinker->GetStack()->AddItem(TempItem);
-		  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CNAME(INDEFINITE));
-		  break;
-		}
-	      else
-		{
-		  ADD_MESSAGE("You may try again. - press any key -");
-		  DRAW_MESSAGES();
+		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
 		  game::DrawEverything();
 		  GETKEY();
+
+		  while(true)
+		    {
+		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+		      item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
+
+		      if(TempItem)
+			{
+			  Drinker->GetStack()->AddItem(TempItem);
+			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CNAME(INDEFINITE));
+			  break;
+			}
+		      else
+			{
+			  ADD_MESSAGE("You may try again. - press any key -");
+			  DRAW_MESSAGES();
+			  game::DrawEverything();
+			  GETKEY();
+			}
+		    }
 		}
+
+
+	    default:
+	      DryOut(); 
+	      // fountain no longer exists: don't do anything here.
 	    }
+	  return;
+	}
+      else
+	{
+	  ADD_MESSAGE("You don't dare to drink this stuff.");
+	  return;
 	}
 
-
-    default:
-      DryOut(); 
-      // fountain no longer exists: don't do anything here.
+    }
+  else
+    {
+      ADD_MESSAGE("The fountain has dried out.");
+      return;
     }
 }
+
+
+
 
 void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
-  GetLevelSquareUnder()->ChangeOverLevelTerrain(new empty);
+  SetMaterial(2, 0);  
+  UpdatePicture();
 }
 
 void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)

@@ -7,6 +7,7 @@
 #include "stack.h"
 #include "game.h"
 #include "charba.h"
+#include "charde.h"
 #include "level.h"
 #include "lsquare.h"
 #include "lterraba.h"
@@ -17,6 +18,7 @@
 #include "god.h"
 #include "strover.h"
 #include "femath.h"
+#include "whandler.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
@@ -895,6 +897,104 @@ material* loaf::CreateLoafMaterials()
     }
 }
 
+bool oillamp::Apply(character* Applier, stack*)
+{
+  if(GetInhabitedByGenie())
+    {
+      character* Genie;
+      vector2d TryToCreate;
+      bool FoundPlace = false;
+      /*
+	First try to create a genie nearby (10 tries - if all of them fail then stop trying)
+      */
+      for(ushort c = 0; c < 10 && !FoundPlace; c++)
+	{	  
+	  TryToCreate = Applier->GetPos() + game::GetMoveVector(RAND() % DIRECTION_COMMAND_KEYS);
+
+	  if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
+	    {
+	      Genie = new genie;
+	      game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(Genie);
+	      FoundPlace = true;
+	      SetInhabitedByGenie(false);
+	    }
+	}
+
+
+      if(FoundPlace)
+	{
+	  if(rand() % 5 == 0)
+	    {
+	      Genie->SetTeam(game::GetTeam(4));
+	      ADD_MESSAGE("You have freed %s who is angry!", Genie->CNAME(INDEFINITE));
+	      return true;
+	    }
+	  else
+	    {
+	      if(Applier->GetIsPlayer())
+		{
+		  Genie->SetTeam(Applier->GetTeam());
+		  ADD_MESSAGE("You have freed a genie that grants you a wish. You may wish for an item. - press any key -");
+		  game::DrawEverything();
+		  GETKEY();
+
+		  while(true)
+		    {
+		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+		      item* TempItem = protosystem::CreateItem(Temp, Applier->GetIsPlayer());
+
+		      if(TempItem)
+			{
+			  Applier->GetStack()->AddItem(TempItem);
+			  ADD_MESSAGE("%s appears from nothing and the genie flies happily away!", TempItem->CNAME(INDEFINITE));
+			  break;
+			}
+		      else
+			{
+			  ADD_MESSAGE("You may try again. - press any key -");
+			  DRAW_MESSAGES();
+			  game::DrawEverything();
+			  GETKEY();
+			}
+		    }
+		}
+	      game::GetCurrentLevel()->RemoveCharacter(TryToCreate);
+	      delete Genie;
+	    }
+		
+	      
+	
+	}
+      else
+	{
+	  if(Applier->GetIsPlayer())
+	    ADD_MESSAGE("You rub the oil lamp and you feel that the lamp is warmer.");
+	}
+
+
+    }
+  else
+    if(Applier->GetIsPlayer())
+      {
+	ADD_MESSAGE("You rub the lamp, but nothing happens.");
+      }
+  return true;
+}
+
+void oillamp::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+
+  SaveFile << InhabitedByGenie;
+}
+
+void oillamp::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+
+  SaveFile >> InhabitedByGenie;
+}
+
 void holybook::SetOwnerGod(uchar NewOwnerGod)
 {
   switch(game::GetGod(NewOwnerGod)->BasicAlignment())
@@ -912,3 +1012,4 @@ void holybook::SetOwnerGod(uchar NewOwnerGod)
 
   OwnerGod = NewOwnerGod;
 }
+
