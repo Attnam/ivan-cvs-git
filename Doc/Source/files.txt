@@ -4,7 +4,7 @@
 
 			 for Windows version 0.240 alpha
 
-		   Copyrigth (C) Fatal Error Productions 2001
+		   Copyright (C) Fatal Error Productions 2001
 
 ----------------------------------------------------------------------------
 

@@ -85,8 +85,8 @@ bool levelsquare::DrawTerrain() const
 	GetGroundLevelTerrain()->DrawToTileBuffer();
 
 	if(Fluided)
-		GetFluidBuffer()->AlphaBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, 255 - TimeFromSpill);
-
+		GetFluidBuffer()->AlphaBlit(igraph::GetTileBuffer(), 0, 0);		
+	
 	GetOverLevelTerrain()->DrawToTileBuffer();
 
 	return true;
@@ -501,15 +501,16 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	if(!Fluided)
 	{
 		FluidBuffer = new bitmap(16, 16);
-		GetFluidBuffer()->ClearToColor(PINK);
 		Fluided = true;
+		GetFluidBuffer()->CreateAlphaMap(0);
 	}
-	TimeFromSpill = 0;
+	
 
 	for(ushort c = 0; c < Amount; ++c)
 	{
 		vector2d Cords(1 + rand() % 14, 1 + rand() % 14);
 		GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
+		GetFluidBuffer()->SetAlpha(Cords.X, Cords.Y,200 + rand() % 55);
 		for(ushort d = 0; d < 8; ++d)
 		{
 			if((rand() % Lumpiness))
@@ -531,6 +532,8 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 				MAKE_RGB(GET_RED(Color) + Change[0],
 				GET_GREEN(Color) + Change[1],
 				GET_BLUE(Color) + Change[2]) );
+
+				GetFluidBuffer()->SetAlpha(Cords.X + game::GetMoveVector(d).X, Cords.Y + game::GetMoveVector(d).Y,200 + rand() % 55);
 			}
 		}
 
@@ -713,14 +716,12 @@ char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) cons
 
 void levelsquare::HandleFluids()
 {
-	if(TimeFromSpill > 255)
+	if(Fluided && !(rand() % 10) && !GetFluidBuffer()->FadeAlpha(1))
 	{
 		Fluided = false;
 		delete FluidBuffer;
 		FluidBuffer = 0;
 	}
-	else
-		TimeFromSpill += rand() % 3;
 }
 
 void levelsquare::ChangeLevelTerrain(groundlevelterrain* NewGround, overlevelterrain* NewOver)

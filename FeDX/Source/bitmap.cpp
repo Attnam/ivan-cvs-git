@@ -1719,6 +1719,31 @@ void bitmap::Outline(ushort Color)
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
+
+
+bool bitmap::FadeAlpha(char Amount)
+{
+	bool Changes = false;
+	if(!AlphaMap)
+		ABORT("No alpha map to fade.");
+
+	for(ushort x = 0; x < XSize; x++)
+		for(ushort y = 0; y < YSize; y++)
+		{
+			if(AlphaMap[x][y] > Amount)
+			{
+				AlphaMap[x][y] -= Amount;
+				Changes = true;
+			}
+			else if(AlphaMap[x][y])
+			{
+					AlphaMap[x][y] = 0;
+					Changes = true;
+			}
+		}
+	return Changes;
+}
+
 void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 {
 	Bitmap->ClearToColor(0xF81F);
@@ -1787,3 +1812,4 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	DXSurface->GetDDrawSurface()->Unlock(NULL);
 	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
+

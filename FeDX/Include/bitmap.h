@@ -54,6 +54,7 @@ public:
 	void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[X][Y] = Alpha; }
 	uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[X][Y]; }
 	void Outline(ushort);
+	bool FadeAlpha(char);
 	void CreateOutlineBitmap(bitmap*, ushort);
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);

@@ -102,7 +102,6 @@ protected:
 	std::string Engraved;
 	uchar DivineOwner;
 	bool Fluided;
-	ushort TimeFromSpill;
 	bitmap* FluidBuffer;
 };
 
