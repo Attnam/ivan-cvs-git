@@ -750,17 +750,21 @@ class ABSTRACT_ITEM
 public:
 	virtual bool Apply(character*, stack*);
 	virtual bool CanBeZapped() const RET(true)
-	virtual uchar GetCharge() const { return Charge; } 
-	virtual void SetCharge(uchar What) { Charge = What; }
 	virtual void Save(outputfile&) const;
 	virtual void Load(inputfile&);
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
 	virtual bool IsExplosive() const { return true; }
 	virtual bool ReceiveFireDamage(character*, stack*, long);
+	virtual std::string Name(uchar Case) const;
+	virtual uchar GetCharges() const { return Charges; }
+	virtual void SetCharges(uchar What) { Charges = What; }
+	virtual uchar GetTimesUsed() const { return TimesUsed; }
+	virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
 protected:
 	virtual ushort GetFormModifier() const RET(80)
-	uchar Charge;
+	uchar Charges;
+	uchar TimesUsed;
 );
 
 class ITEM
@@ -770,7 +774,8 @@ class ITEM
 	InitMaterials(new glass),
 	{
 		SetSize(10);
-		SetCharge(2 + RAND() % 4);
+		SetCharges(2 + RAND() % 4);
+		SetTimesUsed(0);
 	},
 public:
 	virtual ushort Possibility() const RET(20)
@@ -892,7 +897,8 @@ class ITEM
 	InitMaterials(new marble),
 	{
 		SetSize(12);
-		SetCharge(1 + RAND() % 3);
+		SetCharges(1 + RAND() % 3);
+		SetTimesUsed(0);
 	},
 public:
 	virtual ushort Possibility() const RET(20)

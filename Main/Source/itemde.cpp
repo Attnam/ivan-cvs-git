@@ -15,7 +15,8 @@
 #include "team.h"
 #include "rand.h"
 #include "config.h"
-
+#include "god.h"
+#include "strover.h"
 void can::PositionedDrawToTileBuffer(uchar) const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -320,7 +321,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
 	vector2d CurrentPos = Pos;
 
-	if(!GetCharge())
+	if(GetCharges() <= GetTimesUsed())
 	{
 		ADD_MESSAGE("Nothing happens.");
 		return true;
@@ -354,7 +355,7 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 		game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
 	}
 
-	SetCharge(GetCharge() - 1);
+	SetTimesUsed(GetTimesUsed() + 1);
 	return true;
 }
 
@@ -362,14 +363,16 @@ void wand::Save(outputfile& SaveFile) const
 {
 	item::Save(SaveFile);
 
-	SaveFile << Charge;
+	SaveFile << TimesUsed;
+	SaveFile << Charges;
 }
 
 void wand::Load(inputfile& SaveFile)
 {
 	item::Load(SaveFile);
 
-	SaveFile >> Charge;
+	SaveFile >> TimesUsed;
+	SaveFile >> Charges;
 }
 
 bool scrollofwishing::Read(character* Reader)
@@ -497,8 +500,8 @@ item* brokenbottle::BetterVersion(void) const
 bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
 	vector2d CurrentPos = Pos;
-
-	if(!GetCharge())
+	
+	if(GetCharges() <= GetTimesUsed())
 	{
 		ADD_MESSAGE("Nothing happens.");
 		return true;
@@ -534,7 +537,7 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 			game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
 	}
 
-	SetCharge(GetCharge() - 1);
+	SetTimesUsed(GetTimesUsed() + 1);
 
 	return true;
 }
@@ -744,7 +747,18 @@ bool holybook::CanBeRead(character* Reader) const
 
 bool holybook::Read(character* Reader)
 {
-	return true;
+	if(Reader->GetIsPlayer())
+	{
+		if(game::GetGod(GetOwnerGod())->GetKnown())
+		{
+			ADD_MESSAGE("You already understand %s's wisdom.", game::GetGod(OwnerGod)->GOD_NAME);
+			return false;
+		}
+		game::GetGod(GetOwnerGod())->SetKnown(true);
+		ADD_MESSAGE("You read the book through and feel that you master the magical rites of %s.", game::GetGod(OwnerGod)->GOD_NAME);
+		
+	}
+	return false;
 }
 
 ulong backpack::GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 100000; default: return 0; } }
@@ -763,4 +777,12 @@ bool backpack::ReceiveFireDamage(character* Burner, stack* MotherStack, long Siz
 	SetExists(false);
 	MotherStack->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Burner, MotherStack->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
 	return true;
+}
+
+std::string wand::Name(uchar Case) const 
+{ 
+	if(TimesUsed)
+		return NameWithMaterial(Case) + " (used " + TimesUsed + " times)"; 
+	else
+		return NameWithMaterial(Case);
 }
