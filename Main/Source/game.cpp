@@ -419,7 +419,7 @@ const char* game::Insult()
 {
 switch(rand()%15)
 	{
-	case 0  : return "you moron";
+	case 0  : return "moron";
 	case 1  : return "silly";
         case 2  : return "idiot";
         case 3  : return "airhead";
@@ -430,10 +430,10 @@ switch(rand()%15)
         case 8  : return "potatoes-for-eyes";
         case 9  : return "lamer";
         case 10 : return "mommo-for-brains";
-	   case 11 : return "pinhead";
-	   case 12 : return "you stupid-headed person";
-	   case 13 : return "you software abuser";
-	   case 14 : return "loser";
+	case 11 : return "pinhead";
+	case 12 : return "stupid-headed person";
+	case 13 : return "software abuser";
+	case 14 : return "loser";
         default : return "hugger-mugger";
 	}
 }
