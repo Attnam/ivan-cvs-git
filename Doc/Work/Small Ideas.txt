@@ -399,3 +399,6 @@ Golems should pick up and read scrolls of repair.
 *Blindfold.
 "Walk through walls" state.
 Being confused should decrease chance to hit.
+Rabbits should be brown in summer and white in winter, as in real life.
+Houses floating in water.
+Fountain of youth.

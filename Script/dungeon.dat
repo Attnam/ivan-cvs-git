@@ -203,9 +203,9 @@ Dungeon ELPURI_CAVE;
 				{
 					g == Random { MinPrice = 100; MaxPrice = 10000; Category = GAUNTLET|BOOT; }
 					b == Random { MinPrice = 100; MaxPrice = 10000; Category = GAUNTLET|BOOT; }
-					a == Random { MinPrice = 200; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
+					a == Random { MinPrice = 500; MaxPrice = 10000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
 					d == Random { MinPrice = 200; MaxPrice = 10000; Category = RING|AMULET; }
-					w == Random { MinPrice = 200; MaxPrice = 10000; Category = WEAPON|SHIELD; }
+					w == Random { MinPrice = 500; MaxPrice = 10000; Category = WEAPON|SHIELD; }
 					e == Random { MinPrice = 50; MaxPrice = 10000; Category = FOOD|POTION; }
 					u == Random { MinPrice = 200; MaxPrice = 10000; Category = WAND|TOOL; }
 					r == Random { MinPrice = 200; MaxPrice = 10000; Category = SCROLL|BOOK; }
@@ -1004,9 +1004,9 @@ Dungeon ATTNAM;
 				Types
 				{
 					# == 0;
-					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
+					a == Random { MinPrice = 250; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT|BOOT|GAUNTLET; }
 					d == Random { MinPrice = 50; MaxPrice = 2000; Category = RING|AMULET; }
-					w == Random { MinPrice = 50; MaxPrice = 2000; Category = WEAPON|SHIELD; }
+					w == Random { MinPrice = 250; MaxPrice = 2000; Category = WEAPON|SHIELD; }
 					e == Random { MinPrice = 10; MaxPrice = 2000; Category = FOOD|POTION; }
 					u == Random { MinPrice = 50; MaxPrice = 2000; Category = WAND|TOOL; }
 					v == Random { MinPrice = 500; MaxPrice = 2000; Category = ANY_CATEGORY; }

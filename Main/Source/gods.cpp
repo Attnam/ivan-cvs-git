@@ -641,7 +641,7 @@ void mellis::PrayGoodEffect()
 
   item* NewVersion;
 
-  for(ushort c = 0; !OKItems.empty() && c < 10; ++c)
+  for(ushort c = 0; !OKItems.empty() && c < 5; ++c)
     {
       item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
       NewVersion = ToBeDeleted->BetterVersion();

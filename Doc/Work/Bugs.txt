@@ -47,3 +47,4 @@ Kamikaze dwarves die smiling even if headless.
 Odd pentagram missing bug.
 A puppy can polymorph into a puppy.
 //Magical air and bone are shown by infravision.
+Sophos doesn't accept parchment golem corpses.

@@ -7,6 +7,19 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added version information to bone files
+	* Broken and intact war hammers, a torn cloak and a vacuum cleaner added to
+	  item.pcx by Kahvi
+	* Broken and intact war hammer wielded pictures added to humanoid.pcx by me
+	* Added hammer item (worse than war hammer)
+	* Ikiros now uses a normal hammer instead of war hammer
+	* Cloaks can now break
+	* Broken items now have unique material configurations, which are usually
+	  much better than intact items'; this might make repairing techniques more
+	  important
+
 May 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Divided wood to the following materials: balsa, pine, fir, birch, oak, teak

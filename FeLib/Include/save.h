@@ -27,6 +27,7 @@ class outputfile
   void Put(char What) { fputc(What, Buffer); }
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
   bool IsOpen() { return Buffer != 0; }
+  void Close() { fclose(Buffer); }
  private:
   FILE* Buffer;
 };
@@ -56,6 +57,7 @@ class inputfile
   ulong TellLineOfPos(long);
   const festring& GetFileName() const { return FileName; }
   void UnGet(int Char) { ungetc(Char, Buffer); }
+  void Close() { fclose(Buffer); }
  private:
   FILE* Buffer;
   festring FileName;

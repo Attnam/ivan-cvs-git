@@ -689,7 +689,7 @@ material
 		Density = 900;
 		Color = rgb16(36, 36, 36);
 		IsGolemMaterial = true;
-		PriceModifier = 10000;
+		PriceModifier = 3000;
 		Article = "an";
 		NameStem = "octiron";
 		IsMetal = true;

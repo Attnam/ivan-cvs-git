@@ -429,6 +429,7 @@
 #define BATTLE_AXE 13
 #define SCYTHE 14
 #define QUARTER_STAFF 15
+#define HAMMER 16
 
 #define CHAIN_MAIL 1
 #define PLATE_MAIL 2

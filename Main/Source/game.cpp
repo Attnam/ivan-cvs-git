@@ -33,6 +33,7 @@
 #include "miscitem.h"
 
 #define SAVE_FILE_VERSION 113 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 100 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
@@ -2137,8 +2138,7 @@ void game::CreateBone()
 	{
 	  festring BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
 	  outputfile BoneFile(BoneName);
-	  BoneFile << PLAYER->GetAssignedName();
-	  BoneFile << CurrentLevel;
+	  BoneFile << ushort(BONE_FILE_VERSION) << PLAYER->GetAssignedName() << CurrentLevel;
 	}
     }
 }
@@ -2160,6 +2160,13 @@ bool game::PrepareRandomBone(ushort LevelIndex)
 
       if(BoneFile.IsOpen())/// || RAND() & 1)
 	{
+	  if(ReadType<ushort>(BoneFile) != BONE_FILE_VERSION)
+	    {
+	      BoneFile.Close();
+	      remove(BoneName.CStr());
+	      continue;
+	    }
+
 	  festring PlayerName;
 	  BoneFile >> PlayerName;
 	  level* NewLevel = GetCurrentDungeon()->LoadLevel(BoneFile, LevelIndex);

@@ -2996,7 +2996,7 @@ smith
 	NameSingular = "smith";
 	Helmet = STEEL helmet { Enchantment = 1; }
 	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	RightWielded = MITHRIL meleeweapon(WAR_HAMMER) { Enchantment = 2; }
+	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
 	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
 	RightRing = ring(RING_OF_FIRE_RESISTANCE);
 	LeftRing = ring(RING_OF_FIRE_RESISTANCE);

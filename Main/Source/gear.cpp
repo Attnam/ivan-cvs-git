@@ -708,3 +708,41 @@ bool wondersmellstaff::HitEffect(character* Enemy, character* Hitter, uchar Body
   else
     return BaseSuccess;
 }
+
+bool bodyarmor::AddAdjective(festring& String, bool Articled) const
+{
+  if(IsBroken())
+    {
+      if(Articled)
+	String << "a ";
+
+      if(GetMainMaterial()->GetFlexibility() >= 5)
+	String << "torn";
+      else
+	String << "broken";
+
+      String << ' ';
+      return true;
+    }
+  else
+    return false;
+}
+
+bool cloak::AddAdjective(festring& String, bool Articled) const
+{
+  if(IsBroken())
+    {
+      if(Articled)
+	String << "a ";
+
+      if(GetMainMaterial()->GetFlexibility() >= 5)
+	String << "torn";
+      else
+	String << "broken";
+
+      String << ' ';
+      return true;
+    }
+  else
+    return false;
+}
