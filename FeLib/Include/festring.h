@@ -10,7 +10,6 @@
 #include "felibdef.h"
 
 #define FESTRING_PAGE 0x7F
-#define REFS(ptr) reinterpret_cast<ulong*>(ptr)[-1]
 
 class festring
 {
@@ -36,6 +35,7 @@ class festring
   festring& operator<<(short Int) { return Append(Int); }
   festring& operator<<(ushort Int) { return Append(Int); }
   festring& operator<<(int Int) { return Append(Int); }
+  festring& operator<<(uint Int) { return Append(Int); }
   festring& operator<<(long Int) { return Append(Int); }
   festring& operator<<(ulong Int) { return Append(Int); }
   bool operator<(const festring&) const;
@@ -43,7 +43,7 @@ class festring
   bool operator!=(const festring&) const;
   bool operator==(const char*) const;
   bool operator!=(const char*) const;
-  char Compare(const festring&) const;
+  int Compare(const festring&) const;
   const char* CStr() const;
   sizetype GetSize() const { return Size; }
   void Empty();
@@ -61,7 +61,7 @@ class festring
   festring& Append(const festring& Str, sizetype N) { return Append(Str.Data, N); }
   static const sizetype NPos;
   static void SplitString(festring&, festring&, sizetype);
-  static ushort SplitString(const festring&, std::vector<festring>&, sizetype, sizetype = 0);
+  static int SplitString(const festring&, std::vector<festring>&, sizetype, sizetype = 0);
   static sizetype IgnoreCaseFind(const festring&, const festring&, sizetype = 0);
   static void SearchAndReplace(festring&, const festring&, const festring&, sizetype = 0);
   static bool IgnoreCaseCompare(const festring&, const festring&);
@@ -83,8 +83,8 @@ class festring
   static char* EmptyString;
   char* Data;
   sizetype Size;
-  sizetype Reserved;
-  bool OwnsData;
+  sizetype OwnsData : 1;
+  sizetype Reserved : 31;
 };
 
 class festringpile
@@ -98,6 +98,7 @@ class festringpile
   festringpile& operator+(short What) { String << What; return *this; }
   festringpile& operator+(ushort What) { String << What; return *this; }
   festringpile& operator+(int What) { String << What; return *this; }
+  festringpile& operator+(uint What) { String << What; return *this; }
   festringpile& operator+(long What) { String << What; return *this; }
   festringpile& operator+(ulong What) { String << What; return *this; }
   operator festring() const { return String; }
@@ -115,20 +116,20 @@ inline festringpile operator+(const festring& S, int What) { return festringpile
 inline festringpile operator+(const festring& S, long What) { return festringpile(S) + What; }
 inline festringpile operator+(const festring& S, ulong What) { return festringpile(S) + What; }
 
-inline festring::festring(const festring& Str) : Data(Str.Data), Size(Str.Size), Reserved(Str.Reserved), OwnsData(Str.OwnsData)
+inline festring::festring(const festring& Str) : Data(Str.Data), Size(Str.Size), OwnsData(Str.OwnsData), Reserved(Str.Reserved)
 {
   if(Data && OwnsData)
     ++REFS(Data);
 }
 
-inline festring::festring(sizetype N) : Size(N), Reserved(N|FESTRING_PAGE), OwnsData(true)
+inline festring::festring(sizetype N) : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
   char* Ptr = 4 + new char[Reserved + 5];
   REFS(Ptr) = 0;
   Data = Ptr;
 }
 
-inline festring::festring(sizetype N, char C) : Size(N), Reserved(N|FESTRING_PAGE), OwnsData(true)
+inline festring::festring(sizetype N, char C) : Size(N), OwnsData(true), Reserved(N|FESTRING_PAGE)
 {
   char* Ptr = 4 + new char[Reserved + 5];
   REFS(Ptr) = 0;
@@ -154,7 +155,7 @@ inline bool festring::operator<(const festring& Str) const
 
   if(ThisSize && StrSize)
     {
-      int Comp = memcmp(Data, Str.Data, Min(ThisSize, StrSize));
+      int Comp = memcmp(Data, Str.Data, StrSize > ThisSize ? ThisSize : StrSize);
       return Comp < 0 || (!Comp && StrSize > ThisSize);
     }
   else
@@ -188,14 +189,14 @@ inline bool festring::operator!=(const char* CStr) const
 /* Returns -1 if this is before Str in alphabetical order, zero
    if strings are identical, else 1 */
 
-inline char festring::Compare(const festring& Str) const
+inline int festring::Compare(const festring& Str) const
 {
   sizetype ThisSize = Size;
   sizetype StrSize = Str.Size;
 
   if(ThisSize && StrSize)
     {
-      int Comp = memcmp(Data, Str.Data, Min(ThisSize, StrSize));
+      int Comp = memcmp(Data, Str.Data, StrSize > ThisSize ? ThisSize : StrSize);
 
       if(Comp)
 	return Comp;

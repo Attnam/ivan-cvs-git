@@ -19,7 +19,6 @@ glterrain
 	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
-	/* Obligatory: ContainedMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	OKVisualEffects = NONE;
@@ -28,10 +27,8 @@ glterrain
 	MaterialColorD = 0;
 	SitMessage = "You sit for some time. Nothing happens.";
 	ShowMaterial = true;
-	CreateDivineConfigurations = false;
 	AttachedGod = NONE;
 	HasSecondaryMaterial = false;
-	HasContainedMaterial = false;
 }
 
 solidterrain /* glterrain-> */

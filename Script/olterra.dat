@@ -19,7 +19,6 @@ olterrain
 	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
-	/* Obligatory: ContainedMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	OKVisualEffects = NONE;
@@ -44,7 +43,8 @@ olterrain
 	UseBorderTiles = false;
 	BorderTilePriority = 0;
 	HasSecondaryMaterial = false;
-	HasContainedMaterial = false;
+	CreateWindowConfigurations = false;
+	ShowThingsUnder = true;
 }
 
 wall
@@ -55,6 +55,10 @@ wall
 	Walkability = ETHEREAL;
 	IsAlwaysTransparent = false;
 	BorderTilePriority = 100;
+	CreateWindowConfigurations = true;
+	MaterialColorC = rgb16(140, 96, 48);
+	MaterialColorD = rgb16(180, 180, 255);
+	ShowThingsUnder = false;
 
 	Config BRICK_FINE;
 	{
@@ -63,6 +67,7 @@ wall
 		NameSingular = "wall";
 		BitmapPos = 64, 272;
 		HPModifier = 150;
+		WindowBitmapPos = 96, 256;
 	}
 
 	Config BRICK_PROPAGANDA;
@@ -89,11 +94,22 @@ wall
 	Config BRICK_PRIMITIVE;
 	{
 		DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
-		MainMaterialConfig == STONE;
-		AdjectiveArticle = "an";
+		MainMaterialConfig == BALSA_WOOD;
 		Adjective = "primitive";
 		NameSingular = "wall";
 		BitmapPos = 48, 272;
+		HPModifier = 75;
+		WindowBitmapPos = 80, 256;
+	}
+
+	Config BRICK_PRIMITIVE_PROPAGANDA;
+	{
+		DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
+		MainMaterialConfig == BALSA_WOOD;
+		Adjective = "primitive";
+		NameSingular = "wall";
+		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamese Empire";
+		BitmapPos = 96, 272;
 		HPModifier = 75;
 	}
 
@@ -160,7 +176,8 @@ decoration
 		MaterialColorB = rgb16(32, 80, 32);
 		NameSingular = "palm";
 		BitmapPos = 16, 368;
-		HPModifier = 25;
+		HPModifier = 25;/*
+		IsAlwaysTransparent = false;*/
 	}
 
 	Config HOLY_TREE;
@@ -182,7 +199,6 @@ decoration
 	{
 		DigMessage = "You can't force yourself to ruin this wonderful carpet.";
 		MainMaterialConfig == FABRIC;
-		AdjectiveArticle = "an";
 		NameSingular = "carpet";
 		BitmapPos = 0, 272;
 	}
@@ -192,7 +208,6 @@ decoration
 		CanBeDestroyed = true;
 		DigMessage = "The destroy the couch.";
 		MainMaterialConfig == FABRIC;
-		AdjectiveArticle = "an";
 		NameSingular = "couch";
 		BitmapPos = 0, 400;
 		RestModifier = 2;
@@ -460,14 +475,14 @@ olterraincontainer /* olterrain->decoration-> */
 
 fountain /* olterrain-> */
 {
-	DigMessage = "The water splashes a bit."; /* Wrong if ContainedMaterial != WATER. */
+	DigMessage = "The water splashes a bit."; /* Wrong if SecondaryMaterial != WATER. */
 	MainMaterialConfig == MARBLE;
-	ContainedMaterialConfig == WATER;
+	SecondaryMaterialConfig == WATER;
 	/* Uses ContainerPostFix() */
 	/* Adjective depends on being dried out or not */
 	NameSingular = "fountain";
 	/* BitmapPos depends on being dried out or not */
-	HasContainedMaterial = true;
+	HasSecondaryMaterial = true;
 }
 
 brokendoor /* olterrain->door-> */
@@ -546,4 +561,5 @@ earth
 	HPModifier = 50;
 	BorderTilePriority = 10;
 	UseBorderTiles = true;
+	ShowThingsUnder = false;
 }

@@ -4,6 +4,14 @@
 #include "error.h"
 #include "save.h"
 
+const int basequadricontroller::OrigoDeltaX[4] = { 0, 1, 0, 1 };
+const int basequadricontroller::OrigoDeltaY[4] = { 0, 0, 1, 1 };
+int basequadricontroller::OrigoX, basequadricontroller::OrigoY;
+int basequadricontroller::StartX, basequadricontroller::StartY;
+int basequadricontroller::XSize, basequadricontroller::YSize;
+int basequadricontroller::RadiusSquare;
+bool basequadricontroller::SectorCompletelyClear;
+
 /* A C-program for MT19937: Integer     version                   */
 /*  genrand() generates one pseudorandom unsigned integer (32bit) */
 /* which is uniformly distributed among 0 to 2^32-1  for each     */
@@ -104,156 +112,43 @@ long femath::Rand()
   return y & 0x7FFFFFFF;
 }
 
-/* Why the f*ck these _insane_ warnings didn't appear in game.cpp??? */
-
-#ifdef VC
-#pragma warning(disable : 4244)
-#pragma warning(disable : 4018)
-#endif
-
-bool femath::DoLine(long X1, long Y1, long X2, long Y2, bool (*Proc)(long, long))
+int femath::WeightedRand(long* Possibility, long TotalPossibility)
 {
-  long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
+  long Rand = RAND() % TotalPossibility, PartialSum = 0;
 
-  #define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond)\
-    {\
-      if(!D##PriC)\
-	{\
-	  Proc(X1, Y1);\
-	  return true;\
-	}\
-      \
-      I1 = D##SecC << 1;\
-      DD = I1 - (SecSign (PriSign D##PriC));\
-      I2 = DD - (SecSign (PriSign D##PriC));\
-      \
-      X = X1;\
-      Y = Y1;\
-      \
-      Proc(X, Y);\
-      \
-      if(DD SecCond 0)\
-	{\
-	  SecC SecSign##= 1;\
-	  DD += I2;\
-	}\
-      else\
-	DD += I1;\
-      \
-      PriC PriSign##= 1;\
-      \
-      while(PriC PriCond PriC##2)\
-	{\
-	  if(!Proc(X, Y))\
-	    return false;\
-	  \
-	  if(DD SecCond 0)\
-	    {\
-	      SecC SecSign##= 1;\
-	      DD += I2;\
-	    }\
-	  else\
-	    DD += I1;\
-	  \
-	  PriC PriSign##= 1;\
-	}\
-    }
-
-  if(DX >= 0)
+  for(int c = 0;; ++c)
     {
-      if(DY >= 0)
-	{
-	  if(DX >= DY)
-	    DO_LINE(+, X, <=, +, Y, >=)
-	  else
-	    DO_LINE(+, Y, <=, +, X, >=)
-	}
-      else
-	{
-	  if(DX >= -DY)
-	    DO_LINE(+, X, <=, -, Y, <=)
-	  else
-	    DO_LINE(-, Y, >=, +, X, >=)
-	}
-    }
-  else
-    {
-      if(DY >= 0)
-	{
-	  if(-DX >= DY)
-	    DO_LINE(-, X, >=, +, Y, >=)
-	  else
-	    DO_LINE(+, Y, <=, -, X, <=)
-	}
-      else
-	{
-	  if(-DX >= -DY)
-	    DO_LINE(-, X, >=, -, Y, <=)
-	  else
-	    DO_LINE(-, Y, >=, -, X, <=)
-	}
-    }
+      PartialSum += Possibility[c];
 
-  return true;
-}
-
-ushort femath::WeightedRand(long* Possibility, ushort Size)
-{
-  ushort c;
-  ulong TotalPossibility = 0;
-
-  for(c = 0; c < Size; ++c)
-    TotalPossibility += Possibility[c];
-
-  ulong Chosen = RAND() % TotalPossibility;
-  TotalPossibility = 0;
-
-  for(c = 0; c < Size; ++c)
-    {
-      TotalPossibility += Possibility[c];
-
-      if(TotalPossibility > Chosen)
+      if(PartialSum > Rand)
 	return c;
     }
-
-  ABORT("WeightedRand bugs severely!");
-  return 0x0666;
 }
 
 
-ushort femath::WeightedRand(const std::vector<long>& Possibility)
+int femath::WeightedRand(const std::vector<long>& Possibility, long TotalPossibility)
 {
-  ushort c;
-  ulong TotalPossibility = 0;
+  long Rand = RAND() % TotalPossibility, PartialSum = 0;
 
-  for(c = 0; c < Possibility.size(); ++c)
-    TotalPossibility += Possibility[c];
-
-  ulong Chosen = RAND() % TotalPossibility;
-  TotalPossibility = 0;
-
-  for(c = 0; c < Possibility.size(); ++c)
+  for(int c = 0;; ++c)
     {
-      TotalPossibility += Possibility[c];
+      PartialSum += Possibility[c];
 
-      if(TotalPossibility > Chosen)
+      if(PartialSum > Rand)
 	return c;
     }
-
-  ABORT("WeightedRand bugs severely!");
-  return 0x0666;
 }
 
-float femath::CalculateAngle(vector2d Direction)
+double femath::CalculateAngle(vector2d Direction)
 {
   if(Direction.X < 0)
-    return atan(float(Direction.Y) / Direction.X) + FPI;
+    return atan(double(Direction.Y) / Direction.X) + FPI;
   else if(Direction.X > 0)
     {
       if(Direction.Y < 0)
-	return atan(float(Direction.Y) / Direction.X) + 2 * FPI;
+	return atan(double(Direction.Y) / Direction.X) + 2 * FPI;
       else
-	return atan(float(Direction.Y) / Direction.X);
+	return atan(double(Direction.Y) / Direction.X);
     }
   else
     {
@@ -269,7 +164,7 @@ float femath::CalculateAngle(vector2d Direction)
     }
 }
 
-void femath::CalculateEnvironmentRectangle(rect& Rect, const rect& MotherRect, vector2d Origo, ushort Radius)
+void femath::CalculateEnvironmentRectangle(rect& Rect, const rect& MotherRect, vector2d Origo, int Radius)
 {
   Rect.X1 = Origo.X - Radius;
   Rect.Y1 = Origo.Y - Radius;
@@ -289,68 +184,68 @@ void femath::CalculateEnvironmentRectangle(rect& Rect, const rect& MotherRect, v
     Rect.Y2 = MotherRect.Y2;
 }
 
-bool femath::Clip(ushort& SourceX, ushort& SourceY, ushort& DestX, ushort& DestY, ushort& Width, ushort& Height, ushort XSize, ushort YSize, ushort DestXSize, ushort DestYSize)
+bool femath::Clip(int& SourceX, int& SourceY, int& DestX, int& DestY, int& Width, int& Height, int XSize, int YSize, int DestXSize, int DestYSize)
 {
   /* This sentence is usually true */
 
-  if(short(SourceX) >= 0
-  && short(SourceY) >= 0
-  && short(DestX) >= 0
-  && short(DestY) >= 0
-  && short(SourceX) + Width <= XSize
-  && short(SourceY) + Height <= YSize
-  && short(DestX) + Width <= DestXSize
-  && short(DestY) + Height <= DestYSize)
+  if(SourceX >= 0
+  && SourceY >= 0
+  && DestX >= 0
+  && DestY >= 0
+  && SourceX + Width <= XSize
+  && SourceY + Height <= YSize
+  && DestX + Width <= DestXSize
+  && DestY + Height <= DestYSize)
     return true;
 
-  if(short(SourceX) < 0)
+  if(SourceX < 0)
     {
       Width += SourceX;
       DestX -= SourceX;
       SourceX = 0;
     }
 
-  if(short(SourceY) < 0)
+  if(SourceY < 0)
     {
       Height += SourceY;
       DestY -= SourceY;
       SourceY = 0;
     }
 
-  if(short(DestX) < 0)
+  if(DestX < 0)
     {
       Width += DestX;
       SourceX -= DestX;
       DestX = 0;
     }
 
-  if(short(DestY) < 0)
+  if(DestY < 0)
     {
       Height += DestY;
       SourceY -= DestY;
       DestY = 0;
     }
 
-  if(short(SourceX) + Width > XSize)
+  if(SourceX + Width > XSize)
     Width = XSize - SourceX;
 
-  if(short(SourceY) + Height > YSize)
+  if(SourceY + Height > YSize)
     Height = YSize - SourceY;
 
-  if(short(DestX) + Width > DestXSize)
+  if(DestX + Width > DestXSize)
     Width = DestXSize - DestX;
 
-  if(short(DestY) + Height > DestYSize)
+  if(DestY + Height > DestYSize)
     Height = DestYSize - DestY;
 
-  return short(Width) > 0 && short(Height) > 0;
+  return Width > 0 && Height > 0;
 }
 
 void femath::SaveSeed()
 {
   mtib = mti;
 
-  for(ushort c = 0; c < N1; ++c)
+  for(int c = 0; c < N1; ++c)
     mtb[c] = mt[c];
 }
 
@@ -358,7 +253,7 @@ void femath::LoadSeed()
 {
   mti = mtib;
 
-  for(ushort c = 0; c < N1; ++c)
+  for(int c = 0; c < N1; ++c)
     mt[c] = mtb[c];
 }
 
@@ -404,4 +299,14 @@ inputfile& operator>>(inputfile& SaveFile, region& R)
 {
   SaveFile.Read(reinterpret_cast<char*>(&R), sizeof(R));
   return SaveFile;
+}
+
+long femath::SumArray(const fearray<long>& Vector)
+{
+  long Sum = 0;
+
+  for(uint c = 0; c < Vector.Size; ++c)
+    Sum += Vector.Data[c];
+
+  return Sum;
 }

@@ -9,7 +9,7 @@ Tutorial.
 (r) Sid Meier.
 Santa Claus. (from Renne)
 Mouse control.
-Day and night.
+//Day and night.
 Seasons.
 //Multi-tiled creatures.
 Smithing.
@@ -25,7 +25,7 @@ Random fellow adventurers.
 Indiana Jones.
 Fake gods.
 Capitalists.
-Material color editor.
+//Material color editor.
 Graphical script editor.
 The Holy Haven of Gurus.
 Febot the Oracle.

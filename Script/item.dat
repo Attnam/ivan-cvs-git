@@ -38,7 +38,6 @@ item
 	ArticleMode = NORMAL_ARTICLE;
 	/* Obligatory: MainMaterialConfig */
 	/* Obligatory: SecondaryMaterialConfig */
-	/* Obligatory: ContainedMaterialConfig */
 	/* Obligatory if multiple material configurations defined: MaterialConfigChances */
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
@@ -95,13 +94,14 @@ item
 	BootBitmapPos */
 	GrantsLevitation = false;
 	HasSecondaryMaterial = false;
-	HasContainedMaterial = false;
+	AllowEquip = true;
+	/* Obligatory if scroll: ReadDifficulty */
 }
 
 materialcontainer
 {
 	IsAbstract = true;
-	HasContainedMaterial = true;
+	HasSecondaryMaterial = true;
 }
 
 lantern
@@ -150,7 +150,7 @@ can /* materialcontainer-> */
 	NameSingular = "can";
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
-	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
+	SecondaryMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
 	MaterialConfigChances = { 3, 750, 50, 25; }
 	Roundness = 60;
 	AttachedGod = NONE;
@@ -663,13 +663,14 @@ banana /* materialcontainer-> */
 	DefaultSize = 20;
 	NameSingular = "banana";
 	MainMaterialConfig == BANANA_PEEL;
-	ContainedMaterialConfig == BANANA_FLESH;
+	SecondaryMaterialConfig == BANANA_FLESH;
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
 	/* MinCharges & MaxCharges overridden */
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 320;
+	AllowEquip = false;
 
 	Config BROKEN;
 	{
@@ -696,9 +697,10 @@ holybanana /* materialcontainer->banana-> */
 	WieldedBitmapPos = 160, 320;
 	CanBePiled = false;
 	CanBeBroken = false;
-	ContainedMaterialConfig == HOLY_BANANA_FLESH;
+	SecondaryMaterialConfig == HOLY_BANANA_FLESH;
 	BaseEmitation = rgb24(160, 140, 110);
 	CanBeCloned = false;
+	AllowEquip = true;
 }
 
 justifier /* meleeweapon-> */
@@ -936,7 +938,7 @@ potion /* materialcontainer-> */
 	FormModifier = 25;
 	NameSingular = "bottle";
 	MainMaterialConfig == GLASS;
-	ContainedMaterialConfig = { 8, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD; }
+	SecondaryMaterialConfig = { 8, WATER, HEALING_LIQUID, OMMEL_URINE, POISON_LIQUID, VALDEMAR, ANTIDOTE_LIQUID, VODKA, TROLL_BLOOD; }
 	MaterialConfigChances = { 8, 100, 75, 50, 75, 1, 75, 5, 25; }
 	Alias = { 2, "potion", "drink"; }
 	Roundness = 70;
@@ -961,6 +963,7 @@ bananapeels
 	WeaponCategory = WHIPS;
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 112;
+	AllowEquip = false;
 }
 
 brokenbottle /* cannot contain anything, so NOT bottle-> */
@@ -993,6 +996,7 @@ scroll
 	IsAbstract = true;
 	Roundness = 15;
 	WieldedBitmapPos = 176, 144;
+	AllowEquip = false;
 }
 
 scrollofcreatemonster /* scroll-> */
@@ -1001,6 +1005,7 @@ scrollofcreatemonster /* scroll-> */
 	Price = 25;
 	PostFix = "of create monster";
 	AttachedGod = CRUENTUS;
+	ReadDifficulty = 200;
 }
 
 scrollofteleportation /* scroll-> */
@@ -1010,6 +1015,7 @@ scrollofteleportation /* scroll-> */
 	PostFix = "of teleportation";
 	Alias == "scroll of teleport";
 	AttachedGod = SOPHOS;
+	ReadDifficulty = 50;
 }
 
 scrollofcharging /* scroll-> */
@@ -1020,6 +1026,7 @@ scrollofcharging /* scroll-> */
 	CanBeCloned = false;
 	IsPolymorphSpawnable = false;
 	AttachedGod = SOPHOS;
+	ReadDifficulty = 500;
 }
 
 nut
@@ -1105,6 +1112,7 @@ scrollofwishing /* scroll-> */
 	PostFix = "of wishing";
 	CanBeCloned = false;
 	AttachedGod = ATAVUS;
+	ReadDifficulty = 2500;
 }
 
 cheapcopyofleftnutofpetrus /* nut-> */
@@ -1135,7 +1143,7 @@ wand
 	IsAbstract = true;
 	Roundness = 5;
 	CanBePiled = false;
-	BreakEffectRange = 1;
+	BreakEffectRangeSquare = 2;
 	WieldedBitmapPos = 160, 352;
 
 	Config WAND_OF_POLYMORPH;
@@ -1180,7 +1188,7 @@ wand
 		BeamColor = YELLOW;
 		BeamEffect = BEAM_FIRE_BALL;
 		AttachedGod = INFUSCOR;
-		BreakEffectRange = 0;
+		BreakEffectRangeSquare = 0;
 	}
 
 	Config WAND_OF_TELEPORTATION;
@@ -1196,7 +1204,7 @@ wand
 		BeamColor = GREEN;
 		BeamEffect = BEAM_TELEPORT;
 		AttachedGod = SOPHOS;
-		BreakEffectRange = 2;
+		BreakEffectRangeSquare = 9;
 	}
 
 	Config WAND_OF_HASTE;
@@ -1284,7 +1292,7 @@ wand
 		BeamColor = PINK;
 		BeamEffect = BEAM_CLONE;
 		AttachedGod = INFUSCOR;
-		BreakEffectRange = 0;
+		BreakEffectRangeSquare = 0;
 	}
 
 	Config WAND_OF_LIGHTNING;
@@ -1300,7 +1308,22 @@ wand
 		BeamEffect = BEAM_LIGHTNING;
 		BeamStyle = LIGHTNING_BEAM;
 		AttachedGod = INFUSCOR;
-		BreakEffectRange = 2;
+		BreakEffectRangeSquare = 9;
+	}
+
+	Config WAND_OF_ACID_RAIN;
+	{
+		Possibility = 30;
+		Price = 500;
+		PostFix = "of acid rain";
+		MainMaterialConfig == SULFUR;
+		BeamRange = 15;
+		MinCharges = 2;
+		MaxCharges = 5;
+		BeamColor = GREEN;
+		BeamEffect = BEAM_ACID_RAIN;
+		AttachedGod = SCABIES;
+		BreakEffectRangeSquare = 1;
 	}
 }
 
@@ -1311,6 +1334,7 @@ scrollofchangematerial /* scroll-> */
 	PostFix = "of change material";
 	Alias == "SoCM";
 	AttachedGod = LORICATUS;
+	ReadDifficulty = 1000;
 }
 
 avatarofvalpurus
@@ -1353,6 +1377,7 @@ kiwi
 	Roundness = 80;
 	AttachedGod = SILVA;
 	WieldedBitmapPos = 160, 368;
+	AllowEquip = false;
 }
 
 pineapple
@@ -1432,7 +1457,7 @@ backpack /* materialcontainer-> */
 	FormModifier = 10;
 	NameSingular = "backpack";
 	MainMaterialConfig == LEATHER;
-	ContainedMaterialConfig == GUN_POWDER;
+	SecondaryMaterialConfig == GUN_POWDER;
 	Alias == "explosives";
 	Roundness = 70;
 	IsTwoHanded = true;
@@ -1460,6 +1485,7 @@ holybook
 	IsAbstract = true;
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
+	ReadDifficulty = 1000;
 }
 
 fiftymillionroubles
@@ -1528,6 +1554,7 @@ scrolloftaming /* scroll-> */
 	Price = 500;
 	PostFix = "of taming";
 	AttachedGod = DULCIS;
+	ReadDifficulty = 100;
 }
 
 mine /*materialcontainer-> */
@@ -1542,11 +1569,21 @@ mine /*materialcontainer-> */
 	FormModifier = 10;
 	NameSingular = "mine";
 	MainMaterialConfig == IRON;
-	ContainedMaterialConfig == GUN_POWDER;
+	SecondaryMaterialConfig == GUN_POWDER;
 	Roundness = 100;
 	IsTwoHanded = true;
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 128;
+
+	Config BIG_MINE;
+	{
+		DefaultSize = 65;
+		Possibility = 10;
+		DefaultMainVolume = 250;
+		DefaultContainedVolume = 12500;
+		NameSingular = "big mine";
+		BitmapPos = 80, 288;
+	}
 }
 
 key
@@ -1700,18 +1737,29 @@ boot /* armor-> */
 	BitmapPos = 0, 400;
 	FormModifier = 20;
 	NameSingular = "boot";
-	MainMaterialConfig = { 14, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
-	MaterialConfigChances = { 14, 2000, 1000, 500, 250, 100, 1000, 500, 100, 25, 10, 10, 25, 5, 1; }
+	MainMaterialConfig = { 9, LEATHER, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
+	MaterialConfigChances = { 9, 2000, 1000, 500, 250, 100, 1000, 500, 100, 25; }
 	Roundness = 50;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 10;
 	HandleInPairs = true;
 	WieldedBitmapPos = 160, 128;
 	BootBitmapPos = 16, 432;
+	CanBeBroken = true;
+
+	Config BROKEN;
+	{
+		DefaultSize = 30;
+		FormModifier = 30;
+		BitmapPos = 80, 368;
+		Possibility = 25;
+		MainMaterialConfig = { 9, OMMEL_HAIR, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OCTIRON, ADAMANT; }
+		MaterialConfigChances = { 9, 100, 500, 100, 25, 10, 10, 25, 5, 1; }
+	}
 
 	Config BOOT_OF_STRENGTH;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of strength";
 		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
@@ -1721,9 +1769,19 @@ boot /* armor-> */
 		PriceIsProportionalToEnchantment = true;
 	}
 
+	Config BROKEN|BOOT_OF_STRENGTH;
+	{
+		DefaultSize = 30;
+		FormModifier = 30;
+		BitmapPos = 80, 368;
+		Possibility = 20;
+		AffectsLegStrength = false;
+		Price = 10;
+	}
+
 	Config BOOT_OF_AGILITY;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of agility";
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
@@ -1734,14 +1792,34 @@ boot /* armor-> */
 		AttachedGod = CLEPTIA;
 	}
 
+	Config BROKEN|BOOT_OF_AGILITY;
+	{
+		DefaultSize = 30;
+		FormModifier = 30;
+		BitmapPos = 80, 368;
+		Possibility = 20;
+		AffectsAgility = false;
+		Price = 25;
+	}
+
 	Config BOOT_OF_KICKING;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of kicking";
 		MainMaterialConfig == IRON;
 		MaterialConfigChances == 100;
 		Price = 50;
 		FormModifier = 50;
+	}
+
+	Config BROKEN|BOOT_OF_KICKING;
+	{
+		DefaultSize = 30;
+		FormModifier = 30;
+		BitmapPos = 80, 368;
+		Possibility = 20;
+		MainMaterialConfig = { 5, IRON, STEEL, METEORIC_STEEL, MITHRIL, ADAMANT; }
+		MaterialConfigChances = { 5, 1000, 100, 10, 5, 1; }
 	}
 }
 
@@ -1755,18 +1833,30 @@ gauntlet /* armor-> */
 	BitmapPos = 32, 368;
 	FormModifier = 20;
 	NameSingular = "gauntlet";
-	MainMaterialConfig = { 10, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, MITHRIL; }
-	MaterialConfigChances = { 10, 2000, 1000, 200, 100, 500, 250, 50, 10, 5, 10; }
+	MainMaterialConfig = { 8, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL; }
+	MaterialConfigChances = { 8, 2000, 1000, 200, 100, 500, 250, 50, 10; }
 	Roundness = 60;
 	CanBePiled = true;
 	InElasticityPenaltyModifier = 20;
 	HandleInPairs = true;
 	WieldedBitmapPos = 160, 128;
 	GauntletBitmapPos = 80, 432;
+	CanBeBroken = true;
+
+	Config BROKEN;
+	{
+		Possibility = 25;
+		MainMaterialConfig = { 7, OMMEL_HAIR, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, MITHRIL; }
+		MaterialConfigChances = { 7, 100, 500, 250, 50, 10, 5, 10; }
+		DefaultSize = 30;
+		FormModifier = 30;
+		InElasticityPenaltyModifier = 10;
+		BitmapPos = 80, 400;
+	}
 
 	Config GAUNTLET_OF_STRENGTH;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of strength";
 		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
@@ -1777,9 +1867,19 @@ gauntlet /* armor-> */
 		AttachedGod = CRUENTUS;
 	}
 
+	Config BROKEN|GAUNTLET_OF_STRENGTH;
+	{
+		DefaultSize = 20;
+		FormModifier = 30;
+		InElasticityPenaltyModifier = 10;
+		BitmapPos = 80, 400;
+		AffectsArmStrength = false;
+		Price = 25;
+	}
+
 	Config GAUNTLET_OF_DEXTERITY;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of dexterity";
 		MainMaterialConfig == LEATHER;
 		MaterialConfigChances == 100;
@@ -1788,6 +1888,16 @@ gauntlet /* armor-> */
 		DefaultEnchantment = 1;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = CLEPTIA;
+	}
+
+	Config BROKEN|GAUNTLET_OF_DEXTERITY;
+	{
+		DefaultSize = 20;
+		FormModifier = 30;
+		InElasticityPenaltyModifier = 10;
+		BitmapPos = 80, 400;
+		AffectsDexterity = false;
+		Price = 25;
 	}
 }
 
@@ -1801,16 +1911,26 @@ belt /* armor-> */
 	StrengthModifier = 100;
 	BitmapPos = 32, 384;
 	NameSingular = "belt";
-	MainMaterialConfig = { 5, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE; }
-	MaterialConfigChances = { 5, 1500, 500, 250, 100, 25; }
+	MainMaterialConfig = { 4, HARDENED_LEATHER, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR; }
+	MaterialConfigChances = { 4, 1500, 500, 250, 100; }
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
 	WieldedBitmapPos = 160, 224;
 	BeltBitmapPos = 48, 432;
+	CanBeBroken = true;
+
+	Config BROKEN;
+	{
+		DefaultSize = 150;
+		Possibility = 25;
+		MainMaterialConfig = { 5, TROLL_HIDE, NYMPH_HAIR, OMMEL_HAIR, DRAGON_HIDE, MITHRIL; }
+		MaterialConfigChances = { 5, 500, 250, 100, 25, 10; }
+		BitmapPos = 80, 384;
+	}
 
 	Config BELT_OF_CARRYING;
 	{
-		Possibility = 25;
+		Possibility = 10;
 		PostFix = "of carrying";
 		AffectsCarryingCapacity = true;
 		Price = 75;
@@ -1819,6 +1939,15 @@ belt /* armor-> */
 		AttachedGod = MELLIS;
 		MainMaterialConfig == TROLL_HIDE;
 		MaterialConfigChances == 100;
+	}
+
+	Config BROKEN|BELT_OF_CARRYING;
+	{
+		DefaultSize = 150;
+		Possibility = 20;
+		AffectsCarryingCapacity = false;
+		Price = 25;
+		BitmapPos = 80, 384;
 	}
 
 	Config BELT_OF_LEVITATION;
@@ -1830,6 +1959,14 @@ belt /* armor-> */
 		AttachedGod = SILVA;
 		MainMaterialConfig == ANGEL_HAIR;
 		MaterialConfigChances == 100;
+	}
+
+	Config BROKEN|BELT_OF_LEVITATION;
+	{
+		DefaultSize = 150;
+		GrantsLevitation = false;
+		Price = 100;
+		BitmapPos = 80, 384;
 	}
 }
 
@@ -2187,8 +2324,8 @@ itemcontainer
 		NameSingular = "chest";
 		Adjective = "small";
 		DefaultSize = 50;
-		StorageVolume = 30000;
-		DefaultMainVolume = 4000;
+		StorageVolume = 10000;
+		DefaultMainVolume = 5000;
 		Price = 75;
 		Possibility = 100;
 		MaxGeneratedContainedItems = 3;
@@ -2200,7 +2337,7 @@ itemcontainer
 	Config CHEST;
 	{
 		NameSingular = "chest";
-		StorageVolume = 250000;
+		StorageVolume = 100000;
 		DefaultMainVolume = 30000;
 		DefaultSize = 100;
 		Price = 150;
@@ -2216,7 +2353,7 @@ itemcontainer
 		NameSingular = "chest";
 		Adjective = "large";
 		DefaultSize = 200;
-		StorageVolume = 2000000;
+		StorageVolume = 1000000;
 		DefaultMainVolume = 240000;
 		Price = 250;
 		Possibility = 10;
@@ -2624,6 +2761,7 @@ scrollofenchantweapon /* scroll-> */
 	PostFix = "of enchant weapon";
 	AttachedGod = SOPHOS;
 	Alias == "SoEW";
+	ReadDifficulty = 500;
 }
 
 scrollofenchantarmor /* scroll-> */
@@ -2633,6 +2771,7 @@ scrollofenchantarmor /* scroll-> */
 	PostFix = "of enchant armor";
 	AttachedGod = SOPHOS;
 	Alias == "SoEA";
+	ReadDifficulty = 500;
 }
 
 skull
@@ -2711,6 +2850,7 @@ scrollofrepair /* scroll-> */
 	PostFix = "of repair";
 	Alias == "scroll of repairing";
 	AttachedGod = LORICATUS;
+	ReadDifficulty = 500;
 }
 
 encryptedscroll /* scroll-> */
@@ -2949,3 +3089,12 @@ decosadshirt /* armor->bodyarmor-> */
 	TorsoArmorBitmapPos = 32, 448;
 	Price = 0;
 } 
+
+scrollofdetectmaterial /* scroll-> */
+{
+	Possibility = 50;
+	Price = 25;
+	PostFix = "of detect material";
+	AttachedGod = LEGIFER;
+	ReadDifficulty = 200;
+}

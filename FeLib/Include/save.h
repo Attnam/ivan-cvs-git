@@ -15,6 +15,7 @@
 #include "rect.h"
 #include "error.h"
 #include "festring.h"
+#include "fearray.h"
 
 typedef std::map<festring, long> valuemap;
 
@@ -41,7 +42,7 @@ class inputfile
   festring ReadWord(bool = true);
   void ReadWord(festring&, bool = true);
   char ReadLetter(bool = true);
-  long ReadNumber(uchar = 0xFF, bool = false);
+  long ReadNumber(int = 0xFF, bool = false);
   vector2d ReadVector2d();
   rect ReadRect();
   bool ReadBool();
@@ -57,7 +58,6 @@ class inputfile
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
   const festring& GetFileName() const { return FileName; }
-  void UnGet(int Char) { ungetc(Char, Buffer); }
   void Close() { fclose(Buffer); }
  private:
   FILE* Buffer;
@@ -83,15 +83,17 @@ inline void ReadData(short& Type, inputfile& SaveFile) { Type = SaveFile.ReadNum
 inline void ReadData(ushort& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
 inline void ReadData(long& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
 inline void ReadData(ulong& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(int& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(packedvector2d& Type, inputfile& SaveFile) { Type = SaveFile.ReadVector2d(); }
 inline void ReadData(vector2d& Type, inputfile& SaveFile) { Type = SaveFile.ReadVector2d(); }
 inline void ReadData(rect& Type, inputfile& SaveFile) { Type = SaveFile.ReadRect(); }
 void ReadData(festring&, inputfile&);
-void ReadData(std::vector<long>&, inputfile&);
-void ReadData(std::vector<festring>&, inputfile&);
+void ReadData(fearray<long>&, inputfile&);
+void ReadData(fearray<festring>&, inputfile&);
 
-template <class container, class type> inline void ReadContainerData(container& Container, inputfile& SaveFile)
+template <class type> inline void ReadData(fearray<type>& Array, inputfile& SaveFile)
 {
-  Container.clear();
+  Array.Clear();
   festring Word;
   SaveFile.ReadWord(Word);
 
@@ -100,28 +102,24 @@ template <class container, class type> inline void ReadContainerData(container& 
 
   if(Word == "=")
     {
-      Container.push_back(type());
-      ReadData(Container.front(), SaveFile);
+      Array.Allocate(1);
+      ReadData(Array.Data[0], SaveFile);
       return;
     }
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 
-  ushort Size = SaveFile.ReadNumber();
+  typedef typename fearray<type>::sizetype sizetype;
+  sizetype Size = SaveFile.ReadNumber();
+  Array.Allocate(Size);
 
-  for(ushort c = 0; c < Size; ++c)
-    {
-      Container.push_back(type());
-      ReadData(Container.back(), SaveFile);
-    }
+  for(sizetype c = 0; c < Size; ++c)
+    ReadData(Array.Data[c], SaveFile);
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.CStr(), SaveFile.GetFileName().CStr(), SaveFile.TellLine());
 }
-
-template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile) { ReadContainerData<std::vector<type>, type>(Vector, SaveFile); }
-template <class type> inline void ReadData(std::list<type>& List, inputfile& SaveFile) { ReadContainerData<std::list<type>, type>(List, SaveFile); }
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {
@@ -168,8 +166,8 @@ inline outputfile& operator<<(outputfile& SaveFile, short Value)
 
 inline inputfile& operator>>(inputfile& SaveFile, short& Value)
 {
-  Value  = SaveFile.Get();
-  Value |= SaveFile.Get() << 8;
+  int LowWord = SaveFile.Get();
+  Value = SaveFile.Get() << 8 | LowWord;
   return SaveFile;
 }
 
@@ -182,8 +180,8 @@ inline outputfile& operator<<(outputfile& SaveFile, ushort Value)
 
 inline inputfile& operator>>(inputfile& SaveFile, ushort& Value)
 {
-  Value  = SaveFile.Get();
-  Value |= SaveFile.Get() << 8;
+  int LowWord = SaveFile.Get();
+  Value = SaveFile.Get() << 8 | LowWord;
   return SaveFile;
 }
 
@@ -223,15 +221,39 @@ inline inputfile& operator>>(inputfile& SaveFile, unsigned& Value)
   return SaveFile;
 }
 
-inline outputfile& operator<<(outputfile& SaveFile, float Value)
+inline outputfile& operator<<(outputfile& SaveFile, int Value)
 {
   SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
 }
 
-inline inputfile& operator>>(inputfile& SaveFile, float& Value)
+inline inputfile& operator>>(inputfile& SaveFile, int& Value)
 {
   SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, double Value)
+{
+  SaveFile.Write(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, double& Value)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, packedvector2d Vector)
+{
+  SaveFile.Write(reinterpret_cast<char*>(&Vector), sizeof(Vector));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, packedvector2d& Vector)
+{
+  SaveFile.Read(reinterpret_cast<char*>(&Vector), sizeof(Vector));
   return SaveFile;
 }
 
@@ -261,6 +283,8 @@ inline inputfile& operator>>(inputfile& SaveFile, rect& Rect)
 
 outputfile& operator<<(outputfile&, const festring&);
 inputfile& operator>>(inputfile&, festring&);
+outputfile& operator<<(outputfile&, const char*);
+inputfile& operator>>(inputfile&, char*&);
 
 template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, const std::pair<type1, type2>& Pair)
 {
@@ -330,7 +354,7 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
   ulong Size;
   SaveFile >> Size;
 
-  for(ushort c = 0; c < Size; ++c)
+  for(ulong c = 0; c < Size; ++c)
     {
       type1 First;
       SaveFile >> First;
@@ -356,12 +380,59 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::set
   ulong Size;
   SaveFile >> Size;
 
-  for(ushort c = 0; c < Size; ++c)
+  for(ulong c = 0; c < Size; ++c)
     {
       type Value;
       SaveFile >> Value;
       Set.insert(Value);
     }
+
+  return SaveFile;
+}
+
+template <class type> inline outputfile& operator<<(outputfile& SaveFile, const fearray<type>& Array)
+{
+  typename fearray<type>::sizetype c, Size = Array.Size;
+  SaveFile << Size;
+
+  for(c = 0; c < Size; ++c)
+    SaveFile << Array[c];
+
+  return SaveFile;
+}
+
+template <class type> inline inputfile& operator>>(inputfile& SaveFile, fearray<type>& Array)
+{
+  typename fearray<type>::sizetype c, Size;
+  SaveFile >> Size;
+  Array.Allocate(Size);
+
+  for(c = 0; c < Size; ++c)
+    SaveFile >> Array[c];
+
+  return SaveFile;
+}
+
+template <class type> inline outputfile& SaveLinkedList(outputfile& SaveFile, const type* Element)
+{
+  for(const type* E = Element; E; E = E->Next)
+    SaveFile << bool(true) << E;
+
+  SaveFile << bool(false);
+  return SaveFile;
+}
+
+template <class type> inline inputfile& LoadLinkedList(inputfile& SaveFile, type*& Element)
+{
+  if(ReadType<bool>(SaveFile))
+    {
+      SaveFile >> Element;
+
+      for(type* E = Element; ReadType<bool>(SaveFile); E = E->Next)
+	SaveFile >> E->Next;
+    }
+  else
+    Element = 0;
 
   return SaveFile;
 }

@@ -63,6 +63,6 @@ Hidastinten kirjastointi.
 (r) Massattomat maastot.
 Metsästysvälineiden lokeroittaminen.
 Artikkelien bitittäminen.
-Inttien synninpäästö.
+//Inttien synninpäästö.
 Tehokkuustietojen välitys ruutuilmiöihin.
 Enumeraatiot barrikadeille.

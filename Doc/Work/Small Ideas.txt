@@ -38,7 +38,7 @@ Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
 Cube-like screenshot system.
-Atavus should do something special on Christmas.
+//Atavus should do something special on Christmas.
 Gurus.
 Meditation command.
 Opening a banana should remove its peals.
@@ -142,7 +142,7 @@ In Nethack one can leash pets. In Ivan it should be possible that powerful pets 
 *Spiders should make webs.
 Scroll of gold detection that would identify every unit made of gold on the level.
 Bananas should act as boomerangs when thrown.
-Zombies should spoil.
+//Zombies should spoil.
 *Kicking bodyparts and corpses on the ground should spill blood.
 One must be able to use a stethoscope on doors.
 Jammed bananas.
@@ -452,3 +452,7 @@ How much a monster can eat should depend on its volume (pet rats eat exactly as 
 When seasons are integrated, bears should hibernate through winter.
 Loricatus should change weak golems to steel.
 Statistics about the real time spent on a game.
+New über-artifact: The Holy Grail.
+New über-artifact: The Lance of Longinus.
+//Scroll of detect material.
+Scroll of possession.

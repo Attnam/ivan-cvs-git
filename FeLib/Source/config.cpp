@@ -4,8 +4,8 @@
 #include "feio.h"
 
 configoption* configsystem::Option[MAX_CONFIG_OPTIONS];
-ushort configsystem::Options;
 festring configsystem::ConfigFileName;
+int configsystem::Options;
 
 void configsystem::AddOption(configoption* O) { Option[Options++] = O; }
 void configsystem::NormalStringChanger(stringoption* O, const festring& What) { O->Value = What; }
@@ -57,7 +57,7 @@ bool configsystem::Save()
   if(!SaveFile.is_open())
     return false;
 
-  for(ushort c = 0; c < Options; ++c)
+  for(int c = 0; c < Options; ++c)
     {
       SaveFile << Option[c]->Name << " = ";
       Option[c]->SaveValue(SaveFile);
@@ -80,7 +80,7 @@ bool configsystem::Load()
     {
       /* Inefficient, but speed is probably not an issue here */
 
-      for(ushort c = 0; c < Options; ++c)
+      for(int c = 0; c < Options; ++c)
 	if(Word == Option[c]->Name)
 	  Option[c]->LoadValue(SaveFile);
     }
@@ -90,21 +90,21 @@ bool configsystem::Load()
 
 void configsystem::Show(void (*BackGroundDrawer)(), void (*ListAttributeInitializer)(felist&), bool SlaveScreen)
 {
-  ushort Chosen;
+  int Chosen;
   bool BoolChange = false;
 
   felist List(CONST_S("Which setting do you wish to configure?"));
   List.AddDescription(CONST_S(""));
   List.AddDescription(CONST_S("Setting                                                        Value"));
 
-  while(true)
+  for(;;)
     {
       if(SlaveScreen)
 	BackGroundDrawer();
 
       List.Empty();
 
-      for(ushort c = 0; c < Options; ++c)
+      for(int c = 0; c < Options; ++c)
 	{
 	  festring Entry = Option[c]->Description;
 	  Entry.Capitalize();

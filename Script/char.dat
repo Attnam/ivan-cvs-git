@@ -84,22 +84,9 @@ character
 	/* Obligatory: AttachedGod */
 	BodyPartsDisappearWhenSevered = false;
 	CanBeConfused = true;
-	CanAttack = true;
 	CanApply = false;
 	WieldedPosition = 0, 0;
-	SkinColorIsSparkling = false;	
-	CapColorIsSparkling = false;
-	HairColorIsSparkling = false;
-	EyeColorIsSparkling = false;
-	TorsoMainColorIsSparkling = false;
-	BeltColorIsSparkling = false;
-	BootColorIsSparkling = false;
-	TorsoSpecialColorIsSparkling = false;
-	ArmMainColorIsSparkling = false;
-	GauntletColorIsSparkling = false;
-	ArmSpecialColorIsSparkling = false;
-	LegMainColorIsSparkling = false;
-	LegSpecialColorIsSparkling = false;
+	SparklingFlags = 0;
 	BiteCapturesBodyPart = true;
 	IsPlant = false;
 	MoveType = WALK;
@@ -108,7 +95,6 @@ character
 	BloodMaterial = BLOOD;
 	VomitMaterial = VOMIT;
 	HasSecondaryMaterial = false;
-	HasContainedMaterial = false;
 }
 
 humanoid
@@ -195,7 +181,6 @@ petrus
 	NameSingular = "high priest";
 	PostFix = "of the Great Frog";
 	IsPolymorphable = false;
-	Alias == "Petrus";
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
 	BodyArmor = SAPPHIRE bodyarmor(PLATE_MAIL) { Enchantment = 4; }
 	Cloak = ANGEL_HAIR cloak(CLOAK_OF_ELECTRICITY_RESISTANCE) { Enchantment = 4; }
@@ -345,6 +330,7 @@ guard
 			"\"Decent people have nothing to hide so they don't mind me investigating their homes every now and then.\"",
 			"\"Again I'm all white! The master guard doesn't like me bringing snow in the barracks...\"";
 		}
+		Inventory == lantern;
 	}
 
 	Config SHOP;
@@ -390,7 +376,7 @@ guard
 		PanicLevel = 10;
 		TotalVolume = 80000;
 		ClothColor = rgb16(220, 220, 220);
-		ClothColorIsSparkling = true;
+		SparklingFlags = CLOTH_COLOR;
 		FriendlyReplies =
 		{
 			5,
@@ -430,7 +416,7 @@ guard
 		IsPolymorphable = false;
 		ClothColor = rgb16(144, 144, 200);
 		CanBeConfused = false;
-		ClothColorIsSparkling = true;
+		SparklingFlags = CLOTH_COLOR;
 		Inventory == key(HEXAGONAL_LOCK);
 		FriendlyReplies =
 		{
@@ -551,6 +537,7 @@ priest
 	CanBeCloned = false;
 	IsCharmable = false;
 	MoveType = WALK|SWIM;
+	IsAbstract = true;
 
 	Config VALPURUS;
 	{
@@ -564,6 +551,7 @@ priest
 		DefaultWisdom = 25;
 		DefaultCharisma = 20;
 		DefaultMana = 20;
+
 		CapColor = rgb16(180, 0, 80);
 		HeadBitmapPos = 96, 128;
 		TorsoBitmapPos = 32, 16;
@@ -670,7 +658,7 @@ oree
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
 	PanicLevel = 0;
 	CanBeCloned = false;
-	Inventory == can { MainMaterial = IRON { Volume = 10; } ContainedMaterial = PEPSI { Volume = 330; } }
+	Inventory == can { MainMaterial = IRON { Volume = 10; } SecondaryMaterial = PEPSI { Volume = 330; } }
 	DefaultName = "Oree";
 	HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
 	FleshMaterial = DAEMON_FLESH;
@@ -1183,7 +1171,7 @@ goblin
 		RightSWeaponSkillHits = 20;
 		NameSingular = "goblin butcher";
 		ClothColor = rgb16(200, 0, 0);
-		Inventory == potion { ContainedMaterial = TROLL_BLOOD; Chance = 10; }
+		Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
 	}
 
 	Config PRINCE;
@@ -1201,7 +1189,7 @@ goblin
 		TorsoBitmapPos = 48, 208;
 		HairColor = rgb16(220, 220, 0);
 		ClothColor = rgb16(200, 0, 0);
-		Inventory = { 2, potion { ContainedMaterial = ANTIDOTE_LIQUID; Chance = 20; }, Random { Category = RING; Chance = 20; } }
+		Inventory = { 2, potion { SecondaryMaterial = ANTIDOTE_LIQUID; Chance = 20; }, Random { Category = RING; Chance = 20; } }
 	}
 
 	Config KING;
@@ -1232,7 +1220,7 @@ goblin
 		ClothColor = rgb16(200, 0, 0);
 		Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
 		CanBeConfused = false;
-		HairColorIsSparkling = true;
+		SparklingFlags = HAIR_COLOR;
 		FireResistance = 30;
 		ElectricityResistance = 30;
 		EnergyResistance = 30;
@@ -1566,7 +1554,7 @@ communist /* Ivan */
 	RightGauntlet = PHOENIX_FEATHER gauntlet { Enchantment = 2; }
 	RightBoot = STEEL boot(BOOT_OF_AGILITY) { Enchantment = 2; }
 	PanicLevel = 33;
-	Inventory = { 4, lantern, fiftymillionroubles, potion { ContainedMaterial = VODKA; }, potion { ContainedMaterial = VODKA; } }
+	Inventory = { 4, lantern, fiftymillionroubles, potion { SecondaryMaterial = VODKA; }, potion { SecondaryMaterial = VODKA; } }
 	IsUnique = true;
 	DefaultName = "Ivan";
 	DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";
@@ -2912,7 +2900,7 @@ orc
 		LeftSWeaponSkillHits = 50;
 		NameSingular = "orc slaughterer";
 		PanicLevel = 40;
-		Inventory == potion { ContainedMaterial = TROLL_BLOOD; Chance = 10; }
+		Inventory == potion { SecondaryMaterial = TROLL_BLOOD; Chance = 10; }
 	}
 
 	Config SQUAD_LEADER;
@@ -2974,7 +2962,7 @@ orc
 		RightSWeaponSkillHits = 500;
 		NameSingular = "orc general";
 		PanicLevel = 10;
-		Inventory = { 2, potion { ContainedMaterial = HEALING_LIQUID; Chance = 10; }, Random { Category = RING; Chance = 10; } }
+		Inventory = { 2, potion { SecondaryMaterial = HEALING_LIQUID; Chance = 10; }, Random { Category = RING; Chance = 10; } }
 		TotalVolume = 120000;
 	}
 
@@ -3011,7 +2999,7 @@ orc
 		CanBeCloned = false;
 		IsPolymorphable = false;
 		TotalVolume = 150000;
-		Inventory = { 4, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; }, potion { ContainedMaterial = OMMEL_URINE; } }
+		Inventory = { 4, potion { SecondaryMaterial = OMMEL_URINE; }, potion { SecondaryMaterial = OMMEL_URINE; }, potion { SecondaryMaterial = OMMEL_URINE; }, potion { SecondaryMaterial = OMMEL_URINE; } }
 		CanBeConfused = false;
 		FireResistance = 30;
 		ElectricityResistance = 30;
@@ -3396,7 +3384,6 @@ floatingeye
 	AttackWisdomLimit = 8;
 	AttachedGod = LEGIFER;
 	ClassStates = INFRA_VISION|SEARCHING|GAS_IMMUNITY;
-	CanAttack = false;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 0;
 	MoveType = FLY;

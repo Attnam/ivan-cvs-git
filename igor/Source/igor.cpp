@@ -79,19 +79,20 @@ int Main(int, char**)
 
   CBitmap = new colorizablebitmap(Directory + FileName);
   bitmap CursorBitmap(Directory + "Cursor.pcx");
+  CursorBitmap.ActivateFastFlag();
   vector2d Cursor(0, 0);
   int k = 0;
   Selected = 0;
-  ushort Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
+  color16 Color[4] = { MakeRGB16(47, 131, 95), MakeRGB16(123, 0, 127), MakeRGB16(0, 131, 131), MakeRGB16(175, 131, 0) };
   std::vector<vector2d> DrawQueue;
   uchar TempBuffer[256];
 
-  while(true)
+  for(;;)
     {
       static vector2d MoveVector[] = { vector2d(0, -16), vector2d(-16, 0), vector2d(0, 16), vector2d(16, 0) };
       static int Key[] = { 'w', 'a', 's', 'd' };
 
-      ushort c;
+      int c;
 
       for(c = 0; c < 4; ++c)
 	{
@@ -151,7 +152,7 @@ int Main(int, char**)
 	  FONT->Printf(DOUBLE_BUFFER, 10, 460, RED, "Save? [y/n/c]");
 	  graphics::BlitDBToScreen();
 
-	  while(true)
+	  for(;;)
 	    {
 	      k = GET_KEY();
 

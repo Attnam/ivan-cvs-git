@@ -29,12 +29,13 @@
 
 /* Prints screen full of Text in color Color. If GKey is true function waits for
    keypress. BitmapEditor is a pointer to function that is called during every fade tick. */
- 
 
-void iosystem::TextScreen(const festring& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
+void iosystem::TextScreen(const festring& Text, color16 Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
   bitmap Buffer(RES_X, RES_Y, 0);
-  ushort c, LineNumber = 0;
+  Buffer.ActivateFastFlag();
+  festring::sizetype c;
+  int LineNumber = 0;
 
   for(c = 0; c < Text.GetSize(); ++c)
     if(Text[c] == '\n')
@@ -42,7 +43,7 @@ void iosystem::TextScreen(const festring& Text, ushort Color, bool GKey, void (*
 
   LineNumber >>= 1;
   char Line[200];
-  ushort Lines = 0, LastBeginningOfLine = 0;
+  int Lines = 0, LastBeginningOfLine = 0;
 
   for(c = 0; c < Text.GetSize(); ++c)
     if(Text[c] == '\n')
@@ -65,11 +66,11 @@ void iosystem::TextScreen(const festring& Text, ushort Color, bool GKey, void (*
 
 /* Returns amount of chars cSF in string sSH */
 
-ulong iosystem::CountChars(char cSF, const festring& sSH)
+int CountChars(char cSF, const festring& sSH)
 {
-  ulong iReturnCounter = 0;
+  int iReturnCounter = 0;
 
-  for(ulong i = 0; i < sSH.GetSize(); ++i)
+  for(festring::sizetype i = 0; i < sSH.GetSize(); ++i)
     if(sSH[i] == cSF)
       ++iReturnCounter;
 
@@ -87,16 +88,18 @@ ulong iosystem::CountChars(char cSF, const festring& sSH)
 /* Warning: This function is utter garbage that just happens to work. If you need to use 
    this function use the comments. Don't try to understand it. It is impossible. */
 
-int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, ushort Color, const festring& SmallText1, const festring& SmallText2)
+int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, color16 Color, const festring& SmallText1, const festring& SmallText2)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
 
   bool bReady = false;
-  ulong iSelected = 0;
+  int iSelected = 0;
   bitmap Backup(DOUBLE_BUFFER);
+  Backup.ActivateFastFlag();
   bitmap Buffer(RES_X, RES_Y);
-  ushort c = 0;
+  Buffer.ActivateFastFlag();
+  int c = 0;
 
   if(BackGround)
     BackGround->FastBlit(&Buffer);
@@ -110,7 +113,7 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
     {
       clock_t StartTime = clock();
       sCopyOfMS = Topic;
-      ulong i;
+      int i;
 
       for(i = 0; i < CountChars('\r', Topic); ++i)
 	{
@@ -129,14 +132,12 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 	  VeryUnGuruPrintf = sCopyOfMS;
 	  VeryUnGuruPrintf.Resize(RPos);
 	  sCopyOfMS.Erase(0,RPos+1);
-	  ushort XPos = Pos.X - ((VeryUnGuruPrintf.GetSize() + 3) << 2);
-	  ushort YPos = Pos.Y - CountChars('\r', sMS) * 25 + i * 50;
+	  int XPos = Pos.X - ((VeryUnGuruPrintf.GetSize() + 3) << 2);
+	  int YPos = Pos.Y - CountChars('\r', sMS) * 25 + i * 50;
+	  Buffer.Fill(XPos, YPos, ((VeryUnGuruPrintf.GetSize() + 3) << 3), 9, 0);
 
 	  if(i == iSelected)
-	    {
-	      Buffer.Fill(XPos, YPos, ((VeryUnGuruPrintf.GetSize() + 3) << 3), 8, 0);
-	      FONT->PrintfUnshaded(&Buffer, XPos + 1, YPos + 1, WHITE, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
-	    }
+	    FONT->PrintfUnshaded(&Buffer, XPos + 1, YPos + 1, WHITE, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
 	  else
 	    FONT->Printf(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
 	}
@@ -167,11 +168,11 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 
       if(c < 5)
 	{
-	  ushort Element = 127 - c * 25;
-	  Backup.MaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
+	  int Element = 127 - c * 25;
+	  Backup.LuminanceMaskedBlit(DOUBLE_BUFFER, MakeRGB24(Element, Element, Element), 0);
 	  Buffer.SimpleAlphaBlit(DOUBLE_BUFFER, c++ * 50, 0);
 	  graphics::BlitDBToScreen();
-	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+	  while(clock() - StartTime < 0.05 * CLOCKS_PER_SEC);
 	  k = READ_KEY();
 	}
       else
@@ -202,12 +203,12 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 	  break;
 
 	default:
-	  if(k > 0x30 && k < int(0x31 + CountChars('\r',sMS)))
-	    return signed(k - 0x31);
+	  if(k > 0x30 && k < 0x31 + CountChars('\r',sMS))
+	    return k - 0x31;
 	}
     }
 
-  return signed(iSelected);
+  return iSelected;
 }
 
 /* Asks the user a question requiring a string answer. The answer is saved to Input. Input can also already
@@ -219,11 +220,12 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 
    The function returns ABORTED (when user aborts with esc) or NORMAL_EXIT. */
 
-ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool Fade, bool AllowExit)
+int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool Fade, bool AllowExit)
 {
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
+      Buffer.ActivateFastFlag();
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       Buffer.FadeToScreen();
@@ -296,11 +298,12 @@ ushort iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d
    is drawn to cordinates given by Pos. All fonts are Color colored. If Fade is true
    the question is asked on a black background and the transition to that is a fade. */
 
-long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color, bool Fade)
+long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color, bool Fade)
 {
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
+      Buffer.ActivateFastFlag();
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
       Buffer.FadeToScreen();
@@ -345,7 +348,7 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, ushort Color,
    also work always. If Fade is true the screen is faded to black before drawing th scrollbar.
    If Handler is set it is called always when the value of the scroll bar changes. */
 
-long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, ushort LeftKey, ushort RightKey, bool Fade, void (*Handler)(long))
+long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long StartValue, long Step, long Min, long Max, long AbortValue, color16 TopicColor, color16 Color1, color16 Color2, int LeftKey, int RightKey, bool Fade, void (*Handler)(long))
 {
   long BarValue = StartValue;
   festring Input;
@@ -354,6 +357,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
+      Buffer.ActivateFastFlag();
       FONT->Printf(&Buffer, Pos.X, Pos.Y, TopicColor, "%s %d", Topic.CStr(), StartValue);
       FONT->Printf(&Buffer, Pos.X + (Topic.GetSize() << 3) + 8, Pos.Y + 1, TopicColor, "_");
       Buffer.DrawHorizontalLine(Pos.X + 1, Pos.X + 201, Pos.Y + 15, Color2, false);
@@ -389,7 +393,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
 	}
       else
 	{
-	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s_", Topic.CStr(), Input.CStr());
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, TopicColor, "%s %s", Topic.CStr(), Input.CStr());
 	  FONT->Printf(DOUBLE_BUFFER, Pos.X + ((Topic.GetSize() + Input.GetSize()) << 3) + 8, Pos.Y + 1, TopicColor, "_");
 	}
       
@@ -454,7 +458,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
 /* DirectoryName is the directory where the savefiles are located. Returns
    the selected file or "" if an error occures or if no files are found. */
 
-festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festring& DirectoryName)
+festring iosystem::ContinueMenu(color16 TopicColor, color16 ListColor, const festring& DirectoryName)
 {
 #ifdef WIN32
   struct _finddata_t Found;

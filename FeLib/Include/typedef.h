@@ -7,9 +7,16 @@
 
 struct donothing { };
 
-typedef signed   char  schar;
-typedef unsigned char  uchar;
+typedef unsigned char uchar;
 typedef unsigned short ushort;
-typedef unsigned long  ulong;
+typedef unsigned int uint;
+typedef unsigned long ulong;
+typedef int color16;
+typedef ushort packedcolor16;
+typedef ulong color24;
+typedef int alpha;
+typedef uchar packedalpha;
+typedef int priority;
+typedef uchar packedpriority;
 
 #endif

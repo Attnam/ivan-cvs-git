@@ -5,7 +5,7 @@
 #include "festring.h"
 
 bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
-ushort globalwindowhandler::Controls = 0;
+int globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick;
 bool globalwindowhandler::ControlLoopsEnabled = true;
 
@@ -19,7 +19,7 @@ void globalwindowhandler::InstallControlLoop(bool (*What)())
 
 void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 {
-  ushort c;
+  int c;
 
   for(c = 0; c < Controls; ++c)
     if(ControlLoop[c] == What)
@@ -60,7 +60,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		LastTick = Tick;
 		bool Draw = false;
 
-		for(ushort c = 0; c < Controls; ++c)
+		for(int c = 0; c < Controls; ++c)
 		  if(ControlLoop[c]())
 		    Draw = true;
 
@@ -83,10 +83,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 
 int globalwindowhandler::ReadKey()
 {
-  if(kbhit())
-    return getkey();
-  else
-    return 0;
+  return kbhit() ? getkey() : 0;
 }
 
 #endif
@@ -116,7 +113,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
       KeyBuffer.clear();
     }
 
-  while(true)
+  for(;;)
     if(!KeyBuffer.empty())
       {
 	int Key = KeyBuffer[0];
@@ -144,7 +141,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    LastTick = Tick;
 		    bool Draw = false;
 
-		    for(ushort c = 0; c < Controls; ++c)
+		    for(int c = 0; c < Controls; ++c)
 		      if(ControlLoop[c]())
 			Draw = true;
 
@@ -178,15 +175,12 @@ int globalwindowhandler::ReadKey()
       ProcessMessage(&Event);
     }
 
-  if(KeyBuffer.size())
-    return GetKey(false);
-  else
-    return 0;
+  return KeyBuffer.size() ? GetKey(false) : 0;
 }
 
 void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 {
-  ushort KeyPressed;
+  int KeyPressed;
  
   switch(Event->active.type)
     {

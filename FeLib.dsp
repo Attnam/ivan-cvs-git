@@ -61,7 +61,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeLib/PowerDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /I "FeLib/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /O2 /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -114,15 +114,7 @@ SOURCE=.\FeLib\Source\config.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Source\datapool.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\FeLib\Source\error.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Source\febot.cpp
 # End Source File
 # Begin Source File
 
@@ -147,10 +139,6 @@ SOURCE=.\FeLib\Source\festring.cpp
 # Begin Source File
 
 SOURCE=.\FeLib\Source\graphics.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Source\hextree.cpp
 # End Source File
 # Begin Source File
 
@@ -186,11 +174,11 @@ SOURCE=.\FeLib\Include\config.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\datapool.h
+SOURCE=.\FeLib\Include\error.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\error.h
+SOURCE=.\FeLib\Include\fearray.h
 # End Source File
 # Begin Source File
 
@@ -219,10 +207,6 @@ SOURCE=.\FeLib\Include\festring.h
 # Begin Source File
 
 SOURCE=.\FeLib\Include\graphics.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FeLib\Include\hextree.h
 # End Source File
 # Begin Source File
 

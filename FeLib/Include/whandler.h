@@ -48,7 +48,7 @@ class globalwindowhandler
   static bool (*QuitMessageHandler)();
 #endif
   static bool (*ControlLoop[MAX_CONTROLS])();
-  static ushort Controls;
+  static int Controls;
   static ulong Tick;
   static bool ControlLoopsEnabled;
 };

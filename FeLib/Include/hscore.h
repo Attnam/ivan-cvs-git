@@ -31,17 +31,17 @@ class highscore
   bool LastAddFailed() const { return LastAdd == 100; }
   void AddToFile(highscore*) const;
   bool MergeToFile(highscore*) const;
-  ulong Find(long, const festring&, time_t, long);
-  const festring& GetEntry(ulong c) const { return Entry[c]; }
-  long GetScore(ulong c) const { return Score[c]; }
-  long GetSize() const { return Entry.size(); }
+  int Find(long, const festring&, time_t, long);
+  const festring& GetEntry(int) const;
+  long GetScore(int) const;
+  long GetSize() const;
  private:
   bool Add(long, const festring&, time_t, long);
   std::vector<festring> Entry;
   std::vector<long> Score;
   std::vector<time_t> Time;
   std::vector<long> RandomID;
-  uchar LastAdd;
+  int LastAdd;
 };
 
 #endif

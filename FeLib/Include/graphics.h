@@ -32,10 +32,10 @@ class graphics
 #ifdef __DJGPP__
   static void SwitchMode() { }
 #endif
-  static void SetMode(const char*, const char*, ushort, ushort, bool);
+  static void SetMode(const char*, const char*, int, int, bool);
   static void BlitDBToScreen();
-  static ushort GetResX() { return ResX; }
-  static ushort GetResY() { return ResY; }
+  static int GetResX() { return ResX; }
+  static int GetResY() { return ResY; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void LoadDefaultFont(const festring&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
@@ -98,9 +98,9 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static ushort ResX;
-  static ushort ResY;
-  static uchar ColorDepth;
+  static int ResX;
+  static int ResY;
+  static int ColorDepth;
   static colorizablebitmap* DefaultFont;
 };
 

@@ -70,4 +70,4 @@ Choosing a name including the character ':' will result in very odd consequences
 Golems can be poisoned at least by poison covered weapons.
 It seems to be possible to occasionally find traps by saveloading next to them.
 Mushrooms can be kicked around.
-
+If a pet polymorphs into an invisible stalker which the player can't see, the polymorph msg is incorrect.

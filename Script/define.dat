@@ -99,8 +99,6 @@
 #define RIGHT_LEG_INDEX 5
 #define LEFT_LEG_INDEX 6
 
-#define LIGHT_BORDER 160
-
 #define ALPP 0
 #define ALP 1
 #define AL 2
@@ -124,7 +122,7 @@
 #define NO_ARTICLE 1
 #define DEFINITE_ARTICLE 2
 
-#define ANY_CATEGORY 0
+#define ANY_CATEGORY 2147483647
 #define HELMET 1
 #define AMULET 2
 #define CLOAK 4
@@ -159,12 +157,11 @@
 #define CT_PLASTIC 256
 #define CT_GAS 512
 
-#define DOWN 0
-#define LEFT 1
+#define LEFT 0
+#define DOWN 1
 #define UP 2
 #define RIGHT 3
 #define CENTER 4
-#define HIDDEN 5
 
 #define HOSTILE 1
 #define UNCARING 2
@@ -328,6 +325,7 @@
 #define SPIDER_BLOOD (LIQUID_ID + 13)
 #define VOMIT (LIQUID_ID + 14)
 #define ACIDOUS_BLOOD (LIQUID_ID + 15)
+#define SULPHURIC_ACID (LIQUID_ID + 16)
 
 #define FLESH_ID (4096 * 5)
 
@@ -424,7 +422,8 @@
 #define RIGHT_BOOT_INDEX 11
 #define LEFT_BOOT_INDEX 12
 
-#define BROKEN 256
+#define BROKEN 128
+#define WINDOW 1024
 
 #define LONG_SWORD 1
 #define TWO_HANDED_SWORD 2
@@ -458,8 +457,11 @@
 #define WAND_OF_INVISIBILITY 9
 #define WAND_OF_CLONING 10
 #define WAND_OF_LIGHTNING 11
+#define WAND_OF_ACID_RAIN 12
 
 #define RUNED_WHIP 1
+
+#define BIG_MINE 1
 
 #define CLOAK_OF_INVISIBILITY 1
 #define CLOAK_OF_FIRE_RESISTANCE 2
@@ -589,8 +591,9 @@
 #define BRICK_PROPAGANDA 2
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
-#define STONE_WALL 5
-#define ICE_WALL 6
+#define BRICK_PRIMITIVE_PROPAGANDA 5
+#define STONE_WALL 6
+#define ICE_WALL 7
 
 #define PINE 1
 #define FIR 2
@@ -624,7 +627,10 @@
 
 #define WORLD_MAP 255
 
+#define DEFAULT_TEAM 255
+
 /* Hard-coded teams */
+
 #define PLAYER_TEAM 0
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
@@ -675,7 +681,7 @@
 #define MORTIFER 15
 #define ATHEIST 16
 
-#define MAX_PRICE 4294967295
+#define MAX_PRICE 2147483647
 
 #define ROOM_NORMAL 1
 #define ROOM_SHOP 2
@@ -683,8 +689,6 @@
 #define ROOM_LIBRARY 4
 #define ROOM_BANANA_DROP_AREA 5
 #define ROOM_SUMO_ARENA 6
-
-#define BEAM_EFFECTS 11
 
 #define BEAM_POLYMORPH 0
 #define BEAM_STRIKE 1
@@ -697,6 +701,7 @@
 #define BEAM_CLONE 8
 #define BEAM_LIGHTNING 9
 #define BEAM_DOOR_CREATION 10
+#define BEAM_ACID_RAIN 11
 
 #define BEAM_STYLES 3
 
@@ -746,5 +751,25 @@
 #define SLIGHTLY_RUSTED 1
 #define RUSTED 2
 #define VERY_RUSTED 3
+
+#define SKIN_COLOR 1
+#define CAP_COLOR 2
+#define HAIR_COLOR 4
+#define EYE_COLOR 8
+#define TORSO_MAIN_COLOR 16
+#define BELT_COLOR 32
+#define BOOT_COLOR 64
+#define TORSO_SPECIAL_COLOR 128
+#define ARM_MAIN_COLOR 256
+#define GAUNTLET_COLOR 512
+#define ARM_SPECIAL_COLOR 1024
+#define LEG_MAIN_COLOR 2048
+#define LEG_SPECIAL_COLOR 4096
+#define CLOTH_COLOR (CAP_COLOR|TORSO_MAIN_COLOR|ARM_MAIN_COLOR|GAUNTLET_COLOR|LEG_MAIN_COLOR)
+
+/* contentscript<character> Flags */
+
+#define IS_LEADER 1
+#define IS_MASTER 2
 
 ; /* this line must be here */

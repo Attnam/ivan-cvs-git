@@ -13,14 +13,12 @@ class bitmap;
 class iosystem
 {
  public:
-  static festring ContinueMenu(ushort, ushort, const festring&);
-  static ushort StringQuestion(festring&, const festring&, vector2d, ushort, ushort, ushort, bool, bool);
-  static long NumberQuestion(const festring&, vector2d, ushort, bool);
-  static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, ushort, ushort, ushort, ushort, ushort, bool, void (*)(long) = 0);
-  static int Menu(const bitmap*, vector2d, const festring&, const festring&, ushort, const festring& = CONST_S(""), const festring& = CONST_S(""));
-  static void TextScreen(const festring&, ushort = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
- private:
-  static ulong CountChars(char, const festring&);
+  static festring ContinueMenu(color16, color16, const festring&);
+  static int StringQuestion(festring&, const festring&, vector2d, color16, festring::sizetype, festring::sizetype, bool, bool);
+  static long NumberQuestion(const festring&, vector2d, color16, bool);
+  static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, int, int, bool, void (*)(long) = 0);
+  static int Menu(const bitmap*, vector2d, const festring&, const festring&, color16, const festring& = CONST_S(""), const festring& = CONST_S(""));
+  static void TextScreen(const festring&, color16 = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
 };
 
 #endif

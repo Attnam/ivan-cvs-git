@@ -19,15 +19,15 @@ bool FelistDrawController()
 struct felistentry
 {
   felistentry() : ImageKey(NO_IMAGE) { }
-  felistentry(const festring&, ushort, ushort, ushort, bool);
+  felistentry(const festring&, color16, uint, uint, bool);
   festring String;
-  ushort Color;
-  ushort Marginal;
-  ushort ImageKey;
+  color16 Color;
+  uint Marginal;
+  uint ImageKey;
   bool Selectable;
 };
 
-felistentry::felistentry(const festring& String, ushort Color, ushort Marginal, ushort ImageKey, bool Selectable) : String(String), Color(Color), Marginal(Marginal), ImageKey(ImageKey), Selectable(Selectable)
+felistentry::felistentry(const festring& String, color16 Color, uint Marginal, uint ImageKey, bool Selectable) : String(String), Color(Color), Marginal(Marginal), ImageKey(ImageKey), Selectable(Selectable)
 {
 }
 
@@ -47,12 +47,12 @@ inputfile& operator>>(inputfile& SaveFile, felistentry*& Entry)
 struct felistdescription
 {
   felistdescription() { }
-  felistdescription(const festring& String, ushort Color) : String(String), Color(Color) { }
+  felistdescription(const festring& String, color16 Color) : String(String), Color(Color) { }
   festring String;
-  ushort Color;
+  color16 Color;
 };
 
-felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), UpKey(KEY_UP), DownKey(KEY_DOWN)
+felist::felist(const festring& Topic, color16 TopicColor, uint Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), UpKey(KEY_UP), DownKey(KEY_DOWN)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -61,7 +61,7 @@ felist::~felist()
 {
   Empty();
 
-  for(ushort c = 0; c < Description.size(); ++c)
+  for(uint c = 0; c < Description.size(); ++c)
     delete Description[c];
 }
 
@@ -70,32 +70,32 @@ bool felist::IsEmpty() const
   return Entry.empty();
 }
 
-ushort felist::GetLength() const
+uint felist::GetLength() const
 {
   return Entry.size();
 }
 
-ushort felist::GetLastEntryIndex() const
+uint felist::GetLastEntryIndex() const
 {
   return Entry.size() - 1;
 }
 
-festring felist::GetEntry(ushort Index) const
+festring felist::GetEntry(uint I) const
 {
-  return Entry[Index]->String;
+  return Entry[I]->String;
 }
 
-ushort felist::GetColor(ushort Index) const
+color16 felist::GetColor(uint I) const
 {
-  return Entry[Index]->Color;
+  return Entry[I]->Color;
 }
 
-void felist::SetColor(ushort Index, ushort What)
+void felist::SetColor(uint I, color16 What)
 {
-  Entry[Index]->Color = What;
+  Entry[I]->Color = What;
 }
 
-void felist::AddDescription(const festring& Str, ushort Color)
+void felist::AddDescription(const festring& Str, color16 Color)
 {
   Description.push_back(new felistdescription(Str, Color)); 
 }
@@ -106,7 +106,7 @@ void felist::Pop()
   Entry.pop_back();
 }
 
-ushort felist::Draw()
+uint felist::Draw()
 {
   while(Entry.size() && Entry[GetLastEntryIndex()]->String.IsEmpty())
     Pop();
@@ -120,11 +120,13 @@ ushort felist::Draw()
     globalwindowhandler::InstallControlLoop(FelistDrawController);
 
   bitmap BackGround(RES_X, RES_Y);
+  BackGround.ActivateFastFlag();
   bitmap* Buffer;
 
   if(Flags & FADE)
     {
       Buffer = new bitmap(RES_X, RES_Y, 0);
+      Buffer->ActivateFastFlag();
       BackGround.ClearToColor(0);
     }
   else
@@ -133,8 +135,8 @@ ushort felist::Draw()
       Buffer->FastBlit(&BackGround);
     }
 
-  ushort c, Return, Selectables = 0;
-
+  uint c;
+  uint Return, Selectables = 0;
   bool JustSelectMove = false;
 
   for(c = 0; c < Entry.size(); ++c)
@@ -170,15 +172,15 @@ ushort felist::Draw()
       else
 	graphics::BlitDBToScreen();
 
-      int Pressed = GET_KEY(false);
+      uint Pressed = GET_KEY(false);
 
-      if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 + PageBegin < long(Entry.size()))
+      if(Flags & SELECTABLE && Pressed > 64 && Pressed < 91 && Pressed - 65 + PageBegin < Entry.size())
 	{
 	  Return = Selected = Pressed - 65 + PageBegin;
 	  break;
 	}
 
-      if(Flags & SELECTABLE && Pressed > 96 && Pressed < 123 && Pressed - 97 + PageBegin < long(Entry.size()))
+      if(Flags & SELECTABLE && Pressed > 96 && Pressed < 123 && Pressed - 97 + PageBegin < Entry.size())
 	{
 	  Return = Selected = Pressed - 97 + PageBegin;
 	  break;
@@ -200,9 +202,11 @@ ushort felist::Draw()
 	    }
 	  else
 	    {
-	      for(c = 0, Selected = 0xFFFF; c < Entry.size(); ++c)
+	      for(c = 0, Selected = 0; c < Entry.size(); ++c)
 		if(Entry[c]->Selectable)
 		  ++Selected;
+
+	      --Selected;
 
 	      if(PageBegin == Selected - Selected % PageLength)
 		JustSelectMove = true;
@@ -292,10 +296,10 @@ static festring Str;
 
 bool felist::DrawPage(bitmap* Buffer) const
 {
-  ushort LastFillBottom = Pos.Y + 23 + Description.size() * 10;
+  uint LastFillBottom = Pos.Y + 23 + Description.size() * 10;
   DrawDescription(Buffer, Pos, Width, BackColor);
 
-  ushort c, i; // c == entry index, i == selectable index
+  uint c, i; // c == entry index, i == selectable index
 
   for(c = 0, i = 0; i != PageBegin; ++c)
     if(Entry[c]->Selectable)
@@ -307,7 +311,7 @@ bool felist::DrawPage(bitmap* Buffer) const
   for(;;)
     {
       Str.Empty();
-      ushort Marginal = Entry[c]->Marginal;
+      uint Marginal = Entry[c]->Marginal;
 
       if(Flags & SELECTABLE && Entry[c]->Selectable)
 	{
@@ -319,7 +323,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if(Entry[c]->ImageKey != NO_IMAGE)
 	{
-	  if(ushort(Str.GetSize()) <= (Width - 50) >> 3)
+	  if(Str.GetSize() <= (Width - 50) >> 3)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 
@@ -335,10 +339,10 @@ bool felist::DrawPage(bitmap* Buffer) const
 	    }
 	  else
 	    {
-	      ushort ChapterSize = festring::SplitString(Str, Chapter, (Width - 50) >> 3, Marginal);
-	      ushort PictureTop = LastFillBottom + ChapterSize * 5 - 9;
+	      uint ChapterSize = festring::SplitString(Str, Chapter, (Width - 50) >> 3, Marginal);
+	      uint PictureTop = LastFillBottom + ChapterSize * 5 - 9;
 
-	      for(ushort l = 0; l < ChapterSize; ++l)
+	      for(uint l = 0; l < ChapterSize; ++l)
 		{
 		  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
@@ -356,9 +360,9 @@ bool felist::DrawPage(bitmap* Buffer) const
 	}
       else
 	{
-	  ushort ChapterSize = festring::SplitString(Str, Chapter, (Width - 26) >> 3, Marginal);
+	  uint ChapterSize = festring::SplitString(Str, Chapter, (Width - 26) >> 3, Marginal);
 
-	  for(ushort l = 0; l < ChapterSize; ++l)
+	  for(uint l = 0; l < ChapterSize; ++l)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
@@ -396,11 +400,11 @@ bool felist::DrawPage(bitmap* Buffer) const
   return c == Entry.size() - 1;
 }
 
-void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort BackColor) const
+void felist::DrawDescription(bitmap* Buffer, vector2d Pos, uint Width, color16 BackColor) const
 {
   Buffer->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20, BackColor);
 
-  for(ushort c = 0; c < Description.size(); ++c)
+  for(uint c = 0; c < Description.size(); ++c)
     {
       Buffer->Fill(Pos.X + 3, Pos.Y + 13 + c * 10, Width - 6, 10, BackColor);
       FONT->Printf(Buffer, Pos.X + 13, Pos.Y + 13 + c * 10, Description[c]->Color, Description[c]->String.CStr());
@@ -411,25 +415,25 @@ void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort 
 
 /* We suppose InverseMode == true here */
 
-void felist::QuickDraw(bitmap* Bitmap, ushort PageLength) const
+void felist::QuickDraw(bitmap* Bitmap, uint PageLength) const
 {
   static std::vector<festring> Chapter;
-  ushort Width = Bitmap->GetXSize();
+  uint Width = Bitmap->GetXSize();
   Bitmap->Fill(3, 3, Width - 6, 20 + PageLength * 10, 0);
   Bitmap->DrawRectangle(1, 1, Width - 2, 24 + PageLength * 10, DARK_GRAY, true);
-  ushort LineSize = (Width - 26) >> 3;
+  uint LineSize = (Width - 26) >> 3;
 
-  ushort Index = 0;
-  ushort Bottom = PageLength * 10 + 3;
+  uint Index = 0;
+  uint Bottom = PageLength * 10 + 3;
 
-  for(ushort c1 = 0; c1 <= Selected; ++c1)
+  for(uint c1 = 0; c1 <= Selected; ++c1)
     {
       const felistentry* CurrentEntry = Entry[Selected - c1];
-      ushort ChapterSize = festring::SplitString(CurrentEntry->String, Chapter, LineSize, CurrentEntry->Marginal);
+      uint ChapterSize = festring::SplitString(CurrentEntry->String, Chapter, LineSize, CurrentEntry->Marginal);
 
-      for(ushort c2 = 0; c2 < ChapterSize; ++c2)
+      for(uint c2 = 0; c2 < ChapterSize; ++c2)
 	{
-	  ushort Color = CurrentEntry->Color;
+	  color16 Color = CurrentEntry->Color;
 	  Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * Index / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * Index / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * Index / PageLength) >> 2));
 	  FONT->Printf(Bitmap, 13, Bottom, Color, "%s", Chapter[ChapterSize - c2 - 1].CStr());
 	  Bottom -= 10;
@@ -440,28 +444,28 @@ void felist::QuickDraw(bitmap* Bitmap, ushort PageLength) const
     }
 }
 
-void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, ushort Color, ushort PageLength)
+void felist::CreateQuickDrawFontCaches(colorizablebitmap* Font, color16 Color, uint PageLength)
 {
   if(PageLength < 2)
     return;
 
-  for(ushort c = 0; c < PageLength; ++c)
+  for(uint c = 0; c < PageLength; ++c)
     Font->CreateFontCache(MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * c / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * c / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * c / PageLength) >> 2)));
 }
 
 void felist::Empty()
 {
-  for(ushort c = 0; c < Entry.size(); ++c)
+  for(uint c = 0; c < Entry.size(); ++c)
     delete Entry[c];
 
   Entry.clear();
 }
 
-void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, ushort Key, bool Selectable)
+void felist::AddEntry(const festring& Str, color16 Color, uint Marginal, uint Key, bool Selectable)
 {
   Entry.push_back(new felistentry(Str, Color, Marginal, Key, Selectable));
 
-  if(Maximum && Entry.size() > Maximum)
+  if(Maximum && Entry.size() > ulong(Maximum))
     {
       delete Entry[0];
       Entry.erase(Entry.begin());
@@ -485,7 +489,7 @@ void felist::PrintToFile(const festring& FileName)
   if(!SaveFile.is_open())
     return;
 
-  ushort c;
+  uint c;
 
   for(c = 0; c < Description.size(); ++c)
     SaveFile << Description[c]->String.CStr() << std::endl;

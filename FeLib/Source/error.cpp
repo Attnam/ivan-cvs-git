@@ -53,7 +53,7 @@ void globalerrorhandler::Install()
       OldNewHandler = set_new_handler(NewHandler);
 
 #ifdef __DJGPP__
-      for(ushort c = 0; c < SIGNALS; ++c)
+      for(int c = 0; c < SIGNALS; ++c)
 	OldSignal[c] = signal(Signal[c], SignalHandler);
 #endif
 
@@ -64,7 +64,7 @@ void globalerrorhandler::Install()
 void globalerrorhandler::DeInstall()
 {
 #ifdef __DJGPP__
-  for(ushort c = 0; c < SIGNALS; ++c)
+  for(int c = 0; c < SIGNALS; ++c)
     signal(Signal[c], OldSignal[c]);
 #endif
 
@@ -103,16 +103,17 @@ int globalerrorhandler::NewHandler(size_t)
 void globalerrorhandler::NewHandler()
 #endif
 {
+  const char* Msg = "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.";
 #ifdef WIN32
   ShowWindow(GetActiveWindow(), SW_HIDE);
-  MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
+  MessageBox(NULL, Msg, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
 #endif
 #ifdef LINUX
-  std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
+  std::cout << Msg << std::endl;
 #endif
 #ifdef __DJGPP__
   graphics::DeInit();
-  std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
+  std::cout << Msg << std::endl;
 #endif
 
   exit(1);

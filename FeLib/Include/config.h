@@ -35,8 +35,8 @@ class configsystem
   static void SetConfigFileName(const festring& What) { ConfigFileName = What; }
  private:
   static configoption* Option[MAX_CONFIG_OPTIONS];
-  static ushort Options;
   static festring ConfigFileName;
+  static int Options;
 };
 
 /* Currently there's no human-readable output option in outputfile,
@@ -45,6 +45,7 @@ class configsystem
 struct configoption
 {
   configoption(const char*, const char*);
+  virtual ~configoption() { }
   virtual void SaveValue(std::ofstream&) const = 0;
   virtual void LoadValue(inputfile&) = 0;
   virtual bool ActivateChangeInterface() = 0;

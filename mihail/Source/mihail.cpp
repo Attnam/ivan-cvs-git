@@ -14,7 +14,7 @@ int Main(int argc, char** argv)
       highscore Input(argv[2]);
       std::cout << std::endl;
 
-      for(ushort c = 0; c < Input.GetSize(); ++c)
+      for(festring::sizetype c = 0; c < Input.GetSize(); ++c)
 	std::cout << c << " " << Input.GetEntry(c).CStr() << " " << Input.GetScore(c) << "\n";
 
       return 0;

@@ -7,6 +7,15 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+??? Timo Kiviluoto <firstname.lastname@kolumbus.fi>
+
+<entry incomplete>
+
+	* It is no longer possible to kick stones under walls
+	* It is no longer possible to detect traps by floating over them, dropping
+	  items and checking if the total weight of the stack is greater than the
+	  items' weights' sum
+
 January 6 2004 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* Now compiles in linux. The corrections are _bad_ so checking them wouldn't be a bad idea.

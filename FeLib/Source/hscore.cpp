@@ -7,6 +7,10 @@
 
 #define HIGH_SCORE_VERSION 120 // Increment this if changes make highscores incompatible
 
+const festring& highscore::GetEntry(int I) const { return Entry[I]; }
+long highscore::GetScore(int I) const { return Score[I]; }
+long highscore::GetSize() const { return Entry.size(); }
+
 highscore::highscore(const festring& File) : LastAdd(0xFF)
 {
   Load(File);
@@ -14,7 +18,7 @@ highscore::highscore(const festring& File) : LastAdd(0xFF)
 
 bool highscore::Add(long NewScore, const festring& NewEntry, time_t NewTime, long NewRandomID)
 {
-  for(ushort c = 0; c < Score.size(); ++c)
+  for(uint c = 0; c < Score.size(); ++c)
     if(Score[c] < NewScore)
       {
 	Entry.insert(Entry.begin() + c, NewEntry);
@@ -61,7 +65,7 @@ void highscore::Draw() const
   felist List(CONST_S("Adventurers' Hall of Fame"));
   festring Desc;
 
-  for(ushort c = 0; c < Score.size(); ++c)
+  for(uint c = 0; c < Score.size(); ++c)
     {
       Desc.Empty();
       Desc << c + 1;
@@ -69,7 +73,7 @@ void highscore::Draw() const
       Desc << Score[c];
       Desc.Resize(13, ' ');
       Desc << Entry[c];
-      List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHT_GRAY, 13);
+      List.AddEntry(Desc, c == uint(LastAdd) ? WHITE : LIGHT_GRAY, 13);
     }
 
   List.SetFlags(FADE);
@@ -109,7 +113,7 @@ bool highscore::MergeToFile(highscore* To) const
 {
   bool MergedSomething = false;
 
-  for(ushort c = 0; c < Score.size(); ++c)
+  for(uint c = 0; c < Score.size(); ++c)
     if(!To->Find(Score[c], Entry[c], Time[c], RandomID[c]))
       {
 	To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
@@ -126,9 +130,9 @@ bool highscore::Add(long NewScore, const festring& NewEntry)
 
 // Because of major stupidity this return the number of NEXT from the right entry, 0 = not found
 
-ulong highscore::Find(long AScore, const festring& AEntry, time_t ATime, long ARandomID)
+int highscore::Find(long AScore, const festring& AEntry, time_t ATime, long ARandomID)
 {
-  for(ulong c = 0; c < Score.size(); ++c)
+  for(uint c = 0; c < Score.size(); ++c)
     {
       if(AScore == Score[c] && Entry[c] == AEntry && ATime == Time[c] && ARandomID == RandomID[c])
 	return c + 1;

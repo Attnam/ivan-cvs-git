@@ -30,7 +30,6 @@ material
 	HitMessage = HM_NOTHING;
 	ExplosivePower = 0;
 	Alpha = 255;
-	CreateDivineConfigurations = false;
 	Flexibility = 1;
 	IsSparkling = false;
 	IsMetal = false;
@@ -1226,6 +1225,19 @@ liquid
 		Acidicity = 500:
 		RustModifier = 500;
 	}
+
+	Config SULPHURIC_ACID;
+	{
+		StrengthValue = 1;
+		NutritionValue = 5;
+		Color = rgb16(160, 160, 0);
+		NameStem = "sulphuric acid";
+		Alpha = 150;
+		Flexibility = 45;
+		AttachedGod = SCABIES;
+		RustModifier = 400;
+		Acidicity = 400;
+	}
 }
 
 flesh
@@ -1597,6 +1609,7 @@ powder
 		AdjectiveStem = "snowy";
 		Flexibility = 40;
 		AttachedGod = TERRA;
+		RainColor = rgb16(255, 255, 255);
 	}
 
 	Config SAND;

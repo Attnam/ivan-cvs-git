@@ -28,9 +28,9 @@ graphics::modeinfo graphics::ModeInfo;
 #endif
 
 bitmap* graphics::DoubleBuffer;
-ushort graphics::ResX;
-ushort graphics::ResY;
-uchar graphics::ColorDepth;
+int graphics::ResX;
+int graphics::ResY;
+int graphics::ColorDepth;
 colorizablebitmap* graphics::DefaultFont = 0;
 
 void graphics::Init()
@@ -75,7 +75,7 @@ void graphics::DeInit()
 
 #ifdef USE_SDL
 
-void graphics::SetMode(const char* Title, const char* IconName, ushort NewResX, ushort NewResY, bool FullScreen)
+void graphics::SetMode(const char* Title, const char* IconName, int NewResX, int NewResY, bool FullScreen)
 {
   if(IconName)
     {
@@ -110,12 +110,12 @@ void graphics::BlitDBToScreen()
   if(SDL_MUSTLOCK(Screen) && SDL_LockSurface(Screen) < 0)
     ABORT("Can't lock screen");
 
-  ushort* SrcPtr = &DoubleBuffer->GetImage()[0][0];
-  ushort* DestPtr = static_cast<ushort*>(Screen->pixels);
+  packedcolor16* SrcPtr = DoubleBuffer->GetImage()[0];
+  packedcolor16* DestPtr = static_cast<packedcolor16*>(Screen->pixels);
   ulong ScreenYMove = (Screen->pitch >> 1);
   ulong LineSize = ResX << 1;
 
-  for(ushort y = 0; y < ResY; ++y, SrcPtr += ResX, DestPtr += ScreenYMove)
+  for(int y = 0; y < ResY; ++y, SrcPtr += ResX, DestPtr += ScreenYMove)
     memcpy(DestPtr, SrcPtr, LineSize);
 
   if(SDL_MUSTLOCK(Screen))
@@ -159,7 +159,7 @@ void graphics::LoadDefaultFont(const festring& FileName)
 
 #ifdef __DJGPP__
 
-void graphics::SetMode(const char*, const char*, ushort NewResX, ushort NewResY, bool)
+void graphics::SetMode(const char*, const char*, int NewResX, int NewResY, bool)
 {
   ulong Mode;
 

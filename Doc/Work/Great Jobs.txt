@@ -54,7 +54,7 @@ Unusable state for bodyparts.
 
 Long range weapons including bow.
 
-More flexible throw using linear extrapolation.
+(r) More flexible throw using linear extrapolation.
 
 Support for multiple items flying at the same time.
 

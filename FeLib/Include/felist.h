@@ -17,57 +17,57 @@ class festring;
 struct felistentry;
 struct felistdescription;
 
-typedef void (*entrydrawer)(bitmap*, vector2d, ushort);
+typedef void (*entrydrawer)(bitmap*, vector2d, uint);
 
 class felist
 {
  public:
-  felist(const festring&, ushort = WHITE, ushort = 0);
+  felist(const festring&, color16 = WHITE, uint = 0);
   ~felist();
-  void AddEntry(const festring&, ushort, ushort = 0, ushort = NO_IMAGE, bool = true);
-  void AddDescription(const festring&, ushort = WHITE);
-  ushort Draw();
-  void QuickDraw(bitmap*, ushort) const;
+  void AddEntry(const festring&, color16, uint = 0, uint = NO_IMAGE, bool = true);
+  void AddDescription(const festring&, color16 = WHITE);
+  uint Draw();
+  void QuickDraw(bitmap*, uint) const;
   void Empty();
-  festring GetEntry(ushort) const;
-  ushort GetColor(ushort) const;
-  void SetColor(ushort, ushort);
-  ushort GetLength() const;
-  ushort GetLastEntryIndex() const;
+  festring GetEntry(uint) const;
+  color16 GetColor(uint) const;
+  void SetColor(uint, color16);
+  uint GetLength() const;
+  uint GetLastEntryIndex() const;
   void Load(inputfile&);
   void Save(outputfile&) const;
   bool IsEmpty() const;
-  ushort GetSelected() const { return Selected; }
-  void SetSelected(ushort What) { Selected = What; }
-  void EditSelected(short What) { Selected += What; }
+  uint GetSelected() const { return Selected; }
+  void SetSelected(uint What) { Selected = What; }
+  void EditSelected(int What) { Selected += What; }
   bool DrawPage(bitmap*) const;
   void Pop();
-  static void CreateQuickDrawFontCaches(colorizablebitmap*, ushort, ushort);
+  static void CreateQuickDrawFontCaches(colorizablebitmap*, color16, uint);
   void PrintToFile(const festring&);
   void SetPos(vector2d What) { Pos = What; }
-  void SetWidth(ushort What) { Width = What; }
-  void SetPageLength(ushort What) { PageLength = What; }
-  void SetBackColor(ushort What) { BackColor = What; }
-  void SetFlags(ushort What) { Flags = What; }
-  void AddFlags(ushort What) { Flags |= What; }
-  void RemoveFlags(ushort What) { Flags &= ~What; }
-  void SetUpKey(ushort What) { UpKey = What; }
-  void SetDownKey(ushort What) { DownKey = What; }
+  void SetWidth(uint What) { Width = What; }
+  void SetPageLength(uint What) { PageLength = What; }
+  void SetBackColor(color16 What) { BackColor = What; }
+  void SetFlags(uint What) { Flags = What; }
+  void AddFlags(uint What) { Flags |= What; }
+  void RemoveFlags(uint What) { Flags &= ~What; }
+  void SetUpKey(uint What) { UpKey = What; }
+  void SetDownKey(uint What) { DownKey = What; }
   void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
  private:
-  void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
+  void DrawDescription(bitmap*, vector2d, uint, color16) const;
   std::vector<felistentry*> Entry;
   std::vector<felistdescription*> Description;
-  ushort PageBegin;
-  ushort Maximum;
-  ushort Selected;
+  uint PageBegin;
+  uint Maximum;
+  uint Selected;
   vector2d Pos;
-  ushort Width;
-  ushort PageLength;
-  ushort BackColor;
-  ushort Flags;
-  ushort UpKey;
-  ushort DownKey;
+  uint Width;
+  uint PageLength;
+  color16 BackColor;
+  uint Flags;
+  uint UpKey;
+  uint DownKey;
   entrydrawer EntryDrawer;
 };
 

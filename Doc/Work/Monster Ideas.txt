@@ -338,3 +338,9 @@ Miniature black hole
 	characters and terrains inside it, never to be seen again.
 	Immune to all weapons, but can be destroyed by magic (thaumic
 	particles are not affected by gravity).
+
+Game abuser
+
+	Stupid monster who has a lair on a secret level where he uses
+	mushrooms, banana peels, broken bottles, gods etc. to gain infinite
+	exp.

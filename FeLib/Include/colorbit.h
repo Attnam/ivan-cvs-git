@@ -13,9 +13,10 @@
 class outputfile;
 class inputfile;
 class bitmap;
+class cachedfont;
 class festring;
 
-typedef std::map<ushort, std::pair<bitmap*, bitmap*> > fontcache;
+typedef std::map<color16, std::pair<cachedfont*, cachedfont*> > fontcache;
 
 class colorizablebitmap
 {
@@ -24,53 +25,53 @@ class colorizablebitmap
   ~colorizablebitmap();
   void Save(const festring&);
 
-  void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ushort*) const;
-  void MaskedBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ushort*) const;
-  void MaskedBlit(bitmap*, ushort, ushort, vector2d, ushort, ushort, ushort*) const;
-  void MaskedBlit(bitmap*, ushort, ushort, ushort, ushort, vector2d, ushort*) const;
-  void MaskedBlit(bitmap*, vector2d, vector2d, ushort, ushort, ushort*) const;
-  void MaskedBlit(bitmap*, vector2d, ushort, ushort, vector2d, ushort*) const;
-  void MaskedBlit(bitmap*, ushort, ushort, vector2d, vector2d, ushort*) const;
-  void MaskedBlit(bitmap*, vector2d, vector2d, vector2d, ushort*) const;
-  void MaskedBlit(bitmap*, ushort*) const;
+  void MaskedBlit(bitmap*, int, int, int, int, int, int, packedcolor16*) const;
+  void MaskedBlit(bitmap*, vector2d, int, int, int, int, packedcolor16*) const;
+  void MaskedBlit(bitmap*, int, int, vector2d, int, int, packedcolor16*) const;
+  void MaskedBlit(bitmap*, int, int, int, int, vector2d, packedcolor16*) const;
+  void MaskedBlit(bitmap*, vector2d, vector2d, int, int, packedcolor16*) const;
+  void MaskedBlit(bitmap*, vector2d, int, int, vector2d, packedcolor16*) const;
+  void MaskedBlit(bitmap*, int, int, vector2d, vector2d, packedcolor16*) const;
+  void MaskedBlit(bitmap*, vector2d, vector2d, vector2d, packedcolor16*) const;
+  void MaskedBlit(bitmap*, packedcolor16*) const;
 
-  void Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
-  void PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
-  bitmap* Colorize(const ushort*, uchar = 255, const uchar* = 0) const;
-  bitmap* Colorize(vector2d, vector2d, vector2d, const ushort*, uchar = 255, const uchar* = 0, const uchar* = 0, bool = true) const;
-  ushort GetXSize() const { return XSize; }
-  ushort GetYSize() const { return YSize; }
+  void Printf(bitmap*, int, int, packedcolor16, const char*, ...) const;
+  void PrintfUnshaded(bitmap*, int, int, packedcolor16, const char*, ...) const;
+  cachedfont* Colorize(const packedcolor16*, alpha = 255, const packedalpha* = 0) const;
+  bitmap* Colorize(vector2d, vector2d, vector2d, const packedcolor16*, alpha = 255, const packedalpha* = 0, const uchar* = 0, bool = true) const;
+  int GetXSize() const { return XSize; }
+  int GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
 
-  void AlterGradient(ushort, ushort, ushort, ushort, uchar, char, bool);
-  void AlterGradient(vector2d, ushort, ushort, uchar, char, bool);
-  void AlterGradient(ushort, ushort, vector2d, uchar, char, bool);
-  void AlterGradient(vector2d, vector2d, uchar, char, bool);
+  void AlterGradient(int, int, int, int, int, int, bool);
+  void AlterGradient(vector2d, int, int, int, int, bool);
+  void AlterGradient(int, int, vector2d, int, int, bool);
+  void AlterGradient(vector2d, vector2d, int, int, bool);
 
-  void SwapColors(ushort, ushort, ushort, ushort, uchar, uchar);
-  void SwapColors(vector2d, ushort, ushort, uchar, uchar);
-  void SwapColors(ushort, ushort, vector2d, uchar, uchar);
-  void SwapColors(vector2d, vector2d, uchar, uchar);
+  void SwapColors(int, int, int, int, int, int);
+  void SwapColors(vector2d, int, int, int, int);
+  void SwapColors(int, int, vector2d, int, int);
+  void SwapColors(vector2d, vector2d, int, int);
 
-  void Roll(ushort, ushort, ushort, ushort, short, short, uchar*);
-  void Roll(vector2d, ushort, ushort, short, short, uchar*);
-  void Roll(ushort, ushort, vector2d, short, short, uchar*);
-  void Roll(ushort, ushort, ushort, ushort, vector2d, uchar*);
-  void Roll(vector2d, vector2d, short, short, uchar*);
-  void Roll(vector2d, ushort, ushort, vector2d, uchar*);
-  void Roll(ushort, ushort, vector2d, vector2d, uchar*);
+  void Roll(int, int, int, int, int, int, uchar*);
+  void Roll(vector2d, int, int, int, int, uchar*);
+  void Roll(int, int, vector2d, int, int, uchar*);
+  void Roll(int, int, int, int, vector2d, uchar*);
+  void Roll(vector2d, vector2d, int, int, uchar*);
+  void Roll(vector2d, int, int, vector2d, uchar*);
+  void Roll(int, int, vector2d, vector2d, uchar*);
   void Roll(vector2d, vector2d, vector2d, uchar*);
 
-  void CreateFontCache(ushort);
-  static bool IsMaterialColor(uchar Color) { return Color >= 192; }
-  static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) >> 4; }
-  uchar& AccessPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
+  void CreateFontCache(packedcolor16);
+  static bool IsMaterialColor(int Color) { return Color >= 192; }
+  static int GetMaterialColorIndex(int Color) { return (Color - 192) >> 4; }
+  uchar& AccessPaletteEntry(int X, int Y) const { return PaletteBuffer[Y * XSize + X]; }
   uchar& AccessPaletteEntry(vector2d Pos) const { return PaletteBuffer[Pos.Y * XSize + Pos.X]; }
   bool IsTransparent(vector2d) const;
   bool IsMaterialColor1(vector2d) const;
-  vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, ushort, bool*) const;
+  vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, int, bool*) const;
  protected:
-  ushort XSize, YSize;
+  int XSize, YSize;
   uchar* Palette;
   uchar* PaletteBuffer;
   fontcache FontCache;

@@ -280,7 +280,7 @@ festring::sizetype festring::Find(const char* CStr, sizetype Pos, sizetype N)
 	{
 	  char Char = CStr[0];
 
-	  while(true)
+	  for(;;)
 	    {
 	      char* Result = static_cast<char*>(memchr(Ptr + Pos, Char, Size - Pos));
 
@@ -422,7 +422,7 @@ void festring::InstallIntegerMap()
   Alloc2D(IntegerMap, 1000, 3);
   char Ones = '0', Tens = '0', Hundreds = '0';
 
-  for(ushort c = 0; c < 1000; ++c)
+  for(int c = 0; c < 1000; ++c)
     {
       IntegerMap[c][0] = Hundreds;
       IntegerMap[c][1] = Tens;
@@ -493,7 +493,7 @@ festring& festring::Append(long Integer)
 
   if(ForceZeros || Integer >= 1000000)
     {
-      ushort Temp = Integer / 1000000;
+      int Temp = Integer / 1000000;
       *BufferPtr++ = IntegerMap[Temp][0];
       *BufferPtr++ = IntegerMap[Temp][1];
       *BufferPtr++ = IntegerMap[Temp][2];
@@ -503,7 +503,7 @@ festring& festring::Append(long Integer)
 
   if(ForceZeros || Integer >= 1000)
     {
-      ushort Temp = Integer / 1000;
+      int Temp = Integer / 1000;
       *BufferPtr++ = IntegerMap[Temp][0];
       *BufferPtr++ = IntegerMap[Temp][1];
       *BufferPtr++ = IntegerMap[Temp][2];
@@ -557,7 +557,7 @@ void festring::SplitString(festring& Source, festring& Result, sizetype Length)
  * in which case a number of spaces is inserted in the beginning of each line
  * except the first. It returns the number of created lines. */
 
-ushort festring::SplitString(const festring& Source, std::vector<festring>& StringVector, sizetype Length, sizetype Marginal)
+int festring::SplitString(const festring& Source, std::vector<festring>& StringVector, sizetype Length, sizetype Marginal)
 {
   if(!Length)
     ABORT("Illegal Length 0 passed to festring::SplitString()!");
@@ -573,7 +573,7 @@ ushort festring::SplitString(const festring& Source, std::vector<festring>& Stri
     StringVector[0].Empty();
 
   SplitString(CopyOfSource, StringVector[0], Length);
-  ushort Size = 1;
+  sizetype Size = 1;
 
   while(!CopyOfSource.IsEmpty())
     {
@@ -755,10 +755,10 @@ void festring::ExtractWord(festring& To)
 
 void festring::SwapData(festring& Str)
 {
-  char* TData = Data;
-  sizetype TSize = Size;
-  sizetype TReserved = Reserved;
-  bool TOwnsData = OwnsData;
+  char*const TData = Data;
+  const sizetype TSize = Size;
+  const sizetype TReserved = Reserved;
+  const bool TOwnsData = OwnsData;
   Data = Str.Data;
   Size = Str.Size;
   Reserved = Str.Reserved;

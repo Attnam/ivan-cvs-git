@@ -5,29 +5,29 @@
 #include "save.h"
 #include "femath.h"
 
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ushort* Color) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort* Color) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, int DestX, int DestY, int Width, int Height, packedcolor16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, vector2d Dest, int Width, int Height, packedcolor16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, vector2d BlitSize, packedcolor16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, int Width, int Height, packedcolor16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, int DestX, int DestY, vector2d BlitSize, packedcolor16* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, vector2d Dest, vector2d BlitSize, packedcolor16* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, packedcolor16* Color) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, packedcolor16* Color) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Color); }
 
-void colorizablebitmap::AlterGradient(vector2d Pos, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
-void colorizablebitmap::AlterGradient(ushort X, ushort Y, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
-void colorizablebitmap::AlterGradient(vector2d Pos, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+void colorizablebitmap::AlterGradient(vector2d Pos, int Width, int Height, int MColor, int Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
+void colorizablebitmap::AlterGradient(int X, int Y, vector2d AlterSize, int MColor, int Amount, bool Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+void colorizablebitmap::AlterGradient(vector2d Pos, vector2d AlterSize, int MColor, int Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
 
-void colorizablebitmap::SwapColors(vector2d Pos, ushort Width, ushort Height, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
-void colorizablebitmap::SwapColors(ushort X, ushort Y, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
-void colorizablebitmap::SwapColors(vector2d Pos, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
+void colorizablebitmap::SwapColors(vector2d Pos, int Width, int Height, int Color1, int Color2) { SwapColors(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
+void colorizablebitmap::SwapColors(int X, int Y, vector2d AlterSize, int Color1, int Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
+void colorizablebitmap::SwapColors(vector2d Pos, vector2d AlterSize, int Color1, int Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
 
-void colorizablebitmap::Roll(vector2d Pos, ushort Width, ushort Height, short XMove, short YMove, uchar* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, XMove, YMove, TempBuf); }
-void colorizablebitmap::Roll(ushort X, ushort Y, vector2d BlitSize, short XMove, short YMove, uchar* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
-void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, vector2d Move, uchar* TempBuf) { Roll(X, Y, Width, Height, Move.X, Move.Y, TempBuf); }
-void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, short XMove, short YMove, uchar* TempBuf) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
-void colorizablebitmap::Roll(vector2d Pos, ushort Width, ushort Height, vector2d Move, uchar* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, Move.X, Move.Y, TempBuf); }
-void colorizablebitmap::Roll(ushort X, ushort Y, vector2d BlitSize, vector2d Move, uchar* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y, TempBuf); }
+void colorizablebitmap::Roll(vector2d Pos, int Width, int Height, int XMove, int YMove, uchar* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, XMove, YMove, TempBuf); }
+void colorizablebitmap::Roll(int X, int Y, vector2d BlitSize, int XMove, int YMove, uchar* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
+void colorizablebitmap::Roll(int X, int Y, int Width, int Height, vector2d Move, uchar* TempBuf) { Roll(X, Y, Width, Height, Move.X, Move.Y, TempBuf); }
+void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, int XMove, int YMove, uchar* TempBuf) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, XMove, YMove, TempBuf); }
+void colorizablebitmap::Roll(vector2d Pos, int Width, int Height, vector2d Move, uchar* TempBuf) { Roll(Pos.X, Pos.Y, Width, Height, Move.X, Move.Y, TempBuf); }
+void colorizablebitmap::Roll(int X, int Y, vector2d BlitSize, vector2d Move, uchar* TempBuf) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y, TempBuf); }
 void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, vector2d Move, uchar* TempBuf) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y, TempBuf); }
 
 colorizablebitmap::colorizablebitmap(const festring& FileName)
@@ -49,7 +49,7 @@ colorizablebitmap::colorizablebitmap(const festring& FileName)
   PaletteBuffer = new uchar[XSize * YSize];
   uchar* Buffer = PaletteBuffer;
 
-  while(ulong(Buffer) != ulong(PaletteBuffer) + XSize * YSize)
+  while(Buffer != PaletteBuffer + XSize * YSize)
     {
       int Char1 = File.Get();
 
@@ -58,10 +58,10 @@ colorizablebitmap::colorizablebitmap(const festring& FileName)
 	  int Char2 = File.Get();
 
 	  for(; Char1 > 192; Char1--)
-	    *(Buffer++) = Char2;
+	    *Buffer++ = Char2;
 	}
       else
-	*(Buffer++) = Char1;
+	*Buffer++ = Char1;
     }
 }
 
@@ -95,12 +95,12 @@ void colorizablebitmap::Save(const festring& FileName)
   SaveFile.Write(PCXHeader, 128);
   uchar* Buffer = PaletteBuffer;
 
-  while(ulong(Buffer) != ulong(PaletteBuffer) + XSize * YSize)
+  while(Buffer != PaletteBuffer + XSize * YSize)
     {
-      uchar Char = *(Buffer++);
+      uchar Char = *Buffer++;
 
       if(Char >= 192)
-	SaveFile.Put(uchar(193));
+	SaveFile.Put(char(193));
 
       SaveFile.Put(Char);
     }
@@ -108,29 +108,29 @@ void colorizablebitmap::Save(const festring& FileName)
   SaveFile.Write(reinterpret_cast<char*>(Palette), 768);
 }
 
-void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY, int Width, int Height, packedcolor16* Color) const
 {
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->GetXSize(), Bitmap->GetYSize()))
     return;
 
   uchar* Buffer = PaletteBuffer + SourceY * XSize + SourceX;
-  ushort* DestBuffer = &Bitmap->GetImage()[DestY][DestX];
-  ushort BitmapXSize = Bitmap->GetXSize();
+  packedcolor16* DestBuffer = &Bitmap->GetImage()[DestY][DestX];
+  int BitmapXSize = Bitmap->GetXSize();
   uchar* Palette = this->Palette; // eliminate the efficiency cost of dereferencing
 
-  for(ushort y = 0; y < Height; ++y)
+  for(int y = 0; y < Height; ++y)
     {
-      for(ushort x = 0; x < Width; ++x)
+      for(int x = 0; x < Width; ++x)
 	{
-	  uchar PaletteElement = Buffer[x];
+	  int PaletteElement = Buffer[x];
 
 	  if(PaletteElement >= 192)
 	    {
-	      ushort ThisColor = Color[(PaletteElement - 192) >> 4];
-	      ushort Index = PaletteElement & 15;
-	      ushort Red = (ThisColor >> 8 & 0xF8) * Index;
-	      ushort Green = (ThisColor >> 3 & 0xFC) * Index;
-	      ushort Blue = (ThisColor << 3 & 0xF8) * Index;
+	      int ThisColor = Color[(PaletteElement - 192) >> 4];
+	      int Index = PaletteElement & 15;
+	      int Red = (ThisColor >> 8 & 0xF8) * Index;
+	      int Green = (ThisColor >> 3 & 0xFC) * Index;
+	      int Blue = (ThisColor << 3 & 0xF8) * Index;
 
 	      if(Red > 0x7FF)
 		Red = 0x7FF;
@@ -145,10 +145,10 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
 	    }
 	  else
 	    {
-	      ushort PaletteIndex = PaletteElement + (PaletteElement << 1);
-	      ushort ThisColor = ((Palette[PaletteIndex] & 0xFFF8) << 8)
-			       | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
-			       |  (Palette[PaletteIndex + 2] >> 3);
+	      int PaletteIndex = PaletteElement + (PaletteElement << 1);
+	      int ThisColor = ((Palette[PaletteIndex] & 0xFFF8) << 8)
+			    | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
+			    |  (Palette[PaletteIndex + 2] >> 3);
 
 	      if(ThisColor != TRANSPARENT_COLOR)
 		DestBuffer[x] = ThisColor;
@@ -160,13 +160,13 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
     }
 }
 
-bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
+cachedfont* colorizablebitmap::Colorize(const packedcolor16* Color, alpha BaseAlpha, const packedalpha* Alpha) const
 {
-  bitmap* Bitmap = new bitmap(XSize, YSize);
+  cachedfont* Bitmap = new cachedfont(XSize, YSize);
   uchar* Buffer = PaletteBuffer;
-  ushort* DestBuffer = Bitmap->GetImage()[0];
+  packedcolor16* DestBuffer = Bitmap->GetImage()[0];
   uchar* Palette = this->Palette; // eliminate the efficiency cost of dereferencing
-  uchar* AlphaMap;
+  packedalpha* AlphaMap;
   bool UseAlpha;
 
   if(BaseAlpha != 255 || (Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255)))
@@ -181,25 +181,25 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
       UseAlpha = false;
     }
 
-  ushort BitmapXSize = Bitmap->GetXSize();
+  int BitmapXSize = Bitmap->GetXSize();
 
-  for(ushort y = 0; y < YSize; ++y)
+  for(int y = 0; y < YSize; ++y)
     {
-      for(ushort x = 0; x < XSize; ++x)
+      for(int x = 0; x < XSize; ++x)
 	{
-	  uchar PaletteElement = Buffer[x];
+	  int PaletteElement = Buffer[x];
 
 	  if(PaletteElement >= 192)
 	    {
-	      ushort ColorIndex = (PaletteElement - 192) >> 4;
-	      ushort ThisColor = Color[ColorIndex];
+	      int ColorIndex = (PaletteElement - 192) >> 4;
+	      int ThisColor = Color[ColorIndex];
 
 	      if(ThisColor != TRANSPARENT_COLOR)
 		{
-		  ushort Index = PaletteElement & 15;
-		  ushort Red = (ThisColor >> 8 & 0xF8) * Index;
-		  ushort Green = (ThisColor >> 3 & 0xFC) * Index;
-		  ushort Blue = (ThisColor << 3 & 0xF8) * Index;
+		  int Index = PaletteElement & 15;
+		  int Red = (ThisColor >> 8 & 0xF8) * Index;
+		  int Green = (ThisColor >> 3 & 0xFC) * Index;
+		  int Blue = (ThisColor << 3 & 0xF8) * Index;
 
 		  if(Red > 0x7FF)
 		    Red = 0x7FF;
@@ -220,7 +220,7 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
 	    }
 	  else
 	    {
-	      ushort PaletteIndex = PaletteElement + (PaletteElement << 1);
+	      int PaletteIndex = PaletteElement + (PaletteElement << 1);
 	      DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
 			    | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
 			    |  (Palette[PaletteIndex + 2] >> 3);
@@ -235,7 +235,7 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha, const uchar* RustData, bool AllowReguralColors) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const packedcolor16* Color, alpha BaseAlpha, const packedalpha* Alpha, const uchar* RustData, bool AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   vector2d TargetPos(0, 0);
@@ -268,10 +268,10 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
     }
 
   uchar* Buffer = PaletteBuffer + Pos.Y * XSize + Pos.X;
-  ushort* DestBuffer = &Bitmap->GetImage()[TargetPos.Y][TargetPos.X];
-  ushort BitmapXSize = Bitmap->GetXSize();
+  packedcolor16* DestBuffer = &Bitmap->GetImage()[TargetPos.Y][TargetPos.X];
+  int BitmapXSize = Bitmap->GetXSize();
   uchar* Palette = this->Palette; // eliminate the efficiency cost of dereferencing
-  uchar* AlphaMap;
+  packedalpha* AlphaMap;
   bool UseAlpha;
 
   if(BaseAlpha != 255 || (Alpha && (Alpha[0] != 255 || Alpha[1] != 255 || Alpha[2] != 255 || Alpha[3] != 255)))
@@ -297,26 +297,26 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
       RustSeed[3] = (RustData[3] & 0xFC) >> 2;
     }
 
-  for(ushort y = 0; y < Size.Y; ++y)
+  for(int y = 0; y < Size.Y; ++y)
     {
-      for(ushort x = 0; x < Size.X; ++x)
+      for(int x = 0; x < Size.X; ++x)
 	{
-	  uchar PaletteElement = Buffer[x];
+	  int PaletteElement = Buffer[x];
 
 	  if(PaletteElement >= 192)
 	    {
-	      ushort ColorIndex = (PaletteElement - 192) >> 4;
-	      ushort ThisColor = Color[ColorIndex];
+	      int ColorIndex = (PaletteElement - 192) >> 4;
+	      int ThisColor = Color[ColorIndex];
 
 	      if(ThisColor != TRANSPARENT_COLOR)
 		{
-		  ushort Index = PaletteElement & 15;
-		  ushort Red = (ThisColor >> 8 & 0xF8) * Index;
-		  ushort Green = (ThisColor >> 3 & 0xFC) * Index;
-		  ushort Blue = (ThisColor << 3 & 0xF8) * Index;
+		  int Index = PaletteElement & 15;
+		  int Red = (ThisColor >> 8 & 0xF8) * Index;
+		  int Green = (ThisColor >> 3 & 0xFC) * Index;
+		  int Blue = (ThisColor << 3 & 0xF8) * Index;
 
 		  if(Rusted && RustData[ColorIndex]
-		  && (RustData[ColorIndex] & 3) > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
+		  && (RustData[ColorIndex] & 3UL) > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
 		    {
 		      Green = ((Green << 1) + Green) >> 2;
 		      Blue >>= 1;
@@ -341,7 +341,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
 	    }
 	  else if(AllowReguralColors)
 	    {
-	      ushort PaletteIndex = PaletteElement + (PaletteElement << 1);
+	      int PaletteIndex = PaletteElement + (PaletteElement << 1);
 	      DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
 			    | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
 			    |  (Palette[PaletteIndex + 2] >> 3);
@@ -358,7 +358,7 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
   return Bitmap;
 }
 
-void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+void colorizablebitmap::Printf(bitmap* Bitmap, int X, int Y, packedcolor16 Color, const char* Format, ...) const
 {
   char Buffer[256];
 
@@ -368,27 +368,27 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  ushort Size = strlen(Buffer);
+  int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
     {
-      ushort ShadeCol = MakeShadeColor(Color);
+      packedcolor16 ShadeCol = MakeShadeColor(Color);
 
-      for(ushort c = 0; c < Size; ++c)
+      for(int c = 0; c < Size; ++c)
 	{
-	  ushort FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
+	  int FX = ((Buffer[c] - 0x20) & 0xF) << 4, FY = (Buffer[c] - 0x20) & 0xF0;
 	  MaskedBlit(Bitmap, FX, FY, X + (c << 3) + 1, Y + 1, 8, 8, &ShadeCol);
 	  MaskedBlit(Bitmap, FX, FY, X + (c << 3), Y, 8, 8, &Color);
 	}
     }
   else
     {
-      for(ushort c = 0; c < Size; ++c)
-	Iterator->second.first->MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 9, 9);
+      for(int c = 0; c < Size; ++c)
+	Iterator->second.first->PrintCharacter(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y);
     }
 }
 
-void colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+void colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, int X, int Y, packedcolor16 Color, const char* Format, ...) const
 {
   char Buffer[256];
 
@@ -398,35 +398,35 @@ void colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ushor
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
-  ushort Size = strlen(Buffer);
+  int Size = strlen(Buffer);
 
   if(Iterator == FontCache.end())
     {
-      for(ushort c = 0; c < Size; ++c)
+      for(int c = 0; c < Size; ++c)
 	MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8, &Color);
     }
   else
     {
-      for(ushort c = 0; c < Size; ++c)
-	Iterator->second.second->MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8);
+      for(int c = 0; c < Size; ++c)
+	Iterator->second.second->PrintCharacter(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y);
     }
 }
 
-void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip)
+void colorizablebitmap::AlterGradient(int X, int Y, int Width, int Height, int MColor, int Amount, bool Clip)
 {
-  uchar ColorMin = 192 + (MColor << 4);
-  uchar ColorMax = 207 + (MColor << 4);
+  int ColorMin = 192 + (MColor << 4);
+  int ColorMax = 207 + (MColor << 4);
 
   if(Clip)
     {
-      for(ushort x = X; x < X + Width; ++x)
-	for(ushort y = Y; y < Y + Height; ++y)
+      for(int x = X; x < X + Width; ++x)
+	for(int y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = AccessPaletteEntry(x, y);
+	    int Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
 	      {
-		ushort NewPixel = ushort(Pixel) + Amount;
+		int NewPixel = Pixel + Amount;
 
 		if(NewPixel < ColorMin)
 		  NewPixel = ColorMin;
@@ -440,16 +440,16 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
     }
   else
     {
-      ushort x;
+      int x;
 
       for(x = X; x < X + Width; ++x)
-	for(ushort y = Y; y < Y + Height; ++y)
+	for(int y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = AccessPaletteEntry(x, y);
+	    int Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
 	      {
-		ushort NewPixel = ushort(Pixel) + Amount;
+		int NewPixel = Pixel + Amount;
 
 		if(NewPixel < ColorMin)
 		  return;
@@ -460,9 +460,9 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
 	  }
 
       for(x = X; x < X + Width; ++x)
-	for(ushort y = Y; y < Y + Height; ++y)
+	for(int y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = AccessPaletteEntry(x, y);
+	    int Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
 	      AccessPaletteEntry(x, y) = Pixel + Amount;
@@ -470,13 +470,13 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
     }
 }
 
-void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Height, uchar Color1, uchar Color2)
+void colorizablebitmap::SwapColors(int X, int Y, int Width, int Height, int Color1, int Color2)
 {
   if(Color1 > 3 || Color2 > 3)
     ABORT("Illgal color swap!");
 
-  for(ushort x = X; x < X + Width; ++x)
-    for(ushort y = Y; y < Y + Height; ++y)
+  for(int x = X; x < X + Width; ++x)
+    for(int y = Y; y < Y + Height; ++y)
       {
 	uchar& Pixel = AccessPaletteEntry(x, y);
 
@@ -489,14 +489,14 @@ void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Heig
 
 /* TempBuffer must be an array of Width * Height uchars */
 
-void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, short XMove, short YMove, uchar* TempBuffer)
+void colorizablebitmap::Roll(int X, int Y, int Width, int Height, int XMove, int YMove, uchar* TempBuffer)
 {
-  ushort x, y;
+  int x, y;
 
   for(x = X; x < X + Width; ++x)
     for(y = Y; y < Y + Height; ++y)
       {
-	short XPos = x + XMove, YPos = y + YMove;
+	int XPos = x + XMove, YPos = y + YMove;
 
 	if(XPos < X)
 	  XPos += Width;
@@ -518,26 +518,27 @@ void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, sh
       AccessPaletteEntry(x, y) = TempBuffer[(y - Y) * Width + x - X];
 }
 
-void colorizablebitmap::CreateFontCache(ushort Color)
+void colorizablebitmap::CreateFontCache(packedcolor16 Color)
 {
   if(FontCache.find(Color) != FontCache.end())
     return;
 
-  ushort ShadeColor = MakeShadeColor(Color);
-  bitmap* Font = new bitmap(XSize, YSize, TRANSPARENT_COLOR);
-
+  packedcolor16 ShadeColor = MakeShadeColor(Color);
+  cachedfont* Font = new cachedfont(XSize, YSize, TRANSPARENT_COLOR);
   MaskedBlit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1, &ShadeColor);
-  bitmap* UnshadedFont = Colorize(&Color);
-  UnshadedFont->MaskedBlit(Font);
-  FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, UnshadedFont);
+  cachedfont* UnshadedFont = Colorize(&Color);
+  UnshadedFont->NormalMaskedBlit(Font);
+  Font->CreateMaskMap();
+  UnshadedFont->CreateMaskMap();
+  FontCache[Color] = std::pair<cachedfont*, cachedfont*>(Font, UnshadedFont);
 }
 
 /* returns ERROR_VECTOR if fails find Pos else returns pos */
 
-vector2d colorizablebitmap::RandomizeSparklePos(const vector2d* ValidityArray, vector2d* PossibleBuffer, vector2d Pos, vector2d Size, ushort ValidityArraySize, bool* Sparkling) const
+vector2d colorizablebitmap::RandomizeSparklePos(const vector2d* ValidityArray, vector2d* PossibleBuffer, vector2d Pos, vector2d Size, int ValidityArraySize, bool* Sparkling) const
 {
   bool SparklingReally = false;
-  ushort c;
+  int c;
 
   for(c = 0; c < 4; ++c)
     if(Sparkling[c])
@@ -555,31 +556,31 @@ vector2d colorizablebitmap::RandomizeSparklePos(const vector2d* ValidityArray, v
   BadPossible[3] = BadPossible[0] + ((Size.X + Size.Y) << 1) - 20;
   vector2d* PreferredPossible = BadPossible[3] + ((Size.X + Size.Y) << 1) - 28;
 
-  ushort Preferred = 0;
-  ushort Bad[4] = { 0, 0, 0, 0 };
-  ushort XMax = Pos.X + Size.X;
-  ushort YMax = Pos.Y + Size.Y;
+  int Preferred = 0;
+  int Bad[4] = { 0, 0, 0, 0 };
+  int XMax = Pos.X + Size.X;
+  int YMax = Pos.Y + Size.Y;
 
   for(c = 0; c < ValidityArraySize; ++c)
     {
       vector2d V = ValidityArray[c] + Pos;
-      uchar Entry = AccessPaletteEntry(V.X, V.Y);
+      int Entry = AccessPaletteEntry(V.X, V.Y);
 
       if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
 	{
-	  short MinDist = 0x7FFF;
+	  int MinDist = 0x7FFF;
 
 	  if(V.X < Pos.X + 4)
-	    MinDist = Min<short>(V.X - Pos.X, MinDist);
+	    MinDist = Min(V.X - Pos.X, MinDist);
 
 	  if(V.X >= XMax - 4)
-	    MinDist = Min<short>(XMax - V.X - 1, MinDist);
+	    MinDist = Min(XMax - V.X - 1, MinDist);
 
 	  if(V.Y < Pos.Y + 4)
-	    MinDist = Min<short>(V.Y - Pos.Y, MinDist);
+	    MinDist = Min(V.Y - Pos.Y, MinDist);
 
 	  if(V.Y >= YMax - 4)
-	    MinDist = Min<short>(YMax - V.Y - 1, MinDist);
+	    MinDist = Min(YMax - V.Y - 1, MinDist);
 
 	  if(MinDist >= 4)
 	    PreferredPossible[Preferred++] = V;
@@ -613,6 +614,6 @@ bool colorizablebitmap::IsTransparent(vector2d Pos) const
 
 bool colorizablebitmap::IsMaterialColor1(vector2d Pos) const
 {
-  uchar P = AccessPaletteEntry(Pos);
+  int P = AccessPaletteEntry(Pos);
   return P >= 192 && P < 208;
 }
