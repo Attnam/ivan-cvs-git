@@ -130,7 +130,7 @@ uchar character::TakeHit(character* Enemy, short Success)
 {
 	DeActivateVoluntaryStates(Enemy->Name(DEFINITE) + " seems to be hostile");
 
-	if(!(rand() % 20))
+	if(!(rand() % 20)) // Test whether critical hit or not
 	{
 		ushort Damage = ushort(Enemy->GetAttackStrength() * Enemy->GetStrength() * (1 + float(Success) / 100) * CalculateArmorModifier() / 1000000) + (rand() % 3 ? 2 : 1);
 
@@ -141,7 +141,17 @@ uchar character::TakeHit(character* Enemy, short Success)
 
 		SetHP(GetHP() - Damage);
 
-		if(rand() % 4) SpillBlood(rand() % 3);
+		if(rand() % 4) 
+			SpillBlood(rand() % 5);
+		
+		
+		vector2d Where = GetPos() + game::GetMoveVector(rand() % 8);	
+		if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable())
+		{
+			SpillBlood(5 + rand() % 5, Where);
+		}
+		
+
 
 		if(CheckDeath(std::string("killed by ") + Enemy->Name(INDEFINITE)))
 			return HAS_DIED;
@@ -717,7 +727,7 @@ bool character::TryMove(vector2d MoveTo)
 		}
 		else
 		{
-			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround())
+			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
 			{
 				std::vector<character*> TempPlayerGroup;
 
@@ -1741,9 +1751,16 @@ bool character::Pray()
 	}
 }
 
+void character::SpillBlood(uchar HowMuch, vector2d GetPos)
+{
+	if(!game::GetInWilderness()) 
+		game::GetCurrentLevel()->GetLevelSquare(GetPos)->SpillFluid(HowMuch, GetBloodColor(), 10, 40);
+}
+
 void character::SpillBlood(uchar HowMuch)
 {
-	if(!game::GetInWilderness()) GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),10,40);
+	if(!game::GetInWilderness()) 
+		GetLevelSquareUnder()->SpillFluid(HowMuch, GetBloodColor(),10,40);
 }
 
 void character::ReceiveSchoolFoodEffect(long SizeOfEffect)

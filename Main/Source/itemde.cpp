@@ -189,6 +189,8 @@ material* lump::BeDippedInto()
 bool potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
 	item* Remains = new brokenbottle(false);
+	if(GetMaterial(1)) 
+		GetLevelSquareUnder()->SpillFluid(1, GetMaterial(1)->GetColor());
 	Remains->InitMaterials(GetMaterial(0));
 	SetMaterial(0, 0);
 	ushort Index = ItemStack->AddItem(Remains);

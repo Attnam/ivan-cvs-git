@@ -184,6 +184,7 @@ public:
 	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
 	virtual void SetWielded(item* Something) { Wielded = Something; }
 	virtual void SpillBlood(uchar);
+	virtual void SpillBlood(uchar, vector2d);
 	virtual void Vomit(ushort);
 	virtual void Be();
 	virtual bool Zap();
