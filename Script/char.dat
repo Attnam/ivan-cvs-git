@@ -3089,3 +3089,37 @@ floatingeye
 	UsesNutrition = false;
 	AttackWisdomLimit = 10;
 }
+
+eddy
+{
+	DefaultArmStrength = 1;
+	DefaultAgility = 8;
+	DefaultEndurance = 2;
+	DefaultPerception = 12;
+	DefaultIntelligence = 1;
+	DefaultWisdom = 1;
+	DefaultCharisma = 1;
+	DefaultMana = 10;
+	TotalVolume = 150000; /* most of it is in some other dimension */
+	TorsoBitmapPos = 128, 16;
+	HostileReplies == "The @du twirls angrily.";
+	FriendlyReplies == "The @du twirls faster for a moment.";
+	TotalSize = 100;
+	/* SkinColor overridden */
+	NameSingular = "eddy";
+	NamePlural = "eddies";
+	PostFix = "in space-time continuum";
+	CanBeGenerated = true;
+	HasEyes = false;
+	HasHead = false;
+	HasFeet = false;
+	CanBeGenerated = true;
+	IgnoreDanger = true;
+	HPRequirementForGeneration = 0;
+	Frequency = 500;
+	PanicLevel = 0;
+	StandVerb = "twirling";
+	UsesNutrition = false;
+	SpillsBlood = false;
+	FleshMaterial = MAGICAL_AIR;
+}
