@@ -1,16 +1,7 @@
 level::RandomSquare()
-//datamember<type>::GetMember()
-//continent::GetRandomMember
-//protosystem::BalancedCreateMonster
 spoiling & applyexperience
 reduce the number of CalculateNeighbourBitmapPoses calls
-//map databases (speed N -> log N)
-//panel is drawn maybe too often?
 DrawMemorized may be called too often
 Cache ability to block light
-//Removing air.
 AlterLuminance
 ChangeAlpha
-//Limits in bitmap.cpp
-//AI equipment selection calls UpdatePictures() too often.
-//igraph::RemoveUser()

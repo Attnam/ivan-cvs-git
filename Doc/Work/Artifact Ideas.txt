@@ -2,20 +2,11 @@ small swords
 
 dagger of venom - permanent poison
 incredibly sharp dagger named Mucro - bypass armor
-//short sword named Saal'thul - invisibility
 banshee sickle - screams, makes enemies panic
 
 large swords
 
-//flaming sword - fire damage, glow, may burn enemy items
 sword of giant slaying - double damage against monsters of > 250 size (bastard sword)
-//holy broadsword named Valpurus's Justifier - haste, infravision, esp, polymorph control, teleport control
-
-blunt weapons
-
-//mace named Turox - explosion
-//ancient mace named Neerc Se-ulb - great damage, hp drain
-//thunderbird hammer - lightning
 
 axes
 
@@ -23,11 +14,4 @@ mammoth battle axe - enormous damage, may bounce enemies, very heavy, very diffi
 
 polearms
 
-//runed spear named Vermis - teleports enemy
-//unholy halberd named Mjolak - energy damage, evil thing to use
 scythe of undeath - raises all killed humanoids as temporary zombies
-
-whips
-
-//whip of thievery - steals weapon
-//chameleon whip - polymorphs enemy, depends on relation to Scabies

@@ -1,7 +1,5 @@
 Misc:
 
-//horn of bravery - cures panic of friendly creatures
-//horn of fear - causes panic to enemies
 wand of petrification - has a chance of changing the material of every item and monster it hits to stone
 is - these things are expensive but their amount is every now and then cut to half (mockery of Adom's si :)
 ring of conflict
@@ -10,29 +8,14 @@ knuckles
 
 Weapons:
 
-//hammer of thunderbolts - lightning animation, electricity damage
-//poleaxe of unholy power - energy damage (renamed to Poleaxe named Mjolak)
-//wormhole spear - teleports the enemy (renamed to Spear named Vermis)
-//mace of hellfire - causes an explosion (renamed to Mace named Turox)
-//whip of thievery - disarms the enemy
-//staff of archmagi - randomly polymorphs/teleports/slows the enemy
 baseball bat
 
 Armor:
 
 cloak of displacement - when the owner is being hit, this occasionally displaces him
 reflector shield - reverses the direction of beams
-//gauntlets of strength - +x arm str
-//gauntlets of dexterity - +x dexterity
-//armor of great health - +x end
-//helm of piercing perception - +x per
-//helm of understanding - +x wisdom
-//helm of innovation - +x intelligence
-//helm of attractivity - +x charisma
 helm of ESP
-//boots of kicking - more kicking damage
 sandals of Hermes - flying
-//girdle of carrying - +x% carrying strength
 amulet of improbability - causes odd improbabilities
 spiked gauntlets
 night vision googles - infravision
