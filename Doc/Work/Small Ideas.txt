@@ -18,14 +18,14 @@ Food poisoning state.
 Armor pictures of humanoids.
 Maybe some keys other than Alt+Enter and Print Screen should also work during getkey?
 Double-sized draw of the tiles as a switch.
-Cloning.
-Size of player increases from eating.
+//Cloning.
+Size of player should increase from eating.
 How can you change the window to the rigth size? (stickiness)
-/*Banana peals should be slippery.
-Weapons should break.
+//*Banana peals should be slippery.
+//Weapons should break.
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
-Blindness of pets.
+Blindness.
 Uses for vomiting.
 //CNAME should be clarified.
 Hit rate of thrown items should be lowered.
@@ -50,9 +50,9 @@ Player's difficulty level should not be influenced by the current weapon/armor?
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 //*You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 *Script should have an initial blood level of square option.
-*Balancing offervalues.
+//*Balancing offervalues.
 /*Items on the level could get impactdamage when hit by an earthquake. Doors could also break.
-Donkey should be named "an ass".
+//Donkey should be named "an ass".
 Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
@@ -68,7 +68,7 @@ Fire should do extra damage to parchment golems.
 *Random item option to script.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
-Punishment of cathedral terrain destruction.
+//Punishment of cathedral terrain destruction.
 /*Ivan should break doors.
 Monsters that change colors.
 Drugs.
@@ -106,7 +106,7 @@ Stat point based character generation? (from Antti)
 //Banapeals should be possible to clean from the Cat without alerting guards. (from Nihil)
 Guilds. (from Tapani Tiilikainen)
 Option to change the size of font. (from sturmkoenig2k)
-Practise dungeon? (from JM)
+//Practise dungeon? (from JM)
 Elemental damage. (from JM)
 *Zombies should lose weight when they drop lumps of flesh.
 Consummo should appreciate sacrificed scrolls and books more than other gods.
@@ -119,12 +119,12 @@ Fluid should handle melded metals.
 In-game manual.
 In-game credits.
 Valpurus's altar rooms should be frog-shaped.
-When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into a donkey.")
+When we add magic, low level characters should be able to accidentally miscast a spell so that it would produce really weird effects. ("Uh oh! Something went wrong while casting the force bolt. You transform into an ass.")
 Something mysterious should happen when one lays a pick-axe on a holy banana of Liukas Vipro.
 Intelligent polymorphed monsters should have unique replies?
 //*Fluid disappears too fast.
 *Mommos should not leave corpses but just slime.
-***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
+/***WATER SHOULD MAKE GUNPOWDER USELESSSSS! GRAAAH!
 /*Dipping an empty bottle in a fountain should fill it with water.
 //*The librarian should sell scrolls of charging.
 /*Wand's explosive power should depend on its charges.
@@ -144,7 +144,6 @@ If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his
 //**Message splitting.
 One should be able to buy better bodyparts somewhere in the game.
 One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
-Specialities for highest SWSkills like unwield prohibition and Stormbringer effect.
 Gems should increase score.
 Non-fatal battles like robberies.
 //Angels should carry holy books of their respective OwnerGods.
@@ -189,7 +188,7 @@ Perception should affect chance of detecting traps. (from JM)
 //Slow and haste. (from JM)
 Flying monsters should be more difficult to hit. (from JM)
 Flying monsters should occasionally be displaced.
-Status bar with colored statuses (poisoned, flying etc). (from JM)
+//Status bar with colored statuses (poisoned, flying etc). (from JM)
 Scroll of create holy/fallen angel. (from JM)
 Scroll of light. (from JM)
 Scroll of life, permanent hp plus. (from JM)
@@ -208,7 +207,7 @@ Stores specialized on potions or scrolls. (from JM)
 Pick-axes available in the lowest levels. (from JM)
 In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
 Spiders should make webs.
-/Wand of locking.
+//Wand of locking.
 Scroll of gold detection that would identify every unit made of gold on the level.
 Bananas should act as boomerangs when thrown.
 //*Satiated and bloated states.
@@ -221,7 +220,7 @@ One must be able to use a stethoscope on doors.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
 Mutant monster that would have totally random bodyparts from any humanoid in game.
-WhatToLoad menu could show danger level & dungeon level.
+Continue menu could show danger level & dungeon level.
 Pocket pick-axe.
 //*Aliases for wishing.
 Dipping to oceans.
@@ -232,7 +231,7 @@ Opening a can should be more difficult with less hands.
 Fly function for character!
 Item category "rubbish" which would contain bananapeals and roubles.
 Cumulative comments to script.
-Material colored cursor.
+Material-colored cursor.
 //Alphablit to bottles.
 Wand levels.
 Talking to oneself should abuse intelligence.
@@ -244,9 +243,9 @@ Mommo slimes and armless people shouldn't "try to use their claws to crawl forwa
 It should be possible to use SoCM to gear.
 Explosions could be m-colored: this way magical explosions could look different.
 WoDC should clone its own material to created doors.
-One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
+(r) One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
 Wishing for corpse should give something.
-In script, Square, Random's Walkability should default to true.
+//In script, Square, Random's Walkability should default to true.
 Poison should spread from bodypart to bodypart. (from JM)
 Titles and bonuses. (from JM)
 Informative pictures to message panel. (from JM)
@@ -258,20 +257,21 @@ In my (Timo's) opinion, we should add some powerful undead monsters and maybe a 
 Wand of resurrection should behave correctly when zapped at undead.
 Werewolves (wolf form) should maybe be nonhumanoids.
 One should be also able to wish for terrains, like an altar of Valpurus.
-One MColor in the leg pictures should be allocated for boots (most humanoids walk barefooted now).
+*One MColor in the leg pictures should be allocated for boots (most humanoids walk barefooted now).
 It should be possible to specify the material while wishing for items and while polymorphing into a golem.
-Wand of strinking should also open doors.
+//Wand of striking should also open doors.
 Allow animate and allow alpha blend options to configuration.
 Draw during automated action as an option.
 We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
 Look stretch config option.
 //If an invisible monster hits another monster, the latter should set the hitter's position as its target even if it doesn't see anything there.
-Bodyparts should be rotated when they are severed.
+//Bodyparts should be rotated when they are severed.
 Weight should be the fundamental character of materials, not volume?
-Kicking should do more damage if metal boots are worn.
+//Kicking should do more damage if metal boots are worn.
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
-Zombies should be able to continue even without a head, maybe even without a torso.
-Handling flying bear traps and kicking bear traps.
+//Zombies should be able to continue even without a head, maybe even without a torso.
+Handling flying bear traps.
+Punishing people kicking bear traps.
 //*Calamus should haste the player.
 Priests should be created using CreateDivineConfigurations.
 Zombies should pick up and use heads if they lack one.
@@ -282,12 +282,12 @@ Page up should work correctly in felists.
 If a melee hit is blocker with a weapon, the attacking arm should take damage.
 *Poison effect for snake flesh.
 //Wishing shouldn't perhaps be case sensitive.
-Werewolves should drop their equipment when they polymorph.
+//Werewolves should drop their equipment when they polymorph.
 Mistresses should not exchange their whips for any other weapons.
 Some monsters should be generated in groups.
 Monsters with multiple configs should advance in levels.
 Wings should be bodyparts.
-*Team waypoint setting when whistling.
+//*Team waypoint setting when whistling.
 It shouldn't be possible to mutate nor resurrect non-living bodyparts.
 A special message should be printed when zapping a WoR at a bone or a skull.
 //If the player is polymorphed into a monster that can't heal, the rest command should be disabled.
@@ -306,11 +306,11 @@ Gold golems should be immune to acid.
 Mommos should do acid damage.
 "Character attributes" option to secret knowledge.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
-Potion of death. (from Atte Aholainen)
+Potion of death/döden. (from Atte Aholainen)
 Physical damage should be divided to slashing, blunt, piercing etc. damage. (from Atte Aholainen)
 Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
 Metal detector.
-More info about players' old games in highscore list (probably a sub menu).
+More info about players' old games in highscore list (maybe a sub menu).
 If the handle of a weapon is of the same material as the edge, change material should change it, too.
 Stressed state should slowly decrease player's size.
 Being satiated or bloated should decrease move ease.
@@ -318,7 +318,7 @@ If HP == MaxHP, healing liquid should increase MaxHP a bit.
 Frost weapons should gradually develop ice which would increase damage .
 Metal should look different from other materials. (the lighter parts should be even lighter and darker parts slightly darker to increase the contrast) 
 Corrosion for materials. 
-Acid blobs (needs corrosion) (might also be done by changing mommos)
+Acid blobs. (needs corrosion, might also be done by changing mommos)
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
 Healing liquid should cure poison.
 Angels and Petrus should use game time to determine whether they can cure people. Their current counter is paralyzed when the player is on another level, which is stupid.
@@ -346,4 +346,8 @@ Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time)
 Wishing for a boot/gauntlet (or maybe the plural forms?) should yield a pair.
-Picking VERY heavy items should be prohibited
+Picking VERY heavy items should be prohibited.
+If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
+New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
+Some way of adding things to character's inventory from the script.
+In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.

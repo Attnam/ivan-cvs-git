@@ -1,0 +1,1330 @@
+Tapahtui er‰‰n‰ kauniina p‰iv‰n‰ IVAN:ia k‰‰nt‰ess‰...
+
+
+
+--------------------Configuration: FELL - Win32 Debug--------------------
+Compiling...
+hscore.cpp
+Creating library...
+--------------------Configuration: Main - Win32 Debug--------------------
+Compiling...
+char.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+FEEL/Include\error.h(11) : error C2059: syntax error : '<class-head>'
+FEEL/Include\error.h(14) : error C2267: 'DeInstall' : static functions with block scope are illegal
+FEEL/Include\error.h(15) : error C2267: 'Abort' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2267: 'SetWindow' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2601: 'SetWindow' : local function definitions are illegal
+FEEL/Include\error.h(17) : error C2143: syntax error : missing ';' before 'private'
+FEEL/Include\error.h(21) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(54) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+god.cpp
+Main/Include\material.h(136) : error C2259: 'material' : cannot instantiate abstract class due to following members:
+Main/Include\material.h(136) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned char material::GetItemColor(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetHitValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetDensity(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::OfferValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class material *material::Clone(unsigned long)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > material::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\material.h(152) : error C2059: syntax error : '<class-head>'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(168) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+item.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+proto.cpp
+Main/Include\proto.h(94) : error C2061: syntax error : identifier 'typeable'
+Main/Include\proto.h(95) : error C2143: syntax error : missing ';' before '*'
+Main/Include\proto.h(95) : error C2062: type 'const int' unexpected
+Main/Include\proto.h(95) : error C2501: 'Access' : missing decl-specifiers
+Main/Include\proto.h(95) : warning C4183: 'Access': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\proto.h(96) : error C2061: syntax error : identifier 'typeable'
+Main/Include\proto.h(99) : error C2951: template declarations are only permitted at global or namespace scope
+Main/Include\proto.h(101) : error C2059: syntax error : '>'
+Main/Include\proto.h(101) : error C2976: 'vector' : too few template arguments
+G:\Ivan\Main\Source\proto.cpp(5) : error C2501: 'vector' : missing decl-specifiers
+G:\Ivan\Main\Source\proto.cpp(5) : error C2239: unexpected token '<' following declaration of 'vector'
+G:\Ivan\Main\Source\proto.cpp(5) : error C2059: syntax error : '<'
+Main/Include\drawable.h(14) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\drawable.h(14) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\drawable.h(14) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\drawable.h(14) : error C2062: type 'const int' unexpected
+Main/Include\drawable.h(14) : error C2253: 'GetBitmapPos' : pure specifier only applies to virtual function - specifier ignored
+Main/Include\wterrain.h(17) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(17) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(17) : error C2146: syntax error : missing ';' before identifier 'GetPos'
+Main/Include\wterrain.h(17) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(129) : error C2555: 'glacier::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(129) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(129) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(129) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(129) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(129) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(139) : error C2555: 'desert::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(139) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(139) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(139) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(139) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(139) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(149) : error C2555: 'snow::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(149) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(149) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(149) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(149) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(149) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(159) : error C2555: 'jungle::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(159) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(159) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(159) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(159) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(159) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(169) : error C2555: 'swamp::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(169) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(169) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(169) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(169) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(169) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(179) : error C2555: 'leafyforest::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(179) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(179) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(179) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(179) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(179) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(190) : error C2555: 'evergreenforest::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(190) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(190) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(190) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(190) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(190) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(201) : error C2555: 'ocean::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(201) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(201) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(201) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(201) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(201) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(212) : error C2555: 'steppe::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(212) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(212) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(212) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(212) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(212) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\wterrain.h(227) : error C2555: 'atmosphere::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(227) : error C2433: 'vector' : 'virtual' not permitted on data declarations
+Main/Include\wterrain.h(227) : error C2501: 'vector' : missing decl-specifiers
+Main/Include\wterrain.h(227) : error C2146: syntax error : missing ';' before identifier 'GetBitmapPos'
+Main/Include\wterrain.h(227) : error C2062: type 'const int' unexpected
+Main/Include\wterrain.h(227) : warning C4183: 'GetBitmapPos': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\game.h(42) : error C2146: syntax error : missing ';' before identifier 'GetMoveVector'
+Main/Include\game.h(42) : warning C4183: 'GetMoveVector': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\game.h(58) : error C2373: 'vector' : redefinition; different type modifiers
+Main/Include\game.h(58) : error C2146: syntax error : missing ';' before identifier 'GetCamera'
+Main/Include\game.h(58) : warning C4183: 'GetCamera': member function definition looks like a ctor, but name does not match enclosing class
+Main/Include\game.h(90) : error C2061: syntax error : identifier 'vector'
+Main/Include\game.h(98) : error C2373: 'vector' : redefinition; different type modifiers
+Main/Include\game.h(98) : error C2146: syntax error : missing ';' before identifier 'GetDirectionVectorForKey'
+Main/Include\game.h(99) : error C2373: 'vector' : redefinition; different type modifiers
+Main/Include\game.h(99) : error C2146: syntax error : missing ';' before identifier 'AskForDirectionVector'
+Main/Include\game.h(135) : error C2086: 'vector' : redefinition
+Main/Include\game.h(135) : error C2146: syntax error : missing ';' before identifier 'MoveVector'
+Main/Include\game.h(135) : error C2501: 'MoveVector' : missing decl-specifiers
+Main/Include\game.h(140) : error C2373: 'vector' : redefinition; different type modifiers
+Main/Include\game.h(140) : error C2146: syntax error : missing ';' before identifier 'Camera'
+Main/Include\game.h(140) : error C2501: 'Camera' : missing decl-specifiers
+Main/Include\material.h(152) : error C2555: 'iron::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(168) : error C2555: 'valpurium::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(183) : error C2555: 'stone::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(199) : error C2555: 'bananaflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(213) : error C2555: 'gravel::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(228) : error C2555: 'moraine::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(246) : error C2555: 'schoolfood::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(260) : error C2555: 'air::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(275) : error C2555: 'wood::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(292) : error C2555: 'flesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(304) : error C2555: 'goblinoidflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(317) : error C2555: 'pork::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(330) : error C2555: 'beef::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(330) : fatal error C1003: error count exceeds 100; stopping compilation
+save.cpp
+G:\Ivan\Main\Source\save.cpp(16) : error C2653: 'prototypesystem' : is not a class or namespace name
+G:\Ivan\Main\Source\save.cpp(16) : error C2065: 'Load' : undeclared identifier
+area.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\material.h(46) : error C2062: type 'class character' unexpected
+Main/Include\material.h(136) : error C2259: 'material' : cannot instantiate abstract class due to following members:
+Main/Include\material.h(136) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned char material::GetItemColor(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetHitValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetDensity(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::OfferValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class material *material::Clone(unsigned long)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > material::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\material.h(152) : error C2059: syntax error : '<class-head>'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(168) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+game.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+FEEL/Include\error.h(11) : error C2059: syntax error : '<class-head>'
+FEEL/Include\error.h(14) : error C2267: 'DeInstall' : static functions with block scope are illegal
+FEEL/Include\error.h(15) : error C2267: 'Abort' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2267: 'SetWindow' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2601: 'SetWindow' : local function definitions are illegal
+FEEL/Include\error.h(17) : error C2143: syntax error : missing ';' before 'private'
+FEEL/Include\error.h(21) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(54) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+level.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+FEEL/Include\error.h(11) : error C2059: syntax error : '<class-head>'
+FEEL/Include\error.h(14) : error C2267: 'DeInstall' : static functions with block scope are illegal
+FEEL/Include\error.h(15) : error C2267: 'Abort' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2267: 'SetWindow' : static functions with block scope are illegal
+FEEL/Include\error.h(16) : error C2601: 'SetWindow' : local function definitions are illegal
+FEEL/Include\error.h(17) : error C2143: syntax error : missing ';' before 'private'
+FEEL/Include\error.h(21) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(54) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+lsquare.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\igraph.h(26) : error C2062: type 'class bitmap' unexpected
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(156) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(171) : error C2059: syntax error : '<class-head>'
+Main/Include\lterrain.h(171) : error C2550: 'parquet' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(171) : error C2065: 'HandleVisualEffects' : undeclared identifier
+Main/Include\lterrain.h(171) : warning C4508: 'parquet' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(171) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2061: syntax error : identifier 'parquet'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(186) : error C2462: 'floory' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(186) : error C2555: 'floory::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(188) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(190) : error C2061: syntax error : identifier 'BEGIN_PROTOTYPING'
+Main/Include\lterrain.h(208) : error C2204: 'earth' : type definition found within parentheses
+Main/Include\lterrain.h(208) : error C2462: 'earth' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(208) : error C2550: 'earth' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(208) : warning C4508: 'earth' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(208) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(208) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : fatal error C1003: error count exceeds 100; stopping compilation
+lterrain.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\igraph.h(26) : error C2062: type 'class bitmap' unexpected
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(156) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(171) : error C2059: syntax error : '<class-head>'
+Main/Include\lterrain.h(171) : error C2550: 'parquet' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(171) : error C2065: 'HandleVisualEffects' : undeclared identifier
+Main/Include\lterrain.h(171) : warning C4508: 'parquet' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(171) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2061: syntax error : identifier 'parquet'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(186) : error C2462: 'floory' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(186) : error C2555: 'floory::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(188) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(190) : error C2061: syntax error : identifier 'BEGIN_PROTOTYPING'
+Main/Include\lterrain.h(208) : error C2204: 'earth' : type definition found within parentheses
+Main/Include\lterrain.h(208) : error C2462: 'earth' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(208) : error C2550: 'earth' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(208) : warning C4508: 'earth' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(208) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(208) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : fatal error C1003: error count exceeds 100; stopping compilation
+material.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\material.h(46) : error C2062: type 'class character' unexpected
+Main/Include\material.h(136) : error C2259: 'material' : cannot instantiate abstract class due to following members:
+Main/Include\material.h(136) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned char material::GetItemColor(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetHitValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetDensity(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::OfferValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class material *material::Clone(unsigned long)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > material::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\material.h(152) : error C2059: syntax error : '<class-head>'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(168) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+object.cpp
+Main/Include\material.h(152) : error C2555: 'iron::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(168) : error C2555: 'valpurium::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(183) : error C2555: 'stone::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(199) : error C2555: 'bananaflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(213) : error C2555: 'gravel::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(228) : error C2555: 'moraine::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(246) : error C2555: 'schoolfood::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(260) : error C2555: 'air::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(275) : error C2555: 'wood::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(292) : error C2555: 'flesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(304) : error C2555: 'goblinoidflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(317) : error C2555: 'pork::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(330) : error C2555: 'beef::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(347) : error C2555: 'bone::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(362) : error C2555: 'darkfrogflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(375) : error C2555: 'elpuriflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(390) : error C2555: 'glass::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(408) : error C2555: 'omleurine::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(422) : error C2555: 'bananapeal::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(437) : error C2555: 'parchment::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(452) : error C2555: 'cloth::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(466) : error C2555: 'humanflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(483) : error C2555: 'slime::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(496) : error C2555: 'brownslime::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(508) : error C2555: 'wolfflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(519) : error C2555: 'dogflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(533) : error C2555: 'ennerbeastflesh::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(552) : error C2555: 'pepsi::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\material.h(567) : error C2555: 'mithril::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+G:\Ivan\Main\Source\object.cpp(50) : error C2679: binary '>>' : no operator defined which takes a right-hand operand of type 'class material *' (or there is no acceptable conversion)
+square.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\square.h(9) : error C2062: type 'class area' unexpected
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(58) : error C2555: 'groundlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(77) : error C2555: 'overlevelterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(156) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(156) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(171) : error C2059: syntax error : '<class-head>'
+Main/Include\lterrain.h(171) : error C2550: 'parquet' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(171) : error C2065: 'HandleVisualEffects' : undeclared identifier
+Main/Include\lterrain.h(171) : warning C4508: 'parquet' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(171) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(171) : error C2061: syntax error : identifier 'parquet'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(171) : error C2143: syntax error : missing ';' before '}'
+Main/Include\lterrain.h(186) : error C2462: 'floory' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(186) : error C2555: 'floory::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\lterrain.h(188) : error C2259: 'groundlevelterrain' : cannot instantiate abstract class due to following members:
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class groundlevelterrain *groundlevelterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(188) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\lterrain.h(190) : error C2061: syntax error : identifier 'BEGIN_PROTOTYPING'
+Main/Include\lterrain.h(208) : error C2204: 'earth' : type definition found within parentheses
+Main/Include\lterrain.h(208) : error C2462: 'earth' : cannot define a type in a 'new-expression'
+Main/Include\lterrain.h(208) : error C2550: 'earth' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\lterrain.h(208) : warning C4508: 'earth' : function should return a value; 'void' return type assumed
+Main/Include\lterrain.h(208) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\lterrain.h(208) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\lterrain.h(208) : fatal error C1003: error count exceeds 100; stopping compilation
+stack.cpp
+Main/Include\material.h(136) : error C2259: 'material' : cannot instantiate abstract class due to following members:
+Main/Include\material.h(136) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned char material::GetItemColor(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetHitValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::GetDensity(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'unsigned short material::OfferValue(void)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class material *material::Clone(unsigned long)const ' : pure virtual function was not defined
+Main/Include\material.h(136) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > material::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\material.h(152) : error C2059: syntax error : '<class-head>'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(152) : error C2143: syntax error : missing ';' before '}'
+Main/Include\material.h(168) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+worldmap.cpp
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(119) : error C2259: 'groundworldmapterrain' : cannot instantiate abstract class due to following members:
+Main/Include\wterrain.h(119) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > worldmapterrain::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class groundworldmapterrain *groundworldmapterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(129) : error C2059: syntax error : '<class-head>'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(139) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+wsquare.cpp
+Main/Include\char.h(304) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(304) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\char.h(348) : error C2059: syntax error : '<class-head>'
+Main/Include\char.h(348) : error C2270: 'DrawToTileBuffer' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'WearArmor' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetTorsoArmor' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'Drop' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2575: 'Wield' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'Save' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2575: 'Throw' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2270: 'GetArmType' : modifiers not allowed on nonmember functions
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2575: 'SetArmType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetArmType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetHeadType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetHeadType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetLegType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetLegType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2575: 'SetTorsoType' : only member functions and bases can be virtual
+Main/Include\char.h(348) : error C2601: 'SetTorsoType' : local function definitions are illegal
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(348) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(350) : error C2653: 'humanoid' : is not a class or namespace name
+Main/Include\char.h(350) : error C2601: 'armor' : local function definitions are illegal
+Main/Include\char.h(350) : error C2969: syntax error : ',' : expected member function definition to end with '}'
+Main/Include\char.h(350) : error C2501: 'Legs' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Legs' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Hands' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Hands' : redefinition; different basic types
+Main/Include\char.h(350) : error C2501: 'Head' : missing decl-specifiers
+Main/Include\char.h(350) : error C2371: 'Head' : redefinition; different basic types
+Main/Include\char.h(350) : error C2448: 'Feet' : function-style initializer appears to be a function definition
+Main/Include\char.h(350) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2550: 'human' : constructor initializer lists are only allowed on constructor definitions
+Main/Include\char.h(374) : error C2065: 'InitMaterials' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetDefaultStats' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'SetHP' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'GetEndurance' : undeclared identifier
+Main/Include\char.h(374) : error C2065: 'CreateInitialEquipment' : undeclared identifier
+Main/Include\char.h(374) : warning C4508: 'human' : function should return a value; 'void' return type assumed
+Main/Include\char.h(374) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'protected'
+Main/Include\char.h(374) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before 'public'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(374) : error C2143: syntax error : missing ';' before '}'
+Main/Include\char.h(416) : error C2504: 'human' : base class undefined
+Main/Include\char.h(446) : error C2555: 'oree::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(472) : error C2555: 'swatcommando::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(497) : error C2555: 'ennerbeast::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(529) : error C2555: 'darkfrog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(554) : error C2555: 'elpuri::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(583) : error C2555: 'billswill::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(609) : error C2555: 'fallenvalpurist::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(633) : error C2555: 'froggoblin::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(667) : error C2555: 'conicalmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(689) : error C2555: 'flatmommo::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(717) : error C2555: 'golem::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(742) : error C2555: 'wolf::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(769) : error C2555: 'dog::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\char.h(771) : error C2259: 'character' : cannot instantiate abstract class due to following members:
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NameSingular(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > object::NamePlural(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned long character::Danger(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short character::Possibility(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void character::SetDefaultStats(void)' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\char.h(771) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\area.h(152) : error C2062: type 'class character' unexpected
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(119) : error C2259: 'groundworldmapterrain' : cannot instantiate abstract class due to following members:
+Main/Include\wterrain.h(119) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > worldmapterrain::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class groundworldmapterrain *groundworldmapterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(129) : error C2059: syntax error : '<class-head>'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(139) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+wterrain.cpp
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(34) : error C2555: 'groundworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(47) : error C2555: 'overworldmapterrain::Clone' : overriding virtual function differs from 'typeable::Clone' only by return type or calling convention
+Main/Include\wterrain.h(119) : error C2259: 'groundworldmapterrain' : cannot instantiate abstract class due to following members:
+Main/Include\wterrain.h(119) : warning C4259: 'class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > worldmapterrain::NameStem(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class groundworldmapterrain *groundworldmapterrain::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'void typeable::Clone(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'unsigned short typeable::Type(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(119) : warning C4259: 'class vector drawable::GetBitmapPos(void)const ' : pure virtual function was not defined
+Main/Include\wterrain.h(129) : error C2059: syntax error : '<class-head>'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2270: 'Type' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2270: 'Clone' : modifiers not allowed on nonmember functions
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before 'return'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(129) : error C2143: syntax error : missing ';' before '}'
+Main/Include\wterrain.h(139) : fatal error C1903: unable to recover from previous error(s); stopping compilation
+Skipping... (no relevant changes detected)
+pool.cpp
+terrain.cpp
+Error executing cl.exe.
+
+Main.exe - 1034 error(s), 263 warning(s)

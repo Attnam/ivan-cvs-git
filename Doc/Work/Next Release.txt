@@ -72,7 +72,7 @@ Dipping to corpses, containers etc.
 /Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
-Effects and exps for intelligence, wisdom, charisma and mana.
+Effects and exps for wisdom and charisma.
 ?Shirt.
 //Kamikaze dwarves.
 //Naming hostile monsters.
@@ -113,7 +113,7 @@ Village and tunnel.
 //Item possibilities. (timo)
 //Skull. (hex)
 //Wand of cloning. (hex)
-Water should make gunpowder useless!
+/Water should make gunpowder useless!
 ?Temporary invisibility should be cancelled if the character hits something.
 //Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
 //Prevent digging with a broken pick-axe.
@@ -133,3 +133,17 @@ Solving the Elpuri Cave distance problem.
 //Apply + chests.
 Stats of summoned bodyparts must be made more intelligent.
 Ergonomification of corpse consumption.
+RDAM and similiar unclear attributes should be moved to an own screen.
+?Snake flesh should be poisonous.
+?Some special effect for daemon flesh.
+Checking throw balance.
+Pick-axe available in the lowest levels.
+Boot m-color.
+?Look stretch config option.
+?If a mine in the inventory is active, it should be displayed somehow.
+?Potion full of antidote.
+?Teleport to level 10.
+Selecting from gear when using SoCM/SoEW/SoEA.
+Weapon volumes should be more realistic.
+?Flaming effect for holy banana.
+Solving the iron cloak conundrum.

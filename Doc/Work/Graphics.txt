@@ -27,7 +27,7 @@ Ring of teleportation + gravel floor.
 Smith.
 Forge.
 Anvil. (lp)
-Levitating ostrich.
+//Levitating ostrich.
 M-color for boots.
 Animation for mommos.
 Several types of key pictures. (lp)
