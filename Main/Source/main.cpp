@@ -39,7 +39,7 @@ int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 	elpuri Elpuri(true, false, false, false);
 
 	while(true)
-		switch(iosystem::Menu(Elpuri.GetPicture(), "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
+		switch(iosystem::Menu(Elpuri.GetPicture(), "Main Menu", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
 		{
 		case 0:
 			game::Init();

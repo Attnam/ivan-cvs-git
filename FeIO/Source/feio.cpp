@@ -60,7 +60,7 @@ ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 	return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
+int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
 {
 	if(CountChars('\r',sMS) < 1)
 		return (-1);
@@ -101,11 +101,13 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 
 		std::string sCopyOfMS = sMS;
 
+		FONT->Printf(&Buffer, 400 - (Topic.length() << 2), 300 - CountChars('\r',sMS) * 25 - 100, BLUE, "%s", Topic.c_str());
+
 		for(ulong i = 0; i < CountChars('\r',sMS); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-			FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 175+(i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+			FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 300 - CountChars('\r',sMS) * 25 + (i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 		}
 
 		if(c < 5)
