@@ -1076,7 +1076,7 @@ ring
 		MainMaterialConfig == IRON;
 		Alias == "ring of teleport";
 	}
-	
+
 	Config RINGOFTELEPORTCONTROL;
 	{
 		PostFix = "of teleport control";
@@ -1103,6 +1103,7 @@ amulet
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
+	IsAbstract = true;
 
 	Config AMULETOFLIFESAVING;
 	{

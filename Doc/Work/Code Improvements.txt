@@ -31,7 +31,9 @@ Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 (s) MS-koodin poisajo grafiikkakirjastosta.
 //Kirjastoniputus.
 (s) Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
-//*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.
+//*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia. (tämä on väärässä tiedostossa)
 Uusintaparseria vaatimaton järjestelmä skriptatuille satunnaismuuttujille.
 Kirjastorajapinnan organisointi systeemiriippumattomaksi.
 //*Projektin kattava kompleksisten datajäsenten cachaus.
+*Pinon rajapinnan modifikaatio vähemmän kuolevaisia pelottavaksi.
+Ruumiinosien sisäisen lokerokäsittelyn iteratiivisuuden alentaminen.

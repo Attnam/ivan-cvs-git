@@ -131,22 +131,22 @@ character* protosystem::CreateMonster(bool CreateItems)
     }
 }
 
-template <class type> uchar CountCorrectNameParts(const typename type::database& DataBase, const std::string& Identifier)
+template <class type> ushort CountCorrectNameLetters(const typename type::database& DataBase, const std::string& Identifier)
 {
-  uchar Counter = 0;
+  ushort Counter = 0;
 
   if(Identifier.find(" " + DataBase.NameSingular + " ") != ulong(-1))
-    ++Counter;
+    Counter += DataBase.NameSingular.length();
 
   if(DataBase.Adjective.length() && Identifier.find(" " + DataBase.Adjective + " ") != ulong(-1))
-    ++Counter;
+    Counter += DataBase.Adjective.length();
 
   if(DataBase.PostFix.length() && Identifier.find(" " + DataBase.PostFix + " ") != ulong(-1))
-    ++Counter;
+    Counter += DataBase.PostFix.length();
 
   for(ushort c = 0; c < DataBase.Alias.size(); ++c)
     if(Identifier.find(" " + DataBase.Alias[c] + " ") != ulong(-1))
-      return 0xFF;
+      Counter += DataBase.Alias[c].length();
 
   return Counter;
 }
@@ -167,7 +167,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       const prototype* Proto = protocontainer<type>::GetProto(c);
       const databasemap& Config = Proto->GetConfig();
 
-      ushort Correct = CountCorrectNameParts<type>(*Proto->GetDataBase(), Identifier);
+      ushort Correct = CountCorrectNameLetters<type>(*Proto->GetDataBase(), Identifier);
 
       if(!Proto->IsAbstract() && Correct > Best)
 	if(Proto->CanBeWished() || game::WizardModeActivated())
@@ -181,7 +181,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	{
-	  Correct = CountCorrectNameParts<type>(i->second, Identifier);
+	  Correct = CountCorrectNameLetters<type>(i->second, Identifier);
 
 	  if(Correct > Best)
 	    if(i->second.CanBeWished || game::WizardModeActivated())

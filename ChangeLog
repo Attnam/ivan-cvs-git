@@ -1,5 +1,12 @@
 July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Wishing for "ring of teleport" now works
+	* The game now asks whether one wants to remove saves when quitting in WMode
+	* Real save is now removed and autosave is done when WMode is activated, to prevent
+	  the potential abuse of the latter
+
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* The number of BodyParts and AllowedWeaponSkillCategories cached
 	* Some S&R done:
 	  * Description() -> GetDescription()

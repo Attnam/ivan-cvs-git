@@ -520,7 +520,7 @@ bool game::Save(const std::string& SaveName)
   SaveFile << Dungeon << Team;
 
   if(InWilderness)
-    SaveWorldMap();
+    SaveWorldMap(SaveName);
   else
     GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
@@ -1478,7 +1478,9 @@ void game::End(bool Permanently, bool AndGoToMenu)
 {
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
-  RemoveSaves(Permanently);
+
+  if(Permanently || !WizardModeActivated())
+    RemoveSaves(Permanently);
 
   if(Permanently && !WizardModeActivated())
     {

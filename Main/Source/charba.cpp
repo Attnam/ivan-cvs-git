@@ -285,7 +285,7 @@ void character::Be()
 
 	  if(configuration::GetAutoSaveInterval() && !GetAction() && ++Timer >= configuration::GetAutoSaveInterval())
 	    {
-	      game::Save(game::GetAutoSaveFileName().c_str());
+	      game::Save(game::GetAutoSaveFileName());
 	      Timer = 0;
 	    }
 
@@ -724,7 +724,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 	      game::UpdateCamera();
 	      GetAreaUnder()->UpdateLOS();
 	      if(configuration::GetAutoSaveInterval())
-		game::Save(game::GetAutoSaveFileName().c_str());
+		game::Save(game::GetAutoSaveFileName());
 	      return true;
 	    }
 
@@ -811,7 +811,7 @@ bool character::Quit()
   if(game::BoolQuestion("Thine Holy Quest is not yet compeleted! Really quit? [y/N]"))
     {
       AddScoreEntry("cowardly quit the game", 0.75f);
-      game::End();
+      game::End(!game::WizardModeActivated() || game::BoolQuestion("Remove saves? [y/N]"));
       return true;
     }
   else
@@ -1491,6 +1491,8 @@ bool character::WizardMode()
 	{
 	  game::ActivateWizardMode();
 	  ADD_MESSAGE("Wizard mode activated.");
+	  game::RemoveSaves();
+	  game::Save(game::GetAutoSaveFileName());
 
 	  for(ushort x = 0; x < 5; ++x)
 	    GetStack()->AddItem(new scrollofwishing);
