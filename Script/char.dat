@@ -1561,11 +1561,11 @@ slave
 	DefaultArmStrength = 25;
 	DefaultLegStrength = 25;
 	DefaultDexterity = 15;
-	DefaultAgility = 10;
+	DefaultAgility = 15;
 	DefaultEndurance = 20;
 	DefaultPerception = 15;
-	DefaultIntelligence = 10;
-	DefaultWisdom = 10;
+	DefaultIntelligence = 15;
+	DefaultWisdom = 20;
 	DefaultCharisma = 10;
 	DefaultMana = 5;
 	SkinColor = rgb16(128, 80, 48);
@@ -1580,6 +1580,7 @@ slave
 	NameSingular = "slave";
 	KnownCWeaponSkills = { 2, UNARMED, BLUNT_WEAPONS; }
 	CWeaponSkillHits = { 2, 100, 100; }
+	DefaultMoney = 0;
 	FriendlyReplies = /* used only if the slave has been bought */
 	{
 		5,

@@ -1596,7 +1596,9 @@ void human::VirtualConstructor(bool Load)
       EditAttribute(WISDOM, (RAND() & 1) - (RAND() & 1));
       EditAttribute(CHARISMA, (RAND() & 1) - (RAND() & 1));
       EditAttribute(MANA, (RAND() & 1) - (RAND() & 1));
-      SetMoney(GetMoney() + RAND() % 101);
+
+      if(GetMoney())
+	SetMoney(GetMoney() + RAND() % 101);
     }
 }
 

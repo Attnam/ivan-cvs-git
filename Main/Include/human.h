@@ -321,7 +321,7 @@ class CHARACTER
 class CHARACTER
 (
   slave,
-  humanoid,
+  human,
  public:
   virtual void BeTalkedTo();
   virtual void GetAICommand();

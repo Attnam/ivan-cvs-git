@@ -1981,7 +1981,6 @@ void character::ShowNewPosInfo() const
     game::UpdateCameraY();
 
   game::SendLOSUpdateRequest();
-  GetArea()->UpdateLOS();
   UpdateESPLOS();
 
   if(!game::IsInWilderness())

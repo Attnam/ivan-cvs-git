@@ -99,7 +99,7 @@ bool dog::Catches(item* Thingy)
 
 bool unicorn::SpecialEnemySightedReaction(character*)
 {
-  if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))
+  if((RAND() % 2 && IsInBadCondition()) || !(RAND() % 20))
   {
     if(CanBeSeenByPlayer())
       ADD_MESSAGE("%s disappears!", CHAR_NAME(DEFINITE));
@@ -1462,7 +1462,7 @@ ushort unicorn::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHi
 
   if(Return != HAS_DIED)
     {
-      if((RAND() % 4 && IsInBadCondition()) || !(RAND() % 7))
+      if((RAND() % 3 && IsInBadCondition()) || !(RAND() % 10))
 	TeleportRandomly();
     }
 

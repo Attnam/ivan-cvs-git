@@ -2578,6 +2578,7 @@ saalthul
 	CanBeCloned = false;
 	Alias == "Saal'thul";
 	AttachedGod = CLEPTIA;
+	CanBeWished = false;
 
 	Config BROKEN;
 	{
