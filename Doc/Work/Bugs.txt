@@ -55,7 +55,13 @@ Funny colors with dexterity etc when going to change equipment and then pressing
 MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.
 Light sources in glass chests don't work correctly.
 Digging walls with lanterns doesn't update memorized etc. correctly.
-(hs) You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
+//(hs) Shopkeepers/librarians can buy items even if unconsciouss.
+If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
+//(hs) You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
+One has no way to use stairs covered by sticky slime.
+//Typo in GPL notice
+(hs) Tailor doesn't fix straight from equipment
+//Spider corpses are not poisonous.
 Charmed guards often block hallways when guarding them and the player who can't displace them has to dig a path around them.
 Small chest X fits in small chest Y, even though Y fits in X as well.
 The patrol guard's AI works oddly if the player rests on one of his waypoints for a long time.

@@ -519,3 +519,29 @@ void igraph::BlitBackGround(v2 Pos, v2 Border)
 
   BackGround->NormalBlit(B);
 }
+
+bitmap* igraph::GenerateScarBitmap(int BodyPart, int Severity, int Color)
+{
+  bitmap* CacheBitmap = SilhouetteCache[BodyPart][0][SILHOUETTE_NORMAL];
+  bitmap* Scar = new bitmap(SILHOUETTE_SIZE, 0);
+
+  v2 StartPos;
+  while(true) 
+  {
+    StartPos = v2(RAND_N(SILHOUETTE_SIZE.X),RAND_N(SILHOUETTE_SIZE.Y));
+    if(CacheBitmap->GetPixel(StartPos) != 0) 
+      break;
+  }
+
+  v2 EndPos;
+  while(true)
+  {
+    double Angle = 2 * FPI * RAND_256 / 256;
+    EndPos.X = int(StartPos.X + cos(Angle) * (Severity + 1));
+    EndPos.Y = int(StartPos.Y + sin(Angle) * (Severity + 1));
+    if(CacheBitmap->IsValidPos(EndPos) && CacheBitmap->GetPixel(EndPos) != 0)
+      break;
+  }
+  Scar->DrawLine(StartPos, EndPos, Color);
+  return Scar;
+}

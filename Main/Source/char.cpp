@@ -5947,6 +5947,8 @@ void character::CalculateAttributeBonuses()
       CarryingBonus += Equipment->GetCarryingBonus();
   }
 
+  CalculateSpecialAttributeBonuses();
+
   if(!IsInitializing() && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
   {
     CalculateBodyPartMaxHPs();
@@ -5961,6 +5963,7 @@ void character::CalculateAttributeBonuses()
 
   if(!IsInitializing() && CarryingBonus != BackupCarryingBonus)
     CalculateBurdenState();
+ 
 }
 
 void character::ApplyEquipmentAttributeBonuses(item* Equipment)

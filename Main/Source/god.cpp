@@ -124,30 +124,30 @@ festring god::GetCompleteDescription() const
   else
     Desc << "You have ";
   if (LastPray>-1)
+  {
+    int Hour = LastPray / 2000;
+    int Day = Hour / 24;
+    Hour %= 24;
+    int Min = LastPray % 2000 * 60 / 2000;
+    Desc << "last prayed ";
+    if (Day>=7)
+      Desc << "over a week ago.";
+    else
     {
-      int Hour = LastPray / 2000;
-      int Day = Hour / 24;
-      Hour %= 24;
-      int Min = LastPray % 2000 * 60 / 2000;
-      Desc << "last prayed ";
-      if (Day>=7)
-	Desc << "over a week ago.";
+      if (Day>1)
+	Desc << Day << " days, ";
+      else if (Day)
+	Desc << "one day, ";
+      if (Hour>1)
+	Desc << Hour << " hours, ";
+      else if (Hour)
+	Desc << "one hour, ";
+      if (Day || Hour)
+	Desc << "and " << Min << " minutes ago.";
       else
-	{
-	  if (Day>1)
-	    Desc << Day << " days, ";
-	  else if (Day)
-	    Desc << "one day, ";
-	  if (Hour>1)
-	    Desc << Hour << " hours, ";
-	  else if (Hour)
-	    Desc << "one hour, ";
-	  if (Day || Hour)
-	    Desc << "and " << Min << " minutes ago.";
-	  else
-	    Desc << Min << " minutes ago.";
-	}
+	Desc << Min << " minutes ago.";
     }
+  }
   else
     Desc << "never prayed to this god.";
   return Desc;

@@ -164,6 +164,7 @@ CHARACTER(humanoid, character)
   virtual truth BrainsHurt() const;
   virtual const char* GetRunDescriptionLine(int) const;
   virtual const char* GetNormalDeathMessage() const;
+  virtual void CalculateSpecialAttributeBonuses();
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;

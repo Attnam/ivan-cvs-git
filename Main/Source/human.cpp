@@ -1605,6 +1605,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 	int Type = BodyPart->IsUsable() ? SILHOUETTE_NORMAL : SILHOUETTE_INTER_LACED;
 	bitmap* Cache = igraph::GetSilhouetteCache(c, BodyPart->GetConditionColorIndex(), Type);
 	Cache->NormalMaskedBlit(B2);
+	BodyPart->DrawScars(B2);
       }
     }
   }
@@ -5008,4 +5009,17 @@ void kamikazedwarf::SingRandomSong()
 void imperialist::DisplayStethoscopeInfo(character*) const
 {
   ADD_MESSAGE("You hear coins clinking inside.");
+}
+
+void humanoid::CalculateSpecialAttributeBonuses() 
+{
+  if(GetHead())
+  {
+    AttributeBonus[CHARISMA] -= GetHead()->
+				CalculateScarAttributePenalty(GetAttribute(CHARISMA,false));
+  }
+  else
+  {
+    AttributeBonus[CHARISMA] -= GetAttribute(CHARISMA,false) - 1;
+  }
 }

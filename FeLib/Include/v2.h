@@ -78,6 +78,8 @@ struct v2
     podv2 V = { X, Y };
     return V;
   }
+
+  //  v2 Randomize() const; Would be a good idea.
   int X, Y;
 };
 

@@ -1023,6 +1023,7 @@ class character : public entity, public id
   virtual const char* GetNormalDeathMessage() const;
   virtual bool IsConscious() const;
   void ForcePutNear(v2);
+  virtual void CalculateSpecialAttributeBonuses() {}
  protected:
   static truth DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

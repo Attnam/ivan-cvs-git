@@ -20,8 +20,12 @@ class sweaponskill;
 
 ITEM(bodypart, item)
 {
+ protected:
+  struct scar;
  public:
   friend class corpse;
+  friend outputfile& operator<<(outputfile&, const bodypart::scar&);
+  friend inputfile& operator>>(inputfile&, bodypart::scar&);
   bodypart() : Master(0) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -132,6 +136,10 @@ ITEM(bodypart, item)
   void SetNormalMaterial(int What) { NormalMaterial = What; }
   virtual truth IsBroken() const { return HP < MaxHP; }
   virtual truth IsDestroyable(const character*) const;
+  virtual void DrawScars(const blitdata&) const;
+  virtual truth DamageTypeCanScar(int) const;
+  virtual truth GenerateScar(int, int);
+  int CalculateScarAttributePenalty(int) const;
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
@@ -165,7 +173,17 @@ ITEM(bodypart, item)
   short NormalMaterial;
   uchar SpillBloodCounter;
   uchar WobbleData;
+  struct scar 
+  {
+    int Severity;
+    bitmap* PanelBitmap;
+  };
+
+  std::vector<scar> Scar;
 };
+
+outputfile& operator<<(outputfile&, const bodypart::scar&);
+inputfile& operator>>(inputfile&, bodypart::scar&);
 
 ITEM(head, bodypart)
 {
