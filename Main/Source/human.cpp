@@ -434,6 +434,9 @@ void petrus::BeTalkedTo()
 			    "receive a small dukedom in the middle of tundra where you rule with justice till\n"
 			    "the end of your content life.\n\nYou are victorious!");
 
+	  game::GetCurrentArea()->SendNewDrawRequest();
+	  game::DrawEverything();
+	  PLAYER->ShowAdventureInfo();
 	  AddScoreEntry("retrieved the Shirt of the Golden Eagle and was raised to nobility", 4, false);
 	  game::End();
 	  return;
@@ -460,6 +463,9 @@ void petrus::BeTalkedTo()
 			"sea finally melts, you board the first ship, leaving your past forever\n"
 			"behind.\n\nYou are victorious!");
 
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverything();
+      PLAYER->ShowAdventureInfo();
       AddScoreEntry("defeated Elpuri and continued to further adventures", 2, false);
       game::End();
     }

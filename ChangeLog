@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Adventure information is now shown when the player wins, too
+
 March 27 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Infravision added to magpie so that AI doesn't do stupid things when player is invisibile
