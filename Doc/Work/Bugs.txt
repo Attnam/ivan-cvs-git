@@ -122,7 +122,7 @@ Do you get strength bonus for digging?
 //Are the angels supposed to leave the items in a bonefile? (stupid me. They just disappear)
 (this problem verified only with windows version) Alt+tab then return to program and alt-enter screws things up.
 (hs) Should picking up items from chests require one useable hand?
-"You sense danger message" seen after genie comes up and wish is made.
+//"You sense danger message" seen after genie comes up and wish is made.
 I think there *might* be a screen update problem when a non-animated monster, for instance a kobold, chokes itself in a spider web (the 'Z' symbol may not appear immediately).
 Changing resolutions, visiting programs that take control of the whole screen, etc. can sometimes cause IVAN's graphics system not to be able to open the window again, or fail to show anything on it.
 Earthquake always drops morraine, even though it may be incorrect in the respective level.
