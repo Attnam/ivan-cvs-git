@@ -660,6 +660,7 @@ void landingsite::KickSquare(character* Kicker, lsquare* Square)
 	  {
 	    ADD_MESSAGE("You have harmed the property of the town!");
 	    Kicker->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+	    return;
 	  }
     }
 }

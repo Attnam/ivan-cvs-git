@@ -3738,13 +3738,13 @@ void ostrich::GetAICommand()
 
 void ostrich::Save(outputfile& SaveFile) const
 {
-  character::Save(SaveFile);
+  nonhumanoid::Save(SaveFile);
   SaveFile << HasBeenOnLandingSite;
 }
 
 void ostrich::Load(inputfile& SaveFile)
 {
-  character::Load(SaveFile);
+  nonhumanoid::Load(SaveFile);
   SaveFile >> HasBeenOnLandingSite;
 }
 
@@ -3817,13 +3817,13 @@ void encourager::GetAICommand()
 
 void encourager::Save(outputfile& SaveFile) const
 {
-  character::Save(SaveFile);
+  humanoid::Save(SaveFile);
   SaveFile << LastHit;
 }
 
 void encourager::Load(inputfile& SaveFile)
 {
-  character::Load(SaveFile);
+  humanoid::Load(SaveFile);
   SaveFile >> LastHit;
 }
 

@@ -1,5 +1,11 @@
 November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* A lethal bug in the banana grower encourager's and a minor one in the ostriches'
+	  save code corrected
+	* Language fine tuning
+
+November 28 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Decreased the amount of wolves Silva creates in towns
 	* The fly symbol is a bit clearer now
 	* Banana growers and ostriches now displace any movable creature on the landing

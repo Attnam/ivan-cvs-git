@@ -6191,10 +6191,10 @@ void character::PrintEndConfuseMessage() const
 
 vector2d character::ApplyStateModification(vector2d TryDirection) const
 {
-  if(StateIsActivated(CONFUSED) && RAND() & 1)
-    return game::GetMoveVector(RAND() % 8);
-  else
+  if(!StateIsActivated(CONFUSED) || RAND() & 1)
     return TryDirection;
+  else
+    return game::GetMoveVector(RAND() % 8);
 }
 
 void character::AddConfuseHitMessage() const
