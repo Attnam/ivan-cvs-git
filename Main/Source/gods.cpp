@@ -56,7 +56,7 @@ color16 seges::GetColor() const { return LAWFUL_BASIC_COLOR; }
 color16 seges::GetEliteColor() const { return LAWFUL_ELITE_COLOR; }
 
 const char* sophos::GetName() const { return "Sophos"; }
-const char* sophos::GetDescription() const { return "god of knowledge and magic"; }
+const char* sophos::GetDescription() const { return "god of knowledge, magic and handicrafts"; }
 int sophos::GetAlignment() const { return ALM; }
 int sophos::GetBasicAlignment() const { return GOOD; }
 color16 sophos::GetColor() const { return LAWFUL_BASIC_COLOR; }

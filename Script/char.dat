@@ -5119,7 +5119,7 @@ tailor
 	CanBeCloned = false;
 	DefaultName = "Mirvo";
 	IsCharmable = false;
-	AttachedGod = LORICATUS;
+	AttachedGod = SOPHOS;
 }
 
 mysticfrog
