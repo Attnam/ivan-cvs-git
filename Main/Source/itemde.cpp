@@ -228,6 +228,10 @@ bool pickaxe::Apply(character* User)
     {
       lsquare* Square = game::GetCurrentLevel()->GetLSquare(User->GetPos() + Temp);
 
+      if(Square->GetCharacter())
+	if(User->Hit(Square->GetCharacter()))
+	  return true;
+
       if(Square->CanBeDug())
 	if(Square->GetOLTerrain()->CanBeDug())
 	  if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
