@@ -343,7 +343,6 @@ int globalwindowhandler::ReadKey()
     return 0;
 }
 
-
 void globalwindowhandler::ProcessMessage(SDL_Event event)
 {
   ushort Index, KeyPressed;

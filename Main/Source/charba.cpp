@@ -954,6 +954,8 @@ void character::Die(bool ForceMsg)
 
   if(GetIsPlayer())
     {
+      GetLevelSquareUnder()->SetTemporaryEmitation(GetEmitation());
+
       game::DrawEverything(false);
 
       if(GetStack()->GetItems())
@@ -3182,7 +3184,9 @@ void character::GoHandler()
 	if(OKDirectionsCounter <= 2)
 	  StateVariables.Going.WalkingInOpen = false;
 
-      if(!TryMove(MoveToSquare->GetPos()) || GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLevelSquareUnder()->GetStack()->GetItems())
+      square* BeginSquare = GetSquareUnder();
+
+      if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLevelSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLevelSquareUnder()->GetStack()->GetItems())
 	{
 	  EndGoing();
 	  return;

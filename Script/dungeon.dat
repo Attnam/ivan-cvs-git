@@ -101,13 +101,13 @@ Dungeon 0;
 		Square, Random { Walkable=true; }
 		{
 			Character=spider;
-			Times=5;
+			Times=20;
 		}
 
 		Square, Random { Walkable=true; }
 		{
 			Character=kobold;
-			Times=5;
+			Times=10;
 		}
 
 
