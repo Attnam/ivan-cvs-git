@@ -1,10 +1,20 @@
+This file is written in Timo-dialect (a highly modified version
+of the Finnish language), since these tasks are not meant to be
+done by anyone else than the writer.
+
 *high priority
 
 *Funktioiden verkottaminen.
-Assistanttioperaattorien integrointi?
+Assistenttioperaattorien integrointi?
 *Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 Tilojen luokittaminen.
 *Tuonpuoleisen prototyypitys.
 Tasovaihdosten funktionaalisuuden kohotus.
 Syöntisallimusten liputtaminen.
 Karakterin atribuuttien kollektivointi.
+Tarkkailijoiden tuhoaminen?
+Pinon listaimplementaatio.
+Dynarrayn eliminaatio.
+Osoitinluokat?
+Skriptin perusdatatyyppien luokittaminen.
+Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.

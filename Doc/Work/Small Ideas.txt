@@ -21,16 +21,15 @@ Weapons should break.
 Pickup all.
 Some way of writing a word on a different colour with ADD_MESSAGE().
 Blindness of pets.
-Particle Trail.
 Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
 You must be able to open door by throwing items.
 Renaming of ClearToColor.
-One should be able to summon tame Bill's Wills and Swat Commandos from Windoze keys in WMode.
+One should be able to summon tame Bill's Wills from Windoze keys in WMode.
 Teleport disabling.
 Teleport should bounce back from valpurium.
-It should be possible to determine line height as a felist draw function argument.
+It should be possible to determine line height as a felist draw function argument. (comment: why?)
 Vomiting in a shop should have a special effect.
 Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
@@ -44,10 +43,12 @@ Prepare bug-report function that would make bug-reporting easier.
 Weapon name should be affected by dip material.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
-Dogs and other pets ought to be possible to name.
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
 Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
-Some variety to death messages, e.g. some messages influenced by the cause of death.
+Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 Werewolves should gain exp.
+World map terrain descriptions shouldn't have an article.
+Cats should be possible to tame with rat corpses.
+Talk idea.
