@@ -79,8 +79,8 @@ class ABSTRACT_CHARACTER
   virtual ushort SkinColor() const { return MAKE_RGB(180, 120, 90); }
 
   virtual ushort CapColor() const { return MAKE_RGB(111, 74, 37); }
-  virtual ushort HairColor() const { return MAKE_RGB(64, 48, 24); }
-  virtual ushort HeadSpecialColor() const { return MAKE_RGB(0, 0, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(160, 80, 0); }
+  virtual ushort EyeColor() const { return MAKE_RGB(112, 72, 42); }
 
   virtual ushort TorsoMainColor() const { return MAKE_RGB(111, 74, 37); }
   virtual ushort BeltColor() const { return MAKE_RGB(111, 74, 37); }
@@ -196,11 +196,6 @@ class CHARACTER
     SetStrength(10 + RAND() % 6);
     SetEndurance(10 + RAND() % 6);
     SetPerception(10 + RAND() % 6);
-    /*SetLegType(RAND() % 3);
-    SetTorsoType(0);
-    SetArmType(RAND() % 5);
-    SetHeadType(RAND() % 15);
-    SetShieldType(0);*/
     SetMoney(200 + RAND() % 101);
   },
  public:
@@ -223,11 +218,6 @@ class CHARACTER
     SetStrength(75);
     SetEndurance(75);
     SetPerception(75);
-    /*SetLegType(1);
-    SetTorsoType(5);
-    SetArmType(3);
-    SetHeadType(9);
-    SetShieldType(0);*/
     SetHealTimer(100);
     SetStoryState(0);
     game::SetPetrus(this);
@@ -280,17 +270,13 @@ class CHARACTER
     SetStrength(15);
     SetEndurance(20);
     SetPerception(18);
-    /*SetLegType(RAND() % 3);
-    SetTorsoType(2 + RAND() % 2);
-    SetArmType(RAND() % 5);
-    SetHeadType(5 + RAND() % 2);
-    SetShieldType(0);*/
     SetMoney(20);
   },
  public:
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
  protected:
+  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual ushort HairColor() const { return RAND() % 2 ? MAKE_RGB(80, 0, 80) : MAKE_RGB(160, 160, 160); }
   virtual uchar GetHeadType() const { return 4 + RAND() % 2; }
   virtual uchar GetTorsoType() const { return 2; }
@@ -310,11 +296,6 @@ class CHARACTER
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
-    /*SetLegType(4);
-    SetTorsoType(8);
-    SetArmType(5);
-    SetHeadType(7);
-    SetShieldType(1);*/
   },
  public:
   virtual void GetAICommand() { StandIdleAI(); }
@@ -322,16 +303,13 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
  protected:
   virtual ushort CapColor() const { return MAKE_RGB(0, 128, 128); }
-  virtual ushort HeadSpecialColor() const { return MAKE_RGB(0, 128, 128); }
   virtual ushort TorsoMainColor() const { return MAKE_RGB(0, 128, 128); }
-  //virtual ushort BeltColor() const { return MAKE_RGB(0, 128, 128); }
   virtual ushort ArmMainColor() const { return MAKE_RGB(0, 128, 128); }
   virtual ushort LegMainColor() const { return MAKE_RGB(0, 128, 128); }
   virtual uchar GetHeadType() const { return 7; }
   virtual uchar GetTorsoType() const { return 8; }
   virtual uchar GetArmType() const { return 5; }
   virtual uchar GetLegType() const { return 4; }
-  //virtual uchar GetShieldType() const { return 2; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "guard"; }
   virtual float GetMeleeStrength() const { return 2000; }
@@ -347,11 +325,6 @@ class CHARACTER
     SetStrength(30);
     SetEndurance(25);
     SetPerception(30);
-    /*SetLegType(2);
-    SetTorsoType(7);
-    SetArmType(6);
-    SetHeadType(4);
-    SetShieldType(0);*/
     SetMoney(3000 + RAND() % 2001);
   },
  public:
@@ -360,6 +333,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
  protected:
+  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual uchar GetHeadType() const { return 4; }
   virtual uchar GetTorsoType() const { return 2; }
   virtual uchar GetArmType() const { return 1; }
@@ -379,11 +353,6 @@ class CHARACTER
     SetStrength(20);
     SetEndurance(15);
     SetPerception(18);
-    /*SetLegType(2);
-    SetTorsoType(7);
-    SetArmType(6);
-    SetHeadType(8);
-    SetShieldType(0);*/
   },
  public:
   virtual void GetAICommand() { StandIdleAI(); }
@@ -392,6 +361,7 @@ class CHARACTER
   virtual bool CanSwim() const { return true; }
  protected:
   virtual ushort CapColor() const { return MAKE_RGB(180, 0, 80); }
+  virtual ushort TorsoSpecialColor() const { return MAKE_RGB(0, 96, 0); }
   virtual uchar GetHeadType() const { return 8; }
   virtual uchar GetTorsoType() const { return 2; }
   virtual uchar GetArmType() const { return 1; }
@@ -849,11 +819,6 @@ class CHARACTER
     SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
-    /*SetLegType(5);
-    SetTorsoType(9);
-    SetArmType(7);
-    SetHeadType(11);
-    SetShieldType(0);*/
   },
  public:
   virtual bool MoveRandomly();
@@ -883,11 +848,6 @@ class CHARACTER
     SetStrength(15);
     SetEndurance(15);
     SetPerception(24);
-    /*SetLegType(6);
-    SetTorsoType(12);
-    SetArmType(8);
-    SetHeadType(12);
-    SetShieldType(0);*/
   },
  public:
   virtual void CreateInitialEquipment();
@@ -987,16 +947,12 @@ class CHARACTER
     SetStrength(20);
     SetEndurance(15);
     SetPerception(15);
-    /*SetLegType(6);
-    SetTorsoType(0);
-    SetArmType(9);
-    SetHeadType(13);
-    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual void GetAICommand();
  protected:
+  virtual ushort LegMainColor() const { return MAKE_RGB(56, 48, 20); }
   virtual uchar GetHeadType() const { return 0; }
   virtual uchar GetTorsoType() const { return 0; }
   virtual uchar GetArmType() const { return 0; }
@@ -1015,11 +971,6 @@ class CHARACTER
     SetStrength(5);
     SetEndurance(5);
     SetPerception(21);
-    /*SetLegType(7);
-    SetTorsoType(10);
-    SetArmType(10);
-    SetHeadType(16 + RAND() % 6);
-    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
@@ -1049,7 +1000,7 @@ class CHARACTER
     //SetHeadType(16);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(0, 0, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 1"; }
 );
@@ -1063,7 +1014,7 @@ class CHARACTER
     //SetHeadType(17);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(0, 0, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(0, 0, 0); }
   virtual uchar GetHeadType() const { return 17; }
   virtual std::string NameSingular() const { return "Petrus's wife number 2"; }
 );
@@ -1077,7 +1028,7 @@ class CHARACTER
     //SetHeadType(18);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(60, 48, 24); }
+  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
   virtual uchar GetHeadType() const { return 16; }
   virtual std::string NameSingular() const { return "Petrus's wife number 3"; }
 );
@@ -1091,7 +1042,7 @@ class CHARACTER
     //SetHeadType(19);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(96, 0, 60); }
+  virtual ushort HairColor() const { return MAKE_RGB(200, 96, 0); }
   virtual uchar GetHeadType() const { return 19; }
   virtual std::string NameSingular() const { return "Petrus's wife number 4"; }
 );
@@ -1105,7 +1056,7 @@ class CHARACTER
     //SetHeadType(20);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(80, 64, 32); }
+  virtual ushort HairColor() const { return MAKE_RGB(80, 64, 32); }
   virtual uchar GetHeadType() const { return 20; }
   virtual std::string NameSingular() const { return "Petrus's wife number 5"; }
 );
@@ -1119,7 +1070,7 @@ class CHARACTER
     //SetHeadType(21);
   },
  protected:
-  virtual ushort GetHairColor() const { return MAKE_RGB(144, 0, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(144, 0, 0); }
   virtual uchar GetHeadType() const { return 21; }
   virtual std::string NameSingular() const { return "Petrus's wife number 6"; }
 );
@@ -1134,16 +1085,15 @@ class CHARACTER
     SetStrength(10);
     SetEndurance(15);
     SetPerception(24);
-    /*SetLegType(8);
-    SetTorsoType(11);
-    SetArmType(11);
-    SetHeadType(16 + RAND() % 6);
-    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
  protected:
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(160, 160, 160); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(100, 100, 100); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(180, 80, 0); }
+  virtual ushort HairColor() const { return MAKE_RGB(60, 48, 24); }
   virtual uchar GetHeadType() const { return 16 + RAND() % 6; } //may produce headless housewife...
   virtual uchar GetTorsoType() const { return 10; }
   virtual uchar GetArmType() const { return 10; }
@@ -1163,17 +1113,13 @@ class CHARACTER
     SetStrength(10);
     SetEndurance(15);
     SetPerception(18);
-    /*SetLegType(9);
-    SetTorsoType(13);
-    SetArmType(13);
-    SetHeadType(22);
-    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual ushort HairColor() const { return MAKE_RGB(112, 80, 48); }
   virtual uchar GetHeadType() const { return 22; }
   virtual uchar GetTorsoType() const { return 13; }
   virtual uchar GetArmType() const { return 13; }
@@ -1194,16 +1140,15 @@ class CHARACTER
     SetStrength(5);
     SetEndurance(5);
     SetPerception(12);
-    /*SetLegType(1);
-    SetTorsoType(5);
-    SetArmType(12);
-    SetHeadType(14);
-    SetShieldType(0);*/
   },
  public:
   virtual void BeTalkedTo(character*);
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(128, 128, 128); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(48, 48, 48); }
+  virtual ushort CapColor() const { return MAKE_RGB(160, 160, 160); } // temporary
   virtual uchar GetHeadType() const { return 14; }
   virtual uchar GetTorsoType() const { return 5; }
   virtual uchar GetArmType() const { return 1; }
@@ -1224,11 +1169,6 @@ class CHARACTER
     SetStrength(10);
     SetEndurance(5);
     SetPerception(12);
-    /*SetLegType(10);
-    SetTorsoType(14);
-    SetArmType(14);
-    SetHeadType(23);
-    SetShieldType(0);*/
   },
  public:
   virtual bool CanBeGenerated() const { return true; }
@@ -1307,6 +1247,11 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 5000; }
   virtual void CreateInitialEquipment();
  protected:
+  virtual ushort SkinColor() const { return MAKE_RGB(255, 212, 192); }
+  virtual ushort HairColor() const { return MAKE_RGB(35, 35, 35); }
+  virtual ushort TorsoMainColor() const { return MAKE_RGB(35, 35, 35); }
+  virtual ushort ArmMainColor() const { return MAKE_RGB(35, 35, 35); }
+  virtual ushort LegMainColor() const { return MAKE_RGB(35, 35, 35); }
   virtual uchar GetHeadType() const { return 31; }
   virtual uchar GetTorsoType() const { return 22; }
   virtual uchar GetArmType() const { return 21; }
@@ -1492,11 +1437,6 @@ class CHARACTER
     SetStrength(20);
     SetEndurance(20);
     SetPerception(24);
-    /*SetLegType(13);
-    SetTorsoType(17);
-    SetArmType(16);
-    SetHeadType(26);
-    SetShieldType(0);*/
     SetMaster(1 + RAND() % (game::GetGods() - 1));
   },
  public:

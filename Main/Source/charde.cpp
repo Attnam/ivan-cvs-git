@@ -1967,8 +1967,8 @@ void humanoid::CreateHead()
   GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
   GetHead()->SetColor(0, SkinColor());
   GetHead()->SetColor(1, CapColor());
-  GetHead()->SetColor(3, HairColor());
-  GetHead()->SetColor(2, HeadSpecialColor());
+  GetHead()->SetColor(2, HairColor());
+  GetHead()->SetColor(3, EyeColor());
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
 }
 
