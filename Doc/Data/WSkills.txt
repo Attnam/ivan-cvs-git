@@ -36,17 +36,17 @@ Single weapon experience chart:
 Level	Succesful hits	Unuse penalty	Idle Turns for
 	needed				level minus
 						
-0	0		0		-
-1	50		5/500		5000
-2	100		10/300		3000
-3	250		20/200		2500
-4	500		25/100		2000
-5	1000		100/100		1500
-6	2500		200/100		1250
-7	5000		250/50		1000
-8	10000		500/25		750
-9	25000		500/10		500
-10	50000		500/5
+0	0		0		-		0
+1	50		5/500		5000		20
+2	100		10/300		3000		25
+3	250		20/200		2500		30
+4	500		25/100		2000		35
+5	1000		100/100		1500		40
+6	2500		200/100		1250		45
+7	5000		250/50		1000		50
+8	10000		500/25		750		55
+9	25000		500/10		500		60
+10	50000		500/5				65
 
-Hit limit is 65535. Skill level confers a bonus of 5% per level to damage
-and speed.
+Hit limit is 65535. Skill level confers a bonus of 20% to damage and speed
+from the first level and 5% per level thereafter.

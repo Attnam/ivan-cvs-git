@@ -281,3 +281,10 @@ void object::ChangeMaterial(uchar Index, material* NewMaterial)
 
 	delete OldMaterial;
 }
+
+void object::UpdatePicture()
+{
+	igraph::RemoveUser(GraphicId);
+	GraphicId = graphic_id(GetBitmapPos(), GraphicId.Color, GetGraphicsContainerIndex());
+	Picture = igraph::AddUser(GraphicId).Bitmap;
+}

@@ -52,6 +52,7 @@ public:
 	virtual void DrawToTileBuffer() const = 0;
 	virtual void SetMaterial(uchar, material*);
 	virtual void ChangeMaterial(uchar, material*);
+	virtual void UpdatePicture();
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;

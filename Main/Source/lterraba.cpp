@@ -117,6 +117,8 @@ void overlevelterrain::MakeWalkable()
 
 	if(GetLevelSquareUnder()->RetrieveFlag())
 		game::GetCurrentLevel()->UpdateLOS();
+
+	UpdatePicture();
 }
 
 void overlevelterrain::MakeNotWalkable()
@@ -130,6 +132,8 @@ void overlevelterrain::MakeNotWalkable()
 
 	if(GetLevelSquareUnder()->RetrieveFlag())
 		game::GetCurrentLevel()->UpdateLOS();
+
+	UpdatePicture();
 }
 
 vector2d levelterrain::GetPos() const
