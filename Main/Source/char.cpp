@@ -495,7 +495,7 @@ int character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPart, 
 
   if(Critical)
     {
-      TrueDamage <<= 1;
+      TrueDamage += TrueDamage >> 1;
       ++TrueDamage;
     }
 

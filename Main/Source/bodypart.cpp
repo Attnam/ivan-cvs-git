@@ -1506,8 +1506,8 @@ double bodypart::GetTimeToDie(int Damage, double ToHitValue, double DodgeValue, 
   int Damage5 = (Damage << 2) + Damage;
   int TrueDamage = (19 * (Max((Damage3 >> 2) - TotalResistance, 0)
 		       +  Max((Damage5 >> 2) + 1 - (TotalResistance >> 1), 0))
-		       + (Max((Damage3 >> 1) - TotalResistance, 0)
-		       +  Max((Damage5 >> 1) + 3 - (TotalResistance >> 1), 0))) / 40;
+		       + (Max(((Damage3 + (Damage3 >> 1)) >> 2) - TotalResistance, 0)
+		       +  Max(((Damage5 + (Damage5 >> 1)) >> 2) + 3 - (TotalResistance >> 1), 0))) / 40;
 
   int HP = UseMaxHP ? GetMaxHP() : GetHP();
 

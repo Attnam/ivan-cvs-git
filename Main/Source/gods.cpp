@@ -409,6 +409,10 @@ void silva::PrayGoodEffect()
 	for(int i = 0; i < 50; ++i)
 	  {
 	    vector2d Pos = game::GetCurrentLevel()->GetRandomSquare(0, RAND() & 1 ? 0 : HAS_CHARACTER);
+
+	    if(Pos == ERROR_VECTOR)
+	      continue;
+
 	    lsquare* Square = game::GetCurrentLevel()->GetLSquare(Pos);
 	    character* Char = Square->GetCharacter();
 

@@ -191,7 +191,44 @@ Dungeon ELPURI_CAVE;
 
 		Room
 		{
+			AltarPossible = false;
 			Size = 30,30;
+
+			Square, Random;
+			{
+				Items == Random { MinPrice = 100; Chance = 50; }
+				Times = 20;
+			}
+
+			Square, Random;
+			{
+				Items == Random { MinPrice = 500; Chance = 50; }
+				Times = 4;
+			}
+
+			Square, Random;
+			{
+				Items == beartrap { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
+				Times = 100;
+			}
+
+			Square, Random;
+			{
+				Items == mine { Team = MONSTER_TEAM; IsActive = true; Chance = 25; }
+				Times = 100;
+			}
+
+			Square, Random;
+			{
+				Character = spider;
+				Times = 20;
+			}
+
+			Square, Random;
+			{
+				Items == backpack { Chance = 25; }
+				Times = 10;
+			}
 		}
 
 		RoomDefault

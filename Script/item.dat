@@ -1764,9 +1764,9 @@ key
 	WieldedBitmapPos = 160, 368;
 	IsAbstract = true;
 
-	Config ROUND_LOCK; { Adjective = "round"; Possibility = 15; }
-	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 15; }
-	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 15; }
+	Config ROUND_LOCK; { Adjective = "round"; Possibility = 25; }
+	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 25; }
+	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 25; }
 	Config HEXAGONAL_LOCK; { Adjective = "hexagonal"; }
 	Config OCTAGONAL_LOCK;
 	{
