@@ -195,7 +195,7 @@ void bitmap::Save(std::string FileName) const
 
 	ulong Off = ulong(ddsd.lpSurface) + (YSize - 1) * ddsd.lPitch;
 
-	for(ushort y = 0; y < YSize; ++y, Off -= (ddsd.lPitch << 1))
+	for(ushort y = 0; y < YSize; ++y, Off -= (XSize << 1) + ddsd.lPitch)
 		for(ushort x = 0; x < XSize; ++x, Off += 2)
 		{
 			ushort Pixel = *(ushort*)Off;
