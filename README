@@ -29,8 +29,14 @@ use atleast a:
 
 	Pentium 233 MHz
 	48 Megs of RAM
-	Windows 95
-	DirectX 8
+
+	Windows 9x/ME/XP/2000 (atleast)
+	(Direct X 8)
+
+	or:
+	
+	Linux with 
+	(SDL library version 1.0.0 or higher)
 
 -----------------------------
 
