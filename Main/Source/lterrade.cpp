@@ -549,6 +549,7 @@ bool altar::SitOn(character* Sitter)
 	{
 	  GetMasterGod()->AdjustRelation(2);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true, 1);
+	  game::GetPlayer()->EditExperience(WISDOM, 10);
 	}
     }
   else
@@ -564,6 +565,7 @@ bool altar::SitOn(character* Sitter)
 
 	GetMasterGod()->AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
+	game::GetPlayer()->EditExperience(WISDOM, 250);
       }
 
   Sitter->EditAP(-1000);

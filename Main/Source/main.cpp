@@ -79,7 +79,7 @@ int Main(int argc, char **argv)
 #endif
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, std::string("IVAN v. ") + VERSION + "\rBuild " + __DATE__ + "\r"))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" VERSION "\r"))
       {
       case 0:
 	if(game::Init())

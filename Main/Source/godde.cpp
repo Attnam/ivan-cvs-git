@@ -589,6 +589,7 @@ void valpurus::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, true);
+      game::GetPlayer()->EditExperience(WISDOM, 1000);
 
       if(Relation > 500 && !(RAND() % 5))
 	{
@@ -608,6 +609,7 @@ void valpurus::Pray()
       AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
+      game::GetPlayer()->EditExperience(WISDOM, -250);
 
       if(Relation < -500 && !(RAND() % 25))
 	{
@@ -631,6 +633,7 @@ void atavus::Pray()
       AdjustTimer(50000);
       AdjustRelation(-250);
       game::ApplyDivineAlignmentBonuses(this, true);
+      game::GetPlayer()->EditExperience(WISDOM, 500);
 
       if(Relation > 500 && !(RAND() % 5))
 	{
@@ -650,6 +653,7 @@ void atavus::Pray()
       AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
+      game::GetPlayer()->EditExperience(WISDOM, -250);
 
       if(Relation < -500 && !(RAND() % 25))
 	{
@@ -673,6 +677,7 @@ void mortifer::Pray()
       AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, true);
+      game::GetPlayer()->EditExperience(WISDOM, 1000);
 
       if(Relation > 500 && !(RAND() % 5))
 	{
@@ -692,6 +697,7 @@ void mortifer::Pray()
       AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
+      game::GetPlayer()->EditExperience(WISDOM, -250);
 
       if(Relation < -500 && !(RAND() % 5))
 	{

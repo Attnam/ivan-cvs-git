@@ -1,3 +1,10 @@
+December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added license info to the main menu
+	* Corrected a bug in the ass corpse emitation
+	* BoolQuestion now doesn't interpret enter as "yes"
+	* Wisdom now increases your ability to deal with gods
+
 December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* README updated again
@@ -12,7 +19,7 @@ December 9 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Adjusted color of flaming sword.
 	* Added BoolQuestion confirmation for appling wands.
 	* License changed to GPL.
-	
+
 December 9 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Fixed the Foul Iron Penetrating Light of Death Bug

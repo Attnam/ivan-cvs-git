@@ -72,7 +72,7 @@ ulong iosystem::CountChars(char cSF, const std::string& sSH)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText)
+int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText1, const std::string& SmallText2)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -97,37 +97,46 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
       for(i = 0; i < CountChars('\r', Topic); ++i)
 	{
-	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, Pos.X - (HYVINEPAGURUPRINTF.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, RED, "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, Pos.X - (VeryUnGuruPrintf.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, RED, "%s", VeryUnGuruPrintf.c_str());
 	}
 
       sCopyOfMS = sMS;
 
       for(i = 0; i < CountChars('\r', sMS); ++i)
 	{
-	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 
-	  ushort XPos = Pos.X - ((HYVINEPAGURUPRINTF.length() + 3) << 2);
+	  ushort XPos = Pos.X - ((VeryUnGuruPrintf.length() + 3) << 2);
 	  ushort YPos = Pos.Y - CountChars('\r', sMS) * 25 + i * 50;
 
 	  if(i == iSelected)
 	    {
-	      Buffer.Fill(XPos, YPos, (HYVINEPAGURUPRINTF.length() + 3) * 8, 8, 0);
-	      FONT->PrintfShade(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	      Buffer.Fill(XPos, YPos, (VeryUnGuruPrintf.length() + 3) * 8, 8, 0);
+	      FONT->PrintfShade(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.c_str());
 	    }
 	  else
-	    FONT->Printf(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    FONT->Printf(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.c_str());
 	}
 
-      sCopyOfMS = SmallText;
+      sCopyOfMS = SmallText1;
 
-      for(i = 0; i < CountChars('\r', SmallText); ++i)
+      for(i = 0; i < CountChars('\r', SmallText1); ++i)
 	{
-	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, 2, RES.Y - CountChars('\r', SmallText) * 10 + i * 10, Color, "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, 3, RES.Y - CountChars('\r', SmallText1) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
+	}
+
+      sCopyOfMS = SmallText2;
+
+      for(i = 0; i < CountChars('\r', SmallText2); ++i)
+	{
+	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
+	  FONT->Printf(&Buffer, RES.X - (VeryUnGuruPrintf.length() << 3) - 2, RES.Y - CountChars('\r', SmallText2) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
 	}
 
       int k;

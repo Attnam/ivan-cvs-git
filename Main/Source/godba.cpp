@@ -20,6 +20,7 @@ void god::Pray()
 	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, true);
+	game::GetPlayer()->EditExperience(WISDOM, 250);
 
 	if(Relation > 500 && !(RAND() % 100))
 	  {
@@ -38,6 +39,7 @@ void god::Pray()
 	PrayBadEffect();
 	AdjustTimer(10000);
 	game::ApplyDivineAlignmentBonuses(this, false);
+	game::GetPlayer()->EditExperience(WISDOM, -250);
       }
   else
     if(Relation > RAND() % 500)
@@ -47,6 +49,7 @@ void god::Pray()
 	AdjustTimer(25000);
 	AdjustRelation(-50);
 	game::ApplyDivineAlignmentBonuses(this, false);
+	game::GetPlayer()->EditExperience(WISDOM, -250);
       }
     else
       {
@@ -55,6 +58,7 @@ void god::Pray()
 	AdjustTimer(50000);
 	AdjustRelation(-100);
 	game::ApplyDivineAlignmentBonuses(this, false);
+	game::GetPlayer()->EditExperience(WISDOM, -500);
 
 	if(Relation < -500 && !(RAND() % 50))
 	  {
@@ -104,6 +108,11 @@ void god::AdjustRelation(god* Competitor, bool Good, short Multiplier)
 
 void god::AdjustRelation(short Amount)
 {
+  if(Amount < 0)
+    Amount = Amount * 100 / (100 + game::GetPlayer()->GetAttribute(WISDOM));
+  else
+    Amount = Amount * (100 + game::GetPlayer()->GetAttribute(WISDOM)) / 100;
+
   Relation += Amount;
 
   if(Relation < -1000)
@@ -209,6 +218,11 @@ bool god::ReceiveOffer(item* Sacrifice)
 
       AdjustRelation(OfferValue);
       game::ApplyDivineAlignmentBonuses(this, OfferValue > 0);
+
+      if(OfferValue > 0)
+	game::GetPlayer()->EditExperience(WISDOM, 50);
+      else
+	game::GetPlayer()->EditExperience(WISDOM, -50);
 
       if(OfferValue > 0)
 	ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);

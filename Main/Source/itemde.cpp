@@ -539,6 +539,7 @@ void holybook::FinishReading(character* Reader)
 	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GOD_NAME);
 	  GetMasterGod()->AdjustRelation(75);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
+	  game::GetPlayer()->EditExperience(WISDOM, 250);
 
 	  if(!(RAND() % 3))
 	    {
@@ -1572,6 +1573,7 @@ void corpse::SetDeceased(character* What)
   Deceased = What;
   Deceased->SetMotherEntity(this);
   SignalVolumeAndWeightChange();
+  SignalEmitationIncrease(Deceased->GetEmitation());
   UpdatePictures();
 }
 
