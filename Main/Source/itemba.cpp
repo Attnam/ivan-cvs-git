@@ -145,7 +145,8 @@ bool item::HitCharacter(character* Thrower, character* Dude, float Speed)
   if(Dude->Catches(this, Speed))
     return true;
 
-  Thrower->Hostility(Dude);
+  if(Thrower)
+    Thrower->Hostility(Dude);
 
   if(Dude->DodgesFlyingItem(this, Speed)) 
     {

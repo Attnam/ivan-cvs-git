@@ -6,7 +6,6 @@
 #endif
 
 #include <cstdio>
-#include <string>
 
 #include "typedef.h"
 

@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <string>
-
 #include "typedef.h"
 
 class character;

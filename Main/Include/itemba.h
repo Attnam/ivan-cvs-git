@@ -188,6 +188,8 @@ class item : public object
   virtual void SetDivineMaster(uchar) { }
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual void AddConsumeEndMessage(character*) const;
+  virtual bool IsStackable() const { return false; }
+  virtual bool IsEqual(item*) const { return false; }
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
@@ -223,7 +225,7 @@ class item : public object
   name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMaterial(0, FirstMaterial); }\
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const item::prototype* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
+  const item::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   item* name##_prototype::CreateWishedItem() const { if(!name::SpecialWishedItem()) return Clone(); else return name::CreateWishedItem(); }
 

@@ -1,3 +1,9 @@
+May 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Most of script code structures and data reading routines remade
+	* Some template instantiation relocations committed
+	* Warning corrections
+
 May 3 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Some possible memory leaks prevented

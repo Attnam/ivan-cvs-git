@@ -49,7 +49,10 @@ Dungeon 0;
 	{
 		FillSquare=ground,earth;
 
-		Size=64,36;
+		Variable XSize = 64;
+		Variable YSize = 36;
+
+		Size=XSize, YSize;
 		Rooms=10+rand%21;
 		Items=10+rand%21;
 		GenerateMonsters=true;
@@ -165,7 +168,7 @@ Dungeon 0;
 		{
 			Size=5,7;
 			AltarPossible=false;
-			DivineOwner=10;
+			DivineOwner=mellis;
 			Type=shop;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
@@ -342,7 +345,7 @@ Dungeon 0;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=15;
+			DivineOwner=erado;
 			GenerateFountains=false;
 
 			Square, Pos 3,1;
@@ -391,7 +394,11 @@ Dungeon 1;
 	{
 		Description=Attnam;
 		FillSquare=grassterrain,empty;
-		Size=61,62;
+
+		Variable XSize = 61;
+		Variable YSize = 62;
+
+		Size=XSize, YSize;
 		GenerateMonsters=false;
 		Rooms=25 + rand % 6;
 		Items=0;
@@ -472,7 +479,7 @@ Dungeon 1;
 			FloorSquare=grassterrain,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=1;
+			DivineOwner=valpurus;
 			GenerateLanterns=false;
 			Type=cathedral;
 			
@@ -752,7 +759,7 @@ Dungeon 1;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=10;
+			DivineOwner=mellis;
 			Type=shop;
 			
 			Square, Pos 3, 4;
@@ -804,7 +811,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,gold wall;
 			GenerateDoor=false;
-			DivineOwner=2;
+			DivineOwner=venius;
 			Type=temple;
 
 			Square, Pos 2, 0;
@@ -830,7 +837,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,marble wall;
 			GenerateDoor=false;
-			DivineOwner=4;
+			DivineOwner=dulcis;
 			Type=temple;
 
 			Square, Pos 4, 2;
@@ -856,7 +863,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,bananaflesh wall;
 			GenerateDoor=false;
-			DivineOwner=5;
+			DivineOwner=seges;
 			Type=temple;
 
 			Square, Pos 0, 2;
@@ -882,7 +889,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,parchment wall;
 			GenerateDoor=false;
-			DivineOwner=6;
+			DivineOwner=consummo;
 			Type=temple;
 
 			Square, Pos 2, 4;

@@ -21,8 +21,6 @@
 #define SPEARS		11
 #define WHIPS		12
 
-#include <string>
-
 #include "typedef.h"
 
 class outputfile;

@@ -10,7 +10,6 @@
 #define FLIP 2
 #define ROTATE_90 4
 
-#include <string>
 #include <list>
 
 #include "typedef.h"

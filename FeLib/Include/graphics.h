@@ -42,7 +42,6 @@
 #endif
 
 #include <list>
-#include <string>
 
 #include "typedef.h"
 #include "vector2d.h"

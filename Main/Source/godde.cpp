@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "godba.h"
 
-std::vector<god::prototype*>		protocontainer<god>::ProtoData;
-std::map<std::string, ushort>		protocontainer<god>::CodeNameMap;
+std::vector<god::prototype*> protocontainer<god>::ProtoData;
+valuemap protocontainer<god>::CodeNameMap;
 
 #include "godde.h"
 

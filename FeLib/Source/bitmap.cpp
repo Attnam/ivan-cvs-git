@@ -1,4 +1,3 @@
-#include <string>
 #include <cmath>
 #include <ctime>
 
@@ -822,7 +821,7 @@ void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort 
     }
   else if(Stretch < -1)
     {
-      ushort tx = DestX, ty = DestY;
+      ushort tx = DestX;
 
       for(ushort x1 = SourceX; x1 < SourceX + Width; x1 -= Stretch, ++tx)
 	{

@@ -43,7 +43,6 @@
 #define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))
 #endif
 
-#include <string>
 #include <vector>
 
 #include "typedef.h"

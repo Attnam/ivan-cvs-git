@@ -1,5 +1,4 @@
 #include <ctype.h>
-#include <string>
 
 #include "save.h"
 #include "strover.h"
@@ -228,7 +227,7 @@ char inputfile::ReadLetter(bool AbortOnEOF)
  * ValueMap contains keyword pairs that attach a certain numeric value to a word.
  */
 
-long inputfile::ReadNumber(valuemap ValueMap, uchar CallLevel)
+long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 {
   long Value = 0;
 
@@ -285,7 +284,7 @@ long inputfile::ReadNumber(valuemap ValueMap, uchar CallLevel)
 	  continue;
 	}
 
-      valuemap::iterator Iterator = ValueMap.find(Word);
+      valuemap::const_iterator Iterator = ValueMap.find(Word);
 
       if(Iterator != ValueMap.end())
 	{
@@ -300,7 +299,7 @@ long inputfile::ReadNumber(valuemap ValueMap, uchar CallLevel)
     }
 }
 
-vector2d inputfile::ReadVector2d(valuemap ValueMap)
+vector2d inputfile::ReadVector2d(const valuemap& ValueMap)
 {
   vector2d Vector;
 
@@ -368,4 +367,14 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
 long inputfile::ReadNumber()
 {
   return ReadNumber(valuemap());
+}
+
+void ReadData(std::string* String, inputfile& SaveFile, const valuemap&)
+{
+  *String = SaveFile.ReadWord();
+
+  if(*String == "=")
+    *String = SaveFile.ReadWord();
+
+  SaveFile.ReadWord();
 }

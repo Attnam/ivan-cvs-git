@@ -12,7 +12,6 @@
 #define CENTER 4
 #define HIDDEN 5
 
-#include <string>
 #include <list>
 #include <vector>
 
@@ -71,12 +70,9 @@ class stack
   void Kick(character*, ushort, uchar);
   long Score() const;
   void Polymorph();
-  //void ReceiveSound(float);
-  //void StruckByWandOfStriking(character*, std::string);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const;
-  //void ImpactDamage(ushort);
   void ReceiveDamage(character*, short, uchar);
   void Teleport();
   void FillItemVector(itemvector&) const;

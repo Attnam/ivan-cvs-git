@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "itemba.h"
 
-std::vector<item::prototype*>		protocontainer<item>::ProtoData;
-std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
+std::vector<item::prototype*> protocontainer<item>::ProtoData;
+valuemap protocontainer<item>::CodeNameMap;
 
 #include "femath.h"
 #include "itemde.h"

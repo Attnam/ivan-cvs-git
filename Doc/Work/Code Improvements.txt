@@ -10,16 +10,16 @@ done (or understood) by anyone else than the writer.
 *Funktioiden verkottaminen.
 Assistenttioperaattorien integrointi? (<- osoitinluokat)
 *Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
-Tilojen luokittaminen.
+//Tilojen luokittaminen.
 //*Tuonpuoleisen prototyypitys.
 Tasovaihdosten funktionaalisuuden kohotus.
-Syöntisallimusten liputtaminen.
-Karakterin atribuuttien kollektivointi.
+//Syöntisallimusten liputtaminen.
+Karakterin atribuuttien kollektivointi ja luokitus.
 (r) Tarkkailijoiden tuhoaminen?
 //Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
 Dynarrayn eliminaatio.
 Osoitinluokat?
-Skriptin perusdatatyyppien luokittaminen.
+//Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)
 (r) Merkkijonoviittausten regularisoiminen.
@@ -28,5 +28,5 @@ Merkkitaulukoiden hävittäminen.
 //Protopilkonta.
 MS-koodin poisajo grafiikkakirjastosta.
 //Kirjastoniputus.
-Esittelyjen uudelleenjärjesteleminen? (tosi tylsää)
-*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.
+Esittelyjen uudelleenjärjesteleminen? (tosi tylsää ja täysin hyödytöntä)
+//*Toimintokohtainen pinon käyttökelpoisuusseulonta ennen visualisointia.

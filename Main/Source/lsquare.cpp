@@ -14,20 +14,21 @@
 #include "config.h"
 #include "femath.h"
 #include "fluid.h"
+#include "error.h"
 
 lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), DivineOwner(0), Room(0), TemporaryEmitation(0), Fluid(0)
 {
   Stack = new stack(this);
-
-  for(ushort c = 0; c < 4; ++c) //Is there a better way to do this? Only Stroustrup knows...
-    SideStack[c] = new stack(this, c);
+  SideStack[DOWN] = new stack(this, DOWN);
+  SideStack[LEFT] = new stack(this, LEFT);
+  SideStack[UP] = new stack(this, UP);
+  SideStack[RIGHT] = new stack(this, RIGHT);
 }
 
 lsquare::~lsquare()
 {
   delete GetGLTerrain();
   delete GetOLTerrain();
-
   delete Stack;
 
   for(ushort c = 0; c < 4; ++c)

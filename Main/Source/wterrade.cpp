@@ -3,10 +3,10 @@
 #include "proto.h"
 #include "wterraba.h"
 
-std::vector<gwterrain::prototype*>	protocontainer<gwterrain>::ProtoData;
-std::vector<owterrain::prototype*>	protocontainer<owterrain>::ProtoData;
-std::map<std::string, ushort>		protocontainer<gwterrain>::CodeNameMap;
-std::map<std::string, ushort>		protocontainer<owterrain>::CodeNameMap;
+std::vector<gwterrain::prototype*> protocontainer<gwterrain>::ProtoData;
+std::vector<owterrain::prototype*> protocontainer<owterrain>::ProtoData;
+valuemap protocontainer<gwterrain>::CodeNameMap;
+valuemap protocontainer<owterrain>::CodeNameMap;
 
 #include "wterrade.h"
 

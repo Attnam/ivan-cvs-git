@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <ctime>
+#include <cmath>
 
 #include "femath.h"
 #include "error.h"
@@ -244,4 +245,51 @@ ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
 
   ABORT("WeightedRand bugs severely!");
   return 0x0666;
+}
+
+float femath::CalculateAngle(vector2d Direction)
+{
+  /*if(Direction.Y < 0)
+    {
+      if(Direction.X != 0)
+	return atan(float(Direction.Y) / Direction.X) + PI;
+      else
+	return 3 * PI / 2;
+    }
+  else if(Direction.Y > 0)
+    {
+      if(Direction.X != 0)
+	return atan(float(Direction.Y) / Direction.X);
+      else
+	return PI / 2;
+    }
+  else
+    {
+      if(Direction.X < 0)
+	return PI;
+      else if (Direction.X > 0)
+	return 0;
+      else
+	{
+	  ABORT("Illegal direction passed to femath::CalculateAngle()!");
+	  return 0;
+	}
+    }*/
+
+  if(Direction.X < 0)
+    return atan(float(Direction.Y) / Direction.X) + PI;
+  else if(Direction.X > 0)
+    return atan(float(Direction.Y) / Direction.X);
+  else
+    {
+      if(Direction.Y < 0)
+	return 3 * PI / 2;
+      else if (Direction.Y > 0)
+	return PI / 2;
+      else
+	{
+	  ABORT("Illegal direction passed to femath::CalculateAngle()!");
+	  return 0;
+	}
+    }
 }

@@ -772,6 +772,8 @@ class ITEM
   virtual bool Read(character*);
   virtual ulong Price() const { return 2000; }
   static bool PolymorphSpawnable() { return false; }
+  virtual bool IsStackable() const { return true; }
+  virtual bool IsEqual(item* Item) const { return Item->GetType() == GetType(); }
 );
 
 class ITEM

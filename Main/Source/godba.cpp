@@ -77,9 +77,9 @@ std::string god::CompleteDescription() const
 
   if(game::GetWizardMode())
     {
-      Desc += Timer;
+      Desc += int(Timer);
       Desc += " - ";
-      Desc += Relation;
+      Desc += int(Relation);
     }
 
   Desc.resize(32, ' ');

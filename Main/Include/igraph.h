@@ -35,8 +35,6 @@
 #include <windows.h>
 #endif
 
-#include <map>
-
 #include "typedef.h"
 #include "vector2d.h"
 #include "save.h"

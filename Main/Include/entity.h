@@ -6,7 +6,6 @@
 #endif
 
 #include <list>
-#include <string>
 
 #include "typedef.h"
 #include "pool.h"

@@ -6,7 +6,6 @@
 #endif
 
 #include <vector>
-#include <string>
 
 #include "vector2d.h"
 
@@ -85,7 +84,7 @@ class room
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   void name::SetDefaultStats() { setstats }\
-  const room::prototype* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
+  const room::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else

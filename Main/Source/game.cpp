@@ -37,6 +37,7 @@
 #include "config.h"
 #include "femath.h"
 #include "hscore.h"
+#include "error.h"
 
 class quitrequest { };
 
@@ -962,13 +963,12 @@ uchar game::GetLevels()
 void game::SeeWholeMap()
 {
   SeeWholeMapCheat = !SeeWholeMapCheat;
-
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::InitDungeons()
 {
-  Dungeon.resize(2);
+  Dungeon.resize(*GameScript.GetDungeons());
 
   for(ushort c = 0; c < Dungeon.size(); ++c)
     {

@@ -219,6 +219,7 @@ public:
   static void SetSeed(ulong);
   static bool DoLine(long, long, long, long, ulong, bool (*Proc)(vector2d, vector2d));
   static ushort WeightedRand(ushort, ushort*);
+  static float CalculateAngle(vector2d);
 protected:
   static ulong mt[N1];
   static long mti;

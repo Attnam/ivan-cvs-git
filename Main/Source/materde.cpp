@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "materba.h"
 
-std::vector<material::prototype*>	protocontainer<material>::ProtoData;
-std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
+std::vector<material::prototype*> protocontainer<material>::ProtoData;
+valuemap protocontainer<material>::CodeNameMap;
 
 #include "materde.h"
 

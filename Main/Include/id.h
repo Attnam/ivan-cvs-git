@@ -14,8 +14,6 @@
 
 #define CHARNAME(Case) Name(Case).c_str()
 
-#include <string>
-
 #include "typedef.h"
 
 class id

@@ -92,7 +92,7 @@ class owterrain : public wterrain, public oterrain
   \
   void name::SetDefaultStats() { setstats }\
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const protobase::prototype* const name::GetPrototype() { return protocontainer<protobase>::GetProto(StaticType()); }\
+  const protobase::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else

@@ -9,7 +9,6 @@
 #define NEUTRAL 1
 #define FRIEND 2
 
-#include <map>
 #include <list>
 
 #include "typedef.h"

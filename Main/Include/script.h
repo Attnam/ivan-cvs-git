@@ -5,297 +5,269 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define SCRIPT_RETURN(member)\
-{\
-  if(member)\
-    return member;\
-  else\
+#define DATAMEMBER(type, name)\
+ public:\
+  type* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
+ protected:\
+  datamember< type > name ;
+
+#define PROTONAMEDMEMBER(type, name)\
+ public:\
+  ushort* Get##name(bool AbortOnError = true) const { return name.GetMember(AbortOnError); }\
+ protected:\
+  protonamedmember< type > name ;
+
+#define INITMEMBER(name)\
   {\
-    if(AOE)\
-      ABORT("Undefined script member " #member " sought!");\
-    \
-    return 0;\
-  }\
-}
+    name.SetIdentifier(#name);\
+    Data.push_back(&name);\
+  }
 
-#define SCRIPT_RETURN_WITH_BASE(member)\
-{\
-  if(member)\
-    return member;\
-  else\
-    if(Base)\
-      return Base->Get##member (AOE);\
-    else\
-    {\
-      if(AOE)\
-	ABORT("Undefined script member " #member " sought!");\
-      \
-      return 0;\
-    }\
-}
-
-#include <string>
 #include <vector>
-#include <map>
 
 #include "typedef.h"
 #include "vector2d.h"
-#include "error.h"
-#include "save.h"
 
 class inputfile;
 class glterrain;
 class olterrain;
 class character;
 class item;
+class god;
+class room;
+
+class datamemberbase
+{
+ public:
+  virtual ~datamemberbase() { }
+  virtual void SetBase(datamemberbase*) = 0;
+  virtual bool Load(const std::string&, inputfile&, const valuemap&) = 0;
+  virtual void Load(inputfile&, const valuemap&) = 0;
+  void SetIdentifier(std::string What) { Identifier = What; }
+ protected:
+  std::string Identifier;
+};
+
+template <class type> class datamembertemplate : public datamemberbase
+{
+ public:
+  datamembertemplate() : Base(0), Member(0) { }
+  type* GetMember(bool) const;
+  virtual void SetBase(datamemberbase*);
+ protected:
+  datamembertemplate<type>* Base;
+  type* Member;
+};
+
+template <class type> class datamember : public datamembertemplate<type>
+{
+ public:
+  virtual bool Load(const std::string&, inputfile&, const valuemap&);
+  virtual void Load(inputfile&, const valuemap&);
+};
+
+template <class type> class protonamedmember : public datamembertemplate<ushort>
+{
+ public:
+  virtual bool Load(const std::string&, inputfile&, const valuemap&);
+  virtual void Load(inputfile&, const valuemap&);
+};
 
 class script
 {
  public:
   valuemap& GetValueMap() { return ValueMap; }
   void SetValueMap(const valuemap& What) { ValueMap = What; }
+  datamemberbase* GetDataMember(ushort Index) const { return Data[Index]; }
  protected:
+  std::vector<datamemberbase*> Data;
   valuemap ValueMap;
+};
+
+template <class basetype> class scriptwithbase : public script
+{
+ public:
+  scriptwithbase() : Base(0) { }
+  basetype* GetBase() const { return Base; }
+  void SetBase(basetype*);
+ protected:
+  basetype* Base;
 };
 
 class posscript : public script
 {
  public:
-  posscript() : Vector(0), IsWalkable(0), IsInRoom(0) { }
+  posscript();
   void ReadFrom(inputfile&);
-  vector2d* GetVector(bool AOE = true) const { SCRIPT_RETURN(Vector) }
-  bool* GetIsWalkable(bool AOE = true) const { SCRIPT_RETURN(IsWalkable) }
-  bool* GetIsInRoom(bool AOE = true) const { SCRIPT_RETURN(IsInRoom) }
   bool GetRandom() const { return Random; }
  protected:
-  vector2d* Vector;
-  bool* IsWalkable;
-  bool* IsInRoom;
   bool Random;
+  DATAMEMBER(vector2d, Vector);
+  DATAMEMBER(bool, Walkable);
+  DATAMEMBER(bool, InRoom);
 };
 
 template <class type> class basecontentscript : public script
 {
  public:
-  basecontentscript() : ContentType(0) { }
   virtual ~basecontentscript() { }
   virtual void ReadFrom(inputfile&);
   virtual void ReadParameters(inputfile&, std::string);
   virtual ushort* GetMaterialType(ushort, bool = true) const;
   virtual ulong* GetMaterialVolume(ushort, bool = true) const;
-  virtual ushort* GetContentType(bool AOE = true) const { SCRIPT_RETURN(ContentType) }
+  virtual ushort GetContentType() const { return ContentType; }
   virtual type* Instantiate() const;
  protected:
   std::vector<std::pair<ushort*, ulong*> > MaterialData;
-  ushort* ContentType;
+  ushort ContentType;
 };
 
-template <class type> class contentscript;
+template <class type> class contentscript : public basecontentscript<type> { };
 
 class contentscript<character> : public basecontentscript<character>
 {
  public:
-  contentscript<character>() : Team(0) { }
+  contentscript<character>();
   virtual void ReadParameters(inputfile&, std::string);
   virtual character* Instantiate() const;
-  virtual ushort* GetTeam(bool AOE = true) const { SCRIPT_RETURN(Team) }
  protected:
-  ushort* Team;
+  DATAMEMBER(ushort, Team);
 };
-
-class contentscript<item> : public basecontentscript<item> { };
-class contentscript<glterrain> : public basecontentscript<glterrain> { };
 
 class contentscript<olterrain> : public basecontentscript<olterrain>
 {
  public:
-  contentscript<olterrain>() : Locked(0), VisualFlags(0) { }
+  contentscript<olterrain>();
   virtual void ReadParameters(inputfile&, std::string);
   virtual olterrain* Instantiate() const;
-  virtual bool* GetLocked(bool AOE = true) const { SCRIPT_RETURN(Locked) }
-  virtual uchar* GetVisualFlags(bool AOE = true) const { SCRIPT_RETURN(VisualFlags) }
  protected:
-  bool* Locked;
-  uchar* VisualFlags;
+  DATAMEMBER(bool, Locked);
+  DATAMEMBER(uchar, VisualFlags);
 };
 
 class squarescript : public script
 {
  public:
-  squarescript() : PosScript(0), Character(0), Item(0), GTerrain(0), OTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) { }
+  squarescript();
   void ReadFrom(inputfile&);
-  posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
-  contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
-  contentscript<item>* GetItem(bool AOE = true) const { SCRIPT_RETURN(Item) }
-  contentscript<glterrain>* GetGTerrain(bool AOE = true) const { SCRIPT_RETURN(GTerrain) }
-  contentscript<olterrain>* GetOTerrain(bool AOE = true) const { SCRIPT_RETURN(OTerrain) }
-  bool* GetIsUpStairs(bool AOE = true) const { SCRIPT_RETURN(IsUpStairs) }
-  bool* GetIsDownStairs(bool AOE = true) const { SCRIPT_RETURN(IsDownStairs) }
-  bool* GetIsWorldMapEntry(bool AOE = true) const { SCRIPT_RETURN(IsWorldMapEntry) }
-  uchar* GetTimes(bool AOE = true) const { SCRIPT_RETURN(Times) }
  protected:
-  posscript* PosScript;
-  contentscript<character>* Character;
-  contentscript<item>* Item;
-  contentscript<glterrain>* GTerrain;
-  contentscript<olterrain>* OTerrain;
-  bool* IsUpStairs;
-  bool* IsDownStairs;
-  bool* IsWorldMapEntry;
-  uchar* Times;
+  DATAMEMBER(posscript, Position);
+  DATAMEMBER(contentscript<character>, Character);
+  DATAMEMBER(contentscript<item>, Item);
+  DATAMEMBER(contentscript<glterrain>, GTerrain);
+  DATAMEMBER(contentscript<olterrain>, OTerrain);
+  DATAMEMBER(bool, IsUpStairs);
+  DATAMEMBER(bool, IsDownStairs);
+  DATAMEMBER(bool, IsWorldMapEntry);
+  DATAMEMBER(uchar, Times);
 };
 
 template <class type> class contentmap : public script
 {
  public:
-  contentmap() : ContentScriptMap(0), Size(0), Pos(0) { }
+  contentmap();
   void ReadFrom(inputfile&);
   contentscript<type>* GetContentScript(ushort X, ushort Y) { return ContentScriptMap[X][Y]; }
-  vector2d* GetSize(bool AOE = true) const { SCRIPT_RETURN(Size) }
-  vector2d* GetPos(bool AOE = true) const { SCRIPT_RETURN(Pos) }
  protected:
   contentscript<type>*** ContentScriptMap;
-  vector2d* Size;
-  vector2d* Pos;
+  DATAMEMBER(vector2d, Size);
+  DATAMEMBER(vector2d, Pos);
 };
 
-class roomscript : public script
+class roomscript : public scriptwithbase<roomscript>
 {
  public:
-  roomscript() : CharacterMap(0), ItemMap(0), GTerrainMap(0), OTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), AllowBoobyTrappedDoors(0), Base(0) { }
+  roomscript();
   void ReadFrom(inputfile&, bool = false);
-  void SetBase(roomscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
-  contentmap<character>* GetCharacterMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(CharacterMap) }
-  contentmap<item>* GetItemMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ItemMap) }
-  contentmap<glterrain>* GetGTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GTerrainMap) }
-  contentmap<olterrain>* GetOTerrainMap(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OTerrainMap) }
-  squarescript* GetWallSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(WallSquare) }
-  squarescript* GetFloorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(FloorSquare) }
-  squarescript* GetDoorSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DoorSquare) }
-  vector2d* GetSize(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Size) }
-  vector2d* GetPos(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Pos) }
-  bool* GetAltarPossible(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AltarPossible) }
-  bool* GetGenerateDoor(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDoor) }
-  bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
-  bool* GetGenerateTunnel(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateTunnel) }
-  uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
-  bool* GetGenerateLanterns(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLanterns) }
-  ushort* GetType(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Type) }
-  bool* GetGenerateFountains(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateFountains) }
-  bool* GetAllowLockedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowLockedDoors) }
-  bool* GetAllowBoobyTrappedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowBoobyTrappedDoors) }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
-  contentmap<character>* CharacterMap;
-  contentmap<item>* ItemMap;
-  contentmap<glterrain>* GTerrainMap;
-  contentmap<olterrain>* OTerrainMap;
-  squarescript* WallSquare;
-  squarescript* FloorSquare;
-  squarescript* DoorSquare;
-  vector2d* Size;
-  vector2d* Pos;
-  bool* AltarPossible, * GenerateDoor, * ReCalculate, * GenerateTunnel;
-  uchar* DivineOwner;
-  bool* GenerateLanterns;
-  ushort* Type;
-  bool* GenerateFountains;
-  bool* AllowLockedDoors;
-  bool* AllowBoobyTrappedDoors;
-  roomscript* Base;
+  DATAMEMBER(contentmap<character>, CharacterMap);
+  DATAMEMBER(contentmap<item>, ItemMap);
+  DATAMEMBER(contentmap<glterrain>, GTerrainMap);
+  DATAMEMBER(contentmap<olterrain>, OTerrainMap);
+  DATAMEMBER(squarescript, WallSquare);
+  DATAMEMBER(squarescript, FloorSquare);
+  DATAMEMBER(squarescript, DoorSquare);
+  DATAMEMBER(vector2d, Size);
+  DATAMEMBER(vector2d, Pos);
+  DATAMEMBER(bool, AltarPossible);
+  DATAMEMBER(bool, GenerateDoor);
+  DATAMEMBER(bool, ReCalculate);
+  DATAMEMBER(bool, GenerateTunnel);
+  PROTONAMEDMEMBER(god, DivineOwner);
+  DATAMEMBER(bool, GenerateLanterns);
+  PROTONAMEDMEMBER(room, Type);
+  DATAMEMBER(bool, GenerateFountains);
+  DATAMEMBER(bool, AllowLockedDoors);
+  DATAMEMBER(bool, AllowBoobyTrappedDoors);
 };
 
-class levelscript : public script
+class levelscript : public scriptwithbase<levelscript>
 {
  public:
-  levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), OnGround(0), TeamDefault(0), AmbientLight(0), Description(0), LOSModifier(0), Base(0) { }
+  levelscript();
   void ReadFrom(inputfile&, bool = false);
-  levelscript* GetBase() { return Base; }
-  void SetBase(levelscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
   std::map<uchar, roomscript*>& GetRoom() { return Room; }
-  roomscript* GetRoomDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(RoomDefault) }
-  squarescript* GetFillSquare(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(FillSquare) }
-  std::string* GetLevelMessage(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(LevelMessage) }
-  vector2d* GetSize(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Size) }
-  ushort* GetItems(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Items) }
-  uchar* GetRooms(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Rooms) }
-  bool* GetGenerateMonsters(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateMonsters) }
-  bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
-  bool* GetGenerateUpStairs(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateUpStairs) }
-  bool* GetGenerateDownStairs(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDownStairs) }
-  bool* GetOnGround(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(OnGround) }
-  uchar* GetTeamDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(TeamDefault) }
-  ushort* GetAmbientLight(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AmbientLight) }
-  std::string* GetDescription(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Description) }
-  uchar* GetLOSModifier(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(LOSModifier) }
  protected:
   ulong BufferPos;
   std::vector<squarescript*> Square;
   std::map<uchar, roomscript*> Room;
-  roomscript* RoomDefault;
-  squarescript* FillSquare;
-  std::string* LevelMessage;
-  vector2d* Size;
-  ushort* Items;
-  uchar* Rooms;
-  bool* GenerateMonsters, * ReCalculate;
-  bool* GenerateUpStairs, * GenerateDownStairs, * OnGround;
-  uchar* TeamDefault;
-  ushort* AmbientLight;
-  std::string* Description;
-  uchar* LOSModifier;
-  levelscript* Base;
+  DATAMEMBER(roomscript, RoomDefault);
+  DATAMEMBER(squarescript, FillSquare);
+  DATAMEMBER(std::string, LevelMessage);
+  DATAMEMBER(vector2d, Size);
+  DATAMEMBER(ushort, Items);
+  DATAMEMBER(uchar, Rooms);
+  DATAMEMBER(bool, GenerateMonsters);
+  DATAMEMBER(bool, ReCalculate);
+  DATAMEMBER(bool, GenerateUpStairs);
+  DATAMEMBER(bool, GenerateDownStairs);
+  DATAMEMBER(bool, OnGround);
+  DATAMEMBER(uchar, TeamDefault);
+  DATAMEMBER(ushort, AmbientLight);
+  DATAMEMBER(std::string, Description);
+  DATAMEMBER(uchar, LOSModifier);
 };
 
-class dungeonscript : public script
+class dungeonscript : public scriptwithbase<dungeonscript>
 {
  public:
-  dungeonscript() : LevelDefault(0), Levels(0), Base(0) { }
+  dungeonscript();
   void ReadFrom(inputfile&);
-  void SetBase(dungeonscript* What) { Base = What; }
   std::map<uchar, levelscript*>& GetLevel() { return Level; }
-  levelscript* GetLevelDefault(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(LevelDefault) }
-  uchar* GetLevels(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Levels) }
  protected:
   std::map<uchar, levelscript*> Level;
-  levelscript* LevelDefault;
-  uchar* Levels;
-  dungeonscript* Base;
+  DATAMEMBER(levelscript, LevelDefault);
+  DATAMEMBER(uchar, Levels);
 };
 
 class teamscript : public script
 {
  public:
-  teamscript() : AttackEvilness(0) { }
+  teamscript();
   void ReadFrom(inputfile&);
   std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
-  ushort* GetAttackEvilness(bool AOE = true) const { SCRIPT_RETURN(AttackEvilness) }
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
-  ushort* AttackEvilness;
+  DATAMEMBER(ushort, AttackEvilness);
 };
 
 class gamescript : public script
 {
  public:
-  gamescript() : DungeonDefault(0), Dungeons(0), Teams(0) { }
+  gamescript();
   void ReadFrom(inputfile&);
   std::map<uchar, dungeonscript*>& GetDungeon() { return Dungeon; }
-  dungeonscript* GetDungeonDefault(bool AOE = true) const { SCRIPT_RETURN(DungeonDefault) }
-  uchar* GetDungeons(bool AOE = true) const { SCRIPT_RETURN(Dungeons) }
-  uchar* GetTeams(bool AOE = true) const { SCRIPT_RETURN(Teams) }
   std::vector<std::pair<uchar, teamscript*> >& GetTeam() { return Team; }
  protected:
   std::map<uchar, dungeonscript*> Dungeon;
-  dungeonscript* DungeonDefault;
-  uchar* Dungeons;
-  uchar* Teams;
   std::vector<std::pair<uchar, teamscript*> > Team;
+  DATAMEMBER(dungeonscript, DungeonDefault);
+  DATAMEMBER(uchar, Dungeons);
+  DATAMEMBER(uchar, Teams);
 };
 
 #endif
-
-

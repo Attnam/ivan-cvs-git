@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "actionba.h"
 
-std::vector<action::prototype*>		protocontainer<action>::ProtoData;
-std::map<std::string, ushort>		protocontainer<action>::CodeNameMap;;
+std::vector<action::prototype*> protocontainer<action>::ProtoData;
+valuemap protocontainer<action>::CodeNameMap;
 
 #include "actionde.h"
 

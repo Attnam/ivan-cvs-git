@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "charba.h"
 
-std::vector<character::prototype*>	protocontainer<character>::ProtoData;
-std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
+std::vector<character::prototype*> protocontainer<character>::ProtoData;
+valuemap protocontainer<character>::CodeNameMap;
 
 #include "femath.h"
 #include "itemde.h"
@@ -1813,7 +1813,7 @@ ushort humanoid::GetSize() const
   return Size;
 }
 
-ushort humanoid::HeadSize(ushort TotalSize) const
+ushort humanoid::HeadSize(ushort) const
 {
   return 20;
 }

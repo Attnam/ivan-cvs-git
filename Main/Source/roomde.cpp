@@ -3,8 +3,8 @@
 #include "proto.h"
 #include "roomba.h"
 
-std::vector<room::prototype*>		protocontainer<room>::ProtoData;
-std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
+std::vector<room::prototype*> protocontainer<room>::ProtoData;
+valuemap protocontainer<room>::CodeNameMap;
 
 #include "roomde.h"
 

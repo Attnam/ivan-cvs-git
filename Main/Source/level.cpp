@@ -14,6 +14,7 @@
 #include "femath.h"
 #include "message.h"
 #include "actionba.h"
+#include "error.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -321,19 +322,19 @@ void level::ApplyLSquareScript(squarescript* Square)
     {
       vector2d Pos;
 
-      if(Square->GetPosScript()->GetRandom())
+      if(Square->GetPosition()->GetRandom())
 	{
-	  if(Square->GetPosScript()->GetIsInRoom(false))
-	    for(Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable()))
+	  if(Square->GetPosition()->GetInRoom(false))
+	    for(Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable());; Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable()))
 	      {
-		if((!GetLSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
+		if((!GetLSquare(Pos)->GetRoom() && !*Square->GetPosition()->GetInRoom()) || (GetLSquare(Pos)->GetRoom() && *Square->GetPosition()->GetInRoom()))
 		  break;
 	      }
 	  else
-	    Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());
+	    Pos = RandomSquare(0, *Square->GetPosition()->GetWalkable());
 	}
       else
-	Pos = *Square->GetPosScript()->GetVector();
+	Pos = *Square->GetPosition()->GetVector();
 
       Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
     }
@@ -632,10 +633,10 @@ bool level::MakeRoom(roomscript* RoomScript)
 	{
 	  vector2d Pos;
 
-	  if(Square->GetPosScript()->GetRandom())
+	  if(Square->GetPosition()->GetRandom())
 	    ABORT("Illegal command: Random square positioning not supported in roomscript!");
 	  else
-	    Pos = *Square->GetPosScript()->GetVector();
+	    Pos = *Square->GetPosition()->GetVector();
 
 	  Map[BXPos + Pos.X][BYPos + Pos.Y]->ApplyScript(Square, RoomClass);
 	}
@@ -1100,5 +1101,3 @@ bool level::IsValid(vector2d Vector) const
   else
     return false;
 }
-
-

@@ -7,7 +7,6 @@
 
 #define HIGHSCORE_VERSION 110	// Increment this if changes make highscores incompatible
 
-#include <string>
 #include <vector>
 
 #include "typedef.h"

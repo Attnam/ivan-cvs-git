@@ -22,8 +22,6 @@
 #define MISC_ORGANIC 128
 #define GAS 256
 
-#include <string>
-
 #include "typedef.h"
 #include "proto.h"
 
@@ -130,7 +128,7 @@ class material
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const material::prototype* const name::GetPrototype() { return protocontainer<material>::GetProto(StaticType()); }\
+  const material::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
   material* name##_prototype::CreateWishedMaterial(ulong Volume) const { if(!name::SpecialWishedMaterial()) return Clone(Volume); else return name::CreateWishedMaterial(Volume); }
 

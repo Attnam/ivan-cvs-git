@@ -4,6 +4,102 @@
 #include "materba.h"
 #include "femath.h"
 #include "message.h"
+#include "actionba.h"
+#include "godba.h"
+#include "roomba.h"
+#include "wterraba.h"
+
+template <class type> ushort protocontainer<type>::Add(prototype* Proto)
+{
+  static bool Initialized = false;
+
+  if(!Initialized)
+    {
+      ProtoData.resize(2, 0);
+      Initialized = true;
+    }
+
+  ProtoData.insert(ProtoData.end() - 1, Proto);
+  CodeNameMap[Proto->ClassName()] = ProtoData.size() - 2;
+  return ProtoData.size() - 2;
+}
+
+template ushort protocontainer<action>::Add(action::prototype*);
+template ushort protocontainer<character>::Add(character::prototype*);
+template ushort protocontainer<god>::Add(god::prototype*);
+template ushort protocontainer<item>::Add(item::prototype*);
+template ushort protocontainer<room>::Add(room::prototype*);
+template ushort protocontainer<olterrain>::Add(olterrain::prototype*);
+template ushort protocontainer<glterrain>::Add(glterrain::prototype*);
+template ushort protocontainer<material>::Add(material::prototype*);
+template ushort protocontainer<owterrain>::Add(owterrain::prototype*);
+template ushort protocontainer<gwterrain>::Add(gwterrain::prototype*);
+
+template <class type> ushort protocontainer<type>::SearchCodeName(std::string Name)
+{
+  valuemap::iterator I = CodeNameMap.find(Name);
+
+  if(I != CodeNameMap.end())
+    return I->second;
+  else
+    return 0;
+}
+
+template ushort protocontainer<action>::SearchCodeName(std::string);
+template ushort protocontainer<character>::SearchCodeName(std::string);
+template ushort protocontainer<god>::SearchCodeName(std::string);
+template ushort protocontainer<item>::SearchCodeName(std::string);
+template ushort protocontainer<room>::SearchCodeName(std::string);
+template ushort protocontainer<olterrain>::SearchCodeName(std::string);
+template ushort protocontainer<glterrain>::SearchCodeName(std::string);
+template ushort protocontainer<material>::SearchCodeName(std::string);
+template ushort protocontainer<owterrain>::SearchCodeName(std::string);
+template ushort protocontainer<gwterrain>::SearchCodeName(std::string);
+
+template <class type> outputfile& operator<<(outputfile& SaveFile, type* Class)
+{
+  if(Class)
+    Class->Save(SaveFile);
+  else
+    SaveFile << ushort(0);
+
+  return SaveFile;
+}
+
+template outputfile& operator<<(outputfile&, action*);
+template outputfile& operator<<(outputfile&, character*);
+template outputfile& operator<<(outputfile&, god*);
+template outputfile& operator<<(outputfile&, item*);
+template outputfile& operator<<(outputfile&, room*);
+template outputfile& operator<<(outputfile&, olterrain*);
+template outputfile& operator<<(outputfile&, glterrain*);
+template outputfile& operator<<(outputfile&, material*);
+template outputfile& operator<<(outputfile&, owterrain*);
+template outputfile& operator<<(outputfile&, gwterrain*);
+
+template <class type> inputfile& operator>>(inputfile& SaveFile, type*& Class)
+{
+  ushort Type;
+  SaveFile >> Type;
+
+  if(Type)
+    Class = protocontainer<type>::GetProto(Type)->CloneAndLoad(SaveFile);
+  else
+    Class = 0;
+
+  return SaveFile;
+}
+
+template inputfile& operator>>(inputfile&, action*&);
+template inputfile& operator>>(inputfile&, character*&);
+template inputfile& operator>>(inputfile&, god*&);
+template inputfile& operator>>(inputfile&, item*&);
+template inputfile& operator>>(inputfile&, room*&);
+template inputfile& operator>>(inputfile&, olterrain*&);
+template inputfile& operator>>(inputfile&, glterrain*&);
+template inputfile& operator>>(inputfile&, material*&);
+template inputfile& operator>>(inputfile&, owterrain*&);
+template inputfile& operator>>(inputfile&, gwterrain*&);
 
 character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems)
 {

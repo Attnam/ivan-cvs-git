@@ -2459,7 +2459,7 @@ float character::GetDodgeValue() const
 
 ulong character::CurrentDanger() const
 {
-  ulong AttrDanger = GetAttackStrength() * GetStrength() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / 100000;
+  ulong AttrDanger = ulong(GetAttackStrength() * GetStrength() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / 100000);
   ulong TotalDanger = 0;
   ushort TotalWeight = 0;
 
@@ -2475,7 +2475,7 @@ ulong character::CurrentDanger() const
 
 ulong character::MaxDanger() const
 {
-  ulong AttrDanger = GetAttackStrength() * GetStrength() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / 100000;
+  ulong AttrDanger = ulong(GetAttackStrength() * GetStrength() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / 100000);
   ulong TotalDanger = 0;
   ushort TotalWeight = 0;
 

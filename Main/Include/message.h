@@ -7,8 +7,6 @@
 
 #define ADD_MESSAGE msgsystem::AddMessage
 
-#include <string>
-
 #include "typedef.h"
 
 class felist;

@@ -3,10 +3,10 @@
 #include "proto.h"
 #include "lterraba.h"
 
-std::vector<glterrain::prototype*>	protocontainer<glterrain>::ProtoData;
-std::vector<olterrain::prototype*>	protocontainer<olterrain>::ProtoData;
-std::map<std::string, ushort>		protocontainer<glterrain>::CodeNameMap;
-std::map<std::string, ushort>		protocontainer<olterrain>::CodeNameMap;
+std::vector<glterrain::prototype*> protocontainer<glterrain>::ProtoData;
+std::vector<olterrain::prototype*> protocontainer<olterrain>::ProtoData;
+valuemap protocontainer<glterrain>::CodeNameMap;
+valuemap protocontainer<olterrain>::CodeNameMap;
 
 #include "femath.h"
 #include "lterrade.h"

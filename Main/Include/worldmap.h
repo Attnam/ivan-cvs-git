@@ -9,7 +9,6 @@
 #include <string>
 
 #include "typedef.h"
-
 #include "area.h"
 #include "wterraba.h"
 #include "cont.h"

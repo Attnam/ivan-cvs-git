@@ -7,13 +7,10 @@
 
 #include <cstdio>
 #include <vector>
-#include <map>
 #include <list>
 
 #include "typedef.h"
 #include "vector2d.h"
-
-typedef std::map<std::string, long> valuemap;
 
 /* fstream seems to bug with DJGPP, so we use FILE* here */
 
@@ -35,9 +32,9 @@ class inputfile
   inputfile(std::string, bool = true);
   std::string ReadWord(bool = true);
   char ReadLetter(bool = true);
-  long ReadNumber(valuemap, uchar = 0xFF);
+  long ReadNumber(const valuemap&, uchar = 0xFF);
   long ReadNumber();
-  vector2d ReadVector2d(valuemap);
+  vector2d ReadVector2d(const valuemap&);
   bool ReadBool();
   ~inputfile() { if(Buffer) fclose(Buffer); }
   int Get() { return fgetc(Buffer); }
@@ -55,17 +52,37 @@ class inputfile
 };
 
 /*
- * Reads a variable of type type and returns it.
- * An inputfile member function would be far more elegant,
+ * Reads a binary form variable of type type and returns it.
+ * An inputfile template member function would be far more elegant,
  * but VC doesn't seem to understand it.
  */
 
-template <class type> type ReadType(inputfile& SaveFile)
+template <class type> inline type ReadType(inputfile& SaveFile)
 {
   type Variable;
   SaveFile >> Variable;
   return Variable;
 }
+
+/*
+ * Reads a formatted data variable Type and initializes it.
+ */
+
+template <class type> inline void ReadData(type* Type, inputfile& SaveFile, const valuemap& ValueMap)
+{
+  Type->SetValueMap(ValueMap);
+  Type->ReadFrom(SaveFile);
+}
+
+inline void ReadData(bool* Type, inputfile& SaveFile, const valuemap&) { *Type = SaveFile.ReadBool(); }
+inline void ReadData(char* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(uchar* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(short* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(ushort* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(long* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(ulong* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadNumber(ValueMap); }
+inline void ReadData(vector2d* Type, inputfile& SaveFile, const valuemap& ValueMap) { *Type = SaveFile.ReadVector2d(ValueMap); }
+void ReadData(std::string*, inputfile&, const valuemap&);
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {
@@ -143,18 +160,6 @@ inline inputfile& operator>>(inputfile& SaveFile, long& Value)
   return SaveFile;
 }
 
-inline outputfile& operator<<(outputfile& SaveFile, float Value)
-{
-  SaveFile.Write((char*)&Value, sizeof(Value));
-  return SaveFile;
-}
-
-inline inputfile& operator>>(inputfile& SaveFile, float& Value)
-{
-  SaveFile.Read((char*)&Value, sizeof(Value));
-  return SaveFile;
-}
-
 inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
 {
   SaveFile.Write((char*)&Value, sizeof(Value));
@@ -162,6 +167,18 @@ inline outputfile& operator<<(outputfile& SaveFile, ulong Value)
 }
 
 inline inputfile& operator>>(inputfile& SaveFile, ulong& Value)
+{
+  SaveFile.Read((char*)&Value, sizeof(Value));
+  return SaveFile;
+}
+
+inline outputfile& operator<<(outputfile& SaveFile, float Value)
+{
+  SaveFile.Write((char*)&Value, sizeof(Value));
+  return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, float& Value)
 {
   SaveFile.Read((char*)&Value, sizeof(Value));
   return SaveFile;
@@ -186,7 +203,6 @@ inputfile& operator>>(inputfile&, std::string&);
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, std::vector<type> Vector)
 {
   ulong Size = Vector.size();
-
   SaveFile.Write((char*)&Size, sizeof(Size));
 
   for(ulong c = 0; c < Vector.size(); ++c)
@@ -198,9 +214,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, std::v
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vector<type>& Vector)
 {
   ulong Size;
-
   SaveFile.Read((char*)&Size, sizeof(Size));
-
   Vector.resize(Size, type());
 
   for(ulong c = 0; c < Vector.size(); ++c)
@@ -212,7 +226,6 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vec
 template <class type> inline outputfile& operator<<(outputfile& SaveFile, std::list<type> List)
 {
   ulong Size = List.size();
-
   SaveFile.Write((char*)&Size, sizeof(Size));
 
   for(std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
@@ -224,9 +237,7 @@ template <class type> inline outputfile& operator<<(outputfile& SaveFile, std::l
 template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::list<type>& List)
 {
   ulong Size;
-
   SaveFile.Read((char*)&Size, sizeof(Size));
-
   List.resize(Size, type());
 
   for(std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
@@ -238,7 +249,6 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::lis
 template <class type1, class type2> inline outputfile& operator<<(outputfile& SaveFile, std::map<type1, type2> Map)
 {
   ulong Size = Map.size();
-
   SaveFile.Write((char*)&Size, sizeof(Size));
 
   for(std::map<ulong, uchar>::iterator i = Map.begin(); i != Map.end(); ++i)
@@ -250,20 +260,17 @@ template <class type1, class type2> inline outputfile& operator<<(outputfile& Sa
 template <class type1, class type2> inline inputfile& operator>>(inputfile& SaveFile, std::map<type1, type2>& Map)
 {
   ulong Size;
-
   SaveFile.Read((char*)&Size, sizeof(Size));
 
   for(ushort c = 0; c < Size; ++c)
     {
       type1 First;
       type2 Second;
-
       SaveFile >> First >> Second;
-
       Map[First] = Second;
     }
 
   return SaveFile;
-}	
+}
 
 #endif

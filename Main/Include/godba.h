@@ -19,8 +19,6 @@
 #define ACM	9
 #define ACMM	10
 
-#include <string>
-
 #include "typedef.h"
 #include "materba.h"
 
@@ -95,7 +93,7 @@ class god
   } name##_ProtoType;\
   \
   ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
-  const god::prototype* const name::GetPrototype() { return protocontainer<god>::GetProto(StaticType()); }\
+  const god::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
   ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
