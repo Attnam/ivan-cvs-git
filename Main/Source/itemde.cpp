@@ -298,12 +298,10 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
-					if(Character->GetTeam()->GetRelation(Zapper->GetTeam()) != FRIEND)
-						Zapper->GetTeam()->Hostility(Zapper->GetTeam());
-
+					Zapper->GetTeam()->Hostility(Zapper->GetTeam());
 					Character->Polymorph();
 				}
-				
+
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
 					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
 			}
@@ -482,12 +480,16 @@ bool wandofstriking::Zap(character* Zapper, vector2d Pos, uchar Direction)
 				break;
 			else
 			{
-				
-				CurrentPos += game::GetMoveVector(Direction);			
+				CurrentPos += game::GetMoveVector(Direction);
 
-				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
-					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter()->StruckByWandOfStriking();
-				
+				character* Character;			
+
+				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
+				{
+					Zapper->GetTeam()->Hostility(Zapper->GetTeam());
+					Character->StruckByWandOfStriking();
+				}
+
 				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
 					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->StruckByWandOfStriking();
 			}

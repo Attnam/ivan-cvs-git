@@ -23,7 +23,7 @@ Pimeydelle vaikutuksia.
 Pick-axejen s‰‰teleminen (kesto, expat, valot).
 ////*Mellis abuse.
 ////%*Alpha blend.
-Rest until fully healed.
+////Rest until fully healed.
 ////Messagebuffer should be reordered.
 ////Messagebuffer should be saved.
 %*DOS-portti.

@@ -205,7 +205,7 @@ public:
 	virtual void PolymorphHandler();
 	virtual void SetStateCounter(uchar Index, ushort What) { StateCounter[Index] = What; }
 	virtual bool CanMove();
-	virtual void DeActivateVoluntaryStates(std::string);
+	virtual void DeActivateVoluntaryStates(std::string = "");
 	virtual void EndFainted();
 	virtual void EndEating();
 	virtual void EndPolymorph();

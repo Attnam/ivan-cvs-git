@@ -2156,6 +2156,8 @@ bool character::ShowWeaponSkills()
 
 void character::Faint()
 {
+	DeActivateVoluntaryStates();
+
 	if(GetIsPlayer())
 		ADD_MESSAGE("You faint.");
 	else

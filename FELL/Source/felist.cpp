@@ -6,6 +6,9 @@
 
 ushort felist::Draw(bitmap* TopicFont, bitmap* ListFont, bool WillDrawNumbers) const
 {
+	if(!String.Length())
+		return 0xFFFF;
+
 	bitmap BackGround(XRES, YRES);
 
 	DOUBLEBUFFER->Blit(&BackGround, 0, 0, 0, 0, XRES, YRES);

@@ -2,6 +2,8 @@
 #include "game.h"
 #include "error.h"
 #include "save.h"
+#include "charba.h"
+#include "message.h"
 
 void team::SetRelation(team* AnotherTeam, uchar Relation)
 {
@@ -24,7 +26,12 @@ uchar team::GetRelation(team* AnotherTeam)
 void team::Hostility(team* Enemy)
 {
 	if(GetRelation(Enemy) != HOSTILE)
+	{
 		game::Hostility(this, Enemy);
+
+		if(this == game::GetPlayer()->GetTeam())
+			ADD_MESSAGE("You have a feeling this wasn't a good idea...");
+	}
 
 	SetRelation(Enemy, HOSTILE);
 }
