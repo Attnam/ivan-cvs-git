@@ -2213,7 +2213,8 @@ void character::ShowNewPosInfo() const
 	  if(CanRead())
 	    ADD_MESSAGE("Something has been engraved here: \"%s\"", GetNearLSquare(GetPos())->GetEngraved().CStr());
 	  else
-	    ADD_MESSAG("Something has been engraved here.");
+	    ADD_MESSAGE("Something has been engraved here.");
+	}
     }
 }
 
