@@ -1660,7 +1660,7 @@ key
 	BitmapPos = 16, 416;
 	FormModifier = 30;
 	NameSingular = "key";
-	MainMaterialConfig == IRON;
+	MainMaterialConfig == BRONZE;
 	Roundness = 10;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 368;

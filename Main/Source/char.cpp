@@ -6856,10 +6856,10 @@ void character::LoadSquaresUnder()
   SquareUnder[0] = game::GetSquareInLoad();
 }
 
-void character::AttackAdjacentEnemyAI()
+bool character::AttackAdjacentEnemyAI()
 {
   if(!IsEnabled())
-    return;
+    return false;
 
   character* Char[MAX_NEIGHBOUR_SQUARES];
   vector2d Pos[MAX_NEIGHBOUR_SQUARES];
@@ -6887,9 +6887,9 @@ void character::AttackAdjacentEnemyAI()
     {
       int ChosenIndex = RAND() % Index;
       Hit(Char[ChosenIndex], Pos[ChosenIndex], Dir[ChosenIndex]);
+      return true;
     }
-
-  EditAP(-1000);
+  return false;
 }
 
 void character::SignalStepFrom(lsquare** OldSquareUnder)
@@ -8383,3 +8383,7 @@ void character::EndLevitation()
     }
 }
 
+bool character::CanMove() const
+{
+  return !IsRooted() || StateIsActivated(LEVITATION);
+}

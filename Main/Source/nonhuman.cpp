@@ -631,7 +631,13 @@ void genetrixvesana::GetAICommand()
       return;
     }
 
-  AttackAdjacentEnemyAI();
+  if(AttackAdjacentEnemyAI())
+    return;
+  
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }
 
 color16 carnivorousplant::GetTorsoSpecialColor() const // the flower
@@ -985,6 +991,11 @@ void mushroom::Load(inputfile& SaveFile)
 
 void mushroom::GetAICommand()
 {
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+  
   lsquare* CradleSquare = GetNeighbourLSquare(RAND() % 8);
 
   if(CradleSquare && !CradleSquare->GetCharacter() && (CradleSquare->GetWalkability() & WALK))
@@ -1023,7 +1034,13 @@ void mushroom::GetAICommand()
 	}
     }
 
-  AttackAdjacentEnemyAI();
+  if(AttackAdjacentEnemyAI())
+    return;
+  
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }
 
 void mushroom::VirtualConstructor(bool Load)
@@ -2116,4 +2133,20 @@ void genetrixvesana::FinalProcessForBone()
 {
   largecreature::FinalProcessForBone();
   TurnsExisted = 0;
+}
+
+void carnivorousplant::GetAICommand()
+{
+  SeekLeader(GetLeader());
+
+  if(FollowLeader(GetLeader()))
+    return;
+
+  if(AttackAdjacentEnemyAI())
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }

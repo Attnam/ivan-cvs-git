@@ -103,7 +103,7 @@ character
 	IsPlant = false;
 	MoveType = WALK;
 	DestroysWalls = false;
-	CanMove = true;
+	IsRooted = false;
 	BloodMaterial = BLOOD;
 	VomitMaterial = VOMIT;
 	HasSecondaryMaterial = false;
@@ -2798,7 +2798,7 @@ carnivorousplant
 	StandVerb = "rooted";
 	AttachedGod = SILVA;
 	IsPlant = true;
-	CanMove = false;
+	IsRooted = true;
 
 	Config GREATER;
 	{
@@ -3511,8 +3511,8 @@ mushroom
 	CanBeDisplaced = false;
 	PanicLevel = 0;
 	CanOpen = false;
-	CanMove = false;
 	StandVerb = "rooted";
+	IsRooted = true;
 }
 
 magicmushroom
@@ -3958,7 +3958,7 @@ genetrixvesana
 	HasFeet = false;
 	SpillsBlood = false;
 	StandVerb = "rooted";
-	CanMove = false;
+	IsRooted = true;
 }
 
 hedgehog

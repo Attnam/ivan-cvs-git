@@ -81,7 +81,7 @@ struct characterdatabase : public databasebase
   bool BiteCapturesBodyPart;
   bool IsPlant;
   bool DestroysWalls;
-  bool CanMove;
+  bool IsRooted;
   bool HasSecondaryMaterial;
   bool IsImmuneToLeprosy;
   bool AutomaticallySeen;
@@ -492,7 +492,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
   DATA_BASE_BOOL(DestroysWalls);
-  DATA_BASE_BOOL(CanMove);
+  DATA_BASE_BOOL(IsRooted);
   DATA_BASE_VALUE(int, BloodMaterial);
   DATA_BASE_VALUE(int, VomitMaterial);
   DATA_BASE_BOOL(AutomaticallySeen);
@@ -910,6 +910,7 @@ class character : public entity, public id
   virtual bool CanForceVomit() const { return CanVomit(); }
   void EndLevitation();
   DATA_BASE_VALUE(festring, ForceVomitMessage);
+  virtual bool CanMove() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -967,7 +968,7 @@ class character : public entity, public id
   virtual int ModifyBodyPartToHitChance(int, int Chance) const { return Chance; }
   virtual bool CanPanicFromSeveredBodyPart() const { return true; }
   virtual void SpecialBodyPartSeverReaction() { }
-  void AttackAdjacentEnemyAI();
+  bool AttackAdjacentEnemyAI();
   double RandomizeBabyExperience(double);
   static bool IsLimbIndex(int);
   virtual bool AllowExperience() const { return true; }

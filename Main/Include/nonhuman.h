@@ -230,7 +230,7 @@ class CHARACTER
   nonhumanoid,
  protected:
   virtual color16 GetTorsoSpecialColor() const;
-  virtual void GetAICommand() { AttackAdjacentEnemyAI(); }
+  virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
 );
 

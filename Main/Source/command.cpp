@@ -514,7 +514,7 @@ bool commandsystem::Save(character*)
   if(game::BoolQuestion(CONST_S("Do you truly wish to save and flee? [y/N]")))
     {
       game::Save();
-      game::End(false);
+      game::End("", false);
       return true;
     }
   else

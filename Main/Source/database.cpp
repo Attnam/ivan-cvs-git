@@ -351,7 +351,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsPlant);
   ADD_MEMBER(MoveType);
   ADD_MEMBER(DestroysWalls);
-  ADD_MEMBER(CanMove);
+  ADD_MEMBER(IsRooted);
   ADD_MEMBER(BloodMaterial);
   ADD_MEMBER(VomitMaterial);
   ADD_MEMBER(HasSecondaryMaterial);
