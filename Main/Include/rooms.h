@@ -58,8 +58,8 @@ ROOM(cathedral, room)
   virtual void HostileAction(character*) const;
   virtual truth AllowAltarPolymorph() const { return false; }
   virtual truth AllowFoodSearch() const { return false; }
-  virtual void GetAddItemEffect(item*);
-  virtual character* FindRandomExplosiveReceiver() const;
+  virtual void AddItemEffect(item*);
+  character* FindRandomExplosiveReceiver() const;
  protected:
   truth Entered;
 };

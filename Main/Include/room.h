@@ -83,7 +83,7 @@ class room
   virtual truth AllowFoodSearch() const { return true; }
   virtual void ReceiveVomit(character*) { }
   virtual truth IsOKToDestroyWalls(const character*) const;
-  virtual void GetAddItemEffect(item*) { };
+  virtual void AddItemEffect(item*) { };
   void FinalProcessForBone();
  protected:
   mutable character* Master;

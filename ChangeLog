@@ -7,6 +7,12 @@
 
 -----------------------------------------------------------------------------
 
+August 31 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+	* Fixed a typo in the anti-explosive magical field code
+	* Added distinct break messages for wands (this probably has bugs now,
+	  I'll fix them later tonight)
+
 August 30 2004 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
 	* Corrected a minor bug in characters' special effect draw order

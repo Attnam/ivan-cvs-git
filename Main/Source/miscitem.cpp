@@ -124,6 +124,14 @@ truth wand::Apply(character* Terrorist)
   if(Terrorist->IsPlayer() && !game::TruthQuestion(CONST_S("Are you sure you want to break ") + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
+  if(Terrorist->IsPlayer())
+    ADD_MESSAGE("You bend %s with all your strength.", CHAR_DESCRIPTION(DEFINITE));
+  else if(Terrorist->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s bends %s with all %s strength.", Terrorist->CHAR_NAME(DEFINITE), CHAR_DESCRIPTION(DEFINITE), Terrorist->CHAR_POSSESSIVE_PRONOUN);
+
+  if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s.", CHAR_DESCRIPTION(DEFINITE), GetBreakMsg().CStr());
+
   BreakEffect(Terrorist, CONST_S("killed by ") + GetName(INDEFINITE) + " broken @bk");
   Terrorist->DexterityAction(5);
   return true;
@@ -393,8 +401,8 @@ truth wand::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s%s %s.", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr(), GetBreakMsg().CStr());
 
     BreakEffect(Damager, DeathMsg);
     return true;
@@ -413,8 +421,8 @@ truth backpack::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -433,7 +441,7 @@ truth scroll::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s%s catches fire!", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
@@ -450,7 +458,7 @@ truth holybook::ReceiveDamage(character*, int Damage, int Type, int)
      && (Damage > 125 || !(RAND() % (250 / Damage))))
   {
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
+      ADD_MESSAGE("%s%s catches fire!", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
 
     RemoveFromSlot();
     SendToHell();
@@ -699,8 +707,8 @@ truth mine::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -1495,7 +1503,7 @@ long itemcontainer::GetTruePrice() const
 void potion::Break(character* Breaker, int Dir)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s%s shatters to pieces.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
   else if(PLAYER->CanHear())
     ADD_MESSAGE("You hear something shattering.");
 
@@ -2197,8 +2205,8 @@ truth potion::ReceiveDamage(character* Damager, int Damage, int Type, int Dir)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();
@@ -2321,8 +2329,8 @@ truth holybanana::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(Damager)
       DeathMsg << " caused @bk";
 
-    if(GetSquareUnder()->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+    if(CanBeSeenByPlayer())
+      ADD_MESSAGE("%s%s explodes!", CHAR_DESCRIPTION(DEFINITE), GetLocationDescription().CStr());
 
     lsquare* Square = GetLSquareUnder();
     RemoveFromSlot();

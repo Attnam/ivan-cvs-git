@@ -97,7 +97,8 @@ void item::Fly(character* Thrower, int Direction, int Force)
   if(!Range || GetSquaresUnder() != 1)
   {
     if(GetLSquareUnder()->GetRoom())
-      GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
+      GetLSquareUnder()->GetRoom()->AddItemEffect(this);
+
     return;
   }
 
@@ -170,8 +171,9 @@ void item::Fly(character* Thrower, int Direction, int Force)
 
   if(Breaks)
     ReceiveDamage(Thrower, int(sqrt(GetWeight() * RangeLeft) / 10), THROW|PHYSICAL_DAMAGE, Direction);
-  else if(GetLSquareUnder()->GetRoom())
-    GetLSquareUnder()->GetRoom()->GetAddItemEffect(this);
+
+  if(Exists() && GetLSquareUnder()->GetRoom())
+    GetLSquareUnder()->GetRoom()->AddItemEffect(this);
 }
 
 int item::HitCharacter(character* Thrower, character* Dude, int Damage, double ToHitValue, int Direction)
@@ -738,7 +740,7 @@ truth item::CanBePiledWith(const item* Item, const character* Viewer) const
 void item::Break(character* Breaker, int)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), GetBreakVerb());
+    ADD_MESSAGE("%s%s %s.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr(), GetBreakVerb());
 
   if(Breaker && IsOnGround())
   {
@@ -1335,7 +1337,7 @@ void item::DonateFluidsTo(item* Item)
 void item::Destroy(character* Destroyer, int)
 {
   if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s is destroyed.", CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s%s is destroyed.", CHAR_NAME(DEFINITE), GetLocationDescription().CStr());
 
   if(Destroyer && IsOnGround())
   {
@@ -1547,4 +1549,17 @@ inputfile& operator>>(inputfile& SaveFile, idholder*& IdHolder)
 {
   IdHolder = new idholder(ReadType<ulong>(SaveFile));
   return SaveFile;
+}
+
+festring item::GetLocationDescription() const
+{
+  return "";
+  /*if(IsOnGround())
+  {
+    GetSquareUnder()->
+    festring Desc = CONST_S(" on ");
+
+  }
+  else
+    return CONST_S("");*/
 }

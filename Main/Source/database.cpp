@@ -486,6 +486,7 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(DamageFlags);
   ADD_MEMBER(IsKamikazeWeapon);
   ADD_MEMBER(FlexibilityIsEssential);
+  ADD_MEMBER(BreakMsg);
 }
 
 template <class type>

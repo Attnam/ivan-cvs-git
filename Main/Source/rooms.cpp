@@ -736,61 +736,57 @@ void shop::ReceiveVomit(character* Who)
     ADD_MESSAGE("\"Unfortunately I accept no returns.\"");
 }
 
-void cathedral::GetAddItemEffect(item* Dropped)
+void cathedral::AddItemEffect(item* Dropped)
 {
-  truth SeenBeforeTeleport;
-  if(Dropped->IsExplosive())
+  if(!Dropped->IsExplosive())
+    return;
+
+  truth SeenBeforeTeleport = Dropped->CanBeSeenByPlayer();
+  character* KamikazeDwarf = FindRandomExplosiveReceiver();
+
+  if(KamikazeDwarf)
   {
-    SeenBeforeTeleport = Dropped->CanBeSeenByPlayer();
+    Dropped->MoveTo(KamikazeDwarf->GetStack());
 
-    character* KamikazeDwarf = FindRandomExplosiveReceiver();
-    if(KamikazeDwarf)
+    if(KamikazeDwarf->CanBeSeenByPlayer())
     {
-      Dropped->MoveTo(KamikazeDwarf->GetStack());
-      if(Dropped->CanBeSeenByPlayer())
-      {
-	if(SeenBeforeTeleport) 
-	  ADD_MESSAGE("%s disappears and reappears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
-	else
-	  ADD_MESSAGE("%s appears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
-      }
-      else if(SeenBeforeTeleport)
-	ADD_MESSAGE("%s dissappears.", Dropped->GetName(DEFINITE).CStr());
-
+      if(SeenBeforeTeleport) 
+	ADD_MESSAGE("%s disappears and reappears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
+      else
+	ADD_MESSAGE("%s appears in %s's inventory.", Dropped->GetName(DEFINITE).CStr(), KamikazeDwarf->GetName(DEFINITE).CStr());
     }
-    else
+    else if(SeenBeforeTeleport)
+      ADD_MESSAGE("%s disappears.", Dropped->GetName(DEFINITE).CStr());
+  }
+  else
+  {
+    /* position is in kamikaze dwarf room */
+
+    Dropped->RemoveFromSlot();
+    game::GetCurrentLevel()->GetLSquare(18,21)->GetStack()->AddItem(Dropped, false);
+
+    if(Dropped->CanBeSeenByPlayer())
     {
-      /* position is in kamikaze dwarf room */
-
-      Dropped->RemoveFromSlot();
-      game::GetCurrentLevel()->GetLSquare(18,21)->GetStack()->AddItem(Dropped, false);
-
-      if(Dropped->CanBeSeenByPlayer())
-      {
-	if(SeenBeforeTeleport) 
-	  ADD_MESSAGE("%s disappears and reappears in the kamikaze-dwarf room.", 
-		      Dropped->GetName(DEFINITE).CStr());
-	else
-	  ADD_MESSAGE("%s appears in the kamikaze-dwarf room.", 
-		      Dropped->GetName(DEFINITE).CStr());
-      }
-      else if(SeenBeforeTeleport)
-	ADD_MESSAGE("%s disappears.", Dropped->GetNameSingular().CStr());
+      if(SeenBeforeTeleport) 
+	ADD_MESSAGE("%s disappears and reappears in the kamikaze dwarf room.", 
+		    Dropped->GetName(DEFINITE).CStr());
+      else
+	ADD_MESSAGE("%s appears in the kamikaze dwarf room.", 
+		    Dropped->GetName(DEFINITE).CStr());
     }
+    else if(SeenBeforeTeleport)
+      ADD_MESSAGE("%s disappears.", Dropped->GetNameSingular().CStr());
   }
 }
 
 character* cathedral::FindRandomExplosiveReceiver() const
 {
   std::vector<character*> ListOfDwarfs;
+
   for(std::list<character*>::const_iterator i = game::GetTeam(ATTNAM_TEAM)->GetMember().begin();
       i != game::GetTeam(ATTNAM_TEAM)->GetMember().end(); ++i)
-  {
     if((*i)->IsEnabled() && (*i)->IsKamikazeDwarf())
-    {
       ListOfDwarfs.push_back(*i);
-    }
-  }
 
   if(ListOfDwarfs.empty())
     return 0;

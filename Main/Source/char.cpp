@@ -5135,7 +5135,7 @@ void character::TeleportSomePartsAway(int NumberToTeleport)
 	if(IsPlayer())
 	  ADD_MESSAGE("Your %s disappears.", GetBodyPartName(RandomBodyPart).CStr());
 	else if(CanBeSeenByPlayer())
-	  ADD_MESSAGE("%s %s dissappears.", GetPossessivePronoun().CStr(), GetBodyPartName(RandomBodyPart).CStr());
+	  ADD_MESSAGE("%s %s disappears.", GetPossessivePronoun().CStr(), GetBodyPartName(RandomBodyPart).CStr());
       }
     }	
   }

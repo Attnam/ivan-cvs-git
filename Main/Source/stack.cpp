@@ -87,9 +87,7 @@ void stack::AddItem(item* ToBeAdded, truth RunRoomEffects)
   if(!game::IsGenerating())
   {
     if(RunRoomEffects && GetLSquareUnder()->GetRoom())
-    {
-      GetLSquareUnder()->GetRoom()->GetAddItemEffect(ToBeAdded);
-    }
+      GetLSquareUnder()->GetRoom()->AddItemEffect(ToBeAdded);
 
     SquareUnder->SendNewDrawRequest();
     SquareUnder->SendMemorizedUpdateRequest();

@@ -167,6 +167,7 @@ struct itemdatabase : public databasebase
   int EnchantmentPlusChance;
   int TeleportPriority;
   int DamageFlags;
+  festring BreakMsg;
 };
 
 class itemprototype
@@ -375,6 +376,7 @@ class item : public object
   DATA_BASE_TRUTH(HasNormalPictureDirection);
   DATA_BASE_VALUE(int, DamageFlags);
   DATA_BASE_TRUTH(FlexibilityIsEssential);
+  DATA_BASE_VALUE(const festring&, BreakMsg);
   truth CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual truth TryKey(item*, character*) { return false; }
   long GetBlockModifier() const;
@@ -535,10 +537,10 @@ class item : public object
   int GetMaxSpoilPercentage() const;
   truth HasPrice() const;
   virtual void Disappear();
+  festring GetLocationDescription() const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;
-  //virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();
   virtual void PostConstruct() { }
   void Initialize(int, int);

@@ -2169,7 +2169,7 @@ void lsquare::DisplayFluidInfo(festring& Msg) const
     Msg << ". There is ";
     fluid::AddFluidInfo(Fluid, Msg);
 
-    /* Does this cause problems? */
+    /* Does this cause problems? Ans: It does. */
 
     if(IsFlyable())
       Msg << " on the ground";

@@ -1281,6 +1281,7 @@ wand
 		CanBeCloned = false;
 		AttachedGod = SCABIES;
 		IsKamikazeWeapon = true;
+		BreakMsg = "shatters, its pieces transforming into a myriad of exotic forms before vanishing";
 	}
 
 	Config WAND_OF_STRIKING;
@@ -1296,6 +1297,7 @@ wand
 		BeamEffect = BEAM_STRIKE;
 		AttachedGod = INFUSCOR;
 		IsKamikazeWeapon = true;
+		BreakMsg = "explodes, releasing all of its energy at once";
 	}
 
 	Config WAND_OF_FIRE_BALLS;
@@ -1312,6 +1314,7 @@ wand
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
 		IsKamikazeWeapon = true;
+		BreakMsg = "turns into a fiery ball of rapidly expanding plasma.";
 	}
 
 	Config WAND_OF_TELEPORTATION;
@@ -1328,6 +1331,7 @@ wand
 		BeamEffect = BEAM_TELEPORT;
 		AttachedGod = SOPHOS;
 		BreakEffectRangeSquare = 9;
+		BreakMsg = "breaks apart and a thousand splinters scatter in random directions, each cutting a tiny hole in space and time";
 	}
 
 	Config WAND_OF_HASTE;
@@ -1342,6 +1346,7 @@ wand
 		BeamColor = RED;
 		BeamEffect = BEAM_HASTE;
 		AttachedGod = CLEPTIA;
+		BreakMsg = "breaks, speeding up everything around it";
 	}
 
 	Config WAND_OF_SLOW;
@@ -1356,6 +1361,7 @@ wand
 		BeamColor = BLUE;
 		BeamEffect = BEAM_SLOW;
 		AttachedGod = INFUSCOR;
+		BreakMsg = "breaks, dilating time around it";
 	}
 
 	Config WAND_OF_RESURRECTION;
@@ -1370,6 +1376,7 @@ wand
 		BeamColor = BLACK;
 		BeamEffect = BEAM_RESURRECT;
 		AttachedGod = SEGES;
+		BreakMsg = "breaks, releasing countless green rays of highly compressed life";
 	}
 
 	Config WAND_OF_DOOR_CREATION;
@@ -1385,6 +1392,7 @@ wand
 		BeamEffect = BEAM_DOOR_CREATION;
 		BeamStyle = SHIELD_BEAM;
 		AttachedGod = LORICATUS;
+		BreakMsg = "releases its powers, causing a number of highly unexpected effects around itself";
 	}
 
 	Config WAND_OF_INVISIBILITY;
@@ -1399,6 +1407,7 @@ wand
 		BeamColor = TRANSPARENT_COLOR; /* invisible */
 		BeamEffect = BEAM_INVISIBILITY;
 		AttachedGod = CLEPTIA;
+		BreakMsg = "vanishes";
 	}
 
 	Config WAND_OF_CLONING;
@@ -1416,6 +1425,7 @@ wand
 		BeamEffect = BEAM_DUPLICATE;
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
+		BreakMsg = "breaks up, its dispersing splinters multiplying infinitely";
 	}
 
 	Config WAND_OF_LIGHTNING;
@@ -1433,6 +1443,7 @@ wand
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 9;
 		IsKamikazeWeapon = true;
+		BreakMsg = "breaks and releases all of its stored electricity at once";
 	}
 
 	Config WAND_OF_ACID_RAIN;
@@ -1449,6 +1460,7 @@ wand
 		AttachedGod = SCABIES;
 		BreakEffectRangeSquare = 1;
 		IsKamikazeWeapon = true;
+		BreakMsg = "vaporizes in an instant, unleashing a deadly rainstorm of acid";
 	}
 
 	Config WAND_OF_MIRRORING;
@@ -1466,6 +1478,7 @@ wand
 		BeamEffect = BEAM_DUPLICATE; /* difference from cloning overridden */
 		AttachedGod = INFUSCOR;
 		BreakEffectRangeSquare = 0;
+		BreakMsg = "shatters, its slivers reflecting each other recursively ad infinitum";
 	}
 
 	Config WAND_OF_NECROMANCY;
@@ -1480,6 +1493,7 @@ wand
 		BeamColor = BLACK;
 		BeamEffect = BEAM_NECROMANCY;
 		AttachedGod = INFUSCOR;
+		BreakMsg = "emits a gross of unholy rays and self-obliterates";
 	}
 }
 

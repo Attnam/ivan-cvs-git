@@ -3019,7 +3019,7 @@ kamikazedwarf
 	IsAbstract = true;
 	/* Equipment initialization overridden */
 	PanicLevel = 1;
-	Inventory == backpack;
+	/*Inventory == backpack;*/
 	FleshMaterial = DWARF_FLESH;
 	DeathMessage = "@Dd dies smiling.";
 	IgnoreDanger = true;
@@ -3037,6 +3037,7 @@ kamikazedwarf
 		"@Dd praises @Gd with numerous hymns. @Pp is obviously a very devoted follower.",
 		"\"One day, Holy War will break out and I shall sacrifice my life with joy.\"";
 	}
+	Inventory == wand(WAND_OF_ACID_RAIN);
 }
 
 mammoth
@@ -4934,7 +4935,7 @@ veterankamikazedwarf
 	DefaultIntelligence = 3;
 	DefaultWisdom = 2;
 	Adjective = "veteran";
-	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
+	/*Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }*/
 	HPRequirementForGeneration = 200;
 	DayRequirementForGeneration = 10;
 	Frequency = 200;
