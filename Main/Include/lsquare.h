@@ -82,7 +82,6 @@ class lsquare : public square
   virtual void SetLevelUnder(level* What) { AreaUnder = (area*)What; }
   virtual void ChangeGLTerrain(glterrain*);
   virtual void ChangeOLTerrain(olterrain*);
-  //virtual bitmap* GetFluidBuffer() const { return FluidBuffer; }
   virtual void ApplyScript(squarescript*, room*);
   virtual bool CanBeSeen(bool = false) const;
   virtual bool CanBeSeenFrom(vector2d, ulong, bool = false) const;

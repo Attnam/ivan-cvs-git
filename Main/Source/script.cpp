@@ -398,7 +398,7 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 
 	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
 	    {
-				/* This may cause a memory leak if room's ReCalculate == true!!! */
+	      /* This may cause a memory leak if room's ReCalculate == true!!! */
 
 	      contentscript<type>* ContentScript = new contentscript<type>;
 

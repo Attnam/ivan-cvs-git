@@ -148,3 +148,4 @@ Non-fatal battles.
 Angels should carry holy books of their respective OwnerGods.
 Angels as enemies.
 Amputation.
+Beard item.

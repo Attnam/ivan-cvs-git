@@ -105,7 +105,7 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 {
   long DX = X2 - X1, DY = Y2 - Y1, I1, I2, X, Y, DD;
 
-#define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond) 	\
+  #define DO_LINE(PriSign, PriC, PriCond, SecSign, SecC, SecCond) 	\
 	{										\
 		if(!D##PriC) 						\
 		{									\

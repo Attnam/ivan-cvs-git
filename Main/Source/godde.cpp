@@ -299,7 +299,9 @@ void silva::PrayGoodEffect()
 		break;
 	      }
 	  }
+
       // Impact damage for items in the level
+
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
 	  {

@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define VERSION			"0.311"
+#define VERSION			"0.40d"
 #define SAVEFILE_VERSION	110	// Increment this if changes make savefiles incompatible
 
 #define DIRECTION_COMMAND_KEYS	8
@@ -131,8 +131,6 @@ class game
   static float Difficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
-  //static void SetGodNumber(uchar What) { GodNumber = What; }
-  //static uchar GetGodNumber() { return GodNumber; }
   static long GetBaseScore() { return BaseScore; }
   static void Tick(ushort Tick = 1) { Ticks += Tick; }
   static ulong GetTicks() { return Ticks; }
@@ -204,7 +202,6 @@ class game
   static bool SeeWholeMapCheat;
   static bool GoThroughWallsCheat;
   static std::string PlayerName;
-  //static uchar GodNumber;
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;

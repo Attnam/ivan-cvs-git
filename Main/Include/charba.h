@@ -373,7 +373,6 @@ class character : public type, public entity
   ulong Money;
   uchar HomeRoom;
   std::list<character*>::iterator TeamIterator;
-  //torso* Torso;
   bodypart** BodyPart;
 };
 

@@ -60,7 +60,6 @@ petrus* game::Petrus = 0;
 
 std::string game::AutoSaveFileName = SAVE_DIR + "Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
-//god* game::God[] = {0, new valpurus, new venius, new atavus, new dulcis, new inasnum, new seges, new consummo, new silva, new loricatus, new mellis, new calamus, new pestifer, new macellarius, new scabies, new infuscor, new cruentus, new erado, 0};
 std::vector<god*> game::God;
 
 command* game::Command[] = {0,
@@ -125,7 +124,6 @@ bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 std::string game::PlayerName;
-//uchar game::GodNumber;
 ulong game::Ticks;
 
 void game::InitScript()
@@ -166,7 +164,6 @@ void game::Init(std::string Name)
   PlayerBackup = 0;
 
   femath::SetSeed(time(0));
-  //game::CalculateGodNumber();
   LOSTurns = 1;
   WorldMap = 0;
 
@@ -223,13 +220,6 @@ void game::Init(std::string Name)
 	InWilderness = true;
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
-
-	/*for(ushort c = 1; GetGod(c); ++c)
-	  {
-	    GetGod(c)->SetKnown(false);
-	    GetGod(c)->SetRelation(0);
-	    GetGod(c)->SetTimer(0);
-	  }*/
 
 	GetGod(1)->SetKnown(true);
 	GetGod(2)->SetKnown(true);
@@ -607,12 +597,7 @@ bool game::Save(std::string SaveName)
     GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
   SaveFile << God;
-
-  //for(ushort c = 1; GetGod(c); ++c)
-  //  SaveFile << GetGod(c);
-
   SaveFile << game::GetPlayer()->GetPos();
-
   SaveFile << PlayerBackup;
   globalmessagingsystem::GetMessageHistory()->Save(SaveFile);
   return true;
@@ -653,9 +638,6 @@ uchar game::Load(std::string SaveName)
     GetCurrentDungeon()->LoadLevel(SaveName);
 
   SaveFile >> God;
-
-  //for(ushort c = 1; GetGod(c); ++c)
-  //  GetGod(c)->Load(SaveFile);
 
   vector2d Pos;
 
@@ -873,16 +855,6 @@ void game::TriggerQuestForGoldenEagleShirt()
 
   GetDungeon(0)->SaveLevel(SaveName(), 6);
 }
-
-/*void game::CalculateGodNumber()
-{
-  for(ushort c = 1;; ++c)
-    if(game::GetGod(c) == 0)
-      {
-	SetGodNumber(c - 1);
-	break;
-      }
-}*/
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
 {

@@ -162,11 +162,7 @@ character* god::CreateAngel()
 
       if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  /* This is a most unitelligent gum solution, but... */
-
-	  /*for(ushort c = 1; game::GetGod(c); ++c)
-	    if(game::GetGod(c) == this)*/
-	      Angel->SetMaster(GetType());
+	  Angel->SetMaster(GetType());
 
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CNAME(INDEFINITE));

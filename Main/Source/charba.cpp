@@ -1825,7 +1825,7 @@ bool character::MoveRandomly()
     {
       ushort ToTry = RAND() % 8;
 
-      if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)))// && !game::GetCurrentLevel()->GetLSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
+      if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)))
 	OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
     }
 

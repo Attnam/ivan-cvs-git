@@ -726,6 +726,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
     {
       float Energy = Speed * Hitter->GetWeight() / 100;  
       // Newton is rolling in his grave. 
+      // And Einstein.
       if(Visible && game::GetWizardMode())
 	{
 	  ADD_MESSAGE("Energy hitting the door: %f.", Energy);

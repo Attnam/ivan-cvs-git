@@ -918,9 +918,7 @@ bool oillamp::Apply(character* Applier, stack*)
       vector2d TryToCreate;
       bool FoundPlace = false;
 
-      /*
-	First try to create a genie nearby (10 tries - if all of them fail then stop trying)
-       */
+      /* First try to create a genie nearby (10 tries - if all of them fail then stop trying) */
 
       for(ushort c = 0; c < 10 && !FoundPlace; c++)
 	{	  

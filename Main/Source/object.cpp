@@ -7,7 +7,6 @@
 
 object::object(bool AddToPool, bool HasBe) : unit(AddToPool, HasBe)
 {
-  //*(ulong*)(&GraphicId.Color[0]) = *(ulong*)(&GraphicId.Color[2]) = 0;
 }
 
 object::~object()
