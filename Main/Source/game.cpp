@@ -45,7 +45,7 @@
 #include "materias.h"
 #include "rain.h"
 #include "gear.h"
-//#include "fetime.h"
+#include "fetime.h"
 
 #define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
 #define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
@@ -371,7 +371,7 @@ bool game::Init(const festring& Name)
 	NecroCounter = 0;
 	GameBegan = time(0);
 	LastLoad = time(0);
-	//TimePlayedBeforeLastLoad = time::ZeroTime();
+	TimePlayedBeforeLastLoad = time::GetZeroTime();
 
 	ADD_MESSAGE("You begin your journey to Attnam. Use direction keys to move, '>' to enter an area and '?' to view other commands.");
 
@@ -388,7 +388,6 @@ bool game::Init(const festring& Name)
       return false;
     }
 }
-
 void game::DeInit()
 {
   delete WorldMap;
@@ -3484,7 +3483,7 @@ double game::GetGameSituationDanger()
 
 long game::GetTimeSpent() 
 {
-  return 0;//time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
+  return time::TimeAdd(time::TimeDifference(time(0),LastLoad), TimePlayedBeforeLastLoad);
 }
 
 outputfile& operator<<(outputfile& SaveFile, const massacreid& MI)
