@@ -9,8 +9,11 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <algorithm>
+#endif
+
+#ifdef LINUX
+#include <dirent.h>
 #endif
 
 #ifdef __DJGPP__
@@ -433,7 +436,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
   return Buffer.GetEntry(Check);
 #endif
 
-#ifdef USE_SDL
+#ifdef LINUX
   DIR* dp;
   struct dirent* ep;
   std::string Buffer;

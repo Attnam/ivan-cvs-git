@@ -132,7 +132,7 @@ human
 	CanRead = true;
 	NameSingular = "human";
 	Inventory == encryptedscroll;
-	Inventory == thunderhammer;
+	/*Inventory == thunderhammer;*/
 
 	/*DefaultArmStrength = 25;
 	DefaultLegStrength = 25;

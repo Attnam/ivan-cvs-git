@@ -195,9 +195,7 @@ class game
   static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
   static petrus* GetPetrus() { return Petrus; }
   static void SetPetrus(petrus* What) { Petrus = What; }
-#ifndef __DJGPP__
   static bool HandleQuitMessage();
-#endif
   static void Beep();
   static uchar GetDirectionForVector(vector2d);
   static void SetIsInGetCommand(bool What) { InGetCommand = What; }

@@ -24,13 +24,6 @@
 
 const bool ValpuriIsAlive = true;
 
-#ifdef WIN32
-
-int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
-{
-
-#else
-
 int Main(int argc, char **argv)
 {
   if(argc > 1 && std::string(argv[1]) == "--version")
@@ -38,7 +31,6 @@ int Main(int argc, char **argv)
     std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
     return 0;
   }
-#endif
 
 #ifdef __DJGPP__
 
@@ -47,7 +39,7 @@ int Main(int argc, char **argv)
   char ShiftByteState = _farpeekb(_dos_ds, 0x417);
   _farpokeb(_dos_ds, 0x417, 0);
 
-#endif
+#endif /* __DJGPP__ */
 
   festring::InstallIntegerMap();
   femath::SetSeed(time(0));
@@ -56,12 +48,7 @@ int Main(int argc, char **argv)
   game::InitLuxTable();
   game::InitScript();
   configuration::Load();
-
-#ifdef WIN32
-  igraph::Init(hInstance, hWnd);
-#else
   igraph::Init();
-#endif
 
 #ifndef __DJGPP__
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
@@ -71,6 +58,7 @@ int Main(int argc, char **argv)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" IVAN_VERSION "\r"))
       {
       case 0:
+	ABORT("oke");
 	if(game::Init())
 	  {
 	    game::Run();

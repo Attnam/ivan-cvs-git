@@ -8,10 +8,6 @@
 #include "save.h"
 #include "felist.h"
 
-#ifdef WIN32
-#include "resource.h"
-#endif
-
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
@@ -20,11 +16,7 @@ std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/O
 std::string igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx"};
 tilemap igraph::TileMap;
 
-#ifdef WIN32
-void igraph::Init(HINSTANCE hInst, HWND* hWnd)
-#else
 void igraph::Init()
-#endif
 {
   static bool AlreadyInstalled = false;
 
@@ -33,31 +25,22 @@ void igraph::Init()
       AlreadyInstalled = true;
       graphics::Init();
 
-      std::string Title = std::string("IVAN ") + IVAN_VERSION;
-
-#ifdef WIN32
-      graphics::SetMode(hInst, hWnd, Title.c_str(), vector2d(800, 600), 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
-#endif
 #ifdef USE_SDL
-      graphics::SetMode(Title.c_str(), vector2d(800, 600), 16);
+      graphics::SetMode("IVAN " IVAN_VERSION, GAME_DIR "Graphics/Icon.bmp", vector2d(800, 600), 16, configuration::GetFullScreenMode());
 #endif
+
 #ifdef __DJGPP__
       graphics::SetMode(0x114);
 #endif
+
       DOUBLE_BUFFER->Fill(0);
       graphics::BlitDBToScreen();
-#if defined (WIN32) || (USE_SDL)
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
-#endif
-      graphics::LoadDefaultFont(GAME_DIR + "Graphics/Font.pcx");
-
+      graphics::LoadDefaultFont(GAME_DIR "Graphics/Font.pcx");
       FONT->CreateFontCache(RED);
-      FONT->CreateFontCache(GREEN);
       FONT->CreateFontCache(BLUE);
-      FONT->CreateFontCache(YELLOW);
       FONT->CreateFontCache(WHITE);
       FONT->CreateFontCache(LIGHT_GRAY);
-      FONT->CreateFontCache(DARK_GRAY);
       felist::CreateQuickDrawFontCaches(FONT, WHITE, 8);
       felist::CreateQuickDrawFontCaches(FONT, LIGHT_GRAY, 8);
 

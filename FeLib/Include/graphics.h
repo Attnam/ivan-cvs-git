@@ -5,10 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
@@ -27,10 +23,6 @@
 class bitmap;
 class colorizablebitmap;
 
-#ifdef WIN32
-class CDisplay;
-#endif
-
 class graphics
 {
  public:
@@ -38,12 +30,8 @@ class graphics
   static void Init();
   static void DeInit();
   static void SwitchMode();
-#ifdef WIN32 
-  static void SetMode(HINSTANCE, HWND*, const char*, vector2d, uchar, bool, LPCTSTR);
-  static bool GetFullScreen() { return FullScreen; }
-#endif
 #ifdef USE_SDL
-  static void SetMode(const char*, vector2d, uchar);
+  static void SetMode(const char*, const char*, vector2d, uchar, bool);
 #endif
 #ifdef __DJGPP__
   static void SetMode(ushort);
@@ -51,23 +39,13 @@ class graphics
   static void BlitDBToScreen();
   static vector2d GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
-  static void UpdateBounds();
   static void LoadDefaultFont(const std::string&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
-#if defined (WIN32) || (USE_SDL)
   static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
-#endif
  private:
-#ifdef WIN32
-  static HWND hWnd;
-  static bool FullScreen;
-  static CDisplay* DXDisplay;
-#endif
-#if defined (WIN32) || (USE_SDL)
   static void (*SwitchModeHandler)();
-#endif
 #ifdef USE_SDL
-  static SDL_Surface* screen;
+  static SDL_Surface* Screen;
 #endif
 #ifdef __DJGPP__
   static ulong BufferSize;

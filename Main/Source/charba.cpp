@@ -3282,8 +3282,8 @@ bool character::SecretKnowledge()
   game::SetStandardListAttributes(List);
   List.SetPageLength(PageLength);
   List.Draw();
-  List.PrintToFile(HOME_DIR + "secret" + Chosen + ".txt");
-  ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR.c_str(), Chosen);
+  List.PrintToFile(std::string(HOME_DIR "secret") + Chosen + ".txt");
+  ADD_MESSAGE("Info written also to %ssecret%d.txt.", HOME_DIR, Chosen);
   return false;
 }
 

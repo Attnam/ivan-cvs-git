@@ -11,6 +11,11 @@
 #include "graphics.h"
 #endif
 
+#ifdef WIN32
+#include "SDL.h"
+#include <windows.h>
+#endif
+
 #include "error.h"
 
 /* Shouldn't be initialized here! */
@@ -26,12 +31,8 @@ void (*globalerrorhandler::OldNewHandler)() = 0;
 #endif
 
 #ifdef __DJGPP__
-void (*globalerrorhandler::OldSignal[SIGNALS])(int) = {0, 0, 0, 0, 0, 0, 0, 0};
-int globalerrorhandler::Signal[SIGNALS] = {SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT};
-#endif
-
-#ifdef WIN32
-HWND* globalerrorhandler::hWnd;
+void (*globalerrorhandler::OldSignal[SIGNALS])(int);
+int globalerrorhandler::Signal[SIGNALS] = { SIGABRT, SIGFPE, SIGILL, SIGSEGV, SIGTERM, SIGINT, SIGKILL, SIGQUIT };
 #endif
 
 #ifdef VC
@@ -78,10 +79,10 @@ void globalerrorhandler::Abort(const char* Format, ...)
   strcat(Buffer, BugMsg);
 
 #ifdef WIN32
-  ShowWindow(*hWnd, SW_HIDE);
+  SDL_WM_IconifyWindow();
   MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
-#ifdef USE_SDL
+#ifdef LINUX
   std::cout << Buffer << std::endl;
 #endif
 #ifdef __DJGPP__
@@ -99,10 +100,10 @@ void globalerrorhandler::NewHandler()
 #endif
 {
 #ifdef WIN32
-  ShowWindow(*hWnd, SW_HIDE);
+  SDL_WM_IconifyWindow();
   MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
 #endif
-#ifdef USE_SDL
+#ifdef LINUX
   std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 #ifdef __DJGPP__

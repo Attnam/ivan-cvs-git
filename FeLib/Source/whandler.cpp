@@ -89,242 +89,11 @@ int globalwindowhandler::ReadKey()
 #include "bitmap.h"
 
 std::vector<int> globalwindowhandler::KeyBuffer;
-bool globalwindowhandler::Initialized = false;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
 
-#ifdef WIN32
-char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
-bool globalwindowhandler::Active = false;
-
-#include <windows.h>
-#include <ddraw.h>
-#include <mmsystem.h>
-#include "ddutil.h"
-
-LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-  switch (uMsg)
-    {
-    case WM_SIZE:
-      if(wParam == SIZE_MAXHIDE || wParam == SIZE_MINIMIZED)
-	Active = false;
-      else
-	{
-	  Active = true;
-
-	  if(wParam == SIZE_MAXIMIZED)
-	    {
-	      graphics::SwitchMode();
-	      break;
-	    }
-	}
-
-    case WM_MOVE:
-      {
-	graphics::UpdateBounds();
-
-	if(Initialized && Active)
-	  graphics::BlitDBToScreen();
-
-	break;
-      }
-
-    case WM_PAINT:
-      {
-	if(Initialized && Active)
-	  graphics::BlitDBToScreen();
-
-	break;
-      }
-
-    case WM_SYSCOMMAND:
-      {
-	switch (wParam)
-	  {
-	  case SC_SCREENSAVE:
-	  case SC_MONITORPOWER:
-	    return 0;
-	  }
-
-	break;
-      }
-
-    case WM_CLOSE:
-      {
-	if(!QuitMessageHandler || QuitMessageHandler())
-	  PostQuitMessage(0);
-
-	return 0;
-      }
-
-    case WM_KEYDOWN:
-      {
-	int Key = 0;
-
-	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = KEY_LEFT;
-	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = KEY_HOME;
-	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = KEY_UP;
-	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEY_PAGE_UP;
-	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = KEY_RIGHT;
-	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEY_PAGE_DOWN;
-	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = KEY_DOWN;
-	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = KEY_END;
-	if(wParam == VK_NUMPAD5) Key = '.';
-
-	if(Key && std::find(KeyBuffer.begin(), KeyBuffer.end(), Key) == KeyBuffer.end())
-	  KeyBuffer.push_back(Key);
-
-	return 0;
-      }
-
-    case WM_CHAR:
-      {
-	if(std::find(KeyBuffer.begin(), KeyBuffer.end(), int(wParam)) == KeyBuffer.end())
-	  KeyBuffer.push_back(wParam);
-
-	return 0;
-      }
-
-    case WM_KEYUP:
-      {
-	if(wParam == VK_SNAPSHOT)
-	  DOUBLE_BUFFER->Save("Scrshot.bmp");
-
-	return 0;
-      }
-
-    case WM_SYSKEYUP:
-      if(wParam == VK_RETURN)
-	{
-	  graphics::SwitchMode();
-	  return 0;
-	}
-    }
-
-  return DefWindowProc(hWnd,uMsg,wParam,lParam);
-}
-
-int globalwindowhandler::GetKey(bool EmptyBuffer)
-{
-  MSG msg;
-
-  if(EmptyBuffer)
-    {
-      CheckMessages();
-      KeyBuffer.clear();
-    }
-
-  while(true)
-    if(Active && KeyBuffer.size())
-      {
-	int Key = KeyBuffer[0];
-	KeyBuffer.erase(KeyBuffer.begin());
-	return Key;
-      }
-    else
-      if(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-	if(msg.message == WM_QUIT)
-	  exit(0);
-	else
-	  {
-	    TranslateMessage(&msg);
-	    DispatchMessage(&msg);
-	  }
-      else
-	{
-	  if(Active && Controls)
-	    {
-	      static ulong LastTick = 0;
-	      UpdateTick();
-
-	      if(LastTick != Tick)
-		{
-		  LastTick = Tick;
-		  bool Draw = false;
-
-		  for(ushort c = 0; c < Controls; ++c)
-		    if(ControlLoop[c]())
-		      Draw = true;
-
-		  if(Draw)
-		    graphics::BlitDBToScreen();
-		}
-
-	      Sleep(30);
-	    }
-	  else
-	    WaitMessage();
-	}
-}
-
-void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title, LPCTSTR IconName)
-{
-  WNDCLASS wc;
-  HWND hWnd;
-  wc.lpszClassName = Title;
-  wc.lpfnWndProc   = (WNDPROC) globalwindowhandler::WndProc;
-  wc.style         = CS_OWNDC;
-  wc.hInstance     = hInst;
-  wc.hIcon         = LoadIcon(hInst, IconName);
-  wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-  wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
-  wc.lpszMenuName  = NULL;
-  wc.cbClsExtra    = 0;
-  wc.cbWndExtra    = 0;
-
-  if(!RegisterClass(&wc))
-    ABORT("No Window register.");
-
-  hWnd = CreateWindowEx(0, Title, Title, WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0, 0, hInst, 0);
-
-  if(!hWnd)
-    ABORT("No Window.");
-
-  ShowWindow(hWnd, SW_SHOW);
-  SetFocus(hWnd);
-  UpdateWindow(hWnd);
-  *phWnd = hWnd;
-  GetKeyboardLayoutName(KeyboardLayoutName);
-}
-
-int globalwindowhandler::ReadKey()
-{
-  while(true)
-    {
-      CheckMessages();
-
-      if(Active) // Active true if the window is not iconified
-	break;
-      else
-	WaitMessage();
-    }
-
-  if(KeyBuffer.size())
-    return GetKey(false);
-  else
-    return 0;
-}
-
-void globalwindowhandler::CheckMessages()
-{
-  MSG msg;
-
-  while(PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-    if(msg.message == WM_QUIT)
-      exit(0);
-    else
-      {
-	TranslateMessage(&msg);
-	DispatchMessage(&msg);
-      }
-}
-
-#endif
-
 #ifdef USE_SDL
-void globalwindowhandler::Init(const char* Title)
+void globalwindowhandler::Init()
 {
-  SDL_WM_SetCaption(Title, 0);
   SDL_EnableUNICODE(1);
   SDL_EnableKeyRepeat(500, 30);
 }
@@ -411,10 +180,13 @@ int globalwindowhandler::ReadKey()
 
 void globalwindowhandler::ProcessMessage(SDL_Event* event)
 {
-  ushort Index, KeyPressed;
+  ushort KeyPressed;
  
   switch(event->active.type)
     {
+    case SDL_VIDEOEXPOSE:
+      graphics::BlitDBToScreen();
+      break;
     case SDL_QUIT:
       if(!QuitMessageHandler || QuitMessageHandler())
 	exit(0);	
@@ -424,9 +196,12 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	{
 	case SDLK_RETURN:
 	  if(event->key.keysym.mod & KMOD_ALT)
-	     graphics::SwitchMode();
+	    {
+	      graphics::SwitchMode();
+	      return;
+	    }
 	  else
-	     KeyPressed = event->key.keysym.unicode;
+	    KeyPressed = event->key.keysym.unicode;
 	  break;
 
 	case SDLK_DOWN:
@@ -465,8 +240,8 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
 	  return;
 	default:
-
 	  KeyPressed = event->key.keysym.unicode;
+
 	  if(KeyPressed == 0)
 	    return;
 	}

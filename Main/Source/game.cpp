@@ -4,21 +4,17 @@
 #include <cstdarg>
 #include <iostream>
 
-#ifdef WIN32
-#include <direct.h>	// Needed for _mkdir
-#include <windows.h>
-#endif
-
 #ifdef USE_SDL
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/stat.h>
-#define IDNO 1
-#define IDYES 0
-#define IDCANCEL 2
 #endif
 
 #ifdef __DJGPP__
 #include <sys/stat.h>
+#endif
+
+#ifdef WIN32
+#include <direct.h>
 #endif
 
 #include "level.h"
@@ -84,7 +80,7 @@ bool game::Loading = false, game::InGetCommand = false;
 petrus* game::Petrus = 0;
 guard* game::Haedlac = 0;
 
-std::string game::AutoSaveFileName = SAVE_DIR + "AutoSave";
+std::string game::AutoSaveFileName = SAVE_DIR "AutoSave";
 std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 std::string game::LockDescription[] = { "round", "square", "triangular", "broken" };
 std::vector<god*> game::God;
@@ -178,7 +174,7 @@ characteridmap game::CharacterIDMap;
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat", &GlobalValueMap);
+  inputfile ScriptFile(GAME_DIR "Script/dungeon.dat", &GlobalValueMap);
   delete GameScript;
   GameScript = new gamescript;
   GameScript->ReadFrom(ScriptFile);
@@ -213,8 +209,8 @@ bool game::Init(const std::string& Name)
   mkdir("Save", S_IWUSR);
 #endif
 
-#ifdef USE_SDL
-  mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
+#ifdef LINUX
+  mkdir(SAVE_DIR, S_IRWXU | S_IRWXG);
 #endif
 
   switch(Load(SaveName(PlayerName)))
@@ -1036,30 +1032,21 @@ void game::UpdateCamera()
   GetCurrentArea()->SendNewDrawRequest();
 }
 
-#ifndef __DJGPP__
-
 bool game::HandleQuitMessage()
 {
   if(IsRunning())
     {
       if(IsInGetCommand())
 	{
-#ifndef WIN32
 	  switch(game::Menu(0, RES >> 1, "Do you want to save your game before quitting?\r","Yes\rNo\rCancel\r", LIGHT_GRAY))
-#else
-	  switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
-#endif
 	    {
-	    case IDYES:
+	    case 0:
 	      Save();
 	      game::RemoveSaves(false);
 	      break;
-	    case IDCANCEL:
-#ifndef WIN32
+	    case 2:
 	      GetCurrentArea()->SendNewDrawRequest();
 	      game::DrawEverything();
-	      return false;
-#endif
 	      return false;
 	    default:
 	      GetPlayer()->AddScoreEntry("cowardly quit the game", 0.75f);
@@ -1068,22 +1055,14 @@ bool game::HandleQuitMessage()
 	    }
 	}
       else
-#ifdef WIN32
-	if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
-#else
 	if(game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHT_GRAY))
-#endif
-	  {
-	    RemoveSaves();
-	  }
+	  RemoveSaves();
 	else
 	  return false;
     }
 
   return true;
 }
-
-#endif
 
 void game::Beep()
 {
@@ -1309,7 +1288,7 @@ bool game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GAME_DIR + "Script/define.dat", &GlobalValueMap);
+  inputfile SaveFile(GAME_DIR "Script/define.dat", &GlobalValueMap);
   std::string Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))

@@ -5,10 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include "typedef.h"
 
 #define ABORT globalerrorhandler::Abort
@@ -24,9 +20,6 @@ class globalerrorhandler
   static void DeInstall();
   static void Abort(const char*, ...);
   static const char* GetBugMsg() { return BugMsg; }
-#ifdef WIN32
-  static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
-#endif
  private:
   static const char* BugMsg;
 #ifdef VC
@@ -35,9 +28,6 @@ class globalerrorhandler
 #else
   static void NewHandler();
   static void (*OldNewHandler)();
-#endif
-#ifdef WIN32
-  static HWND* hWnd;
 #endif
 #ifdef __DJGPP__
   static void SignalHandler(int);

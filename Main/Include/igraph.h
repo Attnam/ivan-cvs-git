@@ -5,10 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include <map>
 #include <string>
 
@@ -75,11 +71,7 @@ typedef std::map<graphicid, tile> tilemap;
 class igraph
 {
  public:
-#ifdef WIN32
-  static void Init(HINSTANCE, HWND*);
-#else
   static void Init();
-#endif
   static void DeInit();
   static bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
   static bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }

@@ -271,7 +271,7 @@ void level::Generate(ushort Index)
     }
 
   ushort c;
-  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat", &game::GetGlobalValueMap());
+  inputfile ScriptFile(GAME_DIR "Script/dungeon.dat", &game::GetGlobalValueMap());
 
   for(c = 0; c < *LevelScript->GetRooms(); ++c)
     {

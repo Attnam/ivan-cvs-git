@@ -67,7 +67,6 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	}
 
       Proto->CreateSpecialConfigurations();
-      std::cout << Proto->GetClassId() << std::endl;
     }
 }
 
@@ -431,27 +430,27 @@ void databasesystem::Initialize()
   {
     /* Must be before character */
 
-    inputfile ScriptFile(GAME_DIR + "Script/material.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(GAME_DIR "Script/material.dat", &game::GetGlobalValueMap());
     database<material>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/char.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(GAME_DIR "Script/char.dat", &game::GetGlobalValueMap());
     database<character>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/item.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(GAME_DIR "Script/item.dat", &game::GetGlobalValueMap());
     database<item>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/glterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(GAME_DIR "Script/glterra.dat", &game::GetGlobalValueMap());
     database<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/olterra.dat", &game::GetGlobalValueMap());
+    inputfile ScriptFile(GAME_DIR "Script/olterra.dat", &game::GetGlobalValueMap());
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }

@@ -6,42 +6,36 @@
 #include "graphics.h"
 #endif
 
-#include "error.h"
-
 #ifdef WIN32
-int Main(HINSTANCE, HINSTANCE, HWND*, LPSTR, int);
+#include <windows.h>
+#endif
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-  HWND hWnd;
-  globalerrorhandler::SetWindow(&hWnd);
-#else
+#ifdef USE_SDL
+#include "SDL.h"
+#endif
+
+#include "error.h"
 
 int Main(int, char**);
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
-#endif
   globalerrorhandler::Install();
 
   try
     {
-#ifdef WIN32
-      return Main(hInstance, hPrevInstance, &hWnd, lpCmdLine, nCmdShow);
-#else
       return Main(argc, argv);
-#endif
     }
   catch(...)
     {
 #ifdef WIN32
-      ShowWindow(hWnd, SW_HIDE);
+      SDL_WM_IconifyWindow();
       char Buffer[256];
       strcpy(Buffer, "Fatal Error: Unknown exception thrown.");
       strcat(Buffer, globalerrorhandler::GetBugMsg());
       MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
-#ifdef USE_SDL
+#ifdef LINUX
       std::cout << "Fatal Error: Unknown exception thrown." << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
 #ifdef __DJGPP__
@@ -49,7 +43,6 @@ int main(int argc, char** argv)
       std::cout << "Fatal Error: Unknown exception thrown." << globalerrorhandler::GetBugMsg() << std::endl;
 #endif
       exit(3);
-
     }
 
   exit(0);

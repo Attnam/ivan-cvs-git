@@ -21,17 +21,17 @@
 #define DATA_BASE_BOOL(data) bool data() const { return DataBase->data; }
 
 #if defined(WIN32) || defined(__DJGPP__)
-#define GAME_DIR std::string("")
-#define SAVE_DIR std::string("Save/")
-#define HOME_DIR std::string("")
+#define GAME_DIR ""
+#define SAVE_DIR "Save/"
+#define HOME_DIR ""
 #endif
 
 /* The program can only create directories to the deepness of one, no more... */
 
-#ifdef USE_SDL
-#define GAME_DIR (std::string(DATADIR) + "/ivan/")
-#define SAVE_DIR (std::string(getenv("HOME")) + "/IvanSave/")
-#define HOME_DIR (std::string(getenv("HOME")) + "/")
+#ifdef LINUX
+#define GAME_DIR (DATADIR "/ivan/")
+#define SAVE_DIR (getenv("HOME") "/IvanSave/")
+#define HOME_DIR (getenv("HOME") "/")
 #endif
 
 #define HAS_HIT 0
