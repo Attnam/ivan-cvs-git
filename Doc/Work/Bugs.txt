@@ -6,3 +6,4 @@ The locked shop bug.
 Cannibalism abuse.
 Alt+Enter twice.
 The dark death bug.
+Keys don't work on Win2k fullscreen mode.

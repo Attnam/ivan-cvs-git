@@ -53,13 +53,9 @@ void priest::CreateInitialEquipment()
 void oree::CreateInitialEquipment()
 {
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new goldeneagleshirt)));
-
-	for(ushort c = 0; c < 6; ++c)
-	{
-		item* Can = new can(false);
-		Can->InitMaterials(2, new iron(10), new pepsi(330));
-		GetStack()->FastAddItem(Can);
-	}
+	item* Can = new can(false);
+	Can->InitMaterials(2, new iron(10), new pepsi(330));
+	GetStack()->FastAddItem(Can);
 }
 
 void darkknight::CreateInitialEquipment()
@@ -697,7 +693,7 @@ void petrus::BeTalkedTo(character* Talker)
 
 		if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
 		{
-			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Petrus is happy!\n\nYou are victorious!");
+			iosystem::TextScreen("Thou hast slain the Blood Daemon King, and Petrus is happy!\n\nYou are victorious!");
 			game::RemoveSaves();
 
 			if(!game::GetWizardMode())
@@ -736,7 +732,7 @@ void petrus::BeTalkedTo(character* Talker)
 			{
 				iosystem::TextScreen(	"Champion of Law!\n\n"
 							"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
-							"Oree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
+							"Oree the Blood Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
 							"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
 
 				game::GetCurrentArea()->SendNewDrawRequest();
@@ -768,9 +764,7 @@ void petrus::BeTalkedTo(character* Talker)
 						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
 
 			game::GetCurrentArea()->SendNewDrawRequest();
-			ADD_MESSAGE("Petrus hands you something. \"Thou migth need this.\"");
 			ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
-			Talker->GetStack()->AddItem(new banana);
 			StoryState = 1;
 		}
 		else
@@ -1371,7 +1365,7 @@ void librarian::BeTalkedTo(character* Talker)
 	case 4:
 		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 		{
-			ADD_MESSAGE("\"Thou wish to confront the Pepsi Daemon King? Heed my advice:");
+			ADD_MESSAGE("\"Thou wish to confront the Blood Daemon King? Heed my advice:");
 			ADD_MESSAGE("He is a cunning enemy and will try to ambush thee.");
 			ADD_MESSAGE("A powerful party and a means of quick escape at hand would help thee greatly.\"");
 			break;
@@ -1411,7 +1405,7 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 8:
-		ADD_MESSAGE("\"If thou shall ever encounter an Enner Beast, now this: It is a horrible foe.");
+		ADD_MESSAGE("\"If thou shall ever encounter an Enner Beast, know this: It is a horrible foe.");
 		ADD_MESSAGE("It may shatter thine items and armor with its scream that penetrates iron and stone.");
 		ADD_MESSAGE("Thou should not engage it in melee. Kill it from afar.\"");
 		break;
@@ -1464,6 +1458,12 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 void mistress::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new whip)));
+
+	if(RAND() % 10)
+		GetStack()->FastAddItem(new banana);
+
+	if(RAND() % 100)
+		GetStack()->FastAddItem(new holybanana);
 
 	GetCategoryWeaponSkill(WHIPS)->AddHit(10000);
 	GetCurrentSingleWeaponSkill()->AddHit(10000);

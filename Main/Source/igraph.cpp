@@ -23,7 +23,7 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 	{
 		AlreadyInstalled = true;
 
-		graphics::SetMode(hInst, hWnd, "IVAN 0.301a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
+		graphics::SetMode(hInst, hWnd, "IVAN 0.302a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 		DOUBLEBUFFER->Fill(0);
 		graphics::BlitDBToScreen();
 		graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);

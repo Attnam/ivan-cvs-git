@@ -296,8 +296,8 @@ protected:
 	virtual std::string ThirdPersonPSIVerb(bool Critical) const		{ return Critical ? "emits powerful psi waves at" : "emits psi waves at"; }
 	virtual std::string FirstPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomit very acidous brown slime at" : "vomit brown slime at"; }
 	virtual std::string ThirdPersonBrownSlimeVerb(bool Critical) const	{ return Critical ? "vomits very acidous brown slime at" : "vomits brown slime at"; }
-	virtual std::string FirstPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomit very stale pepsi at" : "vomit pepsi at"; }
-	virtual std::string ThirdPersonPepsiVerb(bool Critical) const		{ return Critical ? "vomits very stale pepsi at" : "vomits pepsi at"; }
+	virtual std::string FirstPersonBloodVerb(bool Critical) const		{ return Critical ? "vomit very acidous blood at" : "vomit acidous blood at"; }
+	virtual std::string ThirdPersonBloodVerb(bool Critical) const		{ return Critical ? "vomits very acidous blood at" : "vomits acidous blood at"; }
 	virtual std::string TalkVerb() const { return "grunts"; }
 	stack* Stack;
 	item* Wielded;

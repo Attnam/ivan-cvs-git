@@ -66,3 +66,6 @@ Atavus should do something special on Christmas.
 A graphical equipment screen.
 Gurus.
 Meditation command.
+Opening a banana should remove its peals.
+Uses for a holybook after it's been read.
+Specialities to daemon flesh.

@@ -279,7 +279,7 @@ class CHARACTER
 (
 	oree,
 	humanoid,
-	InitMaterials(2, new pepsi, new leather),
+	InitMaterials(2, new daemonflesh, new leather),
 	{
 		SetSize(225);
 		SetAgility(50);
@@ -297,14 +297,14 @@ public:
 	virtual bool HasInfraVision() const { return true; }
 	virtual bool CanBeDisplaced() const { return false; }
 protected:
-	virtual std::string DeathMessage() { return Name(DEFINITE) + "vomits pepsi for one last time and then dies."; }
+	virtual std::string DeathMessage() { return Name(DEFINITE) + "vomits blood for one last time and then dies."; }
 	virtual vector2d GetBitmapPos() const RETV(208,0)
-	virtual std::string NameSingular() const RET("Oree the Pepsi Daemon King")
+	virtual std::string NameSingular() const RET("Oree the Blood Daemon King")
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(30000)
-	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
-	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonPepsiVerb(Critical))
-	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonPepsiVerb(Critical))
+	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBloodVerb(Critical))
+	virtual std::string FirstPersonHitVerb(character*, bool Critical) const RET(FirstPersonBloodVerb(Critical))
+	virtual std::string AICombatHitVerb(character*, bool Critical) const RET(ThirdPersonBloodVerb(Critical))
 );
 
 class CHARACTER

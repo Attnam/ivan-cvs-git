@@ -836,4 +836,14 @@ protected:
 	virtual std::string NameStem() const	{ return "gunpowder"; }
 );
 
+class MATERIAL
+(
+	daemonflesh,
+	flesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(180, 0, 0); }
+protected:
+	virtual std::string NameStem() const	{ return "daemon flesh"; }
+);
+
 #endif
