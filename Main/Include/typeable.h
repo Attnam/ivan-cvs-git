@@ -20,6 +20,7 @@ public:
 	virtual void SetAreaUnder(area* What) { AreaUnder = What; }
 	virtual square* GetSquareUnder(void) const { return SquareUnder; }
 	virtual void SetSquareUnder(square* What) { SquareUnder = What; }
+	ushort GetType(void) { return Type(); }
 protected:
 	virtual ushort Type(void) const = 0;
 	area* AreaUnder;
