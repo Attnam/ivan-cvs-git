@@ -725,6 +725,8 @@ Dungeon 1;
 					4 = petrusswife(4);
 					5 = petrusswife(5);
 					6 = petrusswife(6);
+					k = kamikazedwarf;
+					A = angel;
 					k = kamikazedwarf(valpurus);
 					A = oree;
 					B = goblin;
@@ -737,6 +739,7 @@ Dungeon 1;
 					I = carnivorousplant;
 					J = lion;
 					K = buffalo;
+					S = snake;
 				}
 			}
 			{
@@ -773,7 +776,7 @@ Dungeon 1;
 				# . . . . 4 . 6 . # . . . . . . . . . . . . . # . . . . . . . . #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # . . . # #
 				. # # 2 . # . . . . . . . . . . . . . . . . . . . . . # . . # # .
-				. . # # # # . . . . . . . . . . . . . . . . . . . . . # # # # . .
+				. . # # # # . . . . . . . . . A S . . . . . . . . . . # # # # . .
 			}
 		}
 

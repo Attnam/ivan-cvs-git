@@ -1427,3 +1427,24 @@ buffalo
 	BiteStrength = 5000;
 	CanKick = true;
 }
+
+snake
+{
+	DefaultArmStrength = 2;
+	DefaultAgility = 4;
+	DefaultEndurance = 4;
+	DefaultPerception = 9;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 4;
+	DefaultMana = 0;
+	TotalVolume = 400;
+	TorsoBitmapPos = 384,0;
+	TalkVerb = "hisses";
+	TotalSize = 250;
+	SkinColor = rgb(130, 0, 0);
+	NameSingular = "snake";
+	AttackStyle = USE_HEAD;
+	BiteStrength = 5000;
+	CanKick = false;
+}

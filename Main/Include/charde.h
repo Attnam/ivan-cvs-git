@@ -1453,5 +1453,19 @@ class CHARACTER
   virtual ushort TotalSize() const { return 250; }
 );
 
+class CHARACTER
+(
+  snake,
+  nonhumanoid,
+ protected:
+  virtual ulong TotalVolume() const { return 400; }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(SNAKEFLESH, Volume); }
+  //virtual std::string NameSingular() const { return "buffalo"; }
+  /*virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBiteVerb(Critical); }
+  virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
+  virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }*/
+  //virtual float GetMeleeStrength() const { return 500; }
+  virtual void SpecialBiteEffect(character*);
+);
 #endif
 

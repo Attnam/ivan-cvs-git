@@ -817,4 +817,9 @@ flesh
 		PriceModifier = 600;
 		NameStem = "buffalo flesh";
 	}
+	Config SNAKEFLESH;
+	{
+		PriceModifier = 600;
+		NameStem = "snake flesh";
+	}
 }

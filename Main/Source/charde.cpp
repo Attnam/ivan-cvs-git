@@ -3343,20 +3343,20 @@ void angel::GetAICommand()
 bool angel::AttachBodyPartsOfFriendsNear()
 {
   std::vector<character*> HurtFriends = GetFriendsAround();
-  
-  /* Now analize HurtFriendsAround for really hurt friends and delete unhurt ones. */
+  std::vector<character*> Temp;
+
+  /* 
+     Now analize HurtFriendsAround for really hurt friends and delete unhurt onesd and 
+     check whether the HurtFriends are curable (ie. they have one of their bodyparts in their stack)
+   */
   std::vector<character*>::iterator i;
 
   for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
-      if((*i)->HasAllBodyParts() == 0)
-	HurtFriends.erase(i);
+    if(!(*i)->HasAllBodyParts() && !((*i)->FindRandomOwnBodyPart() == 0))
+	Temp.push_back(*i);
+  HurtFriends.swap(Temp);
 
-  /* Check whether the HurtFriends are curable (ie. they have one of their bodyparts in their stack) */
-  
-  for(i = HurtFriends.begin(); i != HurtFriends.end(); ++i)
-    if((*i)->FindRandomOwnBodyPart() == 0)
-      HurtFriends.erase(i);
-  
+ 
   /* Now if there are no friends left return false */
   if(HurtFriends.empty())
     return false;
@@ -3377,7 +3377,13 @@ bool angel::AttachBodyPartsOfFriendsNear()
   bodypart* JustCreated = TheOneWhoWillBeCured->TryAttachRandomOldBodyPart();
   if(JustCreated)
     {
+      if(TheOneWhoWillBeCured->IsPlayer())
+	ADD_MESSAGE("%s puts %s back to its place.", CHARNAME(DEFINITE), JustCreated->CHARNAME(DEFINITE));
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s helps %s by putting %s in its old place.", CHARNAME(DEFINITE), TheOneWhoWillBeCured->CHARNAME(DEFINITE), JustCreated->CHARNAME(DEFINITE));
+	
       JustCreated->SetHP(1);
+
       return true;
     }
   else
@@ -3441,6 +3447,12 @@ void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool A
 
   if(GetHead())
     GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAlpha, AllowAnimate);
+}
+
+
+void snake::SpecialBiteEffect(character* Char)
+{
+  Char->BeginTemporaryState(POISONED, 100);
 }
 
 ushort angel::GetTorsoMainColor(ushort) const
