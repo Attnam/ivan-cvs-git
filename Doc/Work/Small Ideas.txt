@@ -509,3 +509,4 @@ Wand of Polymorph to X (where X is a monster)
 Magic hassel which causes invisibility. (from Henri Kiviluoto)
 Stickiness value for materials.
 Detecting spider silk should identify webs in the level.
+Eddies should teleport smoke, fluids and webs around.

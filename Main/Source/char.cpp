@@ -5114,7 +5114,7 @@ void character::TeleportSomePartsAway(int NumberToTeleport)
 
 /* Returns an index of a random bodypart that is not vital. If no non-vital bodypart is found returns NONE_INDEX */
 
-int character::GetRandomNonVitalBodyPart()
+int character::GetRandomNonVitalBodyPart() const
 {
   int OKBodyPart[MAX_BODYPARTS];
   int OKBodyParts = 0;
@@ -9118,4 +9118,16 @@ bool character::IsTooHurtToRegainConsciousness() const
 bool character::CanPanic() const
 {
   return !Action || !Action->IsUnconsciousness();
+}
+
+int character::GetRandomBodyPart() const
+{
+  int OKBodyPart[MAX_BODYPARTS];
+  int OKBodyParts = 0;
+
+  for(int c = 0; c < BodyParts; ++c)
+    if(GetBodyPart(c))
+      OKBodyPart[OKBodyParts++] = c;
+
+  return OKBodyParts ? OKBodyPart[RAND_N(OKBodyParts)] : NONE_INDEX;
 }

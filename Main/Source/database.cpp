@@ -383,6 +383,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsExtraFragile);
   ADD_MEMBER(AllowUnconsciousness);
   ADD_MEMBER(CanChoke);
+  ADD_MEMBER(IsImmuneToStickiness);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()

@@ -253,6 +253,7 @@ character
 	IsExtraFragile = false;
 	AllowUnconsciousness = true;
 	CanChoke = true;
+	IsImmuneToStickiness = false;
 }
 
 humanoid
@@ -1440,6 +1441,7 @@ billswill
 	ClassStates = HASTE|ESP|GAS_IMMUNITY|LEVITATION;
 	MoveType = ETHEREAL;
 	CanChoke = false;
+	IsImmuneToStickiness = true;
 }
 
 skeleton
@@ -1891,6 +1893,7 @@ spider
 	BodyPartsDisappearWhenSevered = true;
 	BiteCapturesBodyPart = false;
 	AutomaticallySeen = true;
+	IsImmuneToStickiness = true;
 }
 
 jackal
@@ -3186,6 +3189,7 @@ genie
 	ClassStates = GAS_IMMUNITY|LEVITATION;
 	WieldedPosition = -1, -3;
 	CanChoke = false;
+	IsImmuneToStickiness = true;
 }
 
 lion
@@ -3971,6 +3975,7 @@ eddy
 	IsCharmable = false;
 	CanHear = false;
 	CanChoke = false;
+	IsImmuneToStickiness = true;
 }
 
 mushroom
@@ -4258,6 +4263,7 @@ ghost
 	BiteCapturesBodyPart = false;
 	MoveType = ETHEREAL;
 	CanChoke = false;
+	IsImmuneToStickiness = true;
 }
 
 twoheadedmoose
@@ -4389,6 +4395,7 @@ invisiblestalker
 	CWeaponSkillHits == 200;
 	ClassStates = INVISIBLE;
 	BodyPartsDisappearWhenSevered = true;
+	IsImmuneToStickiness = true;
 }
 
 largecreature

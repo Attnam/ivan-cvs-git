@@ -206,6 +206,7 @@ struct characterdatabase : public databasebase
   bool IsExtraFragile;
   bool AllowUnconsciousness;
   bool CanChoke;
+  bool IsImmuneToStickiness;
 };
 
 class characterprototype
@@ -533,6 +534,9 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, ScienceTalkIntelligenceRequirement);
   DATA_BASE_VALUE(int, ScienceTalkWisdomRequirement);
   DATA_BASE_BOOL(IsExtraFragile);
+  DATA_BASE_BOOL(IsImmuneToStickiness);
+  DATA_BASE_VALUE(festring, ForceVomitMessage);
+  DATA_BASE_BOOL(CanChoke);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(bool = false);
   bool TeleportNear(character*);
@@ -643,7 +647,7 @@ class character : public entity, public id
   square* GetSquareUnder(int I = 0) const { return !MotherEntity ? SquareUnder[I] : MotherEntity->GetSquareUnderEntity(I); }
   virtual square* GetSquareUnderEntity(int I = 0) const { return GetSquareUnder(I); }
   lsquare* GetLSquareUnder(int I = 0) const { return static_cast<lsquare*>(GetSquareUnder(I)); }
-  int GetRandomNonVitalBodyPart();
+  int GetRandomNonVitalBodyPart() const;
   void TeleportSomePartsAway(int);
   virtual void SignalVolumeAndWeightChange();
   virtual void SignalBodyPartVolumeAndWeightChange() { }
@@ -938,7 +942,6 @@ class character : public entity, public id
   virtual bool CheckApply() const;
   virtual bool CanForceVomit() const { return CanVomit(); }
   void EndLevitation();
-  DATA_BASE_VALUE(festring, ForceVomitMessage);
   virtual bool CanMove() const;
   void CalculateEnchantments();
   bool GetNewFormForPolymorphWithControl(character*&);
@@ -978,7 +981,7 @@ class character : public entity, public id
   virtual bool AllowUnconsciousness() const;
   virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
-  DATA_BASE_BOOL(CanChoke);
+  int GetRandomBodyPart() const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

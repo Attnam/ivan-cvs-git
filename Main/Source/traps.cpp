@@ -22,7 +22,7 @@ void web::VirtualConstructor(bool Load)
     {
       TrapData.TrapID = game::CreateNewTrapID(this);
       TrapData.VictimID = 0;
-      Picture = new bitmap(16,16, TRANSPARENT_COLOR);
+      Picture = new bitmap(16, 16, TRANSPARENT_COLOR);
       Picture->ActivateFastFlag();
       packedcolor16 Color = MakeRGB16(160, 160, 160);
       igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0, 0, 16, 16, &Color);
@@ -32,7 +32,7 @@ void web::VirtualConstructor(bool Load)
 bool web::TryToUnStick(character* Victim, vector2d)
 {
   ulong TrapID = GetTrapID();
-  int Modifier = GetTrapBaseModifier() * Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
+  int Modifier = 10 * GetTrapBaseModifier() / Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH), 1);
 
   if(Modifier <= 1 || !RAND_N(Modifier))
     {
@@ -56,7 +56,7 @@ bool web::TryToUnStick(character* Victim, vector2d)
       SendToHell();
 
       if(Victim->IsPlayer())
-	ADD_MESSAGE("You are tear the web down.");
+	ADD_MESSAGE("You tear the web down.");
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s tears the web down.", Victim->CHAR_NAME(DEFINITE));
 
@@ -64,19 +64,19 @@ bool web::TryToUnStick(character* Victim, vector2d)
       return true;
     }
 
-  Modifier = GetTrapBaseModifier() * Max(Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH) * 3 / 20, 2);
+  Modifier = Max(GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75, 2);
 
   if(Victim->CanChoke() && !RAND_N(Modifier << 2))
     {
-      Victim->LoseConsciousness(250 + RAND_N(250));
-
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to choke yourself on the web.");
       else if(Victim->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s chokes %sself on the web.", Victim->CHAR_NAME(DEFINITE),Victim->CHAR_OBJECT_PRONOUN);
+
+      Victim->LoseConsciousness(250 + RAND_N(250));
     }
 
-  if(!RAND_N(Modifier << 1))
+  if(!RAND_N(Modifier))
     {
       int VictimBodyPart = Victim->RandomizeTryToUnStickBodyPart(ALL_BODYPART_FLAGS&~TrapData.BodyParts);
 
@@ -117,7 +117,10 @@ void web::Load(inputfile& SaveFile)
 
 void web::StepOnEffect(character* Stepper)
 {
-  int StepperBodyPart = Stepper->GetRandomStepperBodyPart();
+  if(Stepper->IsImmuneToStickiness())
+    return;
+
+  int StepperBodyPart = Stepper->GetRandomBodyPart();
 
   if(StepperBodyPart == NONE_INDEX)
     return;
