@@ -17,6 +17,7 @@ March 24 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Smokes are now a little less repetitive
 	* A problem in the attack interrupt message fixed
 	* Corrected a fatal bug in the wand of teleport's and polymorph's break code
+	* Reduced the amount of kiwis in level 3 to make exping more difficult
 
 March 23 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
