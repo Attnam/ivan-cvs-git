@@ -77,6 +77,8 @@ character
 	HostileReplies == "@Dd grunts angrily.";
 	FriendlyReplies == "@Dd grunts happily.";
 	CanZap = false;
+	HasFeet = true;
+	DeathMessage = "@Dd is slain.";
 }
 
 humanoid
@@ -97,6 +99,8 @@ humanoid
 	CanKick = true;
 	CanTalk = true;
 	CanZap = true; /* if has at least one hand (hard coded) */
+	FleshMaterial = HUMAN_FLESH;
+	DeathMessage = "@Dd dies screaming."; /* overridden if has no head */
 }
 
 nonhumanoid
@@ -237,12 +241,11 @@ human
 	BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 	Cloak = PHOENIX_FEATHER cloak { Enchantment = 1; }
 	Belt = NYMPH_HAIR belt;
-	RightWielded = MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
-	LeftWielded = MITHRIL meleeweapon(LONG_SWORD) { Enchantment = 2; }
+	RightWielded = MITHRIL turox { Enchantment = 2; }
 	RightRing = ring(RING_OF_INFRA_VISION);
 	RightGauntlet = NYMPH_HAIR gauntlet(BOOT_OF_AGILITY) { Enchantment = 1; }
 	RightBoot = NYMPH_HAIR boot(BOOT_OF_AGILITY) { Enchantment = 1; }
-	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	KnownCWeaponSkills = { 2, MACES, SHIELDS; }
 	CWeaponSkillHits = { 2, 200, 75; }
 	RightSWeaponSkillHits = 200;
 	LeftSWeaponSkillHits = 200;
@@ -375,6 +378,7 @@ petrus
 	PanicLevel = 0;
 	CanBeCloned = false;
 	DefaultName = "Petrus";
+	DeathMessage = "The High Priest disappears in a bright light and only his left nut is left behind.";
 	/* Replies overridden */
 }
 
@@ -715,6 +719,8 @@ oree
 	Inventory == can { MainMaterial = IRON { Volume = 10; } ContainedMaterial = PEPSI { Volume = 330; } }
 	DefaultName = "Oree";
 	HostileReplies == "@Dd laughs: \"No time for small talk. Time to drink blood!\"";
+	FleshMaterial = DAEMON_FLESH;
+	DeathMessage = "@Dd vomits blood for one last time and then dies.";
 }
 
 darkknight
@@ -853,6 +859,8 @@ ennerbeast
 	BootColor = rgb16(90, 50, 10);
 	LegMainColor = rgb16(64, 20, 0);
 	PanicLevel = 75;
+	FleshMaterial = ENNER_BEAST_FLESH;
+	DeathMessage = "@Dd dies and the world is finally freed from this terrible monster.";
 	HostileReplies == "Aighee!";
 	FriendlyReplies =
 	{
@@ -875,6 +883,7 @@ frog
 	BaseBiteStrength = 750;
 	CanSwim = true;
 	KnownCWeaponSkills == BITE;
+	FleshMaterial = FROG_FLESH;
 
 	Config DARK;
 	{
@@ -989,6 +998,8 @@ elpuri
 	SkinColor = rgb16(60, 60, 60);
 	ClassStates = INFRA_VISION;
 	BaseBiteStrength = 1250;
+	FleshMaterial = ELPURI_FLESH;
+	DeathMessage = "@Dd groans horribly and drops @pp head.";
 }
 
 billswill
@@ -1022,6 +1033,9 @@ billswill
 	FriendlyReplies == "\"Praise the Corporation!\"";
 	Inventory == amulet(AMULET_OF_ESP) { Chance = 10; }
 	PanicLevel = 0;
+	HasFeet = false;
+	FleshMaterial = MAGICAL_AIR;
+	DeathMessage = "@Dd vanishes from existence.";
 }
 
 skeleton
@@ -1055,6 +1069,8 @@ skeleton
 	PanicLevel = 0;
 	HostileReplies == "@Dd grunts: \"Bones. Need more bones.\"";
 	FriendlyReplies == "@Dd sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"";
+	FleshMaterial = BONE;
+	DeathMessage = "@Dd is transformed into a crumpled heap of bones.";
 
 	Config WARRIOR;
 	{
@@ -1129,6 +1145,7 @@ goblin
 	PanicLevel = 66;
 	HostileReplies == "@Dd yells goblin war cries at you.";
 	FriendlyReplies == "@Dd laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"";
+	FleshMaterial = GOBLINOID_FLESH;
 
 	Config BERSERKER;
 	{
@@ -1218,6 +1235,9 @@ mommo
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
 	BaseEmitation = rgb24(90, 110, 90);
+	HasFeet = false;
+	FleshMaterial = BROWN_SLIME;
+	DeathMessage = "@Dd turns into lifeless goo.";
 
 	Config CONICAL;
 	{
@@ -1280,6 +1300,8 @@ golem
 	PanicLevel = 10;
 	HostileReplies == "\"Yes, master. Golem kill human. Golem then return.\"";
 	FriendlyReplies == "\"Yes, master?\"";
+	/* FleshMaterial overridden */
+	DeathMessage = "The Holy Words of @dd fly away and the monster collapses.";
 
 	Config VALPURIUM;
 	{
@@ -1336,6 +1358,7 @@ wolf
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
 	ClassStates = INFRA_VISION;
+	FleshMaterial = WOLF_FLESH;
 }
 
 dog
@@ -1355,13 +1378,13 @@ dog
 	TotalSize = 70;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	SkinColor = rgb16(111, 74, 37);
-	Adjective = "little";
-	NameSingular = "dog";
+	NameSingular = "puppy";
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 400;
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
+	FleshMaterial = DOG_FLESH;
 }
 
 spider
@@ -1389,6 +1412,7 @@ spider
 	ClassStates = INFRA_VISION;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
+	FleshMaterial = SPIDER_FLESH;
 }
 
 jackal
@@ -1413,6 +1437,7 @@ jackal
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
+	FleshMaterial = JACKAL_FLESH;
 }
 
 ass
@@ -1438,6 +1463,8 @@ ass
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
+	FleshMaterial = ASS_FLESH;
+	DeathMessage = "@Dd neighs one last time and dies.";
 }
 
 communist /* Ivan */
@@ -1483,6 +1510,7 @@ communist /* Ivan */
 	Inventory == fiftymillionroubles;
 	IsUnique = true;
 	DefaultName = "Ivan";
+	DeathMessage = "@Dd falls groaning bravely: \"Party revenges @nu\"!";
 	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
 	FriendlyReplies =
 	{
@@ -1533,6 +1561,7 @@ hunter
 	CWeaponSkillHits == 200;
 	RightSWeaponSkillHits = 200;
 	PanicLevel = 20;
+	Inventory == beartrap;
 	HostileReplies == "\"Your head will look fine above my fireplace!\"";
 	FriendlyReplies =
 	{
@@ -1566,6 +1595,8 @@ polarbear
 	BaseBiteStrength = 600;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
+	FleshMaterial = POLAR_BEAR_FLESH;
+	DeathMessage = "@Dd groans terribly and falls dead to the ground.";
 }
 
 dolphin
@@ -1596,6 +1627,8 @@ dolphin
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 200;
 	CanRead = true;
+	HasFeet = false;
+	FleshMaterial = DOLPHIN_FLESH;
 }
 
 slave
@@ -1848,6 +1881,7 @@ zombie
 	PanicLevel = 0;
 	BaseUnarmedStrength = 200;
 	/* Replies overridden */
+	DeathMessage = "@Dd is slain (again).";
 }
 
 imp
@@ -1875,6 +1909,7 @@ imp
 	CWeaponSkillHits == 50;
 	PanicLevel = 75;
 	BaseUnarmedStrength = 300;
+	FleshMaterial = SULFUR;
 }
 
 bat
@@ -1904,6 +1939,7 @@ bat
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	PanicLevel = 75;
+	FleshMaterial = BAT_FLESH;
 }
 
 mistress
@@ -2059,6 +2095,7 @@ werewolfhuman
 	KnownCWeaponSkills == UNARMED;
 	CWeaponSkillHits == 200;
 	BaseUnarmedStrength = 300;
+	FleshMaterial = WERE_WOLF_FLESH;
 }
 
 werewolfwolf
@@ -2093,6 +2130,7 @@ werewolfwolf
 	CanBeWished = false;
 	ClassStates = INFRA_VISION;
 	PanicLevel = 0;
+	FleshMaterial = WERE_WOLF_FLESH;
 }
 
 kobold
@@ -2126,6 +2164,8 @@ kobold
 	CWeaponSkillHits == 5;
 	RightSWeaponSkillHits = 0;
 	PanicLevel = 66;
+	FleshMaterial = KOBOLD_FLESH;
+	DeathMessage = "@Dd dies yelling like a tortured hyena.";
 
 	Config CHIEFTAIN;
 	{
@@ -2210,6 +2250,7 @@ gibberling
 	CWeaponSkillHits == 50;
 	PanicLevel = 85;
 	BaseUnarmedStrength = 300;
+	FleshMaterial = GIBBERLING_FLESH;
 }
 
 largecat
@@ -2236,6 +2277,7 @@ largecat
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 50;
 	ClassStates = INFRA_VISION;
+	FleshMaterial = CAT_FLESH;
 }
 
 largerat
@@ -2264,6 +2306,7 @@ largerat
 	CWeaponSkillHits == 20;
 	ClassStates = INFRA_VISION;
 	CanSwim = true;
+	FleshMaterial = RAT_FLESH;
 }
 
 angel
@@ -2303,11 +2346,7 @@ angel
 	BaseUnarmedStrength = 200;
 	HostileReplies == "\"With the power of @Gd, I shall slay thee, sinner!\"";
 	FriendlyReplies == "\"@Gd be with you, mortal.\"";
-}
-
-dwarf
-{
-	IsAbstract = true;
+	DeathMessage = "@Dd leaves this mortal plane behind.";
 }
 
 kamikazedwarf
@@ -2338,6 +2377,8 @@ kamikazedwarf
 	/* Equipment initialization overridden */
 	PanicLevel = 1;
 	Inventory == backpack;
+	FleshMaterial = DWARF_FLESH;
+	DeathMessage = "@Dd dies smiling.";
 	HostileReplies == "\"Heaven awaits me in the house of @Gd after I bomb you, heretic!\"";
 	FriendlyReplies =
 	{
@@ -2375,6 +2416,7 @@ mammoth
 	CWeaponSkillHits = { 2, 50, 50; }
 	PanicLevel = 10;
 	CanBeWished = false;
+	FleshMaterial = MAMMOTH_FLESH;
 }
 
 unicorn
@@ -2408,18 +2450,21 @@ unicorn
 	{
 		SkinColor = rgb16(200, 200, 200);
 		Adjective = "white";
+		FleshMaterial = WHITE_UNICORN_FLESH;
 	}
 
 	Config NEUTRAL;
 	{
 		SkinColor = rgb16(144, 144, 144);
 		Adjective = "gray";
+		FleshMaterial = GRAY_UNICORN_FLESH;
 	}
 
 	Config EVIL;
 	{
 		SkinColor = rgb16(80, 80, 80);
 		Adjective = "black";
+		FleshMaterial = BLACK_UNICORN_FLESH;
 	}
 }
 
@@ -2455,6 +2500,8 @@ genie
 	HostileReplies == "\"Fall, puny primy!\"";
 	FriendlyReplies == "\"You know, it's not fun to stay in an oil lamp for three centuries...\"";
 	Belt = SPIDER_SILK belt;
+	FleshMaterial = MAGICAL_AIR;
+	DeathMessage = "@Dd vanishes from existence.";
 }
 
 lion
@@ -2479,6 +2526,8 @@ lion
 	CanBeGenerated = true;
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 200;
+	FleshMaterial = LION_FLESH;
+	DeathMessage = "@Dd growls ans is slain.";
 }
 
 carnivorousplant
@@ -2510,6 +2559,9 @@ carnivorousplant
 	CWeaponSkillHits == 20;
 	PanicLevel = 0;
 	ClassStates = INFRA_VISION;
+	HasFeet = false;
+	FleshMaterial = PLANT_FIBER;
+	DeathMessage = "@Dd is destroyed.";
 
 	Config GREATER;
 	{
@@ -2549,6 +2601,8 @@ buffalo
 	KnownCWeaponSkills = { 2, KICK, BITE; }
 	CWeaponSkillHits = { 2, 50, 50; }
 	PanicLevel = 10;
+	FleshMaterial = BUFFALO_FLESH;
+	DeathMessage = "@Dd snarls one last time.";
 }
 
 snake
@@ -2575,6 +2629,8 @@ snake
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 100;
 	ClassStates = INFRA_VISION;
+	HasFeet = false;
+	FleshMaterial = SNAKE_FLESH;
 }
 
 orc
@@ -2615,6 +2671,7 @@ orc
 	PanicLevel = 50;
 	HostileReplies == "\"Nice scalp! Me want it!\"";
 	FriendlyReplies == "\"Has you seen any elf or dwarf? Me hungry.\"";
+	FleshMaterial = ORC_FLESH;
 
 	Config SLAUGHTERER;
 	{
@@ -2762,6 +2819,7 @@ cossack
 	RightGauntlet = HARDENED_LEATHER gauntlet;
 	RightBoot = HARDENED_LEATHER boot;
 	PanicLevel = 10;
+	DeathMessage = "@Dd falls shouting: \"Hope there's vodka in hell!";
 	HostileReplies == "%s shouts wildly: \"For Tataria!\"";
 	FriendlyReplies =
 	{
@@ -2797,6 +2855,7 @@ bananagrower
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
 	LegBitmapPos = 0, 16;
+	Inventory = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
 }
 
 imperialist
@@ -2922,4 +2981,34 @@ genetrixvesana
 	IsNameable = false;
 	IsUnique = true;
 	CanBeWished = false;
+	DeathMessage = "@Dd is brutally destroyed.";
+}
+
+ostrich
+{
+	DefaultArmStrength = 15;
+	DefaultAgility = 30;
+	DefaultEndurance = 10;
+	DefaultPerception = 15;
+	DefaultIntelligence = 5;
+	DefaultWisdom = 5;
+	DefaultCharisma = 7;
+	DefaultMana = 0;
+	TotalVolume = 120000;
+	TorsoBitmapPos = 64, 16;
+	HostileReplies == "@Dd cackles diabolically.";
+	FriendlyReplies == "@Dd cackles cheerfully.";
+	TotalSize = 230;
+	SkinColor = rgb16(160, 140, 140);
+	TorsoMainColor = rgb16(48, 48, 48); /* the body feathers */
+	Adjective = "levitating";
+	NameSingular = "ostrich";
+	AttackStyle = USE_HEAD;
+	BaseBiteStrength = 200;
+	KnownCWeaponSkills == BITE;
+	CWeaponSkillHits == 20;
+	CanFly = true;
+	PanicLevel = 95;
+	FleshMaterial = OSTRICH_FLESH;
+	DeathMessage = "@Dd is squashed to a bloody mass of feathers.";
 }

@@ -599,7 +599,7 @@ void skeleton::BeTalkedTo()
 
 void communist::BeTalkedTo()
 {
-  if(GetRelation(game::GetPlayer()) != HOSTILE && GetTeam() != game::GetPlayer()->GetTeam() && game::GetPlayer()->GetRelativeDanger(this, true) > 0.33f)
+  if(GetRelation(game::GetPlayer()) != HOSTILE && GetTeam() != game::GetPlayer()->GetTeam() && game::GetPlayer()->GetRelativeDanger(this, true) > 0.5f)
     {
       ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), game::GetPlayer()->GetAssignedName().c_str(), CHAR_NAME(UNARTICLED), game::GetPlayer()->GetAssignedName().c_str());
       ChangeTeam(game::GetPlayer()->GetTeam());
@@ -981,19 +981,6 @@ bool largecat::Catches(item* Thingy, float)
     }
   else
     return false;
-}
-
-material* unicorn::CreateBodyPartMaterial(ushort, ulong Volume) const
-{
-  switch(Config)
-    {
-    case GOOD:
-      return MAKE_MATERIAL(WHITE_UNICORN_FLESH, Volume);
-    case NEUTRAL:
-      return MAKE_MATERIAL(GRAY_UNICORN_FLESH, Volume);
-    default:
-      return MAKE_MATERIAL(BLACK_UNICORN_FLESH, Volume);
-    }
 }
 
 void kamikazedwarf::GetAICommand()
@@ -1550,7 +1537,7 @@ void humanoid::CompleteRiseFromTheDead()
 
   for(c = 0; c < GetBodyParts(); ++c)
     {
-      if(BodyPartVital(c) && !GetBodyPart(c))
+      if(BodyPartIsVital(c) && !GetBodyPart(c))
 	if(!HandleNoBodyPart(c))
 	  return;
 
@@ -1663,7 +1650,6 @@ void human::VirtualConstructor(bool Load)
       EditAttribute(DEXTERITY, (RAND() & 1) - (RAND() & 1));
       EditAttribute(LEG_STRENGTH, (RAND() & 1) - (RAND() & 1));
       EditAttribute(AGILITY, (RAND() & 1) - (RAND() & 1));
-      EditAttribute(ENDURANCE, (RAND() & 1) - (RAND() & 1));
       EditAttribute(PERCEPTION, (RAND() & 1) - (RAND() & 1));
       EditAttribute(INTELLIGENCE, (RAND() & 1) - (RAND() & 1));
       EditAttribute(WISDOM, (RAND() & 1) - (RAND() & 1));
@@ -2526,7 +2512,7 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool
     GetHead()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 }
 
-void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
+void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
   if(GetGroin())
     GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
@@ -2826,7 +2812,7 @@ item* skeleton::SevereBodyPart(ushort BodyPartIndex)
 void zombie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(BodyPartVital(c) || RAND() % 3)
+    if(BodyPartIsVital(c) || RAND() % 3)
       CreateBodyPart(c, SpecialFlags);
 }
 
@@ -2955,9 +2941,10 @@ humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRight
     SWeaponSkill[c] = new sweaponskill(*Humanoid.SWeaponSkill[c]);
 }
 
-std::string humanoid::GetDeathMessage() const
+const std::string& humanoid::GetDeathMessage() const
 {
-  return GetName(DEFINITE) + (GetHead() ? " dies screaming." : " dies without a sound."); 
+  static std::string HeadlessDeathMsg = "@Dd dies without a sound.";
+  return GetHead() || character::GetDeathMessage() != "@Dd dies screaming." ? character::GetDeathMessage() : HeadlessDeathMsg;
 }
 
 uchar humanoid::GetSWeaponSkillLevel(const item* Item) const
@@ -3073,20 +3060,24 @@ void bananagrower::BeTalkedTo()
 void bananagrower::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
-  if(!Load)
-    Profession = RAND() % 8;
-}
 
-void bananagrower::Load(inputfile& SaveFile)
-{
-  humanoid::Load(SaveFile);
-  SaveFile >> Profession;
+  if(!Load)
+    {
+      Profession = RAND() % 8;
+      HasBeenOnLandingSite = false;
+    }
 }
 
 void bananagrower::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << Profession;
+  SaveFile << Profession << HasBeenOnLandingSite;
+}
+
+void bananagrower::Load(inputfile& SaveFile)
+{
+  humanoid::Load(SaveFile);
+  SaveFile >> Profession >> HasBeenOnLandingSite;
 }
 
 void smith::BeTalkedTo()
@@ -3206,7 +3197,7 @@ bool humanoid::ShowBattleInfo()
     {
       Index = CategoryList.Draw();
 
-      if(Index & 0x8000)
+      if(Index & FELIST_ERROR_BIT)
 	return false;
 
       switch(InfoToDraw[Index])
@@ -3256,7 +3247,7 @@ bool nonhumanoid::ShowBattleInfo()
     {
       Index = CategoryList.Draw();
 
-      if(Index & 0x8000)
+      if(Index & FELIST_ERROR_BIT)
 	return false;
 
       switch(InfoToDraw[Index])
@@ -3607,4 +3598,152 @@ ushort carnivorousplant::GetTorsoSpecialColor() const // the flower
 ushort genetrixvesana::GetTorsoSpecialColor() const // the flower
 {
   return MakeRGB16(160, 0, 0);
+}
+
+void bananagrower::GetAICommand()
+{
+  if(CheckForEnemies(false, false))
+    return;
+
+  if(GetPos() == vector2d(45, 45))
+    {
+      itemvector ItemVector;
+      GetStack()->FillItemVector(ItemVector);
+      ushort BananasDropped = 0;
+
+      for(ushort c = 0; c < ItemVector.size(); ++c)
+	if(ItemVector[c]->IsBanana())
+	  {
+	    ItemVector[c]->MoveTo(GetStackUnder());
+	    ++BananasDropped;
+	  }
+
+      if(BananasDropped)
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s drops %s.", CHAR_NAME(DEFINITE), BananasDropped == 1 ? "a banana" : "some bananas");
+
+	  return;
+	}
+
+      HasBeenOnLandingSite = true;
+    }
+
+  if(!HasBeenOnLandingSite)
+    {
+      if(MoveTowards(vector2d(45, 45)))
+	return;
+    }
+  else if(GetPos().X == 49)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s leaves the town to gather more bananas.", CHAR_NAME(DEFINITE));
+
+      for(ushort c = 0; c < 10; ++c)
+	GetStack()->AddItem(new banana);
+
+      vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, vector2d(0, 45));
+
+      if(Where == DIR_ERROR_VECTOR)
+	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
+
+      Teleport(Where);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
+
+      HasBeenOnLandingSite = false;
+    }
+  else
+    {
+      if(MoveTowards(vector2d(49, 45)))
+	return;
+    }
+
+  EditAP(-1000);
+}
+
+void ostrich::GetAICommand()
+{
+  if(CheckForEnemies(false, false))
+    return;
+
+  if(GetPos() == vector2d(45, 45))
+    HasBeenOnLandingSite = true;
+
+  itemvector ItemVector;
+  GetStackUnder()->FillItemVector(ItemVector);
+  ushort BananasPicked = 0;  
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->IsBanana() && ItemVector[c]->CanBeSeenBy(this)
+    && ItemVector[c]->IsPickable(this) && !MakesBurdened(GetCarriedWeight() + ItemVector[c]->GetWeight()))
+      {
+	ItemVector[c]->MoveTo(GetStack());
+	++BananasPicked;
+      }
+
+  if(BananasPicked)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s picks up %s.", CHAR_NAME(DEFINITE), BananasPicked == 1 ? "the banana" : "some bananas");
+
+      return;
+    }
+
+  if(!HasBeenOnLandingSite)
+    {
+      if(MoveTowards(vector2d(45, 45)))
+	return;
+    }
+  else if(GetPos().Y == 49)
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s leaves the town.", CHAR_NAME(DEFINITE));
+
+      itemvector ItemVector;
+      GetStack()->FillItemVector(ItemVector);
+
+      for(ushort c = 0; c < ItemVector.size(); ++c)
+	{
+	  ItemVector[c]->RemoveFromSlot();
+	  ItemVector[c]->SendToHell();
+	}
+
+      vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, vector2d(45, 0));
+
+      if(Where == DIR_ERROR_VECTOR)
+	Where = GetLevelUnder()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
+
+      Teleport(Where);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
+
+      HasBeenOnLandingSite = false;
+    }
+  else
+    {
+      if(MoveTowards(vector2d(45, 49)))
+	return;
+    }
+
+  EditAP(-1000);
+}
+
+void ostrich::Save(outputfile& SaveFile) const
+{
+  character::Save(SaveFile);
+  SaveFile << HasBeenOnLandingSite;
+}
+
+void ostrich::Load(inputfile& SaveFile)
+{
+  character::Load(SaveFile);
+  SaveFile >> HasBeenOnLandingSite;
+}
+
+void ostrich::VirtualConstructor(bool)
+{
+  HasBeenOnLandingSite = false;
 }

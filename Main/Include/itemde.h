@@ -164,6 +164,7 @@ class ITEM
   virtual void ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags = 0) { ChangeSecondaryMaterial(NewMaterial, SpecialFlags); }
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual bool IsFixableBySmith(const character*) const { return false; }
+  virtual bool IsBanana() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   uchar Charges;
@@ -174,6 +175,7 @@ class ITEM
   holybanana,
   banana,
  public:
+  virtual void Be() { }
   virtual uchar GetSpecialFlags() const { return ST_FLAME; }
   virtual ulong GetPrice() const { return item::GetPrice(); }
 );
@@ -217,7 +219,6 @@ class ABSTRACT_ITEM
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual bool IsWeapon(const character*) const { return true; }
   virtual bool IsArmor(const character*) const { return true; }
   virtual char GetEnchantment() const { return Enchantment; }
   virtual void SetEnchantment(char);

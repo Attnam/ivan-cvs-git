@@ -12,6 +12,7 @@ Teams = 10;
  * 1 == MONSTER_TEAM == Monsters, default relation to other teams == hostile
  * 2 == ATTNAM_TEAM == Residents of Attnam
  * 3 == FINAL_BATTLE_TEAM == Petrus's team during the Final Battle
+ * 8 == NEW_ATTNAM_TEAM == banana growers and ostriches
  */
 
 Team ATTNAM_TEAM;
@@ -49,7 +50,7 @@ Team 7; /* Ivan */
 	AttackEvilness = 100;
 }
 
-Team 8; /* Residents of New Attnam */
+Team NEW_ATTNAM_TEAM; /* Residents of New Attnam */
 {
 	Relation 0, FRIEND;
 	Relation 4, HOSTILE;
@@ -59,6 +60,7 @@ Team 8; /* Residents of New Attnam */
 Team 9; /* Richel Decos and his guards */
 {
 	Relation 4, HOSTILE;
+	Relation 1, UNCARING;
 }
 
 Dungeon ELPURI_CAVE;
@@ -76,7 +78,7 @@ Dungeon ELPURI_CAVE;
 		GenerateMonsters = true;
 		ReCalculate = true;
 		OnGround = false;
-		TeamDefault = 1;
+		TeamDefault = MONSTER_TEAM;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
@@ -436,7 +438,6 @@ Dungeon ELPURI_CAVE;
 		Rooms = 1;
 		GenerateMonsters = false;
 		Items = 0;
-		ReCalculate = false;
 		IgnoreDefaultSpecialSquares = true;
 
 		Room 0;
@@ -446,9 +447,9 @@ Dungeon ELPURI_CAVE;
 			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
 			FloorSquare = solidterrain(PARQUET),empty;
 			GenerateDoor = false;
-			ReCalculate = false;
 			DivineMaster = mortifer;
 			GenerateFountains = false;
+			GenerateLanterns = false;
 
 			Square, Pos 4,1;
 			{
@@ -507,7 +508,7 @@ Dungeon ATTNAM;
 		Items = 0;
 		ReCalculate = false;
 		OnGround = true;
-		TeamDefault = 2;
+		TeamDefault = ATTNAM_TEAM;
 		AmbientLight = rgb24(115, 115, 115);
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
@@ -1141,23 +1142,24 @@ Dungeon NEW_ATTNAM;
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
 		Size = XSize, YSize;
 		GenerateMonsters = false;
-		Rooms =  5 + rand % 3;
+		Rooms = 5 + rand % 3;
 		Items = 0;
 		ReCalculate = false;
 		OnGround = true;
-		TeamDefault = 8;
+		TeamDefault = NEW_ATTNAM_TEAM;
 		AmbientLight = rgb24(130, 130, 130);
 		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
+		AutoReveal = true;
 
 		RoomDefault
 		{
-			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Pos = 2+rand%35,2+rand%35;
 			Size = 4+rand%3,4+rand%3;
 			AltarPossible = false;
-			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
-			FloorSquare = solidterrain(FLOOR),empty;
-			DoorSquare = solidterrain(FLOOR), door;
+			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_PRIMITIVE);
+			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
+			DoorSquare = solidterrain(GRASS_TERRAIN), WOOD door;
 			GenerateDoor = true;
 			ReCalculate = true;
 			DivineMaster = 0;
@@ -1172,93 +1174,129 @@ Dungeon NEW_ATTNAM;
 
 		Room 0;
 		{
-			Pos = 2,2;
-			Size = 17,16;
-			WallSquare = solidterrain(FLOOR),STONE wall(BRICK_FINE);
+			Pos = 4,4;
+			Size = 17,19;
+			WallSquare = solidterrain(FLOOR),WOOD wall(BRICK_FINE);
 			FloorSquare = solidterrain(FLOOR),empty;
+			DoorSquare = solidterrain(FLOOR), WOOD door;
 			GenerateDoor = false;
 			ReCalculate = false;
 			DivineMaster = silva;
 			GenerateLanterns = false;
+
 			OTerrainMap
 			{
-				Pos = 2,2;
-				Size = 13,12;
+				Pos = 3,3;
+				Size = 11,13;
 				Types
 				{
+					_ = 0;
+					o = GOLD wall(BRICK_PROPAGANDA);
 					# = GOLD wall(BRICK_FINE);
+					^ = decoration(HOLY_TREE);
+					c = decoration(COUCH);
 				}
 			}
 			{
-				.............
-				.............
-				..#########..
-				..#.......#..
-				..#.......#..
-				..#.......#..
-				..#.......#..
-				..#.......#..
-				..#.......#..
-				..####.####..
-				.............
-				.............
+				...##o##...
+				.###___###.
+				##_______##
+				#____c____#
+				#___^_^___#
+				#_________#
+				##_______##
+				.##_____##.
+				..##___##..
+				...#___#...
+				...#___#...
+				...#___#...
+				...#___#...
 			}
+
 			CharacterMap
 			{
-				Pos = 2,2;
-				Size = 13,12;
+				Pos = 3,3;
+				Size = 11,13;
 				Types
 				{
+					_ = 0;
 					# = 0;
 					I = imperialist { Team = 9; }
+					f = femaleslave;
+					g = guard(ROOKIE) { Team = 9; }
 				}
 			}
 			{
-				.............
-				.............
-				..#########..
-				..#.......#..
-				..#.......#..
-				..#...I...#..
-				..#.......#..
-				..#.......#..
-				..#.......#..
-				..#########..
-				.............
-				.............
+				...#####...
+				.###_g_###.
+				##_______##
+				#___fIf___#
+				#g_______g#
+				#_________#
+				##_______##
+				.##_____##.
+				..##g_g##..
+				...#___#...
+				...#___#...
+				...#___#...
+				...#g_g#...
 			}
+
 			GTerrainMap
 			{
-				Pos = 2,2;
-				Size = 13,12;
+				Pos = 3,3;
+				Size = 11,13;
 				Types
 				{
-					# = 0;
-					_ = GOLD solidterrain(FLOOR);
+					# = SILVER solidterrain(FLOOR);
+					_ = SILVER solidterrain(FLOOR);
 				}
 			}
 			{
-				.............
-				.............
-				..#########..
-				..#_______#..
-				..#_______#..
-				..#_______#..
-				..#_______#..
-				..#_______#..
-				..#_______#..
-				..####_####..
-				.............
-				.............
+				...#####...
+				.###___###.
+				##_______##
+				#_________#
+				#_________#
+				#_________#
+				##_______##
+				.##_____##.
+				..##___##..
+				...#___#...
+				...#___#...
+				...#___#...
+				...#___#...
 			}
 		}
 
-		Square, Pos 10, 17;
+		Room 1;
 		{
-			OTerrain = GOLD door;
+			Type = landingsite;
+			Size = 3, 3;
+			Pos = 44, 44;
+
+			AltarPossible = false;
+			WallSquare = solidterrain(GRASS_TERRAIN),decoration(PALM);
+			FloorSquare = solidterrain(LANDING_SITE),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			GenerateTunnel = false;
+			GenerateLanterns = false;
+			GenerateFountains = false;
+			Shape = RECTANGLE;
+
+			Square, Pos 1, 1;
+			{
+				Items = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
+			}
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Pos 12, 22;
+		{
+			OTerrain = WOOD door;
+		}
+
+		Square, Pos 49, 49;
 		{
 			EntryIndex = STAIRS_UP;
 		}
@@ -1266,7 +1304,7 @@ Dungeon NEW_ATTNAM;
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain = boulder;
-			Times = 50;
+			Times = 25;
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -1275,13 +1313,47 @@ Dungeon NEW_ATTNAM;
 			Times = 100;
 		}
 
-		Square, Random NOT_IN_ROOM;
+		Square, Pos 0, 45;
 		{
 			Character = bananagrower;
-			Times = 40;
 		}
 
-		Square, Pos 9, 18;
+		Square, Pos 10, 45;
+		{
+			Character = bananagrower;
+		}
+
+		Square, Pos 20, 45;
+		{
+			Character = bananagrower;
+		}
+
+		Square, Pos 30, 45;
+		{
+			Character = bananagrower;
+		}
+
+		Square, Pos 40, 45;
+		{
+			Character = bananagrower;
+		}
+
+		Square, Pos 45, 0;
+		{
+			Character = ostrich;
+		}
+
+		Square, Pos 45, 15;
+		{
+			Character = ostrich;
+		}
+
+		Square, Pos 45, 30;
+		{
+			Character = ostrich;
+		}
+
+		Square, Pos 11, 23;
 		{
 			OTerrain = sign { Text = "The mansion of Viceroy Richel Decos, formerly a temple of nature."; }
 		}
@@ -1303,7 +1375,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		GenerateMonsters = true;
 		ReCalculate = true;
 		OnGround = false;
-		TeamDefault = 1;
+		TeamDefault = MONSTER_TEAM;
 		AmbientLight = 0;
 		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;

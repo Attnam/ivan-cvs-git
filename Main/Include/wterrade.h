@@ -143,7 +143,7 @@ class OWTERRAIN
   newattnam,
   owterrain,
  public:
-  virtual std::string GetNameStem() const { return "primitive village"; }
+  virtual std::string GetNameStem() const { return "primitive but bustling native village"; }
   virtual vector2d GetBitmapPos(ushort) const { return vector2d(16, 64); }
   virtual uchar GetAttachedDungeon() const { return NEW_ATTNAM; }
 );

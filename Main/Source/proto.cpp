@@ -153,8 +153,8 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 	    }
 	}
 
-      MinPrice -= MinPrice / 4;
-      MaxPrice += MaxPrice / 4;
+      MinPrice -= MinPrice >> 2;
+      MaxPrice += MaxPrice >> 2;
     }
 }
 

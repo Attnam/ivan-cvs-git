@@ -409,7 +409,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
 
   Check = Buffer.Draw();
 
-  if(Check == 0xFFFF)
+  if(Check & FELIST_ERROR_BIT)
     return "";
 
   return Buffer.GetEntry(Check);
@@ -440,7 +440,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
 	{
 	  int Check = List.Draw();
 
-	  if(Check == 0xFFFF)
+	  if(Check & FELIST_ERROR_BIT)
 	    return "";
 
 	  return List.GetEntry(Check);
@@ -469,7 +469,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
 
   Check = Buffer.Draw();
 
-  if(Check == 0xFFFF)
+  if(Check & FELIST_ERROR_BIT)
     return "";
 
   return Buffer.GetEntry(Check);

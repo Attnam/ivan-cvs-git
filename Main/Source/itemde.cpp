@@ -305,13 +305,13 @@ bool scrollofchangematerial::Read(character* Reader)
 
 void scrollofchangematerial::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->GetItems())
+  if(!Reader->GetStack()->GetItems() && !Reader->EquipsSomething())
     ADD_MESSAGE("You notice you have lost anything you wished to alter.");
   else
     {
       while(true)
 	{
-	  item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?");
+	  item* Item = Reader->SelectFromPossessions("What item do you wish to change?");
 
 	  if(Item)
 	    {
@@ -791,7 +791,7 @@ ushort holybook::GetMaterialColorA(ushort) const
 
 bool scrollofcharging::Read(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter)) // that 1 is the scroll itself
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter) && !Reader->EquipsSomething(&item::ChargeableSorter))
     {
       ADD_MESSAGE("You have nothing to charge.");
       return false;
@@ -805,12 +805,12 @@ bool scrollofcharging::Read(character* Reader)
 
 void scrollofcharging::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ChargeableSorter) && !Reader->EquipsSomething(&item::ChargeableSorter))
     ADD_MESSAGE("You have lost whatever you wished to charge.");
   else
     while(true)
       {
-	item* Item = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?", 0, &item::ChargeableSorter);
+	item* Item = Reader->SelectFromPossessions("Which item do you wish to charge?", &item::ChargeableSorter);
 
 	if(Item)
 	  {
@@ -819,6 +819,8 @@ void scrollofcharging::FinishReading(character* Reader)
 	    ADD_MESSAGE("You charge %s and the scroll burns.", Item->CHAR_NAME(DEFINITE));
 	    break;
 	  }
+	else if(game::BoolQuestion("Really cancel read? [y/N]"))
+	  return;
       }
 
   RemoveFromSlot();
@@ -1121,7 +1123,7 @@ bool bodypart::ReceiveDamage(character*, ushort Damage, uchar)
     {
       ushort BHP = GetHP();
 
-      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1 && Master->BodyPartVital(GetBodyPartIndex()))
+      if(GetHP() <= Damage && GetHP() == GetMaxHP() && GetHP() != 1 && Master->BodyPartIsVital(GetBodyPartIndex()))
 	Damage = GetHP() - 1;
 
       EditHP(-Damage);
@@ -3152,7 +3154,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       std::string DeathMSG = "killed by " + Enemy->GetName(DEFINITE); 
-      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 20 + RAND() % 5 - RAND() % 5);
+      Enemy->GetLevelUnder()->Explosion(Hitter, DeathMSG, Enemy->GetPos(), 80 + RAND() % 20 - RAND() % 20);
       return true;
     }
   else
@@ -3851,19 +3853,27 @@ void armor::AddPostFix(std::string& String) const
 
 bool scrollofenchantweapon::Read(character* Reader)
 {
-  Reader->StartReading(this, 1000);
-  return true;
+  if(!Reader->GetStack()->SortedItems(Reader, &item::WeaponSorter) && !Reader->EquipsSomething(&item::WeaponSorter))
+    {
+      ADD_MESSAGE("You have nothing to enchant.");
+      return false;
+    }
+  else
+    {
+      Reader->StartReading(this, 1000);
+      return true;
+    }
 }
 
 void scrollofenchantweapon::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, item::WeaponSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::WeaponSorter) && !Reader->EquipsSomething(&item::WeaponSorter))
     ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
   else
     {
       while(true)
 	{
-	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose a weapon to enchant:", 0, item::WeaponSorter);
+	  item* Item = Reader->SelectFromPossessions("Choose a weapon to enchant:", &item::WeaponSorter);
 
 	  if(Item)
 	    {
@@ -3882,19 +3892,27 @@ void scrollofenchantweapon::FinishReading(character* Reader)
 
 bool scrollofenchantarmor::Read(character* Reader)
 {
-  Reader->StartReading(this, 1000);
-  return true;
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ArmorSorter) && !Reader->EquipsSomething(&item::ArmorSorter))
+    {
+      ADD_MESSAGE("You have nothing to enchant.");
+      return false;
+    }
+  else
+    {
+      Reader->StartReading(this, 1000);
+      return true;
+    }
 }
 
 void scrollofenchantarmor::FinishReading(character* Reader)
 {
-  if(!Reader->GetStack()->SortedItems(Reader, item::ArmorSorter))
+  if(!Reader->GetStack()->SortedItems(Reader, &item::ArmorSorter) && !Reader->EquipsSomething(&item::ArmorSorter))
     ADD_MESSAGE("You notice you have lost anything you wished to enchant.");
   else
     {
       while(true)
 	{
-	  item* Item = Reader->GetStack()->DrawContents(Reader, "Choose an armor to enchant:", 0, item::ArmorSorter);
+	  item* Item = Reader->SelectFromPossessions("Choose an armor to enchant:", &item::ArmorSorter);
 
 	  if(Item)
 	    {
@@ -4862,5 +4880,4 @@ ushort gorovitssickle::GetOutlineColor(ushort Frame) const
   Frame &= 31;
   return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
-
 

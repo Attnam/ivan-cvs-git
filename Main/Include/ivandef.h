@@ -162,6 +162,7 @@
 #define GR_CURSOR 2
 #define GR_SYMBOL 3
 #define GR_MENU 4
+#define GR_TRANSPARENT_TILE 5
 
 #define ST_NORMAL (0 << 3)
 #define ST_RIGHT_ARM (1 << 3)
@@ -387,6 +388,7 @@
 #define BUFFALO_FLESH (FLESH_ID + 29)
 #define SNAKE_FLESH (FLESH_ID + 30)
 #define ORC_FLESH (FLESH_ID + 31)
+#define OSTRICH_FLESH (FLESH_ID + 32)
 
 #define POWDER_ID (4096 * 6)
 
@@ -536,23 +538,26 @@
 #define FLOOR 2
 #define GROUND 3
 #define GRASS_TERRAIN 4
+#define LANDING_SITE 5
 
 #define POOL 1
 
 #define BRICK_FINE 1
 #define BRICK_PROPAGANDA 2
 #define BRICK_OLD 3
-#define EARTH 4
+#define BRICK_PRIMITIVE 4
+#define EARTH 5
 
 #define PINE 1
 #define SPRUCE 2
 #define LINDEN 3
-#define CARPET 4
-#define COUCH 5
-#define DOUBLE_BED 6
-#define POOL_BORDER 7
-#define POOL_CORNER 8
-#define PALM 9
+#define HOLY_TREE 4
+#define CARPET 5
+#define COUCH 6
+#define DOUBLE_BED 7
+#define POOL_BORDER 8
+#define POOL_CORNER 9
+#define PALM 10
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2
@@ -575,6 +580,7 @@
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
 #define FINAL_BATTLE_TEAM 3
+#define NEW_ATTNAM_TEAM 8
 
 #define LOAD 1
 #define NO_PIC_UPDATE 2
@@ -603,6 +609,7 @@
 #define NO_MULTI_SELECT 2
 #define NO_SPECIAL_INFO 4
 #define REMEMBER_SELECTED 8
+#define NONE_AS_CHOICE 16
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2

@@ -861,6 +861,7 @@ void boulder::Break()
 {
   /* If this used the volume of the boulder the pieces would be huge or there would be just hundreds of them so I jsut use normal sized stones and just a few of them too... */
   ushort HowManyParts = RAND() % 5 + 1;
+
   for(ushort c = 0; c < HowManyParts; ++c)
     {
       material* StonesMaterial = GetMainMaterial()->Clone();
@@ -870,6 +871,7 @@ void boulder::Break()
       GetLSquareUnder()->GetStack()->AddItem(Stone);
       
     }
+
   olterrain::Break();
 }
 
@@ -885,5 +887,14 @@ void sign::StepOn(character* Stepper)
     ADD_MESSAGE("There's a sign here saying: \"%s\"", Text.c_str());
 }
 
+void sign::Save(outputfile& SaveFile) const
+{
+  olterrain::Save(SaveFile);
+  SaveFile << Text;
+}
 
-
+void sign::Load(inputfile& SaveFile)
+{
+  olterrain::Load(SaveFile);
+  SaveFile >> Text;
+}

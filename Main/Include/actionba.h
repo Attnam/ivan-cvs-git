@@ -24,7 +24,7 @@ class actionprototype
   action* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
- protected:
+ private:
   ushort Index;
   action* (*Cloner)(bool);
   std::string ClassId;

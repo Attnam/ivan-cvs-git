@@ -1018,7 +1018,7 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
   ushort x, y;
   uchar Shape = *RoomScript->GetShape();
 
-  if(Shape == ROUND_CORNERS && ((Size.X < 4 || Size.Y < 4) || (Size.X == 4 && Size.Y == 4))) /* No wierd shapes this way. */
+  if(Shape == ROUND_CORNERS && (Size.X < 5 || Size.Y < 5)) /* No wierd shapes this way. */
     Shape = RECTANGLE;
 
   for(x = Pos.X; x < Pos.X + Size.X; ++x, Counter += 2)
@@ -1101,4 +1101,20 @@ void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vecto
       }
 }
 
+void level::Reveal()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	if(!Map[x][y]->LastSeen)
+	  {
+	    Map[x][y]->Memorized = new bitmap(16, 16);
+	    Map[x][y]->LastSeen = 1;
+	  }
 
+	Map[x][y]->MemorizedUpdateRequested = true;
+	Map[x][y]->DescriptionChanged = true;
+	Map[x][y]->UpdateMemorized();
+	Map[x][y]->UpdateMemorizedDescription();
+      }
+}

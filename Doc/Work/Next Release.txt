@@ -143,7 +143,7 @@ Checking throw balance.
 (r) ?If a mine in the inventory is active, it should be displayed somehow.
 //Potion full of antidote.
 //?Teleport to level 10.
-Selecting from gear when using SoCM/SoEW/SoEA.
+//Selecting from gear when using SoCM/SoEW/SoEA.
 //Weapon volumes should be more realistic.
 //?Flaming effect for holy banana.
 //?Solving the iron cloak conundrum.

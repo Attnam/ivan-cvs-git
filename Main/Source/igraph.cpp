@@ -13,7 +13,7 @@
 #endif
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
-bitmap* igraph::Graphic[GRAPHIC_TYPES];
+bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
 std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerrain.pcx", "Graphics/OLTerrain.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx" };
@@ -69,6 +69,8 @@ void igraph::Init()
       for(c = 0; c < GRAPHIC_TYPES; ++c)
 	Graphic[c] = new bitmap(GAME_DIR + GraphicFileName[c]);
 
+      Graphic[GR_TRANSPARENT_TILE] = new bitmap(16, 16, TRANSPARENT_COLOR);
+
       TileBuffer = new bitmap(16, 16);
       OutlineBuffer = new bitmap(16, 16);
     }
@@ -81,7 +83,7 @@ void igraph::DeInit()
   for(c = 0; c < RAW_TYPES; ++c)
     delete RawGraphic[c];
 
-  for(c = 0; c < GRAPHIC_TYPES; ++c)
+  for(c = 0; c < GRAPHIC_TYPES + 1; ++c)
     delete Graphic[c];
 
   delete TileBuffer;

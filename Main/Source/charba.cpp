@@ -921,7 +921,7 @@ void character::Die(bool ForceMsg)
     }
   else
     if(CanBeSeenByPlayer())
-      ADD_MESSAGE(GetDeathMessage().c_str());
+      ProcessAndAddMessage(GetDeathMessage());
     else if(ForceMsg)
       ADD_MESSAGE("You sense the death of something.");
 
@@ -1801,7 +1801,7 @@ bool character::Pray()
   Panthenon.AddFlags(SELECTABLE);
   ushort Select = Panthenon.Draw();
 
-  if(Select & 0x8000)
+  if(Select & FELIST_ERROR_BIT)
     return false;
   else
     {
@@ -3039,7 +3039,7 @@ bool character::SecretKnowledge()
   ushort Chosen = List.Draw();
   ushort c, PageLength = 20;
 
-  if(Chosen & 0x8000)
+  if(Chosen & FELIST_ERROR_BIT)
     return false;
 
   List.Empty();
@@ -3440,8 +3440,7 @@ bool character::EquipmentScreen()
 	  else
 	    {
 	      Entry += GetBodyPartOfEquipment(c) ? "-" : "can't use";
-	      bitmap Black(16, 16, TRANSPARENT_COLOR);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, &Black);
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, igraph::GetTransparentTile());
 	    }
 	}
 
@@ -3472,7 +3471,7 @@ bool character::EquipmentScreen()
       else
 	{
 	  game::DrawEverythingNoBlit();
-	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", 0, EquipmentSorter(Chosen));
+	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", NONE_AS_CHOICE, EquipmentSorter(Chosen));
 
 	  if(Item != OldEquipment)
 	    EquipmentChanged = true;
@@ -3925,7 +3924,7 @@ characterprototype::characterprototype(characterprototype* Base, character* (*Cl
 
 bool character::TeleportNear(character* Caller)
 {
-  vector2d Where = GetAreaUnder()->GetNearestFreeSquare(Caller, Caller->GetPos());
+  vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, Caller->GetPos());
 
   if(Where == DIR_ERROR_VECTOR)
     return false;
@@ -5250,7 +5249,7 @@ uchar character::GetRandomNonVitalBodyPart()
   ushort c;
   for(c = 0; c < GetBodyParts(); ++c)
     {
-      if(GetBodyPart(c) && !BodyPartVital(c))
+      if(GetBodyPart(c) && !BodyPartIsVital(c))
 	{
 	  OKBodyPart[OKBodyParts] = c;
 	  ++OKBodyParts;
@@ -5493,7 +5492,7 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
   float MinHits = 1000;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(BodyPartVital(c) && GetBodyPart(c))
+    if(BodyPartIsVital(c) && GetBodyPart(c))
       {
 	float Hits = GetBodyPart(c)->GetTimeToDie(Damage, ToHitValue, DodgeValue, AttackIsBlockable, UseMaxHP);
 
@@ -5906,6 +5905,7 @@ void character::ReceiveAntidote(long Amount)
   if(StateIsActivated(POISONED))
     {
       long Left = GetTemporaryStateCounter(POISONED);
+
       if(Left > Amount)
 	{
 	  EditTemporaryStateCounter(POISONED, -Amount);
@@ -5913,7 +5913,7 @@ void character::ReceiveAntidote(long Amount)
       else
 	{
 	  if(IsPlayer())
-	    ADD_MESSAGE("Aaaah... You feel MUCH better.");
+	    ADD_MESSAGE("Aaaah... You feel much better.");
 
 	  DeActivateTemporaryState(POISONED);
 	}
@@ -5933,7 +5933,7 @@ void character::AddAntidoteConsumeEndMessage() const
 bool character::IsDead() const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(BodyPartVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
+    if(BodyPartIsVital(c) && (!GetBodyPart(c) || GetBodyPart(c)->GetHP() < 1))
       return true;
 
   return false;
@@ -6033,32 +6033,30 @@ bool character::SummonMonster()
   return false;
 }
 
-/* this is evil */
+#define SEARCH_N_REPLACE(what, with) if(Msg.find(what, 0) != std::string::npos) festring::SearchAndReplace(Msg, what, with);
 
-#define SEARCH_N_REPLACE(what, with)\
-for(Pos = Reply.find(what, 0); Pos != std::string::npos; Pos = Reply.find(what, Pos))\
-{\
-  Reply.erase(Pos, 3);\
-  Reply.insert(Pos, with);\
-}
-
-void character::MakeReply(std::string Reply) const
+void character::ProcessAndAddMessage(std::string Msg) const
 {
-  strsize Pos;
   SEARCH_N_REPLACE("@nu", GetName(UNARTICLED));
   SEARCH_N_REPLACE("@ni", GetName(INDEFINITE));
   SEARCH_N_REPLACE("@nd", GetName(DEFINITE));
   SEARCH_N_REPLACE("@du", GetDescription(UNARTICLED));
   SEARCH_N_REPLACE("@di", GetDescription(INDEFINITE));
   SEARCH_N_REPLACE("@dd", GetDescription(DEFINITE));
+  SEARCH_N_REPLACE("@pp", GetPersonalPronoun());
+  SEARCH_N_REPLACE("@sp", GetPossessivePronoun());
+  SEARCH_N_REPLACE("@op", GetObjectPronoun());
   SEARCH_N_REPLACE("@Nu", festring::CapitalizeCopy(GetName(UNARTICLED)));
   SEARCH_N_REPLACE("@Ni", festring::CapitalizeCopy(GetName(INDEFINITE)));
   SEARCH_N_REPLACE("@Nd", festring::CapitalizeCopy(GetName(DEFINITE)));
   SEARCH_N_REPLACE("@Du", festring::CapitalizeCopy(GetDescription(UNARTICLED)));
   SEARCH_N_REPLACE("@Di", festring::CapitalizeCopy(GetDescription(INDEFINITE)));
   SEARCH_N_REPLACE("@Dd", festring::CapitalizeCopy(GetDescription(DEFINITE)));
-  SEARCH_N_REPLACE("@Gd", GetMasterGod()->Name().c_str());
-  ADD_MESSAGE("%s", Reply.c_str());
+  SEARCH_N_REPLACE("@Pp", festring::CapitalizeCopy(GetPersonalPronoun()));
+  SEARCH_N_REPLACE("@Sp", festring::CapitalizeCopy(GetPossessivePronoun()));
+  SEARCH_N_REPLACE("@Op", festring::CapitalizeCopy(GetObjectPronoun()));
+  SEARCH_N_REPLACE("@Gd", GetMasterGod()->Name());
+  ADD_MESSAGE("%s", Msg.c_str());
 }
 
 void character::BeTalkedTo()
@@ -6070,14 +6068,14 @@ void character::BeTalkedTo()
       if(Said.size() != GetHostileReplies().size())
 	Said.resize(GetHostileReplies().size());
 
-      MakeReply(GetHostileReplies()[RandomizeReply(Said)]);
+      ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said)]);
     }
   else
     {
       if(Said.size() != GetFriendlyReplies().size())
 	Said.resize(GetFriendlyReplies().size());
 
-      MakeReply(GetFriendlyReplies()[RandomizeReply(Said)]);
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said)]);
     }
 }
 
@@ -6151,3 +6149,58 @@ bool character::LevelTeleport()
   else
     return false;
 }
+
+item* character::SelectFromPossessions(const std::string& Topic, bool (*SorterFunction)(item*, const character*))
+{
+  if(!CanUseEquipment())
+    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+
+  felist List(Topic);
+  bool InventoryPossible = GetStack()->SortedItems(this, SorterFunction);
+
+  if(InventoryPossible)
+    List.AddEntry("choose from inventory", LIGHT_GRAY, 20, igraph::GetTransparentTile());
+
+  bool UseSorterFunction = SorterFunction != 0;
+
+  std::vector<item*> Item;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
+      {
+	Item.push_back(GetEquipment(c));
+	std::string Entry = EquipmentName(c) + ":";
+	Entry.resize(20, ' ');
+	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
+	AddSpecialEquipmentInfo(Entry, c);
+	List.AddEntry(Entry, LIGHT_GRAY, 20, GetEquipment(c)->GetPicture());
+      }
+
+  game::SetStandardListAttributes(List);
+  List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+  ushort Chosen = List.Draw();
+
+  if(Chosen == ESCAPED)
+    return 0;
+  else if((InventoryPossible && !Chosen) || Chosen & FELIST_ERROR_BIT)
+    return GetStack()->DrawContents(this, Topic, 0, SorterFunction);
+  else
+    return Item[InventoryPossible ? Chosen - 1 : Chosen];
+}
+
+bool character::EquipsSomething(bool (*SorterFunction)(item*, const character*))
+{
+  bool UseSorterFunction = SorterFunction != 0;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
+      return true;
+
+  return false;
+}
+
+material* character::CreateBodyPartMaterial(ushort, ulong Volume) const
+{
+  return MAKE_MATERIAL(GetFleshMaterial(), Volume);
+}
+

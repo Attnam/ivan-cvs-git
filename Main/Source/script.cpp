@@ -562,6 +562,7 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(MonsterAmountDelta);
   ANALYZE_MEMBER(MonsterGenerationIntervalBase);
   ANALYZE_MEMBER(MonsterGenerationIntervalDelta);
+  ANALYZE_MEMBER(AutoReveal);
   return 0;
 }
 

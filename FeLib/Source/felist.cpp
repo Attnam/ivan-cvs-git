@@ -34,7 +34,7 @@ ushort felist::Draw()
     Entry.pop_back();
 
   if(!Entry.size())
-    return 0xFFFF;
+    return LIST_WAS_EMPTY;
 
   FelistCurrentlyDrawn = this;
 
@@ -171,9 +171,14 @@ ushort felist::Draw()
 	  break;
 	}
 
-      if(Pressed == KEY_ESC || (AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
+      if(Pressed == KEY_ESC)
 	{
-	  Return = 0xFFFF;
+	  Return = ESCAPED;
+	  break;
+	}
+      if((AtTheEnd && !(Flags & INVERSE_MODE)) || (!PageBegin && Flags & INVERSE_MODE))
+	{
+	  Return = NOTHING_SELECTED;
 	  break;
 	}
       else

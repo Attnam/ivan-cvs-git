@@ -118,7 +118,7 @@ class itemprototype
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
   const itemdatabase& ChooseBaseForConfig(ushort);
- protected:
+ private:
   ushort Index;
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
@@ -370,6 +370,7 @@ class item : public object
   virtual void ResetSpoiling();
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
   virtual short GetCarryingBonus() const { return 0; }
+  virtual bool IsBanana() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

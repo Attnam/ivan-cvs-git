@@ -217,8 +217,10 @@ class OLTERRAIN
   sign,
   olterrain,
  public:
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
   virtual void SetText(const std::string& What) { Text = What; }
-  virtual std::string GetText() const { return Text; }
+  virtual const std::string& GetText() const { return Text; }
   virtual void AddPostFix(std::string&) const;
   virtual void StepOn(character*);
  protected:

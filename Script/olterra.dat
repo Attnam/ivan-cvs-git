@@ -71,6 +71,16 @@ wall
 		BitmapPos = 16, 256;
 	}
 
+	Config BRICK_PRIMITIVE;
+	{
+		DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
+		MainMaterialConfig == STONE;
+		AdjectiveArticle = "an";
+		Adjective = "primitive";
+		NameSingular = "wall";
+		BitmapPos = 48, 272;
+	}
+
 	Config EARTH;
 	{
 		OKVisualEffects = MIRROR|FLIP|ROTATE;
@@ -94,7 +104,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(0, 160, 0);
+		MaterialColorB = rgb16(32, 144, 32);
 		NameSingular = "pine";
 		BitmapPos = 16, 320;
 	}
@@ -106,10 +116,11 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(0, 160, 0);
+		MaterialColorB = rgb16(32, 144, 32);
 		NameSingular = "spruce";
 		BitmapPos = 16, 352;
 	}
+
 	Config PALM;
 	{
 		OKVisualEffects = MIRROR;
@@ -117,7 +128,7 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(0, 50, 0);
+		MaterialColorB = rgb16(32, 80, 32);
 		NameSingular = "palm";
 		BitmapPos = 16, 368;
 	}
@@ -129,10 +140,23 @@ decoration
 		DigMessage = "You chop the tree down.";
 		MainMaterialConfig == WOOD;
 		ShowMaterial = false;
-		MaterialColorB = rgb16(0, 160, 0);
+		MaterialColorB = rgb16(32, 144, 32);
 		Adjective = "lovely";
 		NameSingular = "linden";
 		BitmapPos = 32, 336;
+	}
+
+	Config HOLY_TREE;
+	{
+		CanBeDug = true;
+		DigMessage = "You ruthlessly chop the beautiful tree down.";
+		MainMaterialConfig == GOLD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(224, 224, 0);
+		Adjective = "holy";
+		NameSingular = "tree";
+		BitmapPos = 32, 336;
+		ShowMaterial = true;
 	}
 
 	Config CARPET;
@@ -140,7 +164,6 @@ decoration
 		DigMessage = "You can't force yourself to ruin this wonderful carpet.";
 		MainMaterialConfig == FABRIC;
 		AdjectiveArticle = "an";
-		Adjective = "expensive";
 		NameSingular = "carpet";
 		BitmapPos = 0, 272;
 	}
@@ -151,7 +174,6 @@ decoration
 		DigMessage = "The destroy the couch.";
 		MainMaterialConfig == FABRIC;
 		AdjectiveArticle = "an";
-		Adjective = "expensive";
 		NameSingular = "couch";
 		BitmapPos = 0, 400;
 		RestModifier = 2;

@@ -60,7 +60,7 @@ class lterrain : public object
   virtual void Load(inputfile&);
   virtual bool Open(character*) { return false; }
   virtual bool Close(character*) { return false; }
-  virtual vector2d GetPos() const;
+  vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool AcceptsOffers() const { return false; }
   virtual void ReceiveVomit(character*) { }
@@ -105,7 +105,7 @@ class glterrainprototype
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
   const glterraindatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
- protected:
+ private:
   ushort Index;
   glterrainprototype* Base;
   std::map<ushort, glterraindatabase> Config;
@@ -180,7 +180,7 @@ class olterrainprototype
   void CreateSpecialConfigurations() { }
   bool IsAbstract() const { return Config.begin()->second.IsAbstract; }
   const olterraindatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
- protected:
+ private:
   ushort Index;
   olterrainprototype* Base;
   std::map<ushort, olterraindatabase> Config;
@@ -248,7 +248,7 @@ class olterrain : public lterrain, public oterrain
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
   virtual void SetText(const std::string&) { }
-  virtual std::string GetText() const { return 0; }
+  virtual const std::string& GetText() const { return ""; }
  protected:
   virtual void InstallDataBase();
   virtual uchar GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }

@@ -1,3 +1,29 @@
+November 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Corrected a fatal script error that sometimes caused a crash when entering Oree's lair
+	* Hunters now carry bear traps
+	* Invisible New Attnam made almost visible by Kahvi
+	* Almost visible New Attnam made visible by me
+	* Sign's Text wasn't saved at all but now is
+	* The player now learns the layout of New Attnam without any exploration when he begins
+	  the game (he has lived there, after all)
+	* Removed the random factor of starting endurance, its effect was too great
+	* Added "none" option to equipment selection menu
+	* Added possibility to select target from equipment when reading item-affecting scrolls
+	* The holy banana of Liukas Vipro no longer spoils
+	* The former value of HasFeet() function comes now from the script
+	* Characters' flesh materials can now be defined in the script
+	* Death messages can now be defined in the script (it uses the same parser as replies)
+	* Reply and death message parser now understands pronouns
+	* Renamed little dog to puppy in order to reduce the Nethack-clone impression of the game
+	* Some devirtualizations
+	* Richel Decos's mansion is now prettier and better guarded
+	* Levitating ostrich picture modified somewhat by me
+	* Ostrich landing site picture added to glterrain.pcx by me
+	* New terrains added: holy tree and ostrich landing site
+	* Added levitating ostriches
+	* Added banana transportation AI for banana growers and levitating ostriches
+
 November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Water *really* makes gunpowder useless

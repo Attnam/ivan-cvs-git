@@ -86,6 +86,7 @@ class igraph
   static bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
   static bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetMenuGraphic() { return Graphic[GR_MENU]; }
+  static bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_TILE]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
   static tile GetTile(graphicid);
@@ -96,7 +97,7 @@ class igraph
   static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
  private:
   static colorizablebitmap* RawGraphic[RAW_TYPES];
-  static bitmap* Graphic[GRAPHIC_TYPES];
+  static bitmap* Graphic[GRAPHIC_TYPES + 1];
   static bitmap* TileBuffer;
   static std::string RawGraphicFileName[];
   static std::string GraphicFileName[];

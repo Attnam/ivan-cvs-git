@@ -614,3 +614,79 @@ void cathedral::DestroyTerrain(character* Who, olterrain*)
 {
   Who->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));  
 }
+
+bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
+{
+  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Hungry->GetTeam()) == HOSTILE)
+    return true;
+
+  if(Hungry->IsPlayer())
+    {
+      if(!Item->IsBanana())
+	return true;
+
+      ADD_MESSAGE("That would be stealing.");
+
+      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+	{
+	  Hungry->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+	  return true;
+	}
+    }
+
+  return false;
+}
+
+bool landingsite::DropItem(character* Dropper, item* Item, ushort)
+{
+  return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && (!Item->IsBanana() || game::BoolQuestion("Do you wish to donate this item to the town? [y/N]")));
+}
+
+void landingsite::KickSquare(character* Kicker, lsquare* Square)
+{
+  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) == HOSTILE)
+    return;
+
+  if(Kicker->IsPlayer())
+    {
+      for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
+	if(i->IsBanana())
+	  {
+	    ADD_MESSAGE("You have harmed the property of the town!");
+	    Kicker->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+	  }
+    }
+}
+
+bool landingsite::ConsumeItem(character* HungryMan, item* Item, ushort)
+{
+  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
+    return true;
+
+  if(HungryMan->IsPlayer())
+    {
+      if(Item->IsBanana())
+	ADD_MESSAGE("Eating this is forbidden.");
+
+      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+	{
+	  HungryMan->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+	  return true;
+	}
+    }
+
+  return false;
+}
+
+void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
+{
+  if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Infidel->GetTeam()) == HOSTILE)
+    return;
+
+  for(stackiterator i = Square->GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(i->IsBanana())
+      {
+	Infidel->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+	return;
+      }
+}

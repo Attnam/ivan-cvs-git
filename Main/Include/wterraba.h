@@ -48,7 +48,7 @@ class gwterrainprototype
   gwterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
- protected:
+ private:
   ushort Index;
   gwterrain* (*Cloner)(bool);
   std::string ClassId;
@@ -77,7 +77,7 @@ class owterrainprototype
   owterrain* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
- protected:
+ private:
   ushort Index;
   owterrain* (*Cloner)(bool);
   std::string ClassId;

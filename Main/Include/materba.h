@@ -67,7 +67,7 @@ class materialprototype
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
   void CreateSpecialConfigurations() { }
   const materialdatabase& ChooseBaseForConfig(ushort) { return Config.begin()->second; }
- protected:
+ private:
   ushort Index;
   materialprototype* Base;
   std::map<ushort, materialdatabase> Config;

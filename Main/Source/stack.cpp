@@ -348,6 +348,9 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
       Contents.AddDescription(std::string("Overall weight: ") + (MergeStack ? GetWeight() + MergeStack->GetWeight() : GetWeight()) + " grams");
     }
 
+  if(Flags & NONE_AS_CHOICE)
+    Contents.AddEntry("none", LIGHT_GRAY, 0, igraph::GetTransparentTile());
+
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, SorterFunction);
 
@@ -364,13 +367,19 @@ void stack::DrawContents(std::vector<item*>& ReturnVector, stack* MergeStack, co
 
   Selected = Contents.Draw();
 
-  if(Selected & 0x8000)
+  if(Selected & FELIST_ERROR_BIT)
     {
       Selected = 0;
       return;
     }
 
   ushort Pos = 0;
+
+  if(Flags & NONE_AS_CHOICE)
+    if(!Selected)
+      return;
+    else
+      ++Pos;
 
   if(MergeStack)
     {

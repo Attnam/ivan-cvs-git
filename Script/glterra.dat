@@ -68,6 +68,16 @@ solidterrain /* glterrain-> */
 		NameSingular = "ground";
 		BitmapPos = 16, 16;
 	}
+
+	Config LANDING_SITE;
+	{
+		MainMaterialConfig == GRASS;
+		MaterialColorB = rgb16(230, 230, 230);
+		Article = "an";
+		NameSingular = "ostrich landing site";
+		BitmapPos = 32, 16;
+		ShowMaterial = false;
+	}
 }
 
 liquidterrain /* glterrain-> */

@@ -225,7 +225,7 @@ material
 		IsGolemMaterial = true;
 		IsFlammable = true;
 		Color = rgb16(176, 0, 0);
-		NameStem = "fabric";
+		NameStem = "expensive fabric";
 		Flexibility = 15;
 	}
 
@@ -281,7 +281,7 @@ material
 		ConsumeType = CT_METAL;
 		Density = 10500;
 		IsGolemMaterial = true;
-		Color = rgb16(200, 200, 200);
+		Color = rgb16(220, 220, 220);
 		CanBeWished = false;
 		PriceModifier = 1000;
 		NameStem = "silver";
@@ -948,6 +948,11 @@ flesh
 	Config ORC_FLESH;
 	{
 		NameStem = "orc flesh";
+	}
+
+	Config OSTRICH_FLESH;
+	{
+		NameStem = "ostrich flesh";
 	}
 }
 

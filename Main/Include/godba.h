@@ -26,7 +26,7 @@ class godprototype
   god* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
- protected:
+ private:
   ushort Index;
   god* (*Cloner)(bool);
   std::string ClassId;

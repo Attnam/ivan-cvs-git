@@ -1645,7 +1645,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
     {
       SetIsInWilderness(false);
       SetCurrent(Area);
-      GetCurrentDungeon()->PrepareLevel(Area);
+      bool New = !GetCurrentDungeon()->PrepareLevel(Area);
       GetCurrentLevel()->FiatLux();
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
@@ -1660,6 +1660,9 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 
 	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
 	}
+
+      if(New && GetCurrentLevel()->GetLevelScript()->GetAutoReveal(false) && *GetCurrentLevel()->GetLevelScript()->GetAutoReveal())
+	GetCurrentLevel()->Reveal();
 
       ShowLevelMessage();
       SendLOSUpdateRequest();

@@ -26,7 +26,7 @@ class roomprototype
   room* CloneAndLoad(inputfile&) const;
   const std::string& GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
- protected:
+ private:
   ushort Index;
   room* (*Cloner)(bool);
   std::string ClassId;

@@ -227,6 +227,9 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(InHandsPicColorA);
   ANALYZE_DATA(InHandsPicColorB);
   ANALYZE_DATA(ShieldColor);
+  ANALYZE_DATA(FleshMaterial);
+  ANALYZE_DATA(HasFeet);
+  ANALYZE_DATA(DeathMessage);
 
   return Found;
 }

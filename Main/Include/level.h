@@ -66,6 +66,7 @@ class level : public area
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
   vector2d GetEntryPos(const character*, uchar) const;
   void GenerateRectangularRoom(std::vector<vector2d>&, std::vector<vector2d>&, std::vector<vector2d>&, roomscript*, room*, vector2d, vector2d);
+  void Reveal();
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar, uchar) const;

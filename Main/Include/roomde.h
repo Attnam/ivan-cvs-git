@@ -80,4 +80,17 @@ class ROOM
   virtual bool CheckDestroyTerrain(character*, olterrain*);
 );
 
+class ROOM
+(
+  landingsite,
+  room,
+ public:
+  virtual bool PickupItem(character*, item*, ushort);
+  virtual bool DropItem(character*, item*, ushort);
+  virtual void KickSquare(character*, lsquare*);
+  virtual bool ConsumeItem(character*, item*, ushort);
+  virtual bool AllowDropGifts() const { return false; }
+  virtual void TeleportSquare(character*, lsquare*);
+);
+
 #endif

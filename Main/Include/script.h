@@ -339,6 +339,7 @@ class levelscript : public script
   DATA_MEMBER(short, MonsterAmountDelta);
   DATA_MEMBER(short, MonsterGenerationIntervalBase);
   DATA_MEMBER(short, MonsterGenerationIntervalDelta);
+  DATA_MEMBER(bool, AutoReveal);
 };
 
 class dungeonscript : public script

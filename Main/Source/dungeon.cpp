@@ -68,10 +68,15 @@ levelscript* dungeon::GetLevelScript(ushort Index)
   return LevelScript;
 }
 
-void dungeon::PrepareLevel(ushort Index, bool Visual)
+/* Returns whether the level has been visited before */
+
+bool dungeon::PrepareLevel(ushort Index, bool Visual)
 {
   if(Generated[Index])
-    LoadLevel(game::SaveName(), Index);
+    {
+      LoadLevel(game::SaveName(), Index);
+      return true;
+    }
   else
     {
       Level[Index] = new level;
@@ -89,6 +94,7 @@ void dungeon::PrepareLevel(ushort Index, bool Visual)
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
 
       game::SetIsGenerating(false);
+      return false;
     }
 }
 

@@ -81,4 +81,9 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define DRAW_BACKGROUND_AFTERWARDS 8
 #define FADE 16
 
+#define FELIST_ERROR_BIT 0x8000
+#define LIST_WAS_EMPTY 0xFFFF
+#define ESCAPED 0xFFFE
+#define NOTHING_SELECTED 0xFFFD
+
 #endif
