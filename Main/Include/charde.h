@@ -1249,7 +1249,7 @@ class CHARACTER
 	character,
 	InitMaterials(new ratflesh),
 	{
-		SetSize(30);
+		SetSize(20);
 		SetAgility(8);
 		SetStrength(3);
 		SetEndurance(2);

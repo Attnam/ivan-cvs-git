@@ -709,7 +709,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 14; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(100, 100, 90); }
 	virtual short NutritionValue() const			{ return 400; }
 protected:
 	virtual std::string NameStem() const	{ return "kobold flesh"; }
@@ -721,7 +721,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 12; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(90, 64, 64); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(50, 40, 200); }
 	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "gibberling flesh"; }
@@ -745,7 +745,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 8; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(0, 0, 0); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(200, 120, 40); }
 	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "rat flesh"; }
