@@ -385,6 +385,7 @@
 
 #define GUN_POWDER (POWDER_ID + 1)
 #define SNOW (POWDER_ID + 2)
+#define SAND (POWDER_ID + 3)
 
 #define UNARMED_ATTACK 0
 #define WEAPON_ATTACK 1
@@ -562,6 +563,7 @@
 /* -------------------------------- ADDED TERRAIN TYPES */
 #define DARK_GRASS_TERRAIN 7
 /*   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#define SAND_TERRAIN 8
 
 #define POOL 1
 
@@ -570,6 +572,8 @@
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
 #define EARTH 5
+#define STONE_WALL 6
+#define ICE_WALL 7
 
 #define PINE 1
 #define FIR 2
@@ -586,10 +590,15 @@
 /* ------------------------------ ADDED DECORATIONS */
 #define SHARD 13
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-
+#define CACTUS 14
+#define OAK 15
+#define BIRCH 16
+#define TEAK 17
+#define DWARF_BIRCH 18
 
 #define DOOR_PRISON 1
+
+#define SNOW_BOULDER 4
 
 #define STAIRS_UP 1
 #define STAIRS_DOWN 2

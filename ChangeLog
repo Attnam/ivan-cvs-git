@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+June 05 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Very basic worldmap tile types added. (much work needed still)
+	
+	
 May 24 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>	
 
 	* The new path-finding (or actually checking whether a path exists...) algorithm added

@@ -42,6 +42,7 @@ olterrain
 	IsSafeToCreateDoor = false;
 	AttachedGod = NONE;
 	Walkability = ANY_MOVE;
+	IsAlwaysTransparent = true;
 }
 
 wall
@@ -50,6 +51,7 @@ wall
 	CanBeDestroyed = true;
 	IsSafeToCreateDoor = true;
 	Walkability = WALK_THROUGH_WALLS;
+	IsAlwaysTransparent = false;
 
 	Config BRICK_FINE;
 	{
@@ -103,6 +105,27 @@ wall
 		BitmapPos = 0, 336;
 		HPModifier = 50;
 	}
+
+	Config STONE_WALL;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		DigMessage = "The ground is hard to dig.";
+		MainMaterialConfig == STONE;
+		MaterialColorB = rgb16(56, 56, 56);
+		NameSingular = "wall";
+		BitmapPos = 0, 32;
+		HPModifier = 100;
+	}
+
+	Config ICE_WALL;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		DigMessage = "The ice is pretty easy to dig.";
+		MainMaterialConfig == ICE;
+		NameSingular = "wall";
+		BitmapPos = 0, 32;
+		HPModifier = 40;
+	}
 }
 
 decoration
@@ -133,6 +156,7 @@ decoration
 		NameSingular = "fir";
 		BitmapPos = 16, 352;
 		HPModifier = 25;
+		IsAlwaysTransparent = false;
 	}
 
 	Config PALM;
@@ -245,6 +269,7 @@ decoration
 		PostFix = "covered with snow";
 		BitmapPos = 16, 352;
 		HPModifier = 25;
+		IsAlwaysTransparent = false;
 	}
 
 	Config ANVIL;
@@ -270,6 +295,72 @@ decoration
 		HPModifier = 5;
 		MainMaterialConfig = { 3, BLUE_CRYSTAL, PURPLE_CRYSTAL, GREEN_CRYSTAL; }
 		MaterialConfigChances = { 3, 100, 100, 100; }
+	}
+
+	Config CACTUS;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDestroyed = true;
+		DigMessage = "You chop the cactus down.";
+		MainMaterialConfig == PLANT_FIBER;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(32, 100, 32);
+		NameSingular = "cactus";
+		NamePlural = "cactuses";
+		BitmapPos = 16, 352;
+		HPModifier = 20;
+	}
+	
+	Config OAK;
+	{
+		CanBeDestroyed = true;
+		DigMessage = "You ruthlessly chop the tree down.";
+		MainMaterialConfig == OAK_WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(0, 150, 0);
+		NameSingular = "oak tree";
+		BitmapPos = 32, 336;
+		ShowMaterial = true;
+		HPModifier = 25;
+		IsAlwaysTransparent = false;
+	}
+
+	Config BIRCH;
+	{
+		CanBeDestroyed = true;
+		DigMessage = "You chop the tree down.";
+		MainMaterialConfig == BIRCH_WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(125, 160, 80);
+		MaterialColorC = rgb16(220, 220, 220);
+		NameSingular = "birch tree";
+		BitmapPos = 80, 368;
+		HPModifier = 25;
+	}
+
+	Config TEAK;
+	{
+		CanBeDestroyed = true;
+		DigMessage = "You ruthlessly chop the tree down.";
+		MainMaterialConfig == TEAK_WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(0, 220, 0);
+		NameSingular = "teak tree";
+		BitmapPos = 32, 336;
+		HPModifier = 25;
+	}
+
+	Config DWARF_BIRCH;
+	{
+		CanBeDestroyed = true;
+		DigMessage = "You chop the dwarf birch down.";
+		MainMaterialConfig == BIRCH_WOOD;
+		ShowMaterial = false;
+		MaterialColorB = rgb16(125, 160, 80);
+		MaterialColorC = rgb16(220, 220, 220);
+		NameSingular = "dwarf birch";
+		BitmapPos = 32, 368;
+		HPModifier = 10;
 	}
 }
 
@@ -422,6 +513,21 @@ boulder /* olterrain-> */
 	Config 2;
 	{
 		BitmapPos = 64, 304;
+	}
+	Config 3;
+	{
+		BitmapPos = 64, 304; /* Should be checked */
+		HPModifier = 70;
+		Adjective = "large";
+		IsAlwaysTransparent = false;
+		Walkability = WALK_THROUGH_WALLS;
+	}
+
+	Config SNOW_BOULDER;
+	{
+		MaterialColorB = rgb16(220, 220, 220);
+		BitmapPos = 80, 306;
+		Adjective = "snow-covered";
 	}
 }
 

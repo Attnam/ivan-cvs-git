@@ -192,6 +192,7 @@ struct olterraindatabase
   bool IsSafeToCreateDoor;
   vector2d OpenBitmapPos;
   uchar Walkability; 
+  bool IsAlwaysTransparent;
 };
 
 class olterrainprototype
@@ -283,12 +284,13 @@ class olterrain : public lterrain, public oterrain
   ushort GetStrengthValue() const;
   virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
   void CalculateHP();
-  virtual bool IsTransparent() const { return true; }
   virtual uchar GetAttachedGod() const;
   void SetConfig(ushort);
   god* GetMasterGod() const;
   virtual void SetLockType(uchar) { }
   virtual DATA_BASE_VALUE(uchar, Walkability);
+  DATA_BASE_BOOL(IsAlwaysTransparent);
+  virtual bool IsTransparent() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual void InstallDataBase(ushort);

@@ -1059,11 +1059,6 @@ bool fountain::IsDipDestination() const
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
 
-bool wall::IsTransparent() const
-{
-  return MainMaterial->IsTransparent();
-}
-
 uchar door::GetWalkability() const
 {
   return Opened ? ANY_MOVE : ANY_MOVE&~(WALK|FLY);

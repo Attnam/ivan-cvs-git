@@ -743,6 +743,7 @@ void lsquare::ChangeGLTerrain(glterrain* NewGround)
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
+  GetLevel()->SetWalkability(Pos, GetWalkability());
 
   if(NewGround->IsAnimated())
     IncAnimatedEntities();
@@ -758,6 +759,7 @@ void lsquare::ChangeOLTerrain(olterrain* NewOver)
   NewDrawRequested = true;
   MemorizedUpdateRequested = true;
   DescriptionChanged = true;
+  GetLevel()->SetWalkability(Pos, GetWalkability());
 
   if(NewOver)
     {
@@ -772,9 +774,10 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
 {
   SetGLTerrain(NewGround);
   SetOLTerrain(NewOver);
+  GetLevel()->SetWalkability(Pos, GetWalkability());
 }
 
-void lsquare::SetGLTerrain(glterrain* NewGround)
+void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
 {
   GLTerrain = NewGround;
   NewGround->SetLSquareUnder(this);
@@ -783,7 +786,7 @@ void lsquare::SetGLTerrain(glterrain* NewGround)
     IncAnimatedEntities();
 }
 
-void lsquare::SetOLTerrain(olterrain* NewOver)
+void lsquare::SetOLTerrain(olterrain* NewOver) // NOTICE WALKABILITY CHANGE!!
 {
   OLTerrain = NewOver;
 

@@ -516,7 +516,7 @@ material
 		ConsumeType = CT_MINERAL; /* correct someday */
 		Density = 750;
 		IsGolemMaterial = true;
-		Color = rgb16(220, 220, 255);
+		Color = rgb16(175, 175, 230);
 		Article = "an";
 		NameStem = "ice";
 		Alpha = 150;
@@ -1546,6 +1546,18 @@ powder
 		Color = rgb16(200, 200, 200);
 		NameStem = "snow";
 		AdjectiveStem = "snowy";
+		Flexibility = 40;
+		AttachedGod = TERRA;
+	}
+
+	Config SAND;
+	{
+		StrengthValue = 2;
+		ConsumeType = CT_MINERAL; /* add something appropriate for this */
+		Density = 1600;
+		Color = rgb16(200, 200, 125);
+		NameStem = "sand";
+		AdjectiveStem = "sandy";
 		Flexibility = 40;
 		AttachedGod = TERRA;
 	}

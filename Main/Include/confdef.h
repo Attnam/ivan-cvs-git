@@ -138,6 +138,7 @@
 
 #define GUN_POWDER (POWDER_ID + 1)
 #define SNOW (POWDER_ID + 2)
+#define SAND (POWDER_ID + 3)
 
 #define LONG_SWORD 1
 #define TWO_HANDED_SWORD 2
@@ -268,6 +269,8 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
+#define DARK_GRASS_TERRAIN 7
+#define SAND_TERRAIN 8
 
 #define POOL 1
 
@@ -276,6 +279,8 @@
 #define BRICK_OLD 3
 #define BRICK_PRIMITIVE 4
 #define EARTH 5
+#define STONE_WALL 6
+#define ICE_WALL 7
 
 #define PINE 1
 #define FIR 2
@@ -289,8 +294,16 @@
 #define SNOW_PINE 10
 #define SNOW_FIR 11
 #define ANVIL 12
+#define SHARD 13
+#define CACTUS 14
+#define OAK 15
+#define BIRCH 16
+#define TEAK 17
+#define DWARF_BIRCH 18
 
 #define DOOR_PRISON 1
+
+#define SNOW_BOULDER 4
 
 #define OREE_LAIR_ENTRY 3
 #define OREE_LAIR_EXIT 4

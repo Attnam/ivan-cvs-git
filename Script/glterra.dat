@@ -97,6 +97,14 @@ solidterrain /* glterrain-> */
 		NameSingular = "ground";
 		BitmapPos = 16, 16;
 	}
+
+	Config SAND_TERRAIN;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == SAND;
+		NameSingular = "ground";
+		BitmapPos = 32, 32;
+	}
 }
 
 liquidterrain /* glterrain-> */

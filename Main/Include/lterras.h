@@ -13,7 +13,6 @@ class OLTERRAIN
   olterrain,
  public:
   virtual void Break();
-  virtual bool IsTransparent() const;
 );
 
 class OLTERRAIN

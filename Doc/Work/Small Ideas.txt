@@ -405,3 +405,6 @@ Eyeglasses.
 Shift + direction should act as go command.
 Flying monsters can fly over jungle...
 Jussi The tenant farmer wielding a hoe on some swamp.
+Snow pines should change to regular pines when kicked a few times.
+Library improvement - When walking towards the book cases should show the inventory (like with doors)
+Wand of change material (change everything in wand path to material of the wand)

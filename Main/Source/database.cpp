@@ -442,6 +442,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsSafeToCreateDoor);
   ADD_MEMBER(OpenBitmapPos);
   ADD_MEMBER(Walkability);
+  ADD_MEMBER(IsAlwaysTransparent);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

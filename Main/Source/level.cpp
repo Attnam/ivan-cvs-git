@@ -4,6 +4,8 @@
 #define ON_POSSIBLE_ROUTE 2
 #define STILL_ON_POSSIBLE_ROUTE 4
 #define PREFERRED 8
+#define ICE 16
+#define STONE 32
 
 level::level() : Room(1, static_cast<room*>(0)) { }
 void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
@@ -232,9 +234,13 @@ void level::Generate(ushort Index)
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Alloc2D(NodeMap, XSize, YSize);
+
   Alloc2D(WalkabilityMap, XSize, YSize);
 
   Map = reinterpret_cast<lsquare***>(area::Map);
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      NodeMap[x][y] = new node(x,y, Map[x][y]);
 
   ushort Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
   switch(Type)
@@ -1628,20 +1634,68 @@ void level::GenerateDungeon(ushort Index)
 
 void level::GenerateJungle()
 {
-  CreateTunnelNetwork(1,4,20, 120, vector2d(0, YSize / 2));
-
-  for(ushort x = 0; x < XSize; ++x)
+  ushort x,y;
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
+      }
+    
+  while(true)
     {
-      game::BusyAnimation();
-
-      for(ushort y = 0; y < YSize; ++y)
+      CreateTunnelNetwork(1,4,20, 120, vector2d(0,YSize / 2));
+      CreateTunnelNetwork(1,4,20, 120, vector2d(XSize - 1,YSize / 2));
+      for(ushort c = 0; c < 25; ++c)
 	{
-	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  if(FlagMap[x][y] != PREFERRED)
-	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), new decoration(PALM));
-	  else
-	    Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
+	  vector2d StartPos;
+	  switch(RAND_N(5))
+	    {
+	    case 0:
+	      StartPos = vector2d(RAND_N(XSize), 0);
+	      break;
+	    case 1:
+	      StartPos = vector2d(RAND_N(XSize), YSize - 1);
+	      break;
+	    case 2:
+	      StartPos = vector2d(0, RAND_N(YSize));
+	      break;
+	    case 3:
+	      StartPos = vector2d(XSize - 1, RAND_N(YSize));
+	      break;
+	    case 4:
+	      StartPos = vector2d(RAND_N(XSize), RAND_N(YSize));
+	    }
+	    CreateTunnelNetwork(1,4,20, 120, StartPos);
 	}
+
+      for(x = 0; x < XSize; ++x)
+	{
+	  game::BusyAnimation();
+
+	  for(y = 0; y < YSize; ++y)
+	    {
+	      if(FlagMap[x][y] != PREFERRED)
+		{
+		  Map[x][y]->ChangeOLTerrain(new wall(BRICK_PROPAGANDA));
+		}
+	      else
+		{
+		  if(RAND_2)
+		    Map[x][y]->ChangeOLTerrain(new decoration(PALM));
+		}
+	    }
+	}
+      /*      node* Node = FindRoute(vector2d(0, YSize / 2), vector2d(XSize - 1, YSize / 2), WALK);
+      if(Node)
+	{
+	  while(Node)
+	    {
+	      Map[Node->Pos.X][Node->Pos.Y]->ChangeOLTerrain(new wall(EARTH));
+	      Node = Node->Last;
+	    }
+	  return;
+	}*/
     }
 }
 
@@ -1725,7 +1779,7 @@ uchar node::BackingFrom(uchar BackingFromIndex)
 }
 
 
-void level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, const character* SpecialMover)
+node* level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, const character* SpecialMover)
 {
   node::NodeMap = NodeMap;
   node::RequiredWalkability = RequiredWalkability;
@@ -1740,15 +1794,18 @@ void level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, con
 
   node* Node = NodeMap[From.X][From.Y]; 
   Node->Last = 0; 
+  Node->Processed = true;
 	  
   uchar NodeIndex = Node->CalculateNextNodes();
   if(NodeIndex == 8)
-    return; // return something bad
+    return 0;
 
   while(true)
     {
       if(NodeIndex == 8)
 	{
+	  if(!Node->Last)
+	    return 0;
 	  NodeIndex = Node->Last->BackingFrom(Node->Index);
 	  Node = Node->Last;
 	}
@@ -1756,11 +1813,227 @@ void level::FindRoute(vector2d From, vector2d To, uchar RequiredWalkability, con
 	{
 	  Node = Node->Link[NodeIndex];
 	  if(Node->Pos == To)
-	    // returns
+	    return Node;
 	  NodeIndex = Node->CalculateNextNodes();
 	  Node->Last->Next = Node;
 	}
     }
 }
 
+void level::GenerateDesert()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->SetLTerrain(new solidterrain(SAND_TERRAIN), 0);
+      }
+  game::BusyAnimation();
+  ushort AmountOfCactuses = RAND_N(10);
+  ushort c;
+  for(c = 0; c < AmountOfCactuses; ++c)
+    Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new decoration(CACTUS));
 
+  
+  ushort AmountOfBoulders = RAND_N(10);
+  
+  for(c = 0; c < AmountOfBoulders; ++c)
+    Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(1 + RAND_2));
+}
+
+void level::GenerateSteppe()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), 0);
+      }
+  game::BusyAnimation();
+  ushort c;
+  
+  ushort AmountOfBoulders = RAND_N(20) + 5; 
+  
+  for(c = 0; c < AmountOfBoulders; ++c)
+    Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(1 + RAND_2));
+}
+
+void level::GenerateLeafyForest()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	olterrain* OLTerrain;
+	switch(RAND_4)
+	  {
+	  case 0:
+	    if(RAND_8)
+	      OLTerrain = new decoration(OAK);
+	    else
+	      OLTerrain = new decoration(TEAK);
+	    break;
+	  case 1:
+	    OLTerrain = new decoration(BIRCH);
+	    break;
+	  case 2:
+	    OLTerrain = 0;
+	    if(!RAND_4)
+	      OLTerrain = new boulder(1 + RAND_2);
+
+	    if(!RAND_4)
+	      OLTerrain = new boulder(3);
+	    break;
+	  case 3:
+	    OLTerrain = 0;
+	  }
+	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), OLTerrain);
+      }
+}
+
+
+void level::GenerateEvergreenForest()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	olterrain* OLTerrain;
+	switch(RAND_4)
+	  {
+	  case 0:
+	    if(RAND_2)
+	      OLTerrain = new decoration(PINE);
+	    break;
+	  case 1:
+	    OLTerrain = new decoration(FIR);
+	    break;
+	  case 2:
+	    OLTerrain = 0;
+	    if(!RAND_4)
+	      OLTerrain = new boulder(1 + RAND_2);
+
+	    if(!RAND_4)
+	      OLTerrain = new boulder(3);
+	    break;
+	  case 3:
+	    OLTerrain = 0;
+	  }
+	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), OLTerrain);
+      }
+}
+
+void level::GenerateTundra()
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->SetLTerrain(new solidterrain(SNOW_TERRAIN), 0);
+      }
+  game::BusyAnimation();
+  ushort c;
+  
+  ushort AmountOfBoulders = RAND_N(20) + 8; 
+  
+  for(c = 0; c < AmountOfBoulders; ++c)
+    Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(SNOW_BOULDER));  
+
+  ushort AmountOfDwarfBirches = RAND_N(10);
+  for(c = 0; c < AmountOfDwarfBirches; ++c)
+    Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new decoration(DWARF_BIRCH));  
+}
+
+void level::GenerateGlacier()
+{
+  ushort x,y;
+  for(x = 0; x < XSize; ++x)
+    for(y = 0; y < YSize; ++y)
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	Map[x][y]->SetLTerrain(new solidterrain(SNOW_TERRAIN), 0);
+      }  
+  ushort AmountOfBoulders = RAND_N(20) + 5;
+  for(ushort c = 0; c < AmountOfBoulders; ++c)
+    {
+      Map[RAND_N(XSize)][RAND_N(YSize)]->ChangeOLTerrain(new boulder(SNOW_BOULDER));  	
+    }
+
+
+  while(true)
+    {
+      CreateTunnelNetwork(1,4,20, 120, vector2d(0,YSize / 2));
+      CreateTunnelNetwork(1,4,20, 120, vector2d(XSize - 1,YSize / 2));
+      for(ushort c = 0; c < 20; ++c)
+	{
+	  vector2d StartPos;
+	  switch(RAND_N(5))
+	    {
+	    case 0:
+	      StartPos = vector2d(RAND_N(XSize), 0);
+	      break;
+	    case 1:
+	      StartPos = vector2d(RAND_N(XSize), YSize - 1);
+	      break;
+	    case 2:
+	      StartPos = vector2d(0, RAND_N(YSize));
+	      break;
+	    case 3:
+	      StartPos = vector2d(XSize - 1, RAND_N(YSize));
+	      break;
+	    case 4:
+	      StartPos = vector2d(RAND_N(XSize), RAND_N(YSize));
+	    }
+	  CreateTunnelNetwork(1,4,20, 120, StartPos);
+	}
+
+
+      for(x = 0; x < XSize; ++x)
+	for(y = 0; y < YSize; ++y)
+	  if(FlagMap[x][y] != PREFERRED)
+	    FlagMap[x][y] |= RAND_2 ? ICE : STONE;
+
+      for(x = 0; x < XSize; ++x)
+	{
+	  game::BusyAnimation();
+
+	  for(y = 0; y < YSize; ++y)
+	    {
+	      if(!(FlagMap[x][y] & PREFERRED)) 
+		{
+		  ushort SquaresAround = 0;
+		  ushort IceAround = 0;
+	      
+		  for(ushort d = 0; d < 8; ++d)
+		    {
+		      vector2d Pos = vector2d(x,y) + game::GetMoveVector(d);
+		      if(IsValidPos(Pos) && !(FlagMap[Pos.X][Pos.Y] & PREFERRED))
+			{
+			  ++SquaresAround;
+			  if(FlagMap[Pos.X][Pos.Y] & ICE)
+			    ++IceAround;
+			}
+		    }
+		  if(IceAround > SquaresAround / 2)
+		    FlagMap[x][y] = ICE;
+		  else
+		    FlagMap[x][y] = STONE;
+		}
+	    }
+	}
+
+      for(x = 0; x < XSize; ++x)
+	for(y = 0; y < YSize; ++y)
+	  if(!(FlagMap[x][y] & PREFERRED))
+	    {
+	      if(FlagMap[x][y] & ICE)
+		GetLSquare(x,y)->ChangeOLTerrain(new wall(ICE_WALL));
+	      else
+		GetLSquare(x,y)->ChangeOLTerrain(new wall(STONE_WALL));
+	    }
+
+      ushort AmountOfBoulders = RAND_N(20) + 8; 
+  
+      break; // Doesen't yet check path in any way 
+    }
+}

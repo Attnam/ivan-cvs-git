@@ -21,6 +21,7 @@ class room;
 
 struct node
 {
+  node(ushort x, ushort y, lsquare* Lsquare) : Pos(x,y), Square(Lsquare) { }
   node* Link[8];
   ushort Distance;
   vector2d Pos;
@@ -115,16 +116,16 @@ class level : public area
   bool PostProcessForBone();
   void FinalProcessForBone();
   void GenerateDungeon(ushort);
-  void GenerateDesert() {}
+  void GenerateDesert();
   void GenerateJungle();
-  void GenerateSteppe() {}
-  void GenerateLeafyForest() {}
-  void GenerateEvergreenForest() {}
-  void GenerateTundra() {}
-  void GenerateGlacier() {}
+  void GenerateSteppe();
+  void GenerateLeafyForest();
+  void GenerateEvergreenForest();
+  void GenerateTundra();
+  void GenerateGlacier();
   void CreateTunnelNetwork(ushort, ushort, ushort, ushort, vector2d);
-  void SetWalkability(ushort x, ushort y, uchar What) { WalkabilityMap[x][y] = What; }
-  void FindRoute(vector2d, vector2d, uchar, const character* = 0);
+  void SetWalkability(vector2d Pos, uchar What) { WalkabilityMap[Pos.X][Pos.Y] = What; }
+  node* FindRoute(vector2d, vector2d, uchar, const character* = 0);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
