@@ -91,7 +91,7 @@ void worldmap::Generate(void)
 	{
 		if(timesgone < 4)
 		{
-			for(int c1 = 0; c1 < rand() % 10; c1++)
+			for(int c1 = 0; c1 < rand() % 20; c1++)
 			{
 				placex = 5 + rand() % (XSize-10);
 				placey = 5 + rand() % (YSize-10);
@@ -130,12 +130,12 @@ void worldmap::Generate(void)
 #define CLIMATE_RANDOMNESS		0.2		//0 = mathematic, 1 = random
 #define MAX_TEMPERATURE			27		//increase for more tropical world
 #define LATITUDE_EFFECT			0.3		//increase for more effect
-#define ALTITUDE_EFFECT			0.03
+#define ALTITUDE_EFFECT			0.06
 
-#define COLD					10
-#define NORMAL					13
-#define WARM					15
-#define HOT					19
+#define COLD				10
+#define NORMAL				13
+#define WARM				15
+#define HOT				19
 
 #define BORDER_OF_DARKNESS		-100		//in what depth will DARK_WATER be shown
 
@@ -162,7 +162,7 @@ void worldmap::GenerateClimate(void)
 
 			distance_from_equator = fabs(float(y) / YSize - 0.5f);
 
-			if(distance_from_equator <= 0.08 || (distance_from_equator > 0.25 && distance_from_equator <= 0.42))
+			if(distance_from_equator <= 0.05 || (distance_from_equator > 0.25 && distance_from_equator <= 0.45))
 				rainfall = 1;
 			else
 				rainfall = 0;
@@ -181,11 +181,11 @@ void worldmap::GenerateClimate(void)
 			if (temperature <= COLD && rainfall == 1)
 				Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
 
-			if (temperature > COLD && temperature <= NORMAL)
-				Map[x][y]->ChangeWorldMapTerrain(new evergreenforest, new atmosphere);
+			if (temperature > COLD && temperature <= NORMAL && rainfall == 0)
+				Map[x][y]->ChangeWorldMapTerrain(new snow, new atmosphere);
 
-			//if (temperature > COLD && temperature <= NORMAL && rainfall == 1)
-			//	Map[x][y]->ChangeWorldMapTerrain(new evergreenforest, new atmosphere);
+			if (temperature > COLD && temperature <= NORMAL && rainfall == 1)
+				Map[x][y]->ChangeWorldMapTerrain(new evergreenforest, new atmosphere);
 
 			if (temperature > NORMAL && temperature <= WARM && rainfall == 0)
 				Map[x][y]->ChangeWorldMapTerrain(new steppe, new atmosphere);
@@ -208,7 +208,7 @@ void worldmap::GenerateClimate(void)
 			Data[x][y] = Map[x][y]->GetGroundWorldMapTerrain()->GetType() - groundworldmapterrain::GetProtoIndexBegin();
 		}
 
-	for(ushort c = 0; c < 2; c++)
+	for(ushort c = 0; c < 3; c++)
 	{
 		for(x = 0; x < XSize; x++)
 			for(ushort y = 0; y < YSize; y++)

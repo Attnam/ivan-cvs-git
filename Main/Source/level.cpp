@@ -15,7 +15,7 @@ level::level(ushort XSize, ushort YSize, ushort Index) : area(XSize, YSize), Lev
 		for(ulong y = 0; y < YSize; y++)
 		{
 			Map[x][y] = new levelsquare(this, vector(x, y));
-			Map[x][y]->ChangeLevelTerrain(new floory, new earth);
+			Map[x][y]->ChangeLevelTerrain(new floor, new earth);
 		}
 
 	FluidBuffer = new bitmap(XSize << 4, YSize << 4);
@@ -257,7 +257,7 @@ void level::GenerateTunnel(vector From, vector Target, bool XMode)
 				{
 					FlagMap[x][y] |= ON_POSSIBLE_ROUTE | PREFERRED;
 
-					Map[x][y]->ChangeLevelTerrain(new floory, new empty);
+					Map[x][y]->ChangeLevelTerrain(new floor, new empty);
 				}
 
 				for(ushort X = 0; X < XSize; X++)
@@ -273,7 +273,7 @@ void level::GenerateTunnel(vector From, vector Target, bool XMode)
 
 void level::PutStairs(vector Pos)
 {
-	Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new floory, new stairsup);
+	Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new floor, new stairsup);
 
 	UpStairs = Pos;
 
@@ -293,7 +293,7 @@ void level::Generate(void)
 	{
 		ushort XPos = 2 + rand() % (XSize - 6), YPos = 2 + rand() % (YSize - 6), Width = 4 + rand() % 8, Height = 4 + rand() % 8;
 
-		if(!MakeRoom(vector(XPos, YPos), vector(Width, Height)))
+		if(!MakeRoom(vector(XPos, YPos), vector(Width, Height), LevelIndex ? true : false))
 		{
 			if(i < 10)
 				c--;
@@ -375,7 +375,7 @@ vector level::CreateDownStairs(void)
 
 	game::GetLevel(LevelIndex + 1)->PutStairs(Pos);
 
-	Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new floory, new stairsdown);
+	Map[Pos.X][Pos.Y]->ChangeLevelTerrain(new floor, new stairsdown);
 
 	DownStairs = Pos;
 
@@ -691,6 +691,7 @@ void level::GenerateNewMonsters(ushort HowMany)
 		for(uchar cc = 0; cc < 30; c++)
 		{
 			Pos = RandomSquare(true);
+
 			if(abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6 && !Map[Pos.X][Pos.Y]->Character)
 				break;
 		}
@@ -718,3 +719,5 @@ void level::ParticleTrail(vector StartPos, vector EndPos)
 		ABORT("666th rule of thermodynamics - Particles don't move the way you want them to move.");
 	// NEEDS SOME WORK!
 }
+
+

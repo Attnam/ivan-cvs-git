@@ -2672,26 +2672,28 @@ bool character::Zap(void)
 bool character::Polymorph(void)
 {
 	GetSquareUnder()->AddCharacter(prototypesystem::BalancedCreateMonster(2));
+
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
+
 	SetWielded(0);
 	SetTorsoArmor(0);
-	if(this == game::GetPlayer())
+
+	if(GetIsPlayer())
 	{
 		if(game::GetPolymorphCounter() == 0xFFFF)
 		{
 			game::SetPlayerBackup(this);
 			game::SetPlayer(GetSquareUnder()->GetCharacter());
 			game::SetPolymorphCounter(1000);
-			GetSquareUnder()->GetCharacter()->SetRelations(HOSTILE);
-			return true;
+			GetSquareUnder()->GetCharacter()->SetRelations(FRIEND);
 		}
 		else
 			ADD_MESSAGE("You shudder.");
 	}
-	
+	else
+		game::SendToHell(this);
 
-	delete this;
 	return true;
 }
 
@@ -2701,9 +2703,10 @@ void character::ChangeBackToPlayer(void)
 	game::SendToHell(this);
 
 	GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
+
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetCharacter()->GetStack());
+
 	game::SetPlayer(GetSquareUnder()->GetCharacter());
-	game::SetPlayerBackup(0);
-	
+	game::SetPlayerBackup(0);	
 }

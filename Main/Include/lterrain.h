@@ -172,7 +172,7 @@ protected:
 
 class GROUNDLEVELTERRAIN
 (
-	floory,
+	floor,
 	groundlevelterrain,
 	InitMaterials(new gravel(1)),
 	{
@@ -325,3 +325,5 @@ protected:
 FINISH_PROTOTYPING(overlevelterrain)
 
 #endif
+
+
