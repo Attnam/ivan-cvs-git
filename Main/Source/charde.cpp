@@ -944,11 +944,11 @@ void humanoid::KickHit()
     GetCategoryWeaponSkill(UNARMED)->AddLevelUpMessage();
 }
 
-void ivan::BeTalkedTo(character* Talker)
+void communist::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("\"You capitalist! Lenin want Ivan kill capitalists!\"");
+      ADD_MESSAGE("\"You capitalist! Lenin want %s kill capitalists!\"", CNAME(UNARTICLED));
       return;
     }
 
@@ -959,34 +959,34 @@ void ivan::BeTalkedTo(character* Talker)
       switch(RandomizeReply(11, Said))
 	{
 	case 0:
-	  ADD_MESSAGE("\"Da, Ivan like killing.\"");
+	  ADD_MESSAGE("\"Da, %s like killing.\"", CNAME(UNARTICLED));
 	  break;
 	case 1:
-	  ADD_MESSAGE("\"Ivan ruski specialist.\"");
+	  ADD_MESSAGE("\"%s ruski specialist.\"", CNAME(UNARTICLED));
 	  break;
 	case 2:
-	  ADD_MESSAGE("\"Ivan work. Else Ivan get stapled.\"");
+	  ADD_MESSAGE("\"%s work. Else %s get stapled.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
 	  break;
 	case 3:
-	  ADD_MESSAGE("\"Party mean big weapons. Ivan like big weapons. Ivan kill for Party.\"");
+	  ADD_MESSAGE("\"Party mean big weapons. %s like big weapons. %s kill for Party.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
 	  break;
 	case 4:
 	  ADD_MESSAGE("\"CCCP roxxx.\"");
 	  break;
 	case 5:
-	  ADD_MESSAGE("\"Ivan like throw Ladas. You want compete?\"");
+	  ADD_MESSAGE("\"%s like throw Ladas. You want compete?\"", CNAME(UNARTICLED));
 	  break;
 	case 6:
 	  ADD_MESSAGE("\"Why is AK not invented?\"");
 	  break;
 	case 7:
-	  ADD_MESSAGE("\"Ivan like Attnam. Petrus communist too.\"");
+	  ADD_MESSAGE("\"%s like Attnam. Petrus communist too.\"", CNAME(UNARTICLED));
 	  break;
 	case 8:
-	  ADD_MESSAGE("\"Ivan buy kyber eyes. Ivan see in dark.\"");
+	  ADD_MESSAGE("\"%s buy kyber eyes. %s see in dark.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
 	  break;
 	case 9:
-	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. Ivan like.\"");
+	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. %s like.\"", CNAME(UNARTICLED));
 	  break;
 	case 10:
 	  if(GetTeam() == Talker->GetTeam())
@@ -998,12 +998,12 @@ void ivan::BeTalkedTo(character* Talker)
     }
   else
     {
-      ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. Ivan go with you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. %s go with you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", CNAME(UNARTICLED));
       ChangeTeam(Talker->GetTeam());
     }
 }
 
-void ivan::CreateInitialEquipment()
+void communist::CreateInitialEquipment()
 {
   SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace(new iron))));
   SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail)));
@@ -1363,7 +1363,7 @@ void librarian::BeTalkedTo(character* Talker)
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 	{
 	  ADD_MESSAGE("\"Thou areth not alone in thine attempth to defeat Elpuri.");
-	  ADD_MESSAGE("A brave adventurer named Ivan also dived into its cave not long ago.\"");
+	  ADD_MESSAGE("A brave adventurer called Ivan also dived into its cave not long ago.\"");
 	  break;
 	}
       else
@@ -1380,7 +1380,7 @@ void femaleslave::CreateInitialEquipment()
   SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new palmbranch)));
 }
 
-bool ivan::MoveRandomly()
+bool communist::MoveRandomly()
 {
   switch(RAND() % 1000)
     {
@@ -1390,13 +1390,13 @@ bool ivan::MoveRandomly()
       // Currently too long
     case 1:
       if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("Ivan engraves something to the ground.");
+	ADD_MESSAGE("%s engraves something to the ground.", CNAME(UNARTICLED));
 
       Engrave("Proletarians of all countries, unite!");
       return true;
     case 2:
       if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("Ivan engraves something to the ground.");
+	ADD_MESSAGE("%s engraves something to the ground.", CNAME(UNARTICLED));
 
       Engrave("Capital is therefore not only personal; it is a social power.");
       return true;

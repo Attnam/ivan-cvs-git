@@ -1497,6 +1497,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << uchar(1);
   else
     SaveFile << uchar(0);
+  SaveFile << AssignedName;
 }
 
 void character::Load(inputfile& SaveFile)
@@ -1590,6 +1591,8 @@ void character::Load(inputfile& SaveFile)
 
   if(Leader)
     GetTeam()->SetLeader(this);
+
+  SaveFile >> AssignedName;
 }
 
 bool character::WizardMode()
@@ -3597,15 +3600,31 @@ bool character::AssignName()
   if(Where == vector2d(-1,-1) || Where == GetPos())
     return false;
   character* Character = game::GetCurrentLevel()->GetLSquare(Where)->GetCharacter();
-  if(Character)
+  if(Character && Character->GetSquareUnder()->CanBeSeen())
     {
-      std::string Topic = std::string("What do you want to call this ") + Character->Name(UNARTICLED);
-      std::string Name = game::StringQuestion(Topic, vector2d(7,7), WHITE, 0, 80, true);
-      if(Name != "")
-	Character->ReName(Name);
-      return false;
+      if(Character->CanBeAssignedAName())
+	{
+	  std::string Topic = std::string("What do you want to call this ") + Character->Name(UNARTICLED);
+	  std::string Name = game::StringQuestion(Topic, vector2d(7,7), WHITE, 0, 80, true);
+	  if(Name != "")
+	    Character->ReName(Name);
+	}
+      else
+	ADD_MESSAGE("%s refuses to be called anything else but %s", Character->CNAME(DEFINITE), Character->CNAME(DEFINITE));
     }
+  return false;
 }
 
 
-
+std::string character::Name(uchar Case) const
+{
+  if(AssignedName.size())
+  {
+    if(ShowClassName()) 
+      return AssignedName + " " + NameNormal(DEFINITE, Article(), Adjective());
+    else
+      return AssignedName;
+  }
+  else
+    return NameNormal(Case, Article(), Adjective());
+} 

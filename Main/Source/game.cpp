@@ -1301,7 +1301,10 @@ vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
   
   while(true)
     {
-      DOUBLEBUFFER->Fill((CurrentPos.X - game::GetCamera().X) << 4, (CurrentPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
+      game::DrawEverythingNoBlit();
+      igraph::DrawCursor((CurrentPos - game::GetCamera() + vector2d(0,2)) << 4);
+      game::GetCurrentArea()->GetSquare(CurrentPos)->SendNewDrawRequest();
+      FONT->Printf(DOUBLEBUFFER, 16, 514, WHITE, Question.c_str());
       graphics::BlitDBToScreen();
       Key = GETKEY();
       if(Key == FK_ESC)

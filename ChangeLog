@@ -1,5 +1,10 @@
 2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
 
+	* Main/Include/charde.h: Changed ivan class to communist and assigned it the name "Ivan". Also changed Elpuri, Oree and Petrus to get their _name_ from AssignedName
+	* Main/Source/charba.cpp: character::Save Changed to save AssignedName
+	
+	* Main/Include/charba.h (class character): Added functions   Name(), Article() Adjective(), ShowClassName(), CanBeAssignedAName(). For the AssignedNames
+
 	* Main/Source/game.cpp: Added the function key to character's AssignName
 
 	* Main/Source/charba.cpp (AssignName): Function added

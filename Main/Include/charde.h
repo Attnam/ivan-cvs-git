@@ -208,11 +208,12 @@ class CHARACTER
     SetHealTimer(100);
     SetStoryState(0);
     game::SetPetrus(this);
+    ReName("Petrus");
   },
  public:
   virtual ~petrus();
   virtual void Load(inputfile&);
-  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
+  //  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual void BeTalkedTo(character*);
   virtual ushort GetEmitation() const { return 333; }
   virtual void HealFully(character*);
@@ -228,6 +229,7 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
+  virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
@@ -236,7 +238,7 @@ class CHARACTER
   virtual uchar GetArmType() const { return 1; }
   virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 80000; }
-  virtual std::string NameSingular() const { return "Petrus, the High Priest of the Great Frog"; }
+  virtual std::string NameSingular() const { return "High Priest of the Great Frog"; }
   virtual void CreateCorpse();
   virtual std::string DeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
   virtual float GetMeleeStrength() const { return 20000; }
@@ -362,6 +364,7 @@ class CHARACTER
     SetStrength(30);
     SetEndurance(30);
     SetPerception(30);
+    ReName("Oree");
   },
  public:
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
@@ -372,12 +375,13 @@ class CHARACTER
   virtual bool HasInfraVision() const { return true; }
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
+  virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ulong TotalVolume() const { return 110000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new daemonflesh(Volume); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + "vomits blood for one last time and then dies."; }
   virtual vector2d GetBitmapPos() const { return vector2d(208,0); }
-  virtual std::string NameSingular() const { return "Oree the Blood Daemon King"; }
+  virtual std::string NameSingular() const { return "Blood Daemon King"; }
   virtual float GetMeleeStrength() const { return 30000; }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBloodVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBloodVerb(Critical); }
@@ -429,7 +433,7 @@ class CHARACTER
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new ennerbeastflesh(Volume); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
   virtual vector2d GetBitmapPos() const { return vector2d(96,0); }
-  virtual std::string NameSingular() const { return "Enner Beast"; }
+  virtual std::string NameSingular() const { return "enner beast"; }
   virtual float GetMeleeStrength() const { return 100000; }
   virtual void GetAICommand();
   virtual void CreateCorpse();
@@ -480,10 +484,10 @@ class CHARACTER
     SetStrength(30);
     SetEndurance(50);
     SetPerception(30);
+    ReName("Elpuri");
   },
  public:
   virtual bool CanBeGenerated() const { return false; }
-  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
@@ -491,12 +495,13 @@ class CHARACTER
   virtual ushort CalculateArmorModifier() const { return 10; }
   virtual bool Hit(character*);
   virtual bool CanBeDisplaced() const { return false; }
+  virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ulong TotalVolume() const { return 277500; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new elpuriflesh(Volume); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
   virtual vector2d GetBitmapPos() const { return vector2d(64,0); }
-  virtual std::string NameSingular() const { return "Elpuri the Dark Frog"; }
+  virtual std::string NameSingular() const { return "master the dark frog"; }
   virtual void CreateCorpse();
 );
 
@@ -793,7 +798,7 @@ class CHARACTER
 
 class CHARACTER
 (
-  ivan,
+  communist,
   humanoid,
   {
     SetSize(230);
@@ -801,6 +806,7 @@ class CHARACTER
     SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
+    ReName("Ivan");
   },
  public:
   virtual bool MoveRandomly();
@@ -809,6 +815,8 @@ class CHARACTER
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
+  virtual bool ShowClassName() const { return false; } 
+  virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ushort BeltColor() const { return MAKE_RGB(0, 0, 0); }
   virtual ushort ArmSpecialColor() const { return MAKE_RGB(160, 0, 0); }
@@ -818,8 +826,8 @@ class CHARACTER
   virtual uchar GetArmType() const { return 7; }
   virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 120000; }
-  virtual std::string DeathMessage() { return "Ivan falls groaning bravely: \"Party revenges Ivan!\""; }
-  virtual std::string NameSingular() const { return "Ivan"; }
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " falls groaning bravely: \"Party revenges " + Name(DEFINITE) + "\"!"; }
+  virtual std::string NameSingular() const { return "communist"; }
   virtual float GetMeleeStrength() const { return 5000; }
 );
 
@@ -1394,6 +1402,7 @@ class CHARACTER
   virtual uchar GetMaster() const { return Master; }
   //virtual std::string Name(uchar Case) const { return NameNormal(Case, "an") + OwnerGodDescription(Master); }
   virtual bool CanFly() const { return true; }
+  virtual std::string Article() const { return "an"; }
  protected:
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }

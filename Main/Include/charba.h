@@ -301,6 +301,12 @@ class character : public type, public entity
   virtual bool SecretKnowledge();
   virtual void ReName(std::string What) { AssignedName = What; }
   virtual bool AssignName();
+  virtual std::string Name(uchar) const;
+  virtual std::string Article() const { return "a"; }
+  virtual std::string Adjective() const { return ""; }
+  virtual bool ShowClassName() const { return true; }
+ 
+ virtual bool CanBeAssignedAName() const { return true; }
  protected:
 
   virtual void CreateBodyParts();
