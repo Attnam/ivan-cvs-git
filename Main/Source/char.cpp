@@ -965,7 +965,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
 			  }
 			else
 			  {
-			    if(!IsPlayer() || game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(UNARTICLED) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
+			    if(!IsPlayer() || game::BoolQuestion(CONST_S("Do you want to open ") + Terrain->GetName(DEFINITE) + "? [y/N]", false, game::GetMoveCommandKeyBetweenPoints(PLAYER->GetPos(), MoveToSquare[0]->GetPos())))
 			      {
 				OpenPos(MoveToSquare[c]->GetPos());
 				return true;

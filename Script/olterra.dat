@@ -434,6 +434,7 @@ throne /* olterrain-> */
 olterraincontainer /* olterrain->decoration-> */
 {
 	IsAbstract = true;
+	Walkability = WALK_THROUGH_WALLS;
 
 	Config BOOK_CASE;
 	{
