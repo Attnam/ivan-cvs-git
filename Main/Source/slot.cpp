@@ -38,7 +38,7 @@ void characterslot::Empty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
-  GetMaster()->CalculateEquipmentStates();
+  GetMaster()->CalculateEquipmentState();
 }
 
 void characterslot::FastEmpty()
@@ -46,7 +46,7 @@ void characterslot::FastEmpty()
   EditVolume(-Item->GetVolume());
   EditWeight(-Item->GetWeight());
   Item = 0;
-  GetMaster()->CalculateEquipmentStates();
+  GetMaster()->CalculateEquipmentState();
 }
 
 void stackslot::MoveItemTo(stack* Stack)

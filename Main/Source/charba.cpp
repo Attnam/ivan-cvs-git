@@ -27,15 +27,15 @@
 #include "proto.h"
 #include "save.h"
 
-void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginSeeInvisibleMessage };
-void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndSeeInvisibleMessage };
-void (character::*character::EnterTemporaryStateHandler[STATES])(ushort) = { 0, &character::EnterTemporaryHaste, &character::EnterTemporarySlow, 0, 0, 0, 0, 0 };
-void (character::*character::EndTemporaryStateHandler[STATES])() = { &character::EndTemporaryPolymorph, 0, 0, 0, 0, 0, 0, 0 };
-void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0 };
+void (character::*character::PrintBeginStateMessage[STATES])() const = { 0, &character::PrintBeginHasteMessage, &character::PrintBeginSlowMessage, &character::PrintBeginPolymorphControlMessage, &character::PrintBeginLifeSaveMessage, &character::PrintBeginLycanthropyMessage, &character::PrintBeginInvisibilityMessage, &character::PrintBeginInfraVisionMessage, &character::PrintBeginESPMessage };
+void (character::*character::PrintEndStateMessage[STATES])() const = { 0, &character::PrintEndHasteMessage, &character::PrintEndSlowMessage, &character::PrintEndPolymorphControlMessage, &character::PrintEndLifeSaveMessage, &character::PrintEndLycanthropyMessage, &character::PrintEndInvisibilityMessage, &character::PrintEndInfraVisionMessage, &character::PrintEndESPMessage };
+void (character::*character::BeginStateHandler[STATES])() = { 0, 0, 0, 0, 0, 0, &character::BeginInvisibility, &character::BeginInfraVision, &character::BeginESP };
+void (character::*character::EndStateHandler[STATES])() = { &character::EndPolymorph, 0, 0, 0, 0, 0, &character::EndInvisibility, &character::EndInfraVision, &character::EndESP };
+void (character::*character::StateHandler[STATES])() = { 0, 0, 0, 0, 0, &character::LycanthropyHandler, 0, 0, 0 };
 
-std::string character::StateDescription[STATES] = { "polymorphed", "hasted", "slowed", "polycontrol", "life saved", "lycanthropy", "invisible", "see invis." };
+std::string character::StateDescription[STATES] = { "Polymorphed", "Hasted", "Slowed", "PolyControl", "Life Saved", "Lycanthropy", "Invisible", "Infravision", "ESP" };
 
-character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), PermanentState(0)
+character::character(donothing) : entity(true), NP(25000), AP(0), Player(false), TemporaryState(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0), Action(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0)
 {
   Stack = new stack(0, this, HIDDEN);
 }
@@ -381,30 +381,62 @@ bool character::Drop()
   return false;
 }
 
-bool character::Consume()
+bool character::Eat()
 {
-  if(!game::IsInWilderness() && GetLSquareUnder()->GetOLTerrain()->HasConsumeEffect())
+  if(!game::IsInWilderness() && GetLSquareUnder()->GetOLTerrain()->HasEatEffect())
     {
-      if(GetLSquareUnder()->GetOLTerrain()->Consume(this))
+      if(GetLSquareUnder()->GetOLTerrain()->Eat(this))
 	return true;
     }
 
-  if((game::IsInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter)) && !GetStack()->SortedItems(this, &item::ConsumableSorter))
+  if((game::IsInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::EatableSorter)) && !GetStack()->SortedItems(this, &item::EatableSorter))
     {
-      ADD_MESSAGE("You have nothing to consume!");
+      ADD_MESSAGE("You have nothing to eat!");
       return false;
     }
 
   item* Item;
 
-  if(!game::IsInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::ConsumableSorter))
-      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to consume?", "Items in your inventory", "Items on ground", &item::ConsumableSorter);
+  if(!game::IsInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::EatableSorter))
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to eat?", "Items in your inventory", "Items on ground", &item::EatableSorter);
   else
-      Item = GetStack()->DrawContents(this, "What do you wish to consume?", &item::ConsumableSorter);
+      Item = GetStack()->DrawContents(this, "What do you wish to eat?", &item::EatableSorter);
 
   if(Item)
     {
       if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
+	return false;
+
+      return ConsumeItem(Item);
+    }
+
+  return false;
+}
+
+bool character::Drink()
+{
+  if(!game::IsInWilderness() && GetLSquareUnder()->GetOLTerrain()->HasDrinkEffect())
+    {
+      if(GetLSquareUnder()->GetOLTerrain()->Drink(this))
+	return true;
+    }
+
+  if((game::IsInWilderness() || !GetLSquareUnder()->GetStack()->SortedItems(this, &item::DrinkableSorter)) && !GetStack()->SortedItems(this, &item::DrinkableSorter))
+    {
+      ADD_MESSAGE("You have nothing to drink!");
+      return false;
+    }
+
+  item* Item;
+
+  if(!game::IsInWilderness() && GetLSquareUnder()->GetStack()->SortedItems(this, &item::DrinkableSorter))
+      Item = GetStack()->DrawContents(GetLSquareUnder()->GetStack(), this, "What do you wish to drink?", "Items in your inventory", "Items on ground", &item::DrinkableSorter);
+  else
+      Item = GetStack()->DrawContents(this, "What do you wish to drink?", &item::DrinkableSorter);
+
+  if(Item)
+    {
+      if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you drink anything more. Force it down? [y/N]"))
 	return false;
 
       return ConsumeItem(Item);
@@ -467,11 +499,11 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
     }
 }
 
-void character::DrawToTileBuffer(bool Animate) const
+/*void character::DrawToTileBuffer(bool Animate) const
 {
   if(GetTorso())
     GetTorso()->DrawToTileBuffer(Animate);
-}
+}*/
 
 void character::GetAICommand()
 {
@@ -703,8 +735,10 @@ bool character::PickUp()
 {
   bool ToBeReturned = false;
 
-  if(GetLSquareUnder()->GetStack()->GetItems() > 0)
-    if(GetLSquareUnder()->GetStack()->GetItems() > 1)
+  ushort VisibleItemsOnGround = GetLSquareUnder()->GetStack()->GetVisibleItems();
+
+  if(VisibleItemsOnGround > 0)
+    if(VisibleItemsOnGround > 1)
       {
 	for(;;)
 	  {
@@ -724,7 +758,7 @@ bool character::PickUp()
 		      return false;
 		  }
 
-	    if(!Item || !GetLSquareUnder()->GetStack()->GetItems())
+	    if(!Item || !GetLSquareUnder()->GetStack()->GetVisibleItems())
 	      break;
 
 	    game::DrawEverythingNoBlit();
@@ -732,7 +766,7 @@ bool character::PickUp()
       }
     else
       {
-	item* Item = GetLSquareUnder()->GetStack()->GetBottomItem();
+	item* Item = GetLSquareUnder()->GetStack()->GetBottomVisibleItem();
 
 	if(!GetLSquareUnder()->GetRoom() || (GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->PickupItem(this, Item)))
 	  {
@@ -1078,6 +1112,8 @@ void character::ApplyExperience()
 	  ADD_MESSAGE("Suddenly %s looks less healthy.", CHARNAME(DEFINITE));
     }
 
+  /* Should LOS be updated? */
+
   if(CheckForAttributeIncrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
     {
       if(IsPlayer())
@@ -1325,7 +1361,7 @@ void character::Save(outputfile& SaveFile) const
     SaveFile << BaseAttribute[c] << BaseExperience[c];
 
   SaveFile << NP << AP;
-  SaveFile << TemporaryState << PermanentState << Money << HomeRoom << WayPoint << Config;
+  SaveFile << TemporaryState << EquipmentState << Money << HomeRoom << WayPoint << Config;
   SaveFile << HasBe();
 
   for(c = 0; c < BodyParts(); ++c)
@@ -1374,7 +1410,7 @@ void character::Load(inputfile& SaveFile)
     SaveFile >> BaseAttribute[c] >> BaseExperience[c];
 
   SaveFile >> NP >> AP;
-  SaveFile >> TemporaryState >> PermanentState >> Money >> HomeRoom >> WayPoint >> Config;
+  SaveFile >> TemporaryState >> EquipmentState >> Money >> HomeRoom >> WayPoint >> Config;
   SetHasBe(ReadType<bool>(SaveFile));
 
   for(c = 0; c < BodyParts(); ++c)
@@ -1498,20 +1534,6 @@ bool character::GainAllItems()
 bool character::SeeWholeMap()
 {
   game::SeeWholeMap();
-  return false;
-}
-
-bool character::IncreaseContrast()
-{
-  configuration::EditContrast(5);
-  game::GetCurrentArea()->SendNewDrawRequest();
-  return false;
-}
-
-bool character::DecreaseContrast()
-{
-  configuration::EditContrast(-5);
-  game::GetCurrentArea()->SendNewDrawRequest();
   return false;
 }
 
@@ -2303,6 +2325,8 @@ bool character::CheckForUsefulItemsOnGround()
 {
   return false;
 
+  /* Check visibility! */
+
   for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottomSlot(); i != GetLSquareUnder()->GetStack()->GetSlotAboveTop(); ++i)
     {
 //<<<charba.cpp
@@ -2504,8 +2528,17 @@ ushort character::LOSRange() const
 ushort character::LOSRangeSquare() const
 {
   ulong LOSModifier = game::GetCurrentArea()->GetLOSModifier();
-
   return GetAttribute(PERCEPTION) * GetAttribute(PERCEPTION) * LOSModifier * LOSModifier / 2304;
+}
+
+ushort character::ESPRange() const
+{
+  return GetAttribute(INTELLIGENCE) / 3;
+}
+
+ushort character::ESPRangeSquare() const
+{
+  return GetAttribute(INTELLIGENCE) * GetAttribute(INTELLIGENCE) / 9;
 }
 
 bool character::GainDivineKnowledge()
@@ -2583,6 +2616,7 @@ void character::SetNP(long What)
 	}
     }
 }
+
 void character::ShowNewPosInfo() const
 {
   if(GetPos().X < game::GetCamera().X + 2 || GetPos().X > game::GetCamera().X + game::GetScreenSize().X - 2)
@@ -2593,17 +2627,25 @@ void character::ShowNewPosInfo() const
 
   game::SendLOSUpdateRequest();
 
+  if(StateIsActivated(ESP))
+    for(ushort c = 0; c < game::GetTeams(); ++c)
+      for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	if((*i)->IsEnabled())
+	  (*i)->GetSquareUnder()->SendNewDrawRequest();
+
   if(!game::IsInWilderness())
     {
       if(GetLSquareUnder()->GetLuminance() < LIGHT_BORDER && !game::GetSeeWholeMapCheat())
 	ADD_MESSAGE("It's dark in here!");
 
-      if(GetLSquareUnder()->GetStack()->GetItems() > 0)
+      ushort VisibleItemsOnGround = GetLSquareUnder()->GetStack()->GetVisibleItems();
+
+      if(VisibleItemsOnGround > 0)
 	{
-	  if(GetLSquareUnder()->GetStack()->GetItems() > 1)
+	  if(VisibleItemsOnGround > 1)
 	    ADD_MESSAGE("Several items are lying here.");
 	  else
-	    ADD_MESSAGE("%s is lying here.", GetLSquareUnder()->GetStack()->GetBottomItem()->CHARNAME(INDEFINITE));
+	    ADD_MESSAGE("%s is lying here.", GetLSquareUnder()->GetStack()->GetBottomVisibleItem()->CHARNAME(INDEFINITE));
 	}
 		
       if(game::GetCurrentLevel()->GetLSquare(GetPos())->GetEngraved() != "")
@@ -2708,7 +2750,7 @@ void character::GoOn(go* Go)
 
   square* BeginSquare = GetSquareUnder();
 
-  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLSquareUnder()->GetStack()->GetItems())
+  if(!TryMove(MoveToSquare->GetPos()) || BeginSquare == GetSquareUnder() || GetLSquareUnder()->GetLuminance() < LIGHT_BORDER || GetLSquareUnder()->GetStack()->GetVisibleItems())
     {
       Go->Terminate(false);
       return;
@@ -3207,8 +3249,6 @@ std::string character::GetName(uchar Case) const
 {
   if(!(Case & PLURAL) && AssignedName != "")
     {
-      if(!IsPlayer())
-	int esko = 2;
       if(!ShowClassDescription())
 	return AssignedName;
       else
@@ -3242,7 +3282,7 @@ uchar character::GetHungerState() const
     return VERYHUNGRY;
 }
 
-bool character::EqupmentScreen()
+bool character::EquipmentScreen()
 {
   if(!CanUseEquipment())
     {
@@ -3256,7 +3296,6 @@ bool character::EqupmentScreen()
 
   while(true)
     {
-      game::DrawEverythingNoBlit();
       List.Empty();
 
       for(ushort c = 0; c < EquipmentSlots(); ++c)
@@ -3274,6 +3313,7 @@ bool character::EqupmentScreen()
 	  List.AddEntry(Entry, LIGHTGRAY);
 	}
 
+      game::DrawEverythingNoBlit();
       Chosen = List.Draw(vector2d(26, 42), 652, 20, MAKE_RGB(0, 0, 16), true, false);
 
       if(Chosen >= EquipmentSlots())
@@ -3297,6 +3337,7 @@ bool character::EqupmentScreen()
 	}
       else
 	{
+	  game::DrawEverythingNoBlit();
 	  item* Item = GetStack()->DrawContents(this, "Choose " + EquipmentName(Chosen) + ":", EquipmentSorter(Chosen));
 
 	  if(Item != OldEquipment)
@@ -3329,29 +3370,29 @@ characterslot* character::GetBodyPartSlot(ushort Index) const
   return &BodyPartSlot[Index];
 }
 
-bool character::CanEat(material* Material) const
+bool character::CanConsume(material* Material) const
 {
-  return GetEatFlags() & Material->GetConsumeType() ? true : false;
+  return GetConsumeFlags() & Material->GetConsumeType() ? true : false;
 }
 
-void character::SetTemporaryStateCounter(uchar State, ushort What)
+void character::SetTemporaryStateCounter(ushort State, ushort What)
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & TemporaryState)
+    if((1 << c) & State)
       TemporaryStateCounter[c] = What;
 }
 
-void character::EditTemporaryStateCounter(uchar State, short What)
+void character::EditTemporaryStateCounter(ushort State, short What)
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & TemporaryState)
+    if((1 << c) & State)
       TemporaryStateCounter[c] += What;
 }
 
-ushort character::GetTemporaryStateCounter(uchar State) const
+ushort character::GetTemporaryStateCounter(ushort State) const
 {
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & TemporaryState)
+    if((1 << c) & State)
       return TemporaryStateCounter[c];
 
   ABORT("Illegal GetTemporaryStateCounter request!");
@@ -3718,9 +3759,15 @@ void character::Initialize(uchar NewConfig, bool CreateEquipment, bool Load)
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
+      TemporaryState |= GetClassStates();
+
+      if(TemporaryState)
+	for(ushort c = 0; c < STATES; ++c)
+	  if(TemporaryState & (1 << c))
+	    TemporaryStateCounter[c] = 0;
+
       CreateBodyParts();
       InitSpecialAttributes();
-      PermanentState |= GetPermanentStates();
     }
 
   VirtualConstructor(Load);
@@ -3769,7 +3816,9 @@ void character::InstallDataBase()
 
 void character::ReceiveHeal(long Amount)
 {
-  for(ushort c = 0; c < BodyParts(); ++c)
+  ushort c;
+
+  for(c = 0; c < BodyParts(); ++c)
     {
       if(!GetBodyPart(c) && Amount > 1000)
 	{
@@ -3780,8 +3829,7 @@ void character::ReceiveHeal(long Amount)
 	}
     }
 
-
-  for(ushort c = 0; c < BodyParts(); ++c)
+  for(c = 0; c < BodyParts(); ++c)
     {
       if(GetBodyPart(c))
 	{
@@ -3964,8 +4012,6 @@ bool character::TryToUnstuck(vector2d Direction)
   return StuckTo->TryToUnstuck(this, StuckToBodyPart, Direction);
 }
 
-
-
 bool character::IsStuck() const
 {
   if(GetStuckToBodyPart() == NONEINDEX)
@@ -4093,8 +4139,8 @@ void character::DrawPanel() const
     FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", CapitalizeCopy(GetAction()->GetDescription()).c_str());
 
   for(ushort c = 0; c < STATES; ++c)
-    if((1 << c) & TemporaryState || (1 << c) & PermanentState)
-      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & PermanentState ? BLUE : WHITE, "%s", CapitalizeCopy(StateDescription[c]).c_str());
+    if(StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
+      FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & EquipmentState || !TemporaryStateCounter[c] ? BLUE : WHITE, "%s", StateDescription[c].c_str());
 
   if(GetHungerState() == VERYHUNGRY)
     FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Starving");
@@ -4263,24 +4309,60 @@ long character::CalculateStateAPGain(long BaseAPGain) const
 void character::SignalEquipmentAdd(ushort EquipmentIndex)
 {
   if(EquipmentHasNoPairProblems(EquipmentIndex))
-    PermanentState |= GetEquipment(EquipmentIndex)->GetGearStates();
+    {
+      ushort AddedStates = GetEquipment(EquipmentIndex)->GetGearStates();
+
+      if(!AddedStates)
+	return;
+
+      for(ushort c = 0; c < STATES; ++c)
+	if(AddedStates & (1 << c))
+	  {
+	    if(!StateIsActivated(1 << c))
+	      {
+		EquipmentState |= 1 << c;
+
+		if(BeginStateHandler[c])
+		  (this->*BeginStateHandler[c])();
+
+		(this->*PrintBeginStateMessage[c])();
+	      }
+	    else
+	      EquipmentState |= 1 << c;
+	  }
+    }
 }
 
 void character::SignalEquipmentRemoval(ushort)
 {
-  CalculateEquipmentStates();
+  CalculateEquipmentState();
 }
 
-void character::CalculateEquipmentStates()
+void character::CalculateEquipmentState()
 {
-  PermanentState = GetPermanentStates();
+  ushort c, Back = EquipmentState;
+  EquipmentState = 0;
 
-  for(ushort c = 0; c < EquipmentSlots(); ++c)
+  for(c = 0; c < EquipmentSlots(); ++c)
     if(GetEquipment(c) && EquipmentHasNoPairProblems(c))
-      PermanentState |= GetEquipment(c)->GetGearStates();
+      EquipmentState |= GetEquipment(c)->GetGearStates();
+
+  for(c = 0; c < STATES; ++c)
+    if(Back & (1 << c) && !StateIsActivated(1 << c))
+      {
+	if(EndStateHandler[c])
+	  {
+	    (this->*EndStateHandler[c])();
+
+	    if(!IsEnabled())
+	      return;
+	  }
+
+	(this->*PrintEndStateMessage[c])();
+      }
 }
 
-void character::EnterTemporaryState(ushort State, ushort Counter)
+void character::BeginTemporaryState(ushort State, ushort Counter)
 {
   ushort Index;
 
@@ -4288,21 +4370,23 @@ void character::EnterTemporaryState(ushort State, ushort Counter)
     if(1 << Index == State)
       break;
 
-  if(EnterTemporaryStateHandler[Index])
-    {
-      (this->*EnterTemporaryStateHandler[Index])(Counter);
-      return;
-    }
-
   if(TemporaryStateIsActivated(State))
-    EditTemporaryStateCounter(State, Counter);
+    {
+      if(GetTemporaryStateCounter(State))
+	EditTemporaryStateCounter(State, Counter);
+    }
   else
     {
-      if(!PermanentStateIsActivated(State))
-	(this->*PrintBeginStateMessage[Index])();
-
       ActivateTemporaryState(State);
       SetTemporaryStateCounter(State, Counter);
+
+      if(!EquipmentStateIsActivated(State))
+	{
+	  if(BeginStateHandler[Index])
+	    (this->*BeginStateHandler[Index])();
+
+	  (this->*PrintBeginStateMessage[Index])();
+	}
     }
 }
 
@@ -4310,27 +4394,25 @@ void character::HandleStates()
 {
   for(ushort c = 0; c < STATES; ++c)
     {
-      if(TemporaryStateIsActivated(1 << c))
+      if(TemporaryState & (1 << c) && TemporaryStateCounter[c])
 	{
-	  if(!GetTemporaryStateCounter(1 << c))
+	  if(!--TemporaryStateCounter[c])
 	    {
-	      if(EndTemporaryStateHandler[c])
+	      TemporaryState &= ~(1 << c);
+
+	      if(!(EquipmentState & (1 << c)))
 		{
-		  (this->*EndTemporaryStateHandler[c])();
+		  if(EndStateHandler[c])
+		    {
+		      (this->*EndStateHandler[c])();
 
-		  if(!IsEnabled())
-		    return;
-		  else
-		    continue;
+		      if(!IsEnabled())
+			return;
+		    }
+
+		  (this->*PrintEndStateMessage[c])();
 		}
-
-	      if(!PermanentStateIsActivated(1 << c))
-		(this->*PrintEndStateMessage[c])();
-
-	      DeActivateTemporaryState(1 << c);
 	    }
-
-	  EditTemporaryStateCounter(1 << c, -1);
 	}
 
       if(StateIsActivated(1 << c))
@@ -4339,6 +4421,30 @@ void character::HandleStates()
 
       if(!IsEnabled())
 	return;
+    }
+}
+
+void character::LoseIntrinsic(ushort What)
+{
+  ushort Index;
+
+  for(Index = 0; Index < STATES; ++Index)
+    if(1 << Index == What)
+      break;
+
+  TemporaryState &= ~What;
+
+  if(!(EquipmentState & What))
+    {
+      if(EndStateHandler[Index])
+	{
+	  (this->*EndStateHandler[Index])();
+
+	  if(!IsEnabled())
+	    return;
+	}
+
+      (this->*PrintEndStateMessage[Index])();
     }
 }
 
@@ -4380,27 +4486,41 @@ void character::PrintEndLycanthropyMessage() const
 
 void character::PrintBeginInvisibilityMessage() const
 {
-  if(game::GetPlayer()->StateIsActivated(SEE_INVISIBLE))
-    return;
-
-  if(IsPlayer())
-    ADD_MESSAGE("You disappear.");
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
+  if(game::GetPlayer()->StateIsActivated(INFRAVISION))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You seem somehow transparent.");
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s looks somehow transparent.", CHARNAME(DEFINITE));
+    }
+  else
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You fade away.");
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
+    }
 }
 
 void character::PrintEndInvisibilityMessage() const
 {
-  if(game::GetPlayer()->StateIsActivated(SEE_INVISIBLE))
-    return;
-
-  if(IsPlayer())
-    ADD_MESSAGE("You reappear.");
-  else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("Suddenly %s appears from nowhere!", CHARNAME(INDEFINITE));
+  if(game::GetPlayer()->StateIsActivated(INFRAVISION))
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("Your notice your transparency has ended.");
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The appearance of %s looks far more solid now.", CHARNAME(INDEFINITE));
+    }
+  else
+    {
+      if(IsPlayer())
+	ADD_MESSAGE("You reappear.");
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s appears from nowhere!", CHARNAME(INDEFINITE));
+    }
 }
 
-void character::PrintBeginSeeInvisibleMessage() const
+void character::PrintBeginInfraVisionMessage() const
 {
   if(IsPlayer())
     if(StateIsActivated(INVISIBLE))
@@ -4409,13 +4529,25 @@ void character::PrintBeginSeeInvisibleMessage() const
       ADD_MESSAGE("You feel your perception being magically altered.");
 }
 
-void character::PrintEndSeeInvisibleMessage() const
+void character::PrintEndInfraVisionMessage() const
 {
   if(IsPlayer())
     if(StateIsActivated(INVISIBLE))
       ADD_MESSAGE("You disappear.");
     else
       ADD_MESSAGE("You feel your perception returning to normal.");
+}
+
+void character::PrintBeginESPMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You suddenly feel like being only a tiny part of a great network of intelligent minds.");
+}
+
+void character::PrintEndESPMessage() const
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You are filled with desire to be just yourself from now on.");
 }
 
 void character::PrintBeginHasteMessage() const
@@ -4429,9 +4561,9 @@ void character::PrintBeginHasteMessage() const
 void character::PrintEndHasteMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Time seems to go by at the normal rate now.");
-  else if(game::IsInWilderness() || CanBeSeenByPlayer())
-    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("Everything seems to move much faster now.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks slower!", CHARNAME(DEFINITE));
 }
 
 void character::PrintBeginSlowMessage() const
@@ -4445,62 +4577,12 @@ void character::PrintBeginSlowMessage() const
 void character::PrintEndSlowMessage() const
 {
   if(IsPlayer())
-    ADD_MESSAGE("Time seems to go by at the normal rate now.");
-  else if(game::IsInWilderness() || CanBeSeenByPlayer())
-    ADD_MESSAGE("%s seems to move at the normal pace now.", CHARNAME(DEFINITE));
+    ADD_MESSAGE("Time slows down to a crawl.");
+  else if(CanBeSeenByPlayer())
+    ADD_MESSAGE("%s looks faster!", CHARNAME(DEFINITE));
 }
 
-void character::EnterTemporaryHaste(ushort Counter)
-{
-  if(TemporaryStateIsActivated(SLOW))
-    {
-      if(!PermanentStateIsActivated(SLOW))
-	PrintEndSlowMessage();
-
-      DeActivateTemporaryState(SLOW);
-    }   
-  else
-    {
-      if(TemporaryStateIsActivated(HASTE))
-	{
-	  EditTemporaryStateCounter(HASTE, Counter);
-	  return;
-	}
-
-      if(!PermanentStateIsActivated(HASTE))
-	PrintBeginHasteMessage();
-
-      ActivateTemporaryState(HASTE);
-      SetTemporaryStateCounter(HASTE, Counter);
-    }
-}
-
-void character::EnterTemporarySlow(ushort Counter)
-{
-  if(TemporaryStateIsActivated(HASTE))
-    {
-      if(!PermanentStateIsActivated(HASTE))
-	PrintEndHasteMessage();
-
-      DeActivateTemporaryState(HASTE);
-    }
-  else
-    {
-      if(TemporaryStateIsActivated(SLOW))
-	{
-	  EditTemporaryStateCounter(SLOW, Counter);
-	  return;
-	}
-
-      if(!PermanentStateIsActivated(SLOW))
-	PrintBeginSlowMessage();
-
-      ActivateTemporaryState(SLOW);
-      SetTemporaryStateCounter(SLOW, Counter);
-    }
-}
-
-void character::EndTemporaryPolymorph()
+void character::EndPolymorph()
 {
   if(IsPlayer())
     ADD_MESSAGE("You return to your true form.");
@@ -4638,8 +4720,8 @@ void character::StartReading(item* Item, ulong Time)
   read* Read = new read(this);
   Read->SetLiterature(Item); // slot cleared automatically
 
-  //if(game::WizardModeActive())
-    //Time = 1000;
+  if(game::WizardModeActivated() && Time > 100)
+    Time = 100;
 
   Read->SetCounter(Time);
   SetAction(Read);
@@ -4663,20 +4745,31 @@ void character::DexterityAction(ushort Difficulty)
 
 bool character::CanBeSeenByPlayer() const
 {
-  if(StateIsActivated(INVISIBLE) && !game::GetPlayer()->StateIsActivated(SEE_INVISIBLE))
+  bool Visible = !StateIsActivated(INVISIBLE) || (game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
+
+  if((game::IsInWilderness() && Visible) || (game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (GetPos() - game::GetPlayer()->GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare()))
+    return true;
+  else if(!Visible)
     return false;
   else
-    return GetSquareUnder()->CanBeSeenByPlayer();
+    return GetSquareUnder()->CanBeSeenByPlayer(game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm());
 }
 
 bool character::CanBeSeenBy(character* Who) const
 {
   if(Who->IsPlayer())
     return CanBeSeenByPlayer();
-  else if(StateIsActivated(INVISIBLE) && !Who->StateIsActivated(SEE_INVISIBLE))
-    return false;
   else
-    return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), Who->HasInfraVision());
+    {
+      bool Visible = !StateIsActivated(INVISIBLE) || (Who->StateIsActivated(INFRAVISION) && IsWarm());
+
+      if((game::IsInWilderness() && Visible) || (Who->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (GetPos() - Who->GetPos()).Length() <= Who->ESPRangeSquare()))
+	return true;
+      else if(!Visible)
+	return false;
+      else
+	return GetSquareUnder()->CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare(), Who->StateIsActivated(INFRAVISION) && IsWarm());
+    }
 }
 
 bool character::DetachBodyPart()
@@ -4734,6 +4827,7 @@ stackiterator character::FindRandomOwnBodyPart()
 	      LostAndFound.push_back(ii);
 	  }
       }
+
   if(LostAndFound.empty())
     return 0;
   else
@@ -4777,4 +4871,79 @@ bodypart* character::AttachOldBodyPartFromStack(stackiterator OldOwnBodyPartIter
   AttachBodyPart(OldOwnBodyPart, OldOwnBodyPart->GetBodyPartIndex());
   GetStack()->RemoveItem(OldOwnBodyPartIterator);
   return OldOwnBodyPart;  
+}
+
+bool character::IsWarm() const
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c) && GetBodyPart(c)->GetMainMaterial()->IsAlive())
+      return true;
+
+  return false;
+}
+
+void character::BeginInvisibility()
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->UpdatePictures();
+
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+void character::BeginInfraVision()
+{
+  if(IsPlayer())
+    game::GetCurrentArea()->SendNewDrawRequest();
+}
+
+void character::BeginESP()
+{
+  if(IsPlayer())
+    game::GetCurrentArea()->SendNewDrawRequest();
+}
+
+void character::EndInvisibility()
+{
+  for(ushort c = 0; c < BodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->UpdatePictures();
+
+  GetSquareUnder()->SendNewDrawRequest();
+}
+
+void character::EndInfraVision()
+{
+  if(IsPlayer())
+    game::GetCurrentArea()->SendNewDrawRequest();
+}
+
+void character::EndESP()
+{
+  if(IsPlayer())
+    game::GetCurrentArea()->SendNewDrawRequest();
+}
+
+void character::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  if((game::GetPlayer()->StateIsActivated(ESP) && GetAttribute(INTELLIGENCE) >= 5 && (game::GetPlayer()->GetPos() - GetPos()).Length() <= game::GetPlayer()->ESPRangeSquare()) || (game::GetPlayer()->StateIsActivated(INFRAVISION) && IsWarm()))
+    Luminance = configuration::GetContrastLuminance();
+
+  DrawBodyParts(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(configuration::GetOutlineCharacters())
+    {
+      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
+      DrawBodyParts(igraph::GetTileBuffer(), vector2d(0, 0), 256, false, AllowAnimate);
+      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
+      igraph::GetOutlineBuffer()->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
+    }
+  
+  if(GetTeam() == game::GetPlayer()->GetTeam() && !IsPlayer())
+    igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, 32, 16, Pos, 16, 16, configuration::GetContrastLuminance());
+}
+
+void character::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
 }

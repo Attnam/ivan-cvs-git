@@ -74,16 +74,17 @@ class ITEM
   lantern,
   item,
  public:
-  virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  virtual void SignalSquarePositionChange(bool);
-  virtual void SetOnWall(bool What) { OnWall = What; }
+  //virtual void PositionedDrawToTileBuffer(uchar, bool) const;
+  virtual void SignalSquarePositionChange(uchar);
+  virtual void SetSquarePosition(uchar What) { SquarePosition = What; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool ReceiveDamage(character*, short, uchar);
  protected:
+  virtual uchar GetSpecialFlags(ushort) const;
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, OnWall ? 192 : 256); }
-  bool OnWall;
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, SquarePosition == CENTER ? 256 : 192); }
+  uchar SquarePosition;
 );
 
 class ITEM
@@ -434,7 +435,7 @@ class ITEM
  public:
   virtual bool ReceiveDamage(character*, short, uchar) { return false; }
  protected:
-  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, OnWall ? 208 : 304); }
+  virtual vector2d GetBitmapPos(ushort) const { return vector2d(0, SquarePosition == CENTER ? 304 : 208); }
 );
 
 class ITEM
@@ -789,6 +790,7 @@ class ABSTRACT_ITEM
   virtual void SignalEquipmentRemoval(gearslot*);
   virtual void Mutate();
  protected:
+  virtual uchar GetMaxAlpha(ushort) const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
   virtual std::string GetPostFix() const { return GetOwnerDescription(); }
@@ -1100,6 +1102,7 @@ class ITEM
   virtual material* GetMaterial(ushort) const;
   virtual bool RaiseTheDead(character*);
   virtual std::string GetConsumeVerb() const;
+  virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
  protected:
   virtual void GenerateMaterials() { }
   virtual ushort GetMaterialColor0(ushort) const;
@@ -1228,6 +1231,18 @@ class ITEM
   virtual bool Zap(character*, vector2d, uchar);
  protected:
   virtual void VirtualConstructor(bool);
+);
+
+class ITEM
+(
+  wandofinvisibility,
+  wand,
+ public:
+  virtual bool Zap(character*, vector2d, uchar);
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
+ protected:
+  virtual void VirtualConstructor(bool);
+  virtual ushort GetBeamColor() const { return WHITE; }
 );
 
 /*class ITEM

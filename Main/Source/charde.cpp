@@ -1834,9 +1834,22 @@ bool humanoid::BodyPartCanBeSevered(ushort Index) const
     return true;
 }
 
-void humanoid::DrawToTileBuffer(bool Animate) const
+/*void humanoid::DrawToTileBuffer(bool Animate) const
 {
-  /* Order is important, so don't use a loop */
+  /static ushort DrawOrder[] = { GROININDEX, RIGHTLEGINDEX, LEFTLEGINDEX, TORSOINDEX, RIGHTARMINDEX, LEFTARMINDEX, HEADINDEX };
+
+  if(game::GetPlayer()->StateIsActivated(ESP))
+    {
+  for(ushort c = 0; c < HUMANOID_BODYPARTS; ++c)
+    if(GetBodyPart(DrawOrder[c]))
+      GetBodyPart(DrawOrder[c])->DrawToTileBuffer(Animate);
+
+  if(game::GetPlayer()->StateIsActivated(INFRAVISION))
+  for(ushort c = 0; c < HUMANOID_BODYPARTS; ++c)
+    if(GetBodyPart(DrawOrder[c]) && GetBodyPart(DrawOrder[c])->GetMainMaterial()->IsAlive())
+      GetBodyPart(DrawOrder[c])->DrawToTileBuffer(Animate);/
+
+  / Order is important, so don't use a loop /
 
   if(GetGroin())
     GetGroin()->DrawToTileBuffer(Animate);
@@ -1882,7 +1895,7 @@ void dwarf::DrawToTileBuffer(bool Animate) const
 
   if(GetHead())
     GetHead()->DrawToTileBuffer(vector2d(0, 1), Animate);
-}
+}*/
 
 bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
 {
@@ -2335,11 +2348,10 @@ bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
   for(c = 0; c < EquipmentSlots(); ++c)
     {
       vector2d Pos = Where + GetEquipmentPanelPos(c);
-
       DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
 
       if(GetEquipment(c))
-	GetEquipment(c)->DrawTo(DOUBLEBUFFER, Pos);
+	GetEquipment(c)->Draw(DOUBLEBUFFER, Pos, configuration::GetContrastLuminance(), false, true);
     }
 
   return true;
@@ -3421,8 +3433,10 @@ void humanoid::VirtualConstructor(bool Load)
 
 void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 {
-  if(EquipmentHasNoPairProblems(EquipmentIndex))
-    PermanentState |= GetEquipment(EquipmentIndex)->GetGearStates();
+  //if(EquipmentHasNoPairProblems(EquipmentIndex))
+    //PermanentState |= GetEquipment(EquipmentIndex)->GetGearStates();
+
+  character::SignalEquipmentAdd(EquipmentIndex);
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
     {
@@ -3460,7 +3474,7 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 
 void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
 {
-  CalculateEquipmentStates();
+  character::SignalEquipmentRemoval(EquipmentIndex);
 
   if(EquipmentIndex == RIGHTWIELDEDINDEX)
     {
@@ -3605,7 +3619,10 @@ bool angel::AttachBodyPartsOfFriendsNear()
       return true;
     }
   else
-    ABORT("Dark forces attack angel. Too Bad. Sorry.");
+    {
+      ABORT("Dark forces attack angel. Too Bad. Sorry.");
+      return false;
+    }
 }
 
 void angel::VirtualConstructor(bool Load)
@@ -3616,4 +3633,54 @@ void angel::VirtualConstructor(bool Load)
     {
       SetHealTimer(LENGTH_OF_ANGELS_HEAL_COUNTER_LOOP);
     }
+}
+
+void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  /* Order is important: Don't use a loop. */
+
+  if(GetGroin())
+    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetRightLeg())
+    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetLeftLeg())
+    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetTorso())
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  
+  if(GetRightArm())
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetLeftArm())
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetHead())
+    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+}
+
+void dwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  if(GetGroin())
+    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetRightLeg())
+    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetLeftLeg())
+    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetTorso())
+    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  
+  if(GetRightArm())
+    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetLeftArm())
+    GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+
+  if(GetHead())
+    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAlpha, AllowAnimate);
 }

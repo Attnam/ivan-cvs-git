@@ -59,6 +59,7 @@ class object : public entity, public id
   void SetEmitation(ushort What) { Emitation = What; }
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
+  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
@@ -75,6 +76,7 @@ class object : public entity, public id
   virtual ushort GetMaterialColor1(ushort) const { return 0; }
   virtual ushort GetMaterialColor2(ushort) const { return 0; }
   virtual ushort GetMaterialColor3(ushort) const { return 0; }
+  virtual uchar GetMaxAlpha(ushort) const { return 255; }
   virtual uchar GetBaseAlpha(ushort) const { return 255; }
   virtual uchar GetAlpha0(ushort) const;
   virtual uchar GetAlpha1(ushort) const { return 255; }

@@ -24,7 +24,7 @@
 
 std::string configuration::DefaultName;
 ushort configuration::AutoSaveInterval = 500;
-uchar configuration::Contrast = 100;
+ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
@@ -32,6 +32,7 @@ ushort configuration::CharacterOutlineColor = BLUE;
 ushort configuration::ItemOutlineColor = RED;
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
+ushort configuration::ContrastLuminance = 256;
 
 void configuration::Save()
 {
@@ -42,7 +43,7 @@ void configuration::Save()
 
   SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
   SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
-  SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
+  SaveFile << "Contrast = " << Contrast << ";\n";
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
   SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
@@ -110,16 +111,14 @@ void configuration::Load()
     }
 }
 
-void configuration::EditContrast(char Change)
+void configuration::EditContrast(short Change)
 {
-  short TContrast = Contrast;
+  Contrast += Change;
 
-  TContrast += Change;
+  if(short(Contrast) < 0) Contrast = 0;
+  if(short(Contrast) > 200) Contrast = 200;
 
-  if(TContrast < 0) TContrast = 0;
-  if(TContrast > 200) TContrast = 200;
-
-  Contrast = TContrast;
+  ContrastLuminance = (Contrast << 8) / 100;
 }
 
 void configuration::ShowConfigScreen()
@@ -166,8 +165,9 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  continue;
 	case 2:
-	  SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::IsRunning()));
-	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
+	  //SetContrast(iosystem::NumberQuestion("Set new contrast value (0-200):", QuestionPos, WHITE, !game::IsRunning()));
+	  iosystem::ScrollBarQuestion("Set new contrast value (0-200, '<' and '>' move the slider):", QuestionPos, Contrast, 5, 0, 200, WHITE, LIGHTGRAY, DARKGRAY, !game::IsRunning(), &ContrastHandler);
+	  //if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = false;
 	  continue;
 	case 3:
@@ -216,12 +216,13 @@ void configuration::SetAutoSaveInterval(long What)
   AutoSaveInterval = What;
 }
 
-void configuration::SetContrast(long What)
+void configuration::SetContrast(short What)
 {
   if(What < 0) What = 0;
   if(What > 200) What = 200;
 
   Contrast = What;
+  ContrastLuminance = (Contrast << 8) / 100;
 }
 
 void configuration::SwitchModeHandler()
@@ -229,3 +230,13 @@ void configuration::SwitchModeHandler()
   SetFullScreenMode(!GetFullScreenMode());
 }
 
+void configuration::ContrastHandler(long Value)
+{
+  SetContrast(Value);
+
+  if(game::IsRunning())
+    {
+      game::GetCurrentArea()->SendNewDrawRequest();
+      game::DrawEverythingNoBlit();
+    }
+}

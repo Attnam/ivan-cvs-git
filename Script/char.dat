@@ -21,7 +21,6 @@ character
 	Sex = UNDEFINED;
 	BloodColor = rgb(75, 0, 0);
 	CanBeGenerated = false;
-	HasInfraVision = false;
 	CriticalModifier = 20;
 	StandVerb = "standing";
 	CanOpen = true;
@@ -38,7 +37,7 @@ character
 	PoisonResistance = 0;
 	BulimiaResistance = 0;
 	IsUnique = false;
-	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED;
+	ConsumeFlags = FRUIT|MEAT|LIQUID|PROCESSED;
 	/* Obligatory: TotalVolume */
 	TalkVerb = "grunts";
 	IsNameable = true;
@@ -61,7 +60,7 @@ character
 	CanUseEquipment = false;
 	CanKick = false;
 	CanTalk = false;
-	PermanentStates = 0;
+	ClassStates = 0;
 	CanBeWished = true;
 }
 
@@ -133,7 +132,6 @@ petrus
 	DefaultCharisma = 42;
 	DefaultMana = 42;
 	IsCharmable = false;
-	HasInfraVision = true;
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
@@ -152,6 +150,7 @@ petrus
 	IsPolymorphable = false;
 	CanBeWished = false;
 	Alias == "Petrus";
+	ClassStates = INFRAVISION;
 }
 
 farmer
@@ -259,7 +258,6 @@ oree
 	DefaultCharisma = 3;
 	DefaultMana = 30;
 	IsCharmable = false;
-	HasInfraVision = true;
 	CanBeDisplaced = false;
 	IsNameable = false;
 	IsUnique = true;
@@ -279,6 +277,7 @@ oree
 	BiteStrength = 30000;
 	CanBeWished = false;
 	Alias == "Oree";
+	ClassStates = INFRAVISION;
 }
 
 darkknight
@@ -356,13 +355,13 @@ darkfrog
 	DefaultCharisma = 5;
 	DefaultMana = 20;
 	BloodColor = rgb(0, 0, 0);
-	HasInfraVision = true;
 	TotalVolume = 2500;
 	TorsoBitmapPos = 80, 0;
 	TotalSize = 25;
 	SkinColor = rgb(48, 48, 48);
 	Adjective = "dark";
 	CanBeGenerated = true;
+	ClassStates = INFRAVISION;
 }
 
 elpuri
@@ -402,7 +401,6 @@ billswill
 	DefaultWisdom = 2;
 	DefaultCharisma = 5;
 	DefaultMana = 10;
-	HasInfraVision = true;
 	StandVerb = "floating";
 	Frequency = 100;
 	CanFly = true;
@@ -415,6 +413,7 @@ billswill
 	PostFix = "of Bill's will";
 	UnarmedStrength = 20000;
 	CanBeGenerated = true;
+	ClassStates = ESP;
 }
 
 skeleton
@@ -436,7 +435,7 @@ skeleton
 	TorsoBitmapPos = 32, 96;
 	ArmBitmapPos = 64, 96;
 	LegBitmapPos = 0, 80;
-	TotalVolume = 60000;
+	TotalVolume = 10000;
 	TotalSize = 150;
 	NameSingular = "skeleton";
 	CanBeGenerated = true;
@@ -566,7 +565,7 @@ dog
 	TorsoBitmapPos = 240, 0;
 	TalkVerb = "barks";
 	TotalSize = 70;
-	EatFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
+	ConsumeFlags = FRUIT|MEAT|LIQUID|PROCESSED|BONY;
 	SkinColor = rgb(111, 74, 37);
 	NameSingular = "dog";
 	AttackStyle = USE_HEAD;
@@ -585,7 +584,6 @@ spider
 	DefaultCharisma = 4;
 	DefaultMana = 0;
 	BloodColor = rgb(0, 0, 0);
-	HasInfraVision = true;
 	CanOpen = false;
 	TotalVolume = 100;
 	TorsoBitmapPos = 272, 0;
@@ -596,6 +594,7 @@ spider
 	AttackStyle = USE_HEAD;
 	BiteStrength = 20000;
 	CanBeGenerated = true;
+	ClassStates = INFRAVISION;
 }
 
 jackal
@@ -652,7 +651,6 @@ communist /* Ivan */
 	DefaultWisdom = 5;
 	DefaultCharisma = 10;
 	DefaultMana = 5;
-	HasInfraVision = true;
 	CriticalModifier = 4;
 	IsNameable = false;
 	BeltColor = rgb(0, 0, 0);
@@ -667,6 +665,7 @@ communist /* Ivan */
 	CanRead = true;
 	NameSingular = "communist";
 	Alias == "Ivan";
+	ClassStates = INFRAVISION;
 }
 
 hunter
@@ -995,7 +994,6 @@ bat
 	DefaultMana = 0;
 	StandVerb = "flying";
 	CanOpen = false;
-	HasInfraVision = true;
 	CanFly = true;
 	TotalVolume = 1000;
 	TorsoBitmapPos = 464, 0;
@@ -1006,6 +1004,7 @@ bat
 	AttackStyle = USE_HEAD;
 	BiteStrength = 15000;
 	CanBeGenerated = true;
+	ClassStates = INFRAVISION;
 }
 
 mistress
@@ -1062,7 +1061,7 @@ werewolfhuman
 	AttackStyle = USE_ARMS;
 	CanBeGenerated = true;
 	CanRead = true;
-	PermanentStates = LYCANTHROPY;
+	ClassStates = LYCANTHROPY;
 }
 
 werewolfwolf
@@ -1089,11 +1088,11 @@ werewolfwolf
 	NameSingular = "werewolf";
 	NamePlural = "werewolves";
 	AttackStyle = USE_HEAD;
-	HasInfraVision = true;
 	Sex = UNDEFINED;
 	BiteStrength = 20000;
 	CanUseEquipment = false;
 	CanBeWished = false;
+	ClassStates = INFRAVISION;
 }
 
 kobold
@@ -1211,7 +1210,6 @@ angel
 	DefaultCharisma = 50;
 	DefaultMana = 35;
 	IsCharmable = false;
-	HasInfraVision = true;
 	Sex = FEMALE;
 	CanFly = true;
 	TotalVolume = 60000;
@@ -1222,6 +1220,7 @@ angel
 	NameSingular = "angel";
 	Article = "an";
 	CanBeWished = false;
+	ClassStates = ESP;
 }
 
 dwarf

@@ -457,14 +457,14 @@ bool level::MakeRoom(roomscript* RoomScript)
 	if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 	  {
 	    lantern* Lantern = new lantern;
-	    Lantern->SignalSquarePositionChange(true);
+	    Lantern->SignalSquarePositionChange(2);
 	    Map[x][YPos]->GetSideStack(2)->FastAddItem(Lantern);
 	  }
 
 	if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 	  {
 	    lantern* Lantern = new lantern;
-	    Lantern->SignalSquarePositionChange(true);
+	    Lantern->SignalSquarePositionChange(0);
 	    Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lantern);
 	  }
 
@@ -491,14 +491,14 @@ bool level::MakeRoom(roomscript* RoomScript)
       if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 	{
 	  lantern* Lantern = new lantern;
-	  Lantern->SignalSquarePositionChange(true);
+	  Lantern->SignalSquarePositionChange(1);
 	  Map[XPos][y]->GetSideStack(1)->FastAddItem(Lantern);
 	}
 
       if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 	{
 	  lantern* Lantern = new lantern;
-	  Lantern->SignalSquarePositionChange(true);
+	  Lantern->SignalSquarePositionChange(3);
 	  Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lantern);
 	}
 

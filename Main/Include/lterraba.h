@@ -73,7 +73,7 @@ class glterrain : public lterrain, public gterrain
   virtual uchar GetEntryDifficulty() const { return 1; }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
  protected:
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GRGLTERRAIN; }
 };
@@ -104,8 +104,10 @@ class olterrain : public lterrain, public oterrain
   virtual void BeKicked(character*, float) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }
-  virtual bool HasConsumeEffect() const { return false; } 
-  virtual bool Consume(character*) { return false; }
+  virtual bool HasEatEffect() const { return false; } 
+  virtual bool HasDrinkEffect() const { return false; } 
+  virtual bool Eat(character*) { return false; }
+  virtual bool Drink(character*) { return false; }
   virtual void Lock() { }
   virtual bool IsLocked() const { return false; }
   virtual void CreateBoobyTrap() { }
@@ -118,7 +120,7 @@ class olterrain : public lterrain, public oterrain
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool IsEmpty() const { return false; }
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
  protected:
   virtual uchar GetGraphicsContainerIndex(ushort) const { return GROLTERRAIN; }
   short HP;

@@ -96,7 +96,8 @@ class OLTERRAIN
   virtual std::string DigMessage() const { return "The square you are trying to dig is empty."; }
   virtual bool IsSafeToDestroy() const { return true; }
   virtual bool IsEmpty() const { return true; }
-  virtual void DrawToTileBuffer(bool) const { }
+  //virtual void DrawToTileBuffer(bool) const { }
+  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const { }
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(AIR), false); }
   virtual std::string GetNameSingular() const { return "atmosphere"; }
@@ -187,7 +188,7 @@ class OLTERRAIN
   olterrain,
  public:
   virtual bool CanBeOffered() const { return true; }
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
   virtual uchar GetDivineMaster() const { return DivineMaster; }
   virtual void SetDivineMaster(uchar What) { DivineMaster = What; }
   virtual void Save(outputfile&) const;
@@ -198,6 +199,7 @@ class OLTERRAIN
   virtual void ReceiveVomit(character*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
+  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   virtual void GenerateMaterials() { InitMaterials(MAKE_MATERIAL(STONE), false); }
   virtual void VirtualConstructor(bool);
@@ -324,8 +326,8 @@ class OLTERRAIN
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
   virtual bool SitOn(character*);
-  virtual bool Consume(character*);
-  virtual bool HasConsumeEffect() const { return true; } 
+  virtual bool Drink(character*);
+  virtual bool HasDrinkEffect() const { return true; } 
   virtual void DryOut();
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }

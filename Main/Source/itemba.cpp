@@ -22,20 +22,30 @@ item::item(donothing) : Slot(0), Cannibalised(false), ID(game::CreateNewItemID()
 {
 }
 
-void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
+/*void item::PositionedDrawToTileBuffer(uchar, bool Animate) const
 {
   if(!Animate || AnimationFrames == 1)
     Picture[0]->AlphaBlit(igraph::GetTileBuffer());
   else
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
-}
+}*/
 
 bool item::IsConsumable(const character* Eater) const
 {
   if(!GetConsumeMaterial())
     return false;
   else
-    return Eater->CanEat(GetConsumeMaterial());
+    return Eater->CanConsume(GetConsumeMaterial());
+}
+
+bool item::IsEatable(const character* Eater) const
+{
+  return IsConsumable(Eater) && !GetConsumeMaterial()->IsLiquid();
+}
+
+bool item::IsDrinkable(const character* Eater) const
+{
+  return IsConsumable(Eater) && GetConsumeMaterial()->IsLiquid();
 }
 
 short item::CalculateOfferValue(char GodAlignment) const
@@ -141,10 +151,10 @@ float item::GetWeaponStrength() const
   return sqrt(float(GetFormModifier()) * GetMainMaterial()->GetStrengthValue() * GetWeight());
 }
 
-void item::DrawToTileBuffer(bool Animate) const
+/*void item::DrawToTileBuffer(bool Animate) const
 {
   PositionedDrawToTileBuffer(CENTER, Animate);
-}
+}*/
 
 bool item::Apply(character* Applier)
 {
@@ -222,7 +232,7 @@ void item::TeleportRandomly()
   MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(0, true, false))->GetStack());
 }
 
-void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
+/*void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
 {
   vector2d From, To, BlitSize;
 
@@ -256,7 +266,7 @@ void item::DrawToTileBuffer(vector2d Pos, bool Animate) const
     Picture[0]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
   else
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer(), From, To, BlitSize);
-}
+}*/
 
 ushort item::GetStrengthValue() const
 {
@@ -500,13 +510,13 @@ bool item::IsSimiliarTo(item* Item) const
   return Item->GetType() == GetType() && Item->GetConfig() == GetConfig();
 }
 
-void item::DrawTo(bitmap* Bitmap, vector2d Pos, bool Animate) const
+/*void item::DrawTo(bitmap* Bitmap, vector2d Pos, bool Animate) const
 {
   if(!Animate || AnimationFrames == 1)
     Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
   else
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
-}
+}*/
 
 bool item::CanBeSeenByPlayer() const
 {
@@ -528,3 +538,21 @@ std::string item::Description(uchar Case) const
   else
     return "something";
 }
+
+/*void item::Draw(bitmap* Bitmap, vector2d Pos, bool AllowAlpha, bool AllowAnimate) const
+{
+  if(AllowAlpha)
+    {
+      if(!AllowAnimate || AnimationFrames == 1)
+	Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
+      else
+	Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
+    }
+  else
+    {
+      if(!AllowAnimate || AnimationFrames == 1)
+	Picture[0]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16);
+      else
+	Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16);
+    }
+}*/

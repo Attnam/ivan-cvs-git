@@ -135,6 +135,7 @@ class material
   static material* MakeMaterial(ushort);
   static material* MakeMaterial(ushort, ulong);
   virtual bool IsFlesh() const { return false; }
+  virtual bool IsLiquid() const { return false; }
   virtual std::string GetConsumeVerb() const { return "eating"; }
   ulong GetWeight() const { return Weight; }
   void CalculateWeight() { Weight = ulong(float(Volume) * GetDensity() / 1000); }

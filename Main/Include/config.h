@@ -16,9 +16,9 @@ class configuration
   static void SetDefaultName(const std::string&);
   static ushort GetAutoSaveInterval() { return AutoSaveInterval; }
   static void SetAutoSaveInterval(long);
-  static void EditContrast(char);
+  static void EditContrast(short);
   static ushort GetContrast() { return Contrast; }
-  static void SetContrast(long);
+  static void SetContrast(short);
   static bool GetAutoDropLeftOvers() { return AutoDropLeftOvers; }
   static void SetAutoDropLeftOvers(bool What) { AutoDropLeftOvers = What; }
   static bool GetOutlineCharacters() { return OutlineCharacters; }
@@ -37,10 +37,12 @@ class configuration
   static void Load();
   static void ShowConfigScreen();
   static void SwitchModeHandler();
+  static ushort GetContrastLuminance() { return ContrastLuminance; }
  private:
+  static void ContrastHandler(long);
   static std::string DefaultName;
   static ushort AutoSaveInterval;
-  static uchar Contrast;
+  static ushort Contrast;
   static bool AutoDropLeftOvers;
   static bool OutlineCharacters;
   static bool OutlineItems;
@@ -48,6 +50,7 @@ class configuration
   static ushort ItemOutlineColor;
   static bool BeepOnCritical;
   static bool FullScreenMode;
+  static ushort ContrastLuminance;
 };
 
 #endif

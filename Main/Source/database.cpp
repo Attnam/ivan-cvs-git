@@ -81,9 +81,6 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
 {
   const valuemap& ValueMap = game::GetGlobalValueMap();
 
-  if(Word == "PostFix")
-    int esko = 2;
-
   ANALYZEDATA(DefaultArmStrength);
   ANALYZEDATA(DefaultLegStrength);
   ANALYZEDATA(DefaultDexterity);
@@ -101,7 +98,7 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(Sex);
   ANALYZEDATA(BloodColor);
   ANALYZEDATA(CanBeGenerated);
-  ANALYZEDATA(HasInfraVision);
+  //ANALYZEDATA(HasInfraVision);
   ANALYZEDATA(CriticalModifier);
   ANALYZEDATA(StandVerb);
   ANALYZEDATA(CanOpen);
@@ -118,7 +115,7 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(PoisonResistance);
   ANALYZEDATA(BulimiaResistance);
   ANALYZEDATA(IsUnique);
-  ANALYZEDATA(EatFlags);
+  ANALYZEDATA(ConsumeFlags);
   ANALYZEDATA(TotalVolume);
   ANALYZEDATA(TalkVerb);
   ANALYZEDATA(HeadBitmapPos);
@@ -169,7 +166,7 @@ void database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(CanUseEquipment);
   ANALYZEDATA(CanKick);
   ANALYZEDATA(CanTalk);
-  ANALYZEDATA(PermanentStates);
+  ANALYZEDATA(ClassStates);
   ANALYZEDATA(CanBeWished);
   ANALYZEDATA(Alias);
 }

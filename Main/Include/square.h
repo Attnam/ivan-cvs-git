@@ -58,6 +58,7 @@ class square
   void IncAnimatedEntities() { ++AnimatedEntities; }
   void DecAnimatedEntities() { --AnimatedEntities; }
   bool CanBeSeenBy(character*) const;
+  //void DrawCharacterSymbols();
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

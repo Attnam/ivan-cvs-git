@@ -37,7 +37,7 @@ void wsquare::Load(inputfile& SaveFile)
   SaveFile >> GWTerrain >> OWTerrain;
 }
 
-bool wsquare::DrawTerrain(bool Animate) const
+/*bool wsquare::DrawTerrain(bool Animate) const
 {
   GetGWTerrain()->DrawToTileBuffer(Animate);
   GetOWTerrain()->DrawToTileBuffer(Animate);
@@ -45,27 +45,46 @@ bool wsquare::DrawTerrain(bool Animate) const
   return true;
 }
 
-bool wsquare::DrawCharacters(bool Animate) const
+bool wsquare::DrawCharacter(bool Animate) const
 {
-  if(GetCharacter())
+  if(Character && Character->CanBeSeenByPlayer())
     {
-      GetCharacter()->DrawToTileBuffer(Animate);
+      Character->DrawToTileBuffer(Animate);
       return true;
     }
   else
     return false;
+}*/
+
+void wsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool RealDraw) const
+{
+  GWTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
+  OWTerrain->Draw(Bitmap, Pos, Luminance, true, RealDraw);
 }
+
+/*void wsquare::DrawCharacter(bool Animate) const
+{
+  if(Character && Character->CanBeSeenByPlayer())
+    {
+      Character->DrawToTileBuffer(Animate);
+      return true;
+    }
+  else
+    return false;
+}*/
 
 void wsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
-      ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
+      ushort Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f)));
+      DrawStaticContents(Memorized, vector2d(0, 0), Luminance, false);
+      igraph::GetFOWGraphic()->MaskedBlit(Memorized);
 
-      DrawTerrain(false);
+      //DrawTerrain(false);
 
-      igraph::GetTileBuffer()->Blit(GetMemorized(), Luminance);
-      igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
+      //igraph::GetTileBuffer()->Blit(GetMemorized(), Luminance);
+      //igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
 
       MemorizedUpdateRequested = false;
     }
@@ -76,17 +95,21 @@ void wsquare::Draw()
   if(NewDrawRequested || GetAnimatedEntities())
     {
       vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
+      ushort Luminance = (256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f))) * configuration::GetContrastLuminance() >> 8;
+      DrawStaticContents(DOUBLEBUFFER, BitPos, Luminance, true);
 
-      ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
-      ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
+      if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), true, true);
 
-      DrawTerrain(true);
+      //ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
 
-      igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), Luminance);
+      //DrawTerrain(true);
 
-      if(!configuration::GetOutlineCharacters())
+      //igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), Luminance);
+
+      /*if(!configuration::GetOutlineCharacters())
 	{
-	  DrawCharacters(true);
+	  DrawCharacter(true);
 	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	}
       else
@@ -96,11 +119,11 @@ void wsquare::Draw()
 	  if(GetCharacter())
 	    {
 	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-	      DrawCharacters(true);
+	      DrawCharacter(true);
 	      igraph::GetTileBuffer()->Outline(configuration::GetCharacterOutlineColor());
 	      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	    }
-	}
+	}*/
 
       NewDrawRequested = false;
     }

@@ -75,3 +75,5 @@ Cats & rat corpses.
 Things thrown at doors.
 %s"
 CollectCreatures
+Drinking should be separated.
+//Skeleton volume.

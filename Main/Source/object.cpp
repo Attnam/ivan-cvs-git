@@ -8,6 +8,7 @@
 #include "proto.h"
 #include "materba.h"
 #include "femath.h"
+#include "whandler.h"
 
 object::~object()
 {
@@ -143,11 +144,34 @@ void object::UpdatePictures()
       GraphicId[c].Color[1] = GetMaterialColor1(c);
       GraphicId[c].Color[2] = GetMaterialColor2(c);
       GraphicId[c].Color[3] = GetMaterialColor3(c);
+
+      ushort MaxAlpha = GetMaxAlpha(c);
+
       GraphicId[c].BaseAlpha = GetBaseAlpha(c);
+
+      if(GraphicId[c].BaseAlpha > MaxAlpha)
+	GraphicId[c].BaseAlpha = MaxAlpha;
+
       GraphicId[c].Alpha[0] = GetAlpha0(c);
+
+      if(GraphicId[c].Alpha[0] > MaxAlpha)
+	GraphicId[c].Alpha[0] = MaxAlpha;
+
       GraphicId[c].Alpha[1] = GetAlpha1(c);
+
+      if(GraphicId[c].Alpha[1] > MaxAlpha)
+	GraphicId[c].Alpha[1] = MaxAlpha;
+
       GraphicId[c].Alpha[2] = GetAlpha2(c);
+
+      if(GraphicId[c].Alpha[2] > MaxAlpha)
+	GraphicId[c].Alpha[2] = MaxAlpha;
+
       GraphicId[c].Alpha[3] = GetAlpha3(c);
+
+      if(GraphicId[c].Alpha[3] > MaxAlpha)
+	GraphicId[c].Alpha[3] = MaxAlpha;
+
       GraphicId[c].BitmapPos = GetBitmapPos(c);
       GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
       GraphicId[c].SpecialFlags = (GetVisualEffects() & 0x7)|GetSpecialFlags(c);
@@ -248,5 +272,23 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
 
       if(Material->GetEmitation() > Emitation)
 	Emitation = Material->GetEmitation();
+    }
+}
+
+void object::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
+{
+  if(AllowAlpha)
+    {
+      if(!AllowAnimate || AnimationFrames == 1)
+	Picture[0]->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      else
+	Picture[globalwindowhandler::GetTick() % AnimationFrames]->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    }
+  else
+    {
+      if(!AllowAnimate || AnimationFrames == 1)
+	Picture[0]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      else
+	Picture[globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
     }
 }

@@ -36,7 +36,7 @@
 #define SATIATED 3
 #define BLOATED 4
 
-#define STATES 8
+#define STATES 9
 
 #define POLYMORPHED 1
 #define HASTE 2
@@ -45,7 +45,8 @@
 #define LIFE_SAVED 16
 #define LYCANTHROPY 32
 #define INVISIBLE 64
-#define SEE_INVISIBLE 128
+#define INFRAVISION 128
+#define ESP 256
 
 #define HEAD 1
 #define TORSO 2
@@ -370,8 +371,10 @@
 
 #define RINGOFFIRERESISTANCE 1
 #define RINGOFPOLYMORPHCONTROL 2
+#define RINGOFINFRAVISION 3
 
 #define AMULETOFLIFESAVING 1
+#define AMULETOFESP 2
 
 #define CONICALMOMMO 1
 #define FLATMOMMO 2

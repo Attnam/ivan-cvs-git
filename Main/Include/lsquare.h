@@ -74,9 +74,9 @@ class lsquare : public square
   void BeKicked(character*, float, float, short, bool);
   uchar GetDivineMaster() const { return DivineMaster; }
   void SetDivineMaster(uchar What) { DivineMaster = What; }
-  bool DrawTerrain(bool) const;
+  /*bool DrawTerrain(bool) const;
   bool DrawStacks(bool) const;
-  bool DrawCharacters(bool) const;
+  bool DrawCharacter(bool) const;*/
   void Draw();
   void UpdateMemorized();
   bool CanBeDug() const;
@@ -116,13 +116,13 @@ class lsquare : public square
   void HasBeenHitBy(item*, float, uchar);
   void TeleportEverything(character*);
   bool DipInto(item*, character*);
-  void DrawCharacterSymbols();
   bool LockEverything(character*);
   bool RaiseTheDead(character*);
   bool TryKey(item*, character*);
   void SetLastSeen(ulong);
   ushort GetLuminance() const { return Luminance; }
   void CalculateLuminance();
+  void DrawStaticContents(bitmap*, vector2d, ushort, bool) const;
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

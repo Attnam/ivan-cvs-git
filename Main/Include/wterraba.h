@@ -14,6 +14,7 @@ class wsquare;
 class worldmap;
 class gwterrain;
 class owterrain;
+class bitmap;
 
 class wterrain
 {
@@ -52,7 +53,8 @@ class gwterrain : public wterrain, public gterrain
  public:
   typedef gwterrainprototype prototype;
   virtual void Save(outputfile&) const;
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
+  void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual uchar Priority() const = 0;
   virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
@@ -76,7 +78,8 @@ class owterrain : public wterrain, public oterrain
  public:
   typedef owterrainprototype prototype;
   virtual void Save(outputfile&) const;
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
+  void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
   virtual const prototype* GetProtoType() const = 0;

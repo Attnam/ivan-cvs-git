@@ -53,7 +53,7 @@ class ABSTRACT_CHARACTER
   virtual void SetHumanoidTorso(humanoidtorso* What);
   virtual arm* GetMainArm() const;
   virtual arm* GetSecondaryArm() const;
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
   virtual bool ReceiveDamage(character*, short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
   virtual bool BodyPartVital(ushort);
   virtual bool BodyPartCanBeSevered(ushort) const;
@@ -149,7 +149,8 @@ class ABSTRACT_CHARACTER
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
 
-  virtual uchar BodyParts() const { return 7; }
+  virtual uchar BodyParts() const { return HUMANOID_BODYPARTS; }
+  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
@@ -337,7 +338,7 @@ class CHARACTER
   virtual bool Charmable() const { return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual void BeTalkedTo(character*);
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual bool CanBeDisplaced() const { return false; }
   virtual void CreateInitialEquipment();
   virtual bool CanBeAssignedAName() const { return false; }
@@ -436,7 +437,7 @@ class CHARACTER
   frog,
  public:
   virtual ulong GetBloodColor() const { return BLACK; }
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 2500; }
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(FROGFLESH, Volume); }
@@ -478,7 +479,7 @@ class CHARACTER
   virtual void SpillBlood(uchar) { }
   virtual void SpillBlood(uchar, vector2d) { }
   virtual void BeTalkedTo(character*);
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual std::string StandVerb() const { return "floating"; }
   //static ushort Frequency() { return 100; }
   virtual bool CanFly() const { return true; }
@@ -515,6 +516,7 @@ class CHARACTER
   //virtual uchar GetSex() const { return MALE + RAND() % 2; }
  protected:
   //virtual ushort SkinColor() const { return MAKE_RGB(144, 144, 144); }
+  virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(BONE, Volume); }
   virtual ushort EyeColor() const { return MAKE_RGB(100, 0, 0); }
   virtual ushort ClothColor() const { return MAKE_RGB(111,74, 37); }
   virtual vector2d GetHeadBitmapPos() const { return vector2d(96, 208);}
@@ -663,7 +665,7 @@ class CHARACTER
   },*/
  public:
   virtual ulong GetBloodColor() const { return BLACK; }
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual bool CanOpen() const { return false; }
  protected:
   virtual ulong TotalVolume() const { return 100; }
@@ -741,7 +743,7 @@ class CHARACTER
   virtual bool MoveRandomly();
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
   virtual bool CanBeAssignedAName() const { return false; }
  protected:
@@ -1071,7 +1073,7 @@ class CHARACTER
  public:
   virtual std::string StandVerb() const { return "flying"; }
   virtual bool CanOpen() const { return false; }
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual bool CanFly() const { return true; }
  protected:
   virtual ulong TotalVolume() const { return 1000; }
@@ -1269,7 +1271,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual bool Charmable() const { return false; }
-  virtual bool HasInfraVision() const { return true; }
+  //virtual bool HasInfraVision() const { return true; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual uchar GetSex() const { return FEMALE; }
@@ -1300,7 +1302,8 @@ class ABSTRACT_CHARACTER
   dwarf,
   humanoid,
  public:
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   virtual material* CreateBodyPartFlesh(ushort, ulong Volume) const { return MAKE_MATERIAL(DWARFFLESH, Volume); }
 );

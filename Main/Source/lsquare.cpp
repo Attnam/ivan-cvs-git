@@ -89,7 +89,7 @@ ushort lsquare::CalculateEmitation() const
   return Emitation;
 }
 
-bool lsquare::DrawTerrain(bool Animate) const
+/*bool lsquare::DrawTerrain(bool Animate) const
 {
   GLTerrain->DrawToTileBuffer(Animate);
 
@@ -131,33 +131,24 @@ bool lsquare::DrawStacks(bool Animate) const
   return Items;
 }
 
-bool lsquare::DrawCharacters(bool Animate) const
+bool lsquare::DrawCharacter(bool Animate) const
 {
-  if(Character)
+  if(Character && Character->CanBeSeenByPlayer())
     {
       Character->DrawToTileBuffer(Animate);
       return true;
     }
   else
     return false;
-}
+}*/
 
 void lsquare::UpdateMemorized()
 {
   if(MemorizedUpdateRequested)
     {
-      //ushort Luminance = GetLuminance();
-
       if(Luminance >= LIGHT_BORDER)
 	{
-	  DrawTerrain(false);
-	  DrawStacks(false);
-
-	  igraph::GetTileBuffer()->Blit(Memorized);
-
-	  if(Stack->GetItems() > 1 && OLTerrain->IsWalkable())
-	    igraph::GetSymbolGraphic()->MaskedBlit(Memorized, 0, 16, 0, 0, 16, 16);
-	  
+	  DrawStaticContents(Memorized, vector2d(0, 0), 256, false);
 	  igraph::GetFOWGraphic()->MaskedBlit(Memorized);
 	}
       else
@@ -170,17 +161,70 @@ void lsquare::UpdateMemorized()
     }
 }
 
+void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool RealDraw) const
+{
+  GLTerrain->Draw(Bitmap, Pos, Luminance, false, RealDraw);
+
+  if(Fluid)
+    Fluid->Draw(Bitmap, Pos, Luminance, true, RealDraw);
+	
+  OLTerrain->Draw(Bitmap, Pos, Luminance, true, RealDraw);
+
+  if(OLTerrain->IsWalkable())
+    {
+      Stack->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+
+      #define NS(D, S) game::GetCurrentLevel()->GetLSquare(GetPos() + D)->GetSideStack(S)
+
+      if(GetPos().X)
+	NS(vector2d(-1, 0), 1)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+
+      if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
+	NS(vector2d(1, 0), 3)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+
+      if(GetPos().Y)
+	NS(vector2d(0, -1), 2)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+
+      if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
+	NS(vector2d(0, 1), 0)->Draw(Bitmap, Pos, Luminance, true, RealDraw, RealDraw);
+    }
+}
+
 void lsquare::Draw()
 {
   if(NewDrawRequested || AnimatedEntities)
     {
       vector2d BitPos = game::CalculateScreenCoordinates(Pos);
-      //ushort Luminance = GetLuminance();
 
       if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
 	{
-	  ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
-	  ushort RealLuminance = game::GetSeeWholeMapCheat() ? ContrastLuminance : Luminance * configuration::GetContrast() / 100;
+	  ushort RealLuminance = game::GetSeeWholeMapCheat() ? configuration::GetContrastLuminance() : Luminance * configuration::GetContrastLuminance() >> 8;
+	  DrawStaticContents(DOUBLEBUFFER, BitPos, RealLuminance, true);
+
+	  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+	    Character->Draw(DOUBLEBUFFER, BitPos, RealLuminance, true, true);
+
+	  /*if(Character && Character->CanBeSeenByPlayer())
+	    {
+	      if(Character->ImageIsClear())
+		{
+		  igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+		  Character->DrawToTileBuffer(Animate);
+		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
+		}
+	      else
+		{
+		  Character->DrawToTileBuffer(Animate);
+		  igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
+		}
+
+	      DrawCharacterSymbols();
+	    }*/
+
+
+	  /*ushort ContrastLuminance = (configuration::GetContrast() << 8) / 100;
+	  ushort RealLuminance = game::GetSeeWholeMapCheat() ? 256 : Luminance;
 
 	  if(!configuration::GetOutlineItems())
 	    {
@@ -190,24 +234,47 @@ void lsquare::Draw()
 	      if(!configuration::GetOutlineCharacters())
 		if(Stack->GetItems() <= 1)
 		  {
-		    DrawCharacters(true);
-		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-		    DrawCharacterSymbols();
+		    if(Character && Character->CanBeSeenByPlayer())
+		      {
+			if(Character->ImageIsClear())
+			  {
+			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+			    Character->DrawToTileBuffer(Animate);
+			    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
+			  }
+			else
+			  {
+			    Character->DrawToTileBuffer(Animate);
+			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+			    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
+			  }
+
+			DrawCharacterSymbols();
+		      }
 		  }
 		else
 		  {
-		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
+		    if(Character && Character->CanBeSeenByPlayer())
+		      {
+			if(Character->ImageIsClear())
+			  {
+			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+			    Character->DrawToTileBuffer(Animate);
+			  }
+			else
+			  {
+			    Character->DrawToTileBuffer(Animate);
+			    igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
+			  }
+		      }
+		    else
+		      igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, RealLuminance);
 
 		    if(OLTerrain->IsWalkable())
-		      igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
+		      igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), 0, 16, 0, 0, 16, 16);
 
-		    if(Character)
-		      {
-			igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-			DrawCharacters(true);
-			igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
-			DrawCharacterSymbols();
-		      }
+		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
+		    DrawCharacterSymbols();
 		  }
 	      else
 		{
@@ -216,10 +283,10 @@ void lsquare::Draw()
 		  if(Stack->GetItems() > 1 && OLTerrain->IsWalkable()) 
 		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
 
-		  if(Character)
+		  if(Character && Character->CanBeSeenByPlayer())
 		    {
 		      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
-		      DrawCharacters(true);
+		      DrawCharacter(true);
 		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
@@ -243,30 +310,35 @@ void lsquare::Draw()
 
 		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 
-		  if(Character)
+		  if(Character && Character->CanBeSeenByPlayer())
 		    igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 		}
 
 	      if(!configuration::GetOutlineCharacters())
 		{
-		  if(DrawCharacters(true))
+		  if(DrawCharacter(true))
 		    {
 		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      DrawCharacterSymbols();
 		    }
 		}
 	      else
-		if(DrawCharacters(true))
+		if(DrawCharacter(true))
 		  {
 		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		    igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 		    igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 		    DrawCharacterSymbols();
 		  }
-	    }
+	    }*/
 	}
       else
-	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+	{
+	  DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+
+	  if(Character && Character->CanBeSeenByPlayer())
+	    Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), false, true);
+	}
 
       NewDrawRequested = false;
     }
@@ -532,7 +604,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 	  NewDrawRequested = true;
 
-	  if(!Luminance)
+	  if(!OldLuminance)
 	    {
 	      DescriptionChanged = true;
 	      MemorizedUpdateRequested = true;
@@ -556,7 +628,7 @@ bool lsquare::Open(character* Opener)
 
 bool lsquare::Close(character* Closer)
 {
-  if(!GetStack()->GetItems() && !Character)
+  if(!GetStack()->GetVisibleItems() && !Character)
     return GetOLTerrain()->Close(Closer);
   else
     {
@@ -701,16 +773,18 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		Anything = true;
 	      }
 
-	    if(GetStack()->GetItems())
+	    ushort VisibleItems = GetStack()->GetVisibleItems();
+
+	    if(VisibleItems)
 	      {
 		if(Anything)
-		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomItem()->GetName(INDEFINITE)));
+		  if(VisibleItems == 1)
+		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomVisibleItem()->GetName(INDEFINITE)));
 		  else
 		    SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
 		else
-		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(std::string(GetStack()->GetBottomItem()->GetName(INDEFINITE)));
+		  if(VisibleItems == 1)
+		    SetMemorizedDescription(std::string(GetStack()->GetBottomVisibleItem()->GetName(INDEFINITE)));
 		  else
 		    SetMemorizedDescription("many items");
 
@@ -730,12 +804,12 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	    bool HasManyItems = false;
 
 	    for(ushort c = 0; c < 4; ++c)
-	      if(GetSideStack(c)->GetItems())
+	      if(GetSideStack(c)->GetVisibleItems())
 		{
 		  if(++HasItems > 1)
 		    break;
 
-		  if(GetSideStack(c)->GetItems() > 1)
+		  if(GetSideStack(c)->GetVisibleItems() > 1)
 		    {
 		      HasManyItems = true;
 		      break;
@@ -747,9 +821,9 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	    else if(HasItems == 1)
 	      for(ushort c = 0; c < 4; ++c)
 		{
-		  if(GetSideStack(c)->GetItems())
+		  if(GetSideStack(c)->GetVisibleItems())
 		    {
-		      SetMemorizedDescription(GetSideStack(c)->GetBottomItem()->GetName(INDEFINITE) + " on " + GetOLTerrain()->GetName(INDEFINITE));
+		      SetMemorizedDescription(GetSideStack(c)->GetBottomVisibleItem()->GetName(INDEFINITE) + " on " + GetOLTerrain()->GetName(INDEFINITE));
 		      break;
 		    }
 		}
@@ -1045,7 +1119,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 
   for(ushort c = 0; c < 4; ++c)
     while(GetSideStack(c)->GetItems())
-      GetSideStack(c)->MoveItem(GetSideStack(c)->GetBottomSlot(), GetStack())->SignalSquarePositionChange(false);
+      GetSideStack(c)->MoveItem(GetSideStack(c)->GetBottomSlot(), GetStack())->SignalSquarePositionChange(CENTER);
 
   if(WasWalkable != GetOLTerrain()->IsWalkable())
     {
@@ -1199,12 +1273,6 @@ bool lsquare::DipInto(item* Thingy, character* Dipper)
 
       return false;
     }
-}
-
-void lsquare::DrawCharacterSymbols()
-{
-  if(Character && Character->GetTeam() == game::GetPlayer()->GetTeam() && !Character->IsPlayer())
-    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, game::CalculateScreenCoordinates(Pos), 16, 16, ushort((configuration::GetContrast() << 8) / 100));
 }
 
 bool lsquare::LockEverything(character*)

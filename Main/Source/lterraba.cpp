@@ -112,7 +112,7 @@ void olterrain::Load(inputfile& SaveFile)
   SaveFile >> HP;
 }
 
-void glterrain::DrawToTileBuffer(bool Animate) const
+/*void glterrain::DrawToTileBuffer(bool Animate) const
 {
   if(!Animate || AnimationFrames == 1)
     Picture[0]->MaskedBlit(igraph::GetTileBuffer());
@@ -126,7 +126,7 @@ void olterrain::DrawToTileBuffer(bool Animate) const
     Picture[0]->AlphaBlit(igraph::GetTileBuffer());
   else
     Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(igraph::GetTileBuffer());
-}
+}*/
 
 vector2d lterrain::GetPos() const
 {

@@ -46,10 +46,9 @@ vector2d wterrain::GetPos() const
   return GetWSquareUnder()->GetPos();
 }
 
-void gwterrain::DrawToTileBuffer(bool) const
+void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool) const
 {
-  igraph::GetWTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos(0), 0, 0, 16, 16);
-
+  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(0), Pos, 16, 16, Luminance);
   std::priority_queue<prioritypair> Neighbour;
 
   DO_FOR_SQUARES_AROUND(GetPos().X, GetPos().Y, GetWorldMapUnder()->GetXSize(), GetWorldMapUnder()->GetYSize(),
@@ -62,14 +61,14 @@ void gwterrain::DrawToTileBuffer(bool) const
 
   while(Neighbour.size())
     {
-      igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos, 0, 0, 16, 16);
+      igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour.top().BitmapPos, Pos, 16, 16, Luminance);
       Neighbour.pop();
     }
 }
 
-void owterrain::DrawToTileBuffer(bool) const
+void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool, bool) const
 {
-  igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos(0), 0, 0, 16, 16);
+  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(0), Pos, 16, 16, Luminance);
 }
 
 worldmap* wterrain::GetWorldMapUnder() const

@@ -88,19 +88,18 @@ command* game::Command[] =
   new command(&character::Apply, "apply", 'a', false),
   new command(&character::Talk, "chat", 'C', false),
   new command(&character::Close, "close", 'c', false),
-  new command(&character::DecreaseContrast, "decrease contrast", 'B', true),
-  new command(&character::DetachBodyPart, "detach a limb", '0', true),
-  new command(&character::Dip, "dip", 'D', true),
+  new command(&character::DetachBodyPart, "detach a limb cheat", '0', true, true),
+  new command(&character::Dip, "dip", '!', true),
+  new command(&character::Drink, "drink", 'D', true),
   new command(&character::Drop, "drop", 'd', false),
-  new command(&character::Consume, "eat/drink", 'e', true),
-  new command(&character::WhatToEngrave, "engrave", 'E', false),
-  new command(&character::EqupmentScreen, "equipment menu", 'I', true),
+  new command(&character::Eat, "eat", 'e', true),
+  new command(&character::WhatToEngrave, "engrave", 'G', false),
+  new command(&character::EquipmentScreen, "equipment menu", 'E', true),
   new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
   new command(&character::GainAllItems, "give all items cheat", '8', true, true),
   new command(&character::Go, "go", 'g', false),
   new command(&character::GoDown, "go down", '>', true),
   new command(&character::GoUp, "go up", '<', true),
-  new command(&character::IncreaseContrast, "increase contrast", 'b', true),
   new command(&character::Kick, "kick", 'k', false),
   new command(&character::Look, "look", 'l', true),
   new command(&character::LowerStats, "lower stats cheat", '2', true, true),
@@ -108,8 +107,8 @@ command* game::Command[] =
   new command(&character::AssignName, "name", 'n', false),
   new command(&character::Offer, "offer", 'O', false),
   new command(&character::Open, "open", 'o', false),
-  new command(&character::OutlineCharacters, "outline characters", 'K', true),
-  new command(&character::OutlineItems, "outline items", 'J', true),
+  new command(&character::OutlineCharacters, "outline characters", 'u', true),
+  new command(&character::OutlineItems, "outline items", 'U', true),
   new command(&character::PickUp, "pick up", ',', false),
   new command(&character::Pray, "pray", 'p', false),
   new command(&character::Quit, "quit", 'q', true),
@@ -1077,6 +1076,15 @@ long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
   return Return;
 }
 
+long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
+{
+  DrawEverythingNoBlit();
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, TopicColor, Color1, Color2, false, Handler);
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Return;
+}
+
 void game::LOSTurn()
 {
   if(LOSTurns++ == 0xFFFFFFFF)
@@ -1364,13 +1372,14 @@ void game::LookHandler(vector2d CursorPos)
 	Msg = "You remember here ";
 
       Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription() + ".";
-      character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
-
-      if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
-	Character->DisplayInfo(Msg);
     }
   else
-    Msg = "You have no idea what might lie here.";
+    Msg = "You have never been here.";
+
+  character* Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+
+  if(Character && (Character->CanBeSeenByPlayer() || game::GetSeeWholeMapCheat()))
+    Character->DisplayInfo(Msg);
 
   if(game::WizardModeActivated())
     Msg += std::string(" (") + CursorPos.X + ", " + CursorPos.Y + ")";
@@ -1471,7 +1480,7 @@ void game::LookKeyHandler(vector2d CursorPos, int Key)
 	  {
 	    stack* Stack = game::GetCurrentLevel()->GetLSquare(CursorPos)->GetStack();
 
-	    if(Stack->GetItems())
+	    if(Stack->GetVisibleItems())
 	      Stack->DrawContents(game::GetPlayer(), "Items here", false);
 	    else
 	      ADD_MESSAGE("You see no items here.");

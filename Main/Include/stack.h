@@ -36,7 +36,7 @@ class stack
   stack(square* = 0, entity* = 0, uchar = CENTER);
   ~stack();
   void Load(inputfile&);
-  bool DrawToTileBuffer(bool) const;
+  void Draw(bitmap*, vector2d, ushort, bool, bool, bool) const;
   void AddItem(item*);
   void FastAddItem(item*);
   void RemoveItem(stackiterator);
@@ -45,7 +45,9 @@ class stack
   stackiterator GetBottomSlot() const;
   stackiterator GetSlotAboveTop() const;
   item* GetBottomItem() const;
+  item* GetBottomVisibleItem() const;
   ushort GetItems() const { return Item->size(); }
+  ushort GetVisibleItems() const;
   void SetSquareUnder(square*);
   item* DrawContents(character*, const std::string&, bool (*)(item*, character*) = 0) const;
   item* DrawContents(character*, const std::string&, bool, bool (*)(item*, character*) = 0) const;
@@ -61,7 +63,6 @@ class stack
   square* GetSquareUnder() const { return SquareUnder; }
   lsquare* GetLSquareUnder() const;
   bool SortedItems(character*, bool (*)(item*, character*)) const;
-  void DrawItemData(ushort, ushort) const;
   void DeletePointers();
   void BeKicked(character*, float);
   long Score() const;

@@ -1054,6 +1054,14 @@ ring
 		MainMaterialConfig == RUBY;
 		GearStates = POLYMORPH_CONTROL;
 	}
+
+	Config RINGOFINFRAVISION;
+	{
+		PostFix = "of infravision";
+		Possibility = 10;
+		MainMaterialConfig == SILVER;
+		GearStates = INFRAVISION;
+	}
 }
 
 amulet
@@ -1075,6 +1083,13 @@ amulet
 		PostFix = "of life saving";
 		MainMaterialConfig == GOLD;
 		GearStates = LIFE_SAVED;
+	}
+
+	Config AMULETOFESP;
+	{
+		PostFix = "of ESP";
+		MainMaterialConfig == SAPPHIRE;
+		GearStates = ESP;
 	}
 }
 
@@ -1258,6 +1273,14 @@ beartrap
 	IsPickableByAI = false;
 	BitmapPos = 32, 304;
 	IsTwoHanded = true;
+}
+
+wandofinvisibility /* wand-> */
+{
+	Possibility = 20;
+	Price = 250;
+	PostFix = "of invisibility";
+	MainMaterialConfig == GLASS;
 }
 
 helmet

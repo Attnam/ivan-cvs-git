@@ -81,7 +81,7 @@ void potion::GenerateLeftOvers(character* Eater)
     MoveTo(Eater->GetStack());
 }
 
-void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
+/*void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) const
 {
   bitmap* Bitmap = !Animate || AnimationFrames == 1 ? Picture[0] : Picture[globalwindowhandler::GetTick() % AnimationFrames];
 
@@ -101,7 +101,7 @@ void lantern::PositionedDrawToTileBuffer(uchar LSquarePosition, bool Animate) co
       Bitmap->AlphaBlit(igraph::GetTileBuffer(), uchar(ROTATE | MIRROR));
       break;
     }
-}
+}*/
 
 bool scroll::CanBeRead(character* Reader) const
 {
@@ -337,7 +337,7 @@ bool lantern::ReceiveDamage(character*, short Damage, uchar)
 
       brokenlantern* Lantern = new brokenlantern(0, false);
       Lantern->InitMaterials(GetMainMaterial());
-      Lantern->SignalSquarePositionChange(OnWall);
+      Lantern->SignalSquarePositionChange(SquarePosition);
       DonateSlotTo(Lantern);
       SendToHell();
       return true;
@@ -512,25 +512,25 @@ ulong bodyarmor::Price() const
   return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
 }
 
-void lantern::SignalSquarePositionChange(bool NewPosOnWall)
+void lantern::SignalSquarePositionChange(uchar NewSquarePosition)
 {
-  if(OnWall == NewPosOnWall)
-    return;
-
-  OnWall = NewPosOnWall;
-  UpdatePictures();
+  if(SquarePosition != NewSquarePosition)
+    {
+      SquarePosition = NewSquarePosition;
+      UpdatePictures();
+    }
 }
 
 void lantern::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << OnWall;
+  SaveFile << SquarePosition;
 }
 
 void lantern::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> OnWall;
+  SaveFile >> SquarePosition;
 }
 
 item* potion::BetterVersion() const
@@ -1395,12 +1395,14 @@ bool mine::GetStepOnEffect(character* Stepper)
 bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
+
   if(Dude)
     {
-      Dude->EnterTemporaryState(HASTE, 500 + RAND() % 1000);
+      Dude->BeginTemporaryState(HASTE, 500 + RAND() % 1000);
       return true;
     }
-  return false;
+  else
+    return false;
 }
 
 bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
@@ -1419,12 +1421,14 @@ bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
 bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
+
   if(Dude)
     {
-      Dude->EnterTemporaryState(SLOW, 500 + RAND() % 1000);
+      Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
       return true;
     }
-  return false;
+  else
+    return false;
 }
 
 bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
@@ -2282,7 +2286,7 @@ void banana::VirtualConstructor(bool Load)
 void lantern::VirtualConstructor(bool Load)
 {
   item::VirtualConstructor(Load);
-  SetOnWall(false);
+  SetSquarePosition(CENTER);
 }
 
 void wand::VirtualConstructor(bool Load)
@@ -3017,6 +3021,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
 
       return true;
     }
+
   ADD_MESSAGE("You are unable to escape from %s", CHARNAME(DEFINITE));
   return false;
 }
@@ -3257,4 +3262,56 @@ sweaponskill* rightarm::GetCurrentSingleWeaponSkill() const
 sweaponskill* leftarm::GetCurrentSingleWeaponSkill() const
 {
   return GetHumanoidMaster()->GetCurrentLeftSingleWeaponSkill();
+}
+
+uchar bodypart::GetMaxAlpha(ushort Frame) const
+{
+  if(GetMaster() && GetMaster()->StateIsActivated(INVISIBLE))
+    return 150;
+  else
+    return 255;
+}
+
+void wandofinvisibility::VirtualConstructor(bool Load)
+{
+  wand::VirtualConstructor(Load);
+
+  if(!Load)
+    SetCharges(2 + RAND() % 5);
+}
+
+bool wandofinvisibility::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+
+  Beam(Zapper, "killed by a bug in the invisibility code", Direction, 10);
+  SetTimesUsed(GetTimesUsed() + 1);
+  return true;
+}
+
+bool wandofinvisibility::BeamEffect(character* Who, const std::string& DeathMsg, uchar Dir, lsquare* Where) 
+{
+  if(Where->GetCharacter())
+    Where->GetCharacter()->BeginTemporaryState(INVISIBLE, 1000 + RAND() % 1001);
+
+  return false;
+}
+
+uchar lantern::GetSpecialFlags(ushort) const
+{
+  switch(SquarePosition)
+    {
+    case LEFT:
+      return ROTATE;
+    case UP:
+      return FLIP;
+    case RIGHT:
+      return ROTATE|MIRROR;
+    default:
+      return 0;
+    }
 }

@@ -176,6 +176,7 @@ class game
   static uchar CalculateRoughDirection(vector2d);
   static void SetCurrentEmitterEmitation(ushort What) { CurrentEmitterEmitation = What; }
   static void SetCurrentEmitterPos(vector2d);
+  static long ScrollBarQuestion(const std::string&, vector2d, long, long, long, long, ushort, ushort, ushort, void (*)(long) = 0);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;

@@ -97,10 +97,10 @@ bool door::Close(character* Closer)
   return true;
 }
 
-void altar::DrawToTileBuffer(bool Animate) const
+void altar::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool AllowAnimate) const
 {
-  olterrain::DrawToTileBuffer(Animate);
-  igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
+  olterrain::Draw(Bitmap, Pos, Luminance, AllowAlpha, AllowAnimate);
+  igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, GetDivineMaster() << 4, 0, Pos, 16, 16, Luminance);
 }
 
 void altar::Load(inputfile& SaveFile)
@@ -444,7 +444,7 @@ bool doublebed::SitOn(character* Sitter)
   return true;
 }
 
-bool fountain::Consume(character* Drinker)
+bool fountain::Drink(character* Drinker)
 {
   if(GetContainedMaterial())
     {

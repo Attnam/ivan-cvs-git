@@ -11,6 +11,7 @@
 #include "proto.h"
 #include "game.h"
 #include "save.h"
+#include "igraph.h"
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true), AnimatedEntities(0)
 {
@@ -57,9 +58,18 @@ void square::AddCharacter(character* Guy)
 
 void square::DrawMemorized()
 {
-  if(LastSeen && (NewDrawRequested || LastSeen == game::GetLOSTurns() - 1))
-    {	
-      GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, game::CalculateScreenCoordinates(Pos), 16, 16, ushort((configuration::GetContrast() << 8) / 100));
+  if(NewDrawRequested || LastSeen == game::GetLOSTurns() - 1)
+    {
+      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+
+      if(LastSeen)
+	Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+      else
+	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
+
+      if(Character && Character->CanBeSeenByPlayer())
+	Character->Draw(DOUBLEBUFFER, BitPos, configuration::GetContrastLuminance(), LastSeen ? true : false, true);
+
       NewDrawRequested = false;
     }
 }
@@ -161,3 +171,9 @@ bool square::CanBeSeenBy(character* Who) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->LOSRangeSquare());
 }
+
+/*void square::DrawCharacterSymbols()
+{
+  if(Character && Character->GetTeam() == game::GetPlayer()->GetTeam() && Character->CanBeSeenByPlayer() && !Character->IsPlayer())
+    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, game::CalculateScreenCoordinates(Pos), 16, 16, ushort((configuration::GetContrast() << 8) / 100));
+}*/

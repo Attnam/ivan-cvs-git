@@ -77,9 +77,12 @@ void fluid::Load(inputfile& SaveFile)
   SaveFile >> Picture;
 }
 
-void fluid::DrawToTileBuffer(bool) const
+void fluid::Draw(bitmap* Bitmap, vector2d Pos, ushort Luminance, bool AllowAlpha, bool) const
 {
-  Picture->AlphaBlit(igraph::GetTileBuffer());
+  if(AllowAlpha)
+    Picture->PowerBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    Picture->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 outputfile& operator<<(outputfile& SaveFile, fluid* Fluid)

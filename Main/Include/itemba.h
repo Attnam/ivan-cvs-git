@@ -114,10 +114,10 @@ class item : public object
   typedef std::map<ushort, itemdatabase> databasemap;
   item(donothing);
   virtual float GetWeaponStrength() const;
-  virtual void DrawToTileBuffer(bool) const;
-  virtual void DrawToTileBuffer(vector2d Pos, bool) const;
-  virtual void PositionedDrawToTileBuffer(uchar, bool) const;
-  virtual void DrawTo(bitmap*, vector2d, bool = true) const;
+  //virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(vector2d Pos, bool) const;
+  //virtual void PositionedDrawToTileBuffer(uchar, bool) const;
+  //virtual void DrawTo(bitmap*, vector2d, bool = true) const;
   virtual bool Open(character*);
   virtual bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
@@ -141,7 +141,7 @@ class item : public object
   virtual bool CheckPickUpEffect(character*) { return true; }
   virtual bool GetStepOnEffect(character*) { return false; }
   virtual bool IsTheAvatar() const { return false; }
-  virtual void SignalSquarePositionChange(bool) { }
+  virtual void SignalSquarePositionChange(uchar) { }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
@@ -162,7 +162,8 @@ class item : public object
   virtual void MoveTo(stack*);
   virtual void DonateSlotTo(item*);
   static std::string ItemCategoryName(uchar);
-  static bool ConsumableSorter(item* Item, character* Char) { return Item->IsConsumable(Char); }
+  static bool EatableSorter(item* Item, character* Char) { return Item->IsEatable(Char); }
+  static bool DrinkableSorter(item* Item, character* Char) { return Item->IsDrinkable(Char); }
   static bool OpenableSorter(item* Item, character* Char) { return Item->IsOpenable(Char); }
   static bool ReadableSorter(item* Item, character* Char) { return Item->IsReadable(Char); }
   static bool DippableSorter(item* Item, character* Char) { return Item->IsDippable(Char); }
@@ -179,6 +180,8 @@ class item : public object
   static bool BeltSorter(item* Item, character* Char) { return Item->IsBelt(Char); }
   static bool BootSorter(item* Item, character* Char) { return Item->IsBoot(Char); }
   virtual bool IsConsumable(const character*) const;
+  virtual bool IsEatable(const character*) const;
+  virtual bool IsDrinkable(const character*) const;
   virtual bool IsOpenable(const character*) const { return false; }
   virtual bool IsReadable(const character*) const { return false; }
   virtual bool IsDippable(const character*) const { return false; }
@@ -303,7 +306,6 @@ class item : public object
   ulong ID;
   graphic_id InHandsGraphicId;
   const database* DataBase;
-  uchar VisualEffects;
   ulong CarriedWeight;
 };
 

@@ -1,6 +1,7 @@
 #ifndef __FLUID_H__
 #define __FLUID_H__
 
+#include "vector2d.h"
 #include "entity.h"
 
 class outputfile;
@@ -17,7 +18,7 @@ class fluid : public entity
   virtual void Be();
   void Save(outputfile&) const;
   void Load(inputfile&);
-  void DrawToTileBuffer(bool) const;
+  void Draw(bitmap*, vector2d, ushort, bool, bool) const;
   ushort GetEmitation() const;
   bitmap* GetPicture() const { return Picture; }
   material* GetMaterial() const { return Material; }

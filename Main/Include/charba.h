@@ -60,7 +60,7 @@ struct characterdatabase
   uchar Sex;
   ulong BloodColor;
   bool CanBeGenerated;
-  bool HasInfraVision;
+  //bool HasInfraVision;
   uchar CriticalModifier;
   std::string StandVerb;
   bool CanOpen;
@@ -77,7 +77,7 @@ struct characterdatabase
   ushort PoisonResistance;
   ushort BulimiaResistance;
   bool IsUnique;
-  ushort EatFlags;
+  ushort ConsumeFlags;
   ulong TotalVolume;
   std::string TalkVerb;
   vector2d HeadBitmapPos;
@@ -128,7 +128,7 @@ struct characterdatabase
   bool CanUseEquipment;
   bool CanKick;
   bool CanTalk;
-  ushort PermanentStates;
+  ushort ClassStates;
   bool CanBeWished;
   std::vector<std::string> Alias;
 };
@@ -190,8 +190,8 @@ class character : public entity, public id
   virtual bool IsPlayer() const { return Player; }
   virtual bool Apply();
   virtual bool Close();
-  virtual bool Consume();
-  virtual bool DecreaseContrast();
+  virtual bool Eat();
+  virtual bool Drink();
   virtual bool Dip();
   virtual bool DrawMessageHistory();
   virtual bool Drop();
@@ -200,7 +200,6 @@ class character : public entity, public id
   virtual bool GainAllItems();
   virtual bool GoDown();
   virtual bool GoUp();
-  virtual bool IncreaseContrast();
   virtual bool Kick();
   virtual bool Look();
   virtual bool LowerStats();
@@ -220,7 +219,7 @@ class character : public entity, public id
   virtual bool Talk();
   virtual bool Throw();
   virtual bool WalkThroughWalls();
-  virtual bool EqupmentScreen();
+  virtual bool EquipmentScreen();
   virtual bool WhatToEngrave();
   virtual bool WizardMode();
   virtual void AddScoreEntry(const std::string&, float = 1, bool = true) const;
@@ -237,6 +236,8 @@ class character : public entity, public id
   virtual ushort GetEmitation() const;
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
+  virtual ushort ESPRange() const;
+  virtual ushort ESPRangeSquare() const;
   virtual vector2d GetPos() const;
   virtual void AddMissMessage(character*) const;
   virtual void AddPrimitiveHitMessage(character*, const std::string&, const std::string&, uchar) const;
@@ -245,7 +246,7 @@ class character : public entity, public id
   virtual void BeTalkedTo(character*);
   virtual void ReceiveDarkness(long);
   virtual void Die(bool = false);
-  virtual void DrawToTileBuffer(bool) const;
+  //virtual void DrawToTileBuffer(bool) const;
   virtual void HasBeenHitByItem(character*, item*, float);
   virtual void HealFully(character*) { }
   virtual void Hunger(ushort = 1);
@@ -272,14 +273,14 @@ class character : public entity, public id
   //virtual void CharacterSpeciality(ushort = 1) { }
   virtual void ActivateTemporaryState(ushort What) { TemporaryState |= What; }
   virtual void DeActivateTemporaryState(ushort What) { TemporaryState &= ~What; }
-  virtual void ActivatePermanentState(ushort What) { PermanentState |= What; }
-  virtual void DeActivatePermanentState(ushort What) { PermanentState &= ~What; }
+  virtual void ActivateEquipmentState(ushort What) { EquipmentState |= What; }
+  virtual void DeActivateEquipmentState(ushort What) { EquipmentState &= ~What; }
   virtual bool TemporaryStateIsActivated(ushort What) const { return TemporaryState & What ? true : false; }	
-  virtual bool PermanentStateIsActivated(ushort What) const { return PermanentState & What ? true : false; }
-  virtual bool StateIsActivated(ushort What) const { return TemporaryState & What || PermanentState & What; }
+  virtual bool EquipmentStateIsActivated(ushort What) const { return EquipmentState & What ? true : false; }
+  virtual bool StateIsActivated(ushort What) const { return TemporaryState & What || EquipmentState & What; }
   virtual void Faint();
   //virtual void TemporaryPolymorphHandler();
-  virtual void SetTemporaryStateCounter(uchar, ushort);
+  virtual void SetTemporaryStateCounter(ushort, ushort);
   virtual void DeActivateVoluntaryAction(const std::string& = "");
   //virtual void EndTemporaryPolymorph();
   virtual void ActionAutoTermination();
@@ -371,7 +372,7 @@ class character : public entity, public id
   virtual characterslot* GetTorsoSlot() const { return GetBodyPartSlot(0); }
   virtual characterslot* GetBodyPartSlot(ushort) const;
   virtual bool ConsumeItem(item*);
-  virtual bool CanEat(material*) const;
+  virtual bool CanConsume(material*) const;
   virtual action* GetAction() const { return Action; }
   virtual void SetAction(action* What) { Action = What; }
   virtual void SwitchToDig(item*, vector2d) { }
@@ -383,8 +384,8 @@ class character : public entity, public id
   virtual uchar CloseMultiplier() const { return 2; }
   virtual bool CheckThrow() const { return true; }  
   virtual bool CheckOffer() const { return true; }
-  virtual ushort GetTemporaryStateCounter(uchar) const;
-  virtual void EditTemporaryStateCounter(uchar, short);
+  virtual ushort GetTemporaryStateCounter(ushort) const;
+  virtual void EditTemporaryStateCounter(ushort, short);
   virtual void BlockDamageType(uchar);
   virtual bool AllowDamageTypeBloodSpill(uchar) const;
   virtual bool DamageTypeCanSeverBodyPart(uchar) const;
@@ -440,7 +441,7 @@ class character : public entity, public id
   DATABASEVALUE(uchar, Sex);
   DATABASEVALUE(ulong, BloodColor);
   DATABASEBOOL(CanBeGenerated);
-  DATABASEBOOL(HasInfraVision);
+  //DATABASEBOOL(HasInfraVision);
   DATABASEVALUE(uchar, CriticalModifier);
   DATABASEVALUE(const std::string&, StandVerb);
   DATABASEBOOL(CanOpen);
@@ -457,7 +458,7 @@ class character : public entity, public id
   DATABASEVALUE(ushort, PoisonResistance);
   DATABASEVALUE(ushort, BulimiaResistance);
   DATABASEBOOL(IsUnique);
-  DATABASEVALUE(ushort, EatFlags);
+  DATABASEVALUE(ushort, ConsumeFlags);
   DATABASEVALUE(ulong, TotalVolume);
   DATABASEVALUE(const std::string&, TalkVerb);
   DATABASEVALUEWITHPARAMETER(vector2d, HeadBitmapPos, ushort);
@@ -507,7 +508,7 @@ class character : public entity, public id
   DATABASEBOOL(CanUseEquipment);
   DATABASEBOOL(CanKick);
   DATABASEBOOL(CanTalk);
-  DATABASEVALUE(ushort, PermanentStates);
+  DATABASEVALUE(ushort, ClassStates);
   DATABASEBOOL(CanBeWished);
   DATABASEVALUE(const std::vector<std::string>&, Alias);
 
@@ -557,10 +558,12 @@ class character : public entity, public id
   virtual bool EquipmentHasNoPairProblems(ushort) const { return true; }
   virtual void SignalEquipmentAdd(ushort);
   virtual void SignalEquipmentRemoval(ushort);
-  virtual void CalculateEquipmentStates();
+  //virtual void CalculateEquipmentStates();
   ushort GetConfig() const { return Config; }
 
-  virtual void EnterTemporaryState(ushort, ushort);
+  virtual void BeginTemporaryState(ushort, ushort);
+  virtual void GainIntrinsic(ushort What) { BeginTemporaryState(What, 0); }
+  virtual void LoseIntrinsic(ushort);
   virtual void HandleStates();
   virtual void PrintBeginPolymorphControlMessage() const;
   virtual void PrintEndPolymorphControlMessage() const;
@@ -572,11 +575,15 @@ class character : public entity, public id
   virtual void PrintEndHasteMessage() const;
   virtual void PrintBeginSlowMessage() const;
   virtual void PrintEndSlowMessage() const;
-  virtual void EnterTemporaryHaste(ushort);
-  virtual void EnterTemporarySlow(ushort);
-  virtual void EndTemporaryPolymorph();
+  virtual void EndPolymorph();
   virtual void LycanthropyHandler();
   virtual void SaveLife();
+  virtual void BeginInvisibility();
+  virtual void BeginInfraVision();
+  virtual void BeginESP();
+  virtual void EndInvisibility();
+  virtual void EndInfraVision();
+  virtual void EndESP();
   virtual void PolymorphRandomly(ushort);
   virtual bool EquipmentEasilyRecognized(ushort) const { return true; }
   virtual void StartReading(item*, ulong);
@@ -584,8 +591,10 @@ class character : public entity, public id
   virtual void CharacterSpeciality() { }
   virtual void PrintBeginInvisibilityMessage() const;
   virtual void PrintEndInvisibilityMessage() const;
-  virtual void PrintBeginSeeInvisibleMessage() const;
-  virtual void PrintEndSeeInvisibleMessage() const;
+  virtual void PrintBeginInfraVisionMessage() const;
+  virtual void PrintEndInfraVisionMessage() const;
+  virtual void PrintBeginESPMessage() const;
+  virtual void PrintEndESPMessage() const;
   virtual bool CanBeSeenByPlayer() const;
   virtual bool CanBeSeenBy(character*) const;
   virtual bool DetachBodyPart();
@@ -598,6 +607,10 @@ class character : public entity, public id
   virtual std::vector<character*> GetFriendsAround() const;
   virtual bodypart* TryAttachRandomOldBodyPart();
   virtual bodypart* AttachOldBodyPartFromStack(stackiterator, stack*);
+  virtual bool IsWarm() const;
+  virtual void CalculateEquipmentState();
+  virtual void Draw(bitmap*, vector2d, ushort, bool, bool) const;
+  virtual void DrawBodyParts(bitmap*, vector2d, ushort, bool, bool) const;
  protected:
   virtual uchar AllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
   virtual void Initialize(uchar, bool, bool);
@@ -673,11 +686,11 @@ class character : public entity, public id
   entity* MotherEntity;
   character* PolymorphBackup;
   gweaponskill** CategoryWeaponSkill;
-  ushort PermanentState;
+  ushort EquipmentState;
   static void (character::*PrintBeginStateMessage[STATES])() const;
   static void (character::*PrintEndStateMessage[STATES])() const;
-  static void (character::*EnterTemporaryStateHandler[STATES])(ushort);
-  static void (character::*EndTemporaryStateHandler[STATES])();
+  static void (character::*BeginStateHandler[STATES])();
+  static void (character::*EndStateHandler[STATES])();
   static void (character::*StateHandler[STATES])();
 };
 

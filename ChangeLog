@@ -1,3 +1,40 @@
+July 5 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Temporary states whose counters are zero are now considered permanent intrinsics
+	* The character database value PermanentStates renamed as ClassStates
+	* The character data member PermanentState renamed as EquipmentState,
+	  and the associated function names updated as well
+	* Added BeginStateHandlers and EndStateHandlers that are called always when states
+	  (either temporary, intrinsic or controlled) are activated/deactivated
+	* Removed the old handler system used only when switching a temporary state on/off
+	* Simplified the inner structure of the code in such way that haste and slow can now be
+	  in effect simultaneously, but this is represented in the panel as if neither was active
+	* Added infravision and ESP states
+	* See invisible state removed, as infravision now confers the same benefits
+	* HasInfraVision character database value removed
+	* Added wand of invisibility
+	* Added ring of infravision
+	* Added amulet of ESP
+	* Draw system rewritten completely to make draw functions far more flexible and
+	  easier to use and to remove some duplicate code
+	* Added transparency effect for invisible creatures sensed by infravision or ESP
+	* Added object::MaxAlpha() function to make the adding of transparency effects again a bit easier
+	* Characters seen by infravision or ESP are no longer affected by varying luminance;
+	  instead they are always seen as if the light level was 256
+	* Corrected a recently-added bug which caused AlterLuminance not to update
+	  MemorizedDescription correctly when the first emitter was added
+	* Added item::IsVisible(), stack::GetVisibleItems() and stack::GetBottomVisibleItem()
+	  functions which allow the convenient use of hidden items
+	* Script generated land mines and bear traps are now correctly invisible
+	* Hidden items are now shown if SeeWholeMapCheat is on
+	* Added iosystem::ScrollBarQuestion which acts as a graphical version of the normal NumberQuestion
+	* Contrast can now be set with ScrollBarQuestion and the display is still updated constantly
+	* Removed the increase and decrease contrast ('b' and 'B') commands
+	* Separated the eat and drink ('e' and 'D') commands
+	* Redefined much of the keyboard layout
+	* Decreased reading times required when WMode is activated
+	* Skeleton's TotalVolume and FleshMaterial are now correct
+
 July 03 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* SDL's key repeat activated
@@ -14,7 +51,7 @@ June 19 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 June 17 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* AP system remade: it is now the actions' duty to decrease AP, not Be()'s
-	* Added read action, thus allowing reading times longer than one turn,
+	* Added read action, thus allowing reading times longer than one turn and
 	  read interupts
 	* Lookmode's messages and information keys work far better now
 	* Fixed a minor bug in the lookmode zoom code
