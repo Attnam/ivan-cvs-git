@@ -1715,7 +1715,7 @@ void character::MoveRandomly()
 	{
 		ushort ToTry = rand() % 8;
 
-		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter());
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
@@ -2989,4 +2989,17 @@ stack* character::GetGiftStack() const
 		return GetStack();
 	else
 		return GetLevelSquareUnder()->GetStack();
+}
+
+void character::MoveRandomlyInRoom()
+{
+	bool OK = false;
+
+	for(uchar c = 0; c < 10 && !OK; ++c)
+	{
+		ushort ToTry = rand() % 8;
+
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter() && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
+			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
+	}
 }

@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "strover.h"
 #include "wsquare.h"
 #include "igraph.h"
@@ -57,8 +59,7 @@ void worldmapsquare::UpdateMemorized()
 {
 	if(MemorizedUpdateRequested)
 	{
-		//ushort Luminance = 256 - ushort(log(1 + abs(GetWorldMapUnder()->GetAltitude(Pos)) / 50) * 25);
-		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+		ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
 
 		DrawTerrain();
 
@@ -75,7 +76,7 @@ void worldmapsquare::Draw()
 	{
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
 
-		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+		ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
 		ushort GammaLuminance = ushort(256 * game::GetSoftGamma());
 
 		DrawTerrain();

@@ -17,6 +17,7 @@
 #include "felist.h"
 #include "strover.h"
 #include "team.h"
+#include "lterraba.h"
 
 perttu::~perttu()
 {
@@ -673,18 +674,31 @@ void perttu::BeTalkedTo(character* Talker)
 
 	if(Talker->HasMaakotkaShirt())
 	{
-		iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
-		game::RemoveSaves();
-		game::Quit();
+		ADD_MESSAGE("Perttu smiles. \"Thou hast defeated Oree! Valpuri shall bless thee for the rest of thine life!");
+		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power! Return it now, please.\"");
 
-		if(!game::GetWizardMode())
+		if(game::BoolQuestion("Will you give the Maakotka Shirt to Perttu? [Y/n]", 'y'))
 		{
-			AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 4, false);
-			highscore HScore;
-			HScore.Draw();
-		}
+			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Perttu is happy!\n\nYou are victorious!");
+			game::RemoveSaves();
+			game::Quit();
 
-		return;
+			if(!game::GetWizardMode())
+			{
+				AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 4, false);
+				highscore HScore;
+				HScore.Draw();
+			}
+
+			return;
+		}
+		else
+		{
+			ADD_MESSAGE("Perttu's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
+			ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpuri bless him who is better.\"");
+			GetTeam()->Hostility(Talker->GetTeam());
+			return;
+		}
 	}
 	else
 		if(StoryState >= 2)
@@ -736,6 +750,7 @@ void perttu::BeTalkedTo(character* Talker)
 
 			game::GetCurrentArea()->SendNewDrawRequest();
 			ADD_MESSAGE("Perttu hands you something. \"Thou migth need this.\"");
+			ADD_MESSAGE("\"And by the way, visit the librarian. He might have advice for thee.\"");
 			Talker->GetStack()->AddItem(new banana);
 			StoryState = 1;
 		}
@@ -1185,7 +1200,7 @@ void perttuswife::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
-		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		ADD_MESSAGE("\"Murderer! Just wait until Perttu finds you!\"");
 		return;
 	}
 
@@ -1196,17 +1211,17 @@ void perttuswife::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		ADD_MESSAGE("\"I'm so sick jealous to those dolphins...\"");
 		break;
 	case 1:
-		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		ADD_MESSAGE("\"I'm Perttu's favorite, not she!\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		ADD_MESSAGE("\"Why must Perttu stay in this forest? There isn't even a proper hairdresser here!\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
-		ADD_MESSAGE("I am now the only child in the family.\"");
+		ADD_MESSAGE("\"Being one of six wives is a dream job.");
+		ADD_MESSAGE("Pay is good and you only have to work about one night a week!\"");
 		break;
 	}
 }
@@ -1215,7 +1230,7 @@ void housewife::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
-		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		ADD_MESSAGE("\"Face my rolling pin! Graah!\"");
 		return;
 	}
 
@@ -1226,17 +1241,19 @@ void housewife::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		ADD_MESSAGE("\"Can you help me find my husband? He is hiding somewhere.");
+		ADD_MESSAGE("He's that farmer who's just been mugged with a frying pan.\"");
 		break;
 	case 1:
-		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		ADD_MESSAGE("\"Yesterday a bear rushed through my kitchen wall and ruined all my pies.");
+		ADD_MESSAGE("Animals are truly annoying. Why can't we just burn the whole forest down?\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		ADD_MESSAGE("\"Wolves ate my seventh daughter last week. Damn.");
+		ADD_MESSAGE("It'll take eight years to produce an equally good replacement worker.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
-		ADD_MESSAGE("I am now the only child in the family.\"");
+		ADD_MESSAGE("\"Perttu's wives are so arrogant towards us working class ones. Grr...\"");
 		break;
 	}
 }
@@ -1245,7 +1262,7 @@ void femaleslave::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
-		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		ADD_MESSAGE("\"Yikes!\"");
 		return;
 	}
 
@@ -1256,17 +1273,16 @@ void femaleslave::BeTalkedTo(character* Talker)
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
+		ADD_MESSAGE("\"Praise our lord Perttu!\"");
 		break;
 	case 1:
-		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
+		ADD_MESSAGE("\"Does that toy frog really need us serving it?\"");
 		break;
 	case 2:
-		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+		ADD_MESSAGE("\"I'm not a slave. I'm a high-ranking palm branch officer with a good career history.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
-		ADD_MESSAGE("I am now the only child in the family.\"");
+		ADD_MESSAGE("\"Palm leaves are good for health. Perttu loves their smell.\"");
 		break;
 	}
 }
@@ -1275,28 +1291,108 @@ void librarian::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
-		ADD_MESSAGE("\"Your head will look fine above my fireplace!\"");
+		ADD_MESSAGE("\"The pen is mightier than the sword! Fall, unlearned one!\"");
 		return;
 	}
 
 	static uchar LastSaid = 0xFF, ToSay;
-	while((ToSay = rand() % 4) == LastSaid);
+	while((ToSay = rand() % 9) == LastSaid);
 	LastSaid = ToSay;
 
 	switch(ToSay)
 	{
 	case 0:
-		ADD_MESSAGE("\"A man is not a man unless he has lost his left arm in a battle against a polar bear.\"");
-		break;
+		if(game::GetPerttu() && !game::GetPerttu()->GetStoryState())
+		{
+			ADD_MESSAGE("\"Thou should visit Perttu if thou areth in need of adventure.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"It is said that the wand of polymorph has dozens of uses.\"");
+			break;
+		}
 	case 1:
-		ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
-		break;
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		{
+			ADD_MESSAGE("\"Thou are going to fight Elpuri? Beware! It is a powerful enemy.");
+			ADD_MESSAGE("Other monsters are very vulnerable if surrounded by thine party, but not that beast.");
+			ADD_MESSAGE("For it may slay a horde of thine friends at once with its horrendous tail attack.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"Remember: Scientia est potentia.\"");
+			break;
+		}
 	case 2:
-		ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
-		break;
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		{
+			ADD_MESSAGE("\"Elpuri the Dark Frog abhors light and resides in a level of eternal darkness.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"Shh! Be silent in the library.\"");
+			break;
+		}
 	case 3:
-		ADD_MESSAGE("\"That communist should be hunted down and boiled. My brother tried it one day.");
-		ADD_MESSAGE("I am now the only child in the family.\"");
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 1)
+		{
+			ADD_MESSAGE("\"Elpuri's attacks are so strong that they may shatter many of thine precious items.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"Dost thou not smell all the knowledge floating around here?\"");
+			break;
+		}
+	case 4:
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 2)
+		{
+			ADD_MESSAGE("\"Thou wish to confront the Pepsi Daemon King? Heed my advice:");
+			ADD_MESSAGE("He is a cunning enemy and will try to ambush thee.");
+			ADD_MESSAGE("A powerful party and a means of quick escape at hand would help thee greatly.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"It is said that Loricatus, the god of smithing, can enchant your weapons' material.\"");
+			break;
+		}
+	case 5:
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 2)
+		{
+			ADD_MESSAGE("\"The Maakotka Shirt is a legendary artifact. Thou canst not find a better armor.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"It this book they talk about Erado, the great chaos god.");
+			ADD_MESSAGE("He hates us mortals more than anything and will respond only to Champions of Evil.\"");
+			break;
+		}
+	case 6:
+		ADD_MESSAGE("\"Attnam is traditionally ruled by the Überpriest of the Great Frog.");
+		ADD_MESSAGE("The Überpriest is he who holds the holy Maakotka Shirt and kills the last Überpriest.\"");
+		break;
+	case 7:
+		if(game::GetPerttu() && game::GetPerttu()->GetStoryState() == 3)
+		{
+			ADD_MESSAGE("\"Remember, the Maakotka Shirt is the armor the Überpriests.");
+			ADD_MESSAGE("Things will get *very* rough if one denies it from Perttu.\"");
+			break;
+		}
+		else
+		{
+			ADD_MESSAGE("\"They say thou should keep all the artifacts thou find.");
+			ADD_MESSAGE("They shall make thee famous after thine retirement.\"");
+			break;
+		}
+	case 8:
+		ADD_MESSAGE("\"If thou shall ever encounter an Enner Beast, now it is a horrible foe.");
+		ADD_MESSAGE("It may shatter your items and armor with its scream that penetrates iron and stone.");
+		ADD_MESSAGE("Thou should not engage it in melee. Kill it from afar.\"");
 		break;
 	}
 }

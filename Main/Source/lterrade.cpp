@@ -390,3 +390,18 @@ void stairsdown::StepOn(character* Stepper)
 	if(Stepper->GetIsPlayer()) 
 		ADD_MESSAGE("There is stairway leading downwards here.");
 }
+
+void bookcase::SitOn(character*)
+{
+	ADD_MESSAGE("The bookcase is very unconfortable to sit on.");
+}
+
+void fountain::SitOn(character*)
+{
+	ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
+}
+
+void doublebed::SitOn(character*)
+{
+	ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
+}

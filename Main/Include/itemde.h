@@ -356,7 +356,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, cloth::StaticType()))
 	virtual ushort Possibility() const RET(0)
 	virtual ushort GetArmorValue() const RET(10)
-	virtual std::string NameSingular() const RET("Maakotka shirt")
+	virtual std::string NameSingular() const RET("Maakotka Shirt")
 	virtual short CalculateOfferValue(char) const RET(750)
 	virtual long Score() const RET(2500)
 	virtual bool IsMaakotkaShirt() const RET(true);

@@ -337,6 +337,7 @@ class OVERLEVELTERRAIN
 	},
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+	virtual void SitOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "bookcase"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 272); }
@@ -351,6 +352,7 @@ class OVERLEVELTERRAIN
 	},
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+	virtual void SitOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "fountain"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(16, 288); }
@@ -365,6 +367,7 @@ class OVERLEVELTERRAIN
 	},
 public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
+	virtual void SitOn(character*);
 protected:
 	virtual std::string NameSingular() const				{ return "luxurious double bed"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }

@@ -132,7 +132,7 @@ void consummo::PrayBadEffect()
 void valpuri::PrayGoodEffect()
 {
 	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
-	ADD_MESSAGE("A sword glittering with holy might drops on to the ground.");
+	ADD_MESSAGE("A sword glittering with holy might appears from nothing.");
 
 	game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(new valpurium));
 }
@@ -271,7 +271,7 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-	ADD_MESSAGE("A mithril platemail drops on the ground.");
+	ADD_MESSAGE("A mithril platemail materializes before you.");
 	item* Reward = new platemail(false);
 	Reward->InitMaterials(new mithril);
 	game::GetPlayer()->GetGiftStack()->AddItem(Reward);
@@ -538,7 +538,7 @@ void erado::PrayGoodEffect()
 	ADD_MESSAGE("The air vibrates violently around you.");
 	ADD_MESSAGE("A terrible undead voice echoes through the caverns:");
 	ADD_MESSAGE("\"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\"");
-	ADD_MESSAGE("A heavy weapon of pure corruption falls on the ground.");
+	ADD_MESSAGE("A heavy weapon of pure corruption materializes before you.");
 
 	game::GetPlayer()->GetGiftStack()->AddItem(new neercseulb);
 }
@@ -713,12 +713,13 @@ void macellarius::PrayBadEffect()
 
 void scabies::PrayGoodEffect()
 {
-	ADD_MESSAGE("5 cans full of school food drop to on the ground.");
+	ADD_MESSAGE("Five cans full of school food drop from somewhere above!");
+
 	for(uchar c = 0; c < 5; ++c)
 	{
 		item* Reward = new can(false);
 		Reward->InitMaterials(2, new iron, new schoolfood);
-		game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
+		game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 	}
 }
 
@@ -741,7 +742,7 @@ void scabies::PrayBadEffect()
 
 void infuscor::PrayGoodEffect()
 {
-	ADD_MESSAGE("5 scrolls drop to on the ground.");
+	ADD_MESSAGE("Suddenly five scrolls appear from nothing!");
 
 	for(uchar c = 0; c < 5; ++c)
 		game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleport);

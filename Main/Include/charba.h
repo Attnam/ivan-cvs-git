@@ -251,6 +251,7 @@ public:
 	virtual uchar CriticalModifier() const { return 20; }
 	virtual std::string StandVerb() const { return "standing"; }
 	virtual stack* GetGiftStack() const;
+	virtual void MoveRandomlyInRoom();
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

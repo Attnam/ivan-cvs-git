@@ -221,7 +221,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 	struct _finddata_t Found;
 	long hFile;
 	int Check = 0;
-	felist Buffer("Chooseth a file and be sorry", TopicColor);
+	felist Buffer("Choose a file and be sorry:", TopicColor);
 	hFile = _findfirst("Save/*.sav", &Found);
 
 	if(hFile == -1L)

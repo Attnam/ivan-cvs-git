@@ -156,8 +156,8 @@ class CHARACTER
 	{
 		SetSize(170);
 		SetAgility(10);
-		SetStrength(10);
-		SetEndurance(15);
+		SetStrength(15);
+		SetEndurance(20);
 		SetPerception(18);
 		SetLegType(rand() % 3);
 		SetTorsoType(2 + rand() % 2);
@@ -183,9 +183,9 @@ class CHARACTER
 	{
 		SetSize(180);
 		SetAgility(15);
-		SetStrength(30);
+		SetStrength(25);
 		SetEndurance(30);
-		SetPerception(21);
+		SetPerception(24);
 		SetLegType(4);
 		SetTorsoType(8);
 		SetArmType(5);
@@ -199,7 +199,8 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
 	virtual void BeTalkedTo(character*);
 protected:
-	virtual std::string NameSingular() const RET("city guard")
+	virtual std::string NameSingular() const RET("guard")
+	virtual float GetMeleeStrength() const RET(2000)
 );
 
 class CHARACTER
@@ -210,9 +211,9 @@ class CHARACTER
 	{
 		SetSize(160);
 		SetAgility(10);
-		SetStrength(30);
+		SetStrength(25);
 		SetEndurance(30);
-		SetPerception(30);
+		SetPerception(25);
 		SetLegType(2);
 		SetTorsoType(7);
 		SetArmType(6);
@@ -240,7 +241,7 @@ class CHARACTER
 		SetSize(180);
 		SetAgility(10);
 		SetStrength(20);
-		SetEndurance(20);
+		SetEndurance(15);
 		SetPerception(18);
 		SetLegType(2);
 		SetTorsoType(7);
@@ -256,7 +257,6 @@ public:
 	virtual void BeTalkedTo(character*);
 protected:
 	virtual std::string NameSingular() const RET("priest")
-	virtual float GetMeleeStrength() const RET(1000)
 );
 
 class CHARACTER
@@ -743,7 +743,7 @@ public:
 protected:
 	virtual std::string DeathMessage() { return "Ivan falls groaning bravely: \"Party revenges Ivan!\""; }
 	virtual std::string NameSingular() const RET("Ivan")
-	virtual float GetMeleeStrength() const RET(2000)
+	virtual float GetMeleeStrength() const RET(5000)
 );
 
 class CHARACTER
@@ -754,8 +754,8 @@ class CHARACTER
 	{
 		SetSize(180);
 		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
+		SetStrength(15);
+		SetEndurance(15);
 		SetPerception(24);
 		SetLegType(6);
 		SetTorsoType(12);
@@ -835,6 +835,7 @@ public:
 	virtual ushort Possibility() const RET(0)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
 	virtual ulong GetBloodColor() const RET(WHITE)
+	virtual void MoveRandomly() { MoveRandomlyInRoom(); }
 protected:
 	virtual vector2d GetBitmapPos() const RETV(80,0)
 	virtual std::string NameSingular() const RET("light frog")
@@ -849,8 +850,8 @@ class CHARACTER
 		SetSize(160);
 		SetAgility(10);
 		SetStrength(20);
-		SetEndurance(10);
-		SetPerception(12);
+		SetEndurance(15);
+		SetPerception(15);
 		SetLegType(6);
 		SetTorsoType(0);
 		SetArmType(9);
@@ -864,7 +865,6 @@ public:
 	virtual void GetAICommand();
 protected:
 	virtual std::string NameSingular() const RET("slave")
-	virtual float GetMeleeStrength() const RET(1000)
 );
 
 class CHARACTER
@@ -873,11 +873,11 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(180);
-		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
-		SetPerception(24);
+		SetSize(170);
+		SetAgility(10);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(21);
 		SetLegType(7);
 		SetTorsoType(10);
 		SetArmType(10);
@@ -886,12 +886,92 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 50000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual uchar GetSex() const RET(FEMALE)
+	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
+	virtual void MoveRandomly() { MoveRandomlyInRoom(); }
 protected:
 	virtual std::string NameSingular() const RET("Perttu's wife")
-	virtual float GetMeleeStrength() const RET(1000)
+	virtual float GetMeleeStrength() const RET(500)
+);
+
+class CHARACTER
+(
+	perttuswife1,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(16);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 1")
+);
+
+class CHARACTER
+(
+	perttuswife2,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(17);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 2")
+);
+
+class CHARACTER
+(
+	perttuswife3,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(18);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 3")
+);
+
+class CHARACTER
+(
+	perttuswife4,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(19);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 4")
+);
+
+class CHARACTER
+(
+	perttuswife5,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(20);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 5")
+);
+
+class CHARACTER
+(
+	perttuswife6,
+	perttuswife,
+	InitMaterials(new humanflesh),
+	{
+		perttuswife::SetDefaultStats();
+		SetHeadType(21);
+	},
+protected:
+	virtual std::string NameSingular() const RET("Perttu's wife number 6")
 );
 
 class CHARACTER
@@ -900,10 +980,10 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(180);
-		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
+		SetSize(160);
+		SetAgility(15);
+		SetStrength(10);
+		SetEndurance(15);
 		SetPerception(24);
 		SetLegType(8);
 		SetTorsoType(11);
@@ -913,12 +993,12 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 70000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual uchar GetSex() const RET(FEMALE)
 protected:
 	virtual std::string NameSingular() const RET("housewife")
-	virtual float GetMeleeStrength() const RET(1000)
+	virtual float GetMeleeStrength() const RET(500)
 );
 
 class CHARACTER
@@ -927,11 +1007,11 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(180);
-		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
-		SetPerception(24);
+		SetSize(170);
+		SetAgility(10);
+		SetStrength(10);
+		SetEndurance(15);
+		SetPerception(18);
 		SetLegType(9);
 		SetTorsoType(13);
 		SetArmType(13);
@@ -940,13 +1020,14 @@ class CHARACTER
 	},
 public:
 	virtual ushort Possibility() const RET(0)
-	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 40000; else return 0; }
 	virtual void BeTalkedTo(character*);
 	virtual void CreateInitialEquipment();
 	virtual uchar GetSex() const RET(FEMALE)
 protected:
 	virtual std::string NameSingular() const RET("female slave")
-	virtual float GetMeleeStrength() const RET(1000)
+	virtual float GetMeleeStrength() const RET(500)
+	virtual void GetAICommand() { StandIdleAI(); }
 );
 
 class CHARACTER
@@ -955,11 +1036,11 @@ class CHARACTER
 	human,
 	InitMaterials(new humanflesh),
 	{
-		SetSize(180);
-		SetAgility(20);
-		SetStrength(20);
-		SetEndurance(20);
-		SetPerception(24);
+		SetSize(170);
+		SetAgility(5);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(12);
 		SetLegType(1);
 		SetTorsoType(1);
 		SetArmType(12);
@@ -973,7 +1054,8 @@ public:
 	virtual void BeTalkedTo(character*);
 protected:
 	virtual std::string NameSingular() const RET("librarian")
-	virtual float GetMeleeStrength() const RET(1000)
+	virtual float GetMeleeStrength() const RET(500)
+	virtual void GetAICommand() { StandIdleAI(); }
 );
 
 #endif
