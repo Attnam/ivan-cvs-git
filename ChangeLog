@@ -6,6 +6,11 @@
  totally. The file is provided AS IS and is probably completely unreadable.
 
 -----------------------------------------------------------------------------
+
+April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * BugFix: Mirror and clone crashed
+
 April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
   * fixes to look mode and holy handgrenade in the world map	
 
@@ -15,7 +20,7 @@ April 2 2005 Heikki Sairanen <heikki.sairanen@gmail.com>
   * Holy handgranade
   * gas grenades
   * total weight of inventory to inventory
-	
+
 April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * Mustard gas works somehow

@@ -3467,7 +3467,7 @@ bodypart::~bodypart()
     delete Scar[c].PanelBitmap;
 }
 
-bodypart::bodypart(const bodypart& B) : OwnerDescription(B.OwnerDescription), Master(B.Master), CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume), BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD), SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP), BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial), SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
+bodypart::bodypart(const bodypart& B) : mybase(B), OwnerDescription(B.OwnerDescription), Master(B.Master), CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume), BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD), SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP), BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial), SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
 {
   for(int c = 0; c < Scar.size(); ++c)
     if(Scar[c].PanelBitmap)
