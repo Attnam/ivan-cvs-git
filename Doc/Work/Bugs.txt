@@ -6,4 +6,4 @@
 *Alt+Enter in config screen.
 *Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
-WMode bug.
+WMode bug. (what is this?)

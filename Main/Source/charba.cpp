@@ -50,7 +50,34 @@ void character::ReceiveSound(char* Pointer, short Success, float ScreamStrength)
   ushort Damage = ushort(ScreamStrength * (1 + float(Success) / 100) / 50000);
 
   SetHP(HP - Damage);
+
+  /* Behold! The Ultimate in gum solutions! */
+
+  stack WieldedStack(GetLevelSquareUnder());
+
+  if(GetWielded())
+    {
+      WieldedStack.FastAddItem(GetStack()->RemoveItem(GetStack()->SearchItem(GetWielded())));
+    }
+
+  stack TorsoStack(GetLevelSquareUnder());
+
+  if(GetTorsoArmor())
+    {
+      TorsoStack.FastAddItem(GetStack()->RemoveItem(GetStack()->SearchItem(GetTorsoArmor())));
+    }
+
   GetStack()->ReceiveSound(ScreamStrength);
+  if(GetWielded())
+    WieldedStack.ReceiveSound(ScreamStrength);
+  if(GetTorsoArmor())
+    TorsoStack.ReceiveSound(ScreamStrength);
+
+  if(GetWielded())
+    SetWielded(GetStack()->GetItem(GetStack()->AddItem(WieldedStack.RemoveItem(0))));
+  if(GetTorsoArmor())
+    SetTorsoArmor(GetStack()->GetItem(GetStack()->AddItem(TorsoStack.RemoveItem(0))));
+
   CheckDeath("killed by an Enner Beast's scream");
   CheckGearExistence();
 }
@@ -2699,7 +2726,7 @@ bool character::CheckForEnemies(bool CheckDoors)
       else
 	return true;
     else
-      if(HostileCharsNear)
+      if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && WayPoint.X == -1)) && HostileCharsNear)
 	{
 	  if(CheckDoors && CheckForDoors())
 	    return true;

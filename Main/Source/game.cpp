@@ -135,6 +135,9 @@ void game::InitScript()
   GameScript.ReadFrom(ScriptFile);
 }
 
+#include "stack.h"
+#include "itemde.h"
+
 void game::Init(std::string Name)
 {
   static ushort Counter = 0;
@@ -223,9 +226,17 @@ void game::Init(std::string Name)
       GetGod(6)->SetKnown(true);
       GetGod(7)->SetKnown(true);
 
-      Ticks = 0;
+      Ticks = 160000;
+      Player->SetStrength(55);
+      Player->SetEndurance(41);
+      Player->SetAgility(49);
+      Player->SetPerception(31);
+      Player->SetWielded(Player->GetStack()->GetItem(Player->GetStack()->FastAddItem(new curvedtwohandedsword(new valpurium))));
+      Player->SetTorsoArmor(Player->GetStack()->GetItem(Player->GetStack()->FastAddItem(new platemail(new mithril))));
+
       BaseScore = Player->Score();
-      dog* Doggie = new dog;
+      character* Doggie = new angel;
+      ((angel*)Doggie)->SetMaster(17);
       Doggie->SetTeam(GetTeam(0));
       GetWorldMap()->GetPlayerGroup().push_back(Doggie);
       ADD_MESSAGE("Game generated successfully.");
@@ -381,7 +392,7 @@ void game::DrawPanel()
   FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
   FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
 
-  if(GetWizardMode())
+  if(!GetWizardMode())
     {
       FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "Danger: %d", Player->CurrentDanger());
       FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "NP: %d", Player->GetNP());

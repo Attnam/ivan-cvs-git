@@ -515,8 +515,8 @@ bool platemail::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
     {
       character* Wearer = ItemsStack->GetSquareUnder()->GetCharacter();
 
-      if(Wearer && Wearer->GetTorsoArmor() == this)
-	Wearer->SetTorsoArmor(0);
+      //if(Wearer && Wearer->GetTorsoArmor() == this)
+	//Wearer->SetTorsoArmor(0);
 
       ImpactDamage(ushort(Strength), false, ItemsStack);
 
