@@ -1,3 +1,17 @@
+June 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added equipment pictures to panel
+	* The config system of items and characters works now correctly (I think).
+	  This means that one can add new equipment or monsters without touching code at all,
+	  using one of the existing classes as a base
+	* Converted almost all weapons to configurations of meleeweapon.
+	  Weapons not converted: pickaxe (special, can dig), whip (special, FormModifier depends on material),
+	  Valpurus's Justifier and Neerc Se-Ulb (artifacts, will get animation functions soon)
+	* Converted chain mail, amulets, rings and boots to configurations of their base classes
+	* Added possibility to specify config in script in brackets following a classname
+	  (example: Square, Pos 3,1; { Item = boot(BOOTOFSPEED); Times = 2; } adds two boots of speed to square at 3,1)
+	* Removed the former way to set it
+
 June 15 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Added a new state system that allows both temporary and permanent states

@@ -158,64 +158,158 @@ meleeweapon
 	Category = WEAPON;
 	ContainedMaterialConfig == 0;
 	IsAbstract = true;
+
+	Config LONGSWORD;
+	{
+		DefaultSize = 150;
+		Possibility = 25;
+		InHandsPic = 160, 16;
+		WeaponCategory = LARGE_SWORDS;
+		DefaultMainVolume = 2400;
+		DefaultSecondaryVolume = 100;
+		BitmapPos = 16, 336;
+		FormModifier = 150;
+		StrengthModifier = 150;
+		OfferModifier = 5000;
+		NameSingular = "sword";
+		Adjective = "long";
+		MainMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
+		MaterialConfigChances = { 4, 50, 150, 50, 10; }
+		Roundness = 10;
+	}
+
+	Config TWOHANDEDSWORD;
+	{
+		DefaultSize = 175;
+		Possibility = 3;
+		InHandsPic = 160, 16;
+		WeaponCategory = LARGE_SWORDS;
+		DefaultMainVolume = 5500;
+		DefaultSecondaryVolume = 250;
+		StrengthModifier = 250;
+		BitmapPos = 0, 0;
+		StrengthModifier = 150;
+		FormModifier = 175;
+		OfferModifier = 2500;
+		Adjective = "two-handed";
+		NameSingular = "sword";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 15;
+	}
+
+	Config CURVEDTWOHANDEDSWORD;
+	{
+		DefaultSize = 175;
+		Possibility = 0;
+		InHandsPic = 160, 16;
+		WeaponCategory = LARGE_SWORDS;
+		DefaultMainVolume = 5500;
+		DefaultSecondaryVolume = 250;
+		StrengthModifier = 250;
+		BitmapPos = 0, 16;
+		StrengthModifier = 150;
+		FormModifier = 200;
+		OfferModifier = 2500;
+		Adjective = "curved two-handed";
+		NameSingular = "sword";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
+		MaterialConfigChances = { 2, 250, 10; }
+		Roundness = 15;
+	}
+
+	Config SPEAR;
+	{
+		DefaultSize = 200;
+		Possibility = 100;
+		InHandsPic = 160, 96;
+		WeaponCategory = SPEARS;
+		StrengthModifier = 75;
+		BitmapPos = 16, 144;
+		FormModifier = 200;
+		DefaultMainVolume = 200;
+		DefaultSecondaryVolume = 1600;
+		OfferModifier = 10000;
+		NameSingular = "spear";
+		MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
+		Roundness = 10;
+	}
+
+	Config AXE;
+	{
+		DefaultSize = 125;
+		Possibility = 100;
+		InHandsPic = 160, 176;
+		WeaponCategory = AXES;
+		DefaultMainVolume = 1400;
+		DefaultSecondaryVolume = 1600;
+		StrengthModifier = 150;
+		BitmapPos = 16, 256;
+		FormModifier = 150;
+		OfferModifier = 2500;
+		NameSingular = "axe";
+		Article = "an";
+		MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 4, 100, 100, 50, 10; }
+		Roundness = 20;
+	}
+
+	Config POLEAXE;
+	{
+		DefaultSize = 225;
+		Possibility = 50;
+		InHandsPic = 160, 176;
+		WeaponCategory = AXES;
+		DefaultMainVolume = 2500;
+		DefaultSecondaryVolume = 2000;
+		StrengthModifier = 150;
+		BitmapPos = 0, 80;
+		FormModifier = 150;
+		NameSingular = "poleaxe";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 2, 50, 10; }
+		Roundness = 20;
+	}
+
+	Config SPIKEDMACE;
+	{
+		StrengthModifier = 400; 
+		FormModifier = 125; 
+		DefaultSize = 150; 
+		DefaultMainVolume = 5000; 
+		BitmapPos = 0, 32;
+		Possibility = 20;
+		InHandsPic = 160, 192;
+		DefaultSecondaryVolume = 2000;
+		WeaponCategory = MACES;
+		OfferModifier = 1250;
+		NameSingular = "mace";
+		Adjective = "spiked";
+		MainMaterialConfig = { 2, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 2, 100, 10; }
+		Roundness = 30; /* we count the handle, too */
+	}
 }
 
-longsword /* meleeweapon-> */
-{
-	DefaultSize = 150;
-	Possibility = 25;
-	InHandsPic = 160, 16;
-	WeaponCategory = LARGE_SWORDS;
-	DefaultMainVolume = 2400;
-	DefaultSecondaryVolume = 100;
-	BitmapPos = 16, 336;
-	FormModifier = 150;
-	StrengthModifier = 150;
-	OfferModifier = 5000;
-	NameSingular = "sword";
-	Adjective = "long";
-	MainMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
-	SecondaryMaterialConfig = { 4, WOOD, BRONZE, IRON, MITHRIL; }
-	MaterialConfigChances = { 4, 50, 150, 50, 10; }
-	Alias == "sword";
-	Roundness = 10;
-}
-
-twohandedsword /* meleeweapon->longsword-> */
-{
-	DefaultSize = 175;
-	Possibility = 3;
-	DefaultMainVolume = 5500;
-	DefaultSecondaryVolume = 250;
-	StrengthModifier = 250;
-	BitmapPos = 0, 0;
-	FormModifier = 175;
-	OfferModifier = 2500;
-	Adjective = "two-handed";
-	MainMaterialConfig = { 2, IRON, MITHRIL; }
-	SecondaryMaterialConfig = { 2, IRON, MITHRIL; }
-	MaterialConfigChances = { 2, 100, 10; }
-	Roundness = 15;
-}
-
-curvedtwohandedsword /* meleeweapon->longsword->twohandedsword */
-{
-	Possibility = 0;
-	BitmapPos = 0, 16;
-	FormModifier = 200;
-	Adjective = "curved two-handed";
-	MaterialConfigChances = { 2, 250, 10; }
-	Roundness = 15;
-}
-
-valpurusjustifier /* meleeweapon->longsword-> */
+valpurusjustifier /* meleeweapon-> */
 {
 	DefaultSize = 200;
 	Possibility = 0;
+	InHandsPic = 160, 16;
+	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 6700;
 	DefaultSecondaryVolume = 300;
 	BitmapPos = 0, 64;
 	FormModifier = 400;
+	StrengthModifier = 150;
 	Score = 1000;
 	CanBeWished = false;
 	IsMaterialChangeable = false;
@@ -227,33 +321,41 @@ valpurusjustifier /* meleeweapon->longsword-> */
 	ArticleMode = DEFINITEARTICLE;
 	MainMaterialConfig == VALPURIUM;
 	SecondaryMaterialConfig == VALPURIUM;
-	MaterialConfigChances == 100;
 	IsPolymorphable = false;
 	Alias == "Justifier";
 	Roundness = 20;
 }
 
-axe /* meleeweapon-> */
+neercseulb /* meleeweapon-> */
 {
-	DefaultSize = 125;
-	Possibility = 100;
-	InHandsPic = 160, 176;
-	WeaponCategory = AXES;
-	DefaultMainVolume = 1400;
-	DefaultSecondaryVolume = 1600;
-	StrengthModifier = 150;
-	BitmapPos = 16, 256;
+	StrengthModifier = 600;
 	FormModifier = 150;
+	DefaultSize = 200;
+	Possibility = 0;
+	Score = 1000;
+	CanBeWished = false;
+	BitmapPos = 0, 32;
+	InHandsPic = 160, 192;
+	WeaponCategory = MACES;
+	IsMaterialChangeable = false;
+	DefaultMainVolume = 12000;
+	DefaultSecondaryVolume = 6000;
+	DefaultContainedVolume = 2500;
 	OfferModifier = 2500;
-	NameSingular = "axe";
-	Article = "an";
-	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
-	SecondaryMaterialConfig == WOOD;
-	MaterialConfigChances = { 4, 100, 100, 50, 10; }
-	Roundness = 20;
+	Adjective = "ancient";
+	NameSingular = "mace";
+	AdjectiveArticle = "an";
+	PostFix = "\"Neerc Se-ulb\"";
+	ArticleMode = DEFINITEARTICLE;
+	MainMaterialConfig == DIAMOND;
+	SecondaryMaterialConfig == DIAMOND;
+	ContainedMaterialConfig == FROGFLESH;
+	IsPolymorphable = false;
+	Alias == "Neerc Se-ulb";
+	Roundness = 35;
 }
 
-pickaxe /* meleeweapon->axe-> */
+pickaxe /* meleeweapon-> */
 {
 	DefaultSize = 150;
 	Possibility = 50;
@@ -265,25 +367,12 @@ pickaxe /* meleeweapon->axe-> */
 	NameSingular = "pick-axe";
 	Alias == "pick-ax";
 	Roundness = 20;
-}
-
-spear /* meleeweapon-> */
-{
-	DefaultSize = 200;
-	Possibility = 100;
-	InHandsPic = 160, 96;
-	WeaponCategory = SPEARS;
-	StrengthModifier = 75;
-	BitmapPos = 16, 144;
-	FormModifier = 200;
-	DefaultMainVolume = 200;
-	DefaultSecondaryVolume = 1600;
-	OfferModifier = 10000;
-	NameSingular = "spear";
-	MainMaterialConfig = { 6, WOOD, BONE, COPPER, BRONZE, IRON, MITHRIL; }
+	WeaponCategory = AXES;
+	StrengthModifier = 150;
+	OfferModifier = 2500;
+	MainMaterialConfig = { 4, COPPER, BRONZE, IRON, MITHRIL; }
 	SecondaryMaterialConfig == WOOD;
-	MaterialConfigChances = { 6, 500, 50, 250, 150, 50, 10; }
-	Roundness = 10;
+	MaterialConfigChances = { 4, 100, 100, 50, 10; }
 }
 
 bodyarmor
@@ -293,6 +382,21 @@ bodyarmor
 	FormModifier = 20;
 	IsAbstract = true;
 	Roundness = 70;
+
+	Config CHAINMAIL;
+	{
+		Possibility = 25;
+		StrengthModifier = 100; 
+		DefaultSize = 75; 
+		DefaultMainVolume = 2000; 
+		BitmapPos = 16, 96;
+		OfferModifier = 5000;
+		NameSingular = "chain mail";
+		MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
+		SecondaryMaterialConfig == WOOD;
+		MaterialConfigChances = { 3, 150, 50, 10; }
+	}
+
 }
 
 platemail /* bodyarmor-> */
@@ -309,27 +413,7 @@ platemail /* bodyarmor-> */
 	Alias == "armor";
 }
 
-chainmail /* bodyarmor-> */
-{
-	Possibility = 25;
-	StrengthModifier = 100; 
-	DefaultSize = 75; 
-	DefaultMainVolume = 2000; 
-	BitmapPos = 16, 96;
-	OfferModifier = 5000;
-	NameSingular = "chain mail";
-	MainMaterialConfig = { 3, BRONZE, IRON, MITHRIL; }
-	SecondaryMaterialConfig == WOOD;
-	MaterialConfigChances = { 3, 150, 50, 10; }
-}
-
-shirt /* bodyarmor-> */
-{
-	NameSingular = "shirt";
-	IsAbstract = true;
-}
-
-goldeneagleshirt /* bodyarmor->shirt-> */
+goldeneagleshirt /* bodyarmor-> */
 {
 	DefaultSize = 60;
 	BitmapPos = 16, 112;
@@ -485,69 +569,6 @@ bone
 	NameSingular = "bone";
 	MainMaterialConfig == BONE;
 	Roundness = 20;
-}
-
-
-poleaxe /* meleeweapon->axe-> */
-{
-	DefaultSize = 225;
-	Possibility = 50;
-	DefaultMainVolume = 2500;
-	DefaultSecondaryVolume = 2000;
-	StrengthModifier = 150;
-	BitmapPos = 0, 80;
-	FormModifier = 150;
-	NameSingular = "poleaxe";
-	MainMaterialConfig = { 2, IRON, MITHRIL; }
-	SecondaryMaterialConfig == WOOD;
-	MaterialConfigChances = { 2, 50, 10; }
-	Roundness = 20;
-}
-
-spikedmace /* meleeweapon-> */
-{
-	StrengthModifier = 400; 
-	FormModifier = 125; 
-	DefaultSize = 150; 
-	DefaultMainVolume = 5000; 
-	BitmapPos = 0, 32; 
-	Possibility = 20;
-	InHandsPic = 160, 192;
-	DefaultSecondaryVolume = 2000;
-	WeaponCategory = MACES;
-	OfferModifier = 1250;
-	NameSingular = "mace";
-	Adjective = "spiked";
-	MainMaterialConfig = { 2, IRON, MITHRIL; }
-	SecondaryMaterialConfig == WOOD;
-	MaterialConfigChances = { 2, 100, 10; }
-	Roundness = 30; /* we count the handle, too */
-}
-
-neercseulb /* meleeweapon->spikedmace-> */
-{
-	StrengthModifier = 600;
-	FormModifier = 150;
-	DefaultSize = 200;
-	Possibility = 0;
-	Score = 1000;
-	CanBeWished = false;
-	IsMaterialChangeable = false;
-	DefaultMainVolume = 12000;
-	DefaultSecondaryVolume = 6000;
-	DefaultContainedVolume = 2500;
-	OfferModifier = 2500;
-	Adjective = "ancient";
-	AdjectiveArticle = "an";
-	PostFix = "\"Neerc Se-ulb\"";
-	ArticleMode = DEFINITEARTICLE;
-	MainMaterialConfig == DIAMOND;
-	SecondaryMaterialConfig == DIAMOND;
-	ContainedMaterialConfig == FROGFLESH;
-	MaterialConfigChances == 100;
-	IsPolymorphable = false;
-	Alias == "Neerc Se-ulb";
-	Roundness = 35;
 }
 
 loaf
@@ -948,6 +969,14 @@ boot
 	MainMaterialConfig = { 4, LEATHER, BRONZE, IRON, MITHRIL; }
 	MaterialConfigChances = { 4, 250, 100, 50, 10; }
 	Roundness = 50;
+
+	Config BOOTOFSPEED;
+	{
+		PostFix = "of speed";
+		MainMaterialConfig == DIAMOND;
+		MaterialConfigChances == 100;
+		GearStates = HASTE;
+	}
 }
 
 gauntlet
@@ -994,6 +1023,22 @@ ring
 	NameSingular = "ring";
 	MainMaterialConfig == DIAMOND;
 	Roundness = 10; /* it is considered here opened */
+
+	Config RINGOFFIRERESISTANCE;
+	{
+		Possibility = 15;
+		FireResistance = 10;
+		PostFix = "of fire resistance";
+		MainMaterialConfig == GOLD;
+	}
+
+	Config RINGOFPOLYMORPHCONTROL;
+	{
+		PostFix = "of polymorph control";
+		Possibility = 10;
+		MainMaterialConfig == RUBY;
+		GearStates = POLYMORPH_CONTROL;
+	}
 }
 
 amulet
@@ -1009,6 +1054,13 @@ amulet
 	Article = "an";
 	MainMaterialConfig == GOLD;
 	Roundness = 10; /* it is considered here opened */
+
+	Config AMULETOFLIFESAVING;
+	{
+		PostFix = "of life saving";
+		MainMaterialConfig == GOLD;
+		GearStates = LIFE_SAVED;
+	}
 }
 
 bodypart
@@ -1142,21 +1194,6 @@ wandofresurrection /* wand-> */
 	MainMaterialConfig == BONE;
 }
 
-ringoffireresistance /* ring-> */
-{
-	Possibility = 15;
-	FireResistance = 10;
-	PostFix = "of fire resistance";
-	MainMaterialConfig == GOLD;
-}
-
-amuletoflifesaving /* amulet-> */
-{
-	PostFix = "of life saving";
-	MainMaterialConfig == GOLD;
-	GearStates = LIFE_SAVED;
-}
-
 whistle
 {
 	Category = TOOL;
@@ -1191,22 +1228,6 @@ wandofdoorcreation /* wand-> */
 	Price = 200;
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
-}
-
-bootofspeed /* boot-> */
-{
-	PostFix = "of speed";
-	MainMaterialConfig == DIAMOND;
-	MaterialConfigChances == 100;
-	GearStates = HASTE;
-}
-
-ringofpolymorphcontrol
-{
-	PostFix = "of polymorph control";
-	Possibility = 10;
-	MainMaterialConfig == RUBY;
-	GearStates = POLYMORPH_CONTROL;
 }
 
 beartrap

@@ -252,9 +252,10 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if(c == Entry.size() - 1 || (Entry[c].Selectable && i - Min == PageLength - 1))
 	{
-	  Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + 1, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
+	  /*Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + 1, LastFillBottom + 1, DARKGRAY, true);
 	  Buffer->DrawLine(Pos.X + Width - 2, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
-	  Buffer->DrawLine(Pos.X + 1, LastFillBottom + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);
+	  Buffer->DrawLine(Pos.X + 1, LastFillBottom + 1, Pos.X + Width - 2, LastFillBottom + 1, DARKGRAY, true);*/
 	  return c == Entry.size() - 1;
 	}
 
@@ -265,7 +266,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
 void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort BackColor) const
 {
-  Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 1, DARKGRAY, true);
+  //Buffer->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 1, DARKGRAY, true);
   Buffer->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20, BackColor);
 
   for(ushort c = 0; c < Description.size(); ++c)
@@ -280,10 +281,11 @@ void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort 
 void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 {
   DOUBLEBUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
-  DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 1, DARKGRAY, true);
+  DOUBLEBUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
+  /*DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 1, DARKGRAY, true);
   DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 1, Pos.X + 1, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
   DOUBLEBUFFER->DrawLine(Pos.X + Width - 2, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
-  DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 24 + PageLength * 10, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);
+  DOUBLEBUFFER->DrawLine(Pos.X + 1, Pos.Y + 24 + PageLength * 10, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARKGRAY, true);*/
 
   for(ushort c = 0, LastBottom = Pos.Y + 13; c < PageLength && c + Selected < Length(); ++c, LastBottom += 10)
     {

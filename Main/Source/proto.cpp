@@ -28,10 +28,28 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	{
 	  ushort Chosen = 1 + RAND() % (protocontainer<character>::GetProtoAmount() - 1);
 	  const character::prototype* Proto = protocontainer<character>::GetProto(Chosen);
+	  const character::databasemap& Config = Proto->GetConfig();
 
-	  if(!Proto->IsAbstract() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
+	  Chosen = RAND() % (1 + Config.size());
+	  character* Monster = 0;
+
+	  if(Chosen)
 	    {
-	      character* Monster = Proto->Clone(0, CreateItems);
+	      for(character::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+		if(!--Chosen)
+		  {
+		    if(!i->second.IsAbstract && i->second.CanBeGenerated && i->second.Frequency > RAND() % 10000)
+		      Monster = Proto->Clone(i->first, CreateItems);
+
+		    break;
+		  }
+	    }
+	  else
+	    if(!Proto->IsAbstract() && Proto->CanBeGenerated() && Proto->GetFrequency() > RAND() % 10000)
+	      Monster = Proto->Clone(0, CreateItems);
+
+	  if(Monster)
+	    {
 	      float Danger = Monster->MaxDanger();
 
 	      if(c >= 99 || (Danger < Difficulty * Multiplier * 2 && Danger > Difficulty * Multiplier / 2))
@@ -48,29 +66,54 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 
 item* protosystem::BalancedCreateItem(bool Polymorph)
 {
+  ulong c, SumOfPossibilities = 0;
+
+  for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
+    {
+      const item::prototype* Proto = protocontainer<item>::GetProto(c);
+
+      if(!Proto->IsAbstract())
+	SumOfPossibilities += Proto->GetPossibility();
+
+      for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
+	if(!i->second.IsAbstract)
+	  SumOfPossibilities += i->second.Possibility;
+    }
+
   while(true)
     {
-      ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
-
-      ushort c;
+      ulong Counter = 0, RandomOne = 1 + RAND() % (SumOfPossibilities);
 
       for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-	if(!protocontainer<item>::GetProto(c)->IsAbstract())
-	  SumOfPossibilities += protocontainer<item>::GetProto(c)->GetPossibility();
-			
-      RandomOne = 1 + RAND() % (SumOfPossibilities);
-		
-      for(c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-	if(!protocontainer<item>::GetProto(c)->IsAbstract())
-	  {
-	    Counter += protocontainer<item>::GetProto(c)->GetPossibility();
+	{
+	  const item::prototype* Proto = protocontainer<item>::GetProto(c);
 
-	    if(Counter >= RandomOne)
-	      if(!Polymorph || protocontainer<item>::GetProto(c)->IsPolymorphSpawnable())
-		return protocontainer<item>::GetProto(c)->Clone();
-	      else
-		break;
-	  }
+	  if(!Proto->IsAbstract())
+	    {
+	      Counter += Proto->GetPossibility();
+
+	      if(Counter >= RandomOne)
+		if(!Polymorph || Proto->IsPolymorphSpawnable())
+		  return Proto->Clone();
+		else
+		  break;
+	    }
+
+	  for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
+	    {
+	    const item::database p = i->second;
+	    if(!i->second.IsAbstract)
+	      {
+		Counter += i->second.Possibility;
+
+		if(Counter >= RandomOne)
+		  if(!Polymorph || i->second.IsPolymorphSpawnable)
+		    return Proto->Clone(i->first);
+		  else
+		    break;
+	      }
+	    }
+	}
     }
 }
 
@@ -90,7 +133,7 @@ character* protosystem::CreateMonster(bool CreateItems)
     }
 }
 
-template <class type> uchar CountCorrectNameParts(const type::database& DataBase, const std::string& Identifier)
+template <class type> uchar CountCorrectNameParts(const typename type::database& DataBase, const std::string& Identifier)
 {
   uchar Counter = 0;
 
@@ -123,35 +166,32 @@ template <class type> std::pair<const type::prototype*, ushort> SearchForProto(c
       const type::prototype* Proto = protocontainer<type>::GetProto(c);
       const type::databasemap& Config = Proto->GetConfig();
 
-      if(!Config.size())
-	{
-	  ushort Correct = CountCorrectNameParts<type>(*Proto->GetDataBase(), Identifier);
+      ushort Correct = CountCorrectNameParts<type>(*Proto->GetDataBase(), Identifier);
 
-	  if(!Proto->IsAbstract() && Correct > Best)
-	    if(Proto->CanBeWished() || game::WizardModeActivated())
+      if(!Proto->IsAbstract() && Correct > Best)
+	if(Proto->CanBeWished() || game::WizardModeActivated())
+	  {
+	    Id.first = Proto;
+	    Id.second = 0;
+	    Best = Correct;
+	  }
+	else
+	  Illegal = true;
+
+      for(type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
+	{
+	  Correct = CountCorrectNameParts<type>(i->second, Identifier);
+
+	  if(!i->second.IsAbstract && Correct > Best)
+	    if(i->second.CanBeWished || game::WizardModeActivated())
 	      {
 		Id.first = Proto;
-		Id.second = 0;
+		Id.second = i->first;
 		Best = Correct;
 	      }
 	    else
 	      Illegal = true;
 	}
-      else
-	for(type::databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
-	  {
-	    ushort Correct = CountCorrectNameParts<type>(i->second, Identifier);
-
-	    if(!i->second.IsAbstract && Correct > Best)
-	      if(i->second.CanBeWished || game::WizardModeActivated())
-		{
-		  Id.first = Proto;
-		  Id.second = i->first;
-		  Best = Correct;
-		}
-	      else
-		Illegal = true;
-	  }
     }
 
   if(!Best && Output)

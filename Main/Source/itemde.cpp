@@ -849,7 +849,7 @@ bool oillamp::Apply(character* Applier)
 		}
 	    }
 
-	    item* Sword = new curvedtwohandedsword;
+	    item* Sword = new meleeweapon(CURVEDTWOHANDEDSWORD);
 	    ADD_MESSAGE("%s wishes for %s. Suddenly %s appears from nothing and %s wields it.", Genie->CHARNAME(DEFINITE), Sword->CHARNAME(INDEFINITE), Sword->CHARNAME(INDEFINITE), Genie->CHARNAME(DEFINITE));
 	    Genie->SetMainWielded(Sword);
 	}

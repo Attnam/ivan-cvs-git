@@ -152,13 +152,12 @@ material* materialscript::Instantiate() const
   return Instance;
 }
 
-basecontentscript::basecontentscript()
+basecontentscript::basecontentscript() : Config(0)
 {
   INITMEMBER(MainMaterial);
   INITMEMBER(SecondaryMaterial);
   INITMEMBER(ContainedMaterial);
   INITMEMBER(Parameters);
-  INITMEMBER(Config);
 }
 
 void basecontentscript::ReadFrom(inputfile& SaveFile)
@@ -186,6 +185,12 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
   else
     ABORT("Odd script term %s encountered content script of %s!", Word.c_str(), ClassName().c_str());
 
+  if(Word == "(")
+    {
+      Config = SaveFile.ReadNumber(ValueMap);
+      Word = SaveFile.ReadWord();
+    }
+
   if(Word == "{")
     for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
       {
@@ -199,7 +204,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
 
 template <class type> type* contentscripttemplate<type>::Instantiate() const
 {
-  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone(GetConfig(false) ? *GetConfig() : 0);
+  type* Instance = protocontainer<type>::GetProto(ContentType)->Clone(Config);
 
   if(GetParameters(false))
     Instance->SetParameters(*GetParameters());

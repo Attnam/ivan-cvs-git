@@ -40,7 +40,7 @@ void consummo::PrayBadEffect()
 void valpurus::PrayGoodEffect()
 {
   ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
-  game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(MAKE_MATERIAL(VALPURIUM)));
+  game::GetPlayer()->GetGiftStack()->AddItem(new meleeweapon(CURVEDTWOHANDEDSWORD, MAKE_MATERIAL(VALPURIUM)));
 }
 
 void valpurus::PrayBadEffect()

@@ -7,11 +7,11 @@ V‰rien tarkistusl‰pik‰yminen.
 Enner beast ihmiseksi + p‰‰ kuntoon. (hex)
 //Menua vasemmalle.
 Damage estimate kuntoon. (timo)
-Werewolfit kuntoon. (timo)
+//Werewolfit kuntoon. (timo)
 Paneeli kuntoon:
 //* Uusi siluetti. (kahvi)
 * Itemit sen ymp‰rille.
-* Attribuutit ja status alle.
+//* Attribuutit ja status alle.
 Efektien l‰pik‰yminen. (timo)
 Miina kuntoon. (timo)
 Lookmoden messaget kuntoon. (timo)
@@ -48,7 +48,7 @@ Ruumiinosien hoitotavat:
 //Avaimelle kuva. (kahvi)
 Helmet. (hex)
 //BaseEmitationit toimintaan. (timo)
-Pertun nutin wishaaminen. (timo)
+//Pertun nutin wishaaminen. (timo)
 Orc.
 Prices. (timo)
 OfferModifiers. (timo)
@@ -64,6 +64,9 @@ People shouldn't "die screaming" if their heads are not present.
 //Shields. (timo)
 Lower all unarmed to hit values. (timo)
 Skeleton bodyparts.
-Amuletit, cloak
+//Amuletit, cloak
 Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
+Shirt.
+Kamikaze dwarves.
+Naming hostile monsters.

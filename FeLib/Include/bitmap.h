@@ -122,6 +122,11 @@ class bitmap
   void StretchBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, char Stretch) const  { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
   void StretchBlit(bitmap* Bitmap, char Stretch) const { StretchBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Stretch); }
 
+  void DrawRectangle(ushort, ushort, ushort, ushort, ushort, bool = false);
+  void DrawRectangle(vector2d TopLeft, ushort Right, ushort Bottom, ushort Color, bool Wide = false) { DrawRectangle(TopLeft.X, TopLeft.Y, Right, Bottom, Color, Wide); }
+  void DrawRectangle(ushort Left, ushort Top, vector2d BottomRight, ushort Color, bool Wide = false) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
+  void DrawRectangle(vector2d TopLeft, vector2d BottomRight, ushort Color, bool Wide = false) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
+
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }

@@ -103,10 +103,11 @@ void area::SendNewDrawRequest()
       Map[x][y]->SendNewDrawRequest();
 
   DOUBLEBUFFER->Fill(0);
-  DOUBLEBUFFER->DrawLine(14, 30, 17 + (game::GetScreenSize().X << 4), 30, DARKGRAY, true);
+  DOUBLEBUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);
+  /*DOUBLEBUFFER->DrawLine(14, 30, 17 + (game::GetScreenSize().X << 4), 30, DARKGRAY, true);
   DOUBLEBUFFER->DrawLine(14, 30, 14, 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);
   DOUBLEBUFFER->DrawLine(17 + (game::GetScreenSize().X << 4), 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);
-  DOUBLEBUFFER->DrawLine(14, 33 + (game::GetScreenSize().Y << 4), 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);
+  DOUBLEBUFFER->DrawLine(14, 33 + (game::GetScreenSize().Y << 4), 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARKGRAY, true);*/
 }
 
 void area::MoveCharacter(vector2d From, vector2d To)

@@ -230,7 +230,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    graphics::BlitDBToScreen();
 		}
 
-	      Sleep(5);
+	      Sleep(50);
 	    }
 	  else
 	    WaitMessage();

@@ -957,3 +957,11 @@ inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
 
   return SaveFile;
 }
+
+void bitmap::DrawRectangle(ushort Left, ushort Top, ushort Right, ushort Bottom, ushort Color, bool Wide)
+{
+  DrawLine(Left, Top, Right, Top, Color, Wide);
+  DrawLine(Right, Top, Right, Bottom, Color, Wide);
+  DrawLine(Right, Bottom, Left, Bottom, Color, Wide);
+  DrawLine(Left, Bottom, Left, Top, Color, Wide);
+}

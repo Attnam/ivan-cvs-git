@@ -245,3 +245,4 @@ Explosions could be m-colored: this way magical explosions could look different.
 WoDC should clone its own material to created doors.
 One of the possible races in Ivan should be an enner beast that could kill people by 'C'hatting with them.
 Wishing for corpse should give something.
+In script, Square, Random's Walkability should default to true.

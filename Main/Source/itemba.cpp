@@ -498,3 +498,11 @@ bool item::IsSimiliarTo(item* Item) const
 {
   return Item->GetType() == GetType() && Item->GetConfig() == GetConfig();
 }
+
+void item::DrawTo(bitmap* Bitmap, vector2d Pos, bool Animate) const
+{
+  if(!Animate || AnimationFrames == 1)
+    Picture[0]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
+  else
+    Picture[globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16);
+}

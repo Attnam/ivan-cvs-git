@@ -1504,8 +1504,16 @@ bool character::LowerStats()
 bool character::GainAllItems()
 {
   for(ushort c = 1; c < protocontainer<item>::GetProtoAmount(); ++c)
-    if(!protocontainer<item>::GetProto(c)->IsAbstract() && protocontainer<item>::GetProto(c)->IsAutoInitializable())
-      Stack->AddItem(protocontainer<item>::GetProto(c)->Clone());
+    {
+      const item::prototype* Proto = protocontainer<item>::GetProto(c);
+
+      if(!Proto->IsAbstract() && Proto->IsAutoInitializable())
+	GetStack()->AddItem(Proto->Clone());
+
+      for(item::databasemap::const_iterator i = Proto->GetConfig().begin(); i != Proto->GetConfig().end(); ++i)
+	if(!i->second.IsAbstract && i->second.IsAutoInitializable)
+	  GetStack()->AddItem(Proto->Clone(i->first));
+    }
 
   return false;
 }
@@ -3007,7 +3015,7 @@ void character::TeleportRandomly()
 
 bool character::SecretKnowledge()
 {
-  felist List("Knowledge of the ancients:", WHITE, 0);
+  /*felist List("Knowledge of the ancients:", WHITE, 0);
 
   std::string Buffer = "Name                                                 Weight       SV     Str";
   List.AddDescription(Buffer);
@@ -3027,7 +3035,7 @@ bool character::SecretKnowledge()
 	delete Item;
       }
 
-  List.Draw(vector2d(26, 42), 652, 10);
+  List.Draw(vector2d(26, 42), 652, 10);*/
   return false;
 }
 
@@ -3176,7 +3184,9 @@ bodypart* character::SevereBodyPart(ushort BodyPartIndex)
   BodyPart->RemoveFromSlot();
   return BodyPart;
 }
+
 /* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage */
+
 bool character::ReceiveDamage(character* Damager, short Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical)
 {
   bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical);
@@ -4160,7 +4170,6 @@ void character::DrawPanel() const
   DOUBLEBUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
   DOUBLEBUFFER->Fill(16, 45 + game::GetScreenSize().Y * 16, game::GetScreenSize().X << 4, 9, 0);
   FONT->Printf(DOUBLEBUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
-  DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 16, 32));
 
   ushort PanelPosX = RES.X - 96;
   ushort PanelPosY = DrawStats() + 1;
@@ -4611,8 +4620,8 @@ void character::EndTemporaryPolymorph()
 
 void character::LycanthropyHandler()
 {
-  if(!(RAND() % 25))
-    Polymorph(new werewolfwolf, RAND() % 25);
+  if(!(RAND() % 2500))
+    Polymorph(new werewolfwolf, RAND() % 2500);
 }
 
 void character::SaveLife()

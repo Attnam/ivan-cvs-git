@@ -36,6 +36,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber(game::GetGlobalValueMap());
 	      typename type::database TempDataBase = Proto->DataBase;
+	      TempDataBase.InitDefaults();
 
 	      if(SaveFile.ReadWord() != "{")
 		ABORT("Bracket missing in the data script of %s!", typeid(type).name());

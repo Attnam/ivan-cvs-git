@@ -207,14 +207,14 @@ Dungeon 0;
 				Types
 				{
 					c = scrollofchangematerial;
-					L = IRON longsword;
-					C = MITHRIL chainmail;
+					L = IRON meleeweapon(LONGSWORD);
+					C = MITHRIL bodyarmor(CHAINMAIL);
 					s = wandofstriking;
 					a = lantern;
 					l = BREAD loaf;
 					t = scrollofteleportation;
 					g = IRON can { ContainedMaterial = GOBLINOIDFLESH; }
-					p = IRON poleaxe;
+					p = IRON meleeweapon(POLEAXE);
 					B = BEEF loaf;
 				}
 			}
@@ -626,12 +626,12 @@ Dungeon 1;
 					b = banana;
 					k = kiwi;
 					p = pineapple;
-					o = IRON poleaxe;
-					l = MITHRIL longsword;
-					t = IRON twohandedsword;
-					m = IRON spikedmace;
-					s = IRON spear;
-					c = chainmail;
+					o = IRON meleeweapon(POLEAXE);
+					l = MITHRIL meleeweapon(LONGSWORD);
+					t = IRON meleeweapon(TWOHANDEDSWORD);
+					m = IRON meleeweapon(SPIKEDMACE);
+					s = IRON meleeweapon(SPEAR);
+					c = bodyarmor(CHAINMAIL);
 					e = backpack;
 					g = GOLD stone;
 					i = SILVER stone;
@@ -692,12 +692,12 @@ Dungeon 1;
 					d = dolphin;
 					l = lightfrog;
 					s = femaleslave;
-					1 = petrusswife { Config = 1; }
-					2 = petrusswife { Config = 2; }
-					3 = petrusswife { Config = 3; }
-					4 = petrusswife { Config = 4; }
-					5 = petrusswife { Config = 5; }
-					6 = petrusswife { Config = 6; }
+					1 = petrusswife(1);
+					2 = petrusswife(2);
+					3 = petrusswife(3);
+					4 = petrusswife(4);
+					5 = petrusswife(5);
+					6 = petrusswife(6);
 					k = kamikazedwarf;
 					A = oree;
 					B = goblin;
@@ -785,7 +785,7 @@ Dungeon 1;
 				Types
 				{
 					t = scrollofteleportation;
-					s = spear;
+					s = meleeweapon(SPEAR);
 					p = pickaxe;
 					A = pineapple;
 					b = banana;
@@ -794,7 +794,7 @@ Dungeon 1;
 					L = BREAD loaf;
 					a = lantern;
 					P = potion { ContainedMaterial = OMLEURINE; }
-					C = chainmail;
+					C = bodyarmor(CHAINMAIL);
 					w = whip;
 				}
 			}

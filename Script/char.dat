@@ -479,38 +479,38 @@ mommo
 	AttackStyle = USE_HEAD;
 	BiteStrength = 20000;
 	CanBeGenerated = true;
-}
 
-conicalmommo
-{
-	DefaultArmStrength = 4;
-	DefaultAgility = 2;
-	DefaultEndurance = 20;
-	DefaultPerception = 9;
-	DefaultIntelligence = 3;
-	DefaultWisdom = 2;
-	DefaultCharisma = 4;
-	DefaultMana = 0;
-	TotalVolume = 250000;
-	TorsoBitmapPos = 176, 0;
-	TotalSize = 100;
-	Adjective = "conical";
-}
+	Config CONICALMOMMO;
+	{
+		DefaultArmStrength = 4;
+		DefaultAgility = 2;
+		DefaultEndurance = 20;
+		DefaultPerception = 9;
+		DefaultIntelligence = 3;
+		DefaultWisdom = 2;
+		DefaultCharisma = 4;
+		DefaultMana = 0;
+		TotalVolume = 250000;
+		TorsoBitmapPos = 176, 0;
+		TotalSize = 100;
+		Adjective = "conical";
+	}
 
-flatmommo
-{
-	DefaultArmStrength = 2;
-	DefaultAgility = 4;
-	DefaultEndurance = 20;
-	DefaultPerception = 9;
-	DefaultIntelligence = 2;
-	DefaultWisdom = 3;
-	DefaultCharisma = 3;
-	DefaultMana = 0;
-	TotalVolume = 150000;
-	TorsoBitmapPos = 192, 0;
-	TotalSize = 75;
-	Adjective = "flat";
+	Config FLATMOMMO;
+	{
+		DefaultArmStrength = 2;
+		DefaultAgility = 4;
+		DefaultEndurance = 20;
+		DefaultPerception = 9;
+		DefaultIntelligence = 2;
+		DefaultWisdom = 3;
+		DefaultCharisma = 3;
+		DefaultMana = 0;
+		TotalVolume = 150000;
+		TorsoBitmapPos = 192, 0;
+		TotalSize = 75;
+		Adjective = "flat";
+	}
 }
 
 golem
@@ -807,6 +807,7 @@ petrusswife
 	Adjective = "Petrus's";
 	NameSingular = "wife";
 	ArticleMode = NOARTICLE;
+	IsAbstract = true;
 
 	Config 1;
 	{
@@ -1296,6 +1297,7 @@ unicorn
 	BiteStrength = 5000;
 	CanBeGenerated = true;
 	CanKick = true;
+	IsAbstract = true;
 
 	Config GOOD;
 	{

@@ -145,8 +145,8 @@ class basecontentscript : public script
   DATAMEMBER(materialscript, SecondaryMaterial);
   DATAMEMBER(materialscript, ContainedMaterial);
   DATAMEMBER(ulong, Parameters);
-  DATAMEMBER(ushort, Config);
   ushort ContentType;
+  ushort Config;
 };
 
 template <class type> class contentscripttemplate : public basecontentscript

@@ -129,6 +129,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckBalance(float);
   virtual long CalculateMoveAPRequirement(long) const;
   virtual bool EquipmentHasNoPairProblems(ushort) const;
+  virtual vector2d GetEquipmentPanelPos(ushort) const;
  protected:
   virtual vector2d GetBodyPartBitmapPos(ushort, ushort);
   virtual ushort GetBodyPartColor1(ushort, ushort);
@@ -546,44 +547,6 @@ class ABSTRACT_CHARACTER
   virtual std::string BiteNoun() const { return "slime"; }
   //virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "vibrates oddly"; }
-);
-
-class CHARACTER
-(
-  conicalmommo,
-  mommo,
-  /*{
-    SetAgility(2);
-    SetStrength(4);
-    SetEndurance(50);
-    SetPerception(9);
-  },*/
- public:
-  virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
- protected:
-  virtual ulong TotalVolume() const { return 250000; }
-  //virtual std::string NameSingular() const { return "conical mommo slime"; }
-  virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(176,0); }
-  virtual ushort TotalSize() const { return 100; }
-);
-
-class CHARACTER
-(
-  flatmommo,
-  mommo,
-  /*{
-    SetAgility(4);
-    SetStrength(2);
-    SetEndurance(25);
-    SetPerception(9);
-  },*/
- public:
-  virtual ulong GetBloodColor() const { return MAKE_RGB(7,155,0); }
- protected:
-  virtual ulong TotalVolume() const { return 150000; }
-  //virtual std::string NameSingular() const { return "flat mommo slime"; }
-  virtual vector2d GetTorsoBitmapPos(ushort) const { return vector2d(192,0); }
-  virtual ushort TotalSize() const { return 75; }
 );
 
 class CHARACTER

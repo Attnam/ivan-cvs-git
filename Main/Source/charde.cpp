@@ -73,8 +73,8 @@ void petrus::CreateInitialEquipment()
 
 void priest::CreateInitialEquipment()
 {
-  SetMainWielded(new spikedmace(MAKE_MATERIAL(MITHRIL)));
-  SetBodyArmor(new chainmail(MAKE_MATERIAL(MITHRIL)));
+  SetMainWielded(new meleeweapon(SPIKEDMACE, MAKE_MATERIAL(MITHRIL)));
+  SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(MITHRIL)));
 }
 
 void oree::CreateInitialEquipment()
@@ -88,24 +88,24 @@ void oree::CreateInitialEquipment()
 void darkknight::CreateInitialEquipment()
 {
   if(RAND() % 20)
-    SetMainWielded(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword));
+    SetMainWielded(RAND() % 5 ? (item*)(new meleeweapon(LONGSWORD)) : RAND() % 20 ? (item*)(new meleeweapon(TWOHANDEDSWORD)) : (item*)(new meleeweapon(CURVEDTWOHANDEDSWORD)));
   else
     {
-      longsword* DoomsDay = new longsword(0, false);
+      meleeweapon* DoomsDay = new meleeweapon(LONGSWORD, false);
       DoomsDay->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
       SetMainWielded(DoomsDay);
     }
 
-  SetBodyArmor(new chainmail(RAND() % 5 ? MAKE_MATERIAL(IRON) : MAKE_MATERIAL(MITHRIL)));
+  SetBodyArmor(new bodyarmor(CHAINMAIL, RAND() % 5 ? MAKE_MATERIAL(IRON) : MAKE_MATERIAL(MITHRIL)));
 }
 
 void skeleton::CreateInitialEquipment()
 {
   if(RAND() % 10)
-    SetMainWielded(RAND() % 3 ? (item*)new axe : (item*)new pickaxe);
+    SetMainWielded(RAND() % 3 ? (item*)new meleeweapon(AXE) : (item*)new pickaxe);
   else
     {
-      SetMainWielded(new spikedmace);
+      SetMainWielded(new meleeweapon(SPIKEDMACE));
       SetSize(200);
       /*Sety(15);
       SetStrength(18);
@@ -115,13 +115,13 @@ void skeleton::CreateInitialEquipment()
 
 void goblin::CreateInitialEquipment()
 {
-  SetMainWielded(RAND() % 3 ? (item*)new spear : (item*)new poleaxe);
+  SetMainWielded(RAND() % 3 ? (item*)new meleeweapon(SPEAR) : (item*)new meleeweapon(POLEAXE));
 }
 
 void guard::CreateInitialEquipment()
 {
-  SetMainWielded(new longsword(MAKE_MATERIAL(IRON)));
-  SetBodyArmor(new chainmail);
+  SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)));
+  SetBodyArmor(new bodyarmor(CHAINMAIL));
 
   GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
   GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(500);
@@ -474,7 +474,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
 void shopkeeper::CreateInitialEquipment()
 {
   SetMainWielded(new pickaxe(MAKE_MATERIAL(MITHRIL)));
-  SetBodyArmor(new chainmail(MAKE_MATERIAL(MITHRIL)));
+  SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(MITHRIL)));
 
   GetCategoryWeaponSkill(AXES)->AddHit(5000);
   GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(5000);
@@ -482,7 +482,7 @@ void shopkeeper::CreateInitialEquipment()
 
 void farmer::CreateInitialEquipment()
 {
-  SetMainWielded(new axe);
+  SetMainWielded(new meleeweapon(AXE));
 }
 
 void petrus::BeTalkedTo(character* Talker)
@@ -874,7 +874,7 @@ void communist::BeTalkedTo(character* Talker)
 
 void communist::CreateInitialEquipment()
 {
-  SetMainWielded(new spikedmace(MAKE_MATERIAL(IRON)));
+  SetMainWielded(new meleeweapon(SPIKEDMACE, MAKE_MATERIAL(IRON)));
   SetBodyArmor(new platemail);
   GetStack()->FastAddItem(new fiftymillionroubles);
 }
@@ -911,7 +911,7 @@ void hunter::BeTalkedTo(character* Talker)
 
 void hunter::CreateInitialEquipment()
 {
-  SetMainWielded(new spear);
+  SetMainWielded(new meleeweapon(SPEAR));
 }
 
 void slave::BeTalkedTo(character* Talker)
@@ -1438,7 +1438,7 @@ void werewolfhuman::VirtualConstructor(bool Load)
 
 void kobold::CreateInitialEquipment()
 {
-  SetMainWielded(new spear);
+  SetMainWielded(new meleeweapon(SPEAR));
 }
 
 void mistress::BeTalkedTo(character* Talker)
@@ -1469,20 +1469,20 @@ void angel::SetDivineMaster(uchar NewMaster)
     {
     case GOOD:
       EditAttribute(AGILITY, 99);
-      SetMainWielded(new longsword(MAKE_MATERIAL(DIAMOND)));
-      SetBodyArmor(new chainmail(MAKE_MATERIAL(DIAMOND)));
+      SetMainWielded(new meleeweapon(LONGSWORD, MAKE_MATERIAL(DIAMOND)));
+      SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(DIAMOND)));
       RestoreHP();
       break;
     case NEUTRAL:
       EditAttribute(ENDURANCE, 99);
-      SetMainWielded(new poleaxe(MAKE_MATERIAL(SAPPHIRE)));
-      SetBodyArmor(new chainmail(MAKE_MATERIAL(SAPPHIRE)));
+      SetMainWielded(new meleeweapon(POLEAXE, MAKE_MATERIAL(SAPPHIRE)));
+      SetBodyArmor(new bodyarmor(CHAINMAIL, MAKE_MATERIAL(SAPPHIRE)));
       RestoreHP();
       break;
     case EVIL:
       {
 	EditAttribute(ARMSTRENGTH, 99);
-	spikedmace* SpikedMace = new spikedmace(0, false);
+	meleeweapon* SpikedMace = new meleeweapon(SPIKEDMACE, false);
 	SpikedMace->InitMaterials(MAKE_MATERIAL(RUBY), MAKE_MATERIAL(IRON), MAKE_MATERIAL(FROGFLESH));
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(MAKE_MATERIAL(RUBY)));
@@ -2242,54 +2242,69 @@ void carnivorousplant::GetAICommand()
   GetTorso()->UpdatePictures();
 }*/
 
+vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
+{
+  switch(Index)
+    {
+    case HELMETINDEX: return vector2d(34, -23);
+    case AMULETINDEX: return vector2d(14, -23);
+    case CLOAKINDEX: return vector2d(-6, -23);
+    case BODYARMORINDEX: return vector2d(54, -23);
+    case BELTINDEX: return vector2d(24, 70);
+    case RIGHTWIELDEDINDEX: return vector2d(-14, 4);
+    case LEFTWIELDEDINDEX: return vector2d(62, 4);
+    case RIGHTRINGINDEX: return vector2d(-14, 24);
+    case LEFTRINGINDEX: return vector2d(62, 24);
+    case RIGHTGAUNTLETINDEX: return vector2d(-14, 44);
+    case LEFTGAUNTLETINDEX: return vector2d(62, 44);
+    case RIGHTBOOTINDEX: return vector2d(4, 70);
+    case LEFTBOOTINDEX: return vector2d(44, 70);
+    default: return vector2d(24, 12);
+    }
+}
+
 bool humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where) const
 {
-  ushort Color[4], x;
-
-  for(x = 0; x < 4; ++x)
-    Color[x] = BLACK;
-
-  if(GetLeftLeg())
-    {
-      Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
-
-  if(GetRightLeg())
-    {
-      Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
-
-  if(GetGroin())
-    {
-      Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
-
-  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
-
-  for(x = 0; x < 4; ++x)
-    Color[x] = BLACK;
-
-  if(GetTorso())
-    {
-      Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
-
-  if(GetLeftArm())
-    {
-      Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
-
-  if(GetRightArm())
-    {
-      Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
+  ushort c, Color[4] = { 0, 0, 0, 0 };
 
   if(GetHead())
-    {
-      Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
-    }
+    Color[0] = GetHead()->GetHP() * 3 < GetHead()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  if(GetRightArm())
+    Color[1] = GetRightArm()->GetHP() * 3 < GetRightArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  if(GetLeftArm())
+    Color[2] = GetLeftArm()->GetHP() * 3 < GetLeftArm()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  if(GetTorso())
+    Color[3] = GetTorso()->GetHP() * 3 < GetTorso()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
 
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 0, 64, Where.X, Where.Y, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
+
+  for(c = 0; c < 4; ++c)
+    Color[c] = 0;
+
+  if(GetGroin())
+    Color[1] = GetGroin()->GetHP() * 3 < GetGroin()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  if(GetRightLeg())
+    Color[2] = GetRightLeg()->GetHP() * 3 < GetRightLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  if(GetLeftLeg())
+    Color[3] = GetLeftLeg()->GetHP() * 3 < GetLeftLeg()->GetMaxHP() ? MAKE_RGB(128,0,0) : LIGHTGRAY;
+
+  igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
+
+  for(c = 0; c < EquipmentSlots(); ++c)
+    {
+      vector2d Pos = Where + GetEquipmentPanelPos(c);
+
+      DOUBLEBUFFER->DrawRectangle(Pos + vector2d(-1, -1), Pos + vector2d(17, 17), DARKGRAY);
+
+      if(GetEquipment(c))
+	GetEquipment(c)->DrawTo(DOUBLEBUFFER, Pos);
+    }
+
   return true;
 }
 
@@ -3038,7 +3053,9 @@ bool nonhumanoid::LowerStats()
 
 ushort humanoid::DrawStats() const
 {
-  ushort PanelPosX = RES.X - 96, PanelPosY = 12;
+  DrawSilhouette(DOUBLEBUFFER, vector2d(RES.X - SILHOUETTE_X_SIZE - 23, 53));
+
+  ushort PanelPosX = RES.X - 96, PanelPosY = 15;
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "ArmStr %d", GetAttribute(ARMSTRENGTH));
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LegStr %d", GetAttribute(LEGSTRENGTH));
@@ -3118,7 +3135,7 @@ ushort humanoid::DrawStats() const
 
 ushort nonhumanoid::DrawStats() const
 {
-  ushort PanelPosX = RES.X - 96, PanelPosY = 12;
+  ushort PanelPosX = RES.X - 96, PanelPosY = 3;
 
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", Strength >> 1);
   FONT->Printf(DOUBLEBUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", Agility >> 1);

@@ -118,6 +118,7 @@ class item : public object
   virtual void DrawToTileBuffer(bool) const;
   virtual void DrawToTileBuffer(vector2d Pos, bool) const;
   virtual void PositionedDrawToTileBuffer(uchar, bool) const;
+  virtual void DrawTo(bitmap*, vector2d, bool = true) const;
   virtual bool Open(character*);
   virtual bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
@@ -328,7 +329,8 @@ name : public base\
 {\
  public:\
   name(ushort Config = 0, bool CallGenerateMaterials = true, bool Load = false) : base(donothing()) { Initialize(Config, CallGenerateMaterials, Load); }\
-  name(material* FirstMaterial, ushort Config = 0) : base(donothing()) { Initialize(Config, true, false); SetMainMaterial(FirstMaterial); }\
+  name(ushort Config, material* FirstMaterial) : base(donothing()) { Initialize(Config, true, false); SetMainMaterial(FirstMaterial); }\
+  name(material* FirstMaterial) : base(donothing()) { Initialize(0, true, false); SetMainMaterial(FirstMaterial); }\
   name(donothing D) : base(D) { }\
   virtual const prototype* GetProtoType() const;\
   static item* Clone(ushort Config, bool CallGenerateMaterials, bool Load) { return new name(Config, CallGenerateMaterials, Load); }\

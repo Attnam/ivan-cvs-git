@@ -117,7 +117,7 @@ class ITEM
   virtual bool ShowMaterial() const { return false; }
 );
 
-class ABSTRACT_ITEM
+class ITEM
 (
   meleeweapon,
   item,
@@ -147,6 +147,20 @@ class ABSTRACT_ITEM
 
 class ITEM
 (
+  valpurusjustifier,
+  meleeweapon,
+  ;
+);
+
+class ITEM
+(
+  neercseulb,
+  meleeweapon,
+  ;
+);
+
+/*class ITEM
+(
   longsword,
   meleeweapon,
   ;
@@ -168,36 +182,29 @@ class ITEM
 
 class ITEM
 (
-  valpurusjustifier,
-  longsword,
-  ;
-);
-
-class ITEM
-(
   axe,
   meleeweapon,
   ;
-);
+);*/
 
 class ITEM
 (
   pickaxe,
-  axe,
+  meleeweapon,
  public:
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const;
   ;
 );
 
-class ITEM
+/*class ITEM
 (
   spear,
   meleeweapon,
   ;
-);
+);*/
 
-class ABSTRACT_ITEM
+class ITEM
 (
   bodyarmor,
   item,
@@ -216,7 +223,7 @@ class ITEM
   virtual std::string GetNameSingular() const;
 );
 
-class ITEM
+/*class ITEM
 (
   chainmail,
   bodyarmor,
@@ -228,12 +235,12 @@ class ABSTRACT_ITEM
   shirt,
   bodyarmor,
   ;
-);
+);*/
 
 class ITEM
 (
   goldeneagleshirt,
-  shirt,
+  bodyarmor,
  public:
   virtual ushort GetStrengthValue() const { return 100; }
   virtual short CalculateOfferValue(char) const { return 750; }
@@ -336,7 +343,7 @@ class ITEM
 
 );
 
-class ITEM
+/*class ITEM
 (
   poleaxe,
   axe,
@@ -349,13 +356,7 @@ class ITEM
   meleeweapon,
   ;
 );
-
-class ITEM
-(
-  neercseulb,
-  spikedmace,
-  ;
-);
+*/
 
 class ITEM
 (
@@ -1109,7 +1110,7 @@ class ITEM
   virtual ushort GetBeamColor() const { return BLACK; }
 );
 
-class ITEM
+/*class ITEM
 (
   ringoffireresistance,
   ring,
@@ -1121,7 +1122,7 @@ class ITEM
   amuletoflifesaving,
   amulet,
   ;
-);
+);*/
 
 class ITEM
 (
@@ -1200,7 +1201,7 @@ class ITEM
   virtual void VirtualConstructor(bool);
 );
 
-class ITEM
+/*class ITEM
 (
   bootofspeed,
   boot,
@@ -1212,7 +1213,7 @@ class ITEM
   ringofpolymorphcontrol,
   ring,
   ;
-);
+);*/
 
 #endif
 
