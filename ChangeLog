@@ -1,3 +1,7 @@
+March 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Humanoid.pcx: Some humanoids dismembered by Kahvi
+
 March 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* GetHitValue() of material and GetArmorValue() of material and item replaced by StrengthValue()

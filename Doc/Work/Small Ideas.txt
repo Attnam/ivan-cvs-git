@@ -163,3 +163,7 @@ Allergies.
 Special birth gifts like "big head".
 Copper, bronze, wooden weapons.
 Nuts could be bodyparts. Or perhaps not.
+Tame symbol.
+Potion effect from fountain.
+Bananas should have black dots when spoiled.
+Zoom to look.
