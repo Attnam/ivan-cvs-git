@@ -33,6 +33,8 @@ class wsquare;
 class cweaponskill;
 class action;
 class characterprototype;
+class web; 
+
 struct homedata;
 struct trapdata;
 
@@ -982,6 +984,7 @@ class character : public entity, public id
   virtual bool IsTooHurtToRegainConsciousness() const;
   bool CanPanic() const;
   int GetRandomBodyPart() const;
+  virtual bool CanChokeOnWeb(web*) const { return CanChoke(); }
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();

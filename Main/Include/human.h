@@ -165,6 +165,7 @@ class ABSTRACT_CHARACTER
   virtual int RandomizeTryToUnStickBodyPart(ulong) const;
   virtual bool AllowUnconsciousness() const;
   virtual bool IsTooHurtToRegainConsciousness() const;
+  virtual bool CanChokeOnWeb(web*) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;

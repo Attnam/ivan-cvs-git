@@ -22,10 +22,12 @@ void web::VirtualConstructor(bool Load)
     {
       TrapData.TrapID = game::CreateNewTrapID(this);
       TrapData.VictimID = 0;
-      Picture = new bitmap(16, 16, TRANSPARENT_COLOR);
-      Picture->ActivateFastFlag();
-      packedcolor16 Color = MakeRGB16(160, 160, 160);
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(Picture, RAND_2 ? 64 : 80, 32, 0, 0, 16, 16, &Color);
+      Picture = new bitmap(16,16, TRANSPARENT_COLOR);
+      bitmap Temp(16, 16, TRANSPARENT_COLOR);
+      Temp.ActivateFastFlag();
+      packedcolor16 Color = MakeRGB16(250, 250, 250);
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, RAND_2 ? 64 : 80, 32, 0,0,16,16, &Color);
+      Temp.NormalBlit(Picture, Flags);
     }
 }
 
@@ -66,7 +68,7 @@ bool web::TryToUnStick(character* Victim, vector2d)
 
   Modifier = Max(GetTrapBaseModifier() * (Victim->GetAttribute(DEXTERITY) + Victim->GetAttribute(ARM_STRENGTH)) / 75, 2);
 
-  if(Victim->CanChoke() && !RAND_N(Modifier << 2))
+  if(Victim->CanChokeOnWeb(this) && !RAND_N(Modifier << 2))
     {
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You manage to choke yourself on the web.");
@@ -148,4 +150,9 @@ void web::AddTrapName(festring& String, int) const
 void web::Draw(bitmap* Bitmap, vector2d Pos, color24 Luminance) const
 {
   Picture->NormalMaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+bool web::IsStuckToBodyPart(int I) const
+{
+  return !!(1 << I & TrapData.BodyParts);
 }

@@ -39,6 +39,7 @@ class TRAP
   virtual void UnStick() { TrapData.VictimID = 0; }
   void SetStrength(int What) { Strength = What; }
   virtual void Draw(bitmap*, vector2d, color24) const;
+  virtual bool IsStuckToBodyPart(int) const;
  protected:
   virtual void VirtualConstructor(bool);
   trapdata TrapData;
