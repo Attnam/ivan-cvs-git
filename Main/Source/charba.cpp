@@ -2427,7 +2427,7 @@ void character::ConsumeHandler()
 	if((++StateCounter[CONSUMING]) * 500 >= GetConsumingCurrently()->ConsumeLimit())
 	{
 		if(GetIsPlayer())
-			ADD_MESSAGE("You finish eating %s.", GetConsumingCurrently()->CNAME(DEFINITE));
+			ADD_MESSAGE("You finish %s %s.", GetConsumingCurrently()->GetConsumeVerb().c_str(), GetConsumingCurrently()->CNAME(DEFINITE));
 		else
 			if(GetLevelSquareUnder()->CanBeSeen())
 				ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
