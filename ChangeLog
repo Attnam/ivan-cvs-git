@@ -7,6 +7,51 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 1 2004 Timo Kiviluoto <firstname.lastname@hut.fi>
+
+	* Corrected an extremely fatal bug in the square destruction code (it may
+	  have caused random crashes when changing levels)
+	* Fixed a harmless light update absence bug in the cloning code
+	* N simultaneously bought items in a shop can no longer cost more than N
+	  times one item's price (formelly this was possible since all arithmetic
+	  operations during the price calculations were rounded down)
+	* Monsters now avoid needlessly stepping on banana peels and broken bottles
+	* The nationality adjective "Attnamian" is now written "Attnamese"
+	* Gear pictures are now updated correctly when an equipped item spoils
+	* Adjusted the word order of sword names (based on our weapon expert Kahvi's
+	  opinions)
+	* The game no longer enters an infinite loop when blood is spilled on an
+	  enner beast's groin
+	* It is now possible to determine the leader of a team in the script
+	* It is now possible to determine how spoiled items are in the script
+	* Adding several identical items in the script is now more elegant
+	* Remade the consume system: the game now handles correctly situations
+	  where the player eg. eats an iron sword with a banana flesh handle
+	* Ikiros can now remove rust from equipment
+	* Fixed two bugs in Loricatus's pray effect
+	* Optimized the generation of terrains and items somewhat
+	* Added many new features to New Attnam
+	  * Banana shop for the hungry (the products start to spoil within a few
+	    turns, though)
+	  * Priestess of Silva who offers the same services as the priest in
+	    Attnam but is cheaper
+	  * Tourist family who follow Kaethos around the town
+	  * Underground sumo wrestling arena, where the player can compete with
+	    the local sumo champion Huang Ming Pong (I will not list all the
+	    meticulous details of the associated events here)
+	  * Added two new armors which the player gets after winning the sumo
+	    fight
+	  * The banana growers now feed the sumo wrestler regularily
+	  * It now rains in the village occasionally
+	* Lowered the player's starting money
+	* Zombies raised by necromancers now inherit the attributes of their
+	  past lives; also their names now depend on them
+	* Master necromancers can now sometimes raise Xinroch, if he hasn't
+	  been generated yet
+	* Apprentice necromancers can now raise any corpse he sees as a zombie
+	  (not just an adjacent one), and masters any corpse in the level
+	* Necromancers are now somewhat more intelligent
+
 December 16 2003 Timo Kiviluoto <firstname.lastname@hut.fi>
 
 	* Adjusted the colors of menus and lists so that the selected item is

@@ -80,7 +80,7 @@ class ROOM
 
 class ROOM
 (
-  landingsite,
+  bananadroparea,
   room,
  public:
   virtual bool PickupItem(character*, item*, ushort);
@@ -90,8 +90,17 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;
-  virtual bool AllowFoodSearch() const { return false; }
   virtual void HostileAction(character*) const;
+);
+
+class ROOM
+(
+  sumoarena,
+  room,
+ public:
+  virtual void DestroyTerrain(character*);
+  virtual void HostileAction(character*) const;
+  virtual bool CheckDestroyTerrain(character*);
 );
 
 #endif

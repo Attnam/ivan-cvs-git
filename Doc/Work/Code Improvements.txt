@@ -60,7 +60,7 @@ Eliöiden totuusjäsenten yhteensulauttaminen.
 Leikisti aktiivin 1. partisiipissa olevien data-arvojen muokkaus kykylauseiksi.
 Hidastinten kirjastointi.
 //Litkujen materialisoiminen.
-Massattomat maastot.
+(r) Massattomat maastot.
 Metsästysvälineiden lokeroittaminen.
 Artikkelien bitittäminen.
 Inttien synninpäästö.

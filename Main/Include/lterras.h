@@ -160,6 +160,7 @@ class OLTERRAIN
   virtual void Load(inputfile&);
   virtual ushort GetMaterials() const { return 2; }
   virtual material* GetMaterial(ushort) const;
+  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials();

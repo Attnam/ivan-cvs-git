@@ -8,7 +8,6 @@
 #include "square.h"
 #include "level.h"
 #include "dungeon.h"
-#include "felibdef.h"
 #include "lterra.h"
 
 #ifndef LIGHT_BORDER
@@ -25,6 +24,7 @@ class smoke;
 class gas;
 class bodypart;
 class liquid;
+class rain;
 
 typedef std::vector<item*> itemvector;
 typedef std::list<fluid*> fluidlist;
@@ -163,6 +163,7 @@ class lsquare : public square
   bool EngravingsCanBeReadByPlayer();
   bool HasEngravings() const { return !Engraved.IsEmpty(); }
   void FinalProcessForBone();
+  bool IsFreezed() const { return Freezed; }
   void SetIsFreezed(bool What) { Freezed = What; }
   bool IsDangerousForAIToBreathe(const character*) const;
   uchar GetWalkability() const;
@@ -174,6 +175,12 @@ class lsquare : public square
   void DisplayFluidInfo(festring&) const;
   void RemoveFluid(fluid*);
   void AddFluid(liquid*);
+  void DrawStacks(bitmap*, vector2d, ulong, bool) const;
+  bool FluidIsVisible() const { return SmokeAlphaSum < 175; }
+  void RemoveRain(rain*);
+  void AddRain(liquid*, vector2d, bool);
+  void SetIsOutside(bool What) { Outside = What; }
+  bool IsOutside() const { return Outside; }
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -194,6 +201,9 @@ class lsquare : public square
   bool Freezed;
   borderpartner BorderPartner[8];
   bool HasFluids;
+  std::vector<rain*> Rain;
+  bool HasRain;
+  bool Outside;
 };
 
 inline bool lsquare::IsDark() const

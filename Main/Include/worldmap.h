@@ -12,6 +12,8 @@
 class wsquare;
 class continent;
 
+typedef std::vector<character*> charactervector;
+
 class worldmap : public area
 {
  public:
@@ -33,7 +35,7 @@ class worldmap : public area
   continent* GetContinent(ushort) const;
   void RemoveEmptyContinents();
   short GetAltitude(vector2d);
-  std::vector<character*>& GetPlayerGroup();
+  charactervector& GetPlayerGroup();
   character* GetPlayerGroupMember(ushort);
   virtual void Draw(bool) const;
   void CalculateLuminances();
@@ -52,7 +54,7 @@ class worldmap : public area
   short** AltitudeBuffer;
   short** OldAltitudeBuffer;
   uchar** ContinentBuffer;
-  std::vector<character*> PlayerGroup;
+  charactervector PlayerGroup;
 };
 
 outputfile& operator<<(outputfile&, const worldmap*);

@@ -27,7 +27,6 @@ class ITEM
   virtual ushort GetMaterials() const { return 3; }
   virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual void SignalSpoil(material*);
-  virtual bool CanBePiledWith(const item*, const character*) const;
   virtual void Be();
   virtual bool IsWeapon(const character*) const { return true; }
   virtual char GetEnchantment() const { return Enchantment; }
@@ -37,12 +36,22 @@ class ITEM
   virtual ushort GetStrengthValue() const;
   virtual ushort GetEffectBonus() const;
   virtual ushort GetAPBonus() const;
-  virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
+  virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
   virtual ushort GetBonus() const;
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
   virtual void TryToRust(ulong);
+  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
+  virtual material* RemoveMaterial(material*);
+  material* RemoveMainMaterial();
+  material* RemoveSecondaryMaterial();
+  virtual vector2d GetWieldedBitmapPos(ushort) const;
+  virtual void CalculateEmitation();
+  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
+  virtual item* Fix();
  protected:
+  virtual bool CalculateHasBe() const;
   virtual bool AllowFluids() const { return true; }
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
@@ -52,6 +61,7 @@ class ITEM
   virtual uchar GetAlphaB(ushort) const;
   virtual uchar GetRustDataB() const;
   virtual ushort GetDripColor() const;
+  virtual bool AllowRegularColors() const;
   material* SecondaryMaterial;
   char Enchantment;
 );
@@ -212,7 +222,7 @@ class ABSTRACT_ITEM
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ushort GetInElasticityPenalty(ushort) const;
   virtual short GetCarryingBonus() const;
-  virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
+  virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
   virtual bool AllowFluids() const { return true; }
  protected:
   virtual void AddPostFix(festring&) const;
@@ -367,6 +377,23 @@ class ITEM
   virtual ushort GetOutlineColor(ushort) const;
   virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
+);
+
+class ITEM
+(
+  decosadshirt,
+  bodyarmor,
+ public:
+  virtual void Be();
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  ulong GetEquippedTicks() { return EquippedTicks; }
+  void SetEquippedTicks(ulong What) { EquippedTicks = What; }
+  virtual bool IsDecosAdShirt() const { return true; }
+ protected:
+  virtual bool CalculateHasBe() const { return true; }
+  virtual void VirtualConstructor(bool);
+  ulong EquippedTicks;
 );
 
 #endif

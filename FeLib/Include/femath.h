@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "vector2d.h"
-#include "felibdef.h"
 #include "rect.h"
 
 #define RAND femath::Rand
@@ -24,16 +23,6 @@
 
 class outputfile;
 class inputfile;
-
-template <class type> inline type HypotSquare(const type& X, const type& Y) { return X * X + Y * Y; }
-template <class f, class type> inline type Recurse(f F, type Value, ushort Amount) { return Amount ? Recurse(F, F(Value), Amount - 1) : Value; }
-
-template <class type> inline void Swap(type& X, type& Y)
-{
-  const type T(X);
-  X = Y;
-  Y = T;
-}
 
 class femath
 {

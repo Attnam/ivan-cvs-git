@@ -322,41 +322,62 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(ushort
   type* Instance = 0;
   const typename type::prototype* Proto = protocontainer<type>::GetProto(ContentType);
   const typename type::databasemap& ProtoConfig = Proto->GetConfig();
+  const materialscript* MainMaterial = GetMainMaterial();
+  const materialscript* SecondaryMaterial = GetSecondaryMaterial();
+  const materialscript* ContainedMaterial = GetContainedMaterial();
+  const const typename type::database* DataBase = &ProtoConfig.begin()->second;
+  bool UseOverriddenMaterials = false;
 
-  if(!Config && ProtoConfig.begin()->second.IsAbstract)
+  if(!Config && DataBase->IsAbstract)
     {
       while(!Instance)
 	{
 	  ushort ChosenConfig = 1 + RAND() % (ProtoConfig.size() - 1);
 	  typename type::databasemap::const_iterator i;
 	  for(i = ProtoConfig.begin(); ChosenConfig; ++i, --ChosenConfig);
+	  DataBase = &i->second;
 
-	  if(i->second.AllowRandomInstantiation())
-	    Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+	  if(DataBase->AllowRandomInstantiation())
+	    {
+	      if(!(SpecialFlags & NO_MATERIALS) && MainMaterial && (!DataBase->HasSecondaryMaterial || SecondaryMaterial) && (!DataBase->HasContainedMaterial || ContainedMaterial))
+		{
+		  SpecialFlags |= NO_MATERIALS;
+		  UseOverriddenMaterials = true;
+		}
+
+	      Instance = Proto->Clone(i->first, SpecialFlags|NO_PIC_UPDATE);
+	    }
 	}
     }
   else
-    Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
+    {
+      if(!(SpecialFlags & NO_MATERIALS) && MainMaterial && (!DataBase->HasSecondaryMaterial || SecondaryMaterial) && (!DataBase->HasContainedMaterial || ContainedMaterial))
+	{
+	  SpecialFlags |= NO_MATERIALS;
+	  UseOverriddenMaterials = true;
+	}
+
+      Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
+    }
 
   const ulong* Parameters = GetParameters();
 
   if(Parameters)
     Instance->SetParameters(*Parameters);
 
-  const materialscript* MainMaterial = GetMainMaterial();
+  if(UseOverriddenMaterials)
+    Instance->InitMaterials(MainMaterial, SecondaryMaterial, ContainedMaterial, false);
+  else
+    {
+      if(MainMaterial)
+	Instance->ChangeMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  if(MainMaterial)
-    Instance->ChangeMainMaterial(MainMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      if(SecondaryMaterial)
+	Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
 
-  const materialscript* SecondaryMaterial = GetSecondaryMaterial();
-
-  if(SecondaryMaterial)
-    Instance->ChangeSecondaryMaterial(SecondaryMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
-
-  const materialscript* ContainedMaterial = GetContainedMaterial();
-
-  if(ContainedMaterial)
-    Instance->ChangeContainedMaterial(ContainedMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+      if(ContainedMaterial)
+	Instance->ChangeContainedMaterial(ContainedMaterial->Instantiate(), SpecialFlags|NO_PIC_UPDATE);
+    }
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
     Instance->UpdatePictures();
@@ -391,6 +412,7 @@ void contentscript<character>::InitDataMap()
   INIT_MEMBER(Inventory);
   INIT_MEMBER(IsMaster);
   INIT_MEMBER(WayPoint);
+  INIT_MEMBER(IsLeader);
 }
 
 character* contentscript<character>::Instantiate(ushort SpecialFlags) const
@@ -427,6 +449,8 @@ void contentscript<item>::InitDataMap()
   INIT_MEMBER(ItemsInside);
   INIT_MEMBER(Chance);
   INIT_MEMBER(ConfigFlags);
+  INIT_MEMBER(SpoilPercentage);
+  INIT_MEMBER(Times);
 }
 
 item* contentscript<item>::Instantiate(ushort SpecialFlags) const
@@ -468,6 +492,11 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
 
   if(ItemsInside)
     Instance->SetItemsInside(*ItemsInside, SpecialFlags);
+
+  const uchar* SpoilPercentage = GetSpoilPercentage();
+
+  if(SpoilPercentage)
+    Instance->SetSpoilPercentage(*SpoilPercentage);
 
   return Instance;
 }

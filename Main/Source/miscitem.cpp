@@ -3,8 +3,7 @@
 void materialcontainer::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
 void materialcontainer::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
 void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
-void materialcontainer::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetContainedMaterial(NewMaterial, SpecialFlags); }
-void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
+void materialcontainer::InitMaterials(const materialscript* M, const materialscript*, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
 ushort holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
@@ -15,13 +14,17 @@ ushort lantern::GetMaterialColorC(ushort) const { return MakeRGB16(255, 255, 100
 ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB16(255, 255, 100); }
 
 bool can::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
-vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
+vector2d can::GetBitmapPos(ushort) const { return vector2d(16, ContainedMaterial ? 288 : 304); }
 bool can::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
 
 bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 bool potion::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 bool potion::EffectIsGood() const { return GetContainedMaterial() && GetContainedMaterial()->EffectIsGood(); }
 bool potion::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
+
+bool bananapeels::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
+
+bool brokenbottle::IsDangerousForAI(const character* Stepper) const { return Stepper->HasFeet(); }
 
 ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
@@ -41,19 +44,6 @@ bool beartrap::AddAdjective(festring& String, bool Articled) const { return (IsA
 ushort carrot::GetMaterialColorB(ushort) const { return MakeRGB16(80, 100, 16); }
 
 ushort charmlyre::GetMaterialColorB(ushort) const { return MakeRGB16(150, 130, 110); }
-
-void potion::GenerateLeftOvers(character* Eater)
-{
-  ChangeConsumeMaterial(0);
-
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
-    {
-      MoveTo(Eater->GetStackUnder());
-      Eater->DexterityAction(1);
-    }
-  else
-    MoveTo(Eater->GetStack());
-}
 
 bool scroll::CanBeRead(character* Reader) const
 {
@@ -134,15 +124,7 @@ bool lump::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool 
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      bool Success = GetMainMaterial()->HitEffect(Enemy);
-
-      if(!GetMainMaterial()->GetVolume())
-	{
-	  RemoveFromSlot();
-	  SendToHell();
-	}
-
-      return Success;
+      return GetMainMaterial()->HitEffect(Enemy);
     }
   else
     return false;
@@ -313,22 +295,12 @@ void brokenbottle::StepOnEffect(character* Stepper)
 
 liquid* can::CreateDipLiquid()
 {
-  material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
-
-  if(!GetContainedMaterial()->GetVolume())
-    Empty();
-
-  return static_cast<liquid*>(Material);
+  return static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()));
 }
 
 liquid* potion::CreateDipLiquid()
 {
-  material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
-
-  if(!GetContainedMaterial()->GetVolume())
-    Empty();
-
-  return static_cast<liquid*>(Material);
+  return static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()));
 }
 
 void potion::DipInto(liquid* Liquid, character* Dipper)
@@ -940,7 +912,7 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed != 0 && game::GetTicks() - LastUsed < 2500)
+  if(LastUsed && game::GetTicks() - LastUsed < 2500)
     {
       whistle::BlowEffect(Whistler);
       return;
@@ -978,7 +950,7 @@ void itemcontainer::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      SetIsLocked(RAND() % 3 != 0);
+      SetIsLocked(!!RAND_N(3));
       ulong ItemNumber = RAND() % (GetMaxGeneratedContainedItems() + 1);
 
       /* Terrible gum solution! */
@@ -1238,19 +1210,6 @@ bool beartrap::CheckPickUpEffect(character* Picker)
   return true;
 }
 
-void can::GenerateLeftOvers(character* Eater)
-{
-  ChangeConsumeMaterial(0);
-
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
-    {
-      MoveTo(Eater->GetStackUnder());
-      Eater->DexterityAction(1);
-    }
-  else
-    MoveTo(Eater->GetStack());
-}
-
 ushort lantern::GetSpecialFlags() const
 {
   switch(SquarePosition)
@@ -1467,34 +1426,19 @@ void materialcontainer::SignalSpoil(material* Material)
   if(!Exists())
     return;
 
-  if(Material == GetMainMaterial())
+  if(Material == MainMaterial)
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s becomes so spoiled that it cannot hold its contents anymore.", CHAR_NAME(DEFINITE));
 
-      if(GetContainedMaterial()->IsLiquid())
-	{
-	  if(!game::IsInWilderness())
-	    GetLSquareUnder()->SpillFluid(0, static_cast<liquid*>(GetContainedMaterial()));
-
-	  RemoveFromSlot();
-	}
-      else
-	{
-	  lump* Lump = new lump(0, NO_MATERIALS);
-	  Lump->InitMaterials(GetContainedMaterial());
-	  DonateSlotTo(Lump);
-	  SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
-	}
-
-      SendToHell();
+      RemoveMainMaterial();
     }
-  else if(Material == GetContainedMaterial())
+  else
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The contents of %s spoil completely.", CHAR_NAME(DEFINITE));
 
-      Empty();
+      RemoveContainedMaterial();
     }
 }
 
@@ -1505,11 +1449,11 @@ bool materialcontainer::CanBePiledWith(const item* Item, const character* Viewer
 
   const materialcontainer* Weapon = static_cast<const materialcontainer*>(Item);
 
-  if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
+  if(!ContainedMaterial && !Weapon->ContainedMaterial)
     return true;
 
-  return ContainedMaterial != 0
-      && Weapon->ContainedMaterial != 0
+  return ContainedMaterial
+      && Weapon->ContainedMaterial
       && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
       && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
 }
@@ -1783,12 +1727,17 @@ void itemcontainer::SetItemsInside(const std::list<contentscript<item> >& ItemLi
   for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
     if(i->IsValid())
       {
-	item* Item = i->Instantiate(SpecialFlags);
+	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
 
-	if(Item)
+	for(ushort c = 0; c < Times; ++c)
 	  {
-	    Contained->AddItem(Item);
-	    Item->SpecialGenerationHandler();
+	    item* Item = i->Instantiate(SpecialFlags);
+
+	    if(Item)
+	      {
+		Contained->AddItem(Item);
+		Item->SpecialGenerationHandler();
+	      }
 	  }
       }
 }
@@ -1805,11 +1754,6 @@ bool mine::CheckPickUpEffect(character*)
     }
 
   return true;
-}
-
-void itemcontainer::GenerateLeftOvers(character*)
-{
-  Contained->MoveItemsTo(GetSlot());
 }
 
 bool scrollofrepair::Read(character* Reader)
@@ -1904,7 +1848,7 @@ bool encryptedscroll::Read(character*)
 
 bool horn::Apply(character* Blower) 
 {
-  if(LastUsed == 0 || game::GetTicks() - LastUsed >= 2500)
+  if(!LastUsed || game::GetTicks() - LastUsed >= 2500)
     {
       LastUsed = game::GetTicks();
       const char* SoundDescription = GetConfig() == BRAVERY ? "loud but calming" : "frightening, almost scream-like";
@@ -1984,24 +1928,6 @@ bool beartrap::IsPickable(character* Picker) const
   return !IsActive() && (!Picker->GetStuckTo() || Picker->GetStuckTo()->GetID() != GetID());
 }
 
-void banana::GenerateLeftOvers(character* Eater)
-{
-  item* Peel = new bananapeels(0, NO_MATERIALS);
-  Peel->InitMaterials(GetMainMaterial());
-
-  if(!game::IsInWilderness() && (!Eater->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
-    {
-      Eater->GetStackUnder()->AddItem(Peel);
-      Eater->DexterityAction(1);
-    }
-  else
-    Eater->GetStack()->AddItem(Peel);
-
-  RemoveFromSlot();
-  SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
-  SendToHell();
-}
-
 void banana::Save(outputfile& SaveFile) const
 {
   materialcontainer::Save(SaveFile);
@@ -2054,19 +1980,15 @@ void banana::SignalSpoil(material* Material)
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("The inside of %s spoils completely.", CHAR_NAME(DEFINITE));
 
-      item* Peel = new bananapeels(0, NO_MATERIALS);
-      Peel->InitMaterials(GetMainMaterial());
-      DonateSlotTo(Peel);
-      SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
-      SendToHell();
+      RemoveContainedMaterial();
     }
   else
     item::SignalSpoil(Material);
 }
 
-bool bone::DogWillCatchAndConsume() const
+bool bone::DogWillCatchAndConsume(const character* Doggie) const
 {
-  return GetConsumeMaterial()->GetConfig() == BONE && GetConsumeMaterial()->GetSpoilLevel() == 0;
+  return GetConsumeMaterial(Doggie)->GetConfig() == BONE && !GetConsumeMaterial(Doggie)->GetSpoilLevel();
 }
 
 bool stone::ShowMaterial() const
@@ -2284,7 +2206,7 @@ bool holybanana::HitEffect(character* Enemy, character* Hitter, vector2d HitPos,
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s banana burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 3), FIRE, BodyPartIndex, Direction) != 0 || BaseSuccess;
+      return Enemy->ReceiveBodyPartDamage(Hitter, 2 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
     }
   else
     return BaseSuccess;
@@ -2413,7 +2335,7 @@ void horn::FinalProcessForBone()
 
 bool charmlyre::Apply(character* Charmer)
 {
-  if(LastUsed != 0 && game::GetTicks() - LastUsed < 10000)
+  if(LastUsed && game::GetTicks() - LastUsed < 10000)
     {
       if(Charmer->IsPlayer())
 	ADD_MESSAGE("You produce a highly alluring sound.");
@@ -2491,9 +2413,9 @@ void charmlyre::FinalProcessForBone()
   LastUsed = 0;
 }
 
-bool carrot::BunnyWillCatchAndConsume() const
+bool carrot::BunnyWillCatchAndConsume(const character* Bunny) const
 {
-  return GetConsumeMaterial()->GetConfig() == CARROT_FLESH && GetConsumeMaterial()->GetSpoilLevel() == 0;
+  return GetConsumeMaterial(Bunny)->GetConfig() == CARROT_FLESH && !GetConsumeMaterial(Bunny)->GetSpoilLevel();
 }
 
 void beartrap::TeleportRandomly()
@@ -2526,4 +2448,93 @@ void backpack::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex
     }
 
   item::SpillFluid(Spiller, Liquid, SquareIndex);
+}
+
+material* materialcontainer::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+{
+  if(ContainedMaterial
+  && (ContainedMaterial->*Predicate)()
+  && Consumer->CanConsume(ContainedMaterial))
+    return ContainedMaterial;
+  else
+    return item::GetConsumeMaterial(Consumer, Predicate);
+}
+
+material* materialcontainer::RemoveMaterial(material* Material)
+{
+  if(Material == MainMaterial)
+    return RemoveMainMaterial();
+  else
+    return RemoveContainedMaterial();
+}
+
+material* materialcontainer::RemoveMainMaterial()
+{
+  if(!ContainedMaterial)
+    RemoveFromSlot();
+  else if(ContainedMaterial->IsLiquid())
+    {
+      if(!game::IsInWilderness())
+	{
+	  lsquare* Square = GetLSquareUnder();
+	  RemoveFromSlot();
+	  Square->SpillFluid(0, static_cast<liquid*>(ContainedMaterial));
+	  SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+	}
+      else
+	RemoveFromSlot();
+    }
+  else
+    {
+      item* Lump = new lump(0, NO_MATERIALS);
+      Lump->InitMaterials(ContainedMaterial);
+      DonateFluidsTo(Lump);
+      DonateIDTo(Lump);
+      DonateSlotTo(Lump);
+      SetContainedMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+    }
+
+  SendToHell();
+  return 0;
+}
+
+material* materialcontainer::RemoveContainedMaterial()
+{
+  material* Material = ContainedMaterial;
+  SetContainedMaterial(0);
+  SendNewDrawAndMemorizedUpdateRequest();
+  return Material;
+}
+
+material* banana::RemoveContainedMaterial()
+{
+  item* Peel = new bananapeels(0, NO_MATERIALS);
+  Peel->InitMaterials(MainMaterial);
+  DonateSlotTo(Peel);
+  DonateIDTo(Peel);
+  SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+  SendToHell();
+  return 0;
+}
+
+material* itemcontainer::RemoveMaterial(material* Material)
+{
+  Contained->MoveItemsTo(GetSlot());
+  return item::RemoveMaterial(Material);
+}
+
+void materialcontainer::CalculateEmitation()
+{
+  Emitation = GetBaseEmitation();
+
+  if(MainMaterial)
+    game::CombineLights(Emitation, MainMaterial->GetEmitation());
+
+  if(ContainedMaterial)
+    game::CombineLights(Emitation, ContainedMaterial->GetEmitation());
+}
+
+bool materialcontainer::CalculateHasBe() const
+{
+  return (MainMaterial && MainMaterial->HasBe()) || (ContainedMaterial && ContainedMaterial->HasBe());
 }

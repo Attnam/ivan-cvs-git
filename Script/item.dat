@@ -93,11 +93,15 @@ item
 	BeltBitmapPos
 	GauntletBitmapPos
 	BootBitmapPos */
+	GrantsLevitation = false;
+	HasSecondaryMaterial = false;
+	HasContainedMaterial = false;
 }
 
 materialcontainer
 {
 	IsAbstract = true;
+	HasContainedMaterial = true;
 }
 
 lantern
@@ -178,6 +182,7 @@ meleeweapon
 	CanBeBroken = true;
 	CanBePiled = false;
 	CanBeEnchanted = true;
+	HasSecondaryMaterial = true;
 
 	Config LONG_SWORD;
 	{
@@ -189,8 +194,7 @@ meleeweapon
 		BitmapPos = 16, 336;
 		FormModifier = 90;
 		StrengthModifier = 100;
-		NameSingular = "sword";
-		Adjective = "long";
+		NameSingular = "long sword";
 		MainMaterialConfig = { 9, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig = { 9, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 9, 200, 150, 100, 50, 1000, 750, 100, 25, 25; }
@@ -219,8 +223,7 @@ meleeweapon
 		StrengthModifier = 200;
 		BitmapPos = 0, 0;
 		FormModifier = 135;
-		Adjective = "two-handed";
-		NameSingular = "sword";
+		NameSingular = "two-handed sword";
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
@@ -248,8 +251,7 @@ meleeweapon
 		StrengthModifier = 175;
 		BitmapPos = 0, 16;
 		FormModifier = 160;
-		Adjective = "two-handed";
-		NameSingular = "scimitar";
+		NameSingular = "two-handed scimitar";
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 4, 2000, 100, 25, 25; }
@@ -482,8 +484,7 @@ meleeweapon
 		BitmapPos = 48, 240;
 		FormModifier = 80;
 		StrengthModifier = 90;
-		Adjective = "short";
-		NameSingular = "sword";
+		NameSingular = "short sword";
 		MainMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig = { 6, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		MaterialConfigChances = { 6, 1250, 1000, 750, 100, 25, 25; }
@@ -667,7 +668,6 @@ banana /* materialcontainer-> */
 	Roundness = 15;
 	CanBeBroken = true;
 	/* MinCharges & MaxCharges overridden */
-	CanBePiled = true;
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 320;
 
@@ -921,7 +921,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	CanBeEnchanted = false;
 	AttachedGod = VALPURUS;
 	IsQuestItem = true;
-} 
+}
 
 potion /* materialcontainer-> */
 {
@@ -1818,6 +1818,17 @@ belt /* armor-> */
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = MELLIS;
 		MainMaterialConfig == TROLL_HIDE;
+		MaterialConfigChances == 100;
+	}
+
+	Config BELT_OF_LEVITATION;
+	{
+		Possibility = 0;
+		PostFix = "of levitation";
+		GrantsLevitation = true;
+		Price = 500;
+		AttachedGod = SILVA;
+		MainMaterialConfig == ANGEL_HAIR;
 		MaterialConfigChances == 100;
 	}
 }
@@ -2921,3 +2932,19 @@ hattifattenertorso /* normaltorso-> */
 	AttachedGod = NONE;
 }
 
+decosadshirt /* armor->bodyarmor-> */
+{
+	DefaultSize = 60;
+	BitmapPos = 80, 64;
+	Possibility = 0;
+	DefaultMainVolume = 1000;
+	StrengthModifier = 75;
+	NameSingular = "shirt";
+	PostFix = "with a Decos Bananas Co. ad";
+	MainMaterialConfig == CLOTH;
+	CanBeBroken = false;
+	InElasticityPenaltyModifier = 30;
+	AttachedGod = MELLIS;
+	TorsoArmorBitmapPos = 32, 448;
+	Price = 0;
+} 

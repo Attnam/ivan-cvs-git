@@ -37,7 +37,7 @@ class colorizablebitmap
   void Printf(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   void PrintfUnshaded(bitmap*, ushort, ushort, ushort, const char*, ...) const;
   bitmap* Colorize(const ushort*, uchar = 255, const uchar* = 0) const;
-  bitmap* Colorize(vector2d, vector2d, vector2d, const ushort*, uchar = 255, const uchar* = 0, const uchar* = 0) const;
+  bitmap* Colorize(vector2d, vector2d, vector2d, const ushort*, uchar = 255, const uchar* = 0, const uchar* = 0, bool = true) const;
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
@@ -63,9 +63,11 @@ class colorizablebitmap
 
   void CreateFontCache(ushort);
   static bool IsMaterialColor(uchar Color) { return Color >= 192; }
-  bool IsTransparent(vector2d Pos) const { return PaletteBuffer[Pos.Y * XSize + Pos.X] == 191; }
   static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) >> 4; }
-  uchar GetPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
+  uchar& AccessPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
+  uchar& AccessPaletteEntry(vector2d Pos) const { return PaletteBuffer[Pos.Y * XSize + Pos.X]; }
+  bool IsTransparent(vector2d) const;
+  bool IsMaterialColor1(vector2d) const;
   vector2d RandomizeSparklePos(const vector2d*, vector2d*, vector2d, vector2d, ushort, bool*) const;
  protected:
   ushort XSize, YSize;

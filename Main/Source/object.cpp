@@ -17,10 +17,6 @@ vector2d NormalSparkleValidityArray[256];
 vector2d PossibleSparkleBuffer[256];
 
 object::object() : entity(0), MainMaterial(0) { }
-void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void object::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
-void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
-void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
 ushort object::GetSpecialFlags() const { return ST_NORMAL; }
 ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
 const bitmap*const* object::GetPicture() const { return GraphicData.Picture; }
@@ -56,15 +52,6 @@ void object::Load(inputfile& SaveFile)
 {
   SaveFile >> GraphicData >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
-}
-
-void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
-{
-  InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
-  SignalVolumeAndWeightChange();
-
-  if(CallUpdatePictures)
-    UpdatePictures();
 }
 
 void object::ObjectInitMaterials(material*& FirstMaterial, material* FirstNewMaterial, ulong FirstDefaultVolume, material*& SecondMaterial, material* SecondNewMaterial, ulong SecondDefaultVolume, bool CallUpdatePictures)
@@ -222,11 +209,18 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
 		}
 
 	      SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, vector2d(16, 16), ValidityArraySize, MColorSparkling);
-	      SparkleTime = RAND() % 241;
-	      femath::LoadSeed();
 
-	      if(AnimationFrames <= 256)
-		AnimationFrames = 256;
+	      if(SparklePos != ERROR_VECTOR)
+		{
+		  SparkleTime = RAND() % 241;
+
+		  if(AnimationFrames <= 256)
+		    AnimationFrames = 256;
+		}
+	      else
+		Sparkling = false;
+
+	      femath::LoadSeed();
 	    }
 	}
 
@@ -286,6 +280,9 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort 
   uchar RustDataB = GetRustDataB();
   uchar RustDataC = GetRustDataC();
   uchar RustDataD = GetRustDataD();
+
+  if(!AllowRegularColors())
+    SpecialFlags |= ST_DISALLOW_R_COLORS;
 
   for(c = 0; c < AnimationFrames; ++c)
     {
@@ -372,26 +369,6 @@ void object::AddLumpyPostFix(festring& String) const
   MainMaterial->AddName(String << " of ");
 }
 
-void object::SetSecondaryMaterial(material*, ushort)
-{
-  ABORT("Illegal object::SetSecondaryMaterial call!");
-}
-
-void object::ChangeSecondaryMaterial(material*, ushort)
-{
-  ABORT("Illegal object::ChangeSecondaryMaterial call!");
-}
-
-void object::SetContainedMaterial(material*, ushort)
-{
-  ABORT("Illegal object::SetContainedMaterial call!");
-}
-
-void object::ChangeContainedMaterial(material*, ushort)
-{
-  ABORT("Illegal object::ChangeContainedMaterial call!");
-}
-
 uchar object::GetAlphaA(ushort) const
 {
   return MainMaterial->GetAlpha();
@@ -423,12 +400,8 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
 
 ushort object::RandomizeMaterialConfiguration()
 {
-  return GetMaterialConfigChances().size() > 1 ? femath::WeightedRand(GetMaterialConfigChances()) : 0;
-}
-
-void object::GenerateMaterials()
-{
-  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
+  const std::vector<long>& MaterialConfigChances = GetMaterialConfigChances();
+  return MaterialConfigChances.size() > 1 ? femath::WeightedRand(MaterialConfigChances) : 0;
 }
 
 void object::InitChosenMaterial(material*& Material, const std::vector<long>& MaterialConfig, ulong DefaultVolume, ushort Chosen)
@@ -456,18 +429,13 @@ void object::CalculateEmitation()
 {
   Emitation = GetBaseEmitation();
 
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      game::CombineLights(Emitation, GetMaterial(c)->GetEmitation());
+  if(MainMaterial)
+    game::CombineLights(Emitation, MainMaterial->GetEmitation());
 }
 
 bool object::CalculateHasBe() const
 {
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c) && GetMaterial(c)->HasBe())
-      return true;
-
-  return false;
+  return MainMaterial && MainMaterial->HasBe();
 }
 
 bool object::IsSparkling(ushort ColorIndex) const

@@ -4,8 +4,15 @@ square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(
 
 square::~square()
 {
-  if(Character)
-    Character->SendToHell();
+  character* Char = GetCharacter();
+
+  if(Char)
+    {
+      for(ushort c = 0; c < Char->GetSquaresUnder(); ++c)
+	Char->GetSquareUnder(c)->Character = 0;
+
+      delete Char;
+    }
 }
 
 void square::Save(outputfile& SaveFile) const

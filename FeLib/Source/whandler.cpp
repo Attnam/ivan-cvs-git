@@ -6,7 +6,7 @@
 
 bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 ushort globalwindowhandler::Controls = 0;
-ulong globalwindowhandler::Tick = 0;
+ulong globalwindowhandler::Tick;
 bool globalwindowhandler::ControlLoopsEnabled = true;
 
 void globalwindowhandler::InstallControlLoop(bool (*What)())
@@ -125,7 +125,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	if(Key > 0xE000) 
 	  return Key - 0xE000;
 
-	if(Key != 0 && Key < 0x81)
+	if(Key && Key < 0x81)
 	  return Key;
       }
     else
@@ -264,7 +264,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	default:
 	  KeyPressed = Event->key.keysym.unicode;
 
-	  if(KeyPressed == 0)
+	  if(!KeyPressed)
 	    return;
 	}
 

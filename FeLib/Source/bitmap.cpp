@@ -1953,7 +1953,7 @@ void bitmap::CalculateRandMap()
     ABORT("Alpha map needed to calculate random map.");
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
-    UpdateRandMap(c, AlphaMap[0][c] != 0);
+    UpdateRandMap(c, !!AlphaMap[0][c]);
 }
 
 void bitmap::AlphaPutPixel(ushort x, ushort y, ushort Color, ulong Luminance, uchar Alpha)

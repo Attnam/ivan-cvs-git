@@ -22,15 +22,32 @@ bool shop::PickupItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
-  ulong Price = ForSale->GetTruePrice() * Amount * 100 / (100 + Customer->GetAttribute(CHARISMA));
+  ulong Price = ForSale->GetTruePrice();
+
+  if(Price)
+    {
+      Price = Amount * (Price * 100 / (100 + Customer->GetAttribute(CHARISMA)) + 1);
+
+      if(GetMaster()->GetConfig() == NEW_ATTNAM)
+	if(ForSale->IsBanana())
+	  Price = (Price >> 2) + 1;
+	else if(ForSale->IsConsumable(GetMaster()))
+	  Price <<= 2;
+	else
+	  Price = 0;
+    }
 
   if(!Customer->IsPlayer())
     if(Customer->CanBeSeenByPlayer() && Customer->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
-	Customer->EditMoney(-Price);
-	GetMaster()->EditMoney(Price);
-	Customer->EditExperience(CHARISMA, Price);
+	if(Price)
+	  {
+	    ADD_MESSAGE("%s buys %s.", Customer->CHAR_NAME(DEFINITE), ForSale->GetName(INDEFINITE, Amount).CStr());
+	    Customer->EditMoney(-Price);
+	    GetMaster()->EditMoney(Price);
+	    Customer->EditExperience(CHARISMA, Price);
+	  }
+
 	return true;
       }
     else
@@ -92,6 +109,12 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
   if(!MasterIsActive() || Customer == GetMaster() || GetMaster()->GetRelation(Customer) == HOSTILE)
     return true;
 
+  if(GetMaster()->GetConfig() == NEW_ATTNAM)
+    {
+      ADD_MESSAGE("\"Sorry, I'm only allowed to buy from Decos Bananas Co. if I wish to stay here.\"");
+      return false;
+    }
+
   ulong Price = ForSale->GetTruePrice() * Amount * (100 + Customer->GetAttribute(CHARISMA)) / 400;
 
   if(!Customer->IsPlayer())
@@ -120,7 +143,7 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
 
-      if(GetMaster()->GetMoney() != 0)
+      if(GetMaster()->GetMoney())
 	{
 	  if(GetMaster()->GetMoney() < Price)
 	    Price = GetMaster()->GetMoney();
@@ -464,7 +487,7 @@ bool library::DropItem(character* Customer, item* ForSale, ushort Amount)
 	  return false;
 	}
       
-      if(GetMaster()->GetMoney() != 0)
+      if(GetMaster()->GetMoney())
 	{
 	  if(GetMaster()->GetMoney() < Price)
 	    Price = GetMaster()->GetMoney();
@@ -520,7 +543,7 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
     }
 }
 
-bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
+bool bananadroparea::PickupItem(character* Hungry, item* Item, ushort)
 {
   if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Hungry->GetTeam()) == HOSTILE)
     return true;
@@ -542,12 +565,12 @@ bool landingsite::PickupItem(character* Hungry, item* Item, ushort)
   return false;
 }
 
-bool landingsite::DropItem(character* Dropper, item* Item, ushort)
+bool bananadroparea::DropItem(character* Dropper, item* Item, ushort)
 {
   return game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Dropper->GetTeam()) == HOSTILE || (Dropper->IsPlayer() && (!Item->IsBanana() || game::BoolQuestion(CONST_S("Do you wish to donate this item to the town? [y/N]"))));
 }
 
-void landingsite::KickSquare(character* Kicker, lsquare* Square)
+void bananadroparea::KickSquare(character* Kicker, lsquare* Square)
 {
   if(AllowKick(Kicker, Square) && Kicker->IsPlayer() && game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Kicker->GetTeam()) != HOSTILE)
     {
@@ -561,7 +584,7 @@ void landingsite::KickSquare(character* Kicker, lsquare* Square)
     }
 }
 
-bool landingsite::ConsumeItem(character* HungryMan, item* Item, ushort)
+bool bananadroparea::ConsumeItem(character* HungryMan, item* Item, ushort)
 {
   if(game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(HungryMan->GetTeam()) == HOSTILE)
     return true;
@@ -578,10 +601,10 @@ bool landingsite::ConsumeItem(character* HungryMan, item* Item, ushort)
 	}
     }
 
-  return false;
+  return HungryMan->IsSumoWrestler();
 }
 
-void landingsite::TeleportSquare(character* Infidel, lsquare* Square)
+void bananadroparea::TeleportSquare(character* Infidel, lsquare* Square)
 {
   if(!Infidel || game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Infidel->GetTeam()) == HOSTILE)
     return;
@@ -615,7 +638,7 @@ bool library::AllowKick(const character* Char, const lsquare* LSquare) const
   return !LSquare->GetStack()->GetItems() || !MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || LSquare->CanBeSeenBy(GetMaster());
 }
 
-bool landingsite::AllowKick(const character* Char, const lsquare*) const
+bool bananadroparea::AllowKick(const character* Char, const lsquare*) const
 {
  return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
 }
@@ -644,8 +667,36 @@ void library::HostileAction(character* Guilty) const
     }
 }
 
-void landingsite::HostileAction(character* Guilty) const
+void bananadroparea::HostileAction(character* Guilty) const
 {
   if(Guilty)
     Guilty->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+}
+
+void sumoarena::DestroyTerrain(character* Who)
+{
+  if(Who)
+    Who->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+}
+
+void sumoarena::HostileAction(character* Guilty) const
+{
+  if(Guilty)
+    Guilty->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+}
+
+bool sumoarena::CheckDestroyTerrain(character* Infidel) 
+{
+  if(Infidel->GetTeam()->GetRelation(game::GetTeam(NEW_ATTNAM_TEAM)) == HOSTILE)
+    return true;
+
+  ADD_MESSAGE("The residents of New Attnam might not like this.");
+
+  if(game::BoolQuestion(CONST_S("Are you sure you want to do this? [y/N]")))
+    {
+      DestroyTerrain(Infidel);
+      return true;
+    }
+  else
+    return false; 
 }

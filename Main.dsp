@@ -334,6 +334,11 @@ SOURCE=.\Main\Source\proto.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\rain.cpp
+# PROP Exclude_From_Build 1
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\room.cpp
 # PROP Exclude_From_Build 1
 # End Source File
@@ -551,6 +556,10 @@ SOURCE=.\Main\Include\pool.h
 # Begin Source File
 
 SOURCE=.\Main\Include\proto.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\rain.h
 # End Source File
 # Begin Source File
 

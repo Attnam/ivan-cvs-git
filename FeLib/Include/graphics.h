@@ -9,7 +9,6 @@
 #include "SDL.h"
 #endif
 
-#include "typedef.h"
 #include "felibdef.h"
 
 #define DOUBLE_BUFFER graphics::GetDoubleBuffer()

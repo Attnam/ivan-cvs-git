@@ -2,15 +2,16 @@
 #define __IVANDEF_H__
 
 /* Global defines for the project IVAN.
- * This file is created to decrease the need of including headers in other headers just for the sake of some silly macros,
- * because it decreases compilation efficiency and may even cause cross-including
- *
- * List of macros that should be gathered here:
- * 1. all numeric defines used in multiple .cpp or .h files, except those #defined in confdef.h
- * 2. all inline functions used in multiple .cpp or .h files and independent enough (do not require other headers)
- * 3. class construction macros used in multiple .h files
- *
- * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
+   This file is created to decrease the need of including headers in other
+   headers just for the sake of some silly macros, because it decreases
+   compilation efficiency and may cause cross-including
+
+   List of macros that should be gathered here:
+   1. all numeric defines used in multiple .cpp or .h files, except those
+      #defined in confdef.h
+   2. all inline functions used in multiple .cpp or .h files and independent
+      enough (do not require other headers)
+   3. class construction macros used in multiple .h files */
 
 #define IVAN_VERSION "0.440"
 
@@ -55,8 +56,8 @@
 #define INFRA_VISION 128
 #define ESP 256
 #define POISONED 512
-#define TELEPORT 1024 /* Teleports every now and then */
-#define POLYMORPH 2048 /* Polymorph randomly every now and then */
+#define TELEPORT 1024
+#define POLYMORPH 2048
 #define TELEPORT_CONTROL 4096
 #define PANIC 8192
 #define CONFUSED 16384
@@ -169,6 +170,7 @@
 #define ST_CLOAK 64
 #define ST_FLAME 128
 #define ST_LIGHTNING 256
+#define ST_DISALLOW_R_COLORS 512
 
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64
@@ -347,17 +349,16 @@
 
 #define WORLD_MAP 255
 
-/* Prices */
-#define PRICE_TO_ATTACH_OLD_LIMB_AT_ALTAR 50
-#define PRICE_TO_ATTACH_NEW_LIMB_AT_ALTAR 100
-
 /* Hard-coded teams */
 #define PLAYER_TEAM 0
 #define MONSTER_TEAM 1
 #define ATTNAM_TEAM 2
+#define SUMO_TEAM 3
 #define IVAN_TEAM 6
 #define NEW_ATTNAM_TEAM 7
 #define COLONIST_TEAM 8
+#define TOURIST_GUIDE_TEAM 9
+#define TOURIST_TEAM 10
 #define NO_TEAM 0xFFFF
 
 #define LOAD 1
@@ -420,6 +421,7 @@
 #define INFUSCOR 13
 #define CRUENTUS 14
 #define MORTIFER 15
+#define ATHEIST 16
 
 #define MAX_PRICE 4294967295UL
 
@@ -550,5 +552,14 @@
 #define DRIP_PRIORITY ((9 << 4) + 9)
 
 #define BODY_ARMOR_PARTS 6
+
+#define SUMO_ROOM_POS vector2d(25, 35)
+#define SUMO_ARENA_POS vector2d(19, 12)
+
+#define MAX_RAIN_DROPS 32
+
+#define WON 0
+#define LOST 1
+#define DISQUALIFIED 2
 
 #endif

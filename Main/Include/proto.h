@@ -21,6 +21,7 @@ template <class type> class databasecreator;
 
 typedef std::map<festring, long> valuemap;
 typedef std::vector<item*> itemvector;
+typedef std::vector<character*> charactervector;
 
 template <class type> class protocontainer
 {
@@ -64,9 +65,9 @@ class protosystem
   static character* CreateMonster(const festring&, ushort = 0, bool = true);
   static item* CreateItem(const festring&, bool = true);
   static material* CreateMaterial(const festring&, ulong = 0, bool = true);
-  static void CreateEveryNormalEnemy(std::vector<character*>&);
+  static void CreateEveryNormalEnemy(charactervector&);
 #ifdef WIZARD
-  static void CreateEveryCharacter(std::vector<character*>&);
+  static void CreateEveryCharacter(charactervector&);
   static void CreateEveryItem(itemvector&);
   static void CreateEveryMaterial(std::vector<material*>&);
 #endif

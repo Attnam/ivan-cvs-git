@@ -6,8 +6,8 @@
 material::prototype** protocontainer<material>::ProtoData;
 valuemap protocontainer<material>::CodeNameMap;
 ushort protocontainer<material>::ProtoAmount;
-material* material_Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
-materialprototype material_ProtoType(0, &material_Clone, "material");
+//material* material_Clone(ushort Config, ulong Volume, bool Load) { return new material(Config, Volume, Load); }
+materialprototype material_ProtoType(0, 0, "material");
 const materialprototype* material::GetProtoType() const { return &material_ProtoType; }
 
 #include "materias.h"
@@ -25,8 +25,10 @@ const materialprototype* material::GetProtoType() const { return &material_Proto
 #include "game.h"
 #include "colorbit.h"
 #include "whandler.h"
+#include "rain.h"
 
 #include "materia.cpp"
 #include "materias.cpp"
 #include "fluid.cpp"
 #include "smoke.cpp"
+#include "rain.cpp"

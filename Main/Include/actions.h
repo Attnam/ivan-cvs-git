@@ -37,8 +37,6 @@ class ACTION
   virtual void Handle();
   virtual void Terminate(bool);
   void SetConsumingID(ulong What) { ConsumingID = What; }
-  void SetWasOnGround(bool What) { WasOnGround = What; }
-  void SetHasEaten(bool What) { Eaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
   virtual const char* GetDescription() const;
@@ -46,8 +44,6 @@ class ACTION
  protected:
   festring Description;
   ulong ConsumingID;
-  bool WasOnGround;
-  bool Eaten;
 );
 
 class ACTION

@@ -16,6 +16,8 @@ ushort protocontainer<action>::ProtoAmount;
 #include "materia.h"
 #include "game.h"
 #include "save.h"
+#include "iconf.h"
+#include "stack.h"
 
 #include "action.cpp"
 #include "actions.cpp"

@@ -197,9 +197,9 @@ bool character::CanUseEquipment(ushort Index) const { return CanUseEquipment() &
 ushort character::GetAttribute(ushort Identifier) const { return Max(BaseAttribute[Identifier] + AttributeBonus[Identifier], 1); }
 ushort character::GetRandomStepperBodyPart() const { return TORSO_INDEX; }
 void character::GainIntrinsic(ulong What) { BeginTemporaryState(What, PERMANENT); }
-bool character::IsUsingArms() const { return (GetAttackStyle() & USE_ARMS) != 0; }
-bool character::IsUsingLegs() const { return (GetAttackStyle() & USE_LEGS) != 0; }
-bool character::IsUsingHead() const { return (GetAttackStyle() & USE_HEAD) != 0; }
+bool character::IsUsingArms() const { return !!(GetAttackStyle() & USE_ARMS); }
+bool character::IsUsingLegs() const { return !!(GetAttackStyle() & USE_LEGS); }
+bool character::IsUsingHead() const { return !!(GetAttackStyle() & USE_HEAD); }
 void character::CalculateAllowedWeaponSkillCategories() { AllowedWeaponSkillCategories = MARTIAL_SKILL_CATEGORIES; }
 festring character::GetBeVerb() const { return IsPlayer() ? CONST_S("are") : CONST_S("is"); }
 void character::SetEndurance(ushort What) { BaseAttribute[ENDURANCE] = What; }
@@ -247,6 +247,9 @@ bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpec
 ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 bool character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
+character* character::GetLeader() const { return GetTeam()->GetLeader(); }
+uchar character::GetMoveType() const { return DataBase->MoveType | EquipmentMoveType; }
+festring character::GetZombieDescription() const { return " of " + GetName(INDEFINITE); }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder), LastAcidMsgTurn(0)
 {
@@ -654,6 +657,9 @@ void character::Be()
 
 void character::Move(vector2d MoveTo, bool TeleportMove)
 {
+  if(!IsEnabled())
+    return;
+
   /* Test whether the player is stuck to something */
 
   if(!TeleportMove && IsStuck() && !TryToUnstuck(MoveTo - GetPos()))
@@ -699,9 +705,9 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
 
 void character::GetAICommand()
 {
-  SeekLeader();
+  SeekLeader(GetLeader());
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(CheckForEnemies(true, true))
@@ -1043,7 +1049,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
 
 void character::CreateCorpse(lsquare* Square)
 {
-  if(!BodyPartsDisappearWhenSevered())
+  if(!BodyPartsDisappearWhenSevered() && !game::AllBodyPartsVanish())
     {
       corpse* Corpse = new corpse(0, NO_MATERIALS);
       Corpse->SetDeceased(this);
@@ -1684,6 +1690,9 @@ bool character::Engrave(const festring& What)
 
 bool character::MoveRandomly()
 {
+  if(!IsEnabled())
+    return false;
+
   for(ushort c = 0; c < 10; ++c)
     {
       vector2d ToTry = game::GetMoveVector(RAND() & 7);
@@ -1733,6 +1742,12 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
 {
   if(!IsEnabled())
     return true;
+
+  if(game::IsSumoWrestling() && IsDead())
+    {
+      game::EndSumoWrestling(IsPlayer());
+      return true;
+    }
 
   if(ForceDeath || IsDead())
     {
@@ -2041,12 +2056,12 @@ void character::FallTo(character* GuiltyGuy, vector2d Where)
 
 bool character::CheckCannibalism(const material* What) const
 { 
-  return GetTorso()->GetConsumeMaterial()->IsSameAs(What); 
+  return GetTorso()->GetMainMaterial()->IsSameAs(What); 
 }
 
 void character::StandIdleAI()
 {
-  SeekLeader();
+  SeekLeader(GetLeader());
 
   if(CheckForEnemies(true, true))
     return;
@@ -2054,7 +2069,7 @@ void character::StandIdleAI()
   if(CheckForUsefulItemsOnGround())
     return;
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(CheckForDoors())
@@ -2136,6 +2151,9 @@ void character::ActionAutoTermination()
 
 bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveRandomly)
 {
+  if(!IsEnabled())
+    return false;
+
   bool HostileCharsNear = false;
   character* NearestChar = 0;
   ulong NearestDistance = 0xFFFFFFFF;
@@ -2183,7 +2201,12 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
     }
   else
     {
-      if(!GetTeam()->GetLeader() && IsGoingSomeWhere())
+      character* Leader = GetLeader();
+
+      if(Leader == this)
+	Leader = 0;
+
+      if(!Leader && IsGoingSomeWhere())
 	{
 	  if(!MoveTowardsTarget())
 	    {
@@ -2200,7 +2223,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 	}
       else
 	{
-	  if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && !IsGoingSomeWhere())) && HostileCharsNear)
+	  if((!Leader || (Leader && !IsGoingSomeWhere())) && HostileCharsNear)
 	    {
 	      if(CheckDoors && CheckForDoors())
 		return true;
@@ -2219,7 +2242,7 @@ bool character::CheckForEnemies(bool CheckDoors, bool CheckGround, bool MayMoveR
 
 bool character::CheckForDoors()
 {
-  if(!CanOpen())
+  if(!CanOpen() || !IsEnabled())
     return false;
 
   for(ushort d = 0; d < GetNeighbourSquares(); ++d)
@@ -2235,7 +2258,7 @@ bool character::CheckForDoors()
 
 bool character::CheckForUsefulItemsOnGround()
 {
-  if(IsRetreating())
+  if(IsRetreating() || !IsEnabled())
     return false;
 
   itemvector ItemVector;
@@ -2254,12 +2277,12 @@ bool character::CheckForUsefulItemsOnGround()
   return false;
 }
 
-bool character::FollowLeader()
+bool character::FollowLeader(character* Leader)
 {
-  if(!GetTeam()->GetLeader())
+  if(!Leader || Leader == this || !IsEnabled())
     return false;
 
-  if(GetTeam()->GetLeader()->CanBeSeenBy(this))
+  if(Leader->CanBeSeenBy(this))
     {
       vector2d Distance = GetPos() - GoingTo;
 
@@ -2281,11 +2304,9 @@ bool character::FollowLeader()
       return false;
 }
 
-void character::SeekLeader()
+void character::SeekLeader(const character* Leader)
 {
-  character* Leader = GetTeam()->GetLeader();
-
-  if(Leader && Leader->CanBeSeenBy(this))
+  if(Leader && Leader != this && Leader->CanBeSeenBy(this))
     SetGoingTo(Leader->GetPos());
 }
 
@@ -2675,7 +2696,7 @@ void character::TestWalkability()
 	    {
 	      Remove();
 	      SendToHell();
-	      game::AskForKeyPress(GetSquareUnder()->DeathMessage(this) + '.');
+	      game::AskForKeyPress(festring(GetSquareUnder()->DeathMessage(this)) + '.');
 	      PLAYER->AddScoreEntry(GetSquareUnder()->ScoreEntry(this));
 	      game::End();
 	    }
@@ -2927,7 +2948,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
-  if(BodyPartsDisappearWhenSevered() || StateIsActivated(POLYMORPHED))
+  if(BodyPartsDisappearWhenSevered() || StateIsActivated(POLYMORPHED) || game::AllBodyPartsVanish())
     {
       BodyPart->RemoveFromSlot();
       GetStackUnder()->AddItem(BodyPart);
@@ -2962,7 +2983,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 
 bool character::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
-  bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical, ShowMsg) != 0;
+  bool Affected = !!ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical, ShowMsg);
 
   if(DamageTypeAffectsInventory(Type))
     {
@@ -2982,7 +3003,7 @@ bool character::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uc
 
 bool character::BodyPartCanBeSevered(ushort Index) const
 {
-  return Index != 0;
+  return !!Index;
 }
 
 festring character::GetDescription(uchar Case) const
@@ -3067,7 +3088,7 @@ uchar character::GetHungerState() const
 
 bool character::CanConsume(material* Material) const
 {
-  return (GetConsumeFlags() & Material->GetConsumeType()) != 0;
+  return !!(GetConsumeFlags() & Material->GetConsumeType());
 }
 
 void character::SetTemporaryStateCounter(ulong State, ushort What)
@@ -3903,16 +3924,16 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 	  switch(Type)
 	    {
 	    case UNARMED_ATTACK:
-	      AddBlockMessage(Enemy, Blocker, Enemy->UnarmedHitNoun(), NewDamage != 0);
+	      AddBlockMessage(Enemy, Blocker, Enemy->UnarmedHitNoun(), !!NewDamage);
 	      break;
 	    case WEAPON_ATTACK:
-	      AddBlockMessage(Enemy, Blocker, "attack", NewDamage != 0);
+	      AddBlockMessage(Enemy, Blocker, "attack", !!NewDamage);
 	      break;
 	    case KICK_ATTACK:
-	      AddBlockMessage(Enemy, Blocker, Enemy->KickNoun(), NewDamage != 0);
+	      AddBlockMessage(Enemy, Blocker, Enemy->KickNoun(), !!NewDamage);
 	      break;
 	    case BITE_ATTACK:
-	      AddBlockMessage(Enemy, Blocker, Enemy->BiteNoun(), NewDamage != 0);
+	      AddBlockMessage(Enemy, Blocker, Enemy->BiteNoun(), !!NewDamage);
 	      break;
 	    }
 
@@ -3974,6 +3995,8 @@ void character::SignalEquipmentAdd(ushort EquipmentIndex)
 	      else
 		EquipmentState |= 1 << c;
 	    }
+
+      EquipmentMoveType |= Equipment->GetEquipmentMoveType();
     }
 
   if(!Initializing && Equipment->IsInCorrectSlot(EquipmentIndex))
@@ -3984,6 +4007,16 @@ void character::SignalEquipmentRemoval(ushort)
 {
   CalculateEquipmentState();
   CalculateAttributeBonuses();
+  bool CouldFly = !!(EquipmentMoveType & FLY);
+  CalculateEquipmentMoveType();
+
+  if(CouldFly && !(GetMoveType() & FLY))
+    {
+      if(!game::IsInWilderness() && !GetLSquareUnder()->IsFreezed())
+	SignalStepFrom(0);
+
+      TestWalkability();
+    }
 }
 
 void character::CalculateEquipmentState()
@@ -4960,6 +4993,7 @@ void character::CalculateAll()
   CalculateBodyPartMaxHPs(false);
   CalculateBurdenState();
   CalculateBattleInfo();
+  CalculateEquipmentMoveType();
   Initializing = false;
 }
 
@@ -5251,6 +5285,7 @@ character* character::Duplicate() const
 
   character* Char = RawDuplicate();
   Char->CalculateAll();
+  Char->CalculateEmitation();
   Char->UpdatePictures();
   return Char;
 }
@@ -5261,7 +5296,7 @@ bool character::TryToEquip(item* Item)
     return false;
 
   for(ushort e = 0; e < GetEquipmentSlots(); ++e)
-    if(GetBodyPartOfEquipment(e) && (!EquipmentSorter(e) || EquipmentSorter(e)(Item, this)))
+    if(CanUseEquipment(e) && (!EquipmentSorter(e) || EquipmentSorter(e)(Item, this)))
       {
 	item* OldEquipment = GetEquipment(e);
 
@@ -5342,10 +5377,7 @@ bool character::TryToConsume(item* Item)
 {
   if(Item->IsConsumable(this) && Item->CanBeEatenByAI(this) && (!GetRoom() || GetRoom()->ConsumeItem(this, Item, 1)))
     {
-      if(Item->IsStupidToConsume())
-	EditExperience(WISDOM, 500);
-
-      ConsumeItem(Item);
+      ConsumeItem(Item, Item->GetConsumeMaterial(this)->GetConsumeVerb());
       return true;
     }
   else
@@ -5609,12 +5641,17 @@ void character::AddToInventory(const std::list<contentscript<item> >& ItemList, 
   for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
     if(i->IsValid())
       {
-	item* Item = i->Instantiate(SpecialFlags);
+	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
 
-	if(Item)
+	for(ushort c = 0; c < Times; ++c)
 	  {
-	    Stack->AddItem(Item);
-	    Item->SpecialGenerationHandler();
+	    item* Item = i->Instantiate(SpecialFlags);
+
+	    if(Item)
+	      {
+		Stack->AddItem(Item);
+		Item->SpecialGenerationHandler();
+	      }
 	  }
       }
 }
@@ -5758,7 +5795,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
   if(InventoryPossible)
     List.AddEntry(CONST_S("choose from inventory"), LIGHT_GRAY, 20, game::AddToItemDrawVector(0));
 
-  bool Any = false, UseSorterFunction = (SorterFunction != 0);
+  bool Any = false, UseSorterFunction = !!SorterFunction;
   itemvector Item;
   festring Entry;
 
@@ -5815,7 +5852,7 @@ void character::SelectFromPossessions(itemvector& ReturnVector, const festring& 
 
 bool character::EquipsSomething(bool (*SorterFunction)(const item*, const character*))
 {
-  bool UseSorterFunction = SorterFunction != 0;
+  bool UseSorterFunction = !!SorterFunction;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     {
@@ -5846,7 +5883,7 @@ bool character::CheckTalk()
 
 bool character::MoveTowardsHomePos()
 {
-  if(HomeDataIsValid())
+  if(HomeDataIsValid() && IsEnabled())
     {
       SetGoingTo(HomeData->Pos);
       return MoveTowardsTarget() || (!GetPos().IsAdjacent(HomeData->Pos) && MoveRandomly());
@@ -6023,23 +6060,21 @@ void character::SetBodyPart(ushort Index, bodypart* What)
     AddOriginalBodyPartID(Index, What->GetID());
 }
 
-bool character::ConsumeItem(item* Item)
+bool character::ConsumeItem(item* Item, const festring& ConsumeVerb)
 {
   if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion(CONST_S("Are you sure? You may be able to put it back... [y/N]")))
     return false;
 
-  if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this,Item, 1))
+  if(Item->IsOnGround() && GetRoom() && !GetRoom()->ConsumeItem(this, Item, 1))
     return false;
      
   if(IsPlayer())
-    ADD_MESSAGE("You begin %s %s.", Item->GetConsumeVerb(), Item->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("You begin %s %s.", ConsumeVerb.CStr(), Item->CHAR_NAME(DEFINITE));
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s begins %s %s.", CHAR_NAME(DEFINITE), Item->GetConsumeVerb(), Item->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s begins %s %s.", CHAR_NAME(DEFINITE), ConsumeVerb.CStr(), Item->CHAR_NAME(DEFINITE));
 
   consume* Consume = new consume(this);
-  Consume->SetHasEaten(false);
-  Consume->SetDescription(Item->GetConsumeVerb());
-  Consume->SetWasOnGround(Item->IsOnGround());
+  Consume->SetDescription(ConsumeVerb);
   Consume->SetConsumingID(Item->GetID());
   SetAction(Consume);
   DexterityAction(5);
@@ -6511,7 +6546,11 @@ void character::PutNear(vector2d Pos)
   vector2d NewPos = game::GetCurrentLevel()->GetNearestFreeSquare(this, Pos, false);
 
   if(NewPos == ERROR_VECTOR)
-    NewPos = game::GetCurrentLevel()->GetRandomSquare(this);
+    do
+      {
+	NewPos = game::GetCurrentLevel()->GetRandomSquare(this);
+      }
+    while(NewPos == Pos);
 
   PutTo(NewPos);
 }
@@ -6538,7 +6577,12 @@ void character::Remove()
 void character::SendNewDrawRequest() const
 {
   for(ushort c = 0; c < SquaresUnder; ++c)
-    GetSquareUnder(c)->SendNewDrawRequest();
+    {
+      square* Square = GetSquareUnder(c);
+
+      if(Square)
+	Square->SendNewDrawRequest();
+    }
 }
 
 bool character::IsOver(vector2d Pos) const
@@ -6552,27 +6596,27 @@ bool character::IsOver(vector2d Pos) const
 
 bool character::CanTheoreticallyMoveOn(const lsquare* LSquare) const
 {
-  return (GetMoveType() & LSquare->GetTheoreticalWalkability()) != 0;
+  return !!(GetMoveType() & LSquare->GetTheoreticalWalkability());
 }
 
 bool character::CanMoveOn(const lsquare* LSquare) const
 {
-  return (GetMoveType() & LSquare->GetWalkability()) != 0;
+  return !!(GetMoveType() & LSquare->GetWalkability());
 }
 
 bool character::CanMoveOn(const square* Square) const
 {
-  return (GetMoveType() & Square->GetSquareWalkability()) != 0;
+  return !!(GetMoveType() & Square->GetSquareWalkability());
 }
 
 bool character::CanMoveOn(const olterrain* OLTerrain) const
 {
-  return (GetMoveType() & OLTerrain->GetWalkability()) != 0;
+  return !!(GetMoveType() & OLTerrain->GetWalkability());
 }
 
 bool character::CanMoveOn(const oterrain* OTerrain) const
 {
-  return (GetMoveType() & OTerrain->GetWalkability()) != 0;
+  return !!(GetMoveType() & OTerrain->GetWalkability());
 }
 
 bool character::IsFreeForMe(square* Square) const
@@ -6587,6 +6631,9 @@ void character::LoadSquaresUnder()
 
 void character::AttackAdjacentEnemyAI()
 {
+  if(!IsEnabled())
+    return;
+
   character* Char[MAX_NEIGHBOUR_SQUARES];
   vector2d Pos[MAX_NEIGHBOUR_SQUARES];
   uchar Dir[MAX_NEIGHBOUR_SQUARES];
@@ -6744,7 +6791,7 @@ void character::TerminateGoingTo()
 
 bool character::CheckForFood(ushort Radius)
 {
-  if(StateIsActivated(PANIC) || !UsesNutrition())
+  if(StateIsActivated(PANIC) || !UsesNutrition() || !IsEnabled())
     return false;
 
   vector2d Pos = GetPos();
@@ -6882,7 +6929,7 @@ void character::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareInde
 
 void character::StayOn(liquid* Liquid)
 {
-  Liquid->ConstantEffect(this, TORSO_INDEX);
+  Liquid->TouchEffect(this, TORSO_INDEX);
 }
 
 bool character::IsAlly(const character* Char) const
@@ -6961,4 +7008,34 @@ void character::ResetSpoiling()
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       GetBodyPart(c)->ResetSpoiling();
+}
+
+void character::CalculateEquipmentMoveType()
+{
+  EquipmentMoveType = 0;
+
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment)
+	EquipmentMoveType |= Equipment->GetEquipmentMoveType();
+    }
+}
+
+item* character::SearchForItem(const character* Char, bool (*Sorter)(const item*, const character*)) const
+{
+  for(ushort c = 0; c < GetEquipmentSlots(); ++c)
+    {
+      item* Equipment = GetEquipment(c);
+
+      if(Equipment && Sorter(Equipment, Char))
+	return Equipment;
+    }
+
+  for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
+    if(Sorter(*i, Char))
+      return *i;
+
+  return 0;
 }

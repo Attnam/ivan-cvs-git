@@ -45,13 +45,13 @@ void faint::Terminate(bool Finished)
 void consume::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << WasOnGround << ConsumingID << Description;
+  SaveFile << ConsumingID << Description;
 }
 
 void consume::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> WasOnGround >> ConsumingID >> Description;
+  SaveFile >> ConsumingID >> Description;
 }
 
 void consume::Handle()
@@ -91,9 +91,8 @@ void consume::Handle()
       return;
     }
 
-  SetHasEaten(true);
-
-  /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
+  /* Note: if backupped Actor has died of food effect,
+     Action is deleted automatically, so we mustn't Terminate it */
 
   if(Consuming->Consume(Actor, 500) && Actor->GetAction() == this && Actor->IsEnabled())
     Terminate(true);
@@ -107,35 +106,28 @@ void consume::Handle()
 void consume::Terminate(bool Finished)
 {
   item* Consuming = game::SearchItem(ConsumingID);
+  character* Actor = GetActor();
+
+  if(Actor->IsPlayer())
+    ADD_MESSAGE("You %s %s.", Finished ? "finish" : "stop", Description.CStr());
+  else if(Actor->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s %s %s.", Actor->CHAR_NAME(DEFINITE), Finished ? "finishes" : "stops", Description.CStr());
 
   if(Finished)
     {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You finish %s %s.", Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
-
-      if(Eaten)
-	Consuming->AddConsumeEndMessage(GetActor());
-
-      Consuming->GenerateLeftOvers(GetActor());
+      if(Consuming->Exists() && !game::IsInWilderness() && (!Actor->IsPlayer() || ivanconfig::GetAutoDropLeftOvers()))
+	{
+	  Consuming->RemoveFromSlot();
+	  Actor->GetStackUnder()->AddItem(Consuming);
+	  Actor->DexterityAction(1);
+	}
     }
   else if(Consuming && Consuming->Exists())
     {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s %s.", Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr(), Consuming->CHAR_NAME(DEFINITE));
+      material* ConsumeMaterial = Consuming->GetConsumeMaterial(Actor);
 
-      if(Eaten)
-	Consuming->AddConsumeEndMessage(GetActor());
-    }
-  else
-    {
-      if(GetActor()->IsPlayer())
-	ADD_MESSAGE("You stop %s.", Description.CStr());
-      else if(GetActor()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s stops %s.", GetActor()->CHAR_NAME(DEFINITE), Description.CStr());
+      if(ConsumeMaterial)
+	ConsumeMaterial->FinishConsuming(Actor);
     }
 
   action::Terminate(Finished);

@@ -14,7 +14,6 @@
 #include <ctime>
 #endif
 
-#include "typedef.h"
 #include "felibdef.h"
 
 #define GET_KEY globalwindowhandler::GetKey
@@ -29,7 +28,7 @@ class globalwindowhandler
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
   static ulong GetTick() { return Tick; }
-  static bool ControlLoopsInstalled() { return Controls != 0; }
+  static bool ControlLoopsInstalled() { return !!Controls; }
   static void EnableControlLoops() { ControlLoopsEnabled = true; }
   static void DisableControlLoops() { ControlLoopsEnabled = false; }
 #ifdef USE_SDL

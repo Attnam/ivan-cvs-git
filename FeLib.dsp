@@ -114,6 +114,10 @@ SOURCE=.\FeLib\Source\config.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Source\datapool.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Source\error.cpp
 # End Source File
 # Begin Source File
@@ -143,6 +147,10 @@ SOURCE=.\FeLib\Source\festring.cpp
 # Begin Source File
 
 SOURCE=.\FeLib\Source\graphics.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FeLib\Source\hextree.cpp
 # End Source File
 # Begin Source File
 
@@ -178,6 +186,10 @@ SOURCE=.\FeLib\Include\config.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\datapool.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\error.h
 # End Source File
 # Begin Source File
@@ -210,11 +222,11 @@ SOURCE=.\FeLib\Include\graphics.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\hscore.h
+SOURCE=.\FeLib\Include\hextree.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FeLib\Include\ntree.h
+SOURCE=.\FeLib\Include\hscore.h
 # End Source File
 # Begin Source File
 

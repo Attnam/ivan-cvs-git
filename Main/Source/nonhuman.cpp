@@ -93,9 +93,9 @@ bool elpuri::Hit(character* Enemy, vector2d, uchar, bool ForceHit)
 
 bool dog::Catches(item* Thingy)
 {
-  if(Thingy->DogWillCatchAndConsume())
+  if(Thingy->DogWillCatchAndConsume(this))
     {
-      if(ConsumeItem(Thingy))
+      if(ConsumeItem(Thingy, CONST_S("eating")))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
@@ -608,8 +608,11 @@ void ostrich::GetAICommand()
   if(CheckForEnemies(false, false))
     return;
 
+  if(!IsEnabled())
+    return;
+
   if(GetPos() == vector2d(45, 45))
-    HasBeenOnLandingSite = true;
+    HasDroppedBananas = true;
 
   itemvector ItemVector;
   GetStackUnder()->FillItemVector(ItemVector);
@@ -631,7 +634,7 @@ void ostrich::GetAICommand()
       return;
     }
 
-  if(!HasBeenOnLandingSite)
+  if(!HasDroppedBananas)
     {
       SetGoingTo(vector2d(45, 45));
 
@@ -665,7 +668,7 @@ void ostrich::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s enters the town.", CHAR_NAME(INDEFINITE));
 
-      HasBeenOnLandingSite = false;
+      HasDroppedBananas = false;
     }
   else
     {
@@ -681,18 +684,18 @@ void ostrich::GetAICommand()
 void ostrich::Save(outputfile& SaveFile) const
 {
   nonhumanoid::Save(SaveFile);
-  SaveFile << HasBeenOnLandingSite;
+  SaveFile << HasDroppedBananas;
 }
 
 void ostrich::Load(inputfile& SaveFile)
 {
   nonhumanoid::Load(SaveFile);
-  SaveFile >> HasBeenOnLandingSite;
+  SaveFile >> HasDroppedBananas;
 }
 
 void ostrich::VirtualConstructor(bool)
 {
-  HasBeenOnLandingSite = false;
+  HasDroppedBananas = false;
 }
 
 bool ostrich::HandleCharacterBlockingTheWay(character* Char, vector2d Pos, uchar Dir)
@@ -805,12 +808,12 @@ void floatingeye::GetAICommand()
       GoingTo = WayPoints[NextWayPoint];
     }
 
-  SeekLeader();
+  SeekLeader(GetLeader());
 
   if(CheckForEnemies(false, false))
     return;
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(MoveRandomly())
@@ -1087,7 +1090,7 @@ void magpie::GetAICommand()
 
       if(Char)
 	{
-	  std::vector<item*> Sparkling;
+	  itemvector Sparkling;
 
 	  for(stackiterator i = Char->GetStack()->GetBottom(); i.HasItem(); ++i)
 	    {
@@ -1494,7 +1497,7 @@ void largecreature::Remove()
 
 void largecreature::CreateCorpse(lsquare* Square)
 {
-  if(!BodyPartsDisappearWhenSevered())
+  if(!BodyPartsDisappearWhenSevered() && !game::AllBodyPartsVanish())
     {
       corpse* Corpse = new largecorpse(0, NO_MATERIALS);
       Corpse->SetDeceased(this);
@@ -1528,9 +1531,9 @@ void hattifattener::GetAICommand()
       return;
     }
 
-  SeekLeader();
+  SeekLeader(GetLeader());
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(MoveRandomly())
@@ -1627,9 +1630,9 @@ void bunny::GetAICommand()
       RestoreHP();
     }
 
-  SeekLeader();
+  SeekLeader(GetLeader());
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(CheckForEnemies(true, true))
@@ -1761,9 +1764,9 @@ bool bunny::CheckForMatePartner()
 
 bool bunny::Catches(item* Thingy)
 {
-  if(Thingy->BunnyWillCatchAndConsume())
+  if(Thingy->BunnyWillCatchAndConsume(this))
     {
-      if(ConsumeItem(Thingy))
+      if(ConsumeItem(Thingy, CONST_S("eating")))
 	{
 	  if(IsPlayer())
 	    ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHAR_NAME(DEFINITE));
@@ -1814,7 +1817,7 @@ bool mommo::Hit(character* Enemy, vector2d Pos, uchar, bool)
 
 void mommo::GetAICommand()
 {
-  SeekLeader();
+  SeekLeader(GetLeader());
 
   if(CheckForEnemies(false, false))
     return;
@@ -1826,7 +1829,7 @@ void mommo::GetAICommand()
       return;
     }
 
-  if(FollowLeader())
+  if(FollowLeader(GetLeader()))
     return;
 
   if(MoveRandomly())

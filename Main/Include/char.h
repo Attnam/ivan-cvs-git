@@ -170,6 +170,8 @@ struct characterdatabase
   bool CanMove;
   ushort BloodMaterial;
   ushort VomitMaterial;
+  bool HasSecondaryMaterial;
+  bool HasContainedMaterial;
 };
 
 class characterprototype
@@ -262,8 +264,8 @@ class character : public entity, public id
   void DeActivateTemporaryState(ulong What) { TemporaryState &= ~What; }
   void ActivateEquipmentState(ulong What) { EquipmentState |= What; }
   void DeActivateEquipmentState(ulong What) { EquipmentState &= ~What; }
-  bool TemporaryStateIsActivated(ulong What) const { return (TemporaryState & What) != 0; }	
-  bool EquipmentStateIsActivated(ulong What) const { return (EquipmentState & What) != 0; }
+  bool TemporaryStateIsActivated(ulong What) const { return !!(TemporaryState & What); }	
+  bool EquipmentStateIsActivated(ulong What) const { return !!(EquipmentState & What); }
   bool StateIsActivated(ulong What) const { return TemporaryState & What || EquipmentState & What; }
   virtual bool Faint(ushort, bool = false);
   void SetTemporaryStateCounter(ulong, ushort);
@@ -327,7 +329,7 @@ class character : public entity, public id
   virtual void SetMainWielded(item*) { }
   virtual void SetSecondaryWielded(item*) { }
   uchar GetHungerState() const;
-  bool ConsumeItem(item*);
+  bool ConsumeItem(item*, const festring&);
   virtual bool CanConsume(material*) const;
   action* GetAction() const { return Action; }
   void SetAction(action* What) { Action = What; }
@@ -366,7 +368,7 @@ class character : public entity, public id
   virtual bool TryToRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
-  bool CanUseEquipment(ushort) const;
+  virtual bool CanUseEquipment(ushort) const;
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   void SetParameters(uchar) { }
@@ -486,7 +488,6 @@ class character : public entity, public id
   DATA_BASE_BOOL(IgnoreDanger);
   DATA_BASE_BOOL(BiteCapturesBodyPart);
   DATA_BASE_BOOL(IsPlant);
-  DATA_BASE_VALUE(uchar, MoveType);
   DATA_BASE_BOOL(DestroysWalls);
   DATA_BASE_BOOL(CanMove);
   DATA_BASE_VALUE(ushort, BloodMaterial);
@@ -814,7 +815,6 @@ class character : public entity, public id
   virtual ushort GetTameSymbolSquareIndex() const { return 0; }
   virtual ushort GetFlySymbolSquareIndex() const { return 0; }
   virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
-  virtual character* TryToRiseFromTheDeadAsZombie() { return 0; }
   liquid* CreateBlood(ulong) const;
   void SpillFluid(character*, liquid*, ushort = 0);
   virtual void StayOn(liquid*);
@@ -826,6 +826,14 @@ class character : public entity, public id
   virtual bool AllowSpoil() const { return false; }
   void Spoil(corpse*);
   void ResetSpoiling();
+  virtual character* GetLeader() const;
+  uchar GetMoveType() const;
+  void CalculateEquipmentMoveType();
+  virtual bool IsSumoWrestler() const { return false; }
+  void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool) { }
+  item* SearchForItem(const character*, bool (*)(const item*, const character*)) const;
+  virtual character* CreateZombie() const { return 0; }
+  virtual festring GetZombieDescription() const;
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;
@@ -851,11 +859,11 @@ class character : public entity, public id
   virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
   virtual bool ShowClassDescription() const { return true; }
-  void SeekLeader();
+  void SeekLeader(const character*);
   virtual bool CheckForUsefulItemsOnGround();
   bool CheckForDoors();
   bool CheckForEnemies(bool, bool, bool = true);
-  bool FollowLeader();
+  bool FollowLeader(character*);
   void StandIdleAI();
   virtual void CreateCorpse(lsquare*);
   void GetPlayerCommand();
@@ -927,6 +935,7 @@ class character : public entity, public id
   std::vector<vector2d> Route;
   std::set<vector2d> Illegal;
   ulong LastAcidMsgTurn;
+  uchar EquipmentMoveType;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

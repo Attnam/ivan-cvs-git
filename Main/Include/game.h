@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "vector2d.h"
-#include "felibdef.h"
 #include "femath.h"
 #include "festring.h"
 
@@ -36,6 +35,8 @@ class wsquare;
 class lsquare;
 class bitmap;
 class festring;
+class rain;
+class liquid;
 struct explosion;
 
 typedef std::map<festring, long> valuemap;
@@ -88,6 +89,11 @@ typedef std::map<ulong, character*> characteridmap;
 typedef std::map<ulong, item*> itemidmap;
 typedef std::map<configid, ushort> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
+typedef std::vector<item*> itemvector;
+typedef std::vector<character*> charactervector;
+
+class quitrequest { };
+class areachangerequest { };
 
 class game
 {
@@ -215,8 +221,8 @@ class game
   static void InitDangerMap();
   static const dangermap& GetDangerMap();
   static bool TryTravel(uchar, uchar, uchar, bool = false);
-  static bool LeaveArea(std::vector<character*>&, bool);
-  static void EnterArea(std::vector<character*>&, uchar, uchar);
+  static bool LeaveArea(charactervector&, bool);
+  static void EnterArea(charactervector&, uchar, uchar);
   static char CompareLights(ulong, ulong);
   static char CompareLightToInt(ulong, uchar);
   static void CombineLights(ulong&, ulong);
@@ -280,7 +286,7 @@ class game
   static bool PrepareRandomBone(ushort);
   static boneidmap& GetBoneItemIDMap() { return BoneItemIDMap; }
   static boneidmap& GetBoneCharacterIDMap() { return BoneCharacterIDMap; }
-  static float CalculateAverageDanger(const std::vector<character*>&, character*);
+  static float CalculateAverageDanger(const charactervector&, character*);
   static float CalculateAverageDangerOfAllNormalEnemies();
   static character* CreateGhost();
   static bool TooGreatDangerFound() { return TooGreatDangerFoundBool; }
@@ -297,8 +303,20 @@ class game
   static void ClearCharacterDrawVector();
   static void CharacterEntryDrawer(bitmap*, vector2d, ushort);
   static void GodEntryDrawer(bitmap*, vector2d, ushort);
-  static std::vector<item*>& GetItemDrawVector() { return ItemDrawVector; }
-  static std::vector<character*>& GetCharacterDrawVector() { return CharacterDrawVector; }
+  static itemvector& GetItemDrawVector() { return ItemDrawVector; }
+  static charactervector& GetCharacterDrawVector() { return CharacterDrawVector; }
+  static bool IsSumoWrestling() { return SumoWrestling; }
+  static void SetIsSumoWrestling(bool What) { SumoWrestling = What; }
+  static bool AllowHostilities() { return !SumoWrestling; }
+  static bool AllBodyPartsVanish() { return SumoWrestling; }
+  static bool TryToEnterSumoArena();
+  static bool TryToExitSumoArena();
+  static bool EndSumoWrestling(uchar);
+  static character* GetSumo();
+  static const festring& GetPlayerName() { return PlayerName; }
+  static rain* ConstructGlobalRain();
+  static void SetGlobalRainLiquid(liquid* What) { GlobalRainLiquid = What; }
+  static bool PlayerIsSumoChampion() { return PlayerSumoChampion; }
  private:
   static const char* const Alignment[];
   static god** God;
@@ -375,8 +393,14 @@ class game
   static bool TooGreatDangerFoundBool;
   static bitmap* BusyAnimationCache[48];
   static uchar MoveType;
-  static std::vector<item*> ItemDrawVector;
-  static std::vector<character*> CharacterDrawVector;
+  static itemvector ItemDrawVector;
+  static charactervector CharacterDrawVector;
+  static bool SumoWrestling;
+  static festring PlayerName;
+  static liquid* GlobalRainLiquid;
+  static vector2d GlobalRainSpeed;
+  static ulong GlobalRainTimeModifier;
+  static bool PlayerSumoChampion;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -46,8 +46,8 @@ void gearslot::Empty()
 {
   ulong Emitation = Item->GetEmitation();
   Item = 0;
-  GetBodyPart()->SignalEquipmentRemoval(this);
   SignalVolumeAndWeightChange();
+  GetBodyPart()->SignalEquipmentRemoval(this);
   SignalEmitationDecrease(Emitation);
 }
 

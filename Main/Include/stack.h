@@ -47,7 +47,7 @@ public:
   stackiterator(stackslot* Slot) : Slot(Slot) { }
   stackiterator& operator++() { Slot = Slot->Next; return *this; }
   stackiterator& operator--() { Slot = Slot->Last; return *this; }
-  bool HasItem() const { return Slot != 0; }
+  bool HasItem() const { return !!Slot; }
   item* operator->() const { return Slot->Item; }
   item* operator*() const { return Slot->Item; }
   const stackslot& GetSlot() const { return *Slot; }
@@ -129,6 +129,8 @@ class stack
   void SetIsFreezed(bool What) { Freezed = What; }
   void AddElement(item*);
   void SpillFluid(character*, liquid*, ulong);
+  void AddItems(const itemvector&);
+  void MoveItemsTo(itemvector&);
  private:
   void RemoveElement(stackslot*);
   void AddContentsToList(felist&, const character*, const festring&, uchar, bool (*)(const item*, const character*)) const;

@@ -22,9 +22,6 @@ class ABSTRACT_ITEM
   void InitMaterials(material*, material*, bool = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual material* GetConsumeMaterial() const { return ContainedMaterial; }
-  virtual void SetConsumeMaterial(material*, ushort = 0);
-  virtual void ChangeConsumeMaterial(material*, ushort = 0);
   virtual ushort GetMaterials() const { return 2; }
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
@@ -32,7 +29,14 @@ class ABSTRACT_ITEM
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
   virtual uchar GetAttachedGod() const;
+  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual material* RemoveMaterial(material*);
+  material* RemoveMainMaterial();
+  virtual material* RemoveContainedMaterial();
+  virtual void CalculateEmitation();
+  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
  protected:
+  virtual bool CalculateHasBe() const;
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
@@ -52,9 +56,9 @@ class ITEM
   virtual void ChargeFully(character*) { TimesUsed = 0; }
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
-  virtual void GenerateLeftOvers(character*);
   virtual void SignalSpoil(material*);
   virtual bool IsBanana() const { return true; }
+  virtual material* RemoveContainedMaterial();
  protected:
   virtual void VirtualConstructor(bool);
   uchar TimesUsed;
@@ -107,7 +111,6 @@ class ITEM
   materialcontainer,
  public:
   virtual item* BetterVersion() const;
-  virtual void GenerateLeftOvers(character*);
   virtual void DipInto(liquid*, character*);
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual bool IsDipDestination(const character*) const;
@@ -140,7 +143,6 @@ class ITEM
   virtual void DipInto(liquid*, character*);
   virtual liquid* CreateDipLiquid();
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
-  virtual void GenerateLeftOvers(character*);
   virtual void Break(character*, uchar);
   virtual bool IsDipDestination(const character*) const;
   virtual bool IsExplosive() const;
@@ -160,6 +162,8 @@ class ITEM
   virtual item* BetterVersion() const;
   virtual bool HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
+  virtual bool IsBananaPeel() const { return true; }
+  virtual bool IsDangerousForAI(const character*) const;
 );
 
 class ITEM
@@ -172,6 +176,7 @@ class ITEM
   virtual bool HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual item* Fix();
+  virtual bool IsDangerousForAI(const character*) const;
 );
 
 class ABSTRACT_ITEM
@@ -233,7 +238,7 @@ class ITEM
   bone,
   item,
  public:
-  virtual bool DogWillCatchAndConsume() const;
+  virtual bool DogWillCatchAndConsume(const character*) const;
 );
 
 class ITEM
@@ -502,7 +507,6 @@ class ITEM
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort);
-  virtual void GenerateLeftOvers(character*);
   virtual bool AllowContentEmitation() const { return false; }
   virtual bool IsDestroyable() const;
   virtual short GetOfferValue(uchar) const;
@@ -510,6 +514,7 @@ class ITEM
   virtual void PreProcessForBone();
   virtual void PostProcessForBone();
   virtual void FinalProcessForBone();
+  virtual material* RemoveMaterial(material*);
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
   virtual void VirtualConstructor(bool);
@@ -626,7 +631,7 @@ class ITEM
   carrot,
   item,
  public:
-  virtual bool BunnyWillCatchAndConsume() const;
+  virtual bool BunnyWillCatchAndConsume(const character*) const;
  protected:
   virtual ushort GetMaterialColorB(ushort) const;
 );

@@ -30,15 +30,18 @@
 #include "bitmap.h"
 #include "save.h"
 #include "miscitem.h"
+#include "room.h"
+#include "materias.h"
+#include "rain.h"
+#include "gear.h"
+#include "wskill.h"
 
-#define SAVE_FILE_VERSION 114 // Increment this if changes make savefiles incompatible
-#define BONE_FILE_VERSION 101 // Increment this if changes make bonefiles incompatible
+#define SAVE_FILE_VERSION 115 // Increment this if changes make savefiles incompatible
+#define BONE_FILE_VERSION 102 // Increment this if changes make bonefiles incompatible
 
 #define LOADED 0
 #define NEW_GAME 1
 #define BACK 2
-
-class quitrequest { };
 
 ushort game::CurrentLevelIndex;
 bool game::InWilderness = false;
@@ -77,8 +80,13 @@ ulong game::MiscMassacreAmount = 0;
 boneidmap game::BoneItemIDMap;
 boneidmap game::BoneCharacterIDMap;
 bool game::TooGreatDangerFoundBool;
-std::vector<item*> game::ItemDrawVector;
-std::vector<character*> game::CharacterDrawVector;
+itemvector game::ItemDrawVector;
+charactervector game::CharacterDrawVector;
+bool game::SumoWrestling;
+liquid* game::GlobalRainLiquid;
+vector2d game::GlobalRainSpeed = vector2d(256, 512); //gum
+ulong game::GlobalRainTimeModifier;
+bool game::PlayerSumoChampion;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -122,6 +130,7 @@ bool game::GoThroughWallsCheat;
 ushort game::QuestMonstersFound;
 bitmap* game::BusyAnimationCache[48];
 uchar game::MoveType;
+festring game::PlayerName;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
@@ -144,11 +153,11 @@ void game::InitScript()
 
 bool game::Init(const festring& Name)
 {
-  festring PlayerName;
-
   if(Name.IsEmpty())
     if(ivanconfig::GetDefaultName().IsEmpty())
       {
+	PlayerName.Empty();
+
 	if(iosystem::StringQuestion(PlayerName, CONST_S("What is your name? (1-20 letters)"), vector2d(30, 46), WHITE, 1, 20, true, true) == ABORTED || PlayerName.IsEmpty())
 	  return false;
       }
@@ -187,6 +196,7 @@ bool game::Init(const festring& Name)
 	GetCurrentArea()->SendNewDrawRequest();
 	SendLOSUpdateRequest();
 	ADD_MESSAGE("Game loaded successfully.");
+	PlayerName = PLAYER->GetAssignedName();
 	return true;
       }
     case NEW_GAME:
@@ -211,7 +221,7 @@ bool game::Init(const festring& Name)
 				      "plotting against me and intercepting my messages before they reach him!\"\n\n"
 				      "\"That is why you must travel to Attnam with a letter I'll give you and\n"
 				      "deliver it to Petrus directly. Alas, you somehow have to cross the sea\n"
-				      "between. Because it's winter, all Attnamian ships are trapped by ice and\n"
+				      "between. Because it's winter, all Attnamese ships are trapped by ice and\n"
 				      "I have none. Therefore you must venture through the small underwater tunnel\n"
 				      "connecting our islands. It is infested with monsters, but since you have\n"
 				      "stayed alive here so long, the trip will surely cause you no trouble.\"\n\n"
@@ -260,13 +270,17 @@ bool game::Init(const festring& Name)
 	WizardMode = false;
 	SeeWholeMapCheatMode = MAP_HIDDEN;
 	GoThroughWallsCheat = false;
+	SumoWrestling = false;
+	GlobalRainTimeModifier = RAND() & 1023;
+	PlayerSumoChampion = false;
+
 	if(game::IsXMas())
 	  {
 	    item* Present = new banana;
 	    game::GetPlayer()->GetStack()->AddItem(Present);
 	    ADD_MESSAGE("Atavus is happy today! He gives you %s.", Present->CHAR_NAME(INDEFINITE));
-	    
 	  }
+
 	return true;
       }
     default:
@@ -306,13 +320,17 @@ void game::Run()
     {
       if(!InWilderness)
 	{
+	  /* Temporary places */
 	  static ushort Counter = 0;
 
 	  if(++Counter == 10)
 	    {
-	      CurrentLevel->GenerateMonsters(); // Temporary place
+	      CurrentLevel->GenerateMonsters();
 	      Counter = 0;
 	    }
+
+	  if(CurrentDungeonIndex == NEW_ATTNAM && CurrentLevelIndex == 0)
+	    GlobalRainLiquid->SetVolumeNoSignals(Max<long>(sin((Ticks + GlobalRainTimeModifier) * 0.0003) * 300 - 150, 0));
 	}
 
       try
@@ -325,6 +343,9 @@ void game::Run()
       catch(quitrequest)
 	{
 	  break;
+	}
+      catch(areachangerequest)
+	{
 	}
     }
 }
@@ -504,7 +525,7 @@ bool game::Save(const festring& SaveName)
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
   SaveFile << Ticks << InWilderness << NextCharacterID << NextItemID;
-  SaveFile << LOSTurns;
+  SaveFile << LOSTurns << SumoWrestling << PlayerSumoChampion << GlobalRainTimeModifier;
   ulong Seed = RAND();
   femath::SetSeed(Seed);
   SaveFile << Seed;
@@ -555,7 +576,7 @@ uchar game::Load(const festring& SaveName)
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
   SaveFile >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
-  SaveFile >> LOSTurns;
+  SaveFile >> LOSTurns >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<ulong>(SaveFile));
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
   SaveFile >> Teams >> Dungeons >> StoryState;
@@ -604,7 +625,7 @@ festring game::SaveName(const festring& Base)
   festring SaveName = GetSaveDir();
 
   if(!Base.GetSize())
-    SaveName << PLAYER->GetAssignedName();
+    SaveName << PlayerName;
   else
     SaveName << Base;
 
@@ -725,7 +746,7 @@ bool game::EyeHandler(long X, long Y)
 
 bool game::WalkabilityHandler(long X, long Y)
 {
-  return CurrentLevel->IsValidPos(X, Y) && (CurrentLSquareMap[X][Y]->GetTheoreticalWalkability() & MoveType) != 0;
+  return CurrentLevel->IsValidPos(X, Y) && CurrentLSquareMap[X][Y]->GetTheoreticalWalkability() & MoveType;
 }
 
 float game::GetMinDifficulty()
@@ -1252,7 +1273,10 @@ void game::LookHandler(vector2d CursorPos)
       if(!IsInWilderness() && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
 	{
 	  lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
-	  LSquare->DisplayFluidInfo(Msg);
+
+	  if(LSquare->FluidIsVisible())
+	    LSquare->DisplayFluidInfo(Msg);
+
 	  LSquare->DisplaySmokeInfo(Msg);
 
 	  if(LSquare->HasEngravings() && LSquare->IsTransparent())
@@ -1566,7 +1590,7 @@ void game::CalculateNextDanger()
 
 bool game::TryTravel(uchar Dungeon, uchar Area, uchar EntryIndex, bool AllowHostiles)
 {
-  std::vector<character*> Group;
+  charactervector Group;
 
   if(LeaveArea(Group, AllowHostiles))
     {
@@ -1578,7 +1602,7 @@ bool game::TryTravel(uchar Dungeon, uchar Area, uchar EntryIndex, bool AllowHost
     return false;
 }
 
-bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
+bool game::LeaveArea(charactervector& Group, bool AllowHostiles)
 {
   if(!IsInWilderness())
     {
@@ -1600,7 +1624,7 @@ bool game::LeaveArea(std::vector<character*>& Group, bool AllowHostiles)
 
 /* Used always when the player enters an area. */
 
-void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryIndex)
+void game::EnterArea(charactervector& Group, uchar Area, uchar EntryIndex)
 {
   if(Area != WORLD_MAP)
     {
@@ -1608,8 +1632,15 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       CurrentLevelIndex = Area;
       bool New = !PrepareRandomBone(Area) && !GetCurrentDungeon()->PrepareLevel(Area);
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
-      GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
-      Player->PutToOrNear(Pos);
+
+      if(Player)
+	{
+	  GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+	  Player->PutToOrNear(Pos);
+	}
+      else
+	SetPlayer(GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+
       ushort c;
 
       for(c = 0; c < Group.size(); ++c)
@@ -1636,6 +1667,14 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 
       for(c = 0; c < Group.size(); ++c)
 	Group[c]->SignalStepFrom(0);
+
+      /* Gum solution! */
+
+      if(New && CurrentDungeonIndex == NEW_ATTNAM && Area == 0)
+	{
+	  GlobalRainLiquid = new liquid(WATER);
+	  CurrentLevel->CreateGlobalRain(GlobalRainLiquid, GlobalRainSpeed);
+	}
 
       if(ivanconfig::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
@@ -2038,7 +2077,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   std::set<massacresetentry> MassacreSet;
   festring FirstPronoun;
   bool First = true;
-  std::vector<character*> GraveYard;
+  charactervector GraveYard;
 
   for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
     {
@@ -2153,7 +2192,7 @@ void game::CreateBone()
 	{
 	  festring BoneName = GetBoneDir() + "bon" + CurrentDungeonIndex + CurrentLevelIndex + BoneIndex;
 	  outputfile BoneFile(BoneName);
-	  BoneFile << ushort(BONE_FILE_VERSION) << PLAYER->GetAssignedName() << CurrentLevel;
+	  BoneFile << ushort(BONE_FILE_VERSION) << PlayerName << CurrentLevel;
 	}
     }
 }
@@ -2180,8 +2219,8 @@ bool game::PrepareRandomBone(ushort LevelIndex)
 	      continue;
 	    }
 
-	  festring PlayerName;
-	  BoneFile >> PlayerName;
+	  festring Name;
+	  BoneFile >> Name;
 	  level* NewLevel = GetCurrentDungeon()->LoadLevel(BoneFile, LevelIndex);
 
 	  if(!NewLevel->PostProcessForBone())
@@ -2200,7 +2239,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
 	  CurrentLSquareMap = NewLevel->GetMap();
 	  GetCurrentDungeon()->SetIsGenerated(LevelIndex, true);
 
-	  if(PlayerName == PLAYER->GetAssignedName())
+	  if(Name == PlayerName)
 	    ADD_MESSAGE("This place is oddly familiar. Like you had been here in one of your past lives.");
 	  else
 	    ADD_MESSAGE("You smell the stench of death.");
@@ -2218,7 +2257,7 @@ bool game::PrepareRandomBone(ushort LevelIndex)
     return false;
 }
 
-float game::CalculateAverageDanger(const std::vector<character*>& EnemyVector, character* Char)
+float game::CalculateAverageDanger(const charactervector& EnemyVector, character* Char)
 {
   float DangerSum = 0;
   ushort Enemies = 0;
@@ -2256,11 +2295,11 @@ float game::CalculateAverageDangerOfAllNormalEnemies()
 character* game::CreateGhost()
 {
   float AverageDanger = game::CalculateAverageDangerOfAllNormalEnemies();
-  std::vector<character*> EnemyVector;
+  charactervector EnemyVector;
   protosystem::CreateEveryNormalEnemy(EnemyVector);
   ghost* Ghost = new ghost;
   Ghost->SetTeam(GetTeam(MONSTER_TEAM));
-  Ghost->SetOwnerSoul(PLAYER->GetAssignedName());
+  Ghost->SetOwnerSoul(PlayerName);
   Ghost->SetIsActive(false);
   Ghost->EditAllAttributes(-4);
   PLAYER->SetSoulID(Ghost->GetID());
@@ -2347,4 +2386,215 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, vector2d Pos, ushort Index)
 void game::GodEntryDrawer(bitmap* Bitmap, vector2d Pos, ushort Index)
 {
   igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, Index << 4, 0, Pos, 16, 16);
+}
+
+character* game::GetSumo()
+{
+  return GetCurrentLevel()->GetLSquare(SUMO_ROOM_POS)->GetRoom()->GetMaster();
+}
+
+bool game::TryToEnterSumoArena()
+{
+  character* Sumo = GetSumo();
+
+  if(!Sumo || !Sumo->IsEnabled() || Sumo->GetRelation(PLAYER) == HOSTILE || !PLAYER->CanBeSeenBy(Sumo))
+    return true;
+
+  if(TweraifIsFree())
+    {
+      ADD_MESSAGE("\"You started this stupid revolution, after which I've been constantly hungry. Get lost!\"");
+      return false;
+    }
+
+  if(PlayerIsSumoChampion())
+    {
+      ADD_MESSAGE("\"I don't really enjoy losing, especially many times to the same guy. Go away.\"");
+      return false;
+    }
+
+  if(PLAYER->IsPolymorphed())
+    {
+      ADD_MESSAGE("\"Don't try to cheat. Come back when you're normal again.\"");
+      return false;
+    }
+
+  if(PLAYER->GetHungerState() < SATIATED)
+    {
+      ADD_MESSAGE("\"Your figure is too slender for this sport. Eat a lot more and come back.\"");
+      return false;
+    }
+
+  if(PLAYER->GetHungerState() < BLOATED)
+    {
+      ADD_MESSAGE("\"You're still somewhat too thin. Eat some more and we'll compete.\"");
+      return false;
+    }
+
+  ADD_MESSAGE("\"So you want to compete? Okay, I'll explain the rules. First, I'll make a mirror image out of us both. We'll enter the arena and fight till one is knocked out. Use of any equipment is not allowed. Note that we will not gain experience from fighting as a mirror image, but won't get really hurt, either. However, controlling the image is exhausting and you can get hungry very quickly.\"");
+
+  if(!BoolQuestion("Do you want to challenge him? [y/N]"))
+    return false;
+
+  SumoWrestling = true;
+  character* MirrorPlayer = PLAYER->Duplicate();
+  character* MirrorSumo = Sumo->Duplicate();
+  SetPlayer(MirrorPlayer);
+  charactervector Spectators;
+
+  if(PLAYER->GetTeam()->GetRelation(GetTeam(TOURIST_GUIDE_TEAM)) != HOSTILE
+  && PLAYER->GetTeam()->GetRelation(GetTeam(TOURIST_TEAM)) != HOSTILE)
+    {
+      GetTeam(TOURIST_GUIDE_TEAM)->MoveMembersTo(Spectators);
+      GetTeam(TOURIST_TEAM)->MoveMembersTo(Spectators);
+    }
+
+  GetCurrentDungeon()->SaveLevel(SaveName(), 0);
+  EnterArea(charactervector(), 1, STAIRS_UP);
+  MirrorSumo->PutTo(SUMO_ARENA_POS + vector2d(6, 7));
+  MirrorSumo->ChangeTeam(GetTeam(SUMO_TEAM));
+  GetCurrentLevel()->GetLSquare(SUMO_ARENA_POS)->GetRoom()->SetMasterID(MirrorSumo->GetID());
+
+  for(ushort c = 0; c < Spectators.size(); ++c)
+    Spectators[c]->PutToOrNear(SUMO_ARENA_POS + vector2d(6, 10));
+
+  throw areachangerequest();
+  return true;
+}
+
+bool game::TryToExitSumoArena()
+{
+  if(GetTeam(PLAYER_TEAM)->GetRelation(GetTeam(NEW_ATTNAM_TEAM)) == HOSTILE)
+    return true;
+
+  itemvector IVector;
+  charactervector CVector;
+
+  if(IsSumoWrestling())
+    {
+      if(BoolQuestion("Do you really wish to give up? [y/N]"))
+	return EndSumoWrestling(LOST);
+      else
+	return false;
+    }
+  else
+    {
+      PLAYER->Remove();
+      GetCurrentLevel()->CollectEverything(IVector, CVector);
+      GetCurrentDungeon()->SaveLevel(SaveName(), 1);
+      EnterArea(std::vector<character*>(), 0, STAIRS_DOWN);
+      PLAYER->GetStackUnder()->AddItems(IVector);
+
+      if(!IVector.empty())
+	{
+	  character* Sumo = GetSumo();
+
+	  if(Sumo && Sumo->GetRelation(PLAYER) != HOSTILE && PLAYER->CanBeSeenBy(Sumo))
+	    ADD_MESSAGE("\"Don't leave anything there, please.\"");
+	}
+
+      vector2d PlayerPos = PLAYER->GetPos();
+
+      for(ushort c = 0; c < CVector.size(); ++c)
+	CVector[c]->PutNear(PlayerPos);
+
+      throw areachangerequest();
+      return true;
+    }
+}
+
+bool game::EndSumoWrestling(uchar Result)
+{
+  msgsystem::LeaveBigMessageMode();
+
+  if(Result == LOST)
+    AskForKeyPress("You lose. [press any key to continue]");
+  else if(Result == WON)
+    AskForKeyPress("You win! [press any key to continue]");
+  else if(Result == DISQUALIFIED)
+    AskForKeyPress("You are disqualified! [press any key to continue]");
+
+  character* Sumo = GetCurrentLevel()->GetLSquare(SUMO_ARENA_POS)->GetRoom()->GetMaster();
+
+  /* We'll make a throw soon so deletes are allowed */
+
+  if(Sumo)
+    {
+      Sumo->Remove();
+      delete Sumo;
+    }
+
+  PLAYER->Remove();
+  delete PLAYER;
+  SetPlayer(0);
+  itemvector IVector;
+  charactervector CVector;
+  GetCurrentLevel()->CollectEverything(IVector, CVector);
+  GetCurrentDungeon()->SaveLevel(SaveName(), 1);
+  EnterArea(std::vector<character*>(), 0, STAIRS_DOWN);
+  SumoWrestling = false;
+  PLAYER->GetStackUnder()->AddItems(IVector);
+  vector2d PlayerPos = PLAYER->GetPos();
+
+  for(ushort c = 0; c < CVector.size(); ++c)
+    CVector[c]->PutNear(PlayerPos);
+
+  if(Result == LOST)
+    ADD_MESSAGE("\"I hope you've learned your lesson now!\"");
+  else if(Result == DISQUALIFIED)
+    ADD_MESSAGE("\"Don't do that again or I'll be really angry!\"");
+  else
+    {
+      PlayerSumoChampion = true;
+      character* Sumo = GetSumo();
+      item* Belt = Sumo && Sumo->IsHumanoid() ? static_cast<humanoid*>(Sumo)->GetBelt() : 0;
+      festring Msg = Sumo->GetName(DEFINITE) + " seems humbler than before. \"Darn. You bested me.\n";
+
+      if(Belt)
+	{
+	  Msg << "Here's a little something as a reward\", " << Sumo->GetPersonalPronoun() << " says and hands you " << Belt->GetName(INDEFINITE) << ".\n\"";
+	  Belt->MoveTo(PLAYER->GetStack());
+	}
+
+      Msg << "Allow me to ";
+
+      if(Belt)
+	Msg << "also ";
+
+      Msg << "teach you a few nasty martial art tricks the years have taught me.\"";
+      PLAYER->GetCWeaponSkill(UNARMED)->AddHit(1000);
+      PLAYER->GetCWeaponSkill(KICK)->AddHit(1000);
+      character* Imperialist = GetCurrentLevel()->GetLSquare(5, 5)->GetRoom()->GetMaster();
+
+      if(Imperialist && Imperialist->GetRelation(PLAYER) != HOSTILE)
+	{
+	  vector2d Pos = PLAYER->GetPos() + vector2d(0, 1);
+	  GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
+	  Imperialist->Remove();
+	  Imperialist->PutTo(Pos);
+	  Msg << "\n\nSuddenly you notice " << Imperialist->GetName(DEFINITE) << " has also entered.\n"
+		 "\"I see we have a promising fighter among us. I had already heard of your\n"
+		 "adventures outside the village, but hardly could I believe that one day you\n"
+		 "would defeat even the mighty Huang Ming Pong! A hero such as you is bound\n"
+		 "to become world famous, and can earn a fortune if wealthy sponsors are behind\n"
+		 "him. May I therefore propose a mutually profitable contract: I'll give you this\n"
+		 "nice shirt with my company's ad, and you'll wear it as you journey bravely to\n"
+		 "the unknown and fight epic battles against the limitless minions of evil. I'll\n"
+		 "reward you well when you return, depending on how much you have used it.\"";
+	  PLAYER->GetStack()->AddItem(new decosadshirt);
+	}
+
+      TextScreen(Msg);
+      GetCurrentArea()->SendNewDrawRequest();
+      DrawEverything();
+    }
+
+  PLAYER->EditNP(-25000);
+  PLAYER->CheckStarvationDeath(CONST_S("exhausted after controlling a mirror image for too long"));
+  throw areachangerequest();
+  return true;
+}
+
+rain* game::ConstructGlobalRain()
+{
+  return new rain(GlobalRainLiquid, static_cast<lsquare*>(game::GetSquareInLoad()), GlobalRainSpeed, false);
 }

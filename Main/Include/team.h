@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <vector>
 #include <list>
 #include <map>
 
@@ -13,6 +14,8 @@
 class outputfile;
 class inputfile;
 class character;
+
+typedef std::vector<character*> charactervector;
 
 class team
 {
@@ -36,6 +39,7 @@ class team
   bool HasEnemy() const;
   ushort GetMembers() const { return Member.size(); }
   ushort GetEnabledMembers() const;
+  void MoveMembersTo(charactervector&);
  private:
   character* Leader;
   std::map<ulong, uchar> Relation;

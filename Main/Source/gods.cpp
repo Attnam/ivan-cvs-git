@@ -187,7 +187,7 @@ void seges::PrayGoodEffect()
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
-      if(OldBodyPart != 0)
+      if(OldBodyPart)
 	{
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
@@ -298,7 +298,7 @@ void silva::PrayGoodEffect()
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
-      if(OldBodyPart != 0)
+      if(OldBodyPart)
 	{
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
@@ -509,7 +509,7 @@ void loricatus::PrayGoodEffect()
     {
       if(MainWielded->IsMaterialChangeable())
 	{
-	  ushort StrengthValue = protocontainer<material>::GetProto(1)->GetConfig().find(STEEL)->second.StrengthValue;
+	  ushort StrengthValue = material::GetDataBase(STEEL)->StrengthValue;
 
 	  if(StrengthValue > MainWielded->GetMainMaterial()->GetStrengthValue())
 	    {
@@ -520,6 +520,10 @@ void loricatus::PrayGoodEffect()
 		{
 		  MainWielded->AddName(Desc, PLURAL);
 		  Desc << " glow and sparkle like they were";
+
+		  if(SecondaryWielded->GetSecondaryMaterial() && SecondaryWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
+		    SecondaryWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(STEEL));
+
 		  SecondaryWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
 		}
 	      else
@@ -527,6 +531,9 @@ void loricatus::PrayGoodEffect()
 		  MainWielded->AddName(Desc, UNARTICLED);
 		  Desc << " glows and sparkles like it was";
 		}
+
+	      if(MainWielded->GetSecondaryMaterial() && MainWielded->GetSecondaryMaterial()->IsSameAs(MainWielded->GetMainMaterial()))
+		MainWielded->ChangeSecondaryMaterial(MAKE_MATERIAL(STEEL));
 
 	      MainWielded->ChangeMainMaterial(MAKE_MATERIAL(STEEL));
 	      ADD_MESSAGE("Your %s reforged by invisible hands.", Desc.CStr());
@@ -867,7 +874,7 @@ void scabies::PrayGoodEffect()
     {
       bodypart* OldBodyPart = PLAYER->FindRandomOwnBodyPart();
 
-      if(OldBodyPart != 0)
+      if(OldBodyPart)
 	{
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
@@ -923,7 +930,7 @@ void scabies::PrayBadEffect()
   if(!(RAND() % 50))
     {
       ADD_MESSAGE("%s makes you eat a LOT of school food.", GetName());
-      material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 1000);
+      material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 2000);
       SchoolFood->EatEffect(PLAYER, 1000);
       delete SchoolFood;
       ADD_MESSAGE("You feel your muscles softening terribly...");

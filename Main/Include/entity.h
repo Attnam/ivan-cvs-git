@@ -23,9 +23,9 @@ class entity
   entity(const entity&);
   virtual ~entity();
   virtual void Be() { }
-  bool Exists() const { return (EntityFlags & EXISTS) != 0; }
+  bool Exists() const { return !!(EntityFlags & EXISTS); }
   void SendToHell();
-  bool IsEnabled() const { return (EntityFlags & HAS_BE) != 0; }
+  bool IsEnabled() const { return !!(EntityFlags & HAS_BE); }
   void Enable();
   void Disable();
   virtual square* GetSquareUnderEntity(ushort = 0) const = 0;
@@ -40,6 +40,8 @@ class entity
   virtual bool IsOnGround() const = 0;
   virtual bool AllowContentEmitation() const { return true; }
   virtual void SignalRustLevelChange() { }
+  virtual material* RemoveMaterial(material*) { return 0; }
+  virtual character* TryNecromancy(character*) { return 0; }
  protected:
   std::list<entity*>::iterator PoolIterator;
   ulong Emitation;

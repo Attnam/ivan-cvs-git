@@ -19,6 +19,10 @@ template <class type> class databasecreator;
 typedef std::vector<item*> itemvector;
 typedef std::list<fluid*> fluidlist;
 typedef std::vector<fluid*> fluidvector;
+typedef bool (colorizablebitmap::*pixelpredicate)(vector2d) const;
+typedef bool (material::*materialpredicate)() const;
+
+extern materialpredicate TrueMaterialPredicate;
 
 struct itemdatabase
 {
@@ -114,6 +118,9 @@ struct itemdatabase
   vector2d BeltBitmapPos;
   vector2d GauntletBitmapPos;
   vector2d BootBitmapPos;
+  bool GrantsLevitation;
+  bool HasSecondaryMaterial;
+  bool HasContainedMaterial;
 };
 
 class itemprototype
@@ -149,7 +156,7 @@ class item : public object
   virtual ~item();
   virtual float GetWeaponStrength() const;
   virtual bool Open(character*);
-  virtual bool Consume(character*, long);
+  bool Consume(character*, long);
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }
   virtual bool IsGoldenEagleShirt() const { return false; }
@@ -163,7 +170,7 @@ class item : public object
   virtual short GetOfferValue(uchar) const;
   virtual void Fly(character*, uchar, ushort);
   uchar HitCharacter(character*, character*, ushort, float, uchar);
-  virtual bool DogWillCatchAndConsume() const { return false; }
+  virtual bool DogWillCatchAndConsume(const character*) const { return false; }
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar) { return false; }
   virtual bool Polymorph(character*, stack*);
@@ -172,7 +179,6 @@ class item : public object
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
   virtual bool CanBeEatenByAI(const character*) const;
-  virtual const char* GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -212,9 +218,10 @@ class item : public object
   static bool RepairableSorter(const item* Item, const character*) { return Item->IsBroken() || Item->IsRusted(); }
   static bool EnchantableSorter(const item* Item, const character* Char) { return Item->IsEnchantable(Char); }
   static bool HasLockSorter(const item* Item, const character*) { return Item->HasLock(); }
+  static bool DecosAdShirtSorter(const item* Item, const character*) { return Item->IsDecosAdShirt(); }
   virtual bool IsConsumable(const character*) const;
-  virtual bool IsEatable(const character*) const;
-  virtual bool IsDrinkable(const character*) const;
+  bool IsEatable(const character*) const;
+  bool IsDrinkable(const character*) const;
   virtual bool IsOpenable(const character*) const { return false; }
   virtual bool IsReadable(const character*) const { return false; }
   virtual bool IsDippable(const character*) const { return false; }
@@ -236,11 +243,9 @@ class item : public object
   virtual bool IsEnchantable(const character*) const { return CanBeEnchanted(); }
   virtual bool IsOnGround() const;
   ushort GetResistance(ushort) const;
-  virtual void GenerateLeftOvers(character*);
   virtual void Be();
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual bool ReceiveDamage(character*, ushort, ushort, uchar = YOURSELF);
-  virtual void AddConsumeEndMessage(character*) const;
   virtual bool RaiseTheDead(character*) { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
   virtual const prototype* GetProtoType() const;
@@ -316,7 +321,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
   DATA_BASE_VALUE(uchar, BreakEffectRange);
-  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
   DATA_BASE_BOOL(IsQuestItem);
   DATA_BASE_BOOL(IsGoodWithPlants);
   DATA_BASE_BOOL(CanBePickedUp);
@@ -329,6 +334,7 @@ class item : public object
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BeltBitmapPos, ushort);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, GauntletBitmapPos, ushort);
   DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BootBitmapPos, ushort);
+  DATA_BASE_BOOL(GrantsLevitation);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -376,7 +382,6 @@ class item : public object
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
   virtual void Break(character*, uchar = YOURSELF);
-  void Empty();
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
   virtual void SignalEnchantmentChange();
@@ -412,7 +417,6 @@ class item : public object
   virtual ulong GetTruePrice() const;
   virtual void Search(const character*, ushort) { }
   bool IsSparkling() const;
-  virtual bool IsStupidToConsume() const;
   virtual head* Behead() { return 0; }
   virtual bool IsGorovitsFamilyRelic() const { return false; }
   virtual bool HasLock() const { return false; }
@@ -435,9 +439,8 @@ class item : public object
   vector2d GetLargeBitmapPos(vector2d, ushort) const;
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool) const;
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
-  virtual bool BunnyWillCatchAndConsume() const { return false; }
+  virtual bool BunnyWillCatchAndConsume(const character*) const { return false; }
   void DonateIDTo(item*);
-  virtual character* TryNecromancy(character*) { return 0; }
   virtual void SignalRustLevelChange();
   void SendNewDrawAndMemorizedUpdateRequest() const;
   virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
@@ -461,6 +464,20 @@ class item : public object
   virtual bool AllowFluidBe() const { return true; }
   virtual bool IsRusted() const;
   void RemoveRust();
+  virtual bool IsBananaPeel() const { return false; }
+  void SetSpoilPercentage(uchar);
+  uchar GetEquipmentMoveType() const { return GrantsLevitation() ? FLY : 0; }
+  virtual pixelpredicate GetFluidPixelAllowedPredicate() const;
+  void RedistributeFluids();
+  virtual material* GetConsumeMaterial(const character*, materialpredicate = TrueMaterialPredicate) const;
+  virtual material* RemoveMaterial(material*);
+  virtual void Cannibalize();
+  void InitMaterials(material*, bool = true);
+  void SetMainMaterial(material*, ushort = 0);
+  void ChangeMainMaterial(material*, ushort = 0);
+  virtual void GenerateMaterials();
+  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
+  virtual bool IsDecosAdShirt() const { return false; }
  protected:
   virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;

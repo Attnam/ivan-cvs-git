@@ -245,7 +245,7 @@ class CHARACTER
   virtual bool HandleCharacterBlockingTheWay(character*, vector2d, uchar);
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
-  bool HasBeenOnLandingSite;
+  bool HasDroppedBananas;
 );
 
 class CHARACTER

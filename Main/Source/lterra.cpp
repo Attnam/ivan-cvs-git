@@ -10,6 +10,9 @@ level* lterrain::GetLevel() const { return LSquareUnder->GetLevel(); }
 lsquare* lterrain::GetNearLSquare(vector2d Pos) const { return LSquareUnder->GetLevel()->GetLSquare(Pos); }
 lsquare* lterrain::GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
 room* lterrain::GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+void lterrain::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, 0, SpecialFlags); }
+void lterrain::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, 0, SpecialFlags); }
+void lterrain::InitMaterials(const materialscript* M, const materialscript*, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), CUP); }
 
 void glterrain::InstallDataBase(ushort Config) { databasecreator<glterrain>::InstallDataBase(this, Config); }
 void olterrain::InstallDataBase(ushort Config) { databasecreator<olterrain>::InstallDataBase(this, Config); }
@@ -255,7 +258,6 @@ void olterraindatabase::InitDefaults(ushort NewConfig)
 void olterrain::SetConfig(ushort NewConfig, ushort SpecialFlags)
 {
   InstallDataBase(NewConfig);
-  CalculateAll();
 
   if(!(SpecialFlags & NO_PIC_UPDATE))
     UpdatePictures();
@@ -268,7 +270,7 @@ god* olterrain::GetMasterGod() const
 
 bool olterrain::CanBeDestroyed() const
 {
-  return DataBase->CanBeDestroyed && ((GetPos().X != 0 && GetPos().Y != 0 && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
+  return DataBase->CanBeDestroyed && ((GetPos().X && GetPos().Y && GetPos().X != GetLevel()->GetXSize() - 1 && GetPos().Y != GetLevel()->GetYSize() - 1) || GetLevel()->IsOnGround());
 }
 
 extern itemprototype key_ProtoType;
@@ -429,4 +431,18 @@ void olterrain::ReceiveAcid(material* Material, ulong Modifier)
 	  ReceiveDamage(0, Damage, ACID);
 	}
     }
+}
+
+void lterrain::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
+{
+  InitMaterial(MainMaterial, FirstMaterial, 0);
+  SignalVolumeAndWeightChange();
+
+  if(CallUpdatePictures)
+    UpdatePictures();
+}
+
+void lterrain::GenerateMaterials()
+{
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), 0, RandomizeMaterialConfiguration());
 }

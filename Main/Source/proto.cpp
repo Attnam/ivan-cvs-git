@@ -240,7 +240,7 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 	  {
 	    bool BrokenRequested = festring::IgnoreCaseFind(Identifier, " broken ") != festring::NPos;
 
-	    if(BrokenRequested != ((i->first & BROKEN) != 0))
+	    if(BrokenRequested == !(i->first & BROKEN))
 	      continue;
 
 	    std::pair<ushort, ushort> Correct = CountCorrectNameLetters<type>(i->second, Identifier);
@@ -325,7 +325,7 @@ material* protosystem::CreateMaterial(const festring& What, ulong Volume, bool O
 
 #ifdef WIZARD
 
-void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
+void protosystem::CreateEveryCharacter(charactervector& Character)
 {
   for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
     {
@@ -365,7 +365,7 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 
 #endif
 
-void protosystem::CreateEveryNormalEnemy(std::vector<character*>& EnemyVector)
+void protosystem::CreateEveryNormalEnemy(charactervector& EnemyVector)
 {
   for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
     {

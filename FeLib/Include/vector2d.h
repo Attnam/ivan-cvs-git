@@ -5,7 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "typedef.h"
+#include "felibdef.h"
 
 /* Standard structure for representing positions */
 
@@ -43,5 +43,24 @@ struct vector2d
   static vector2d UnpackByte(vbyte B)	      { return vector2d(B & 0xF, B >> 4); }
   short X, Y;
 };
+
+/* Rotates a position Vect of a square map of size Size x Size according to
+   Flags (see felibdef.h) */
+
+inline void Rotate(vector2d& Vect, ushort Size, uchar Flags)
+{
+  if(Flags & ROTATE)
+    {
+      const short T = Vect.X;
+      Vect.X = Size - Vect.Y - 1;
+      Vect.Y = T;
+    }
+
+  if(Flags & MIRROR)
+    Vect.X = Size - Vect.X - 1;
+
+  if(Flags & FLIP)
+    Vect.Y = Size - Vect.Y - 1;
+}
 
 #endif

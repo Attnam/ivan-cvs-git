@@ -126,7 +126,7 @@ class ABSTRACT_CHARACTER
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(ushort) const;
-  virtual bool HasHead() const { return GetHead() != 0; }
+  virtual bool HasHead() const { return !!GetHead(); }
   virtual const festring& GetStandVerb() const;
   virtual head* Behead();
   virtual void AddAttributeInfo(festring&) const;
@@ -140,9 +140,9 @@ class ABSTRACT_CHARACTER
   virtual bool CanConsume(material*) const;
   virtual bool PreProcessForBone();
   virtual void FinalProcessForBone();
-  virtual character* TryToRiseFromTheDeadAsZombie();
   virtual void StayOn(liquid*);
   virtual head* GetVirtualHead() const { return GetHead(); }
+  virtual character* CreateZombie() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -398,8 +398,14 @@ class CHARACTER
   virtual bool BodyPartIsVital(ushort Index) const;
   virtual void CreateBodyParts(ushort);
   virtual bool AllowSpoil() const { return true; }
+  void SetDescription(const festring What) { Description = What; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual festring GetZombieDescription() const;
  protected:
+  virtual void AddPostFix(festring&) const;
   virtual void GetAICommand();
+  festring Description;
 );
 
 class CHARACTER
@@ -527,7 +533,8 @@ class CHARACTER
   virtual void VirtualConstructor(bool);
   virtual void GetAICommand();
   uchar Profession;
-  bool HasBeenOnLandingSite;
+  bool HasDroppedBananas;
+  bool FeedingSumo;
 );
 
 class CHARACTER
@@ -536,6 +543,7 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand() { StandIdleAI(); }
+  virtual void BeTalkedTo();
 );
 
 class CHARACTER
@@ -552,6 +560,7 @@ class CHARACTER
   elder,
   humanoid,
  protected:
+  virtual void GetAICommand();
   virtual void CreateBodyParts(ushort);
 );
 
@@ -583,13 +592,31 @@ class CHARACTER
   humanoid,
  public:
   virtual void GetAICommand();
-  virtual bool RaiseDeadAsZombies();
-  virtual character* RaiseSkeleton();
-  virtual void Save(outputfile&) const;
-  virtual void Load(inputfile&);
+  virtual bool TryToRaiseZombie();
+  virtual void RaiseSkeleton();
+);
+
+class CHARACTER
+(
+  sumowrestler,
+  humanoid,
+ public:
+  virtual void BeTalkedTo();
+  virtual bool CheckIfSatiated() { return GetNP() > BLOATED_LEVEL; }
+  virtual bool IsSumoWrestler() const { return true; }
+  virtual bool CanUseEquipment(ushort) const;
  protected:
-  virtual void VirtualConstructor(bool);
-  ushort SpellsLeft;
+  virtual void GetAICommand();
+);
+
+class CHARACTER
+(
+  tourist,
+  humanoid,
+ public:
+  virtual character* GetLeader() const;
+ protected:
+  virtual void GetAICommand();
 );
 
 #endif

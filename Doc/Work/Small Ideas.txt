@@ -435,13 +435,18 @@ Changes in attributes should be highlighted by some other colored font. (in the 
 Detonator and starting explosive. When applied the detonator explodes the small other explosive. Could be useful to start big explosions.    
 Vesana and other big monsters should also vomit much more than smaller creatures.
 Doing evil/good deads should have greater effect on the god on whose altar room the deed is done.
-Mutant limbs should be of different color, they should emitate light and drip odd liquid occasionally.
+Mutant limbs should be of different color (maybe even have a different picture?), they should emitate light and drip odd liquid occasionally.
 Leprosy state.
 Randomly generated bonefiles.
 Faster scrolling for look mode. (maybe when shift is pressed)
 Petrus' birthday (petrus gives player 1 banana).
-When an earthquake is shaking the level, the game screen should randomly shift position by a pixel of two every second or so.
+When an earthquake is shaking the level, the game screen should randomly shift position by a pixel or two every second or so.
 Pandora's box item - contains a number of horrible parasites and diseases like leprosy.
 Stone of Deucalion - transforms into a man when thrown.
 Stone of Pyrrha - transforms into a woman when thrown.
 The player shouldn't be able to pick up infinitely many infinitely big items. Its rather odd that a spider can have a large chest in its inventory (it can't move it, but IMHO it shouldn't even be able to pick it up).
+Magical ribbons.
+Graphical effect for Mjolak's energy attack.
+Bananas should return when thrown (they are boomerang-shaped).
+How much a monster can eat should depend on its volume (pet rats eat exactly as much as mammoths before they become bloated and stop).
+When seasons are integrated, bears should hibernate through winter.

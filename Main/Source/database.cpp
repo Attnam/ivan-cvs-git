@@ -296,6 +296,8 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanMove);
   ADD_MEMBER(BloodMaterial);
   ADD_MEMBER(VomitMaterial);
+  ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(HasContainedMaterial);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -389,6 +391,9 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(BeltBitmapPos);
   ADD_MEMBER(GauntletBitmapPos);
   ADD_MEMBER(BootBitmapPos);
+  ADD_MEMBER(GrantsLevitation);
+  ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(HasContainedMaterial);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -411,13 +416,12 @@ template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(MaterialColorC);
   ADD_MEMBER(MaterialColorD);
   ADD_MEMBER(SitMessage);
-  ADD_MEMBER(DefaultMainVolume);
-  ADD_MEMBER(DefaultSecondaryVolume);
-  ADD_MEMBER(DefaultContainedVolume);
   ADD_MEMBER(CreateDivineConfigurations);
   ADD_MEMBER(ShowMaterial);
   ADD_MEMBER(AttachedGod);
   ADD_MEMBER(Walkability);
+  ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(HasContainedMaterial);
 }
 
 template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
@@ -440,13 +444,9 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(MaterialColorC);
   ADD_MEMBER(MaterialColorD);
   ADD_MEMBER(SitMessage);
-  ADD_MEMBER(DefaultMainVolume);
-  ADD_MEMBER(DefaultSecondaryVolume);
-  ADD_MEMBER(DefaultContainedVolume);
   ADD_MEMBER(CreateDivineConfigurations);
   ADD_MEMBER(ShowMaterial);
   ADD_MEMBER(AttachedGod);
-
   ADD_MEMBER(DigMessage);
   ADD_MEMBER(CanBeDestroyed);
   ADD_MEMBER(RestModifier);
@@ -461,6 +461,8 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsAlwaysTransparent);
   ADD_MEMBER(UseBorderTiles);
   ADD_MEMBER(BorderTilePriority);
+  ADD_MEMBER(HasSecondaryMaterial);
+  ADD_MEMBER(HasContainedMaterial);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()

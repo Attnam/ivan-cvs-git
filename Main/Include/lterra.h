@@ -16,6 +16,7 @@ class lsquare;
 class stack;
 class room;
 class liquid;
+class materialscript;
 template <class type> class contentscript;
 template <class type> class databasecreator;
 
@@ -56,6 +57,11 @@ class lterrain : public object
   virtual void SignalRustLevelChange();
   virtual void TryToRust(ulong);
   virtual void ReceiveAcid(material*, ulong) { }
+  void InitMaterials(material*, bool = true);
+  void SetMainMaterial(material*, ushort = 0);
+  void ChangeMainMaterial(material*, ushort = 0);
+  virtual void GenerateMaterials();
+  virtual void InitMaterials(const materialscript*, const materialscript*, const materialscript*, bool);
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -85,13 +91,12 @@ struct glterraindatabase
   ushort MaterialColorC;
   ushort MaterialColorD;
   festring SitMessage;
-  ulong DefaultMainVolume;
-  ulong DefaultSecondaryVolume;
-  ulong DefaultContainedVolume;
   bool CreateDivineConfigurations;
   bool ShowMaterial;
   uchar AttachedGod;
   uchar Walkability;
+  bool HasSecondaryMaterial;
+  bool HasContainedMaterial;
 };
 
 class glterrainprototype
@@ -147,9 +152,6 @@ class glterrain : public lterrain, public gterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
   virtual DATA_BASE_VALUE(const festring&, SitMessage);
-  DATA_BASE_VALUE(ulong, DefaultMainVolume);
-  DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
-  DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
   DATA_BASE_VALUE(uchar, Walkability);
   virtual uchar GetAttachedGod() const;
@@ -183,9 +185,6 @@ struct olterraindatabase
   ushort MaterialColorC;
   ushort MaterialColorD;
   festring SitMessage;
-  ulong DefaultMainVolume;
-  ulong DefaultSecondaryVolume;
-  ulong DefaultContainedVolume;
   bool CreateDivineConfigurations;
   bool ShowMaterial;
   uchar AttachedGod;
@@ -203,6 +202,8 @@ struct olterraindatabase
   bool IsAlwaysTransparent;
   bool UseBorderTiles;
   ushort BorderTilePriority;
+  bool HasSecondaryMaterial;
+  bool HasContainedMaterial;
 };
 
 class olterrainprototype
@@ -272,9 +273,6 @@ class olterrain : public lterrain, public oterrain
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorC, ushort);
   virtual DATA_BASE_VALUE_WITH_PARAMETER(ushort, MaterialColorD, ushort);
   virtual DATA_BASE_VALUE(const festring&, SitMessage);
-  DATA_BASE_VALUE(ulong, DefaultMainVolume);
-  DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);
-  DATA_BASE_VALUE(ulong, DefaultContainedVolume);
   DATA_BASE_BOOL(ShowMaterial);
   DATA_BASE_VALUE(const festring&, DigMessage);
   bool CanBeDestroyed() const;

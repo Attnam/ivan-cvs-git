@@ -255,7 +255,7 @@ bool commandsystem::Drop(character* Char)
 
 bool commandsystem::Eat(character* Char)
 {
-  if(!Char->CheckConsume("eat"))
+  if(!Char->CheckConsume(CONST_S("eat")))
     return false;
 
   lsquare* Square = Char->GetLSquareUnder();
@@ -266,28 +266,12 @@ bool commandsystem::Eat(character* Char)
 	return true;
     }
 
-  stack* Inventory = Char->GetStack();
-  stack* StackUnder = Square->GetStack();
-
-  if((game::IsInWilderness() || !StackUnder->SortedItems(Char, &item::EatableSorter)) && !Inventory->SortedItems(Char, &item::EatableSorter))
-    {
-      ADD_MESSAGE("You have nothing to eat!");
-      return false;
-    }
-
-  itemvector Item;
-
-  if(!game::IsInWilderness() && StackUnder->SortedItems(Char, &item::EatableSorter))
-    Inventory->DrawContents(Item, StackUnder, Char, CONST_S("What do you wish to eat?"), CONST_S("Items in your inventory"), CONST_S("Items on the ground"), NO_MULTI_SELECT, &item::EatableSorter);
-  else
-    Inventory->DrawContents(Item, Char, CONST_S("What do you wish to eat?"), NO_MULTI_SELECT, &item::EatableSorter);
-
-  return !Item.empty() ? Char->ConsumeItem(Item[0]) : false;
+  return Consume(Char, "eat", &item::EatableSorter);
 }
 
 bool commandsystem::Drink(character* Char)
 {
-  if(!Char->CheckConsume("drink"))
+  if(!Char->CheckConsume(CONST_S("drink")))
     return false;
 
   lsquare* Square = Char->GetLSquareUnder();
@@ -298,23 +282,30 @@ bool commandsystem::Drink(character* Char)
 	return true;
     }
 
+  return Consume(Char, "drink", &item::DrinkableSorter);
+}
+
+bool commandsystem::Consume(character* Char, const char* ConsumeVerb, bool (*Sorter)(const item*, const character*))
+{
+  lsquare* Square = Char->GetLSquareUnder();
   stack* Inventory = Char->GetStack();
   stack* StackUnder = Square->GetStack();
 
-  if((game::IsInWilderness() || !StackUnder->SortedItems(Char, &item::DrinkableSorter)) && !Inventory->SortedItems(Char, &item::DrinkableSorter))
+  if((game::IsInWilderness() || !StackUnder->SortedItems(Char, Sorter)) && !Inventory->SortedItems(Char, Sorter))
     {
-      ADD_MESSAGE("You have nothing to drink!");
+      ADD_MESSAGE("You have nothing to %s!", ConsumeVerb);
       return false;
     }
 
   itemvector Item;
+  festring Question = CONST_S("What do you wish to ") + ConsumeVerb + '?';
 
-  if(!game::IsInWilderness() && StackUnder->SortedItems(Char, &item::DrinkableSorter))
-    Inventory->DrawContents(Item, StackUnder, Char, CONST_S("What do you wish to drink?"), CONST_S("Items in your inventory"), CONST_S("Items on the ground"), NO_MULTI_SELECT, &item::DrinkableSorter);
+  if(!game::IsInWilderness() && StackUnder->SortedItems(Char, Sorter))
+    Inventory->DrawContents(Item, StackUnder, Char, Question, CONST_S("Items in your inventory"), CONST_S("Items on the ground"), NO_MULTI_SELECT, Sorter);
   else
-    Inventory->DrawContents(Item, Char, CONST_S("What do you wish to drink?"), NO_MULTI_SELECT, &item::DrinkableSorter);
+    Inventory->DrawContents(Item, Char, Question, NO_MULTI_SELECT, Sorter);
 
-  return !Item.empty() ? Char->ConsumeItem(Item[0]) : false;
+  return !Item.empty() ? Char->ConsumeItem(Item[0], ConsumeVerb + CONST_S("ing")) : false;
 }
 
 bool commandsystem::ShowInventory(character* Char)
@@ -666,6 +657,12 @@ bool commandsystem::Pray(character* Char)
   ushort Index = 0;
   uchar DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
 
+  if(DivineMaster == ATHEIST)
+    {
+      ADD_MESSAGE("Somehow you feel that no god will help you here.");
+      return false;
+    }
+
   if(!DivineMaster)
     {
       for(ushort c = 1; c <= GODS; ++c)
@@ -996,7 +993,7 @@ bool commandsystem::Go(character* Char)
   Char->SetAction(Go);
   Char->EditAP(Char->GetStateAPGain(100)); // gum solution
   Char->GoOn(Go, true);
-  return Char->GetAction() != 0;
+  return !!Char->GetAction();
 }
 
 bool commandsystem::ShowConfigScreen(character*)
@@ -1295,7 +1292,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 
   if(Chosen < 4)
     {
-      std::vector<character*>& Character = game::GetCharacterDrawVector();
+      charactervector& Character = game::GetCharacterDrawVector();
       protosystem::CreateEveryCharacter(Character);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
 

@@ -2,7 +2,7 @@
 
 bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0), Freezed(false), HasFluids(false)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0), Freezed(false), HasFluids(false), HasRain(false), Outside(true)
 {
   Stack = new stack(this, 0, CENTER, false);
   SideStack[DOWN] = new stack(this, 0, DOWN, false);
@@ -30,6 +30,10 @@ lsquare::~lsquare()
   if(!Smoke.empty())
     for(smokelist::iterator s = Smoke.begin(); s != Smoke.end(); ++s)
       delete *s;
+
+  if(HasRain)
+    for(c = 0; c < Rain.size(); ++c)
+      delete Rain[c];
 }
 
 void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
@@ -79,6 +83,10 @@ void lsquare::CalculateEmitation()
   if(HasFluids)
     for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
       game::CombineLights(Emitation, (*f)->GetEmitation());
+
+  if(HasRain)
+    for(c = 0; c < Rain.size(); ++c)
+      game::CombineLights(Emitation, Rain[c]->GetEmitation());
 }
 
 void lsquare::UpdateMemorized()
@@ -100,9 +108,18 @@ void lsquare::UpdateMemorized()
 void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool RealDraw) const
 {
   GLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
+  bool StackDrawn = false;
 
   if(OLTerrain && !IsFlyable())
-    OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
+    {
+      if(OLTerrain->IsTransparent())
+	{
+	  StackDrawn = true;
+	  DrawStacks(Bitmap, Pos, Luminance, RealDraw);
+	}
+
+      OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
+    }
 
   if(HasFluids)
     for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
@@ -111,21 +128,11 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
   if(OLTerrain && IsFlyable())
     OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
 
+  if(!StackDrawn && IsTransparent())
+    DrawStacks(Bitmap, Pos, Luminance, RealDraw);
+
   for(ushort c = 0; c < 8 && BorderPartner[c].Terrain; ++c)
     BorderPartner[c].Terrain->Draw(Bitmap, Pos, Luminance, 8 - BorderPartner[c].SquareIndex, RealDraw);
-
-  if(IsTransparent())
-    {
-      Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
-
-      for(ushort c = 0; c < 4; ++c)
-	{
-	  stack* Stack = GetSideStackOfAdjacentSquare(c);
-
-	  if(Stack)
-	    Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
-	}
-    }
 }
 
 void lsquare::Draw()
@@ -153,7 +160,7 @@ void lsquare::Draw()
 		{
 		  if(!Smoke.empty())
 		    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
-		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
 
 		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
 		}
@@ -163,18 +170,26 @@ void lsquare::Draw()
 
 		  if(!Smoke.empty())
 		    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
-		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
 		}
 	    }
 	  else if(!Smoke.empty())
 	    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
-	      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+	      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance);
+
+	  if(HasRain)
+	    for(ushort c = 0; c < Rain.size(); ++c)
+	      Rain[c]->Draw(DOUBLE_BUFFER, BitPos, Luminance);
 	}
       else if(CanBeFeltByPlayer())
 	{
 	  ulong RealLuminance = Luminance;
 	  game::CombineLights(RealLuminance, DIM_LUMINANCE);
 	  DrawStaticContents(DOUBLE_BUFFER, BitPos, ivanconfig::ApplyContrastTo(RealLuminance), true);
+
+	  if(HasRain)
+	    for(ushort c = 0; c < Rain.size(); ++c)
+	      Rain[c]->Draw(DOUBLE_BUFFER, BitPos, Luminance);
 	}
       else
 	{
@@ -512,7 +527,7 @@ void lsquare::Save(outputfile& SaveFile) const
   for(ushort c = 0; c < 4; ++c)
     SideStack[c]->Save(SaveFile);
 
-  SaveFile << Emitter << Fluid << Emitation << Engraved << RoomIndex << Luminance << Smoke << SmokeAlphaSum;
+  SaveFile << Emitter << Fluid << Emitation << Engraved << RoomIndex << Luminance << Smoke << SmokeAlphaSum << Rain << Outside;
 
   if(LastSeen)
     Memorized->Save(SaveFile);
@@ -531,8 +546,9 @@ void lsquare::Load(inputfile& SaveFile)
       SideStack[c]->SetMotherSquare(this);
     }
 
-  SaveFile >> Emitter >> Fluid >> Emitation >> Engraved >> RoomIndex >> Luminance >> Smoke >> SmokeAlphaSum;
+  SaveFile >> Emitter >> Fluid >> Emitation >> Engraved >> RoomIndex >> Luminance >> Smoke >> SmokeAlphaSum >> Rain >> Outside;
   HasFluids = !Fluid.empty();
+  HasRain = !Rain.empty();
 
   if(LastSeen)
     {
@@ -723,7 +739,7 @@ bool lsquare::BeKicked(character* Kicker, item* Boot, bodypart* Leg, float KickD
 
 bool lsquare::CanBeDug() const
 {
-  if((GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == GetLevel()->GetXSize() - 1 || GetPos().Y == GetLevel()->GetYSize() - 1) && !*GetLevel()->GetLevelScript()->IsOnGround())
+  if((!GetPos().X || !GetPos().Y || GetPos().X == GetLevel()->GetXSize() - 1 || GetPos().Y == GetLevel()->GetYSize() - 1) && !*GetLevel()->GetLevelScript()->IsOnGround())
     {
       ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
       return false;
@@ -829,6 +845,9 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
 
+      if(CharacterScript->IsLeader() && *CharacterScript->IsLeader())
+	Char->GetTeam()->SetLeader(Char);
+
       Char->PutToOrNear(Pos);
       Char->CreateHomeData();
 
@@ -847,22 +866,27 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
     for(std::list<contentscript<item> >::const_iterator i = Items->begin(); i != Items->end(); ++i)
       {
 	stack* Stack;
-	item* Item = i->Instantiate();
+	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
 
-	if(Item)
+	for(ushort c = 0; c < Times; ++c)
 	  {
-	    const uchar* SideStackIndex = i->GetSideStackIndex();
+	    item* Item = i->Instantiate();
 
-	    if(!SideStackIndex)
-	      Stack = GetStack();
-	    else
+	    if(Item)
 	      {
-		Item->SignalSquarePositionChange(*SideStackIndex);
-		Stack = GetSideStack(*SideStackIndex);
-	      }
+		const uchar* SideStackIndex = i->GetSideStackIndex();
 
-	    Stack->AddItem(Item);
-	    Item->SpecialGenerationHandler();
+		if(!SideStackIndex)
+		  Stack = GetStack();
+		else
+		  {
+		    Item->SignalSquarePositionChange(*SideStackIndex);
+		    Stack = GetSideStack(*SideStackIndex);
+		  }
+
+		Stack->AddItem(Item);
+		Item->SpecialGenerationHandler();
+	      }
 	  }
       }
 
@@ -1387,7 +1411,7 @@ bool lsquare::Clone(character* Zapper, const festring&, uchar)
   character* Character = GetCharacter();
 
   if(Character)
-    ClonedSomething = Character->CloneToNearestSquare(Zapper) != 0;
+    ClonedSomething = !!Character->CloneToNearestSquare(Zapper);
 
   if(GetStack()->Clone(ClonedSomething ? 4 : 5))
     ClonedSomething = true;
@@ -1504,6 +1528,9 @@ void lsquare::GetHitByExplosion(const explosion* Explosion)
   if(Explosion->ID == LastExplosionID)
     return;
 
+  if(vector2d(33, 13) == Pos)
+    int esko = 2;
+
   LastExplosionID = Explosion->ID;
   ushort DistanceSquare = (Pos - Explosion->Pos).GetLengthSquare();
 
@@ -1577,8 +1604,6 @@ void lsquare::RemoveSmoke(smoke* ToBeRemoved)
 
 void lsquare::AddSmoke(gas* ToBeAdded)
 {
-  SendNewDrawRequest();
-
   if(Smoke.empty())
     IncAnimatedEntities();
   else
@@ -1884,4 +1909,38 @@ void lsquare::SpillFluid(character* Spiller, liquid* Liquid, bool ShowMsg)
     AddFluid(Liquid);
   else
     delete Liquid;
+}
+
+void lsquare::DrawStacks(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool RealDraw) const
+{
+  Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
+
+  for(ushort c = 0; c < 4; ++c)
+    {
+      stack* Stack = GetSideStackOfAdjacentSquare(c);
+
+      if(Stack)
+	Stack->Draw(PLAYER, Bitmap, Pos, Luminance, RealDraw);
+    }
+}
+
+void lsquare::RemoveRain(rain* ToBeRemoved)
+{
+  std::remove(Rain.begin(), Rain.end(), ToBeRemoved);
+  SignalEmitationDecrease(ToBeRemoved->GetEmitation());
+
+  if(Rain.empty())
+    {
+      DecAnimatedEntities();
+      HasRain = false;
+    }
+}
+
+void lsquare::AddRain(liquid* RainLiquid, vector2d Speed, bool OwnLiquid)
+{
+  if(!HasRain)
+    IncAnimatedEntities();
+
+  HasRain = true;
+  Rain.push_back(new rain(RainLiquid, this, Speed, OwnLiquid));
 }

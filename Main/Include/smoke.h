@@ -23,7 +23,7 @@ class smoke : public entity
   smoke(gas*, lsquare*);
   virtual ~smoke();
   virtual void Be();
-  virtual void Draw(bitmap*, vector2d, ulong, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong) const;
   virtual square* GetSquareUnderEntity(ushort = 0) const;
   void SetLSquareUnder(lsquare* What) { LSquareUnder = What; }
   lsquare* GetLSquareUnder() const { return LSquareUnder; }

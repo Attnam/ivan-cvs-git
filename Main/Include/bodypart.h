@@ -35,9 +35,6 @@ class ABSTRACT_ITEM
   bool IsUnique() const { return Unique; }
   void SetIsUnique(bool What) { Unique = What; }
   virtual void DropEquipment() { }
-  virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  virtual void SetConsumeMaterial(material*, ushort = 0);
-  virtual void ChangeConsumeMaterial(material*, ushort = 0);
   virtual bool ApplyExperience() { return false; }
   virtual void InitSpecialAttributes() { }
   virtual void SignalEquipmentAdd(gearslot*);
@@ -110,6 +107,8 @@ class ABSTRACT_ITEM
   virtual bool ShowFluids() const { return false; }
   virtual void TryToRust(ulong);
   virtual bool AllowFluidBe() const;
+  virtual material* RemoveMaterial(material*);
+  virtual void CopyAttributes(const bodypart*) { }
  protected:
   virtual bool AllowFluids() const { return true; }
   virtual bool IsSparkling(ushort) const;
@@ -307,6 +306,7 @@ class ABSTRACT_ITEM
   virtual void UpdatePictures();
   virtual float GetTypeDamage(const character*) const;
   virtual item* GetArmorToReceiveFluid(bool) const;
+  virtual void CopyAttributes(const bodypart*);
  protected:
   virtual sweaponskill*& GetCurrentSWeaponSkill() const = 0;
   virtual void VirtualConstructor(bool);
@@ -414,6 +414,7 @@ class ABSTRACT_ITEM
   virtual bool EditAllAttributes(short);
   void AddAttackInfo(felist&) const;
   virtual item* GetArmorToReceiveFluid(bool) const;
+  virtual void CopyAttributes(const bodypart*);
  protected:
   virtual void VirtualConstructor(bool);
   void UpdateLegArmorPictures(graphicdata&, graphicdata&, ushort) const;
@@ -461,7 +462,6 @@ class ITEM
  public:
   corpse(const corpse&);
   virtual ~corpse();
-  virtual bool IsConsumable(const character*) const;
   virtual short GetOfferValue(uchar) const;
   virtual float GetWeaponStrength() const;
   virtual bool CanBeEatenByAI(const character*) const;
@@ -471,23 +471,16 @@ class ITEM
   void SetDeceased(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void AddConsumeEndMessage(character*) const;
-  virtual void GenerateLeftOvers(character*);
   virtual bool IsDestroyable() const;
   virtual ulong GetTruePrice() const;
   virtual ushort GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);
-  virtual const char* GetConsumeVerb() const;
-  virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
-  virtual bool IsDrinkable(const character*) const { return false; }
   virtual void CalculateVolumeAndWeight();
   virtual void CalculateEmitation();
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual uchar GetSpoilLevel() const;
-  virtual bool Consume(character*, long);
   virtual material* GetMaterial(ushort) const;
-  virtual bool IsStupidToConsume() const;
   virtual head* Behead();
   virtual bool CanBeCloned() const;
   virtual uchar GetAttachedGod() const;
@@ -496,6 +489,8 @@ class ITEM
   virtual void FinalProcessForBone();
   virtual bool SuckSoul(character*, character* = 0);
   virtual character* TryNecromancy(character*);
+  virtual void Cannibalize();
+  virtual material* GetConsumeMaterial(const character*, materialpredicate) const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials() { }

@@ -1,5 +1,4 @@
 #include "iconf.h"
-#include "felibdef.h"
 #include "game.h"
 #include "feio.h"
 #include "ivandef.h"

@@ -46,7 +46,10 @@ material
 	IsBlood = false;
 	Acidicity = 0;
 	IsImmuneToAcid = false;
+}
 
+solid
+{
 	Config VALPURIUM;
 	{
 		StrengthValue = 400;
@@ -730,7 +733,7 @@ material
 	}
 }
 
-organicsubstance /* substances that spoil but are not flesh */
+organic /* substances that spoil but are not flesh */
 {
 	UseMaterialAttributes = false;
 	SpoilModifier = 10000;

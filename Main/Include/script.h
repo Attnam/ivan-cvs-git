@@ -212,6 +212,7 @@ class contentscript<character> : public contentscripttemplate<character>
   SCRIPT_MEMBER(std::list<contentscript<item> >, Inventory);
   SCRIPT_BOOL(IsMaster);
   SCRIPT_MEMBER(std::vector<vector2d>, WayPoint);
+  SCRIPT_BOOL(IsLeader);
 };
 
 class contentscript<item> : public contentscripttemplate<item>
@@ -234,6 +235,8 @@ class contentscript<item> : public contentscripttemplate<item>
   SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
   SCRIPT_MEMBER(uchar, Chance);
   SCRIPT_MEMBER(ushort, ConfigFlags);
+  SCRIPT_MEMBER(uchar, SpoilPercentage);
+  SCRIPT_MEMBER(ushort, Times);
 };
 
 bool IsValidScript(const std::list<contentscript<item> >*);

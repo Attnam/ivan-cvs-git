@@ -1,8 +1,6 @@
 /* Compiled through itemset.cpp */
 
 uchar bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
-void bodypart::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
-void bodypart::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
 ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
 uchar bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
@@ -494,26 +492,6 @@ void corpse::AddPostFix(festring& String) const
   GetDeceased()->AddName(String, INDEFINITE);
 }
 
-void corpse::GenerateLeftOvers(character* Eater)
-{
-  GetDeceased()->GetTorso()->GenerateLeftOvers(Eater);
-  RemoveFromSlot();
-  SendToHell();
-}
-
-bool corpse::IsConsumable(const character* Eater) const
-{
-  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart && BodyPart->IsConsumable(Eater))
-	return true;
-    }
-
-  return false;
-}
-
 short corpse::GetOfferValue(uchar Receiver) const
 {
   short OfferValue = 0;
@@ -648,11 +626,6 @@ void leg::DropEquipment()
     GetSlot()->AddFriendItem(GetBoot());
 }
 
-void corpse::AddConsumeEndMessage(character* Eater) const
-{
-  GetDeceased()->GetTorso()->AddConsumeEndMessage(Eater);
-}
-
 head::~head()
 {
   delete GetHelmet();
@@ -704,24 +677,6 @@ ulong corpse::GetTruePrice() const
     }
 
   return Price;
-}
-
-bool corpse::Consume(character* Eater, long Amount)
-{
-  for(ushort c = GetDeceased()->GetBodyParts() - 1; c != 0; --c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart)
-	{
-	  if(BodyPart->Consume(Eater, Amount))
-	    BodyPart->GenerateLeftOvers(Eater);
-
-	  return false;
-	}
-    }
-
-  return GetDeceased()->GetTorso()->Consume(Eater, Amount);
 }
 
 material* corpse::GetMaterial(ushort Index) const
@@ -1108,11 +1063,6 @@ void leg::InitSpecialAttributes()
   BaseKickStrength = Master->GetBaseKickStrength();
 }
 
-const char* corpse::GetConsumeVerb() const
-{
-  return GetDeceased()->GetTorso()->GetConsumeVerb();
-}
-
 void bodypart::SignalEquipmentAdd(gearslot* Slot)
 {
   if(Master)
@@ -1338,7 +1288,9 @@ void arm::SignalVolumeAndWeightChange()
       CalculateAttributeBonuses();
       CalculateAttackInfo();
       UpdateWieldedPicture();
-      GetSquareUnder()->SendNewDrawRequest();
+
+      if(GetSquareUnder())
+	GetSquareUnder()->SendNewDrawRequest();
     }
 }
 
@@ -1603,10 +1555,10 @@ bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
       bodypart* BodyPart1 = Deceased->GetBodyPart(c);
       bodypart* BodyPart2 = Corpse->Deceased->GetBodyPart(c);
 
-      if(BodyPart1 == 0 && BodyPart2 == 0)
+      if(!BodyPart1 && !BodyPart2)
 	continue;
 
-      if(BodyPart1 == 0 || BodyPart2 == 0 || !BodyPart1->CanBePiledWith(BodyPart2, Viewer))
+      if(!BodyPart1 || !BodyPart2 || !BodyPart1->CanBePiledWith(BodyPart2, Viewer))
 	return false;
     }
 
@@ -1654,7 +1606,8 @@ void bodypart::SpillBlood(ushort HowMuch)
 {
   if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
     for(ushort c = 0; c < GetSquaresUnder(); ++c)
-      GetLSquareUnder(c)->SpillFluid(0, CreateBlood(HowMuch * sqrt(BodyPartVolume) / 2), false);
+      if(GetLSquareUnder(c))
+	GetLSquareUnder(c)->SpillFluid(0, CreateBlood(HowMuch * sqrt(BodyPartVolume) / 2), false);
 }
 
 void bodypart::SignalEnchantmentChange()
@@ -2053,19 +2006,6 @@ uchar corpse::GetArticleMode() const
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
 
-bool corpse::IsStupidToConsume() const
-{
-  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart && BodyPart->IsStupidToConsume())
-	return true;
-    }
-
-  return false;
-}
-
 head* head::Behead()
 {
   RemoveFromSlot();
@@ -2362,20 +2302,20 @@ character* corpse::TryNecromancy(character* Summoner)
   if(Summoner && Summoner->IsPlayer())
     game::DoEvilDeed(50);
 
-  character* NewZombie = GetDeceased()->TryToRiseFromTheDeadAsZombie();
+  character* Zombie = GetDeceased()->CreateZombie();
 
-  if(NewZombie)
+  if(Zombie)
     {
       vector2d Pos = GetPos();
-      NewZombie->PutToOrNear(Pos); 
-      
-      if(Summoner && GetDeceased()->IsCharmable() && !GetDeceased()->IsPlayer())
-	NewZombie->ChangeTeam(Summoner->GetTeam());
-
-      NewZombie->SignalStepFrom(0);
       RemoveFromSlot();
-      SendToHell();      
-      return NewZombie;
+      Zombie->PutToOrNear(Pos); 
+      
+      if(Summoner)
+	Zombie->ChangeTeam(Summoner->GetTeam());
+
+      Zombie->SignalStepFrom(0);
+      SendToHell();
+      return Zombie;
     }
 
   return 0;
@@ -2468,8 +2408,6 @@ void bodypart::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex
 	Armor->SpillFluid(Spiller, Liquid);
       else if(GetMaster())
 	{
-	  Liquid->SpillEffect(GetMaster(), GetBodyPartIndex());
-
 	  if(Liquid->GetVolume())
 	    AddFluid(Liquid, SquareIndex);
 	  else
@@ -2485,9 +2423,9 @@ void bodypart::StayOn(liquid* Liquid)
   item* Armor = GetArmorToReceiveFluid(true);
 
   if(Armor)
-    Liquid->ConstantEffect(Armor);
+    Liquid->TouchEffect(Armor);
   else if(GetMaster())
-    Liquid->ConstantEffect(GetMaster(), GetBodyPartIndex());
+    Liquid->TouchEffect(GetMaster(), GetBodyPartIndex());
 }
 
 liquid* bodypart::CreateBlood(ulong Volume) const
@@ -2888,4 +2826,57 @@ void bodypart::TryToRust(ulong LiquidModifier)
 
       MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
     }
+}
+
+material* corpse::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+{
+  for(ushort c = GetDeceased()->GetBodyParts() - 1; c; --c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+	{
+	  material* CM = BodyPart->GetConsumeMaterial(Consumer, Predicate);
+
+	  if(CM)
+	    return CM;
+	}
+    }
+
+  return GetDeceased()->GetTorso()->GetConsumeMaterial(Consumer, Predicate);
+}
+
+void corpse::Cannibalize()
+{
+  item::Cannibalize();
+
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart)
+	BodyPart->Cannibalize();
+    }
+}
+
+material* bodypart::RemoveMaterial(material* Material)
+{
+  if(Master && GetBodyPartIndex() == TORSO_INDEX)
+    return Master->GetMotherEntity()->RemoveMaterial(Material); // gum
+  else
+    return item::RemoveMaterial(Material);
+}
+
+void arm::CopyAttributes(const bodypart* BodyPart)
+{
+  const arm* Arm = static_cast<const arm*>(BodyPart);
+  Strength = Arm->Strength;
+  Dexterity = Arm->Dexterity;
+}
+
+void leg::CopyAttributes(const bodypart* BodyPart)
+{
+  const leg* Leg = static_cast<const leg*>(BodyPart);
+  Strength = Leg->Strength;
+  Agility = Leg->Agility;
 }

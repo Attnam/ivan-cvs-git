@@ -2,23 +2,33 @@
 #define __FELIBDEF_H__
 
 /* Global defines for the project FeLib.
- * This file is created to decrease the need of including headers in other headers just for the sake of some silly macros,
- * because it decreases compilation efficiency and may even cause cross-including
- *
- * List of macros that should be gathered here:
- * 1. all numeric defines used in multiple .cpp or .h files
- * 2. all inline functions used in multiple .cpp or .h files and independent enough (do not require other headers)
- * 3. class construction macros used in multiple .h files
- *
- * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
+   This file is created to decrease the need of including headers in other
+   headers just for the sake of some silly macros, because it decreases
+   compilation efficiency and may cause cross-including
+
+   List of macros that should be gathered here:
+   1. all numeric defines used in multiple .cpp or .h files
+   2. all inline functions used in multiple .cpp or .h files and independent
+      enough (do not require other headers)
+   3. class construction macros used in multiple .h files */
+
+#include "typedef.h"
 
 #define FPI 3.1415926535897932384626433832795f
 
-template <class type> inline const type& Max(const type& X, const type& Y) { return X >= Y ? X : Y; }
-template <class type> inline const type& Max(const type& X, const type& Y, const type& Z) { return Max(Max(X, Y), Z); }
-template <class type> inline const type& Min(const type& X, const type& Y) { return X <= Y ? X : Y; }
-template <class type> inline const type& Min(const type& X, const type& Y, const type& Z) { return Min(Min(X, Y), Z); }
-template <class type> inline const type& Limit(const type& Value, const type& Minimum, const type& Maximum) { return Min(Max(Value, Minimum), Maximum); }
+template <class type> inline type Max(type X, type Y) { return X >= Y ? X : Y; }
+template <class type> inline type Max(type X, type Y, type Z) { return Max(Max(X, Y), Z); }
+template <class type> inline type Min(type X, type Y) { return X <= Y ? X : Y; }
+template <class type> inline type Min(type X, type Y, type Z) { return Min(Min(X, Y), Z); }
+template <class type> inline type Limit(type Value, type Minimum, type Maximum) { return Min(Max(Value, Minimum), Maximum); }
+template <class type> inline type HypotSquare(type X, type Y) { return X * X + Y * Y; }
+
+template <class type> inline void Swap(type& X, type& Y)
+{
+  const type T = X;
+  X = Y;
+  Y = T;
+}
 
 inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
 inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
@@ -28,7 +38,6 @@ inline ushort MakeRGB16(ushort Red, ushort Green, ushort Blue) { return (Red << 
 inline ushort EditRGB16(ushort Color, short Red, short Green, short Blue) { return MakeRGB16(Limit(GetRed16(Color) + Red, 0, 0xFF), Limit(GetGreen16(Color) + Green, 0, 0xFF), Limit(GetBlue16(Color) + Blue, 0, 0xFF)); }
 
 inline ushort MakeShadeColor(ushort Color) { return MakeRGB16(GetRed16(Color) / 3, GetGreen16(Color) / 3, GetBlue16(Color) / 3); }
-
 
 inline ulong GetRed24(ulong Color) { return Color >> 16 & 0xFF; }
 inline ulong GetGreen24(ulong Color) { return Color >> 8 & 0xFF; }
@@ -115,5 +124,8 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define AVERAGE_PRIORITY ((8 << 4) + 8)
 
 #define NO_IMAGE 0xFFFF
+
+#define ZERO_POOLS 1
+#define RAND_ALLOC 2
 
 #endif

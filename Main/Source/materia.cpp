@@ -9,6 +9,8 @@ bool material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial-
 ulong material::GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
 const char* material::GetConsumeVerb() const { return "eating"; }
 
+materialpredicate TrueMaterialPredicate = &material::True;
+
 void material::AddName(festring& Name, bool Articled, bool Adjective) const
 {
   if(Articled)
@@ -27,8 +29,16 @@ festring material::GetName(bool Articled, bool Adjective) const
 
 ushort material::TakeDipVolumeAway()
 {
-  ulong Amount = Min(100UL, GetVolume());
-  EditVolume(-Amount);
+  ulong Amount = 100;
+
+  if(Amount < Volume)
+    EditVolume(-Amount);
+  else
+    {
+      Amount = Volume;
+      delete MotherEntity->RemoveMaterial(this);
+    }
+
   return Amount;
 }
 
@@ -57,49 +67,58 @@ bool material::Effect(character* Eater, ulong Amount)
 
   switch(GetEffect())
     {
-    case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); return true;
-    case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); return true;
-    case EFFECT_OMMEL_URINE: Eater->ReceiveOmmelUrine(Amount); return true;
-    case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); return true;
-    case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); return true;
-    case EFFECT_HEAL: Eater->ReceiveHeal(Amount); return true;
-    case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount); return true;
-    case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); return true;
-    case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); return true;
-    case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); return true;
-    case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); return true;
-    case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); return true;
-    case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); return true;
+    case EFFECT_POISON: Eater->BeginTemporaryState(POISONED, Amount); break;
+    case EFFECT_DARKNESS: Eater->ReceiveDarkness(Amount); break;
+    case EFFECT_OMMEL_URINE: Eater->ReceiveOmmelUrine(Amount); break;
+    case EFFECT_PEPSI: Eater->ReceivePepsi(Amount); break;
+    case EFFECT_KOBOLD_FLESH: Eater->ReceiveKoboldFlesh(Amount); break;
+    case EFFECT_HEAL: Eater->ReceiveHeal(Amount); break;
+    case EFFECT_LYCANTHROPY: Eater->BeginTemporaryState(LYCANTHROPY, Amount); break;
+    case EFFECT_SCHOOL_FOOD: Eater->ReceiveSchoolFood(Amount); break;
+    case EFFECT_ANTIDOTE: Eater->ReceiveAntidote(Amount); break;
+    case EFFECT_CONFUSE: Eater->BeginTemporaryState(CONFUSED, Amount); break;
+    case EFFECT_POLYMORPH: Eater->BeginTemporaryState(POLYMORPH, Amount); break;
+    case EFFECT_ESP: Eater->BeginTemporaryState(ESP, Amount); break;
+    case EFFECT_SKUNK_SMELL: Eater->BeginTemporaryState(POISONED, Amount); break;
     case EFFECT_MAGIC_VAPOUR:
       {
 	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
         Eater->ActivateRandomState(SRC_MAGIC_VAPOUR, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
-	return true;
+	break;
       }
-    case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount); return true;
-    case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); return true;
+    case EFFECT_TRAIN_PERCEPTION: Eater->EditExperience(PERCEPTION, Amount); break;
+    case EFFECT_HOLY_BANANA: Eater->ReceiveHolyBanana(Amount); break;
     case EFFECT_EVIL_WONDER_STAFF_VAPOUR:
       {
 	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
         Eater->ActivateRandomState(SRC_EVIL, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
-	return true;
+	break;
       }
     case EFFECT_GOOD_WONDER_STAFF_VAPOUR:
       {
 	vector2d Pos = GetMotherEntity()->GetSquareUnderEntity()->GetPos();
         Eater->ActivateRandomState(SRC_GOOD, Amount, Volume % 250 + Pos.X + Pos.Y + 1);
-	return true;
+	break;
       }
     default: return false;
     }
+
+  return true;
 }
 
-void material::EatEffect(character* Eater, ulong Amount)
+material* material::EatEffect(character* Eater, ulong Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
   Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / 1000);
-  EditVolume(-Amount);
+
+  if(Volume != Amount)
+    {
+      EditVolume(-Amount);
+      return 0;
+    }
+  else
+    return MotherEntity->RemoveMaterial(this);
 }
 
 bool material::HitEffect(character* Enemy)
@@ -118,8 +137,14 @@ bool material::HitEffect(character* Enemy)
     }
 
   ulong Amount = Min(GetVolume() >> 1, 1UL);
-  EditVolume(-Amount);
-  return Effect(Enemy, Amount);
+  bool Success = Effect(Enemy, Amount);
+
+  if(Amount != Volume)
+    EditVolume(-Amount);
+  else
+    delete MotherEntity->RemoveMaterial(this);
+
+  return Success;
 }
 
 void material::AddConsumeEndMessage(character* Eater) const
@@ -153,8 +178,8 @@ material* material::MakeMaterial(ushort Config)
 
   switch(Config >> 12)
     {
-    case MATERIAL_ID >> 12: return new material(Config, 0);
-    case ORGANIC_SUBSTANCE_ID >> 12: return new organicsubstance(Config, 0);
+    case SOLID_ID >> 12: return new solid(Config, 0);
+    case ORGANIC_ID >> 12: return new organic(Config, 0);
     case GAS_ID >> 12: return new gas(Config, 0);
     case LIQUID_ID >> 12: return new liquid(Config, 0);
     case FLESH_ID >> 12: return new flesh(Config, 0);
@@ -173,8 +198,8 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
 
   switch(Config >> 12)
     {
-    case MATERIAL_ID >> 12: return new material(Config, Volume);
-    case ORGANIC_SUBSTANCE_ID >> 12: return new organicsubstance(Config, Volume);
+    case SOLID_ID >> 12: return new solid(Config, Volume);
+    case ORGANIC_ID >> 12: return new organic(Config, Volume);
     case GAS_ID >> 12: return new gas(Config, Volume);
     case LIQUID_ID >> 12: return new liquid(Config, Volume);
     case FLESH_ID >> 12: return new flesh(Config, Volume);
@@ -220,12 +245,7 @@ ulong material::GetTotalNutritionValue() const
 
 bool material::CanBeEatenByAI(const character* Eater) const
 {
-  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() && !GetSpoilLevel();
-}
-
-bool material::IsStupidToConsume()
-{
-  return GetConsumeWisdomLimit() != NO_LIMIT;
+  return Eater->GetAttribute(WISDOM) < GetConsumeWisdomLimit() && !GetSpoilLevel() && !Eater->CheckCannibalism(this);
 }
 
 bool material::BreatheEffect(character* Enemy)
@@ -239,8 +259,8 @@ const materialdatabase* material::GetDataBase(ushort Config)
 
   switch(Config >> 12)
     {
-    case MATERIAL_ID >> 12: ProtoType = &material_ProtoType; break;
-    case ORGANIC_SUBSTANCE_ID >> 12: ProtoType = &organicsubstance_ProtoType; break;
+    case SOLID_ID >> 12: ProtoType = &solid_ProtoType; break;
+    case ORGANIC_ID >> 12: ProtoType = &organic_ProtoType; break;
     case GAS_ID >> 12: ProtoType = &gas_ProtoType; break;
     case LIQUID_ID >> 12: ProtoType = &liquid_ProtoType; break;
     case FLESH_ID >> 12: ProtoType = &flesh_ProtoType; break;
@@ -259,4 +279,12 @@ const materialdatabase* material::GetDataBase(ushort Config)
 
   ABORT("Odd material configuration number %d requested!", Config);
   return 0;
+}
+
+void material::FinishConsuming(character* Consumer)
+{
+  if(!Consumer->IsPlayer() && GetConsumeWisdomLimit() != NO_LIMIT)
+    Consumer->EditExperience(WISDOM, 500);
+
+  AddConsumeEndMessage(Consumer);
 }

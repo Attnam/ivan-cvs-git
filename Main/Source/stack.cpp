@@ -86,7 +86,7 @@ void stack::RemoveItem(stackslot* Slot)
 }
 
 /* Removes all items. LastClean should be true only if the stack is being
-   deleted */
+   deleted (the default is false) */
 
 void stack::Clean(bool LastClean)
 {
@@ -168,7 +168,7 @@ vector2d stack::GetPos() const
 
 bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
-  if(SorterFunction == 0)
+  if(!SorterFunction)
     {
       for(stackiterator i = GetBottom(); i.HasItem(); ++i)
 	if(IgnoreVisibility || i->CanBeSeenBy(Viewer))
@@ -401,7 +401,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
   std::vector<itemvector> PileVector;
   Pile(PileVector, Viewer, SorterFunction);
 
-  bool DrawDesc = Desc.GetSize() != 0;
+  bool DrawDesc = !!Desc.GetSize();
   ulong LastCategory = 0;
   festring Entry;
 
@@ -486,7 +486,7 @@ bool stack::TryKey(item* Key, character* Applier)
 
   item* ToBeOpened = DrawContents(Applier, CONST_S("Where do you wish to use the key?"), 0, &item::HasLockSorter);
 
-  if(ToBeOpened == 0)
+  if(!ToBeOpened)
     return false;
 
   return ToBeOpened->TryKey(Key, Applier);
@@ -685,7 +685,7 @@ bool CategorySorter(const itemvector& V1, const itemvector& V2)
 
 void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
-  bool UseSorterFunction = SorterFunction != 0;
+  bool UseSorterFunction = !!SorterFunction;
   std::list<item*> List;
 
   for(stackiterator s = GetBottom(); s.HasItem(); ++s)
@@ -908,6 +908,9 @@ void stack::FinalProcessForBone()
 
 void stack::SpillFluid(character* Spiller, liquid* Liquid, ulong VolumeModifier)
 {
+  if(!Items)
+    return;
+
   double ChanceMultiplier = 1. / (300 + sqrt(Volume));
   itemvector ItemVector;
   FillItemVector(ItemVector);
@@ -932,4 +935,20 @@ void stack::SpillFluid(character* Spiller, liquid* Liquid, ulong VolumeModifier)
 	      }
 	  }
       }
+}
+
+void stack::AddItems(const itemvector& ItemVector)
+{
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    AddItem(ItemVector[c]);
+}
+
+void stack::MoveItemsTo(itemvector& ItemVector)
+{
+  while(GetItems())
+    {
+      item* Item = *GetBottom();
+      Item->RemoveFromSlot();
+      ItemVector.push_back(Item);
+    }
 }

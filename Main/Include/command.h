@@ -7,6 +7,7 @@
 
 #include "typedef.h"
 
+class item;
 class character;
 
 class command
@@ -69,7 +70,7 @@ private:
   static bool WieldInLeftArm(character*);
   static bool AssignName(character*);
   static bool Search(character*);
-  static command* Command[];
+  static bool Consume(character*, const char*, bool (*)(const item*, const character*));
 #ifdef WIZARD
   static bool WizardMode(character*);
   static bool RaiseStats(character*);
@@ -87,6 +88,7 @@ private:
   static bool LevelTeleport(character*);
   static bool Possess(character*);
 #endif
+  static command* Command[];
 };
 
 #endif

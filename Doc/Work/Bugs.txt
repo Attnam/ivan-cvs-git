@@ -67,3 +67,4 @@ Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving
 Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
 Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
 "You push your fingers down to your throat and vomit." msg incorrect when a dolphin.
+It seems to be possible to occasionally find traps by saveloading next to them.

@@ -8,6 +8,7 @@
 class bitmap;
 
 typedef std::list<fluid*> fluidlist;
+typedef bool (colorizablebitmap::*pixelpredicate)(vector2d) const;
 
 class fluid : public entity
 {
@@ -34,16 +35,20 @@ class fluid : public entity
   void DrawGearPicture(bitmap*, vector2d, ulong, ushort, bool) const;
   bool FadePictures();
   void DrawBodyArmorPicture(bitmap*, vector2d, ulong, ushort, bool) const;
+  void Redistribute();
+  virtual material* RemoveMaterial(material*);
+  void Destroy();
  protected:
   struct imagedata
   {
     imagedata();
     ~imagedata();
     void Animate(bitmap*, vector2d, ulong, ushort) const;
-    void AddLiquidToPicture(const colorizablebitmap*, ulong, ulong, ushort);
+    void AddLiquidToPicture(const colorizablebitmap*, ulong, ulong, ushort, pixelpredicate);
     void Save(outputfile&) const;
     void Load(inputfile&);
     bool Fade();
+    void Clear(bool);
     /* Only pictures of fluids not on ground have their RandMaps initialized,
        since they are animated. Note that the picture is always unrotated. */
     bitmap* Picture;

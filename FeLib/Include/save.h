@@ -27,7 +27,7 @@ class outputfile
   ~outputfile();
   void Put(char What) { fputc(What, Buffer); }
   void Write(const char* Offset, long Size) { fwrite(Offset, 1, Size, Buffer); }
-  bool IsOpen() { return Buffer != 0; }
+  bool IsOpen() { return !!Buffer; }
   void Close() { fclose(Buffer); }
  private:
   FILE* Buffer;
@@ -47,8 +47,8 @@ class inputfile
   bool ReadBool();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
-  bool IsOpen() { return Buffer != 0; }
-  bool Eof() { return feof(Buffer) != 0; }
+  bool IsOpen() { return !!Buffer; }
+  bool Eof() { return !!feof(Buffer); }
   void ClearFlags() { clearerr(Buffer); }
   void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
   void SeekPosCurrent(long Offset) { fseek(Buffer, Offset, SEEK_CUR); }
@@ -131,7 +131,7 @@ inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 
 inline inputfile& operator>>(inputfile& SaveFile, bool& Value)
 {
-  Value = SaveFile.Get() != 0;
+  Value = !!SaveFile.Get();
   return SaveFile;
 }
 

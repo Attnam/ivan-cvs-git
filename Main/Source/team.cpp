@@ -29,6 +29,9 @@ void team::Hostility(team* Enemy)
 {
   if(this != Enemy && GetRelation(Enemy) != HOSTILE)
     {
+      if(ID == PLAYER_TEAM && game::IsSumoWrestling())
+	game::EndSumoWrestling(DISQUALIFIED);
+
       /* This is a gum solution. The behaviour should come from the script. */
 
       if(ID == COLONIST_TEAM && Enemy->ID == NEW_ATTNAM_TEAM)
@@ -36,7 +39,7 @@ void team::Hostility(team* Enemy)
 
       game::Hostility(this, Enemy);
 
-      if(this == PLAYER->GetTeam())
+      if(ID == PLAYER_TEAM)
 	{
 	  if(Enemy->ID == ATTNAM_TEAM)
 	    {
@@ -124,4 +127,20 @@ inputfile& operator>>(inputfile& SaveFile, team*& Team)
   Team = new team;
   Team->Load(SaveFile);
   return SaveFile;
+}
+
+void team::MoveMembersTo(charactervector& CVector)
+{
+  for(std::list<character*>::iterator i = Member.begin(); i != Member.end(); ++i)
+    if((*i)->IsEnabled())
+      {
+	if((*i)->GetAction() && (*i)->GetAction()->IsVoluntary())
+	  (*i)->GetAction()->Terminate(false);
+
+	if(!(*i)->GetAction())
+	  {
+	    CVector.push_back(*i);
+	    (*i)->Remove();
+	  }
+      }
 }

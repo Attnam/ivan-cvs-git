@@ -22,20 +22,14 @@ class object : public entity, public id
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void InitMaterials(material*, bool = true);
   virtual void UpdatePictures();
   material* GetMainMaterial() const { return MainMaterial; }
   virtual material* GetSecondaryMaterial() const { return 0; }
   virtual material* GetContainedMaterial() const { return 0; }
-  virtual material* GetConsumeMaterial() const { return MainMaterial; }
-  void SetMainMaterial(material*, ushort = 0);
-  void ChangeMainMaterial(material*, ushort = 0);
-  virtual void SetConsumeMaterial(material*, ushort = 0);
-  virtual void ChangeConsumeMaterial(material*, ushort = 0);
-  virtual void SetSecondaryMaterial(material*, ushort = 0);
-  virtual void ChangeSecondaryMaterial(material*, ushort = 0);
-  virtual void SetContainedMaterial(material*, ushort = 0);
-  virtual void ChangeContainedMaterial(material*, ushort = 0);
+  virtual void SetSecondaryMaterial(material*, ushort = 0) { }
+  virtual void ChangeSecondaryMaterial(material*, ushort = 0) { }
+  virtual void SetContainedMaterial(material*, ushort = 0) { }
+  virtual void ChangeContainedMaterial(material*, ushort = 0) { }
   virtual ushort GetMaterials() const { return 1; }
   virtual material* GetMaterial(ushort) const { return MainMaterial; }
   const bitmap*const* GetPicture() const;
@@ -57,18 +51,15 @@ class object : public entity, public id
   virtual ushort GetSpecialFlags() const;
   static void InitSparkleValidityArrays();
   void UpdatePictures(graphicdata&, vector2d, ushort, uchar, uchar, bposretriever) const;
+  void InitMaterial(material*&, material*, ulong);
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, bool);
   void ObjectInitMaterials(material*&, material*, ulong, material*&, material*, ulong, material*&, material*, ulong, bool);
-  virtual ulong GetDefaultMainVolume() const { return 0; }
-  virtual ulong GetDefaultSecondaryVolume() const { return 0; }
-  virtual ulong GetDefaultContainedVolume() const { return 0; }
-  void InitMaterial(material*&, material*, ulong);
   material* SetMaterial(material*&, material*, ulong, ushort);
   void ChangeMaterial(material*&, material*, ulong, ushort);
-  bool CalculateHasBe() const;
+  virtual bool CalculateHasBe() const;
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }
@@ -84,7 +75,6 @@ class object : public entity, public id
   virtual uchar GetOutlineAlpha(ushort) const { return 255; }
   virtual bool AddMaterialDescription(festring&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
-  virtual void GenerateMaterials();
   virtual void InitChosenMaterial(material*&, const std::vector<long>&, ulong, ushort);
   virtual void InstallDataBase(ushort) = 0;
   virtual ushort GetClassAnimationFrames() const { return 1; }
@@ -101,6 +91,7 @@ class object : public entity, public id
   virtual uchar GetRustDataD() const { return NOT_RUSTED; }
   virtual ushort GetDripColor() const { return 0; }
   virtual bool AllowSparkling() const { return true; }
+  virtual bool AllowRegularColors() const { return true; }
   graphicdata GraphicData;
   material* MainMaterial;
   uchar VisualEffects;

@@ -32,7 +32,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "team.h"
 #include "wskill.h"
 #include "god.h"
-#include "iconf.h"
 #include "team.h"
 #include "smoke.h"
 #include "save.h"

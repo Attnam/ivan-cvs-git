@@ -20,6 +20,8 @@ class olterrain;
 class dungeon;
 class lsquare;
 class room;
+class item;
+class liquid;
 struct node;
 
 struct nodepointerstorer
@@ -30,6 +32,8 @@ struct nodepointerstorer
 };
 
 typedef std::priority_queue<nodepointerstorer> nodequeue;
+typedef std::vector<item*> itemvector;
+typedef std::vector<character*> charactervector;
 
 struct node
 {
@@ -100,7 +104,7 @@ class level : public area
   void SetRoom(ushort, room*);
   void AddRoom(room*);
   void Explosion(character*, const festring&, vector2d, ushort, bool = true);
-  bool CollectCreatures(std::vector<character*>&, character*, bool);
+  bool CollectCreatures(charactervector&, character*, bool);
   void ApplyLSquareScript(const squarescript*);
   virtual void Draw(bool) const;
   lsquare* GetNeighbourLSquare(vector2d, ushort) const;
@@ -139,6 +143,8 @@ class level : public area
   void SetWalkability(vector2d Pos, uchar What) { WalkabilityMap[Pos.X][Pos.Y] = What; }
   node* FindRoute(vector2d, vector2d, const std::set<vector2d>&, uchar, const character* = 0);
   void AddToAttachQueue(vector2d);
+  void CollectEverything(itemvector&, charactervector&);
+  void CreateGlobalRain(liquid*, vector2d);
  protected:
   void GenerateLanterns(ushort, ushort, uchar) const;
   void CreateRoomSquare(glterrain*, olterrain*, ushort, ushort, uchar) const;
@@ -157,6 +163,7 @@ class level : public area
   node*** NodeMap;
   uchar** WalkabilityMap;
   std::vector<vector2d> AttachQueue;
+  liquid* GlobalRainLiquid;
 };
 
 outputfile& operator<<(outputfile&, const level*);

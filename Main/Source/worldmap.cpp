@@ -17,7 +17,7 @@ continent* worldmap::GetContinentUnder(vector2d Pos) const { return Continent[Co
 vector2d worldmap::GetEntryPos(const character*, uchar Index) const { return EntryMap.find(Index)->second; }
 continent* worldmap::GetContinent(ushort Index) const { return Continent[Index]; }
 short worldmap::GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
-std::vector<character*>& worldmap::GetPlayerGroup() { return PlayerGroup; }
+charactervector& worldmap::GetPlayerGroup() { return PlayerGroup; }
 character* worldmap::GetPlayerGroupMember(ushort c) { return PlayerGroup[c]; }
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)

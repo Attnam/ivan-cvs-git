@@ -91,7 +91,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
   else
     {
-      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData);
+      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData, !(GI.SpecialFlags & ST_DISALLOW_R_COLORS));
       const ushort SpecialFlags = GI.SpecialFlags;
 
       if((SpecialFlags & 0x38) == ST_RIGHT_ARM)

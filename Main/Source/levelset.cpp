@@ -43,6 +43,7 @@ const olterrainprototype* olterrain::GetProtoType() const { return &olterrain_Pr
 #include "save.h"
 #include "allocate.h"
 #include "whandler.h"
+#include "rain.h"
 
 #include "level.cpp"
 #include "lsquare.cpp"

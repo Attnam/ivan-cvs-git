@@ -7,7 +7,7 @@
 #define ICE_TERRAIN 16
 #define STONE_TERRAIN 32
 
-level::level() : Room(1, static_cast<room*>(0)) { }
+level::level() : Room(1, static_cast<room*>(0)), GlobalRainLiquid(0) { }
 void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
 void level::AddToAttachQueue(vector2d Pos) { AttachQueue.push_back(Pos); }
 
@@ -26,6 +26,8 @@ level::~level()
 
   delete [] NodeMap;
   delete [] WalkabilityMap;
+  delete GlobalRainLiquid;
+  game::SetGlobalRainLiquid(0);
 }
 
 void level::ExpandPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
@@ -454,6 +456,9 @@ bool level::MakeRoom(const roomscript* RoomScript)
 		if(!Char->GetTeam())
 		  Char->SetTeam(game::GetTeam(*LevelScript->GetTeamDefault()));
 
+		if(CharacterScript->IsLeader() && *CharacterScript->IsLeader())
+		  Char->GetTeam()->SetLeader(Char);
+
 		Char->PutTo(CharPos + vector2d(x, y));
 		Char->CreateHomeData();
 		const bool* IsMaster = CharacterScript->IsMaster();
@@ -480,22 +485,27 @@ bool level::MakeRoom(const roomscript* RoomScript)
 	      for(std::list<contentscript<item> >::const_iterator i = ItemScript->begin(); i != ItemScript->end(); ++i)
 		{
 		  stack* Stack;
-		  item* Item = i->Instantiate();
+		  ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
 
-		  if(Item)
+		  for(ushort c = 0; c < Times; ++c)
 		    {
-		      const uchar* SideStackIndex = i->GetSideStackIndex();
+		      item* Item = i->Instantiate();
 
-		      if(!SideStackIndex)
-			Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
-		      else
+		      if(Item)
 			{
-			  Item->SignalSquarePositionChange(*SideStackIndex);
-			  Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
-			}
+			  const uchar* SideStackIndex = i->GetSideStackIndex();
 
-		      Stack->AddItem(Item);
-		      Item->SpecialGenerationHandler();
+			  if(!SideStackIndex)
+			    Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetStack();
+			  else
+			    {
+			      Item->SignalSquarePositionChange(*SideStackIndex);
+			      Stack = Map[ItemPos.X + x][ItemPos.Y + y]->GetSideStack(*SideStackIndex);
+			    }
+
+			  Stack->AddItem(Item);
+			  Item->SpecialGenerationHandler();
+			}
 		    }
 		}
 	}
@@ -582,6 +592,7 @@ void level::CreateRoomSquare(glterrain* GLTerrain, olterrain* OLTerrain, ushort 
   Map[X][Y]->ChangeLTerrain(GLTerrain, OLTerrain);
   FlagMap[X][Y] |= FORBIDDEN;
   Map[X][Y]->SetRoomIndex(Room);
+  Map[X][Y]->SetIsOutside(false);
 }
 
 void level::GenerateMonsters()
@@ -595,7 +606,7 @@ void level::GenerateMonsters()
 void level::Save(outputfile& SaveFile) const
 {
   area::Save(SaveFile);
-  SaveFile << Room;
+  SaveFile << Room << GlobalRainLiquid;
 
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
@@ -609,6 +620,8 @@ void level::Load(inputfile& SaveFile)
   area::Load(SaveFile);
   Map = reinterpret_cast<lsquare***>(area::Map);
   SaveFile >> Room;
+  GlobalRainLiquid = static_cast<liquid*>(ReadType<material*>(SaveFile));
+  game::SetGlobalRainLiquid(GlobalRainLiquid);
   ushort x, y;
 
   for(x = 0; x < XSize; ++x)
@@ -665,7 +678,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 	    break;
 	}
 
-      if(!(Pos.X == 0 && Pos.Y == 0))
+      if(Pos.X || Pos.Y)
 	{
 	  Char->PutTo(Pos);
 	  Char->SignalNaturalGeneration();
@@ -930,7 +943,7 @@ ushort level::TriggerExplosions(ushort MinIndex)
   return LastExplosion;
 }
 
-bool level::CollectCreatures(std::vector<character*>& CharacterArray, character* Leader, bool AllowHostiles)
+bool level::CollectCreatures(charactervector& CharacterArray, character* Leader, bool AllowHostiles)
 {
   ushort c;
 
@@ -1144,7 +1157,7 @@ void level::Reveal()
 	if(!Map[x][y]->LastSeen)
 	  {
 	    Map[x][y]->Memorized = new bitmap(16, 16);
-	    Map[x][y]->LastSeen = 1;
+	    Map[x][y]->LastSeen = game::GetLOSTurns();
 	  }
 
 	Map[x][y]->MemorizedUpdateRequested = true;
@@ -1432,7 +1445,7 @@ vector2d level::FreeSquareSeeker(const character* Char, vector2d StartPos, vecto
 	  {
 	    if(Char->CanMoveOn(GetLSquare(Pos)) && Pos != Prohibited)
 	      {
-		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1, AllowStartPos);
+		Pos = FreeSquareSeeker(Char, Pos, Prohibited, MaxDistance - 1, AllowStartPos);
 
 		if(Pos != ERROR_VECTOR)
 		  return Pos;
@@ -2078,4 +2091,33 @@ node* level::FindRoute(vector2d From, vector2d To, const std::set<vector2d>& Ill
     }
 
   return 0;
+}
+
+/* All items on ground are moved to the IVector and all characters to CVector */
+
+void level::CollectEverything(itemvector& IVector, charactervector& CVector)
+{
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      {
+	lsquare* LS = Map[x][y];
+	LS->GetStack()->MoveItemsTo(IVector);
+	character* C = LS->GetCharacter();
+
+	if(C && !C->IsPlayer())
+	  {
+	    C->Remove();
+	    CVector.push_back(C);
+	  }
+      }
+}
+
+void level::CreateGlobalRain(liquid* Liquid, vector2d Speed)
+{
+  GlobalRainLiquid = Liquid;
+
+  for(ushort x = 0; x < XSize; ++x)
+    for(ushort y = 0; y < YSize; ++y)
+      if(Map[x][y]->IsOutside())
+	Map[x][y]->AddRain(Liquid, Speed, false);
 }

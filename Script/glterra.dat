@@ -27,12 +27,11 @@ glterrain
 	MaterialColorC = 0;
 	MaterialColorD = 0;
 	SitMessage = "You sit for some time. Nothing happens.";
-	DefaultMainVolume = 1000000;
-	DefaultSecondaryVolume = 0;
-	DefaultContainedVolume = 0;
 	ShowMaterial = true;
 	CreateDivineConfigurations = false;
 	AttachedGod = NONE;
+	HasSecondaryMaterial = false;
+	HasContainedMaterial = false;
 }
 
 solidterrain /* glterrain-> */

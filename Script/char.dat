@@ -107,6 +107,8 @@ character
 	CanMove = true;
 	BloodMaterial = BLOOD;
 	VomitMaterial = VOMIT;
+	HasSecondaryMaterial = false;
+	HasContainedMaterial = false;
 }
 
 humanoid
@@ -150,7 +152,7 @@ playerkind
 	DefaultWisdom = 10;
 	DefaultCharisma = 10;
 	DefaultMana = 10;
-	DefaultMoney = 200;
+	DefaultMoney = 45;
 	HeadBitmapPos = 96, 416;
 	TorsoBitmapPos = 32, 416;
 	ArmBitmapPos = 64, 416;
@@ -246,7 +248,7 @@ farmer
 	{
 		4,
 		"\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"",
-		"@Dd seems suspicious. \"You look like one from Mondedr! Go away!\"",
+		"@Dd seems suspicious. \"You look like one from Irinox! Go away!\"",
 		"@Dd sighs: \"Again polar bears ate my cattle...\"",
 		"\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"";
 	}
@@ -435,7 +437,7 @@ guard
 			5,
 			"\"And this medal I got after killing my first enner beast using ingenious tactical maneuvers...\"",
 			"\"My grand-grand-father, Sir Haedlac Galladon IV, once told me that when the young Petrus lead the Revolution, his beard was only one feet long. Not that I would believe such urban legends.\"",
-			"\"In addition to all my other responsibilities, I am the head of the Attnamian Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
+			"\"In addition to all my other responsibilities, I am the head of the Attnamese Bureau of Investigation. By the way, you love mangos and hate bananas.\"",
 			"\"See the amulet? Don't think badly of the Government.\"",
 			"\"The house of Galladon has served Petrus ever since he took over.\"";
 		}
@@ -463,16 +465,6 @@ shopkeeper
 	TotalVolume = 150000;
 	TotalSize = 160;
 	NameSingular = "shopkeeper";
-	Helmet = MITHRIL helmet { Enchantment = 2; }
-	Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
-	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-	Belt = NYMPH_HAIR belt(BELT_OF_CARRYING) { Enchantment = 2; }
-	RightWielded = MITHRIL pickaxe { Enchantment = 3; }
-	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
-	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
-	KnownCWeaponSkills == AXES;
-	CWeaponSkillHits == 200;
-	RightSWeaponSkillHits = 100;
 	CanRead = true;
 	HostileReplies == "\"Criminal! Mellis bless my efforts of removing you!\"";
 	IsAbstract = true;
@@ -485,8 +477,39 @@ shopkeeper
 	AttachedGod = MELLIS;
 	CanBeConfused = false;
 
+	Config NEW_ATTNAM;
+	{
+		Helmet = LEATHER helmet;
+		BodyArmor = LEATHER bodyarmor(PLATE_MAIL);
+		Belt = LEATHER belt(BELT_OF_CARRYING);
+		RightBoot = LEATHER boot;
+		HeadBitmapPos = 96, 64;
+		TorsoBitmapPos = 48, 192;
+		ArmBitmapPos = 64, 0;
+		LegBitmapPos = 0, 16;
+		DefaultName = "Zolku";
+		FriendlyReplies =
+		{
+			4,
+			"\"Welcome to the cheapest banana shop in the world!\"",
+			"@Dd sighs: \"It's depressing that the locals have so little purchasing power... But Mellis bless the tourists!\"",
+			"\"No, I don't sell spoiled food. Decos's alchemists have pumped so much magic potions into the soil that nothing here will go bad before you buy it.\"",
+			"\"I wish I was as brilliant an economic genius as the viceroy. Who would have thought levitating ostriches were so low-cost and efficient form of food delivery?\"";
+		}
+	}
+
 	Config ATTNAM;
 	{
+		Helmet = MITHRIL helmet { Enchantment = 1; }
+		Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
+		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
+		Belt = NYMPH_HAIR belt(BELT_OF_CARRYING) { Enchantment = 1; }
+		RightWielded = MITHRIL pickaxe { Enchantment = 2; }
+		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 1; }
+		RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
+		KnownCWeaponSkills == AXES;
+		CWeaponSkillHits == 200;
+		RightSWeaponSkillHits = 100;
 		DefaultName = "Hulbo";
 		FriendlyReplies =
 		{
@@ -500,6 +523,16 @@ shopkeeper
 
 	Config ELPURI_CAVE;
 	{
+		Helmet = MITHRIL helmet { Enchantment = 2; }
+		Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
+		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+		Belt = NYMPH_HAIR belt(BELT_OF_CARRYING) { Enchantment = 2; }
+		RightWielded = MITHRIL pickaxe { Enchantment = 3; }
+		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
+		RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
+		KnownCWeaponSkills == AXES;
+		CWeaponSkillHits == 500;
+		RightSWeaponSkillHits = 200;
 		DefaultName = "Merka";
 		FriendlyReplies =
 		{
@@ -513,40 +546,84 @@ shopkeeper
 
 priest
 {
-	DefaultArmStrength = 15;
-	DefaultLegStrength = 20;
-	DefaultDexterity = 10;
-	DefaultAgility = 10;
-	DefaultEndurance = 15;
-	DefaultPerception = 24;
-	DefaultIntelligence = 15;
-	DefaultWisdom = 25;
-	DefaultCharisma = 20;
-	DefaultMana = 20;
-	CapColor = rgb16(180, 0, 80);
-	HeadBitmapPos = 96, 128;
-	TorsoBitmapPos = 32, 16;
-	ArmBitmapPos = 64, 16;
-	LegBitmapPos = 0, 32;
-	TotalVolume = 100000;
-	TotalSize = 180;
 	CanRead = true;
 	NameSingular = "priest";
-	Helmet = MITHRIL helmet { Enchantment = 2; }
-	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
-	Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
-	Belt = NYMPH_HAIR belt { Enchantment = 2; }
-	RightWielded = ARCANITE meleeweapon(MACE) { Enchantment = 3; }
-	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
-	RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
-	KnownCWeaponSkills == BLUNT_WEAPONS;
-	CWeaponSkillHits == 50;
-	RightSWeaponSkillHits = 20;
 	CanBeCloned = false;
 	IsCharmable = false;
-	/* Replies overridden */
-	AttachedGod = VALPURUS; /* there is only one now */
 	MoveType = WALK|SWIM;
+
+	Config VALPURUS;
+	{
+		DefaultArmStrength = 15;
+		DefaultLegStrength = 20;
+		DefaultDexterity = 10;
+		DefaultAgility = 10;
+		DefaultEndurance = 15;
+		DefaultPerception = 24;
+		DefaultIntelligence = 15;
+		DefaultWisdom = 25;
+		DefaultCharisma = 20;
+		DefaultMana = 20;
+		CapColor = rgb16(180, 0, 80);
+		HeadBitmapPos = 96, 128;
+		TorsoBitmapPos = 32, 16;
+		ArmBitmapPos = 64, 16;
+		LegBitmapPos = 0, 32;
+		TotalVolume = 100000;
+		TotalSize = 180;
+		AttachedGod = VALPURUS;
+		PostFix = "of Valpurus";
+		Helmet = MITHRIL helmet { Enchantment = 2; }
+		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 2; }
+		Cloak = NYMPH_HAIR cloak { Enchantment = 2; }
+		Belt = NYMPH_HAIR belt { Enchantment = 2; }
+		RightWielded = ARCANITE meleeweapon(MACE) { Enchantment = 3; }
+		RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 2; }
+		RightBoot = NYMPH_HAIR boot { Enchantment = 2; }
+		KnownCWeaponSkills == BLUNT_WEAPONS;
+		CWeaponSkillHits == 50;
+		RightSWeaponSkillHits = 20;
+		FriendlyReplies == "@Dd talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"";
+	}
+
+	Config SILVA;
+	{
+		DefaultArmStrength = 10;
+		DefaultLegStrength = 10;
+		DefaultDexterity = 15;
+		DefaultAgility = 10;
+		DefaultEndurance = 10;
+		DefaultPerception = 24;
+		DefaultIntelligence = 20;
+		DefaultWisdom = 35;
+		DefaultCharisma = 30;
+		DefaultMana = 25;
+		TotalVolume = 60000;
+		TotalSize = 170;
+		HeadBitmapPos = 112, 0;
+		TorsoBitmapPos = 32, 208;
+		ArmBitmapPos = 64, 208;
+		LegBitmapPos = 0, 144;
+		SkinColor = rgb16(160, 100, 64);
+		HairColor = rgb16(80, 48, 32);
+		AttachedGod = SILVA;
+		NameSingular = "priestess";
+		PostFix = "of Silva";
+		Sex = FEMALE;
+		Cloak = NYMPH_HAIR cloak;
+		RightWielded = EBONY_WOOD EBONY_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 1; }
+		KnownCWeaponSkills == BLUNT_WEAPONS;
+		CWeaponSkillHits == 50;
+		RightSWeaponSkillHits = 20;
+		FriendlyReplies =
+		{
+			4,
+			"\"Silva is the goddess of nature, who protects all living things. Her earthly manifestation, located in the elven nation of Lunethia, is a giant holy tree which reaches the clouds.\"",
+			"\"In the old temple we had a marvellous altar carved from a branch of Silva Herself, but Decos made firewood out of it.\"",
+			"\"You cannot contact any god unless you know the right rituals. Alas, I'm unable to teach you any, since after the invasion the Attnamese forbade us to officially worship any god save Valpurus. I can therefore only help you as a healer.\"",
+			"\"With my holy powers, I'm capable of reattaching severed limbs and removing various diseases and poisons. For a price, of course. Should I not bring enough money to the colony, the occupiers would make me a banana grower, too.\"";
+		}
+	}
 }
 
 oree
@@ -3003,25 +3080,24 @@ bananagrower
 	TotalSize = 170;
 	NameSingular = "banana grower";
 	RightGauntlet = LEATHER gauntlet;
-	ClothColor = rgb16(128, 18, 18);
 	SkinColor = rgb16(128, 80, 48);
 	HairColor = rgb16(80, 48, 32);
 	ClothColor = rgb16(56, 48, 20);
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
-	ArmBitmapPos = 64, 0;
+	ArmBitmapPos = 64, 64;
 	LegBitmapPos = 0, 288;
-	Inventory = { 10, banana, banana, banana, banana, banana, banana, banana, banana, banana, banana; }
+	Inventory == banana { Times = 10; }
 	IsCharmable = false; /* AI will go insane if he leaves New Attnam */
 	HostileReplies == "\"Banana POWER!\"";
 	AttachedGod = SILVA;
 	CanRead = true;
 	FriendlyReplies =
 	{
-		9, /* 6 first are use before revolution */
+		9, /* 6 first are used before the revolution */
 		"@Dd curses: \"I hate bananas. I wish I still was @pd.\"",
 		"\"I was @pd before Attnam invaded our peaceful land.\"",
-		"@Dd glances thoughtfully to the cloudless sky: \"I wish it would rain soon. The bananas are starting to die.\"",
+		"@Dd glances thoughtfully to the sky: \"Our climate is truly optimal for bananas. It rains all the time here. Damn.\"",
 		"\"1 + 1 = 3. I still don't believe it.\"",
 		"@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought the nature brings us no good!\"",
 		"@Dd seems irritated. \"Go away! I know you can leave and I can't, and I'd prefer to forget that fact.\"";
@@ -3080,14 +3156,14 @@ imperialist
 	IsPolymorphable = false;
 	FriendlyReplies =
 	{
-		7,
+		7, /* the last isn't used if the player is a sumo champion */
 		"\"And they said levitating ostriches had no future! Hah!",
-		"\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"",
 		"\"Poor people shouldn't complain - after all it's their own fault.\"",
-		"\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if this room has something to do with it?\"",
+		"\"Why can't those darn tax collectors ever believe an honest but poor enterpreneur who says he can't pay? Hmmm. I wonder if my room has something to do with it?\"",
 		"\"I couldn't possibly thank this city enough for making Decos Bananas Co. the world's greatest fruit producer. So I don't do it all.\"",
 		"\"Low work and transportation costs have allowed me to thrive in a way envied by all rivals.\"",
-		"\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"";
+		"\"I won't stop until my bananas lie on the breakfast tables of every single dwarf, elf and man above Valpurus!\"",
+		"\"What? You're still here? What the hell I pay you for? Wait, I don't pay you anything. Never mind.\"";
 	}
 }
 
@@ -3206,9 +3282,9 @@ elder
 		"@Dd seems very melancholic. \"I was the head chancellor of the University of Tweraif before the invasion...\"",
 		"\"For a decade I served this Decos lad as a banana grower like everyone else, but then an elephant stepped on my toe and my leg was amputated. I couldn't climb trees anymore so they made me a tourist guide.\"",
 		"\"According to old knowledge ostriches were once kings of the sky. Their divine perception, seven feet wings and almost supernatural speed were envied by men and gods alike. Then one of them discovered levitation and soon they all became lazy and eventually dropped their wings.\"",
-		"\"Previously we could use donkeys to carry the bananas. Then one day Attnamians tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
+		"\"Previously we could use donkeys to carry the bananas. Then one day Attnamese tested a fierce magical bomb nearby. All the asses mutated horribly and started attacking us. The donkeys, I mean, not the colonists.\"",
 		"\"The government of Attnam is led by the high priest of Valpurus, the Great Frog who carries the world. When I was young, Petrus assumed this position by killing the former high priest.\"",
-		"\"Some time ago Attnamian military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"";
+		"\"Some time ago Attnamese military alchemists managed to crossbreed the carnivorous plant and the pineapple tree. They named the result as genetrix vesana and discovered it was a powerful hunter. The colonists tried to transport it to Attnam through the underwater tunnel but never arrived in the destination.\"";
 	}
 }
 
@@ -3226,10 +3302,11 @@ encourager
 	DefaultMana = 0;
 	CapColor = rgb16(64, 64, 64);
 	EyeColor = rgb16(140, 100, 70);
+	BootColor = rgb16(90, 60, 20);
 	HeadBitmapPos = 96, 240;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 288;
+	LegBitmapPos = 16, 208;
 	TotalVolume = 90000;
 	TotalSize = 170;
 	NameSingular = "banana grower encourager";
@@ -3247,7 +3324,7 @@ encourager
 	{
 		4;
 		"@Dd shouts harshly: \"Work! Work! Bring food to yer betters!\"",
-		"@Dd shouts almost sadly: \"Gonna leave, man? Pity. Me kinda liked kicking ye.\"",
+		"@Dd shouts almost sadly: \"Gonna leave, man? Pity. Me kinda liked kicking ya.\"",
 		"@Dd screams at your face: \"Me talented shouter. That made everyone in Attnam jealous. Me was sent here and told to never come back.\"",
 		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouragering workers.\"";
 	}
@@ -4002,7 +4079,6 @@ hattifattener
 	Alias == "Hattivatti";
 }
 
-
 necromancer
 {
 	HeadBitmapPos = 112, 128;
@@ -4015,7 +4091,7 @@ necromancer
 	ArmSpecialColor = rgb16(100, 100, 140);
 	CanRead = true;
 	CanBeGenerated = true;
-	ClassStates = INFRA_VISION|ESP;
+	ClassStates = INFRA_VISION;
 	HostileReplies == "@Dd yells: \"Death! Death!\"";
 	FriendlyReplies == "\"I see dead people.\"";
 	IgnoreDanger = true;
@@ -4023,7 +4099,7 @@ necromancer
 	IsAbstract = true;
 	KnownCWeaponSkills == BLUNT_WEAPONS;
 
-	Config APPRENTICE;
+	Config APPRENTICE_NECROMANCER;
 	{
 		DefaultArmStrength = 15;
 		DefaultLegStrength = 15;
@@ -4042,7 +4118,7 @@ necromancer
 		TotalSize = 180;
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 0; }
-		HPRequirementForGeneration = 90;
+		HPRequirementForGeneration = 75;
 		Frequency = 1500;
 		PanicLevel = 5;
 		Inventory == GREEN_CRYSTAL skull;
@@ -4053,7 +4129,7 @@ necromancer
 		GauntletColor = rgb16(150, 150, 100);
 	}
 
-	Config MASTER;
+	Config MASTER_NECROMANCER;
 	{
 		DefaultArmStrength = 13;
 		DefaultLegStrength = 13;
@@ -4080,5 +4156,166 @@ necromancer
 		Inventory = {2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
 		CapColor = rgb16(100, 100, 200);
 		GauntletColor = rgb16(100, 100, 200);
+	}
+}
+
+sumowrestler
+{
+	DefaultArmStrength = 25;
+	DefaultLegStrength = 35;
+	DefaultDexterity = 15;
+	DefaultAgility = 8;
+	DefaultEndurance = 15;
+	DefaultPerception = 18;
+	DefaultIntelligence = 10;
+	DefaultWisdom = 15;
+	DefaultCharisma = 6;
+	DefaultMana = 0;
+	TotalVolume = 200000;
+	TotalSize = 160;
+	NameSingular = "sumo wrestler";
+	DefaultName = "Huang Ming Pong";
+	SkinColor = rgb16(128, 80, 48);
+	HairColor = rgb16(80, 48, 32);
+	ClothColor = rgb16(56, 48, 20);
+	HeadBitmapPos = 96, 336;
+	TorsoBitmapPos = 32, 352;
+	ArmBitmapPos = 64, 336;
+	LegBitmapPos = 16, 176;
+	IsCharmable = false;
+	HostileReplies == "\"SSSUUUMMMMMMOOOOORRRRGGGGGHHHHH!!!! (Mr. Decos said sumo wrestlers always yell like this)\"";
+	AttachedGod = SILVA;
+	KnownCWeaponSkills = { 2, UNARMED, KICK; }
+	CWeaponSkillHits = { 2, 1000, 1000; }
+	AttackStyle = USE_ARMS|USE_LEGS;
+	Belt = belt(BELT_OF_LEVITATION);
+	IsUnique = true;
+	IsPolymorphable = false;
+	FriendlyReplies =
+	{
+		9, /* 6 first are used before the revolution */
+		"@Dd smiles broadly: \"'Tis the perfect occupation, this. I eat like kings! Or at least like kings who only eat bananas.\"",
+		"\"The ancient rules of this traditional martial art were designed by Mr. Decos himself, so don't complain about them.\"",
+		"\"My real name is Alfred, but the viceroy said it wasn't exotic enough for this job.\"",
+		"@Dd is in a buoyant mood. \"I love the new rule! Before the invasion, my wife always complained about my weight. Now she doesn't, since she's a slave in Attnam.\"",
+		"@Dd seems to be recalling sorrowful memories. \"When Tweraif was still sovereign, I tried to run a restaurant for a while. It ended in a bankrupt since I ate all the food myself.\"",
+		"@Dd winks at you: \"A belt of levitation is really useful for large people.\"",
+		"@Dd looks almost panicked. \"Hey, why aren't people bringing me bananas anymore! I'm hungry! Help! Don't let me starve!\"",
+		"\"If you attack Attnam, too, please don't liberate my wife. She'll force me to commence a merciless diet for sure!\"",
+		"\"I think I'm going to move abroad and start teaching sumo wrestling to foreigners. I'm sure it'll be the number one fashion sport of big-boned people in no time!\"";
+	}
+}
+
+tourist
+{
+	DefaultMana = 0;
+	CanRead = true;
+	IsAbstract = true;
+	AttachedGod = MELLIS;
+	SkinColor = rgb16(200, 110, 70);
+	IsExtraCoward = true;
+
+	Config HUSBAND;
+	{
+		DefaultArmStrength = 10;
+		DefaultLegStrength = 15;
+		DefaultDexterity = 12;
+		DefaultAgility = 8;
+		DefaultEndurance = 10;
+		DefaultPerception = 15;
+		DefaultIntelligence = 10;
+		DefaultWisdom = 7;
+		DefaultCharisma = 8;
+		TotalVolume = 90000;
+		TotalSize = 175;
+		NameSingular = "male tourist";
+		HeadBitmapPos = 96, 64;
+		TorsoBitmapPos = 32, 368;
+		ArmBitmapPos = 80, 48;
+		LegBitmapPos = 16, 224;
+		DefaultMoney = 5000;
+		BootColor = rgb16(200, 0, 0);
+		ClothColor = rgb16(200, 16, 200);
+		LegMainColor = rgb16(50, 100, 132);
+		CapColor = rgb16(200, 200, 0);
+		HostileReplies == "\"Violence is barbaric. Couldn't we settle this little dispute of ours in a court?\"";
+		FriendlyReplies =
+		{
+			4,
+			"\"Don't you barbarians really eat anything but fruits? I need some greasy sausages badly!\"",
+			"\"We're from Bazaria, the great trader nation, where every coin has equal rights. Richel Decos was our fellow countryman before he bought this town from the Attnamese.\"",
+			"\"Back home I plan commercials acted during theatre play breaks.\"",
+			"\"It is good for my son to see how we would live if science and trade hadn't brought us the prosperity and wellfare it has.\"";
+		}
+	}
+
+	Config WIFE;
+	{
+		DefaultArmStrength = 8;
+		DefaultLegStrength = 12;
+		DefaultDexterity = 8;
+		DefaultAgility = 12;
+		DefaultEndurance = 8;
+		DefaultPerception = 21;
+		DefaultIntelligence = 7;
+		DefaultWisdom = 10;
+		DefaultCharisma = 10;
+		TotalVolume = 100000;
+		TotalSize = 170;
+		Sex = FEMALE;
+		NameSingular = "female tourist";
+		HeadBitmapPos = 112, 336;
+		TorsoBitmapPos = 32, 368;
+		ArmBitmapPos = 80, 48;
+		LegBitmapPos = 16, 224;
+		BootColor = rgb16(60, 60, 60);
+		HairColor = rgb16(60, 48, 24);
+		ClothColor = rgb16(50, 200, 50);
+		LegMainColor = rgb16(50, 100, 132);
+		AttackStyle = USE_ARMS|USE_LEGS;
+		HostileReplies == "\"Help! A horribly hideous cannibal aborigine wants to capture me, hit me in the head with his club, drag me into a smelly sinister cave and mate with me!\"";
+		FriendlyReplies =
+		{
+			5,
+			"\"I heard natives like you paint every inch of their body, dance complex ritual dances around a big fire and utter forbidden voodoo spells. When will you begin?\"",
+			"\"Why are all the villagers so sweaty? Can't they try to wash themselves often enough at least when civilized people are around?\"",
+			"\"I so love bananas! This is a heaven!\"",
+			"\"My friend's brother's ex-wife's uncle's old schoolmate inherited some money, bought shares of Decos Bananas Co. and became a millionaire. I think of it as an example of how anyone can become rich and happy if he tries hard enough.\"",
+			"\"Richel Decos is such a great person! I wish I was married to someone as well-off as him!\"";
+		}
+	}
+
+	Config CHILD;
+	{
+		DefaultArmStrength = 7;
+		DefaultLegStrength = 7;
+		DefaultDexterity = 15;
+		DefaultAgility = 15;
+		DefaultEndurance = 10;
+		DefaultPerception = 18;
+		DefaultIntelligence = 12;
+		DefaultWisdom = 5;
+		DefaultCharisma = 6;
+		TotalVolume = 50000;
+		TotalSize = 130;
+		NameSingular = "child tourist";
+		HeadBitmapPos = 112, 352;
+		TorsoBitmapPos = 32, 384;
+		ArmBitmapPos = 80, 352;
+		LegBitmapPos = 16, 16;
+		BootColor = rgb16(200, 200, 200);
+		ClothColor = rgb16(200, 200, 200);
+		LegMainColor = rgb16(50, 100, 132);
+		CapColor = rgb16(40, 40, 40);
+		AttackStyle = USE_ARMS|USE_LEGS|USE_HEAD;
+		HostileReplies == "\"Daddy!!! Hit this man!!! He teases me!!!\"";
+		FriendlyReplies =
+		{
+			4,
+			"\"A real native!!! Can I touch him, mommy? Can I? Can I?\"",
+			"\"I wanna see when you sacrifice someone to tree gods!!!\"",
+			"\"Mister, can you catch me a demon spider? I wanna bring one home as a pet!!!\"",
+			"\"Did you see that Pong person? He's fatter than mommy and daddy!!! I can't believe it!!!\"";
+		}
 	}
 }

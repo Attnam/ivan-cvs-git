@@ -57,9 +57,9 @@ class room
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  void DestroyTerrain(character*);
+  virtual void DestroyTerrain(character*);
   virtual bool AllowSpoil(const item*) const { return true; }
-  bool CheckDestroyTerrain(character*);
+  virtual bool CheckDestroyTerrain(character*);
   virtual short GetGodRelationAdjustment() const { return -50; }
   virtual bool AllowKick(const character*, const lsquare*) const { return true; }
   bool MasterIsActive() const;

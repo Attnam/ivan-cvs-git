@@ -31,9 +31,6 @@ olterrain
 	CanBeDestroyed = false;
 	RestModifier = 1;
 	RestMessage = "";
-	DefaultMainVolume = 1000000;
-	DefaultSecondaryVolume = 0;
-	DefaultContainedVolume = 0;
 	ShowMaterial = true;
 	IsUpLink = false;
 	CreateDivineConfigurations = false;
@@ -46,6 +43,8 @@ olterrain
 	IsAlwaysTransparent = true;
 	UseBorderTiles = false;
 	BorderTilePriority = 0;
+	HasSecondaryMaterial = false;
+	HasContainedMaterial = false;
 }
 
 wall
@@ -71,7 +70,7 @@ wall
 		DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
 		MainMaterialConfig == STONE;
 		NameSingular = "wall";
-		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamian Empire";
+		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamese Empire";
 		BitmapPos = 80, 272;
 		HPModifier = 150;
 	}
@@ -370,13 +369,13 @@ door /* olterrain-> */
 stairs /* olterrain-> */
 {
 	IsAbstract = true;
+	DigMessage = "The stairs are too hard to dig.";
+	MainMaterialConfig == STONE;
+	MaterialColorB = rgb16(160, 64, 0);
+	NameSingular = "stairway";
 
 	Config STAIRS_UP;
 	{
-		DigMessage = "The stairs are too hard to dig.";
-		MainMaterialConfig == STONE;
-		MaterialColorB = rgb16(160, 64, 0);
-		NameSingular = "stairway";
 		PostFix = "upwards";
 		BitmapPos = 0, 192;
 		IsUpLink = true;
@@ -384,12 +383,21 @@ stairs /* olterrain-> */
 
 	Config STAIRS_DOWN;
 	{
-		DigMessage = "The stairs are too hard to dig.";
-		MainMaterialConfig == STONE;
-		MaterialColorB = rgb16(160, 64, 0);
-		NameSingular = "stairway";
 		PostFix = "downwards";
 		BitmapPos = 0, 208;
+	}
+
+	Config SUMO_ARENA_ENTRY;
+	{
+		PostFix = "downwards";
+		BitmapPos = 0, 208;
+	}
+
+	Config SUMO_ARENA_EXIT;
+	{
+		PostFix = "upwards";
+		BitmapPos = 0, 192;
+		IsUpLink = true;
 	}
 }
 
@@ -455,11 +463,11 @@ fountain /* olterrain-> */
 	DigMessage = "The water splashes a bit."; /* Wrong if ContainedMaterial != WATER. */
 	MainMaterialConfig == MARBLE;
 	ContainedMaterialConfig == WATER;
-	DefaultContainedVolume = 10000;
 	/* Uses ContainerPostFix() */
 	/* Adjective depends on being dried out or not */
 	NameSingular = "fountain";
 	/* BitmapPos depends on being dried out or not */
+	HasContainedMaterial = true;
 }
 
 brokendoor /* olterrain->door-> */
@@ -474,7 +482,6 @@ boulder /* olterrain-> */
 {
 	DigMessage = "You smash the boulder to tiny bits.";
 	MainMaterialConfig == STONE;
-	DefaultMainVolume = 523500;
 	NameSingular = "boulder";
 	SitMessage = "The boulder is rather hard to sit on.";
 	CanBeDestroyed = true;
@@ -512,7 +519,6 @@ sign
 {
 	DigMessage = "You smash the sign to tiny bits.";
 	MainMaterialConfig == BALSA_WOOD;
-	DefaultMainVolume = 5000; 
 	MaterialColorB = rgb16(200,200,200);
 	/* Uses own postfix */
 	NameSingular = "sign";

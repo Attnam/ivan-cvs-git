@@ -1,6 +1,6 @@
 /* Compiled through materset.cpp */
 
-void organicsubstance::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
+void organic::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 
 const char* liquid::GetConsumeVerb() const { return "drinking"; }
 
@@ -8,7 +8,7 @@ bool powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 
 bool ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
 
-void organicsubstance::Be()
+void organic::Be()
 {
   if(MotherEntity->AllowSpoil())
     {
@@ -30,19 +30,19 @@ void organicsubstance::Be()
     }
 }
 
-void organicsubstance::Save(outputfile& SaveFile) const
+void organic::Save(outputfile& SaveFile) const
 {
   material::Save(SaveFile);
   SaveFile << SpoilCounter << SpoilLevel;
 }
 
-void organicsubstance::Load(inputfile& SaveFile)
+void organic::Load(inputfile& SaveFile)
 {
   material::Load(SaveFile);
   SaveFile >> SpoilCounter >> SpoilLevel;
 }
 
-void organicsubstance::VirtualConstructor(bool Load)
+void organic::VirtualConstructor(bool Load)
 {
   if(!Load)
     {
@@ -53,13 +53,13 @@ void organicsubstance::VirtualConstructor(bool Load)
 
 void flesh::Save(outputfile& SaveFile) const
 {
-  organicsubstance::Save(SaveFile);
+  organic::Save(SaveFile);
   SaveFile << SkinColor << SkinColorSparkling;
 }
 
 void flesh::Load(inputfile& SaveFile)
 {
-  organicsubstance::Load(SaveFile);
+  organic::Load(SaveFile);
   SaveFile >> SkinColor >> SkinColorSparkling;
 }
 
@@ -81,7 +81,7 @@ void powder::Load(inputfile& SaveFile)
   SaveFile >> Wetness;
 }
 
-void organicsubstance::EatEffect(character* Eater, ulong Amount)
+material* organic::EatEffect(character* Eater, ulong Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
@@ -98,10 +98,16 @@ void organicsubstance::EatEffect(character* Eater, ulong Amount)
   if(GetSpoilLevel() > 4)
     Eater->BeginTemporaryState(POISONED, ushort(Amount * (GetSpoilLevel() - 4) * sqrt(GetNutritionValue()) / 1000));
 
-  SetVolume(Volume - Amount);
+  if(Volume != Amount)
+    {
+      EditVolume(-Amount);
+      return 0;
+    }
+  else
+    return MotherEntity->RemoveMaterial(this);
 }
 
-void organicsubstance::AddConsumeEndMessage(character* Eater) const
+void organic::AddConsumeEndMessage(character* Eater) const
 {
   if(Eater->IsPlayer())
     {
@@ -114,7 +120,7 @@ void organicsubstance::AddConsumeEndMessage(character* Eater) const
   material::AddConsumeEndMessage(Eater);
 }
 
-void organicsubstance::SetSpoilCounter(ushort What)
+void organic::SetSpoilCounter(ushort What)
 {
   SpoilCounter = What;
 
@@ -202,15 +208,7 @@ void ironalloy::Load(inputfile& SaveFile)
   SaveFile >> RustData;
 }
 
-void liquid::SpillEffect(item* Item)
-{
-}
-
-void liquid::SpillEffect(character* Char, ushort BodyPartIndex)
-{  
-}
-
-void liquid::ConstantEffect(item* Item)
+void liquid::TouchEffect(item* Item)
 {
   if(GetRustModifier())
     Item->TryToRust(GetRustModifier() * GetVolume());
@@ -219,7 +217,7 @@ void liquid::ConstantEffect(item* Item)
     Item->ReceiveAcid(this, Volume * GetAcidicity());
 }
 
-void liquid::ConstantEffect(lterrain* Terrain)
+void liquid::TouchEffect(lterrain* Terrain)
 {
   if(GetRustModifier())
     Terrain->TryToRust(GetRustModifier() * GetVolume());
@@ -228,13 +226,13 @@ void liquid::ConstantEffect(lterrain* Terrain)
     Terrain->ReceiveAcid(this, Volume * GetAcidicity());
 }
 
-void liquid::ConstantEffect(character* Char, ushort BodyPartIndex)
+void liquid::TouchEffect(character* Char, ushort BodyPartIndex)
 {
   if(GetAcidicity())
     Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, Volume * GetAcidicity() >> 1);
 }
 
-/* Doesn't do the actual rusting */
+/* Doesn't do the actual rusting, just returns whether it should happen */
 
 bool ironalloy::TryToRust(ulong Modifier)
 {

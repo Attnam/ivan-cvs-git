@@ -7,7 +7,6 @@
 
 #include <vector>
 
-#include "typedef.h"
 #include "felibdef.h"
 
 #define FESTRING_PAGE 0x7F
@@ -17,8 +16,9 @@ class festring
 {
  public:
   typedef ulong sizetype;
-  /* It can be proven that the code works even if OwnsData is left uninitialized.
-     However, Valgrind reports this as a possible error which is annoying */
+  /* It can be proven that the code works even if OwnsData is left
+     uninitialized. However, Valgrind reports this as a possible error
+     which is annoying */
   festring() : Data(0), Size(0), OwnsData(false) { }
   explicit festring(sizetype);
   festring(sizetype, char);
@@ -293,18 +293,6 @@ inline festring& festring::operator<<(const festring& Str)
 struct charcomparer
 {
   bool operator()(const char* const& S1, const char* const& S2) const { return strcmp(S1, S2) < 0; }
-};
-
-/* For ntree */
-
-struct stringsizefinder
-{
-  ulong operator()(const festring& S) const { return S.GetSize(); }
-};
-
-struct stringextractor
-{
-  ulong operator()(const festring& S, ulong Index) const { return S[Index]; }
 };
 
 #define CONST_S(str) festring(str, sizeof(str) - 1)

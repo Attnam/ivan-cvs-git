@@ -77,9 +77,9 @@ square* smoke::GetSquareUnderEntity(ushort) const
   return LSquareUnder;
 }
 
-void smoke::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+void smoke::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance) const
 {
-  Picture[!AllowAnimate ? 0 : (GET_TICK() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture[(GET_TICK() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void smoke::Save(outputfile& SaveFile) const

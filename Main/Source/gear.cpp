@@ -8,6 +8,9 @@ ushort meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
 ushort meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
 ushort meleeweapon::GetDripColor() const { return (*Fluid[0].begin())->GetLiquid()->GetColor(); }
 bool meleeweapon::IsDippable(const character*) const { return !HasFluids; }
+bool meleeweapon::AllowRegularColors() const { return !!SecondaryMaterial->GetVolume(); }
+vector2d meleeweapon::GetWieldedBitmapPos(ushort Index) const { return SecondaryMaterial->GetVolume() ? item::GetWieldedBitmapPos(Index) : vector2d(160, 128); }
+void meleeweapon::InitMaterials(const materialscript* M, const materialscript* S, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), S->Instantiate(), CUP); }
 
 ushort justifier::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 0); }
 
@@ -71,14 +74,8 @@ bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, uchar, uchar
       FillFluidVector(FluidVector);
 
       for(ushort c = 0; c < FluidVector.size(); ++c)
-	if(FluidVector[c]->Exists())
-	  {
-	    if(FluidVector[c]->GetLiquid()->HitEffect(Enemy))
-	      Success = true;
-
-	    if(!FluidVector[c]->GetLiquid()->GetVolume())
-	      RemoveFluid(FluidVector[c]);
-	  }
+	if(FluidVector[c]->Exists() && FluidVector[c]->GetLiquid()->HitEffect(Enemy))
+	  Success = true;
 
       return Success;
     }
@@ -183,7 +180,7 @@ material* meleeweapon::GetMaterial(ushort Index) const
 
 ushort meleeweapon::GetMaterialColorB(ushort) const
 {
-  return SecondaryMaterial->GetColor();
+  return SecondaryMaterial->GetVolume() ? SecondaryMaterial->GetColor() : TRANSPARENT_COLOR;
 }
 
 uchar meleeweapon::GetAlphaB(ushort) const
@@ -200,7 +197,7 @@ bool flamingsword::HitEffect(character* Enemy, character* Hitter, vector2d HitPo
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s sword burns %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) != 0 || BaseSuccess;
+      return Enemy->ReceiveBodyPartDamage(Hitter, 3 + (RAND() & 3), FIRE, BodyPartIndex, Direction) || BaseSuccess;
     }
   else
     return BaseSuccess;
@@ -218,7 +215,7 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uch
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) != 0 || BaseSuccess;
+      return Enemy->ReceiveBodyPartDamage(Hitter, 5 + (RAND() % 6), ENERGY, BodyPartIndex, Direction) || BaseSuccess;
     }
   else
     return BaseSuccess;
@@ -344,7 +341,23 @@ void meleeweapon::SignalSpoil(material* Material)
   if(!Exists())
     return;
 
-  item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
+  if(Material == MainMaterial)
+    {
+      if(CanBeSeenByPlayer())
+	if(SecondaryMaterial->GetVolume())
+	  ADD_MESSAGE("The edge of %s spoils.", CHAR_NAME(DEFINITE));
+	else
+	  ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
+
+      RemoveMainMaterial();
+    }
+  else
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("The handle of %s spoils", CHAR_NAME(DEFINITE));
+
+      RemoveSecondaryMaterial();
+    }
 }
 
 void meleeweapon::AddPostFix(festring& String) const
@@ -363,23 +376,11 @@ void meleeweapon::AddPostFix(festring& String) const
     String << ' ' << short(Enchantment);
 }
 
-bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) const
-{
-  if(!item::CanBePiledWith(Item, Viewer))
-    return false;
-
-  const meleeweapon* Weapon = static_cast<const meleeweapon*>(Item);
-
-  return Enchantment == Weapon->Enchantment
-      && SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial)
-      && SecondaryMaterial->GetSpoilLevel() == Weapon->SecondaryMaterial->GetSpoilLevel();
-}
-
 void meleeweapon::Be()
 {
   MainMaterial->Be();
 
-  if(Exists())
+  if(Exists() && SecondaryMaterial->GetVolume())
     SecondaryMaterial->Be();
 }
 
@@ -425,7 +426,12 @@ void meleeweapon::VirtualConstructor(bool Load)
 
 uchar meleeweapon::GetSpoilLevel() const
 {
-  return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel());
+  uchar MainSpoilLevel = MainMaterial->GetSpoilLevel();
+
+  if(SecondaryMaterial->GetVolume())
+    return Max(MainSpoilLevel, SecondaryMaterial->GetSpoilLevel());
+  else
+    return MainSpoilLevel;
 }
 
 bool neercseulb::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
@@ -440,7 +446,7 @@ bool neercseulb::HitEffect(character* Enemy, character* Hitter, vector2d HitPos,
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s Neerc Se-ulb's life-draining energies swallow %s!", Hitter->CHAR_POSSESSIVE_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
-      return Enemy->ReceiveBodyPartDamage(Hitter, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction) != 0 || BaseSuccess;
+      return Enemy->ReceiveBodyPartDamage(Hitter, 10 + (RAND() % 11), DRAIN, BodyPartIndex, Direction) || BaseSuccess;
     }
   else
     return BaseSuccess;
@@ -783,6 +789,116 @@ void meleeweapon::TryToRust(ulong LiquidModifier)
 {
   item::TryToRust(LiquidModifier);
 
-  if(SecondaryMaterial->TryToRust(LiquidModifier))
+  if(SecondaryMaterial->GetVolume() && SecondaryMaterial->TryToRust(LiquidModifier))
     SecondaryMaterial->SetRustLevel(SecondaryMaterial->GetRustLevel() + 1);
+}
+
+material* meleeweapon::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+{
+  if((SecondaryMaterial->*Predicate)()
+  && SecondaryMaterial->GetVolume()
+  && Consumer->CanConsume(SecondaryMaterial))
+    return SecondaryMaterial;
+  else
+    return item::GetConsumeMaterial(Consumer, Predicate);
+}
+
+material* meleeweapon::RemoveMaterial(material* Material)
+{
+  if(Material == MainMaterial)
+    return RemoveMainMaterial();
+  else
+    return RemoveSecondaryMaterial();
+}
+
+material* meleeweapon::RemoveMainMaterial()
+{
+  if(SecondaryMaterial->GetVolume())
+    {
+      item* Lump = new lump(0, NO_MATERIALS);
+      Lump->InitMaterials(SecondaryMaterial);
+      DonateFluidsTo(Lump);
+      DonateIDTo(Lump);
+      DonateSlotTo(Lump);
+      SetSecondaryMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
+    }
+  else
+    RemoveFromSlot();
+
+  SendToHell();
+  return 0;
+}
+
+material* meleeweapon::RemoveSecondaryMaterial()
+{
+  SecondaryMaterial->SetVolume(0);
+
+  if(!IsBroken())
+    Break(0);
+  else
+    {
+      RedistributeFluids();
+      UpdatePictures();
+      SendNewDrawAndMemorizedUpdateRequest();
+    }
+
+  return 0;
+}
+
+pixelpredicate meleeweapon::GetFluidPixelAllowedPredicate() const
+{
+  if(SecondaryMaterial->GetVolume())
+    return &colorizablebitmap::IsTransparent;
+  else
+    return &colorizablebitmap::IsMaterialColor1;
+}
+
+void meleeweapon::CalculateEmitation()
+{
+  Emitation = GetBaseEmitation();
+
+  if(MainMaterial)
+    game::CombineLights(Emitation, MainMaterial->GetEmitation());
+
+  if(SecondaryMaterial->GetVolume())
+    game::CombineLights(Emitation, SecondaryMaterial->GetEmitation());
+}
+
+bool meleeweapon::CalculateHasBe() const
+{
+  return (MainMaterial && MainMaterial->HasBe()) || (SecondaryMaterial && SecondaryMaterial->GetVolume() && SecondaryMaterial->HasBe());
+}
+
+void decosadshirt::Be()
+{
+  if(PLAYER->Equips(this))
+    ++EquippedTicks;
+
+  bodyarmor::Be();
+}
+
+void decosadshirt::VirtualConstructor(bool Load)
+{
+  bodyarmor::VirtualConstructor(Load);
+  EquippedTicks = 0;
+  Enable();
+}
+
+void decosadshirt::Save(outputfile& SaveFile) const
+{
+  bodyarmor::Save(SaveFile);
+  SaveFile << EquippedTicks;
+}
+
+void decosadshirt::Load(inputfile& SaveFile)
+{
+  bodyarmor::Load(SaveFile);
+  SaveFile >> EquippedTicks;
+  Enable();
+}
+
+item* meleeweapon::Fix()
+{
+  SecondaryMaterial->SetVolumeNoSignals(GetDefaultSecondaryVolume());
+  return item::Fix();
 }

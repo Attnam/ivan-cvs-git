@@ -19,7 +19,7 @@ bool item::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_WIELDED_I
 bool item::IsInCorrectSlot() const { return IsInCorrectSlot(static_cast<gearslot*>(*Slot)->GetEquipmentIndex()); }
 ushort item::GetEquipmentIndex() const { return static_cast<gearslot*>(*Slot)->GetEquipmentIndex(); }
 uchar item::GetGraphicsContainerIndex() const { return GR_ITEM; }
-bool item::IsBroken() const { return (GetConfig() & BROKEN) != 0; }
+bool item::IsBroken() const { return !!(GetConfig() & BROKEN); }
 const char* item::GetBreakVerb() const { return "breaks"; }
 square* item::GetSquareUnderEntity(ushort Index) const { return GetSquareUnder(Index); }
 square* item::GetSquareUnder(ushort Index) const { return Slot[Index] ? Slot[Index]->GetSquareUnder() : 0; }
@@ -27,6 +27,14 @@ lsquare* item::GetLSquareUnder(ushort Index) const { return static_cast<lsquare*
 void item::SignalStackAdd(stackslot* StackSlot, void (stack::*)(item*)) { Slot[0] = StackSlot; }
 bool item::IsAnimated() const { return object::IsAnimated() || HasFluids; }
 bool item::IsRusted() const { return MainMaterial->GetRustLevel() != NOT_RUSTED; }
+bool item::IsConsumable(const character* Eater) const { return !!GetConsumeMaterial(Eater); }
+bool item::IsEatable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsSolid); }
+bool item::IsDrinkable(const character* Eater) const { return !!GetConsumeMaterial(Eater, &material::IsLiquid); }
+pixelpredicate item::GetFluidPixelAllowedPredicate() const { return &colorizablebitmap::IsTransparent; }
+void item::Cannibalize() { ItemFlags |= CANNIBALIZED; }
+void item::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
+void item::InitMaterials(const materialscript* M, const materialscript*, const materialscript*, bool CUP) { InitMaterials(M->Instantiate(), CUP); }
 
 item::item(const item& Item) : object(Item), Slot(0), Size(Item.Size), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight), ItemFlags(0), CloneMotherID(Item.CloneMotherID), SquaresUnder(Item.SquaresUnder), HasFluids(false)
 {
@@ -51,24 +59,6 @@ item::~item()
 
       delete [] Fluid;
     }
-}
-
-bool item::IsConsumable(const character* Eater) const
-{
-  if(!GetConsumeMaterial())
-    return false;
-  else
-    return Eater->CanConsume(GetConsumeMaterial());
-}
-
-bool item::IsEatable(const character* Eater) const
-{
-  return IsConsumable(Eater) && !GetConsumeMaterial()->IsLiquid();
-}
-
-bool item::IsDrinkable(const character* Eater) const
-{
-  return IsConsumable(Eater) && GetConsumeMaterial()->IsLiquid();
 }
 
 void item::Fly(character* Thrower, uchar Direction, ushort Force)
@@ -106,7 +96,7 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
 
   ushort RangeLeft;
 
-  for(RangeLeft = Range; RangeLeft != 0; --RangeLeft)
+  for(RangeLeft = Range; RangeLeft; --RangeLeft)
     {
       if(!GetLevel()->IsValidPos(Pos + DirVector))
 	break;
@@ -215,26 +205,37 @@ bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
     }
 }
 
+/* Returns whether the Eater must stop eating the item */
+
 bool item::Consume(character* Eater, long Amount)
 {
-  if(!GetConsumeMaterial()) // if it's spoiled or something
+  material* ConsumeMaterial = GetConsumeMaterial(Eater);
+
+  if(!ConsumeMaterial)
     return true;
 
-  GetConsumeMaterial()->EatEffect(Eater, Amount);
-
-  if(!(ItemFlags & CANNIBALIZED) && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
+  if(Eater->IsPlayer() && !(ItemFlags & CANNIBALIZED) && Eater->CheckCannibalism(ConsumeMaterial))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
-      ItemFlags |= CANNIBALIZED;
+      Cannibalize();
     }
 
-  return GetConsumeMaterial()->GetVolume() ? false : true;
+  ulong ID = GetID();
+  material* Garbage = ConsumeMaterial->EatEffect(Eater, Amount);
+  item* NewConsuming = GetID() ? this : game::SearchItem(ID);
+  material* NewConsumeMaterial = NewConsuming->GetConsumeMaterial(Eater);
+
+  if(!NewConsuming->Exists() || !NewConsumeMaterial || !NewConsumeMaterial->IsSameAs(ConsumeMaterial))
+    ConsumeMaterial->FinishConsuming(Eater);
+
+  delete Garbage;
+  return !NewConsuming->Exists() || !NewConsumeMaterial;
 }
 
 bool item::CanBeEatenByAI(const character* Eater) const
 {
-  return !Eater->CheckCannibalism(GetConsumeMaterial()) && GetConsumeMaterial()->CanBeEatenByAI(Eater);
+  return GetConsumeMaterial(Eater)->CanBeEatenByAI(Eater);
 }
 
 void item::Save(outputfile& SaveFile) const
@@ -351,17 +352,6 @@ ushort item::GetResistance(ushort Type) const
   return 0;
 }
 
-void item::AddConsumeEndMessage(character* Eater) const
-{
-  GetConsumeMaterial()->AddConsumeEndMessage(Eater);
-}
-
-void item::GenerateLeftOvers(character*)
-{
-  RemoveFromSlot();
-  SendToHell();
-}
-
 bool item::Open(character* Char)
 {
   if(Char->IsPlayer())
@@ -423,11 +413,6 @@ bool item::ShowMaterial() const
     return GetMainMaterial()->GetConfig() != GetMainMaterialConfig()[0];
   else
     return true;
-}
-
-const char* item::GetConsumeVerb() const
-{
-  return GetConsumeMaterial()->GetConsumeVerb();
 }
 
 ulong item::GetBlockModifier() const
@@ -623,7 +608,13 @@ void itemdatabase::InitDefaults(ushort NewConfig)
 
 ulong item::GetNutritionValue() const
 {
-  return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue() : 0; 
+  ulong NV = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      NV += GetMaterial(c)->GetTotalNutritionValue();
+
+  return NV;
 }
 
 void item::SignalSpoil(material*)
@@ -689,12 +680,6 @@ void item::Break(character* Breaker, uchar)
 void item::Be()
 {
   MainMaterial->Be();
-}
-
-void item::Empty()
-{
-  ChangeContainedMaterial(0);
-  SendNewDrawAndMemorizedUpdateRequest();
 }
 
 short item::GetOfferValue(uchar Receiver) const
@@ -765,6 +750,7 @@ void item::SignalSpoilLevelChange(material*)
     for(ushort c = 0; c < SquaresUnder; ++c)
       GetSquareUnder(c)->IncAnimatedEntities();
 
+  SignalVolumeAndWeightChange(); // gum
   UpdatePictures();
 }
 
@@ -863,11 +849,6 @@ bool item::IsSparkling() const
       return true;
 
   return false;
-}
-
-bool item::IsStupidToConsume() const
-{
-  return GetConsumeMaterial()->IsStupidToConsume();
 }
 
 #ifdef WIZARD
@@ -1141,8 +1122,6 @@ void item::FillFluidVector(fluidvector& Vector, ushort SquareIndex) const
 
 void item::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex)
 {
-  Liquid->SpillEffect(this);
-
   if(AllowFluids() && Liquid->GetVolume())
     AddFluid(Liquid, SquareIndex);
   else
@@ -1209,7 +1188,7 @@ void item::DonateFluidsTo(item* Item)
 {
   if(HasFluids)
     for(ushort c = 0; c < GetSquaresUnder(); ++c)
-      for(fluidlist::iterator f = Fluid[c].begin(); f != Fluid[c].end(); ++f)
+      for(fluidlist::const_iterator f = Fluid[c].begin(); f != Fluid[c].end(); ++f)
 	{
 	  liquid* Liquid = (*f)->GetLiquid();
 	  Item->AddFluid(Liquid->CloneLiquid(Liquid->GetVolume()), c);
@@ -1244,3 +1223,49 @@ void item::RemoveRust()
       GetMaterial(c)->SetRustLevel(NOT_RUSTED);
 }
 
+void item::SetSpoilPercentage(uchar Value)
+{
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    {
+      material* Material = GetMaterial(c);
+
+      if(Material && Material->CanSpoil())
+	Material->SetSpoilCounter(Material->GetSpoilModifier() * Value / 100);
+    }
+}
+
+void item::RedistributeFluids()
+{
+  if(HasFluids)
+    for(ushort c = 0; c < GetSquaresUnder(); ++c)
+      for(fluidlist::iterator f = Fluid[c].begin(); f != Fluid[c].end(); ++f)
+	(*f)->Redistribute();
+}
+
+material* item::GetConsumeMaterial(const character* Consumer, materialpredicate Predicate) const
+{
+  return (MainMaterial->*Predicate)() && Consumer->CanConsume(MainMaterial) ? MainMaterial : 0;
+}
+
+/* The parameter can only be MainMaterial */
+
+material* item::RemoveMaterial(material*)
+{
+  RemoveFromSlot();
+  SendToHell();
+  return 0;
+}
+
+void item::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
+{
+  InitMaterial(MainMaterial, FirstMaterial, GetDefaultMainVolume());
+  SignalVolumeAndWeightChange();
+
+  if(CallUpdatePictures)
+    UpdatePictures();
+}
+
+void item::GenerateMaterials()
+{
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), RandomizeMaterialConfiguration());
+}

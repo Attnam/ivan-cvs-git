@@ -11,8 +11,15 @@ class lterrain;
 
 class MATERIAL
 (
-  organicsubstance,
+  solid,
   material,
+  ;
+);
+
+class MATERIAL
+(
+  organic,
+  solid,
  public:
   virtual void Be();
   virtual bool HasBe() const { return true; }
@@ -21,9 +28,10 @@ class MATERIAL
   virtual bool IsVeryCloseToSpoiling() const { return SpoilLevel == 8; }
   virtual uchar GetSpoilLevel() const { return SpoilLevel; }
   virtual void ResetSpoiling();
-  virtual void EatEffect(character*, ulong);
+  virtual material* EatEffect(character*, ulong);
   virtual void AddConsumeEndMessage(character*) const;
   virtual void SetSpoilCounter(ushort);
+  virtual bool CanSpoil() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
   ushort SpoilCounter;
@@ -44,18 +52,17 @@ class MATERIAL
  public:
   virtual const char* GetConsumeVerb() const;
   virtual bool IsLiquid() const { return true; }
-  void ConstantEffect(item*);
-  void ConstantEffect(character*, ushort);
-  void ConstantEffect(lterrain*);
-  void SpillEffect(item*);
-  void SpillEffect(character*, ushort);
+  void TouchEffect(item*);
+  void TouchEffect(character*, ushort);
+  void TouchEffect(lterrain*);
+  //liquid* CloneLiquid() const { return static_cast<liquid*>(Clone(Volume)); }
   liquid* CloneLiquid(ulong Volume) const { return static_cast<liquid*>(Clone(Volume)); }
 );
 
 class MATERIAL
 (
   flesh,
-  organicsubstance,
+  organic,
  public:
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -72,7 +79,7 @@ class MATERIAL
 class MATERIAL
 (
   powder,
-  material,
+  liquid,
  public:
   virtual bool IsPowder() const { return true; }
   virtual bool IsExplosive() const;
@@ -91,7 +98,7 @@ class MATERIAL
 class MATERIAL
 (
   ironalloy,
-  material,
+  solid,
  public:
   virtual void AddName(festring&, bool = false, bool = true) const;
   virtual void SetRustLevel(uchar);

@@ -235,12 +235,12 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha, const uchar* RustData) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha, const uchar* RustData, bool AllowReguralColors) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   vector2d TargetPos(0, 0);
 
-  if(Move.X != 0 || Move.Y != 0)
+  if(Move.X || Move.Y)
     {
       Bitmap->ClearToColor(TRANSPARENT_COLOR);
 
@@ -339,13 +339,15 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
 	      else
 		DestBuffer[x] = TRANSPARENT_COLOR;
 	    }
-	  else
+	  else if(AllowReguralColors)
 	    {
 	      ushort PaletteIndex = PaletteElement + (PaletteElement << 1);
 	      DestBuffer[x] = ((Palette[PaletteIndex] & 0xFFF8) << 8)
 			    | ((Palette[PaletteIndex + 1] & 0xFFFC) << 3)
 			    |  (Palette[PaletteIndex + 2] >> 3);
 	    }
+	  else
+	    DestBuffer[x] = TRANSPARENT_COLOR;
 	}
 
       DestBuffer += BitmapXSize;
@@ -420,7 +422,7 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
       for(ushort x = X; x < X + Width; ++x)
 	for(ushort y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = PaletteBuffer[y * XSize + x];
+	    uchar Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
 	      {
@@ -432,7 +434,7 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
 		if(NewPixel > ColorMax)
 		  NewPixel = ColorMax;
 
-		PaletteBuffer[y * XSize + x] = NewPixel;
+		AccessPaletteEntry(x, y) = NewPixel;
 	      }
 	  }
     }
@@ -443,7 +445,7 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
       for(x = X; x < X + Width; ++x)
 	for(ushort y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = PaletteBuffer[y * XSize + x];
+	    uchar Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
 	      {
@@ -460,10 +462,10 @@ void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort H
       for(x = X; x < X + Width; ++x)
 	for(ushort y = Y; y < Y + Height; ++y)
 	  {
-	    uchar Pixel = PaletteBuffer[y * XSize + x];
+	    uchar Pixel = AccessPaletteEntry(x, y);
 
 	    if(Pixel >= ColorMin && Pixel <= ColorMax)
-	      PaletteBuffer[y * XSize + x] = Pixel + Amount;
+	      AccessPaletteEntry(x, y) = Pixel + Amount;
 	  }
     }
 }
@@ -476,7 +478,7 @@ void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Heig
   for(ushort x = X; x < X + Width; ++x)
     for(ushort y = Y; y < Y + Height; ++y)
       {
-	uchar& Pixel = PaletteBuffer[y * XSize + x];
+	uchar& Pixel = AccessPaletteEntry(x, y);
 
 	if(Pixel >= 192 + (Color1 << 4) && Pixel <= 207 + (Color1 << 4))
 	  Pixel += (Color2 - Color1) << 4;
@@ -508,12 +510,12 @@ void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, sh
 	if(YPos >= Y + Height)
 	  YPos -= Height;
 
-	TempBuffer[(YPos - Y) * Width + XPos - X] = PaletteBuffer[y * XSize + x];
+	TempBuffer[(YPos - Y) * Width + XPos - X] = AccessPaletteEntry(x, y);
       }
 
   for(x = X; x < X + Width; ++x)
     for(y = Y; y < Y + Height; ++y)
-      PaletteBuffer[y * XSize + x] = TempBuffer[(y - Y) * Width + x - X];
+      AccessPaletteEntry(x, y) = TempBuffer[(y - Y) * Width + x - X];
 }
 
 void colorizablebitmap::CreateFontCache(ushort Color)
@@ -561,7 +563,7 @@ vector2d colorizablebitmap::RandomizeSparklePos(const vector2d* ValidityArray, v
   for(c = 0; c < ValidityArraySize; ++c)
     {
       vector2d V = ValidityArray[c] + Pos;
-      uchar Entry = GetPaletteEntry(V.X, V.Y);
+      uchar Entry = AccessPaletteEntry(V.X, V.Y);
 
       if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
 	{
@@ -602,4 +604,15 @@ vector2d colorizablebitmap::RandomizeSparklePos(const vector2d* ValidityArray, v
     Return = ERROR_VECTOR;
 
   return Return;
+}
+
+bool colorizablebitmap::IsTransparent(vector2d Pos) const
+{
+  return AccessPaletteEntry(Pos) == 191;
+}
+
+bool colorizablebitmap::IsMaterialColor1(vector2d Pos) const
+{
+  uchar P = AccessPaletteEntry(Pos);
+  return P >= 192 && P < 208;
 }

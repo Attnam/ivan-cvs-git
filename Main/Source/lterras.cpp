@@ -7,10 +7,11 @@ uchar door::GetTheoreticalWalkability() const { return ANY_MOVE; }
 
 vector2d portal::GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
 
-void fountain::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void fountain::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
+void fountain::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, 0, SpecialFlags); }
+void fountain::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, 0, SpecialFlags); }
+void fountain::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, 0, ContainedMaterial, M2, 0, CUP); }
 vector2d fountain::GetBitmapPos(ushort) const { return vector2d(GetContainedMaterial() ? 16 : 32, 288); }
+void fountain::InitMaterials(const materialscript* M, const materialscript*, const materialscript* C, bool CUP) { InitMaterials(M->Instantiate(), C->Instantiate(), CUP); }
 
 void brokendoor::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 
@@ -641,7 +642,7 @@ void door::CreateBoobyTrap()
 
 bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway())), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetContainedMaterial()->Clone(100)), Who);
   return true;
 }
 
@@ -754,8 +755,8 @@ bool door::TryKey(item* Thingy, character* Applier)
 void fountain::GenerateMaterials()
 {
   ushort Chosen = RandomizeMaterialConfiguration();
-  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
-  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
+  InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), 0, Chosen);
+  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), 0, Chosen);
 }
 
 bool fountain::AddAdjective(festring& String, bool Articled) const
@@ -829,6 +830,12 @@ bool stairs::Enter(bool DirectionUp) const
 	return false;
     }
 
+  if(GetConfig() == SUMO_ARENA_ENTRY && !game::TryToEnterSumoArena())
+    return false;
+
+  if(GetConfig() == SUMO_ARENA_EXIT && !game::TryToExitSumoArena())
+    return false;
+
   return game::TryTravel(game::GetCurrentDungeonIndex(), GetAttachedArea(), GetAttachedEntry(), GetAttachedArea() != WORLD_MAP);
 }
 
@@ -870,13 +877,13 @@ void boulder::Break()
 
   for(ushort c = 0; c < HowManyParts; ++c)
     {
-      material* StonesMaterial = GetMainMaterial()->Clone();
-      StonesMaterial->SetVolume(1000);
+      material* StonesMaterial = GetMainMaterial()->Clone(1000);
       item* Stone = new stone(0, NO_MATERIALS);
       Stone->InitMaterials(StonesMaterial);
       GetLSquareUnder()->AddItem(Stone);
       
     }
+
   olterrain::Break();
 }
 
@@ -953,12 +960,17 @@ void olterraincontainer::SetItemsInside(const std::list<contentscript<item> >& I
   for(std::list<contentscript<item> >::const_iterator i = ItemList.begin(); i != ItemList.end(); ++i)
     if(i->IsValid())
       {
-	item* Item = i->Instantiate(SpecialFlags);
+	ushort Times = i->GetTimes() ? *i->GetTimes() : 1;
 
-	if(Item)
+	for(ushort c = 0; c < Times; ++c)
 	  {
-	    Contained->AddItem(Item);
-	    Item->SpecialGenerationHandler();
+	    item* Item = i->Instantiate(SpecialFlags);
+
+	    if(Item)
+	      {
+		Contained->AddItem(Item);
+		Item->SpecialGenerationHandler();
+	      }
 	  }
       }
 }
@@ -1080,7 +1092,7 @@ void olterraincontainer::Break()
 
 bool fountain::IsDipDestination() const
 {
- return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
+ return ContainedMaterial && ContainedMaterial->IsLiquid(); 
 }
 
 uchar door::GetWalkability() const
@@ -1095,7 +1107,7 @@ bool door::IsTransparent() const
 
 bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(static_cast<liquid*>(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway())), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetMainMaterial()->Clone(100)), Who);
   return true;
 }
 

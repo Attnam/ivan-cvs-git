@@ -329,3 +329,12 @@ Briareos
 	(in Greek mythology, one of the numerous sons of Gaia and Ouranos,
 	earth and sky. His nephew Zeus called him to scare away Hera and her
 	allies who were about to rebel)
+
+Tooth fairy
+
+Miniature black hole
+
+	Zero-intelligence "monster" which sucks items, fluids, gases,
+	characters and terrains inside it, never to be seen again.
+	Immune to all weapons, but can be destroyed by magic (thaumic
+	particles are not affected by gravity).

@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "vector2d.h"
-#include "felibdef.h"
 
 class outputfile;
 class inputfile;
