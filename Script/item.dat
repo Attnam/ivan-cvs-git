@@ -926,3 +926,15 @@ ringoffireresistance
 	FormModifier = 20;
 	FireResistance = 10;
 }
+
+amuletoflifesaving
+{
+	DefaultSize = 20;
+	Possibility = 3;
+	Category = AMULET;
+	DefaultMainVolume = 100;
+	StrengthModifier = 100;
+	BitmapPos = 32, 400;
+	FormModifier = 50;
+}
+

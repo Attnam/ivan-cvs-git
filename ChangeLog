@@ -1,3 +1,8 @@
+May 20 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Amulet of life saving added
+	* game.cpp: Zoom for PositionQuestion added
+
 May 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Macro system remade again for everything but character

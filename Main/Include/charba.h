@@ -463,8 +463,8 @@ class character : public entity, public id
   DATABASEBOOL(IsNameable);
   DATABASEVALUE(ushort, BaseEmitation);
 
+  virtual item* GetLifeSaver() const;
   virtual ushort GetType() const { return GetProtoType().GetIndex(); }
-
  protected:
   virtual void Initialize(bool, bool);
   virtual void VirtualConstructor() { }

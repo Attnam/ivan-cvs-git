@@ -204,7 +204,7 @@ class item : public object
   DATABASEVALUEWITHPARAMETER(vector2d, BitmapPos, ushort);
   DATABASEVALUE(ulong, Price);
   DATABASEVALUE(ushort, BaseEmitation);
-
+  virtual bool SavesLifeWhenWorn() const { return false; }
  protected:
   virtual void LoadDataBaseStats();
   virtual void VirtualConstructor() { }

@@ -767,7 +767,7 @@ void character::CreateCorpse()
 
 void character::Die(bool ForceMsg)
 {
-  // Note for programmers: This function MUST NOT delete any objects!
+  // Note for programmers: This function MUST NOT delete any objects if the character is really going to die! 
 
   if(!IsEnabled())
     return;
@@ -789,7 +789,22 @@ void character::Die(bool ForceMsg)
 	      return;
 	    }
 	}
-
+      item* LifeSaver = GetLifeSaver();
+      if(LifeSaver)
+	{
+	  if(GetIsPlayer()) ADD_MESSAGE("But wait! %s glows red, disappears and you seem to be in a better shape!", LifeSaver->CHARNAME(DEFINITE));
+	  ADD_MESSAGE("[press a key]");  
+	  game::DrawEverything();
+	  GETKEY();
+	  LifeSaver->RemoveFromSlot();
+	  LifeSaver->SetExists(false);
+	  RestoreBodyParts();
+	  RestoreHP();
+	  SetNP(10000);
+	  GetSquareUnder()->SendNewDrawRequest();
+	  return;
+	}	  
+      
       game::RemoveSaves();
     }
   else
@@ -4140,6 +4155,18 @@ character* character_prototype::CloneAndLoad(inputfile& SaveFile) const
   character* Char = Clone(false, false);
   Char->Load(SaveFile);
   return Char;
+}
+
+item* character::GetLifeSaver() const
+{
+  for(ushort c = 0; c < EquipmentSlots(); ++c)
+    {
+      item* Item = GetEquipment(c);
+
+      if(Item && Item->SavesLifeWhenWorn())
+	return Item;
+    }
+  return 0;
 }
 
 void character::Initialize(bool MakeBodyParts, bool CreateEquipment)

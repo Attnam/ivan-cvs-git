@@ -1396,7 +1396,7 @@ int game::AskForKeyPress(const std::string& Topic)
   return Key;
 }
 
-vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d))
+vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, void (*Handler)(vector2d), bool Zoom)
 {
   int Key = 0;
   FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
@@ -1442,13 +1442,16 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 	Handler(CursorPos);
 
       game::DrawEverythingNoBlit();
-      igraph::DrawCursor(game::CalculateScreenCoordinates(CursorPos));
+      vector2d ScreenCordinates = game::CalculateScreenCoordinates(CursorPos);
+      if(Zoom) 
+	DOUBLEBUFFER->StretchBlit(DOUBLEBUFFER, ScreenCordinates.X, ScreenCordinates.Y, RES.X - 96, RES.Y - 96, 16, 16, 5);
+      igraph::DrawCursor(ScreenCordinates);
       game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
       graphics::BlitDBToScreen();
       Key = GETKEY();
     }
 
-  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, BLACK);
   return Return;
 }
 

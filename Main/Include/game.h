@@ -154,7 +154,7 @@ class game
   static vector2d CalculateScreenCoordinates(vector2d);
   static void BusyAnimation(bitmap* = DOUBLEBUFFER);
   static uchar GetDirectionIndexForKey(int);
-  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0);
+  static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, bool = true);
   static void LookHandler(vector2d);
   static int AskForKeyPress(const std::string&);
   static void AnimationController();

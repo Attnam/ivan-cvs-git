@@ -2175,6 +2175,21 @@ class ITEM
   virtual std::string NamePlural() const { return "rings of fire resistance"; }
 );
 
+class ITEM
+(
+ amuletoflifesaving,
+ amulet,
+ /* InitMaterials(new gold),
+ {
+ },*/
+ public: 
+ virtual bool SavesLifeWhenWorn() const { return true; }
+ protected:
+ virtual std::string NameSingular() const { return "amulet of life saving"; }
+ virtual std::string NamePlural() const { return "amulets of life saving"; }
+ virtual void GenerateMaterials() { InitMaterials(new gold); }
+);
+   
 #endif
 
 
