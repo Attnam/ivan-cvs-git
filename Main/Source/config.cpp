@@ -21,7 +21,7 @@ bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
 ulong configuration::ContrastLuminance = NORMAL_LUMINANCE;
 bool configuration::LookZoom = false;
-bool configuration::UseNumberPad = true;
+bool configuration::UseAlternativeKeys = false;
 
 void configuration::Save()
 {
@@ -37,7 +37,7 @@ void configuration::Save()
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
   SaveFile << "LookZoom = " << LookZoom <<";\n";
-  SaveFile << "UseNumberPad = " << UseNumberPad << ";\n;";
+  SaveFile << "UseAlternativeKeys = " << UseAlternativeKeys << ";\n;";
 }
 
 void configuration::Load()
@@ -78,8 +78,8 @@ void configuration::Load()
       if(Word == "LookZoom")
 	SetLookZoom(SaveFile.ReadBool());
 
-      if(Word == "UseNumberPad")
-	SetUseNumberPad(SaveFile.ReadBool());
+      if(Word == "UseAlternativeKeys")
+	SetUseAlternativeKeys(SaveFile.ReadBool());
     }
 }
 
@@ -124,7 +124,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(CONST_S("Contrast:                               ") + Contrast + "/100", LIGHT_GRAY);
       List.AddEntry(CONST_S("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(CONST_S("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
-      List.AddEntry(CONST_S("Use number pad:                         ") + (UseNumberPad ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Use alternative direction keys:         ") + (UseAlternativeKeys ? "yes" : "no"), LIGHT_GRAY);
 
 #ifndef __DJGPP__
       List.AddEntry(CONST_S("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
@@ -163,7 +163,9 @@ void configuration::ShowConfigScreen()
 	  BoolChange = true;
 	  break;
 	case 6:
-	  SetUseNumberPad(!GetUseNumberPad());
+	  SetUseAlternativeKeys(!GetUseAlternativeKeys());
+	  List.SetUpKey(game::GetMoveCommandKey(KEY_UP_INDEX));
+	  List.SetDownKey(game::GetMoveCommandKey(KEY_DOWN_INDEX));
 	  BoolChange = true;
 	  break;
 #ifndef __DJGPP__

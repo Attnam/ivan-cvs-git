@@ -1667,25 +1667,19 @@ void bodypart::Be()
 {
   if(Master)
     {
-      if(Master->IsPolymorphed())
-	return;
-
-      if(Master->IsEnabled())
-	{
-	  if(IsInBadCondition() && !(RAND() & 0xF))
-	    SpillBlood(1);
-
-	  return;
-	}
+      if(IsInBadCondition() && Master->IsEnabled() && !Master->IsPolymorphed() && !(RAND() & 0xF))
+	SpillBlood(1);
     }
-
-  if(HP < MaxHP && !(RAND() & 0xF))
+  else
     {
-      SpillBlood(1);
-      HP += Max(((MaxHP - HP) >> 2), 1);
-    }
+      if(HP < MaxHP && !(RAND() & 0xF))
+	{
+	  SpillBlood(1);
+	  HP += Max(((MaxHP - HP) >> 2), 1);
+	}
 
-  item::Be();
+      item::Be();
+    }
 }
 
 void bodypart::SpillBlood(ushort HowMuch, vector2d Pos)

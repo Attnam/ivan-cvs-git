@@ -252,7 +252,7 @@ ushort character::GetRandomApplyBodyPart() const { return TORSO_INDEX; }
 bool character::MustBeRemovedFromBone() const { return IsUnique() && !CanBeGenerated(); }
 bool character::IsPet() const { return GetTeam()->GetID() == PLAYER_TEAM; }
 
-character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder)
+character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), GoingTo(ERROR_VECTOR), Money(0), AssignedName(Char.AssignedName), Action(0), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter), PictureUpdatesForbidden(false), SquaresUnder(Char.SquaresUnder)
 {
   Stack = new stack(0, this, HIDDEN, true);
 
@@ -295,7 +295,7 @@ character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP
   Initializing = InNoMsgMode = false;
 }
 
-character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(-1, -1), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false)
+character::character(donothing) : entity(HAS_BE), NP(50000), AP(0), Player(false), TemporaryState(0), Team(0), GoingTo(ERROR_VECTOR), Money(0), Action(0), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Polymorphed(false), RegenerationCounter(0), HomeData(0), PictureUpdatesForbidden(false)
 {
   Stack = new stack(0, this, HIDDEN, true);
 }
@@ -389,8 +389,11 @@ ushort character::TakeHit(character* Enemy, item* Weapon, bodypart* EnemyBodyPar
   if(!CanBeSeenBy(Enemy))
     DodgeValue *= 2;
 
-  SetGoingTo(Enemy->GetPos());
-  Enemy->SetGoingTo(GetPos());
+  if(!ForceHit)
+    {
+      SetGoingTo(Enemy->GetPos());
+      Enemy->SetGoingTo(GetPos());
+    }
 
   /* Effectively, the average chance to hit is 100% / (DV/THV + 1). */
 
@@ -801,9 +804,6 @@ bool character::MoveTowardsTarget()
 
   if(TryMove(ModifiedMoveTo)) return true;
 
-  if(Pos.IsAdjacent(GoingTo))
-    return false;
-
   if(RAND() & 1)
     {
       if(TryMove(ApplyStateModification(MoveTo[1]))) return true;
@@ -1016,7 +1016,7 @@ bool character::TryMove(vector2d MoveVector, bool Important)
     }
   else
     {
-      /** no multitile support */
+      /** No multitile support */
 
       if(CanMove() && GetArea()->IsValidPos(MoveTo) && (CanMoveOn(GetNearWSquare(MoveTo)) || game::GoThroughWallsCheatIsActive()))
 	{
@@ -2474,10 +2474,14 @@ bool character::MoveRandomlyInRoom()
   for(ushort c = 0; c < 10; ++c)
     {
       vector2d ToTry = game::GetMoveVector(RAND() & 7);
-      lsquare* Square = GetNearLSquare(GetPos() + ToTry);
 
-      if(Square && !Square->IsDangerousForAIToStepOn(this) && (!Square->GetOLTerrain() || !Square->GetOLTerrain()->IsDoor()) && TryMove(ToTry, false))
-	return true;
+      if(GetLevel()->IsValidPos(GetPos() + ToTry))
+	{
+	  lsquare* Square = GetNearLSquare(GetPos() + ToTry);
+
+	  if(!Square->IsDangerousForAIToStepOn(this) && (!Square->GetOLTerrain() || !Square->GetOLTerrain()->IsDoor()) && TryMove(ToTry, false))
+	    return true;
+	}
     }
 
   return false;
@@ -2552,6 +2556,9 @@ void character::GoOn(go* Go, bool FirstStep)
 
 void character::SetTeam(team* What)
 {
+  if(Team)
+    int esko = 2;
+
   Team = What;
   SetTeamIterator(What->Add(this));
 }
@@ -6756,7 +6763,7 @@ void character::SetGoingTo(vector2d What)
 
 void character::TerminateGoingTo()
 {
-  GoingTo.X = -1;
+  GoingTo = ERROR_VECTOR;
   Route.clear();
   Illegal.clear();
 }

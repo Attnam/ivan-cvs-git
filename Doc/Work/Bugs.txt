@@ -12,7 +12,7 @@
 (s) One cannot eat a can MADE of bananaflesh.
 //It is possible to protect items from explosions by putting them in hand, digging, or eating them (very low priority).
 Entering a dungeon and loading an autosave saves some time.
-Messages after teleport.
+//Messages after teleport.
 (s) Bear trap in shop.
 (s) "Valpurus shall not carry more continents!"
 //Strength bonus is shown in the battle info screen even for Bill's wills.
@@ -46,7 +46,8 @@ Mistresses like shields more than their whips.
 //Dying + being resurrected doesn't eliminate poison.
 //Teleport control can be used to detect walls.
 //RED ommel urine ALERT!
-Displacing plants is again allowed.
+//Displacing plants is again allowed.
 Trying to resurrect a headless player of a bonefile when his ghost is the only light source doesn't
  give the right message since the soul is temporarily sucked into the corpse and everything is dark.
  Should this be so?
+AOGH can be abused.

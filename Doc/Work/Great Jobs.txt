@@ -30,7 +30,7 @@ Ego-monster engine.
 
 Races.
 
-Multi-tiled creature engine.
+//Multi-tiled creature engine.
 
 Blessed/uncursed/cursed item statuses.
 
@@ -60,7 +60,7 @@ Support for multiple items flying at the same time.
 
 Faster tunnel generation algorithm.
 
-Better AI route algorithm.
+//Better AI route algorithm.
 
 Sight direction.
 
@@ -99,3 +99,9 @@ Some kind of rank/danger level system.
 Removing worldmap.
 
 Zombie state.
+
+//Terrain border tiles.
+
+System for representing sounds in the game.
+
+Permanent wounds.

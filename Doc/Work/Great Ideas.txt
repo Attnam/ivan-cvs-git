@@ -11,7 +11,7 @@ Santa Claus. (from Renne)
 Mouse control.
 Day and night.
 Seasons.
-Multi-tiled creatures.
+//Multi-tiled creatures.
 Smithing.
 Ghost-Überpriests.
 Thougth Control.
@@ -90,3 +90,4 @@ Quest to save the prince frog.
 "We apologize for the inconvenience." somewhere in the worldmap.
 Rainbows.
 Tabernae vagantes.
+Shackles.

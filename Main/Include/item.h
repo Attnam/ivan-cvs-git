@@ -169,7 +169,6 @@ class item : public object
   void SetSize(ushort Value) { Size = Value; }
   virtual ushort GetSize() const { return Size; }
   ulong GetID() const { return ID; }
-  void SetID(ulong What) { ID = What; }
   virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot(ushort Index = 0) const { return Slot[Index]; }
@@ -421,6 +420,7 @@ class item : public object
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
   virtual ushort GetStackAnimationFrames() const { return AnimationFrames; }
   virtual bool BunnyWillCatchAndConsume() const { return false; }
+  void DonateIDTo(item*);
  protected:
   virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;

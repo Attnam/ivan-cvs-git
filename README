@@ -1,4 +1,4 @@
-Iter Vehems ad Necem v0.420
+Iter Vehems ad Necem v0.430
 ---------------------------
 
 For news and updates view our homepage at ivan.sourceforge.net.
@@ -81,7 +81,7 @@ Per = Perception - Increases sight range and accuracy
 Int = Intelligence - Increases your ability to read and learn
 Wis = Wisdom - Increases your ability to deal with gods
 Cha = Charisma - Improves your ability to negotiate and make deals
-Siz = Size or height
+Siz = Size or height - Increases your enemies' chance to hit you
 HP = Health Points - The sum of your bodyparts' HPs
 Gold = The amount of money you have
 Time = The turns you have used in this game
@@ -135,6 +135,9 @@ to ivan-users@lists.sourceforge.net. If you are a SourceForge user,
 you can also report this bug at Ivan's SourceForge project page:
 
 http://sourceforge.net/projects/ivan
+
+You should mention your full name so we can credit you at the end
+of the AUTHORS file, if you are the first to discover this bug.
 
 Q: I've got a great idea to make IVAN better! What should I do?
 

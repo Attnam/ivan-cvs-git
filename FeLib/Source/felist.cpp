@@ -77,7 +77,7 @@ struct felistdescription
   ushort Color;
 };
 
-felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), MaskColor(TRANSPARENT_COLOR)
+felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), MaskColor(TRANSPARENT_COLOR), UpKey(KEY_UP), DownKey(KEY_DOWN)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -209,7 +209,7 @@ ushort felist::Draw()
 	  break;
 	}
 
-      if(Flags & SELECTABLE && Pressed == KEY_UP)
+      if(Flags & SELECTABLE && Pressed == UpKey)
 	{
 	  if(Selected)
 	    {
@@ -241,7 +241,7 @@ ushort felist::Draw()
 	  continue;
 	}
 
-      if(Flags & SELECTABLE && Pressed == KEY_DOWN)
+      if(Flags & SELECTABLE && Pressed == DownKey)
 	{
 	  if(!AtTheEnd || Selected != Selectables - 1)
 	    {

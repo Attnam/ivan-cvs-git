@@ -34,13 +34,16 @@ typedef std::priority_queue<nodepointerstorer> nodequeue;
 struct node
 {
   node(ushort x, ushort y, lsquare* Square) : Pos(x, y), Square(Square) { }
-  bool InNodeQueue;
-  bool Processed;
+  void CalculateNextNodes();
+  lsquare* Square;
+  node* Last;
+  vector2d Pos;
   ulong Distance;
   ulong Remaining;
   ulong TotalDistanceEstimate;
-  void CalculateNextNodes();
-  vector2d Pos;
+  ulong Diagonals;
+  bool InNodeQueue;
+  bool Processed;
   static node*** NodeMap;
   static uchar RequiredWalkability;
   static const character* SpecialMover;
@@ -48,9 +51,6 @@ struct node
   static uchar** WalkabilityMap;
   static ushort XSize, YSize;
   static nodequeue* NodeQueue;
-  node* Last;
-  lsquare* Square;
-  ulong Diagonals;
 };
 
 struct explosion

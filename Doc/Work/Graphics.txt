@@ -31,6 +31,8 @@ Oterrain border tiles.
 Skis.
 Female character.
 Tailor.
+Web.
+M-colored explosions.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

@@ -87,8 +87,8 @@ festring game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
 const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
 god** game::God;
 
-const int game::MoveCommandKeyWithNumberPad[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
-const int game::MoveCommandKeyWithoutNumberPad[] = { '7','8','9','u','o','j','k','l','.' };
+const int game::MoveNormalCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+const int game::MoveAbnormalCommandKey[] = { '7','8','9','u','o','j','k','l','.' };
 
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
@@ -124,8 +124,25 @@ uchar game::MoveType;
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
-void game::AddItemID(item* Item, ulong ID) { ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
-void game::RemoveItemID(ulong ID) { if(ID) ItemIDMap.erase(ItemIDMap.find(ID)); }
+void game::AddItemID(item* Item, ulong ID) {
+item* Esko;
+if(ItemIDMap.find(ID) != ItemIDMap.end())
+  Esko = ItemIDMap.find(ID)->second;
+
+ItemIDMap.insert(std::pair<ulong, item*>(ID, Item)); }
+void game::RemoveItemID(ulong ID) { if(ID) {
+
+if(ItemIDMap.find(ID) == ItemIDMap.end())
+  int esko = 2;
+
+ItemIDMap.erase(ItemIDMap.find(ID)); 
+}}
+void game::UpdateItemID(item* Item, ulong ID) {
+
+if(!ID || ItemIDMap.find(ID) == ItemIDMap.end())
+  int esko = 2;
+
+ItemIDMap.find(ID)->second = Item; }
 const dangermap& game::GetDangerMap() { return DangerMap; }
 
 void game::InitScript()
@@ -174,6 +191,9 @@ bool game::Init(const festring& Name)
 #ifdef __DJGPP__
   mkdir("Bones", S_IWUSR);
 #endif
+
+  if(ItemIDMap.size())
+    int esko = 2;
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -304,6 +324,17 @@ void game::Run()
 	      CurrentLevel->GenerateMonsters(); // Temporary place
 	      Counter = 0;
 	    }
+
+	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new holybanana);
+	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, WAND));
+	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_POLYMORPH));
+	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_CLONING));
+	  CurrentLevel->GetLSquare(CurrentLevel->GetRandomSquare())->AddItem(new wand(WAND_OF_RESURRECTION));
+	  character* Char = protosystem::CreateMonster(1, 10000);
+	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+	  Char = protosystem::CreateMonster(1, 10000);
+	  Char->PutTo(CurrentLevel->GetRandomSquare(Char));
+	  Char->ChangeTeam(GetTeam(ATTNAM_TEAM));
 	}
 
       try
@@ -716,7 +747,7 @@ bool game::EyeHandler(long X, long Y)
 
 bool game::WalkabilityHandler(long X, long Y)
 {
-  return (CurrentLSquareMap[X][Y]->GetTheoreticalWalkability() & MoveType) != 0;
+  return CurrentLevel->IsValidPos(X, Y) && (CurrentLSquareMap[X][Y]->GetTheoreticalWalkability() & MoveType) != 0;
 }
 
 float game::GetMinDifficulty()
@@ -1668,6 +1699,8 @@ void game::SetStandardListAttributes(felist& List)
   List.SetPos(vector2d(26, 42));
   List.SetWidth(652);
   List.SetFlags(DRAW_BACKGROUND_AFTERWARDS);
+  List.SetUpKey(game::GetMoveCommandKey(KEY_UP_INDEX));
+  List.SetDownKey(game::GetMoveCommandKey(KEY_DOWN_INDEX));
 }
 
 void game::SignalGeneration(configid ConfigID)
@@ -2261,10 +2294,10 @@ character* game::CreateGhost()
 
 int game::GetMoveCommandKey(ushort Index) 
 {
-  if(configuration::GetUseNumberPad())
-    return MoveCommandKeyWithNumberPad[Index];
+  if(!configuration::GetUseAlternativeKeys())
+    return MoveNormalCommandKey[Index];
   else
-    return MoveCommandKeyWithoutNumberPad[Index];
+    return MoveAbnormalCommandKey[Index];
 }
 
 long game::GetScore()

@@ -102,15 +102,6 @@ void worldmap::Generate()
   Alloc2D(OldAltitudeBuffer, XSize, YSize);
   Alloc2D(OldTypeBuffer, XSize, YSize);
 
-  /*  vector2d Middle = vector2d(XSize, YSize);
-  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      {
-	ulong DistanceFromMiddle = (Middle - vector2d(x,y)).GetLengthSquare();
-	AltitudeBuffer[x][y] = 10000 / (DistanceFromMiddle + 3) - 1000 + RAND_N(500);
-      }
-      SmoothAltitute();*/
-
   while(true)
     {
       RandomizeAltitude();
@@ -275,10 +266,6 @@ void worldmap::Generate()
 
   delete [] OldAltitudeBuffer;
   delete [] OldTypeBuffer;
-
-
-
-  
 }
 
 void worldmap::RandomizeAltitude()
@@ -365,22 +352,6 @@ void worldmap::SafeSmooth(ushort x, ushort y)
 
 void worldmap::GenerateClimate()
 {
-
-  /*  for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      {
-	ushort LeftAltitude;
-	if(x > 0)
-	  LeftAltitude = AltitudeBuffer[x][y];
-	else 
-	  LeftAltitude = -32000;
-	if(LeftAltitude < AltitudeBuffer[x][y])
-	  // RAINY
-	  ;
-	else
-	    // NOT RAINY
-
-	    }*/
   for(ushort y = 0; y < YSize; ++y)
     {
       game::BusyAnimation();

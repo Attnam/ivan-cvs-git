@@ -23,6 +23,9 @@ level::~level()
 {
   for(ushort c = 0; c < Room.size(); ++c)
     delete Room[c];
+
+  delete [] NodeMap;
+  delete [] WalkabilityMap;
 }
 
 void level::ExpandPossibleRoute(ushort OrigoX, ushort OrigoY, ushort TargetX, ushort TargetY, bool XMode)
@@ -237,12 +240,14 @@ void level::Generate(ushort Index)
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
   Alloc2D(NodeMap, XSize, YSize);
   Alloc2D(WalkabilityMap, XSize, YSize);
-
   Map = reinterpret_cast<lsquare***>(area::Map);
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
-      NodeMap[x][y] = new node(x, y, Map[x][y]);
+      {
+	Map[x][y] = new lsquare(this, vector2d(x, y));
+	NodeMap[x][y] = new node(x, y, Map[x][y]);
+      }
 
   ushort Type = LevelScript->GetType() ? *LevelScript->GetType() : 0;
 
@@ -675,6 +680,7 @@ void level::GenerateNewMonsters(ushort HowMany, bool ConsiderPlayer)
 vector2d level::GetRandomSquare(const character* Char, uchar Flags, const rect* Borders) const
 {
   lsquare* LSquare;
+
   for(ushort c = 0;; ++c)
     {
       if(c == 100)
@@ -860,7 +866,7 @@ ushort level::TriggerExplosions(ushort MinIndex)
 
   for(c = MinIndex; c < LastExplosion; ++c)
     {
-      ushort EmitChange = Min(100 + ExplosionQueue[c]->Strength, 255);
+      ushort EmitChange = Min(50 + ExplosionQueue[c]->Strength, 255);
       GetLSquare(ExplosionQueue[c]->Pos)->SetTemporaryEmitation(MakeRGB24(EmitChange, EmitChange, EmitChange));
 
       if(!GetSquare(ExplosionQueue[c]->Pos)->CanBeSeenByPlayer())
@@ -1588,10 +1594,7 @@ void level::GenerateDungeon(ushort Index)
       game::BusyAnimation();
 
       for(ushort y = 0; y < YSize; ++y, ++Counter)
-	{
-	  Map[x][y] = new lsquare(this, vector2d(x, y));
-	  Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
-	}
+	Map[x][y]->SetLTerrain(GTerrain->Instantiate(), OTerrain->Instantiate());
     }
 
   ushort c;
@@ -1832,7 +1835,7 @@ void level::GenerateEvergreenForest()
     for(ushort y = 0; y < YSize; ++y)
       {
 	Map[x][y] = new lsquare(this, vector2d(x, y));
-	olterrain* OLTerrain;
+	olterrain* OLTerrain = 0;
 
 	switch(RAND_4)
 	  {
@@ -1844,15 +1847,12 @@ void level::GenerateEvergreenForest()
 	    OLTerrain = new decoration(FIR);
 	    break;
 	  case 2:
-	    OLTerrain = 0;
 	    if(!RAND_4)
 	      OLTerrain = new boulder(1 + RAND_2);
 
 	    if(!RAND_4)
 	      OLTerrain = new boulder(3);
 	    break;
-	  default:
-	    OLTerrain = 0;
 	  }
 
 	Map[x][y]->SetLTerrain(new solidterrain(GRASS_TERRAIN), OLTerrain);

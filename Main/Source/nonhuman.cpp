@@ -56,40 +56,41 @@ bool elpuri::Hit(character* Enemy, vector2d, uchar, bool ForceHit)
   ushort EnemiesHit = 0;
 
   for(ushort d = 0; d < GetExtendedNeighbourSquares(); ++d)
-    {
-      lsquare* Square = GetNeighbourLSquare(d);
+    if(IsEnabled())
+      {
+	lsquare* Square = GetNeighbourLSquare(d);
 
-      if(Square)
-	{
-	  character* ByStander = Square->GetCharacter();
+	if(Square)
+	  {
+	    character* ByStander = Square->GetCharacter();
 
-	  if(ByStander && (ByStander == Enemy || GetRelation(ByStander) == HOSTILE))
-	    {
-	      bool Abort = false;
+	    if(ByStander && (ByStander == Enemy || GetRelation(ByStander) == HOSTILE))
+	      {
+		bool Abort = false;
 
-	      for(ushort c = 0; c < EnemiesHit; ++c)
-		if(EnemyHit[c] == ByStander)
-		  Abort = true;
+		for(ushort c = 0; c < EnemiesHit; ++c)
+		  if(EnemyHit[c] == ByStander)
+		    Abort = true;
 
-	      if(!Abort)
-		{
-		  nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, ForceHit);
-		  ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
-		  EnemyHit[EnemiesHit++] = ByStander;
-		}
-	    }
+		if(!Abort)
+		  {
+		    nonhumanoid::Hit(ByStander, Square->GetPos(), YOURSELF, ForceHit);
+		    ByStander->DamageAllItems(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
+		    EnemyHit[EnemiesHit++] = ByStander;
+		  }
+	      }
 
-	  Square->GetStack()->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
+	    Square->GetStack()->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
 
-	  for(ushort c = 0; c < 4; ++c)
-	    {
-	      square* STUSS = Square->GetSideStack(c)->GetSquareTrulyUnder();
+	    for(ushort c = 0; c < 4; ++c)
+	      {
+		square* STUSS = Square->GetSideStack(c)->GetSquareTrulyUnder();
 
-	      if(STUSS && IsOver(STUSS->GetPos()))
-		Square->GetSideStack(c)->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
-	    }
-	}
-    }
+		if(STUSS && IsEnabled() && IsOver(STUSS->GetPos()))
+		  Square->GetSideStack(c)->ReceiveDamage(this, RAND() % 36 + RAND() % 36, PHYSICAL_DAMAGE);
+	      }
+	  }
+      }
 
   EditAP(-500);
   return true;
@@ -1226,7 +1227,7 @@ bool elpuri::CompleteRiseFromTheDead()
       ADD_MESSAGE("%s dies.", CHAR_NAME(DEFINITE));
     }
 
-  character::CreateCorpse(GetLSquareUnder());
+  largecreature::CreateCorpse(GetLSquareUnder());
   Remove();
   return false;
 }

@@ -52,6 +52,8 @@ class felist
   void AddFlags(ushort What) { Flags |= What; }
   void RemoveFlags(ushort What) { Flags &= ~What; }
   void SetMaskColor(ushort What) { MaskColor = What; }
+  void SetUpKey(ushort What) { UpKey = What; }
+  void SetDownKey(ushort What) { DownKey = What; }
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry*> Entry;
@@ -65,6 +67,8 @@ class felist
   ushort BackColor;
   ushort Flags;
   ushort MaskColor;
+  ushort UpKey;
+  ushort DownKey;
 };
 
 #endif

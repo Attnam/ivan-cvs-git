@@ -26,26 +26,26 @@ It should be possible to determine line height as a felist draw function argumen
 *Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
-Stone types.
+*Stone types.
 Script should be crypted or precompiled.
 Golems should be able to eat things made of their material to increase size and stats.
 Prepare bug-report function that would make bug-reporting easier.
 Bill's wills should bloat with rising temperature according to Gay-Lussac's law.
 A program which would translate a pcx file into a script content map.
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
-*Script should have an initial blood level of square option.
+Script should have an initial blood level of square option.
 Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
-*Cube-like screenshot system.
+Cube-like screenshot system.
 Atavus should do something special on Christmas.
 Gurus.
 Meditation command.
 Opening a banana should remove its peals.
 Fire should do extra damage to parchment golems.
-As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpuri carries the Earth, what orbit is he talking about?)
+As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpurus carries the Earth, what orbit is he talking about?)
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
-*Ivan should break doors.
+//Ivan should break doors.
 Drugs.
 Karateka.
 Chance-value correlation to change material scrolls.
@@ -73,7 +73,7 @@ Guilds. (from Tapani Tiilikainen)
 Option to change the size of font. (from sturmkoenig2k)
 Elemental damage. (from JM)
 *Zombies should lose weight when they drop lumps of flesh.
-Sophos should appreciate sacrificed scrolls and books more than other gods.
+//Sophos should appreciate sacrificed scrolls and books more than other gods.
 Some death messages should be displayed even if the monster is not on LOS. This would make L6 more interesting, as Ivan's actions would produce constant "you hear a goblin screaming" messages.
 Fix wear-time AV inconsistency. (very difficult)
 Dark frogs (except Elpuri) should be purified and turned into tame light frogs when holy water is thrown at them.
@@ -92,7 +92,7 @@ Socketed items. (from JM)
 Gambling. (from JM)
 Inns. (from JM)
 Thief monsters. (from JM)
-*There should be more ways to gain pets for non-lawfuls.
+//There should be more ways to gain pets for non-lawfuls.
 If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack full of gunpowder anymore.
 One should be able to buy better bodyparts somewhere in the game.
 One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
@@ -129,7 +129,7 @@ Scroll of light. (from JM)
 Scroll of life, permanent hp plus. (from JM)
 Book of fire/frost magic which would have random spells. (from JM)
 Additional heads for flails. (from JM)
-Fireproof container for scrolls and wands. (from JM)
+//Fireproof container for scrolls and wands. (from JM)
 Desperado attacks like in FFs. (from JM)
 Secret doors that can be opened by whistling. (from JM)
 Heads on walls that can be talked to. (from JM)
@@ -139,11 +139,11 @@ Very hard-walled treasure vaults with locked doors in dungeons. (from JM)
 Money to humanoid monsters. (from JM)
 Stores specialized on potions or scrolls. (from JM)
 In Nethack one can leash pets. In Ivan it should be possible that powerful pets leash the player.
-Spiders should make webs.
+*Spiders should make webs.
 Scroll of gold detection that would identify every unit made of gold on the level.
 Bananas should act as boomerangs when thrown.
 Zombies should spoil.
-Kicking bodyparts and corpses on the ground should spill blood.
+*Kicking bodyparts and corpses on the ground should spill blood.
 One must be able to use a stethoscope on doors.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
@@ -159,8 +159,8 @@ Fly function for character.
 Item category "rubbish" which would contain bananapeals and roubles.
 Material-colored cursor.
 Wand levels.
-Talking to oneself should abuse intelligence.
-If you are illiterate you shouldn't be able to read engraved messages.
+//Talking to oneself should abuse intelligence.
+//If you are illiterate you shouldn't be able to read engraved messages.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
 Explosions could be m-colored: this way magical explosions could look different.
@@ -176,7 +176,8 @@ In my (Timo's) opinion, we should add some powerful undead monsters and maybe a 
 Wand of resurrection should behave correctly when zapped at undead.
 Werewolves (wolf form) should maybe be nonhumanoids.
 One should be also able to wish for terrains, like an altar of Valpurus.
-It should be possible to specify the material while wishing for items and while polymorphing into a golem.
+It should be possible to specify the material when wishing for items.
+//It should be possible to specify the material when polymorphing into a golem.
 Allow animate and allow alpha blend options to configuration.
 Draw during automated action as an option.
 We could show a scroll bar during reading, digging etc. that would show the remaining time needed for the action's completion.
@@ -190,7 +191,7 @@ Page up should work correctly in felists.
 If a melee hit is blocked with a weapon, the attacking arm should take damage.
 Mistresses should not exchange their whips for any other weapons.
 *Some monsters should be generated in groups.
-Monsters with multiple configs should advance in levels.
+*Monsters with multiple configs should advance in levels.
 Wings should be bodyparts.
 It shouldn't be possible to mutate nor resurrect non-living bodyparts.
 A special message should be printed when zapping a WoR at a bone or a skull.
@@ -205,7 +206,7 @@ Mommos should do acid damage.
 It should be possible to dig the ground to create a hole through which you could fall to the next level.
 Potion of death/döden. (from Atte Aholainen)
 Physical damage should be divided to slashing, blunt, piercing etc. damage. (from Atte Aholainen)
-Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
+//Player with low dexterity should sometimes be caught up applying his own bear trap (or disarming a mine).
 Metal detector.
 More info about players' old games in highscore list (maybe a sub menu).
 Stressed state should slowly decrease player's size.
@@ -219,9 +220,9 @@ Healing liquid should cure poison.
 Dobbelganger.
 Lick command.
 Bulimia state.
-It should be possible to slip on a bloody floor.
+*It should be possible to slip on a bloody floor.
 Fluids could spill also over character pictures.
-Spruces should block light.
+//Spruces should block light.
 Reading holy books should aggravate certain monsters.
 Time bomb.
 Prohibit vomiting over the Avatar.
@@ -237,25 +238,25 @@ Picking up VERY heavy items should be prohibited.
 If an invisible monster hits the player, a Nethack-style question mark should be displayed in its square.
 New artifact: Banana Bunch of Plenty, which can be applied every day to get free bananas.
 In Attnam there should be thought guards that use amulets of ESP to spy on citizens and have rings of teleportation and teleport control which they use to enter to suspicious people's houses.
-When picking up many items with the New Great System the overall weight of the items should be displayed.   
+When picking up many items the overall weight of the items should be displayed.   
 The smith of Attnam should have a golden statue of a woman in his closet. (A Kalevala reference)
 Wishing for a plate mail shouldn't yield a leather armor.
 Money unit and its plural and symbol should be possible to define from config.
 *Scroll of harden material.
 Broken bananas should spoil faster than intact ones.
-Wand of resurrection shouldn't work on golem corpses.
+//Wand of resurrection shouldn't work on golem corpses.
 Coconuts falling from palms.
 Changing keyboard layout (some people don't seem to like numpad).
 Reflecting items (mirror and shield of reflection).
 Mellis could act as a small shop when prayed to.
-Msg from hit should depend more on weapon and there should be more variation. ("the monsters STABS you with its wooden spear").
+Msg from hit should depend more on weapon and there should be more variation. ("the monster STABS you with its wooden spear").
 Some monster types should taunt the player.
-Breaking different wands should cause different effects.
+//Breaking different wands should cause different effects.
 Scroll of level teleport.
 Once implemented, the game saga should show how many times the player has polymorphed.
 Getting knowledge of all gods should be rewarded somehow.
 If a fireball beam doesn't hit anything, it should still explode at the end of its range.
-*It should be possible to give the smith a better hammer so he could fix mithril items, too.
+(r) It should be possible to give the smith a better hammer so he could fix mithril items, too.
 SWeaponskills for gauntlets and boots.
 Deaf state in which the player can't hear explosions, can't converse and in the future can't hear footsteps etc.
 Explosions should sometimes trigger the deaf state.
@@ -296,7 +297,7 @@ Town hit by "zombie-plague"
 Panicking should be more probable when friends around the character have panicked.
 If the player has enough wisdom, the game should warn about obviously damaging food.
 *Invisible creatures carrying a light source should be revealed.
-/Wielded wands should sometimes break in fights.
+//Wielded wands should sometimes break in fights.
 *IVAN's linux version should be distributed in rpm form, too.
 There should be an "unusable" state for bodyparts about to be severed.
 There should be more ways to put back or summon missing bodyparts of pets.
@@ -310,17 +311,16 @@ Cows that eat plant fiber.
 Cigarettes.
 You should be able to kick an eating dog to teach it not to eat that thing again.
 Guillotine.
-Eating only unspoiled food should require a bit of wisdom.
-Iron and other "good" materials should become more probable for items.
+*Eating only unspoiled food should require a bit of wisdom.
+Iron and other "good" materials should become more probable for items. (WHY?)
 Monsters with ESP should be seen from a longer distance with ESP.
 Pets should also be seen from a longer distance with ESP.
 Rings of teleportation on the ground should occasionally teleport around the level.
 Characters wearing bright colored cloaks should be more visible in the dark.
-Fire immunity for imps.
+//Fire immunity for imps.
 One should occasionally pray to a wrong god when confused.
 When showing inventory at the endgame, equipment should also be displayed.
 If the player has a floating eye in his team and has ESP, the eye's field of vision should be added to player's LOS.
-Options for sorting massacre history
 Potion of receive random stat (better name needed).
 Options for sorting massacre history.
 Magical compass that shows the way to Attnam or other major city.
@@ -335,7 +335,7 @@ Harp of charm which tames monsters. (from JM)
 Pipes.
 Magical herbs.
 More shapes for rooms.
-*Slight variation to weapon properties.
+Slight variation to weapon properties.
 Slipping on ice. (from JM)
 Bridges. (from JM)
 Outposts. (from JM)
@@ -368,15 +368,15 @@ Number of turns in high score list.
 Ghost should be able to change level anywhere.
 Nymph hair should burn.
 If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
-Mistresses should sometimes kick male players in the groin.
+*Mistresses should sometimes kick male players in the groin.
 *Banana peels should become bananas if zapped with a wand of resurrection.
 Wand of digging.
 Skeletons should throw bones at dogs.
 Uses for engraving. (random magic word?)
 One should get some score for pets.
-Message for bottles breaking inside chests.
+//Message for bottles breaking inside chests.
 Bear traps made of stronger materials should do more damage.
-If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
+*If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
 Unarmed accustomization.
 (example) Hex is dead. Player starts game with the name Hex. He should be called Hex II (should be togglable).
 *The game should ask player whether to unlock a door with a key or not.
@@ -389,18 +389,18 @@ Being confused should decrease chance to hit.
 Rabbits should be brown in summer and white in winter, as in real life.
 Houses floating in water.
 Fountain of youth.
-Sometimes when taking (really bad) damage the player might receive permanent wounds (or in other words loose a couple of points from the MaxHP of the bodypart taking damage.)
+*Sometimes when taking (really bad) damage the player might receive permanent wounds (or in other words loose a couple of points from the MaxHP of the bodypart taking damage.)
 If one monster can see an invisible player, then it should reveal his location his comrades, too.
 Cave paintings.
 List of dead friends.
-New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
+*New fountain effect: the fountain could suck the player inside and he would come out from another one in some other level.
 New fountain effect: random level teleport.
 Carnivorous plants should be carnivorous, not anorectic.
-There should be an option to display weapon skills at the end of the game.
+*There should be an option to display weapon skills at the end of the game.
 Loricatus shouldn't change whips to steel.
 Ikiros should forge weapons from raw materials provided by the player.
 Kiss command.
-Cloak of fire resistance should protect items in the inventory from fire.
+*Cloak of fire resistance should protect items in the inventory from fire.
 Eyeglasses.
 [IGOR] Reload option.
 [IGOR] Copy picture.
@@ -410,7 +410,7 @@ Jussi The tenant farmer wielding a hoe on some swamp.
 Snow pines should change to regular pines when kicked a few times.
 //Library improvement - When walking towards the book cases should show the inventory (like with doors)
 Wand of change material (change everything in wand path to material of the wand).
-Go should stop if the player teleports.
+*Go should stop if the player teleports.
 Ability to absorb specific elemental damage.
 Corpse which makes you sober.
 Ivan should buy vodka from player.
@@ -420,3 +420,6 @@ Better mines.
 wand/scroll of fire barrier (from shvagier (?))
 Petrification state.
 There should be a special effect for selling empty potions.
+Polymorph beam should change engraved messages to random gibberish.
+Breaking a staff of wondrous smells should result in a lot of erupting gas.
+Leather should have several possible colors. For instance mistress should wear black leather.

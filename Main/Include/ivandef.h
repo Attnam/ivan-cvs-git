@@ -514,7 +514,7 @@
 #define WALK 1
 #define SWIM 2
 #define FLY  4
-#define WALK_THROUGH_WALLS 8
+#define ETHEREAL 8
 #define ANY_MOVE 15
 
 #define KEY_UP_INDEX 1

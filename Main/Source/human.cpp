@@ -2624,12 +2624,6 @@ void smith::BeTalkedTo()
 	  if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
 	    continue;
 
-	  if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= BodyPart->GetMainMaterial()->GetStrengthValue())
-	    {
-	      ADD_MESSAGE("Your %s seems to be damaged, but, alas, I cannot fix it with my puny %s.", BodyPart->GetBodyPartName().CStr(), GetMainWielded()->CHAR_NAME(UNARTICLED));
-	      continue;
-	    }
-
 	  ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
 	  
 	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
@@ -2650,12 +2644,6 @@ void smith::BeTalkedTo()
       if(!Item->GetMainMaterial()->IsMetal())
 	{
 	  ADD_MESSAGE("\"I only fix items made of metal.\"");
-	  return;
-	}
-
-      if(GetMainWielded()->GetMainMaterial()->GetStrengthValue() <= Item->GetMainMaterial()->GetStrengthValue())
-	{
-	  ADD_MESSAGE("\"I would gladly fix that, but unfortunately my %s isn't strong enough.\"", GetMainWielded()->CHAR_NAME(UNARTICLED));
 	  return;
 	}
 

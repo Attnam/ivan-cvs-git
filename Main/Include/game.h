@@ -236,6 +236,7 @@ class game
   static void RemoveCharacterID(ulong);
   static void AddItemID(item*, ulong);
   static void RemoveItemID(ulong);
+  static void UpdateItemID(item*, ulong);
   static uchar GetStoryState() { return StoryState; }
   static void SetStoryState(uchar What) { StoryState = What; }
   static void SetIsInGetCommand(bool What) { InGetCommand = What; }
@@ -293,8 +294,8 @@ class game
   static god** God;
   static ushort CurrentLevelIndex;
   static ushort CurrentDungeonIndex;
-  static const int MoveCommandKeyWithNumberPad[];
-  static const int MoveCommandKeyWithoutNumberPad[];
+  static const int MoveNormalCommandKey[];
+  static const int MoveAbnormalCommandKey[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
   static const vector2d BasicMoveVector[];

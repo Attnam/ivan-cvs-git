@@ -1553,8 +1553,7 @@ void potion::Break(character* Breaker)
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
-  Remains->SetID(ID);
-  ID = 0;
+  DonateIDTo(Remains);
   DonateSlotTo(Remains);
   SendToHell();
 
@@ -1897,8 +1896,7 @@ item* brokenbottle::Fix()
 {
   potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
-  Potion->SetID(ID);
-  ID = 0;
+  DonateIDTo(Potion);
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
   SendToHell();
@@ -2346,7 +2344,7 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ush
 
 bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if(TimesUsed != 6 && Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
+  if(TimesUsed != 6 && Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
       festring DeathMsg = CONST_S("killed by an explosion of ");
       AddName(DeathMsg, INDEFINITE);

@@ -91,6 +91,7 @@ class ROOM
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;
   virtual bool AllowFoodSearch() const { return false; }
+  virtual void HostileAction(character*) const;
 );
 
 #endif

@@ -37,7 +37,7 @@ glterrain
 
 solidterrain /* glterrain-> */
 {
-	Walkability = WALK|FLY|WALK_THROUGH_WALLS;
+	Walkability = WALK|FLY|ETHEREAL;
 
 	IsAbstract = true;
 
@@ -121,7 +121,7 @@ liquidterrain /* glterrain-> */
 	BitmapPos = 16, 0;
 	IsAbstract = true;
 	ShowMaterial = false;
-	Walkability = SWIM|FLY|WALK_THROUGH_WALLS;
+	Walkability = SWIM|FLY|ETHEREAL;
 
 	Config POOL;
 	{

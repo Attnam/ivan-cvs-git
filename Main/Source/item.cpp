@@ -63,6 +63,10 @@ bool item::IsDrinkable(const character* Eater) const
 void item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
   MoveTo(GetLSquareUnder()->GetStack());
+
+  if(GetSquaresUnder() != 1)
+    return;
+
   ushort Range = Force * 25UL / Max<ulong>(ulong(sqrt(GetWeight())), 1);
 
   if(!Range)
@@ -240,11 +244,14 @@ void item::Load(inputfile& SaveFile)
 
 void item::TeleportRandomly()
 {
-  lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
-  MoveTo(Square->GetStack());
+  if(GetSquaresUnder() != 1) // gum solution
+    {
+      lsquare* Square = GetNearLSquare(GetLevel()->GetRandomSquare());
+      MoveTo(Square->GetStack());
 
-  if(Square->CanBeSeenByPlayer())
-    ADD_MESSAGE("Suddenly %s appears!", CHAR_NAME(INDEFINITE));
+      if(Square->CanBeSeenByPlayer())
+	ADD_MESSAGE("Suddenly %s appears!", CHAR_NAME(INDEFINITE));
+    }
 }
 
 ushort item::GetStrengthValue() const
@@ -490,6 +497,7 @@ item* item::Duplicate()
 
   item* Clone = RawDuplicate();
   CloneMotherID.push_back(ID);
+  game::RemoveItemID(ID);
   ID = game::CreateNewItemID(this);
   Clone->UpdatePictures();
   return Clone;
@@ -621,8 +629,7 @@ void item::Break(character* Breaker)
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
-  Broken->SetID(ID);
-  ID = 0;
+  DonateIDTo(Broken);
   DonateSlotTo(Broken);
   SendToHell();
 
@@ -682,8 +689,7 @@ item* item::Fix()
       Fixed = RawDuplicate();
       Fixed->SetConfig(GetConfig() ^ BROKEN);
       Fixed->SetSize(Fixed->GetSize() << 1);
-      Fixed->SetID(ID);
-      ID = 0;
+      DonateIDTo(Fixed);
       DonateSlotTo(Fixed);
       SendToHell();
     }
@@ -968,4 +974,12 @@ void item::LargeDraw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
     Picture[!AllowAnimate ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
     Picture[!AllowAnimate ? 0 : SquareIndex * TrueAnimationFrames + (globalwindowhandler::GetTick() % TrueAnimationFrames)]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void item::DonateIDTo(item* Item)
+{
+  game::RemoveItemID(Item->ID);
+  game::UpdateItemID(Item, ID);
+  Item->ID = ID;
+  ID = 0;
 }

@@ -954,7 +954,7 @@ billswill
 	AttackStyle = USE_HEAD;
 	BiteCapturesBodyPart = false;
 	ClassStates = HASTE|ESP|GAS_IMMUNITY;
-	MoveType = FLY|WALK_THROUGH_WALLS;
+	MoveType = FLY|ETHEREAL;
 }
 
 skeleton
@@ -1972,6 +1972,7 @@ imp
 	UsesNutrition = false;
 	AttachedGod = MORTIFER;
 	ClassStates = GAS_IMMUNITY;
+	FireResistance = 1000;
 }
 
 bat
@@ -2308,7 +2309,8 @@ kobold
 gibberling
 {
 	DefaultArmStrength = 7;
-	DefaultLegStrength = 7;	DefaultDexterity = 5;
+	DefaultLegStrength = 7;
+	DefaultDexterity = 5;
 	DefaultAgility = 15;
 	DefaultEndurance = 10;
 	DefaultPerception = 15;
@@ -2338,6 +2340,8 @@ gibberling
 	BaseUnarmedStrength = 300;
 	FleshMaterial = GIBBERLING_FLESH;
 	AttachedGod = SILVA;
+	HostileReplies == "@Dd gibbers diabolically.";
+	FriendlyReplies == "@Dd gibbers joyfully.";
 }
 
 largecat
@@ -3093,6 +3097,7 @@ smith
 	TotalSize = 190;
 	NameSingular = "smith";
 	Helmet = STEEL helmet { Enchantment = 1; }
+	Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
 	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
 	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
@@ -3600,7 +3605,7 @@ ghost
 	BaseBiteStrength = 1000;
 	AttackStyle = USE_HEAD;
 	BiteCapturesBodyPart = false;
-	MoveType = FLY|WALK_THROUGH_WALLS;
+	MoveType = FLY|ETHEREAL;
 }
 
 twoheadedmoose
@@ -3777,7 +3782,7 @@ elpuri
 	CanBeConfused = false;
 	AttackStyle = USE_HEAD;
 	KnownCWeaponSkills == BITE;
-	MoveType = WALK|SWIM|WALK_THROUGH_WALLS; 
+	MoveType = WALK|SWIM|ETHEREAL; 
 	DestroysWalls = true;
 }
 
@@ -3942,7 +3947,7 @@ vladimir
 	FleshMaterial = MUTANT_BUNNY_FLESH;
 	AttachedGod = SCABIES;
 	TotalSize = 400;
-	MoveType = WALK|FLY|WALK_THROUGH_WALLS; 
+	MoveType = WALK|ETHEREAL; 
 	DestroysWalls = true;
 	DefaultName = "Vladimir";
 	Alias == "Vladimir";

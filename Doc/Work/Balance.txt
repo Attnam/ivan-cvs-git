@@ -7,4 +7,6 @@
 Turox's price is too high.
 Dagger is "somewhat difficult to use" if one has 9 strength.
 Horn of bravery is useless.
-Wand of cloning is too frequent.
+//Wand of cloning is too frequent.
+Golems yield too much score.
+Phoenix feather shields may be too good.

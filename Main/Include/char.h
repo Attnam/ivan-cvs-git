@@ -794,7 +794,7 @@ class character : public entity, public id
   void SignalStepFrom(lsquare**);
   virtual void SpecialBodyDefenceEffect(character*, bodypart*, uchar) { }
   virtual ulong GetSumOfAttributes() const;
-  bool IsGoingSomeWhere() const { return GoingTo.X != -1; }
+  bool IsGoingSomeWhere() const { return GoingTo != ERROR_VECTOR; }
   virtual bool CreateRoute();
   void TerminateGoingTo();
   virtual bool IsSpy() const { return false; }

@@ -826,7 +826,7 @@ void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
       if(!Char->GetTeam())
 	Char->SetTeam(game::GetTeam(*GetLevel()->GetLevelScript()->GetTeamDefault()));
 
-      Char->PutTo(Pos);
+      Char->PutToOrNear(Pos);
       Char->CreateHomeData();
 
       if(Room)
@@ -1459,7 +1459,12 @@ bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, uchar Direc
 
 bool lsquare::DoorCreation(character* Creator, const festring&, uchar)
 {
-  if((!GetOLTerrain() || GetOLTerrain()->IsSafeToCreateDoor()) && !GetCharacter())
+  if((!GetOLTerrain()
+  ||  GetOLTerrain()->IsSafeToCreateDoor())
+  && !GetCharacter()
+  && (GetLevel()->IsOnGround()
+  || (Pos.X > 0 && Pos.Y > 0
+  &&  Pos.X < GetLevel()->GetXSize() - 1 && Pos.Y < GetLevel()->GetYSize() - 1)))
     {
       if(Creator && GetRoom())
 	GetRoom()->HostileAction(Creator);

@@ -7,10 +7,43 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+August 4 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
+	* The alternative key settings now work in felists, for instance inventory
+	* Imps are now immune to fire
+	* Gibberlings now gibber instead of grunting
+	* Ikiros can now fix any metal item even if it's harder than mithril; the
+	  former restriction was really unrealistic
+	* NEWS and AUTHORS updated
+	* Corrected a bug that could crash the game when placing multitiled characters
+	  in the script
+	* Attempting to kick or teleport multitiled corpses out of the level no longer
+	  crashes
+	* character::MoveRandomlyInRoom() no longer crashes near the level borders
+	* Corrected a fatal bug in all retreating AIs which occasionally caused a
+	  crash near level edges and a very rare bug that could cause them not to be
+	  able to escape near the right side of a level
+	* The same AIs are now somewhat more intelligent near unwalkable terrain
+	* Resurrecting the headless corpse of Elpuri no longer crashes
+	* Planting mines, creating doors etc. on the ostrich landing site is now
+	  prohibited
+	* Exiled the Bloodthirsty Killer Bug of the Shattered IvanDev Emblem
+	* Vladimir no longer flies
+	* Fixed a rare bug that could cause Elpuri's area attack to crash if
+	  he triggered item explosions which killed him and polymorphed his corpse
+	  before the attack was completed
+	* Wand of door creation can no longer be used to reach level borders in
+	  dungeons
+	* Defeated the Mysterious Chaos Bug of Game-Eating Ghost Items
+	* Squashed a fatal bug in the NodeMap initialization code that could cause
+	  multitiled monsters' pathfinding to crash
+	* Plugged a minor memory leak in the level destruction code
+
 August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
 	* Removed the obsolete character and item outline codes
 	* Corrected some gcc warnings
+	* Walls in GC are now made of stone, for variety
 
 August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
@@ -22,6 +55,7 @@ August 3 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 	* Sherarax and Ischaldirh are again several times more insane
 	* Plants etc. again can't follow or be displaced
 	* Corrected a minor outlook bug in the explosion code
+	* Kamikaze dwarves and mines are now more powerful
 
 August 2 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 

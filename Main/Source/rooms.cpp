@@ -643,3 +643,9 @@ void library::HostileAction(character* Guilty) const
       Guilty->Hostility(GetMaster());
     }
 }
+
+void landingsite::HostileAction(character* Guilty) const
+{
+  if(Guilty)
+    Guilty->GetTeam()->Hostility(game::GetTeam(NEW_ATTNAM_TEAM));
+}
