@@ -844,22 +844,25 @@ bool key::Apply(character* User)
 	  ADD_MESSAGE("This monster type cannot use keys.");
 	  return false;
 	}
-      uchar Dir = game::DirectionQuestion(CONST_S("What door do you wish to lock or unlock? [press a direction key]"), false, true);
+      int Key;
+      bool OpenableItems = User->GetStack()->SortedItems(User, &item::HasLockSorter);
 
-      if(Dir == DIR_ERROR)
-	return false;
-
-      vector2d ApplyPos = User->GetPos() + game::GetMoveVector(Dir);
-
-      if(GetArea()->IsValidPos(ApplyPos))
-	{
-	  GetNearLSquare(ApplyPos)->TryKey(this, User);
-	  User->DexterityAction(5);
-	}
+      if(OpenableItems)
+	Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? [press a direction key, space or i]"));
       else
-	return false;
-    }
+	Key = game::AskForKeyPress(CONST_S("What do you wish to lock or unlock? [press a direction key or space]"));
 
+      if(Key == 'i' && OpenableItems)
+	{
+	  item* Item = User->GetStack()->DrawContents(User, CONST_S("What do you want to lock or unlock?"), 0, &item::OpenableSorter);
+	  return Item && Item->TryKey(this, User);
+	}
+
+      vector2d DirVect = game::GetDirectionVectorForKey(Key);
+
+      if(DirVect != ERROR_VECTOR && User->GetArea()->IsValidPos(User->GetPos() + DirVect))
+	return GetLevel()->GetLSquare(User->GetPos() + DirVect)->TryKey(this, User);
+    }
   return true;
 }
 
