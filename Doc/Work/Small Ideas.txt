@@ -402,6 +402,8 @@ Being confused should decrease chance to hit.
 Rabbits should be brown in summer and white in winter, as in real life.
 Houses floating in water.
 Fountain of youth.
+Sometimes when taking (really bad) damage the player might receive permanent wounds (or in other words loose a couple of points from the MaxHP of the bodypart taking damage.)
 If one monster can see an invisible player, then it should reveal his location his comrades, too.
 *HEALING SHOULD STOP IF A MAGE ATTACKS!!!
 Cave paintings.
+
