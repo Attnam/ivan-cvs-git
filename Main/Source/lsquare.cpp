@@ -193,7 +193,8 @@ void levelsquare::NoxifyEmitter(vector2d Dir)
 
 	ushort Index = Emitter.Search(DirEmitter);
 
-	Emitter.Access(Index) = DirEmitter;
+	if(Index != 0xFFFF)
+		Emitter.Access(Index) = DirEmitter;
 }
 
 uchar levelsquare::CalculateBitMask(vector2d Dir) const

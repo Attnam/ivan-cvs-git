@@ -197,6 +197,8 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 
 				continue;
 			}
+
+			ABORT("Odd script term %s encountered in square script!", Word.c_str());
 		}
 	}
 	else
@@ -263,6 +265,8 @@ template <class type> void contentmap<type>::ReadFrom(inputfile& SaveFile)
 
 			continue;
 		}
+
+		ABORT("Odd script term %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
 	}
 
 	if(!ContentScriptMap)
@@ -473,6 +477,8 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 			continue;
 		}
+
+		ABORT("Odd script term %s encountered in room script!", Word.c_str());
 	}
 }
 
@@ -662,6 +668,8 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 			continue;
 		}
+
+		ABORT("Odd script term %s encountered in level script!", Word.c_str());
 	}
 }
 
@@ -719,6 +727,8 @@ void dungeonscript::ReadFrom(inputfile& SaveFile)
 
 			continue;
 		}
+
+		ABORT("Odd script term %s encountered in dungeon script!", Word.c_str());
 	}
 }
 
@@ -763,5 +773,7 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 
 			continue;
 		}
+
+		ABORT("Odd script term %s encountered in game script!", Word.c_str());
 	}
 }

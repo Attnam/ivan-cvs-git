@@ -808,6 +808,8 @@ void game::RemoveSaves()
 {
 	remove((SaveName() + ".sav").c_str());
 	remove((AutoSaveFileName + ".sav").c_str());
+	remove((SaveName() + ".wm").c_str());
+	remove((AutoSaveFileName + ".wm").c_str());
 
 	for(ushort i = 0; i < Dungeon.size(); ++i)
 		for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)

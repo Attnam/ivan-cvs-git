@@ -227,7 +227,6 @@ Dungeon 1;
 		ReCalculate=false;
 		GenerateUpStairs=false;
 		GenerateDownStairs=false;
-		DivineOwner=0;
 		OnGround=true;
 		
 		RoomDefault
@@ -241,12 +240,7 @@ Dungeon 1;
 			GenerateDoor=true;
 			ReCalculate=true;
 			DivineOwner=0;
-			GenerateTunnel=true;
-		}
-
-		/*Square, Random { Walkable=true; }
-		{
-			Character=farmer;
+			GenerateTunnel=false;
 		}
 
 		Square, Random { Walkable=true; }
@@ -268,10 +262,6 @@ Dungeon 1;
 		{
 			Character=farmer;
 		}
-		Square, Random { Walkable=true; }
-		{
-			Character=farmer;
-		}
 
 		Square, Random { Walkable=true; }
 		{
@@ -282,6 +272,10 @@ Dungeon 1;
 			Character=farmer;
 		}
 
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
@@ -340,58 +334,19 @@ Dungeon 1;
 		Square, Random { Walkable=true; }
 		{
 			Character=farmer;
-		}*/
+		}
+
+		Square, Random { Walkable=true; }
+		{
+			Character=farmer;
+		}
 
 		Square, Pos 31,63;
 		{
 			IsWorldMapEntry=true;
 		}
+
 		Room 0;
-		{
-			Pos=34,48;
-			Size=7,5;
-			AltarPossible=false;
-			WallSquare=floor,wall;
-			FloorSquare=parquet,empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineOwner=9;
-			
-			Square, Pos 5, 0;
-			{
-				OverTerrain = door;
-			}
-			Square, Pos 4, 1;
-			{
-				Character = shopkeeper;
-			}
-			ItemMap
-			{
-				Pos=1,1;
-				Size=5,3;
-
-				Types
-				{
-					t = scrollofteleport;
-					s = spear;
-					p = pickaxe;
-					l = lamp;
-					c = scrollofchangematerial;
-					b = banana;
-					l = dogflesh lump;
-					L = pork loaf;					
-				}
-			}
-			{
-			    tsplc
-			    blLcl
-			    tbbbL		
-			}
-		}
-
-
-
-		Room 1;
 		{
 			Pos=15,15;
 			Size=27,25;
@@ -401,20 +356,22 @@ Dungeon 1;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=1;
-			
+
 			Square, Pos 12, 24;
 			{
 				OverTerrain = empty;
 			}
+
 			Square, Pos 13, 24;
 			{
 				OverTerrain = empty;
 			}
+
 			Square, Pos 14, 24;
 			{
 				OverTerrain = empty;
 			}
-			
+
 			GroundTerrainMap
 			{
 				Pos = 5,3;
@@ -537,7 +494,51 @@ Dungeon 1;
 				.................
 				.................
 			}
+		}
+
+		Room 1;
+		{
+			Pos=34,48;
+			Size=7,5;
+			AltarPossible=false;
+			WallSquare=floor,wall;
+			FloorSquare=parquet,empty;
+			GenerateDoor=false;
+			ReCalculate=false;
+			DivineOwner=9;
 			
+			Square, Pos 5, 0;
+			{
+				OverTerrain = door;
+			}
+
+			Square, Pos 4, 1;
+			{
+				Character = shopkeeper;
+			}
+
+			ItemMap
+			{
+				Pos=1,1;
+				Size=5,3;
+
+				Types
+				{
+					t = scrollofteleport;
+					s = spear;
+					p = pickaxe;
+					l = lamp;
+					c = scrollofchangematerial;
+					b = banana;
+					l = dogflesh lump;
+					L = pork loaf;					
+				}
+			}
+			{
+			    tsplc
+			    blLcl
+			    tbbbL		
+			}
 		}
 	}
 }
