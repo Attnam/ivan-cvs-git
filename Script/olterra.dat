@@ -255,6 +255,20 @@ decoration
 		BitmapPos = 16, 432;
 		HPModifier = 25;
 	}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ADDED DECORATIONS */
+
+	Config SHARD;
+	{
+		OKVisualEffects = MIRROR;
+		CanBeDestroyed = true;
+		DigMessage = "You shatter the crystal into pieces.";
+		NameSingular = "shard";
+		BitmapPos = 16, 416;
+		HPModifier = 5;
+		MainMaterialConfig = { 3, BLUE_CRYSTAL, PURPLE_CRYSTAL, GREEN_CRYSTAL; }
+		MaterialConfigChances = { 3, 100, 100, 100; }
+	}
 }
 
 door /* olterrain-> */
@@ -423,3 +437,5 @@ sign
 	MaterialColorB = rgb16(48, 48, 48);
 	HPModifier = 10;
 }
+
+

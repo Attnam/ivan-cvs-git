@@ -87,6 +87,14 @@ solidterrain /* glterrain-> */
 		NameSingular = "ground";
 		BitmapPos = 16, 16;
 	}
+
+	Config DARK_GRASS_TERRAIN;
+	{
+		OKVisualEffects = MIRROR|FLIP|ROTATE;
+		MainMaterialConfig == DARK_GRASS;
+		NameSingular = "ground";
+		BitmapPos = 16, 16;
+	}
 }
 
 liquidterrain /* glterrain-> */

@@ -1401,7 +1401,7 @@ Dungeon NEW_ATTNAM;
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-	Levels = 3;
+	Levels = 4;
 	Description = "underwater tunnel";
 	ShortDescription = "UT";
 
@@ -1515,6 +1515,7 @@ Dungeon UNDER_WATER_TUNNEL;
 				Items == lantern;
 			}
 		}
+
 	}
 
 	Level 1;
@@ -1596,6 +1597,125 @@ Dungeon UNDER_WATER_TUNNEL;
 				.c.
 			}
 		}
+
+		Room
+		{
+			Pos = 2:XSize-5,2:YSize-5;
+			Size = 11,11;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = true;
+			OTerrainMap {
+				Size = 11,11;
+				Pos = 0,0;
+				Types {
+					% = decoration(CARPET);
+					^ = fountain;
+					# = olterraincontainer(BOOK_CASE);
+				}
+			}
+			{
+				...........
+				.....%.....
+				..#..%..#..				
+				..#..%..#..
+				..#..%..#..
+				....%.%....
+				..#..%..#..
+				..#..%..#..
+				..#..%..#..
+				.....%.....
+				...........
+			}
+			Square, Pos 5,5;
+			{
+				OTerrain = stairs(STAIRS_DOWN) { AttachedArea = 3; AttachedEntry = 200; }
+				EntryIndex = 100;
+				Items == itemcontainer(CHEST) 
+				{
+					ItemsInside = {4,
+						Random { MinPrice = 300; },
+						Random { MinPrice = 100; Chance = 50; },
+						stone { Chance = 75; },
+						mine { Team = MONSTER_TEAM; IsActive = true; Chance = 35; }
+					} 
+				}
+
+			}
+		}
+	}
+
+	Level 3;
+	{
+		Rooms = 17:30;
+		Size = 160, 25;
+		MonsterAmountBase = 15;
+		LevelMessage = "The air feels thick and damp, and there are strange crystals sprouting from the ground, emitting soft glows of many colors.";
+		AmbientLight = rgb24(50, 50, 50);
+		FillSquare = solidterrain(DARK_GRASS_TERRAIN), STONE wall(EARTH);
+		RoomDefault
+		{
+			Size = 8:17,8:17;
+			GenerateLanterns = false;
+			Shape = ROUND_CORNERS;
+			WallSquare = solidterrain(DARK_GRASS_TERRAIN), STONE wall(EARTH);
+			FloorSquare = STONE solidterrain(DARK_GRASS_TERRAIN), 0;
+
+		}
+		Square, Random IN_ROOM;
+		{
+		    OTerrain = stairs(STAIRS_UP) { AttachedArea = VESANA_LEVEL; AttachedEntry = 100; }
+		    EntryIndex = 200;
+		}
+
+		Square, Random;
+		{
+			OTerrain = decoration(SHARD);
+			Times = 15:30;
+		}
+
+		/*Square, Random;
+		{
+			OTerrain = decoration(CRYSTAL_GREEN);
+			Times = 5:10;
+		}
+
+		Square, Random;
+		{
+			OTerrain = decoration(CRYSTAL_PURPLE);
+			Times = 5:10;
+		}*/
+		
+
+		Room
+		{
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+		}
+
+		Room
+		{
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+		}
+
+		Room
+		{
+			Size = 8:15,8:15;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = false;
+			Shape = ROUND_CORNERS;
+		}
+
+		Square, Random NOT_IN_ROOM;
+		{
+			OTerrain = boulder;
+			Times = 10:30;
+		}
+
 	}
 }
 Dungeon MONDEDR;

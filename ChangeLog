@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+May 20 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Added first version of Corey's crystal level
+	* Btw, Hex's code doesn't compile
+
 May 19 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Compiles with gcc 3.3

@@ -24,16 +24,19 @@
 #define DID_NO_DAMAGE 4
 #define HAS_FAILED 5
 
+/* ----------------------------- SATIATION LEVELS */
 #define BLOATED_LEVEL 100000
 #define SATIATED_LEVEL 50000
 #define NOT_HUNGER_LEVEL 10000
 #define HUNGER_LEVEL 2500
 
+/* ----------------------------- WEIGHT LEVELS */
 #define OVER_LOADED 0
 #define STRESSED 1
 #define BURDENED 2
 #define UNBURDENED 3
 
+/* ----------------------------- SATIATION STATUS */
 #define STARVING 0
 #define HUNGRY 1
 #define NOT_HUNGRY 2
@@ -290,6 +293,13 @@
 #define OAK_WOOD (MATERIAL_ID + 47)
 #define TEAK_WOOD (MATERIAL_ID + 48)
 #define EBONY_WOOD (MATERIAL_ID + 49)
+#define OCITRON (MATERIAL_ID + 50)
+/* --------------------------------------- ADDED MATERIALS:*/
+#define BLUE_CRYSTAL (MATERIAL_ID + 51)
+#define PURPLE_CRYSTAL (MATERIAL_ID + 52)
+#define GREEN_CRYSTAL (MATERIAL_ID + 53)
+#define DARK_GRASS (MATERIAL_ID + 54)
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #define ORGANIC_SUBSTANCE_ID (4096 * 2)
 
@@ -458,6 +468,8 @@
 #define BOOT_OF_STRENGTH 1
 #define BOOT_OF_AGILITY 2
 #define BOOT_OF_KICKING 3
+#define BOOT_OF_PORTER 4
+#define BOOT_OF_MASTER_PORTER 5
 
 #define GAUNTLET_OF_STRENGTH 1
 #define GAUNTLET_OF_DEXTERITY 2
@@ -547,6 +559,9 @@
 #define GRASS_TERRAIN 4
 #define LANDING_SITE 5
 #define SNOW_TERRAIN 6
+/* -------------------------------- ADDED TERRAIN TYPES */
+#define DARK_GRASS_TERRAIN 7
+/*   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #define POOL 1
 
@@ -568,6 +583,11 @@
 #define SNOW_PINE 10
 #define SNOW_FIR 11
 #define ANVIL 12
+/* ------------------------------ ADDED DECORATIONS */
+#define SHARD 13
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
 
 #define DOOR_PRISON 1
 

@@ -1722,6 +1722,32 @@ boot /* armor-> */
 		Price = 50;
 		FormModifier = 50;
 	}
+
+	Config BOOT_OF_PORTER;
+	{
+		Possibility = 25;
+		PostFix = "of the Porter";
+		AffectsCarryingCapacity = true;
+		Price = 75;
+		DefaultEnchantment = 1;
+		PriceIsProportionalToEnchantment = true;
+		AttachedGod = MELLIS;
+		MainMaterialConfig == TROLL_HIDE;
+		MaterialConfigChances == 100;
+	}
+
+	Config BOOT_OF_MASTER_PORTER;
+	{
+		Possibility = 10;
+		PostFix = "of the Master Porter";
+		AffectsCarryingCapacity = true;
+		Price = 150;
+		DefaultEnchantment = 8;
+		PriceIsProportionalToEnchantment = true;
+		AttachedGod = MELLIS;
+		MainMaterialConfig == TROLL_HIDE;
+		MaterialConfigChances == 100;
+	}
 }
 
 gauntlet /* armor-> */
