@@ -16,6 +16,8 @@ void graphics::Init(void)
  DoubleBuffer = create_bitmap(800,600);
  ToolGraphics = load_pcx("tools.pcx", Palette);
  Data = load_pcx("item.pcx", Palette);
+ MaterialBuffer = create_bitmap_ex(8, Data->w, Data->h);
+ UpdateMaterial(makecol(255,0,0));
 }
 
 void graphics::DeInit(void)
@@ -88,4 +90,17 @@ void graphics::DrawPixelOnData(vector2d What, unsigned short Color)
  putpixel(Data, What.X, What.Y, Color);
 }
 
+void graphics::UpdateMaterial(unsigned short Color1, unsigned short Color2, unsigned short Color3, unsigned short Color4)
+{
+ unsigned short Color = { Color1, Color2, Color3, Color4 };
+ for(int x = 0; x < Data->w; x++)
+  for(int y = 0; y < Data->h; y++)
+  {
+   if((unsigned short PixelColor = getpixel(Data, x,y)) < 128)
+   {
+    putpixel(MaterialBuffer, x,y, (PixelColor % 32) * Color[PixelColor / 32]);
+   }
 
+
+  }
+}

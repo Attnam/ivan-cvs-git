@@ -199,38 +199,10 @@ void window::MoveTo(vector2d What)
 
 void toolwindow::SetActive(unsigned char What)
 {
-<<<<<<< window.cc
  if(!What)
-=======
- std::string Buffer = TextBoxList[1]->GetText();
- Buffer.resize(8);
-
- for(int x = 0; x < 8; x++)
-  if(Buffer[x] == ' ') Buffer[x] = '_';
- Buffer += ".gol";
- for(int x = 0; x < 10; x++)
->>>>>>> 1.3
  {
-<<<<<<< window.cc
   Active = 0;
   return;
-=======
-  Buffer[7] = char(x + 48);
-  ifstream Temp(Buffer.c_str());
-  if(!Temp.is_open())
-  {
-   Temp.close();
-   break;
-  }
-  else
-  {
-   program::ReadNextWord(&Temp);
-   program::ReadNextWord(&Temp);
-   if(program::ReadNextWord(&Temp) == this->GetTextBoxList()[1]->GetText())
-    break;
-   Temp.close();
-  }
->>>>>>> 1.3
  }
  if(Active)
   WindowObjectList[Active - 1]->DeActivate();
@@ -241,26 +213,9 @@ void editorwindow::DrawPixel(vector2d Where)
 {
  float MultX = float(Pos.Right - Pos.Left - 2) / 16, MultY = float(Pos.Bottom - Pos.Top - 17) / 16;
 
-<<<<<<< window.cc
  vector2d RealClickPos((1/MultX)*(Where.X - Pos.Left - 2) + BitmapPos.Left, (1/MultY)*(Where.Y - Pos.Top - 17) + BitmapPos.Top);
  graphics::DrawPixelOnData(RealClickPos, 2);
  UpdateGraphics();
-=======
-void whattoedit::Draw(void)
-{
- DrawBackground();
- TextBox->Draw();
- OKButton->Draw();
- EditTextBox->Draw();
-}
-
-void window::Close(window* Caller)
-{
-
- //windowhandler::GetWindowList().clear();
- windowhandler::GetWindowList().erase(find(windowhandler::GetWindowList().begin(), windowhandler::GetWindowList().end(), Caller));
- delete Caller;
->>>>>>> 1.3
 }
 
 void editorwindow::UpdateGraphics(void)

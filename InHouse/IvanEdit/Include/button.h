@@ -4,7 +4,7 @@
 #include <allegro.h>
 
 #include "graphics.h"
-#include "vector2d2d.h"
+#include "vector.h"
 #include "rect.h"
 #include "strover.h"
 class window;
@@ -12,7 +12,6 @@ class toolwindow;
 class windowobject
 {
  public:
-<<<<<<< button.h
   virtual vector2d GetPos(void) { return Pos; }
   virtual bool IsIn(vector2d What) { return(What.X > Pos.X && What.X < Pos.X + 16 && What.Y > Pos.Y && What.Y < Pos.Y + 16); }
   virtual void Click(void) {}
@@ -20,19 +19,8 @@ class windowobject
   virtual void DeActivate(void) {}
   virtual void Move(vector2d What) { Pos = Pos + What;  }
   virtual rectangle GetRectangle(void) { return rectangle(Pos.Y, Pos.X, Pos.X + 16, Pos.Y + 16); }
-=======
-  virtual void Draw();
-  virtual void Click();
-  button(vector2d2d2d What) : Pos(What) {}
-  button() {}
-  virtual vector2d2d2d GetBitmapPos() const { return vector2d2d2d(0,0); }
-  virtual vector2d2d2d GetSize() const { return vector2d2d2d(16,16); }
-  virtual vector2d2d2d GetPos() const { return Pos; }
-  virtual void SetPos(vector2d2d2d What) { Pos = What; }
-  virtual bool IsIn(vector2d2d2d What) { return(What.X > Pos.X && What.X < Pos.X + 16 && What.Y > Pos.Y && What.Y < Pos.Y + 16); }
->>>>>>> 1.2
  protected:
-  vector2d2d2d Pos;
+  vector2d Pos;
 };
 
 class button : public windowobject
@@ -57,22 +45,22 @@ class button : public windowobject
 class programexitbutton : public button
 {
  public:
-  virtual vector2d2d2d GetBitmapPos() const { return vector2d2d2d(16,0); }
-  virtual void Click();
-  programexitbutton(vector2d2d2d);
+  virtual vector2d GetBitmapPos(void) const { return vector2d(16,0); }
+  virtual void Click(void);
+  programexitbutton(vector2d);
 };
   
 class textbox : public windowobject
 {
  public:
-  textbox::textbox(std::string xText, vector2d2d2d What) : Text(xText) {Pos = What;}
-  textbox::textbox() {}
-  virtual void Draw();
-  virtual void Click();
+  textbox::textbox(std::string xText, vector2d What) : Text(xText) {Pos = What;}
+  textbox::textbox(void) {}
+  virtual void Draw(void);
+  virtual void Click(void);
   virtual void SetText(std::string What) { Text = What; }
-  virtual std::string GetText() { return Text; }
-  virtual unsigned short GetBorderColor() { return BorderColor; }
-  virtual bool IsIn(vector2d2d2d) { return false; }
+  virtual std::string GetText(void) { return Text; }
+  virtual unsigned short GetBorderColor(void) { return BorderColor; }
+  virtual bool IsIn(vector2d) { return false; }
   virtual void SetBorderColor(unsigned short What) { BorderColor = What; }
  protected:
   std::string Text;
@@ -83,9 +71,9 @@ class edittextbox : public textbox
 {
  public:
   edittextbox::edittextbox(rectangle What) { Pos = What; Text = ""; BorderColor = makecol(255,255,255);}
-  virtual void Draw();
-  virtual void Click();
-  virtual bool IsIn(vector2d2d2d What) { return Pos.IsIn(What); }
+  virtual void Draw(void);
+  virtual void Click(void);
+  virtual bool IsIn(vector2d What) { return Pos.IsIn(What); }
  protected:
   rectangle Pos;
 };
@@ -93,16 +81,9 @@ class edittextbox : public textbox
 class functionbutton : public button
 {
  public:
-<<<<<<< button.h
   functionbutton(void (*xFunction)(window*), window* xCaller, vector2d xPos) {Function = xFunction; Caller = xCaller; Pos = xPos;}
   virtual vector2d GetSize(void) const { return vector2d(16,16); }
   virtual void Click(void);
-=======
-  functionbutton(void (*xFunction)(window*), window* xCaller, vector2d2d2d xPos) {Function = xFunction; Caller = xCaller; Pos = xPos;}
-  virtual vector2d2d2d GetBitmapPos() const { return vector2d2d2d(16,0); }
-  virtual vector2d2d2d GetSize() const { return vector2d2d2d(16,16); }
-  virtual void Click();
->>>>>>> 1.2
  protected:
   window* Caller;
   void (*Function)(window*);
@@ -120,4 +101,3 @@ class toolbutton : public button
   toolwindow* MainWindow;
 };
 #endif
-

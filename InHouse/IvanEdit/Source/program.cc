@@ -49,9 +49,5 @@ std::string program::ReadNextWord(ifstream* From)
  }
  return Buffer;
 }
-<<<<<<< program.cc
 
 
-=======
-
->>>>>>> 1.2
