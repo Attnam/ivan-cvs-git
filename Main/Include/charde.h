@@ -108,6 +108,8 @@ class CHARACTER
 		SetLegType(1);
 		SetTorsoType(5);
 		SetHealTimer(100);
+		SetStoryState(0);
+		game::SetPerttu(this);
 	},
 public:
 	virtual void Load(inputfile&);
@@ -124,6 +126,7 @@ public:
 	virtual bool Polymorph() RET(false)
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 80000; else return 0; }
 	virtual void AddHitMessage(character*, const bool = false) const;
+	virtual void SetStoryState(uchar What) { StoryState = What; }
 protected:
 	virtual std::string NameSingular() const RET("Perttu, the Überpriest of the Great Frog")
 	virtual void CreateCorpse();
@@ -132,6 +135,7 @@ protected:
 	virtual float GetMeleeStrength() const RET(20000)
 	virtual void GetAICommand();
 	ushort HealTimer;
+	uchar StoryState;
 );
 
 class CHARACTER

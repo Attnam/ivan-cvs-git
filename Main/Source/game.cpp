@@ -43,6 +43,7 @@ ulong game::LOSTurns;
 gamescript game::GameScript;
 
 bool game::Flag;
+character* game::Perttu = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
 std::string game::Alignment[] = {"L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--"};
@@ -159,7 +160,14 @@ void game::Init(std::string Name)
 	}
 	else
 	{
-		iosystem::TextScreen("On the evening Perttu seems very concerned about something.\nAfter the daily funerals he calls you to his throne room and explains:\n\"Elpuri, the Dark Frog, has infected the dungeon under the cathedral!\nIn the glory of Valpuri, I have decided to allow thee to slay him\nand bring me his head as proof. Return when thou hast succeeded.\"");
+		iosystem::TextScreen(	"Your legs are numbed after a long journey across a cold and gloomy forest.\n"
+					"You should have never believed those that adviced you to seek adventure here,\n"
+					"outside of all civilization. The next ship will arrive on the coast in eight\n"
+					"months. Before that you must make yourself comfortable here.\n\n"
+					"Finally your eyes catch your destination among the ocean of pines. A small\n"
+					"settlement of a few houses build around a round, shining tower rises ahead\n"
+					"of you. This is Attnam, the Holy City of Valpuri the Great Frog. And it is\n"
+					"desperately seeking adventurers like you.");
 
 		iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 
@@ -170,7 +178,7 @@ void game::Init(std::string Name)
 		Player->SetTeam(GetTeam(0));
 		GetTeam(0)->SetLeader(Player);
 
-		game::GetPlayer()->GetStack()->FastAddItem(new lamp);
+		Perttu = 0;
 
 		InitDungeons();
 
@@ -292,8 +300,8 @@ void game::Quit()
 	Running = false;
 }
 
-bool game::LOSHandler(vector2d Pos, vector2d Origo) // CurrentX = CX, CurrentY = CY
-{                                                   // OrigoX = OX, OrigoY = OY
+bool game::LOSHandler(vector2d Pos, vector2d Origo)
+{
 	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
@@ -759,8 +767,8 @@ vector2d game::AskForDirectionVector(std::string String)
 	return GetDirectionVectorForKey(GETKEY());
 }
 
-bool game::EyeHandler(vector2d Pos, vector2d Origo)  // CurrentX = CX, CurrentY = CY
-{                                                   // OrigoX = OX, OrigoY = OY
+bool game::EyeHandler(vector2d Pos, vector2d Origo)
+{
 	if(Pos == Origo)
 		return true;
 	else

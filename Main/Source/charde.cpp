@@ -385,14 +385,14 @@ void perttu::Save(outputfile& SaveFile) const
 {
 	humanoid::Save(SaveFile);
 
-	SaveFile << HealTimer;
+	SaveFile << HealTimer << StoryState;
 }
 
 void perttu::Load(inputfile& SaveFile)
 {
 	humanoid::Load(SaveFile);
 
-	SaveFile >> HealTimer;
+	SaveFile >> HealTimer >> StoryState;
 }
 
 bool humanoid::Throw()
@@ -743,8 +743,6 @@ void priest::GetAICommand()
 
 void perttu::BeTalkedTo(character* Talker)
 {
-	static bool Triggered = false;
-
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 	{
 		ADD_MESSAGE("Heretic! Dev/null is a place not worthy to receive thee!");
@@ -765,10 +763,13 @@ void perttu::BeTalkedTo(character* Talker)
 		}
 	}
 	else
-		if(Triggered)
+		if(StoryState >= 2)
+		{
 			ADD_MESSAGE("Perttu says: \"Bring me the Maakotka shirt and we'll talk.\"");
+			return;
+		}
 
-	if(Talker->HasHeadOfElpuri() && !Triggered)
+	if(Talker->HasHeadOfElpuri())
 	{
 		if(game::GetGod(1)->GetRelation() >= 0 && Talker->Danger() >= 100000)
 		{
@@ -779,11 +780,8 @@ void perttu::BeTalkedTo(character* Talker)
 			{
 				iosystem::TextScreen("Champion of Law!\n\nReturn to the foul cave of Elpuri and seek out the Master Evil:\nOree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\nthe Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
 				game::GetCurrentArea()->SendNewDrawRequest();
-
 				game::TriggerQuestForMaakotkaShirt();
-
-				Triggered = true;
-
+				StoryState = 2;
 				return;
 			}
 		}
@@ -800,7 +798,21 @@ void perttu::BeTalkedTo(character* Talker)
 		}
 	}
 	else
-		if(!Triggered)
+		if(!StoryState)
+		{
+			iosystem::TextScreen(	"Perttu raises his hand as a salutation, and talks:\n"
+						"\"Fare thee well, adventurer! Should thou seek glory, I have a task for thee!\n"
+						"An evil dark frog named Elpuri is pestering our fine city in many ways.\n"
+						"Valpuri hast told that this wile beast can be found in a nearby cave.\n"
+						"Slay it and bring me its head as proof. Return when thou hast succeeded.\"");
+
+			game::GetCurrentArea()->SendNewDrawRequest();
+			ADD_MESSAGE("Perttu hands you a couple of items. \"Thou migth need these.\"");
+			Talker->GetStack()->AddItem(new lamp);
+			Talker->GetStack()->AddItem(new banana);
+			StoryState = 1;
+		}
+		else
 			ADD_MESSAGE("Perttu says: \"Bring me the head of Elpuri and we'll talk.\"");
 }
 

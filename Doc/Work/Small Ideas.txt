@@ -60,7 +60,6 @@ Some variety to death messages, e.g. some messages influenced by the cause of de
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...)
 A special effect for selling empty potions (it's exemplary recycling after all).
 !!!Money should affect score.
-!!!Priests of Attnam should tell what their worshipped deities do.
 !!!Higher victory types should be reimplemented.
-Elpuri would be made more interesting if it attacked all adjacent enemies simultaneously.
 NP shouldn't affect score.
+Money should weight something.

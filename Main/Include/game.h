@@ -156,6 +156,8 @@ public:
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
 	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
+	static character* GetPerttu() { return Perttu; }
+	static void SetPerttu(character* What) { Perttu = What; }
 private:
 	static bool OutlineItems, OutlineCharacters;
 	static std::string Alignment[];
@@ -190,6 +192,7 @@ private:
 	static std::vector<team*> Team;
 	static ulong LOSTurns;
 	static bool LOSUpdateRequested;
+	static character* Perttu;
 };
 
 #endif
