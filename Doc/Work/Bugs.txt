@@ -44,3 +44,5 @@ Unicorns can eat silver stones.
 Exp is gained even if bodypart is non-living, even though it affects nothing.
 One can kick mines.
 new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
+Doors close when they break.
+Can one block when fainted?
