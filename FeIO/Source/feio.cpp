@@ -1,5 +1,7 @@
 #include <ctime>
+#ifdef WIN32
 #include <io.h>
+#endif
 
 #include "graphics.h"
 #include "bitmap.h"
@@ -260,6 +262,7 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 
 std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
 {
+#ifdef WIN32
 	struct _finddata_t Found;
 	long hFile;
 	int Check = 0;
@@ -286,5 +289,8 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 	if(Check == 0xFFFD)
 		return "";
 
-	return Buffer.GetEntry(Check);
+		return Buffer.GetEntry(Check);
+#else
+  return std::string("I have problems and I love Windows and I don't work in Linux");
+#endif
 }

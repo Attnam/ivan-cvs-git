@@ -99,6 +99,7 @@ bitmap::~bitmap()
 
 void bitmap::Save(outputfile& SaveFile) const
 {
+#ifdef WIN32
 	SaveFile.GetBuffer().write((char*)Data[0], (XSize * YSize) << 1);
 
 	if(AlphaMap)
@@ -108,6 +109,7 @@ void bitmap::Save(outputfile& SaveFile) const
 	}
 	else
 		SaveFile << uchar(0);
+#endif
 }
 
 void bitmap::Load(inputfile& SaveFile)
@@ -126,6 +128,7 @@ void bitmap::Load(inputfile& SaveFile)
 
 void bitmap::Save(std::string FileName) const
 {
+#ifdef WIN32
 	static char BMPHeader[] =	{char(0x42), char(0x4D), char(0xB6), char(0x4F), char(0x12), char(0x00),
 					 char(0x00), char(0x00), char(0x00), char(0x00), char(0x36), char(0x00),
 					 char(0x00), char(0x00), char(0x28), char(0x00), char(0x00), char(0x00),
@@ -151,6 +154,7 @@ void bitmap::Save(std::string FileName) const
 			ushort Pixel = Data[y][x];
 			SaveFile << char(Pixel << 3) << char((Pixel >> 5) << 2) << char((Pixel >> 11) << 3);
 		}
+#endif
 }
 
 void Fill(ulong, ulong, ushort, ushort, ushort);

@@ -23,8 +23,11 @@
 
 #define WHITE	MAKE_RGB(255, 255, 255)
 #define BLACK	MAKE_RGB(0, 0, 0)
-
+#ifdef WIN32
 #include <windows.h>
+#else
+#include "SDL.h"
+#endif
 #include <list>
 #include <string>
 
@@ -32,7 +35,9 @@
 
 class bitmap;
 class colorizablebitmap;
+#ifdef WIN32
 class CDisplay;
+#endif
 
 class graphics
 {
@@ -40,27 +45,39 @@ public:
 	friend class bitmap;
 	static void Init();
 	static void DeInit();
-	static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, LPCTSTR);
+#ifdef WIN32 
+static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, LPCTSTR);
+	static void SwitchMode();
+	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
+	static bool GetFullScreen() { return FullScreen; }
+#else
+ static void SetMode(const char*, ushort, ushort, uchar);
+#endif
 	static void BlitDBToScreen();
 	static ushort GetXRes() { return XRes; }
 	static ushort GetYRes() { return YRes; }
 	static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
 	static void UpdateBounds();
-	static void SwitchMode();
+
 	static void LoadDefaultFont(std::string);
 	static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
-	static bool GetFullScreen() { return FullScreen; }
-	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
+
+
 private:
+#ifdef WIN32
 	static HWND hWnd;
 	static bool FullScreen;
 	static CDisplay* DXDisplay;
+	static void (*SwitchModeHandler)();
+#else
+	static SDL_Surface* screen;
+#endif
 	static bitmap* DoubleBuffer;
 	static ushort XRes;
 	static ushort YRes;
 	static uchar ColorDepth;
 	static colorizablebitmap* DefaultFont;
-	static void (*SwitchModeHandler)();
+
 };
 
 #endif

@@ -1,28 +1,43 @@
+#ifdef WIN32
 #include <windowsx.h>
+#include "ddutil.h"
+#else
+#include "SDL.h"
+#endif
 
 #include "graphics.h"
 #include "bitmap.h"
-#include "ddutil.h"
 #include "whandler.h"
 #include "error.h"
 #include "colorbit.h"
 
+#ifdef WIN32
 HWND			graphics::hWnd;
+
 bool			graphics::FullScreen;
 CDisplay*		graphics::DXDisplay;
+void			(*graphics::SwitchModeHandler)();
+#else
+SDL_Surface* graphics::screen;
+#endif
 bitmap*			graphics::DoubleBuffer;
 ushort			graphics::XRes;
 ushort			graphics::YRes;
 uchar			graphics::ColorDepth;
 colorizablebitmap*	graphics::DefaultFont = 0;
-void			(*graphics::SwitchModeHandler)();
 
+
+#ifdef WIN32
 extern DWORD GetDXVersion();
+#endif
 
 void graphics::Init()
 {
 	static bool AlreadyInstalled = false;
-
+#ifndef WIN32
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
+	  ABORT("Can't initialize SDL.");
+#endif
 	if(!AlreadyInstalled)
 	{
 		AlreadyInstalled = true;
@@ -34,8 +49,11 @@ void graphics::Init()
 void graphics::DeInit()
 {
 	delete DefaultFont;
+#ifndef WIN32
+	SDL_Quit();
+#endif
 }
-
+#ifdef WIN32
 void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
 	FullScreen = FScreen;
@@ -78,9 +96,45 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
 	globalwindowhandler::SetInitialized(true);
 }
+#else
 
+void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
+{
+  //	SDL_Surface *screen;
+
+        screen = SDL_SetVideoMode(NewXRes, NewYRes, NewColorDepth, SDL_SWSURFACE);
+	if ( screen == NULL ) 
+	  ABORT("Couldn't set video mode.");
+        
+    
+
+
+	globalwindowhandler::Init(Title);
+	
+	DoubleBuffer = new bitmap(NewXRes, NewYRes);
+
+	XRes = NewXRes;
+	YRes = NewYRes;
+	ColorDepth = NewColorDepth;
+
+	/*	if(!FullScreen)
+	{
+		DDPIXELFORMAT DDPixelFormat;
+		ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
+		DDPixelFormat.dwSize = sizeof(DDPixelFormat);
+
+		DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
+
+		if(DDPixelFormat.dwRGBBitCount != ColorDepth)
+			SwitchMode();
+			}*/
+
+	globalwindowhandler::SetInitialized(true);
+}
+#endif
 void BlitToDB(ulong, ulong, ulong, ushort, ushort);
 
+#ifdef WIN32
 void graphics::BlitDBToScreen()
 {
 	if(DXDisplay->GetDirectDraw()->RestoreAllSurfaces() == DD_OK)
@@ -111,7 +165,33 @@ void graphics::BlitDBToScreen()
 		}
 	}
 }
+#else
+void graphics::BlitDBToScreen()
+{
+    if ( SDL_MUSTLOCK(screen) ) {
+        if ( SDL_LockSurface(screen) < 0 ) {
+            ABORT("Can't lock screen");
+        }
+    }
 
+		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+		//ulong TrueSourceXMove = 0;
+		ulong TrueDestOffset = ulong(screen->pixels);
+		ulong TrueDestXMove =  screen->pitch - (XRES << 1);
+		ushort Width = XRES;
+		ushort Height = YRES;
+
+		BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
+
+
+    if ( SDL_MUSTLOCK(screen) ) {
+        SDL_UnlockSurface(screen);
+    }
+    SDL_UpdateRect(screen, 0,0,XRES,YRES);
+}
+#endif
+
+#ifdef WIN32
 HRESULT CDisplay::CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth,
                                            DWORD dwHeight, DWORD dwBPP )
 {
@@ -260,13 +340,16 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 
 	return S_OK;
 }
+#endif
 
 void graphics::UpdateBounds()
 {
+#ifdef WIN32
 	if(DXDisplay)
 		DXDisplay->UpdateBounds();
+#endif
 }
-
+#ifdef WIN32
 void graphics::SwitchMode()
 {
 	globalwindowhandler::SetInitialized(false);
@@ -325,6 +408,7 @@ void graphics::SwitchMode()
 
 	globalwindowhandler::SetInitialized(true);
 }
+#endif
 
 void graphics::LoadDefaultFont(std::string FileName)
 {

@@ -7,14 +7,22 @@
 #include "save.h"
 #include "colorbit.h"
 #include "strover.h"
-
+#ifdef WIN32
 int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int nCmdShow)
+#else
+  int Main(void)
+#endif
 {
-	MessageBox(NULL, "Running IVAN Library Collection Test", "Message from FEP", MB_OK);
-
+	#ifdef WIN32
+  MessageBox(NULL, "Running IVAN Library Collection Test", "Message from FEP", MB_OK);
+#endif
 	clock_t STim = clock();
-
+	graphics::Init();
+#ifdef WIN32
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false, NULL);
+#else
+	graphics::SetMode("Esko", 800, 600, 16);
+#endif
 
 	graphics::LoadDefaultFont("Graphics/Font.pcx");
 
@@ -137,7 +145,9 @@ int Main(HINSTANCE hInst, HINSTANCE hPrevInst, HWND* hWnd, LPSTR pCmdLine, int n
 
 	sprintf(Buffer, "Time: %.2f seconds.", float(clock() - STim) / CLOCKS_PER_SEC);
 
+#ifdef WIN32
 	MessageBox(NULL, Buffer, "Message from FEP", MB_OK);
+#endif
 
 	return 0;
 }

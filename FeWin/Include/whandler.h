@@ -6,7 +6,11 @@
 #define GETKEY globalwindowhandler::GetKey
 #define READKEY globalwindowhandler::ReadKey
 
+#ifdef WIN32
 #include <windows.h>
+#else
+#include "SDL.h"
+#endif
 
 #include "typedef.h"
 #include "dynarray.h"
@@ -16,9 +20,14 @@ class bitmap;
 class globalwindowhandler
 {
 public:
+#ifdef WIN32
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	static int GetKey(bool = true, bool = false);
 	static void Init(HINSTANCE, HWND*, const char*, LPCTSTR);
+#else
+	static void Init(const char*);
+#endif
+	static int GetKey(bool = true, bool = false);
+
 	static int ReadKey();
 	static void ClearKeyBuffer() { KeyBuffer.Resize(0); }
 	static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
@@ -27,10 +36,13 @@ public:
 	static bool KeyIsDown(int Key) { return KeyBuffer.Search(Key) != 0xFFFF; }
 private:
 	static dynarray<int> KeyBuffer;
-	static char KeyboardLayoutName[KL_NAMELENGTH];
 	static bool Initialized;
 	static bool (*QuitMessageHandler)();
+
+#ifdef WIN32
 	static bool Active;
+	static char KeyboardLayoutName[KL_NAMELENGTH];
+#endif
 };
 
 #endif
