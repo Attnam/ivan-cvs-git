@@ -7,7 +7,6 @@
 #include "graphics.h"
 #include "bitmap.h"
 
-
 stringoption ivanconfig::DefaultName(	  "DefaultName",
 					  "player's default name",
 					  "",
@@ -171,7 +170,7 @@ ulong ivanconfig::ApplyContrastTo(ulong L)
 
 void ivanconfig::CalculateContrastLuminance()
 {
-  ushort Element = Min((GetContrast() << 7) / 100, long(255));
+  ushort Element = Min<long>((GetContrast() << 7) / 100, 255);
   ContrastLuminance = MakeRGB24(Element, Element, Element);
 }
 

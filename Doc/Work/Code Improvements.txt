@@ -59,9 +59,10 @@ Eliöiden totuusjäsenten yhteensulauttaminen.
 (r) Vektoripakkaus?
 Leikisti aktiivin 1. partisiipissa olevien data-arvojen muokkaus kykylauseiksi.
 Hidastinten kirjastointi.
-Litkujen materialisoiminen.
+//Litkujen materialisoiminen.
 Massattomat maastot.
 Metsästysvälineiden lokeroittaminen.
 Artikkelien bitittäminen.
 Inttien synninpäästö.
 Tehokkuustietojen välitys ruutuilmiöihin.
+Enumeraatiot barrikadeille.

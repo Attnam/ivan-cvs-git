@@ -24,7 +24,6 @@ character
 	CanRead = false;
 	IsCharmable = true;
 	Sex = UNDEFINED;
-	BloodColor = rgb16(75, 0, 0);
 	CanBeGenerated = false;
 	CriticalModifier = 20;
 	StandVerb = "standing";
@@ -97,6 +96,7 @@ character
 	BootColorIsSparkling = false;
 	TorsoSpecialColorIsSparkling = false;
 	ArmMainColorIsSparkling = false;
+	GauntletColorIsSparkling = false;
 	ArmSpecialColorIsSparkling = false;
 	LegMainColorIsSparkling = false;
 	LegSpecialColorIsSparkling = false;
@@ -105,6 +105,8 @@ character
 	MoveType = WALK;
 	DestroysWalls = false;
 	CanMove = true;
+	BloodMaterial = BLOOD;
+	VomitMaterial = VOMIT;
 }
 
 humanoid
@@ -136,7 +138,7 @@ nonhumanoid
 	IsAbstract = true;
 }
 
-human
+playerkind
 {
 	DefaultArmStrength = 10;
 	DefaultLegStrength = 10;
@@ -149,11 +151,10 @@ human
 	DefaultCharisma = 10;
 	DefaultMana = 10;
 	DefaultMoney = 200;
-	/* BitmapPoses overridden */
-	HeadBitmapPos = 96, 0;
-	TorsoBitmapPos = 32, 0;
-	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 288;
+	HeadBitmapPos = 96, 416;
+	TorsoBitmapPos = 32, 416;
+	ArmBitmapPos = 64, 416;
+	LegBitmapPos = 0, 416;
 	TotalVolume = 80000;
 	TotalSize = 175;
 	CanRead = true;
@@ -601,6 +602,8 @@ oree
 	CanBeConfused = false;
 	WieldedPosition = 0, -1;
 	BiteCapturesBodyPart = false;
+	VomitMaterial = ACIDOUS_BLOOD;
+	BloodMaterial = ACIDOUS_BLOOD;
 }
 
 darkknight
@@ -617,7 +620,7 @@ darkknight
 	DefaultMana = 10;
 	HeadBitmapPos = 96, 240;
 	TorsoBitmapPos = 32, 16;
-	ArmBitmapPos = 64, 16;
+	ArmBitmapPos = 80, 176;
 	LegBitmapPos = 0, 48;
 	ClothColor = rgb16(0, 0, 100);
 	EyeColor = rgb16(255, 255, 0);
@@ -647,6 +650,7 @@ darkknight
 		PanicLevel = 15;
 		ClothColor = rgb16(70, 70, 70);
 		CapColor = rgb16(48, 48, 48);
+		GauntletColor = rgb16(50, 50, 50);
 	}
 
 	Config VETERAN;
@@ -664,6 +668,7 @@ darkknight
 		PanicLevel = 10;
 		ClothColor = rgb16(40, 40, 40);
 		CapColor = rgb16(48, 48, 48);
+		GauntletColor = rgb16(50, 50, 50);
 	}
 
 	Config ELITE;
@@ -683,6 +688,7 @@ darkknight
 		TotalVolume = 90000;
 		ClothColor = rgb16(20, 20, 120);
 		CapColor = rgb16(48, 48, 48);
+		GauntletColor = rgb16(50, 50, 50);
 	}
 
 	Config GRAND_MASTER;
@@ -693,7 +699,7 @@ darkknight
 		BodyArmor = MITHRIL bodyarmor(PLATE_MAIL) { Enchantment = 3; }
 		Cloak = DRAGON_HIDE cloak { Enchantment = 3; }
 		Belt = SAPPHIRE belt { Enchantment = 3; }
-		RightWielded = SAPPHIRE RUBY meleeweapon(TWO_HANDED_SCIMITAR) { ContainedMaterial = POISON_LIQUID { Volume = 1000; } Enchantment = 4; }
+		RightWielded = SAPPHIRE RUBY meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; }
 		RightGauntlet = SPIDER_SILK gauntlet { Enchantment = 3; }
 		RightBoot = RUBY boot { Enchantment = 3; }
 		Adjective = "grand master";
@@ -714,6 +720,7 @@ darkknight
 		ClothColor = rgb16(100, 0, 0);
 		CapColor = rgb16(48, 48, 48);
 		HairColor = rgb16(32, 32, 32);
+		GauntletColor = rgb16(50, 50, 50);
 		CanBeConfused = false;
 		FireResistance = 30;
 		ElectricityResistance = 30;
@@ -794,7 +801,7 @@ frog
 		DefaultWisdom = 20;
 		DefaultCharisma = 5;
 		DefaultMana = 20;
-		BloodColor = rgb16(0, 0, 0);
+		BloodMaterial = DARK_FROG_BLOOD;
 		TotalVolume = 5000;
 		TorsoBitmapPos = 80, 0;
 		TotalSize = 25;
@@ -817,7 +824,7 @@ frog
 		DefaultCharisma = 4;
 		DefaultMana = 25;
 		BaseBiteStrength = 1000;
-		BloodColor = rgb16(0, 0, 0);
+		BloodMaterial = DARK_FROG_BLOOD;
 		TotalVolume = 50000;
 		TorsoBitmapPos = 96, 0;
 		TotalSize = 100;
@@ -840,7 +847,7 @@ frog
 		DefaultCharisma = 3;
 		DefaultMana = 30;
 		BaseBiteStrength = 1250;
-		BloodColor = rgb16(0, 0, 0);
+		BloodMaterial = DARK_FROG_BLOOD;
 		TotalVolume = 250000;
 		TorsoBitmapPos = 64, 0;
 		TotalSize = 200;
@@ -1126,8 +1133,8 @@ goblin
 		Helmet = STEEL helmet(FULL_HELMET) { Enchantment = 1; }
 		BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 1; }
 		Cloak = OMMEL_HAIR cloak { Enchantment = 1; }
-		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
-		LeftWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 2; }
+		RightWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { Enchantment = 2; }
+		LeftWielded = MITHRIL MITHRIL meleeweapon(SHORT_SWORD) { Enchantment = 2; }
 		RightRing = ring(RING_OF_TELEPORTATION);
 		RightGauntlet = OMMEL_HAIR gauntlet { Enchantment = 1; }
 		RightBoot = STEEL boot { Enchantment = 1; }
@@ -1163,7 +1170,7 @@ mommo
 	StandVerb = "bubbling";
 	HostileReplies == "@Dd vibrates in fury.";
 	FriendlyReplies == "@Dd vibrates oddly.";
-	BloodColor = rgb16(7, 155, 0);
+	BloodMaterial = BROWN_SLIME;
 	NameSingular = "mommo slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
@@ -1181,6 +1188,8 @@ mommo
 	AttachedGod = SCABIES;
 	ClassStates = GAS_IMMUNITY;
 	BiteCapturesBodyPart = false;
+	VomitMaterial = BROWN_SLIME;
+	IgnoreDanger = true;
 
 	Config CONICAL;
 	{
@@ -1194,6 +1203,8 @@ mommo
 		TorsoBitmapPos = 128, 48;
 		TotalSize = 100;
 		Adjective = "conical";
+		HPRequirementForGeneration = 80;
+		Frequency = 500;
 	}
 
 	Config FLAT;
@@ -1208,6 +1219,8 @@ mommo
 		TorsoBitmapPos = 128, 32;
 		TotalSize = 75;
 		Adjective = "flat";
+		HPRequirementForGeneration = 60;
+		Frequency = 1000;
 	}
 }
 
@@ -1279,10 +1292,10 @@ golem
 		Frequency = 10000;
 	}
 
-	Config BLOOD;
+	Config ACIDOUS_BLOOD;
 	{
 		CanBeGenerated = false;
-		Adjective = "blood";
+		Adjective = "acidous blood";
 		CanBeWished = false;
 		AttachedGod = CRUENTUS;
 	}
@@ -1356,7 +1369,7 @@ spider
 	DefaultWisdom = 4;
 	DefaultCharisma = 4;
 	DefaultMana = 0;
-	BloodColor = rgb16(0, 0, 0);
+	BloodMaterial = SPIDER_BLOOD;
 	CanOpen = false;
 	TotalVolume = 100;
 	TorsoBitmapPos = 272, 0;
@@ -1654,10 +1667,6 @@ slave
 	SkinColor = rgb16(128, 80, 48);
 	HairColor = rgb16(80, 48, 32);
 	ClothColor = rgb16(56, 48, 20);
-	HeadBitmapPos = 96, 0;
-	TorsoBitmapPos = 32, 0;
-	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 288;
 	TotalVolume = 60000;
 	TotalSize = 160;
 	NameSingular = "slave";
@@ -2096,8 +2105,8 @@ mistress
 		Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
 		RightGauntlet = PHOENIX_FEATHER gauntlet { Enchantment = 3; }
 		RightBoot = PHOENIX_FEATHER boot { Enchantment = 3; }
-		RightWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
-		LeftWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
+		RightWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 4; }
+		LeftWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { Enchantment = 4; }
 		CWeaponSkillHits == 2000;
 		RightSWeaponSkillHits = 2000;
 		LeftSWeaponSkillHits = 2000;
@@ -2281,7 +2290,7 @@ kobold
 		AttributeBonus = 120;
 		Helmet = METEORIC_STEEL helmet;
 		BodyArmor = METEORIC_STEEL bodyarmor(CHAIN_MAIL);
-		RightWielded = MITHRIL meleeweapon(SPEAR) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 1; }
+		RightWielded = MITHRIL meleeweapon(SPEAR) { Enchantment = 1; }
 		Belt = OMMEL_HAIR belt;
 		Cloak = NYMPH_HAIR cloak;
 		RightGauntlet = NYMPH_HAIR gauntlet;
@@ -2511,6 +2520,7 @@ mammoth
 	FriendlyReplies == "@Dd roars kindly.";
 	TotalSize = 500;
 	SkinColor = rgb16(100, 130, 160);
+	Adjective = "baby";
 	NameSingular = "mammoth";
 	AttackStyle = USE_LEGS|USE_HEAD;
 	BaseKickStrength = 1000;
@@ -2905,7 +2915,7 @@ orc
 		Helmet = MITHRIL helmet(FULL_HELMET) { Enchantment = 2; }
 		Cloak = ANGEL_HAIR cloak { Enchantment = 2; }
 		BodyArmor = DRAGON_HIDE bodyarmor(PLATE_MAIL) { Enchantment = 2; }
-		RightWielded = RUBY meleeweapon(HALBERD) { ContainedMaterial = POISON_LIQUID { Volume = 500; } Enchantment = 3; }
+		RightWielded = RUBY meleeweapon(HALBERD) { Enchantment = 3; }
 		LeftWielded = 0;
 		Belt = RUBY belt { Enchantment = 2; }
 		RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
@@ -3771,7 +3781,7 @@ elpuri
 	CanBeCloned = false;
 	DefaultName = "Elpuri";
 	HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
-	BloodColor = rgb16(0, 0, 0);
+	BloodMaterial = DARK_FROG_BLOOD;
 	SkinColor = rgb16(60, 60, 60);
 	ClassStates = INFRA_VISION;
 	BaseBiteStrength = 1500;
@@ -3995,11 +4005,14 @@ hattifattener
 
 necromancer
 {
-	HeadBitmapPos = 112, 304;
-	TorsoBitmapPos = 48, 224;
-	ArmBitmapPos = 80, 64;
+	HeadBitmapPos = 112, 128;
+	TorsoBitmapPos = 48, 352;
+	ArmBitmapPos = 80, 96;
 	LegBitmapPos = 16, 160;
 	ClothColor = rgb16(50, 50, 50);
+	EyeColor = rgb16(200, 0, 0);
+	BeltColor = rgb16(100, 100, 100);
+	ArmSpecialColor = rgb16(100, 100, 140);
 	CanRead = true;
 	CanBeGenerated = true;
 	ClassStates = INFRA_VISION|ESP;
@@ -4027,8 +4040,6 @@ necromancer
 		NameSingular = "necromancer";
 		TotalVolume = 60000;
 		TotalSize = 180;
-		ClothColor = rgb16(80, 80, 80);
-		BeltColor = rgb16(80, 80, 80);
 		Cloak = LEATHER cloak { Enchantment = 2; }
 		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 0; }
 		HPRequirementForGeneration = 90;
@@ -4038,6 +4049,8 @@ necromancer
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		LeftSWeaponSkillHits = 20;
+		CapColor = rgb16(150, 150, 100);
+		GauntletColor = rgb16(150, 150, 100);
 	}
 
 	Config MASTER;
@@ -4056,8 +4069,6 @@ necromancer
 		NameSingular = "necromancer";
 		TotalVolume = 70000;
 		TotalSize = 170;
-		HairColor = rgb16(180, 40, 40);
-		CapColor = rgb16(180, 40, 40);
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
 		HPRequirementForGeneration = 150;
@@ -4067,5 +4078,7 @@ necromancer
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
 		Inventory = {2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
+		CapColor = rgb16(100, 100, 200);
+		GauntletColor = rgb16(100, 100, 200);
 	}
 }

@@ -83,6 +83,16 @@ item
 	IsGoodWithPlants = true;
 	CreateLockConfigurations = false; /* Can't be overridden by Configs */
 	CanBePickedUp = true;
+	/* Obligatory if helmet: CoverPercentile */
+	/* Obligatory for respective armor:
+	TorsoArmorBitmapPos
+	ArmArmorBitmapPos
+	LegArmorBitmapPos
+	HelmetBitmapPos
+	CloakBitmapPos
+	BeltBitmapPos
+	GauntletBitmapPos
+	BootBitmapPos */
 }
 
 materialcontainer
@@ -164,7 +174,6 @@ lump
 meleeweapon
 {
 	Category = WEAPON;
-	ContainedMaterialConfig == 0;
 	IsAbstract = true;
 	CanBeBroken = true;
 	CanBePiled = false;
@@ -804,6 +813,9 @@ bodyarmor /* armor-> */
 	CanBeBroken = true;
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 144;
+	TorsoArmorBitmapPos = 32, 416;
+	ArmArmorBitmapPos = 80, 416;
+	LegArmorBitmapPos = 16, 416;
 
 	Config CHAIN_MAIL;
 	{
@@ -816,6 +828,9 @@ bodyarmor /* armor-> */
 		MainMaterialConfig = { 6, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL; }
 		MaterialConfigChances = { 6, 450, 300, 150, 25, 20, 25; }
 		InElasticityPenaltyModifier = 10;
+		TorsoArmorBitmapPos = 32, 432;
+		ArmArmorBitmapPos = 64, 432;
+		LegArmorBitmapPos = 0, 432;
 	}
 
 	Config BROKEN|CHAIN_MAIL;
@@ -915,7 +930,7 @@ potion /* materialcontainer-> */
 	WeaponCategory = BLUNT_WEAPONS;
 	Category = POTION;
 	DefaultMainVolume = 60;
-	DefaultContainedVolume = 1500;
+	DefaultContainedVolume = 1000;
 	StrengthModifier = 50;
 	BitmapPos = 0, 160;
 	FormModifier = 25;
@@ -1606,6 +1621,7 @@ cloak /* armor-> */
 	AttachedGod = CLEPTIA;
 	WieldedBitmapPos = 160, 144;
 	CanBeBroken = true;
+	CloakBitmapPos = 48, 416;
 
 	Config BROKEN;
 	{
@@ -1691,6 +1707,7 @@ boot /* armor-> */
 	InElasticityPenaltyModifier = 10;
 	HandleInPairs = true;
 	WieldedBitmapPos = 160, 128;
+	BootBitmapPos = 16, 432;
 
 	Config BOOT_OF_STRENGTH;
 	{
@@ -1745,6 +1762,7 @@ gauntlet /* armor-> */
 	InElasticityPenaltyModifier = 20;
 	HandleInPairs = true;
 	WieldedBitmapPos = 160, 128;
+	GauntletBitmapPos = 80, 432;
 
 	Config GAUNTLET_OF_STRENGTH;
 	{
@@ -1788,6 +1806,7 @@ belt /* armor-> */
 	Roundness = 10;
 	FormModifier = 5; /* this is multiplied by MainMaterial's flexibility */
 	WieldedBitmapPos = 160, 224;
+	BeltBitmapPos = 48, 432;
 
 	Config BELT_OF_CARRYING;
 	{
@@ -2099,6 +2118,14 @@ mommotorso /* normaltorso-> */
 	AttachedGod = NONE;
 }
 
+playerkindhead { }
+playerkindtorso { }
+playerkindrightarm { }
+playerkindleftarm { }
+playerkindgroin { }
+playerkindrightleg { }
+playerkindleftleg { }
+
 whistle
 {
 	Possibility = 50;
@@ -2245,6 +2272,8 @@ helmet
 	Roundness = 60;
 	CanBeBroken = true;
 	WieldedBitmapPos = 160, 128;
+	CoverPercentile = 50;
+	HelmetBitmapPos = 112, 416;
 
 	Config BROKEN;
 	{
@@ -2265,6 +2294,8 @@ helmet
 		Adjective = "full";
 		MainMaterialConfig = { 7, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, ARCANITE, MITHRIL; }
 		MaterialConfigChances = { 7, 750, 500, 250, 100, 25, 25, 25; }
+		CoverPercentile = 90;
+		HelmetBitmapPos = 96, 432;
 	}
 
 	Config BROKEN|FULL_HELMET;
@@ -2291,6 +2322,8 @@ helmet
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = LEGIFER;
+		CoverPercentile = 90;
+		HelmetBitmapPos = 96, 432;
 	}
 
 	Config BROKEN|HELM_OF_PERCEPTION;
@@ -2317,6 +2350,8 @@ helmet
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = SOPHOS;
+		CoverPercentile = 90;
+		HelmetBitmapPos = 96, 432;
 	}
 
 	Config BROKEN|HELM_OF_UNDERSTANDING;
@@ -2342,6 +2377,8 @@ helmet
 		DefaultEnchantment = 1;
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
+		CoverPercentile = 90;
+		HelmetBitmapPos = 96, 432;
 	}
 
 	Config BROKEN|HELM_OF_BRILLIANCE;
@@ -2368,6 +2405,8 @@ helmet
 		Price = 100;
 		PriceIsProportionalToEnchantment = true;
 		AttachedGod = MELLIS;
+		CoverPercentile = 90;
+		HelmetBitmapPos = 96, 432;
 	}
 
 	Config BROKEN|HELM_OF_ATTRACTIVITY;
@@ -2397,6 +2436,8 @@ helmet
 		ArticleMode = DEFINITE_ARTICLE;
 		GearStates = GAS_IMMUNITY;
 		IsQuestItem = true;
+		CoverPercentile = 100;
+		HelmetBitmapPos = 112, 432;
 	}
 }
 

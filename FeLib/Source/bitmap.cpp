@@ -112,16 +112,16 @@ void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor
 #define LOAD_ALPHA() ushort Alpha = *AlphaPtr, AntiAlpha = 256 - Alpha;
 
 #define STORE_COLOR() *DestPtr = (Red << 8 & 0xF800) | (Green << 3 & 0x7E0) | (Blue >> 3 & 0x1F);
-#define SHIFT_AND_STORE_COLOR() *DestPtr = (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11);
+#define SHIFT_AND_STORE_COLOR(to) to = (Red & 0xF800) | (Green >> 5 & 0x7E0) | (Blue >> 11);
 
 #define LUMINATE_RED()\
 ushort Red = (SrcCol >> 8 & 0xF8) + RedLuminance;\
 \
 if(short(Red) >= 0)\
-{\
-  if(Red > 255)\
-    Red = 255;\
-}\
+  {\
+    if(Red > 255)\
+      Red = 255;\
+  }\
 else\
   Red = 0;
 
@@ -129,10 +129,10 @@ else\
 ushort Green = (SrcCol >> 3 & 0xFC) + GreenLuminance;\
 \
 if(short(Green) >= 0)\
-{\
-  if(Green > 255)\
-    Green = 255;\
-}\
+  {\
+    if(Green > 255)\
+      Green = 255;\
+  }\
 else\
   Green = 0;
 
@@ -140,10 +140,10 @@ else\
 ushort Blue = (SrcCol << 3 & 0xF8) + BlueLuminance;\
 \
 if(short(Blue) >= 0)\
-{\
-  if(Blue > 255)\
-    Blue = 255;\
-}\
+  {\
+    if(Blue > 255)\
+      Blue = 255;\
+  }\
 else\
   Blue = 0;
 
@@ -155,7 +155,7 @@ else\
 #define LOAD_AND_APPLY_ALPHA_GREEN() ushort Green = (SrcCol >> 3 & 0xFC) * Alpha + (DestCol >> 3 & 0xFC) * AntiAlpha;
 #define LOAD_AND_APPLY_ALPHA_BLUE() ushort Blue = (SrcCol << 3 & 0xF8) * Alpha + (DestCol << 3 & 0xF8) * AntiAlpha;
 
-bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0), RandMap(0)
 {
   inputfile File(FileName.CStr(), 0, false);
 
@@ -201,7 +201,7 @@ bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0)
       }
 }
 
-bitmap::bitmap(const bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), PriorityMap(0)
+bitmap::bitmap(const bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), PriorityMap(0), RandMap(0)
 {
   Alloc2D(Image, YSize, XSize);
 
@@ -221,23 +221,23 @@ bitmap::bitmap(const bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap
     }
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
   Alloc2D(Image, YSize, XSize);
 }
 
-bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
   Alloc2D(Image, YSize, XSize);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
   Alloc2D(Image, YSize, XSize);
   ClearToColor(Color);
 }
 
-bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0)
+bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), AlphaMap(0), PriorityMap(0), RandMap(0)
 {
   Alloc2D(Image, YSize, XSize);
   ClearToColor(Color);
@@ -248,6 +248,7 @@ bitmap::~bitmap()
   delete [] Image;
   delete [] AlphaMap;
   delete [] PriorityMap;
+  delete [] RandMap;
 }
 
 void bitmap::Save(outputfile& SaveFile) const
@@ -773,7 +774,7 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, uchar Alpha, ushort MaskColor) cons
 	  LOAD_AND_APPLY_ALPHA_RED()
 	  LOAD_AND_APPLY_ALPHA_GREEN()
 	  LOAD_AND_APPLY_ALPHA_BLUE()
-	  SHIFT_AND_STORE_COLOR()
+	  SHIFT_AND_STORE_COLOR(*DestPtr)
 	}
     }
 }
@@ -813,7 +814,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	      LOAD_AND_APPLY_ALPHA_RED()
 	      LOAD_AND_APPLY_ALPHA_GREEN()
 	      LOAD_AND_APPLY_ALPHA_BLUE()
-	      SHIFT_AND_STORE_COLOR()
+	      SHIFT_AND_STORE_COLOR(*DestPtr)
 	    }
 	}
     }
@@ -1030,49 +1031,43 @@ void bitmap::CreateAlphaMap(uchar InitialValue)
   memset(AlphaMap[0], InitialValue, XSizeTimesYSize);
 }
 
-bool bitmap::ChangeAlpha(char Amount)
+bool bitmap::Fade(ulong& AlphaSum, uchar& AlphaAverage, uchar Amount)
 {
-  if(!Amount)
-    return false;
-
-  bool Changes = false;
-
   if(!AlphaMap)
     ABORT("No alpha map to fade.");
 
-  if(Amount > 0)
+  bool Changes = false;
+  ulong Alphas = 0;
+  ulong NewAlphaSum = 0;
+
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
     {
-      for(ulong c = 0; c < XSizeTimesYSize; ++c)
-	if(AlphaMap[0][c] < 255 - Amount)
+      uchar* AlphaPtr = &AlphaMap[0][c];
+
+      if(*AlphaPtr)
+	if(*AlphaPtr > Amount)
 	  {
-	    AlphaMap[0][c] += Amount;
+	    *AlphaPtr -= Amount;
+	    NewAlphaSum += *AlphaPtr;
+	    ++Alphas;
 	    Changes = true;
 	  }
 	else
-	  if(AlphaMap[0][c] != 255)
-	    {
-	      AlphaMap[0][c] = 255;
-	      Changes = true;
-	    }
-    }
-  else
-    for(ulong c = 0; c < XSizeTimesYSize; ++c)
-      if(AlphaMap[0][c] > -Amount)
-	{
-	  AlphaMap[0][c] += Amount;
-	  Changes = true;
-	}
-      else
-	if(AlphaMap[0][c])
 	  {
-	    AlphaMap[0][c] = 0;
+	    *AlphaPtr = 0;
 	    Changes = true;
-	  }
 
+	    if(RandMap)
+	      UpdateRandMap(c, false);
+	  }
+    }
+
+  AlphaSum = NewAlphaSum;
+  AlphaAverage = Alphas ? NewAlphaSum / Alphas : 0;
   return Changes;
 }
 
-void bitmap::Outline(ushort Color, uchar Alpha)
+void bitmap::Outline(ushort Color, uchar Alpha, uchar Priority)
 {
   if(!AlphaMap)
     CreateAlphaMap(255);
@@ -1094,6 +1089,7 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x, y, Alpha);
+	      SafeSetPriority(x, y, Priority);
 	    }
 
 	  Buffer += XMax;
@@ -1102,6 +1098,7 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x, y + 1, Alpha);
+	      SafeSetPriority(x, y + 1, Priority);
 	    }
 
 	  LastColor = NextColor;
@@ -1124,6 +1121,7 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x, y, Alpha);
+	      SafeSetPriority(x, y, Priority);
 	    }
 
 	  ++Buffer;
@@ -1132,6 +1130,7 @@ void bitmap::Outline(ushort Color, uchar Alpha)
 	    {
 	      *Buffer = Color;
 	      SetAlpha(x + 1, y, Alpha);
+	      SafeSetPriority(x + 1, y, Priority);
 	    }
 
 	  LastColor = NextColor;
@@ -1358,7 +1357,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	      APPLY_ALPHA_GREEN()
 	      LUMINATE_BLUE()
 	      APPLY_ALPHA_BLUE()
-	      SHIFT_AND_STORE_COLOR() 
+	      SHIFT_AND_STORE_COLOR(*DestPtr) 
 	    }
 	}
     }
@@ -1412,7 +1411,7 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 	  for(y = Top; y <= FlameLowestPoint[x]; ++y)
 	    {
 	      ushort Pos = y - Top;
-	      PowerPutPixel(x, y, MakeRGB16(255, 255 - (Pos << 7) / Length, 0), 127 + (Pos << 6) / Length, 0);
+	      PowerPutPixel(x, y, MakeRGB16(255, 255 - (Pos << 7) / Length, 0), 127 + (Pos << 6) / Length, AVERAGE_PRIORITY);
 	    }
 	}
     }
@@ -1428,16 +1427,16 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
   if(Frame)
     {
       ushort Size = (Frame - 1) * (16 - Frame) / 10;
-      PowerPutPixel(SparklePos.X, SparklePos.Y, WHITE, 255, 10);
+      PowerPutPixel(SparklePos.X, SparklePos.Y, WHITE, 255, SPARKLE_PRIORITY);
 
       for(ushort c = 1; c < Size; ++c)
 	{
 	  ushort Lightness = 191 + ((Size - c) << 6) / Size;
 	  ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
-	  PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, 10);
-	  PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, 10);
-	  PowerPutPixel(SparklePos.X, SparklePos.Y + c, RGB, 255, 10);
-	  PowerPutPixel(SparklePos.X, SparklePos.Y - c, RGB, 255, 10);
+	  PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, SPARKLE_PRIORITY);
+	  PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, SPARKLE_PRIORITY);
+	  PowerPutPixel(SparklePos.X, SparklePos.Y + c, RGB, 255, SPARKLE_PRIORITY);
+	  PowerPutPixel(SparklePos.X, SparklePos.Y - c, RGB, 255, SPARKLE_PRIORITY);
 	}
     }
 }
@@ -1459,7 +1458,7 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
       vector2d Where;
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp)) * 3);
-      PowerPutPixel(Where.X, Where.Y, 0, 255, 5);
+      PowerPutPixel(Where.X, Where.Y, 0, 255, FLY_PRIORITY);
     }
 
   femath::LoadSeed();
@@ -1547,7 +1546,10 @@ bool bitmap::CreateLightning(vector2d StartPos, vector2d Direction, ushort MaxLe
 	  ushort Limit = Min<ushort>(CurrentPixelVector.size(), MaxLength);
 
 	  for(ushort c = 0; c < Limit; ++c)
-	    PutPixel(CurrentPixelVector[c], Color);
+	    {
+	      PutPixel(CurrentPixelVector[c], Color);
+	      SafeSetPriority(CurrentPixelVector[c], LIGHTNING_PRIORITY);
+	    }
 
 	  CurrentPixelVector.clear();
 	  return true;
@@ -1796,14 +1798,19 @@ void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, 
 	{
 	  LOAD_SRC()
 
-	  if(SrcCol != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	  if(SrcCol != MaskColor)
 	    {
-	      LUMINATE_RED()
-	      LUMINATE_GREEN()
-	      LUMINATE_BLUE()
-	      STORE_COLOR()
+	      uchar SrcPriority = *SrcPriorityPtr;
+	      uchar DestPriority = *DestPriorityPtr;
 
-	      *DestPriorityPtr = *SrcPriorityPtr;
+	      if((SrcPriority & 0xF) >= (DestPriority & 0xF) || (SrcPriority & 0xF0) >= (DestPriority & 0xF0))
+		{
+		  LUMINATE_RED()
+		  LUMINATE_GREEN()
+		  LUMINATE_BLUE()
+		  STORE_COLOR()
+		  *DestPriorityPtr = SrcPriority;
+		}
 	    }
 	}
     }
@@ -1851,19 +1858,24 @@ void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, u
 	{
 	  LOAD_SRC()
 
-	  if(SrcCol != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	  if(SrcCol != MaskColor)
 	    {
-	      LOAD_DEST()
-	      LOAD_ALPHA()
-	      LUMINATE_RED()
-	      APPLY_ALPHA_RED()
-	      LUMINATE_GREEN()
-	      APPLY_ALPHA_GREEN()
-	      LUMINATE_BLUE()
-	      APPLY_ALPHA_BLUE()
-	      SHIFT_AND_STORE_COLOR() 
+	      uchar SrcPriority = *SrcPriorityPtr;
+	      uchar DestPriority = *DestPriorityPtr;
 
-	      *DestPriorityPtr = *SrcPriorityPtr;
+	      if((SrcPriority & 0xF) >= (DestPriority & 0xF) || (SrcPriority & 0xF0) >= (DestPriority & 0xF0))
+		{
+		  LOAD_DEST()
+		  LOAD_ALPHA()
+		  LUMINATE_RED()
+		  APPLY_ALPHA_RED()
+		  LUMINATE_GREEN()
+		  APPLY_ALPHA_GREEN()
+		  LUMINATE_BLUE()
+		  APPLY_ALPHA_BLUE()
+		  SHIFT_AND_STORE_COLOR(*DestPtr)
+		  *DestPriorityPtr = SrcPriority;
+		}
 	    }
 	}
     }
@@ -1893,4 +1905,92 @@ void bitmap::FastBlitAndCopyAlpha(bitmap* Bitmap) const
 
   memcpy(Bitmap->Image[0], Image[0], XSizeTimesYSize << 1);
   memcpy(Bitmap->AlphaMap[0], AlphaMap[0], XSizeTimesYSize);
+}
+
+void bitmap::UpdateRandMap(ulong Index, bool Value)
+{
+  ulong c1 = XSizeTimesYSize + Index;
+  RandMap[c1] = Value;
+
+  for(ulong c2 = c1 >> 1; c2; c1 = c2, c2 >>= 1)
+    {
+      Value |= RandMap[c1 ^ 1];
+
+      if(RandMap[c2] != Value)
+	RandMap[c2] = Value;
+      else
+	break;//return;
+    }
+}
+
+void bitmap::InitRandMap()
+{
+  if(!RandMap)
+    RandMap = new bool[XSizeTimesYSize << 1];
+
+  memset(RandMap, 0, (XSizeTimesYSize << 1) * sizeof(bool));
+}
+
+vector2d bitmap::RandomizePixel() const
+{
+  if(!RandMap[1])
+    return ERROR_VECTOR;
+
+  long Rand = RAND();
+  ulong c, RandMask = 1;
+
+  for(c = 2; c < XSizeTimesYSize << 1; c <<= 1)
+    if(RandMap[c + 1] && (!RandMap[c] || Rand & (RandMask <<= 1)))
+      ++c;
+
+  c = (c >> 1) - XSizeTimesYSize;
+  return vector2d(c % XSize, c / XSize);
+}
+
+void bitmap::CalculateRandMap()
+{
+  if(!AlphaMap)
+    ABORT("Alpha map needed to calculate random map.");
+
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
+    UpdateRandMap(c, AlphaMap[0][c] != 0);
+}
+
+void bitmap::AlphaPutPixel(ushort x, ushort y, ushort Color, ulong Luminance, uchar Alpha)
+{
+  ushort AntiAlpha = 256 - Alpha;
+  ushort SrcCol = Color;
+  ushort DestCol = Image[y][x];
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
+  LUMINATE_RED()
+  APPLY_ALPHA_RED()
+  LUMINATE_GREEN()
+  APPLY_ALPHA_GREEN()
+  LUMINATE_BLUE()
+  APPLY_ALPHA_BLUE()
+  SHIFT_AND_STORE_COLOR(Image[y][x]) 
+}
+
+uchar bitmap::CalculateAlphaAverage() const
+{
+  if(!AlphaMap)
+    ABORT("Alpha map needed to calculate alpha average!");
+
+  ulong Alphas = 0;
+  ulong AlphaSum = 0;
+
+  for(ulong c = 0; c < XSizeTimesYSize; ++c)
+    {
+      uchar* AlphaPtr = &AlphaMap[0][c];
+
+      if(*AlphaPtr)
+	{
+	  AlphaSum += *AlphaPtr;
+	  ++Alphas;
+	}
+    }
+
+  return Alphas ? AlphaSum / Alphas : 0;
 }

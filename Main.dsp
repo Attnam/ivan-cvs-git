@@ -86,7 +86,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 dxguid.lib ddraw.lib FeLib/Debug/FeLib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /profile /debug /machine:I386
-# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib user32.lib /nologo /version:0.410 /subsystem:windows /incremental:no /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
+# ADD LINK32 SDL.lib SDLmain.lib FeLib/PowerDebug/FeLib.lib user32.lib /nologo /version:0.440 /subsystem:windows /incremental:no /debug /machine:I386 /nodefaultlib:"msvcrt" /pdbtype:sept
 # SUBTRACT LINK32 /verbose /pdb:none /map /nodefaultlib
 # Begin Special Build Tool
 SOURCE=$(InputPath)
@@ -655,6 +655,15 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
 # End Group
 # End Target

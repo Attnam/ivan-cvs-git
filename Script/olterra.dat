@@ -31,7 +31,7 @@ olterrain
 	CanBeDestroyed = false;
 	RestModifier = 1;
 	RestMessage = "";
-	DefaultMainVolume = 10000000;
+	DefaultMainVolume = 1000000;
 	DefaultSecondaryVolume = 0;
 	DefaultContainedVolume = 0;
 	ShowMaterial = true;
@@ -490,6 +490,7 @@ boulder /* olterrain-> */
 	{
 		BitmapPos = 64, 304;
 	}
+
 	Config 3;
 	{
 		BitmapPos = 64, 304; /* Should be checked */

@@ -7,27 +7,40 @@
    Fwords to which ControlFWord is linked can begin a reply and those fwords linked
    to ControlFWord can end it. */
 
-febot::febot() { FWordSet.insert(fword(CONST_S(""))); }
-febot::fword* febot::GetControlFWord() const { return const_cast<fword*>(&*FWordSet.begin()); }
+void febot::Initialize(ushort NewChainLength)
+{
+  ChainLength = NewChainLength;
+  WordChainSet.clear();
+  WordChainSet.insert(wordchain(ChainLength));
+}
 
-febot::fword* febot::fword::GetRandomLink() const { return Link[RAND() % Link.size()]; }
+febot::wordchain* febot::GetControlWordChain() const { return const_cast<wordchain*>(&*WordChainSet.begin()); }
+
+febot::wordchain* febot::wordchain::GetRandomLink() const { return Link[RAND() % Link.size()]; }
+
+febot::wordchain::wordchain(const febot::wordchain* WordChain, const festring& NewWord) : String(++WordChain->String.begin(), WordChain->String.end())
+{
+  String.push_back(NewWord);
+}
 
 /* Searches for an fword associated with String in FWordSet and returns it
    or creates a new one if needed */
 
-febot::fword* febot::CreateFWord(const festring& String)
+febot::wordchain* febot::CreateWordChain(const febot::wordchain* WordChain, const festring& NewWord)
 {
-  return const_cast<fword*>(&*FWordSet.insert(fword(String)).first);
+  return const_cast<wordchain*>(&*WordChainSet.insert(wordchain(WordChain, NewWord)).first);
 }
 
 void febot::Save(outputfile& SaveFile) const
 {
-  SaveFile << ulong(FWordSet.size());
-  fwordset::const_iterator i1;
+
+
+  /*SaveFile << ulong(WordChainSet.size());
+  fwordset::const_iterator i1;*/
 
   /* Speeds up saving tremendously for large files */
 
-  std::map<const fword*, ulong> FWordIndexMap;
+  /*std::map<const fword*, ulong> FWordIndexMap;
   ulong c;
 
   for(i1 = FWordSet.begin(), c = 0; i1 != FWordSet.end(); ++i1, ++c)
@@ -42,18 +55,20 @@ void febot::Save(outputfile& SaveFile) const
 
       for(c = 0; c < i1->Link.size(); ++c)
 	SaveFile << FWordIndexMap.find(i1->Link[c])->second;
-    }
+    }*/
 }
 
 void febot::Load(inputfile& SaveFile)
 {
-  FWordSet.clear();
+  wordchain* Chain = CreateWordChain(GetControlWordChain(), "Jaska");
+  Chain = CreateWordChain(Chain, "on");
+  /*FWordSet.clear();
   ulong MapSize;
-  SaveFile >> MapSize;
+  SaveFile >> MapSize;*/
 
   /* Speeds up loading tremendously for large files */
 
-  std::map<ulong, fword*> FWordPtrMap;
+  /*std::map<ulong, fword*> FWordPtrMap;
 
   for(ulong c = 0; c < MapSize; ++c)
     FWordPtrMap[c] = const_cast<fword*>(&*FWordSet.insert(FWordSet.end(), fword(ReadType<festring>(SaveFile))));
@@ -67,7 +82,7 @@ void febot::Load(inputfile& SaveFile)
 
       for(ulong c = 0; c < LinkSize; ++c)
 	FWord->Link[c] = FWordPtrMap.find(ReadType<ulong>(SaveFile))->second;
-    }
+    }*/
 }
 
 void febot::BeTalkedTo(festring String)
@@ -77,41 +92,44 @@ void febot::BeTalkedTo(festring String)
   if(!String.IsEmpty())
     {
       festring Word;
-      String.ExtractWord(Word);
-      fword* OldFWord = CreateFWord(Word);
-      GetControlFWord()->Link.push_back(OldFWord);
+      wordchain* OldChain = GetControlWordChain();
 
       for(String.ExtractWord(Word); !Word.IsEmpty(); String.ExtractWord(Word))
 	{
-	  fword* NewFWord = CreateFWord(Word);
-	  OldFWord->Link.push_back(NewFWord);
-	  OldFWord = NewFWord;
+	  wordchain* NewChain = CreateWordChain(OldChain, Word);
+	  OldChain->Link.push_back(NewChain);
+	  OldChain = NewChain;
 	}
 
-      OldFWord->Link.push_back(GetControlFWord());
+      OldChain->Link.push_back(GetControlWordChain());
     }
 }
 
 void febot::Reply(festring& String) const
 {
-  if(GetControlFWord()->Link.empty())
-    {
-      String.Empty();
-      return;
-    }
-
   String.Empty();
-  fword* FWord = GetControlFWord()->GetRandomLink();
-  String << FWord->String;
 
-  for(FWord = FWord->GetRandomLink(); !FWord->String.IsEmpty(); FWord = FWord->GetRandomLink())
-    String << ' ' << FWord->String;
+  if(GetControlWordChain()->Link.empty())
+    return;
+
+  wordchain* WordChain = GetControlWordChain()->GetRandomLink();
+  String << WordChain->String.back();
+
+  for(WordChain = WordChain->GetRandomLink(); !WordChain->String.back().IsEmpty(); WordChain = WordChain->GetRandomLink())
+    String << ' ' << WordChain->String.back();
 
   String.PostProcessForFebot();
 }
 
-void febot::Amnesify()
+bool febot::wordchain::operator<(const febot::wordchain& W) const
 {
-  FWordSet.clear();
-  FWordSet.insert(fword(CONST_S("")));
+  for(std::list<festring>::const_iterator i1 = String.begin(), i2 = W.String.begin(); i1 != String.end(); ++i1, ++i2)
+    {
+      char Comp = i1->Compare(*i2);
+
+      if(Comp)
+	return Comp < 0;
+    }
+
+  return false;
 }

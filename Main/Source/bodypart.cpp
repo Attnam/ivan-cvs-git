@@ -6,7 +6,6 @@ void bodypart::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags)
 ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
 uchar bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
-bool bodypart::IsDipDestination(const character*) const { return MainMaterial->IsFlesh() || MainMaterial->IsLiquid(); }
 ushort bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 ushort bodypart::GetMaterialColorA(ushort) const { return GetMainMaterial()->GetSkinColor(); }
 bool bodypart::IsWarm() const { return MainMaterial->IsWarm(); }
@@ -14,6 +13,9 @@ bool bodypart::UseMaterialAttributes() const { return MainMaterial->UseMaterialA
 bool bodypart::CanRegenerate() const { return MainMaterial->CanRegenerate(); }
 square* bodypart::GetSquareUnder(ushort Index) const { return Master ? Slot[0]->GetSquareUnder(Index) : Slot[Index]->GetSquareUnder(); }
 lsquare* bodypart::GetLSquareUnder(ushort Index) const { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(Index) : Slot[Index]->GetSquareUnder()); }
+item* bodypart::GetExternalBodyArmor() const { return GetHumanoidMaster()->GetBodyArmor(); }
+item* bodypart::GetExternalCloak() const { return GetHumanoidMaster()->GetCloak(); }
+bool bodypart::AllowFluidBe() const { return !Master || !Master->IsPolymorphed(); }
 
 uchar head::GetBodyPartIndex() const { return HEAD_INDEX; }
 ushort head::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
@@ -26,7 +28,6 @@ uchar normaltorso::GetGraphicsContainerIndex() const { return GR_CHARACTER; }
 ushort arm::GetMinDamage() const { return ushort(Damage * 0.75f); }
 ushort arm::GetMaxDamage() const { return ushort(Damage * 1.25f + 1); }
 float arm::GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
-ushort arm::GetAnimationFrames() const { return Max<ushort>(AnimationFrames, WieldedAnimationFrames); }
 
 uchar rightarm::GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
 ushort rightarm::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
@@ -59,13 +60,17 @@ vector2d ennerhead::GetBitmapPos(ushort Frame) const { return Frame & 16 ? head:
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << BloodColor << IsSparklingB << IsSparklingC << IsSparklingD;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP;
+  SaveFile << OwnerDescription << Unique << BloodMaterial;
+  SaveFile << IsSparklingB << IsSparklingC << IsSparklingD;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> HP >> OwnerDescription >> Unique >> BloodColor >> IsSparklingB >> IsSparklingC >> IsSparklingD;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> HP;
+  SaveFile >> OwnerDescription >> Unique >> BloodMaterial;
+  SaveFile >> IsSparklingB >> IsSparklingC >> IsSparklingD;
 }
 
 ushort bodypart::GetStrengthValue() const
@@ -85,8 +90,8 @@ ushort head::GetTotalResistance(ushort Type) const
       if(GetHelmet())
 	Resistance += GetHelmet()->GetResistance(Type);
 
-      if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 2;
+      if(GetExternalBodyArmor())
+	Resistance += GetExternalBodyArmor()->GetResistance(Type) >> 2;
 
       return Resistance;
     }
@@ -126,8 +131,8 @@ ushort arm::GetTotalResistance(ushort Type) const
     {
       ushort Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
 
-      if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 1;
+      if(GetExternalBodyArmor())
+	Resistance += GetExternalBodyArmor()->GetResistance(Type) >> 1;
 
       if(GetGauntlet())
 	Resistance += GetGauntlet()->GetResistance(Type);
@@ -144,8 +149,8 @@ ushort groin::GetTotalResistance(ushort Type) const
     {
       ushort Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
 
-      if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type);
+      if(GetExternalBodyArmor())
+	Resistance += GetExternalBodyArmor()->GetResistance(Type);
 
       if(GetHumanoidMaster()->GetBelt())
 	Resistance += GetHumanoidMaster()->GetBelt()->GetResistance(Type);
@@ -162,8 +167,8 @@ ushort leg::GetTotalResistance(ushort Type) const
     {
       ushort Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
 
-      if(GetHumanoidMaster()->GetBodyArmor())
-	Resistance += GetHumanoidMaster()->GetBodyArmor()->GetResistance(Type) >> 1;
+      if(GetExternalBodyArmor())
+	Resistance += GetExternalBodyArmor()->GetResistance(Type) >> 1;
 
       if(GetBoot())
 	Resistance += GetBoot()->GetResistance(Type);
@@ -206,10 +211,7 @@ void arm::Save(outputfile& SaveFile) const
   SaveFile << BaseUnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
-  SaveFile << WieldedAnimationFrames;
-
-  for(ushort c = 0; c < WieldedAnimationFrames; ++c)
-    SaveFile << WieldedGraphicIterator[c]->first;
+  SaveFile << WieldedGraphicData;
 }
 
 void arm::Load(inputfile& SaveFile)
@@ -218,20 +220,7 @@ void arm::Load(inputfile& SaveFile)
   SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
-  SaveFile >> WieldedAnimationFrames;
-
-  if(WieldedAnimationFrames)
-    {
-      WieldedPicture = new bitmap*[WieldedAnimationFrames];
-      WieldedGraphicIterator = new tilemap::iterator[WieldedAnimationFrames];
-      graphicid GraphicID;
-
-      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
-	{
-	  SaveFile >> GraphicID;
-	  WieldedPicture[c] = (WieldedGraphicIterator[c] = igraph::AddUser(GraphicID))->second.Bitmap;
-	}
-    }
+  SaveFile >> WieldedGraphicData;
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -248,7 +237,7 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(Master)
     {
@@ -293,7 +282,7 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
 bool bodypart::CannotBeSevered(ushort Type)
 {
-  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (Master->GetTorso()->HP * 3 >= Master->GetTorso()->MaxHP << 1 && Master->GetTorso()->MaxHP > 1))) || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX);
+  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (Master->GetTorso()->HP * 3 >= Master->GetTorso()->MaxHP << 1 && Master->GetTorso()->MaxHP > 1))) || (Type & (POISON|SOUND|ACID) && GetBodyPartIndex() != TORSO_INDEX);
 }
 
 float arm::GetUnarmedDamage() const
@@ -580,7 +569,7 @@ uchar corpse::GetAlphaA(ushort) const
 
 ushort corpse::GetMaterialColorB(ushort) const
 {
-  return GetDeceased()->GetTorso()->IsAlive() ? GetDeceased()->GetBloodColor() : GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
+  return GetDeceased()->GetTorso()->IsAlive() ? material::GetDataBase(GetDeceased()->GetBloodMaterial())->Color : GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
 }
 
 uchar corpse::GetAlphaB(ushort) const
@@ -679,15 +668,6 @@ humanoidtorso::~humanoidtorso()
 
 arm::~arm()
 {
-  if(WieldedAnimationFrames)
-    {
-      for(ushort c = 0; c < WieldedAnimationFrames; ++c)
-	igraph::RemoveUser(WieldedGraphicIterator[c]);
-
-      delete [] WieldedPicture;
-      delete [] WieldedGraphicIterator;
-    }
-
   delete GetWielded();
   delete GetGauntlet();
   delete GetRing();
@@ -757,8 +737,9 @@ bool bodypart::IsSparkling(ushort Index) const
       case 1: return IsSparklingB;
       case 2: return IsSparklingC;
       case 3: return IsSparklingD;
-      default: return false;
     }
+
+  return false;
 }
 
 bool corpse::RaiseTheDead(character* Summoner)
@@ -818,7 +799,6 @@ void arm::VirtualConstructor(bool Load)
 
   if(!Load)
     {
-      WieldedAnimationFrames = 0;
       StrengthBonus = DexterityBonus = 0;
       StrengthExperience = DexterityExperience = 0;
     }
@@ -1093,14 +1073,11 @@ void leg::EditExperience(ushort Identifier, long Value, bool DirectCall)
 
 void head::InitSpecialAttributes()
 {
-  bodypart::InitSpecialAttributes();
   BaseBiteStrength = Master->GetBaseBiteStrength();
 }
 
 void arm::InitSpecialAttributes()
 {
-  bodypart::InitSpecialAttributes();
-
   if(!Master->IsHuman() || Master->IsInitializing())
     {
       Strength = Master->GetDefaultArmStrength() * (100 + Master->GetAttributeBonus()) / 100;
@@ -1117,8 +1094,6 @@ void arm::InitSpecialAttributes()
 
 void leg::InitSpecialAttributes()
 {
-  bodypart::InitSpecialAttributes();
-
   if(!Master->IsHuman() || Master->IsInitializing())
     {
       Strength = Master->GetDefaultLegStrength() * (100 + Master->GetAttributeBonus()) / 100;
@@ -1221,8 +1196,9 @@ item* head::GetEquipment(ushort Index) const
     {
     case 0: return GetHelmet();
     case 1: return GetAmulet();
-    default: return 0;
     }
+
+  return 0;
 }
 
 item* humanoidtorso::GetEquipment(ushort Index) const
@@ -1232,8 +1208,9 @@ item* humanoidtorso::GetEquipment(ushort Index) const
     case 0: return GetBodyArmor();
     case 1: return GetCloak();
     case 2: return GetBelt();
-    default: return 0;
     }
+
+  return 0;
 }
 
 item* arm::GetEquipment(ushort Index) const
@@ -1243,8 +1220,9 @@ item* arm::GetEquipment(ushort Index) const
     case 0: return GetWielded();
     case 1: return GetGauntlet();
     case 2: return GetRing();
-    default: return 0;
     }
+
+  return 0;
 }
 
 item* leg::GetEquipment(ushort Index) const
@@ -1325,9 +1303,12 @@ void bodypart::SignalVolumeAndWeightChange()
 
   if(Master && !Master->IsInitializing())
     {
-      CalculateMaxHP(false);
+      CalculateMaxHP();
       Master->CalculateMaxHP();
       Master->SignalBodyPartVolumeAndWeightChange();
+
+      if(UpdateArmorPictures())
+	GetSquareUnder()->SendNewDrawRequest();
     }
 }
 
@@ -1542,7 +1523,7 @@ humanoidtorso::humanoidtorso(const humanoidtorso& Torso) : torso(Torso)
   BeltSlot.Init(this, BELT_INDEX);
 }
 
-arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength), WieldedAnimationFrames(0)
+arm::arm(const arm& Arm) : bodypart(Arm), Strength(Arm.Strength), Dexterity(Arm.Dexterity), StrengthExperience(Arm.StrengthExperience), DexterityExperience(Arm.DexterityExperience), BaseUnarmedStrength(Arm.BaseUnarmedStrength)
 {
 }
 
@@ -1595,45 +1576,7 @@ bool bodypart::IsVeryCloseToSpoiling() const
 
 void corpse::SignalSpoil(material*)
 {
-  bool TorsoSpoiled = false;
-
-  if(GetDeceased()->GetTorso()->IsVeryCloseToSpoiling())
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s spoils.", CHAR_NAME(DEFINITE));
-
-      TorsoSpoiled = true;
-    }
-
-  for(ushort c = 1; c < GetDeceased()->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart)
-	if(BodyPart->IsVeryCloseToSpoiling())
-	  {
-	    if(!TorsoSpoiled && CanBeSeenByPlayer())
-	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).CStr(), GetDeceased()->CHAR_NAME(DEFINITE));
-
-	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
-
-	    if(BodyPart)
-	      BodyPart->SendToHell();
-	  }
-	else if(TorsoSpoiled)
-	  {
-	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
-
-	    if(BodyPart)
-	      GetSlot()->AddFriendItem(BodyPart);
-	  }
-    }
-
-  if(TorsoSpoiled)
-    {
-      RemoveFromSlot();
-      SendToHell();
-    }
+  GetDeceased()->Spoil(this);
 }
 
 bool bodypart::CanBePiledWith(const item* Item, const character* Viewer) const
@@ -1677,8 +1620,17 @@ void bodypart::Be()
 {
   if(Master)
     {
-      if(IsInBadCondition() && Master->IsEnabled() && !Master->IsPolymorphed() && !(RAND() & 0xF))
+      if(Master->IsEnabled() && IsInBadCondition() && !Master->IsPolymorphed() && !(RAND() & 0xF))
 	SpillBlood(1);
+
+      if(!Master->IsEnabled() && !Master->IsPolymorphed() && HP < MaxHP && !(RAND() & 0xF))
+	{
+	  SpillBlood(1);
+	  HP += Max(((MaxHP - HP) >> 2), 1);
+	}
+
+      if(Master->AllowSpoil())
+	item::Be();
     }
   else
     {
@@ -1694,20 +1646,15 @@ void bodypart::Be()
 
 void bodypart::SpillBlood(ushort HowMuch, vector2d Pos)
 {
-  if(HowMuch && (!Master || (Master->IsEnabled() && Master->SpillsBlood())) && IsAlive() && !game::IsInWilderness()) 
-    GetNearLSquare(Pos)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
+  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness()) 
+    GetNearLSquare(Pos)->SpillFluid(0, CreateBlood(HowMuch * sqrt(BodyPartVolume) / 2), false);
 }
 
 void bodypart::SpillBlood(ushort HowMuch)
 {
-  if(HowMuch && (!Master || (Master->IsEnabled() && Master->SpillsBlood())) && IsAlive() && !game::IsInWilderness())
+  if(HowMuch && (!Master || Master->SpillsBlood()) && (IsAlive() || MainMaterial->IsLiquid()) && !game::IsInWilderness())
     for(ushort c = 0; c < GetSquaresUnder(); ++c)
-      GetLSquareUnder(c)->SpillFluid(HowMuch, GetBloodColor(), 5, 60);
-}
-
-void bodypart::InitSpecialAttributes()
-{
-  BloodColor = Master->GetBloodColor();
+      GetLSquareUnder(c)->SpillFluid(0, CreateBlood(HowMuch * sqrt(BodyPartVolume) / 2), false);
 }
 
 void bodypart::SignalEnchantmentChange()
@@ -1817,8 +1764,8 @@ void arm::CalculateAttributeBonuses()
 
   if(Master)
     {
-      ApplyDexterityPenalty(GetHumanoidMaster()->GetCloak());
-      ApplyDexterityPenalty(GetHumanoidMaster()->GetBodyArmor());
+      ApplyDexterityPenalty(GetExternalCloak());
+      ApplyDexterityPenalty(GetExternalBodyArmor());
     }
 }
 
@@ -1838,8 +1785,8 @@ void leg::CalculateAttributeBonuses()
 
   if(Master)
     {
-      ApplyAgilityPenalty(GetHumanoidMaster()->GetCloak());
-      ApplyAgilityPenalty(GetHumanoidMaster()->GetBodyArmor());
+      ApplyAgilityPenalty(GetExternalCloak());
+      ApplyAgilityPenalty(GetExternalBodyArmor());
     }
 }
 
@@ -1932,13 +1879,13 @@ bool head::DamageArmor(character* Damager, ushort Damage, ushort Type)
       AnyArmor = true;
     }
 
-  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+  if((Armor[1] = GetExternalBodyArmor()))
     {
       AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 2, 1);
       AnyArmor = true;
     }
 
-  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+  if((Armor[2] = GetExternalCloak()))
     {
       AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
@@ -1986,13 +1933,13 @@ bool arm::DamageArmor(character* Damager, ushort Damage, ushort Type)
       AnyArmor = true;
     }
 
-  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+  if((Armor[1] = GetExternalBodyArmor()))
     {
       AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 1, 1);
       AnyArmor = true;
     }
 
-  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+  if((Armor[2] = GetExternalCloak()))
     {
       AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
@@ -2018,13 +1965,13 @@ bool leg::DamageArmor(character* Damager, ushort Damage, ushort Type)
       AnyArmor = true;
     }
 
-  if((Armor[1] = GetHumanoidMaster()->GetBodyArmor()))
+  if((Armor[1] = GetExternalBodyArmor()))
     {
       AV[1] = Max<ushort>(Armor[1]->GetStrengthValue() >> 1, 1);
       AnyArmor = true;
     }
 
-  if((Armor[2] = GetHumanoidMaster()->GetCloak()))
+  if((Armor[2] = GetExternalCloak()))
     {
       AV[2] = Max<ushort>(Armor[2]->GetStrengthValue(), 1);
       AnyArmor = true;
@@ -2049,7 +1996,7 @@ ushort bodypart::GetConditionColor() const
   else if(HP < MaxHP)
     return MakeRGB16(180, 120, 120);
   else
-    return LIGHT_GRAY;
+    return MakeRGB16(180, 180, 180);
 }
 
 bool arm::CheckIfWeaponTooHeavy(const char* WeaponDescription) const
@@ -2123,73 +2070,6 @@ head* head::Behead()
 {
   RemoveFromSlot();
   return this;
-}
-
-material* bodypart::CreateDipMaterial()
-{
-  material* Material = GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
-
-  if(!GetMainMaterial()->GetVolume())
-    {
-      RemoveFromSlot();
-      SendToHell();
-    }
-
-  return Material;
-}
-
-bool corpse::IsDipDestination(const character* Char) const
-{
-  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart && BodyPart->IsDipDestination(Char))
-	return true;
-    }
-
-  return false;
-}
-
-material* corpse::CreateDipMaterial()
-{
-  for(ushort c = GetDeceased()->GetBodyParts() - 1; c != 0; --c)
-    {
-      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-      if(BodyPart && BodyPart->IsDipDestination(0))
-	return BodyPart->CreateDipMaterial();
-    }
-
-  bodypart* Torso = GetDeceased()->GetTorso();
-
-  if(Torso->IsDipDestination(0))
-    {
-      material* Material = Torso->CreateDipMaterial();
-
-      if(!GetDeceased()->GetTorso())
-	{
-	  for(ushort c = 1; c < GetDeceased()->GetBodyParts(); ++c)
-	    {
-	      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
-
-	      if(BodyPart)
-		{
-		  item* BodyPart = GetDeceased()->SevereBodyPart(c);
-
-		  if(BodyPart)
-		    GetSlot()->AddFriendItem(BodyPart);
-		}
-	    }
-
-	  RemoveFromSlot();
-	  SendToHell();
-	}
-
-      return Material;
-    }
-
-  return 0;
 }
 
 bool arm::EditAllAttributes(short Amount)
@@ -2279,29 +2159,32 @@ void arm::UpdateWieldedPicture()
 {
   if(!Master || !Master->PictureUpdatesAreForbidden())
     {
-      const item* Wielded = GetWielded();
+      item* Wielded = GetWielded();
 
       if(Wielded && Master)
 	{
 	  ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
-	  Wielded->UpdatePictures(WieldedPicture, WieldedGraphicIterator, Master->GetWieldedPosition(), WieldedAnimationFrames, SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
-	}
-      else if(WieldedAnimationFrames)
-	{
-	  for(ushort c = 0; c < WieldedAnimationFrames; ++c)
-	    igraph::RemoveUser(WieldedGraphicIterator[c]);
+	  Wielded->UpdatePictures(WieldedGraphicData,
+				  Master->GetWieldedPosition(),
+				  SpecialFlags,
+				  GetMaxAlpha(),
+				  GR_HUMANOID,
+				  static_cast<bposretriever>(&item::GetWieldedBitmapPos));
 
-	  WieldedAnimationFrames = 0;
-	  delete [] WieldedPicture;
-	  delete [] WieldedGraphicIterator;
+	  if(ShowFluids())
+	    Wielded->CheckFluidGearPictures(Wielded->GetWieldedBitmapPos(0), SpecialFlags, false);
 	}
+      else
+	WieldedGraphicData.Retire();
     }
 }
 
 void arm::DrawWielded(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  if(WieldedAnimationFrames)
-    WieldedPicture[!AllowAnimate || WieldedAnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % WieldedAnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  DrawEquipment(WieldedGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(ShowFluids() && GetWielded())
+    GetWielded()->DrawFluidGearPictures(Bitmap, Pos, Luminance, IsRightArm() ? 0 : MIRROR, AllowAnimate);
 }
 
 void arm::UpdatePictures()
@@ -2310,12 +2193,18 @@ void arm::UpdatePictures()
   UpdateWieldedPicture();
 }
 
-void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
+void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SquareIndex, bool AllowAnimate, bool AllowAlpha) const
 {
+  const ushort AF = GraphicData.AnimationFrames;
+  const bitmap* P = GraphicData.Picture[!AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF];
+
   if(AllowAlpha)
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+
+  DrawFluids(Bitmap, Pos, Luminance, SquareIndex, AllowAnimate);
+  DrawArmor(Bitmap, Pos, Luminance, AllowAnimate);
 }
 
 void leg::AddAttackInfo(felist& List) const
@@ -2468,8 +2357,6 @@ ushort largecorpse::GetSquareIndex(vector2d Pos) const
   return RelativePos.X + (RelativePos.Y << 1);
 }
 
-
-
 character* corpse::TryNecromancy(character* Summoner) 
 {
   if(Summoner && Summoner->IsPlayer())
@@ -2490,5 +2377,515 @@ character* corpse::TryNecromancy(character* Summoner)
       SendToHell();      
       return NewZombie;
     }
+
   return 0;
+}
+
+item* head::GetArmorToReceiveFluid(bool) const
+{
+  item* Helmet = GetHelmet();
+
+  if(Helmet && Helmet->GetCoverPercentile() > RAND() % 100)
+    return Helmet;
+  else
+    return 0;
+}
+
+item* humanoidtorso::GetArmorToReceiveFluid(bool) const
+{
+  item* Cloak = GetCloak();
+
+  if(Cloak && !(RAND() % 3))
+    return Cloak;
+
+  item* Belt = GetBelt();
+
+  if(Belt && !(RAND() % 10))
+    return Belt;
+
+  item* BodyArmor = GetBodyArmor();
+  return BodyArmor ? BodyArmor : 0;
+}
+
+item* arm::GetArmorToReceiveFluid(bool) const
+{
+  item* Cloak = GetExternalCloak();
+
+  if(Cloak && !(RAND() % 3))
+    return Cloak;
+
+  item* Gauntlet = GetGauntlet();
+
+  if(Gauntlet && RAND() & 1)
+    return Gauntlet;
+
+  item* BodyArmor = GetExternalBodyArmor();
+  return BodyArmor ? BodyArmor : 0;
+}
+
+item* groin::GetArmorToReceiveFluid(bool) const
+{
+  item* Cloak = GetExternalCloak();
+
+  if(Cloak && !(RAND() % 3))
+    return Cloak;
+
+  item* BodyArmor = GetExternalBodyArmor();
+  return BodyArmor ? BodyArmor : 0;
+}
+
+item* leg::GetArmorToReceiveFluid(bool SteppedOn) const
+{
+  if(SteppedOn)
+    {
+      item* Boot = GetBoot();
+      return Boot ? Boot : 0;
+    }
+  else
+    {
+      item* Cloak = GetExternalCloak();
+
+      if(Cloak && !(RAND() % 3))
+	return Cloak;
+
+      item* Boot = GetBoot();
+
+      if(Boot && RAND() & 1)
+	return Boot;
+
+      item* BodyArmor = GetExternalBodyArmor();
+      return BodyArmor ? BodyArmor : 0;
+    }
+}
+
+void bodypart::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex)
+{
+  if(Master)
+    {
+      item* Armor = GetArmorToReceiveFluid(false);
+
+      if(Armor)
+	Armor->SpillFluid(Spiller, Liquid);
+      else if(GetMaster())
+	{
+	  Liquid->SpillEffect(GetMaster(), GetBodyPartIndex());
+
+	  if(Liquid->GetVolume())
+	    AddFluid(Liquid, SquareIndex);
+	  else
+	    delete Liquid;
+	}
+    }
+  else
+    item::SpillFluid(Spiller, Liquid, SquareIndex);
+}
+
+void bodypart::StayOn(liquid* Liquid)
+{
+  item* Armor = GetArmorToReceiveFluid(true);
+
+  if(Armor)
+    Liquid->ConstantEffect(Armor);
+  else if(GetMaster())
+    Liquid->ConstantEffect(GetMaster(), GetBodyPartIndex());
+}
+
+liquid* bodypart::CreateBlood(ulong Volume) const
+{
+  return new liquid(GetBloodMaterial(), Volume);
+}
+
+uchar corpse::GetRustDataA() const
+{
+  return Deceased->GetTorso()->GetMainMaterial()->GetRustData();
+}
+
+void bodypart::UpdateArmorPicture(graphicdata& GData, item* Armor, ushort SpecialFlags, vector2d (item::*Retriever)(ushort) const, bool BodyArmor) const
+{
+  if(Armor && Master)
+    {
+      Armor->UpdatePictures(GData,
+			    vector2d(0, 0),
+			    SpecialFlags|Armor->GetSpecialFlags(),
+			    GetMaxAlpha(),
+			    GR_HUMANOID,
+			    static_cast<bposretriever>(Retriever));
+      Armor->CheckFluidGearPictures((Armor->*Retriever)(0), SpecialFlags, BodyArmor);
+    }
+  else
+    GData.Retire();
+}
+
+bool playerkindhead::UpdateArmorPictures()
+{
+  UpdateHeadArmorPictures(HelmetGraphicData);
+  return true;
+}
+
+bool playerkindtorso::UpdateArmorPictures()
+{
+  UpdateTorsoArmorPictures(TorsoArmorGraphicData,
+			   CloakGraphicData,
+			   BeltGraphicData);
+  return true;
+}
+
+bool playerkindrightarm::UpdateArmorPictures()
+{
+  UpdateArmArmorPictures(ArmArmorGraphicData,
+			 GauntletGraphicData,
+			 ST_RIGHT_ARM);
+  return true;
+}
+
+bool playerkindleftarm::UpdateArmorPictures()
+{
+  UpdateArmArmorPictures(ArmArmorGraphicData,
+			 GauntletGraphicData,
+			 ST_LEFT_ARM);
+  return true;
+}
+
+bool playerkindgroin::UpdateArmorPictures()
+{
+  UpdateGroinArmorPictures(GroinArmorGraphicData);
+  return true;
+}
+
+bool playerkindrightleg::UpdateArmorPictures()
+{
+  UpdateLegArmorPictures(LegArmorGraphicData,
+			 BootGraphicData,
+			 ST_RIGHT_LEG);
+  return true;
+}
+
+bool playerkindleftleg::UpdateArmorPictures()
+{
+  UpdateLegArmorPictures(LegArmorGraphicData,
+			 BootGraphicData,
+			 ST_LEFT_LEG);
+  return true;
+}
+
+void head::UpdateHeadArmorPictures(graphicdata& HelmetGraphicData) const
+{
+  if(!Master || !Master->PictureUpdatesAreForbidden())
+    {
+      UpdateArmorPicture(HelmetGraphicData,
+			 GetHelmet(),
+			 ST_OTHER_BODYPART,
+			 &item::GetHelmetBitmapPos);
+    }
+}
+
+void humanoidtorso::UpdateTorsoArmorPictures(graphicdata& TorsoArmorGraphicData, graphicdata& CloakGraphicData, graphicdata& BeltGraphicData) const
+{
+  if(!Master || !Master->PictureUpdatesAreForbidden())
+    {
+      UpdateArmorPicture(TorsoArmorGraphicData,
+			 GetBodyArmor(),
+			 ST_OTHER_BODYPART,
+			 &item::GetTorsoArmorBitmapPos,
+			 true);
+      UpdateArmorPicture(CloakGraphicData,
+			 GetCloak(),
+			 ST_OTHER_BODYPART,
+			 &item::GetCloakBitmapPos);
+      UpdateArmorPicture(BeltGraphicData,
+			 GetBelt(),
+			 ST_OTHER_BODYPART,
+			 &item::GetBeltBitmapPos);
+    }
+}
+
+void arm::UpdateArmArmorPictures(graphicdata& ArmArmorGraphicData, graphicdata& GauntletGraphicData, ushort SpecialFlags) const
+{
+  if(!Master || !Master->PictureUpdatesAreForbidden())
+    {
+      UpdateArmorPicture(ArmArmorGraphicData,
+			 Master ? GetExternalBodyArmor() : 0,
+			 SpecialFlags,
+			 &item::GetArmArmorBitmapPos,
+			 true);
+      UpdateArmorPicture(GauntletGraphicData,
+			 GetGauntlet(),
+			 SpecialFlags,
+			 &item::GetGauntletBitmapPos);
+    }
+}
+
+void groin::UpdateGroinArmorPictures(graphicdata& GroinArmorGraphicData) const
+{
+  if(!Master || !Master->PictureUpdatesAreForbidden())
+    {
+      UpdateArmorPicture(GroinArmorGraphicData,
+			 Master ? GetExternalBodyArmor() : 0,
+			 ST_GROIN,
+			 &item::GetLegArmorBitmapPos,
+			 true);
+    }
+}
+
+void leg::UpdateLegArmorPictures(graphicdata& LegArmorGraphicData, graphicdata& BootGraphicData, ushort SpecialFlags) const
+{
+  if(!Master || !Master->PictureUpdatesAreForbidden())
+    {
+      UpdateArmorPicture(LegArmorGraphicData,
+			 Master ? GetExternalBodyArmor() : 0,
+			 SpecialFlags,
+			 &item::GetLegArmorBitmapPos,
+			 true);
+      UpdateArmorPicture(BootGraphicData,
+			 GetBoot(),
+			 SpecialFlags,
+			 &item::GetBootBitmapPos);
+    }
+}
+
+void bodypart::DrawEquipment(const graphicdata& GraphicData, bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  ushort EAF = GraphicData.AnimationFrames;
+
+  if(EAF)
+    GraphicData.Picture[!AllowAnimate || EAF == 1 ? 0 : GET_TICK() % EAF]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+}
+
+void playerkindhead::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(HelmetGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetHelmet())
+    GetHelmet()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindtorso::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(TorsoArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetBodyArmor())
+    GetBodyArmor()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+
+  DrawEquipment(CloakGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetCloak())
+    GetCloak()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+
+  DrawEquipment(BeltGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetBelt())
+    GetBelt()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindrightarm::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(ArmArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(Master && GetExternalBodyArmor())
+    GetExternalBodyArmor()->DrawFluidBodyArmorPictures(Bitmap, Pos, Luminance, ST_RIGHT_ARM, AllowAnimate);
+
+  DrawEquipment(GauntletGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetGauntlet())
+    GetGauntlet()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindleftarm::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(ArmArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(Master && GetExternalBodyArmor())
+    GetExternalBodyArmor()->DrawFluidBodyArmorPictures(Bitmap, Pos, Luminance, ST_LEFT_ARM, AllowAnimate);
+
+  DrawEquipment(GauntletGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetGauntlet())
+    GetGauntlet()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindgroin::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(GroinArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(Master && GetExternalBodyArmor())
+    GetExternalBodyArmor()->DrawFluidBodyArmorPictures(Bitmap, Pos, Luminance, ST_GROIN, AllowAnimate);
+}
+
+void playerkindrightleg::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(LegArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(Master && GetExternalBodyArmor())
+    GetExternalBodyArmor()->DrawFluidBodyArmorPictures(Bitmap, Pos, Luminance, ST_RIGHT_LEG, AllowAnimate);
+
+  DrawEquipment(BootGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetBoot())
+    GetBoot()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindleftleg::DrawArmor(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
+{
+  DrawEquipment(LegArmorGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(Master && GetExternalBodyArmor())
+    GetExternalBodyArmor()->DrawFluidBodyArmorPictures(Bitmap, Pos, Luminance, ST_LEFT_LEG, AllowAnimate);
+
+  DrawEquipment(BootGraphicData, Bitmap, Pos, Luminance, AllowAnimate);
+
+  if(GetBoot())
+    GetBoot()->DrawFluidGearPictures(Bitmap, Pos, Luminance, 0, AllowAnimate);
+}
+
+void playerkindhead::Save(outputfile& SaveFile) const
+{
+  head::Save(SaveFile);
+  SaveFile << HelmetGraphicData;
+}
+
+void playerkindhead::Load(inputfile& SaveFile)
+{
+  head::Load(SaveFile);
+  SaveFile >> HelmetGraphicData;
+}
+
+void playerkindtorso::Save(outputfile& SaveFile) const
+{
+  humanoidtorso::Save(SaveFile);
+  SaveFile << TorsoArmorGraphicData << CloakGraphicData << BeltGraphicData;
+}
+
+void playerkindtorso::Load(inputfile& SaveFile)
+{
+  humanoidtorso::Load(SaveFile);
+  SaveFile >> TorsoArmorGraphicData >> CloakGraphicData >> BeltGraphicData;
+}
+
+void playerkindrightarm::Save(outputfile& SaveFile) const
+{
+  rightarm::Save(SaveFile);
+  SaveFile << ArmArmorGraphicData << GauntletGraphicData;
+}
+
+void playerkindrightarm::Load(inputfile& SaveFile)
+{
+  rightarm::Load(SaveFile);
+  SaveFile >> ArmArmorGraphicData >> GauntletGraphicData;
+}
+
+void playerkindleftarm::Save(outputfile& SaveFile) const
+{
+  leftarm::Save(SaveFile);
+  SaveFile << ArmArmorGraphicData << GauntletGraphicData;
+}
+
+void playerkindleftarm::Load(inputfile& SaveFile)
+{
+  leftarm::Load(SaveFile);
+  SaveFile >> ArmArmorGraphicData >> GauntletGraphicData;
+}
+
+void playerkindgroin::Save(outputfile& SaveFile) const
+{
+  groin::Save(SaveFile);
+  SaveFile << GroinArmorGraphicData;
+}
+
+void playerkindgroin::Load(inputfile& SaveFile)
+{
+  groin::Load(SaveFile);
+  SaveFile >> GroinArmorGraphicData;
+}
+
+void playerkindrightleg::Save(outputfile& SaveFile) const
+{
+  rightleg::Save(SaveFile);
+  SaveFile << LegArmorGraphicData << BootGraphicData;
+}
+
+void playerkindrightleg::Load(inputfile& SaveFile)
+{
+  rightleg::Load(SaveFile);
+  SaveFile >> LegArmorGraphicData >> BootGraphicData;
+}
+
+void playerkindleftleg::Save(outputfile& SaveFile) const
+{
+  leftleg::Save(SaveFile);
+  SaveFile << LegArmorGraphicData << BootGraphicData;
+}
+
+void playerkindleftleg::Load(inputfile& SaveFile)
+{
+  leftleg::Load(SaveFile);
+  SaveFile >> LegArmorGraphicData >> BootGraphicData;
+}
+
+void bodypart::UpdatePictures()
+{
+  item::UpdatePictures();
+  UpdateArmorPictures();
+}
+
+void playerkindtorso::SignalVolumeAndWeightChange()
+{
+  humanoidtorso::SignalVolumeAndWeightChange();
+
+  if(Master && !Master->IsInitializing())
+    Master->UpdatePictures();
+}
+
+void bodypart::ReceiveAcid(material* Material, ulong Modifier)
+{
+  if(Master && !MainMaterial->IsImmuneToAcid())
+    {
+      ulong Tries = Modifier / 1000;
+      Modifier -= Tries * 1000;
+      ushort Damage = 0;
+
+      for(ulong c = 0; c < Tries; ++c)
+	if(!(RAND() % 100))
+	  ++Damage;
+
+      if(Modifier && !(RAND() % 100000 / Modifier))
+	++Damage;
+
+      if(Damage)
+	{
+	  ulong Turn = game::GetTicks() / 10;
+
+	  if(Master->GetLastAcidMsgTurn() != Turn && (Master->CanBeSeenByPlayer() || Master->IsPlayer()))
+	    {
+	      Master->SetLastAcidMsgTurn(Turn);
+
+	      if(Master->IsPlayer())
+		ADD_MESSAGE("Acidous %s burns your %s.", Material->GetName(false, false).CStr(), GetBodyPartName().CStr());
+	      else
+		ADD_MESSAGE("Acidous %s burns %s.", Material->GetName(false, false).CStr(), Master->CHAR_NAME(DEFINITE));
+	    }
+
+	  Master->ReceiveBodyPartDamage(0, Damage, ACID, GetBodyPartIndex(), YOURSELF, false, false, false);
+	  Master->CheckDeath(CONST_S("died of deadly acid damage"), 0);
+	}
+    }
+}
+
+void bodypart::TryToRust(ulong LiquidModifier)
+{
+  if(MainMaterial->TryToRust(LiquidModifier << 4))
+    {
+      const char* MoreMsg = MainMaterial->GetRustLevel() == NOT_RUSTED ? "" : " more";
+
+      if(Master)
+	{
+	  if(Master->IsPlayer())
+	    ADD_MESSAGE("Your %s rusts%s.", GetBodyPartName().CStr(), MoreMsg);
+	  else if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("The %s of %s rusts%s.", GetBodyPartName().CStr(), Master->CHAR_NAME(DEFINITE), MoreMsg);
+	}
+      else if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s rusts%s.", CHAR_NAME(DEFINITE), MoreMsg);
+
+      MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
+    }
 }

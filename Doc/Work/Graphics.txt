@@ -14,7 +14,7 @@ Forge.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-Lada.
+//Lada.
 Jungle bays.
 Robe.
 Mouse.
@@ -33,6 +33,7 @@ Female character.
 Tailor.
 Web.
 M-colored explosions.
+Iron maiden.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

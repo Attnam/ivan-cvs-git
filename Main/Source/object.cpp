@@ -16,31 +16,22 @@ vector2d LeftLegSparkleValidityArray[45];
 vector2d NormalSparkleValidityArray[256];
 vector2d PossibleSparkleBuffer[256];
 
-object::object() : entity(0), MainMaterial(0), AnimationFrames(0) { }
+object::object() : entity(0), MainMaterial(0) { }
 void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void object::ChangeMainMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
 void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
 void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
 ushort object::GetSpecialFlags() const { return ST_NORMAL; }
 ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
-const bitmap*const* object::GetPicture() const { return Picture; }
+const bitmap*const* object::GetPicture() const { return GraphicData.Picture; }
 
-object::object(const object& Object) : entity(Object), id(Object), VisualEffects(Object.VisualEffects), AnimationFrames(0)
+object::object(const object& Object) : entity(Object), id(Object), VisualEffects(Object.VisualEffects)
 {
   CopyMaterial(Object.MainMaterial, MainMaterial);
 }
 
 object::~object()
 {
-  if(AnimationFrames)
-    {
-      for(ushort c = 0; c < AnimationFrames; ++c)
-	igraph::RemoveUser(GraphicIterator[c]);
-
-      delete [] Picture;
-      delete [] GraphicIterator;
-    }
-
   delete MainMaterial;
 }
 
@@ -57,33 +48,13 @@ void object::CopyMaterial(material* const& Source, material*& Dest)
 
 void object::Save(outputfile& SaveFile) const
 {
-  SaveFile << AnimationFrames;
-
-  for(ushort c = 0; c < AnimationFrames; ++c)
-    SaveFile << GraphicIterator[c]->first;
-
-  SaveFile << VisualEffects;
+  SaveFile << GraphicData << VisualEffects;
   SaveFile << MainMaterial;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  SaveFile >> AnimationFrames;
-
-  if(AnimationFrames)
-    {
-      Picture = new bitmap*[AnimationFrames];
-      GraphicIterator = new tilemap::iterator[AnimationFrames];
-      graphicid GraphicID;
-
-      for(ushort c = 0; c < AnimationFrames; ++c)
-	{
-	  SaveFile >> GraphicID;
-	  Picture[c] = (GraphicIterator[c] = igraph::AddUser(GraphicID))->second.Bitmap;
-	}
-    }
-
-  SaveFile >> VisualEffects;
+  SaveFile >> GraphicData >> VisualEffects;
   LoadMaterial(SaveFile, MainMaterial);
 }
 
@@ -183,10 +154,10 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  UpdatePictures(Picture, GraphicIterator, vector2d(0, 0), AnimationFrames, (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+  UpdatePictures(GraphicData, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
 }
 
-void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterator, vector2d Position, ushort& OldAnimationFrames, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
+void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, ushort SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, bposretriever BitmapPosRetriever) const
 {
   ushort AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
@@ -195,71 +166,73 @@ void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterat
   uchar FlyAmount = GetSpoilLevel(); 
   bool Sparkling = false;
   bool FrameNeeded = HasSpecialAnimation();
+  vector2d BPos = (this->*BitmapPosRetriever)(0);
 
   if(!(SpecialFlags & (ST_FLAME|ST_LIGHTNING)))
     {
-      bool MColorSparkling[4] = { false, false, false, false };
-
-      for(ushort c = 0; c < 4; ++c)
-	if(IsSparkling(c))
-	  Sparkling = MColorSparkling[c] = true;
-
-      if(Sparkling)
+      if(AllowSparkling())
 	{
-	  static ushort SeedModifier = 1;
-	  femath::SaveSeed();
-	  vector2d BPos = (this->*BitmapPosRetriever)(0);
-	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
+	  bool MColorSparkling[4] = { false, false, false, false };
 
-	  if(++SeedModifier > 0x10)
-	    SeedModifier = 1;
+	  for(ushort c = 0; c < 4; ++c)
+	    if(IsSparkling(c))
+	      Sparkling = MColorSparkling[c] = true;
 
-	  vector2d* ValidityArray;
-	  ushort ValidityArraySize;
+	  if(Sparkling)
+	    {
+	      static ushort SeedModifier = 1;
+	      femath::SaveSeed();
+	      femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
-	  if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
-	    {
-	      ValidityArray = RightArmSparkleValidityArray;
-	      ValidityArraySize = 128;
-	    }
-	  else if((SpecialFlags & 0x38) == ST_LEFT_ARM)
-	    {
-	      ValidityArray = LeftArmSparkleValidityArray;
-	      ValidityArraySize = 128;
-	    }
-	  else if((SpecialFlags & 0x38) == ST_GROIN)
-	    {
-	      ValidityArray = GroinSparkleValidityArray;
-	      ValidityArraySize = 169;
-	    }
-	  else if((SpecialFlags & 0x38) == ST_RIGHT_LEG)
-	    {
-	      ValidityArray = RightLegSparkleValidityArray;
-	      ValidityArraySize = 42;
-	    }
-	  else if((SpecialFlags & 0x38) == ST_LEFT_LEG)
-	    {
-	      ValidityArray = LeftLegSparkleValidityArray;
-	      ValidityArraySize = 45;
-	    }
-	  else
-	    {
-	      ValidityArray = NormalSparkleValidityArray;
-	      ValidityArraySize = 256;
-	    }
+	      if(++SeedModifier > 0x10)
+		SeedModifier = 1;
 
-	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, vector2d(16, 16), ValidityArraySize, MColorSparkling);
-	  SparkleTime = RAND() % 241;
-	  femath::LoadSeed();
+	      vector2d* ValidityArray;
+	      ushort ValidityArraySize;
 
-	  if(AnimationFrames <= 256)
-	    AnimationFrames = 256;
+	      if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
+		{
+		  ValidityArray = RightArmSparkleValidityArray;
+		  ValidityArraySize = 128;
+		}
+	      else if((SpecialFlags & 0x38) == ST_LEFT_ARM)
+		{
+		  ValidityArray = LeftArmSparkleValidityArray;
+		  ValidityArraySize = 128;
+		}
+	      else if((SpecialFlags & 0x38) == ST_GROIN)
+		{
+		  ValidityArray = GroinSparkleValidityArray;
+		  ValidityArraySize = 169;
+		}
+	      else if((SpecialFlags & 0x38) == ST_RIGHT_LEG)
+		{
+		  ValidityArray = RightLegSparkleValidityArray;
+		  ValidityArraySize = 42;
+		}
+	      else if((SpecialFlags & 0x38) == ST_LEFT_LEG)
+		{
+		  ValidityArray = LeftLegSparkleValidityArray;
+		  ValidityArraySize = 45;
+		}
+	      else
+		{
+		  ValidityArray = NormalSparkleValidityArray;
+		  ValidityArraySize = 256;
+		}
+
+	      SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidityArray, PossibleSparkleBuffer, BPos, vector2d(16, 16), ValidityArraySize, MColorSparkling);
+	      SparkleTime = RAND() % 241;
+	      femath::LoadSeed();
+
+	      if(AnimationFrames <= 256)
+		AnimationFrames = 256;
+	    }
 	}
 
       if(FlyAmount)
 	{
 	  static ushort SeedModifier = 1;
-	  vector2d BPos = (this->*BitmapPosRetriever)(0);
 	  Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
 
 	  if(++SeedModifier > 0x10)
@@ -279,7 +252,6 @@ void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterat
   else if(SpecialFlags & ST_LIGHTNING)
     {
       static ushort SeedModifier = 1;
-      vector2d BPos = (this->*BitmapPosRetriever)(0);
       Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 0x42;
 
       if(++SeedModifier > 0x10)
@@ -291,24 +263,29 @@ void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterat
 
   ModifyAnimationFrames(AnimationFrames);
   ushort c;
+  ushort OldAnimationFrames = GraphicData.AnimationFrames;
 
   for(c = 0; c < OldAnimationFrames; ++c)
-    igraph::RemoveUser(GraphicIterator[c]);
+    igraph::RemoveUser(GraphicData.GraphicIterator[c]);
 
   if(OldAnimationFrames != AnimationFrames)
     {
       if(OldAnimationFrames)
 	{
-	  delete [] Picture;
-	  delete [] GraphicIterator;
+	  delete [] GraphicData.Picture;
+	  delete [] GraphicData.GraphicIterator;
 	}
 
-      Picture = new bitmap*[AnimationFrames];
-      GraphicIterator = new tilemap::iterator[AnimationFrames];
+      GraphicData.Picture = new bitmap*[AnimationFrames];
+      GraphicData.GraphicIterator = new tilemap::iterator[AnimationFrames];
     }
 
-  OldAnimationFrames = AnimationFrames;
+  GraphicData.AnimationFrames = AnimationFrames;
   graphicid GI;
+  uchar RustDataA = GetRustDataA();
+  uchar RustDataB = GetRustDataB();
+  uchar RustDataC = GetRustDataC();
+  uchar RustDataD = GetRustDataD();
 
   for(c = 0; c < AnimationFrames; ++c)
     {
@@ -364,7 +341,11 @@ void object::UpdatePictures(bitmap**& Picture, tilemap::iterator*& GraphicIterat
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
       GI.Position = Position;
-      Picture[c] = (GraphicIterator[c] = igraph::AddUser(GI))->second.Bitmap;
+      GI.RustData[0] = RustDataA;
+      GI.RustData[1] = RustDataB;
+      GI.RustData[2] = RustDataC;
+      GI.RustData[3] = RustDataD;
+      GraphicData.Picture[c] = (GraphicData.GraphicIterator[c] = igraph::AddUser(GI))->second.Bitmap;
     }
 }
 
@@ -537,4 +518,9 @@ void object::InitSparkleValidityArrays()
   for(y = 0; y < 16; ++y)
     for(x = 0; x < 16; ++x)
       NormalSparkleValidityArray[Index++] = vector2d(x, y);
+}
+
+uchar object::GetRustDataA() const
+{
+  return MainMaterial->GetRustData();
 }

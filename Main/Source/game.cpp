@@ -77,6 +77,8 @@ ulong game::MiscMassacreAmount = 0;
 boneidmap game::BoneItemIDMap;
 boneidmap game::BoneCharacterIDMap;
 bool game::TooGreatDangerFoundBool;
+std::vector<item*> game::ItemDrawVector;
+std::vector<character*> game::CharacterDrawVector;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -127,6 +129,8 @@ void game::AddItemID(item* Item, ulong ID) { ItemIDMap.insert(std::pair<ulong, i
 void game::RemoveItemID(ulong ID) { if(ID) ItemIDMap.erase(ItemIDMap.find(ID)); }
 void game::UpdateItemID(item* Item, ulong ID) { ItemIDMap.find(ID)->second = Item; }
 const dangermap& game::GetDangerMap() { return DangerMap; }
+void game::ClearItemDrawVector() { ItemDrawVector.clear(); }
+void game::ClearCharacterDrawVector() { CharacterDrawVector.clear(); }
 
 void game::InitScript()
 {
@@ -135,6 +139,8 @@ void game::InitScript()
   GameScript->ReadFrom(ScriptFile);
   GameScript->RandomizeLevels();
 }
+
+#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -223,7 +229,7 @@ bool game::Init(const festring& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new playerkind);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	Player->SetNP(SATIATED_LEVEL);
@@ -947,6 +953,8 @@ void game::CreateTeams()
     }
 }
 
+/* vector2d Pos should be removed from xxxQuestion()s? */
+
 festring game::StringQuestion(const festring& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
@@ -1244,6 +1252,7 @@ void game::LookHandler(vector2d CursorPos)
       if(!IsInWilderness() && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
 	{
 	  lsquare* LSquare = GetCurrentLevel()->GetLSquare(CursorPos);
+	  LSquare->DisplayFluidInfo(Msg);
 	  LSquare->DisplaySmokeInfo(Msg);
 
 	  if(LSquare->HasEngravings() && LSquare->IsTransparent())
@@ -1512,16 +1521,18 @@ void game::CalculateNextDanger()
     {
       character* Char = Proto->Clone(NextDangerID.Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       float CurrentDanger = Char->GetRelativeDanger(Player, true);
+      float NakedDanger = DangerIterator->second.NakedDanger;
 
-      if(DangerIterator->second.NakedDanger > CurrentDanger)
-	DangerIterator->second.NakedDanger = (DangerIterator->second.NakedDanger * 9 + CurrentDanger) / 10;
+      if(NakedDanger > CurrentDanger)
+	DangerIterator->second.NakedDanger = (NakedDanger * 9 + CurrentDanger) / 10;
 
       delete Char;
       Char = Proto->Clone(NextDangerID.Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
       CurrentDanger = Char->GetRelativeDanger(Player, true);
+      float EquippedDanger = DangerIterator->second.EquippedDanger;
 
-      if(DangerIterator->second.EquippedDanger > CurrentDanger)
-	DangerIterator->second.EquippedDanger = (DangerIterator->second.EquippedDanger * 9 + CurrentDanger) / 10;
+      if(EquippedDanger > CurrentDanger)
+	DangerIterator->second.EquippedDanger = (EquippedDanger * 9 + CurrentDanger) / 10;
 
       delete Char;
 
@@ -2019,8 +2030,7 @@ struct massacresetentry
   bool operator<(const massacresetentry& MSE) const { return festring::IgnoreCaseCompare(Key, MSE.Key); }
   festring Key;
   festring String;
-  bitmap** Picture;
-  ushort Frames;
+  ushort ImageKey;
 };
 
 void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reason, ulong Amount)
@@ -2028,12 +2038,14 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   std::set<massacresetentry> MassacreSet;
   festring FirstPronoun;
   bool First = true;
+  std::vector<character*> GraveYard;
 
   for(massacremap::const_iterator i1 = MassacreMap.begin(); i1 != MassacreMap.end(); ++i1)
     {
       character* Victim = protocontainer<character>::GetProto(i1->first.Type)->Clone(i1->first.Config);
       massacresetentry Entry;
-      Entry.Frames = Victim->DrawBodyPartArray(Entry.Picture, 0);
+      GraveYard.push_back(Victim);
+      Entry.ImageKey = AddToCharacterDrawVector(Victim);
 
       if(i1->second == 1)
 	{
@@ -2053,7 +2065,6 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
 	}
 
       MassacreSet.insert(Entry);
-      delete Victim;
     }
 
   ulong Total = PlayerMassacreAmount + PetMassacreAmount + MiscMassacreAmount;
@@ -2065,9 +2076,9 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
     MainTopic << Total << " creatures perished during your adventure.";
 
   felist List(MainTopic);
-  game::SetStandardListAttributes(List);
+  SetStandardListAttributes(List);
   List.SetPageLength(15);
-  List.SetMaskColor(0);
+  List.SetEntryDrawer(CharacterEntryDrawer);
   List.AddDescription(CONST_S(""));
   festring SideTopic;
 
@@ -2094,16 +2105,13 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   List.AddDescription(SideTopic);
 
   for(std::set<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
-    {
-      List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture, i2->Frames);
-
-      for(ushort c = 0; c < i2->Frames; ++c)
-	delete i2->Picture[c];
-
-      delete [] i2->Picture;
-    }
+    List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->ImageKey);
 
   List.Draw();
+  ClearCharacterDrawVector();
+
+  for(ushort c = 0; c < GraveYard.size(); ++c)
+    delete GraveYard[c];
 }
 
 bool game::MassacreListsEmpty()
@@ -2308,4 +2316,35 @@ bool game::IsXMas() // returns true if date is christmaseve or day
   time_t Time = time(0);
   struct tm* TM = localtime(&Time);
   return (TM->tm_mon == 11 && (TM->tm_mday == 24 || TM->tm_mday == 25));
+}
+
+ushort game::AddToItemDrawVector(item* What)
+{
+  ItemDrawVector.push_back(What);
+  return ItemDrawVector.size() - 1;
+}
+
+void game::ItemEntryDrawer(bitmap* Bitmap, vector2d Pos, ushort Index)
+{
+  item* Item = ItemDrawVector[Index];
+
+  if(Item)
+    Item->Draw(Bitmap, Pos, NORMAL_LUMINANCE, 0, true, Item->AllowAlphaEverywhere());
+}
+
+ushort game::AddToCharacterDrawVector(character* What)
+{
+  CharacterDrawVector.push_back(What);
+  return CharacterDrawVector.size() - 1;
+}
+
+void game::CharacterEntryDrawer(bitmap* Bitmap, vector2d Pos, ushort Index)
+{
+  if(CharacterDrawVector[Index])
+    CharacterDrawVector[Index]->DrawBodyParts(Bitmap, Pos, NORMAL_LUMINANCE, 0, true, false);
+}
+
+void game::GodEntryDrawer(bitmap* Bitmap, vector2d Pos, ushort Index)
+{
+  igraph::GetSymbolGraphic()->MaskedBlit(Bitmap, Index << 4, 0, Pos, 16, 16);
 }

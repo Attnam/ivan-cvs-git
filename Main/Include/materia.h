@@ -62,6 +62,10 @@ struct materialdatabase
   bool UseMaterialAttributes;
   bool CanRegenerate;
   ushort BreatheWisdomLimit;
+  ushort RustModifier;
+  bool IsBlood;
+  ushort Acidicity;
+  bool IsImmuneToAcid;
 };
 
 class materialprototype
@@ -95,13 +99,14 @@ class material
   material(ushort NewConfig, ulong InitVolume, bool Load = false) : MotherEntity(0) { Initialize(NewConfig, InitVolume, Load); }
   material(donothing) : MotherEntity(0) { }
   virtual ~material() { }
-  void AddName(festring&, bool = false, bool = true) const;
+  virtual void AddName(festring&, bool = false, bool = true) const;
   festring GetName(bool = false, bool = true) const;
   ulong GetVolume() const { return Volume; }
   ushort TakeDipVolumeAway();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   void SetVolume(ulong);
+  void SetVolumeNoSignals(ulong);
   bool Effect(character*, ulong);
   virtual void EatEffect(character*, ulong);
   bool HitEffect(character*);
@@ -114,7 +119,7 @@ class material
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void AddConsumeEndMessage(character*) const;
   DATA_BASE_VALUE(ushort, Config);
-  DATA_BASE_VALUE(ushort, StrengthValue);
+  virtual DATA_BASE_VALUE(ushort, StrengthValue);
   DATA_BASE_VALUE(ushort, ConsumeType);
   DATA_BASE_VALUE(ushort, Density);
   DATA_BASE_VALUE(ushort, Color);
@@ -136,7 +141,7 @@ class material
   DATA_BASE_VALUE(uchar, Alpha);
   DATA_BASE_VALUE(ushort, Flexibility);
   DATA_BASE_VALUE(ushort, SpoilModifier);
-  DATA_BASE_BOOL(IsSparkling);
+  virtual DATA_BASE_BOOL(IsSparkling);
   DATA_BASE_BOOL(IsMetal);
   DATA_BASE_BOOL(CanHaveParasite);
   DATA_BASE_VALUE(ushort, EffectStrength);
@@ -146,6 +151,10 @@ class material
   DATA_BASE_BOOL(EffectIsGood);
   DATA_BASE_BOOL(UseMaterialAttributes);
   DATA_BASE_BOOL(CanRegenerate);
+  DATA_BASE_VALUE(ushort, RustModifier);
+  DATA_BASE_BOOL(IsBlood);
+  DATA_BASE_VALUE(ushort, Acidicity);
+  DATA_BASE_BOOL(IsImmuneToAcid);
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }
   material* Clone() const { return GetProtoType()->Clone(GetConfig(), GetVolume()); }
@@ -165,7 +174,7 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue() const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
-  virtual void SetWetness(ulong) { }
+  virtual void AddWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }
   virtual void ResetSpoiling() { }
   bool CanBeEatenByAI(const character*) const;
@@ -178,6 +187,11 @@ class material
   virtual void SetSkinColorIsSparkling(bool) { }
   DATA_BASE_BOOL(IsWarm);
   DATA_BASE_VALUE(ushort, BreatheWisdomLimit);
+  virtual void SetRustLevel(uchar) { }
+  virtual uchar GetRustLevel() const { return NOT_RUSTED; }
+  virtual uchar GetRustData() const { return NOT_RUSTED; }
+  virtual bool TryToRust(ulong) { return false; }
+  static const database* GetDataBase(ushort);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

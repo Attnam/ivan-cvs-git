@@ -16,3 +16,6 @@ emerald (green)				tough
 opal (light blue)			tough
 uranium					slowly causes mutations
 bloat					poison which makes the victim increase his size and does great damage, like he was thrown into a vacuum
+stainless steel				doesn't rust
+ambrosia				food of gods; does something *really* good
+nectar					drink of gods; does something *really* good

@@ -268,15 +268,17 @@ void altar::BeKicked(character* Kicker, ushort, uchar)
     }
 }
 
-void altar::ReceiveVomit(character* Who)
+bool altar::ReceiveVomit(character* Who, liquid* Liquid)
 {
   if(Who->IsPlayer())
     {
-      GetMasterGod()->PlayerVomitedOnAltar();
-
       if(GetRoom())
 	GetRoom()->HostileAction(Who);
+
+      return GetMasterGod()->PlayerVomitedOnAltar(Liquid);
     }
+  else
+    return false;
 }
 
 bool door::AddAdjective(festring& String, bool Articled) const
@@ -639,7 +641,7 @@ void door::CreateBoobyTrap()
 
 bool fountain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway()), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway())), Who);
   return true;
 }
 
@@ -1093,7 +1095,7 @@ bool door::IsTransparent() const
 
 bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
 {
-  ToBeDipped->DipInto(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway()), Who);
+  ToBeDipped->DipInto(static_cast<liquid*>(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway())), Who);
   return true;
 }
 

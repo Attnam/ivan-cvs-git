@@ -121,11 +121,22 @@ void god::AdjustTimer(long Amount)
     Timer = 1000000000;
 }
 
-void god::PlayerVomitedOnAltar()
+bool god::PlayerVomitedOnAltar(liquid* Liquid)
 {
-  ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
+  if(PLAYER->GetVirtualHead())
+    {
+      ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
+      PLAYER->GetVirtualHead()->SpillFluid(0, Liquid);
+      PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
+    }
+  else
+    {
+      ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands all over you.");
+      PLAYER->SpillFluid(0, Liquid);
+      PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID);
+    }
+
   AdjustRelation(-200);
-  PLAYER->ReceiveDamage(0, 1 + (RAND() & 1), ACID, HEAD);
   PLAYER->CheckDeath(CONST_S("killed by a flying lump of vomit"), 0);
 
   if(!(RAND() % 50))
@@ -138,6 +149,8 @@ void god::PlayerVomitedOnAltar()
 	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHAR_NAME(DEFINITE));
 	}
     }
+
+  return true;
 }
 
 character* god::CreateAngel()

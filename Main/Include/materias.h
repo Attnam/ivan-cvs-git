@@ -7,6 +7,8 @@
 
 #include "materia.h"
 
+class lterrain;
+
 class MATERIAL
 (
   organicsubstance,
@@ -42,6 +44,12 @@ class MATERIAL
  public:
   virtual const char* GetConsumeVerb() const;
   virtual bool IsLiquid() const { return true; }
+  void ConstantEffect(item*);
+  void ConstantEffect(character*, ushort);
+  void ConstantEffect(lterrain*);
+  void SpillEffect(item*);
+  void SpillEffect(character*, ushort);
+  liquid* CloneLiquid(ulong Volume) const { return static_cast<liquid*>(Clone(Volume)); }
 );
 
 class MATERIAL
@@ -67,9 +75,8 @@ class MATERIAL
   material,
  public:
   virtual bool IsPowder() const { return true; }
-  virtual bool IsWet() const { return Wetness != 0; }
   virtual bool IsExplosive() const;
-  virtual void SetWetness(ulong What) { Wetness = What; }
+  virtual void AddWetness(ulong What) { Wetness += What; }
   virtual void Be();
   virtual bool HasBe() const { return true; }
   virtual void Save(outputfile&) const;
@@ -77,6 +84,27 @@ class MATERIAL
  protected:
   virtual void VirtualConstructor(bool) { Wetness = 0; }
   ulong Wetness;
+);
+
+/* Materials that can rust */
+
+class MATERIAL
+(
+  ironalloy,
+  material,
+ public:
+  virtual void AddName(festring&, bool = false, bool = true) const;
+  virtual void SetRustLevel(uchar);
+  virtual ushort GetStrengthValue() const;
+  virtual uchar GetRustLevel() const { return RustData & 3; }
+  virtual bool IsSparkling() const;
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual uchar GetRustData() const { return RustData; }
+  virtual bool TryToRust(ulong);
+ protected:
+  virtual void VirtualConstructor(bool) { RustData = NOT_RUSTED; }
+  uchar RustData;
 );
 
 #endif

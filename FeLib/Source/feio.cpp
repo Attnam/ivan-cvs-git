@@ -84,10 +84,10 @@ ulong iosystem::CountChars(char cSF, const festring& sSH)
    to the lower-left corner and SmallText2 is printed to the lower-right. They both can have
    line-ending characters ('\r') and must also always end with one. */
 
-/* Warning: This function is uter garbage that just happens to work. If you need to use 
+/* Warning: This function is utter garbage that just happens to work. If you need to use 
    this function use the comments. Don't try to understand it. It is impossible. */
 
-int iosystem::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, ushort Color, const festring& SmallText1, const festring& SmallText2)
+int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic, const festring& sMS, ushort Color, const festring& SmallText1, const festring& SmallText2)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
@@ -135,7 +135,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const festring& Topic, cons
 	  if(i == iSelected)
 	    {
 	      Buffer.Fill(XPos, YPos, ((VeryUnGuruPrintf.GetSize() + 3) << 3), 8, 0);
-	      FONT->PrintfShade(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
+	      FONT->PrintfUnshaded(&Buffer, XPos + 1, YPos + 1, WHITE, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
 	    }
 	  else
 	    FONT->Printf(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.CStr());
@@ -565,3 +565,4 @@ festring iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const festr
   return List.GetEntry(Check);
 #endif
 }
+

@@ -39,6 +39,9 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "whandler.h"
 #include "bitmap.h"
 
+#include "fluid.h"
+#include "colorbit.h"
+
 #include "item.cpp"
 #include "bodypart.cpp"
 #include "gear.cpp"

@@ -22,7 +22,7 @@ ushort protocontainer<god>::ProtoAmount;
 #include "gear.h"
 #include "miscitem.h"
 #include "confdef.h"
-#include "materia.h"
+#include "materias.h"
 #include "save.h"
 
 #include "god.cpp"

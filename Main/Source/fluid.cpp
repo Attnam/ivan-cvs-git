@@ -1,100 +1,501 @@
 /* Compiled through materset.cpp */
 
-fluid::fluid() : entity(HAS_BE) { }
+/* Used to determine how pixels are distributed when fluid over bodyarmors
+   is shown */
 
-fluid::fluid(square* SquareUnder) : entity(HAS_BE), Picture(0), Material(0), SquareUnder(SquareUnder)
+const ulong fluid::BodyArmorPartPixels[] = { 34, 7, 7, 8, 6, 6 };
+
+fluid::fluid() : entity(HAS_BE), MotherItem(0), GearImage(0) { }
+
+fluid::fluid(liquid* Liquid, lsquare* LSquareUnder) : entity(HAS_BE), Liquid(Liquid), LSquareUnder(LSquareUnder), MotherItem(0), GearImage(0)
 {
-  Picture = new bitmap(16, 16);
-  Picture->ClearToColor(TRANSPARENT_COLOR);
-  Picture->CreateAlphaMap(0);
+  Emitation = Liquid->GetEmitation();
+  AddLiquid(Liquid->GetVolume());
+}
+
+fluid::fluid(liquid* Liquid, item* MotherItem) : entity(HAS_BE), Liquid(Liquid), LSquareUnder(0), MotherItem(MotherItem), GearImage(0)
+{
+  Emitation = Liquid->GetEmitation();
+  Image.Picture->InitRandMap();
+  Image.ShadowPos = MotherItem->GetBitmapPos(0);
+  Image.SpecialFlags = MotherItem->GetSpecialFlags();
+  AddLiquid(Liquid->GetVolume());
 }
 
 fluid::~fluid()
 {
-  delete Picture;
+  delete Liquid;
+  delete [] GearImage;
 }
 
-void fluid::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation)
+void fluid::AddLiquid(ulong Volume)
 {
-  for(ushort c = 0; c < Amount; ++c)
+  ulong Pixels = Volume >> 2;
+  ushort Col = Liquid->GetColor();
+
+  if(MotherItem)
     {
-      vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
-      Picture->PutPixel(Cords, Color);
-      Picture->SetAlpha(Cords, 150 + RAND() % 106);
+      Image.AddLiquidToPicture(MotherItem->GetRawPicture(), Pixels, 225, Col);
 
-      for(ushort d = 0; d < 8; ++d)
-	if(RAND() % Lumpiness)
-	  {
-	    char Change[3];
-
-	    for(ushort x = 0; x < 3; ++x)
-	      Change[x] = RAND() % Variation - RAND() % Variation;
-
-	    if(short(GetRed16(Color) + Change[0]) < 0) Change[0] = -GetRed16(Color);
-	    if(short(GetGreen16(Color) + Change[1]) < 0) Change[1] = -GetGreen16(Color);
-	    if(short(GetBlue16(Color) + Change[2]) < 0) Change[2] = -GetBlue16(Color);
-
-	    if(short(GetRed16(Color) + Change[0]) > 255) Change[0] = 255 - GetRed16(Color);
-	    if(short(GetGreen16(Color) + Change[1]) > 255) Change[1] = 255 - GetGreen16(Color);
-	    if(short(GetBlue16(Color) + Change[2]) > 255) Change[2] = 255 - GetBlue16(Color);
-
-	    Picture->PutPixel(Cords + game::GetMoveVector(d), MakeRGB16(GetRed16(Color) + Change[0], GetGreen16(Color) + Change[1], GetBlue16(Color) + Change[2]));
-	    Picture->SetAlpha(Cords + game::GetMoveVector(d), 50 + RAND() % 206);
-	  }
+      if(GearImage)
+	if(HasBodyArmorPictures)
+	  for(ushort c = 0; c < BODY_ARMOR_PARTS; ++c)
+	    GearImage[c].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels * BodyArmorPartPixels[c] / HUMAN_BODY_ARMOR_PIXELS, Image.AlphaAverage, Col);
+	else
+	  GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Col);
     }
+  else
+    Image.AddLiquidToPicture(0, Pixels, 225, Col);
+
+  /* Image.AlphaSum < Pixels << 8 so the volume can only decrease */
+
+  Liquid->SetVolumeNoSignals(Image.AlphaSum >> 6);
 }
 
 void fluid::Be()
 {
-  if(!(RAND() % 25))
+  if(MotherItem ? !(RAND() & 7) && MotherItem->AllowFluidBe() : !(RAND() & 31))
     {
-      if(!Picture->ChangeAlpha(-1))
+      FadePictures();
+      Liquid->SetVolumeNoSignals(Image.AlphaSum >> 6);
+
+      if(!MotherItem)
 	{
-	  GetLSquareUnder()->RemoveFluid();
-	  SendToHell();
+	  LSquareUnder->SendNewDrawRequest();
+	  LSquareUnder->SendMemorizedUpdateRequest();
 	}
 
-      GetLSquareUnder()->SendNewDrawRequest();
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
+      if(!Liquid->GetVolume())
+	{
+	  if(MotherItem)
+	    MotherItem->RemoveFluid(this);
+	  else
+	    LSquareUnder->RemoveFluid(this);
+
+	  SendToHell();
+	}
+      else if(MotherItem)
+	Liquid->ConstantEffect(MotherItem);
+      else
+	{
+	  Liquid->ConstantEffect(LSquareUnder->GetGLTerrain());
+
+	  if(LSquareUnder->GetOLTerrain())
+	    Liquid->ConstantEffect(LSquareUnder->GetOLTerrain());
+
+	  if(LSquareUnder->GetCharacter())
+	    LSquareUnder->GetCharacter()->StayOn(Liquid);
+	}
     }
 }
 
 void fluid::Save(outputfile& SaveFile) const
 {
-  SaveFile << Picture;
+  SaveFile << Liquid;
+  Image.Save(SaveFile);
+
+  if(GearImage)
+    {
+      SaveFile << bool(true) << HasBodyArmorPictures;
+      ushort Images = HasBodyArmorPictures ? BODY_ARMOR_PARTS : 1;
+
+      for(ushort c = 0; c < Images; ++c)
+	GearImage[c].Save(SaveFile);
+    }
+  else
+    SaveFile << bool(false);
 }
 
 void fluid::Load(inputfile& SaveFile)
 {
-  SquareUnder = game::GetSquareInLoad();
-  SaveFile >> Picture;
+  LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
+  Liquid = static_cast<liquid*>(ReadType<material*>(SaveFile));
+  Liquid->SetMotherEntity(this);
+  Emitation = Liquid->GetEmitation();
+  Image.Load(SaveFile);
+
+  if(ReadType<bool>(SaveFile))
+    {
+      SaveFile >> HasBodyArmorPictures;
+      ushort Images = HasBodyArmorPictures ? BODY_ARMOR_PARTS : 1;
+      GearImage = new imagedata[Images];
+
+      for(ushort c = 0; c < Images; ++c)
+	{
+	  GearImage[c].Load(SaveFile);
+	  GearImage[c].Picture->InitRandMap();
+	  GearImage[c].Picture->CalculateRandMap();
+	}
+    }
 }
 
-void fluid::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool) const
+void fluid::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  bitmap* Picture = Image.Picture;
+  ushort SpecialFlags = MotherItem ? MotherItem->GetSpecialFlags() : 0;
+
+  if(SpecialFlags & 0x7)
+    {
+      Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
+      igraph::GetFlagBuffer()->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    }
+  else
+    Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+
+  if(MotherItem && AllowAnimate)
+    Image.Animate(Bitmap, Pos, Luminance, SpecialFlags);
 }
 
 outputfile& operator<<(outputfile& SaveFile, const fluid* Fluid)
 {
-  if(Fluid)
-    {
-      SaveFile.Put(1);
-      Fluid->Save(SaveFile);
-    }
-  else
-    SaveFile.Put(0);
-
+  Fluid->Save(SaveFile);
   return SaveFile;
 }
 
 inputfile& operator>>(inputfile& SaveFile, fluid*& Fluid)
 {
-  if(SaveFile.Get())
+  Fluid = new fluid;
+  Fluid->Load(SaveFile);
+  return SaveFile;
+}
+
+/* If fluid has decreased, fade, otherwise add new pixels */
+
+void fluid::SignalVolumeAndWeightChange()
+{
+  ulong Volume = Liquid->GetVolume();
+
+  if(Volume < Image.AlphaSum >> 6)
     {
-      Fluid = new fluid;
-      Fluid->Load(SaveFile);
+      while(FadePictures() && Volume < Image.AlphaSum >> 6);
+      Liquid->SetVolumeNoSignals(Image.AlphaSum >> 6);
+    }
+  else
+    AddLiquid(Volume - (Image.AlphaSum >> 6));
+}
+
+bool fluid::FadePictures()
+{
+  bool Change = Image.Fade();
+
+  if(GearImage)
+    {
+      ushort Images = HasBodyArmorPictures ? BODY_ARMOR_PARTS : 1;
+
+      for(ushort c = 0; c < Images; ++c)
+	GearImage[c].Fade();
     }
 
-  return SaveFile;
+  return Change != 0;
+}
+
+/* Used by lookmode, item descriptions etc. If there are 1-3 members in
+   Fluid, list them all, otherwise say "a lot of liquids". If there are
+   several types of blood in the list, they are counted as one. */
+
+void fluid::AddFluidInfo(const fluidlist& Fluid, festring& String)
+{
+  liquid* LiquidStack[4];
+  liquid** Show = LiquidStack + 1;
+  ushort Index = 0;
+  bool Blood = false, OneBlood = true;
+
+  for(fluidlist::const_iterator i = Fluid.begin(); i != Fluid.end(); ++i)
+    {
+      liquid* Liquid = (*i)->GetLiquid();
+      bool LiquidBlood = Liquid->IsBlood();
+
+      if(!LiquidBlood || !Blood)
+	{
+	  if(Index < 3)
+	    {
+	      if(LiquidBlood)
+		{
+		  --Show;
+		  Show[0] = Liquid;
+		  ++Index;
+		}
+	      else
+		Show[Index++] = Liquid;
+	    }
+	  else
+	    {
+	      ++Index;
+	      break;
+	    }
+	}
+
+      if(LiquidBlood)
+	{
+	  if(Blood)
+	    OneBlood = false;
+	  else
+	    Blood = true;
+	}
+    }
+
+  if(Index <= 3)
+    {
+      if(!Blood || OneBlood)
+	String << Show[0]->GetName(false, false);
+      else
+	String << "blood";
+
+      if(Index == 2)
+	String << " and " << Show[1]->GetName(false, false);
+      else if(Index == 3)
+	String << ", " << Show[1]->GetName(false, false) << " and " << Show[2]->GetName(false, false);
+    }
+  else
+    String << "a lot of liquids";
+}
+
+/* Used only when loading fluids. Correcting RandMap here is somewhat
+   a gum solution. */
+
+void fluid::SetMotherItem(item* What)
+{
+  MotherItem = What;
+  Image.Picture->InitRandMap();
+  Image.Picture->CalculateRandMap();
+}
+
+/* Ensures the gear pictures are correct after this. ShadowPos is the armor's
+   or weapon's BitmapPos in humanoid.pcx. SpecialFlags should include drawing
+   information of the bodypart in question (ST_RIGHT_ARM etc). BodyArmor should
+   be true iff the picture is part of a body armor, for instance armor covering
+   one's shoulder. */
+
+void fluid::CheckGearPicture(vector2d ShadowPos, ushort SpecialFlags, bool BodyArmor)
+{
+  HasBodyArmorPictures = BodyArmor;
+
+  if(BodyArmor)
+    {
+      ushort Index = (SpecialFlags & 0x38) >> 3;
+
+      if(Index >= BODY_ARMOR_PARTS)
+	Index = 0;
+
+      if(GearImage)
+	if(GearImage[Index].ShadowPos != ShadowPos)
+	  {
+	    GearImage[Index].Picture->ClearToColor(TRANSPARENT_COLOR);
+	    GearImage[Index].Picture->FillAlpha(0);
+	    GearImage[Index].AlphaSum = 0;
+	  }
+	else
+	  return; // the picture already exists and is correct
+      else
+	GearImage = new imagedata[BODY_ARMOR_PARTS];
+
+      GearImage[Index].ShadowPos = ShadowPos;
+      GearImage[Index].SpecialFlags = SpecialFlags;
+      GearImage[Index].Picture->InitRandMap();
+      ulong Pixels = (Image.AlphaSum * BodyArmorPartPixels[Index] / HUMAN_BODY_ARMOR_PIXELS) >> 10;
+
+      if(Pixels)
+	GearImage[Index].AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Liquid->GetColor());
+    }
+  else
+    {
+      if(GearImage)
+	if(GearImage->ShadowPos != ShadowPos)
+	  {
+	    GearImage->Picture->ClearToColor(TRANSPARENT_COLOR);
+	    GearImage->Picture->FillAlpha(0);
+	    GearImage->AlphaSum = 0;
+	  }
+	else
+	  return; // the picture already exists and is correct
+      else
+	GearImage = new imagedata[1];
+
+      GearImage->ShadowPos = ShadowPos;
+      GearImage->SpecialFlags = SpecialFlags;
+      GearImage->Picture->InitRandMap();
+      ulong Pixels = Image.AlphaSum >> 10;
+
+      if(Pixels)
+	GearImage->AddLiquidToPicture(igraph::GetHumanoidRawGraphic(), Pixels, Image.AlphaAverage, Liquid->GetColor());
+    }
+}
+
+void fluid::DrawGearPicture(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SpecialFlags, bool AllowAnimate) const
+{
+  bitmap* Picture = GearImage->Picture;
+
+  if(SpecialFlags & 0x7)
+    {
+      Picture->BlitAndCopyAlpha(igraph::GetFlagBuffer(), SpecialFlags);
+      igraph::GetFlagBuffer()->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    }
+  else
+    GearImage->Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+
+  if(AllowAnimate)
+    GearImage->Animate(Bitmap, Pos, Luminance, SpecialFlags);
+}
+
+void fluid::DrawBodyArmorPicture(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort SpecialFlags, bool AllowAnimate) const
+{
+  /* We suppose body armor pictures are never rotated */
+
+  ushort Index = (SpecialFlags & 0x38) >> 3;
+
+  if(Index >= BODY_ARMOR_PARTS)
+    Index = 0;
+
+  GearImage[Index].Picture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+
+  if(AllowAnimate)
+    GearImage[Index].Animate(Bitmap, Pos, Luminance, 0);
+}
+
+bool fluid::imagedata::Fade()
+{
+  return Picture->Fade(AlphaSum, AlphaAverage, 1);
+}
+
+/* Let two pixels fall every now and then over the picture. CurrentFlags
+   should include rotation info. */
+
+void fluid::imagedata::Animate(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort CurrentFlags) const
+{
+  if(!AlphaSum)
+    return;
+
+  if(!DripTimer)
+    {
+      DripPos = Picture->RandomizePixel();
+
+      /* DripPos != ERROR_VECTOR since AlphaSum != 0 */
+
+      if(DripPos.Y <= 12)
+	{
+	  DripColor = Picture->GetPixel(DripPos);
+	  DripAlpha = Picture->GetAlpha(DripPos);
+	}
+      else
+	++DripTimer;
+    }
+
+  if(DripTimer <= 0)
+    {
+      vector2d TrueDripPos = DripPos;
+
+      if(CurrentFlags & ROTATE)
+	{
+	  const short T = TrueDripPos.X;
+	  TrueDripPos.X = 15 - TrueDripPos.Y;
+	  TrueDripPos.Y = T;
+	}
+
+      if(CurrentFlags & MIRROR)
+	TrueDripPos.X = 15 - TrueDripPos.X;
+
+      if(CurrentFlags & FLIP)
+	TrueDripPos.Y = 15 - TrueDripPos.Y;
+
+      TrueDripPos.Y -= DripTimer;
+
+      if(TrueDripPos.Y < 16)
+	Bitmap->AlphaPutPixel(Pos + TrueDripPos, DripColor, Luminance, DripAlpha);
+
+      if(TrueDripPos.Y < 15)
+	{
+	  ++TrueDripPos.Y;
+	  Bitmap->AlphaPutPixel(Pos + TrueDripPos, DripColor, Luminance, DripAlpha);
+	}
+      else
+	DripTimer = Min<long>(RAND() % (500000 / AlphaSum), 25000);
+    }
+
+  --DripTimer;
+}
+
+fluid::imagedata::imagedata() : Picture(new bitmap(16, 16, TRANSPARENT_COLOR)), DripTimer(0), AlphaSum(0)
+{
+  Picture->CreateAlphaMap(0);
+}
+
+fluid::imagedata::~imagedata()
+{
+  delete Picture;
+}
+
+void fluid::imagedata::Save(outputfile& SaveFile) const
+{
+  SaveFile << Picture << AlphaSum << ShadowPos << SpecialFlags;
+}
+
+void fluid::imagedata::Load(inputfile& SaveFile)
+{
+  SaveFile >> Picture >> AlphaSum >> ShadowPos >> SpecialFlags;
+}
+
+/* Shadow and this->ShadowPos specify the location of the raw image of
+   MotherItem of which shape the pixels are bound. The alphas of the
+   pixels will be on average AlphaSuggestion. */
+
+void fluid::imagedata::AddLiquidToPicture(const colorizablebitmap* Shadow, ulong Pixels, ulong AlphaSuggestion, ushort Color)
+{
+  DripTimer = 0;
+  ulong Lumps = Pixels - (Pixels << 3) / 9; // ceil[Pixels/9]
+  ulong RoomForPixels = (Lumps << 3) + Lumps;
+  ushort Red = GetRed16(Color);
+  ushort Green = GetGreen16(Color);
+  ushort Blue = GetBlue16(Color);
+  bool** ValidityMap = igraph::GetBodyBitmapValidityMap(SpecialFlags);
+
+  for(ulong c = 0; c < Lumps; ++c)
+    {
+      /* Note! Don't ever give an item a fully transparent picture to make it
+	 invisible or something, or this will crash. */
+
+      vector2d Cords(1 + RAND() % 14, 1 + RAND() % 14);
+
+      if(Shadow)
+	while(Shadow->IsTransparent(ShadowPos + Cords) || !ValidityMap[Cords.X][Cords.Y])
+	  {
+	    Cords.X = 1 + RAND() % 14;
+	    Cords.Y = 1 + RAND() % 14;
+	  }
+
+      Picture->PutPixel(Cords, Color);
+      long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
+      AlphaSum += Alpha - Picture->GetAlpha(Cords);
+      Picture->SetAlpha(Cords, Alpha);
+      Picture->SafeUpdateRandMap(Cords, true);
+      --Pixels;
+      --RoomForPixels;
+
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  if(Pixels > RAND() % RoomForPixels)
+	    {
+	      vector2d Pos = Cords + game::GetMoveVector(d);
+
+	      if(!Shadow || (!Shadow->IsTransparent(ShadowPos + Pos) && ValidityMap[Pos.X][Pos.Y]))
+		{
+		  --Pixels;
+		  Picture->PutPixel(Pos, MakeRGB16(Limit<short>(Red - 25 + RAND() % 51, 0, 0xFF),
+						   Limit<short>(Green - 25 + RAND() % 51, 0, 0xFF),
+						   Limit<short>(Blue - 25 + RAND() % 51, 0, 0xFF)));
+
+		  long Alpha = Limit<long>(AlphaSuggestion - 25 + RAND() % 50, 0, 0xFF);
+		  AlphaSum += Alpha - Picture->GetAlpha(Pos);
+		  Picture->SetAlpha(Pos, Alpha);
+		  Picture->SafeUpdateRandMap(Pos, true);
+
+		  if(!Pixels) // implies c + 1 == Lumps
+		    break;
+		}
+	    }
+
+	  --RoomForPixels;
+	}
+    }
+
+  AlphaAverage = Picture->CalculateAlphaAverage();
 }

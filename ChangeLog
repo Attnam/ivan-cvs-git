@@ -6,6 +6,85 @@ This file contains SPOILERS, which might ruin your IVAN experience totally. The 
 is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
+
+December 16 2003 Timo Kiviluoto <firstname.lastname@hut.fi>
+
+	* Adjusted the colors of menus and lists so that the selected item is
+	  more clearly visible on dark monitors
+	* Large spider, giant spider and Lada added to char.pcx by Kahvi
+	* Expensive camera and miniature mummy of Lenin added to item.pcx by Kahvi
+	* Necromancer, bourgeois tourist, his wife and child, and Lenin added to
+	  humanoid.pcx by Kahvi
+	* Necromancer graphics integrated
+	* Two spider webs added to effect.pcx by Kahvi
+	* Remade felist entry picture drawing system; browsing an enormous inventory
+	  (for instance after using the gain all items cheat) is now a lot faster
+	* A small typo in the look description of neutral panicked NPCs corrected
+	* Added a super-fast system for retrieving random pixels for which a certain
+	  predicate (say, non-transparency) is true; I plan to use a similiar
+	  algorithm for level::RandomSquare in the future
+	* Documented stack.h/cpp and fluid.h/cpp
+	* Added ironalloy material category which currently consists of iron, steel,
+	  meteoric steel and adamant
+	* Iron alloys can now rust; names and strength values are affected
+	* Rusting is now displayed graphically as random brown pixels
+	* Added RustModifier material database member which determines the ability
+	  to rust for liquids and how easily rusting happens for ironalloys
+	* Golems and terrains made of ironalloys can also rust
+	* Scroll of repair can now remove rust
+	* Renamed class human to playerkind
+	* Rewrote the player's armor drawing code; it was probably the most horrible
+		gum solution in the entire game
+	* Added several item database members to control which armor pictures
+	  are to be drawn
+	* Added (half-accidentally) support for armor picture animations
+	* The Shirt of the Golden Eagle now gives the player an appropriate blue aura
+	  when worn
+	* The priority map trickery which is used to determine the special effect
+	  drawing order of humanoids is now completely incomprehensible
+	* Remade the whole fluid code: it now utilizes the full power of IVAN's
+	  material system
+	  * Liquids on ground can now cause effects to legs/other bodyparts
+	  * An arbitrary number of fluids can now cover weapons, armor and
+	    bodyparts; graphical effects added to item pictures
+	  * Fluids can now affect the items and bodyparts they cover
+	  * Removed the obsolete ContainedMaterial of weapons
+	  * Fluid is now displayed over wielded, armor and bodypart graphics
+	    for playerkinds; however I chose not to show them for other monsters
+	    since it could cause many characters to be drawn very unclearly
+	    from the user's perpective
+	  * Added a dripping animation for all fluids not on ground
+	  * Damaging a monster with a weapon now causes blood to be spilled
+	    over the item used
+	  * Dipping to solid materials is alas no longer possible; however, I
+	    haven't done this since 0.311 so it isn't so great a loss
+	  * Liquids can now exist on non-walkable terrain and affect them.
+	    For instance you can destroy walls using acid (see below).
+	    However, there is a small problem that liquids can be seen from
+	    all sides of the terrain which can be strange if it is a part of a
+	    long wall separating parallel tunnels
+	  * Fluids can now emit light (but this feature is not yet used)
+	* A potion which breaks due to hitting an object now spills half of
+	  its contents to the next square on its theoretical line of flight
+	* Fluids affected by paranormal gravitational distractions now land
+	  correctly on the players face, if he/she/it has one
+	* Corpses now spill blood, not just severed bodyparts
+	* Added acid effects which are based on the Acidicity material database
+	  member; acidous fluids cause items to break and can destroy very weak
+	  broken items, and they also tend to be very rusting
+	* Added IsImmuneToAcid material database boolean
+	* Dark frog blood and pepsi are now acidous
+	* Remade the vomit system; the amount of liquid now depends on the body
+	  volume of the character and it can be targeted to adjacent squares
+	  and used as a very poor acid-based weapon
+	* Added BloodMaterial and VomitMaterial character database members
+	* Mommos now really attack by vomiting acidous slime, which also has
+	  a high RustModifier
+	* Oree's vomit attack now really spills acidous blood over the player
+	* M-color 3 of arm pictures is henceforth allocated for gauntlets;
+	  some humanoid graphics updated due to this
+	* Zombies now spoil
+
 November 8 2003 Heikki Sairanen <firstname.lastname@tut.fi>
 
 	* feio.cpp documented
@@ -35,6 +114,3 @@ August 14 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 	* Configuration system has been standardized and moved largely to FeLib
 	* Added Febot engine which can be used by the Oracle of the Holy Haven of Gurus
 	  when the time comes
-
-
-	

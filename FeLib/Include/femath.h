@@ -30,7 +30,7 @@ template <class f, class type> inline type Recurse(f F, type Value, ushort Amoun
 
 template <class type> inline void Swap(type& X, type& Y)
 {
-  type T(X);
+  const type T(X);
   X = Y;
   Y = T;
 }

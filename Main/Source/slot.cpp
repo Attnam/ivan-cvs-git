@@ -96,6 +96,7 @@ void stackslot::SignalVolumeAndWeightChange()
 void bodypartslot::SignalVolumeAndWeightChange()
 {
   GetMaster()->SignalVolumeAndWeightChange();
+  GetMaster()->SignalBodyPartVolumeAndWeightChange();
 }
 
 void gearslot::SignalVolumeAndWeightChange()

@@ -214,6 +214,10 @@ SOURCE=.\FeLib\Include\hscore.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\FeLib\Include\ntree.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\FeLib\Include\rect.h
 # End Source File
 # Begin Source File

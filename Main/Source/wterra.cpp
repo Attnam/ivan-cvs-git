@@ -37,7 +37,8 @@ festring wterrain::GetName(uchar Case) const
 
 void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
+  vector2d BP = GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : GET_TICK() % AnimationFrames);
+  igraph::GetWTerrainGraphic()->Blit(Bitmap, BP, Pos, 16, 16, Luminance);
 
   for(ushort c = 0; c < 8 && Neighbour[c].second; ++c)
     igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
@@ -45,7 +46,8 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAn
 
 void owterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
+  vector2d BP = GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : GET_TICK() % AnimationFrames);
+  igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, BP, Pos, 16, 16, Luminance);
 }
 
 void wterrain::Load(inputfile&)

@@ -19,6 +19,7 @@
 
 #define GET_KEY globalwindowhandler::GetKey
 #define READ_KEY globalwindowhandler::ReadKey
+#define GET_TICK globalwindowhandler::GetTick
 
 class globalwindowhandler
 {
@@ -27,7 +28,6 @@ class globalwindowhandler
   static int ReadKey();
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
-  static void SetTick(ulong What) { Tick = What; }
   static ulong GetTick() { return Tick; }
   static bool ControlLoopsInstalled() { return Controls != 0; }
   static void EnableControlLoops() { ControlLoopsEnabled = true; }

@@ -15,16 +15,13 @@ class ITEM
   meleeweapon(const meleeweapon&);
   virtual ~meleeweapon();
   virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
-  virtual void DipInto(material*, character*);
+  virtual void DipInto(liquid*, character*);
   virtual ulong GetPrice() const;
-  virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
+  virtual bool IsDippable(const character*) const;
   virtual material* GetSecondaryMaterial() const { return SecondaryMaterial; }
   virtual void SetSecondaryMaterial(material*, ushort = 0);
   virtual void ChangeSecondaryMaterial(material*, ushort = 0);
-  virtual material* GetContainedMaterial() const { return ContainedMaterial; }
-  virtual void SetContainedMaterial(material*, ushort = 0);
-  virtual void ChangeContainedMaterial(material*, ushort = 0);
-  void InitMaterials(material*, material*, material*, bool = true);
+  void InitMaterials(material*, material*, bool = true);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual ushort GetMaterials() const { return 3; }
@@ -44,16 +41,18 @@ class ITEM
   virtual ushort GetBonus() const;
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
-  virtual ulong GetBaseWeight() const;
+  virtual void TryToRust(ulong);
  protected:
+  virtual bool AllowFluids() const { return true; }
   virtual void VirtualConstructor(bool);
   virtual bool IsSparkling(ushort) const;
   virtual void AddPostFix(festring&) const;
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
+  virtual uchar GetRustDataB() const;
+  virtual ushort GetDripColor() const;
   material* SecondaryMaterial;
-  material* ContainedMaterial;
   char Enchantment;
 );
 
@@ -186,7 +185,7 @@ class ITEM
  public:
   virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
   virtual ushort GetSpecialFlags() const;
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
 );
 
 class ITEM
@@ -214,6 +213,7 @@ class ABSTRACT_ITEM
   virtual ushort GetInElasticityPenalty(ushort) const;
   virtual short GetCarryingBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
+  virtual bool AllowFluids() const { return true; }
  protected:
   virtual void AddPostFix(festring&) const;
   virtual void VirtualConstructor(bool);
@@ -269,8 +269,9 @@ class ITEM
   virtual ulong GetPrice() const;
   virtual bool IsCloak(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
  protected:
+  virtual ushort GetSpecialFlags() const;
   virtual const char* GetBreakVerb() const;
   virtual bool AddAdjective(festring&, bool) const;
   virtual ushort GetMaterialColorB(ushort) const;

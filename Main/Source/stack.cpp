@@ -1,5 +1,8 @@
 /* Compiled through slotset.cpp */
 
+/* If REMEMBER_SELECTED flag is used, DrawContents() will use this to determine
+   the initial selected item */
+
 ushort stack::Selected;
 
 stack::stack(square* MotherSquare, entity* MotherEntity, uchar SquarePosition, bool IgnoreVisibility) : Bottom(0), Top(0), MotherSquare(MotherSquare), MotherEntity(MotherEntity), SquarePosition(SquarePosition), Volume(0), Weight(0), Emitation(0), Items(0), IgnoreVisibility(IgnoreVisibility), Freezed(false) { }
@@ -82,6 +85,9 @@ void stack::RemoveItem(stackslot* Slot)
     }
 }
 
+/* Removes all items. LastClean should be true only if the stack is being
+   deleted */
+
 void stack::Clean(bool LastClean)
 {
   ulong Emit = GetEmitation();
@@ -114,17 +120,8 @@ void stack::Clean(bool LastClean)
     }
 }
 
-item* stack::MoveItem(stackslot* Slot, stack* MoveTo)
-{
-  item* Item = Slot->GetItem();
-  Item->RemoveFromSlot();
-  MoveTo->AddItem(Item);
-  return Item;
-}
-
 void stack::Save(outputfile& SaveFile) const
 {
-  SaveFile << SquarePosition;
   ushort SavedItems = 0;
 
   for(stackiterator i1 = GetBottom(); i1.HasItem(); ++i1)
@@ -132,6 +129,8 @@ void stack::Save(outputfile& SaveFile) const
       ++SavedItems;
 
   SaveFile << SavedItems;
+
+  /* Save multitiled items only to one stack */
 
   for(stackiterator i2 = GetBottom(); i2.HasItem(); ++i2)
     if(i2->IsMainSlot(&i2.GetSlot()))
@@ -141,7 +140,7 @@ void stack::Save(outputfile& SaveFile) const
 void stack::Load(inputfile& SaveFile)
 {
   ushort SavedItems;
-  SaveFile >> SquarePosition >> SavedItems;
+  SaveFile >> SavedItems;
 
   for(ushort c = 0; c < SavedItems; ++c)
     {
@@ -163,6 +162,9 @@ vector2d stack::GetPos() const
 {
   return GetSquareUnder()->GetPos();
 }
+
+/* Returns whether there are any items satisfying the sorter or any visible
+   items if it is zero */
 
 bool stack::SortedItems(const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
@@ -198,7 +200,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage, uchar Direction)
 	    Item2->Fly(Kicker, Direction, KickDamage * 3);
 	}
     }
-  else if(GetVisibleItems(Kicker) && Kicker->IsPlayer())
+  else if(Kicker->IsPlayer() && GetVisibleItems(Kicker))
     ADD_MESSAGE("Your weak kick has no effect.");
 }
 
@@ -228,6 +230,8 @@ void stack::CheckForStepOnEffect(character* Stepper)
       }
 }
 
+/* This is used mainly to determine the square really under lanterns on walls */
+
 square* stack::GetSquareTrulyUnder() const
 {
   switch(SquarePosition)
@@ -251,10 +255,10 @@ square* stack::GetSquareTrulyUnder() const
       if(GetArea()->IsValidPos(GetPos() + vector2d(1, 0)))
 	return GetNearSquare(GetPos() + vector2d(1, 0));
       else
-	return 0;
-    default:
-      return GetSquareUnder();
+	return 0; 
     }
+
+  return GetSquareUnder();
 }
 
 void stack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
@@ -277,11 +281,15 @@ void stack::TeleportRandomly(ushort Amount)
       ItemVector[c]->TeleportRandomly();
 }
 
+/* ItemVector receives all items in the stack */
+
 void stack::FillItemVector(itemvector& ItemVector) const
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     ItemVector.push_back(*i);
 }
+
+/* Don't use; this function is only for gum solutions */
 
 item* stack::GetItem(ushort Index) const
 {
@@ -294,6 +302,8 @@ item* stack::GetItem(ushort Index) const
   return 0;
 }
 
+/* Don't use; this function is only for gum solutions */
+
 ushort stack::SearchItem(item* ToBeSearched) const
 {
   ushort c = 0;
@@ -304,6 +314,10 @@ ushort stack::SearchItem(item* ToBeSearched) const
 
   return 0xFFFF;
 }
+
+/* Flags for all DrawContents functions can be found in ivandef.h.
+   Those returning ushort return 0 on success and a felist error
+   otherwise (see felibdef.h) */
 
 item* stack::DrawContents(const character* Viewer, const festring& Topic, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
@@ -317,7 +331,8 @@ ushort stack::DrawContents(itemvector& ReturnVector, const character* Viewer, co
   return DrawContents(ReturnVector, 0, Viewer, Topic, CONST_S(""), CONST_S(""), Flags, SorterFunction);
 }
 
-/* MergeStack is used for showing two stacks together. Like when eating when there are items on the ground and in the character's stack */
+/* MergeStack is used for showing two stacks together. Like when eating when
+   there are items on the ground and in the character's stack */
 
 ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const character* Viewer, const festring& Topic, const festring& ThisDesc, const festring& ThatDesc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
@@ -330,7 +345,7 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
     }
 
   if(Flags & NONE_AS_CHOICE)
-    Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, igraph::GetTransparentTile());
+    Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, game::AddToItemDrawVector(0));
 
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, SorterFunction);
@@ -339,6 +354,7 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
   game::SetStandardListAttributes(Contents);
   Contents.SetPageLength(12);
   Contents.RemoveFlags(BLIT_AFTERWARDS);
+  Contents.SetEntryDrawer(game::ItemEntryDrawer);
 
   if(!(Flags & NO_SELECT))
     Contents.AddFlags(SELECTABLE);
@@ -348,6 +364,7 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
 
   game::DrawEverythingNoBlit(); //doesn't prevent mirage puppies
   ushort Chosen = Contents.Draw();
+  game::ClearItemDrawVector();
 
   if(Chosen & FELIST_ERROR_BIT)
     {
@@ -377,6 +394,8 @@ ushort stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const ch
   return 0;
 }
 
+/* Internal function to fill Contents list */
+
 void stack::AddContentsToList(felist& Contents, const character* Viewer, const festring& Desc, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
   std::vector<itemvector> PileVector;
@@ -391,10 +410,10 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
       if(DrawDesc)
 	{
 	  if(!Contents.IsEmpty())
-	    Contents.AddEntry(CONST_S(""), WHITE, 0, 0, false);
+	    Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
 
-	  Contents.AddEntry(Desc, WHITE, 0, 0, false);
-	  Contents.AddEntry(CONST_S(""), WHITE, 0, 0, false);
+	  Contents.AddEntry(Desc, WHITE, 0, NO_IMAGE, false);
+	  Contents.AddEntry(CONST_S(""), WHITE, 0, NO_IMAGE, false);
 	  DrawDesc = false;
 	}
 
@@ -403,14 +422,19 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
       if(Item->GetCategory() != LastCategory)
 	{
 	  LastCategory = Item->GetCategory();
-	  Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, 0, false);
+	  Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, NO_IMAGE, false);
 	}
 
       Entry.Empty();
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      Contents.AddEntry(Entry, LIGHT_GRAY, 0, Item->GetPicture(), Item->GetStackAnimationFrames(), true, Item->AllowAlphaEverywhere());
+      ushort ImageKey = game::AddToItemDrawVector(Item);
+      Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
     }
 }
+
+/* Internal function which fills ReturnVector according to Chosen,
+   which is given by felist::Draw, and possibly the user's additional
+   input about item amount. */
 
 ushort stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, ushort Pos, ushort Chosen, uchar Flags, bool (*SorterFunction)(const item*, const character*)) const
 {
@@ -453,6 +477,8 @@ bool stack::RaiseTheDead(character* Summoner)
   return false;
 }
 
+/* Returns false if the Applier didn't try to use the key */
+
 bool stack::TryKey(item* Key, character* Applier)
 {
   if(!Applier->IsPlayer())
@@ -466,17 +492,15 @@ bool stack::TryKey(item* Key, character* Applier)
   return ToBeOpened->TryKey(Key, Applier);
 }
 
+/* Returns false if the Applier didn't try to open anything */
+
 bool stack::Open(character* Opener)
 {
   if(!Opener->IsPlayer())
     return false;
 
   item* ToBeOpened = DrawContents(Opener, CONST_S("What do you wish to open?"), 0, &item::OpenableSorter);
-
-  if(ToBeOpened == 0)
-    return false;
-
-  return ToBeOpened->Open(Opener);
+  return ToBeOpened ? ToBeOpened->Open(Opener) : false;
 }
 
 ushort stack::GetVisibleItems(const character* Viewer) const
@@ -609,6 +633,8 @@ bool stack::Clone(ushort Max)
   return p > 0;
 }
 
+/* Adds the item without any external update requests */
+
 void stack::AddElement(item* Item)
 {
   ++Items;
@@ -617,6 +643,8 @@ void stack::AddElement(item* Item)
 
   (Top = (Bottom ? Top->Next : Bottom) = new stackslot(this, Top))->PutInItem(Item);
 }
+
+/* Removes the slot without any external update requests */
 
 void stack::RemoveElement(stackslot* Slot)
 {
@@ -638,11 +666,6 @@ void stack::MoveItemsTo(slot* Slot)
     Slot->AddFriendItem(*GetBottom());
 }
 
-ushort stack::GetItems(const character* Char, bool ForceIgnoreVisibility) const
-{
-  return ForceIgnoreVisibility ? Items : GetVisibleItems(Char);
-}
-
 item* stack::GetBottomItem(const character* Char, bool ForceIgnoreVisibility) const
 {
   if(IgnoreVisibility || ForceIgnoreVisibility)
@@ -655,6 +678,10 @@ bool CategorySorter(const itemvector& V1, const itemvector& V2)
 {
   return (*V1.begin())->GetCategory() < (*V2.begin())->GetCategory();
 }
+
+/* Slow function which sorts the stack's contents to a vector of piles
+   (itemvectors) of which elements are similiar to each other, for instance
+   4 bananas */
 
 void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, bool (*SorterFunction)(const item*, const character*)) const
 {
@@ -690,6 +717,8 @@ void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, b
   std::stable_sort(PileVector.begin(), PileVector.end(), CategorySorter);
 }
 
+/* Total price of the stack */
+
 ulong stack::GetTruePrice() const
 {
   ulong Price = 0;
@@ -711,11 +740,7 @@ ulong stack::GetTotalExplosivePower() const
   return ExplosivePower;
 }
 
-void stack::ReceiveFluidSpill(material* Liquid)
-{
-  for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    i->ReceiveFluidSpill(Liquid);
-}
+/* GUI used for instance by chests and bookcases. Returns whether anything was done. */
 
 bool stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
 {
@@ -751,6 +776,9 @@ bool stack::TakeSomethingFrom(character* Opener, const festring& ContainerName)
   return Success;
 }
 
+/* GUI used for instance by chests and bookcases (use ContainerID == 0 if
+   the container isn't an item). Returns whether anything was done. */
+
 bool stack::PutSomethingIn(character* Opener, const festring& ContainerName, ulong StorageVolume, ulong ContainerID)
 {
   if(!Opener->GetStack()->GetItems())
@@ -761,7 +789,7 @@ bool stack::PutSomethingIn(character* Opener, const festring& ContainerName, ulo
 
   bool Success = false;
   room* Room = GetLSquareUnder()->GetRoom();
-  stack::SetSelected(0);
+  SetSelected(0);
 
   for(;;)
     {
@@ -816,10 +844,12 @@ ushort stack::GetSpoiledItems() const
   ushort Counter = 0;
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
-    Counter += (i->GetSpoilLevel() > 0);
+    Counter += (i->GetSpoilLevel() > 0); // even though this is pretty unclear, it isn't mine but Hex's
 
   return Counter;
 }
+
+/* Adds all items and recursively their contents which satisfy the sorter to ItemVector */
 
 void stack::SortAllItems(itemvector& ItemVector, const character* Character, bool (*Sorter)(const item*, const character*)) const
 {
@@ -827,11 +857,15 @@ void stack::SortAllItems(itemvector& ItemVector, const character* Character, boo
     i->SortAllItems(ItemVector, Character, Sorter);
 }
 
+/* Search for traps and other secret items */
+
 void stack::Search(const character* Char, ushort Perception)
 {
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->Search(Char, Perception);
 }
+
+/* Used to determine whether the danger symbol should be shown */
 
 bool stack::IsDangerous(const character* Viewer) const
 {
@@ -866,4 +900,36 @@ void stack::FinalProcessForBone()
 
   for(stackiterator i = GetBottom(); i.HasItem(); ++i)
     i->FinalProcessForBone();
+}
+
+/* VolumeModifier increases the spilled liquid's volume.
+   Note that the original liquid isn't placed anywhere nor deleted,
+   but its volume is decreased (possibly to zero). */
+
+void stack::SpillFluid(character* Spiller, liquid* Liquid, ulong VolumeModifier)
+{
+  double ChanceMultiplier = 1. / (300 + sqrt(Volume));
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+
+  for(short c = ItemVector.size() - 1; c >= 0; --c)
+    if(ItemVector[c]->Exists())
+      {
+	ulong ItemVolume = ItemVector[c]->GetVolume();
+	double Root = sqrt(ItemVolume);
+
+	if(Root > RAND() % 400 || Root > RAND() % 400)
+	  {
+	    ulong SpillVolume = VolumeModifier * Root * ChanceMultiplier;
+
+	    if(SpillVolume)
+	      {
+		Liquid->EditVolume(-Max(SpillVolume, Liquid->GetVolume()));
+		ItemVector[c]->SpillFluid(Spiller, Liquid->CloneLiquid(SpillVolume), ItemVector[c]->GetSquareIndex(GetPos()));
+
+		if(!Liquid->GetVolume())
+		  return;
+	      }
+	  }
+      }
 }

@@ -17,11 +17,6 @@ const char* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"
 const char* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
 
 bodypart* mommo::MakeBodyPart(ushort) const { return new mommotorso(0, NO_MATERIALS); }
-const char* mommo::FirstPersonBiteVerb() const { return "vomit acidous slime at"; }
-const char* mommo::FirstPersonCriticalBiteVerb() const { return "vomit very acidous slime at"; }
-const char* mommo::ThirdPersonBiteVerb() const { return "vomits acidous slime at"; }
-const char* mommo::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous slime at"; }
-const char* mommo::BiteNoun() const { return "slime"; }
 
 ushort dolphin::GetSpecialBodyPartFlags(ushort, bool) const { return RAND() & (MIRROR|ROTATE); }
 
@@ -749,7 +744,7 @@ void mommo::CreateCorpse(lsquare* Square)
       lsquare* NeighbourSquare = Square->GetNeighbourLSquare(d);
 
       if(NeighbourSquare && NeighbourSquare->IsFlyable())
-	NeighbourSquare->SpillFluid(RAND() % 20, GetBloodColor(), 5, 60);
+	NeighbourSquare->SpillFluid(0, new liquid(BROWN_SLIME, 250 + RAND() % 250));
     }
 
   SendToHell();  
@@ -1798,4 +1793,44 @@ bool largecreature::PlaceIsIllegal(vector2d Pos, vector2d Illegal) const
       return true;
 
   return false;
+}
+
+bool mommo::Hit(character* Enemy, vector2d Pos, uchar, bool)
+{
+  if(IsPlayer() && GetRelation(Enemy) != HOSTILE && !game::BoolQuestion(CONST_S("This might cause a hostile reaction. Are you sure? [y/N]")))
+    return false;
+
+  Hostility(Enemy);
+
+  if(IsPlayer())
+    ADD_MESSAGE("You vomit acidous slime at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+  else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s vomits acidous slime at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+  Vomit(Pos, 500 + RAND() % 500, false);
+  EditAP(-1000);
+  return true;  
+}
+
+void mommo::GetAICommand()
+{
+  SeekLeader();
+
+  if(CheckForEnemies(false, false))
+    return;
+
+  if(!(RAND() % 10))
+    {
+      Vomit(GetPos(), 500 + RAND() % 500);
+      EditAP(-1000);
+      return;
+    }
+
+  if(FollowLeader())
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }

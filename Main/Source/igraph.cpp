@@ -7,6 +7,7 @@
 #include "game.h"
 #include "save.h"
 #include "object.h"
+#include "allocate.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
@@ -16,6 +17,7 @@ const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/O
 const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
+bool*** igraph::BodyBitmapValidityMap;
 
 void igraph::Init()
 {
@@ -52,6 +54,8 @@ void igraph::Init()
       TileBuffer->CreatePriorityMap(0);
       FlagBuffer = new bitmap(16, 16);
       FlagBuffer->CreateAlphaMap(0);
+      Alloc3D(BodyBitmapValidityMap, 8, 16, 16);
+      CreateBodyBitmapValidityMaps();
     }
 }
 
@@ -67,6 +71,7 @@ void igraph::DeInit()
 
   delete TileBuffer;
   delete FlagBuffer;
+  delete [] BodyBitmapValidityMap;
 }
 
 void igraph::DrawCursor(vector2d Pos)
@@ -86,8 +91,8 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
     }
   else
     {
-      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha);
-      const uchar SpecialFlags = GI.SpecialFlags;
+      bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Position, GI.Color, GI.BaseAlpha, GI.Alpha, GI.RustData);
+      const ushort SpecialFlags = GI.SpecialFlags;
 
       if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
@@ -131,9 +136,6 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
 	}
 
-      if(GI.OutlineColor != TRANSPARENT_COLOR)
-	Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha);
-
       vector2d SparklePos = GI.SparklePos;
 
       if(SpecialFlags & 0x7) /* Do we need rotating/flipping? */
@@ -145,7 +147,7 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	    }
 	  else
 	    {
-	      Bitmap->Blit(FlagBuffer, SpecialFlags);
+	      Bitmap->Blit(FlagBuffer, uchar(SpecialFlags));
 	      FlagBuffer->FastBlit(Bitmap);
 	    }
 
@@ -167,7 +169,10 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
 	}
 
       if(SpecialFlags & 0x38)
-	Bitmap->CreatePriorityMap(0);
+	Bitmap->CreatePriorityMap(SpecialFlags & ST_CLOAK ? CLOAK_PRIORITY : AVERAGE_PRIORITY);
+
+      if(GI.OutlineColor != TRANSPARENT_COLOR)
+	Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha, (SpecialFlags & 0x38) != ST_WIELDED ? ARMOR_OUTLINE_PRIORITY : AVERAGE_PRIORITY);
 
       if(SparklePos != ERROR_VECTOR)
 	Bitmap->CreateSparkle(SparklePos + GI.Position, GI.SparkleFrame);
@@ -207,4 +212,119 @@ inputfile& operator>>(inputfile& SaveFile, graphicid& Value)
 {
   SaveFile.Read(reinterpret_cast<char*>(&Value), sizeof(Value));
   return SaveFile;
+}
+
+graphicdata::~graphicdata()
+{
+  if(AnimationFrames)
+    {
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	igraph::RemoveUser(GraphicIterator[c]);
+
+      delete [] Picture;
+      delete [] GraphicIterator;
+    }
+}
+
+void graphicdata::Save(outputfile& SaveFile) const
+{
+  SaveFile << AnimationFrames;
+
+  for(ushort c = 0; c < AnimationFrames; ++c)
+    SaveFile << GraphicIterator[c]->first;
+}
+
+void graphicdata::Load(inputfile& SaveFile)
+{
+  SaveFile >> AnimationFrames;
+
+  if(AnimationFrames)
+    {
+      Picture = new bitmap*[AnimationFrames];
+      GraphicIterator = new tilemap::iterator[AnimationFrames];
+      graphicid GraphicID;
+
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	{
+	  SaveFile >> GraphicID;
+	  Picture[c] = (GraphicIterator[c] = igraph::AddUser(GraphicID))->second.Bitmap;
+	}
+    }
+}
+
+outputfile& operator<<(outputfile& SaveFile, const graphicdata& Data)
+{
+  Data.Save(SaveFile);
+  return SaveFile;
+}
+
+inputfile& operator>>(inputfile& SaveFile, graphicdata& Data)
+{
+  Data.Load(SaveFile);
+  return SaveFile;
+}
+
+void graphicdata::Retire()
+{
+  if(AnimationFrames)
+    {
+      for(ushort c = 0; c < AnimationFrames; ++c)
+	igraph::RemoveUser(GraphicIterator[c]);
+
+      AnimationFrames = 0;
+      delete [] Picture;
+      delete [] GraphicIterator;
+    }
+}
+
+bool** igraph::GetBodyBitmapValidityMap(ushort SpecialFlags)
+{
+  return BodyBitmapValidityMap[(SpecialFlags & 0x38) >> 3];
+}
+
+void igraph::CreateBodyBitmapValidityMaps()
+{
+  memset(BodyBitmapValidityMap[0][0], 1, 2048 * sizeof(bool));
+  bool** Map = BodyBitmapValidityMap[ST_RIGHT_ARM >> 3];
+  ushort x, y;
+
+  for(x = 8; x < 16; ++x)
+    for(y = 0; y < 16; ++y)
+      Map[x][y] = false;
+
+  Map = BodyBitmapValidityMap[ST_LEFT_ARM >> 3];
+
+  for(x = 0; x < 8; ++x)
+    for(y = 0; y < 16; ++y)
+      Map[x][y] = false;
+
+  Map = BodyBitmapValidityMap[ST_GROIN >> 3];
+  memset(Map[0], 0, 256 * sizeof(bool));
+
+  for(y = 10; y < 13; ++y)
+    for(x = y - 5; x < 20 - y; ++x)
+      Map[x][y] = true;
+
+  Map = BodyBitmapValidityMap[ST_RIGHT_LEG >> 3];
+
+  for(x = 8; x < 16; ++x)
+    for(y = 0; y < 16; ++y)
+      Map[x][y] = false;
+
+  Map[5][10] = false;
+  Map[6][10] = false;
+  Map[7][10] = false;
+  Map[6][11] = false;
+  Map[7][11] = false;
+  Map[7][12] = false;
+
+  Map = BodyBitmapValidityMap[ST_LEFT_LEG >> 3];
+
+  for(x = 0; x < 8; ++x)
+    for(y = 0; y < 16; ++y)
+      Map[x][y] = false;
+
+  Map[8][10] = false;
+  Map[9][10] = false;
+  Map[8][11] = false;
 }

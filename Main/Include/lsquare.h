@@ -24,8 +24,11 @@ class item;
 class smoke;
 class gas;
 class bodypart;
+class liquid;
 
 typedef std::vector<item*> itemvector;
+typedef std::list<fluid*> fluidlist;
+typedef std::list<smoke*> smokelist;
 
 struct emitter
 {
@@ -62,7 +65,6 @@ class lsquare : public square
   bool Close(character*);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SpillFluid(uchar, ulong, ushort = 5, ushort = 32);
   void SignalEmitationIncrease(ulong);
   void SignalEmitationDecrease(ulong);
   ulong GetEmitation() const { return Emitation; }
@@ -99,16 +101,13 @@ class lsquare : public square
   void StepOn(character*, lsquare**);
   uchar GetRoomIndex() const { return RoomIndex; }
   void SetRoomIndex(uchar What) { RoomIndex = What; }
-  void ReceiveVomit(character*, ushort);
+  void ReceiveVomit(character*, liquid*);
   room* GetRoom() const { return RoomIndex ? GetLevel()->GetRoom(RoomIndex) : 0; }
   void SetTemporaryEmitation(ulong);
   ulong GetTemporaryEmitation() const { return TemporaryEmitation; }
   void ChangeOLTerrainAndUpdateLights(olterrain*);
   void DrawParticles(ulong, bool = true);
   vector2d DrawLightning(vector2d, ulong, uchar, bool = true);
-  fluid* GetFluid() const { return Fluid; }
-  void SetFluid(fluid* What) { Fluid = What; }
-  void RemoveFluid();
   bool DipInto(item*, character*);
   bool TryKey(item*, character*);
   void SetLastSeen(ulong);
@@ -123,7 +122,6 @@ class lsquare : public square
   bool IsDangerousForAIToStepOn(const character*) const;
   stack* GetSideStackOfAdjacentSquare(ushort) const;
   void KickAnyoneStandingHereAway();
-  void SpillFluid(character*, material*, ushort);
   bool IsDark() const;
   void AddItem(item*);
   static bool (lsquare::*GetBeamEffect(ushort))(character*, const festring&, uchar);
@@ -172,6 +170,10 @@ class lsquare : public square
   virtual uchar GetSquareWalkability() const { return GetWalkability(); }
   void CalculateBorderPartners();
   void RequestForBorderPartnerUpdates();
+  void SpillFluid(character*, liquid*, bool = true);
+  void DisplayFluidInfo(festring&) const;
+  void RemoveFluid(fluid*);
+  void AddFluid(liquid*);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;
@@ -183,14 +185,15 @@ class lsquare : public square
   festring Engraved;
   uchar RoomIndex;
   ulong TemporaryEmitation;
-  fluid* Fluid;
+  fluidlist Fluid;
   bitmap* Memorized;
   bool MemorizedUpdateRequested;
   ulong LastExplosionID;
-  std::vector<smoke*> Smoke;
+  smokelist Smoke;
   ushort SmokeAlphaSum;
   bool Freezed;
   borderpartner BorderPartner[8];
+  bool HasFluids;
 };
 
 inline bool lsquare::IsDark() const

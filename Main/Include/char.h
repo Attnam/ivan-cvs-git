@@ -46,7 +46,6 @@ struct characterdatabase
   bool CanRead;
   bool IsCharmable;
   uchar Sex;
-  ulong BloodColor;
   bool CanBeGenerated;
   uchar CriticalModifier;
   festring StandVerb;
@@ -79,6 +78,7 @@ struct characterdatabase
   ushort BootColor;
   ushort TorsoSpecialColor;
   ushort ArmMainColor;
+  ushort GauntletColor;
   ushort ArmSpecialColor;
   ushort LegMainColor;
   ushort LegSpecialColor;
@@ -159,6 +159,7 @@ struct characterdatabase
   bool BootColorIsSparkling;
   bool TorsoSpecialColorIsSparkling;
   bool ArmMainColorIsSparkling;
+  bool GauntletColorIsSparkling;
   bool ArmSpecialColorIsSparkling;
   bool LegMainColorIsSparkling;
   bool LegSpecialColorIsSparkling;
@@ -167,6 +168,8 @@ struct characterdatabase
   uchar MoveType;
   bool DestroysWalls;
   bool CanMove;
+  ushort BloodMaterial;
+  ushort VomitMaterial;
 };
 
 class characterprototype
@@ -205,7 +208,7 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  bool CheckDeath(const festring&, const character*, bool = false);
+  bool CheckDeath(const festring&, const character* = 0, bool = false, bool = false, bool = true);
   bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, vector2d, uchar, bool = false) = 0;
   bool OpenPos(vector2d);
@@ -236,7 +239,7 @@ class character : public entity, public id
   virtual void ApplyExperience(bool = false);
   virtual void BeTalkedTo();
   void ReceiveDarkness(long);
-  void Die(const character* = 0, const festring& = CONST_S(""), bool = false);
+  void Die(const character* = 0, const festring& = CONST_S(""), bool = false, bool = true);
   void HasBeenHitByItem(character*, item*, ushort, float, uchar);
   void Hunger();
   void Move(vector2d, bool = false);
@@ -249,7 +252,7 @@ class character : public entity, public id
   void SetAP(long What) { AP = What; }
   void SetIsPlayer(bool What) { Player = What; }
   void SetNP(long);
-  void Vomit(ushort);
+  void Vomit(vector2d, ushort, bool = true);
   virtual void Be();
   bool Polymorph(character*, ushort);
   void BeKicked(character*, item*, bodypart*, vector2d, float, float, short, uchar, bool, bool);
@@ -383,7 +386,6 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanRead);
   DATA_BASE_BOOL(IsCharmable);
   DATA_BASE_VALUE(uchar, Sex);
-  DATA_BASE_VALUE(ulong, BloodColor);
   DATA_BASE_BOOL(CanBeGenerated);
   DATA_BASE_VALUE(uchar, CriticalModifier);
   virtual DATA_BASE_VALUE(const festring&, StandVerb);
@@ -414,6 +416,7 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(ushort, BootColor);
   virtual DATA_BASE_VALUE(ushort, TorsoSpecialColor);
   virtual DATA_BASE_VALUE(ushort, ArmMainColor);
+  virtual DATA_BASE_VALUE(ushort, GauntletColor);
   virtual DATA_BASE_VALUE(ushort, ArmSpecialColor);
   virtual DATA_BASE_VALUE(ushort, LegMainColor);
   virtual DATA_BASE_VALUE(ushort, LegSpecialColor);
@@ -476,6 +479,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(BootColorIsSparkling);
   DATA_BASE_BOOL(TorsoSpecialColorIsSparkling);
   DATA_BASE_BOOL(ArmMainColorIsSparkling);
+  DATA_BASE_BOOL(GauntletColorIsSparkling);
   DATA_BASE_BOOL(ArmSpecialColorIsSparkling);
   DATA_BASE_BOOL(LegMainColorIsSparkling);
   DATA_BASE_BOOL(LegSpecialColorIsSparkling);
@@ -485,6 +489,8 @@ class character : public entity, public id
   DATA_BASE_VALUE(uchar, MoveType);
   DATA_BASE_BOOL(DestroysWalls);
   DATA_BASE_BOOL(CanMove);
+  DATA_BASE_VALUE(ushort, BloodMaterial);
+  DATA_BASE_VALUE(ushort, VomitMaterial);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual void TeleportRandomly();
   bool TeleportNear(character*);
@@ -670,7 +676,6 @@ class character : public entity, public id
   void UpdatePictures();
   bool CanHeal() const;
   void SetGoingTo(vector2d);
-  void ReceiveFluidSpill(material*, ushort);
   uchar GetRelation(const character*) const;
   void CalculateAttributeBonuses();
   void ApplyEquipmentAttributeBonuses(item*);
@@ -740,7 +745,6 @@ class character : public entity, public id
   void PrintBeginGasImmunityMessage() const;
   void PrintEndGasImmunityMessage() const;
   void ShowAdventureInfo() const;
-  ushort DrawBodyPartArray(bitmap**&, ushort) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
   virtual ushort GetRandomApplyBodyPart() const;
@@ -811,6 +815,17 @@ class character : public entity, public id
   virtual ushort GetFlySymbolSquareIndex() const { return 0; }
   virtual bool PlaceIsIllegal(vector2d Pos, vector2d Illegal) const { return Pos == Illegal; }
   virtual character* TryToRiseFromTheDeadAsZombie() { return 0; }
+  liquid* CreateBlood(ulong) const;
+  void SpillFluid(character*, liquid*, ushort = 0);
+  virtual void StayOn(liquid*);
+  virtual head* GetVirtualHead() const { return 0; }
+  bool IsAlly(const character*) const;
+  virtual bool CanVomit() const { return TorsoIsAlive(); }
+  ulong GetLastAcidMsgTurn() const { return LastAcidMsgTurn; }
+  void SetLastAcidMsgTurn(ulong What) { LastAcidMsgTurn = What; }
+  virtual bool AllowSpoil() const { return false; }
+  void Spoil(corpse*);
+  void ResetSpoiling();
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;
@@ -911,6 +926,7 @@ class character : public entity, public id
   ushort SquaresUnder;
   std::vector<vector2d> Route;
   std::set<vector2d> Illegal;
+  ulong LastAcidMsgTurn;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

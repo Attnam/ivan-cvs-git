@@ -290,6 +290,15 @@ class game
   static void SetMoveType(uchar What) { MoveType = What; }
   static bool TweraifIsFree();
   static bool IsXMas();
+  static ushort AddToItemDrawVector(item*);
+  static void ClearItemDrawVector();
+  static void ItemEntryDrawer(bitmap*, vector2d, ushort);
+  static ushort AddToCharacterDrawVector(character*);
+  static void ClearCharacterDrawVector();
+  static void CharacterEntryDrawer(bitmap*, vector2d, ushort);
+  static void GodEntryDrawer(bitmap*, vector2d, ushort);
+  static std::vector<item*>& GetItemDrawVector() { return ItemDrawVector; }
+  static std::vector<character*>& GetCharacterDrawVector() { return CharacterDrawVector; }
  private:
   static const char* const Alignment[];
   static god** God;
@@ -366,6 +375,8 @@ class game
   static bool TooGreatDangerFoundBool;
   static bitmap* BusyAnimationCache[48];
   static uchar MoveType;
+  static std::vector<item*> ItemDrawVector;
+  static std::vector<character*> CharacterDrawVector;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -12,7 +12,7 @@
  *
  * DO NOT INCLUDE ANY FILES IN THIS HEADER. */
 
-#define IVAN_VERSION "0.430"
+#define IVAN_VERSION "0.440"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -166,8 +166,9 @@
 #define ST_LEFT_LEG 40
 #define ST_OTHER_BODYPART 48
 #define ST_WIELDED 56
-#define ST_FLAME 64
-#define ST_LIGHTNING 128
+#define ST_CLOAK 64
+#define ST_FLAME 128
+#define ST_LIGHTNING 256
 
 #define SILHOUETTE_X_SIZE 64
 #define SILHOUETTE_Y_SIZE 64
@@ -219,12 +220,15 @@
 #define CT_PLASTIC 256
 #define CT_GAS 512
 
+/* Possible square positions for stack. The first four are used for stacks
+   on walls */
+
 #define DOWN 0
 #define LEFT 1
 #define UP 2
 #define RIGHT 3
-#define CENTER 4
-#define HIDDEN 5
+#define CENTER 4 // stack on ground
+#define HIDDEN 5 // stack which is never drawn
 
 #define HOSTILE 1
 #define UNCARING 2
@@ -382,12 +386,16 @@
 #define DARK_LEVEL 6
 #define OREE_LAIR 9
 
-#define NO_SELECT 1
-#define NO_MULTI_SELECT 2
-#define NO_SPECIAL_INFO 4
-#define REMEMBER_SELECTED 8
-#define NONE_AS_CHOICE 16
-#define SELECT_PAIR 32
+/* stack::DrawContents flags */
+
+#define NO_SELECT 1	      // only show items
+#define NO_MULTI_SELECT 2     // select only one item
+#define NO_SPECIAL_INFO 4     // show only name and amount
+#define REMEMBER_SELECTED 8   // if DrawContents will be called multiple times,
+			      // remember the selected item
+#define NONE_AS_CHOICE 16     // "none" is a choice, for instance when wielding
+#define SELECT_PAIR 32	      // if NO_MULTI_SELECT is on, selects a pair if
+			      // appropriate
 
 #define RECTANGLE 1
 #define ROUND_CORNERS 2
@@ -529,5 +537,18 @@
 #define STACK_SLOT 1
 #define CHARACTER_SLOT 2
 #define GEAR_SLOT 3
+
+#define NOT_RUSTED 0
+#define SLIGHTLY_RUSTED 1
+#define RUSTED 2
+#define VERY_RUSTED 3
+
+#define HUMAN_BODY_ARMOR_PIXELS 68
+
+#define ARMOR_OUTLINE_PRIORITY ((7 << 4) + 7)
+#define CLOAK_PRIORITY ((8 << 4) + 7)
+#define DRIP_PRIORITY ((9 << 4) + 9)
+
+#define BODY_ARMOR_PARTS 6
 
 #endif

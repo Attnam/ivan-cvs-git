@@ -5,7 +5,6 @@ void materialcontainer::ChangeContainedMaterial(material* What, ushort SpecialFl
 void materialcontainer::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), ContainedMaterial, M2, GetDefaultContainedVolume(), CUP); }
 void materialcontainer::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetContainedMaterial(NewMaterial, SpecialFlags); }
 void materialcontainer::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeContainedMaterial(NewMaterial, SpecialFlags); }
-ulong materialcontainer::GetBaseWeight() const { return !ContainedMaterial ? Weight : Weight - ContainedMaterial->GetWeight(); }
 
 ushort holybanana::GetSpecialFlags() const { return ST_FLAME; }
 
@@ -17,10 +16,12 @@ ushort lantern::GetMaterialColorD(ushort) const { return MakeRGB16(255, 255, 100
 
 bool can::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 vector2d can::GetBitmapPos(ushort) const { return vector2d(16, GetContainedMaterial() ? 288 : 304); }
+bool can::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
 
 bool potion::IsExplosive() const { return GetContainedMaterial() && GetContainedMaterial()->IsExplosive(); }
 bool potion::AddAdjective(festring& String, bool Articled) const { return AddEmptyAdjective(String, Articled); }
 bool potion::EffectIsGood() const { return GetContainedMaterial() && GetContainedMaterial()->EffectIsGood(); }
+bool potion::IsDipDestination(const character*) const { return ContainedMaterial && ContainedMaterial->IsLiquid(); }
 
 ulong wand::GetPrice() const { return Charges > TimesUsed ? item::GetPrice() : 0; }
 
@@ -145,19 +146,6 @@ bool lump::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool 
     }
   else
     return false;
-}
-
-material* lump::CreateDipMaterial()
-{
-  material* Material = GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
-
-  if(!GetMainMaterial()->GetVolume())
-    {
-      RemoveFromSlot();
-      SendToHell();
-    }
-
-  return Material;
 }
 
 bool wand::Apply(character* Terrorist)
@@ -323,34 +311,34 @@ void brokenbottle::StepOnEffect(character* Stepper)
     }
 }
 
-material* can::CreateDipMaterial()
+liquid* can::CreateDipLiquid()
 {
   material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
 
   if(!GetContainedMaterial()->GetVolume())
     Empty();
 
-  return Material;
+  return static_cast<liquid*>(Material);
 }
 
-material* potion::CreateDipMaterial()
+liquid* potion::CreateDipLiquid()
 {
   material* Material = GetContainedMaterial()->Clone(GetContainedMaterial()->TakeDipVolumeAway());
 
   if(!GetContainedMaterial()->GetVolume())
     Empty();
 
-  return Material;
+  return static_cast<liquid*>(Material);
 }
 
-void potion::DipInto(material* Material, character* Dipper)
+void potion::DipInto(liquid* Liquid, character* Dipper)
 {
   /* Add alchemy */
 
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeContainedMaterial(Material);
+  ChangeContainedMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
@@ -472,7 +460,7 @@ void holybook::FinishReading(character* Reader)
     }
 }
 
-bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(Type & (FIRE|ENERGY|PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -486,7 +474,7 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
   return false;
 }
 
-bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(Type & (FIRE|ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
     {
@@ -509,7 +497,7 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
   return false;
 }
 
-bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type)
+bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type, uchar)
 {
   if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -524,7 +512,7 @@ bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type)
   return false;
 }
 
-bool holybook::ReceiveDamage(character*, ushort Damage, ushort Type)
+bool holybook::ReceiveDamage(character*, ushort Damage, ushort Type, uchar)
 {
   if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
@@ -787,7 +775,7 @@ void mine::Save(outputfile& SaveFile) const
   SaveFile << Active << Team << DiscoveredByTeam;
 }
 
-bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
     {
@@ -823,8 +811,7 @@ void mine::StepOnEffect(character* Stepper)
     ADD_MESSAGE("Something explodes!");
 
   SetIsActive(false);
-  GetLSquareUnder()->SendMemorizedUpdateRequest();
-  GetLSquareUnder()->SendNewDrawRequest();
+  SendNewDrawAndMemorizedUpdateRequest();
 
   if(Stepper->IsPlayer())
     game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
@@ -1227,8 +1214,7 @@ void beartrap::StepOnEffect(character* Stepper)
 	ADD_MESSAGE("%s is trapped in %s.", Stepper->CHAR_NAME(DEFINITE), CHAR_NAME(INDEFINITE));
 
       SetIsActive(false);
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
-      GetLSquareUnder()->SendNewDrawRequest();
+      SendNewDrawAndMemorizedUpdateRequest();
 
       if(Stepper->IsPlayer())
 	game::AskForKeyPress(CONST_S("Trap activated! [press any key to continue]"));
@@ -1269,15 +1255,13 @@ ushort lantern::GetSpecialFlags() const
 {
   switch(SquarePosition)
     {
-    case RIGHT:
-      return ROTATE;
-    case DOWN:
-      return FLIP;
-    case LEFT:
-      return ROTATE|MIRROR;
-    default:
-      return 0;
+    case DOWN: return FLIP;
+    case LEFT: return ROTATE|MIRROR;
+    case UP: return 0;
+    case RIGHT: return ROTATE; 
     }
+
+  return 0;
 }
 
 bool stethoscope::Apply(character* Doctor) 
@@ -1390,8 +1374,7 @@ bool beartrap::Apply(character* User)
 
       User->SetStuckTo(this);
       User->SetStuckToBodyPart(StepperBodyPart);
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
-      GetLSquareUnder()->SendNewDrawRequest();
+      SendNewDrawAndMemorizedUpdateRequest();
       RemoveFromSlot();
       User->GetStackUnder()->AddItem(this);
 
@@ -1492,7 +1475,7 @@ void materialcontainer::SignalSpoil(material* Material)
       if(GetContainedMaterial()->IsLiquid())
 	{
 	  if(!game::IsInWilderness())
-	    GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
+	    GetLSquareUnder()->SpillFluid(0, static_cast<liquid*>(GetContainedMaterial()));
 
 	  RemoveFromSlot();
 	}
@@ -1536,7 +1519,7 @@ ulong itemcontainer::GetTruePrice() const
   return GetContained()->GetTruePrice() + item::GetTruePrice();
 }
 
-void potion::Break(character* Breaker)
+void potion::Break(character* Breaker, uchar Dir)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
@@ -1553,12 +1536,30 @@ void potion::Break(character* Breaker)
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
+  DonateFluidsTo(Remains);
   DonateIDTo(Remains);
   DonateSlotTo(Remains);
   SendToHell();
 
-  if(GetContainedMaterial()) 
-    Remains->GetLSquareUnder()->SpillFluid(0, GetContainedMaterial()->Clone(), 70);
+  if(GetContainedMaterial() && GetContainedMaterial()->IsLiquid())
+    {
+      liquid* Liquid = static_cast<liquid*>(GetContainedMaterial());
+
+      if(Dir != YOURSELF)
+	{
+	  vector2d Pos = Remains->GetPos() + game::GetMoveVector(Dir);
+
+	  if(Remains->GetLevel()->IsValidPos(Pos))
+	    {
+	      ulong HalfVolume = GetContainedMaterial()->GetVolume() >> 1;
+	      Liquid->EditVolume(-HalfVolume);
+	      Remains->GetNearLSquare(Pos)->SpillFluid(Breaker, Liquid->CloneLiquid(HalfVolume));
+	    }
+	}
+
+      if(Remains->Exists())
+	Remains->GetLSquareUnder()->SpillFluid(Breaker, Liquid->CloneLiquid(Liquid->GetVolume()));
+    }
 
   if(PLAYER->Equips(Remains))
     game::AskForKeyPress(CONST_S("Equipment broken! [press any key to continue]"));
@@ -1719,7 +1720,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     }
 }
 
-bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(Type & (PHYSICAL_DAMAGE|SOUND))
     {
@@ -1750,18 +1751,6 @@ void itemcontainer::DrawContents(const character* Char)
 
   for(stackiterator i = GetContained()->GetBottom(); i.HasItem(); ++i)
     i->DrawContents(Char);
-}
-
-void backpack::ReceiveFluidSpill(material* Liquid)
-{
-  if(!Liquid->IsExplosive())
-    {
-      ulong Amount = Liquid->GetVolume() * (30 + (RAND() % 71)) / 100;
-      GetContainedMaterial()->SetWetness(Amount);
-
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s gets wet.", CHAR_NAME(DEFINITE));
-    }
 }
 
 void magicalwhistle::Save(outputfile& SaveFile) const
@@ -1825,7 +1814,7 @@ void itemcontainer::GenerateLeftOvers(character*)
 
 bool scrollofrepair::Read(character* Reader)
 {
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::RepairableSorter) && !Reader->EquipsSomething(&item::RepairableSorter))
     {
       ADD_MESSAGE("You have nothing to repair.");
       return false;
@@ -1837,7 +1826,7 @@ bool scrollofrepair::Read(character* Reader)
 
 void scrollofrepair::FinishReading(character* Reader)
 {
-  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::BrokenSorter) && !Reader->EquipsSomething(&item::BrokenSorter))
+  if(!Reader->HasRepairableBodyParts() && !Reader->GetStack()->SortedItems(Reader, &item::RepairableSorter) && !Reader->EquipsSomething(&item::RepairableSorter))
     ADD_MESSAGE("You have lost whatever you wished to repair.");
   else
     {
@@ -1860,25 +1849,28 @@ void scrollofrepair::FinishReading(character* Reader)
       while(true)
 	{
 	  itemvector Item;
-	  Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::BrokenSorter);
+	  Reader->SelectFromPossessions(Item, CONST_S("Which item do you wish to repair?"), NO_MULTI_SELECT|SELECT_PAIR, &item::RepairableSorter);
 
 	  if(!Item.empty())
 	    {
 	      if(Item[0]->HandleInPairs() && Item.size() == 1)
 		{
-		  ADD_MESSAGE("Only one %s will be enchanted.", Item[0]->CHAR_NAME(UNARTICLED));
+		  ADD_MESSAGE("Only one %s will be repaired.", Item[0]->CHAR_NAME(UNARTICLED));
 
 		  if(!game::BoolQuestion(CONST_S("Still continue? [y/N]")))
 		    continue;
 		}
 
 	      if(Item.size() == 1)
-		ADD_MESSAGE("As you read the scroll, %s glows green and fixes itself.", Item[0]->CHAR_NAME(DEFINITE));
+		ADD_MESSAGE("As you read the scroll, %s glows green and %s.", Item[0]->CHAR_NAME(DEFINITE), Item[0]->IsBroken() ? "fixes itself" : "its rust vanishes");
 	      else
-		ADD_MESSAGE("As you read the scroll, %s glow green and fix themselves.", Item[0]->CHAR_NAME(PLURAL));
+		ADD_MESSAGE("As you read the scroll, %s glow green and %s.", Item[0]->CHAR_NAME(PLURAL), Item[0]->IsBroken() ? "fix themselves" : "their rust vanishes");
 
 	      for(ushort c = 0; c < Item.size(); ++c)
-		Item[c]->Fix();
+		{
+		  Item[c]->RemoveRust();
+		  Item[c]->Fix();
+		}
 
 	      break;
 	    }
@@ -1896,6 +1888,7 @@ item* brokenbottle::Fix()
 {
   potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
+  DonateFluidsTo(Potion);
   DonateIDTo(Potion);
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
@@ -1933,7 +1926,7 @@ bool horn::Apply(character* Blower)
 
 	    if(Audience)
 	      {
-		if(GetConfig() == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->GetTeam()->GetID() == Audience->GetTeam()->GetID())
+		if(GetConfig() == BRAVERY && Audience->TemporaryStateIsActivated(PANIC) && Blower->IsAlly(Audience))
 		  {
 		    if(Audience->IsPlayer())
 		      ADD_MESSAGE("You calm down.");
@@ -2138,8 +2131,7 @@ void beartrap::Search(const character* Char, ushort Perception)
   if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
     {
       DiscoveredByTeam.insert(ViewerTeam);
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
-      GetLSquareUnder()->SendNewDrawRequest();
+      SendNewDrawAndMemorizedUpdateRequest();
 
       if(Char->IsPlayer())
 	{
@@ -2156,8 +2148,7 @@ void mine::Search(const character* Char, ushort Perception)
   if(IsActive() && ViewerTeam != Team && DiscoveredByTeam.find(ViewerTeam) == DiscoveredByTeam.end() && !RAND_N(200 / Perception))
     {
       DiscoveredByTeam.insert(ViewerTeam);
-      GetLSquareUnder()->SendMemorizedUpdateRequest();
-      GetLSquareUnder()->SendNewDrawRequest();
+      SendNewDrawAndMemorizedUpdateRequest();
 
       if(Char->IsPlayer())
 	{
@@ -2197,7 +2188,7 @@ void wand::BreakEffect(character* Terrorist, const festring& DeathMsg)
   SendToHell();
 }
 
-bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(!IsStuck() && !IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
@@ -2215,8 +2206,7 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 		ADD_MESSAGE("%s snaps shut.", CHAR_NAME(DEFINITE));
 
 	      SetIsActive(false);
-	      GetLSquareUnder()->SendMemorizedUpdateRequest();
-	      GetLSquareUnder()->SendNewDrawRequest();	  
+	      SendNewDrawAndMemorizedUpdateRequest();  
 	      return true;
 	    }
 	}
@@ -2225,7 +2215,7 @@ bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
   return false;
 }
 
-bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar Dir)
 {
   if(Type & FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
@@ -2252,14 +2242,14 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
       if(!StrengthValue)
 	StrengthValue = 1;
 
-      if(Damage > StrengthValue << 2 && RAND() % (25 * Damage / StrengthValue) >= 100)
+      if(Damage > StrengthValue << 2 && RAND() % (50 * Damage / StrengthValue) >= 100)
 	{
-	  Break(Damager);
+	  Break(Damager, Dir);
 	  return true;
 	}
     }
 
-  return item::ReceiveDamage(Damager, Damage, Type);
+  return item::ReceiveDamage(Damager, Damage, Type, Dir);
 }
 
 bool beartrap::IsStuck() const
@@ -2274,14 +2264,14 @@ void beartrap::Fly(character* Thrower, uchar Direction, ushort Force)
     item::Fly(Thrower, Direction, Force);
 }
 
-void can::DipInto(material* Material, character* Dipper)
+void can::DipInto(liquid* Liquid, character* Dipper)
 {
   /* Add alchemy */
 
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
+    ADD_MESSAGE("%s is now filled with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeContainedMaterial(Material);
+  ChangeContainedMaterial(Liquid);
   Dipper->DexterityAction(10);
 }
 
@@ -2342,7 +2332,7 @@ void holybanana::AddInventoryEntry(const character* Viewer, festring& Entry, ush
     }
 }
 
-bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool holybanana::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar)
 {
   if(TimesUsed != 6 && Type & (PHYSICAL_DAMAGE|FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
@@ -2518,4 +2508,22 @@ void mine::TeleportRandomly()
   Team = NO_TEAM;
   DiscoveredByTeam.clear();
   item::TeleportRandomly();
+}
+
+uchar materialcontainer::GetRustDataB() const
+{
+  return ContainedMaterial ? ContainedMaterial->GetRustData() : GetRustDataA();
+}
+
+void backpack::SpillFluid(character* Spiller, liquid* Liquid, ushort SquareIndex)
+{
+  if(!Liquid->IsExplosive())
+    {
+      GetContainedMaterial()->AddWetness(Liquid->GetVolume() * 25);
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s gets wet.", CHAR_NAME(DEFINITE));
+    }
+
+  item::SpillFluid(Spiller, Liquid, SquareIndex);
 }

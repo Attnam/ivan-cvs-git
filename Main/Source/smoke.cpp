@@ -1,5 +1,7 @@
 /* Compiled through materset.cpp */
 
+smoke::smoke() : entity(HAS_BE) { }
+
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {
   Gas->SetMotherEntity(this);
@@ -34,10 +36,6 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
     }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);
-}
-
-smoke::smoke() : entity(HAS_BE)
-{
 }
 
 smoke::~smoke()
@@ -81,7 +79,7 @@ square* smoke::GetSquareUnderEntity(ushort) const
 
 void smoke::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  Picture[!AllowAnimate ? 0 : (globalwindowhandler::GetTick() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  Picture[!AllowAnimate ? 0 : (GET_TICK() >> 1) & 3]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void smoke::Save(outputfile& SaveFile) const
@@ -91,9 +89,9 @@ void smoke::Save(outputfile& SaveFile) const
 
 void smoke::Load(inputfile& SaveFile)
 {
+  LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
   SaveFile >> Picture >> Gas >> Alpha;
   Gas->SetMotherEntity(this);
-  LSquareUnder = static_cast<lsquare*>(game::GetSquareInLoad());
 }
 
 outputfile& operator<<(outputfile& SaveFile, const smoke* Smoke)

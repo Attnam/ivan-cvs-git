@@ -15,6 +15,7 @@ class level;
 class lsquare;
 class stack;
 class room;
+class liquid;
 template <class type> class contentscript;
 template <class type> class databasecreator;
 
@@ -28,7 +29,7 @@ class lterrain : public object
   vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool AcceptsOffers() const { return false; }
-  virtual void ReceiveVomit(character*) { }
+  virtual bool ReceiveVomit(character*, liquid*) { return false; }
   virtual bool CanBeOpenedByAI() { return false; }
   virtual bool Polymorph(character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
@@ -52,6 +53,9 @@ class lterrain : public object
   room* GetRoom() const;
   void Draw(bitmap*, vector2d, ulong, bool) const;
   void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void SignalRustLevelChange();
+  virtual void TryToRust(ulong);
+  virtual void ReceiveAcid(material*, ulong) { }
  protected:
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }
@@ -291,8 +295,8 @@ class olterrain : public lterrain, public oterrain
   virtual festring GetText() const;
   virtual void SetItemsInside(const std::list<contentscript<item> >&, ushort) { }
   ushort GetStrengthValue() const;
-  virtual void SignalVolumeAndWeightChange() { CalculateHP(); }
-  void CalculateHP();
+  virtual void SignalVolumeAndWeightChange() { HP = CalculateMaxHP(); }
+  short CalculateMaxHP();
   virtual uchar GetAttachedGod() const;
   void SetConfig(ushort, ushort = 0);
   god* GetMasterGod() const;
@@ -301,6 +305,8 @@ class olterrain : public lterrain, public oterrain
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
   virtual uchar GetTheoreticalWalkability() const { return DataBase->Walkability; }
   virtual void BeDestroyed() { Break(); }
+  virtual void ReceiveAcid(material*, ulong);
+  virtual void SignalRustLevelChange();
  protected:
   virtual vector2d GetBitmapPos(ushort) const;
   virtual void ModifyAnimationFrames(ushort&) const;

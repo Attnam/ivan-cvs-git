@@ -32,12 +32,12 @@ class ABSTRACT_ITEM
   virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
   virtual uchar GetAttachedGod() const;
-  virtual ulong GetBaseWeight() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   virtual void GenerateMaterials();
   virtual ushort GetMaterialColorB(ushort) const;
   virtual uchar GetAlphaB(ushort) const;
+  virtual uchar GetRustDataB() const;
   material* ContainedMaterial;
 );
 
@@ -71,7 +71,7 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetSpecialFlags() const;
   virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
 );
 
 class ITEM
@@ -108,10 +108,10 @@ class ITEM
  public:
   virtual item* BetterVersion() const;
   virtual void GenerateLeftOvers(character*);
-  virtual void DipInto(material*, character*);
+  virtual void DipInto(liquid*, character*);
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
-  virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
-  virtual material* CreateDipMaterial();
+  virtual bool IsDipDestination(const character*) const;
+  virtual liquid* CreateDipLiquid();
   virtual bool AllowSpoil() const { return false; } // temporary
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
  protected:
@@ -126,8 +126,6 @@ class ITEM
   item,
  public:
   virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool);
-  virtual material* CreateDipMaterial();
-  virtual bool IsDipDestination(const character*) const { return MainMaterial != 0; }
  protected:
   virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
   virtual bool ShowMaterial() const { return false; }
@@ -139,14 +137,14 @@ class ITEM
   materialcontainer,
  public:
   virtual item* BetterVersion() const;
-  virtual void DipInto(material*, character*);
-  virtual material* CreateDipMaterial();
+  virtual void DipInto(liquid*, character*);
+  virtual liquid* CreateDipLiquid();
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual void GenerateLeftOvers(character*);
-  virtual void Break(character*);
-  virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
+  virtual void Break(character*, uchar);
+  virtual bool IsDipDestination(const character*) const;
   virtual bool IsExplosive() const;
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual bool HasBetterVersion() const { return !ContainedMaterial; }
   virtual bool EffectIsGood() const;
  protected:
@@ -183,7 +181,7 @@ class ABSTRACT_ITEM
  public:
   virtual bool CanBeRead(character*) const;
   virtual bool IsReadable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
 );
 
 class ITEM
@@ -275,7 +273,7 @@ class ITEM
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual bool Zap(character*, vector2d, uchar);
   virtual void AddInventoryEntry(const character*, festring&, ushort, bool) const;
   virtual ulong GetPrice() const;
@@ -334,10 +332,10 @@ class ITEM
  public:
   virtual bool Apply(character*);
   virtual bool IsAppliable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual bool IsExplosive() const;
   virtual ulong GetTotalExplosivePower() const;
-  virtual void ReceiveFluidSpill(material*);
+  virtual void SpillFluid(character*, liquid*, ushort = 0);
  protected:
   virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
 );
@@ -350,7 +348,7 @@ class ITEM
   virtual bool CanBeRead(character*) const;
   virtual bool Read(character*);
   virtual bool IsReadable(const character*) const { return true; }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual void FinishReading(character*);
  protected:
   virtual ushort GetMaterialColorA(ushort) const;
@@ -408,7 +406,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void StepOnEffect(character*);
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual bool IsActive() const { return Active; }
   virtual void SetIsActive(bool);
   virtual bool CanBeSeenBy(const character*) const;
@@ -499,7 +497,7 @@ class ITEM
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetTruePrice() const;
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual void DrawContents(const character*);
   virtual bool Apply(character* Applier) { return Open(Applier); }
   virtual bool IsAppliable(const character*) const { return true; }
@@ -539,7 +537,7 @@ class ITEM
   virtual bool IsDangerousForAI(const character*) const { return IsActive(); }
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar);
   virtual void Search(const character*, ushort);
   virtual bool IsDangerous() const { return IsActive(); }
   virtual bool IsStuck() const;
@@ -604,7 +602,7 @@ class ITEM
  public:
   virtual void Be() { }
   virtual bool Read(character*);
-  virtual bool ReceiveDamage(character*, ushort, ushort) { return false; }
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar) { return false; }
   virtual bool IsEncryptedScroll() const { return true; }
 );
 

@@ -7,8 +7,11 @@
 
 #include "typedef.h"
 
+/* Standard structure for representing positions */
+
 struct vector2d
 {
+  typedef uchar vbyte;
   vector2d()				      { }
   vector2d(short X, short Y) : X(X), Y(Y)     { }
   vector2d  operator +   (vector2d H) const   { return vector2d(X + H.X, Y + H.Y); }
@@ -32,7 +35,12 @@ struct vector2d
   vector2d& operator >>= (uchar S)	      { X >>= S; Y >>= S; return *this; }
   bool	    operator <	 (vector2d H) const   { return X < H.X || (X == H.X && Y < H.Y); }
   ulong GetLengthSquare() const		      { return long(X) * long(X) + long(Y) * long(Y); }
-  bool IsAdjacent(vector2d V) const	      { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; } // Also returns true if V == this
+  /* Also returns true if V == *this */
+  bool IsAdjacent(vector2d V) const	      { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; }
+  /* Pack a position of a 16x16 map to a byte and vice versa */
+  static vbyte PackToByte(short X, short Y)   { return (Y << 4) | (X & 0xF); }
+  static vbyte PackToByte(vector2d V)	      { return (V.Y << 4) | (V.X & 0xF); }
+  static vector2d UnpackByte(vbyte B)	      { return vector2d(B & 0xF, B >> 4); }
   short X, Y;
 };
 

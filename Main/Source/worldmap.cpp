@@ -574,10 +574,10 @@ void worldmap::RemoveEmptyContinents()
 
 void worldmap::Draw(bool) const
 {
-  ushort XMin = game::GetCamera().X;
-  ushort YMin = game::GetCamera().Y;
-  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
-  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  const ushort XMin = game::GetCamera().X;
+  const ushort YMin = game::GetCamera().Y;
+  const ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
+  const ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
 
   if(!game::GetSeeWholeMapCheatMode())
     {

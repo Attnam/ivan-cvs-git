@@ -17,9 +17,10 @@ class festring
 {
  public:
   typedef ulong sizetype;
-  /* I can prove that the code works even if OwnsData is left uninitialized.
+  /* It can be proven that the code works even if OwnsData is left uninitialized.
      However, Valgrind reports this as a possible error which is annoying */
   festring() : Data(0), Size(0), OwnsData(false) { }
+  explicit festring(sizetype);
   festring(sizetype, char);
   festring(const char* CStr) : Data(const_cast<char*>(CStr)), Size(strlen(CStr)), OwnsData(false) { }
   festring(const char* CStr, sizetype N) : Data(const_cast<char*>(CStr)), Size(N), OwnsData(false) { }
@@ -42,6 +43,7 @@ class festring
   bool operator!=(const festring&) const;
   bool operator==(const char*) const;
   bool operator!=(const char*) const;
+  char Compare(const festring&) const;
   const char* CStr() const;
   sizetype GetSize() const { return Size; }
   void Empty();
@@ -64,7 +66,7 @@ class festring
   static void SearchAndReplace(festring&, const festring&, const festring&, sizetype = 0);
   static bool IgnoreCaseCompare(const festring&, const festring&);
   bool IsEmpty() const { return !Size; }
-  char& operator[](sizetype Index) const { return Data[Index]; }
+  char& operator[](sizetype Index) const { return Data[Index]; } /// HORRIBLE ERROR!!!!
   void PreProcessForFebot();
   void PostProcessForFebot();
   void SwapData(festring&);
@@ -117,6 +119,13 @@ inline festring::festring(const festring& Str) : Data(Str.Data), Size(Str.Size),
 {
   if(Data && OwnsData)
     ++REFS(Data);
+}
+
+inline festring::festring(sizetype N) : Size(N), Reserved(N|FESTRING_PAGE), OwnsData(true)
+{
+  char* Ptr = 4 + new char[Reserved + 5];
+  REFS(Ptr) = 0;
+  Data = Ptr;
 }
 
 inline festring::festring(sizetype N, char C) : Size(N), Reserved(N|FESTRING_PAGE), OwnsData(true)
@@ -174,6 +183,25 @@ inline bool festring::operator!=(const char* CStr) const
 {
   sizetype StrSize = strlen(CStr);
   return Size != StrSize || (StrSize && memcmp(Data, CStr, StrSize));
+}
+
+/* Returns -1 if this is before Str in alphabetical order, zero
+   if strings are identical, else 1 */
+
+inline char festring::Compare(const festring& Str) const
+{
+  sizetype ThisSize = Size;
+  sizetype StrSize = Str.Size;
+
+  if(ThisSize && StrSize)
+    {
+      int Comp = memcmp(Data, Str.Data, Min(ThisSize, StrSize));
+
+      if(Comp)
+	return Comp;
+    }
+
+  return ThisSize < StrSize ? -1 : ThisSize == StrSize ? 0 : 1;
 }
 
 inline const char* festring::CStr() const
@@ -265,6 +293,18 @@ inline festring& festring::operator<<(const festring& Str)
 struct charcomparer
 {
   bool operator()(const char* const& S1, const char* const& S2) const { return strcmp(S1, S2) < 0; }
+};
+
+/* For ntree */
+
+struct stringsizefinder
+{
+  ulong operator()(const festring& S) const { return S.GetSize(); }
+};
+
+struct stringextractor
+{
+  ulong operator()(const festring& S, ulong Index) const { return S[Index]; }
 };
 
 #define CONST_S(str) festring(str, sizeof(str) - 1)

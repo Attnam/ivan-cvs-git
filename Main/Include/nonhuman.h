@@ -103,13 +103,11 @@ class CHARACTER
   mommo,
   nonhumanoid,
  protected:
+  virtual bool CanVomit() const { return true; }
   virtual bodypart* MakeBodyPart(ushort) const;
-  virtual const char* FirstPersonBiteVerb() const;
-  virtual const char* FirstPersonCriticalBiteVerb() const;
-  virtual const char* ThirdPersonBiteVerb() const;
-  virtual const char* ThirdPersonCriticalBiteVerb() const;
-  virtual const char* BiteNoun() const;
   virtual void CreateCorpse(lsquare*);
+  virtual bool Hit(character*, vector2d, uchar, bool);
+  virtual void GetAICommand();
 );
 
 class CHARACTER

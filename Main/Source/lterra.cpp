@@ -172,7 +172,7 @@ bool olterrain::Enter(bool DirectionUp) const
 void olterrain::VirtualConstructor(bool Load)
 {
   if(!Load)
-    CalculateHP();
+    HP = CalculateMaxHP();
 }
 
 ushort olterrain::GetStrengthValue() const
@@ -220,13 +220,15 @@ void olterrain::BeKicked(character* Kicker, ushort Damage, uchar)
     ADD_MESSAGE("Your kick has no effect on %s.", CHAR_NAME(DEFINITE));
 }
 
-void olterrain::CalculateHP()
+short olterrain::CalculateMaxHP()
 {
   if(GetMainMaterial())
     {
       ulong SV = GetMainMaterial()->GetStrengthValue();
-      HP = SV * SV * GetHPModifier() / 6000;
+      return SV * SV * GetHPModifier() / 6000;
     }
+  else
+    return 0;
 }
 
 uchar glterrain::GetAttachedGod() const
@@ -305,15 +307,20 @@ bool olterrain::IsTransparent() const
 
 void lterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  const ushort AF = GraphicData.AnimationFrames;
+  const bitmap* P = GraphicData.Picture[!AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF];
+  P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void lterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
+  const ushort AF = GraphicData.AnimationFrames;
+  const bitmap* P = GraphicData.Picture[!AllowAnimate || AF == 1 ? 0 : GET_TICK() % AF];
+
   if(AllowAlpha)
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
   else
-    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+    P->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void olterrain::ModifyAnimationFrames(ushort& AF) const
@@ -326,7 +333,8 @@ vector2d olterrain::GetBitmapPos(ushort Index) const
 {
   if(UseBorderTiles())
     {
-      vector2d MV = game::GetMoveVector((Index + (Index << 3)) / AnimationFrames);
+      Index = Index ? 8 - (Index + (Index << 3)) / GraphicData.AnimationFrames : 8;
+      vector2d MV = game::GetMoveVector(Index);
 
       if(VisualEffects & MIRROR)
 	MV.X = -MV.X;
@@ -351,13 +359,13 @@ void olterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
 {
   if(UseBorderTiles())
     {
-      ushort TrueAnimationFrames = AnimationFrames / 9;
-      ushort PictureIndex = SquareIndex * TrueAnimationFrames;
+      const ushort TrueAF = GraphicData.AnimationFrames / 9;
+      ushort PictureIndex = SquareIndex * TrueAF;
 
-      if(AllowAnimate && TrueAnimationFrames != 1)
-	PictureIndex += globalwindowhandler::GetTick() % TrueAnimationFrames;
+      if(AllowAnimate && TrueAF != 1)
+	PictureIndex += GET_TICK() % TrueAF;
 
-      Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+      GraphicData.Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
     }
   else
     lterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate);
@@ -367,17 +375,58 @@ void olterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort Squar
 {
   if(UseBorderTiles())
     {
-      ushort TrueAnimationFrames = AnimationFrames / 9;
-      ushort PictureIndex = SquareIndex * TrueAnimationFrames;
+      const ushort TrueAF = GraphicData.AnimationFrames / 9;
+      ushort PictureIndex = SquareIndex * TrueAF;
 
-      if(AllowAnimate && TrueAnimationFrames != 1)
-	PictureIndex += globalwindowhandler::GetTick() % TrueAnimationFrames;
+      if(AllowAnimate && TrueAF != 1)
+	PictureIndex += GET_TICK() % TrueAF;
 
       if(AllowAlpha)
-	Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+	GraphicData.Picture[PictureIndex]->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
       else
-	Picture[PictureIndex]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+	GraphicData.Picture[PictureIndex]->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
     }
   else
     lterrain::Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+}
+
+void lterrain::SignalRustLevelChange()
+{
+  UpdatePictures();
+  GetLSquareUnder()->SendMemorizedUpdateRequest();
+  GetLSquareUnder()->SendNewDrawRequest();
+}
+
+void olterrain::SignalRustLevelChange()
+{
+  lterrain::SignalRustLevelChange();
+  HP = Min(HP, CalculateMaxHP());
+}
+
+void lterrain::TryToRust(ulong LiquidModifier)
+{
+  if(MainMaterial->TryToRust(LiquidModifier * 10))
+    {
+      if(CanBeSeenByPlayer())
+	if(MainMaterial->GetRustLevel() == NOT_RUSTED)
+	  ADD_MESSAGE("%s rusts.", CHAR_NAME(DEFINITE));
+	else
+	  ADD_MESSAGE("%s rusts more.", CHAR_NAME(DEFINITE));
+
+      MainMaterial->SetRustLevel(MainMaterial->GetRustLevel() + 1);
+    }
+}
+
+void olterrain::ReceiveAcid(material* Material, ulong Modifier)
+{
+  if(!GetMainMaterial()->IsImmuneToAcid())
+    {
+      ushort Damage = Modifier / 10000;
+
+      if(Damage)
+	{
+	  Damage += RAND() % Damage;
+	  ReceiveDamage(0, Damage, ACID);
+	}
+    }
 }

@@ -18,42 +18,17 @@ bool FelistDrawController()
 
 struct felistentry
 {
-  felistentry() : AnimationFrames(0) { }
-  felistentry(const festring&, ushort, ushort, bool);
-  felistentry(const bitmap*const*, const festring&, ushort, ushort, ushort, bool, bool);
-  ~felistentry();
-  bitmap** Bitmap;
+  felistentry() : ImageKey(NO_IMAGE) { }
+  felistentry(const festring&, ushort, ushort, ushort, bool);
   festring String;
   ushort Color;
   ushort Marginal;
-  ushort AnimationFrames;
+  ushort ImageKey;
   bool Selectable;
 };
 
-felistentry::felistentry(const festring& String, ushort Color, ushort Marginal, bool Selectable) : String(String), Color(Color), Marginal(Marginal), AnimationFrames(0), Selectable(Selectable)
+felistentry::felistentry(const festring& String, ushort Color, ushort Marginal, ushort ImageKey, bool Selectable) : String(String), Color(Color), Marginal(Marginal), ImageKey(ImageKey), Selectable(Selectable)
 {
-}
-
-felistentry::~felistentry()
-{
-  if(AnimationFrames)
-    {
-      for(ushort c = 0; c < AnimationFrames; ++c)
-	delete Bitmap[c];
-
-      delete Bitmap;
-    }
-}
-
-felistentry::felistentry(const bitmap*const* BitmapArray, const festring& String, ushort AnimationFrames, ushort Color, ushort Marginal, bool Selectable, bool AllowAlpha) : String(String), Color(Color), Marginal(Marginal), AnimationFrames(AnimationFrames), Selectable(Selectable)
-{
-  if(AnimationFrames)
-    {
-      Bitmap = new bitmap*[AnimationFrames];
-
-      for(ushort c = 0; c < AnimationFrames; ++c)
-	Bitmap[c] = new bitmap(BitmapArray[c], 0, AllowAlpha);
-    }
 }
 
 outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
@@ -77,7 +52,7 @@ struct felistdescription
   ushort Color;
 };
 
-felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), MaskColor(TRANSPARENT_COLOR), UpKey(KEY_UP), DownKey(KEY_DOWN)
+felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), UpKey(KEY_UP), DownKey(KEY_DOWN)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -342,15 +317,17 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       Str << Entry[c]->String;
 
-      if(Entry[c]->AnimationFrames)
+      if(Entry[c]->ImageKey != NO_IMAGE)
 	{
 	  if(ushort(Str.GetSize()) <= (Width - 50) >> 3)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->AnimationFrames]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16, MaskColor);
+
+	      if(EntryDrawer)
+		EntryDrawer(Buffer, vector2d(Pos.X + 13, LastFillBottom), Entry[c]->ImageKey);
 
 	      if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-		FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
+		FONT->PrintfUnshaded(Buffer, Pos.X + 38, LastFillBottom + 5, WHITE, "%s", Str.CStr());
 	      else
 		FONT->Printf(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
 
@@ -366,14 +343,15 @@ bool felist::DrawPage(bitmap* Buffer) const
 		  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
 		  if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-		    FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
+		    FONT->PrintfUnshaded(Buffer, Pos.X + 38, LastFillBottom + 1, WHITE, "%s", Chapter[l].CStr());
 		  else
 		    FONT->Printf(Buffer, Pos.X + 37, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
 
 		  LastFillBottom += 10;
 		}
 
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->AnimationFrames]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, PictureTop, 16, 16, MaskColor);
+	      if(EntryDrawer)
+		EntryDrawer(Buffer, vector2d(Pos.X + 13, PictureTop), Entry[c]->ImageKey);
 	    }
 	}
       else
@@ -385,7 +363,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
 	      if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
-		FONT->PrintfShade(Buffer, Pos.X + 13, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
+		FONT->PrintfUnshaded(Buffer, Pos.X + 14, LastFillBottom + 1, WHITE, "%s", Chapter[l].CStr());
 	      else
 		FONT->Printf(Buffer, Pos.X + 13, LastFillBottom, Entry[c]->Color, "%s", Chapter[l].CStr());
 
@@ -479,25 +457,9 @@ void felist::Empty()
   Entry.clear();
 }
 
-void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, bitmap* Bitmap, bool Selectable)
+void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, ushort Key, bool Selectable)
 {
-  if(!Bitmap)
-    {
-      Entry.push_back(new felistentry(Str, Color, Marginal, Selectable));
-
-      if(Maximum && Entry.size() > Maximum)
-	{
-	  delete Entry[0];
-	  Entry.erase(Entry.begin());
-	}
-    }
-  else
-    AddEntry(Str, Color, Marginal, &Bitmap, 1, Selectable);
-}
-
-void felist::AddEntry(const festring& Str, ushort Color, ushort Marginal, const bitmap*const* Bitmap, ushort AnimationFrames, bool Selectable, bool AllowAlpha)
-{
-  Entry.push_back(new felistentry(Bitmap, Str, AnimationFrames, Color, Marginal, Selectable, AllowAlpha));
+  Entry.push_back(new felistentry(Str, Color, Marginal, Key, Selectable));
 
   if(Maximum && Entry.size() > Maximum)
     {
@@ -532,7 +494,7 @@ void felist::PrintToFile(const festring& FileName)
 
   for(c = 0; c < Entry.size(); ++c)
     {
-      if(Entry[c]->AnimationFrames)
+      if(Entry[c]->ImageKey != NO_IMAGE)
 	SaveFile << "   ";
 
       SaveFile << Entry[c]->String.CStr() << std::endl;

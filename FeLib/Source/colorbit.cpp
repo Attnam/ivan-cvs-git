@@ -235,7 +235,7 @@ bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const 
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, const ushort* Color, uchar BaseAlpha, const uchar* Alpha, const uchar* RustData) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   vector2d TargetPos(0, 0);
@@ -286,6 +286,17 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
       UseAlpha = false;
     }
 
+  bool Rusted = RustData && (RustData[0] || RustData[1] || RustData[2] || RustData[3]);
+  ulong RustSeed[4];
+
+  if(Rusted)
+    {
+      RustSeed[0] = (RustData[0] & 0xFC) >> 2;
+      RustSeed[1] = (RustData[1] & 0xFC) >> 2;
+      RustSeed[2] = (RustData[2] & 0xFC) >> 2;
+      RustSeed[3] = (RustData[3] & 0xFC) >> 2;
+    }
+
   for(ushort y = 0; y < Size.Y; ++y)
     {
       for(ushort x = 0; x < Size.X; ++x)
@@ -303,6 +314,13 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, vector2d Move, 
 		  ushort Red = (ThisColor >> 8 & 0xF8) * Index;
 		  ushort Green = (ThisColor >> 3 & 0xFC) * Index;
 		  ushort Blue = (ThisColor << 3 & 0xF8) * Index;
+
+		  if(Rusted && RustData[ColorIndex]
+		  && (RustData[ColorIndex] & 3) > (RustSeed[ColorIndex] = RustSeed[ColorIndex] * 1103515245 + 12345) >> 30)
+		    {
+		      Green = ((Green << 1) + Green) >> 2;
+		      Blue >>= 1;
+		    }
 
 		  if(Red > 0x7FF)
 		    Red = 0x7FF;
@@ -368,9 +386,8 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
     }
 }
 
-void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
+void colorizablebitmap::PrintfUnshaded(bitmap* Bitmap, ushort X, ushort Y, ushort Color, const char* Format, ...) const
 {
-  ++X; ++Y;
   char Buffer[256];
 
   va_list AP;
@@ -383,8 +400,6 @@ void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort C
 
   if(Iterator == FontCache.end())
     {
-      Color = MakeShadeColor(Color);
-
       for(ushort c = 0; c < Size; ++c)
 	MaskedBlit(Bitmap, ((Buffer[c] - 0x20) & 0xF) << 4, (Buffer[c] - 0x20) & 0xF0, X + (c << 3), Y, 8, 8, &Color);
     }
@@ -507,13 +522,12 @@ void colorizablebitmap::CreateFontCache(ushort Color)
     return;
 
   ushort ShadeColor = MakeShadeColor(Color);
-  bitmap* Font = new bitmap(XSize, YSize);
-  Font->Fill(0, 0, 1, YSize, TRANSPARENT_COLOR);
-  Font->Fill(0, 0, XSize, 1, TRANSPARENT_COLOR);
-  bitmap* ShadeFont = Colorize(&ShadeColor);
-  ShadeFont->Blit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1);
-  MaskedBlit(Font, &Color);
-  FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, ShadeFont);
+  bitmap* Font = new bitmap(XSize, YSize, TRANSPARENT_COLOR);
+
+  MaskedBlit(Font, 0, 0, 1, 1, XSize - 1, YSize - 1, &ShadeColor);
+  bitmap* UnshadedFont = Colorize(&Color);
+  UnshadedFont->MaskedBlit(Font);
+  FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, UnshadedFont);
 }
 
 /* returns ERROR_VECTOR if fails find Pos else returns pos */

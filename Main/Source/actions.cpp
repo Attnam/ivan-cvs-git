@@ -100,7 +100,7 @@ void consume::Handle()
   else if(Actor->GetHungerState() == OVER_FED)
     {
       Actor->DeActivateVoluntaryAction(CONST_S("You are about to choke on this stuff."));
-      Actor->Vomit(2 + RAND() % 3);
+      Actor->Vomit(Actor->GetPos(), 500 + RAND() % 500);
     }
 }
 

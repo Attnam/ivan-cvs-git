@@ -576,7 +576,7 @@ Dungeon ELPURI_CAVE;
 				{
 					O = oree;
 					B = darkknight(ELITE);
-					G = golem(BLOOD);
+					G = golem(ACIDOUS_BLOOD);
 					A = angel(MORTIFER);
 				}
 			}

@@ -56,6 +56,14 @@ Border tiles aren't shown in the dark.
 Vladimir doesn't destroy walls on the turn when it is created.
 NetBSD and trailing slash
 Mirage puppies.
-Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
+//Using change material scroll to change large items (ie plate mail) to carrot can be abused to get too much perception.
 Still some problems with bad edge tiles.
+If the whole level is full of monsters, the game won't work correctly.
 Better gentoo packages. No root should be needed.
+Petrus's AI goes rather insane (he just runs around his throne) if he is severely wounded.
+Headless zombies can vomit.
+Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
+Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
+Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
+Choosing a name including the character ':' will result in very odd consequences, like crashes, disappearing saves and savefiles which cannot be deleted (at least in Windows).
+"You push your fingers down to your throat and vomit." msg incorrect when a dolphin.

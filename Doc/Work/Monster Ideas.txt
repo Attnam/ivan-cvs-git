@@ -4,7 +4,7 @@ Genie
 
 Mammoth
 	
-	Pretty normal creatures except that when they die an ivory horn. 
+	Pretty normal creatures except that when they die they drop an ivory horn. 
 
 Gremlin
 	
@@ -13,7 +13,6 @@ Gremlin
 Dwarf
 
 	Dwarfs are a pretty generic character. Except that they carry pick-axes and dig through walls. They should also have more mithril and other precious metals than normal monsters. You should also be able to bribe them to your side with gold.
-
 
 Hobbit
 
@@ -153,16 +152,16 @@ Sumo wrestler
 
 The Monster guarding the Cave of Caerbannog
 
-    (quote from Monthy Python & Holy Grail)
+	(quote from Monthy Python & Holy Grail)
     
-    "But follow only if you are men of valor. For the entrance to this cave
-    is guarded by a monster, a creature so foul and cruel that no man yet
-    has fought with it and lived. Bones of full fifty men lie strewn about
-    its lair ... therefore sweet knights if you may doubt your strength or
-    courage come no further, for death awaits you all with nasty pointy
-    teeth."
+	"But follow only if you are men of valor. For the entrance to this cave
+	is guarded by a monster, a creature so foul and cruel that no man yet
+	has fought with it and lived. Bones of full fifty men lie strewn about
+	its lair ... therefore sweet knights if you may doubt your strength or
+	courage come no further, for death awaits you all with nasty pointy
+	teeth."
 
-    Looks like a rabbit, but in reality, deadly.
+	Looks like a rabbit, but in reality, deadly.
 
 Philosopher's stone golem
 
@@ -175,7 +174,158 @@ Deep sea blowfish (Singularis minutia gigantica)
 
 Flying squirrel
 
+Mountain troll
+
+	A mountain who is a troll.
+
+Exploding mushrooms
+
+High-level thieves
+
+Monster which engulfs others
+
+Basilisk or cockatrice
+
+	Petrifies.
+
 Carpenter 
 
-	  Sells wood stuff and asks the player: "How much wood would a 
-	  wood-chuck chuck if a wood-chuck chucked wood?"
+	Sells wood stuff and asks the player: "How much wood would a 
+	wood-chuck chuck if a wood-chuck could chuck wood?"
+
+Troll
+
+	Regenerates at enormous rate, and its blood heals the enemy if spilled
+	over him -> unusually long battles, good pets.
+
+Mola Mola
+
+	Gigantic hybrid of a perch and an octopus whose eyes shine with
+	ugly green ligth. Carnivorous and sentient. Uses almost all
+	of her energy in rapidly making new muscles and fins, may grow
+	twenty feet tall, and can shut down her life supporting systems
+	for days and still recover in full strength. More intelligent
+	than enner beasts.
+
+Nuas
+
+	According to a Valpuristic legend, a sea monster which gave birth
+	to Mola Mola and numerous other demons. Similiar to the biblical
+	Leviathan.
+
+Flying asses
+
+	Shoot lightnings and use chemical weapons.
+
+Knight of Ni
+
+	Says "Ni". At higher levels learns to say
+	"Ekky-ekky-ekky-ekky-z'Bang, zoom-Boing, z'nourrrwringmm".
+
+Airavata
+
+	Giant white war elephant with four tusks like mountains
+	(mounted by Indra, the Hindu god of weather and war)
+
+Varaha
+
+	Divine warrior boar
+	(avatar of Vishnu which defeated the demon Hiranyakshyap,
+	brother of Hiranyakashipu)
+
+Narasimha
+
+	Powerful man-lion with deadly nails
+	(avatar of Vishnu which defeated the demon Hiranyakashipu,
+	brother of Hiranyakshyap)
+
+Leviathan or Tiamat
+
+	Giant demonic multi-headed sea monster or whale
+	(Leviathan is the biblical version, Tiamat Babylonian)
+
+Behemoth
+
+	Unimaginably powerful amphibious monster, with a body
+	probably resembling that of a giant hippo
+	(mentioned in the Book of Job, 40:15)
+
+Ziz
+
+	Gigantic bird monster
+	(the Jewish mythology states that its meat will be served
+	along with Behemoth and Leviathan after the Armageddon)
+
+
+Sirens
+
+	'So far so good,' said she, when I had ended my story, 'and now pay
+	attention to what I am about to tell you- heaven itself, indeed,
+	will recall it to your recollection. First you will come to the Sirens
+	who enchant all who come near them. If any one unwarily draws in too
+	close and hears the singing of the Sirens, his wife and children
+	will never welcome him home again, for they sit in a green field and
+	warble him to death with the sweetness of their song. There is a great
+	heap of dead men's bones lying all around, with the flesh still
+	rotting off them. Therefore pass these Sirens by, and stop your
+	men's ears with wax that none of them may hear; but if you like you
+	can listen yourself, for you may get the men to bind you as you
+	stand upright on a cross-piece half way up the mast, and they must
+	lash the rope's ends to the mast itself, that you may have the
+	pleasure of listening. If you beg and pray the men to unloose you,
+	then they must bind you faster.'
+	(The Odyssey, by Homer)
+
+
+Scylla
+
+	'Of these two rocks the one reaches heaven and its peak is lost
+	in a dark cloud. This never leaves it, so that the top is never
+	clear not even in summer and early autumn. No man though he had twenty
+	hands and twenty feet could get a foothold on it and climb it, for
+	it runs sheer up, as smooth as though it had been polished. In the
+	middle of it there is a large cavern, looking West and turned
+	towards Erebus; you must take your ship this way, but the cave is so
+	high up that not even the stoutest archer could send an arrow into it.
+	Inside it Scylla sits and yelps with a voice that you might take to be
+	that of a young hound, but in truth she is a dreadful monster and no
+	one- not even a god- could face her without being terror-struck. She
+	has twelve mis-shapen feet, and six necks of the most prodigious
+	length; and at the end of each neck she has a frightful head with
+	three rows of teeth in each, all set very close together, so that they
+	would crunch any one to death in a moment, and she sits deep within
+	her shady cell thrusting out her heads and peering all round the rock,
+	fishing for dolphins or dogfish or any larger monster that she can
+	catch, of the thousands with which Amphitrite teems. No ship ever
+	yet got past her without losing some men, for she shoots out all her
+	heads at once, and carries off a man in each mouth'
+	(The Odyssey, by Homer)
+
+Charybdis
+
+	'You will find the other rocks lie lower, but they are so close
+	together that there is not more than a bowshot between them. A
+	large fig tree in full leaf grows upon it, and under it lies the
+	sucking whirlpool of Charybdis. Three times in the day does she
+	vomit forth her waters, and three times she sucks them down again; see
+	that you be not there when she is sucking, for if you are, Neptune
+	himself could not save you; you must hug the Scylla side and drive
+	ship by as fast as you can, for you had better lose six men than
+	your whole crew.'
+	(The Odyssey, by Homer)
+
+Tennyo
+
+	Beautiful female angelic creature with magical powers. Wears a
+	a feathered robe called amano hagoromo which allows her to fly and
+	cross the border between heaven and earth. If the robe is stolen,
+	the tennyo will become a servant of the thief in order to retrieve it.
+	(japanese mythological being)
+
+Briareos
+
+	Giant with one hundred arms and fifty heads. The glare of his
+	hundred eyes makes everyone panic automatically.
+	(in Greek mythology, one of the numerous sons of Gaia and Ouranos,
+	earth and sky. His nephew Zeus called him to scare away Hera and her
+	allies who were about to rebel)

@@ -6,6 +6,7 @@
 #endif
 
 #include <set>
+#include <list>
 
 #include "festring.h"
 
@@ -15,25 +16,28 @@ class inputfile;
 class febot
 {
  public:
-  febot();
+  void Initialize(ushort);
   void Save(outputfile&) const;
   void Load(inputfile&);
   void BeTalkedTo(festring);
   void Reply(festring&) const;
-  void Amnesify();
+  void Amnesify() { Initialize(ChainLength); }
+  bool IsIgnorant() const { return WordChainSet.size() <= 1; }
  private:
-  struct fword
+  struct wordchain
   {
-    fword(const festring& String) : String(String) { }
-    bool operator<(const fword& W) const { return String < W.String; }
-    fword* GetRandomLink() const;
-    festring String;
-    std::vector<fword*> Link;
+    wordchain(ushort ChainLength) : String(ChainLength, festring()) { }
+    wordchain(const wordchain*, const festring&);
+    bool operator<(const wordchain&) const;
+    wordchain* GetRandomLink() const;
+    std::list<festring> String;
+    std::vector<wordchain*> Link;
   };
-  fword* CreateFWord(const festring&);
-  fword* GetControlFWord() const;
-  typedef std::set<fword> fwordset;
-  fwordset FWordSet;
+  wordchain* CreateWordChain(const wordchain*, const festring&);
+  wordchain* GetControlWordChain() const;
+  typedef std::set<wordchain> wordchainset;
+  wordchainset WordChainSet;
+  ushort ChainLength;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, const febot& Febot) { Febot.Save(SaveFile); return SaveFile; }

@@ -13,6 +13,7 @@ class outputfile;
 class inputfile;
 class festring;
 class god;
+class liquid;
 
 class godprototype
 {
@@ -54,7 +55,7 @@ class god
   bool IsKnown() const { return Known; }
   void PlayerKickedAltar() { AdjustRelation(-100); }
   void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
-  virtual void PlayerVomitedOnAltar();
+  virtual bool PlayerVomitedOnAltar(liquid*);
   character* CreateAngel();
   virtual ushort GetColor() const = 0;
   virtual const prototype* GetProtoType() const = 0;

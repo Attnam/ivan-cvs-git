@@ -2,7 +2,7 @@
 
 bool lsquare::IsDipDestination() const { return GLTerrain->IsDipDestination() || (OLTerrain && OLTerrain->IsDipDestination()); }
 
-lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Fluid(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0), Freezed(false)
+lsquare::lsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), GLTerrain(0), OLTerrain(0), Emitation(0), RoomIndex(0), TemporaryEmitation(0), Memorized(0), MemorizedUpdateRequested(true), LastExplosionID(0), SmokeAlphaSum(0), Freezed(false), HasFluids(false)
 {
   Stack = new stack(this, 0, CENTER, false);
   SideStack[DOWN] = new stack(this, 0, DOWN, false);
@@ -21,11 +21,15 @@ lsquare::~lsquare()
   for(c = 0; c < 4; ++c)
     delete SideStack[c];
 
-  delete Fluid;
+  if(HasFluids)
+    for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
+      delete *f;
+
   delete Memorized;
 
-  for(c = 0; c < Smoke.size(); ++c)
-    delete Smoke[c];
+  if(!Smoke.empty())
+    for(smokelist::iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+      delete *s;
 }
 
 void lsquare::SignalEmitationIncrease(ulong EmitationUpdate)
@@ -52,8 +56,9 @@ void lsquare::SignalEmitationDecrease(ulong EmitationUpdate)
 void lsquare::CalculateEmitation()
 {
   Emitation = Stack->GetEmitation();
+  ushort c;
 
-  for(ushort c = 0; c < 4; ++c)
+  for(c = 0; c < 4; ++c)
     {
       stack* Stack = GetSideStackOfAdjacentSquare(c);
 
@@ -70,6 +75,10 @@ void lsquare::CalculateEmitation()
     game::CombineLights(Emitation, OLTerrain->GetEmitation());
 
   game::CombineLights(Emitation, TemporaryEmitation);
+
+  if(HasFluids)
+    for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
+      game::CombineLights(Emitation, (*f)->GetEmitation());
 }
 
 void lsquare::UpdateMemorized()
@@ -92,14 +101,18 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
 {
   GLTerrain->Draw(Bitmap, Pos, Luminance, RealDraw);
 
-  if(Fluid)
-    Fluid->Draw(Bitmap, Pos, Luminance, RealDraw);
+  if(OLTerrain && !IsFlyable())
+    OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
 
-  if(OLTerrain)	
-    OLTerrain->Draw(Bitmap, Pos, Luminance, 8, RealDraw);
+  if(HasFluids)
+    for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
+      (*f)->Draw(Bitmap, Pos, Luminance, RealDraw);
+
+  if(OLTerrain && IsFlyable())
+    OLTerrain->Draw(Bitmap, Pos, Luminance, 0, RealDraw);
 
   for(ushort c = 0; c < 8 && BorderPartner[c].Terrain; ++c)
-    BorderPartner[c].Terrain->Draw(Bitmap, Pos, Luminance, BorderPartner[c].SquareIndex, RealDraw);
+    BorderPartner[c].Terrain->Draw(Bitmap, Pos, Luminance, 8 - BorderPartner[c].SquareIndex, RealDraw);
 
   if(IsTransparent())
     {
@@ -138,8 +151,9 @@ void lsquare::Draw()
 
 	      if(Character->GetMoveType() & FLY)
 		{
-		  for(ushort c = 0; c < Smoke.size(); ++c)
-		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		  if(!Smoke.empty())
+		    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 
 		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
 		}
@@ -147,13 +161,14 @@ void lsquare::Draw()
 		{
 		  Character->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, Index, true);
 
-		  for(ushort c = 0; c < Smoke.size(); ++c)
-		    Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+		  if(!Smoke.empty())
+		    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+		      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 		}
 	    }
-	  else
-	    for(ushort c = 0; c < Smoke.size(); ++c)
-	      Smoke[c]->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
+	  else if(!Smoke.empty())
+	    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+	      (*s)->Draw(DOUBLE_BUFFER, BitPos, RealLuminance, true);
 	}
       else if(CanBeFeltByPlayer())
 	{
@@ -517,25 +532,13 @@ void lsquare::Load(inputfile& SaveFile)
     }
 
   SaveFile >> Emitter >> Fluid >> Emitation >> Engraved >> RoomIndex >> Luminance >> Smoke >> SmokeAlphaSum;
+  HasFluids = !Fluid.empty();
 
   if(LastSeen)
     {
       Memorized = new bitmap(16, 16);
       Memorized->Load(SaveFile);
     }
-}
-
-void lsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort Variation) // ho ho ho /me is very funny. - Anonymous
-{
-  if(!Amount)
-    return;
-	
-  if(!GetFluid())
-    SetFluid(new fluid(this));
-
-  GetFluid()->SpillFluid(Amount, Color, Lumpiness, Variation);
-  SendMemorizedUpdateRequest();
-  SendNewDrawRequest();
 }
 
 void lsquare::CalculateLuminance()
@@ -643,7 +646,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		      stack* Stack = GetSideStackOfAdjacentSquare(c);
 
 		      if(Stack)
-			Items += Stack->GetItems(PLAYER, Cheat);
+			Items += Cheat ? Stack->GetItems() : Stack->GetVisibleItems(PLAYER);
 		    }
 
 		  if(Items > 1)
@@ -656,7 +659,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 			{
 			  stack* Stack = GetSideStackOfAdjacentSquare(c);
 
-			  if(Stack && Stack->GetItems(PLAYER, Cheat))
+			  if(Stack && ((Cheat && Stack->GetItems()) || (!Cheat && Stack->GetVisibleItems(PLAYER))))
 			    Stack->GetBottomItem(PLAYER, Cheat)->AddName(MemorizedDescription, INDEFINITE);
 			}
 
@@ -924,12 +927,10 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
     GetStack()->CheckForStepOnEffect(Stepper);
 }
 
-void lsquare::ReceiveVomit(character* Who, ushort Amount)
+void lsquare::ReceiveVomit(character* Who, liquid* Liquid)
 {
-  SpillFluid(Amount, MakeRGB16(10, 230, 10), 5, 60);
-
-  if(GetOLTerrain())
-    GetOLTerrain()->ReceiveVomit(Who);
+  if(!GetOLTerrain() || !GetOLTerrain()->ReceiveVomit(Who, Liquid))
+    SpillFluid(Who, Liquid);
 }
 
 void lsquare::SetTemporaryEmitation(ulong What)
@@ -977,8 +978,8 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
     {
       DecAnimatedEntities();
 
-      for(ushort c = 0; c < Smoke.size(); ++c)
-	Smoke[c]->SendToHell();
+      for(smokelist::iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+	(*s)->SendToHell();
 
       Smoke.clear();
       SmokeAlphaSum = 0;
@@ -1014,16 +1015,6 @@ void lsquare::DrawParticles(ulong Color, bool DrawHere)
     {
       graphics::BlitDBToScreen();
       while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
-    }
-}
-
-void lsquare::RemoveFluid()
-{
-  if(GetFluid())
-    {
-      fluid* Backup = GetFluid();
-      SetFluid(0);
-      SignalEmitationDecrease(Backup->GetEmitation());
     }
 }
 
@@ -1148,12 +1139,13 @@ stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
 {
   switch(Index)
     {
-    case LEFT: return Pos.X ? GetNearLSquare(Pos + vector2d(-1, 0))->GetSideStack(RIGHT) : 0;
-    case RIGHT: return Pos.X < GetLevel()->GetXSize() - 1 ? GetNearLSquare(Pos + vector2d(1, 0))->GetSideStack(LEFT) : 0;
-    case UP: return Pos.Y ? GetNearLSquare(Pos + vector2d(0, -1))->GetSideStack(DOWN) : 0;
     case DOWN: return Pos.Y < GetLevel()->GetYSize() - 1 ? GetNearLSquare(Pos + vector2d(0, 1))->GetSideStack(UP) : 0;
-    default: return 0;
+    case LEFT: return Pos.X ? GetNearLSquare(Pos + vector2d(-1, 0))->GetSideStack(RIGHT) : 0;
+    case UP: return Pos.Y ? GetNearLSquare(Pos + vector2d(0, -1))->GetSideStack(DOWN) : 0;
+    case RIGHT: return Pos.X < GetLevel()->GetXSize() - 1 ? GetNearLSquare(Pos + vector2d(1, 0))->GetSideStack(LEFT) : 0;
     }
+
+  return 0;
 }
 
 void lsquare::SendMemorizedUpdateRequest()
@@ -1191,22 +1183,6 @@ inputfile& operator>>(inputfile& SaveFile, emitter& Emitter)
 {
   SaveFile >> Emitter.Pos >> Emitter.DilatedEmitation;
   return SaveFile;
-}
-
-void lsquare::SpillFluid(character* Spiller, material* Liquid, ushort HitPercent)
-{
-  SpillFluid(1, Liquid->GetColor(), 5, 60);
-
-  if(GetCharacter() && HitPercent > RAND() % 100)
-    {
-      if(Spiller)
-	Spiller->Hostility(GetCharacter());
-
-      GetCharacter()->ReceiveFluidSpill(Liquid, (HitPercent >> 1) + RAND() % ((HitPercent >> 1) + 1));
-    }
-
-  GetStack()->ReceiveFluidSpill(Liquid);
-  delete Liquid;
 }
 
 void lsquare::AddItem(item* Item)
@@ -1492,8 +1468,9 @@ stack* lsquare::GetFirstSideStackUnderAttack(uchar Direction) const
     case 5: return GetSideStack(UP);
     case 6: return GetSideStack(UP);
     case 7: return GetSideStack(UP);
-    default: return 0; /* YOURSELF */
     }
+
+  return 0; /* YOURSELF */
 }
 
 stack* lsquare::GetSecondSideStackUnderAttack(uchar Direction) const
@@ -1592,7 +1569,7 @@ void lsquare::SortAllItems(itemvector& AllItems, const character* Character, boo
 
 void lsquare::RemoveSmoke(smoke* ToBeRemoved)
 {
-  Smoke.erase(std::find(Smoke.begin(), Smoke.end(), ToBeRemoved));
+  Smoke.remove(ToBeRemoved);
 
   if(Smoke.empty())
     DecAnimatedEntities();
@@ -1606,10 +1583,10 @@ void lsquare::AddSmoke(gas* ToBeAdded)
     IncAnimatedEntities();
   else
     {
-      for(ushort c = 0; c < Smoke.size(); ++c)
-	if(ToBeAdded->IsSameAs(Smoke[c]->GetGas()))
+      for(smokelist::iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+	if(ToBeAdded->IsSameAs((*s)->GetGas()))
 	  {
-	    Smoke[c]->Merge(ToBeAdded);
+	    (*s)->Merge(ToBeAdded);
 	    return;
 	  }
     }
@@ -1619,8 +1596,9 @@ void lsquare::AddSmoke(gas* ToBeAdded)
 
 void lsquare::ShowSmokeMessage() const
 {
-  for(ushort c = 0; c < Smoke.size(); ++c)
-    Smoke[c]->AddBreatheMessage();
+  if(!Smoke.empty())
+    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+      (*s)->AddBreatheMessage();
 }
 
 void lsquare::SignalSmokeAlphaChange(short What)
@@ -1665,7 +1643,7 @@ uchar lsquare::GetDivineMaster() const
 void lsquare::DisplaySmokeInfo(festring& Msg) const
 {
   if(Smoke.size() == 1)
-    Msg << " A cloud of " << Smoke[0]->GetGas()->GetName(false, false) << " surrounds the square.";
+    Msg << " A cloud of " << (*Smoke.begin())->GetGas()->GetName(false, false) << " surrounds the square.";
   else if(Smoke.size())
     Msg << " A lot of gases hover over the square.";
 }
@@ -1703,8 +1681,8 @@ void lsquare::PreProcessForBone()
     {
       DecAnimatedEntities();
 
-      for(ushort c = 0; c < Smoke.size(); ++c)
-	Smoke[c]->SendToHell();
+      for(smokelist::iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+	(*s)->SendToHell();
 
       Smoke.clear();
       SmokeAlphaSum = 0;
@@ -1750,9 +1728,10 @@ void lsquare::DisplayEngravedInfo(festring& Buffer) const
 
 bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
 {
-  for(ushort c = 0; c < Smoke.size(); ++c)
-    if(Smoke[c]->IsDangerousForAIToBreathe(Who))
-      return true;
+  if(!Smoke.empty())
+    for(smokelist::const_iterator s = Smoke.begin(); s != Smoke.end(); ++s)
+      if((*s)->IsDangerousForAIToBreathe(Who))
+	return true;
 
   return false;
 }
@@ -1819,4 +1798,90 @@ uchar lsquare::GetWalkability() const
     }
   else
     return OLTerrain ? OLTerrain->GetWalkability() & GLTerrain->GetWalkability() : GLTerrain->GetWalkability(); 
+}
+
+void lsquare::RemoveFluid(fluid* ToBeRemoved)
+{
+  Fluid.remove(ToBeRemoved);
+  SignalEmitationDecrease(ToBeRemoved->GetEmitation());
+  HasFluids = !Fluid.empty();
+}
+
+void lsquare::AddFluid(liquid* ToBeAdded)
+{
+  SendNewDrawRequest();
+  SendMemorizedUpdateRequest();
+
+  if(HasFluids)
+    for(fluidlist::iterator f = Fluid.begin(); f != Fluid.end(); ++f)
+      if(ToBeAdded->IsSameAs((*f)->GetLiquid()))
+	{
+	  (*f)->AddLiquid(ToBeAdded->GetVolume());
+	  delete ToBeAdded;
+	  return;
+	}
+
+  HasFluids = true;
+  fluid* NewFluid = new fluid(ToBeAdded, this);
+  Fluid.push_back(NewFluid);
+  SignalEmitationIncrease(NewFluid->GetEmitation());
+}
+
+void lsquare::DisplayFluidInfo(festring& Msg) const
+{
+  if(HasFluids)
+    {
+      Msg << " There is ";
+      fluid::AddFluidInfo(Fluid, Msg);
+
+      /* Does this cause problems? */
+
+      if(IsFlyable())
+	Msg << " on the ground.";
+      else
+	Msg << " on the wall.";
+    }
+}
+
+void lsquare::SpillFluid(character* Spiller, liquid* Liquid, bool ShowMsg)
+{
+  if(!Liquid->GetVolume())
+    {
+      delete Liquid;
+      return;
+    }
+
+  if(IsFlyable())
+    {
+      if(GetCharacter())
+	{
+	  if(Spiller && !GetCharacter()->IsAlly(Spiller))
+	    Spiller->Hostility(GetCharacter());
+
+	  ulong CharVolume = GetCharacter()->GetVolume();
+	  double ChanceMultiplier = 1. / (300 + sqrt(GetStack()->GetVolume() + CharVolume));
+	  double Root = sqrt(CharVolume);
+
+	  if(Root > RAND() % 400 || Root > RAND() % 400)
+	    {
+	      ulong SpillVolume = Liquid->GetVolume() * Root * ChanceMultiplier;
+
+	      if(SpillVolume)
+		{
+		  if(ShowMsg && (GetCharacter()->IsPlayer() || GetCharacter()->CanBeSeenByPlayer()))
+		    ADD_MESSAGE("%s is spilled all over %s.", Liquid->GetName(false, false).CStr(), GetCharacter()->CHAR_DESCRIPTION(DEFINITE));
+
+		  Liquid->EditVolume(-SpillVolume);
+		  GetCharacter()->SpillFluid(Spiller, Liquid->CloneLiquid(SpillVolume), GetCharacter()->GetSquareIndex(GetPos()));
+		}
+	    }
+	}
+
+      GetStack()->SpillFluid(Spiller, Liquid, Liquid->GetVolume());
+    }
+
+  if(Liquid->GetVolume())
+    AddFluid(Liquid);
+  else
+    delete Liquid;
 }

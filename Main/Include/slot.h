@@ -80,7 +80,7 @@ class bodypartslot : public slot
   virtual void PutInItem(item*);
   virtual void Load(inputfile&);
   virtual bool CanBeSeenBy(const character*) const;
-  virtual bool IsVisible() const { return true; }
+  virtual bool IsVisible() const { return false; }
  protected:
   character* Master;
 };

@@ -909,7 +909,7 @@ void scabies::PrayGoodEffect()
       if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
 	{
 	  ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_NAME(DEFINITE));
-	  Square->SpillFluid(PLAYER, MAKE_MATERIAL(POISON_LIQUID, 500), 100);
+	  Square->SpillFluid(PLAYER, new liquid(POISON_LIQUID, 500));
 	  Success = true;
 	}
     }
@@ -1073,8 +1073,9 @@ void cruentus::PrayBadEffect()
     }
 }
 
-void scabies::PlayerVomitedOnAltar()
+bool scabies::PlayerVomitedOnAltar(liquid*)
 {
   ADD_MESSAGE("%s feels that you are indeed her follower.", GetName()); 
   AdjustRelation(1);
+  return false;
 }

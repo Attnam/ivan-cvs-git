@@ -172,7 +172,6 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanRead);
   ADD_MEMBER(IsCharmable);
   ADD_MEMBER(Sex);
-  ADD_MEMBER(BloodColor);
   ADD_MEMBER(CanBeGenerated);
   ADD_MEMBER(CriticalModifier);
   ADD_MEMBER(StandVerb);
@@ -205,6 +204,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BootColor);
   ADD_MEMBER(TorsoSpecialColor);
   ADD_MEMBER(ArmMainColor);
+  ADD_MEMBER(GauntletColor);
   ADD_MEMBER(ArmSpecialColor);
   ADD_MEMBER(LegMainColor);
   ADD_MEMBER(LegSpecialColor);
@@ -285,6 +285,7 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(BootColorIsSparkling);
   ADD_MEMBER(TorsoSpecialColorIsSparkling);
   ADD_MEMBER(ArmMainColorIsSparkling);
+  ADD_MEMBER(GauntletColorIsSparkling);
   ADD_MEMBER(ArmSpecialColorIsSparkling);
   ADD_MEMBER(LegMainColorIsSparkling);
   ADD_MEMBER(LegSpecialColorIsSparkling);
@@ -293,6 +294,8 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(MoveType);
   ADD_MEMBER(DestroysWalls);
   ADD_MEMBER(CanMove);
+  ADD_MEMBER(BloodMaterial);
+  ADD_MEMBER(VomitMaterial);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -377,6 +380,15 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsGoodWithPlants);
   ADD_MEMBER(CreateLockConfigurations);
   ADD_MEMBER(CanBePickedUp);
+  ADD_MEMBER(CoverPercentile);
+  ADD_MEMBER(TorsoArmorBitmapPos);
+  ADD_MEMBER(ArmArmorBitmapPos);
+  ADD_MEMBER(LegArmorBitmapPos);
+  ADD_MEMBER(HelmetBitmapPos);
+  ADD_MEMBER(CloakBitmapPos);
+  ADD_MEMBER(BeltBitmapPos);
+  ADD_MEMBER(GauntletBitmapPos);
+  ADD_MEMBER(BootBitmapPos);
 }
 
 template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
@@ -489,6 +501,10 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(UseMaterialAttributes);
   ADD_MEMBER(CanRegenerate);
   ADD_MEMBER(BreatheWisdomLimit);
+  ADD_MEMBER(RustModifier);
+  ADD_MEMBER(IsBlood);
+  ADD_MEMBER(Acidicity);
+  ADD_MEMBER(IsImmuneToAcid);
 }
 
 template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)
@@ -508,13 +524,28 @@ template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile
 template<> void databasecreator<character>::CheckDefaults(const festring& Word, character::database& DataBase)
 {
   if(Word == "ArmBitmapPos")
-    DataBase.RightArmBitmapPos = DataBase.LeftArmBitmapPos = DataBase.ArmBitmapPos;
+    DataBase.RightArmBitmapPos =
+    DataBase.LeftArmBitmapPos =
+    DataBase.ArmBitmapPos;
   else if(Word == "LegBitmapPos")
-    DataBase.GroinBitmapPos = DataBase.RightLegBitmapPos = DataBase.LeftLegBitmapPos = DataBase.LegBitmapPos;
+    DataBase.GroinBitmapPos =
+    DataBase.RightLegBitmapPos =
+    DataBase.LeftLegBitmapPos =
+    DataBase.LegBitmapPos;
   else if(Word == "ClothColor")
-    DataBase.CapColor = DataBase.TorsoMainColor = DataBase.ArmMainColor = DataBase.LegMainColor = DataBase.ClothColor;
+    DataBase.CapColor =
+    DataBase.TorsoMainColor =
+    DataBase.ArmMainColor =
+    DataBase.GauntletColor =
+    DataBase.LegMainColor =
+    DataBase.ClothColor;
   else if(Word == "ClothColorIsSparkling")
-    DataBase.CapColorIsSparkling = DataBase.TorsoMainColorIsSparkling = DataBase.ArmMainColorIsSparkling = DataBase.LegMainColorIsSparkling = DataBase.ClothColorIsSparkling;
+    DataBase.CapColorIsSparkling =
+    DataBase.TorsoMainColorIsSparkling =
+    DataBase.ArmMainColorIsSparkling =
+    DataBase.GauntletColorIsSparkling =
+    DataBase.LegMainColorIsSparkling =
+    DataBase.ClothColorIsSparkling;
   else if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
   else if(Word == "BaseUnarmedStrength")

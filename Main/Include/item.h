@@ -17,6 +17,8 @@ template <class type> class contentscript;
 template <class type> class databasecreator;
 
 typedef std::vector<item*> itemvector;
+typedef std::list<fluid*> fluidlist;
+typedef std::vector<fluid*> fluidvector;
 
 struct itemdatabase
 {
@@ -103,6 +105,15 @@ struct itemdatabase
   bool IsGoodWithPlants;
   bool CreateLockConfigurations;
   bool CanBePickedUp;
+  uchar CoverPercentile;
+  vector2d TorsoArmorBitmapPos;
+  vector2d ArmArmorBitmapPos;
+  vector2d LegArmorBitmapPos;
+  vector2d HelmetBitmapPos;
+  vector2d CloakBitmapPos;
+  vector2d BeltBitmapPos;
+  vector2d GauntletBitmapPos;
+  vector2d BootBitmapPos;
 };
 
 class itemprototype
@@ -146,8 +157,8 @@ class item : public object
   virtual bool Read(character*) { return false; }
   virtual void FinishReading(character*) { }
   virtual bool HitEffect(character*, character*, vector2d, uchar, uchar, bool) { return false; }
-  virtual void DipInto(material*, character*) { }
-  virtual material* CreateDipMaterial() { return 0; }
+  virtual void DipInto(liquid*, character*) { }
+  virtual liquid* CreateDipLiquid() { return 0; }
   virtual item* BetterVersion() const { return 0; }
   virtual short GetOfferValue(uchar) const;
   virtual void Fly(character*, uchar, ushort);
@@ -198,7 +209,7 @@ class item : public object
   static bool WeaponSorter(const item* Item, const character* Char) { return Item->IsWeapon(Char); }
   static bool ArmorSorter(const item* Item, const character* Char) { return Item->IsArmor(Char); }
   static bool FixableBySmithSorter(const item* Item, const character* Char) { return Item->IsFixableBySmith(Char); }
-  static bool BrokenSorter(const item* Item, const character*) { return Item->IsBroken(); }
+  static bool RepairableSorter(const item* Item, const character*) { return Item->IsBroken() || Item->IsRusted(); }
   static bool EnchantableSorter(const item* Item, const character* Char) { return Item->IsEnchantable(Char); }
   static bool HasLockSorter(const item* Item, const character*) { return Item->HasLock(); }
   virtual bool IsConsumable(const character*) const;
@@ -228,7 +239,7 @@ class item : public object
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ReceiveDamage(character*, ushort, ushort);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = YOURSELF);
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool RaiseTheDead(character*) { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
@@ -305,10 +316,19 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
   DATA_BASE_VALUE(uchar, BreakEffectRange);
-  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
   DATA_BASE_BOOL(IsQuestItem);
   DATA_BASE_BOOL(IsGoodWithPlants);
   DATA_BASE_BOOL(CanBePickedUp);
+  DATA_BASE_VALUE(uchar, CoverPercentile);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, TorsoArmorBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, ArmArmorBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, LegArmorBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, HelmetBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, CloakBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BeltBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, GauntletBitmapPos, ushort);
+  DATA_BASE_VALUE_WITH_PARAMETER(vector2d, BootBitmapPos, ushort);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -333,7 +353,6 @@ class item : public object
   virtual void CalculateVolumeAndWeight();
   ulong GetVolume() const { return Volume; }
   ulong GetWeight() const { return Weight; }
-  virtual ulong GetBaseWeight() const { return Weight; }
   virtual void SignalEmitationIncrease(ulong);
   virtual void SignalEmitationDecrease(ulong);
   void CalculateAll();
@@ -356,7 +375,7 @@ class item : public object
   item* DuplicateToStack(stack*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
-  virtual void Break(character*);
+  virtual void Break(character*, uchar = YOURSELF);
   void Empty();
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }
@@ -364,7 +383,6 @@ class item : public object
   virtual ushort GetBonus() const { return 100; }
   virtual void DrawContents(const character*) { }
   virtual bool IsBroken() const;
-  virtual void ReceiveFluidSpill(material*) { }
   virtual char GetEnchantment() const { return 0; }
   ulong GetEnchantedPrice(char) const;
   virtual item* Fix();
@@ -393,7 +411,7 @@ class item : public object
   virtual uchar GetAttachedGod() const;
   virtual ulong GetTruePrice() const;
   virtual void Search(const character*, ushort) { }
-  virtual bool IsSparkling() const;
+  bool IsSparkling() const;
   virtual bool IsStupidToConsume() const;
   virtual head* Behead() { return 0; }
   virtual bool IsGorovitsFamilyRelic() const { return false; }
@@ -410,7 +428,6 @@ class item : public object
   void SetConfig(ushort, ushort = 0);
   god* GetMasterGod() const;
   const std::vector<ulong>& GetCloneMotherID() const { return CloneMotherID; }
-  virtual ushort GetSquaresUnder() const { return 1; }
   virtual void SignalStackAdd(stackslot*, void (stack::*)(item*));
   virtual ushort GetSquareIndex(vector2d) const { return 0; }
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;
@@ -418,11 +435,34 @@ class item : public object
   vector2d GetLargeBitmapPos(vector2d, ushort) const;
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool) const;
   void LargeDraw(bitmap*, vector2d, ulong, ushort, bool, bool) const;
-  virtual ushort GetStackAnimationFrames() const { return AnimationFrames; }
   virtual bool BunnyWillCatchAndConsume() const { return false; }
   void DonateIDTo(item*);
   virtual character* TryNecromancy(character*) { return 0; }
+  virtual void SignalRustLevelChange();
+  void SendNewDrawAndMemorizedUpdateRequest() const;
+  virtual void CalculateSquaresUnder() { SquaresUnder = 1; }
+  ushort GetSquaresUnder() const { return SquaresUnder; }
+  virtual void CalculateEmitation();
+  void FillFluidVector(fluidvector&, ushort = 0) const;
+  virtual void SpillFluid(character*, liquid*, ushort = 0);
+  virtual void TryToRust(ulong);
+  void RemoveFluid(fluid*);
+  void AddFluid(liquid*, ushort = 0);
+  virtual bool IsAnimated() const;
+  const colorizablebitmap* GetRawPicture() const;
+  void DrawFluidGearPictures(bitmap*, vector2d, ulong, ushort, bool) const;
+  void DrawFluidBodyArmorPictures(bitmap*, vector2d, ulong, ushort, bool) const;
+  void CheckFluidGearPictures(vector2d, ushort, bool);
+  void DrawFluids(bitmap*, vector2d, ulong, ushort, bool) const;
+  virtual void ReceiveAcid(material*, ulong);
+  virtual bool ShowFluids() const { return true; }
+  void DonateFluidsTo(item*);
+  void Destroy(character*, uchar);
+  virtual bool AllowFluidBe() const { return true; }
+  virtual bool IsRusted() const;
+  void RemoveRust();
  protected:
+  virtual bool AllowFluids() const { return false; }
   virtual const char* GetBreakVerb() const;
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;
@@ -432,6 +472,7 @@ class item : public object
   virtual void InstallDataBase(ushort);
   virtual uchar GetGraphicsContainerIndex() const;
   virtual bool ShowMaterial() const;
+  virtual bool AllowSparkling() const { return !HasFluids; }
   slot** Slot;
   ushort Size;
   ulong ID;
@@ -440,6 +481,9 @@ class item : public object
   ulong Weight;
   uchar ItemFlags;
   std::vector<ulong> CloneMotherID;
+  fluidlist* Fluid;
+  ushort SquaresUnder;
+  bool HasFluids;
 };
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__

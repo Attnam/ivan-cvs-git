@@ -18,7 +18,7 @@
 #include "hscore.h"
 #include "god.h"
 #include "command.h"
-#include "materia.h"
+#include "materias.h"
 #include "room.h"
 #include "felist.h"
 #include "graphics.h"

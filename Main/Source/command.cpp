@@ -325,9 +325,7 @@ bool commandsystem::ShowInventory(character* Char)
 
 bool commandsystem::PickUp(character* Char)
 {
-  ushort VisibleItemsOnGround = Char->GetStackUnder()->GetVisibleItems(Char);
-
-  if(!VisibleItemsOnGround)
+  if(!Char->GetStackUnder()->GetVisibleItems(Char))
     {
       ADD_MESSAGE("There is nothing here to pick up!");
       return false;
@@ -589,7 +587,7 @@ bool commandsystem::Dip(character* Char)
 		  return false;
 		}
 
-	      Item->DipInto(DipTo->CreateDipMaterial(), Char);
+	      Item->DipInto(DipTo->CreateDipLiquid(), Char);
 	      return true;
 	    }
 	}
@@ -663,25 +661,25 @@ bool commandsystem::WhatToEngrave(character* Char)
 bool commandsystem::Pray(character* Char)
 {
   felist Panthenon(CONST_S("To Whom you want to address your prayers?"));
+  Panthenon.SetEntryDrawer(game::GodEntryDrawer);
   ushort Known[GODS];
   ushort Index = 0;
+  uchar DivineMaster = Char->GetLSquareUnder()->GetDivineMaster();
 
-  if(!Char->GetLSquareUnder()->GetDivineMaster())
+  if(!DivineMaster)
     {
       for(ushort c = 1; c <= GODS; ++c)
 	if(game::GetGod(c)->IsKnown())
 	  {
-	    igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), c << 4, 0, 0, 0, 16, 16);
-	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
+	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, c);
 	    Known[Index++] = c;
 	  }
     }
   else
-    if(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->IsKnown())
+    if(game::GetGod(DivineMaster)->IsKnown())
       {
-	igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), Char->GetLSquareUnder()->GetDivineMaster() << 4, 0, 0, 0, 16, 16);
-	Panthenon.AddEntry(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
-	Known[0] = Char->GetLSquareUnder()->GetDivineMaster();
+	Panthenon.AddEntry(game::GetGod(DivineMaster)->GetCompleteDescription(), LIGHT_GRAY, 20, DivineMaster);
+	Known[0] = DivineMaster;
       }
     else
       {
@@ -857,18 +855,22 @@ bool commandsystem::Apply(character* Char)
 
 bool commandsystem::ForceVomit(character* Char)
 {
-  if(Char->TorsoIsAlive())
+  if(Char->CanVomit())
     {
-      ADD_MESSAGE("You push your fingers down to your throat and vomit.");
-      Char->Vomit(2 + RAND() % 3);
-      Char->EditAP(-1000);
-      return true;
+      uchar Dir = game::DirectionQuestion(CONST_S("Where do you wish to vomit?  [press a direction key]"), false, true);
+
+      if(Dir != DIR_ERROR && Char->GetArea()->IsValidPos(Char->GetPos() + game::GetMoveVector(Dir)))
+	{
+	  ADD_MESSAGE("You push your fingers down to your throat and vomit.");
+	  Char->Vomit(Char->GetPos() + game::GetMoveVector(Dir), 500 + RAND() % 500);
+	  Char->EditAP(-1000);
+	  return true;
+	}
     }
   else
-    {
-      ADD_MESSAGE("You can't vomit.");
-      return false;
-    }
+    ADD_MESSAGE("You can't vomit.");
+
+  return false;
 }
 
 bool commandsystem::Zap(character* Char)
@@ -1037,19 +1039,22 @@ bool commandsystem::EquipmentScreen(character* Char)
 	    {
 	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
 	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), Equipment->GetAnimationFrames(), true, Equipment->AllowAlphaEverywhere());
+	      ushort ImageKey = game::AddToItemDrawVector(Equipment);
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, ImageKey, true);
 	    }
 	  else
 	    {
 	      Entry << (Char->GetBodyPartOfEquipment(c) ? "-" : "can't use");
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, igraph::GetTransparentTile());
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, game::AddToItemDrawVector(0));
 	    }
 	}
 
       game::DrawEverythingNoBlit();
       game::SetStandardListAttributes(List);
       List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+      List.SetEntryDrawer(game::ItemEntryDrawer);
       Chosen = List.Draw();
+      game::ClearItemDrawVector();
 
       if(Chosen >= Char->GetEquipmentSlots())
 	break;
@@ -1279,20 +1284,20 @@ bool commandsystem::SecretKnowledge(character* Char)
   game::SetStandardListAttributes(List);
   List.AddFlags(SELECTABLE);
   ushort Chosen = List.Draw();
-  ushort c, PageLength = 20;
+  ushort c;
   festring Entry;
 
   if(Chosen & FELIST_ERROR_BIT)
     return false;
 
   List.Empty();
+  List.RemoveFlags(SELECTABLE);
 
   if(Chosen < 4)
     {
-      std::vector<character*> Character;
+      std::vector<character*>& Character = game::GetCharacterDrawVector();
       protosystem::CreateEveryCharacter(Character);
-      bitmap** Picture;
-      ushort Frames = 0;
+      List.SetEntryDrawer(game::CharacterEntryDrawer);
 
       switch(Chosen)
 	{
@@ -1303,13 +1308,11 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
 	      Character[c]->AddAttributeInfo(Entry);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c);
 	    }
 
-	  List.SetMaskColor(0);
-	  PageLength = 15;
+	  List.SetPageLength(15);
 	  break;
 	case 1:
 	  List.AddDescription(CONST_S("                                                  BD        THV       APC"));
@@ -1318,13 +1321,11 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Character[c]->AddName(Entry, UNARTICLED);
-	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c);
 	      Character[c]->AddAttackInfo(List);
 	    }
 
-	  List.SetMaskColor(0);
-	  PageLength = 20;
+	  List.SetPageLength(20);
 	  break;
 	case 2:
 	  List.AddDescription(CONST_S("                                                  DV/BV     HP        AV/BS"));
@@ -1337,13 +1338,11 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Entry << int(Character[c]->GetDodgeValue());
 	      Entry.Resize(57);
 	      Entry << Character[c]->GetMaxHP();
-	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c);
 	      Character[c]->AddDefenceInfo(List);
 	    }
 
-	  List.SetMaskColor(0);
-	  PageLength = 25;
+	  List.SetPageLength(25);
 	  break;
 	case 3:
 	  List.AddDescription(CONST_S("                                                  Danger    NGM       EGM"));
@@ -1366,28 +1365,26 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      else
 		Entry << "-         -";
 
-	      Frames = Character[c]->DrawBodyPartArray(Picture, Frames);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture, Frames);
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c);
 	    }
 
-	  List.SetMaskColor(0);
-	  PageLength = 15;
+	  List.SetPageLength(15);
 	  break;
 	}
 
-      for(c = 0; c < Frames; ++c)
-	delete Picture[c];
-
-      delete [] Picture;
+      List.Draw();
 
       for(c = 0; c < Character.size(); ++c)
 	delete Character[c];
+
+      game::ClearCharacterDrawVector();
     }
   else if(Chosen < 6)
     {
-      itemvector Item;
+      itemvector& Item = game::GetItemDrawVector();
       protosystem::CreateEveryItem(Item);
-      PageLength = 20;
+      List.SetEntryDrawer(game::ItemEntryDrawer);
+      List.SetPageLength(20);
 
       switch(Chosen)
 	{
@@ -1398,7 +1395,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetStackAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
 	      Item[c]->AddAttackInfo(List);
 	    }
 
@@ -1410,21 +1407,25 @@ bool commandsystem::SecretKnowledge(character* Char)
 	    {
 	      Entry.Empty();
 	      Item[c]->AddName(Entry, UNARTICLED);
-	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture(), Item[c]->GetStackAnimationFrames(), true, Item[c]->AllowAlphaEverywhere());
+	      List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
 	      Item[c]->AddMiscellaneousInfo(List);
 	    }
 
 	  break;
 	}
 
+      List.Draw();
+
       for(c = 0; c < Item.size(); ++c)
 	delete Item[c];
+
+      game::ClearItemDrawVector();
     }
   else if(Chosen < 7)
     {
       std::vector<material*> Material;
       protosystem::CreateEveryMaterial(Material);
-      PageLength = 30;
+      List.SetPageLength(30);
       List.AddDescription(CONST_S("                                        Strength       Flexibility   Density"));
 
       for(c = 0; c < Material.size(); ++c)
@@ -1440,13 +1441,12 @@ bool commandsystem::SecretKnowledge(character* Char)
 	  List.AddEntry(Entry, Material[c]->GetColor());
 	}
 
+      List.Draw();
+
       for(c = 0; c < Material.size(); ++c)
 	delete Material[c];
     }
 
-  game::SetStandardListAttributes(List);
-  List.SetPageLength(PageLength);
-  List.Draw();
   List.PrintToFile(game::GetHomeDir() + "secret" + Chosen + ".txt");
   ADD_MESSAGE("Info written also to %ssecret%d.txt.", game::GetHomeDir().CStr(), Chosen);
   return false;

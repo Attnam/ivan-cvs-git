@@ -2,11 +2,11 @@
 
 Porting IvanMap to linux and adding it to CVS.
 
-Creating a tool to combine high score files.
+//Creating a tool to combine high score files.
 
 Script precompiler.
 
-Febot engine for Hog's oracle.
+//Febot engine for Hog's oracle.
 
 //Documenting graphics formats.
 
@@ -42,9 +42,9 @@ Magic system.
 
 Spreading fire.
 
-Fluid system that handles special material effects, eg. molten metals damaging legs.
+//Fluid system that handles special material effects, eg. molten metals damaging legs.
 
-Corrosion/rust for materials.
+//Corrosion/rust for materials.
 
 Dividing physical damage to slashing, blunt, piercing etc. damage.
 
@@ -111,3 +111,5 @@ Permanent wounds.
 More vague weight descriptions.
 
 Rivers.
+
+Mounting.

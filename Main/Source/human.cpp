@@ -1,5 +1,7 @@
 /* Compiled through charsset.cpp */
 
+ushort humanoid::DrawOrder[] = { TORSO_INDEX, HEAD_INDEX, GROIN_INDEX, RIGHT_LEG_INDEX, LEFT_LEG_INDEX, RIGHT_ARM_INDEX, LEFT_ARM_INDEX };
+
 bool humanoid::BodyPartIsVital(ushort Index) const { return Index == TORSO_INDEX || Index == HEAD_INDEX || Index == GROIN_INDEX; }
 bool humanoid::BodyPartCanBeSevered(ushort Index) const { return Index != TORSO_INDEX && Index != GROIN_INDEX; }
 uchar humanoid::OpenMultiplier() const { return GetRightArm() || GetLeftArm() ? 1 : 3; }
@@ -914,7 +916,7 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       Equipment->SetEnchantment(1);
       SetBodyArmor(Equipment);
       Weapon = new meleeweapon(LONG_SWORD, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(MITHRIL), !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetRightWielded(Weapon);
       Equipment = new shield(0, SpecialFlags|NO_MATERIALS);
@@ -934,11 +936,11 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       Equipment->SetEnchantment(1);
       SetCloak(Equipment);
       Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetRightWielded(Weapon);
       Weapon = new meleeweapon(WAR_HAMMER, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(TEAK_WOOD), !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetLeftWielded(Weapon);
       GetCWeaponSkill(BLUNT_WEAPONS)->AddHit(500);
@@ -948,7 +950,7 @@ void angel::CreateInitialEquipment(ushort SpecialFlags)
       break;
     case EVIL:
       Weapon = new meleeweapon(HALBERD, SpecialFlags|NO_MATERIALS);
-      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(EBONY_WOOD), 0, !(SpecialFlags & NO_PIC_UPDATE));
+      Weapon->InitMaterials(MAKE_MATERIAL(MITHRIL), MAKE_MATERIAL(EBONY_WOOD), !(SpecialFlags & NO_PIC_UPDATE));
       Weapon->SetEnchantment(2);
       SetRightWielded(Weapon);
       Equipment = new gauntlet(0, SpecialFlags|NO_MATERIALS);
@@ -1034,10 +1036,10 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize) const
     case GROIN_INDEX: return (TotalSize - 20) / 3;
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return (TotalSize - 20) * 3 / 5;
-    default:
-      ABORT("Illegal humanoid bodypart size request!");
-      return 0;
     }
+
+  ABORT("Illegal humanoid bodypart size request!");
+  return 0;
 }
 
 ulong humanoid::GetBodyPartVolume(ushort Index) const
@@ -1051,10 +1053,10 @@ ulong humanoid::GetBodyPartVolume(ushort Index) const
     case GROIN_INDEX: return (GetTotalVolume() - 4000) / 10;
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return ((GetTotalVolume() - 4000) << 1) / 15;
-    default:
-      ABORT("Illegal humanoid bodypart volume request!");
-      return 0;
     }
+
+  ABORT("Illegal humanoid bodypart volume request!");
+  return 0;
 }
 
 bodypart* humanoid::MakeBodyPart(ushort Index) const
@@ -1068,10 +1070,10 @@ bodypart* humanoid::MakeBodyPart(ushort Index) const
     case GROIN_INDEX: return new groin(0, NO_MATERIALS);
     case RIGHT_LEG_INDEX: return new rightleg(0, NO_MATERIALS);
     case LEFT_LEG_INDEX: return new leftleg(0, NO_MATERIALS);
-    default:
-      ABORT("Weird bodypart to make for a humanoid. It must be your fault!");
-      return 0;
     }
+
+  ABORT("Weird bodypart to make for a humanoid. It must be your fault!");
+  return 0;
 }
 
 bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
@@ -1201,8 +1203,9 @@ const char* humanoid::GetEquipmentName(ushort Index) const // convert to array
     case LEFT_GAUNTLET_INDEX: return "left gauntlet";
     case RIGHT_BOOT_INDEX: return "right boot";
     case LEFT_BOOT_INDEX: return "left boot";
-    default: return "forbidden piece of cloth";
     }
+
+  return "forbidden piece of cloth";
 }
 
 bool (*humanoid::EquipmentSorter(ushort Index) const)(const item*, const character*)
@@ -1222,8 +1225,9 @@ bool (*humanoid::EquipmentSorter(ushort Index) const)(const item*, const charact
     case LEFT_GAUNTLET_INDEX: return &item::GauntletSorter;
     case RIGHT_BOOT_INDEX:
     case LEFT_BOOT_INDEX: return &item::BootSorter;
-    default: return 0;
     }
+
+  return 0;
 }
 
 bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
@@ -1249,9 +1253,9 @@ bodypart* humanoid::GetBodyPartOfEquipment(ushort Index) const
       return GetRightLeg();
     case LEFT_BOOT_INDEX:
       return GetLeftLeg();
-    default:
-      return 0;
     }
+
+  return 0;
 }
 
 item* humanoid::GetEquipment(ushort Index) const
@@ -1271,8 +1275,9 @@ item* humanoid::GetEquipment(ushort Index) const
     case LEFT_GAUNTLET_INDEX: return GetLeftGauntlet();
     case RIGHT_BOOT_INDEX: return GetRightBoot();
     case LEFT_BOOT_INDEX: return GetLeftBoot();
-    default: return 0;
     }
+
+  return 0;
 }
 
 void humanoid::SetEquipment(ushort Index, item* What)
@@ -1386,25 +1391,23 @@ bool humanoid::CheckThrow() const
   if(!character::CheckThrow())
     return false;
 
-  switch(GetArms())
+  if(GetRightArm() || GetLeftArm())
+    return true;
+  else
     {
-    case 0:
       ADD_MESSAGE("You don't have an arm to do that!");
       return false;
-    default:
-      return true;
     }
 }
 
 bool humanoid::CheckOffer() const
 {
-  switch(GetArms())
+  if(GetRightArm() || GetLeftArm())
+    return true;
+  else
     {
-    case 0:
       ADD_MESSAGE("You need an arm to offer.");
-      return false; 
-    default:
-      return true;
+      return false;
     }
 }
 
@@ -1425,8 +1428,9 @@ vector2d humanoid::GetEquipmentPanelPos(ushort Index) const // convert to array
     case LEFT_GAUNTLET_INDEX: return vector2d(62, 24);
     case RIGHT_BOOT_INDEX: return vector2d(4, 70);
     case LEFT_BOOT_INDEX: return vector2d(44, 70);
-    default: return vector2d(24, 12);
     }
+
+  return vector2d(24, 12);
 }
 
 void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDraw) const
@@ -1585,10 +1589,10 @@ vector2d humanoid::GetBodyPartBitmapPos(ushort Index, bool) const
     case GROIN_INDEX: return GetGroinBitmapPos();
     case RIGHT_LEG_INDEX: return GetRightLegBitmapPos();
     case LEFT_LEG_INDEX: return GetLeftLegBitmapPos();
-    default:
-      ABORT("Weird bodypart BitmapPos request for a humanoid!");
-      return vector2d();
     }
+
+  ABORT("Weird bodypart BitmapPos request for a humanoid!");
+  return vector2d();
 }
 
 ushort humanoid::GetBodyPartColorB(ushort Index, bool) const
@@ -1602,10 +1606,10 @@ ushort humanoid::GetBodyPartColorB(ushort Index, bool) const
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return GetLegMainColor();
-    default:
-      ABORT("Weird bodypart color B request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color B request for a humanoid!");
+  return 0;
 }
 
 ushort humanoid::GetBodyPartColorC(ushort Index, bool) const
@@ -1615,14 +1619,14 @@ ushort humanoid::GetBodyPartColorC(ushort Index, bool) const
     case TORSO_INDEX: return GetBeltColor();
     case HEAD_INDEX: return GetHairColor();
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX:
-    case GROIN_INDEX: return 0; // reserved for future use
-    case RIGHT_LEG_INDEX: return GetBootColor();
+    case LEFT_ARM_INDEX: return GetGauntletColor();
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return GetBootColor();
-    default:
-      ABORT("Weird bodypart color C request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color C request for a humanoid!");
+  return 0;
 }
 
 ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
@@ -1636,10 +1640,10 @@ ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return GetLegSpecialColor();
-    default:
-      ABORT("Weird bodypart color D request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color D request for a humanoid!");
+  return 0;
 }
 
 bool humanoid::BodyPartColorBIsSparkling(ushort Index, bool) const
@@ -1653,10 +1657,10 @@ bool humanoid::BodyPartColorBIsSparkling(ushort Index, bool) const
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return LegMainColorIsSparkling();
-    default:
-      ABORT("Weird bodypart color B request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color B request for a humanoid!");
+  return 0;
 }
 
 bool humanoid::BodyPartColorCIsSparkling(ushort Index, bool) const
@@ -1666,14 +1670,14 @@ bool humanoid::BodyPartColorCIsSparkling(ushort Index, bool) const
     case TORSO_INDEX: return BeltColorIsSparkling();
     case HEAD_INDEX: return HairColorIsSparkling();
     case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX:
-    case GROIN_INDEX: return 0; // reserved for future use
-    case RIGHT_LEG_INDEX: return BootColorIsSparkling();
+    case LEFT_ARM_INDEX: return GauntletColorIsSparkling();
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return BootColorIsSparkling();
-    default:
-      ABORT("Weird bodypart color C request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color C request for a humanoid!");
+  return 0;
 }
 
 bool humanoid::BodyPartColorDIsSparkling(ushort Index, bool) const
@@ -1687,13 +1691,13 @@ bool humanoid::BodyPartColorDIsSparkling(ushort Index, bool) const
     case GROIN_INDEX:
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return LegSpecialColorIsSparkling();
-    default:
-      ABORT("Weird bodypart color D request for a humanoid!");
-      return 0;
     }
+
+  ABORT("Weird bodypart color D request for a humanoid!");
+  return 0;
 }
 
-void human::VirtualConstructor(bool Load)
+void playerkind::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
 
@@ -1998,10 +2002,10 @@ long humanoid::GetMoveAPRequirement(uchar Difficulty) const
       return (!StateIsActivated(PANIC) ? 13333333 : 10666667) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
     case 2:
       return (!StateIsActivated(PANIC) ? 10000000 : 8000000) * Difficulty / (APBonus(GetAttribute(AGILITY)) * GetMoveEase());
-    default:
-      ABORT("A %d legged humanoid invaded the dungeon!", GetLegs());
-      return 0;
     }
+
+  ABORT("A %d legged humanoid invaded the dungeon!", GetLegs());
+  return 0;
 }
 
 void hunter::CreateBodyParts(ushort SpecialFlags)
@@ -2150,31 +2154,16 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, usho
   Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
   TileBuffer->FillPriority(0);
 
-  /* Order is important: don't use a loop. */
+  for(ushort c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = GetBodyPart(DrawOrder[c]);
 
-  if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
+      if(BodyPart)
+	BodyPart->Draw(TileBuffer, GetDrawDisplacement(c), Luminance, 0, AllowAnimate, AllowAlpha);
+    }
 
   if(GetLeftArm())
-    {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
-    }
+    GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
 
   if(GetRightArm())
     GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
@@ -2182,40 +2171,10 @@ void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, usho
   TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
-void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
+vector2d kamikazedwarf::GetDrawDisplacement(ushort Index) const
 {
-  bitmap* TileBuffer = igraph::GetTileBuffer();
-  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
-  TileBuffer->FillPriority(0);
-
-  if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 1), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetLeftArm())
-    {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
-    }
-
-  if(GetRightArm())
-    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
-
-  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
+  static vector2d DrawDisplacement[] = { vector2d(0, 0), vector2d(0, 1), vector2d(0, -1), vector2d(0, -1), vector2d(0, -1), vector2d(0, 0), vector2d(0, 0) };
+  return DrawDisplacement[Index];
 }
 
 ushort angel::GetTorsoMainColor() const
@@ -2233,7 +2192,7 @@ ushort kamikazedwarf::GetTorsoMainColor() const
   return GetMasterGod()->GetColor();
 }
 
-ushort kamikazedwarf::GetArmMainColor() const
+ushort kamikazedwarf::GetGauntletColor() const
 {
   return GetMasterGod()->GetColor();
 }
@@ -2357,7 +2316,10 @@ void zombie::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < BodyParts; ++c) 
     if(BodyPartIsVital(c) || RAND() % 3)
-      CreateBodyPart(c, SpecialFlags);
+      {
+	bodypart* BodyPart = CreateBodyPart(c, SpecialFlags|NO_PIC_UPDATE);
+	BodyPart->GetMainMaterial()->SetSpoilCounter(2000 + RAND() % 1000);
+      }
 }
 
 void humanoid::AddSpecialEquipmentInfo(festring& String, ushort Index) const
@@ -2412,10 +2374,10 @@ festring humanoid::GetBodyPartName(ushort Index, bool Articled) const
     case GROIN_INDEX: return Article + "groin";
     case RIGHT_LEG_INDEX: return Article + "right leg";
     case LEFT_LEG_INDEX: return Article + "left leg";
-    default:
-      ABORT("Illegal humanoid bodypart name request!");
-      return 0;
     }
+
+  ABORT("Illegal humanoid bodypart name request!");
+  return "";
 }
 
 void humanoid::CreateBlockPossibilityVector(blockvector& Vector, float ToHitValue) const
@@ -2518,8 +2480,10 @@ ulong angel::GetBaseEmitation() const
     {
     case GOOD: return MakeRGB24(150, 150, 150);
     case NEUTRAL: return MakeRGB24(120, 120, 150);
-    default: return MakeRGB24(150, 110, 110);
+    case EVIL: return MakeRGB24(150, 110, 110);
     }
+
+  return 0;
 }
 
 void bananagrower::BeTalkedTo()
@@ -2886,10 +2850,10 @@ ulong skeleton::GetBodyPartVolume(ushort Index) const
     case GROIN_INDEX: return (GetTotalVolume() - 600) / 10;
     case RIGHT_LEG_INDEX:
     case LEFT_LEG_INDEX: return ((GetTotalVolume() - 600) << 1) / 15;
-    default:
-      ABORT("Illegal humanoid bodypart volume request!");
-      return 0;
     }
+
+  ABORT("Illegal humanoid bodypart volume request!");
+  return 0;
 }
 
 bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
@@ -3007,18 +2971,6 @@ void humanoid::AddSpecialStethoscopeInfo(felist& Info) const
   Info.AddEntry(CONST_S("Agility: ") + GetAttribute(AGILITY), LIGHT_GRAY);
 }
 
-void zombie::CreateCorpse(lsquare* Square)
-{
-  corpse* Corpse = new corpse(0, NO_MATERIALS);
-  Corpse->SetDeceased(this);
-  Square->AddItem(Corpse);
-  Disable();
-
-  for(ushort c = 0; c < BodyParts; ++c)
-    if(Exists() && GetBodyPart(c))
-      GetBodyPart(c)->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
-}
-
 item* humanoid::GetPairEquipment(ushort Index) const
 {
   switch(Index)
@@ -3029,18 +2981,9 @@ item* humanoid::GetPairEquipment(ushort Index) const
     case LEFT_GAUNTLET_INDEX: return GetRightGauntlet();
     case RIGHT_BOOT_INDEX: return GetLeftBoot();
     case LEFT_BOOT_INDEX: return GetRightBoot();
-    default: return 0;
     }
-}
 
-item* zombie::SevereBodyPart(ushort BodyPartIndex)
-{
-  item* BodyPart = humanoid::SevereBodyPart(BodyPartIndex);
-
-  if(BodyPart)
-    BodyPart->GetMainMaterial()->SetSpoilCounter(5000 + RAND() % 2500);
-
-  return BodyPart;
+  return 0;
 }
 
 const festring& humanoid::GetStandVerb() const
@@ -3288,214 +3231,9 @@ head* humanoid::Behead()
   return Head;
 }
 
-vector2d human::GetBodyPartBitmapPos(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::GetBodyPartBitmapPos(Index);
-
-  bool NoChainMailGraphics = !GetBodyArmor() || (GetBodyArmor()->GetConfig()&~BROKEN) != CHAIN_MAIL;
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return vector2d(GetBelt() ? 32 : 48, NoChainMailGraphics ? GetCloak() ? 320 : 288 : GetCloak() ? 336 : 304);
-    case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? 304 : 112 : 160 : 0);
-    case RIGHT_ARM_INDEX: return vector2d(GetRightGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
-    case LEFT_ARM_INDEX: return vector2d(GetLeftGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return vector2d(0, NoChainMailGraphics ? 288 : 304);
-    default:
-      ABORT("Weird bodypart BitmapPos request for a human!");
-      return vector2d();
-    }
-}
-
-ushort human::GetBodyPartColorA(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::GetBodyPartColorA(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
-    case HEAD_INDEX: return GetHelmet() && GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(0, 60, 0) : GetSkinColor();
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX:
-    case GROIN_INDEX: return GetSkinColor();
-    case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
-    case LEFT_LEG_INDEX: return GetLeftBoot() ? GetLeftBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
-    default:
-      ABORT("Weird bodypart color B request for a human!");
-      return 0;
-    }
-}
-
-ushort human::GetBodyPartColorB(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::GetBodyPartColorB(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->GetColor() : 0;
-    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : 0;
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : 0;
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetClothColor();
-    default:
-      ABORT("Weird bodypart color B request for a human!");
-      return 0;
-    }
-}
-
-ushort human::GetBodyPartColorC(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::GetBodyPartColorC(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->GetColor() : 0;
-    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(180, 200, 180) : GetHelmet()->GetMainMaterial()->GetColor() : GetHairColor();
-    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->GetColor() : 0;
-    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->GetColor() : 0;
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return 0;
-    default:
-      ABORT("Weird bodypart color C request for a humanoid!");
-      return 0;
-    }
-}
-
-bool human::BodyPartColorAIsSparkling(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::BodyPartColorAIsSparkling(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX:
-    case HEAD_INDEX:
-    case GROIN_INDEX: return SkinColorIsSparkling();
-    case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
-    case LEFT_LEG_INDEX: return GetLeftBoot() ? GetLeftBoot()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
-    default: return false;
-    }
-}
-
-bool human::BodyPartColorBIsSparkling(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::BodyPartColorBIsSparkling(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->IsSparkling() : false;
-    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->IsSparkling() : false;
-    case RIGHT_ARM_INDEX:
-    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : false;
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : LegMainColorIsSparkling();
-    default: return false;
-    }
-}
-
-bool human::BodyPartColorCIsSparkling(ushort Index, bool Severed) const
-{
-  if(Severed)
-    return humanoid::BodyPartColorCIsSparkling(Index);
-
-  switch(Index)
-    {
-    case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->IsSparkling() : false;
-    case HEAD_INDEX: return GetHelmet() ? false : HairColorIsSparkling();
-    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->IsSparkling() : false;
-    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->IsSparkling() : false;
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return false;
-    default: return false;
-    }
-}
-
-void human::SignalEquipmentAdd(ushort EquipmentIndex)
-{
-  humanoid::SignalEquipmentAdd(EquipmentIndex);
-
-  if(!Initializing)
-    {
-      UpdatePictures();
-      SendNewDrawRequest();
-    }
-}
-
-void human::SignalEquipmentRemoval(ushort EquipmentIndex)
-{
-  humanoid::SignalEquipmentRemoval(EquipmentIndex);
-
-  if(!Initializing)
-    {
-      UpdatePictures();
-      SendNewDrawRequest();
-    }
-}
-
-void human::SignalBodyPartVolumeAndWeightChange()
-{
-  if(!Initializing)
-    {
-      UpdatePictures();
-      SendNewDrawRequest();
-    }
-}
-
 bool communist::BoundToUse(const item* Item, ushort Index) const
 {
   return Item && Item->IsGorovitsFamilyRelic() && Item->IsInCorrectSlot(Index);
-}
-
-void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, ushort, bool AllowAnimate, bool AllowAlpha) const
-{
-  bitmap* TileBuffer = igraph::GetTileBuffer();
-  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
-  TileBuffer->FillPriority(0);
-
-  /* Order is important: don't use a loop. */
-
-  if(GetTorso())
-    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetGroin())
-    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightLeg())
-    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetLeftLeg())
-    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetHead())
-    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetRightArm())
-    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-
-  if(GetLeftArm())
-    {
-      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, 0, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
-    }
-
-  if(GetRightArm())
-    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
-
-  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
 festring werewolfwolf::GetKillName() const
@@ -3709,19 +3447,19 @@ void encourager::FinalProcessForBone()
   LastHit = 0;
 }
 
-void human::Save(outputfile& SaveFile) const
+void playerkind::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
   SaveFile << SoulID << IsBonePlayer << IsClone;
 }
 
-void human::Load(inputfile& SaveFile)
+void playerkind::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> SoulID >> IsBonePlayer >> IsClone;
 }
 
-void human::SetSoulID(ulong What)
+void playerkind::SetSoulID(ulong What)
 {
   SoulID = What;
 
@@ -3729,7 +3467,7 @@ void human::SetSoulID(ulong What)
     GetPolymorphBackup()->SetSoulID(What);
 }
 
-bool human::SuckSoul(character* Soul)
+bool playerkind::SuckSoul(character* Soul)
 {
   if(Soul->GetID() == SoulID)
     {
@@ -3740,7 +3478,7 @@ bool human::SuckSoul(character* Soul)
   return false;
 }
 
-bool human::TryToRiseFromTheDead()
+bool playerkind::TryToRiseFromTheDead()
 {
   if(humanoid::TryToRiseFromTheDead())
     {
@@ -3756,7 +3494,7 @@ bool human::TryToRiseFromTheDead()
     return false;
 }
 
-void human::FinalProcessForBone()
+void playerkind::FinalProcessForBone()
 {
   humanoid::FinalProcessForBone();
   IsBonePlayer = true;
@@ -3770,11 +3508,11 @@ void human::FinalProcessForBone()
     }
 }
 
-human::human(const human& Human) : humanoid(Human), SoulID(Human.SoulID), IsBonePlayer(Human.IsBonePlayer), IsClone(true)
+playerkind::playerkind(const playerkind& Char) : humanoid(Char), SoulID(Char.SoulID), IsBonePlayer(Char.IsBonePlayer), IsClone(true)
 {
 }
 
-void human::BeTalkedTo()
+void playerkind::BeTalkedTo()
 {
   if(IsClone && IsBonePlayer)
     {
@@ -4008,6 +3746,7 @@ void necromancer::GetAICommand()
   vector2d Pos = GetPos();
 
   /* Look for zombie candidates */
+
   if(SpellsLeft && RaiseDeadAsZombies())
     {
       --SpellsLeft;
@@ -4118,6 +3857,7 @@ character* necromancer::RaiseSkeleton()
       if(Square && !Square->GetCharacter())
 	{
 	  character* Monster;
+
 	  switch(RAND() % 10)
 	    {
 	    case 0:
@@ -4126,6 +3866,7 @@ character* necromancer::RaiseSkeleton()
 	    default:
 	      Monster = new skeleton;
 	    }
+
 	  Monster->SetTeam(GetTeam());
 	  if(Monster->CanMoveOn(Square) && Monster->IsFreeForMe(Square))
 	    {
@@ -4137,6 +3878,8 @@ character* necromancer::RaiseSkeleton()
 	    delete Monster; 
 	}
     }
+
+  return 0;
 }
 
 character* humanoid::TryToRiseFromTheDeadAsZombie()
@@ -4169,4 +3912,87 @@ void necromancer::VirtualConstructor(bool Load)
       else
 	SpellsLeft = RAND_N(16) + 10;
     }
+}
+
+void humanoid::StayOn(liquid* Liquid)
+{
+  bool Standing = false;
+
+  if(GetRightLeg())
+    {
+      GetRightLeg()->StayOn(Liquid);
+      Standing = true;
+    }
+
+  if(IsEnabled() && GetLeftLeg())
+    {
+      GetLeftLeg()->StayOn(Liquid);
+      Standing = true;
+    }
+
+  if(!Standing)
+    {
+      bodypart* BodyPart[MAX_BODYPARTS];
+      ushort Index = 0;
+
+      for(ushort c = 0; c < GetBodyParts(); ++c)
+	if(GetBodyPart(c))
+	  BodyPart[Index++] = GetBodyPart(c);
+
+      BodyPart[RAND() % Index]->StayOn(Liquid);
+    }
+}
+
+bodypart* playerkind::MakeBodyPart(ushort Index) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return new playerkindtorso(0, NO_MATERIALS);
+    case HEAD_INDEX: return new playerkindhead(0, NO_MATERIALS);
+    case RIGHT_ARM_INDEX: return new playerkindrightarm(0, NO_MATERIALS);
+    case LEFT_ARM_INDEX: return new playerkindleftarm(0, NO_MATERIALS);
+    case GROIN_INDEX: return new playerkindgroin(0, NO_MATERIALS);
+    case RIGHT_LEG_INDEX: return new playerkindrightleg(0, NO_MATERIALS);
+    case LEFT_LEG_INDEX: return new playerkindleftleg(0, NO_MATERIALS);
+    }
+
+  ABORT("Weird bodypart to make for a playerkind. It must be your fault!");
+  return 0;
+}
+
+bool golem::AddAdjective(festring& String, bool Articled) const
+{
+  ushort TotalRustLevel = 0;
+
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      TotalRustLevel += GetBodyPart(c)->GetMainMaterial()->GetRustLevel();
+
+  if(!TotalRustLevel)
+    return humanoid::AddAdjective(String, Articled);
+  else
+    {
+      if(Articled)
+	String << 'a';
+
+      if(TotalRustLevel <= GetBodyParts())
+	String << "slightly rusted ";
+      else if(TotalRustLevel <= GetBodyParts() << 1)
+	String << "rusted ";
+      else
+	String << "very rusted ";
+
+      String << GetAdjective() << ' ';
+      return true;
+    }
+}
+
+void oree::Bite(character* Enemy, vector2d HitPos, uchar, bool)
+{
+  if(IsPlayer())
+    ADD_MESSAGE("You vomit acidous blood at %s.", Enemy->CHAR_DESCRIPTION(DEFINITE));
+  else if(Enemy->IsPlayer() || CanBeSeenByPlayer() || Enemy->CanBeSeenByPlayer())
+    ADD_MESSAGE("%s vomits acidous blood at %s.", CHAR_DESCRIPTION(DEFINITE), Enemy->CHAR_DESCRIPTION(DEFINITE));
+
+  Vomit(HitPos, 500 + RAND() % 500, false);
 }

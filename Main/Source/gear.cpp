@@ -2,25 +2,24 @@
 
 void meleeweapon::SetSecondaryMaterial(material* What, ushort SpecialFlags) { SetMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
 void meleeweapon::ChangeSecondaryMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(SecondaryMaterial, What, GetDefaultSecondaryVolume(), SpecialFlags); }
-void meleeweapon::SetContainedMaterial(material* What, ushort SpecialFlags) { SetMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void meleeweapon::ChangeContainedMaterial(material* What, ushort SpecialFlags) { ChangeMaterial(ContainedMaterial, What, GetDefaultContainedVolume(), SpecialFlags); }
-void meleeweapon::InitMaterials(material* M1, material* M2, material* M3, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), ContainedMaterial, M3, GetDefaultContainedVolume(), CUP); }
+void meleeweapon::InitMaterials(material* M1, material* M2, bool CUP) { ObjectInitMaterials(MainMaterial, M1, GetDefaultMainVolume(), SecondaryMaterial, M2, GetDefaultSecondaryVolume(), CUP); }
 ushort meleeweapon::GetEffectBonus() const { return 100 + 5 * Enchantment; }
 ushort meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
 ushort meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
-ulong meleeweapon::GetBaseWeight() const { return !ContainedMaterial ? Weight : Weight - ContainedMaterial->GetWeight(); }
+ushort meleeweapon::GetDripColor() const { return (*Fluid[0].begin())->GetLiquid()->GetColor(); }
+bool meleeweapon::IsDippable(const character*) const { return !HasFluids; }
 
 ushort justifier::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 0); }
 
 ushort neercseulb::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
 
-ushort flamingsword::GetSpecialFlags() const { return ST_FLAME; }
+ushort flamingsword::GetSpecialFlags() const { return meleeweapon::GetSpecialFlags()|ST_FLAME; }
 
 ushort gorovitshammer::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
 
 ushort gorovitssickle::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
 
-ushort thunderhammer::GetSpecialFlags() const { return !IsBroken() ? ST_LIGHTNING : 0; }
+ushort thunderhammer::GetSpecialFlags() const { return !IsBroken() ? meleeweapon::GetSpecialFlags()|ST_LIGHTNING : meleeweapon::GetSpecialFlags(); }
 
 short armor::GetCarryingBonus() const { return Enchantment << 1; }
 
@@ -37,7 +36,8 @@ ulong cloak::GetPrice() const { return armor::GetPrice() * 10 + GetEnchantedPric
 bool cloak::IsInCorrectSlot(ushort Index) const { return Index == CLOAK_INDEX; }
 ushort cloak::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); }
 const char* cloak::GetBreakVerb() const { return GetMainMaterial()->GetFlexibility() >= 5 ? "is torn apart" : "breaks"; }
-bool cloak::ReceiveDamage(character* Damager, ushort Damage, ushort Type) { return armor::ReceiveDamage(Damager, Damage >> 1, Type); }
+bool cloak::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar Dir) { return armor::ReceiveDamage(Damager, Damage >> 1, Type, Dir); }
+ushort cloak::GetSpecialFlags() const { return ST_CLOAK; }
 
 ulong boot::GetPrice() const { return armor::GetPrice() / 5 + GetEnchantedPrice(Enchantment); }
 bool boot::IsInCorrectSlot(ushort Index) const { return Index == RIGHT_BOOT_INDEX || Index == LEFT_BOOT_INDEX; }
@@ -64,15 +64,21 @@ ushort wondersmellstaff::GetClassAnimationFrames() const { return !IsBroken() ? 
 
 bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, uchar, uchar, bool BlockedByArmour)
 {
-  if(!BlockedByArmour && GetContainedMaterial())
+  if(!BlockedByArmour && HasFluids)
     {
-      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s reacts with %s!", GetContainedMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
+      bool Success = false;
+      fluidvector FluidVector;
+      FillFluidVector(FluidVector);
 
-      bool Success = GetContainedMaterial()->HitEffect(Enemy);
+      for(ushort c = 0; c < FluidVector.size(); ++c)
+	if(FluidVector[c]->Exists())
+	  {
+	    if(FluidVector[c]->GetLiquid()->HitEffect(Enemy))
+	      Success = true;
 
-      if(!GetContainedMaterial()->GetVolume())
-	Empty();
+	    if(!FluidVector[c]->GetLiquid()->GetVolume())
+	      RemoveFluid(FluidVector[c]);
+	  }
 
       return Success;
     }
@@ -80,12 +86,12 @@ bool meleeweapon::HitEffect(character* Enemy, character*, vector2d, uchar, uchar
     return false;
 }
 
-void meleeweapon::DipInto(material* Material, character* Dipper)
+void meleeweapon::DipInto(liquid* Liquid, character* Dipper)
 {
   if(Dipper->IsPlayer())
-    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Material->GetName(false, false).CStr());
+    ADD_MESSAGE("%s is now covered with %s.", CHAR_NAME(DEFINITE), Liquid->GetName(false, false).CStr());
 
-  ChangeContainedMaterial(Material);
+  SpillFluid(Dipper, Liquid);
   Dipper->DexterityAction(10);
 }
 
@@ -161,7 +167,6 @@ void meleeweapon::Save(outputfile& SaveFile) const
   item::Save(SaveFile);
   SaveFile << Enchantment;
   SaveFile << SecondaryMaterial;
-  SaveFile << ContainedMaterial;
 }
 
 void meleeweapon::Load(inputfile& SaveFile)
@@ -169,17 +174,11 @@ void meleeweapon::Load(inputfile& SaveFile)
   item::Load(SaveFile);
   SaveFile >> Enchantment;
   LoadMaterial(SaveFile, SecondaryMaterial);
-  LoadMaterial(SaveFile, ContainedMaterial);
 }
 
 material* meleeweapon::GetMaterial(ushort Index) const
 {
-  switch(Index)
-    {
-    case 0: return MainMaterial;
-    case 1: return SecondaryMaterial;
-    default: return ContainedMaterial;
-    }
+  return !Index ? MainMaterial : SecondaryMaterial;
 }
 
 ushort meleeweapon::GetMaterialColorB(ushort) const
@@ -289,13 +288,11 @@ bool whipofthievery::HitEffect(character* Enemy, character* Hitter, vector2d Hit
 meleeweapon::~meleeweapon()
 {
   delete SecondaryMaterial;
-  delete ContainedMaterial;
 }
 
 meleeweapon::meleeweapon(const meleeweapon& MW) : item(MW), Enchantment(MW.Enchantment)
 {
   CopyMaterial(MW.SecondaryMaterial, SecondaryMaterial);
-  CopyMaterial(MW.ContainedMaterial, ContainedMaterial);
 }
 
 extern character::prototype petrus_ProtoType;
@@ -347,25 +344,17 @@ void meleeweapon::SignalSpoil(material* Material)
   if(!Exists())
     return;
 
-  if(Material == GetContainedMaterial())
-    {
-      Empty();
-
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s seems cleaner now.", CHAR_NAME(DEFINITE));
-    }
-  else
-    item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
+  item::SignalSpoil(Material); // this should spill potential poison liquid to the ground!
 }
 
 void meleeweapon::AddPostFix(festring& String) const
 {
   item::AddPostFix(String);
 
-  if(GetContainedMaterial())
+  if(HasFluids)
     {
       String << " covered with ";
-      GetContainedMaterial()->AddName(String, false, false);
+      fluid::AddFluidInfo(Fluid[0], String);
     }
 
   if(Enchantment > 0)
@@ -381,16 +370,9 @@ bool meleeweapon::CanBePiledWith(const item* Item, const character* Viewer) cons
 
   const meleeweapon* Weapon = static_cast<const meleeweapon*>(Item);
 
-  if(Enchantment != Weapon->Enchantment || !SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial) || SecondaryMaterial->GetSpoilLevel() != Weapon->SecondaryMaterial->GetSpoilLevel())
-    return false;
-
-  if(ContainedMaterial == 0 && Weapon->ContainedMaterial == 0)
-    return true;
-
-  return ContainedMaterial != 0
-      && Weapon->ContainedMaterial != 0
-      && ContainedMaterial->IsSameAs(Weapon->ContainedMaterial)
-      && ContainedMaterial->GetSpoilLevel() == Weapon->ContainedMaterial->GetSpoilLevel();
+  return Enchantment == Weapon->Enchantment
+      && SecondaryMaterial->IsSameAs(Weapon->SecondaryMaterial)
+      && SecondaryMaterial->GetSpoilLevel() == Weapon->SecondaryMaterial->GetSpoilLevel();
 }
 
 void meleeweapon::Be()
@@ -399,9 +381,6 @@ void meleeweapon::Be()
 
   if(Exists())
     SecondaryMaterial->Be();
-
-  if(Exists() && ContainedMaterial)
-    ContainedMaterial->Be();
 }
 
 ulong whipofthievery::GetPrice() const
@@ -413,7 +392,7 @@ ulong whipofthievery::GetPrice() const
 
 bool meleeweapon::IsSparkling(ushort ColorIndex) const
 {
-  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && SecondaryMaterial->IsSparkling()) || (ColorIndex == 2 && ContainedMaterial && ContainedMaterial->IsSparkling());
+  return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && SecondaryMaterial->IsSparkling());
 }
 
 void meleeweapon::SetEnchantment(char Amount)
@@ -446,7 +425,7 @@ void meleeweapon::VirtualConstructor(bool Load)
 
 uchar meleeweapon::GetSpoilLevel() const
 {
-  return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
+  return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel());
 }
 
 bool neercseulb::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
@@ -490,9 +469,9 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, vector2d HitP
      return BaseSuccess;
 }
 
-bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar Dir)
 {
-  return Type & ELECTRICITY ? false : meleeweapon::ReceiveDamage(Damager, Damage, Type);
+  return Type & ELECTRICITY ? false : meleeweapon::ReceiveDamage(Damager, Damage, Type, Dir);
 }
 
 ulong armor::GetPrice() const
@@ -568,6 +547,12 @@ void armor::AddPostFix(festring& String) const
 {
   item::AddPostFix(String);
 
+  if(HasFluids)
+    {
+      String << " covered with ";
+      fluid::AddFluidInfo(Fluid[0], String);
+    }
+
   if(Enchantment > 0)
     String << " +" << short(Enchantment);
   else if(Enchantment < 0)
@@ -607,7 +592,6 @@ void meleeweapon::GenerateMaterials()
   ushort Chosen = RandomizeMaterialConfiguration();
   InitChosenMaterial(MainMaterial, GetMainMaterialConfig(), GetDefaultMainVolume(), Chosen);
   InitChosenMaterial(SecondaryMaterial, GetSecondaryMaterialConfig(), GetDefaultSecondaryVolume(), Chosen);
-  InitChosenMaterial(ContainedMaterial, GetContainedMaterialConfig(), GetDefaultContainedVolume(), Chosen);
 }
 
 bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, vector2d HitPos, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
@@ -788,4 +772,17 @@ bool cloak::AddAdjective(festring& String, bool Articled) const
     }
   else
     return false;
+}
+
+uchar meleeweapon::GetRustDataB() const
+{
+  return SecondaryMaterial->GetRustData();
+}
+
+void meleeweapon::TryToRust(ulong LiquidModifier)
+{
+  item::TryToRust(LiquidModifier);
+
+  if(SecondaryMaterial->TryToRust(LiquidModifier))
+    SecondaryMaterial->SetRustLevel(SecondaryMaterial->GetRustLevel() + 1);
 }

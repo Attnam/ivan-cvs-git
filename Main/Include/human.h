@@ -141,6 +141,8 @@ class ABSTRACT_CHARACTER
   virtual bool PreProcessForBone();
   virtual void FinalProcessForBone();
   virtual character* TryToRiseFromTheDeadAsZombie();
+  virtual void StayOn(liquid*);
+  virtual head* GetVirtualHead() const { return GetHead(); }
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -154,23 +156,21 @@ class ABSTRACT_CHARACTER
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual const festring& GetDeathMessage() const;
+  virtual vector2d GetDrawDisplacement(ushort) const { return vector2d(0, 0); }
   std::list<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;
   sweaponskill* CurrentLeftSWeaponSkill;
+  static ushort DrawOrder[];
 );
 
 class CHARACTER
 (
-  human,
+  playerkind,
   humanoid,
  public:
-  human(const human&);
+  playerkind(const playerkind&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual void SignalBodyPartVolumeAndWeightChange();
-  virtual void SignalEquipmentAdd(ushort);
-  virtual void SignalEquipmentRemoval(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
   virtual void SetSoulID(ulong);
   virtual bool SuckSoul(character*);
   virtual bool TryToRiseFromTheDead();
@@ -179,13 +179,7 @@ class CHARACTER
   virtual bool IsHuman() const { return true; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorA(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorB(ushort, bool = false) const;
-  virtual ushort GetBodyPartColorC(ushort, bool = false) const;
-  virtual bool BodyPartColorAIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
-  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
+  virtual bodypart* MakeBodyPart(ushort) const;
   ulong SoulID;
   bool IsBonePlayer;
   bool IsClone;
@@ -260,6 +254,8 @@ class CHARACTER
 (
   oree,
   humanoid,
+ public:
+  virtual void Bite(character*, vector2d, uchar, bool = false);
  protected:
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
@@ -317,6 +313,7 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void BeTalkedTo();
  protected:
+  virtual bool AddAdjective(festring&, bool) const;
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
 );
 
@@ -346,7 +343,7 @@ class CHARACTER
 class CHARACTER
 (
   slave,
-  human,
+  playerkind,
  public:
   virtual void BeTalkedTo();
   virtual void GetAICommand();
@@ -400,9 +397,8 @@ class CHARACTER
   virtual void BeTalkedTo();
   virtual bool BodyPartIsVital(ushort Index) const;
   virtual void CreateBodyParts(ushort);
-  virtual item* SevereBodyPart(ushort);
+  virtual bool AllowSpoil() const { return true; }
  protected:
-  virtual void CreateCorpse(lsquare*);
   virtual void GetAICommand();
 );
 
@@ -483,11 +479,11 @@ class CHARACTER
   virtual bool CheckForUsefulItemsOnGround() { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(ushort);
-  virtual void DrawBodyParts(bitmap*, vector2d, ulong, ushort, bool, bool = true) const;
  protected:
   virtual ushort GetTorsoMainColor() const;
-  virtual ushort GetArmMainColor() const;
+  virtual ushort GetGauntletColor() const;
   virtual ushort GetLegMainColor() const;
+  virtual vector2d GetDrawDisplacement(ushort) const;
 );
 
 class CHARACTER

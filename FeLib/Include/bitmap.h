@@ -151,18 +151,17 @@ class bitmap
   void AlphaPriorityBlit(bitmap*, ulong, ushort = TRANSPARENT_COLOR) const;
 
   void FastBlitAndCopyAlpha(bitmap*) const;
-
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
   void DrawPolygon(ushort, ushort, ushort, ushort, ushort, bool = true, bool = false, double = 0);
   void CreateAlphaMap(uchar);
-  bool ChangeAlpha(char);
+  bool Fade(ulong&, uchar&, uchar);
   void SetAlpha(ushort X, ushort Y, uchar Alpha) { AlphaMap[Y][X] = Alpha; }
   void SetAlpha(vector2d Pos, uchar Alpha) { AlphaMap[Pos.Y][Pos.X] = Alpha; }
   uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[Y][X]; }
   uchar GetAlpha(vector2d Pos) const { return AlphaMap[Pos.Y][Pos.X]; }
-  void Outline(ushort, uchar);
+  void Outline(ushort, uchar, uchar);
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(bitmapeditor = 0);
   void CreateFlames(ushort, ushort = TRANSPARENT_COLOR);
@@ -178,13 +177,36 @@ class bitmap
   void FillAlpha(uchar);
   void CreatePriorityMap(uchar);
   void FillPriority(uchar);
+  void SafeSetPriority(ushort, ushort, uchar);
+  void SafeSetPriority(vector2d Pos, uchar What) { SafeSetPriority(Pos.X, Pos.Y, What); }
+  void SafeUpdateRandMap(vector2d, bool);
+  void UpdateRandMap(ulong, bool);
+  void InitRandMap();
+  vector2d RandomizePixel() const;
+  void AlphaPutPixel(ushort, ushort, ushort, ulong, uchar);
+  void AlphaPutPixel(vector2d Pos, ushort Color, ulong Luminance, uchar Alpha) { AlphaPutPixel(Pos.X, Pos.Y, Color, Luminance, Alpha); }
+  void CalculateRandMap();
+  uchar CalculateAlphaAverage() const;
  protected:
   ushort XSize, YSize;
   ulong XSizeTimesYSize;
   ushort** Image;
   uchar** AlphaMap;
   uchar** PriorityMap;
+  bool* RandMap;
 };
+
+inline void bitmap::SafeUpdateRandMap(vector2d Pos, bool What)
+{
+  if(RandMap)
+    UpdateRandMap(Pos.Y * XSize + Pos.X, What);
+}
+
+inline void bitmap::SafeSetPriority(ushort x, ushort y, uchar What)
+{
+  if(PriorityMap)
+    PriorityMap[y][x] = What;
+}
 
 outputfile& operator<<(outputfile&, const bitmap*);
 inputfile& operator>>(inputfile&, bitmap*&);

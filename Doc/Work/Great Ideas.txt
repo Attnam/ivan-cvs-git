@@ -37,7 +37,7 @@ Spreading fire.
 Burial.
 Wars.
 Homes.
-Family. And lost siblings that can be found by digging in the World Map.
+Family. And lost siblings that can be found by digging on the World Map.
 (r) Diapers which can be applied to babies to prevent them from spilling yellow and brown fluids to the floor.
 The Reaper.
 Script event system.
@@ -78,7 +78,7 @@ Random demigods.
 On the world map, there should be a sign in the middle of nowhere with text "All your base are belong to us."
 Graphical statistics of kills per 100 turns etc. to endgame.
 Player-creatable magic.
-Noble ranks.
+Nobility ranks.
 Pyramids.
 Temperatures.
 "Saveload" spell.
@@ -91,3 +91,8 @@ Quest to save the prince frog.
 Rainbows.
 Tabernae vagantes.
 Shackles.
+Telephats in each town which would handle long distance communication.
+Gradual stoning/freezing system.
+Steam-powered vodka flame thrower.
+Stamina.
+Winds.

@@ -107,7 +107,7 @@ class OLTERRAIN
   virtual bool AcceptsOffers() const { return true; }
   virtual void StepOn(character*);
   virtual void BeKicked(character*, ushort, uchar);
-  virtual void ReceiveVomit(character*);
+  virtual bool ReceiveVomit(character*, liquid*);
   virtual bool Polymorph(character*);
   virtual bool SitOn(character*);
   virtual void Draw(bitmap*, vector2d, ulong, ushort, bool) const;

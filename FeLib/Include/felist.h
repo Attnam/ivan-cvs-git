@@ -18,13 +18,14 @@ class festring;
 struct felistentry;
 struct felistdescription;
 
+typedef void (*entrydrawer)(bitmap*, vector2d, ushort);
+
 class felist
 {
  public:
   felist(const festring&, ushort = WHITE, ushort = 0);
   ~felist();
-  void AddEntry(const festring&, ushort, ushort = 0, bitmap* = 0, bool = true);
-  void AddEntry(const festring&, ushort, ushort, const bitmap*const*, ushort, bool = true, bool = false);
+  void AddEntry(const festring&, ushort, ushort = 0, ushort = NO_IMAGE, bool = true);
   void AddDescription(const festring&, ushort = WHITE);
   ushort Draw();
   void QuickDraw(bitmap*, ushort) const;
@@ -51,9 +52,9 @@ class felist
   void SetFlags(ushort What) { Flags = What; }
   void AddFlags(ushort What) { Flags |= What; }
   void RemoveFlags(ushort What) { Flags &= ~What; }
-  void SetMaskColor(ushort What) { MaskColor = What; }
   void SetUpKey(ushort What) { UpKey = What; }
   void SetDownKey(ushort What) { DownKey = What; }
+  void SetEntryDrawer(entrydrawer What) { EntryDrawer = What; }
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry*> Entry;
@@ -66,9 +67,9 @@ class felist
   ushort PageLength;
   ushort BackColor;
   ushort Flags;
-  ushort MaskColor;
   ushort UpKey;
   ushort DownKey;
+  entrydrawer EntryDrawer;
 };
 
 #endif

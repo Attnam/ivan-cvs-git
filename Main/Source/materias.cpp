@@ -6,6 +6,8 @@ const char* liquid::GetConsumeVerb() const { return "drinking"; }
 
 bool powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 
+bool ironalloy::IsSparkling() const { return material::IsSparkling() && GetRustLevel() == NOT_RUSTED; }
+
 void organicsubstance::Be()
 {
   if(MotherEntity->AllowSpoil())
@@ -131,4 +133,118 @@ void organicsubstance::SetSpoilCounter(ushort What)
     }
   else
     MotherEntity->SignalSpoil(this);
+}
+
+void ironalloy::SetRustLevel(uchar What)
+{
+  if(GetRustLevel() != What)
+    {
+      if(!RustData)
+	RustData = RAND() & 0xFC | What;
+      else if(!What)
+	RustData = 0;
+      else
+	RustData = RustData & 0xFC | What;
+
+      if(MotherEntity)
+	MotherEntity->SignalRustLevelChange();
+    }
+}
+
+ushort ironalloy::GetStrengthValue() const
+{
+  ushort Base = material::GetStrengthValue();
+
+  switch(GetRustLevel())
+    {
+    case NOT_RUSTED: return Base;
+    case SLIGHTLY_RUSTED: return ((Base << 3) + Base) / 10;
+    case RUSTED: return ((Base << 1) + Base) >> 2;
+    case VERY_RUSTED: return Base >> 1;
+    }
+
+  return 0; /* not possible */
+}
+
+void ironalloy::AddName(festring& Name, bool Articled, bool Adjective) const
+{
+  if(Articled)
+    if(GetRustLevel() == NOT_RUSTED)
+      Name << GetArticle() << ' ';
+    else
+      Name << "a ";
+
+  switch(GetRustLevel())
+    {
+    case SLIGHTLY_RUSTED:
+      Name << "sligthly rusted ";
+      break;
+    case RUSTED:
+      Name << "rusted ";
+      break;
+    case VERY_RUSTED:
+      Name << "very rusted ";
+      break;
+    }
+
+  Name << (Adjective ? GetAdjectiveStem() : GetNameStem());
+}
+
+void ironalloy::Save(outputfile& SaveFile) const
+{
+  material::Save(SaveFile);
+  SaveFile << RustData;
+}
+
+void ironalloy::Load(inputfile& SaveFile)
+{
+  material::Load(SaveFile);
+  SaveFile >> RustData;
+}
+
+void liquid::SpillEffect(item* Item)
+{
+}
+
+void liquid::SpillEffect(character* Char, ushort BodyPartIndex)
+{  
+}
+
+void liquid::ConstantEffect(item* Item)
+{
+  if(GetRustModifier())
+    Item->TryToRust(GetRustModifier() * GetVolume());
+
+  if(GetAcidicity())
+    Item->ReceiveAcid(this, Volume * GetAcidicity());
+}
+
+void liquid::ConstantEffect(lterrain* Terrain)
+{
+  if(GetRustModifier())
+    Terrain->TryToRust(GetRustModifier() * GetVolume());
+
+  if(GetAcidicity())
+    Terrain->ReceiveAcid(this, Volume * GetAcidicity());
+}
+
+void liquid::ConstantEffect(character* Char, ushort BodyPartIndex)
+{
+  if(GetAcidicity())
+    Char->GetBodyPart(BodyPartIndex)->ReceiveAcid(this, Volume * GetAcidicity() >> 1);
+}
+
+/* Doesn't do the actual rusting */
+
+bool ironalloy::TryToRust(ulong Modifier)
+{
+  if(GetRustLevel() != VERY_RUSTED)
+    {
+      ulong Chance = 5000000. * sqrt(GetVolume()) / (Modifier * GetRustModifier());
+
+      if(Chance <= 1 || !(RAND() % Chance))
+	return true;
+    }
+
+  return false;
 }

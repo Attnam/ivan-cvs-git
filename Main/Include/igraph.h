@@ -32,7 +32,7 @@ struct graphicid
   uchar FileIndex NO_ALIGNMENT;
   uchar BaseAlpha NO_ALIGNMENT;
   uchar Alpha[4] NO_ALIGNMENT;
-  uchar SpecialFlags NO_ALIGNMENT;
+  ushort SpecialFlags NO_ALIGNMENT;
   vector2d SparklePos NO_ALIGNMENT;
   uchar SparkleFrame NO_ALIGNMENT;
   ushort OutlineColor NO_ALIGNMENT;
@@ -40,6 +40,7 @@ struct graphicid
   ushort Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
   vector2d Position NO_ALIGNMENT;
+  uchar RustData[4] NO_ALIGNMENT;
 };
 
 #ifdef VC
@@ -59,26 +60,44 @@ struct tile
 
 typedef std::map<graphicid, tile> tilemap;
 
+struct graphicdata
+{
+  graphicdata() : AnimationFrames(0) { }
+  ~graphicdata();
+  void Save(outputfile&) const;
+  void Load(inputfile&);
+  void Retire();
+  ushort AnimationFrames;
+  bitmap** Picture;
+  tilemap::iterator* GraphicIterator;
+};
+
+outputfile& operator<<(outputfile&, const graphicdata&);
+inputfile& operator>>(inputfile&, graphicdata&);
+
 class igraph
 {
  public:
   static void Init();
   static void DeInit();
-  static bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
-  static bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
-  static bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
-  static bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
-  static bitmap* GetMenuGraphic() { return Graphic[GR_MENU]; }
-  static bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_COLOR_TILE]; }
+  static const bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
+  static const bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
+  static const bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
+  static const bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
+  static const bitmap* GetMenuGraphic() { return Graphic[GR_MENU]; }
+  static const bitmap* GetTransparentTile() { return Graphic[GR_TRANSPARENT_COLOR_TILE]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
   static void DrawCursor(vector2d);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
-  static colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
-  static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
-  static colorizablebitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
-  static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
+  static const colorizablebitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
+  static const colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GR_CHARACTER]; }
+  static const colorizablebitmap* GetEffectRawGraphic() { return RawGraphic[GR_EFFECT]; }
+  static const colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
+  static bool** GetBodyBitmapValidityMap(ushort);
+  static bitmap* GetFlagBuffer() { return FlagBuffer; }
  private:
+  static void CreateBodyBitmapValidityMaps();
   static colorizablebitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES + 1];
   static bitmap* TileBuffer;
@@ -87,6 +106,7 @@ class igraph
   static tilemap TileMap;
   static uchar RollBuffer[256];
   static bitmap* FlagBuffer;
+  static bool*** BodyBitmapValidityMap;
 };
 
 #endif

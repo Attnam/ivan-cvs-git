@@ -11,6 +11,7 @@
 #include "proto.h"
 #include "action.h"
 #include "save.h"
+#include "materias.h"
 
 #include "slot.cpp"
 #include "stack.cpp"

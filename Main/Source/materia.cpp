@@ -27,7 +27,7 @@ festring material::GetName(bool Articled, bool Adjective) const
 
 ushort material::TakeDipVolumeAway()
 {
-  ulong Amount = Min(500UL, GetVolume());
+  ulong Amount = Min(100UL, GetVolume());
   EditVolume(-Amount);
   return Amount;
 }
@@ -117,7 +117,7 @@ bool material::HitEffect(character* Enemy)
     case HM_HOLY_BANANA: Enemy->AddHolyBananaConsumeEndMessage(); break;
     }
 
-  ulong Amount = Min(100UL, GetVolume());
+  ulong Amount = Min(GetVolume() >> 1, 1UL);
   EditVolume(-Amount);
   return Effect(Enemy, Amount);
 }
@@ -159,10 +159,11 @@ material* material::MakeMaterial(ushort Config)
     case LIQUID_ID >> 12: return new liquid(Config, 0);
     case FLESH_ID >> 12: return new flesh(Config, 0);
     case POWDER_ID >> 12: return new powder(Config, 0);
-    default:
-      ABORT("Odd material configuration number %d requested!", Config);
-      return 0;
+    case IRON_ALLOY_ID >> 12: return new ironalloy(Config, 0);
     }
+
+  ABORT("Odd material configuration number %d requested!", Config);
+  return 0;
 }
 
 material* material::MakeMaterial(ushort Config, ulong Volume)
@@ -178,10 +179,11 @@ material* material::MakeMaterial(ushort Config, ulong Volume)
     case LIQUID_ID >> 12: return new liquid(Config, Volume);
     case FLESH_ID >> 12: return new flesh(Config, Volume);
     case POWDER_ID >> 12: return new powder(Config, Volume);
-    default:
-      ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
-      return 0;
+    case IRON_ALLOY_ID >> 12: return new ironalloy(Config, Volume);
     }
+
+  ABORT("Odd material configuration number %d of volume %d requested!", Config, Volume);
+  return 0;
 }
 
 void material::SetVolume(ulong What)
@@ -191,6 +193,12 @@ void material::SetVolume(ulong What)
 
   if(MotherEntity)
     MotherEntity->SignalVolumeAndWeightChange();
+}
+
+void material::SetVolumeNoSignals(ulong What)
+{
+  Volume = What;
+  CalculateWeight();
 }
 
 void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
@@ -223,4 +231,32 @@ bool material::IsStupidToConsume()
 bool material::BreatheEffect(character* Enemy)
 {
   return Effect(Enemy, Max<ulong>(GetVolume() / 10, 50));
+}
+
+const materialdatabase* material::GetDataBase(ushort Config)
+{
+  const prototype* ProtoType = 0;
+
+  switch(Config >> 12)
+    {
+    case MATERIAL_ID >> 12: ProtoType = &material_ProtoType; break;
+    case ORGANIC_SUBSTANCE_ID >> 12: ProtoType = &organicsubstance_ProtoType; break;
+    case GAS_ID >> 12: ProtoType = &gas_ProtoType; break;
+    case LIQUID_ID >> 12: ProtoType = &liquid_ProtoType; break;
+    case FLESH_ID >> 12: ProtoType = &flesh_ProtoType; break;
+    case POWDER_ID >> 12: ProtoType = &powder_ProtoType; break;
+    case IRON_ALLOY_ID >> 12: ProtoType = &ironalloy_ProtoType; break;
+    }
+
+  if(ProtoType)
+    {
+      const databasemap& ConfigMap = ProtoType->GetConfig();
+      const databasemap::const_iterator i = ConfigMap.find(Config);
+
+      if(i != ConfigMap.end())
+	return &i->second;
+    }
+
+  ABORT("Odd material configuration number %d requested!", Config);
+  return 0;
 }

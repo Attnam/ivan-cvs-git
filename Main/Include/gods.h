@@ -182,7 +182,7 @@ class GOD
   virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
-  virtual void PlayerVomitedOnAltar();
+  virtual bool PlayerVomitedOnAltar(liquid*);
   virtual ushort GetColor() const;
  protected:
   virtual void PrayGoodEffect();

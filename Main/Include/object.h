@@ -10,6 +10,9 @@
 #include "id.h"
 
 class god;
+class object;
+
+typedef vector2d (object::*bposretriever)(ushort) const;
 
 class object : public entity, public id
 {
@@ -42,9 +45,8 @@ class object : public entity, public id
   uchar GetVisualEffects() const { return VisualEffects; }
   void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual uchar GetForcedVisualEffects() const { return 0; }
-  void SetAnimationFrames(ushort What) { AnimationFrames = What; }
-  virtual ushort GetAnimationFrames() const { return AnimationFrames; }
-  bool IsAnimated() const { return AnimationFrames > 1; }
+  ushort GetAnimationFrames() const { return GraphicData.AnimationFrames; }
+  virtual bool IsAnimated() const { return GraphicData.AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
@@ -52,10 +54,9 @@ class object : public entity, public id
   virtual void CalculateAll() = 0;
   virtual uchar GetSpoilLevel() const { return 0; }
   void CreateWieldedBitmap(graphicid&) const;
-  virtual vector2d GetWieldedBitmapPos(ushort) const { return vector2d(); }
-  void UpdatePictures(bitmap**&, tilemap::iterator*&, vector2d, ushort&, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
   virtual ushort GetSpecialFlags() const;
   static void InitSparkleValidityArrays();
+  void UpdatePictures(graphicdata&, vector2d, ushort, uchar, uchar, bposretriever) const;
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
@@ -94,11 +95,15 @@ class object : public entity, public id
   void RandomizeVisualEffects();
   virtual bool HasSpecialAnimation() const { return false; }
   virtual void ModifyAnimationFrames(ushort&) const { }
+  virtual uchar GetRustDataA() const;
+  virtual uchar GetRustDataB() const { return NOT_RUSTED; }
+  virtual uchar GetRustDataC() const { return NOT_RUSTED; }
+  virtual uchar GetRustDataD() const { return NOT_RUSTED; }
+  virtual ushort GetDripColor() const { return 0; }
+  virtual bool AllowSparkling() const { return true; }
+  graphicdata GraphicData;
   material* MainMaterial;
-  bitmap** Picture;
-  tilemap::iterator* GraphicIterator;
   uchar VisualEffects;
-  ushort AnimationFrames;
 };
 
 #endif

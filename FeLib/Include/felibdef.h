@@ -50,7 +50,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define PINK 0xF01E
 
 #define WHITE 0xFFFF
-#define LIGHT_GRAY 0xB5B6
+#define LIGHT_GRAY 0x94B2
 #define DARK_GRAY 0x528A
 #define BLACK 0x0000
 
@@ -91,6 +91,8 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define DRAW_BACKGROUND_AFTERWARDS 8
 #define FADE 16
 
+/* felist errors */
+
 #define FELIST_ERROR_BIT 0x8000
 #define LIST_WAS_EMPTY 0xFFFF
 #define ESCAPED 0xFFFE
@@ -106,5 +108,12 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define ABORTED 1
 
 #define MAX_CONFIG_OPTIONS 0x100
+
+#define FLY_PRIORITY ((10 << 4) + 10)
+#define SPARKLE_PRIORITY ((12 << 4) + 12)
+#define LIGHTNING_PRIORITY ((14 << 4) + 14)
+#define AVERAGE_PRIORITY ((8 << 4) + 8)
+
+#define NO_IMAGE 0xFFFF
 
 #endif

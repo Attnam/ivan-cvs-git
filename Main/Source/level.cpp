@@ -974,11 +974,11 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
 void level::Draw(bool AnimationDraw) const
 {
-  ushort XMin = game::GetCamera().X;
-  ushort YMin = game::GetCamera().Y;
-  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
-  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
-  ulong LOSTurns = game::GetLOSTurns();
+  const ushort XMin = game::GetCamera().X;
+  const ushort YMin = game::GetCamera().Y;
+  const ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
+  const ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
+  const ulong LOSTurns = game::GetLOSTurns();
 
   if(!game::GetSeeWholeMapCheatMode())
     {

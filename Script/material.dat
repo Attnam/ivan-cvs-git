@@ -43,20 +43,9 @@ material
 	UseMaterialAttributes = true;
 	CanRegenerate = false;
 	BreatheWisdomLimit = NO_LIMIT;
-
-	Config IRON;
-	{
-		StrengthValue = 100;
-		ConsumeType = CT_METAL;
-		Density = 8000;
-		Color = rgb16(96, 96, 96);
-		PriceModifier = 40;
-		IsGolemMaterial = true;
-		NameStem = "iron";
-		Article = "an";
-		IsMetal = true;
-		AttachedGod = LORICATUS;
-	}
+	IsBlood = false;
+	Acidicity = 0;
+	IsImmuneToAcid = false;
 
 	Config VALPURIUM;
 	{
@@ -73,6 +62,7 @@ material
 		IsMetal = true;
 		Flexibility = 4;
 		AttachedGod = VALPURUS;
+		IsImmuneToAcid = true;
 	}	
 
 	Config STONE;
@@ -162,6 +152,7 @@ material
 		Flexibility = 2;
 		CanBeWished = false;
 		AttachedGod = LORICATUS;
+		IsImmuneToAcid = true;
 	}
 
 	Config MARBLE;
@@ -190,6 +181,7 @@ material
 		IsSparkling = true;
 		IsMetal = true;
 		AttachedGod = MELLIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config GRASS;
@@ -295,6 +287,7 @@ material
 		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config SILVER;
@@ -310,6 +303,7 @@ material
 		IsSparkling = true;
 		IsMetal = true;
 		AttachedGod = MELLIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config SAPPHIRE;
@@ -325,6 +319,7 @@ material
 		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config RUBY;
@@ -340,6 +335,7 @@ material
 		CanBeWished = false;
 		IsSparkling = true;
 		AttachedGod = MELLIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config BRONZE;
@@ -377,19 +373,6 @@ material
 		Color = rgb16(100, 100, 100);
 		PriceModifier = 15;
 		NameStem = "tin";
-		IsMetal = true;
-		AttachedGod = LORICATUS;
-	}
-
-	Config STEEL;
-	{
-		StrengthValue = 125;
-		ConsumeType = CT_METAL;
-		Density = 7500;
-		Color = rgb16(128, 128, 128);
-		IsGolemMaterial = true;
-		PriceModifier = 40;
-		NameStem = "steel";
 		IsMetal = true;
 		AttachedGod = LORICATUS;
 	}
@@ -484,6 +467,7 @@ material
 		Article = "an";
 		CanBeWished = false;
 		AttachedGod = DULCIS;
+		IsImmuneToAcid = true;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -508,6 +492,7 @@ material
 		Flexibility = 25;
 		CanBeWished = false;
 		AttachedGod = VALPURUS;
+		IsImmuneToAcid = true;
 	}
 
 	Config ICE;
@@ -534,19 +519,7 @@ material
 		CanBeWished = false;
 		IsGolemMaterial = true;
 		AttachedGod = CRUENTUS;
-	}
-
-	Config METEORIC_STEEL;
-	{
-		StrengthValue = 150;
-		ConsumeType = CT_METAL;
-		Density = 7000;
-		Color = rgb16(160, 160, 160);
-		IsGolemMaterial = true;
-		PriceModifier = 250;
-		NameStem = "meteoric steel";
-		IsMetal = true;
-		AttachedGod = LORICATUS;
+		IsImmuneToAcid = true;
 	}
 
 	Config ARCANITE;
@@ -563,6 +536,7 @@ material
 		AttachedGod = SOPHOS;
 		Flexibility = 3;
 		CanBeWished = false;
+		IsImmuneToAcid = true;
 	}
 
 	Config ILLITHIUM;
@@ -578,23 +552,7 @@ material
 		IsMetal = true;
 		AttachedGod = LEGIFER;
 		CanBeWished = false;
-	}
-
-	Config ADAMANT;
-	{
-		StrengthValue = 350;
-		ConsumeType = CT_METAL;
-		Density = 10000;
-		Color = rgb16(220, 220, 240);
-		IsGolemMaterial = true;
-		PriceModifier = 6000;
-		Article = "an";
-		NameStem = "adamant";
-		AdjectiveStem = "adamantine";
-		IsMetal = true;
-		AttachedGod = LORICATUS;
-		IsSparkling = true;
-		CanBeWished = false;
+		IsImmuneToAcid = true;
 	}
 
 	Config BALSA_WOOD;
@@ -698,6 +656,7 @@ material
 		AttachedGod = SOPHOS;
 		CanBeWished = false;
 		Flexibility = 2;
+		IsImmuneToAcid = true;
 	}
 
 	Config BLUE_CRYSTAL;
@@ -715,6 +674,7 @@ material
 		IsMetal = false;
 		Emitation = rgb24(135, 135, 160);
 		IsSparkling = true;
+		IsImmuneToAcid = true;
 	}
 
 	Config PURPLE_CRYSTAL;
@@ -732,6 +692,7 @@ material
 		IsMetal = false;
 		Emitation = rgb24(175, 150, 175);
 		IsSparkling = true;
+		IsImmuneToAcid = true;
 	}
 
 	Config GREEN_CRYSTAL;
@@ -749,6 +710,7 @@ material
 		IsMetal = false;
 		Emitation = rgb24(135, 155, 135);
 		IsSparkling = true;
+		IsImmuneToAcid = true;
 	}
 
 	Config DARK_GRASS;
@@ -1036,6 +998,7 @@ liquid
 	Density = 1000;
 	Flexibility = 50;
 	IsWarm = false;
+	RustModifier = 0;
 
 	Config OMMEL_URINE;
 	{
@@ -1067,6 +1030,8 @@ liquid
 		ConsumeEndMessage = CEM_PEPSI;
 		HitMessage = HM_PEPSI;
 		AttachedGod = MELLIS;
+		RustModifier = 200;
+		Acidicity = 10;
 	}
 
 	Config WATER;
@@ -1077,6 +1042,7 @@ liquid
 		NameStem = "water";
 		Alpha = 150;
 		AttachedGod = TERRA;
+		RustModifier = 100;
 	}
 
 	Config HEALING_LIQUID;
@@ -1096,28 +1062,30 @@ liquid
 
 	Config BLOOD;
 	{
-		StrengthValue = 150;
+		StrengthValue = 1;
 		NutritionValue = 50;
-		Color = rgb16(160, 0, 0);
-		CanBeWished = false;
+		Color = rgb16(100, 0, 0);
 		NameStem = "blood";
 		Alpha = 175;
 		Flexibility = 40;
 		AttachedGod = CRUENTUS;
+		IsBlood = true;
 	}
 
 	Config BROWN_SLIME;
 	{
 		StrengthValue = 5;
 		Density = 400;
-		NutritionValue = 250;
-		Color = rgb16(0, 128, 0);
-		Color = rgb16(111, 74, 37);
+		NutritionValue = 10;
+		Color = rgb16(130, 90, 40);
 		NameStem = "brown slime";
 		Alpha = 200;
 		Flexibility = 30;
 		UseMaterialAttributes = false;
 		AttachedGod = SCABIES;
+		RustModifier = 200;
+		Acidicity = 100;
+		IsImmuneToAcid = true;
 	}
 
 	Config POISON_LIQUID;
@@ -1131,6 +1099,7 @@ liquid
 		Alpha = 150;
 		PriceModifier = 500;
 		AttachedGod = SCABIES;
+		RustModifier = 50;
 	}
 
 	Config VALDEMAR;
@@ -1147,6 +1116,7 @@ liquid
 		PriceModifier = 500;
 		AttachedGod = NEFAS;
 		EffectIsGood = true;
+		EffectStrength = 150;
 	}
 
 	Config ANTIDOTE_LIQUID;
@@ -1174,7 +1144,7 @@ liquid
 		NameStem = "vodka";
 		Effect = EFFECT_CONFUSE;
 		Alpha = 150;
-		EffectStrength = 200;
+		EffectStrength = 300;
 		IsExplosive = true;
 		ExplosivePower = 20000;
 		PriceModifier = 500;
@@ -1199,6 +1169,59 @@ liquid
 		AttachedGod = CRUENTUS;
 		EffectIsGood = true;
 		IsWarm = true;
+		IsBlood = true;
+	}
+
+	Config DARK_FROG_BLOOD;
+	{
+		StrengthValue = 1;
+		NutritionValue = 40;
+		Color = rgb16(50, 0, 0);
+		NameStem = "dark frog blood";
+		Alpha = 175;
+		Flexibility = 40;
+		AttachedGod = CRUENTUS;
+		IsBlood = true;
+		Acidicity = 100;
+	}
+
+	Config SPIDER_BLOOD;
+	{
+		StrengthValue = 1;
+		NutritionValue = 40;
+		Color = rgb16(50, 0, 0);
+		NameStem = "spider blood";
+		Alpha = 175;
+		Flexibility = 40;
+		AttachedGod = CRUENTUS;
+		IsBlood = true;
+	}
+
+	Config VOMIT;
+	{
+		StrengthValue = 1;
+		NutritionValue = 200;
+		Color = rgb16(10, 230, 10);
+		NameStem = "vomit";
+		Alpha = 175;
+		Flexibility = 35;
+		AttachedGod = SCABIES;
+		RustModifier = 200;
+		Acidicity = 10;
+	}
+
+	Config ACIDOUS_BLOOD;
+	{
+		StrengthValue = 150;
+		NutritionValue = 50;
+		Color = rgb16(100, 0, 0);
+		NameStem = "acidous blood";
+		Alpha = 175;
+		Flexibility = 40;
+		AttachedGod = CRUENTUS;
+		IsBlood = true;
+		Acidicity = 500:
+		RustModifier = 500;
 	}
 }
 
@@ -1256,6 +1279,7 @@ flesh
 		HitMessage = HM_FROG_FLESH;
 		NameStem = "frog flesh";
 		AttachedGod = MORTIFER;
+		IsImmuneToAcid = true;
 	}
 
 	Config ELPURI_FLESH;
@@ -1271,6 +1295,7 @@ flesh
 		Color = rgb16(60, 60, 60);
 		AttachedGod = VALPURUS;
 		IsWarm = false;
+		IsImmuneToAcid = true;
 	}
 
 	Config HUMAN_FLESH;
@@ -1400,6 +1425,7 @@ flesh
 		EffectStrength = 10;
 		ConsumeWisdomLimit = 8;
 		AttachedGod = MORTIFER;
+		IsImmuneToAcid = true;
 	}
 
 	Config MAMMOTH_FLESH;
@@ -1580,5 +1606,70 @@ powder
 		AdjectiveStem = "sandy";
 		Flexibility = 40;
 		AttachedGod = TERRA;
+	}
+}
+
+ironalloy /* metals that rust */
+{
+	ConsumeType = CT_METAL;
+	IsGolemMaterial = true;
+	AttachedGod = LORICATUS;
+	IsMetal = true;
+
+	Config IRON;
+	{
+		StrengthValue = 100;
+		Density = 8000;
+		Color = rgb16(96, 96, 96);
+		PriceModifier = 40;
+		NameStem = "iron";
+		Article = "an";
+		RustModifier = 100;
+	}
+
+	Config STEEL;
+	{
+		StrengthValue = 125;
+		ConsumeType = CT_METAL;
+		Density = 7500;
+		Color = rgb16(128, 128, 128);
+		IsGolemMaterial = true;
+		PriceModifier = 40;
+		NameStem = "steel";
+		IsMetal = true;
+		AttachedGod = LORICATUS;
+		RustModifier = 75;
+	}
+
+	Config METEORIC_STEEL;
+	{
+		StrengthValue = 150;
+		ConsumeType = CT_METAL;
+		Density = 7000;
+		Color = rgb16(160, 160, 160);
+		IsGolemMaterial = true;
+		PriceModifier = 250;
+		NameStem = "meteoric steel";
+		IsMetal = true;
+		AttachedGod = LORICATUS;
+		RustModifier = 50;
+	}
+
+	Config ADAMANT;
+	{
+		StrengthValue = 350;
+		ConsumeType = CT_METAL;
+		Density = 10000;
+		Color = rgb16(220, 220, 240);
+		IsGolemMaterial = true;
+		PriceModifier = 6000;
+		Article = "an";
+		NameStem = "adamant";
+		AdjectiveStem = "adamantine";
+		IsMetal = true;
+		AttachedGod = LORICATUS;
+		IsSparkling = true;
+		CanBeWished = false;
+		RustModifier = 25;
 	}
 }
