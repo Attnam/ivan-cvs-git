@@ -495,7 +495,23 @@ void nonhumanoid::CalculateBiteAttackInfo()
 void dog::BeTalkedTo()
 {
   if(RAND() % 50)
-    character::BeTalkedTo();
+    {
+      if(GetRelation(PLAYER) != HOSTILE)
+	{
+	  static bool Last;
+	  const char* Reply;
+
+	  if(!IsInBadCondition())
+	    Reply = Last ? "barks happily" : "wags its tail happily";
+	  else
+	    Reply = Last ? "yelps" : "howls";
+
+	  ADD_MESSAGE("%s %s.", CHAR_NAME(DEFINITE), Reply);
+	  Last = !Last;
+	}
+      else
+	character::BeTalkedTo();
+    }
   else
     ADD_MESSAGE("\"Can't you understand I can't speak?\"");
 }

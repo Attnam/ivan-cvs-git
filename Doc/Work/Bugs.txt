@@ -26,3 +26,4 @@ Does using a two-handed weapon yield exp to only one arm?
 I think one can get a score of hundreds of thousands by cloning vast amounts of wands of resurrection and repeatedly killing and resurrecting Elpuri and collecting the dropped heads, each worth 2000p.
 'G'oing on the the ostrich landing site and interrupting a banana grower may sometimes make New Attnam hostile.
 The player often becomes burdened, stressed or overloaded when he eats big corpses.
+It is possible to chat with fainted creatures.

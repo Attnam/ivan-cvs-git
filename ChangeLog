@@ -9,6 +9,12 @@ is also provided AS IS and is probably completely unreadable.
 
 April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Setting the default name is now possible from conf
+	* This default is initialized to Kenny
+	* Puppies now have more replies
+
+April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Extremely powerful kickers like adamant golems can now kick down walls
 	* It is now possible to break lanterns on walls by kicking them
 	* The faster monster now gets a 25% bonus when calculating relative danger,

@@ -20,6 +20,7 @@
 #endif
 
 std::string configuration::DefaultName;
+std::string configuration::DefaultPetName = "Kenny";
 ushort configuration::AutoSaveInterval = 100;
 ushort configuration::Contrast = 100;
 bool configuration::AutoDropLeftOvers = true;
@@ -40,6 +41,7 @@ void configuration::Save()
     return;
 
   SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
+  SaveFile << "DefaultPetName = \"" << DefaultPetName << "\";\n";
   SaveFile << "AutoSaveInterval = " << AutoSaveInterval << ";\n";
   SaveFile << "Contrast = " << Contrast << ";\n";
   SaveFile << "AutoDropLeftOvers = " << AutoDropLeftOvers << ";\n";
@@ -66,6 +68,12 @@ void configuration::Load()
 	{
 	  SaveFile.ReadWord();
 	  SetDefaultName(SaveFile.ReadWord());
+	}
+
+      if(Word == "DefaultPetName")
+	{
+	  SaveFile.ReadWord();
+	  SetDefaultPetName(SaveFile.ReadWord());
 	}
 
       if(Word == "AutoSaveInterval")
@@ -140,6 +148,7 @@ void configuration::ShowConfigScreen()
 
       List.Empty();
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHT_GRAY);
+      List.AddEntry(std::string("Starting pet's default name:            ") + (DefaultPetName.length() ? DefaultPetName : "-"), LIGHT_GRAY);
 
       if(AutoSaveInterval)
 	List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turn" + (AutoSaveInterval != 1 ? "s" : ""), LIGHT_GRAY);
@@ -213,6 +222,14 @@ void configuration::SetDefaultName(const std::string& What)
     DefaultName = What;
   else
     DefaultName.resize(0);
+}
+
+void configuration::SetDefaultPetName(const std::string& What)
+{
+  if(What.length())
+    DefaultPetName = What;
+  else
+    DefaultPetName.resize(0);
 }
 
 void configuration::SetAutoSaveInterval(long What)

@@ -245,6 +245,7 @@ bool game::Init(const std::string& Name)
 	character* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+	Doggie->SetAssignedName(configuration::GetDefaultPetName());
 
 	/*for(ushort c = 1; c < protocontainer<material>::GetProtoAmount(); ++c)
 	  {

@@ -1290,7 +1290,7 @@ dog
 	TotalVolume = 20000;
 	TorsoBitmapPos = 240, 0;
 	HostileReplies == "@Dd barks in fury.";
-	FriendlyReplies == "@Dd barks happily.";
+	/* FriendlyReplies overridden */
 	TotalSize = 70;
 	ConsumeFlags = CT_FRUIT|CT_MEAT|CT_LIQUID|CT_PROCESSED|CT_BONE;
 	SkinColor = rgb16(111, 74, 37);
@@ -1304,6 +1304,7 @@ dog
 	FleshMaterial = DOG_FLESH;
 	AttachedGod = SILVA;
 	Alias == "dog";
+	DeathMessage = "@Dd is killed.";
 }
 
 spider

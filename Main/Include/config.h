@@ -41,9 +41,12 @@ class configuration
   static ulong ApplyContrastTo(ulong);
   static void SetLookZoom(bool What) { LookZoom = What; }
   static bool GetLookZoom() { return LookZoom; }
+  static const std::string& GetDefaultPetName() { return DefaultPetName; }
+  static void SetDefaultPetName(const std::string&);
  private:
   static void ContrastHandler(long);
   static std::string DefaultName;
+  static std::string DefaultPetName;
   static ushort AutoSaveInterval;
   static ushort Contrast;
   static bool AutoDropLeftOvers;
