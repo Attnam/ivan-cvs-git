@@ -30,7 +30,7 @@ time_t time::TimeDifference(time_t A, time_t B)
   return A - B;
 }
 
-festring time::VerbalizeAsTimeSpent(time_t)
+festring time::VerbalizeAsTimeSpent(time_t A)
 {
   return "mur";
 }
