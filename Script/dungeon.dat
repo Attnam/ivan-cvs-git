@@ -456,41 +456,31 @@ Dungeon 1;
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=hunter;
-			Times=100;
+			Times=10;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=polarbear;
-			Times=50;
+			Times=5;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=farmer;
-			Times=50;
+			Times=5;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
 		{
 			Character=housewife;
-			Times=50;
+			Times=5;
 		}
 
 		Square, Pos 30,61;
 		{
 			IsWorldMapEntry=true;
 		}
-
-		/*Square, Pos 30,60;
-		{
-			Character=angel(silva);
-		}
-
-		Square, Pos 31,60;
-		{
-			Character=angel(scabies);
-		}*/
 	
 		Room 0;
 		{

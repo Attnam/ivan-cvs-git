@@ -73,8 +73,7 @@
 #define POISONED 512
 #define TELEPORT 1024 /* Teleports every now and then */
 #define POLYMORPH 2048 /* Polymorph randomly every now and then */
-#define TELEPORT_CONTROL 4096 
-
+#define TELEPORT_CONTROL 4096
 
 #define TORSO 1
 #define HEAD 2

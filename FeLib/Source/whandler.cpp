@@ -147,9 +147,9 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	if(wParam == VK_LEFT || wParam == VK_NUMPAD4) Key = KEYLEFT;
 	if(wParam == VK_HOME || wParam == VK_NUMPAD7) Key = KEYHOME;
 	if(wParam == VK_UP || wParam == VK_NUMPAD8) Key = KEYUP;
-	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEYPAGEUP;	  // page up! Believe it, or not!
+	if(wParam == VK_PRIOR || wParam == VK_NUMPAD9) Key = KEYPAGEUP;
 	if(wParam == VK_RIGHT || wParam == VK_NUMPAD6) Key = KEYRIGHT;
-	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEYPAGEDOWN;  // page down! Believe it, or not!
+	if(wParam == VK_NEXT || wParam == VK_NUMPAD3) Key = KEYPAGEDOWN;
 	if(wParam == VK_DOWN || wParam == VK_NUMPAD2) Key = KEYDOWN;
 	if(wParam == VK_END || wParam == VK_NUMPAD1) Key = KEYEND;
 	if(wParam == VK_NUMPAD5) Key = '.';

@@ -278,11 +278,7 @@ void lsquare::NoxifyEmitter(vector2d Dir)
 		DescriptionChanged = true;
 
 		if(GetLastSeen() == game::GetLOSTurns())
-		  {
-		    game::SendLOSUpdateRequest();
-		    /*UpdateMemorized();
-		    UpdateMemorizedDescription();*/
-		  }
+		  game::SendLOSUpdateRequest();
 	      }
 	  }
 
@@ -385,13 +381,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		    DescriptionChanged = true;
 
 		    if(GetLastSeen() == game::GetLOSTurns())
-		      {
-			game::SendLOSUpdateRequest();
-			/* Bug bug bug! */
-
-			/*UpdateMemorized();
-			UpdateMemorizedDescription();*/
-		      }
+		      game::SendLOSUpdateRequest();
 		  }
 	      }
 	    else
@@ -423,11 +413,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 		    DescriptionChanged = true;
 
 		    if(GetLastSeen() == game::GetLOSTurns())
-		      {
-			game::SendLOSUpdateRequest();
-			/*UpdateMemorized();
-			UpdateMemorizedDescription();*/
-		      }
+		      game::SendLOSUpdateRequest();
 		  }
 	      }
 	  }
@@ -463,11 +449,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 	      MemorizedUpdateRequested = true;
 
 	      if(GetLastSeen() == game::GetLOSTurns())
-		{
-		  game::SendLOSUpdateRequest();
-		  /*UpdateMemorized();
-		  UpdateMemorizedDescription();*/
-		}
+		game::SendLOSUpdateRequest();
 	    }
 	}
       else
@@ -994,10 +976,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
       CalculateLuminance();
 
       if(GetLastSeen() == game::GetLOSTurns())
-	{
-	  game::SendLOSUpdateRequest();
-	  //GetAreaUnder()->UpdateLOS();
-	}
+	game::SendLOSUpdateRequest();
     }
 }
 

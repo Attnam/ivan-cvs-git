@@ -78,12 +78,6 @@ class ABSTRACT_CHARACTER
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  /*virtual float GetRightAttackStrength() const;
-  virtual float GetLeftAttackStrength() const;
-  virtual float GetRightToHitValue() const;
-  virtual float GetLeftToHitValue() const;
-  virtual long GetRightAPCost() const;
-  virtual long GetLeftAPCost() const;*/
   virtual std::string EquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
@@ -140,7 +134,7 @@ class ABSTRACT_CHARACTER
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
   virtual void AddAttackInfo(felist&) const;
-  virtual void CalculateAttackInfo();
+  virtual void CalculateBattleInfo();
   virtual leg* GetKickLeg() const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -201,7 +195,7 @@ class ABSTRACT_CHARACTER
   virtual bool LowerStats();
   virtual ushort GetCarryingStrength() const { return GetAttribute(LEGSTRENGTH) << 1; }
   virtual void AddAttackInfo(felist&) const;
-  virtual void CalculateAttackInfo();
+  virtual void CalculateBattleInfo();
   virtual void CalculateUnarmedAttackInfo();
   virtual void CalculateKickAttackInfo();
   virtual void CalculateBiteAttackInfo();

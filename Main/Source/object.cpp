@@ -77,13 +77,6 @@ void object::InitMaterial(material*& Material, material* NewMaterial, ulong Defa
 
       Material->SetMotherEntity(this);
       SignalEmitationIncrease(Material->GetEmitation());
-      //SignalVolumeAndWeightChange(); // this could be optimized
-
-      /*EditVolume(NewMaterial->GetVolume());
-      EditWeight(NewMaterial->GetWeight());*/
-
-      /*if(NewMaterial->GetEmitation() > Emitation)
-	Emitation = NewMaterial->GetEmitation();*/
     }
 }
 
@@ -116,22 +109,10 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
       NewMaterial->SetMotherEntity(this);
       SignalEmitationIncrease(NewMaterial->GetEmitation());
-      /*EditVolume(NewMaterial->GetVolume());
-      EditWeight(NewMaterial->GetWeight());*/
-
-      /*if(NewMaterial->GetEmitation() > Emitation)
-	Emitation = NewMaterial->GetEmitation();*/
     }
 
   if(OldMaterial)
     SignalEmitationDecrease(OldMaterial->GetEmitation());
-    //{
-      /*EditVolume(-OldMaterial->GetVolume());
-      EditWeight(-OldMaterial->GetWeight());*/
-
-      /*if(OldMaterial->GetEmitation() == Emitation)
-	CalculateEmitation();*/
-    //}
 
   SignalVolumeAndWeightChange();
   UpdatePictures();
@@ -273,8 +254,6 @@ void object::LoadMaterial(inputfile& SaveFile, material*& Material)
   if(Material)
     {
       Material->SetMotherEntity(this);
-      /*Volume += Material->GetVolume();
-      Weight += Material->GetWeight();*/
 
       if(Material->GetEmitation() > Emitation)
 	Emitation = Material->GetEmitation();

@@ -324,7 +324,6 @@ item* itemprototype::CloneAndLoad(inputfile& SaveFile) const
 
 void item::LoadDataBaseStats()
 {
-  //SetEmitation(GetBaseEmitation());
   SetSize(GetDefaultSize());
 }
 

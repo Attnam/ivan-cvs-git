@@ -261,7 +261,6 @@ void level::Generate()
 	{
 	  Map[x][y] = new lsquare(this, vector2d(x, y));
 	  Map[x][y]->SetLTerrain(FillGTerrain[Counter], FillOTerrain[Counter]);
-	  //Map[x][y]->SetLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
 	}
     }
 

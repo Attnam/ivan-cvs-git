@@ -68,9 +68,6 @@ void stack::AddItem(item* ToBeAdded)
 
   if(GetSquareTrulyUnder())
     {
-      /*if(!game::IsInWilderness())
-	GetLSquareTrulyUnder()->SignalEmitationIncrease(ToBeAdded->GetEmitation());*/
-
       if(SquarePosition != HIDDEN)
 	{
 	  GetLSquareTrulyUnder()->SendNewDrawRequest();
@@ -99,8 +96,6 @@ void stack::FastAddItem(item* ToBeAdded)
 void stack::RemoveItem(stackiterator Iterator)
 {
   bool WasAnimated = (**Iterator)->IsAnimated();
-  /*EditVolume(-(**Iterator)->GetVolume());
-  EditWeight(-(**Iterator)->GetWeight());*/
   ushort Emit = (**Iterator)->GetEmitation();
   delete *Iterator;
   Item->erase(Iterator);
@@ -117,9 +112,6 @@ void stack::RemoveItem(stackiterator Iterator)
 
   if(GetSquareTrulyUnder())
     {
-      /*if(!game::IsInWilderness())
-	GetLSquareTrulyUnder()->SignalEmitationDecrease(IEmit);*/
-
       if(SquarePosition != HIDDEN)
 	{
 	  GetLSquareTrulyUnder()->SendNewDrawRequest();
@@ -139,8 +131,6 @@ void stack::FastRemoveItem(stackiterator Iterator)
   if(SquarePosition != HIDDEN && (**Iterator)->IsAnimated() && GetSquareTrulyUnder())
     GetSquareTrulyUnder()->DecAnimatedEntities();
 
-  /*EditVolume(-(**Iterator)->GetVolume());
-  EditWeight(-(**Iterator)->GetWeight());*/
   ushort Emit = (**Iterator)->GetEmitation();
   delete *Iterator;
   Item->erase(Iterator);
@@ -152,12 +142,6 @@ void stack::Clean(bool LastClean)
 {
   for(stackiterator i = Item->begin(); i != Item->end(); ++i)
     {
-      /*if(EditVolumes)
-	{
-	  EditVolume(-(**i)->GetVolume());
-	  EditWeight(-(**i)->GetWeight());
-	}*/
-
       if(SquarePosition != HIDDEN && (**i)->IsAnimated() && GetSquareTrulyUnder())
 	GetSquareTrulyUnder()->DecAnimatedEntities();
 
@@ -227,14 +211,9 @@ void stack::Load(inputfile& SaveFile)
     {
       (*i)->SetStackIterator(i);
       (*i)->SetMotherStack(this);
-      /*EditVolume((**i)->GetVolume());
-      EditWeight((**i)->GetWeight());*/
       Volume += (**i)->GetVolume();
       Weight += (**i)->GetWeight();
     }
-
-  /*CalculateVolume();
-  CalculateWeight();*/
 }
 
 vector2d stack::GetPos() const
@@ -560,22 +539,6 @@ void stack::MoveAll(stack* ToStack)
   while(GetItems())
     MoveItem(GetBottomSlot(), ToStack);
 }
-
-/*void stack::EditVolume(long What)
-{
-  Volume += What;
-
-  if(GetMotherEntity())
-    GetMotherEntity()->EditVolume(What);
-}
-
-void stack::EditWeight(long What)
-{
-  Weight += What;
-
-  if(GetMotherEntity())
-    GetMotherEntity()->EditWeight(What);
-}*/
 
 ushort stack::GetVisibleItems() const
 {

@@ -273,10 +273,7 @@ void door::MakeWalkable()
   GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
-    {
-      game::SendLOSUpdateRequest();
-      //game::GetCurrentArea()->UpdateLOS();
-    }
+    game::SendLOSUpdateRequest();
 
   ActivateBoobyTrap();
 }
@@ -293,10 +290,7 @@ void door::MakeNotWalkable()
   GetLSquareUnder()->CalculateLuminance();
 
   if(GetLSquareUnder()->GetLastSeen() == game::GetLOSTurns())
-    {
-      game::SendLOSUpdateRequest();
-      //game::GetCurrentArea()->UpdateLOS();
-    }
+    game::SendLOSUpdateRequest();
 }
 
 void altar::StepOn(character* Stepper)

@@ -350,90 +350,6 @@ item* humanoid::GetSecondaryWielded() const
     return 0;
 }
 
-/*float humanoid::GetRightAttackStrength() const
-{
-  if(GetRightArm())
-    if(GetRightArm()->GetWielded())
-      return GetRightArm()->GetWieldedStrength();
-    else
-      if(GetLeftArm() && GetLeftArm()->GetWielded() && !GetLeftArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetRightArm()->GetUnarmedStrength();
-  else
-    return 0;
-}
-
-float humanoid::GetLeftAttackStrength() const
-{
-  if(GetLeftArm())
-    if(GetLeftArm()->GetWielded())
-      return GetLeftArm()->GetWieldedStrength();
-    else
-      if(GetRightArm() && GetRightArm()->GetWielded() && !GetRightArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetLeftArm()->GetUnarmedStrength();
-  else
-    return 0;
-}
-
-float humanoid::GetRightToHitValue() const
-{
-  if(GetRightArm())
-    if(GetRightArm()->GetWielded())
-      return GetRightArm()->GetWieldedToHitValue();
-    else
-      if(GetLeftArm() && GetLeftArm()->GetWielded() && !GetLeftArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetRightArm()->GetUnarmedToHitValue();
-  else
-    return 0;
-}
-
-float humanoid::GetLeftToHitValue() const
-{
- if(GetLeftArm())
-    if(GetLeftArm()->GetWielded())
-      return GetLeftArm()->GetWieldedToHitValue();
-    else
-      if(GetRightArm() && GetRightArm()->GetWielded() && !GetRightArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetLeftArm()->GetUnarmedToHitValue();
-  else
-    return 0;
-}
-
-long humanoid::GetRightAPCost() const
-{
-  if(GetRightArm())
-    if(GetRightArm()->GetWielded())
-      return GetRightArm()->GetWieldedAPCost();
-    else
-      if(GetLeftArm() && GetLeftArm()->GetWielded() && !GetLeftArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetRightArm()->GetUnarmedAPCost();
-  else
-    return 0;
-}
-
-long humanoid::GetLeftAPCost() const
-{
- if(GetLeftArm())
-    if(GetLeftArm()->GetWielded())
-      return GetLeftArm()->GetWieldedAPCost();
-    else
-      if(GetRightArm() && GetRightArm()->GetWielded() && !GetRightArm()->GetWielded()->IsShield(this))
-	return 0;
-      else
-	return GetLeftArm()->GetUnarmedAPCost();
-  else
-    return 0;
-}*/
-
 bool humanoid::Hit(character* Enemy)
 {
   if(IsPlayer() && GetTeam()->GetRelation(Enemy->GetTeam()) != HOSTILE && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
@@ -2520,11 +2436,6 @@ void nonhumanoid::Bite(character* Enemy)
 
 void humanoid::Kick(lsquare* Square)
 {
-  /* This function must not be called if a leg is missing */
-
-  /*if(GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength())
-    {*/
-
   leg* KickLeg = GetKickLeg();
   EditAP(KickLeg->GetKickAPCost());
   Square->BeKicked(this, KickLeg->GetKickStrength(), KickLeg->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
@@ -2536,21 +2447,6 @@ void humanoid::Kick(lsquare* Square)
       KickLeg->EditExperience(LEGSTRENGTH, 25);
       KickLeg->EditExperience(AGILITY, 50);
     }
-
-    /*}
-  else
-    {
-      EditAP(GetLeftLeg()->GetKickAPCost());
-      Square->BeKicked(this, GetLeftLeg()->GetKickStrength(), GetLeftLeg()->GetKickToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % GetCriticalModifier()));
-
-      / Leg might be destroyed in the process, check needed /
-
-      if(GetLeftLeg())
-	{
-	  GetLeftLeg()->EditExperience(LEGSTRENGTH, 25);
-	  GetLeftLeg()->EditExperience(AGILITY, 50);
-	}
-    }*/
 
   EditNP(-50);
 
@@ -3217,7 +3113,7 @@ void humanoid::SignalEquipmentAdd(ushort EquipmentIndex)
 	}
     }
 
-  CalculateAttackInfo();
+  CalculateBattleInfo();
 }
 
 void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
@@ -3251,7 +3147,7 @@ void humanoid::SignalEquipmentRemoval(ushort EquipmentIndex)
       SetCurrentLeftSingleWeaponSkill(0);
     }
 
-  CalculateAttackInfo();
+  CalculateBattleInfo();
 }
 
 void humanoid::CharacterSpeciality()
@@ -3618,8 +3514,10 @@ void nonhumanoid::AddAttackInfo(felist& List) const
     }
 }
 
-void humanoid::CalculateAttackInfo()
+void humanoid::CalculateBattleInfo()
 {
+  CalculateDodgeValue();
+
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
@@ -3629,8 +3527,9 @@ void humanoid::CalculateAttackInfo()
       }
 }
 
-void nonhumanoid::CalculateAttackInfo()
+void nonhumanoid::CalculateBattleInfo()
 {
+  CalculateDodgeValue();
   CalculateUnarmedAttackInfo();
   CalculateKickAttackInfo();
   CalculateBiteAttackInfo();
@@ -3661,3 +3560,4 @@ leg* humanoid::GetKickLeg() const
 {
   return GetRightLeg()->GetKickStrength() >= GetLeftLeg()->GetKickStrength() ? static_cast<leg*>(GetRightLeg()) : static_cast<leg*>(GetLeftLeg());
 }
+

@@ -12,10 +12,6 @@ ushort sweaponskill::LevelMap[] = { 0, 5, 10, 20, 50, 100, 200, 500, 1000, 2000,
 ulong sweaponskill::UnuseTickMap[] = { 100000, 100000, 40000, 30000, 20000, 15000, 10000, 7500, 5000, 2500, 2000 };
 ushort sweaponskill::UnusePenaltyMap[] = { 5, 5, 5, 15, 25, 50, 150, 250, 500, 1000, 1500 };
 
-weaponskill::weaponskill() : Level(0), Hits(0), HitCounter(0)
-{
-}
-
 void weaponskill::Save(outputfile& SaveFile) const
 {
   SaveFile << Level << Hits << HitCounter;
@@ -24,22 +20,6 @@ void weaponskill::Save(outputfile& SaveFile) const
 void weaponskill::Load(inputfile& SaveFile)
 {
   SaveFile >> Level >> Hits >> HitCounter;
-}
-
-bool weaponskill::Tick()
-{
-  ++HitCounter;
-  bool LevelChange = false;
-
-  while(HitCounter >= GetUnuseTickMap(Level))
-    {
-      HitCounter -= GetUnuseTickMap(Level);
-
-      if(SubHit(GetUnusePenaltyMap(Level)))
-	LevelChange = true;
-    }
-
-  return LevelChange;
 }
 
 bool weaponskill::AddHit()
@@ -70,10 +50,7 @@ bool weaponskill::AddHit(ushort AddHits)
   while(Hits >= GetLevelMap(Level + 1))
     ++Level;
 
-  if(Level != OldLevel)
-    return true;
-  else
-    return false;
+  return Level != OldLevel;
 }
 
 bool weaponskill::SubHit()
@@ -104,10 +81,7 @@ bool weaponskill::SubHit(ushort SubHits)
   while(Level && Hits < GetLevelMap(Level))
     --Level;
 
-  if(Level != OldLevel)
-    return true;
-  else
-    return false;
+  return Level != OldLevel;
 }
 
 void gweaponskill::AddLevelUpMessage() const
@@ -140,4 +114,36 @@ void sweaponskill::Load(inputfile& SaveFile)
 {
   weaponskill::Load(SaveFile);
   SaveFile >> ID;
+}
+
+/*
+ * This function is could as well be weaponskill's function,
+ * but that would mean using a slow GetUnuseTickMap() virtual function
+ * 17 times per tick per humanoid which we don't want.
+ */
+
+bool gweaponskill::Tick()
+{
+  if(HitCounter++ >= UnuseTickMap[Level])
+    {
+      HitCounter -= UnuseTickMap[Level];
+
+      if(SubHit(UnusePenaltyMap[Level]))
+	return true;
+    }
+
+  return false;
+}
+
+bool sweaponskill::Tick()
+{
+  if(HitCounter++ >= UnuseTickMap[Level])
+    {
+      HitCounter -= UnuseTickMap[Level];
+
+      if(SubHit(UnusePenaltyMap[Level]))
+	return true;
+    }
+
+  return false;
 }

@@ -28,12 +28,12 @@ class id
   virtual const std::string& GetNameSingular() const = 0;
   virtual void AddNameSingular(std::string&, bool) const;
   virtual const std::string& GetNamePlural() const = 0;
-  virtual const std::string& GetArticle() const = 0;// { return "a"; }
+  virtual const std::string& GetArticle() const = 0;
   virtual bool AddAdjective(std::string&, bool) const;
-  virtual const std::string& GetAdjective() const = 0; //{ return ""; }
-  virtual const std::string& GetAdjectiveArticle() const = 0;// { return "a"; }
+  virtual const std::string& GetAdjective() const = 0;
+  virtual const std::string& GetAdjectiveArticle() const = 0;
   virtual bool AddMaterialDescription(std::string&, bool) const = 0;
-  virtual const std::string& GetPostFix() const = 0; //{ return ""; }
+  virtual const std::string& GetPostFix() const = 0;
   virtual void AddPostFix(std::string&) const;
   virtual uchar GetArticleMode() const { return NORMALARTICLE; }
   virtual bool ShowMaterial() const { return false; }

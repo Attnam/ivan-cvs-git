@@ -1,3 +1,9 @@
+July 23 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed some obsolete and commented code
+	* Dodge value is now cached
+	* Optimized weaponskills and regeneration a bit
+
 July 22 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* new Fountain effect: randomly activates a mode temporarily or permanently depending on luck.
@@ -11,7 +17,7 @@ July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* BurdenState and all non-trivial attack information is now cached
-	* Some recently added bugs in TemporaryStateIsActivated(), EquipmentStateIsActivated()
+	* Some recently added bugs in TemporaryStateIsActivated(), EquipmentStateIsActivated(),
 	  IsUsingArms(), IsUsingLegs() and IsUsingHead() fixed
 	* Corrected a fatal bug in the interlevel travel code born due to Hex's search & replace
 	* Fixed some odd block messages

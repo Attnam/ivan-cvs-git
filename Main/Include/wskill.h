@@ -15,8 +15,7 @@ class inputfile;
 class weaponskill
 {
  public:
-  weaponskill();
-  bool Tick();
+  weaponskill() : Level(0), Hits(0), HitCounter(0) { }
   uchar GetLevel() const { return Level; }
   ulong GetHits() const { return Hits; }
   ulong GetHitCounter() const { return HitCounter; }
@@ -24,23 +23,22 @@ class weaponskill
   bool AddHit(ushort);
   bool SubHit();
   bool SubHit(ushort);
-  virtual ushort GetLevelMap(ushort Index) const = 0;
-  virtual ulong GetUnuseTickMap(ushort Index) const = 0;
-  virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  void SetHitMultiplier(float What) { HitMultiplier = What; }
-  float GetHitMultiplier() const { return HitMultiplier; }
+  virtual ushort GetLevelMap(ushort) const = 0;
+  virtual ulong GetUnuseTickMap(ushort) const = 0;
+  virtual ushort GetUnusePenaltyMap(ushort) const = 0;
  protected:
   uchar Level;
-  ushort Hits, HitCounter;
-  float HitMultiplier;
+  ushort Hits;
+  ushort HitCounter;
 };
 
 class gweaponskill : public weaponskill
 {
  public:
   gweaponskill(uchar Index) : Index(Index) { }
+  bool Tick();
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
@@ -72,7 +70,7 @@ inline inputfile& operator>>(inputfile& SaveFile, gweaponskill* WeaponSkill)
 class sweaponskill : public weaponskill
 {
  public:
-  sweaponskill() { }
+  bool Tick();
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
   ulong GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }

@@ -777,7 +777,6 @@ class ITEM
   virtual ushort GetEquipmentSlots() const { return 2; }
   ulong GetBaseBiteStrength() const { return BaseBiteStrength; }
   void SetBaseBiteStrength(ulong What) { BaseBiteStrength = What; }
-  //void CalculateBiteToHitValue();
   virtual void CalculateAttackStrength();
   virtual void CalculateAPCost();
  protected:
@@ -1025,17 +1024,12 @@ class ITEM
  public:
   virtual ~corpse();
   virtual bool Consume(character*, long);
-  //virtual ushort GetEmitation() const;
   virtual bool IsConsumable(const character*) const;
   virtual short GetOfferValue(char) const;
   virtual float GetWeaponStrength() const;
   virtual bool IsBadFoodForAI(character*) const;
   virtual ushort GetStrengthValue() const;
   virtual void Be() { }
-  /*virtual void SetMainMaterial(material*);
-  virtual void ChangeMainMaterial(material*);
-  virtual void SetContainedMaterial(material*);
-  virtual void ChangeContainedMaterial(material*);*/
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual character* GetDeceased() const { return Deceased; }
   virtual void SetDeceased(character*);

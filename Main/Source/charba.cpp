@@ -1238,7 +1238,7 @@ void character::ApplyExperience(bool Edited)
     }
 
   if(Edited)
-    CalculateAttackInfo();
+    CalculateBattleInfo();
 }
 
 bool character::HasHeadOfElpuri() const
@@ -1345,7 +1345,7 @@ void character::CalculateBurdenState()
     BurdenState = UNBURDENED;
 
   if(!Initializing && BurdenState != OldBurdenState)
-    CalculateAttackInfo();
+    CalculateBattleInfo();
 }
 
 bool character::Dip()
@@ -4094,10 +4094,12 @@ void character::DrawPanel(bool AnimationDraw) const
     }
 }
 
-float character::GetDodgeValue() const
+void character::CalculateDodgeValue()
 {
-  float DV = float(GetMoveEase()) * GetAttribute(AGILITY) / (sqrt(GetSize()) * 20);
-  return DV > 1 ? DV : 1;
+  DodgeValue = float(GetMoveEase()) * GetAttribute(AGILITY) / (sqrt(GetSize()) * 20);
+
+  if(DodgeValue < 1)
+    DodgeValue = 1;
 }
 
 void character::VirtualConstructor(bool Load)
@@ -4934,7 +4936,7 @@ void character::PrintEndTeleportMessage() const
 
 void character::TeleportHandler()
 {
-  if(!(RAND() % 1500)) // What the elpuri is this? HEX! It's always false!
+  if(!(RAND() % 1500))
     TeleportRandomly();
 }
 
@@ -5134,7 +5136,7 @@ void character::CalculateAll()
   CalculateHP();
   CalculateBodyPartMaxHPs();
   CalculateBurdenState();
-  CalculateAttackInfo();
+  CalculateBattleInfo();
 }
 
 void character::CalculateHP()
@@ -5177,7 +5179,7 @@ bool character::EditAttribute(ushort Identifier, short Value)
 	  else if(Identifier == PERCEPTION && IsPlayer())
 	    game::SendLOSUpdateRequest();
 
-	  CalculateAttackInfo();
+	  CalculateBattleInfo();
 	}
 
       return true;

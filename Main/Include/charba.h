@@ -219,7 +219,6 @@ class character : public entity, public id
   virtual long GetScore() const;
   long GetAP() const { return AP; }
   long GetNP() const { return NP; }
-  //virtual short GetHP() const;
   virtual stack* GetStack() const { return Stack; }
   virtual uchar GetBurdenState() const { return BurdenState; }
   virtual bool MakesBurdened(ulong What) const { return ulong(GetCarryingStrength()) * 2500 < What; }
@@ -276,9 +275,8 @@ class character : public entity, public id
   virtual bool RestUntilHealed();
   virtual bool OutlineCharacters();
   virtual bool OutlineItems();
-  //virtual short GetMaxHP() const;
   virtual uchar GetMoveEase() const;
-  virtual float GetDodgeValue() const;
+  float GetDodgeValue() const { return DodgeValue; }
   virtual bool RaiseGodRelations();
   virtual bool LowerGodRelations();
   virtual bool GainDivineKnowledge();
@@ -350,8 +348,8 @@ class character : public entity, public id
   virtual uchar GetHungerState() const;
   virtual bool ConsumeItem(item*);
   virtual bool CanConsume(material*) const;
-  virtual action* GetAction() const { return Action; }
-  virtual void SetAction(action* What) { Action = What; }
+  action* GetAction() const { return Action; }
+  void SetAction(action* What) { Action = What; }
   virtual void SwitchToDig(item*, vector2d) { }
   virtual void SetRightWielded(item*) { }
   virtual void SetLeftWielded(item*) { }
@@ -632,8 +630,9 @@ class character : public entity, public id
   bool ActivateRandomState(ushort);
   ushort GetRandomNotActivatedState();
   bool GainRandomInstric();
-  virtual void CalculateAttackInfo() = 0;
+  virtual void CalculateBattleInfo() = 0;
   void CalculateBurdenState();
+  void CalculateDodgeValue();
  protected:
   virtual void SpecialTurnHandler() { }
   virtual uchar GetAllowedWeaponSkillCategories() const { return MARTIAL_SKILL_CATEGORIES; }
@@ -728,6 +727,7 @@ class character : public entity, public id
   short MaxHP;
   bool Initializing;
   uchar BurdenState;
+  float DodgeValue;
 };
 
 #ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DEFINITIONS__

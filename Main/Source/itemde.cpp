@@ -1029,26 +1029,6 @@ ushort bodypart::GetStrengthValue() const
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
 }
 
-/*short bodypart::GetMaxHP() const
-{
-  if(GetMaster())
-    {
-      short HP = 0;
-
-      if(GetMainMaterial()->IsAlive())
-	HP = GetBodyPartVolume() * GetMaster()->GetAttribute(ENDURANCE) / 10000;
-      else
-	HP = GetBodyPartVolume() * GetMainMaterial()->GetStrengthValue() / 10000;
-
-      if(HP < 1)
-	HP = 1;
-
-      return HP;
-    }
-  else
-    return 0;
-}*/
-
 ushort head::GetTotalResistance(uchar Type) const
 {
   if(GetMaster())
@@ -1138,18 +1118,6 @@ ushort leg::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-/*void bodypart::LoadGearSlot(inputfile& SaveFile, gearslot& GearSlot)
-{
-  SaveFile >> GearSlot;*/
-
-  /*if(*GearSlot)
-    {
-      EditVolume(GearSlot->GetVolume());
-      EditWeight(GearSlot->GetWeight());
-      EditCarriedWeight(GearSlot->GetWeight());
-    }*/
-//}
-
 void head::Save(outputfile& SaveFile) const
 {
   bodypart::Save(SaveFile);
@@ -1162,8 +1130,6 @@ void head::Load(inputfile& SaveFile)
   bodypart::Load(SaveFile);
   SaveFile >> BaseBiteStrength;
   SaveFile >> HelmetSlot >> AmuletSlot;
-  /*LoadGearSlot(SaveFile, HelmetSlot);
-  LoadGearSlot(SaveFile, AmuletSlot);*/
 }
 
 void humanoidtorso::Save(outputfile& SaveFile) const
@@ -1176,9 +1142,6 @@ void humanoidtorso::Load(inputfile& SaveFile)
 {
   bodypart::Load(SaveFile);
   SaveFile >> BodyArmorSlot >> CloakSlot >> BeltSlot;
-  /*LoadGearSlot(SaveFile, BodyArmorSlot);
-  LoadGearSlot(SaveFile, CloakSlot);
-  LoadGearSlot(SaveFile, BeltSlot);*/
 }
 
 void arm::Save(outputfile& SaveFile) const
@@ -1195,9 +1158,6 @@ void arm::Load(inputfile& SaveFile)
   SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
-  /*LoadGearSlot(SaveFile, WieldedSlot);
-  LoadGearSlot(SaveFile, GauntletSlot);
-  LoadGearSlot(SaveFile, RingSlot);*/
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -1212,7 +1172,6 @@ void leg::Load(inputfile& SaveFile)
   bodypart::Load(SaveFile);
   SaveFile >> BaseKickStrength >> Strength >> StrengthExperience >> Agility >> AgilityExperience;
   SaveFile >> BootSlot;
-  //LoadGearSlot(SaveFile, BootSlot);
 }
 
 bool torso::ReceiveDamage(character* Damager, short Damage, uchar Type)
@@ -1537,11 +1496,6 @@ ushort belt::GetFormModifier() const
   return 50 * GetMainMaterial()->GetFlexibility();
 }
 
-/*character* bodypart::GetMaster() const
-{
-  return Slot && Slot->IsCharacterSlot() ? static_cast<characterslot*>(Slot)->GetMaster() : 0;
-}*/
-
 bool pickaxe::IsAppliable(const character* Who) const
 {
   return Who->CanWield();
@@ -1570,8 +1524,6 @@ void corpse::Load(inputfile& SaveFile)
   item::Load(SaveFile);
   SaveFile >> Deceased;
   Deceased->SetMotherEntity(this);
-  /*EditVolume(Deceased->GetVolume());
-  EditWeight(Deceased->GetWeight());*/
 }
 
 void corpse::AddPostFix(std::string& String) const
@@ -1591,11 +1543,6 @@ void corpse::GenerateLeftOvers(character* Eater)
   RemoveFromSlot();
   SendToHell();
 }
-
-/*ushort corpse::GetEmitation() const
-{
-  return GetDeceased()->GetEmitation();
-}*/
 
 bool corpse::IsConsumable(const character* Eater) const
 {
@@ -1642,26 +1589,6 @@ corpse::~corpse()
     GetDeceased()->SendToHell();
 }
 
-/*void corpse::SetMainMaterial(material* NewMaterial)
-{
-  GetDeceased()->SetMainMaterial(NewMaterial);
-}
-
-void corpse::ChangeMainMaterial(material* NewMaterial)
-{
-  GetDeceased()->ChangeMainMaterial(NewMaterial);
-}
-
-void corpse::SetContainedMaterial(material* NewMaterial)
-{
-  GetDeceased()->SetContainedMaterial(NewMaterial);
-}
-
-void corpse::ChangeContainedMaterial(material* NewMaterial)
-{
-  GetDeceased()->ChangeContainedMaterial(NewMaterial);
-}*/
-
 ushort corpse::GetMaterialColorA(ushort) const
 {
   return GetDeceased()->GetTorso()->GetMainMaterial()->GetColor();
@@ -1696,33 +1623,36 @@ void corpse::SetDeceased(character* What)
 {
   Deceased = What;
   Deceased->SetMotherEntity(this);
-  /*EditVolume(Deceased->GetVolume());
-  EditWeight(Deceased->GetWeight());*/
   SignalVolumeAndWeightChange();
   UpdatePictures();
 }
 
 void bodypart::Regenerate()
 {
-  if(GetMainMaterial()->IsAlive())
+  if(MainMaterial->IsAlive())
     {
       ulong RegenerationBonus = ulong(MaxHP) * Master->GetAttribute(ENDURANCE);
 
       if(Master->GetAction() && GetMaster()->GetAction()->GetRestRegenerationBonus())
-	RegenerationBonus *= GetMaster()->GetSquareUnder()->GetRestModifier();
+	RegenerationBonus *= Master->GetSquareUnder()->GetRestModifier();
 
       RegenerationCounter += RegenerationBonus;
+      bool Increased = false;
 
       while(RegenerationCounter > 100000)
 	{
 	  if(HP < MaxHP)
 	    {
-	      EditHP(1);
+	      ++HP;
 	      Master->EditExperience(ENDURANCE, 100);
+	      Increased = true;
 	    }
 
 	  RegenerationCounter -= 100000;
 	}
+
+      if(Increased)
+	Master->CalculateHP();
     }
 }
 
@@ -2703,61 +2633,6 @@ const std::string& key::GetAdjective() const
 {
   return game::GetLockDescription(LockType);
 }
-
-/*ushort head::GetEmitation() const
-{
-  ushort Emitation = item::GetEmitation();
-
-  if(GetHelmet() && GetHelmet()->GetEmitation() > Emitation)
-    Emitation = GetHelmet()->GetEmitation();
-
-  if(GetAmulet() && GetAmulet()->GetEmitation() > Emitation)
-    Emitation = GetAmulet()->GetEmitation();
-
-  return Emitation;
-}
-
-ushort humanoidtorso::GetEmitation() const
-{
-  ushort Emitation = item::GetEmitation();
-
-  if(GetBodyArmor() && GetBodyArmor()->GetEmitation() > Emitation)
-    Emitation = GetBodyArmor()->GetEmitation();
-
-  if(GetCloak() && GetCloak()->GetEmitation() > Emitation)
-    Emitation = GetCloak()->GetEmitation();
-
-  if(GetBelt() && GetBelt()->GetEmitation() > Emitation)
-    Emitation = GetBelt()->GetEmitation();
-
-  return Emitation;
-}
-
-ushort arm::GetEmitation() const
-{
-  ushort Emitation = item::GetEmitation();
-
-  if(GetWielded() && GetWielded()->GetEmitation() > Emitation)
-    Emitation = GetWielded()->GetEmitation();
-
-  if(GetGauntlet() && GetGauntlet()->GetEmitation() > Emitation)
-    Emitation = GetGauntlet()->GetEmitation();
-
-  if(GetRing() && GetRing()->GetEmitation() > Emitation)
-    Emitation = GetRing()->GetEmitation();
-
-  return Emitation;
-}
-
-ushort leg::GetEmitation() const
-{
-  ushort Emitation = item::GetEmitation();
-
-  if(GetBoot() && GetBoot()->GetEmitation() > Emitation)
-    Emitation = GetBoot()->GetEmitation();
-
-  return Emitation;
-}*/
 
 void head::InitSpecialAttributes()
 {
