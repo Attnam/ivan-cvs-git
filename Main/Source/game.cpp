@@ -708,7 +708,7 @@ long game::GodScore()
 
 float game::Difficulty()
 {
-  float Base = float(*GetCurrentLevel()->GetLevelScript()->GetBaseDifficulty() + *GetCurrentLevel()->GetLevelScript()->GetDifficultyDelta() * GetCurrent()) / 1000;
+  float Base = float(GetCurrentLevel()->GetDifficulty()) / 1000;
 
   while(true)
     {

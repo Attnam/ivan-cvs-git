@@ -555,8 +555,12 @@ datamemberbase* levelscript::GetData(const std::string& Identifier)
   ANALYZE_MEMBER(Description);
   ANALYZE_MEMBER(LOSModifier);
   ANALYZE_MEMBER(IgnoreDefaultSpecialSquares);
-  ANALYZE_MEMBER(BaseDifficulty);
+  ANALYZE_MEMBER(DifficultyBase);
   ANALYZE_MEMBER(DifficultyDelta);
+  ANALYZE_MEMBER(MonsterAmountBase);
+  ANALYZE_MEMBER(MonsterAmountDelta);
+  ANALYZE_MEMBER(MonsterGenerationIntervalBase);
+  ANALYZE_MEMBER(MonsterGenerationIntervalDelta);
   return 0;
 }
 

@@ -38,7 +38,7 @@ roomprototype::roomprototype(room* (*Cloner)(bool), const std::string& ClassId) 
   Index = protocontainer<room>::Add(this);
 }
 
-void room::DestroyTerrain(character* Who, olterrain* Destroyed)
+void room::DestroyTerrain(character* Who, olterrain*)
 {
   if(Master)
     Who->Hostility(Master);

@@ -191,7 +191,7 @@ bool petrus::HealFully(character* ToBeHealed)
   for(ushort c = 0; c < ToBeHealed->GetBodyParts(); ++c)
     if(!ToBeHealed->GetBodyPart(c))
       {
-	bodypart* BodyPart;
+	bodypart* BodyPart = 0;
 
 	for(std::list<ulong>::const_iterator i = ToBeHealed->GetOriginalBodyPartID(c).begin(); i != ToBeHealed->GetOriginalBodyPartID(c).end(); ++i)
 	  {
@@ -1745,7 +1745,7 @@ void nonhumanoid::CalculateUnarmedToHitValue()
 
 void nonhumanoid::CalculateUnarmedAPCost()
 {
-  UnarmedAPCost = Max(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(UNARMED)->GetBonus()), 100);
+  UnarmedAPCost = Max<long>(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(UNARMED)->GetBonus()), 100);
 }
 
 void nonhumanoid::CalculateKickDamage()
@@ -1760,7 +1760,7 @@ void nonhumanoid::CalculateKickToHitValue()
 
 void nonhumanoid::CalculateKickAPCost()
 {
-  KickAPCost = Max(2000000000 / (APBonus(GetAttribute(AGILITY)) * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus()), 100);
+  KickAPCost = Max<long>(2000000000 / (APBonus(GetAttribute(AGILITY)) * GetMoveEase() * GetCWeaponSkill(KICK)->GetBonus()), 100);
 }
 
 void nonhumanoid::CalculateBiteDamage()
@@ -1775,7 +1775,7 @@ void nonhumanoid::CalculateBiteToHitValue()
 
 void nonhumanoid::CalculateBiteAPCost()
 {
-  BiteAPCost = Max(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus()), 100);
+  BiteAPCost = Max<long>(1000000000 / (APBonus(GetAttribute(DEXTERITY)) * GetMoveEase() * GetCWeaponSkill(BITE)->GetBonus()), 100);
 }
 
 void nonhumanoid::InitSpecialAttributes()
@@ -1897,9 +1897,6 @@ void nonhumanoid::UnarmedHit(character* Enemy)
 
 float humanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
 {
-  if(dynamic_cast<const gibberling*>(this) != 0)
-    int esko = 2;
-
   float Effectivity = 0;
   ushort AttackStyles = 0;
 
@@ -3327,7 +3324,7 @@ void nonhumanoid::ShowUnarmedInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -3398,7 +3395,7 @@ void nonhumanoid::ShowKickInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -3469,7 +3466,7 @@ void nonhumanoid::ShowBiteInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);

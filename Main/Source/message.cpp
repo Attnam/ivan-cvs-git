@@ -36,8 +36,6 @@ void msgsystem::AddMessage(const char* Format, ...)
   std::string Buffer(Message);
   festring::Capitalize(Buffer);
 
-  short c;
-
   if(!Buffer.length())
     ABORT("Empty message request!");
 
@@ -66,7 +64,7 @@ void msgsystem::AddMessage(const char* Format, ...)
     }
   else
     {
-      for(c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
+      for(short c = MessageHistory.LastEntryIndex(); c >= 0 && MessageHistory.GetColor(c) == WHITE; --c)
 	MessageHistory.SetColor(c, LIGHT_GRAY);
 
       Times = 1;
@@ -90,7 +88,7 @@ void msgsystem::AddMessage(const char* Format, ...)
   std::vector<std::string> Chapter;
   festring::SplitString(Temp, Chapter, 78, Marginal);
 
-  for(c = 0; c < Chapter.size(); ++c)
+  for(ushort c = 0; c < Chapter.size(); ++c)
     MessageHistory.AddEntry(Chapter[c], WHITE);
 
   MessageHistory.SetSelected(MessageHistory.LastEntryIndex());

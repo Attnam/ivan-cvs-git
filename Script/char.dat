@@ -296,7 +296,7 @@ human
 	RightSWeaponSkillHits = 500;
 	LeftSWeaponSkillHits = 500;*/
 
-	/*DefaultArmStrength = 50;
+        /*DefaultArmStrength = 50;
 	DefaultLegStrength = 50;
 	DefaultDexterity = 40;
 	DefaultAgility = 40;
@@ -307,7 +307,7 @@ human
 	DefaultCharisma = 20;
 	DefaultMana = 20;
 
-	Helmet = DIAMOND helmet { Enchantment = 5; }
+        Helmet = DIAMOND helmet { Enchantment = 5; }
 	Amulet = amulet(AMULET_OF_LIFE_SAVING);
 	BodyArmor = goldeneagleshirt;
 	Cloak = ANGEL_HAIR cloak { Enchantment = 5; }
@@ -321,7 +321,7 @@ human
 	CWeaponSkillHits = { 3, 1000, 1000, 1000; }
 	RightSWeaponSkillHits = 500;
 	LeftSWeaponSkillHits = 500;
-	Inventory = { 4, wandofslow, wandofhaste, wandofstriking, stethoscope; }*/
+        Inventory = { 4, wandofslow, wandofhaste, wandofstriking, stethoscope; }*/
 }
 
 petrus

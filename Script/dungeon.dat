@@ -80,8 +80,12 @@ Dungeon ELPURI_CAVE;
 		AmbientLight=0;
 		LOSModifier=16;
 		IgnoreDefaultSpecialSquares = false;
-		BaseDifficulty = 80;
+		DifficultyBase = 80;
 		DifficultyDelta = 20;
+		MonsterAmountBase = 10;
+		MonsterAmountDelta = 4;
+		MonsterGenerationIntervalBase = 50;
+		MonsterGenerationIntervalDelta = -5;
 
 		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
 		{
@@ -1274,13 +1278,16 @@ Dungeon UNDER_WATER_TUNNEL;
 		AmbientLight=0;
 		LOSModifier=16;
 		IgnoreDefaultSpecialSquares = false;
-		BaseDifficulty = 20;
+		DifficultyBase = 20;
 		DifficultyDelta = 20;
+		MonsterAmountDelta = 0;
+		MonsterGenerationIntervalBase = 100;
+		MonsterGenerationIntervalDelta = -25;
 
 		Square, Random;
 		{
 			Items == beartrap { Team = MONSTER_TEAM; Active = true; }
-			Times = rand%2;
+			Times = rand%4;
 		}
 
 		RoomDefault
@@ -1307,6 +1314,7 @@ Dungeon UNDER_WATER_TUNNEL;
 	Level 0;
 	{
 		IgnoreDefaultSpecialSquares = true;
+		MonsterAmountBase = 5;
 
 		RoomDefault
 		{
@@ -1318,19 +1326,25 @@ Dungeon UNDER_WATER_TUNNEL;
 		Square, Random;
 		{
 			Character=spider;
-			Times=5;
+			Times=3;
 		}
 
 		Square, Random;
 		{
 			Character=kobold;
-			Times=5;
+			Times=3;
 		}
 
 		Square, Random;
 		{
 			Character=zombie;
-			Times=5;
+			Times=3;
+		}
+
+		Square, Random;
+		{
+			Character=carnivorousplant;
+			Times=3;
 		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1342,7 +1356,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
-			Pos=2+rand%(XSize/2-6),2+rand%(YSize-6);
+			Pos=2+rand%(XSize/4-6),2+rand%(YSize-6);
 			Size=5,5;
 			AllowLockedDoors=false;
 			AllowBoobyTrappedDoors=false;
@@ -1363,6 +1377,15 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 1;
 	{
+		Size = 160, 20;
+		MonsterAmountBase = 15;
+		Items=20+rand%21;
+
+		RoomDefault
+		{
+			Pos=2+rand%154,2+rand%(YSize-6);
+		}
+
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_UP);
@@ -1370,7 +1393,7 @@ Dungeon UNDER_WATER_TUNNEL;
 			AttachRequired = true;
 		}
 
-		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
+		Square, BoundedRandom 141, 1, 158, 18, NOT_WALKABLE|ATTACHABLE;
 		{
 			OTerrain = link(STAIRS_UP) { AttachedArea = 2; }
 			EntryIndex = STAIRS_UP + 1;
@@ -1380,6 +1403,8 @@ Dungeon UNDER_WATER_TUNNEL;
 
 	Level 2;
 	{
+		MonsterAmountBase = 10;
+
 		LevelMessage="This level seems to be somehow alive...";
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1392,7 +1417,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		Room 0;
 		{
 			Size=5,5;
-			Pos=XSize/2 + rand%(XSize/2-10),2+rand%(YSize-6);
+			Pos=3*XSize/4 + rand%(XSize/4-6),2+rand%(YSize-6);
 			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
 			GenerateFountains = false;
 			AltarPossible = false;

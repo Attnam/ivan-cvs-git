@@ -163,7 +163,7 @@ vector2d area::GetNearestFreeSquare(const character* Char, vector2d StartPos) co
 	return Pos;
     }
 
-  for(ushort Dist = 0; Dist < 20; ++Dist)
+  for(ushort Dist = 0; Dist < 10; ++Dist)
     for(c = 0; c < 8; ++c)
       {
 	vector2d Pos = StartPos + game::GetMoveVector(c);

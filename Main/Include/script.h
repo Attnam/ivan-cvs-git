@@ -332,8 +332,12 @@ class levelscript : public script
   DATA_MEMBER(std::string, Description);
   DATA_MEMBER(uchar, LOSModifier);
   DATA_MEMBER(bool, IgnoreDefaultSpecialSquares);
-  DATA_MEMBER(ushort, BaseDifficulty);
-  DATA_MEMBER(ushort, DifficultyDelta);
+  DATA_MEMBER(short, DifficultyBase);
+  DATA_MEMBER(short, DifficultyDelta);
+  DATA_MEMBER(short, MonsterAmountBase);
+  DATA_MEMBER(short, MonsterAmountDelta);
+  DATA_MEMBER(short, MonsterGenerationIntervalBase);
+  DATA_MEMBER(short, MonsterGenerationIntervalDelta);
 };
 
 class dungeonscript : public script

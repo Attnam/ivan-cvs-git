@@ -1,5 +1,18 @@
 November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Monster amounts and generation intervals can now be defined in the script
+	* Decreased the monster generation values in the tunnel
+	* The middle level of the tunnel is now twice as long as before
+	* Corrected a fatal bug in the skeleton bodypart severing code
+	* Gcc warning corrections
+	* Fixed the Vicious Endless Dinner Time of Mad Slaves Bug
+	* ApplyExperience() is now called also during actions (I can't understand
+	  why there was an if-sentence disabling it...)
+	* Rounding error corrections
+	* More exp balancing
+
+November 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Exp rates quadrupled
 	* Fixed a bug in the battle info screen: it didn't work correctly if a
 	  two-handed weapon was too heavy to be used

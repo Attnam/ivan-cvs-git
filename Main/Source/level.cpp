@@ -236,7 +236,7 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
       FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 }
 
-void level::Generate()
+void level::Generate(ushort Index)
 {
   game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
@@ -244,6 +244,13 @@ void level::Generate()
 
   if(LevelScript->GetLevelMessage(false))
     LevelMessage = *LevelScript->GetLevelMessage();
+
+  if(*LevelScript->GetGenerateMonsters())
+    {
+      MonsterGenerationInterval = *LevelScript->GetMonsterGenerationIntervalBase() + *LevelScript->GetMonsterGenerationIntervalDelta() * Index;
+      IdealPopulation = *LevelScript->GetMonsterAmountBase() + *LevelScript->GetMonsterAmountDelta() * Index;
+      Difficulty = *LevelScript->GetDifficultyBase() + *LevelScript->GetDifficultyDelta() * Index;
+    }
 
   contentscript<glterrain>* GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
   contentscript<olterrain>* OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
@@ -626,9 +633,8 @@ void level::GenerateMonsters()
       for(ushort c = 0; c < game::GetTeams(); ++c)
 	Population += game::GetTeam(c)->GetMember().size();
 
-      if(Population < GetIdealPopulation())
-	if(!(RAND() % (2 << (11 - game::GetCurrent()))))
-	  GenerateNewMonsters(1);
+      if(Population < IdealPopulation && !(RAND() % MonsterGenerationInterval))
+	GenerateNewMonsters(1);
     }
 }
 
@@ -640,7 +646,7 @@ void level::Save(outputfile& SaveFile) const
   for(ulong c = 0; c < XSizeTimesYSize; ++c)
     Map[0][c]->Save(SaveFile);
 
-  SaveFile << Door << LevelMessage;
+  SaveFile << Door << LevelMessage << IdealPopulation << MonsterGenerationInterval << Difficulty;
 }
 
 void level::Load(inputfile& SaveFile)
@@ -657,7 +663,7 @@ void level::Load(inputfile& SaveFile)
 	Map[x][y]->Load(SaveFile);
       }
 
-  SaveFile >> Door >> LevelMessage;
+  SaveFile >> Door >> LevelMessage >> IdealPopulation >> MonsterGenerationInterval >> Difficulty;
 }
 
 void level::FiatLux()
@@ -748,11 +754,6 @@ bool level::GetOnGround() const
 void level::MoveCharacter(vector2d From, vector2d To)
 {
   GetLSquare(From)->MoveCharacter(GetLSquare(To));
-}
-
-ushort level::GetIdealPopulation() const 
-{ 
-  return 10 + (game::GetCurrent() * 4);
 }
 
 ushort level::GetLOSModifier() const

@@ -30,7 +30,7 @@ class level : public area
  public:
   level() : Room(1, (room*)0) { }
   virtual ~level();
-  void Generate();
+  void Generate(ushort);
   vector2d GetRandomSquare(const character* = 0, uchar = 0, const rect* = 0) const;
   void GenerateMonsters();
   lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
@@ -41,7 +41,8 @@ class level : public area
   void Save(outputfile&) const;
   void Load(inputfile&);
   void FiatLux();
-  ushort GetIdealPopulation() const;
+  ushort GetIdealPopulation() const { return IdealPopulation; }
+  ushort GetDifficulty() const { return Difficulty; }
   void GenerateNewMonsters(ushort, bool = true);
   void AttachPos(vector2d);
   void CreateItems(ushort);
@@ -73,6 +74,9 @@ class level : public area
   std::string LevelMessage;
   std::vector<vector2d> Door;
   std::vector<room*> Room;
+  uchar IdealPopulation;
+  uchar MonsterGenerationInterval;
+  uchar Difficulty;
 };
 
 inline outputfile& operator<<(outputfile& SaveFile, level* Level)

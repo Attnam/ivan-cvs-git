@@ -247,7 +247,7 @@ class olterrain : public lterrain, public oterrain
   static olterrain* Clone(ushort, ushort) { return 0; }
   virtual void SetAttachedArea(uchar) { }
   virtual void SetAttachedEntry(uchar) { }
-  virtual void SetText(const std::string& What) { }
+  virtual void SetText(const std::string&) { }
   virtual std::string GetText() const { return 0; }
  protected:
   virtual void InstallDataBase();

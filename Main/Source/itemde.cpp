@@ -1404,7 +1404,7 @@ void head::CalculateAPCost()
   if(!Master)
     return;
 
-  BiteAPCost = Max(1000000000 / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus()), 100);
+  BiteAPCost = Max<long>(1000000000 / (APBonus(Master->GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(BITE)->GetBonus()), 100);
 }
 
 void leg::CalculateDamage()
@@ -1433,7 +1433,7 @@ void leg::CalculateAPCost()
   if(!Master)
     return;
 
-  KickAPCost = Max(2000000000 / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus()), 100);
+  KickAPCost = Max<long>(2000000000 / (APBonus(GetAttribute(AGILITY)) * Master->GetMoveEase() * Master->GetCWeaponSkill(KICK)->GetBonus()), 100);
 }
 
 humanoid* bodypart::GetHumanoidMaster() const
@@ -2879,13 +2879,13 @@ void bodypart::CalculateMaxHP()
     {
       if(IsAlive())
 	{
-	  float Endurance = GetMaster()->GetAttribute(ENDURANCE);
-	  MaxHP = short(GetBodyPartVolume() * Endurance * Endurance / 200000);
+	  long Endurance = GetMaster()->GetAttribute(ENDURANCE);
+	  MaxHP = GetBodyPartVolume() * Endurance * Endurance / 200000;
 	}
       else
 	{
-	  float SV = GetMainMaterial()->GetStrengthValue();
-	  MaxHP = short(GetBodyPartVolume() * SV * SV / 4000000);
+	  long SV = GetMainMaterial()->GetStrengthValue();
+	  MaxHP = (GetBodyPartVolume() * SV >> 4) * SV / 250000;
 	}
 
       if(MaxHP < 1)
@@ -3042,9 +3042,6 @@ bool arm::TwoHandWieldIsActive() const
 
 float bodypart::GetTimeToDie(ushort Damage, float ToHitValue, float DodgeValue, bool AttackIsBlockable, bool UseMaxHP) const
 {
-  if(dynamic_cast<gibberling*>(GetMaster()) != 0)
-    int esko = 2;
-
   float Durability;
   short TrueDamage = (19 * (Max((Damage * 3 >> 2) - GetTotalResistance(PHYSICAL_DAMAGE), 0)
 			 +  Max((Damage * 5 >> 2) + 1 - (GetTotalResistance(PHYSICAL_DAMAGE) >> 1), 0))
@@ -4329,7 +4326,7 @@ void arm::ShowWieldedAttackInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -4465,7 +4462,7 @@ void arm::ShowDefenceInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -4537,7 +4534,7 @@ void arm::ShowUnarmedInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Dexterity penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -4619,7 +4616,7 @@ void leg::ShowKickInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -4685,7 +4682,7 @@ void head::ShowBiteInfo() const
   else if(Bonus < 100)
     Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
 
-  Bonus = sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000);
+  Bonus = short(sqrt(GetMaster()->GetAttribute(PERCEPTION) * 1000));
 
   if(Bonus > 100)
     Info.AddEntry(std::string("Perception bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
@@ -4844,7 +4841,7 @@ bool bodypart::IsBadFoodForAI(const character* Who) const
   return item::IsBadFoodForAI(Who) || (Who->GetTeam()->GetID() == game::GetPlayer()->GetTeam()->GetID() && game::GetPlayer()->HasHadBodyPart(this));
 }
 
-bool mine::CheckPickUpEffect(character* Picker)
+bool mine::CheckPickUpEffect(character*)
 {
   if(WillExplode(0))
     {

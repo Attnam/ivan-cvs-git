@@ -342,9 +342,7 @@ void character::Be()
 
   if(AP >= 1000)
     {
-      if(!GetAction())
-	ApplyExperience();
-
+      ApplyExperience();
       SpecialTurnHandler();
 
       if(IsPlayer())
@@ -521,7 +519,7 @@ bool character::Drink()
 
 bool character::ConsumeItem(item* Item)
 {
-  if(HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
+  if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
     return false;
 
   Item = Item->PrepareForConsuming(this);
@@ -2448,7 +2446,7 @@ bool character::CheckForUsefulItemsOnGround()
 	if(TryToEquip(ItemVector[c]))
 	  return true;
 
-	if(TryToConsume(ItemVector[c]))
+	if(GetHungerState() < SATIATED && TryToConsume(ItemVector[c]))
 	  return true;
       }
 
@@ -4181,12 +4179,12 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
     {
       if(!DoubleAttribute)
 	{
-	  if(Experience < (long(Attribute) - 100) << 8)
+	  if(Experience < (long(Attribute) - 100) << 10)
 	    {
 	      if(Attribute > 1)
 		{
 		  Attribute -= 1;
-		  Experience += Max(long(100 - Attribute) << 8, 0L);
+		  Experience += Max(long(100 - Attribute) << 10, 0L);
 		  Effect = true;
 		  continue;
 		}
@@ -4194,12 +4192,12 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
 	}
       else
 	{
-	  if(Experience < (long(Attribute) - 200) << 7)
+	  if(Experience < (long(Attribute) - 200) << 9)
 	    {
 	      if(Attribute > 2)
 		{
 		  Attribute -= 1;
-		  Experience += Max(long(200 - Attribute) << 7, 0L);
+		  Experience += Max(long(200 - Attribute) << 9, 0L);
 		  Effect = true;
 		  continue;
 		}
