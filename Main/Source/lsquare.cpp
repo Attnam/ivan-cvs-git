@@ -13,6 +13,9 @@
 
 lsquare*** eyecontroller::Map;
 
+lsquare*** pathcontroller::Map;
+const character* pathcontroller::Character;
+
 lsquare*** stackcontroller::Map;
 lsquare** stackcontroller::Stack;
 long stackcontroller::StackIndex;
@@ -607,11 +610,11 @@ void lsquare::AddCharacter(character* Guy)
   SignalEmitationIncrease(Guy->GetEmitation());
   Flags |= STRONG_NEW_DRAW_REQUEST;
   IncAnimatedEntities();
+  SignalPossibleTransparencyChange();
 
   if(Guy->IsPlayer()
   || (Guy->CanBeSeenByPlayer(true) && CanBeSeenByPlayer()))
     Guy->SignalSeen();
-  //Guy->CheckIfSeen();
 }
 
 void lsquare::Clean()
@@ -628,6 +631,7 @@ void lsquare::RemoveCharacter()
       Character = 0;
       SignalEmitationDecrease(Backup->GetEmitation());
       Flags |= STRONG_NEW_DRAW_REQUEST;
+      SignalPossibleTransparencyChange();
     }
 }
 
@@ -651,7 +655,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 
 	      if(Flags & IS_TRANSPARENT)
 		{
-		  std::vector<itemvector> PileVector;
+		  itemvectorvector PileVector;
 		  GetStack()->Pile(PileVector, PLAYER, CENTER);
 
 		  if(PileVector.size())
@@ -843,31 +847,6 @@ void lsquare::SetLTerrain(glterrain* NewGround, olterrain* NewOver)
   GetLevel()->SetWalkability(Pos, GetTheoreticalWalkability());
 }
 
-/*void lsquare::SetGLTerrain(glterrain* NewGround) // NOTICE WALKABILITY CHANGE!!
-{
-  GLTerrain = NewGround;
-  NewGround->SetLSquareUnder(this);
-
-  if(NewGround->IsAnimated())
-    IncAnimatedEntities();
-}
-
-void lsquare::SetOLTerrain(olterrain* NewOver) // NOTICE WALKABILITY CHANGE!!
-{
-  OLTerrain = NewOver;
-
-  if(NewOver)
-    {
-      NewOver->SetLSquareUnder(this);
-
-      if(NewOver->IsAnimated())
-	IncAnimatedEntities();
-
-      if(!NewOver->IsTransparent())
-	Flags &= ~IS_TRANSPARENT;
-    }
-}*/
-
 void lsquare::ApplyScript(const squarescript* SquareScript, room* Room)
 {
   if(SquareScript->AttachRequired())
@@ -987,7 +966,7 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
     {
       OLTerrain->StepOn(Stepper);
 
-      if(Stepper->DestroysWalls() && OLTerrain->CanBeDestroyed())
+      if(Stepper->DestroysWalls() && OLTerrain->WillBeDestroyedBy(Stepper))
 	{
 	  if(CanBeSeenByPlayer()) 
 	    ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
@@ -1693,7 +1672,9 @@ void lsquare::ShowSmokeMessage() const
 
 void lsquare::SignalSmokeAlphaChange(int What)
 {
-  if(Flags & IS_TRANSPARENT)
+  SmokeAlphaSum += What;
+  SignalPossibleTransparencyChange();
+  /*if(Flags & IS_TRANSPARENT)
     {
       if(SmokeAlphaSum + What >= 175)
 	{
@@ -1724,7 +1705,7 @@ void lsquare::SignalSmokeAlphaChange(int What)
 	  if(LastSeen == game::GetLOSTick())
 	    game::SendLOSUpdateRequest();
 	}
-    }
+    }*/
 }
 
 int lsquare::GetDivineMaster() const
@@ -2313,7 +2294,8 @@ void lsquare::ZeroReSunEmitatedFlags()
 
 bool lsquare::CalculateIsTransparent()
 {
-  if((!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175)
+  if((!OLTerrain || OLTerrain->IsTransparent()) && SmokeAlphaSum < 175
+  && (!Character || Character->IsTransparent()))
     {
       Flags |= IS_TRANSPARENT;
       return true;
@@ -2481,4 +2463,38 @@ lsquare* lsquare::GetRandomAdjacentSquare() const
     return OK[RAND_N(Index)];
   else
     return 0;
+}
+
+bool pathcontroller::Handler(int x, int y)
+{
+  return Character->CanMoveOn(Map[x][y]);
+}
+
+void lsquare::SignalPossibleTransparencyChange()
+{
+  bool WasTransparent = IsTransparent();
+  CalculateIsTransparent();
+
+  if(WasTransparent && !IsTransparent())
+    {
+      Flags |= IS_TRANSPARENT;
+      emittervector EmitterBackup = Emitter;
+      GetLevel()->ForceEmitterNoxify(EmitterBackup);
+      Flags &= ~IS_TRANSPARENT;
+      GetLevel()->ForceEmitterEmitation(EmitterBackup, SunEmitter, FORCE_ADD);
+      CalculateLuminance();
+      Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
+
+      if(LastSeen == game::GetLOSTick())
+	game::SendLOSUpdateRequest();
+    }
+  else if(!WasTransparent && IsTransparent())
+    {
+      GetLevel()->ForceEmitterEmitation(Emitter, SunEmitter);
+      CalculateLuminance();
+      Flags |= DESCRIPTION_CHANGE|MEMORIZED_UPDATE_REQUEST;
+
+      if(LastSeen == game::GetLOSTick())
+	game::SendLOSUpdateRequest();
+    }
 }

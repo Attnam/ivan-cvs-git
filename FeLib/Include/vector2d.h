@@ -16,6 +16,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <cmath>
+
 #include "felibdef.h"
 
 struct vector2d;
@@ -56,10 +58,7 @@ struct vector2d
   int GetLengthSquare() const		      { return X * X + Y * Y; }
   /* Also returns true if V == *this */
   bool IsAdjacent(vector2d V) const	      { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; }
-  /* Pack a position of a 16x16 map to a byte and vice versa */
-  /*static vbyte PackToByte(int X, int Y)	      { return (Y << 4) | (X & 0xF); }
-  static vbyte PackToByte(vector2d V)	      { return (V.Y << 4) | (V.X & 0xF); }
-  static vector2d UnpackByte(vbyte B)	      { return vector2d(B & 0xF, B >> 4); }*/
+  int GetManhattanLength() const	      { return Max(abs(X), abs(Y)); }
   int X, Y;
 };
 

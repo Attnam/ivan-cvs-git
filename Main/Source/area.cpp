@@ -64,12 +64,19 @@ void area::Load(inputfile& SaveFile)
 
 void area::SendNewDrawRequest()
 {
-  for(int x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenXSize(); ++x)
-    for(int y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenYSize(); ++y)
+  const int XMin = Max(game::GetCamera().X, 0);
+  const int YMin = Max(game::GetCamera().Y, 0);
+  const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
+  const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
+
+  for(int x = XMin; x < XSize && x < XMax; ++x)
+    for(int y = YMin; y < YMax; ++y)
       Map[x][y]->SendStrongNewDrawRequest();
 
-  DOUBLE_BUFFER->ClearToColor(0);
+  //DOUBLE_BUFFER->ClearToColor(0);
+  igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
   DOUBLE_BUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenXSize() << 4), 33 + (game::GetScreenYSize() << 4), DARK_GRAY, true);
+  DOUBLE_BUFFER->Fill(16, 32, game::GetScreenXSize() << 4, game::GetScreenYSize() << 4, BLACK);
 }
 
 square* area::GetNeighbourSquare(vector2d Pos, int I) const

@@ -81,6 +81,7 @@ class ABSTRACT_ITEM
   int GetConditionColorIndex() const;
   void SetBitmapPos(vector2d What) { BitmapPos = What; }
   void SetSpecialFlags(int What) { SpecialFlags = What; }
+  void SetWobbleData(int What) { WobbleData = What; }
   void SetMaterialColorB(color16 What) { ColorB = What; }
   void SetMaterialColorC(color16 What) { ColorC = What; }
   void SetMaterialColorD(color16 What) { ColorD = What; }
@@ -137,6 +138,7 @@ class ABSTRACT_ITEM
   virtual color16 GetMaterialColorC(int) const { return ColorC; }
   virtual color16 GetMaterialColorD(int) const { return ColorD; }
   virtual vector2d GetBitmapPos(int) const { return BitmapPos; }
+  virtual int GetWobbleData() const { return WobbleData; }
   void UpdateArmorPicture(graphicdata&, item*, int, vector2d (item::*)(int) const, bool = false) const;
   void DrawEquipment(const graphicdata&, bitmap*, vector2d, color24, bool) const;
   festring OwnerDescription;
@@ -145,6 +147,7 @@ class ABSTRACT_ITEM
   color16 ColorC;
   color16 ColorD;
   int SpecialFlags;
+  int WobbleData;
   int HP;
   int MaxHP;
   bool Unique;
@@ -272,7 +275,7 @@ class ABSTRACT_ITEM
   double GetUnarmedToHitValue() const;
   double GetUnarmedDamage() const;
   void Hit(character*, vector2d, int, bool = false);
-  int GetAttribute(int) const;
+  int GetAttribute(int, bool = true) const;
   bool EditAttribute(int, int);
   void EditExperience(int, double, double);
   //virtual bool ApplyExperience();
@@ -404,7 +407,7 @@ class ABSTRACT_ITEM
   double GetKickDamage() const { return KickDamage; }
   int GetKickMinDamage() const;
   int GetKickMaxDamage() const;
-  int GetAttribute(int) const;
+  int GetAttribute(int, bool = true) const;
   bool EditAttribute(int, int);
   void EditExperience(int, double, double);
   //virtual bool ApplyExperience();
@@ -716,6 +719,16 @@ class ITEM
  protected:
   virtual alpha GetAlphaA(int) const;
   virtual int GetClassAnimationFrames() const { return 64; }
+);
+
+class ITEM
+(
+  mysticfrogtorso,
+  normaltorso,
+ protected:
+  virtual int GetClassAnimationFrames() const { return 128; }
+  virtual color16 GetOutlineColor(int) const;
+  virtual alpha GetOutlineAlpha(int) const;
 );
 
 #endif

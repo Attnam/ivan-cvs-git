@@ -19,19 +19,24 @@
 #include "save.h"
 #include "object.h"
 #include "allocate.h"
+#include "whandler.h"
 
 rawbitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::FlagBuffer;
-const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
-const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx" };
+const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx", "Graphics/Cursor.pcx" };
+const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Symbol.pcx" };
 tilemap igraph::TileMap;
 uchar igraph::RollBuffer[256];
 int** igraph::BodyBitmapValidityMap;
 bitmap* igraph::Menu;
 bitmap* igraph::SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
 rawbitmap* igraph::ColorizeBuffer[2] = { new rawbitmap(16, 16), new rawbitmap(16, 16) };
+bitmap* igraph::Cursor[CURSOR_TYPES];
+color16 igraph::CursorColor[CURSOR_TYPES] = { MakeRGB16(255, 0, 0), MakeRGB16(40, 40, 40) };
+bitmap* igraph::BackGround;
+int igraph::CurrentColorType = -1;
 
 void igraph::Init()
 {
@@ -75,6 +80,14 @@ void igraph::Init()
       Alloc2D(BodyBitmapValidityMap, 8, 16);
       CreateBodyBitmapValidityMaps();
       CreateSilhouetteCaches();
+
+      for(c = 0; c < CURSOR_TYPES; ++c)
+	{
+	  Cursor[c] = new bitmap(48, 16, TRANSPARENT_COLOR);
+	  Cursor[c]->CreateAlphaMap(255);
+	  packedcolor16 Color = CursorColor[c];
+	  GetCursorRawGraphic()->MaskedBlit(Cursor[c], 0, 0, 0, 0, 48, 16, &Color);
+	}
     }
 }
 
@@ -91,11 +104,38 @@ void igraph::DeInit()
   delete TileBuffer;
   delete FlagBuffer;
   delete [] BodyBitmapValidityMap;
+  delete BackGround;
 }
 
-void igraph::DrawCursor(vector2d Pos)
+void igraph::DrawCursor(vector2d Pos, int CursorData)
 {
-  igraph::GetCursorGraphic()->LuminanceMaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, ivanconfig::GetContrastLuminance());
+  /* Inefficient gum solution */
+
+  color24 Luminance = ivanconfig::GetContrastLuminance();
+  bitmap* CursorBitmap = Cursor[CursorData&~(TARGET|FLASH)];
+
+  if(!(CursorData & (TARGET|FLASH)))
+    {
+      CursorBitmap->LuminanceMaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, Luminance);
+      return;
+    }
+
+  if(!(CursorData & TARGET))
+    {
+      int Tick = GET_TICK() % 32;
+      CursorBitmap->FillAlpha(95 + 10 * abs(Tick - 16));
+      CursorBitmap->AlphaBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, Luminance);
+      return;
+    }
+
+  int Tick = (GET_TICK() << 2) / 3;
+  int Frame = (Tick >> 4) % 3;
+  int X1 = Frame << 4;
+  CursorBitmap->FillAlpha(255 - (Tick & 0xF) * 16);
+  CursorBitmap->AlphaBlit(DOUBLE_BUFFER, X1, 0, Pos, 16, 16, Luminance);
+  int X2 = ((Frame + 1) % 3) << 4;
+  CursorBitmap->FillAlpha((Tick & 0xF) * 16);
+  CursorBitmap->AlphaBlit(DOUBLE_BUFFER, X2, 0, Pos, 16, 16, Luminance);
 }
 
 const vector2d SizeVect = vector2d(16, 16);
@@ -157,8 +197,17 @@ tilemap::iterator igraph::AddUser(const graphicid& GI)
       if(GI.FlyAmount)
 	Bitmap->CreateFlies(GI.Seed, Frame, GI.FlyAmount);
 
-      if(SpecialFlags & ST_WOBBLE && !(Frame & 0x60))
-	Bitmap->Wobble(Frame, !!(SpecialFlags & ST_WOBBLE_HORIZONTALLY_BIT));
+      const int WobbleData = GI.WobbleData;
+
+      if(WobbleData & WOBBLE)
+	{
+	  int Speed = (WobbleData & WOBBLE_SPEED_RANGE) >> WOBBLE_SPEED_SHIFT;
+	  int Freq = (WobbleData & WOBBLE_FREQ_RANGE) >> WOBBLE_FREQ_SHIFT;
+	  int WobbleMask = 7 >> Freq << (6 - Speed);
+
+	  if(!(Frame & WobbleMask))
+	    Bitmap->Wobble(Frame & ((1 << (6 - Speed)) - 1), Speed, !!(WobbleData & WOBBLE_HORIZONTALLY_BIT));
+	}
 
       if(SpecialFlags & ST_FLAMES)
 	{
@@ -405,4 +454,51 @@ void igraph::CreateSilhouetteCaches()
 					       SILHOUETTE_Y_SIZE, Color);
 	}
     }
+}
+
+void igraph::CreateBackGround(int ColorType)
+{
+  if(CurrentColorType == ColorType)
+    return;
+
+  CurrentColorType = ColorType;
+  delete BackGround;
+  BackGround = new bitmap(RES_X, RES_Y);
+  int Side = 1025;
+  int** Map;
+  Alloc2D(Map, Side, Side);
+  //femath::SaveSeed();
+  //femath::SetSeed(666); //37
+  femath::GenerateFractalMap(Map, Side, Side - 1, 1000);
+  //femath::LoadSeed();
+  int XPlus = (1025 - RES_X) >> 1;
+  int YPlus = (1025 - RES_Y) >> 1;
+
+  for(int x = 0; x < RES_X; ++x)
+    for(int y = 0; y < RES_Y; ++y)
+      {
+	int E = Limit<int>(abs(Map[1024 - x][1024 - (RES_Y - y)]) / 50, 0, 50);
+	BackGround->PutPixel(x, y, GetBackGroundColor(E));
+     }
+
+  delete [] Map;
+}
+
+color16 igraph::GetBackGroundColor(int Element)
+{
+  switch(CurrentColorType)
+    {
+    case GRAY_FRACTAL: return MakeRGB16(Element, Element, Element);
+    case RED_FRACTAL: return MakeRGB16(Element << 1, 0, 0);
+    case GREEN_FRACTAL: return MakeRGB16(0, Element << 1, 0);
+    case BLUE_FRACTAL: return MakeRGB16(Element, Element, Element << 1);
+    case YELLOW_FRACTAL: return MakeRGB16(Element << 1, Element << 1, 0);
+    }
+
+  return 0;
+}
+
+void igraph::BlitBackGround(int X, int Y, int Width, int Height)
+{
+  BackGround->NormalBlit(DOUBLE_BUFFER, X, Y, X, Y, Width, Height);
 }

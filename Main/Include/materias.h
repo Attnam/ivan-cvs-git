@@ -123,7 +123,7 @@ class MATERIAL
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual int GetRustData() const { return RustData; }
-  virtual bool TryToRust(long);
+  virtual bool TryToRust(long, long = 0);
   virtual bool AddRustLevelDescription(festring&, bool) const;
  protected:
   virtual void VirtualConstructor(bool) { RustData = NOT_RUSTED; }

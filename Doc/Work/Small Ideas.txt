@@ -491,7 +491,7 @@ Pets should be able to drink from fountains.
 The message which informs that an item has been broken should indicate who carries the item.
 (hs) There should be a possibility to examine an item (show materials etc.) in the inventory screen.
 Goblins should be generated tame if goblin king belongs to the player team.
-Kill reasons to the "killed by other reasons" list.
+//Kill reasons to the "killed by other reasons" list.
 If the player is poisoned, he should be able to slow the poison's effect by standing still. (from Henri Kiviluoto)
 He should be also able to call 112/911.  (from Henri Kiviluoto)
 The pictures of mirrored creatures should also be mirrored and their limbs swapped.
@@ -501,4 +501,7 @@ If a creature has lost all its limbs, leprosy should drop its head.
 Good NPCs should try not to use ommel bone/tooth weapons.
 Death message for team member killing each other while confused should be "X killed by confused Y".
 Lair of the Loser Kamikaze Dwarf somewhere below Dark Level (he destroys half of the level with him, if he somehow manages to light his megaexplosives).
+Magic carpet.
+Lobotomised state.
+Geysirs.
 Damaged bodyparts should work less well. (ie. when arms are damaged armstrength should go down)

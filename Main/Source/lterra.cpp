@@ -457,7 +457,7 @@ void olterrain::SignalRustLevelChange()
 
 void lterrain::TryToRust(long LiquidModifier)
 {
-  if(MainMaterial->TryToRust(LiquidModifier * 10))
+  if(MainMaterial->TryToRust(LiquidModifier * 10, 10000))
     {
       if(CanBeSeenByPlayer())
 	if(MainMaterial->GetRustLevel() == NOT_RUSTED)
@@ -518,4 +518,9 @@ void olterraindatabase::InitDefaults(const olterrainprototype* NewProtoType, int
 bool olterrain::ShowThingsUnder() const
 {
   return DataBase->ShowThingsUnder || IsTransparent();
+}
+
+bool olterrain::WillBeDestroyedBy(const character* Char) const
+{
+  return IsWall() && CanBeDestroyed() && MainMaterial->GetStrengthValue() <= (Char->GetAttribute(ARM_STRENGTH) * 3);
 }

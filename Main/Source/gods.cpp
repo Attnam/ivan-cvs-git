@@ -753,7 +753,7 @@ void valpurus::Pray()
 
       if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
+	  character* Angel = CreateAngel(PLAYER->GetTeam());
 
 	  if(Angel)
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));
@@ -791,7 +791,7 @@ void mortifer::Pray()
 
       if(Relation > 250 && !(RAND() % 2))
 	{
-	  character* Angel = CreateAngel(PLAYER->GetTeam(), 10000);
+	  character* Angel = CreateAngel(PLAYER->GetTeam());
 
 	  if(Angel)
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHAR_NAME(DEFINITE));

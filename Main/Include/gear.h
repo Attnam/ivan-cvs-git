@@ -45,6 +45,7 @@ class ITEM
   virtual void EditEnchantment(int);
   virtual int GetStrengthValue() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
+  virtual bool IsFixableByTailor(const character*) const { return IsBroken(); }
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
   virtual int GetSpoilLevel() const;
@@ -226,6 +227,7 @@ class ABSTRACT_ITEM
   virtual int GetInElasticityPenalty(int) const;
   virtual int GetCarryingBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken() || IsRusted(); }
+  virtual bool IsFixableByTailor(const character*) const { return IsBroken(); }
   virtual bool AllowFluids() const { return true; }
   virtual void CalculateEnchantment();
   virtual double GetTHVBonus() const;

@@ -91,7 +91,7 @@ void god::Pray()
 	game::ApplyDivineAlignmentBonuses(this, 20, false);
 	PLAYER->EditExperience(WISDOM, -100, 1 << 11);
 
-	if(Relation < -250 && !(RAND() % 10))
+	if(Relation < -250 && !(RAND() % 5))
 	  {
 	    character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
@@ -171,7 +171,7 @@ bool god::PlayerVomitedOnAltar(liquid* Liquid)
   AdjustRelation(-200);
   PLAYER->CheckDeath(CONST_S("killed by a flying lump of vomit"), 0);
 
-  if(!(RAND() % 10))
+  if(!(RAND() % 5))
     {
       character* Angel = CreateAngel(game::GetTeam(4), 10000);
 
@@ -194,7 +194,8 @@ character* god::CreateAngel(team* Team, int LifeBase)
 	{
 	  angel* Angel;
 
-	  if(LifeBase && (!(RAND() % 5) || abs(Relation) == 1000))
+	  if(LifeBase && GetType() != VALPURUS
+	  && (!(RAND() % 5) || abs(Relation) == 1000))
 	    Angel = new archangel(GetType());
 	  else
 	    Angel = new angel(GetType());
@@ -322,3 +323,26 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
+
+/*bool god::TryToAttachLimb(character* Char)
+{
+  if(!Char->HasAllBodyParts())
+    {
+      bodypart* BodyPart = Char->FindRandomOwnBodyPart();
+
+      if(BodyPart)
+	{
+	  BodyPart->RemoveFromSlot();
+	  Char->AttachBodyPart(BodyPart);
+	  ADD_MESSAGE("%s attaches your old %s back.", GetName(), BodyPart->GetBodyPartName().CStr());
+	}
+      else
+	{
+	  BodyPart = Char->GenerateRandomBodyPart();
+	  ADD_MESSAGE("You grow a new %s.", BodyPart->GetBodyPartName().CStr()); 
+	}
+
+      BodyPart->SetHP(1);
+      return;
+    }
+}*/

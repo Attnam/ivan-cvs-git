@@ -142,6 +142,9 @@ struct itemdatabase : public databasebase
   bool IsValuable;
   int EnchantmentMinusChance;
   int EnchantmentPlusChance;
+  int TeleportPriority;
+  bool HasNormalPictureDirection;
+  int DamageFlags;
 };
 
 class itemprototype
@@ -342,6 +345,9 @@ class item : public object
   DATA_BASE_VALUE(int, ReadDifficulty);
   DATA_BASE_VALUE(int, EnchantmentMinusChance);
   DATA_BASE_VALUE(int, EnchantmentPlusChance);
+  virtual DATA_BASE_VALUE(int, TeleportPriority);
+  DATA_BASE_BOOL(HasNormalPictureDirection);
+  DATA_BASE_VALUE(int, DamageFlags);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, int, vector2d) { return false; }
@@ -402,7 +408,8 @@ class item : public object
   int GetStrengthRequirement() const;
   virtual int GetInElasticityPenalty(int) const { return 0; }
   virtual bool IsFixableBySmith(const character*) const { return false; }
-  virtual long GetFixPrice() const { return 100; } 
+  virtual bool IsFixableByTailor(const character*) const { return false; }
+  long GetFixPrice() const;
   void DonateSlotTo(item*);
   virtual int GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
@@ -494,6 +501,7 @@ class item : public object
   virtual void CalculateEnchantment() { }
   virtual character* GetBodyPartMaster() const { return 0; }
   virtual bool AllowFluids() const { return false; }
+  int GetHinderVisibilityBonus(const character*) const;
  protected:
   virtual const char* GetBreakVerb() const;
   virtual long GetMaterialPrice() const;

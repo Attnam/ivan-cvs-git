@@ -394,7 +394,6 @@ class ITEM
  public:
   virtual long GetTruePrice() const;
  protected:
-  virtual bool ShowMaterial() const;
   virtual bool WeightIsIrrelevant() const { return true; }
 );
 
@@ -520,6 +519,8 @@ class ITEM
   virtual material* RemoveMaterial(material*);
   virtual void SetLifeExpectancy(int, int);
   virtual void CalculateEnchantment();
+  virtual int GetTeleportPriority() const;
+  virtual void SetParameters(int);
  protected:
   virtual color16 GetMaterialColorB(int) const;
   virtual void VirtualConstructor(bool);

@@ -189,7 +189,35 @@ void ennerbeast::GetAICommand()
 
 void petrus::GetAICommand()
 {
-  if(HP << 1 < MaxHP && (GetPos() - vector2d(28, 20)).GetLengthSquare() > 25)
+  int Enemies = 0;
+
+  for(int c = 0; c < game::GetTeams(); ++c)
+    if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
+      Enemies += game::GetTeam(c)->GetEnabledMembers();
+
+  if(Enemies && !RAND_N(250 / Min(Enemies, 50)))
+    {
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s shouts a magnificent prayer to Valpurus.");
+
+      angel* Angel = new angel(VALPURUS);
+      Angel->SetLifeExpectancy(10000, 0);
+      vector2d Where = GetLevel()->GetNearestFreeSquare(Angel, GetPos());
+
+      if(Where == ERROR_VECTOR)
+	Where = GetLevel()->GetRandomSquare(Angel);
+
+      Angel->SetTeam(GetTeam());
+      Angel->PutTo(Where);
+
+      if(Angel->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s materializes.", Angel->CHAR_NAME(INDEFINITE));
+
+      EditAP(-1000);
+      return;
+    }
+
+  if(HP << 1 < MaxHP && (GetPos() - vector2d(28, 20)).GetLengthSquare() > 400 && !RAND_N(10))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
@@ -737,7 +765,9 @@ void skeleton::BeTalkedTo()
 
 void communist::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) != HOSTILE && GetTeam() != PLAYER->GetTeam() && PLAYER->GetRelativeDanger(this, true) > 0.5)
+  if(GetRelation(PLAYER) != HOSTILE
+  && GetTeam() != PLAYER->GetTeam()
+  && PLAYER->GetRelativeDanger(this, true) > 0.1)
     {
       ADD_MESSAGE("%s seems to be very friendly. \"%s make good communist. %s go with %s!\"", CHAR_DESCRIPTION(DEFINITE), PLAYER->GetAssignedName().CStr(), CHAR_NAME(UNARTICLED), PLAYER->GetAssignedName().CStr());
 
@@ -1520,7 +1550,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
 
 	if(Equipment)
 	  {
-	    DOUBLE_BUFFER->Fill(Pos, 16, 16, BLACK);
+	    igraph::BlitBackGround(Pos.X, Pos.Y, 16, 16);
 	    Equipment->Draw(DOUBLE_BUFFER, Pos, ivanconfig::GetContrastLuminance(), 0, true, Equipment->AllowAlphaEverywhere());
 	  }
       }
@@ -1539,7 +1569,7 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
       }
 }
 
-int humanoid::GlobalResistance(int Type) const
+int humanoid::GetGlobalResistance(int Type) const
 {
   int Resistance = GetResistance(Type);
 
@@ -2354,6 +2384,7 @@ item* skeleton::SevereBodyPart(int BodyPartIndex, bool ForceDisappearance, stack
   BodyPart->SendToHell();
   CalculateAttributeBonuses();
   CalculateBattleInfo();
+  SignalPossibleTransparencyChange();
 
   if(StuckToBodyPart == BodyPartIndex)
     {
@@ -2665,19 +2696,21 @@ void smith::BeTalkedTo()
 
       /** update messages */
 
-      if(PLAYER->GetMoney() < Item->GetFixPrice())
+      long FixPrice = Item->GetFixPrice();
+
+      if(PLAYER->GetMoney() < FixPrice)
 	{
-	  ADD_MESSAGE("\"Getting that fixed costs you %d gold pieces. Get the money and we'll talk.\"", Item->GetFixPrice());
+	  ADD_MESSAGE("\"Getting that fixed costs you %d gold pieces. Get the money and we'll talk.\"", FixPrice);
 	  return;
 	}
 
-      ADD_MESSAGE("\"I can fix your %s, but it'll cost you %d gold pieces.\"", Item->CHAR_NAME(UNARTICLED), Item->GetFixPrice());
+      ADD_MESSAGE("\"I can fix your %s, but it'll cost you %d gold pieces.\"", Item->CHAR_NAME(UNARTICLED), FixPrice);
 
       if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
 	{
 	  Item->RemoveRust();
 	  Item->Fix();
-	  PLAYER->EditMoney(-Item->GetFixPrice());
+	  PLAYER->EditMoney(-FixPrice);
 	  ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));
 	}
     }
@@ -3121,27 +3154,31 @@ void darkmage::GetAICommand()
 	}
     }
 
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
+    {
+      if(NearestEnemy->IsSmall()
+      && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit()
+      && !(RAND() % 5)
+      && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
+	return;
+      else if((GetConfig() == ARCH_MAGE && RAND() & 1)
+	   || (GetConfig() == ELDER && !(RAND() & 3)))
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+
+	  TeleportRandomly(true);
+	  EditAP(-GetSpellAPCost());
+	  return;
+	}
+    }
+
   if(NearestEnemy && ((GetConfig() != APPRENTICE && NearestEnemyDistance < 10) || StateIsActivated(PANIC)) && RAND() & 3)
     {
       SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
 
       if(MoveTowardsTarget(true))
 	return;
-    }
-
-  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
-    {
-      if(NearestEnemy->IsSmall() && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && !(RAND() % 5) && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
-	return;
-      else if((GetConfig() == ARCH_MAGE && RAND() & 1) || (GetConfig() == ELDER && !(RAND() & 3)))
-	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
-
-	  TeleportRandomly();
-	  EditAP(-GetSpellAPCost());
-	  return;
-	}
     }
 
   if(Friend.size() && !(RAND() & 3))
@@ -3759,12 +3796,6 @@ humanoid::~humanoid()
     delete *i;
 }
 
-void guard::TeleportRandomly()
-{
-  if(GetConfig() != MASTER)
-    humanoid::TeleportRandomly();
-}
-
 bool petrus::MoveTowardsHomePos()
 {
   if(GetPos() != vector2d(28, 20))
@@ -3875,6 +3906,35 @@ void necromancer::GetAICommand()
 	    }
       }
 
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
+    {
+      if(GetConfig() == MASTER_NECROMANCER && !(RAND() & 3))
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+
+	  TeleportRandomly(true);
+	  EditAP(-GetSpellAPCost());
+	  return;
+	}
+      else if(NearestEnemy->IsSmall()
+	   && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit()
+	   && !(RAND() & 3)
+	   && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
+	return;
+    }
+
+  if(!NearestEnemy)
+    {
+      if(!RAND_N(3) && TryToRaiseZombie())
+	return;
+    }
+  else
+    {
+      if(!RAND_N(6) && TryToRaiseZombie())
+	return;
+    }
+
   if(NearestEnemy && !(RAND() % (GetConfig() == APPRENTICE_NECROMANCER ? 3 : 2)))
     {
       lsquare* Square = NearestEnemy->GetLSquareUnder();
@@ -3920,29 +3980,12 @@ void necromancer::GetAICommand()
 
       return;
     }
-  else if(!NearestEnemy && TryToRaiseZombie())
-    return;
 
   if(NearestEnemy && (NearestEnemyDistance < 10 || StateIsActivated(PANIC)) && RAND() & 3)
     {
       SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
 
       if(MoveTowardsTarget(true))
-	return;
-    }
-
-  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
-    {
-      if(GetConfig() == MASTER_NECROMANCER && !(RAND() & 3))
-	{
-	  if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
-
-	  TeleportRandomly();
-	  EditAP(-GetSpellAPCost());
-	  return;
-	}
-      else if(NearestEnemy->IsSmall() && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit() && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
 	return;
     }
 
@@ -4006,7 +4049,7 @@ void necromancer::RaiseSkeleton()
     }
   else
     {
-      Skeleton = new skeleton(GetConfig() == APPRENTICE_NECROMANCER ? 0 : WARRIOR);
+      Skeleton = new skeleton(GetConfig() == APPRENTICE_NECROMANCER ? 0 : WARRIOR, NO_EQUIPMENT);
       Skeleton->SetTeam(GetTeam());
       Skeleton->PutNear(GetPos());
 
@@ -4576,4 +4619,109 @@ int necromancer::GetSpellAPCost() const
     }
 
   return 4000;
+}
+
+/* Horrible repeating. Sorry */
+
+void tailor::BeTalkedTo()
+{
+  if(GetRelation(PLAYER) == HOSTILE)
+    {
+      ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who the hell else are you talkin' to? You talkin' to me? Well I'm the only one here. Who do you think you're talking to? Oh yeah? Huh? Ok.\"");
+      return;
+    }
+
+  for(int c = 0; c < BodyParts; ++c)
+    {
+      bodypart* BodyPart = PLAYER->GetBodyPart(c);
+
+      if(BodyPart)
+	{
+	  if(!BodyPart->GetMainMaterial()->CanBeTailored())
+	    continue;
+	  
+	  if(BodyPart->GetHP() >= BodyPart->GetMaxHP())
+	    continue;
+
+	  ADD_MESSAGE("Your %s seems to be hurt. I could fix it for the modest sum of 25 gold pieces.", BodyPart->GetBodyPartName().CStr()); 
+	  
+	  if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
+	    {
+	      BodyPart->RestoreHP();
+	      PLAYER->EditMoney(-25);
+	    }	
+	}
+    }
+
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor))
+    {
+      item* Item = PLAYER->GetStack()->DrawContents(this, CONST_S("\"What do you want me to fix?\""), 0, &item::IsFixableByTailor);
+
+      if(!Item)
+	return;
+
+      if(!Item->GetMainMaterial()->CanBeTailored())
+	{
+	  ADD_MESSAGE("\"I can't work on %s.\"", Item->GetMainMaterial()->GetName(false, false).CStr());
+	  return;
+	}
+
+      /** update messages */
+
+      long FixPrice = Item->GetFixPrice();
+
+      if(PLAYER->GetMoney() < FixPrice)
+	{
+	  ADD_MESSAGE("\"Getting that fixed costs you %d gold pieces. Get the money and we'll talk.\"", FixPrice);
+	  return;
+	}
+
+      ADD_MESSAGE("\"I can fix your %s, but it'll cost you %d gold pieces.\"", Item->CHAR_NAME(UNARTICLED), FixPrice);
+
+      if(game::BoolQuestion(CONST_S("Do you accept this deal? [y/N]")))
+	{
+	  Item->Fix();
+	  PLAYER->EditMoney(-FixPrice);
+	  ADD_MESSAGE("%s fixes %s in no time.", CHAR_NAME(DEFINITE), Item->CHAR_NAME(DEFINITE));
+	}
+    }
+  else
+    ADD_MESSAGE("\"Come back when you have some weapons or armor I can fix.\"");
+}
+
+void veterankamikazedwarf::VirtualConstructor(bool Load)
+{
+  kamikazedwarf::VirtualConstructor(Load);
+
+  if(!Load)
+    {
+      ivantime Time;
+      game::GetTime(Time);
+
+      if(Time.Day >= 25 || (Time.Day > 5 && RAND_N(20) < Time.Day - 5))
+	GainIntrinsic(INVISIBLE);
+    }
+}
+
+bool humanoid::IsTransparent() const
+{
+  return !IsEnormous() || GetTorso()->GetMainMaterial()->IsTransparent()
+      || !(GetRightLeg() || GetLeftLeg());
+}
+
+void humanoid::ModifySituationDanger(double& Danger) const
+{
+  character::ModifySituationDanger(Danger);
+
+  switch(GetArms())
+    {
+    case 0: Danger *= 10;
+    case 1: Danger *= 2;
+    }
+
+  switch(GetLegs())
+    {
+    case 0: Danger *= 10;
+    case 1: Danger *= 2;
+    }
 }

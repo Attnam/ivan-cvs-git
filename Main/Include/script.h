@@ -390,6 +390,7 @@ class roomscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(int, Shape);
   SCRIPT_BOOL_WITH_BASE(IsInside);
   SCRIPT_BOOL_WITH_BASE(GenerateWindows);
+  SCRIPT_BOOL_WITH_BASE(UseFillSquareWalls);
 };
 
 class levelscript : public scriptwithbase
@@ -411,6 +412,7 @@ class levelscript : public scriptwithbase
   std::list<roomscript> Room;
   SCRIPT_MEMBER_WITH_BASE(roomscript, RoomDefault);
   SCRIPT_MEMBER_WITH_BASE(squarescript, FillSquare);
+  SCRIPT_MEMBER_WITH_BASE(squarescript, TunnelSquare);
   SCRIPT_MEMBER_WITH_BASE(festring, LevelMessage);
   SCRIPT_MEMBER_WITH_BASE(vector2d, Size);
   SCRIPT_MEMBER_WITH_BASE(interval, Items);
@@ -437,6 +439,7 @@ class levelscript : public scriptwithbase
   SCRIPT_MEMBER_WITH_BASE(int, EnchantmentMinusChanceDelta);
   SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceBase);
   SCRIPT_MEMBER_WITH_BASE(int, EnchantmentPlusChanceDelta);
+  SCRIPT_MEMBER_WITH_BASE(int, BackGroundType);
 };
 
 class dungeonscript : public script

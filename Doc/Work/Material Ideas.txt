@@ -1,7 +1,7 @@
 sapient pearwood			used to create items that magically follow their owner
 ommel flesh				beneficial effect (spoils)
 //ommel bone				-||- (spoils)
-ommel tooth				-||- (spoils)
+//ommel tooth				-||- (spoils)
 ommel skin				-||-
 ommel nail				-||-
 ommel spit				-||-
@@ -13,9 +13,9 @@ ommel vomit				-||-
 ommel sperm				-||-
 //ommel cerumen				-||-
 //ommel snot				-||-
-emerald (green)				tough
-opal (light blue)			tough
-uranium					slowly causes mutations
+emerald (green)				SV 200-350
+opal (light blue)			SV 200-350
+uranium					slowly causes mutations, D 18700
 bloat					poison which makes the victim increase his size and does great damage, like he was thrown into a vacuum
 stainless steel				doesn't rust
 ambrosia				food of gods; does something *really* good
@@ -23,3 +23,13 @@ nectar					drink of gods; does something *really* good
 cursed water of Nyanneechuan		changes the gender of a male player
 orichalcum				copper-looking expensive material mentioned to be abundant in Atlantis by Plato
 thunderbird feather			lightning resistant
+sleeping gas
+tear gas
+mustard gas
+laughing gas
+arrow-proof glass
+electrum (yellowish-white)		the alloy of gold and silver (and maybe some copper)
+silicon carbide				SV 140-190, D 3100
+nephrite/jade (green)			SV 200-350
+tungsten carbide			SV 200-350, D 15700
+aluminium				SV 90, D 2650

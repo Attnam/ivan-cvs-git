@@ -97,7 +97,7 @@ command* commandsystem::Command[] =
   new command(&LowerGodRelations, "lower your relations to the gods", '6', '6', true, true),
   new command(&GainDivineKnowledge, "gain knowledge of all gods", '\"', '\"', true, true),
   new command(&GainAllItems, "gain all items", '$', '$', true, true),
-  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, true),
+  new command(&SecretKnowledge, "reveal secret knowledge", '*', '*', true, false),
   new command(&DetachBodyPart, "detach a limb", '0', '0', true, true),
   /*new command(&ReloadDatafiles, "reload datafiles", 'R', 'R', true, true),*/
   new command(&SummonMonster, "summon monster", '&', '&', false, true),
@@ -352,7 +352,7 @@ bool commandsystem::PickUp(character* Char)
       return false;
     }
 
-  std::vector<itemvector> PileVector;
+  itemvectorvector PileVector;
   Char->GetStackUnder()->Pile(PileVector, Char, CENTER);
 
   for(int c = 0; c < 4; ++c)
@@ -369,7 +369,7 @@ bool commandsystem::PickUp(character* Char)
 	int Amount = PileVector[0].size();
 
 	if(Amount > 1)
-	  Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	  Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[0][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
 	if(!Amount)
 	  return false;
@@ -498,8 +498,18 @@ bool commandsystem::Talk(character* Char)
   return false;
 }
 
+#include "igraph.h"
+#include "graphics.h"
+#include "whandler.h"
+
 bool commandsystem::NOP(character* Char)
 {
+  /*igraph::GetBackGround()->FastBlit(DOUBLE_BUFFER);
+  graphics::BlitDBToScreen();
+  GET_KEY();*/
+  ADD_MESSAGE("Danger: %d.", int(game::GetGameSituationDanger() * 1000));
+  return false;
+
   /*{
     //humanoid* H = static_cast<humanoid*>(Char);
 
@@ -668,7 +678,7 @@ bool commandsystem::WhatToEngrave(character* Char)
       return false;
     }
 
-  Char->GetNearLSquare(Char->GetPos())->Engrave(game::StringQuestion(CONST_S("What do you want to engrave here?"), vector2d(16, 6), WHITE, 0, 80, true));
+  Char->GetNearLSquare(Char->GetPos())->Engrave(game::StringQuestion(CONST_S("What do you want to engrave here?"), WHITE, 0, 80, true));
   return false;
 }
 
@@ -969,7 +979,7 @@ bool commandsystem::Rest(character* Char)
 
   if(Error)
     {
-      long MinutesToRest = game::NumberQuestion(CONST_S("How many minutes to wait?"), vector2d(16, 6), WHITE);
+      long MinutesToRest = game::NumberQuestion(CONST_S("How many minutes to wait?"), WHITE);
 
       if(MinutesToRest > 0)
 	{
@@ -988,7 +998,7 @@ bool commandsystem::Rest(character* Char)
 	return false;
     }
 
-  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"), vector2d(16, 6), Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+  long HPToRest = game::ScrollBarQuestion(CONST_S("How many hit points you desire?"), Char->GetMaxHP(), 1, 0, Char->GetMaxHP(), 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
   if(HPToRest <= Char->GetHP())
     {
@@ -1052,9 +1062,9 @@ bool commandsystem::ShowConfigScreen(character*)
   return false;
 }
 
-bool commandsystem::AssignName(character* Char)
+bool commandsystem::AssignName(character*)
 {
-  game::PositionQuestion(CONST_S("What do you want to name? [press 'n' over a tame creature or ESC to exit]"), Char->GetPos(), 0, &game::NameKeyHandler);
+  game::NameQuestion();
   return false;
 }
 
@@ -1225,12 +1235,12 @@ bool commandsystem::LowerStats(character* Char)
 
 bool commandsystem::GainAllItems(character* Char)
 {
-  itemvector AllItems;
+  itemvectorvector AllItems;
   protosystem::CreateEveryItem(AllItems);
   stack* Stack = game::IsInWilderness() ? Char->GetStack() : Char->GetStackUnder();
 
   for(uint c = 0; c < AllItems.size(); ++c)
-    Stack->AddItem(AllItems[c]);
+    Stack->AddItem(AllItems[c][0]);
 
   return false;
 }
@@ -1295,6 +1305,7 @@ bool commandsystem::SecretKnowledge(character* Char)
   if(Chosen < 4)
     {
       charactervector& Character = game::GetCharacterDrawVector();
+      Character.push_back(Char);
       protosystem::CreateEveryCharacter(Character);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
 
@@ -1366,14 +1377,14 @@ bool commandsystem::SecretKnowledge(character* Char)
 
       List.Draw();
 
-      for(c = 0; c < Character.size(); ++c)
+      for(c = 1; c < Character.size(); ++c)
 	delete Character[c];
 
       game::ClearCharacterDrawVector();
     }
   else if(Chosen < 6)
     {
-      itemvector& Item = game::GetItemDrawVector();
+      itemvectorvector& Item = game::GetItemDrawVector();
       protosystem::CreateEveryItem(Item);
       List.SetEntryDrawer(game::ItemEntryDrawer);
       List.SetPageLength(20);
@@ -1386,9 +1397,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	  for(c = 0; c < Item.size(); ++c)
 	    {
 	      Entry.Empty();
-	      Item[c]->AddName(Entry, UNARTICLED);
+	      Item[c][0]->AddName(Entry, UNARTICLED);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
-	      Item[c]->AddAttackInfo(List);
+	      Item[c][0]->AddAttackInfo(List);
 	    }
 
 	  break;
@@ -1398,9 +1409,9 @@ bool commandsystem::SecretKnowledge(character* Char)
 	  for(c = 0; c < Item.size(); ++c)
 	    {
 	      Entry.Empty();
-	      Item[c]->AddName(Entry, UNARTICLED);
+	      Item[c][0]->AddName(Entry, UNARTICLED);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, c, true);
-	      Item[c]->AddMiscellaneousInfo(List);
+	      Item[c][0]->AddMiscellaneousInfo(List);
 	    }
 
 	  break;
@@ -1409,7 +1420,7 @@ bool commandsystem::SecretKnowledge(character* Char)
       List.Draw();
 
       for(c = 0; c < Item.size(); ++c)
-	delete Item[c];
+	delete Item[c][0];
 
       game::ClearItemDrawVector();
     }
@@ -1474,7 +1485,7 @@ bool commandsystem::SummonMonster(character* Char)
 
 bool commandsystem::LevelTeleport(character*)
 {
-  long Level = game::NumberQuestion(CONST_S("To which level?"), vector2d(16, 6), WHITE);
+  long Level = game::NumberQuestion(CONST_S("To which level?"), WHITE);
 
   if(Level <= 0 || Level > game::GetLevels())
     {
@@ -1518,8 +1529,7 @@ bool commandsystem::Polymorph(character* Char)
   if(!Char->GetNewFormForPolymorphWithControl(NewForm))
     return true;
 
-  Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), 
-						vector2d(16, 6), WHITE));
+  Char->Polymorph(NewForm, game::NumberQuestion(CONST_S("For how long?"), WHITE));
   return true;
 }
 

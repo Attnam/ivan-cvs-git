@@ -637,7 +637,7 @@ bool chameleonwhip::HitEffect(character* Enemy, character* Hitter, vector2d HitP
   if(!IsBroken() && Enemy->IsEnabled() && ScabiesHelps(Enemy, Hitter))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
-      ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.", Hitter->CHAR_PERSONAL_PRONOUN, Hitter->CHAR_DESCRIPTION(DEFINITE));
+      ADD_MESSAGE("%s whip asks for the help of Scabies as it polymorphs %s.", Hitter->CHAR_PERSONAL_PRONOUN, Enemy->CHAR_DESCRIPTION(DEFINITE));
 
       if(Hitter->IsPlayer())
 	{

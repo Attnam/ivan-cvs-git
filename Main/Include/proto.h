@@ -31,6 +31,7 @@ struct itemdatabase;
 
 typedef std::map<festring, long> valuemap;
 typedef std::vector<item*> itemvector;
+typedef std::vector<itemvector> itemvectorvector;
 typedef std::vector<character*> charactervector;
 
 template <class type> class protocontainer
@@ -79,7 +80,7 @@ class protosystem
   static void CreateEveryNormalEnemy(charactervector&);
 #ifdef WIZARD
   static void CreateEveryCharacter(charactervector&);
-  static void CreateEveryItem(itemvector&);
+  static void CreateEveryItem(itemvectorvector&);
   static void CreateEveryMaterial(std::vector<material*>&);
 #endif
   static void Initialize();

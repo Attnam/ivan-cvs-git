@@ -77,6 +77,13 @@ struct eyecontroller
   static lsquare*** Map;
 };
 
+struct pathcontroller
+{
+  static bool Handler(int, int);
+  static lsquare*** Map;
+  static const character* Character;
+};
+
 struct stackcontroller
 {
   static lsquare*** Map;
@@ -251,6 +258,7 @@ class lsquare : public square
   void SwapMemorized(lsquare*);
   bool HasNoBorderPartners() const { return !(BorderPartnerInfo >> 24); }
   lsquare* GetRandomAdjacentSquare() const;
+  void SignalPossibleTransparencyChange();
  protected:
   void ChangeLuminance(color24&, color24);
   void RemoveLuminance(color24&);

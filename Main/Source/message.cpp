@@ -19,6 +19,7 @@
 #include "graphics.h"
 #include "save.h"
 #include "bitmap.h"
+#include "igraph.h"
 
 felist msgsystem::MessageHistory(CONST_S("Message history"), WHITE, 128);
 festring msgsystem::LastMessage;
@@ -131,7 +132,13 @@ void msgsystem::Draw()
       MessagesChanged = false;
     }
 
-  QuickDrawCache->NormalBlit(DOUBLE_BUFFER, 0, 0, 13, RES_Y - 122, QuickDrawCache->GetSize());
+  vector2d Size = QuickDrawCache->GetSize();
+  int Y = RES_Y - 122;
+  QuickDrawCache->NormalBlit(DOUBLE_BUFFER, 0, 0, 13, Y, Size);
+  igraph::BlitBackGround(13, Y, 1, 1);
+  igraph::BlitBackGround(12 + Size.X, Y, 1, 1);
+  igraph::BlitBackGround(13, Y + Size.Y - 1, 1, 1);
+  igraph::BlitBackGround(12 + Size.X, Y + Size.Y - 1, 1, 1);
 
   if(WasInBigMessageMode)
     EnterBigMessageMode();

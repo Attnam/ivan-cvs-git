@@ -18,7 +18,7 @@ bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 int bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
 color16 bodypart::GetMaterialColorA(int) const { return GetMainMaterial()->GetSkinColor(); }
 bool bodypart::IsWarm() const { return MainMaterial->IsWarm(); }
-bool bodypart::UseMaterialAttributes() const { return MainMaterial->UseMaterialAttributes(); }
+bool bodypart::UseMaterialAttributes() const { return MainMaterial->UseMaterialAttributes() || !Master || Master->AlwaysUseMaterialAttributes(); }
 bool bodypart::CanRegenerate() const { return MainMaterial->CanRegenerate(); }
 square* bodypart::GetSquareUnder(int I) const { return Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder(); }
 lsquare* bodypart::GetLSquareUnder(int I) const { return static_cast<lsquare*>(Master ? Slot[0]->GetSquareUnder(I) : Slot[I]->GetSquareUnder()); }
@@ -69,7 +69,7 @@ alpha blinkdogtorso::GetAlphaA(int Frame) const { return (Frame & 31) != 31 ? 25
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << (int)SpecialFlags << HP;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << (int)SpecialFlags << WobbleData << HP;
   SaveFile << OwnerDescription << Unique << BloodMaterial;
   SaveFile << IsSparklingB << IsSparklingC << IsSparklingD;
 }
@@ -77,14 +77,14 @@ void bodypart::Save(outputfile& SaveFile) const
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> (int&)SpecialFlags >> HP;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> (int&)SpecialFlags >> WobbleData >> HP;
   SaveFile >> OwnerDescription >> Unique >> BloodMaterial;
   SaveFile >> IsSparklingB >> IsSparklingC >> IsSparklingD;
 }
 
 int bodypart::GetStrengthValue() const
 {
-  if(Master && !UseMaterialAttributes())
+  if(!UseMaterialAttributes())
     return long(GetStrengthModifier()) * Master->GetAttribute(ENDURANCE) / 2000;
   else
     return long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000;
@@ -94,7 +94,7 @@ int head::GetTotalResistance(int Type) const
 {
   if(Master)
     {
-      int Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
+      int Resistance = GetResistance(Type) + Master->GetGlobalResistance(Type);
 
       if(GetHelmet())
 	Resistance += GetHelmet()->GetResistance(Type);
@@ -111,7 +111,7 @@ int head::GetTotalResistance(int Type) const
 int normaltorso::GetTotalResistance(int Type) const
 {
   if(Master)
-    return GetResistance(Type) + Master->GlobalResistance(Type);
+    return GetResistance(Type) + Master->GetGlobalResistance(Type);
   else
     return GetResistance(Type);
 }
@@ -120,7 +120,7 @@ int humanoidtorso::GetTotalResistance(int Type) const
 {
   if(Master)
     {
-      int Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
+      int Resistance = GetResistance(Type) + Master->GetGlobalResistance(Type);
 
       if(GetBodyArmor())
 	Resistance += GetBodyArmor()->GetResistance(Type);
@@ -138,7 +138,7 @@ int arm::GetTotalResistance(int Type) const
 {
   if(Master)
     {
-      int Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
+      int Resistance = GetResistance(Type) + Master->GetGlobalResistance(Type);
 
       if(GetExternalBodyArmor())
 	Resistance += GetExternalBodyArmor()->GetResistance(Type) >> 1;
@@ -156,7 +156,7 @@ int groin::GetTotalResistance(int Type) const
 {
   if(Master)
     {
-      int Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
+      int Resistance = GetResistance(Type) + Master->GetGlobalResistance(Type);
 
       if(GetExternalBodyArmor())
 	Resistance += GetExternalBodyArmor()->GetResistance(Type);
@@ -174,7 +174,7 @@ int leg::GetTotalResistance(int Type) const
 {
   if(Master)
     {
-      int Resistance = GetResistance(Type) + Master->GlobalResistance(Type);
+      int Resistance = GetResistance(Type) + Master->GetGlobalResistance(Type);
 
       if(GetExternalBodyArmor())
 	Resistance += GetExternalBodyArmor()->GetResistance(Type) >> 1;
@@ -938,21 +938,29 @@ void arm::Hit(character* Enemy, vector2d HitPos, int Direction, bool ForceHit)
     }
 }
 
-int arm::GetAttribute(int Identifier) const
+int arm::GetAttribute(int Identifier, bool AllowBonus) const
 {
   if(Identifier == ARM_STRENGTH)
     {
-      if(!UseMaterialAttributes())
-	return Max(int(StrengthExperience * EXP_DIVISOR) + StrengthBonus, 1);
-      else
-	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
+      int Base = !UseMaterialAttributes()
+	       ? int(StrengthExperience * EXP_DIVISOR)
+	       : GetMainMaterial()->GetStrengthValue();
+
+      if(AllowBonus)
+	Base += StrengthBonus;
+
+      return Max(Base, 1);
     }
   else if(Identifier == DEXTERITY)
     {
-      if(!UseMaterialAttributes())
-	return Max(int(DexterityExperience * EXP_DIVISOR) + DexterityBonus, 1);
-      else
-	return Max((GetMainMaterial()->GetFlexibility() << 2) + DexterityBonus, 1);
+      int Base = !UseMaterialAttributes()
+	       ? int(DexterityExperience * EXP_DIVISOR)
+	       : GetMainMaterial()->GetFlexibility() << 2;
+
+      if(AllowBonus)
+	Base += DexterityBonus;
+
+      return Max(Base, 1);
     }
   else
     {
@@ -1037,21 +1045,29 @@ void arm::EditExperience(int Identifier, double Value, double Speed)
     ABORT("Illegal arm attribute %d experience edit request!", Identifier);
 }
 
-int leg::GetAttribute(int Identifier) const
+int leg::GetAttribute(int Identifier, bool AllowBonus) const
 {
   if(Identifier == LEG_STRENGTH)
     {
-      if(!UseMaterialAttributes())
-	return Max(int(StrengthExperience * EXP_DIVISOR) + StrengthBonus, 1);
-      else
-	return Max(GetMainMaterial()->GetStrengthValue() + StrengthBonus, 1);
+      int Base = !UseMaterialAttributes()
+	       ? int(StrengthExperience * EXP_DIVISOR)
+	       : GetMainMaterial()->GetStrengthValue();
+
+      if(AllowBonus)
+	Base += StrengthBonus;
+
+      return Max(Base, 1);
     }
   else if(Identifier == AGILITY)
     {
-      if(!UseMaterialAttributes())
-	return Max(int(AgilityExperience * EXP_DIVISOR) + AgilityBonus, 1);
-      else
-	return Max((GetMainMaterial()->GetFlexibility() << 2) + AgilityBonus, 1);
+      int Base = !UseMaterialAttributes()
+	       ? int(AgilityExperience * EXP_DIVISOR)
+	       : GetMainMaterial()->GetFlexibility() << 2;
+
+      if(AllowBonus)
+	Base += AgilityBonus;
+
+      return Max(Base, 1);
     }
   else
     {
@@ -1894,7 +1910,8 @@ void humanoidtorso::SignalEquipmentAdd(gearslot* Slot)
   humanoid* Master = GetHumanoidMaster();
   int EquipmentIndex = Slot->GetEquipmentIndex();
 
-  if(!Master->IsInitializing() && EquipmentIndex == CLOAK_INDEX || EquipmentIndex == BODY_ARMOR_INDEX)
+  if(!Master->IsInitializing()
+  && (EquipmentIndex == CLOAK_INDEX || EquipmentIndex == BODY_ARMOR_INDEX))
     {
       item* Item = Slot->GetItem();
 
@@ -1931,13 +1948,13 @@ int arm::GetWieldedHitStrength() const
 void arm::ApplyDexterityPenalty(item* Item)
 {
   if(Item)
-    DexterityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? GetAttribute(DEXTERITY) : GetMainMaterial()->GetFlexibility());
+    DexterityBonus -= Item->GetInElasticityPenalty(GetAttribute(DEXTERITY, false));
 }
 
 void leg::ApplyAgilityPenalty(item* Item)
 {
   if(Item)
-    AgilityBonus -= Item->GetInElasticityPenalty(!UseMaterialAttributes() ? GetAttribute(AGILITY) : GetMainMaterial()->GetFlexibility());
+    AgilityBonus -= Item->GetInElasticityPenalty(GetAttribute(AGILITY, false));
 }
 
 int corpse::GetSpoilLevel() const
@@ -3109,4 +3126,23 @@ bool corpse::Necromancy(character* Necromancer)
 
       return false;
     }
+}
+
+alpha mysticfrogtorso::GetOutlineAlpha(int Frame) const
+{
+  Frame &= 31;
+  return Frame * (31 - Frame) >> 1;
+}
+
+color16 mysticfrogtorso::GetOutlineColor(int Frame) const
+{
+  switch((Frame&127) >> 5)
+    {
+    case 0: return BLUE;
+    case 1: return GREEN;
+    case 2: return RED;
+    case 3: return YELLOW;
+    }
+
+  return TRANSPARENT_COLOR;
 }

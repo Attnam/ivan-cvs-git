@@ -321,3 +321,80 @@ long femath::SumArray(const fearray<long>& Vector)
 
   return Sum;
 }
+
+void femath::GenerateFractalMap(int** Map, int Side, int StartStep, int Randomness)
+{
+  const int Limit = Side - 1;
+  Map[0][0] = 0;
+  Map[0][Limit] = 0;
+  Map[Limit][0] = 0;
+  Map[Limit][Limit] = 0;
+
+  for(int Step = StartStep, HalfStep = Step >> 1;
+      HalfStep;
+      Step = HalfStep, HalfStep >>= 1,
+      Randomness = ((Randomness << 3) - Randomness) >> 3)
+    {
+      int x, y, RandMod = (Randomness << 1) + 1;
+
+      for(x = HalfStep; x < Side; x += Step)
+	for(y = HalfStep; y < Side; y += Step)
+	  Map[x][y] = ((Map[x - HalfStep][y - HalfStep]
+		      + Map[x - HalfStep][y + HalfStep]
+		      + Map[x + HalfStep][y - HalfStep]
+		      + Map[x + HalfStep][y + HalfStep])
+		      >> 2) - Randomness + RAND() % RandMod;
+
+      for(x = HalfStep; x < Side; x += Step)
+	for(y = 0; y < Side; y += Step)
+	  {
+	    int HeightSum = Map[x - HalfStep][y] + Map[x + HalfStep][y];
+	    int Neighbours = 2;
+
+	    if(y)
+	      {
+		HeightSum += Map[x][y - HalfStep];
+		++Neighbours;
+	      }
+
+	    if(y != Limit)
+	      {
+		HeightSum += Map[x][y + HalfStep];
+		++Neighbours;
+	      }
+
+	    if(Neighbours == 4)
+	      HeightSum >>= 2;
+	    else
+	      HeightSum /= Neighbours;
+
+	    Map[x][y] = HeightSum - Randomness + RAND() % RandMod;
+	  }
+
+      for(x = 0; x < Side; x += Step)
+	for(y = HalfStep; y < Side; y += Step)
+	  {
+	    int HeightSum = Map[x][y - HalfStep] + Map[x][y + HalfStep];
+	    int Neighbours = 2;
+
+	    if(x)
+	      {
+		HeightSum += Map[x - HalfStep][y];
+		++Neighbours;
+	      }
+
+	    if(x != Limit)
+	      {
+		HeightSum += Map[x + HalfStep][y];
+		++Neighbours;
+	      }
+
+	    if(Neighbours == 4)
+	      HeightSum >>= 2;
+	    else
+	      HeightSum /= Neighbours;
+
+	    Map[x][y] = HeightSum - Randomness + RAND() % RandMod;
+	  }
+    }
+}

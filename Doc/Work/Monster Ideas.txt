@@ -363,3 +363,14 @@ Mind worm
 	(from Sid Meier's Alpha Centauri)
 
 Monster which can eat metals
+
+Snowman
+
+	Melts in the summer and leaves a carrot.
+
+The Groke (suggested by Henri Kiviluoto)
+
+	A dark, mound-shaped creature with staring eyes; everything she
+	touches dies, and the ground freezes wherever she sits. Appears
+	in Tove Jansson's books, for instance "Who Will Comfort Toffle?"
+	and the Moomin series.

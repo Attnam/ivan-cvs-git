@@ -576,8 +576,8 @@ vector2d rawbitmap::RandomizeSparklePos(const vector2d* ValidityArray, vector2d*
   vector2d* BadPossible[4];
   BadPossible[0] = PossibleBuffer;
   BadPossible[1] = BadPossible[0] + ((Size.X + Size.Y) << 1) -  4;
-  BadPossible[2] = BadPossible[0] + ((Size.X + Size.Y) << 1) - 12;
-  BadPossible[3] = BadPossible[0] + ((Size.X + Size.Y) << 1) - 20;
+  BadPossible[2] = BadPossible[1] + ((Size.X + Size.Y) << 1) - 12;
+  BadPossible[3] = BadPossible[2] + ((Size.X + Size.Y) << 1) - 20;
   vector2d* PreferredPossible = BadPossible[3] + ((Size.X + Size.Y) << 1) - 28;
 
   int Preferred = 0;

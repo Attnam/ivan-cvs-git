@@ -1,6 +1,6 @@
 # Ivan Graphics editOR makefile for DJGPP environment
 
-# Copyrights (C) Timo Kiviluoto / IvanDev 2003
+# Copyrights (C) Timo Kiviluoto / IvanDev 2003-2004
 
 AR       = ar rs
 CC       = gxx -o

@@ -52,6 +52,7 @@ public:
   static void LoadSeed();
   static long SumArray(const fearray<long>&);
   static int LoopRoll(int, int);
+  static void GenerateFractalMap(int**, int, int, int);
 protected:
   static ulong mt[];
   static long mti;

@@ -369,6 +369,9 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(ForceVomitMessage);
   ADD_MEMBER(SweatMaterial);
   ADD_MEMBER(Sweats);
+  ADD_MEMBER(IsImmuneToItemTeleport);
+  ADD_MEMBER(AlwaysUseMaterialAttributes);
+  ADD_MEMBER(IsEnormous);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -468,6 +471,9 @@ template<> void databasecreator<item>::CreateDataBaseMemberMap()
   ADD_MEMBER(IsValuable);
   ADD_MEMBER(EnchantmentMinusChance);
   ADD_MEMBER(EnchantmentPlusChance);
+  ADD_MEMBER(TeleportPriority);
+  ADD_MEMBER(HasNormalPictureDirection);
+  ADD_MEMBER(DamageFlags);
 }
 
 template<class type> void databasecreator<type>::CreateLTerrainDataBaseMemberMap()
@@ -521,6 +527,7 @@ template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
   ADD_MEMBER(WindowBitmapPos);
   ADD_MEMBER(ShowThingsUnder);
   ADD_MEMBER(LeftOverItems);
+  ADD_MEMBER(IsWall);
 }
 
 template<> void databasecreator<material>::CreateDataBaseMemberMap()
@@ -572,6 +579,7 @@ template<> void databasecreator<material>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanBeMirrored);
   ADD_MEMBER(AffectInside);
   ADD_MEMBER(IsValuable);
+  ADD_MEMBER(CanBeTailored);
 }
 
 template <class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const festring& Word, database& DataBase)

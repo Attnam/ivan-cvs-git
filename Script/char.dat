@@ -120,6 +120,9 @@ character
 	ForceVomitMessage = "You push your fingers down to your throat and vomit.";
 	SweatMaterial = SWEAT;
 	Sweats = true;
+	IsImmuneToItemTeleport = false;
+	AlwaysUseMaterialAttributes = false;
+	IsEnormous = false;
 }
 
 humanoid
@@ -183,6 +186,21 @@ playerkind
 	CWeaponSkillHits == 100;*/
 	/*Inventory == potion { Times = 50; }*/
 
+/*
+	Helmet = MITHRIL helmet(FULL_HELMET);
+	BodyArmor = MITHRIL bodyarmor(CHAIN_MAIL) { Enchantment = 3; }
+	RightWielded = MITHRIL flamingsword { Enchantment = 5; }
+	LeftWielded = MITHRIL shield { Enchantment = 3; }
+	Belt = STEEL belt;
+	Cloak = PHOENIX_FEATHER cloak { Enchantment = 3; }
+	RightGauntlet = NYMPH_HAIR gauntlet { Enchantment = 3; }
+	RightBoot = METEORIC_STEEL boot { Enchantment = 3; }
+	KnownCWeaponSkills = { 2, LARGE_SWORDS, SHIELDS; }
+	CWeaponSkillHits = { 2, 1000, 1000; }
+	RightSWeaponSkillHits = 500;
+	LeftSWeaponSkillHits = 500;
+	Inventory == itemcontainer(SMALL_CHEST) { ItemsInside = { 6, wand(WAND_OF_TELEPORTATION) { Times = 3; }, wand(WAND_OF_MIRRORING) { Times = 3; }, scrollofgolemcreation { Times = 2; }, wand(WAND_OF_STRIKING) { Times = 3; }, wand(WAND_OF_SLOW) { Times = 3; }, wand(WAND_OF_HASTE) { Times = 3; } } }
+*/
 	/*Config 1;
 	{
 		KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
@@ -300,6 +318,22 @@ playerkind
 		CWeaponSkillHits = { 1, 500; }
 		RightSWeaponSkillHits = 500;
 	}*/
+
+	/*Inventory = { 4
+	,COPPER itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } }
+	,BRONZE itemcontainer(CHEST) 
+				{Parameters = 0; 
+					ItemsInside = { 5,	Random { MinPrice = 1000; },
+															Random { MinPrice = 1000; },
+															stone { Chance = 75; },
+															stone { Chance = 75; },
+															stone { Chance = 75; } } 
+				}
+	,IRON itemcontainer(CHEST) { Parameters = LOCKED; ItemsInside = { 2, Random { MinPrice = 2000; }, Random { MinPrice = 2000; } } }
+	,ADAMANT itemcontainer(CHEST|OCTAGONAL_LOCK) { Parameters = 0; ItemsInside = { 2, Random { MinPrice = 3000; }, Random { MinPrice = 3000; } } }
+	}*/
+	/*Inventory == Random { MinPrice = 200; Category = POTION; Times = 10; }*/
+	/*Inventory = { 2, ring(RING_OF_TELEPORT_CONTROL), wand(WAND_OF_TELEPORTATION) { Times = 5; } }*/
 }
 
 petrus
@@ -353,6 +387,7 @@ petrus
 	CanBeConfused = false;
 	EnergyResistance = 50;
 	IsImmuneToLeprosy = true;
+	IsImmuneToItemTeleport = true;
 }
 
 farmer
@@ -460,6 +495,29 @@ guard
 		}
 	}
 
+	Config EUNUCH;
+	{
+		Helmet = STEEL helmet(FULL_HELMET);
+		BodyArmor = STEEL bodyarmor(PLATE_MAIL);
+		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD);
+		LeftWielded = STEEL shield;
+		AdjectiveArticle = "an";
+		Adjective = "eunuch";
+		CWeaponSkillHits = { 2, 200, 200; }
+		RightSWeaponSkillHits = 20;
+		LeftSWeaponSkillHits = 20;
+		PanicLevel = 20;
+		ClothColor = rgb16(110, 110, 110);
+		FriendlyReplies =
+		{
+			4,
+			"@Dd states in a very serious tone: \"My job is vital for the safety of the nation. No one knows what Petrus would do if something happened to his most dear lovers, or one of them escaped.\"",
+			"\"Don't you dare to touch any of the ladies!\"",
+			"\"And everyone said I didn't have the balls to achieve a high status in the guard! Hah!\"",
+			"@Dd seems very proud. \"I'm not just a guard, but also the choirmaster of the Cathedral. My mezzo-soprano voice is famous Attnam-wide.\"";
+		}
+	}
+
 	Config PATROL;
 	{
 		Helmet = helmet(HELM_OF_PERCEPTION) { Enchantment = 2; }
@@ -520,6 +578,7 @@ guard
 		RightGauntlet = MITHRIL gauntlet { Enchantment = 2; }
 		RightBoot = MITHRIL boot { Enchantment = 2; }
 		RightRing = ring(RING_OF_INFRA_VISION);
+		LeftRing = ring(RING_OF_INVISIBILITY);
 		AdjectiveArticle = "an";
 		Adjective = "elite";
 		CWeaponSkillHits = { 2, 500, 500; }
@@ -550,8 +609,8 @@ guard
 		Cloak = PHOENIX_FEATHER cloak(CLOAK_OF_FIRE_RESISTANCE);
 		RightWielded = VALPURIUM VALPURIUM meleeweapon(LONG_SWORD) { Enchantment = 3; }
 		LeftWielded = VALPURIUM shield { Enchantment = 3; }
-		RightRing = ring(RING_OF_ELECTRICITY_RESISTANCE);
-		LeftRing = ring(RING_OF_POISON_RESISTANCE);
+		RightRing = ring(RING_OF_TELEPORT_CONTROL);
+		LeftRing = ring(RING_OF_INVISIBILITY);
 		RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 3; }
 		RightBoot = SAPPHIRE boot(BOOT_OF_STRENGTH) { Enchantment = 3; }
 		Adjective = "master";
@@ -579,6 +638,7 @@ guard
 			"\"See the amulet? Don't think badly of the Government.\"",
 			"\"The house of Galladon has served Petrus ever since he took over.\"";
 		}
+		IsImmuneToItemTeleport = true;
 	}
 }
 
@@ -824,6 +884,7 @@ oree
 	VomitMaterial = ACIDOUS_BLOOD;
 	BloodMaterial = ACIDOUS_BLOOD;
 	SweatMaterial = ACIDOUS_BLOOD;
+	IsImmuneToItemTeleport = true;
 }
 
 darkknight
@@ -920,6 +981,7 @@ darkknight
 		Cloak = DRAGON_HIDE cloak { Enchantment = 3; }
 		Belt = SAPPHIRE belt { Enchantment = 3; }
 		RightWielded = SAPPHIRE RUBY meleeweapon(TWO_HANDED_SCIMITAR) { Enchantment = 4; }
+		LeftRing = ring(RING_OF_TELEPORT_CONTROL);
 		RightGauntlet = SPIDER_SILK gauntlet { Enchantment = 3; }
 		RightBoot = RUBY boot { Enchantment = 3; }
 		Adjective = "grand master";
@@ -946,6 +1008,7 @@ darkknight
 		FireResistance = 30;
 		ElectricityResistance = 30;
 		EnergyResistance = 30;
+		IsImmuneToItemTeleport = true;
 	}
 }
 
@@ -1019,7 +1082,7 @@ frog
 		DefaultAgility = 40;
 		DefaultEndurance = 10;
 		DefaultPerception = 24;
-		DefaultIntelligence = 25;
+		DefaultIntelligence = 15;
 		DefaultWisdom = 20;
 		DefaultCharisma = 5;
 		DefaultMana = 20;
@@ -1041,7 +1104,7 @@ frog
 		DefaultAgility = 35;
 		DefaultEndurance = 15;
 		DefaultPerception = 30;
-		DefaultIntelligence = 30;
+		DefaultIntelligence = 20;
 		DefaultWisdom = 25;
 		DefaultCharisma = 4;
 		DefaultMana = 25;
@@ -1064,7 +1127,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 20;
 		DefaultPerception = 36;
-		DefaultIntelligence = 35;
+		DefaultIntelligence = 25;
 		DefaultWisdom = 30;
 		DefaultCharisma = 3;
 		DefaultMana = 30;
@@ -1076,9 +1139,11 @@ frog
 		SkinColor = rgb16(60, 60, 60);
 		Adjective = "giant dark";
 		CanBeGenerated = true;
-		ClassStates = INFRA_VISION;
+		ClassStates = INFRA_VISION|TELEPORT_CONTROL;
 		CWeaponSkillHits == 500;
 		AttachedGod = SCABIES;
+		IsPolymorphable = false;
+		IsEnormous = true;
 	}
 
 	Config LIGHT;
@@ -1087,7 +1152,7 @@ frog
 		DefaultAgility = 40;
 		DefaultEndurance = 10;
 		DefaultPerception = 24;
-		DefaultIntelligence = 15;
+		DefaultIntelligence = 5;
 		DefaultWisdom = 30;
 		DefaultCharisma = 15;
 		DefaultMana = 20;
@@ -1106,7 +1171,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 15;
 		DefaultPerception = 36;
-		DefaultIntelligence = 20;
+		DefaultIntelligence = 10;
 		DefaultWisdom = 35;
 		DefaultCharisma = 20;
 		DefaultMana = 25;
@@ -1126,7 +1191,7 @@ frog
 		DefaultAgility = 30;
 		DefaultEndurance = 20;
 		DefaultPerception = 36;
-		DefaultIntelligence = 25;
+		DefaultIntelligence = 15;
 		DefaultWisdom = 40;
 		DefaultCharisma = 25;
 		DefaultMana = 30;
@@ -1137,7 +1202,10 @@ frog
 		SkinColor = rgb16(32, 88, 32);
 		Adjective = "giant light";
 		CWeaponSkillHits == 500;
-		AttachedGod = SCABIES;
+		AttachedGod = VALPURUS;
+		IsPolymorphable = false;
+		ClassStates = TELEPORT_CONTROL;
+		IsEnormous = true;
 	}
 }
 
@@ -1272,6 +1340,8 @@ skeleton
 		FireResistance = 100;
 		ElectricityResistance = 100;
 		EnergyResistance = 100;
+		ClassStates = GAS_IMMUNITY|TELEPORT_CONTROL;
+		IsImmuneToItemTeleport = true;
 	}
 }
 
@@ -1471,6 +1541,7 @@ golem
 	NameSingular = "golem";
 	CanBeGenerated = true;
 	Sex = UNDEFINED;
+	SkinColor = rgb16(160, 32, 16); /* for flesh golems */
 	EyeColor = rgb16(0, 0, 0);
 	HeadBitmapPos = 96, 256;
 	TorsoBitmapPos = 32, 256;
@@ -1496,6 +1567,8 @@ golem
 	BodyPartsDisappearWhenSevered = true;
 	DangerModifier = 75;
 	/*IsImmuneToLeprosy = true;*/
+	AlwaysUseMaterialAttributes = true;
+	IsEnormous = true;
 
 	Config VALPURIUM;
 	{
@@ -1512,7 +1585,7 @@ golem
 		IsUnique = true;
 		CanBeWished = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL); }
-		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
+		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE|TELEPORT_CONTROL;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1520,6 +1593,7 @@ golem
 		AttachedGod = SOPHOS;
 		CanBeConfused = false;
 		Frequency = 10000;
+		IsImmuneToItemTeleport = true;
 	}
 
 	Config ACIDOUS_BLOOD;
@@ -1744,6 +1818,7 @@ communist /* Ivan */
 	}
 	AttachedGod = LORICATUS;
 	ConstantCommandFlags = FLEE_FROM_ENEMIES;
+	IsEnormous = true;
 }
 
 hunter
@@ -1842,6 +1917,7 @@ bear
 		CanBeGenerated = true;
 		TotalVolume = 250000;
 		TotalSize = 250;
+		IsEnormous = true;
 	}
 
 	Config POLAR_BEAR;
@@ -1851,6 +1927,7 @@ bear
 		TotalVolume = 300000;
 		TotalSize = 300;
 		AttributeBonus = 15;
+		IsEnormous = true;
 	}
 }
 
@@ -2389,6 +2466,7 @@ mistress
 		FireResistance = 40;
 		ElectricityResistance = 40;
 		EnergyResistance = 40;
+		IsImmuneToItemTeleport = true;
 	}
 }
 
@@ -2673,7 +2751,7 @@ angel
 	CanRead = true;
 	NameSingular = "angel";
 	Article = "an";
-	ClassStates = ESP|GAS_IMMUNITY;
+	ClassStates = ESP|GAS_IMMUNITY|TELEPORT_CONTROL;
 	SkinColor = rgb16(200, 200, 200);
 	HairColor = rgb16(180, 180, 0);
 	EyeColor = rgb16(48, 48, 255);
@@ -2696,6 +2774,7 @@ angel
 	WieldedPosition = 0, -2;
 	MoveType = FLY;
 	UsesNutrition = false;
+	IsPolymorphable = false;
 }
 
 kamikazedwarf
@@ -2775,6 +2854,7 @@ mammoth
 	FleshMaterial = MAMMOTH_FLESH;
 	AttachedGod = SILVA;
 	Frequency = 2500;
+	IsEnormous = true;
 }
 
 unicorn
@@ -2956,6 +3036,7 @@ carnivorousplant
 		CWeaponSkillHits == 100;
 		TotalVolume = 40000;
 		TotalSize = 250;
+		IsEnormous = true;
 	}
 }
 
@@ -2989,6 +3070,7 @@ buffalo
 	DeathMessage = "@Dd snarls one last time.";
 	AttachedGod = SILVA;
 	Frequency = 2500;
+	IsEnormous = true;
 }
 
 snake
@@ -3160,6 +3242,7 @@ orc
 		Cloak = ANGEL_HAIR cloak { Enchantment = 2; }
 		BodyArmor = DRAGON_HIDE bodyarmor(PLATE_MAIL) { Enchantment = 2; }
 		RightWielded = RUBY meleeweapon(HALBERD) { Enchantment = 3; }
+		LeftRing = ring(RING_OF_TELEPORT_CONTROL);
 		LeftWielded = 0;
 		Belt = RUBY belt { Enchantment = 2; }
 		RightGauntlet = DRAGON_HIDE gauntlet(GAUNTLET_OF_STRENGTH) { Enchantment = 2; }
@@ -3184,6 +3267,8 @@ orc
 		FireResistance = 30;
 		ElectricityResistance = 30;
 		EnergyResistance = 30;
+		IsImmuneToItemTeleport = true;
+		IsEnormous = true;
 	}
 }
 
@@ -3499,7 +3584,7 @@ encourager
 		"@Dd shouts harshly: \"Work! Work! Bring food to yer betters!\"",
 		"@Dd shouts almost sadly: \"Gonna leave, man? Pity. Me kinda liked kicking ya.\"",
 		"@Dd screams at your face: \"Me talented shouter. That made everyone in Attnam jealous. Me was sent here and told to never come back.\"",
-		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouragering workers.\"";
+		"@Dd shouts smiling: \"Me has team management diploma from Decos business school! Me very good at encouraging workers.\"";
 	}
 	AutomaticallySeen = true;
 }
@@ -3734,6 +3819,7 @@ darkmage
 		RightSWeaponSkillHits = 20;
 		LeftSWeaponSkillHits = 20;
 		PolymorphIntelligenceRequirement = 5;
+		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 5; } }
 	}
 
 	Config BATTLE_MAGE;
@@ -3763,8 +3849,8 @@ darkmage
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
-		Inventory == Random { MaxPrice = 500; Category = WAND|SCROLL; }
 		PolymorphIntelligenceRequirement = 20;
+		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 25; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 10; } }
 	}
 
 	Config ELDER;
@@ -3796,8 +3882,8 @@ darkmage
 		CWeaponSkillHits == 200;
 		RightSWeaponSkillHits = 100;
 		LeftSWeaponSkillHits = 100;
-		Inventory == Random { MinPrice = 500; Category = WAND|SCROLL; }
 		PolymorphIntelligenceRequirement = 35;
+		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 50; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 50; } }
 	}
 
 	Config ARCH_MAGE;
@@ -3815,7 +3901,7 @@ darkmage
 		Adjective = "dark";
 		NameSingular = "archmage";
 		DefaultName = "Ischaldirh";
-		ClassStates = INVISIBLE|INFRA_VISION|ESP;
+		ClassStates = INVISIBLE|INFRA_VISION|ESP|TELEPORT_CONTROL;
 		TotalVolume = 100000;
 		TotalSize = 150;
 		IsUnique = true;
@@ -3833,7 +3919,7 @@ darkmage
 		Belt = ANGEL_HAIR belt { Enchantment = 5; }
 		RightBoot = DRAGON_HIDE boot(BOOT_OF_AGILITY) { Enchantment = 5; }
 		RightWielded = OCTIRON OCTIRON meleeweapon(QUARTER_STAFF) { Enchantment = 6; }
-		Inventory = { 8, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR); }
+		Inventory = { 9, wand(WAND_OF_RESURRECTION), wand(WAND_OF_STRIKING), wand(WAND_OF_CLONING), wand(WAND_OF_LIGHTNING), wand(WAND_OF_FIRE_BALLS), scrollofcharging, scrollofwishing, holybook(INFUSCOR), key(OCTAGONAL_LOCK); }
 		HPRequirementForGeneration = 450;
 		DayRequirementForGeneration = 18;
 		PanicLevel = 0;
@@ -3845,6 +3931,7 @@ darkmage
 		ElectricityResistance = 40;
 		EnergyResistance = 40;
 		PolymorphIntelligenceRequirement = 50;
+		IsImmuneToItemTeleport = true;
 	}
 }
 
@@ -3914,6 +4001,7 @@ twoheadedmoose
 	BaseBiteStrength = 300;
 	CanKick = true;
 	DangerModifier = 50;
+	IsEnormous = true;
 }
 
 magpie
@@ -4020,6 +4108,7 @@ largecreature
 	IsAbstract = true;
 	CanBeWished = false;
 	CanBeGenerated = false;
+	IsEnormous = true;
 }
 
 elpuri
@@ -4050,7 +4139,7 @@ elpuri
 	HostileReplies == "@Dd roars horribly: \"DiE hUmAn!!\"";
 	BloodMaterial = DARK_FROG_BLOOD;
 	SkinColor = rgb16(60, 60, 60);
-	ClassStates = INFRA_VISION;
+	ClassStates = INFRA_VISION|TELEPORT_CONTROL;
 	BaseBiteStrength = 1500;
 	FleshMaterial = ELPURI_FLESH;
 	DeathMessage = "@Dd groans horribly and drops @pp head.";
@@ -4059,7 +4148,7 @@ elpuri
 	CanBeConfused = false;
 	AttackStyle = USE_HEAD;
 	KnownCWeaponSkills == BITE;
-	MoveType = WALK|SWIM|ETHEREAL; 
+	MoveType = WALK|SWIM; 
 	DestroysWalls = true;
 }
 
@@ -4225,7 +4314,7 @@ vladimir
 	FleshMaterial = MUTANT_BUNNY_FLESH;
 	AttachedGod = SCABIES;
 	TotalSize = 400;
-	MoveType = WALK|ETHEREAL; 
+	MoveType = WALK; 
 	DestroysWalls = true;
 	DefaultName = "Vladimir";
 	Alias == "Vladimir";
@@ -4312,18 +4401,18 @@ necromancer
 		TotalVolume = 60000;
 		TotalSize = 180;
 		Cloak = LEATHER cloak { Enchantment = 2; }
-		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 0; }
-		HPRequirementForGeneration = 75;
-		DayRequirementForGeneration = 3;
+		RightWielded = OAK_WOOD OAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 3; }
+		HPRequirementForGeneration = 50;
+		DayRequirementForGeneration = 2;
 		Frequency = 1500;
 		PanicLevel = 5;
-		Inventory == skull;
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		LeftSWeaponSkillHits = 20;
 		CapColor = rgb16(150, 150, 100);
 		GauntletColor = rgb16(150, 150, 100);
 		PolymorphIntelligenceRequirement = 5;
+		Inventory = { 3, skull, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 5; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 1; } }
 	}
 
 	Config MASTER_NECROMANCER;
@@ -4343,17 +4432,17 @@ necromancer
 		TotalSize = 170;
 		Cloak = NYMPH_HAIR cloak { Enchantment = 3; }
 		RightWielded = TEAK_WOOD TEAK_WOOD meleeweapon(QUARTER_STAFF) { Enchantment = 4; }
-		HPRequirementForGeneration = 150;
-		DayRequirementForGeneration = 6;
+		HPRequirementForGeneration = 125;
+		DayRequirementForGeneration = 5;
 		Frequency = 1000;
 		PanicLevel = 0;
 		CWeaponSkillHits == 100;
 		RightSWeaponSkillHits = 50;
 		LeftSWeaponSkillHits = 50;
-		Inventory = { 2, Random { MaxPrice = 500; Category = WAND|SCROLL; }, BLUE_CRYSTAL skull; }
 		CapColor = rgb16(100, 100, 200);
 		GauntletColor = rgb16(100, 100, 200);
 		PolymorphIntelligenceRequirement = 20;
+		Inventory = { 5, BLUE_CRYSTAL skull { Chance = 20; }, PURPLE_CRYSTAL skull { Chance = 20; }, GREEN_CRYSTAL skull { Chance = 20; }, Random { MaxPrice = 500; Category = WAND|SCROLL; Chance = 10; }, Random { MinPrice = 500; Category = WAND|SCROLL; Chance = 3; } }
 	}
 }
 
@@ -4405,6 +4494,7 @@ sumowrestler
 		"\"I think I'm going to move abroad and start teaching sumo wrestling to foreigners. I'm sure it'll be the number one fashion sport of big-boned people in no time!\"";
 	}
 	AutomaticallySeen = true;
+	IsEnormous = true;
 }
 
 tourist
@@ -4483,7 +4573,7 @@ tourist
 		FriendlyReplies =
 		{
 			5,
-			"\"I heard natives like you paint every inch of their body, dance complex ritual dances around a big fire and utter forbidden voodoo spells. When will you begin?\"",
+			"\"I heard natives like you paint every inch of their body, dance complex ritual dances around a big bonfire and utter forbidden voodoo spells. When will you begin?\"",
 			"\"Why are all the villagers so sweaty? Can't they try to wash themselves often enough at least when civilized people are around?\"",
 			"\"I so love bananas! This is a heaven!\"",
 			"\"My friend's brother's ex-wife's uncle's old schoolmate inherited some money, bought shares of Decos Bananas Co. and became a millionaire. I think of it as an example of how anyone can become rich and happy if he tries hard enough.\"",
@@ -4550,6 +4640,8 @@ blinkdog
 veterankamikazedwarf
 {
 	AttributeBonus = 50;
+	DefaultIntelligence = 3;
+	DefaultWisdom = 2;
 	Adjective = "veteran";
 	Inventory == backpack { SecondaryMaterial = GUN_POWDER { Volume = 30000; } }
 	HPRequirementForGeneration = 200;
@@ -4591,6 +4683,7 @@ archangel
 	Cloak = ANGEL_HAIR cloak { Enchantment = 4; }
 	Belt = ANGEL_HAIR belt { Enchantment = 4; }
 	RightGauntlet = ANGEL_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+	IsImmuneToItemTeleport = true;
 
 	Config VALPURUS;
 	{
@@ -4668,7 +4761,7 @@ archangel
 	}
 }
 
-/*tailor
+tailor
 {
 	DefaultArmStrength = 15;
 	DefaultLegStrength = 15;
@@ -4682,15 +4775,12 @@ archangel
 	DefaultMana = 10;
 	TotalVolume = 70000;
 	TotalSize = 180;
-	NameSingular = "smith";
-	Helmet = STEEL helmet { Enchantment = 1; }
-	Cloak = OMMEL_HAIR cloak(CLOAK_OF_FIRE_RESISTANCE) { Enchantment = 1; }
-	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
-	RightWielded = MITHRIL meleeweapon(HAMMER) { Enchantment = 2; }
-	RightGauntlet = LEATHER gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
-	RightRing = ring(RING_OF_FIRE_RESISTANCE);
-	LeftRing = ring(RING_OF_FIRE_RESISTANCE);
-	RightBoot = STEEL boot { Enchantment = 1; }
+	NameSingular = "tailor";
+	Cloak = LEATHER cloak { Enchantment = 1; }
+	BodyArmor = HARDENED_LEATHER bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	RightWielded = MITHRIL meleeweapon(DAGGER) { Enchantment = 2; }
+	RightGauntlet = NYMPH_HAIR gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 4; }
+	RightBoot = OMMEL_HAIR boot { Enchantment = 1; }
 	KnownCWeaponSkills == BLUNT_WEAPONS;
 	CWeaponSkillHits == 500;
 	RightSWeaponSkillHits = 200;
@@ -4701,11 +4791,57 @@ archangel
 	LegBitmapPos = 0, 0;
 	ClothColor = rgb16(111, 64, 37);
 	CanRead = true;
-	/ Replies overridden /
+	/* Replies overridden */
 	IsUnique = true;
 	IsNameable = false;
 	CanBeCloned = false;
 	DefaultName = "Mirvo";
 	IsCharmable = false;
 	AttachedGod = LORICATUS;
-}*/
+}
+
+mysticfrog
+{
+	DefaultArmStrength = 10;
+	DefaultAgility = 25;
+	DefaultEndurance = 12;
+	DefaultPerception = 18;
+	DefaultMana = 40;
+	BaseBiteStrength = 1000;
+	TotalVolume = 30000;
+	TorsoBitmapPos = 96, 0;
+	TotalSize = 50;
+	CWeaponSkillHits == 100;
+	IsPolymorphable = false;
+	IsAbstract = true;
+
+	Config DARK;
+	{
+		DefaultIntelligence = 35;
+		DefaultWisdom = 25;
+		DefaultCharisma = 6;
+		BloodMaterial = DARK_FROG_BLOOD;
+		SkinColor = rgb16(60, 60, 60);
+		Adjective = "mystic dark";
+		CanBeGenerated = true;
+		ClassStates = INFRA_VISION|TELEPORT_CONTROL|INVISIBLE|ESP;
+		AttachedGod = INFUSCOR;
+		IgnoreDanger = true;
+		HPRequirementForGeneration = 400;
+		DayRequirementForGeneration = 16;
+		Frequency = 250;
+		PolymorphIntelligenceRequirement = 25;
+	}
+
+	Config LIGHT;
+	{
+		DefaultIntelligence = 25;
+		DefaultWisdom = 35;
+		DefaultCharisma = 30;
+		SkinColor = rgb16(32, 88, 32);
+		Adjective = "mystic light";
+		ClassStates = TELEPORT_CONTROL|INVISIBLE|ESP;
+		AttachedGod = VALPURUS;
+		PolymorphIntelligenceRequirement = 15;
+	}
+}

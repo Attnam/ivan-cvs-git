@@ -277,7 +277,7 @@ void basecontentscript::InitDataMap()
 
 basecontentscript::basecontentscript()
 : ContentType(0), Random(false), Config(0),
-  INIT(Parameters, 0)
+  INIT(Parameters, NO_PARAMETERS)
 { }
 
 void basecontentscript::ReadFrom(inputfile& SaveFile)
@@ -417,7 +417,7 @@ template <class type> type* contentscripttemplate<type>::BasicInstantiate(int Sp
       Instance = Proto->Clone(Config, SpecialFlags|NO_PIC_UPDATE);
     }
 
-  if(GetParameters())
+  if(GetParameters() != NO_PARAMETERS)
     Instance->SetParameters(GetParameters());
 
   if(UseOverriddenMaterials)
@@ -794,6 +794,7 @@ void roomscript::InitDataMap()
   INIT_ENTRY(Shape);
   INIT_ENTRY(IsInside);
   INIT_ENTRY(GenerateWindows);
+  INIT_ENTRY(UseFillSquareWalls);
 }
 
 void roomscript::ReadFrom(inputfile& SaveFile)
@@ -836,6 +837,7 @@ void levelscript::InitDataMap()
 {
   INIT_ENTRY(RoomDefault);
   INIT_ENTRY(FillSquare);
+  INIT_ENTRY(TunnelSquare);
   INIT_ENTRY(LevelMessage);
   INIT_ENTRY(Size);
   INIT_ENTRY(Items);
@@ -862,6 +864,7 @@ void levelscript::InitDataMap()
   INIT_ENTRY(EnchantmentMinusChanceDelta);
   INIT_ENTRY(EnchantmentPlusChanceBase);
   INIT_ENTRY(EnchantmentPlusChanceDelta);
+  INIT_ENTRY(BackGroundType);
 }
 
 void levelscript::ReadFrom(inputfile& SaveFile)
@@ -937,8 +940,11 @@ void levelscript::Combine(levelscript& Script)
   Square.splice(Square.end(), Script.Square);
   Room.splice(Room.end(), Script.Room);
 
-  for(datamap::const_iterator i = DataMap.begin(); i != DataMap.end(); ++i)
-    (this->*i->second).Replace(Script.*i->second);
+  for(std::list<roomscript>::iterator i1 = Room.begin(); i1 != Room.end(); ++i1)
+    i1->SetBase(GetRoomDefault());
+
+  for(datamap::const_iterator i2 = DataMap.begin(); i2 != DataMap.end(); ++i2)
+    (this->*i2->second).Replace(Script.*i2->second);
 }
 
 void levelscript::SetBase(const scriptwithbase* What)

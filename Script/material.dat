@@ -65,6 +65,7 @@ material
 	CanBeMirrored = true;
 	AffectInside = false;
 	IsValuable = false;
+	CanBeTailored = false;
 }
 
 solid
@@ -85,19 +86,6 @@ solid
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 60;
 		IsValuable = true;
-	}	
-
-	Config STONE;
-	{
-		StrengthValue = 40;
-		ConsumeType = CT_MINERAL; 
-		Density = 4000;
-		IsGolemMaterial = true; 
-		Color = rgb16(80, 80, 80);
-		NameStem = "stone";
-		AttachedGod = TERRA;
-		NaturalForm = stone;
-		HardenedMaterial = PURPLE_CRYSTAL;
 	}
 
 	Config GRAVEL;
@@ -119,7 +107,7 @@ solid
 		Color = rgb16(100, 60, 30);
 		NameStem = "moraine";
 		CanBeWished = false;
-		DigProductMaterial = STONE;
+		DigProductMaterial = GRANITE;
 		AttachedGod = TERRA;
 		NaturalForm = stone;
 	}
@@ -152,6 +140,7 @@ solid
 		PriceModifier = 100;
 		HardenedMaterial = SPIDER_SILK;
 		IntelligenceRequirement = 10;
+		CanBeTailored = true;
 	}
 
 	Config CLOTH;
@@ -167,6 +156,7 @@ solid
 		AttachedGod = DULCIS;
 		HardenedMaterial = ANGEL_HAIR;
 		IntelligenceRequirement = 5;
+		CanBeTailored = true;
 	}
 
 	Config MITHRIL;
@@ -176,7 +166,7 @@ solid
 		Density = 5000;
 		IsGolemMaterial = true;
 		Color = rgb16(224, 224, 224);
-		PriceModifier = 5000;
+		PriceModifier = 2000;
 		NameStem = "mithril";
 		IsSparkling = true;
 		IsMetal = true;
@@ -251,6 +241,7 @@ solid
 		AttachedGod = LORICATUS;
 		HardenedMaterial = HARDENED_LEATHER;
 		IntelligenceRequirement = 5;
+		CanBeTailored = true;
 	}
 
 	Config LEAF;
@@ -265,6 +256,7 @@ solid
 		Flexibility = 10;
 		AttachedGod = SILVA;
 		HardenedMaterial = PALM_LEAF;
+		CanBeTailored = true;
 	}
 
 	Config FABRIC;
@@ -278,6 +270,7 @@ solid
 		NameStem = "expensive fabric";
 		Flexibility = 15;
 		AttachedGod = MELLIS;
+		CanBeTailored = true;
 	}
 
 	Config PALM_LEAF;
@@ -293,6 +286,7 @@ solid
 		AttachedGod = SILVA;
 		HardenedMaterial = NYMPH_HAIR;
 		IntelligenceRequirement = 5;
+		CanBeTailored = true;
 	}
 
 	Config SULFUR;
@@ -360,7 +354,7 @@ solid
 	{
 		StrengthValue = 250;
 		ConsumeType = CT_MINERAL;
-		Density = 3500;
+		Density = 4000;
 		IsGolemMaterial = true;
 		Color = rgb16(96, 96, 200);
 		PriceModifier = 6000;
@@ -379,7 +373,7 @@ solid
 	{
 		StrengthValue = 250;
 		ConsumeType = CT_MINERAL;
-		Density = 3500;
+		Density = 4000;
 		IsGolemMaterial = true;
 		Color = rgb16(180, 0, 0);
 		PriceModifier = 8000;
@@ -451,6 +445,7 @@ solid
 		AttachedGod = SOPHOS;
 		IntelligenceRequirement = 45;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config KEVLAR;
@@ -464,6 +459,7 @@ solid
 		AttachedGod = LORICATUS;
 		IntelligenceRequirement = 50;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config OMMEL_HAIR;
@@ -481,6 +477,7 @@ solid
 		HardenedMaterial = PHOENIX_FEATHER;
 		IntelligenceRequirement = 15;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config HARDENED_LEATHER;
@@ -495,6 +492,7 @@ solid
 		Flexibility = 7;
 		AttachedGod = LORICATUS;
 		IntelligenceRequirement = 10;
+		CanBeTailored = true;
 	}
 
 	Config TROLL_HIDE;
@@ -509,6 +507,7 @@ solid
 		AttachedGod = SILVA;
 		HardenedMaterial = OMMEL_HAIR;
 		IntelligenceRequirement = 10;
+		CanBeTailored = true;
 	}
 
 	Config NYMPH_HAIR;
@@ -524,6 +523,7 @@ solid
 		AttachedGod = SILVA;
 		HardenedMaterial = TROLL_HIDE;
 		IntelligenceRequirement = 10;
+		CanBeTailored = true;
 	}
 
 	Config ANGEL_HAIR;
@@ -540,6 +540,7 @@ solid
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 40;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config PHOENIX_FEATHER;
@@ -555,6 +556,7 @@ solid
 		HardenedMaterial = DRAGON_HIDE;
 		IntelligenceRequirement = 25;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config GOLDEN_EAGLE_FEATHER;
@@ -569,6 +571,7 @@ solid
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 60;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config ICE;
@@ -598,6 +601,7 @@ solid
 		IsImmuneToAcid = true;
 		IntelligenceRequirement = 40;
 		IsValuable = true;
+		CanBeTailored = true;
 	}
 
 	Config ARCANITE;
@@ -605,7 +609,7 @@ solid
 		StrengthValue = 180;
 		ConsumeType = CT_METAL;
 		Density = 800;
-		Color = rgb16(224, 224, 160);
+		Color = rgb16(224, 224, 120);
 		IsGolemMaterial = true;
 		PriceModifier = 2000;
 		Article = "an";
@@ -758,16 +762,14 @@ solid
 	Config BLUE_CRYSTAL;
 	{
 		StrengthValue = 140;
-		ConsumeType = CT_MINERAL; /* correct someday */
+		ConsumeType = CT_MINERAL;
 		Density = 2000;
 		IsGolemMaterial = true;
 		Color = rgb16(150, 150, 170);
-		Article = "a";
-		NameStem = "blue crystal";
+		NameStem = "blue light crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
-		IsMetal = false;
 		Emitation = rgb24(135, 135, 160);
 		IsSparkling = true;
 		IsImmuneToAcid = true;
@@ -781,16 +783,14 @@ solid
 	Config PURPLE_CRYSTAL;
 	{
 		StrengthValue = 130;
-		ConsumeType = CT_MINERAL; /* correct someday */
+		ConsumeType = CT_MINERAL;
 		Density = 2000;
 		IsGolemMaterial = true;
 		Color = rgb16(175, 150, 175);
-		Article = "a";
-		NameStem = "purple crystal";
+		NameStem = "purple light crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
-		IsMetal = false;
 		Emitation = rgb24(175, 150, 175);
 		IsSparkling = true;
 		IsImmuneToAcid = true;
@@ -804,16 +804,14 @@ solid
 	Config GREEN_CRYSTAL;
 	{
 		StrengthValue = 150;
-		ConsumeType = CT_MINERAL; /* correct someday */
+		ConsumeType = CT_MINERAL;
 		Density = 2000;
 		IsGolemMaterial = true;
 		Color = rgb16(150, 175, 150);
-		Article = "a";
-		NameStem = "green crystal";
+		NameStem = "green light crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
-		IsMetal = false;
 		Emitation = rgb24(135, 155, 135);
 		IsSparkling = true;
 		IsImmuneToAcid = true;
@@ -821,6 +819,236 @@ solid
 		PriceModifier = 8000;
 		IntelligenceRequirement = 25;
 		IsValuable = true;
+	}
+
+	Config SAND_STONE;
+	{
+		StrengthValue = 25;
+		ConsumeType = CT_MINERAL;
+		Density = 2300;
+		IsGolemMaterial = true;
+		Color = rgb16(150, 125, 80);
+		NameStem = "sandstone";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = LIME_STONE;
+	}
+
+	Config LIME_STONE;
+	{
+		StrengthValue = 30;
+		ConsumeType = CT_MINERAL; 
+		Density = 2500;
+		IsGolemMaterial = true; 
+		Color = rgb16(160, 170, 160);
+		NameStem = "limestone";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = CALCITE;
+	}
+
+	Config CALCITE;
+	{
+		StrengthValue = 35;
+		ConsumeType = CT_MINERAL; 
+		Density = 2700;
+		IsGolemMaterial = true; 
+		Color = rgb16(180, 180, 200);
+		NameStem = "calcite";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = OBSIDIAN;
+		Alpha = 140;
+	}
+
+	Config OBSIDIAN;
+	{
+		StrengthValue = 40;
+		ConsumeType = CT_MINERAL; 
+		Density = 2400;
+		IsGolemMaterial = true; 
+		Color = rgb16(40, 40, 40);
+		Article = "an";
+		NameStem = "obsidian";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = GNEISS;
+	}
+
+	Config GNEISS;
+	{
+		StrengthValue = 45;
+		ConsumeType = CT_MINERAL; 
+		Density = 2900;
+		IsGolemMaterial = true; 
+		Color = rgb16(108, 80, 75);
+		NameStem = "gneiss";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = SLATE;
+	}
+
+	Config SLATE;
+	{
+		StrengthValue = 50;
+		ConsumeType = CT_MINERAL; 
+		Density = 2700;
+		IsGolemMaterial = true; 
+		Color = rgb16(140, 80, 64);
+		NameStem = "slate";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = GRANITE;
+	}
+
+	Config GRANITE;
+	{
+		StrengthValue = 55;
+		ConsumeType = CT_MINERAL; 
+		Density = 2700;
+		IsGolemMaterial = true; 
+		Color = rgb16(100, 100, 100);
+		NameStem = "granite";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = BASALT;
+	}
+
+	Config BASALT;
+	{
+		StrengthValue = 60;
+		ConsumeType = CT_MINERAL; 
+		Density = 2900;
+		IsGolemMaterial = true; 
+		Color = rgb16(60, 60, 60);
+		NameStem = "basalt";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = MILKY_QUARTZ;
+	}
+
+	Config MILKY_QUARTZ;
+	{
+		StrengthValue = 65;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(200, 240, 200);
+		NameStem = "milky quartz";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = QUARTZITE;
+	}
+
+	Config FLINT;
+	{
+		StrengthValue = 65;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(135, 150, 180);
+		NameStem = "flint";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = QUARTZITE;
+	}
+
+	Config QUARTZITE;
+	{
+		StrengthValue = 70;
+		ConsumeType = CT_MINERAL; 
+		Density = 2700;
+		IsGolemMaterial = true; 
+		Color = rgb16(175, 160, 135);
+		NameStem = "quartzite";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		IntelligenceRequirement = 5;
+	}
+
+	Config AMETHYST;
+	{
+		StrengthValue = 75;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(160, 35, 160);
+		Article = "an";
+		NameStem = "amethyst";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		PriceModifier = 1000;
+		IntelligenceRequirement = 10;
+		IsSparkling = true;
+		Alpha = 160;
+	}
+
+	Config CITRINE;
+	{
+		StrengthValue = 75;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true;
+		Color = rgb16(230, 210, 40);
+		NameStem = "citrine";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		PriceModifier = 1000;
+		IntelligenceRequirement = 10;
+		IsSparkling = true;
+		Alpha = 180;
+	}
+
+	Config ROSE_QUARTZ;
+	{
+		StrengthValue = 75;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(160, 130, 130);
+		NameStem = "rose quartz";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		PriceModifier = 1000;
+		IntelligenceRequirement = 10;
+		IsSparkling = true;
+		Alpha = 180;
+	}
+
+	Config JASPER;
+	{
+		StrengthValue = 75;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(150, 40, 30);
+		NameStem = "jasper";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		PriceModifier = 1000;
+		IntelligenceRequirement = 10;
+		IsSparkling = true;
+	}
+
+	Config ROCK_CRYSTAL;
+	{
+		StrengthValue = 75;
+		ConsumeType = CT_MINERAL; 
+		Density = 2650;
+		IsGolemMaterial = true; 
+		Color = rgb16(180, 180, 200);
+		NameStem = "rock crystal";
+		AttachedGod = TERRA;
+		NaturalForm = stone;
+		HardenedMaterial = PURPLE_CRYSTAL;
+		PriceModifier = 500;
+		IntelligenceRequirement = 10;
+		Alpha = 140;
 	}
 
 	Config DARK_GRASS;
@@ -919,7 +1147,7 @@ organic /* substances that spoil but are not flesh */
 
 	Config PLANT_FIBER;
 	{
-		StrengthValue = 5;
+		StrengthValue = 7;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(111, 64, 37);
@@ -930,11 +1158,12 @@ organic /* substances that spoil but are not flesh */
 		AttachedGod = MORTIFER;
 		IsAlive = true;
 		CanRegenerate = true;
+		IsGolemMaterial = true;
 	}
 
 	Config MUTANT_PLANT_FIBER;
 	{
-		StrengthValue = 5;
+		StrengthValue = 7;
 		ConsumeType = CT_MISC_ORGANIC;
 		Density = 500;
 		Color = rgb16(111, 64, 37);
@@ -960,6 +1189,7 @@ organic /* substances that spoil but are not flesh */
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 48000;
 		AttachedGod = MORTIFER;
+		IsGolemMaterial = true;
 	}
 
 	Config BREAD;
@@ -1046,6 +1276,7 @@ organic /* substances that spoil but are not flesh */
 		AttachedGod = MORTIFER;
 		HardenedMaterial = OMMEL_TOOTH;
 		IntelligenceRequirement = 15;
+		IsGolemMaterial = true;
 	}
 
 	Config OMMEL_TOOTH;
@@ -1063,6 +1294,7 @@ organic /* substances that spoil but are not flesh */
 		AttachedGod = MORTIFER;
 		IntelligenceRequirement = 30;
 		IsSparkling = true;
+		IsGolemMaterial = true;
 	}
 }
 
@@ -1548,6 +1780,7 @@ flesh
 		PriceModifier = 1600;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
+		IsGolemMaterial = true;
 	}
 
 	Config BEEF;
@@ -1558,6 +1791,7 @@ flesh
 		PriceModifier = 1600;
 		CanHaveParasite = false;
 		AttachedGod = SEGES;
+		IsGolemMaterial = true;
 	}
 
 	Config FROG_FLESH;
@@ -1591,6 +1825,7 @@ flesh
 	{
 		NameStem = "human flesh";
 		AttachedGod = MORTIFER;
+		IsGolemMaterial = true;
 	}
 
 	Config DOLPHIN_FLESH;

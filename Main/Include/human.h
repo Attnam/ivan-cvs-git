@@ -86,7 +86,7 @@ class ABSTRACT_CHARACTER
   virtual sorter EquipmentSorter(int) const;
   virtual void SetEquipment(int, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
-  virtual int GlobalResistance(int) const;
+  virtual int GetGlobalResistance(int) const;
   virtual bool TryToRiseFromTheDead();
   virtual bool HandleNoBodyPart(int);
   virtual void Kick(lsquare*, int, bool = false);
@@ -164,6 +164,8 @@ class ABSTRACT_CHARACTER
   virtual bool CheckApply() const;
   virtual bool HasArm() const;
   virtual bool CanForceVomit() const { return TorsoIsAlive() && HasArm(); }
+  virtual bool IsTransparent() const;
+  virtual void ModifySituationDanger(double&) const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(int, bool = false) const;
@@ -217,7 +219,6 @@ class CHARACTER
   virtual void BeTalkedTo();
   bool HealFully(character*);
   virtual void FinalProcessForBone();
-  virtual void TeleportRandomly() { }
   virtual bool MoveTowardsHomePos();
  protected:
   virtual void VirtualConstructor(bool);
@@ -245,7 +246,6 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void GetAICommand();
   virtual void SetWayPoints(const fearray<packedvector2d>&);
-  virtual void TeleportRandomly();
   virtual bool MoveTowardsHomePos();
  protected:
   virtual void VirtualConstructor(bool);
@@ -335,7 +335,7 @@ class CHARACTER
   humanoid,
  public:
   virtual bool MoveRandomly();
-  virtual bool CheckForUsefulItemsOnGround() { return false; }
+  virtual bool CheckForUsefulItemsOnGround(bool = true) { return false; }
   virtual void BeTalkedTo();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -516,7 +516,7 @@ class CHARACTER
   humanoid,
  public:
   virtual bool Hit(character*, vector2d, int, bool = false);
-  virtual bool CheckForUsefulItemsOnGround() { return false; }
+  virtual bool CheckForUsefulItemsOnGround(bool = true) { return false; }
   virtual void GetAICommand();
   virtual void CreateInitialEquipment(int);
  protected:
@@ -665,6 +665,7 @@ class CHARACTER
   veterankamikazedwarf,
   kamikazedwarf,
  protected:
+  virtual void VirtualConstructor(bool);
   virtual int GetTorsoMainColor() const;
   virtual int GetGauntletColor() const;
   virtual int GetLegMainColor() const;
@@ -681,6 +682,15 @@ class CHARACTER
  protected:
   virtual int GetTorsoMainColor() const;
   virtual int GetArmMainColor() const;
+);
+
+class CHARACTER
+(
+  tailor,
+  humanoid,
+ public:
+  virtual void BeTalkedTo();
+  virtual void GetAICommand() { StandIdleAI(); }
 );
 
 #endif

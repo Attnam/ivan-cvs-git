@@ -812,15 +812,18 @@ item* item::Fix()
 
 void item::DonateSlotTo(item* Item)
 {
-  Slot[0]->DonateTo(Item);
-  Slot[0] = 0;
+  if(Slot[0])
+    {
+      Slot[0]->DonateTo(Item);
+      Slot[0] = 0;
 
-  for(int c = 1; c < SquaresUnder; ++c)
-    if(Slot[c])
-      {
-	Slot[c]->Empty();
-	Slot[c] = 0;
-      }
+      for(int c = 1; c < SquaresUnder; ++c)
+	if(Slot[c])
+	  {
+	    Slot[c]->Empty();
+	    Slot[c] = 0;
+	  }
+    }
 }
 
 int item::GetSpoilLevel() const
@@ -1427,4 +1430,31 @@ bool item::IsValuable() const
     }
 
   return false;
+}
+
+int item::GetHinderVisibilityBonus(const character* Char) const
+{
+  int Bonus = 0;
+
+  if(GetGearStates() & INFRA_VISION
+  && !Char->TemporaryStateIsActivated(INFRA_VISION))
+    Bonus += 20000;
+
+  if(GetGearStates() & ESP
+  && !Char->TemporaryStateIsActivated(ESP))
+    Bonus += 20000;
+
+  if(!game::IsDark(GetEmitation()))
+    Bonus += 5000;
+
+  return Bonus;
+}
+
+long item::GetFixPrice() const
+{
+  item* Clone = RawDuplicate();
+  Clone = Clone->Fix();
+  long FixPrice = Clone->GetTruePrice();
+  Clone->SendToHell();
+  return Max<long>(5 * sqrt(FixPrice), 10);
 }

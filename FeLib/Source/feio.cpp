@@ -233,6 +233,8 @@ int iosystem::Menu(const bitmap* BackGround, vector2d Pos, const festring& Topic
 
 int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool Fade, bool AllowExit, stringkeyhandler StringKeyHandler)
 {
+  bitmap BackUp(RES_X, 9, 0);
+
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
@@ -241,13 +243,15 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       Buffer.FadeToScreen();
     }
+  else
+    DOUBLE_BUFFER->NormalBlit(&BackUp, Pos.X, Pos.Y + 10, 0, 0, (MaxLetters << 3) + 9, 9);
 
   bool TooShort = false;
   FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, (MaxLetters << 3) + 9, 9, 0);
+      BackUp.NormalBlit(DOUBLE_BUFFER, 0, 0, Pos.X, Pos.Y + 10, (MaxLetters << 3) + 9, 9);
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
 
       if(TooShort)
@@ -322,6 +326,8 @@ int iosystem::StringQuestion(festring& Input, const festring& Topic, vector2d Po
 
 long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color, bool Fade)
 {
+  bitmap BackUp(RES_X, 9, 0);
+
   if(Fade)
     {
       bitmap Buffer(RES_X, RES_Y, 0);
@@ -330,13 +336,16 @@ long iosystem::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
       Buffer.FadeToScreen();
     }
+  else
+    DOUBLE_BUFFER->NormalBlit(&BackUp, Pos.X, Pos.Y + 10, 0, 0, 105, 9);
 
   festring Input;
   FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y, Color, "%s", Topic.CStr());
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 105, 9, 0);
+      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 105, 9, 0);
+      BackUp.NormalBlit(DOUBLE_BUFFER, 0, 0, Pos.X, Pos.Y + 10, 105, 9);
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.CStr());
       graphics::BlitDBToScreen();
 
@@ -375,6 +384,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
   long BarValue = StartValue;
   festring Input;
   bool FirstTime = true;
+  bitmap BackUp(RES_X, 20, 0);
 
   if(Fade)
     {
@@ -389,6 +399,8 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
       Buffer.DrawVerticalLine(Pos.X + 1 + (BarValue - Min) * 200 / (Max - Min), Pos.Y + 12, Pos.Y + 18, Color1, true);
       Buffer.FadeToScreen();
     }
+  else
+    DOUBLE_BUFFER->NormalBlit(&BackUp, Pos.X, Pos.Y, 0, 0, RES_X, 20);
 
   for(int LastKey = 0;; LastKey = 0)
     {
@@ -404,8 +416,10 @@ long iosystem::ScrollBarQuestion(const festring& Topic, vector2d Pos, long Start
       if(Handler)
 	Handler(BarValue);
 
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, ((Topic.GetSize() + 14) << 3) + 1, 10, 0);
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
+      BackUp.NormalBlit(DOUBLE_BUFFER, 0, 0, Pos.X, Pos.Y, ((Topic.GetSize() + 14) << 3) + 1, 10);
+      BackUp.NormalBlit(DOUBLE_BUFFER, 0, 10, Pos.X, Pos.Y + 10, 203, 10);
+      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, ((Topic.GetSize() + 14) << 3) + 1, 10, 0);
+      //DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
 
       if(FirstTime)
 	{

@@ -1,4 +1,4 @@
-Version 0.440
+Version 0.50
 -------------
 
 - fluids can now cover items and characters and interact with them
@@ -12,14 +12,18 @@ Version 0.440
   more intelligence
 - added wands of acid rain, mirroring and necromancy
 - added scrolls of detect material, harden material and golem creation
-- added several new monsters, eg. named archangels for each god
-  and necromancers
+- added several new monsters, eg. powerful named archangels for each god
+  and necromancers who raise skeletons and zombies to their bidding
 - one can now give pets tactical commands, change their equipment and
   use them to carry extra stuff (these are accessed using 'C'hat and
   'I'ssue commands keys)
 - the player can now panic if he gets hit too much
 - the player can now become exhausted if he fights for too long and/or
   uses the new r'u'n command too much
+- it is now possible to browse detailed death reasons of individual
+  monsters in the postgame massacre lists
+- gloomy cave is now longer and has more special levels and rooms
+- all the endgame battles are more complex
 - added leprosy, a disease which causes your limbs to drop off randomly
 
 Version 0.430

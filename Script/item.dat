@@ -111,6 +111,9 @@ item
 	IsValuable = true;
 	EnchantmentMinusChance = 0;
 	EnchantmentPlusChance = 0;
+	TeleportPriority = 100;
+	HasNormalPictureDirection = true;
+	DamageFlags = BLUNT;
 }
 
 materialcontainer
@@ -200,6 +203,7 @@ meleeweapon
 	CanBePiled = false;
 	CanBeEnchanted = true;
 	HasSecondaryMaterial = true;
+	TeleportPriority = 500;
 
 	Config LONG_SWORD;
 	{
@@ -219,6 +223,7 @@ meleeweapon
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
 		EnchantmentPlusChance = 5;
+		DamageFlags = SLASH|PIERCE;
 	}
 
 	Config BROKEN|LONG_SWORD;
@@ -252,6 +257,7 @@ meleeweapon
 		WieldedBitmapPos = 160, 16;
 		EnchantmentMinusChance = 5;
 		EnchantmentPlusChance = 5;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|TWO_HANDED_SWORD;
@@ -284,6 +290,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 112;
 		EnchantmentMinusChance = 5;
 		EnchantmentPlusChance = 5;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|TWO_HANDED_SCIMITAR;
@@ -315,6 +322,7 @@ meleeweapon
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 96;
 		EnchantmentPlusChance = 15;
+		DamageFlags = PIERCE;
 	}
 
 	Config BROKEN|SPEAR;
@@ -347,6 +355,7 @@ meleeweapon
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 160, 176;
 		EnchantmentPlusChance = 15;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|AXE;
@@ -379,6 +388,7 @@ meleeweapon
 		WieldedBitmapPos = 160, 256;
 		EnchantmentMinusChance = 5;
 		EnchantmentPlusChance = 5;
+		DamageFlags = SLASH|PIERCE;
 	}
 
 	Config BROKEN|HALBERD;
@@ -474,6 +484,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 32;
 		IsGoodWithPlants = true;
 		EnchantmentPlusChance = 20;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|SICKLE;
@@ -504,6 +515,7 @@ meleeweapon
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 288;
 		EnchantmentPlusChance = 25;
+		DamageFlags = SLASH|PIERCE;
 	}
 
 	Config BROKEN|DAGGER;
@@ -535,6 +547,7 @@ meleeweapon
 		AttachedGod = CLEPTIA;
 		WieldedBitmapPos = 160, 32;
 		EnchantmentPlusChance = 15;
+		DamageFlags = SLASH|PIERCE;
 	}
 
 	Config BROKEN|SHORT_SWORD;
@@ -567,6 +580,7 @@ meleeweapon
 		AttachedGod = CRUENTUS;
 		WieldedBitmapPos = 160, 16;
 		EnchantmentPlusChance = 5;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|BASTARD_SWORD;
@@ -597,6 +611,7 @@ meleeweapon
 		AttachedGod = LORICATUS;
 		WieldedBitmapPos = 160, 272;
 		EnchantmentPlusChance = 10;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|BATTLE_AXE;
@@ -629,6 +644,7 @@ meleeweapon
 		WieldedBitmapPos = 176, 48;
 		IsGoodWithPlants = true;
 		EnchantmentPlusChance = 20;
+		DamageFlags = SLASH;
 	}
 
 	Config BROKEN|SCYTHE;
@@ -791,6 +807,7 @@ justifier /* meleeweapon-> */
 	AttachedGod = VALPURUS;
 	WieldedBitmapPos = 160, 16;
 	IsQuestItem = true;
+	DamageFlags = SLASH|PIERCE;
 }
 
 neercseulb /* meleeweapon-> */
@@ -847,6 +864,7 @@ pickaxe /* meleeweapon-> */
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 64;
 	EnchantmentPlusChance = 10;
+	DamageFlags = PIERCE;
 
 	Config BROKEN;
 	{
@@ -880,6 +898,7 @@ bodyarmor /* armor-> */
 	TorsoArmorBitmapPos = 32, 416;
 	ArmArmorBitmapPos = 80, 416;
 	LegArmorBitmapPos = 16, 416;
+	TeleportPriority = 200;
 
 	Config CHAIN_MAIL;
 	{
@@ -1015,6 +1034,7 @@ potion /* materialcontainer-> */
 	AttachedGod = NONE;
 	WieldedBitmapPos = 176, 144;
 	IsValuable = false;
+	TeleportPriority = 200;
 }
 
 bananapeels
@@ -1052,6 +1072,7 @@ brokenbottle /* cannot contain anything, so NOT bottle-> */
 	AttachedGod = NEFAS;
 	WieldedBitmapPos = 160, 128;
 	IsValuable = false;
+	DamageFlags = PIERCE;
 }
 
 scroll
@@ -1068,6 +1089,7 @@ scroll
 	Roundness = 15;
 	WieldedBitmapPos = 176, 144;
 	AllowEquip = false;
+	TeleportPriority = 300;
 }
 
 scrollofcreatemonster /* scroll-> */
@@ -1234,6 +1256,7 @@ wand
 	CanBePiled = false;
 	BreakEffectRangeSquare = 2;
 	WieldedBitmapPos = 160, 352;
+	TeleportPriority = 1000;
 
 	Config WAND_OF_POLYMORPH;
 	{
@@ -1315,7 +1338,7 @@ wand
 		Possibility = 40;
 		Price = 500;
 		PostFix = "of slow";
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == GRANITE;
 		BeamRange = 5;
 		MinCharges = 3;
 		MaxCharges = 6;
@@ -1529,6 +1552,7 @@ palmbranch
 	BitmapPos = 0, 240;
 	FormModifier = 15;
 	NameSingular = "palm branch";
+	NamePlural = "palm branches";
 	MainMaterialConfig == PALM_LEAF;
 	Roundness = 80;
 	IsTwoHanded = true;
@@ -1673,6 +1697,7 @@ stone
 	AttachedGod = NONE;
 	WieldedBitmapPos = 160, 368;
 	IsValuable = false;
+	HasNormalPictureDirection = false;
 }
 
 scrolloftaming /* scroll-> */
@@ -1736,6 +1761,12 @@ key
 	Config SQUARE_LOCK; { Adjective = "square"; Possibility = 15; }
 	Config TRIANGULAR_LOCK; { Adjective = "triangular"; Possibility = 15; }
 	Config HEXAGONAL_LOCK; { Adjective = "hexagonal"; }
+	Config OCTAGONAL_LOCK;
+	{
+		MainMaterialConfig == OCTIRON;
+		AdjectiveArticle = "an";
+		Adjective = "octagonal";
+	}
 }
 
 shield /* armor-> */
@@ -1870,6 +1901,7 @@ cloak /* armor-> */
 		Price = 250;
 		AcidResistance = 4;
 		EnchantmentPlusChance = 5;
+		TeleportPriority = 1000;
 	}
 
 	Config BROKEN|CLOAK_OF_ACID_RESISTANCE;
@@ -2009,6 +2041,7 @@ gauntlet /* armor-> */
 	GauntletBitmapPos = 80, 432;
 	CanBeBroken = true;
 	EnchantmentPlusChance = 10;
+	HasNormalPictureDirection = false;
 
 	Config BROKEN;
 	{
@@ -2160,6 +2193,7 @@ ring
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
 	WieldedBitmapPos = 160, 368;
+	TeleportPriority = 300;
 
 	Config RING_OF_FIRE_RESISTANCE;
 	{
@@ -2212,6 +2246,7 @@ ring
 		GearStates = TELEPORT_CONTROL;
 		Price = 500;
 		AttachedGod = SOPHOS;
+		TeleportPriority = 1000;
 	}
 
 	Config RING_OF_POLYMORPH;
@@ -2273,6 +2308,7 @@ ring
 		MainMaterialConfig == GOLD;
 		Price = 250;
 		AttachedGod = LORICATUS;
+		TeleportPriority = 1000;
 	}
 }
 
@@ -2290,6 +2326,7 @@ amulet
 	Roundness = 10; /* it is considered here opened */
 	IsAbstract = true;
 	WieldedBitmapPos = 160, 112;
+	HasNormalPictureDirection = false;
 
 	Config AMULET_OF_LIFE_SAVING;
 	{
@@ -2413,7 +2450,8 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	FormModifier = 15;
 	BitmapPos = 16, 0;
 	DefaultMainVolume = 25000;
-	NameSingular = "head of Elpuri";
+	NameSingular = "head";
+	PostFix = "of Elpuri";
 	ArticleMode = DEFINITE_ARTICLE;
 	MainMaterialConfig == ELPURI_FLESH;
 	IsPolymorphable = false;
@@ -2469,6 +2507,10 @@ blinkdogtorso /* dogtorso-> */
 {
 }
 
+mysticfrogtorso /* normaltorso-> */
+{
+}
+
 whistle
 {
 	Possibility = 50;
@@ -2496,6 +2538,7 @@ magicalwhistle /* whistle-> */
 	Alias == "magic whistle";
 	CanBePiled = false;
 	AttachedGod = DULCIS;
+	TeleportPriority = 10000;
 }
 
 itemcontainer
@@ -2615,7 +2658,7 @@ helmet
 	BitmapPos = 16, 384;
 	FormModifier = 10;
 	NameSingular = "helmet";
-	MainMaterialConfig = { 23, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, STONE, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
+	MainMaterialConfig = { 23, LEATHER, HARDENED_LEATHER, TROLL_HIDE, BALSA_WOOD, PINE_WOOD, FIR_WOOD, BIRCH_WOOD, OAK_WOOD, TEAK_WOOD, EBONY_WOOD, BONE, OBSIDIAN, TIN, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, DRAGON_HIDE, ARCANITE, MITHRIL, OMMEL_BONE, OMMEL_TOOTH; }
 	MaterialConfigChances = { 23, 500, 750, 300, 20, 70, 60, 50, 40, 30, 20, 300, 100, 100, 750, 500, 250, 100, 25, 25, 25, 25, 10, 5; }
 	Roundness = 60;
 	CanBeBroken = true;
@@ -2823,6 +2866,7 @@ stethoscope
 	MainMaterialConfig == UNICORN_HORN;
 	AttachedGod = SEGES;
 	WieldedBitmapPos = 160, 128;
+	HasNormalPictureDirection = false;
 }
 
 flamingsword /* meleeweapon-> */
@@ -2846,6 +2890,7 @@ flamingsword /* meleeweapon-> */
 	AttachedGod = LORICATUS;
 	WieldedBitmapPos = 160, 16;
 	EnchantmentPlusChance = 2;
+	DamageFlags = SLASH|PIERCE;
 
 	Config BROKEN;
 	{
@@ -2884,6 +2929,7 @@ mjolak /* meleeweapon-> */
 	AttachedGod = CRUENTUS;
 	WieldedBitmapPos = 160, 256;
 	EnchantmentPlusChance = 2;
+	DamageFlags = SLASH|PIERCE;
 
 	Config BROKEN;
 	{
@@ -2920,6 +2966,7 @@ vermis /* meleeweapon-> */
 	AttachedGod = SOPHOS;
 	WieldedBitmapPos = 160, 96;
 	EnchantmentPlusChance = 2;
+	DamageFlags = PIERCE;
 
 	Config BROKEN;
 	{
@@ -3072,6 +3119,7 @@ gorovitssickle
 	AttachedGod = SEGES;
 	WieldedBitmapPos = 176, 32;
 	IsQuestItem = true;
+	DamageFlags = SLASH;
 }
 
 scrollofrepair /* scroll-> */
@@ -3114,6 +3162,7 @@ horn
 	CanBePiled = false;
 	AttachedGod = DULCIS;
 	WieldedBitmapPos = 160, 352;
+	TeleportPriority = 500;
 
 	Config BRAVERY;
 	{
@@ -3123,7 +3172,7 @@ horn
 
 	Config FEAR;
 	{
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == OBSIDIAN;
 		PostFix = "of fear";
 	}
 }
@@ -3189,6 +3238,7 @@ saalthul
 	AttachedGod = CLEPTIA;
 	WieldedBitmapPos = 160, 32;
 	EnchantmentPlusChance = 2;
+	DamageFlags = SLASH|PIERCE;
 
 	Config BROKEN;
 	{

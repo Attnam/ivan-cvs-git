@@ -303,11 +303,14 @@ void liquid::TouchEffect(character* Char, int BodyPartIndex)
 
 /* Doesn't do the actual rusting, just returns whether it should happen */
 
-bool ironalloy::TryToRust(long Modifier)
+bool ironalloy::TryToRust(long Modifier, long Volume)
 {
   if(GetRustLevel() != VERY_RUSTED)
     {
-      long Chance = long(5000000. * sqrt(GetVolume()) / (Modifier * GetRustModifier()));
+      if(!Volume)
+	Volume = GetVolume();
+
+      long Chance = long(5000000. * sqrt(Volume) / (Modifier * GetRustModifier()));
 
       if(Chance <= 1 || !(RAND() % Chance))
 	return true;

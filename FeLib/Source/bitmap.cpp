@@ -344,7 +344,9 @@ void bitmap::NormalBlit(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int
     {
     case NONE:
       {
-	if(XSize == Bitmap->XSize && YSize == Bitmap->YSize)
+	if(!SourceX && !SourceY && !DestX && !DestY
+	&& Width == XSize && Height == YSize
+	&& Width == Bitmap->XSize && Height == Bitmap->YSize)
 	  memcpy(DestImage[0], SrcImage[0], XSizeTimesYSize * sizeof(packedcolor16));
 	else
 	  {
@@ -2065,12 +2067,12 @@ alpha bitmap::CalculateAlphaAverage() const
 
 cachedfont::cachedfont(int XSize, int YSize) : bitmap(XSize, YSize)
 {
-  Alloc2D(MaskMap, XSize, YSize);
+  Alloc2D(MaskMap, YSize, XSize);
 }
 
 cachedfont::cachedfont(int XSize, int YSize, color16 Color) : bitmap(XSize, YSize, Color)
 {
-  Alloc2D(MaskMap, XSize, YSize);
+  Alloc2D(MaskMap, YSize, XSize);
 }
 
 void cachedfont::PrintCharacter(bitmap* Bitmap, int SourceX, int SourceY, int DestX, int DestY) const
@@ -2113,9 +2115,9 @@ void cachedfont::CreateMaskMap()
 
 const int WaveDelta[] = { 1, 2, 2, 2, 1, 0, -1, -2, -2, -2, -1 };
 
-void bitmap::Wobble(int Frame, bool Horizontally)
+void bitmap::Wobble(int Frame, int SpeedShift, bool Horizontally)
 {
-  int WavePos = (Frame << 1) - 14;
+  int WavePos = (Frame << SpeedShift >> 1) - 14;
 
   if(Horizontally)
     {

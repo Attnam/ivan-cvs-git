@@ -451,7 +451,7 @@ void protosystem::CreateEveryCharacter(charactervector& Character)
     }
 }
 
-void protosystem::CreateEveryItem(itemvector& Item)
+void protosystem::CreateEveryItem(itemvectorvector& Item)
 {
   for(int c = 1; c < protocontainer<item>::GetSize(); ++c)
     {
@@ -461,7 +461,7 @@ void protosystem::CreateEveryItem(itemvector& Item)
 
       for(int c2 = 0; c2 < ConfigSize; ++c2)
 	if(!ConfigData[c2]->IsAbstract && ConfigData[c2]->IsAutoInitializable)
-	  Item.push_back(Proto->Clone(ConfigData[c2]->Config));
+	  Item.push_back(itemvector(1, Proto->Clone(ConfigData[c2]->Config)));
     }
 }
 

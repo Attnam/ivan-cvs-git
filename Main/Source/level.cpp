@@ -229,11 +229,14 @@ void level::GenerateTunnel(int FromX, int FromY, int TargetX, int TargetY, bool 
 {
   FlagMap[FromX][FromY] |= ON_POSSIBLE_ROUTE;
   ExpandPossibleRoute(FromX, FromY, TargetX, TargetY, XMode);
+  const contentscript<glterrain>* GTerrain = LevelScript->GetTunnelSquare()->GetGTerrain();
+  const contentscript<olterrain>* OTerrain = LevelScript->GetTunnelSquare()->GetOTerrain();
 
   if(FlagMap[TargetX][TargetY] & ON_POSSIBLE_ROUTE)
     for(int x = 0; x < XSize; ++x)
       for(int y = 0; y < YSize; ++y)
-	if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE && !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
+	if((FlagMap[x][y] & (ON_POSSIBLE_ROUTE|PREFERRED)) == ON_POSSIBLE_ROUTE
+	&& !(x == FromX && y == FromY) && !(x == TargetX && y == TargetY))
 	  {
 	    FlagMap[x][y] &= ~ON_POSSIBLE_ROUTE;
 	    FlagMap[FromX][FromY] |= STILL_ON_POSSIBLE_ROUTE;
@@ -242,7 +245,8 @@ void level::GenerateTunnel(int FromX, int FromY, int TargetX, int TargetY, bool 
 	    if(!(FlagMap[TargetX][TargetY] & STILL_ON_POSSIBLE_ROUTE))
 	      {
 		FlagMap[x][y] |= ON_POSSIBLE_ROUTE|PREFERRED;
-		Map[x][y]->ChangeOLTerrain(0);
+		Map[x][y]->ChangeGLTerrain(GTerrain->Instantiate());
+		Map[x][y]->ChangeOLTerrain(OTerrain->Instantiate());
 	      }
 
 	    for(int X = 0; X < XSize; ++X)
@@ -639,7 +643,7 @@ void level::GenerateMonsters()
 {
   if(*LevelScript->GenerateMonsters()
   && game::GetTeam(MONSTER_TEAM)->GetEnabledMembers() < IdealPopulation
-  && !(RAND() % MonsterGenerationInterval))
+  && (MonsterGenerationInterval <= 1 || !(RAND() % MonsterGenerationInterval)))
     GenerateNewMonsters(1);
 }
 
@@ -730,12 +734,14 @@ void level::GenerateNewMonsters(int HowMany, bool ConsiderPlayer)
       for(int c2 = 0; c2 < 30; ++c2)
 	{
 	  Pos = GetRandomSquare(Char);
-			
-	  if(!ConsiderPlayer || abs(int(Pos.X) - PLAYER->GetPos().X) > 6 || abs(int(Pos.Y) - PLAYER->GetPos().Y) > 6)
+
+	  if(!ConsiderPlayer
+	  || abs(int(Pos.X) - PLAYER->GetPos().X) > 6
+	  || abs(int(Pos.Y) - PLAYER->GetPos().Y) > 6)
 	    break;
 	}
 
-      if(Pos.X || Pos.Y)
+      if(Pos != ERROR_VECTOR)
 	{
 	  Char->PutTo(Pos);
 	  Char->SetGenerationDanger(Difficulty);
@@ -1084,8 +1090,8 @@ bool level::CollectCreatures(charactervector& CharacterArray, character* Leader,
 
 void level::Draw(bool AnimationDraw) const
 {
-  const int XMin = game::GetCamera().X;
-  const int YMin = game::GetCamera().Y;
+  const int XMin = Max(game::GetCamera().X, 0);
+  const int YMin = Max(game::GetCamera().Y, 0);
   const int XMax = Min(XSize, game::GetCamera().X + game::GetScreenXSize());
   const int YMax = Min(YSize, game::GetCamera().Y + game::GetScreenYSize());
   const ulong LOSTick = game::GetLOSTick();
@@ -1158,8 +1164,20 @@ vector2d level::GetEntryPos(const character* Char, int I) const
 
 void level::GenerateRectangularRoom(std::vector<vector2d>& OKForDoor, std::vector<vector2d>& Inside, std::vector<vector2d>& Border, const roomscript* RoomScript, room* RoomClass, vector2d Pos, vector2d Size)
 {
-  const contentscript<glterrain>* GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
-  const contentscript<olterrain>* OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
+  const contentscript<glterrain>* GTerrain;
+  const contentscript<olterrain>* OTerrain;
+
+  if(*RoomScript->UseFillSquareWalls())
+    {
+      GTerrain = LevelScript->GetFillSquare()->GetGTerrain();
+      OTerrain = LevelScript->GetFillSquare()->GetOTerrain();
+    }
+  else
+    {
+      GTerrain = RoomScript->GetWallSquare()->GetGTerrain();
+      OTerrain = RoomScript->GetWallSquare()->GetOTerrain();
+    }
+
   int Room = RoomClass->GetIndex();
   long Counter = 0;
   bool AllowLanterns = *RoomScript->GenerateLanterns();

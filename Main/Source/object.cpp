@@ -262,8 +262,17 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
 	SeedModifier = 1;
     }
 
-  if(SpecialFlags & ST_WOBBLE && AnimationFrames <= 128)
-    AnimationFrames = 128;
+  int WobbleData = GetWobbleData();
+
+  if(WobbleData & WOBBLE)
+    {
+      int Speed = (WobbleData & WOBBLE_SPEED_RANGE) >> WOBBLE_SPEED_SHIFT;
+      int Freq = (WobbleData & WOBBLE_FREQ_RANGE) >> WOBBLE_FREQ_SHIFT;
+      int WobbleFrames = 512 >> (Freq + Speed);
+
+      if(AnimationFrames <= WobbleFrames)
+	AnimationFrames = WobbleFrames;
+    }
 
   ModifyAnimationFrames(AnimationFrames);
   int c;
@@ -333,8 +342,18 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
       GI.Frame = !c
 	      || FrameNeeded
 	      || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7))
-	      || (SpecialFlags & ST_WOBBLE && !(c & 0x60))
 	       ? c : 0;
+
+      if(WobbleData & WOBBLE)
+	{
+	  int Speed = (WobbleData & WOBBLE_SPEED_RANGE) >> WOBBLE_SPEED_SHIFT;
+	  int Freq = (WobbleData & WOBBLE_FREQ_RANGE) >> WOBBLE_FREQ_SHIFT;
+	  int WobbleMask = 7 >> Freq << (6 - Speed);
+
+	  if(!(c & WobbleMask))
+	    GI.Frame = c;
+	}
+
       GI.OutlineColor = GetOutlineColor(c);
       GI.OutlineAlpha = GetOutlineAlpha(c);
       GI.Seed = Seed;
@@ -344,6 +363,7 @@ void object::UpdatePictures(graphicdata& GraphicData, vector2d Position, int Spe
       GI.RustData[1] = RustDataB;
       GI.RustData[2] = RustDataC;
       GI.RustData[3] = RustDataD;
+      GI.WobbleData = WobbleData;
       tilemap::iterator Iterator = igraph::AddUser(GI);
       GraphicData.GraphicIterator[c] = Iterator;
       GraphicData.Picture[c] = Iterator->second.Bitmap;

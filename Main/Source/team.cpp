@@ -66,7 +66,11 @@ void team::Hostility(team* Enemy)
 
 		  for(int c = 0; c < 3; ++c)
 		    {
-		      Angel = new angel(VALPURUS);
+		      if(!c)
+			Angel = new archangel(VALPURUS);
+		      else
+			Angel = new angel(VALPURUS);
+
 		      vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Angel, AngelPos);
 
 		      if(Where == ERROR_VECTOR)

@@ -15,6 +15,7 @@
 #include "area.h"
 #include "graphics.h"
 #include "bitmap.h"
+#include "igraph.h"
 
 stringoption ivanconfig::DefaultName(	  "DefaultName",
 					  "player's default name",
@@ -90,7 +91,7 @@ bool ivanconfig::DefaultNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    DOUBLE_BUFFER->Fill(16, 6, game::GetScreenXSize() << 4, 23, 0);
+    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
 
   return false;
 }
@@ -103,7 +104,7 @@ bool ivanconfig::DefaultPetNameChangeInterface(stringoption* O)
     O->ChangeValue(String);
 
   if(game::IsRunning())
-    DOUBLE_BUFFER->Fill(16, 6, game::GetScreenXSize() << 4, 23, 0);
+    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
 
   return false;
 }
@@ -113,7 +114,7 @@ bool ivanconfig::AutoSaveIntervalChangeInterface(numberoption* O)
   O->ChangeValue(iosystem::NumberQuestion(CONST_S("Set new autosave interval (1-50000 turns, 0 for never):"), GetQuestionPos(), WHITE, !game::IsRunning()));
 
   if(game::IsRunning())
-    DOUBLE_BUFFER->Fill(16, 6, game::GetScreenXSize() << 4, 23, 0);
+    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
 
   return false;
 }
@@ -123,7 +124,7 @@ bool ivanconfig::ContrastChangeInterface(numberoption* O)
   iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), GetQuestionPos(), O->Value, 5, 0, 200, O->Value, WHITE, LIGHT_GRAY, DARK_GRAY, game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX), !game::IsRunning(), static_cast<scrollbaroption*>(O)->BarHandler);
 
   if(game::IsRunning())
-    DOUBLE_BUFFER->Fill(16, 6, game::GetScreenXSize() << 4, 23, 0);
+    igraph::BlitBackGround(16, 6, game::GetScreenXSize() << 4, 23);
 
   return false;
 }

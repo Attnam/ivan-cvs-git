@@ -200,7 +200,7 @@ class bitmap
   alpha CalculateAlphaAverage() const;
   void ActivateFastFlag() { FastFlag = 1; }
   void DeactivateFastFlag() { FastFlag = 0; }
-  void Wobble(int, bool);
+  void Wobble(int, int, bool);
   void MoveLineVertically(int, int);
   void MoveLineHorizontally(int, int);
  protected:

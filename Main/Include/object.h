@@ -98,6 +98,7 @@ class object : public entity, public id
   virtual color16 GetDripColor() const { return 0; }
   virtual bool AllowSparkling() const { return true; }
   virtual bool AllowRegularColors() const { return true; }
+  virtual int GetWobbleData() const { return 0; }
   graphicdata GraphicData;
   material* MainMaterial;
   int VisualEffects;

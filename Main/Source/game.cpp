@@ -83,7 +83,7 @@ long game::MiscMassacreAmount = 0;
 boneidmap game::BoneItemIDMap;
 boneidmap game::BoneCharacterIDMap;
 bool game::TooGreatDangerFoundBool;
-itemvector game::ItemDrawVector;
+itemvectorvector game::ItemDrawVector;
 charactervector game::CharacterDrawVector;
 bool game::SumoWrestling;
 liquid* game::GlobalRainLiquid;
@@ -93,12 +93,14 @@ bool game::PlayerSumoChampion;
 ulong game::SquarePartEmitationTick = 0;
 long game::Turn;
 bool game::PlayerRunning;
-character* game::LastCharacterUnderCommandCursor;
-charactervector game::CommandVector;
+character* game::LastPetUnderCursor;
+charactervector game::PetVector;
 double game::DangerFound;
 int game::OldAttribute[ATTRIBUTES];
 int game::NewAttribute[ATTRIBUTES];
 int game::LastAttributeChangeTick[ATTRIBUTES];
+int game::NecroCounter;
+int game::CursorData;
 
 bool game::Loading = false;
 bool game::InGetCommand = false;
@@ -276,6 +278,7 @@ bool game::Init(const festring& Name)
 	SetIsRunning(true);
 	InWilderness = true;
 	iosystem::TextScreen(CONST_S("Generating game...\n\nThis may take some time, please wait."), WHITE, false, &BusyAnimation);
+	igraph::CreateBackGround(GRAY_FRACTAL);
 	NextCharacterID = 1;
 	NextItemID = 1;
 	InitScript();
@@ -336,6 +339,7 @@ bool game::Init(const festring& Name)
 	memset(EquipmentMemory, 0, sizeof(EquipmentMemory));
 	PlayerRunning = false;
 	InitAttributeMemory();
+	NecroCounter = 0;
 
 	if(game::IsXMas())
 	  {
@@ -390,6 +394,41 @@ void game::Run()
 	    {
 	      CurrentLevel->GenerateMonsters();
 	      Counter = 0;
+	    }
+
+	  if(CurrentDungeonIndex == ELPURI_CAVE
+	  && CurrentLevelIndex == ZOMBIE_LEVEL
+	  && !RAND_N(1000 + NecroCounter))
+	    {
+	      character* Char = new necromancer(RAND_N(4) ? APPRENTICE_NECROMANCER : MASTER_NECROMANCER);
+	      vector2d Pos;
+
+	      for(int c2 = 0; c2 < 30; ++c2)
+		{
+		  Pos = GetCurrentLevel()->GetRandomSquare(Char);
+
+		  if(abs(int(Pos.X) - PLAYER->GetPos().X) > 20
+		  || abs(int(Pos.Y) - PLAYER->GetPos().Y) > 20)
+		    break;
+		}
+
+	      if(Pos != ERROR_VECTOR)
+		{
+		  Char->SetTeam(GetTeam(MONSTER_TEAM));
+		  Char->PutTo(Pos);
+		  Char->SetGenerationDanger(GetCurrentLevel()->GetDifficulty());
+		  Char->SignalGeneration();
+		  Char->SignalNaturalGeneration();
+		  ivantime Time;
+		  GetTime(Time);
+
+		  if(Time.Day > 7)
+		    Char->EditAllAttributes((Time.Day - 6) >> 1);
+
+		  NecroCounter += 50;
+		}
+	      else
+		delete Char;
 	    }
 
 	  if(!(GetTick() % 1000))
@@ -547,44 +586,39 @@ void game::DeInitLuxTable()
 
 void game::UpdateCameraX()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Player->GetPos().X < GetScreenXSize() >> 1)
-    if(!Camera.X)
-      return;
-    else
-      Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
-    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenXSize())
-      return;
-    else
-      Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
-  else
-    if(Camera.X == Player->GetPos().X - (GetScreenXSize() >> 1))
-      return;
-    else
-      Camera.X = Player->GetPos().X - (GetScreenXSize() >> 1);
-
-  GetCurrentArea()->SendNewDrawRequest();
+  UpdateCameraX(Player->GetPos().X);
 }
 
 void game::UpdateCameraY()
 {
-  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Player->GetPos().Y < GetScreenYSize() >> 1)
-    if(!Camera.Y)
-      return;
-    else
-      Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
-    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenYSize())
-      return;
-    else
-      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
-  else
-    if(Camera.Y == Player->GetPos().Y - (GetScreenYSize() >> 1))
-      return;
-    else
-      Camera.Y = Player->GetPos().Y - (GetScreenYSize() >> 1);
+  UpdateCameraY(Player->GetPos().Y);
+}
 
-  GetCurrentArea()->SendNewDrawRequest();
+void game::UpdateCameraX(int X)
+{
+  UpdateCameraCoordinate(Camera.X, X, GetCurrentArea()->GetXSize(), GetScreenXSize());
+}
+
+void game::UpdateCameraY(int Y)
+{
+  UpdateCameraCoordinate(Camera.Y, Y, GetCurrentArea()->GetYSize(), GetScreenYSize());
+}
+
+void game::UpdateCameraCoordinate(int& Coordinate, int Center, int Size, int ScreenSize)
+{
+  int OldCoordinate = Coordinate;
+
+  if(Size < ScreenSize)
+    Coordinate = (Size - ScreenSize) >> 1;
+  else if(Center < ScreenSize >> 1)
+    Coordinate = 0;
+  else if(Center > Size - (ScreenSize >> 1))
+    Coordinate = Size - ScreenSize;
+  else
+    Coordinate = Center - (ScreenSize >> 1);
+
+  if(Coordinate != OldCoordinate)
+    GetCurrentArea()->SendNewDrawRequest();
 }
 
 const char* game::Insult() // convert to array
@@ -675,7 +709,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
       if(DoZoom())
 	DOUBLE_BUFFER->StretchBlit(DOUBLE_BUFFER, ScreenCordinates, RES_X - 96, RES_Y - 96, 16, 16, 5);
 
-      igraph::DrawCursor(ScreenCordinates);
+      igraph::DrawCursor(ScreenCordinates, CursorData);
     }
 
   if(Player->IsEnabled())
@@ -683,7 +717,7 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
       vector2d Pos = Player->GetPos();
 
       if(OnScreen(Pos))
-	igraph::DrawCursor(CalculateScreenCoordinates(Pos));
+	igraph::DrawCursor(CalculateScreenCoordinates(Pos), PLAYER->GetCursorData());
     }
 }
 
@@ -693,7 +727,7 @@ bool game::Save(const festring& SaveName)
   SaveFile << int(SAVE_FILE_VERSION);
   SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
   SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
-  SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID;
+  SaveFile << Tick << Turn << InWilderness << NextCharacterID << NextItemID << NecroCounter;
   SaveFile << SumoWrestling << PlayerSumoChampion << GlobalRainTimeModifier;
   long Seed = RAND();
   femath::SetSeed(Seed);
@@ -754,7 +788,7 @@ int game::Load(const festring& SaveName)
 
   SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
   SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
-  SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID;
+  SaveFile >> Tick >> Turn >> InWilderness >> NextCharacterID >> NextItemID >> NecroCounter;
   SaveFile >> SumoWrestling >> PlayerSumoChampion >> GlobalRainTimeModifier;
   femath::SetSeed(ReadType<long>(SaveFile));
   SaveFile >> AveragePlayerArmStrengthExperience;
@@ -798,6 +832,7 @@ int game::Load(const festring& SaveName)
       CurrentLSquareMap = CurrentLevel->GetMap();
     }
 
+  igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
   vector2d Pos;
   SaveFile >> Pos >> PlayerName;
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
@@ -828,48 +863,6 @@ festring game::SaveName(const festring& Base)
 #endif
 
   return SaveName;
-}
-
-void game::UpdateCameraXWithPos(int Coord)
-{
-  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Coord < GetScreenXSize() >> 1)
-    if(!Camera.X)
-      return;
-    else
-      Camera.X = 0;
-  else if(Coord > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
-    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenXSize())
-      return;
-    else
-      Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
-  else
-    if(Camera.X == Coord - (GetScreenXSize() >> 1))
-      return;
-    else
-      Camera.X = Coord - (GetScreenXSize() >> 1);
-
-  GetCurrentArea()->SendNewDrawRequest();
-}
-
-void game::UpdateCameraYWithPos(int Coord)
-{
-  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Coord < GetScreenYSize() >> 1)
-    if(!Camera.Y)
-      return;
-    else
-      Camera.Y = 0;
-  else if(Coord > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
-    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenYSize())
-      return;
-    else
-      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
-  else
-    if(Camera.Y == Coord - (GetScreenYSize() >> 1))
-      return;
-    else
-      Camera.Y = Coord - (GetScreenYSize() >> 1);
-
-  GetCurrentArea()->SendNewDrawRequest();
 }
 
 int game::GetMoveCommandKeyBetweenPoints(vector2d A, vector2d B)
@@ -1138,31 +1131,31 @@ void game::CreateTeams()
 
 /* vector2d Pos should be removed from xxxQuestion()s? */
 
-festring game::StringQuestion(const festring& Topic, vector2d Pos, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool AllowExit, stringkeyhandler KeyHandler)
+festring game::StringQuestion(const festring& Topic, color16 Color, festring::sizetype MinLetters, festring::sizetype MaxLetters, bool AllowExit, stringkeyhandler KeyHandler)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0); // pos may be incorrect!
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23); // pos may be incorrect!
   festring Return;
-  iosystem::StringQuestion(Return, Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
+  iosystem::StringQuestion(Return, Topic, vector2d(16, 6), Color, MinLetters, MaxLetters, false, AllowExit, KeyHandler);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Return;
 }
 
-long game::NumberQuestion(const festring& Topic, vector2d Pos, color16 Color)
+long game::NumberQuestion(const festring& Topic, color16 Color)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
-  long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
+  long Return = iosystem::NumberQuestion(Topic, vector2d(16, 6), Color, false);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Return;
 }
 
-long game::ScrollBarQuestion(const festring& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, color16 TopicColor, color16 Color1, color16 Color2, void (*Handler)(long))
+long game::ScrollBarQuestion(const festring& Topic, long BeginValue, long Step, long Min, long Max, long AbortValue, color16 TopicColor, color16 Color1, color16 Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
-  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX), GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
+  long Return = iosystem::ScrollBarQuestion(Topic, vector2d(16, 6), BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX), GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Return;
 }
 
@@ -1179,21 +1172,8 @@ ulong game::IncreaseLOSTick()
 
 void game::UpdateCamera()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Player->GetPos().X < GetScreenXSize() >> 1)
-    Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
-    Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
-  else
-    Camera.X = Player->GetPos().X - (GetScreenXSize() >> 1);
-
-  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Player->GetPos().Y < GetScreenYSize() >> 1)
-    Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
-    Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
-  else
-    Camera.Y = Player->GetPos().Y - (GetScreenYSize() >> 1);
-
-  GetCurrentArea()->SendNewDrawRequest();
+  UpdateCameraX();
+  UpdateCameraY();
 }
 
 bool game::HandleQuitMessage()
@@ -1342,7 +1322,7 @@ int game::AskForKeyPress(const festring& Topic)
   FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.CapitalizeCopy().CStr());
   graphics::BlitDBToScreen();
   int Key = GET_KEY();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Key;
 }
 
@@ -1355,6 +1335,10 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
   int Key = 0;
   SetDoZoom(Zoom);
   vector2d Return;
+  CursorData = NORMAL_CURSOR;
+
+  if(Handler)
+    Handler(CursorPos);
 
   for(;;)
     {
@@ -1403,10 +1387,10 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
 	}
 
       if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
-	UpdateCameraXWithPos(CursorPos.X);
+	UpdateCameraX(CursorPos.X);
 
       if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
-	UpdateCameraYWithPos(CursorPos.Y);
+	UpdateCameraY(CursorPos.Y);
 
       FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.CStr());
       SetCursorPos(CursorPos);
@@ -1414,8 +1398,8 @@ vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void 
       Key = GET_KEY();
     }
 
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, BLACK);
-  DOUBLE_BUFFER->Fill(RES_X - 96, RES_Y - 96, 80, 80, BLACK);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
+  igraph::BlitBackGround(RES_X - 96, RES_Y - 96, 80, 80);
   SetDoZoom(false);
   SetCursorPos(vector2d(-1, -1));
   return Return;
@@ -1542,7 +1526,7 @@ int game::KeyQuestion(const festring& Message, int DefaultAnswer, int KeyNumber,
     }
 
   delete [] Key;
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
+  igraph::BlitBackGround(16, 6, GetScreenXSize() << 4, 23);
   return Return;
 }
 
@@ -1589,30 +1573,17 @@ vector2d game::LookKeyHandler(vector2d CursorPos, int Key)
 
 vector2d game::NameKeyHandler(vector2d CursorPos, int Key)
 {
-  switch(Key)
+  if(SelectPet(Key))
+    return LastPetUnderCursor->GetPos();
+
+  if(Key == 'n' || Key == 'N')
     {
-    case 'n':
-      character* Character = GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
+      character* Char = GetCurrentArea()->GetSquare(CursorPos)->GetCharacter();
 
-      if(Character && Character->CanBeSeenByPlayer())
-	{
-	  if(Character->GetTeam() != GetPlayer()->GetTeam())
-	    ADD_MESSAGE("%s refuses to let YOU decide what %s's called.", Character->CHAR_NAME(DEFINITE), Character->GetPersonalPronoun().CStr());
-	  else if(Character->IsPlayer())
-	    ADD_MESSAGE("You can't rename yourself!");
-	  else if(!Character->IsNameable())
-	    ADD_MESSAGE("%s refuses to be called anything else but %s.", Character->CHAR_NAME(DEFINITE), Character->CHAR_NAME(DEFINITE));
-	  else
-	    {
-	      festring Topic = CONST_S("What name will you give to ") + Character->GetName(DEFINITE) + '?';
-	      festring Name = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, true);
-
-	      if(Name.GetSize())
-		Character->SetAssignedName(Name);
-	    }
-	}
-
-      break;
+      if(Char && Char->CanBeSeenByPlayer())
+	Char->TryToName();
+      else
+	ADD_MESSAGE("You don't see anyone here to name.");
     }
 
   return CursorPos;
@@ -1724,14 +1695,20 @@ void game::CalculateNextDanger()
   const character::prototype* Proto = protocontainer<character>::GetProto(NextDangerIDType);
   const character::database*const* ConfigData = Proto->GetConfigData();
   const character::database* DataBase = ConfigData[NextDangerIDConfigIndex];
-
-  //character::databasemap::const_iterator ConfigIterator = Config.find(NextDangerID.Config);
   dangermap::iterator DangerIterator = DangerMap.find(configid(NextDangerIDType, DataBase->Config));
+  team* Team = GetTeam(PLAYER_TEAM);
 
   if(DataBase && DangerIterator != DangerMap.end())
     {
       character* Char = Proto->Clone(DataBase->Config, NO_EQUIPMENT|NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      double CurrentDanger = Char->GetRelativeDanger(Player, true);
+      std::list<character*>::const_iterator i;
+      double DangerSum = Player->GetRelativeDanger(Char, true);
+
+      for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
+	if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
+	  DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+
+      double CurrentDanger = 1 / DangerSum;
       double NakedDanger = DangerIterator->second.NakedDanger;
       delete Char;
 
@@ -1739,7 +1716,13 @@ void game::CalculateNextDanger()
 	DangerIterator->second.NakedDanger = (NakedDanger * 9 + CurrentDanger) / 10;
 
       Char = Proto->Clone(DataBase->Config, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-      CurrentDanger = Char->GetRelativeDanger(Player, true);
+      DangerSum = Player->GetRelativeDanger(Char, true);
+
+      for(i = Team->GetMember().begin(); i != Team->GetMember().end(); ++i)
+	if((*i)->IsEnabled() && !(*i)->IsTemporary() && !RAND_N(10))
+	  DangerSum += (*i)->GetRelativeDanger(Char, true) / 4;
+
+      CurrentDanger = 1 / DangerSum;
       double EquippedDanger = DangerIterator->second.EquippedDanger;
       delete Char;
 
@@ -1814,6 +1797,8 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
       SetIsInWilderness(false);
       CurrentLevelIndex = Area;
       bool New = !PrepareRandomBone(Area) && !GetCurrentDungeon()->PrepareLevel(Area);
+      igraph::CreateBackGround(*CurrentLevel->GetLevelScript()->GetBackGroundType());
+      GetCurrentArea()->SendNewDrawRequest();
       vector2d Pos = GetCurrentLevel()->GetEntryPos(Player, EntryIndex);
 
       if(Player)
@@ -1874,6 +1859,7 @@ void game::EnterArea(charactervector& Group, int Area, int EntryIndex)
     }
   else
     {
+      igraph::CreateBackGround(GRAY_FRACTAL);
       SetIsInWilderness(true);
       LoadWorldMap();
       SetCurrentArea(WorldMap);
@@ -2607,18 +2593,39 @@ bool game::IsXMas() // returns true if date is christmaseve or day
   return (TM->tm_mon == 11 && (TM->tm_mday == 24 || TM->tm_mday == 25));
 }
 
-int game::AddToItemDrawVector(item* What)
+int game::AddToItemDrawVector(const itemvector& What)
 {
   ItemDrawVector.push_back(What);
   return ItemDrawVector.size() - 1;
 }
 
+vector2d ItemDisplacement[3][3] =
+{
+  { vector2d(0, 0), ERROR_VECTOR, ERROR_VECTOR },
+  { vector2d(-2, -2), vector2d(2, 2), ERROR_VECTOR },
+  { vector2d(-4, -4), vector2d(0, 0), vector2d(4, 4) }
+};
+
 void game::ItemEntryDrawer(bitmap* Bitmap, vector2d Pos, uint I)
 {
-  item* Item = ItemDrawVector[I];
+  itemvector ItemVector = ItemDrawVector[I];
+  int Amount = Min(ItemVector.size(), 3U);
 
-  if(Item)
-    Item->Draw(Bitmap, Pos, NORMAL_LUMINANCE, 0, true, Item->AllowAlphaEverywhere());
+  for(int c = 0; c < Amount; ++c)
+    {
+      vector2d Displacement = ItemDisplacement[Amount - 1][c];
+
+      if(!ItemVector[0]->HasNormalPictureDirection())
+	Displacement.X = -Displacement.X;
+
+      ItemVector[c]->Draw(Bitmap, Pos + Displacement, NORMAL_LUMINANCE, 0, true, ItemVector[c]->AllowAlphaEverywhere());
+    }
+
+  if(ItemVector.size() > 3)
+    {
+      vector2d NewPos = ItemVector[0]->HasNormalPictureDirection() ? Pos + vector2d(11, -2) : Pos + vector2d(-2, -2);
+      igraph::GetSymbolGraphic()->NormalMaskedBlit(Bitmap, 0, 16, NewPos, 16, 16);
+    }
 }
 
 int game::AddToCharacterDrawVector(character* What)
@@ -2927,7 +2934,7 @@ festring game::DefaultQuestion(festring Topic, festring& Default, stringkeyhandl
   if(!Default.IsEmpty())
     Topic << " [" << ShortDefault << ']';
 
-  festring Answer = StringQuestion(Topic, vector2d(16, 6), WHITE, 0, 80, false, KeyHandler);
+  festring Answer = StringQuestion(Topic, WHITE, 0, 80, false, KeyHandler);
 
   if(Answer.IsEmpty())
     Answer = Default;
@@ -3039,32 +3046,40 @@ bool DistanceOrderer(character* C1, character* C2)
     return Pos1.X < Pos2.X;
 }
 
-bool game::CommandQuestion()
+bool game::FillPetVector(const char* Verb)
 {
-  CommandVector.clear();
+  PetVector.clear();
   team* Team = GetTeam(PLAYER_TEAM);
 
   for(std::list<character*>::const_iterator i = Team->GetMember().begin();
       i != Team->GetMember().end(); ++i)
     if((*i)->IsEnabled() && !(*i)->IsPlayer() && (*i)->CanBeSeenByPlayer())
-      CommandVector.push_back(*i);
+      PetVector.push_back(*i);
 
-  if(CommandVector.empty())
+  if(PetVector.empty())
     {
-      ADD_MESSAGE("You don't detect any friends to command.");
+      ADD_MESSAGE("You don't detect any friends to %s.", Verb);
       return false;
     }
 
+  std::sort(PetVector.begin(), PetVector.end(), DistanceOrderer);
+  LastPetUnderCursor = PetVector[0];
+  return true;
+}
+
+bool game::CommandQuestion()
+{
+  if(!FillPetVector("command"))
+    return false;
+
   character* Char;
 
-  if(CommandVector.size() == 1)
-    Char = CommandVector[0];
+  if(PetVector.size() == 1)
+    Char = PetVector[0];
   else
     {
-      std::sort(CommandVector.begin(), CommandVector.end(), DistanceOrderer);
-      LastCharacterUnderCommandCursor = CommandVector[0];
-      vector2d Pos = CommandVector[0]->GetPos();
-      Pos = PositionQuestion(CONST_S("Whom do you wish to command? [direction keys/'+'/'-'/'a'/space/esc]"), Pos, 0, &CommandKeyHandler);
+      vector2d Pos = PetVector[0]->GetPos();
+      Pos = PositionQuestion(CONST_S("Whom do you wish to command? [direction keys/'+'/'-'/'a'll/space/esc]"), Pos, &PetHandler, &CommandKeyHandler);
 
       if(Pos == ERROR_VECTOR)
 	return false;
@@ -3096,44 +3111,68 @@ bool game::CommandQuestion()
   return Char->IssuePetCommands();
 }
 
-void game::CommandHandler(vector2d CursorPos)
+void game::NameQuestion()
+{
+  if(!FillPetVector("name"))
+    return;
+
+  if(PetVector.size() == 1)
+    PetVector[0]->TryToName();
+  else
+    PositionQuestion(CONST_S("Who do you want to name? [direction keys/'+'/'-'/'n'ame/esc]"), PetVector[0]->GetPos(), &game::PetHandler, &game::NameKeyHandler);
+}
+
+void game::PetHandler(vector2d CursorPos)
 {
   character* Char = CurrentArea->GetSquare(CursorPos)->GetCharacter();
 
+  if(Char && Char->CanBeSeenByPlayer() && Char->IsPet() && !Char->IsPlayer())
+    CursorData = NORMAL_CURSOR|TARGET;
+  else
+    CursorData = NORMAL_CURSOR;
+
   if(Char && !Char->IsPlayer() && Char->IsPet())
-    LastCharacterUnderCommandCursor = Char;
+    LastPetUnderCursor = Char;
 }
 
 vector2d game::CommandKeyHandler(vector2d CursorPos, int Key)
 {
-  if(Key == '+')
-    {
-      for(uint c = 0; c < CommandVector.size(); ++c)
-	if(CommandVector[c] == LastCharacterUnderCommandCursor)
-	  {
-	    if(++c == CommandVector.size())
-	      c = 0;
-
-	    LastCharacterUnderCommandCursor = CommandVector[c];
-	    return CommandVector[c]->GetPos();
-	  }
-    }
-  else if(Key == '-')
-    {
-      for(uint c = 0; c < CommandVector.size(); ++c)
-	if(CommandVector[c] == LastCharacterUnderCommandCursor)
-	  {
-	    if(!c)
-	      c = CommandVector.size();
-
-	    LastCharacterUnderCommandCursor = CommandVector[--c];
-	    return CommandVector[c]->GetPos();
-	  }
-    }
+  if(SelectPet(Key))
+    return LastPetUnderCursor->GetPos();
   else if(Key == 'a' || Key == 'A')
     return CommandAll() ? ABORT_VECTOR : ERROR_VECTOR;
 
   return CursorPos;
+}
+
+bool game::SelectPet(int Key)
+{
+  if(Key == '+')
+    {
+      for(uint c = 0; c < PetVector.size(); ++c)
+	if(PetVector[c] == LastPetUnderCursor)
+	  {
+	    if(++c == PetVector.size())
+	      c = 0;
+
+	    LastPetUnderCursor = PetVector[c];
+	    return true;
+	  }
+    }
+  else if(Key == '-')
+    {
+      for(uint c = 0; c < PetVector.size(); ++c)
+	if(PetVector[c] == LastPetUnderCursor)
+	  {
+	    if(!c)
+	      c = PetVector.size();
+
+	    LastPetUnderCursor = PetVector[--c];
+	    return true;
+	  }
+    }
+
+  return false;
 }
 
 void game::CommandScreen(const festring& Topic, ulong PossibleFlags, ulong ConstantFlags, ulong& VaryFlags, ulong& Flags)
@@ -3210,11 +3249,11 @@ bool game::CommandAll()
   ulong PossibleFlags = 0, ConstantFlags = ALL_COMMAND_FLAGS, VaryFlags = 0, OldFlags = 0;
   uint c1, c2;
 
-  for(c1 = 0; c1 < CommandVector.size(); ++c1)
+  for(c1 = 0; c1 < PetVector.size(); ++c1)
     {
-      ConstantFlags &= CommandVector[c1]->GetConstantCommandFlags();
-      ulong C = CommandVector[c1]->GetCommandFlags();
-      ulong ThisPossible = CommandVector[c1]->GetPossibleCommandFlags();
+      ConstantFlags &= PetVector[c1]->GetConstantCommandFlags();
+      ulong C = PetVector[c1]->GetCommandFlags();
+      ulong ThisPossible = PetVector[c1]->GetPossibleCommandFlags();
 
       for(c2 = 0; c2 < COMMAND_FLAGS; ++c2)
 	if(1 << c2 & PossibleFlags & ThisPossible
@@ -3235,9 +3274,9 @@ bool game::CommandAll()
   CommandScreen(CONST_S("Issue commands to whole visible team"), PossibleFlags, ConstantFlags, VaryFlags, NewFlags);
   bool Change = false;
 
-  for(c1 = 0; c1 < CommandVector.size(); ++c1)
+  for(c1 = 0; c1 < PetVector.size(); ++c1)
     {
-      character* Char = CommandVector[c1];
+      character* Char = PetVector[c1];
       ulong OldC = Char->GetCommandFlags();
       ulong ConstC = Char->GetConstantCommandFlags();
       ulong ThisC = NewFlags
@@ -3290,4 +3329,48 @@ void game::InitAttributeMemory()
 {
   for(int c = 0; c < ATTRIBUTES; ++c)
     OldAttribute[c] = NewAttribute[c] = PLAYER->GetAttribute(c);
+}
+
+void game::TeleportHandler(vector2d CursorPos)
+{
+  if((CursorPos - Player->GetPos()).GetLengthSquare() > Player->GetTeleportRangeSquare())
+    CursorData = DARK_CURSOR|TARGET;
+  else
+    CursorData = NORMAL_CURSOR|TARGET;
+}
+
+double game::GetGameSituationDanger()
+{
+  double SituationDanger = 0;
+
+  for(int c1 = 0; c1 < GetTeams(); ++c1)
+    if(GetTeam(c1)->GetRelation(GetTeam(PLAYER_TEAM)) == HOSTILE)
+      for(std::list<character*>::const_iterator i1 = GetTeam(c1)->GetMember().begin();
+	  i1 != GetTeam(c1)->GetMember().end(); ++i1)
+	{
+	  character* Enemy = *i1;
+
+	  if(Enemy->IsEnabled() && Enemy->CanAttack()
+	  && (Enemy->CanMove() || Enemy->GetPos().IsAdjacent(Player->GetPos())))
+	    {
+	      double PlayerTeamDanger = 1 / Enemy->GetSituationDanger(Player);
+
+	      for(int c2 = 0; c2 < GetTeams(); ++c2)
+		if(GetTeam(c2)->GetRelation(GetTeam(c1)) == HOSTILE)
+		  for(std::list<character*>::const_iterator i2 = GetTeam(c2)->GetMember().begin();
+		      i2 != GetTeam(c2)->GetMember().end(); ++i2)
+		    {
+		      character* Friend = *i2;
+
+		      if(Friend->IsEnabled() && !Friend->IsPlayer() && Friend->CanAttack()
+		      && (Friend->CanMove() || Friend->GetPos().IsAdjacent(Enemy->GetPos())))
+			PlayerTeamDanger += Friend->GetSituationDanger(Enemy);
+		    }
+
+	      SituationDanger += 1 / PlayerTeamDanger;
+	    }
+	}
+
+  Player->ModifySituationDanger(SituationDanger);
+  return SituationDanger;
 }

@@ -26,13 +26,13 @@ const char* billswill::FirstPersonBiteVerb() const { return "emit psi waves at";
 const char* billswill::FirstPersonCriticalBiteVerb() const { return "emit powerful psi waves at"; }
 const char* billswill::ThirdPersonBiteVerb() const { return "emits psi waves at"; }
 const char* billswill::ThirdPersonCriticalBiteVerb() const { return "emits powerful psi waves at"; }
-int billswill::GetSpecialBodyPartFlags(int, bool) const { return ST_WOBBLE_HORIZONTALLY; }
+int billswill::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
-int mommo::GetSpecialBodyPartFlags(int, bool) const { return GetConfig() == CONICAL ? ST_WOBBLE_HORIZONTALLY : ST_WOBBLE_VERTICALLY; }
+int mommo::GetBodyPartWobbleData(int) const { return (GetConfig() == CONICAL ? WOBBLE_HORIZONTALLY : WOBBLE_VERTICALLY)|(2 << WOBBLE_FREQ_SHIFT); }
 
 bodypart* dog::MakeBodyPart(int) const { return new dogtorso(0, NO_MATERIALS); }
 
-int dolphin::GetSpecialBodyPartFlags(int, bool) const { return RAND() & (MIRROR|ROTATE); }
+int dolphin::GetSpecialBodyPartFlags(int) const { return RAND() & (MIRROR|ROTATE); }
 
 color16 chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
@@ -47,7 +47,7 @@ const char* ghost::FirstPersonCriticalBiteVerb() const { return "awfully touch";
 const char* ghost::ThirdPersonBiteVerb() const { return "touches"; }
 const char* ghost::ThirdPersonCriticalBiteVerb() const { return "awfully touches"; }
 bool ghost::SpecialEnemySightedReaction(character*) { return !(Active = true); }
-int ghost::GetSpecialBodyPartFlags(int, bool) const { return ST_WOBBLE_HORIZONTALLY; }
+int ghost::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(2 << WOBBLE_FREQ_SHIFT); }
 
 const char* magpie::FirstPersonBiteVerb() const { return "peck"; }
 const char* magpie::FirstPersonCriticalBiteVerb() const { return "critically peck"; }
@@ -58,11 +58,15 @@ bodypart* largecreature::MakeBodyPart(int) const { return new largetorso(0, NO_M
 lsquare* largecreature::GetNeighbourLSquare(int I) const { return static_cast<lsquare*>(GetNeighbourSquare(I)); }
 wsquare* largecreature::GetNeighbourWSquare(int I) const { return static_cast<wsquare*>(GetNeighbourSquare(I)); }
 
-int hattifattener::GetSpecialBodyPartFlags(int, bool) const { return ST_LIGHTNING|ST_WOBBLE_HORIZONTALLY; }
+int hattifattener::GetSpecialBodyPartFlags(int) const { return ST_LIGHTNING; }
+int hattifattener::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(1 << WOBBLE_FREQ_SHIFT); }
 
 color16 vladimir::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
 bodypart* blinkdog::MakeBodyPart(int) const { return new blinkdogtorso(0, NO_MATERIALS); }
+
+int mysticfrog::GetBodyPartWobbleData(int) const { return WOBBLE_HORIZONTALLY|(1 << WOBBLE_SPEED_SHIFT)|(3 << WOBBLE_FREQ_SHIFT); }
+bodypart* mysticfrog::MakeBodyPart(int) const { return new mysticfrogtorso(0, NO_MATERIALS); }
 
 bool elpuri::Hit(character* Enemy, vector2d, int, bool ForceHit)
 {
@@ -364,71 +368,20 @@ double nonhumanoid::GetTimeToKill(const character* Enemy, bool UseMaxHP) const
   return AttackStyles / Effectivity;
 }
 
-/*void nonhumanoid::ApplyExperience(bool Edited)
-{
-  if(GetTorso()->UseMaterialAttributes())
-    {
-      character::ApplyExperience(false);
-      return;
-    }
-
-  if(CheckForAttributeIncrease(Strength, StrengthExperience, true))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Your feel stronger!");
-      else if(IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks stronger.", CHAR_NAME(DEFINITE));
-
-      CalculateBurdenState();
-      Edited = true;
-    }
-  else if(CheckForAttributeDecrease(Strength, StrengthExperience, true))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Your feel weaker.");
-      else if(IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks weaker.", CHAR_NAME(DEFINITE));
-
-      CalculateBurdenState();
-      Edited = true;
-    }
-
-  if(CheckForAttributeIncrease(Agility, AgilityExperience, true))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Your feel very agile!");
-      else if(IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks very agile.", CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-  else if(CheckForAttributeDecrease(Agility, AgilityExperience, true))
-    {
-      if(IsPlayer())
-	ADD_MESSAGE("Your feel slower.");
-      else if(IsPet() && CanBeSeenByPlayer())
-	ADD_MESSAGE("Suddenly %s looks sluggish.", CHAR_NAME(DEFINITE));
-
-      Edited = true;
-    }
-
-  character::ApplyExperience(Edited);
-}*/
-
 int nonhumanoid::GetAttribute(int Identifier) const
 {
   if(Identifier < BASE_ATTRIBUTES)
     return character::GetAttribute(Identifier);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
-      if(!GetTorso()->UseMaterialAttributes())
+      if(!UseMaterialAttributes())
 	return int(StrengthExperience * EXP_DIVISOR);
       else
 	return GetTorso()->GetMainMaterial()->GetStrengthValue();
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
-      if(!GetTorso()->UseMaterialAttributes())
+      if(!UseMaterialAttributes())
 	return int(AgilityExperience * EXP_DIVISOR);
       else
 	return (GetTorso()->GetMainMaterial()->GetFlexibility() << 2);
@@ -445,9 +398,9 @@ bool nonhumanoid::EditAttribute(int Identifier, int Value)
   if(Identifier < BASE_ATTRIBUTES)
     return character::EditAttribute(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
-    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(StrengthExperience, Value);
+    return !UseMaterialAttributes() && RawEditAttribute(StrengthExperience, Value);
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
-    return !GetTorso()->UseMaterialAttributes() && RawEditAttribute(AgilityExperience, Value);
+    return !UseMaterialAttributes() && RawEditAttribute(AgilityExperience, Value);
   else
     {
       ABORT("Illegal nonhumanoid attribute %d edit request!", Identifier);
@@ -464,7 +417,7 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
     character::EditExperience(Identifier, Value, Speed);
   else if(Identifier == ARM_STRENGTH || Identifier == LEG_STRENGTH)
     {
-      if(!GetTorso()->UseMaterialAttributes())
+      if(!UseMaterialAttributes())
 	{
 	  int Change = RawEditExperience(StrengthExperience,
 					 GetNaturalExperience(ARM_STRENGTH),
@@ -486,7 +439,7 @@ void nonhumanoid::EditExperience(int Identifier, double Value, double Speed)
     }
   else if(Identifier == DEXTERITY || Identifier == AGILITY)
     {
-      if(!GetTorso()->UseMaterialAttributes())
+      if(!UseMaterialAttributes())
 	{
 	  int Change = RawEditExperience(AgilityExperience,
 					 GetNaturalExperience(AGILITY),
@@ -1072,7 +1025,7 @@ void magicmushroom::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s disappears.", CHAR_NAME(DEFINITE));
 
-      TeleportRandomly();
+      TeleportRandomly(true);
       EditAP(-1000);
     }
   else if(!(RAND() % 50))
@@ -1225,7 +1178,7 @@ void eddy::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s engulfs itself.", CHAR_NAME(DEFINITE));
 
-      TeleportRandomly();
+      TeleportRandomly(true);
       EditAP(-1000);
       return;
     }
@@ -2090,13 +2043,14 @@ const char* DolphinTalkScience[] =
   "logic",
   "fiction",
   "economics",
-  "theology"
+  "theology",
+  "alchemy"
 };
 
 void dolphin::BeTalkedTo()
 {
   if(GetRelation(PLAYER) != HOSTILE
-  && PLAYER->GetAttribute(INTELLIGENCE) >= 30)
+  && PLAYER->GetAttribute(INTELLIGENCE) >= 20)
     {
       const char* Attribute = DolphinTalkAttribute[RAND() % (sizeof(DolphinTalkAttribute) / sizeof(const char*))];
       const char* Science = DolphinTalkScience[RAND() % (sizeof(DolphinTalkScience) / sizeof(const char*))];
@@ -2108,6 +2062,8 @@ void dolphin::BeTalkedTo()
 	Prefix = "meta";
       else if(RAND() % 3)
 	Prefix = "neo";
+      else if(RAND() % 3)
+	Prefix = RAND_2 ? "micro" : "macro";
       else
 	Prefix = "neuro";
 
@@ -2159,30 +2115,167 @@ void carnivorousplant::GetAICommand()
   EditAP(-1000);
 }
 
-bool vladimir::PartCanMoveOn(const lsquare* LSquare) const
+void mysticfrog::GetAICommand()
 {
-  /* This gum is all sticky */
-  if(LSquare->GetRoom())
-    {
-      olterrain* OLTerrain = LSquare->GetOLTerrain();
+  SeekLeader(GetLeader());
 
-      if(OLTerrain)
+  if(FollowLeader(GetLeader()))
+    return;
+
+  character* NearestEnemy = 0;
+  long NearestEnemyDistance = 0x7FFFFFFF;
+  character* RandomFriend = 0;
+  charactervector Friend;
+  vector2d Pos = GetPos();
+  bool Enemies = false;
+
+  for(int c = 0; c < game::GetTeams(); ++c)
+    {
+      if(GetTeam()->GetRelation(game::GetTeam(c)) == HOSTILE)
 	{
-	  if(!OLTerrain->CanBeDestroyed())
-	    return false;
-	  else if(LSquare->GetRoom())
-	    {
-		  if(!LSquare->GetRoom()->IsOKToDestroyWalls(this))
-		    return false;
-	    }
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    if((*i)->IsEnabled())
+	      {
+		Enemies = true;
+		long ThisDistance = Max<long>(abs((*i)->GetPos().X - Pos.X), abs((*i)->GetPos().Y - Pos.Y));
+
+		if((ThisDistance < NearestEnemyDistance || (ThisDistance == NearestEnemyDistance && !(RAND() % 3))) && (*i)->CanBeSeenBy(this))
+		  {
+		    NearestEnemy = *i;
+		    NearestEnemyDistance = ThisDistance;
+		  }
+	      }
+	}
+      else if(GetTeam()->GetRelation(game::GetTeam(c)) == FRIEND)
+	{
+	  for(std::list<character*>::const_iterator i = game::GetTeam(c)->GetMember().begin(); i != game::GetTeam(c)->GetMember().end(); ++i)
+	    if((*i)->IsEnabled() && (*i)->CanBeSeenBy(this))
+	      Friend.push_back(*i);
+	}
+    }
+
+  if(NearestEnemy && NearestEnemy->GetPos().IsAdjacent(Pos))
+    {
+      if(NearestEnemy->IsSmall()
+      && GetAttribute(WISDOM) < NearestEnemy->GetAttackWisdomLimit()
+      && !(RAND() % 5)
+      && Hit(NearestEnemy, NearestEnemy->GetPos(), game::GetDirectionForVector(NearestEnemy->GetPos() - GetPos())))
+	return;
+      else if(!(RAND() & 3))
+	{
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s invokes a spell and disappears.", CHAR_NAME(DEFINITE));
+
+	  TeleportRandomly(true);
+	  EditAP(-GetSpellAPCost());
+	  return;
+	}
+    }
+
+  if(NearestEnemy && (NearestEnemyDistance < 10 || StateIsActivated(PANIC)) && RAND() & 3)
+    {
+      SetGoingTo((Pos << 1) - NearestEnemy->GetPos());
+
+      if(MoveTowardsTarget(true))
+	return;
+    }
+
+  if(Friend.size() && !(RAND() & 3))
+    {
+      RandomFriend = Friend[RAND() % Friend.size()];
+      NearestEnemy = 0;
+    }
+
+  if(GetRelation(PLAYER) == HOSTILE && PLAYER->CanBeSeenBy(this) && !RAND_4)
+    NearestEnemy = PLAYER;
+
+  beamdata Beam
+  (
+    this,
+    CONST_S("killed by the spells of ") + GetName(INDEFINITE),
+    YOURSELF,
+    0
+  );
+
+  if(NearestEnemy)
+    {
+      lsquare* Square = NearestEnemy->GetLSquareUnder();
+      EditAP(-GetSpellAPCost());
+
+      if(CanBeSeenByPlayer())
+	ADD_MESSAGE("%s invokes a spell!", CHAR_NAME(DEFINITE));
+
+      switch(RAND() % 20)
+	{
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5: Square->DrawParticles(RED); if(NearestEnemy->TeleportRandomItem(GetConfig() == DARK)) break;
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10: Square->DrawParticles(RED); Square->Teleport(Beam); break;
+	case 11:
+	case 12:
+	case 13:
+	case 14: Square->DrawParticles(RED); Square->Slow(Beam); break;
+	case 15: Square->DrawParticles(RED); Square->LowerEnchantment(Beam); break;
+	default: Square->DrawLightning(vector2d(8, 8), WHITE, YOURSELF); Square->Lightning(Beam); break;
 	}
 
+      if(CanBeSeenByPlayer())
+	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell of ") + GetName(DEFINITE) + CONST_S(" interrupts you."));
+      else
+	NearestEnemy->DeActivateVoluntaryAction(CONST_S("The spell interrupts you."));
+
+      return;
     }
-  return largecreature::PartCanMoveOn(LSquare);
+
+  if(RandomFriend && Enemies)
+    {
+      lsquare* Square = RandomFriend->GetLSquareUnder();
+      EditAP(-GetSpellAPCost());
+      Square->DrawParticles(RED);
+
+      if(RAND() & 1)
+	Square->Invisibility(Beam);
+      else
+	Square->Haste(Beam);
+
+      return;
+    }
+
+  if(CheckForDoors())
+    return;
+
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }
 
 bool largecreature::PartCanMoveOn(const lsquare* LSquare) const
 {
-  level* Level = LSquare->GetLevel();
-  return (GetMoveType() & LSquare->GetWalkability());
+  int Walkability = LSquare->GetWalkability();
+
+  if(!!(GetMoveType() & Walkability))
+    return true;
+
+  if(DestroysWalls() && !!(ETHEREAL & Walkability))
+    {
+      olterrain* Terrain = LSquare->GetOLTerrain();
+
+      if(Terrain && Terrain->WillBeDestroyedBy(this))
+	{
+	  room* Room = LSquare->GetRoom();
+
+	  if(!Room || Room->IsOKToDestroyWalls(this))
+	    return true;
+	}
+    }
+
+  return false;
 }

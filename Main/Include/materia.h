@@ -80,6 +80,7 @@ struct materialdatabase : public databasebase
   bool CanBeMirrored;
   bool AffectInside;
   bool IsValuable;
+  bool CanBeTailored;
 };
 
 class materialprototype
@@ -203,10 +204,11 @@ class material
   DATA_BASE_BOOL(IsScary);
   DATA_BASE_BOOL(CanBeMirrored);
   DATA_BASE_BOOL(AffectInside);
+  DATA_BASE_BOOL(CanBeTailored);
   virtual void SetRustLevel(int) { }
   virtual int GetRustLevel() const { return NOT_RUSTED; }
   virtual int GetRustData() const { return NOT_RUSTED; }
-  virtual bool TryToRust(long) { return false; }
+  virtual bool TryToRust(long, long = 0) { return false; }
   static const database* GetDataBase(int);
   virtual bool CanSpoil() const { return false; }
   bool IsSolid() const { return !IsLiquid(); }

@@ -393,7 +393,10 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
     }*/
 
   if(Flags & NONE_AS_CHOICE)
-    Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, game::AddToItemDrawVector(0));
+    {
+      int ImageKey = game::AddToItemDrawVector(itemvector());
+      Contents.AddEntry(CONST_S("none"), LIGHT_GRAY, 0, ImageKey);
+    }
 
   if(MergeStack)
     MergeStack->AddContentsToList(Contents, Viewer, ThatDesc, Flags, CENTER, SorterFunction);
@@ -465,7 +468,7 @@ int stack::DrawContents(itemvector& ReturnVector, stack* MergeStack, const chara
 
 void stack::AddContentsToList(felist& Contents, const character* Viewer, const festring& Desc, int Flags, int RequiredSquarePosition, sorter SorterFunction) const
 {
-  std::vector<itemvector> PileVector;
+  itemvectorvector PileVector;
   Pile(PileVector, Viewer, RequiredSquarePosition, SorterFunction);
 
   bool DrawDesc = !!Desc.GetSize();
@@ -494,7 +497,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const f
 
       Entry.Empty();
       Item->AddInventoryEntry(Viewer, Entry, PileVector[p].size(), !(Flags & NO_SPECIAL_INFO));
-      int ImageKey = game::AddToItemDrawVector(Item);
+      int ImageKey = game::AddToItemDrawVector(PileVector[p]);
       Contents.AddEntry(Entry, LIGHT_GRAY, 0, ImageKey);
     }
 }
@@ -507,7 +510,7 @@ int stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, int P
 {
   /* Not really efficient... :( */
 
-  std::vector<itemvector> PileVector;
+  itemvectorvector PileVector;
   Pile(PileVector, Viewer, RequiredSquarePosition, SorterFunction);
 
   for(uint p = 0; p < PileVector.size(); ++p)
@@ -523,7 +526,7 @@ int stack::SearchChosen(itemvector& ReturnVector, const character* Viewer, int P
 	  int Amount = PileVector[p].size();
 
 	  if(Amount > 1)
-	    Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[p][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
+	    Amount = game::ScrollBarQuestion(CONST_S("How many ") + PileVector[p][0]->GetName(PLURAL) + '?', Amount, 1, 0, Amount, 0, WHITE, LIGHT_GRAY, DARK_GRAY);
 
 	  ReturnVector.assign(PileVector[p].end() - Amount, PileVector[p].end());
 	  return -1;
@@ -828,7 +831,7 @@ bool CategorySorter(const itemvector& V1, const itemvector& V2)
    (itemvectors) of which elements are similiar to each other, for instance
    4 bananas */
 
-void stack::Pile(std::vector<itemvector>& PileVector, const character* Viewer, int RequiredSquarePosition, sorter SorterFunction) const
+void stack::Pile(itemvectorvector& PileVector, const character* Viewer, int RequiredSquarePosition, sorter SorterFunction) const
 {
   if(!Items)
     return;

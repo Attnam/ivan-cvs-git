@@ -100,7 +100,7 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetBodyPartWobbleData(int) const;
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
@@ -114,7 +114,7 @@ class CHARACTER
   mommo,
   nonhumanoid,
  protected:
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetBodyPartWobbleData(int) const;
   virtual bool CanVomit() const { return true; }
   virtual void CreateCorpse(lsquare*);
   virtual bool Hit(character*, vector2d, int, bool);
@@ -177,7 +177,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo();
  protected:
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetSpecialBodyPartFlags(int) const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }
 );
 
@@ -351,7 +351,7 @@ class CHARACTER
   virtual bool IsPolymorphable() const { return MaxHP < 100; }
  protected:
   virtual void VirtualConstructor(bool);
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetBodyPartWobbleData(int) const;
   virtual const char* FirstPersonBiteVerb() const;
   virtual const char* FirstPersonCriticalBiteVerb() const;
   virtual const char* ThirdPersonBiteVerb() const;
@@ -422,7 +422,7 @@ class ABSTRACT_CHARACTER
   virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
   virtual int GetFlySymbolSquareIndex() const { return 1; }
   virtual bool PlaceIsIllegal(vector2d, vector2d) const;
-  virtual bool PartCanMoveOn(const lsquare*) const;
+  bool PartCanMoveOn(const lsquare*) const;
  protected:
   virtual bodypart* MakeBodyPart(int) const;
   virtual void CreateCorpse(lsquare*);
@@ -495,7 +495,6 @@ class CHARACTER
   virtual bool MustBeRemovedFromBone() const;
   virtual color16 GetSkinColor() const;
   virtual void SpecialTurnHandler() { UpdatePictures(); }
-  virtual bool PartCanMoveOn(const lsquare*) const;
 );
 
 class CHARACTER
@@ -505,7 +504,8 @@ class CHARACTER
  public:
   bool Hit(character*, vector2d, int, bool) { return false; }
  protected:
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetBodyPartWobbleData(int) const;
+  virtual int GetSpecialBodyPartFlags(int) const;
   virtual void GetAICommand();
   virtual void CreateCorpse(lsquare*);
 );
@@ -525,6 +525,18 @@ class CHARACTER
   void MonsterTeleport(const char*);
   bool SummonFriend();
   int SummonModifier;
+);
+
+class CHARACTER
+(
+  mysticfrog,
+  frog,
+ public:
+  virtual void GetAICommand();
+ protected:
+  virtual int GetBodyPartWobbleData(int) const;
+  virtual bodypart* MakeBodyPart(int) const;
+  int GetSpellAPCost() const { return 1500; }
 );
 
 #endif

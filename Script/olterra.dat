@@ -58,6 +58,7 @@ olterrain
 	HasSecondaryMaterial = false;
 	CreateWindowConfigurations = false;
 	ShowThingsUnder = true;
+	IsWall = false;
 }
 
 wall
@@ -73,11 +74,12 @@ wall
 	MaterialColorD = rgb16(180, 180, 255);
 	ShowThingsUnder = false;
 	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:4; }
+	IsWall = true;
 
 	Config BRICK_FINE;
 	{
 		DigMessage = "The wall is pretty hard, but you still manage to go through it.";
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == GRANITE;
 		NameSingular = "wall";
 		BitmapPos = 64, 272;
 		HPModifier = 150;
@@ -87,7 +89,7 @@ wall
 	Config BRICK_PROPAGANDA;
 	{
 		DigMessage = "You break the wall down despite the uncomfortable feeling of being constantly watched.";
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == GRANITE;
 		NameSingular = "wall";
 		PostFix = "and a poster with a picture of high priest Petrus, the ruler of the Attnamese Empire";
 		BitmapPos = 80, 272;
@@ -97,7 +99,7 @@ wall
 	Config BRICK_OLD;
 	{
 		DigMessage = "The piece of wall is very old and shabby. You dig it with ease.";
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == GRANITE;
 		AdjectiveArticle = "an";
 		Adjective = "old";
 		NameSingular = "wall";
@@ -131,7 +133,7 @@ wall
 	{
 		OKVisualEffects = MIRROR|FLIP|ROTATE;
 		DigMessage = "The ground is hard to dig.";
-		MainMaterialConfig == STONE;
+		MainMaterialConfig == GRANITE;
 		MaterialColorB = rgb16(56, 56, 56);
 		NameSingular = "wall";
 		BitmapPos = 0, 32;
@@ -406,7 +408,7 @@ stairs /* olterrain-> */
 {
 	IsAbstract = true;
 	DigMessage = "The stairs are too hard to dig.";
-	MainMaterialConfig == STONE;
+	MainMaterialConfig == GRANITE;
 	MaterialColorB = rgb16(160, 64, 0);
 	NameSingular = "stairway";
 
@@ -456,7 +458,7 @@ portal /* stairs -> */
 altar /* olterrain-> */
 {
 	DigMessage = "An invisible wall stops your feeble attempt.";
-	MainMaterialConfig == STONE;
+	MainMaterialConfig == GRANITE;
 	Article = "an";
 	NameSingular = "altar";
 	BitmapPos = 0, 368;
@@ -518,7 +520,7 @@ brokendoor /* olterrain->door-> */
 boulder /* olterrain-> */
 {
 	DigMessage = "You smash the boulder to tiny bits.";
-	MainMaterialConfig == STONE;
+	MainMaterialConfig == GRANITE;
 	NameSingular = "boulder";
 	SitMessage = "The boulder is rather hard to sit on.";
 	CanBeDestroyed = true;
@@ -578,7 +580,6 @@ earth
 	OKVisualEffects = MIRROR|FLIP|ROTATE;
 	DigMessage = "The ground is fairly easy to dig.";
 	MainMaterialConfig == MORAINE;
-	MaterialColorB = rgb16(56, 56, 56);
 	Article = "an";
 	NameSingular = "earth";
 	BitmapPos = 96, 416;
@@ -587,4 +588,5 @@ earth
 	UseBorderTiles = true;
 	ShowThingsUnder = false;
 	LeftOverItems == NaturalMaterialForm { MainMaterial = 0 { Volume = 500:1500; } Times = 1:3; }
+	IsWall = true;
 }

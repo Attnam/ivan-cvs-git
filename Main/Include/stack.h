@@ -23,6 +23,7 @@ class felist;
 class entity;
 
 typedef std::vector<item*> itemvector;
+typedef std::vector<itemvector> itemvectorvector;
 
 /* Stack contains an arbitrary number of items in a linked list, which can
    be browsed using stackiterators like this:
@@ -127,7 +128,7 @@ class stack
   item* GetBottomItem(const character*, bool) const;
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomSideItem(const character*, int, bool) const;
-  void Pile(std::vector<itemvector>&, const character*, int, sorter = 0) const;
+  void Pile(itemvectorvector&, const character*, int, sorter = 0) const;
   long GetTruePrice() const;
   static int GetSelected() { return Selected; }
   static void SetSelected(int What) { Selected = What; }

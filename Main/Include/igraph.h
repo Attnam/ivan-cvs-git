@@ -54,6 +54,7 @@ struct graphicid
   vector2d Position NO_ALIGNMENT;
   uchar RustData[4] NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
+  uchar WobbleData NO_ALIGNMENT;
 };
 
 #ifdef VC
@@ -100,10 +101,10 @@ class igraph
   static void DeInit();
   static const bitmap* GetWTerrainGraphic() { return Graphic[GR_WTERRAIN]; }
   static const bitmap* GetFOWGraphic() { return Graphic[GR_FOW]; }
-  static const bitmap* GetCursorGraphic() { return Graphic[GR_CURSOR]; }
+  static const rawbitmap* GetCursorRawGraphic() { return RawGraphic[GR_CURSOR]; }
   static const bitmap* GetSymbolGraphic() { return Graphic[GR_SYMBOL]; }
   static bitmap* GetTileBuffer() { return TileBuffer; }
-  static void DrawCursor(vector2d);
+  static void DrawCursor(vector2d, int);
   static tilemap::iterator AddUser(const graphicid&);
   static void RemoveUser(tilemap::iterator);
   static const rawbitmap* GetHumanoidRawGraphic() { return RawGraphic[GR_HUMANOID]; }
@@ -116,11 +117,15 @@ class igraph
   static void LoadMenu();
   static void UnLoadMenu();
   static bitmap* GetSilhouetteCache(int I1, int I2) { return SilhouetteCache[I1][I2]; }
+  static const bitmap* GetBackGround() { return BackGround; }
+  static void BlitBackGround(int, int, int, int);
+  static void CreateBackGround(int);
  private:
   static void EditBodyPartTile(rawbitmap*, rawbitmap*, vector2d, int);
   static vector2d RotateTile(rawbitmap*, rawbitmap*, vector2d, vector2d, int);
   static void CreateBodyBitmapValidityMaps();
   static void CreateSilhouetteCaches();
+  static color16 GetBackGroundColor(int);
   static rawbitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];
   static bitmap* TileBuffer;
@@ -133,6 +138,10 @@ class igraph
   static bitmap* Menu;
   static bitmap* SilhouetteCache[HUMANOID_BODYPARTS][CONDITION_COLORS];
   static rawbitmap* ColorizeBuffer[2];
+  static bitmap* Cursor[CURSOR_TYPES];
+  static color16 CursorColor[CURSOR_TYPES];
+  static bitmap* BackGround;
+  static int CurrentColorType;
 };
 
 #endif

@@ -109,24 +109,11 @@ void scrollofteleportation::FinishReading(character* Reader)
   else if(Reader->CanBeSeenByPlayer())
     ADD_MESSAGE("%s disappears!", Reader->CHAR_NAME(DEFINITE));
 
-  Reader->TeleportRandomly();
+  Reader->TeleportRandomly(true);
   RemoveFromSlot();
   SendToHell();
   Reader->EditExperience(INTELLIGENCE, 150, 1 << 12);
 }
-
-/*bool lump::HitEffect(character* Enemy, character*, vector2d, int, int, bool BlockedByArmour)
-{
-  if(!BlockedByArmour && RAND() & 1)
-    {
-      if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
-	ADD_MESSAGE("The %s touches %s!", GetMainMaterial()->GetName(false, false).CStr(), Enemy->CHAR_DESCRIPTION(DEFINITE));
-
-      return GetMainMaterial()->HitEffect(Enemy);
-    }
-  else
-    return false;
-}*/
 
 bool wand::Apply(character* Terrorist)
 {
@@ -911,10 +898,10 @@ void magicalwhistle::BlowEffect(character* Whistler)
     if((*i)->IsEnabled() && Whistler != *i)
       ToSort.push_back(distancepair((Pos - (*i)->GetPos()).GetLengthSquare(), *i));
 
-  if(ToSort.size() > 10)
+  if(ToSort.size() > 5)
     std::sort(ToSort.begin(), ToSort.end());
 
-  for(uint c = 0; c < 10 && c < ToSort.size(); ++c)
+  for(uint c = 0; c < 5 && c < ToSort.size(); ++c)
     ToSort[c].Char->TeleportNear(Whistler);
 
   game::CallForAttention(GetPos(), 400);
@@ -1671,7 +1658,7 @@ void scrollofenchantarmor::FinishReading(character* Reader)
 
 bool itemcontainer::ReceiveDamage(character* Damager, int Damage, int Type, int)
 {
-  if(Type & (PHYSICAL_DAMAGE|SOUND))
+  if(Type & (PHYSICAL_DAMAGE|SOUND|ENERGY))
     {
       Contained->ReceiveDamage(Damager, Damage / GetDamageDivider(), Type);
       int SV = Max(GetStrengthValue(), 1);
@@ -2024,11 +2011,6 @@ void banana::SignalSpoil(material* Material)
 bool bone::DogWillCatchAndConsume(const character* Doggie) const
 {
   return GetConsumeMaterial(Doggie)->GetConfig() == BONE && !GetConsumeMaterial(Doggie)->GetSpoilLevel();
-}
-
-bool stone::ShowMaterial() const
-{
-  return GetMainMaterial()->GetConfig() != STONE; // gum solution
 }
 
 int itemcontainer::GetOfferValue(int Receiver) const
@@ -2896,4 +2878,19 @@ void scrollofgolemcreation::FinishReading(character* Reader)
 void itemcontainer::CalculateEnchantment()
 {
   Contained->CalculateEnchantments();
+}
+
+int itemcontainer::GetTeleportPriority() const
+{
+  long Priority = item::GetTeleportPriority();
+
+  for(stackiterator i = Contained->GetBottom(); i.HasItem(); ++i)
+    Priority += i->GetTeleportPriority();
+
+  return Priority;
+}
+
+void itemcontainer::SetParameters(int Param)
+{
+  SetIsLocked(Param & LOCKED);
 }

@@ -133,6 +133,7 @@ typedef std::map<ulong, item*> itemidmap;
 typedef std::map<configid, killdata> massacremap;
 typedef std::map<ulong, ulong> boneidmap;
 typedef std::vector<item*> itemvector;
+typedef std::vector<itemvector> itemvectorvector;
 typedef std::vector<character*> charactervector;
 
 class quitrequest { };
@@ -169,8 +170,8 @@ class game
   static int Load(const festring& = SaveName(""));
   static bool IsRunning() { return Running; }
   static void SetIsRunning(bool What) { Running = What; }
-  static void UpdateCameraXWithPos(int);
-  static void UpdateCameraYWithPos(int);
+  static void UpdateCameraX(int);
+  static void UpdateCameraY(int);
   static int GetCurrentLevelIndex() { return CurrentLevelIndex; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
@@ -212,8 +213,8 @@ class game
   static int GetTeams() { return Teams; }
   static void Hostility(team*, team*);
   static void CreateTeams();
-  static festring StringQuestion(const festring&, vector2d, color16, festring::sizetype, festring::sizetype, bool, stringkeyhandler = 0);
-  static long NumberQuestion(const festring&, vector2d, int);
+  static festring StringQuestion(const festring&, color16, festring::sizetype, festring::sizetype, bool, stringkeyhandler = 0);
+  static long NumberQuestion(const festring&, int);
   static ulong IncreaseLOSTick();
   static ulong GetLOSTick() { return LOSTick; }
   static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
@@ -238,7 +239,6 @@ class game
   static valuemap& GetGlobalValueMap() { return GlobalValueMap; }
   static void InitGlobalValueMap();
   static void TextScreen(const festring&, color16 = 0xFFFF, bool = true, void (*)(bitmap*) = 0);
-  static vector2d GetCursorPos() { return CursorPos; }
   static void SetCursorPos(vector2d What) { CursorPos = What; }
   static bool DoZoom() { return Zoom; }
   static void SetDoZoom(bool What) { Zoom = What; }
@@ -247,7 +247,7 @@ class game
   static vector2d NameKeyHandler(vector2d, int);
   static void End(festring, bool = true, bool = true);
   static int CalculateRoughDirection(vector2d);
-  static long ScrollBarQuestion(const festring&, vector2d, long, long, long, long, long, color16, color16, color16, void (*)(long) = 0);
+  static long ScrollBarQuestion(const festring&, long, long, long, long, long, color16, color16, color16, void (*)(long) = 0);
   static bool IsGenerating() { return Generating; }
   static void SetIsGenerating(bool What) { Generating = What; }
   static void CalculateNextDanger();
@@ -263,7 +263,6 @@ class game
   static color24 CombineConstLights(color24, color24);
   static bool IsDark(color24);
   static void SetStandardListAttributes(felist&);
-  //static void SignalGeneration(configid);
   static double GetAveragePlayerArmStrengthExperience() { return AveragePlayerArmStrengthExperience; }
   static double GetAveragePlayerLegStrengthExperience() { return AveragePlayerLegStrengthExperience; }
   static double GetAveragePlayerDexterityExperience() { return AveragePlayerDexterityExperience; }
@@ -329,14 +328,14 @@ class game
   static long GetScore();
   static bool TweraifIsFree();
   static bool IsXMas();
-  static int AddToItemDrawVector(item*);
+  static int AddToItemDrawVector(const itemvector&);
   static void ClearItemDrawVector();
   static void ItemEntryDrawer(bitmap*, vector2d, uint);
   static int AddToCharacterDrawVector(character*);
   static void ClearCharacterDrawVector();
   static void CharacterEntryDrawer(bitmap*, vector2d, uint);
   static void GodEntryDrawer(bitmap*, vector2d, uint);
-  static itemvector& GetItemDrawVector() { return ItemDrawVector; }
+  static itemvectorvector& GetItemDrawVector() { return ItemDrawVector; }
   static charactervector& GetCharacterDrawVector() { return CharacterDrawVector; }
   static bool IsSumoWrestling() { return SumoWrestling; }
   static void SetIsSumoWrestling(bool What) { SumoWrestling = What; }
@@ -365,8 +364,9 @@ class game
   static ulong* GetEquipmentMemory() { return EquipmentMemory; }
   static bool PlayerIsRunning() { return PlayerRunning; }
   static void SetPlayerIsRunning(bool What) { PlayerRunning = What; }
+  static bool FillPetVector(const char*);
   static bool CommandQuestion();
-  static void CommandHandler(vector2d);
+  static void NameQuestion();
   static vector2d CommandKeyHandler(vector2d, int);
   static void CommandScreen(const festring&, ulong, ulong, ulong&, ulong&);
   static bool CommandAll();
@@ -375,7 +375,12 @@ class game
   static color16 GetAttributeColor(int);
   static void UpdateAttributeMemory();
   static void InitAttributeMemory();
+  static void TeleportHandler(vector2d);
+  static void PetHandler(vector2d);
+  static bool SelectPet(int);
+  static double GetGameSituationDanger();
  private:
+  static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
   static god** God;
   static int CurrentLevelIndex;
@@ -446,7 +451,7 @@ class game
   static boneidmap BoneCharacterIDMap;
   static bool TooGreatDangerFoundBool;
   static bitmap* BusyAnimationCache[32];
-  static itemvector ItemDrawVector;
+  static itemvectorvector ItemDrawVector;
   static charactervector CharacterDrawVector;
   static bool SumoWrestling;
   static festring PlayerName;
@@ -459,12 +464,14 @@ class game
   static long Turn;
   static ulong EquipmentMemory[MAX_EQUIPMENT_SLOTS];
   static bool PlayerRunning;
-  static character* LastCharacterUnderCommandCursor;
-  static charactervector CommandVector;
+  static character* LastPetUnderCursor;
+  static charactervector PetVector;
   static double DangerFound;
   static int OldAttribute[ATTRIBUTES];
   static int NewAttribute[ATTRIBUTES];
   static int LastAttributeChangeTick[ATTRIBUTES];
+  static int NecroCounter;
+  static int CursorData;
 };
 
 inline void game::CombineLights(color24& L1, color24 L2)

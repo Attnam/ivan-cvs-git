@@ -191,6 +191,9 @@ struct characterdatabase : public databasebase
   festring ForceVomitMessage;
   int SweatMaterial;
   bool Sweats;
+  bool IsImmuneToItemTeleport;
+  bool AlwaysUseMaterialAttributes;
+  bool IsEnormous;
 };
 
 class characterprototype
@@ -257,6 +260,8 @@ class character : public entity, public id
   int GetLOSRangeSquare() const { return GetLOSRange() * GetLOSRange(); }
   int GetESPRange() const { return GetAttribute(INTELLIGENCE) / 3; }
   int GetESPRangeSquare() const { return GetESPRange() * GetESPRange(); }
+  int GetTeleportRange() const { return (GetAttribute(INTELLIGENCE) * 3) >> 2; }
+  int GetTeleportRangeSquare() const { return GetTeleportRange() * GetTeleportRange(); }
   void AddMissMessage(const character*) const;
   void AddPrimitiveHitMessage(const character*, const festring&, const festring&, int) const;
   void AddWeaponHitMessage(const character*, const item*, int, bool = false) const;
@@ -368,7 +373,7 @@ class character : public entity, public id
   static bool AllowDamageTypeBloodSpill(int);
   bool ClosePos(vector2d);
   int GetResistance(int) const;
-  virtual int GlobalResistance(int Type) const { return GetResistance(Type); }
+  virtual int GetGlobalResistance(int Type) const { return GetResistance(Type); }
   virtual const char* GetEquipmentName(int) const;
   virtual bodypart* GetBodyPartOfEquipment(int) const { return 0; }
   virtual item* GetEquipment(int) const { return 0; }
@@ -479,6 +484,7 @@ class character : public entity, public id
   DATA_BASE_VALUE(int, FleshMaterial);
   virtual DATA_BASE_BOOL(HasFeet);
   virtual DATA_BASE_VALUE(const festring&, DeathMessage);
+  DATA_BASE_VALUE(int, HPRequirementForGeneration);
   DATA_BASE_BOOL(IsExtraCoward);
   DATA_BASE_BOOL(SpillsBlood);
   DATA_BASE_BOOL(HasEyes);
@@ -506,8 +512,11 @@ class character : public entity, public id
   DATA_BASE_BOOL(WillCarryItems);
   DATA_BASE_VALUE(int, SweatMaterial);
   DATA_BASE_BOOL(Sweats);
+  DATA_BASE_BOOL(IsImmuneToItemTeleport);
+  DATA_BASE_BOOL(AlwaysUseMaterialAttributes);
+  DATA_BASE_BOOL(IsEnormous);
   int GetType() const { return GetProtoType()->GetIndex(); }
-  virtual void TeleportRandomly();
+  void TeleportRandomly(bool = false);
   bool TeleportNear(character*);
   bool IsStuck() const;
   virtual void InitSpecialAttributes() { }
@@ -922,6 +931,22 @@ class character : public entity, public id
   void CalculateEnchantments();
   bool GetNewFormForPolymorphWithControl(character*&);
   liquid* CreateSweat(long) const;
+  bool IsTemporary() const;
+  bool TeleportRandomItem(bool);
+  bool HasClearRouteTo(vector2d) const;
+  virtual bool IsTransparent() const;
+  void SignalPossibleTransparencyChange();
+  int GetCursorData() const;
+  void TryToName();
+  double GetSituationDanger(const character*) const;
+  virtual void ModifySituationDanger(double&) const;
+  void LycanthropySituationDangerModifier(double&) const;
+  void PoisonedSituationDangerModifier(double&) const;
+  void PolymorphingSituationDangerModifier(double&) const;
+  void PanicSituationDangerModifier(double&) const;
+  void ConfusedSituationDangerModifier(double&) const;
+  void ParasitizedSituationDangerModifier(double&) const;
+  void LeprosySituationDangerModifier(double&) const;
  protected:
   static bool DamageTypeDestroysBodyPart(int);
   virtual void LoadSquaresUnder();
@@ -948,7 +973,7 @@ class character : public entity, public id
   virtual material* CreateBodyPartMaterial(int, long) const;
   virtual bool ShowClassDescription() const { return true; }
   void SeekLeader(const character*);
-  virtual bool CheckForUsefulItemsOnGround();
+  virtual bool CheckForUsefulItemsOnGround(bool = true);
   bool CheckForDoors();
   bool CheckForEnemies(bool, bool, bool, bool = false);
   bool FollowLeader(character*);
@@ -974,7 +999,8 @@ class character : public entity, public id
   virtual const char* BiteNoun() const;
   virtual bool AttackIsBlockable(int) const { return true; }
   virtual bool AttackMayDamageArmor() const { return true; }
-  virtual int GetSpecialBodyPartFlags(int, bool = false) const;
+  virtual int GetSpecialBodyPartFlags(int) const { return ST_NORMAL; }
+  virtual int GetBodyPartWobbleData(int) const { return 0; }
   virtual int ModifyBodyPartHitPreference(int, int Modifier) const { return Modifier; }
   virtual int ModifyBodyPartToHitChance(int, int Chance) const { return Chance; }
   virtual bool CanPanicFromSeveredBodyPart() const { return true; }

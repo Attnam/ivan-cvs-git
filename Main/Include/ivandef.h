@@ -24,7 +24,7 @@
       enough (do not require other headers)
    3. class construction macros used in multiple .h files */
 
-#define IVAN_VERSION "0.440"
+#define IVAN_VERSION "0.50"
 
 struct databasebase { int Config; };
 
@@ -159,7 +159,7 @@ struct databasebase { int Config; };
 
 #define TRANSPARENT_COLOR 0xF81F // pink
 
-#define RAW_TYPES 6
+#define RAW_TYPES 7
 
 #define GR_GLTERRAIN 0
 #define GR_OLTERRAIN 1
@@ -167,13 +167,13 @@ struct databasebase { int Config; };
 #define GR_CHARACTER 3
 #define GR_HUMANOID 4
 #define GR_EFFECT 5
+#define GR_CURSOR 6
 
-#define GRAPHIC_TYPES 4
+#define GRAPHIC_TYPES 3
 
 #define GR_WTERRAIN 0
 #define GR_FOW 1
-#define GR_CURSOR 2
-#define GR_SYMBOL 3
+#define GR_SYMBOL 2
 
 /* SpecialFlags for graphics system. No one knows what "ST_" means... */
 
@@ -188,16 +188,21 @@ struct databasebase { int Config; };
 #define ST_CLOAK 64
 #define ST_LIGHTNING 128
 #define ST_DISALLOW_R_COLORS 256
-#define ST_WOBBLE 512
-#define ST_WOBBLE_HORIZONTALLY_BIT 1024
-#define ST_WOBBLE_VERTICALLY ST_WOBBLE
-#define ST_WOBBLE_HORIZONTALLY (ST_WOBBLE|ST_WOBBLE_HORIZONTALLY_BIT)
-#define ST_FLAME_1 2048
-#define ST_FLAME_2 4096
-#define ST_FLAME_3 8192
-#define ST_FLAME_4 16384
+#define ST_FLAME_1 512
+#define ST_FLAME_2 1024
+#define ST_FLAME_3 2048
+#define ST_FLAME_4 4096
 #define ST_FLAMES (ST_FLAME_1|ST_FLAME_2|ST_FLAME_3|ST_FLAME_4)
-#define ST_FLAME_SHIFT 11
+#define ST_FLAME_SHIFT 9
+
+#define WOBBLE 1
+#define WOBBLE_HORIZONTALLY_BIT 2
+#define WOBBLE_VERTICALLY WOBBLE
+#define WOBBLE_HORIZONTALLY (WOBBLE|WOBBLE_HORIZONTALLY_BIT)
+#define WOBBLE_SPEED_SHIFT 2
+#define WOBBLE_SPEED_RANGE (3 << WOBBLE_SPEED_SHIFT)
+#define WOBBLE_FREQ_SHIFT 4
+#define WOBBLE_FREQ_RANGE (3 << WOBBLE_FREQ_SHIFT)
 
 #define SILHOUETTE_X_SIZE 48
 #define SILHOUETTE_Y_SIZE 64
@@ -224,13 +229,14 @@ struct databasebase { int Config; };
 #define VALUABLE 65536
 #define MISC 131072
 
-#define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
+/*#define NUMBER_OF_LOCK_TYPES 3 // damaged lock type does not count
 
 #define ROUND 0
 #define SQUARE 1
 #define TRIANGULAR 2
 #define DAMAGED 3 // lock is too damaged to be used again
 #define HEXAGONAL 4
+#define OCTAGONAL 5*/
 
 #define GOOD 1
 #define NEUTRAL 2
@@ -433,9 +439,10 @@ struct databasebase { int Config; };
 #define VESANA_LEVEL 2
 #define CRYSTAL_LEVEL 3
 #define ENNER_BEAST_LEVEL 4
-#define IVAN_LEVEL 5
-#define DARK_LEVEL 6
-#define OREE_LAIR 9
+#define ZOMBIE_LEVEL 5
+#define IVAN_LEVEL 7
+#define DARK_LEVEL 8
+#define OREE_LAIR 12
 
 /* stack::DrawContents flags */
 
@@ -507,8 +514,8 @@ struct databasebase { int Config; };
 
 /* Entry indices, not actual config defines */
 
-#define STAIRS_UP 1
-#define STAIRS_DOWN 2
+#define STAIRS_UP 100
+#define STAIRS_DOWN 200
 #define FOUNTAIN 0xFFFF
 
 #define NO_LIMIT 0xFFFF
@@ -569,6 +576,7 @@ struct databasebase { int Config; };
 /* Special lock types, which must be generated in the script */
 
 #define HEXAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 1)
+#define OCTAGONAL_LOCK (S_LOCK_ID + LOCK_DELTA * 2)
 
 #define DESERT 1
 #define JUNGLE 2
@@ -769,5 +777,24 @@ struct databasebase { int Config; };
 #define GIVE_ITEMS 4
 #define ISSUE_COMMANDS 8
 #define CHAT_IDLY 16
+
+#define NO_PARAMETERS 0xFF
+
+#define CURSOR_TYPES 2
+
+#define NORMAL_CURSOR 0
+#define DARK_CURSOR 1
+#define FLASH 0x4000
+#define TARGET 0x8000
+
+#define GRAY_FRACTAL 0
+#define RED_FRACTAL 1
+#define GREEN_FRACTAL 2
+#define BLUE_FRACTAL 3
+#define YELLOW_FRACTAL 4
+
+#define BLUNT 1
+#define SLASH 2
+#define PIERCE 4
 
 #endif

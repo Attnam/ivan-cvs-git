@@ -206,6 +206,7 @@ struct olterraindatabase : public lterraindatabase
   vector2d WindowBitmapPos;
   bool ShowThingsUnder;
   fearray<contentscript<item> > LeftOverItems;
+  bool IsWall;
 };
 
 class olterrainprototype
@@ -294,6 +295,7 @@ class olterrain : public lterrain, public oterrain
   DATA_BASE_BOOL(CreateWindowConfigurations);
   DATA_BASE_VALUE(vector2d, WindowBitmapPos);
   DATA_BASE_VALUE(const fearray<contentscript<item> >&, LeftOverItems);
+  DATA_BASE_BOOL(IsWall);
   virtual void SetAttachedArea(int) { }
   virtual void SetAttachedEntry(int) { }
   virtual void SetText(const festring&) { }
@@ -313,6 +315,7 @@ class olterrain : public lterrain, public oterrain
   virtual void SignalRustLevelChange();
   virtual bool IsFountainWithWater() const { return false; }
   bool ShowThingsUnder() const;
+  bool WillBeDestroyedBy(const character*) const;
  protected:
   virtual vector2d GetBitmapPos(int) const;
   virtual void ModifyAnimationFrames(int&) const;

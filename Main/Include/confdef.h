@@ -17,54 +17,69 @@
 #define SOLID_ID (1 << 12)
 
 #define VALPURIUM (SOLID_ID + 1)
-#define STONE (SOLID_ID + 2)
-#define GRAVEL (SOLID_ID + 3)
-#define MORAINE (SOLID_ID + 4)
-#define OCTIRON (SOLID_ID + 5)
-#define GLASS (SOLID_ID + 6)
-#define PARCHMENT (SOLID_ID + 7)
-#define CLOTH (SOLID_ID + 8)
-#define MITHRIL (SOLID_ID + 9)
-#define MARBLE (SOLID_ID + 10)
-#define GOLD (SOLID_ID + 11)
-#define GRASS (SOLID_ID + 12)
-#define LEATHER (SOLID_ID + 13)
-#define LEAF (SOLID_ID + 14)
-#define FABRIC (SOLID_ID + 15)
-#define PALM_LEAF (SOLID_ID + 16)
-#define SULFUR (SOLID_ID + 17)
-#define UNICORN_HORN (SOLID_ID + 18)
-#define DIAMOND (SOLID_ID + 19)
-#define SILVER (SOLID_ID + 20)
-#define SAPPHIRE (SOLID_ID + 21)
-#define RUBY (SOLID_ID + 22)
-#define BRONZE (SOLID_ID + 23)
-#define COPPER (SOLID_ID + 24)
-#define TIN (SOLID_ID + 25)
-#define SPIDER_SILK (SOLID_ID + 26)
-#define KEVLAR (SOLID_ID + 27)
-#define OMMEL_HAIR (SOLID_ID + 28)
-#define HARDENED_LEATHER (SOLID_ID + 29)
-#define TROLL_HIDE (SOLID_ID + 30)
-#define NYMPH_HAIR (SOLID_ID + 31)
-#define ANGEL_HAIR (SOLID_ID + 32)
-#define PHOENIX_FEATHER (SOLID_ID + 33)
-#define GOLDEN_EAGLE_FEATHER (SOLID_ID + 34)
-#define ICE (SOLID_ID + 35)
-#define DRAGON_HIDE (SOLID_ID + 36)
-#define ARCANITE (SOLID_ID + 37)
-#define ILLITHIUM (SOLID_ID + 38)
-#define BALSA_WOOD (SOLID_ID + 39)
-#define PINE_WOOD (SOLID_ID + 40)
-#define FIR_WOOD (SOLID_ID + 41)
-#define BIRCH_WOOD (SOLID_ID + 42)
-#define OAK_WOOD (SOLID_ID + 43)
-#define TEAK_WOOD (SOLID_ID + 44)
-#define EBONY_WOOD (SOLID_ID + 45)
-#define BLUE_CRYSTAL (SOLID_ID + 46)
-#define PURPLE_CRYSTAL (SOLID_ID + 47)
-#define GREEN_CRYSTAL (SOLID_ID + 48)
-#define DARK_GRASS (SOLID_ID + 49)
+#define GRAVEL (SOLID_ID + 2)
+#define MORAINE (SOLID_ID + 3)
+#define OCTIRON (SOLID_ID + 4)
+#define GLASS (SOLID_ID + 5)
+#define PARCHMENT (SOLID_ID + 6)
+#define CLOTH (SOLID_ID + 7)
+#define MITHRIL (SOLID_ID + 8)
+#define MARBLE (SOLID_ID + 9)
+#define GOLD (SOLID_ID + 10)
+#define GRASS (SOLID_ID + 11)
+#define LEATHER (SOLID_ID + 12)
+#define LEAF (SOLID_ID + 13)
+#define FABRIC (SOLID_ID + 14)
+#define PALM_LEAF (SOLID_ID + 15)
+#define SULFUR (SOLID_ID + 16)
+#define UNICORN_HORN (SOLID_ID + 17)
+#define DIAMOND (SOLID_ID + 18)
+#define SILVER (SOLID_ID + 19)
+#define SAPPHIRE (SOLID_ID + 20)
+#define RUBY (SOLID_ID + 21)
+#define BRONZE (SOLID_ID + 22)
+#define COPPER (SOLID_ID + 23)
+#define TIN (SOLID_ID + 24)
+#define SPIDER_SILK (SOLID_ID + 25)
+#define KEVLAR (SOLID_ID + 26)
+#define OMMEL_HAIR (SOLID_ID + 27)
+#define HARDENED_LEATHER (SOLID_ID + 28)
+#define TROLL_HIDE (SOLID_ID + 29)
+#define NYMPH_HAIR (SOLID_ID + 30)
+#define ANGEL_HAIR (SOLID_ID + 31)
+#define PHOENIX_FEATHER (SOLID_ID + 32)
+#define GOLDEN_EAGLE_FEATHER (SOLID_ID + 33)
+#define ICE (SOLID_ID + 34)
+#define DRAGON_HIDE (SOLID_ID + 35)
+#define ARCANITE (SOLID_ID + 36)
+#define ILLITHIUM (SOLID_ID + 37)
+#define BALSA_WOOD (SOLID_ID + 38)
+#define PINE_WOOD (SOLID_ID + 39)
+#define FIR_WOOD (SOLID_ID + 40)
+#define BIRCH_WOOD (SOLID_ID + 41)
+#define OAK_WOOD (SOLID_ID + 42)
+#define TEAK_WOOD (SOLID_ID + 43)
+#define EBONY_WOOD (SOLID_ID + 44)
+#define BLUE_CRYSTAL (SOLID_ID + 45)
+#define PURPLE_CRYSTAL (SOLID_ID + 46)
+#define GREEN_CRYSTAL (SOLID_ID + 47)
+#define SAND_STONE (SOLID_ID + 48)
+#define LIME_STONE (SOLID_ID + 49)
+#define CALCITE (SOLID_ID + 50)
+#define OBSIDIAN (SOLID_ID + 51)
+#define GNEISS (SOLID_ID + 52)
+#define SLATE (SOLID_ID + 53)
+#define GRANITE (SOLID_ID + 54)
+#define BASALT (SOLID_ID + 55)
+#define MILKY_QUARTZ (SOLID_ID + 56)
+#define FLINT (SOLID_ID + 57)
+#define QUARTZITE (SOLID_ID + 58)
+#define AMETHYST (SOLID_ID + 59)
+#define CITRINE (SOLID_ID + 60)
+#define ROSE_QUARTZ (SOLID_ID + 61)
+#define JASPER (SOLID_ID + 62)
+#define ROCK_CRYSTAL (SOLID_ID + 63)
+#define DARK_GRASS (SOLID_ID + 64)
 
 #define ORGANIC_ID (2 << 12)
 
@@ -269,11 +284,12 @@
 
 #define ROOKIE 1
 #define VETERAN 2
-#define PATROL 3
-#define SHOP 4
-#define ELITE 5
-#define MASTER 6
-#define GRAND_MASTER 7
+#define EUNUCH 3
+#define PATROL 4
+#define SHOP 5
+#define ELITE 6
+#define MASTER 7
+#define GRAND_MASTER 8
 
 #define DARK 1
 #define GREATER_DARK 2
@@ -375,10 +391,10 @@
 
 #define SNOW_BOULDER 4
 
-#define OREE_LAIR_ENTRY 3
-#define OREE_LAIR_EXIT 4
-#define SUMO_ARENA_ENTRY 7
-#define SUMO_ARENA_EXIT 8
+#define OREE_LAIR_ENTRY 300
+#define OREE_LAIR_EXIT 400
+#define SUMO_ARENA_ENTRY 700
+#define SUMO_ARENA_EXIT 800
 
 #define BOOK_CASE 1
 
