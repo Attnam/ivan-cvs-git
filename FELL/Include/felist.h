@@ -38,6 +38,7 @@ public:
 	ushort Length() const { return Entry.size(); }
 	void Load(inputfile&);
 	void Save(outputfile&) const;
+	bool IsEmpty() { return (Length() == 0); }
 protected:
 	std::vector<felistentry> Entry;
 	std::vector<felistentry> Description;
