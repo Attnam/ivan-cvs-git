@@ -410,12 +410,14 @@ bool felist::DrawPage(bitmap* Buffer) const
 	    }
 
 	  Buffer->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, LastFillBottom + 1, DARK_GRAY, true);
-	  return c == Entry.size() - 1;
+	  break;
 	}
 
       if(Entry[c++]->Selectable)
 	++i;
     }
+
+  return c == Entry.size() - 1;
 }
 
 void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort BackColor) const

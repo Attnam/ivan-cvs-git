@@ -1,10 +1,12 @@
 #include "whandler.h"
 #include "graphics.h"
 #include "error.h"
+#include "bitmap.h"
 
 bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
 ushort globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick = 0;
+bool globalwindowhandler::ControlLoopsEnabled = true;
 
 void globalwindowhandler::InstallControlLoop(bool (*What)())
 {
@@ -34,6 +36,7 @@ void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 #ifdef __DJGPP__
 
 #include <pc.h>
+#include <keys.h>
 
 int globalwindowhandler::GetKey(bool EmptyBuffer)
 {
@@ -41,27 +44,40 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
     while(kbhit())
       getkey();
 
-  while(!kbhit())
-    if(Controls)
-      {
-	static ulong LastTick = 0;
-	UpdateTick();
+  int Key = 0;
 
-	if(LastTick != Tick)
+  while(!Key)
+    {
+      while(!kbhit())
+	if(Controls && ControlLoopsEnabled)
 	  {
-	    LastTick = Tick;
-	    bool Draw = false;
+	    static ulong LastTick = 0;
+	    UpdateTick();
 
-	    for(ushort c = 0; c < Controls; ++c)
-	      if(ControlLoop[c]())
-		Draw = true;
+	    if(LastTick != Tick)
+	      {
+		LastTick = Tick;
+		bool Draw = false;
 
-	    if(Draw)
-	      graphics::BlitDBToScreen();
+		for(ushort c = 0; c < Controls; ++c)
+		  if(ControlLoop[c]())
+		    Draw = true;
+
+		if(Draw)
+		  graphics::BlitDBToScreen();
+	      }
 	  }
-      }
 
-  return getkey();
+      Key = getkey();
+
+      if(Key == K_Control_Print)
+	{
+	  DOUBLE_BUFFER->Save("Scrshot.bmp");
+	  Key = 0;
+	}
+    }
+
+  return Key;
 }
 
 int globalwindowhandler::ReadKey()
@@ -77,8 +93,6 @@ int globalwindowhandler::ReadKey()
 #ifdef USE_SDL
 
 #include <algorithm>
-
-#include "bitmap.h"
 
 std::vector<int> globalwindowhandler::KeyBuffer;
 bool (*globalwindowhandler::QuitMessageHandler)() = 0;
@@ -119,7 +133,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  ProcessMessage(&Event);
 	else
 	  {
-	    if(SDL_GetAppState() & SDL_APPACTIVE && Controls)
+	    if(SDL_GetAppState() & SDL_APPACTIVE && Controls && ControlLoopsEnabled)
 	      {
 		static ulong LastTick = 0;
 		UpdateTick();
@@ -232,9 +246,20 @@ void globalwindowhandler::ProcessMessage(SDL_Event* Event)
 	case SDLK_KP5:
 	  KeyPressed = KEY_NUMPAD_5;
 	  break;
+	case SDLK_SYSREQ:
 	case SDLK_PRINT:
+#ifdef WIN32
+	  DOUBLE_BUFFER->Save("Scrshot.bmp");
+#else
 	  DOUBLE_BUFFER->Save(std::string(getenv("HOME")) + "/Scrshot.bmp");
+#endif
 	  return;
+	case SDLK_e:
+	  if(Event->key.keysym.mod & KMOD_ALT && (Event->key.keysym.mod & KMOD_LCTRL || Event->key.keysym.mod & KMOD_RCTRL))
+	    {
+	      KeyPressed = '\177';
+	      break;
+	    }
 
 	default:
 	  KeyPressed = Event->key.keysym.unicode;

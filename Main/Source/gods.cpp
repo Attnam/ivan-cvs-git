@@ -1,5 +1,3 @@
-#include <algorithm>
-
 /* Compiled through godset.cpp */
 
 std::string valpurus::GetName() const { return "Valpurus"; }

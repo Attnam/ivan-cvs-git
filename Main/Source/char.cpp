@@ -2995,8 +2995,8 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
 void character::ReceiveOmmelUrine(long Amount)
 {
-  EditExperience(ARM_STRENGTH, Amount << 2);
-  EditExperience(LEG_STRENGTH, Amount << 2);
+  EditExperience(ARM_STRENGTH, Amount * 5);
+  EditExperience(LEG_STRENGTH, Amount * 5);
   RestoreLivingHP();
 
   if(IsPlayer())

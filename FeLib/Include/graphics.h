@@ -27,7 +27,12 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+#ifdef USE_SDL
   static void SwitchMode();
+#endif
+#ifdef __DJGPP__
+  static void SwitchMode() { }
+#endif
   static void SetMode(const char*, const char*, vector2d, bool);
   static void BlitDBToScreen();
   static vector2d GetRes() { return Res; }

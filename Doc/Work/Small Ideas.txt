@@ -424,8 +424,10 @@ Footprints.
 Polymorph question should default to the monster that the player last polymorphed to.
 Carnivorous plant seeds.
 Town hit by "zombie-plague"
-When player is killed by something when he is fainting the death message should say "killed by a X while helpless" 
+When player is killed by something when he is fainting the death message should say "killed by a X while helpless".
 Panicking should be more probable when friends around the character have panicked.
 If the player has enough wisdom, the game should warn about obviously damaging food.
 Invisible creatures carrying a light source should be revealed.
 Wielded wands should sometimes break in fights.
+*Dropping multiple items should be made more convenient.
+Bottles should break more easily when kicked.

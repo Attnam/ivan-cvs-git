@@ -7,6 +7,16 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* FeLib interface is finally OS independent
+	* Ivan now compiles on MinGW and DJGPP environments correctly
+	* Ctrl + Print Screen now takes a screenshot in the DOS port
+	* Print Screen works again correctly in both Win32 ports
+	* Ctrl + Alt + E is now interpreted as a euro symbol in all SDL ports
+	* Corrected many bugs in game::HandleQuitMessage()
+	* Many new files added to Doc/Obsolete and Doc/Work
+
 February 2 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Hitting a non-polymorphed chameleon no longer crashes

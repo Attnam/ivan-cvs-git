@@ -1,6 +1,8 @@
 #include <new.h>
 #include <cstdarg>
 #include <cstring>
+#include <cstdlib>
+#include <cstdio>
 
 #ifdef __DJGPP__
 #include <conio.h>

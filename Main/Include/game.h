@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <string>
 
 #include "vector2d.h"
 #include "felibdef.h"

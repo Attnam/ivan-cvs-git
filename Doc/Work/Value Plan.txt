@@ -1,0 +1,36 @@
+self		others
+Nefas		Atavus
+Mellis		Sophos
+Infuscor	Seges
+
+life		death
+Terra		Mortifer
+Seges		Scabies
+Dulcis		Cruentus
+
+order		chaos
+Legifer		Cleptia
+Valpurus	Scabies
+Mellis		Infuscor
+
+nature		man
+Silva		Loricatus
+Sophos		Mellis
+Dulcis		Legifer
+
+Valpurus 	the king of gods				order
+Seges		goddess of health and long age			life, others
+Atavus		god of charity and munificence			others
+Terra		goddess of earth				life
+Dulcis		goddess of love and art				nature, life
+Sophos		god of knowledge and magic			nature, others
+Silva		goddess of forests and wildlife			nature
+Legifer		god of law and loyalty				order, man
+Loricatus	god of fire, machines and weaponry		man
+Mellis		god of money, trade and politics		self, man
+Nefas		goddess of greed and forbidden pleasures	self
+Cruentus	god of war and blood				death, order
+Cleptia		goddess of crime and rebellion			chaos
+Infuscor	goddess of wrong knowledge and vile magic	chaos, self
+Scabies		goddess of mutations, disease and famine	death, chaos
+Mortifer	god of death and destruction			death

@@ -24,17 +24,14 @@ SDL_Surface* graphics::Screen;
 #ifdef __DJGPP__
 ulong graphics::BufferSize;
 ushort graphics::ScreenSelector = 0;
+graphics::vesainfo graphics::VesaInfo;
+graphics::modeinfo graphics::ModeInfo;
 #endif
 
 bitmap* graphics::DoubleBuffer;
 vector2d graphics::Res;
 uchar graphics::ColorDepth;
 colorizablebitmap* graphics::DefaultFont = 0;
-
-#ifdef __DJGPP__
-graphics::vesainfo graphics::VesaInfo;
-graphics::modeinfo graphics::ModeInfo;
-#endif
 
 void graphics::Init()
 {
@@ -120,12 +117,8 @@ void graphics::BlitDBToScreen()
   SDL_UpdateRect(Screen, 0,0, RES.X, RES.Y);
 }
 
-#endif
-
 void graphics::SwitchMode()
 {
-#ifdef USE_SDL
-
   ulong Flags;
 
   if(Screen->flags & SDL_FULLSCREEN)
@@ -148,9 +141,9 @@ void graphics::SwitchMode()
     ABORT("Couldn't toggle fullscreen mode.");
 
   BlitDBToScreen();
+}
 
 #endif
-}
 
 void graphics::LoadDefaultFont(const std::string& FileName)
 {

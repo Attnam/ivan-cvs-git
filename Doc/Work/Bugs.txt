@@ -12,7 +12,7 @@
 (s) Picking sale items after polymorphing and killing the shopkeeper crashes.
 //Shopkeeper + levelchange?
 (r) WMode bug. (what was this?)
-Screenshots don't work in the DOS port. //(do they in Linux?)
+//Screenshots don't work in the DOS port. (do they in Linux?)
 (s) The White Screen Bug.
 //DarkLevel monsters.
 //Bats get damage from splinters.

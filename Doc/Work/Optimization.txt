@@ -1,0 +1,5 @@
+level::RandomSquare()
+//datamember<type>::GetMember()
+continent::GetRandomMember
+protosystem::BalancedCreateMonster
+spoiling & applyexperience

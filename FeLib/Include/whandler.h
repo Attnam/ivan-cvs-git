@@ -23,35 +23,34 @@
 class globalwindowhandler
 {
  public:
-#ifdef USE_SDL
-  static void Init();
-  static void ProcessMessage(SDL_Event*);
-#endif
   static int GetKey(bool = true);
   static int ReadKey();
-#ifdef __DJGPP__
-  static void SetQuitMessageHandler(bool (*)()) { }
-#else
-  static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
-#endif
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
   static ulong GetTick() { return Tick; }
   static bool ControlLoopsInstalled() { return Controls != 0; }
+  static void EnableControlLoops() { ControlLoopsEnabled = true; }
+  static void DisableControlLoops() { ControlLoopsEnabled = false; }
 #ifdef USE_SDL
+  static void Init();
+  static void SetQuitMessageHandler(bool (*What)()) { QuitMessageHandler = What; }
   static void UpdateTick() { Tick = SDL_GetTicks() / 40; }
 #endif
 #ifdef __DJGPP__
+  static void Init() { }
+  static void SetQuitMessageHandler(bool (*)()) { }
   static void UpdateTick() { Tick = uclock() * 25 / UCLOCKS_PER_SEC; }
 #endif
  private:
-#ifndef __DJGPP__
+#ifdef USE_SDL
+  static void ProcessMessage(SDL_Event*);
   static std::vector<int> KeyBuffer;
   static bool (*QuitMessageHandler)();
 #endif
   static bool (*ControlLoop[MAX_CONTROLS])();
   static ushort Controls;
   static ulong Tick;
+  static bool ControlLoopsEnabled;
 };
 
 #endif

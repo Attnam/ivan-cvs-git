@@ -10,6 +10,8 @@ valuemap protocontainer<god>::CodeNameMap;
 
 #undef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 
+#include <algorithm>
+
 #include "human.h"
 #include "message.h"
 #include "game.h"

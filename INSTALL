@@ -11,7 +11,7 @@ make install
 
 Under DOS:
 
-If you have DJGPP 2.03+ and gcc 3.03+
+If you have DJGPP 2.03+ and gcc 2.952+
 installed, type:
 
 make -f ivandj.mak

@@ -601,6 +601,45 @@ SOURCE=.\Main\Include\wterra.h
 SOURCE=.\Main\Include\wterras.h
 # End Source File
 # End Group
+# Begin Group "Script"
+
+# PROP Default_Filter "*.dat"
+# Begin Source File
+
+SOURCE=.\Script\char.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\define.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\dungeon.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\glterra.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\item.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\material.dat
+# End Source File
+# Begin Source File
+
+SOURCE=.\Script\olterra.dat
+# End Source File
+# End Group
+# Begin Group "Misc"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ChangeLog
+# End Source File
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.ico
@@ -608,6 +647,16 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
+
+!ENDIF 
+
 # End Source File
+# End Group
 # End Target
 # End Project

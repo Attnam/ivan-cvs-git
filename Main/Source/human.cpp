@@ -1748,9 +1748,6 @@ bool humanoid::EditAttribute(ushort Identifier, short Value)
 
 void humanoid::EditExperience(ushort Identifier, long Value)
 {
-  if(Identifier == AGILITY && Value < 0)
-    int esko = 2;
-
   if(Identifier < BASE_ATTRIBUTES)
     character::EditExperience(Identifier, Value);
   else if(Identifier == ARM_STRENGTH || Identifier == DEXTERITY)

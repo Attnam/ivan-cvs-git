@@ -12,4 +12,5 @@
 //Halberd requires too much strength (weapons experts opinion).
 //Phoenix feather limbs may be too powerful. (I'm not sure, I just discovered they even are possible to gain)
 //Guy with beginning stats and no equipment in gloomy cave level 2 -> Ur-Khan the orc marshal appears. (I was in WMode, but still...)
-There's a LOT of school food in the game.
+//There's a LOT of school food in the game.
+Shields may be a little too weak.

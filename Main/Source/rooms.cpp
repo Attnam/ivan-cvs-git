@@ -630,7 +630,7 @@ bool library::AllowKick(const character* Char, const lsquare* LSquare) const
   return !LSquare->GetStack()->GetItems() || MasterIsActive() || Char == GetMaster() || GetMaster()->GetRelation(Char) == HOSTILE || LSquare->CanBeSeenBy(GetMaster());
 }
 
-bool landingsite::AllowKick(const character* Char, const lsquare* LSquare) const
+bool landingsite::AllowKick(const character* Char, const lsquare*) const
 {
  return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
 }
