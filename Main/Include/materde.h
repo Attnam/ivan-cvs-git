@@ -1041,4 +1041,38 @@ class MATERIAL
  protected:
   virtual std::string NameStem() const { return "healing liquid"; }
 ); 
+
+class MATERIAL
+(
+  bronze,
+  material,
+ public:
+  virtual ushort StrengthValue() const { return 80; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 8300; } 
+  virtual ushort OfferValue() const { return 10; }
+  virtual bool IsSolid() const { return true; }
+  virtual ushort GetColor() const { return MAKE_RGB(184, 115, 51); }
+  virtual ulong RawPrice() const { return GetVolume() >> 7; }
+  virtual bool CanBeDigged() const { return false; }
+ protected:
+  virtual std::string NameStem() const { return "bronze"; }
+);
+
+class MATERIAL
+(
+  copper,
+  material,
+ public:
+  virtual ushort StrengthValue() const { return 60; }
+  virtual uchar GetConsumeType() const { return HARD; }
+  virtual ushort GetDensity() const { return 9000; } // rounded from 8920
+  virtual ushort OfferValue() const { return 10; } 
+  virtual bool IsSolid() const { return true; }
+  virtual ulong RawPrice() const { return GetVolume() >> 7; }
+  virtual bool CanBeDigged() const { return false; }
+  virtual ushort GetColor() const { return MAKE_RGB(140, 120, 83); }
+ protected:
+  virtual std::string NameStem() const { return "bronze"; }
+);
 #endif

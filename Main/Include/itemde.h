@@ -9,7 +9,7 @@
 #include "materde.h"
 #include "wskill.h"
 #include "game.h"
-
+#include "lterrade.h"
 class ITEM
 (
   banana,
@@ -1527,6 +1527,29 @@ class ITEM
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
-
+class ITEM
+(
+ key,
+ item,
+ InitMaterials(new iron),
+ {
+   SetSize(5);
+   SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
+ },
+ public:
+  virtual ushort Possibility() const { return 80; }
+  virtual std::string NameSingular() const { return "key"; }
+  virtual float OfferModifier() const { return 0.5; }
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } }
+  virtual ulong Price() const { return 10; }
+  virtual bool Apply(character*, stack*);
+  virtual void SetLockType(uchar What) { LockType = What; }
+  virtual uchar GetLockType() const { return LockType; }
+ protected:
+  virtual ushort StrengthModifier() const { return 50; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16,48); } // Alcohol and Mr. Graphics Guy don't fit together very well
+  virtual ushort GetFormModifier() const { return 40; }
+  uchar LockType;
+);
 #endif
 

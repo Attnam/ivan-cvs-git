@@ -1072,3 +1072,17 @@ bool lsquare::TeleportEverything(character* Teleporter)
   Teleporter->EditNP(-50);
   return true;  
 }
+
+bool lsquare::ReceiveApply(item* Thingy, character* Applier)
+{
+  if(GetGLTerrain()->ReceiveApply(Thingy, Applier) || GetOLTerrain()->ReceiveApply(Thingy,Applier))
+    {
+      return true;
+    }
+  else
+    {
+      ADD_MESSAGE("You cannot apply that on this!");
+      return false;
+    }
+}
+

@@ -28,7 +28,7 @@ std::map<std::string, ushort>	protocontainer<olterrain>::CodeNameMap;
 #include "stack.h"
 #include "itemba.h"
 #include "config.h"
-
+#include "itemde.h"
 bool door::Open(character* Opener)
 {
   if(!GetIsWalkable())
@@ -832,4 +832,42 @@ void door::ActivateBoobyTrap()
 void door::CreateBoobyTrap()
 {
   SetBoobyTrap(1); 
+}
+
+
+bool door::ReceiveApply(item* Thingy, character* Applier)
+{
+  if(Thingy->GetType() == key::StaticType())
+    {
+      if(IsOpen)
+	return false;
+
+      if(Thingy->GetLockType() == GetLockType())
+	{
+	  if(Applier->GetIsPlayer())
+	    {
+	      if(GetIsLocked())
+		ADD_MESSAGE("You unlock the door.");
+	      else
+		ADD_MESSAGE("You lock the door.");
+	    }
+	  else if(Applier->GetLSquareUnder()->CanBeSeen())
+	    {
+	      if(GetIsLocked())
+		ADD_MESSAGE("%s unlocks the door.", Applier->CNAME(DEFINITE));
+	      else
+		ADD_MESSAGE("%s locks the door.", Applier->CNAME(DEFINITE));
+	    }
+	  SetIsLocked(!GetIsLocked());	      
+	}
+      else
+	{
+	  if(Applier->GetIsPlayer())
+	    ADD_MESSAGE("The key doesen't fit into the lock.");
+
+	}
+      return true;
+    }
+  else
+    return false;
 }

@@ -102,6 +102,7 @@ class item : public object
   virtual ushort StrengthValue() const;
   virtual uchar SurfaceMaterial() const { return 0; }
   virtual bool AutoInitializable() const { return true; }
+  virtual uchar GetLockType() const { return 0; }
  protected:
   virtual ushort StrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }

@@ -51,6 +51,7 @@ class lterrain : public object
   virtual bool ReceiveStrike() { return false; }
   virtual bool GetIsLocked() const { return false; }
   virtual bool Polymorph(character*) { return false; }
+  virtual bool ReceiveApply(item*,character*) { return false; }
  protected:
   virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   uchar VisualFlags;

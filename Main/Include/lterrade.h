@@ -7,6 +7,8 @@
 
 #include "lterraba.h"
 
+#define NUMBER_OF_LOCK_TYPES 3
+
 class GLTERRAIN
 (
   parquet,
@@ -123,6 +125,7 @@ class OLTERRAIN
     SetIsLocked(false);
     SetBoobyTrap(0);
     UpdatePicture();
+    SetLockType(RAND() % NUMBER_OF_LOCK_TYPES);
   },
  public:
   virtual bool Open(character*);
@@ -145,6 +148,9 @@ class OLTERRAIN
   virtual void HasBeenHitBy(item*, float, uchar, bool);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
+  virtual void SetLockType(uchar What) { LockType = What; }
+  virtual uchar GetLockType() { return LockType; }
+  virtual bool ReceiveApply(item*, character*);
  private:
   virtual void Break(bool);
  protected:
@@ -157,6 +163,7 @@ class OLTERRAIN
   bool IsOpen;
   bool IsLocked;
   uchar BoobyTrap;
+  uchar LockType;
 );
 
 class OLTERRAIN

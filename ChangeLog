@@ -1,3 +1,16 @@
+2002-04-01 Heikki Sairanen <heikki.sairanen@phpoint.net>
+	* Main/Include/itemba.h: GetLockType() function added to item (returns 0 for everything else but key)
+	* Main/Include/itemde.h: Key added
+	* Main/Include/lterraba.h: Added function ReceiveApply to LTerrain
+	* Main/Include/lterrade.h: Added define NUMBER_OF_LOCK_TYPES and added lock type for class door
+	* Main/Include/materde.h: Added copper and bronze
+	* Main/Source/charde.cpp: *classified*
+	* Main/Source/itemde.cpp: Added Apply function for key
+	* Main/Include/lsquare.h:
+	* Main/Source/lsquare.cpp: Added function ReceiveApply
+	* Main/Source/lterrade.cpp: Added function ReceiveApply for door
+	
+
 2002-03-31 Heikki Sairanen <heikki.sairanen@phpoint.net>
 	* Main/Source/itemde.cpp:
 	* Main/Include/itemde.h: Added wandofhaste and wandofslow (and their needed funcitons: BeamEffect, Zap)

@@ -744,9 +744,9 @@ void guard::BeTalkedTo(character* Talker)
       return;
     }
 
-  static bool Said[4];
+  static bool Said[5];
 
-  switch(RandomizeReply(4, Said))
+  switch(RandomizeReply(5, Said))
     {
     case 0:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
@@ -774,6 +774,12 @@ void guard::BeTalkedTo(character* Talker)
 	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
           ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
         }
+      break;
+    case 4:
+      if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
+	ADD_MESSAGE("\"Attnam, shit, I'm still only in Attnam. Every time I think I'm gonna wake up back in the dungeon.\"");
+      else
+	ADD_MESSAGE("\"When I was here, I wanted to be there, when I was there all I could think of was getting back into the dungeon.\"");
       break;
     }
 }
@@ -1029,7 +1035,10 @@ void hunter::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
       break;
     case 2:
-      ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
+      if(GetWielded())
+	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", Wielded->CNAME(UNARTICLED), Wielded->CNAME(UNARTICLED));
+      else
+	ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
     case 3:
       ADD_MESSAGE("\"I saw a communist visiting the city a few days past.");
@@ -1099,6 +1108,9 @@ void slave::BeTalkedTo(character* Talker)
 	      break;
 	    case 3:
 	      ADD_MESSAGE("\"I would like to be like Ivan. Ivan is a good worker.\"");
+	      break;
+	    case 4:
+	      ADD_MESSAGE("\"I am putting myself to the fullest possible use, which is all I think that any conscious entity can ever hope to do.\"");
 	      break;
 	    }
 	}
@@ -1204,9 +1216,9 @@ void housewife::BeTalkedTo(character* Talker)
       return;
     }
 
-  static bool Said[4];
+  static bool Said[5];
 
-  switch(RandomizeReply(4, Said))
+  switch(RandomizeReply(5, Said))
     {
     case 0:
       ADD_MESSAGE("\"Can you help me find my husband? He is hiding somewhere.");
@@ -1223,6 +1235,8 @@ void housewife::BeTalkedTo(character* Talker)
     case 3:
       ADD_MESSAGE("\"Petrus's wives are so arrogant towards us working class ones. Grr...\"");
       break;
+    case 4:
+      ADD_MESSAGE("\"If you men only knew!\"");
     }
 }
 
@@ -1261,9 +1275,9 @@ void librarian::BeTalkedTo(character* Talker)
       return;
     }
 
-  static bool Said[10];
+  static bool Said[11];
 
-  switch(RandomizeReply(10, Said))
+  switch(RandomizeReply(11, Said))
     {
     case 0:
       if(game::GetPetrus() && !game::GetPetrus()->GetStoryState())
@@ -1372,6 +1386,10 @@ void librarian::BeTalkedTo(character* Talker)
 	  ADD_MESSAGE("But thou must remember: unlike lawfuls, they shalt not help thee when things go bad.\"");
 	  break;
 	}
+    case 10:
+      ADD_MESSAGE("\"If a man cannot choose, he ceases to be a man.\"");
+      break;
+
     }
 }
 
@@ -1408,7 +1426,10 @@ bool communist::MoveRandomly()
 void zombie::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    ADD_MESSAGE("\"Need brain!!\"");
+    if(RAND() % 5)
+      ADD_MESSAGE("\"Need brain!!\"");
+    else
+      ADD_MESSAGE("\"Redrum! Redrum! Redrum!\"");
   else
     ADD_MESSAGE("\"Need brain, but not your brain.\"");
 }

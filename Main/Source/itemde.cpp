@@ -1348,3 +1348,21 @@ bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
   Zapper->EditAP(500);
   return true;
 }
+
+bool key::Apply(character* User, stack*)
+{
+  if(User->GetIsPlayer())
+    {
+      ADD_MESSAGE("What door do you wish to lock or unlock? [press a direction key or space]");
+      game::DrawEverything();
+      vector2d ApplyPos = game::AskForDirectionVector() + User->GetPos();
+      if(game::GetCurrentLevel()->IsValid(ApplyPos))
+	game::GetCurrentLevel()->GetLSquare(ApplyPos)->ReceiveApply(this, User);
+      else
+	{
+	  if(User->GetIsPlayer())
+	    ADD_MESSAGE("Can't do that, sir!");
+	}
+      User->EditAP(500);
+    }
+}
