@@ -1338,8 +1338,13 @@ void ghost::VirtualConstructor(bool)
 
 ushort ghost::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
 {
-  Active = true;
-  return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg);
+  if(Type != SOUND)
+    {
+      Active = true;
+      return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg);
+    }
+  else
+    return 0;
 }
 
 void ghost::GetAICommand()

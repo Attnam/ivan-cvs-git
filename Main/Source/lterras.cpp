@@ -270,7 +270,12 @@ void altar::BeKicked(character* Kicker, ushort)
 void altar::ReceiveVomit(character* Who)
 {
   if(Who->IsPlayer())
-    GetMasterGod()->PlayerVomitedOnAltar();
+    {
+      GetMasterGod()->PlayerVomitedOnAltar();
+
+      if(GetRoom())
+	GetRoom()->HostileAction(Who);
+    }
 }
 
 bool door::AddAdjective(festring& String, bool Articled) const
@@ -454,7 +459,6 @@ bool fountain::Drink(character* Drinker)
 	      ADD_MESSAGE("The water tastes good.");
 	      Drinker->EditNP(500);
 	      break;
-
 	    }
 
 	  // fountain might have dried out: don't do anything here.

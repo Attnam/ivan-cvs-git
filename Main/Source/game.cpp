@@ -485,6 +485,14 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
 
   if(OnScreen(CursorPos))
     {
+      if(!IsInWilderness() && !GetSeeWholeMapCheatMode())
+	{
+	  lsquare* Square = CurrentLSquareMap[CursorPos.X][CursorPos.Y];
+
+	  if(Square->GetLastSeen() != game::GetLOSTurns())
+	    Square->DrawMemorized();
+	}
+
       vector2d ScreenCordinates = CalculateScreenCoordinates(CursorPos);
 
       if(DoZoom())
@@ -1161,7 +1169,6 @@ int game::AskForKeyPress(const festring& Topic)
 vector2d game::PositionQuestion(const festring& Topic, vector2d CursorPos, void (*Handler)(vector2d), void (*KeyHandler)(vector2d, int), bool Zoom)
 {
   int Key = 0;
-  graphics::BlitDBToScreen();
   SetDoZoom(Zoom);
   vector2d Return;
 
@@ -1270,7 +1277,7 @@ void game::LookHandler(vector2d CursorPos)
   if(Character && (Character->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
     Character->DisplayInfo(Msg);
 
-  if(!(RAND() % 10000))
+  if(!(RAND() % 10000) && (Square->CanBeSeenByPlayer() || GetSeeWholeMapCheatMode()))
     Msg << " You see here a frog eating a magnolia.";
 
   ADD_MESSAGE("%s", Msg.CStr());

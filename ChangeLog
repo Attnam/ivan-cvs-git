@@ -9,6 +9,13 @@ is also provided AS IS and is probably completely unreadable.
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Ghosts now ignore sound damage
+	* Cloning a monster along with a stack now reduces the amount of copied items
+	  by one
+	* Corrected two small bugs in the lookmode code
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* BusyAnimations are now cached
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>

@@ -1435,7 +1435,7 @@ bool lsquare::Clone(character* Zapper, const festring&, uchar)
   if(Character)
     ClonedSomething = Character->CloneToNearestSquare(Zapper) != 0;
 
-  if(GetStack()->Clone(5))
+  if(GetStack()->Clone(ClonedSomething ? 4 : 5))
     ClonedSomething = true;
 
   return ClonedSomething;

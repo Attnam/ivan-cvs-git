@@ -184,8 +184,8 @@ void igraph::RemoveUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
-  /*if(Iterator == TileMap.end())
-    int esko = 2;*/
+  if(Iterator == TileMap.end())
+    int esko = 2;
 
   tile& Tile = Iterator->second;
 

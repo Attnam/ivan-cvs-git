@@ -153,21 +153,6 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
     }
 }
 
-void temple::Enter(character* Pilgrim)
-{
-  if(Pilgrim->IsPlayer())
-    if(MasterIsActive())
-      {
-	if(GetMaster()->GetRelation(Pilgrim) != HOSTILE && Pilgrim->CanBeSeenBy(GetMaster()))
-	  if(GetMaster()->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().CStr(), game::GetGod(DivineMaster)->GetName());
-	  else
-	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->GetName());
-      }
-    else
-      ADD_MESSAGE("The temple appears to be deserted.");
-}
-
 void shop::KickSquare(character* Infidel, lsquare* Square)
 {
   if(!AllowKick(Infidel, Square))

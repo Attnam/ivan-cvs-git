@@ -33,14 +33,6 @@ class ROOM
 
 class ROOM
 (
-  temple,
-  room,
- public:
-  virtual void Enter(character*);
-);
-
-class ROOM
-(
   cathedral,
   room,
  public:
