@@ -1407,3 +1407,51 @@ void cloak::GenerateCloakMaterials()
     case 2: InitMaterials(new cloth); break;
     }
 }
+
+ushort belt::GetFormModifier() const
+{
+  if(GetMaterial(0)->IsFlexible())
+    return 800;
+  else
+    return 60;
+}
+
+
+void boot::GenerateBootMaterials()
+{ 
+  switch(RAND() % 2)
+    {
+    case 1: InitMaterials(new leather); break;
+    case 2: InitMaterials(new iron); break;
+    }
+}
+
+
+void gauntlet::GenerateGauntletMaterials()
+{ 
+  switch(RAND() % 3)
+    {
+    case 0: InitMaterials(new bronze); break;
+    case 1: InitMaterials(new iron); break;
+    }
+}
+
+void ring::GenerateRingMaterials()
+{ 
+  switch(RAND() % 3)
+    {
+    case 0: InitMaterials(new gold); break;
+    case 1: InitMaterials(new diamond); break;
+    case 2: InitMaterials(new copper); break;
+    }
+}
+
+void amulet::GenerateAmuletMaterials()
+{
+  switch(RAND() % 3)
+    {
+    case 0: InitMaterials(new gold); break;
+    case 1: InitMaterials(new diamond); break;
+    case 2: InitMaterials(new copper); break;
+    }  
+}

@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+
+#define TRANSPARENT 0xF81F // Pink
 #define RAW_TYPES	4
 
 #define GRLTERRAIN	0
@@ -36,6 +38,8 @@
 #include "vector2d.h"
 
 #include "save.h"
+
+
 
 class bitmap;
 class colorizablebitmap;

@@ -106,6 +106,7 @@ class lsquare : public square
   virtual bool TeleportEverything(character*);
   virtual bool ReceiveApply(item*, character*);
   virtual bool ReceiveDip(item*, character*);
+  virtual void DrawCharacterSymbols(vector2d, ushort);
  protected:
   glterrain* GLTerrain;
   olterrain* OLTerrain;

@@ -154,7 +154,7 @@ void lsquare::UpdateMemorized()
 
 	  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
 	    igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
-
+	  
 	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 	}
       else
@@ -189,6 +189,7 @@ void lsquare::Draw()
 		  {
 		    DrawCharacters();
 		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		    DrawCharacterSymbols(BitPos, ContrastLuminance);
 		  }
 		else
 		  {
@@ -202,6 +203,7 @@ void lsquare::Draw()
 			igraph::GetTileBuffer()->Fill(0xF81F);
 			DrawCharacters();
 			igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+			DrawCharacterSymbols(BitPos, ContrastLuminance);
 		      }
 		  }
 	      else
@@ -218,6 +220,7 @@ void lsquare::Draw()
 		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 		      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		      DrawCharacterSymbols(BitPos, ContrastLuminance);
 		    }
 		}
 	    }
@@ -226,7 +229,7 @@ void lsquare::Draw()
 	      DrawTerrain();
 
 	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-	      igraph::GetTileBuffer()->Fill(0xF81F);
+	      igraph::GetTileBuffer()->Fill(TRANSPARENT);
 
 	      if(DrawStacks())
 		{
@@ -239,13 +242,16 @@ void lsquare::Draw()
 		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
-		    igraph::GetTileBuffer()->Fill(0xF81F);
+		    igraph::GetTileBuffer()->Fill(TRANSPARENT);
 		}
 
 	      if(!configuration::GetOutlineCharacters())
 		{
 		  if(DrawCharacters())
-		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		    {
+		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		      DrawCharacterSymbols(BitPos, ContrastLuminance);
+		    }
 		}
 	      else
 		if(DrawCharacters())
@@ -253,6 +259,7 @@ void lsquare::Draw()
 		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
 		    igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 		    igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		    DrawCharacterSymbols(BitPos, ContrastLuminance);
 		  }
 	    }
 	}
@@ -1117,3 +1124,18 @@ bool lsquare::ReceiveDip(item* Thingy, character* Dipper)
     }
 }
 
+void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
+{
+  if(GetCharacter() && !GetCharacter()->GetIsPlayer())
+    {
+      switch(game::GetPlayer()->GetTeam()->GetRelation(GetCharacter()->GetTeam()))
+	{
+	case FRIEND:
+	  igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+	  break;
+	default:
+	  
+	  break;
+	}
+    }
+}

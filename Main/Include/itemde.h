@@ -902,6 +902,7 @@ class ITEM
   virtual bool IsMaterialChangeable() const { return false; }
   virtual bool Consumable(character*) const { return false; }
   virtual bool Polymorph(stack*) { return false; }
+  virtual ulong Price() const { return 2000000000; }
  protected:
   virtual ushort StrengthModifier() const { return 400; }
   virtual vector2d GetBitmapPos() const { return vector2d(0,320); }
@@ -1593,8 +1594,106 @@ class ITEM
   virtual ushort StrengthModifier() const { return 30; }
   virtual vector2d GetBitmapPos() const { return vector2d(32,352); }
   virtual ushort GetFormModifier() const { return 20; } 
- 
 );
 
+class ITEM
+(
+ boot,
+ item,
+ GenerateBootMaterials(),
+ {
+   SetSize(30);
+ },
+ public:
+ virtual ushort Possibility() const { return 30; }
+ virtual std::string NameSingular() const { return "boot"; }
+ virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the boots can be calculated someho
+  virtual void GenerateBootMaterials();
+  protected:
+  virtual ushort StrengthModifier() const { return 50; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
+  virtual ushort GetFormModifier() const { return 20; } 
+);
+
+class ITEM
+(
+ gauntlet, 
+ item,
+ GenerateGauntletMaterials(),
+ {
+   SetSize(30);
+ },
+ public:
+ virtual ushort Possibility() const { return 30; }
+ virtual std::string NameSingular() const { return "gauntlet"; }
+ virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 600; default: return 0; } } 
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the gauntlets can be calculated somehow
+  virtual void GenerateGauntletMaterials();
+  protected:
+  virtual ushort StrengthModifier() const { return 55; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32, 368); }
+  virtual ushort GetFormModifier() const { return 20; } 
+);
+
+class ITEM
+(
+ belt, 
+ item,
+ InitMaterials(new leather),
+ {
+   SetSize(150);
+ },
+ public:
+ virtual ushort Possibility() const { return 30; }
+ virtual std::string NameSingular() const { return "belt"; }
+ virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } } 
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  virtual uchar GetWeaponCategory() const { return WHIPS; }
+  protected:
+  virtual ushort StrengthModifier() const { return 50; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32, 384); }
+  virtual ushort GetFormModifier() const;
+);
+
+class ITEM
+(
+ ring, 
+ item,
+ GenerateRingMaterials(),
+ {
+   SetSize(2);
+ },
+ public:
+ virtual ushort Possibility() const { return 30; }
+ virtual std::string NameSingular() const { return "ring"; }
+ virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 3; default: return 0; } } 
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  void GenerateRingMaterials();
+  protected:
+  virtual ushort StrengthModifier() const { return 80; }
+  virtual vector2d GetBitmapPos() const { return vector2d(16, 400); }
+  virtual ushort GetFormModifier() const { return 20; } 
+);
+
+class ITEM
+(
+ amulet, 
+ item,
+ GenerateAmuletMaterials(),
+ {
+   SetSize(20);
+ },
+ public:
+ virtual ushort Possibility() const { return 30; }
+ virtual std::string NameSingular() const { return "amulet"; }
+ virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 15; default: return 0; } } 
+  virtual ulong Price() const { return GetMaterial(0)->RawPrice(); } // This should be overwritten, when the effectivness of the belt can be calculated somehow
+  void GenerateAmuletMaterials();
+  protected:
+  virtual ushort StrengthModifier() const { return 30; }
+  virtual vector2d GetBitmapPos() const { return vector2d(32, 400); }
+  virtual ushort GetFormModifier() const { return 50; } 
+);
 #endif
 
