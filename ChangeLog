@@ -1,3 +1,7 @@
+March 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	 * Graphics/Makefile.am: Human.pcx changed to Humanoid.pcx
+
 March 16 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* charde.h: Bodypart color tweaks
