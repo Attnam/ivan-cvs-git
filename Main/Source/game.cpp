@@ -345,7 +345,7 @@ void game::Quit()
 
 bool game::LOSHandler(vector2d Pos, vector2d Origo)
 {
-	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
+	if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
 	GetCurrentArea()->GetSquare(Pos)->SetLastSeen(LOSTurns);
@@ -532,7 +532,7 @@ void game::DrawEverything(bool EmptyMsg)
 
 bool game::OnScreen(vector2d Pos)
 {
-	if(Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + 50 && Pos.Y < game::GetCamera().Y + 30)
+	if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + 50 && Pos.Y < game::GetCamera().Y + 30)
 		return true;
 	else
 		return false;
@@ -646,7 +646,7 @@ std::string game::SaveName()
 
 bool game::EmitationHandler(vector2d Pos, vector2d Origo)
 {
-	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
+	if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
 	ushort Emit = GetLevel(Current)->GetLevelSquare(Origo)->GetEmitation();
@@ -668,7 +668,7 @@ bool game::EmitationHandler(vector2d Pos, vector2d Origo)
 
 bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
 {
-	if(Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
+	if(Pos.X < 0 || Pos.Y < 0 || Pos.X >= GetCurrentArea()->GetXSize() || Pos.Y >= GetCurrentArea()->GetYSize())
 		return false;
 
 	GetCurrentDungeon()->GetLevel(Current)->GetLevelSquare(Pos)->NoxifyEmitter(Origo);
@@ -1080,7 +1080,7 @@ void game::CreateTeams()
 
 bool game::IsValidPos(vector2d Pos)
 {
-	if(Pos.X < GetCurrentArea()->GetXSize() && Pos.Y < GetCurrentArea()->GetYSize())
+	if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X < GetCurrentArea()->GetXSize() && Pos.Y < GetCurrentArea()->GetYSize())
 		return true;
 	else
 		return false;

@@ -64,7 +64,7 @@ public:
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
 	virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
 	virtual bool GetOnGround() const;
-	virtual bool IsValid(vector2d Vector) const { return Vector.X < XSize ? Vector.Y < YSize ? true : false : false; }
+	virtual bool IsValid(vector2d) const;
 	virtual levelscript* GetLevelScript() const { return LevelScript; }
 	virtual void MoveCharacter(vector2d, vector2d);
 	virtual ushort GetLOSModifier() const;

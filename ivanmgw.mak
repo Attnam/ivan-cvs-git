@@ -42,12 +42,6 @@ LIBS = -lstdc++ -lddraw -ldxguid -lkernel32 -luser32 -lgdi32 -lwinspool -lcomdlg
 ivan:	$(IVANBIN)
 ltest:	$(LTestBIN)
 
-clean:	;
-	@echo Deleting object files...
-	@if exist $(ROOTDIR)\Object\*.o del $(ROOTDIR)\Object\*.o
-	@echo Deleting library...
-	@if exist $(ROOTDIR)\$(LIBRARY) del $(ROOTDIR)\$(LIBRARY)
-
 $(FeDXOBJ) : $(FeDXDIR)/Object/%.o : $(FeDXDIR)/Source/%.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)

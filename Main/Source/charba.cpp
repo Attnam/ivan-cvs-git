@@ -718,7 +718,7 @@ bool character::MoveTowards(vector2d TPos)
 bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 {
 	if(!game::GetInWilderness())
-		if(MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
+		if(MoveTo.X >= 0 && MoveTo.Y >= 0 && MoveTo.X < game::GetCurrentLevel()->GetXSize() && MoveTo.Y < game::GetCurrentLevel()->GetYSize())
 		{
 			character* Character;
 

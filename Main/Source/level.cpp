@@ -1070,3 +1070,11 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
 
 	return true;
 }
+
+bool level::IsValid(vector2d Vector) const
+{
+	if(Vector.X >= 0 && Vector.Y >= 0 && Vector.X < GetXSize() && Vector.Y < GetYSize())
+		return true;
+	else
+		return false;
+}
