@@ -691,7 +691,7 @@ class ITEM
 (
 	loaf,
 	item,
-	InitMaterials(RAND() % 2 ? (material*)new pork : (material*)new beef),
+	InitMaterials(switch(RAND() % 3) { case 0: (material*)new pork break; case 1: (material*)new beef break; default: (material*)new bread }),
 	{
 		SetSize(40);
 	},

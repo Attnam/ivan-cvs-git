@@ -876,4 +876,22 @@ protected:
 	virtual std::string NameStem() const	{ return "mammoth flesh"; }
 );
 
+class MATERIAL
+(
+	bread,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 10; }
+	virtual uchar GetConsumeType() const				{ return FLESH; }
+	virtual ushort GetDensity() const				{ return 200; }
+	virtual ushort OfferValue() const				{ return 7; }
+	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
+	virtual short NutritionValue() const			{ return 100; }
+	virtual ushort GetColor() const { return MAKE_RGB(170, 110, 60); }
+	virtual ulong RawPrice() const { return GetVolume() >> 3; }
+protected:
+	virtual std::string NameStem() const	{ return "bread"; }
+
+);
+ 
 #endif
