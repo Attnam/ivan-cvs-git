@@ -17,10 +17,11 @@ G+	L+	Seges, light goddess of health and nutrition
 
 Favours:
 -heals when hurt
+-restores lost limbs
 -feeds when hungry, with pure nutrition or food items
 -(cure disease)
 -(cure poisoning)
--increases endurance
+-trains endurance
 
 Punishments:
 -
@@ -29,6 +30,7 @@ G+	B=	Atavus, light god of charity and munificence
 ------------------------------------------------------------
 
 Favours:
+-gives random good items as gifts
 -
 
 Punishments:
@@ -113,7 +115,6 @@ E+	B-	Macellarius, chaos goddess of greed and forbidden pleasures
 
 Favours:
 -gives Omle urine
--(gives a banana to females)
 
 Punishments:
 -
@@ -134,9 +135,10 @@ E	C-	Calamus, chaos god of crime
 -------------------------------------------
 
 Favours:
--increases agility
--increases perception
+-trains agility
+-trains perception
 -teleports the player elsewhere
+-makes the player invisible
 
 Punishments:
 -steals a random item that is not in the gear
@@ -145,28 +147,27 @@ E-	B+	Cruentus, chaos god of war and blood
 ----------------------------------------------------
 
 Favours:
--gives a steel two-handed scimitar
--increases strength
--increases endurance
+-gives a steel two-handed scimitar, if player's weapon isn't great
+-trains strength
+-trains endurance
 -heals battle wounds
 
 Punishments:
--sends swat commandos to hunt the player
+-sends dark knights to hunt the player
 -hurts the player a lot
 
 E-	C	Scabies, chaos goddess of mutations, deseases and famine
 ------------------------------------------------------------------------
 
 Favours:
--gives school food for the hungry
--(causes sickness to surrounding monsters)
--(cures sickness)
--increases endurance
+-gives slightly spoiled food for the hungry
+-causes sickness to surrounding monsters
+-trains endurance
 
 Punishments:
 -sends mommo slimes to hunt the player
--(sends lesser pepsi daemons to hunt the player)
--(causes sickness)
+-causes sickness
+-spoils random food items
 
 E--	C--	Destroyer of Worlds, Erado the Master Evil
 ----------------------------------------------------------

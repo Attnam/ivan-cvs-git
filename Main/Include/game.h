@@ -11,7 +11,9 @@
 
 #define SAVEFILE_VERSION	110	// Increment this if changes make savefiles incompatible
 
-#define DIRECTION_COMMAND_KEYS	8
+#define DIRECTION_COMMAND_KEYS 8
+#define EXTENDED_DIRECTION_COMMAND_KEYS 9
+#define YOURSELF 8
 
 #define UNDEFINED		0
 #define MALE			1
@@ -46,7 +48,7 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-
+#include "graphics.h"
 #include "command.h"
 
 class area;
@@ -97,9 +99,7 @@ class game
   static void DeInitLuxTable();
   static const char* Insult();
   static bool BoolQuestion(std::string, char = 0, int = 0);
-  //static const char* PersonalPronoun(uchar Index);
-  //static const char* PossessivePronoun(uchar Index);
-  static void DrawEverything(bool = true);
+  static void DrawEverything();
   static bool Save(std::string = SaveName(""));
   static uchar Load(std::string = SaveName(""));
   static bool GetRunning() { return Running; }
@@ -117,16 +117,14 @@ class game
   static void SetCurrent(ushort What) { Current = What; }
   static ushort GetCurrent() { return Current; }
   static int GetMoveCommandKey(vector2d, vector2d);
-  static void DrawEverythingNoBlit(bool = true);
+  static void DrawEverythingNoBlit();
   static god* GetGod(uchar Index) { return God[Index]; }
   static uchar GetGods() { return God.size(); }
   static std::string CAlignment(uchar Index) { return Alignment[Index]; }
   static void ApplyDivineTick(ushort = 1);
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
-  static vector2d GetDirectionVectorForKey(ushort);
-  static vector2d AskForDirectionVector(std::string = "");
-  //static std::string GetPlayerName() { return PlayerName; }
-  //static void SetPlayerName(std::string What) { PlayerName = What; }
+  static vector2d GetDirectionVectorForKey(int);
+  //static vector2d AskForDirectionVector(std::string = "");
   static std::string SaveName(std::string = "");
   static bool EyeHandler(vector2d, vector2d);
   static long GodScore();
@@ -189,14 +187,22 @@ class game
   static bool GetInGetCommand() { return InGetCommand; }
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
-  static vector2d PositionQuestion(std::string, vector2d);
+  //static vector2d PositionQuestion(std::string, vector2d);
+  static vector2d GetScreenSize() { return ScreenSize; }
+  static void SetScreenSize(vector2d What) { ScreenSize = What; }
+  static vector2d CalculateScreenCoordinates(vector2d);
+  static void BusyAnimation(bitmap* = DOUBLEBUFFER);
+  static uchar GetDirectionIndexForKey(int);
+  static vector2d PositionQuestion(std::string, vector2d, void (*)(vector2d) = 0);
+  static void LookHandler(vector2d);
+  static int AskForKeyPress(std::string);
  private:
   static std::string Alignment[];
   static std::vector<god*> God;
   static ushort Current;
   static uchar CurrentDungeon;
-  static int MoveCommandKey[DIRECTION_COMMAND_KEYS];
-  static const vector2d MoveVector[DIRECTION_COMMAND_KEYS];
+  static int MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS];
+  static const vector2d MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS];
   static ushort*** LuxTable;
   static ushort* LuxTableSize;
   static bool Running;
@@ -205,7 +211,6 @@ class game
   static bool WizardMode;
   static bool SeeWholeMapCheat;
   static bool GoThroughWallsCheat;
-  //static std::string PlayerName;
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;
@@ -224,6 +229,7 @@ class game
   static petrus* Petrus;
   static bool InGetCommand;
   static bool IsLoading;
+  static vector2d ScreenSize;
 };
 
 #endif

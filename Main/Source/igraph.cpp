@@ -34,10 +34,10 @@ void igraph::Init()
       std::string Title = std::string("IVAN ") + VERSION;
 
 #ifdef WIN32
-      graphics::SetMode(hInst, hWnd, Title.c_str(), 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
+      graphics::SetMode(hInst, hWnd, Title.c_str(), vector2d(800, 600), 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 #endif
 #ifdef USE_SDL
-      graphics::SetMode(Title.c_str(), 800, 600, 16);
+      graphics::SetMode(Title.c_str(), vector2d(800, 600), 16);
 #endif
 #ifdef __DJGPP__
       graphics::SetMode(0x114);
@@ -49,7 +49,7 @@ void igraph::Init()
 #endif
       graphics::LoadDefaultFont((GAME_DIR + "Graphics/Font.pcx").c_str());
 
-      uchar c;
+      ushort c;
 
       for(c = 0; c < RAW_TYPES; ++c)
 	RawGraphic[c] = new colorizablebitmap((GAME_DIR + std::string(RawGraphicFileName[c])).c_str());
@@ -64,7 +64,7 @@ void igraph::Init()
 
 void igraph::DeInit()
 {
-  uchar c;
+  ushort c;
 
   for(c = 0; c < RAW_TYPES; ++c)
     delete RawGraphic[c];
@@ -78,7 +78,7 @@ void igraph::DeInit()
 
 void igraph::DrawCursor(vector2d Pos)
 {
-  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
+  igraph::GetCursorGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
 }
 
 tile igraph::GetTile(graphic_id GI)
@@ -106,12 +106,12 @@ tile igraph::AddUser(graphic_id GI)
 
       if(GI.SpecialType == STRIGHTARM)
 	{
-	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
+	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
 	}
 
       if(GI.SpecialType == STLEFTARM)
 	{
-	  Bitmap->Fill(0, 0, 8, 16, 0xF81F);
+	  Bitmap->Fill(0, 0, 8, 16, TRANSPARENTCOL);
 	}
 
       if(GI.SpecialType == STGROIN)
@@ -122,7 +122,7 @@ tile igraph::AddUser(graphic_id GI)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
 	      Pixel[i++] = Bitmap->GetPixel(x, y);
 
-	  Bitmap->Fill(0, 10, 16, 6, 0xF81F);
+	  Bitmap->Fill(0, 10, 16, 6, TRANSPARENTCOL);
 
 	  for(y = 10, i = 0; y < 13; ++y)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
@@ -131,24 +131,28 @@ tile igraph::AddUser(graphic_id GI)
 
       if(GI.SpecialType == STRIGHTLEG)
 	{
-	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
-	  Bitmap->PutPixel(5, 10, 0xF81F);
-	  Bitmap->PutPixel(6, 10, 0xF81F);
-	  Bitmap->PutPixel(7, 10, 0xF81F);
-	  Bitmap->PutPixel(6, 11, 0xF81F);
-	  Bitmap->PutPixel(7, 11, 0xF81F);
-	  Bitmap->PutPixel(7, 12, 0xF81F);
+	  /* Right leg from the character's, NOT the player's point of view */
+
+	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(8, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(9, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
+	  Bitmap->PutPixel(8, 11, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
 
       if(GI.SpecialType == STLEFTLEG)
 	{
-	  Bitmap->Fill(0, 0, 7, 16, 0xF81F);
-	  Bitmap->PutPixel(7, 10, 0xF81F);
-	  Bitmap->PutPixel(8, 10, 0xF81F);
-	  Bitmap->PutPixel(9, 10, 0xF81F);
-	  Bitmap->PutPixel(7, 11, 0xF81F);
-	  Bitmap->PutPixel(8, 11, 0xF81F);
-	  Bitmap->PutPixel(7, 12, 0xF81F);
+	  /* Left leg from the character's, NOT the player's point of view */
+
+	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENTCOL);
+	  Bitmap->PutPixel(5, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(6, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 10, TRANSPARENTCOL);
+	  Bitmap->PutPixel(6, 11, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
+	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
 
       tile Tile(Bitmap);
@@ -168,3 +172,4 @@ void igraph::RemoveUser(graphic_id GI)
 	TileMap.erase(Iterator);
       }
 }
+

@@ -35,7 +35,7 @@ worldmap::~worldmap()
   delete [] AltitudeBuffer;
   delete [] ContinentBuffer;
 
-  uchar c;
+  ushort c;
 
   for(c = 1; c < Continent.size(); ++c)
     delete Continent[c];
@@ -149,6 +149,8 @@ void worldmap::Generate()
 
 void worldmap::RandomizeAltitude()
 {
+  game::BusyAnimation();
+
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
       AltitudeBuffer[x][y] = RAND() % 5001 - RAND() % 5000;
@@ -160,6 +162,8 @@ void worldmap::SmoothAltitude()
 
   for(ushort c = 0; c < 10; ++c)
     {
+      game::BusyAnimation();
+
       if(c < 8)
 	{
 	  for(ushort c1 = 0; c1 < RAND() % 20; ++c1)
@@ -205,6 +209,8 @@ void worldmap::GenerateClimate()
 {
   for(ushort y = 0; y < YSize; ++y)
     {
+      game::BusyAnimation();
+
       float DistanceFromEquator = fabs(float(y) / YSize - 0.5f);
 
       bool LatitudeRainy = DistanceFromEquator <= 0.05 || (DistanceFromEquator > 0.25 && DistanceFromEquator <= 0.45) ? true : false;
@@ -262,10 +268,16 @@ void worldmap::SmoothClimate()
   OldTypeBuffer = Alloc2D<ushort>(XSize, YSize);
 
   for(ushort c = 0; c < 3; ++c)
-    for(ushort y = 0; y < YSize; ++y)
-      for(ushort x = 0, NewType; x < XSize; ++x)
-	if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
-	  TypeBuffer[x][y] = NewType;
+    {
+      game::BusyAnimation();
+
+      for(ushort y = 0; y < YSize; ++y)
+	for(ushort x = 0, NewType; x < XSize; ++x)
+	  if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
+	    TypeBuffer[x][y] = NewType;
+    }
+
+  game::BusyAnimation();
 
   for(ushort x = 0; x < XSize; ++x)
     for(ushort y = 0; y < YSize; ++y)
@@ -297,7 +309,7 @@ ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingThe
 
 void worldmap::CalculateContinents()
 {
-  uchar c;
+  ushort c;
 
   for(c = 1; c < Continent.size(); ++c)
     delete Continent[c];
@@ -306,45 +318,49 @@ void worldmap::CalculateContinents()
   memset(ContinentBuffer[0], 0, XSize * YSize);
 
   for(ushort x = 0; x < XSize; ++x)
-    for(ushort y = 0; y < YSize; ++y)
-      if(AltitudeBuffer[x][y] > 0)
-	{
-	  bool Attached = false;
+    {
+      game::BusyAnimation();
 
-	  DO_FOR_SQUARES_AROUND(x, y, XSize, YSize,
-	  {
-	    if(ContinentBuffer[DoX][DoY])
-	      {
-		if(ContinentBuffer[x][y])
-		  {
-		    if(ContinentBuffer[x][y] != ContinentBuffer[DoX][DoY])
-		      if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[DoX][DoY]]->Size())
-			Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[DoX][DoY]]);
-		      else
-			Continent[ContinentBuffer[DoX][DoY]]->AttachTo(Continent[ContinentBuffer[x][y]]);
-		  }
-		else
-		  Continent[ContinentBuffer[DoX][DoY]]->Add(vector2d(x, y));
-
-		Attached = true;
-	      }
-	  });
-
-	  if(!Attached)
+	for(ushort y = 0; y < YSize; ++y)
+	  if(AltitudeBuffer[x][y] > 0)
 	    {
-	      if(Continent.size() == 255)
+	      bool Attached = false;
+
+	      DO_FOR_SQUARES_AROUND(x, y, XSize, YSize,
+	      {
+		if(ContinentBuffer[DoX][DoY])
+		  {
+		    if(ContinentBuffer[x][y])
+		      {
+			if(ContinentBuffer[x][y] != ContinentBuffer[DoX][DoY])
+			  if(Continent[ContinentBuffer[x][y]]->Size() < Continent[ContinentBuffer[DoX][DoY]]->Size())
+			    Continent[ContinentBuffer[x][y]]->AttachTo(Continent[ContinentBuffer[DoX][DoY]]);
+			  else
+			    Continent[ContinentBuffer[DoX][DoY]]->AttachTo(Continent[ContinentBuffer[x][y]]);
+		      }
+		    else
+		      Continent[ContinentBuffer[DoX][DoY]]->Add(vector2d(x, y));
+
+		    Attached = true;
+		  }
+	      });
+
+	      if(!Attached)
 		{
-		  RemoveEmptyContinents();
-
 		  if(Continent.size() == 255)
-		    ABORT("Valpurus shall not carry more continents!");
-		}
+		    {
+		      RemoveEmptyContinents();
 
-	      continent* NewContinent = new continent(Continent.size());
-	      NewContinent->Add(vector2d(x, y));
-	      Continent.push_back(NewContinent);
+		      if(Continent.size() == 255)
+			ABORT("Valpurus shall not carry more continents!");
+		    }
+
+		  continent* NewContinent = new continent(Continent.size());
+		  NewContinent->Add(vector2d(x, y));
+		  Continent.push_back(NewContinent);
+		}
 	    }
-	}
+    }
 
   RemoveEmptyContinents();
 

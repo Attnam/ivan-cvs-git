@@ -75,7 +75,20 @@ bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), IsIndep
   SetAlphaMap(0);
 }
 
+bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), IsIndependent(true)
+{
+  SetImage(Alloc2D<ushort>(YSize, XSize));
+  SetAlphaMap(0);
+}
+
 bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), IsIndependent(true)
+{
+  SetImage(Alloc2D<ushort>(YSize, XSize));
+  SetAlphaMap(0);
+  Fill(Color);
+}
+
+bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), IsIndependent(true)
 {
   SetImage(Alloc2D<ushort>(YSize, XSize));
   SetAlphaMap(0);
@@ -87,6 +100,13 @@ bitmap::bitmap(bitmap* MotherBitmap, ushort XPos, ushort YPos, ushort XSize, ush
   SetMotherBitmap(MotherBitmap);
   SetXPos(XPos);
   SetYPos(YPos);
+}
+
+bitmap::bitmap(bitmap* MotherBitmap, vector2d Pos, vector2d Size) : XSize(Size.X), YSize(Size.Y), IsIndependent(false)
+{
+  SetMotherBitmap(MotherBitmap);
+  SetXPos(Pos.X);
+  SetYPos(Pos.Y);
 }
 
 bitmap::~bitmap()
@@ -617,12 +637,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *(ushort*)(Buffer + (XSize << 1));
 
-	  if((LastColor == 0xF81F || !y) && NextColor != 0xF81F)
+	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
 	    *(ushort*)Buffer = Color;
 
 	  Buffer += XSize << 1;
 
-	  if(LastColor != 0xF81F && (NextColor == 0xF81F || y == YSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
 	    *(ushort*)Buffer = Color;
 
 	  LastColor = NextColor;
@@ -639,12 +659,12 @@ void bitmap::Outline(ushort Color)
 	{
 	  NextColor = *(ushort*)(Buffer + 2);
 
-	  if((LastColor == 0xF81F || !x) && NextColor != 0xF81F)
+	  if((LastColor == DEFAULT_TRANSPARENT || !x) && NextColor != DEFAULT_TRANSPARENT)
 	    *(ushort*)Buffer = Color;
 
 	  Buffer += 2;
 
-	  if(LastColor != 0xF81F && (NextColor == 0xF81F || x == XSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || x == XSize - 2))
 	    *(ushort*)Buffer = Color;
 
 	  LastColor = NextColor;
@@ -657,7 +677,7 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
   if(!IsIndependent)
     ABORT("Subbitmap outline bitmap creation request detected!");
 
-  Bitmap->Fill(0xF81F);
+  Bitmap->Fill(DEFAULT_TRANSPARENT);
 
   for(ushort x = 0; x < XSize; ++x)
     {
@@ -670,13 +690,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	{
 	  ushort NextColor = *(ushort*)(SrcBuffer + (XSize << 1));
 
-	  if((LastColor == 0xF81F || !y) && NextColor != 0xF81F)
+	  if((LastColor == DEFAULT_TRANSPARENT || !y) && NextColor != DEFAULT_TRANSPARENT)
 	    *(ushort*)DestBuffer = Color;
 
 	  SrcBuffer += XSize << 1;
 	  DestBuffer += Bitmap->XSize << 1;
 
-	  if(LastColor != 0xF81F && (NextColor == 0xF81F || y == YSize - 2))
+	  if(LastColor != DEFAULT_TRANSPARENT && (NextColor == DEFAULT_TRANSPARENT || y == YSize - 2))
 	    *(ushort*)DestBuffer = Color;
 
 	  LastColor = NextColor;
@@ -696,13 +716,13 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
 	  ushort NextSrcColor = *(ushort*)(SrcBuffer + 2);
 	  ushort NextDestColor = *(ushort*)(DestBuffer + 2);
 
-	  if((LastSrcColor == 0xF81F || !x) && (NextSrcColor != 0xF81F || NextDestColor != 0xF81F))
+	  if((LastSrcColor == DEFAULT_TRANSPARENT || !x) && (NextSrcColor != DEFAULT_TRANSPARENT || NextDestColor != DEFAULT_TRANSPARENT))
 	    *(ushort*)DestBuffer = Color;
 
 	  SrcBuffer += 2;
 	  DestBuffer += 2;
 
-	  if((LastSrcColor != 0xF81F || LastDestColor != 0xF81F) && (NextSrcColor == 0xF81F || x == XSize - 2))
+	  if((LastSrcColor != DEFAULT_TRANSPARENT || LastDestColor != DEFAULT_TRANSPARENT) && (NextSrcColor == DEFAULT_TRANSPARENT || x == XSize - 2))
 	    *(ushort*)DestBuffer = Color;
 
 	  LastSrcColor = NextSrcColor;
@@ -711,22 +731,30 @@ void bitmap::CreateOutlineBitmap(bitmap* Bitmap, ushort Color)
     }
 }
 
-void bitmap::FadeToScreen()
+void bitmap::FadeToScreen(void (*BitmapEditor)(bitmap*))
 {
-  bitmap Backup(XRES, YRES);
-  DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
+  bitmap Backup(RES);
+  DOUBLEBUFFER->Blit(&Backup);
 
   for(ushort c = 0; c <= 5; ++c)
     {
       clock_t StartTime = clock();
-      Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(255 - c * 50), 0);
-      AlphaBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(c * 50), 0);
+      Backup.MaskedBlit(DOUBLEBUFFER, ushort(255 - c * 50), 0);
+
+      if(BitmapEditor)
+	BitmapEditor(this);
+
+      AlphaBlit(DOUBLEBUFFER, uchar(c * 50), 0);
       graphics::BlitDBToScreen();
       while(clock() - StartTime < 0.01f * CLOCKS_PER_SEC);
     }
 
   DOUBLEBUFFER->Fill(0);
-  MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, uchar(0), 0);
+
+  if(BitmapEditor)
+    BitmapEditor(this);
+
+  MaskedBlit(DOUBLEBUFFER, uchar(0), 0);
   graphics::BlitDBToScreen();
 }
 
@@ -760,4 +788,17 @@ uchar bitmap::GetAlpha(ushort X, ushort Y) const
     return GetAlphaMap()[Y][X];
   else
     return GetMotherBitmap()->GetAlpha(GetXPos() + X, GetYPos() + Y);
+}
+
+void bitmap::FillWithGradient(ushort X, ushort Y, ushort Width, ushort Height, ushort Color1, ushort Color2)
+{
+  for(ushort x = 0; x < Width; ++x)
+    for(ushort y = 0; y < Height; ++y)
+      {
+	float Multiplier = (float(x) / Width + float(y) / Height) / 2;
+
+	PutPixel(X + x, Y + y, MAKE_RGB(ushort(GET_RED(Color1) * (1.0f - Multiplier) + GET_RED(Color2) * Multiplier),
+					ushort(GET_GREEN(Color1) * (1.0f - Multiplier) + GET_GREEN(Color2) * Multiplier),
+					ushort(GET_BLUE(Color1) * (1.0f - Multiplier) + GET_BLUE(Color2) * Multiplier)));
+      }
 }

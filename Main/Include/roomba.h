@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "vector2d.h"
-#include "type.h"
 
 class outputfile;
 class inputfile;
@@ -16,10 +15,23 @@ class character;
 class olterrain;
 class item;
 class lsquare;
+class room;
 
-class room : public type
+class room_prototype
 {
  public:
+  virtual room* Clone() const = 0;
+  virtual room* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+ protected:
+  ushort Index;
+};
+
+class room
+{
+ public:
+  typedef room_prototype prototype;
   room(bool);
   virtual ~room() { }
   virtual void Save(outputfile&) const;
@@ -50,6 +62,7 @@ class room : public type
   virtual void TeleportSquare(character*, lsquare*) { }
  protected:
   virtual void SetDefaultStats() = 0;
+  virtual ushort Type() const = 0;
   std::vector<vector2d> Door;
   vector2d Pos, Size;
   character* Master;
@@ -58,25 +71,25 @@ class room : public type
 
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
 
-#define ROOM_PROTOINSTALLER(name, base, setstats)\
+#define ROOM_PROTOTYPE(name, base, setstats)\
   \
-  static class name##_protoinstaller\
+  static class name##_prototype : public room::prototype\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<room>::Add(new name)) { }\
-    ushort GetIndex() const { return Index; }\
-   private:\
-    ushort Index;\
-  } name##_ProtoInstaller;\
+    name##_prototype() { Index = protocontainer<room>::Add(this); }\
+    virtual room* Clone() const { return new name; }\
+    virtual room* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
+    virtual std::string ClassName() const { return #name; }\
+  } name##_ProtoType;\
   \
-  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
+  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
   void name::SetDefaultStats() { setstats }\
-  const room* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
-  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  const room::prototype* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
 
-#define ROOM_PROTOINSTALLER(name, base, setstats)
+#define ROOM_PROTOTYPE(name, base, setstats)
 
 #endif
 
@@ -87,15 +100,13 @@ name : public base\
  public:\
   name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
   virtual room* Clone() const { return new name; }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
   static ushort StaticType();\
-  static const room* const GetPrototype();\
-  virtual std::string ClassName() const { return #name; }\
+  static const room::prototype* const GetPrototype();\
  protected:\
   virtual ushort Type() const;\
   virtual void SetDefaultStats();\
   data\
-}; ROOM_PROTOINSTALLER(name, base, setstats)
+}; ROOM_PROTOTYPE(name, base, setstats)
 
 #endif
 

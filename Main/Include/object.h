@@ -5,15 +5,12 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define CHARNAME(Case) Name(Case).c_str()
-
 #include <string>
 
 #include "typedef.h"
 #include "vector2d.h"
 
 #include "igraph.h"
-#include "type.h"
 #include "unit.h"
 #include "id.h"
 
@@ -24,10 +21,9 @@ class bitmap;
 class lsquare;
 class square;
 
-class object : public type, public unit, public id
+class object : public unit, public id
 {
  public:
-  object(bool, bool);
   virtual ~object();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -36,13 +32,14 @@ class object : public type, public unit, public id
   virtual void SetMaterial(uchar, material*);
   virtual void ChangeMaterial(uchar, material*);
   virtual void UpdatePicture(bool = true);
-  virtual ulong GetDefaultVolume(ushort Index) const = 0;
+  virtual ulong GetDefaultVolume(ushort) const { return 0; }
   virtual uchar GetMainMaterialIndex() const { return 0; }
   virtual material* GetMainMaterial() const { return GetMaterial(GetMainMaterialIndex()); }
   virtual uchar GetContainedMaterialIndex() const { return 1; }
   virtual material* GetContainedMaterial() const { return GetMaterial(GetContainedMaterialIndex()); }
   virtual uchar GetConsumeMaterialIndex() const { return 0; }
   virtual material* GetConsumeMaterial() const { return GetMaterial(GetConsumeMaterialIndex()); }
+  virtual ulong GetWeight() const;
  protected:
   virtual uchar GetSpecialType() const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex() const = 0;
@@ -54,6 +51,7 @@ class object : public type, public unit, public id
   virtual std::string ContainerPostFix() const;
   virtual std::string LumpyPostFix() const;
   virtual vector2d GetBitmapPos() const = 0;
+  virtual ushort Type() const = 0;
   graphic_id GraphicId;
 };
 

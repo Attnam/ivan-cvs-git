@@ -14,16 +14,17 @@
 template <class type> class protocontainer
 {
  public:
-  static ushort Add(type*);
-  static const type* const GetProto(ushort Index) { return ProtoData[Index]; }
+  typedef typename type::prototype prototype;
+  static ushort Add(prototype*);
+  static const prototype* const GetProto(ushort Index) { return ProtoData[Index]; }
   static ushort GetProtoAmount() { return ProtoData.size() - 2; }
   static ushort SearchCodeName(std::string);
  private:
-  static std::vector<type*> ProtoData;
+  static std::vector<prototype*> ProtoData;
   static std::map<std::string, ushort> CodeNameMap;
 };
 
-template <class type> ushort protocontainer<type>::Add(type* Proto)
+template <class type> ushort protocontainer<type>::Add(prototype* Proto)
 {
   static bool Initialized = false;
 
@@ -38,7 +39,7 @@ template <class type> ushort protocontainer<type>::Add(type* Proto)
   return ProtoData.size() - 2;
 }
 
-template <class type> ushort protocontainer<type>::SearchCodeName(std::string Name)
+template <class templatetype> ushort protocontainer<templatetype>::SearchCodeName(std::string Name)
 {
   std::map<std::string, ushort>::iterator I = CodeNameMap.find(Name);
 
@@ -83,7 +84,7 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, type*& C
   SaveFile >> Type;
 
   if(Type)
-    Class = dynamic_cast<type*>(protocontainer<type>::GetProto(Type)->CloneAndLoad(SaveFile));
+    Class = protocontainer<type>::GetProto(Type)->CloneAndLoad(SaveFile);
   else
     Class = 0;
 

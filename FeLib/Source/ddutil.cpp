@@ -15,11 +15,6 @@
 #include "ddutil.h"
 #include "dxutil.h"
 
-
-
-
-
-
 //-----------------------------------------------------------------------------
 // Name: CDisplay()
 // Desc:
@@ -32,9 +27,6 @@ CDisplay::CDisplay()
   m_pddsBackBufferLeft = NULL;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: ~CDisplay()
 // Desc:
@@ -43,9 +35,6 @@ CDisplay::~CDisplay()
 {
   DestroyObjects();
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DestroyObjects()
@@ -65,24 +54,16 @@ HRESULT CDisplay::DestroyObjects()
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: CreateFullScreenDisplay()
 // Desc:
 //-----------------------------------------------------------------------------
     
 
-
-
 //-----------------------------------------------------------------------------
 // Name: CreateWindowedDisplay()
 // Desc:
 //-----------------------------------------------------------------------------
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: 
@@ -114,9 +95,6 @@ HRESULT CDisplay::CreateSurface( CSurface** ppSurface,
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: CDisplay::CreateSurfaceFromBitmap()
@@ -181,9 +159,6 @@ HRESULT CDisplay::CreateSurfaceFromBitmap( CSurface** ppSurface,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: CDisplay::CreateSurfaceFromText()
 // Desc: Creates a DirectDrawSurface from a text string using hFont or the default 
@@ -234,9 +209,6 @@ HRESULT CDisplay::CreateSurfaceFromText( CSurface** ppSurface,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -269,9 +241,6 @@ HRESULT CDisplay::Present()
     }
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -294,9 +263,6 @@ HRESULT CDisplay::ShowBitmap( HBITMAP hbm, LPDIRECTDRAWPALETTE pPalette )
   return Present();
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -310,9 +276,6 @@ HRESULT CDisplay::ColorKeyBlt( DWORD x, DWORD y, LPDIRECTDRAWSURFACE7 pdds,
   return m_pddsBackBuffer->BltFast( x, y, pdds, prc, DDBLTFAST_SRCCOLORKEY );
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -325,9 +288,6 @@ HRESULT CDisplay::Blt( DWORD x, DWORD y, LPDIRECTDRAWSURFACE7 pdds, RECT* prc,
 
   return m_pddsBackBuffer->BltFast( x, y, pdds, prc, dwFlags );
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: 
@@ -343,9 +303,6 @@ HRESULT CDisplay::Blt( DWORD x, DWORD y, CSurface* pSurface, RECT* prc )
   else
     return Blt( x, y, pSurface->GetDDrawSurface(), prc, 0L );
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: 
@@ -365,9 +322,6 @@ HRESULT CDisplay::Clear( DWORD dwColor )
   return m_pddsBackBuffer->Blt( NULL, NULL, NULL, DDBLT_COLORFILL, &ddbltfx );
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -379,9 +333,6 @@ HRESULT CDisplay::SetPalette( LPDIRECTDRAWPALETTE pPalette )
 
   return m_pddsFrontBuffer->SetPalette( pPalette );
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: 
@@ -492,9 +443,6 @@ HRESULT CDisplay::CreatePaletteFromBitmap( LPDIRECTDRAWPALETTE* ppPalette,
   return m_pDD->CreatePalette( DDPCAPS_8BIT, aPalette, ppPalette, NULL );
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -515,10 +463,6 @@ HRESULT CDisplay::UpdateBounds()
 
   return S_OK;
 }
-
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: CDisplay::InitClipper
@@ -545,10 +489,6 @@ HRESULT CDisplay::InitClipper()
   return S_OK;
 }
 
-
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -559,9 +499,6 @@ CSurface::CSurface()
   m_bColorKeyed = 0;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -570,9 +507,6 @@ CSurface::~CSurface()
 {
   SAFE_RELEASE( m_pdds );
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: 
@@ -596,7 +530,6 @@ HRESULT CSurface::Create( LPDIRECTDRAWSURFACE7 pdds )
 
 #include <cstdio>
 
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -618,9 +551,6 @@ HRESULT CSurface::Create( LPDIRECTDRAW7 pDD, DDSURFACEDESC2* pddsd )
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -630,9 +560,6 @@ HRESULT CSurface::Destroy()
   SAFE_RELEASE( m_pdds );
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: CSurface::DrawBitmap()
@@ -694,9 +621,6 @@ HRESULT CSurface::DrawBitmap( HBITMAP hBMP,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: CSurface::DrawText()
 // Desc: Draws a text string on a DirectDraw surface using hFont or the default
@@ -734,9 +658,6 @@ HRESULT CSurface::DrawText( HFONT hFont, TCHAR* strText,
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: CSurface::ReDrawBitmapOnSurface()
@@ -777,9 +698,6 @@ HRESULT CSurface::DrawBitmap( TCHAR* strBMP,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: 
 // Desc: 
@@ -797,10 +715,6 @@ HRESULT CSurface::SetColorKey( DWORD dwColorKey )
     
   return m_pdds->SetColorKey( DDCKEY_SRCBLT, &ddck );
 }
-
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: CSurface::ConvertGDIColor()
@@ -847,9 +761,6 @@ DWORD CSurface::ConvertGDIColor( COLORREF dwGDIColor )
   return dw;    
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: CSurface::GetBitMaskInfo()
 // Desc: Returns the number of bits and the shift in the bit mask
@@ -882,3 +793,5 @@ HRESULT CSurface::GetBitMaskInfo( DWORD dwBitMask, DWORD* pdwShift, DWORD* pdwBi
 
   return S_OK;
 }
+
+

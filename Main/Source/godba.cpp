@@ -132,10 +132,9 @@ void god::AdjustTimer(long Amount)
 
 void god::PlayerVomitedOnAltar()
 {
-  ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
-  ADD_MESSAGE("The vomit lands on your face.");
+  ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction. The vomit lands on your face.");
   AdjustRelation(-200);
-  game::GetPlayer()->ReceiveDamage(1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
+  game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 
@@ -163,7 +162,7 @@ character* god::CreateAngel()
 
       if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetIsWalkable(Angel) && game::GetCurrentLevel()->GetLSquare(TryToCreate)->GetCharacter() == 0)
 	{
-	  Angel->SetMaster(GetType());
+	  Angel->SetDivineMaster(Type());
 
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
 	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));
@@ -176,9 +175,9 @@ character* god::CreateAngel()
   return 0;
 }
 
-void god::AddPriestMessage() const
+std::string god::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"Not currently implemented.\"");
+  return "\"Not currently implemented.\"";
 }
 
 void god::PrintRelation() const
@@ -215,7 +214,6 @@ bool god::ReceiveOffer(item* Sacrifice)
       if(!Sacrifice->Destroyable())
 	{
 	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHARNAME(DEFINITE));
-
 	  return false;
 	}
 
@@ -251,13 +249,12 @@ bool god::ReceiveOffer(item* Sacrifice)
 
 void god::Save(outputfile& SaveFile) const
 {
-  type::Save(SaveFile);
+  SaveFile << Type();
   SaveFile << Relation << Timer << Known;
 }
 
 void god::Load(inputfile& SaveFile)
 {
-  type::Load(SaveFile);
   SaveFile >> Relation >> Timer >> Known;
 }
 

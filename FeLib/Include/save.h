@@ -8,7 +8,6 @@
 #include <cstdio>
 #include <vector>
 #include <map>
-//#include <queue>
 #include <list>
 
 #include "typedef.h"
@@ -16,7 +15,7 @@
 
 typedef std::map<std::string, long> valuemap;
 
-/* fstream seems to bug at least with our DJGPP's gcc port, so we use FILE* here */
+/* fstream seems to bug with DJGPP, so we use FILE* here */
 
 class outputfile
 {
@@ -54,6 +53,19 @@ class inputfile
  private:
   FILE* Buffer;
 };
+
+/*
+ * Reads a variable of type type and returns it.
+ * An inputfile member function would be far more elegant,
+ * but VC doesn't seem to understand it.
+ */
+
+template <class type> type ReadType(inputfile& SaveFile)
+{
+  type Variable;
+  SaveFile >> Variable;
+  return Variable;
+}
 
 inline outputfile& operator<<(outputfile& SaveFile, bool Value)
 {

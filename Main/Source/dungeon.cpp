@@ -2,6 +2,7 @@
 #include "level.h"
 #include "strover.h"
 #include "script.h"
+#include "feio.h"
 
 dungeon::dungeon(uchar Index) : Index(Index)
 {
@@ -73,13 +74,16 @@ void dungeon::PrepareLevel(ushort Index)
     }
   else
     {
+      iosystem::TextScreen("Generating level...\n\nThis may take some time, please wait.", WHITE, false, &game::BusyAnimation);
       Level[Index] = new level;
       Level[Index]->Generate(GetLevelScript(Index));
-		
       Generated[Index] = true;
+      game::BusyAnimation();
 
       if(*Level[Index]->GetLevelScript()->GetGenerateMonsters())
 	Level[Index]->GenerateNewMonsters(Level[Index]->GetIdealPopulation(), false);
+
+      game::GetCurrentArea()->SendNewDrawRequest();
     }
 }
 

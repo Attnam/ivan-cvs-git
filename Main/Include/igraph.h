@@ -37,10 +37,7 @@
 
 #include "typedef.h"
 #include "vector2d.h"
-
 #include "save.h"
-
-
 
 class bitmap;
 class colorizablebitmap;
@@ -115,6 +112,7 @@ class igraph
   static tile AddUser(graphic_id);
   static void RemoveUser(graphic_id);
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
+  static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GRCHARACTER]; }
  private:
   static colorizablebitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];

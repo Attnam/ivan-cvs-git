@@ -63,7 +63,7 @@ class lsquare : public square
   virtual bool Engrave(std::string What) { Engraved = What; return true; }
   virtual void SetEmitation(ushort What) { Emitation = What; }
   virtual void UpdateMemorizedDescription(bool = false);
-  virtual bool Kick(ushort,uchar, character*);
+  virtual bool Kick(character*, ushort, uchar);
   virtual uchar GetDivineOwner() const { return DivineOwner; }
   virtual void SetDivineOwner(uchar What) { DivineOwner = What; }
   virtual bool DrawTerrain() const;
@@ -98,7 +98,7 @@ class lsquare : public square
   virtual void ChangeOLTerrainAndUpdateLights(olterrain*);
   virtual void DrawParticles(ushort, uchar);
   virtual void PolymorphEverything(character*);
-  virtual void StrikeEverything(character*, std::string, uchar);
+  virtual void StrikeEverything(character*, std::string, short, uchar);
   virtual fluid* GetFluid() const { return Fluid; }
   virtual void SetFluid(fluid* What) { Fluid = What; }
   virtual void RemoveFluid();

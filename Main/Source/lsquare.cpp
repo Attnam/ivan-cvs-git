@@ -150,17 +150,17 @@ void lsquare::UpdateMemorized()
 	  DrawTerrain();
 	  DrawStacks();
 
-	  igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+	  igraph::GetTileBuffer()->Blit(GetMemorized());
 
 	  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
 	    igraph::GetSymbolGraphic()->MaskedBlit(GetMemorized(), 0, 16, 0, 0, 16, 16);
 	  
-	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
 	}
       else
 	{
 	  Memorized->Fill(0);
-	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+	  igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
 	}
 
       MemorizedUpdateRequested = false;
@@ -171,7 +171,7 @@ void lsquare::Draw()
 {
   if(NewDrawRequested)
     {
-      vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
+      vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
       ushort Luminance = GetLuminance();
 
       if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
@@ -188,38 +188,38 @@ void lsquare::Draw()
 		if(GetStack()->GetItems() <= 1)
 		  {
 		    DrawCharacters();
-		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		    DrawCharacterSymbols(BitPos, ContrastLuminance);
 		  }
 		else
 		  {
-		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		    igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 
 		    if(GetOTerrain()->GetIsWalkable())
-		      igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		      igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
 
 		    if(GetCharacter())
 		      {
-			igraph::GetTileBuffer()->Fill(0xF81F);
+			igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 			DrawCharacters();
-			igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+			igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 			DrawCharacterSymbols(BitPos, ContrastLuminance);
 		      }
 		  }
 	      else
 		{
-		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 
 		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable()) 
-		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		    igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 16, BitPos, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
 		    {
-		      igraph::GetTileBuffer()->Fill(0xF81F);
+		      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 		      DrawCharacters();
-		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
-		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		      igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 		      DrawCharacterSymbols(BitPos, ContrastLuminance);
 		    }
 		}
@@ -228,18 +228,18 @@ void lsquare::Draw()
 	    {
 	      DrawTerrain();
 
-	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 
 	      if(DrawStacks())
 		{
-		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		  igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		  igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
 
 		  if(GetStack()->GetItems() > 1 && GetOTerrain()->GetIsWalkable())
 		    igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
 
-		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
 		    igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
@@ -249,22 +249,22 @@ void lsquare::Draw()
 		{
 		  if(DrawCharacters())
 		    {
-		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		      DrawCharacterSymbols(BitPos, ContrastLuminance);
 		    }
 		}
 	      else
 		if(DrawCharacters())
 		  {
-		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
+		    igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, RealLuminance);
 		    igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
-		    igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+		    igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 		    DrawCharacterSymbols(BitPos, ContrastLuminance);
 		  }
 	    }
 	}
       else
-	DOUBLEBUFFER->Fill(BitPos.X, BitPos.Y, 16, 16, 0);
+	DOUBLEBUFFER->Fill(BitPos, 16, 16, 0);
 
       NewDrawRequested = false;
     }
@@ -480,7 +480,10 @@ void lsquare::AlterLuminance(vector2d Dir, ushort AiL)
 
   NewDrawRequested = true;
 
-  /* This is extremely important but I don't remember why! */
+  /*
+   * This seems to be a completely useless piece of conditional code.
+   * It is, however, extremely important, although I don't remember why.
+   */
 
   if(GetLastSeen() == game::GetLOSTurns())
     game::SendLOSUpdateRequest();
@@ -723,7 +726,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
     }
 }
 
-bool lsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
+bool lsquare::Kick(character* Kicker, ushort Strength, uchar KickWay)
 {
   if(GetCharacter() && Kicker->GetTeam()->GetRelation(GetCharacter()->GetTeam()) != HOSTILE)
     if(Kicker->GetIsPlayer() && !game::BoolQuestion("This might cause a hostile reaction. Are you sure? [y/N]"))
@@ -734,10 +737,10 @@ bool lsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
   if(Room)
     GetLevelUnder()->GetRoom(Room)->KickSquare(Kicker, this);
 
-  GetStack()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
+  GetStack()->Kick(Kicker, Strength, KickWay);
 
   if(GetCharacter())
-    GetCharacter()->BeKicked(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay, Kicker);
+    GetCharacter()->BeKicked(Kicker, Strength, KickWay);
 
   GetOLTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
   Kicker->EditStrengthExperience(25);
@@ -977,17 +980,17 @@ void lsquare::PolymorphEverything(character* Zapper)
 
 void lsquare::DrawParticles(ushort Color, uchar)
 {
-  if(GetPos().X < game::GetCamera().X || GetPos().Y < game::GetCamera().Y || GetPos().X >= game::GetCamera().X + 50 || GetPos().Y >= game::GetCamera().Y + 30)
+  if(GetPos().X < game::GetCamera().X || GetPos().Y < game::GetCamera().Y || GetPos().X >= game::GetCamera().X + game::GetScreenSize().X || GetPos().Y >= game::GetCamera().Y + game::GetScreenSize().Y)
     return;
 
   clock_t StartTime = clock();
 
-  vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
+  vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
 
-  game::DrawEverythingNoBlit(false);
+  game::DrawEverythingNoBlit();
 
   for(ushort c = 0; c < 10; c++)
-    DOUBLEBUFFER->PutPixel(1 + BitPos.X + RAND() % 14, 1 + BitPos.Y + RAND() % 14, Color);
+    DOUBLEBUFFER->PutPixel(BitPos + vector2d(1 + RAND() % 14, 1 + RAND() % 14), Color);
 
   graphics::BlitDBToScreen();
 
@@ -997,51 +1000,51 @@ void lsquare::DrawParticles(ushort Color, uchar)
     while(clock() - StartTime < 0.02f * CLOCKS_PER_SEC);
 }
 
-void lsquare::StrikeEverything(character* Zapper, std::string DeathMsg, uchar Direction)
+void lsquare::StrikeEverything(character* Zapper, std::string DeathMsg, short Damage, uchar Direction)
 {
-  GetStack()->StruckByWandOfStriking(Zapper, DeathMsg);
+  GetStack()->ReceiveDamage(Zapper, Damage, ENERGY);
 
   switch(Direction)
     {
     case 0:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 1:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 2:
-      GetSideStack(UP)->StruckByWandOfStriking(Zapper, DeathMsg);
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(UP)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 3:
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 4:
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 5:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
-      GetSideStack(LEFT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(LEFT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 6:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     case 7:
-      GetSideStack(DOWN)->StruckByWandOfStriking(Zapper, DeathMsg);
-      GetSideStack(RIGHT)->StruckByWandOfStriking(Zapper, DeathMsg);
+      GetSideStack(DOWN)->ReceiveDamage(Zapper, Damage, ENERGY);
+      GetSideStack(RIGHT)->ReceiveDamage(Zapper, Damage, ENERGY);
       break;
     }
 
-  character* Char;
+  character* Char = GetCharacter();
 
-  if((Char = GetCharacter()))
+  if(Char)
     {
-      Char->StruckByWandOfStriking(Zapper, DeathMsg);
+      Char->ReceiveDamage(Zapper, Damage, ENERGY, ALL);
       Zapper->Hostility(Char);
     }
 
-  GetOLTerrain()->ReceiveStrike();	
+  GetOLTerrain()->ReceiveDamage(Zapper, Damage, ENERGY);	
 }
 
 void lsquare::RemoveFluid()
@@ -1121,7 +1124,7 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
   if(GetCharacter() && !GetCharacter()->GetIsPlayer())
     {
       if(GetCharacter()->GetTeam() == game::GetPlayer()->GetTeam())
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos, 16, 16, ContrastLuminance);
 
       /*switch(game::GetPlayer()->GetTeam()->GetRelation(GetCharacter()->GetTeam()))
 	{
@@ -1134,3 +1137,4 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 	}*/
     }
 }
+

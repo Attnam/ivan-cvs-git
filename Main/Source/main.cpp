@@ -14,6 +14,7 @@
 #include "game.h"
 #include "igraph.h"
 #include "graphics.h"
+#include "main.h"
 
 const bool ValpuriIsAlive = true;
 
@@ -66,7 +67,7 @@ int Main(int argc, char **argv)
 #endif
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, true))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
       {
       case 0:
 	game::Init();

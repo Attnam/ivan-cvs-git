@@ -60,7 +60,7 @@ class stack
   ushort GetEmitation() const;
   vector2d GetPos() const;
   void Clean();
-  ulong SumOfMasses() const;
+  ulong GetTotalWeight() const;
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
@@ -68,16 +68,16 @@ class stack
   bool SortedItems(character*, bool (item::*jipii)(character*) const) const;
   void DrawItemData(ushort, ushort) const;
   void DeletePointers();
-  void Kick(ushort, bool, uchar);
+  void Kick(character*, ushort, uchar);
   long Score() const;
   void Polymorph();
-  void ReceiveSound(float);
-  void StruckByWandOfStriking(character*, std::string);
+  //void ReceiveSound(float);
+  //void StruckByWandOfStriking(character*, std::string);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const;
-  void ImpactDamage(ushort);
-  void ReceiveFireDamage(character*, std::string, long);
+  //void ImpactDamage(ushort);
+  void ReceiveDamage(character*, short, uchar);
   void Teleport();
   void FillItemVector(itemvector&) const;
   void AddContentsToList(felist&, character*, std::string, bool, bool (item::*)(character*) const) const;

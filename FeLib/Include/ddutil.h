@@ -11,26 +11,17 @@
 #include <ddraw.h>
 #include <d3d.h>
 
-
-
-
 //-----------------------------------------------------------------------------
 // Classes defined in this header file 
 //-----------------------------------------------------------------------------
 class CDisplay;
 class CSurface;
 
-
-
-
 //-----------------------------------------------------------------------------
 // Flags for the CDisplay and CSurface methods
 //-----------------------------------------------------------------------------
 #define DSURFACELOCK_READ
 #define DSURFACELOCK_WRITE
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: class CDisplay
@@ -98,9 +89,6 @@ class CDisplay
   HRESULT Present();
 };
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: class CSurface
 // Desc: Class to handle aspects of a DirectDrawSurface.
@@ -136,3 +124,5 @@ class CSurface
 extern CDisplay* g_pDisplay;
 
 #endif // DDUTIL_H
+
+

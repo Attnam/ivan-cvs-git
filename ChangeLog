@@ -1,3 +1,30 @@
+May 1 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Pentagram moved from menu to generation screen
+	* Proto and macro systems remade
+	* Some obviously shared virtual functions of proto-using classes made static
+	* Pool system tweaked
+	* Damage and material effect system remade
+	* Many outlook tweaks
+	* Message screen added to panel
+	* Remade all question systems (vector, boolquestion, positionquestion, strinquestion, numberquestion etc.)
+	* Felist tweaks (parameter adds etc.)
+	* Consume system remade
+	* Structural change: type removed
+	* Resistance system added
+	* Wizard info option to lookmode
+	* Weight system works correctly and no one can move anymore
+	* Gear drop on death and bodypart severing works may work correctly (I didn't test it)
+	* Corpse and death system remade, although special monsters probably bug
+	* Added a mass of bitmap blit functions with varying amounts of optional vector2d parameters
+	* More vector2d parameters added elsewhere too, but I don't remember exact places
+	* Added femath::WeightedRand and new material generation system
+	* Added ::ReadType that makes loading temporary variables easier
+	* Many gum solutions removed
+	* Numerous bugs added
+	* Regeneration may work (again, I didn't test it)
+	* etc. etc. etc. etc. etc.
+
 April 26 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Damage system revised

@@ -10,13 +10,14 @@
 #include "colorbit.h"
 #include "strover.h"
 
-char* globalmessagingsystem::MessageBuffer = 0;
-ushort globalmessagingsystem::BufferLength = 0;
-felist globalmessagingsystem::MessageHistory("Message history", WHITE, 100, true);
+felist msgsystem::MessageHistory("Message history", WHITE, 100, true);
+std::string msgsystem::LastMessage;
+ushort msgsystem::Times;
+ulong msgsystem::Begin, msgsystem::End;
 
-void globalmessagingsystem::AddMessage(const char* Format, ...)
+void msgsystem::AddMessage(const char* Format, ...)
 {
-  char Message[256];
+  char Message[1024];
 
   va_list AP;
   va_start(AP, Format);
@@ -26,56 +27,47 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
   if(Message[0] > 0x60 && Message[0] < 0x7B)
     Message[0] &= ~0x20;              // Very guru and odd. Capitalizes the first letter!
 
-  if(MessageBuffer)
-  {
-    ushort NewLength = BufferLength + strlen(Message) + 1;
+  std::string Buffer(Message);
 
-    char* TempBuffer = new char[NewLength];
+  ushort c;
 
+  if(Buffer == LastMessage)
     {
-    for(ushort c = 0; c < BufferLength; ++c)
-      TempBuffer[c] = MessageBuffer[c];
+      while(MessageHistory.Length() && MessageHistory.GetColor(0) == 0xFFFF)
+	MessageHistory.RemoveEntryFromPos(0);
+
+      ++Times;
+      End = int(game::GetTicks() / 10);
     }
-
-    TempBuffer[BufferLength] = ' ';
-
-    for(ushort c = BufferLength + 1, i = 0; c < NewLength; ++c, ++i)
-      TempBuffer[c] = Message[i];
-
-    delete [] MessageBuffer;
-    MessageBuffer = TempBuffer;
-    BufferLength = NewLength;
-  }
   else
-  {
-    BufferLength = strlen(Message);
-    MessageBuffer = new char[BufferLength];
+    {
+      for(c = 0; c < MessageHistory.Length() && MessageHistory.GetColor(c) == 0xFFFF; ++c)
+	MessageHistory.SetColor(c, LIGHTGRAY);
 
-    for(ushort c = 0; c < BufferLength; ++c)
-      MessageBuffer[c] = Message[c];
-  }
-
-  std::string String(Message);
+      Times = 1;
+      Begin = End = int(game::GetTicks() / 10);
+      LastMessage = Buffer;
+    }
 
   bool First = true;
 
-  uchar LineLength = 90;
+  uchar LineLength = 80;
   ushort Marginal = 0;
 
-  for(ushort c = 0; String.length(); ++c)
+  for(c = 0; Buffer.length(); ++c)
     {
-      long Pos;
-
-      if(String.length() > LineLength)
-	Pos = String.find_last_of(' ', LineLength);
-      else
-	Pos = String.length();
-
       std::string Temp;
 
       if(First)
 	{
-	  Temp += int(game::GetTicks() / 10);
+	  Temp += int(Begin);
+
+	  if(Begin != End)
+	    Temp += std::string("-") + int(End);
+
+	  if(Times != 1)
+	    Temp += std::string(" (") + Times + "x)";
+
 	  Temp += " ";
 	  Marginal = Temp.length();
 	  First = false;
@@ -83,94 +75,66 @@ void globalmessagingsystem::AddMessage(const char* Format, ...)
       else
 	Temp.resize(Marginal, ' ');
 
+      long Pos;
+
+      if(Buffer.length() > LineLength - Marginal)
+	Pos = Buffer.find_last_of(' ', LineLength - Marginal);
+      else
+	Pos = Buffer.length();
+
       if(Pos < 0)
 	{
-	  Temp += String.substr(0, LineLength);
-	  String.erase(0, LineLength);
+	  Temp += Buffer.substr(0, LineLength - Marginal);
+	  Buffer.erase(0, LineLength - Marginal);
 	}
       else
 	{
-	  Temp += String.substr(0, Pos);
-	  String.erase(0, Pos + 1);
+	  Temp += Buffer.substr(0, Pos);
+	  Buffer.erase(0, Pos + 1);
 	}
 
-      MessageHistory.AddEntryToPos(Temp, c, LIGHTGRAY);
+      MessageHistory.AddEntryToPos(Temp, c, WHITE);
     }
+
+  MessageHistory.SetSelected(0);
 }
 
-void globalmessagingsystem::Draw()
+void msgsystem::Draw()
 {
-  DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
-  ulong Length = BufferLength, Pointer = 0;
-  char Buffer[99];
-  Buffer[98] = 0;
-
-  if(MessageBuffer)
-    while(Length)
-    {
-      for(ushort y = 0; y < 2; ++y)
-      {
-        if(Length <= 98)
-        {
-          for(ulong c = 0; c < Length; ++c)
-            Buffer[c] = MessageBuffer[c + Pointer];
-
-          Buffer[Length] = 0;
-          FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
-          Length = 0;
-          break;
-        }
-        else
-        {
-          ulong i = 97;
-
-          for(; i; i--)
-            if(MessageBuffer[Pointer + i] == ' ')
-            {
-              for(ulong c = 0; c < i; ++c)
-                Buffer[c] = MessageBuffer[c + Pointer];
-
-              Buffer[i] = 0;
-              Pointer += i + 1;
-              Length -= i + 1;
-              break;
-            }
-
-          if(!i)
-          {
-            for(ulong c = 0; c < 98; ++c)
-              Buffer[c] = MessageBuffer[c + Pointer];
-
-            Pointer += 98;
-            Length -= 98;
-          }
-
-          FONT->Printf(DOUBLEBUFFER, 7, 7 + y * 10, WHITE, "%s", Buffer);
-        }
-      }
-
-      if(Length)
-      {
-        graphics::BlitDBToScreen();
-        GETKEY();
-        DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
-      }
-    }
+  MessageHistory.QuickDraw(vector2d(13, RES.Y - 122), (game::GetScreenSize().X << 4) + 6, 8);
 }
 
-void globalmessagingsystem::Empty()
-{
-  delete [] MessageBuffer;
-  MessageBuffer = 0;
-  BufferLength = 0;
-}
-
-void globalmessagingsystem::DrawMessageHistory()
+void msgsystem::DrawMessageHistory()
 {
   MessageHistory.Draw(vector2d(10, 42), 780, 40, false);
 }
 
-void globalmessagingsystem::Format()
+void msgsystem::Format()
 {
   MessageHistory.Empty();
+  LastMessage = "";
+}
+
+void msgsystem::Save(outputfile& SaveFile)
+{
+  MessageHistory.Save(SaveFile);
+  SaveFile << LastMessage << Times << Begin << End;
+}
+
+void msgsystem::Load(inputfile& SaveFile)
+{
+  MessageHistory.Load(SaveFile);
+  SaveFile >> LastMessage >> Times >> Begin >> End;
+}
+
+void msgsystem::ScrollDown()
+{
+  if(MessageHistory.GetSelected() != MessageHistory.Length() - 1)
+    MessageHistory.EditSelected(1);
+}
+
+void msgsystem::ScrollUp()
+{
+  if(MessageHistory.GetSelected())
+    MessageHistory.EditSelected(-1);
 }

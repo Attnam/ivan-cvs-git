@@ -1,10 +1,9 @@
 #define __FILE_OF_STATIC_GOD_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "godba.h"
 
-class god;
-
-std::vector<god*>			protocontainer<god>::ProtoData;
+std::vector<god::prototype*>		protocontainer<god>::ProtoData;
 std::map<std::string, ushort>		protocontainer<god>::CodeNameMap;
 
 #include "godde.h"
@@ -25,17 +24,13 @@ std::map<std::string, ushort>		protocontainer<god>::CodeNameMap;
 
 void consummo::PrayGoodEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
-  ADD_MESSAGE("You teleport away!");
-
+  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! You teleport away!");
   game::GetPlayer()->Move(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true), true);
 }
 
 void consummo::PrayBadEffect()
 {
-  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
-  ADD_MESSAGE("Some parts of you teleport away!");
-
+  ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement! Some parts of you teleport away!");
   //game::GetPlayer()->ReceivePhysicalDamage(5, HEAD, false, RAND() % 8);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
   game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
@@ -43,38 +38,36 @@ void consummo::PrayBadEffect()
 
 void valpurus::PrayGoodEffect()
 {
-  ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
-  ADD_MESSAGE("A sword glittering with holy might appears from nothing.");
-
+  ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\" A sword glittering with holy might appears from nothing.");
   game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(new valpurium));
 }
 
 void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
-  game::GetPlayer()->ReceiveDamage(10, PHYSICALDAMAGE, HEAD, RAND() % 8);
+  game::GetPlayer()->ReceiveDamage(0, 10, PHYSICALDAMAGE, HEAD, RAND() % 8);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
   game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
 }
 
 void venius::PrayGoodEffect()
 {
-  ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\"");
-  ADD_MESSAGE("A huge firestorm engulfs everything around you.");
-
+  ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge firestorm engulfs everything around you.");
   game::GetCurrentLevel()->Explosion(game::GetPlayer(), "killed accidentally by " + Name(), game::GetPlayer()->GetPos(), 40, false);
 }
 
 void venius::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
-  game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
+  game::GetPlayer()->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
+  //game::GetPlayer()->ReceiveFireDamage(game::GetPlayer(), "killed accidentally by " + Name(), 20);
   game::GetPlayer()->CheckDeath(std::string("burned to death by the wrath of ") + Name());
 }
 
 void dulcis::PrayGoodEffect()
 {
   ADD_MESSAGE("A beautiful melody echoes around you.");
+
   DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
   {
     character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(DoX, DoY))->GetCharacter();
@@ -102,58 +95,9 @@ void dulcis::PrayGoodEffect()
 void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
-  game::GetPlayer()->ReceiveDamage(1 + RAND() % 9, SOUND, HEAD);
+  game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
   game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
-}
-
-void inasnum::PrayGoodEffect()
-{
-  ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
-
-  switch(RAND() % 7)
-    {
-    case 0:
-      ADD_MESSAGE("His eye was found in a mug.");
-      break;
-    case 1:
-      ADD_MESSAGE("Master Evil, the Pepsi Daemon King, has escapeth not upwards but downwards.");
-      ADD_MESSAGE("In the pits of dev/null he carrieth a great foe of the sword.");
-      break;
-    case 2:
-      ADD_MESSAGE("Thou shalt not hit thine lesser brethren with a biggest thing you can find.");
-      break;
-    case 3:
-      ADD_MESSAGE("If thy hast fought but not conquered thine foe thy must lick thine wounds in peace.");
-      break;
-    case 4:
-      ADD_MESSAGE("School... No, no... Its right behind me!!! Nooo... Why is it coming into my dreams?");
-      break;
-    case 5:
-      ADD_MESSAGE("Thou shalt not hurry in thine killing.");
-      break;
-    case 6:
-      ADD_MESSAGE("If thy shall eat frogs, thy will be foul.");
-      break;
-    default:
-      ADD_MESSAGE("He created me from the fire to destroy all gods who oppose him.");
-    }
-}
-
-void inasnum::PrayBadEffect()
-{
-  ADD_MESSAGE("%s gives you a hint.", GOD_NAME);
-  switch(RAND() % 3)
-    {
-    case 0:
-      ADD_MESSAGE("Dancing in front of Bill's SWAT professional will calm him down.");
-      break;
-    case 1:
-      ADD_MESSAGE("Writing \"Elbereth\" to the ground will make you safe.");
-      break;
-    default:
-      ADD_MESSAGE("Engraving \"29392172387Fda3419080418012838\" will give thou a bag of money.");
-    }
 }
 
 void seges::PrayGoodEffect()
@@ -167,7 +111,6 @@ void seges::PrayGoodEffect()
 void seges::PrayBadEffect()
 {
   ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
-
   game::GetPlayer()->EditNP(-1000);
 
   if(game::GetPlayer()->GetNP() < 1)
@@ -176,9 +119,9 @@ void seges::PrayBadEffect()
 
 void atavus::PrayGoodEffect()
 {
-  ADD_MESSAGE("A mithril platemail materializes before you.");
   item* Reward = new platemail(false);
   Reward->InitMaterials(new mithril);
+  ADD_MESSAGE("%s materializes before you.", Reward->CHARNAME(INDEFINITE));
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 }
 
@@ -201,8 +144,7 @@ void atavus::PrayBadEffect()
 	}
       else
 	{
-	  ADD_MESSAGE("%s tries to remove your %s, but fails.", GOD_NAME, Disappearing->CHARNAME(UNARTICLED));
-	  ADD_MESSAGE("You feel you are not so gifted anymore.");
+	  ADD_MESSAGE("%s tries to remove your %s, but fails. You feel you are not so gifted anymore.", GOD_NAME, Disappearing->CHARNAME(UNARTICLED));
 	  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
 	  game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
 	  game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
@@ -222,8 +164,7 @@ void silva::PrayGoodEffect()
   if(!*game::GetCurrentLevel()->GetLevelScript()->GetOnGround())
     {
       ADD_MESSAGE("Suddenly a horrible earthquake shakes the level.");
-
-      uchar c, Tunnels = 2 + RAND() % 3;
+      ushort c, Tunnels = 2 + RAND() % 3;
 
       for(c = 0; c < Tunnels; ++c)
 	game::GetCurrentLevel()->AttachPos(game::GetCurrentLevel()->RandomSquare(0, false));
@@ -265,7 +206,7 @@ void silva::PrayGoodEffect()
 
 	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
-	    if(game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->GetType() != empty::StaticType() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
+	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->GetIsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
 	      continue;
 
 	    uchar Walkables = 0;
@@ -285,7 +226,7 @@ void silva::PrayGoodEffect()
 		    if(Char->GetSquareUnder()->CanBeSeen())
 		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHARNAME(DEFINITE));
 
-		    Char->ReceiveDamage(20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
+		    Char->ReceiveDamage(0, 20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
 		    //Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
 		    Char->CheckDeath("killed by an earthquake");
 		  }
@@ -301,7 +242,7 @@ void silva::PrayGoodEffect()
 		  if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()))
 		    ++p;*/
 
-		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ImpactDamage(10 + RAND() % 41);
+		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ReceiveDamage(0, 10 + RAND() % 41, PHYSICALDAMAGE);
 
 		break;
 	      }
@@ -312,14 +253,15 @@ void silva::PrayGoodEffect()
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
 	  {
-	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5);
+	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ReceiveDamage(0, RAND() % 5, PHYSICALDAMAGE);
+
 	    for(ushort c = 0; c < 4; ++c)
-	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5);
+	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ReceiveDamage(0, RAND() % 5, PHYSICALDAMAGE);
 	  }
     }
   else
     {
-      uchar Created = 0;
+      ushort Created = 0;
 
       DO_FOR_SQUARES_AROUND(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
       {
@@ -460,22 +402,16 @@ void calamus::PrayBadEffect()
 
 void erado::PrayGoodEffect()
 {
-  ADD_MESSAGE("The air vibrates violently around you.");
-  ADD_MESSAGE("A terrible undead voice echoes through the caverns:");
-  ADD_MESSAGE("\"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\"");
-  ADD_MESSAGE("A heavy weapon of pure corruption materializes before you.");
-
+  ADD_MESSAGE("The air vibrates violently around you. A terrible undead voice echoes through the caverns: \"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\" A heavy weapon of pure corruption materializes before you.");
   game::GetPlayer()->GetGiftStack()->AddItem(new neercseulb);
 }
 
 void erado::PrayBadEffect()
 {
-  ADD_MESSAGE("A dark, booming voice shakes the area:");
-  ADD_MESSAGE("\"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\"");
-  ADD_MESSAGE("A bolt of black energy hits you.");
+  ADD_MESSAGE("A dark, booming voice shakes the area: \"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\" A bolt of black energy hits you.");
 
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
-  game::GetPlayer()->ReceiveDamage(1 + RAND() % 20, ENERGY, ALL);
+  game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, ENERGY, ALL);
 
   game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
   game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
@@ -532,21 +468,6 @@ void mellis::PrayBadEffect()
       game::GetGod(c)->AdjustRelation(-100);
 
   ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);
-}
-
-void pestifer::PrayGoodEffect()
-{
-  ADD_MESSAGE("Suddenly a very ugly head appears beside you, groaning horribly into your ear!");
-  game::GetPlayer()->GetGiftStack()->AddItem(new headofennerbeast);
-  game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() + 1);
-}
-
-void pestifer::PrayBadEffect()
-{
-  character* EnnerBeast = new ennerbeast;
-  EnnerBeast->SetTeam(game::GetTeam(4));
-  game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(EnnerBeast, true))->AddCharacter(EnnerBeast);
-  ADD_MESSAGE("You hear the roaring of a new enner beast!");
 }
 
 void valpurus::Pray()
@@ -693,7 +614,7 @@ void macellarius::PrayGoodEffect()
 void macellarius::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
-  game::GetPlayer()->ReceiveDamage(RAND() % 7, PHYSICALDAMAGE, HEAD);
+  game::GetPlayer()->ReceiveDamage(0, RAND() % 7, PHYSICALDAMAGE, HEAD);
   //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
   game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
@@ -780,7 +701,7 @@ void cruentus::PrayBadEffect()
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
       //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
-      game::GetPlayer()->ReceiveDamage(1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
+      game::GetPlayer()->ReceiveDamage(0, 1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
       game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
     }
 }
@@ -827,31 +748,24 @@ void cruentus::Pray()
     }
 }
 
-void venius::AddPriestMessage() const
+std::string venius::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"%s is the Great Protector of all Law and Order.", GOD_NAME);
-  ADD_MESSAGE("Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"");
+  return std::string("\"") + GOD_NAME + " is the Great Protector of all Law and Order. Prayeth upon, He may burn thy enemies with the Fire of Justice, if thou areth worthy.\"";
 }
 
-void dulcis::AddPriestMessage() const
+std::string dulcis::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"%s is the Creator of everything that we call Art and Beauty.", GOD_NAME);
-  ADD_MESSAGE("When thou pray for Her help, She may calm thine worst enemies with Her love.");
-  ADD_MESSAGE("But beware! There areth some villains that may resist even Her call!\"");
+  return std::string("\"") + GOD_NAME + " is the Creator of everything that we call Art and Beauty. When thou pray for Her help, She may calm thine worst enemies with Her love. But beware! There areth some villains that may resist even Her call!\"";
 }
 
-void seges::AddPriestMessage() const
+std::string seges::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"%s brings Life, Health and Nutrition to all who follow Her.", GOD_NAME);
-  ADD_MESSAGE("When thou call upon Her with an empty stomach, a miracle may indeed fill it.\"");
+  return std::string("\"") + GOD_NAME + " brings Life, Health and Nutrition to all who follow Her. When thou call upon Her with an empty stomach, a miracle may indeed fill it.";
 }
 
-void consummo::AddPriestMessage() const
+std::string consummo::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"The Wise bow before %s, for He maketh the Universe as rational as it is.", GOD_NAME);
-  ADD_MESSAGE("Those who follow Him are not bound to space and time, since knowledge controls them.");
-  ADD_MESSAGE("This is why those chosen by Him may escape any danger with their wisdom.");
-  ADD_MESSAGE("Alas, beware! Soon thou may find thyself in an even worse situation!\"");
+  return std::string("\"The Wise bow before ") + GOD_NAME + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou may find thyself in an even worse situation!\"";
 }
 
 void scabies::PlayerVomitedOnAltar()
@@ -860,13 +774,9 @@ void scabies::PlayerVomitedOnAltar()
   AdjustRelation(1);
 }
 
-void valpurus::AddPriestMessage() const
+std::string valpurus::GetPriestMessage() const
 {
-  ADD_MESSAGE("\"%s the Great Frog is the highest of all gods.", GOD_NAME);
-  ADD_MESSAGE("The Wise know that the world is really a square pancake which He carries on His back.");
-  ADD_MESSAGE("This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\"");
-  ADD_MESSAGE("\"In thine prayers thou must understand that He is a busy god who knows His importance.");
-  ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
+  return std::string("\"") + GOD_NAME + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thine prayers thou must understand that He is a busy god who knows His importance. He will not help newbies. Pray Him only when He calls thee a Champion!\"";
 }
 
 

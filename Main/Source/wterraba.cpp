@@ -42,7 +42,7 @@ vector2d wterrain::GetPos() const
 
 void gwterrain::DrawToTileBuffer() const
 {
-  igraph::GetWTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
+  igraph::GetWTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos(), 0, 0, 16, 16);
 
   std::priority_queue<prioritypair> Neighbour;
 
@@ -56,14 +56,14 @@ void gwterrain::DrawToTileBuffer() const
 
   while(Neighbour.size())
     {
-      igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos.X, Neighbour.top().BitmapPos.Y, 0, 0, 16, 16);
+      igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), Neighbour.top().BitmapPos, 0, 0, 16, 16);
       Neighbour.pop();
     }
 }
 
 void owterrain::DrawToTileBuffer() const
 {
-  igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X, GetBitmapPos().Y, 0, 0, 16, 16);
+  igraph::GetWTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos(), 0, 0, 16, 16);
 }
 
 worldmap* wterrain::GetWorldMapUnder() const
@@ -85,12 +85,12 @@ bool owterrain::GoDown(character*) const
   return false;
 }
 
-void wterrain::Load(inputfile& SaveFile)
+void wterrain::Save(outputfile& SaveFile) const
 {
-  type::Load(SaveFile);
-
-  WSquareUnder = (wsquare*)game::GetSquareInLoad();
+  SaveFile << Type();
 }
 
-
-
+void wterrain::Load(inputfile& SaveFile)
+{
+  WSquareUnder = (wsquare*)game::GetSquareInLoad();
+}

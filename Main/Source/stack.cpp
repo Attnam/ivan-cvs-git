@@ -178,7 +178,7 @@ ushort stack::GetEmitation() const // Calculates the biggest light emmision of t
   return Emitation;
 }
 
-ulong stack::SumOfMasses() const
+ulong stack::GetTotalWeight() const
 {
   ulong Sum = 0;
 
@@ -229,20 +229,20 @@ void stack::DeletePointers()
     FastRemoveItem(GetBottomSlot());
 }
 
-void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
+void stack::Kick(character* Kicker, ushort Strength, uchar Direction)
 {
   if(Strength > 3)
     {
-      ImpactDamage(Strength);
+      ReceiveDamage(Kicker, Strength, PHYSICALDAMAGE);
 
       if(GetItems())
-	(***Item->begin())->Fly(Direction, Strength, this, true);
+	(***Item->begin())->Fly(Kicker, Direction, Strength);
 
       if(GetItems() && RAND() % 2)
-	(***Item->begin())->Fly(Direction, Strength, this, true);
+	(***Item->begin())->Fly(Kicker, Direction, Strength);
     }
   else
-    if(GetItems() && ShowOnScreen)
+    if(GetItems() && Kicker->GetIsPlayer())
       ADD_MESSAGE("Your weak kick has no effect.");
 }
 
@@ -274,7 +274,7 @@ void stack::Polymorph()
       break;
 }
 
-void stack::ReceiveSound(float Strength)
+/*void stack::ReceiveSound(float Strength)
 {
   itemvector ItemVector;
 
@@ -283,9 +283,9 @@ void stack::ReceiveSound(float Strength)
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
       ItemVector[c]->ReceiveSound(Strength);
-}
+}*/
 
-void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
+/*void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
 {
   itemvector ItemVector;
 
@@ -294,7 +294,7 @@ void stack::StruckByWandOfStriking(character* Zapper, std::string DeathMsg)
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
       ItemVector[c]->StruckByWandOfStriking(Zapper, DeathMsg);
-}
+}*/
 
 void stack::CheckForStepOnEffect(character* Stepper)
 {
@@ -336,7 +336,7 @@ square* stack::GetSquareTrulyUnder() const
     }
 }
 
-void stack::ImpactDamage(ushort Strength)
+/*void stack::ImpactDamage(ushort Strength)
 {
   itemvector ItemVector;
 
@@ -345,9 +345,9 @@ void stack::ImpactDamage(ushort Strength)
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
       ItemVector[c]->ImpactDamage(Strength);
-}
+}*/
 
-void stack::ReceiveFireDamage(character* Burner, std::string DeathMsg, long SizeOfEffect)
+void stack::ReceiveDamage(character* Damager, short Damage, uchar Type)
 {
   itemvector ItemVector;
 
@@ -355,7 +355,7 @@ void stack::ReceiveFireDamage(character* Burner, std::string DeathMsg, long Size
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
     if(ItemVector[c]->GetExists())
-      ItemVector[c]->ReceiveFireDamage(Burner, DeathMsg, this, SizeOfEffect);
+      ItemVector[c]->ReceiveDamage(Damager, Damage, Type);
 }
 
 void stack::Teleport()
@@ -442,10 +442,10 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topi
   felist ItemNames(Topic, WHITE, 0);
 
   ItemNames.AddDescription("");
-  ItemNames.AddDescription(std::string("Overall weight: ") + SumOfMasses() + (MergeStack ? MergeStack->SumOfMasses() : 0) + " grams");
+  ItemNames.AddDescription(std::string("Overall weight: ") + GetTotalWeight() + (MergeStack ? MergeStack->GetTotalWeight() : 0) + " grams");
   ItemNames.AddDescription("");
 
-  std::string Buffer = "Icon  Name                                             Weight     AV    Str";
+  std::string Buffer = "Icon  Name                                         Weight SV   Str";
   Viewer->AddSpecialItemInfoDescription(Buffer);
   ItemNames.AddDescription(Buffer);
 
@@ -454,7 +454,7 @@ item* stack::DrawContents(stack* MergeStack, character* Viewer, std::string Topi
 
   AddContentsToList(ItemNames, Viewer, ThisDesc, SelectItem, SorterFunction);
 
-  ushort Chosen = ItemNames.Draw(vector2d(10, 42), 780, MergeStack ? 12 : 15, SelectItem, false);
+  ushort Chosen = ItemNames.Draw(vector2d(26, 42), 652, MergeStack ? 12 : 15, SelectItem, false);
 
   if(Chosen & 0x8000)
     return 0;
@@ -492,6 +492,7 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string 
 		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
 		ItemNames.AddEntry(Desc, LIGHTGRAY, 0, false);
 		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
+		DescDrawn = true;
 	      }
 
 	    if(!CatDescDrawn)
@@ -501,11 +502,18 @@ void stack::AddContentsToList(felist& ItemNames, character* Viewer, std::string 
 	      }
 
 	    std::string Buffer = (**i)->Name(INDEFINITE);
-	    Buffer.resize(49,' ');
+
+	    if(Buffer.length() > 44)
+	      {
+		Buffer[41] = Buffer[42] = Buffer[43] = '.';
+		Buffer[44] = ' ';
+	      }
+
+	    Buffer.resize(45,' ');
 	    Buffer += int((**i)->GetWeight());
-	    Buffer.resize(60, ' ');
+	    Buffer.resize(52, ' ');
 	    Buffer += int((**i)->GetStrengthValue());
-	    Buffer.resize(66, ' ');
+	    Buffer.resize(57, ' ');
 	    Buffer += int((**i)->GetWeaponStrength() / 100);
 	    Viewer->AddSpecialItemInfo(Buffer, ***i);
 

@@ -15,7 +15,7 @@ class material;
 class unit : public entity
 {
  public:
-  unit(bool, bool);
+  unit() : Picture(0) { }
   virtual ~unit();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);

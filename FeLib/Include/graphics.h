@@ -10,8 +10,7 @@
 #endif
 
 #define DOUBLEBUFFER	graphics::GetDoubleBuffer()
-#define XRES		graphics::GetXRes()
-#define YRES		graphics::GetYRes()
+#define RES		graphics::GetRes()
 #define FONT		graphics::GetDefaultFont()
 
 #define GET_RED(Color) (((Color) >> 8) & 0xF8)
@@ -27,7 +26,7 @@
 
 #define YELLOW	MAKE_RGB(255, 255, 0)
 #define PINK	MAKE_RGB(255, 0, 255)
-#define DEFAULT_TRANSPARENT MAKE_RGB(255, 0, 255)
+#define DEFAULT_TRANSPARENT 0xF81F
 
 #define WHITE	MAKE_RGB(255, 255, 255)
 #define LIGHTGRAY MAKE_RGB(180, 180, 180)
@@ -46,6 +45,7 @@
 #include <string>
 
 #include "typedef.h"
+#include "vector2d.h"
 
 class bitmap;
 class colorizablebitmap;
@@ -61,21 +61,20 @@ class graphics
   static void Init();
   static void DeInit();
 #ifdef WIN32 
-  static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, LPCTSTR);
+  static void SetMode(HINSTANCE, HWND*, const char*, vector2d, uchar, bool, LPCTSTR);
   static void SwitchMode();
   static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
   static bool GetFullScreen() { return FullScreen; }
 #endif
 #ifdef USE_SDL
-  static void SetMode(const char*, ushort, ushort, uchar);
+  static void SetMode(const char*, vector2d, uchar);
   static void ToggleFullScreen(void);
 #endif
 #ifdef __DJGPP__
   static void SetMode(ushort);
 #endif
   static void BlitDBToScreen();
-  static ushort GetXRes() { return XRes; }
-  static ushort GetYRes() { return YRes; }
+  static vector2d GetRes() { return Res; }
   static bitmap* GetDoubleBuffer() { return DoubleBuffer; }
   static void UpdateBounds();
   static void LoadDefaultFont(std::string);
@@ -145,8 +144,7 @@ class graphics
   } ModeInfo;
 #endif
   static bitmap* DoubleBuffer;
-  static ushort XRes;
-  static ushort YRes;
+  static vector2d Res;
   static uchar ColorDepth;
   static colorizablebitmap* DefaultFont;
 };

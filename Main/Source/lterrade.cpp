@@ -1,14 +1,12 @@
 #define __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "lterraba.h"
 
-class glterrain;
-class olterrain;
-
-std::vector<glterrain*>		protocontainer<glterrain>::ProtoData;
-std::vector<olterrain*>		protocontainer<olterrain>::ProtoData;
-std::map<std::string, ushort>	protocontainer<glterrain>::CodeNameMap;
-std::map<std::string, ushort>	protocontainer<olterrain>::CodeNameMap;
+std::vector<glterrain::prototype*>	protocontainer<glterrain>::ProtoData;
+std::vector<olterrain::prototype*>	protocontainer<olterrain>::ProtoData;
+std::map<std::string, ushort>		protocontainer<glterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<olterrain>::CodeNameMap;
 
 #include "femath.h"
 #include "lterrade.h"
@@ -96,20 +94,20 @@ bool door::Close(character* Closer)
 
 void altar::DrawToTileBuffer() const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-  igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetOwnerGod() << 4, 0, 0, 0, 16, 16);
+  Picture->MaskedBlit(igraph::GetTileBuffer());
+  igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 }
 
 void altar::Load(inputfile& SaveFile)
 {
   olterrain::Load(SaveFile);
-  SaveFile >> OwnerGod;
+  SaveFile >> DivineMaster;
 }
 
 void altar::Save(outputfile& SaveFile) const
 {
   olterrain::Save(SaveFile);
-  SaveFile << OwnerGod;
+  SaveFile << DivineMaster;
 }
 
 bool stairsup::GoUp(character* Who) const // Try to go up
@@ -270,9 +268,7 @@ void door::Load(inputfile& SaveFile)
 void door::MakeWalkable()
 {
   IsOpen = true;
-
   UpdatePicture();
-
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
@@ -290,11 +286,8 @@ void door::MakeWalkable()
 void door::MakeNotWalkable()
 {
   GetLSquareUnder()->ForceEmitterNoxify();
-
   IsOpen = false;
-
   UpdatePicture();
-
   GetLSquareUnder()->SendNewDrawRequest();
   GetLSquareUnder()->SendMemorizedUpdateRequest();
   GetLSquareUnder()->SetDescriptionChanged(true);
@@ -309,12 +302,10 @@ void door::MakeNotWalkable()
 
 void altar::StepOn(character* Stepper)
 {
-  if(Stepper->GetIsPlayer() && OwnerGod && !game::GetGod(OwnerGod)->GetKnown())
+  if(Stepper->GetIsPlayer() && DivineMaster && !game::GetGod(DivineMaster)->GetKnown())
     {
-      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them.");
-      ADD_MESSAGE("The altar is dedicated to %s, the %s.", game::GetGod(OwnerGod)->Name().c_str(), game::GetGod(OwnerGod)->Description().c_str());
-      ADD_MESSAGE("You now know the sacred rituals that allow you to contact this deity via prayers.");
-      game::GetGod(OwnerGod)->SetKnown(true);
+      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", game::GetGod(DivineMaster)->Name().c_str(), game::GetGod(DivineMaster)->Description().c_str());
+      game::GetGod(DivineMaster)->SetKnown(true);
     }
 }
 
@@ -322,22 +313,19 @@ bool throne::SitOn(character* Sitter)
 {
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() != 1000)
     {
-      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
-      ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
+      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
       return true;
     }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
-      ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
+      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
       return true;
     }
 
   if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
-      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
-      ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
+      ADD_MESSAGE("You have a strange vision of yourself becoming great ruler. The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
       return true;
     }
 
@@ -382,26 +370,6 @@ void altar::ReceiveVomit(character* Who)
   if(Who->GetIsPlayer())
     game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
 }
-
-/*std::string door::Name(uchar Case) const
-{
-  if(!(Case & PLURAL))
-    if(!(Case & DEFINEBIT))
-      return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
-      else
-	return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
-  else
-    if(!(Case & DEFINEBIT))
-      return GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
-      else
-	return GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
-}*/
 
 std::string door::Adjective(bool Articled) const
 {
@@ -506,13 +474,13 @@ bool fountain::Consume(character* Drinker)
 	    case 2:
 	      if(!(RAND() % 10))
 		{
-		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
-		  game::DrawEverything();
-		  GETKEY();
+		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item.");
+		  //game::DrawEverything();
+		  //GETKEY();
 
 		  while(true)
 		    {
-		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80, false);
+		      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
 		      item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
 
 		      if(TempItem)
@@ -520,13 +488,6 @@ bool fountain::Consume(character* Drinker)
 			  Drinker->GetStack()->AddItem(TempItem);
 			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHARNAME(INDEFINITE));
 			  break;
-			}
-		      else
-			{
-			  ADD_MESSAGE("You may try again. - press any key -");
-			  DRAW_MESSAGES();
-			  game::DrawEverything();
-			  GETKEY();
 			}
 		    }
 		}
@@ -617,19 +578,25 @@ void brokendoor::Kick(ushort Strength, bool ShowOnScreen, uchar)
 	  ADD_MESSAGE("The door resists.");
 }
 
-bool door::ReceiveStrike()
+bool door::ReceiveDamage(character*, short, uchar)
 {
   if(RAND() % 2)
     {
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("The wand strikes the door and the door breaks.");
+      //if(GetLSquareUnder()->CanBeSeen())
+	//ADD_MESSAGE("The wand strikes the door and the door breaks.");
+
+      if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s breaks.", CHARNAME(DEFINITE));
 
       Break();
     }
   else
     {
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("The wand strikes the door and the door opens.");
+      //if(GetLSquareUnder()->CanBeSeen())
+	//ADD_MESSAGE("The wand strikes the door and the door opens.");
+
+      if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
 		
       MakeWalkable();
       IsLocked = false;
@@ -638,17 +605,16 @@ bool door::ReceiveStrike()
   return true;
 }
 
-bool brokendoor::ReceiveStrike()
+bool brokendoor::ReceiveDamage(character*, short, uchar)
 {
   if(RAND() % 2)
     {
+      if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s opens.", CHARNAME(DEFINITE));
+
       MakeWalkable();
       IsLocked = false;
-      if(GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("The wand strikes the door and the door opens.");
     }
-  else
-    ADD_MESSAGE("The wand strikes the door, but the door won't budge.");
 
   return true;
 }
@@ -658,10 +624,10 @@ bool altar::Polymorph(character*)
   if(GetSquareUnder()->CanBeSeen())
     ADD_MESSAGE("%s glows briefly.", CHARNAME(DEFINITE));
 	
-  uchar OldGod = OwnerGod;
+  uchar OldGod = DivineMaster;
 
-  while(OwnerGod == OldGod)
-    OwnerGod = 1 + RAND() % (game::GetGods() - 1);
+  while(DivineMaster == OldGod)
+    DivineMaster = 1 + RAND() % (game::GetGods() - 1);
 
   GetSquareUnder()->SendNewDrawRequest();
   GetSquareUnder()->SendMemorizedUpdateRequest();
@@ -678,20 +644,20 @@ bool altar::Polymorph(character*)
 
 bool altar::SitOn(character*)
 {
-  ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(OwnerGod)->GOD_NAME);
+  ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(DivineMaster)->GOD_NAME);
 
-  if(game::GetGod(OwnerGod)->GetRelation() < 500)
+  if(game::GetGod(DivineMaster)->GetRelation() < 500)
     {
       if(!(RAND() % 20))
 	{
-	  game::GetGod(OwnerGod)->AdjustRelation(2);
-	  game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true, 1);
+	  game::GetGod(DivineMaster)->AdjustRelation(2);
+	  game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true, 1);
 	}
     }
   else
     if(!(RAND() % 2500))
       {
-	character* Angel = game::GetGod(OwnerGod)->CreateAngel();
+	character* Angel = game::GetGod(DivineMaster)->CreateAngel();
 
 	if(Angel)
 	  {
@@ -699,8 +665,8 @@ bool altar::SitOn(character*)
 	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	  }
 
-	game::GetGod(OwnerGod)->AdjustRelation(50);
-	game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true);
+	game::GetGod(DivineMaster)->AdjustRelation(50);
+	game::ApplyDivineAlignmentBonuses(game::GetGod(DivineMaster), true);
       }
 
   return true;
@@ -711,10 +677,10 @@ bool pool::GetIsWalkable(character* ByWho) const
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
 
-std::string fountain::Adjective(bool Articled) const
+/*std::string fountain::Adjective(bool Articled) const
 {
   return Articled ? "a dried out" : "dried out";
-}
+}*/
 
 void couch::ShowRestMessage(character*) const
 {

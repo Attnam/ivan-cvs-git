@@ -55,7 +55,7 @@ void square::DrawMemorized()
 {
   if(GetLastSeen() && (NewDrawRequested || GetLastSeen() == game::GetLOSTurns() - 1))
     {	
-      GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, (GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4, 16, 16, ushort(256.0f * configuration::GetContrast() / 100));
+      GetMemorized()->Blit(DOUBLEBUFFER, 0, 0, game::CalculateScreenCoordinates(GetPos()), vector2d(16, 16), ushort(256.0f * configuration::GetContrast() / 100));
       NewDrawRequested = false;
     }
 }

@@ -25,13 +25,14 @@ class lsquare;
 class square;
 class outputfile;
 class inputfile;
+class glterrain;
+class olterrain;
 
 /* Presentation of the lterrain class & subclasses */
 
 class lterrain : public object
 {
  public:
-  lterrain(bool AddToPool) : object(AddToPool, false) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Open(character* Opener);
@@ -47,38 +48,64 @@ class lterrain : public object
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
   virtual void ReceiveVomit(character*) { }
   virtual bool CanBeOpenedByAI() { return false; }
-  virtual bool ReceiveStrike() { return false; }
+  //virtual bool ReceiveStrike() { return false; }
+  virtual bool ReceiveDamage(character*, short, uchar) { return false; }
   virtual bool GetIsLocked() const { return false; }
   virtual bool Polymorph(character*) { return false; }
   virtual bool ReceiveApply(item*, character*) { return false; }
   virtual bool DipInto(item*, character*) { return false; }
   virtual bool IsDipDestination() const { return false; }
+  virtual void SetDivineMaster(uchar) { }
  protected:
   virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
   virtual bool ShowMaterial() const { return true; }
   uchar VisualFlags;
 };
 
+class glterrain_prototype
+{
+ public:
+  virtual glterrain* Clone(bool = true, bool = true) const = 0;
+  virtual glterrain* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+ protected:
+  ushort Index;
+};
+
 class glterrain : public lterrain, public gterrain
 {
  public:
-  glterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
+  typedef glterrain_prototype prototype;
+  glterrain(bool = true, bool = true) { }
   virtual void DrawToTileBuffer() const;
   virtual glterrain* Clone(bool = true, bool = true) const = 0;
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
 };
 
+class olterrain_prototype
+{
+ public:
+  virtual olterrain* Clone(bool = true, bool = true) const = 0;
+  virtual olterrain* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+ protected:
+  ushort Index;
+};
+
 class olterrain : public lterrain, public oterrain
 {
  public:
-  olterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool), HP(1000) { }
+  typedef olterrain_prototype prototype;
+  olterrain(bool = true, bool = true) : HP(1000) { }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void DrawToTileBuffer() const;
   virtual bool GoUp(character*) const;
   virtual bool GoDown(character*) const;
-  virtual uchar GetOwnerGod() const { return 0; }
+  virtual uchar GetDivineMaster() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual olterrain* Clone(bool = true, bool = true) const = 0;
   virtual void Kick(ushort, bool, uchar) { }
@@ -93,33 +120,34 @@ class olterrain : public lterrain, public oterrain
   virtual short GetHP() const { return HP; }
   virtual void SetHP(short What) { HP = What; }
   virtual void EditHP(short What) { HP += What; }
+  virtual bool IsSafeToDestroy() const { return false; }
  protected:
   short HP;
 };
 
 #ifdef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
 
-#define LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)\
+#define LTERRAIN_PROTOTYPE(name, base, protobase, initmaterials, setstats)\
   \
-  static class name##_protoinstaller\
+  static class name##_prototype : public protobase::prototype\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<protobase>::Add(new name(false, false, false))) { }\
-    ushort GetIndex() const { return Index; }\
-   private:\
-    ushort Index;\
-  } name##_ProtoInstaller;\
+    name##_prototype() { Index = protocontainer<protobase>::Add(this); }\
+    virtual protobase* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+    virtual protobase* CloneAndLoad(inputfile& SaveFile) const { protobase* P = new name(false, false); P->Load(SaveFile); return P; }\
+    virtual std::string ClassName() const { return #name; }\
+  } name##_ProtoType;\
   \
-  name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
-  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); HandleVisualEffects(); }\
+  name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); if(CreateMaterials) initmaterials ; HandleVisualEffects(); }\
+  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMaterial(0, FirstMaterial); HandleVisualEffects(); }\
   void name::SetDefaultStats() { setstats }\
-  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-  const protobase* const name::GetPrototype() { return protocontainer<protobase>::GetProto(StaticType()); }\
-  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
+  const protobase::prototype* const name::GetPrototype() { return protocontainer<protobase>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
 
-#define LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
+#define LTERRAIN_PROTOTYPE(name, base, protobase, initmaterials, setstats)
 
 #endif
 
@@ -128,16 +156,15 @@ class olterrain : public lterrain, public oterrain
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true, bool = true);\
+  name(bool = true, bool = true);\
   name(material*, bool = true);\
   static ushort StaticType();\
-  static const protobase* const GetPrototype();\
-  virtual std::string ClassName() const { return #name; }\
+  static const protobase::prototype* const GetPrototype();\
  protected:\
   virtual void SetDefaultStats();\
   virtual ushort Type() const;\
   data\
-}; LTERRAIN_PROTOINSTALLER(name, base, protobase, initmaterials, setstats)
+}; LTERRAIN_PROTOTYPE(name, base, protobase, initmaterials, setstats)
 
 #define GLTERRAIN(name, base, initmaterials, setstats, data)\
 \
@@ -148,7 +175,6 @@ LTERRAIN(\
   initmaterials,\
   setstats,\
   virtual glterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { glterrain* G = new name(false, false); G->Load(SaveFile); return G; }\
   data\
 );
 
@@ -161,11 +187,8 @@ LTERRAIN(\
   initmaterials,\
   setstats,\
   virtual olterrain* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { olterrain* O = new name(false, false); O->Load(SaveFile); return O; }\
   data\
 );
 
 #endif
-
-
 

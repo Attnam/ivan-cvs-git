@@ -5,27 +5,33 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define ADD_MESSAGE globalmessagingsystem::AddMessage
-#define DRAW_MESSAGES globalmessagingsystem::Draw
-#define EMPTY_MESSAGES globalmessagingsystem::Empty
+#define ADD_MESSAGE msgsystem::AddMessage
+
+#include <string>
 
 #include "typedef.h"
 
 class felist;
+class outputfile;
+class inputfile;
 
-class globalmessagingsystem
+class msgsystem
 {
  public:
   static void AddMessage(const char*, ...);
   static void Draw();
-  static void Empty();
   static void DrawMessageHistory();
   static void Format();
-  static felist* GetMessageHistory() { return &MessageHistory; }
+  static void Save(outputfile&);
+  static void Load(inputfile&);
+  static void ScrollDown();
+  static void ScrollUp();
  private:
-  static char* MessageBuffer;
-  static ushort BufferLength;
   static felist MessageHistory;
+  static std::string LastMessage;
+  static ushort Times;
+  static ulong Begin, End;
 };
 
 #endif
+

@@ -3,8 +3,7 @@
 #include "proto.h"
 #include "error.h"
 #include "femath.h"
-
-class gwterrain;
+#include "wterraba.h"
 
 ushort** continent::TypeBuffer;
 short** continent::AltitudeBuffer;

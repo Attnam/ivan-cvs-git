@@ -105,6 +105,15 @@ SOURCE=.\Main\Source\actionba.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\actionde.cpp
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+
+# ADD CPP /W3
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -244,10 +253,6 @@ SOURCE=.\Main\Source\terra.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Source\type.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Source\unit.cpp
 # End Source File
 # Begin Source File
@@ -364,6 +369,10 @@ SOURCE=.\Main\Include\lterrade.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Include\main.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Include\materba.h
 # End Source File
 # Begin Source File
@@ -420,10 +429,6 @@ SOURCE=.\Main\Include\terra.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Main\Include\type.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Main\Include\unit.h
 # End Source File
 # Begin Source File
@@ -454,6 +459,13 @@ SOURCE=.\Main\Resource\Logo.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\main.rc
+
+!IF  "$(CFG)" == "Main - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Main - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Target
 # End Project

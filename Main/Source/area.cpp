@@ -84,14 +84,18 @@ void area::UpdateLOS()
 
 void area::SendNewDrawRequest()
 {
-  ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
-  ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
+  ushort XMax = GetXSize() < game::GetCamera().X + game::GetScreenSize().X ? GetXSize() : game::GetCamera().X + game::GetScreenSize().X;
+  ushort YMax = GetYSize() < game::GetCamera().Y + game::GetScreenSize().Y ? GetYSize() : game::GetCamera().Y + game::GetScreenSize().Y;
 
   for(ushort x = game::GetCamera().X; x < XMax; ++x)
     for(ushort y = game::GetCamera().Y; y < YMax; ++y)
       Map[x][y]->SendNewDrawRequest();
 
-  DOUBLEBUFFER->Fill(0, 32, 800, 480, 0);
+  DOUBLEBUFFER->Fill(0);
+  DOUBLEBUFFER->DrawLine(14, 30, 17 + (game::GetScreenSize().X << 4), 30, MAKE_RGB(111, 74, 37), true);
+  DOUBLEBUFFER->DrawLine(14, 30, 14, 33 + (game::GetScreenSize().Y << 4), MAKE_RGB(111, 74, 37), true);
+  DOUBLEBUFFER->DrawLine(17 + (game::GetScreenSize().X << 4), 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), MAKE_RGB(111, 74, 37), true);
+  DOUBLEBUFFER->DrawLine(14, 33 + (game::GetScreenSize().Y << 4), 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), MAKE_RGB(111, 74, 37), true);
 }
 
 void area::MoveCharacter(vector2d From, vector2d To)
@@ -162,8 +166,8 @@ vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
 
 void area::Draw() const
 {
-  ushort XMax = GetXSize() < game::GetCamera().X + 50 ? GetXSize() : game::GetCamera().X + 50;
-  ushort YMax = GetYSize() < game::GetCamera().Y + 30 ? GetYSize() : game::GetCamera().Y + 30;
+  ushort XMax = GetXSize() < game::GetCamera().X + game::GetScreenSize().X ? GetXSize() : game::GetCamera().X + game::GetScreenSize().X;
+  ushort YMax = GetYSize() < game::GetCamera().Y + game::GetScreenSize().Y ? GetYSize() : game::GetCamera().Y + game::GetScreenSize().Y;
 
   if(!game::GetSeeWholeMapCheat())
     for(ushort x = game::GetCamera().X; x < XMax; ++x)

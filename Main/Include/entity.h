@@ -19,7 +19,7 @@ class inputfile;
 class entity
 {
  public:
-  entity(bool, bool);
+  entity();
   virtual ~entity();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -33,6 +33,7 @@ class entity
   virtual void SetSquareUnder(square* What) { SquareUnder = What; }
   virtual lsquare* GetLSquareUnder() const;
   virtual void SetLSquareUnder(lsquare*);
+  virtual bool GetHasBe() const;
   virtual void SetHasBe(bool);
  protected:
   std::list<entityinfo>::iterator PoolIterator;

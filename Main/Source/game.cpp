@@ -52,6 +52,7 @@ uchar game::CurrentDungeon;
 ulong game::NextItemID = 0;
 std::vector<team*> game::Team;
 ulong game::LOSTurns;
+vector2d game::ScreenSize(42, 26);
 
 gamescript game::GameScript;
 
@@ -96,6 +97,8 @@ command* game::Command[] = {0,
 			    new command(&character::RestUntilHealed, "rest/heal", 'h', true),
 			    new command(&character::Save, "save game", 's', true),
 			    new command(&character::SecretKnowledge, "reveal secret knowledge", '9', true, true),
+			    new command(&character::ScrollMessagesDown, "scroll messages down", '+', true),
+			    new command(&character::ScrollMessagesUp, "scroll messages up", '-', true),
 			    new command(&character::SeeWholeMap, "see whole map cheat", '3', true, true),
 			    new command(&character::ShowConfigScreen, "show config screen", '\\', true),
 			    new command(&character::ShowInventory, "show inventory", 'i', true),
@@ -107,14 +110,12 @@ command* game::Command[] = {0,
 			    new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
 			    new command(&character::ForceVomit, "vomit", 'v', false),
 			    new command(&character::NOP, "wait", '.', true),
-			    //new command(&character::WearArmor, "wear", 'W', true),
-			    //new command(&character::Wield, "wield", 'w', true),
 			    new command(&character::WizardMode, "wizard mode activation", 'X', true),
 			    new command(&character::Zap, "zap", 'z', false),
 			    0};
 
-int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
-const vector2d game::MoveVector[DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1)};
+int game::MoveCommandKey[EXTENDED_DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151, '.'};
+const vector2d game::MoveVector[EXTENDED_DIRECTION_COMMAND_KEYS] = {vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0)};
 
 bool game::LOSUpdateRequested = false;
 ushort*** game::LuxTable;
@@ -126,7 +127,6 @@ bool game::WizardMode;
 bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
-//std::string game::PlayerName;
 ulong game::Ticks;
 
 void game::InitScript()
@@ -159,9 +159,8 @@ void game::Init(std::string Name)
   static ushort Counter = 0;
 
   Ticks = 0;
-  EMPTY_MESSAGES();
   ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
-  globalmessagingsystem::Format();
+  msgsystem::Format();
 
   WizardMode = false;
   SeeWholeMapCheat = false;
@@ -210,7 +209,7 @@ void game::Init(std::string Name)
 			     "And you know nothing about the adventures that await you here.");
 
 	Running = true;
-	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
+	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
 	CreateTeams();
 	CreateGods();
 	SetPlayer(new human);
@@ -228,8 +227,8 @@ void game::Init(std::string Name)
 	GetGod(1)->SetKnown(true);
 	GetGod(2)->SetKnown(true);
 	GetGod(4)->SetKnown(true);
+	GetGod(5)->SetKnown(true);
 	GetGod(6)->SetKnown(true);
-	GetGod(7)->SetKnown(true);
 
 	Ticks = 0;
 
@@ -277,7 +276,7 @@ void game::DeInit()
 
   God.clear();
 
-  entitypool::BurnTheDead();
+  entitypool::KillEverything();
 
   for(c = 0; c < Team.size(); ++c)
     delete GetTeam(c);
@@ -313,17 +312,13 @@ void game::InitLuxTable()
   if(!AlreadyInitialized)
     {
       AlreadyInitialized = true;
-
       LuxTable = new ushort**[0x200];
-
       LuxTableSize = new ushort[0x200];
 
       for(ushort c = 0; c < 0x200; ++c)
 	{
 	  ushort MaxDist = c >= 160 ? ushort(2 * sqrt(c / 5 - 32)) : 0, MaxSize = (MaxDist << 1) + 1;
-
 	  LuxTableSize[c] = MaxSize;
-
 	  LuxTable[c] = new ushort*[MaxSize];
 
 	  for(long x = 0; x < MaxSize; ++x)
@@ -333,7 +328,6 @@ void game::InitLuxTable()
 	      for(long y = 0; y < MaxSize; ++y)
 		{
 		  long xLSquare = abs((int)x - MaxDist), yLSquare = abs((int)y - MaxDist);
-
 		  LuxTable[c][x][y] = ushort(float(c) / (float(xLSquare * xLSquare + yLSquare * yLSquare) / 128 + 1));
 		}
 	    }
@@ -387,18 +381,18 @@ bool game::LOSHandler(vector2d Pos, vector2d Origo)
 
 void game::DrawPanel()
 {
-  DOUBLEBUFFER->Fill(0, 512, 800, 88, 0);
+  DOUBLEBUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
 
-  character* Player = GetPlayer();
+  FONT->Printf(DOUBLEBUFFER, 16, 45 + GetScreenSize().Y * 16, WHITE, "%s", game::GetPlayer()->CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
 
-  FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s", game::GetPlayer()->CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
+  vector2d PanelPos(RES.X - 96, 12);
 
-  FONT->Printf(DOUBLEBUFFER, 16, 534, WHITE, "Strength: %d", Player->GetStrength());
-  FONT->Printf(DOUBLEBUFFER, 16, 544, WHITE, "Endurance: %d", Player->GetEndurance());
-  FONT->Printf(DOUBLEBUFFER, 16, 554, WHITE, "Agility: %d", Player->GetAgility());
-  FONT->Printf(DOUBLEBUFFER, 16, 564, WHITE, "Perception: %d", Player->GetPerception());
-  FONT->Printf(DOUBLEBUFFER, 16, 574, WHITE, "Size: %d", Player->GetSize());
-  FONT->Printf(DOUBLEBUFFER, 16, 584, Player->GetHP() < Player->GetMaxHP() / 3 ? RED : WHITE, "HP: %d/%d", Player->GetHP(), Player->GetMaxHP());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "St %d", Player->GetStrength());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "En %d", Player->GetEndurance());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Ag %d", Player->GetAgility());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Pe %d", Player->GetPerception());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, WHITE, "Sz %d", Player->GetSize());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, (PanelPos.Y++) * 10, Player->GetHP() < Player->GetMaxHP() / 3 ? RED : WHITE, "HP %d/%d", Player->GetHP(), Player->GetMaxHP());
 
   /*if(Player->GetMainWielded())
     FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetMainWielded()->CHARNAME(INDEFINITE));
@@ -406,86 +400,96 @@ void game::DrawPanel()
   if(Player->GetBodyArmor())
     FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetBodyArmor()->CHARNAME(INDEFINITE));*/
 
-  FONT->Printf(DOUBLEBUFFER, 200, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
-  FONT->Printf(DOUBLEBUFFER, 200, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
-  FONT->Printf(DOUBLEBUFFER, 200, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 66667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 40000 + 1));
-  FONT->Printf(DOUBLEBUFFER, 200, 564, WHITE, "Money: %d", Player->GetMoney());
+  /*FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 66667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 40000 + 1));
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, WHITE, "Money: %d", Player->GetMoney());
 
   //FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
-  FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
 
   if(GetWizardMode())
     {
-      FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "Danger: %d", Player->CurrentDanger());
-      FONT->Printf(DOUBLEBUFFER, 440, 564, WHITE, "NP: %d", Player->GetNP());
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Danger: %d", Player->CurrentDanger());
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, WHITE, "NP: %d", Player->GetNP());
     }
   else
-    FONT->Printf(DOUBLEBUFFER, 440, 554, WHITE, "Danger Level: %d", Player->DangerLevel());
+    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, WHITE, "Danger Level: %d", Player->DangerLevel());
 
   if(GetInWilderness())
-    FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "Worldmap");
+    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "Worldmap");
   else
-    FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
+    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
 
-  FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Time: %d", GetTicks() / 10);
+  FONT->Printf(DOUBLEBUFFER, PanelPos.X, 544, WHITE, "Time: %d", GetTicks() / 10);
 
   //if(Player->StateIsActivated(FAINTED))
     //FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
-  /*else */if(Player->GetHungerState() == VERYHUNGRY)
-    FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
+  if(Player->GetHungerState() == VERYHUNGRY)
+    FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, RED, "Fainting");
   else
     if(Player->GetHungerState() == HUNGRY)
-      FONT->Printf(DOUBLEBUFFER, 620, 554, BLUE, "Hungry");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, BLUE, "Hungry");
   else 
     if(Player->GetHungerState() == SATIATED)
-      FONT->Printf(DOUBLEBUFFER, 620, 554, GREEN, "Satiated");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, GREEN, "Satiated");
   else
     if(Player->GetHungerState() == BLOATED)
-      FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Bloated");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 554, RED, "Bloated");
 
   switch(Player->GetBurdenState())
     {
     case OVERLOADED:
-      FONT->Printf(DOUBLEBUFFER, 620, 564, RED, "Overload!");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, RED, "Overload!");
       break;
     case STRESSED:
-      FONT->Printf(DOUBLEBUFFER, 620, 564, BLUE, "Stressed");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, BLUE, "Stressed");
       break;
     case BURDENED:
-      FONT->Printf(DOUBLEBUFFER, 620, 564, BLUE, "Burdened!");
+      FONT->Printf(DOUBLEBUFFER, PanelPos.X, 564, BLUE, "Burdened!");
     case UNBURDENED:
       break;
-    }
+    }*/
 }
 
 void game::UpdateCameraX()
 {
-  if(Player->GetPos().X < 25)
+  if(Player->GetPos().X < GetScreenSize().X / 2)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else
-    if(Camera.X == Player->GetPos().X - 25)
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
       return;
     else
-      Camera.X = Player->GetPos().X - 25;
+      Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
+  else
+    if(Camera.X == Player->GetPos().X - GetScreenSize().X / 2)
+      return;
+    else
+      Camera.X = Player->GetPos().X - GetScreenSize().X / 2;
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraY()
 {
-  if(Player->GetPos().Y < 15)
+  if(Player->GetPos().Y < GetScreenSize().Y / 2)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else
-    if(Camera.Y == Player->GetPos().Y - 15)
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
       return;
     else
-      Camera.Y = Player->GetPos().Y - 15;
+      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
+  else
+    if(Camera.Y == Player->GetPos().Y - GetScreenSize().Y / 2)
+      return;
+    else
+      Camera.Y = Player->GetPos().Y - GetScreenSize().Y / 2;
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -515,69 +519,54 @@ const char* game::Insult()
 
 bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForTrue)
 {
-  int ch;
-  ADD_MESSAGE(String.c_str());
-  DRAW_MESSAGES();
+  DrawEverythingNoBlit();
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", String.c_str());
   graphics::BlitDBToScreen();
-  for(;;)
+
+  bool Return;
+
+  while(true)
     {
-      ch = GETKEY();
-      if (ch == 0x00d || ch == 'y' || ch == 'Y' || ch == OtherKeyForTrue) { EMPTY_MESSAGES(); graphics::BlitDBToScreen(); return true;  }
-      if (ch == 'n' || ch == 'N') { EMPTY_MESSAGES(); graphics::BlitDBToScreen(); return false; }
-      if(DefaultAnswer == 2) continue;
-      EMPTY_MESSAGES();
-      graphics::BlitDBToScreen();
-      return DefaultAnswer ? true : false;
+      int k = GETKEY();
+
+      if(k == 0x00d || k == 'y' || k == 'Y' || k == OtherKeyForTrue)
+	{
+	  Return = true;
+	  break;
+	}
+
+      if(k == 'n' || k == 'N')
+	{
+	  Return = false;
+	  break;
+	}
+
+      if(DefaultAnswer != 2)
+	{
+	  Return = DefaultAnswer ? true : false;
+	  break;
+	}
     }
+
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Return;
 }
 
-/*const char* game::PersonalPronoun(uchar Sex)
+void game::DrawEverything()
 {
-  switch(Sex)
-    {
-    case UNDEFINED:
-      return "it";
-    case MALE:
-      return "he";
-    case FEMALE:
-      return "she";
-    default:
-      ABORT("Illegal sex encountered.");
-      return "xxx";
-    }
-}*/
-
-/*const char* game::PossessivePronoun(uchar Sex)
-{
-  switch(Sex)
-    {
-    case UNDEFINED:
-      return "its";
-    case MALE:
-      return "his";
-    case FEMALE:
-      return "her";
-    default:
-      ABORT("Illegal sex encountered.");
-      return "xxx";
-    }
-}*/
-
-void game::DrawEverything(bool EmptyMsg)
-{
-  DrawEverythingNoBlit(EmptyMsg);
+  DrawEverythingNoBlit();
   graphics::BlitDBToScreen();
 }
 
 bool game::OnScreen(vector2d Pos)
 {
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + 50 && Pos.Y < game::GetCamera().Y + 30)
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < game::GetCamera().X + GetScreenSize().X && Pos.Y < game::GetCamera().Y + GetScreenSize().Y)
     return true;
   else
     return false;
 }
 
-void game::DrawEverythingNoBlit(bool EmptyMsg)
+void game::DrawEverythingNoBlit()
 {
   if(LOSUpdateRequested)
     game::GetCurrentArea()->UpdateLOS();
@@ -585,22 +574,17 @@ void game::DrawEverythingNoBlit(bool EmptyMsg)
   game::GetCurrentArea()->Draw();
 
   if(OnScreen(GetPlayer()->GetPos()))
-    igraph::DrawCursor((GetPlayer()->GetPos() - GetCamera() + vector2d(0,2)) << 4);
+    igraph::DrawCursor(CalculateScreenCoordinates(GetPlayer()->GetPos()));
 
   DrawPanel();
-
-  if(EmptyMsg)
-    {
-      DRAW_MESSAGES();
-      EMPTY_MESSAGES();
-    }
+  msgsystem::Draw();
 }
 
 bool game::Save(std::string SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
 
-  SaveFile << ushort(SAVEFILE_VERSION);// << PlayerName;
+  SaveFile << ushort(SAVEFILE_VERSION);
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
   SaveFile << LOSTurns;
@@ -619,7 +603,7 @@ bool game::Save(std::string SaveName)
   SaveFile << God;
   SaveFile << game::GetPlayer()->GetPos();
   SaveFile << PlayerBackup;
-  globalmessagingsystem::GetMessageHistory()->Save(SaveFile);
+  msgsystem::Save(SaveFile);
   return true;
 }
 
@@ -635,13 +619,12 @@ uchar game::Load(std::string SaveName)
 
   if(Version != SAVEFILE_VERSION)
     {
-      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY, false))
+      if(!iosystem::Menu(0, "Sorry, this save is incompatible with the new version.\rStart new game?\r","Yes\rNo\r", MAKE_SHADE_COL(LIGHTGRAY), LIGHTGRAY))
 	  return NEWGAME;
       else
 	  return BACK;
     }
 
-  //SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextItemID;
   SaveFile >> LOSTurns;
@@ -666,7 +649,7 @@ uchar game::Load(std::string SaveName)
   SetPlayer(GetCurrentArea()->GetSquare(Pos)->GetCharacter());
 
   SaveFile >> PlayerBackup;
-  globalmessagingsystem::GetMessageHistory()->Load(SaveFile);
+  msgsystem::Load(SaveFile);
   return LOADED;
 }
 
@@ -733,39 +716,49 @@ bool game::NoxifyHandler(vector2d Pos, vector2d Origo)
 
 void game::UpdateCameraXWithPos(ushort Coord)
 {
-  if(Coord < 25)
+  if(Coord < GetScreenSize().X / 2)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else
-    if(Camera.X == Coord - 25)
+  else if(Coord > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
       return;
     else
-      Camera.X = Coord - 25;
+      Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
+  else
+    if(Camera.X == Coord - GetScreenSize().X / 2)
+      return;
+    else
+      Camera.X = Coord - GetScreenSize().X / 2;
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-  if(Coord < 15)
+  if(Coord < GetScreenSize().Y / 2)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else
-    if(Camera.Y == Coord - 15)
+  else if(Coord > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
       return;
     else
-      Camera.Y = Coord - 15;
+      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
+  else
+    if(Camera.Y == Coord - GetScreenSize().Y / 2)
+      return;
+    else
+      Camera.Y = Coord - GetScreenSize().Y / 2;
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 int game::GetMoveCommandKey(vector2d A, vector2d B)
 {
-  for(ushort c = 0; c < 8; ++c)
+  for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if((A + game::GetMoveVector(c)) == B)
       return game::MoveCommandKey[c];
 
@@ -785,26 +778,22 @@ void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Mult
       GetGod(c)->AdjustRelation(CompareTarget, Good, Multiplier);
 }
 
-vector2d game::GetDirectionVectorForKey(ushort Key)
+uchar game::GetDirectionIndexForKey(int Key)
+{
+  for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
+    if(Key == game::GetMoveCommandKey(c))
+      return c;
+
+  return 0xFF;
+}
+
+vector2d game::GetDirectionVectorForKey(int Key)
 {
   for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
     if(Key == game::GetMoveCommandKey(c))
       return game::GetMoveVector(c);
 
   return vector2d(0,0);
-}
-
-vector2d game::AskForDirectionVector(std::string String)
-{
-  if(String != "")
-    {
-      ADD_MESSAGE("%s", String.c_str());
-      DRAW_MESSAGES();
-      graphics::BlitDBToScreen();
-      EMPTY_MESSAGES();
-    }
-
-  return GetDirectionVectorForKey(GETKEY());
 }
 
 bool game::EyeHandler(vector2d Pos, vector2d Origo)
@@ -883,29 +872,24 @@ void game::TriggerQuestForGoldenEagleShirt()
 
 uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool RequireAnswer, bool AcceptYourself)
 {
-  ADD_MESSAGE(Topic.c_str());
-
-  DRAW_MESSAGES();
-
-  EMPTY_MESSAGES();
-
-  graphics::BlitDBToScreen();
-
   while(true)
     {
-      int Key = GETKEY();
+      int Key = AskForKeyPress(Topic);
 
       if(AcceptYourself && Key == '.')
-	return '.';
+	return YOURSELF;
 
-      for(ushort c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
-	if(Key == game::GetMoveCommandKey(c))
-	  return c;
+      uchar DIndex = GetDirectionIndexForKey(Key);
 
-      if(DefaultAnswer < 8) return DefaultAnswer;
-      if(!RequireAnswer) return 0xFF;
+      if(DIndex < DIRECTION_COMMAND_KEYS)
+	return DIndex;
+
+      if(DefaultAnswer < EXTENDED_DIRECTION_COMMAND_KEYS)
+	return DefaultAnswer;
+
+      if(!RequireAnswer)
+	return 0xFF;
     }
-
 }
 
 void game::RemoveSaves(bool RealSavesAlso)
@@ -1163,16 +1147,18 @@ bool game::IsValidPos(vector2d Pos)
 
 std::string game::StringQuestion(std::string Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
-  EMPTY_MESSAGES();
   DrawEverythingNoBlit();
-  return iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
+  std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Return;
 }
 
 long game::NumberQuestion(std::string Topic, vector2d Pos, ushort Color)
 {
-  EMPTY_MESSAGES();
   DrawEverythingNoBlit();
-  return iosystem::NumberQuestion(Topic, Pos, Color, false);
+  long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Return;
 }
 
 void game::LOSTurn()
@@ -1185,15 +1171,19 @@ void game::LOSTurn()
 
 void game::UpdateCamera()
 {
-  if(Player->GetPos().X < 25)
+  if(Player->GetPos().X < GetScreenSize().X / 2)
     Camera.X = 0;
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+    Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
   else
-    Camera.X = Player->GetPos().X - 25;
+    Camera.X = Player->GetPos().X - GetScreenSize().X / 2;
 
-  if(Player->GetPos().Y < 15)
+  if(Player->GetPos().Y < GetScreenSize().Y / 2)
     Camera.Y = 0;
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+    Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
   else
-    Camera.Y = Player->GetPos().Y - 15;
+    Camera.Y = Player->GetPos().Y - GetScreenSize().Y / 2;
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -1309,47 +1299,152 @@ void game::CreateGods()
     God.push_back(protocontainer<god>::GetProto(c)->Clone());
 }
 
-/* 
- * This function gets a position from the current map and then returns it.
- * However, if the player presses ESC then it returns vector2d(-1,-1)
- */
-
-vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
+vector2d game::CalculateScreenCoordinates(vector2d Pos)
 {
-  int Key = 0;
-  game::DrawEverythingNoBlit();
-  EMPTY_MESSAGES();
-  ADD_MESSAGE(Question.c_str());
-  DRAW_MESSAGES();
-  
-  while(true)
+  return (Pos - Camera + vector2d(1, 2)) << 4;
+}
+
+void game::BusyAnimation(bitmap* Buffer)
+{
+  static bitmap Elpuri(16, 16, TRANSPARENTCOL);
+  static bool ElpuriLoaded = false;
+  static double Rotation = 0;
+  static clock_t LastTime = 0;
+
+  if(!ElpuriLoaded)
     {
-      game::DrawEverythingNoBlit();
-      igraph::DrawCursor((CurrentPos - game::GetCamera() + vector2d(0,2)) << 4);
-      game::GetCurrentArea()->GetSquare(CurrentPos)->SendNewDrawRequest();
-      FONT->Printf(DOUBLEBUFFER, 16, 514, WHITE, Question.c_str());
-      graphics::BlitDBToScreen();
-      Key = GETKEY();
-      if(Key == FK_ESC)
-	return vector2d(-1,-1);
-      if(Key == ' ')
-	return CurrentPos;
+      ushort Color = MAKE_RGB(48, 48, 48);
+      igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
+      ElpuriLoaded = true;
+    }
 
-      vector2d DirectionVector = GetDirectionVectorForKey(Key); 
+  if(clock() - LastTime > 0.03f * CLOCKS_PER_SEC)
+    {
+      vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
+      Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
+      Rotation += 0.01;
 
-      if(DirectionVector != vector2d(0,0))
-	{
-	  CurrentPos += DirectionVector;
-	  if(short(CurrentPos.X) > game::GetCurrentArea()->GetXSize()-1) CurrentPos.X = 0;
-	  if(short(CurrentPos.X) < 0) 			CurrentPos.X = game::GetCurrentArea()->GetXSize()-1;
-	  if(short(CurrentPos.Y) > game::GetCurrentArea()->GetYSize()-1) CurrentPos.Y = 0;
-	  if(short(CurrentPos.Y) < 0) 			CurrentPos.Y = game::GetCurrentArea()->GetYSize()-1;
-	}
-      if(CurrentPos.X < game::GetCamera().X + 2 || CurrentPos.X > game::GetCamera().X + 48)
-	game::UpdateCameraXWithPos(CurrentPos.X);
+      if(Rotation > 2 * PI)
+	Rotation -= 2 * PI;
 
-      if(CurrentPos.Y < game::GetCamera().Y + 2 || CurrentPos.Y > game::GetCamera().Y + 27)
-	game::UpdateCameraYWithPos(CurrentPos.Y);
+      Elpuri.MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
+
+      ushort x;
+
+      for(x = 0; x < 10; ++x)
+	Buffer->DrawPolygon(Pos, 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), false, true, Rotation + double(x) / 50);
+
+      for(x = 0; x < 4; ++x)
+	Buffer->DrawPolygon(Pos, 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
+
+      if(Buffer == DOUBLEBUFFER)
+	graphics::BlitDBToScreen();
+
+      LastTime = clock();
     }
 }
 
+int game::AskForKeyPress(std::string Topic)
+{
+  DrawEverythingNoBlit();
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "%s", Topic.c_str());
+  graphics::BlitDBToScreen();
+  int Key = GETKEY();
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Key;
+}
+
+vector2d game::PositionQuestion(std::string Topic, vector2d CursorPos, void (*Handler)(vector2d))
+{
+  int Key = 0;
+  FONT->Printf(DOUBLEBUFFER, 16, 8, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
+  graphics::BlitDBToScreen();
+  vector2d Return;
+
+  while(true)
+    {
+      if(Key == ' ')
+	{
+	  Return = CursorPos;
+	  break;
+	}
+
+      if(Key == 0x1B)
+	{
+	  Return = vector2d(-1, -1);
+	  break;
+	}
+
+      vector2d DirectionVector = GetDirectionVectorForKey(Key);
+
+      if(DirectionVector != vector2d(0, 0))
+	{
+	  DOUBLEBUFFER->Fill(game::CalculateScreenCoordinates(CursorPos), vector2d(16, 16), 0);
+	  CursorPos += DirectionVector;
+
+	  if(short(CursorPos.X) > game::GetCurrentArea()->GetXSize() - 1) CursorPos.X = 0;
+	  if(short(CursorPos.X) < 0) CursorPos.X = game::GetCurrentArea()->GetXSize() - 1;
+	  if(short(CursorPos.Y) > game::GetCurrentArea()->GetYSize() - 1) CursorPos.Y = 0;
+	  if(short(CursorPos.Y) < 0) CursorPos.Y = game::GetCurrentArea()->GetYSize() - 1;
+	}
+
+      if(CursorPos.X < game::GetCamera().X + 2 || CursorPos.X > game::GetCamera().X + game::GetScreenSize().X - 2)
+	game::UpdateCameraXWithPos(CursorPos.X);
+
+      if(CursorPos.Y < game::GetCamera().Y + 2 || CursorPos.Y > game::GetCamera().Y + game::GetScreenSize().Y - 2)
+	game::UpdateCameraYWithPos(CursorPos.Y);
+
+      if(Handler)
+	Handler(CursorPos);
+
+      game::DrawEverythingNoBlit();
+      igraph::DrawCursor(game::CalculateScreenCoordinates(CursorPos));
+      game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
+      graphics::BlitDBToScreen();
+      Key = GETKEY();
+    }
+
+  DOUBLEBUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+  return Return;
+}
+
+void game::LookHandler(vector2d CursorPos)
+{
+  std::string OldMemory;
+
+  if(game::GetSeeWholeMapCheat())
+    {
+      OldMemory = game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+      game::GetCurrentArea()->GetSquare(CursorPos)->UpdateMemorizedDescription(true);
+    }
+
+  if(game::GetCurrentArea()->GetSquare(CursorPos)->GetLastSeen() || game::GetSeeWholeMapCheat())
+    {
+      std::string Msg;
+
+      if(game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen(true) || game::GetSeeWholeMapCheat())
+	Msg = "You see here ";
+      else
+	Msg = "You remember here ";
+
+      Msg += game::GetCurrentArea()->GetSquare(CursorPos)->GetMemorizedDescription();
+
+      ADD_MESSAGE("%s.", Msg.c_str());
+
+      character* Character;
+
+      if((Character = game::GetCurrentArea()->GetSquare(CursorPos)->GetCharacter()) && (game::GetCurrentArea()->GetSquare(CursorPos)->CanBeSeen() && (game::GetInWilderness() || game::GetCurrentLevel()->GetLSquare(CursorPos)->GetLuminance() >= LIGHT_BORDER) || game::GetSeeWholeMapCheat()))
+	Character->DisplayInfo();
+    }
+  else
+    ADD_MESSAGE("You have no idea what might lie here.");
+
+  if(game::GetSeeWholeMapCheat())
+    {
+      game::GetCurrentArea()->GetSquare(CursorPos)->SetMemorizedDescription(OldMemory);
+      game::GetCurrentArea()->GetSquare(CursorPos)->SetDescriptionChanged(true);
+    }
+
+  if(game::GetWizardMode())
+    ADD_MESSAGE("(%d, %d)", CursorPos.X, CursorPos.Y);
+}

@@ -116,12 +116,12 @@ void olterrain::Load(inputfile& SaveFile)
 
 void glterrain::DrawToTileBuffer() const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
+  Picture->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
 }
 
 void olterrain::DrawToTileBuffer() const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, VisualFlags);
+  Picture->MaskedBlit(igraph::GetTileBuffer(), VisualFlags);
 }
 
 bool lterrain::Open(character* Opener)

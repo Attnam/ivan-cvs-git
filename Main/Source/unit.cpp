@@ -2,10 +2,6 @@
 #include "materba.h"
 #include "save.h"
 
-unit::unit(bool AddToPool, bool HasBe) : entity(AddToPool, HasBe), Picture(0)
-{
-}
-
 unit::~unit()
 {
   for(ushort c = 0; c < Material.size(); ++c)

@@ -1,22 +1,22 @@
 #define __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "actionba.h"
 
-class action;
-
-std::vector<action*>			protocontainer<action>::ProtoData;
-std::map<std::string, ushort>		protocontainer<action>::CodeNameMap;
+std::vector<action::prototype*>		protocontainer<action>::ProtoData;
+std::map<std::string, ushort>		protocontainer<action>::CodeNameMap;;
 
 #include "actionde.h"
 
 #undef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
 
-#include "save.h"
 #include "message.h"
+#include "save.h"
 #include "charba.h"
 #include "lsquare.h"
 #include "itemba.h"
 #include "level.h"
+#include "error.h"
 
 void faint::Save(outputfile& SaveFile) const
 {
@@ -72,11 +72,13 @@ void consume::Load(inputfile& SaveFile)
 
 void consume::Handle()
 {
+  if(!*Consuming)
+    Terminate(false);
+
+  SetHasEaten(true);
+
   if(Consuming->Consume(GetActor(), 500))
-    {
-      Consuming->SetExists(false);
-      Terminate(true);
-    }
+    Terminate(true);
 }
 
 void consume::Terminate(bool Finished)
@@ -87,18 +89,34 @@ void consume::Terminate(bool Finished)
 	ADD_MESSAGE("You finish %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s finishes %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
-    }
-  else
-    {
-      if(GetWasOnGround())
-	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
-      else
-	Consuming->MoveTo(GetActor()->GetStack());
 
+      if(GetHasEaten())
+	Consuming->AddConsumeEndMessage(GetActor());
+
+      if(Consuming->GenerateLeftOvers(GetActor()))
+	Consuming->SetExists(false);
+    }
+  else if(*Consuming)
+    {
       if(GetActor()->GetIsPlayer())
 	ADD_MESSAGE("You stop %s %s.", Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
       else if(GetActor()->GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s stops %s %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str(), Consuming->CHARNAME(DEFINITE));
+
+      if(GetHasEaten())
+	Consuming->AddConsumeEndMessage(GetActor());
+
+      if(GetWasOnGround())
+	Consuming->MoveTo(GetActor()->GetLSquareUnder()->GetStack());
+      else
+	Consuming->MoveTo(GetActor()->GetStack());
+    }
+  else
+    {
+      if(GetActor()->GetIsPlayer())
+	ADD_MESSAGE("You stop %s.", Consuming->GetConsumeVerb().c_str());
+      else if(GetActor()->GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s stops %s.", GetActor()->CHARNAME(DEFINITE), Consuming->GetConsumeVerb().c_str());
     }
 
   action::Terminate(Finished);
@@ -113,6 +131,8 @@ void consume::SetConsuming(item* Food)
 {
   if(Food)
     Food->RemoveFromSlot();
+  else
+    ABORT("Consuming nothing!");
 
   Consuming.SetItem(Food);
 }
@@ -171,8 +191,10 @@ void dig::Load(inputfile& SaveFile)
 
 void dig::Handle()
 {
-  lsquare* Square = GetActor()->GetLSquareUnder()->GetLevelUnder()->GetLSquare(SquareDug);
+  if(!GetActor()->GetMainWielded())
+    Terminate(false);
 
+  lsquare* Square = GetActor()->GetLSquareUnder()->GetLevelUnder()->GetLSquare(SquareDug);
   Square->GetOLTerrain()->EditHP(-long(GetActor()->GetStrength()) * GetActor()->GetMainWielded()->GetMainMaterial()->GetStrengthValue() / Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue());
 
   if(Square->GetOLTerrain()->GetHP() <= 0)
@@ -188,16 +210,6 @@ void dig::Handle()
       SetLeftBackup(0);
       Terminate(true);
     }
-
-  /*if(StateCounter[DIGGING] > 0)
-    {
-      StateCounter[DIGGING]--;
-      EditStrengthExperience(5);
-      EditAgilityExperience(-5);
-      EditNP(-5);
-    }
-  else
-    EndDig();*/
 }
 
 void dig::Terminate(bool Finished)
@@ -260,4 +272,25 @@ void go::Load(inputfile& SaveFile)
 void go::Handle()
 {
   GetActor()->GoOn(this);
+}
+
+ulong consume::GetWeight() const
+{
+  if(GetConsuming())
+    return GetConsuming()->GetWeight();
+  else
+    return 0;
+}
+
+ulong dig::GetWeight() const
+{
+  ulong Weight = 0;
+
+  if(GetRightBackup())
+    Weight += GetRightBackup()->GetWeight();
+
+  if(GetLeftBackup())
+    Weight += GetLeftBackup()->GetWeight();
+
+  return Weight;
 }

@@ -1,14 +1,12 @@
 #define __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "wterraba.h"
 
-class gwterrain;
-class owterrain;
-
-std::vector<gwterrain*>		protocontainer<gwterrain>::ProtoData;
-std::vector<owterrain*>		protocontainer<owterrain>::ProtoData;
-std::map<std::string, ushort>	protocontainer<gwterrain>::CodeNameMap;
-std::map<std::string, ushort>	protocontainer<owterrain>::CodeNameMap;
+std::vector<gwterrain::prototype*>	protocontainer<gwterrain>::ProtoData;
+std::vector<owterrain::prototype*>	protocontainer<owterrain>::ProtoData;
+std::map<std::string, ushort>		protocontainer<gwterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<owterrain>::CodeNameMap;
 
 #include "wterrade.h"
 
@@ -26,7 +24,6 @@ std::map<std::string, ushort>	protocontainer<owterrain>::CodeNameMap;
 
 bool attnam::GoDown(character* Who) const
 {
-  iosystem::TextScreen("Entering dungeon...\n\nThis may take some time, please wait.", WHITE, false);
   game::GetWorldMap()->RemoveCharacter(Who->GetPos());
   game::SetInWilderness(false);
   game::SetCurrentDungeon(1);
@@ -63,7 +60,6 @@ bool attnam::GoDown(character* Who) const
 
 bool elpuricave::GoDown(character* Who) const
 {
-  iosystem::TextScreen("Entering dungeon...\n\nThis may take some time, please wait.", WHITE, false);
   game::GetWorldMap()->RemoveCharacter(Who->GetPos());
   game::SetInWilderness(false);
   game::SetCurrentDungeon(0);

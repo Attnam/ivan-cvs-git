@@ -8,16 +8,12 @@
 #ifndef DXUTIL_H
 #define DXUTIL_H
 
-
 //-----------------------------------------------------------------------------
 // Miscellaneous helper functions
 //-----------------------------------------------------------------------------
 #define SAFE_DELETE(p) { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_GetDXSDKMediaPath() and DXUtil_FindMediaFile() 
@@ -26,9 +22,6 @@
 //-----------------------------------------------------------------------------
 const TCHAR* DXUtil_GetDXSDKMediaPath();
 HRESULT      DXUtil_FindMediaFile( TCHAR* strPath, TCHAR* strFilename );
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_Read*RegKey() and DXUtil_Write*RegKey()
@@ -43,9 +36,6 @@ HRESULT DXUtil_ReadStringRegKey( HKEY hKey, TCHAR* strRegName, TCHAR* strValue, 
 HRESULT DXUtil_ReadIntRegKey( HKEY hKey, TCHAR* strRegName, DWORD* pdwValue, DWORD dwDefault );
 HRESULT DXUtil_ReadGuidRegKey( HKEY hKey, TCHAR* strRegName, GUID* pGuidValue, GUID& guidDefault );
 HRESULT DXUtil_ReadBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL* pbValue, BOOL bDefault );
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_Timer()
@@ -63,9 +53,6 @@ enum TIMER_COMMAND { TIMER_RESET, TIMER_START, TIMER_STOP, TIMER_ADVANCE,
                      TIMER_GETABSOLUTETIME, TIMER_GETAPPTIME, TIMER_GETELAPSEDTIME };
 FLOAT __stdcall DXUtil_Timer( TIMER_COMMAND command );
 
-
-
-
 //-----------------------------------------------------------------------------
 // UNICODE support for converting between CHAR, TCHAR, and WCHAR strings
 //-----------------------------------------------------------------------------
@@ -75,9 +62,6 @@ VOID DXUtil_ConvertGenericStringToAnsi( CHAR* strDestination, const TCHAR* tstrS
 VOID DXUtil_ConvertGenericStringToWide( WCHAR* wstrDestination, const TCHAR* tstrSource, int cchDestChar = -1 );
 VOID DXUtil_ConvertAnsiStringToGeneric( TCHAR* tstrDestination, const CHAR* strSource, int cchDestChar = -1 );
 VOID DXUtil_ConvertWideStringToGeneric( TCHAR* tstrDestination, const WCHAR* wstrSource, int cchDestChar = -1 );
-
-
-
 
 //-----------------------------------------------------------------------------
 // Debug printing support
@@ -98,3 +82,5 @@ HRESULT _DbgOut( TCHAR*, DWORD, HRESULT, TCHAR* );
 #endif
 
 #endif // DXUTIL_H
+
+

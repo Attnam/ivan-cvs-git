@@ -12,6 +12,8 @@
 #define	INDEFINEBIT		4	//0000100
 #define	INDEFINITE		6	//0000110
 
+#define CHARNAME(Case) Name(Case).c_str()
+
 #include <string>
 
 #include "typedef.h"
@@ -24,7 +26,7 @@ class id
   virtual std::string NamePlural() const { return NameSingular() + "s"; }
   virtual std::string Name(uchar) const;
  protected:
-  virtual std::string OwnerGodDescription(uchar) const;
+  virtual std::string DivineMasterDescription(uchar) const;
   virtual std::string Article() const { return "a"; }
   virtual std::string Adjective(bool Articled) const { return Articled ? AdjectiveArticle() + " " + Adjective() : Adjective(); }
   virtual std::string Adjective() const { return ""; }

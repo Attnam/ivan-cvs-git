@@ -1,10 +1,9 @@
 #define __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "roomba.h"
 
-class room;
-
-std::vector<room*>			protocontainer<room>::ProtoData;
+std::vector<room::prototype*>		protocontainer<room>::ProtoData;
 std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
 
 #include "roomde.h"
@@ -74,8 +73,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
       if(Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"Ah! That %s costs %d squirrels.", ForSale->CHARNAME(UNARTICLED), Price);
-	  ADD_MESSAGE("No haggling, please.\"");
+	  ADD_MESSAGE("\"Ah! That %s costs %d squirrels. No haggling, please.\"", ForSale->CHARNAME(UNARTICLED), Price);
 
 	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
 	    {
@@ -88,8 +86,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar!", ForSale->CHARNAME(UNARTICLED));
-	  ADD_MESSAGE("It is worth %d squirrels!\"", Price);
+	  ADD_MESSAGE("\"Don't touch that %s, beggar! It is worth %d squirrels!\"", ForSale->CHARNAME(UNARTICLED));
 	  return false;
 	}
     }

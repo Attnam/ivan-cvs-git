@@ -13,7 +13,7 @@
 #include "femath.h"
 #include "slot.h"
 
-item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool, false), Slot(0), Cannibalised(false)
+item::item(bool CreateMaterials, bool SetStats) : Slot(0), Cannibalised(false)
 {
   ID = game::CreateNewItemID();
 
@@ -23,18 +23,7 @@ item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPo
 
 void item::PositionedDrawToTileBuffer(uchar) const
 {
-  Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
-}
-
-ulong item::GetWeight() const
-{
-  ulong TotalWeight = 0;
-
-  for(ushort c = 0; c < GetMaterials(); ++c)
-    if(GetMaterial(c))
-      TotalWeight += GetMaterial(c)->GetWeight();
-
-  return TotalWeight;
+  Picture->MaskedBlit(igraph::GetTileBuffer());
 }
 
 bool item::IsConsumable(character* Eater) const
@@ -60,6 +49,7 @@ ushort item::GetEmitation() const
 short item::CalculateOfferValue(char GodAlignment) const
 {
   float OfferValue = 0;
+
   for(ushort c = 0; c < GetMaterials(); ++c)
     {
       if(GetMaterial(c))
@@ -84,6 +74,7 @@ short item::CalculateOfferValue(char GodAlignment) const
 	    OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
 	}
     }
+
   return short(OfferValue * (OfferModifier() / 250));
 }
 
@@ -93,10 +84,10 @@ short item::CalculateOfferValue(char GodAlignment) const
 *kicking and throwing things...		  *
 ******************************************/
 
-bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
+bool item::Fly(character* Thrower, uchar Direction, ushort Force)
 {
-  vector2d StartingPos = Start->GetPos();
-  vector2d Pos = Start->GetPos();
+  vector2d StartingPos = GetSquareUnder()->GetPos();
+  vector2d Pos = GetSquareUnder()->GetPos();
   bool Breaks = false;
   float Speed = float(Force) / GetWeight() * 1500;
 
@@ -122,13 +113,12 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	    break;
 
 	  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
-	  game::DrawEverything(false);
-	  Start = game::GetCurrentLevel()->GetLSquare(Pos)->GetStack();
+	  game::DrawEverything();
+	  //Start = game::GetCurrentLevel()->GetLSquare(Pos)->GetStack();
 
 	  if(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter())
 	    {
-	      if(Hostile)
-		game::GetPlayer()->Hostility(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
+	      Thrower->Hostility(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter());
 
 	      if(HitCharacter(game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter(), Speed, game::GetPlayer()))
 		{
@@ -144,7 +134,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
   MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 
   if(Breaks)
-    ImpactDamage(ushort(Speed));
+    ReceiveDamage(Thrower, short(Speed), PHYSICALDAMAGE);
 
   if(Pos == StartingPos)
     return false;
@@ -167,6 +157,7 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
 
       return false;
     }
+
   if(RAND() % 2) 
     ReceiveHitEffect(Dude, Hitter);
 
@@ -188,11 +179,6 @@ float item::GetWeaponStrength() const
 void item::DrawToTileBuffer() const
 {
   PositionedDrawToTileBuffer(CENTER);
-}
-
-item* item::CreateWishedItem() const
-{
-  return protocontainer<item>::GetProto(Type())->Clone();
 }
 
 bool item::Apply(character* Applier)
@@ -225,10 +211,10 @@ uchar item::GetWeaponCategory() const
   return UNCATEGORIZED;
 }
 
-bool item::StruckByWandOfStriking(character*, std::string) 
+/*bool item::StruckByWandOfStriking(character*, std::string) 
 { 
   return ImpactDamage(10);
-}
+}*/
 
 bool item::Consume(character* Eater, float Amount)
 {
@@ -255,16 +241,13 @@ bool item::IsBadFoodForAI(character* Eater) const
 void item::Save(outputfile& SaveFile) const
 {
   object::Save(SaveFile);
-
   SaveFile << Cannibalised << Size << ID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
-
   game::PopItemID(ID);
-
   SaveFile >> Cannibalised >> Size >> ID;
 }
 
@@ -276,35 +259,35 @@ void item::Teleport()
 
 void item::DrawToTileBuffer(vector2d Pos) const
 {
-  ushort FromX, FromY, ToX, ToY, Width, Height;
+  vector2d From, To, BlitSize;
 
   if(Pos.X < 0)
     {
-      FromX = -Pos.X;
-      ToX = 0;
-      Width = 16 + Pos.X;
+      From.X = -Pos.X;
+      To.X = 0;
+      BlitSize.X = 16 + Pos.X;
     }
   else
     {
-      FromX = 0;
-      ToX = Pos.X;
-      Width = 16 - Pos.X;
+      From.X = 0;
+      To.X = Pos.X;
+      BlitSize.X = 16 - Pos.X;
     }
 
   if(Pos.Y < 0)
     {
-      FromY = -Pos.Y;
-      ToY = 0;
-      Height = 16 + Pos.Y;
+      From.Y = -Pos.Y;
+      To.Y = 0;
+      BlitSize.Y = 16 + Pos.Y;
     }
   else
     {
-      FromY = 0;
-      ToY = Pos.Y;
-      Height = 16 - Pos.Y;
+      From.Y = 0;
+      To.Y = Pos.Y;
+      BlitSize.Y = 16 - Pos.Y;
     }
 
-  Picture->MaskedBlit(igraph::GetTileBuffer(), FromX, FromY, ToX, ToY, Width, Height);
+  Picture->MaskedBlit(igraph::GetTileBuffer(), From, To, BlitSize);
 }
 
 ushort item::GetStrengthValue() const
@@ -331,13 +314,19 @@ void item::PlaceToSlot(slot* Slot)
 
 void item::RemoveFromSlot()
 {
-  GetSlot()->Empty();
-  SetSlot(0);
+  if(GetSlot())
+    {
+      GetSlot()->Empty();
+      SetSlot(0);
+    }
 }
 
 void item::MoveTo(stack* Stack)
 {
-  GetSlot()->MoveItemTo(Stack);
+  if(GetSlot())
+    GetSlot()->MoveItemTo(Stack);
+  else
+    Stack->AddItem(this);
 }
 
 void item::DonateSlotTo(item* Item)
@@ -382,14 +371,37 @@ ushort item::GetResistance(uchar Type) const
   switch(Type)
     {
     case PHYSICALDAMAGE: return GetStrengthValue();
-    case SOUND: return 0;
-    case ENERGY: return 0;
-    case ACID: return 0;
-    case FIRE: return 0;
-    case POISON: return 0;
-    case BULIMIA: return 0;
+    case SOUND: return SoundResistance();
+    case ENERGY: return EnergyResistance();
+    case ACID: return AcidResistance();
+    case FIRE: return FireResistance();
+    case POISON: return PoisonResistance();
+    case BULIMIA: return BulimiaResistance();
     default:
       ABORT("Resistance lack detected!");
       return 0;
     }
+}
+
+void item::Be()
+{
+  ABORT("ESKO!");
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c) && !GetMaterial(c)->Be() && RemoveMaterial(c))
+      {
+	RemoveFromSlot();
+	SetExists(false);
+	break;
+      }
+}
+
+bool item::RemoveMaterial(uchar)
+{
+  return true;
+}
+
+void item::AddConsumeEndMessage(character* Eater) const
+{
+  GetConsumeMaterial()->AddConsumeEndMessage(Eater);
 }

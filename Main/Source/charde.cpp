@@ -1,10 +1,9 @@
 #define __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
+#include "charba.h"
 
-class character;
-
-std::vector<character*>			protocontainer<character>::ProtoData;
+std::vector<character::prototype*>	protocontainer<character>::ProtoData;
 std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 
 #include "femath.h"
@@ -78,7 +77,7 @@ void petrus::CreateInitialEquipment()
 
 void priest::CreateInitialEquipment()
 {
-  SetMainWielded(new spikedmace);
+  SetMainWielded(new spikedmace(new mithril));
   SetBodyArmor(new chainmail(new mithril));
 }
 
@@ -134,23 +133,28 @@ void guard::CreateInitialEquipment()
 
 bool ennerbeast::Hit(character*)
 {
-  char Message[256] ;
-  if(RAND() % 2) sprintf(Message,"The Enner Beast yells: UGH UGHAaaa!");
-  else sprintf(Message, "The Enner Beast yells: Uga Ugar Ugade Ugat!");
-
   DO_FILLED_RECTANGLE(GetPos().X, GetPos().Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1, 30,
   {
     character* Char = game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetCharacter();
 
-    float ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
+    ushort ScreamStrength = GetMeleeStrength() * GetStrength() / GetHypotSquare(float(GetPos().X) - XPointer, float(GetPos().Y) - YPointer);
 
     if(Char && Char != this)
-      Char->ReceiveSound(Message, RAND() % 26 - RAND() % 26,ScreamStrength);
+      {
+	if(Char->GetIsPlayer())
+	  if(RAND() % 2)
+	    ADD_MESSAGE("%s yells: UGH UGHAaaa!", CHARDESCRIPTION(DEFINITE));
+	  else
+	    ADD_MESSAGE("%s yells: Uga Ugar Ugade Ugat!", CHARDESCRIPTION(DEFINITE));
 
-    game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveSound(ScreamStrength);
+	Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, 8, true);
+	Char->CheckDeath("killed by " + Name(INDEFINITE) + "'s scream");
+      }
+
+    game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
 
     for(ushort x = 0; x < 4; ++x)
-      game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
+      game::GetCurrentLevel()->GetLSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveDamage(this, ScreamStrength, SOUND);
   });
 
   EditStrengthExperience(100);
@@ -327,6 +331,31 @@ bool dog::Catches(item* Thingy, float)
     return false;
 }
 
+item* humanoid::GetMainWielded() const
+{
+  if(GetMainArm())
+    if(GetMainArm()->GetWielded())
+      return GetMainArm()->GetWielded();
+    else
+      if(GetSecondaryArm())
+	return GetSecondaryArm()->GetWielded();
+      else
+	return 0;
+  else
+    if(GetSecondaryArm())
+      return GetSecondaryArm()->GetWielded();
+    else
+      return 0;
+}
+
+item* humanoid::GetSecondaryWielded() const
+{
+  if(GetSecondaryArm())
+    return GetSecondaryArm()->GetWielded();
+  else
+    return 0;
+}
+
 float humanoid::GetMainAttackStrength() const
 {
   if(GetMainArm())
@@ -451,7 +480,7 @@ void humanoid::MainHit(character* Enemy)
 	  if(GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
 	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
-	  GetMainWielded()->ImpactDamage(GetStrength() / 2);
+	  GetMainWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
 	}
     case HAS_DODGED:
       EditAgilityExperience(25);
@@ -475,7 +504,7 @@ void humanoid::SecondaryHit(character* Enemy)
 	  if(GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
 	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
-	  GetSecondaryWielded()->ImpactDamage(GetStrength() / 2);
+	  GetSecondaryWielded()->ReceiveDamage(this, GetStrength() / 2, PHYSICALDAMAGE);
 	}
     case HAS_DODGED:
       EditAgilityExperience(25);
@@ -564,10 +593,7 @@ void petrus::BeTalkedTo(character* Talker)
 
   if(Talker->HasGoldenEagleShirt())
     {
-      ADD_MESSAGE("Petrus smiles.");
-      ADD_MESSAGE("\"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life!");
-      ADD_MESSAGE("And thou possess the Shirt of the Golden Eagle, the symbol of my status!");
-      ADD_MESSAGE("Return it now, please.\"");
+      ADD_MESSAGE("Petrus smiles. \"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life! And thou possess the Shirt of the Golden Eagle, the symbol of my status! Return it now, please.\"");
 
       if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
 	{
@@ -586,11 +612,13 @@ void petrus::BeTalkedTo(character* Talker)
 	}
       else
 	{
-	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom.");
-	  ADD_MESSAGE("Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
+	  ADD_MESSAGE("Petrus's face turns red. \"I see. Thine greed hast overcome thine wisdom. Then, we shall fight for the shiny shirt. May Valpurus bless him who is better.\"");
 
-	  /* Perhaps we could here use our material system to actually make his face change color ;-) */
+	  /* And now we actually make his face change color ;-) */
 
+	  GetHead()->SetColor(0, MAKE_RGB(255, 75, 50));
+	  GetHead()->UpdatePicture();
+	  GetSquareUnder()->SendNewDrawRequest();
 	  Talker->GetTeam()->Hostility(GetTeam());
 	  return;
 	}
@@ -606,8 +634,7 @@ void petrus::BeTalkedTo(character* Talker)
     {
       if(game::GetGod(1)->GetRelation() >= 0 && Talker->MaxDanger() >= 250000)
 	{
-	  ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog!");
-	  ADD_MESSAGE("Elpuri is not a foe worthy for thee.");
+	  ADD_MESSAGE("Petrus smiles. \"Thou areth indeed a great Champion of the Great Frog! Elpuri is not a foe worthy for thee.");
 
 	  if(game::BoolQuestion("Dost thou wish to stay on duty for a while more and complete another quest for me?\" [Y/n]", 'y'))
 	    {
@@ -716,8 +743,7 @@ void guard::BeTalkedTo(character* Talker)
 	ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
       else
         {
-	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
-          ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
+	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword. But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
         }
       break;
     case 4:
@@ -748,15 +774,11 @@ void shopkeeper::BeTalkedTo(character* Talker)
 	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 1:
-      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan.", CHARDESCRIPTION(DEFINITE));
-      ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
+      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan, and the one before it ran into an Enner Beast. It must be all Elpuri's doings!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	{
-	  ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", CHARDESCRIPTION(DEFINITE));
-	  ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
-	}
+	ADD_MESSAGE("\"You truly can't find better prices in this city! Indeed, you can't find ANY prices, since my store is a monopoly.\"");
       else
 	ADD_MESSAGE("\"The topmost reason why I work here is that monsters devour tax collectors.\"");
       break;
@@ -780,10 +802,7 @@ void priest::BeTalkedTo(character* Talker)
   if(!HomeRoom)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    {
-      ADD_MESSAGE("%s talks to you:", CHARDESCRIPTION(DEFINITE));
-      game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
-    }
+    ADD_MESSAGE("%s talks to you: %s", CHARDESCRIPTION(DEFINITE), game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->GetPriestMessage().c_str());
 }
 
 void oree::BeTalkedTo(character*)
@@ -864,9 +883,9 @@ long humanoid::StatScore() const
 
 void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 {
-  Description.resize(72, ' ');
+  Description.resize(62, ' ');
   Description += GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
-  Description.resize(77, ' ');
+  Description.resize(66, ' ');
 
   if(GetRightArm())
     {
@@ -884,7 +903,7 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 	Description += 0;
     }
 
-  Description.resize(82, ' ');
+  Description.resize(70, ' ');
 
   if(GetLeftArm())
     {
@@ -905,11 +924,11 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
 
 void humanoid::AddSpecialItemInfoDescription(std::string& Description)
 {
-  Description.resize(78, ' ');
+  Description.resize(68, ' ');
   Description += "GS";
-  Description.resize(83, ' ');
+  Description.resize(72, ' ');
   Description += "SSR";
-  Description.resize(88, ' ');
+  Description.resize(76, ' ');
   Description += "SSL";
 }
 
@@ -1010,15 +1029,14 @@ void hunter::BeTalkedTo(character* Talker)
 	ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
     case 3:
-      ADD_MESSAGE("\"I saw a communist visiting the city a few days past.");
-      ADD_MESSAGE("I'm now organising a party to seek and hunt him down.\"");
+      ADD_MESSAGE("\"I saw a communist visiting the city a few days past. I'm now organising a party to seek and hunt him down.\"");
       break;
     }
 }
 
 void hunter::CreateInitialEquipment()
 {
-  SetMainWielded(new spear(new iron));
+  SetMainWielded(new spear);
 }
 
 void slave::BeTalkedTo(character* Talker)
@@ -1047,8 +1065,7 @@ void slave::BeTalkedTo(character* Talker)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch sale items.");
-	  ADD_MESSAGE("I'm worth 50 squirrels, you know!\"");
+	  ADD_MESSAGE("\"Don't touch me! Master doesn't want people to touch sale items. I'm worth 50 squirrels, you know!\"");
 	}
 
       return;
@@ -1127,18 +1144,18 @@ bool elpuri::Hit(character* Enemy)
 	  case HAS_HIT:
 	  case HAS_BLOCKED:
 	  case HAS_DIED:
-	    ByStander->GetStack()->ImpactDamage(GetStrength());
+	    //ByStander->GetStack()->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
 	    EditStrengthExperience(50);
 	  case HAS_DODGED:
 	    EditAgilityExperience(25);
 	  }
       }
 
-    Square->GetStack()->ImpactDamage(GetStrength());
+    Square->GetStack()->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
 
     for(ushort c = 0; c < 4; ++c)
       if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	Square->GetSideStack(c)->ImpactDamage(GetStrength());
+	Square->GetSideStack(c)->ReceiveDamage(this, GetStrength(), PHYSICALDAMAGE);
   });
 
   EditNP(-50);
@@ -1168,8 +1185,7 @@ void petrusswife::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Why must Petrus stay in this forest? There isn't even a proper hairdresser here!\"");
       break;
     case 3:
-      ADD_MESSAGE("\"Being one of six wives is a dream job.");
-      ADD_MESSAGE("Pay is good and you only have to work about one night a week!\"");
+      ADD_MESSAGE("\"Being one of six wives is a dream job. Pay is good and you only have to work about one night a week!\"");
       break;
     }
 }
@@ -1187,16 +1203,13 @@ void housewife::BeTalkedTo(character* Talker)
   switch(RandomizeReply(5, Said))
     {
     case 0:
-      ADD_MESSAGE("\"Can you help me find my husband? He is hiding somewhere.");
-      ADD_MESSAGE("He's that farmer who's just been mugged with a frying pan.\"");
+      ADD_MESSAGE("\"Can you help me find my husband? He is hiding somewhere. He's that farmer who's just been mugged with a frying pan.\"");
       break;
     case 1:
-      ADD_MESSAGE("\"Yesterday a bear rushed through my kitchen wall and ruined all my pies.");
-      ADD_MESSAGE("Animals are truly annoying. Why can't we just burn the whole forest down?\"");
+      ADD_MESSAGE("\"Yesterday a bear rushed through my kitchen wall and ruined all my pies. Animals are truly annoying. Why can't we just burn the whole forest down?\"");
       break;
     case 2:
-      ADD_MESSAGE("\"Wolves ate my seventh daughter last week. Damn.");
-      ADD_MESSAGE("It'll take eight years to produce an equally good replacement worker.\"");
+      ADD_MESSAGE("\"Wolves ate my seventh daughter last week. Damn. It'll take eight years to produce an equally good replacement worker.\"");
       break;
     case 3:
       ADD_MESSAGE("\"Petrus's wives are so arrogant towards us working class ones. Grr...\"");
@@ -1259,9 +1272,7 @@ void librarian::BeTalkedTo(character* Talker)
     case 1:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 	{
-	  ADD_MESSAGE("\"Thou are going to fight Elpuri? Beware! It is a powerful enemy.");
-	  ADD_MESSAGE("Other monsters are very vulnerable if surrounded by thine party, but not that beast.");
-	  ADD_MESSAGE("For it may slay a horde of thine friends at once with its horrendous tail attack.\"");
+	  ADD_MESSAGE("\"Thou are going to fight Elpuri? Beware! It is a powerful enemy. Other monsters are very vulnerable if surrounded by thine party, but not that beast, for it may slay a horde of thine friends at once with its horrendous tail attack.\"");
 	  break;
 	}
       else
@@ -1294,9 +1305,7 @@ void librarian::BeTalkedTo(character* Talker)
     case 4:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 	{
-	  ADD_MESSAGE("\"Thou wish to confront the Blood Daemon King? Heed my advice:");
-	  ADD_MESSAGE("He is a cunning enemy and will try to ambush thee.");
-	  ADD_MESSAGE("A powerful party and a means of quick escape at hand would help thee greatly.\"");
+	  ADD_MESSAGE("\"Thou wish to confront the Blood Daemon King? Heed my advice: He is a cunning enemy and will try to ambush thee. A powerful party and a means of quick escape at hand would help thee greatly.\"");
 	  break;
 	}
       else
@@ -1307,49 +1316,40 @@ void librarian::BeTalkedTo(character* Talker)
     case 5:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 	{
-	  ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact.");
-	  ADD_MESSAGE("Thou canst not find a better armor.\"");
+	  ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
 	  break;
 	}
       else
 	{
-	  ADD_MESSAGE("\"In this book they talk about Erado, the great chaos god.");
-	  ADD_MESSAGE("He hates us mortals more than anything and will respond only to Champions of Evil.\"");
+	  ADD_MESSAGE("\"In this book they talk about Erado, the great chaos god. He hates us mortals more than anything and will respond only to Champions of Evil.\"");
 	  break;
 	}
     case 6:
-      ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog.");
-      ADD_MESSAGE("He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
+      ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog. He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
       break;
     case 7:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
 	{
-	  ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the High Priests.");
-	  ADD_MESSAGE("Things will get *very* rough if one denies it from Petrus.\"");
+	  ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the High Priests. Things will get *very* rough if one denies it from Petrus.\"");
 	  break;
 	}
       else
 	{
-	  ADD_MESSAGE("\"They say thou should keep all the artifacts thou find.");
-	  ADD_MESSAGE("They shalt make thee famous after thine retirement.\"");
+	  ADD_MESSAGE("\"They say thou should keep all the artifacts thou find. They shalt make thee famous after thine retirement.\"");
 	  break;
 	}
     case 8:
-      ADD_MESSAGE("\"If thou shalt ever encounter an Enner Beast, know this: It is a horrible foe.");
-      ADD_MESSAGE("It may shatter thine items and armor with its scream that penetrates iron and stone.");
-      ADD_MESSAGE("Thou should not engage it in melee. Kill it from afar.\"");
+      ADD_MESSAGE("\"If thou shalt ever encounter an Enner Beast, know this: It is a horrible foe. It may shatter thine items and armor with its scream that penetrates iron and stone. Thou should not engage it in melee. Kill it from afar.\"");
       break;
     case 9:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 1)
 	{
-	  ADD_MESSAGE("\"Thou areth not alone in thine attempth to defeat Elpuri.");
-	  ADD_MESSAGE("A brave adventurer called Ivan also dived into its cave not long ago.\"");
+	  ADD_MESSAGE("\"Thou areth not alone in thine attempth to defeat Elpuri. A brave adventurer called Ivan also dived into its cave not long ago.\"");
 	  break;
 	}
       else
 	{
-	  ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers.");
-	  ADD_MESSAGE("But thou must remember: unlike lawfuls, they shalt not help thee when things go bad.\"");
+	  ADD_MESSAGE("\"It is said that chaotic gods offer great power to their followers. But thou must remember: unlike lawfuls, they shalt not help thee when things go bad.\"");
 	  break;
 	}
     case 10:
@@ -1368,10 +1368,12 @@ bool communist::MoveRandomly()
 {
   switch(RAND() % 1000)
     {
-      /*		case 0:
-			Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
-			break;*/
-      // Currently too long
+    case 0:
+      if(GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
+
+      Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
+      return true;
     case 1:
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
@@ -1499,11 +1501,9 @@ void werewolf::Be()
   character::Be();
 }
 
-ulong werewolf::MaxDanger()
+ulong werewolf::MaxDanger() const
 {
-  bool BeforeThis = GetIsWolf();
-
-  /* This should perhaps be made more elegant... */
+  /*bool BeforeThis = GetIsWolf();
 
   ChangeIntoWolf();
   ulong AsWolf = humanoid::MaxDanger();
@@ -1513,7 +1513,8 @@ ulong werewolf::MaxDanger()
   if(BeforeThis)
     ChangeIntoWolf();
 
-  return (AsWolf + AsHuman) >> 1;
+  return (AsWolf + AsHuman) >> 1;*/
+  return 0;
 }
 
 float werewolf::GetMeleeStrength() const
@@ -1554,31 +1555,31 @@ void mistress::BeTalkedTo(character* Talker)
 void angel::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-  SaveFile << Master;
+  SaveFile << DivineMaster;
 }
 
 void angel::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-  SaveFile >> Master;
+  SaveFile >> DivineMaster;
 }
 
-void angel::SetMaster(uchar NewMaster)
+void angel::SetDivineMaster(uchar NewMaster)
 {
+  character::SetDivineMaster(NewMaster);
+
   switch(game::GetGod(NewMaster)->BasicAlignment())
     {
     case GOOD:
       SetAgility(99);
       SetMainWielded(new longsword(new diamond));
       SetBodyArmor(new chainmail(new diamond));
-      SetMaterial(1, new goodleather);
       RestoreHP();
       break;
     case NEUTRAL:
       SetEndurance(99);
       SetMainWielded(new poleaxe(new sapphire));
       SetBodyArmor(new chainmail(new sapphire));
-      SetMaterial(1, new neutralleather);
       RestoreHP();
       break;
     case EVIL:
@@ -1588,28 +1589,27 @@ void angel::SetMaster(uchar NewMaster)
 	SpikedMace->InitMaterials(3, new ruby, new iron, new darkfrogflesh);
 	SetMainWielded(SpikedMace);
 	SetBodyArmor(new brokenplatemail(new ruby));
-	SetMaterial(1, new evilleather);
 	RestoreHP();
 	break;
       }
     }
 
-  Master = NewMaster;
+  DivineMaster = NewMaster;
 }
 
 void angel::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
-    ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", game::GetGod(Master)->Name().c_str());
+    ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", game::GetGod(DivineMaster)->Name().c_str());
   else
-    ADD_MESSAGE("\"%s be with you, mortal.\"", game::GetGod(Master)->Name().c_str());
+    ADD_MESSAGE("\"%s be with you, mortal.\"", game::GetGod(DivineMaster)->Name().c_str());
 }
 
 void kamikazedwarf::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(Master)->Name().c_str());
+      ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(DivineMaster)->Name().c_str());
       return;
     }
 
@@ -1624,8 +1624,7 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns.", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
-      ADD_MESSAGE("%s is obviously a very devoted follower.", PersonalPronoun().c_str());
+      ADD_MESSAGE("%s praises %s with numerous hymns. %s is obviously a very devoted follower.", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str(), PersonalPronoun().c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1635,8 +1634,8 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
 
 void kamikazedwarf::CreateInitialEquipment()
 {
-  holybook* HolyBook = new holybook;
-  HolyBook->SetOwnerGod(Master);
+  item* HolyBook = new holybook;
+  HolyBook->SetDivineMaster(DivineMaster);
   SetMainWielded(HolyBook);
   GetStack()->FastAddItem(new backpack);
 }
@@ -1651,9 +1650,9 @@ bool kamikazedwarf::Hit(character* Enemy)
 	if((**i)->IsExplosive())
 	  {
 	    if(RAND() % 2)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str());
 	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(DivineMaster)->Name().c_str());
 
 	    if((**i)->Apply(this))
 	      return true;
@@ -1666,15 +1665,13 @@ bool kamikazedwarf::Hit(character* Enemy)
 void kamikazedwarf::Save(outputfile& SaveFile) const
 {
   humanoid::Save(SaveFile);
-
-  SaveFile << Master;
+  SaveFile << DivineMaster;
 }
 
 void kamikazedwarf::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
-
-  SaveFile >> Master;
+  SaveFile >> DivineMaster;
 }
 
 bool largecat::Catches(item* Thingy, float)
@@ -1704,26 +1701,9 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-/*void unicorn::RandomizeFleshMaterial()
-{
-  SetAlignment(RAND() % 3);
-  switch(GetAlignment())
-    {
-    case GOOD:
-      InitMaterials(2, new whiteunicornflesh, new unicornhorn);
-      return;
-    case NEUTRAL:
-      InitMaterials(2, new grayunicornflesh, new unicornhorn);
-      return;
-    default:
-      InitMaterials(2, new blackunicornflesh, new unicornhorn);
-      return;
-    }
-}*/
-
 material* unicorn::CreateTorsoFlesh(ulong Volume) const
 {
-  switch(RAND() % 3)
+  switch(Alignment)
     {
     case GOOD:
       return new whiteunicornflesh(Volume);
@@ -1732,11 +1712,6 @@ material* unicorn::CreateTorsoFlesh(ulong Volume) const
     default:
       return new blackunicornflesh(Volume);
     }
-}
-
-void unicorn::AdjustAlignment()
-{
-  SetAlignment(2 - GetTorso()->GetMainMaterial()->Alignment());
 }
 
 void unicorn::Save(outputfile& SaveFile) const
@@ -2144,7 +2119,7 @@ bool humanoid::BodyPartVital(uchar Index)
 
 bool humanoid::BodyPartCanBeSevered(uchar Index) const
 {
-  if(Index == 0 || Index == 4)
+  if(!GetBodyPart(Index) || Index == 0 || Index == 4)
     return false;
   else
     return true;
@@ -2200,7 +2175,7 @@ void dwarf::DrawToTileBuffer() const
     GetHead()->DrawToTileBuffer(vector2d(0, 1));
 }
 
-bool humanoid::ReceiveDamage(short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
+bool humanoid::ReceiveDamage(character* Damager, short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
 {
   std::vector<uchar> ChooseFrom;
 
@@ -2233,29 +2208,13 @@ bool humanoid::ReceiveDamage(short Amount, uchar Type, uchar TargetFlags, uchar 
       bool Affected = false;
 
       for(ushort c = 0; c < ChooseFrom.size(); ++c)
-	if(ReceiveBodyPartDamage(Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
+	if(ReceiveBodyPartDamage(Damager, Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
 	  Affected = true;
 
       return Affected;
     }
   else
-    return ReceiveBodyPartDamage(Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
-}
-
-item* humanoid::GetMainWielded() const
-{
-  if(GetMainArm())
-    return GetMainArm()->GetWielded();
-  else
-    return 0;
-}
-
-item* humanoid::GetSecondaryWielded() const
-{
-  if(GetSecondaryArm())
-    return GetSecondaryArm()->GetWielded();
-  else
-    return 0;
+    return ReceiveBodyPartDamage(Damager, Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
 }
 
 arm* humanoid::GetMainArm() const
@@ -2268,7 +2227,10 @@ arm* humanoid::GetMainArm() const
 
 arm* humanoid::GetSecondaryArm() const
 {
-  return GetLeftArm();
+  if(GetRightArm())
+    return GetLeftArm();
+  else
+    return 0;
 }
 
 void humanoid::SetMainWielded(item* Item)
@@ -2317,10 +2279,6 @@ std::string humanoid::EquipmentName(uchar Index) const
     default: return "forbidden piece of cloth";
     }
 }
-
-/*
- * You are not expected to understand this.
- */
 
 bool (item::*humanoid::EquipmentSorter(uchar Index) const)(character*) const
 {
@@ -2440,72 +2398,6 @@ void humanoid::SetLeftGauntlet(item* What) { if(GetLeftArm()) GetLeftArm()->SetG
 void humanoid::SetRightBoot(item* What) { if(GetRightLeg()) GetRightLeg()->SetBoot(What); }
 void humanoid::SetLeftBoot(item* What) { if(GetLeftLeg()) GetLeftLeg()->SetBoot(What); }
 
-bool humanoid::VirtualEquipmentScreen()
-{
-  ushort Chosen = 0;
-  bool EquipmentChanged = false;
-
-  while(true)
-    {
-      game::DrawEverythingNoBlit();
-
-      felist List("Equipment menu", WHITE);
-
-      for(ushort c = 0; c < EquipmentSlots(); ++c)
-	{
-	  std::string Entry = EquipmentName(c) + ":";
-	  Entry.resize(20, ' ');
-
-	  if(!GetBodyPartOfEquipment(c))
-	    Entry += "can't use";
-	  else if(!GetEquipment(c))
-	    Entry += "-";
-	  else
-	    Entry += GetEquipment(c)->Name(INDEFINITE);
-
-	  List.AddEntry(Entry, LIGHTGRAY);
-	}
-
-      List.SetSelected(Chosen);
-      Chosen = List.Draw(vector2d(10, 42), 780, 20, true, false);
-
-      if(Chosen >= EquipmentSlots())
-	break;
-
-      if(!GetBodyPartOfEquipment(Chosen))
-	{
-	  ADD_MESSAGE("Bodypart missing!");
-	  continue;
-	}
-
-      item* OldEquipment = GetEquipment(Chosen);
-
-      if(OldEquipment)
-	GetEquipment(Chosen)->MoveTo(GetStack());
-
-      if(!GetStack()->SortedItems(this, EquipmentSorter(Chosen)))
-	{
-	  ADD_MESSAGE("You haven't got any item that could be used for this purpose.");
-	  continue;
-	}
-      else
-	{
-	  item* Item = GetStack()->DrawContents(this, std::string("Choose ") + EquipmentName(Chosen) + ":", EquipmentSorter(Chosen));
-
-	  if(Item != OldEquipment)
-	    EquipmentChanged = true;
-
-	  if(Item)
-	    {
-	      Item->RemoveFromSlot();
-	      SetEquipment(Chosen, Item);
-	    }
-	}
-    }
-
-  return EquipmentChanged;
-}
-
 void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 {
   dig* Dig = new dig(this);
@@ -2522,13 +2414,14 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
   SetAction(Dig);
 }
 
-bool humanoid::CheckKick()
+bool humanoid::CheckKick() const
 {
   if(!CanKick())
     {
       ADD_MESSAGE("This monster type can not kick.");
       return false;
     }
+
   if(GetLegs() < 2)
     {
       std::string LegNumber;
@@ -2570,20 +2463,22 @@ uchar humanoid::GetArms() const
 float humanoid::GetAPStateMultiplier() const
 {
   float Multiplier = 1;
+
   switch(GetLegs())
     {
     case 0:
       Multiplier = 0.1f;
       break;
     case 1:
-      Multiplier = 1/3;
+      Multiplier = 0.33f;
       break;
     case 2:
-      Multiplier = 1;
+      Multiplier = 1.0f;
     }
 
   if(StateIsActivated(HASTE))
     Multiplier *= 2;
+
   if(StateIsActivated(SLOW))
     Multiplier *= 0.5;
   
@@ -2596,6 +2491,17 @@ short humanoid::GetLengthOfOpen(vector2d) const
     {
     case 0:
       return -1500;
+    default:
+      return -500;
+    }
+}
+
+short humanoid::GetLengthOfClose(vector2d) const
+{ 
+  switch(GetArms())
+    {
+    case 0:
+      return -1000;
     default:
       return -500;
     }
@@ -2644,4 +2550,52 @@ void carnivorousplant::CreateTorso()
   character::CreateTorso();
   GetTorso()->SetColor(1, MAKE_RGB(40 + RAND() % 100, 40 + RAND() % 100, 40 + RAND() % 100));
   GetTorso()->UpdatePicture();
+}
+
+ushort humanoid::GlobalResistance(uchar Type) const
+{
+  ushort Resistance = GetResistance(Type);
+
+  if(GetCloak())
+    Resistance += GetCloak()->GetResistance(Type);
+
+  if(Type != PHYSICALDAMAGE)
+    {
+      if(GetAmulet())
+	Resistance += GetAmulet()->GetResistance(Type);
+
+      if(GetRightRing())
+	Resistance += GetRightRing()->GetResistance(Type);
+
+      if(GetLeftRing())
+	Resistance += GetLeftRing()->GetResistance(Type);
+    }
+
+  return Resistance;
+}
+
+void kamikazedwarf::SetDivineMaster(uchar Master)
+{
+  character::SetDivineMaster(Master);
+  DivineMaster = Master;
+}
+
+void humanoid::AddInfo(felist& Info) const
+{
+  if(GetMainWielded())
+    Info.AddEntry(std::string("Main wielded: ") + GetMainWielded()->Name(INDEFINITE), LIGHTGRAY);
+  else
+    Info.AddEntry("Main wielded: nothing", LIGHTGRAY);
+
+  if(GetSecondaryWielded())
+    Info.AddEntry(std::string("Secondary wielded: ") + GetSecondaryWielded()->Name(INDEFINITE), LIGHTGRAY);
+  else
+    Info.AddEntry("Secondary wielded: nothing", LIGHTGRAY);
+
+  Info.AddEntry(std::string("Main attack strength: ") + int(GetMainAttackStrength()), LIGHTGRAY);
+  Info.AddEntry(std::string("Secondary attack strength: ") + int(GetSecondaryAttackStrength()), LIGHTGRAY);
+  Info.AddEntry(std::string("Main to hit value: ") + int(GetMainToHitValue()), LIGHTGRAY);
+  Info.AddEntry(std::string("Secondary to hit value: ") + int(GetSecondaryToHitValue()), LIGHTGRAY);
+
+  
 }

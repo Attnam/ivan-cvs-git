@@ -3,6 +3,12 @@
 
 std::list<entityinfo> entitypool::Pool;
 
+/*
+ * Calls the Be() function of each self-changeable entity during each tick,
+ * thus allowing acting characters, spoiling food etc.
+ * Also handles removal of entities marked as dead by calling SetExists(false).
+ */
+
 void entitypool::Be()
 {
   for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
@@ -20,16 +26,15 @@ void entitypool::Be()
       }
 }
 
-void entitypool::BurnTheDead()
+/*
+ * Brutally removes all entities.
+ */
+
+void entitypool::KillEverything()
 {
   for(std::list<entityinfo>::iterator i = Pool.begin(); i != Pool.end();)
-    if(i->Exists)
-      {
-	++i;
-      }
-    else
-      {
-	std::list<entityinfo>::iterator Dirt = i++;
-	delete Dirt->Entity;
-      }
+    {
+      std::list<entityinfo>::iterator Dirt = i++;
+      delete Dirt->Entity;
+    }
 }

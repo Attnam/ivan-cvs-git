@@ -2,6 +2,7 @@
 #include <ctime>
 
 #include "femath.h"
+#include "error.h"
 
 /* A C-program for MT19937: Integer     version                   */
 /*  genrand() generates one pseudorandom unsigned integer (32bit) */
@@ -164,4 +165,28 @@ bool femath::DoLine(long X1, long Y1, long X2, long Y2, ulong MaxDistance, bool 
 					    DO_LINE(-, Y, >=, -, X, <=)
 
 					      return true;
+}
+
+ushort femath::WeightedRand(ushort Elements, ushort* Possibility)
+{
+  ushort c;
+  ulong TotalPossibility = 0;
+
+  for(c = 0; c < Elements; ++c)
+    TotalPossibility += Possibility[c];
+
+  ulong Chosen = RAND() % TotalPossibility;
+
+  TotalPossibility = 0;
+
+  for(c = 0; c < Elements; ++c)
+    {
+      TotalPossibility += Possibility[c];
+
+      if(TotalPossibility > Chosen)
+	return c;
+    }
+
+  ABORT("WeightedRand bugs severely!");
+  return 0x0666;
 }

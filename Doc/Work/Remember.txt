@@ -2,7 +2,7 @@
 //Messages.
 (s) Multi-tiled creatures.
 (s) New team system.
-*Corpse.
+/*Corpse.
 (s) Corpse size levels.
 (s) Lines & words.
 *Healing.
@@ -11,9 +11,9 @@
 //(s) Vector based humanoid read.
 (s) Throw flipping.
 *Silhouette.
-*Graphical item menu.
+//*Graphical item menu.
 *Effect types.
 Priest.
-*Pick-axe.
-*New state system.
+/*Pick-axe.
+//*New state system.
 Oree author.

@@ -11,6 +11,7 @@ class entity;
 
 struct entityinfo
 {
+  entityinfo(entity* Entity) : Entity(Entity), Exists(true), HasBe(false) { }
   entity* Entity;
   bool Exists;
   bool HasBe;
@@ -19,10 +20,10 @@ struct entityinfo
 class entitypool
 {
  public:
-  static std::list<entityinfo>::iterator Add(entityinfo EntityInfo) { return Pool.insert(Pool.end(), EntityInfo); }
+  static std::list<entityinfo>::iterator Add(entity* Entity) { return Pool.insert(Pool.end(), entityinfo(Entity)); }
   static void Remove(std::list<entityinfo>::iterator Iterator) { Pool.erase(Iterator); }
   static void Be();
-  static void BurnTheDead();
+  static void KillEverything();
  private:
   static std::list<entityinfo> Pool;
 };

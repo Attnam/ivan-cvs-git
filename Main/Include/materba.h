@@ -25,8 +25,6 @@
 #include <string>
 
 #include "typedef.h"
-
-#include "type.h"
 #include "proto.h"
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
@@ -42,14 +40,30 @@ class item;
 class entity;
 class outputfile;
 class inputfile;
+class material;
 
-class material : public type
+class material_prototype
 {
  public:
+  virtual material* Clone(ulong) const = 0;
+  virtual material* Clone() const = 0;
+  virtual material* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+  virtual bool CanBeWished() const = 0;
+  virtual material* CreateWishedMaterial(ulong) const = 0;
+  virtual bool IsSolid() const = 0;
+ protected:
+  ushort Index;
+};
+
+class material
+{
+ public:
+  typedef material_prototype prototype;
   material() : Volume(0), MotherEntity(0) { }
   virtual ~material() { }
   virtual std::string Name(bool = false, bool = true) const;
-  //virtual const char* CHARNAME(uchar Case = 0, bool Adjective = true) const { return Name(Case, Adjective).c_str(); }
   virtual ushort GetStrengthValue() const = 0;
   virtual ushort GetConsumeType() const = 0;
   virtual ulong GetVolume() const { return Volume; }
@@ -66,14 +80,13 @@ class material : public type
   virtual void HitEffect(character*)   { }
   virtual short NutritionValue() const { return 0; }
   virtual void MinusAmount(float Amount)   { SetVolume(ulong(GetVolume() > Amount ? GetVolume() - Amount : 0)); }
-  virtual material* Clone(ulong Volume) const = 0;
+  virtual material* Clone(ulong) const = 0;
   virtual material* Clone() const = 0;
   virtual bool IsType(ushort QType) const { return Type() == QType; }
-  virtual bool IsSolid() const { return false; }
-  virtual void Be() { }
+  static bool IsSolid() { return false; }
   virtual ushort GetColor() const = 0;
-  virtual bool CanBeWished() const { return true; }
-  virtual material* CreateWishedMaterial(ulong) const;
+  static bool CanBeWished() { return true; }
+  static material* CreateWishedMaterial(ulong) { return 0; } // never called
   virtual entity* GetMotherEntity() const { return MotherEntity; }
   virtual void SetMotherEntity(entity* What) { MotherEntity = What; }
   virtual ulong RawPrice() const { return 0; }
@@ -84,35 +97,46 @@ class material : public type
   virtual ushort ExplosivePower() const { return 0; }
   virtual bool IsFlammable() const { return false; }
   virtual bool IsAlive() const { return false; }
+  virtual bool HasBe() const { return false; }
+  virtual bool Be() { return true; }
+  static bool SpecialWishedMaterial() { return false; }
+  virtual ushort GetType() const { return Type(); }
+  virtual void AddConsumeEndMessage(character*) const { }
  protected:
-  virtual std::string AdjectiveStem() const { return NameStem(); }
   virtual std::string NameStem() const = 0;
+  virtual std::string AdjectiveStem() const { return NameStem(); }
   virtual std::string Article() const { return "a"; }
   virtual void NormalFoodEffect(character*, float, float);
+  virtual ushort Type() const = 0;
   ulong Volume;
   entity* MotherEntity;
 };
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
 
-#define MATERIAL_PROTOINSTALLER(name, base)\
+#define MATERIAL_PROTOTYPE(name, base)\
   \
-  static class name##_protoinstaller\
+  static class name##_prototype : public material::prototype\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) { }\
-    ushort GetIndex() const { return Index; }\
-   private:\
-    ushort Index;\
-  } name##_ProtoInstaller;\
+    name##_prototype() { Index = protocontainer<material>::Add(this); }\
+    virtual material* Clone(ulong Volume) const { return new name(Volume); }\
+    virtual material* Clone() const { return new name; }\
+    virtual material* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
+    virtual std::string ClassName() const { return #name; }\
+    virtual bool CanBeWished() const { return name::CanBeWished(); }\
+    virtual material* CreateWishedMaterial(ulong) const;\
+    virtual bool IsSolid() const { return name::IsSolid(); }\
+  } name##_ProtoType;\
   \
-  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-  const material* const name::GetPrototype() { return protocontainer<material>::GetProto(StaticType()); }\
-  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
+  const material::prototype* const name::GetPrototype() { return protocontainer<material>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
+  material* name##_prototype::CreateWishedMaterial(ulong Volume) const { if(!name::SpecialWishedMaterial()) return Clone(Volume); else return name::CreateWishedMaterial(Volume); }
 
 #else
 
-#define MATERIAL_PROTOINSTALLER(name, base)
+#define MATERIAL_PROTOTYPE(name, base)
 
 #endif
 
@@ -125,16 +149,20 @@ name : public base\
   name() { }\
   virtual material* Clone(ulong Volume) const { return new name(Volume); }\
   virtual material* Clone() const { return new name; }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { material* Mat = new name; Mat->Load(SaveFile); return Mat; }\
   static ushort StaticType();\
-  static const material* const GetPrototype();\
-  virtual std::string ClassName() const { return #name; }\
+  static const material::prototype* const GetPrototype();\
  protected:\
   virtual ushort Type() const;\
   data\
-}; MATERIAL_PROTOINSTALLER(name, base)
+}; MATERIAL_PROTOTYPE(name, base)
+
+#define ABSTRACT_MATERIAL(name, base, data)\
+\
+name : public base\
+{\
+ public:\
+  data\
+};
 
 #endif
-
-
 

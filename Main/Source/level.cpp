@@ -227,27 +227,30 @@ void level::GenerateTunnel(vector2d From, vector2d Target, bool XMode)
 void level::Generate(levelscript* GenLevelScript)
 {
   LevelScript = GenLevelScript;
-
+  game::BusyAnimation();
   Initialize(LevelScript->GetSize()->X, LevelScript->GetSize()->Y);
-
   Map = (lsquare***)area::Map;
 
   if(LevelScript->GetLevelMessage(false))
     LevelMessage = *LevelScript->GetLevelMessage();
 
   for(ushort x = 0; x < XSize; ++x)
-    for(ulong y = 0; y < YSize; ++y)
-      {
-	Map[x][y] = new lsquare(this, vector2d(x, y));
-	Map[x][y]->ChangeLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
-      }
+    {
+      game::BusyAnimation();
+
+      for(ulong y = 0; y < YSize; ++y)
+	{
+	  Map[x][y] = new lsquare(this, vector2d(x, y));
+	  Map[x][y]->ChangeLTerrain(LevelScript->GetFillSquare()->GetGTerrain()->Instantiate(), LevelScript->GetFillSquare()->GetOTerrain()->Instantiate());
+	}
+    }
 
   ushort c;
 
   for(c = 0; c < *LevelScript->GetRooms(); ++c)
     {
+      game::BusyAnimation();
       std::map<uchar, roomscript*>::iterator RoomIterator = LevelScript->GetRoom().find(c);
-
       roomscript* RoomScript;
 
       if(RoomIterator != LevelScript->GetRoom().end())
@@ -284,6 +287,8 @@ void level::Generate(levelscript* GenLevelScript)
 	}
     }
 
+  game::BusyAnimation();
+
   if(*LevelScript->GetGenerateUpStairs())
     CreateStairs(true);
 
@@ -294,16 +299,16 @@ void level::Generate(levelscript* GenLevelScript)
 
   for(c = 0; c < LevelScript->GetSquare().size(); ++c)
     {
+      game::BusyAnimation();
       squarescript* Square = LevelScript->GetSquare()[c];
-
       ApplyLSquareScript(Square);
     }
 
   if(LevelScript->GetBase())
     for(c = 0; c < LevelScript->GetBase()->GetSquare().size(); ++c)
       {
+	game::BusyAnimation();
 	squarescript* Square = LevelScript->GetBase()->GetSquare()[c];
-
 	ApplyLSquareScript(Square);
       }
 }
@@ -370,7 +375,6 @@ void level::CreateItems(ushort Amount)
   for(ushort x = 0; x < Amount; ++x)
     {
       vector2d Pos = RandomSquare(0, true);
-
       Map[Pos.X][Pos.Y]->Stack->FastAddItem(protosystem::BalancedCreateItem());
     }
 }
@@ -427,12 +431,13 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   RoomClass->SetDivineOwner(*RoomScript->GetDivineOwner());
 
+  game::BusyAnimation();
+
   {
     for(ushort x = XPos; x < XPos + Width; ++x)
       {
 	Map[x][YPos]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
 	FlagMap[x][YPos] |= FORBIDDEN;
-
 	Map[x][YPos + Height - 1]->ChangeLTerrain(RoomScript->GetWallSquare()->GetGTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOTerrain()->Instantiate());
 	FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
@@ -460,6 +465,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 	Map[x][YPos + Height - 1]->SetRoom(RoomClass->GetIndex());
       }
   }
+
+  game::BusyAnimation();
 
   for(ushort y = YPos; y < YPos + Height; ++y)
     {
@@ -492,6 +499,8 @@ bool level::MakeRoom(roomscript* RoomScript)
       Map[XPos + Width - 1][y]->SetRoom(RoomClass->GetIndex());
     }
 
+  game::BusyAnimation();
+
   for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
     for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
       {
@@ -516,7 +525,7 @@ bool level::MakeRoom(roomscript* RoomScript)
       vector2d Pos(XPos + 1 + RAND() % (Width-2), YPos + 1 + RAND() % (Height-2));
       Map[Pos.X][Pos.Y]->ChangeOLTerrain(new altar);
 
-      uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOLTerrain())->GetOwnerGod();
+      uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOLTerrain())->GetDivineMaster();
 
       for(ushort x = XPos + 1; x < XPos + Width - 1; ++x)
 	for(ushort y = YPos + 1; y < YPos + Height - 1; ++y)
@@ -525,10 +534,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(*RoomScript->GetGenerateTunnel() && Door.Length())
     {
+      game::BusyAnimation();
       vector2d LPos = Door.Access(RAND() % Door.Length());
-
       ushort LXPos = LPos.X, LYPos = LPos.Y;
-
       olterrain* Door = RoomScript->GetDoorSquare()->GetOTerrain()->Instantiate(); //Bug! Wrong room!
 
       if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
@@ -588,6 +596,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(*RoomScript->GetGenerateDoor())
     {
+      game::BusyAnimation();
+
       if(RAND() % 2)
 	{
 	  XPos += RAND() % (Width - 2) + 1;
@@ -614,8 +624,8 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)
     {
+      game::BusyAnimation();
       squarescript* Square = RoomScript->GetSquare()[c];
-
       uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
 
       for(ushort c = 0; c < Times; ++c)
@@ -633,9 +643,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetCharacterMap(false))
     {
+      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetCharacterMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetCharacterMap()->GetPos()->Y;
-
       contentscript<character>* CharacterScript;
 
       for(ushort x = 0; x < RoomScript->GetCharacterMap()->GetSize()->X; ++x)
@@ -654,9 +664,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetItemMap(false))
     {
+      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetItemMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetItemMap()->GetPos()->Y;
-
       contentscript<item>* ItemScript;
 
       for(ushort x = 0; x < RoomScript->GetItemMap()->GetSize()->X; ++x)
@@ -667,9 +677,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetGTerrainMap(false))
     {
+      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetGTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetGTerrainMap()->GetPos()->Y;
-
       contentscript<glterrain>* GTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetGTerrainMap()->GetSize()->X; ++x)
@@ -680,9 +690,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
   if(RoomScript->GetOTerrainMap(false))
     {
+      game::BusyAnimation();
       XPos = BXPos + RoomScript->GetOTerrainMap()->GetPos()->X;
       YPos = BYPos + RoomScript->GetOTerrainMap()->GetPos()->Y;
-
       contentscript<olterrain>* OTerrainScript;
 
       for(ushort x = 0; x < RoomScript->GetOTerrainMap()->GetSize()->X; ++x)
@@ -907,7 +917,7 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
         break;
       }
 
-  vector2d BPos = ((Pos - game::GetCamera() + vector2d(0,2)) << 4) - vector2d(16 * (6 - Size), 16 * (6 - Size));
+  vector2d BPos = game::CalculateScreenCoordinates(Pos) - vector2d(16 * (6 - Size), 16 * (6 - Size));
   vector2d SizeVect(16 + 32 * (6 - Size), 16 + 32 * (6 - Size)), OldSizeVect = SizeVect;
   vector2d PicPos = StrengthPicPos[Size];
 
@@ -933,27 +943,27 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	    BPos.Y = 0;
 	  }
 
-      if(BPos.X >= XRES || BPos.Y >= YRES)
+      if(BPos.X >= RES.X || BPos.Y >= RES.Y)
 	break;
 
-      if(BPos.X + SizeVect.X > XRES)
-	SizeVect.X = XRES - BPos.X;
+      if(BPos.X + SizeVect.X > RES.X)
+	SizeVect.X = RES.X - BPos.X;
 
-      if(BPos.Y + SizeVect.Y > YRES)
-	SizeVect.Y = YRES - BPos.Y;
+      if(BPos.Y + SizeVect.Y > RES.Y)
+	SizeVect.Y = RES.Y - BPos.Y;
 
-      DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
-      game::DrawEverythingNoBlit(false);
+      //DOUBLEBUFFER->Fill(0, 0, 800, 32, 0);
+      game::DrawEverythingNoBlit();
 
       uchar Flags = RAND() % 8;
 
       if(!Flags || SizeVect != OldSizeVect)
-	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos.X, PicPos.Y, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, PicPos, BPos, SizeVect, ContrastLuminance);
       else
 	{
 	  bitmap ExplosionPic(SizeVect.X, SizeVect.Y);
-	  igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos.X, PicPos.Y, 0, 0, SizeVect.X, SizeVect.Y, Flags);
-	  ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos.X, BPos.Y, SizeVect.X, SizeVect.Y, ContrastLuminance);
+	  igraph::GetSymbolGraphic()->Blit(&ExplosionPic, PicPos, 0, 0, SizeVect, Flags);
+	  ExplosionPic.MaskedBlit(DOUBLEBUFFER, 0, 0, BPos, SizeVect, ContrastLuminance);
 	}
 
       graphics::BlitDBToScreen();
@@ -1003,20 +1013,16 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 		  }
 	      });
 
-	      Char->GetStack()->ImpactDamage(Damage);
-	      Char->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
-	      //Char->CheckGearExistence();
+	      //Char->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
+	      Char->ReceiveDamage(Terrorist, Damage, FIRE, ALL);
+	      //Char->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 	      Char->CheckDeath(DeathMsg);
 	    }
 
-	Square->GetStack()->ImpactDamage(Damage);
-	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
+	Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
+	//Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
-//<<<<<<< level.cpp
-	//if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->CanBeDug())
-//=======
 	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
-//>>>>>>> 1.94
 	  Square->ChangeOLTerrainAndUpdateLights(new empty);
       }
   });
@@ -1038,8 +1044,9 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	  }
       });
 
-      game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage);
-      game::GetPlayer()->ReceiveFireDamage(Terrorist, DeathMsg, PlayerDamage);
+      game::GetPlayer()->GetStack()->ReceiveDamage(Terrorist, PlayerDamage, FIRE);
+      //game::GetPlayer()->ReceiveFireDamage(Terrorist, DeathMsg, PlayerDamage);
+      game::GetPlayer()->ReceiveDamage(Terrorist, PlayerDamage, FIRE, ALL);
       //game::GetPlayer()->CheckGearExistence();
       game::GetPlayer()->CheckDeath(DeathMsg);
     }

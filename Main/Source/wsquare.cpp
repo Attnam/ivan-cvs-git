@@ -59,8 +59,8 @@ void wsquare::UpdateMemorized()
 
       DrawTerrain();
 
-      igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
-      igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
+      igraph::GetTileBuffer()->Blit(GetMemorized(), Luminance);
+      igraph::GetFOWGraphic()->MaskedBlit(GetMemorized());
 
       MemorizedUpdateRequested = false;
     }
@@ -70,30 +70,30 @@ void wsquare::Draw()
 {
   if(NewDrawRequested)
     {
-      vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
+      vector2d BitPos = game::CalculateScreenCoordinates(GetPos());
 
       ushort Luminance = 256 - ushort(75.0f * log(1.0f + fabs(GetWorldMapUnder()->GetAltitude(Pos)) / 500.0f));
       ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
 
       DrawTerrain();
 
-      igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
+      igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), Luminance);
 
       if(!configuration::GetOutlineCharacters())
 	{
 	  DrawCharacters();
-	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	}
       else
 	{
-	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+	  igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 
 	  if(GetCharacter())
 	    {
-	      igraph::GetTileBuffer()->Fill(0xF81F);
+	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 	      DrawCharacters();
 	      igraph::GetTileBuffer()->Outline(configuration::GetCharacterOutlineColor());
-	      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+	      igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos, 16, 16, ContrastLuminance);
 	    }
 	}
 

@@ -156,9 +156,9 @@ Mirages.
 Mirrors.
 Breaking LTerrain in two parts.
 Worldmap LOS disabling.
-Symbolic inventory.
-Symbolic god menu.
-Lists, especially message history, should look better.
+//Symbolic inventory.
+//Symbolic god menu.
+//Lists, especially message history, should look better.
 *Hunters must be one-armed.
 Something special should happen if the player is polymorphed into a chicken and loses his head.
 Allergies.
@@ -227,3 +227,6 @@ Aliases for wishing.
 Dipping to oceans.
 If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
 Moving diagonally should use sqrt(2) times more AP.
+Msghistory length to conf.
+Opening a can should be more difficult with less hands.
+Fly function for character!

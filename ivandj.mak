@@ -21,11 +21,12 @@ IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source
            $(IVANDIR)/Source/message.o $(IVANDIR)/Source/object.o $(IVANDIR)/Source/pool.o\
            $(IVANDIR)/Source/proto.o $(IVANDIR)/Source/roomba.o  $(IVANDIR)/Source/roomde.o\
            $(IVANDIR)/Source/script.o $(IVANDIR)/Source/square.o $(IVANDIR)/Source/stack.o\
-           $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/type.o $(IVANDIR)/Source/worldmap.o\
+           $(IVANDIR)/Source/wsquare.o $(IVANDIR)/Source/worldmap.o\
            $(IVANDIR)/Source/wskill.o $(IVANDIR)/Source/wterraba.o $(IVANDIR)/Source/wterrade.o\
            $(IVANDIR)/Source/config.o $(IVANDIR)/Source/terra.o $(IVANDIR)/Source/entity.o\
            $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/unit.o $(IVANDIR)/Source/igraph.o\
-           $(IVANDIR)/Source/identity.o $(IVANDIR)/Source/slot.o
+           $(IVANDIR)/Source/id.o $(IVANDIR)/Source/slot.o $(IVANDIR)/Source/actionba.o\
+           $(IVANDIR)/Source/actionde.o
 FLAGS = -IInclude -I$(FeLibDIR)/Include -s -O3 -ffast-math -W -Wall
 LIBS = -lstdcxx
 

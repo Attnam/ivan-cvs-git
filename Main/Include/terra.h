@@ -5,7 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "type.h"
+#include <string>
+
+#include "typedef.h"
 
 class outputfile;
 class inputfile;

@@ -42,13 +42,31 @@ class stack;
 class outputfile;
 class inputfile;
 class slot;
+class item;
+
+class item_prototype
+{
+ public:
+  virtual item* Clone(bool = true, bool = true) const = 0;
+  virtual item* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+  virtual bool PolymorphSpawnable() const = 0;
+  virtual ushort Possibility() const = 0;
+  virtual bool CanBeWished() const = 0;
+  virtual item* CreateWishedItem() const = 0;
+  virtual bool AutoInitializable() const = 0;
+ protected:
+  ushort Index;
+};
 
 /* Presentation of the item class */
 
 class item : public object
 {
  public:
-  item(bool, bool, bool = true);
+  typedef item_prototype prototype;
+  item(bool, bool);
   virtual float GetWeaponStrength() const;
   virtual void DrawToTileBuffer() const;
   virtual void DrawToTileBuffer(vector2d Pos) const;
@@ -56,9 +74,7 @@ class item : public object
   virtual ushort GetEmitation() const;
   virtual vector2d GetInHandsPic() const { return vector2d(0,0); }
   virtual item* TryToOpen(character*) { return 0; }
-  virtual ulong GetWeight() const;
   virtual bool Consume(character*, float);
-  //virtual ushort GetArmorValue() const { return 100; }
   virtual bool IsHeadOfElpuri() const { return false; }
   virtual bool IsPetrussNut() const { return false; }
   virtual bool IsGoldenEagleShirt() const { return false; }
@@ -68,31 +84,26 @@ class item : public object
   virtual void DipInto(material*, character*) { }
   virtual material* CreateDipMaterial() { return 0; }
   virtual bool CanBeWorn() const { return false; }
-  //virtual bool Consumable(character*) const;
   virtual item* BetterVersion() const { return 0; }
-  virtual bool ImpactDamage(ushort) { return false; }
   virtual short CalculateOfferValue(char) const;
   virtual float OfferModifier() const { return 0; }
   virtual long Score() const { return 0; }
   virtual bool Destroyable() const { return true; }
-  virtual bool Fly(uchar, ushort, stack*, bool = true);
+  virtual bool Fly(character*, uchar, ushort);
   virtual bool HitCharacter(character*, float, character*);
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual item* PrepareForConsuming(character*);
   virtual item* Clone(bool = true, bool = true) const = 0;
-  virtual ushort Possibility() const = 0;
-  virtual bool CanBeWished() const { return true; }
-  virtual item* CreateWishedItem() const;
+  static bool CanBeWished() { return true; }
+  static item* CreateWishedItem() { return 0; } // never called
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar);
   virtual bool CanBeZapped() const { return false; }
   virtual bool Polymorph(stack*);
-  virtual bool ReceiveSound(float) { return false; }
   virtual bool IsMaterialChangeable() const { return true; }
   virtual void ChangeMainMaterial(material*);
   virtual void CheckPickUpEffect(character*) { }
   virtual uchar GetWeaponCategory() const;
-  virtual bool StruckByWandOfStriking(character*, std::string);
   virtual float GetThrowGetStrengthModifier() const { return 1; }
   virtual bool UseThrowGetStrengthModifier() const { return false; }
   virtual bool GetStepOnEffect(character*) { return false; }
@@ -102,9 +113,8 @@ class item : public object
   virtual ulong ConsumeLimit() const { return GetConsumeMaterial() ? GetConsumeMaterial()->GetVolume() : 0; }
   virtual bool IsBadFoodForAI(character*) const;
   virtual std::string GetConsumeVerb() const { return std::string("eating"); }
-  virtual bool PolymorphSpawnable() const { return true; }
+  static bool PolymorphSpawnable() { return true; }
   virtual bool IsExplosive() const { return false; }
-  virtual bool ReceiveFireDamage(character*, std::string, stack*, long) { return false; }
   virtual bool CatWillCatchAndConsume() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -116,7 +126,7 @@ class item : public object
   virtual void SetID(ulong What) { ID = What; }
   virtual void Teleport();
   virtual ushort GetStrengthValue() const;
-  virtual bool AutoInitializable() const { return true; }
+  static bool AutoInitializable() { return true; }
   virtual ulong GetVolume() const;
   virtual slot* GetSlot() const { return Slot; }
   virtual void SetSlot(slot* What) { Slot = What; }
@@ -164,6 +174,20 @@ class item : public object
   virtual bool IsBoot(character*) const { return false; }
   virtual bool IsOnGround() const;
   virtual ushort GetResistance(uchar) const;
+  virtual bool GenerateLeftOvers(character*) { return true; }
+  virtual void Be();
+  virtual bool RemoveMaterial(uchar);
+  virtual ushort SoundResistance() const { return 0; }
+  virtual ushort EnergyResistance() const { return 0; }
+  virtual ushort AcidResistance() const { return 0; }
+  virtual ushort FireResistance() const { return 0; }
+  virtual ushort PoisonResistance() const { return 0; }
+  virtual ushort BulimiaResistance() const { return 0; }
+  static bool SpecialWishedItem() { return false; }
+  virtual ushort GetType() const { return Type(); }
+  virtual void SetDivineMaster(uchar) { }
+  virtual bool ReceiveDamage(character*, short, uchar) { return false; }
+  virtual void AddConsumeEndMessage(character*) const;
  protected:
   virtual ushort GetStrengthModifier() const = 0;
   virtual uchar GetGraphicsContainerIndex() const { return GRITEM; }
@@ -179,27 +203,33 @@ class item : public object
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
 
-#define ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)\
+#define ITEM_PROTOTYPE(name, base, initmaterials, setstats)\
   \
-  static class name##_protoinstaller\
+  static class name##_prototype : public item::prototype\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) { }\
-    ushort GetIndex() const { return Index; }\
-   private:\
-    ushort Index;\
-  } name##_ProtoInstaller;\
+    name##_prototype() { Index = protocontainer<item>::Add(this); }\
+    virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+    virtual item* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+    virtual std::string ClassName() const { return #name; }\
+    virtual bool PolymorphSpawnable() const { return name::PolymorphSpawnable(); }\
+    virtual ushort Possibility() const { return name::Possibility(); }\
+    virtual bool CanBeWished() const { return name::CanBeWished(); }\
+    virtual item* CreateWishedItem() const;\
+    virtual bool AutoInitializable() const { return name::AutoInitializable(); }\
+  } name##_ProtoType;\
   \
-  name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
-  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); }\
+  name::name(bool CreateMaterials, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); if(CreateMaterials) initmaterials ; }\
+  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { if(SetStats) SetDefaultStats(); initmaterials ; SetMaterial(0, FirstMaterial); }\
   void name::SetDefaultStats() { setstats }\
-  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-  const item* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
-  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
+  const item::prototype* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoType.GetIndex(); }\
+  item* name##_prototype::CreateWishedItem() const { if(!name::SpecialWishedItem()) return Clone(); else return name::CreateWishedItem(); }
 
 #else
 
-#define ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)
+#define ITEM_PROTOTYPE(name, base, initmaterials, setstats)
 
 #endif
 
@@ -208,29 +238,28 @@ class item : public object
 name : public base\
 {\
  public:\
-  name(bool = true, bool = true, bool = true);\
+  name(bool = true, bool = true);\
   name(material*, bool = true);\
   virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
   static ushort StaticType();\
-  static const item* const GetPrototype();\
-  virtual std::string ClassName() const { return #name; }\
+  static const item::prototype* const GetPrototype();\
  protected:\
   virtual void SetDefaultStats();\
   virtual ushort Type() const;\
   data\
-}; ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)
+}; ITEM_PROTOTYPE(name, base, initmaterials, setstats)
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
 name : public base\
 {\
  public:\
-  name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) { }\
+  name(bool CreateMaterials, bool SetStats) : base(CreateMaterials, SetStats) { }\
   data\
 };
 
 #endif
+
 
 
 

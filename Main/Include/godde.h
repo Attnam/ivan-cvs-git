@@ -6,6 +6,7 @@
 #endif
 
 #include "godba.h"
+#include "graphics.h"
 
 class GOD
 (
@@ -17,7 +18,8 @@ class GOD
   virtual uchar Alignment() const { return ALPP; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return GOOD; }
-  virtual void AddPriestMessage() const;
+  virtual std::string GetPriestMessage() const;
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -32,7 +34,8 @@ class GOD
   virtual std::string Description() const { return "god of paladins and holy fire"; }
   virtual uchar Alignment() const { return ALP; }
   virtual uchar BasicAlignment() const { return GOOD; }
-  virtual void AddPriestMessage() const;
+  virtual std::string GetPriestMessage() const;
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -48,6 +51,7 @@ class GOD
   virtual uchar Alignment() const { return ALP; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return GOOD; }
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -62,13 +66,14 @@ class GOD
   virtual std::string Description() const { return "goddess of music"; }
   virtual uchar Alignment() const { return AL; }
   virtual uchar BasicAlignment() const { return GOOD; }
-  virtual void AddPriestMessage() const;
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
+  virtual std::string GetPriestMessage() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
 );
 
-class GOD
+/*class GOD
 (
   inasnum,
   god,
@@ -80,7 +85,7 @@ class GOD
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-);
+);*/
 
 class GOD
 (
@@ -91,7 +96,8 @@ class GOD
   virtual std::string Description() const { return "goddess of health and nutrition"; }
   virtual uchar Alignment() const { return AL; }
   virtual uchar BasicAlignment() const { return GOOD; }
-  virtual void AddPriestMessage() const;
+  virtual std::string GetPriestMessage() const;
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -106,7 +112,8 @@ class GOD
   virtual std::string Description() const { return "god of knowledge, wisdom and understanding"; }
   virtual uchar Alignment() const { return ALM; }
   virtual uchar BasicAlignment() const { return GOOD; }
-  virtual void AddPriestMessage() const;
+  virtual std::string GetPriestMessage() const;
+  virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -121,6 +128,7 @@ class GOD
   virtual std::string Description() const { return "goddess of nature"; }
   virtual uchar Alignment() const { return ANP; }
   virtual uchar BasicAlignment() const { return NEUTRAL; }
+  virtual ushort GetColor() const { return MAKE_RGB(20, 120, 200); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -135,6 +143,7 @@ class GOD
   virtual std::string Description() const { return "god of fire, machines and weaponry"; }
   virtual uchar Alignment() const { return AN; }
   virtual uchar BasicAlignment() const { return NEUTRAL; }
+  virtual ushort GetColor() const { return MAKE_RGB(20, 120, 200); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -149,6 +158,7 @@ class GOD
   virtual std::string Description() const { return "god of money, trade and politics"; }
   virtual uchar Alignment() const { return ANM; }
   virtual uchar BasicAlignment() const { return NEUTRAL; }
+  virtual ushort GetColor() const { return MAKE_RGB(20, 120, 200); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -163,12 +173,13 @@ class GOD
   virtual std::string Description() const { return "god of assassins and thieves"; }
   virtual uchar Alignment() const { return ACP; }
   virtual uchar BasicAlignment() const { return EVIL; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
 );
 
-class GOD
+/*class GOD
 (
   pestifer,
   god,
@@ -180,7 +191,7 @@ class GOD
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
-);
+);*/
 
 class GOD
 (
@@ -191,6 +202,7 @@ class GOD
   virtual std::string Description() const { return "god of greed and forbidden pleasures"; }
   virtual uchar Alignment() const { return AC; }
   virtual uchar BasicAlignment() const { return EVIL; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -206,6 +218,7 @@ class GOD
   virtual uchar Alignment() const { return AC; }
   virtual uchar BasicAlignment() const { return EVIL; }
   virtual void PlayerVomitedOnAltar();
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -220,6 +233,7 @@ class GOD
   virtual std::string Description() const { return "goddess of wrong knowledge and vile magic"; }
   virtual uchar Alignment() const { return ACM; }
   virtual uchar BasicAlignment() const { return EVIL; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -235,6 +249,7 @@ class GOD
   virtual uchar Alignment() const { return ACM; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return EVIL; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -250,6 +265,7 @@ class GOD
   virtual uchar Alignment() const { return ACMM; }
   virtual void Pray();
   virtual uchar BasicAlignment() const { return EVIL; }
+  virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();

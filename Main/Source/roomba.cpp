@@ -12,15 +12,12 @@ room::room(bool SetStats) : Master(0)
 
 void room::Save(outputfile& SaveFile) const
 {
-  type::Save(SaveFile);
-
+  SaveFile << Type();
   SaveFile << Pos << Size << Door << Index << DivineOwner;
 }
 
 void room::Load(inputfile& SaveFile)
 {
-  type::Load(SaveFile);
-
   SaveFile >> Pos >> Size >> Door >> Index >> DivineOwner;
 }
 
@@ -29,21 +26,16 @@ void room::HandleInstantiatedOLTerrain(olterrain* Terrain)
   if(Terrain->IsDoor())
     Door.push_back(Terrain->GetPos());
 
-  if(Terrain->GetType() == altar::StaticType())
-    ((altar*)Terrain)->SetOwnerGod(DivineOwner);
+  if(DivineOwner)
+    Terrain->SetDivineMaster(DivineOwner);
 }
 
 void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
 
-  /* This is a highly temporary gum solution... Which most likely will be forgotten here. */
-
-  if(Character->GetType() == kamikazedwarf::StaticType())
-    {
-      ((kamikazedwarf*)Character)->SetMaster(DivineOwner);
-      ((holybook*)Character->GetMainWielded())->SetOwnerGod(DivineOwner);
-    }
+  if(DivineOwner)
+    Character->SetDivineMaster(DivineOwner);
 }
 
 

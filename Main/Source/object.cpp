@@ -5,10 +5,6 @@
 #include "game.h"
 #include "godba.h"
 
-object::object(bool AddToPool, bool HasBe) : unit(AddToPool, HasBe)
-{
-}
-
 object::~object()
 {
   igraph::RemoveUser(GraphicId);
@@ -16,26 +12,21 @@ object::~object()
 
 void object::Save(outputfile& SaveFile) const
 {
-  type::Save(SaveFile);
+  SaveFile << Type();
   unit::Save(SaveFile);
-
   SaveFile << GraphicId;
 }
 
 void object::Load(inputfile& SaveFile)
 {
-  type::Load(SaveFile);
   unit::Load(SaveFile);
-
   SaveFile >> GraphicId;
-
   Picture = igraph::AddUser(GraphicId).Bitmap;
 }
 
 void object::InitMaterials(ushort Materials, ...)
 {
   va_list AP;
-
   va_start(AP, Materials);
 
   for(ushort c = 0; c < Materials; ++c)
@@ -45,6 +36,9 @@ void object::InitMaterials(ushort Materials, ...)
 
       if(Material[c])
 	{
+	  if(Material[c]->HasBe())
+	    SetHasBe(true);
+
 	  Material[c]->SetMotherEntity(this);
 
 	  if(!Material[c]->GetVolume())
@@ -53,7 +47,6 @@ void object::InitMaterials(ushort Materials, ...)
     }
 
   va_end(AP);
-
   UpdatePicture(false);
 }
 
@@ -64,6 +57,9 @@ void object::InitMaterials(material* FirstMaterial)
 
   if(Material[0])
     {
+      if(Material[0]->HasBe())
+	SetHasBe(true);
+
       Material[0]->SetMotherEntity(this);
 
       if(!Material[0]->GetVolume())
@@ -81,14 +77,32 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
       PreserveBit.resize(Index + 1, false);
     }
 
-  if((Material[Index] = NewMaterial))
-    {
-      Material[Index]->SetMotherEntity(this);
+  if((!Material[Index] || !Material[Index]->HasBe()) && NewMaterial && NewMaterial->HasBe())
+    SetHasBe(true);
 
-      if(!Material[Index]->GetVolume())
-	Material[Index]->SetVolume(GetDefaultVolume(Index));
+  if(Material[Index] && Material[Index]->HasBe() && (!NewMaterial || !NewMaterial->HasBe()))
+    {
+      bool HasBe = false;
+
+      for(ushort c = 0; c < Material.size(); ++c)
+	if(c != Index && Material[c] && Material[c]->HasBe())
+	  {
+	    HasBe = true;
+	    break;
+	  }
+
+      SetHasBe(HasBe);
     }
 
+  if(NewMaterial)
+    {
+      NewMaterial->SetMotherEntity(this);
+
+      if(!NewMaterial->GetVolume())
+	NewMaterial->SetVolume(GetDefaultVolume(Index));
+    }
+
+  Material[Index] = NewMaterial;
   UpdatePicture();
 }
 
@@ -164,4 +178,15 @@ std::string object::ContainerPostFix() const
 std::string object::LumpyPostFix() const
 {
   return "of " + GetMainMaterial()->Name();
+}
+
+ulong object::GetWeight() const
+{
+  ulong TotalWeight = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      TotalWeight += GetMaterial(c)->GetWeight();
+
+  return TotalWeight;
 }

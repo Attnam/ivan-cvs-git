@@ -5,14 +5,30 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "typedef.h"
-#include "type.h"
 
 class character;
+class action;
+class outputfile;
+class inputfile;
 
-class action : public type
+class action_prototype
 {
  public:
+  virtual action* Clone() const = 0;
+  virtual action* CloneAndLoad(inputfile&) const = 0;
+  virtual std::string ClassName() const = 0;
+  ushort GetIndex() const { return Index; }
+ protected:
+  ushort Index;
+};
+
+class action
+{
+ public:
+  typedef action_prototype prototype;
   action(character* Actor) : Actor(Actor) { }
   virtual void Handle() = 0;
   virtual void Terminate(bool);
@@ -22,31 +38,36 @@ class action : public type
   virtual bool AllowFaint() const { return true; }
   virtual bool AllowFoodConsumption() const { return true; }
   virtual bool AllowDisplace() const { return true; }
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&) { }
+  virtual bool GetRestRegenerationBonus() const { return false; }
+  virtual ulong GetWeight() const { return 0; }
  protected:
+  virtual ushort Type() const = 0;
   character* Actor;
 };
 
 #ifdef __FILE_OF_STATIC_ACTION_PROTOTYPE_DECLARATIONS__
 
-#define ACTION_PROTOINSTALLER(name, base, setstats)\
+#define ACTION_PROTOTYPE(name, base, setstats)\
   \
-  static class name##_protoinstaller\
+  static class name##_prototype : public action::prototype\
   {\
    public:\
-    name##_protoinstaller() : Index(protocontainer<action>::Add(new name)) { }\
-    ushort GetIndex() const { return Index; }\
-   private:\
-    ushort Index;\
-  } name##_ProtoInstaller;\
+    name##_prototype() { Index = protocontainer<action>::Add(this); }\
+    virtual action* Clone() const { return new name; }\
+    virtual action* CloneAndLoad(inputfile& SaveFile) const { action* Act = new name; Act->Load(SaveFile); return Act; }\
+    virtual std::string ClassName() const { return #name; }\
+  } name##_ProtoType;\
   \
   void name::Init() { setstats }\
-  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-  const action* const name::GetPrototype() { return protocontainer<action>::GetProto(StaticType()); }\
-  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  ushort name::StaticType() { return name##_ProtoType.GetIndex(); }\
+  const action::prototype* const name::GetPrototype() { return &name##_ProtoType; }\
+  ushort name::Type() const { return name##_ProtoType.GetIndex(); }
 
 #else
 
-#define ACTION_PROTOINSTALLER(name, base, setstats)
+#define ACTION_PROTOTYPE(name, base, setstats)
 
 #endif
 
@@ -58,14 +79,14 @@ name : public base\
   name() : base(0) { Init(); }\
   name(character* Actor) : base(Actor) { Init(); }\
   virtual action* Clone() const { return new name; }\
-  virtual type* CloneAndLoad(inputfile& SaveFile) const { action* Act = new name; Act->Load(SaveFile); return Act; }\
   static ushort StaticType();\
-  static const action* const GetPrototype();\
-  virtual std::string ClassName() const { return #name; }\
+  static const action::prototype* const GetPrototype();\
  protected:\
   virtual void Init();\
   virtual ushort Type() const;\
   data\
-}; ACTION_PROTOINSTALLER(name, base, setstats)
+}; ACTION_PROTOTYPE(name, base, setstats)
 
 #endif
+
+

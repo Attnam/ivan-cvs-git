@@ -6,8 +6,7 @@
 #include "allocate.h"
 #include "team.h"
 #include "itemba.h"
-
-class room;
+#include "roomba.h"
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {

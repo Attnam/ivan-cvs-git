@@ -15,7 +15,7 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	{
 	  ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 
-	  const character* const Proto = protocontainer<character>::GetProto(Chosen);
+	  const character::prototype* const Proto = protocontainer<character>::GetProto(Chosen);
 
 	  if(Proto->CanBeGenerated() && Proto->Frequency() > RAND() % 10000)
 	    {
@@ -81,14 +81,20 @@ character* protosystem::CreateMonster(bool CreateItems)
 item* protosystem::CreateItem(std::string What, bool Output)
 {
   for(ushort c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-    if(protocontainer<item>::GetProto(c)->NameSingular() == What)
-      if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
-	return protocontainer<item>::GetProto(c)->CreateWishedItem();
-      else if(Output)
-	{
-	  ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-	  return 0;
-	}
+    {
+      /* "Temporary" gum solution! */
+
+      item* Temp = protocontainer<item>::GetProto(c)->Clone(false, false);
+
+      if(Temp->NameSingular() == What)
+	if(protocontainer<item>::GetProto(c)->CanBeWished() || game::GetWizardMode())
+	  return protocontainer<item>::GetProto(c)->CreateWishedItem();
+	else if(Output)
+	  {
+	    ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+	    return 0;
+	  }
+    }
 
   if(Output)
     ADD_MESSAGE("There is no such item.");
@@ -99,14 +105,20 @@ item* protosystem::CreateItem(std::string What, bool Output)
 material* protosystem::CreateMaterial(std::string What, ulong Volume, bool Output)
 {
   for(ushort c = 1; c <= protocontainer<material>::GetProtoAmount(); ++c)
-    if(protocontainer<material>::GetProto(c)->Name(UNARTICLED, false) == What)
-      if(protocontainer<material>::GetProto(c)->CanBeWished())
-	return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
-      else if(Output)
-	{
-	  ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-	  return 0;
-	}
+    {
+      /* "Temporary" gum solution! */
+
+      material* Temp = protocontainer<material>::GetProto(c)->Clone();
+
+      if(Temp->Name(UNARTICLED) == What)
+	if(protocontainer<material>::GetProto(c)->CanBeWished())
+	  return protocontainer<material>::GetProto(c)->CreateWishedMaterial(Volume);
+	else if(Output)
+	  {
+	    ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+	    return 0;
+	  }
+    }
 		
   if(Output)
     ADD_MESSAGE("There is no such material.");

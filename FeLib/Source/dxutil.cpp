@@ -14,9 +14,6 @@
 #include <stdarg.h>
 #include "DXUtil.h"
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_GetDXSDKMediaPath()
 // Desc: Returns the DirectX SDK media path
@@ -47,9 +44,6 @@ const TCHAR* DXUtil_GetDXSDKMediaPath()
 
   return strPath;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_FindMediaFile()
@@ -89,9 +83,6 @@ HRESULT DXUtil_FindMediaFile( TCHAR* strPath, TCHAR* strFilename )
   return E_FAIL;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ReadStringRegKey()
 // Desc: Helper function to read a registry key string
@@ -110,9 +101,6 @@ HRESULT DXUtil_ReadStringRegKey( HKEY hKey, TCHAR* strRegName, TCHAR* strValue,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_WriteStringRegKey()
 // Desc: Helper function to write a registry key string
@@ -127,9 +115,6 @@ HRESULT DXUtil_WriteStringRegKey( HKEY hKey, TCHAR* strRegName,
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ReadIntRegKey()
@@ -150,9 +135,6 @@ HRESULT DXUtil_ReadIntRegKey( HKEY hKey, TCHAR* strRegName, DWORD* pdwValue,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_WriteIntRegKey()
 // Desc: Helper function to write a registry key int
@@ -165,9 +147,6 @@ HRESULT DXUtil_WriteIntRegKey( HKEY hKey, TCHAR* strRegName, DWORD dwValue )
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ReadBoolRegKey()
@@ -188,9 +167,6 @@ HRESULT DXUtil_ReadBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL* pbValue,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_WriteBoolRegKey()
 // Desc: Helper function to write a registry key BOOL
@@ -203,9 +179,6 @@ HRESULT DXUtil_WriteBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL bValue )
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ReadGuidRegKey()
@@ -226,9 +199,6 @@ HRESULT DXUtil_ReadGuidRegKey( HKEY hKey, TCHAR* strRegName, GUID* pGuidValue,
   return S_OK;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_WriteGuidRegKey()
 // Desc: Helper function to write a registry key guid
@@ -241,9 +211,6 @@ HRESULT DXUtil_WriteGuidRegKey( HKEY hKey, TCHAR* strRegName, GUID guidValue )
 
   return S_OK;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_Timer()
@@ -417,9 +384,6 @@ FLOAT __stdcall DXUtil_Timer( TIMER_COMMAND command )
     }
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertAnsiStringToWide()
 // Desc: This is a UNICODE conversion utility to convert a CHAR string into a
@@ -441,9 +405,6 @@ VOID DXUtil_ConvertAnsiStringToWide( WCHAR* wstrDestination, const CHAR* strSour
   wstrDestination[cchDestChar-1] = 0;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertWideStringToAnsi()
 // Desc: This is a UNICODE conversion utility to convert a WCHAR string into a
@@ -464,9 +425,6 @@ VOID DXUtil_ConvertWideStringToAnsi( CHAR* strDestination, const WCHAR* wstrSour
 
   strDestination[cchDestChar-1] = 0;
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertGenericStringToAnsi()
@@ -490,9 +448,6 @@ VOID DXUtil_ConvertGenericStringToAnsi( CHAR* strDestination, const TCHAR* tstrS
 #endif
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertGenericStringToWide()
 // Desc: This is a UNICODE conversion utility to convert a TCHAR string into a
@@ -514,9 +469,6 @@ VOID DXUtil_ConvertGenericStringToWide( WCHAR* wstrDestination, const TCHAR* tst
   DXUtil_ConvertAnsiStringToWide( wstrDestination, tstrSource, cchDestChar );
 #endif
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertAnsiStringToGeneric()
@@ -540,9 +492,6 @@ VOID DXUtil_ConvertAnsiStringToGeneric( TCHAR* tstrDestination, const CHAR* strS
 #endif
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_ConvertAnsiStringToGeneric()
 // Desc: This is a UNICODE conversion utility to convert a WCHAR string into a
@@ -564,9 +513,6 @@ VOID DXUtil_ConvertWideStringToGeneric( TCHAR* tstrDestination, const WCHAR* wst
   DXUtil_ConvertWideStringToAnsi( tstrDestination, wstrSource, cchDestChar );
 #endif
 }
-
-
-
 
 //-----------------------------------------------------------------------------
 // Name: _DbgOut()
@@ -590,9 +536,6 @@ HRESULT _DbgOut( TCHAR* strFile, DWORD dwLine, HRESULT hr, TCHAR* strMsg )
   return hr;
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 // Name: DXUtil_Trace()
 // Desc: Outputs to the debug stream a formatted string with a variable-
@@ -613,3 +556,5 @@ VOID DXUtil_Trace( TCHAR* strMsg, ... )
 #else
 VOID DXUtil_Trace(TCHAR*, ... ) { }
 #endif
+
+

@@ -123,7 +123,7 @@ void configuration::EditContrast(char Change)
 
 void configuration::ShowConfigScreen()
 {
-  vector2d QuestionPos = game::GetRunning() ? vector2d(7, 7) : vector2d(30, 46);
+  vector2d QuestionPos = game::GetRunning() ? vector2d(16, 6) : vector2d(30, 46);
   ushort Chosen = 0;
   bool BoolChange = false;
 
@@ -140,7 +140,7 @@ void configuration::ShowConfigScreen()
       List.AddDescription("Setting                                    Value");
 
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), LIGHTGRAY);
-      List.AddEntry(std::string("AutoSave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
+      List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);

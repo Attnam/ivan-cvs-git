@@ -28,9 +28,9 @@
 
 #define PENT_WIDTH 70
 
-void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
+void iosystem::TextScreen(std::string Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
-  bitmap Buffer(XRES, YRES);
+  bitmap Buffer(RES);
   Buffer.Fill(0);
 
   ushort c, LineNumber = 0;
@@ -48,7 +48,7 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
     if(Text[c] == '\n')
       {
 	Line[c - LastBeginningOfLine] = 0;
-	FONT->Printf(&Buffer, 400 - strlen(Line) * 4, 225 - (LineNumber - Lines) * 15, Color, Line);
+	FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 3 / 8 - (LineNumber - Lines) * 15, Color, Line);
 	++Lines;
 	LastBeginningOfLine = c + 1;
       }
@@ -56,15 +56,18 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
       Line[c - LastBeginningOfLine] = Text[c];
 
   Line[c - LastBeginningOfLine] = 0;
-  FONT->Printf(&Buffer, 400 - strlen(Line) * 4, 225 - (LineNumber - Lines) * 15, Color, Line);
+  FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 3 / 8 - (LineNumber - Lines) * 15, Color, Line);
 
-  Buffer.FadeToScreen();
+  //if(BitmapEditor)
+    //BitmapEditor(&Buffer);
+
+  Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
-    GETKEY(false);
+      GETKEY(false);
 }
 
-ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
+ulong iosystem::CountChars(char cSF,std::string sSH)
 {
   ulong iReturnCounter = 0;
 
@@ -75,45 +78,26 @@ ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
   return iReturnCounter;
 }
 
-int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected, bool Pentagram) // (MENU)
+int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushort ColorSelected, ushort ColorNotSelected)
 {
   if(CountChars('\r',sMS) < 1)
     return (-1);
 
   bool bReady = false;
   ulong iSelected = 0;
-  double Rotation = 0;
+  //double Rotation = 0;
 
-  bitmap Backup(XRES, YRES);
-  DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
-  bitmap Buffer(XRES, YRES);
+  bitmap Backup(RES);
+  DOUBLEBUFFER->Blit(&Backup);
+  bitmap Buffer(RES);
 
-  uchar c = 0;
+  ushort c = 0;
+
+  BackGround->Blit(&Buffer);
 
   while(!bReady)
     {
       clock_t StartTime = clock();
-
-      if(BackGround)
-	BackGround->Blit(&Buffer, 0, 0, 0, 0, 800, 600);
-      else
-	Buffer.Fill(0);
-
-      if(Pentagram)
-	{
-	  Rotation += 0.01;
-
-	  if(Rotation > 2 * PI)
-	    Rotation -= 2 * PI;
-
-	  uchar x;
-
-	  for(x = 0; x < 10; ++x)
-	    Buffer.DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), false, true, Rotation + double(x) / 50);
-
-	  for(x = 0; x < 4; ++x)
-	    Buffer.DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
-	}
 
       std::string sCopyOfMS = Topic;
 
@@ -123,7 +107,7 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
 	{
 	  std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-	  FONT->Printf(&Buffer, 400 - (HYVINEPAGURUPRINTF.length() << 2), 310 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
+	  FONT->Printf(&Buffer, RES.X / 2 - (HYVINEPAGURUPRINTF.length() << 2), RES.Y / 2 + 10 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
 	}
 
       sCopyOfMS = sMS;
@@ -134,27 +118,33 @@ int iosystem::Menu(bitmap* BackGround, std::string Topic, std::string sMS, ushor
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 
 	  if(i == iSelected)
-	    FONT->PrintfUnshaded(&Buffer, 401 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 341 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    {
+	      FONT->PrintfUnshaded(&Buffer, RES.X / 2 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 40 - CountChars('\r', sMS) * 25 + i * 50, BLACK, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	      FONT->PrintfUnshaded(&Buffer, RES.X / 2 + 1 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 41 - CountChars('\r', sMS) * 25 + i * 50, ColorSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    }
 	  else
-	    FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 340 - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+	    FONT->Printf(&Buffer, RES.X / 2 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), RES.Y / 2 + 40 - CountChars('\r', sMS) * 25 + i * 50, ColorNotSelected, "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 	}
+
+      int k;
 
       if(c < 5)
 	{
-	  Backup.MaskedBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(255 - c * 50), 0);
-	  Buffer.AlphaBlit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES, ushort(c * 50), 0);
+	  Backup.MaskedBlit(DOUBLEBUFFER, ushort(255 - c * 50), 0);
+	  Buffer.AlphaBlit(DOUBLEBUFFER, uchar(c * 50), 0);
 	  ++c;
+	  graphics::BlitDBToScreen();
+	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+	  k = READKEY();
 	}
       else
-	Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-
-      graphics::BlitDBToScreen();
-
-      while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
-
-      int k;
+	{
+	  Buffer.Blit(DOUBLEBUFFER);
+	  graphics::BlitDBToScreen();
+	  k = GETKEY();
+	}
 		
-      switch(k = READKEY())
+      switch(k)
 	{	
 	case 0x148:
 	  if (iSelected > 0)
@@ -187,7 +177,7 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 {
   if(Fade)
     {
-      bitmap Buffer(XRES, YRES);
+      bitmap Buffer(RES);
       Buffer.Fill(0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
@@ -196,15 +186,15 @@ std::string iosystem::StringQuestion(std::string Topic, vector2d Pos, ushort Col
 
   std::string Input;
 
-  bitmap Backup(XRES, YRES);
-  DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
+  bitmap Backup(RES);
+  DOUBLEBUFFER->Blit(&Backup);
   Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);
 
   bool TooShort = false;
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+      Backup.Blit(DOUBLEBUFFER);
       FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 
@@ -252,7 +242,7 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 {
   if(Fade)
     {
-      bitmap Buffer(XRES, YRES);
+      bitmap Buffer(RES);
       Buffer.Fill(0);
       FONT->Printf(&Buffer, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(&Buffer, Pos.X, Pos.Y + 10, Color, "_");
@@ -261,13 +251,13 @@ long iosystem::NumberQuestion(std::string Topic, vector2d Pos, ushort Color, boo
 
   std::string Input;
 
-  bitmap Backup(XRES, YRES);
-  DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
+  bitmap Backup(RES);
+  DOUBLEBUFFER->Blit(&Backup);
   Backup.Fill(Pos.X, Pos.Y + 10, 9, 9, 0);
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+      Backup.Blit(DOUBLEBUFFER);
       FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, Color, "%s", Topic.c_str());
       FONT->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
       graphics::BlitDBToScreen();

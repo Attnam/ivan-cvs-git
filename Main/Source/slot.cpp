@@ -112,21 +112,33 @@ void actionslot::Init(action* Action)
 
 void stackslot::AddFriendItem(item* Item) const
 {
+  Item->RemoveFromSlot();
   GetMotherStack()->AddItem(Item);
 }
 
 void characterslot::AddFriendItem(item* Item) const
 {
-  GetMaster()->GetLSquareUnder()->GetStack()->AddItem(Item);
+  Item->RemoveFromSlot();
+
+  if(!game::GetInWilderness())
+    GetMaster()->GetLSquareUnder()->GetStack()->AddItem(Item);
+  else
+    GetMaster()->GetStack()->AddItem(Item);
 }
 
 void gearslot::AddFriendItem(item* Item) const
 {
-  GetBodyPart()->GetLSquareUnder()->GetStack()->AddItem(Item);
+  Item->RemoveFromSlot();
+
+  if(!game::GetInWilderness())
+    GetBodyPart()->GetLSquareUnder()->GetStack()->AddItem(Item);
+  else
+    GetBodyPart()->GetMaster()->GetStack()->AddItem(Item);
 }
 
 void actionslot::AddFriendItem(item* Item) const
 {
+  Item->RemoveFromSlot();
   GetAction()->GetActor()->GetStack()->AddItem(Item);
 }
 

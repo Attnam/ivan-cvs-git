@@ -342,7 +342,7 @@ Dungeon 0;
 			FloorSquare=parquet,empty;
 			GenerateDoor=false;
 			ReCalculate=false;
-			DivineOwner=17;
+			DivineOwner=15;
 			GenerateFountains=false;
 
 			Square, Pos 3,1;
@@ -856,7 +856,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,bananaflesh wall;
 			GenerateDoor=false;
-			DivineOwner=6;
+			DivineOwner=5;
 			Type=temple;
 
 			Square, Pos 0, 2;
@@ -882,7 +882,7 @@ Dungeon 1;
 			Size=5,5;
 			WallSquare=grassterrain,parchment wall;
 			GenerateDoor=false;
-			DivineOwner=7;
+			DivineOwner=6;
 			Type=temple;
 
 			Square, Pos 2, 4;

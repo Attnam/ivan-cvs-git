@@ -40,8 +40,7 @@ ushort			graphics::ScreenSelector = 0;
 #endif
 
 bitmap*			graphics::DoubleBuffer;
-ushort			graphics::XRes;
-ushort			graphics::YRes;
+vector2d		graphics::Res;
 uchar			graphics::ColorDepth;
 colorizablebitmap*	graphics::DefaultFont = 0;
 
@@ -96,7 +95,7 @@ void graphics::DeInit()
 
 #ifdef WIN32
 
-void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
+void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, vector2d NewRes, uchar NewColorDepth, bool FScreen, LPCTSTR IconName)
 {
   FullScreen = FScreen;
 
@@ -111,17 +110,15 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
   if(FullScreen)
     {
-      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, NewXRes, NewYRes, NewColorDepth)))
-	ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewXRes, NewYRes, NewColorDepth);
+      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, NewRes.X, NewRes.Y, NewColorDepth)))
+	ABORT("This system does not support %dx%dx%d in fullscreen mode!", NewRes.X, NewRes.Y, NewColorDepth);
     }
   else
-    if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewXRes, NewYRes)))
-      ABORT("This system does not support %dx%dx%d in window mode!", NewXRes, NewYRes, NewColorDepth);
+    if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, NewRes.X, NewRes.Y)))
+      ABORT("This system does not support %dx%dx%d in window mode!", NewRes.X, NewRes.Y, NewColorDepth);
 
-  DoubleBuffer = new bitmap(NewXRes, NewYRes);
-
-  XRes = NewXRes;
-  YRes = NewYRes;
+  DoubleBuffer = new bitmap(NewRes);
+  Res = NewRes;
   ColorDepth = NewColorDepth;
 
   if(!FullScreen)
@@ -143,20 +140,16 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
 #ifdef USE_SDL
 
-void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
+void graphics::SetMode(const char* Title, vector2d NewRes, uchar NewColorDepth)
 {
-  screen = SDL_SetVideoMode(NewXRes, NewYRes, NewColorDepth, SDL_SWSURFACE);
+  screen = SDL_SetVideoMode(NewRes.X, NewRes.Y, NewColorDepth, SDL_SWSURFACE);
   if ( screen == NULL ) 
     ABORT("Couldn't set video mode.");
 
   globalwindowhandler::Init(Title);
-	
-  DoubleBuffer = new bitmap(NewXRes, NewYRes);
-
-  XRes = NewXRes;
-  YRes = NewYRes;
+  DoubleBuffer = new bitmap(NewRes);
+  Res = NewRes;
   ColorDepth = NewColorDepth;
-
   globalwindowhandler::SetInitialized(true);
 }
 
@@ -179,11 +172,9 @@ void graphics::BlitDBToScreen()
 
       ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
       ulong TrueDestOffset = ulong(ddsd.lpSurface);
-      ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
-      ushort Width = XRES;
-      ushort Height = YRES;
+      ulong TrueDestXMove = ddsd.lPitch - (RES.X << 1);
 
-      BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
+      BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, RES.X, RES.Y);
 
       if(FullScreen)
 	DXDisplay->GetFrontBuffer()->Unlock(NULL);
@@ -210,17 +201,15 @@ void graphics::BlitDBToScreen()
   ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
   //ulong TrueSourceXMove = 0;
   ulong TrueDestOffset = ulong(screen->pixels);
-  ulong TrueDestXMove =  screen->pitch - (XRES << 1);
-  ushort Width = XRES;
-  ushort Height = YRES;
+  ulong TrueDestXMove =  screen->pitch - (RES.X << 1);
 
-  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
-
+  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, RES.X, RES.Y);
 
   if ( SDL_MUSTLOCK(screen) ) {
     SDL_UnlockSurface(screen);
   }
-  SDL_UpdateRect(screen, 0,0,XRES,YRES);
+
+  SDL_UpdateRect(screen, 0,0, RES.X, RES.Y);
 }
 
 #endif
@@ -270,11 +259,9 @@ HRESULT CDisplay::CreateFullScreenDisplay( HWND hWnd, DWORD dwWidth,
     return E_FAIL;
 
   m_pddsBackBuffer->AddRef();
-
   m_hWnd      = hWnd;
   m_bWindowed = FALSE;
   UpdateBounds();
-
   DWORD dwStyle = GetWindowLong( hWnd, GWL_STYLE );
   dwStyle |= WS_POPUP;
   dwStyle &= ~(WS_THICKFRAME | WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
@@ -312,7 +299,7 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
   SetWindowLong( hWnd, GWL_STYLE, dwStyle );
 
   // Set window size
-  SetRect( &rc, 0, 0, 800, 600 );
+  SetRect( &rc, 0, 0, dwWidth, dwHeight );
 
   AdjustWindowRectEx( &rc, GetWindowStyle(hWnd), GetMenu(hWnd) != NULL, GetWindowExStyle(hWnd) );
 
@@ -368,11 +355,9 @@ HRESULT CDisplay::CreateWindowedDisplay( HWND hWnd, DWORD dwWidth, DWORD dwHeigh
 
   // Done with clipper
   pcClipper->Release();
-
   m_hWnd      = hWnd;
   m_bWindowed = TRUE;
   UpdateBounds();
-
   return S_OK;
 }
 
@@ -402,43 +387,37 @@ void graphics::SwitchMode()
 
   if(FullScreen)
     {
-      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
-	ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+      if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, Res.X, Res.Y, ColorDepth)))
+	ABORT("This system does not support %dx%dx%d in fullscreen mode!", Res.X, Res.Y, ColorDepth);
 
       BlitDBToScreen();
-
       ShowCursor(false);
     }
   else
     {
-      if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, XRes, YRes)))
-	ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
+      if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, Res.X, Res.Y)))
+	ABORT("This system does not support %dx%dx%d in window mode!", Res.X, Res.Y, ColorDepth);
 
       BlitDBToScreen();
-
       ShowCursor(true);
-
       DDPIXELFORMAT DDPixelFormat;
       ZeroMemory(&DDPixelFormat, sizeof(DDPixelFormat));
       DDPixelFormat.dwSize = sizeof(DDPixelFormat);
-
       DXDisplay->GetBackBuffer()->GetPixelFormat(&DDPixelFormat);
 
       if(DDPixelFormat.dwRGBBitCount != ColorDepth)
 	{
 	  MessageBox(NULL, "This alpha release of IVAN supports only 16-bit color format. Change your monitor settings to it before trying to run the game in windowed mode.", "Incorrect color depth detected!", MB_OK|MB_ICONEXCLAMATION);
-
 	  FullScreen = !FullScreen;
 
 	  if(SwitchModeHandler)
 	    SwitchModeHandler();
 
 	  delete DXDisplay;
-
 	  DXDisplay = new CDisplay();
 
-	  if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
-	    ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
+	  if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, Res.X, Res.Y, ColorDepth)))
+	    ABORT("This system does not support %dx%dx%d in fullscreen mode!", Res.X, Res.Y, ColorDepth);
 
 	  ShowCursor(false);
 	}
@@ -471,30 +450,20 @@ void graphics::SetMode(ushort Mode)
     ABORT("Mode 0x%X not supported!", Mode);
 
   __dpmi_regs Regs;
-
   Regs.x.ax = 0x4F02;
   Regs.x.bx = Mode | 0x4000;
-
   __dpmi_int(0x10, &Regs);
-
-  XRes =		ModeInfo.Width;
-  YRes =		ModeInfo.Height;
-  BufferSize =	YRes * ModeInfo.BytesPerLine;
-
+  Res.X =		ModeInfo.Width;
+  Res.Y =		ModeInfo.Height;
+  BufferSize =	Res.Y * ModeInfo.BytesPerLine;
   delete DoubleBuffer;
-
-  DoubleBuffer = new bitmap(XRes, YRes);
-
+  DoubleBuffer = new bitmap(Res);
   __dpmi_meminfo MemoryInfo;
-
   MemoryInfo.size = BufferSize;
   MemoryInfo.address = ModeInfo.PhysicalLFBAddress;
-
   __dpmi_physical_address_mapping(&MemoryInfo);
   __dpmi_lock_linear_region(&MemoryInfo);
-
   ScreenSelector = __dpmi_allocate_ldt_descriptors(1);
-
   __dpmi_set_segment_base_address(ScreenSelector, MemoryInfo.address);
   __dpmi_set_segment_limit(ScreenSelector, BufferSize - 1);
 }
@@ -504,42 +473,30 @@ void graphics::BlitDBToScreen()
   ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
   ulong TrueDestOffset = 0;
   ulong TrueDestXMove = 0;
-  ushort Width = XRES;
-  ushort Height = YRES;
-
-  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, Width, Height);
+  BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, RES.X, RES.Y);
 }
 
 void graphics::vesainfo::Retrieve()
 {
   Signature = 0x32454256;
-
   dosmemput(this, sizeof(vesainfo), __tb);
-
   __dpmi_regs Regs;
-
   Regs.x.ax = 0x4F00;
   Regs.x.di =  __tb       & 0x000F;
   Regs.x.es = (__tb >> 4) & 0xFFFF;
-
   __dpmi_int(0x10, &Regs);
-
   dosmemget(__tb, sizeof(vesainfo), this);
 }
 
 void graphics::modeinfo::Retrieve(ushort Mode)
 {
   __dpmi_regs Regs;
-
   Regs.x.ax = 0x4F01;
   Regs.x.cx = Mode;
   Regs.x.di =  __tb       & 0x000F;
   Regs.x.es = (__tb >> 4) & 0xFFFF;
-
   dosmemput(this, sizeof(modeinfo), __tb);
-
   __dpmi_int(0x10, &Regs);
-
   dosmemget(__tb, sizeof(modeinfo), this);
 }
 

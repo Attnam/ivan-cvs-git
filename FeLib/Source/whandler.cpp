@@ -176,7 +176,10 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	    DispatchMessage(&msg);
 	  }
       else
-	WaitMessage();
+	{
+	  WaitMessage();
+	  //Sleep(40);
+	}
 }
 
 void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title, LPCTSTR IconName)

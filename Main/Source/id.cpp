@@ -10,9 +10,9 @@ std::string id::NameSingular(bool Articled) const
     return NameSingular();
 }
 
-std::string id::OwnerGodDescription(uchar OwnerGod) const
+std::string id::DivineMasterDescription(uchar DivineMaster) const
 {
-  return std::string("of ") + game::GetGod(OwnerGod)->Name();
+  return std::string("of ") + game::GetGod(DivineMaster)->Name();
 }
 
 std::string id::Name(uchar Case) const

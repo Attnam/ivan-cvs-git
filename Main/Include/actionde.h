@@ -34,6 +34,7 @@ class ACTION
   action,
   {
     Consuming.Init(this);
+    SetHasEaten(false);
   },
  public:
   virtual void Save(outputfile&) const;
@@ -44,11 +45,15 @@ class ACTION
   virtual void SetConsuming(item*);
   virtual bool GetWasOnGround() const { return WasOnGround; }
   virtual void SetWasOnGround(bool What) { WasOnGround = What; }
+  virtual bool GetHasEaten() const { return HasEaten; }
+  virtual void SetHasEaten(bool What) { HasEaten = What; }
   virtual bool AllowFaint() const { return false; }
   virtual bool AllowFoodConsumption() const { return false; }
+  virtual ulong GetWeight() const;
  protected:
   actionslot Consuming;
   bool WasOnGround;
+  bool HasEaten;
 );
 
 class ACTION
@@ -64,6 +69,7 @@ class ACTION
   virtual short GetGoalHP() const { return GoalHP; }
   virtual void SetGoalHP(short What) { GoalHP = What; }
   virtual void Terminate(bool);
+  virtual bool GetRestRegenerationBonus() const { return true; }
  protected:
   short GoalHP;
 );
@@ -88,6 +94,7 @@ class ACTION
   virtual item* GetLeftBackup() const;
   virtual void SetLeftBackup(item*);
   virtual bool AllowDisplace() const { return false; }
+  virtual ulong GetWeight() const;
  protected:
   actionslot RightBackup;
   actionslot LeftBackup;
