@@ -459,10 +459,7 @@ void game::DrawEverything()
 
 bool game::OnScreen(vector2d Pos)
 {
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize())
-    return true;
-  else
-    return false;
+  return Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize();
 }
 
 void game::DrawEverythingNoBlit(bool AnimationDraw)
@@ -1115,7 +1112,7 @@ void game::BusyAnimation(bitmap* Buffer)
   static ushort Frame = 0;
   static vector2d Pos((RES_X >> 1) - 100, (RES_Y << 1) / 3 - 100);
 
-  if((clock() - LastTime) << 5 > CLOCKS_PER_SEC)
+  if(clock() - LastTime > CLOCKS_PER_SEC >> 5)
     {
       BusyAnimationCache[Frame]->Blit(Buffer, 0, 0, Pos, 200, 200);
 

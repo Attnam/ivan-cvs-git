@@ -86,7 +86,10 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
 	  clock_t StartTime = clock();
 	  Pos += DirVector;
 	  MoveTo(JustHit->GetStack());
-	  game::DrawEverything();
+	  bool Draw = game::OnScreen(JustHit->GetPos()) && JustHit->CanBeSeenByPlayer();
+
+	  if(Draw)
+	    game::DrawEverything();
 
 	  if(JustHit->GetCharacter())
 	    {
@@ -101,7 +104,8 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
 		break;
 	    }
 
-	  while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+	  if(Draw)
+	    while(clock() - StartTime < 0.03f * CLOCKS_PER_SEC);
 	}
     }
 

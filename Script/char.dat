@@ -349,6 +349,7 @@ guard
 		BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 		RightWielded = STEEL STEEL meleeweapon(LONG_SWORD) { Enchantment = 1; }
 		LeftWielded = STEEL shield { Enchantment = 1; }
+		RightRing = ring(RING_OF_INFRA_VISION) { Chance = 50; }
 		Adjective = "shop";
 		CWeaponSkillHits = { 2, 200, 200; }
 		RightSWeaponSkillHits = 200;
@@ -696,7 +697,7 @@ darkknight
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Golgor Dhan";
-		DangerModifier = 1500;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -1008,7 +1009,7 @@ skeleton
 		NameSingular = "skeleton warlord";
 		IsUnique = true;
 		DefaultName = "Xinroch";
-		DangerModifier = 1500;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1114,7 +1115,7 @@ goblin
 		NameSingular = "goblin king";
 		IsUnique = true;
 		DefaultName = "Guugzamesh";
-		DangerModifier = 2000;
+		DangerModifier = 2500;
 		IsNameable = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
@@ -1220,8 +1221,9 @@ golem
 	UsesNutrition = false;
 	AttachedGod = NONE;
 	ClassStates = GAS_IMMUNITY;
-	Frequency = 2500;
+	Frequency = 2000;
 	CanTalk = false;
+	CanRead = true;
 
 	Config VALPURIUM;
 	{
@@ -1235,7 +1237,7 @@ golem
 	Config SPIDER_SILK;
 	{
 		DefaultName = "experiment ZQ-29";
-		DangerModifier = 1500;
+		DangerModifier = 2000;
 		IsUnique = true;
 		Inventory = { 6, wand(WAND_OF_INVISIBILITY), wand(WAND_OF_TELEPORTATION), wand(WAND_OF_CLONING), scrollofchangematerial, holybook(SOPHOS), SPIDER_SILK bodyarmor(PLATE_MAIL); }
 		ClassStates = GAS_IMMUNITY|HASTE|INFRA_VISION|INVISIBLE;
@@ -2053,7 +2055,7 @@ mistress
 		IsCharmable = false;
 		IsUnique = true;
 		DefaultName = "Sherarax";
-		DangerModifier = 1000;
+		DangerModifier = 1500;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;
@@ -2210,7 +2212,7 @@ kobold
 		NameSingular = "kobold patriarch";
 		IsUnique = true;
 		DefaultName = "Rondol";
-		DangerModifier = 2500;
+		DangerModifier = 3000;
 		IsNameable = false;
 		CanBeCloned = false;
 		TotalVolume = 70000;
@@ -2819,7 +2821,7 @@ orc
 		PanicLevel = 0;
 		IsUnique = true;
 		DefaultName = "Ur-Khan";
-		DangerModifier = 1500;
+		DangerModifier = 2000;
 		IsNameable = false;
 		CanBeDisplaced = false;
 		CanBeCloned = false;

@@ -9,6 +9,13 @@ is also provided AS IS and is probably completely unreadable.
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Golems can now read
+	* Death message now shows if the player is polymorphed
+	* Flying items are no longer slowed by code if they can't be seen, which
+	  makes AI battles faster
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Ghosts with >= 100 HPs can no longer be polymorphed
 	* Carrots' weights and NP values are now more realistic
 	* Carrot flesh plate mails are no longer allowed since eating them gave 10

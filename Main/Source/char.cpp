@@ -1599,10 +1599,23 @@ bool character::CheckDeath(const festring& Msg, const character* Murderer, bool 
       if(Murderer && Murderer->IsPlayer() && GetTeam()->GetKillEvilness())
 	game::DoEvilDeed(GetTeam()->GetKillEvilness());
 
-      festring NewMsg = Msg;
+      festring NewMsg = Msg, PolyMsg;
+
+      if(GetPolymorphBackup())
+	{
+	  PolyMsg = CONST_S(" polymorphed into ");
+	  id::AddName(PolyMsg, INDEFINITE);
+	}
 
       if(GetAction())
-	NewMsg << GetAction()->GetDeathExplanation();
+	{
+	  NewMsg << GetAction()->GetDeathExplanation();
+
+	  if(!PolyMsg.IsEmpty())
+	    NewMsg << " and" << PolyMsg;
+	}
+      else if(!PolyMsg.IsEmpty())
+	NewMsg << " while" << PolyMsg;
 
       if(IsPlayer() && game::WizardModeIsActive())
 	ADD_MESSAGE("Death message: %s.", NewMsg.CStr());
@@ -5516,7 +5529,13 @@ festring character::GetKillName() const
   if(!GetPolymorphBackup())
     return GetName(INDEFINITE);
   else
-    return GetPolymorphBackup()->GetName(INDEFINITE) + " polymorphed into " + GetName(INDEFINITE);
+    {
+      festring KillName;
+      GetPolymorphBackup()->AddName(KillName, INDEFINITE);
+      KillName << " polymorphed into ";
+      id::AddName(KillName, INDEFINITE);
+      return KillName;
+    }
 }
 
 festring character::GetPanelName() const
