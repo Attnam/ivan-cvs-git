@@ -1,3 +1,16 @@
+July 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Config screen now shows "disabled" as the autosave interval if it's zero and
+	  "1 turn" if it's one (not "1 turns")
+	* LOS is now updated immediately when perception is naturally increased;
+	  previously you had to move before the sight range was increased
+	* RaiseStats and LowerStats cheats now work correctly when one is polymorphed into
+	  a nonhumanoid
+	* Fixed an AP system bug that caused the AI of stationary monsters (most Attnamians
+	  and carnivorous plants) to be run each tick instead of each turn, thus slowing
+	  down the game considerably
+	* Corrected the Great Attnamian Blitzkrieg Bug added by the last commit
+
 July 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* typeid calls replaced with GetClassId()s, thus making the script error messages of a
@@ -6,7 +19,8 @@ July 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Equipment no longer increases HP
 	* Corpses' weights now work
 	* Emitation cache system added
-	* Fixed some light system related minor problems
+	* Emitation updating is now handled correctly when items are wielded or worn
+	* Fixed some other light system related minor problems
 	* If reading is terminated because the light level drops, the game now prints a message
 	  explaining what has happened
 	* Scroll of create monster creates only one monster again (although I am not positively

@@ -20,7 +20,7 @@ Tasovaihdosten funktionaalisuuden kohotus.
 (r) Tarkkailijoiden tuhoaminen?
 //Pinon listaimplementaatio. (ja gearin iteraattoritoteutus?)
 //Dynarrayn eliminaatio.
-Osoitinluokat?
+(r) Osoitinluokat?
 //Skriptin perusdatatyyppien luokittaminen.
 Kenttänluonnin uudelleentoteuttaminen tavukarttojen ja A*:n avulla.
 (s) Aliasten klarifikaatio. (Perhana. Mitähän tällä tarkoitin?)

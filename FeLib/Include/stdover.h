@@ -46,6 +46,41 @@ inline std::string operator+ (const std::string& CppString, const ulong& Int)
   return CppString + Buffer;
 }
 
+inline std::string operator+ (const short& Int, const std::string& CppString)
+{
+  char Buffer[12];
+  sprintf(Buffer, "%d", int(Int));
+  return Buffer + CppString;
+}
+
+inline std::string operator+ (const ushort& Int, const std::string& CppString)
+{
+  char Buffer[12];
+  sprintf(Buffer, "%d", int(Int));
+  return Buffer + CppString;
+}
+
+inline std::string operator+ (const int& Int, const std::string& CppString)
+{
+  char Buffer[12];
+  sprintf(Buffer, "%d", Int);
+  return Buffer + CppString;
+}
+
+inline std::string operator+ (const long& Int, const std::string& CppString)
+{
+  char Buffer[12];
+  sprintf(Buffer, "%d", int(Int));
+  return Buffer + CppString;
+}
+
+inline std::string operator+ (const ulong& Int, const std::string& CppString)
+{
+  char Buffer[12];
+  sprintf(Buffer, "%d", int(Int));
+  return Buffer + CppString;
+}
+
 inline std::string& operator+= (std::string& CppString, const short& Int)
 {
   char Buffer[12];

@@ -141,7 +141,7 @@ void configuration::ShowConfigScreen()
 
       List.Empty();
       List.AddEntry(std::string("Player's default name:                  ") + (DefaultName.length() ? DefaultName : "-"), LIGHTGRAY);
-      List.AddEntry(std::string("Autosave interval:                      ") + AutoSaveInterval + " turns", LIGHTGRAY);
+      List.AddEntry(std::string("Autosave interval:                      ") + (AutoSaveInterval ? AutoSaveInterval + std::string(" turn") + (AutoSaveInterval != 1 ? "s" : "") : "disabled"), LIGHTGRAY);
       List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", LIGHTGRAY);
       List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutoDropLeftOvers ? "yes" : "no"), LIGHTGRAY);
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHTGRAY);

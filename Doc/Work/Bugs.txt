@@ -38,3 +38,4 @@ Skeletons are probably seen by infravision.
 Wishing for ring of teleport bugs.
 Teleportation in Attnam bugs.
 Corpse + loricatus.
+Chests and lanterns.

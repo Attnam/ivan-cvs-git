@@ -268,7 +268,7 @@ void character::Be()
 	    return;
 	}
       else
-	AP += GetStateAPGain(100);
+	EditAP(GetStateAPGain(100));
     }
 
   if(AP >= 1000)
@@ -523,7 +523,10 @@ void character::GetAICommand()
   if(CheckForDoors())
     return;
 
-  MoveRandomly();
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }
 
 bool character::MoveTowards(vector2d TPos)
@@ -1103,8 +1106,11 @@ bool character::NOP()
 {
   EditExperience(AGILITY, -10);
   EditAP(-1000);
-  EditExperience(PERCEPTION, 100000);
-  EditExperience(ENDURANCE, 100000);
+  //EditExperience(PERCEPTION, 100000);
+  //EditExperience(ENDURANCE, 100000);
+  EditAttribute(PERCEPTION, 1);
+  EditAttribute(ENDURANCE, 1);
+  EditAttribute(ARMSTRENGTH, 1);
   return true;
 }
 
@@ -1133,12 +1139,13 @@ void character::ApplyExperience()
       CalculateBodyPartMaxHPs();
     }
 
-  /* Should LOS be updated? */
-
   if(CheckForAttributeIncrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
     {
       if(IsPlayer())
-	ADD_MESSAGE("Your don't feel as guru anymore.");
+	{
+	  ADD_MESSAGE("Your don't feel as guru anymore.");
+	  game::SendLOSUpdateRequest();
+	}
     }
   else if(CheckForAttributeDecrease(BaseAttribute[PERCEPTION], BaseExperience[PERCEPTION]))
     {
@@ -1146,6 +1153,7 @@ void character::ApplyExperience()
 	{
 	  ADD_MESSAGE("You feel very guru.");
 	  game::GetGod(1)->AdjustRelation(100);
+	  game::SendLOSUpdateRequest();
 	}
     }
 
@@ -1585,17 +1593,15 @@ bool character::WhatToEngrave()
 
 bool character::MoveRandomly()
 {
-  bool OK = false;
-
-  for(ushort c = 0; c < 10 && !OK; ++c)
+  for(ushort c = 0; c < 10; ++c)
     {
-      ushort ToTry = RAND() % 8;
+      vector2d ToTry = GetPos() + game::GetMoveVector(RAND() % 8);
 
-      if(GetAreaUnder()->IsValidPos(GetPos() + game::GetMoveVector(ToTry)))
-	OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
+      if(GetLevelUnder()->IsValidPos(ToTry) && TryMove(ToTry, false))
+	return true;
     }
 
-  return OK;
+  return false;
 }
 
 bool character::TestForPickup(item* ToBeTested) const
@@ -2138,6 +2144,8 @@ void character::StandIdleAI()
 
   if(CheckForDoors())
     return;
+
+  EditAP(-1000);
 }
 
 void character::Faint()
@@ -2239,25 +2247,30 @@ bool character::CheckForEnemies(bool CheckDoors)
       return MoveTowards(NearestChar->GetPos());
     }
   else
-    if(!GetTeam()->GetLeader() && WayPoint.X != -1)
-      if(!MoveTowards(WayPoint))
+    {
+      if(!GetTeam()->GetLeader() && WayPoint.X != -1)
 	{
-	  WayPoint.X = -1;
-	  return false;
-	}
-      else
-	return true;
-    else
-      if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && WayPoint.X == -1)) && HostileCharsNear)
-	{
-	  if(CheckDoors && CheckForDoors())
+	  if(!MoveTowards(WayPoint))
+	    {
+	      WayPoint.X = -1;
+	      return false;
+	    }
+	  else
 	    return true;
-
-	  MoveRandomly(); // one has heard that an enemy is near but doesn't know where
-	  return true;
 	}
       else
-	return false;
+	{
+	  if((!GetTeam()->GetLeader() || (GetTeam()->GetLeader() && WayPoint.X == -1)) && HostileCharsNear)
+	    {
+	      if(CheckDoors && CheckForDoors())
+		return true;
+
+	      return MoveRandomly(); // one has heard that an enemy is near but doesn't know where
+	    }
+	  else
+	    return false;
+	}
+    }
 }
 
 bool character::CheckForDoors()
@@ -2590,17 +2603,15 @@ stack* character::GetGiftStack() const
 
 bool character::MoveRandomlyInRoom()
 {
-  bool OK = false;
-
-  for(ushort c = 0; c < 10 && !OK; ++c)
+  for(ushort c = 0; c < 10; ++c)
     {
       vector2d ToTry = GetPos() + game::GetMoveVector(RAND() % 8);
 
-      if(GetLevelUnder()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->GetOLTerrain()->IsDoor())
-	OK = TryMove(ToTry, false);
+      if(GetLevelUnder()->IsValidPos(ToTry) && !GetNearLSquare(ToTry)->GetOLTerrain()->IsDoor() && TryMove(ToTry, false))
+	return true;
     }
 
-  return OK;
+  return false;
 }
 
 bool character::Go()
@@ -3950,7 +3961,7 @@ bool character::CheckForAttributeDecrease(ushort& Attribute, long& Experience, b
   else
     if(Experience <= (long(Attribute) - 200) << 7)
       {
-	if(Attribute > 1)
+	if(Attribute > 2)
 	  {
 	    Attribute -= 1;
 	    Experience = 0;
@@ -3970,9 +3981,11 @@ bool character::RawEditAttribute(ushort& Attribute, short& Amount, bool DoubleAt
 
   if(Amount < 0)
     {
+      ushort Limit = DoubleAttribute ? 2 : 1;
+
       if(Attribute > 1)
 	{
-	  Attribute = Attribute > 1 - Amount ? Attribute + Amount : 1;
+	  Attribute = Attribute > Limit - Amount ? Attribute + Amount : Limit;
 	  return true;
 	}
       else
@@ -4882,7 +4895,7 @@ void character::PrintEndTeleportMessage() const
 
 void character::TeleportHandler()
 {
-  if(!(RAND() % 1500 + 100))
+  if(!(RAND() % 1500 + 100)) // What the elpuri is this? HEX! It's always false!
     TeleportRandomly();
 }
 
@@ -5054,8 +5067,8 @@ bool character::EditAttribute(ushort Identifier, short Value)
 	{
 	  if(Identifier == ENDURANCE)
 	    CalculateBodyPartMaxHPs();
-	  else if(Identifier == PERCEPTION)
-	    ;
+	  else if(Identifier == PERCEPTION && IsPlayer())
+	    game::SendLOSUpdateRequest();
 	}
 
       return true;

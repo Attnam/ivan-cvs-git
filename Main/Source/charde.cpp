@@ -215,10 +215,10 @@ bool golem::MoveRandomly()
 
 void ennerbeast::GetAICommand()
 {
+  SeekLeader();
+
   if(RAND() % 3)
     Hit(0);
-
-  SeekLeader();
 
   if(CheckForEnemies(false))
     return;
@@ -226,40 +226,34 @@ void ennerbeast::GetAICommand()
   if(FollowLeader())
     return;
 
-  MoveRandomly();
+  if(MoveRandomly())
+    return;
+
+  EditAP(-1000);
 }
 
 void petrus::GetAICommand()
 {
-  SeekLeader();
   SetHealTimer(GetHealTimer() + 1);
 
-  for(ushort d = 0; d < 8; ++d)
-    {
-      square* Square = GetNeighbourSquare(d);
+  if(GetHealTimer() > 100)
+    for(ushort d = 0; d < 8; ++d)
+      {
+	square* Square = GetNeighbourSquare(d);
 
-      if(Square)
-	{
-	  character* Char = Square->GetCharacter();
+	if(Square)
+	  {
+	    character* Char = Square->GetCharacter();
 
-	  if(Char && GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3 && GetHealTimer() > 100)
-	    {
-	      HealFully(Char);
-	      return;
-	    }
-	}
-    }
+	    if(Char && GetTeam()->GetRelation(Char->GetTeam()) == FRIEND && Char->GetHP() < Char->GetMaxHP() / 3)
+	      {
+		HealFully(Char);
+		return;
+	      }
+	  }
+      }
 
-  if(CheckForEnemies(true))
-    return;
-
-  if(CheckForUsefulItemsOnGround())
-    return;
-
-  if(FollowLeader())
-    return;
-
-  CheckForDoors();
+  StandIdleAI();
 }
 
 void petrus::HealFully(character* ToBeHealed)
@@ -1116,8 +1110,12 @@ void slave::GetAICommand()
   if(!HomeRoom || !GetLevelUnder()->GetRoom(HomeRoom)->GetMaster())
     {
       HomeRoom = 0;
-      MoveRandomly();
+
+      if(MoveRandomly())
+	return;
     }
+
+  EditAP(-1000);
 }
 
 bool elpuri::Hit(character* Enemy)
@@ -2033,6 +2031,8 @@ void carnivorousplant::GetAICommand()
 	    }
 	}
     }
+
+  EditAP(-1000);
 }
 
 vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
@@ -2873,15 +2873,15 @@ void nonhumanoid::EditExperience(ushort Identifier, long Value)
 
 bool nonhumanoid::RaiseStats()
 {
-  Strength += 10;
-  Agility += 10;
+  Strength += 20;
+  Agility += 20;
   return character::RaiseStats();
 }
 
 bool nonhumanoid::LowerStats()
 {
-  Strength -= 10;
-  Agility -= 10;
+  Strength -= 20;
+  Agility -= 20;
   return character::LowerStats();
 }
 

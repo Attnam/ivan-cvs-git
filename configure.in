@@ -2,7 +2,7 @@ AC_INIT(Main/Source/area.cpp)
 
 #AM_PROG_AS Doesn't seem to work anymore!
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE(ivan,0.311)
+AM_INIT_AUTOMAKE(ivan,0.40)
 AC_PROG_CC
 
 AC_PROG_CXX
