@@ -2,7 +2,7 @@
 name	version		date	      release	lang	ports		files	 lines	  bytes		files	lines	  bytes		files	  bytes
 RL	prod. began 	08.04.1999
 RL	last build	04.05.1999	N	C	DOS		   28	  1262	  26188		    3	 7385	  22157		    0	      0
-RL2	last build	27.07.1999	N	C	DOS		    ?	     ?	      ?		    ?	    ?	      ?		    ?	      ?
+RL2	last build	27.07.1999	N	C	DOS		    ?	     ?	      ?		    ?	    ?	      ?		    0	      0
 RL3	last build	28.07.1999	N	C	DOS		    6	  1424	  24899		    2	 3703	  11111		    0	      0
 RLPMM	0.100 alpha	10.12.1999	N	C	DOS		   25	  3261	  78122		    0	    0	      0		    0	      0
 RLPMM	0.190 alpha	24.12.1999	N	C	DOS		   29	  4070	  96149		    0	    0	      0		    1	   2950

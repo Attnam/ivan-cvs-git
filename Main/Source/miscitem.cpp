@@ -777,6 +777,7 @@ truth whistle::Apply(character* Whistler)
     ADD_MESSAGE("You must have a head to do this.");
     return false;
   }
+
   BlowEffect(Whistler);
   Whistler->EditAP(-1000);
   return true;

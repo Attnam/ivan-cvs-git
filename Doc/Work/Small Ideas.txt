@@ -551,5 +551,7 @@ Priest should perhaps be able to remove parasites.
 //There shouldn't be doors in UT4. It is a natural cave.
 It should be possible to name individual items.
 You should be able to change level anywhere if WalkThroughWalls cheat is on.
+Getting hit in the head should sometimes cause the player to forget a god's praying rituals.
 Using teleport control / polymorph control should train either intelligence or willpower.
 Bears shouldn't attack you if you play dead.
+Reading should be faster in Sophos's altar rooms.
