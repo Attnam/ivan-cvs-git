@@ -104,6 +104,7 @@ public:
 	virtual bool SeeWholeMap();
 	virtual bool ShowInventory();
 	virtual bool ShowKeyLayout();
+	virtual bool ShowWeaponSkills();// { return DrawWeaponSkillList(); }
 	virtual bool Talk();
 	virtual bool Throw();
 	virtual bool WalkThroughWalls();
@@ -111,6 +112,7 @@ public:
 	virtual bool WhatToEngrave();
 	virtual bool Wield();
 	virtual bool WizardMode();
+	//virtual bool DrawWeaponSkillList();
 	virtual long AddScoreEntry(std::string, float = 1) const;
 	virtual long Score() const;
 	virtual float GetAttackStrength() const;
@@ -202,6 +204,7 @@ public:
 	virtual void SoldierAICommand();
 	virtual void VirtualConstructor() {}
 	virtual ushort GetSpeed() const;
+	virtual void CharacterSpeciality() {}
 protected:
 	virtual void CreateCorpse();
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }

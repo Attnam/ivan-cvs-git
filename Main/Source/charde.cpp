@@ -14,6 +14,8 @@
 #include "god.h"
 #include "feio.h"
 #include "wskill.h"
+#include "felist.h"
+#include "strover.h"
 
 void humanoid::VirtualConstructor()
 {
@@ -286,6 +288,9 @@ void humanoid::Save(outputfile& SaveFile) const
 	ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
 	SaveFile << Index << ArmType << HeadType << LegType << TorsoType;
+
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		SaveFile << GetWeaponSkill(c);
 }
 
 void humanoid::Load(inputfile& SaveFile)
@@ -297,6 +302,9 @@ void humanoid::Load(inputfile& SaveFile)
 	SaveFile >> Index >> ArmType >> HeadType >> LegType >> TorsoType;
 
 	Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
+
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		SaveFile >> GetWeaponSkill(c);
 }
 
 float golem::GetMeleeStrength() const
@@ -535,7 +543,7 @@ bool humanoid::Hit(character* Enemy)
 			GetWielded()->ReceiveHitEffect(Enemy, this);
 	case HAS_DIED:
 		SetStrengthExperience(GetStrengthExperience() + 50);
-		GetWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit();
+		GetWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit(GetIsPlayer());
 	case HAS_DODGED:
 		SetAgilityExperience(GetAgilityExperience() + 25);
 	}
@@ -543,4 +551,41 @@ bool humanoid::Hit(character* Enemy)
 	SetNP(GetNP() - 4);
 
 	return true;
+}
+
+void humanoid::CharacterSpeciality()
+{
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+		GetWeaponSkill(c)->Turn(GetIsPlayer());
+}
+
+bool humanoid::ShowWeaponSkills()
+{
+	felist List("Current Weapon Skills");
+
+	List.AddDescription("");
+	List.AddDescription("Skill Name          Level     Points    To Next Level");
+
+	for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
+	{
+		std::string Buffer;
+
+		Buffer += GetWeaponSkill(c)->Name();
+		Buffer.resize(20, ' ');
+
+		Buffer += GetWeaponSkill(c)->GetLevel();
+		Buffer.resize(30, ' ');
+
+		Buffer += int(GetWeaponSkill(c)->GetHits());
+		Buffer.resize(40, ' ');
+
+		if(GetWeaponSkill(c)->GetLevel() != 10)
+			List.AddString(Buffer + (GetWeaponSkill(c)->GetLevelMap(GetWeaponSkill(c)->GetLevel() + 1) - GetWeaponSkill(c)->GetHits()));
+		else
+			List.AddString(Buffer + '-');
+	}
+
+	List.Draw(FONTW, FONTR, false);
+
+	return false;
 }

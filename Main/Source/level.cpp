@@ -532,7 +532,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		Door.Add(vector2d(XPos, YPos));
 
-		if(*RoomScript->GetGenerateTunnel())
+		if(!*RoomScript->GetGenerateTunnel())
 		{
 			Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
 			Map[XPos][YPos]->Clean();

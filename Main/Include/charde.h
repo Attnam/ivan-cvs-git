@@ -38,6 +38,9 @@ public:
 	virtual float GetAttackStrength() const;
 	virtual bool Hit(character*);
 	virtual weaponskill* GetWeaponSkill(uchar Index) const { return WeaponSkill[Index]; }
+	virtual void CharacterSpeciality();
+	//virtual bool DrawWeaponSkillList();
+	virtual bool ShowWeaponSkills();
 protected:
 	virtual vector2d GetBitmapPos() const RETV(0,0)
 	virtual float GetMeleeStrength() const RET(2000)

@@ -19,3 +19,5 @@ Ligths should be updated when terrain changes.
 Material volume is undefined in 
 The door material bug.
 "What direction do you wish to dig?" question stays on screen until save / load or quit.
+Messagebuffer is resized from the wrong direction.
+Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.

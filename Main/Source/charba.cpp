@@ -238,6 +238,7 @@ void character::Be()
 					game::Save(game::GetAutoSaveFileName().c_str());
 					Timer = 0;
 				}
+				CharacterSpeciality();
 				GetPlayerCommand();
 				Hunger();
 				Regenerate();
@@ -2288,4 +2289,11 @@ void character::SoldierAICommand()
 ushort character::GetSpeed() const
 {
 	return GetWielded() ? ushort(sqrt((ulong(GetAgility() << 2) + GetStrength()) * 20000 / Wielded->GetWeight())) : ulong(GetAgility() << 2) + GetStrength();
+}
+
+bool character::ShowWeaponSkills()
+{
+	ADD_MESSAGE("This race isn't capable of developing weapon skill experience!");
+
+	return false;
 }

@@ -67,6 +67,9 @@ void square::RemoveCharacter()
 
 bool square::CanBeSeen() const
 {
+	if(!game::GetPlayer()->GetSquareUnder())
+		return false;
+
 	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
 
 	if((RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare()) || game::GetSeeWholeMapCheat())

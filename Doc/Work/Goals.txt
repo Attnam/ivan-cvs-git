@@ -1,6 +1,6 @@
 ////*Pentagrammi menuun.
 *Monsujen väheneminen.
-Change material scroll.
+////Change material scroll.
 Syönnin keskeytys kun monsu tulee näköpiiriin.
 ////Dark frogeista plussaa kaaottisille jumalille.
 ////Kannibalismi.
@@ -15,7 +15,7 @@ Pimeydelle vaikutuksia.
 %*Attnam.
 *Player must not be the Only Son anymore.
 ////Garbage monsters.
-%*New material color system.
+////%*New material color system.
 Ääriviivat itemeille ja monsuille.
 ////Space should = esc in the inventory.
 ////Help should be organised.
@@ -24,7 +24,7 @@ Pick-axejen sääteleminen (kesto, expat, valot).
 *Mellis abuse.
 %*Alpha blend.
 Rest until fully healed.
-Messagebuffer should be reordered.
-Messagebuffer should be saved.
+////Messagebuffer should be reordered.
+////Messagebuffer should be saved.
 %*DOS-portti.
 DX lack warning.
