@@ -1,3 +1,7 @@
+March 10 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* gccblit.s: added alternative gcc asm func names with only one lowline
+
 Friday, March 08 2002 Heikki Sairanen <heikki.sairanen@phpoint.net> 
 	(however all changes actually coded by Mark Schreiber)
 

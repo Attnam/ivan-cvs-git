@@ -149,3 +149,4 @@ Angels should carry holy books of their respective OwnerGods.
 Angels as enemies.
 Amputation.
 Beard item.
+Monsters that eat other monsters alive, like Nethack's purple worm.
