@@ -1172,7 +1172,7 @@ void billswill::Die(void)
 
 	if(game::CPlayer() == this) 
 	{
-		ADD_MESSAGE("You die and disappear in a whisp of smoke.");
+		ADD_MESSAGE("You die and disappear in a whisp of smoke."); // Shouldn't this smoke be poison?
 
 		game::DrawEverything();
 
@@ -2599,7 +2599,7 @@ bool humanoid::Throw(void)
 	return true;
 }
 
-bool character::ThrowItem(uchar Direction, item* ToBeThrown)
+bool character::ThrowItem(uchar Direction, item* ToBeThrown) // Note to C++ people. This is throw in the GAME not the throw in c++!
 {
 	if(Direction > 7)
 		ABORT("Throw in TOO odd direction...");
