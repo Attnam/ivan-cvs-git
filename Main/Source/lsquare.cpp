@@ -892,12 +892,13 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
     {
       bool WasInRoom = false;
 
-      for(ushort c = 0; c < Stepper->GetSquaresUnder(); ++c)
-	if(ComingFrom[c]->GetRoomIndex() == RoomIndex)
-	  {
-	    WasInRoom = true;
-	    break;
-	  }
+      if(ComingFrom)
+	for(ushort c = 0; c < Stepper->GetSquaresUnder(); ++c)
+	  if(ComingFrom[c]->GetRoomIndex() == RoomIndex)
+	    {
+	      WasInRoom = true;
+	      break;
+	    }
 
       if(!WasInRoom)
 	GetLevel()->GetRoom(RoomIndex)->Enter(Stepper);
@@ -908,11 +909,13 @@ void lsquare::StepOn(character* Stepper, lsquare** ComingFrom)
   if(OLTerrain)
     {
       OLTerrain->StepOn(Stepper);
+
       if(Stepper->DestroysWalls() && OLTerrain->CanBeDestroyed())
 	{
 	  if(CanBeSeenByPlayer()) 
 	    ADD_MESSAGE("%s destroys %s.", Stepper->CHAR_NAME(DEFINITE), OLTerrain->CHAR_NAME(DEFINITE));
-	  Stepper->EditAP(-10);
+
+	  Stepper->EditAP(-100);
 	  OLTerrain->Break();
 	}
     }

@@ -1593,17 +1593,6 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       GetCurrentLevel()->GetLSquare(Pos)->KickAnyoneStandingHereAway();
       Player->PutToOrNear(Pos);
       GetCurrentLevel()->FiatLux();
-
-      for(ushort c = 0; c < Group.size(); ++c)
-	{
-	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
-
-	  if(NPCPos == ERROR_VECTOR)
-	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
-
-	  Group[c]->PutTo(NPCPos);
-	}
-
       const bool* AutoReveal = GetCurrentLevel()->GetLevelScript()->AutoReveal();
 
       if(New && AutoReveal && *AutoReveal)
@@ -1613,6 +1602,18 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
       SendLOSUpdateRequest();
       UpdateCamera();
       GetCurrentArea()->UpdateLOS();
+      Player->SignalStepFrom(0);
+
+      for(ushort c = 0; c < Group.size(); ++c)
+	{
+	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
+
+	  if(NPCPos == ERROR_VECTOR)
+	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
+
+	  Group[c]->PutTo(NPCPos);
+	  Group[c]->SignalStepFrom(0);
+	}
 
       if(configuration::GetAutoSaveInterval())
 	Save(GetAutoSaveFileName().CStr());
