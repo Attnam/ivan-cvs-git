@@ -20,6 +20,8 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 		for(uchar c = 0; c < GRAPHIC_TYPES; ++c)
 			Graphic[c] = new bitmap(GraphicFileName[c]);
 
+		//CharacterGraphics = new bitmap("Graphics/NovaChar.pcx");
+
 		TileBuffer = new bitmap(16, 16);
 
 		atexit(igraph::DeInit);
@@ -48,3 +50,27 @@ void igraph::DrawCursor(vector2d Pos)
 
 	igraph::GetCharacterGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, Pos.X, Pos.Y, 16, 16, Luminance);
 }
+
+/*void igraph::CreateGraphics(ushort Color)
+{
+	std::map<ushort, materialgraphics>::iterator Iterator = MaterialGraphics.find(Color);
+
+	if(Iterator == MaterialGraphics.end())
+	{
+		materialgraphics NewMaterialGraphics;
+
+		NewMaterialGraphics.CharacterGraphics = CharacterGraphics->ColorizeTo16Bit(Color);
+
+		MaterialGraphics[Color] = NewMaterialGraphics;
+	}
+}
+
+bitmap* GetCharacterGraphic(ushort Color)
+{
+	std::map<ushort, materialgraphics>::iterator Iterator = MaterialGraphics.find(Color);
+
+	if(Iterator != MaterialGraphics.end())
+		ABORT("Character Graphics of color 0x%X not found!", Color);
+
+	return Iterator->second.CharacterGraphics;
+}*/

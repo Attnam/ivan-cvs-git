@@ -1,5 +1,5 @@
 #include "message.h"
-#include "list.h"
+#include "felist.h"
 #include "game.h"
 #include "graphics.h"
 #include "igraph.h"
@@ -8,7 +8,7 @@
 
 char* globalmessagingsystem::MessageBuffer = 0;
 ushort globalmessagingsystem::BufferLength = 0;
-list globalmessagingsystem::MessageHistory(200);
+felist globalmessagingsystem::MessageHistory(200);
 
 void globalmessagingsystem::AddMessage(const char* Format, ...)
 {
@@ -149,3 +149,4 @@ void globalmessagingsystem::Format()
 {
 	MessageHistory.Empty();
 }
+

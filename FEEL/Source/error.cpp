@@ -51,3 +51,4 @@ int globalerrorhandler::NewHandler(size_t)
 
 	return 0;
 }
+

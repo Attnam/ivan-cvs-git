@@ -79,11 +79,11 @@ LIB32=link.exe -lib
 # PROP Default_Filter "c,cc,cpp"
 # Begin Source File
 
-SOURCE=.\Fell\Source\hscore.cpp
+SOURCE=.\Fell\Source\felist.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Fell\Source\list.cpp
+SOURCE=.\Fell\Source\hscore.cpp
 # End Source File
 # End Group
 # Begin Group "Include"
@@ -91,11 +91,11 @@ SOURCE=.\Fell\Source\list.cpp
 # PROP Default_Filter "h,hh,hpp"
 # Begin Source File
 
-SOURCE=.\Fell\Include\hscore.h
+SOURCE=.\Fell\Include\felist.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Fell\Include\list.h
+SOURCE=.\Fell\Include\hscore.h
 # End Source File
 # End Group
 # End Target

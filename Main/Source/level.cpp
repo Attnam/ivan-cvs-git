@@ -335,8 +335,6 @@ void level::Generate(levelscript* GenLevelScript)
 
 	for(ushort c = 0; c < *LevelScript->GetRooms(); ++c)
 	{
-		//ushort XPos = 2 + rand() % (XSize - 6), YPos = 2 + rand() % (YSize - 6);//, Width = 4 + rand() % 8, Height = 4 + rand() % 8;
-
 		std::map<uchar, roomscript*>::iterator RoomIterator = LevelScript->GetRoom().find(c);
 
 		roomscript* RoomScript;
@@ -374,9 +372,6 @@ void level::Generate(levelscript* GenLevelScript)
 			}
 		}
 	}
-
-	//for(c = 0; c < KeyPoint.Length(); ++c)
-	//	AttachPos(KeyPoint.Access(c));
 
 	if(*LevelScript->GetGenerateUpStairs())
 		CreateStairs(true);
@@ -489,8 +484,6 @@ void level::CreateStairs(bool Up)
 	while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN))
 		Pos = vector2d(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
-	//game::GetLevel(LevelIndex + 1)->PutStairs(Pos);
-
 	Map[Pos.X][Pos.Y]->ChangeOverLevelTerrain(Up ? (overlevelterrain*)(new stairsup) : (overlevelterrain*)(new stairsdown));
 
 	if(Up)
@@ -517,14 +510,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 	if(XPos + Width > XSize - 2)
 		return false;
-		//Width = XSize - XPos - 2;
 
 	if(YPos + Height > YSize - 2)
 		return false;
-		//Height = YSize - YPos - 2;
-
-	/*if(Width < 3 || Height < 3)
-		return false;*/
 
 	{
 	for(ushort x = XPos - 1; x <= XPos + Width; x++)
@@ -532,15 +520,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 			if(FlagMap[x][y] & FORBIDDEN || FlagMap[x][y] & PREFERRED)
 				return false;
 	}
-
-	/*const groundlevelterrain* const WallGroundTerrainProto = protocontainer<groundlevelterrain>::GetProto(RoomScript->GetWallSquare()->GetGroundTerrain()->GetTerrainType());
-	const overlevelterrain* const WallOverTerrainProto = protocontainer<overlevelterrain>::GetProto(RoomScript->GetWallSquare()->GetOverTerrain()->GetTerrainType());
-
-	const groundlevelterrain* const FloorGroundTerrainProto = protocontainer<groundlevelterrain>::GetProto(RoomScript->GetFloorSquare()->GetGroundTerrain()->GetTerrainType());
-	const overlevelterrain* const FloorOverTerrainProto = protocontainer<overlevelterrain>::GetProto(RoomScript->GetFloorSquare()->GetOverTerrain()->GetTerrainType());
-
-	const groundlevelterrain* const DoorGroundTerrainProto = protocontainer<groundlevelterrain>::GetProto(RoomScript->GetDoorSquare()->GetGroundTerrain()->GetTerrainType());
-	const overlevelterrain* const DoorOverTerrainProto = protocontainer<overlevelterrain>::GetProto(RoomScript->GetDoorSquare()->GetOverTerrain()->GetTerrainType());*/
 
 	{
 	for(ushort x = XPos; x < XPos + Width; x++)
@@ -685,7 +664,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 		vector2d Pos;
 
 		if(Square->GetPosScript()->GetRandom())
-			//Pos = RandomSquare(*Square->GetPosScript()->GetIsWalkable());
 			ABORT("Illegal command: Random square positioning not supported in roomscript!");
 		else
 			Pos = *Square->GetPosScript()->GetVector();
@@ -869,7 +847,7 @@ void level::HandleCharacters()
 		}
 	}
 
-	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())// && LevelIndex != 9)
+	if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
 		GenerateNewMonsters(GetIdealPopulation() - Population);
 }
 

@@ -77,7 +77,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-int globalwindowhandler::GetKey(bool EmptyBuffer)
+int globalwindowhandler::GetKey(bool EmptyBuffer, bool AcceptCommandKeys)
 {	
 	bool Shift = false;
 	if(EmptyBuffer)
@@ -131,6 +131,9 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 
 				if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
 					return ToBeReturned;
+				else
+					if(AcceptCommandKeys)
+						return 0;
 			}
 		}
 	}
@@ -176,18 +179,18 @@ int globalwindowhandler::ReadKey()
 	MSG msg;
 
 	if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
-		if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
+		if (msg.message==WM_QUIT)
 		{
 			exit(0);
 		}
-		else									// If Not, Deal With Window Messages
+		else
 		{
-			TranslateMessage(&msg);				// Translate The Message
-			DispatchMessage(&msg);				// Dispatch The Message
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 
 	if(KeyBuffer.Length())
-		return GetKey(false);
+		return GetKey(false, true);
 	else
 		return 0;
 }

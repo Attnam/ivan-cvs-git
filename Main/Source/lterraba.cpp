@@ -11,11 +11,9 @@ bool overlevelterrain::GoUp(character* Who) const // Try to go up
 	if(game::GetCurrent() != 0 && game::GetCurrent() != 9 && game::GetWizardMode())
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
 		game::GetCurrentDungeon()->PrepareLevel();
-		//game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetDownStairs(), Who);
 		vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -37,11 +35,9 @@ bool overlevelterrain::GoDown(character* Who) const // Try to go down
 	if(game::GetCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
 	{
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
 		game::GetCurrentDungeon()->PrepareLevel();
-		//game::GetCurrentLevel()->AddCharacter(game::GetCurrentLevel()->GetUpStairs(), Who);
 		vector2d Pos = game::GetCurrentLevel()->RandomSquare(true);
 		game::GetCurrentLevel()->AddCharacter(Pos, Who);
 		game::GetCurrentLevel()->Luxify();
@@ -154,4 +150,3 @@ levelsquare* levelterrain::GetLevelSquareUnder() const
 {
 	return (levelsquare*)SquareUnder;
 }
-

@@ -7,7 +7,7 @@
 
 #include "typedef.h"
 
-class list;
+class felist;
 
 class globalmessagingsystem
 {
@@ -20,7 +20,8 @@ public:
 private:
 	static char* MessageBuffer;
 	static ushort BufferLength;
-	static list MessageHistory;
+	static felist MessageHistory;
 };
 
 #endif
+

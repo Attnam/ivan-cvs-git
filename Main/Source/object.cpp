@@ -254,3 +254,4 @@ void object::EraseMaterials()
 
 	Material.resize(0);
 }
+

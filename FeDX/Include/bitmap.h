@@ -22,7 +22,7 @@ class bitmap
 {
 public:
 	friend class graphics;
-	bitmap(std::string);
+	bitmap(std::string, bool = true);
 	bitmap(ushort, ushort);
 	~bitmap();
 	void Save(outputfile&) const;
@@ -46,7 +46,8 @@ public:
 	void DrawLine(ushort, ushort, ushort, ushort, ushort = 0xFFFF, bool = false);
 	ushort GetXSize() const { return XSize; }
 	ushort GetYSize() const { return YSize; }
-	void DrawPolygon(ushort, vector2d, bool, double = 0, ushort = 255, ushort = 100);
+	void DrawPolygon(vector2d, ushort, ushort, ushort, bool = false, double = 0);
+	bitmap* ColorizeTo16Bit(ushort*);
 protected:
 	bitmap(IDirectDrawSurface7*, ushort, ushort);
 	void AttachSurface(IDirectDrawSurface7*, ushort, ushort);
@@ -57,6 +58,9 @@ protected:
 	ushort XSize, YSize;
 	ushort* BackupBuffer;
 	DDSURFACEDESC2* TempDDSD;
+	bool Is16Bit;
+	uchar* Palette;
+	uchar* PaletteBuffer;
 };
 
 #endif

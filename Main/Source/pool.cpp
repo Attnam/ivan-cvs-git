@@ -14,3 +14,6 @@ void objectpool::Be()
 			delete (*Dirt);
 		}
 }
+
+
+

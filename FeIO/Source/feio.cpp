@@ -1,11 +1,10 @@
 #include <io.h>
-//#include <windows.h>
 
 #include "graphics.h"
 #include "bitmap.h"
 #include "feio.h"
 #include "whandler.h"
-#include "list.h"
+#include "felist.h"
 
 #define PENT_WIDTH 70
 
@@ -76,12 +75,12 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 		DOUBLEBUFFER->ClearToColor(0);
 
 		for(int x = 0; x < 10; x++)
-			DOUBLEBUFFER->DrawPolygon(5,vector2d(150,150), true, Rotation + double(x) / 50, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), 100);
+			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100, 5, MAKE_RGB(int(255 - 25 * (10 - x)),0,0), true, Rotation + double(x) / 50);
 		
 		std::string sCopyOfMS = sMS;
 
 		for(x = 0; x < 4; x++)
-			DOUBLEBUFFER->DrawPolygon(50,vector2d(150,150), false, 0, MAKE_RGB(int(255 - 12 * x),0,0), 100 + x);
+			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
 
 		for(unsigned int i = 0; i < CountChars('\r',sMS); ++i)
 		{
@@ -92,21 +91,6 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 
 		graphics::BlitDBToScreen();
 		int k;
-
-		/*MSG		msg;
-
-		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
-		{
-			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
-			{
-				exit(0);
-			}
-			else									// If Not, Deal With Window Messages
-			{
-				TranslateMessage(&msg);				// Translate The Message
-				DispatchMessage(&msg);				// Dispatch The Message
-			}
-		}*/
 		
 		switch(k = globalwindowhandler::ReadKey())
 		{
@@ -135,7 +119,6 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 				if(k > 0x30 && k < int(0x31 + CountChars('\r',sMS)))
 					return signed(k - 0x31);
 		}
-		//globalwindowhandler::ClearKeyBuffer();
 	}
 
 	return signed(iSelected);
@@ -179,12 +162,52 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 	return Input;
 }
 
+long iosystem::NumberQuestion(bitmap* Font, std::string Topic, vector2d Pos)
+{
+	std::string Input;
+
+	bitmap Backup(XRES, YRES);
+	DOUBLEBUFFER->Blit(&Backup, 0, 0, 0, 0, XRES, YRES);
+
+	for(int LastKey = 0;; LastKey = 0)
+	{
+		Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
+		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, "%s", Topic.c_str());
+		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
+		graphics::BlitDBToScreen();
+
+		while(!(isdigit(LastKey) || LastKey == 8 || LastKey == 13))
+		{
+			if(LastKey == '-' && !Input.length())
+				break;
+
+			LastKey = GETKEY();
+		}
+
+		if(LastKey == 8)
+		{
+			if(Input.length())
+				Input.resize(Input.length() - 1);
+
+			continue;
+		}
+
+		if(LastKey == 13)
+			break;
+
+		if(Input.length() < 12)
+			Input += LastKey;
+	}
+
+	return atoi(Input.c_str());
+}
+
 std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for some _very_ strange reason "LoadMenu" occasionaly generates an error!
 {
 	struct _finddata_t Found;
 	long hFile;
 	int Check = 0;
-	list Buffer("Chooseth a file and be sorry");
+	felist Buffer("Chooseth a file and be sorry");
 	hFile = _findfirst("Save/*.sav", &Found);
 
 	if(hFile == -1L)
@@ -215,3 +238,4 @@ std::string iosystem::WhatToLoadMenu(bitmap* TopicFont, bitmap* ListFont) // for
 
 	return Buffer.GetString(Check);
 }
+

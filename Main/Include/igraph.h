@@ -25,6 +25,11 @@
 
 class bitmap;
 
+/*struct materialgraphics
+{
+	bitmap* CharacterGraphics;
+};*/
+
 class igraph
 {
 public:
@@ -34,6 +39,7 @@ public:
 	static bitmap* GetWorldMapTerrainGraphic()	{ return Graphic[GWTERRAIN]; }
 	static bitmap* GetItemGraphic()		{ return Graphic[GITEM]; }
 	static bitmap* GetCharacterGraphic()	{ return Graphic[GCHARACTER]; }
+	static bitmap* GetCharacterGraphic(ushort);// { return Graphic[GCHARACTER]; }
 	static bitmap* GetFOWGraphic()		{ return Graphic[GFOWGRAPHIC]; }
 	static bitmap* GetHumanGraphic()		{ return Graphic[GHUMAN]; }
 	static bitmap* GetFontRGraphic()		{ return Graphic[GFONTR]; }
@@ -43,10 +49,13 @@ public:
 	static bitmap* GetTileBuffer()		{ return TileBuffer; }
 	static void BlitTileBuffer(vector2d, ushort = 256);
 	static void DrawCursor(vector2d);
+	static void CreateGraphics(ushort) {}
+	//static std::map<ushort, materialgraphics>& GetMaterialGraphics() const { return MaterialGraphics; }
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];
 	static bitmap* TileBuffer;
 	static char* GraphicFileName[];
+	//static std::map<ushort, materialgraphics> MaterialGraphics;
 };
 
 #endif

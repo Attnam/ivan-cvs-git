@@ -3,7 +3,7 @@
 #include "itemba.h"
 #include "stack.h"
 #include "strover.h"
-#include "list.h"
+#include "felist.h"
 #include "lsquare.h"
 #include "game.h"
 #include "proto.h"
@@ -204,10 +204,10 @@ void stack::Optimize(ushort OptimizeBoundary)
 	}
 }
 
-ushort stack::DrawContents(const char* Topic) const 	// Draws a list of the items in this stack on the screen
+ushort stack::DrawContents(const char* Topic) const 	// Draws a felist of the items in this stack on the screen
 {							// Displays Topic on the screen also...
 	if(!GetItems()) return 0xFFFF;
-	list ItemNames(Topic);
+	felist ItemNames(Topic);
 	ItemNames.AddDescription("");
 	ItemNames.AddDescription("Name                                                 Weight       Armor  Strength");
 
@@ -396,3 +396,4 @@ void stack::ReceiveSound(float Strength)
 	for(int x = 0; x < GetItems(); x++) // PROBLEM!!! This probably has the same problems as kick... So...
 		GetItem(x)->ReceiveSound(Strength, GetSquareUnder()->CanBeSeen(), this);
 }
+

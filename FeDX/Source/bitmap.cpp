@@ -7,7 +7,7 @@
 #include "error.h"
 #include "save.h"
 
-bitmap::bitmap(std::string FileName) : BackupBuffer(0)
+bitmap::bitmap(std::string FileName, bool Is16Bit) : BackupBuffer(0), Is16Bit(Is16Bit), Palette(0), PaletteBuffer(0)
 {
 	std::ifstream File(FileName.c_str(), std::ios::in | std::ios::binary);
 
@@ -16,7 +16,7 @@ bitmap::bitmap(std::string FileName) : BackupBuffer(0)
 
 	File.seekg(-768, std::ios::end);
 
-	uchar Palette[768];
+	Palette = new uchar[768];
 
 	for(ulong c = 0; c < 768; ++c)
 		Palette[c] = File.get();
@@ -28,20 +28,66 @@ bitmap::bitmap(std::string FileName) : BackupBuffer(0)
 	YSize  =  File.get();
 	YSize += (File.get() << 8) + 1;
 
-	graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
-
 	File.seekg(128, std::ios::beg);
 
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	ushort* Buffer = (ushort*)ddsd.lpSurface;
-
-	for(ushort y = 0; y < YSize; y++)
+	if(Is16Bit)
 	{
-		for(ushort x = 0; x < XSize; x++)
+		graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
+
+		DDSURFACEDESC2 ddsd;
+		ZeroMemory( &ddsd,sizeof(ddsd) );
+		ddsd.dwSize = sizeof(ddsd);
+		DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+		ushort* Buffer = (ushort*)ddsd.lpSurface;
+
+		for(ushort y = 0; y < YSize; y++)
+		{
+			for(ushort x = 0; x < XSize; x++)
+			{
+				int Char1 = File.get();
+
+				if(Char1 > 192)
+				{
+					int Char2 = File.get();
+
+					x--;
+
+					for(; Char1 > 192; Char1--)
+					{
+                				*(Buffer++) = ushort(Palette[Char2 + (Char2 << 1)] >> 3) << 11 | ushort(Palette[Char2 + (Char2 << 1) + 1] >> 2) << 5 | ushort(Palette[Char2 + (Char2 << 1) + 2] >> 3);
+
+						if(++x == XSize)
+						{
+							x = 0;
+							y++;
+							Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
+						}
+					}
+        			}
+				else
+					*(Buffer++) = ushort(Palette[Char1 + (Char1 << 1)] >> 3) << 11 | ushort(Palette[Char1 + (Char1 << 1) + 1] >> 2) << 5 | ushort(Palette[Char1 + (Char1 << 1) + 2] >> 3);
+			}
+
+			Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
+		}
+
+		DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+		DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
+		DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
+
+		delete [] Palette;
+		Palette = 0;
+	}
+	else
+	{
+		PaletteBuffer = new uchar[XSize * YSize];
+		uchar* Buffer = PaletteBuffer;
+
+		DXSurface = 0;
+
+		while(ulong(Buffer) != ulong(PaletteBuffer) + XSize * YSize)
 		{
 			int Char1 = File.get();
 
@@ -49,36 +95,18 @@ bitmap::bitmap(std::string FileName) : BackupBuffer(0)
 			{
 				int Char2 = File.get();
 
-				x--;
-
 				for(; Char1 > 192; Char1--)
-				{
-                			*(Buffer++) = ushort(Palette[Char2 + (Char2 << 1)] >> 3) << 11 | ushort(Palette[Char2 + (Char2 << 1) + 1] >> 2) << 5 | ushort(Palette[Char2 + (Char2 << 1) + 2] >> 3);
-
-					if(++x == XSize)
-					{
-						x = 0;
-						y++;
-						Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
-					}
-				}
+                			*(Buffer++) = Char2;
         		}
 			else
-				*(Buffer++) = ushort(Palette[Char1 + (Char1 << 1)] >> 3) << 11 | ushort(Palette[Char1 + (Char1 << 1) + 1] >> 2) << 5 | ushort(Palette[Char1 + (Char1 << 1) + 2] >> 3);
+				*(Buffer++) = Char1;
 		}
-
-		Buffer = (ushort*)(ulong(Buffer) + ddsd.lPitch - (XSize << 1));
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-	DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
 
 	graphics::BitmapContainer.push_back(this);
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupBuffer(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupBuffer(0), Is16Bit(true), Palette(0), PaletteBuffer(0)
 {
 	HRESULT hr = graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
 
@@ -91,7 +119,7 @@ bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), BackupB
 	graphics::BitmapContainer.push_back(this);
 }
 
-bitmap::bitmap(IDirectDrawSurface7* DDSurface, ushort XSize, ushort YSize) : BackupBuffer(0), XSize(XSize), YSize(YSize)
+bitmap::bitmap(IDirectDrawSurface7* DDSurface, ushort XSize, ushort YSize) : BackupBuffer(0), XSize(XSize), YSize(YSize), Is16Bit(true), Palette(0), PaletteBuffer(0)
 {
 	DXSurface = new CSurface;
 
@@ -109,6 +137,8 @@ bitmap::~bitmap()
 {
 	delete DXSurface;
 	delete [] BackupBuffer;
+	delete [] Palette;
+	delete [] PaletteBuffer;
 
 	for(ulong c = 0; c < graphics::BitmapContainer.size(); ++c)
 		if(graphics::BitmapContainer[c] == this)
@@ -164,7 +194,7 @@ void bitmap::Save(std::string FileName) const
 	ddsd.dwSize = sizeof(ddsd);
 	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 
-	ushort XSize = ddsd.dwWidth, YSize = ddsd.dwHeight, XMove = XSize << 2;
+	//ushort XSize = ddsd.dwWidth, YSize = ddsd.dwHeight;//, XMove = ddsd.lPitch;
 
 	BMPHeader[0x12] =  XSize       & 0xFF;
 	BMPHeader[0x13] = (XSize >> 8) & 0xFF;
@@ -173,9 +203,9 @@ void bitmap::Save(std::string FileName) const
 
 	SaveFile.GetBuffer().write(BMPHeader, 0x36);
 
-	ulong Off = ulong(ddsd.lpSurface) + (((YSize - 1) * XSize) << 1);
+	ulong Off = ulong(ddsd.lpSurface) + (YSize - 1) * ddsd.lPitch;
 
-	for(ushort y = 0; y < YSize; y++, Off -= XMove)
+	for(ushort y = 0; y < YSize; y++, Off -= (ddsd.lPitch << 1))
 		for(ushort x = 0; x < XSize; x++, Off += 2)
 		{
 			ushort Pixel = *(ushort*)Off;
@@ -1294,60 +1324,66 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 
 void bitmap::Backup(bool DestroySurface)
 {
-	BackupBuffer = new ushort[XSize * YSize];
-
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	ulong SrcBuffer = ulong(ddsd.lpSurface);
-	ulong DestBuffer = ulong(BackupBuffer);
-
-	for(ushort y = 0; y < YSize; y++)
+	if(Is16Bit)
 	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
+		BackupBuffer = new ushort[XSize * YSize];
 
-		SrcBuffer += ddsd.lPitch;
-		DestBuffer += XSize << 1;
+		DDSURFACEDESC2 ddsd;
+		ZeroMemory( &ddsd,sizeof(ddsd) );
+		ddsd.dwSize = sizeof(ddsd);
+		DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+		ulong SrcBuffer = ulong(ddsd.lpSurface);
+		ulong DestBuffer = ulong(BackupBuffer);
+
+		for(ushort y = 0; y < YSize; y++)
+		{
+			memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
+
+			SrcBuffer += ddsd.lPitch;
+			DestBuffer += XSize << 1;
+		}
+
+		DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+		if(DestroySurface)
+			delete DXSurface;
 	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	if(DestroySurface)
-		delete DXSurface;
 }
 
 void bitmap::Restore(bool CreateSurface)
 {
-	if(CreateSurface)
+	if(Is16Bit)
 	{
-		graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
-		DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
-		DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
+		if(CreateSurface)
+		{
+			graphics::GetDXDisplay()->CreateSurface(&DXSurface, XSize, YSize);
+			DDCOLORKEY ColorKey = { 0xF81F, 0xF81F }; // purple
+			DXSurface->GetDDrawSurface()->SetColorKey(DDCKEY_SRCBLT, &ColorKey);
+		}
+
+		DDSURFACEDESC2 ddsd;
+		ZeroMemory( &ddsd,sizeof(ddsd) );
+		ddsd.dwSize = sizeof(ddsd);
+		DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
+
+		ulong SrcBuffer = ulong(BackupBuffer);
+		ulong DestBuffer = ulong(ddsd.lpSurface);
+
+		for(ushort y = 0; y < YSize; y++)
+		{
+			memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
+
+			SrcBuffer += XSize << 1;
+			DestBuffer += ddsd.lPitch;
+		}
+
+		DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+		delete [] BackupBuffer;
+
+		BackupBuffer = 0;
 	}
-
-	DDSURFACEDESC2 ddsd;
-	ZeroMemory( &ddsd,sizeof(ddsd) );
-	ddsd.dwSize = sizeof(ddsd);
-	DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
-
-	ulong SrcBuffer = ulong(BackupBuffer);
-	ulong DestBuffer = ulong(ddsd.lpSurface);
-
-	for(ushort y = 0; y < YSize; y++)
-	{
-		memcpy((void*)DestBuffer, (void*)SrcBuffer, XSize << 1);
-
-		SrcBuffer += XSize << 1;
-		DestBuffer += ddsd.lPitch;
-	}
-
-	DXSurface->GetDDrawSurface()->Unlock(NULL);
-
-	delete [] BackupBuffer;
-
-	BackupBuffer = 0;
 }
 
 void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface, ushort NewXSize, ushort NewYSize)
@@ -1362,7 +1398,7 @@ void bitmap::AttachSurface(IDirectDrawSurface7* DDSurface, ushort NewXSize, usho
 	YSize = NewYSize;
 }
 
-void bitmap::DrawPolygon(ushort NumberOfSides, vector2d Center, bool DrawDiameters, double Rotation, ushort Color, ushort Radius)
+void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, ushort Color, bool DrawDiameters, double Rotation)
 {
 	std::vector<vector2d> Points;
 	
@@ -1371,27 +1407,52 @@ void bitmap::DrawPolygon(ushort NumberOfSides, vector2d Center, bool DrawDiamete
 		double PosX =  sin((2 * 3.1415926535 / NumberOfSides) * c + Rotation) * Radius, PosY = cos((2 * 3.1415926535 / NumberOfSides) * c + Rotation) * Radius;
 		Points.push_back(vector2d(PosX, PosY) + Center);
 	}
+
 	if(DrawDiameters)
 		for(c = 0; c < Points.size(); ++c)
-		{
 			for(ushort a = 0; a < Points.size(); ++a)
 			{
 				if(abs(int(c) - a) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1)) DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
 			}
-		}
 	else
-	{
 		for(c = 0; c < NumberOfSides; ++c)
-		{
 			DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
-		}
-	}
-
 }
 
+bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
+{
+	bitmap* Bitmap = new bitmap(XSize, YSize);
 
+	DDSURFACEDESC2 ddsd;
+	ZeroMemory( &ddsd,sizeof(ddsd) );
+	ddsd.dwSize = sizeof(ddsd);
+	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &ddsd, DDLOCK_WAIT, NULL );
 
+	uchar* Buffer = PaletteBuffer;
+	ulong DestBuffer = ulong(ddsd.lpSurface);
 
+	for(ushort y = 0; y < YSize; y++)
+	{
+		for(ushort x = 0; x < XSize; x++)
+		{
+			if(Buffer[x] >= 192)
+			{
+				ushort ThisColor = Color[(Buffer[x] - 192) / 16];
 
+				float Gradient = float(Buffer[x] % 16) / 8 - 1.0f;
 
+				((ushort*)DestBuffer)[x] = MAKE_RGB(uchar(GET_RED(ThisColor) * Gradient), uchar(GET_GREEN(ThisColor) * Gradient), uchar(GET_BLUE(ThisColor) * Gradient));
+			}
+			else
+				((ushort*)DestBuffer)[x] = ((Palette[Buffer[x] + (Buffer[x] << 1)] >> 3) << 11) | ((Palette[Buffer[x] + (Buffer[x] << 1) + 1] >> 2) << 5) | (Palette[Buffer[x] + (Buffer[x] << 1) + 2] >> 3);
+		}
+
+		DestBuffer += ddsd.lPitch;
+		Buffer = (uchar*)(ulong(Buffer) + XSize);
+	}
+
+	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	return Bitmap;
+}
 

@@ -18,7 +18,7 @@
 #include "hscore.h"
 #include "feio.h"
 #include "god.h"
-#include "list.h"
+#include "felist.h"
 
 character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), IsPlayer(false)
 {
@@ -563,7 +563,7 @@ bool character::Wield()
 }
 
 void character::GetAICommand() // Freedom is slavery. Love is hate. War is peace.
-				   // Shouldn't it be "Ignorance is strength", not "Love is hate"?
+			       // Shouldn't it be "Ignorance is strength", not "Love is hate"?
 {
 	switch(GetRelations())
 	{
@@ -817,8 +817,6 @@ void character::Die()
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
 
-	//Dead = true;
-
 	while(GetStack()->GetItems())
 		GetStack()->MoveItem(0, GetLevelSquareUnder()->GetStack());
 	
@@ -827,7 +825,6 @@ void character::Die()
 	CreateCorpse();
 
 	SetExists(false);
-	//game::SendToHell(this);
 
 	if(GetIsPlayer())
 	{
@@ -1354,7 +1351,7 @@ bool character::WalkThroughWalls()
 
 bool character::ShowKeyLayout()
 {
-	list List("Keyboard Layout");
+	felist List("Keyboard Layout");
 
 	List.AddDescription("");
 	List.AddDescription("Key       Description");
@@ -1504,7 +1501,7 @@ bool character::OpenPos(vector2d APos)
 
 bool character::Pray()
 {
-	list Panthenon("To Whom shall thee adress thine prayers?");
+	felist Panthenon("To Whom shall thee adress thine prayers?");
 
 	if(!GetLevelSquareUnder()->GetDivineOwner())
 		for(ushort c = 1; game::GetGod(c); ++c)
@@ -2014,7 +2011,7 @@ void character::GetPlayerCommand()
 			}
 
 		if (!ValidKeyPressed)
-			ADD_MESSAGE("Unknown key, you %s. Press '?' for a list of commands.", game::Insult());
+			ADD_MESSAGE("Unknown key, you %s. Press '?' for a felist of commands.", game::Insult());
 	}
 }
 
@@ -2146,6 +2143,7 @@ bool character::Polymorph()
 
 	character* NewForm = protosystem::BalancedCreateMonster(5);
 
+	GetSquareUnder()->RemoveCharacter();
 	GetSquareUnder()->AddCharacter(NewForm);
 
 	while(GetStack()->GetItems())
@@ -2174,6 +2172,7 @@ void character::ChangeBackToPlayer()
 {
 	SetExists(false);
 
+	GetSquareUnder()->RemoveCharacter();
 	GetSquareUnder()->AddCharacter(game::GetPlayerBackup());
 
 	while(GetStack()->GetItems())
@@ -2265,3 +2264,4 @@ bool character::CheckCannibalism(ushort What)
 { 
 	return (GetMaterial(0)->GetType() == What); 
 }
+

@@ -365,8 +365,6 @@ void charactermap::ReadFrom(inputfile& SaveFile)
 
 void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	//bool ReCalculating = false;
-
 	if(ReRead)
 	{
 		if(Base)
@@ -377,7 +375,6 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 		{
 			SaveFile.GetBuffer().clear();
 			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
-			//ReCalculating = true;
 		}
 		else
 			return;
@@ -513,8 +510,6 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 {
-	//bool ReCalculating = false;
-
 	if(ReRead)
 	{
 		if(Base)
@@ -525,7 +520,6 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 		{
 			SaveFile.GetBuffer().clear();
 			SaveFile.GetBuffer().seekg(BufferPos, std::ios::beg);
-			//ReCalculating = true;
 		}
 		else
 			return;

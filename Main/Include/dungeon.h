@@ -20,7 +20,7 @@ class dungeon
 {
 public:
 	dungeon() {}
-	dungeon(uchar);// : Generated(false) {};
+	dungeon(uchar);
 	~dungeon();
 	void PrepareLevel(ushort = game::GetCurrent());
 	void SaveLevel(std::string = game::SaveName(), ushort = game::GetCurrent(), bool = true);
@@ -29,17 +29,13 @@ public:
 	uchar GetLevels() const;
 	void Save(outputfile&) const;
 	void Load(inputfile&);
-	//void GenerateIfNeeded() { if(!Generated) Generate(); }
 	void SetIndex(uchar What) { Index = What; }
 	uchar GetIndex() { return Index; }
 	levelscript* GetLevelScript(ushort);
 private:
 	void Initialize();
-	//uchar*** BlockMap;
 	dungeonscript* DungeonScript;
 	level** Level;
-	//uchar Levels;
-	//bool Generated;
 	uchar Index;
 	bool* Generated;
 };

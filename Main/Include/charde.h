@@ -630,6 +630,4 @@ protected:
 	virtual float GetMeleeStrength() const RET(3000)
 );
 
-
-
 #endif

@@ -9,7 +9,7 @@
 #include "god.h"
 #include "igraph.h"
 #include "strover.h"
-#include "list.h"
+#include "felist.h"
 #include "whandler.h"
 #include "lsquare.h"
 #include "stack.h"
@@ -753,20 +753,10 @@ void game::ShowLevelMessage()
 void game::TriggerQuestForMaakotkaShirt()
 {
 	ADD_MESSAGE("The dungeon underneath vibrates violently.");
-
 	GetCurrentDungeon()->LoadLevel(SaveName(), 6);
-	//GetCurrentDungeon()->LoadLevel(SaveName(), 7);
-
 	GetLevel(6)->CreateStairs(false);
-	//GetLevel(7)->CreateStairs(true);
-
-	//GetLevel(7)->PutStairs(Pos);
-	//GetLevel(7)->AttachPos(Pos);
-
 	GetCurrentDungeon()->GetLevel(6)->SetLevelMessage("You feel something has changed since you were last here...");
-
 	GetCurrentDungeon()->SaveLevel(SaveName(), 6);
-	//GetCurrentDungeon()->SaveLevel(SaveName(), 7);
 }
 
 void game::CalculateGodNumber()
@@ -890,3 +880,4 @@ void game::DoNeutralDeed(short Amount)
 	if(!Amount) return;
 	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
 }
+

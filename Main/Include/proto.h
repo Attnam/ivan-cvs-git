@@ -24,7 +24,6 @@ template <class type> class protocontainer
 public:
 	static ushort Add(type*);
 	static const type* const GetProto(ushort Index) { return ProtoData[Index]; }
-	//static const type* const GetProto(ushort* IndexPointer) { return IndexPointer ? ProtoData[*IndexPointer] : 0; }
 	static ushort GetProtoAmount() { return ProtoData.size() - 2; }
 	static ushort SearchCodeName(std::string);
 private:

@@ -1,4 +1,4 @@
-#define __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__ // for prototyping system
+#define __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
 #include "proto.h"
 

@@ -252,7 +252,6 @@ public:
 	area(ushort, ushort);
 	area() {}
 	virtual ~area();
-	//virtual void Generate() {}
 	virtual void Draw() const = 0;
 	virtual void AddCharacter(vector2d, character*);
 	virtual void RemoveCharacter(vector2d);

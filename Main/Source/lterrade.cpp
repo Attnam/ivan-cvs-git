@@ -96,7 +96,6 @@ bool stairsup::GoUp(character* Who) const  // Try to go up
 				return false;
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() - 1);
 		game::GetCurrentDungeon()->PrepareLevel();
@@ -172,7 +171,6 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 		}
 
 		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
-		//vector2d Pos = Who->GetPos();
 		game::GetCurrentDungeon()->SaveLevel();
 		game::SetCurrent(game::GetCurrent() + 1);
 		game::GetCurrentDungeon()->PrepareLevel();
@@ -198,4 +196,3 @@ void door::Kick(ushort, bool ShowOnScreen, uchar)
 	if(!GetIsWalkable() && ShowOnScreen) ADD_MESSAGE("The door opens.");
 		MakeWalkable();
 }
-

@@ -23,9 +23,7 @@ class roomscript;
 class level : public area
 {
 public:
-	//level(ushort, ushort, ushort);
 	level() {}
-	//level(ushort Index) : LevelIndex(Index) {}
 	virtual ~level() {}
 	virtual void Generate(levelscript*);
 	virtual vector2d RandomSquare(bool, bool = false) const;
@@ -37,7 +35,6 @@ public:
 	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector2d Pos);
 	virtual void GenerateTunnel(vector2d, vector2d, bool);
-	//virtual void PutStairs(vector2d);
 	virtual void ExpandPossibleRoute(vector2d, vector2d, bool);
 	virtual void ExpandStillPossibleRoute(vector2d, vector2d, bool);
 	virtual void Save(outputfile&) const;
@@ -51,7 +48,6 @@ public:
 	virtual void CreateItems(ushort);
 	virtual void CreateMonsters(ushort);
 	virtual void CreateStairs(bool);
-	//virtual bool MakeRoom(vector2d, vector2d, bool = true, uchar = 0);
 	virtual bool MakeRoom(roomscript*);
 	virtual vector2d GetUpStairs() { return UpStairs; }
 	virtual vector2d GetDownStairs() { return DownStairs; }
@@ -67,7 +63,6 @@ protected:
 	std::string LevelMessage;
 	dynarray<vector2d, uchar> KeyPoint, Door;
 	vector2d UpStairs, DownStairs;
-	//ushort LevelIndex;
 	ushort Population;
 };
 

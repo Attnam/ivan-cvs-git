@@ -42,6 +42,12 @@
 #include "typeable.h"
 #include "proto.h"
 
+#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+
+	#include "igraph.h"
+
+#endif
+
 /* Presentation of material class */
 
 class character;
@@ -79,6 +85,7 @@ public:
 	virtual bool IsType(ushort QType) const { return Type() == QType; }
 	virtual bool IsSolid() const { return false; }
 	virtual void Be() {}
+	virtual ushort GetColor() const = 0;
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }
@@ -88,12 +95,12 @@ protected:
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define MATERIAL_PROTOINSTALLER(name, base)\
+	#define MATERIAL_PROTOINSTALLER(name, base, color)\
 	\
 	class name##_protoinstaller\
 	{\
 	public:\
-		name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) {}\
+		name##_protoinstaller() : Index(protocontainer<material>::Add(new name)) { igraph::CreateGraphics(color); }\
 		ushort GetIndex() const { return Index; }\
 	private:\
 		ushort Index;\
@@ -105,11 +112,11 @@ protected:
 
 #else
 
-	#define MATERIAL_PROTOINSTALLER(name, base)
+	#define MATERIAL_PROTOINSTALLER(name, base, color)
 
 #endif
 
-#define MATERIAL(name, base, data)\
+#define MATERIAL(name, base, color, data)\
 \
 name : public base\
 {\
@@ -122,9 +129,10 @@ public:\
 	static ushort StaticType();\
 	static const material* const GetPrototype();\
 	virtual std::string ClassName() const { return #name; }\
+	virtual ushort GetColor() const { return color; }\
 protected:\
 	virtual ushort Type() const;\
 	data\
-}; MATERIAL_PROTOINSTALLER(name, base)
+}; MATERIAL_PROTOINSTALLER(name, base, color)
 
 #endif

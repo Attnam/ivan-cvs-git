@@ -20,7 +20,7 @@ class area;
 class material;
 class level;
 class character;
-class list;
+class felist;
 class item;
 class god;
 class item;
@@ -171,3 +171,4 @@ private:
 };
 
 #endif
+

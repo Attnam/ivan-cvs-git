@@ -2,11 +2,13 @@
 #define __MATERDE_H__
 
 #include "materba.h"
+#include "graphics.h"
 
 class MATERIAL
 (
 	iron,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const				{ return 100; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -23,6 +25,7 @@ class MATERIAL
 (
 	valpurium,
 	material,
+	MAKE_RGB(255, 255, 255),
 public:
 	virtual ushort GetHitValue() const				{ return 400; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -40,6 +43,7 @@ class MATERIAL
 (
 	stone,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const				{ return 50; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -55,6 +59,7 @@ class MATERIAL
 (
 	bananaflesh,
 	material,
+	MAKE_RGB(255, 255, 0),
 public:
 	virtual ushort GetHitValue() const				{ return 5; }
 	virtual uchar GetConsumeType() const				{ return FRUIT; }
@@ -71,6 +76,7 @@ class MATERIAL
 (
 	gravel,
 	material,
+	MAKE_RGB(128, 128, 128),
 public:
 	virtual ushort GetHitValue() const				{ return 40; }
 	virtual uchar GetConsumeType() const				{ return ODD; }
@@ -85,6 +91,7 @@ class MATERIAL
 (
 	moraine,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	
 	virtual ushort GetHitValue() const				{ return 25; }
@@ -100,6 +107,7 @@ class MATERIAL
 (
 	schoolfood,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const				{ return 5; }
 	virtual uchar GetConsumeType() const				{ return SCHOOLFOOD; }
@@ -118,6 +126,7 @@ class MATERIAL
 (
 	air,
 	material,
+	MAKE_RGB(255, 255, 255),
 public:
 	virtual ushort GetHitValue() const				{ return 0; }
 	virtual ushort GetDensity() const				{ return 1; }
@@ -132,6 +141,7 @@ class MATERIAL
 (
 	wood,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const				{ return 20; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -147,6 +157,7 @@ class MATERIAL
 (
 	flesh,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 15; }
 	virtual uchar GetConsumeType() const				{ return MEAT; }
@@ -164,6 +175,7 @@ class MATERIAL
 (
 	goblinoidflesh,
 	flesh,
+	MAKE_RGB(0, 255, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 10; }
@@ -176,6 +188,7 @@ class MATERIAL
 (
 	pork,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
@@ -189,6 +202,7 @@ class MATERIAL
 (
 	beef,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 20; }
@@ -202,6 +216,7 @@ class MATERIAL
 (
 	bone,
 	material,
+	MAKE_RGB(255, 255, 255),
 public:
 	virtual ushort GetHitValue() const 				{ return 25; }
 	virtual ushort GetDensity() const				{ return 2000; }
@@ -219,6 +234,7 @@ class MATERIAL
 (
 	darkfrogflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 50; }
@@ -234,6 +250,7 @@ class MATERIAL
 (
 	elpuriflesh,
 	darkfrogflesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual ushort GetDensity() const				{ return 2400; }
@@ -247,6 +264,7 @@ class MATERIAL
 (
 	glass,
 	material,
+	MAKE_RGB(0, 0, 255),
 public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -262,6 +280,7 @@ class MATERIAL
 (
 	omleurine,
 	material,
+	MAKE_RGB(0, 255, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 1; }
 	virtual uchar GetConsumeType() const				{ return LIQUID; }
@@ -280,6 +299,7 @@ class MATERIAL
 (
 	bananapeal,
 	material,
+	MAKE_RGB(255, 255, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 10; }
 	virtual uchar GetConsumeType() const				{ return ODD; }
@@ -294,6 +314,7 @@ class MATERIAL
 (
 	parchment,
 	material,
+	MAKE_RGB(255, 255, 255),
 public:
 	virtual ushort GetHitValue() const 				{ return 15; }
 	virtual uchar GetConsumeType() const				{ return ODD; }
@@ -309,6 +330,7 @@ class MATERIAL
 (
 	cloth,
 	material,
+	MAKE_RGB(0, 0, 255),
 public:
 	virtual ushort GetHitValue() const 				{ return 15; }
 	virtual uchar GetConsumeType() const				{ return ODD; }
@@ -324,6 +346,7 @@ class MATERIAL
 (
 	humanflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 30; }
@@ -337,6 +360,7 @@ class MATERIAL
 (
 	slime,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 2; }
 	virtual uchar GetConsumeType() const				{ return MEAT; }
@@ -354,6 +378,7 @@ class MATERIAL
 (
 	brownslime,
 	slime,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 1; }
@@ -367,6 +392,7 @@ class MATERIAL
 (
 	wolfflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 15; }
@@ -379,6 +405,7 @@ class MATERIAL
 (
 	dogflesh,
 	wolfflesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort OfferValue() const				{ return 15; }
 	virtual uchar Alignment() const				{ return EVIL; }
@@ -390,6 +417,7 @@ class MATERIAL
 (
 	ennerbeastflesh,
 	humanflesh, //???
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 30; }
 	virtual ushort GetDensity() const				{ return 2400; }
@@ -404,6 +432,7 @@ class MATERIAL
 (
 	pepsi,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 200; }
 	virtual uchar GetConsumeType() const				{ return LIQUID; }
@@ -423,6 +452,7 @@ class MATERIAL
 (
 	mithril,
 	material,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual ushort GetHitValue() const 				{ return 200; }
 	virtual uchar GetConsumeType() const				{ return HARD; }
@@ -438,6 +468,7 @@ class MATERIAL
 (
 	spiderflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 4; }
@@ -450,6 +481,7 @@ class MATERIAL
 (
 	jackalflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const				{ return MEAT; }
 	virtual ushort OfferValue() const				{ return 6; }
@@ -462,6 +494,7 @@ class MATERIAL
 (
 	donkeyflesh,
 	flesh,
+	MAKE_RGB(0, 0, 0),
 public:
 	virtual uchar GetConsumeType() const		{ return MEAT; }
 	virtual ushort OfferValue() const			{ return 6; }
@@ -469,4 +502,5 @@ public:
 protected:
 	virtual std::string NameStem() const	{ return "donkey flesh"; }
 );
+
 #endif
