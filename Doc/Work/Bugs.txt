@@ -95,3 +95,4 @@ Bodyparts hit by sound or energy are never severed nor destroyed, so they can re
 Consuming chests probably crashes the game.
 Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
+(example of the problem) If you generate a sign in the script future random palms may overwrite the sign. 

@@ -27,9 +27,10 @@
 HWND graphics::hWnd;
 bool graphics::FullScreen;
 CDisplay* graphics::DXDisplay;
+#endif
+#if defined (WIN32) || (USE_SDL)
 void (*graphics::SwitchModeHandler)();
 #endif
-
 #ifdef USE_SDL
 SDL_Surface* graphics::screen;
 #endif
@@ -369,10 +370,10 @@ void graphics::UpdateBounds()
 #endif
 }
 
-#ifdef WIN32
 
 void graphics::SwitchMode()
 {
+#ifdef WIN32
   globalwindowhandler::SetInitialized(false);
   BlitDBToScreen();
   FullScreen = !FullScreen;
@@ -422,16 +423,12 @@ void graphics::SwitchMode()
     }
 
   globalwindowhandler::SetInitialized(true);
-}
-
 #endif
-
 #ifdef USE_SDL
-void graphics::ToggleFullScreen()
-{
-   SDL_WM_ToggleFullScreen(screen);
-}
+  if(!SDL_WM_ToggleFullScreen(screen))
+    ABORT("This system does not support %dx%dx%d in fullscreen mode!", Res.X, Res.Y, ColorDepth);
 #endif
+}
 
 void graphics::LoadDefaultFont(const std::string& FileName)
 {

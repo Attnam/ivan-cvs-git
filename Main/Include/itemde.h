@@ -596,6 +596,7 @@ class ITEM
   virtual ushort GetTeam() const { return Team; }
   virtual void SetTeam(ushort What) { Team = What; }
   virtual ulong GetPrice() const;
+  virtual bool CheckPickUpEffect(character*);
  protected:
   virtual void VirtualConstructor(bool);
   bool Active;
@@ -787,6 +788,7 @@ class ABSTRACT_ITEM
   virtual void SignalEnchantmentChange();
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
+  virtual bool IsBadFoodForAI(character*) const;
   virtual bool DamageArmor(character*, ushort, uchar) { return false; }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }

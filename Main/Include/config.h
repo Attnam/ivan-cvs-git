@@ -39,6 +39,8 @@ class configuration
   static void SwitchModeHandler();
   static ulong GetContrastLuminance() { return ContrastLuminance; }
   static ulong ApplyContrastTo(ulong);
+  static void SetLookZoom(bool What) { LookZoom = What; }
+  static bool GetLookZoom() { return LookZoom; }
  private:
   static void ContrastHandler(long);
   static std::string DefaultName;
@@ -52,6 +54,7 @@ class configuration
   static bool BeepOnCritical;
   static bool FullScreenMode;
   static ulong ContrastLuminance;
+  static bool LookZoom;
 };
 
 #endif

@@ -29,6 +29,7 @@ ushort configuration::ItemOutlineColor = MakeRGB16(48, 48, 100);
 bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
 ulong configuration::ContrastLuminance = MakeRGB24(128, 128, 128);
+bool configuration::LookZoom = false;
 
 void configuration::Save()
 {
@@ -47,6 +48,7 @@ void configuration::Save()
   SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
   SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
+  SaveFile << "LookZoom = " << LookZoom <<";\n";
 }
 
 void configuration::Load()
@@ -104,6 +106,9 @@ void configuration::Load()
 
       if(Word == "FullScreenMode")
 	SetFullScreenMode(SaveFile.ReadBool());
+
+      if(Word == "LookZoom")
+	SetLookZoom(SaveFile.ReadBool());
     }
 }
 
@@ -149,10 +154,9 @@ void configuration::ShowConfigScreen()
       List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
 
-#ifdef WIN32
       List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
-#endif
+      List.AddEntry(std::string("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
 
       if(game::IsRunning())
 	game::SetStandardListAttributes(List);
@@ -188,16 +192,19 @@ void configuration::ShowConfigScreen()
 	  if(game::IsRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 	  BoolChange = true;
 	  continue;
-#ifdef WIN32
 	case 6:
 	  SetBeepOnCritical(!GetBeepOnCritical());
 	  BoolChange = true;
 	  continue;
 	case 7:
+	  SetFullScreenMode(!GetFullScreenMode());
 	  graphics::SwitchMode();
 	  BoolChange = true;
 	  continue;
-#endif
+	case 8:
+	  SetLookZoom(!GetLookZoom());
+	  BoolChange = true;
+	  continue;
 	}
 
       break;

@@ -4,7 +4,7 @@
  */
 
 Dungeons=4;
-Teams=8;
+Teams=9;
 
 /*
  * Description of teams:
@@ -44,6 +44,14 @@ Team 7; /* Ivan */
 {
 	Relation 4, HOSTILE;
 	AttackEvilness=100;
+}
+
+Team 8; /* Residents of New Attnam */
+{
+	Relation 0, FRIEND;
+	Relation 2, FRIEND;
+	Relation 4, HOSTILE;
+	AttackEvilness=200;
 }
 
 Dungeon ELPURI_CAVE;
@@ -130,6 +138,7 @@ Dungeon ELPURI_CAVE;
 		{
 			Size=7,7;
 			AltarPossible=false;
+			Shape = ROUND_CORNERS;
 
 			CharacterMap
 			{
@@ -143,11 +152,11 @@ Dungeon ELPURI_CAVE;
 				}
 			}
 			{
-				wwwww
+				.www.
 				wwwww
 				wwWww
 				wwwww
-				wwwww
+				.www.
 			}
 		}
 	}
@@ -233,11 +242,45 @@ Dungeon ELPURI_CAVE;
 	{
 		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
 		Rooms=10+rand%21;
-
+		Room 0; /* vault */
+		{
+		
+			GenerateLanterns=true;
+			GenerateFountains=false;
+			WallSquare = solidterrain(GROUND),wall(EARTH);
+			GenerateDoor = false;
+			GenerateTunnel = false;
+			AltarPossible = false;
+			Size = 7,7;
+			OTerrainMap
+			{
+				Pos=1,1;
+				Size=5,5;
+				Types
+				{
+					x = STONE wall(BRICK_OLD);
+				}
+			}
+			{
+				xxxxx
+				x...x
+				x...x
+				x...x
+				xxxxx
+			}
+			Square, Pos 3,3;
+			{
+				Items == itemcontainer(CHEST) 
+				{
+					ItemsInside = { 2, Random { MinPrice = 1000; }, Random { MinPrice = 1000; } } 
+				}
+			}
+		}
 		Square, Random NOT_IN_ROOM;
 		{
 			Character=communist { Team=7; }
 		}
+		
 	}
 
 	Level DARK_LEVEL;
@@ -1036,7 +1079,7 @@ Dungeon NEW_ATTNAM;
 		Items=0;
 		ReCalculate=false;
 		OnGround=true;
-		TeamDefault=2;
+		TeamDefault=8;
 		AmbientLight=rgb24(130, 130, 130);
 		LOSModifier=48;
 		IgnoreDefaultSpecialSquares = false;
@@ -1067,7 +1110,7 @@ Dungeon NEW_ATTNAM;
 			Size=20,20;
 			WallSquare=solidterrain(FLOOR),STONE wall(BRICK_FINE);
 			FloorSquare=solidterrain(FLOOR),empty;
-			GenerateDoor=true;
+			GenerateDoor = false;
 			ReCalculate=false;
 			DivineMaster=silva;
 			GenerateLanterns=false;
@@ -1078,7 +1121,6 @@ Dungeon NEW_ATTNAM;
 				Types
 				{
 					# = GOLD wall(BRICK_FINE);
-					s = sign { Text = "under construction"; }
 				}
 			}
 			{
@@ -1096,7 +1138,7 @@ Dungeon NEW_ATTNAM;
 				..#..........#..
 				..#..........#..
 				..#####.######..
-				......s.........
+				................
 				................
 			}
 			CharacterMap
@@ -1156,6 +1198,14 @@ Dungeon NEW_ATTNAM;
 				................				
 			}
 		}
+		Square, Pos 20, 30;
+		{
+			OTerrain = sign { Text = "former temple of Silva"; }
+		}
+		Square, Pos 19, 29;
+		{
+			OTerrain = GOLD door;
+		}
 		Square, Random NOT_IN_ROOM;
 		{
 			EntryIndex = STAIRS_UP;
@@ -1174,6 +1224,10 @@ Dungeon NEW_ATTNAM;
 		{
 			Character=bananagrower;
 			Times=40;
+		}
+		Square, Pos 25,30;
+		{
+			Character = oree { Team = 1; }
 		}
 	}
 }

@@ -1,3 +1,13 @@
+November 1 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Pets shouldn't eat the player's bodyparts.
+	* Look stretch config option.
+	* If a mine in the inventory is active, it should be displayed somehow.
+	* Artifact vault.
+	* Stethoscope info now shows HP and MaxHP
+	* Daemon flesh is now poisones
+	* Strong box now looks like a strong box (also edited its graphics)
+	
 October 30 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Item strength values are now somewhat more balanced

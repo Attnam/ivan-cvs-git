@@ -870,5 +870,16 @@ void boulder::Break()
 
 void sign::AddPostFix(std::string& String) const
 {
-  String << " " << " saying \"" << Text << "\".";
+  String << " saying \"" << Text << "\".";
+}
+
+void sign::StepOn(character* Stepper)
+{
+  if(Stepper->IsPlayer())
+    {
+      if(Stepper->CanRead())
+	ADD_MESSAGE("There's a sign here that says: \"%s\"", Text.c_str());
+      else
+	ADD_MESSAGE("There's a sign here with some letters, but you are unable to read them.");
+    }
 }

@@ -46,7 +46,7 @@ void igraph::Init()
 #endif
       DOUBLE_BUFFER->Fill(0);
       graphics::BlitDBToScreen();
-#ifdef WIN32
+#if defined (WIN32) || (USE_SDL)
       graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
 #endif
       graphics::LoadDefaultFont(GAME_DIR + "Graphics/Font.pcx");

@@ -3946,9 +3946,9 @@ void bodypart::SignalEnchantmentChange()
 
 bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if(Type == PHYSICAL_DAMAGE)
+  if(Type == PHYSICAL_DAMAGE || Type == SOUND)
     {
-      Contained->ReceiveDamage(Damager, Damage / 2, PHYSICAL_DAMAGE);
+      Contained->ReceiveDamage(Damager, Damage / 2, Type);
 
       if(IsLocked() && Damage > RAND() % 6)
 	{
@@ -4710,7 +4710,6 @@ bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
   std::vector<long> AV(3, 0);
   item* Armor[3];
   bool AnyArmor = false;
-
   if((Armor[0] = GetBoot()))
     {
       AV[0] = Armor[0]->GetStrengthValue();
@@ -4731,3 +4730,22 @@ bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
 
   return AnyArmor ? Armor[femath::WeightedRand(AV)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
+
+bool bodypart::IsBadFoodForAI(character* Who) const
+{
+  return (!GetMaster() || GetMaster()->IsPlayer()) || materialcontainer::IsBadFoodForAI(Who); 
+}
+
+bool mine::CheckPickUpEffect(character* Picker)
+{
+  if(WillExplode(0))
+    {
+      lsquare* Square = GetLSquareUnder();
+      RemoveFromSlot();
+      SendToHell();
+      Square->GetLevelUnder()->Explosion(0, "killed trying to pickup a land mine", Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      return false;
+    }
+  return true;
+}
+

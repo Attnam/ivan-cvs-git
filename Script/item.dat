@@ -1688,6 +1688,7 @@ itemcontainer
 		Possibility = 10;
 		MaxGeneratedContainedItems = 3;
 		MainMaterialConfig == IRON;
+		BitmapPos = 48, 368;
 	}
 }
 

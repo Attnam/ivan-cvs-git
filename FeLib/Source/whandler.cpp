@@ -412,7 +412,7 @@ void globalwindowhandler::ProcessMessage(SDL_Event* event)
 	{
 	case SDLK_RETURN:
 	  if(event->key.keysym.mod & KMOD_ALT)
-	     graphics::ToggleFullScreen();
+	     graphics::SwitchMode();
 	  else
 	     KeyPressed = event->key.keysym.unicode;
 	  break;

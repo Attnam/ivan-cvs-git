@@ -2,6 +2,7 @@
 #include <ctime>
 #include <algorithm>
 #include <cstdarg>
+#include <iostream>
 
 #ifdef WIN32
 #include <direct.h>	// Needed for _mkdir
@@ -244,7 +245,7 @@ bool game::Init(const std::string& Name)
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
-	SetPlayer(new human);
+	SetPlayer(new petrus);
 	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
@@ -1123,10 +1124,9 @@ bool game::HandleQuitMessage()
 
 void game::Beep()
 {
-#ifdef WIN32
   if(configuration::GetBeepOnCritical())
-    ::Beep(400, 1000);
-#endif
+    //    ::Beep(400, 1000);
+    std::cout << "\a";
 }
 
 uchar game::GetDirectionForVector(vector2d Vector)

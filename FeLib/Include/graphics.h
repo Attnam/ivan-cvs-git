@@ -37,15 +37,13 @@ class graphics
   friend class bitmap;
   static void Init();
   static void DeInit();
+  static void SwitchMode();
 #ifdef WIN32 
   static void SetMode(HINSTANCE, HWND*, const char*, vector2d, uchar, bool, LPCTSTR);
-  static void SwitchMode();
-  static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
   static bool GetFullScreen() { return FullScreen; }
 #endif
 #ifdef USE_SDL
   static void SetMode(const char*, vector2d, uchar);
-  static void ToggleFullScreen(void);
 #endif
 #ifdef __DJGPP__
   static void SetMode(ushort);
@@ -56,11 +54,16 @@ class graphics
   static void UpdateBounds();
   static void LoadDefaultFont(const std::string&);
   static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
+#if defined (WIN32) || (USE_SDL)
+  static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
+#endif
  private:
 #ifdef WIN32
   static HWND hWnd;
   static bool FullScreen;
   static CDisplay* DXDisplay;
+#endif
+#if defined (WIN32) || (USE_SDL)
   static void (*SwitchModeHandler)();
 #endif
 #ifdef USE_SDL

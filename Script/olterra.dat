@@ -307,8 +307,9 @@ boulder /* olterrain-> */
 sign
 {
 	DigMessage = "You smash the sign to tiny bits.";
-	MainMaterialConfig == WOOD;
-	DefaultMainVolume = 11000;
+	MainMaterialConfig == WOOD; /* stick part */
+	DefaultMainVolume = 5000; 
+	MaterialColorB = rgb16(200,200,200);
 	/* Uses own postfix */
 	NameSingular = "sign";
 	BitmapPos = 16, 336;

@@ -212,6 +212,7 @@ class OLTERRAIN
   virtual void SetText(const std::string& What) { Text = What; }
   virtual std::string GetText() const { return Text; }
   virtual void AddPostFix(std::string&) const;
+  virtual void StepOn(character*);
  protected:
   std::string Text;
 );

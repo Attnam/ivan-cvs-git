@@ -158,5 +158,6 @@ New background story.
 Tunnel boss.
 ?Something special to tunnel level 2.
 ?Penalty for eating spoiled food.
-Pets shouldn't eat the player's bodyparts.
+//Pets shouldn't eat the player's bodyparts.
 ?Village duelist.
+

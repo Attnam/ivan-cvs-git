@@ -1711,7 +1711,7 @@ bool character::Look()
   else
     Msg = "Direction keys move cursor, ESC exits, 'c' examines a character.";
 
-  game::PositionQuestion(Msg, GetPos(), &game::LookHandler, &game::LookKeyHandler);
+  game::PositionQuestion(Msg, GetPos(), &game::LookHandler, &game::LookKeyHandler, configuration::GetLookZoom());
   EditExperience(PERCEPTION, 1);
   EditAP(-100);
   return true;
@@ -5185,6 +5185,7 @@ void character::DisplayStethoscopeInfo(character*) const
   Info.AddEntry(std::string("Charisma: ") + GetAttribute(CHARISMA), LIGHT_GRAY);
   Info.AddEntry(std::string("Carried weight: ") + GetCarriedWeight() + "g", LIGHT_GRAY);
   Info.AddEntry(std::string("Total weight: ") + GetWeight() + "g", LIGHT_GRAY);
+  Info.AddEntry(std::string("HP: ") + GetHP() + "/" + GetMaxHP(), LIGHT_GRAY);
   game::SetStandardListAttributes(Info);
   Info.Draw();
 }

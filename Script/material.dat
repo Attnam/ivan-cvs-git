@@ -865,6 +865,9 @@ flesh
 	{
 		Color = rgb16(180, 0, 0);
 		NameStem = "daemon flesh";
+		Effect = EFFECT_POISON;
+		EffectStrength = 10;
+		IsBadFoodForAI = true;
 	}
 
 	Config MAMMOTH_FLESH;
@@ -909,6 +912,7 @@ flesh
 		NameStem = "snake flesh";
 		Effect = EFFECT_POISON;
 		EffectStrength = 15;
+		IsBadFoodForAI = true;
 	}
 
 	Config ORC_FLESH;
