@@ -634,3 +634,26 @@ bool landingsite::AllowKick(const character* Char, const lsquare*) const
 {
  return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
 }
+
+void shop::PlantTrap(character* Trapper) const
+{
+  if(MasterIsActive() && Trapper != GetMaster() && GetMaster()->GetRelation(Trapper) != HOSTILE && Trapper->CanBeSeenBy(GetMaster()))
+    {
+      ADD_MESSAGE("\"You infidel!\"");
+      Trapper->Hostility(GetMaster());
+    }
+}
+
+void cathedral::PlantTrap(character* Trapper) const
+{
+  Trapper->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+}
+
+void library::PlantTrap(character* Trapper) const
+{
+  if(MasterIsActive() && Trapper != GetMaster() && GetMaster()->GetRelation(Trapper) != HOSTILE && Trapper->CanBeSeenBy(GetMaster()))
+    {
+      ADD_MESSAGE("\"You infidel!\"");
+      Trapper->Hostility(GetMaster());
+    }
+}

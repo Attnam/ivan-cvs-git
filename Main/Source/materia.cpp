@@ -78,13 +78,11 @@ bool material::Effect(character* Eater, ulong Amount)
     }
 }
 
-/* NPModifier / 100 = percent */
-
-void material::EatEffect(character* Eater, ulong Amount, ulong NPModifier)
+void material::EatEffect(character* Eater, ulong Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(ulonglong(GetNutritionValue()) * Amount * NPModifier * 15 / 1000000);
+  Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / 1000);
   EditVolume(-Amount);
 }
 
@@ -190,9 +188,9 @@ void material::Initialize(ushort NewConfig, ulong InitVolume, bool Load)
   VirtualConstructor(Load);
 }
 
-ulong material::GetTotalNutritionValue(const item* What) const
+ulong material::GetTotalNutritionValue() const
 { 
-  return ulonglong(GetNutritionValue()) * What->GetNPModifier() * GetVolume() * 15 / 1000000;
+  return GetNutritionValue() * GetVolume() * 15 / 1000;
 }
 
 bool material::CanBeEatenByAI(const character* Eater) const

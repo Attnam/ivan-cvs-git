@@ -79,22 +79,22 @@ void powder::Load(inputfile& SaveFile)
   SaveFile >> Wetness;
 }
 
-void organicsubstance::EatEffect(character* Eater, ulong Amount, ulong NPModifier)
+void organicsubstance::EatEffect(character* Eater, ulong Amount)
 {
   Amount = Volume > Amount ? Amount : Volume;
   Effect(Eater, Amount);
-  Eater->ReceiveNutrition(ulonglong(GetNutritionValue()) * Amount * NPModifier * 15 / (1000000 * (GetSpoilLevel() + 1)));
+  Eater->ReceiveNutrition(GetNutritionValue() * Amount * 15 / (1000 * (GetSpoilLevel() + 1)));
 
   if(GetSpoilLevel() > 0)
     {
-      Eater->BeginTemporaryState(CONFUSED, ushort(Amount * GetSpoilLevel() * sqrt(NPModifier) / 2500));
+      Eater->BeginTemporaryState(CONFUSED, ushort(Amount * GetSpoilLevel() * sqrt(GetNutritionValue()) / 1000));
 
-      if(CanHaveParasite() && !(RAND() % (2500 / GetSpoilLevel())))
+      if(CanHaveParasite() && !(RAND() % (1000 / GetSpoilLevel())))
 	Eater->GainIntrinsic(PARASITIZED);
     }
 
   if(GetSpoilLevel() > 4)
-    Eater->BeginTemporaryState(POISONED, ushort(Amount * (GetSpoilLevel() - 4) * sqrt(NPModifier) / 2500));
+    Eater->BeginTemporaryState(POISONED, ushort(Amount * (GetSpoilLevel() - 4) * sqrt(GetNutritionValue()) / 1000));
 
   SetVolume(Volume - Amount);
 }

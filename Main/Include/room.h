@@ -63,6 +63,7 @@ class room
   virtual bool AllowKick(const character*, const lsquare*) const { return true; }
   bool MasterIsActive() const;
   bool CheckKickSquare(const character*, const lsquare*) const;
+  virtual void PlantTrap(character*) const { }
  protected:
   virtual void VirtualConstructor(bool) { }
   vector2d Pos;

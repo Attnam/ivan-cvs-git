@@ -1007,7 +1007,7 @@ void elpuri::GetAICommand()
     }
 }
 
-ushort elpuri::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
+ushort elpuri::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
 {
   Active = true;
   return character::ReceiveBodyPartDamage(Damager, Damage, Type, BodyPartIndex, Direction, PenetrateResistance, Critical, ShowNoDamageMsg);

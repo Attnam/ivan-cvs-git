@@ -601,19 +601,6 @@ material
 		IsSparkling = true;
 		CanBeWished = false;
 	}
-
-	Config SWAMP;
-	{
-		StrengthValue = 30;
-		Density = 750;
-		Color = rgb16(80, 120, 80);
-		NameStem = "swamp";
-		ConsumeType = CT_MISC_ORGANIC;
-		AdjectiveStem = "swampy";
-		Flexibility = 15;
-		CanBeWished = false;
-		AttachedGod = TERRA;
-	}
 }
 
 organicsubstance /* substances that spoil but are not flesh */
@@ -626,7 +613,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 3;
 		Density = 1200;
 		ConsumeType = CT_FRUIT;
-		NutritionValue = 100;
+		NutritionValue = 1000;
 		Color = rgb16(224, 224, 0);
 		PriceModifier = 600;
 		NameStem = "banana flesh";
@@ -639,7 +626,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 3;
 		ConsumeType = CT_MEAT;
 		Density = 1500;
-		NutritionValue = 50;
+		NutritionValue = 500;
 		Color = rgb16(111, 74, 37);
 		ConsumeWisdomLimit = 7;
 		NameStem = "school food";
@@ -669,7 +656,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 3;
 		ConsumeType = CT_FRUIT;
 		Density = 1200;
-		NutritionValue = 100;
+		NutritionValue = 1000;
 		Color = rgb16(160, 112, 32);
 		PriceModifier = 600;
 		NameStem = "kiwi flesh";
@@ -682,7 +669,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 5;
 		ConsumeType = CT_FRUIT;
 		Density = 1200;
-		NutritionValue = 100;
+		NutritionValue = 1000;
 		Color = rgb16(192, 112, 96);
 		PriceModifier = 600;
 		NameStem = "pineapple flesh";
@@ -723,7 +710,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		Density = 2000;
 		ConsumeType = CT_BONE;
 		Color = rgb16(180, 180, 180);
-		NutritionValue = 50;
+		NutritionValue = 500;
 		NameStem = "bone";
 		ConsumeEndMessage = CEM_BONE;
 		SpoilModifier = 100000;
@@ -735,7 +722,7 @@ organicsubstance /* substances that spoil but are not flesh */
 		StrengthValue = 5;
 		ConsumeType = CT_PROCESSED;
 		Density = 250;
-		NutritionValue = 100;
+		NutritionValue = 1000;
 		Color = rgb16(180, 96, 64);
 		PriceModifier = 600;
 		NameStem = "bread";
@@ -825,7 +812,7 @@ liquid
 		StrengthValue = 1;
 		Color = rgb16(160, 160, 0);
 		CanBeWished = false;
-		NutritionValue = 50;
+		NutritionValue = 500;
 		PriceModifier = 2500;
 		NameStem = "ommel urine";
 		Article = "an";
@@ -840,7 +827,7 @@ liquid
 	{
 		StrengthValue = 200;
 		Density = 1500;
-		NutritionValue = 50;
+		NutritionValue = 500;
 		Color = rgb16(48, 48, 48);
 		ConsumeWisdomLimit = 2;
 		NameStem = "pepsi";
@@ -853,7 +840,7 @@ liquid
 	Config WATER;
 	{
 		StrengthValue = 1;
-		NutritionValue = 1;
+		NutritionValue = 10;
 		Color = rgb16(144, 144, 240);
 		NameStem = "water";
 		Alpha = 150;
@@ -863,7 +850,7 @@ liquid
 	Config HEALING_LIQUID;
 	{
 		StrengthValue = 1;
-		NutritionValue = 25;
+		NutritionValue = 250;
 		Color = rgb16(180, 0, 0);
 		PriceModifier = 1000;
 		NameStem = "healing liquid";
@@ -877,7 +864,7 @@ liquid
 	Config BLOOD;
 	{
 		StrengthValue = 150;
-		NutritionValue = 10;
+		NutritionValue = 50;
 		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
 		NameStem = "blood";
@@ -890,7 +877,7 @@ liquid
 	{
 		StrengthValue = 5;
 		Density = 400;
-		NutritionValue = 25;
+		NutritionValue = 250;
 		Color = rgb16(0, 128, 0);
 		Color = rgb16(111, 74, 37);
 		NameStem = "brown slime";
@@ -903,7 +890,7 @@ liquid
 	Config POISON_LIQUID;
 	{
 		StrengthValue = 1;
-		NutritionValue = 10;
+		NutritionValue = 100;
 		Color = rgb16(0, 128, 0);
 		ConsumeWisdomLimit = 5;
 		NameStem = "poison";
@@ -916,7 +903,7 @@ liquid
 	Config VALDEMAR;
 	{
 		StrengthValue = 1;
-		NutritionValue = 8;
+		NutritionValue = 80;
 		Color = rgb16(50, 0, 0);
 		ConsumeWisdomLimit = 10;
 		NameStem = "Valdemar";
@@ -931,7 +918,7 @@ liquid
 	Config ANTIDOTE_LIQUID;
 	{
 		StrengthValue = 1;
-		NutritionValue = 10;
+		NutritionValue = 100;
 		Color = rgb16(128, 0, 128);
 		NameStem = "antidote liquid";
 		Effect = EFFECT_ANTIDOTE;
@@ -946,7 +933,7 @@ liquid
 	Config VODKA;
 	{
 		StrengthValue = 1;
-		NutritionValue = 8;
+		NutritionValue = 80;
 		Color = rgb16(144, 144, 144);
 		ConsumeWisdomLimit = 10;
 		NameStem = "vodka";
@@ -962,7 +949,7 @@ liquid
 	Config TROLL_BLOOD;
 	{
 		StrengthValue = 1;
-		NutritionValue = 50;
+		NutritionValue = 500;
 		Color = rgb16(160, 0, 0);
 		CanBeWished = false;
 		NameStem = "troll blood";
@@ -975,16 +962,6 @@ liquid
 		PriceModifier = 500;
 		AttachedGod = CRUENTUS;
 	}
-
-	Config LAVA;
-	{
-		StrengthValue = 25;
-		Color = rgb16(255, 0, 0);
-		CanBeWished = false;
-		NameStem = "lava";
-		Alpha = 200;
-		AttachedGod = LORICATUS;
-	}
 }
 
 flesh
@@ -992,27 +969,27 @@ flesh
 	StrengthValue = 5;
 	ConsumeType = CT_MEAT;
 	Density = 1200;
-	NutritionValue = 200;
+	NutritionValue = 20;
 	Color = rgb16(160, 32, 16);
 	IsAlive = true;
 	NameStem = "flesh";
 	Flexibility = 5;
 	SpoilModifier = 10000;
-	PriceModifier = 1200;
+	PriceModifier = 12;
 	CanHaveParasite = true;
 
 	Config GOBLINOID_FLESH;
 	{
 		Color = rgb16(0, 128, 0);
 		NameStem = "green flesh";
-		NutritionValue = 150;
-		PriceModifier = 800;
+		NutritionValue = 15;
+		PriceModifier = 8;
 		AttachedGod = MORTIFER;
 	}
 
 	Config PORK;
 	{
-		NutritionValue = 250;
+		NutritionValue = 2500;
 		NameStem = "pork";
 		SpoilModifier = 20000;
 		PriceModifier = 1600;
@@ -1022,7 +999,7 @@ flesh
 
 	Config BEEF;
 	{
-		NutritionValue = 250;
+		NutritionValue = 2500;
 		NameStem = "beef";
 		SpoilModifier = 20000;
 		PriceModifier = 1600;
@@ -1068,7 +1045,7 @@ flesh
 
 	Config POLAR_BEAR_FLESH;
 	{
-		NameStem = "polar bear flesh";
+		NameStem = "raw polar bear flesh";
 		AttachedGod = MORTIFER;
 	}
 
@@ -1133,7 +1110,7 @@ flesh
 
 	Config KOBOLD_FLESH;
 	{
-		NutritionValue = 100;
+		NutritionValue = 10;
 		ConsumeWisdomLimit = 6;
 		NameStem = "kobold flesh";
 		Effect = EFFECT_KOBOLD_FLESH;
@@ -1193,7 +1170,7 @@ flesh
 	{
 		Color = rgb16(48, 48, 48);
 		NameStem = "black unicorn flesh";
-		PriceModifier = 2000;
+		PriceModifier = 20;
 		AttachedGod = DULCIS;
 	}
 
@@ -1201,7 +1178,7 @@ flesh
 	{
 		Color = rgb16(112, 112, 112);
 		NameStem = "gray unicorn flesh";
-		PriceModifier = 2000;
+		PriceModifier = 20;
 		AttachedGod = LORICATUS;
 	}
 
@@ -1209,7 +1186,7 @@ flesh
 	{
 		Color = rgb16(160, 160, 160);
 		NameStem = "white unicorn flesh";
-		PriceModifier = 2000;
+		PriceModifier = 20;
 		AttachedGod = MORTIFER;
 	}
 
@@ -1250,7 +1227,7 @@ flesh
 	{
 		NameStem = "chameleon flesh";
 		Effect = EFFECT_POLYMORPH;
-		PriceModifier = 1000;
+		PriceModifier = 10;
 		ConsumeWisdomLimit = 7;
 		AttachedGod = SCABIES;
 	}
@@ -1281,7 +1258,7 @@ flesh
 
 	Config MAGPIE_FLESH;
 	{
-		NameStem = "moose flesh";
+		NameStem = "magpie flesh";
 		AttachedGod = MORTIFER;
 	}
 

@@ -106,7 +106,7 @@ void item::Fly(character* Thrower, uchar Direction, ushort Force)
     }
 
   if(Breaks)
-    ReceiveDamage(Thrower, ushort(sqrt(GetWeight() * RangeLeft) / 10), PHYSICAL_DAMAGE);
+    ReceiveDamage(Thrower, ushort(sqrt(GetWeight() * RangeLeft) / 10), THROW|PHYSICAL_DAMAGE);
 }
 
 uchar item::HitCharacter(character* Thrower, character* Dude, ushort Damage, float ToHitValue, uchar Direction)
@@ -170,7 +170,7 @@ bool item::Consume(character* Eater, long Amount)
   if(!GetConsumeMaterial()) // if it's spoiled or something
     return true;
 
-  GetConsumeMaterial()->EatEffect(Eater, Amount, GetNPModifier());
+  GetConsumeMaterial()->EatEffect(Eater, Amount);
 
   if(!Cannibalised && Eater->IsPlayer() && Eater->CheckCannibalism(GetConsumeMaterial()))
     {
@@ -261,9 +261,9 @@ std::string item::ItemCategoryName(ulong Category)
     }
 }
 
-ushort item::GetResistance(uchar Type) const
+ushort item::GetResistance(ushort Type) const
 {
-  switch(Type)
+  switch(Type&0xFFF)
     {
     case PHYSICAL_DAMAGE: return GetStrengthValue();
     case SOUND:
@@ -433,7 +433,7 @@ void item::CalculateAll()
 
 void item::WeaponSkillHit()
 {
-  if(Slot)
+  if(Slot && Slot->IsGearSlot())
     static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
@@ -478,7 +478,7 @@ const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
     }
 }
 
-bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
+bool item::ReceiveDamage(character*, ushort Damage, ushort Type)
 {
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY))
     {
@@ -544,7 +544,7 @@ void item::AddMiscellaneousInfo(felist& List) const
 
 ulong item::GetNutritionValue() const
 {
-  return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue(this) : 0; 
+  return GetConsumeMaterial() ? GetConsumeMaterial()->GetTotalNutritionValue() : 0; 
 }
 
 void item::SignalSpoil(material*)

@@ -176,7 +176,7 @@ class ITEM
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
   virtual uchar GetSpecialFlags() const;
-  virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual bool ReceiveDamage(character*, ushort, ushort);
 );
 
 class ITEM

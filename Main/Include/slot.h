@@ -36,6 +36,7 @@ class slot
   virtual bool CanBeSeenBy(const character*) const = 0;
   virtual void SignalEnchantmentChange() { }
   virtual bool IsVisible() const = 0;
+  virtual bool IsGearSlot() const { return false; }
  protected:
   item* Item;
 };
@@ -101,6 +102,7 @@ class gearslot : public slot
   virtual bool CanBeSeenBy(const character*) const;
   virtual void SignalEnchantmentChange();
   virtual bool IsVisible() const { return false; }
+  virtual bool IsGearSlot() const { return true; }
  protected:
   bodypart* BodyPart;
   uchar EquipmentIndex;

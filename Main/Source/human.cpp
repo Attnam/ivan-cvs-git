@@ -89,7 +89,6 @@ void skeleton::CreateCorpse(lsquare* Square)
     {
       item* Skull = SevereBodyPart(HEAD_INDEX);
       Square->AddItem(Skull);
-      Skull->DropEquipment();
     }
 
   ushort Amount = 2 + (RAND() & 3);
@@ -468,7 +467,7 @@ void petrus::BeTalkedTo()
     {
       if(!game::GetStoryState())
 	{
-	  if(PLAYER->HasEncryptedScroll())
+	  if(PLAYER->RemoveEncryptedScroll())
 	    {
 	      game::TextScreen( "You kneel down and bow before the high priest and hand him the encrypted scroll.\n"
 				"Petrus raises his arm, the scroll glows yellow, and lo! The letters are clear and\n"
@@ -1028,7 +1027,7 @@ bodypart* humanoid::MakeBodyPart(ushort Index) const
     }
 }
 
-bool humanoid::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
+bool humanoid::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
   uchar ChooseFrom[MAX_BODYPARTS];
   ushort BodyParts = 0;
@@ -1249,14 +1248,21 @@ void humanoid::SwitchToDig(item* DigItem, vector2d Square)
 {
   dig* Dig = new dig(this);
 
-  if(GetRightArm())
+  if(GetRightArm() && GetRightArm()->GetWielded() != DigItem)
     Dig->SetRightBackup(GetRightArm()->GetWielded()); // slot cleared automatically
 
-  if(GetLeftArm())
+  if(GetLeftArm() && GetLeftArm()->GetWielded() != DigItem)
     Dig->SetLeftBackup(GetLeftArm()->GetWielded()); // slot cleared automatically
 
-  DigItem->RemoveFromSlot();
-  SetMainWielded(DigItem); // bug, this may change arm?
+  if(GetMainWielded() != DigItem)
+    {
+      Dig->SetMoveDigger(true);
+      DigItem->RemoveFromSlot();
+      SetMainWielded(DigItem);
+    }
+  else
+    Dig->SetMoveDigger(false);
+
   Dig->SetSquareDug(Square);
   SetAction(Dig);
 }
@@ -1423,14 +1429,14 @@ void humanoid::DrawSilhouette(bitmap* ToBitmap, vector2d Where, bool AnimationDr
   igraph::GetCharacterRawGraphic()->MaskedBlit(ToBitmap, 64, 64, Where, SILHOUETTE_X_SIZE, SILHOUETTE_Y_SIZE, Color);
 }
 
-ushort humanoid::GlobalResistance(uchar Type) const
+ushort humanoid::GlobalResistance(ushort Type) const
 {
   ushort Resistance = GetResistance(Type);
 
   if(GetCloak())
     Resistance += GetCloak()->GetResistance(Type);
 
-  if(Type != PHYSICAL_DAMAGE)
+  if(!(Type & PHYSICAL_DAMAGE))
     {
       if(GetAmulet())
 	Resistance += GetAmulet()->GetResistance(Type);
@@ -1992,14 +1998,19 @@ void humanoid::DetachBodyPart()
     {
       item* ToDrop = SevereBodyPart(ToBeDetached);
       GetSquareUnder()->SendNewDrawRequest();
-      GetStack()->AddItem(ToDrop);
-      ToDrop->DropEquipment();
+
+      if(ToDrop)
+	{
+	  GetStack()->AddItem(ToDrop);
+	  ToDrop->DropEquipment();
+	}
+
       ADD_MESSAGE("Bodypart detached!");  
     }
   else
     ADD_MESSAGE("That bodypart has already been detached.");
 
-  CheckDeath("Removed one of his vital bodyparts.", 0);
+  CheckDeath("removed one of his vital bodyparts", 0);
 }
 
 void angel::GetAICommand()
@@ -2135,24 +2146,6 @@ ushort kamikazedwarf::GetArmMainColor() const
 ushort kamikazedwarf::GetLegMainColor() const
 {
   return GetMasterGod()->GetColor();
-}
-
-void angel::CreateBodyParts(ushort SpecialFlags)
-{
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROIN_INDEX || c == RIGHT_LEG_INDEX || c == LEFT_LEG_INDEX)
-      SetBodyPart(c, 0);
-    else
-      CreateBodyPart(c, SpecialFlags);
-}
-
-void genie::CreateBodyParts(ushort SpecialFlags)
-{
-  for(ushort c = 0; c < GetBodyParts(); ++c) 
-    if(c == GROIN_INDEX || c == RIGHT_LEG_INDEX || c == LEFT_LEG_INDEX)
-      SetBodyPart(c, 0);
-    else
-      CreateBodyPart(c, SpecialFlags);
 }
 
 ushort housewife::GetHairColor() const
@@ -3012,11 +3005,11 @@ void guard::GetAICommand()
   StandIdleAI();
 }
 
-bool mistress::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
+bool mistress::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
   bool Success = humanoid::ReceiveDamage(Damager, Damage, Type, TargetFlags, Direction, Divide, PenetrateArmor, Critical, ShowMsg);
 
-  if(Type == SOUND && Success && !(RAND() & 7))
+  if(Type & SOUND && Success && !(RAND() & 7))
     {
       if(IsPlayer())
 	ADD_MESSAGE("Aahhh. The pain feels unbelievably good.");
@@ -3265,7 +3258,7 @@ void darkmage::GetAICommand()
 
 void zombie::GetAICommand()
 {
-  if(!GetBodyPart(HEAD_INDEX))
+  if(!GetHead())
     {
       for(stackiterator i = GetLSquareUnder()->GetStack()->GetBottom(); i.HasItem(); ++i)
 	{

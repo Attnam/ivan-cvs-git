@@ -1352,12 +1352,17 @@ bool lsquare::Haste(character*, const std::string&, uchar)
   return false;
 }
 
-bool lsquare::Slow(character*, const std::string&, uchar)
+bool lsquare::Slow(character* Slower, const std::string&, uchar)
 {
   character* Dude = GetCharacter();
 
   if(Dude)
-    Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+    {
+      if(Slower)
+	Slower->Hostility(Dude);
+
+      Dude->BeginTemporaryState(SLOW, 500 + RAND() % 1000);
+    }
 
   return false;
 }

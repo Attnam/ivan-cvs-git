@@ -37,7 +37,6 @@ struct itemdatabase
   ushort ElectricityResistance;
   ushort StrengthModifier;
   ushort FormModifier;
-  ulong NPModifier;
   ushort DefaultSize;
   ulong DefaultMainVolume;
   ulong DefaultSecondaryVolume;
@@ -221,11 +220,11 @@ class item : public object
   virtual bool IsArmor(const character*) const { return false; }
   virtual bool IsEnchantable(const character*) const { return CanBeEnchanted(); }
   virtual bool IsOnGround() const;
-  ushort GetResistance(uchar) const;
+  ushort GetResistance(ushort) const;
   virtual void GenerateLeftOvers(character*);
   virtual void Be();
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual bool ReceiveDamage(character*, ushort, ushort);
   virtual void AddConsumeEndMessage(character*) const;
   virtual bool RaiseTheDead(character*) { return false; }
   virtual uchar GetBodyPartIndex() const { return 0xFF; }
@@ -245,7 +244,6 @@ class item : public object
   DATA_BASE_VALUE(ushort, ElectricityResistance);
   DATA_BASE_VALUE(ushort, StrengthModifier);
   virtual DATA_BASE_VALUE(ushort, FormModifier);
-  DATA_BASE_VALUE(ulong, NPModifier);
   DATA_BASE_VALUE(ushort, DefaultSize);
   DATA_BASE_VALUE(ulong, DefaultMainVolume);
   DATA_BASE_VALUE(ulong, DefaultSecondaryVolume);

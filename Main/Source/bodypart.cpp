@@ -3,9 +3,10 @@
 uchar bodypart::GetGraphicsContainerIndex() const { return GR_HUMANOID; }
 void bodypart::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { SetMainMaterial(NewMaterial, SpecialFlags); }
 void bodypart::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
-ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice() / 100; }
+ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
 uchar bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
+bool bodypart::IsDipDestination(const character*) const { return MainMaterial->IsFlesh() || MainMaterial->IsLiquid(); }
 
 uchar head::GetBodyPartIndex() const { return HEAD_INDEX; }
 ushort head::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
@@ -64,7 +65,7 @@ ushort bodypart::GetStrengthValue() const
     return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000;
 }
 
-ushort head::GetTotalResistance(uchar Type) const
+ushort head::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     {
@@ -82,7 +83,7 @@ ushort head::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-ushort normaltorso::GetTotalResistance(uchar Type) const
+ushort normaltorso::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     return GetResistance(Type) + GetMaster()->GlobalResistance(Type);
@@ -90,7 +91,7 @@ ushort normaltorso::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-ushort humanoidtorso::GetTotalResistance(uchar Type) const
+ushort humanoidtorso::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     {
@@ -108,7 +109,7 @@ ushort humanoidtorso::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-ushort arm::GetTotalResistance(uchar Type) const
+ushort arm::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     {
@@ -126,7 +127,7 @@ ushort arm::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-ushort groin::GetTotalResistance(uchar Type) const
+ushort groin::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     {
@@ -144,7 +145,7 @@ ushort groin::GetTotalResistance(uchar Type) const
     return GetResistance(Type);
 }
 
-ushort leg::GetTotalResistance(uchar Type) const
+ushort leg::GetTotalResistance(ushort Type) const
 {
   if(GetMaster())
     {
@@ -218,11 +219,11 @@ void leg::Load(inputfile& SaveFile)
   SaveFile >> BootSlot;
 }
 
-bool bodypart::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool bodypart::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(Master)
     {
-      if(!IsAlive() && Type == POISON)
+      if(!IsAlive() && Type & POISON)
 	return false;
 
       ushort BHP = HP;
@@ -235,7 +236,7 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 
       EditHP(-Damage);
 
-      if(Type == DRAIN && IsAlive())
+      if(Type & DRAIN && IsAlive())
 	for(ushort c = 0; c < Damage; ++c)
 	  Damager->HealHitPoint();
 
@@ -261,9 +262,9 @@ bool bodypart::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   return false;
 }
 
-bool bodypart::CannotBeSevered(uchar Type)
+bool bodypart::CannotBeSevered(ushort Type)
 {
-  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (!Master->GetTorso()->IsInBadCondition() && Master->GetTorso()->MaxHP > 3))) || ((Type == POISON || Type == SOUND) && GetBodyPartIndex() != TORSO_INDEX);
+  return (Master->BodyPartIsVital(GetBodyPartIndex()) && ((HP == MaxHP && HP != 1) || (!Master->GetTorso()->IsInBadCondition() && Master->GetTorso()->MaxHP > 3))) || (Type & (POISON|SOUND) && GetBodyPartIndex() != TORSO_INDEX);
 }
 
 float arm::GetUnarmedDamage() const
@@ -1560,12 +1561,14 @@ void corpse::SignalSpoil(material*)
 	      ADD_MESSAGE("The %s of %s spoils.", GetDeceased()->GetBodyPartName(c).c_str(), GetDeceased()->CHAR_NAME(DEFINITE));
 
 	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
+
 	    if(BodyPart)
 	      BodyPart->SendToHell();
 	  }
 	else if(TorsoSpoiled)
 	  {
 	    item* BodyPart = GetDeceased()->SevereBodyPart(c);
+
 	    if(BodyPart)
 	      GetSlot()->AddFriendItem(BodyPart);
 	  }
@@ -2339,7 +2342,7 @@ void head::ShowBiteInfo() const
   Info.Draw();
 }
 
-bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
+bool head::DamageArmor(character* Damager, ushort Damage, ushort Type)
 {
   long AV[3] = { 0, 0, 0 };
   item* Armor[3];
@@ -2366,7 +2369,7 @@ bool head::DamageArmor(character* Damager, ushort Damage, uchar Type)
   return AnyArmor ? Armor[femath::WeightedRand(AV, 3)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-bool humanoidtorso::DamageArmor(character* Damager, ushort Damage, uchar Type)
+bool humanoidtorso::DamageArmor(character* Damager, ushort Damage, ushort Type)
 {
   long AV[3] = { 0, 0, 0 };
   item* Armor[3];
@@ -2393,7 +2396,7 @@ bool humanoidtorso::DamageArmor(character* Damager, ushort Damage, uchar Type)
   return AnyArmor ? Armor[femath::WeightedRand(AV, 3)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-bool arm::DamageArmor(character* Damager, ushort Damage, uchar Type)
+bool arm::DamageArmor(character* Damager, ushort Damage, ushort Type)
 {
   long AV[3] = { 0, 0, 0 };
   item* Armor[3];
@@ -2420,12 +2423,12 @@ bool arm::DamageArmor(character* Damager, ushort Damage, uchar Type)
   return AnyArmor ? Armor[femath::WeightedRand(AV, 3)]->ReceiveDamage(Damager, Damage, Type) : false;
 }
 
-bool groin::DamageArmor(character* Damager, ushort Damage, uchar Type)
+bool groin::DamageArmor(character* Damager, ushort Damage, ushort Type)
 {
   return GetMaster()->GetTorso()->DamageArmor(Damager, Damage, Type);
 }
 
-bool leg::DamageArmor(character* Damager, ushort Damage, uchar Type)
+bool leg::DamageArmor(character* Damager, ushort Damage, ushort Type)
 {
   long AV[3] = { 0, 0, 0 };
   item* Armor[3];
@@ -2534,6 +2537,7 @@ bool corpse::IsStupidToConsume() const
       if(BodyPart && BodyPart->IsStupidToConsume())
 	return true;
     }
+
   return false;
 }
 
@@ -2541,4 +2545,71 @@ head* head::Behead()
 {
   RemoveFromSlot();
   return this;
+}
+
+material* bodypart::CreateDipMaterial()
+{
+  material* Material = GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway());
+
+  if(!GetMainMaterial()->GetVolume())
+    {
+      RemoveFromSlot();
+      SendToHell();
+    }
+
+  return Material;
+}
+
+bool corpse::IsDipDestination(const character* Char) const
+{
+  for(ushort c = 0; c < GetDeceased()->GetBodyParts(); ++c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsDipDestination(Char))
+	return true;
+    }
+
+  return false;
+}
+
+material* corpse::CreateDipMaterial()
+{
+  for(ushort c = GetDeceased()->GetBodyParts() - 1; c != 0; --c)
+    {
+      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+      if(BodyPart && BodyPart->IsDipDestination(0))
+	return BodyPart->CreateDipMaterial();
+    }
+
+  bodypart* Torso = GetDeceased()->GetTorso();
+
+  if(Torso->IsDipDestination(0))
+    {
+      material* Material = Torso->CreateDipMaterial();
+
+      if(!GetDeceased()->GetTorso())
+	{
+	  for(ushort c = 1; c < GetDeceased()->GetBodyParts(); ++c)
+	    {
+	      bodypart* BodyPart = GetDeceased()->GetBodyPart(c);
+
+	      if(BodyPart)
+		{
+		  item* BodyPart = GetDeceased()->SevereBodyPart(c);
+
+		  if(BodyPart)
+		    GetSlot()->AddFriendItem(BodyPart);
+		}
+	    }
+
+	  RemoveFromSlot();
+	  SendToHell();
+	}
+
+      return Material;
+    }
+
+  return 0;
 }

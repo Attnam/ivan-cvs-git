@@ -102,11 +102,13 @@ class ACTION
   virtual ulong GetEmitation() const;
   virtual long GetScore() const;
   virtual bool ShowEnvironment() const { return false; }
+  virtual void SetMoveDigger(bool What) { MoveDigger = What; }
  protected:
   virtual void VirtualConstructor(bool);
   actionslot RightBackup;
   actionslot LeftBackup;
   vector2d SquareDug;
+  bool MoveDigger;
 );
 
 class ACTION

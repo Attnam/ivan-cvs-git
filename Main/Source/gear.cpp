@@ -483,9 +483,9 @@ bool thunderhammer::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
      return BaseSuccess;
 }
 
-bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  return Type != ELECTRICITY ? meleeweapon::ReceiveDamage(Damager, Damage, Type) : false;
+  return Type & ELECTRICITY ? false : meleeweapon::ReceiveDamage(Damager, Damage, Type);
 }
 
 ulong armor::GetPrice() const

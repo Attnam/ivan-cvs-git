@@ -100,3 +100,7 @@ Hedgehog
 Butterfly of storms
 
 	Causes small tornadoes and thunderstorms around the level by flapping its wings.
+
+Hattifattener
+
+	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings.

@@ -96,7 +96,7 @@ class material
   virtual void Load(inputfile&);
   void SetVolume(ulong);
   bool Effect(character*, ulong);
-  virtual void EatEffect(character*, ulong, ulong);
+  virtual void EatEffect(character*, ulong);
   bool HitEffect(character*);
   virtual ushort GetSkinColor() const { return GetColor(); }
   virtual void SetSkinColor(ushort) { }
@@ -153,7 +153,7 @@ class material
   bool IsSameAs(const material* What) const { return What->Config == Config; }
   bool IsTransparent() const { return GetAlpha() != 255; }
   virtual material* Duplicate() const { return new material(*this); }
-  virtual ulong GetTotalNutritionValue(const item*) const;
+  virtual ulong GetTotalNutritionValue() const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
   virtual void SetWetness(ulong) { }
   virtual uchar GetSpoilLevel() const { return 0; }

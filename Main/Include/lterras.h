@@ -48,7 +48,7 @@ class OLTERRAIN
   virtual void SetIsLocked(bool What) { Locked = What; }
   virtual bool IsLocked() const { return Locked; }
   virtual bool CanBeOpenedByAI();
-  virtual void ReceiveDamage(character*, ushort, uchar);
+  virtual void ReceiveDamage(character*, ushort, ushort);
   virtual void CreateBoobyTrap();
   virtual void ActivateBoobyTrap();
   virtual void SetLockType(uchar What) { LockType = What; }
@@ -181,7 +181,7 @@ class OLTERRAIN
   door,
  public:
   virtual void BeKicked(character*, ushort);
-  virtual void ReceiveDamage(character*, ushort, uchar);
+  virtual void ReceiveDamage(character*, ushort, ushort);
   virtual void HasBeenHitByItem(character*, item*, ushort);
   virtual void Break() { olterrain::Break(); }
 );

@@ -177,7 +177,7 @@ ushort olterrain::GetStrengthValue() const
   return GetMainMaterial()->GetStrengthValue() / 20;
 }
 
-void olterrain::ReceiveDamage(character* Villain, ushort What, uchar)
+void olterrain::ReceiveDamage(character* Villain, ushort What, ushort)
 {
   if(CanBeDestroyed() && What > GetStrengthValue())
     {

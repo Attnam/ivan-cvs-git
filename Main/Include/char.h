@@ -197,7 +197,7 @@ class character : public entity, public id
   bool HasHeadOfElpuri() const;
   bool HasGoldenEagleShirt() const;
   bool HasPetrussNut() const;
-  bool HasEncryptedScroll() const;
+  bool RemoveEncryptedScroll();
   bool IsPlayer() const { return Player; }
   bool Engrave(const std::string&);
   void AddScoreEntry(const std::string&, float = 1, bool = true) const;
@@ -290,8 +290,8 @@ class character : public entity, public id
   void Teleport(vector2d);
   void RestoreHP();
   void RestoreLivingHP();
-  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool BodyPartIsVital(ushort) const { return true; }
   void RestoreBodyParts();
   std::string GetAssignedName() const { return AssignedName; }
@@ -323,10 +323,10 @@ class character : public entity, public id
   virtual bool CheckOffer() const { return true; }
   ushort GetTemporaryStateCounter(ulong) const;
   void EditTemporaryStateCounter(ulong, short);
-  static bool AllowDamageTypeBloodSpill(uchar);
+  static bool AllowDamageTypeBloodSpill(ushort);
   bool ClosePos(vector2d);
-  ushort GetResistance(uchar) const;
-  virtual ushort GlobalResistance(uchar Type) const { return GetResistance(Type); }
+  ushort GetResistance(ushort) const;
+  virtual ushort GlobalResistance(ushort Type) const { return GetResistance(Type); }
   virtual std::string GetEquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
@@ -466,7 +466,7 @@ class character : public entity, public id
   void DrawPanel(bool) const;
   virtual ushort DrawStats(bool) const = 0;
   virtual ushort GetCarryingStrength() const = 0;
-  static bool DamageTypeAffectsInventory(uchar);
+  static bool DamageTypeAffectsInventory(ushort);
   void SetStuckTo(item* What) { StuckTo = What; }
   item* GetStuckTo() const { return StuckTo; }
   void SetStuckToBodyPart(ushort What) { StuckToBodyPart = What; }
@@ -660,7 +660,7 @@ class character : public entity, public id
   void SetWisdom(ushort);
   void SetCharisma(ushort);
   void SetMana(ushort);
-  void DamageAllItems(character*, ushort, uchar);
+  void DamageAllItems(character*, ushort, ushort);
   bool Equips(const item*) const;
   virtual void AddAttributeInfo(std::string&) const;
   void PrintBeginConfuseMessage() const;
@@ -671,7 +671,7 @@ class character : public entity, public id
   void SelectFromPossessions(itemvector&, const std::string&, uchar, bool (*)(const item*, const character*) = 0);
   bool EquipsSomething(bool (*)(const item*, const character*) = 0);
   bool CheckTalk();
-  virtual bool CanCreateBodyPart(ushort) const { return false; }
+  virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
   std::string& ProcessMessage(std::string&) const;
   virtual bool IsHumanoid() const { return false; }

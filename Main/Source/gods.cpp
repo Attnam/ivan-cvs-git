@@ -910,7 +910,7 @@ void scabies::PrayBadEffect()
     {
       ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
       material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 1000);
-      SchoolFood->EatEffect(PLAYER, 1000, 10000);
+      SchoolFood->EatEffect(PLAYER, 1000);
       delete SchoolFood;
       ADD_MESSAGE("You feel your muscles softening terribly...");
       PLAYER->EditAttribute(ARM_STRENGTH, -1);

@@ -56,7 +56,7 @@ class ABSTRACT_CHARACTER
   void SetLeftBoot(item* What) { GetLeftLeg()->SetBoot(What); }
   arm* GetMainArm() const;
   arm* GetSecondaryArm() const;
-  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
   virtual bool BodyPartIsVital(ushort) const;
   virtual bool BodyPartCanBeSevered(ushort) const;
   virtual item* GetMainWielded() const;
@@ -78,7 +78,7 @@ class ABSTRACT_CHARACTER
   virtual bool (*EquipmentSorter(ushort) const)(const item*, const character*);
   virtual void SetEquipment(ushort, item*);
   virtual void DrawSilhouette(bitmap*, vector2d, bool) const;
-  virtual ushort GlobalResistance(uchar) const;
+  virtual ushort GlobalResistance(ushort) const;
   virtual void CompleteRiseFromTheDead();
   virtual bool HandleNoBodyPart(ushort);
   virtual void Kick(lsquare*, bool = false);
@@ -136,7 +136,6 @@ class ABSTRACT_CHARACTER
   virtual void AddAttributeInfo(std::string&) const;
   virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
-  virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
   virtual item* GetPairEquipment(ushort) const;
@@ -395,7 +394,7 @@ class CHARACTER
   humanoid,
  public:
   virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
-  virtual bool ReceiveDamage(character*, ushort, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
+  virtual bool ReceiveDamage(character*, ushort, ushort, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false, bool = true);
 );
 
 class CHARACTER
@@ -434,7 +433,6 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual bool AttachBodyPartsOfFriendsNear(); 
-  virtual void CreateBodyParts(ushort);
   virtual bool BodyPartIsVital(ushort) const;
   virtual ushort GetAttribute(ushort) const;
   virtual ulong GetBaseEmitation() const;
@@ -470,7 +468,6 @@ class CHARACTER
   genie,
   humanoid,
  public:
-  virtual void CreateBodyParts(ushort);
   virtual bool BodyPartIsVital(ushort) const;
   virtual ushort GetAttribute(ushort) const;
   virtual bool CanCreateBodyPart(ushort) const;

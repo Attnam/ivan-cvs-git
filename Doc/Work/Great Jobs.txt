@@ -6,7 +6,7 @@ Creating a tool to combine high score files.
 
 Script precompiler.
 
-Febot engine for the Holy Haven of Gurus.
+Febot engine for Hog's oracle.
 
 //Documenting graphics formats.
 
@@ -17,8 +17,6 @@ Documenting FeLib.
 Documenting IVAN. (haha)
 
 In-game manual.
-
-Monster memory.
 
 Mouse interface.
 
@@ -40,11 +38,11 @@ Identify system.
 
 Magic system.
 
-Fire effects.
+Spreading fire.
 
-Fluid system that handles special material effects, eg. molten metals.
+Fluid system that handles special material effects, eg. molten metals damaging legs.
 
-Corrosion for materials.
+Corrosion/rust for materials.
 
 Dividing physical damage to slashing, blunt, piercing etc. damage.
 
@@ -58,13 +56,15 @@ More flexible throw using linear extrapolation.
 
 Support for multiple items flying at the same time.
 
-Breaking different wands should cause different effects.
+//Breaking different wands should cause different effects.
 
-New tunnel generation algorithm.
+Faster tunnel generation algorithm.
 
-New AI route algorithm.
+Better AI route algorithm.
 
 Sight direction.
+
+Dynamic team system.
 
 Monsters generating in groups.
 
@@ -82,6 +82,18 @@ Bonefile system.
 
 Support for colored messages.
 
-Armor pictures of humanoids.
+//Armor pictures for player.
 
-Blindness.
+Weapon pictures for player.
+
+Blindness state.
+
+Adding Mondedr the chaos town.
+
+Adding Hog the neutral town.
+
+Money item.
+
+Some kind of rank/danger level system.
+
+Removing worldmap.

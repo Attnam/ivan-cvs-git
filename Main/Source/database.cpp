@@ -249,7 +249,6 @@ template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::stri
   ANALYZE_DATA(ElectricityResistance);
   ANALYZE_DATA(StrengthModifier);
   ANALYZE_DATA(FormModifier);
-  ANALYZE_DATA(NPModifier);
   ANALYZE_DATA(DefaultSize);
   ANALYZE_DATA(DefaultMainVolume);
   ANALYZE_DATA(DefaultSecondaryVolume);

@@ -306,9 +306,7 @@ bool fountain::Drink(character* Drinker)
 	  else
 	    {
 	      if(!game::BoolQuestion("Do you want to drink from the fountain? [y/N]"))
-		{
-		  return false;
-		}
+		return false;
 	    }
 
 	  Drinker->EditAP(-1000);
@@ -949,7 +947,7 @@ void wall::Break()
   olterrain::Break();
 }
 
-void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
+void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
 {
   if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {
@@ -992,7 +990,7 @@ void door::ReceiveDamage(character* Villain, ushort Damage, uchar)
     }
 }
 
-void brokendoor::ReceiveDamage(character* Villain, ushort Damage, uchar)
+void brokendoor::ReceiveDamage(character* Villain, ushort Damage, ushort)
 {
   if(!Opened && !IsLocked() && Damage > (RAND() & 3))
     {

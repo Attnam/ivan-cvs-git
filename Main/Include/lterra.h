@@ -211,7 +211,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Break();
   short GetHP() const { return HP; }
   void EditHP(short What) { HP += What; }
-  virtual void ReceiveDamage(character*, ushort, uchar);
+  virtual void ReceiveDamage(character*, ushort, ushort);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   virtual const prototype* GetProtoType() const;
   const database* GetDataBase() const { return DataBase; }

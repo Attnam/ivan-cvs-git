@@ -1119,15 +1119,28 @@ bool character::HasGoldenEagleShirt() const
   return false;
 }
 
-bool character::HasEncryptedScroll() const
+bool character::RemoveEncryptedScroll()
 {
   for(stackiterator i = GetStack()->GetBottom(); i.HasItem(); ++i)
     if(i->IsEncryptedScroll())
-      return true;
+      {
+	item* Item = *i;
+	Item->RemoveFromSlot();
+	Item->SendToHell();
+	return true;
+      }
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
-    if(GetEquipment(c) && GetEquipment(c)->IsEncryptedScroll())
-      return true;
+    {
+      item* Item = GetEquipment(c);
+
+      if(Item && Item->IsEncryptedScroll())
+	{
+	  Item->RemoveFromSlot();
+	  Item->SendToHell();
+	  return true;
+	}
+    }
 
   return false;
 }
@@ -2326,9 +2339,9 @@ void character::RestoreLivingHP()
     }
 }
 
-bool character::AllowDamageTypeBloodSpill(uchar Type)
+bool character::AllowDamageTypeBloodSpill(ushort Type)
 {
-  switch(Type)
+  switch(Type&0xFFF)
     {
     case PHYSICAL_DAMAGE:
     case SOUND:
@@ -2348,7 +2361,7 @@ bool character::AllowDamageTypeBloodSpill(uchar Type)
 
 /* Returns truly done damage */
 
-ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
+ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, ushort Type, uchar BodyPartIndex, uchar Direction, bool PenetrateResistance, bool Critical, bool ShowNoDamageMsg)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
   BodyPart->DamageArmor(Damager, Damage, Type);
@@ -2393,11 +2406,10 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 	ADD_MESSAGE("%s %s is severed off!", GetPossessivePronoun().c_str(), BodyPart->GetBodyPartName().c_str());
 
       item* Severed = SevereBodyPart(BodyPartIndex);
+      GetSquareUnder()->SendNewDrawRequest();
 
       if(Severed)
 	{
-	  GetSquareUnder()->SendNewDrawRequest();
-
 	  if(!game::IsInWilderness())
 	    {
 	      GetStackUnder()->AddItem(Severed);
@@ -2426,12 +2438,16 @@ ushort character::ReceiveBodyPartDamage(character* Damager, ushort Damage, uchar
 }
 
 /* Returns 0 if bodypart dissappears */
+
 item* character::SevereBodyPart(ushort BodyPartIndex)
 {
   bodypart* BodyPart = GetBodyPart(BodyPartIndex);
 
-  if(BodyPartsDisappearWhenSevered())
+  if(BodyPartsDisappearWhenSevered() || StateIsActivated(POLYMORPHED))
     {
+      BodyPart->RemoveFromSlot();
+      GetStackUnder()->AddItem(BodyPart);
+      BodyPart->DropEquipment();
       BodyPart->RemoveFromSlot();
       CalculateAttributeBonuses();
       CalculateBattleInfo();
@@ -2459,7 +2475,7 @@ item* character::SevereBodyPart(ushort BodyPartIndex)
 
 /* The second uchar is actually TargetFlags, which is not used here, but seems to be used in humanoid::ReceiveDamage. Returns true if the character really receives damage */
 
-bool character::ReceiveDamage(character* Damager, ushort Damage, uchar Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical, bool ShowMsg)
+bool character::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uchar, uchar Direction, bool, bool PenetrateArmor, bool Critical, bool ShowMsg)
 {
   bool Affected = ReceiveBodyPartDamage(Damager, Damage, Type, 0, Direction, PenetrateArmor, Critical, ShowMsg) != 0;
 
@@ -2603,9 +2619,9 @@ bool character::CheckKick() const
     return true;
 }
 
-ushort character::GetResistance(uchar Type) const
+ushort character::GetResistance(ushort Type) const
 {
-  switch(Type)
+  switch(Type&0xFFF)
     {
     case PHYSICAL_DAMAGE:
     case SOUND:
@@ -2756,13 +2772,14 @@ ulong character::GetBodyPartVolume(ushort Index) const
 void character::CreateBodyParts(ushort SpecialFlags)
 {
   for(ushort c = 0; c < GetBodyParts(); ++c) 
-    CreateBodyPart(c, SpecialFlags);
+    if(CanCreateBodyPart(c))
+      CreateBodyPart(c, SpecialFlags);
 }
 
 void character::RestoreBodyParts()
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(!GetBodyPart(c))
+    if(!GetBodyPart(c) && CanCreateBodyPart(c))
       CreateBodyPart(c);
 }
 
@@ -3369,9 +3386,9 @@ void character::CalculateDodgeValue()
     DodgeValue = 1;
 }
 
-bool character::DamageTypeAffectsInventory(uchar Type)
+bool character::DamageTypeAffectsInventory(ushort Type)
 {
-  switch(Type)
+  switch(Type&0xFFF)
     {
     case SOUND:
     case ENERGY:
@@ -4205,15 +4222,16 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
       else
 	{
 	  item* SeveredBodyPart = SevereBodyPart(RandomBodyPart);
+
 	  if(SeveredBodyPart)
 	    {
-	  GetNearLSquare(GetLevel()->GetRandomSquare())->AddItem(SeveredBodyPart);
-	  SeveredBodyPart->DropEquipment();
+	      GetNearLSquare(GetLevel()->GetRandomSquare())->AddItem(SeveredBodyPart);
+	      SeveredBodyPart->DropEquipment();
 
-	  if(IsPlayer())
-	    ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).c_str());
-	  else if(CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
+	      if(IsPlayer())
+		ADD_MESSAGE("Your %s teleports away.", GetBodyPartName(RandomBodyPart).c_str());
+	      else if(CanBeSeenByPlayer())
+		ADD_MESSAGE("%s %s teleports away.", GetPossessivePronoun().c_str(), GetBodyPartName(RandomBodyPart).c_str());
 	    }
 	  else
 	    {
@@ -4495,6 +4513,13 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
 float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
 {
   float Danger = Enemy->GetTimeToKill(this, UseMaxHP) / GetTimeToKill(Enemy, UseMaxHP);
+
+  if(!Enemy->CanBeSeenBy(this, true))
+    Danger *= 0.5f;
+
+  if(!CanBeSeenBy(Enemy, true))
+    Danger *= 2.0f;
+
   return Limit(Danger, -100.0f, 100.0f);
 }
 
@@ -5068,7 +5093,7 @@ bool character::CheckZap()
   return true;
 }
 
-void character::DamageAllItems(character* Damager, ushort Damage, uchar Type)
+void character::DamageAllItems(character* Damager, ushort Damage, ushort Type)
 {
   GetStack()->ReceiveDamage(Damager, Damage, Type);
 
@@ -5485,7 +5510,7 @@ void character::GetHitByExplosion(const explosion* Explosion, ushort Damage)
 {
   uchar DamageDirection = GetPos() == Explosion->Pos ? RANDOM_DIR : game::CalculateRoughDirection(GetPos() - Explosion->Pos);
 
-  if(GetTeam()->GetID() != PLAYER->GetTeam()->GetID() && Explosion->Terrorist)
+  if(GetTeam()->GetID() != PLAYER->GetTeam()->GetID() && Explosion->Terrorist && Explosion->Terrorist->GetTeam()->GetID() == PLAYER->GetTeam()->GetID())
     Explosion->Terrorist->Hostility(this);
 
   GetTorso()->SpillBlood((8 - Explosion->Size + RAND() % (8 - Explosion->Size)) >> 1);

@@ -263,70 +263,6 @@ guard
 	HostileReplies == "\"A fair trial? Hah! Prepare to be executed!\"";
 	AttachedGod = LEGIFER;
 
-	/*Config REAPER;
-	{
-		AttributeBonus = 200;
-		IsCharmable = false;
-		CanBeDisplaced = false;
-		IsNameable = false;
-		IsUnique = true;
-		HairColor = rgb16(20, 20, 20);
-		ClothColor = rgb16(20, 20, 20);
-		EyeColor = rgb16(255, 0, 0);
-		HeadBitmapPos = 96, 112;
-		TorsoBitmapPos = 32, 80;
-		ArmBitmapPos = 64, 16;
-		LegBitmapPos = 0, 0;
-		TotalVolume = 80000;
-		TotalSize = 225;
-		CanRead = true;
-		NameSingular = "Reaper";
-		PostFix = "of the Darkness";
-		IsPolymorphable = false;
-		DangerModifier = 4000;
-		CanBeWished = false;
-		Alias == "Darkness";
-		Helmet = RUBY helmet(FULL_HELMET){ Enchantment = 3; }
-		Amulet = amulet(AMULET_OF_LIFE_SAVING);
-		BodyArmor = DIAMOND bodyarmor(PLATE_MAIL) { Enchantment = 4; }
-		Cloak = SPIDER_SILK cloak { Enchantment = 4; }
-		Belt = RUBY belt { Enchantment = 4; }
-		RightWielded = RUBY STEEL meleeweapon(TWO_HANDED_SWORD) { Enchantment = 10;}
-		RightGauntlet = DIAMOND gauntlet(GAUNTLET_OF_DEXTERITY) { Enchantment = 8; }
-		RightRing = ring(RING_OF_FIRE_RESISTANCE);
-		LeftRing = ring(RING_OF_POISON_RESISTANCE);
-		RightBoot = SPIDER_SILK boot(BOOT_OF_AGILITY) { Enchantment = 8; }
-		KnownCWeaponSkills = { 4, UNARMED, KICK, BITE, LARGE_SWORDS; }
-		CWeaponSkillHits = { 4, 5000, 5000, 5000, 5000; }
-		RightSWeaponSkillHits = 2000;
-		PanicLevel = 0;
-		CanBeCloned = false;
-		DefaultName = "Balrog";
-		DeathMessage = "The mysterious Reaper covered with darkness disappears.";
-	}
-
-	Config NECRO;
-	{
-		AttributeBonus = +10;
-		Helmet = STEEL helmet(FULL_HELMET){ Enchantment = 3; }
-		BodyArmor = STEEL bodyarmor(PLATE_MAIL){ Enchantment = 3; }
-		RightWielded = STEEL RUBY meleeweapon(LONG_SWORD){ Enchantment = 3; }
-		LeftWielded = STEEL shield {Enchantment = 3; }
-		RightGauntlet = STEEL gauntlet { Enchantment = 3; }
-		RightBoot = STEEL boot { Enchantment = 3; }
-		Adjective = "necro";
-		CWeaponSkillHits = { 2, 20, 20; }
-		PanicLevel = 20;
-		ClothColor = rgb16(20, 20, 20);
-		FriendlyReplies =
-		{
-			2,
-			"@Dd says loudly: \"Go away, we don`t need you here.\"",
-			"\"Some day we`ll slay Petrus and his armies, untill then, get out of my sight.\"",
-			
-		}
-	}*/
-
 	Config ROOKIE;
 	{
 		AttributeBonus = -20;
@@ -2009,9 +1945,9 @@ mistress
 	RightWielded = NYMPH_HAIR whip { Enchantment = 1; }
 	LeftWielded = NYMPH_HAIR whip { Enchantment = 1; }
 	KnownCWeaponSkills == WHIPS;
-	CWeaponSkillHits == 200;
-	RightSWeaponSkillHits = 200;
-	LeftSWeaponSkillHits = 200;
+	CWeaponSkillHits == 100;
+	RightSWeaponSkillHits = 100;
+	LeftSWeaponSkillHits = 100;
 	ClassStates = INFRA_VISION;
 	PanicLevel = 20;
 	Inventory = { 2, banana { Chance = 10; }, holybanana { Chance = 1; } }
@@ -2034,9 +1970,9 @@ mistress
 		RightBoot = NYMPH_HAIR boot { Enchantment = 1; }
 		RightWielded = OMMEL_HAIR whip { Enchantment = 2; }
 		LeftWielded = OMMEL_HAIR whip { Enchantment = 2; }
-		CWeaponSkillHits == 500;
-		RightSWeaponSkillHits = 500;
-		LeftSWeaponSkillHits = 500;
+		CWeaponSkillHits == 200;
+		RightSWeaponSkillHits = 200;
+		LeftSWeaponSkillHits = 200;
 		NameSingular = "mistress torturing chief";
 		PanicLevel = 15;
 	}
@@ -2050,9 +1986,9 @@ mistress
 		RightBoot = OMMEL_HAIR boot { Enchantment = 2; }
 		RightWielded = PHOENIX_FEATHER whip(RUNED_WHIP) { Enchantment = 3; }
 		LeftWielded = PHOENIX_FEATHER whip(RUNED_WHIP) { Enchantment = 3; }
-		CWeaponSkillHits == 1000;
-		RightSWeaponSkillHits = 1000;
-		LeftSWeaponSkillHits = 1000;
+		CWeaponSkillHits == 500;
+		RightSWeaponSkillHits = 500;
+		LeftSWeaponSkillHits = 500;
 		NameSingular = "mistress whip champion";
 		PanicLevel = 10;
 	}
@@ -2067,9 +2003,9 @@ mistress
 		RightBoot = PHOENIX_FEATHER boot { Enchantment = 3; }
 		RightWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
 		LeftWielded = ANGEL_HAIR RUBY whip(RUNED_WHIP) { ContainedMaterial = POISON_LIQUID { Volume = 250; } Enchantment = 4; }
-		CWeaponSkillHits == 2000;
-		RightSWeaponSkillHits = 2000;
-		LeftSWeaponSkillHits = 2000;
+		CWeaponSkillHits == 1000;
+		RightSWeaponSkillHits = 1000;
+		LeftSWeaponSkillHits = 1000;
 		NameSingular = "mistress warlady";
 		NamePlural = "mistress warladies";
 		PanicLevel = 5;
@@ -2090,9 +2026,9 @@ mistress
 		LeftWielded = SPIDER_SILK chameleonwhip { Enchantment = 5; }
 		RightRing = ring(RING_OF_FIRE_RESISTANCE);
 		LeftRing = ring(RING_OF_POISON_RESISTANCE);
-		CWeaponSkillHits == 5000;
-		RightSWeaponSkillHits = 5000;
-		LeftSWeaponSkillHits = 5000;
+		CWeaponSkillHits == 2000;
+		RightSWeaponSkillHits = 2000;
+		LeftSWeaponSkillHits = 2000;
 		NameSingular = "mistress queen";
 		PanicLevel = 0;
 		ClassStates = INVISIBLE|HASTE|INFRA_VISION;

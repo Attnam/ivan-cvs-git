@@ -28,8 +28,8 @@ class ABSTRACT_ITEM
   short GetHP() const { return HP; }
   void EditHP(short);
   void IncreaseHP() { ++HP; }
-  virtual ushort GetTotalResistance(uchar) const = 0;
-  virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual ushort GetTotalResistance(ushort) const = 0;
+  virtual bool ReceiveDamage(character*, ushort, ushort);
   const std::string& GetOwnerDescription() const { return OwnerDescription; }
   void SetOwnerDescription(const std::string& What) { OwnerDescription = What; }
   bool IsUnique() const { return Unique; }
@@ -85,8 +85,10 @@ class ABSTRACT_ITEM
   virtual void CalculateAttributeBonuses() { }
   virtual void SignalSpoilLevelChange(material*);
   virtual bool CanBeEatenByAI(const character*) const;
-  virtual bool DamageArmor(character*, ushort, uchar) { return false; }
-  bool CannotBeSevered(uchar);
+  virtual bool DamageArmor(character*, ushort, ushort) { return false; }
+  bool CannotBeSevered(ushort);
+  virtual bool IsDipDestination(const character*) const;
+  virtual material* CreateDipMaterial();
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -125,7 +127,7 @@ class ITEM
   virtual ~head();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
   void SetHelmet(item* What) { HelmetSlot.PutInItem(What); }
   item* GetHelmet() const { return *HelmetSlot; }
   void SetAmulet(item* What) { AmuletSlot.PutInItem(What); }
@@ -146,7 +148,7 @@ class ITEM
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
   void ShowBiteInfo() const;
-  virtual bool DamageArmor(character*, ushort, uchar);
+  virtual bool DamageArmor(character*, ushort, ushort);
   virtual head* Behead();
  protected:
   virtual void VirtualConstructor(bool);
@@ -173,7 +175,7 @@ class ITEM
   torso,
  public:
   virtual uchar GetGraphicsContainerIndex() const;
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
 );
 
 class ITEM
@@ -185,7 +187,7 @@ class ITEM
   virtual ~humanoidtorso();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
   void SetBodyArmor(item* What) { BodyArmorSlot.PutInItem(What); }
   item* GetBodyArmor() const { return *BodyArmorSlot; }
   void SetCloak(item* What) { CloakSlot.PutInItem(What); }
@@ -197,7 +199,7 @@ class ITEM
   virtual ushort GetEquipmentSlots() const { return 3; }
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalVolumeAndWeightChange();
-  virtual bool DamageArmor(character*, ushort, uchar);
+  virtual bool DamageArmor(character*, ushort, ushort);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BodyArmorSlot;
@@ -214,7 +216,7 @@ class ABSTRACT_ITEM
   virtual ~arm();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
   float GetWieldedDamage() const;
   float GetWieldedToHitValue() const;
   void SetWielded(item* What) { WieldedSlot.PutInItem(What); }
@@ -273,7 +275,7 @@ class ABSTRACT_ITEM
   void ShowWieldedAttackInfo() const;
   void ShowDefenceInfo() const;
   void ShowUnarmedInfo() const;
-  virtual bool DamageArmor(character*, ushort, uchar);
+  virtual bool DamageArmor(character*, ushort, ushort);
   bool CheckIfWeaponTooHeavy(const std::string&) const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -325,9 +327,9 @@ class ITEM
   groin,
   bodypart,
  public:
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
   virtual uchar GetBodyPartIndex() const;
-  virtual bool DamageArmor(character*, ushort, uchar);
+  virtual bool DamageArmor(character*, ushort, ushort);
  protected:
   virtual uchar GetSpecialFlags() const;
 );
@@ -341,7 +343,7 @@ class ABSTRACT_ITEM
   virtual ~leg();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
-  virtual ushort GetTotalResistance(uchar) const;
+  virtual ushort GetTotalResistance(ushort) const;
   void SetBoot(item* What) { BootSlot.PutInItem(What); }
   item* GetBoot() const { return *BootSlot; }
   virtual void DropEquipment();
@@ -375,7 +377,7 @@ class ABSTRACT_ITEM
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
   void ShowKickInfo() const;
-  virtual bool DamageArmor(character*, ushort, uchar);
+  virtual bool DamageArmor(character*, ushort, ushort);
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -453,6 +455,8 @@ class ITEM
   virtual head* Behead();
   virtual bool CanBeCloned() const;
   virtual uchar GetAttachedGod() const;
+  virtual bool IsDipDestination(const character*) const;
+  virtual material* CreateDipMaterial();
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual void GenerateMaterials() { }

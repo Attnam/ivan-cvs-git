@@ -98,7 +98,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Hit(character*, bool = false);
-  virtual ushort ReceiveBodyPartDamage(character*, ushort, uchar, uchar, uchar = 8, bool = false, bool = false, bool = true);
+  virtual ushort ReceiveBodyPartDamage(character*, ushort, ushort, uchar, uchar = 8, bool = false, bool = false, bool = true);
   virtual bool SpecialEnemySightedReaction(character*);
   virtual bool Faint(ushort, bool = false) { return false; }
  protected:

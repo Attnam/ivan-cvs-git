@@ -18,18 +18,31 @@ smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquar
   Picture.resize(16);
   ushort Color = Gas->GetColor();
   bitmap Temp(16, 16, TRANSPARENT_COLOR);
-  ushort Last = 4;
+  ushort Frame[16];
+  uchar Flags[16];
 
   for(ushort c = 0; c < 16; ++c)
     {
       Picture[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
       Picture[c]->CreateAlphaMap(Alpha);
-      ushort Frame;
+      bool Correct = false;
 
-      for(Frame = RAND() & 3; Frame == Last; Frame = RAND() & 3);
+      while(!Correct)
+	{
+	  Frame[c] = RAND() & 3;
+	  Flags[c] = RAND() & 7;
+	  Correct = true;
 
-      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, Frame << 4, 32, 0, 0, 16, 16, &Color);
-      Temp.Blit(Picture[c], uchar(RAND() & 7));
+	  for(ushort i = 0; i < c; ++i)
+	    if(Frame[c] == Frame[i] && Flags[c] == Flags[i])
+	      {
+		Correct = false;
+		break;
+	      }
+	}
+
+      igraph::GetRawGraphic(GR_EFFECT)->MaskedBlit(&Temp, Frame[c] << 4, 32, 0, 0, 16, 16, &Color);
+      Temp.Blit(Picture[c], Flags[c]);
     }
 
   LSquareUnder->SignalSmokeAlphaChange(Alpha);

@@ -135,7 +135,7 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
-//#include "confdef.h"
+#include "confdef.h"
 
 bool game::Init(const std::string& Name)
 {

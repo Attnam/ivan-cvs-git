@@ -75,12 +75,13 @@
 
 #define PHYSICAL_DAMAGE 1
 #define SOUND 2
-#define ACID 3
-#define FIRE 4
-#define ELECTRICITY 5
-#define ENERGY 6
-#define POISON 7
-#define DRAIN 8
+#define ACID 4
+#define FIRE 8
+#define ELECTRICITY 16
+#define ENERGY 32
+#define POISON 64
+#define DRAIN 128
+#define THROW 32768
 
 #define UNDEFINED 0
 #define MALE 1

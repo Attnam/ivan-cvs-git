@@ -24,7 +24,6 @@ item
 	ElectricityResistance = 0;
 	StrengthModifier = 0;
 	/* Obligatory: FormModifier */
-	NPModifier = 10000;
 	/* Obligatory: DefaultSize */
 	/* Obligatory: DefaultMainVolume */
 	DefaultSecondaryVolume = 0;
@@ -136,7 +135,7 @@ can /* materialcontainer-> */
 	/* Adjective and PostFix overridden */
 	MainMaterialConfig == IRON;
 	ContainedMaterialConfig = { 3, BANANA_FLESH, SCHOOL_FOOD, MUSHROOM_FLESH; }
-	MaterialConfigChances = { 3, 75, 5, 5; }
+	MaterialConfigChances = { 3, 750, 50, 25; }
 	Roundness = 60;
 	AttachedGod = NONE;
 }
@@ -177,7 +176,7 @@ meleeweapon
 		DefaultMainVolume = 130;
 		DefaultSecondaryVolume = 45;
 		BitmapPos = 16, 336;
-		FormModifier = 100;
+		FormModifier = 90;
 		StrengthModifier = 100;
 		NameSingular = "sword";
 		Adjective = "long";
@@ -284,7 +283,7 @@ meleeweapon
 		DefaultSecondaryVolume = 400;
 		StrengthModifier = 80;
 		BitmapPos = 16, 256;
-		FormModifier = 55;
+		FormModifier = 60;
 		NameSingular = "axe";
 		Article = "an";
 		MainMaterialConfig = { 5, COPPER, BRONZE, IRON, STEEL, MITHRIL; }
@@ -330,7 +329,7 @@ meleeweapon
 	Config MACE;
 	{
 		StrengthModifier = 125; 
-		FormModifier = 65; 
+		FormModifier = 75; 
 		DefaultSize = 70; 
 		DefaultMainVolume = 300;
 		DefaultSecondaryVolume = 500;
@@ -389,7 +388,7 @@ meleeweapon
 		DefaultMainVolume = 100;
 		DefaultSecondaryVolume = 50;
 		BitmapPos = 48, 144;
-		FormModifier = 45;
+		FormModifier = 60;
 		StrengthModifier = 40;
 		NameSingular = "sickle";
 		MainMaterialConfig = { 3, IRON, STEEL, MITHRIL; }
@@ -414,8 +413,8 @@ meleeweapon
 		DefaultMainVolume = 25;
 		DefaultSecondaryVolume = 25;
 		BitmapPos = 48, 256;
-		FormModifier = 65;
-		StrengthModifier = 50;
+		FormModifier = 75;
+		StrengthModifier = 60;
 		NameSingular = "dagger";
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
@@ -517,7 +516,7 @@ meleeweapon
 		DefaultMainVolume = 150;
 		DefaultSecondaryVolume = 1800;
 		BitmapPos = 64, 112;
-		FormModifier = 60;
+		FormModifier = 80;
 		StrengthModifier = 40;
 		NameSingular = "scythe";
 		MainMaterialConfig = { 4, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
@@ -558,31 +557,6 @@ meleeweapon
 		Possibility = 30;
 		BitmapPos = 64, 256;
 	}
-
-	/*Config MORNING_STAR;
-	{
-		StrengthModifier = 150; 
-		FormModifier = 65; 
-		DefaultSize = 55; 
-		DefaultMainVolume = 450;
-		DefaultSecondaryVolume = 300;
-		BitmapPos = 48, 384;
-		Possibility = 300;
-		InHandsPic = 160, 192;
-		WeaponCategory = SPIKED_WEAPONS;
-		NameSingular = "morning star";
-		MainMaterialConfig = { 2, IRON, MITHRIL; }
-		SecondaryMaterialConfig == WOOD;
-		MaterialConfigChances = { 2, 100, 10; }
-		Roundness = 20;
-		IsTwoHanded = true;
-	}
-
-	Config BROKEN|MORNING_STAR;
-	{
-		Possibility = 30;
-		BitmapPos = 64, 384;
-	}*/
 }
 
 banana /* materialcontainer-> */
@@ -1322,7 +1296,7 @@ whip /* meleeweapon-> */
 	SecondaryMaterialConfig == WOOD;
 	MaterialConfigChances = { 4, 2000, 250, 100, 5; }
 	Roundness = 2;
-	FormModifier = 7; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 10; /* this is multiplied by MainMaterial's flexibility */
 	CanBeBroken = false;
 	AttachedGod = NEFAS;
 
@@ -1334,7 +1308,7 @@ whip /* meleeweapon-> */
 		DefaultSecondaryVolume = 50;
 		StrengthModifier = 20;
 		Adjective = "runed";
-		FormModifier = 15;
+		FormModifier = 20;
 	}
 }
 
@@ -1816,7 +1790,6 @@ bodypart
 	Possibility = 0;
 	Category = FOOD;
 	IsAutoInitializable = false;
-	NPModifier = 100;
 	IsAbstract = true;
 	IsTwoHanded = true;
 	Adjective = "severed"; /* only used if severed */
@@ -1915,7 +1888,6 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	IsPolymorphable = false;
 	Roundness = 80;
 	IsTwoHanded = true;
-	NPModifier = 100;
 	CanBeCloned = false;
 	AttachedGod = SCABIES;
 }
@@ -1929,7 +1901,6 @@ corpse
 	IsPolymorphSpawnable = false;
 	StrengthModifier = 100;
 	FormModifier = 15;
-	NPModifier = 100;
 	NameSingular = "corpse";
 	OKVisualEffects = ROTATE|MIRROR|FLIP;
 	Roundness = 50;
@@ -2410,9 +2381,9 @@ whipofthievery /* meleeweapon->whip-> */
 	NameSingular = "whip";
 	PostFix = "of thievery";
 	MainMaterialConfig == NYMPH_HAIR;
-	SecondaryMaterialConfig == DIAMOND;
+	SecondaryMaterialConfig == SAPPHIRE;
 	Roundness = 2;
-	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 30; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
 	AttachedGod = CLEPTIA;
 }
@@ -2626,9 +2597,9 @@ chameleonwhip
 	StrengthModifier = 30;
 	NameSingular = "chameleon whip";
 	MainMaterialConfig == OMMEL_HAIR;
-	SecondaryMaterialConfig == SILVER;
+	SecondaryMaterialConfig == RUBY;
 	Roundness = 2;
-	FormModifier = 25; /* this is multiplied by MainMaterial's flexibility */
+	FormModifier = 30; /* this is multiplied by MainMaterial's flexibility */
 	Price = 500;
 	AttachedGod = SCABIES;
 }

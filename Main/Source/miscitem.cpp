@@ -481,9 +481,9 @@ void holybook::FinishReading(character* Reader)
     }
 }
 
-bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool wand::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if((Type == FIRE || Type == ENERGY || Type == PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
+  if(Type & (FIRE|ENERGY|PHYSICAL_DAMAGE) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       if(GetSquareUnder()->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
@@ -495,9 +495,9 @@ bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   return false;
 }
 
-bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool backpack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if((Type == FIRE || Type == ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
+  if(Type & (FIRE|ENERGY) && Damage && IsExplosive() && (Damage > 25 || !(RAND() % (50 / Damage))))
     {
       std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -518,9 +518,9 @@ bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
   return false;
 }
 
-bool scroll::ReceiveDamage(character*, ushort Damage, uchar Type)
+bool scroll::ReceiveDamage(character*, ushort Damage, ushort Type)
 {
-  if(Type == FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
+  if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
@@ -533,9 +533,9 @@ bool scroll::ReceiveDamage(character*, ushort Damage, uchar Type)
   return false;
 }
 
-bool holybook::ReceiveDamage(character*, ushort Damage, uchar Type)
+bool holybook::ReceiveDamage(character*, ushort Damage, ushort Type)
 {
-  if(Type == FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
+  if(Type & FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
@@ -790,9 +790,9 @@ void mine::Save(outputfile& SaveFile) const
   SaveFile << Active << Team << DiscoveredByTeam;
 }
 
-bool mine::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool mine::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if(((Type == FIRE || Type == ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || ((Type == PHYSICAL_DAMAGE || Type == SOUND) && WillExplode(0)))
+  if((Type & (FIRE|ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || (Type & (PHYSICAL_DAMAGE|SOUND) && WillExplode(0)))
     {
       std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -1327,6 +1327,11 @@ bool mine::Apply(character* User)
   if(User->IsPlayer() && !game::BoolQuestion("Are you sure you want to plant " + GetName(DEFINITE) + "? [y/N]")) 
     return false;
 
+  room* Room = GetRoom();
+
+  if(Room)
+    Room->PlantTrap(User);
+
   if(User->IsPlayer())
     ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
 
@@ -1345,6 +1350,14 @@ bool mine::Apply(character* User)
 
 bool beartrap::Apply(character* User)
 {
+  if(User->IsPlayer() && !game::BoolQuestion("Are you sure you want to plant " + GetName(DEFINITE) + "? [y/N]")) 
+    return false;
+
+  room* Room = GetRoom();
+
+  if(Room)
+    Room->PlantTrap(User);
+
   if(IsBroken())
     {
       if(User->IsPlayer())
@@ -1662,9 +1675,9 @@ void scrollofenchantarmor::FinishReading(character* Reader)
     }
 }
 
-bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
-  if(Type == PHYSICAL_DAMAGE || Type == SOUND)
+  if(Type & (PHYSICAL_DAMAGE|SOUND))
     {
       Contained->ReceiveDamage(Damager, Damage / GetDamageDivider(), Type);
       ushort SV = Max<ushort>(GetStrengthValue(), 1);
@@ -1911,29 +1924,6 @@ void horn::VirtualConstructor(bool Load)
   LastUsed = 0;
 }
 
-bool potion::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
-{
-  if(Type == FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
-    {
-      std::string DeathMsg = "killed by an explosion of ";
-      AddName(DeathMsg, INDEFINITE);
-
-      if(Damager)
-	DeathMsg << " caused by " << Damager->GetKillName();
-
-      if(GetSquareUnder()->CanBeSeenByPlayer())
-	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
-
-      lsquare* Square = GetLSquareUnder();
-      RemoveFromSlot();
-      SendToHell();
-      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
-      return true;
-    }
-  else
-    return item::ReceiveDamage(Damager, Damage, Type);
-}
-
 item* bananapeels::BetterVersion() const
 {
   return new banana;
@@ -2084,8 +2074,12 @@ void beartrap::Search(const character* Char, ushort Perception)
       DiscoveredByTeam.insert(ViewerTeam);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
-      game::AskForKeyPress("Trap found! [press any key to continue]");
-      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+
+      if(Char->IsPlayer())
+	{
+	  game::AskForKeyPress("Trap found! [press any key to continue]");
+	  ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+	}
     }
 }
 
@@ -2098,8 +2092,12 @@ void mine::Search(const character* Char, ushort Perception)
       DiscoveredByTeam.insert(ViewerTeam);
       GetLSquareUnder()->SendMemorizedUpdateRequest();
       GetLSquareUnder()->SendNewDrawRequest();
-      game::AskForKeyPress("Trap found! [press any key to continue]");
-      ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+
+      if(Char->IsPlayer())
+	{
+	  game::AskForKeyPress("Trap found! [press any key to continue]");
+	  ADD_MESSAGE("You find %s.", CHAR_NAME(INDEFINITE));
+	}
     }
 }
 
@@ -2133,9 +2131,9 @@ void wand::BreakEffect(character* Terrorist, const std::string& DeathMsg)
   SendToHell();
 }
 
-bool beartrap::ReceiveDamage(character*, ushort Damage, uchar Type)
+bool beartrap::ReceiveDamage(character*, ushort Damage, ushort Type)
 {
-  if(!IsBroken() && Type == PHYSICAL_DAMAGE && Damage)
+  if(!IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
@@ -2156,4 +2154,41 @@ bool beartrap::ReceiveDamage(character*, ushort Damage, uchar Type)
     }
 
   return false;
+}
+
+bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
+{
+  if(Type & FIRE && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
+    {
+      std::string DeathMsg = "killed by an explosion of ";
+      AddName(DeathMsg, INDEFINITE);
+
+      if(Damager)
+	DeathMsg << " caused by " << Damager->GetKillName();
+
+      if(GetSquareUnder()->CanBeSeenByPlayer())
+	ADD_MESSAGE("%s explodes!", CHAR_DESCRIPTION(DEFINITE));
+
+      lsquare* Square = GetLSquareUnder();
+      RemoveFromSlot();
+      SendToHell();
+      Square->GetLevel()->Explosion(Damager, DeathMsg, Square->GetPos(), GetContainedMaterial()->GetTotalExplosivePower());
+      return true;
+    }
+
+  if(Type & THROW)
+    {
+      ushort StrengthValue = GetStrengthValue();
+
+      if(!StrengthValue)
+	StrengthValue = 1;
+
+      if(Damage > StrengthValue << 2 && RAND() % (25 * Damage / StrengthValue) >= 100)
+	{
+	  Break();
+	  return true;
+	}
+    }
+
+  return item::ReceiveDamage(Damager, Damage, Type);
 }

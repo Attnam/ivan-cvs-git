@@ -876,13 +876,13 @@ bool commandsystem::Throw(character* Char)
 
 bool commandsystem::Apply(character* Char)
 {
-  if(!Char->GetStack()->SortedItems(Char, &item::AppliableSorter))
+  if(!Char->GetStack()->SortedItems(Char, &item::AppliableSorter) && !Char->EquipsSomething(&item::AppliableSorter))
     {
       ADD_MESSAGE("You have nothing to apply!");
       return false;
     }
 
-  item* Item = Char->GetStack()->DrawContents(Char, "What do you want to apply?", 0, &item::AppliableSorter);
+  item* Item = Char->SelectFromPossessions("What do you want to apply?", &item::AppliableSorter);
   return Item && Item->Apply(Char);
 }
 

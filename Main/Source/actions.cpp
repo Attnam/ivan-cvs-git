@@ -94,7 +94,7 @@ void consume::Handle()
 
   /* Note: if backupped Actor has died of food effect, Action is deleted automatically, so we mustn't Terminate it */
 
-  if(Consuming->Consume(Actor, 500) && Actor->GetAction() && Actor->IsEnabled())
+  if(Consuming->Consume(Actor, 500) && Actor->GetAction() == this && Actor->IsEnabled())
     Terminate(true);
 }
 
@@ -198,7 +198,7 @@ void rest::Terminate(bool Finished)
 void dig::Save(outputfile& SaveFile) const
 {
   action::Save(SaveFile);
-  SaveFile << SquareDug;
+  SaveFile << SquareDug << MoveDigger;
   SaveFile << RightBackup;
   SaveFile << LeftBackup;
 }
@@ -206,7 +206,7 @@ void dig::Save(outputfile& SaveFile) const
 void dig::Load(inputfile& SaveFile)
 {
   action::Load(SaveFile);
-  SaveFile >> SquareDug;
+  SaveFile >> SquareDug >> MoveDigger;
   LoadActionSlot(SaveFile, RightBackup);
   LoadActionSlot(SaveFile, LeftBackup);
 }
@@ -249,7 +249,7 @@ void dig::Handle()
       if(!Actor->IsEnabled())
 	return;
 
-      if(Actor->GetMainWielded())
+      if(MoveDigger && Actor->GetMainWielded())
 	Actor->GetMainWielded()->MoveTo(Actor->GetStack());
 
       if(GetRightBackup())

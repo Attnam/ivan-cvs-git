@@ -265,7 +265,7 @@ square* stack::GetSquareTrulyUnder() const
     }
 }
 
-void stack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
+void stack::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);

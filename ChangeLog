@@ -7,6 +7,33 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+March 27 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Slow is now a hostile action
+	* The encrypted scroll is now removed when the player talks to Petrus
+	* GC levels 8 and 9 are now more difficult
+	* The secret vault is now on a random level
+	* RestoreBodyParts() now handles genies and angels correctly
+	* Corrected a bug in the bodypart vanish code
+	* Bodyparts of polymorphed monsters now vanish when severed
+	* Being invisible to the enemy now doubles relative danger; this makes
+	  the state more balanced since generated enemies will be more powerful
+	* Weapons are now more balanced
+	* Corrected a fatal bug in the thunder hammer & Turox codes
+	* Fixed a horrible bug in the consuming code that could cause unreproducable
+	  crashes
+	* Damage types are now flagged
+	* Thrown potions now break easier
+	* Dipping to corpses is again possible
+	* Removed the strange item NPModifier gum solution which became abusable due
+	  to the latter (you got 100 times more NP by putting flesh first in potions)
+	* Battle-axe, scythe, sickle and halberd InHandsPics added to humanoid.pcx
+	  by Kahvi
+	* Wielded pick-axe can now be applied
+	* Planting traps in shops or in the cathedral is now a hostile action
+	* Mondedr removed temporarily from the script so it won't confuse players of
+	  v0.410
+
 March 24 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Talking now trains charisma a little
