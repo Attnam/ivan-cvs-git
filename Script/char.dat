@@ -4130,7 +4130,7 @@ necromancer
 		HPRequirementForGeneration = 75;
 		Frequency = 1500;
 		PanicLevel = 5;
-		Inventory == GREEN_CRYSTAL skull;
+		Inventory == skull;
 		CWeaponSkillHits == 50;
 		RightSWeaponSkillHits = 20;
 		LeftSWeaponSkillHits = 20;

@@ -205,7 +205,7 @@ void scrollofchangematerial::FinishReading(character* Reader)
 	  ADD_MESSAGE("But your mind is not yet strong enough to summon enough %s for the change.", TempMaterial->GetName(false, false).CStr());
 	  delete TempMaterial;
 	  msgsystem::LeaveBigMessageMode();
-	  break;
+	  continue;
 	}
 
       material* MainMaterial = Item[0]->GetMainMaterial();
@@ -2667,7 +2667,7 @@ void scrollofhardenmaterial::FinishReading(character* Reader)
 	  delete TempMaterial;
 	  ADD_MESSAGE("But your mind is not yet strong enough to harden %s.", Item.size() == 1 ? "it" : "them");
 	  msgsystem::LeaveBigMessageMode();
-	  break;
+	  continue;
 	}
 
       material* MainMaterial = Item[0]->GetMainMaterial();
