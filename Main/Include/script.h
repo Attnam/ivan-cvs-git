@@ -209,6 +209,7 @@ class levelscript : public script
  public:
   levelscript() : RoomDefault(0), FillSquare(0), LevelMessage(0), Size(0), Items(0), Rooms(0), GenerateMonsters(0), ReCalculate(0), GenerateUpStairs(0), GenerateDownStairs(0), OnGround(0), TeamDefault(0), AmbientLight(0), Description(0), LOSModifier(0), Base(0) {}
   void ReadFrom(inputfile&, bool = false);
+  levelscript* GetBase() { return Base; }
   void SetBase(levelscript* What) { Base = What; }
   std::vector<squarescript*>& GetSquare() { return Square; }
   std::map<uchar, roomscript*>& GetRoom() { return Room; }

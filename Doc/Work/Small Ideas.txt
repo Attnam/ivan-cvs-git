@@ -84,3 +84,4 @@ WMap terrain height should be shown in WMode.
 *KDwarves should shout.
 Special "enemy sighted" rections.
 Attnam could be resized again?
+Vampires should be able to polymorph into a bat.

@@ -210,7 +210,7 @@ class OVERLEVELTERRAIN
   virtual void Kick(ushort, bool, uchar);
   virtual void ReceiveVomit(character*);
   virtual bool Polymorph(character*);
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*);
  protected:
   virtual std::string NameSingular() const { return "altar"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 368); }
@@ -226,7 +226,7 @@ class OVERLEVELTERRAIN
   },
  public:
   virtual std::string DigMessage() const { return "The throne resists."; }
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*);
  protected:
   virtual std::string NameSingular() const { return "throne"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 416); }
@@ -306,7 +306,7 @@ class OVERLEVELTERRAIN
   },
  public:
   virtual std::string DigMessage() const { return "The destroy the couch."; }
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
   virtual std::string NameSingular() const { return "couch"; }
@@ -337,7 +337,7 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "You smash the bookcase into pieces."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
   virtual std::string NameSingular() const { return "bookcase"; }
@@ -354,14 +354,13 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "The water splashes a bit."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-  virtual void SitOn(character*);
-  virtual std::string GetConsumeQuestion() const { return std::string("Do want to drink from ") + Name(DEFINITE) + std::string("?"); }
+  virtual bool SitOn(character*);
   virtual void Consume(character*);
   virtual bool HasConsumeEffect() const { return true; } 
   virtual void DryOut();
  protected:
   virtual std::string NameSingular() const { return "fountain"; }
-  virtual vector2d GetBitmapPos() const { return vector2d(16, 288); }
+  virtual vector2d GetBitmapPos() const { return vector2d(GetMaterial(1) ? 16 : 32, 288); }
 );
 
 class OVERLEVELTERRAIN
@@ -374,7 +373,7 @@ class OVERLEVELTERRAIN
  public:
   virtual std::string DigMessage() const { return "You smash the bed into pieces."; }
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
  protected:
   virtual std::string NameSingular() const { return "luxurious double bed"; }
@@ -410,6 +409,7 @@ class GROUNDLEVELTERRAIN
  public:
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool GetIsWalkable(character*) const;
+  virtual bool SitOn(character*);
  protected:
   virtual std::string NameSingular() const { return "pool"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 224); }

@@ -298,28 +298,41 @@ void level::Generate(levelscript* GenLevelScript)
     {
       squarescript* Square = LevelScript->GetSquare()[c];
 
-      uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
+      ApplyLevelSquareScript(Square);
+    }
 
-      for(uchar c = 0; c < Times; ++c)
+  if(LevelScript->GetBase())
+    for(c = 0; c < LevelScript->GetBase()->GetSquare().size(); ++c)
+      {
+	squarescript* Square = LevelScript->GetBase()->GetSquare()[c];
+
+	ApplyLevelSquareScript(Square);
+      }
+}
+
+void level::ApplyLevelSquareScript(squarescript* Square)
+{
+  uchar Times = Square->GetTimes(false) ? *Square->GetTimes() : 1;
+
+  for(uchar c = 0; c < Times; ++c)
+    {
+      vector2d Pos;
+
+      if(Square->GetPosScript()->GetRandom())
 	{
-	  vector2d Pos;
-
-	  if(Square->GetPosScript()->GetRandom())
-	    {
-	      if(Square->GetPosScript()->GetIsInRoom(false))
-		for(Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable()))
-		  {
-		    if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
-		      break;
-		  }
-	      else
-		Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());
-	    }
+	  if(Square->GetPosScript()->GetIsInRoom(false))
+	    for(Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());; Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable()))
+	      {
+		if((!GetLevelSquare(Pos)->GetRoom() && !*Square->GetPosScript()->GetIsInRoom()) || (GetLevelSquare(Pos)->GetRoom() && *Square->GetPosScript()->GetIsInRoom()))
+		  break;
+	      }
 	  else
-	    Pos = *Square->GetPosScript()->GetVector();
-
-	  Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
+	    Pos = RandomSquare(0, *Square->GetPosScript()->GetIsWalkable());
 	}
+      else
+	Pos = *Square->GetPosScript()->GetVector();
+
+      Map[Pos.X][Pos.Y]->ApplyScript(Square, 0);
     }
 }
 

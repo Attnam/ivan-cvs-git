@@ -1445,10 +1445,3 @@ class CHARACTER
 );
 
 #endif
-
-
-
-
-
-
-

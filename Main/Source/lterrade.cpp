@@ -311,46 +311,47 @@ void altar::StepOn(character* Stepper)
     }
 }
 
-void throne::SitOn(character* Sitter)
+bool throne::SitOn(character* Sitter)
 {
   if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() != 1000)
     {
       ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
       ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt be a My Champion first!\"");
-      return;
+      return true;
     }
 
   if(Sitter->HasPetrussNut() && !Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
       ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
       ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt wear My shining armor first!\"");
-      return;
+      return true;
     }
 
   if(!Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
       ADD_MESSAGE("You have a strange vision of yourself becoming great ruler.");
       ADD_MESSAGE("The daydream fades in a whisper: \"Thou shalt surpass thy predecessor first!\"");
-      return;
+      return true;
     }
 
-  //if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
+  if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
     {
       iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
       game::RemoveSaves();
 
       if(!game::GetWizardMode())
 	{
-	  game::GetPlayer()->AddScoreEntry("killed Petrus and became the new High Priest of the Great Frog", 5, false);
+	  game::GetPlayer()->AddScoreEntry("became the new High Priest of the Great Frog", 5, false);
 	  highscore HScore;
 	  HScore.Draw();
 	}
 
       game::Quit();
-      return;
+      return true;
     }
 
   ADD_MESSAGE("You feel somehow out of place.");
+  return true;
 }
 
 void altar::Kick(ushort, bool ShowOnScreen, uchar)
@@ -395,15 +396,17 @@ std::string door::Name(uchar Case) const
 	return GetMaterial(0)->Name() + " " + NamePlural();
 }
 
-void couch::SitOn(character*)
+bool couch::SitOn(character*)
 {
   ADD_MESSAGE("The couch is extremely soft and confortable. You relax well.");
+  return true;
 }
 
-/*void pool::SitOn(character*)
+bool pool::SitOn(character*)
 {
   ADD_MESSAGE("You sit on the pool. Oddly enough, you sink. You feel stupid.");
-}*/
+  return true;
+}
 
 void stairsup::StepOn(character* Stepper)
 {
@@ -417,51 +420,59 @@ void stairsdown::StepOn(character* Stepper)
     ADD_MESSAGE("There is stairway leading downwards here.");
 }
 
-void bookcase::SitOn(character*)
+bool bookcase::SitOn(character*)
 {
   ADD_MESSAGE("The bookcase is very unconfortable to sit on.");
+  return true;
 }
 
-void fountain::SitOn(character*)
+bool fountain::SitOn(character* Char)
 {
-  ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
+  if(GetMaterial(1))
+    {
+      ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
+      return true;
+    }
+  else
+    return overlevelterrain::SitOn(Char);
 }
 
-void doublebed::SitOn(character*)
+bool doublebed::SitOn(character*)
 {
   ADD_MESSAGE("The beautiful bed is very soft. You get a feeling it's not meant for your kind of people.");
+  return true;
 }
 
 void fountain::Consume(character* Drinker)
 {
-  if(GetMaterial(2))
+  if(GetMaterial(1))
     {
-      if(GetMaterial(2)->GetType() == water::StaticType()) 
+      if(GetMaterial(1)->GetType() == water::StaticType()) 
 	{
+	  if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->Drink(Drinker))
+	    return;
+
 	  switch(RAND() % 5)
 	    {
 	    case 0:
-	      ADD_MESSAGE("The water tastes good.");
-	      Drinker->SetNP(Drinker->GetNP() + 30);
-	      break;
-
-	    case 1:
 	      ADD_MESSAGE("The water is contaminated!");
 	      Drinker->SetNP(Drinker->GetNP() + 5);
-	      Drinker->ChangeRandomStat(-1);
 
 	      if(!(RAND() % 5))
 		Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
+	      else
+		Drinker->ChangeRandomStat(-1);
+
 	      break;
 	
-	    case 2:
+	    case 1:
 	      ADD_MESSAGE("The water tasted very good.");
-	      Drinker->SetNP(Drinker->GetNP() + 50);
+	      Drinker->SetNP(Drinker->GetNP() + 100);
 	      Drinker->ChangeRandomStat(1);
 	      break;
 
-	    case 3:
-	      if(!(RAND() % 5))
+	    case 2:
+	      if(!(RAND() % 10))
 		{
 		  ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
 		  game::DrawEverything();
@@ -488,11 +499,18 @@ void fountain::Consume(character* Drinker)
 		    }
 		}
 
+	    case 3:
+	      DryOut();
+	      break;
 
 	    default:
-	      DryOut(); 
-	      // fountain no longer exists: don't do anything here.
+	      ADD_MESSAGE("The water tastes good.");
+	      Drinker->SetNP(Drinker->GetNP() + 25);
+	      break;
 	    }
+
+	  // fountain might have dried out: don't do anything here.
+
 	  return;
 	}
       else
@@ -509,13 +527,11 @@ void fountain::Consume(character* Drinker)
     }
 }
 
-
-
-
 void fountain::DryOut()
 {
   ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
-  SetMaterial(2, 0);  
+  delete GetMaterial(1);
+  SetMaterial(1, 0);
   UpdatePicture();
 }
 
@@ -619,7 +635,7 @@ bool altar::Polymorph(character*)
   return true;	
 }
 
-void altar::SitOn(character*)
+bool altar::SitOn(character*)
 {
   ADD_MESSAGE("You kneel down and worship %s for a moment.", game::GetGod(OwnerGod)->GOD_NAME);
 
@@ -645,6 +661,8 @@ void altar::SitOn(character*)
 	game::GetGod(OwnerGod)->AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true);
       }
+
+  return true;
 }
 
 bool pool::GetIsWalkable(character* ByWho) const

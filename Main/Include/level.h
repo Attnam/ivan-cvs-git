@@ -23,6 +23,7 @@ class outputfile;
 class inputfile;
 class levelscript;
 class roomscript;
+class squarescript;
 
 /* Presentation of the level class */
 
@@ -37,8 +38,6 @@ class level : public area
   virtual void HandleCharacters();
   virtual levelsquare* GetLevelSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   virtual levelsquare* GetLevelSquare(ushort x, ushort y) const { return Map[x][y]; }
-  //virtual void PutPlayer(bool);
-  //virtual void PutPlayerAround(vector2d Pos);
   virtual void GenerateTunnel(vector2d, vector2d, bool);
   virtual void ExpandPossibleRoute(vector2d, vector2d, bool);
   virtual void ExpandStillPossibleRoute(vector2d, vector2d, bool);
@@ -74,6 +73,7 @@ class level : public area
   virtual void AddRoom(room*);
   virtual void Explosion(character*, vector2d, ushort);
   virtual bool CollectCreatures(std::vector<character*>&, character*, bool);
+  virtual void ApplyLevelSquareScript(squarescript*);
  protected:
   levelsquare*** Map;
   levelscript* LevelScript;

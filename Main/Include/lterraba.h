@@ -63,6 +63,7 @@ class groundlevelterrain : public levelterrain, public groundterrain
   virtual void DrawToTileBuffer() const;
   virtual groundlevelterrain* Clone(bool = true, bool = true) const = 0;
   virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
+  virtual bool SitOn(character*);
 };
 
 class overlevelterrain : public levelterrain, public overterrain
@@ -78,9 +79,8 @@ class overlevelterrain : public levelterrain, public overterrain
   virtual std::string Name(uchar Case = 0) const { return levelterrain::Name(Case); }
   virtual void Kick(ushort, bool, uchar) {}
   virtual bool IsDoor() const { return false; }
-  virtual void SitOn(character*);
+  virtual bool SitOn(character*) { return false; }
   virtual bool HasConsumeEffect() const { return false; } 
-  virtual std::string GetConsumeQuestion() const { return std::string("Do you want to consume ") + Name(DEFINITE) + std::string("?"); }
   virtual void Consume(character*) {}
   virtual void Lock() {}
 };

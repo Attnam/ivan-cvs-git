@@ -43,6 +43,7 @@ class room : public typeable
   virtual void KickSquare(character*, levelsquare*) { }
   virtual bool ConsumeItem(character*, item*) { return true; }
   virtual bool AllowDropGifts() const { return true; }
+  virtual bool Drink(character*) const { return true; }
  protected:
   virtual void SetDefaultStats() = 0;
   std::vector<vector2d> Door;

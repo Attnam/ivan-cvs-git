@@ -300,3 +300,22 @@ void cathedral::Load(inputfile& SaveFile)
 
   SaveFile >> Entered;
 }
+
+bool cathedral::Drink(character* Thirsty) const
+{
+  if(game::GetTeam(2)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
+    return true;
+
+  if(Thirsty->GetIsPlayer())
+    {
+      ADD_MESSAGE("Drinking property of the Cathedral is prohibited.");
+
+      if(game::BoolQuestion("Do you still want to do this? [y/N]"))
+	{
+	  Thirsty->GetTeam()->Hostility(game::GetTeam(2));
+	  return true;
+	}
+    }
+
+  return false;
+}

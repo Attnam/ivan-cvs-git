@@ -60,6 +60,7 @@ class ROOM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool AllowDropGifts() const { return false; }
+  virtual bool Drink(character*) const;
  protected:
   bool Entered;
 );

@@ -203,27 +203,17 @@ void game::Init(std::string Name)
 			   "And you know nothing about the adventures that await you here.");
 
       Running = true;
-
       iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
-
       CreateTeams();
-
       SetPlayer(new genie);
-
       Player->SetTeam(GetTeam(0));
       GetTeam(0)->SetLeader(Player);
-
       Petrus = 0;
-
       InitDungeons();
-
       WorldMap = new worldmap(128, 128);
       WorldMap->Generate();
-
       InWilderness = true;
-
       UpdateCamera();
-
       game::SendLOSUpdateRequest();
 
       for(ushort c = 1; GetGod(c); ++c)
@@ -240,13 +230,10 @@ void game::Init(std::string Name)
       GetGod(7)->SetKnown(true);
 
       Turns = 0;
-
       BaseScore = Player->Score();
-
       dog* Doggie = new dog;
       Doggie->SetTeam(GetTeam(0));
       GetWorldMap()->GetPlayerGroup().push_back(Doggie);
-
       ADD_MESSAGE("Game generated successfully.");
     }
 }
