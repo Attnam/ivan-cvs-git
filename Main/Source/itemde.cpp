@@ -218,8 +218,14 @@ bool pickaxe::Apply(character* User)
 	if(Square->GetOLTerrain()->CanBeDug())
 	  if(Square->GetOLTerrain()->GetMainMaterial()->CanBeDug(GetMainMaterial()))
 	    {
-	      User->SwitchToDig(this, User->GetPos() + Temp);
-	      return true;
+	      uchar RoomNumber = Square->GetRoom();
+	      if(!RoomNumber || Square->GetLevelUnder()->GetRoom(RoomNumber)->DestroyTerrain(User, Square->GetOLTerrain()))
+		{
+		  User->SwitchToDig(this, User->GetPos() + Temp);
+		  return true;
+		}
+	      else
+		return false;
 	    }
 	  else
 	    ADD_MESSAGE("%s is too hard to dig.", Square->GetOLTerrain()->CHARNAME(DEFINITE));
@@ -794,7 +800,7 @@ bool oillamp::Apply(character* Applier)
 	      if(Applier->IsPlayer())
 		{
 		  Genie->SetTeam(Applier->GetTeam());
-		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. Its your choice.\"", Genie->CHARNAME(INDEFINITE));
+		  ADD_MESSAGE("You see a puff of smoke, and %s appears. \"For centuries I have been imprisoned in this lamp. But at last you have freed me! I am deeply grateful. You deserve a generous reward. I may serve you for 1001 nights or grant you a wish. It's your choice.\"", Genie->CHARNAME(INDEFINITE));
 		  game::DrawEverything();
 		  GETKEY();
 
@@ -2605,6 +2611,13 @@ void chest::VirtualConstructor(bool Load)
   item::VirtualConstructor(Load);
   StorageVolume = 1000;
   Contained = new stack;
+  uchar ItemNumber = RAND() % 5; 
+  for(uchar c = 0; c < ItemNumber; ++c)
+    {
+      item* NewItem = protosystem::BalancedCreateItem();
+      if(NewItem->CanBeGeneratedInContainer() && FitsIn(NewItem))
+	GetContained()->AddItem(NewItem);
+    }
 }
 
 bool chest::TryKey(item* Key, character* Applier)
@@ -2685,15 +2698,12 @@ bool chest::TakeSomethingFrom(character* Opener)
       return false;
     }
   item* ToBeTaken = GetContained()->DrawContents(Opener, "What do you want take?");
-  if(ToBeTaken)
+  uchar RoomNumber = GetLSquareUnder()->GetRoom();
+  if(ToBeTaken && (!RoomNumber || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->PickupItem(Opener,this)))
     {
       ToBeTaken->MoveTo(Opener->GetStack());
-      return true;
     }
-  else
-    return false;
 }
-
 bool chest::PutSomethingIn(character* Opener)
 {
   if(Opener->GetStack()->GetItems() == 0)
@@ -2705,19 +2715,22 @@ bool chest::PutSomethingIn(character* Opener)
   item* ToBePut = Opener->GetStack()->DrawContents(Opener, Message);
   if(ToBePut)
     {
-      if(GetContained()->GetTotalVolume() + ToBePut->GetVolume() < GetStorageVolume())
+      uchar RoomNumber = GetLSquareUnder()->GetRoom();
+      if((RoomNumber == 0 || GetLSquareUnder()->GetLevelUnder()->GetRoom(RoomNumber)->DropItem(Opener, this)))
 	{
-	  ToBePut->MoveTo(GetContained());
-	  return true;
-	}
-      else
-	{
-	  ADD_MESSAGE("%s doesn't fit in %s", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
-	  return false;
+	  if(FitsIn(ToBePut))
+	    {
+	      ToBePut->MoveTo(GetContained());
+	      return true;
+	    }
+	  else
+	    {
+	      ADD_MESSAGE("%s doesn't fit in %s", ToBePut->CHARNAME(DEFINITE), CHARNAME(DEFINITE));
+	      return false;
+	    }
 	}
     }
-  else
-    return false;
+  return false;
 }
 
 void chest::Save(outputfile& SaveFile) const
@@ -2744,4 +2757,9 @@ bool chest::Polymorph(stack* CurrentStack)
   GetContained()->MoveAll(CurrentStack);
   item::Polymorph(CurrentStack);
   return true;
+}
+
+bool chest::FitsIn(item* ToBePut) const
+{
+  return GetContained()->GetTotalVolume() + ToBePut->GetVolume() < GetStorageVolume();
 }

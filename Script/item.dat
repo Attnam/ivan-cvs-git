@@ -48,6 +48,7 @@ item
 	IsAbstract = true; /* This is false by default and does not inherit! */
 	IsPolymorphable = true;
 	OKVisualEffects = NONE;
+	CanBeGeneratedInContainer = true;
 }
 
 materialcontainer
@@ -1112,4 +1113,5 @@ chest
 	MainMaterialConfig == WOOD;
 	NameSingular = "chest";
 	Possibility = 100;
+	CanBeGeneratedInContainer = false;
 }

@@ -1101,6 +1101,7 @@ class ITEM
   virtual ulong GetStorageVolume() const { return StorageVolume; }
   virtual ulong GetWeight() const;
   virtual bool Polymorph(stack*);
+  virtual bool FitsIn(item*) const;
  protected:
   virtual void VirtualConstructor(bool);
   ulong StorageVolume;

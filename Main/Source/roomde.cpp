@@ -40,7 +40,7 @@ void shop::Enter(character* Customer)
     else
       ADD_MESSAGE("The shop appears to be deserted.");
 }
-
+/* item* ForSale can also be in chest or other container, so don't assume anything else in this function */
 bool shop::PickupItem(character* Customer, item* ForSale)
 {
   if(!Master || Customer == Master || Master->GetTeam()->GetRelation(Customer->GetTeam()) == HOSTILE)
@@ -222,6 +222,7 @@ void cathedral::Enter(character* Visitor)
     }
 }
 
+/* Item can also be in a chest, so don't assume anything else... */
 bool cathedral::PickupItem(character* Visitor, item* Item)
 {
   if(game::GetTeam(2)->GetRelation(Visitor->GetTeam()) == HOSTILE)
@@ -544,4 +545,49 @@ void library::TeleportSquare(character* Infidel, lsquare* Square)
       ADD_MESSAGE("\"You book hater!\"");
       Infidel->Hostility(Master);
     }
+}
+/* returns true if player agrees to continue */
+bool library::DestroyTerrain(character* Infidel, olterrain*) 
+{ 
+  ADD_MESSAGE("The librarian might not like this.");
+  if(game::BoolQuestion("Are you sure you want to do this? [y,N]"))
+    {
+      if(Master)
+	{
+	  /* The libarian is telepathic and senses the attack and that may not be the perfect way to handle this */
+	  ADD_MESSAGE("\"You book hater!\"");
+	  Infidel->Hostility(Master);
+	}
+      return true;
+    }
+  return false; 
+}
+
+/* returns true if player agrees to continue */
+bool cathedral::DestroyTerrain(character* Infidel, olterrain*) 
+{ 
+  ADD_MESSAGE("This is prohibited in the cathedral.");
+  if(game::BoolQuestion("Are you sure? [y,N]"))
+    {
+      Infidel->GetTeam()->Hostility(game::GetTeam(2));
+      return true;
+    }
+  return false; 
+}
+
+/* returns true if player agrees to continue */
+bool shop::DestroyTerrain(character* Infidel, olterrain*) 
+{ 
+  ADD_MESSAGE("The shopkeeper might not like this.");
+  if(game::BoolQuestion("Are you sure you want to do this? [y,N]"))
+    {
+      if(Master)
+	{
+	  /* The libarian is telepathic and senses the attack and that may not be the perfect way to handle this */
+	  ADD_MESSAGE("\"You communist!\"");
+	  Infidel->Hostility(Master);
+	}
+      return true;
+    }
+  return false; 
 }

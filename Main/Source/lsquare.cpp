@@ -489,14 +489,7 @@ void lsquare::AlterLuminance(vector2d Dir, ushort NewLuminance)
 
 bool lsquare::Open(character* Opener)
 {
-  if(!GetOLTerrain()->Open(Opener) && !GetStack()->Open(Opener))
-    if(Opener->IsPlayer())
-      {
-	ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
-	return false;
-      }
-
-  return true;
+  return !GetStack()->Open(Opener) || !GetOLTerrain()->Open(Opener); 
 }
 
 bool lsquare::Close(character* Closer)

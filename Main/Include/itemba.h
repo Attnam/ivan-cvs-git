@@ -68,6 +68,7 @@ struct itemdatabase
   bool IsAbstract;
   bool IsPolymorphable;
   uchar OKVisualEffects;
+  bool CanBeGeneratedInContainer;
 };
 
 class itemprototype
@@ -247,7 +248,7 @@ class item : public object
   DATABASEVALUE(const std::vector<long>&, MaterialConfigChances);
   DATABASEBOOL(IsPolymorphable);
   DATABASEVALUE(uchar, OKVisualEffects);
-
+  DATABASEBOOL(CanBeGeneratedInContainer);
   virtual bool SavesLifeWhenWorn() const { return false; }
   static item* Clone(ushort, bool, bool) { return 0; }
   virtual bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
