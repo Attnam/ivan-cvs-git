@@ -120,7 +120,7 @@ class OVERLEVELTERRAIN
 	InitMaterials(new stone),
 	{
 		SetIsOpen(false);
-		SetIsLocked(IsOpen ? false : !(RAND() % 5));
+		SetIsLocked(false);
 		UpdatePicture();
 	},
 public:
@@ -139,6 +139,7 @@ public:
 	virtual bool GetIsLocked() const { return IsLocked; }
 	virtual bool CanBeOpenedByAI() { return !GetIsLocked() && CanBeOpened(); }
 	virtual bool ReceiveStrike();
+	virtual void Lock() { SetIsLocked(true); }
 protected:
 	virtual std::string NameSingular() const				{ return "door"; }
 	virtual vector2d GetBitmapPos() const						{ return vector2d(0, GetIsWalkable() ? 48 : 176); }

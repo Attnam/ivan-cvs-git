@@ -1,31 +1,57 @@
 Dungeons=2;
-Teams=6;
+Teams=8;
 
-Team 2;
+/*
+ * Description of teams:
+ * 0 - Player and pets
+ * 1 - Monsters, default relation to other teams == hostile
+ */
+
+Team 2; /* Residents of Attnam */
 {
 	Relation 0, FRIEND;
 }
 
-Team 3;
+Team 3; /* Petrus's team during the Final Battle */
 {
 	Relation 0, NEUTRAL;
 	Relation 2, NEUTRAL;
 }
 
-Team 4;
+Team 4; /* Pestifer's Enner Beasts */
 {
 	Relation 0, HOSTILE;
 	Relation 2, HOSTILE;
 	Relation 3, HOSTILE;
 }
 
-Team 5;
+Team 5; /* Spawned hostile angels */
 {
 	Relation 0, HOSTILE;
 	Relation 1, NEUTRAL;
 	Relation 2, NEUTRAL;
 	Relation 3, NEUTRAL;
 	Relation 4, HOSTILE;
+}
+
+Team 6; /* Dungeon shopkeepers */
+{
+	Relation 0, NEUTRAL;
+	Relation 1, NEUTRAL;
+	Relation 2, NEUTRAL;
+	Relation 3, NEUTRAL;
+	Relation 4, HOSTILE;
+	Relation 5, NEUTRAL;
+}
+
+Team 7; /* Ivan */
+{
+	Relation 0, NEUTRAL;
+	Relation 2, NEUTRAL;
+	Relation 3, NEUTRAL;
+	Relation 4, HOSTILE;
+	Relation 5, NEUTRAL;
+	Relation 6, NEUTRAL;
 }
 
 Dungeon 0;
@@ -63,6 +89,7 @@ Dungeon 0;
 			GenerateLamps=true;
 			Type=normalroom;
 			GenerateFountains=true;
+			AllowLockedDoors=true;
 		}
 	}
 
@@ -98,9 +125,21 @@ Dungeon 0;
 
 		LevelMessage="You hear a wailing scream in the distance. An Enner Beast must dwell in the level!";
 
+		Square, Random { Walkable=true; InRoom=false; }
+		{
+			Character=ennerbeast { Team = 4; }
+		}
+	}
+
+	Level 5;
+	{
+		Rooms=10+rand%21;  /* Due to a bug in the recalculation code this must be repeated! */
+
+		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
+
 		Square, Random { Walkable=true; InRoom=true; }
 		{
-			Character=ennerbeast;
+			Character=ivan { Team = 7; }
 		}
 	}
 
@@ -306,6 +345,7 @@ Dungeon 1;
 			GenerateLamps=true;
 			Type=normalroom;
 			GenerateFountains=false;
+			AllowLockedDoors=false;
 		}
 
 		Square, Random { Walkable=true; InRoom=false; }
@@ -353,6 +393,7 @@ Dungeon 1;
 		Square, Pos 30,61;
 		{
 			IsWorldMapEntry=true;
+			Item=scrollofwishing;
 		}
 
 		Room 0;
@@ -560,7 +601,6 @@ Dungeon 1;
 					c = guard;
 					p = priest;
 					d = dolphin;
-					i = ivan;
 					l = lightfrog;
 					8 = librarian;
 					s = femaleslave;
@@ -606,7 +646,7 @@ Dungeon 1;
 				# . . . . 4 . 6 . # . . . . . . . . . . . . . # . . . . . . . . #
 				# # . . . # # # # # . . . . . . . . . . . . . # # # # # . . . # #
 				. # # 2 . # . . . . . . . . . . . . . . . . . . . . . # . . # # .
-				. . # # # # . i . . . . . . . . . . . . . . . . . . . # # # # . .
+				. . # # # # . . . . . . . . . . . . . . . . . . . . . # # # # . .
 			}
 		}
 

@@ -418,6 +418,7 @@ public:
 	virtual ushort GetDensity() const				{ return 1800; }
 	virtual ushort OfferValue() const				{ return 5; }
 	virtual ushort GetColor() const { return MAKE_RGB(112, 112, 64); }
+	virtual bool GetIsBadFoodForAI() const { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "Enner Beast flesh"; }
 	virtual std::string Article() const { return "an"; }

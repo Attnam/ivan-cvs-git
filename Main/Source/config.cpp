@@ -17,6 +17,8 @@ bool configuration::BeepOnCritical = false;
 bool configuration::AutodropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
+ushort configuration::CharacterOutlineColor = BLUE;
+ushort configuration::ItemOutlineColor = GREEN;
 
 void configuration::Save()
 {
@@ -32,7 +34,9 @@ void configuration::Save()
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
 	SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
-	SaveFile << "OutlineItems = " << OutlineItems << ";";
+	SaveFile << "OutlineItems = " << OutlineItems << ";\n";
+	SaveFile << "CharacterOutlineColor = " << GET_RED(CharacterOutlineColor) << ", " << GET_GREEN(CharacterOutlineColor) << ", " << GET_BLUE(CharacterOutlineColor) << ";\n";
+	SaveFile << "ItemOutlineColor = " << GET_RED(ItemOutlineColor) << ", " << GET_GREEN(ItemOutlineColor) << ", " << GET_BLUE(ItemOutlineColor) << ";";
 }
 
 void configuration::Load()
@@ -72,6 +76,12 @@ void configuration::Load()
 
 		if(Word == "OutlineItems")
 			SetOutlineItems(SaveFile.ReadBool());
+
+		if(Word == "CharacterOutlineColor")
+			SetCharacterOutlineColor(MAKE_RGB(SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap)));
+
+		if(Word == "ItemOutlineColor")
+			SetItemOutlineColor(MAKE_RGB(SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap), SaveFile.ReadNumber(ValueMap)));
 	}
 }
 

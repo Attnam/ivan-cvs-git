@@ -343,6 +343,9 @@ void golem::MoveRandomly()
 
 void ennerbeast::GetAICommand()
 {
+	if(RAND() % 3)
+		Hit(0);
+
 	SeekLeader();
 
 	if(CheckForEnemies())
@@ -351,10 +354,7 @@ void ennerbeast::GetAICommand()
 	if(FollowLeader())
 		return;
 
-	if(RAND() % 3)
-		Hit(0);
-	else
-		MoveRandomly();
+	MoveRandomly();
 }
 
 void petrus::GetAICommand()
@@ -687,7 +687,7 @@ void petrus::BeTalkedTo(character* Talker)
 	{
 		ADD_MESSAGE("Petrus smiles.");
 		ADD_MESSAGE("\"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life!");
-		ADD_MESSAGE("And thou possess the Shirt of the Golden Eagle, the symbol of my Überpriestial power!");
+		ADD_MESSAGE("And thou possess the Shirt of the Golden Eagle, the symbol of my status!");
 		ADD_MESSAGE("Return it now, please.\"");
 
 		if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
@@ -825,7 +825,7 @@ void guard::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
 		break;
 	case 3:
-		ADD_MESSAGE("\"The Überpriest is my idol. I would want a sword as big as his!\"");
+		ADD_MESSAGE("\"The High Priest is my idol. I would want a sword as big as his!\"");
 		break;
 	}
 }
@@ -856,7 +856,7 @@ void shopkeeper::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
 		break;
 	case 3:
-		ADD_MESSAGE("\"Don't try anything. The Überpriest is a LAN friend of mine.\"");
+		ADD_MESSAGE("\"Don't try anything. The High Priest is a LAN friend of mine.\"");
 		break;
 	}
 }
@@ -1387,13 +1387,13 @@ void librarian::BeTalkedTo(character* Talker)
 			break;
 		}
 	case 6:
-		ADD_MESSAGE("\"Attnam is traditionally ruled by the Überpriest of the Great Frog.");
-		ADD_MESSAGE("The Überpriest is he who holds the Shirt of the Golden Eagle and kills the last Überpriest.\"");
+		ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog.");
+		ADD_MESSAGE("The High Priest is he who holds the Shirt of the Golden Eagle and kills the last Überpriest.\"");
 		break;
 	case 7:
 		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
 		{
-			ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the Überpriests.");
+			ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the High Priests.");
 			ADD_MESSAGE("Things will get *very* rough if one denies it from Petrus.\"");
 			break;
 		}
@@ -1425,9 +1425,15 @@ void ivan::MoveRandomly()
 			break;*/
 		// Currently too long
 		case 1:
+			if(GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("Ivan engraves something to the ground.");
+
 			Engrave("Proletarians of all countries, unite!");
 			break;
 		case 2:
+			if(GetSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("Ivan engraves something to the ground.");
+
 			Engrave("Capital is therefore not only personal; it is a social power.");
 			break;
 		default:
@@ -1461,10 +1467,10 @@ void mistress::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new whip)));
 
-	if(RAND() % 10)
+	if(!(RAND() % 10))
 		GetStack()->FastAddItem(new banana);
 
-	if(RAND() % 100)
+	if(!(RAND() % 100))
 		GetStack()->FastAddItem(new holybanana);
 
 	GetCategoryWeaponSkill(WHIPS)->AddHit(10000);
@@ -1679,7 +1685,7 @@ void kamikazedwarf::CreateInitialEquipment()
 
 ulong kamikazedwarf::MaxDanger()
 {
-	return 100;
+	return 20000;
 }
 
 bool kamikazedwarf::Hit(character* Enemy)

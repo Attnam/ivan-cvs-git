@@ -97,7 +97,7 @@ void worldmapsquare::Draw()
 			{
 				igraph::GetTileBuffer()->Fill(0xF81F);
 				DrawCharacters();
-				igraph::GetTileBuffer()->Outline(CHARACTER_OUTLINE_COLOR);
+				igraph::GetTileBuffer()->Outline(configuration::GetCharacterOutlineColor());
 				igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 			}
 		}

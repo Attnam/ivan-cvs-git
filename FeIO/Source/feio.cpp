@@ -99,15 +99,24 @@ int iosystem::Menu(bitmap* PentaPicture, std::string Topic, std::string sMS, ush
 			PentaPicture->MaskedBlit(&Buffer, 0, 0, 143, 141, 16, 16);
 		}
 
-		std::string sCopyOfMS = sMS;
+		std::string sCopyOfMS = Topic;
 
-		FONT->Printf(&Buffer, 400 - (Topic.length() << 2), 300 - CountChars('\r',sMS) * 25 - 100, BLUE, "%s", Topic.c_str());
+		ulong i;
 
-		for(ulong i = 0; i < CountChars('\r',sMS); ++i)
+		for(i = 0; i < CountChars('\r', Topic); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
-			FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 4) << 2), 300 - CountChars('\r',sMS) * 25 + (i*50), (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
+			FONT->Printf(&Buffer, 400 - (HYVINEPAGURUPRINTF.length() << 2), 310 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, MAKE_RGB(200, 0, 0), "%s", HYVINEPAGURUPRINTF.c_str());
+		}
+
+		sCopyOfMS = sMS;
+
+		for(i = 0; i < CountChars('\r', sMS); ++i)
+		{
+			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
+			FONT->Printf(&Buffer, 400 - ((HYVINEPAGURUPRINTF.length() + 3) << 2), 340 - CountChars('\r', sMS) * 25 + i * 50, (i == iSelected ? ColorSelected : ColorNotSelected), "%d. %s", i + 1, HYVINEPAGURUPRINTF.c_str());
 		}
 
 		if(c < 5)
@@ -296,6 +305,6 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor) // for
 
 		return Buffer.GetEntry(Check);
 #else
-  return std::string("I have problems and I love Windows and I don't work in Linux");
+	return std::string("I have problems and I love Windows and I don't work in Linux");
 #endif
 }

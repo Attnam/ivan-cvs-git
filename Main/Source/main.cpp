@@ -26,20 +26,10 @@ int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
 	igraph::Init(hInstance, hWnd);
 	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 
-	char Buffer[256];
-
-	sprintf(Buffer, "Iter Vehemens ad Necem v. 0.302 alpha\n\n"
-			"Last build %s at %s.\n\n"
-			"Antivalpuri is rising and dark times are ahead;\n"
-			"Dark frogs pillage towns and tomatoes are growing.\n"
-			"But fortunately, there is hope, you!", __DATE__, __TIME__);
-
-	iosystem::TextScreen(Buffer);
-
 	elpuri Elpuri(true, false, false, false);
 
 	while(true)
-		switch(iosystem::Menu(Elpuri.GetPicture(), "Main Menu", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
+		switch(iosystem::Menu(Elpuri.GetPicture(), "Iter Vehemens ad Necem\rMain Menu\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", BLUE, WHITE, true))
 		{
 		case 0:
 			game::Init();

@@ -766,7 +766,7 @@ public:
 	virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
 	virtual void Beam(character*, uchar, uchar);
 	virtual void BeamEffect(character*, uchar, levelsquare*) {};
-	virtual ushort GetBeamColor() const { return MAKE_RGB(128,128,128); }
+	virtual ushort GetBeamColor() const { return YELLOW; }
 	virtual bool StruckByWandOfStriking(character*, stack*);
 protected:
 	virtual ushort GetFormModifier() const RET(80)
@@ -793,7 +793,7 @@ public:
 	virtual ulong Price() const { return 500; }
 	virtual bool PolymorphSpawnable() const { return false; }
 	virtual void BeamEffect(character*, uchar, levelsquare*);
-	virtual ushort GetBeamColor() const { return MAKE_RGB(255,0,255); }
+	virtual ushort GetBeamColor() const { return BLUE; }
 );
 
 /*class ITEM

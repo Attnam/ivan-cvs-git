@@ -25,10 +25,10 @@ void can::PositionedDrawToTileBuffer(uchar) const
 
 item* can::TryToOpen(character* Opener, stack* Stack)
 {
-	if(Opener->GetStrength() > RAND() % 5 + 1)
+	if(Opener->GetStrength() >= RAND() % 10 + 1)
 	{
-		item* x = new lump(GetMaterial(1));
-		Stack->AddItem(x);
+		item* Item = new lump(GetMaterial(1));
+		Stack->AddItem(Item);
 		SetMaterial(1,0);
 		UpdatePicture();
 
@@ -40,11 +40,13 @@ item* can::TryToOpen(character* Opener, stack* Stack)
 				Opener->GetStack()->MoveItem(Index, Opener->GetLevelSquareUnder()->GetStack());
 		}
 
-		return x;
+		return Item;
 	}
 	else
 	{
-		ADD_MESSAGE("The can is shut tight and you are too weak.");
+		if(Opener->GetIsPlayer())
+			ADD_MESSAGE("The can is shut tight and you are too weak.");
+
 		return 0;
 	}
 }
@@ -703,13 +705,23 @@ bool holybook::Read(character* Reader)
 	{
 		if(game::GetGod(GetOwnerGod())->GetKnown())
 		{
-			ADD_MESSAGE("You already understand %s's wisdom.", game::GetGod(OwnerGod)->GOD_NAME);
-			return false;
+			ADD_MESSAGE("The book reveals many divine secrets of %s to you.", game::GetGod(OwnerGod)->GOD_NAME);
+			game::GetGod(OwnerGod)->AdjustRelation(75);
+			game::ApplyDivineAlignmentBonuses(game::GetGod(OwnerGod), true);
+
+			if(RAND() % 3)
+				return false;
+			else
+			{
+				ADD_MESSAGE("But then it disappears.");
+				return true;
+			}
 		}
+
 		game::GetGod(GetOwnerGod())->SetKnown(true);
 		ADD_MESSAGE("You read the book through and feel that you master the magical rites of %s.", game::GetGod(OwnerGod)->GOD_NAME);
-		
 	}
+
 	return false;
 }
 

@@ -77,11 +77,12 @@ template <class type> class contentscript : public script
 {
 public:
 	contentscript() : ContentType(0) {}
-	void ReadFrom(inputfile&);
-	ushort* GetMaterialType(ushort, bool = true) const;
-	ulong* GetMaterialVolume(ushort, bool = true) const;
-	ushort* GetContentType(bool AOE = true) const { SCRIPT_RETURN(ContentType) }
-	type* Instantiate() const;
+	virtual void ReadFrom(inputfile&);
+	virtual void ReadParameters(inputfile&, std::string);
+	virtual ushort* GetMaterialType(ushort, bool = true) const;
+	virtual ulong* GetMaterialVolume(ushort, bool = true) const;
+	virtual ushort* GetContentType(bool AOE = true) const { SCRIPT_RETURN(ContentType) }
+	virtual type* Instantiate() const;
 protected:
 	std::vector<std::pair<ushort*, ulong*> > MaterialData;
 	ushort* ContentType;
@@ -113,13 +114,24 @@ template <class type> ulong* contentscript<type>::GetMaterialVolume(ushort Index
 	}
 }
 
+class characterscript : public contentscript<character>
+{
+public:
+	characterscript() : Team(0) {}
+	virtual void ReadParameters(inputfile&, std::string);
+	virtual character* Instantiate() const;
+	virtual ushort* GetTeam(bool AOE = true) const { SCRIPT_RETURN(Team) }
+protected:
+	ushort* Team;
+};
+
 class squarescript : public script
 {
 public:
 	squarescript() : PosScript(0), Character(0), Item(0), GroundTerrain(0), OverTerrain(0), IsUpStairs(0), IsDownStairs(0), IsWorldMapEntry(0), Times(0) {}
 	void ReadFrom(inputfile&);
 	posscript* GetPosScript(bool AOE = true) const { SCRIPT_RETURN(PosScript) }
-	contentscript<character>* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
+	characterscript* GetCharacter(bool AOE = true) const { SCRIPT_RETURN(Character) }
 	contentscript<item>* GetItem(bool AOE = true) const { SCRIPT_RETURN(Item) }
 	contentscript<groundlevelterrain>* GetGroundTerrain(bool AOE = true) const { SCRIPT_RETURN(GroundTerrain) }
 	contentscript<overlevelterrain>* GetOverTerrain(bool AOE = true) const { SCRIPT_RETURN(OverTerrain) }
@@ -129,7 +141,7 @@ public:
 	uchar* GetTimes(bool AOE = true) const { SCRIPT_RETURN(Times) }
 protected:
 	posscript* PosScript;
-	contentscript<character>* Character;
+	characterscript* Character;
 	contentscript<item>* Item;
 	contentscript<groundlevelterrain>* GroundTerrain;
 	contentscript<overlevelterrain>* OverTerrain;
@@ -156,7 +168,7 @@ protected:
 class roomscript : public script
 {
 public:
-	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Type(0), GenerateFountains(0), Base(0) {}
+	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -177,6 +189,7 @@ public:
 	bool* GetGenerateLamps(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLamps) }
 	ushort* GetType(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Type) }
 	bool* GetGenerateFountains(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateFountains) }
+	bool* GetAllowLockedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowLockedDoors) }
 protected:
 	ulong BufferPos;
 	std::vector<squarescript*> Square;
@@ -193,7 +206,8 @@ protected:
 	uchar* DivineOwner;
 	bool* GenerateLamps;
 	ushort* Type;
-	bool * GenerateFountains;
+	bool* GenerateFountains;
+	bool* AllowLockedDoors;
 	roomscript* Base;
 };
 

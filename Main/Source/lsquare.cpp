@@ -176,7 +176,6 @@ void levelsquare::Draw()
 	if(NewDrawRequested)
 	{
 		vector2d BitPos = vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4);
-
 		ushort Luminance = GetLuminance();
 
 		if(Luminance >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
@@ -219,11 +218,9 @@ void levelsquare::Draw()
 					if(GetCharacter())
 					{
 						igraph::GetTileBuffer()->Fill(0xF81F);
-
 						DrawCharacters();
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-
-						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
+						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 					}
 				}
@@ -238,8 +235,7 @@ void levelsquare::Draw()
 				if(DrawStacks())
 				{
 					igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-
-					igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), ITEM_OUTLINE_COLOR);
+					igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetItemOutlineColor());
 
 					if(GetStack()->GetItems() > 1 && GetOverTerrain()->GetIsWalkable())
 						igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetOutlineBuffer(), 0, 16, 0, 0, 16, 16);
@@ -259,7 +255,7 @@ void levelsquare::Draw()
 					if(DrawCharacters())
 					{
 						igraph::GetTileBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), CHARACTER_OUTLINE_COLOR);
+						igraph::GetTileBuffer()->CreateOutlineBitmap(igraph::GetOutlineBuffer(), configuration::GetCharacterOutlineColor());
 						igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 					}
 			}
@@ -1019,7 +1015,7 @@ void levelsquare::PolymorphEverything(character* Zapper)
 
 	if((Character = GetCharacter()))
 	{
-		if(Character != Zapper)
+		if(Character != Zapper && Character->GetTeam() != Zapper->GetTeam())
 			Zapper->Hostility(Character);
 
 		Character->Polymorph(protosystem::CreateMonster(false));

@@ -29,7 +29,7 @@ bool door::Open(character* Opener)
 			
 			return true;
 		}
-		else if(RAND() % 5 + 1 < Opener->GetStrength())
+		else if(RAND() % 20 < Opener->GetStrength())
 		{
 			if(Opener->GetIsPlayer())
 				ADD_MESSAGE("You open the door.");
@@ -240,7 +240,7 @@ void door::Kick(ushort Strength, bool ShowOnScreen, uchar)
 {
 	if(!GetIsWalkable()) 
 	{
-		if(Strength > RAND() % 20)
+		if(Strength > RAND() % 30)
 		{
 			if(ShowOnScreen) ADD_MESSAGE("The door opens.");
 			MakeWalkable();
@@ -354,12 +354,12 @@ void throne::SitOn(character* Sitter)
 
 	if(Sitter->HasPetrussNut() && Sitter->HasGoldenEagleShirt() && game::GetGod(1)->GetRelation() == 1000)
 	{
-		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
+		iosystem::TextScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Petrus, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new High Priest!\"\n\nYou are victorious!");
 		game::RemoveSaves();
 
 		if(!game::GetWizardMode())
 		{
-			game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5, false);
+			game::GetPlayer()->AddScoreEntry("killed Petrus and became the new High Priest of the Great Frog", 5, false);
 			highscore HScore;
 			HScore.Draw();
 		}
@@ -554,8 +554,10 @@ bool door::ReceiveStrike()
 	if(RAND() % 2)
 	{
 		bool NewLockedStatus = IsLocked;
+
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("The wand strikes the door and the door breaks.");
+
 		brokendoor* Temp;
 		GetLevelSquareUnder()->ChangeOverLevelTerrain(Temp = new brokendoor);
 		Temp->SetIsLocked(NewLockedStatus);
@@ -589,19 +591,20 @@ bool brokendoor::ReceiveStrike()
 
 bool altar::Polymorph(character*)
 {
-	uchar OldGod;
-
 	if(GetSquareUnder()->CanBeSeen())
-	{
 		ADD_MESSAGE("%s glows briefly.", CNAME(DEFINITE));
-	}
 	
-	OldGod = OwnerGod;
+	uchar OldGod = OwnerGod;
 
 	while(OwnerGod == OldGod)
-	{
 		OwnerGod = RAND() % game::GetGodNumber() + 1;
-	}
+
+	GetSquareUnder()->SendNewDrawRequest();
+	GetSquareUnder()->SendMemorizedUpdateRequest();
+	GetSquareUnder()->SetDescriptionChanged(true);
+
+	if(GetSquareUnder()->CanBeSeen())
+		GetSquareUnder()->UpdateMemorizedDescription();
+
 	return true;	
-	
 }

@@ -11,7 +11,6 @@
 #include "itemba.h"
 #include "team.h"
 
-template contentscript<character>;
 template contentscript<item>;
 template contentscript<groundlevelterrain>;
 template contentscript<overlevelterrain>;
@@ -122,8 +121,7 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 		Word = SaveFile.ReadWord();
 	}
 
-	if(Word != ";" && Word != ",")
-		ABORT("Script error: Odd terminator %s encountered in content script of %s!", Word.c_str(), typeid(type).name());
+	ReadParameters(SaveFile, Word);
 }
 
 template <class type> type* contentscript<type>::Instantiate() const
@@ -135,6 +133,43 @@ template <class type> type* contentscript<type>::Instantiate() const
 
 	for(ushort c = 0; c < MaterialData.size(); ++c)
 		Instance->SetMaterial(c, protocontainer<material>::GetProto(*MaterialData[c].first)->Clone(MaterialData[c].second ? *MaterialData[c].second : 0));
+
+	return Instance;
+}
+
+template <class type> void contentscript<type>::ReadParameters(inputfile&, std::string LastWord)
+{
+	if(LastWord != ";" && LastWord != ",")
+		ABORT("Script error: Odd terminator %s encountered in content script of %s!", LastWord.c_str(), typeid(type).name());
+}
+
+void characterscript::ReadParameters(inputfile& SaveFile, std::string LastWord)
+{
+	if(LastWord == "{")
+		for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+		{
+			if(Word == "Team")
+			{
+				if(!Team)
+					Team = new ushort;
+
+				*Team = SaveFile.ReadNumber(ValueMap);
+
+				continue;
+			}
+
+			ABORT("Odd script term %s encountered in room script!", Word.c_str());
+		}
+	else
+		contentscript<character>::ReadParameters(SaveFile, LastWord);
+}
+
+character* characterscript::Instantiate() const
+{
+	character* Instance = contentscript<character>::Instantiate();
+
+	if(GetTeam(false))
+		Instance->SetTeam(game::GetTeam(*GetTeam()));
 
 	return Instance;
 }
@@ -161,7 +196,7 @@ void squarescript::ReadFrom(inputfile& SaveFile)
 			if(Word == "Character")
 			{
 				if(!Character)
-					Character = new contentscript<character>;
+					Character = new characterscript;
 
 				Character->SetValueMap(ValueMap);
 				Character->ReadFrom(SaveFile);
@@ -563,6 +598,16 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 				GenerateFountains = new bool;
 
 			*GenerateFountains = SaveFile.ReadBool();
+
+			continue;
+		}
+
+		if(Word == "AllowLockedDoors")
+		{
+			if(!AllowLockedDoors)
+				AllowLockedDoors = new bool;
+
+			*AllowLockedDoors = SaveFile.ReadBool();
 
 			continue;
 		}

@@ -5,8 +5,6 @@
 #pragma warning(disable : 4786)
 #endif
 
-#define ITEM_OUTLINE_COLOR	GREEN
-
 #include "typedef.h"
 #include "vector2d.h"
 

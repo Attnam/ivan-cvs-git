@@ -160,9 +160,9 @@ public:
 	virtual bool HasInfraVision() const { return true; }
 	virtual bool CanBeDisplaced() const { return false; }
 protected:
-	virtual std::string NameSingular() const RET("Petrus, the Überpriest of the Great Frog")
+	virtual std::string NameSingular() const RET("Petrus, the High Priest of the Great Frog")
 	virtual void CreateCorpse();
-	virtual std::string DeathMessage() { return "The Überpriest disappears in a bright light and only his left nut is left behind."; }
+	virtual std::string DeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
 	virtual void CreateInitialEquipment();
 	virtual float GetMeleeStrength() const RET(20000)
 	virtual void GetAICommand();
@@ -317,7 +317,7 @@ class CHARACTER
 	{
 		SetSize(200);
 		SetAgility(30);
-		SetStrength(25);
+		SetStrength(30);
 		SetEndurance(30);
 		SetPerception(30);
 	},

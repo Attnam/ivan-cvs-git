@@ -68,3 +68,5 @@ Uses for a holybook after it's been read.
 Specialities to daemon flesh.
 Fixing level 10.
 Pressing X while in WMode should give more scrolls of wishing.
+Fire should do extra damage to parchment golems.
+High score version number.

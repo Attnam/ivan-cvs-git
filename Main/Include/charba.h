@@ -32,8 +32,6 @@
 #define DIGGING			4
 #define GOING			5
 
-#define CHARACTER_OUTLINE_COLOR	BLUE
-
 #include <list>
 
 #include "game.h"

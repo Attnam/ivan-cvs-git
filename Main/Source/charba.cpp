@@ -998,7 +998,7 @@ void character::Die(bool ForceMsg)
 
 	if(GetIsPlayer())
 	{
-		iosystem::TextScreen("Unfortunately thee died during thine journey. The Überpriest is not happy.");
+		iosystem::TextScreen("Unfortunately thee died during thine journey. The High Priest is not happy.");
 
 		if(!game::GetWizardMode())
 		{
@@ -1809,7 +1809,7 @@ void character::MoveRandomly()
 	{
 		ushort ToTry = RAND() % 8;
 
-		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)))// && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
@@ -3106,7 +3106,7 @@ void character::MoveRandomlyInRoom()
 	{
 		ushort ToTry = RAND() % 8;
 
-		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter() && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
+		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry))/* && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter()*/ && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
 			OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
 	}
 }
@@ -3154,8 +3154,12 @@ bool character::Go()
 		});
 
 		StateVariables.Going.WalkingInOpen = OKDirectionsCounter > 2 ? true : false;
+
+		square* OldSquare = GetSquareUnder();
+
 		GoHandler();
-		return StateIsActivated(GOING);
+
+		return OldSquare != GetSquareUnder();
 	}
 
 	return false;

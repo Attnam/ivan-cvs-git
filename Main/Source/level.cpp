@@ -517,7 +517,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		ushort LXPos = LPos.X, LYPos = LPos.Y;
 
-		Map[LXPos][LYPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate()); //Bug! Wrong room!
+		overlevelterrain* Door = RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate(); //Bug! Wrong room!
+
+		if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
+			Door->Lock();
+
+		Map[LXPos][LYPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), Door);
 		Map[LXPos][LYPos]->Clean();
 
 		FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
@@ -543,7 +548,12 @@ bool level::MakeRoom(roomscript* RoomScript)
 		FlagMap[XPos][YPos] &= ~FORBIDDEN;
 		FlagMap[XPos][YPos] |= PREFERRED;
 
-		Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
+		Door = RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate();
+
+		if(!(RAND() % 5) && *RoomScript->GetAllowLockedDoors())
+			Door->Lock();
+
+		Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), Door);
 		Map[XPos][YPos]->Clean();
 
 		GenerateTunnel(vector2d(XPos, YPos), vector2d(LXPos, LYPos), RAND() % 2 ? true : false);
