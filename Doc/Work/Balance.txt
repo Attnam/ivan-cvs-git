@@ -15,3 +15,6 @@ Staff of wondrous smells is useless.
 Limb weights may be incorrect.
 School food abuse!!!!
 Monster danger is adjusted too fast.
+It should be checked whether read times of scrolls used in emergency situations are short enough.
+Repairing special limbs in Attnam is too cheap.
+The mage room is too difficult.

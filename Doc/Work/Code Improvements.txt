@@ -67,3 +67,4 @@ Hidastinten kirjastointi.
 Tehokkuustietojen välitys ruutuilmiöihin.
 Enumeraatiot barrikadeille.
 Keinosielujen uudelleenvaistoittaminen.
+Rotuspesialiteettien standardointi.

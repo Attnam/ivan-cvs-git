@@ -12,7 +12,7 @@ Write msgbuffer to a file command.
 (hs) Date to highscores.
 It should be possible to sort highscores according to date.
 Blood could flow around.
-Gods should have more than two effects.
+/Gods should have more than two effects.
 We should give more thought to the role of the gods.
 Maybe some keys other than Alt+Enter and Print Screen should also work during getkey?
 Double-sized draw of the tiles as a switch.
@@ -27,7 +27,7 @@ It should be possible to determine line height as a felist draw function argumen
 Intelligent monsters should read scrolls and use wands.
 Several types of critical hits (e.g. one that throws the opponent one square backwards).
 Highscores should be crypted somehow.
-Stone types.
+//Stone types.
 Script should be crypted or precompiled.
 Golems should be able to eat things made of their material to increase size and stats.
 Prepare bug-report function that would make bug-reporting easier.
@@ -35,21 +35,21 @@ Bill's wills should bloat with rising temperature according to Gay-Lussac's law.
 A program which would translate a pcx file into a script content map.
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 Script should have an initial blood level of square option.
-Pet donkeys should be able to carry backpacks instead of the player.
+//Pet donkeys should be able to carry backpacks instead of the player.
 Full backpacks should decrease AV, but they would also increase the chance of item damage.
 Explosion animation.
 Cube-like screenshot system.
 Gurus.
 Meditation command.
-Opening a banana should remove its peals.
+Opening a banana should remove its peel.
 Fire should do extra damage to parchment golems.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit. (If Valpurus carries the Earth, what orbit is he talking about?)
 Attnam's shopkeeper should send an experienced player on a quest to kill his competitor in the main dungeon.
 Drugs.
 Karateka.
-Chance-value correlation to change material scrolls.
+(r) Chance-value correlation to change material scrolls.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
-("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
+("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer's head is severed off. The farmer dies without a sound.")
 Special "enemy sighted" reactions. (like what?)
 Vampires should be able to polymorph into a bat.
 (s) Kicking a throne should yield precious stones. (suspended, Überpriest victory code suspects that thrones are indestructible)
@@ -89,7 +89,7 @@ Inns. (from JM)
 Thief monsters. (from JM)
 If both hands of a kamikaze dwarf are cut off, he shouldn't be able to carry his backpack anymore.
 One should be able to buy better bodyparts somewhere in the game.
-One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
+//One should be able to use a scroll of change material on one's bodyparts. ("Your humanflesh head changes into a wooden head"... Well, maybe not :)
 Gems should increase score.
 Non-fatal battles like robberies.
 Angels as enemies.
@@ -107,7 +107,7 @@ Bananas should have black dots when spoiled.
 High level priests should be able to summon angels.
 Kamikaze dwarves should not kamikaze the player if he serves the same god. Instead, they should give him some of their explosives.
 Pet priest. (from JM)
-Sword of Fire/Frost/Ligthning. (from JM)
+Sword of Fire/Frost/Lightning. (from JM)
 Frozen state to monsters. (from JM)
 Dialogs. (from JM)
 A way to steal from the weapon vault of the Cathedral. (key to secret door?) (from JM)
@@ -115,7 +115,7 @@ A scroll that would make a ego-sword flaming. (from JM)
 Hunters should ask the player to aid them in a quest battle against a goblin king/mammoth. (from JM)
 Pits with sticks. (from JM)
 Acid pits. (from JM)
-Perception should affect chance of detecting traps. (from JM)
+//Perception should affect chance of detecting traps. (from JM)
 Flying monsters should be more difficult to hit. (from JM)
 Flying monsters should occasionally be displaced.
 Scroll of create holy/fallen angel. (from JM)
@@ -138,7 +138,7 @@ One must be able to use a stethoscope on doors.
 Jammed bananas.
 Kamikaze dwarfs should sometimes have gunpowder golems as pets.
 Mutant monster that would have totally random bodyparts from any humanoid in game.
-Continue menu could show danger level & dungeon level.
+Continue menu could show some additional info, eg. dungeon level.
 Pocket pick-axe.
 Dipping to oceans.
 If the player has enormous amounts of items in his backpack, some of them could randomly drop, at least after sight direction is implemented.
@@ -146,8 +146,8 @@ Moving diagonally should use sqrt(2) times more AP.
 Msghistory max length to conf.
 Opening a can should be more difficult with less hands.
 Fly function for character.
-Item category "rubbish" which would contain bananapeals and roubles.
-Material-colored cursor.
+Item category "rubbish" which would contain bananapeels and roubles.
+//Material-colored cursor.
 Wand levels.
 Possibility to override keys that felist accepts.
 Angels should become hostile if the player's relation to their DivineMaster drops radically.
@@ -171,7 +171,7 @@ We could show a scroll bar during reading, digging etc. that would show the rema
 Some balancing related game values like GLOBAL_WEAK_BODYPART_HIT_MODIFIER should come from the datafiles.
 Handling flying bear traps.
 Punishing people kicking bear traps.
-Priests should be created using CreateDivineConfigurations.
+//Priests should be created using CreateDivineConfigurations.
 Whips should sometimes remove the helmet of the target.
 Page up should work correctly in felists.
 If a melee hit is blocked with a weapon, the attacking arm should take damage.
@@ -196,7 +196,6 @@ Being satiated or bloated should decrease move ease.
 If HP == MaxHP, healing liquid should increase MaxHP a bit.
 Metal should look different from other materials: the lighter parts should be even lighter and darker parts slightly darker to increase the contrast.
 Frost weapons should gradually develop ice which would increase damage and disappear after successful hit.
-Dobbelganger.
 Lick command.
 Bulimia state.
 It should be possible to slip on a bloody floor.
@@ -234,9 +233,10 @@ Explosions should sometimes trigger the deaf state.
 The Cathedral should employ a gardener whose duty is take care of the firs around the building.
 An environmentalist character who would protest outside the Cathedral against the imprisonment of the dolphins.
 Monsters shouldn't drink antidote liquid if they don't need it.
+Monsters should drink antidote liquid if they need it.
 Ask for auto wear for picked up items.
 The spirit appearing in fountains should have a picture.
-Town portal scroll.
+Town portal scroll or something similiar.
 Small shadows for items. (one pixel right and down from the items graphic)
 "Select the direction you wish to enter Attnam from".
 Petrus should offer a small meal for player when he first visits him.
@@ -263,7 +263,7 @@ Panicking should be more probable when friends around the character have panicke
 If the player has enough wisdom, the game should warn about obviously damaging food.
 Invisible creatures carrying a light source should be revealed.
 IVAN's linux version should be distributed in rpm form, too.
-There should be an "unusable" state for bodyparts about to be severed.
+//There should be an "unusable" state for bodyparts about to be severed.
 There should be more ways to put back or summon missing bodyparts of pets.
 It should be possible to change materials of golems and other monsters.
 One should be able to wish for a new limb.
@@ -350,7 +350,6 @@ List of dead friends.
 Carnivorous plants should be carnivorous, not anorectic.
 (hs) There should be an option to display weapon skills at the end of the game.
 Loricatus shouldn't change whips to steel.
-Ikiros should forge weapons from raw materials provided by the player.
 Kiss command.
 Cloak of fire resistance should protect items in the inventory from fire.
 Eyeglasses.
@@ -380,7 +379,7 @@ Drinking and surviving a potion of poison should give some permanent poison resi
 Fortune cookies.
 Changes in attributes should be highlighted by some other colored font. (in the sidebar)
 Detonator and starting explosive. When applied the detonator explodes the small other explosive. Could be useful to start big explosions.    
-Vesana and other big monsters should also vomit much more than smaller creatures.
+//Vesana and other big monsters should also vomit much more than smaller creatures.
 Doing evil/good deeds should have greater effect on the god on whose altar room the deed is done.
 Mutant limbs should be of different color (maybe even have a different picture?), they should emitate light and drip odd liquid occasionally.
 Randomly generated bonefiles.
@@ -393,7 +392,6 @@ Stone of Pyrrha - transforms into a woman when thrown.
 The player shouldn't be able to pick up infinitely many infinitely big items. Its rather odd that a spider can have a large chest in its inventory (it can't move it, but IMHO it shouldn't even be able to pick it up).
 Magical ribbons.
 (hs) Graphical effect for Mjolak's energy attack.
-Bananas should return when thrown (they are boomerang-shaped).
 How much a monster can eat should depend on its volume (pet rats eat exactly as much as mammoths before they become bloated and stop).
 When seasons are integrated, bears should hibernate through winter.
 (hs) Loricatus should change weak golems to steel.
@@ -426,7 +424,7 @@ Taxidermy.
 Hunters should carry stuffed heads of random animals.
 Crown item for the goblin king.
 Pets should be able to drink from fountains.
-The message which informs that an item has been broken should indicate who carries the item.
+//The message which informs that an item has been broken should indicate who carries the item.
 (hs) There should be a possibility to examine an item (show materials etc.) in the inventory screen.
 Goblins should be generated tame if goblin king belongs to the player team.
 If the player is poisoned, he should be able to slow the poison's effect by standing still. (from Henri Kiviluoto)
@@ -454,7 +452,7 @@ Golems' wisdom shouldn't rise.
 "Psycho" state.
 The holy kiwi of Oily Orpiv.
 The holy pineapple of Oily Orpiv.
-System should be more intuative so that people wouldn't be confuse wielding and wearing.
+System should be more intuitive so that people wouldn't be confuse wielding and wearing.
 If the player has a giant beard, Richel Decos shouldn't pay him for wearing the ad shirt, since the banana logo can't be seen by anyone.
 "Berserk" state.
 There should be a possibility that Vermis teleports away bodyparts it hits. It is not very useful as it is now.
@@ -519,8 +517,6 @@ If you have high intelligence, ESP and telecontrol, you should sometimes be able
 It should be possible to use bladed weapons for amputation purposes.
 Light frog blood should do something beneficial, since it's the opposite of acicid dark frog blood.
 There should be a special symbol for mirrored items.
-Acid traps.
-Pits.
 There should be a gold golem in Petrus's treasure room.
 The priestess of New Attnam should change her replies after the revolution.
 There should be a one day warranty for the slave: if he dies you can resurrect him in the shop, or perhaps the shopkeeper gives you a resurrection coupon which you can give to the priest so he resurrects the slave for free.
@@ -531,17 +527,14 @@ Some of the liquid that is over the player should occasionally drop on the groun
 Zombies raised from a spesific corpse should retain their old heads.
 Kamikaze dwarves should loudly sing hymns which would warn about their presense in the level.
 The player's avatar should reflect the broken/intact state of his armours.
-There should be several snake types.
 There should be a hint of direction in the enner beast yell msg.
 Disease: Rabies.
 Different confuse effects for scrolls.
 Taming special named monsters should require some INT etc. because they are so great compared to anything else you can get as a pet.
-You should be able to slip if you run on a bloody floor.
 If you are poisoned, your face should turn blue.
 Lyre of charm's effect should depend on charisma and the relation to Dulcis.
 Amnesia should use different shapes to blur memory, for instance remove some rectangular areas from one's map.
 Maybe vesana could be animated somehow?
-If you have no limbs, your head should sometimes drop off due to leprosy.
 There should be more savescumming detection, at least hidden data in highscores we could use.
 HP-based monster generation of special monsters shouldn't consider HPs of polymorph forms.
 When wishing for "a mithril chain mail +5", the game should ask "Do you mean 'chain mail'? [y/n]".
@@ -586,3 +579,19 @@ A tin foil hat should make you immune to ESP.
 HP-based monster generation should use HP averages over long periods of time instead of current max HP.
 Butcher in Attnam - converts pets to cans of flesh.
 Tailor and smith should be able to make items from raw materials.
+Canning food from lumps and corpses.
+Wearing equipment of a god's material should make Him/Her slightly more favourable.
+Playing musical instruments should increase relation to Dulcis somewhat.
+Holy books could have several parts.
+Random stories could be generated to describe what the player reads from a holy book.
+Newspaper stand in Attnam where you can buy newspapers with randomized headlines and lots of religious propaganda are sold.
+Tentacle limbs.
+An infinite dungeon.
+An ancient battlefield where skeleton warriors constantly rise up and blattle each other and the player.
+The strength value of half spoiled ommel bone/tooth should be lower than normally.
+Dead sea lake.
+There should be a toggle whether wish, SoCM etc. limitations are disabled in WMode or not.
+More logical error checking in the script.
+The effect of the danger system could be made more obvious by eg. a message "Valpurus sees that you are very strong. Prepare for a test."
+Disease: Tetanus.
+Some way to disarm mines.

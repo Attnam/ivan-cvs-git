@@ -47,7 +47,7 @@ If you hit someone with one hand and either one of you teleports, you can still 
 (s) Border tile bug.
 Mirror + WorldMap.
 You can destroy terrains in Attnam with a wand of acid rain without causing an alarm.
-(d) "The kobold glows and transforms into an invisible talker."
+(d) "The kobold glows and transforms into an invisible stalker."
 Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
 "There is many items on the wall"
 Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
@@ -86,6 +86,7 @@ Cloak and armor shouldn't protect from broken bottles. (from Ighalli)
 You can bite with an unusable head.
 Petrus says that they have witnessed you leaving the tunnel even if you got here by means of levitation. (from Z)
 Crash : During the reading of a scroll of repair. See forum.
-Leprosy + cathedral bug.
-Mines do not disappear in the cathedral.
+(hs) Leprosy + cathedral bug.
+(hs) Mines do not disappear in the cathedral.
 10000/100 HP bug.
+If you try to open a (closed) chest that stands on the place of open door, the game calls you idiot for no reason.
