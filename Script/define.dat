@@ -913,7 +913,7 @@
 /* End of DataBase flags */
 /*************************/
 
-#define BONUS_LIVES 10
+#define BONUS_LIVES 0
 
 /* room flags */
 

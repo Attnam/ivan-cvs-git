@@ -517,6 +517,8 @@ Golems' wisdom shouldn't rise.
 "Psycho" state.
 The holy kiwi of Oily Orpiv.
 The holy pineapple of Oily Orpiv.
+If the player has a giant beard, Richel Decos shouldn't pay for him for wearing the ad shirt, since the banana logo can't be seen by anyone.
+System should be more intuative so that people wouldn't be confuse wielding and wearing.
 If the player has a giant beard, Richel Decos shouldn't pay him for wearing the ad shirt, since the banana logo can't be seen by anyone.
 "Berserk" state.
 There should be a possibility that Vermis teleports away bodyparts it hits. It is not very useful as it is now.
@@ -524,6 +526,8 @@ Boulders should cast small shadows in sunlight.
 Explosions should break pineapples and kiwis, leaving only some juice to the ground.
 A frog should be able to use its long, sticky tongue as a ranged weapon and catch small creatures up to three squares away so it may digest them afterwards. Elpuri should also be able to catch man-sized creatures who would find themselves in its acidous stomach, like they would have been engulfed by a purple worm in Nethack.
 Every 10000th new game or so IVAN should make a Nethack level 1 represented by ASCII characters and show it instead of the real one, print the standard Amulet of Yendor story, ask for key press, then print "Oh gosh. Wrong game, sorry!" and continue the original game.
+Go back -function to menus like ?-key.
+When there is vomit stuck to character, its charisma should be lowered.
 Mommos should follow the player more agressively; they are useless now as pets.
 "Sulphuric acid is raining here." to look mode when appropriate.
 You shouldn't be able to take equipment from angels; they are sacred after all, and it is strange that you can kill an archangel by removing her stuff and commanding her to equip two plate mails which she can't use, forcing her to bite you instead. (btw, even then she's quite tough :)
@@ -531,3 +535,5 @@ If the player is confused or has bad relations to Dulcis, using a magical whistl
 When confused, stethoscope should produce very inaccurate results.
 There should be a way of getting a verbal hint whether a god's pray timer allows praying without relation penalties; maybe the relation description printed upon offering could be modified, or a special msg could be given when reading a holy book.
 There could be a more interesting effect for trying to teleport over a monster; perhaps the player's and the monster's souls could be swapped (ie. they would polymorph into each other for some time) or their bodyparts could get randomly mixed.
+Drinkin _lots_ of water should maybe help poisonings.
+Shopkeepers should dislike Cleptia. (for example they shouldn't buy or sell holy books of cleptia)

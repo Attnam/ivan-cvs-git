@@ -100,6 +100,8 @@ Shopkeepers/librarians can buy items even if unconsciouss.
 If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
 You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
 One has no way to use stairs covered by sticky slime.
+Typo in GPL notice
+Taylor doesen't fix straight from equipment
 //Spider corpses are not poisonous.
 Charmed guards often block hallways when guarding them and the player who can't displace them has to dig a path around them.
 //Charming a tourist, leaving Attnam and entering a dungeon crashes. A usable autosave results, though, and the game can be continued with the tourist.
@@ -113,3 +115,4 @@ You can probably give commands to unconscious monsters.
 Scroll of golem creation destroys chest contents.
 //"The magic mushroom grunts happily."
 //Mammoth's corpse's weight is negative.
+

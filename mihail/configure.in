@@ -1,8 +1,8 @@
-AC_INIT(mihail,0.9)
+AC_INIT(mihail,0.91)
 AC_CANONICAL_TARGET
 
 AC_CONFIG_SRCDIR(Source/mihail.cpp)
-AM_INIT_AUTOMAKE(mihail, 0.9)
+AM_INIT_AUTOMAKE(mihail, 0.91)
 AM_PROG_AS 
 AC_PROG_CC
 
