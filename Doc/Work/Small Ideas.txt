@@ -567,3 +567,18 @@ You should get a bonus to your carrying capacity equal to your arms' weight (or 
 More funny and strange features, less swift and deadly ways to die. (from Timofei Shatrov)
 Extra blood more.
 Code improvement: char.cpp could be split in two.
+Trapped chests.
+"Are you sure you want to step on the mine?"/"Allow stepping on discovered mines?"
+Ways to cure pet leprosy.
+Previous games should affect the world more, for instance top 10 statues could be hidden somewhere.
+Mellis could transport his worshippers to a divine bazaar.
+The order of priests' limb attachment and leprosy curing services should be reversed.
+"What is this 'ommel'?" to extremely frequently asked questions.
+Healing should decrease panic counter somewhat. It is annoying that you must wait years for panic to wear off after drinking a potion of healing.
+Vodka should cure panic.
+You should be able to cut down balsa walls with an axe.
+Anyone named 'Captain Action' should encounter completely impossible monsters starting from the first level.
+A tin foil hat should make you immune to ESP.
+HP-based monster generation should use HP averages over long periods of time instead of current max HP.
+Butcher in Attnam - converts pets to cans of flesh.
+Tailor and smith should be able to make items from raw materials.
