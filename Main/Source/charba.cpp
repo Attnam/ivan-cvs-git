@@ -793,6 +793,14 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
     {
       if(GetAreaUnder()->IsValidPos(MoveTo) && (GetNearSquare(MoveTo)->IsWalkable(this) || game::GoThroughWallsCheatIsActive()))
 	{
+	  if(!game::GoThroughWallsCheatIsActive())
+	    for(ushort c = 0; c < game::GetWorldMap()->GetPlayerGroup().size(); ++c)
+	      if(!GetNearSquare(MoveTo)->IsWalkable(game::GetWorldMap()->GetPlayerGroup()[c]))
+		{
+		  ADD_MESSAGE("One or more of your team members cannot cross this terrain.");
+		  return false;
+		}
+
 	  Move(MoveTo);
 	  return true;
 	}
@@ -825,7 +833,7 @@ bool character::PickUp()
       ushort Amount = PileVector[0].size();
 
       if(Amount > 1)
-	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), 1, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
+	Amount = game::ScrollBarQuestion("How many " + PileVector[0][0]->GetName(PLURAL) + '?', vector2d(16, 6), Amount, 1, 0, Amount, WHITE, LIGHT_GRAY, DARK_GRAY);
 
       if((!GetRoomUnder() || GetRoomUnder()->PickupItem(this, PileVector[0][0], Amount)) && PileVector[0][0]->CheckPickUpEffect(this))
 	{
@@ -5470,6 +5478,8 @@ void characterprototype::CreateSpecialConfigurations()
 	    {
 	      character::database TempDataBase(Config.begin()->second);
 	      TempDataBase.InitDefaults(i->first);
+	      TempDataBase.Adjective = i->second.NameStem;
+	      TempDataBase.AdjectiveArticle = i->second.Article;
 	      Config[i->first] = TempDataBase;
 	    }
       }

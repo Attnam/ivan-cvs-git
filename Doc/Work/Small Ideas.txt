@@ -372,3 +372,8 @@ Breaking different wands should cause different effects.
 Scroll of level teleport.
 Once implemented, game saga should show how many times the player has polymorphed.
 Buffalos shouldn't be able to throw items.
+If a fireball beam doesn't hit anything, it should still explode at the end of its range.
+It should be possible to give the smith a better hammer so he could fix mithril items, too.
+SWeaponskills for gauntlets and boots.
+Deaf state in which the player can't hear explosions, can't converse and in the future can't hear footsteps etc.
+Explosions should sometimes trigger the deaf state.

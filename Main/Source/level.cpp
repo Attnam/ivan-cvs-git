@@ -506,6 +506,9 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		Map[CharPos.X + x][CharPos.Y + y]->AddCharacter(Char);
 		RoomClass->HandleInstantiatedCharacter(Char);
+
+		if(CharacterScript->GetIsMaster(false) && *CharacterScript->GetIsMaster())
+		  RoomClass->SetMaster(Char);
 	      }
 	}
     }
@@ -905,7 +908,8 @@ void level::Explosion(character* Terrorist, const std::string& DeathMsg, vector2
 		  Char->CheckDeath(DeathMsg);
 		}
 
-	    Square->GetStack()->ReceiveDamage(Terrorist, Damage, FIRE);
+	    Square->GetStack()->ReceiveDamage(Terrorist, Damage / 2, FIRE);
+	    Square->GetStack()->ReceiveDamage(Terrorist, Damage / 2, PHYSICAL_DAMAGE);
 
 	    if(Damage >= 20 && Square->GetOLTerrain()->CanBeDug() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
 	      {

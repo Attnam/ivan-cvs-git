@@ -201,6 +201,7 @@ class contentscript<character> : public contentscripttemplate<character>
  protected:
   DATA_MEMBER(ushort, Team);
   DATA_MEMBER(std::vector<contentscript<item> >, Inventory);
+  DATA_MEMBER(bool, IsMaster);
 };
 
 class contentscript<item> : public contentscripttemplate<item>

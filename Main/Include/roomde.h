@@ -19,7 +19,6 @@ class ROOM
   shop,
   room,
  public:
-  virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
   virtual bool PickupItem(character*, item*, ushort);
   virtual bool DropItem(character*, item*, ushort);
@@ -36,7 +35,6 @@ class ROOM
   temple,
   room,
  public:
-  virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
 );
 
@@ -72,7 +70,6 @@ class ROOM
   library,
   room,
  public:
-  virtual void HandleInstantiatedCharacter(character*);
   virtual void Enter(character*);
   virtual bool PickupItem(character*, item*, ushort);
   virtual bool DropItem(character*, item*, ushort);

@@ -21,12 +21,6 @@ valuemap protocontainer<room>::CodeNameMap;
 #include "save.h"
 #include "lterraba.h"
 
-void shop::HandleInstantiatedCharacter(character* Character)
-{
-  room::HandleInstantiatedCharacter(Character);
-  Master = Character;
-}
-
 void shop::Enter(character* Customer)
 {
   if(Customer->IsPlayer())
@@ -175,12 +169,6 @@ bool shop::DropItem(character* Customer, item* ForSale, ushort Amount)
     }
   else
     return true;
-}
-
-void temple::HandleInstantiatedCharacter(character* Character)
-{
-  room::HandleInstantiatedCharacter(Character);
-  Master = Character;
 }
 
 void temple::Enter(character* Pilgrim)
@@ -390,13 +378,6 @@ bool cathedral::Dip(character* Thirsty) const
 void cathedral::VirtualConstructor(bool)
 {
   SetEntered(false);
-}
-
-
-void library::HandleInstantiatedCharacter(character* Character)
-{
-  room::HandleInstantiatedCharacter(Character);
-  Master = Character;
 }
 
 void library::Enter(character* Customer)

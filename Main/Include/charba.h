@@ -95,6 +95,7 @@ struct characterdatabase
   ushort EyeColor;
   ushort TorsoMainColor;
   ushort BeltColor;
+  ushort BootColor;
   ushort TorsoSpecialColor;
   ushort ArmMainColor;
   ushort ArmSpecialColor;
@@ -459,6 +460,7 @@ class character : public entity, public id
   virtual DATA_BASE_VALUE(ushort, EyeColor);
   virtual DATA_BASE_VALUE(ushort, TorsoMainColor);
   virtual DATA_BASE_VALUE(ushort, BeltColor);
+  virtual DATA_BASE_VALUE(ushort, BootColor);
   virtual DATA_BASE_VALUE(ushort, TorsoSpecialColor);
   virtual DATA_BASE_VALUE(ushort, ArmMainColor);
   virtual DATA_BASE_VALUE(ushort, ArmSpecialColor);
@@ -718,7 +720,6 @@ class character : public entity, public id
   virtual bool LevelTeleport();
  protected:
   virtual character* RawDuplicate() const = 0;
-  virtual bool ShowMaterial() const { return CreateGolemMaterialConfigurations(); }
   virtual void SpecialTurnHandler() { }
   void Initialize(ushort, ushort);
   virtual void VirtualConstructor(bool) { }

@@ -86,6 +86,7 @@ humanoid
 	HairColor = rgb16(160, 80, 0);
 	EyeColor = rgb16(48, 8, 80);
 	BeltColor = rgb16(48, 48, 48);
+	BootColor = rgb16(16, 16, 16);
 	TorsoSpecialColor = 0;
 	ArmSpecialColor = 0;
 	LegSpecialColor = 0;
@@ -95,7 +96,7 @@ humanoid
 	CanUseEquipment = true;
 	CanKick = true;
 	CanTalk = true;
-	CanZap = true; /* AND has one hand (hard coded) */
+	CanZap = true; /* if has at least one hand (hard coded) */
 }
 
 nonhumanoid
@@ -119,11 +120,13 @@ human
 	HeadBitmapPos = 96, 0;
 	TorsoBitmapPos = 32, 0;
 	ArmBitmapPos = 64, 0;
-	LegBitmapPos = 0, 0;
+	LegBitmapPos = 0, 16;
 	TotalVolume = 80000;
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
+	Inventory == wandofpolymorph;
+	RightRing = ring(RING_OF_POLYMORPH_CONTROL);
 	/*Helmet = LEATHER helmet;
 	RightWielded = COPPER meleeweapon(SPEAR);
 	CWeaponSkillHits == 25;
@@ -388,6 +391,7 @@ farmer
 	DefaultMana = 5;
 	DefaultMoney = 20;
 	TorsoSpecialColor = rgb16(0, 96, 0);
+	BootColor = rgb16(90, 50, 10);
 	TotalVolume = 50000;
 	TotalSize = 170;
 	NameSingular = "farmer";
@@ -845,6 +849,7 @@ ennerbeast
 	HeadBitmapPos = 112, 128;
 	HairColor = rgb16(64, 20, 0);
 	ClothColor = rgb16(0, 0, 100);
+	BootColor = rgb16(90, 50, 10);
 	LegMainColor = rgb16(64, 20, 0);
 	PanicLevel = 75;
 	HostileReplies == "Aighee!";
@@ -1202,7 +1207,8 @@ mommo
 	HostileReplies == "@Dd vibrates in fury.";
 	FriendlyReplies == "@Dd vibrates oddly.";
 	BloodColor = rgb16(7, 155, 0);
-	NameSingular = "mommo slime";
+	NameSingular = "mommo";
+	PostFix = "slime";
 	IsAbstract = true;
 	AttackStyle = USE_HEAD;
 	BaseBiteStrength = 800;
@@ -1278,6 +1284,8 @@ golem
 	{
 		Frequency = 1000;
 		DangerModifier = 500;
+		Adjective = "valpurium";
+		CanBeWished = false;
 	}
 
 	Config SPIDER_SILK;
@@ -1292,11 +1300,14 @@ golem
 		CanBeWished = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
+		Adjective = "spider silk";
 	}
 
 	Config BLOOD;
 	{
 		CanBeGenerated = false;
+		Adjective = "blood";
+		CanBeWished = false;
 	}
 }
 
@@ -1502,6 +1513,7 @@ hunter
 	DefaultMana = 5;
 	ClothColor = rgb16(128, 80, 48);
 	BeltColor = rgb16(144, 96, 60);
+	BootColor = rgb16(90, 50, 10);
 	HeadBitmapPos = 96, 192;
 	TorsoBitmapPos = 32, 192;
 	ArmBitmapPos = 64, 128;
@@ -1641,8 +1653,7 @@ petrusswife
 	TotalVolume = 40000;
 	TotalSize = 170;
 	CanRead = true;
-	Adjective = "Petrus's";
-	NameSingular = "wife";
+	NameSingular = "Petrus's wife";
 	ArticleMode = NO_ARTICLE;
 	IsAbstract = true;
 	PanicLevel = 95;
@@ -1806,7 +1817,6 @@ librarian
 	/* Replies depend on story state */
 	IsUnique = true;
 	IsNameable = false;
-	CanBeCloned = false;
 	DefaultName = "Haathbar";
 }
 
@@ -2252,6 +2262,7 @@ largerat
 	KnownCWeaponSkills == BITE;
 	CWeaponSkillHits == 20;
 	ClassStates = INFRA_VISION;
+	CanSwim = true;
 }
 
 angel
@@ -2869,7 +2880,7 @@ smith
 	TorsoBitmapPos = 48, 192; 
 	HeadBitmapPos = 112, 160;
 	ArmBitmapPos = 64, 64;
-	LegBitmapPos = 0, 16; 
+	LegBitmapPos = 0, 96;
 	HairColor = rgb16(200, 200, 200);
 	ClothColor = rgb16(100, 100, 100);
 	CanRead = true;

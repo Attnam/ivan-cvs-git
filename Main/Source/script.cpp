@@ -247,6 +247,7 @@ datamemberbase* contentscript<character>::GetData(const std::string& Identifier)
 {
   ANALYZE_MEMBER(Team);
   ANALYZE_MEMBER(Inventory);
+  ANALYZE_MEMBER(IsMaster);
   return contentscripttemplate<character>::GetData(Identifier);
 }
 

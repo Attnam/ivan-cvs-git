@@ -772,7 +772,12 @@ void lsquare::ApplyScript(squarescript* SquareScript, room* Room)
       AddCharacter(Char);
 
       if(Room)
-	Room->HandleInstantiatedCharacter(Char);
+	{
+	  Room->HandleInstantiatedCharacter(Char);
+
+	  if(SquareScript->GetCharacter()->GetIsMaster(false) && *SquareScript->GetCharacter()->GetIsMaster())
+	    Room->SetMaster(Char);
+	}
     }
 
   if(SquareScript->GetItems(false))
@@ -817,19 +822,21 @@ bool lsquare::CanBeSeenByPlayer(bool IgnoreDarkness) const
 
 bool lsquare::CanBeSeenFrom(vector2d FromPos, ulong MaxDistance, bool IgnoreDarkness) const
 {
-  ulong Distance = (GetPos() - FromPos).Length();
+  return (GetPos() - FromPos).Length() <= MaxDistance && (IgnoreDarkness || !IsDark())
+      && ((Character && Character->IsPlayer() && GetNearSquare(FromPos)->CanBeSeenByPlayer(true))
+      || femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler));
+
+  /*ulong Distance = (GetPos() - FromPos).Length();
 
   if(Distance > MaxDistance || (!IgnoreDarkness && IsDark()))
     return false;
   else
     {
-      character* Char = GetCharacter();
-
-      if(Char && Char->IsPlayer() && Distance < Char->LOSRangeSquare())
-	return GetNearSquare(FromPos)->CanBeSeenByPlayer(true);
+      if(Character && Character->IsPlayer() && GetNearSquare(FromPos)->CanBeSeenByPlayer(true))
+	return true;
       else
 	return femath::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
-    }
+    }*/
 }
 
 void lsquare::MoveCharacter(lsquare* To)

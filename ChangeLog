@@ -1,3 +1,30 @@
+November 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* The default answer of drop and pickup amount question is now the number
+	  of items, instead of one
+	* Merka is now the shopkeeper of the dungeon, not one of his guards
+	* AI sight code works (very) little better now
+	* The player can no longer fly over oceans if he has walking creatures
+	  in his team
+	* Broken (runed) whips are no longer generated; since the intact ones
+	  can't break, they were somewhat odd
+	* The possibilities that items explode or burn (if they can) now depend
+	  on the amount of fire/energy damage
+	* Monsters no longer attack the enner beast; its death this way wasn't fun
+	* Reduced the enner beast's damage somewhat
+	* Enner beast's scream now detonates activated mines
+	* Unicorn code is now simpler
+	* Wish parser now asks the player to be more precise if there are more than
+	  one equally good matches; this way typos like "wand of clonning" don't
+	  yield a wand of polymorph etc. just because NameSingular is correct
+	* It is now possible (and necessary) to specify material when polymorphing
+	  into a golem
+	* Leg pictures' MColor 3 is now allocated for boots
+	* Genetrix vesana no longer creates plants around dead members of the player
+	  team
+	* Magical whistle effect no longer attemps to teleport dead members of the
+	  party
+
 November 20 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Polymorph state causes polymorph less often (the frequency was ridiculous)

@@ -3,8 +3,8 @@
  * This file contains SPOILERS, which might ruin your IVAN experience totally.
  */
 
-Dungeons=4;
-Teams=10;
+Dungeons = 4;
+Teams = 10;
 
 /*
  * Description of hard-coded teams:
@@ -17,12 +17,12 @@ Teams=10;
 Team ATTNAM_TEAM;
 {
 	Relation 0, FRIEND;
-	AttackEvilness=250;
+	AttackEvilness = 250;
 }
 
 /* Script defined teams: */
 
-Team 4; /* Enner beasts */
+Team 4; /* obsolete */
 {
 	Relation 0, HOSTILE;
 	Relation 2, HOSTILE;
@@ -40,20 +40,20 @@ Team 6; /* Dungeon shopkeepers */
 {
 	Relation 1, UNCARING;
 	Relation 4, HOSTILE;
-	AttackEvilness=100;
+	AttackEvilness = 100;
 }
 
 Team 7; /* Ivan */
 {
 	Relation 4, HOSTILE;
-	AttackEvilness=100;
+	AttackEvilness = 100;
 }
 
 Team 8; /* Residents of New Attnam */
 {
 	Relation 0, FRIEND;
 	Relation 4, HOSTILE;
-	AttackEvilness=200;
+	AttackEvilness = 200;
 }
 
 Team 9; /* Richel Decos and his guards */
@@ -63,22 +63,22 @@ Team 9; /* Richel Decos and his guards */
 
 Dungeon ELPURI_CAVE;
 {
-	Levels=10;
+	Levels = 10;
 	Variable XSize = 64;
 	Variable YSize = 36;
 
 	LevelDefault
 	{
-		FillSquare=solidterrain(GROUND),wall(EARTH);
-		Size=XSize, YSize;
-		Rooms=10+rand%21;
-		Items=25+rand%26;
-		GenerateMonsters=true;
-		ReCalculate=true;
-		OnGround=false;
-		TeamDefault=1;
-		AmbientLight=0;
-		LOSModifier=16;
+		FillSquare = solidterrain(GROUND),wall(EARTH);
+		Size = XSize, YSize;
+		Rooms = 10+rand%21;
+		Items = 25+rand%26;
+		GenerateMonsters = true;
+		ReCalculate = true;
+		OnGround = false;
+		TeamDefault = 1;
+		AmbientLight = 0;
+		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
 		DifficultyBase = 80;
 		DifficultyDelta = 20;
@@ -121,45 +121,45 @@ Dungeon ELPURI_CAVE;
 
 		RoomDefault
 		{
-			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
-			Size=4+rand%8,4+rand%8;
-			AltarPossible=true;
-			WallSquare=solidterrain(GROUND),wall(BRICK_OLD);
-			FloorSquare=solidterrain(PARQUET),empty;
-			DoorSquare=solidterrain(PARQUET),door;
-			GenerateDoor=true;
-			ReCalculate=true;
-			DivineMaster=0;
-			GenerateTunnel=true;
-			GenerateLanterns=true;
-			Type=normalroom;
-			GenerateFountains=true;
-			AllowLockedDoors=true;
-			AllowBoobyTrappedDoors=true;
+			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Size = 4+rand%8,4+rand%8;
+			AltarPossible = true;
+			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
+			FloorSquare = solidterrain(PARQUET),empty;
+			DoorSquare = solidterrain(PARQUET),door;
+			GenerateDoor = true;
+			ReCalculate = true;
+			DivineMaster = 0;
+			GenerateTunnel = true;
+			GenerateLanterns = true;
+			Type = normalroom;
+			GenerateFountains = true;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = true;
 			Shape = RECTANGLE;
 		}
 	}
 
 	Level rand%3;
 	{
-		LevelMessage="You hear many wolves howling. You shiver.";
-		Rooms=10+rand%21;
+		LevelMessage = "You hear many wolves howling. You shiver.";
+		Rooms = 10+rand%21;
 
 		Room 1;
 		{
-			Size=7,7;
-			AltarPossible=false;
+			Size = 7,7;
+			AltarPossible = false;
 			Shape = ROUND_CORNERS;
 
 			CharacterMap
 			{
-				Pos=1,1;
-				Size=5,5;
+				Pos = 1,1;
+				Size = 5,5;
 
 				Types
 				{
-					w=wolf;
-					W=werewolfhuman { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
+					w = wolf;
+					W = werewolfhuman { Inventory = { 2, scrollofenchantweapon, scrollofenchantarmor; } }
 				}
 			}
 			{
@@ -174,17 +174,15 @@ Dungeon ELPURI_CAVE;
 
 	Level 1+rand%3;
 	{
-		Rooms=10+rand%21;
+		Rooms = 10+rand%21;
 
 		Room 2;
 		{
-			Size=5,9;
-			AltarPossible=false;
-			DivineMaster=mellis;
-			Type=shop;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
-			GenerateFountains=false;
+			Size = 5,9;
+			AltarPossible = false;
+			DivineMaster = mellis;
+			Type = shop;
+			GenerateFountains = false;
 
 			CharacterMap
 			{
@@ -193,8 +191,8 @@ Dungeon ELPURI_CAVE;
 
 				Types
 				{
-					g = guard(SHOP) { Team=6; }
-					s = shopkeeper(ELPURI_CAVE) { Team=6; }
+					g = guard(SHOP) { Team = 6; }
+					s = shopkeeper(ELPURI_CAVE) { Team = 6; IsMaster = true; }
 				}
 			}
 			{
@@ -209,8 +207,8 @@ Dungeon ELPURI_CAVE;
 
 			ItemMap
 			{
-				Pos=1,1;
-				Size=3,7;
+				Pos = 1,1;
+				Size = 3,7;
 
 				Types
 				{
@@ -239,25 +237,47 @@ Dungeon ELPURI_CAVE;
 
 	Level 4;
 	{
-		LevelMessage="You hear a wailing scream in the distance. An enner beast must dwell in the level!";
-		Rooms=10+rand%21;
+		LevelMessage = "You hear a wailing scream in the distance. An enner beast must dwell in the level!";
+		IgnoreDefaultSpecialSquares = true;
+		Rooms = 10+rand%21;
+		Items = 50+rand%51;
+
+		Square, Random NOT_WALKABLE|NOT_IN_ROOM;
+		{
+			Items == stone;
+			Times = 25+rand%25;
+		}
+
+		Square, Random NOT_WALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRS_UP);
+			EntryIndex = STAIRS_UP;
+			AttachRequired = true;
+		}
+
+		Square, Random NOT_WALKABLE|ATTACHABLE;
+		{
+			OTerrain = link(STAIRS_DOWN);
+			EntryIndex = STAIRS_DOWN;
+			AttachRequired = true;
+		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=ennerbeast { Team=4; }
+			Character = ennerbeast;
 		}
 	}
 
 	Level 5;
 	{
-		LevelMessage="You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
-		Rooms=10+rand%21;
+		LevelMessage = "You hear someone singing loudly: \"Uncle Lenin lives in Russia...\"";
+		Rooms = 10+rand%21;
 
 		Room 0; /* vault */
 		{
 		
-			GenerateLanterns=false;
-			GenerateFountains=false;
+			GenerateLanterns = false;
+			GenerateFountains = false;
 			WallSquare = solidterrain(GROUND),wall(EARTH);
 			GenerateDoor = false;
 			GenerateTunnel = false;
@@ -266,8 +286,8 @@ Dungeon ELPURI_CAVE;
 
 			OTerrainMap
 			{
-				Pos=1,1;
-				Size=5,5;
+				Pos = 1,1;
+				Size = 5,5;
 				Types
 				{
 					x = IRON wall(BRICK_OLD);
@@ -308,30 +328,30 @@ Dungeon ELPURI_CAVE;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=communist { Team=7; }
+			Character = communist { Team = 7; }
 		}
 		
 	}
 
 	Level DARK_LEVEL;
 	{
-		Description=DarkLevel;
-		LevelMessage="You shudder as you sense a being of pure darkness nearby. Your goal is near.";
-		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
-		Items=0;
+		Description = DarkLevel;
+		LevelMessage = "You shudder as you sense a being of pure darkness nearby. Your goal is near.";
+		FillSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+		Items = 0;
 		IgnoreDefaultSpecialSquares = true;
 
 		RoomDefault
 		{
-			AltarPossible=false;
-			WallSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
-			DoorSquare=solidterrain(PARQUET), IRON door;
-			GenerateLanterns=false;
+			AltarPossible = false;
+			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+			DoorSquare = solidterrain(PARQUET), IRON door;
+			GenerateLanterns = false;
 		}
 
 		Square, Random IN_ROOM;
 		{
-			Character=elpuri;
+			Character = elpuri;
 		}
 
 		Square, Random NOT_WALKABLE|ATTACHABLE;
@@ -344,22 +364,22 @@ Dungeon ELPURI_CAVE;
 
 	Level 5+rand%4;
 	{
-		Rooms=10+rand%21;
+		Rooms = 10+rand%21;
 
 		Room 1;
 		{
-			Size=7,7;
-			AltarPossible=false;
+			Size = 7,7;
+			AltarPossible = false;
 			Shape = ROUND_CORNERS;
 
 			CharacterMap
 			{
-				Pos=1,1;
-				Size=5,5;
+				Pos = 1,1;
+				Size = 5,5;
 
 				Types
 				{
-					G=golem;
+					G = golem;
 				}
 			}
 			{
@@ -385,11 +405,11 @@ Dungeon ELPURI_CAVE;
 
 		Room 0;
 		{
-			Size=7,7;
-			AltarPossible=false;
-			WallSquare=solidterrain(GROUND),IRON wall(BRICK_OLD);
-			FloorSquare=solidterrain(PARQUET),empty;
-			DoorSquare=solidterrain(PARQUET),IRON door;
+			Size = 7,7;
+			AltarPossible = false;
+			WallSquare = solidterrain(GROUND),IRON wall(BRICK_OLD);
+			FloorSquare = solidterrain(PARQUET),empty;
+			DoorSquare = solidterrain(PARQUET),IRON door;
 
 			Square, Pos 3,3;
 			{
@@ -410,25 +430,25 @@ Dungeon ELPURI_CAVE;
 
 	Level OREE_LAIR;
 	{
-		Description=OreeLair;
-		LevelMessage="\"Welcome to my lair, mortal! There's no escape now!\"";
-		FillSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
-		Rooms=1;
-		GenerateMonsters=false;
-		Items=0;
-		ReCalculate=false;
+		Description = OreeLair;
+		LevelMessage = "\"Welcome to my lair, mortal! There's no escape now!\"";
+		FillSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+		Rooms = 1;
+		GenerateMonsters = false;
+		Items = 0;
+		ReCalculate = false;
 		IgnoreDefaultSpecialSquares = true;
 
 		Room 0;
 		{
-			Size=9,9;
-			AltarPossible=false;
-			WallSquare=solidterrain(FLOOR), IRON wall(BRICK_OLD);
-			FloorSquare=solidterrain(PARQUET),empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineMaster=mortifer;
-			GenerateFountains=false;
+			Size = 9,9;
+			AltarPossible = false;
+			WallSquare = solidterrain(FLOOR), IRON wall(BRICK_OLD);
+			FloorSquare = solidterrain(PARQUET),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			DivineMaster = mortifer;
+			GenerateFountains = false;
 
 			Square, Pos 4,1;
 			{
@@ -447,15 +467,15 @@ Dungeon ELPURI_CAVE;
 
 			CharacterMap
 			{
-				Pos=1,1;
-				Size=7,7;
+				Pos = 1,1;
+				Size = 7,7;
 
 				Types
 				{
-					O=oree;
-					B=darkknight(ELITE);
-					G=golem(BLOOD);
-					A=angel(MORTIFER);
+					O = oree;
+					B = darkknight(ELITE);
+					G = golem(BLOOD);
+					A = angel(MORTIFER);
 				}
 			}
 			{
@@ -473,79 +493,79 @@ Dungeon ELPURI_CAVE;
 
 Dungeon ATTNAM;
 {
-	Levels=1;
+	Levels = 1;
 	Variable XSize = 61;
 	Variable YSize = 62;
 
 	Level 0;
 	{
-		Description=Attnam;
-		FillSquare=solidterrain(GRASS_TERRAIN),empty;
-		Size=XSize, YSize;
-		GenerateMonsters=false;
-		Rooms=20 + rand % 6;
-		Items=0;
-		ReCalculate=false;
-		OnGround=true;
-		TeamDefault=2;
-		AmbientLight=rgb24(115, 115, 115);
-		LOSModifier=48;
+		Description = Attnam;
+		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		Size = XSize, YSize;
+		GenerateMonsters = false;
+		Rooms = 20 + rand % 6;
+		Items = 0;
+		ReCalculate = false;
+		OnGround = true;
+		TeamDefault = 2;
+		AmbientLight = rgb24(115, 115, 115);
+		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
 
 		RoomDefault
 		{
-			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
-			Size=4+rand%8,4+rand%8;
-			AltarPossible=false;
-			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare=solidterrain(PARQUET),empty;
-			DoorSquare=solidterrain(PARQUET),door;
-			GenerateDoor=true;
-			ReCalculate=true;
-			DivineMaster=0;
-			GenerateTunnel=false;
-			GenerateLanterns=true;
-			Type=normalroom;
-			GenerateFountains=false;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
+			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Size = 4+rand%8,4+rand%8;
+			AltarPossible = false;
+			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare = solidterrain(PARQUET),empty;
+			DoorSquare = solidterrain(PARQUET),door;
+			GenerateDoor = true;
+			ReCalculate = true;
+			DivineMaster = 0;
+			GenerateTunnel = false;
+			GenerateLanterns = true;
+			Type = normalroom;
+			GenerateFountains = false;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
 			Shape = RECTANGLE;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain=decoration(PINE);
-			Times=50;
+			OTerrain = decoration(PINE);
+			Times = 50;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain=decoration(SPRUCE);
-			Times=200;
+			OTerrain = decoration(SPRUCE);
+			Times = 200;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=hunter;
-			Times=10;
+			Character = hunter;
+			Times = 10;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=polarbear;
-			Times=5;
+			Character = polarbear;
+			Times = 5;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=farmer;
-			Times=5;
+			Character = farmer;
+			Times = 5;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=housewife;
-			Times=5;
+			Character = housewife;
+			Times = 5;
 		}
 
 		Square, Pos 30,61;
@@ -555,15 +575,15 @@ Dungeon ATTNAM;
 	
 		Room 0;
 		{
-			Pos=10,10;
-			Size=41,42;
-			WallSquare=solidterrain(GRASS_TERRAIN),STONE wall(BRICK_FINE);
-			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineMaster=valpurus;
-			GenerateLanterns=false;
-			Type=cathedral;
+			Pos = 10,10;
+			Size = 41,42;
+			WallSquare = solidterrain(GRASS_TERRAIN),STONE wall(BRICK_FINE);
+			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			DivineMaster = valpurus;
+			GenerateLanterns = false;
+			Type = cathedral;
 
 			Square, Pos 19, 41;
 			{
@@ -592,8 +612,8 @@ Dungeon ATTNAM;
 			
 			GTerrainMap
 			{
-				Pos=4,4;
-				Size=33,34;
+				Pos = 4,4;
+				Size = 33,34;
 				Types
 				{
 					# = MARBLE solidterrain(FLOOR);
@@ -640,8 +660,8 @@ Dungeon ATTNAM;
 
 			OTerrainMap
 			{
-				Pos=1,1;
-				Size=39,40;
+				Pos = 1,1;
+				Size = 39,40;
 				Types
 				{
 					# = MARBLE wall(BRICK_FINE);
@@ -711,8 +731,8 @@ Dungeon ATTNAM;
 
 			ItemMap
 			{
-				Pos=4,4;
-				Size=33,34;
+				Pos = 4,4;
+				Size = 33,34;
 				Types
 				{
 					# == 0;
@@ -788,8 +808,8 @@ Dungeon ATTNAM;
 
 			CharacterMap
 			{
-				Pos=4,4;
-				Size=33,34;
+				Pos = 4,4;
+				Size = 33,34;
 				Types
 				{
 					# = 0;
@@ -851,14 +871,14 @@ Dungeon ATTNAM;
 
 		Room 1;
 		{
-			Pos=32,53;
-			Size=8,6;
-			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare=solidterrain(PARQUET),empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineMaster=mellis;
-			Type=shop;
+			Pos = 32,53;
+			Size = 8,6;
+			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare = solidterrain(PARQUET),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			DivineMaster = mellis;
+			Type = shop;
 			
 			Square, Pos 3, 5;
 			{
@@ -873,13 +893,13 @@ Dungeon ATTNAM;
 
 			Square, Pos 6, 1;
 			{
-				Character = shopkeeper(ATTNAM);
+				Character = shopkeeper(ATTNAM) { IsMaster = true; }
 			}
 
 			ItemMap
 			{
-				Pos=1,1;
-				Size=6,4;
+				Pos = 1,1;
+				Size = 6,4;
 				Types
 				{
 					a == Random { MinPrice = 50; MaxPrice = 2000; Category = HELMET|CLOAK|BODY_ARMOR|BELT; }
@@ -894,21 +914,21 @@ Dungeon ATTNAM;
 				}
 			}
 			{
-			    .aaaa.
-			    eddwww
+				.aaaa.
+				eddwww
 				eefvuw 
-			    eeiluu
+				eeiluu
 			}
 		}
 
 		Room 2;
 		{
-			Pos=54,55;
-			Size=5,5;
-			WallSquare=solidterrain(GRASS_TERRAIN),STEEL wall(BRICK_FINE);
-			GenerateDoor=false;
-			DivineMaster=legifer;
-			Type=temple;
+			Pos = 54,55;
+			Size = 5,5;
+			WallSquare = solidterrain(GRASS_TERRAIN),STEEL wall(BRICK_FINE);
+			GenerateDoor = false;
+			DivineMaster = legifer;
+			Type = temple;
 
 			Square, Pos 2, 0;
 			{
@@ -923,18 +943,18 @@ Dungeon ATTNAM;
 
 			Square, Pos 2, 3;
 			{
-				Character = priest;
+				Character = priest { IsMaster = true; }
 			}
 		}
 
 		Room 3;
 		{
-			Pos=2,55;
-			Size=5,5;
-			WallSquare=solidterrain(GRASS_TERRAIN),MARBLE wall(BRICK_FINE);
-			GenerateDoor=false;
-			DivineMaster=dulcis;
-			Type=temple;
+			Pos = 2,55;
+			Size = 5,5;
+			WallSquare = solidterrain(GRASS_TERRAIN),MARBLE wall(BRICK_FINE);
+			GenerateDoor = false;
+			DivineMaster = dulcis;
+			Type = temple;
 
 			Square, Pos 4, 2;
 			{
@@ -949,18 +969,18 @@ Dungeon ATTNAM;
 
 			Square, Pos 1, 2;
 			{
-				Character = priest;
+				Character = priest { IsMaster = true; }
 			}
 		}
 
 		Room 4;
 		{
-			Pos=54,2;
-			Size=5,5;
-			WallSquare=solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
-			GenerateDoor=false;
-			DivineMaster=seges;
-			Type=temple;
+			Pos = 54,2;
+			Size = 5,5;
+			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
+			GenerateDoor = false;
+			DivineMaster = seges;
+			Type = temple;
 
 			Square, Pos 0, 2;
 			{
@@ -975,18 +995,18 @@ Dungeon ATTNAM;
 
 			Square, Pos 3, 2;
 			{
-				Character = priest;
+				Character = priest { IsMaster = true; }
 			}
 		}
 
 		Room 5;
 		{
-			Pos=2,2;
-			Size=5,5;
-			WallSquare=solidterrain(GRASS_TERRAIN),PARCHMENT wall(BRICK_FINE);
-			GenerateDoor=false;
-			DivineMaster=sophos;
-			Type=temple;
+			Pos = 2,2;
+			Size = 5,5;
+			WallSquare = solidterrain(GRASS_TERRAIN),PARCHMENT wall(BRICK_FINE);
+			GenerateDoor = false;
+			DivineMaster = sophos;
+			Type = temple;
 
 			Square, Pos 2, 4;
 			{
@@ -1001,20 +1021,20 @@ Dungeon ATTNAM;
 
 			Square, Pos 2, 1;
 			{
-				Character = priest;
+				Character = priest { IsMaster = true; }
 			}
 		}
 
 		Room 6;
 		{
-			Pos=21,53;
-			Size=8,6;
-			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare=solidterrain(PARQUET),empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineMaster=sophos;
-			Type=library;
+			Pos = 21,53;
+			Size = 8,6;
+			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare = solidterrain(PARQUET),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			DivineMaster = sophos;
+			Type = library;
 			
 			Square, Pos 3, 5;
 			{
@@ -1025,13 +1045,13 @@ Dungeon ATTNAM;
 
 			Square, Pos 4, 4;
 			{
-				Character = librarian;
+				Character = librarian { IsMaster = true; }
 			}
 
 			ItemMap
 			{
-				Pos=1,1;
-				Size=6,4;
+				Pos = 1,1;
+				Size = 6,4;
 
 				Types
 				{
@@ -1047,8 +1067,8 @@ Dungeon ATTNAM;
 
 			OTerrainMap
 			{
-				Pos=1,1;
-				Size=6,4;
+				Pos = 1,1;
+				Size = 6,4;
 				Types
 				{
 					= = olterraincontainer(BOOK_CASE);
@@ -1064,14 +1084,14 @@ Dungeon ATTNAM;
 
 		Room 7;
 		{
-			Pos=2,47;
-			Size=7,5;
-			AltarPossible=false;
-			WallSquare=solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
-			FloorSquare=solidterrain(PARQUET),empty;
-			GenerateDoor=false;
-			ReCalculate=false;
-			DivineMaster=loricatus;
+			Pos = 2,47;
+			Size = 7,5;
+			AltarPossible = false;
+			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);
+			FloorSquare = solidterrain(PARQUET),empty;
+			GenerateDoor = false;
+			ReCalculate = false;
+			DivineMaster = loricatus;
 
 			Square, Pos 3, 4;
 			{
@@ -1087,23 +1107,23 @@ Dungeon ATTNAM;
 		}
 		Room 8;
 		{
-			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
-			DoorSquare=solidterrain(FLOOR), door;
+			FloorSquare = solidterrain(FLOOR),empty;
+			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room 9;
 		{
-			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
-			DoorSquare=solidterrain(FLOOR), door;
+			FloorSquare = solidterrain(FLOOR),empty;
+			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 		Room 10;
 		{
-			FloorSquare=solidterrain(FLOOR),empty;
-			WallSquare=solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
-			DoorSquare=solidterrain(FLOOR), door;
+			FloorSquare = solidterrain(FLOOR),empty;
+			WallSquare = solidterrain(GRASS_TERRAIN), WOOD wall(BRICK_FINE);
+			DoorSquare = solidterrain(FLOOR), door;
 		}
 
 	}
@@ -1117,53 +1137,53 @@ Dungeon NEW_ATTNAM;
 
 	Level 0;
 	{
-		Description="New Attnam";
-		FillSquare=solidterrain(GRASS_TERRAIN),empty;
-		Size=XSize, YSize;
-		GenerateMonsters=false;
-		Rooms= 5 + rand % 3;
-		Items=0;
-		ReCalculate=false;
-		OnGround=true;
-		TeamDefault=8;
-		AmbientLight=rgb24(130, 130, 130);
-		LOSModifier=48;
+		Description = "New Attnam";
+		FillSquare = solidterrain(GRASS_TERRAIN),empty;
+		Size = XSize, YSize;
+		GenerateMonsters = false;
+		Rooms =  5 + rand % 3;
+		Items = 0;
+		ReCalculate = false;
+		OnGround = true;
+		TeamDefault = 8;
+		AmbientLight = rgb24(130, 130, 130);
+		LOSModifier = 48;
 		IgnoreDefaultSpecialSquares = false;
 
 		RoomDefault
 		{
-			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
-			Size=4+rand%3,4+rand%3;
-			AltarPossible=false;
-			WallSquare=solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
-			FloorSquare=solidterrain(FLOOR),empty;
-			DoorSquare=solidterrain(FLOOR), door;
-			GenerateDoor=true;
-			ReCalculate=true;
-			DivineMaster=0;
-			GenerateTunnel=false;
-			GenerateLanterns=false;
-			Type=normalroom;
-			GenerateFountains=false;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
+			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Size = 4+rand%3,4+rand%3;
+			AltarPossible = false;
+			WallSquare = solidterrain(GRASS_TERRAIN),WOOD wall(BRICK_FINE);
+			FloorSquare = solidterrain(FLOOR),empty;
+			DoorSquare = solidterrain(FLOOR), door;
+			GenerateDoor = true;
+			ReCalculate = true;
+			DivineMaster = 0;
+			GenerateTunnel = false;
+			GenerateLanterns = false;
+			Type = normalroom;
+			GenerateFountains = false;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
 			Shape = ROUND_CORNERS;
 		}
 
 		Room 0;
 		{
-			Pos=2,2;
-			Size=17,16;
-			WallSquare=solidterrain(FLOOR),STONE wall(BRICK_FINE);
-			FloorSquare=solidterrain(FLOOR),empty;
+			Pos = 2,2;
+			Size = 17,16;
+			WallSquare = solidterrain(FLOOR),STONE wall(BRICK_FINE);
+			FloorSquare = solidterrain(FLOOR),empty;
 			GenerateDoor = false;
-			ReCalculate=false;
-			DivineMaster=silva;
-			GenerateLanterns=false;
+			ReCalculate = false;
+			DivineMaster = silva;
+			GenerateLanterns = false;
 			OTerrainMap
 			{
-				Pos=2,2;
-				Size=13,12;
+				Pos = 2,2;
+				Size = 13,12;
 				Types
 				{
 					# = GOLD wall(BRICK_FINE);
@@ -1185,8 +1205,8 @@ Dungeon NEW_ATTNAM;
 			}
 			CharacterMap
 			{
-				Pos=2,2;
-				Size=13,12;
+				Pos = 2,2;
+				Size = 13,12;
 				Types
 				{
 					# = 0;
@@ -1209,8 +1229,8 @@ Dungeon NEW_ATTNAM;
 			}
 			GTerrainMap
 			{
-				Pos=2,2;
-				Size=13,12;
+				Pos = 2,2;
+				Size = 13,12;
 				Types
 				{
 					# = 0;
@@ -1245,20 +1265,20 @@ Dungeon NEW_ATTNAM;
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain=boulder;
-			Times=50;
+			OTerrain = boulder;
+			Times = 50;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			OTerrain=decoration(PALM);
+			OTerrain = decoration(PALM);
 			Times = 100;
 		}
 
 		Square, Random NOT_IN_ROOM;
 		{
-			Character=bananagrower;
-			Times=40;
+			Character = bananagrower;
+			Times = 40;
 		}
 
 		Square, Pos 9, 18;
@@ -1270,22 +1290,22 @@ Dungeon NEW_ATTNAM;
 
 Dungeon UNDER_WATER_TUNNEL;
 {
-	Levels=3;
+	Levels = 3;
 	Variable XSize = 80;
 	Variable YSize = 20;
 
 	LevelDefault
 	{
-		FillSquare=solidterrain(GROUND),wall(EARTH);
-		Size=XSize, YSize;
-		Rooms=5+rand%6;
-		Items=15+rand%16;
-		GenerateMonsters=true;
-		ReCalculate=true;
-		OnGround=false;
-		TeamDefault=1;
-		AmbientLight=0;
-		LOSModifier=16;
+		FillSquare = solidterrain(GROUND),wall(EARTH);
+		Size = XSize, YSize;
+		Rooms = 5+rand%6;
+		Items = 15+rand%16;
+		GenerateMonsters = true;
+		ReCalculate = true;
+		OnGround = false;
+		TeamDefault = 1;
+		AmbientLight = 0;
+		LOSModifier = 16;
 		IgnoreDefaultSpecialSquares = false;
 		DifficultyBase = 20;
 		DifficultyDelta = 20;
@@ -1301,21 +1321,21 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		RoomDefault
 		{
-			Pos=2+rand%(XSize-6),2+rand%(YSize-6);
-			Size=4+rand%8,4+rand%8;
-			AltarPossible=true;
-			WallSquare=solidterrain(GROUND),wall(BRICK_OLD);
-			FloorSquare=solidterrain(PARQUET),empty;
-			DoorSquare=solidterrain(PARQUET),door;
-			GenerateDoor=true;
-			ReCalculate=true;
-			DivineMaster=0;
-			GenerateTunnel=true;
-			GenerateLanterns=true;
-			Type=normalroom;
-			GenerateFountains=true;
-			AllowLockedDoors=true;
-			AllowBoobyTrappedDoors=true;
+			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Size = 4+rand%8,4+rand%8;
+			AltarPossible = true;
+			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
+			FloorSquare = solidterrain(PARQUET),empty;
+			DoorSquare = solidterrain(PARQUET),door;
+			GenerateDoor = true;
+			ReCalculate = true;
+			DivineMaster = 0;
+			GenerateTunnel = true;
+			GenerateLanterns = true;
+			Type = normalroom;
+			GenerateFountains = true;
+			AllowLockedDoors = true;
+			AllowBoobyTrappedDoors = true;
 			Shape = RECTANGLE;
 		}
 	}
@@ -1327,33 +1347,33 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		RoomDefault
 		{
-			AltarPossible=false;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
+			AltarPossible = false;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
 		}
 
 		Square, Random;
 		{
-			Character=spider;
-			Times=3;
+			Character = spider;
+			Times = 3;
 		}
 
 		Square, Random;
 		{
-			Character=kobold;
-			Times=3;
+			Character = kobold;
+			Times = 3;
 		}
 
 		Square, Random;
 		{
-			Character=zombie;
-			Times=3;
+			Character = zombie;
+			Times = 3;
 		}
 
 		Square, Random;
 		{
-			Character=carnivorousplant;
-			Times=3;
+			Character = carnivorousplant;
+			Times = 3;
 		}
 
 		Square, BoundedRandom 61, 1, 78, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1365,10 +1385,10 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
-			Pos=2+rand%(XSize/4-6),2+rand%(YSize-6);
-			Size=5,5;
-			AllowLockedDoors=false;
-			AllowBoobyTrappedDoors=false;
+			Pos = 2+rand%(XSize/4-6),2+rand%(YSize-6);
+			Size = 5,5;
+			AllowLockedDoors = false;
+			AllowBoobyTrappedDoors = false;
 			Shape = ROUND_CORNERS;
 
 			Square, Pos 2,2;
@@ -1379,7 +1399,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 			Square, Pos 2,1;
 			{
-				Items==lantern;
+				Items =  = lantern;
 			}
 		}
 	}
@@ -1388,11 +1408,11 @@ Dungeon UNDER_WATER_TUNNEL;
 	{
 		Size = 160, 20;
 		MonsterAmountBase = 15;
-		Items=20+rand%21;
+		Items = 20+rand%21;
 
 		RoomDefault
 		{
-			Pos=2+rand%154,2+rand%(YSize-6);
+			Pos = 2+rand%154,2+rand%(YSize-6);
 		}
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1414,7 +1434,7 @@ Dungeon UNDER_WATER_TUNNEL;
 	{
 		MonsterAmountBase = 10;
 
-		LevelMessage="This level seems to be somehow alive...";
+		LevelMessage = "This level seems to be somehow alive...";
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
 		{
@@ -1425,9 +1445,9 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
-			Size=5,5;
-			Pos=3*XSize/4 + rand%(XSize/4-6),2+rand%(YSize-6);
-			FloorSquare=solidterrain(GRASS_TERRAIN),empty;
+			Size = 5,5;
+			Pos = 3*XSize/4 + rand%(XSize/4-6),2+rand%(YSize-6);
+			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
 			GenerateFountains = false;
 			AltarPossible = false;
 

@@ -55,27 +55,31 @@ bool ennerbeast::Hit(character*)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	character* Char = GetNearSquare(x, y)->GetCharacter();
-	ushort ScreamStrength = ushort(100 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(60 / (hypot(GetPos().X - x, GetPos().Y - y) + 1));
 
-	if(Char && Char != this)
+	if(ScreamStrength)
 	  {
-	    msgsystem::EnterBigMessageMode();
+	    character* Char = GetNearSquare(x, y)->GetCharacter();
 
-	    if(Char->IsPlayer())
-	      ADD_MESSAGE("You are hit by the horrible waves of high sound.");
-	    else if(Char->CanBeSeenByPlayer())
-	      ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
+	    if(Char && Char != this)
+	      {
+		msgsystem::EnterBigMessageMode();
 
-	    Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
-	    Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
-	    msgsystem::LeaveBigMessageMode();
+		if(Char->IsPlayer())
+		  ADD_MESSAGE("You are hit by the horrible waves of high sound.");
+		else if(Char->CanBeSeenByPlayer())
+		  ADD_MESSAGE("%s is hit by the horrible waves of high sound.", Char->CHAR_NAME(DEFINITE));
+
+		Char->ReceiveDamage(this, ScreamStrength, SOUND, ALL, YOURSELF, true);
+		Char->CheckDeath("killed by " + GetName(INDEFINITE) + "'s scream");
+		msgsystem::LeaveBigMessageMode();
+	      }
+
+	    GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
+
+	    for(ushort c = 0; c < 4; ++c)
+	      GetNearLSquare(x, y)->GetSideStack(c)->ReceiveDamage(this, ScreamStrength, SOUND);
 	  }
-
-	GetNearLSquare(x, y)->GetStack()->ReceiveDamage(this, ScreamStrength, SOUND);
-
-	for(ushort c = 0; c < 4; ++c)
-	  GetNearLSquare(x, y)->GetSideStack(c)->ReceiveDamage(this, ScreamStrength, SOUND);
       }
 
   EditNP(-100);
@@ -981,7 +985,7 @@ bool largecat::Catches(item* Thingy, float)
 
 material* unicorn::CreateBodyPartMaterial(ushort, ulong Volume) const
 {
-  switch(Alignment)
+  switch(Config)
     {
     case GOOD:
       return MAKE_MATERIAL(WHITE_UNICORN_FLESH, Volume);
@@ -990,18 +994,6 @@ material* unicorn::CreateBodyPartMaterial(ushort, ulong Volume) const
     default:
       return MAKE_MATERIAL(BLACK_UNICORN_FLESH, Volume);
     }
-}
-
-void unicorn::Save(outputfile& SaveFile) const
-{
-  nonhumanoid::Save(SaveFile);
-  SaveFile << Alignment;
-}
-
-void unicorn::Load(inputfile& SaveFile)
-{
-  nonhumanoid::Load(SaveFile);
-  SaveFile >> Alignment;
 }
 
 void kamikazedwarf::GetAICommand()
@@ -1635,9 +1627,9 @@ ushort humanoid::GetBodyPartColorC(ushort Index)
     case HEAD_INDEX: return GetHairColor();
     case RIGHT_ARM_INDEX:
     case LEFT_ARM_INDEX:
-    case GROIN_INDEX:
-    case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return 0; // reserved for future use
+    case GROIN_INDEX: return 0; // reserved for future use
+    case RIGHT_LEG_INDEX: return GetBootColor();
+    case LEFT_LEG_INDEX: return GetBootColor();
     default:
       ABORT("Weird bodypart color C request for a humanoid!");
       return 0;
@@ -1701,12 +1693,6 @@ void shopkeeper::VirtualConstructor(bool Load)
 
   if(!Load)
     SetMoney(GetMoney() + RAND() % 2001);
-}
-
-void unicorn::CreateBodyParts(ushort SpecialFlags)
-{
-  SetAlignment(RAND() % 3);
-  character::CreateBodyParts(SpecialFlags);
 }
 
 void human::Save(outputfile& SaveFile) const
@@ -3537,35 +3523,35 @@ bool humanoid::CheckZap()
 
 void genetrixvesana::GetAICommand()
 {
-  if(!(RAND() % 50))
+  if(!(RAND() % 40))
     {
       ushort NumberOfPlants = RAND() % 3 + RAND() % 3 + RAND() % 3 + RAND() % 3;
 
       for(ushort c = 0; c < 50 && NumberOfPlants; ++c)
 	{
 	  for(std::list<character*>::const_iterator i = game::GetTeam(PLAYER_TEAM)->GetMember().begin(); i != game::GetTeam(PLAYER_TEAM)->GetMember().end(); ++i)
-	    {
-	      character* Victim = *i;
-	      lsquare* LSquare = Victim->GetNeighbourLSquare(RAND() % 8);
+	    if((*i)->IsEnabled())
+	      {
+		lsquare* LSquare = (*i)->GetNeighbourLSquare(RAND() % 8);
 
-	      if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
-		{
-		  character* NewPlant = new carnivorousplant(RAND() % 3 ? 0 : GREATER);
-		  NewPlant->SetTeam(GetTeam());
-		  LSquare->AddCharacter(NewPlant);
-		  --NumberOfPlants;
+		if(LSquare && LSquare->IsWalkable(0) && !LSquare->GetCharacter())
+		  {
+		    character* NewPlant = new carnivorousplant(RAND() % 3 ? 0 : GREATER);
+		    NewPlant->SetTeam(GetTeam());
+		    LSquare->AddCharacter(NewPlant);
+		    --NumberOfPlants;
 
-		  if(NewPlant->CanBeSeenByPlayer())
-		    {
-		      if(Victim->IsPlayer())
-			ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
-		      else if(Victim->CanBeSeenByPlayer())
-			ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), Victim->CHAR_NAME(DEFINITE));
-		      else
-			ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(DEFINITE));
-		    }
-		}
-	    }
+		    if(NewPlant->CanBeSeenByPlayer())
+		      {
+			if((*i)->IsPlayer())
+			  ADD_MESSAGE("%s sprouts from the ground near you.", NewPlant->CHAR_NAME(DEFINITE));
+			else if((*i)->CanBeSeenByPlayer())
+			  ADD_MESSAGE("%s sprouts from the ground near %s.", NewPlant->CHAR_NAME(DEFINITE), (*i)->CHAR_NAME(DEFINITE));
+			else
+			  ADD_MESSAGE("%s sprouts from the ground.", NewPlant->CHAR_NAME(DEFINITE));
+		      }
+		  }
+	      }
 	}
     }
 
@@ -3608,4 +3594,17 @@ void nonhumanoid::AddAttributeInfo(std::string& Entry) const
   Entry.resize(48, ' ');
   Entry << "-  -  " << GetAttribute(AGILITY);
   character::AddAttributeInfo(Entry);
+}
+
+ushort carnivorousplant::GetTorsoSpecialColor() const // the flower
+{
+  if(!Config)
+    return MakeRGB16(RAND() % 100, 125 + RAND() % 125, RAND() % 100);
+  else
+    return MakeRGB16(RAND() % 100, RAND() % 100, 125 + RAND() % 125);
+}
+
+ushort genetrixvesana::GetTorsoSpecialColor() const // the flower
+{
+  return MakeRGB16(160, 0, 0);
 }

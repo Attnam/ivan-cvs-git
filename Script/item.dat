@@ -1014,7 +1014,7 @@ whip /* meleeweapon-> */
 
 	Config BROKEN; /* for future */
 	{
-		Possibility = 5;
+		Possibility = 0;
 		BitmapPos = 32, 256;
 	}
 
@@ -1031,7 +1031,7 @@ whip /* meleeweapon-> */
 
 	Config BROKEN|RUNED_WHIP;
 	{
-		Possibility = 2;
+		Possibility = 0;
 		BitmapPos = 32, 256;
 	}
 }
@@ -1136,7 +1136,7 @@ wandoffireballs /* wand-> */
 	Price = 500;
 	PostFix = "of fireballs";
 	MainMaterialConfig == BRONZE;
-	BeamRange = 200;
+	BeamRange = 50;
 	MinCharges = 1;
 	MaxCharges = 4;
 }
@@ -1642,7 +1642,7 @@ wandofresurrection /* wand-> */
 	Price = 500;
 	PostFix = "of resurrection";
 	MainMaterialConfig == BONE;
-	BeamRange = 15;
+	BeamRange = 5;
 	MinCharges = 1;
 	MaxCharges = 3;
 }
@@ -1769,7 +1769,7 @@ wandofinvisibility /* wand-> */
 	Price = 250;
 	PostFix = "of invisibility";
 	MainMaterialConfig == GLASS;
-	BeamRange = 15;
+	BeamRange = 10;
 	MinCharges = 3;
 	MaxCharges = 6;
 }

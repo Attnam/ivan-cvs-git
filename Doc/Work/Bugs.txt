@@ -43,7 +43,7 @@ Chests and lanterns.
 //Unicorns can eat silver stones.
 //Exp is gained even if bodypart is non-living, even though it affects nothing.
 //One can kick mines.
-new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
+//new meleeweapon(LONGSWORD, MAKE_MATERIAL(IRON)) may create a long iron sword with a mithril handle.
 //Doors close when they break.
 //Can one block when fainted?
 //Wand of resurrection doesn't work
@@ -67,7 +67,7 @@ Highscore of no entries doesn't work properly.
 Scroll of charging ("no items to charge")
 Alpha + rotate doesn't work.
 //Beartraps + groinless creatures.
-Zapping is possible without arms.
+//Zapping is possible without arms.
 Hit effects of flying items.
 //Head of Elpuri, Shirt of the Golden Eagle and the Left Nut of Petrus aren't recognized by the storyline if they are equipped.
 Consummo message.
@@ -77,36 +77,42 @@ Bear trap + displace.
 Attnam + Elpuri.
 Headless player zombie + Chat.
 Messages after teleport.
-Panic + vital bodypart.
+//Panic + vital bodypart.
 Poison + poison resistance message.
 (7x) the werewolf resists.
 Bear trap in shop.
-Bloated monster eat AI.
-Omle urine doesn't really work.
-Infravision range.
+//Bloated monster eat AI.
+//Omle urine doesn't really work.
+*Infravision range.
 Carnivorous plants spill blood.
-Oree's blood golems' HPs' are incorrect.
+//Oree's blood golems' HPs' are incorrect.
 //(In Linux) push X-button, then cancel
-Skeletons' health bugs. Some have over 20000 hps.
+//Skeletons' health bugs. Some have over 20000 hps.
 "Valpurus shall not carry more continents!"
-Going down from underwater tunnel level 3 in WMode crashes.
+//Going down from underwater tunnel level 3 in WMode crashes.
 "Stone stones"
-Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.
+//Bodyparts hit by sound or energy are never severed nor destroyed, so they can reach negative hps.
 //Consuming chests probably crashes the game.
 Go seems to be slower than manual walking.
 Strength bonus is shown in the battle info screen even for Bill's wills.
-(example of the problem) If you generate a sign in the script future random palms may overwrite the sign. 
+(example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 Bear trap + level change crashes.
 Polymorphing while wearing a ring of infravision crashes.
-Message history may crash if many many very long messages are successively printed.
+//Message history may crash if many many very long messages are successively printed.
 Unicorns kicking items in shop.
 Seges and others may give genies and angels a groin and legs.
-You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
+//You can change a sword to water with a scroll of change material. (maybe the whole sword could just vanish. Maybe add a bit fluid on the square the player is standing on)
+  (doesn't exists and hasn't; changing only works in WMode)
 Teleportation state works in the wilderness.
 Golden plate mails are worth less than iron ones.
 The imperialist makes no reaction if the player destroys his golden room completely with pick-axe etc.
 Skulls are insanely heavy (8 kg).
 Carnivorous plants can be kicked around.
-Merka's money amount bugs?
+//Merka's money amount bugs?
 The dead are counted when calculating population.
 "The kamikaze dwarf manages to free heself from the bear trap."
+Pet plants are able to follow the player to the world map.
+It is impossible to polymorph into a kamikaze dwarf, the game just says "Be more precise" since there are many configurations with same name. (low priority)
+"0 scrolls of wishing dropped."
+Destroying shops, libraries, smithies and temples (except the cathedral) with a pick-axe yields no penalties.
+Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.

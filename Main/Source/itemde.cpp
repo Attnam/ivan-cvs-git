@@ -561,9 +561,9 @@ void holybook::FinishReading(character* Reader)
     }
 }
 
-bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
+bool wand::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if((Type == FIRE && !(RAND() % 10)) || (Type == ENERGY && !(RAND() % 10)))
+  if((Type == FIRE || Type == ENERGY) && Damage && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       std::string DeathMsg = "explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -584,9 +584,9 @@ bool wand::ReceiveDamage(character* Damager, ushort, uchar Type)
   return false;
 }
 
-bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
+bool backpack::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if(((Type == FIRE && !(RAND() % 3)) || (Type == ENERGY && RAND() % 3)) && IsExplosive())
+  if((Type == FIRE || Type == ENERGY) && Damage && IsExplosive() && (Damage > 50 || !(RAND() % (100 / Damage))))
     {
       std::string DeathMsg = "explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -607,9 +607,9 @@ bool backpack::ReceiveDamage(character* Damager, ushort, uchar Type)
   return false;
 }
 
-bool scroll::ReceiveDamage(character*, ushort, uchar Type)
+bool scroll::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(Type == FIRE && !(RAND() % 10) && GetMainMaterial()->IsFlammable())
+  if(Type == FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
@@ -674,9 +674,9 @@ bool wandofstriking::BeamEffect(character* Who, const std::string& DeathMsg, uch
   return false;
 }
 
-bool holybook::ReceiveDamage(character*, ushort, uchar Type)
+bool holybook::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(Type == FIRE && RAND() & 1 && GetMainMaterial()->IsFlammable())
+  if(Type == FIRE && Damage && GetMainMaterial()->IsFlammable() && (Damage > 125 || !(RAND() % (250 / Damage))))
     {
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s catches fire!", CHAR_NAME(DEFINITE));
@@ -1164,9 +1164,9 @@ void mine::Save(outputfile& SaveFile) const
   SaveFile << Active << Team;
 }
 
-bool mine::ReceiveDamage(character* Damager, ushort, uchar Type)
+bool mine::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
-  if((Type == FIRE && RAND() & 1) || (Type == ENERGY && RAND() & 1) || ((Type == PHYSICAL_DAMAGE) && WillExplode(0)))
+  if(((Type == FIRE || Type == ENERGY) && Damage && (Damage > 50 || !(RAND() % (100 / Damage)))) || ((Type == PHYSICAL_DAMAGE || Type == SOUND) && WillExplode(0)))
     {
       std::string DeathMsg = "killed by an explosion of ";
       AddName(DeathMsg, INDEFINITE);
@@ -1965,7 +1965,7 @@ void magicalwhistle::BlowEffect(character* Whistler)
   const std::list<character*>& Member = Whistler->GetTeam()->GetMember();
 
   for(std::list<character*>::const_iterator i = Member.begin(); i != Member.end(); ++i)
-    if(Whistler != *i)
+    if((*i)->IsEnabled() && Whistler != *i)
       (*i)->TeleportNear(Whistler);
 }
 
@@ -3975,17 +3975,12 @@ bool itemcontainer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 	  SetLockType(DAMAGED);
 
 	  if(CanBeSeenByPlayer())
-	    {
-	      ADD_MESSAGE("%s's lock shatters to pieces.", GetNameSingular().c_str());
-	    }
+	    ADD_MESSAGE("%s's lock shatters to pieces.", GetNameSingular().c_str());
 
 	  return true;
 	}
-      else
-	{
-	  if(Damager->IsPlayer())
-	    ADD_MESSAGE("THUMB!");
-	}
+      else if(Damager->IsPlayer())
+	ADD_MESSAGE("THUMB!");
     }
 
   return false;

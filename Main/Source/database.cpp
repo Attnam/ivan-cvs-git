@@ -167,6 +167,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZE_DATA(EyeColor);
   ANALYZE_DATA_WITH_DEFAULT(TorsoMainColor, ClothColor);
   ANALYZE_DATA(BeltColor);
+  ANALYZE_DATA(BootColor);
   ANALYZE_DATA(TorsoSpecialColor);
   ANALYZE_DATA_WITH_DEFAULT(ArmMainColor, ClothColor);
   ANALYZE_DATA(ArmSpecialColor);

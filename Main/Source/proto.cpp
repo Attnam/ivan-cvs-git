@@ -187,24 +187,33 @@ character* protosystem::CreateMonster(ushort SpecialFlags)
     }
 }
 
-template <class type> ushort CountCorrectNameLetters(const typename type::database& DataBase, const std::string& Identifier)
+template <class type> std::pair<ushort, ushort> CountCorrectNameLetters(const typename type::database& DataBase, const std::string& Identifier)
 {
-  ushort Counter = 0;
+  std::pair<ushort, ushort> Result(0, 0);
+
+  if(!DataBase.NameSingular.empty())
+    ++Result.second;
 
   if(festring::IgnoreCaseFind(Identifier, " " + DataBase.NameSingular + " ") != std::string::npos)
-    Counter += DataBase.NameSingular.length();
+    Result.first += DataBase.NameSingular.length();
+
+  if(!DataBase.Adjective.empty())
+    ++Result.second;
 
   if(DataBase.Adjective.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.Adjective + " ") != std::string::npos)
-    Counter += DataBase.Adjective.length();
+    Result.first += DataBase.Adjective.length();
+
+  if(!DataBase.PostFix.empty())
+    ++Result.second;
 
   if(DataBase.PostFix.length() && festring::IgnoreCaseFind(Identifier, " " + DataBase.PostFix + " ") != std::string::npos)
-    Counter += DataBase.PostFix.length();
+    Result.first += DataBase.PostFix.length();
 
   for(ushort c = 0; c < DataBase.Alias.size(); ++c)
     if(festring::IgnoreCaseFind(Identifier, " " + DataBase.Alias[c] + " ") != std::string::npos)
-      Counter += DataBase.Alias[c].length();
+      Result.first += DataBase.Alias[c].length();
 
-  return Counter;
+  return Result;
 }
 
 template <class type> std::pair<const typename type::prototype*, ushort> SearchForProto(const std::string& What, bool Output)
@@ -214,9 +223,9 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
 
   std::string Identifier;
   Identifier << " " << What << " ";
-  bool Illegal = false;
+  bool Illegal = false, Conflict = false;
   std::pair<const prototype*, ushort> Id(0, 0);
-  ushort Best = 0;
+  std::pair<ushort, ushort> Best(0, 0);
 
   for(ushort c = 1; c < protocontainer<type>::GetProtoAmount(); ++c)
     {
@@ -226,26 +235,37 @@ template <class type> std::pair<const typename type::prototype*, ushort> SearchF
       for(typename databasemap::const_iterator i = Config.begin(); i != Config.end(); ++i)
 	if(!i->second.IsAbstract)
 	  {
-	    ushort Correct = CountCorrectNameLetters<type>(i->second, Identifier);
+	    std::pair<ushort, ushort> Correct = CountCorrectNameLetters<type>(i->second, Identifier);
 
-	    if(Correct > Best)
+	    if(Correct == Best)
+	      Conflict = true;
+	    else if(Correct.first > Best.first || (Correct.first == Best.first && Correct.second < Best.second))
 	      if(i->second.CanBeWished || game::WizardModeIsActive())
 		{
 		  Id.first = Proto;
 		  Id.second = i->first;
 		  Best = Correct;
+		  Conflict = false;
 		}
 	      else
 		Illegal = true;
 	  }
     }
 
-  if(!Best && Output)
+  if(Output)
     {
-      if(Illegal)
-	ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
-      else
-	ADD_MESSAGE("What a strange wish!");
+      if(!Best.first)
+	{
+	  if(Illegal)
+	    ADD_MESSAGE("You hear a booming voice: \"No, mortal! This will not be done!\"");
+	  else
+	    ADD_MESSAGE("What a strange wish!");
+	}
+      else if(Conflict)
+	{
+	  ADD_MESSAGE("Be more precise!");
+	  return std::pair<const prototype*, ushort>(0, 0);
+	}
     }
 
   return Id;

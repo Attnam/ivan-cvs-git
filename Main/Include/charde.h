@@ -726,15 +726,9 @@ class CHARACTER
   unicorn,
   nonhumanoid,
  public:
-  virtual void SetAlignment(uchar What) { Alignment = What; }
-  virtual uchar GetAlignment() const { return Alignment; }
-  virtual void Load(inputfile&);
-  virtual void Save(outputfile&) const;
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
-  virtual void CreateBodyParts(ushort);
   virtual material* CreateBodyPartMaterial(ushort, ulong) const;
-  uchar Alignment;
 );
 
 class CHARACTER
@@ -769,7 +763,7 @@ class CHARACTER
  protected:
   virtual material* CreateBodyPartMaterial(ushort, ulong Volume) const { return MAKE_MATERIAL(PLANT_FIBER, Volume); }
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is destroyed."; }
-  virtual ushort GetTorsoSpecialColor() const { return MakeRGB16(60 + RAND() % 180, 60 + RAND() % 180, 60 + RAND() % 180); } // the flower
+  virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
 );
 
@@ -843,9 +837,9 @@ class CHARACTER
 (
   genetrixvesana,
   carnivorousplant,
- public:
  protected:
   virtual std::string GetDeathMessage() const { return GetName(DEFINITE) + " is brutally destroyed."; }
+  virtual ushort GetTorsoSpecialColor() const;
   virtual void GetAICommand();
 );
 
