@@ -416,3 +416,4 @@ Corpse which makes you sober.
 Ivan should buy vodka from player.
 Big t and p should work when controlling containers.
 There could be possibility to revive pet by praying (from shvagier (?))
+Petrification state.

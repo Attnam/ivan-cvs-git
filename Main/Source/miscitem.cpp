@@ -2130,7 +2130,7 @@ void itemcontainer::SortAllItems(itemvector& AllItems, const character* Characte
 
 uchar materialcontainer::GetAttachedGod() const
 {
-  return DataBase->AttachedGod ? DataBase->AttachedGod : ContainedMaterial->GetAttachedGod();
+  return DataBase->AttachedGod ? DataBase->AttachedGod : ContainedMaterial ? ContainedMaterial->GetAttachedGod() : 0;
 }
 
 void beartrap::Search(const character* Char, ushort Perception)

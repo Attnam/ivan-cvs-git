@@ -98,8 +98,8 @@ void lsquare::DrawStaticContents(bitmap* Bitmap, vector2d Pos, ulong Luminance, 
   if(OLTerrain)	
     OLTerrain->Draw(Bitmap, Pos, Luminance, 8, RealDraw);
 
-  for(ushort c = 0; c < 8 && BorderPartner[c].first; ++c)
-    BorderPartner[c].first->Draw(Bitmap, Pos, Luminance, BorderPartner[c].second, RealDraw);
+  for(ushort c = 0; c < 8 && BorderPartner[c].Terrain; ++c)
+    BorderPartner[c].Terrain->Draw(Bitmap, Pos, Luminance, BorderPartner[c].SquareIndex, RealDraw);
 
   if(IsTransparent())
     {
@@ -1754,9 +1754,9 @@ bool lsquare::IsDangerousForAIToBreathe(const character* Who) const
   return false;
 }
 
-bool BorderPartnerOrderer(const std::pair<olterrain*, ushort>& BP1, const std::pair<olterrain*, ushort>& BP2)
+bool BorderPartnerOrderer(const borderpartner& BP1, const borderpartner& BP2)
 {
-  return BP1.first->GetBorderTilePriority() < BP1.first->GetBorderTilePriority();
+  return BP1.Terrain->GetBorderTilePriority() < BP1.Terrain->GetBorderTilePriority();
 }
 
 void lsquare::CalculateBorderPartners()
@@ -1776,8 +1776,8 @@ void lsquare::CalculateBorderPartners()
 
 	  if(Terrain && Terrain->UseBorderTiles() && Terrain->GetBorderTilePriority() > Priority)
 	    {
-	      BorderPartner[Index].first = Terrain;
-	      BorderPartner[Index].second = 7 - d;
+	      BorderPartner[Index].Terrain = Terrain;
+	      BorderPartner[Index].SquareIndex = 7 - d;
 	      ++Index;
 	    }
 	}
@@ -1786,7 +1786,7 @@ void lsquare::CalculateBorderPartners()
   std::sort(BorderPartner, BorderPartner + Index, BorderPartnerOrderer);
 
   if(Index < 8)
-    BorderPartner[Index].first = 0;
+    BorderPartner[Index].Terrain = 0;
 }
 
 void lsquare::RequestForBorderPartnerUpdates()

@@ -137,7 +137,7 @@ void legifer::PrayGoodEffect()
 void legifer::PrayBadEffect()
 {
   ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GetName());
-  PLAYER->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
+  PLAYER->ReceiveDamage(0, 50 + RAND() % 50, FIRE, ALL);
   PLAYER->CheckDeath(CONST_S("burned to death by the wrath of ") + GetName(), 0);
 }
 
@@ -597,20 +597,20 @@ void cleptia::PrayGoodEffect()
   if(!PLAYER->StateIsActivated(HASTE))
     {
       ADD_MESSAGE("%s gives you the talent for speed.", GetName());
-      PLAYER->BeginTemporaryState(HASTE, 250);
+      PLAYER->BeginTemporaryState(HASTE, 2500);
       return;
     }
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
     {
       ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GetName());
-      PLAYER->BeginTemporaryState(INVISIBLE, 250);
+      PLAYER->BeginTemporaryState(INVISIBLE, 2500);
       return;
     }
 
   ADD_MESSAGE("Cleptia helps you, but you really don't know how.");  
   ushort StateToActivate = RAND() & 1 ? HASTE : INVISIBLE;
-  PLAYER->BeginTemporaryState(StateToActivate, 250);
+  PLAYER->BeginTemporaryState(StateToActivate, 2500);
 }
 
 void cleptia::PrayBadEffect()
@@ -826,7 +826,7 @@ void nefas::PrayGoodEffect()
 	      }
 	  }
     }
-  else if(RAND() % 5)
+  else if(RAND() & 4)
     {
       mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
       vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, PLAYER->GetPos());
@@ -959,9 +959,9 @@ void infuscor::PrayGoodEffect()
       return;
     }    
 
-  ADD_MESSAGE("Suddenly 5 scrolls appear almost under your feet.");
+  ADD_MESSAGE("Suddenly three scrolls appear almost under your feet.");
 
-  for(ushort c = 0; c < 5; ++c)
+  for(ushort c = 0; c < 3; ++c)
     PLAYER->GetGiftStack()->AddItem(new scrollofteleportation);
 }
 

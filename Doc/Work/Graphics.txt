@@ -29,6 +29,7 @@ Nomad.
 Cactus.
 Oterrain border tiles.
 Skis.
+Female character.
 
 Bronze hammer on gravel floor is not very clear.
 Goblin berserker on grassy ground is really NOT visible.

@@ -38,6 +38,12 @@ struct emitter
 outputfile& operator<<(outputfile&, const emitter&);
 inputfile& operator>>(inputfile&, emitter&);
 
+struct borderpartner
+{
+  olterrain* Terrain;
+  ushort SquareIndex;
+};
+
 class lsquare : public square
 {
  public:
@@ -184,7 +190,7 @@ class lsquare : public square
   std::vector<smoke*> Smoke;
   ushort SmokeAlphaSum;
   bool Freezed;
-  std::pair<olterrain*, ushort> BorderPartner[8];
+  borderpartner BorderPartner[8];
 };
 
 inline bool lsquare::IsDark() const
