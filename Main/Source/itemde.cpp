@@ -577,6 +577,15 @@ material* corpse::BeDippedInto()
 	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
 }
 
+bool fruit::Consume(character* Eater, float Amount)
+{
+	GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+
+	return GetMaterial(0)->GetVolume() ? false : true;
+}
+
+
+
 void potion::ColorChangeSpeciality(uchar Index, bool EmptyMaterial)
 {
 	if(!Index)
@@ -629,3 +638,4 @@ vector2d lamp::GetBitmapPos() const
 {
 	return vector2d(0, OnWall ? 192 : 256);
 }
+

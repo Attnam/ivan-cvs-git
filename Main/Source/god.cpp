@@ -717,3 +717,19 @@ void consummo::AddPriestMessage() const
 	ADD_MESSAGE("This is why those chosen by Him may escape any danger with their wisdom.");
 	ADD_MESSAGE("Alas, beware! Soon thou may find thyself in an even worse situation!\"");
 }
+
+
+void god::PlayerVomitedOnAltar()
+{
+	ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction and the vomit lands on your face.");
+	AdjustRelation(-200);
+	game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - rand() % 2);
+	game::GetPlayer()->CheckDeath("chocked to death by own vomit.");
+}
+
+void scabies::PlayerVomitedOnAltar()
+{
+	ADD_MESSAGE("%s feels that you are indeed her follower.");
+	AdjustRelation(5);
+}
+

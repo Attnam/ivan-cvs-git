@@ -982,3 +982,9 @@ void levelsquare::SwapCharacter(levelsquare* With)
 		if(With->Character)
 			With->MoveCharacter(this);
 }
+
+void levelsquare::ReceiveVomit(character* Who)
+{
+	SpillFluid(1, MAKE_RGB(10,230,10),5,50);
+	GetOverLevelTerrain()->ReceiveVomit(Who);
+}

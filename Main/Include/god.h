@@ -51,6 +51,9 @@ public:
 	virtual void SetKnown(bool What) { Known = What; }
 	virtual bool GetKnown() const { return Known; }
 	virtual void AddPriestMessage() const;
+	virtual void PlayerKickedAltar() { AdjustRelation(-100); }
+	virtual void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
+	virtual void PlayerVomitedOnAltar();
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();
@@ -234,6 +237,7 @@ public:
 	virtual std::string Description() const { return "goddess of mutations, deseases and famine"; }
 	virtual uchar Alignment() const { return AC; }
 	virtual uchar BasicAlignment() const { return EVIL; }
+	virtual void PlayerVomitedOnAltar();
 protected:
 	virtual void PrayGoodEffect();
 	virtual void PrayBadEffect();

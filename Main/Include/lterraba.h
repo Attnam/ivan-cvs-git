@@ -43,6 +43,7 @@ public:
 	virtual void Save(outputfile&) const;
 	virtual uchar GetGraphicsContainerIndex() const { return GLTERRAIN; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 10000000; else return 0; }
+	virtual void ReceiveVomit(character*) {}
 protected:
 	uchar VisualFlags;
 };

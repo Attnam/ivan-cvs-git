@@ -176,6 +176,8 @@ public:
 	virtual uchar OKVisualEffects() const { return 0; }
 	virtual std::string DigMessage() const { return "An invisible wall stops your feeble attempt."; }
 	virtual void StepOn(character*);
+	virtual void Kick(ushort, bool, uchar);
+	virtual void ReceiveVomit(character*);
 protected:
 	virtual std::string NameSingular() const		{ return "altar"; }
 	virtual vector2d GetBitmapPos() const				{ return vector2d(0, 368); }

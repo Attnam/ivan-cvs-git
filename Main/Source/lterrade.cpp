@@ -337,3 +337,20 @@ void throne::SitOn(character* Sitter)
 	if(Sitter->GetIsPlayer())
 		ADD_MESSAGE("You feel somehow out of place.");
 }
+
+void altar::Kick(ushort, bool ShowOnScreen, uchar)
+{
+	// This function does not currently support AI kicking altars when they are in player's LOS
+	if(ShowOnScreen)
+	{
+		ADD_MESSAGE("You feel like a sinner.");
+	}
+	game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerKickedAltar();
+	if(GetLevelSquareUnder()->GetDivineOwner() > 1) game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
+	if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber()) game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();
+}
+
+void altar::ReceiveVomit(character* Who)
+{
+	if(Who->GetIsPlayer()) game::GetGod(GetLevelSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
+}

@@ -91,6 +91,7 @@ public:
 	virtual uchar GetRoom() const { return Room; }
 	virtual void SetRoom(uchar What) { Room = What; }
 	virtual void SwapCharacter(levelsquare*);
+	virtual void ReceiveVomit(character*);
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;

@@ -893,7 +893,7 @@ protected:
 	virtual ushort GetFormModifier() const RET(30)
 );
 
-/*class ITEM
+class ITEM
 (
 	bow,
 	item,
@@ -910,6 +910,42 @@ public:
 	virtual float GetThrowStrengthModifier() const RET(4)
 protected:
 	virtual ushort GetFormModifier() const RET(40)
-);*/
+);
+
+class ITEM
+(
+	fruit,
+	item,
+	InitMaterials(new fruitflesh),
+	{	
+		SetSize(9);
+	},
+public:
+	virtual ushort Possibility() const RET(20)
+	virtual std::string NameSingular() const RET("fruit")
+	virtual float OfferModifier() const RET(0.4f)
+	virtual vector2d GetBitmapPos() const RETV(0,384)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
+	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType())
+	virtual bool Consume(character*, float = 100);
+protected:
+	virtual ushort GetFormModifier() const RET(20)
+);
+
+class ITEM
+(
+	pineapple,
+	fruit,
+	InitMaterials(new pineappleflesh),
+	{
+		SetSize(16);
+	},
+public:
+	virtual ushort Possibility() const RET(25)
+	virtual std::string NameSingular() const RET("pineapple")
+	virtual vector2d GetBitmapPos() const RETV(0,368)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1100; default: return 0; } }
+);
+
 
 #endif

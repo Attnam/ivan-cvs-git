@@ -532,4 +532,36 @@ protected:
 	virtual std::string NameStem() const	{ return "grass"; }
 );
 
+class MATERIAL
+(
+	fruitflesh,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 5; }
+	virtual uchar GetConsumeType() const			{ return FRUIT; }
+	virtual ushort GetDensity() const				{ return 1300; }
+	virtual ushort OfferValue() const				{ return 11; }
+	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
+	virtual short NutritionValue() const			{ return 180; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(225, 225, 0); }
+protected:
+	virtual std::string NameStem() const	{ return "fruit flesh"; }
+);
+
+class MATERIAL
+(
+	pineappleflesh,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 8; }
+	virtual uchar GetConsumeType() const			{ return FRUIT; }
+	virtual ushort GetDensity() const				{ return 1500; }
+	virtual ushort OfferValue() const				{ return 12; }
+	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
+	virtual short NutritionValue() const			{ return 180; }
+	virtual ushort GetColor() const				{ return MAKE_RGB(225, 225, 225); }
+protected:
+	virtual std::string NameStem() const	{ return "pineapple flesh"; }
+);
+
 #endif
