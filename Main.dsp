@@ -113,6 +113,10 @@ SOURCE=.\Main\Source\charde.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\Main\Source\config.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Main\Source\cont.cpp
 # End Source File
 # Begin Source File
@@ -250,6 +254,10 @@ SOURCE=.\Main\Include\charde.h
 # Begin Source File
 
 SOURCE=.\Main\Include\command.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Main\Include\config.h
 # End Source File
 # Begin Source File
 
