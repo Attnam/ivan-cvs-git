@@ -308,4 +308,12 @@ class CHARACTER
   virtual void GetAICommand();
 );
 
+class CHARACTER
+(
+  eddy,
+  nonhumanoid,
+ public:
+  virtual bool Hit(character*, bool = false);
+  virtual void CreateCorpse(lsquare*) { SendToHell(); }
+);
 #endif

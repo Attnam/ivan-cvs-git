@@ -139,3 +139,4 @@ Offering chests in prohibited. (They are too important according to the game)
 Skeletons can be poisoned.
 //Spiders can lock doors.
 If multiple chests are stacked, only the top one can be opened with key.
+Add monsters seem to be able to apply.
