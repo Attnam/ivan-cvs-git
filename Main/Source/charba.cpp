@@ -2982,3 +2982,11 @@ bool character::SetAutosaveInterval()
 	game::SetAutosaveInterval(Interval);
 	return false;
 }
+
+stack* character::GetGiftStack() const
+{
+	if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetRoomClass()->AllowDropGifts())
+		return GetStack();
+	else
+		return GetLevelSquareUnder()->GetStack();
+}

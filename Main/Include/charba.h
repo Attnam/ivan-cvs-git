@@ -250,6 +250,7 @@ public:
 	virtual bool SetAutosaveInterval();
 	virtual uchar CriticalModifier() const { return 20; }
 	virtual std::string StandVerb() const { return "standing"; }
+	virtual stack* GetGiftStack() const;
 protected:
 	virtual void SeekLeader();
 	virtual bool CheckForUsefulItemsOnGround();

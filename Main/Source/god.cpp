@@ -134,9 +134,7 @@ void valpuri::PrayGoodEffect()
 	ADD_MESSAGE("You hear booming voice: \"DEFEAT ERADO WITH THIS, MY PALADIN!\"");
 	ADD_MESSAGE("A sword glittering with holy might drops on to the ground.");
 
-	item* Reward = new curvedtwohandedsword(false);
-	Reward->InitMaterials(3, new valpurium, new iron, 0);
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
+	game::GetPlayer()->GetGiftStack()->AddItem(new curvedtwohandedsword(new valpurium));
 }
 
 void valpuri::PrayBadEffect()
@@ -276,7 +274,7 @@ void atavus::PrayGoodEffect()
 	ADD_MESSAGE("A mithril platemail drops on the ground.");
 	item* Reward = new platemail(false);
 	Reward->InitMaterials(new mithril);
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
+	game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 }
 
 void atavus::PrayBadEffect()
@@ -542,7 +540,7 @@ void erado::PrayGoodEffect()
 	ADD_MESSAGE("\"SlAvE! ThOu HaSt PlAeSeD mE! lIfT tHiNe ReWaRd, ChAmPiOn!\"");
 	ADD_MESSAGE("A heavy weapon of pure corruption falls on the ground.");
 
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new neercseulb);
+	game::GetPlayer()->GetGiftStack()->AddItem(new neercseulb);
 }
 
 void erado::PrayBadEffect()
@@ -616,7 +614,7 @@ void mellis::PrayBadEffect()
 void pestifer::PrayGoodEffect()
 {
 	ADD_MESSAGE("Suddenly a very ugly head appears beside you, groaning horribly into your ear!");
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new headofennerbeast);
+	game::GetPlayer()->GetGiftStack()->AddItem(new headofennerbeast);
 	game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() + 1);
 }
 
@@ -701,7 +699,7 @@ void macellarius::PrayGoodEffect()
 	ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
 	item* Reward = new potion(false);
 	Reward->InitMaterials(2, new glass, new omleurine);
-	game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(Reward);
+	game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 	ADD_MESSAGE("%s drops on the ground.", Reward->CNAME(DEFINITE));
 }
 
@@ -746,7 +744,7 @@ void infuscor::PrayGoodEffect()
 	ADD_MESSAGE("5 scrolls drop to on the ground.");
 
 	for(uchar c = 0; c < 5; ++c)
-		game::GetPlayer()->GetLevelSquareUnder()->GetStack()->AddItem(new scrollofteleport);
+		game::GetPlayer()->GetGiftStack()->AddItem(new scrollofteleport);
 }
 
 void cruentus::PrayGoodEffect()
