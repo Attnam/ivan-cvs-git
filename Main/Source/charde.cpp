@@ -870,7 +870,7 @@ void cityguard::BeTalkedTo(character* Talker)
 		ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CNAME(DEFINITE));
 		break;
 	case 3:
-		ADD_MESSAGE("\"Überpriest is my idol. I would want a sword as big as his!\"");
+		ADD_MESSAGE("\"The Überpriest is my idol. I would want a sword as big as his!\"");
 		break;
 	}
 }

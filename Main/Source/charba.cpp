@@ -2130,7 +2130,7 @@ bool character::Zap()
 
 bool character::Polymorph()
 {
-	if(GetIsPlayer() && State & POLYMORPHED)
+	if(GetIsPlayer() && StateIsActivated(POLYMORPHED))
 	{
 		ADD_MESSAGE("You shudder.");
 		return true;
