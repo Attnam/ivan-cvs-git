@@ -90,7 +90,7 @@ void dungeon::PrepareLevel(ushort Index)
 
 void dungeon::SaveLevel(std::string SaveName, ushort Number, bool DeleteAfterwards)
 {
-	outputfile SaveFile(SaveName + ".d" + Index + "-" + Number, true);
+	outputfile SaveFile(SaveName + ".d" + Index + "-" + Number);
 
 	SaveFile << Level[Number];
 

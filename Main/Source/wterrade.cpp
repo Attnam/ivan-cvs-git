@@ -16,7 +16,7 @@ bool attnam::GoDown(character* Who) const
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(1);
 	game::SetCurrent(0);
-	delete game::GetWorldMap();
+	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
 	game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
 	game::GetCurrentLevel()->Luxify();
@@ -34,7 +34,7 @@ bool elpuricave::GoDown(character* Who) const
 	game::SetInWilderness(false);
 	game::SetCurrentDungeon(0);
 	game::SetCurrent(0);
-	delete game::GetWorldMap();
+	game::SaveWorldMap(game::SaveName(), true);
 	game::SetWorldMap(0);
 	game::GetCurrentLevel()->PutPlayerAround(game::GetCurrentLevel()->GetUpStairs());
 	game::GetCurrentLevel()->Luxify();

@@ -23,10 +23,12 @@ public:
 	virtual void Generate();
 	virtual void Draw() const;
 	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+//	virtual void Save(std::string) const;
+//	virtual void Load(std::string);
 	virtual worldmapsquare* GetWorldMapSquare(vector2d Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual worldmapsquare* GetWorldMapSquare(ushort x, ushort y) const {return Map[x][y];}
 	virtual void GenerateClimate();
-	virtual void Load(inputfile&);
 	virtual ushort WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort, ushort);
 	virtual void CalculateContinents();
 	virtual void SmoothAltitude();
@@ -43,5 +45,29 @@ protected:
 	short** AltitudeBuffer;
 	uchar** ContinentBuffer;
 };
+
+inline outputfile& operator<<(outputfile& SaveFile, worldmap* WorldMap)
+{
+	if(WorldMap)
+	{
+		SaveFile.GetBuffer().put(1);
+		WorldMap->Save(SaveFile);
+	}
+	else
+		SaveFile.GetBuffer().put(0);
+
+	return SaveFile;
+}
+
+inline inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
+{
+	if(SaveFile.GetBuffer().get())
+	{
+		WorldMap = new worldmap;
+		WorldMap->Load(SaveFile);
+	}
+
+	return SaveFile;
+}
 
 #endif

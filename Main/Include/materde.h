@@ -225,7 +225,7 @@ public:
 	virtual uchar GetFleshColor() const			{ return FLESH; }
 	virtual uchar GetItemColor() const			{ return WHITE; }
 	virtual bool IsSolid() const { return true; }
-	virtual ushort GetColor() const { return MAKE_RGB(255, 255, 0); }
+	virtual ushort GetColor() const { return MAKE_RGB(255, 255, 255); }
 	virtual bool IsFlesh() { return true; }
 protected:
 	virtual std::string NameStem() const	{ return "bone"; }

@@ -526,9 +526,6 @@ bool game::Save(std::string SaveName)
 {
 	outputfile SaveFile(SaveName + ".sav");
 
-	if(!SaveFile.GetBuffer().is_open())
-		return false;
-
 	SaveFile << PlayerName;
 	SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat << Gamma;
 	SaveFile << GoThroughWallsCheat << BaseScore << Turns << SoftGamma << InWilderness << PolymorphCounter;
@@ -540,7 +537,7 @@ bool game::Save(std::string SaveName)
 	SaveFile << Dungeon;
 
 	if(InWilderness)
-		SaveFile << WorldMap;
+		SaveWorldMap();
 	else
 		GetCurrentDungeon()->SaveLevel(SaveName, Current, false);
 
@@ -572,10 +569,7 @@ bool game::Load(std::string SaveName)
 	SaveFile >> Dungeon;
 
 	if(InWilderness)
-	{
-		WorldMap = new worldmap;
-		WorldMap->Load(SaveFile);
-	}
+		LoadWorldMap();
 	else
 		GetCurrentDungeon()->LoadLevel(SaveName);
 
@@ -879,4 +873,21 @@ void game::DoNeutralDeed(short Amount)
 {
 	if(!Amount) return;
 	ADD_MESSAGE("If you are a coder, you could help us make game::DoNeutralDeed");
+}
+
+void game::SaveWorldMap(std::string SaveName, bool DeleteAfterwards)
+{
+	outputfile SaveFile(SaveName + ".wm");
+
+	SaveFile << WorldMap;
+
+	if(DeleteAfterwards)
+		delete WorldMap;
+}
+
+void game::LoadWorldMap(std::string SaveName)
+{
+	inputfile SaveFile(SaveName + ".wm");
+
+	SaveFile >> WorldMap;
 }

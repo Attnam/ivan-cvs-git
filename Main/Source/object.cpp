@@ -270,5 +270,8 @@ void object::SetMaterial(uchar Index, material* NewMaterial)
 			Picture = igraph::AddUser(GraphicId).Bitmap;
 		}
 
+	if(Material[Index])
+		delete Material[Index];
+
 	Material[Index] = NewMaterial;
 }

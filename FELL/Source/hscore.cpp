@@ -73,7 +73,7 @@ void highscore::Draw(bitmap* TopicFont, bitmap* ListFont) const
 
 void highscore::Save(std::string File) const
 {
-	outputfile HighScore(File, true);
+	outputfile HighScore(File);
 
 	HighScore << Score.Length();
 

@@ -13,7 +13,7 @@
 class outputfile
 {
 public:
-	outputfile(std::string, bool = false);
+	outputfile(std::string, bool = true);
 	std::ofstream& GetBuffer() { return Buffer; }
 private:
 	std::ofstream Buffer;

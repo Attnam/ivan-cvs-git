@@ -57,6 +57,7 @@ public:
 	virtual std::string GetLevelMessage() { return LevelMessage; }
 	virtual void SetLevelMessage(std::string What) { LevelMessage = What; }
 	virtual void SetLevelScript(levelscript* What) { LevelScript = What; }
+	virtual bool GetOnGround() const;
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

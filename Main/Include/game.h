@@ -137,6 +137,8 @@ public:
 	static void DoNeutralDeed(short);
 	static void DoEvilDeed(short);
 	static void InitScript();
+	static void SaveWorldMap(std::string = SaveName(), bool = false);
+	static void LoadWorldMap(std::string = SaveName());
 private:
 	static std::string Alignment[];
 	static god* God[];

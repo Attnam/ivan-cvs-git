@@ -15,6 +15,7 @@ Dungeon 0;
 		ReCalculate=true;
 		GenerateUpStairs=true;
 		GenerateDownStairs=true;
+		OnGround=false;
 
 		RoomDefault
 		{
@@ -229,5 +230,6 @@ Dungeon 1;
 		GenerateUpStairs=false;
 		GenerateDownStairs=false;
 		DivineOwner=0;
+		OnGround=true;
 	}
 }

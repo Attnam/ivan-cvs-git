@@ -124,7 +124,7 @@ public:
 	virtual std::string NamePlural() const RET("lumps")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 112))
 	virtual float OfferModifier() const RET(0.5)
-	virtual vector2d GetBitmapPos() const RETV(144,48)
+	virtual vector2d GetBitmapPos() const RETV(16,48)
 	virtual bool CanBeWished() const RET(false)
 protected:
 	virtual ushort GetFormModifier() const RET(10)
@@ -220,7 +220,7 @@ public:
 	virtual std::string NameSingular() const RET("axe")
 	virtual std::string NamePlural() const RET("axes")
 	virtual float OfferModifier() const RET(0.25)
-	virtual vector2d GetBitmapPos() const RETV(144,256)
+	virtual vector2d GetBitmapPos() const RETV(16,256)
 protected:
 	virtual ushort GetFormModifier() const RET(150)
 );
@@ -260,7 +260,7 @@ public:
 	virtual std::string NameSingular() const RET("spear")
 	virtual std::string NamePlural() const RET("spears")
 	virtual float OfferModifier() const RET(1)
-	virtual vector2d GetBitmapPos() const RETV(144,144)
+	virtual vector2d GetBitmapPos() const RETV(16,144)
 protected:
 	virtual ushort GetFormModifier() const RET(200)
 );
@@ -289,7 +289,7 @@ public:
 	virtual std::string NameSingular() const RET("plate mail")
 	virtual std::string NamePlural() const RET("plate mails")
 	virtual float OfferModifier() const RET(0.5)
-	virtual vector2d GetBitmapPos() const RETV(144,128)
+	virtual vector2d GetBitmapPos() const RETV(16,128)
 );
 
 class ITEM
@@ -306,7 +306,7 @@ public:
 	virtual std::string NameSingular() const RET("chain mail")
 	virtual std::string NamePlural() const RET("chain mails")
 	virtual float OfferModifier() const RET(0.5)
-	virtual vector2d GetBitmapPos() const RETV(144,96)
+	virtual vector2d GetBitmapPos() const RETV(16,96)
 );
 
 class ABSTRACT_ITEM
@@ -332,7 +332,7 @@ public:
 	virtual short CalculateOfferValue(char) const RET(750)
 	virtual long Score() const RET(1000)
 	virtual bool IsMaakotkaShirt() const RET(true);
-	virtual vector2d GetBitmapPos() const RETV(144,112)
+	virtual vector2d GetBitmapPos() const RETV(16,112)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
 	virtual ushort GetEmitation() const RET(333)
@@ -353,7 +353,7 @@ public:
 	virtual std::string NameSingular() const RET("corpse")
 	virtual std::string NamePlural() const RET("corpses")
 	virtual float OfferModifier() const RET(0.01f)
-	virtual vector2d GetBitmapPos() const RETV(144,192)
+	virtual vector2d GetBitmapPos() const RETV(16,192)
 	virtual bool CanBeWished() const RET(false)
 protected:
 	virtual ushort GetFormModifier() const RET(20)
@@ -418,7 +418,7 @@ public:
 	virtual std::string NamePlural() const RET("broken bottles")
 	virtual item* BetterVersion() const { item* P = new potion(false); P->InitMaterials(2, new glass(50), new omleurine(1500)); return P; }
 	virtual float OfferModifier() const RET(0)
-	virtual vector2d GetBitmapPos() const RETV(144,160)
+	virtual vector2d GetBitmapPos() const RETV(16,160)
 protected:
 	virtual ushort GetFormModifier() const RET(60)
 );
@@ -446,7 +446,7 @@ public:
 	virtual std::string NameSingular() const RET("scroll of create monster")
 	virtual std::string NamePlural() const RET("scrolls of create monster")
 	virtual float OfferModifier() const RET(5)
-	virtual vector2d GetBitmapPos() const RETV(144,176)
+	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
 );
 
@@ -463,7 +463,7 @@ public:
 	virtual std::string NameSingular() const RET("scroll of teleportation")
 	virtual std::string NamePlural() const RET("scrolls of teleportation")
 	virtual float OfferModifier() const RET(5)
-	virtual vector2d GetBitmapPos() const RETV(144,176)
+	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool Read(character*);
 );
 
@@ -501,7 +501,7 @@ public:
 	virtual std::string NameSingular() const RET("head of Elpuri")
 	virtual std::string NamePlural() const RET("heads of Elpuri")
 	virtual long Score() const RET(500);
-	virtual vector2d GetBitmapPos() const RETV(144,0)
+	virtual vector2d GetBitmapPos() const RETV(16,0)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
 );
@@ -539,7 +539,7 @@ public:
 	virtual std::string NameSingular() const RET("left nut of Perttu")
 	virtual std::string NamePlural() const RET("left nuts of Perttu")		//???
 	virtual long Score() const RET(2500)
-	virtual vector2d GetBitmapPos() const RETV(144,208)
+	virtual vector2d GetBitmapPos() const RETV(16,208)
 	virtual item* CreateWishedItem() const;
 	virtual bool Destroyable() const { return false; }
 );
@@ -561,7 +561,7 @@ public:
 	virtual bool Consume(character*, float = 100);
 	virtual bool DogWillCatchAndConsume() const RET(true);
 	virtual uchar GetConsumeType() const RET(Material[0]->GetConsumeType());
-	virtual vector2d GetBitmapPos() const RETV(144,240)
+	virtual vector2d GetBitmapPos() const RETV(16,240)
 protected:
 	virtual ushort GetFormModifier() const RET(50)
 );
@@ -659,7 +659,7 @@ public:
 	virtual std::string NameSingular() const RET("scroll of wishing")
 	virtual std::string NamePlural() const RET("scrolls of wishing")
 	virtual float OfferModifier() const RET(50)
-	virtual vector2d GetBitmapPos() const RETV(144,176)
+	virtual vector2d GetBitmapPos() const RETV(16,176)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Read(character*);
 );
@@ -677,7 +677,7 @@ public:
 	virtual std::string NameSingular() const RET("cheap copy of left nut of Perttu")
 	virtual std::string NamePlural() const RET("cheap copies of left nut of Perttu")
 	virtual long Score() const RET(1)
-	virtual vector2d GetBitmapPos() const RETV(144,208)
+	virtual vector2d GetBitmapPos() const RETV(16,208)
 );
 
 class ABSTRACT_ITEM
@@ -727,7 +727,7 @@ public:
 	virtual std::string NameSingular() const RET("arrow")
 	virtual std::string NamePlural() const RET("arrows")
 	virtual float OfferModifier() const RET(0.5f)
-	virtual vector2d GetBitmapPos() const RETV(144,80)
+	virtual vector2d GetBitmapPos() const RETV(16,80)
 protected:
 	virtual ushort GetFormModifier() const RET(70)
 );

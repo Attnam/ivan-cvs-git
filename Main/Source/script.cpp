@@ -684,6 +684,16 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
 			continue;
 		}
+
+		if(Word == "OnGround")
+		{
+			if(!OnGround)
+				OnGround = new bool;
+
+			*OnGround = SaveFile.ReadBool();
+
+			continue;
+		}
 	}
 }
 
