@@ -1865,17 +1865,16 @@ ulong humanoid::LegVolume() const
 void humanoid::CreateBodyParts()
 {
   /* Create all body parts */
-  for(uchar c = 0; c < 7; ++c) 
-    {
-      CreateBodyPart(c);
-    }
+
+  for(uchar c = 0; c < BodyParts(); ++c) 
+    CreateBodyPart(c);
 }
 
 void humanoid::RestoreBodyParts()
 {
   for(uchar c = 0; c < BodyParts(); ++c)
-      if(GetBodyPart(c))
-	CreateBodyPart(c);
+    if(!GetBodyPart(c))
+      CreateBodyPart(c);
 }
 
 void humanoid::UpdateBodyPartPictures(bool CallUpdatePictures)

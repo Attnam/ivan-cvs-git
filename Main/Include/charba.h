@@ -395,7 +395,7 @@ class character : public entity, public id
   virtual item* GetEquipment(ushort) const { return 0; }
   virtual ushort EquipmentSlots() const { return 0; }
   virtual bool (*EquipmentSorter(ushort) const)(item*, character*) { return 0; }
-  virtual void SetEquipment(uchar, item*) { }
+  virtual void SetEquipment(ushort, item*) { }
   virtual bool ScrollMessagesDown();
   virtual bool ScrollMessagesUp();
   virtual void AddHealingLiquidConsumeEndMessage() const;
