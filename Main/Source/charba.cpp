@@ -1942,7 +1942,7 @@ void character::HasBeenHitByItem(item* Thingy, float Speed)
 		if(game::GetWizardMode())
 			ADD_MESSAGE("(damage: %d) (speed: %f)", Damage, Speed);
 	}
-
+	Thingy->ImpactDamage(Speed, GetSquareUnder()->CanBeSeen(), GetLevelSquareUnder()->GetStack());
 	SpillBlood(1 + rand() % 1);
 	CheckDeath(std::string("died by thrown ") + Thingy->CNAME(INDEFINITE) );
 }

@@ -369,7 +369,7 @@ bool scrollofwishing::Read(character* Reader)
 
 void lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenlamp);
+	ItemStack->AddItem(new brokenlamp);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The lamp shatters to pieces.");
 	//delete this;

@@ -115,6 +115,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 					game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->SetRelations(HOSTILE);
 				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter(), Speed))
 					break;
+				
 			}
 
 			while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
@@ -139,7 +140,7 @@ bool item::HitCharacter(character* Dude, float Speed)
 
 	if(Dude->DodgesFlyingItem(this, Speed)) // Insert better formula for dodge
 	{
-		if(GetSquareUnder()->CanBeSeen())
+		if(Dude->GetSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
 
 		return false;
