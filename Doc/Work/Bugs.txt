@@ -101,3 +101,4 @@ Shopkeepers/librarians can buy items even if unconsciouss.
 If an NPC is poisoned and vomits at the player, the game thinks it's an attack and makes teams hostile to each other.
 You can't rest while panicked, yet you can continue resting if you panic while doing so, for instance because of poison or acid damaging you.
 One has no way to use stairs covered by sticky slime.
+Spider corpses are not poisonous.

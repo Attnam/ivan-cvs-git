@@ -406,7 +406,7 @@ truth level::MakeRoom(const roomscript* RoomScript)
   if(*RoomScript->GenerateFountains() && !(RAND() % 10))
     GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(fountain::Spawn());
 
-  if(*RoomScript->AltarPossible())// && !(RAND() % 5))
+  if(*RoomScript->AltarPossible() && !(RAND() % 5))
   {
     int Owner = 1 + RAND() % GODS;
     GetLSquare(Inside[RAND() % Inside.size()])->ChangeOLTerrain(altar::Spawn(Owner));
