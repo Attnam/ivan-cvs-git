@@ -495,10 +495,10 @@ color16 igraph::GetBackGroundColor(int Element)
   switch(CurrentColorType)
     {
     case GRAY_FRACTAL: return MakeRGB16(Element, Element, Element);
-    case RED_FRACTAL: return MakeRGB16(Element, Element / 3, Element / 3);
-    case GREEN_FRACTAL: return MakeRGB16(Element / 3, Element, Element / 3);
-    case BLUE_FRACTAL: return MakeRGB16(Element / 3, Element / 3, Element);
-    case YELLOW_FRACTAL: return MakeRGB16(Element, Element, Element / 3);
+    case RED_FRACTAL: return MakeRGB16(Element + (Element >> 1), Element / 3, Element / 3);
+    case GREEN_FRACTAL: return MakeRGB16(Element / 3, Element + (Element >> 2), Element / 3);
+    case BLUE_FRACTAL: return MakeRGB16(Element / 3, Element / 3, Element + (Element >> 1));
+    case YELLOW_FRACTAL: return MakeRGB16(Element + (Element >> 1), Element + (Element >> 1), Element / 3);
     }
 
   return 0;
