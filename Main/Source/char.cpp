@@ -2484,11 +2484,17 @@ bool character::Displace(character* Who, bool Forced)
     }
 
   double Danger = GetRelativeDanger(Who);
+  int PriorityDifference = Limit(GetDisplacePriority() - Who->GetDisplacePriority(), -31, 31);
 
-  if(IsPlayer())
+  if(PriorityDifference > 0)
+    Danger *= 1 << PriorityDifference;
+  else
+    Danger /= 1 << -PriorityDifference;
+
+  /*if(IsPlayer())
     Danger *= 4;
   else if(Who->IsPlayer())
-    Danger *= .25;
+    Danger *= .25;*/
 
   if(IsSmall() && Who->IsSmall() 
    && (Forced || (Who->CanBeDisplaced() && Danger > 1.))
@@ -4901,7 +4907,7 @@ void character::PoisonedHandler()
 
 bool character::IsWarm() const
 {
-  return CombineBodyPartPredicates<OR_BOOLS>(this, &bodypart::IsWarm);
+  return CombineBodyPartPredicates<true>(this, &bodypart::IsWarm);
 }
 
 void character::BeginInvisibility()

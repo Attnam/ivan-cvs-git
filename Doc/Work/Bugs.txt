@@ -96,3 +96,5 @@ MISSING: Etat the Maniac. When given anything confusing to eat or drink, will go
 Graphics bug in vesana.
 Graphics bug in vesana corpse.
 Light sources in glass chests don't work correctly.
+Digging walls with lanterns doesn't update memorized etc. correctly.
+Shopkeepers/librarians can buy items even if unconsciouss.

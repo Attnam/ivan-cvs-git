@@ -817,9 +817,6 @@ struct databasebase { int Config; };
 #define WARNED 1
 #define HAS_CAUSED_PANIC 2
 
-#define AND_BOOLS false
-#define OR_BOOLS true
-
 /* MaxHP calculation flags */
 
 #define MAY_CHANGE_HPS 1

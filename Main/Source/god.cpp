@@ -340,8 +340,7 @@ struct materialsorter
   materialsorter(const item* Item) : Item(Item) { }
   bool operator()(const material* M1, const material* M2) const
   {
-    return M1->GetHardenModifier(Item)
-	 > M2->GetHardenModifier(Item);
+    return M1->GetHardenModifier(Item) > M2->GetHardenModifier(Item);
   }
   const item* Item;
 };
@@ -365,7 +364,7 @@ bool god::TryToAttachBodyPart(character* Char)
 	  BodyPart = 0;
 	  materialvector MaterialVector;
 	  protosystem::CreateEveryMaterial(MaterialVector, this, Char);
-	  std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(BodyPart));
+	  std::sort(MaterialVector.begin(), MaterialVector.end(), materialsorter(0));
 	  int c;
 
 	  for(c = 0; c < MaterialVector.size(); ++c)

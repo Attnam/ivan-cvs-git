@@ -254,6 +254,7 @@ character
 	AllowUnconsciousness = true;
 	CanChoke = true;
 	IsImmuneToStickiness = false;
+	DisplacePriority = 0;
 }
 
 humanoid
@@ -309,6 +310,7 @@ playerkind
 	CanRead = true;
 	NameSingular = "human";
 	AttachedGod = SEGES;
+	DisplacePriority = 2;
 	/* Replies overridden */
 	/*Inventory = { 6, scrollofteleportation { Times = 30; }, potion { SecondaryMaterial = BROWN_SLIME; }, potion { SecondaryMaterial = DARK_FROG_BLOOD; }, potion { SecondaryMaterial = ACIDOUS_BLOOD; }, potion { SecondaryMaterial = VOMIT; }, potion { SecondaryMaterial = SULPHURIC_ACID; } }*/
 	/*Inventory == belt(BELT_OF_LEVITATION);*/
@@ -520,6 +522,7 @@ petrus
 	IsImmuneToLeprosy = true;
 	IsImmuneToItemTeleport = true;
 	AllowUnconsciousness = false;
+	DisplacePriority = 10;
 }
 
 farmer
@@ -567,6 +570,7 @@ farmer
 		"agriculture", "apiculture", "aquaculture", "horticulture", "silviculture",
 		"herbalism", "plants", "breeding", "snow", "forestry";
 	}
+	DisplacePriority = -1;
 }
 
 guard
@@ -1030,6 +1034,7 @@ oree
 	SweatMaterial = ACIDOUS_BLOOD;
 	IsImmuneToItemTeleport = true;
 	AllowUnconsciousness = false;
+	DisplacePriority = 8;
 }
 
 darkknight
@@ -1144,7 +1149,7 @@ darkknight
 		CanBeDisplaced = false;
 		CanBeCloned = false;
 		IsPolymorphable = false;
-		Inventory = { 4, scrollofenchantarmor, scrollofenchantarmor, scrollofenchantweapon, scrollofenchantweapon; }
+		Inventory = { 2, scrollofenchantarmor { Times = 2; }, scrollofenchantweapon { Times = 2; } }
 		HeadBitmapPos = 96, 112;
 		ClothColor = rgb16(100, 0, 0);
 		CapColor = rgb16(48, 48, 48);
@@ -1157,6 +1162,7 @@ darkknight
 		IsImmuneToItemTeleport = true;
 		IsExtraFragile = false;
 		AllowUnconsciousness = false;
+		DisplacePriority = 8;
 	}
 }
 
@@ -1174,7 +1180,7 @@ ennerbeast
 	DefaultMana = 0;
 	CanOpen = false;
 	CanApply = false;
-	TotalVolume = 50000;
+	TotalVolume = 65000;
 	TotalSize = 150;
 	Adjective = "enner";
 	NameSingular = "beast";
@@ -5011,6 +5017,7 @@ archangel
 	ScienceTalkWisdomRequirement = 40;
 	AllowUnconsciousness = false;
 	CanChoke = false;
+	DisplacePriority = 10;
 
 	Config VALPURUS;
 	{

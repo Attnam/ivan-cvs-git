@@ -209,6 +209,7 @@ struct characterdatabase : public databasebase
   bool AllowUnconsciousness;
   bool CanChoke;
   bool IsImmuneToStickiness;
+  int DisplacePriority;
 };
 
 class characterprototype
@@ -542,6 +543,7 @@ class character : public entity, public id
   DATA_BASE_BOOL(IsImmuneToStickiness);
   DATA_BASE_VALUE(festring, ForceVomitMessage);
   DATA_BASE_BOOL(CanChoke);
+  DATA_BASE_VALUE(int, DisplacePriority);
   int GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly(bool = false);
   bool TeleportNear(character*);

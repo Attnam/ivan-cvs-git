@@ -1111,10 +1111,11 @@ worldmap* game::LoadWorldMap(const festring& SaveName)
 void game::Hostility(team* Attacker, team* Defender)
 {
   for(int c = 0; c < Teams; ++c)
-    if(GetTeam(c) != Attacker && GetTeam(c) != Defender && c != NEW_ATTNAM_TEAM) // gum solution
+    if(GetTeam(c) != Attacker && GetTeam(c) != Defender
+    && c != NEW_ATTNAM_TEAM) // gum solution
       switch(GetTeam(c)->GetRelation(Defender))
 	{
-	case HOSTILE:
+	/*case HOSTILE:
 	  {
 	    if(GetTeam(c)->GetRelation(Attacker) == UNCARING)
 	      GetTeam(c)->SetRelation(Attacker, FRIEND);
@@ -1127,7 +1128,7 @@ void game::Hostility(team* Attacker, team* Defender)
 	      GetTeam(c)->SetRelation(Defender, FRIEND);
 
 	    break;
-	  }
+	  }*/
 	case FRIEND:
 	  {
 	    GetTeam(c)->SetRelation(Attacker, HOSTILE);
