@@ -374,6 +374,8 @@ class CHARACTER
 (
   femaleslave,
   humanoid,
+ public:
+  virtual void BeTalkedTo();
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );

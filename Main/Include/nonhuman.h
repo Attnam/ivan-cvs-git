@@ -471,6 +471,8 @@ class CHARACTER
   largecreature,
  public:
   virtual bool MustBeRemovedFromBone() const;
+  virtual ushort GetSkinColor() const;
+  virtual void SpecialTurnHandler() { UpdatePictures(); }
 );
 
 class CHARACTER

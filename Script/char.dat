@@ -1474,17 +1474,18 @@ communist /* Ivan */
 	HostileReplies == "\"You capitalist! Lenin want @nu kill capitalists!\"";
 	FriendlyReplies =
 	{
-		10,
+		11,
 		"\"Da, @nu like killing.\"",
 		"\"@Nu ruski specialist.\"",
-		"\"@Nu work. Else @nu get stapled.\"",
+		"\"@Nu work. Else @nu nerve stapled.\"",
 		"\"Party mean big weapons. @Nu like big weapons. @Nu kill for Party.\"",
 		"\"CCCP roxxx.\"",
 		"\"@Nu like throw Ladas. You want compete?\"",
-		"\"Why is AK not invented?\"",
+		"\"Why AK not invented?\"",
 		"\"@Nu buy kyber eyes. @Nu see in dark.\"",
-		"\"Uncle Lenin lives in Russia. Lenin strong guy. @Nu like.\"",
-		"\"The vodka is strong, but the meat is rotten.\"";
+		"\"Uncle Lenin live in Russia. Lenin strong guy. @Nu like.\"",
+		"\"The vodka is strong, but the meat is rotten.\"",
+		"\"Vladimir @nu best buddy. @Nu meet Vladimir first in magic test area near Voktsovadil.\"";
 	}
 	AttachedGod = LORICATUS;
 }
@@ -1561,7 +1562,7 @@ bear
 	Config BLACK_BEAR;
 	{
 		Adjective = "black";
-		SkinColor = rgb16(48, 48, 48);
+		SkinColor = rgb16(80, 80, 80);
 		CanBeGenerated = true;
 		TotalVolume = 150000;
 		TotalSize = 150;
@@ -1853,11 +1854,14 @@ femaleslave
 		AttachedGod = SEGES;
 		FriendlyReplies = 
 		{
-			4,
+			7, /* 4 first are used before revolution */
 			"\"Thank Silva I don't have to gather bananas!\"",
 			"\"My sister got a promotion last year. I've heard she is now a very successful slave in the Cathedral of Attnam. I am so jealous!\"",
 			"\"Palm leaves are good for health. Mr. Decos loves their smell.\"",
-			"\"When I was a highly educated doctor in independent Tweraif, I didn't have to wear stupid bikinis all day long.\"";
+			"\"When I was a highly educated doctor in independent Tweraif, I didn't have to wear stupid bikinis all day long.\"",
+			"\"Our hero!\" @Dd shouts as @pp hugs you. \"Aargh! Go away, you're all sweaty and bloody!\"",
+			"\"Don't tell me you need a palm leaf expert, too.\"",
+			"\"Now it's my sister's turn to be jealous!\"";
 		}
 	}
 }
@@ -2981,13 +2985,16 @@ bananagrower
 	CanRead = true;
 	FriendlyReplies =
 	{
-		6,
+		9, /* 6 first are use before revolution */
 		"@Dd curses: \"I hate bananas. I wish I still was @pd.\"",
 		"\"I was @pd before Attnam invaded our peaceful land.\"",
 		"@Dd glances thoughtfully to the cloudless sky: \"I wish it would rain soon. The bananas are starting to die.\"",
 		"\"1 + 1 = 3. I still don't believe it.\"",
 		"@Dd sighs: \"Piranhas ate my mother-in-law a few days ago. And I thought the nature brings us no good!\"",
 		"@Dd seems irritated. \"Go away! I know you can leave and I can't, and I'd prefer to forget that fact.\"";
+		"@Dd seems very joyful. \"I can finally be @pd again!\"",
+		"\"I knew you would come to save us!\"",
+		"\"Kill Petrus for us, too!\"";
 	}
 }
 
@@ -3106,7 +3113,7 @@ ostrich
 	TotalVolume = 120000;
 	TorsoBitmapPos = 64, 16;
 	HostileReplies == "@Dd cackles diabolically.";
-	FriendlyReplies == "@Dd cackles cheerfully. @Pp likes @sp work.";
+	FriendlyReplies == "@Dd cackles cheerfully. @Pp likes @sp life.";
 	TotalSize = 230;
 	SkinColor = rgb16(160, 140, 140);
 	TorsoMainColor = rgb16(48, 48, 48); /* the body feathers */

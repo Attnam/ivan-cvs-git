@@ -43,7 +43,7 @@ Team IVAN_TEAM;
 
 Team NEW_ATTNAM_TEAM;
 {
-	Relation 0, FRIEND;
+	Relation 0, UNCARING;
 	KillEvilness = 50;
 }
 

@@ -2525,10 +2525,19 @@ ulong angel::GetBaseEmitation() const
 
 void bananagrower::BeTalkedTo()
 {
-  if(GetRelation(PLAYER) != HOSTILE && !Profession && !(RAND() % 10))
-    ADD_MESSAGE("\"I'm glad that Petrus spared my life even though I was the president.\"");
+  static ulong Said;
+
+  if(GetRelation(PLAYER) == HOSTILE)
+    ProcessAndAddMessage(GetHostileReplies()[RandomizeReply(Said, GetHostileReplies().size())]);
+  else if(!game::TweraifIsFree())
+    {
+      if(GetRelation(PLAYER) != HOSTILE && !Profession && !(RAND() % 7))
+	ADD_MESSAGE("\"I'm glad Petrus spared my life even though I was the president.\"");
+
+      ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 6)]);
+    }
   else
-    character::BeTalkedTo();
+    ProcessAndAddMessage(GetFriendlyReplies()[6 + RandomizeReply(Said, 3)]);
 }
 
 festring bananagrower::GetProfessionDescription() const
@@ -2700,6 +2709,12 @@ bool humanoid::CheckZap()
 
 void bananagrower::GetAICommand()
 {
+  if(game::TweraifIsFree())
+    {
+      humanoid::GetAICommand();
+      return;
+    }
+
   if(CheckForEnemies(false, false))
     return;
 
@@ -3965,4 +3980,16 @@ bool humanoid::CheckConsume(const festring& Verb) const
 bool humanoid::CanConsume(material* Material) const
 {
   return HasHead() && character::CanConsume(Material);
+}
+
+void femaleslave::BeTalkedTo()
+{
+  static ulong Said;
+
+  if(GetConfig() != NEW_ATTNAM || GetRelation(PLAYER) == HOSTILE)
+    humanoid::BeTalkedTo();
+  else if(!game::TweraifIsFree())
+    ProcessAndAddMessage(GetFriendlyReplies()[RandomizeReply(Said, 4)]);
+  else
+    ProcessAndAddMessage(GetFriendlyReplies()[4 + RandomizeReply(Said, 3)]);
 }

@@ -48,6 +48,8 @@ wsquare* largecreature::GetNeighbourWSquare(ushort Index) const { return static_
 
 bodypart* hattifattener::MakeBodyPart(ushort) const { return new hattifattenertorso(0, NO_MATERIALS); }
 
+ushort vladimir::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
+
 bool elpuri::Hit(character* Enemy, vector2d, uchar, bool ForceHit)
 {
   character* EnemyHit[MAX_NEIGHBOUR_SQUARES];
@@ -601,6 +603,12 @@ ushort carnivorousplant::GetTorsoSpecialColor() const // the flower
 
 void ostrich::GetAICommand()
 {
+  if(game::TweraifIsFree())
+    {
+      nonhumanoid::GetAICommand();
+      return;
+    }
+
   if(CheckForEnemies(false, false))
     return;
 

@@ -883,7 +883,7 @@ worldmap* game::LoadWorldMap(const festring& SaveName)
 void game::Hostility(team* Attacker, team* Defender)
 {
   for(ushort c = 0; c < Teams; ++c)
-    if(GetTeam(c) != Attacker && GetTeam(c) != Defender)
+    if(GetTeam(c) != Attacker && GetTeam(c) != Defender && c != NEW_ATTNAM_TEAM) // gum solution
       switch(GetTeam(c)->GetRelation(Defender))
 	{
 	case HOSTILE:
@@ -2282,4 +2282,15 @@ long game::GetScore()
     }
 
   return long(0.01 * Counter);
+}
+
+/* Only works if New Attnam is loaded */
+
+bool game::TweraifIsFree()
+{
+  for(std::list<character*>::const_iterator i = GetTeam(COLONIST_TEAM)->GetMember().begin(); i != GetTeam(COLONIST_TEAM)->GetMember().end(); ++i)
+    if((*i)->IsEnabled())
+      return false;
+
+  return true;
 }
