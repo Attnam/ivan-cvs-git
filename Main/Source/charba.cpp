@@ -1393,11 +1393,10 @@ bool character::Look()
 
 	while(Key != ' ' && Key != 0x1B)
 	{
-
-
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; ++c)
 			if(Key == game::GetMoveCommandKey(c))
 			{
+				DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 				CursorPos += game::GetMoveVector(c);
 
 				if (short(CursorPos.X) > game::GetCurrentArea()->GetXSize()-1)	CursorPos.X = 0;
@@ -1452,11 +1451,12 @@ bool character::Look()
 		game::GetCurrentArea()->GetSquare(CursorPos)->SendNewDrawRequest();
 		FONTW->Printf(DOUBLEBUFFER, 16, 514, "Press direction keys to move cursor or esc to exit from the mode.");
 		graphics::BlitDBToScreen();
-		DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 		EMPTY_MESSAGES();
 
 		Key = GETKEY();
 	}
+
+	DOUBLEBUFFER->ClearToColor((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
 
 	return false;
 }
