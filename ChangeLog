@@ -1,9 +1,13 @@
+March 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Char.pcx: mega-large mammoth added by Kahvi
+	* Item.pcx: tiny and mega-large corpses added by Kahvi
+
 2002-03-29 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Main/Include/itemde.h: Added mine.
 	* Main/Source/itemde.cpp: Added functions for mine
 	* Main/Source/lsquare.cpp: Added a if clause for flying creatures in StepOn function. 	
-
 
 2002-03-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
@@ -21,7 +25,6 @@
 
 	* Script/dungeon.dat: Added parameter AllowBoobyTraps to both dungeon and Attnam.
 
-	
 2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
 
 	* Main/Include/charde.h: Changed ivan class to communist and assigned it the name "Ivan". Also changed Elpuri, Oree and Petrus to get their _name_ from AssignedName
@@ -34,7 +37,6 @@
 	* Main/Source/charba.cpp (AssignName): Function added
 	
 	* Main/Source/game.cpp (PositionQuestion): Function added.
-
 	
 2002-03-22  Heikki Sairanen  <hex@localhost.localdomain>
 
@@ -45,7 +47,6 @@
 	* FELL/Include/felist.h (class felist): DrawDescription moved to .cpp to correct an odd Linux bug.
 	* FELL/Source/felist.cpp:
 
-	
 March 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Humanoid.pcx: Some humanoids dismembered by Kahvi
