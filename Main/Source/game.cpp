@@ -2752,8 +2752,8 @@ bool game::PolymorphControlKeyHandler(int Key, festring& String)
       protosystem::CreateEverySeenCharacter(CharacterDrawVector);
       std::sort(CharacterDrawVector.begin(), CharacterDrawVector.end(), NameOrderer);
       List.SetEntryDrawer(game::CharacterEntryDrawer);
-
-      for(uint c = 0; c < CharacterDrawVector.size(); ++c)
+      uint c;
+      for(c = 0; c < CharacterDrawVector.size(); ++c)
 	List.AddEntry(CharacterDrawVector[c]->GetName(UNARTICLED), LIGHT_GRAY, 0, c);
 
       int Chosen = List.Draw();

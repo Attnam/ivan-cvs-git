@@ -592,7 +592,7 @@ void armor::EditEnchantment(int Amount)
 
 int armor::GetStrengthValue() const
 {
-  return Max(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
+  return Max<long>(long(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 2000 + Enchantment, 0);
 }
 
 void armor::VirtualConstructor(bool Load)
