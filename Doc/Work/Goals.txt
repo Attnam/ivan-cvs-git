@@ -16,7 +16,7 @@ Pimeydelle vaikutuksia.
 ////*Player must not be the Only Son anymore.
 ////Garbage monsters.
 ////%*New material color system.
-Ääriviivat itemeille ja monsuille.
+////Ääriviivat itemeille ja monsuille.
 ////Space should = esc in the inventory.
 ////Help should be organised.
 ////*Do you really want to pray to somebody.

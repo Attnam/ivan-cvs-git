@@ -247,7 +247,12 @@ void levelsquare::UpdateMemorizedAndDraw()
 		else
 		{
 			Memorized->ClearToColor(0);
-			Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16);
+
+			if(game::GetSeeWholeMapCheat())
+				DrawCheat();
+			else
+				Memorized->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16);
+			
 			igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 		}
 

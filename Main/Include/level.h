@@ -63,6 +63,7 @@ public:
 	virtual bool IsValid(vector2d Vector) const { return Vector.X < XSize ? Vector.Y < YSize ? true : false : false; }
 	virtual levelscript* GetLevelScript() const { return LevelScript; }
 	virtual vector2d GetNearestFreeSquare(vector2d);
+	vector2d FreeSquareSeeker(vector2d, vector2d, uchar);
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

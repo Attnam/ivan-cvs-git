@@ -15,3 +15,4 @@ One can kill Attnamian farmers with Holy Fire without becoming outlawed.
 Attacking team members doesn't work correctly.
 Characters not in LOS aren't shown in WMode lookmode.
 Show messages may show the same page twice. (does exist, appears when 2+ pages are displayed with a boolquestion on the last page)
+MemorizedDescription isn't turned to "darkness" when walking without light with SeeWholeMap on and deactivating it promptly.
