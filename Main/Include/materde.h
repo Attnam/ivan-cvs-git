@@ -731,7 +731,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort OfferValue() const				{ return 12; }
-	virtual ushort GetColor() const				{ return MAKE_RGB(0, 0, 0); }
+	virtual ushort GetColor() const				{ return MAKE_RGB(50, 50, 50); }
 	virtual short NutritionValue() const			{ return 405; }
 protected:
 	virtual std::string NameStem() const	{ return "cat flesh"; }

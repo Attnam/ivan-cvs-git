@@ -1181,7 +1181,7 @@ public:
 	virtual bool CanBeGenerated() const { return true; }
 	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 90000; else return 0; }
 protected:
-	virtual vector2d GetBitmapPos() const RETV(448,0)
+	virtual vector2d GetBitmapPos() const RETV(480,0)
 	virtual std::string NameSingular() const RET("kobold")
 	virtual float GetMeleeStrength() const RET(15000)
 );
