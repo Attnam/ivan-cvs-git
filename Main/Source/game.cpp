@@ -1013,6 +1013,8 @@ void game::UpdateCamera()
 
 bool game::HandleQuitMessage()
 {
+#ifdef USE_SDL
+
   if(IsRunning())
     {
       if(IsInGetCommand())
@@ -1034,13 +1036,19 @@ bool game::HandleQuitMessage()
 	    }
 	}
       else
-	if(game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?", "Yes\rNo\r", LIGHT_GRAY))
+	if(!game::Menu(0, RES >> 1, "You can't save at this point. Are you sure you still want to do this?\r", "Yes\rNo\r", LIGHT_GRAY))
 	  RemoveSaves();
 	else
-	  return false;
+	  {
+	    GetCurrentArea()->SendNewDrawRequest();
+	    game::DrawEverything();
+	    return false;
+	  }
     }
 
   return true;
+
+#endif /* USE_SDL */
 }
 
 uchar game::GetDirectionForVector(vector2d Vector)
@@ -1282,9 +1290,9 @@ void game::InitGlobalValueMap()
 
 void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*BitmapEditor)(bitmap*))
 {
-  globalwindowhandler::DeInstallControlLoop(AnimationController);
+  globalwindowhandler::DisableControlLoops();
   iosystem::TextScreen(Text, Color, GKey, BitmapEditor);
-  globalwindowhandler::InstallControlLoop(AnimationController);
+  globalwindowhandler::EnableControlLoops();
 }
 
 /* ... all the keys that are acceptable 
@@ -1458,9 +1466,9 @@ void game::SetCurrentEmitterPos(vector2d What)
 
 int game::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, const std::string& sMS, ushort Color, const std::string& SmallText1, const std::string& SmallText2)
 {
-  globalwindowhandler::DeInstallControlLoop(AnimationController);
+  globalwindowhandler::DisableControlLoops();
   int Return = iosystem::Menu(BackGround, Pos, Topic, sMS, Color, SmallText1, SmallText2);
-  globalwindowhandler::InstallControlLoop(AnimationController);
+  globalwindowhandler::EnableControlLoops();
   return Return;
 }
 
