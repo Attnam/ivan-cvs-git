@@ -2715,7 +2715,7 @@ vector character::GetPos(void) const
 bool character::ForceVomit(void)
 {
 	ushort Amount = rand() % 3;
-	ADD_MESSAGE("You push you fingers down to your throat.");
+	ADD_MESSAGE("You push your fingers down to your throat.");
 	if(Amount) 
 		Vomit(rand() % 3);
 	else
@@ -2724,3 +2724,8 @@ bool character::ForceVomit(void)
 	return true;
 }
 
+bool character::Zap(void)
+{
+	ADD_MESSAGE("Under construction.");
+	return true;
+}

@@ -804,6 +804,32 @@ public:
 	virtual vector GetBitmapPos(void) const RETV(144,208)
 );
 
+class ABSTRACT_ITEM
+(
+	wand,
+	item,
+public:
+	virtual bool Apply(character*);
+);
+
+class ITEM
+(
+	wandofpolymorph,
+	wand,
+	InitMaterials(new glass(100)),
+	{
+		SetSize(10);
+	},
+public:
+	virtual ushort Possibility(void) const RET(3)
+	virtual std::string NameSingular(void) const RET("wand of polymorph")
+	virtual std::string NamePlural(void) const RET("wands of polymorph")
+	virtual float OfferModifier(void) const RET(30)
+	virtual vector GetBitmapPos(void) const RETV(144,176)
+);
+	
+
+
 FINISH_PROTOTYPING(item)
 
 #endif

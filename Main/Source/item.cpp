@@ -451,3 +451,19 @@ ushort chainmail::GetArmorValue(void) const
 
 	return ushort(Base);
 }
+
+bool wand::Apply(character* StupidPerson)
+{
+	if(StupidPerson == game::GetPlayer()) ADD_MESSAGE("The wand brakes in two and then explodes.");
+	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
+	if(game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter())
+	{
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->ReceiveFireDamage(5);
+		game::GetCurrentLevel()->GetLevelSquare(vector(DoX, DoY))->CCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby."));
+	})
+
+	StupidPerson->ReceiveFireDamage(10);
+	StupidPerson->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding."));
+	
+	return true;
+}

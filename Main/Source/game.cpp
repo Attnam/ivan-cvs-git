@@ -74,6 +74,7 @@ command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
 				new command(&character::GainAllItems, "give all items cheat", 'A', true),
 				new command(&character::ForceVomit, "vomit", 'v', false),
+				new command(&character::Zap, "zap", 'z', false),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x14D, 0x148, 0x150, 0x14B, 0x147, 0x149, 0x151, 0x14F};

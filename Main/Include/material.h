@@ -388,7 +388,7 @@ public:
 	virtual uchar GetConsumeType(void) const				{ return HARD; }
 	virtual ushort GetDensity(void) const				{ return 2500; }
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar GetItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return BLUE; }
 	virtual bool IsSolid(void) const { return true; }
 protected:
 	virtual std::string NameStem(void) const	{ return "glass"; }
