@@ -943,7 +943,7 @@ truth level::DrawExplosion(const explosion* Explosion) const
 			{ PicPos.X, PicPos.Y },
 			{ 0, 0 },
 			{ SizeVect.X, SizeVect.Y },
-			0,
+			{ 0 },
 			TRANSPARENT_COLOR,
 			0 };
 
@@ -1120,7 +1120,7 @@ void level::Draw(truth AnimationDraw) const
 			{ 0, 0 },
 			{ 0, 0 },
 			{ TILE_SIZE, TILE_SIZE },
-			0,
+			{ 0 },
 			TRANSPARENT_COLOR,
 			ALLOW_ANIMATE|ALLOW_ALPHA };
 

@@ -595,7 +595,7 @@ void worldmap::Draw(truth) const
 			{ 0, 0 },
 			{ 0, 0 },
 			{ TILE_SIZE, TILE_SIZE },
-			0,
+			{ 0 },
 			TRANSPARENT_COLOR,
 			ALLOW_ANIMATE };
 

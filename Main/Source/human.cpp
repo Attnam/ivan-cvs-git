@@ -1521,7 +1521,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 		  { 0, 0 },
 		  { 0, 0 },
 		  { TILE_SIZE, TILE_SIZE },
-		  ivanconfig::GetContrastLuminance(),
+		  { ivanconfig::GetContrastLuminance() },
 		  TRANSPARENT_COLOR,
 		  ALLOW_ANIMATE };
 
@@ -1557,7 +1557,7 @@ void humanoid::DrawSilhouette(truth AnimationDraw) const
 		    { 0, 0 },
 		    { Where.X + 8, Where.Y },
 		    { SILHOUETTE_SIZE.X, SILHOUETTE_SIZE.Y },
-		    0,
+		    { 0 },
 		    0,
 		    0 };
 
@@ -2207,7 +2207,7 @@ void humanoid::DrawBodyParts(blitdata& BlitData) const
 		 { BlitData.Dest.X, BlitData.Dest.Y },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 0,
+		 { 0 },
 		 TRANSPARENT_COLOR,
 		 BlitData.CustomData };
 

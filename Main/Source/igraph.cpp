@@ -119,7 +119,7 @@ void igraph::DrawCursor(v2 Pos, int CursorData)
 			{ 0, 0 },
 			{ Pos.X, Pos.Y },
 			{ TILE_SIZE, TILE_SIZE },
-			ivanconfig::GetContrastLuminance(),
+			{ ivanconfig::GetContrastLuminance() },
 			TRANSPARENT_COLOR,
 			0 };
 
@@ -513,7 +513,7 @@ void igraph::BlitBackGround(v2 Pos, v2 Border)
 		  { Pos.X, Pos.Y },
 		  { Pos.X, Pos.Y },
 		  { Border.X, Border.Y },
-		  0,
+		  { 0 },
 		  0,
 		  0 };
 

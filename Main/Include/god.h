@@ -87,27 +87,9 @@ class god
   truth Known;
 };
 
-/*#ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
-  #define GOD_PROTOTYPE(name)\
-  god* name##_Spawn(truth) { return new name; }\
-  godprototype name##_ProtoType(&name##_Spawn, #name);\
-  const godprototype* name::GetProtoType() const { return &name##_ProtoType; }
-  #else
-  #define GOD_PROTOTYPE(name)
-  #endif
-
-  #define GOD(name, base, data)\
-  \
-  class name : public base\
-  {\
-  public:\
-  virtual const prototype* GetProtoType() const;\
-  data\
-  }; GOD_PROTOTYPE(name)*/
-
 #ifdef __FILE_OF_STATIC_GOD_PROTOTYPE_DEFINITIONS__
 #define GOD_PROTO(name)\
-template<> const godprototype name##sysbase::ProtoType(godspawner(&name##sysbase::Spawn), #name);
+template<> const godprototype name##sysbase::ProtoType((godspawner)(&name##sysbase::Spawn), #name);
 #else
 #define GOD_PROTO(name)
 #endif

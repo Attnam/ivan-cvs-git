@@ -740,7 +740,7 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
 		   { 0, 0 },
 		   { ScreenCordinates.X, ScreenCordinates.Y },
 		   { TILE_SIZE, TILE_SIZE },
-		   0,
+		   { 0 },
 		   TRANSPARENT_COLOR,
 		   ALLOW_ANIMATE|ALLOW_ALPHA };
 
@@ -1339,7 +1339,7 @@ void game::BusyAnimation(bitmap* Buffer)
 			{ 0, 0 },
 			{ (RES.X >> 1) - 100, (RES.Y << 1) / 3 - 100 },
 			{ 200, 200 },
-			0,
+			{ 0 },
 			0,
 			0 };
 
@@ -1374,7 +1374,7 @@ void game::CreateBusyAnimationCache()
 		  { 0, 0 },
 		  { 92, 92 },
 		  { TILE_SIZE, TILE_SIZE },
-		  0,
+		  { 0 },
 		  TRANSPARENT_COLOR,
 		  0 };
 
@@ -1382,7 +1382,7 @@ void game::CreateBusyAnimationCache()
 		  { 0, 0 },
 		  { 0, 0 },
 		  { 200, 200 },
-		  0,
+		  { 0 },
 		  TRANSPARENT_COLOR,
 		  0 };
 
@@ -2721,7 +2721,7 @@ void game::ItemEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 		 { 0, 0 },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 NORMAL_LUMINANCE,
+		 { NORMAL_LUMINANCE },
 		 TRANSPARENT_COLOR,
 		 ALLOW_ANIMATE };
 
@@ -2768,7 +2768,7 @@ void game::CharacterEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 		   { 0, 0 },
 		   { Pos.X, Pos.Y },
 		   { TILE_SIZE, TILE_SIZE },
-		   NORMAL_LUMINANCE,
+		   { NORMAL_LUMINANCE },
 		   TRANSPARENT_COLOR,
 		   ALLOW_ANIMATE|ALLOW_ALPHA };
 
@@ -2782,7 +2782,7 @@ void game::GodEntryDrawer(bitmap* Bitmap, v2 Pos, uint I)
 		 { I << 4, 0 },
 		 { Pos.X, Pos.Y },
 		 { TILE_SIZE, TILE_SIZE },
-		 0,
+		 { 0 },
 		 TRANSPARENT_COLOR,
 		 0 };
 

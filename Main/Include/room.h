@@ -95,31 +95,9 @@ class room
   int DivineMaster;
 };
 
-/*#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
-  #define ROOM_PROTOTYPE(name, base)\
-  room* name##_Spawn(truth Load) { return new name(Load); }\
-  roomprototype name##_ProtoType(&name##_Spawn, #name);\
-  name::name(truth Load) : base(donothing()) { VirtualConstructor(Load); }\
-  name::name(donothing D) : base(D) { }\
-  const roomprototype* name::GetProtoType() const { return &name##_ProtoType; }
-  #else
-  #define ROOM_PROTOTYPE(name, base)
-  #endif
-
-  #define ROOM(name, base, data)\
-  \
-  class name : public base\
-  {\
-  public:\
-  name(truth = false);\
-  name(donothing);\
-  virtual const prototype* GetProtoType() const;\
-  data\
-  }; ROOM_PROTOTYPE(name, base)*/
-
 #ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DEFINITIONS__
 #define ROOM_PROTO(name)\
-template<> const roomprototype name##sysbase::ProtoType(roomspawner(&name##sysbase::Spawn), #name);
+template<> const roomprototype name##sysbase::ProtoType((roomspawner)(&name##sysbase::Spawn), #name);
 #else
 #define ROOM_PROTO(name)
 #endif

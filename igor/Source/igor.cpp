@@ -92,17 +92,17 @@ int Main(int, char**)
 		  { 0, 0 },
 		  { RES.X - STRETCH * 16 - 10, RES.Y - STRETCH * 16 - 10 },
 		  { TILE_SIZE, TILE_SIZE },
-		  STRETCH };
+		  { STRETCH } };
   blitdata B2 = { DOUBLE_BUFFER,
 		  { 0, 0 },
 		  { RES.X - STRETCH * 32 - 20, RES.Y - STRETCH * 16 - 10 },
 		  { TILE_SIZE, TILE_SIZE },
-		  STRETCH };
+		  { STRETCH } };
   blitdata B3 = { DOUBLE_BUFFER,
 		  { 0, 0 },
 		  { 0, 0 },
 		  { TILE_SIZE, TILE_SIZE },
-		  0,
+		  { 0 },
 		  TRANSPARENT_COLOR };
 
   for(;;)

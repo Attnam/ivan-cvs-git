@@ -138,9 +138,10 @@ void msgsystem::Draw()
 		 { 0, 0 },
 		 { 13, Y },
 		 { Size.X, Size.Y },
-		 0,
+		 { 0 },
 		 0,
 		 0 };
+
   QuickDrawCache->NormalBlit(B);
   igraph::BlitBackGround(v2(13, Y), v2(1, 1));
   igraph::BlitBackGround(v2(12 + Size.X, Y), v2(1, 1));

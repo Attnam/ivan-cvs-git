@@ -176,7 +176,7 @@ inline void bitmap::NormalBlit(bitmap* Bitmap, int Flags) const
 		 { 0, 0 },
 		 { 0, 0 },
 		 { Size.X, Size.Y },
-		 Flags,
+		 { Flags },
 		 0,
 		 0 };
   NormalBlit(B);

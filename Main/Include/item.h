@@ -561,7 +561,7 @@ class item : public object
 
 #ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DEFINITIONS__
 #define ITEM_PROTO(name, base)\
-template<> const itemprototype name##sysbase::ProtoType(&base::ProtoType, itemspawner(&name##sysbase::Spawn), itemcloner(&name##sysbase::Clone), #name);
+template<> const itemprototype name##sysbase::ProtoType(&base::ProtoType, (itemspawner)(&name##sysbase::Spawn), (itemcloner)(&name##sysbase::Clone), #name);
 #else
 #define ITEM_PROTO(name, base)
 #endif

@@ -205,7 +205,7 @@ int iosystem::Menu(const bitmap* BackGround, v2 Pos,
 			    { 0, 0 },
 			    { 0, 0 },
 			    { RES.X, RES.Y },
-			    MakeRGB24(Element, Element, Element),
+			    { MakeRGB24(Element, Element, Element) },
 			    0,
 			    0 };
       Backup.LuminanceMaskedBlit(BlitData);
@@ -270,12 +270,13 @@ int iosystem::StringQuestion(festring& Input,
 			     truth Fade, truth AllowExit,
 			     stringkeyhandler StringKeyHandler)
 {
-  bitmap BackUp(v2(RES.X, 9), 0);
+  v2 V(RES.X, 9); ///???????????
+  bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
 		 { Pos.X, Pos.Y + 10 },
 		 { 0, 0 },
 		 { (MaxLetters << 3) + 9, 9 },
-		 0,
+		 { 0 },
 		 0,
 		 0 };
 
@@ -378,12 +379,13 @@ int iosystem::StringQuestion(festring& Input,
 long iosystem::NumberQuestion(const festring& Topic, v2 Pos, col16 Color,
 			      truth Fade, truth ReturnZeroOnEsc)
 {
-  bitmap BackUp(v2(RES.X, 9), 0);
+  v2 V(RES.X, 9); ///???????????
+  bitmap BackUp(V, 0);
   blitdata B = { &BackUp,
 		 { Pos.X, Pos.Y + 10 },
 		 { 0, 0 },
 		 { 105, 9 },
-		 0,
+		 { 0 },
 		 0,
 		 0 };
 
@@ -461,7 +463,8 @@ long iosystem::ScrollBarQuestion(const festring& Topic, v2 Pos,
   long BarValue = StartValue;
   festring Input;
   truth FirstTime = true;
-  bitmap BackUp(v2(RES.X, 20), 0);
+  v2 V(RES.X, 20); ///???????????
+  bitmap BackUp(V, 0);
 
   if(Fade)
   {
@@ -490,7 +493,7 @@ long iosystem::ScrollBarQuestion(const festring& Topic, v2 Pos,
 		   { Pos.X, Pos.Y },
 		   { 0, 0 },
 		   { RES.X, 20 },
-		   0,
+		   { 0 },
 		   0,
 		   0 };
 
@@ -501,14 +504,14 @@ long iosystem::ScrollBarQuestion(const festring& Topic, v2 Pos,
 		  { 0, 0 },
 		  { Pos.X, Pos.Y },
 		  { ((Topic.GetSize() + 14) << 3) + 1, 10 },
-		  0,
+		  { 0 },
 		  0,
 		  0 };
   blitdata B2 = { 0,
 		  { 0, 10 },
 		  { Pos.X, Pos.Y + 10 },
 		  { 203, 10 },
-		  0,
+		  { 0 },
 		  0,
 		  0 };
 

@@ -250,7 +250,7 @@ class materialsysbase : public base
 
 #ifdef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DEFINITIONS__
 #define MATERIAL_PROTO(name, base)\
-template<> const materialprototype name##sysbase::ProtoType(&base::ProtoType, materialspawner(&name##sysbase::Spawn), materialcloner(&name##sysbase::Clone), #name);
+template<> const materialprototype name##sysbase::ProtoType(&base::ProtoType, (materialspawner)(&name##sysbase::Spawn), (materialcloner)(&name##sysbase::Clone), #name);
 #else
 #define MATERIAL_PROTO(name, base)
 #endif

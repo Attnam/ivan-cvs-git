@@ -773,7 +773,7 @@ void bitmap::SimpleAlphaBlit(bitmap* Bitmap, alpha Alpha, col16 MaskColor) const
 		   { 0, 0 },
 		   { 0, 0 },
 		   { Size.X, Size.Y },
-		   0,
+		   { 0 },
 		   MaskColor,
 		   0 };
 
@@ -1159,7 +1159,7 @@ void bitmap::FadeToScreen(bitmapeditor BitmapEditor)
 		 { 0, 0 },
 		 { 0, 0 },
 		 { RES.X, RES.Y },
-		 0,
+		 { 0 },
 		 0,
 		 0 };
 

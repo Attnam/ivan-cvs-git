@@ -162,7 +162,7 @@ void lsquare::UpdateMemorized()
 		     { 0, 0 },
 		     { 0, 0 },
 		     { TILE_SIZE, TILE_SIZE },
-		     NORMAL_LUMINANCE,
+		     { NORMAL_LUMINANCE },
 		     TRANSPARENT_COLOR,
 		     ALLOW_ALPHA };
 
@@ -196,7 +196,7 @@ void lsquare::UpdateStaticContentCache(col24 Luminance) const
 		 { 0, 0 },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 Luminance,
+		 { Luminance },
 		 0,
 		 0 };
 
@@ -609,7 +609,7 @@ void lsquare::Load(inputfile& SaveFile)
 		   { 0, 0 },
 		   { 0, 0 },
 		   { TILE_SIZE, TILE_SIZE },
-		   0,
+		   { 0 },
 		   0,
 		   0 };
 
@@ -1398,7 +1398,7 @@ v2 lsquare::DrawLightning(v2 StartPos, long Color, int Direction, truth DrawHere
 		 { 0, 0 },
 		 { 0, 0 },
 		 { TILE_SIZE, TILE_SIZE },
-		 0,
+		 { 0 },
 		 TRANSPARENT_COLOR,
 		 0 };
 

@@ -390,7 +390,7 @@ void rawbitmap::Printf(bitmap* Bitmap, v2 Pos, packcol16 Color, const char* Form
 		   { 0, 0 },
 		   { Pos.X, Pos.Y },
 		   { 9, 9 },
-		   0,
+		   { 0 },
 		   TRANSPARENT_COLOR,
 		   0 };
 
@@ -429,7 +429,7 @@ void rawbitmap::PrintfUnshaded(bitmap* Bitmap, v2 Pos, packcol16 Color, const ch
 		   { 0, 0 },
 		   { Pos.X, Pos.Y },
 		   { 9, 9 },
-		   0,
+		   { 0 },
 		   TRANSPARENT_COLOR,
 		   0 };
 
@@ -562,7 +562,7 @@ void rawbitmap::CreateFontCache(packcol16 Color)
 		 { 0, 0 },
 		 { 0, 0 },
 		 { Size.X, Size.Y },
-		 0,
+		 { 0 },
 		 TRANSPARENT_COLOR,
 		 0 };
 
