@@ -306,6 +306,16 @@ void atavus::PrayBadEffect()
 	}
 }
 
+void silva::PrayGoodEffect()
+{
+	ADD_MESSAGE("This will soon be implemented.");
+}
+
+void silva::PrayBadEffect()
+{
+	ADD_MESSAGE("This will soon be implemented.");
+}
+
 void loricatus::PrayGoodEffect()
 {
 	std::string OldName;
@@ -333,7 +343,6 @@ void loricatus::PrayBadEffect()
 	else
 		ADD_MESSAGE("You feel a loss.");
 }
-
 
 void calamus::PrayGoodEffect()
 {

@@ -10,6 +10,3 @@ One can kill Attnamian farmers with Holy Fire without becoming outlawed.
 I went down to Elpuri's level in WMode. Elpuri happened to be right next to me, and hit me before my first move. The message was "something hits you".
 Monsters eat dark frogs and school food.
 Coming up from level 10 with pets doesn't work.
-Throwing a wielded item bugs.
-Dying to Seges's anger has buggy messages.
-God knowledge is not removed when the game ends!!!

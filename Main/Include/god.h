@@ -150,6 +150,18 @@ protected:
 	virtual void PrayBadEffect();
 };
 
+class silva : public god
+{
+public:
+	virtual std::string Name() const { return "Silva"; }
+	virtual std::string Description() const { return "goddess of nature"; }
+	virtual uchar Alignment() const { return ANP; }
+	virtual uchar BasicAlignment() const { return NEUTRAL; }
+protected:
+	virtual void PrayGoodEffect();
+	virtual void PrayBadEffect();
+};
+
 class loricatus : public god
 {
 public:
