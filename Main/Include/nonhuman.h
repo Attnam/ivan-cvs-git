@@ -315,5 +315,8 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool = false);
   virtual void CreateCorpse(lsquare*) { SendToHell(); }
+  virtual bodypart* MakeBodyPart(ushort) const;
+  virtual bool IsAnimated() const { return true; }
 );
+
 #endif

@@ -42,7 +42,7 @@ class ITEM
   virtual ushort GetAPBonus() const;
   virtual bool IsFixableBySmith(const character*) const { return IsBroken(); }
   virtual ushort GetBonus() const;
-  virtual uchar GetFlyAmount() const;
+  virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
  protected:
   virtual void VirtualConstructor(bool);
@@ -331,3 +331,4 @@ class ITEM
 ); 
 
 #endif
+

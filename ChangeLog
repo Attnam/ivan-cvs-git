@@ -9,6 +9,12 @@ is also provided AS IS and is probably completely unreadable.
 
 February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* Corrected a bug in the Igor's savefile code
+	* GetFlyAmount() S&R:ed by GetSpoilLevel()
+	* Eddies are now animated
+
+February 12 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* New eddy animation added to char.pcx by Kahvi
 	* Added makefile for DJGPP port of Igor
 	* Igor now works if the graphics are in the same directory as the binary

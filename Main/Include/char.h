@@ -339,7 +339,7 @@ class character : public entity, public id
   virtual void AddBoneConsumeEndMessage() const;
   virtual void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
-  bool IsAnimated() const { return false; }
+  virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
   virtual bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
@@ -513,7 +513,7 @@ class character : public entity, public id
   bool CanBeSeenByPlayer(bool = false, bool = false) const;
   bool CanBeSeenBy(const character*, bool = false, bool = false) const;
   virtual void DetachBodyPart();
-  virtual bodypart* MakeBodyPart(ushort);
+  virtual bodypart* MakeBodyPart(ushort) const;
   void AttachBodyPart(bodypart*);
   virtual bool HasAllBodyParts() const;
   virtual bodypart* FindRandomOwnBodyPart(bool = false) const;

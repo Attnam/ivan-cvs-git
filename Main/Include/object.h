@@ -56,7 +56,7 @@ class object : public entity, public id
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
   void SetConfig(ushort);
   virtual void CalculateAll() = 0;
-  virtual uchar GetFlyAmount() const { return 0; }
+  virtual uchar GetSpoilLevel() const { return 0; }
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
@@ -103,3 +103,4 @@ class object : public entity, public id
 };
 
 #endif
+

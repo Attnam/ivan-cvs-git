@@ -364,7 +364,7 @@ class item : public object
   virtual bool IsFixableBySmith(const character*) const { return false; }
   virtual ulong GetFixPrice() const { return 100; } 
   void DonateSlotTo(item*);
-  virtual uchar GetFlyAmount() const;
+  virtual uchar GetSpoilLevel() const;
   virtual void SignalSpoilLevelChange(material*);
   virtual void ResetSpoiling();
   virtual void SetItemsInside(const std::vector<contentscript<item> >&, ushort) { }
@@ -437,3 +437,4 @@ name : public base\
 }; ABSTRACT_ITEM_PROTOTYPE(name, base, &base##_ProtoType);
 
 #endif
+

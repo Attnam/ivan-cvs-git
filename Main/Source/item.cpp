@@ -656,14 +656,14 @@ void item::DonateSlotTo(item* Item)
   Slot = 0;
 }
 
-uchar item::GetFlyAmount() const
+uchar item::GetSpoilLevel() const
 {
   return MainMaterial->GetSpoilLevel();
 }
 
 void item::SignalSpoilLevelChange(material*)
 {
-  bool NeedToInformSlot = !IsAnimated() && GetFlyAmount() && GetSquareUnder() && Slot->IsVisible();
+  bool NeedToInformSlot = !IsAnimated() && GetSpoilLevel() && GetSquareUnder() && Slot->IsVisible();
   UpdatePictures();
 
   if(NeedToInformSlot)
@@ -726,3 +726,4 @@ bool item::IsBroken() const
 {
   return (Config & BROKEN) != 0;
 }
+

@@ -445,7 +445,7 @@ class ITEM
   virtual void CalculateEmitation();
   virtual void SignalSpoil(material*);
   virtual bool CanBePiledWith(const item*, const character*) const;
-  virtual uchar GetFlyAmount() const;
+  virtual uchar GetSpoilLevel() const;
   virtual bool Consume(character*, long);
   virtual material* GetMaterial(ushort) const;
  protected:
@@ -460,6 +460,17 @@ class ITEM
   virtual ushort GetSize() const;
   virtual uchar GetArticleMode() const;
   character* Deceased;
+);
+
+class ITEM
+(
+  eddytorso,
+  normaltorso,
+ public:
+  virtual ushort GetClassAnimationFrames() const { return 8; }
+  //virtual void VirtualConstructor(bool);
+  virtual vector2d GetBitmapPos(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 #endif

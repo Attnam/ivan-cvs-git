@@ -158,7 +158,7 @@ void object::UpdatePictures()
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
   ushort Seed = 0;
-  uchar FlyAmount = GetFlyAmount(); 
+  uchar FlyAmount = GetSpoilLevel(); 
   bool Sparkling = false;
   bool FrameNeeded = HasSpecialAnimation();
 
@@ -440,3 +440,4 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
+

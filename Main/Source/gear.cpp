@@ -427,7 +427,7 @@ void meleeweapon::VirtualConstructor(bool Load)
     Enchantment = GetDefaultEnchantment();
 }
 
-uchar meleeweapon::GetFlyAmount() const
+uchar meleeweapon::GetSpoilLevel() const
 {
   return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
 }
@@ -644,3 +644,4 @@ bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter
   else
     return !(RAND() % 20);
 } 
+

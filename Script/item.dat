@@ -1815,6 +1815,10 @@ corpse
 	IsMaterialChangeable = false;
 }
 
+eddytorso /* normaltorso-> */
+{
+}
+
 whistle
 {
 	Possibility = 50;

@@ -156,7 +156,7 @@ int Main(int, char**)
 
 	      if(k == 'y' || k == 'Y')
 		{
-		  CBitmap->Save(FileName);
+		  CBitmap->Save(Directory + FileName);
 		  delete CBitmap;
 		  return 0;
 		}

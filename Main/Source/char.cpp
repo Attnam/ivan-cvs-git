@@ -2698,7 +2698,7 @@ void character::UpdatePictures()
     UpdateBodyPartPicture(c);
 }
 
-bodypart* character::MakeBodyPart(ushort Index)
+bodypart* character::MakeBodyPart(ushort Index) const
 {
   if(Index == TORSO_INDEX)
     return new normaltorso(0, NO_MATERIALS);

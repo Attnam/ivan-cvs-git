@@ -28,7 +28,7 @@ class ABSTRACT_ITEM
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetPrice() const;
   virtual void Be();
-  virtual uchar GetFlyAmount() const;
+  virtual uchar GetSpoilLevel() const;
   virtual material* GetMaterial(ushort) const;
  protected:
   virtual bool IsSparkling(ushort) const;
@@ -612,3 +612,4 @@ class ITEM
 );
 
 #endif
+

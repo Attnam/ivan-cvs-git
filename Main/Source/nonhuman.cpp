@@ -26,6 +26,8 @@ uchar dolphin::GetSpecialBodyPartFlags(ushort) const { return RAND() & (MIRROR|R
 
 ushort chameleon::GetSkinColor() const { return MakeRGB16(60 + RAND() % 190, 60 + RAND() % 190, 60 + RAND() % 190); }
 
+bodypart* eddy::MakeBodyPart(ushort) const { return new eddytorso(0, NO_MATERIALS); }
+
 bool elpuri::Hit(character* Enemy, bool ForceHit)
 {
   for(ushort d = 0; d < 9; ++d)

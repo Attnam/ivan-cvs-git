@@ -150,7 +150,7 @@ class ABSTRACT_CHARACTER
   virtual ushort GetBodyPartColorD(ushort);
   virtual ulong GetBodyPartSize(ushort, ushort);
   virtual ulong GetBodyPartVolume(ushort) const;
-  virtual bodypart* MakeBodyPart(ushort);
+  virtual bodypart* MakeBodyPart(ushort) const;
   virtual const std::string& GetDeathMessage() const;
   std::vector<sweaponskill*> SWeaponSkill;
   sweaponskill* CurrentRightSWeaponSkill;

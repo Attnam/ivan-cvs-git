@@ -1011,7 +1011,7 @@ ulong humanoid::GetBodyPartVolume(ushort Index) const
     }
 }
 
-bodypart* humanoid::MakeBodyPart(ushort Index)
+bodypart* humanoid::MakeBodyPart(ushort Index) const
 {
   switch(Index)
     {

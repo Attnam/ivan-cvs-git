@@ -1760,7 +1760,7 @@ void magicalwhistle::VirtualConstructor(bool Load)
   LastUsed = 0;
 }
 
-uchar materialcontainer::GetFlyAmount() const
+uchar materialcontainer::GetSpoilLevel() const
 {
   return Max<uchar>(MainMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
 }
@@ -2077,3 +2077,4 @@ bool itemcontainer::IsDestroyable() const
       return false;
   return true;
 }
+
