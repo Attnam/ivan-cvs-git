@@ -5,11 +5,7 @@
 #include "graphics.h"
 #include "bitmap.h"
 #include "whandler.h"
-#include "save.h"
 #include "colorbit.h"
-#include "strover.h"
-
-#include "error.h"
 
 #ifdef WIN32
 int Main(HINSTANCE hInst, HINSTANCE, HWND* hWnd, LPSTR, int)

@@ -29,7 +29,7 @@ class ABSTRACT_CHARACTER
   virtual float GetAttackStrength() const;
   virtual bool Hit(character*);
   virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
-  virtual void CharacterSpeciality();
+  virtual void CharacterSpeciality(ushort = 1);
   virtual bool ShowWeaponSkills();
   virtual void SetWielded(item*);
   virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
@@ -1363,6 +1363,7 @@ class CHARACTER
   virtual void CreateInitialEquipment();
   virtual ushort Frequency() const { return 2500; }
  protected:
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " dies smiling."; }
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }
   virtual std::string NameSingular() const { return "kamikaze dwarf"; }
   uchar Master;

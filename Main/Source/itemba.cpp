@@ -3,8 +3,6 @@
 
 #include "itemba.h"
 #include "error.h"
-#include "igraph.h"
-#include "bitmap.h"
 #include "charba.h"
 #include "stack.h"
 #include "level.h"
@@ -12,7 +10,6 @@
 #include "lterraba.h"
 #include "message.h"
 #include "wskill.h"
-#include "team.h"
 #include "femath.h"
 
 item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool), Cannibalised(false)

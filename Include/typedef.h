@@ -5,9 +5,9 @@
 #pragma warning(disable : 4786)
 #endif
 
-typedef		signed		char		schar;
-typedef		unsigned	char		uchar;
-typedef		unsigned	short		ushort;
-typedef		unsigned	long		ulong;
+typedef signed   char  schar;
+typedef unsigned char  uchar;
+typedef unsigned short ushort;
+typedef unsigned long  ulong;
 
 #endif

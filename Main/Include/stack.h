@@ -12,6 +12,8 @@
 
 #define CENTER 4
 
+#include <string>
+
 #include "typedef.h"
 #include "vector2d.h"
 

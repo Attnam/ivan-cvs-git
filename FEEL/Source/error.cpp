@@ -7,10 +7,10 @@
 #ifdef __DJGPP__
 #include <conio.h>
 #include <csignal>
+#include "graphics.h"
 #endif
 
 #include "error.h"
-#include "graphics.h"
 
 #ifdef VC
 int (*globalerrorhandler::OldNewHandler)(size_t) = 0;

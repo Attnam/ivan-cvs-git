@@ -18,27 +18,20 @@
 #include <sys/stat.h>
 #endif
 
-#include "game.h"
 #include "level.h"
 #include "charde.h"
-#include "error.h"
-#include "itemde.h"
+#include "itemba.h"
 #include "god.h"
-#include "igraph.h"
 #include "strover.h"
 #include "felist.h"
 #include "whandler.h"
 #include "lsquare.h"
-#include "stack.h"
 #include "lterraba.h"
 #include "worldmap.h"
 #include "message.h"
 #include "pool.h"
-#include "proto.h"
 #include "dungeon.h"
-#include "save.h"
 #include "feio.h"
-#include "graphics.h"
 #include "script.h"
 #include "team.h"
 #include "colorbit.h"
@@ -133,7 +126,7 @@ bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
 std::string game::PlayerName;
 uchar game::GodNumber;
-ulong game::Turns;
+ulong game::Ticks;
 
 void game::InitScript()
 {
@@ -146,7 +139,7 @@ void game::Init(std::string Name)
 {
   static ushort Counter = 0;
 
-  Turns = 0;
+  Ticks = 0;
   EMPTY_MESSAGES();
   ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
   globalmessagingsystem::Format();
@@ -230,7 +223,7 @@ void game::Init(std::string Name)
       GetGod(6)->SetKnown(true);
       GetGod(7)->SetKnown(true);
 
-      Turns = 0;
+      Ticks = 0;
       BaseScore = Player->Score();
       dog* Doggie = new dog;
       Doggie->SetTeam(GetTeam(0));
@@ -264,7 +257,13 @@ void game::Run()
       if(!InWilderness)
 	GetCurrentDungeon()->GetLevel(Current)->HandleCharacters(); // Temporary
 
-      try { objectpool::Be(); }
+      try
+	{
+	  objectpool::Be();
+
+	  Tick();
+	  ApplyDivineTick();
+	}
       catch(quitrequest) { }
 
       objectpool::BurnTheDead();
@@ -395,9 +394,11 @@ void game::DrawPanel()
   else
     FONT->Printf(DOUBLEBUFFER, 620, 534, WHITE, "%s", GetCurrentDungeon()->GetLevelDescription(GetCurrent()).c_str());
 
-  FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Turns: %d", GetTurns());
+  FONT->Printf(DOUBLEBUFFER, 620, 544, WHITE, "Time: %d", GetTicks() / 10);
 
-  if(Player->GetNP() < CRITICALHUNGERLEVEL)
+  if(Player->StateIsActivated(FAINTED))
+    FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainted");
+  else if(Player->GetNP() < CRITICALHUNGERLEVEL)
     FONT->Printf(DOUBLEBUFFER, 620, 554, RED, "Fainting");
   else
     if(Player->GetNP() < HUNGERLEVEL)
@@ -561,7 +562,7 @@ bool game::Save(std::string SaveName)
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << PlayerName;
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
-  SaveFile << GoThroughWallsCheat << BaseScore << Turns << InWilderness << NextObjectID;
+  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextObjectID;
   SaveFile << LOSTurns;
 
   ulong Time = time(0);
@@ -594,7 +595,7 @@ bool game::Load(std::string SaveName)
 
   SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
-  SaveFile >> GoThroughWallsCheat >> BaseScore >> Turns >> InWilderness >> NextObjectID;
+  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextObjectID;
   SaveFile >> LOSTurns;
 
   ulong Time;
@@ -719,10 +720,10 @@ int game::GetMoveCommandKey(vector2d A, vector2d B)
   return 0xFF;
 }
 
-void game::ApplyDivineTick(ushort Turns)
+void game::ApplyDivineTick(ushort Ticks)
 {
   for(ushort c = 1; GetGod(c); ++c)
-    GetGod(c)->ApplyDivineTick(Turns);
+    GetGod(c)->ApplyDivineTick(Ticks);
 }
 
 void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good, short Multiplier)

@@ -10,7 +10,7 @@ Level	Danger points	Description		Monsters
 2	500					goblins, cats, mommos, frogs, wolves, bone/wood/gold/glass golems, werewolves (h-form)
 3	2500					imps, Bill's wills, marble/sulfur/stone golems
 4	10000					dark knights*, werewolves (w-form), k-dwarves, iron golems
-5	50000					Ivan, mistresses, mammoths, mithril/valpurium golems, angels
+5	50000					Ivan, mistresses, mammoths, mithril/diamond/valpurium golems, angels
 6	250000					Elpuri
 7	1000000					Oree
 8	5000000					Petrus

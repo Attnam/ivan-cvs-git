@@ -5,11 +5,7 @@
 #include "wterrade.h"
 #include "charba.h"
 #include "allocate.h"
-#include "level.h"
-#include "materba.h"
-#include "proto.h"
 #include "error.h"
-#include "save.h"
 #include "dungeon.h"
 #include "femath.h"
 

@@ -7,26 +7,21 @@
 #include "itemde.h"
 #include "lsquare.h"
 #include "lterraba.h"
-#include "wsquare.h"
-#include "wterraba.h"
 #include "dungeon.h"
 #include "whandler.h"
 #include "level.h"
 #include "worldmap.h"
-#include "igraph.h"
 #include "hscore.h"
 #include "feio.h"
 #include "god.h"
 #include "felist.h"
 #include "team.h"
 #include "colorbit.h"
-#include "graphics.h"
-#include "script.h"
 #include "config.h"
 #include "femath.h"
 #include "strover.h"
 
-character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(2500), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : object(AddToPool), Stack(new stack), Wielded(0), RegenerationCounter(0), NP(25000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), IsPlayer(false), State(0), Team(0), WayPoint(-1, -1), Money(0), HomeRoom(0)
 {
   if(CreateMaterials || SetStats || CreateEquipment)
     ABORT("BOOO!");
@@ -65,23 +60,23 @@ void character::Hunger(ushort Turns)
   switch(GetBurdenState())
     {
     case UNBURDENED:
-      SetNP(GetNP() - Turns);
+      EditNP(-Turns);
       break;
     case BURDENED:
-      SetNP(GetNP() - 2 * Turns);
-      SetStrengthExperience(GetStrengthExperience() + 25 * Turns);
-      SetAgilityExperience(GetAgilityExperience() - 10 * Turns);
+      EditNP(-2 * Turns);
+      EditStrengthExperience(2 * Turns);
+      EditAgilityExperience(-2 * Turns);
       break;
     case STRESSED:
     case OVERLOADED:
-      SetNP(GetNP() - 4 * Turns);
-      SetStrengthExperience(GetStrengthExperience() + 50 * Turns);
-      SetAgilityExperience(GetAgilityExperience() - 25 * Turns);
+      EditNP(-4 * Turns);
+      EditStrengthExperience(4 * Turns);
+      EditAgilityExperience(-4 * Turns);
       break;
     }
 
   if(GetNP() < HUNGERLEVEL)
-    SetStrengthExperience(GetStrengthExperience() - 10 * Turns);
+    EditStrengthExperience(-Turns);
 
   CheckStarvationDeath("starved to death");
 }
@@ -102,15 +97,15 @@ bool character::Hit(character* Enemy)
       if(GetWielded())
 	GetWielded()->ReceiveHitEffect(Enemy, this);
     case HAS_DIED:
-      SetStrengthExperience(GetStrengthExperience() + 50);
+      EditStrengthExperience(50);
       if(GetWielded()) 
 	if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
 	  SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
     case HAS_DODGED:
-      SetAgilityExperience(GetAgilityExperience() + 25);
+      EditAgilityExperience(25);
     }
 
-  SetNP(GetNP() - 4);
+  EditNP(-50);
 
   return true;
 }
@@ -162,8 +157,8 @@ uchar character::TakeHit(character* Enemy, short Success)
 	{
 	  Enemy->AddBlockMessage(this);
 
-	  SetStrengthExperience(GetStrengthExperience() + 25);
-	  SetEnduranceExperience(GetEnduranceExperience() + 25);
+	  EditStrengthExperience(50);
+	  EditEnduranceExperience(50);
 
 	  return HAS_BLOCKED;
 	}
@@ -185,7 +180,8 @@ uchar character::TakeHit(character* Enemy, short Success)
   else
     {
       Enemy->AddDodgeMessage(this);
-      SetAgilityExperience(GetAgilityExperience() + 100);
+      EditAgilityExperience(50);
+      EditPerceptionExperience(25);
       return HAS_DODGED;
     }
 }
@@ -208,14 +204,14 @@ void character::Be()
 	  switch(GetBurdenState())
 	    {
 	    case UNBURDENED:
-	      SetAP(GetAP() + 100 + (GetAgility() >> 1));
+	      EditAP(100 + (GetAgility() >> 1));
 	      break;
 	    case BURDENED:
-	      SetAP(GetAP() + 75 + (GetAgility() >> 1) - (GetAgility() >> 2));
+	      EditAP(75 + (GetAgility() >> 1) - (GetAgility() >> 2));
 	      break;
 	    case STRESSED:
 	    case OVERLOADED:
-	      SetAP(GetAP() + 50 + (GetAgility() >> 2));
+	      EditAP(50 + (GetAgility() >> 2));
 	      break;
 	    }
 
@@ -233,12 +229,13 @@ void character::Be()
 	    {
 	      DeActivateVoluntaryStates();
 	      Faint();
-	      game::DrawEverything();
 	    }
 	}
 
-      if(GetAP() >= 1000)
+      if(GetAP() >= 0)
 	{
+	  StateAutoDeactivation();
+
 	  if(GetIsPlayer())
 	    {
 	      static ushort Timer = 0;
@@ -249,8 +246,6 @@ void character::Be()
 		  Timer = 0;
 		}
 
-	      StateAutoDeactivation();
-
 	      if(CanMove())
 		GetPlayerCommand();
 	      else
@@ -260,30 +255,24 @@ void character::Be()
 		  if(READKEY())
 		    DeActivateVoluntaryStates();
 		}
-
-	      CharacterSpeciality();
-
-	      if(!StateIsActivated(CONSUMING))
-		Hunger();
-
-	      Regenerate();
-	      game::Turn();
-	      game::ApplyDivineTick();
 	    }
 	  else
 	    {
-	      StateAutoDeactivation();
-
 	      if(CanMove() && !game::GetInWilderness())
 		GetAICommand();
-
-	      CharacterSpeciality();
-
-	      Regenerate();
 	    }
 
-	  SetAP(GetAP() - 1000);
+	  EditAP(-1000);
 	}
+
+	CharacterSpeciality();
+	Regenerate();
+
+	if(GetIsPlayer())
+	  {
+	    if(!StateIsActivated(CONSUMING))
+	      Hunger();
+	  }
     }
 }
 
@@ -291,8 +280,9 @@ bool character::GoUp()
 {
   if(GetSquareUnder()->GetOverTerrain()->GoUp(this))
     {
-      SetStrengthExperience(GetStrengthExperience() + 25);
-      SetNP(GetNP() - 2);
+      EditStrengthExperience(50);
+      EditNP(-20);
+      EditAP(-1000);
       return true;
     }
   else
@@ -303,8 +293,9 @@ bool character::GoDown()
 {
   if(GetSquareUnder()->GetOverTerrain()->GoDown(this))
     {
-      SetAgilityExperience(GetAgilityExperience() + 25);
-      SetNP(GetNP() - 1);
+      EditAgilityExperience(25);
+      EditNP(-10);
+      EditAP(-1000);
       return true;
     }
   else
@@ -321,9 +312,7 @@ bool character::Open()
 	ADD_MESSAGE("Where is this famous door you wish to open?  [press a direction key or space]");
 
       DRAW_MESSAGES();
-
       EMPTY_MESSAGES();
-
       graphics::BlitDBToScreen();
 
       while(true)
@@ -352,11 +341,8 @@ bool character::Close()
   if(CanOpenDoors())
     {
       ADD_MESSAGE("Where is this door you wish to close? [press a direction key or space]");
-
       DRAW_MESSAGES();
-
       EMPTY_MESSAGES();
-
       graphics::BlitDBToScreen();
 
       while(true)
@@ -370,8 +356,9 @@ bool character::Close()
 	    if(Key == game::GetMoveCommandKey(c))
 	      if(game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(c))->Close(this))
 		{
-		  SetAgilityExperience(GetAgilityExperience() + 25);
-		  SetNP(GetNP() - 1);
+		  EditAgilityExperience(25);
+		  EditNP(-10);
+		  EditAP(-500);
 		  return true;
 		}
 	      else
@@ -477,16 +464,16 @@ bool character::Consume()
 
 bool character::CheckBulimia() const
 {
-  return GetNP() > (GetSize() << 5) ? true : false;
+  return GetNP() / 10 > (GetSize() << 5) ? true : false;
 }
 
 void character::ReceiveBulimiaDamage()
 {
-  if((GetNP() - (GetSize() << 5)) / 50 > 0)
+  if((GetNP() / 10 - (GetSize() << 5)) / 50 > 0)
     {
       ADD_MESSAGE("Urgh... Your stomach hurts.");
 
-      SetHP(GetHP() - (GetNP() - (GetSize() << 5)) / 50);
+      SetHP(GetHP() - (GetNP() / 10 - (GetSize() << 5)) / 50);
 
       CheckDeath("died of bulimia");
     }
@@ -562,8 +549,12 @@ void character::Move(vector2d MoveTo, bool TeleportMove)
       if(GetIsPlayer())
 	ShowNewPosInfo();
 
-      SetNP(GetNP() - 1);
-      SetAgilityExperience(GetAgilityExperience() + 10);
+      if(!TeleportMove)
+	{
+	  EditAP(-GetSquareUnder()->GetEntryAPRequirement() + 1000);
+	  EditNP(-10);
+	  EditAgilityExperience(5);
+	}
     }
   else
     if(GetIsPlayer())
@@ -928,7 +919,7 @@ void character::Die(bool ForceMsg)
 	  if(!game::BoolQuestion("Do you want to do this, cheater? [y/n]", 2))
 	    {
 	      SetHP(GetMaxHP());
-	      SetNP(1000);
+	      SetNP(10000);
 	      return;
 	    }
 	}
@@ -1009,8 +1000,9 @@ bool character::OpenItem()
   if(Index < GetStack()->GetItems())
     if(GetStack()->GetItem(Index)->TryToOpen(this, Stack))
       {
-	SetAgilityExperience(GetAgilityExperience() + 25);
-	SetNP(GetNP() - 1);
+	EditAgilityExperience(25);
+	EditNP(-10);
+	EditAP(-500);
 	return true;
       }
     else
@@ -1024,17 +1016,22 @@ bool character::OpenItem()
 
 void character::Regenerate(ushort Turns)
 {
-  SetRegenerationCounter(GetRegenerationCounter() + GetEndurance() * Turns);
+  ulong RegenerationBonus = GetEndurance() * Turns;
 
-  while(GetRegenerationCounter() > 200)
+  if(StateIsActivated(RESTING))
+    RegenerationBonus *= GetSquareUnder()->RestModifier();
+
+  EditRegenerationCounter(RegenerationBonus);
+
+  while(GetRegenerationCounter() > 1000)
     {
       if(GetHP() < GetMaxHP())
 	{
 	  SetHP(GetHP() + 1);
-	  SetEnduranceExperience(GetEnduranceExperience() + 200);
+	  EditEnduranceExperience(100);
 	}
 
-      SetRegenerationCounter(GetRegenerationCounter() - 200);
+      EditRegenerationCounter(-1000);
     }
 }
 
@@ -1101,13 +1098,9 @@ bool character::Talk()
 {
   int k;
   ADD_MESSAGE("To whom do you wish to talk to? [press a direction key or space]");
-
   DRAW_MESSAGES();
-
   EMPTY_MESSAGES();
-
   graphics::BlitDBToScreen();
-
   bool CorrectKey = false;
 
   while(!CorrectKey)
@@ -1124,7 +1117,7 @@ bool character::Talk()
 	    if(Who)
 	      {
 		if(Who->GetTeam()->GetRelation(GetTeam()) != HOSTILE)
-		  Who->SetAP(0);
+		  Who->EditAP(-1000);
 
 		Who->BeTalkedTo(this);
 		return true;
@@ -1144,7 +1137,7 @@ bool character::Talk()
 
 bool character::NOP()
 {
-  SetAgilityExperience(GetAgilityExperience() - 5);
+  EditAgilityExperience(-10);
   return true;
 }
 
@@ -1293,6 +1286,12 @@ bool character::Save()
 
 bool character::Read()
 {
+  if(!CanRead())
+    {
+      ADD_MESSAGE("You can't read.");
+      return false;
+    }
+
   if(!GetStack()->GetItems())
     {
       ADD_MESSAGE("You have nothing to read!");
@@ -1309,18 +1308,26 @@ bool character::Read()
 
 bool character::ReadItem(int ToBeRead, stack* ItemsStack)
 {
-  if(ItemsStack->GetItem(ToBeRead) == GetWielded() || ItemsStack->GetItem(ToBeRead) == GetTorsoArmor())
+  if(ItemsStack->GetItem(ToBeRead) == GetTorsoArmor())
     {
-      ADD_MESSAGE("You can't read items that are in your gear!");
+      ADD_MESSAGE("You can't read items that you wear!");
       return false;
     }
 
   if(ItemsStack->GetItem(ToBeRead)->CanBeRead(this))
     if(GetLevelSquareUnder()->GetLuminance() >= LIGHT_BORDER || game::GetSeeWholeMapCheat())
       {
-	if(ItemsStack->GetItem(ToBeRead)->Read(this))
-	  delete ItemsStack->RemoveItem(ToBeRead);
+	bool LackOfLight = GetLevelSquareUnder()->GetRawLuminance() < 225 ? true : false;
 
+	if(ItemsStack->GetItem(ToBeRead)->Read(this))
+	  {
+	    ItemsStack->RemoveItem(ToBeRead)->SetExists(false);
+
+	    if(LackOfLight)
+	      SetPerceptionExperience(-25);
+	  }
+
+	CheckGearExistence();
 	return true;
       }
     else
@@ -1734,13 +1741,13 @@ bool character::Look()
       FONT->Printf(DOUBLEBUFFER, 16, 514, WHITE, "Press direction keys to move cursor or esc to exit from the mode.");
       graphics::BlitDBToScreen();
       EMPTY_MESSAGES();
-
       Key = GETKEY();
     }
 
-
   DOUBLEBUFFER->Fill((CursorPos.X - game::GetCamera().X) << 4, (CursorPos.Y - game::GetCamera().Y + 2) << 4, 16, 16, 0);
-  return false;
+  EditPerceptionExperience(1);
+  EditAP(900);
+  return true;
 }
 
 float character::GetAttackStrength() const
@@ -1787,8 +1794,9 @@ bool character::OpenPos(vector2d APos)
 {
   if(game::GetCurrentLevel()->GetLevelSquare(APos)->Open(this))
     {
-      SetAgilityExperience(GetAgilityExperience() + 25);
-      SetNP(GetNP() - 1);
+      EditAgilityExperience(25);
+      EditNP(-10);
+      EditAP(-500);
       return true;
     }
 
@@ -1889,7 +1897,7 @@ void character::ReceiveSchoolFoodEffect(long SizeOfEffect)
 
 void character::ReceiveNutrition(long SizeOfEffect)
 {
-  SetNP(GetNP() + SizeOfEffect * 2);
+  EditNP(SizeOfEffect * 20);
 }
 
 void character::ReceiveOmleUrineEffect(long)
@@ -2116,6 +2124,10 @@ bool character::Throw()
 
       ThrowItem(Answer, GetStack()->GetItem(Index));
 
+      EditStrengthExperience(25);
+      EditAgilityExperience(25);
+      EditPerceptionExperience(25);
+      EditNP(-50);
       return true;
     }
   else
@@ -2227,7 +2239,9 @@ void character::Vomit(ushort)
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s vomits.", CNAME(DEFINITE));
 
-  SetNP(GetNP() - 20 - RAND() % 21);
+  EditStrengthExperience(-50);
+  EditEnduranceExperience(50);
+  EditNP(-200 - RAND() % 201);
 
   GetLevelSquareUnder()->ReceiveVomit(this);
 }
@@ -2416,7 +2430,7 @@ void character::BeKicked(ushort KickStrength, bool ShowOnScreen, uchar Direction
 
 void character::FallTo(vector2d Where, bool OnScreen)
 {
-  SetAP(GetAP() - 500);
+  EditAP(-500);
 
   if(game::GetCurrentLevel()->GetLevelSquare(Where)->GetOverLevelTerrain()->GetIsWalkable() && !game::GetCurrentLevel()->GetLevelSquare(Where)->GetCharacter())
     Move(Where, true);
@@ -2472,7 +2486,6 @@ void character::Faint()
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s faints.", CNAME(DEFINITE));
 
-  SetStrengthExperience(GetStrengthExperience() - 100);
   ActivateState(FAINTED);
   StateCounter[FAINTED] = 100 + RAND() % 101;
 }
@@ -2488,6 +2501,10 @@ void character::FaintHandler()
 	  ADD_MESSAGE("%s wakes up.", CNAME(DEFINITE));
 
       EndFainted();
+    }
+  else
+    {
+      EditStrengthExperience(-3);
     }
 }
 
@@ -2505,17 +2522,6 @@ void character::ConsumeHandler()
 
       return;
     }
-
-  /*if(StateIsActivated(CONSUMING) && StateCounter[CONSUMING] == 200)
-    {
-      if(GetIsPlayer())
-	ADD_MESSAGE("You have eaten for a long time now. You stop eating.");
-      else
-	if(GetLevelSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s finishes eating %s.", CNAME(DEFINITE), GetConsumingCurrently()->CNAME(DEFINITE));
-
-      EndConsuming();
-    }*/
 }
 
 void character::PolymorphHandler()
@@ -2609,7 +2615,7 @@ void character::DeActivateVoluntaryStates(std::string Reason)
       if(StateIsActivated(DIGGING))
 	{
 	  ADD_MESSAGE("You stop digging.");
-	  SetAP(750);
+	  EditAP(-250);
 	}
     }
 
@@ -2811,6 +2817,8 @@ bool character::RestUntilHealed()
       return false;
     }
 
+  GetSquareUnder()->GetOverTerrain()->ShowRestMessage(this);
+  DRAW_MESSAGES();
   StateCounter[RESTING] = HPToRest;
   ActivateState(RESTING);
   return true;
@@ -2821,6 +2829,10 @@ void character::RestHandler()
 {
   if(GetHP() >= StateCounter[RESTING] || GetHP() == GetMaxHP())
     EndRest();
+  else
+    {
+      EditAgilityExperience(-1 * GetSquareUnder()->RestModifier());
+    }
 }
 
 void character::EndRest()
@@ -2833,6 +2845,9 @@ void character::DigHandler()
   if(StateCounter[DIGGING] > 0)
     {
       StateCounter[DIGGING]--;
+      EditStrengthExperience(5);
+      EditAgilityExperience(-5);
+      EditNP(-5);
     }
   else
     EndDig();
@@ -2984,7 +2999,7 @@ bool character::Displace(character* Who)
       if(Who->GetIsPlayer())
 	Who->ShowNewPosInfo();
 
-      SetAP(GetAP() - 500);
+      EditAP(-500);
       return true;
     }
   else
@@ -3150,7 +3165,7 @@ bool character::Go()
 
 void character::GoHandler()
 {
-  if(GetAP() >= 1000)
+  if(GetAP() >= 0)
     {
       if(!game::IsValidPos(GetPos() + game::GetMoveVector(StateVariables.Going.Direction)))
 	{

@@ -101,25 +101,25 @@ class item : public object
   bool Cannibalised;
 };
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
 
 #define ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)\
-	\
-	static class name##_protoinstaller\
-	{\
-	public:\
-		name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) {}\
-		ushort GetIndex() const { return Index; }\
-	private:\
-		ushort Index;\
-	} name##_ProtoInstaller;\
-	\
-	name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
-	name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); }\
-	void name::SetDefaultStats() { setstats }\
-	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-	const item* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
-	ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  \
+  static class name##_protoinstaller\
+  {\
+   public:\
+    name##_protoinstaller() : Index(protocontainer<item>::Add(new name(false, false, false))) {}\
+    ushort GetIndex() const { return Index; }\
+   private:\
+    ushort Index;\
+  } name##_ProtoInstaller;\
+  \
+  name::name(bool CreateMaterials, bool SetStats, bool AddToPool) : base(false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+  name::name(material* FirstMaterial, bool SetStats) : base(false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) SetDefaultStats(); }\
+  void name::SetDefaultStats() { setstats }\
+  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
+  const item* const name::GetPrototype() { return protocontainer<item>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -131,27 +131,27 @@ class item : public object
 \
 name : public base\
 {\
-public:\
-	name(bool = true, bool = true, bool = true);\
-	name(material*, bool = true);\
-	virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
-	virtual typeable* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
-	static ushort StaticType();\
-	static const item* const GetPrototype();\
-	virtual std::string ClassName() const { return #name; }\
-protected:\
-	virtual void SetDefaultStats();\
-	virtual ushort Type() const;\
-	data\
+ public:\
+  name(bool = true, bool = true, bool = true);\
+  name(material*, bool = true);\
+  virtual item* Clone(bool CreateMaterials = true, bool SetStats = true) const { return new name(CreateMaterials, SetStats); }\
+  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { item* Item = new name(false, false); Item->Load(SaveFile); return Item; }\
+  static ushort StaticType();\
+  static const item* const GetPrototype();\
+  virtual std::string ClassName() const { return #name; }\
+ protected:\
+  virtual void SetDefaultStats();\
+  virtual ushort Type() const;\
+  data\
 }; ITEM_PROTOINSTALLER(name, base, initmaterials, setstats)
 
 #define ABSTRACT_ITEM(name, base, data)\
 \
 name : public base\
 {\
-public:\
-	name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) {}\
-	data\
+ public:\
+  name(bool CreateMaterials, bool SetStats, bool AddToPool = true) : base(CreateMaterials, SetStats, AddToPool) {}\
+  data\
 };
 
 #endif

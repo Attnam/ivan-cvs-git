@@ -2,10 +2,8 @@
 
 #include "object.h"
 #include "error.h"
-#include "proto.h"
 #include "materba.h"
 #include "pool.h"
-#include "save.h"
 #include "game.h"
 #include "lsquare.h"
 #include "god.h"

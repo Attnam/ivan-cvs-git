@@ -1,21 +1,29 @@
+#define __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<groundlevelterrain*>	protocontainer<groundlevelterrain>::ProtoData;
+std::vector<overlevelterrain*>		protocontainer<overlevelterrain>::ProtoData;
+std::map<std::string, ushort>		protocontainer<groundlevelterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<overlevelterrain>::CodeNameMap;
+
+#include "femath.h"
 #include "lterrade.h"
+
+#undef __FILE_OF_STATIC_LTERRAIN_PROTOTYPE_DECLARATIONS__
+
 #include "message.h"
 #include "god.h"
-#include "igraph.h"
-#include "save.h"
 #include "level.h"
-#include "charba.h"
 #include "dungeon.h"
 #include "feio.h"
 #include "hscore.h"
 #include "lsquare.h"
 #include "worldmap.h"
 #include "charba.h"
-#include "team.h"
 #include "whandler.h"
 #include "stack.h"
 #include "itemba.h"
-#include "femath.h"
 #include "config.h"
 
 bool door::Open(character* Opener)
@@ -72,7 +80,7 @@ bool door::Close(character* Closer)
       else
 	{
 	  ADD_MESSAGE("The door resists!");
-	  return false;
+	  return true;
 	}
     else
       {
@@ -466,7 +474,7 @@ bool fountain::Consume(character* Drinker)
 	    {
 	    case 0:
 	      ADD_MESSAGE("The water is contaminated!");
-	      Drinker->SetNP(Drinker->GetNP() + 5);
+	      Drinker->EditNP(50);
 
 	      if(!(RAND() % 5))
 		Drinker->Polymorph(protosystem::CreateMonster(false), 2500 + RAND() % 2500);
@@ -477,7 +485,7 @@ bool fountain::Consume(character* Drinker)
 	
 	    case 1:
 	      ADD_MESSAGE("The water tasted very good.");
-	      Drinker->SetNP(Drinker->GetNP() + 100);
+	      Drinker->EditNP(1000);
 	      Drinker->ChangeRandomStat(1);
 	      break;
 
@@ -508,14 +516,14 @@ bool fountain::Consume(character* Drinker)
 			}
 		    }
 		}
+	      else
+		DryOut();
 
-	    case 3:
-	      DryOut();
 	      break;
 
 	    default:
 	      ADD_MESSAGE("The water tastes good.");
-	      Drinker->SetNP(Drinker->GetNP() + 25);
+	      Drinker->EditNP(250);
 	      break;
 	    }
 
@@ -700,4 +708,14 @@ std::string fountain::Name(uchar Case) const
     return NameWithMaterial(Case, 1);
   else
     return NameNormal(Case, "a", "dried out ");
+}
+
+void couch::ShowRestMessage(character*) const
+{
+  ADD_MESSAGE("You rest well on the soft sofa.");
+}
+
+void doublebed::ShowRestMessage(character*) const
+{
+  ADD_MESSAGE("You lay yourself on the confortable bed.");
 }

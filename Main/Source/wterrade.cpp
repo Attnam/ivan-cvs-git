@@ -1,14 +1,23 @@
+#define __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<groundworldmapterrain*>	protocontainer<groundworldmapterrain>::ProtoData;
+std::vector<overworldmapterrain*>	protocontainer<overworldmapterrain>::ProtoData;
+std::map<std::string, ushort>		protocontainer<groundworldmapterrain>::CodeNameMap;
+std::map<std::string, ushort>		protocontainer<overworldmapterrain>::CodeNameMap;
+
 #include "wterrade.h"
-#include "game.h"
+
+#undef __FILE_OF_STATIC_WTERRAIN_PROTOTYPE_DECLARATIONS__
+
 #include "message.h"
 #include "dungeon.h"
 #include "level.h"
 #include "worldmap.h"
 #include "charde.h"
 #include "feio.h"
-#include "igraph.h"
 #include "square.h"
-#include "graphics.h"
 #include "team.h"
 #include "config.h"
 

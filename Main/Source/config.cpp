@@ -1,14 +1,11 @@
 #include <fstream>
 
 #include "config.h"
-#include "save.h"
 #include "felist.h"
 #include "graphics.h"
-#include "bitmap.h"
 #include "strover.h"
 #include "feio.h"
 #include "game.h"
-#include "message.h"
 #include "area.h"
 
 #ifdef WIN32
@@ -119,10 +116,7 @@ void configuration::ShowConfigScreen()
   while(true)
     {
       if(game::GetRunning())
-	{
-	  EMPTY_MESSAGES();
-	  game::DrawEverythingNoBlit();
-	}
+	game::DrawEverythingNoBlit();
 
       felist List("Which setting do you wish to configure?", WHITE, 0);
 

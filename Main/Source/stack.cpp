@@ -1,14 +1,9 @@
-#include "bitmap.h"
-#include "igraph.h"
 #include "itemba.h"
 #include "stack.h"
 #include "strover.h"
 #include "felist.h"
 #include "lsquare.h"
-#include "game.h"
-#include "proto.h"
 #include "message.h"
-#include "save.h"
 #include "graphics.h"
 #include "charba.h"
 #include "area.h"
@@ -406,7 +401,8 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 	GetItem(0)->Fly(Direction, Strength, this, true);
     }
   else
-    if(GetItems() && ShowOnScreen) ADD_MESSAGE("Your weak kick has no effect.");
+    if(GetItems() && ShowOnScreen)
+      ADD_MESSAGE("Your weak kick has no effect.");
 }
 
 long stack::Score() const

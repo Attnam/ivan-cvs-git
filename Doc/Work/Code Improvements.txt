@@ -3,6 +3,7 @@ of the Finnish language), since these tasks are not meant to be
 done (or understood) by anyone else than the writer.
 
 *high priority
+//done
 
 *Funktioiden verkottaminen.
 Assistenttioperaattorien integrointi?
@@ -22,3 +23,5 @@ Aliasten klarifikaatio.
 Merkkijonoviittausten regularisoiminen.
 Merkkitaulukoiden hävittäminen.
 *Funktioparametrisoitujen aliohjelmien suosiminen makrojen sijaan.
+//Protopilkonta.
+MS-koodin poisajo grafiikkakirjastosta.

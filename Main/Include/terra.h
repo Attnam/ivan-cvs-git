@@ -26,6 +26,7 @@ class groundterrain : public terrain
 {
  public:
   virtual bool GetIsWalkable(character*) const;
+  virtual ushort GetEntryAPRequirement() const = 0;
 };
 
 class overterrain : public terrain
@@ -33,6 +34,8 @@ class overterrain : public terrain
  public:
   virtual bool GoUp(character*) const = 0;
   virtual bool GoDown(character*) const = 0;
+  virtual uchar RestModifier() const { return 1; }
+  virtual void ShowRestMessage(character*) const { }
 };
 
 #endif

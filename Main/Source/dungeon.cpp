@@ -1,14 +1,6 @@
 #include "dungeon.h"
-#include "allocate.h"
 #include "level.h"
-#include "lsquare.h"
-#include "lterrade.h"
-#include "charde.h"
-#include "stack.h"
 #include "strover.h"
-#include "error.h"
-#include "save.h"
-#include "materde.h"
 #include "script.h"
 
 dungeon::dungeon(uchar Index) : Index(Index)

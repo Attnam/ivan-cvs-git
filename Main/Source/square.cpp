@@ -1,14 +1,13 @@
 #include "charba.h"
 #include "square.h"
-#include "lterraba.h"
-#include "igraph.h"
-#include "level.h"
-#include "proto.h"
+#include "terra.h"
+#include "area.h"
 #include "materba.h"
 #include "strover.h"
-#include "save.h"
 #include "config.h"
 #include "femath.h"
+#include "bitmap.h"
+#include "graphics.h"
 
 square::square(area* AreaUnder, vector2d Pos) : AreaUnder(AreaUnder), Character(0), Pos(Pos), NewDrawRequested(true), MemorizedUpdateRequested(true), Memorized(0), LastSeen(0), DescriptionChanged(true)
 {
@@ -138,4 +137,14 @@ std::string square::ScoreEntry(character*) const
     return GetOverTerrain()->ScoreEntry();
   else
     return GetGroundTerrain()->ScoreEntry();
+}
+
+ushort square::GetEntryAPRequirement() const
+{
+  return GetGroundTerrain()->GetEntryAPRequirement();
+}
+
+uchar square::RestModifier() const
+{
+  return GetOverTerrain()->RestModifier();
 }

@@ -12,7 +12,6 @@
 
 class outputfile;
 class inputfile;
-class vector2d;
 class bitmap;
 
 class colorizablebitmap

@@ -53,23 +53,23 @@ class room : public typeable
   uchar Index, DivineOwner;
 };
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
 
 #define ROOM_PROTOINSTALLER(name, base, setstats)\
-	\
-	static class name##_protoinstaller\
-	{\
-	public:\
-		name##_protoinstaller() : Index(protocontainer<room>::Add(new name)) { }\
-		ushort GetIndex() const { return Index; }\
-	private:\
-		ushort Index;\
-	} name##_ProtoInstaller;\
-	\
-	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-	void name::SetDefaultStats() { setstats }\
-	const room* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
-	ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  \
+  static class name##_protoinstaller\
+  {\
+   public:\
+    name##_protoinstaller() : Index(protocontainer<room>::Add(new name)) { }\
+    ushort GetIndex() const { return Index; }\
+   private:\
+    ushort Index;\
+  } name##_ProtoInstaller;\
+  \
+  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
+  void name::SetDefaultStats() { setstats }\
+  const room* const name::GetPrototype() { return protocontainer<room>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -81,17 +81,17 @@ class room : public typeable
 \
 name : public base\
 {\
-public:\
-	name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
-	virtual room* Clone() const { return new name; }\
-	virtual typeable* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
-	static ushort StaticType();\
-	static const room* const GetPrototype();\
-	virtual std::string ClassName() const { return #name; }\
-protected:\
-	virtual ushort Type() const;\
-	virtual void SetDefaultStats();\
-	data\
+ public:\
+  name(bool SetStats = true) : base(false) { if(SetStats) SetDefaultStats(); }\
+  virtual room* Clone() const { return new name; }\
+  virtual typeable* CloneAndLoad(inputfile& SaveFile) const { room* Room = new name; Room->Load(SaveFile); return Room; }\
+  static ushort StaticType();\
+  static const room* const GetPrototype();\
+  virtual std::string ClassName() const { return #name; }\
+ protected:\
+  virtual ushort Type() const;\
+  virtual void SetDefaultStats();\
+  data\
 }; ROOM_PROTOINSTALLER(name, base, setstats)
 
 #endif

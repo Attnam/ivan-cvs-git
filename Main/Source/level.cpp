@@ -3,15 +3,12 @@
 
 #include "level.h"
 #include "charba.h"
-#include "error.h"
 #include "itemde.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "lterrade.h"
 #include "proto.h"
-#include "save.h"
 #include "script.h"
-#include "roomde.h"
 #include "team.h"
 #include "config.h"
 #include "femath.h"
@@ -853,7 +850,7 @@ void level::MoveCharacter(vector2d From, vector2d To)
 
 ushort level::GetIdealPopulation() const 
 { 
-  return 5 + (game::GetCurrent() * 3);
+  return 10 + (game::GetCurrent() * 4);
 }
 
 ushort level::GetLOSModifier() const

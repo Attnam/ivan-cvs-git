@@ -3,10 +3,8 @@
 #include "charba.h"
 #include "dungeon.h"
 #include "message.h"
-#include "igraph.h"
 #include "lsquare.h"
 #include "worldmap.h"
-#include "femath.h"
 #include "femath.h"
 #include "config.h"
 

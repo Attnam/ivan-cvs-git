@@ -1,7 +1,5 @@
 #include "team.h"
-#include "game.h"
 #include "error.h"
-#include "save.h"
 #include "charba.h"
 #include "message.h"
 

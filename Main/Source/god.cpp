@@ -7,8 +7,6 @@
 #include "itemde.h"
 #include "stack.h"
 #include "message.h"
-#include "proto.h"
-#include "save.h"
 #include "script.h"
 #include "lterrade.h"
 #include "team.h"
@@ -21,7 +19,7 @@ void god::Pray()
       {
 	ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
 	PrayGoodEffect();
-	AdjustTimer(500);
+	AdjustTimer(5000);
 	AdjustRelation(50);
 	game::ApplyDivineAlignmentBonuses(this, true);
 
@@ -40,7 +38,7 @@ void god::Pray()
       {
 	ADD_MESSAGE("You feel %s is displeased today.", GOD_NAME);
 	PrayBadEffect();
-	AdjustTimer(1000);
+	AdjustTimer(10000);
 	game::ApplyDivineAlignmentBonuses(this, false);
       }
   else
@@ -48,7 +46,7 @@ void god::Pray()
       {
 	ADD_MESSAGE("You feel %s is displeased, but helps you anyway.", GOD_NAME);
 	PrayGoodEffect();
-	AdjustTimer(2500);
+	AdjustTimer(25000);
 	AdjustRelation(-50);
 	game::ApplyDivineAlignmentBonuses(this, false);
       }
@@ -56,7 +54,7 @@ void god::Pray()
       {
 	ADD_MESSAGE("You feel %s is angry.", GOD_NAME);
 	PrayBadEffect();
-	AdjustTimer(5000);
+	AdjustTimer(50000);
 	AdjustRelation(-100);
 	game::ApplyDivineAlignmentBonuses(this, false);
 
@@ -271,15 +269,15 @@ void seges::PrayGoodEffect()
 {
   ADD_MESSAGE("Your stomach feels full again.");
 
-  if(game::GetPlayer()->GetNP() < 1000)
-    game::GetPlayer()->SetNP(1000);
+  if(game::GetPlayer()->GetNP() < 10000)
+    game::GetPlayer()->SetNP(10000);
 }
 
 void seges::PrayBadEffect()
 {
   ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
 
-  game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 100);
+  game::GetPlayer()->EditNP(-1000);
 
   if(game::GetPlayer()->GetNP() < 1)
     game::GetPlayer()->CheckStarvationDeath(std::string("starved by ") + Name());
@@ -651,7 +649,7 @@ void valpurus::Pray()
     {
       ADD_MESSAGE("You feel %s is very pleased.", GOD_NAME);
       PrayGoodEffect();
-      AdjustTimer(10000);
+      AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, true);
 
@@ -670,7 +668,7 @@ void valpurus::Pray()
     {
       ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
       PrayBadEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
 
@@ -693,7 +691,7 @@ void atavus::Pray()
     {
       ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
       PrayGoodEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-250);
       game::ApplyDivineAlignmentBonuses(this, true);
 
@@ -712,7 +710,7 @@ void atavus::Pray()
     {
       ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
       PrayBadEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
 
@@ -735,7 +733,7 @@ void erado::Pray()
     {
       ADD_MESSAGE("You feel %s is very pleased.", GOD_NAME);
       PrayGoodEffect();
-      AdjustTimer(10000);
+      AdjustTimer(100000);
       AdjustRelation(-500);
       game::ApplyDivineAlignmentBonuses(this, true);
 
@@ -754,7 +752,7 @@ void erado::Pray()
     {
       ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
       PrayBadEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
 
@@ -774,9 +772,7 @@ void erado::Pray()
 void infuscor::PrayBadEffect()
 {
   ADD_MESSAGE("Vile and evil knowledge pulps into your brain. It's too much for it to handle; you faint.");
-
-  game::GetPlayer()->SetAP(-10000);
-  game::GetPlayer()->SetNP(game::GetPlayer()->GetNP() - 200);
+  game::GetPlayer()->Faint();
 }
 
 void macellarius::PrayGoodEffect()
@@ -870,7 +866,7 @@ void cruentus::Pray()
     {
       ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
       PrayGoodEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-250);
       game::ApplyDivineAlignmentBonuses(this, true);
 
@@ -889,7 +885,7 @@ void cruentus::Pray()
     {
       ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
       PrayBadEffect();
-      AdjustTimer(5000);
+      AdjustTimer(50000);
       AdjustRelation(-100);
       game::ApplyDivineAlignmentBonuses(this, false);
 

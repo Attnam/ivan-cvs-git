@@ -7,23 +7,18 @@
 #include <sys/farptr.h>
 #endif
 
-#include "graphics.h"
-#include "game.h"
-#include "igraph.h"
 #include "hscore.h"
 #include "feio.h"
 #include "whandler.h"
 #include "charde.h"
 #include "config.h"
-#include "bitmap.h"
 
 #ifdef WIN32
 int Main(HINSTANCE hInstance, HINSTANCE, HWND* hWnd, LPSTR, int)
+{
 #else
 int Main(int argc, char **argv)
-#endif
 {
-#ifndef WIN32
   if(argc > 1 && std::string(argv[1]) == "--version")
   {
     std::cout << "IVAN version " << VERSION << std::endl;

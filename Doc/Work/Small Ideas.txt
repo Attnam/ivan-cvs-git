@@ -69,7 +69,6 @@ Ivan should break doors.
 Monsters that change colors.
 Drugs.
 Karateka.
-*Jewels.
 Change material tweaking.
 Monsters should pray and occasionaly be punished by the gods for praying too often.
 ("You hit the farmer. The farmer prays for Valpurus's help. Valpurus is annoyed. Valpurus smites the farmer with a small hammer. The farmer is slain.")
@@ -77,6 +76,6 @@ WMap terrain height should be shown in WMode.
 Special "enemy sighted" rections.
 Attnam could be resized again?
 Vampires should be able to polymorph into a bat.
-*Drowning.
-Material adjectives.
 Kicking a throne should yield precious stones.
+Weapon skills should affect attack AP costs as in ADOM.
+*RestMessages.

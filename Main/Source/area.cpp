@@ -3,11 +3,7 @@
 #include "square.h"
 #include "bitmap.h"
 #include "charba.h"
-#include "materba.h"
-#include "proto.h"
-#include "save.h"
 #include "graphics.h"
-#include "terra.h"
 #include "error.h"
 #include "femath.h"
 

@@ -10,27 +10,27 @@
 #define HAS_DODGED 2
 #define HAS_DIED 3
 
-#define NUMBER_OF_HUMAN_LEGS	10
-#define NUMBER_OF_HUMAN_TORSOS	14
-#define NUMBER_OF_HUMAN_ARMS	14
-#define NUMBER_OF_HUMAN_HEADS	23
+#define NUMBER_OF_HUMAN_LEGS  10
+#define NUMBER_OF_HUMAN_TORSOS  14
+#define NUMBER_OF_HUMAN_ARMS  14
+#define NUMBER_OF_HUMAN_HEADS  23
 
-#define HUNGERLEVEL 		500
-#define CRITICALHUNGERLEVEL 	100
+#define HUNGERLEVEL     5000
+#define CRITICALHUNGERLEVEL   1000
 
-#define OVERLOADED		0
-#define STRESSED		1
-#define BURDENED		2
-#define UNBURDENED		3
+#define OVERLOADED    0
+#define STRESSED    1
+#define BURDENED    2
+#define UNBURDENED    3
 
-#define STATES			6
+#define STATES      6
 
-#define FAINTED			0
-#define CONSUMING		1
-#define POLYMORPHED		2
-#define RESTING			3
-#define DIGGING			4
-#define GOING			5
+#define FAINTED      0
+#define CONSUMING    1
+#define POLYMORPHED    2
+#define RESTING      3
+#define DIGGING      4
+#define GOING      5
 
 #include <list>
 
@@ -123,17 +123,17 @@ class character : public object
   virtual void AddScoreEntry(std::string, float = 1, bool = true) const;
   virtual long Score() const;
   virtual float GetAttackStrength() const;
-  virtual item* GetTorsoArmor() const 		{ return 0; }
-  virtual item* GetWielded() const 		{ return Wielded; }
+  virtual item* GetTorsoArmor() const     { return 0; }
+  virtual item* GetWielded() const     { return Wielded; }
   virtual worldmapsquare* GetWorldMapSquareUnder() const;
   virtual long GetAgilityExperience() const { return AgilityExperience; }
   virtual long GetAP() const { return AP; }
   virtual long GetEnduranceExperience() const { return EnduranceExperience; }
-  virtual long GetNP() const 			{ return NP; }
+  virtual long GetNP() const       { return NP; }
   virtual long GetPerceptionExperience() const { return PerceptionExperience; }
   virtual long GetStrengthExperience() const { return StrengthExperience; }
-  virtual short GetHP() const 			{ return HP; }
-  virtual stack* GetStack() const 		{ return Stack; }
+  virtual short GetHP() const       { return HP; }
+  virtual stack* GetStack() const     { return Stack; }
   virtual uchar GetBurdenState(ulong = 0) const;
   virtual uchar GetSex() const { return UNDEFINED; }
   virtual uchar TakeHit(character*, short);
@@ -142,12 +142,12 @@ class character : public object
   virtual ulong GetBloodColor() const;
   virtual ushort CalculateArmorModifier() const;
   virtual ushort GetRegenerationCounter() const { return RegenerationCounter; }
-  virtual ushort GetAgility() const 			{ return Agility; }
+  virtual ushort GetAgility() const       { return Agility; }
   virtual item* GetConsumingCurrently() const { return StateVariables.Consuming.ConsumingCurrently; }
   virtual ushort GetEmitation() const;
-  virtual ushort GetEndurance() const 			{ return Endurance; }
-  virtual ushort GetPerception() const 		{ return Perception; }
-  virtual ushort GetStrength() const 			{ return Strength; }
+  virtual ushort GetEndurance() const       { return Endurance; }
+  virtual ushort GetPerception() const     { return Perception; }
+  virtual ushort GetStrength() const       { return Strength; }
   virtual ushort LOSRange() const;
   virtual ushort LOSRangeSquare() const;
   virtual bool CanBeGenerated() const { return true; }
@@ -202,7 +202,7 @@ class character : public object
   virtual bool CheckCannibalism(ushort);
   virtual uchar GetGraphicsContainerIndex() const { return GCHARACTER; }
   virtual void VirtualConstructor() {}
-  virtual void CharacterSpeciality() {}
+  virtual void CharacterSpeciality(ushort = 1) {}
   virtual void ActivateState(uchar Index) { State |= 1 << Index; }
   virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
   virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }
@@ -279,6 +279,13 @@ class character : public object
   virtual bool CanSwim() const { return false; }
   virtual bool CanFly() const { return false; }
   virtual void TestWalkability();
+  virtual void EditAP(long What) { AP += What; }
+  virtual void EditNP(long What) { NP += What; }
+  virtual void EditStrengthExperience(long What) { StrengthExperience += What; }
+  virtual void EditEnduranceExperience(long What) { EnduranceExperience += What; }
+  virtual void EditAgilityExperience(long What) { AgilityExperience += What; }
+  virtual void EditPerceptionExperience(long What) { PerceptionExperience += What; }
+  virtual void EditRegenerationCounter(long What) { RegenerationCounter += What; }
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();
@@ -292,7 +299,7 @@ class character : public object
   virtual void GetPlayerCommand();
   virtual void GetAICommand();
   virtual bool MoveTowards(vector2d);
-  virtual float GetMeleeStrength() const 		{ return 0; }
+  virtual float GetMeleeStrength() const     { return 0; }
   virtual std::string ThirdPersonWeaponHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return NormalThirdPersonHitVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return NormalFirstPersonHitVerb(Critical); }
@@ -316,7 +323,7 @@ class character : public object
   long StrengthExperience, EnduranceExperience, AgilityExperience, PerceptionExperience;
   bool IsPlayer;
   uchar State;
-  ushort StateCounter[STATES];
+  short StateCounter[STATES];
   void (character::*StateHandler[STATES])();
   team* Team;
   vector2d WayPoint;
@@ -343,27 +350,27 @@ class character : public object
   std::list<character*>::iterator TeamIterator;
 };
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
+#ifdef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
 
 #define CHARACTER_PROTOINSTALLER(name, base, initmaterials, setstats)\
-	\
-	static class name##_protoinstaller\
-	{\
-	public:\
-		name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) {}\
-		ushort GetIndex() const { return Index; }\
-	private:\
-		ushort Index;\
-	} name##_ProtoInstaller;\
-	\
-	name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
-	name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
-	character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
-	typeable* name::CloneAndLoad(inputfile& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
-	void name::SetDefaultStats() { setstats }\
-	ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
-	const character* const name::GetPrototype() { return protocontainer<character>::GetProto(StaticType()); }\
-	ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
+  \
+  static class name##_protoinstaller\
+  {\
+   public:\
+    name##_protoinstaller() : Index(protocontainer<character>::Add(new name(false, false, false, false))) {}\
+    ushort GetIndex() const { return Index; }\
+   private:\
+    ushort Index;\
+  } name##_ProtoInstaller;\
+  \
+  name::name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool) : base(false, false, false, AddToPool) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
+  name::name(material* FirstMaterial, bool SetStats, bool CreateEquipment) : base(false, false, false) { initmaterials ; SetMaterial(0, FirstMaterial); if(SetStats) { SetDefaultStats(); SetHP(GetMaxHP()); } if(CreateEquipment) CreateInitialEquipment(); }\
+  character* name::Clone(bool CreateMaterials, bool SetStats, bool CreateEquipment) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
+  typeable* name::CloneAndLoad(inputfile& SaveFile) const { character* Char = new name(false, false, false); Char->Load(SaveFile); return Char; }\
+  void name::SetDefaultStats() { setstats }\
+  ushort name::StaticType() { return name##_ProtoInstaller.GetIndex(); }\
+  const character* const name::GetPrototype() { return protocontainer<character>::GetProto(StaticType()); }\
+  ushort name::Type() const { return name##_ProtoInstaller.GetIndex(); }
 
 #else
 
@@ -375,27 +382,27 @@ class character : public object
 \
 name : public base\
 {\
-public:\
-	name(bool = true, bool = true, bool = true, bool = true);\
-	name(material*, bool = true, bool = true);\
-	virtual character* Clone(bool = true, bool = true, bool = true) const;\
-	virtual typeable* CloneAndLoad(inputfile&) const;\
-	static ushort StaticType();\
-	static const character* const GetPrototype();\
-	virtual std::string ClassName() const { return #name; }\
-protected:\
-	virtual void SetDefaultStats();\
-	virtual ushort Type() const;\
-	data\
+ public:\
+  name(bool = true, bool = true, bool = true, bool = true);\
+  name(material*, bool = true, bool = true);\
+  virtual character* Clone(bool = true, bool = true, bool = true) const;\
+  virtual typeable* CloneAndLoad(inputfile&) const;\
+  static ushort StaticType();\
+  static const character* const GetPrototype();\
+  virtual std::string ClassName() const { return #name; }\
+ protected:\
+  virtual void SetDefaultStats();\
+  virtual ushort Type() const;\
+  data\
 }; CHARACTER_PROTOINSTALLER(name, base, initmaterials, setstats)
 
 #define ABSTRACT_CHARACTER(name, base, data)\
 \
 name : public base\
 {\
-public:\
-	name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(CreateMaterials, SetStats, CreateEquipment, AddToPool) { VirtualConstructor(); }\
-	data\
+ public:\
+  name(bool CreateMaterials, bool SetStats, bool CreateEquipment, bool AddToPool = true) : base(CreateMaterials, SetStats, CreateEquipment, AddToPool) { VirtualConstructor(); }\
+  data\
 };
 
 #endif

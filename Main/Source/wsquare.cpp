@@ -2,14 +2,9 @@
 
 #include "strover.h"
 #include "wsquare.h"
-#include "igraph.h"
 #include "charba.h"
 #include "worldmap.h"
-#include "wterraba.h"
-#include "proto.h"
-#include "materba.h"
 #include "bitmap.h"
-#include "save.h"
 #include "graphics.h"
 #include "config.h"
 

@@ -59,6 +59,8 @@ class square
   virtual std::string DeathMessage(character*) const;
   virtual std::string MonsterDeathVerb(character*) const;
   virtual std::string ScoreEntry(character*) const;
+  virtual ushort GetEntryAPRequirement() const;
+  virtual uchar RestModifier() const;
  protected:
   std::string MemorizedDescription;
   area* AreaUnder;

@@ -128,8 +128,8 @@ class game
   static void SetGodNumber(uchar What) { GodNumber = What; }
   static uchar GetGodNumber() { return GodNumber; }
   static long GetBaseScore() { return BaseScore; }
-  static void Turn(ushort Turn = 1) { Turns += Turn; }
-  static ulong GetTurns() { return Turns; }
+  static void Tick(ushort Tick = 1) { Ticks += Tick; }
+  static ulong GetTicks() { return Ticks; }
   static std::string GetAutoSaveFileName() { return AutoSaveFileName; }
   static uchar DirectionQuestion(std::string, uchar = 8, bool = true, bool = false);
   static command* GetCommand(ushort Index) { return Command[Index]; }
@@ -199,7 +199,7 @@ class game
   static std::string PlayerName;
   static uchar GodNumber;
   static long BaseScore;
-  static ulong Turns;
+  static ulong Ticks;
   static std::string AutoSaveFileName;
   static command* Command[];
   static bool InWilderness;

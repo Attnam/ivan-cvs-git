@@ -151,7 +151,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 
   switch(Flags)
     {
-    case 0:
+    case NONE:
       {
 	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
@@ -252,7 +252,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 
   switch(Flags)
     {
-    case 0:
+    case NONE:
       {
 	ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;

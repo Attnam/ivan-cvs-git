@@ -1,15 +1,11 @@
 #include <typeinfo>
 
 #include "script.h"
-#include "save.h"
-#include "error.h"
-#include "proto.h"
-#include "materba.h"
 #include "lterraba.h"
 #include "charba.h"
 #include "allocate.h"
-#include "itemba.h"
 #include "team.h"
+#include "itemba.h"
 
 void posscript::ReadFrom(inputfile& SaveFile)
 {
@@ -195,6 +191,7 @@ character* contentscript<character>::Instantiate() const
 
 void contentscript<overlevelterrain>::ReadParameters(inputfile& SaveFile, std::string LastWord)
 {
+  ValueMap["NONE"] = 0;
   ValueMap["MIRROR"] = 1;
   ValueMap["FLIP"] = 2;
   ValueMap["ROTATE"] = 4;

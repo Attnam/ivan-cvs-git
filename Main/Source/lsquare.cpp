@@ -1,18 +1,13 @@
 #include <ctime>
 #include <cmath>
 
-#include "charba.h"
-#include "igraph.h"
 #include "lsquare.h"
 #include "stack.h"
 #include "lterrade.h"
 #include "level.h"
 #include "itemba.h"
-#include "proto.h"
 #include "message.h"
 #include "strover.h"
-#include "save.h"
-#include "graphics.h"
 #include "script.h"
 #include "charba.h"
 #include "team.h"
@@ -775,7 +770,9 @@ bool levelsquare::Kick(ushort Strength, uchar KickWay, character* Kicker)
     GetCharacter()->BeKicked(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay, Kicker);
 
   GetOverLevelTerrain()->Kick(Strength, GetLastSeen() == game::GetLOSTurns(), KickWay);
-
+  Kicker->EditStrengthExperience(25);
+  Kicker->EditAgilityExperience(50);
+  Kicker->EditNP(-50);
   return true;
 }
 

@@ -308,6 +308,8 @@ class OVERLEVELTERRAIN
   virtual std::string DigMessage() const { return "The destroy the couch."; }
   virtual bool SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
+  virtual uchar RestModifier() const { return 2; }
+  virtual void ShowRestMessage(character*) const;
  protected:
   virtual std::string NameSingular() const { return "couch"; }
   virtual vector2d GetBitmapPos() const { return vector2d(0, 400); }
@@ -375,6 +377,8 @@ class OVERLEVELTERRAIN
   virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
   virtual bool SitOn(character*);
   virtual bool CanBeDigged() const { return true; }
+  virtual uchar RestModifier() const { return 5; }
+  virtual void ShowRestMessage(character*) const;
  protected:
   virtual std::string NameSingular() const { return "luxurious double bed"; }
   virtual vector2d GetBitmapPos() const { return vector2d(48, 304); }

@@ -1,5 +1,4 @@
 #include "roomba.h"
-#include "save.h"
 #include "lterrade.h"
 #include "error.h"
 #include "charde.h"
@@ -37,6 +36,8 @@ void room::HandleInstantiatedOverLevelTerrain(overlevelterrain* Terrain)
 void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
+
+  /* This is a highly temporary gum solution... That most likely will be forgotten here. */
 
   if(Character->GetType() == kamikazedwarf::StaticType())
     {

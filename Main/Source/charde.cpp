@@ -1,15 +1,24 @@
+#define __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<character*>			protocontainer<character>::ProtoData;
+std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
+
+#include "femath.h"
+#include "materde.h"
+#include "charde.h"
+
+#undef __FILE_OF_STATIC_CHARACTER_PROTOTYPE_DECLARATIONS__
+
 #include <cmath>
 
-#include "charde.h"
 #include "stack.h"
 #include "itemde.h"
 #include "level.h"
 #include "lsquare.h"
 #include "message.h"
-#include "igraph.h"
-#include "bitmap.h"
 #include "hscore.h"
-#include "save.h"
 #include "god.h"
 #include "feio.h"
 #include "wskill.h"
@@ -17,7 +26,6 @@
 #include "strover.h"
 #include "team.h"
 #include "lterraba.h"
-#include "femath.h"
 #include "error.h"
 
 petrus::~petrus()
@@ -127,7 +135,8 @@ bool ennerbeast::Hit(character*)
       game::GetCurrentLevel()->GetLevelSquare(vector2d(XPointer, YPointer))->GetSideStack(x)->ReceiveSound(ScreamStrength);
   });
 
-  SetStrengthExperience(GetStrengthExperience() + 100);
+  EditStrengthExperience(100);
+  EditNP(-100);
 
   return true;
 }
@@ -266,6 +275,7 @@ bool humanoid::WearArmor()
 	if(GetStack()->GetItem(Index) != GetWielded())
 	  {
 	    Armor.Torso = GetStack()->GetItem(Index);
+	    EditAP(-5000);
 	    return true;
 	  }
 	else
@@ -508,7 +518,7 @@ bool humanoid::Hit(character* Enemy)
       if(GetWielded())
 	GetWielded()->ReceiveHitEffect(Enemy, this);
     case HAS_DIED:
-      SetStrengthExperience(GetStrengthExperience() + 50);
+      EditStrengthExperience(50);
       if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
 	GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
       if(GetWielded())
@@ -521,23 +531,23 @@ bool humanoid::Hit(character* Enemy)
 
 	}
     case HAS_DODGED:
-      SetAgilityExperience(GetAgilityExperience() + 25);
+      EditAgilityExperience(25);
     }
 
-  SetNP(GetNP() - 4);
+  EditNP(-50);
 
   return true;
 }
 
-void humanoid::CharacterSpeciality()
+void humanoid::CharacterSpeciality(ushort Turns)
 {
   for(uchar c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
-    if(GetCategoryWeaponSkill(c)->Turn() && GetIsPlayer())
+    if(GetCategoryWeaponSkill(c)->Turn(Turns) && GetIsPlayer())
       GetCategoryWeaponSkill(c)->AddLevelDownMessage();
 
   for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
     {
-      if((*i)->Turn() && GetIsPlayer())
+      if((*i)->Turn(Turns) && GetIsPlayer())
 	for(ushort c = 0; c < GetStack()->GetItems(); ++c)
 	  if((*i)->GetID() == GetStack()->GetItem(c)->GetID())
 	    {
@@ -849,7 +859,7 @@ void guard::BeTalkedTo(character* Talker)
       else
         {
 	  ADD_MESSAGE("\"Attnam's guards can barely wield a sword.");
-          ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't make anything suspicious here.\"");
+          ADD_MESSAGE("But we are trained by the laws of the dungeon, so don't do anything suspicious here.\"");
         }
       break;
     }
@@ -1227,9 +1237,9 @@ bool elpuri::Hit(character* Enemy)
 	  case HAS_DIED:
 	    ByStander->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
 	    ByStander->CheckGearExistence();
-	    SetStrengthExperience(GetStrengthExperience() + 50);
+	    EditStrengthExperience(50);
 	  case HAS_DODGED:
-	    SetAgilityExperience(GetAgilityExperience() + 25);
+	    EditAgilityExperience(25);
 	  }
       }
 
@@ -1239,6 +1249,8 @@ bool elpuri::Hit(character* Enemy)
       if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
 	Square->GetSideStack(c)->ImpactDamage(GetStrength(), Square->CanBeSeen());
   });
+
+  EditNP(-50);
 
   return true;
 }
@@ -1745,7 +1757,7 @@ void kamikazedwarf::CreateInitialEquipment()
 bool kamikazedwarf::Hit(character* Enemy)
 {
   if(GetIsPlayer())
-    humanoid::Hit(Enemy);
+    return humanoid::Hit(Enemy);
   else
     {
       for(ushort c = 0; c < GetStack()->GetItems(); ++c)
@@ -1760,10 +1772,8 @@ bool kamikazedwarf::Hit(character* Enemy)
 	      return true;
 	  }
 
-      humanoid::Hit(Enemy);
+      return humanoid::Hit(Enemy);
     }
-
-  return true;
 }
 
 void kamikazedwarf::Save(outputfile& SaveFile) const
@@ -1881,7 +1891,7 @@ void genie::BeTalkedTo(character* Talker)
 
 bool unicorn::SpecialEnemySightedReaction(character*)
 {
-  if((!(RAND() % 3) && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
+  if((RAND() % 3 && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
   {
     if(GetLevelSquareUnder()->CanBeSeen())
       ADD_MESSAGE("%s disappears!", CNAME(DEFINITE));
@@ -1902,5 +1912,9 @@ bool unicorn::SpecialEnemySightedReaction(character*)
 
 void unicorn::CreateInitialEquipment()
 {
-  GetStack()->FastAddItem(new astone);
+  if(RAND() % 2)
+    GetStack()->FastAddItem(new astone);
+
+  if(RAND() % 2)
+    GetStack()->FastAddItem(new astone);
 }

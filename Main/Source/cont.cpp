@@ -1,8 +1,6 @@
 #include "cont.h"
 #include "strover.h"
-#include "save.h"
 #include "proto.h"
-#include "wterraba.h"
 #include "error.h"
 #include "femath.h"
 

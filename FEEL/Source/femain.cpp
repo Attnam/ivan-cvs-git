@@ -3,9 +3,9 @@
 
 #ifdef __DJGPP__
 #include <conio.h>
+#include "graphics.h"
 #endif
 
-#include "graphics.h"
 #include "error.h"
 
 #ifdef WIN32

@@ -33,6 +33,7 @@ class weaponskill
  public:
   weaponskill();
   bool Turn();
+  bool Turn(ushort);
   uchar GetLevel() const { return Level; }
   ulong GetHits() const { return Hits; }
   ulong GetHitCounter() const { return HitCounter; }
@@ -41,7 +42,7 @@ class weaponskill
   bool SubHit();
   bool SubHit(ulong);
   virtual ushort GetLevelMap(ushort Index) const = 0;
-  virtual ushort GetUnuseTurnMap(ushort Index) const = 0;
+  virtual ushort GetUnuseTickMap(ushort Index) const = 0;
   virtual ushort GetUnusePenaltyMap(ushort Index) const = 0;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -58,7 +59,7 @@ class gweaponskill : public weaponskill
  public:
   gweaponskill(uchar Index) : Index(Index) {}
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
+  ushort GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   std::string Name() const { return SkillName[Index]; }
   float GetBonus() const { return 1.0f + 0.15f * Level; }
@@ -66,7 +67,7 @@ class gweaponskill : public weaponskill
   void AddLevelDownMessage() const;
  private:
   static ushort LevelMap[];
-  static ushort UnuseTurnMap[];
+  static ushort UnuseTickMap[];
   static ushort UnusePenaltyMap[];
   static std::string SkillName[];
   uchar Index;
@@ -91,7 +92,7 @@ class sweaponskill : public weaponskill
  public:
   sweaponskill() {}
   ushort GetLevelMap(ushort Index) const { return LevelMap[Index]; }
-  ushort GetUnuseTurnMap(ushort Index) const { return UnuseTurnMap[Index]; }
+  ushort GetUnuseTickMap(ushort Index) const { return UnuseTickMap[Index]; }
   ushort GetUnusePenaltyMap(ushort Index) const { return UnusePenaltyMap[Index]; }
   float GetBonus() const { return Level ? 1.2f + 0.05f * (Level - 1) : 1.0f; }
   void AddLevelUpMessage(std::string) const;
@@ -102,7 +103,7 @@ class sweaponskill : public weaponskill
   ulong GetID() const { return ID; }
  private:
   static ushort LevelMap[];
-  static ushort UnuseTurnMap[];
+  static ushort UnuseTickMap[];
   static ushort UnusePenaltyMap[];
   ulong ID;
 };

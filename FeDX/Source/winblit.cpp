@@ -1,4 +1,6 @@
-#include "blit.h"
+#include "typedef.h"
+
+/* This file has been converted to Emacs style. That's why it looks so horrible. */
 
 void Fill(ulong TrueDestOffset, ulong TrueDestXMove, ushort Width, ushort Height, ushort Color)
 {

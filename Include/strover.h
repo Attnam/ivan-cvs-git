@@ -12,40 +12,40 @@
 
 inline std::string operator+ (std::string CppString, const int& Int)
 {
-	char Buffer[12];
+  char Buffer[12];
 
-	sprintf(Buffer, "%d", Int);
+  sprintf(Buffer, "%d", Int);
 
-	CppString += Buffer;
+  CppString += Buffer;
 
-	return CppString;
+  return CppString;
 }
 
 inline std::string& operator+= (std::string& CppString, const int& Int)
 {
-	char Buffer[12];
+  char Buffer[12];
 
-	sprintf(Buffer, "%d", Int);
+  sprintf(Buffer, "%d", Int);
 
-	CppString += Buffer;
+  CppString += Buffer;
 
-	return CppString;
+  return CppString;
 }
 
 inline std::string operator+ (const char* CString, std::string CppString)
 {
-	return std::string(CString) + CppString;
+  return std::string(CString) + CppString;
 }
 
 inline std::string& operator+ (std::string& CppString, const ulong& Int)
 {
-	char Buffer[12];
+  char Buffer[12];
 
-	sprintf(Buffer, "%d", int(Int));
+  sprintf(Buffer, "%d", int(Int));
 
-	CppString += Buffer;
+  CppString += Buffer;
 
-	return CppString;
+  return CppString;
 }
 
 #endif

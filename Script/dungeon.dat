@@ -67,7 +67,7 @@ Dungeon 0;
 		}
 		{
 			Item = astone;
-			Times = 50+rand%50;
+			Times = 25+rand%25;
 		}
 
 		RoomDefault
@@ -553,11 +553,11 @@ Dungeon 1;
 					D = valpurium door;
 					L = valpurium door { Locked = true; }
 					b = linden;
-					1 = poolcorner { VisualFlags = 0; }
+					1 = poolcorner { VisualFlags = NONE; }
 					2 = poolcorner { VisualFlags = MIRROR; }
 					3 = poolcorner { VisualFlags = MIRROR | FLIP; }
 					4 = poolcorner { VisualFlags = FLIP; }
-					5 = poolborder { VisualFlags = 0; }
+					5 = poolborder { VisualFlags = NONE; }
 					6 = poolborder { VisualFlags = ROTATE; }
 					7 = poolborder { VisualFlags = FLIP; }
 					8 = poolborder { VisualFlags = MIRROR | ROTATE; }
@@ -628,6 +628,11 @@ Dungeon 1;
 					s = iron spear;
 					c = chainmail;
 					e = backpack;
+					g = gold astone;
+					i = silver astone;
+					h = sapphire astone;
+					r = ruby astone;
+					d = diamond astone;
 				}
 			}
 			{
@@ -636,23 +641,23 @@ Dungeon 1;
 				# # # # . . . . . . # # # . . . . . . . # # # . . . . . . # # # #
 				# . . # . . . . . . # . . . . . . . . . . . # . . . . . . # . . #
 				# . . # . . . . # # # . . . . . . . . . . . # # # . . . . # . . #
-				# . . # . . . . # . . . . . . . . . a . . . . . # . . . . # . . #
+				# . . # . . . . # . . . d . . . . . a . d . . . # . . . . # . . #
 				# . . # # # . . # . . . . . . p . p . . . . . . # . . # # # . . #
 				# . . . e # . . # . . . . . . b . b . . . . . . # . . # . . . . #
 				# . . . e # . . # . . . . . . k . k . . . . . . # . . # . . . . #
-				# # # . e # . . # # # . . . . p . p . . . . # # # . . # . . # # #
+				# # # . e # . . # # # . r . . p . p . . r . # # # . . # . . # # #
 				. . # . e # # # . . # . . . . b . b . . . . # . . # # # . . # . .
 				. . # . . . . # . . # . . . . k . k . . . . # . . # . . . . # . .
 				. . # # # . . # # # # . . . . p . p . . . . # # # # . . # # # . .
-				. . . . # . . . . . # . . . . b . b . . . . # . . . . . # . . . .
+				. . . . # . . . . . # . h . . b . b . . h . # . . . . . # . . . .
 				. . . . # . . . . . # . . . . k . k . . . . # . . . . . # . . . .
 				. . . . # # # # . . # . . . . p . p . . . . # . . # # # # . . . .
 				. . . . . . . # . . # . . . . b . b . . . . # . . # . . . . . . .
-				. . . . . . # # # . # . . . . k . k . . . . # . # # # . . . . . .
+				. . . . . . # # # . # . i . . k . k . . i . # . # # # . . . . . .
 				. . # # # # # . # . # . . . . p . p . . . . # . # . # # # # # . .
 				. # # . . . . . . . # . . . . b . b . . . . # . . . . . . . # # .
 				. # . . . . . . # . # . . . . k . k . . . . # . # . . . . . . # .
-				. # . . . . . . # . # . . . . p . p . . . . # . # . . . . . . # .
+				. # . . . . . . # . # . g . . p . p . . g . # . # . . . . . . # .
 				. # # . . . . . # . # . . . . b . b . . . . # . # . . . . . # # .
 				. . # # . . . . # . # . . . . . . . . . . . # . # . . . . # # . .
 				. . . # # . . . # . # # # # # # . # # # # # # . # . . . # # . . .

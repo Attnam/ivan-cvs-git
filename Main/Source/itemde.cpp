@@ -1,23 +1,26 @@
+#define __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<item*>			protocontainer<item>::ProtoData;
+std::map<std::string, ushort>		protocontainer<item>::CodeNameMap;
+
+#include "femath.h"
+#include "itemde.h"
+
+#undef __FILE_OF_STATIC_ITEM_PROTOTYPE_DECLARATIONS__
+
 #include <cmath>
 
-#include "itemde.h"
-#include "igraph.h"
 #include "message.h"
-#include "bitmap.h"
 #include "stack.h"
-#include "game.h"
-#include "charba.h"
 #include "charde.h"
 #include "level.h"
 #include "lsquare.h"
 #include "lterraba.h"
-#include "save.h"
-#include "feio.h"
-#include "team.h"
 #include "config.h"
 #include "god.h"
 #include "strover.h"
-#include "femath.h"
 #include "whandler.h"
 
 void can::PositionedDrawToTileBuffer(uchar) const
@@ -274,7 +277,6 @@ bool pickaxe::Apply(character* User, stack*)
 	    User->SetWielded(this);
 	    User->ActivateState(DIGGING);
 	    User->SetStateCounter(DIGGING, User->GetStrength() < 50 ? (200 - (User->GetStrength() << 2)) : 2);
-	    User->SetStrengthExperience(User->GetStrengthExperience() + 50);
 	    return true;
 	  }
 	else
@@ -356,8 +358,9 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
     }
 
   Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
-
   SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
   return true;
 }
 
@@ -387,9 +390,9 @@ bool scrollofwishing::Read(character* Reader)
     {
       Reader->GetStack()->AddItem(TempItem);
       ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
+      Reader->EditAP(-2500); // very difficult to read
       return true;
     }
-
 
   return false;
 }
@@ -434,12 +437,6 @@ bool potion::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 bool scrollofchangematerial::Read(character* Reader)
 {
   ushort Index;
-
-  if(!Reader->CanRead())
-    {
-      ADD_MESSAGE("This monster can't read anything.");
-      return false;
-    }
 
   if((Index = Reader->GetStack()->DrawContents(Reader, "What item do you wish to change?")) == 0xFFFF)
     {
@@ -504,10 +501,11 @@ bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
       ADD_MESSAGE("Nothing happens.");
       return true;
     }
-  Beam(Zapper, "killed by a wand of striking", Direction, 15);
-	
-  SetTimesUsed(GetTimesUsed() + 1);
 
+  Beam(Zapper, "killed by a wand of striking", Direction, 15);
+  SetTimesUsed(GetTimesUsed() + 1);
+  Zapper->EditPerceptionExperience(50);
+  Zapper->EditAP(500);
   return true;
 }
 
@@ -1059,12 +1057,6 @@ bool scrollofcharging::Read(character* Reader)
 {
   ushort Index;
 
-  if(!Reader->CanRead())
-    {
-      ADD_MESSAGE("This monster can't read anything.");
-      return false;
-    }
-
   if((Index = Reader->GetStack()->DrawContents(Reader, "What item do you wish to charge?")) == 0xFFFF)
     {
       ADD_MESSAGE("You have nothing to charge.");
@@ -1108,7 +1100,7 @@ void banana::Load(inputfile& SaveFile)
   SaveFile >> Charges;
 }
 
-bool banana::Zap(character*, vector2d, uchar)
+bool banana::Zap(character* Zapper, vector2d, uchar)
 {
   if(Charges)
     {
@@ -1120,6 +1112,6 @@ bool banana::Zap(character*, vector2d, uchar)
       ADD_MESSAGE("Click!");
     }
 
+  Zapper->EditAP(500);
   return true;
 }
-

@@ -1,4 +1,14 @@
+#define __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<material*>			protocontainer<material>::ProtoData;
+std::map<std::string, ushort>		protocontainer<material>::CodeNameMap;
+
 #include "materde.h"
+
+#undef __FILE_OF_STATIC_MATERIAL_PROTOTYPE_DECLARATIONS__
+
 #include "charba.h"
 #include "message.h"
 #include "lsquare.h"

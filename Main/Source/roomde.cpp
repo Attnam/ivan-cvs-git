@@ -1,9 +1,17 @@
+#define __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
+
+#include "proto.h"
+
+std::vector<room*>			protocontainer<room>::ProtoData;
+std::map<std::string, ushort>		protocontainer<room>::CodeNameMap;
+
 #include "roomde.h"
+
+#undef __FILE_OF_STATIC_ROOM_PROTOTYPE_DECLARATIONS__
+
 #include "charba.h"
-#include "square.h"
 #include "message.h"
 #include "itemba.h"
-#include "lterraba.h"
 #include "god.h"
 #include "lsquare.h"
 #include "stack.h"

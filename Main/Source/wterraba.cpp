@@ -1,18 +1,10 @@
 #include <queue>
 
-#include "wterraba.h"
 #include "wsquare.h"
-#include "igraph.h"
 #include "bitmap.h"
-#include "object.h"
-#include "materba.h"
-#include "proto.h"
 #include "worldmap.h"
-#include "game.h"
-#include "save.h"
 #include "message.h"
 #include "charba.h"
-#include "team.h"
 #include "femath.h"
 
 struct prioritypair

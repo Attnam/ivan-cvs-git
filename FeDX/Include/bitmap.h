@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#define NONE 0
 #define MIRROR 1
 #define FLIP 2
 #define ROTATE_90 4
