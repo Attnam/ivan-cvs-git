@@ -125,4 +125,3 @@ bool square::CanBeSeenBy(const character* Who, bool IgnoreDarkness) const
   else
     return CanBeSeenFrom(Who->GetPos(), Who->GetLOSRangeSquare(), IgnoreDarkness);
 }
-

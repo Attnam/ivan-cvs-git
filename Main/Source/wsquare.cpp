@@ -141,4 +141,3 @@ void wsquare::CalculateLuminance()
   uchar Element = Min((128 - ushort(37.5f * log(1.0f + fabs(GetWorldMap()->GetAltitude(Pos)) / 500.0f))), 255);
   Luminance = MakeRGB24(Element, Element, Element);
 }
-

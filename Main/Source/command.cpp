@@ -1289,4 +1289,3 @@ bool commandsystem::ShowBattleInfo(character* Char)
   Char->ShowBattleInfo();
   return false;
 }
-

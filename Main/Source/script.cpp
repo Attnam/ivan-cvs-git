@@ -803,4 +803,3 @@ void gamescript::ReadFrom(inputfile& SaveFile, bool)
 	ABORT("Odd script term %s encountered in game script line %d!", Word.c_str(), SaveFile.TellLine());
     }
 }
-

@@ -33,4 +33,3 @@ void action::LoadActionSlot(inputfile& SaveFile, actionslot& ActionSlot)
   SaveFile >> ActionSlot;
   ActionSlot.SetAction(this);
 }
-

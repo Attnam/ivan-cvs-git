@@ -795,4 +795,3 @@ bool stack::IsOnGround() const
 {
   return !MotherEntity || MotherEntity->IsOnGround();
 }
-

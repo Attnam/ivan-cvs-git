@@ -1379,4 +1379,3 @@ void (level::*level::GetBeam(ushort Index))(character*, const std::string&, vect
   static void (level::*Beam[BEAM_STYLES])(character*, const std::string&, vector2d, ulong, uchar, uchar, uchar) = { &level::ParticleBeam, &level::LightningBeam, &level::ShieldBeam };
   return Beam[Index];
 }
-

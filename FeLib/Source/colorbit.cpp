@@ -449,4 +449,3 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
 
   return ERROR_VECTOR;
 }
-

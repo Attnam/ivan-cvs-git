@@ -440,4 +440,3 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
-

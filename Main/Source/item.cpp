@@ -726,4 +726,3 @@ bool item::IsBroken() const
 {
   return (Config & BROKEN) != 0;
 }
-

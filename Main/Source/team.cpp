@@ -92,4 +92,3 @@ inputfile& operator>>(inputfile& SaveFile, team*& Team)
   Team->Load(SaveFile);
   return SaveFile;
 }
-

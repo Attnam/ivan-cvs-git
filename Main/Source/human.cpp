@@ -3095,4 +3095,3 @@ const std::string& humanoid::GetStandVerb() const
   static std::string HasntFeet = "crawling";
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
-

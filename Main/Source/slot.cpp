@@ -273,4 +273,3 @@ bool stackslot::IsVisible() const
 {
   return GetMotherStack()->IsVisible();
 }
-

@@ -644,4 +644,3 @@ bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter
   else
     return !(RAND() % 20);
 } 
-

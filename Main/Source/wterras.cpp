@@ -87,4 +87,3 @@ bool ocean::IsWalkable(const character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
-

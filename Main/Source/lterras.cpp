@@ -1044,4 +1044,3 @@ bool fountain::IsDipDestination() const
 {
  return ContainedMaterial != 0 && ContainedMaterial->IsLiquid(); 
 }
-

@@ -2511,4 +2511,3 @@ uchar corpse::GetArticleMode() const
 {
   return Deceased->LeftOversAreUnique() ? DEFINITE_ARTICLE : NORMAL_ARTICLE;
 }
-

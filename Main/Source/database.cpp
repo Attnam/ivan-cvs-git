@@ -447,4 +447,3 @@ void databasesystem::Initialize()
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }
-

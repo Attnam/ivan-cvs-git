@@ -7,6 +7,11 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Removed the silly console window from the MinGW port
+	* Reduced floating eyes' effect a bit to reduce the possibility of insta deaths
+
 February 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* FeLib interface is finally OS independent

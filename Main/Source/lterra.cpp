@@ -211,4 +211,3 @@ void olterrain::CalculateHP()
       HP = SV * SV * GetHPModifier() / 5000;
     }
 }
-

@@ -1448,5 +1448,3 @@ void lsquare::GetHitByExplosion(const explosion& Explosion)
   Terrain = GetOLTerrain(); // might have changed
   Terrain->ReceiveDamage(Explosion.Terrorist, Damage >> 1, PHYSICAL_DAMAGE);
 }
-
-
