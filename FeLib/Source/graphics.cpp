@@ -207,7 +207,7 @@ void graphics::BlitDBToScreen()
     }
   }
 
-  ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+  ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
   //ulong TrueSourceXMove = 0;
   ulong TrueDestOffset = ulong(screen->pixels);
   ulong TrueDestXMove =  screen->pitch - (XRES << 1);
@@ -501,7 +501,7 @@ void graphics::SetMode(ushort Mode)
 
 void graphics::BlitDBToScreen()
 {
-  ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
+  ulong TrueSourceOffset = ulong(DoubleBuffer->GetImage()[0]);
   ulong TrueDestOffset = 0;
   ulong TrueDestXMove = 0;
   ushort Width = XRES;

@@ -76,9 +76,6 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool DrawBackroundAfterwards, 
 	  LastFillBottom += 10;
 	}
 
-      bool p = Entry[c].Selectable;
-      std::string q = Entry[c].String;
-
       if(c != Entry.size() - 1 && Entry[c].Selectable && i - Min == PageLength - 1)
 	{
 	  Bitmap->Fill(20, LastFillBottom, 758, 30, 128);

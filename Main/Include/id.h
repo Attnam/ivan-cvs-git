@@ -1,5 +1,5 @@
-#ifndef __IDENTITY_H__
-#define __IDENTITY_H__
+#ifndef __ID_H__
+#define __ID_H__
 
 #ifdef VC
 #pragma warning(disable : 4786)
@@ -16,7 +16,7 @@
 
 #include "typedef.h"
 
-class identity
+class id
 {
  public:
   virtual std::string NameSingular() const = 0;

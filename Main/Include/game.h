@@ -100,8 +100,8 @@ class game
   //static const char* PersonalPronoun(uchar Index);
   //static const char* PossessivePronoun(uchar Index);
   static void DrawEverything(bool = true);
-  static bool Save(std::string = game::SaveName());
-  static uchar Load(std::string = game::SaveName());
+  static bool Save(std::string = SaveName(""));
+  static uchar Load(std::string = SaveName(""));
   static bool GetRunning() { return Running; }
   static void EnableWizardMode() { WizardMode = true; }
   static bool GetWizardMode() { return WizardMode; }
@@ -162,8 +162,8 @@ class game
   static void DoNeutralDeed(ushort);
   static void DoEvilDeed(ushort);
   static void InitScript();
-  static void SaveWorldMap(std::string = SaveName(), bool = false);
-  static void LoadWorldMap(std::string = SaveName());
+  static void SaveWorldMap(std::string = SaveName(""), bool = false);
+  static void LoadWorldMap(std::string = SaveName(""));
   static void UpdateCamera();
   static ulong CreateNewItemID();
   static void PopItemID(ulong ID) { if(NextItemID == ID + 1) --NextItemID; }

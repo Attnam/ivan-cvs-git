@@ -38,7 +38,7 @@ struct felistdescription
 class felist
 {
  public:
-  felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort PageLength = 20, ushort Maximum = 0, bool Selectable = true, bool InverseMode = false) : PageLength(PageLength), Maximum(Maximum), Selectable(Selectable), Selected(0), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
+  felist(std::string Topic, ushort TopicColor = 0xFFFF, ushort PageLength = 20, ushort Maximum = 0, bool Selectable = true, bool InverseMode = false) : PageLength(PageLength), Maximum(Maximum), Selected(0), Selectable(Selectable), InverseMode(InverseMode) { AddDescription(Topic, TopicColor); }
   ~felist();
   void AddEntry(std::string, ushort, bitmap* = 0, bool = true);
   void AddDescription(std::string, ushort = 0xFFFF);

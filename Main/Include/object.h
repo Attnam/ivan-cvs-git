@@ -15,7 +15,7 @@
 #include "igraph.h"
 #include "type.h"
 #include "unit.h"
-#include "identity.h"
+#include "id.h"
 
 class material;
 class outputfile;
@@ -24,7 +24,7 @@ class bitmap;
 class lsquare;
 class square;
 
-class object : public type, public unit, public identity
+class object : public type, public unit, public id
 {
  public:
   object(bool, bool);

@@ -1,5 +1,9 @@
 April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* All libraries united
+
+April 21 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* bitmap.cpp/h, colorbit.cpp, graphics.cpp: Subbitmap support added
 	* colorbit.cpp/h, graphics.cpp: Text shading added
 	* felist.cpp/h: Added felist support for pictures, entry categories and arrow key selection

@@ -4,24 +4,12 @@
 
 AR       = ar rs
 CC       = gcc -o
-FeDXDIR  = FeDX
-FeDXOBJ  = $(FeDXDIR)/Source/bitmap.o $(FeDXDIR)/Source/colorbit.o $(FeDXDIR)/Source/graphics.o
-FeDXASM  = $(FeDXDIR)/Source/gccblit.o
-FEELDIR  = FEEL
-FEELOBJ  = $(FEELDIR)/Source/error.o $(FEELDIR)/Source/femain.o
-FeFileDIR  = FeFile
-FeFileOBJ  = $(FeFileDIR)/Source/save.o
-FeIODIR  = FeIO
-FeIOOBJ  = $(FeIODIR)/Source/feio.o
-FELLDIR  = FELL
-FELLOBJ  = $(FELLDIR)/Source/felist.o $(FELLDIR)/Source/hscore.o
-FeMathDIR  = FeMath
-FeMathOBJ  = $(FeMathDIR)/Source/femath.o
-FeWinDIR  = FeWin
-FeWinOBJ  = $(FeWinDIR)/Source/whandler.o
-LTestDIR  = LibTest
-LTestBIN  = LibTest.exe
-LTestOBJ  = $(LTestDIR)/Source/libtest.o
+FeLibDIR = FeLib
+FeLibOBJ = $(FeLibDIR)/Source/bitmap.o $(FeLibDIR)/Source/colorbit.o $(FeLibDIR)/Source/graphics.o\
+           $(FeLibDIR)/Source/error.o $(FeLibDIR)/Source/femain.o $(FeLibDIR)/Source/save.o\
+           $(FeLibDIR)/Source/feio.o $(FeLibDIR)/Source/felist.o $(FeLibDIR)/Source/hscore.o\
+           $(FeLibDIR)/Source/femath.o $(FeLibDIR)/Source/whandler.o
+FeLibASM = $(FeLibDIR)/Source/gccblit.o
 IVANDIR  = Main
 IVANBIN  = Ivan.exe
 IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source/team.o\
@@ -38,56 +26,23 @@ IVANOBJ  = $(IVANDIR)/Source/charba.o $(IVANDIR)/Source/area.o $(IVANDIR)/Source
            $(IVANDIR)/Source/config.o $(IVANDIR)/Source/terra.o $(IVANDIR)/Source/entity.o\
            $(IVANDIR)/Source/fluid.o $(IVANDIR)/Source/unit.o $(IVANDIR)/Source/igraph.o\
            $(IVANDIR)/Source/identity.o $(IVANDIR)/Source/slot.o
-FLAGS = -IInclude -I$(FeDXDIR)/Include -I$(FEELDIR)/Include -I$(FeFileDIR)/Include -I$(FeIODIR)/Include -I$(FELLDIR)/Include -I$(FeMathDIR)/Include -I$(FeWinDIR)/Include -s -O3 -ffast-math -W -Wall
+FLAGS = -IInclude -I$(FeLibDIR)/Include -s -O3 -ffast-math -W -Wall
 LIBS = -lstdcxx
 
-ivan:	$(IVANBIN)
-ltest:	$(LTestBIN)
+all:	$(IVANBIN)
 
-$(FeDXOBJ) : %.o : %.cpp
+$(FeLibOBJ) : %.o : %.cpp
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
-$(FeDXASM) : %.o : %.s
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FEELOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FeFileOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FeIOOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FELLOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FeMathOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(FeWinOBJ) : %.o : %.cpp
-	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS)
-
-$(LTestOBJ) : %.o : %.cpp
+$(FeLibASM) : %.o : %.s
 	@echo Compiling $@...
 	@$(CC) $@ -c $< $(FLAGS)
 
 $(IVANOBJ) : %.o : %.cpp
 	@echo Compiling $@...
-	@$(CC) $@ -c $< $(FLAGS) -I$(IVANDIR)/Include -I$(IVANDIR)/Resource
+	@$(CC) $@ -c $< $(FLAGS) -I$(IVANDIR)/Include
 
-$(LTestBIN) : $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(LTestOBJ)
-	@echo Compiling $(LTestBIN)...
-	@$(CC) $(LTestBIN) $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(LTestOBJ) $(LIBS)
-
-$(IVANBIN) : $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(IVANOBJ)
+$(IVANBIN) : $(FeLibOBJ) $(FeLibASM) $(IVANOBJ)
 	@echo Compiling $(IVANBIN)...
-	@$(CC) $(IVANBIN) $(FeDXOBJ) $(FeDXASM) $(FEELOBJ) $(FeFileOBJ) $(FeIOOBJ) $(FELLOBJ) $(FeMathOBJ) $(FeWinOBJ) $(IVANOBJ) $(LIBS)
+	@$(CC) $(IVANBIN) $(FeLibOBJ) $(FeLibASM) $(IVANOBJ) $(LIBS)

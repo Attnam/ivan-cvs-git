@@ -21,7 +21,7 @@ tilemap igraph::TileMap;
 #ifdef WIN32
 void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 #else
-  void igraph::Init()
+void igraph::Init()
 #endif
 {
   static bool AlreadyInstalled = false;

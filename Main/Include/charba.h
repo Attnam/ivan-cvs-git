@@ -72,7 +72,7 @@
 #include "typedef.h"
 #include "vector2d.h"
 #include "igraph.h"
-#include "identity.h"
+#include "id.h"
 
 class square;
 class bitmap;
@@ -92,7 +92,7 @@ class characterslot;
 
 /* Presentation of the character class */
 
-class character : public type, public entity, public identity
+class character : public type, public entity, public id
 {
  public:
   character(bool, bool, bool, bool = true, bool = true);

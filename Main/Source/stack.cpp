@@ -483,9 +483,7 @@ item* stack::DrawContents(character* Viewer, std::string Topic, bool (item::*Sor
 	  {
 	    if(!DescDrawn)
 	      {
-		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
 		ItemNames.AddEntry(item::ItemCategoryName(c), LIGHTGRAY, 0, false);
-		ItemNames.AddEntry("", LIGHTGRAY, 0, false);
 		DescDrawn = true;
 	      }
 

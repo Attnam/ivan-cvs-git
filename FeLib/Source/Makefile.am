@@ -1,0 +1,4 @@
+noinst_LIBRARIES = libFeLib.a
+libFeLib_a_SOURCES = bitmap.cpp colorbit.cpp error.cpp feio.cpp felist.cpp femain.cpp femath.cpp gccblit.s graphics.cpp hscore.cpp save.cpp whandler.cpp
+EXTRA_DIST = dxutil.cpp ddutil.cpp winblit.cpp 
+INCLUDES=-I@top_srcdir@/FeLib/Include

@@ -3965,7 +3965,7 @@ std::string character::Name(uchar Case) const
       Case &= ~INDEFINEBIT;
     }
 
-  return Name + identity::Name(Case);
+  return Name + id::Name(Case);
 }
 
 void character::ReceiveHeal(long Amount)
