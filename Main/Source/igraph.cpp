@@ -32,7 +32,7 @@ void igraph::Init()
 #ifdef WIN32
 		graphics::SetMode(hInst, hWnd, "IVAN 0.310a", 800, 600, 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 		graphics::SetMode("IVAN 0.310a", 800, 600, 16);
 #endif
 #ifdef __DJGPP__
@@ -120,3 +120,4 @@ void igraph::RemoveUser(graphic_id GI)
 			TileMap.erase(Iterator);
 		}
 }
+

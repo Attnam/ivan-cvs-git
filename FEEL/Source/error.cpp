@@ -72,7 +72,7 @@ void globalerrorhandler::Abort(const char* Format, ...)
 	ShowWindow(*hWnd, SW_HIDE);
 	MessageBox(NULL, Buffer, "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	std::cout << Buffer << std::endl;
 #endif
 #ifdef __DJGPP__
@@ -93,7 +93,7 @@ void globalerrorhandler::NewHandler()
 	ShowWindow(*hWnd, SW_HIDE);
 	MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);	
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	std::cout << "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space." << std::endl;
 #endif
 #ifdef __DJGPP__
@@ -167,3 +167,4 @@ void globalerrorhandler::SignalHandler(int Signal)
 }
 
 #endif
+

@@ -4,7 +4,7 @@
 #include <io.h>
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #include <stddef.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -319,7 +319,7 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	return Buffer.GetEntry(Check);
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 	DIR* dp;
 	struct dirent* ep;
 	std::string Buffer;
@@ -420,3 +420,4 @@ std::string iosystem::WhatToLoadMenu(ushort TopicColor, ushort ListColor, std::s
 	game::DeInit();
 #endif*/
 }
+

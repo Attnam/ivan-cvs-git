@@ -50,10 +50,6 @@ void BlitToDB(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueDestXMove,
 	}
 }
 
-/* This function is only used in the DJGPP port */
-
-void BlitToDB(ulong, ulong, ulong, ushort, ushort, ushort) {}
-
 void BlitNoFlags(ulong TrueSourceOffset, ulong TrueDestOffset, ulong TrueSourceXMove, ulong TrueDestXMove, ushort Width, ushort Height)
 {
 	__asm

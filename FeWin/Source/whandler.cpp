@@ -256,7 +256,7 @@ void globalwindowhandler::CheckMessages()
 
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 
 void globalwindowhandler::Init(const char* Title)
 {
@@ -396,3 +396,4 @@ void globalwindowhandler::ProcessMessage(SDL_Event event)
 #endif
 
 #endif
+

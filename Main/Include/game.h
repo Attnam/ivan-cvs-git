@@ -24,7 +24,7 @@
 #define SAVE_DIR std::string("Save/")
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #define GAME_DIR std::string(DATADIR) + std::string("/ivan/")
 
 #define SAVE_DIR (std::string(getenv("HOME")) + std::string("/IvanSave/"))

@@ -3,7 +3,7 @@
 #include "ddutil.h"
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #include "SDL.h"
 #endif
 
@@ -30,7 +30,7 @@ CDisplay*		graphics::DXDisplay;
 void			(*graphics::SwitchModeHandler)();
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 SDL_Surface* graphics::screen;
 #endif
 
@@ -62,7 +62,7 @@ void graphics::Init()
 	{
 		AlreadyInstalled = true;
 
-#ifdef SDL
+#ifdef USE_SDL
 		if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE))
 			ABORT("Can't initialize SDL.");
 #endif
@@ -80,7 +80,7 @@ void graphics::DeInit()
 	delete DefaultFont;
 	DefaultFont = 0;
 
-#ifdef SDL
+#ifdef USE_SDL
 	SDL_Quit();
 #endif
 
@@ -141,7 +141,7 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 
 void graphics::SetMode(const char* Title, ushort NewXRes, ushort NewYRes, uchar NewColorDepth)
 {
@@ -214,7 +214,7 @@ void graphics::BlitDBToScreen()
 
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 
 void graphics::BlitDBToScreen()
 {
@@ -558,3 +558,4 @@ void graphics::modeinfo::Retrieve(ushort Mode)
 }
 
 #endif
+

@@ -25,7 +25,7 @@ public:
 #include <windows.h>
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #include "SDL.h"
 #endif
 
@@ -42,7 +42,7 @@ public:
 	static void Init(HINSTANCE, HWND*, const char*, LPCTSTR);
 	static void CheckMessages();
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	static void Init(const char*);
 	static void ProcessMessage(SDL_Event);
 #endif

@@ -38,7 +38,7 @@ int main()
 
 	  MessageBox(NULL, "Fatal Error: Unknown exception thrown.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	std::cout << "Fatal Error: Unknown exception thrown." << std::endl;
 #endif
 #ifdef __DJGPP__

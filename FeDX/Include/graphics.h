@@ -34,7 +34,7 @@
 #include <windows.h>
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #include "SDL.h"
 #endif
 
@@ -62,7 +62,7 @@ static void SetMode(HINSTANCE, HWND*, const char*, ushort, ushort, uchar, bool, 
 	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
 	static bool GetFullScreen() { return FullScreen; }
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	static void SetMode(const char*, ushort, ushort, uchar);
 #endif
 #ifdef __DJGPP__
@@ -82,7 +82,7 @@ private:
 	static CDisplay* DXDisplay;
 	static void (*SwitchModeHandler)();
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	static SDL_Surface* screen;
 #endif
 #ifdef __DJGPP__

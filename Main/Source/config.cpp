@@ -17,7 +17,7 @@
 #define CONFIG_FILENAME "ivan.cfg"
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #define CONFIG_FILENAME (std::string(getenv("HOME")) + std::string("/.ivan.conf")).c_str()
 #endif
 
@@ -213,3 +213,4 @@ void configuration::SwitchModeHandler()
 {
 	SetFullScreenMode(!GetFullScreenMode());
 }
+

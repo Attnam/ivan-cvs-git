@@ -8,8 +8,11 @@
 #include "typedef.h"
 
 void Fill(ulong, ulong, ushort, ushort, ushort);
+#ifndef __DJGPP__
 void BlitToDB(ulong, ulong, ulong, ushort, ushort);
+#else
 void BlitToDB(ulong, ulong, ulong, ushort, ushort, ushort);
+#endif
 void BlitNoFlags(ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitMirror(ulong, ulong, ulong, ulong, ushort, ushort);
 void BlitFlip(ulong, ulong, ulong, ulong, ushort, ushort);

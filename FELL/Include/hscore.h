@@ -21,7 +21,7 @@
 #define HIGHSCORE_FILENAME "HScore.dat"
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #define HIGHSCORE_FILENAME "/var/lib/games/ivan-highscores.scores"
 #endif
 

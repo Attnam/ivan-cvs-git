@@ -6,7 +6,7 @@
 #include <windows.h>
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 #include <stdlib.h>
 #include "sys/stat.h"
 #define IDNO 1
@@ -160,7 +160,7 @@ void game::Init(std::string Name)
 	_mkdir("Save");
 #endif
 
-#ifdef SDL
+#ifdef USE_SDL
 	mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
 #endif
 
@@ -1217,3 +1217,4 @@ std::string game::GetVerbalPlayerAlignment()
 
 	return std::string("extremely chaotic");
 }
+

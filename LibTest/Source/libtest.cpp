@@ -26,7 +26,7 @@ int Main()
 #ifdef WIN32
 	graphics::SetMode(hInst, hWnd, "Esko", 800, 600, 16, false, NULL);
 #endif
-#ifdef SDL
+#ifdef USE_SDL
 	graphics::SetMode("Esko", 800, 600, 16);
 #endif
 #ifdef __DJGPP__
