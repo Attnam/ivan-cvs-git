@@ -18,7 +18,7 @@ public:
 	static int Menu(std::string, ushort, ushort);
 	static void TextScreen(std::string, ushort = 0xFFFF, bool = true);
 private:
-	static unsigned int CountChars(char, std::string);
+	static ulong CountChars(char, std::string);
 };
 
 #endif

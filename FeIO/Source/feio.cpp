@@ -11,36 +11,32 @@
 
 void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
 {
-	char Line[200];
-        ushort LastBeginningOfLine = 0;
-        ushort c;
-        ushort Lines = 0;
-	ushort LineNumber = 1;
-
 	DOUBLEBUFFER->ClearToColor(0);
 
-	{
-        for(ushort cc = 0; cc < 200; ++cc)
-		Line[cc] = 0;
-	}
+	ushort c, LineNumber = 0;
 
-	for(ushort cc = 0; cc < Text.length(); ++cc)
-		if(Text[cc] == '\n')
+	for(c = 0; c < Text.length(); ++c)
+		if(Text[c] == '\n')
 			++LineNumber;
 
-	for(c = 0; Text[c] != 0; ++c)
+	LineNumber >>= 1;
+
+	char Line[200];
+	ushort Lines = 0, LastBeginningOfLine = 0;
+
+	for(c = 0; c < Text.length(); ++c)
 		if(Text[c] == '\n')
 		{
-			FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, Color, "%s", Line);
-                        LastBeginningOfLine = c + 1;
-                        ++Lines;
-                        for(ushort cc = 0; cc < 200; ++cc)
-                        	Line[cc] = 0;
-                }
+			Line[c - LastBeginningOfLine] = 0;
+			FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 225 - (LineNumber - Lines) * 15, Color, Line);
+			++Lines;
+			LastBeginningOfLine = c + 1;
+		}
 		else
 			Line[c - LastBeginningOfLine] = Text[c];
 
-	FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 275 - (LineNumber - Lines) * 15, Color, "%s", Line);
+	Line[c - LastBeginningOfLine] = 0;
+	FONT->Printf(DOUBLEBUFFER, 400 - strlen(Line) * 4, 225 - (LineNumber - Lines) * 15, Color, Line);
 
 	graphics::BlitDBToScreen();
 
@@ -48,11 +44,11 @@ void iosystem::TextScreen(std::string Text, ushort Color, bool GKey)
 		GETKEY();
 }
 
-unsigned int iosystem::CountChars(char cSF,std::string sSH) // (MENU)
+ulong iosystem::CountChars(char cSF,std::string sSH) // (MENU)
 {
-	unsigned int iReturnCounter = 0;
+	ulong iReturnCounter = 0;
 
-	for(unsigned int i = 0; i < sSH.length(); ++i)
+	for(ulong i = 0; i < sSH.length(); ++i)
 		if(sSH[i] == cSF)
 			++iReturnCounter;
 
@@ -65,7 +61,7 @@ int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelecte
 		return (-1);
 
 	bool bReady = false;
-	unsigned int iSelected = 0;
+	ulong iSelected = 0;
 	double Rotation = 0;
 	while(!bReady)
 	{
@@ -84,7 +80,7 @@ int iosystem::Menu(std::string sMS, ushort ColorSelected, ushort ColorNotSelecte
 		for(x = 0; x < 4; ++x)
 			DOUBLEBUFFER->DrawPolygon(vector2d(150,150), 100 + x, 50, MAKE_RGB(int(255 - 12 * x),0,0));
 
-		for(unsigned int i = 0; i < CountChars('\r',sMS); ++i)
+		for(ulong i = 0; i < CountChars('\r',sMS); ++i)
 		{
 			std::string HYVINEPAGURUPRINTF = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 			sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);

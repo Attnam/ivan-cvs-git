@@ -17,7 +17,8 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 	char Buffer[256];
 
 	sprintf(Buffer, "Iter Vehemens ad Necem v. 0.30 alpha\n\n"
-			"Last build %s at %s.\n\nAntivalpuri is rising and dark times are ahead;\n"
+			"Last build %s at %s.\n\n"
+			"Antivalpuri is rising and dark times are ahead;\n"
 			"Dark frogs pillage towns and tomatoes are growing.\n"
 			"But fortunately, there is hope, you!", __DATE__, __TIME__);
 
