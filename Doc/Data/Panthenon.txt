@@ -6,7 +6,7 @@ G++	L++	King of Gods, Valpuri the Great Frog
 Favours:
 -gives a valpurium two-handed sword
 -gives a wish
--makes you radiate with holy ligth for some time
+-makes you radiate with holy light for some time
 
 Punishments:
 -smites with a small hammer
@@ -56,7 +56,7 @@ Favours:
 Punishments:
 -
 
-G-	B+	Consummo, ligth god of knowledge and magic
+G-	B+	Consummo, light god of knowledge and magic
 ----------------------------------------------------------
 
 Favours:
@@ -176,3 +176,5 @@ Favours:
 Punishments:
 -bolt of black energy
 -(sends Greater Dark Frogs and Bill's wills to hunt the player)
+
+

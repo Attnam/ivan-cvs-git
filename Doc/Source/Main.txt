@@ -146,7 +146,7 @@ Regenerate()
 
 Move(vector MoveTo, bool TeleportMove = false)
 
-	An actual move, this handles ligthning and LOS changes and
+	An actual move, this handles lightning and LOS changes and
 	replacing the character. However this does nothing if
 	the character is overburdened and TeleportMove is false.
 
@@ -170,7 +170,7 @@ bool Wield()
 Die()
 
 	Drops all items, creates a corpse of the character, possibly
-	updates ligths, sends the character to game::Hell and exits
+	updates lights, sends the character to game::Hell and exits
 	if this == Player and no cheats prevent this. Does nothing
 	if character is already dead.
 
@@ -195,7 +195,7 @@ stack* CStack()
 
 ushort CEmitation()
 
-	Calculates the character's ligth emulation in range 0-511.
+	Calculates the character's light emulation in range 0-511.
 
 vector CPos()
 
@@ -783,7 +783,7 @@ DeInitLuxTable()
 
 	Create and free the LuxTable and LuxTableSize. DeInitLuxTable()
 	is called automatically on exit. For more information, see
-	"ligth.txt".
+	"light.txt".
 
 character* BalancedCreateMonster()
 item* BalancedCreateItem()
@@ -879,7 +879,7 @@ bool EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 bool NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 
 	Handlers used with DoLine, mainly by the lighting system.
-	See "ligth.txt".
+	See "light.txt".
 
 int GetKey()
 int MonsGetKey()
@@ -981,7 +981,7 @@ std::string SaveName()
 
 bool EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 
-	Used with DoLine to determine if a ray of ligth can cross the
+	Used with DoLine to determine if a ray of light can cross the
 	line without intervention.
 
 long GodScore()
@@ -1027,7 +1027,7 @@ Turn()
 float CSoftGamma()
 
 	Returns SoftGamma, a value between 0-2, that is multiplied by
-	luminance before all ligthed draws.
+	luminance before all lighted draws.
 
 EditSoftGamma(float E)
 
@@ -1366,7 +1366,7 @@ bool Consumable(character* Eater)
 
 ushort CEmitation(void)
 
-	Returns the total emitation of the item. See "ligth.txt".
+	Returns the total emitation of the item. See "light.txt".
 
 short CalculateOfferValue(char GodAlignment)
 
@@ -1383,7 +1383,7 @@ bool Fly(uchar Direction, ushort Force, stack* Start, bool Hostile = true)
 	the Start stack, flying it all the way in the specified
 	Direction as long as there's Force to hold it above
 	ground. If Hostile is true, any character that the item
-	passes during its fligth will become hostile, even if not
+	passes during its flight will become hostile, even if not
 	hit. If the item flew to nowhere, i.e. it landed on the square
 	of former lift off, false is returned.
 
@@ -1655,7 +1655,7 @@ Luxify()
 
 FastAddCharacter(vector Pos, character* Guy)
 
-	Adds Guy to Pos, without updating ligths.
+	Adds Guy to Pos, without updating lights.
 
 Draw()
 
@@ -1698,7 +1698,7 @@ levelsquare (lsquare.h)
 -----------------------
 
 A square that appears in levels only and has some special procedures
-like ligthing that plain squares don't have a chance to enjoy of.
+like lighting that plain squares don't have a chance to enjoy of.
 Derived from square.
 
 Functions:
@@ -1726,7 +1726,7 @@ uchar CalculateBitMask(vector Dir)
 AlterLuminance(vector Dir, ushort AiL)
 ushort CLuminance()
 
-	See "ligth.txt".
+	See "light.txt".
 
 DrawToTileBuffer()
 
@@ -1763,11 +1763,11 @@ SpillFluid(uchar Amount, ulong Color, ushort Lumpiness = 3,
 
 AddCharacter(character* Guy)
 
-	Adds Guy onto the square and updates ligthning if necessary.
+	Adds Guy onto the square and updates lightning if necessary.
 
 FastAddCharacter(character* Guy)
 
-	Adds Guy onto the square but never updates ligths.
+	Adds Guy onto the square but never updates lights.
 
 Clean()
 
@@ -1776,7 +1776,7 @@ Clean()
 RemoveCharacter()
 
 	Removes the Character currently standing on the square, updating
-	ligth if necessary. (Character isn't deleted, just set to zero)
+	light if necessary. (Character isn't deleted, just set to zero)
 
 UpdateItemMemory()
 
@@ -1834,7 +1834,7 @@ SEmitation(ushort What)
 
 	Returns and sets Emitation, which is used as a backup
 	emitation value from the last call to CalculateEmitation().
-	See "ligth.txt".
+	See "light.txt".
 
 std::string CEngraved()
 
@@ -1859,7 +1859,7 @@ levelsquare::emitter (lsquare.h)
 --------------------------------
 
 Emitter is a simple struct that contains information about an emitter,
-which is shedding ligth upon a particular levelsquare. See "ligth.txt"
+which is shedding light upon a particular levelsquare. See "light.txt"
 for more knowledge about emitters.
 
 Functions:
@@ -2159,7 +2159,7 @@ SVolume(ulong What)
 
 ushort CEmitation(void)
 
-	Returns the light emitation of the material. See "ligth.txt".
+	Returns the light emitation of the material. See "light.txt".
 
 ushort OfferValue(void)
 
@@ -2255,7 +2255,7 @@ PositionedDrawToTileBuffer(uchar LevelSquarePosition)
 ushort AddItem(item* ToBeAdded)
 
 	Adds ToBeAdded to the stack and then returns the index of ToBeAdded.
-	Updates ligths if needed.
+	Updates lights if needed.
 
 ushort FastAddItem(item* ToBeAdded)
 
@@ -2264,7 +2264,7 @@ ushort FastAddItem(item* ToBeAdded)
 item* RemoveItem(ushort Index)
 
 	Removes item number Index and then returns a pointer to that item.
-	Updates ligths if needed.
+	Updates lights if needed.
 
 FastRemoveItem(ushort Index)
 
@@ -2278,7 +2278,7 @@ ushort MoveItem(ushort Index, stack* MoveTo)
 
 	Moves item number Index to the stack that MoveTo is pointing at.
 	Then returns the new index of the item in question. Updates
-	ligths if needed.
+	lights if needed.
 
 Optimize(ushort OptimizeBoundary)
 
@@ -2316,7 +2316,7 @@ ushort SearchItem(item* ToBeSearched)
 
 void stack::Move(levelsquare* To)
 
-	Moves the whole stack to levelsquare To and updates ligths if
+	Moves the whole stack to levelsquare To and updates lights if
 	necessary.
 
 vector CPos(void)
@@ -2473,3 +2473,5 @@ ushort CMaterials(void)
 ----------------------------------------------------------------------------
 
 End of document.
+
+

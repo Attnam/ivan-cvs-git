@@ -8,17 +8,17 @@ The lighting system in IVAN is a quite complex one and extends to numerous
 different files and so it is rather difficult to understand it just by
 looking at the source. This file explains it's mechanisms throughoutly.
 
-All ligth is divided into two categories: emitation and luminance.
+All light is divided into two categories: emitation and luminance.
 The former is light shed by a light-producing object like a lamp,
-the latter is how much actual ligth there is on an object's surface.
+the latter is how much actual light there is on an object's surface.
 Emitation is a natural attribute of an object, luminance a calculated
 value shared by all objects on the same square, determined by present
 emitating objects and their distance from the luminanced object. Both
 emitation and luminance are of type ushort and are measured in a scale
-from zero to five hundred and eleven, minimum meaning no ligth and maximum
+from zero to five hundred and eleven, minimum meaning no light and maximum
 meaning the ultimate edge of brigthness.
 
-Class levelsquare is the basic ligth emitter of IVAN. The amount of ligth
+Class levelsquare is the basic light emitter of IVAN. The amount of light
 it sheds is directly calculated in levelsquare::CalculateEmitation()
 by going through all instances of class object's derived classes
 (characters, items, terrains) currently on the levelsquare, calling their
@@ -36,7 +36,7 @@ a diameter of 2 * sqrt(Emitation - 64) + 1 (*) centered on the current
 square. Then via game::DoLine() it "draws" lines beginning from the center
 to each square on the edges, calls game::EmitationHandler on each square on
 the line, which adds the source square to the "emitation list" of that
-particular square. If a tile with an overterrain impassable for ligth is
+particular square. If a tile with an overterrain impassable for light is
 detected, the line stops and no further emitation lists are updated until
 next line is begun.
 
@@ -72,13 +72,13 @@ luminance of the square, which is the highest emitation value of the list.
 Of course, AlterLuminance discards all emitation values less than 64,
 the minimum luminance possible.
 
-Emitate is not called only at the beginning of the level. When ligth
+Emitate is not called only at the beginning of the level. When light
 level of some square changes, it or its sister functions may need to
 be recalled.
 
 Function levelsquare::CalculateEmitation() is may be rather slow if
 for example a hundred items are lying on the square, so it cannot be
-used to detect ligthing level changes. For this there are two other
+used to detect lighting level changes. For this there are two other
 functions: If an emitating object is removed from the square,
 levelsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 is called, and levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
@@ -99,7 +99,7 @@ This causes AlterLuminance to actually remove the origo square from the
 emitator list.
 
 But what happens if a square becomes impassable and an emitator is shedding
-ligth on it? Most obviously the emitator's Emitate must be run again.
+light on it? Most obviously the emitator's Emitate must be run again.
 But that doesn't affect squares beyound the new impenetrable square.
 So before the square is made impassable, it is imperative that
 levelsquare::ForceEmitterNoxify() is called for that square. It in turn
@@ -117,7 +117,7 @@ square, where they are left for the time being but have no effect on the
 luminance.
 
 If a square loses its impassability, only ForceEmitterEmitation() needs
-to be called after the square has opened for ligth.
+to be called after the square has opened for light.
 
 That's all about emitation. Lumination is far simpler, since in walkable
 squares it is calculated in simply by picking the highest emitation in the
@@ -130,7 +130,7 @@ although no-one remembers accurately how this works. These two bitmask
 are just logically anded, and if any bit is set in the result, the
 process continues.
 
-Result of all this is the max ligth shed on the square, and it is used
+Result of all this is the max light shed on the square, and it is used
 for drawing the square. Both bitmap::Blit and bitmap::MaskedBlit have
 variants that support the 0-511 leveled luminance in the following
 way: Luminance - 256 is added to each color component and the result
@@ -163,3 +163,5 @@ after a long journey.
 ----------------------------------------------------------------------------
 
 End of document.
+
+

@@ -186,7 +186,7 @@
 	if(Rigth  > (ClipRigth))	Rigth  = (ClipRigth);									\
 	if(Bottom > (ClipBottom))	Bottom = (ClipBottom);									\
 																\
-	if(Left < (ClipRigth) && Top < (ClipBottom) && Rigth > (ClipLeft) && Bottom > (ClipTop))				\
+	if(Left <= (ClipRigth) && Top <= (ClipBottom) && Rigth >= (ClipLeft) && Bottom >= (ClipTop))				\
 	{															\
 		ushort XPointer, YPointer;											\
 																\

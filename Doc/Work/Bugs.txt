@@ -1,19 +1,15 @@
 Sokeaksi tuleminen pepsistä bugittaa.
-Savekansion autoluonti.
 Surfacejen tuhoutuminen sekoittaa pelin.
 Liian pitkät messaget bugittaa msghistoryssa.
-The Lone Black Man of the Mountain Bug.
 Fullscreen + F10.
 Ligths should be updated when terrain changes.
 Material volume is undefined in script created instances.
 Messagesystem may show an empty [Y/N] boolquestion, if many messages are displayed and the question is preserved for the next page. This may be inconvenient.
 Show messages may show the same page twice. (not sure if this exists anymore)
 Various graphics have become buggy after the Material Color Change.
-"You can't apply something that you wield!"
 Felist crashes when an empty list ougth to be drawn.
 Dark frog effect is far too high.
 "The fallen valpurist dies screaming. Suddenly the fallen valpurist looks tougher."
-Farmers can be born inside walls.
 Residents of Attnam grunt when talked to.
 Single weapon skill's name isn't updated when the name of the item changes.
 Doggie eating message is shown even if not on LOS.

@@ -13,6 +13,14 @@
 #include "save.h"
 #include "message.h"
 
+struct prioritypair
+{
+	prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
+	bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
+	uchar Priority;
+	vector2d BitmapPos;
+};
+
 std::string worldmapterrain::Name(uchar Case) const
 {
 	if(!(Case & PLURAL))
@@ -37,14 +45,6 @@ vector2d worldmapterrain::GetPos() const
 {
 	return GetWorldMapSquareUnder()->GetPos();
 }
-
-struct prioritypair
-{
-	prioritypair(uchar Priority, vector2d BitmapPos) : Priority(Priority), BitmapPos(BitmapPos) {}
-	bool operator < (const prioritypair& AnotherPair) const { return Priority > AnotherPair.Priority; }
-	uchar Priority;
-	vector2d BitmapPos;
-};
 
 void groundworldmapterrain::DrawToTileBuffer() const
 {

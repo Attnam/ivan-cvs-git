@@ -96,8 +96,8 @@ Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort
 	lightning effects with the bit block transfer. Luminance must be in
 	the range of 0-511, and it is applied to all pixel color components
 	copied to the destination, according to the following formula:
-	ColorComponent += Luminance - 256. So 256 means the ligthning level
-	is average, 0 that there's no ligth, and 511 is (almost) as brigth
+	ColorComponent += Luminance - 256. So 256 means the lightning level
+	is average, 0 that there's no light, and 511 is (almost) as brigth
 	as Valpuri Himself. Notice that there's no Flags, and so no
 	mirroring, flipping or rotating is possible with this method.
 
@@ -273,3 +273,5 @@ CDisplay* GetDXDisplay(void) { return DXDisplay; }
 ----------------------------------------------------------------------------
 
 End of document.
+
+

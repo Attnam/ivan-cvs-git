@@ -709,10 +709,12 @@ vector2d game::AskForDirectionVector(std::string String)
 {
 	if(String != "")
 	{
-		FONTW->Printf(DOUBLEBUFFER, 40, 35, "%s", String.c_str());
+		ADD_MESSAGE("%s", String.c_str());
+		DRAW_MESSAGES();
 		graphics::BlitDBToScreen();
+		EMPTY_MESSAGES();
 	}
-	DOUBLEBUFFER->ClearToColor(40,35, String.length() * 8 + 8, 43, 0); 
+
 	return GetDirectionVectorForKey(GETKEY());
 }
 

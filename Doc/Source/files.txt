@@ -20,10 +20,12 @@ general.txt - General Information about IVAN source
 Include.txt - Documentation of miscellaneous shared include files
 item.txt - How to make a new item type tutorial
 LibTest.txt - Fatal Error Library Test (LibTest) documentation
-ligth.txt - IVAN lighting system documentation
+light.txt - IVAN lighting system documentation
 Main.txt - Iter Vehemens ad Necem main executable source documentation
 project.txt - How to create a new project in IVAN workspace tutorial
 
 ----------------------------------------------------------------------------
 
 End of document.
+
+

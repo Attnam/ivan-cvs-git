@@ -8,6 +8,7 @@
 #include "materba.h"
 #include "bitmap.h"
 #include "save.h"
+#include "graphics.h"
 
 worldmapsquare::worldmapsquare(worldmap* WorldMapUnder, vector2d Pos) : square(WorldMapUnder, Pos), OverWorldMapTerrain(0), GroundWorldMapTerrain(0), DescriptionChanged(true)
 {
@@ -54,13 +55,14 @@ void worldmapsquare::UpdateMemorizedAndDraw()
 
 		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
 
-		igraph::GetTileBuffer()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16, Luminance);
+		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
+		igraph::GetTileBuffer()->Blit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 		igraph::GetFOWGraphic()->MaskedBlit(GetMemorized(), 0, 0, 0, 0, 16, 16);
 
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
 
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 
 		NewDrawRequested = false;
 	}
@@ -139,12 +141,14 @@ void worldmapsquare::DrawCheat()
 	{
 		DrawToTileBuffer();
 
+		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
+
+		igraph::GetTileBuffer()->Blit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16, Luminance);
+
 		if(GetCharacter())
 			GetCharacter()->DrawToTileBuffer();
 
-		ushort Luminance = 256 - (abs(GetWorldMapUnder()->GetAltitude(Pos)) >> 3);
-
-		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4), Luminance);
+		igraph::BlitTileBuffer(vector2d((GetPos().X - game::GetCamera().X) << 4, (GetPos().Y - game::GetCamera().Y + 2) << 4));
 
 		NewDrawRequested = false;
 	}

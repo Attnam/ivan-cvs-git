@@ -55,6 +55,7 @@ public:
 	virtual ulong GetID() const { return ID; }
 	virtual void SetID(ulong What) { ID = What; }
 	virtual void DrawToTileBuffer() const = 0;
+	virtual bitmap* GetPicture() const { return Picture; }
 protected:
 	virtual std::string NameSingular() const = 0;
 	virtual std::string NamePlural() const = 0;

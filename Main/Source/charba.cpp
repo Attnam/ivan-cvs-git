@@ -939,7 +939,7 @@ void character::AddHitMessage(character* Enemy, const bool Critical) const
 
 void character::BeTalkedTo(character*)
 {
-	ADD_MESSAGE("The monster grunts.");
+	ADD_MESSAGE("%s grunts.", CNAME(DEFINITE));
 }
 
 bool character::Talk()
@@ -1540,6 +1540,8 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
+	EMPTY_MESSAGES();
+	game::DrawEverythingNoBlit();
 	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(iosystem::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 0, 50));
 	return false;
 }
@@ -1953,11 +1955,9 @@ void character::Vomit(ushort HowMuch)
 bool character::Apply()
 {
 	ushort Index;
+
 	if((Index = GetStack()->DrawContents("What do you want to apply?")) == 0xFFFF)
-	{
-		ADD_MESSAGE("You have nothing to apply.");
 		return false;
-	}
 
 	if(Index < GetStack()->GetItems())
 	{
@@ -1981,7 +1981,7 @@ vector2d character::GetPos() const
 bool character::ForceVomit()
 {
 	ADD_MESSAGE("You push your fingers down to your throat and vomit.");
-	Vomit(rand() % 3);
+	Vomit(1 + rand() % 3);
 	return true;
 }
 
@@ -2039,7 +2039,7 @@ bool character::Polymorph()
 
 	if(GetIsPlayer())
 	{
-		ADD_MESSAGE("Your body glows in a crimson ligth. You transform into %s!", NewForm->CNAME(INDEFINITE));
+		ADD_MESSAGE("Your body glows in a crimson light. You transform into %s!", NewForm->CNAME(INDEFINITE));
 		game::SetPlayerBackup(this);
 		game::SetPlayer(NewForm);
 		NewForm->ActivateState(POLYMORPHED);

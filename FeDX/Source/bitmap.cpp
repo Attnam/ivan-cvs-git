@@ -293,9 +293,15 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
 
 	DDSURFACEDESC2 destddsd;
-	ZeroMemory( &destddsd,sizeof(destddsd) );
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	if(Bitmap != this)
+	{
+		ZeroMemory( &destddsd,sizeof(destddsd) );
+		destddsd.dwSize = sizeof(destddsd);
+		Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+	}
+	else
+		destddsd = srcddsd;
 
 	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
 	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
@@ -546,8 +552,10 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 		}
 	}
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(Bitmap != this)
+		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
@@ -558,9 +566,15 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
 
 	DDSURFACEDESC2 destddsd;
-	ZeroMemory( &destddsd,sizeof(destddsd) );
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	if(Bitmap != this)
+	{
+		ZeroMemory( &destddsd,sizeof(destddsd) );
+		destddsd.dwSize = sizeof(destddsd);
+		Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+	}
+	else
+		destddsd = srcddsd;
 
 	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
 	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
@@ -643,8 +657,10 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 		popad
 	}
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(Bitmap != this)
+		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const
@@ -663,9 +679,15 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
 
 	DDSURFACEDESC2 destddsd;
-	ZeroMemory( &destddsd,sizeof(destddsd) );
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	if(Bitmap != this)
+	{
+		ZeroMemory( &destddsd,sizeof(destddsd) );
+		destddsd.dwSize = sizeof(destddsd);
+		Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+	}
+	else
+		destddsd = srcddsd;
 
 	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
 	ulong TrueSourceXMove = srcddsd.lPitch - (Width << 1);
@@ -975,8 +997,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		}
 	}
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(Bitmap != this)
+		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort Luminance) const
@@ -987,9 +1011,15 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
 
 	DDSURFACEDESC2 destddsd;
-	ZeroMemory( &destddsd,sizeof(destddsd) );
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	if(Bitmap != this)
+	{
+		ZeroMemory( &destddsd,sizeof(destddsd) );
+		destddsd.dwSize = sizeof(destddsd);
+		Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+	}
+	else
+		destddsd = srcddsd;
 
 	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
 	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
@@ -1080,8 +1110,10 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 		popad
 	}
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(Bitmap != this)
+		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha) const
@@ -1092,9 +1124,15 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	DXSurface->GetDDrawSurface()->Lock( NULL, &srcddsd, DDLOCK_WAIT, NULL );
 
 	DDSURFACEDESC2 destddsd;
-	ZeroMemory( &destddsd,sizeof(destddsd) );
-	destddsd.dwSize = sizeof(destddsd);
-	Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+
+	if(Bitmap != this)
+	{
+		ZeroMemory( &destddsd,sizeof(destddsd) );
+		destddsd.dwSize = sizeof(destddsd);
+		Bitmap->DXSurface->GetDDrawSurface()->Lock( NULL, &destddsd, DDLOCK_WAIT, NULL );
+	}
+	else
+		destddsd = srcddsd;
 
 	ulong TrueSourceOffset = ulong(srcddsd.lpSurface) + (SourceY * srcddsd.lPitch + (SourceX << 1));
 	ulong TrueDestOffset = ulong(destddsd.lpSurface) + (DestY * destddsd.lPitch + (DestX << 1));
@@ -1113,7 +1151,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		mov edi, TrueDestOffset
 		mov dl, Alpha
 		cld
-
 	MaskedLoop1:
 		mov cx, Width
 	MaskedLoop2:
@@ -1123,7 +1160,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		mov bx, [edi]
 		mov DColor, bx
 		mov bx, ax
-
 		and ax, 0x1F
 		shl ax, 0x03
 		mul dl
@@ -1141,7 +1177,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		ror bx, 0x05
 		ror DColor, 0x05
 		mov ax, bx
-
 		and ax, 0x3F
 		shl ax, 0x02
 		mul dl
@@ -1159,7 +1194,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		ror bx, 0x06
 		ror DColor, 0x06
 		mov ax, bx
-
 		and ax, 0x1F
 		shl ax, 0x03
 		mul dl
@@ -1176,7 +1210,6 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		or bx, ax
 		ror bx, 0x05
 		mov ax, bx
-
 		stosw
 		dec cx
 		jnz MaskedLoop2
@@ -1194,8 +1227,10 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 		popad
 	}
 
-	DXSurface->GetDDrawSurface()->Unlock(NULL); 
-	Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
+	DXSurface->GetDDrawSurface()->Unlock(NULL);
+
+	if(Bitmap != this)
+		Bitmap->DXSurface->GetDDrawSurface()->Unlock(NULL);
 }
 
 void bitmap::FastBlit(bitmap* Bitmap) const

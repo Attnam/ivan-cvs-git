@@ -51,7 +51,7 @@ bless a new altar for use? (you must build an unaligned altar first)
 convert the altar under (**)
 bless items on the altar under
 restore mana points
-*make you radiate holy ligth for a certain period
+*make you radiate holy light for a certain period
 sterilize fast breeders and self-cloning monsters on the level
 crown the faithful as his/her champion
 
@@ -69,3 +69,5 @@ crown the faithful as his/her champion
      This could also be an independent command, since receiving altar bonuses when praying may
      become a habit for some players, and so the "Do you want to convert the altar?" prompt would
      become quite annoying.
+
+

@@ -332,6 +332,8 @@ void wand::Load(inputfile& SaveFile)
 
 bool scrollofwishing::Read(character* Reader)
 {
+	EMPTY_MESSAGES();
+	game::DrawEverythingNoBlit();
 	std::string Temp = iosystem::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 0, 256);
 
 	item* TempItem = protosystem::CreateItem(Temp);
@@ -412,7 +414,9 @@ bool scrollofchangematerial::Read(character* Reader)
 		ADD_MESSAGE("You can't change that!");
 		return false;
 	}
-	
+
+	EMPTY_MESSAGES();
+	game::DrawEverythingNoBlit();
 	std::string Temp = iosystem::StringQuestion(FONTW, "What material do you want to wish for?", vector2d(7,7), 0, 256);
 
 	material* TempMaterial = protosystem::CreateMaterial(Temp, Reader->GetStack()->GetItem(Index)->GetMaterial(0)->GetVolume());

@@ -134,9 +134,6 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 	for(int LastKey = 0;; LastKey = 0)
 	{
 		Backup.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
-		DOUBLEBUFFER->ClearToColor(Pos.X, Pos.Y, XRES - Pos.X, Pos.Y + 8,0);
-		DOUBLEBUFFER->ClearToColor(Pos.X, Pos.Y + 10, XRES - Pos.X, Pos.Y + 18,0);
-
 		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y, "%s", Topic.c_str());
 		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
