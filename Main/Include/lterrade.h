@@ -92,6 +92,7 @@ class OVERLEVELTERRAIN
 	InitMaterials(new stone(1)),
 	{
 		SetIsWalkable(false);
+		UpdatePicture();
 	},
 public:
 	virtual bool Open(character*);

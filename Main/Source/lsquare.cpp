@@ -70,6 +70,12 @@ ushort levelsquare::CalculateEmitation() const
 	if(GetCharacter() && GetCharacter()->GetEmitation() > Emitation)
 		Emitation = GetCharacter()->GetEmitation();
 
+	if(GetGroundLevelTerrain() && GetGroundLevelTerrain()->GetEmitation() > Emitation)
+		Emitation = GetGroundLevelTerrain()->GetEmitation();
+
+	if(GetOverLevelTerrain() && GetOverLevelTerrain()->GetEmitation() > Emitation)
+		Emitation = GetOverLevelTerrain()->GetEmitation();
+
 	return Emitation;
 }
 
