@@ -13,6 +13,9 @@
 #include "charba.h"
 #include "team.h"
 #include "rand.h"
+#include "whandler.h"
+#include "stack.h"
+#include "itemba.h"
 
 bool door::Open(character* Opener)
 {
@@ -208,8 +211,20 @@ bool stairsdown::GoDown(character* Who) const  // Try to go down
 
 void door::Kick(ushort, bool ShowOnScreen, uchar)
 {
-	if(!GetIsWalkable() && ShowOnScreen) ADD_MESSAGE("The door opens.");
-		MakeWalkable();
+	if(!GetIsWalkable()) 
+	{
+		if(RAND() % 2)
+		{
+			if(ShowOnScreen) ADD_MESSAGE("The door opens.");
+			MakeWalkable();
+		}
+		else
+		{
+			if(ShowOnScreen) ADD_MESSAGE("The door breaks.");
+			GetLevelSquareUnder()->ChangeOverLevelTerrain(new brokendoor);
+		}
+		// Door may have been destroyed here, so don't do anything
+	}
 }
 
 void door::Save(outputfile& SaveFile) const
@@ -394,7 +409,7 @@ void doublebed::SitOn(character*)
 
 void fountain::Consume(character* Drinker)
 {
-	switch(RAND() % 3)
+	switch(RAND() % 5)
 	{
 	case 0:
 		ADD_MESSAGE("The water tastes good.");
@@ -414,6 +429,40 @@ void fountain::Consume(character* Drinker)
 		ADD_MESSAGE("The water tasted very good.");
 		Drinker->SetNP(Drinker->GetNP() + 50);
 		Drinker->ChangeRandomStat(1);
+	break;
+
+	case 3:
+		if(!(RAND() % 5)) // TEMP
+		{
+			ADD_MESSAGE("You have freed a spirit that grants you a wish. You may wish for an item. - press any key -");
+			DRAW_MESSAGES();
+			game::DrawEverything();
+			GETKEY();
+			while(true)
+			{
+				EMPTY_MESSAGES();
+				game::DrawEverythingNoBlit();
+				std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(7,7), WHITE, 0, 80);
+
+				item* TempItem = protosystem::CreateItem(Temp, Drinker->GetIsPlayer());
+
+				if(TempItem)
+				{
+					Drinker->GetStack()->AddItem(TempItem);
+					ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CNAME(INDEFINITE));
+					break;
+				}
+				else
+				{
+					ADD_MESSAGE("You may try again. - press any key -");
+					DRAW_MESSAGES();
+					game::DrawEverything();
+					GETKEY();
+				}
+			}
+		}
+
+
 	default:
 		DryOut(); 
 		// fountain no longer exists: don't do anything here.
@@ -424,4 +473,16 @@ void fountain::DryOut()
 {
 	ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
 	GetLevelSquareUnder()->ChangeOverLevelTerrain(new empty);
+}
+
+
+void brokendoor::Kick(ushort, bool ShowOnScreen, uchar)
+{
+	if(!GetIsWalkable()) 
+	{
+		if(ShowOnScreen) 
+			ADD_MESSAGE("The broken door opens.");
+		MakeWalkable();
+	
+	}
 }

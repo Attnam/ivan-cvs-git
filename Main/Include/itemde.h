@@ -1081,4 +1081,27 @@ protected:
 	uchar OwnerGod;
 );
 
+
+
+
+class ITEM
+(
+	millionsofroubles,
+	item,
+	InitMaterials(new iron),
+	{
+		SetSize(15);
+	},
+public:
+	virtual vector2d GetBitmapPos() const RETV(0,304)
+	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, iron::StaticType()))
+	virtual ushort Possibility() const RET(0)
+	virtual std::string NameSingular() const RET("50 million roubles")
+	virtual float OfferModifier() const RET(0.01f)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 75; default: return 0; } }
+protected:
+	virtual ushort GetFormModifier() const RET(40)
+);
+
+
 #endif

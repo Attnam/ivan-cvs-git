@@ -137,6 +137,8 @@ uchar character::TakeHit(character* Enemy, short Success)
 			ADD_MESSAGE("(damage: %d)", Damage);
 
 		SetHP(GetHP() - Damage);
+		if(GetTorsoArmor() && RAND() % 2 && GetTorsoArmor()->ImpactDamage(float(Enemy->GetAttackStrength()) / 10000 + RAND() % 10 - RAND() % 10, GetLevelSquareUnder()->CanBeSeen(), GetStack()))
+				SetTorsoArmor(GetStack()->GetItem(GetStack()->GetItems() - 1));
 
 		SpillBlood(3 + RAND() % 3);
 
@@ -1700,7 +1702,10 @@ bool character::Look()
 					ADD_MESSAGE("You are %s here.", Character->StandVerb().c_str());
 				else
 				{
-					ADD_MESSAGE("%s is %s here.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
+					if(Character->GetWielded())
+						ADD_MESSAGE("%s is %s here and wielding %s.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str(), Character->GetWielded()->CNAME(INDEFINITE));
+					else
+						ADD_MESSAGE("%s is %s here and wielding nothing.", Character->CNAME(INDEFINITE), Character->StandVerb().c_str());
 
 					if(Character->GetTeam() == game::GetPlayer()->GetTeam())
 						ADD_MESSAGE("%s is tame.", game::PersonalPronoun(Character->GetSex()));

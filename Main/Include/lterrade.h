@@ -379,4 +379,22 @@ protected:
 	virtual vector2d GetBitmapPos() const						{ return vector2d(48, 304); }
 );
 
+class OVERLEVELTERRAIN
+(
+	brokendoor,
+	door,
+	InitMaterials(new stone),
+	{
+		SetIsOpen(false);
+		UpdatePicture();
+	},
+public:
+	virtual std::string DigMessage() const { return "The broken door is too hard to dig."; }
+	virtual void Kick(ushort, bool, uchar);
+protected:
+	virtual std::string NameSingular() const	{ return "broken door"; }
+	virtual vector2d GetBitmapPos() const		{ return vector2d(0, GetIsWalkable() ? 48 : 160); }
+);
+
+
 #endif

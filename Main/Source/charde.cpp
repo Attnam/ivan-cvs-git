@@ -1051,6 +1051,7 @@ void ivan::CreateInitialEquipment()
 {
 	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace(new iron))));
 	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail)));
+	GetStack()->FastAddItem(new millionsofroubles);
 }
 
 void hunter::BeTalkedTo(character* Talker)
