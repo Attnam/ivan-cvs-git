@@ -378,7 +378,7 @@ bool character::Consume()
 			if(GetLevelSquareUnder()->GetRoom() && !GetLevelSquareUnder()->GetLevelUnder()->GetRoom(GetLevelSquareUnder()->GetRoom())->ConsumeItem(this, GetLevelSquareUnder()->GetStack()->GetItem(Index)))
 				return false;
 
-			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst ifyou eat anything more. Force it down? [y/N]"))
+			if(CheckBulimia() && !game::BoolQuestion("You think your stomach will burst if you eat anything more. Force it down? [y/N]"))
 				return false;
 
 			if(ConsumeItem(GetLevelSquareUnder()->GetStack()->GetItem(Index), GetLevelSquareUnder()->GetStack()))
@@ -1714,7 +1714,7 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
-	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion("What do you want to engrave here?", vector2d(7,7), WHITE, 0, 50));
+	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(game::StringQuestion("What do you want to engrave here?", vector2d(7,7), WHITE, 0, 80));
 	return false;
 }
 
@@ -2135,7 +2135,10 @@ void character::GetPlayerCommand()
 	{
 		game::DrawEverything();
 
+		game::SetInGetCommand(true);
 		int Key = GETKEY();
+		game::SetInGetCommand(false);
+
 		bool ValidKeyPressed = false;
 		uchar c;
 
@@ -2971,7 +2974,10 @@ void character::ShowNewPosInfo() const
 		}
 		
 		if(game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved() != "")
-			ADD_MESSAGE("Something has been engraved here: \"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+		{
+			ADD_MESSAGE("Something has been engraved here:");
+			ADD_MESSAGE("\"%s\"", game::GetCurrentLevel()->GetLevelSquare(GetPos())->GetEngraved().c_str());
+		}
 	}
 }
 

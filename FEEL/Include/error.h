@@ -15,8 +15,8 @@ public:
 	static void Abort(const char*, ...);
 	static void SetWindow(HWND* NewhWnd) { hWnd = NewhWnd; }
 private:
-	static void NewHandler();
-	static void (*OldNewHandler)();
+	static int NewHandler(size_t);
+	static int (*OldNewHandler)(size_t);
 	static HWND* hWnd;
 };
 

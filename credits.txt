@@ -3,6 +3,7 @@ Programming (in order of actual code completed):
 	Heikki Sairanen
 	Ilari Kaartinen
 	Perttu Luukko
+	Niko Kosonen
 
 Graphics (in order of actual graphics completed):
 	Tuukka Virtaperko
@@ -16,4 +17,3 @@ Bug hunting (alphabetical order):
 	Heikki Sairanen
 	Renne Sairanen
 	Tuukka Virtaperko
-	

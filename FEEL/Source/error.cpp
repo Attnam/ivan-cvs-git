@@ -5,7 +5,7 @@
 
 #include "error.h"
 
-void (*globalerrorhandler::OldNewHandler)() = 0;
+int (*globalerrorhandler::OldNewHandler)(size_t) = 0;
 HWND* globalerrorhandler::hWnd;
 
 void globalerrorhandler::Install()
@@ -16,7 +16,7 @@ void globalerrorhandler::Install()
 	{
 		AlreadyInstalled = true;
 
-		OldNewHandler = (void (*)())_set_new_handler((int (*)(size_t))NewHandler);
+		OldNewHandler = _set_new_handler(NewHandler);
 
 		atexit(globalerrorhandler::DeInstall);
 	}
@@ -24,7 +24,7 @@ void globalerrorhandler::Install()
 
 void globalerrorhandler::DeInstall()
 {
-	_set_new_handler((int (*)(size_t))OldNewHandler);
+	_set_new_handler(OldNewHandler);
 }
 
 void globalerrorhandler::Abort(const char* Format, ...)
@@ -43,11 +43,13 @@ void globalerrorhandler::Abort(const char* Format, ...)
 	exit(4);
 }
 
-void globalerrorhandler::NewHandler()
+int globalerrorhandler::NewHandler(size_t)
 {
 	ShowWindow(*hWnd, SW_HIDE);
 
 	MessageBox(NULL, "Fatal Error: Memory depleted. Check that you have enough free RAM and hard disk space.", "Program aborted!", MB_OK|MB_ICONEXCLAMATION);
 
 	exit(1);
+
+	return 0;
 }

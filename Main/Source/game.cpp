@@ -44,7 +44,7 @@ ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
-bool game::Flag, game::BeepOnCriticalMsg = false;
+bool game::Flag, game::BeepOnCriticalMsg = false, game::InGetCommand = false;
 perttu* game::Perttu = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
@@ -53,21 +53,23 @@ god* game::God[] = {0, new valpuri, new venius, new atavus, new dulcis, new inas
 
 command* game::Command[] = {	0,
 				new command(&character::Apply, "apply", 'a', false),
+				new command(&character::Talk, "chat", 'C', false),
 				new command(&character::Close, "close", 'c', false),
-				new command(&character::Consume, "eat/drink", 'e', true),
 				new command(&character::DecreaseSoftGamma, "decrease software gamma", 'B', true),
 				new command(&character::Dip, "dip", 'D', true),
 				new command(&character::Drop, "drop", 'd', false),
+				new command(&character::Consume, "eat/drink", 'e', true),
 				new command(&character::WhatToEngrave, "engrave", 'E', false),
-				new command(&character::GainAllItems, "give all items cheat", '8', true, true),
 				new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
+				new command(&character::GainAllItems, "give all items cheat", '8', true, true),
+				new command(&character::Go, "go", 'g', false),
 				new command(&character::GoDown, "go down", '>', true),
 				new command(&character::GoUp, "go up", '<', true),
 				new command(&character::IncreaseSoftGamma, "increase software gamma", 'b', true),
 				new command(&character::Kick, "kick", 'k', false),
 				new command(&character::Look, "look", 'l', true),
-				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
 				new command(&character::LowerStats, "lower stats cheat", '2', true, true),
+				new command(&character::LowerGodRelations, "lower your relations to the gods cheat", '6', true, true),
 				new command(&character::Offer, "offer", 'O', false),
 				new command(&character::Open, "open", 'o', false),
 				new command(&character::OutlineCharacters, "outline characters", 'K', true),
@@ -75,8 +77,8 @@ command* game::Command[] = {	0,
 				new command(&character::PickUp, "pick up", ',', false),
 				new command(&character::Pray, "pray", 'p', false),
 				new command(&character::Quit, "quit", 'q', true),
-				new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
 				new command(&character::RaiseStats, "raise stats cheat", '1', true, true),
+				new command(&character::RaiseGodRelations, "raise your relations to the gods cheat", '5', true, true),
 				new command(&character::Read, "read", 'r', false),
 				new command(&character::RestUntilHealed, "rest/heal", 'h', true),
 				new command(&character::Save, "save game", 's', true),
@@ -84,19 +86,17 @@ command* game::Command[] = {	0,
 				new command(&character::SetAutosaveInterval, "set autosave frequency", 'f', true),
 				new command(&character::ShowInventory, "show inventory", 'i', true),
 				new command(&character::ShowKeyLayout, "show key layout", '?', true),
+				new command(&character::DrawMessageHistory, "show message history", 'M', true),
 				new command(&character::ShowWeaponSkills, "show weapon skills", '@', true),
 				new command(&character::Sit, "sit", 'S', false),
-				new command(&character::DrawMessageHistory, "show message history", 'M', true),
-				new command(&character::Talk, "chat with someone", 'C', false),
 				new command(&character::Throw, "throw", 't', false),
 				new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
 				new command(&character::ForceVomit, "vomit", 'v', false),
 				new command(&character::NOP, "wait", '.', true),
 				new command(&character::WearArmor, "wear", 'W', true),
 				new command(&character::Wield, "wield", 'w', true),
-				new command(&character::WizardMode, "activate wizard mode", 'X', true),
+				new command(&character::WizardMode, "wizard mode activation", 'X', true),
 				new command(&character::Zap, "zap", 'z', false),
-				new command(&character::Go, "go", 'g', false),
 				0};
 
 int game::MoveCommandKey[DIRECTION_COMMAND_KEYS] = {0x147, 0x148, 0x149, 0x14B, 0x14D, 0x14F, 0x150, 0x151};
@@ -135,7 +135,6 @@ void game::Init(std::string Name)
 	ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
 	globalmessagingsystem::Format();
 
-	Running = true;
 	WizardMode = false;
 	SeeWholeMapCheat = false;
 	GoThroughWallsCheat = false;
@@ -158,6 +157,7 @@ void game::Init(std::string Name)
 
 	if(Load())
 	{
+		Running = true;
 		Flag = true;
 		GetCurrentArea()->SendNewDrawRequest();
 
@@ -176,6 +176,8 @@ void game::Init(std::string Name)
 					"few who didn't understand they really meant what they said.\n\n"
 					"You have arrived at Attnam, the Holy City of Valpuri the Great Frog.\n"
 					"And you know nothing about the adventures that await you here.");
+
+		Running = true;
 
 		iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false);
 
@@ -1148,10 +1150,30 @@ void game::UpdateCamera()
 	GetCurrentArea()->SendNewDrawRequest();
 }
 
-void game::HandleQuitMessage()
+bool game::HandleQuitMessage()
 {
-	if(Running)
-		RemoveSaves();
+	if(GetRunning())
+	{
+		if(GetInGetCommand())
+			switch(MessageBox(NULL, "Do you want to save your game before quitting?", "Save before quitting?", MB_YESNOCANCEL | MB_ICONQUESTION))
+			{
+			case IDYES:
+				Save();
+				break;
+			case IDCANCEL:
+				return false;
+			default:
+				RemoveSaves();
+				break;
+			}
+		else
+			if(MessageBox(NULL, "You can't save at this point. Are you sure you still want to do this?", "Exit confirmation request", MB_YESNO | MB_ICONWARNING) == IDYES)
+				RemoveSaves();
+			else
+				return false;
+	}
+
+	return true;
 }
 
 void game::Beep()

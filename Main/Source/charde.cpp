@@ -317,16 +317,10 @@ ushort golem::CalculateArmorModifier() const
 
 void golem::MoveRandomly()
 {
-	ushort ToTry = RAND() % 9;
-
-	if(ToTry == 8)
-	{
-		if(!(RAND() % 100))
-			Engrave("Golem Needs Master");
-	}
+	if(!(RAND() % 500))
+		Engrave("Golem Needs Master");
 	else
-		if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
-			TryMove(GetPos() + game::GetMoveVector(ToTry), false);
+		character::MoveRandomly();
 }
 
 void ennerbeast::GetAICommand()
@@ -1369,7 +1363,7 @@ void librarian::BeTalkedTo(character* Talker)
 		}
 		else
 		{
-			ADD_MESSAGE("\"It this book they talk about Erado, the great chaos god.");
+			ADD_MESSAGE("\"In this book they talk about Erado, the great chaos god.");
 			ADD_MESSAGE("He hates us mortals more than anything and will respond only to Champions of Evil.\"");
 			break;
 		}
@@ -1405,7 +1399,7 @@ void femaleslave::CreateInitialEquipment()
 
 void ivan::MoveRandomly()
 {
-	switch(RAND() % 200)
+	switch(RAND() % 500)
 	{
 		case 0:
 			Engrave("The weapons with which the bourgeoisie felled feudalism to the ground are now turned against the bourgeoisie itself.");
@@ -1417,12 +1411,7 @@ void ivan::MoveRandomly()
 			Engrave("Capital is therefore not only personal; it is a social power.");
 			break;
 		default:
-		{
-			char ToTry = rand() % 8;
-
-			if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
-				TryMove(GetPos() + game::GetMoveVector(ToTry), false);
-		}
+			character::MoveRandomly();
 	}
 }
 

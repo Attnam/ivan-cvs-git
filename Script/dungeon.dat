@@ -645,10 +645,11 @@ Dungeon 1;
 					L = pork loaf;
 					P = glass omleurine potion;
 					C = chainmail;
+					w = wandofstriking;
 				}
 			}
 			{
-			    .spbt
+			    .spwt
 			    blLcP
 			    L.Clt
 			}

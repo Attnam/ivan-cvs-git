@@ -53,3 +53,7 @@ You should be able to fight when overloaded, because it can be abused. (Elpuri's
 Description of wands should show how many times it has been used.
 Uranium weapons should turn monsters to mutants.
 A god effect that gives the player some free turns.
+The inventory screen should show the total weigth of items and burdened/stressed weigth limits.
+Name of gamma should be corrected.
+Some more variation to death messages.
+The librarian could charge wand or sell scrolls?
