@@ -271,7 +271,6 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
-  virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
   virtual bool HasInfraVision() const { return true; }

@@ -1,5 +1,10 @@
 April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* charde.cpp/h: Petrus's "temporary" AddHitMessage finally removed
+	* felist.cpp: List order bug corrected
+
+April 22 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* felist.cpp/h: Added AddEntryToPos
 	* message.cpp: Messages are now split correctly
 

@@ -590,34 +590,6 @@ void farmer::CreateInitialEquipment()
   SetMainWielded(new axe);
 }
 
-/*
- * This function is temporary. It prevents Petrus's hit messages becoming too long,
- * which would at present make the message history quite ugly.
- */
-
-void petrus::AddHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bool Critical) const
-{
-  std::string Msg;
-  std::string ThisDescription = GetSquareUnder()->CanBeSeen() ? "Petrus" : "something";
-  std::string BodyPartDescription = BodyPart && Enemy->GetSquareUnder()->CanBeSeen() ? std::string(" in ") + Enemy->GetBodyPart(BodyPart)->Name(DEFINITE) : "";
-
-  if(Enemy->GetIsPlayer())
-    {
-      if(Weapon && GetSquareUnder()->CanBeSeen())
-	Msg = ThisDescription + " " + ThirdPersonWeaponHitVerb(Critical) + " you" + BodyPartDescription + " with " + PossessivePronoun() + " " + Weapon->Name(UNARTICLED) + "!";
-      else
-	Msg = ThisDescription + " " + ThirdPersonMeleeHitVerb(Critical) + " you" + BodyPartDescription + "!";
-    }
-  else if(GetIsPlayer())
-    Msg = std::string("You ") + FirstPersonHitVerb(Enemy, Critical) + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
-  else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
-    Msg = ThisDescription + " " + AICombatHitVerb(Enemy, Critical) + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
-  else
-    Msg = "";
-
-  ADD_MESSAGE("%s", Msg.c_str());
-}
-
 void petrus::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)

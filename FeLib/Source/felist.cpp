@@ -259,11 +259,6 @@ void felist::AddEntryToPos(std::string Str, ushort Pos, ushort Color, bitmap* Bi
 {
   bitmap* NewBitmap = Bitmap ? new bitmap(Bitmap) : 0;
 
-  /*if(InverseMode)
-    Entry.insert(Entry.begin(), felistentry(NewBitmap, Str, Color, Selectable));
-  else
-    Entry.push_back(felistentry(NewBitmap, Str, Color, Selectable));*/
-
   Entry.insert(Entry.begin() + Pos, felistentry(NewBitmap, Str, Color, Selectable));
 
   if(Maximum && Entry.size() > Maximum)
@@ -275,7 +270,7 @@ void felist::AddEntryToPos(std::string Str, ushort Pos, ushort Color, bitmap* Bi
 
 void felist::AddEntry(std::string Str, ushort Color, bitmap* Bitmap, bool Selectable)
 {
-  AddEntryToPos(Str, InverseMode ? Entry.size() : 0, Color, Bitmap, Selectable);
+  AddEntryToPos(Str, InverseMode ? 0 : Entry.size(), Color, Bitmap, Selectable);
 }
 
 void felist::Save(outputfile& SaveFile) const
