@@ -1107,10 +1107,10 @@ void itemcontainer::Load(inputfile& SaveFile)
   SaveFile >> LockType >> Locked;
 }
 
-bool itemcontainer::Polymorph(stack* CurrentStack)
+bool itemcontainer::Polymorph(character* Polymorpher, stack* CurrentStack)
 {
   GetContained()->MoveItemsTo(CurrentStack);
-  item::Polymorph(CurrentStack);
+  item::Polymorph(Polymorpher, CurrentStack);
   return true;
 }
 
@@ -1164,7 +1164,7 @@ bool beartrap::TryToUnstuck(character* Victim, ushort BodyPart, vector2d)
     {
       Victim->SetStuckTo(0);
       Victim->SetStuckToBodyPart(NONE_INDEX);
-      Break();
+      Break(Victim);
 
       if(Victim->IsPlayer())
 	ADD_MESSAGE("You are freed.");
@@ -1331,7 +1331,7 @@ bool mine::Apply(character* User)
   room* Room = GetRoom();
 
   if(Room)
-    Room->PlantTrap(User);
+    Room->HostileAction(User);
 
   if(User->IsPlayer())
     ADD_MESSAGE("%s is now %sactive.", CHAR_NAME(DEFINITE), IsActive() ? "in" : "");
@@ -1357,7 +1357,7 @@ bool beartrap::Apply(character* User)
   room* Room = GetRoom();
 
   if(Room)
-    Room->PlantTrap(User);
+    Room->HostileAction(User);
 
   if(IsBroken())
     {
@@ -1504,10 +1504,18 @@ ulong itemcontainer::GetTruePrice() const
   return GetContained()->GetTruePrice() + item::GetTruePrice();
 }
 
-void potion::Break()
+void potion::Break(character* Breaker)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s shatters to pieces.", CHAR_NAME(DEFINITE));
+
+  if(Breaker && IsOnGround())
+    {
+      room* Room = GetRoom();
+
+      if(Room)
+	Room->HostileAction(Breaker);
+    }
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
@@ -2132,13 +2140,13 @@ void wand::BreakEffect(character* Terrorist, const std::string& DeathMsg)
   SendToHell();
 }
 
-bool beartrap::ReceiveDamage(character*, ushort Damage, ushort Type)
+bool beartrap::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(!IsBroken() && Type & PHYSICAL_DAMAGE && Damage)
     {
       if(Damage > 125 || !(RAND() % (250 / Damage)))
 	{
-	  Break();	  
+	  Break(Damager);	  
 	  return true;
 	}
       else
@@ -2186,7 +2194,7 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
       if(Damage > StrengthValue << 2 && RAND() % (25 * Damage / StrengthValue) >= 100)
 	{
-	  Break();
+	  Break(Damager);
 	  return true;
 	}
     }

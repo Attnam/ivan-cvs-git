@@ -673,7 +673,7 @@ class character : public entity, public id
   bool CheckTalk();
   virtual bool CanCreateBodyPart(ushort) const { return true; }
   virtual bool HandleCharacterBlockingTheWay(character*) { return false; }
-  std::string& ProcessMessage(std::string&) const;
+  virtual std::string& ProcessMessage(std::string&) const;
   virtual bool IsHumanoid() const { return false; }
   long GetStuffScore() const;
   bool IsOnGround() const;
@@ -718,6 +718,7 @@ class character : public entity, public id
   void ShowAdventureInfo() const;
   void DrawBodyPartVector(std::vector<bitmap*>&) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
+  virtual bool IsBananaGrower() const { return false; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;

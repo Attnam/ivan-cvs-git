@@ -56,14 +56,15 @@ class room
   virtual void TeleportSquare(character*, lsquare*) { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  void DestroyTerrain(character*, olterrain*);
+  void DestroyTerrain(character*);
   virtual bool AllowSpoil(const item*) const { return true; }
-  virtual bool CheckDestroyTerrain(character*, olterrain*);
+  bool CheckDestroyTerrain(character*);
   virtual short GetGodRelationAdjustment() const { return -50; }
   virtual bool AllowKick(const character*, const lsquare*) const { return true; }
   bool MasterIsActive() const;
   bool CheckKickSquare(const character*, const lsquare*) const;
-  virtual void PlantTrap(character*) const { }
+  virtual void HostileAction(character*) const { }
+  virtual bool AllowAltarPolymorph() const { return true; }
  protected:
   virtual void VirtualConstructor(bool) { }
   vector2d Pos;

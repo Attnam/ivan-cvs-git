@@ -152,12 +152,20 @@ bool item::Apply(character* Applier)
 
 /* returns bool that tells whether the Polymorph really happened */
 
-bool item::Polymorph(stack* CurrentStack)
+bool item::Polymorph(character* Polymorpher, stack* CurrentStack)
 {
   if(!IsPolymorphable())
     return false;
   else
     {
+      if(Polymorpher && IsOnGround())
+	{
+	  room* Room = GetRoom();
+
+	  if(Room)
+	    Room->HostileAction(Polymorpher);
+	}
+
       CurrentStack->AddItem(protosystem::BalancedCreateItem(0, MAX_PRICE, 0, true));
       RemoveFromSlot();
       SendToHell();
@@ -478,7 +486,7 @@ const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
     }
 }
 
-bool item::ReceiveDamage(character*, ushort Damage, ushort Type)
+bool item::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 {
   if(CanBeBroken() && !IsBroken() && Type & (PHYSICAL_DAMAGE|SOUND|ENERGY))
     {
@@ -489,7 +497,7 @@ bool item::ReceiveDamage(character*, ushort Damage, ushort Type)
 
       if(Damage > StrengthValue << 2 && RAND() & 3 && RAND() % (25 * Damage / StrengthValue) >= 100)
 	{
-	  Break();
+	  Break(Damager);
 	  return true;
 	}
     }
@@ -591,10 +599,18 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item);
 }
 
-void item::Break()
+void item::Break(character* Breaker)
 {
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s breaks.", CHAR_NAME(DEFINITE));
+
+  if(Breaker && IsOnGround())
+    {
+      room* Room = GetRoom();
+
+      if(Room)
+	Room->HostileAction(Breaker);
+    }
 
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);

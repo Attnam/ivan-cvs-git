@@ -98,7 +98,7 @@ bool pickaxe::Apply(character* User)
 	{
 	  uchar RoomNumber = Square->GetRoomIndex();
 
-	  if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User, Square->GetOLTerrain()))
+	  if(!RoomNumber || Square->GetLevel()->GetRoom(RoomNumber)->CheckDestroyTerrain(User))
 	    {
 	      User->SwitchToDig(this, User->GetPos() + Temp);
 	      User->DexterityAction(5);

@@ -150,7 +150,7 @@ class item : public object
   virtual bool DogWillCatchAndConsume() const { return false; }
   virtual bool Apply(character*);
   virtual bool Zap(character*, vector2d, uchar) { return false; }
-  virtual bool Polymorph(stack*);
+  virtual bool Polymorph(character*, stack*);
   virtual bool CheckPickUpEffect(character*) { return true; }
   virtual void StepOnEffect(character*) { }
   virtual bool IsTheAvatar() const { return false; }
@@ -353,7 +353,7 @@ class item : public object
   item* DuplicateToStack(stack*);
   virtual bool CanBePiledWith(const item*, const character*) const;
   virtual ulong GetTotalExplosivePower() const { return 0; }
-  virtual void Break();
+  virtual void Break(character*);
   void Empty();
   virtual void SetEnchantment(char) { }
   virtual void EditEnchantment(char) { }

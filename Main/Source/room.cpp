@@ -24,7 +24,7 @@ room* roomprototype::CloneAndLoad(inputfile& SaveFile) const
   return Room;
 }
 
-void room::DestroyTerrain(character* Who, olterrain*)
+void room::DestroyTerrain(character* Who)
 {
   if(Who && MasterIsActive())
     Who->Hostility(GetMaster());
@@ -35,7 +35,7 @@ void room::DestroyTerrain(character* Who, olterrain*)
 
 /* returns true if player agrees to continue */
 
-bool room::CheckDestroyTerrain(character* Infidel, olterrain* Terrain) 
+bool room::CheckDestroyTerrain(character* Infidel) 
 {
   if(!MasterIsActive() || Infidel == GetMaster() || GetMaster()->GetRelation(Infidel) == HOSTILE)
     return true;
@@ -44,7 +44,7 @@ bool room::CheckDestroyTerrain(character* Infidel, olterrain* Terrain)
 
   if(game::BoolQuestion("Are you sure you want to do this? [y/N]"))
     {
-      DestroyTerrain(Infidel, Terrain);
+      DestroyTerrain(Infidel);
       return true;
     }
   else

@@ -2867,7 +2867,7 @@ void encourager::GetAICommand()
 	    {
 	      character* Char = Square->GetCharacter();
 
-	      if(Char && Char->GetTeam()->GetID() == NEW_ATTNAM_TEAM && Hit(Char, true))
+	      if(Char && Char->IsBananaGrower() && Hit(Char, true))
 		{
 		  LastHit = game::GetTicks();
 		  WayPoint = vector2d(-1, -1);

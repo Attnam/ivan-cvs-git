@@ -498,6 +498,7 @@ class CHARACTER
   virtual void BeTalkedTo();
   virtual std::string& ProcessMessage(std::string&) const;
   virtual std::string GetProfessionDescription() const;
+  virtual bool IsBananaGrower() const { return true; }
  protected:
   virtual bool HandleCharacterBlockingTheWay(character*);
   virtual void VirtualConstructor(bool);

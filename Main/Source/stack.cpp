@@ -210,14 +210,14 @@ long stack::GetScore() const
   return Score;
 }
 
-void stack::Polymorph()
+void stack::Polymorph(character* Polymorpher)
 {
   itemvector ItemVector;
   FillItemVector(ItemVector);
   ushort p = 0;
 
   for(ushort c = 0; c < ItemVector.size(); ++c)
-    if(ItemVector[c]->Exists() && ItemVector[c]->Polymorph(this) && ++p == 5)
+    if(ItemVector[c]->Exists() && ItemVector[c]->Polymorph(Polymorpher, this) && ++p == 5)
       break;
 }
 

@@ -99,11 +99,6 @@ void door::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(!Opened) 
     {
-      room* Room = GetLSquareUnder()->GetRoom();
-
-      if(Room)
-	Room->DestroyTerrain(Kicker, this);
-
       if(!IsLocked() && KickDamage > (RAND() & 3))
 	{
 	  if(CanBeSeenByPlayer())
@@ -138,12 +133,21 @@ void door::BeKicked(character* Kicker, ushort KickDamage)
 		ADD_MESSAGE("The door is damaged.");
 	    }
 
+	  room* Room = GetRoom();
 	  Break();
+
+	  if(Room)
+	    Room->DestroyTerrain(Kicker);
 	}
       else if(CanBeSeenByPlayer())
 	{
 	  if(LockBreaks)
-	    ADD_MESSAGE("The lock breaks.");
+	    {
+	      ADD_MESSAGE("The lock breaks.");
+
+	      if(GetRoom())
+		GetRoom()->DestroyTerrain(Kicker);
+	    }
 	  else
 	    ADD_MESSAGE("The door won't budge!");
 	}
@@ -241,15 +245,13 @@ bool throne::SitOn(character* Sitter)
 
 void altar::BeKicked(character* Kicker, ushort)
 {
-  room* Room = GetLSquareUnder()->GetRoom();
-
-  if(Room)
-    Room->DestroyTerrain(Kicker, this);
-
   if(Kicker->IsPlayer())
     ADD_MESSAGE("You feel like a sinner.");
   else if(Kicker->CanBeSeenByPlayer())
     ADD_MESSAGE("%s looks like a sinner.", Kicker->CHAR_NAME(DEFINITE));
+
+  if(GetRoom())
+    GetRoom()->DestroyTerrain(Kicker);
 
   if(Kicker->IsPlayer())
     {
@@ -486,11 +488,6 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 {
   if(!Opened) 
     {
-      room* Room = GetLSquareUnder()->GetRoom();
-
-      if(Room)
-	Room->DestroyTerrain(Kicker, this);
-
       if(!IsLocked() && KickDamage > (RAND() & 3))
 	{
 	  if(CanBeSeenByPlayer())
@@ -514,7 +511,12 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 		  MakeWalkable();
 		}
 	      else if(CanBeSeenByPlayer())
-		ADD_MESSAGE("The lock breaks from the force of your kick.");
+		{
+		  ADD_MESSAGE("The lock breaks from the force of your kick.");
+
+		  if(GetRoom())
+		    GetRoom()->DestroyTerrain(Kicker);
+		}
 
 	      SetIsLocked(false);
 	      return;
@@ -528,6 +530,11 @@ void brokendoor::BeKicked(character* Kicker, ushort KickDamage)
 
 bool altar::Polymorph(character*)
 {
+  room* Room = GetRoom();
+
+  if(Room && !Room->AllowAltarPolymorph())
+    return false;
+
   if(CanBeSeenByPlayer())
     ADD_MESSAGE("%s glows briefly.", CHAR_NAME(DEFINITE));
 	
@@ -970,14 +977,6 @@ void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
       if(LockBreaks)
 	SetIsLocked(false);
 
-      if(LockBreaks || HP <= 0)
-	{
-	  room* Room = GetLSquareUnder()->GetRoom();
-
-	  if(Room)
-	    Room->DestroyTerrain(Villain, this);
-	}
-
       if(HP <= 0)
 	{
 	  if(CanBeSeenByPlayer())
@@ -986,10 +985,19 @@ void door::ReceiveDamage(character* Villain, ushort Damage, ushort)
 	    else
 	      ADD_MESSAGE("The door breaks.");
 
+	  room* Room = GetRoom();
 	  Break();
+
+	  if(Room)
+	    Room->DestroyTerrain(Villain);
 	}
       else if(LockBreaks && CanBeSeenByPlayer())
-	ADD_MESSAGE("The door's lock is shattered.");
+	{
+	  ADD_MESSAGE("The door's lock is shattered.");
+
+	  if(GetRoom())
+	    GetRoom()->DestroyTerrain(Villain);
+	}
     }
 }
 
@@ -1013,23 +1021,24 @@ void brokendoor::ReceiveDamage(character* Villain, ushort Damage, ushort)
       if(LockBreaks)
 	SetIsLocked(false);
 
-      if(LockBreaks || HP <= 0)
-	{
-	  room* Room = GetLSquareUnder()->GetRoom();
-
-	  if(Room)
-	    Room->DestroyTerrain(Villain, this);
-	}
-
       if(HP <= 0)
 	{
 	  if(CanBeSeenByPlayer())
 	    ADD_MESSAGE("The broken door is completely destroyed.");
 
+	  room* Room = GetRoom();
 	  Break();
+
+	  if(Room)
+	    Room->DestroyTerrain(Villain);
 	}
       else if(LockBreaks && CanBeSeenByPlayer())
-	ADD_MESSAGE("The broken door's lock is shattered.");
+	{
+	  ADD_MESSAGE("The broken door's lock is shattered.");
+
+	  if(GetRoom())
+	    GetRoom()->DestroyTerrain(Villain);
+	}
     }
 }
 

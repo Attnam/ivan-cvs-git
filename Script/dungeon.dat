@@ -616,6 +616,16 @@ Dungeon ATTNAM;
 			Character = guard(PATROL) { WayPoint = { 4, 0, 0, 61 - 1, 0, 61 - 1, 62 - 1, 0, 62 - 1; } }
 		}
 
+		Square, Pos 29, 7;
+		{
+			Character = guard(VETERAN);
+		}
+
+		Square, Pos 31, 7;
+		{
+			Character = guard(VETERAN);
+		}
+
 		Square, Random NOT_IN_ROOM;
 		{
 			OTerrain = decoration(SNOW_PINE);
@@ -1068,16 +1078,6 @@ Dungeon ATTNAM;
 			}
 		}
 
-		Square, Pos 29, 7;
-		{
-			Character = guard(VETERAN);
-		}
-
-		Square, Pos 31, 7;
-		{
-			Character = guard(VETERAN);
-		}
-
 		Room
 		{
 			Pos=22,53;
@@ -1379,7 +1379,7 @@ Dungeon NEW_ATTNAM;
 			Character = ostrich;
 		}
 
-		Square, BoundedRandom 0, 22, 28, 54, NOT_IN_ROOM;
+		Square, Pos 20, 43;/*, BoundedRandom 0, 22, 28, 54, NOT_IN_ROOM;*/
 		{
 			Character = elder;
 		}

@@ -185,12 +185,11 @@ void olterrain::ReceiveDamage(character* Villain, ushort What, ushort)
 
       if(HP <= 0)
 	{
-	  room* Room = GetLSquareUnder()->GetRoom();
+	  room* Room = GetRoom();
+	  Break();
 
 	  if(Room)
-	    Room->DestroyTerrain(Villain, this);
-
-	  Break();
+	    Room->DestroyTerrain(Villain);
 	}
     }
 }

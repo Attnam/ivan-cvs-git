@@ -635,25 +635,25 @@ bool landingsite::AllowKick(const character* Char, const lsquare*) const
  return !Char->IsPlayer() || (game::GetTeam(NEW_ATTNAM_TEAM)->GetRelation(Char->GetTeam()) == HOSTILE);
 }
 
-void shop::PlantTrap(character* Trapper) const
+void shop::HostileAction(character* Guilty) const
 {
-  if(MasterIsActive() && Trapper != GetMaster() && GetMaster()->GetRelation(Trapper) != HOSTILE && Trapper->CanBeSeenBy(GetMaster()))
+  if(MasterIsActive() && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
-      Trapper->Hostility(GetMaster());
+      Guilty->Hostility(GetMaster());
     }
 }
 
-void cathedral::PlantTrap(character* Trapper) const
+void cathedral::HostileAction(character* Guilty) const
 {
-  Trapper->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
+  Guilty->GetTeam()->Hostility(game::GetTeam(ATTNAM_TEAM));
 }
 
-void library::PlantTrap(character* Trapper) const
+void library::HostileAction(character* Guilty) const
 {
-  if(MasterIsActive() && Trapper != GetMaster() && GetMaster()->GetRelation(Trapper) != HOSTILE && Trapper->CanBeSeenBy(GetMaster()))
+  if(MasterIsActive() && Guilty != GetMaster() && GetMaster()->GetRelation(Guilty) != HOSTILE && Guilty->CanBeSeenBy(GetMaster()))
     {
       ADD_MESSAGE("\"You infidel!\"");
-      Trapper->Hostility(GetMaster());
+      Guilty->Hostility(GetMaster());
     }
 }

@@ -56,7 +56,7 @@ class stack
   bool SortedItems(const character*, bool (*)(const item*, const character*)) const;
   void BeKicked(character*, ushort);
   long GetScore() const;
-  void Polymorph();
+  void Polymorph(character*);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
   lsquare* GetLSquareTrulyUnder() const { return static_cast<lsquare*>(GetSquareTrulyUnder()); }

@@ -978,6 +978,7 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
 	Smoke[c]->SendToHell();
 
       Smoke.clear();
+      SmokeAlphaSum = 0;
     }
 }
 
@@ -1262,7 +1263,7 @@ vector2d lsquare::DrawLightning(vector2d StartPos, ulong Color, uchar Direction,
 
 bool lsquare::Polymorph(character* Zapper, const std::string&, uchar)
 {
-  GetStack()->Polymorph();
+  GetStack()->Polymorph(Zapper);
 
   if(GetOLTerrain())
     GetOLTerrain()->Polymorph(Zapper);
@@ -1437,10 +1438,13 @@ bool lsquare::Lightning(character* Zapper, const std::string& DeathMsg, uchar Di
   return false;
 }
 
-bool lsquare::DoorCreation(character*, const std::string&, uchar)
+bool lsquare::DoorCreation(character* Creator, const std::string&, uchar)
 {
   if((!GetOLTerrain() || GetOLTerrain()->IsSafeToCreateDoor()) && !GetCharacter())
     {
+      if(Creator && GetRoom())
+	GetRoom()->HostileAction(Creator);
+
       door* Door = new door(0, NO_MATERIALS);
       Door->InitMaterials(MAKE_MATERIAL(IRON));
 

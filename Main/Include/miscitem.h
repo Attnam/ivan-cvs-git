@@ -137,7 +137,7 @@ class ITEM
   virtual material* CreateDipMaterial();
   virtual bool IsDippable(const character*) const { return !ContainedMaterial; }
   virtual void GenerateLeftOvers(character*);
-  virtual void Break();
+  virtual void Break(character*);
   virtual bool IsDipDestination(const character*) const { return ContainedMaterial != 0; }
   virtual bool IsExplosive() const;
   virtual bool ReceiveDamage(character*, ushort, ushort);
@@ -502,7 +502,7 @@ class ITEM
   virtual stack* GetContained() const { return Contained; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual bool Polymorph(stack*);
+  virtual bool Polymorph(character*, stack*);
   virtual void CalculateVolumeAndWeight();
   virtual bool ContentsCanBeSeenBy(const character*) const;
   virtual ulong GetTruePrice() const;

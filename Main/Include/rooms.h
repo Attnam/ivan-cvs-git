@@ -28,7 +28,7 @@ class ROOM
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowSpoil(const item*) const;
   virtual bool AllowKick(const character*,const lsquare*) const;
-  virtual void PlantTrap(character*) const;
+  virtual void HostileAction(character*) const;
 );
 
 class ROOM
@@ -61,7 +61,8 @@ class ROOM
   virtual bool AllowSpoil(const item*) const { return false; }
   virtual short GetGodRelationAdjustment() const { return -150; }
   virtual bool AllowKick(const character*,const lsquare*) const;
-  virtual void PlantTrap(character*) const;
+  virtual void HostileAction(character*) const;
+  virtual bool AllowAltarPolymorph() const { return false; }
  protected:
   virtual void VirtualConstructor(bool);
   bool Entered;
@@ -80,7 +81,7 @@ class ROOM
   virtual bool AllowDropGifts() const { return false; }
   virtual void TeleportSquare(character*, lsquare*);
   virtual bool AllowKick(const character*, const lsquare*) const;
-  virtual void PlantTrap(character*) const;
+  virtual void HostileAction(character*) const;
 );
 
 class ROOM

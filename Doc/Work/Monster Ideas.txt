@@ -104,3 +104,7 @@ Butterfly of storms
 Hattifattener
 
 	Not dangerous in normal weather, but gathers electricity during thunderstorms and starts shooting lightnings.
+
+Grid feature
+
+	Zaps people.
