@@ -374,6 +374,7 @@ class item : public object
   bool IsInCorrectSlot() const;
   ushort GetEquipmentIndex() const;
   room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
+  virtual bool HasBetterVersion() const { return false; }
  protected:
   virtual item* RawDuplicate() const = 0;
   void LoadDataBaseStats();

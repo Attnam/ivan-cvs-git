@@ -426,4 +426,4 @@ Carnivorous plant seeds.
 Town hit by "zombie-plague"
 When player is killed by something when he is fainting the death message should say "killed by a X while helpless" 
 Panicking should be more probable when friends around the character have panicked.
-
+Wielded wands should sometimes break in fights.

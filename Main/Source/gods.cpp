@@ -626,35 +626,27 @@ void mortifer::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   bool Success = false;
-  item* NewVersion;
 
-  if(PLAYER->GetStack()->GetItems())
+  std::vector<item*> OKItems;
+  for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
     {
-      bool Cont = true;
-
-      while(Cont)
-	{
-	  Cont = false;
-
-	  for(stackiterator i = PLAYER->GetStack()->GetBottom(); i.HasItem(); ++i)
-	    {
-	      NewVersion = i->BetterVersion();
-
-	      if(NewVersion)
-		{
-		  item* ToBeDeleted = *i;
-		  ToBeDeleted->RemoveFromSlot();
-		  PLAYER->GetStack()->AddItem(NewVersion);
-		  Success = true;
-		  ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
-		  ToBeDeleted->SendToHell();
-		  Cont = true;
-		  break;
-		}
-	    }
-	}
+      if(!i->HasBetterVersion())
+	continue;
+	  
+      OKItems.push_back(*i);
+      Success = true;
     }
-
+  item* NewVersion;
+  for(ushort c = 0; !OKItems.empty() && c < 5; ++c)
+    {
+      item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
+      NewVersion = ToBeDeleted->BetterVersion();
+      ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
+      PLAYER->GetStack()->AddItem(NewVersion);
+      ToBeDeleted->RemoveFromSlot();
+      ToBeDeleted->SendToHell();
+      OKItems.erase(std::find(OKItems.begin(), OKItems.end(), ToBeDeleted));
+    }
   if((Success && !(RAND() % 5) || (!Success && !(RAND() % 3))))
     {
       uchar* Possible = new uchar[GODS]; 
@@ -672,8 +664,8 @@ void mellis::PrayGoodEffect()
 	  return;
 	}
     }
-
-  ADD_MESSAGE("Nothing happens.");
+  if(!Success)
+    ADD_MESSAGE("Nothing happens.");
 }
 
 void mellis::PrayBadEffect()

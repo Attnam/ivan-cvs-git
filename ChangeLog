@@ -7,6 +7,10 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+February 01 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Mellis now exchanges maximum of 5 items
+
 January 28 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Chests can be offered now

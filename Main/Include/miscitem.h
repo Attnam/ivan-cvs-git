@@ -97,6 +97,7 @@ class ITEM
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual material* CreateDipMaterial();
   virtual bool AllowSpoil() const { return false; } // temporary
+  virtual bool HasBetterVersion() const { return true; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string&, bool) const;
@@ -131,6 +132,7 @@ class ITEM
   virtual bool IsDipDestination(const character*) const { return true; }
   virtual bool IsExplosive() const;
   virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual bool HasBetterVersion() const { return true; }
  protected:
   virtual void AddPostFix(std::string& String) const { AddContainerPostFix(String); }
   virtual bool AddAdjective(std::string&, bool) const;
@@ -142,6 +144,7 @@ class ITEM
   item,
  public:
   virtual item* BetterVersion() const;
+  virtual bool HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
 );
 
@@ -152,6 +155,7 @@ class ITEM
  public:
   virtual bool IsBroken() const { return true; }
   virtual item* BetterVersion() const;
+  virtual bool HasBetterVersion() const { return true; }
   virtual void StepOnEffect(character*);
   virtual item* Fix();
 );
