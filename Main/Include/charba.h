@@ -81,7 +81,7 @@ public:
 	virtual bool ThrowItem(uchar, item*);
 	virtual bool TryMove(vector2d, bool = true);
 	virtual bool HasHeadOfElpuri() const;
-	virtual bool HasMaakotkaShirt() const;
+	virtual bool HasGoldenEagleShirt() const;
 	virtual bool HasPetrussNut() const;
 	virtual bool GetIsPlayer() const { return IsPlayer; }
 	virtual bool Apply();

@@ -103,7 +103,7 @@ public:
 	static long GodScore();
 	static void ShowLevelMessage();
 	static float Difficulty();
-	static void TriggerQuestForMaakotkaShirt();
+	static void TriggerQuestForGoldenEagleShirt();
 	static void CalculateGodNumber();
 	static void SetGodNumber(uchar What) { GodNumber = What; }
 	static uchar GetGodNumber() { return GodNumber; }
@@ -149,7 +149,7 @@ public:
 	static long NumberQuestion(std::string, vector2d, ushort);
 	static void LOSTurn();
 	static ulong GetLOSTurns() { return LOSTurns; }
-	static void SendLOSUpdateRequest();// { LOSUpdateRequested = true; }
+	static void SendLOSUpdateRequest() { LOSUpdateRequested = true; }
 	static void RemoveLOSUpdateRequest() { LOSUpdateRequested = false; }
 	static petrus* GetPetrus() { return Petrus; }
 	static void SetPetrus(petrus* What) { Petrus = What; }

@@ -15,14 +15,11 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 
 	__asm _emit(1 << 0x04)|(1 << 0x07);
 
-	configuration::Load();
-
-	igraph::Init(hInstance, hWnd);
-
-	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
-
 	game::InitLuxTable();
 	game::InitScript();
+	configuration::Load();
+	igraph::Init(hInstance, hWnd);
+	globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
 
 	char Buffer[256];
 
@@ -31,8 +28,6 @@ int Main(HINSTANCE hInstance, HINSTANCE hPrevInstance, HWND* hWnd, LPSTR lpCmdLi
 			"Antivalpuri is rising and dark times are ahead;\n"
 			"Dark frogs pillage towns and tomatoes are growing.\n"
 			"But fortunately, there is hope, you!", __DATE__, __TIME__);
-
-	DOUBLEBUFFER->Fill(0);
 
 	iosystem::TextScreen(Buffer);
 

@@ -53,7 +53,7 @@ void priest::CreateInitialEquipment()
 
 void oree::CreateInitialEquipment()
 {
-	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new maakotkashirt)));
+	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new goldeneagleshirt)));
 
 	for(ushort c = 0; c < 6; ++c)
 	{
@@ -466,7 +466,8 @@ bool dog::ConsumeItemType(uchar Type) const     // We need a better system for t
 	case CONTAINER:
 		return false;
 		break;
-	case BONE: // Bone is an odd item, cause it actually can be opened, but not always...
+	case BONE:	// Bone is an odd item, cause it actually can be opened, but not always...
+			// Comment for the comment: a banana can be opened also.
 		return true;
 		break;
 	default:
@@ -679,14 +680,14 @@ void petrus::BeTalkedTo(character* Talker)
 		return;
 	}
 
-	if(Talker->HasMaakotkaShirt())
+	if(Talker->HasGoldenEagleShirt())
 	{
 		ADD_MESSAGE("Petrus smiles.");
 		ADD_MESSAGE("\"Thou hast defeated Oree! Valpurus shall bless thee for the rest of thine life!");
-		ADD_MESSAGE("And thou possess the Maakotka Shirt, the symbol of my Überpriestial power!");
+		ADD_MESSAGE("And thou possess the Shirt of the Golden Eagle, the symbol of my Überpriestial power!");
 		ADD_MESSAGE("Return it now, please.\"");
 
-		if(game::BoolQuestion("Will you give the Maakotka Shirt to Petrus? [Y/n]", 'y'))
+		if(game::BoolQuestion("Will you give the Shirt of the Golden Eagle to Petrus? [Y/n]", 'y'))
 		{
 			iosystem::TextScreen("Thou hast slain the Pepsi Daemon King, and Petrus is happy!\n\nYou are victorious!");
 			game::RemoveSaves();
@@ -694,7 +695,7 @@ void petrus::BeTalkedTo(character* Talker)
 
 			if(!game::GetWizardMode())
 			{
-				AddScoreEntry("retrieved the Holy Maakotka Shirt and was titled as the Avatar of Law", 4, false);
+				AddScoreEntry("retrieved the Shirt of the Golden Eagle and became the Avatar of Law", 4, false);
 				highscore HScore;
 				HScore.Draw();
 			}
@@ -712,7 +713,7 @@ void petrus::BeTalkedTo(character* Talker)
 	else
 		if(StoryState >= 2)
 		{
-			ADD_MESSAGE("Petrus says: \"Bring me the Maakotka Shirt and we'll talk.\"");
+			ADD_MESSAGE("Petrus says: \"Bring me the Shirt of the Golden Eagle and we'll talk.\"");
 			return;
 		}
 
@@ -728,10 +729,10 @@ void petrus::BeTalkedTo(character* Talker)
 				iosystem::TextScreen(	"Champion of Law!\n\n"
 							"Return to the foul cave of Elpuri and seek out the Master Evil:\n"
 							"Oree the Pepsi Daemon King, who hast stolenth one of the most powerful of all of my artifacts:\n"
-							"the Holy Maakotka Shirt! Return with it and immortal glory shall be thine!");
+							"the Shirt of the Golden Eagle! Return with it and immortal glory shall be thine!");
 
 				game::GetCurrentArea()->SendNewDrawRequest();
-				game::TriggerQuestForMaakotkaShirt();
+				game::TriggerQuestForGoldenEagleShirt();
 				StoryState = 2;
 				return;
 			}
@@ -1374,7 +1375,7 @@ void librarian::BeTalkedTo(character* Talker)
 	case 5:
 		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 		{
-			ADD_MESSAGE("\"The Maakotka Shirt is a legendary artifact. Thou canst not find a better armor.\"");
+			ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
 			break;
 		}
 		else
@@ -1385,12 +1386,12 @@ void librarian::BeTalkedTo(character* Talker)
 		}
 	case 6:
 		ADD_MESSAGE("\"Attnam is traditionally ruled by the Überpriest of the Great Frog.");
-		ADD_MESSAGE("The Überpriest is he who holds the Holy Maakotka Shirt and kills the last Überpriest.\"");
+		ADD_MESSAGE("The Überpriest is he who holds the Shirt of the Golden Eagle and kills the last Überpriest.\"");
 		break;
 	case 7:
 		if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
 		{
-			ADD_MESSAGE("\"Remember, the Maakotka Shirt is the armor the Überpriests.");
+			ADD_MESSAGE("\"Remember, the Shirt of the Golden Eagle is the armor the Überpriests.");
 			ADD_MESSAGE("Things will get *very* rough if one denies it from Petrus.\"");
 			break;
 		}
@@ -1415,7 +1416,7 @@ void femaleslave::CreateInitialEquipment()
 
 void ivan::MoveRandomly()
 {
-	switch(RAND() % 500)
+	switch(RAND() % 1000)
 	{
 /*		case 0:
 			Engrave("The bourgeois is a bourgeois -- for the benefit of the working class.");
@@ -1738,5 +1739,5 @@ bool largecat::Catches(item* Thingy, float)
 
 void human::CreateInitialEquipment()
 {
-	//SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
+	/* Player's initial equipment creation should be added */
 }

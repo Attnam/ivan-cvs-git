@@ -15,6 +15,7 @@ ushort			graphics::XRes;
 ushort			graphics::YRes;
 uchar			graphics::ColorDepth;
 colorizablebitmap*	graphics::DefaultFont = 0;
+void			(*graphics::SwitchModeHandler)();
 
 extern DWORD GetDXVersion();
 
@@ -290,11 +291,13 @@ void graphics::UpdateBounds()
 void graphics::SwitchMode()
 {
 	globalwindowhandler::SetInitialized(false);
-
+	BlitDBToScreen();
 	FullScreen = !FullScreen;
 
-	delete DXDisplay;
+	if(SwitchModeHandler)
+		SwitchModeHandler();
 
+	delete DXDisplay;
 	DXDisplay = new CDisplay();
 
 	if(FullScreen)
@@ -302,12 +305,16 @@ void graphics::SwitchMode()
 		if(FAILED(DXDisplay->CreateFullScreenDisplay(hWnd, XRes, YRes, ColorDepth)))
 			ABORT("This system does not support %dx%dx%d in fullscreen mode!", XRes, YRes, ColorDepth);
 
+		BlitDBToScreen();
+
 		ShowCursor(false);
 	}
 	else
 	{
 		if(FAILED(DXDisplay->CreateWindowedDisplay(hWnd, XRes, YRes)))
 			ABORT("This system does not support %dx%dx%d in window mode!", XRes, YRes, ColorDepth);
+
+		BlitDBToScreen();
 
 		ShowCursor(true);
 
@@ -323,6 +330,9 @@ void graphics::SwitchMode()
 
 			FullScreen = !FullScreen;
 
+			if(SwitchModeHandler)
+				SwitchModeHandler();
+
 			delete DXDisplay;
 
 			DXDisplay = new CDisplay();
@@ -333,8 +343,6 @@ void graphics::SwitchMode()
 			ShowCursor(false);
 		}
 	}
-
-	BlitDBToScreen();
 
 	globalwindowhandler::SetInitialized(true);
 }

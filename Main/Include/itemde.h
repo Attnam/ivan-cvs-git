@@ -349,7 +349,7 @@ class ABSTRACT_ITEM
 
 class ITEM
 (
-	maakotkashirt,
+	goldeneagleshirt,
 	shirt,
 	InitMaterials(new cloth),
 	{
@@ -359,10 +359,10 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, cloth::StaticType()))
 	virtual ushort Possibility() const RET(0)
 	virtual ushort GetArmorValue() const RET(10)
-	virtual std::string NameSingular() const RET("Holy Maakotka Shirt")
+	virtual std::string NameSingular() const RET("Shirt of the Golden Eagle")
 	virtual short CalculateOfferValue(char) const RET(750)
 	virtual long Score() const RET(2500)
-	virtual bool IsMaakotkaShirt() const RET(true);
+	virtual bool IsGoldenEagleShirt() const RET(true);
 	virtual vector2d GetBitmapPos() const RETV(16,112)
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }

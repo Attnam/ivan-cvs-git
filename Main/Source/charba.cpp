@@ -251,7 +251,12 @@ void character::Be()
 				if(CanMove())
 					GetPlayerCommand();
 				else
+				{
 					game::DrawEverything(false);
+
+					if(READKEY())
+						DeActivateVoluntaryStates();
+				}
 
 				if(!StateIsActivated(CONSUMING))
 					Hunger();
@@ -773,7 +778,7 @@ bool character::TryMove(vector2d MoveTo, bool DisplaceAllowed)
 		{
 			if(GetIsPlayer() && game::GetCurrentLevel()->GetOnGround() && game::BoolQuestion("Do you want to leave " + game::GetCurrentDungeon()->GetLevelDescription(game::GetCurrent()) + "? [y/N]"))
 			{
-				if(HasPetrussNut() && !HasMaakotkaShirt())
+				if(HasPetrussNut() && !HasGoldenEagleShirt())
 				{
 					iosystem::TextScreen("An undead and sinister voice greets you as you leave the city behind:\n\n\"MoRtAl! ThOu HaSt SlAuGtHeReD pErTtU aNd PlEaSeD mE!\nfRoM tHiS dAy On, YoU aRe ThE dEaReSt SeRvAnT oF aLl EvIl!\"\n\nYou are victorious!");
 					game::RemoveSaves();
@@ -1269,10 +1274,10 @@ bool character::HasPetrussNut() const
 	return false;
 }
 
-bool character::HasMaakotkaShirt() const
+bool character::HasGoldenEagleShirt() const
 {
 	for(ushort c = 0; c < GetStack()->GetItems(); ++c)
-		if(GetStack()->GetItem(c)->IsMaakotkaShirt())
+		if(GetStack()->GetItem(c)->IsGoldenEagleShirt())
 			return true;
 
 	return false;
@@ -3125,7 +3130,8 @@ bool character::Go()
 		});
 
 		StateVariables.Going.WalkingInOpen = OKDirectionsCounter > 2 ? true : false;
-		return true;
+		GoHandler();
+		return StateIsActivated(GOING);
 	}
 
 	return false;

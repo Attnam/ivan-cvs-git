@@ -753,7 +753,6 @@ bool scroll::ReceiveFireDamage(character*, stack* MotherStack, long SizeOfEffect
 		return false;
 }
 
-
 void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 {
 	vector2d CurrentPos = Zapper->GetPos();
@@ -782,7 +781,6 @@ void wand::Beam(character* Zapper, uchar Direction, uchar Range)
 		Where->DrawParticles(GetBeamColor(), Direction);
 	}
 }
-
 
 void wandofpolymorph::BeamEffect(character* Zapper, uchar Direction, levelsquare* LevelSquare)
 {

@@ -17,6 +17,8 @@ public:
 	static void EditContrast(char);
 	static uchar GetContrast() { return Contrast; }
 	static void SetContrast(long);
+	static bool GetFullScreenMode() { return FullScreenMode; }
+	static void SetFullScreenMode(bool What) { FullScreenMode = What; }
 	static bool GetBeepOnCritical() { return BeepOnCritical; }
 	static void SetBeepOnCritical(bool What) { BeepOnCritical = What; }
 	static bool GetAutodropLeftOvers() { return AutodropLeftOvers; }
@@ -28,10 +30,12 @@ public:
 	static void Save();
 	static void Load();
 	static void ShowConfigScreen();
+	static void SwitchModeHandler();
 private:
 	static std::string DefaultName;
 	static ushort AutosaveInterval;
 	static uchar Contrast;
+	static bool FullScreenMode;
 	static bool BeepOnCritical;
 	static bool AutodropLeftOvers;
 	static bool OutlineCharacters;

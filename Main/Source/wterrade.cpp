@@ -36,7 +36,7 @@ bool attnam::GoDown(character* Who) const
 	game::SendLOSUpdateRequest();
 	game::UpdateCamera();
 
-	if(Who->HasMaakotkaShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
+	if(Who->HasGoldenEagleShirt() && game::GetPetrus() && game::GetTeam(2)->GetRelation(Who->GetTeam()) != HOSTILE && game::GetPetrus()->GetStoryState() < 3)
 	{
 		game::GetCurrentLevel()->GetSquare(vector2d(30, 52))->KickAnyoneStandingHereAway();
 		game::GetPetrus()->Move(vector2d(30, 52), true);

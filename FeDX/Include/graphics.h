@@ -49,6 +49,7 @@ public:
 	static void LoadDefaultFont(std::string);
 	static colorizablebitmap* GetDefaultFont() { return DefaultFont; }
 	static bool GetFullScreen() { return FullScreen; }
+	static void SetSwitchModeHandler(void (*What)()) { SwitchModeHandler = What; }
 private:
 	static HWND hWnd;
 	static bool FullScreen;
@@ -58,6 +59,7 @@ private:
 	static ushort YRes;
 	static uchar ColorDepth;
 	static colorizablebitmap* DefaultFont;
+	static void (*SwitchModeHandler)();
 };
 
 #endif

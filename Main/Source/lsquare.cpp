@@ -1011,7 +1011,6 @@ void levelsquare::ChangeOverLevelTerrainAndUpdateLights(overlevelterrain* NewTer
 			GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
 }
 
-
 void levelsquare::PolymorphEverything(character* Zapper)
 {
 	character* Character;			
@@ -1026,7 +1025,6 @@ void levelsquare::PolymorphEverything(character* Zapper)
 
 	GetStack()->Polymorph();
 }
-
 
 void levelsquare::DrawParticles(ushort Color, uchar)
 {						
@@ -1055,11 +1053,11 @@ void levelsquare::StrikeEverything(character* Zapper, uchar)
 		else
 			Zapper->Hostility(GetCharacter());
 
-
-		if(CanBeSeen()) ADD_MESSAGE("The wand hits %s", GetCharacter()->CNAME(DEFINITE));
+		if(CanBeSeen()) ADD_MESSAGE("The wand hits %s.", GetCharacter()->CNAME(DEFINITE));
 		
 		GetCharacter()->SetHP(GetCharacter()->GetHP() - RAND() % 5 - 1);
 		GetCharacter()->CheckDeath("killed by a wand of striking.");
 	}
+
 	GetOverLevelTerrain()->ReceiveStrike();	
 }

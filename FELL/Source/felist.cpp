@@ -76,8 +76,6 @@ ushort felist::Draw(bool BlitBackroundAfterwards, bool Fade) const
 			else
 			{
 				if(!Fade)
-				//	DOUBLFEBUFFER->Fill(0);
-				//else
 					Buffer.Blit(DOUBLEBUFFER, 0, 0, 0, 0, XRES, YRES);
 
 				DrawDescription(Fade ? &Buffer : DOUBLEBUFFER);

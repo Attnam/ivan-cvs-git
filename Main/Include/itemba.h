@@ -39,7 +39,7 @@ public:
 	virtual ushort GetArmorValue() const { return 100; }
 	virtual bool IsHeadOfElpuri() const { return false; }
 	virtual bool IsPetrussNut() const { return false; }
-	virtual bool IsMaakotkaShirt() const { return false; }
+	virtual bool IsGoldenEagleShirt() const { return false; }
 	virtual bool CanBeRead(character*) const { return false; }
 	virtual bool Read(character*) { return false; }
 	virtual void ReceiveHitEffect(character*, character*) {}

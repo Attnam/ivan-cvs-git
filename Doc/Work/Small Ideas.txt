@@ -61,3 +61,5 @@ Explosion animation.
 Cube-like screenshot system.
 Drinking from the fountains of the Cathedral should be prohibited.
 Loaf of bread.
+Talking to a slave while wielding a whip should cause a special effect.
+Alt+Enter.

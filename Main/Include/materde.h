@@ -390,7 +390,7 @@ class MATERIAL
 public:
 	virtual ushort OfferValue() const				{ return 15; }
 	virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
-	virtual short NutritionValue() const			{ return 400; }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "wolf flesh"; }
 );
@@ -615,6 +615,7 @@ class MATERIAL
 	flesh,
 public:
 	virtual ushort GetColor() const { return MAKE_RGB(128, 128, 128); }
+	virtual ulong RawPrice() const { return GetVolume() >> 4; }
 protected:
 	virtual std::string NameStem() const	{ return "polar bear flesh"; }
 );

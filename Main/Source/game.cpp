@@ -843,7 +843,7 @@ void game::ShowLevelMessage()
 	GetLevel(GetCurrent())->SetLevelMessage("");
 }
 
-void game::TriggerQuestForMaakotkaShirt()
+void game::TriggerQuestForGoldenEagleShirt()
 {
 	GetDungeon(0)->PrepareLevel(6);
 	GetDungeon(0)->GetLevel(6)->CreateStairs(false);
@@ -1202,9 +1202,4 @@ uchar game::GetDirectionForVector(vector2d Vector)
 			return c;
 
 	return DIRECTION_COMMAND_KEYS;
-}
-
-void game::SendLOSUpdateRequest()
-{
-	LOSUpdateRequested = true;
 }

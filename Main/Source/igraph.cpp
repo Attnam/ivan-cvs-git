@@ -23,7 +23,10 @@ void igraph::Init(HINSTANCE hInst, HWND* hWnd)
 	{
 		AlreadyInstalled = true;
 
-		graphics::SetMode(hInst, hWnd, "IVAN 0.301a", 800, 600, 16, false);
+		graphics::SetMode(hInst, hWnd, "IVAN 0.301a", 800, 600, 16, configuration::GetFullScreenMode());
+		DOUBLEBUFFER->Fill(0);
+		graphics::BlitDBToScreen();
+		graphics::SetSwitchModeHandler(configuration::SwitchModeHandler);
 		graphics::LoadDefaultFont("Graphics/Font.pcx");
 
 		uchar c;

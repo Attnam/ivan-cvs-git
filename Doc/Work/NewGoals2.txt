@@ -26,7 +26,7 @@ A second city that will act as a haven for chaotics.
 Manual.
 *Money item.
 Secret Knowledge Command.
-*Manual rest/go termination.
+//*Manual rest/go termination.
 /Graphic effects for rays.
 Dungeon shops.
 Smithy to Attnam.
@@ -68,16 +68,16 @@ Household weaponry
 ?Copulation command
 More realistic hungriness
 ?Mutinous slaves
-Roubles in Ivan's inventory
+//Roubles in Ivan's inventory
 Cats should have seven lives
 *Wand recharging
 Uses for the librarian
 *Dolphin pools should be bigger
 Special eat effect for werewolf corpses
 //*"Times used" value to wand description
-*Inventory weight should be shown
+//*Inventory weight should be shown
 Effect for critically hitting a golem
 Werewolves should gain exp
 //Cats should devour rats
-/Starting pet
+//Starting pet
 //*Polypile balancement

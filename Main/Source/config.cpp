@@ -9,11 +9,12 @@
 #include "message.h"
 #include "area.h"
 
-uchar configuration::Contrast = 100;
-bool configuration::BeepOnCritical = false;
 std::string configuration::DefaultName;
-bool configuration::AutodropLeftOvers = true;
 ushort configuration::AutosaveInterval = 500;
+uchar configuration::Contrast = 100;
+bool configuration::FullScreenMode = false;
+bool configuration::BeepOnCritical = false;
+bool configuration::AutodropLeftOvers = true;
 bool configuration::OutlineCharacters = false;
 bool configuration::OutlineItems = false;
 
@@ -27,6 +28,7 @@ void configuration::Save()
 	SaveFile << "DefaultName = \"" << DefaultName << "\";\n";
 	SaveFile << "AutosaveInterval = " << AutosaveInterval << ";\n";
 	SaveFile << "Contrast = " << ulong(Contrast) << ";\n";
+	SaveFile << "FullScreenMode = " << FullScreenMode << ";";
 	SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
 	SaveFile << "AutodropLeftOvers = " << AutodropLeftOvers << ";\n";
 	SaveFile << "OutlineCharacters = " << OutlineCharacters << ";\n";
@@ -55,6 +57,9 @@ void configuration::Load()
 
 		if(Word == "Contrast")
 			SetContrast(SaveFile.ReadNumber(ValueMap));
+
+		if(Word == "FullScreenMode")
+			SetFullScreenMode(SaveFile.ReadBool());
 
 		if(Word == "BeepOnCritical")
 			SetBeepOnCritical(SaveFile.ReadBool());
@@ -105,6 +110,7 @@ void configuration::ShowConfigScreen()
 		List.AddEntry(std::string("Player's default name:                  ") + (DefaultName == "" ? "-" : DefaultName), BLUE);
 		List.AddEntry(std::string("Autosave interval:                      ") + AutosaveInterval + " turns", BLUE);
 		List.AddEntry(std::string("Contrast:                               ") + Contrast + "/100", BLUE);
+		List.AddEntry(std::string("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Beep on critical messages:              ") + (BeepOnCritical ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Drop food leftovers automatically:      ") + (AutodropLeftOvers ? "yes" : "no"), BLUE);
 		List.AddEntry(std::string("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), BLUE);
@@ -126,19 +132,23 @@ void configuration::ShowConfigScreen()
 			BoolChange = false;
 			continue;
 		case 3:
-			SetBeepOnCritical(!GetBeepOnCritical());
+			graphics::SwitchMode();
 			BoolChange = true;
 			continue;
 		case 4:
-			SetAutodropLeftOvers(!GetAutodropLeftOvers());
+			SetBeepOnCritical(!GetBeepOnCritical());
 			BoolChange = true;
 			continue;
 		case 5:
+			SetAutodropLeftOvers(!GetAutodropLeftOvers());
+			BoolChange = true;
+			continue;
+		case 6:
 			SetOutlineCharacters(!GetOutlineCharacters());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
 			continue;
-		case 6:
+		case 7:
 			SetOutlineItems(!GetOutlineItems());
 			if(game::GetRunning()) game::GetCurrentArea()->SendNewDrawRequest();
 			BoolChange = true;
@@ -171,4 +181,9 @@ void configuration::SetContrast(long What)
 	if(What > 200) What = 200;
 
 	Contrast = What;
+}
+
+void configuration::SwitchModeHandler()
+{
+	SetFullScreenMode(!GetFullScreenMode());
 }
