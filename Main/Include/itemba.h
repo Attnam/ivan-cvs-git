@@ -75,9 +75,13 @@ struct itemdatabase
   ushort GearStates;
   bool IsTwoHanded;
   bool CreateDivineConfigurations;
+  bool CanBeCloned;
+  ushort BeamRange;
   bool CanBeBroken;
   vector2d WallBitmapPos;
   std::string FlexibleNameSingular;
+  uchar MinCharges;
+  uchar MaxCharges;
   bool CanBePiled;
 };
 
@@ -297,10 +301,15 @@ class item : public object
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
   virtual void AddMiscellaneousInfo(felist&) const;
   virtual ulong GetNutritionValue() const;
+  virtual DATABASEBOOL(CanBeCloned);
+  virtual DATABASEVALUE(ushort, BeamRange);
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const { return true; }
   bool CarriedByPlayer() const;
   bool CarriedBy(const character*) const;
+  item* DuplicateToStack(stack*);
+  virtual DATABASEVALUE(uchar, MaxCharges);
+  virtual DATABASEVALUE(uchar, MinCharges);
   virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
   virtual item* RawDuplicate() const = 0;

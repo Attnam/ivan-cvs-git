@@ -68,6 +68,7 @@ character
 	RightSWeaponSkillHits = 0;
 	LeftSWeaponSkillHits = 0;
 	PanicLevel = 33;
+	CanBeCloned = true;
 }
 
 humanoid
@@ -166,6 +167,7 @@ petrus
 	RightSWeaponSkillHits = 5000;
 	ClassStates = INFRAVISION;
 	PanicLevel = 0;
+	CanBeCloned = false;
 }
 
 farmer
@@ -252,6 +254,7 @@ shopkeeper
 	KnownCWeaponSkills == AXES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
+	CanBeCloned = false;
 }
 
 priest
@@ -282,6 +285,7 @@ priest
 	KnownCWeaponSkills == MACES;
 	CWeaponSkillHits == 50;
 	RightSWeaponSkillHits = 20;
+	CanBeCloned = false;
 }
 
 oree
@@ -326,6 +330,7 @@ oree
 	KnownCWeaponSkills = { 3, UNARMED, KICK, BITE; }
 	CWeaponSkillHits = { 3, 2000, 2000, 2000; }
 	PanicLevel = 0;
+	CanBeCloned = false;
 }
 
 darkknight
@@ -507,6 +512,7 @@ elpuri
 	Alias == "Elpuri";
 	CWeaponSkillHits == 500;
 	PanicLevel = 0;
+	CanBeCloned = false;
 }
 
 billswill
@@ -1190,6 +1196,7 @@ librarian
 	CanRead = true;
 	NameSingular = "librarian";
 	PanicLevel = 50;
+	CanBeCloned = false;
 }
 
 zombie

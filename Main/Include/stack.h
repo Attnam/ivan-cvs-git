@@ -92,6 +92,7 @@ class stack
   void CalculateEmitation();
   bool CanBeSeenBy(const character*) const;
   bool IsDangerousForAIToStepOn(const character*) const;
+  bool Clone(ushort);
   void MoveItemsTo(stack*);
   item* GetBottomVisibleItem(const character*) const;
   item* GetBottomItem(const character*, bool) const;

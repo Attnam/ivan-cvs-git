@@ -349,12 +349,13 @@ class ABSTRACT_ITEM
   virtual uchar GetTimesUsed() const { return TimesUsed; }
   virtual void SetTimesUsed(uchar What) { TimesUsed = What; }
   virtual void Beam(character*, const std::string&, uchar, uchar);
-  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*) { return false; };
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*) { }
   virtual void ChargeFully(character*) { SetTimesUsed(0); }
   virtual bool IsAppliable(const character*) const { return true; }
   virtual bool IsZappable(const character*) const { return true; }
   virtual bool IsChargeable(const character*) const { return true; }
   virtual bool ReceiveDamage(character*, ushort, uchar);
+  virtual bool Zap(character*, vector2d, uchar);
   virtual void AddInventoryEntry(const character*, felist&, ushort, bool) const;
  protected:
   virtual ushort GetBeamColor() const { return WHITE; }
@@ -368,11 +369,9 @@ class ITEM
   wandofpolymorph,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
   virtual ushort GetBeamColor() const { return BLUE; }
-  virtual void VirtualConstructor(bool);
 );
 
 class ITEM
@@ -398,10 +397,8 @@ class ITEM
   wandofstriking,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return WHITE; }
 );
 
@@ -506,10 +503,8 @@ class ITEM
   wandoffireballs,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return YELLOW; }
 );
 
@@ -527,10 +522,8 @@ class ITEM
   wandofteleportation,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
@@ -563,10 +556,8 @@ class ITEM
   wandofhaste,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return RED; }
 );
 
@@ -575,10 +566,8 @@ class ITEM
   wandofslow,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
@@ -1100,10 +1089,8 @@ class ITEM
   wandoflocking,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return WHITE; }
 );
 
@@ -1112,10 +1099,8 @@ class ITEM
   wandofresurrection,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return BLACK; }
 );
 
@@ -1204,8 +1189,6 @@ class ITEM
   wand,
  public:
   virtual bool Zap(character*, vector2d, uchar);
- protected:
-  virtual void VirtualConstructor(bool);
 );
 
 class ITEM
@@ -1213,10 +1196,8 @@ class ITEM
   wandofinvisibility,
   wand,
  public:
-  virtual bool Zap(character*, vector2d, uchar);
   virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
  protected:
-  virtual void VirtualConstructor(bool);
   virtual ushort GetBeamColor() const { return WHITE; }
 );
 
@@ -1284,5 +1265,14 @@ class ITEM
   virtual bool CleptiaHelps(const character*, const character*) const;
 );
 
+class ITEM
+(
+ wandofcloning,
+ wand,
+ public:
+  virtual bool BeamEffect(character*, const std::string&, uchar, lsquare*);
+ protected:
+  virtual ushort GetBeamColor() const { return GREEN; }
+);
 #endif
 

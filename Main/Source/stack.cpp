@@ -538,6 +538,21 @@ bool stack::IsDangerousForAIToStepOn(const character* Stepper) const
   return false;
 }
 
+/* returns true if something was cloned. Max is the cap of items to be cloned */
+bool stack::Clone(ushort Max)
+{
+  if(!GetItems())
+    return false;
+  itemvector ItemVector;
+  FillItemVector(ItemVector);
+  ushort p = 0;
+
+  for(ushort c = 0; c < ItemVector.size(); ++c)
+    if(ItemVector[c]->Exists() && ItemVector[c]->DuplicateToStack(this) && ++p == Max)
+      break;  
+  return p > 0;
+}
+
 void stack::AddElement(item* Item)
 {
   ++Items;

@@ -149,6 +149,7 @@ struct characterdatabase
   ushort RightSWeaponSkillHits;
   ushort LeftSWeaponSkillHits;
   uchar PanicLevel;
+  bool CanBeCloned;
 };
 
 class characterprototype
@@ -680,6 +681,8 @@ class character : public entity, public id
   virtual void PrintBeginPanicMessage() const;
   virtual void PrintEndPanicMessage() const;
   virtual void CheckPanic(ulong);
+  virtual DATABASEBOOL(CanBeCloned);
+  virtual character* CloneToNearestSquare(character*) const;
   virtual void SignalSpoil();
   bool HasSecondaryMaterial() const { return false; }
   bool HasContainedMaterial() const { return true; }

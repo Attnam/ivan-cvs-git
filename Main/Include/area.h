@@ -34,8 +34,8 @@ class area
   void SendNewDrawRequest();
   void Initialize(ushort, ushort);
   virtual void MoveCharacter(vector2d, vector2d);
-  vector2d GetNearestFreeSquare(character*, vector2d);
-  vector2d FreeSquareSeeker(character*, vector2d, vector2d, uchar);
+  vector2d GetNearestFreeSquare(const character*, vector2d) const;
+  vector2d FreeSquareSeeker(const character*, vector2d, vector2d, uchar) const;
   virtual ushort GetLOSModifier() const { return 16; }
   square* GetNeighbourSquare(vector2d, ushort) const;
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }

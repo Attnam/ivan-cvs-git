@@ -27,7 +27,7 @@ class terrain
 class gterrain : public terrain
 {
  public:
-  virtual bool IsWalkable(character*) const;
+  virtual bool IsWalkable(const character*) const;
   virtual uchar GetEntryDifficulty() const = 0;
 };
 

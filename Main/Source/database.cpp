@@ -215,6 +215,7 @@ bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Wo
   ANALYZEDATA(RightSWeaponSkillHits);
   ANALYZEDATA(LeftSWeaponSkillHits);
   ANALYZEDATA(PanicLevel);
+  ANALYZEDATA(CanBeCloned);
 
   return Found;
 }
@@ -272,9 +273,13 @@ bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, i
   ANALYZEDATA(GearStates);
   ANALYZEDATA(IsTwoHanded);
   ANALYZEDATA(CreateDivineConfigurations);
+  ANALYZEDATA(CanBeCloned);
+  ANALYZEDATA(BeamRange);
   ANALYZEDATA(CanBeBroken);
   ANALYZEDATAWITHDEFAULT(WallBitmapPos, BitmapPos);
   ANALYZEDATAWITHDEFAULT(FlexibleNameSingular, NameSingular);
+  ANALYZEDATA(MaxCharges);
+  ANALYZEDATA(MinCharges);
   ANALYZEDATA(CanBePiled);
 
   return Found;

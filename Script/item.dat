@@ -51,7 +51,10 @@ item
 	IsTwoHanded = false;
 	CreateDivineConfigurations = false;
 	ForcedVisualEffects = 0;
+	CanBeCloned = true;
 	CanBeBroken = false;
+	MinCharges = 0;
+	MaxCharges = 0;
 	CanBePiled = true;
 }
 
@@ -340,6 +343,8 @@ banana /* materialcontainer-> */
 	Alias == "gun";
 	Roundness = 15;
 	CanBeBroken = true;
+	MaxCharges = 6;
+	MinCharges = 6;
 	CanBePiled = true;
 
 	Config BROKEN;
@@ -396,6 +401,7 @@ valpurusjustifier /* meleeweapon-> */
 	IsPolymorphable = false;
 	Alias == "Justifier";
 	Roundness = 20;
+	CanBeCloned = false;
 	CanBeBroken = false;
 
 	Config BROKEN; /* for future */
@@ -432,6 +438,7 @@ neercseulb /* meleeweapon-> */
 	Alias == "Neerc Se-ulb";
 	Roundness = 35;
 	IsTwoHanded = true;
+	CanBeCloned = false;
 	CanBeBroken = false;
 
 	Config BROKEN; /* for future */
@@ -538,6 +545,7 @@ goldeneagleshirt /* armor->bodyarmor-> */
 	MainMaterialConfig == CLOTH;
 	ArticleMode = DEFINITEARTICLE;
 	IsPolymorphable = false;
+	CanBeCloned = false;
 } 
 
 potion /* materialcontainer-> */
@@ -709,6 +717,7 @@ scrollofwishing /* scroll-> */
 	Price = 2000;
 	IsPolymorphSpawnable = false;
 	PostFix = "of wishing";
+	CanBeCloned = false;
 }
 
 cheapcopyofleftnutofpetrus /* nut-> */
@@ -747,6 +756,9 @@ wandofpolymorph /* wand-> */
 	IsPolymorphSpawnable = false;
 	PostFix = "of polymorph";
 	MainMaterialConfig == GLASS;
+	BeamRange = 5;
+	MinCharges = 2;
+	MaxCharges = 5;
 }
 
 scrollofchangematerial /* scroll-> */
@@ -776,6 +788,7 @@ avatarofvalpurus
 	MainMaterialConfig == VALPURIUM;
 	IsPolymorphable = false;
 	Roundness = 80;
+	CanBeCloned = false;
 }
 
 wandofstriking /* wand-> */
@@ -784,6 +797,9 @@ wandofstriking /* wand-> */
 	Price = 500;
 	PostFix = "of striking";
 	MainMaterialConfig == MARBLE;
+	BeamRange = 15;
+	MinCharges = 2;
+	MaxCharges = 5;
 }
 
 kiwi
@@ -961,6 +977,9 @@ wandoffireballs /* wand-> */
 	Price = 500;
 	PostFix = "of fireballs";
 	MainMaterialConfig == MARBLE;
+	BeamRange = 200;
+	MinCharges = 1;
+	MaxCharges = 4;
 }
 
 scrolloftaming /* scroll-> */
@@ -977,6 +996,9 @@ wandofteleportation /* wand-> */
 	PostFix = "of teleportation";
 	MainMaterialConfig == GOLD;
 	Alias == "wand of teleport";
+	BeamRange = 5;
+	MinCharges = 2;
+	MaxCharges = 7;
 }
 
 mine /*materialcontainer-> */
@@ -1002,6 +1024,9 @@ wandofhaste /* wand-> */
 	Price = 500;
 	PostFix = "of haste";
 	MainMaterialConfig == IRON;
+	BeamRange = 5;
+	MinCharges = 2;
+	MaxCharges = 6;
 }
 
 wandofslow /* wand-> */
@@ -1010,6 +1035,9 @@ wandofslow /* wand-> */
 	Price = 500;
 	PostFix = "of slow";
 	MainMaterialConfig == IRON;
+	BeamRange = 5;
+	MinCharges = 2;
+	MaxCharges = 6;
 }
 
 key
@@ -1232,6 +1260,7 @@ amulet
 		PostFix = "of life saving";
 		MainMaterialConfig == GOLD;
 		GearStates = LIFE_SAVED;
+		CanBeCloned = false;
 	}
 
 	Config AMULETOFESP;
@@ -1341,6 +1370,7 @@ headofelpuri /* cannot wear helmet etc, so NOT head-> */
 	IsPolymorphable = false;
 	Roundness = 80;
 	IsTwoHanded = true;
+	CanBeCloned = false;
 }
 
 corpse
@@ -1367,6 +1397,9 @@ wandoflocking /* wand-> */
 	Price = 100;
 	PostFix = "of locking";
 	MainMaterialConfig == COPPER;
+	BeamRange = 10;
+	MinCharges = 2;
+	MaxCharges = 6;
 }
 
 wandofresurrection /* wand-> */
@@ -1375,6 +1408,9 @@ wandofresurrection /* wand-> */
 	Price = 500;
 	PostFix = "of resurrection";
 	MainMaterialConfig == BONE;
+	BeamRange = 15;
+	MinCharges = 1;
+	MaxCharges = 2;
 }
 
 whistle
@@ -1419,6 +1455,8 @@ wandofdoorcreation /* wand-> */
 	Price = 200;
 	PostFix = "of door creation";
 	MainMaterialConfig == WOOD;
+	MinCharges = 2;
+	MaxCharges = 6;
 }
 
 beartrap
@@ -1441,6 +1479,9 @@ wandofinvisibility /* wand-> */
 	Price = 250;
 	PostFix = "of invisibility";
 	MainMaterialConfig == GLASS;
+	BeamRange = 15;
+	MinCharges = 2;
+	MaxCharges = 6;
 }
 
 helmet
@@ -1525,6 +1566,7 @@ mjolak /* meleeweapon-> */
 	PostFix = "named Mjolak";
 	ArticleMode = DEFINITEARTICLE;
 	Alias == "Mjolak";
+	CanBeCloned = false;
 
 	Config BROKEN;
 	{
@@ -1555,6 +1597,8 @@ vermis /* meleeweapon-> */
 	IsTwoHanded = true;
 	Alias == "Vermis";
 
+	CanBeCloned = false;
+
 	Config BROKEN;
 	{
 		BitmapPos = 32, 224;
@@ -1583,6 +1627,7 @@ turox /* meleeweapon-> */
 	Roundness = 30; /* we count the handle, too */
 	IsTwoHanded = true;
 	Alias == "Turox";
+	CanBeCloned = false;
 
 	Config BROKEN;
 	{
@@ -1607,10 +1652,23 @@ whipofcleptia /* meleeweapon->whip-> */
 	MainMaterialConfig == LEATHER;
 	SecondaryMaterialConfig == WOOD;
 	Roundness = 2;
+	CanBeCloned = false;
 	Alias == "whip of cleptia";
 
 	Config BROKEN;
 	{
 		BitmapPos = 32, 256;
 	}
+}
+
+wandofcloning /* wand-> */
+{
+	Possibility = 20;
+	Price = 500;
+	IsPolymorphSpawnable = false;
+	PostFix = "of cloning";
+	MainMaterialConfig == BRONZE;
+	BeamRange = 5;
+	MinCharges = 1;
+	MaxCharges = 2;
 }

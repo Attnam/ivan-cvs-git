@@ -231,19 +231,6 @@ bool wand::Apply(character* Terrorist)
   return true;
 }
 
-bool wandofpolymorph::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the polymorph code", Direction, 5);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 void wand::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -379,37 +366,6 @@ item* brokenbottle::BetterVersion() const
 
   return P;
 }
-
-bool wandofstriking::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a wand of striking", Direction, 15);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
-/*bool platemail::ReceiveDamage(character*, ushort Damage, uchar)
-{
-  if(Damage > GetStrengthValue() * 2 + RAND() % 11 - RAND() % 11)
-    {
-      if(CanBeSeenByPlayer())
-	ADD_MESSAGE("%s is damaged.", CHARNAME(DEFINITE));
-
-      item* Plate = new brokenplatemail(0, false);
-      Plate->InitMaterials(GetMainMaterial());
-      SetMainMaterial(0);
-      GetSlot()->DonateTo(Plate);
-      SendToHell();
-      return true;
-    }
-
-  return false;
-}*/
 
 bool brokenbottle::StepOnEffect(character* Stepper)
 {
@@ -906,19 +862,6 @@ bool bananapeals::StepOnEffect(character* Stepper)
   return false;
 }
 
-bool wandoffireballs::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a wand of fireballs", Direction, 200);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 bool wandoffireballs::BeamEffect(character* Who, const std::string& DeathMsg, uchar, lsquare* Where) 
 { 
   if(!Where->GetOTerrain()->IsWalkable() || Where->GetCharacter())
@@ -997,19 +940,6 @@ void bodypart::Load(inputfile& SaveFile)
 {
   materialcontainer::Load(SaveFile);
   SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags  >> HP >> OwnerDescription >> Unique >> RegenerationCounter;
-}
-
-bool wandofteleportation::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the teleportation code", Direction, 5);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
 }
 
 bool wandofteleportation::BeamEffect(character* Who, const std::string&, uchar, lsquare* Where) 
@@ -1275,19 +1205,6 @@ bool wandofhaste::BeamEffect(character*, const std::string&, uchar, lsquare* LSq
     return false;
 }
 
-bool wandofhaste::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the haste code", Direction, 5);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSquare)
 {
   character* Dude = LSquare->GetCharacter();
@@ -1299,19 +1216,6 @@ bool wandofslow::BeamEffect(character*, const std::string&, uchar, lsquare* LSqu
     }
   else
     return false;
-}
-
-bool wandofslow::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the slow code", Direction, 5);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
 }
 
 bool key::Apply(character* User)
@@ -1822,19 +1726,6 @@ bool wandoflocking::BeamEffect(character* Who, const std::string&, uchar, lsquar
   return Where->LockEverything(Who); 
 }
 
-bool wandoflocking::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the wand locking code", Direction, 10);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 void materialcontainer::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -1940,19 +1831,6 @@ bool wandofresurrection::BeamEffect(character* Zapper, const std::string&, uchar
   return LSquare->RaiseTheDead(Zapper);
 }
 
-bool wandofresurrection::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a wand of resurrection", Direction, 15);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
-}
-
 bool corpse::RaiseTheDead(character* Summoner)
 {
   if(Summoner->IsPlayer())
@@ -1972,7 +1850,8 @@ void banana::VirtualConstructor(bool Load)
 {
   meleeweapon::VirtualConstructor(Load);
   SetAnimationFrames(20);
-  SetCharges(6);
+  if(!Load)
+    SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
 }
 
 void lantern::VirtualConstructor(bool Load)
@@ -1983,24 +1862,11 @@ void lantern::VirtualConstructor(bool Load)
 
 void wand::VirtualConstructor(bool Load)
 {
-  item::VirtualConstructor(Load);
-  SetTimesUsed(0);
-}
-
-void wandofpolymorph::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-
   if(!Load)
-    SetCharges(2 + RAND() % 5);
-}
-
-void wandofstriking::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
+    {
+      SetCharges(GetMinCharges() + RAND() % (GetMaxCharges() - GetMinCharges() + 1));
+      SetTimesUsed(0);
+    }
 }
 
 void oillamp::VirtualConstructor(bool Load)
@@ -2009,22 +1875,6 @@ void oillamp::VirtualConstructor(bool Load)
   
   if(!Load)
     SetInhabitedByGenie(RAND() & 1);
-}
-
-void wandoffireballs::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(1 + RAND() % 3);
-}
-
-void wandofteleportation::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
 }
 
 void mine::VirtualConstructor(bool Load)
@@ -2036,22 +1886,6 @@ void mine::VirtualConstructor(bool Load)
       Team = MONSTER_TEAM;
       Active = true;
     }
-}
-
-void wandofhaste::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
-}
-
-void wandofslow::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
 }
 
 void key::VirtualConstructor(bool Load)
@@ -2127,22 +1961,6 @@ void leftleg::VirtualConstructor(bool Load)
 {
   leg::VirtualConstructor(Load);
   BootSlot.Init(this, LEFTBOOTINDEX);
-}
-
-void wandoflocking::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
-}
-
-void wandofresurrection::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(1 + (RAND() & 1));
 }
 
 bool whistle::Apply(character* Whistler) 
@@ -2805,14 +2623,6 @@ bool wandofdoorcreation::Zap(character* Zapper, vector2d, uchar Direction)
   return true;
 }
 
-void wandofdoorcreation::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-  
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
-}
-
 void bodypart::SignalEquipmentAdd(gearslot* Slot)
 {
   if(GetMaster())
@@ -2891,27 +2701,6 @@ uchar bodypart::GetMaxAlpha(ushort) const
     return 150;
   else
     return 255;
-}
-
-void wandofinvisibility::VirtualConstructor(bool Load)
-{
-  wand::VirtualConstructor(Load);
-
-  if(!Load)
-    SetCharges(2 + RAND() % 5);
-}
-
-bool wandofinvisibility::Zap(character* Zapper, vector2d, uchar Direction)
-{
-  if(GetCharges() <= GetTimesUsed())
-    {
-      ADD_MESSAGE("Nothing happens.");
-      return true;
-    }
-
-  Beam(Zapper, "killed by a bug in the invisibility code", Direction, 10);
-  SetTimesUsed(GetTimesUsed() + 1);
-  return true;
 }
 
 bool wandofinvisibility::BeamEffect(character*, const std::string&, uchar, lsquare* Where) 
@@ -3497,6 +3286,24 @@ bool whipofcleptia::CleptiaHelps(const character* Enemy, const character* Hitter
     return !(RAND() % 5);
 }
 
+bool wand::Zap(character* Zapper, vector2d, uchar Direction)
+{
+  if(GetCharges() <= GetTimesUsed())
+    {
+      ADD_MESSAGE("Nothing happens.");
+      return true;
+    }
+  std::string DeathMSG = "killed by " + GetName(INDEFINITE);
+  Beam(Zapper, DeathMSG, Direction, GetBeamRange());
+  SetTimesUsed(GetTimesUsed() + 1);
+  return true;
+}
+
+bool wandofcloning::BeamEffect(character* Zapper, const std::string&, uchar, lsquare* Where)
+{
+  return Where->CloneEverything(Zapper);
+}
+
 void meleeweapon::AddInventoryEntry(const character* Viewer, felist& List, ushort, bool ShowSpecialInfo) const // never piled
 {
   std::string Entry;
@@ -3800,4 +3607,5 @@ bool corpse::CanBePiledWith(const item* Item, const character* Viewer) const
 
   return true;
 }
+
 

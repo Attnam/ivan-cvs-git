@@ -114,7 +114,7 @@ void area::MoveCharacter(vector2d From, vector2d To)
   GetSquare(To)->AddCharacter(Backup);
 }
 
-vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance)
+vector2d area::FreeSquareSeeker(const character* Char, vector2d StartPos, vector2d Prohibited, uchar MaxDistance) const
 {
   ushort c;
 
@@ -146,7 +146,7 @@ vector2d area::FreeSquareSeeker(character* Char, vector2d StartPos, vector2d Pro
   return vector2d(-1, -1);
 }
 
-vector2d area::GetNearestFreeSquare(character* Char, vector2d StartPos)
+vector2d area::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
 {
   if(GetSquare(StartPos)->IsWalkable(Char) && !GetSquare(StartPos)->GetCharacter())
     return StartPos;

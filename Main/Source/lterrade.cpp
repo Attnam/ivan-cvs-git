@@ -636,7 +636,7 @@ bool altar::SitOn(character* Sitter)
   return true;
 }
 
-bool liquidterrain::IsWalkable(character* ByWho) const
+bool liquidterrain::IsWalkable(const character* ByWho) const
 {
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }

@@ -396,7 +396,7 @@
 #define REQUIRES_ANSWER -1
 
 #define DIR_ERROR 0xFF
-#define DIR_ERROR_VECTOR vector2d(666, 666)
+#define DIR_ERROR_VECTOR vector2d(-666, -666)
 
 #define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0f
 

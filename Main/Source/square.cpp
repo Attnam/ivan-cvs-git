@@ -82,7 +82,7 @@ void square::KickAnyoneStandingHereAway()
     }
 }
 
-bool square::IsWalkable(character* Char) const
+bool square::IsWalkable(const character* Char) const
 {
   return GetOTerrain()->IsWalkable() && GetGTerrain()->IsWalkable(Char);
 }

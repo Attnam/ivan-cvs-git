@@ -464,8 +464,11 @@ void item::WeaponSkillHit()
   static_cast<arm*>(static_cast<gearslot*>(Slot)->GetBodyPart())->WieldedSkillHit();
 }
 
+/* returns 0 if item cannot be cloned */
 item* item::Duplicate() const
 {
+  if(!CanBeCloned())
+    return 0;
   item* Clone = RawDuplicate();
   Clone->UpdatePictures();
   return Clone;
@@ -573,6 +576,16 @@ bool item::CarriedBy(const character* Who) const
   return Who->SearchForItemWithID(GetID()) != 0;
 }
 
+item* item::DuplicateToStack(stack* CurrentStack)
+{
+  item* Duplicated = Duplicate();
+  if(!Duplicated)
+    return 0;
+
+  CurrentStack->AddItem(Duplicated);
+  return Duplicated;
+}
+
 bool item::CanBePiledWith(const item* Item, const character* Viewer) const
 {
   return GetType() == Item->GetType()
@@ -582,3 +595,4 @@ bool item::CanBePiledWith(const item* Item, const character* Viewer) const
       && Viewer->GetCWeaponSkillLevel(this) == Viewer->GetCWeaponSkillLevel(Item)
       && Viewer->GetSWeaponSkillLevel(this) == Viewer->GetSWeaponSkillLevel(Item);
 }
+

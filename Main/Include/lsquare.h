@@ -122,6 +122,7 @@ class lsquare : public square
   lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }
   lsquare* GetNearLSquare(vector2d Pos) const { return static_cast<lsquare*>(AreaUnder->GetSquare(Pos)); }
   bool IsDangerousForAIToStepOn(const character*) const;
+  bool CloneEverything(character*);
   stack* GetSideStackOfAdjacentSquare(ushort) const;
  protected:
   glterrain* GLTerrain;

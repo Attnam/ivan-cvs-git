@@ -64,6 +64,7 @@ Splinter message has incorrect order.
 //Kamikaze dwarves don't use backpacks correctly.
 Highscore of no entries doesn't work properly.
 //Carnivorous plants inside walls!
+Scroll of charging ("no items to charge")
 Alpha + rotate doesn't work.
 Beartraps + groinless creatures.
 Zapping is possible without arms.

@@ -5571,8 +5571,11 @@ void character::AddDefenceInfo(felist& List) const
       }
 }
 
+/* returns 0 if character cannot be cloned */
 character* character::Duplicate() const
 {
+  if(!CanBeCloned())
+    return 0;
   character* Char = RawDuplicate();
   Char->CalculateAll();
   return Char;
@@ -5700,6 +5703,25 @@ void character::CheckPanic(ulong Ticks)
     }
 }
 
+/* returns 0 if fails else the newly created character */
+character* character::CloneToNearestSquare(character*) const
+{
+  vector2d Where = GetAreaUnder()->GetNearestFreeSquare(this, GetPos());
+  if(Where == DIR_ERROR_VECTOR)
+    {
+      ADD_MESSAGE("You sense a disturbance in the Force.");
+      return 0;
+    }
+
+  character* NewlyCreated = Duplicate();
+
+  if(!NewlyCreated)
+    return 0;
+  
+  GetLevelUnder()->GetLSquare(Where)->AddCharacter(NewlyCreated);
+  return NewlyCreated;
+}
+
 void character::SignalSpoil()
 {
   /* Add support for spoiling zombies! */
@@ -5707,3 +5729,4 @@ void character::SignalSpoil()
   if(GetMotherEntity())
     GetMotherEntity()->SignalSpoil(0);
 }
+

@@ -1224,6 +1224,22 @@ bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
   return GetStack()->IsDangerousForAIToStepOn(Who); 
 } 
 
+/* returns true if clones something */
+bool lsquare::CloneEverything(character* Cloner)
+{
+  bool ClonedSomething = false;
+  character* Character = GetCharacter();
+
+  if(Character)
+    {
+      ClonedSomething = Character->CloneToNearestSquare(Cloner);
+    }
+
+  if(GetStack()->Clone(5))
+    ClonedSomething = true;
+  return ClonedSomething;
+}
+
 stack* lsquare::GetSideStackOfAdjacentSquare(ushort Index) const
 {
   switch(Index)
@@ -1247,3 +1263,4 @@ void lsquare::SendMemorizedUpdateRequest()
       UpdateMemorizedDescription();
     }
 }
+

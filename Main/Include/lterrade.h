@@ -180,7 +180,7 @@ class GLTERRAIN
   liquidterrain,
   glterrain,
  public:
-  virtual bool IsWalkable(character*) const;
+  virtual bool IsWalkable(const character*) const;
   virtual std::string SurviveMessage() const { return "you manage to get out of the pool"; }
   virtual std::string DeathMessage() const { return "you drown"; }
   virtual std::string MonsterDeathVerb() const { return "drowns"; }
