@@ -1426,7 +1426,7 @@ void skunk::GetAICommand()
 	      if(CanBeSeenByPlayer())
 		ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
 
-	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 1000));
+	      Char->GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 250));
 	      EditAP(-1000);
 	      return;
 	    }
@@ -1437,7 +1437,7 @@ void skunk::GetAICommand()
       if(CanBeSeenByPlayer())
 	ADD_MESSAGE("%s stinks.", CHAR_NAME(DEFINITE));
 
-      GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 500));
+      GetLSquareUnder()->AddSmoke(new gas(SKUNK_SMELL, 250));
     }
 
   nonhumanoid::GetAICommand();
