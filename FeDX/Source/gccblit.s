@@ -24,11 +24,36 @@
 .globl _AlphaBlit__FUlUlUlUlUsUsUs
 .globl _DrawLine__FUlUlUsUsUsUsUsUsUs
 
+.globl Fill__FUlUlUsUsUs
+.globl BlitToDB__FUlUlUlUsUs
+.globl BlitNoFlags__FUlUlUlUlUsUs
+.globl BlitMirror__FUlUlUlUlUsUs
+.globl BlitFlip__FUlUlUlUlUsUs
+.globl BlitMirrorFlip__FUlUlUlUlUsUs
+.globl BlitRotate90__FUlUlUlUlUlUsUs
+.globl BlitMirrorRotate90__FUlUlUlUlUlUsUs
+.globl BlitFlipRotate90__FUlUlUlUlUlUsUs
+.globl BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
+.globl BlitLuminated__FUlUlUlUlUlUsUs
+.globl MaskedBlitNoFlags__FUlUlUlUlUsUsUs
+.globl MaskedBlitMirror__FUlUlUlUlUsUsUs
+.globl MaskedBlitFlip__FUlUlUlUlUsUsUs
+.globl MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs
+.globl MaskedBlitRotate90__FUlUlUlUlUlUsUsUs
+.globl MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
+.globl MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
+.globl MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
+.globl MaskedBlitLuminated__FUlUlUlUlUlUsUsUs
+.globl AlphaBlit__FUlUlUlUlUsUsUcUs
+.globl AlphaBlit__FUlUlUlUlUsUsUs
+.globl DrawLine__FUlUlUsUsUsUsUsUsUs
+
 .text
 
 /*-------------------------------------*/
 
 _Fill__FUlUlUsUsUs:
+Fill__FUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+24]
@@ -66,6 +91,7 @@ MaskedLoop38:
 /*-------------------------------------*/
 
 _BlitToDB__FUlUlUlUsUs:
+BlitToDB__FUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+24]
@@ -103,6 +129,7 @@ MaskedLoop3:
 /*-------------------------------------*/
 
 _BlitNoFlags__FUlUlUlUlUsUs:
+BlitNoFlags__FUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+28]
@@ -143,6 +170,7 @@ MaskedLoop39:
 /*-------------------------------------*/
 
 _BlitMirror__FUlUlUlUlUsUs:
+BlitMirror__FUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+28]
@@ -189,6 +217,7 @@ BlitMirror2:
 /*-------------------------------------*/
 
 _BlitFlip__FUlUlUlUlUsUs:
+BlitFlip__FUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+28]
@@ -229,6 +258,7 @@ BlitFlip3:
 /*-------------------------------------*/
 
 _BlitMirrorFlip__FUlUlUlUlUsUs:
+BlitMirrorFlip__FUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+28]
@@ -275,6 +305,7 @@ BlitMirrorFlip7:
 /*-------------------------------------*/
 
 _BlitRotate90__FUlUlUlUlUlUsUs:
+BlitRotate90__FUlUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -322,6 +353,7 @@ BlitRotate905:
 /*-------------------------------------*/
 
 _BlitMirrorRotate90__FUlUlUlUlUlUsUs:
+BlitMirrorRotate90__FUlUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -369,6 +401,7 @@ BlitMirrorRotate909:
 /*-------------------------------------*/
 
 _BlitFlipRotate90__FUlUlUlUlUlUsUs:
+BlitFlipRotate90__FUlUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -416,6 +449,7 @@ BlitFlipRotate9011:
 /*-------------------------------------*/
 
 _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs:
+BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -463,6 +497,7 @@ BlitMirrorFlipRotate9013:
 /*-------------------------------------*/
 
 _BlitLuminated__FUlUlUlUlUlUsUs:
+BlitLuminated__FUlUlUlUlUlUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -558,6 +593,7 @@ BlitLuminatedNext6:
 /*-------------------------------------*/
 
 _MaskedBlitNoFlags__FUlUlUlUlUsUsUs:
+MaskedBlitNoFlags__FUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -616,6 +652,7 @@ MaskedNextLine27:
 /*-------------------------------------*/
 
 _MaskedBlitMirror__FUlUlUlUlUsUsUs:
+MaskedBlitMirror__FUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -676,6 +713,7 @@ MaskedNextLine1:
 /*-------------------------------------*/
 
 _MaskedBlitFlip__FUlUlUlUlUsUsUs:
+MaskedBlitFlip__FUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -734,6 +772,7 @@ MaskedNextLine2:
 /*-------------------------------------*/
 
 _MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs:
+MaskedBlitMirrorFlip__FUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -794,6 +833,7 @@ MaskedNextLine3:
 /*-------------------------------------*/
 
 _MaskedBlitRotate90__FUlUlUlUlUlUsUsUs:
+MaskedBlitRotate90__FUlUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -846,6 +886,7 @@ MaskSkip4:
 /*-------------------------------------*/
 
 _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs:
+MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -898,6 +939,7 @@ MaskSkip5:
 /*-------------------------------------*/
 
 _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs:
+MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -950,6 +992,7 @@ MaskSkip6:
 /*-------------------------------------*/
 
 _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs:
+MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -1002,6 +1045,7 @@ MaskSkip7:
 /*-------------------------------------*/
 
 _MaskedBlitLuminated__FUlUlUlUlUlUsUsUs:
+MaskedBlitLuminated__FUlUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -1111,6 +1155,7 @@ MaskedNextLineL1:
 /*-------------------------------------*/
 
 _AlphaBlit__FUlUlUlUlUsUsUcUs:
+AlphaBlit__FUlUlUlUlUsUsUcUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
@@ -1222,6 +1267,7 @@ MaskedNextLineA1:
 /*-------------------------------------*/
 
 _AlphaBlit__FUlUlUlUlUsUsUs:
+AlphaBlit__FUlUlUlUlUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+32]
@@ -1331,6 +1377,7 @@ MaskedNextLineA2:
 /*-------------------------------------*/
 
 _DrawLine__FUlUlUsUsUsUsUsUsUs:
+DrawLine__FUlUlUsUsUsUsUsUsUs:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+40]
