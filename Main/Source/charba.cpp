@@ -4485,6 +4485,7 @@ void character::CalculateEquipmentState()
       }
 }
 
+/* Counter = duration in tics */
 void character::BeginTemporaryState(ushort State, ushort Counter)
 {
   ushort Index;
@@ -5767,3 +5768,7 @@ bool character::CanHeal() const
   return false;
 }
 
+void character::ReceiveFluidSpill(material* Liquid, ushort HitPercent)
+{
+  Liquid->Effect(this, Liquid->GetVolume() * HitPercent / 100);
+}

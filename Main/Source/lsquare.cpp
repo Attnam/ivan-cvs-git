@@ -1264,6 +1264,19 @@ inputfile& operator>>(inputfile& SaveFile, emitter& Emitter)
   return SaveFile;
 }
 
+void lsquare::SpillFluid(material* Liquid, ushort HitPercent, character* Spiller)
+{
+  SpillFluid(1, Liquid->GetColor(), 5, 60);
+  character* CharHere = GetCharacter();
+  if(CharHere && (RAND() % 100) > 99 - short(HitPercent))
+    {
+      if(Spiller)
+	Spiller->Hostility(CharHere);
+      CharHere->ReceiveFluidSpill(Liquid, HitPercent);
+    }
+  delete Liquid;
+}
+
 bool lsquare::IsDark() const
 {
   return !Luminance || (GetRed24(Luminance) < LIGHT_BORDER && GetGreen24(Luminance) < LIGHT_BORDER && GetBlue24(Luminance) < LIGHT_BORDER);

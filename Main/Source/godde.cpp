@@ -665,6 +665,19 @@ void scabies::PrayGoodEffect()
 	  game::GetPlayer()->GetGiftStack()->AddItem(Reward);
 	}
     }
+  else
+    {
+      for(ushort d = 0; d < 8; ++d)
+	{
+	  lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
+	  if(Square)
+	    {
+	      Square->SpillFluid(MAKE_MATERIAL(POISON, 1500), 100, 0);
+	    }
+	  ADD_MESSAGE("%s throws poisons all squares near!", GOD_NAME);
+	}
+
+    }
 
 }
 
@@ -682,11 +695,8 @@ void scabies::PrayBadEffect()
     }
   else
     {
-      
-
-
-
-
+      ADD_MESSAGE("%s unleashes all her fury upon you!", GOD_NAME);
+      game::GetPlayer()->BeginTemporaryState(POISONED, 500 + RAND() % 300);
     }
 }
 

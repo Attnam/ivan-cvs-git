@@ -11,7 +11,7 @@
 .globl _BlitMirrorRotate90__FUlUlUlUlUlUsUs
 .globl _BlitFlipRotate90__FUlUlUlUlUlUsUs
 .globl _BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
-.globl _BlitLuminated__FUlUlUlUlUsUsUs
+.globl _BlitLuminated__FUlUlUlUlUsUsUl
 .globl _MaskedBlitNoFlags__FUlUlUlUlUsUsUs
 .globl _MaskedBlitMirror__FUlUlUlUlUsUsUs
 .globl _MaskedBlitFlip__FUlUlUlUlUsUsUs
@@ -20,7 +20,7 @@
 .globl _MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
 .globl _MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl _MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
-.globl _MaskedBlitLuminated__FUlUlUlUlUsUsUsUs
+.globl _MaskedBlitLuminated__FUlUlUlUlUsUsUlUs
 .globl _SimpleAlphaBlit__FUlUlUlUlUsUsUcUs
 .globl _AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs
 .globl _AlphaBlitMirror__FUlUlUlUlUlUsUsUs
@@ -30,7 +30,6 @@
 .globl _AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs
 .globl _AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs
 .globl _AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs
-.globl _AlphaBlitLuminated__FUlUlUlUlUlUsUsUsUs
 
 .globl _DrawLine__FUlUlUsUsUsUsUsUsUs
 
@@ -45,7 +44,7 @@
 .globl BlitMirrorRotate90__FUlUlUlUlUlUsUs
 .globl BlitFlipRotate90__FUlUlUlUlUlUsUs
 .globl BlitMirrorFlipRotate90__FUlUlUlUlUlUsUs
-.globl BlitLuminated__FUlUlUlUlUsUsUs
+.globl BlitLuminated__FUlUlUlUlUsUsUl
 .globl MaskedBlitNoFlags__FUlUlUlUlUsUsUs
 .globl MaskedBlitMirror__FUlUlUlUlUsUsUs
 .globl MaskedBlitFlip__FUlUlUlUlUsUsUs
@@ -54,7 +53,7 @@
 .globl MaskedBlitMirrorRotate90__FUlUlUlUlUlUsUsUs
 .globl MaskedBlitFlipRotate90__FUlUlUlUlUlUsUsUs
 .globl MaskedBlitMirrorFlipRotate90__FUlUlUlUlUlUsUsUs
-.globl MaskedBlitLuminated__FUlUlUlUlUsUsUsUs
+.globl MaskedBlitLuminated__FUlUlUlUlUsUsUlUs
 .globl SimpleAlphaBlit__FUlUlUlUlUsUsUcUs
 .globl AlphaBlitNoFlags__FUlUlUlUlUlUsUsUs
 .globl AlphaBlitMirror__FUlUlUlUlUlUsUsUs
@@ -64,7 +63,6 @@
 .globl AlphaBlitMirrorRotate90__FUlUlUlUlUlUlUsUsUs
 .globl AlphaBlitFlipRotate90__FUlUlUlUlUlUlUsUsUs
 .globl AlphaBlitMirrorFlipRotate90__FUlUlUlUlUlUlUsUsUs
-.globl AlphaBlitLuminated__FUlUlUlUlUlUsUsUsUs
 
 .globl DrawLine__FUlUlUsUsUsUsUsUsUs
 
@@ -79,7 +77,7 @@
 .globl __Z18BlitMirrorRotate90mmmmmtt
 .globl __Z16BlitFlipRotate90mmmmmtt
 .globl __Z22BlitMirrorFlipRotate90mmmmmtt
-.globl __Z13BlitLuminatedmmmmttt
+.globl __Z13BlitLuminatedmmmmttm
 .globl __Z17MaskedBlitNoFlagsmmmmttt
 .globl __Z16MaskedBlitMirrormmmmttt
 .globl __Z14MaskedBlitFlipmmmmttt
@@ -88,7 +86,7 @@
 .globl __Z24MaskedBlitMirrorRotate90mmmmmttt
 .globl __Z22MaskedBlitFlipRotate90mmmmmttt
 .globl __Z28MaskedBlitMirrorFlipRotate90mmmmmttt
-.globl __Z19MaskedBlitLuminatedmmmmtttt
+.globl __Z19MaskedBlitLuminatedmmmmttmt
 .globl __Z15SimpleAlphaBlitmmmmttht
 .globl __Z16AlphaBlitNoFlagsmmmmmttt
 .globl __Z15AlphaBlitMirrormmmmmttt
@@ -112,7 +110,7 @@
 .globl _Z18BlitMirrorRotate90mmmmmtt
 .globl _Z16BlitFlipRotate90mmmmmtt
 .globl _Z22BlitMirrorFlipRotate90mmmmmtt
-.globl _Z13BlitLuminatedmmmmttt
+.globl _Z13BlitLuminatedmmmmttm
 .globl _Z17MaskedBlitNoFlagsmmmmttt
 .globl _Z16MaskedBlitMirrormmmmttt
 .globl _Z14MaskedBlitFlipmmmmttt
@@ -121,7 +119,7 @@
 .globl _Z24MaskedBlitMirrorRotate90mmmmmttt
 .globl _Z22MaskedBlitFlipRotate90mmmmmttt
 .globl _Z28MaskedBlitMirrorFlipRotate90mmmmmttt
-.globl _Z19MaskedBlitLuminatedmmmmtttt
+.globl _Z19MaskedBlitLuminatedmmmmttmt
 .globl _Z15SimpleAlphaBlitmmmmttht
 .globl _Z16AlphaBlitNoFlagsmmmmmttt
 .globl _Z15AlphaBlitMirrormmmmmttt
@@ -644,14 +642,14 @@ BlitMirrorFlipRotate9013:
 
 /*-------------------------------------*/
 
-_BlitLuminated__FUlUlUlUlUsUsUs:
-BlitLuminated__FUlUlUlUlUsUsUs:
-__Z13BlitLuminatedmmmmttt:
-_Z13BlitLuminatedmmmmttt:
+_BlitLuminated__FUlUlUlUlUsUsUl:
+BlitLuminated__FUlUlUlUlUsUsUl:
+__Z13BlitLuminatedmmmmttm:
+_Z13BlitLuminatedmmmmttm:
 	push ebp
 	mov ebp, esp
-	mov ax, [ebp+32]
-	mov Luminance, ax
+	mov eax, [ebp+32]
+	mov Luminance, eax
 	mov ax, [ebp+28]
 	mov Height, ax
 	mov ax, [ebp+24]
@@ -673,10 +671,28 @@ _Z13BlitLuminatedmmmmttt:
 	mov edi, TrueDestOffset
 	xor edx, edx
 	mov es, ax
-	mov dx, Luminance
 	xor ecx, ecx
-	sub dx, 0x100
+	
+	mov edx, Luminance
+	shr edx, 0x0F
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Red, dx
+
+	mov edx, Luminance
+	shr edx, 0x07
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Green, dx
+
+	mov edx, Luminance
+	shl edx, 0x01
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Blue, dx
+	
 	cld
+	
 BlitLuminated1:
 	mov cx, Width
 BlitLuminated2:
@@ -684,7 +700,7 @@ BlitLuminated2:
 	mov bx, ax
 	and bx, 0x1F
 	shl bx, 0x03
-	add bx, dx
+	add bx, Blue
 	jns BlitLuminatedNext1
 	xor bx, bx
 	jmp BlitLuminatedNext2
@@ -700,7 +716,7 @@ BlitLuminatedNext2:
 	mov bx, ax
 	and bx, 0x3F
 	shl bx, 0x02
-	add bx, dx
+	add bx, Green
 	jns BlitLuminatedNext3
 	xor bx, bx
 	jmp BlitLuminatedNext4
@@ -716,7 +732,7 @@ BlitLuminatedNext4:
 	mov bx, ax
 	and bx, 0x1F
 	shl bx, 0x03
-	add bx, dx
+	add bx, Red
 	jns BlitLuminatedNext5
 	xor bx, bx
 	jmp BlitLuminatedNext6
@@ -1210,16 +1226,16 @@ MaskSkip7:
 
 /*-------------------------------------*/
 
-_MaskedBlitLuminated__FUlUlUlUlUsUsUsUs:
-MaskedBlitLuminated__FUlUlUlUlUsUsUsUs:
-__Z19MaskedBlitLuminatedmmmmtttt:
-_Z19MaskedBlitLuminatedmmmmtttt:
+_MaskedBlitLuminated__FUlUlUlUlUsUsUlUs:
+MaskedBlitLuminated__FUlUlUlUlUsUsUlUs:
+__Z19MaskedBlitLuminatedmmmmttmt:
+_Z19MaskedBlitLuminatedmmmmttmt:
 	push ebp
 	mov ebp, esp
 	mov ax, [ebp+36]
 	mov MaskColor, ax
-	mov ax, [ebp+32]
-	mov Luminance, ax
+	mov eax, [ebp+32]
+	mov Luminance, eax
 	mov ax, [ebp+28]
 	mov Height, ax
 	mov ax, [ebp+24]
@@ -1241,9 +1257,26 @@ _Z19MaskedBlitLuminatedmmmmtttt:
 	mov edi, TrueDestOffset
 	xor edx, edx
 	mov es, ax
-	mov dx, Luminance
 	xor ecx, ecx
-	sub dx, 0x100
+	
+	mov edx, Luminance
+	shr edx, 0x0F
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Red, dx
+
+	mov edx, Luminance
+	shr edx, 0x07
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Green, dx
+
+	mov edx, Luminance
+	shl edx, 0x01
+	and edx, 0x1FE
+	sub edx, 0x100
+	mov Blue, dx
+			
 	cld
 MaskedBlitLuminated1:
 	mov cx, Width
@@ -1254,7 +1287,7 @@ MaskedBlitLuminated2:
 	mov bx, ax
 	and bx, 0x1F
 	shl bx, 0x03
-	add bx, dx
+	add bx, Blue
 	jns MaskedBlitLuminatedNext1
 	xor bx, bx
 	jmp MaskedBlitLuminatedNext2
@@ -1270,7 +1303,7 @@ MaskedBlitLuminatedNext2:
 	mov bx, ax
 	and bx, 0x3F
 	shl bx, 0x02
-	add bx, dx
+	add bx, Green		
 	jns MaskedBlitLuminatedNext3
 	xor bx, bx
 	jmp MaskedBlitLuminatedNext4
@@ -1286,7 +1319,7 @@ MaskedBlitLuminatedNext4:
 	mov bx, ax
 	and bx, 0x1F
 	shl bx, 0x03
-	add bx, dx
+	add bx, Red
 	jns MaskedBlitLuminatedNext5
 	xor bx, bx
 	jmp MaskedBlitLuminatedNext6
@@ -2699,3 +2732,6 @@ BTemp:			.short 0x00
 Color:			.short 0x00
 MaskColor:		.short 0x00
 Selector:		.short 0x00
+Red:			.short 0x00
+Green:			.short 0x00
+Blue:			.short 0x00

@@ -38,7 +38,6 @@ int Main(int argc, char **argv)
     std::cout << "Iter Vehemens ad Necem version " << VERSION << std::endl;
     return 0;
   }
-
 #endif
 
 #ifdef VC

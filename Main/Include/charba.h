@@ -690,6 +690,7 @@ class character : public entity, public id
   virtual bool CanHeal() const;
   virtual vector2d GetWaypoint() const { return WayPoint; }
   virtual void SetWayPoint(vector2d What) { WayPoint = What; }
+  virtual void ReceiveFluidSpill(material*, ushort);
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }
