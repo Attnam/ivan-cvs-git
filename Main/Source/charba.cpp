@@ -1083,8 +1083,6 @@ bool character::Talk()
 
 bool character::NOP()
 {
-	game::Beep();
-
 	SetAgilityExperience(GetAgilityExperience() - 5);
 
 	return true;

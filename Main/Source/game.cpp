@@ -44,7 +44,7 @@ ulong game::LOSTurns;
 
 gamescript game::GameScript;
 
-bool game::Flag, game::BeepOnCriticalMsg = true;
+bool game::Flag, game::BeepOnCriticalMsg = false;
 perttu* game::Perttu = 0;
 
 std::string game::AutoSaveFileName = "Save/Autosave";
