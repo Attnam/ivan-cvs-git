@@ -288,41 +288,80 @@ void worldmap::SmoothAltitude()
   for(ushort c = 0; c < 10; ++c)
     {
       game::BusyAnimation();
+      ushort x, y;
 
-      for(ushort y = 0; y < YSize; ++y)
-	for(ushort x = 0; x < XSize; ++x)
-	  {
-	    long HeightNear = 0;
-	    ushort d, SquaresNear = 0;
+      for(x = 0; x < XSize; ++x)
+	SafeSmooth(x, 0);
 
-	    for(d = 0; d < 4; ++d)
-	      {
-		ushort X = x + game::GetMoveVector(d).X;
-		ushort Y = y + game::GetMoveVector(d).Y;
+      for(y = 1; y < YSize - 1; ++y)
+	{
+	  SafeSmooth(0, y);
 
-		if(IsValidPos(X, Y))
-		  {
-		    HeightNear += OldAltitudeBuffer[X][Y];
-		    ++SquaresNear;
-		  }
-	      }
+	  for(x = 1; x < XSize - 1; ++x)
+	    FastSmooth(x, y);
 
-	    for(d = 4; d < 8; ++d)
-	      {
-		ushort X = x + game::GetMoveVector(d).X;
-		ushort Y = y + game::GetMoveVector(d).Y;
+	  SafeSmooth(XSize - 1, y);
+	}
 
-		if(IsValidPos(X, Y))
-		  {
-		    HeightNear += AltitudeBuffer[X][Y];
-		    ++SquaresNear;
-		  }
-	      }
-
-	    OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
-	    AltitudeBuffer[x][y] = HeightNear / SquaresNear;
-	  }
+      for(x = 0; x < XSize; ++x)
+	SafeSmooth(x, YSize - 1);
     }
+}
+
+void worldmap::FastSmooth(ushort x, ushort y)
+{
+  long HeightNear = 0;
+  ushort d;
+
+  for(d = 0; d < 4; ++d)
+    {
+      vector2d Vect = game::GetMoveVector(d);
+      HeightNear += OldAltitudeBuffer[x + Vect.X][y + Vect.Y];
+    }
+
+  for(d = 4; d < 8; ++d)
+    {
+      vector2d Vect = game::GetMoveVector(d);
+      HeightNear += AltitudeBuffer[x + Vect.X][y + Vect.Y];
+    }
+
+  OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
+  AltitudeBuffer[x][y] = HeightNear >> 3;
+}
+
+void worldmap::SafeSmooth(ushort x, ushort y)
+{
+  long HeightNear = 0;
+  ushort d, SquaresNear = 0;
+
+  for(d = 0; d < 4; ++d)
+    {
+      vector2d Vect = game::GetMoveVector(d);
+      ushort X = x + Vect.X;
+      ushort Y = y + Vect.Y;
+
+      if(IsValidPos(X, Y))
+	{
+	  HeightNear += OldAltitudeBuffer[X][Y];
+	  ++SquaresNear;
+	}
+    }
+
+  for(d = 4; d < 8; ++d)
+    {
+      vector2d Vect = game::GetMoveVector(d);
+      ushort X = x + Vect.X;
+      ushort Y = y + Vect.Y;
+
+      if(IsValidPos(X, Y))
+	{
+	  HeightNear += AltitudeBuffer[X][Y];
+	  ++SquaresNear;
+	}
+    }
+
+  OldAltitudeBuffer[x][y] = AltitudeBuffer[x][y];
+  AltitudeBuffer[x][y] = HeightNear / SquaresNear;
 }
 
 void worldmap::GenerateClimate()
@@ -397,9 +436,9 @@ void worldmap::SmoothClimate()
       game::BusyAnimation();
 
       for(ushort y = 0; y < YSize; ++y)
-	for(ushort x = 0, NewType; x < XSize; ++x)
-	  if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType() && (NewType = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y)))
-	    TypeBuffer[x][y] = NewType;
+	for(ushort x = 0; x < XSize; ++x)
+	  if((OldTypeBuffer[x][y] = TypeBuffer[x][y]) != ocean::StaticType())
+	    TypeBuffer[x][y] = WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(x, y);
     }
 
   game::BusyAnimation();
@@ -409,40 +448,62 @@ void worldmap::SmoothClimate()
       Map[x][y]->ChangeWTerrain(protocontainer<gwterrain>::GetProto(TypeBuffer[x][y])->Clone(), new atmosphere);
 }
 
+/* Evil... */
+
+#define ANALYZE_TYPE(type)\
+{\
+  ushort T = type;\
+  \
+  for(c = 0; c < u; ++c)\
+    if(T == UsedType[c])\
+      {\
+	++TypeAmount[c];\
+	break;\
+      }\
+  \
+  if(c == u)\
+    {\
+      UsedType[u] = T;\
+      TypeAmount[u++] = 1;\
+    }\
+}
+
 ushort worldmap::WhatTerrainIsMostCommonAroundCurrentTerritorySquareIncludingTheSquareItself(ushort x, ushort y)
 {
-  static ushort Types = protocontainer<gwterrain>::GetProtoAmount() + 1;
-  static uchar* Type = new uchar[Types]; // evil
-  uchar UsedType[9];
-  memset(Type, 0, Types * sizeof(uchar));
-  ushort d, u = 0;
+  ushort UsedType[9];
+  ushort TypeAmount[9];
+  ushort c, d, u = 1;
+
+  UsedType[0] = TypeBuffer[x][y];
+  TypeAmount[0] = 1;
 
   for(d = 0; d < 4; ++d)
     {
-      ushort X = x + game::GetMoveVector(d).X;
-      ushort Y = y + game::GetMoveVector(d).Y;
+      vector2d Vect = game::GetMoveVector(d);
+      ushort X = x + Vect.X;
+      ushort Y = y + Vect.Y;
 
       if(IsValidPos(X, Y))
-	++Type[UsedType[u++] = OldTypeBuffer[X][Y]];
+	ANALYZE_TYPE(OldTypeBuffer[X][Y]);
     }
 
   for(d = 4; d < 8; ++d)
     {
-      ushort X = x + game::GetMoveVector(d).X;
-      ushort Y = y + game::GetMoveVector(d).Y;
+      vector2d Vect = game::GetMoveVector(d);
+      ushort X = x + Vect.X;
+      ushort Y = y + Vect.Y;
 
       if(IsValidPos(X, Y))
-	++Type[UsedType[u++] = TypeBuffer[X][Y]];
+	ANALYZE_TYPE(TypeBuffer[X][Y]);
     }
 
-  ++Type[UsedType[u++] = TypeBuffer[x][y]];
-  uchar MostCommon = 0;
+  ushort MostCommon = 0;
 
-  for(ushort c = 0; c < u; ++c)
-    if(Type[UsedType[c]] > Type[MostCommon] && UsedType[c] != ocean::StaticType())
-      MostCommon = UsedType[c];
+  for(c = 1; c < u; ++c)
+    if(TypeAmount[c] > TypeAmount[MostCommon] && UsedType[c] != ocean::StaticType())
+      MostCommon = c;
 
-  return MostCommon;
+  return UsedType[MostCommon];
 }
 
 void worldmap::CalculateContinents()

@@ -284,8 +284,8 @@ class CHARACTER
   farmer,
   humanoid,
  protected:
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) * 16); }
-  virtual vector2d GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) * 16); }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) << 4); }
+  virtual vector2d GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) << 4); }
   virtual vector2d GetLeftArmBitmapPos() const { return GetRightArmBitmapPos(); }
 );
 
@@ -539,7 +539,7 @@ class CHARACTER
   virtual bool SpecialEnemySightedReaction(character*);
  protected:
   virtual ushort GetHairColor() const;
-  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) * 16); }
+  virtual vector2d GetHeadBitmapPos() const { return vector2d(112, (RAND() % 6) << 4); }
 );
 
 class CHARACTER

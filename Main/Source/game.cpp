@@ -75,7 +75,6 @@ long game::CurrentEmitterPosX;
 long game::CurrentEmitterPosY;
 vector2d game::CurrentEmitterPos;
 bool game::Generating = false;
-bool game::BusyAnimationDisabled = false;
 float game::AveragePlayerArmStrength;
 float game::AveragePlayerLegStrength;
 float game::AveragePlayerDexterity;
@@ -179,10 +178,9 @@ characteridmap game::CharacterIDMap;
 
 void game::InitScript()
 {
-  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat");
+  inputfile ScriptFile(GAME_DIR + "Script/dungeon.dat", &GlobalValueMap);
   delete GameScript;
   GameScript = new gamescript;
-  GameScript->SetValueMap(GetGlobalValueMap());
   GameScript->ReadFrom(ScriptFile);
 }
 
@@ -406,42 +404,42 @@ bool game::LevelLOSHandler(long X, long Y)
 
 void game::UpdateCameraX()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X >> 1)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
     if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
       return;
     else
       Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
   else
-    if(Camera.X == Player->GetPos().X - GetScreenSize().X / 2)
+    if(Camera.X == Player->GetPos().X - (GetScreenSize().X >> 1))
       return;
     else
-      Camera.X = Player->GetPos().X - GetScreenSize().X / 2;
+      Camera.X = Player->GetPos().X - (GetScreenSize().X >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraY()
 {
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y >> 1)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
     if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
       return;
     else
       Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
   else
-    if(Camera.Y == Player->GetPos().Y - GetScreenSize().Y / 2)
+    if(Camera.Y == Player->GetPos().Y - (GetScreenSize().Y >> 1))
       return;
     else
-      Camera.Y = Player->GetPos().Y - GetScreenSize().Y / 2;
+      Camera.Y = Player->GetPos().Y - (GetScreenSize().Y >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -555,7 +553,7 @@ bool game::Save(const std::string& SaveName)
 
 uchar game::Load(const std::string& SaveName)
 {
-  inputfile SaveFile(SaveName + ".sav", false);
+  inputfile SaveFile(SaveName + ".sav", 0, false);
 
   if(!SaveFile.IsOpen())
     return NEW_GAME;
@@ -641,42 +639,42 @@ bool game::NoxifyHandler(long X, long Y)
 
 void game::UpdateCameraXWithPos(ushort Coord)
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Coord < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Coord < GetScreenSize().X >> 1)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else if(Coord > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+  else if(Coord > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
     if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
       return;
     else
       Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
   else
-    if(Camera.X == Coord - GetScreenSize().X / 2)
+    if(Camera.X == Coord - (GetScreenSize().X >> 1))
       return;
     else
-      Camera.X = Coord - GetScreenSize().X / 2;
+      Camera.X = Coord - (GetScreenSize().X >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Coord < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Coord < GetScreenSize().Y >> 1)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else if(Coord > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+  else if(Coord > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
     if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
       return;
     else
       Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
   else
-    if(Camera.Y == Coord - GetScreenSize().Y / 2)
+    if(Camera.Y == Coord - (GetScreenSize().Y >> 1))
       return;
     else
-      Camera.Y = Coord - GetScreenSize().Y / 2;
+      Camera.Y = Coord - (GetScreenSize().Y >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -709,7 +707,7 @@ vector2d game::GetDirectionVectorForKey(int Key)
     if(Key == game::GetMoveCommandKey(c))
       return game::GetMoveVector(c);
 
-  return DIR_ERROR_VECTOR;
+  return ERROR_VECTOR;
 }
 
 bool game::EyeHandler(long X, long Y)
@@ -800,6 +798,7 @@ void game::RemoveSaves(bool RealSavesAlso)
 
   remove((AutoSaveFileName + ".sav").c_str());
   remove((AutoSaveFileName + ".wm").c_str());
+  std::string File;
 
   for(ushort i = 1; i < Dungeon.size(); ++i)
     for(ushort c = 0; c < GetDungeon(i)->GetLevels(); ++c)
@@ -810,7 +809,7 @@ void game::RemoveSaves(bool RealSavesAlso)
 	 * if it is written in a less odd way.
 	 */
 
-	std::string File = SaveName() + "." + i;
+	File = SaveName() + "." + i;
 	File += c;
 
 	if(RealSavesAlso)
@@ -879,18 +878,18 @@ void game::DoEvilDeed(ushort Amount)
       short Change = Amount - Amount * GetGod(c)->Alignment() / 5;
 
       if(!IsInWilderness() && GetPlayer()->GetLSquareUnder()->GetDivineMaster() == c)
-	if(GetGod(c)->GetRelation() - Change * 2 < -750)
+	if(GetGod(c)->GetRelation() - (Change << 1) < -750)
 	  {
 	    if(GetGod(c)->GetRelation() > -750)
 	      GetGod(c)->SetRelation(-750);
 	  }
-	else if(GetGod(c)->GetRelation() - Change * 2 > 750)
+	else if(GetGod(c)->GetRelation() - (Change << 1) > 750)
 	  {
 	    if(GetGod(c)->GetRelation() < 750)
 	      GetGod(c)->SetRelation(750);
 	  }
 	else
-	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change * 2);
+	  GetGod(c)->SetRelation(GetGod(c)->GetRelation() - Change << 1);
       else
 	if(GetGod(c)->GetRelation() - Change < -500)
 	  {
@@ -1020,19 +1019,19 @@ void game::LOSTurn()
 
 void game::UpdateCamera()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X / 2)
+  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X >> 1)
     Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - GetScreenSize().X / 2)
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
     Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
   else
-    Camera.X = Player->GetPos().X - GetScreenSize().X / 2;
+    Camera.X = Player->GetPos().X - (GetScreenSize().X >> 1);
 
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y / 2)
+  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y >> 1)
     Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - GetScreenSize().Y / 2)
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
     Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
   else
-    Camera.Y = Player->GetPos().Y - GetScreenSize().Y / 2;
+    Camera.Y = Player->GetPos().Y - (GetScreenSize().Y >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -1146,7 +1145,7 @@ void game::BusyAnimation(bitmap* Buffer)
   static double Rotation = 0;
   static clock_t LastTime = 0;
 
-  if(!BusyAnimationDisabled && clock() - LastTime > CLOCKS_PER_SEC >> 5)
+  if(clock() - LastTime > CLOCKS_PER_SEC >> 5)
     {
       if(!ElpuriLoaded)
 	{
@@ -1155,7 +1154,7 @@ void game::BusyAnimation(bitmap* Buffer)
 	  ElpuriLoaded = true;
 	}
 
-      vector2d Pos(RES.X / 2, RES.Y * 2 / 3);
+      vector2d Pos(RES.X >> 1, (RES.Y << 1) / 3);
       Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
       Rotation += 0.02;
 
@@ -1224,7 +1223,7 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
 
       vector2d DirectionVector = GetDirectionVectorForKey(Key);
 
-      if(DirectionVector != DIR_ERROR_VECTOR)
+      if(DirectionVector != ERROR_VECTOR)
 	{
 	  CursorPos += DirectionVector;
 
@@ -1310,7 +1309,7 @@ bool game::AnimationController()
 
 void game::InitGlobalValueMap()
 {
-  inputfile SaveFile(GAME_DIR + "Script/define.dat");
+  inputfile SaveFile(GAME_DIR + "Script/define.dat", &GlobalValueMap);
   std::string Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -1319,7 +1318,7 @@ void game::InitGlobalValueMap()
 	ABORT("Illegal datafile define on line %d!", SaveFile.TellLine());
 
       SaveFile.ReadWord(Word);
-      GlobalValueMap[Word] = SaveFile.ReadNumber(GlobalValueMap);
+      GlobalValueMap.insert(std::pair<std::string, long>(Word, SaveFile.ReadNumber()));
     }
 }
 
@@ -1530,7 +1529,7 @@ void game::InitDangerMap()
 	      }
 
 	    character* Char = Proto->Clone(i->first, NO_PIC_UPDATE|NO_EQUIPMENT_PIC_UPDATE);
-	    DangerMap[configid(c, i->first)] = dangerid(Char->GetRelativeDanger(Player, true));
+	    DangerMap.insert(std::pair<configid, dangerid>(configid(c, i->first), dangerid(Char->GetRelativeDanger(Player, true))));
 	    delete Char;
 	  }
     }
@@ -1616,7 +1615,7 @@ void game::EnterArea(std::vector<character*>& Group, uchar Area, uchar EntryInde
 	{
 	  vector2d NPCPos = GetCurrentLevel()->GetNearestFreeSquare(Group[c], Pos);
 
-	  if(NPCPos == DIR_ERROR_VECTOR)
+	  if(NPCPos == ERROR_VECTOR)
 	    NPCPos = GetCurrentLevel()->GetRandomSquare(Group[c]);
 
 	  GetCurrentLevel()->AddCharacter(NPCPos, Group[c]);
@@ -1845,7 +1844,7 @@ inputfile& operator>>(inputfile& SaveFile, homedata*& HomeData)
 ulong game::CreateNewCharacterID(character* NewChar)
 {
   ulong ID = NextCharacterID++;
-  CharacterIDMap[ID] = NewChar;
+  CharacterIDMap.insert(std::pair<ulong, character*>(ID, NewChar));
   return ID;
 }
 
@@ -1854,3 +1853,4 @@ character* game::SearchCharacter(ulong ID)
   characteridmap::iterator Iterator = CharacterIDMap.find(ID);
   return Iterator != CharacterIDMap.end() ? Iterator->second : 0;
 }
+

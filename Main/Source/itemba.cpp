@@ -24,7 +24,7 @@
 const std::string item::ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
 const std::string item::StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
-item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
+item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), BackupID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight)
 {
 }
 
@@ -204,14 +204,14 @@ void item::Save(outputfile& SaveFile) const
 {
   SaveFile << GetType();
   object::Save(SaveFile);
-  SaveFile << Cannibalised << Size << ID;
+  SaveFile << Cannibalised << Size << ID << BackupID;
 }
 
 void item::Load(inputfile& SaveFile)
 {
   object::Load(SaveFile);
   InstallDataBase();
-  SaveFile >> Cannibalised >> Size >> ID;
+  SaveFile >> Cannibalised >> Size >> ID >> BackupID;
 }
 
 void item::TeleportRandomly()
@@ -278,7 +278,6 @@ ushort item::GetResistance(uchar Type) const
     case SOUND:
     case ENERGY:
     case ACID:
-    case BULIMIA:
     case DRAIN:
       return 0;
     case FIRE: return GetFireResistance();
@@ -327,6 +326,7 @@ void item::Initialize(ushort NewConfig, ushort SpecialFlags)
   if(!(SpecialFlags & LOAD))
     {
       ID = game::CreateNewItemID();
+      BackupID = game::CreateNewItemID();
       Config = NewConfig;
       InstallDataBase();
       LoadDataBaseStats();
@@ -613,6 +613,8 @@ void item::Break()
   item* Broken = RawDuplicate();
   Broken->SetConfig(GetConfig() | BROKEN);
   Broken->SetSize(Broken->GetSize() >> 1);
+  Broken->SetID(BackupID);
+  Broken->SetBackupID(ID);
   DonateSlotTo(Broken);
   SendToHell();
 
@@ -662,6 +664,8 @@ item* item::Fix()
       Fixed = RawDuplicate();
       Fixed->SetConfig(GetConfig() ^ BROKEN);
       Fixed->SetSize(Fixed->GetSize() << 1);
+      Fixed->SetID(BackupID);
+      Fixed->SetBackupID(ID);
       DonateSlotTo(Fixed);
       SendToHell();
     }

@@ -14,9 +14,7 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#ifndef FPI
 #define FPI 3.1415926535897932384626433832795f
-#endif
 
 inline ushort GetRed16(ushort Color) { return Color >> 8 & 0xF8; }
 inline ushort GetGreen16(ushort Color) { return Color >> 3 & 0xFC; }
@@ -36,17 +34,17 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 
 #define TRANSPARENT_COLOR 0xF81F
 
-#define RED MakeRGB16(255, 0, 0)
-#define GREEN MakeRGB16(0, 255, 0)
-#define BLUE MakeRGB16(0, 0, 255)
+#define RED 0xF800
+#define GREEN 0x07E0
+#define BLUE 0x001F
 
-#define YELLOW MakeRGB16(255, 255, 0)
-#define PINK MakeRGB16(255, 0, 255)
+#define YELLOW 0xFFE0
+#define PINK 0xF01E
 
-#define WHITE MakeRGB16(255, 255, 255)
-#define LIGHT_GRAY MakeRGB16(180, 180, 180)
-#define DARK_GRAY MakeRGB16(80, 80, 80)
-#define BLACK MakeRGB16(0, 0, 0)
+#define WHITE 0xFFFF
+#define LIGHT_GRAY 0xB5B6
+#define DARK_GRAY 0x528A
+#define BLACK 0x0000
 
 #define KEY_BACK_SPACE 0x08
 #define KEY_ESC 0x1B
@@ -67,7 +65,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 
 #define NOFLAME 0xFFFF
 
-#define BITMAP_ERROR_VECTOR vector2d(-666, -666)
+#define ERROR_VECTOR vector2d(-0x8000, -0x8000)
 
 #ifdef GCC
 #define NO_ALIGNMENT __attribute__ ((packed))
@@ -99,5 +97,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #ifdef VC
 #define RAND_MULTIPLIER 6364136223846793005
 #endif
+
+#define MAX_CONTROLS 0x10
 
 #endif

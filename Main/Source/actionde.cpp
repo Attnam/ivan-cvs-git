@@ -78,7 +78,7 @@ void consume::Handle()
 
   character* Actor = GetActor();
 
-  if(!InDNDMode() && Actor->CheckBulimia())
+  if(!InDNDMode() && Actor->GetHungerState() >= BLOATED)
     if(Actor->IsPlayer())
       {
 	ADD_MESSAGE("You have a really hard time getting all this down your throat.");

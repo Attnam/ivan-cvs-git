@@ -160,10 +160,10 @@ void festring::SplitString(std::string& Source, std::string& Result, strsize Len
  * Divides Source into lines of size up to Length without cutting words
  * and stores them one by one to StringVector. You can also specify a Marginal,
  * in which case a number of spaces is inserted in the beginning of each line
- * except the first.
+ * except the first. It returns the number of created lines.
  */
 
-void festring::SplitString(const std::string& Source, std::vector<std::string>& StringVector, strsize Length, strsize Marginal)
+ushort festring::SplitString(const std::string& Source, std::vector<std::string>& StringVector, strsize Length, strsize Marginal)
 {
   if(!Length)
     ABORT("Illegal Length 0 passed to festring::SplitString()!");
@@ -172,15 +172,26 @@ void festring::SplitString(const std::string& Source, std::vector<std::string>& 
     ABORT("Illegal festring::SplitString() call: Marginal must be less than Length!");
 
   std::string CopyOfSource(Source);
-  StringVector.resize(1, std::string());
+
+  if(StringVector.empty())
+    StringVector.push_back(std::string());
+  else
+    StringVector[0].resize(0);
+
   SplitString(CopyOfSource, StringVector[0], Length);
+  ushort Size = 1;
 
   while(CopyOfSource.length())
     {
-      std::string String(Marginal, ' ');
+      if(StringVector.size() <= Size)
+	StringVector.push_back(std::string());
+
+      std::string& String = StringVector[Size++];
+      String.assign(Marginal, ' ');
       SplitString(CopyOfSource, String, Length - Marginal);
-      StringVector.push_back(String);
     }
+
+  return Size;
 }
 
 /*

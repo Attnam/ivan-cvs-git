@@ -13,32 +13,10 @@ outputfile::outputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fo
     ABORT("Can't open %s for output!", FileName.c_str());
 }
 
-inputfile::inputfile(const std::string& FileName, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb")), FileName(FileName)
+inputfile::inputfile(const std::string& FileName, const valuemap* ValueMap, bool AbortOnErr) : Buffer(fopen(FileName.c_str(), "rb")), FileName(FileName), ValueMap(ValueMap)
 {
   if(AbortOnErr && !IsOpen())
     ABORT("File %s not found!", FileName.c_str());
-}
-
-/* This function is a gum solution. */
-
-bool inputfile::Eof()
-{
-  int Char = fgetc(Buffer);
-
-  if(feof(Buffer) != 0)
-    return true;
-  else
-    {
-      ungetc(Char, Buffer);
-      return false;
-    }
-}
-
-int inputfile::Peek()
-{
-  int Char = fgetc(Buffer);
-  ungetc(Char, Buffer);
-  return Char;
 }
 
 std::string inputfile::ReadWord(bool AbortOnEOF)
@@ -63,132 +41,129 @@ void inputfile::ReadWord(std::string& Buffer, bool AbortOnEOF)
 	  return;
 	}
 
-      int Char = Peek();
+      int Char = Get();
 
       if(isalpha(Char) || Char == '_')
 	{
 	  if(!Mode)
 	    Mode = 1;
-	  else
-	    if(Mode == 2)
+	  else if(Mode == 2)
+	    {
+	      UnGet(Char);
 	      return;
+	    }
 
 	  Buffer += char(Char);
-	  Get();
 	  continue;
 	}
-
-      if(Char == ' ' && Mode)
-	return;
 
       if(isdigit(Char))
 	{
 	  if(!Mode)
 	    Mode = 2;
-	  else
-	    if(Mode == 1)
+	  else if(Mode == 1)
+	    {
+	      UnGet(Char);
 	      return;
+	    }
 
 	  Buffer += char(Char);
+	  continue;
 	}
 
-      if(ispunct(Char) && Char != '_')
+      if((Char == ' ' || Char == '\n') && Mode)
+	return;
+
+      if(ispunct(Char))
 	{
 	  if(Char == '/')
 	    {
-	      Get();
-
 	      if(!Eof())
-		if(Peek() == '*')
-		  {
-		    long StartPos = TellPos();
-
-		    for(;;)
-		      {
-			Char = Get();
-
-			if(Eof())
-			  ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
-
-			if(Char == '*' && Peek() == '/')
-			  {
-			    Get();
-
-			    if(Mode == 2)
-			      return;
-			    else
-			      break;
-			  }		
-		      }
-
-		    continue;
-		  }
-
-	      if(Mode)
 		{
-		  ungetc('/', this->Buffer);
-		  return;
+		  Char = Get();
+
+		  if(Char == '*')
+		    {
+		      long StartPos = TellPos();
+		      int OldChar = 0;
+		      ushort CommentLevel = 1;
+
+		      for(;;)
+			{
+			  if(Eof())
+			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
+
+			  Char = Get();
+
+			  if(OldChar != '*' || Char != '/')
+			    {
+			      if(OldChar != '/' || Char != '*')
+				OldChar = Char;
+			      else
+				{
+				  ++CommentLevel;
+				  OldChar = 0;
+				}
+			    }
+			  else
+			    {
+			      if(!--CommentLevel)
+				break;
+			      else
+				OldChar = 0;
+			    }
+			}
+
+		      continue;
+		    }
+		  else
+		    UnGet(Char);
 		}
 
-	      Buffer += char(Char);
+	      if(Mode)
+		UnGet('/');
+	      else
+		Buffer += '/';
+
 	      return;
 	    }
 
 	  if(Mode)
-	    return;
+	    {
+	      UnGet(Char);
+	      return;
+	    }
 
 	  if(Char == '"')
 	    {
 	      long StartPos = TellPos();
-	      Get();
-
-	      if(Eof())
-		ABORT("Unterminated string in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
-
-	      if(Peek() == '"')
-		{
-		  Get();
-		  return;
-		}
+	      int OldChar = 0;
 
 	      for(;;)
 		{
-		  Char = Get();
-
 		  if(Eof())
 		    ABORT("Unterminated string in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
-		  if(Peek() == '"')
-		    if(Char == '\\')
-		      {
-			Buffer += '"';
-			Get();
+		  Char = Get();
 
-			if(Peek() == '"')
-			  {
-			    Get();
-			    break;
-			  }
-		      }
-		    else
-		      {
-			Buffer += char(Char);
-			Get();
-			break;
-		      }
+		  if(Char != '"')
+		    {
+		      Buffer += char(Char);
+		      OldChar = Char;
+		    }
+		  else if(OldChar == '\\')
+		    {
+		      Buffer[Buffer.length() - 1] = '"';
+		      OldChar = 0;
+		    }
 		  else
-		    Buffer += char(Char);
+		    return;
 		}
-
-	      return;
 	    }
 
 	  Buffer += char(Char);
-	  Get();
 	  return;
 	}
-
-      Get();
     }
 }
 
@@ -214,41 +189,60 @@ char inputfile::ReadLetter(bool AbortOnEOF)
 	  if(Char == '/')
 	    {
 	      if(!Eof())
-		if(Peek() == '*')
-		  {
-		    long StartPos = TellPos();
+		{
+		  Char = Get();
 
-		    for(;;)
-		      {
-			Char = Get();
+		  if(Char == '*')
+		    {
+		      long StartPos = TellPos();
+		      int OldChar = 0;
+		      ushort CommentLevel = 1;
 
-			if(Eof())
-			  ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
+		      for(;;)
+			{
+			  if(Eof())
+			    ABORT("Unterminated comment in file %s, beginning at line %d!", FileName.c_str(), TellLineOfPos(StartPos));
 
-			if(Char == '*' && Peek() == '/')
-			  {
-			    Get();
-			    break;
-			  }		
-		      }
+			  Char = Get();
 
-		    continue;
-		  }
-		else
-		  return Char;
+			  if(OldChar != '*' || Char != '/')
+			    {
+			      if(OldChar != '/' || Char != '*')
+				OldChar = Char;
+			      else
+				{
+				  ++CommentLevel;
+				  OldChar = 0;
+				}
+			    }
+			  else
+			    {
+			      if(!--CommentLevel)
+				break;
+			      else
+				OldChar = 0;
+			    }
+			}
+
+		      continue;
+		    }
+		  else
+		    UnGet(Char);
+		}
+
+	      return '/';
 	    }
-	  else
-	    return Char;
+
+	  return Char;
 	}
     }
 }
 
 /*
  * Reads a number or a formula from inputfile. Valid values could be for instance "3", "5 * 4+5", "2+rand%4" etc.
- * ValueMap contains keyword pairs that attach a certain numeric value to a word.
  */
 
-long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
+long inputfile::ReadNumber(uchar CallLevel)
 {
   long Value = 0;
   std::string Word;
@@ -265,46 +259,58 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  continue;
 	}
 
-      if(Word == ";" || Word == "," || Word == ")")
+      if(Word.length() == 1)
 	{
-	  if(CallLevel != 0xFF && (Word != ")" || CallLevel != 4))
-	    SeekPosCurrent(-1);
+	  if(Word[0] == ';' || Word[0] == ',' || Word[0] == ')')
+	    {
+	      if(CallLevel != 0xFF && (Word[0] != ')' || CallLevel != 4))
+		SeekPosCurrent(-1);
 
-	  return Value;
-	}
+	      return Value;
+	    }
 
-      /* Convert this into an inline function! */
+	  /* Convert this into an inline function! */
 
-      #define CHECK_OP(op, cl)\
-      if(Word == #op)\
-	if(cl < CallLevel)\
-	  {\
-	    Value op##= ReadNumber(ValueMap, cl);\
-	    NumberCorrect = true;\
-	    continue;\
-	  }\
-	else\
-	  {\
-	    SeekPosCurrent(-1);\
-	    return Value;\
-	  }
+	  #define CHECK_OP(op, cl)\
+	  if(Word[0] == #op[0])\
+	    if(cl < CallLevel)\
+	      {\
+		Value op##= ReadNumber(cl);\
+		NumberCorrect = true;\
+		continue;\
+	      }\
+	    else\
+	      {\
+		SeekPosCurrent(-1);\
+		return Value;\
+	      }
 
-      CHECK_OP(&, 1); CHECK_OP(|, 1); CHECK_OP(^, 1);
-      CHECK_OP(*, 2); CHECK_OP(/, 2); CHECK_OP(%, 2);
-      CHECK_OP(+, 3); CHECK_OP(-, 3);
+	  CHECK_OP(&, 1); CHECK_OP(|, 1); CHECK_OP(^, 1);
+	  CHECK_OP(*, 2); CHECK_OP(/, 2); CHECK_OP(%, 2);
+	  CHECK_OP(+, 3); CHECK_OP(-, 3);
 
-      if(Word == "(")
-	if(NumberCorrect)
-	  {
-	    SeekPosCurrent(-1);
-	    return Value;
-	  }
-	else
-	  {
-	    Value = ReadNumber(ValueMap, 4);
-	    NumberCorrect = false;
+	  if(Word[0] == '(')
+	    if(NumberCorrect)
+	      {
+		SeekPosCurrent(-1);
+		return Value;
+	      }
+	    else
+	      {
+		Value = ReadNumber(4);
+		NumberCorrect = false;
+		continue;
+	      }
+
+	  if(Word[0] == '=' && CallLevel == 0xFF)
 	    continue;
-	  }
+
+	  if(Word[0] == '#') // for #defines
+	    {
+	      SeekPosCurrent(-1);
+	      return Value;
+	    }
+	}
 
       if(Word == "rand")
 	{
@@ -315,20 +321,20 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 
       if(Word == "rgb")
 	{
-	  ushort Bits = ReadNumber(ValueMap);
+	  ushort Bits = ReadNumber();
 
 	  if(Bits == 16)
 	    {
-	      ushort Red = ReadNumber(ValueMap);
-	      ushort Green = ReadNumber(ValueMap);
-	      ushort Blue = ReadNumber(ValueMap);
+	      ushort Red = ReadNumber();
+	      ushort Green = ReadNumber();
+	      ushort Blue = ReadNumber();
 	      Value = MakeRGB16(Red, Green, Blue);
 	    }
 	  else if(Bits == 24)
 	    {
-	      ulong Red = ReadNumber(ValueMap);
-	      ulong Green = ReadNumber(ValueMap);
-	      ulong Blue = ReadNumber(ValueMap);
+	      ulong Red = ReadNumber();
+	      ulong Green = ReadNumber();
+	      ulong Blue = ReadNumber();
 	      Value = MakeRGB24(Red, Green, Blue);
 	    }
 	  else
@@ -338,43 +344,37 @@ long inputfile::ReadNumber(const valuemap& ValueMap, uchar CallLevel)
 	  continue;
 	}
 
-      valuemap::const_iterator Iterator = ValueMap.find(Word);
-
-      if(Iterator != ValueMap.end())
+      if(ValueMap)
 	{
-	  Value = Iterator->second;
-	  NumberCorrect = true;
-	  continue;
-	}
+	  valuemap::const_iterator Iterator = ValueMap->find(Word);
 
-      if(Word == "=" && CallLevel == 0xFF)
-	continue;
-
-      if(Word == "#") // for #defines
-	{
-	  SeekPosCurrent(-1);
-	  return Value;
+	  if(Iterator != ValueMap->end())
+	    {
+	      Value = Iterator->second;
+	      NumberCorrect = true;
+	      continue;
+	    }
 	}
 
       ABORT("Odd numeric value \"%s\" encountered in file %s, line %d!", Word.c_str(), FileName.c_str(), TellLine());
     }
 }
 
-vector2d inputfile::ReadVector2d(const valuemap& ValueMap)
+vector2d inputfile::ReadVector2d()
 {
   vector2d Vector;
-  Vector.X = ReadNumber(ValueMap);
-  Vector.Y = ReadNumber(ValueMap);
+  Vector.X = ReadNumber();
+  Vector.Y = ReadNumber();
   return Vector;
 }
 
-rect inputfile::ReadRect(const valuemap& ValueMap)
+rect inputfile::ReadRect()
 {
   rect Rect;
-  Rect.X1 = ReadNumber(ValueMap);
-  Rect.Y1 = ReadNumber(ValueMap);
-  Rect.X2 = ReadNumber(ValueMap);
-  Rect.Y2 = ReadNumber(ValueMap);
+  Rect.X1 = ReadNumber();
+  Rect.Y1 = ReadNumber();
+  Rect.X2 = ReadNumber();
+  Rect.Y2 = ReadNumber();
   return Rect;
 }
 
@@ -433,7 +433,7 @@ inputfile& operator>>(inputfile& SaveFile, std::string& String)
   return SaveFile;
 }
 
-void ReadData(std::string& String, inputfile& SaveFile, const valuemap&)
+void ReadData(std::string& String, inputfile& SaveFile)
 {
   SaveFile.ReadWord(String);
 
@@ -443,7 +443,7 @@ void ReadData(std::string& String, inputfile& SaveFile, const valuemap&)
   SaveFile.ReadWord();
 }
 
-void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+void ReadData(std::vector<long>& Vector, inputfile& SaveFile)
 {
   Vector.clear();
   std::string Word;
@@ -454,23 +454,23 @@ void ReadData(std::vector<long>& Vector, inputfile& SaveFile, const valuemap& Va
 
   if(Word == "=")
     {
-      Vector.push_back(SaveFile.ReadNumber(ValueMap));
+      Vector.push_back(SaveFile.ReadNumber());
       return;
     }
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
-  ushort Size = SaveFile.ReadNumber(ValueMap);
+  ushort Size = SaveFile.ReadNumber();
 
   for(ushort c = 0; c < Size; ++c)
-    Vector.push_back(SaveFile.ReadNumber(ValueMap));
+    Vector.push_back(SaveFile.ReadNumber());
 
   if(SaveFile.ReadWord() != "}")
     ABORT("Illegal array terminator \"%s\" encountered in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 }
 
-void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile)
 {
   Vector.clear();
   std::string Word;
@@ -492,7 +492,7 @@ void ReadData(std::vector<std::string>& Vector, inputfile& SaveFile, const value
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
-  ushort Size = SaveFile.ReadNumber(ValueMap);
+  ushort Size = SaveFile.ReadNumber();
 
   for(ushort c = 0; c < Size; ++c)
     {

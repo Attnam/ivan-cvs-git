@@ -33,7 +33,7 @@ void igraph::Init()
       AlreadyInstalled = true;
       graphics::Init();
 
-      std::string Title = std::string("IVAN ") + VERSION;
+      std::string Title = std::string("IVAN ") + IVAN_VERSION;
 
 #ifdef WIN32
       graphics::SetMode(hInst, hWnd, Title.c_str(), vector2d(800, 600), 16, configuration::GetFullScreenMode(), MAKEINTRESOURCE(IDI_LOGO));
@@ -168,8 +168,8 @@ tile igraph::AddUser(graphicid GI)
       if(GI.OutlineColor != TRANSPARENT_COLOR)
 	Bitmap->Outline(GI.OutlineColor);
 
-      if(GI.SparklePos != BITMAP_ERROR_VECTOR)
-	Bitmap->CreateSparkle(GI.SparklePos, GI.Frame - GI.SparkleTime);
+      if(GI.SparklePos != ERROR_VECTOR)
+	Bitmap->CreateSparkle(GI.SparklePos, GI.SparkleFrame);
 
       if(GI.FlyAmount)
 	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
@@ -184,11 +184,11 @@ tile igraph::AddUser(graphicid GI)
       if(GI.SpecialFlags & ST_FLAME)
 	Bitmap->CreateFlames(GI.Frame);
 
-      if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 2) & 7))
+      if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
 	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
 
       tile Tile(Bitmap);
-      TileMap[GI] = Tile;
+      TileMap.insert(std::pair<graphicid, tile>(GI, Tile));
       return Tile;
     }
 }
@@ -204,3 +204,4 @@ void igraph::RemoveUser(graphicid GI)
 	TileMap.erase(Iterator);
       }
 }
+

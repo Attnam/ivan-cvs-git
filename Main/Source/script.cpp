@@ -25,7 +25,7 @@ bool script::LoadData(inputfile& SaveFile, const std::string& Word)
 
   if(Data)
     {
-      Data->Load(SaveFile, ValueMap);
+      Data->Load(SaveFile);
       return true;
     }
   else
@@ -48,20 +48,20 @@ void posscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "Pos")
     {
       Random = false;
-      VectorHolder.Load(SaveFile, ValueMap);
+      VectorHolder.Load(SaveFile);
     }
 
   if(Word == "Random")
     {
       Random = true;
-      FlagsHolder.Load(SaveFile, ValueMap);
+      FlagsHolder.Load(SaveFile);
     }
 
   if(Word == "BoundedRandom")
     {
       Random = true;
-      BordersHolder.Load(SaveFile, ValueMap);
-      FlagsHolder.Load(SaveFile, ValueMap);
+      BordersHolder.Load(SaveFile);
+      FlagsHolder.Load(SaveFile);
     }
 }
 
@@ -79,9 +79,9 @@ void materialscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "=")
     Word = SaveFile.ReadWord();
 
-  valuemap::const_iterator Iterator = ValueMap.find(Word);
+  valuemap::const_iterator Iterator = game::GetGlobalValueMap().find(Word);
 
-  if(Iterator != ValueMap.end())
+  if(Iterator != game::GetGlobalValueMap().end())
     Config = Iterator->second;
   else
     ABORT("Unconfigured material script detected at line %d!", SaveFile.TellLine());
@@ -121,18 +121,18 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
   if(Word == "=" || Word == ",")
     Word = SaveFile.ReadWord();
 
-  valuemap::const_iterator Iterator = ValueMap.find(Word);
+  valuemap::const_iterator Iterator = game::GetGlobalValueMap().find(Word);
 
-  if(Iterator != ValueMap.end())
+  if(Iterator != game::GetGlobalValueMap().end())
     {
       if(!GetMainMaterial())
 	MainMaterialHolder.SetMember(new materialscript);
 
       GetMainMaterial()->SetConfig(Iterator->second);
       Word = SaveFile.ReadWord();
-      Iterator = ValueMap.find(Word);
+      Iterator = game::GetGlobalValueMap().find(Word);
 
-      if(Iterator != ValueMap.end())
+      if(Iterator != game::GetGlobalValueMap().end())
 	{
 	  if(!GetSecondaryMaterial())
 	    SecondaryMaterialHolder.SetMember(new materialscript);
@@ -160,7 +160,7 @@ void basecontentscript::ReadFrom(inputfile& SaveFile, bool)
 
   if(Word == "(")
     {
-      Config = SaveFile.ReadNumber(ValueMap);
+      Config = SaveFile.ReadNumber();
       Word = SaveFile.ReadWord();
     }
   else
@@ -387,7 +387,7 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
 
   if(Word != "=")
     {
-      PositionHolder.Load(SaveFile, ValueMap);
+      PositionHolder.Load(SaveFile);
 
       if(SaveFile.ReadWord() != "{")
 	ABORT("Bracket missing in square script line %d!", SaveFile.TellLine());
@@ -398,8 +398,8 @@ void squarescript::ReadFrom(inputfile& SaveFile, bool)
     }
   else
     {
-      GTerrainHolder.Load(SaveFile, ValueMap);
-      OTerrainHolder.Load(SaveFile, ValueMap);
+      GTerrainHolder.Load(SaveFile);
+      OTerrainHolder.Load(SaveFile);
     }
 }
 
@@ -432,26 +432,26 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
     ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
   std::map<char, contenttype*> SymbolMap;
+  SymbolMap.insert(std::pair<char, contenttype*>('.', 0));
+  std::string Word1, Word2;
 
-  SymbolMap['.'] = 0;
-
-  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+  for(Word1 = SaveFile.ReadWord(); Word1 != "}"; Word1 = SaveFile.ReadWord())
     {
-      if(Word == "Types")
+      if(Word1 == "Types")
 	{
 	  if(SaveFile.ReadWord() != "{")
 	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
-	  for(std::string Word = SaveFile.ReadWord(); Word != "}"; Word = SaveFile.ReadWord())
+	  for(Word2 = SaveFile.ReadWord(); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
 	      contenttype* Content = new contenttype;
-	      ReadData(*Content, SaveFile, ValueMap);
+	      ReadData(*Content, SaveFile);
 
 	      if(IsValidScript(*Content))
-		SymbolMap[Word[0]] = Content;
+		SymbolMap.insert(std::pair<char, contenttype*>(Word2[0], Content));
 	      else
 		{
-		  SymbolMap[Word[0]] = 0;
+		  SymbolMap.insert(std::pair<char, contenttype*>(Word2[0], 0));
 		  delete Content;
 		}
 	    }
@@ -459,8 +459,8 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	  continue;
 	}
 
-      if(!LoadData(SaveFile, Word))
-	ABORT("Odd script term %s encountered in %s content script line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+      if(!LoadData(SaveFile, Word1))
+	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
     }
 
   if(!ContentMap)
@@ -560,7 +560,6 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
       if(Word == "Square")
 	{
 	  squarescript* SS = new squarescript;
-	  SS->SetValueMap(ValueMap);
 	  SS->ReadFrom(SaveFile);
 
 	  if(!ReRead)
@@ -649,7 +648,6 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
       if(Word == "Square")
 	{
 	  squarescript* SS = new squarescript;
-	  SS->SetValueMap(ValueMap);
 	  SS->ReadFrom(SaveFile);
 
 	  if(!ReRead)
@@ -662,27 +660,25 @@ void levelscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 
       if(Word == "Room")
 	{
-	  ushort Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber();
 	  std::map<uchar, roomscript*>::iterator Iterator = Room.find(Index);
 	  roomscript* RS = Iterator == Room.end() ? new roomscript : Iterator->second;
-
-	  RS->SetValueMap(ValueMap);
 	  roomscript* RoomDefault = GetRoomDefault();
 
 	  if(RoomDefault)
 	    RS->SetBase(RoomDefault);
 
 	  RS->ReadFrom(SaveFile, ReRead);
-	  Room[Index] = RS;
+	  Room.insert(std::pair<uchar, roomscript*>(Index, RS));
 	  continue;
 	}
 
-      if(Word == "Variable")
+      /*if(Word == "Variable")
 	{
 	  SaveFile.ReadWord(Word);
 	  ValueMap[Word] = SaveFile.ReadNumber(ValueMap);
 	  continue;
-	}
+	}*/
 
       if(!LoadData(SaveFile, Word))
 	ABORT("Odd script term %s encountered in level script line %d!", Word.c_str(), SaveFile.TellLine());
@@ -720,24 +716,16 @@ void dungeonscript::ReadFrom(inputfile& SaveFile, bool)
     {
       if(Word == "Level")
 	{
-	  ushort Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber();
 	  std::map<uchar, levelscript*>::iterator Iterator = Level.find(Index);
 	  levelscript* LS = Iterator == Level.end() ? new levelscript : Iterator->second;
-	  LS->SetValueMap(ValueMap);
 	  levelscript* LevelDefault = GetLevelDefault();
 
 	  if(LevelDefault)
 	    LS->SetBase(LevelDefault);
 
 	  LS->ReadFrom(SaveFile);
-	  Level[Index] = LS;
-	  continue;
-	}
-
-      if(Word == "Variable")
-	{
-	  SaveFile.ReadWord(Word);
-	  ValueMap[Word] = SaveFile.ReadNumber(ValueMap);
+	  Level.insert(std::pair<uchar, levelscript*>(Index, LS));
 	  continue;
 	}
 
@@ -764,8 +752,8 @@ void teamscript::ReadFrom(inputfile& SaveFile, bool)
       if(Word == "Relation")
 	{
 	  std::pair<uchar, uchar> Rel;
-	  Rel.first = SaveFile.ReadNumber(ValueMap);
-	  Rel.second = SaveFile.ReadNumber(ValueMap);
+	  Rel.first = SaveFile.ReadNumber();
+	  Rel.second = SaveFile.ReadNumber();
 	  Relation.push_back(Rel);
 	  continue;
 	}
@@ -799,20 +787,18 @@ void gamescript::ReadFrom(inputfile& SaveFile, bool)
     {
       if(Word == "Dungeon")
 	{
-	  ushort Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber();
 	  std::map<uchar, dungeonscript*>::iterator Iterator = Dungeon.find(Index);
 	  dungeonscript* DS = Iterator == Dungeon.end() ? new dungeonscript : Iterator->second;
-	  DS->SetValueMap(ValueMap);
 	  DS->ReadFrom(SaveFile);
-	  Dungeon[Index] = DS;
+	  Dungeon.insert(std::pair<uchar, dungeonscript*>(Index, DS));
 	  continue;
 	}
 
       if(Word == "Team")
 	{
-	  ushort Index = SaveFile.ReadNumber(ValueMap);
+	  ushort Index = SaveFile.ReadNumber();
 	  teamscript* TS = new teamscript;
-	  TS->SetValueMap(ValueMap);
 	  TS->ReadFrom(SaveFile);
 	  Team.push_back(std::pair<uchar, teamscript*>(Index, TS));
 	  continue;

@@ -280,9 +280,11 @@ bool scrollofwishing::Read(character* Reader)
 
 void scrollofwishing::FinishReading(character* Reader)
 {
+  std::string Temp;
+
   while(true)
     {
-      std::string Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
+      Temp = game::StringQuestion("What do you want to wish for?", vector2d(16, 6), WHITE, 0, 80, false);
       item* TempItem = protosystem::CreateItem(Temp, Reader->IsPlayer());
 
       if(TempItem)
@@ -3547,6 +3549,8 @@ void potion::Break()
 
   item* Remains = new brokenbottle(0, NO_MATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());
+  Remains->SetID(BackupID);
+  Remains->SetBackupID(ID);
   DonateSlotTo(Remains);
   SendToHell();
 
@@ -4849,6 +4853,8 @@ item* brokenbottle::Fix()
 {
   potion* Potion = new potion(0, NO_MATERIALS);
   Potion->InitMaterials(GetMainMaterial(), 0);
+  Potion->SetID(BackupID);
+  Potion->SetBackupID(ID);
   DonateSlotTo(Potion);
   SetMainMaterial(0, NO_PIC_UPDATE|NO_SIGNALS);
   SendToHell();
@@ -5068,5 +5074,3 @@ bool thunderhammer::ReceiveDamage(character* Damager, ushort Damage, uchar Type)
 {
   return Type != ELECTRICITY ? meleeweapon::ReceiveDamage(Damager, Damage, Type) : false;
 }
-
-

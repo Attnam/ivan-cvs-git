@@ -7,10 +7,20 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+January 9 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Fixed a bug that sometimes prevented Haedlac from being teleported to aid
+	  Petrus ere the final battle
+	* Removed bulimia damage type
+	* Greatly optimized the creation of sparkling and lightning-shooting objects
+	* IVAN's total RAM usage on my system reduced from 30 Mb to 10 Mb
+	* Binary initialization speeded up by 25%
+	* The script now supports cumulative comments
+
 January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Player can no longer choke on his/her food
-	
+
 January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* A floating eye can't make enemies faint if the they don't see it
@@ -24,7 +34,7 @@ January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 January 5 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Lookmode now shows if a monster has panicked.
-	
+
 January 5 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Intact and broken battle-axe, bastard sword, scythe and club pictures added

@@ -15,7 +15,7 @@ std::vector<vector2d> bitmap::CurrentPixelVector;
 bitmap::bitmap(const std::string& FileName) : IsIndependent(true)
 {
   SetAlphaMap(0);
-  inputfile File(FileName.c_str(), false);
+  inputfile File(FileName.c_str(), 0, false);
 
   if(!File.IsOpen())
     ABORT("Bitmap %s not found!", FileName.c_str());
@@ -1104,15 +1104,14 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
   for(x = 0; x < XSize; ++x)
     {
       FlameLowestPoint[x] = NOFLAME;
+
       if(GetPixel(x, 0) != MaskColor)
 	FlameLowestPoint[x] = 0;
       else
 	{
 	  for(ushort y = 1; y < YSize; ++y)
-	    {
-	      if(GetPixel(x,y - 1) == MaskColor && GetPixel(x,y) != MaskColor && (FlameLowestPoint[x] == NOFLAME && FlameLowestPoint[x] > y))
-		FlameLowestPoint[x] = y;
-	    }
+	    if(GetPixel(x,y - 1) == MaskColor && GetPixel(x,y) != MaskColor && (FlameLowestPoint[x] == NOFLAME && FlameLowestPoint[x] > y))
+	      FlameLowestPoint[x] = y;
 	}
     }
   
@@ -1123,11 +1122,12 @@ void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 	  if(FlameLowestPoint[x] != 0)
 	    {
 	      Top = RAND() % FlameLowestPoint[x];
+
 	      for(y = Top; y <= FlameLowestPoint[x]; ++y)
 		{
 		  MaxDist = FlameLowestPoint[x] - Top;
 		  RelPos = y - Top;
-		  SafePutPixelAndResetAlpha(x,y, MakeRGB16((RelPos * 128) / MaxDist, 255 - ((RelPos * 128) / MaxDist), 0));
+		  SafePutPixelAndResetAlpha(x,y, MakeRGB16((RelPos << 7) / MaxDist, 255 - ((RelPos << 7) / MaxDist), 0));
 		}
 	    }
 	  else if(RAND() & 1)
@@ -1148,7 +1148,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
 
   for(ushort c = 1; c < Size; ++c)
     {
-      uchar Lightness = 191 + (Size - c) * 64 / Size;
+      uchar Lightness = 191 + ((Size - c) << 6) / Size;
       ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
       SafePutPixelAndResetAlpha(SparklePos.X + c, SparklePos.Y, RGB);
       SafePutPixelAndResetAlpha(SparklePos.X - c, SparklePos.Y, RGB);
@@ -1157,7 +1157,7 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
     }
 }
 
-void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
+void bitmap::CreateFlies(ulonglong Seed, ushort Frame, uchar FlyAmount)
 {
   ulonglong OldSeed = femath::GetSeed();
   femath::SetSeed(Seed);
@@ -1180,7 +1180,7 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
   femath::SetSeed(OldSeed);
 }
 
-void bitmap::CreateLightning(ulong Seed, ushort Color)
+void bitmap::CreateLightning(ulonglong Seed, ushort Color)
 {
   ulonglong OldSeed = femath::GetSeed();
   femath::SetSeed(Seed);

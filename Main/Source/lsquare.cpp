@@ -1137,7 +1137,7 @@ void lsquare::KickAnyoneStandingHereAway()
     {
       vector2d Pos = GetLevel()->GetNearestFreeSquare(Character, GetPos());
 
-      if(Pos == DIR_ERROR_VECTOR)
+      if(Pos == ERROR_VECTOR)
 	Pos = GetLevel()->GetRandomSquare(Character);
 
       GetLevel()->AddCharacter(Pos, Character);

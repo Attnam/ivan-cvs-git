@@ -2,23 +2,35 @@
 
 #include "whandler.h"
 #include "graphics.h"
+#include "error.h"
 
-controlvector globalwindowhandler::ControlLoop;
+bool (*globalwindowhandler::ControlLoop[MAX_CONTROLS])();
+ushort globalwindowhandler::Controls = 0;
 ulong globalwindowhandler::Tick = 0;
 
 void globalwindowhandler::InstallControlLoop(bool (*What)())
 {
-  ControlLoop.push_back(What);
+  if(Controls == MAX_CONTROLS)
+    ABORT("Animation control frenzy!");
+
+  ControlLoop[Controls++] = What;
 }
 
 void globalwindowhandler::DeInstallControlLoop(bool (*What)())
 {
-  for(controlvector::iterator i = ControlLoop.begin(); i != ControlLoop.end(); ++i)
-    if(*i == What)
-      {
-	ControlLoop.erase(i);
-	return;
-      }
+  ushort c;
+
+  for(c = 0; c < Controls; ++c)
+    if(ControlLoop[c] == What)
+      break;
+
+  if(c != Controls)
+    {
+      --Controls;
+
+      for(; c < Controls; ++c)
+	ControlLoop[c] = ControlLoop[c + 1];
+    }
 }
 
 ulong globalwindowhandler::UpdateTick()
@@ -39,7 +51,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
     while(kbhit()) getkey();
 
   while(!kbhit())
-    if(ControlLoop.size())
+    if(Controls)
       {
 	static ulong LastTick = 0;
 	UpdateTick();
@@ -49,7 +61,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer, bool)
 	    LastTick = Tick;
 	    bool Draw = false;
 
-	    for(ushort c = 0; c < ControlLoop.size(); ++c)
+	    for(ushort c = 0; c < Controls; ++c)
 	      if(ControlLoop[c]())
 		Draw = true;
 
@@ -220,7 +232,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  }
       else
 	{
-	  if(Active && ControlLoop.size())
+	  if(Active && Controls)
 	    {
 	      static ulong LastTick = 0;
 	      UpdateTick();
@@ -230,7 +242,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		  LastTick = Tick;
 		  bool Draw = false;
 
-		  for(ushort c = 0; c < ControlLoop.size(); ++c)
+		  for(ushort c = 0; c < Controls; ++c)
 		    if(ControlLoop[c]())
 		      Draw = true;
 
@@ -346,7 +358,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 	  ProcessMessage(&event);
 	else
 	  {
-	    if((SDL_GetAppState() & SDL_APPACTIVE)  && ControlLoop.size())
+	    if((SDL_GetAppState() & SDL_APPACTIVE)  && Controls)
 	      {
 		static ulong LastTick = 0;
 		UpdateTick();
@@ -356,7 +368,7 @@ int globalwindowhandler::GetKey(bool EmptyBuffer)
 		    LastTick = Tick;
 		    bool Draw = false;
 
-		    for(ushort c = 0; c < ControlLoop.size(); ++c)
+		    for(ushort c = 0; c < Controls; ++c)
 		      if(ControlLoop[c]())
 			Draw = true;
 

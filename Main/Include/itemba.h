@@ -173,6 +173,8 @@ class item : public object
   virtual ushort GetSize() const { return Size; }
   ulong GetID() const { return ID; }
   void SetID(ulong What) { ID = What; }
+  ulong GetBackupID() const { return BackupID; }
+  void SetBackupID(ulong What) { BackupID = What; }
   virtual void TeleportRandomly();
   virtual ushort GetStrengthValue() const;
   slot* GetSlot() const { return Slot; }
@@ -398,6 +400,7 @@ class item : public object
   bool Cannibalised;
   ushort Size;
   ulong ID;
+  ulong BackupID;
   const database* DataBase;
   static prototype item_ProtoType;
   ulong Volume;

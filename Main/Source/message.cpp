@@ -34,10 +34,11 @@ void msgsystem::AddMessage(const char* Format, ...)
   va_end(AP);
 
   std::string Buffer(Message);
-  festring::Capitalize(Buffer);
 
   if(!Buffer.length())
     ABORT("Empty message request!");
+
+  festring::Capitalize(Buffer);
 
   /* Comment the first line and uncomment the second before the release! */
 

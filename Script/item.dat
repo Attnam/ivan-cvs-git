@@ -1309,7 +1309,7 @@ fiftymillionroubles
 oillamp
 {
 	DefaultSize = 30;
-	Possibility = 35;
+	Possibility = 15;
 	CanBeWished = false;
 	Category = TOOL;
 	DefaultMainVolume = 150;
@@ -2091,7 +2091,7 @@ stethoscope
 flamingsword /* meleeweapon-> */
 {
 	DefaultSize = 120;
-	Possibility = 25;
+	Possibility = 20;
 	InHandsPic = 160, 16;
 	WeaponCategory = LARGE_SWORDS;
 	DefaultMainVolume = 130;
@@ -2357,7 +2357,7 @@ horn
 thunderhammer /* meleeweapon-> */
 {
 	DefaultSize = 50;
-	Possibility = 5;
+	Possibility = 10;
 	InHandsPic = 176, 16;
 	WeaponCategory = BLUNT_WEAPONS;
 	DefaultMainVolume = 200;
@@ -2376,7 +2376,7 @@ thunderhammer /* meleeweapon-> */
 
 	Config BROKEN;
 	{
-		Possibility = 0;
+		Possibility = 1;
 		BitmapPos = 48, 192;
 		Price = 100;
 	}

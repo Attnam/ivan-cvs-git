@@ -20,7 +20,7 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
 
 	if(Score.size() > 100)
 	  {
-	    Entry.resize(100, std::string());
+	    Entry.resize(100);
 	    Score.resize(100);
 	  }
 
@@ -51,10 +51,11 @@ void highscore::Draw() const
     }
 
   felist List("Adventurers' Hall of Fame");
+  std::string Desc;
 
   for(ushort c = 0; c < Score.size(); ++c)
     {
-      std::string Desc;
+      Desc.resize(0);
       Desc += c + 1;
       Desc.resize(5, ' ');
       Desc += Score[c];
@@ -77,7 +78,7 @@ void highscore::Save(const std::string& File) const
 void highscore::Load(const std::string& File)
 {
   {
-    inputfile HighScore(File, false);
+    inputfile HighScore(File, 0, false);
 
     if(!HighScore.IsOpen())
       return;
@@ -88,7 +89,7 @@ void highscore::Load(const std::string& File)
       return;
   }
 
-  inputfile HighScore(File, false);
+  inputfile HighScore(File, 0, false);
   ushort HVersion;
   HighScore >> HVersion;
 

@@ -46,14 +46,13 @@ void configuration::Save()
   SaveFile << "OutlineItems = " << OutlineItems << ";\n";
   SaveFile << "CharacterOutlineColor = " << GetRed16(CharacterOutlineColor) << ", " << GetGreen16(CharacterOutlineColor) << ", " << GetBlue16(CharacterOutlineColor) << ";\n";
   SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
-  //  SaveFile << "BeepOnCritical = " << BeepOnCritical << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
   SaveFile << "LookZoom = " << LookZoom <<";\n";
 }
 
 void configuration::Load()
 {
-  inputfile SaveFile(CONFIG_FILENAME, false);
+  inputfile SaveFile(CONFIG_FILENAME, 0, false);
 
   if(!SaveFile.IsOpen())
     return;

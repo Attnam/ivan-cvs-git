@@ -110,6 +110,7 @@ class OLTERRAIN
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(16 + (((Frame & 31) << 3)&~8), 0); } // gum solution, should come from script
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class OLTERRAIN
@@ -215,6 +216,7 @@ class GLTERRAIN
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class OLTERRAIN

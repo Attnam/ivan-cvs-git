@@ -418,6 +418,7 @@ Enchantments should increase thunder hammer's lightning possibility or lightning
 One should be able to fix non-living bodyparts with a scroll of repair.
 Vodka should increase or decrease wisdom. (probably determined randomly) 
 Monsters that can eat already spoiled food without damage. (eg zombie)
-Lightning and metal items should interact somehow.=======
+Lightning and metal items should interact somehow.
 Skis.
 Footprints.
+Polymorph question should default to the monster that the player last polymorphed to.

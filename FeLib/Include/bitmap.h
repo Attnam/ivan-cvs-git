@@ -162,8 +162,8 @@ class bitmap
   bool IsValidPos(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
   bool IsValidPos(short X, short Y) const { return (X >= 0 && Y >= 0 && X < XSize && Y < YSize); }
   void CreateSparkle(vector2d, ushort);
-  void CreateFlies(ulong, ushort, uchar);
-  void CreateLightning(ulong, ushort);
+  void CreateFlies(ulonglong, ushort, uchar);
+  void CreateLightning(ulonglong, ushort);
   bool CreateLightning(vector2d, vector2d, ushort, ushort);
   static bool PixelVectorHandler(long, long);
  protected:

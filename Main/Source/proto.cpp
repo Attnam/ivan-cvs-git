@@ -15,12 +15,6 @@
 #include "save.h"
 #include "festring.h"
 
-template <class type> void protocontainer<type>::GenerateCodeNameMap()
-{
-  for(ushort c = 1; c < GetProtoAmount(); ++c)
-    CodeNameMap[GetProto(c)->GetClassId()] = c;
-}
-
 character* protosystem::BalancedCreateMonster()
 {
   std::vector<std::pair<ushort, ushort> > Illegal;
@@ -163,8 +157,8 @@ item* protosystem::BalancedCreateItem(ulong MinPrice, ulong MaxPrice, ulong Cate
 	    }
 	}
 
-      MinPrice = MinPrice * 3 / 4;
-      MaxPrice = MaxPrice * 5 / 4;
+      MinPrice = MinPrice * 3 >> 2;
+      MaxPrice = MaxPrice * 5 >> 2;
     }
 }
 
@@ -210,8 +204,8 @@ character* protosystem::CreateMonster(ushort MinDanger, ushort MaxDanger, ushort
 	      }
 	}
 
-      MinDanger = MinDanger * 3 / 4;
-      MaxDanger = MaxDanger * 5 / 4;
+      MinDanger = MinDanger * 3 >> 2;
+      MaxDanger = MaxDanger * 5 >> 2;
     }
 }
 
@@ -341,20 +335,6 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
     ADD_MESSAGE("There is no such material.");
 
   return 0;
-}
-
-void protosystem::GenerateCodeNameMaps()
-{
-  protocontainer<action>::GenerateCodeNameMap();
-  protocontainer<character>::GenerateCodeNameMap();
-  protocontainer<god>::GenerateCodeNameMap();
-  protocontainer<item>::GenerateCodeNameMap();
-  protocontainer<room>::GenerateCodeNameMap();
-  protocontainer<olterrain>::GenerateCodeNameMap();
-  protocontainer<glterrain>::GenerateCodeNameMap();
-  protocontainer<material>::GenerateCodeNameMap();
-  protocontainer<owterrain>::GenerateCodeNameMap();
-  protocontainer<gwterrain>::GenerateCodeNameMap();
 }
 
 void protosystem::CreateEveryCharacter(std::vector<character*>& Character)

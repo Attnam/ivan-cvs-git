@@ -222,10 +222,12 @@ bool felist::DrawPage(bitmap* Buffer) const
       ++i;
 
   while(!Entry[c].Selectable && Entry[c].String.empty()) ++c;
+  std::string Str;
+  std::vector<std::string> Chapter;
 
   for(;;)
     {
-      std::string Str;
+      Str.resize(0);
       ushort Marginal = Entry[c].Marginal;
 
       if(Flags & SELECTABLE && Entry[c].Selectable)
@@ -239,7 +241,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 
       if(Entry[c].Bitmap.size())
 	{
-	  if(ushort(Str.length()) <= (Width - 50) / 8)
+	  if(ushort(Str.length()) <= (Width - 50) >> 3)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
 	      Entry[c].Bitmap[globalwindowhandler::GetTick() % Entry[c].Bitmap.size()]->MaskedBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);
@@ -253,11 +255,10 @@ bool felist::DrawPage(bitmap* Buffer) const
 	    }
 	  else
 	    {
-	      std::vector<std::string> Chapter;
-	      festring::SplitString(Str, Chapter, (Width - 50) / 8, Marginal);
-	      ushort PictureTop = LastFillBottom + Chapter.size() * 5 - 9;
+	      ushort ChapterSize = festring::SplitString(Str, Chapter, (Width - 50) >> 3, Marginal);
+	      ushort PictureTop = LastFillBottom + ChapterSize * 5 - 9;
 
-	      for(ushort l = 0; l < Chapter.size(); ++l)
+	      for(ushort l = 0; l < ChapterSize; ++l)
 		{
 		  Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
@@ -274,10 +275,9 @@ bool felist::DrawPage(bitmap* Buffer) const
 	}
       else
 	{
-	  std::vector<std::string> Chapter;
-	  festring::SplitString(Str, Chapter, (Width - 26) / 8, Marginal);
+	  ushort ChapterSize = festring::SplitString(Str, Chapter, (Width - 26) >> 3, Marginal);
 
-	  for(ushort l = 0; l < Chapter.size(); ++l)
+	  for(ushort l = 0; l < ChapterSize; ++l)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 10, BackColor);
 
@@ -330,8 +330,10 @@ void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort 
 
 void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 {
+  static std::vector<std::string> Chapter;
   DOUBLE_BUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
   DOUBLE_BUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARK_GRAY, true);
+  ushort LineSize = (Width - 26) >> 3;
 
   if(!PageLength)
     return;
@@ -342,14 +344,13 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
   for(ushort c1 = 0; c1 <= Selected; ++c1)
     {
       const felistentry& CurrentEntry = Entry[Selected - c1];
-      std::vector<std::string> Chapter;
-      festring::SplitString(CurrentEntry.String, Chapter, (Width - 26) / 8, CurrentEntry.Marginal);
+      ushort ChapterSize = festring::SplitString(CurrentEntry.String, Chapter, LineSize, CurrentEntry.Marginal);
 
-      for(ushort c2 = 0; c2 < Chapter.size(); ++c2)
+      for(ushort c2 = 0; c2 < ChapterSize; ++c2)
 	{
 	  ushort Color = CurrentEntry.Color;
 	  Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * Index / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * Index / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * Index / PageLength) >> 2));
-	  FONT->Printf(DOUBLE_BUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[Chapter.size() - c2 - 1].c_str());
+	  FONT->Printf(DOUBLE_BUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[ChapterSize - c2 - 1].c_str());
 	  Bottom -= 10;
 
 	  if(++Index == PageLength)

@@ -154,9 +154,10 @@ void object::UpdatePictures()
   uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
   uchar SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
-  ulong Seed = 0;
+  ushort Seed = 0;
   uchar FlyAmount = GetFlyAmount(); 
   bool Sparkling = false;
+  bool FrameNeeded = HasSpecialAnimation();
 
   if(!(SpecialFlags & (ST_FLAME|ST_LIGHTNING)))
     {
@@ -195,10 +196,15 @@ void object::UpdatePictures()
 
 	  if(AnimationFrames <= 32)
 	    AnimationFrames = 32;
+
+	  FrameNeeded = true;
 	}
     }
   else if(SpecialFlags & ST_FLAME && AnimationFrames <= 16)
-    AnimationFrames = 16;
+    {
+      AnimationFrames = 16;
+      FrameNeeded = true;
+    }
   else if(SpecialFlags & ST_LIGHTNING)
     {
       static ushort SeedModifier = 1;
@@ -256,9 +262,21 @@ void object::UpdatePictures()
       GI.BitmapPos = GetBitmapPos(c);
       GI.FileIndex = GraphicsContainerIndex;
       GI.SpecialFlags = SpecialFlags;
-      GI.Frame = c;
-      GI.SparklePos = Sparkling && c >= SparkleTime && c < SparkleTime + 16 ? SparklePos : BITMAP_ERROR_VECTOR;
-      GI.SparkleTime = SparkleTime;
+
+      bool SparkleInfoNeeded = Sparkling && c >= SparkleTime && c < SparkleTime + 16;
+
+      if(SparkleInfoNeeded)
+	{
+	  GI.SparklePos = SparklePos;
+	  GI.SparkleFrame = c - SparkleTime;
+	}
+      else
+	{
+	  GI.SparklePos = ERROR_VECTOR;
+	  GI.SparkleFrame = 0;
+	}
+
+      GI.Frame = !c || FrameNeeded || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7)) ? c : 0;
       GI.OutlineColor = GetOutlineColor(c);
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
@@ -419,3 +437,4 @@ bool object::IsSparkling(ushort ColorIndex) const
 {
   return !ColorIndex && MainMaterial->IsSparkling();
 }
+

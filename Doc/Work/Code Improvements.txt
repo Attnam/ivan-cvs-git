@@ -48,11 +48,11 @@ Charba.cpp:n resplittaus (kontrollit erilleen?).
 Kirjallisen yliluonnollisuuden epäfunktioittaminen.
 //Säiliöluokat.
 Piirron deasmaus.
-Repliikkien datafilesaatio.
-Raajarajapinta. (täh?)
+//Repliikkien datafilesaatio.
+Raajarajapinta.
 Jumalten arrayttäminen.
 Tiedostojen tekijätiedottaminen.
 Hyökkäyslajien olioiminen.
 Markkinatalouden yhdenmukaistaminen.
-Potentiaali konfiguraatioiden ekplisiittiseen periyttämiseen.
+Potentiaali konfiguraatioiden eksplisiittiseen periyttämiseen.
 Eliöiden totuusarvojen yhteensulauttaminen.

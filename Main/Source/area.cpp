@@ -144,16 +144,16 @@ vector2d area::FreeSquareSeeker(const character* Char, vector2d StartPos, vector
 	      {
 		Pos = FreeSquareSeeker(Char, Pos, StartPos, MaxDistance - 1);
 
-		if(Pos != DIR_ERROR_VECTOR)
+		if(Pos != ERROR_VECTOR)
 		  return Pos;
 	      }
 	  }
       }
 
-  return DIR_ERROR_VECTOR;
+  return ERROR_VECTOR;
 }
 
-/* Returns DIR_ERROR_VECTOR if no free square was found */
+/* Returns ERROR_VECTOR if no free square was found */
 
 vector2d area::GetNearestFreeSquare(const character* Char, vector2d StartPos) const
 {
@@ -179,12 +179,12 @@ vector2d area::GetNearestFreeSquare(const character* Char, vector2d StartPos) co
 	  {
 	    Pos = FreeSquareSeeker(Char, Pos, StartPos, Dist);
 
-	    if(Pos != DIR_ERROR_VECTOR)
+	    if(Pos != ERROR_VECTOR)
 	      return Pos;
 	  }
       }
 
-  return DIR_ERROR_VECTOR;
+  return ERROR_VECTOR;
 }
 
 square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
@@ -196,3 +196,4 @@ square* area::GetNeighbourSquare(vector2d Pos, ushort Index) const
   else
     return 0;
 }
+

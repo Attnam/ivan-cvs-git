@@ -9,6 +9,8 @@
 #include "godba.h"
 #include "lterraba.h"
 
+#include <iostream>
+
 template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {
   typedef typename type::database typedatabase;
@@ -23,7 +25,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
 
       typeprototype* Proto = protocontainer<type>::ProtoData[Index];
-      Proto->Config[0] = Proto->Base ? typedatabase(Proto->Base->Config.begin()->second) : typedatabase();
+      Proto->Config.insert(std::pair<ushort, typedatabase>(0, Proto->Base ? typedatabase(Proto->Base->Config.begin()->second) : typedatabase()));
       typedatabase& DataBase = Proto->Config.begin()->second;
       DataBase.InitDefaults(0);
 
@@ -34,7 +36,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	{
 	  if(Word == "Config")
 	    {
-	      ushort ConfigNumber = SaveFile.ReadNumber(game::GetGlobalValueMap());
+	      ushort ConfigNumber = SaveFile.ReadNumber();
 	      typedatabase TempDataBase(Proto->ChooseBaseForConfig(ConfigNumber));
 	      TempDataBase.InitDefaults(ConfigNumber);
 
@@ -45,7 +47,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 		if(!AnalyzeData(SaveFile, Word, TempDataBase))
 		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId().c_str(), ConfigNumber, SaveFile.TellLine());
 
-	      Proto->Config[ConfigNumber] = TempDataBase;
+	      Proto->Config.insert(std::pair<ushort, typedatabase>(ConfigNumber, TempDataBase));
 	      continue;
 	    }
 
@@ -60,11 +62,12 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	      {
 		typedatabase TempDataBase(DataBase);
 		TempDataBase.InitDefaults(c);
-		Proto->Config[c] = TempDataBase;
+		Proto->Config.insert(std::pair<ushort, typedatabase>(c, TempDataBase));
 	      }
 	}
 
       Proto->CreateSpecialConfigurations();
+      std::cout << Proto->GetClassId() << std::endl;
     }
 }
 
@@ -72,7 +75,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase.data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile);\
       Found = true;\
     }\
 }
@@ -81,7 +84,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase.data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile);\
       Found = true;\
     }\
   \
@@ -93,7 +96,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase.data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile);\
       Found = true;\
     }\
   \
@@ -105,7 +108,7 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 {\
   if(Word == #data)\
     {\
-      ReadData(DataBase.data, SaveFile, ValueMap);\
+      ReadData(DataBase.data, SaveFile);\
       DataBase.to.push_back(DataBase.data);\
       Found = true;\
     }\
@@ -113,7 +116,6 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 
 template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
 {
-  const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
 
   ANALYZE_DATA(DefaultArmStrength);
@@ -233,7 +235,6 @@ template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std:
 
 template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database& DataBase)
 {
-  const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
 
   ANALYZE_DATA(Possibility);
@@ -317,7 +318,6 @@ template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::stri
 
 template<> bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database& DataBase)
 {
-  const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
 
   ANALYZE_DATA(BitmapPos);
@@ -349,7 +349,6 @@ template<> bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std:
 
 template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database& DataBase)
 {
-  const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
 
   ANALYZE_DATA(BitmapPos);
@@ -391,7 +390,6 @@ template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std:
 
 template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database& DataBase)
 {
-  const valuemap& ValueMap = game::GetGlobalValueMap();
   bool Found = false;
 
   ANALYZE_DATA(StrengthValue);
@@ -433,27 +431,27 @@ void databasesystem::Initialize()
   {
     /* Must be before character */
 
-    inputfile ScriptFile(GAME_DIR + "Script/material.dat");
+    inputfile ScriptFile(GAME_DIR + "Script/material.dat", &game::GetGlobalValueMap());
     database<material>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/char.dat");
+    inputfile ScriptFile(GAME_DIR + "Script/char.dat", &game::GetGlobalValueMap());
     database<character>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/item.dat");
+    inputfile ScriptFile(GAME_DIR + "Script/item.dat", &game::GetGlobalValueMap());
     database<item>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/glterra.dat");
+    inputfile ScriptFile(GAME_DIR + "Script/glterra.dat", &game::GetGlobalValueMap());
     database<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
-    inputfile ScriptFile(GAME_DIR + "Script/olterra.dat");
+    inputfile ScriptFile(GAME_DIR + "Script/olterra.dat", &game::GetGlobalValueMap());
     database<olterrain>::ReadFrom(ScriptFile);
   }
 }

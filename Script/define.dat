@@ -3,17 +3,17 @@
 #define FLIP 2
 #define ROTATE 4
 
-#define RED rgb16(255, 0, 0)
-#define GREEN rgb16(0, 255, 0)
-#define BLUE rgb16(0, 0, 255)
+#define RED 63488
+#define GREEN 2016
+#define BLUE 31
 
-#define YELLOW rgb16(255, 255, 0)
-#define PINK rgb16(255, 0, 255)
+#define YELLOW 65504
+#define PINK 61470
 
-#define WHITE rgb16(255, 255, 255)
-#define LIGHT_GRAY rgb16(180, 180, 180)
-#define DARK_GRAY rgb16(80, 80, 80)
-#define BLACK rgb16(0, 0, 0)
+#define WHITE 65535
+#define LIGHT_GRAY 46518
+#define DARK_GRAY 21130
+#define BLACK 0
 
 #define TRANSPARENT_COLOR 63519
 
@@ -63,11 +63,11 @@
 #define TORSO 2
 #define RIGHT_ARM 4
 #define LEFT_ARM 8
-#define ARMS (RIGHT_ARM|LEFT_ARM)
+#define ARMS 12
 #define GROIN 16
 #define RIGHT_LEG 32
 #define LEFT_LEG 64
-#define LEGS (RIGHT_LEG|LEFT_LEG)
+#define LEGS 96
 #define OTHER 128
 #define ALL 255
 
@@ -79,7 +79,6 @@
 #define ENERGY 6
 #define POISON 7
 #define DRAIN 8
-#define BULIMIA 9
 
 #define UNDEFINED 0
 #define MALE 1
@@ -545,7 +544,7 @@
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
 #define MONDEDR 5
-#define UNDER_WATER_TUNNEL_EXIT -1
+#define UNDER_WATER_TUNNEL_EXIT 128
 
 #define DARK_LEVEL 6
 #define OREE_LAIR 9

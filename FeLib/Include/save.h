@@ -34,32 +34,32 @@ class outputfile
 class inputfile
 {
  public:
-  inputfile(const std::string&, bool = true);
+  inputfile(const std::string&, const valuemap* = 0, bool = true);
   ~inputfile() { if(Buffer) fclose(Buffer); }
   std::string ReadWord(bool = true);
   void ReadWord(std::string&, bool = true);
   char ReadLetter(bool = true);
-  long ReadNumber(const valuemap&, uchar = 0xFF);
-  long ReadNumber() { return ReadNumber(valuemap()); }
-  vector2d ReadVector2d(const valuemap&);
-  rect ReadRect(const valuemap&);
+  long ReadNumber(uchar = 0xFF);
+  vector2d ReadVector2d();
+  rect ReadRect();
   bool ReadBool();
   int Get() { return fgetc(Buffer); }
   void Read(char* Offset, long Size) { fread(Offset, 1, Size, Buffer); }
   bool IsOpen() { return Buffer != 0; }
-  bool Eof();
+  bool Eof() { return feof(Buffer) != 0; }
   void ClearFlags() { clearerr(Buffer); }
   void SeekPosBegin(long Offset) { fseek(Buffer, Offset, SEEK_SET); }
   void SeekPosCurrent(long Offset) { fseek(Buffer, Offset, SEEK_CUR); }
   void SeekPosEnd(long Offset) { fseek(Buffer, Offset, SEEK_END); }
   long TellPos() { return ftell(Buffer); }
-  int Peek();
   ulong TellLine() { return TellLineOfPos(TellPos()); }
   ulong TellLineOfPos(long);
   const std::string& GetFileName() const { return FileName; }
+  void UnGet(int Char) { ungetc(Char, Buffer); }
  private:
   FILE* Buffer;
   std::string FileName;
+  const valuemap* ValueMap;
 };
 
 /*
@@ -75,20 +75,20 @@ template <class type> inline type ReadType(inputfile& SaveFile)
   return Variable;
 }
 
-inline void ReadData(bool& Type, inputfile& SaveFile, const valuemap&) { Type = SaveFile.ReadBool(); }
-inline void ReadData(char& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(uchar& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(short& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(ushort& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(long& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(ulong& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadNumber(ValueMap); }
-inline void ReadData(vector2d& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadVector2d(ValueMap); }
-inline void ReadData(rect& Type, inputfile& SaveFile, const valuemap& ValueMap) { Type = SaveFile.ReadRect(ValueMap); }
-void ReadData(std::string&, inputfile&, const valuemap&);
-void ReadData(std::vector<long>&, inputfile&, const valuemap&);
-void ReadData(std::vector<std::string>&, inputfile&, const valuemap&);
+inline void ReadData(bool& Type, inputfile& SaveFile) { Type = SaveFile.ReadBool(); }
+inline void ReadData(char& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(uchar& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(short& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(ushort& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(long& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(ulong& Type, inputfile& SaveFile) { Type = SaveFile.ReadNumber(); }
+inline void ReadData(vector2d& Type, inputfile& SaveFile) { Type = SaveFile.ReadVector2d(); }
+inline void ReadData(rect& Type, inputfile& SaveFile) { Type = SaveFile.ReadRect(); }
+void ReadData(std::string&, inputfile&);
+void ReadData(std::vector<long>&, inputfile&);
+void ReadData(std::vector<std::string>&, inputfile&);
 
-template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile, const valuemap& ValueMap)
+template <class type> inline void ReadData(std::vector<type>& Vector, inputfile& SaveFile)
 {
   Vector.clear();
   std::string Word;
@@ -100,19 +100,19 @@ template <class type> inline void ReadData(std::vector<type>& Vector, inputfile&
   if(Word == "=")
     {
       Vector.push_back(type());
-      ReadData(Vector[0], SaveFile, ValueMap);
+      ReadData(Vector[0], SaveFile);
       return;
     }
 
   if(Word != "{")
     ABORT("Array syntax error \"%s\" found in file %s, line %d!", Word.c_str(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 
-  ushort Size = SaveFile.ReadNumber(ValueMap);
+  ushort Size = SaveFile.ReadNumber();
 
   for(ushort c = 0; c < Size; ++c)
     {
       Vector.push_back(type());
-      ReadData(Vector.back(), SaveFile, ValueMap);
+      ReadData(Vector.back(), SaveFile);
     }
 
   if(SaveFile.ReadWord() != "}")
@@ -317,9 +317,8 @@ template <class type1, class type2> inline inputfile& operator>>(inputfile& Save
   for(ushort c = 0; c < Size; ++c)
     {
       type1 First;
-      type2 Second;
-      SaveFile >> First >> Second;
-      Map[First] = Second;
+      SaveFile >> First;
+      SaveFile >> Map[First];
     }
 
   return SaveFile;

@@ -198,7 +198,6 @@ class character : public entity, public id
   virtual void Load(inputfile&);
   virtual bool CanWield() const { return false; }
   virtual bool Catches(item*) { return false; }
-  virtual bool CheckBulimia() const { return GetHungerState() == BLOATED; }
   bool CheckDeath(const std::string&, character*, bool = false);
   virtual bool DodgesFlyingItem(item*, float);
   virtual bool Hit(character*, bool = false) = 0;

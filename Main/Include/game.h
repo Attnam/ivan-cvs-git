@@ -303,7 +303,6 @@ class game
   static bool Generating;
   static dangermap DangerMap;
   static configid NextDangerId;
-  static bool BusyAnimationDisabled;
   static float AveragePlayerArmStrength;
   static float AveragePlayerLegStrength;
   static float AveragePlayerDexterity;

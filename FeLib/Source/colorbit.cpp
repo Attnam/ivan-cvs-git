@@ -11,7 +11,7 @@
 
 colorizablebitmap::colorizablebitmap(const std::string& FileName)
 {
-  inputfile File(FileName.c_str(), false);
+  inputfile File(FileName.c_str(), 0, false);
 
   if(!File.IsOpen())
     ABORT("Bitmap %s not found!", FileName.c_str());
@@ -212,8 +212,10 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
 
 	      if(ThisColor != TRANSPARENT_COLOR)
 		{
-		  float Gradient = float(PaletteElement & 15) / 8;
-		  ushort Red = ushort(GetRed16(ThisColor) * Gradient), Blue = ushort(GetBlue16(ThisColor) * Gradient), Green = ushort(GetGreen16(ThisColor) * Gradient);
+		  ushort Index = PaletteElement & 15;
+		  ushort Red = (GetRed16(ThisColor) * Index) >> 3;
+		  ushort Blue = (GetBlue16(ThisColor) * Index) >> 3;
+		  ushort Green = (GetGreen16(ThisColor) * Index) >> 3;
 		  reinterpret_cast<ushort*>(DestBuffer)[x] = MakeRGB16(Red < 256 ? Red : 255, Green < 256 ? Green : 255, Blue < 256 ? Blue : 255);
 
 		  if(UseAlpha)
@@ -243,6 +245,9 @@ void colorizablebitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, ushort Color,
   va_end(AP);
 
   fontcache::const_iterator Iterator = FontCache.find(Color);
+
+  if(!strlen(Format))
+    int esko = 2;
 
   if(Iterator == FontCache.end())
     {
@@ -290,8 +295,8 @@ void colorizablebitmap::PrintfShade(bitmap* Bitmap, ushort X, ushort Y, ushort C
 
 void colorizablebitmap::AlterGradient(ushort X, ushort Y, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip)
 {
-  uchar ColorMin = 192 + MColor * 16;
-  uchar ColorMax = 207 + MColor * 16;
+  uchar ColorMin = 192 + (MColor << 4);
+  uchar ColorMax = 207 + (MColor << 4);
 
   if(Clip)
     {
@@ -356,10 +361,10 @@ void colorizablebitmap::SwapColors(ushort X, ushort Y, ushort Width, ushort Heig
       {
 	uchar& Pixel = PaletteBuffer[y * XSize + x];
 
-	if(Pixel >= 192 + Color1 * 16 && Pixel <= 207 + Color1 * 16)
-	  Pixel += (Color2 - Color1) * 16;
-	else if(Pixel >= 192 + Color2 * 16 && Pixel <= 207 + Color2 * 16)
-	  Pixel += (Color1 - Color2) * 16;
+	if(Pixel >= 192 + (Color1 << 4) && Pixel <= 207 + (Color1 << 4))
+	  Pixel += (Color2 - Color1) << 4;
+	else if(Pixel >= 192 + (Color2 << 4) && Pixel <= 207 + (Color2 << 4))
+	  Pixel += (Color1 - Color2) << 4;
       }
 }
 
@@ -413,7 +418,7 @@ void colorizablebitmap::CreateFontCache(ushort Color)
   FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, ShadeFont);
 }
 
-/* returns BITMAP_ERROR_VECTOR if fails find Pos else returns pos */
+/* returns ERROR_VECTOR if fails find Pos else returns pos */
 
 vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, bool* Sparkling) const
 {
@@ -424,12 +429,12 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
       SparklingReally = true;
 
   if(!SparklingReally)
-    return BITMAP_ERROR_VECTOR;
+    return ERROR_VECTOR;
 
   std::vector<vector2d> PreferredPossible;
   PreferredPossible.reserve((Size.X - 8) * (Size.Y - 8));
   std::vector<vector2d> BadPossible;
-  BadPossible.reserve(8 * (Size.X + Size.Y) - 64);
+  BadPossible.reserve(((Size.X + Size.Y) << 3) - 64);
 
   ushort XMax = Pos.X + Size.X;
   ushort YMax = Pos.Y + Size.Y;
@@ -451,5 +456,6 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
   else if(!BadPossible.empty())
     return BadPossible[RAND() % BadPossible.size()] - Pos;
 
-  return BITMAP_ERROR_VECTOR;
+  return ERROR_VECTOR;
 }
+

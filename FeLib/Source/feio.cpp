@@ -46,7 +46,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
     if(Text[c] == '\n')
       {
 	Line[c - LastBeginningOfLine] = 0;
-	FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 2 / 5 - (LineNumber - Lines) * 15, Color, Line);
+	FONT->Printf(&Buffer, (RES.X >> 1) - (strlen(Line) << 2), (RES.Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
 	++Lines;
 	LastBeginningOfLine = c + 1;
       }
@@ -54,7 +54,7 @@ void iosystem::TextScreen(const std::string& Text, ushort Color, bool GKey, void
       Line[c - LastBeginningOfLine] = Text[c];
 
   Line[c - LastBeginningOfLine] = 0;
-  FONT->Printf(&Buffer, RES.X / 2 - strlen(Line) * 4, RES.Y * 2 / 5 - (LineNumber - Lines) * 15, Color, Line);
+  FONT->Printf(&Buffer, (RES.X >> 1) - (strlen(Line) << 2), (RES.Y << 1) / 5 - (LineNumber - Lines) * 15, Color, Line);
   Buffer.FadeToScreen(BitmapEditor);
 
   if(GKey)
@@ -89,15 +89,18 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
   else
     Buffer.Fill(0);
 
+  std::string sCopyOfMS;
+  std::string VeryUnGuruPrintf;
+
   while(!bReady)
     {
       clock_t StartTime = clock();
-      std::string sCopyOfMS = Topic;
+      sCopyOfMS = Topic;
       ulong i;
 
       for(i = 0; i < CountChars('\r', Topic); ++i)
 	{
-	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 	  FONT->Printf(&Buffer, Pos.X - (VeryUnGuruPrintf.length() << 2), Pos.Y - 30 - (CountChars('\r', Topic) + CountChars('\r', sMS)) * 25 + i * 25, RED, "%s", VeryUnGuruPrintf.c_str());
 	}
@@ -106,7 +109,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
       for(i = 0; i < CountChars('\r', sMS); ++i)
 	{
-	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 
 	  ushort XPos = Pos.X - ((VeryUnGuruPrintf.length() + 3) << 2);
@@ -114,7 +117,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
 	  if(i == iSelected)
 	    {
-	      Buffer.Fill(XPos, YPos, (VeryUnGuruPrintf.length() + 3) * 8, 8, 0);
+	      Buffer.Fill(XPos, YPos, ((VeryUnGuruPrintf.length() + 3) << 3), 8, 0);
 	      FONT->PrintfShade(&Buffer, XPos, YPos, Color, "%d. %s", i + 1, VeryUnGuruPrintf.c_str());
 	    }
 	  else
@@ -125,7 +128,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
       for(i = 0; i < CountChars('\r', SmallText1); ++i)
 	{
-	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 	  FONT->Printf(&Buffer, 3, RES.Y - CountChars('\r', SmallText1) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
 	}
@@ -134,7 +137,7 @@ int iosystem::Menu(bitmap* BackGround, vector2d Pos, const std::string& Topic, c
 
       for(i = 0; i < CountChars('\r', SmallText2); ++i)
 	{
-	  std::string VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
+	  VeryUnGuruPrintf = sCopyOfMS.substr(0,sCopyOfMS.find_first_of('\r'));
 	  sCopyOfMS.erase(0,sCopyOfMS.find_first_of('\r')+1);
 	  FONT->Printf(&Buffer, RES.X - (VeryUnGuruPrintf.length() << 3) - 2, RES.Y - CountChars('\r', SmallText2) * 10 + i * 10, Color, "%s", VeryUnGuruPrintf.c_str());
 	}
@@ -203,7 +206,7 @@ std::string iosystem::StringQuestion(const std::string& Topic, vector2d Pos, ush
 
   for(int LastKey = 0;; LastKey = 0)
     {
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, MaxLetters * 8 + 9, 9, 0);
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, (MaxLetters << 3) + 9, 9, 0);
       FONT->Printf(DOUBLE_BUFFER, Pos.X, Pos.Y + 10, Color, "%s_", Input.c_str());
 
       if(TooShort)
@@ -328,7 +331,7 @@ long iosystem::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long St
       if(Handler)
 	Handler(BarValue);
 
-      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, (Topic.length() + 14) * 8 + 1, 10, 0);
+      DOUBLE_BUFFER->Fill(Pos.X, Pos.Y, ((Topic.length() + 14) << 3) + 1, 10, 0);
       DOUBLE_BUFFER->Fill(Pos.X, Pos.Y + 10, 203, 10, 0);
 
       if(FirstTime)
@@ -440,7 +443,7 @@ std::string iosystem::ContinueMenu(ushort TopicColor, ushort ListColor, const st
     {
       while(ep = readdir(dp))
 	{
-	  Buffer = std::string(ep->d_name);
+	  Buffer = ep->d_name;
 	  if(Buffer.find(".sav") != Buffer.npos)
 	    {
 	      List.AddEntry(Buffer, ListColor);

@@ -103,6 +103,7 @@ class object : public entity, public id
   bool AddEmptyAdjective(std::string&, bool) const;
   virtual vector2d GetBitmapPos(ushort) const = 0;
   void RandomizeVisualEffects();
+  virtual bool HasSpecialAnimation() const { return false; }
   material* MainMaterial;
   std::vector<graphicid> GraphicId;
   std::vector<bitmap*> Picture;

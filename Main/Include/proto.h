@@ -26,7 +26,6 @@ template <class type> class protocontainer
   static ushort GetProtoAmount() { return ProtoData.size(); }
   static ushort SearchCodeName(const std::string&);
   static const valuemap& GetCodeNameMap() { return CodeNameMap; }
-  static void GenerateCodeNameMap();
   static const std::string& GetMainClassId() { return ProtoData[1]->GetClassId(); }
  private:
   static std::vector<prototype*> ProtoData;
@@ -38,8 +37,10 @@ template <class type> inline ushort protocontainer<type>::Add(prototype* Proto)
   if(!ProtoData.size())
     ProtoData.push_back(0);
 
+  ushort Index = ProtoData.size();
   ProtoData.push_back(Proto);
-  return ProtoData.size() - 1;
+  CodeNameMap.insert(std::pair<std::string, long>(Proto->GetClassId(), Index));
+  return Index;
 }
 
 template <class type> inline ushort protocontainer<type>::SearchCodeName(const std::string& Name)
@@ -57,7 +58,6 @@ class protosystem
   static character* CreateMonster(const std::string&, ushort = 0, bool = true);
   static item* CreateItem(const std::string&, bool = true);
   static material* CreateMaterial(const std::string&, ulong = 0, bool = true);
-  static void GenerateCodeNameMaps();
   static void CreateEveryCharacter(std::vector<character*>&);
   static void CreateEveryItem(std::vector<item*>&);
 };

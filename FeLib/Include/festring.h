@@ -21,7 +21,7 @@ public:
   static void DeInstallIntegerMap();
   static char* IntegerToChar(long);
   static void SplitString(std::string&, std::string&, strsize);
-  static void SplitString(const std::string&, std::vector<std::string>&, strsize, strsize = 0);
+  static ushort SplitString(const std::string&, std::vector<std::string>&, strsize, strsize = 0);
   static char& Capitalize(char& Char) { return Char > 0x60 && Char < 0x7B ? Char ^= 0x20 : Char; }
   static char CapitalizeCopy(char Char) { return Capitalize(Char); }
   static std::string& Capitalize(std::string& String) { Capitalize(String[0]); return String; }

@@ -47,6 +47,8 @@ class worldmap : public area
   wsquare* GetNeighbourWSquare(vector2d, ushort) const;
   vector2d GetEntryPos(const character*, uchar Index) const { return EntryMap.find(Index)->second; }
   void RevealEnvironment(vector2d, ushort);
+  void SafeSmooth(ushort, ushort);
+  void FastSmooth(ushort, ushort);
  protected:
   wsquare*** Map;
   std::vector<continent*> Continent;

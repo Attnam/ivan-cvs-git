@@ -14,9 +14,7 @@
  * DO NOT INCLUDE ANY FILES IN THIS HEADER.
  */
 
-#ifndef VERSION
-#define VERSION "0.401"
-#endif
+#define IVAN_VERSION "0.401"
 
 #define DATA_BASE_VALUE(type, data) type Get##data() const { return DataBase->data; }
 #define DATA_BASE_VALUE_WITH_PARAMETER(type, data, param) type Get##data(param) const { return DataBase->data; }
@@ -84,11 +82,11 @@
 #define HEAD 2
 #define RIGHT_ARM 4
 #define LEFT_ARM 8
-#define ARMS (RIGHT_ARM|LEFT_ARM)
+#define ARMS 12
 #define GROIN 16
 #define RIGHT_LEG 32
 #define LEFT_LEG 64
-#define LEGS (RIGHT_LEG|LEFT_LEG)
+#define LEGS 96
 #define OTHER 128
 #define ALL 255
 
@@ -100,7 +98,6 @@
 #define ENERGY 6
 #define POISON 7
 #define DRAIN 8
-#define BULIMIA 9
 
 #define UNDEFINED 0
 #define MALE 1
@@ -171,12 +168,12 @@
 #define GR_MENU 4
 #define GR_TRANSPARENT_COLOR_TILE 5
 
-#define ST_NORMAL (0 << 3)
-#define ST_RIGHT_ARM (1 << 3)
-#define ST_LEFT_ARM (2 << 3)
-#define ST_GROIN (3 << 3)
-#define ST_RIGHT_LEG (4 << 3)
-#define ST_LEFT_LEG (5 << 3)
+#define ST_NORMAL 0
+#define ST_RIGHT_ARM 8
+#define ST_LEFT_ARM 16
+#define ST_GROIN 24
+#define ST_RIGHT_LEG 32
+#define ST_LEFT_LEG 40
 #define ST_FLAME 64
 #define ST_LIGHTNING 128
 
@@ -336,7 +333,7 @@
 #define GOLDEN_EAGLE_FEATHER (MATERIAL_ID + 36)
 #define ICE (MATERIAL_ID + 37)
 
-#define ORGANIC_SUBSTANCE_ID (4096 * 2)
+#define ORGANIC_SUBSTANCE_ID (4096 << 1)
 
 #define BANANA_FLESH (ORGANIC_SUBSTANCE_ID + 1)
 #define SCHOOL_FOOD (ORGANIC_SUBSTANCE_ID + 2)
@@ -353,7 +350,7 @@
 #define AIR (GAS_ID + 1)
 #define MAGICAL_AIR (GAS_ID + 2)
 
-#define LIQUID_ID (4096 * 4)
+#define LIQUID_ID (4096 << 2)
 
 #define OMMEL_URINE (LIQUID_ID + 1)
 #define PEPSI (LIQUID_ID + 2)
@@ -438,7 +435,6 @@
 #define REQUIRES_ANSWER -1
 
 #define DIR_ERROR 0xFF
-#define DIR_ERROR_VECTOR vector2d(-666, -666)
 
 #define GLOBAL_WEAK_BODYPART_HIT_MODIFIER 10.0f
 
@@ -639,7 +635,7 @@
 #define NEW_ATTNAM 3
 #define UNDER_WATER_TUNNEL 4
 #define MONDEDR 5
-#define UNDER_WATER_TUNNEL_EXIT -1
+#define UNDER_WATER_TUNNEL_EXIT 0x80
 
 #define DARK_LEVEL 6
 #define OREE_LAIR 9

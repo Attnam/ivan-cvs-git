@@ -43,7 +43,7 @@ class area
   bool IsValidPos(vector2d Pos) const { return Pos.X >= 0 && Pos.Y >= 0 && Pos.X < XSize && Pos.Y < YSize; }
   bool IsValidPos(short X, short Y) const { return X >= 0 && Y >= 0 && X < XSize && Y < YSize; }
   const rect& GetBorder() const { return Border; }
-  void SetEntryPos(uchar Index, vector2d Pos) { EntryMap[Index] = Pos; }
+  void SetEntryPos(uchar Index, vector2d Pos) { EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos)); }
  protected:
   square*** Map;
   ushort** FlagMap;

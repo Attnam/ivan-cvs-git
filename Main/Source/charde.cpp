@@ -405,11 +405,12 @@ bool humanoid::Hit(character* Enemy, bool ForceHit)
 bool humanoid::AddSpecialSkillInfo(felist& List) const
 {
   bool Something = false;
+  std::string Buffer;
 
   if(CurrentRightSWeaponSkill && CurrentRightSWeaponSkill->GetHits())
     {
       List.AddEntry("", LIGHT_GRAY);
-      std::string Buffer = "right accustomization";
+      Buffer = "right accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentRightSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -432,7 +433,7 @@ bool humanoid::AddSpecialSkillInfo(felist& List) const
       if(!Something)
 	List.AddEntry("", LIGHT_GRAY);
 
-      std::string Buffer = "left accustomization";
+      Buffer = "left accustomization";
       Buffer.resize(30, ' ');
       Buffer << CurrentLeftSWeaponSkill->GetLevel();
       Buffer.resize(40, ' ');
@@ -1099,7 +1100,7 @@ ulong humanoid::GetBodyPartSize(ushort Index, ushort TotalSize)
   switch(Index)
     {
     case HEAD_INDEX: return 20;
-    case TORSO_INDEX: return (TotalSize - 20) * 2 / 5;
+    case TORSO_INDEX: return ((TotalSize - 20) << 1) / 5;
     case RIGHT_ARM_INDEX:
     case LEFT_ARM_INDEX: return (TotalSize - 20) * 3 / 5;
     case GROIN_INDEX: return (TotalSize - 20) / 3;
@@ -1121,7 +1122,7 @@ ulong humanoid::GetBodyPartVolume(ushort Index) const
     case LEFT_ARM_INDEX: return (GetTotalVolume() - 4000) / 10;
     case GROIN_INDEX: return (GetTotalVolume() - 4000) / 10;
     case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return (GetTotalVolume() - 4000) * 2 / 15;
+    case LEFT_LEG_INDEX: return ((GetTotalVolume() - 4000) << 1) / 15;
     default:
       ABORT("Illegal humanoid bodypart volume request!");
       return 0;
@@ -2235,10 +2236,10 @@ ushort humanoid::DrawStats(bool AnimationDraw) const
 
   ushort PanelPosX = RES.X - 96, PanelPosY = 15;
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "ArmStr %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "LegStr %d", GetAttribute(LEG_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Dex %d", GetAttribute(DEXTERITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
   return PanelPosY;
 }
 
@@ -2249,8 +2250,8 @@ ushort nonhumanoid::DrawStats(bool AnimationDraw) const
 
   ushort PanelPosX = RES.X - 96, PanelPosY = 3;
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Str %d", GetAttribute(ARM_STRENGTH));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Str %d", GetAttribute(ARM_STRENGTH));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Agi %d", GetAttribute(AGILITY));
   return PanelPosY;
 }
 
@@ -2726,11 +2727,13 @@ void humanoid::AddAttackInfo(felist& List) const
 	GetLeftArm()->AddAttackInfo(List);
     }
 
+  std::string Entry;
+
   if(IsUsingLegs())
     {
       leg* KickLeg = GetKickLeg();
 
-      std::string Entry = "   kick attack";
+      Entry = "   kick attack";
       Entry.resize(50, ' ');
       Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
       Entry.resize(60, ' ');
@@ -2742,7 +2745,7 @@ void humanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingHead())
     {
-      std::string Entry = "   bite attack";
+      Entry = "   bite attack";
       Entry.resize(50, ' ');
       Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
       Entry.resize(60, ' ');
@@ -2755,9 +2758,11 @@ void humanoid::AddAttackInfo(felist& List) const
 
 void nonhumanoid::AddAttackInfo(felist& List) const
 {
+  std::string Entry;
+
   if(IsUsingArms())
     {
-      std::string Entry = "   unarmed attack";
+      Entry = "   unarmed attack";
       Entry.resize(50, ' ');
       Entry << GetUnarmedMinDamage() << '-' << GetUnarmedMaxDamage();
       Entry.resize(60, ' ');
@@ -2769,7 +2774,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingLegs())
     {
-      std::string Entry = "   kick attack";
+      Entry = "   kick attack";
       Entry.resize(50, ' ');
       Entry << GetKickMinDamage() << '-' << GetKickMaxDamage();
       Entry.resize(60, ' ');
@@ -2781,7 +2786,7 @@ void nonhumanoid::AddAttackInfo(felist& List) const
 
   if(IsUsingHead())
     {
-      std::string Entry = "   bite attack";
+      Entry = "   bite attack";
       Entry.resize(50, ' ');
       Entry << GetBiteMinDamage() << '-' << GetBiteMaxDamage();
       Entry.resize(60, ' ');
@@ -3676,7 +3681,7 @@ void bananagrower::GetAICommand()
 
       vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(0, 45));
 
-      if(Where == DIR_ERROR_VECTOR)
+      if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
@@ -3748,7 +3753,7 @@ void ostrich::GetAICommand()
 
       vector2d Where = GetArea()->GetNearestFreeSquare(this, vector2d(45, 0));
 
-      if(Where == DIR_ERROR_VECTOR)
+      if(Where == ERROR_VECTOR)
 	Where = GetLevel()->GetRandomSquare(this, NOT_IN_ROOM); // this is odd but at least it doesn't crash
 
       Teleport(Where);
@@ -3903,7 +3908,7 @@ ulong skeleton::GetBodyPartVolume(ushort Index) const
     case LEFT_ARM_INDEX: return (GetTotalVolume() - 600) / 10;
     case GROIN_INDEX: return (GetTotalVolume() - 600) / 10;
     case RIGHT_LEG_INDEX:
-    case LEFT_LEG_INDEX: return (GetTotalVolume() - 600) * 2 / 15;
+    case LEFT_LEG_INDEX: return ((GetTotalVolume() - 600) << 1) / 15;
     default:
       ABORT("Illegal humanoid bodypart volume request!");
       return 0;
@@ -4039,15 +4044,15 @@ void guard::Load(inputfile& SaveFile)
 {
   humanoid::Load(SaveFile);
   SaveFile >> WayPoints >> NextWayPoint;
+
+  if(Config == MASTER)
+    game::SetHaedlac(this);
 }
 
 void guard::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
   NextWayPoint = 0;
-
-  if(Config == MASTER)
-    game::SetHaedlac(this);
 }
 
 void guard::GetAICommand()
@@ -4198,3 +4203,4 @@ const std::string& humanoid::GetStandVerb() const
   static std::string HasntFeet = "crawling";
   return HasFeet() ? character::GetStandVerb() : HasntFeet;
 }
+

@@ -185,6 +185,7 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -197,6 +198,7 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -255,6 +257,7 @@ class ITEM
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -527,7 +530,7 @@ class ITEM
   stone,
   item,
  public:
-  virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() * 2 + item::GetPrice(); }
+  virtual ulong GetPrice() const { return (GetMainMaterial()->GetRawPrice() << 1) + item::GetPrice(); }
  protected:
   virtual bool ShowMaterial() const { return GetMainMaterial()->GetConfig() != STONE; } // gum solution
 );
@@ -1314,6 +1317,7 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM
@@ -1324,6 +1328,7 @@ class ITEM
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual bool HasSpecialAnimation() const { return true; }
 );
 
 class ITEM

@@ -147,7 +147,7 @@ void character::Hunger()
       EditExperience(LEG_STRENGTH, -1);
     }
 
-  if(GetHungerState() == SATIATED || GetHungerState() == BLOATED)
+  if(GetHungerState() >= SATIATED)
     EditExperience(AGILITY, -1);
 
   CheckStarvationDeath("starved to death");
@@ -451,7 +451,7 @@ bool character::Open()
 
       vector2d DirVect = game::GetDirectionVectorForKey(Key);
 
-      if(DirVect != DIR_ERROR_VECTOR && GetArea()->IsValidPos(GetPos() + DirVect))
+      if(DirVect != ERROR_VECTOR && GetArea()->IsValidPos(GetPos() + DirVect))
 	return OpenPos(GetPos() + DirVect);
     }
   else
@@ -1216,8 +1216,14 @@ bool character::Talk()
   return false;
 }
 
+//#include <crtdbg.h>
+
 bool character::NOP()
 {
+  /*_CrtMemState Temp;
+  _CrtMemCheckpoint(&Temp);
+  _CrtMemDumpStatistics(&Temp);*/
+
   EditExperience(DEXTERITY, -10);
   EditExperience(AGILITY, -10);
   EditAP(-GetStateAPGain(1000));
@@ -1745,11 +1751,12 @@ bool character::ShowKeyLayout()
 
   List.AddDescription("");
   List.AddDescription("Key       Description");
+  std::string Buffer;
 
   for(ushort c = 1; game::GetCommand(c); ++c)
     if(!game::GetCommand(c)->IsWizardModeFunction())
       {
-	std::string Buffer;
+	Buffer.resize(0);
 	Buffer += game::GetCommand(c)->GetKey();
 	Buffer.resize(10, ' ');
 	List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHT_GRAY);
@@ -1764,7 +1771,7 @@ bool character::ShowKeyLayout()
       for(ushort c = 1; game::GetCommand(c); ++c)
 	if(game::GetCommand(c)->IsWizardModeFunction())
 	  {
-	    std::string Buffer;
+	    Buffer.resize(0);
 	    Buffer += game::GetCommand(c)->GetKey();
 	    Buffer.resize(10, ' ');
 	    List.AddEntry(Buffer + game::GetCommand(c)->GetDescription(), LIGHT_GRAY);
@@ -3142,6 +3149,7 @@ bool character::SecretKnowledge()
   List.AddFlags(SELECTABLE);
   ushort Chosen = List.Draw();
   ushort c, PageLength = 20;
+  std::string Entry;
 
   if(Chosen & FELIST_ERROR_BIT)
     return false;
@@ -3161,7 +3169,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Pic.Fill(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
@@ -3176,7 +3184,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Pic.Fill(TRANSPARENT_COLOR);
 	      Character[c]->DrawBodyParts(&Pic, vector2d(0, 0), MakeRGB24(128, 128, 128), false, false);
@@ -3191,7 +3199,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Entry.resize(47, ' ');
 	      Entry << int(Character[c]->GetDodgeValue());
@@ -3210,7 +3218,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Character.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Character[c]->AddName(Entry, UNARTICLED);
 	      Entry.resize(47, ' ');
 	      Entry << int(Character[c]->GetRelativeDanger(this, true) * 100);
@@ -3246,7 +3254,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Item.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Item[c]->AddName(Entry, UNARTICLED);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
 	      Item[c]->AddAttackInfo(List);
@@ -3258,7 +3266,7 @@ bool character::SecretKnowledge()
 
 	  for(c = 0; c < Item.size(); ++c)
 	    {
-	      std::string Entry;
+	      Entry.resize(0);
 	      Item[c]->AddName(Entry, UNARTICLED);
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, Item[c]->GetPicture());
 	      Item[c]->AddMiscellaneousInfo(List);
@@ -3322,7 +3330,6 @@ bool character::AllowDamageTypeBloodSpill(uchar Type) const
     case FIRE:
     case DRAIN:
     case POISON:
-    case BULIMIA:
     case ELECTRICITY:
       return false;
     default:
@@ -3544,6 +3551,7 @@ bool character::EquipmentScreen()
   ushort Chosen = 0;
   bool EquipmentChanged = false;
   felist List("Equipment menu");
+  std::string Entry;
 
   while(true)
     {
@@ -3551,7 +3559,7 @@ bool character::EquipmentScreen()
 
       for(ushort c = 0; c < GetEquipmentSlots(); ++c)
 	{
-	  std::string Entry = EquipmentName(c) + ":";
+	  Entry = EquipmentName(c) + ":";
 	  Entry.resize(20, ' ');
 
 	  if(GetEquipment(c))
@@ -3641,7 +3649,6 @@ ushort character::GetResistance(uchar Type) const
     case ENERGY:
     case ACID:
     case DRAIN:
-    case BULIMIA:
       return 0;
     case FIRE: return GetFireResistance();
     case POISON: return GetPoisonResistance();
@@ -4015,7 +4022,7 @@ bool character::TeleportNear(character* Caller)
 {
   vector2d Where = GetArea()->GetNearestFreeSquare(this, Caller->GetPos());
 
-  if(Where == DIR_ERROR_VECTOR)
+  if(Where == ERROR_VECTOR)
     return false;
 
   Teleport(Where);
@@ -4102,8 +4109,11 @@ void character::ReceiveNutrition(long SizeOfEffect)
 
   if(GetHungerState() == OVER_FED)
     {
-      DeActivateVoluntaryAction("You are forced to vomit to prevent choking on this stuff.");
+      if(IsPlayer())
+	ADD_MESSAGE("You are forced to vomit to prevent choking on this stuff.");
+
       Vomit(2 + RAND() % 3);
+      DeActivateVoluntaryAction();
     }
 }
 
@@ -4339,60 +4349,61 @@ void character::DrawPanel(bool AnimationDraw) const
     }
 
   DOUBLE_BUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES.X - 19 - (game::GetScreenSize().X << 4), RES.Y, 0);
-  DOUBLE_BUFFER->Fill(16, 45 + game::GetScreenSize().Y * 16, game::GetScreenSize().X << 4, 9, 0);
-  FONT->Printf(DOUBLE_BUFFER, 16, 45 + game::GetScreenSize().Y * 16, WHITE, "%s", GetPanelName().c_str());
+  DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenSize().Y << 4), game::GetScreenSize().X << 4, 9, 0);
+  FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenSize().Y << 4), WHITE, "%s", GetPanelName().c_str());
 
   ushort PanelPosX = RES.X - 96;
   ushort PanelPosY = DrawStats(false);
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Siz %d", GetSize());
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Gold: %d", GetMoney());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "End %d", GetAttribute(ENDURANCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Per %d", GetAttribute(PERCEPTION));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Int %d", GetAttribute(INTELLIGENCE));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Wis %d", GetAttribute(WISDOM));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Cha %d", GetAttribute(CHARISMA));
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Siz %d", GetSize());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, IsInBadCondition() ? RED : WHITE, "HP %d/%d", GetHP(), GetMaxHP());
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Gold: %d", GetMoney());
   ++PanelPosY;
 
   if(game::IsInWilderness())
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Worldmap");
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Worldmap");
   else
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex())).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring::CapitalizeCopy(game::GetCurrentDungeon()->GetShortLevelDescription(game::GetCurrentLevelIndex())).c_str());
 
-  FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Time: %d", game::GetTicks() / 10);
+  FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Time: %d", game::GetTicks() / 10);
 
   ++PanelPosY;
 
   if(GetAction())
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "%s", festring::CapitalizeCopy(GetAction()->GetDescription()).c_str());
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "%s", festring::CapitalizeCopy(GetAction()->GetDescription()).c_str());
 
   for(ushort c = 0; c < STATES; ++c)
     if(!StateIsSecret[c] && StateIsActivated(1 << c) && (1 << c != HASTE || !StateIsActivated(SLOW)) && (1 << c != SLOW || !StateIsActivated(HASTE)))
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateDescription[c].c_str());
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, (1 << c) & EquipmentState || TemporaryStateCounter[c] == PERMANENT ? BLUE : WHITE, "%s", StateDescription[c].c_str());
+
+  /* Make this more elegant!!! */
 
   if(GetHungerState() == STARVING)
-    FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Starving");
-  else
-    if(GetHungerState() == HUNGRY)
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Hungry");
-  else 
-    if(GetHungerState() == SATIATED)
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Satiated");
-  else
-    if(GetHungerState() == BLOATED)
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, WHITE, "Bloated");
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, RED, "Starving");
+  else if(GetHungerState() == HUNGRY)
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Hungry");
+  else  if(GetHungerState() == SATIATED)
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Satiated");
+  else if(GetHungerState() == BLOATED)
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Bloated");
+  else if(GetHungerState() == OVER_FED)
+    FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, WHITE, "Overfed!");
 
   switch(GetBurdenState())
     {
     case OVER_LOADED:
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, RED, "Overload!");
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, RED, "Overload!");
       break;
     case STRESSED:
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Stressed");
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Stressed");
       break;
     case BURDENED:
-      FONT->Printf(DOUBLE_BUFFER, PanelPosX, (PanelPosY++) * 10, BLUE, "Burdened");
+      FONT->Printf(DOUBLE_BUFFER, PanelPosX, PanelPosY++ * 10, BLUE, "Burdened");
     case UNBURDENED:
       break;
     }
@@ -4421,7 +4432,6 @@ bool character::DamageTypeAffectsInventory(uchar Type) const
       return true;
     case PHYSICAL_DAMAGE:
     case POISON:
-    case BULIMIA:
     case DRAIN:
       return false;
     default:
@@ -4477,17 +4487,15 @@ ushort character::CheckForBlockWithArm(character* Enemy, item* Weapon, arm* Arm,
 bool character::ShowWeaponSkills()
 {
   felist List("Your experience in weapon categories");
-
   List.AddDescription("");
   List.AddDescription("Category name                 Level     Points    Needed    Battle bonus");
-
   bool Something = false;
+  std::string Buffer;
 
   for(ushort c = 0; c < GetAllowedWeaponSkillCategories(); ++c)
     if(GetCWeaponSkill(c)->GetHits())
       {
-	std::string Buffer;
-	Buffer << GetCWeaponSkill(c)->Name();
+	Buffer = GetCWeaponSkill(c)->Name();
 	Buffer.resize(30, ' ');
 	Buffer << GetCWeaponSkill(c)->GetLevel();
 	Buffer.resize(40, ' ');
@@ -5285,7 +5293,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	{
 	  for(; c < NumberToTeleport; ++c)
 	    {
-	      GetTorso()->SetHP(GetTorso()->GetHP() * 4 / 5);
+	      GetTorso()->SetHP((GetTorso()->GetHP() << 2) / 5);
 	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
 
 	      if(TorsosVolume == 0)
@@ -5544,7 +5552,7 @@ void characterprototype::CreateSpecialConfigurations()
 	      TempDataBase.InitDefaults(i->first);
 	      TempDataBase.Adjective = i->second.NameStem;
 	      TempDataBase.AdjectiveArticle = i->second.Article;
-	      Config[i->first] = TempDataBase;
+	      Config.insert(std::pair<ushort, character::database>(i->first, TempDataBase));
 	    }
       }
 }
@@ -5681,10 +5689,12 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
 
 void character::AddDefenceInfo(felist& List) const
 {
+  std::string Entry;
+
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(GetBodyPart(c))
       {
-	std::string Entry = "   ";
+	Entry = "   ";
 	Entry << GetBodyPart(c)->GetBodyPartName();
 	Entry.resize(60, ' ');
 	Entry << GetBodyPart(c)->GetMaxHP();
@@ -5829,7 +5839,7 @@ character* character::CloneToNearestSquare(character*) const
 {
   vector2d Where = GetArea()->GetNearestFreeSquare(this, GetPos());
 
-  if(Where == DIR_ERROR_VECTOR)
+  if(Where == ERROR_VECTOR)
     {
       ADD_MESSAGE("You sense a disturbance in the Force.");
       return 0;
@@ -6118,7 +6128,7 @@ bool character::SummonMonster()
   Summoned->SetTeam(game::GetTeam(MONSTER_TEAM));
   vector2d Where = GetLevel()->GetNearestFreeSquare(Summoned, GetPos());
 
-  if(Where == DIR_ERROR_VECTOR)
+  if(Where == ERROR_VECTOR)
     Where = GetLevel()->GetRandomSquare(Summoned);
 
   GetNearLSquare(Where)->AddCharacter(Summoned);
@@ -6307,12 +6317,14 @@ void character::SelectFromPossessions(std::vector<item*>& ReturnVector, const st
 
   bool Any = false, UseSorterFunction = (SorterFunction != 0);
   std::vector<item*> Item;
+  std::string Entry;
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if(GetEquipment(c) && (!UseSorterFunction || SorterFunction(GetEquipment(c), this)))
       {
 	Item.push_back(GetEquipment(c));
-	std::string Entry = EquipmentName(c) + ":";
+	Entry = EquipmentName(c);
+	Entry << ':';
 	Entry.resize(20, ' ');
 	GetEquipment(c)->AddInventoryEntry(this, Entry, 1, true);
 	AddSpecialEquipmentInfo(Entry, c);
@@ -6572,3 +6584,4 @@ void character::AddESPConsumeMessage() const
   if(IsPlayer())
     ADD_MESSAGE("You feel a strange mental activity.");
 }
+

@@ -33,15 +33,15 @@ struct graphicid
   bool operator<(const graphicid& GI) const { return CompareBits(*this, GI); }
   vector2d BitmapPos NO_ALIGNMENT;
   ushort Color[4] NO_ALIGNMENT;
-  ushort Frame NO_ALIGNMENT;
+  uchar Frame NO_ALIGNMENT;
   uchar FileIndex NO_ALIGNMENT;
   uchar BaseAlpha NO_ALIGNMENT;
   uchar Alpha[4] NO_ALIGNMENT;
   uchar SpecialFlags NO_ALIGNMENT;
   vector2d SparklePos NO_ALIGNMENT;
-  uchar SparkleTime NO_ALIGNMENT;
+  uchar SparkleFrame NO_ALIGNMENT;
   ushort OutlineColor NO_ALIGNMENT;
-  ulong Seed NO_ALIGNMENT;
+  ushort Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
 };
 

@@ -73,15 +73,15 @@ Team 10; /* Residents of Mondedr */
 Dungeon ELPURI_CAVE;
 {
 	Levels = 10;
-	Variable XSize = 64;
-	Variable YSize = 36;
+	/*Variable XSize = 64;
+	Variable YSize = 36;*/
 	Description = "gloomy cave";
 	ShortDescription = "GC";
 
 	LevelDefault
 	{
 		FillSquare = solidterrain(GROUND),wall(EARTH);
-		Size = XSize, YSize;
+		Size = 64, 36;
 		Rooms = 10+rand%21;
 		Items = 25+rand%26;
 		GenerateMonsters = true;
@@ -132,7 +132,7 @@ Dungeon ELPURI_CAVE;
 
 		RoomDefault
 		{
-			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Pos = 2+rand%(64-6),2+rand%(36-6);
 			Size = 4+rand%8,4+rand%8;
 			AltarPossible = true;
 			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
@@ -567,15 +567,15 @@ Dungeon ELPURI_CAVE;
 Dungeon ATTNAM;
 {
 	Levels = 1;
-	Variable XSize = 61;
-	Variable YSize = 62;
+	/*Variable XSize = 61;
+	Variable YSize = 62;*/
 
 	Level 0;
 	{
 		Description = Attnam;
 		ShortDescription = Attnam;
 		FillSquare = solidterrain(SNOW_TERRAIN),empty;
-		Size = XSize, YSize;
+		Size = 61, 62;
 		GenerateMonsters = false;
 		Rooms = 20 + rand % 6;
 		Items = 0;
@@ -588,7 +588,7 @@ Dungeon ATTNAM;
 
 		RoomDefault
 		{
-			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Pos = 2+rand%(61-6),2+rand%(62-6);
 			Size = 4+rand%8,4+rand%8;
 			AltarPossible = false;
 			WallSquare = solidterrain(SNOW_TERRAIN),wall(BRICK_FINE);
@@ -608,7 +608,7 @@ Dungeon ATTNAM;
 
 		Square, Pos 0, 0;
 		{
-			Character = guard(PATROL) { WayPoint = { 4, 0, 0, XSize - 1, 0, XSize - 1, YSize - 1, 0, YSize - 1; } }
+			Character = guard(PATROL) { WayPoint = { 4, 0, 0, 61 - 1, 0, 61 - 1, 62 - 1, 0, 62 - 1; } }
 		}
 
 		Square, Random NOT_IN_ROOM;
@@ -1149,8 +1149,8 @@ Dungeon ATTNAM;
 Dungeon NEW_ATTNAM;
 {
 	Levels = 1;
-	Variable XSize = 55;
-	Variable YSize = 55;
+	/*Variable XSize = 55;
+	Variable YSize = 55;*/
 
 	Level 0;
 	{
@@ -1158,7 +1158,7 @@ Dungeon NEW_ATTNAM;
 		Description = "New Attnam";
 		ShortDescription = "New Attnam";
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
-		Size = XSize, YSize;
+		Size = 55, 55;
 		GenerateMonsters = false;
 		Rooms = 5 + rand % 3;
 		Items = 0;
@@ -1391,15 +1391,15 @@ Dungeon NEW_ATTNAM;
 Dungeon UNDER_WATER_TUNNEL;
 {
 	Levels = 3;
-	Variable XSize = 80;
-	Variable YSize = 20;
+	/*Variable XSize = 80;
+	Variable YSize = 20;*/
 	Description = "underwater tunnel";
 	ShortDescription = "UT";
 
 	LevelDefault
 	{
 		FillSquare = solidterrain(GROUND),wall(EARTH);
-		Size = XSize, YSize;
+		Size = 80, 20;
 		Rooms = 5+rand%6;
 		Items = 15+rand%16;
 		GenerateMonsters = true;
@@ -1423,7 +1423,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		RoomDefault
 		{
-			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Pos = 2+rand%(80-6),2+rand%(20-6);
 			Size = 4+rand%8,4+rand%8;
 			AltarPossible = true;
 			WallSquare = solidterrain(GROUND),wall(BRICK_OLD);
@@ -1487,7 +1487,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		Room 0;
 		{
-			Pos = 2+rand%(XSize/4-6),2+rand%(YSize-6);
+			Pos = 2+rand%(80/4-6),2+rand%(20-6);
 			Size = 5,5;
 			AllowLockedDoors = false;
 			AllowBoobyTrappedDoors = false;
@@ -1524,7 +1524,7 @@ Dungeon UNDER_WATER_TUNNEL;
 
 		RoomDefault
 		{
-			Pos = 2+rand%154,2+rand%(YSize-6);
+			Pos = 2+rand%154,2+rand%(20-6);
 		}
 
 		Square, BoundedRandom 1, 1, 18, 18, NOT_WALKABLE|ATTACHABLE;
@@ -1558,7 +1558,7 @@ Dungeon UNDER_WATER_TUNNEL;
 		Room 0;
 		{
 			Size = 5,5;
-			Pos = 3*XSize/4 + rand%(XSize/4-6),2+rand%(YSize-6);
+			Pos = 3*80/4 + rand%(80/4-6),2+rand%(20-6);
 			FloorSquare = solidterrain(GRASS_TERRAIN),empty;
 			GenerateFountains = false;
 			AltarPossible = false;
@@ -1592,15 +1592,15 @@ Dungeon UNDER_WATER_TUNNEL;
 Dungeon MONDEDR;
 {
 	Levels = 1;
-	Variable XSize = 60;
-	Variable YSize = 60;
+	/*Variable XSize = 60;
+	Variable YSize = 60;*/
 
 	Level 0;
 	{
 		Description = "Mondedr";
 		ShortDescription = "Mondedr";
 		FillSquare = solidterrain(GRASS_TERRAIN),empty;
-		Size = XSize, YSize;
+		Size = 60, 60;
 		GenerateMonsters = false;
 		Rooms = 0;
 		Items = 0;
@@ -1613,7 +1613,7 @@ Dungeon MONDEDR;
 
 		RoomDefault
 		{
-			Pos = 2+rand%(XSize-6),2+rand%(YSize-6);
+			Pos = 2+rand%(60-6),2+rand%(60-6);
 			Size = 4+rand%8,4+rand%8;
 			AltarPossible = false;
 			WallSquare = solidterrain(GRASS_TERRAIN),wall(BRICK_FINE);

@@ -41,7 +41,7 @@ Animation for mommos.
 Several types of key pictures. (lp)
 Harp.
 Nuts shouldn't be peeled.
-Teleport.
+//Teleport.
 //Golden Eagle Shirt's animation is really gay.
 Visible invisible stalker.
 Lada.

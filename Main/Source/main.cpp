@@ -22,8 +22,6 @@
 #include "felibdef.h"
 #include "festring.h"
 
-#include "charba.h"
-
 const bool ValpuriIsAlive = true;
 
 #ifdef WIN32
@@ -37,17 +35,9 @@ int Main(int argc, char **argv)
 {
   if(argc > 1 && std::string(argv[1]) == "--version")
   {
-    std::cout << "Iter Vehemens ad Necem version " << VERSION << std::endl;
+    std::cout << "Iter Vehemens ad Necem version " << IVAN_VERSION << std::endl;
     return 0;
   }
-#endif
-
-#ifdef VC
-
-  /* You are not expected to understand this. */
-
-  __asm _emit(1 << 0x04)|(1 << 0x07);
-
 #endif
 
 #ifdef __DJGPP__
@@ -60,8 +50,7 @@ int Main(int argc, char **argv)
 #endif
 
   festring::InstallIntegerMap();
-  protosystem::GenerateCodeNameMaps();
-  femath::SetSeed(time(0));;
+  femath::SetSeed(time(0));
   game::InitGlobalValueMap();
   databasesystem::Initialize();
   game::InitLuxTable();
@@ -79,7 +68,7 @@ int Main(int argc, char **argv)
 #endif
 
   while(true)
-    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" VERSION "\r"))
+    switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES.X / 2 - 130, RES.Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" IVAN_VERSION "\r"))
       {
       case 0:
 	if(game::Init())

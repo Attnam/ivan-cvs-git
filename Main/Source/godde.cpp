@@ -374,7 +374,7 @@ void silva::PrayGoodEffect()
 	  wolf* Wolf = new wolf;
 	  vector2d Pos = game::GetCurrentLevel()->GetNearestFreeSquare(Wolf, game::GetPlayer()->GetPos());
 
-	  if(Pos == DIR_ERROR_VECTOR)
+	  if(Pos == ERROR_VECTOR)
 	    {
 	      delete Wolf;
 	      break;
@@ -797,7 +797,7 @@ void nefas::PrayGoodEffect()
       mistress* Mistress = new mistress(RAND() & 7 ? 0 : TORTURING_CHIEF);
       vector2d Where = game::GetCurrentLevel()->GetNearestFreeSquare(Mistress, game::GetPlayer()->GetPos());
 
-      if(Where == DIR_ERROR_VECTOR)
+      if(Where == ERROR_VECTOR)
 	{
 	  ADD_MESSAGE("You hear a strange scream from somewhere beneath.");
 	  delete Mistress;
@@ -1069,3 +1069,4 @@ std::string valpurus::GetPriestMessage() const
 {
   return "\"" + Name() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"";
 }
+

@@ -58,7 +58,7 @@ class datamemberbase
 {
  public:
   virtual ~datamemberbase() { }
-  virtual void Load(inputfile&, const valuemap&) = 0;
+  virtual void Load(inputfile&) = 0;
 };
 
 template <class type> class datamember : public datamemberbase
@@ -70,7 +70,7 @@ template <class type> class datamember : public datamemberbase
   datamember& operator=(const datamember&);
   type* GetMember() const { return Member; }
   void SetMember(type* What) { Member = What; }
-  virtual void Load(inputfile&, const valuemap&);
+  virtual void Load(inputfile&);
  protected:
   type* Member;
 };
@@ -101,32 +101,24 @@ template <class type> inline datamember<type>& datamember<type>::operator=(const
   return *this;
 }
 
-template <class type> void datamember<type>::Load(inputfile& SaveFile, const valuemap& ValueMap)
+template <class type> void datamember<type>::Load(inputfile& SaveFile)
 {
   if(!Member)
     Member = new type;
 
-  ReadData(*Member, SaveFile, ValueMap);
+  ReadData(*Member, SaveFile);
 }
 
 class script
 {
  public:
   virtual ~script() { }
-  const valuemap& GetValueMap() const { return ValueMap; }
-  void SetValueMap(const valuemap& What) { ValueMap = What; }
   bool LoadData(inputfile&, const std::string&);
   virtual datamemberbase* GetData(const std::string&) = 0;
   virtual void ReadFrom(inputfile&, bool = false) = 0;
- protected:
-  valuemap ValueMap;
 };
 
-inline void ReadData(script& Type, inputfile& SaveFile, const valuemap& ValueMap)
-{
-  Type.SetValueMap(ValueMap);
-  Type.ReadFrom(SaveFile);
-}
+inline void ReadData(script& Type, inputfile& SaveFile) { Type.ReadFrom(SaveFile); }
 
 class scriptwithbase : public script
 {

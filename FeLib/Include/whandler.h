@@ -5,18 +5,15 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include <vector>
+#include "typedef.h"
+#include "felibdef.h"
 
 #define GET_KEY globalwindowhandler::GetKey
 #define READ_KEY globalwindowhandler::ReadKey
 
-typedef std::vector<bool (*)()> controlvector;
-
 #ifdef __DJGPP__
 
 #include <pc.h>
-
-#include "typedef.h"
 
 class globalwindowhandler
 {
@@ -26,14 +23,17 @@ class globalwindowhandler
   static ulong GetTick() { return Tick; }
   static void InstallControlLoop(bool (*)());
   static void DeInstallControlLoop(bool (*)());
-  static bool ControlLoopsInstalled() { return ControlLoop.size() != 0; }
+  static bool ControlLoopsInstalled() { return Controls != 0; }
   static ulong UpdateTick();
  protected:
-  static controlvector ControlLoop;
+  static bool (*ControlLoop[MAX_CONTROLS])();
+  static ushort Controls;
   static ulong Tick;
 };
 
 #else
+
+#include <vector>
 
 #ifdef WIN32
 #include <windows.h>
@@ -42,8 +42,6 @@ class globalwindowhandler
 #ifdef USE_SDL
 #include "SDL.h"
 #endif
-
-#include "typedef.h"
 
 class bitmap;
 
@@ -66,13 +64,14 @@ class globalwindowhandler
   static void DeInstallControlLoop(bool (*)());
   static void SetInitialized(bool What) { Initialized = What; }
   static ulong GetTick() { return Tick; }
-  static bool ControlLoopsInstalled() { return ControlLoop.size() != 0; }
+  static bool ControlLoopsInstalled() { return Controls != 0; }
   static ulong UpdateTick();
  private:
   static std::vector<int> KeyBuffer;
   static bool Initialized;
   static bool (*QuitMessageHandler)();
-  static controlvector ControlLoop;
+  static bool (*ControlLoop[MAX_CONTROLS])();
+  static ushort Controls;
   static ulong Tick;
 #ifdef WIN32
   static bool Active;
