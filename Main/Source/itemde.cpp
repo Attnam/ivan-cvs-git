@@ -878,18 +878,33 @@ bool backpack::StruckByWandOfStriking(character* Striker, stack* MotherStack)
     return false;
 }
 
-material* loaf::CreateLoafMaterials(void)
+material* loaf::CreateLoafMaterials()
 {
-  switch(RAND() % 3)
+  switch(RAND() % 5)
     {
     case 0:
-      return new bread;
-
+      return new beef;
     case 1:
       return new pork;
-
     default:
-      return new beef;
+      return new bread;
     }
 }
 
+void holybook::SetOwnerGod(uchar NewOwnerGod)
+{
+  switch(game::GetGod(NewOwnerGod)->BasicAlignment())
+    {
+    case GOOD:
+      SetMaterial(0, new goodleather);
+      break;
+    case NEUTRAL:
+      SetMaterial(0, new neutralleather);
+      break;
+    case EVIL:
+      SetMaterial(0, new evilleather);
+      break;
+    }
+
+  OwnerGod = NewOwnerGod;
+}

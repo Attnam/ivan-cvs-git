@@ -1755,7 +1755,7 @@ bool character::WhatToEngrave()
   return false;
 }
 
-void character::MoveRandomly()
+bool character::MoveRandomly()
 {
   bool OK = false;
 
@@ -1766,6 +1766,8 @@ void character::MoveRandomly()
       if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)))// && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetCharacter())
 	OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
     }
+
+  return OK;
 }
 
 bool character::TestForPickup(item* ToBeTested) const
@@ -2668,6 +2670,9 @@ bool character::CheckForEnemies(bool CheckDoors)
 
   if(NearestChar)
     {
+      if(SpecialEnemySightedReaction(NearestChar))
+	return true;
+
       if(!GetTeam()->GetLeader() && NearestChar->GetIsPlayer())
 	WayPoint = NearestChar->GetPos();
 
@@ -3067,7 +3072,7 @@ stack* character::GetGiftStack() const
     return GetLevelSquareUnder()->GetStack();
 }
 
-void character::MoveRandomlyInRoom()
+bool character::MoveRandomlyInRoom()
 {
   bool OK = false;
 
@@ -3078,6 +3083,8 @@ void character::MoveRandomlyInRoom()
       if(game::GetCurrentLevel()->IsValid(GetPos() + game::GetMoveVector(ToTry)) && !game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(ToTry))->GetOverLevelTerrain()->IsDoor())
 	OK = TryMove(GetPos() + game::GetMoveVector(ToTry), false);
     }
+
+  return OK;
 }
 
 void character::SetHP(short What)
@@ -3146,7 +3153,7 @@ void character::GoHandler()
 
       levelsquare* MoveToSquare = game::GetCurrentLevel()->GetLevelSquare(GetPos() + game::GetMoveVector(StateVariables.Going.Direction));
 
-      if(!MoveToSquare->GetOverTerrain()->GetIsWalkable() || MoveToSquare->GetCharacter())
+      if(!MoveToSquare->GetOverTerrain()->GetIsWalkable() || (MoveToSquare->GetCharacter() && GetTeam() != MoveToSquare->GetCharacter()->GetTeam()))
 	{
 	  EndGoing();
 	  return;

@@ -692,11 +692,9 @@ class ITEM
   loaf,
   item,
   InitMaterials(CreateLoafMaterials()),
-        {
+  {
     SetSize(40);
   },
-  
-
  public:
   virtual ushort Possibility() const { return 100; }
   virtual std::string Name(uchar Case) const { return NameThingsThatAreLikeLumps(Case, "a"); }
@@ -708,7 +706,7 @@ class ITEM
   virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 500; default: return 0; } }
   virtual vector2d GetInHandsPic() const { return vector2d(160,128); }
   virtual ulong Price() const { return GetMaterial(0) ? GetMaterial(0)->RawPrice() : 0; }
-  virtual material* CreateLoafMaterials(void);
+  virtual material* CreateLoafMaterials();
  protected:
   virtual ushort GetFormModifier() const { return 30; }
 );
@@ -1073,14 +1071,14 @@ class ITEM
 (
   holybook,
   item,
-  InitMaterials(new parchment),
+  InitMaterials(1, 0),
   {  
     SetSize(25);
     SetOwnerGod(1 + RAND() % game::GetGodNumber());
   },
  public:
   virtual bool CanBeRead(character*) const;
-  virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", parchment::StaticType()) + OwnerGodDescription(OwnerGod); }
+  virtual std::string Name(uchar Case) const { return NameNormal(Case, "a") + OwnerGodDescription(OwnerGod); }
   virtual vector2d GetInHandsPic() const { return vector2d(160, 128); }
   virtual ushort Possibility() const { return 5; }
   virtual float OfferModifier() const { return 0.4f; }
@@ -1089,7 +1087,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual uchar GetOwnerGod() const { return OwnerGod; }
-  virtual void SetOwnerGod(uchar What) { OwnerGod = What; }
+  virtual void SetOwnerGod(uchar);
   virtual bool Read(character*);
   virtual bool ReceiveFireDamage(character*, stack*, long);
  protected:

@@ -164,7 +164,7 @@ class character : public object
   virtual void HealFully(character*) {}
   virtual void Hunger(ushort = 1);
   virtual void Move(vector2d, bool = false);
-  virtual void MoveRandomly();
+  virtual bool MoveRandomly();
   virtual void ReceiveBulimiaDamage();
   virtual void ReceiveFireDamage(character*, long);
   virtual void ReceiveNutrition(long);
@@ -257,7 +257,7 @@ class character : public object
   virtual uchar CriticalModifier() const { return 20; }
   virtual std::string StandVerb() const { return "standing"; }
   virtual stack* GetGiftStack() const;
-  virtual void MoveRandomlyInRoom();
+  virtual bool MoveRandomlyInRoom();
   virtual bool CanOpenDoors() const { return true; }
   virtual void GoHandler();
   virtual void EndGoing();
@@ -274,6 +274,7 @@ class character : public object
   virtual ushort DangerLevel();
   virtual void CreateInitialEquipment() {}
   virtual void DisplayInfo();
+  virtual bool SpecialEnemySightedReaction(character*) { return false; }
  protected:
   virtual void SeekLeader();
   virtual bool CheckForUsefulItemsOnGround();

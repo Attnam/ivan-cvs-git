@@ -72,8 +72,3 @@ void koboldflesh::EatEffect(character* Eater, float Amount, float NPModifier)
   NormalFoodEffect(Eater, Amount, NPModifier);
   MinusAmount(Amount);
 }
-
-ushort air::GetColor() const
-{
-  return MAKE_RGB(180, 64, 64);
-}

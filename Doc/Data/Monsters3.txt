@@ -34,7 +34,7 @@ librarian	170	5	5	5	12	500
 angel		180	35*	35*	35*	45	10000		80000	*default; depends on alignment
 bat		20	40	2	1	24	20000		1000
 beholder
-genie		300	30	30	30	18
+genie		300	30	30	30	18	5000		200000
 gibberling	90	20	5	5	15	10000		30000
 gnoll
 imp		100	15	10	10	15	20000		40000

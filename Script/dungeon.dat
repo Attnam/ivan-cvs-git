@@ -10,12 +10,12 @@ Teams=8;
 Team 2; /* Residents of Attnam */
 {
 	Relation 0, FRIEND;
+	AttackEvilness=250;
 }
 
 Team 3; /* Petrus's team during the Final Battle */
 {
-	Relation 0, NEUTRAL;
-	Relation 2, NEUTRAL;
+	AttackEvilness=100;
 }
 
 Team 4; /* Enner Beasts */
@@ -29,29 +29,20 @@ Team 5; /* Spawned hostile angels */
 {
 	Relation 0, HOSTILE;
 	Relation 1, NEUTRAL;
-	Relation 2, NEUTRAL;
-	Relation 3, NEUTRAL;
 	Relation 4, HOSTILE;
 }
 
 Team 6; /* Dungeon shopkeepers */
 {
-	Relation 0, NEUTRAL;
 	Relation 1, NEUTRAL;
-	Relation 2, NEUTRAL;
-	Relation 3, NEUTRAL;
 	Relation 4, HOSTILE;
-	Relation 5, NEUTRAL;
+	AttackEvilness=100;
 }
 
 Team 7; /* Ivan */
 {
-	Relation 0, NEUTRAL;
-	Relation 2, NEUTRAL;
-	Relation 3, NEUTRAL;
 	Relation 4, HOSTILE;
-	Relation 5, NEUTRAL;
-	Relation 6, NEUTRAL;
+	AttackEvilness=100;
 }
 
 Dungeon 0;
@@ -127,6 +118,7 @@ Dungeon 0;
 			Square, Pos 3,1;
 			{
 				Item=lantern;
+				Character=unicorn;
 			}
 		}
 	}
@@ -212,7 +204,7 @@ Dungeon 0;
 					C = mithril chainmail;
 					s = wandofstriking;
 					a = lantern;
-					l = pork loaf;
+					l = bread loaf;
 					t = scrollofteleport;
 					g = iron goblinoidflesh can;
 					p = iron poleaxe;
@@ -764,7 +756,7 @@ Dungeon 1;
 					b = banana;
 					l = wolfflesh lump;
 					i = iron polarbearflesh can;
-					L = pork loaf;
+					L = bread loaf;
 					a = lantern;
 					P = glass omleurine potion;
 					C = chainmail;

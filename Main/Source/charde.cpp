@@ -337,12 +337,15 @@ ushort golem::CalculateArmorModifier() const
     return 100 - ((GetMaterial(0)->GetArmorValue() * 3) >> 2);
 }
 
-void golem::MoveRandomly()
+bool golem::MoveRandomly()
 {
   if(!(RAND() % 500))
+  {
     Engrave("Golem Needs Master");
+    return true;
+  }
   else
-    character::MoveRandomly();
+    return character::MoveRandomly();
 }
 
 void ennerbeast::GetAICommand()
@@ -1048,7 +1051,7 @@ void ivan::BeTalkedTo(character* Talker)
 	  ADD_MESSAGE("\"CCCP roxxx.\"");
 	  break;
 	case 5:
-	  ADD_MESSAGE("\"Ivan like throw ladas. You want compete?\"");
+	  ADD_MESSAGE("\"Ivan like throw Ladas. You want compete?\"");
 	  break;
 	case 6:
 	  ADD_MESSAGE("\"Why is AK not invented?\"");
@@ -1152,22 +1155,29 @@ void slave::BeTalkedTo(character* Talker)
 
   if(GetTeam() == Talker->GetTeam())
     {
-      static bool Said[4];
-
-      switch(RandomizeReply(4, Said))
+      if(Talker->GetWielded() && Talker->GetWielded()->GetType() == whip::StaticType())
 	{
-	case 0:
-	  ADD_MESSAGE("\"Whatever the master wants.\"");
-	  break;
-	case 1:
-	  ADD_MESSAGE("\"Work work work all day long. No, that was not a complain! Don't punish!\"");
-	  break;
-	case 2:
-	  ADD_MESSAGE("\"I love all my masters. At least when the whip is being washed.\"");
-	  break;
-	case 3:
-	  ADD_MESSAGE("\"I would like to be like Ivan. Ivan is a good worker.\"");
-	  break;
+	  ADD_MESSAGE("\"Don't hit me! I work! I obey! I not think!\"");
+	}
+      else
+	{
+	  static bool Said[4];
+
+	  switch(RandomizeReply(4, Said))
+	    {
+	    case 0:
+	      ADD_MESSAGE("\"Whatever the master wants.\"");
+	      break;
+	    case 1:
+	      ADD_MESSAGE("\"Work work work all day long. No, that was not a complain! Don't punish!\"");
+	      break;
+	    case 2:
+	      ADD_MESSAGE("\"I love all my masters. At least when the whip is being washed.\"");
+	      break;
+	    case 3:
+	      ADD_MESSAGE("\"I would like to be like Ivan. Ivan is a good worker.\"");
+	      break;
+	    }
 	}
     }
   else
@@ -1392,7 +1402,8 @@ void librarian::BeTalkedTo(character* Talker)
     case 5:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 2)
 	{
-	  ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact. Thou canst not find a better armor.\"");
+	  ADD_MESSAGE("\"The Shirt of the Golden Eagle is a legendary artifact.");
+	  ADD_MESSAGE("Thou canst not find a better armor.\"");
 	  break;
 	}
       else
@@ -1403,7 +1414,7 @@ void librarian::BeTalkedTo(character* Talker)
 	}
     case 6:
       ADD_MESSAGE("\"Attnam is traditionally ruled by the High Priest of the Great Frog.");
-      ADD_MESSAGE("The High Priest is he who holds the Shirt of the Golden Eagle and kills the last High Priest.\"");
+      ADD_MESSAGE("He holds the Shirt of the Golden Eagle and has always killed his predecessor.\"");
       break;
     case 7:
       if(game::GetPetrus() && game::GetPetrus()->GetStoryState() == 3)
@@ -1444,7 +1455,7 @@ void femaleslave::CreateInitialEquipment()
   SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new palmbranch)));
 }
 
-void ivan::MoveRandomly()
+bool ivan::MoveRandomly()
 {
   switch(RAND() % 1000)
     {
@@ -1457,15 +1468,15 @@ void ivan::MoveRandomly()
 	ADD_MESSAGE("Ivan engraves something to the ground.");
 
       Engrave("Proletarians of all countries, unite!");
-      break;
+      return true;
     case 2:
       if(GetSquareUnder()->CanBeSeen())
 	ADD_MESSAGE("Ivan engraves something to the ground.");
 
       Engrave("Capital is therefore not only personal; it is a social power.");
-      break;
+      return true;
     default:
-      character::MoveRandomly();
+      return character::MoveRandomly();
     }
 }
 
@@ -1866,9 +1877,23 @@ void genie::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Need brain, but not your brain.\"");*/
 }
 
-void genie::CreateInitialEquipment()
+bool unicorn::SpecialEnemySightedReaction(character* Enemy)
 {
-  /*SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));*/
-}
+  if((!(RAND() % 3) && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
+  {
+    if(GetLevelSquareUnder()->CanBeSeen())
+      ADD_MESSAGE("%s disappears!", CNAME(DEFINITE));
 
+    Move(GetLevelSquareUnder()->GetLevelUnder()->RandomSquare(true), true);
+
+    if(GetLevelSquareUnder()->CanBeSeen())
+      ADD_MESSAGE("Suddenly %s appears from nothing!", CNAME(INDEFINITE));
+
+    return true;
+  }
+
+  if(!(RAND() % 3) && MoveRandomly())
+    return true;
+
+  return false;
+}

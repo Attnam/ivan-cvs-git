@@ -9,3 +9,4 @@ Keys don't work on Win2k fullscreen mode.
 *Alt+Enter in config screen.
 *Picking sale items after polymorphing and killing the shopkeeper crashes.
 Shopkeeper + levelchange?
+The shop kick bug.

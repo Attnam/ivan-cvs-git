@@ -579,7 +579,7 @@ class CHARACTER
   },
  public:
   virtual ushort CalculateArmorModifier() const;
-  virtual void MoveRandomly();
+  virtual bool MoveRandomly();
   virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual void DrawToTileBuffer() const;
   virtual void SpillBlood(uchar) {}
@@ -741,7 +741,7 @@ class CHARACTER
     SetShieldType(0);
   },
  public:
-  virtual void MoveRandomly();
+  virtual bool MoveRandomly();
   virtual void CreateInitialEquipment();
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 120000; else return 0; }
   virtual void BeTalkedTo(character*);
@@ -844,7 +844,7 @@ class CHARACTER
  public:
   virtual bool CanBeGenerated() const { return false; }
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 2500; else return 0; }
-  virtual void MoveRandomly() { MoveRandomlyInRoom(); }
+  virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "light frog"; }
@@ -897,7 +897,7 @@ class CHARACTER
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
   virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
-  virtual void MoveRandomly() { MoveRandomlyInRoom(); }
+  virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
   virtual std::string NameSingular() const { return "Petrus's wife"; }
   virtual float GetMeleeStrength() const { return 500; }
@@ -1406,6 +1406,7 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
   virtual void RandomizeFleshMaterial();
+  virtual bool SpecialEnemySightedReaction(character*);
  protected:
   uchar Alignment;
 );
@@ -1428,13 +1429,12 @@ class CHARACTER
   virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 200000; else return 0; }
   virtual void BeTalkedTo(character*);
   virtual std::string StandVerb() const { return "floating"; }
-  virtual void CreateInitialEquipment();
  protected:
   virtual vector2d GetBitmapPos() const { return vector2d(416,0); }
   virtual std::string NameSingular() const { return "genie"; }
   virtual void CreateCorpse() {}
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
-  virtual float GetMeleeStrength() const { return 20000; }
+  virtual float GetMeleeStrength() const { return 5000; }
 );
 
 #endif

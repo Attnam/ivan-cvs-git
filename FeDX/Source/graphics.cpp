@@ -524,7 +524,7 @@ void graphics::BlitDBToScreen()
   BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, ScreenSelector, Width, Height);
 }
 
-void graphics::vesainfo::Retrieve(void)
+void graphics::vesainfo::Retrieve()
 {
   Signature = 0x32454256;
 

@@ -112,10 +112,10 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 	    return 0;
 	  }
 
-	/*ushort Index = KeyBuffer.Search(wParam);
+	ushort Index = KeyBuffer.Search(wParam);
 
-	  if(Index != 0xFFFF)
-	  KeyBuffer.Remove(Index);*/
+	if(Index != 0xFFFF)
+	  KeyBuffer.Remove(Index);
 
 	return 0;
       }

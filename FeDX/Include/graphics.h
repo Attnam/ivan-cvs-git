@@ -90,9 +90,8 @@ class graphics
   static ushort ScreenSelector;
   static struct vesainfo
   {
-    public:
-void Retrieve(void);
-    bool   CheckSupport(void) {return Version == 0x0200 ? true : false;};
+    void Retrieve();
+    bool   CheckSupport() {return Version == 0x0200 ? true : false;};
     ulong Signature		PACKED;
     ushort Version		PACKED;
     ulong OEMString		PACKED;
@@ -104,7 +103,7 @@ void Retrieve(void);
   static struct modeinfo
   {
     void Retrieve(ushort);
-    bool   CheckSupport(void) {return Attribs1 & 1 ? true : false;};
+    bool   CheckSupport() {return Attribs1 & 1 ? true : false;};
     ushort Attribs1		PACKED;
     uchar  AWindowAttribs	PACKED;
     uchar  BWindowAttribs	PACKED;

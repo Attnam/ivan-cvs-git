@@ -406,7 +406,7 @@ void stack::Kick(ushort Strength, bool ShowOnScreen, uchar Direction)
 	GetItem(0)->Fly(Direction, Strength, this, true);
     }
   else
-    if(ShowOnScreen) ADD_MESSAGE("Your weak kick does no damage.");
+    if(GetItems() && ShowOnScreen) ADD_MESSAGE("Your weak kick has no effect.");
 }
 
 long stack::Score() const

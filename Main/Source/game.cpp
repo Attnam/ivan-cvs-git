@@ -208,7 +208,7 @@ void game::Init(std::string Name)
 
       CreateTeams();
 
-      SetPlayer(new human);
+      SetPlayer(new genie);
 
       Player->SetTeam(GetTeam(0));
       GetTeam(0)->SetLeader(Player);
@@ -1082,8 +1082,13 @@ void game::CreateTeams()
       GetTeam(1)->SetRelation(GetTeam(c), HOSTILE);
 
   for(c = 0; c < GameScript.GetTeam().size(); ++c)
+  {
     for(ushort i = 0; i < GameScript.GetTeam()[c].second->GetRelation().size(); ++i)
       GetTeam(GameScript.GetTeam()[c].second->GetRelation()[i].first)->SetRelation(GetTeam(GameScript.GetTeam()[c].first), GameScript.GetTeam()[c].second->GetRelation()[i].second);
+
+    if(GameScript.GetTeam()[c].second->GetAttackEvilness(false))
+      GetTeam(GameScript.GetTeam()[c].first)->SetAttackEvilness(*GameScript.GetTeam()[c].second->GetAttackEvilness());
+  }
 }
 
 bool game::IsValidPos(vector2d Pos)

@@ -33,8 +33,11 @@ void team::Hostility(team* Enemy)
 	{
 	  /* This is a gum solution. The message should come from the script. */
 
-	  if(Enemy == game::GetTeam(2))
+	  if(Enemy->GetID() == 2)
 	    ADD_MESSAGE("You hear an alarm ringing.");
+
+	  if(Enemy->GetAttackEvilness())
+	    game::DoEvilDeed(Enemy->GetAttackEvilness());
 
 	  ADD_MESSAGE("You have a feeling this wasn't a good idea...");
 	}
@@ -45,10 +48,10 @@ void team::Hostility(team* Enemy)
 
 void team::Save(outputfile& SaveFile) const
 {
-  SaveFile << ID << Relation;
+  SaveFile << ID << Relation << AttackEvilness;
 }
 
 void team::Load(inputfile& SaveFile)
 {
-  SaveFile >> ID >> Relation;
+  SaveFile >> ID >> Relation >> AttackEvilness;
 }

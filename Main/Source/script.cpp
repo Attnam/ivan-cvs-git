@@ -53,6 +53,7 @@ void posscript::ReadFrom(inputfile& SaveFile)
 
 	      continue;
 	    }
+
 	  ABORT("Odd script term %s encountered in position script!", Word.c_str());
 	}
     }
@@ -976,6 +977,16 @@ void teamscript::ReadFrom(inputfile& SaveFile)
 	  Rel.second = SaveFile.ReadNumber(ValueMap);
 
 	  Relation.push_back(Rel);
+
+	  continue;
+	}
+
+      if(Word == "AttackEvilness")
+	{
+	  if(!AttackEvilness)
+	    AttackEvilness = new ushort;
+
+	  *AttackEvilness = SaveFile.ReadNumber(ValueMap);
 
 	  continue;
 	}

@@ -133,7 +133,7 @@ class MATERIAL
   virtual ushort GetHitValue() const { return 0; }
   virtual ushort GetDensity() const { return 1; }
   virtual ushort OfferValue() const { return 0; }
-  virtual ushort GetColor() const;
+  virtual ushort GetColor() const { return MAKE_RGB(112, 112, 200); }
  protected:
   virtual std::string NameStem() const { return "air"; }
   virtual std::string Article() const { return "an"; }
@@ -778,7 +778,6 @@ class MATERIAL
  public:
   virtual bool IsSolid() const { return false; }
   virtual ushort GetColor() const { return MAKE_RGB(160, 160, 0); }
-  virtual uchar Alignment() const { return GOOD; }
   virtual bool CanBeWished() const { return false; }
  protected:
   virtual std::string NameStem() const { return "good leather"; }
@@ -791,7 +790,6 @@ class MATERIAL
  public:
   virtual bool IsSolid() const { return false; }
   virtual ushort GetColor() const { return MAKE_RGB(20, 120, 200); }
-  virtual uchar Alignment() const { return NEUTRAL; }
   virtual bool CanBeWished() const { return false; }
  protected:
   virtual std::string NameStem() const { return "neutral leather"; }
@@ -804,7 +802,6 @@ class MATERIAL
  public:
   virtual bool IsSolid() const { return false; }
   virtual ushort GetColor() const { return MAKE_RGB(200, 0, 0); }
-  virtual uchar Alignment() const { return EVIL; }
   virtual bool CanBeWished() const { return false; }
  protected:
   virtual std::string NameStem() const { return "evil leather"; }
@@ -886,24 +883,12 @@ class MATERIAL
   virtual ushort GetDensity() const { return 200; }
   virtual ushort OfferValue() const { return 7; }
   virtual void EatEffect(character* Eater, float Amount, float NPModifier) { NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
-  virtual short NutritionValue() const { return 100; }
+  virtual short NutritionValue() const { return 200; }
   virtual ushort GetColor() const { return MAKE_RGB(170, 110, 60); }
-  virtual ulong RawPrice() const { return GetVolume() >> 3; }
+  virtual ulong RawPrice() const { return GetVolume() >> 4; }
  protected:
   virtual std::string NameStem() const { return "bread"; }
 
-);
-
-class MATERIAL
-(
-  unicornflesh,
-  flesh,
- public:
-  virtual ushort OfferValue() const { return 35; }
-  virtual ushort GetColor() const { return MAKE_RGB(64, 64, 64); }
-  virtual ulong RawPrice() const { return GetVolume() >> 4; }
- protected:
-  virtual std::string NameStem() const { return "unicorn flesh"; }  
 );
 
 class MATERIAL
@@ -925,8 +910,10 @@ class MATERIAL
 (
   blackunicornflesh,
   flesh,
+ public:
+  virtual ushort OfferValue() const { return 35; }
   virtual ushort GetColor() const { return MAKE_RGB(48, 48, 48); }
-  virtual uchar Alignment() const { return EVIL; }
+  virtual uchar Alignment() const { return GOOD; } // this means that good gods like sacrifises made of it
  protected:
   virtual std::string NameStem() const { return "black unicorn flesh"; } 
 );
@@ -935,8 +922,9 @@ class MATERIAL
 (
   grayunicornflesh,
   flesh,
-  virtual ushort GetColor() const { return MAKE_RGB(96, 96, 96); }
-  virtual uchar Alignment() const { return NEUTRAL; }
+ public:
+  virtual ushort OfferValue() const { return 35; }
+  virtual ushort GetColor() const { return MAKE_RGB(112, 112, 112); }
  protected:
   virtual std::string NameStem() const { return "gray unicorn flesh"; } 
 );
@@ -945,8 +933,10 @@ class MATERIAL
 (
   whiteunicornflesh,
   flesh,
+ public:
+  virtual ushort OfferValue() const { return 35; }
   virtual ushort GetColor() const { return MAKE_RGB(160, 160, 160); }
-  virtual uchar Alignment() const { return GOOD; }
+  virtual uchar Alignment() const { return EVIL; }
  protected:
   virtual std::string NameStem() const { return "white unicorn flesh"; } 
 );

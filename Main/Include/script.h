@@ -263,10 +263,13 @@ class dungeonscript : public script
 class teamscript : public script
 {
  public:
+  teamscript() : AttackEvilness(0) {}
   void ReadFrom(inputfile&);
   std::vector<std::pair<uchar, uchar> >& GetRelation() { return Relation; }
+  ushort* GetAttackEvilness(bool AOE = true) const { SCRIPT_RETURN(AttackEvilness) }
  protected:
   std::vector<std::pair<uchar, uchar> > Relation;
+  ushort* AttackEvilness;
 };
 
 class gamescript : public script

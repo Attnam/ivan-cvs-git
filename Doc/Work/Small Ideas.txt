@@ -24,7 +24,6 @@ Uses for vomiting.
 CNAME should be clarified.
 Hit rate of thrown items should be lowered.
 You must be able to open door by throwing items.
-Renaming of ClearToColor.
 One should be able to summon tame Bill's Wills from Windoze keys in WMode.
 Teleport disabling.
 Teleport should bounce back from valpurium.
@@ -44,7 +43,6 @@ Bill's wills should bloat with rising temperature according to Gay-Lussac's Law.
 Checking exp balance.
 A program which would translate a pcx file into a script content map.
 Player's difficulty level should not be influenced by the current weapon/armor?
-Optimization of ClearToColor with pos/size parameters. (Hex's gum solution)
 Some variety to monster death messages, e.g. some messages influenced by the cause of death.
 You should be able to fight when overloaded, because it can be abused. (Elpuri's corpse changed to mithril and wielded...).
 Script should have an initial blood level of square option.
@@ -57,7 +55,6 @@ Explosion animation.
 Cube-like screenshot system.
 *Drinking from the fountains of the Cathedral should be prohibited.
 *Loaf of bread.
-*Talking to a slave while wielding a whip should cause a special effect.
 Atavus should do something special on Christmas.
 A graphical equipment screen.
 Gurus.
@@ -66,17 +63,12 @@ Opening a banana should remove its peals.
 Specialities to daemon flesh.
 Pressing X while in WMode should give more scrolls of wishing.
 Fire should do extra damage to parchment golems.
-*Kamikaze dwarves to Attnam's temples.
 Random item option to script.
 As Heikki suggested, when the player jumps in the WMap and is strong enough, he should reach the orbit.
-*Holybook color change.
-*Go displacement.
-*Attack alignments.
 Attnam's shopkeeper should give the player a quest to kill his competitor in the main dungeon.
 Punishment of cathedral terrain destruction.
 *Fountains should dry out, not disappear.
 Ivan should break doors.
-*Integration of the unicorn.
 Monsters that change colors.
 Drugs.
 Karateka.
@@ -90,3 +82,5 @@ Effect for Venius's firestorm.
 There should be an option to set the value of pi in the config menu.
 *Killed by an explosion.
 WMap terrain height should be shown in WMode.
+*KDwarves should shout.
+Special "enemy sighted" rections.
