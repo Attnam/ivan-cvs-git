@@ -467,7 +467,7 @@ bool level::MakeRoom(roomscript* RoomScript)
 				Map[x][y]->SetDivineOwner(Owner);
 	}
 
-	if(Door.Length())
+	if(*RoomScript->GetGenerateTunnel() && Door.Length())
 	{
 		vector2d LPos = Door.Access(rand() % Door.Length());
 
@@ -475,9 +475,6 @@ bool level::MakeRoom(roomscript* RoomScript)
 
 		FlagMap[LXPos][LYPos] &= ~FORBIDDEN;
 		FlagMap[LXPos][LYPos] |= PREFERRED;
-
-		Map[LXPos][LYPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate()); //BUG! Wrong room!
-		Map[LXPos][LYPos]->Clean();
 
 		ushort BXPos = XPos, BYPos = YPos;
 
@@ -513,22 +510,28 @@ bool level::MakeRoom(roomscript* RoomScript)
 		XPos = BXPos; YPos = BYPos;
 	}
 
-	if(rand() % 2)
+	if(*RoomScript->GetGenerateDoor())
 	{
-		XPos += rand() % (Width - 2) + 1;
-
 		if(rand() % 2)
-			YPos += Height - 1;
-	}
-	else
-	{
-		YPos += rand() % (Height - 2) + 1;
+		{
+			XPos += rand() % (Width - 2) + 1;
 
-		if(rand() % 2)
-			XPos += Width - 1;
-	}
+			if(rand() % 2)
+				YPos += Height - 1;
+		}
+		else
+		{
+			YPos += rand() % (Height - 2) + 1;
 
-	Door.Add(vector2d(XPos, YPos));
+			if(rand() % 2)
+				XPos += Width - 1;
+		}
+
+		Door.Add(vector2d(XPos, YPos));
+
+		Map[XPos][YPos]->ChangeLevelTerrain(RoomScript->GetDoorSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetDoorSquare()->GetOverTerrain()->Instantiate());
+		Map[XPos][YPos]->Clean();
+	}
 
 	for(ushort c = 0; c < RoomScript->GetSquare().size(); ++c)
 	{

@@ -123,7 +123,7 @@ protected:
 class roomscript : public script
 {
 public:
-	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), DivineOwner(0), Base(0) {}
+	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -139,6 +139,7 @@ public:
 	bool* GetAltarPossible(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AltarPossible) }
 	bool* GetGenerateDoor(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateDoor) }
 	bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
+	bool* GetGenerateTunnel(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateTunnel) }
 	uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
 protected:
 	ulong BufferPos;
@@ -152,7 +153,7 @@ protected:
 	squarescript* DoorSquare;
 	vector2d* Size;
 	vector2d* Pos;
-	bool* AltarPossible, * GenerateDoor, * ReCalculate;
+	bool* AltarPossible, * GenerateDoor, * ReCalculate, * GenerateTunnel;
 	uchar* DivineOwner;
 	roomscript* Base;
 };

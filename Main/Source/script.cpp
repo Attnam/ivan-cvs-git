@@ -84,7 +84,7 @@ template <class type> void contentscript<type>::ReadFrom(inputfile& SaveFile)
 	}
 
 	if(Word != ";" && Word != ",")
-		ABORT("Script error in content script!");
+		ABORT("Script error: Odd terminator %s encountered in content script!", Word.c_str());
 }
 
 template <class type> type* contentscript<type>::Instantiate() const
@@ -450,6 +450,16 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 				ReCalculate = new bool;
 
 			*ReCalculate = SaveFile.ReadBool();
+
+			continue;
+		}
+
+		if(Word == "GenerateTunnel")
+		{
+			if(!GenerateTunnel)
+				GenerateTunnel = new bool;
+
+			*GenerateTunnel = SaveFile.ReadBool();
 
 			continue;
 		}

@@ -147,4 +147,3 @@ void levelterrain::HandleVisualEffects()
 
 	SetVisualFlags(Flags);
 }
-
