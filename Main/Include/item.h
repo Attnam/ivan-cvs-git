@@ -20,16 +20,6 @@ class stack;
 
 /* Presentation of the item class */
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
-
-	class proto_item
-	{
-	public:
-		proto_item(bool) {}
-	};
-
-#endif
-
 class item : public object
 {
 public:
@@ -104,27 +94,11 @@ protected:
 		data\
 	};\
 	\
-	class proto_##name : public proto_##base\
+	class proto_##name\
 	{\
 	public:\
-		proto_##name(bool Add = true) : proto_##base(false) { if(Add) game::CItemPrototype().Add(type, new name); }\
+		proto_##name(void) { game::CItemPrototype().Add(type, new name); }\
 	} static Proto_##name;
-
-	#define ABSTRACT_ITEM(name, base, imaterials, constructor, load, data)\
-	class name : public base\
-	{\
-	public:\
-		name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) {}\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) {}\
-	protected:\
-		data\
-	};\
-	\
-	class proto_##name : public proto_##base\
-	{\
-	public:\
-		proto_##name(bool Add) : proto_##base(Add) {}\
-	};
 
 #else
 
@@ -144,17 +118,17 @@ protected:
 		data\
 	};
 
-	#define ABSTRACT_ITEM(name, base, imaterials, constructor, load, data)\
-	class name : public base\
-	{\
-	public:\
-		name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) {}\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) {}\
-	protected:\
-		data\
-	};
-
 #endif
+
+#define ABSTRACT_ITEM(name, base, imaterials, constructor, load, data)\
+class name : public base\
+{\
+public:\
+	name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) {}\
+	name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) {}\
+protected:\
+	data\
+};
 
 #define GET_CONSUME_TYPE public: virtual uchar GetConsumeType(void)
 #define CONSUME public: virtual bool Consume(character*, float = 100)

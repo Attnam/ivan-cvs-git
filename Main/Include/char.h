@@ -44,16 +44,6 @@ class levelsquare;
 
 /* Presentation of the character class */
 
-#ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
-
-	class proto_character
-	{
-	public:
-		proto_character(bool) {}
-	};
-
-#endif
-
 class character : public object
 {
 public:
@@ -317,27 +307,11 @@ protected:
 		data\
 	};\
 	\
-	class proto_##name : public proto_##base\
+	class proto_##name\
 	{\
 	public:\
-		proto_##name(bool Add = true) : proto_##base(false) { if(Add) game::CCharacterPrototype().Add(type, new name); }\
+		proto_##name(void) { game::CCharacterPrototype().Add(type, new name); }\
 	} static Proto_##name;
-
-	#define HEADER_CONSTRUCTED_BASE(name, base, cparameters, bparameters, constructor, load, data)\
-	class name : public base\
-	{\
-	public:\
-		name cparameters : base bparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
-		virtual ~name() {}\
-		data\
-	};\
-	\
-	class proto_##name : public proto_##base\
-	{\
-	public:\
-		proto_##name(bool Add) : proto_##base(Add) {}\
-	};
 
 	#define SOURCE_CONSTRUCTED_CHARACTER(name, base, cparameters, type, possibility, data)\
 	\
@@ -356,27 +330,11 @@ protected:
 		data\
 	};\
 	\
-	class proto_##name : public proto_##base\
+	class proto_##name\
 	{\
 	public:\
-		proto_##name(bool Add = true) : proto_##base(false) { if(Add) game::CCharacterPrototype().Add(type, new name); }\
+		proto_##name(void) { game::CCharacterPrototype().Add(type, new name); }\
 	} static Proto_##name;
-
-	#define SOURCE_CONSTRUCTED_BASE(name, base, cparameters, data)\
-	class name : public base\
-	{\
-	public:\
-		name cparameters;\
-		name(std::ifstream*, ushort = 1);\
-		virtual ~name() {}\
-		data\
-	};\
-	\
-	class proto_##name : public proto_##base\
-	{\
-	public:\
-		proto_##name(bool Add) : proto_##base(Add) {}\
-	};
 
 #else
 
@@ -397,16 +355,6 @@ protected:
 		data\
 	};
 
-	#define HEADER_CONSTRUCTED_BASE(name, base, cparameters, bparameters, constructor, load, data)\
-	class name : public base\
-	{\
-	public:\
-		name cparameters : base bparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
-		virtual ~name() {}\
-		data\
-	};
-
 	#define SOURCE_CONSTRUCTED_CHARACTER(name, base, cparameters, type, possibility, data)\
 	\
 	class name : public base\
@@ -424,17 +372,27 @@ protected:
 		data\
 	};
 
-	#define SOURCE_CONSTRUCTED_BASE(name, base, cparameters, data)\
-	class name : public base\
-	{\
-	public:\
-		name cparameters;\
-		name(std::ifstream*, ushort = 1);\
-		virtual ~name() {}\
-		data\
-	};
-
 #endif
+
+#define HEADER_CONSTRUCTED_BASE(name, base, cparameters, bparameters, constructor, load, data)\
+class name : public base\
+{\
+public:\
+	name cparameters : base bparameters constructor\
+	name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
+	virtual ~name() {}\
+	data\
+};
+
+#define SOURCE_CONSTRUCTED_BASE(name, base, cparameters, data)\
+class name : public base\
+{\
+public:\
+	name cparameters;\
+	name(std::ifstream*, ushort = 1);\
+	virtual ~name() {}\
+	data\
+};
 
 SOURCE_CONSTRUCTED_BASE(
 	humanoid,
