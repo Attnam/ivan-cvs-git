@@ -63,3 +63,4 @@ Multiple material support to script.
 Lamps on walls.
 Teleport disabling.
 Teleport should bounce back from valpurium.
+Highscores should be crypted somehow.
