@@ -1112,3 +1112,29 @@ void bitmap::DrawFlames(ushort Frame, ushort MaskColor)
   femath::SetSeed(NewSeed);
 }
 
+void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
+{
+  if(Frame == 0)
+    return;
+
+  ushort Size = -(Frame - 1)*(Frame - 16) / 10;
+
+  for(ushort c = 0; c < Size; ++c)
+    {
+      uchar Lightness = 192 + c * 64 / Size;
+      ushort RGB = MakeRGB(Lightness, Lightness, Lightness);
+
+      vector2d Pos(SparklePos.X + c, SparklePos.Y);
+      if(IsValid(Pos))
+	PutPixel(Pos.X, Pos.Y, RGB);
+      Pos = vector2d(SparklePos.X - c, SparklePos.Y);
+      if(IsValid(Pos))
+	PutPixel(Pos.X, Pos.Y, RGB);
+      Pos = vector2d(SparklePos.X, SparklePos.Y + c);
+      if(IsValid(Pos))
+	PutPixel(Pos.X, Pos.Y, RGB);
+      Pos = vector2d(SparklePos.X, SparklePos.Y - c);
+      if(IsValid(Pos))
+	PutPixel(Pos.X, Pos.Y, RGB);
+    }
+}

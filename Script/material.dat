@@ -29,6 +29,7 @@ material
 	Alpha = 255;
 	CreateDivineConfigurations = false;
 	Flexibility = 1;
+	IsSparkling = false;
 
 	Config IRON;
 	{
@@ -289,6 +290,7 @@ material
 		NameStem = "diamond";
 		Alpha = 175;
 		CanBeWished = false;
+		IsSparkling = true;
 	}
 
 	Config SILVER;

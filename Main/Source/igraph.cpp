@@ -166,8 +166,12 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 11, TRANSPARENTCOL);
 	  Bitmap->PutPixel(7, 12, TRANSPARENTCOL);
 	}
+      if(!(GI.SpecialFlags & STFLAME) && GI.SparklePos != BITMAP_ERROR_VECTOR)
+	{
+	  Bitmap->CreateSparkle(GI.SparklePos, GI.Frame);
+	}
 
-      if(GI.SpecialFlags & 0x7)
+      if(GI.SpecialFlags & 0x7) /* Do we need Rotating/Flipping? */
 	{
 	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
 	  delete Bitmap;

@@ -30,6 +30,7 @@ struct graphic_id
   uchar FileIndex;
   uchar SpecialFlags;
   ushort Frame;
+  vector2d SparklePos;
 };
 
 inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
@@ -76,6 +77,12 @@ inline bool operator < (const graphic_id& GI1, const graphic_id& GI2)
   if(GI1.Frame != GI2.Frame)
     return GI1.Frame < GI2.Frame;
 
+  if(GI1.SparklePos.X != GI2.SparklePos.X)
+    return GI1.SparklePos.X < GI2.SparklePos.X;
+  
+  if(GI1.SparklePos.Y != GI2.SparklePos.Y)
+    return GI1.SparklePos.Y < GI2.SparklePos.Y;
+
   return false;
 }
 
@@ -110,6 +117,7 @@ class igraph
   static void RemoveUser(graphic_id);
   static bitmap* GetOutlineBuffer() { return OutlineBuffer; }
   static colorizablebitmap* GetCharacterRawGraphic() { return RawGraphic[GRCHARACTER]; }
+  static colorizablebitmap* GetRawGraphic(ushort Index) { return RawGraphic[Index]; }
  private:
   static colorizablebitmap* RawGraphic[RAW_TYPES];
   static bitmap* Graphic[GRAPHIC_TYPES];

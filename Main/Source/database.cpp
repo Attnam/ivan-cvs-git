@@ -385,6 +385,7 @@ bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Wor
   ANALYZEDATA(CreateDivineConfigurations);
   ANALYZEDATA(Flexibility);
   ANALYZEDATA(SpoilModifier);
+  ANALYZEDATA(IsSparkling);
 
   return Found;
 }

@@ -50,6 +50,7 @@ struct materialdatabase
   bool CreateDivineConfigurations;
   uchar Flexibility;
   ushort SpoilModifier;
+  bool IsSparkling;
 };
 
 class materialprototype
@@ -148,6 +149,7 @@ class material
   virtual material* Duplicate() const { return new material(*this); }
   virtual ulong GetTotalNutritionValue(const item*) const;
   virtual bool IsVeryCloseToSpoiling() const { return false; }
+  DATABASEBOOL(IsSparkling);
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

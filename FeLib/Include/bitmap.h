@@ -151,6 +151,8 @@ class bitmap
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(void (*)(bitmap*) = 0);
   void DrawFlames(ushort, ushort = PINK);
+  bool IsValid(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
+  void CreateSparkle(vector2d, ushort);
  protected:
   ushort XSize, YSize;
   bool IsIndependent;

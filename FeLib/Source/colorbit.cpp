@@ -227,7 +227,6 @@ bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, 
       AlphaMap += Bitmap->XSize;
       Buffer = reinterpret_cast<uchar*>(ulong(Buffer) + XSize);
     }
-
   return Bitmap;
 }
 
@@ -411,3 +410,29 @@ void colorizablebitmap::CreateFontCache(ushort Color)
   FontCache[Color] = std::pair<bitmap*, bitmap*>(Font, ShadeFont);
 }
 
+/* returns BITMAP_ERROR_VECTOR if fails find Pos else returns pos */
+vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, bool* Sparkling) const
+{
+  bool SparklingReally = false;
+  for(ushort c = 0; c < 4; ++c)
+    if(Sparkling[c])
+      SparklingReally = true;
+
+  if(!SparklingReally)
+    return BITMAP_ERROR_VECTOR;
+
+  std::vector<vector2d> Possible;
+  Possible.reserve(Size.X * Size.Y);
+
+  for(ushort x = Pos.X; x < Pos.X + Size.X; ++x)
+    for(ushort y = Pos.Y; y < Pos.Y + Size.Y; ++y)
+      {
+	uchar Entry = GetPaletteEntry(x,y);
+	if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
+	  Possible.push_back(vector2d(x,y));
+      }
+  if(Possible.empty())
+    return BITMAP_ERROR_VECTOR;
+
+  return Possible[RAND() % Possible.size()] - Pos;
+}

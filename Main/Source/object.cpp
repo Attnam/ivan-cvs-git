@@ -10,7 +10,7 @@
 #include "femath.h"
 #include "whandler.h"
 #include "festring.h"
-
+#include "colorbit.h"
 object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects), AnimationFrames(Object.AnimationFrames)
 {
   CopyMaterial(Object.MainMaterial, MainMaterial);
@@ -146,7 +146,12 @@ void object::UpdatePictures()
 
   GraphicId.resize(AnimationFrames);
   Picture.resize(AnimationFrames);
+  bool Sparkling[4];
 
+  for(c = 0; c < 4; ++c)
+    Sparkling[c] = IsSparkling(c);
+
+  vector2d SparklePos = igraph::GetRawGraphic(GetGraphicsContainerIndex(0))->RandomizeSparklePos(GetBitmapPos(0), vector2d(16,16), Sparkling); 
   for(c = 0; c < GraphicId.size(); ++c)
     {
       GraphicId[c].Color[0] = GetMaterialColorA(c);
@@ -185,6 +190,7 @@ void object::UpdatePictures()
       GraphicId[c].FileIndex = GetGraphicsContainerIndex(c);
       GraphicId[c].SpecialFlags = (GetVisualEffects() & 0x7)|GetSpecialFlags(c);
       GraphicId[c].Frame = c;
+      GraphicId[c].SparklePos = SparklePos;
       Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
     }
 }
@@ -353,3 +359,7 @@ bool object::CalculateHasBe() const
   return false;
 }
 
+bool object::IsSparkling(ushort ColorIndex) const
+{
+  return (GetMaterial(ColorIndex) && GetMaterial(ColorIndex)->IsSparkling());
+}

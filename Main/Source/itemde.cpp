@@ -3717,3 +3717,11 @@ ulong whipofcleptia::GetPrice() const
   /* If not broken but not flexible enough to work, special thievery bonus must be removed */
   return GetMainMaterial()->GetFlexibility() > 5 || Config & BROKEN ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
+
+void stone::VirtualConstructor(bool Load)
+{
+  item::VirtualConstructor(Load);
+  SetAnimationFrames(16);
+}
+
+

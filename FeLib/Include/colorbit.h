@@ -62,6 +62,10 @@ class colorizablebitmap
   void Roll(vector2d Pos, vector2d BlitSize, vector2d Move) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
 
   void CreateFontCache(ushort);
+  static bool IsMaterialColor(uchar Color) { return Color >= 192; }
+  static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) / 16; }
+  uchar GetPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
+  vector2d RandomizeSparklePos(vector2d, vector2d, bool*) const;
  protected:
   ushort XSize, YSize;
   uchar* Palette;

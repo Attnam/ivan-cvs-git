@@ -115,6 +115,8 @@ Skull. (hex)
 Wand of cloning. (hex)
 Water should make gunpowder useless.
 Temporary invisibility should be cancelled if the character hits something.
+Applying a whistle should set the waypoint of all monsters in the level to point to the square under player.
 Prevent digging with broken pick-axe.
 Stethoscopre should show relative danger.
 Remove the school food effects of scabies (or make them a lot more seldom).
+

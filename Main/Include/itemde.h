@@ -504,7 +504,9 @@ class ITEM
   stone,
   item,
  public:
-  virtual ulong GetPrice() const { return (GetMainMaterial()->GetRawPrice() << 1) + item::GetPrice(); }
+  virtual ulong GetPrice() const { return GetMainMaterial()->GetRawPrice() * 2 + item::GetPrice(); }
+ protected:
+  virtual void VirtualConstructor(bool);
 );
 
 class ITEM

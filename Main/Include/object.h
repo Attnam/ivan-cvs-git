@@ -67,6 +67,7 @@ class object : public entity, public id
   virtual void CalculateAll() = 0;
   virtual bool HasSecondaryMaterial() const { return false; }
   virtual bool HasContainedMaterial() const { return false; }
+  virtual bool IsSparkling(ushort) const;
  protected:
   void CopyMaterial(material* const&, material*&);
   virtual material*& GetMaterialReference(ushort) { return MainMaterial; }
