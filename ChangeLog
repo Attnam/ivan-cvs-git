@@ -7,9 +7,9 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
-August 4 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+August 5 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
-	* Resurrecting monsters will no trigger StepOn effects under them
+	* Resurrecting monsters will now trigger StepOn effects under them
 	* Corrected a typo in Vladimir's description
 	* Vladimir can no longer be polymorphed
 
