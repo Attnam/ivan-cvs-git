@@ -1,4 +1,4 @@
-Iter Vehems ad Necem (0.301)
+Iter Vehems ad Necem (0.310)
 ----------------------------
 
 (For news and updates view our homepage at ivan.sourceforge.net)
@@ -31,7 +31,12 @@ use atleast a:
 	48 Megs of RAM
 
 	Windows 9x/ME/XP/2000 (atleast)
-	(Direct X 8)
+	DirectX 8
+
+	or:
+
+	DOS
+	Vesa 2.0 compatible video card
 
 	or:
 	
@@ -72,9 +77,4 @@ SourceForge project page (see above).
 Q: I'm a programmer and I would like to help you. 
 What should I do?
 
-A: Currently we are using Microsoft Visual C++ 5.0/6.0 and
-we accept the fact that most people don't have either on their
-machines. We are currently searching for ways to port this to
-gcc and Mingw32. If you happen to have Microsoft Visual
-C++ 5.0/6.0 or you are interested in porting IVAN to other
-platforms or other compilers contact us at ivan-users@sourceforge.net.
+A: 
