@@ -157,8 +157,8 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 
 void meleeweapon::DipInto(item* DipTo)
 {
-	ChangeMaterial(2, DipTo->BeDippedInto());
-	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), GetMaterial(2)->CNAME(UNARTICLED));
+	ChangeMaterial(GetMaterials() - 1, DipTo->BeDippedInto());
+	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), GetMaterial(GetMaterials() - 1)->CNAME(UNARTICLED));
 }
 
 material* lump::BeDippedInto()
@@ -562,4 +562,9 @@ void brokenbottle::GetStepOnEffect(character* Stepper, bool)
 	Stepper->SetHP(Stepper->GetHP() - rand() % 2 - 1);
 	Stepper->CheckDeath("stepped on a broken bottle.");
 
+}
+
+material* corpse::BeDippedInto()
+{
+	return GetMaterial(0)->Clone(GetMaterial(0)->TakeDipVolumeAway());
 }

@@ -5,6 +5,7 @@
 #include "materde.h"
 #include "wskill.h"
 
+
 class ITEM
 (
 	banana,
@@ -128,7 +129,7 @@ class ABSTRACT_ITEM
 public:
 	virtual void ReceiveHitEffect(character*, character*);
 	virtual void DipInto(item*);
-	virtual bool CanBeDippedInto(item*) const RET(Material[2] ? false : true)
+	virtual bool CanBeDippedInto(item*) const RET(Material[GetMaterials()] ? false : true)
 	virtual bool CanBeDipped() const RET(true)
 );
 
@@ -363,6 +364,8 @@ public:
 	virtual float OfferModifier() const RET(0.01f)
 	virtual vector2d GetBitmapPos() const RETV(16,192)
 	virtual bool CanBeWished() const RET(false)
+	virtual bool CanBeDippedInto(item*) const RET(true)
+	virtual material* BeDippedInto();
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 60000; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,144))
 protected:
@@ -825,6 +828,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Destroyable() const { return false; }
 	virtual void CheckPickUpEffect(character*);
+	virtual bool CanAIPickup() const { return false; }
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 250; default: return 0; } }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,112))
 protected:

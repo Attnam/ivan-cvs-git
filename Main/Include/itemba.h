@@ -77,6 +77,7 @@ public:
 	virtual float GetThrowStrengthModifier() const { return 1; }
 	virtual bool UseThrowStrengthModifier() const { return false; }
 	virtual void GetStepOnEffect(character*, bool) {}
+	virtual bool CanAIPickup() const { return true; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

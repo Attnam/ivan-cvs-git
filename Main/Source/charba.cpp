@@ -826,6 +826,7 @@ void character::Die()
 	else
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE(DeathMessage().c_str());
+	SetExists(false);
 
 	if(GetIsPlayer())
 	{
@@ -1169,10 +1170,17 @@ bool character::ReadItem(int ToBeRead, stack* ItemsStack)
 {
 	if(ItemsStack->GetItem(ToBeRead)->CanBeRead(this))
 	{
-		if(ItemsStack->GetItem(ToBeRead)->Read(this))
-			ItemsStack->RemoveItem(ToBeRead);
+		if(GetLevelSquareUnder()->GetLuminance() >= LIGHT_BORDER)
+		{
+			if(ItemsStack->GetItem(ToBeRead)->Read(this))
+				ItemsStack->RemoveItem(ToBeRead);
 
-		return true;
+			return true;
+		}
+		else
+			if(GetIsPlayer())
+				ADD_MESSAGE("It's too dark in here to read.");
+		return false;
 	}
 	else
 	{
@@ -2417,7 +2425,7 @@ bool character::CheckForUsefulItemsOnGround()
 {
 	for(ushort c = 0; c < GetLevelSquareUnder()->GetStack()->GetItems(); ++c)
 	{
-		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
+		if(GetLevelSquareUnder()->GetStack()->GetItem(c)->CanAIPickup() && GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeaponStrength() > GetAttackStrength() && GetBurdenState(GetStack()->SumOfMasses() + GetLevelSquareUnder()->GetStack()->GetItem(c)->GetWeight()) == UNBURDENED && CanWield())
 		{
 			item* ToWield = GetLevelSquareUnder()->GetStack()->MoveItem(c, GetStack());
 
@@ -2620,4 +2628,5 @@ bool character::LowerGodRelations()
 		game::GetGod(c)->AdjustRelation(-50);
 	}
 	return false;
+
 }
