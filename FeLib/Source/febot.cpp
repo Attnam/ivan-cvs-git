@@ -2,10 +2,18 @@
 #include "femath.h"
 #include "save.h"
 
-febot::fword* febot::fword::GetRandomLink() const { return Link[RAND() % Link.size()]; }
+/* The fword associated with the empty string is called ControlFWord and is always
+   the first in FWordSet (since S1 < S2 for every string S2 if S1 is empty).
+   Fwords to which ControlFWord is linked can begin a reply and those fwords linked
+   to ControlFWord can end it. */
 
 febot::febot() { FWordSet.insert(fword(CONST_S(""))); }
 febot::fword* febot::GetControlFWord() const { return const_cast<fword*>(&*FWordSet.begin()); }
+
+febot::fword* febot::fword::GetRandomLink() const { return Link[RAND() % Link.size()]; }
+
+/* Searches for an fword associated with String in FWordSet and returns it
+   or creates a new one if needed */
 
 febot::fword* febot::CreateFWord(const festring& String)
 {
@@ -16,6 +24,9 @@ void febot::Save(outputfile& SaveFile) const
 {
   SaveFile << ulong(FWordSet.size());
   fwordset::const_iterator i1;
+
+  /* Speeds up saving tremendously for large files */
+
   std::map<const fword*, ulong> FWordIndexMap;
   ulong c;
 
@@ -39,6 +50,9 @@ void febot::Load(inputfile& SaveFile)
   FWordSet.clear();
   ulong MapSize;
   SaveFile >> MapSize;
+
+  /* Speeds up loading tremendously for large files */
+
   std::map<ulong, fword*> FWordPtrMap;
 
   for(ulong c = 0; c < MapSize; ++c)

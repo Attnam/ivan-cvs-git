@@ -65,9 +65,9 @@ void highscore::Draw() const
     {
       Desc.Empty();
       Desc << c + 1;
-      Desc.Resize(5);
+      Desc.Resize(5, ' ');
       Desc << Score[c];
-      Desc.Resize(13);
+      Desc.Resize(13, ' ');
       Desc << Entry[c];
       List.AddEntry(Desc, c == LastAdd ? WHITE : LIGHT_GRAY, 13);
     }
@@ -105,13 +105,34 @@ void highscore::Load(const festring& File)
     HighScore >> Score >> Entry >> Time >> RandomID >> LastAdd;
 }
 
-void highscore::AddToFile(highscore* To) const
+bool highscore::MergeToFile(highscore* To) const
 {
+  bool MergedSomething = false;
+
   for(ushort c = 0; c < Score.size(); ++c)
-    To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
+    if(!To->Find(Score[c], Entry[c], Time[c], RandomID[c]))
+      {
+	To->Add(Score[c], Entry[c], Time[c], RandomID[c]);
+	MergedSomething = true;
+      }
+
+  return MergedSomething;
 }
 
 bool highscore::Add(long NewScore, const festring& NewEntry)
 {
   return Add(NewScore, NewEntry, time(0), RAND());
+}
+
+// Because of major stupidity this return the number of NEXT from the right entry, 0 = not found
+
+ulong highscore::Find(long AScore, const festring& AEntry, time_t ATime, long ARandomID)
+{
+  for(ulong c = 0; c < Score.size(); ++c)
+    {
+      if(AScore == Score[c] && Entry[c] == AEntry && ATime == Time[c] && ARandomID == RandomID[c])
+	return c + 1;
+    }
+
+  return 0;
 }

@@ -14,7 +14,7 @@
 #define HIGH_SCORE_FILENAME LOCAL_STATE_DIR "/ivan-highscore.scores"
 #endif
 
-#if (defined(WIN32) || defined(__DJGPP__)) && !defined(HIGH_SCORE_FILENAME)
+#if defined(WIN32) || defined(__DJGPP__)
 #define HIGH_SCORE_FILENAME CONST_S("HScore.dat")
 #endif
 
@@ -29,7 +29,11 @@ class highscore
   void Save(const festring& = HIGH_SCORE_FILENAME) const;
   void Load(const festring& = HIGH_SCORE_FILENAME);
   bool LastAddFailed() const { return LastAdd == 100; }
-  void AddToFile(highscore*) const;
+  bool MergeToFile(highscore*) const;
+  ulong Find(long, const festring&, time_t, long);
+  const festring& GetEntry(ulong c) const { return Entry[c]; }
+  long GetScore(ulong c) const { return Score[c]; }
+  long GetSize() const { return Entry.size(); }
  private:
   bool Add(long, const festring&, time_t, long);
   std::vector<festring> Entry;

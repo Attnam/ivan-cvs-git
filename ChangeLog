@@ -9,6 +9,11 @@ is also provided AS IS and is probably completely unreadable.
 
 August 14 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
 
+	* Added some comments to the Febot code
+	* Hex's new MIHAIL version added to CVS
+
+August 14 2003 Timo Kiviluoto <markku.kiviluoto@sono.fimnet.fi>
+
 	* iosystem::StringQuestion now takes the destination string as an argument
 	  and returns whether the user aborted the question or not
 	* Configuration system has been standardized and moved largely to FeLib

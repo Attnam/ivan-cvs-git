@@ -645,6 +645,8 @@ bool festring::IgnoreCaseCompare(const festring& First, const festring& Second)
   return First.GetSize() < Second.GetSize();
 }
 
+/* Sorry for ugliness */
+
 void festring::PreProcessForFebot()
 {
   sizetype c, d, Length;
@@ -697,6 +699,8 @@ void festring::PreProcessForFebot()
     *this << ' ' << '.';
 }
 
+/* Sorry for ugliness */
+
 void festring::PostProcessForFebot()
 {
   Capitalize();
@@ -729,6 +733,9 @@ void festring::PostProcessForFebot()
 	}
     }
 }
+
+/* Erases the first word of the sentence and places it to To.
+   Should currently be used only by strings processed for Febot */
 
 void festring::ExtractWord(festring& To)
 {
