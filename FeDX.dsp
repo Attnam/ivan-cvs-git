@@ -46,6 +46,10 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
+# Begin Special Build Tool
+SOURCE=$(InputPath)
+PreLink_Cmds=nasm -o FeDX/Asm/winblit.obj FeDX/Source/winblit.asm -f win32
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "FeDX - Win32 Debug"
 
@@ -60,7 +64,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "FeDX/Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /GR /GX /Z7 /Od /Ob0 /I "Include" /I "Main/Include" /I "Main/Resource" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /I "FeMath/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /W3 /GR /GX /Z7 /Od /I "Include" /I "Main/Include" /I "Main/Resource" /I "FeDX/Include" /I "FEEL/Include" /I "FeFile/Include" /I "FeIO/Include" /I "FELL/Include" /I "FeWin/Include" /I "FeMath/Include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
 # SUBTRACT CPP /Gy
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
@@ -68,6 +72,10 @@ BSC32=bscmake.exe
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
 # ADD LIB32 /nologo
+# Begin Special Build Tool
+SOURCE=$(InputPath)
+PreLink_Cmds=nasm -o FeDX/Asm/winblit.obj FeDX/Source/winblit.asm -f win32
+# End Special Build Tool
 
 !ENDIF 
 
@@ -132,5 +140,9 @@ SOURCE=.\FeDX\Include\dxutil.h
 SOURCE=.\FeDX\Include\graphics.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\FeDX\Asm\winblit.obj
+# End Source File
 # End Target
 # End Project

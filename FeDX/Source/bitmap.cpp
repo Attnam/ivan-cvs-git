@@ -220,7 +220,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX]);
 			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-			__asm
+			BlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -242,7 +244,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop3
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -252,7 +254,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
 			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
-			__asm
+			BlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -279,7 +283,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop1
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -289,7 +293,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
 			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
-			__asm
+			BlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -311,7 +317,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop32
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -321,7 +327,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
 			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-			__asm
+			BlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -348,7 +356,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop6
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -359,7 +367,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
-			__asm
+			BlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -385,7 +395,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop4
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -396,7 +406,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
-			__asm
+			BlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -422,7 +434,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop8
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -433,7 +445,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
-			__asm
+			BlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -459,7 +473,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop10
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -470,7 +484,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
-			__asm
+			BlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -496,7 +512,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 				jnz MaskedLoop12
 				pop es
 				popad
-			}
+			}*/
 		}
 	}
 }
@@ -517,7 +533,9 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	ulong TrueSourceXMove = (XSize - Width) << 1;
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-	__asm
+	BlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance);
+
+	/*__asm
 	{
 		pushad
 		push es
@@ -591,7 +609,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 		jnz MaskedLoop1
 		pop es
 		popad
-	}
+	}*/
 }
 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
@@ -614,7 +632,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			if(short(Height) < 0)
 				int esko = 2;
 
-			__asm
+			MaskedBlitNoFlags(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -651,7 +671,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			MaskedNextLine2:
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -661,7 +681,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY][DestX + Width - 1]);
 			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
-			__asm
+			MaskedBlitMirror(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -700,7 +722,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			MaskedNextLine1:
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -710,7 +732,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX]);
 			ulong TrueDestXMove = (Bitmap->XSize + Width) << 1;
 
-			__asm
+			MaskedBlitFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -747,7 +771,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			MaskedNextLine27:
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -757,7 +781,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestOffset = ulong(&Bitmap->Data[DestY + Height - 1][DestX + Width - 1]);
 			ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-			__asm
+			MaskedBlitMirrorFlip(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -796,7 +822,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			MaskedNextLine3:
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -807,7 +833,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
-			__asm
+			MaskedBlitRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -836,7 +864,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				jnz MaskedLoop4
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -847,7 +875,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
-			__asm
+			MaskedBlitMirrorRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -876,7 +906,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				jnz MaskedLoop8
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -887,7 +917,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) - 2;
 
-			__asm
+			MaskedBlitFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -916,7 +948,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				jnz MaskedLoop10
 				pop es
 				popad
-			}
+			}*/
 
 			break;
 		}
@@ -927,7 +959,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 			ulong TrueDestXMove = Bitmap->XSize << 1;
 			ulong TrueDestYMove = ((Height * Bitmap->XSize) << 1) + 2;
 
-			__asm
+			MaskedBlitMirrorFlipRotate90(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, TrueDestYMove, Width, Height, MaskColor);
+
+			/*__asm
 			{
 				pushad
 				push es
@@ -956,7 +990,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 				jnz MaskedLoop12
 				pop es
 				popad
-			}
+			}*/
 		}
 	}
 }
@@ -977,7 +1011,9 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	ulong TrueSourceXMove = (XSize - Width) << 1;
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-	__asm
+	MaskedBlitLuminated(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Luminance, MaskColor);
+
+	/*__asm
 	{
 		pushad
 		push es
@@ -1063,7 +1099,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	MaskedNextLine:
 		pop es
 		popad
-	}
+	}*/
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Alpha, ushort MaskColor) const
@@ -1082,9 +1118,11 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	ulong TrueSourceXMove = (XSize - Width) << 1;
 	ulong TrueDestXMove = (Bitmap->XSize - Width) << 1;
 
-	ushort SColor, DColor;
+	//ushort SColor, DColor;
 
-	__asm
+	::AlphaBlit(TrueSourceOffset, TrueDestOffset, TrueSourceXMove, TrueDestXMove, Width, Height, Alpha, MaskColor);
+
+	/*__asm
 	{
 		pushad
 		push es
@@ -1172,7 +1210,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 	MaskedNextLine:
 		pop es
 		popad
-	}
+	}*/
 }
 
 void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskColor) const
@@ -1185,9 +1223,11 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskCo
 	ulong TrueDestXMove = (Bitmap->XSize - XSize) << 1;
 	ulong AlphaMapOffset = ulong(AlphaMap[0]);
 
-	ushort SColor, DColor, Width = XSize, Height = YSize;
+	ushort /*SColor, DColor, */Width = XSize, Height = YSize;
 
-	__asm
+	::AlphaBlit(AlphaMapOffset, TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height, MaskColor);
+
+	/*__asm
 	{
 		pushad
 		push es
@@ -1275,12 +1315,12 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort DestX, ushort DestY, ushort MaskCo
 		pop ebx
 		pop es
 		popad
-	}
+	}*/
 }
 
 void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort OrigToY, ushort Color, bool Wide)
 {
-	ushort ThisXSize = XSize, ThisYSize = YSize, DistaX, DistaY, BTemp;
+	ushort ThisXSize = XSize, ThisYSize = YSize;//, DistaX, DistaY, BTemp;
 
 	ulong Pitch = XSize << 1, Surface = ulong(Data[0]);
 
@@ -1293,7 +1333,9 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 		ushort ToX = OrigToX + Point[c].X;
 		ushort ToY = OrigToY + Point[c].Y;
 
-		__asm
+		::DrawLine(Surface, Pitch, FromX, FromY, ToX, ToY, ThisXSize, ThisYSize, Color);
+
+		/*__asm
 		{
 			push	ax
 			push	bx
@@ -1476,7 +1518,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 			ret
 
 		End:
-		}
+		}*/
 	}
 }
 

@@ -79,6 +79,8 @@ void graphics::SetMode(HINSTANCE hInst, HWND* phWnd, const char* Title, ushort N
 	globalwindowhandler::SetInitialized(true);
 }
 
+BlitToDB(ulong, ulong, ulong, ushort, ushort);
+
 void graphics::BlitDBToScreen()
 {
 	if(DXDisplay->GetDirectDraw()->RestoreAllSurfaces() == DD_OK)
@@ -93,13 +95,15 @@ void graphics::BlitDBToScreen()
 			DXDisplay->GetBackBuffer()->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL);
 
 		ulong TrueSourceOffset = ulong(DoubleBuffer->Data[0]);
-		ulong TrueSourceXMove = 0;
+		//ulong TrueSourceXMove = 0;
 		ulong TrueDestOffset = ulong(ddsd.lpSurface);
 		ulong TrueDestXMove = ddsd.lPitch - (XRES << 1);
 		ushort Width = XRES;
 		ushort Height = YRES;
 
-		__asm
+		BlitToDB(TrueSourceOffset, TrueDestOffset, TrueDestXMove, Width, Height);
+
+		/*__asm
 		{
 			pushad
 			push es
@@ -121,7 +125,7 @@ void graphics::BlitDBToScreen()
 			jnz MaskedLoop3
 			pop es
 			popad
-		}
+		}*/
 
 		if(FullScreen)
 			DXDisplay->GetFrontBuffer()->Unlock(NULL);
