@@ -484,7 +484,7 @@ const itemdatabase& itemprototype::ChooseBaseForConfig(ushort ConfigNumber)
 
 bool item::ReceiveDamage(character*, ushort Damage, uchar Type)
 {
-  if(CanBeBroken() && !(GetConfig() & BROKEN) && Type & (PHYSICALDAMAGE|SOUND|ENERGY))
+  if(CanBeBroken() && !(IsBroken()) && Type & (PHYSICALDAMAGE|SOUND|ENERGY))
     {
       ushort StrengthValue = GetStrengthValue();
 

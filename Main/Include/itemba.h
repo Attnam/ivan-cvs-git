@@ -324,6 +324,7 @@ class item : public object
   virtual void DrawContents(const character*) { }
   virtual DATABASEVALUE(ulong, StorageVolume);
   virtual DATABASEVALUE(ushort, MaxGeneratedContainedItems);
+  bool IsBroken() const { return Config & BROKEN; }
  protected:
   virtual item* RawDuplicate() const = 0;
   virtual void LoadDataBaseStats();

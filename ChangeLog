@@ -1,4 +1,9 @@
-September 17 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+September 26 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Added lightning effect to bitmap
+	* Prevented digging with broken pick-axes
+
+September 24 2002 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
 	* Now compiles on Linux again
 	

@@ -1151,3 +1151,16 @@ void bitmap::CreateFlies(ushort FlyAmount, ulong Seed, ushort Frame)
     }
   femath::SetSeed(NewSeed);
 }
+
+void bitmap::CreateLightning()
+{
+  vector2d Pos[4];
+  Pos[0] = vector2d(7 + RAND() % 2 ,1 + RAND() % 2);
+  Pos[1] = vector2d(3 + RAND() % 2,7 + RAND() % 2);
+  Pos[2] = vector2d(12 + RAND() % 2,6 + RAND() % 2);
+  Pos[3] = vector2d(7 + RAND() % 2,14 + RAND() % 2);
+  for(ushort c = 0; c < 3; ++c)
+    {
+      DrawLine(Pos[c].X, Pos[c].Y, Pos[c + 1].X, Pos[c + 1].Y, MakeRGB16(192 + RAND() % 64, 192 + RAND() % 64, 192 + RAND() % 64), false);
+    }
+}

@@ -188,6 +188,11 @@ material* lump::CreateDipMaterial()
 
 bool pickaxe::Apply(character* User)
 {
+  if(IsBroken())
+    {
+      ADD_MESSAGE("%s is totally broken.",CHARNAME(DEFINITE));
+      return false;
+    }
   uchar Dir = game::DirectionQuestion("What direction do you want to dig? [press a direction key]", false);
 
   vector2d Temp = game::GetMoveVector(Dir);
@@ -3010,7 +3015,7 @@ bool mjolak::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("A burst of %s Mjolak's unholy energy fries %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
@@ -3025,7 +3030,7 @@ bool vermis::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex,
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Enemy->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s Vermis sends %s on a sudden journey.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARDESCRIPTION(DEFINITE));
@@ -3041,7 +3046,7 @@ bool turox::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, 
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(Config & BROKEN) && Enemy->IsEnabled() && !(RAND() % 5))
+  if(!(IsBroken()) && Enemy->IsEnabled() && !(RAND() % 5))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s smash%s %s with the full force of Turox.", Hitter->CHARPERSONALPRONOUN, Hitter->IsPlayer() ? "" : "es", Enemy->CHARDESCRIPTION(DEFINITE));
@@ -3058,7 +3063,7 @@ bool whipofcleptia::HitEffect(character* Enemy, character* Hitter, uchar BodyPar
 {
   bool BaseSuccess = meleeweapon::HitEffect(Enemy, Hitter, BodyPartIndex, Direction, BlockedByArmour);
 
-  if(!(Config & BROKEN) && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
+  if(!(IsBroken()) && Enemy->IsEnabled() && CleptiaHelps(Enemy, Hitter))
     {
       if(Enemy->IsPlayer() || Hitter->IsPlayer() || Enemy->CanBeSeenByPlayer() || Hitter->CanBeSeenByPlayer())
 	ADD_MESSAGE("%s whip asks for the help of Cleptia as it steals %s %s.", Hitter->CHARPOSSESSIVEPRONOUN, Enemy->CHARPOSSESSIVEPRONOUN, Enemy->GetMainWielded()->CHARNAME(UNARTICLED));
@@ -3691,7 +3696,7 @@ ulong shield::GetPrice() const /* temporary... */
 ulong whipofcleptia::GetPrice() const
 {
   /* If not broken but not flexible enough to work, special thievery bonus must be removed */
-  return GetMainMaterial()->GetFlexibility() > 5 || Config & BROKEN ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
+  return GetMainMaterial()->GetFlexibility() > 5 || IsBroken() ? whip::GetPrice() : whip::GetPrice() - item::GetPrice();
 }
 
 bool materialcontainer::IsSparkling(ushort ColorIndex) const

@@ -672,7 +672,7 @@ void scabies::PrayGoodEffect()
 	  lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
 	  if(Square)
 	    {
-	      Square->SpillFluid(MAKE_MATERIAL(POISON, 1500), 100, 0);
+	      Square->SpillFluid(MAKE_MATERIAL(POISONLIQUID, 1500), 100, 0);
 	    }
 	  ADD_MESSAGE("%s throws poisons all squares near!", GOD_NAME);
 	}

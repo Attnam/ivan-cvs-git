@@ -329,4 +329,4 @@ Lick command.
 Bulimia state.
 It should be possible to slip on a bloody floor.
 Fluids could spill also over character pictures.
-
+Monster that only sees in red,green or blue light.

@@ -156,6 +156,7 @@ class bitmap
   bool IsValidPos(vector2d What) const { return (What.X >= 0 && What.Y >= 0 && What.X < XSize && What.Y < YSize); }
   void CreateSparkle(vector2d, ushort);
   void CreateFlies(ushort, ulong, ushort);
+  void CreateLightning();
  protected:
   ushort XSize, YSize;
   bool IsIndependent;
