@@ -7,31 +7,31 @@
 
 #define SCRIPT_RETURN(member)\
 {\
-	if(member)\
-		return member;\
-	else\
-	{\
-		if(AOE)\
-			ABORT("Undefined script member " #member " sought!");\
-		\
-		return 0;\
-	}\
+  if(member)\
+    return member;\
+  else\
+  {\
+    if(AOE)\
+      ABORT("Undefined script member " #member " sought!");\
+    \
+    return 0;\
+  }\
 }
 
 #define SCRIPT_RETURN_WITH_BASE(member)\
 {\
-	if(member)\
-		return member;\
-	else\
-		if(Base)\
-			return Base->Get##member (AOE);\
-		else\
-		{\
-			if(AOE)\
-				ABORT("Undefined script member " #member " sought!");\
-			\
-			return 0;\
-		}\
+  if(member)\
+    return member;\
+  else\
+    if(Base)\
+      return Base->Get##member (AOE);\
+    else\
+    {\
+      if(AOE)\
+	ABORT("Undefined script member " #member " sought!");\
+      \
+      return 0;\
+    }\
 }
 
 #include <string>

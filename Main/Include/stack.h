@@ -13,6 +13,8 @@
 #define CENTER 4
 
 #include <string>
+#include <list>
+#include <vector>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -24,6 +26,11 @@ class bitmap;
 class square;
 class outputfile;
 class inputfile;
+class stackslot;
+
+typedef std::list<stackslot*> stacklist;
+typedef std::list<stackslot*>::iterator stackiterator;
+typedef std::vector<item*> itemvector;
 
 /* Presentation of the stack class */
 
@@ -34,16 +41,19 @@ class stack
   ~stack();
   void Load(inputfile&);
   bool DrawToTileBuffer() const;
-  ushort AddItem(item*);
-  ushort FastAddItem(item*);
-  item* RemoveItem(ushort);
-  void FastRemoveItem(ushort);
-  item* GetItem(ushort I) const { return Item[I]; }
-  ushort GetItems() const { return Items; }
+  void AddItem(item*);
+  void FastAddItem(item*);
+  void RemoveItem(stackiterator);
+  void FastRemoveItem(stackiterator);
+  item* GetItem(ushort) const;
+  stackiterator GetBottomSlot() const { return Item.begin(); }
+  stackiterator GetSlotAboveTop() const { return Item.end(); }
+  item* GetBottomItem() const;// { return Item.begin(); }
+  ushort GetItems() const { return Item.size(); }
   void SetSquareUnder(square*);
-  ushort DrawContents(character*, std::string) const;
-  void DrawPartOfContents(ushort, ushort, bool, const char*) const;
-  item* MoveItem(ushort, stack*);
+  item* DrawContents(character*, std::string) const;
+  item* MoveItem(stackiterator, stack*);
+  //item* MoveItem(item*, stack*);
   ushort GetEmitation() const;
   vector2d GetPos() const;
   void Clean();
@@ -51,33 +61,34 @@ class stack
   void Save(outputfile&) const;
   ushort SearchItem(item*) const;
   square* GetSquareUnder() const { return SquareUnder; }
-  lsquare* GetLSquareUnder() const { return (lsquare*)SquareUnder; }
-  void SetItem(ushort Where, item* What) { Item[Where] = What; }
-  void SetItems(ushort What) { Items = What; }
-  ushort CNonExistent() const { return NonExistent; }
-  void SNonExistent(ushort What) { NonExistent = What; }
-  ushort ConsumableItems(character*);
+  lsquare* GetLSquareUnder() const;
+  /*void SetItem(ushort Where, item* What) { Item[Where] = What; }
+  void SetItems(ushort What) { Items = What; }*/
+  /*ushort CNonExistent() const { return NonExistent; }
+  void SNonExistent(ushort What) { NonExistent = What; }*/
+  bool ConsumableItems(character*);
   void DrawItemData(ushort, ushort) const;
-  ushort DrawConsumableContents(character*, std::string) const;
+  item* DrawConsumableContents(character*, std::string) const;
   void DeletePointers();
-  void StackMerge(stack*);
-  ushort MultiselectDrawContents(const char*) const;
+  //void StackMerge(stack*);
   void Kick(ushort, bool, uchar);
   long Score() const;
-  bool Polymorph();
+  void Polymorph();
   void ReceiveSound(float);
   void StruckByWandOfStriking(character*, std::string);
   void CheckForStepOnEffect(character*);
   square* GetSquareTrulyUnder() const;
-  lsquare* GetLSquareTrulyUnder() const { return (lsquare*)GetSquareTrulyUnder(); }
-  void ImpactDamage(ushort, bool);
+  lsquare* GetLSquareTrulyUnder() const;
+  void ImpactDamage(ushort);
   void ReceiveFireDamage(character*, std::string, long);
-  bool Teleport();
+  void Teleport();
+  void FillItemVector(itemvector&) const;
  private:
-  void Optimize(ushort);
+  stacklist Item;
+  //void Optimize(ushort);
   square* SquareUnder;
-  item** Item;
-  ushort Items, NonExistent;
+  //item** Item;
+  //ushort Items, NonExistent;
   uchar SquarePosition;
 };
 

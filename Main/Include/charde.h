@@ -12,11 +12,13 @@
 #include "femath.h"
 
 class head;
+class arm;
 class rightarm;
 class leftarm;
 class groin;
 class rightleg;
 class leftleg;
+class humanoidtorso;
 
 class ABSTRACT_CHARACTER
 (
@@ -26,33 +28,31 @@ class ABSTRACT_CHARACTER
   virtual ~humanoid();
   virtual void VirtualConstructor();
   virtual void Load(inputfile&);
-  virtual bool WearArmor();
-  virtual item* GetTorsoArmor() const { return Armor.Torso; }
-  virtual bool SetTorsoArmor(item* What) { Armor.Torso = What; return true; }
+  //virtual bool WearArmor();
+  //virtual item* GetBodyArmor() const { return Armor.Torso; }
+  //virtual bool SetBodyArmor(item* What) { Armor.Torso = What; return true; }
   virtual uchar GetSex() const { return MALE; }
-  virtual ushort CalculateArmorModifier() const;
+  //virtual ushort CalculateArmorModifier() const;
   virtual void Save(outputfile&) const;
-  virtual bool CanWield() const { return true; }
+  //virtual bool CanWield() const { return true; }
   virtual bool CanWear() const { return true; }
   virtual bool CanKick() const { return true; }
-  virtual float GetAttackStrength() const;
+  //virtual float GetAttackStrength() const;
   virtual bool Hit(character*);
   virtual gweaponskill* GetCategoryWeaponSkill(uchar Index) const { return CategoryWeaponSkill[Index]; }
   virtual void CharacterSpeciality(ushort = 1);
   virtual bool ShowWeaponSkills();
-  virtual void SetWielded(item*);
-  virtual sweaponskill* GetCurrentSingleWeaponSkill() const { return CurrentSingleWeaponSkill; }
-  virtual void SetCurrentSingleWeaponSkill(sweaponskill* What) { CurrentSingleWeaponSkill = What; }
-  virtual sweaponskill* GetSingleWeaponSkill(ushort Index) const { return SingleWeaponSkill[Index]; }
-  virtual void SetSingleWeaponSkill(ushort Index, sweaponskill* What) { SingleWeaponSkill[Index] = What; }
-  virtual float GetToHitValue() const;
+  //virtual void SetWielded(item*);
+
+  //virtual float GetToHitValue() const;
   virtual long StatScore() const;
   virtual void AddSpecialItemInfo(std::string&, item*);
   virtual void AddSpecialItemInfoDescription(std::string&);
   virtual void KickHit();
   virtual bool CanBeGenerated() const { return false; }
-  virtual void CheckGearExistence();
+  //virtual void CheckGearExistence();
   virtual ushort GetSize() const;
+  virtual bool EqupmentScreen();
 
   virtual head* GetHead() const;
   virtual void SetHead(head* What);
@@ -68,7 +68,42 @@ class ABSTRACT_CHARACTER
   virtual void SetLeftLeg(leftleg* What);
   virtual void SetSize(ushort);
 
+  virtual humanoidtorso* GetHumanoidTorso() const;
+  virtual void SetHumanoidTorso(humanoidtorso* What);
+
+  virtual arm* GetMainArm() const;
+  virtual arm* GetSecondaryArm() const;
+
   virtual void DrawToTileBuffer() const;
+
+  virtual bool ReceiveEffect(short, uchar, uchar = ALL, uchar = 8, bool = false, bool = false, bool = false);
+
+  virtual bool BodyPartVital(uchar);
+  virtual void RestoreBodyParts();
+
+  virtual bool BodyPartCanBeSevered(uchar) const;
+
+  virtual item* GetMainWielded() const;
+  virtual item* GetSecondaryWielded() const;
+  virtual item* GetBodyArmor() const;
+
+  virtual void SetMainWielded(item*);
+  virtual void SetSecondaryWielded(item*);
+  virtual void SetBodyArmor(item*);
+
+  virtual bool CanWieldInMainHand() const;
+  virtual bool CanWieldInSecondaryHand() const;
+
+  virtual arm* GetMainWeaponArm() const;
+  virtual arm* GetSecondaryWeaponArm() const;
+  virtual void MainHit(character*);
+  virtual void SecondaryHit(character*);
+
+  virtual float GetMainAttackStrength() const;
+  virtual float GetSecondaryAttackStrength() const;
+
+  virtual float GetMainToHitValue() const;
+  virtual float GetSecondaryToHitValue() const;
 
  protected:
 
@@ -152,33 +187,42 @@ class ABSTRACT_CHARACTER
   virtual ulong LeftLegVolume() const { return LegVolume(); }
   virtual ulong LegVolume() const;
 
+  virtual ushort HeadSize() const;
+  virtual ushort TorsoSize() const;
+  virtual ushort RightArmSize() const { return ArmSize(); }
+  virtual ushort LeftArmSize() const { return ArmSize(); }
+  virtual ushort ArmSize() const;
+  virtual ushort GroinSize() const;
+  virtual ushort RightLegSize() const { return LegSize(); }
+  virtual ushort LeftLegSize() const { return LegSize(); }
+  virtual ushort LegSize() const;
+
   virtual uchar BodyParts() const { return 7; }
 
   virtual vector2d GetBitmapPos() const { return vector2d(0,0); } // remove this
   virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies screaming."; }
-  struct armor
+  /*struct armor
   {
     armor();
     item* Torso;
-    /*item* Legs;
+    item* Legs;
     item* Hands;
     item* Head;
-    item* Feet;*/
-  } Armor;
+    item* Feet;
+  } Armor;*/
   gweaponskill* CategoryWeaponSkill[WEAPON_SKILL_GATEGORIES];
-  std::vector<sweaponskill*> SingleWeaponSkill;
-  sweaponskill* CurrentSingleWeaponSkill;
+  //std::vector<sweaponskill*> SingleWeaponSkill;
+  //sweaponskill* CurrentSingleWeaponSkill;
 );
 
-inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
+//inline humanoid::armor::armor() : Torso(0)/*, Legs(0), Hands(0), Head(0), Feet(0)*/ { }
 
 class CHARACTER
 (
   human,
   humanoid,
   {
-    SetSize(150 + RAND() % 51);
     SetAgility(15 + RAND() % 11);
     SetStrength(10 + RAND() % 6);
     SetEndurance(10 + RAND() % 6);
@@ -193,6 +237,7 @@ class CHARACTER
   virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "human"; }
+  virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -200,7 +245,7 @@ class CHARACTER
   petrus,
   humanoid,
   {
-    SetSize(225);
+    //SetSize(225);
     SetAgility(75);
     SetStrength(75);
     SetEndurance(75);
@@ -208,7 +253,7 @@ class CHARACTER
     SetHealTimer(100);
     SetStoryState(0);
     game::SetPetrus(this);
-    ReName("Petrus");
+    SetAssignedName("Petrus");
   },
  public:
   virtual ~petrus();
@@ -223,7 +268,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
-  virtual void AddHitMessage(character*, const bool = false) const;
+  virtual void AddHitMessage(character*, item*, uchar, bool = false) const;
   virtual uchar GetStoryState() const { return StoryState; }
   virtual void SetStoryState(uchar What) { StoryState = What; }
   virtual bool HasInfraVision() const { return true; }
@@ -243,6 +288,7 @@ class CHARACTER
   virtual std::string DeathMessage() { return "The High Priest disappears in a bright light and only his left nut is left behind."; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual void GetAICommand();
+  virtual ushort TotalSize() const { return 225; }
   ushort HealTimer;
   uchar StoryState;
 );
@@ -252,7 +298,7 @@ class CHARACTER
   farmer,
   humanoid,
   {
-    SetSize(170);
+    //SetSize(170);
     SetAgility(10);
     SetStrength(15);
     SetEndurance(20);
@@ -271,6 +317,7 @@ class CHARACTER
   virtual uchar GetLegType() const { return RAND() % 3; }
   virtual ulong TotalVolume() const { return 30000; }
   virtual std::string NameSingular() const { return "farmer"; }
+  virtual ushort TotalSize() const { return 170; }
 );
 
 class CHARACTER
@@ -278,7 +325,7 @@ class CHARACTER
   guard,
   humanoid,
   {
-    SetSize(180);
+    //SetSize(180);
     SetAgility(15);
     SetStrength(20);
     SetEndurance(20);
@@ -297,6 +344,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "guard"; }
   virtual float GetMeleeStrength() const { return 2000; }
+  virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -304,7 +352,7 @@ class CHARACTER
   shopkeeper,
   humanoid,
   {
-    SetSize(160);
+    //SetSize(160);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(25);
@@ -325,6 +373,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "shopkeeper"; }
   virtual float GetMeleeStrength() const { return 2000; }
+  virtual ushort TotalSize() const { return 160; }
 );
 
 class CHARACTER
@@ -332,7 +381,7 @@ class CHARACTER
   priest,
   humanoid,
   {
-    SetSize(180);
+    //SetSize(180);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
@@ -352,6 +401,7 @@ class CHARACTER
   virtual uchar GetLegType() const { return 2; }
   virtual ulong TotalVolume() const { return 100000; }
   virtual std::string NameSingular() const { return "priest"; }
+  virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -359,15 +409,15 @@ class CHARACTER
   oree,
   humanoid,
   {
-    SetSize(225);
+    //SetSize(225);
     SetAgility(50);
     SetStrength(30);
     SetEndurance(30);
     SetPerception(30);
-    ReName("Oree");
+    SetAssignedName("Oree");
   },
  public:
-  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
+  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool Charmable() const { return false; }
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
@@ -386,6 +436,7 @@ class CHARACTER
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonBloodVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBloodVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBloodVerb(Critical); }
+  virtual ushort TotalSize() const { return 225; }
 );
 
 class CHARACTER
@@ -393,7 +444,7 @@ class CHARACTER
   darkknight,
   humanoid,
   {
-    SetSize(200);
+    //SetSize(200);
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);
@@ -408,6 +459,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(128,0); }
   virtual std::string NameSingular() const { return "dark knight"; }
   virtual float GetMeleeStrength() const { return 5000; }
+  virtual ushort TotalSize() const { return 200; }
 );
 
 class CHARACTER
@@ -415,7 +467,7 @@ class CHARACTER
   ennerbeast,
   character,
   {
-    SetSize(150);
+    //SetSize(150);
     SetAgility(10);
     SetStrength(10);
     SetEndurance(25);
@@ -429,6 +481,7 @@ class CHARACTER
   virtual ulong CurrentDanger() { return character::CurrentDanger() * 5; }
   virtual ulong MaxDanger() { return character::MaxDanger() * 5; }
  protected:
+  virtual std::string Article() const { return "an"; }
   virtual ulong TotalVolume() const { return 30000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new ennerbeastflesh(Volume); }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies and the world is finally freed from this terrible monster."; }
@@ -437,6 +490,7 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 100000; }
   virtual void GetAICommand();
   virtual void CreateCorpse();
+  virtual ushort TotalSize() const { return 150; }
 );
 
 class ABSTRACT_CHARACTER
@@ -458,7 +512,7 @@ class CHARACTER
   darkfrog,
   frog,
   {
-    SetSize(25);
+    //SetSize(25);
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
@@ -472,6 +526,7 @@ class CHARACTER
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new darkfrogflesh(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "dark frog"; }
+  virtual ushort TotalSize() const { return 25; }
 );
 
 class CHARACTER
@@ -479,12 +534,12 @@ class CHARACTER
   elpuri,
   darkfrog,
   {
-    SetSize(300);
+    //SetSize(300);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(50);
     SetPerception(30);
-    ReName("Elpuri");
+    SetAssignedName("Elpuri");
   },
  public:
   virtual bool CanBeGenerated() const { return false; }
@@ -492,17 +547,18 @@ class CHARACTER
   virtual bool Polymorph(character* Char, ushort) { delete Char; return false; }
   virtual ulong GetBloodColor() const { return BLACK; }
   virtual void BeTalkedTo(character*);
-  virtual ushort CalculateArmorModifier() const { return 10; }
+  //virtual ushort CalculateArmorModifier() const { return 10; }
   virtual bool Hit(character*);
   virtual bool CanBeDisplaced() const { return false; }
   virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ulong TotalVolume() const { return 277500; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new elpuriflesh(Volume); }
-  virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + game::PossessivePronoun(GetSex()) + " head."; }
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " groans horribly and drops " + PossessivePronoun() + " head."; }
   virtual vector2d GetBitmapPos() const { return vector2d(64,0); }
-  virtual std::string NameSingular() const { return "master the dark frog"; }
+  virtual std::string NameSingular() const { return "Master Dark Frog"; }
   virtual void CreateCorpse();
+  virtual ushort TotalSize() const { return 300; }
 );
 
 class CHARACTER
@@ -510,7 +566,7 @@ class CHARACTER
   billswill,
   character,
   {
-    SetSize(100);
+    //SetSize(100);
     SetAgility(40);
     SetStrength(5);
     SetEndurance(20);
@@ -536,6 +592,7 @@ class CHARACTER
   virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const { return ThirdPersonPSIVerb(Critical); }
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonPSIVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonPSIVerb(Critical); }
+  virtual ushort TotalSize() const { return 100; }
 );
 
 class CHARACTER
@@ -543,7 +600,7 @@ class CHARACTER
   skeleton,
   humanoid,
   {
-    SetSize(150);
+    //SetSize(150);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(10);
@@ -562,6 +619,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "skeleton"; }
   virtual void CreateCorpse();
   virtual float GetMeleeStrength() const { return 1000; }
+  virtual ushort TotalSize() const { return 150; }
 );
 
 class CHARACTER
@@ -569,7 +627,7 @@ class CHARACTER
   goblin,
   humanoid,
   {
-    SetSize(100);
+    //SetSize(100);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
@@ -585,6 +643,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(144,0); }
   virtual std::string NameSingular() const { return "goblin"; }
   virtual float GetMeleeStrength() const { return 2000; }
+  virtual ushort TotalSize() const { return 100; }
 );
 
 class ABSTRACT_CHARACTER
@@ -608,7 +667,7 @@ class CHARACTER
   conicalmommo,
   mommo,
   {
-    SetSize(100);
+    //SetSize(100);
     SetAgility(2);
     SetStrength(4);
     SetEndurance(50);
@@ -620,7 +679,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 250000; }
   virtual std::string NameSingular() const { return "conical mommo slime"; }
   virtual vector2d GetBitmapPos() const { return vector2d(176,0); }
-
+  virtual ushort TotalSize() const { return 100; }
 );
 
 class CHARACTER
@@ -628,7 +687,7 @@ class CHARACTER
   flatmommo,
   mommo,
   {
-    SetSize(50);
+    //SetSize(50);
     SetAgility(4);
     SetStrength(2);
     SetEndurance(25);
@@ -640,6 +699,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 150000; }
   virtual std::string NameSingular() const { return "flat mommo slime"; }
   virtual vector2d GetBitmapPos() const { return vector2d(192,0); }
+  virtual ushort TotalSize() const { return 50; }
 );
 
 class CHARACTER
@@ -647,14 +707,13 @@ class CHARACTER
   golem,
   character,
   {
-    SetSize(250);
+    //SetSize(250);
     SetAgility(5);
     SetStrength(20);
     SetEndurance(20);
     SetPerception(12);
   },
  public:
-  virtual ushort CalculateArmorModifier() const;
   virtual bool MoveRandomly();
   //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual void SpillBlood(uchar) { }
@@ -669,6 +728,8 @@ class CHARACTER
   virtual std::string NameSingular() const { return "golem"; }
   virtual vector2d GetBitmapPos() const { return vector2d(256,0); }
   virtual float GetMeleeStrength() const;
+  virtual ushort TotalSize() const { return 250; }
+  virtual bool ShowMaterial() const { return true; }
 );
 
 class CHARACTER
@@ -676,7 +737,7 @@ class CHARACTER
   wolf,
   character,
   {
-    SetSize(100);
+    //SetSize(100);
     SetAgility(20);
     SetStrength(10);
     SetEndurance(10);
@@ -693,6 +754,7 @@ class CHARACTER
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string TalkVerb() const { return "howls"; }
+  virtual ushort TotalSize() const { return 100; }
 );
 
 class CHARACTER
@@ -700,7 +762,7 @@ class CHARACTER
   dog,
   character,
   {
-    SetSize(70);
+    //SetSize(70);
     SetAgility(15);
     SetStrength(5);
     SetEndurance(5);
@@ -719,6 +781,7 @@ class CHARACTER
   virtual std::string FirstPersonHitVerb(character*, bool Critical) const { return FirstPersonBiteVerb(Critical); }
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual std::string TalkVerb() const { return "barks"; }
+  virtual ushort TotalSize() const { return 70; }
 );
 
 class CHARACTER
@@ -726,7 +789,7 @@ class CHARACTER
   spider,
   character,
   {
-    SetSize(10);
+    //SetSize(10);
     SetAgility(5);
     SetStrength(2);
     SetEndurance(1);
@@ -747,6 +810,7 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 10000; }
   virtual void CreateCorpse() { }
   virtual std::string TalkVerb() const { return "says nothing"; }
+  virtual ushort TotalSize() const { return 10; }
 );
 
 class CHARACTER
@@ -754,7 +818,7 @@ class CHARACTER
   jackal,
   character,
   {
-    SetSize(80);
+    //SetSize(80);
     SetAgility(10);
     SetStrength(3);
     SetEndurance(3);
@@ -770,6 +834,7 @@ class CHARACTER
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual float GetMeleeStrength() const { return 5000; }
   virtual std::string TalkVerb() const { return "howls"; }
+  virtual ushort TotalSize() const { return 80; }
 );
 
 class CHARACTER
@@ -777,7 +842,7 @@ class CHARACTER
   donkey,
   character,
   {
-    SetSize(150);
+    //SetSize(150);
     SetAgility(5);
     SetStrength(10);
     SetEndurance(10);
@@ -794,6 +859,7 @@ class CHARACTER
   virtual std::string AICombatHitVerb(character*, bool Critical) const { return ThirdPersonBiteVerb(Critical); }
   virtual float GetMeleeStrength() const { return 1000; }
   virtual std::string TalkVerb() const { return "neighs"; }
+  virtual ushort TotalSize() const { return 150; }
 );
 
 class CHARACTER
@@ -801,21 +867,20 @@ class CHARACTER
   communist,
   humanoid,
   {
-    SetSize(230);
+    //SetSize(230);
     SetAgility(20);
     SetStrength(50);
     SetEndurance(50);
     SetPerception(18);
-    ReName("Ivan");
+    SetAssignedName("Ivan");
   },
  public:
   virtual bool MoveRandomly();
   virtual void CreateInitialEquipment();
   virtual void BeTalkedTo(character*);
-  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
+  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool HasInfraVision() const { return true; }
   virtual uchar CriticalModifier() const { return 4; }
-  virtual bool ShowClassName() const { return false; } 
   virtual bool CanBeAssignedAName() const { return false; }
  protected:
   virtual ushort BeltColor() const { return MAKE_RGB(0, 0, 0); }
@@ -826,9 +891,11 @@ class CHARACTER
   virtual uchar GetArmType() const { return 7; }
   virtual uchar GetLegType() const { return 0; }
   virtual ulong TotalVolume() const { return 120000; }
-  virtual std::string DeathMessage() { return Name(DEFINITE) + " falls groaning bravely: \"Party revenges " + Name(DEFINITE) + "\"!"; }
+  virtual std::string DeathMessage() { return Name(DEFINITE) + " falls groaning bravely: \"Party revenges " + Name(UNARTICLED) + "\"!"; }
   virtual std::string NameSingular() const { return "communist"; }
   virtual float GetMeleeStrength() const { return 5000; }
+  virtual ushort TotalSize() const { return 230; }
+  virtual bool ShowClassDescription() const { return false; }
 );
 
 class CHARACTER
@@ -836,7 +903,7 @@ class CHARACTER
   hunter,
   humanoid,
   {
-    SetSize(180);
+    //SetSize(180);
     SetAgility(20);
     SetStrength(15);
     SetEndurance(15);
@@ -855,6 +922,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 80000; }
   virtual std::string NameSingular() const { return "hunter"; }
   virtual float GetMeleeStrength() const { return 2000; }
+  virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -862,7 +930,7 @@ class CHARACTER
   polarbear,
   character,
   {
-    SetSize(250);
+    //SetSize(250);
     SetAgility(10);
     SetStrength(30);
     SetEndurance(30);
@@ -878,6 +946,7 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 10000; }
   virtual vector2d GetBitmapPos() const { return vector2d(336,0); }
   virtual std::string TalkVerb() const { return "growls"; }
+  virtual ushort TotalSize() const { return 250; }
 );
 
 class CHARACTER
@@ -885,7 +954,7 @@ class CHARACTER
   dolphin,
   character,
   {
-    SetSize(300);
+    //SetSize(300);
     SetAgility(30);
     SetStrength(10);
     SetEndurance(10);
@@ -906,6 +975,7 @@ class CHARACTER
   virtual float GetMeleeStrength() const { return 1000; }
   virtual vector2d GetBitmapPos() const { return vector2d(320,0); }
   virtual std::string TalkVerb() const { return "peeps passionately to you"; }
+  virtual ushort TotalSize() const { return 300; }
 );
 
 class CHARACTER
@@ -913,7 +983,7 @@ class CHARACTER
   lightfrog,
   frog,
   {
-    SetSize(25);
+    //SetSize(25);
     SetAgility(30);
     SetStrength(5);
     SetEndurance(5);
@@ -928,6 +998,7 @@ class CHARACTER
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new lightfrogflesh(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(80,0); }
   virtual std::string NameSingular() const { return "light frog"; }
+  virtual ushort TotalSize() const { return 25; }
 );
 
 class CHARACTER
@@ -935,7 +1006,7 @@ class CHARACTER
   slave,
   humanoid,
   {
-    SetSize(160);
+    //SetSize(160);
     SetAgility(10);
     SetStrength(20);
     SetEndurance(15);
@@ -955,6 +1026,7 @@ class CHARACTER
   virtual uchar GetLegType() const { return 1; }
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string NameSingular() const { return "slave"; }
+  virtual ushort TotalSize() const { return 160; }
 );
 
 class CHARACTER
@@ -962,7 +1034,7 @@ class CHARACTER
   petrusswife,
   humanoid,
   {
-    SetSize(170);
+    //SetSize(170);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
@@ -971,7 +1043,7 @@ class CHARACTER
  public:
   virtual void BeTalkedTo(character*);
   virtual uchar GetSex() const { return FEMALE; }
-  virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
+  //virtual std::string Name(uchar Case) const { return NameProperNoun(Case); }
   virtual bool MoveRandomly() { return MoveRandomlyInRoom(); }
  protected:
   virtual ushort ClothColor() const { return MAKE_RGB(150, 0, 0); }
@@ -983,6 +1055,8 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string NameSingular() const { return "Petrus's wife"; }
   virtual float GetMeleeStrength() const { return 500; }
+  virtual ushort TotalSize() const { return 170; }
+  virtual bool ShowArticle() const { return false; }
 );
 
 class CHARACTER
@@ -1068,7 +1142,7 @@ class CHARACTER
   housewife,
   humanoid,
   {
-    SetSize(160);
+    //SetSize(160);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(15);
@@ -1089,6 +1163,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 70000; }
   virtual std::string NameSingular() const { return "housewife"; }
   virtual float GetMeleeStrength() const { return 500; }
+  virtual ushort TotalSize() const { return 160; }
 );
 
 class CHARACTER
@@ -1096,7 +1171,7 @@ class CHARACTER
   femaleslave,
   humanoid,
   {
-    SetSize(170);
+    //SetSize(170);
     SetAgility(10);
     SetStrength(10);
     SetEndurance(15);
@@ -1117,6 +1192,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "female slave"; }
   virtual float GetMeleeStrength() const { return 500; }
   virtual void GetAICommand() { StandIdleAI(); }
+  virtual ushort TotalSize() const { return 170; }
 );
 
 class CHARACTER
@@ -1124,7 +1200,7 @@ class CHARACTER
   librarian,
   humanoid,
   {
-    SetSize(170);
+    //SetSize(170);
     SetAgility(5);
     SetStrength(5);
     SetEndurance(5);
@@ -1136,7 +1212,6 @@ class CHARACTER
   virtual ushort HairColor() const { return MAKE_RGB(160, 160, 160); }
   virtual ushort ClothColor() const { return MAKE_RGB(48, 48, 48); }
   virtual ushort ArmMainColor() const { return MAKE_RGB(144, 144, 144); }
-  virtual ushort CapColor() const { return MAKE_RGB(160, 160, 160); } // temporary
   virtual uchar GetHeadType() const { return 14; }
   virtual uchar GetTorsoType() const { return 5; }
   virtual uchar GetArmType() const { return 1; }
@@ -1145,6 +1220,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "librarian"; }
   virtual float GetMeleeStrength() const { return 500; }
   virtual void GetAICommand() { StandIdleAI(); }
+  virtual ushort TotalSize() const { return 170; }
 );
 
 class CHARACTER
@@ -1152,7 +1228,7 @@ class CHARACTER
   zombie,
   humanoid,
   {
-    SetSize(160);
+    //SetSize(160);
     SetAgility(5);
     SetStrength(10);
     SetEndurance(5);
@@ -1174,6 +1250,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 50000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " is slain (again)."; }
   virtual std::string NameSingular() const { return "zombie"; }
+  virtual ushort TotalSize() const { return 160; }
 );
 
 class CHARACTER
@@ -1181,18 +1258,20 @@ class CHARACTER
   imp,
   character,
   {
-    SetSize(100);
+    //SetSize(100);
     SetAgility(15);
     SetStrength(10);
     SetEndurance(10);
     SetPerception(15);
   },
  protected:
+  virtual std::string Article() const { return "an"; }
   virtual ulong TotalVolume() const { return 40000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new sulfur(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(368,0); }
   virtual std::string NameSingular() const { return "imp"; }
   virtual float GetMeleeStrength() const { return 20000; }
+  virtual ushort TotalSize() const { return 100; }
 );
 
 class CHARACTER
@@ -1200,7 +1279,7 @@ class CHARACTER
   bat,
   character,
   {
-    SetSize(20);
+    //SetSize(20);
     SetAgility(40);
     SetStrength(2);
     SetEndurance(1);
@@ -1218,6 +1297,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "bat"; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "squeaks"; }
+  virtual ushort TotalSize() const { return 20; }
 );
 
 class CHARACTER
@@ -1225,7 +1305,7 @@ class CHARACTER
   mistress,
   humanoid,
   {
-    SetSize(180);
+    //SetSize(180);
     SetAgility(35);
     SetStrength(25);
     SetEndurance(50);
@@ -1248,6 +1328,7 @@ class CHARACTER
   virtual ulong TotalVolume() const { return 60000; }
   virtual vector2d GetBitmapPos() const { return vector2d(352,0); }
   virtual std::string NameSingular() const { return "mistress"; }
+  virtual ushort TotalSize() const { return 180; }
 );
 
 class CHARACTER
@@ -1257,7 +1338,7 @@ class CHARACTER
   {
     SetChangeCounter(RAND() % 2500);
 
-    if(RAND() % 2) 
+    if(RAND() % 2)
       ChangeIntoHuman();
     else
       ChangeIntoWolf();
@@ -1275,7 +1356,7 @@ class CHARACTER
   virtual void SetChangeCounter(ushort What) { ChangeCounter = What; }
   virtual ushort GetChangeCounter() { return ChangeCounter; }
   virtual ulong MaxDanger();
-  virtual bool CanWield() const { return !GetIsWolf(); } 
+  //virtual bool CanWield() const { return !GetIsWolf(); } 
  protected:
   virtual ushort SkinColor() const { return IsWolf ? MAKE_RGB(88, 96, 88) : humanoid::SkinColor(); }
   virtual ushort EyeColor() const { return MAKE_RGB(160, 0, 0); }
@@ -1289,6 +1370,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "werewolf"; }
   virtual float GetMeleeStrength() const;
   virtual std::string TalkVerb() const { return IsWolf ? "howls" : "screams"; }
+  virtual ushort TotalSize() const { return 170; }
   ushort ChangeCounter;
   bool IsWolf;
 );
@@ -1298,7 +1380,7 @@ class CHARACTER
   kobold,
   humanoid,
   {
-    SetSize(90);
+    //SetSize(90);
     SetAgility(10);
     SetStrength(5);
     SetEndurance(5);
@@ -1314,6 +1396,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(480,0); }
   virtual std::string NameSingular() const { return "kobold"; }
   virtual float GetMeleeStrength() const { return 2000; }
+  virtual ushort TotalSize() const { return 90; }
 );
 
 class CHARACTER
@@ -1321,7 +1404,7 @@ class CHARACTER
   gibberling,
   character,
   {
-    SetSize(90);
+    //SetSize(90);
     SetAgility(20);
     SetStrength(5);
     SetEndurance(5);
@@ -1333,6 +1416,7 @@ class CHARACTER
   virtual vector2d GetBitmapPos() const { return vector2d(448,0); }
   virtual std::string NameSingular() const { return "gibberling"; }
   virtual float GetMeleeStrength() const { return 10000; }
+  virtual ushort TotalSize() const { return 90; }
 );
 
 class CHARACTER  
@@ -1340,7 +1424,7 @@ class CHARACTER
   largecat,
   character,
   {
-    SetSize(60);
+    //SetSize(60);
     SetAgility(25);
     SetStrength(5);
     SetEndurance(5);
@@ -1355,6 +1439,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "large cat"; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "mews"; }
+  virtual ushort TotalSize() const { return 60; }
 );
 
 class CHARACTER  
@@ -1362,7 +1447,7 @@ class CHARACTER
   largerat,
   character,
   {
-    SetSize(30);
+    //SetSize(30);
     SetAgility(10);
     SetStrength(3);
     SetEndurance(2);
@@ -1377,6 +1462,7 @@ class CHARACTER
   virtual std::string NameSingular() const { return "large rat"; }
   virtual float GetMeleeStrength() const { return 20000; }
   virtual std::string TalkVerb() const { return "squeaks"; }
+  virtual ushort TotalSize() const { return 30; }
 );
 
 class CHARACTER  
@@ -1384,7 +1470,7 @@ class CHARACTER
   angel,
   humanoid,
   {
-    SetSize(180);
+    //SetSize(180);
     SetAgility(35);
     SetStrength(35);
     SetEndurance(35);
@@ -1402,7 +1488,6 @@ class CHARACTER
   virtual uchar GetMaster() const { return Master; }
   //virtual std::string Name(uchar Case) const { return NameNormal(Case, "an") + OwnerGodDescription(Master); }
   virtual bool CanFly() const { return true; }
-  virtual std::string Article() const { return "an"; }
  protected:
   virtual ulong TotalVolume() const { return 60000; }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }
@@ -1410,6 +1495,10 @@ class CHARACTER
   virtual std::string NameSingular() const { return "angel"; }
   virtual float GetMeleeStrength() const { return 10000; }
   virtual void CreateCorpse() { }
+  virtual ushort TotalSize() const { return 180; }
+  virtual std::string Article() const { return "an"; }
+  virtual bool ShowPostFix() const { return true; }
+  virtual std::string PostFix() const { return OwnerGodDescription(Master); }
   uchar Master;
 );
 
@@ -1428,7 +1517,7 @@ class CHARACTER
   kamikazedwarf,
   dwarf,
   {
-    SetSize(130);
+    //SetSize(130);
     SetAgility(20);
     SetStrength(20);
     SetEndurance(20);
@@ -1459,6 +1548,7 @@ class CHARACTER
   virtual std::string DeathMessage() { return Name(DEFINITE) + " dies smiling."; }
   virtual vector2d GetBitmapPos() const { return vector2d(400,0); }
   virtual std::string NameSingular() const { return "kamikaze dwarf"; }
+  virtual ushort TotalSize() const { return 130; }
   uchar Master;
 );
 
@@ -1467,19 +1557,20 @@ class CHARACTER
   mammoth,
   character,
   {
-    SetSize(500);
+    //SetSize(500);
     SetAgility(20);
     SetStrength(80);
     SetEndurance(80);
     SetPerception(18);
   },
  protected:
-  virtual ulong TotalVolume() const { return 500000; }
+  virtual ulong TotalVolume() const { return 5000000; }
   virtual material* CreateTorsoFlesh(ulong Volume) const { return new mammothflesh(Volume); }
   virtual vector2d GetBitmapPos() const { return vector2d(528,0); }
   virtual std::string NameSingular() const { return "mammoth"; }
   virtual float GetMeleeStrength() const { return 5000; }
   virtual std::string TalkVerb() const { return "roars"; }
+  virtual ushort TotalSize() const { return 500; }
 );
 
 class CHARACTER
@@ -1488,11 +1579,12 @@ class CHARACTER
   character,
   //RandomizeFleshMaterial(),
   {
-    SetSize(200);
+    //SetSize(200);
     SetAgility(40);
     SetStrength(10);
     SetEndurance(25);
     SetPerception(18);
+    AdjustAlignment();
   },
  public:
   virtual float GetMeleeStrength() const { return 5000; }
@@ -1501,14 +1593,16 @@ class CHARACTER
   virtual uchar GetAlignment() const { return Alignment; }
   virtual void Load(inputfile&);
   virtual void Save(outputfile&) const;
-  virtual void RandomizeFleshMaterial();
+  //virtual void RandomizeFleshMaterial();
   virtual bool SpecialEnemySightedReaction(character*);
   virtual void CreateInitialEquipment();
+  virtual void AdjustAlignment();
  protected:
   virtual ulong TotalVolume() const { return 200000; }
   virtual vector2d GetBitmapPos() const { return vector2d(544, 0); }
   virtual std::string NameSingular() const;
-  virtual material* CreateTorsoFlesh(ulong Volume) const { return new blackunicornflesh(Volume); } // temporary
+  virtual material* CreateTorsoFlesh(ulong) const;// { return new blackunicornflesh(Volume); } // temporary
+  virtual ushort TotalSize() const { return 200; }
   uchar Alignment;
 );
 
@@ -1517,7 +1611,7 @@ class CHARACTER
   genie,
   humanoid,
   {
-    SetSize(250);
+    //SetSize(250);
     SetAgility(30);
     SetStrength(30);
     SetEndurance(30);
@@ -1537,6 +1631,8 @@ class CHARACTER
   virtual void CreateCorpse() { }
   virtual std::string DeathMessage() { return Name(DEFINITE) + " vanishes from existence."; }
   virtual float GetMeleeStrength() const { return 5000; }
+  virtual ushort TotalSize() const { return 250; }
 );
 
 #endif
+

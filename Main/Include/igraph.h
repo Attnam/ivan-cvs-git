@@ -5,8 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#define TRANSPARENTCOL 0xF81F // Pink
 
-#define TRANSPARENT 0xF81F // Pink
 #define RAW_TYPES	4
 
 #define GRLTERRAIN	0
@@ -21,12 +21,12 @@
 #define GRCURSOR	2
 #define GRSYMBOL	3
 
-#define NORMAL		0
-#define RIGHTARM	1
-#define LEFTARM		2
-#define GROIN		3
-#define RIGHTLEG	4
-#define LEFTLEG		5
+#define STNORMAL	0
+#define STRIGHTARM	1
+#define STLEFTARM	2
+#define STGROIN		3
+#define STRIGHTLEG	4
+#define STLEFTLEG	5
 
 #ifdef WIN32
 #include <windows.h>

@@ -54,8 +54,9 @@ class material : public type
  public:
   material() : Volume(0), MotherEntity(0) { }
   virtual ~material() { }
-  virtual std::string Name(uchar = 0, bool = true) const;
-  virtual ushort StrengthValue() const = 0;
+  virtual std::string Name(bool = false, bool = true) const;
+  //virtual const char* CHARNAME(uchar Case = 0, bool Adjective = true) const { return Name(Case, Adjective).c_str(); }
+  virtual ushort GetStrengthValue() const = 0;
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ulong GetVolume() const { return Volume; }
   virtual ulong GetWeight() const { return ulong(float(Volume) * GetDensity() / 1000); }

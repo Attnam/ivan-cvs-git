@@ -103,7 +103,7 @@ class lsquare : public square
   virtual void SetFluid(fluid* What) { Fluid = What; }
   virtual void RemoveFluid();
   virtual void HasBeenHitBy(item*, float, uchar, bool);
-  virtual bool TeleportEverything(character*);
+  virtual void TeleportEverything(character*);
   virtual bool ReceiveApply(item*, character*);
   virtual bool ReceiveDip(item*, character*);
   virtual void DrawCharacterSymbols(vector2d, ushort);

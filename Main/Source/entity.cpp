@@ -46,33 +46,7 @@ void entity::SetExists(bool What)
   GetPoolIterator()->Exists = What;
 }
 
-/* Temporary */
-
-std::string entity::NameNormal(uchar Case, std::string Article, std::string Adjective) const
+void entity::SetHasBe(bool What)
 {
-  if(!(Case & PLURAL))
-    if(!(Case & DEFINEBIT))
-      return Adjective + NameSingular();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Adjective + NameSingular();
-      else
-	return Article + " " + Adjective + NameSingular();
-  else
-    if(!(Case & DEFINEBIT))
-      return Adjective + NamePlural();
-    else
-      if(!(Case & INDEFINEBIT))
-	return std::string("the ") + Adjective + NamePlural();
-      else
-	return Adjective + NamePlural();
+  GetPoolIterator()->HasBe = What;
 }
-
-std::string entity::NameProperNoun(uchar Case) const
-{
-  if(!(Case & PLURAL))
-    return NameSingular();
-  else
-    return NamePlural();
-}
-

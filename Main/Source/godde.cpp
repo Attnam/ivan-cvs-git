@@ -21,6 +21,7 @@ std::map<std::string, ushort>		protocontainer<god>::CodeNameMap;
 #include "team.h"
 #include "script.h"
 #include "lterrade.h"
+#include "slot.h"
 
 void consummo::PrayGoodEffect()
 {
@@ -35,7 +36,8 @@ void consummo::PrayBadEffect()
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   ADD_MESSAGE("Some parts of you teleport away!");
 
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
+  //game::GetPlayer()->ReceivePhysicalDamage(5, HEAD, false, RAND() % 8);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % game::GetPlayer()->GetMaxHP());
   game::GetPlayer()->CheckDeath(std::string("shattered to pieces by the wrath of ") + Name());
 }
 
@@ -50,7 +52,8 @@ void valpurus::PrayGoodEffect()
 void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
+  game::GetPlayer()->ReceiveEffect(10, PHYSICALDAMAGE, HEAD, RAND() % 8);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 5);
   game::GetPlayer()->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + Name());
 }
 
@@ -81,25 +84,26 @@ void dulcis::PrayGoodEffect()
 	if(Char->CurrentDanger() * 2 < game::GetPlayer()->MaxDanger())
 	  {
 	    if(Char->GetTeam() == game::GetPlayer()->GetTeam())
-	      ADD_MESSAGE("%s seems to be very happy.", Char->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very happy.", Char->CHARNAME(DEFINITE));
 	    else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
-	      ADD_MESSAGE("%s stops fighting.", Char->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s stops fighting.", Char->CHARNAME(DEFINITE));
 	    else
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHARNAME(DEFINITE));
 
 	    Char->ChangeTeam(game::GetPlayer()->GetTeam());
 	  }
 	else
-	  ADD_MESSAGE("%s resists its charming call.", Char->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s resists its charming call.", Char->CHARNAME(DEFINITE));
       else
-	ADD_MESSAGE("%s seems not affected.", Char->CNAME(DEFINITE));
+	ADD_MESSAGE("%s seems not affected.", Char->CHARNAME(DEFINITE));
   });
 }
 
 void dulcis::PrayBadEffect()
 {
   ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
+  game::GetPlayer()->ReceiveEffect(1 + RAND() % 9, SOUND, HEAD);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 9 - 1);
   game::GetPlayer()->CheckDeath(std::string("became insane by listening ") + Name() + " too much");
 }
 
@@ -189,15 +193,15 @@ void atavus::PrayBadEffect()
 
       if(Disappearing->Destroyable())
 	{
-	  ADD_MESSAGE("Your %s disappears.", Disappearing->CNAME(UNARTICLED));
-	  game::GetPlayer()->GetStack()->RemoveItem(ToBeDeleted);
-	  if(game::GetPlayer()->GetWielded() == Disappearing) game::GetPlayer()->SetWielded(0);
-	  if(game::GetPlayer()->GetTorsoArmor() == Disappearing) game::GetPlayer()->SetTorsoArmor(0);
-	  delete Disappearing;
+	  ADD_MESSAGE("Your %s disappears.", Disappearing->CHARNAME(UNARTICLED));
+	  Disappearing->RemoveFromSlot();
+	  //if(game::GetPlayer()->GetWielded() == Disappearing) game::GetPlayer()->SetWielded(0);
+	  //if(game::GetPlayer()->GetBodyArmor() == Disappearing) game::GetPlayer()->SetBodyArmor(0);
+	  Disappearing->SetExists(false);
 	}
       else
 	{
-	  ADD_MESSAGE("%s tries to remove your %s, but fails.", GOD_NAME, Disappearing->CNAME(UNARTICLED));
+	  ADD_MESSAGE("%s tries to remove your %s, but fails.", GOD_NAME, Disappearing->CHARNAME(UNARTICLED));
 	  ADD_MESSAGE("You feel you are not so gifted anymore.");
 	  game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
 	  game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
@@ -279,9 +283,10 @@ void silva::PrayGoodEffect()
 		if(Char)
 		  {
 		    if(Char->GetSquareUnder()->CanBeSeen())
-		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CNAME(DEFINITE));
+		      ADD_MESSAGE("%s is hit by a brick of earth falling from the roof!", Char->CHARNAME(DEFINITE));
 
-		    Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
+		    Char->ReceiveEffect(20 + RAND() % 21, PHYSICALDAMAGE, HEAD|TORSO, 8, true);
+		    //Char->SetHP(Char->GetHP() - 20 - RAND() % 21);
 		    Char->CheckDeath("killed by an earthquake");
 		  }
 
@@ -292,9 +297,11 @@ void silva::PrayGoodEffect()
 		for(p = 0; p < 4; ++p)
 		  game::GetCurrentLevel()->GetLSquare(Pos)->GetSideStack(p)->Clean();
 
-		for(p = 0; p < game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItems();)
+		/*for(p = 0; p < game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItems();)
 		  if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->GetItem(p)->ImpactDamage(0xFFFF, game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()))
-		    ++p;
+		    ++p;*/
+
+		game::GetCurrentLevel()->GetLSquare(Pos)->GetStack()->ImpactDamage(10 + RAND() % 41);
 
 		break;
 	      }
@@ -305,9 +312,9 @@ void silva::PrayGoodEffect()
       for(ushort x = 0; x < game::GetCurrentLevel()->GetXSize(); ++x)
 	for(ushort y = 0; y < game::GetCurrentLevel()->GetYSize(); ++y)
 	  {
-	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLSquare(x,y)->CanBeSeen());
+	    game::GetCurrentLevel()->GetLSquare(x,y)->GetStack()->ImpactDamage(RAND() % 5);
 	    for(ushort c = 0; c < 4; ++c)
-	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5, game::GetCurrentLevel()->GetLSquare(x,y)->CanBeSeen());
+	      game::GetCurrentLevel()->GetLSquare(x,y)->GetSideStack(c)->ImpactDamage(RAND() % 5);
 	  }
     }
   else
@@ -357,48 +364,62 @@ void silva::PrayBadEffect()
 
 void loricatus::PrayGoodEffect()
 {
-  for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); c++)
+  /*for(stackiterator i = game::GetPlayer()->GetStack()->GetBottomSlot(); i != game::GetPlayer()->GetStack()->GetSlotAboveTop(); ++i)
     {
-      item* Old = game::GetPlayer()->GetStack()->GetItem(c);
+      item* Old = ***i;
 
       if(Old->GetType() == brokenplatemail::StaticType())
 	{
 	  bool Worn = false, Wielded = false;
 
-	  if(Old == game::GetPlayer()->GetTorsoArmor())
+	  if(Old == game::GetPlayer()->GetBodyArmor())
 	    Worn = true;
 	  else
 	    if(Old == game::GetPlayer()->GetWielded())
 	      Wielded = true;
 
-	  game::GetPlayer()->GetStack()->RemoveItem(c);
-	  ADD_MESSAGE("Loricatus fixes your %s.", Old->CNAME(UNARTICLED));
+	  Old->RemoveFromSlot();
+	  //game::GetPlayer()->GetStack()->RemoveItem(c);
+	  ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
 	  Old->SetExists(false);
 	  item* Plate = new platemail(false);
-	  Plate->InitMaterials(Old->GetMaterial(0));
+	  Plate->InitMaterials(Old->GetMainMaterial());
 	  Old->PreserveMaterial(0);
 	  game::GetPlayer()->GetStack()->AddItem(Plate);
 
 	  if(Worn)
-	    game::GetPlayer()->SetTorsoArmor(Plate);
+	    game::GetPlayer()->SetBodyArmor(Plate);
 	  else
 	    if(Wielded)
 	      game::GetPlayer()->SetWielded(Plate);
 
 	  return;
 	}
+    }*/
+
+  item* Old = game::GetPlayer()->GetBodyArmor();
+
+  if(Old && Old->GetType() == brokenplatemail::StaticType())
+    {
+      ADD_MESSAGE("Loricatus fixes your %s.", Old->CHARNAME(UNARTICLED));
+      Old->RemoveFromSlot();
+      Old->SetExists(false);
+      item* Plate = new platemail(false);
+      Plate->InitMaterials(Old->GetMainMaterial());
+      Old->PreserveMaterial(0);
+      game::GetPlayer()->GetStack()->AddItem(Plate);
     }
 	
-  if(game::GetPlayer()->GetWielded())
-    if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
+  if(game::GetPlayer()->GetMainWielded())
+    if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	std::string OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
+	std::string OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
+	game::GetPlayer()->GetMainWielded()->SetMaterial(0, new mithril(game::GetPlayer()->GetMainWielded()->GetMaterial(0)->GetVolume()));
+	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
 	return;
       }
     else
-      ADD_MESSAGE("%s glows in a strange light but remains unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
+      ADD_MESSAGE("%s glows in a strange light but remains unchanged.", game::GetPlayer()->GetMainWielded()->CHARNAME(DEFINITE));
   else
     ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
@@ -407,15 +428,15 @@ void loricatus::PrayBadEffect()
 {
   std::string OldName;
 
-  if(game::GetPlayer()->GetWielded())
-    if(game::GetPlayer()->GetWielded()->IsMaterialChangeable())
+  if(game::GetPlayer()->GetMainWielded())
+    if(game::GetPlayer()->GetMainWielded()->IsMaterialChangeable())
       {
-	OldName = game::GetPlayer()->GetWielded()->Name(UNARTICLED);
-	game::GetPlayer()->GetWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetWielded()->GetMaterial(0)->GetVolume()));
-	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetWielded()->CNAME(INDEFINITE));
+	OldName = game::GetPlayer()->GetMainWielded()->Name(UNARTICLED);
+	game::GetPlayer()->GetMainWielded()->ChangeMaterial(0, new bananaflesh(game::GetPlayer()->GetMainWielded()->GetMaterial(0)->GetVolume()));
+	ADD_MESSAGE("Your %s changes into %s.", OldName.c_str(), game::GetPlayer()->GetMainWielded()->CHARNAME(INDEFINITE));
       }
     else
-      ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetWielded()->CNAME(DEFINITE));
+      ADD_MESSAGE("%s glows in a strange light but remain unchanged.", game::GetPlayer()->GetMainWielded()->CHARNAME(DEFINITE));
   else
     ADD_MESSAGE("You feel a slight tingling in your hands.");
 }
@@ -453,7 +474,9 @@ void erado::PrayBadEffect()
   ADD_MESSAGE("\"PuNy MoRtAl! YoU aRe NoT wOrThY! i ShAlL DeStRoY yOu LiKe EvErYoNe ElSe!\"");
   ADD_MESSAGE("A bolt of black energy hits you.");
 
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - game::GetPlayer()->GetMaxHP() + 1);
+  game::GetPlayer()->ReceiveEffect(1 + RAND() % 20, ENERGY, ALL);
+
   game::GetPlayer()->SetAgility(game::GetPlayer()->GetAgility() - 1);
   game::GetPlayer()->SetStrength(game::GetPlayer()->GetStrength() - 1);
   game::GetPlayer()->SetEndurance(game::GetPlayer()->GetEndurance() - 1);
@@ -463,7 +486,7 @@ void erado::PrayBadEffect()
 void mellis::PrayGoodEffect()
 {
   bool Success = false;
-  ushort JustCreated;
+  //ushort JustCreated;
   item* NewVersion;
 
   if(game::GetPlayer()->GetStack()->GetItems())
@@ -475,25 +498,26 @@ void mellis::PrayGoodEffect()
 	{
 	  Cont = false;
 
-	  for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
-	    if(game::GetPlayer()->GetStack()->GetItem(c))
-	      {
-		NewVersion = game::GetPlayer()->GetStack()->GetItem(c)->BetterVersion();
+	  //for(ushort c = 0; c < game::GetPlayer()->GetStack()->GetItems(); ++c)
+	    //if(game::GetPlayer()->GetStack()->GetItem(c))
+	  for(stackiterator i = game::GetPlayer()->GetStack()->GetBottomSlot(); i != game::GetPlayer()->GetStack()->GetSlotAboveTop(); ++i)
+	    {
+	      NewVersion = (**i)->BetterVersion();
 
-		if(NewVersion)
-		  {
-		    item* ToBeDeleted = game::GetPlayer()->GetStack()->GetItem(c);
-		    game::GetPlayer()->GetStack()->RemoveItem(c);
-		    JustCreated = game::GetPlayer()->GetStack()->AddItem(NewVersion);
-		    Success = true;
-		    ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CNAME(DEFINITE), game::GetPlayer()->GetStack()->GetItem(JustCreated)->CNAME(INDEFINITE));
-		    if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
-		    if(ToBeDeleted == game::GetPlayer()->GetTorsoArmor()) game::GetPlayer()->SetTorsoArmor(0);
-		    delete ToBeDeleted;
-		    Cont = true;
-		    break;
-		  }
-	      }
+	      if(NewVersion)
+		{
+		  item* ToBeDeleted = ***i;
+		  ToBeDeleted->RemoveFromSlot();
+		  game::GetPlayer()->GetStack()->AddItem(NewVersion);
+		  Success = true;
+		  ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHARNAME(DEFINITE), NewVersion->CHARNAME(INDEFINITE));
+		  //if(ToBeDeleted == game::GetPlayer()->GetWielded()) game::GetPlayer()->SetWielded(0);
+		  //if(ToBeDeleted == game::GetPlayer()->GetBodyArmor()) game::GetPlayer()->SetBodyArmor(0);
+		  delete ToBeDeleted;
+		  Cont = true;
+		  break;
+		}
+	    }
 	}
     }
 
@@ -542,7 +566,7 @@ void valpurus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -561,7 +585,7 @@ void valpurus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -584,7 +608,7 @@ void atavus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -603,7 +627,7 @@ void atavus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -626,7 +650,7 @@ void erado::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -645,7 +669,7 @@ void erado::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -663,13 +687,14 @@ void macellarius::PrayGoodEffect()
   item* Reward = new potion(false);
   Reward->InitMaterials(2, new glass, new omleurine);
   game::GetPlayer()->GetGiftStack()->AddItem(Reward);
-  ADD_MESSAGE("%s drops on the ground.", Reward->CNAME(DEFINITE));
+  ADD_MESSAGE("%s drops on the ground.", Reward->CHARNAME(DEFINITE));
 }
 
 void macellarius::PrayBadEffect()
 {
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
+  game::GetPlayer()->ReceiveEffect(RAND() % 7, PHYSICALDAMAGE, HEAD);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 7);
   game::GetPlayer()->GetLSquareUnder()->GetStack()->AddItem(new brokenbottle);
   game::GetPlayer()->CheckDeath(std::string("killed while enjoying the company of ") + Name());
 }
@@ -719,25 +744,43 @@ void cruentus::PrayGoodEffect()
 
 void cruentus::PrayBadEffect()
 {
-  item* ToBe;
+  item* ToBe = game::GetPlayer()->GetMainWielded();
 
-  ToBe = game::GetPlayer()->GetWielded();
+  if(ToBe)
+    {
+      if(!ToBe->Destroyable())
+      {
+	ToBe = game::GetPlayer()->GetSecondaryWielded();
 
-  if(ToBe && !ToBe->Destroyable())
-    ADD_MESSAGE("%s tries to destroy your weapon, but fails.", GOD_NAME);
+	if(!ToBe)
+	  ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, game::GetPlayer()->GetMainWielded()->CHARNAME(UNARTICLED));
+	else
+	  if(!ToBe->Destroyable())
+	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHARNAME(UNARTICLED));
+      }
+    }
+  else
+    {
+	ToBe = game::GetPlayer()->GetSecondaryWielded();
+
+	if(ToBe && !ToBe->Destroyable())
+	  ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHARNAME(UNARTICLED));
+    }
 
   if(ToBe && ToBe->Destroyable())
     {
       ADD_MESSAGE("%s destroys your weapon.", GOD_NAME);
 
-      game::GetPlayer()->GetStack()->RemoveItem(game::GetPlayer()->GetStack()->SearchItem(ToBe));
-      game::GetPlayer()->SetWielded(0);
-      delete ToBe;
+      ToBe->RemoveFromSlot();
+      //game::GetPlayer()->GetStack()->RemoveItem(game::GetPlayer()->GetStack()->SearchItem(ToBe));
+      //game::GetPlayer()->SetWielded(0);
+      ToBe->SetExists(false);
     }
   else
     {
       ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
-      game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
+      //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - RAND() % 20);
+      game::GetPlayer()->ReceiveEffect(1 + RAND() % 20, PHYSICALDAMAGE, ALL, RAND() % 8);
       game::GetPlayer()->CheckDeath(std::string("destroyed by ") + Name());
     }
 }
@@ -759,7 +802,7 @@ void cruentus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -778,7 +821,7 @@ void cruentus::Pray()
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetTeam(5));
-	      ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -825,4 +868,5 @@ void valpurus::AddPriestMessage() const
   ADD_MESSAGE("\"In thine prayers thou must understand that He is a busy god who knows His importance.");
   ADD_MESSAGE("He will not help newbies. Pray Him only when He calls thee a Champion!\"");
 }
+
 

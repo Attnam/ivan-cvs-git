@@ -49,7 +49,7 @@ bool door::Open(character* Opener)
 	  else if(GetLSquareUnder()->CanBeSeen())
 	    {
 	      if(Opener->GetLSquareUnder()->CanBeSeen())
-		ADD_MESSAGE("%s opens the door.", Opener->CNAME(DEFINITE));
+		ADD_MESSAGE("%s opens the door.", Opener->CHARNAME(DEFINITE));
 	      else
 		ADD_MESSAGE("Something opens the door.");
 	    }
@@ -61,7 +61,7 @@ bool door::Open(character* Opener)
 	    ADD_MESSAGE("The door resists.");
 	  else if(GetLSquareUnder()->CanBeSeen())
 	    if(Opener->GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s fails to open the door.", Opener->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s fails to open the door.", Opener->CHARNAME(DEFINITE));
 	  ActivateBoobyTrap();
 	  return true;
 	}
@@ -384,24 +384,39 @@ void altar::ReceiveVomit(character* Who)
     game::GetGod(GetLSquareUnder()->GetDivineOwner())->PlayerVomitedOnAltar();
 }
 
-std::string door::Name(uchar Case) const
+/*std::string door::Name(uchar Case) const
 {
   if(!(Case & PLURAL))
     if(!(Case & DEFINEBIT))
-      return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
+      return std::string(IsOpen ? "open" : "closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
+	return std::string(IsOpen ? "the open" : "the closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
       else
-	return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name() + " " + NameSingular();
+	return std::string(IsOpen ? "an open" : "a closed") + (IsLocked ? ", locked " : " ") + GetMaterial(0)->Name(UNARTICLED) + " " + NameSingular();
   else
     if(!(Case & DEFINEBIT))
-      return GetMaterial(0)->Name() + " " + NamePlural();
+      return GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
     else
       if(!(Case & INDEFINEBIT))
-	return std::string("the ") + GetMaterial(0)->Name() + " " + NamePlural();
+	return std::string("the ") + GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
       else
-	return GetMaterial(0)->Name() + " " + NamePlural();
+	return GetMaterial(0)->Name(UNARTICLED) + " " + NamePlural();
+}*/
+
+std::string door::Adjective(bool Articled) const
+{
+  std::string Adj;
+
+  if(Articled)
+    Adj = std::string(IsOpen ? "an open" : "a closed");
+  else
+    Adj = std::string(IsOpen ? "open" : "closed");
+
+  if(IsLocked)
+    Adj += ", locked";
+
+  return Adj;
 }
 
 bool couch::SitOn(character*)
@@ -436,7 +451,7 @@ bool bookcase::SitOn(character*)
 
 bool fountain::SitOn(character* Char)
 {
-  if(GetMaterial(1))
+  if(GetContainedMaterial())
     {
       ADD_MESSAGE("You sit on the fountain. Water falls on your head and you get quite wet. You feel like a moron.");
       return true;
@@ -453,9 +468,9 @@ bool doublebed::SitOn(character*)
 
 bool fountain::Consume(character* Drinker)
 {
-  if(GetMaterial(1))
+  if(GetContainedMaterial())
     {
-      if(GetMaterial(1)->GetType() == water::StaticType()) 
+      if(GetContainedMaterial()->GetType() == water::StaticType()) 
 	{
 	  if(GetLSquareUnder()->GetRoom() && GetLSquareUnder()->GetLevelUnder()->GetRoom(GetLSquareUnder()->GetRoom())->HasDrinkHandler())
 	    {
@@ -464,7 +479,7 @@ bool fountain::Consume(character* Drinker)
 	    }
 	  else
 	    {
-	      if(!game::BoolQuestion("Do you still want to drink from the fountain? [y/N]"))
+	      if(!game::BoolQuestion("Do you want to drink from the fountain? [y/N]"))
 		{
 		  return false;
 		}
@@ -504,7 +519,7 @@ bool fountain::Consume(character* Drinker)
 		      if(TempItem)
 			{
 			  Drinker->GetStack()->AddItem(TempItem);
-			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CNAME(INDEFINITE));
+			  ADD_MESSAGE("%s appears from nothing and the spirit flies happily away!", TempItem->CHARNAME(INDEFINITE));
 			  break;
 			}
 		      else
@@ -547,9 +562,9 @@ bool fountain::Consume(character* Drinker)
 
 void fountain::DryOut()
 {
-  ADD_MESSAGE("%s dries out.", CNAME(DEFINITE));
-  delete GetMaterial(1);
-  SetMaterial(1, 0);
+  ADD_MESSAGE("%s dries out.", CHARNAME(DEFINITE));
+  delete GetContainedMaterial();
+  SetMaterial(GetContainedMaterialIndex(), 0);
   UpdatePicture();
 
   if(GetSquareUnder())
@@ -645,7 +660,7 @@ bool brokendoor::ReceiveStrike()
 bool altar::Polymorph(character*)
 {
   if(GetSquareUnder()->CanBeSeen())
-    ADD_MESSAGE("%s glows briefly.", CNAME(DEFINITE));
+    ADD_MESSAGE("%s glows briefly.", CHARNAME(DEFINITE));
 	
   uchar OldGod = OwnerGod;
 
@@ -685,7 +700,7 @@ bool altar::SitOn(character*)
 	if(Angel)
 	  {
 	    Angel->SetTeam(game::GetPlayer()->GetTeam());
-	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	    ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	  }
 
 	game::GetGod(OwnerGod)->AdjustRelation(50);
@@ -700,12 +715,9 @@ bool pool::GetIsWalkable(character* ByWho) const
   return ByWho && (ByWho->CanSwim() || ByWho->CanFly());
 }
 
-std::string fountain::Name(uchar Case) const
+std::string fountain::Adjective(bool Articled) const
 {
-  if(GetMaterial(1))
-    return NameWithMaterial(Case, 1);
-  else
-    return NameNormal(Case, "a", "dried out ");
+  return Articled ? "a dried out" : "dried out";
 }
 
 void couch::ShowRestMessage(character*) const
@@ -735,7 +747,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	  MakeWalkable();
 	  if(Visible)
 	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 	}
       else if(Energy > 500)
@@ -749,7 +761,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 
 	  if(Visible)
 	    {
-	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s and %s breaks.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 
 	  Break(NewLockedStatus);
@@ -759,7 +771,7 @@ void door::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	  // Nothing happens
 	  if(Visible)
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -781,7 +793,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	  MakeWalkable();
 	  if(Visible)
 	    {
-	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s and %s opens.", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 	}
       else
@@ -789,7 +801,7 @@ void brokendoor::HasBeenHitBy(item* Hitter, float Speed, uchar, bool Visible)
 	  // Nothing happens
 	  if(Visible)
 	    {
-	      ADD_MESSAGE("%s hits %s. ", Hitter->CNAME(DEFINITE), CNAME(DEFINITE), CNAME(DEFINITE));
+	      ADD_MESSAGE("%s hits %s. ", Hitter->CHARNAME(DEFINITE), CHARNAME(DEFINITE), CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -819,7 +831,7 @@ void door::ActivateBoobyTrap()
       // Explosion
       if(GetLSquareUnder()->CanBeSeen())
 	{
-	  ADD_MESSAGE("%s is booby trapped!", CNAME(DEFINITE));
+	  ADD_MESSAGE("%s is booby trapped!", CHARNAME(DEFINITE));
 	  GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by an exploding booby trapped door", GetPos(), 20 + RAND() % 10 - RAND() % 10);
 	}
       break;
@@ -833,7 +845,6 @@ void door::CreateBoobyTrap()
 {
   SetBoobyTrap(1); 
 }
-
 
 bool door::ReceiveApply(item* Thingy, character* Applier)
 {
@@ -854,9 +865,9 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
 	  else if(Applier->GetLSquareUnder()->CanBeSeen())
 	    {
 	      if(GetIsLocked())
-		ADD_MESSAGE("%s unlocks the door.", Applier->CNAME(DEFINITE));
+		ADD_MESSAGE("%s unlocks the door.", Applier->CHARNAME(DEFINITE));
 	      else
-		ADD_MESSAGE("%s locks the door.", Applier->CNAME(DEFINITE));
+		ADD_MESSAGE("%s locks the door.", Applier->CHARNAME(DEFINITE));
 	    }
 	  SetIsLocked(!GetIsLocked());	      
 	}
@@ -871,7 +882,6 @@ bool door::ReceiveApply(item* Thingy, character* Applier)
   else
     return false;
 }
-
 
 bool fountain::ReceiveDip(item* ToBeDipped, character* Who)
 {

@@ -229,7 +229,7 @@ void lsquare::Draw()
 	      DrawTerrain();
 
 	      igraph::GetTileBuffer()->Blit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, RealLuminance);
-	      igraph::GetTileBuffer()->Fill(TRANSPARENT);
+	      igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 
 	      if(DrawStacks())
 		{
@@ -242,7 +242,7 @@ void lsquare::Draw()
 		  igraph::GetOutlineBuffer()->MaskedBlit(DOUBLEBUFFER, 0, 0, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
 
 		  if(GetCharacter())
-		    igraph::GetTileBuffer()->Fill(TRANSPARENT);
+		    igraph::GetTileBuffer()->Fill(TRANSPARENTCOL);
 		}
 
 	      if(!configuration::GetOutlineCharacters())
@@ -653,7 +653,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	  {
 	    bool Anything = false;
 
-	    if(GetOLTerrain()->GetNameSingular() != "")
+	    if(GetOLTerrain()->NameSingular() != "")
 	      {
 		SetMemorizedDescription(GetOLTerrain()->Name(INDEFINITE));
 		Anything = true;
@@ -663,12 +663,12 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 	      {
 		if(Anything)
 		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+		    SetMemorizedDescription(GetMemorizedDescription() + " and " + std::string(GetStack()->GetBottomItem()->Name(INDEFINITE)));
 		  else
 		    SetMemorizedDescription(GetMemorizedDescription() + " and " + "many items");
 		else
 		  if(GetStack()->GetItems() == 1)
-		    SetMemorizedDescription(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
+		    SetMemorizedDescription(std::string(GetStack()->GetBottomItem()->Name(INDEFINITE)));
 		  else
 		    SetMemorizedDescription("many items");
 
@@ -707,7 +707,7 @@ void lsquare::UpdateMemorizedDescription(bool Cheat)
 		{
 		  if(GetSideStack(c)->GetItems())
 		    {
-		      SetMemorizedDescription(GetSideStack(c)->GetItem(0)->Name(INDEFINITE) + " on " + GetOLTerrain()->Name(INDEFINITE));
+		      SetMemorizedDescription(GetSideStack(c)->GetBottomItem()->Name(INDEFINITE) + " on " + GetOLTerrain()->Name(INDEFINITE));
 		      break;
 		    }
 		}
@@ -954,8 +954,8 @@ void lsquare::ChangeOLTerrainAndUpdateLights(olterrain* NewTerrain)
   game::SendLOSUpdateRequest();
 
   for(ushort c = 0; c < 4; ++c)
-    for(ushort x = 0; x < GetSideStack(c)->GetItems(); ++x)
-      GetSideStack(c)->MoveItem(x, GetStack())->SignalSquarePositionChange(false);
+    for(stackiterator i = GetSideStack(c)->GetBottomSlot(); i != GetSideStack(c)->GetSlotAboveTop(); ++i)
+      GetSideStack(c)->MoveItem(i, GetStack())->SignalSquarePositionChange(false);
 }
 
 void lsquare::PolymorphEverything(character* Zapper)
@@ -1060,24 +1060,21 @@ void lsquare::HasBeenHitBy(item* Hitter, float Speed, uchar FlyingDirection, boo
   GetOLTerrain()->HasBeenHitBy(Hitter, Speed, FlyingDirection, Visible);
 }
 
-bool lsquare::TeleportEverything(character* Teleporter)
+void lsquare::TeleportEverything(character* Teleporter)
 {
-  bool HasHitSomething = false; 
   if(GetCharacter())
     {
       Teleporter->Hostility(GetCharacter());
       GetCharacter()->Teleport();
-      HasHitSomething = true;
     }
+
   if(Room)
     GetLevelUnder()->GetRoom(Room)->TeleportSquare(Teleporter, this);
 
-  if(GetStack()->Teleport())
-    HasHitSomething = true;
+  GetStack()->Teleport();
 
   Teleporter->EditPerceptionExperience(50);
   Teleporter->EditNP(-50);
-  return true;  
 }
 
 bool lsquare::ReceiveApply(item* Thingy, character* Applier)
@@ -1120,6 +1117,7 @@ bool lsquare::ReceiveDip(item* Thingy, character* Dipper)
     {
       if(Dipper->GetIsPlayer())
 	ADD_MESSAGE("You cannot dip that on this!");
+
       return false;
     }
 }
@@ -1128,7 +1126,10 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 {
   if(GetCharacter() && !GetCharacter()->GetIsPlayer())
     {
-      switch(game::GetPlayer()->GetTeam()->GetRelation(GetCharacter()->GetTeam()))
+      if(GetCharacter()->GetTeam() == game::GetPlayer()->GetTeam())
+	igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
+
+      /*switch(game::GetPlayer()->GetTeam()->GetRelation(GetCharacter()->GetTeam()))
 	{
 	case FRIEND:
 	  igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 32, 16, BitPos.X, BitPos.Y, 16, 16, ContrastLuminance);
@@ -1136,6 +1137,6 @@ void lsquare::DrawCharacterSymbols(vector2d BitPos, ushort ContrastLuminance)
 	default:
 	  
 	  break;
-	}
+	}*/
     }
 }

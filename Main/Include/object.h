@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#define CHARNAME(Case) Name(Case).c_str()
+
 #include <string>
 
 #include "typedef.h"
@@ -13,6 +15,7 @@
 #include "igraph.h"
 #include "type.h"
 #include "unit.h"
+#include "identity.h"
 
 class material;
 class outputfile;
@@ -21,7 +24,7 @@ class bitmap;
 class lsquare;
 class square;
 
-class object : public type, public unit
+class object : public type, public unit, public identity
 {
  public:
   object(bool, bool);
@@ -35,19 +38,27 @@ class object : public type, public unit
   virtual void UpdatePicture(bool = true);
   virtual ulong GetDefaultVolume(ushort Index) const = 0;
   //virtual void ColorChangeSpeciality(uchar, bool) { }
+  virtual uchar GetMainMaterialIndex() const { return 0; }
+  virtual material* GetMainMaterial() const { return GetMaterial(GetMainMaterialIndex()); }
+  virtual uchar GetContainedMaterialIndex() const { return 1; }
+  virtual material* GetContainedMaterial() const { return GetMaterial(GetContainedMaterialIndex()); }
  protected:
-  virtual uchar GetSpecialType() const { return NORMAL; }
+  virtual uchar GetSpecialType() const { return STNORMAL; }
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColor0() const;
   virtual ushort GetMaterialColor1() const;
   virtual ushort GetMaterialColor2() const;
   virtual ushort GetMaterialColor3() const;
-  virtual std::string NameArtifact(uchar, uchar) const;
+  /*virtual std::string NameArtifact(uchar, uchar) const;
   virtual std::string NameWithMaterial(uchar, uchar = 0) const;
   virtual std::string NameHandleDefaultMaterial(uchar, std::string, uchar) const;
   virtual std::string NameContainer(uchar) const;
-  virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
-  virtual std::string OwnerGodDescription(uchar) const;
+  virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;*/
+
+  virtual std::string MaterialDescription(bool) const;
+  virtual std::string ContainerPostFix() const;
+  virtual std::string LumpyPostFix() const;
+
   virtual vector2d GetBitmapPos() const = 0;
   graphic_id GraphicId;
 };

@@ -25,7 +25,7 @@ void god::Pray()
 	    if(Angel)
 	      {
 		Angel->SetTeam(game::GetPlayer()->GetTeam());
-		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+		ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	      }
 	  }
       }
@@ -60,7 +60,7 @@ void god::Pray()
 	    if(Angel)
 	      {
 		Angel->SetTeam(game::GetTeam(5));
-		ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+		ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	      }
 	  }
       }
@@ -135,7 +135,8 @@ void god::PlayerVomitedOnAltar()
   ADD_MESSAGE("The vomit drops on the altar, but then suddenly gravity changes its direction.");
   ADD_MESSAGE("The vomit lands on your face.");
   AdjustRelation(-200);
-  game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
+  game::GetPlayer()->ReceiveEffect(1 + RAND() % 2, ACID, HEAD);//SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
+  //game::GetPlayer()->SetHP(game::GetPlayer()->GetHP() - 1 - RAND() % 2);
   game::GetPlayer()->CheckDeath("chocked to death by own vomit");
 
   if(!(RAND() % 50))
@@ -145,7 +146,7 @@ void god::PlayerVomitedOnAltar()
       if(Angel)
 	{
 	  Angel->SetTeam(game::GetTeam(5));
-	  ADD_MESSAGE("%s seems to be hostile.", Angel->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s seems to be hostile.", Angel->CHARNAME(DEFINITE));
 	}
     }
 }
@@ -165,7 +166,7 @@ character* god::CreateAngel()
 	  Angel->SetMaster(GetType());
 
 	  game::GetCurrentLevel()->GetLSquare(TryToCreate)->AddCharacter(Angel);
-	  ADD_MESSAGE("Suddenly %s appears!", Angel->CNAME(INDEFINITE));
+	  ADD_MESSAGE("Suddenly %s appears!", Angel->CHARNAME(INDEFINITE));
 	  return Angel;
 	}
       else
@@ -213,7 +214,7 @@ bool god::ReceiveOffer(item* Sacrifice)
     {
       if(!Sacrifice->Destroyable())
 	{
-	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s is too important for you to be sacrificed.", Sacrifice->CHARNAME(DEFINITE));
 
 	  return false;
 	}
@@ -235,7 +236,7 @@ bool god::ReceiveOffer(item* Sacrifice)
 	  if(Angel)
 	    {
 	      Angel->SetTeam(game::GetPlayer()->GetTeam());
-	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s seems to be very friendly towards you.", Angel->CHARNAME(DEFINITE));
 	    }
 	}
 

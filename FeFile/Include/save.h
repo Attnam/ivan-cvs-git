@@ -8,7 +8,8 @@
 #include <cstdio>
 #include <vector>
 #include <map>
-#include <queue>
+//#include <queue>
+#include <list>
 
 #include "typedef.h"
 #include "vector2d.h"
@@ -192,6 +193,32 @@ template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::vec
 
   for(ulong c = 0; c < Vector.size(); ++c)
     SaveFile >> Vector[c];
+
+  return SaveFile;
+}
+
+template <class type> inline outputfile& operator<<(outputfile& SaveFile, std::list<type> List)
+{
+  ulong Size = List.size();
+
+  SaveFile.Write((char*)&Size, sizeof(Size));
+
+  for(std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
+    SaveFile << *i;
+
+  return SaveFile;
+}
+
+template <class type> inline inputfile& operator>>(inputfile& SaveFile, std::list<type>& List)
+{
+  ulong Size;
+
+  SaveFile.Read((char*)&Size, sizeof(Size));
+
+  List.resize(Size, type());
+
+  for(std::list<type>::iterator i = List.begin(); i != List.end(); ++i)
+    SaveFile >> *i;
 
   return SaveFile;
 }

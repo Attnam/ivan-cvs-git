@@ -3,9 +3,9 @@
 #include "error.h"
 #include "femath.h"
 
-std::string material::Name(uchar Case, bool Adjective) const
+std::string material::Name(bool Articled, bool Adjective) const
 {
-  std::string Name = Case & INDEFINEBIT ? Article() + " " : "";
+  std::string Name = Articled ? Article() + " " : "";
   Name += Adjective ? AdjectiveStem() : NameStem();
   return Name;
 }
@@ -49,8 +49,7 @@ void material::EatEffect(character*, float, float)
   ABORT("Calling material that does not have eat effect!");
 }
 
-
 bool material::CanBeDigged(material* ShovelMaterial) const
 {
-  return ShovelMaterial->StrengthValue() > StrengthValue();
+  return ShovelMaterial->GetStrengthValue() > GetStrengthValue();
 }

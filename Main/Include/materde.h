@@ -13,7 +13,7 @@ class MATERIAL
   iron,
   material,
  public:
-  virtual ushort StrengthValue() const { return 100; }
+  virtual ushort GetStrengthValue() const { return 100; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 8000; }
   virtual ushort OfferValue() const { return 10; }
@@ -30,7 +30,7 @@ class MATERIAL
   valpurium,
   material,
  public:
-  virtual ushort StrengthValue() const { return 400; }
+  virtual ushort GetStrengthValue() const { return 400; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 100; }
@@ -49,7 +49,7 @@ class MATERIAL
   stone,
   material,
  public:
-  virtual ushort StrengthValue() const { return 60; }
+  virtual ushort GetStrengthValue() const { return 60; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 5; }
@@ -64,7 +64,7 @@ class MATERIAL
   bananaflesh,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 10; }
@@ -82,7 +82,7 @@ class MATERIAL
   gravel,
   material,
  public:
-  virtual ushort StrengthValue() const { return 40; }
+  virtual ushort GetStrengthValue() const { return 40; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 1; }
@@ -96,7 +96,7 @@ class MATERIAL
   moraine,
   material,
  public:
-  virtual ushort StrengthValue() const { return 20; }
+  virtual ushort GetStrengthValue() const { return 20; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 2; }
@@ -110,7 +110,7 @@ class MATERIAL
   schoolfood,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return SCHOOLFOOD; }
   virtual ushort GetDensity() const { return 1500; }
   virtual ushort OfferValue() const { return 20; }
@@ -130,7 +130,7 @@ class MATERIAL
   air,
   material,
  public:
-  virtual ushort StrengthValue() const { return 0; }
+  virtual ushort GetStrengthValue() const { return 0; }
   virtual ushort GetDensity() const { return 1; }
   virtual ushort OfferValue() const { return 0; }
   virtual ushort GetColor() const { return MAKE_RGB(112, 112, 200); }
@@ -144,7 +144,7 @@ class MATERIAL
   wood,
   material,
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 5; }
@@ -160,8 +160,7 @@ class MATERIAL
   flesh,
   material,
  public:
-
-  virtual ushort StrengthValue() const { return 10; }
+  virtual ushort GetStrengthValue() const { return 10; }
   virtual uchar GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 15; }
@@ -216,7 +215,7 @@ class MATERIAL
   bone,
   material,
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 5; }
   virtual uchar GetConsumeType() const { return BONE; }
@@ -258,7 +257,7 @@ class MATERIAL
   elpuriflesh,
   darkfrogflesh,
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual ushort GetDensity() const { return 2400; }
   virtual ushort OfferValue() const { return 1; }
  protected:
@@ -271,7 +270,7 @@ class MATERIAL
   glass,
   material,
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 2500; }
   virtual ushort OfferValue() const { return 5; }
@@ -286,7 +285,7 @@ class MATERIAL
   omleurine,
   material,
  public:
-  virtual ushort StrengthValue() const { return 1; }
+  virtual ushort GetStrengthValue() const { return 1; }
   virtual uchar GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 100; }
@@ -307,7 +306,7 @@ class MATERIAL
   bananapeal,
   material,
  public:
-  virtual ushort StrengthValue() const { return 10; }
+  virtual ushort GetStrengthValue() const { return 10; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 1; }
@@ -322,7 +321,7 @@ class MATERIAL
   parchment,
   material,
  public:
-  virtual ushort StrengthValue() const { return 15; }
+  virtual ushort GetStrengthValue() const { return 15; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 600; }
   virtual ushort OfferValue() const { return 5; }
@@ -338,7 +337,7 @@ class MATERIAL
   cloth,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 100; }
   virtual ushort OfferValue() const { return 5; }
@@ -366,7 +365,7 @@ class MATERIAL
   slime,
   material,
  public:
-  virtual ushort StrengthValue() const { return 2; }
+  virtual ushort GetStrengthValue() const { return 2; }
   virtual uchar GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 400; }
   virtual ushort OfferValue() const { return 1; }
@@ -419,7 +418,7 @@ class MATERIAL
   ennerbeastflesh,
   humanflesh, //???
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual ushort GetDensity() const { return 1800; }
   virtual ushort OfferValue() const { return 5; }
   virtual ushort GetColor() const { return MAKE_RGB(112, 112, 64); }
@@ -434,7 +433,7 @@ class MATERIAL
   pepsi,
   material,
  public:
-  virtual ushort StrengthValue() const { return 200; }
+  virtual ushort GetStrengthValue() const { return 200; }
   virtual uchar GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1500; }
   virtual ushort OfferValue() const { return 50; }
@@ -453,7 +452,7 @@ class MATERIAL
   mithril,
   material,
  public:
-  virtual ushort StrengthValue() const { return 200; }
+  virtual ushort GetStrengthValue() const { return 200; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 5000; }
   virtual ushort OfferValue() const { return 25; }
@@ -504,7 +503,7 @@ class MATERIAL
   marble,
   material,
  public:
-  virtual ushort StrengthValue() const { return 50; }
+  virtual ushort GetStrengthValue() const { return 50; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3000; }
   virtual ushort OfferValue() const { return 7; }
@@ -519,11 +518,10 @@ class MATERIAL
   gold,
   material,
  public:
-  virtual ushort StrengthValue() const { return 30; }
+  virtual ushort GetStrengthValue() const { return 30; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 20000; }
   virtual ushort OfferValue() const { return 50; }
-  virtual uchar Alignment() const { return NEUTRAL; }
   virtual bool IsSolid() const { return true; }
   virtual ushort GetColor() const { return MAKE_RGB(200, 200, 0); }
   virtual bool CanBeWished() const { return false; }
@@ -538,7 +536,7 @@ class MATERIAL
   grass,
   material,
  public:
-  virtual ushort StrengthValue() const { return 2; }
+  virtual ushort GetStrengthValue() const { return 2; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 100; }
   virtual ushort OfferValue() const { return 2; }
@@ -554,7 +552,7 @@ class MATERIAL
   kiwiflesh,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 11; }
@@ -572,7 +570,7 @@ class MATERIAL
   pineappleflesh,
   material,
  public:
-  virtual ushort StrengthValue() const { return 10; }
+  virtual ushort GetStrengthValue() const { return 10; }
   virtual uchar GetConsumeType() const { return FRUIT; }
   virtual ushort GetDensity() const { return 1200; }
   virtual ushort OfferValue() const { return 12; }
@@ -590,7 +588,7 @@ class MATERIAL
   leather,
   material,
  public:
-  virtual ushort StrengthValue() const { return 10; }
+  virtual ushort GetStrengthValue() const { return 10; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
@@ -638,7 +636,7 @@ class MATERIAL
   leaf,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 500; }
   virtual ushort OfferValue() const { return 10; }
@@ -667,7 +665,7 @@ class MATERIAL
   water,
   material,
  public:
-  virtual ushort StrengthValue() const { return 1; }
+  virtual ushort GetStrengthValue() const { return 1; }
   virtual uchar GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 1; }
@@ -692,7 +690,7 @@ class MATERIAL
   sulfur,
   material,
  public:
-  virtual ushort StrengthValue() const { return 50; }
+  virtual ushort GetStrengthValue() const { return 50; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 10; }
@@ -834,11 +832,10 @@ class MATERIAL
   gunpowder,
   material,
  public:
-  virtual ushort StrengthValue() const { return 5; }
+  virtual ushort GetStrengthValue() const { return 5; }
   virtual uchar GetConsumeType() const { return ODD; }
   virtual ushort GetDensity() const { return 250; }
   virtual ushort OfferValue() const { return 5; }
-  virtual uchar Alignment() const { return NEUTRAL; }
   virtual ushort GetColor() const { return MAKE_RGB(30, 30, 30); }
   virtual bool CanBeWished() const { return false; }
   virtual bool IsExplosive() const { return true; }
@@ -863,7 +860,7 @@ class MATERIAL
   blood,
   material, // should be "liquid"
  public:
-  virtual ushort StrengthValue() const { return 200; }
+  virtual ushort GetStrengthValue() const { return 200; }
   virtual uchar GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1000; }
   virtual ushort OfferValue() const { return 50; }
@@ -892,7 +889,7 @@ class MATERIAL
   bread,
   material,
  public:
-  virtual ushort StrengthValue() const { return 10; }
+  virtual ushort GetStrengthValue() const { return 10; }
   virtual uchar GetConsumeType() const { return MEAT; }
   virtual ushort GetDensity() const { return 200; }
   virtual ushort OfferValue() const { return 7; }
@@ -910,7 +907,7 @@ class MATERIAL
   unicornhorn,
   material,
  public:
-  virtual ushort StrengthValue() const { return 125; }
+  virtual ushort GetStrengthValue() const { return 125; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 2000; }
   virtual ushort OfferValue() const { return 10; }
@@ -961,7 +958,7 @@ class MATERIAL
   diamond,
   material,
  public:
-  virtual ushort StrengthValue() const { return 300; }
+  virtual ushort GetStrengthValue() const { return 300; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
@@ -977,7 +974,7 @@ class MATERIAL
   silver,
   material,
  public:
-  virtual ushort StrengthValue() const { return 50; }
+  virtual ushort GetStrengthValue() const { return 50; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 10500; }
   virtual ushort OfferValue() const { return 30; }
@@ -994,7 +991,7 @@ class MATERIAL
   sapphire,
   material,
  public:
-  virtual ushort StrengthValue() const { return 250; }
+  virtual ushort GetStrengthValue() const { return 250; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
@@ -1010,7 +1007,7 @@ class MATERIAL
   ruby,
   material,
  public:
-  virtual ushort StrengthValue() const { return 250; }
+  virtual ushort GetStrengthValue() const { return 250; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 3500; }
   virtual ushort OfferValue() const { return 50; }
@@ -1026,7 +1023,7 @@ class MATERIAL
   healingliquid,
   material,
  public:
-  virtual ushort StrengthValue() const { return 1; }
+  virtual ushort GetStrengthValue() const { return 1; }
   virtual uchar GetConsumeType() const { return LIQUID; }
   virtual ushort GetDensity() const { return 1100; }
   virtual ushort OfferValue() const { return 70; }
@@ -1037,14 +1034,14 @@ class MATERIAL
   virtual ulong RawPrice() const { return GetVolume() >> 2; }
  protected:
   virtual std::string NameStem() const { return "healing liquid"; }
-); 
+);
 
 class MATERIAL
 (
   bronze,
   material,
  public:
-  virtual ushort StrengthValue() const { return 80; }
+  virtual ushort GetStrengthValue() const { return 80; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 8300; } 
   virtual ushort OfferValue() const { return 10; }
@@ -1060,7 +1057,7 @@ class MATERIAL
   copper,
   material,
  public:
-  virtual ushort StrengthValue() const { return 60; }
+  virtual ushort GetStrengthValue() const { return 60; }
   virtual uchar GetConsumeType() const { return HARD; }
   virtual ushort GetDensity() const { return 9000; } // rounded from 8920
   virtual ushort OfferValue() const { return 10; } 
@@ -1070,4 +1067,6 @@ class MATERIAL
  protected:
   virtual std::string NameStem() const { return "bronze"; }
 );
+
 #endif
+

@@ -38,7 +38,7 @@ class lterrain : public object
   virtual vector2d GetPos() const;
   virtual bool CanBeOpened() const { return false; }
   virtual bool CanBeOffered() const { return false; }
-  virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
+  //virtual std::string Name(uchar Case) const { return NameWithMaterial(Case); }
   virtual bool CanBeDigged() const { return false; }
   virtual uchar OKVisualEffects() const { return 0; }
   virtual uchar GetVisualFlags() const { return VisualFlags; }
@@ -56,6 +56,7 @@ class lterrain : public object
   virtual bool HasDipEffect() const { return false; }
  protected:
   virtual uchar GetGraphicsContainerIndex() const { return GRLTERRAIN; }
+  virtual bool ShowMaterial() const { return true; }
   uchar VisualFlags;
 };
 
@@ -65,7 +66,7 @@ class glterrain : public lterrain, public gterrain
   glterrain(bool = true, bool = true, bool AddToPool = true) : lterrain(AddToPool) { }
   virtual void DrawToTileBuffer() const;
   virtual glterrain* Clone(bool = true, bool = true) const = 0;
-  virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
+  //virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual bool SitOn(character*);
   virtual ushort GetEntryAPRequirement() const { return 1000; }
 };
@@ -80,7 +81,7 @@ class olterrain : public lterrain, public oterrain
   virtual uchar GetOwnerGod() const { return 0; }
   virtual std::string DigMessage() const { return "The ground is too hard to dig."; }
   virtual olterrain* Clone(bool = true, bool = true) const = 0;
-  virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
+  //virtual std::string Name(uchar Case = 0) const { return lterrain::Name(Case); }
   virtual void Kick(ushort, bool, uchar) { }
   virtual bool IsDoor() const { return false; }
   virtual bool SitOn(character*) { return false; }

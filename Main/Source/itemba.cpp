@@ -11,8 +11,9 @@
 #include "message.h"
 #include "wskill.h"
 #include "femath.h"
+#include "slot.h"
 
-item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool, false), Cannibalised(false)
+item::item(bool CreateMaterials, bool SetStats, bool AddToPool) : object(AddToPool, false), Slot(0), Cannibalised(false)
 {
   ID = game::CreateNewItemID();
 
@@ -83,7 +84,6 @@ short item::CalculateOfferValue(char GodAlignment) const
   return short(OfferValue * (OfferModifier() / 250));
 }
 
-
 /******************************************
 *This fly system seems to have been made, *
 *just to handle only player               *
@@ -118,7 +118,7 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	  if(Speed < 0.5)
 	    break;
 
-	  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
+	  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 	  game::DrawEverything(false);
 	  Start = game::GetCurrentLevel()->GetLSquare(Pos)->GetStack();
 
@@ -138,10 +138,10 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 	}
     }
 
-  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
+  MoveTo(game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
 
   if(Breaks)
-    ImpactDamage(ushort(Speed), game::GetCurrentLevel()->GetLSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLSquare(Pos)->GetStack());
+    ImpactDamage(ushort(Speed));
 
   if(Pos == StartingPos)
     return false;
@@ -157,10 +157,10 @@ bool item::HitCharacter(character* Dude, float Speed, character* Hitter)
   if(Dude->DodgesFlyingItem(this, Speed)) 
     {
       if(Dude->GetIsPlayer())
-	ADD_MESSAGE("%s misses you.", CNAME(DEFINITE));
+	ADD_MESSAGE("%s misses you.", CHARNAME(DEFINITE));
       else
 	if(Dude->GetLSquareUnder()->CanBeSeen())
-	  ADD_MESSAGE("%s misses %s.", CNAME(DEFINITE), Dude->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s misses %s.", CHARNAME(DEFINITE), Dude->CHARNAME(DEFINITE));
 
       return false;
     }
@@ -179,7 +179,7 @@ item* item::PrepareForConsuming(character*, stack*)
 
 float item::GetWeaponStrength() const
 {
-  return sqrt(float(GetFormModifier()) * Material[0]->StrengthValue() * GetWeight());
+  return sqrt(float(GetFormModifier()) * Material[0]->GetStrengthValue() * GetWeight());
 }
 
 void item::DrawToTileBuffer() const
@@ -222,28 +222,28 @@ uchar item::GetWeaponCategory() const
   return UNCATEGORIZED;
 }
 
-bool item::StruckByWandOfStriking(character*, std::string, stack* What) 
+bool item::StruckByWandOfStriking(character*, std::string) 
 { 
-  return ImpactDamage(10, What->GetLSquareUnder()->CanBeSeen(), What);
+  return ImpactDamage(10);
 }
 
 bool item::Consume(character* Eater, float Amount)
 {
-  GetMaterial(0)->EatEffect(Eater, Amount, NPModifier());
+  GetMainMaterial()->EatEffect(Eater, Amount, NPModifier());
 
-  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+  if(!Cannibalised && Eater->GetIsPlayer() && Eater->CheckCannibalism(GetMainMaterial()->GetType()))
     {
       game::DoEvilDeed(25);
       ADD_MESSAGE("You feel that this was an evil deed.");
       Cannibalised = true;
     }
 
-  return GetMaterial(0)->GetVolume() ? false : true;
+  return GetMainMaterial()->GetVolume() ? false : true;
 }
 
 bool item::IsBadFoodForAI(character* Eater) const
 {
-  if(Eater->CheckCannibalism(GetMaterial(0)->GetType()))
+  if(Eater->CheckCannibalism(GetMainMaterial()->GetType()))
     return true;
   else
     return GetMaterial(GetConsumeMaterial())->GetIsBadFoodForAI();
@@ -267,8 +267,8 @@ void item::Load(inputfile& SaveFile)
 
 void item::Teleport(stack* Start)
 {
-  Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
   /* This uses Player as the character that is used for walkability calculations, which might not be very wise. Please fix.*/
+  MoveTo(game::GetCurrentLevel()->GetLSquare(game::GetCurrentLevel()->RandomSquare(game::GetPlayer(), true, false))->GetStack());
 }
 
 void item::DrawToTileBuffer(vector2d Pos) const
@@ -304,7 +304,42 @@ void item::DrawToTileBuffer(vector2d Pos) const
   Picture->MaskedBlit(igraph::GetTileBuffer(), FromX, FromY, ToX, ToY, Width, Height);
 }
 
-ushort item::StrengthValue() const
+ushort item::GetStrengthValue() const
 {
-  return ulong(StrengthModifier()) * GetMaterial(SurfaceMaterial())->StrengthValue() / 1000;
+  return ulong(GetStrengthModifier()) * GetMainMaterial()->GetStrengthValue() / 1000;
+}
+
+ulong item::GetVolume() const
+{
+  ulong Volume = 0;
+
+  for(ushort c = 0; c < GetMaterials(); ++c)
+    if(GetMaterial(c))
+      Volume += GetMaterial(c)->GetVolume();
+
+  return Volume;
+}
+
+void item::PlaceToSlot(slot* Slot)
+{
+  SetSlot(Slot);
+  Slot->SetItem(this);
+}
+
+void item::RemoveFromSlot()
+{
+  GetSlot()->Empty();
+  SetSlot(0);
+}
+
+void item::MoveTo(stack* Stack)
+{
+  GetSlot()->MoveItemTo(Stack);
+}
+
+void item::DonateSlotTo(item* Item)
+{
+  Item->SetSlot(GetSlot());
+  GetSlot()->SetItem(Item);
+  SetSlot(0);
 }

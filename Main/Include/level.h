@@ -35,7 +35,7 @@ class level : public area
   virtual void Generate(levelscript*);
   virtual vector2d RandomSquare(character*, bool, bool = false) const;
   virtual void FastAddCharacter(vector2d, character*);
-  virtual void HandleCharacters();
+  virtual void GenerateMonsters();
   virtual lsquare* GetLSquare(vector2d Pos) const { return Map[Pos.X][Pos.Y]; }
   virtual lsquare* GetLSquare(ushort x, ushort y) const { return Map[x][y]; }
   virtual void GenerateTunnel(vector2d, vector2d, bool);

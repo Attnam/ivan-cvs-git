@@ -104,17 +104,17 @@ tile igraph::AddUser(graphic_id GI)
     {
       bitmap* Bitmap = RawGraphic[GI.FileIndex]->Colorize(GI.BitmapPos, vector2d(16, 16), GI.Color);
 
-      if(GI.SpecialType == RIGHTARM)
+      if(GI.SpecialType == STRIGHTARM)
 	{
 	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
 	}
 
-      if(GI.SpecialType == LEFTARM)
+      if(GI.SpecialType == STLEFTARM)
 	{
 	  Bitmap->Fill(0, 0, 8, 16, 0xF81F);
 	}
 
-      if(GI.SpecialType == GROIN)
+      if(GI.SpecialType == STGROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -129,7 +129,7 @@ tile igraph::AddUser(graphic_id GI)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
 
-      if(GI.SpecialType == RIGHTLEG)
+      if(GI.SpecialType == STRIGHTLEG)
 	{
 	  Bitmap->Fill(8, 0, 8, 16, 0xF81F);
 	  Bitmap->PutPixel(5, 10, 0xF81F);
@@ -140,7 +140,7 @@ tile igraph::AddUser(graphic_id GI)
 	  Bitmap->PutPixel(7, 12, 0xF81F);
 	}
 
-      if(GI.SpecialType == LEFTLEG)
+      if(GI.SpecialType == STLEFTLEG)
 	{
 	  Bitmap->Fill(0, 0, 7, 16, 0xF81F);
 	  Bitmap->PutPixel(7, 10, 0xF81F);

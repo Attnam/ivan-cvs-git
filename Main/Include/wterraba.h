@@ -20,7 +20,7 @@ class wterrain : public type
   virtual wsquare* GetWSquareUnder() const { return WSquareUnder; }
   virtual void SetWSquareUnder(wsquare* What) { WSquareUnder = What; }
   virtual worldmap* GetWorldMapUnder() const;
-  virtual std::string Name(uchar = 0) const;
+  virtual std::string Name(uchar) const;
   virtual void Load(inputfile&);
  protected:
   virtual std::string NameStem() const = 0;

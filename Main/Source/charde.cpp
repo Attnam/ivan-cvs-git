@@ -29,6 +29,7 @@ std::map<std::string, ushort>		protocontainer<character>::CodeNameMap;
 #include "lterraba.h"
 #include "error.h"
 #include "config.h"
+#include "slot.h"
 
 petrus::~petrus()
 {
@@ -40,7 +41,7 @@ void humanoid::VirtualConstructor()
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     CategoryWeaponSkill[c] = new gweaponskill(c);
 
-  CurrentSingleWeaponSkill = 0;
+  //CurrentSingleWeaponSkill = 0;
 }
 
 humanoid::~humanoid()
@@ -50,28 +51,40 @@ humanoid::~humanoid()
 
   /* Do not delete these! */
 
-  GetHead()->SetExists(false);
-  GetRightArm()->SetExists(false);
-  GetLeftArm()->SetExists(false);
-  GetRightLeg()->SetExists(false);
-  GetLeftLeg()->SetExists(false);
+  if(GetHead())
+    GetHead()->SetExists(false);
+
+  if(GetRightArm())
+    GetRightArm()->SetExists(false);
+
+  if(GetLeftArm())
+    GetLeftArm()->SetExists(false);
+
+  if(GetGroin())
+    GetGroin()->SetExists(false);
+
+  if(GetRightLeg())
+    GetRightLeg()->SetExists(false);
+
+  if(GetLeftLeg())
+    GetLeftLeg()->SetExists(false);
 }
 
 void petrus::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new valpurusjustifier)));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail(new valpurium))));
+  SetMainWielded(new valpurusjustifier);
+  SetBodyArmor(new platemail(new valpurium));
 }
 
 void priest::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
+  SetMainWielded(new spikedmace);
+  SetBodyArmor(new chainmail(new mithril));
 }
 
 void oree::CreateInitialEquipment()
 {
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new goldeneagleshirt)));
+  SetBodyArmor(new goldeneagleshirt);
   item* Can = new can(false);
   Can->InitMaterials(2, new iron(10), new pepsi(330));
   GetStack()->FastAddItem(Can);
@@ -80,24 +93,24 @@ void oree::CreateInitialEquipment()
 void darkknight::CreateInitialEquipment()
 {
   if(RAND() % 20)
-    SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword))));
+    SetMainWielded(RAND() % 5 ? (item*)(new longsword) : RAND() % 20 ? (item*)(new twohandedsword) : (item*)(new curvedtwohandedsword));
   else
     {
       item* DoomsDay = new longsword;
       DoomsDay->InitMaterials(3, new mithril, new iron, new darkfrogflesh);
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(DoomsDay)));
+      SetMainWielded(DoomsDay);
     }
 
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril))));
+  SetBodyArmor(new chainmail(RAND() % 5 ? (material*)new iron : (material*)new mithril));
 }
 
 void skeleton::CreateInitialEquipment()
 {
   if(RAND() % 10)
-    SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new axe : (item*)new pickaxe)));
+    SetMainWielded(RAND() % 3 ? (item*)new axe : (item*)new pickaxe);
   else
     {
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace)));
+      SetMainWielded(new spikedmace);
       SetSize(200);
       SetAgility(15);
       SetStrength(18);
@@ -107,21 +120,16 @@ void skeleton::CreateInitialEquipment()
 
 void goblin::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(RAND() % 3 ? (item*)new spear : (item*)new poleaxe)));
+  SetMainWielded(RAND() % 3 ? (item*)new spear : (item*)new poleaxe);
 }
 
 void guard::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new iron))));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail)));
+  SetMainWielded(new longsword(new iron));
+  SetBodyArmor(new chainmail);
 
   GetCategoryWeaponSkill(LARGE_SWORDS)->AddHit(500);
-  GetCurrentSingleWeaponSkill()->AddHit(500);
-}
-
-ushort humanoid::CalculateArmorModifier() const
-{
-  return Armor.Torso ? Armor.Torso->StrengthValue() : 0;
+  GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(500);
 }
 
 bool ennerbeast::Hit(character*)
@@ -162,7 +170,6 @@ void skeleton::CreateCorpse()
 void elpuri::CreateCorpse()
 {
   character::CreateCorpse();
-
   GetLSquareUnder()->GetStack()->AddItem(new headofelpuri);
 }
 
@@ -174,11 +181,10 @@ void petrus::CreateCorpse()
 void ennerbeast::CreateCorpse()
 {
   character::CreateCorpse();
-
   GetLSquareUnder()->GetStack()->AddItem(new headofennerbeast);
 }
 
-bool humanoid::WearArmor()
+/*bool humanoid::WearArmor()
 {
   if(!GetStack()->GetItems())
     {
@@ -209,15 +215,15 @@ bool humanoid::WearArmor()
 	ADD_MESSAGE("You can't wear THAT!");
 
   return false;
-}
+}*/
 
 void humanoid::Save(outputfile& SaveFile) const
 {
   character::Save(SaveFile);
 
-  ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
+  //ushort Index = Armor.Torso ? Stack->SearchItem(Armor.Torso) : 0xFFFF;
 
-  SaveFile << Index << SingleWeaponSkill;
+  //SaveFile << SingleWeaponSkill;
 
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile << GetCategoryWeaponSkill(c);
@@ -227,22 +233,14 @@ void humanoid::Load(inputfile& SaveFile)
 {
   character::Load(SaveFile);
 
-  ushort Index;
+  /*ushort Index;
 
   SaveFile >> Index >> SingleWeaponSkill;
 
-  Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;
+  Armor.Torso = Index != 0xFFFF ? Stack->GetItem(Index) : 0;*/
 
   for(ushort c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SaveFile >> GetCategoryWeaponSkill(c);
-
-  if(GetWielded())
-    for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
-      if((*i)->GetID() == Wielded->GetID())
-	{
-	  SetCurrentSingleWeaponSkill(*i);
-	  break;
-	}
 }
 
 float golem::GetMeleeStrength() const
@@ -251,14 +249,14 @@ float golem::GetMeleeStrength() const
   return 0;
 }
 
-ushort golem::CalculateArmorModifier() const
+/*ushort golem::CalculateArmorModifier() const
 {
-  /*if(((GetTorso()->GetMaterial(0)->StrengthValue() * 3) >> 2) > 90)
+  if(((GetTorso()->GetMaterial(0)->GetStrengthValue() * 3) >> 2) > 90)
     return 10;
   else
-    return 100 - ((GetTorso()->GetMaterial(0)->StrengthValue() * 3) >> 2);*/
+    return 100 - ((GetTorso()->GetMaterial(0)->GetStrengthValue() * 3) >> 2);
   return 0;
-}
+}*/
 
 bool golem::MoveRandomly()
 {
@@ -321,12 +319,12 @@ void petrus::HealFully(character* ToBeHealed)
 {
   SetHealTimer(0);
 
-  ToBeHealed->SetHP(ToBeHealed->GetMaxHP());
+  ToBeHealed->RestoreHP();//SetHP(ToBeHealed->GetMaxHP());
 
   if(ToBeHealed->GetIsPlayer())
-    ADD_MESSAGE("%s heals you fully.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s heals you fully.", CHARDESCRIPTION(DEFINITE));
   else
-    ADD_MESSAGE("%s heals %s fully.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", ToBeHealed->GetSquareUnder()->CanBeSeen() ? ToBeHealed->CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s heals %s fully.", CHARDESCRIPTION(DEFINITE), ToBeHealed->CHARDESCRIPTION(DEFINITE));
 }
 
 void petrus::Save(outputfile& SaveFile) const
@@ -351,20 +349,20 @@ bool dog::Catches(item* Thingy, float)
     {
       if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
 	if(GetIsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
 	else
 	  {
 	    if(GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s catches %s and eats it.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
 	  }
       else
 	if(GetIsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHARNAME(DEFINITE));
 	else
 	  if(GetLSquareUnder()->CanBeSeen())
-	    ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+	    ADD_MESSAGE("%s catches %s.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
 
       return true;
     }
@@ -410,9 +408,117 @@ bool dog::ConsumeItemType(uchar Type) const // We need a better system for this.
     }
 }
 
-float humanoid::GetAttackStrength() const
+/*float humanoid::GetAttackStrength() const
 {
-  return GetWielded() ? GetWielded()->GetWeaponStrength() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() : GetMeleeStrength() * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+  if(!GetMainArm() && !GetSecondaryArm())
+    return 0; //add biting
+
+  //if(!GetMainWielded() && !GetSecondaryWielded())
+  //  return GetMeleeStrength() * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+
+  float AS;
+
+  //if(GetMainWielded())
+  AS = GetMainAttackStrength() * GetCategoryWeaponSkill(GetMainWeaponCategory())->GetBonus();
+
+  if(GetSecondaryWielded())
+    {
+      AS *= 1 - float(GetMainWielded()->OneHandedPenalty(this)) / 100;
+
+      AS += GetSecondaryAttackStrength() * GetCategoryWeaponSkill(GetSecondaryWeaponCategory())->GetBonus();
+    }
+  else
+    {
+      if(GetSecondaryHand())
+	{
+	  
+	}
+      else
+	{
+	  //if(GetMainWielded()->CanBeWieldedWithTwoHands(this))
+	  AS *= 1 - float(GetMainWielded()->OneHandedPenalty(this)) / 100;
+	}
+    }
+
+  return 
+}*/
+
+/*float humanoid::GetAttackStrength() const
+{
+  return GetMainAttackStrength() + GetSecondaryAttackStrength();
+}*/
+
+/*float humanoid::GetToHitValue() const
+{
+  return (GetMainToHitValue() + GetSecondaryToHitValue()) / 2;
+}*/
+
+float humanoid::GetMainAttackStrength() const
+{
+  if(GetMainArm())
+    if(GetMainArm()->GetWielded())
+      return GetMainArm()->GetWieldedStrength(!GetSecondaryArm() || GetSecondaryArm()->GetWielded());
+    else
+      if(GetSecondaryArm() && GetSecondaryArm()->GetWielded())
+	return GetSecondaryArm()->GetWieldedStrength(false);
+      else
+	return GetMainArm()->GetMeleeStrength();
+  else
+    if(GetSecondaryArm())
+      if(GetSecondaryArm()->GetWielded())
+	return GetSecondaryArm()->GetWieldedStrength(true);
+      else
+	return GetSecondaryArm()->GetMeleeStrength();
+    else
+      return 0;
+}
+
+float humanoid::GetSecondaryAttackStrength() const
+{
+  if(GetSecondaryArm())
+    if(GetSecondaryArm()->GetWielded())
+      return GetSecondaryArm()->GetWieldedStrength(!GetMainArm() || GetMainArm()->GetWielded());
+    else
+      if(GetMainArm() && GetMainArm()->GetWielded())
+	return 0;
+      else
+	return GetSecondaryArm()->GetMeleeStrength();
+  else
+    return 0;
+}
+
+float humanoid::GetMainToHitValue() const
+{
+  if(GetMainArm())
+    if(GetMainArm()->GetWielded())
+      return GetMainArm()->GetWieldedToHitValue(!GetSecondaryArm() || GetSecondaryArm()->GetWielded());
+    else
+      if(GetSecondaryArm() && GetSecondaryArm()->GetWielded())
+	return GetSecondaryArm()->GetWieldedToHitValue(false);
+      else
+	return GetMainArm()->GetMeleeToHitValue();
+  else
+    if(GetSecondaryArm())
+      if(GetSecondaryArm()->GetWielded())
+	return GetSecondaryArm()->GetWieldedToHitValue(true);
+      else
+	return GetSecondaryArm()->GetMeleeToHitValue();
+    else
+      return 0;
+}
+
+float humanoid::GetSecondaryToHitValue() const
+{
+  if(GetSecondaryArm())
+    if(GetSecondaryArm()->GetWielded())
+      return GetSecondaryArm()->GetWieldedToHitValue(!GetMainArm() || GetMainArm()->GetWielded());
+    else
+      if(GetMainArm() && GetMainArm()->GetWielded())
+	return 0;
+      else
+	return GetSecondaryArm()->GetMeleeToHitValue();
+  else
+    return 0;
 }
 
 bool humanoid::Hit(character* Enemy)
@@ -422,34 +528,88 @@ bool humanoid::Hit(character* Enemy)
 
   Hostility(Enemy);
 
-  short Success = RAND() % 26 - RAND() % 26;
+  if(GetBurdenState() == OVERLOADED)
+    {
+      if(GetIsPlayer())
+	ADD_MESSAGE("You cannot fight while carrying so much.");
 
-  switch(Enemy->TakeHit(this, Success)) //there's no breaks and there shouldn't be any
+      return true;
+    }
+
+  if(GetMainAttackStrength())
+    MainHit(Enemy);
+
+  if(GetSecondaryAttackStrength())
+    SecondaryHit(Enemy);
+
+  EditNP(-50);
+
+  return true;
+}
+
+arm* humanoid::GetMainWeaponArm() const
+{
+  if(!GetMainArm() || !GetMainArm()->GetWielded())
+    return GetSecondaryArm();
+  else
+    return GetMainArm();
+}
+
+arm* humanoid::GetSecondaryWeaponArm() const
+{
+  return GetSecondaryArm();
+}
+
+void humanoid::MainHit(character* Enemy)
+{
+  switch(Enemy->TakeHit(this, GetMainWielded(), GetMainAttackStrength(), GetMainToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier()))) //there's no breaks and there shouldn't be any
     {
     case HAS_HIT:
     case HAS_BLOCKED:
-      if(GetWielded())
-	GetWielded()->ReceiveHitEffect(Enemy, this);
+      if(GetMainWielded())
+	GetMainWielded()->ReceiveHitEffect(Enemy, this);
     case HAS_DIED:
       EditStrengthExperience(50);
-      if(GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
-	GetCategoryWeaponSkill(GetWielded() ? GetWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
-      if(GetWielded())
+      if(GetCategoryWeaponSkill(GetMainWielded() ? GetMainWielded()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
+	GetCategoryWeaponSkill(GetMainWielded() ? GetMainWielded()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
+      if(GetMainWielded())
 	{
-	  if(GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
-	    GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetWielded()->Name(UNARTICLED));
+	  if(GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
+	    GetMainWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
-	  if(GetWielded()->ImpactDamage(GetStrength() / 2, GetLSquareUnder()->CanBeSeen(), GetStack()))
-	    SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
+	  GetMainWielded()->ImpactDamage(GetStrength() / 2);
+	    //SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
 
 	}
     case HAS_DODGED:
       EditAgilityExperience(25);
     }
+}
 
-  EditNP(-50);
+void humanoid::SecondaryHit(character* Enemy)
+{
+  switch(Enemy->TakeHit(this, GetSecondaryWielded(), GetSecondaryAttackStrength(), GetSecondaryToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier()))) //there's no breaks and there shouldn't be any
+    {
+    case HAS_HIT:
+    case HAS_BLOCKED:
+      if(GetSecondaryWielded())
+	GetSecondaryWielded()->ReceiveHitEffect(Enemy, this);
+    case HAS_DIED:
+      EditStrengthExperience(50);
+      if(GetCategoryWeaponSkill(GetSecondaryWeaponArm() ? GetSecondaryWeaponArm()->GetWeaponCategory() : UNARMED)->AddHit() && GetIsPlayer())
+	GetCategoryWeaponSkill(GetSecondaryWeaponArm() ? GetSecondaryWeaponArm()->GetWeaponCategory() : UNARMED)->AddLevelUpMessage();
+      if(GetSecondaryWielded())
+	{
+	  if(GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddHit() && GetIsPlayer())
+	    GetSecondaryWeaponArm()->GetCurrentSingleWeaponSkill()->AddLevelUpMessage(GetMainWielded()->Name(UNARTICLED));
 
-  return true;
+	  GetSecondaryWielded()->ImpactDamage(GetStrength() / 2);
+	    //SetWielded(GetStack()->GetItem(GetStack()->GetItems() - 1));
+
+	}
+    case HAS_DODGED:
+      EditAgilityExperience(25);
+    }
 }
 
 void humanoid::CharacterSpeciality(ushort Turns)
@@ -458,25 +618,8 @@ void humanoid::CharacterSpeciality(ushort Turns)
     if(GetCategoryWeaponSkill(c)->Turn(Turns) && GetIsPlayer())
       GetCategoryWeaponSkill(c)->AddLevelDownMessage();
 
-  for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end();)
-    {
-      if((*i)->Turn(Turns) && GetIsPlayer())
-	for(ushort c = 0; c < GetStack()->GetItems(); ++c)
-	  if((*i)->GetID() == GetStack()->GetItem(c)->GetID())
-	    {
-	      (*i)->AddLevelDownMessage(GetStack()->GetItem(c)->Name(UNARTICLED));
-	      break;
-	    }
-
-      if(!(*i)->GetHits() && *i != GetCurrentSingleWeaponSkill())
-	{
-	  SingleWeaponSkill.erase(i);
-	  i = SingleWeaponSkill.begin();
-	  continue;
-	}
-
-      ++i;
-    }
+  //GetRightArm()->WeaponSkillHandler();
+  //GetLeftArm()->WeaponSkillHandler();
 }
 
 bool humanoid::ShowWeaponSkills()
@@ -506,11 +649,11 @@ bool humanoid::ShowWeaponSkills()
 	  List.AddEntry(Buffer + '-', RED);
       }
 
-    if(CurrentSingleWeaponSkill)
+    /*if(CurrentSingleWeaponSkill)
       {
 	List.AddEntry("", RED);
 
-	std::string Buffer = "current single weapon skill:  ";
+	std::string Buffer = "current right hand single weapon skill:  ";
 
 	Buffer += CurrentSingleWeaponSkill->GetLevel();
 	Buffer.resize(40, ' ');
@@ -522,7 +665,7 @@ bool humanoid::ShowWeaponSkills()
 	  List.AddEntry(Buffer + (CurrentSingleWeaponSkill->GetLevelMap(CurrentSingleWeaponSkill->GetLevel() + 1) - CurrentSingleWeaponSkill->GetHits()), RED);
 	else
 	  List.AddEntry(Buffer + '-', RED);
-      }
+      }*/
 
     List.Draw();
   }
@@ -530,7 +673,7 @@ bool humanoid::ShowWeaponSkills()
   return false;
 }
 
-void humanoid::SetWielded(item* Something)
+/*void humanoid::SetWielded(item* Something)
 {
   if(GetWielded() && !GetCurrentSingleWeaponSkill()->GetHits())
     for(std::vector<sweaponskill*>::iterator i = SingleWeaponSkill.begin(); i != SingleWeaponSkill.end(); ++i)
@@ -562,51 +705,56 @@ void humanoid::SetWielded(item* Something)
 
   if(GetSquareUnder())
     GetSquareUnder()->SendNewDrawRequest();
-}
+}*/
 
-float humanoid::GetToHitValue() const
+/*float humanoid::GetToHitValue() const
 {
   if(GetWielded())
     return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
   else
     return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
-}
+}*/
 
 void shopkeeper::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new pickaxe(new mithril))));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new mithril))));
+  SetMainWielded(new pickaxe(new mithril));
+  SetBodyArmor(new chainmail(new mithril));
 
   GetCategoryWeaponSkill(AXES)->AddHit(5000);
-  GetCurrentSingleWeaponSkill()->AddHit(5000);
+  GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(5000);
 }
 
 void farmer::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new axe)));
+  SetMainWielded(new axe);
 }
 
-void petrus::AddHitMessage(character* Enemy, const bool Critical) const
-{
-  /*
-   * This function is temporary. It prevents Petrus's hit messages becoming too long,
-   * which would at present make the message history quite ugly.
-   */
+/*
+ * This function is temporary. It prevents Petrus's hit messages becoming too long,
+ * which would at present make the message history quite ugly.
+ */
 
-  std::string ThisDescription = GetLSquareUnder()->CanBeSeen() ? "Petrus" : "something";
-  std::string EnemyDescription = Enemy->GetLSquareUnder()->CanBeSeen() ? Enemy->CNAME(DEFINITE) : "something";
+void petrus::AddHitMessage(character* Enemy, item* Weapon, uchar BodyPart, bool Critical) const
+{
+  std::string Msg;
+  std::string ThisDescription = GetSquareUnder()->CanBeSeen() ? "Petrus" : "something";
+  std::string BodyPartDescription = BodyPart && Enemy->GetSquareUnder()->CanBeSeen() ? std::string(" in ") + Enemy->GetBodyPart(BodyPart)->Name(DEFINITE) : "";
 
   if(Enemy->GetIsPlayer())
-    if(GetWielded() && GetLSquareUnder()->CanBeSeen())
-      ADD_MESSAGE("%s %s you with %s %s!", ThisDescription.c_str(), ThirdPersonWeaponHitVerb(Critical).c_str(), game::PossessivePronoun(GetSex()), Wielded->CNAME(0));
-    else
-      ADD_MESSAGE("%s %s you!", ThisDescription.c_str(), ThirdPersonMeleeHitVerb(Critical).c_str());
+    {
+      if(Weapon && GetSquareUnder()->CanBeSeen())
+	Msg = ThisDescription + " " + ThirdPersonWeaponHitVerb(Critical) + " you" + BodyPartDescription + " with " + PossessivePronoun() + " " + Weapon->Name(UNARTICLED) + "!";
+      else
+	Msg = ThisDescription + " " + ThirdPersonMeleeHitVerb(Critical) + " you" + BodyPartDescription + "!";
+    }
+  else if(GetIsPlayer())
+    Msg = std::string("You ") + FirstPersonHitVerb(Enemy, Critical) + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
+  else if(GetSquareUnder()->CanBeSeen() || Enemy->GetSquareUnder()->CanBeSeen())
+    Msg = ThisDescription + " " + AICombatHitVerb(Enemy, Critical) + " " + Enemy->Description(DEFINITE) + BodyPartDescription + "!";
   else
-    if(GetIsPlayer())
-      ADD_MESSAGE("You %s %s!", FirstPersonHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
-    else
-      if(GetLSquareUnder()->CanBeSeen() || Enemy->GetLSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s %s %s!", ThisDescription.c_str(), AICombatHitVerb(Enemy, Critical).c_str(), EnemyDescription.c_str());
+    Msg = "";
+
+  ADD_MESSAGE("%s", Msg.c_str());
 }
 
 void petrus::BeTalkedTo(character* Talker)
@@ -725,10 +873,10 @@ void farmer::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Crops are so lousy around here. Perhaps because the summer lasts two weeks.\"");
       break;
     case 1:
-      ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s seems suspicious. \"You look like one from Istour! Go away!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s sighs: \"Again polar bears ate my cattle...\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 3:
       ADD_MESSAGE("\"The prices are infamous here. Ivan should smack that capitalist shopkeeper hard!\"");
@@ -750,19 +898,19 @@ void guard::BeTalkedTo(character* Talker)
     {
     case 0:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it in the army.\"", CHARDESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s says gravely: \"You don't have a life. Get it as shop guard.\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 1:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of breaking rules.\"", CHARDESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s looks at you suspiciously. \"Don't even think of stealing anything.\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s shouts excited: \"Attnam victoor!\"", CHARDESCRIPTION(DEFINITE));
       else
 	ADD_MESSAGE("\"Yes, this is a dangerous place to work, but our boss pays us well.\"");
       break;
@@ -798,18 +946,18 @@ void shopkeeper::BeTalkedTo(character* Talker)
     {
     case 0:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
-	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s sighs: \"If only I hadn't chosen a city in the middle of nowhere...\"", CHARDESCRIPTION(DEFINITE));
       else
-	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	ADD_MESSAGE("%s sighs: \"I wonder why I have so few customers these days...\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 1:
-      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s sighs: \"Mutant mushrooms ate the last caravan.", CHARDESCRIPTION(DEFINITE));
       ADD_MESSAGE("The one before it ran into an Enner Beast. It must be all Elpuri's doings!\"");
       break;
     case 2:
       if(GetLSquareUnder()->GetLevelUnder()->GetOnGround())
 	{
-	  ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	  ADD_MESSAGE("\"You truly can't find better prices in this city!\", %s smiles.", CHARDESCRIPTION(DEFINITE));
 	  ADD_MESSAGE("\"Indeed, you can't find ANY prices, since my store is a monopoly.\"");
 	}
       else
@@ -836,19 +984,19 @@ void priest::BeTalkedTo(character* Talker)
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
     {
-      ADD_MESSAGE("%s talks to you:", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s talks to you:", CHARDESCRIPTION(DEFINITE));
       game::GetGod(GetLSquareUnder()->GetLevelUnder()->GetRoom(HomeRoom)->GetDivineOwner())->AddPriestMessage();
     }
 }
 
 void oree::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+  ADD_MESSAGE("%s laughs: \"No time for small talk. Time to drink blood!\"", CHARDESCRIPTION(DEFINITE));
 }
 
 void darkknight::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s yells: \"For Erado I shall slay you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+  ADD_MESSAGE("%s yells: \"For Erado I shall slay you!\"", CHARDESCRIPTION(DEFINITE));
 }
 
 void ennerbeast::BeTalkedTo(character*)
@@ -874,7 +1022,7 @@ void ennerbeast::BeTalkedTo(character*)
 
 void elpuri::BeTalkedTo(character*)
 {
-  ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+  ADD_MESSAGE("%s roars horribly: \"DiE hUmAn!!\"", CHARDESCRIPTION(DEFINITE));
 }
 
 void billswill::BeTalkedTo(character*)
@@ -885,17 +1033,17 @@ void billswill::BeTalkedTo(character*)
 void skeleton::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s sings: \"Leg bone is connected to the hib bone, hib bone is connected to the rib bone...\"", CHARDESCRIPTION(DEFINITE));
   else
-    ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s grunts: \"Bones. Need more bones.\"", CHARDESCRIPTION(DEFINITE));
 }
 
 void goblin::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) != HOSTILE)
-    ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s laughs: \"Humie friend. Many mommo we kill. Many spider we eat.\"", CHARDESCRIPTION(DEFINITE));
   else
-    ADD_MESSAGE("%s yells goblin war cries at you.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+    ADD_MESSAGE("%s yells goblin war cries at you.", CHARDESCRIPTION(DEFINITE));
 }
 
 void golem::BeTalkedTo(character* Talker)
@@ -914,8 +1062,9 @@ long humanoid::StatScore() const
   for(c = 0; c < WEAPON_SKILL_GATEGORIES; ++c)
     SkillScore += GetCategoryWeaponSkill(c)->GetHits();
 
+  /*
   for(c = 0; c < SingleWeaponSkill.size(); ++c)
-    SkillScore += SingleWeaponSkill[c]->GetHits();
+    SkillScore += SingleWeaponSkill[c]->GetHits();*/
 
   return (SkillScore >> 2) + character::StatScore();
 }
@@ -926,14 +1075,39 @@ void humanoid::AddSpecialItemInfo(std::string& Description, item* Item)
   Description += GetCategoryWeaponSkill(Item->GetWeaponCategory())->GetLevel();
   Description.resize(80, ' ');
 
-  for(ushort c = 0; c < SingleWeaponSkill.size(); ++c)
-    if(Item->GetID() == SingleWeaponSkill[c]->GetID())
-      {
-	Description += SingleWeaponSkill[c]->GetLevel();
-	return;
-      }
+  if(GetRightArm())
+    {
+      bool Added = false;
 
-  Description += 0;
+      for(ushort c = 0; c < GetRightArm()->GetSingleWeaponSkills(); ++c)
+	if(Item->GetID() == GetRightArm()->GetSingleWeaponSkill(c)->GetID())
+	  {
+	    Description += GetRightArm()->GetSingleWeaponSkill(c)->GetLevel();
+	    Added = true;
+	    break;
+	  }
+
+      if(!Added)
+	Description += 0;
+    }
+
+  Description.resize(87, ' ');
+
+  if(GetLeftArm())
+    {
+      bool Added = false;
+
+      for(ushort c = 0; c < GetLeftArm()->GetSingleWeaponSkills(); ++c)
+	if(Item->GetID() == GetLeftArm()->GetSingleWeaponSkill(c)->GetID())
+	  {
+	    Description += GetLeftArm()->GetSingleWeaponSkill(c)->GetLevel();
+	    Added = true;
+	    break;
+	  }
+
+      if(!Added)
+	Description += 0;
+    }
 }
 
 void humanoid::AddSpecialItemInfoDescription(std::string& Description)
@@ -941,7 +1115,9 @@ void humanoid::AddSpecialItemInfoDescription(std::string& Description)
   Description.resize(78, ' ');
   Description += "GS";
   Description.resize(83, ' ');
-  Description += "SS";
+  Description += "SSR";
+  Description.resize(90, ' ');
+  Description += "SSL";
 }
 
 void humanoid::KickHit()
@@ -954,7 +1130,7 @@ void communist::BeTalkedTo(character* Talker)
 {
   if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
     {
-      ADD_MESSAGE("\"You capitalist! Lenin want %s kill capitalists!\"", CNAME(UNARTICLED));
+      ADD_MESSAGE("\"You capitalist! Lenin want %s kill capitalists!\"", CHARNAME(UNARTICLED));
       return;
     }
 
@@ -965,34 +1141,34 @@ void communist::BeTalkedTo(character* Talker)
       switch(RandomizeReply(11, Said))
 	{
 	case 0:
-	  ADD_MESSAGE("\"Da, %s like killing.\"", CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Da, %s like killing.\"", CHARNAME(UNARTICLED));
 	  break;
 	case 1:
-	  ADD_MESSAGE("\"%s ruski specialist.\"", CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s ruski specialist.\"", CHARNAME(UNARTICLED));
 	  break;
 	case 2:
-	  ADD_MESSAGE("\"%s work. Else %s get stapled.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s work. Else %s get stapled.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
 	  break;
 	case 3:
-	  ADD_MESSAGE("\"Party mean big weapons. %s like big weapons. %s kill for Party.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Party mean big weapons. %s like big weapons. %s kill for Party.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
 	  break;
 	case 4:
 	  ADD_MESSAGE("\"CCCP roxxx.\"");
 	  break;
 	case 5:
-	  ADD_MESSAGE("\"%s like throw Ladas. You want compete?\"", CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s like throw Ladas. You want compete?\"", CHARNAME(UNARTICLED));
 	  break;
 	case 6:
 	  ADD_MESSAGE("\"Why is AK not invented?\"");
 	  break;
 	case 7:
-	  ADD_MESSAGE("\"%s like Attnam. Petrus communist too.\"", CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s like Attnam. Petrus communist too.\"", CHARNAME(UNARTICLED));
 	  break;
 	case 8:
-	  ADD_MESSAGE("\"%s buy kyber eyes. %s see in dark.\"", CNAME(UNARTICLED), CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"%s buy kyber eyes. %s see in dark.\"", CHARNAME(UNARTICLED), CHARNAME(UNARTICLED));
 	  break;
 	case 9:
-	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. %s like.\"", CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Uncle Lenin lives in Russia. Lenin strong guy. %s like.\"", CHARNAME(UNARTICLED));
 	  break;
 	case 10:
 	  if(GetTeam() == Talker->GetTeam())
@@ -1004,15 +1180,15 @@ void communist::BeTalkedTo(character* Talker)
     }
   else
     {
-      ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. %s go with you!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", CNAME(UNARTICLED));
+      ADD_MESSAGE("%s seems to be very friendly. \"You make good communist. %s go with you!\"", CHARDESCRIPTION(DEFINITE), CHARNAME(UNARTICLED));
       ChangeTeam(Talker->GetTeam());
     }
 }
 
 void communist::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spikedmace(new iron))));
-  SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new platemail)));
+  SetMainWielded(new spikedmace(new iron));
+  SetBodyArmor(new platemail);
   GetStack()->FastAddItem(new fiftymillionroubles);
 }
 
@@ -1035,8 +1211,8 @@ void hunter::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Bears, ogres, slaves, farmers... Ah, there's so much to hunt here!\"");
       break;
     case 2:
-      if(GetWielded())
-	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", Wielded->CNAME(UNARTICLED), Wielded->CNAME(UNARTICLED));
+      if(GetMainWielded())
+	ADD_MESSAGE("\"This is my %s. There are many like it but this one is mine. My %s is my best friend.\"", GetMainWielded()->CHARNAME(UNARTICLED), GetMainWielded()->CHARNAME(UNARTICLED));
       else
 	ADD_MESSAGE("\"I am the Great White Hunter. Get out of My way!\"");
       break;
@@ -1049,7 +1225,7 @@ void hunter::BeTalkedTo(character* Talker)
 
 void hunter::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear(new iron))));
+  SetMainWielded(new spear(new iron));
 }
 
 void slave::BeTalkedTo(character* Talker)
@@ -1066,7 +1242,7 @@ void slave::BeTalkedTo(character* Talker)
     {
       if(Talker->GetMoney() >= 50)
 	{
-	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+	  ADD_MESSAGE("%s talks: \"Do you want to buy me? 50 squirrels. I work very hard.\"", CHARDESCRIPTION(DEFINITE));
 
 	  if(game::BoolQuestion("Do you want to buy him? [y/N]"))
 	    {
@@ -1087,7 +1263,7 @@ void slave::BeTalkedTo(character* Talker)
 
   if(GetTeam() == Talker->GetTeam())
     {
-      if(Talker->GetWielded() && Talker->GetWielded()->GetType() == whip::StaticType())
+      if(Talker->GetMainWielded() && Talker->GetMainWielded()->GetType() == whip::StaticType())
 	{
 	  ADD_MESSAGE("\"Don't hit me! I work! I obey! I not think!\"");
 	}
@@ -1153,26 +1329,24 @@ bool elpuri::Hit(character* Enemy)
       {
 	Hostility(ByStander);
 
-	short Success = RAND() % 26 - RAND() % 26;
-
-	switch(ByStander->TakeHit(this, Success))
+	switch(ByStander->TakeHit(this, 0, GetAttackStrength(), GetToHitValue(), RAND() % 26 - RAND() % 26, !(RAND() % Enemy->CriticalModifier())))
 	  {
 	  case HAS_HIT:
 	  case HAS_BLOCKED:
 	  case HAS_DIED:
-	    ByStander->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
-	    ByStander->CheckGearExistence();
+	    ByStander->GetStack()->ImpactDamage(GetStrength());
+	    //ByStander->CheckGearExistence();
 	    EditStrengthExperience(50);
 	  case HAS_DODGED:
 	    EditAgilityExperience(25);
 	  }
       }
 
-    Square->GetStack()->ImpactDamage(GetStrength(), Square->CanBeSeen());
+    Square->GetStack()->ImpactDamage(GetStrength());
 
     for(ushort c = 0; c < 4; ++c)
       if(Square->GetSideStack(c)->GetSquareTrulyUnder() == GetSquareUnder())
-	Square->GetSideStack(c)->ImpactDamage(GetStrength(), Square->CanBeSeen());
+	Square->GetSideStack(c)->ImpactDamage(GetStrength());
   });
 
   EditNP(-50);
@@ -1395,7 +1569,7 @@ void librarian::BeTalkedTo(character* Talker)
 
 void femaleslave::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new palmbranch)));
+  SetMainWielded(new palmbranch);
 }
 
 bool communist::MoveRandomly()
@@ -1408,13 +1582,13 @@ bool communist::MoveRandomly()
       // Currently too long
     case 1:
       if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s engraves something to the ground.", CNAME(UNARTICLED));
+	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
 
       Engrave("Proletarians of all countries, unite!");
       return true;
     case 2:
       if(GetSquareUnder()->CanBeSeen())
-	ADD_MESSAGE("%s engraves something to the ground.", CNAME(UNARTICLED));
+	ADD_MESSAGE("%s engraves something to the ground.", CHARNAME(UNARTICLED));
 
       Engrave("Capital is therefore not only personal; it is a social power.");
       return true;
@@ -1450,7 +1624,7 @@ void zombie::SpillBlood(uchar HowMuch, vector2d GetPos)
 
 void mistress::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new whip)));
+  SetMainWielded(new whip);
 
   if(!(RAND() % 10))
     GetStack()->FastAddItem(new banana);
@@ -1459,7 +1633,7 @@ void mistress::CreateInitialEquipment()
     GetStack()->FastAddItem(new holybanana);
 
   GetCategoryWeaponSkill(WHIPS)->AddHit(10000);
-  GetCurrentSingleWeaponSkill()->AddHit(10000);
+  GetMainArm()->GetCurrentSingleWeaponSkill()->AddHit(10000);
 }
 
 void werewolf::ChangeIntoHuman()
@@ -1474,7 +1648,7 @@ void werewolf::ChangeIntoHuman()
   SetEnduranceExperience(0);
   SetAgilityExperience(0);
   SetPerceptionExperience(0);
-  SetHP(GetMaxHP());
+  RestoreHP();
   UpdateBodyPartPictures();
 
   if(GetSquareUnder())
@@ -1489,12 +1663,13 @@ void werewolf::ChangeIntoWolf()
   SetEndurance(25);
   SetPerception(24);
   SetIsWolf(true);
-  SetWielded(0);
+  SetMainWielded(0);
+  SetSecondaryWielded(0);
   SetStrengthExperience(0);
   SetEnduranceExperience(0);
   SetAgilityExperience(0);
   SetPerceptionExperience(0);
-  SetHP(GetMaxHP());
+  RestoreHP();
   UpdateBodyPartPictures();
 
   if(GetSquareUnder())
@@ -1514,7 +1689,7 @@ void werewolf::Be()
 	    ADD_MESSAGE("You change into a human... At least for some time.");
 	  else if(GetSquareUnder()->CanBeSeen())
 	    {
-	      ADD_MESSAGE("%s changes into human.", CNAME(DEFINITE));
+	      ADD_MESSAGE("%s changes into human.", CHARNAME(DEFINITE));
 	    }
 	}
       else
@@ -1524,7 +1699,7 @@ void werewolf::Be()
 	    ADD_MESSAGE("You change into a wolf... At least for some time.");
 	  else if(GetSquareUnder()->CanBeSeen())
 	    {
-	      ADD_MESSAGE("%s changes into a wolf.", CNAME(DEFINITE));
+	      ADD_MESSAGE("%s changes into a wolf.", CHARNAME(DEFINITE));
 	    }
 	}
     }
@@ -1573,7 +1748,7 @@ void werewolf::Load(inputfile& SaveFile)
 
 void kobold::CreateInitialEquipment()
 {
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new spear)));
+  SetMainWielded(new spear);
 }
 
 void mistress::BeTalkedTo(character* Talker)
@@ -1602,27 +1777,27 @@ void angel::SetMaster(uchar NewMaster)
     {
     case GOOD:
       SetAgility(99);
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new longsword(new diamond))));
-      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new diamond))));
+      SetMainWielded(new longsword(new diamond));
+      SetBodyArmor(new chainmail(new diamond));
       SetMaterial(1, new goodleather);
-      SetHP(GetMaxHP());
+      RestoreHP();
       break;
     case NEUTRAL:
       SetEndurance(99);
-      SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(new poleaxe(new sapphire))));
-      SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new chainmail(new sapphire))));
+      SetMainWielded(new poleaxe(new sapphire));
+      SetBodyArmor(new chainmail(new sapphire));
       SetMaterial(1, new neutralleather);
-      SetHP(GetMaxHP());
+      RestoreHP();
       break;
     case EVIL:
       {
 	SetStrength(99);
 	item* SpikedMace = new spikedmace(false);
 	SpikedMace->InitMaterials(3, new ruby, new iron, new darkfrogflesh);
-	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(SpikedMace)));
-	SetTorsoArmor(GetStack()->GetItem(GetStack()->FastAddItem(new brokenplatemail(new ruby))));
+	SetMainWielded(SpikedMace);
+	SetBodyArmor(new brokenplatemail(new ruby));
 	SetMaterial(1, new evilleather);
-	SetHP(GetMaxHP());
+	RestoreHP();
 	break;
       }
     }
@@ -1654,11 +1829,11 @@ void kamikazedwarf::BeTalkedTo(character* Talker)
       ADD_MESSAGE("\"Would you like me to teach you the best suicidal bombing tactics?\"");
       break;
     case 1:
-      ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something");
+      ADD_MESSAGE("%s shouts: \"Death to disbelievers!\"", CHARDESCRIPTION(DEFINITE));
       break;
     case 2:
-      ADD_MESSAGE("%s praises %s with numerous hymns.", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
-      ADD_MESSAGE("%s is obviously a very devoted follower.", game::PersonalPronoun(GetSex()));
+      ADD_MESSAGE("%s praises %s with numerous hymns.", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
+      ADD_MESSAGE("%s is obviously a very devoted follower.", PersonalPronoun().c_str());
       break;
     case 3:
       ADD_MESSAGE("\"One day, Holy War will break out and I shall sacrifice my life with joy.\"");
@@ -1670,7 +1845,7 @@ void kamikazedwarf::CreateInitialEquipment()
 {
   holybook* HolyBook = new holybook;
   HolyBook->SetOwnerGod(Master);
-  SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(HolyBook)));
+  SetMainWielded(HolyBook);
   GetStack()->FastAddItem(new backpack);
 }
 
@@ -1680,15 +1855,16 @@ bool kamikazedwarf::Hit(character* Enemy)
     return humanoid::Hit(Enemy);
   else
     {
-      for(ushort c = 0; c < GetStack()->GetItems(); ++c)
-	if(GetStack()->GetItem(c)->IsExplosive())
+      //for(ushort c = 0; c < GetStack()->GetItems(); ++c)
+      for(stackiterator i = GetStack()->GetBottomSlot(); i != GetStack()->GetSlotAboveTop(); ++i)
+	if((**i)->IsExplosive())
 	  {
 	    if(RAND() % 2)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
 	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", GetSquareUnder()->CanBeSeen() ? CNAME(DEFINITE) : "something", game::GetGod(Master)->Name().c_str());
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHARDESCRIPTION(DEFINITE), game::GetGod(Master)->Name().c_str());
 
-	    if(GetStack()->GetItem(c)->Apply(this, GetStack()))
+	    if((**i)->Apply(this, GetStack()))
 	      return true;
 	  }
 
@@ -1710,13 +1886,13 @@ void kamikazedwarf::Load(inputfile& SaveFile)
   SaveFile >> Master;
 }
 
-void humanoid::CheckGearExistence()
+/*void humanoid::CheckGearExistence()
 {
   character::CheckGearExistence();
 
-  if(GetTorsoArmor() && !GetTorsoArmor()->GetExists())
-    SetTorsoArmor(0);
-}
+  if(GetBodyArmor() && !GetBodyArmor()->GetExists())
+    SetBodyArmor(0);
+}*/
 
 bool largecat::Catches(item* Thingy, float)
 {
@@ -1724,20 +1900,20 @@ bool largecat::Catches(item* Thingy, float)
     {
       if(ConsumeItem(Thingy, GetLSquareUnder()->GetStack()))
 	if(GetIsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air and consume it.", Thingy->CHARNAME(DEFINITE));
 	else
 	  {
 	    if(GetLSquareUnder()->CanBeSeen())
-	      ADD_MESSAGE("%s catches %s and eats it.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+	      ADD_MESSAGE("%s catches %s and eats it.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
 
 	    ChangeTeam(game::GetPlayer()->GetTeam());
 	  }
       else
 	if(GetIsPlayer())
-	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CNAME(DEFINITE));
+	  ADD_MESSAGE("You catch %s in mid-air.", Thingy->CHARNAME(DEFINITE));
 	else
 	  if(GetLSquareUnder()->CanBeSeen())
-	    ADD_MESSAGE("%s catches %s.", CNAME(DEFINITE), Thingy->CNAME(DEFINITE));
+	    ADD_MESSAGE("%s catches %s.", CHARNAME(DEFINITE), Thingy->CHARNAME(DEFINITE));
 
       return true;
     }
@@ -1745,9 +1921,9 @@ bool largecat::Catches(item* Thingy, float)
     return false;
 }
 
-void unicorn::RandomizeFleshMaterial()
+/*void unicorn::RandomizeFleshMaterial()
 {
-  /*SetAlignment(RAND() % 3);
+  SetAlignment(RAND() % 3);
   switch(GetAlignment())
     {
     case GOOD:
@@ -1759,7 +1935,25 @@ void unicorn::RandomizeFleshMaterial()
     default:
       InitMaterials(2, new blackunicornflesh, new unicornhorn);
       return;
-    }*/
+    }
+}*/
+
+material* unicorn::CreateTorsoFlesh(ulong Volume) const
+{
+  switch(RAND() % 3)
+    {
+    case GOOD:
+      return new whiteunicornflesh;
+    case NEUTRAL:
+      return new grayunicornflesh;
+    default:
+      return new blackunicornflesh;
+    }
+}
+
+void unicorn::AdjustAlignment()
+{
+  SetAlignment(2 - GetTorso()->GetMainMaterial()->Alignment());
 }
 
 void unicorn::Save(outputfile& SaveFile) const
@@ -1811,12 +2005,12 @@ bool unicorn::SpecialEnemySightedReaction(character*)
   if((RAND() % 3 && GetHP() < GetMaxHP() / 3) || !(RAND() % 10))
   {
     if(GetLSquareUnder()->CanBeSeen())
-      ADD_MESSAGE("%s disappears!", CNAME(DEFINITE));
+      ADD_MESSAGE("%s disappears!", CHARNAME(DEFINITE));
 
     Move(GetLSquareUnder()->GetLevelUnder()->RandomSquare(this, true), true);
 
     if(GetLSquareUnder()->CanBeSeen())
-      ADD_MESSAGE("Suddenly %s appears from nothing!", CNAME(INDEFINITE));
+      ADD_MESSAGE("Suddenly %s appears from nothing!", CHARNAME(INDEFINITE));
 
     return true;
   }
@@ -1838,21 +2032,73 @@ void unicorn::CreateInitialEquipment()
 
 void humanoid::SetSize(ushort Size)
 {
-  GetHead()->SetSize(20);
-  GetTorso()->SetSize((Size - GetHead()->GetSize()) * 2 / 5);
-  GetGroin()->SetSize((Size - GetHead()->GetSize()) / 3);
+  if(GetHead())
+    GetHead()->SetSize(HeadSize());
 
-  ushort LimbSize = (Size - GetHead()->GetSize()) * 3 / 5;
+  if(GetTorso())
+    GetTorso()->SetSize(TorsoSize());
 
-  GetRightArm()->SetSize(LimbSize);
-  GetLeftArm()->SetSize(LimbSize);
-  GetRightLeg()->SetSize(LimbSize);
-  GetLeftLeg()->SetSize(LimbSize);
+  if(GetGroin())
+    GetGroin()->SetSize(GroinSize());
+
+  if(GetRightArm())
+    GetRightArm()->SetSize(ArmSize());
+
+  if(GetLeftArm())
+    GetLeftArm()->SetSize(ArmSize());
+
+  if(GetRightLeg())
+    GetRightLeg()->SetSize(LegSize());
+
+  if(GetLeftLeg())
+    GetLeftLeg()->SetSize(LegSize());
 }
 
 ushort humanoid::GetSize() const
 {
-  return GetHead()->GetSize() + GetTorso()->GetSize() + Max(GetLeftLeg()->GetSize(), GetRightLeg()->GetSize());
+  ushort Size = 0;
+
+  if(GetHead())
+    Size += GetHead()->GetSize();
+
+  if(GetTorso())
+    Size += GetTorso()->GetSize();
+
+  if(GetLeftLeg() && GetRightLeg())
+    Size += Max(GetLeftLeg()->GetSize(), GetRightLeg()->GetSize());
+  else
+    if(GetLeftLeg())
+      Size += GetLeftLeg()->GetSize();
+    else
+      if(GetRightLeg())
+	Size += GetRightLeg()->GetSize();
+
+  return Size;
+}
+
+ushort humanoid::HeadSize() const
+{
+  return 20;
+}
+
+ushort humanoid::TorsoSize() const
+{
+  return (TotalSize() - HeadSize()) * 2 / 5;
+}
+
+ushort humanoid::ArmSize() const
+{
+  return (TotalSize() - HeadSize()) * 3 / 5;
+}
+
+ushort humanoid::GroinSize() const
+{
+  return (TotalSize() - HeadSize()) / 3;
+}
+
+ushort humanoid::LegSize() const
+{
+  return (TotalSize() - HeadSize()) * 3 / 5;
 }
 
 ulong humanoid::HeadVolume() const
@@ -1891,6 +2137,30 @@ void humanoid::CreateBodyParts()
   CreateLeftLeg();
 }
 
+void humanoid::RestoreBodyParts()
+{
+  if(!GetHead())
+    CreateHead();
+
+  if(!GetTorso())
+    CreateTorso();
+
+  if(!GetRightArm())
+    CreateRightArm();
+
+  if(!GetLeftArm())
+    CreateLeftArm();
+
+  if(!GetGroin())
+    CreateGroin();
+
+  if(!GetRightLeg())
+    CreateRightLeg();
+
+  if(!GetLeftLeg())
+    CreateLeftLeg();
+}
+
 void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture)
 {
   UpdateHeadPicture(CallUpdatePicture);
@@ -1904,130 +2174,171 @@ void humanoid::UpdateBodyPartPictures(bool CallUpdatePicture)
 
 void humanoid::CreateHead()
 {
-  SetHead(new head(false, false));
+  SetHead(new head(false));
   UpdateHeadPicture(false);
   GetHead()->InitMaterials(2, CreateHeadFlesh(HeadVolume() * (100 - HeadBonePercentile()) / 100), CreateHeadBone(TorsoVolume() * HeadBonePercentile() / 100));
+  GetHead()->SetMaster(this);
+  GetHead()->SetAttached(true);
+  GetHead()->SetSize(HeadSize());
 }
 
 void humanoid::UpdateHeadPicture(bool CallUpdatePicture)
 {
-  GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
-  GetHead()->SetColor(0, SkinColor());
-  GetHead()->SetColor(1, CapColor());
-  GetHead()->SetColor(2, HairColor());
-  GetHead()->SetColor(3, EyeColor());
+  if(GetHead())
+    {
+      GetHead()->SetBitmapPos(vector2d(96 + (GetHeadType() / 16) * 16, (GetHeadType() % 16) * 16));
+      GetHead()->SetColor(0, SkinColor());
+      GetHead()->SetColor(1, CapColor());
+      GetHead()->SetColor(2, HairColor());
+      GetHead()->SetColor(3, EyeColor());
 
-  if(CallUpdatePicture)
-    GetHead()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetHead()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateTorso()
 {
-  SetTorso(new humanoidtorso(false, false));
+  SetTorso(new humanoidtorso(false));
   UpdateTorsoPicture(false);
   GetTorso()->InitMaterials(2, CreateTorsoFlesh(TorsoVolume() * (100 - TorsoBonePercentile()) / 100), CreateTorsoBone(TorsoVolume() * TorsoBonePercentile() / 100));
+  GetTorso()->SetMaster(this);
+  GetTorso()->SetAttached(true);
+  GetTorso()->SetSize(TorsoSize());
 }
 
 void humanoid::UpdateTorsoPicture(bool CallUpdatePicture)
 {
-  GetTorso()->SetBitmapPos(vector2d(32 + (GetTorsoType() / 16) * 16, (GetTorsoType() % 16) * 16));
-  GetTorso()->SetColor(0, SkinColor());
-  GetTorso()->SetColor(1, TorsoMainColor());
-  GetTorso()->SetColor(2, BeltColor());
-  GetTorso()->SetColor(3, TorsoSpecialColor());
+  if(GetTorso())
+    {
+      GetTorso()->SetBitmapPos(vector2d(32 + (GetTorsoType() / 16) * 16, (GetTorsoType() % 16) * 16));
+      GetTorso()->SetColor(0, SkinColor());
+      GetTorso()->SetColor(1, TorsoMainColor());
+      GetTorso()->SetColor(2, BeltColor());
+      GetTorso()->SetColor(3, TorsoSpecialColor());
 
-  if(CallUpdatePicture)
-    GetTorso()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetTorso()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateRightArm()
 {
-  SetRightArm(new rightarm(false, false));
+  SetRightArm(new rightarm(false));
   UpdateRightArmPicture(false);
   GetRightArm()->InitMaterials(2, CreateRightArmFlesh(RightArmVolume() * (100 - RightArmBonePercentile()) / 100), CreateRightArmBone(RightArmVolume() * RightArmBonePercentile() / 100));
+  GetRightArm()->SetMaster(this);
+  GetRightArm()->SetAttached(true);
+  GetRightArm()->SetSize(RightArmSize());
 }
 
 void humanoid::UpdateRightArmPicture(bool CallUpdatePicture)
 {
-  GetRightArm()->SetBitmapPos(vector2d(64 + (GetRightArmType() / 16) * 16, (GetRightArmType() % 16) * 16));
-  GetRightArm()->SetColor(0, SkinColor());
-  GetRightArm()->SetColor(1, ArmMainColor());
-  GetRightArm()->SetColor(3, ArmSpecialColor());
+  if(GetRightArm())
+    {
+      GetRightArm()->SetBitmapPos(vector2d(64 + (GetRightArmType() / 16) * 16, (GetRightArmType() % 16) * 16));
+      GetRightArm()->SetColor(0, SkinColor());
+      GetRightArm()->SetColor(1, ArmMainColor());
+      GetRightArm()->SetColor(3, ArmSpecialColor());
 
-  if(CallUpdatePicture)
-    GetRightArm()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetRightArm()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateLeftArm()
 {
-  SetLeftArm(new leftarm(false, false));
+  SetLeftArm(new leftarm(false));
   UpdateLeftArmPicture(false);
   GetLeftArm()->InitMaterials(2, CreateLeftArmFlesh(LeftArmVolume() * (100 - LeftArmBonePercentile()) / 100), CreateLeftArmBone(LeftArmVolume() * LeftArmBonePercentile() / 100));
+  GetLeftArm()->SetMaster(this);
+  GetLeftArm()->SetSize(LeftArmSize());
 }
 
 void humanoid::UpdateLeftArmPicture(bool CallUpdatePicture)
 {
-  GetLeftArm()->SetBitmapPos(vector2d(64 + (GetLeftArmType() / 16) * 16, (GetLeftArmType() % 16) * 16));
-  GetLeftArm()->SetColor(0, SkinColor());
-  GetLeftArm()->SetColor(1, ArmMainColor());
-  GetLeftArm()->SetColor(3, ArmSpecialColor());
+  if(GetLeftArm())
+    {
+      GetLeftArm()->SetBitmapPos(vector2d(64 + (GetLeftArmType() / 16) * 16, (GetLeftArmType() % 16) * 16));
+      GetLeftArm()->SetColor(0, SkinColor());
+      GetLeftArm()->SetColor(1, ArmMainColor());
+      GetLeftArm()->SetColor(3, ArmSpecialColor());
 
-  if(CallUpdatePicture)
-    GetLeftArm()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetLeftArm()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateGroin()
 {
-  SetGroin(new groin(false, false));
+  SetGroin(new groin(false));
   UpdateGroinPicture(false);
   GetGroin()->InitMaterials(2, CreateGroinFlesh(GroinVolume() * (100 - GroinBonePercentile()) / 100), CreateGroinBone(GroinVolume() * GroinBonePercentile() / 100));
+  GetGroin()->SetMaster(this);
+  GetGroin()->SetAttached(true);
+  GetGroin()->SetSize(GroinSize());
 }
 
 void humanoid::UpdateGroinPicture(bool CallUpdatePicture)
 {
-  GetGroin()->SetBitmapPos(vector2d((GetGroinType() / 16) * 16, (GetGroinType() % 16) * 16));
-  GetGroin()->SetColor(0, SkinColor());
-  GetGroin()->SetColor(1, LegMainColor());
-  GetGroin()->SetColor(3, LegSpecialColor());
+  if(GetGroin())
+    {
+      GetGroin()->SetBitmapPos(vector2d((GetGroinType() / 16) * 16, (GetGroinType() % 16) * 16));
+      GetGroin()->SetColor(0, SkinColor());
+      GetGroin()->SetColor(1, LegMainColor());
+      GetGroin()->SetColor(3, LegSpecialColor());
 
-  if(CallUpdatePicture)
-    GetGroin()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetGroin()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateRightLeg()
 {
-  SetRightLeg(new rightleg(false, false));
+  SetRightLeg(new rightleg(false));
   UpdateRightLegPicture(false);
   GetRightLeg()->InitMaterials(2, CreateRightLegFlesh(RightLegVolume() * (100 - RightLegBonePercentile()) / 100), CreateRightLegBone(RightLegVolume() * RightLegBonePercentile() / 100));
+  GetRightLeg()->SetMaster(this);
+  GetRightLeg()->SetAttached(true);
+  GetRightLeg()->SetSize(RightLegSize());
 }
 
 void humanoid::UpdateRightLegPicture(bool CallUpdatePicture)
 {
-  GetRightLeg()->SetBitmapPos(vector2d((GetRightLegType() / 16) * 16, (GetRightLegType() % 16) * 16));
-  GetRightLeg()->SetColor(0, SkinColor());
-  GetRightLeg()->SetColor(1, LegMainColor());
-  GetRightLeg()->SetColor(3, LegSpecialColor());
+  if(GetRightLeg())
+    {
+      GetRightLeg()->SetBitmapPos(vector2d((GetRightLegType() / 16) * 16, (GetRightLegType() % 16) * 16));
+      GetRightLeg()->SetColor(0, SkinColor());
+      GetRightLeg()->SetColor(1, LegMainColor());
+      GetRightLeg()->SetColor(3, LegSpecialColor());
 
-  if(CallUpdatePicture)
-    GetRightLeg()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetRightLeg()->UpdatePicture();
+    }
 }
 
 void humanoid::CreateLeftLeg()
 {
-  SetLeftLeg(new leftleg(false, false));
+  SetLeftLeg(new leftleg(false));
   UpdateLeftLegPicture(false);
   GetLeftLeg()->InitMaterials(2, CreateLeftLegFlesh(LeftLegVolume() * (100 - LeftLegBonePercentile()) / 100), CreateLeftLegBone(LeftLegVolume() * LeftLegBonePercentile() / 100));
+  GetLeftLeg()->SetMaster(this);
+  GetLeftLeg()->SetAttached(true);
+  GetLeftLeg()->SetSize(LeftLegSize());
 }
 
 void humanoid::UpdateLeftLegPicture(bool CallUpdatePicture)
 {
-  GetLeftLeg()->SetBitmapPos(vector2d((GetLeftLegType() / 16) * 16, (GetLeftLegType() % 16) * 16));
-  GetLeftLeg()->SetColor(0, SkinColor());
-  GetLeftLeg()->SetColor(1, LegMainColor());
-  GetLeftLeg()->SetColor(3, LegSpecialColor());
+  if(GetLeftLeg())
+    {
+      GetLeftLeg()->SetBitmapPos(vector2d((GetLeftLegType() / 16) * 16, (GetLeftLegType() % 16) * 16));
+      GetLeftLeg()->SetColor(0, SkinColor());
+      GetLeftLeg()->SetColor(1, LegMainColor());
+      GetLeftLeg()->SetColor(3, LegSpecialColor());
 
-  if(CallUpdatePicture)
-    GetLeftLeg()->UpdatePicture();
+      if(CallUpdatePicture)
+	GetLeftLeg()->UpdatePicture();
+    }
 }
 
 head* humanoid::GetHead() const { return (head*)GetBodyPart(1); }
@@ -2043,24 +2354,199 @@ void humanoid::SetRightLeg(rightleg* What) { SetBodyPart(5, What); }
 leftleg* humanoid::GetLeftLeg() const { return (leftleg*)GetBodyPart(6); }
 void humanoid::SetLeftLeg(leftleg* What) { SetBodyPart(6, What); }
 
+humanoidtorso* humanoid::GetHumanoidTorso() const { return (humanoidtorso*)GetBodyPart(0); }
+void humanoid::SetHumanoidTorso(humanoidtorso* What) { SetBodyPart(0, What); }
+
+bool humanoid::BodyPartVital(uchar Index)
+{
+  if(Index == 0 || Index == 1 || Index == 4)
+    return true;
+  else
+    return false;
+}
+
+bool humanoid::BodyPartCanBeSevered(uchar Index) const
+{
+  if(Index == 0 || Index == 4)
+    return false;
+  else
+    return true;
+}
+
 void humanoid::DrawToTileBuffer() const
 {
-  GetGroin()->DrawToTileBuffer();
-  GetRightLeg()->DrawToTileBuffer();
-  GetLeftLeg()->DrawToTileBuffer();
-  GetTorso()->DrawToTileBuffer();
-  GetRightArm()->DrawToTileBuffer();
-  GetLeftArm()->DrawToTileBuffer();
-  GetHead()->DrawToTileBuffer();
+  /* Order is important, so don't use a loop */
+
+  if(GetGroin())
+    GetGroin()->DrawToTileBuffer();
+
+  if(GetRightLeg())
+    GetRightLeg()->DrawToTileBuffer();
+
+  if(GetLeftLeg())
+    GetLeftLeg()->DrawToTileBuffer();
+
+  if(GetTorso())
+    GetTorso()->DrawToTileBuffer();
+
+  if(GetRightArm())
+    GetRightArm()->DrawToTileBuffer();
+
+  if(GetLeftArm())
+    GetLeftArm()->DrawToTileBuffer();
+
+  if(GetHead())
+    GetHead()->DrawToTileBuffer();
 }
 
 void dwarf::DrawToTileBuffer() const
 {
-  GetGroin()->DrawToTileBuffer(vector2d(0, -1));
-  GetRightLeg()->DrawToTileBuffer(vector2d(0, -1));
-  GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1));
-  GetTorso()->DrawToTileBuffer();
-  GetRightArm()->DrawToTileBuffer();
-  GetLeftArm()->DrawToTileBuffer();
-  GetHead()->DrawToTileBuffer(vector2d(0, 1));
+  if(GetGroin())
+    GetGroin()->DrawToTileBuffer(vector2d(0, -1));
+
+  if(GetRightLeg())
+    GetRightLeg()->DrawToTileBuffer(vector2d(0, -1));
+
+  if(GetLeftLeg())
+    GetLeftLeg()->DrawToTileBuffer(vector2d(0, -1));
+
+  if(GetTorso())
+    GetTorso()->DrawToTileBuffer();
+  
+  if(GetRightArm())
+    GetRightArm()->DrawToTileBuffer();
+
+  if(GetLeftArm())
+    GetLeftArm()->DrawToTileBuffer();
+
+  if(GetHead())
+    GetHead()->DrawToTileBuffer(vector2d(0, 1));
+}
+
+bool humanoid::ReceiveEffect(short Amount, uchar Type, uchar TargetFlags, uchar Direction, bool Divide, bool PenetrateArmor, bool Critical)
+{
+  std::vector<uchar> ChooseFrom;
+
+  if(TargetFlags & TORSO && GetTorso())
+    ChooseFrom.push_back(0);
+
+  if(TargetFlags & HEAD && GetHead())
+    ChooseFrom.push_back(1);
+
+  if(TargetFlags & RIGHTARM && GetRightArm())
+    ChooseFrom.push_back(2);
+
+  if(TargetFlags & LEFTARM && GetLeftArm())
+    ChooseFrom.push_back(3);
+
+  if(TargetFlags & GROIN && GetGroin())
+    ChooseFrom.push_back(4);
+
+  if(TargetFlags & RIGHTLEG && GetRightLeg())
+    ChooseFrom.push_back(5);
+
+  if(TargetFlags & LEFTLEG && GetLeftLeg())
+    ChooseFrom.push_back(6);
+
+  if(!ChooseFrom.size())
+    return false;
+
+  if(Divide)
+    {
+      bool Affected = false;
+
+      for(ushort c = 0; c < ChooseFrom.size(); ++c)
+	if(ReceiveBodyPartEffect(Amount / ChooseFrom.size(), Type, ChooseFrom[c], Direction, PenetrateArmor, Critical))
+	  Affected = true;
+
+      return Affected;
+    }
+  else
+    return ReceiveBodyPartEffect(Amount, Type, ChooseFrom[RAND() % ChooseFrom.size()], Direction, PenetrateArmor, Critical);
+}
+
+item* humanoid::GetMainWielded() const
+{
+  if(GetMainArm())
+    return GetMainArm()->GetWielded();
+  else
+    return 0;
+}
+
+item* humanoid::GetSecondaryWielded() const
+{
+  if(GetSecondaryArm())
+    return GetSecondaryArm()->GetWielded();
+  else
+    return 0;
+}
+
+item* humanoid::GetBodyArmor() const
+{
+  return GetHumanoidTorso()->GetBodyArmor();
+}
+
+arm* humanoid::GetMainArm() const
+{
+  if(GetRightArm())
+    return GetRightArm();
+  else
+    return GetLeftArm();
+}
+
+arm* humanoid::GetSecondaryArm() const
+{
+  return GetLeftArm();
+}
+
+void humanoid::SetMainWielded(item* Item)
+{
+  if(GetMainArm())
+    GetMainArm()->SetWielded(Item);
+  else
+    ABORT("Right hand in wrong place!");
+}
+
+void humanoid::SetSecondaryWielded(item* Item)
+{
+  if(GetSecondaryArm())
+    GetSecondaryArm()->SetWielded(Item);
+  else
+    ABORT("Left hand in wrong place!");
+}
+
+void humanoid::SetBodyArmor(item* Item)
+{
+  GetHumanoidTorso()->SetBodyArmor(Item);
+}
+
+bool humanoid::CanWieldInMainHand() const
+{
+  return GetMainArm() ? true : false;
+}
+
+bool humanoid::CanWieldInSecondaryHand() const
+{
+  return GetSecondaryArm() ? true : false;
+}
+
+/*float humanoid::GetMainToHitValue() const
+{
+  if(GetWielded())
+    return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
+  else
+    return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+}
+
+float humanoid::GetSecondaryToHitValue() const
+{
+  if(GetWielded())
+    return GetMeleeAttributeModifier() * GetCategoryWeaponSkill(GetWielded()->GetWeaponCategory())->GetBonus() * GetCurrentSingleWeaponSkill()->GetBonus() / sqrt(GetWielded()->GetWeight() > 400 ? GetWielded()->GetWeight() : 400) * 10;
+  else
+    return (GetMeleeAttributeModifier() >> 1) * GetCategoryWeaponSkill(UNARMED)->GetBonus();
+}*/
+
+bool humanoid::EqupmentScreen()
+{
+  return false;
 }

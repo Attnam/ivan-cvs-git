@@ -97,8 +97,8 @@ class game
   static void DeInitLuxTable();
   static const char* Insult();
   static bool BoolQuestion(std::string, char = 0, int = 0);
-  static const char* PersonalPronoun(uchar Index);
-  static const char* PossessivePronoun(uchar Index);
+  //static const char* PersonalPronoun(uchar Index);
+  //static const char* PossessivePronoun(uchar Index);
   static void DrawEverything(bool = true);
   static bool Save(std::string = game::SaveName());
   static uchar Load(std::string = game::SaveName());
@@ -125,9 +125,9 @@ class game
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 25);
   static vector2d GetDirectionVectorForKey(ushort);
   static vector2d AskForDirectionVector(std::string = "");
-  static std::string GetPlayerName() { return PlayerName; }
-  static void SetPlayerName(std::string What) { PlayerName = What; }
-  static std::string SaveName();
+  //static std::string GetPlayerName() { return PlayerName; }
+  //static void SetPlayerName(std::string What) { PlayerName = What; }
+  static std::string SaveName(std::string = "");
   static bool EyeHandler(vector2d, vector2d);
   static long GodScore();
   static void ShowLevelMessage();
@@ -205,7 +205,7 @@ class game
   static bool WizardMode;
   static bool SeeWholeMapCheat;
   static bool GoThroughWallsCheat;
-  static std::string PlayerName;
+  //static std::string PlayerName;
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;

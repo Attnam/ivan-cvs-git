@@ -151,4 +151,3 @@ bool glterrain::SitOn(character*)
   ADD_MESSAGE("You sit for some time. Nothing happens.");
   return true;
 }
-

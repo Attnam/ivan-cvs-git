@@ -71,6 +71,7 @@ command* game::Command[] = {0,
 			    new command(&character::Drop, "drop", 'd', false),
 			    new command(&character::Consume, "eat/drink", 'e', true),
 			    new command(&character::WhatToEngrave, "engrave", 'E', false),
+			    new command(&character::EqupmentScreen, "equipment meny", 'I', true),
 			    new command(&character::GainDivineKnowledge, "gain knowledge of all gods cheat", '7', true, true),
 			    new command(&character::GainAllItems, "give all items cheat", '8', true, true),
 			    new command(&character::Go, "go", 'g', false),
@@ -85,7 +86,7 @@ command* game::Command[] = {0,
 			    new command(&character::Offer, "offer", 'O', false),
 			    new command(&character::Open, "open", 'o', false),
 			    new command(&character::OutlineCharacters, "outline characters", 'K', true),
-			    new command(&character::OutlineItems, "outline items", 'I', true),
+			    new command(&character::OutlineItems, "outline items", 'J', true),
 			    new command(&character::PickUp, "pick up", ',', false),
 			    new command(&character::Pray, "pray", 'p', false),
 			    new command(&character::Quit, "quit", 'q', true),
@@ -106,8 +107,8 @@ command* game::Command[] = {0,
 			    new command(&character::WalkThroughWalls, "toggle walk through walls cheat", '4', true, true),
 			    new command(&character::ForceVomit, "vomit", 'v', false),
 			    new command(&character::NOP, "wait", '.', true),
-			    new command(&character::WearArmor, "wear", 'W', true),
-			    new command(&character::Wield, "wield", 'w', true),
+			    //new command(&character::WearArmor, "wear", 'W', true),
+			    //new command(&character::Wield, "wield", 'w', true),
 			    new command(&character::WizardMode, "wizard mode activation", 'X', true),
 			    new command(&character::Zap, "zap", 'z', false),
 			    0};
@@ -125,7 +126,7 @@ bool game::WizardMode;
 bool game::SeeWholeMapCheat;
 bool game::GoThroughWallsCheat;
 bool KeyIsOK(char);
-std::string game::PlayerName;
+//std::string game::PlayerName;
 ulong game::Ticks;
 
 void game::InitScript()
@@ -140,18 +141,20 @@ void game::InitScript()
 
 void game::Init(std::string Name)
 {
+  std::string PlayerName;
+
   if(Name == "")
     if(configuration::GetDefaultName() == "")
       {
-	SetPlayerName(iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true));
+	PlayerName = iosystem::StringQuestion("What is your name? (3-20 letters)", vector2d(30, 46), WHITE, 3, 20, true, true);
 
 	if(PlayerName == "")
 	  return;
       }
     else
-      SetPlayerName(configuration::GetDefaultName());
+      PlayerName = configuration::GetDefaultName();
   else
-    SetPlayerName(Name);
+    PlayerName = Name;
 
   static ushort Counter = 0;
 
@@ -181,7 +184,7 @@ void game::Init(std::string Name)
   mkdir(SAVE_DIR.c_str(), S_IRWXU | S_IRWXG);
 #endif
 
-  switch(Load())
+  switch(Load(SaveName(PlayerName)))
     {
     case LOADED:
       {
@@ -211,14 +214,13 @@ void game::Init(std::string Name)
 	CreateTeams();
 	CreateGods();
 	SetPlayer(new human);
+	Player->SetAssignedName(PlayerName);
 	Player->SetTeam(GetTeam(0));
 	GetTeam(0)->SetLeader(Player);
 	Petrus = 0;
 	InitDungeons();
 	WorldMap = new worldmap(128, 128);
 	WorldMap->Generate();
-	GetDungeon(0)->PrepareLevel(6);
-	GetDungeon(0)->SaveLevel(SaveName(), 6);
 	InWilderness = true;
 	UpdateCamera();
 	game::SendLOSUpdateRequest();
@@ -235,6 +237,16 @@ void game::Init(std::string Name)
 	dog* Doggie = new dog;
 	Doggie->SetTeam(GetTeam(0));
 	GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+
+	/*communist* Communist = new communist;
+	Communist->SetTeam(GetTeam(0));
+	GetWorldMap()->GetPlayerGroup().push_back(Communist);
+
+	angel* Angel = new angel;
+	Angel->SetMaster(1);
+	Angel->SetTeam(GetTeam(0));
+	GetWorldMap()->GetPlayerGroup().push_back(Angel);*/
+
 	ADD_MESSAGE("Game generated successfully.");
 	break;
       }
@@ -278,7 +290,7 @@ void game::Run()
   while(GetRunning())
     {	
       if(!InWilderness)
-	GetCurrentDungeon()->GetLevel(Current)->HandleCharacters(); // Temporary
+	GetCurrentDungeon()->GetLevel(Current)->GenerateMonsters(); // Temporary place
 
       try
 	{
@@ -379,7 +391,7 @@ void game::DrawPanel()
 
   character* Player = GetPlayer();
 
-  FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s the %s %s", GetPlayerName().c_str(), GetVerbalPlayerAlignment().c_str(), Player->CNAME(UNARTICLED));
+  FONT->Printf(DOUBLEBUFFER, 16, 524, WHITE, "%s", game::GetPlayer()->CHARNAME(INDEFINITE));//, GetVerbalPlayerAlignment().c_str());
 
   FONT->Printf(DOUBLEBUFFER, 16, 534, WHITE, "Strength: %d", Player->GetStrength());
   FONT->Printf(DOUBLEBUFFER, 16, 544, WHITE, "Endurance: %d", Player->GetEndurance());
@@ -388,18 +400,18 @@ void game::DrawPanel()
   FONT->Printf(DOUBLEBUFFER, 16, 574, WHITE, "Size: %d", Player->GetSize());
   FONT->Printf(DOUBLEBUFFER, 16, 584, Player->GetHP() < Player->GetMaxHP() / 3 ? RED : WHITE, "HP: %d/%d", Player->GetHP(), Player->GetMaxHP());
 
-  if(Player->GetWielded())
-    FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
+  /*if(Player->GetMainWielded())
+    FONT->Printf(DOUBLEBUFFER, 200, 574, WHITE, "Wielded: %s", Player->GetMainWielded()->CHARNAME(INDEFINITE));
 
-  if(Player->GetTorsoArmor())
-    FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
+  if(Player->GetBodyArmor())
+    FONT->Printf(DOUBLEBUFFER, 200, 584, WHITE, "Worn: %s", Player->GetBodyArmor()->CHARNAME(INDEFINITE));*/
 
   FONT->Printf(DOUBLEBUFFER, 200, 534, WHITE, "Weapon Strength: %.0f", Player->GetAttackStrength() / 100);
   FONT->Printf(DOUBLEBUFFER, 200, 544, WHITE, "To Hit Value: %.0f", Player->GetToHitValue());
   FONT->Printf(DOUBLEBUFFER, 200, 554, WHITE, "Damage: %d-%d", ushort(Player->GetAttackStrength() * Player->GetStrength() / 66667), ushort(Player->GetAttackStrength() * Player->GetStrength() / 40000 + 1));
   FONT->Printf(DOUBLEBUFFER, 200, 564, WHITE, "Money: %d", Player->GetMoney());
 
-  FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
+  //FONT->Printf(DOUBLEBUFFER, 440, 534, WHITE, "Armor Value: %d", Player->CalculateArmorModifier());
   FONT->Printf(DOUBLEBUFFER, 440, 544, WHITE, "Dodge Value: %.0f", Player->GetDodgeValue());
 
   if(GetWizardMode())
@@ -519,7 +531,7 @@ bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForT
     }
 }
 
-const char* game::PersonalPronoun(uchar Sex)
+/*const char* game::PersonalPronoun(uchar Sex)
 {
   switch(Sex)
     {
@@ -533,9 +545,9 @@ const char* game::PersonalPronoun(uchar Sex)
       ABORT("Illegal sex encountered.");
       return "xxx";
     }
-}
+}*/
 
-const char* game::PossessivePronoun(uchar Sex)
+/*const char* game::PossessivePronoun(uchar Sex)
 {
   switch(Sex)
     {
@@ -549,7 +561,7 @@ const char* game::PossessivePronoun(uchar Sex)
       ABORT("Illegal sex encountered.");
       return "xxx";
     }
-}
+}*/
 
 void game::DrawEverything(bool EmptyMsg)
 {
@@ -588,7 +600,7 @@ bool game::Save(std::string SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
 
-  SaveFile << ushort(SAVEFILE_VERSION) << PlayerName;
+  SaveFile << ushort(SAVEFILE_VERSION);// << PlayerName;
   SaveFile << CurrentDungeon << Current << Camera << WizardMode << SeeWholeMapCheat;
   SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextItemID;
   SaveFile << LOSTurns;
@@ -629,7 +641,7 @@ uchar game::Load(std::string SaveName)
 	  return BACK;
     }
 
-  SaveFile >> PlayerName;
+  //SaveFile >> PlayerName;
   SaveFile >> CurrentDungeon >> Current >> Camera >> WizardMode >> SeeWholeMapCheat;
   SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextItemID;
   SaveFile >> LOSTurns;
@@ -658,9 +670,14 @@ uchar game::Load(std::string SaveName)
   return LOADED;
 }
 
-std::string game::SaveName()
+std::string game::SaveName(std::string Base)
 {
-  std::string SaveName = SAVE_DIR + PlayerName;
+  std::string SaveName = SAVE_DIR;
+
+  if(Base == "")
+    SaveName += game::GetPlayer()->GetAssignedName();
+  else
+    SaveName += Base;
 
   for(ushort c = 0; c < SaveName.length(); ++c)
     if(SaveName[c] == ' ')
@@ -1254,7 +1271,6 @@ uchar game::GetDirectionForVector(vector2d Vector)
   return DIRECTION_COMMAND_KEYS;
 }
 
-
 std::string game::GetVerbalPlayerAlignment()
 {
   long Sum = 0;
@@ -1338,3 +1354,4 @@ vector2d game::PositionQuestion(std::string Question, vector2d CurrentPos)
 
 
 }
+

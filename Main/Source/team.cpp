@@ -35,19 +35,6 @@ void team::Hostility(team* Enemy)
 	      /* This is a gum solution. The message should come from the script. */
 
 	      ADD_MESSAGE("You hear an alarm ringing.");
-
-	      if(game::GetPetrus() && game::GetPetrus()->GetStoryState() < 2)
-		{
-		  game::TriggerQuestForGoldenEagleShirt();
-
-		  /*
-		   * If the game would crash before the next autosave,
-		   * DarkLevel could be altered twice.
-		   */
-
-		  if(configuration::GetAutosaveInterval())
-		    game::Save(game::GetAutoSaveFileName().c_str());
-		}
 	    }
 
 	  if(Enemy->GetAttackEvilness())

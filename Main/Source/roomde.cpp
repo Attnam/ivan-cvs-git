@@ -32,7 +32,7 @@ void shop::Enter(character* Customer)
       {
 	if(Master->GetTeam()->GetRelation(Customer->GetTeam()) != HOSTILE && Customer->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	  if(Master->GetSquareUnder()->CanBeSeenFrom(Customer->GetSquareUnder()->GetPos(), Customer->LOSRangeSquare()))
-	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CNAME(DEFINITE));
+	    ADD_MESSAGE("%s welcomes you warmly to the shop.", Master->CHARNAME(DEFINITE));
 	  else
 	    ADD_MESSAGE("Something welcomes you warmly to the shop.");
       }
@@ -50,7 +50,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
   if(!Customer->GetIsPlayer())
     if(Customer->GetSquareUnder()->CanBeSeen() && Customer->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s buys %s.", Customer->CNAME(DEFINITE), ForSale->CNAME(DEFINITE));
+	ADD_MESSAGE("%s buys %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
 	Customer->SetMoney(Customer->GetMoney() - Price);
 	Master->SetMoney(Master->GetMoney() + Price);
 	return true;
@@ -74,7 +74,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 
       if(Customer->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"Ah! That %s costs %d squirrels.", ForSale->CNAME(UNARTICLED), Price);
+	  ADD_MESSAGE("\"Ah! That %s costs %d squirrels.", ForSale->CHARNAME(UNARTICLED), Price);
 	  ADD_MESSAGE("No haggling, please.\"");
 
 	  if(game::BoolQuestion("Do you want to buy this item? [y/N]"))
@@ -88,7 +88,7 @@ bool shop::PickupItem(character* Customer, item* ForSale)
 	}
       else
 	{
-	  ADD_MESSAGE("\"Don't touch that %s, beggar!", ForSale->CNAME(UNARTICLED));
+	  ADD_MESSAGE("\"Don't touch that %s, beggar!", ForSale->CHARNAME(UNARTICLED));
 	  ADD_MESSAGE("It is worth %d squirrels!\"", Price);
 	  return false;
 	}
@@ -113,7 +113,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
   if(!Customer->GetIsPlayer())
     if(Price && Customer->GetSquareUnder()->CanBeSeen() && Master->GetMoney() >= Price)
       {
-	ADD_MESSAGE("%s sells %s.", Customer->CNAME(DEFINITE), ForSale->CNAME(DEFINITE));
+	ADD_MESSAGE("%s sells %s.", Customer->CHARNAME(DEFINITE), ForSale->CHARNAME(DEFINITE));
 	Customer->SetMoney(Customer->GetMoney() + Price);
 	Master->SetMoney(Master->GetMoney() - Price);
 	return true;
@@ -137,7 +137,7 @@ bool shop::DropItem(character* Customer, item* ForSale)
 
       if(Master->GetMoney() >= Price)
 	{
-	  ADD_MESSAGE("\"What a fine %s. I'll pay %d squirrels for it.\"", ForSale->CNAME(UNARTICLED), Price);
+	  ADD_MESSAGE("\"What a fine %s. I'll pay %d squirrels for it.\"", ForSale->CHARNAME(UNARTICLED), Price);
 
 	  if(game::BoolQuestion("Do you want to sell this item? [y/N]"))
 	    {
@@ -171,7 +171,7 @@ void temple::Enter(character* Pilgrim)
       {
 	if(Master->GetTeam()->GetRelation(Pilgrim->GetTeam()) != HOSTILE && Pilgrim->GetSquareUnder()->CanBeSeenFrom(Master->GetSquareUnder()->GetPos(), Master->LOSRangeSquare()))
 	  if(Master->GetSquareUnder()->CanBeSeenFrom(Pilgrim->GetSquareUnder()->GetPos(), Pilgrim->LOSRangeSquare()))
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CNAME(DEFINITE), game::PossessivePronoun(Master->GetSex()), game::GetGod(DivineOwner)->Name().c_str());
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", Master->CHARNAME(DEFINITE), Master->PossessivePronoun().c_str(), game::GetGod(DivineOwner)->Name().c_str());
 	  else
 	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineOwner)->Name().c_str());
       }
@@ -314,7 +314,7 @@ void cathedral::Load(inputfile& SaveFile)
 bool cathedral::Drink(character* Thirsty) const
 {
   if(game::GetTeam(2)->GetRelation(Thirsty->GetTeam()) == HOSTILE)
-    return true;
+    return game::BoolQuestion("Do you want to drink? [y/N]");
 
   if(Thirsty->GetIsPlayer())
     {

@@ -37,12 +37,12 @@ void room::HandleInstantiatedCharacter(character* Character)
 {
   Character->SetHomeRoom(Index);
 
-  /* This is a highly temporary gum solution... That most likely will be forgotten here. */
+  /* This is a highly temporary gum solution... Which most likely will be forgotten here. */
 
   if(Character->GetType() == kamikazedwarf::StaticType())
     {
       ((kamikazedwarf*)Character)->SetMaster(DivineOwner);
-      ((holybook*)Character->GetWielded())->SetOwnerGod(DivineOwner);
+      ((holybook*)Character->GetMainWielded())->SetOwnerGod(DivineOwner);
     }
 }
 

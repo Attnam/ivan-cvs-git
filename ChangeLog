@@ -1,3 +1,7 @@
+April 19 2002 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Everything changed.
+
 2002-04-18  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
 	* Main/Include/itemde.h: Price of Avatar of Valpuri added. Also added boot, gauntlet, belt, ring and amulet 
@@ -7,7 +11,6 @@
 2002-04-06 Heikki Sairanen <heikki.sairanen@phpoint.net>
 
  	* Main/Include/itemde.h: Added cloak and shield	(actually did this a week ago, but didn't commit)
-
 
 April 13 2002 Timo Kiviluoto <sonor@phpoint.fi>
 

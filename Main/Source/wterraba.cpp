@@ -18,7 +18,7 @@ struct prioritypair
 std::string wterrain::Name(uchar Case) const
 {
   if(!(Case & PLURAL))
-    if(!(Case & DEFINEBIT))
+    if(!(Case & ARTICLEBIT))
       return NameStem();
     else
       if(!(Case & INDEFINEBIT))
@@ -26,7 +26,7 @@ std::string wterrain::Name(uchar Case) const
       else
 	return Article() + " " + NameStem();
   else
-    if(!(Case & DEFINEBIT))
+    if(!(Case & ARTICLEBIT))
       return NameStem() + " terrains";
     else
       if(!(Case & INDEFINEBIT))

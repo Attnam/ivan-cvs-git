@@ -697,18 +697,21 @@ bool level::MakeRoom(roomscript* RoomScript)
   return true;
 }
 
-void level::HandleCharacters()
+void level::GenerateMonsters()
 {
-  ushort Population = 0;
-
-  for(ushort c = 0; c < game::GetTeams(); ++c)
+  if(*LevelScript->GetGenerateMonsters())
     {
-      Population += game::GetTeam(c)->GetMember().size();
-    }
+      ushort Population = 0;
 
-  if(Population < GetIdealPopulation() && *LevelScript->GetGenerateMonsters())
-    if(!(RAND() % (2 << (11 - game::GetCurrent()))))
-      GenerateNewMonsters(1);
+      for(ushort c = 0; c < game::GetTeams(); ++c)
+	{
+	  Population += game::GetTeam(c)->GetMember().size();
+	}
+
+      if(Population < GetIdealPopulation())
+	if(!(RAND() % (2 << (11 - game::GetCurrent()))))
+	  GenerateNewMonsters(1);
+    }
 }
 
 void level::Save(outputfile& SaveFile) const
@@ -999,16 +1002,20 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 		  }
 	      });
 
-	      Char->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+	      Char->GetStack()->ImpactDamage(Damage);
 	      Char->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
-	      Char->CheckGearExistence();
+	      //Char->CheckGearExistence();
 	      Char->CheckDeath(DeathMsg);
 	    }
 
-	Square->GetStack()->ImpactDamage(Damage, Square->CanBeSeen());
+	Square->GetStack()->ImpactDamage(Damage);
 	Square->GetStack()->ReceiveFireDamage(Terrorist, DeathMsg, Damage);
 
-	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMaterial(0)->StrengthValue() < 100)
+//<<<<<<< level.cpp
+	//if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMainMaterial()->CanBeDigged())
+//=======
+	if(Damage >= 20 && Square->GetOLTerrain()->CanBeDigged() && Square->GetOLTerrain()->GetMainMaterial()->GetStrengthValue() < 100)
+//>>>>>>> 1.94
 	  Square->ChangeOLTerrainAndUpdateLights(new empty);
       }
   });
@@ -1030,9 +1037,9 @@ void level::Explosion(character* Terrorist, std::string DeathMsg, vector2d Pos, 
 	  }
       });
 
-      game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage, true);
+      game::GetPlayer()->GetStack()->ImpactDamage(PlayerDamage);
       game::GetPlayer()->ReceiveFireDamage(Terrorist, DeathMsg, PlayerDamage);
-      game::GetPlayer()->CheckGearExistence();
+      //game::GetPlayer()->CheckGearExistence();
       game::GetPlayer()->CheckDeath(DeathMsg);
     }
 }
@@ -1059,7 +1066,7 @@ bool level::CollectCreatures(std::vector<character*>& CharacterArray, character*
     if(Char)
       if(Char != Leader && (Char->GetTeam() == Leader->GetTeam() || Char->GetTeam()->GetRelation(Leader->GetTeam()) == HOSTILE) && ((Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeen()) || (!Leader->GetIsPlayer() && Char->GetLSquareUnder()->CanBeSeenFrom(Leader->GetPos(), Leader->LOSRangeSquare(), Leader->HasInfraVision()))))
 	{
-	  ADD_MESSAGE("%s follows you.", Char->CNAME(DEFINITE));
+	  ADD_MESSAGE("%s follows you.", Char->CHARNAME(DEFINITE));
 
 	  if(Char->StateIsActivated(CONSUMING)) 
 	    Char->EndConsuming();
