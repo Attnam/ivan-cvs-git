@@ -14,11 +14,9 @@
 #include "lsquare.h"
 #include "terrain.h"
 
-item::item(ushort Size2, bool CreateMaterials)
+item::item(bool CreateMaterials, bool SetStats)
 {
-	Size = Size2;
-
-	if(CreateMaterials)
+	if(CreateMaterials || SetStats)
 		ABORT("Boo!");
 }
 
@@ -36,7 +34,7 @@ ushort can::TryToOpen(stack* Stack)
 {
 	ADD_MESSAGE("You succeed in opening the can!");
 
-	item* Lump = new lump(123, false);
+	item* Lump = new lump(false);
 	Lump->InitMaterials(CMaterial(1));
 
 	ushort x = Stack->AddItem(Lump);
@@ -231,10 +229,10 @@ ushort item::CEmitation(void)
 
 void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-game::CCurrentLevel()->CLevelSquare(ItemStack->CPos())->CStack()->AddItem(new brokenbottle);
-ItemStack->RemoveItem(ItemStack->FindItem(this));
-if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
-delete this;
+	game::CCurrentLevel()->CLevelSquare(ItemStack->CPos())->CStack()->AddItem(new brokenbottle);
+	ItemStack->RemoveItem(ItemStack->FindItem(this));
+	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
+	delete this;
 }
 
 

@@ -6,23 +6,19 @@
 template <class ProtoType> class prototypecontainer
 {
 public:
-	prototypecontainer(void) { ProtoData.push_back(0); }
-	void Add(const ushort, ProtoType*);
+	prototypecontainer(void) { ProtoData.push_back(0); ProtoData.push_back(0); }
+	ushort Add(ProtoType*);
 	const ProtoType* const Access(ushort Index) const { return ProtoData[Index]; }
 	const ProtoType* const operator [] (ushort Index) const { return ProtoData[Index]; }
 private:
 	std::vector<ProtoType*> ProtoData;
 };
 
-template <class ProtoType> inline void prototypecontainer<ProtoType>::Add(const ushort Index, ProtoType* Proto)
+template <class ProtoType> inline ushort prototypecontainer<ProtoType>::Add(ProtoType* Proto)
 {
-	if(ProtoData.size() < Index + 2)
-	{
-		ProtoData.resize(Index + 2, 0);
-		ProtoData[Index] = Proto;
-	}
-	else
-		ProtoData[Index] = Proto;
+	ProtoData.insert(ProtoData.end() - 1, Proto);
+
+	return ProtoData.size() - 2;
 }
 
 #endif

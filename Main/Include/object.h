@@ -23,6 +23,7 @@ public:
 	virtual void InitMaterials(material*);
 	virtual material* CMaterial(ushort Index) { return Material[Index]; }
 	virtual ushort CEmitation(void);
+	virtual void SSize(ushort Value) { Size = Value; }
 	virtual ushort CSize(void) { return Size; }
 	virtual void EraseMaterials(void);
 	virtual ushort CMaterials(void) { return Material.size(); }

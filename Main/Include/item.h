@@ -23,8 +23,8 @@ class stack;
 class item : public object
 {
 public:
-	item(ushort, bool);
-	item(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : object(SaveFile) {}
+	item(bool = true, bool = true);
+	item(std::ifstream* SaveFile) : object(SaveFile) {}
 	virtual float GetWeaponStrength(void);
 	virtual void DrawToTileBuffer(void);
 	virtual void PositionedDrawToTileBuffer(uchar);
@@ -68,6 +68,7 @@ public:
 	virtual item* CreateWishedItem(void) { return 0; }
 	virtual bool Apply(character*) { ADD_MESSAGE("You can't apply this!"); return false; }
 protected:
+	virtual void SetDefaultStats(void) = 0;
 	virtual ushort CFormModifier(void) {return 0;}
 };
 
@@ -78,55 +79,61 @@ protected:
 
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define ITEM(name, base, imaterials, dparameters, constructor, load, type, possibility, data)\
+	#define ITEM(name, base, initmaterials, setstats, loader, destructor, data)\
 	\
 	class name : public base\
 	{\
 	public:\
-		name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) constructor\
-		name(bool CreateMaterials = true) : base dparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) load\
-		virtual item* Clone(void) const {return new name;}\
-		virtual item* Load(std::ifstream* SaveFile) const {return new name(SaveFile, 0);}\
-		virtual ushort Possibility(void) const { return possibility; }\
+		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+		name(std::ifstream* SaveFile) : base(SaveFile) loader\
+		virtual ~name() destructor\
+		virtual item* Clone(void) const { return new name; }\
+		virtual item* Load(std::ifstream* SaveFile) const { return new name(SaveFile); }\
 	protected:\
-		virtual ushort Type(void) { return type; }\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void);\
 		data\
 	};\
 	\
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) { game::CItemPrototype().Add(type, new name); }\
-	} static Proto_##name;
+		proto_##name(void) : Index(game::CItemPrototype().Add(new name)) {}\
+		ushort GetIndex(void) { return Index; }\
+	private:\
+		ushort Index;\
+	} static Proto_##name;\
+	\
+	ushort name::Type(void) { return Proto_##name.GetIndex(); }
 
 #else
 
-	#define ITEM(name, base, imaterials, dparameters, constructor, load, type, possibility, data)\
+	#define ITEM(name, base, initmaterials, setstats, loader, destructor, data)\
 	\
 	class name : public base\
 	{\
 	public:\
-		name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) constructor\
-		name(bool CreateMaterials = true) : base dparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) load\
-		virtual item* Clone(void) const {return new name;}\
-		virtual item* Load(std::ifstream* SaveFile) const {return new name(SaveFile, 0);}\
-		virtual ushort Possibility(void) const { return possibility; }\
+		name(bool CreateMaterials = true, bool SetStats = true) : base(false, false) { if(CreateMaterials) initmaterials ; if(SetStats) SetDefaultStats(); }\
+		name(std::ifstream* SaveFile) : base(SaveFile) loader\
+		virtual ~name() destructor\
+		virtual item* Clone(void) const { return new name; }\
+		virtual item* Load(std::ifstream* SaveFile) const { return new name(SaveFile); }\
 	protected:\
-		virtual ushort Type(void) { return type; }\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void);\
 		data\
 	};
 
 #endif
 
-#define ABSTRACT_ITEM(name, base, imaterials, constructor, load, data)\
+#define ABSTRACT_ITEM(name, base, loader, destructor, data)\
+\
 class name : public base\
 {\
 public:\
-	name(ushort Size, bool CreateMaterials) : base(Size, CreateMaterials) {}\
-	name(std::ifstream* SaveFile, ushort MaterialQuantity = imaterials) : base(SaveFile, MaterialQuantity) {}\
-protected:\
+	name(bool CreateMaterials, bool SetStats) : base(CreateMaterials, SetStats) {}\
+	name(std::ifstream* SaveFile) : base(SaveFile) loader\
+	virtual ~name() destructor\
 	data\
 };
 
@@ -158,13 +165,14 @@ protected:\
 #define PREPARE_FOR_CONSUMING public: virtual ushort PrepareForConsuming(character*, stack*)
 #define CAN_BE_WISHED public: virtual bool CanBeWished(void)
 #define CREATE_WISHED_ITEM public: virtual item* CreateWishedItem(void)
+#undef POSSIBILITY
+#define POSSIBILITY public: virtual ushort Possibility(void) const
 #undef APPLY
 #define APPLY public: virtual bool Apply(character*)
 
 ABSTRACT_ITEM(
 	meleeweapon,
 	item,
-	3,
 	{},
 	{},
 	RECEIVE_HIT_EFFECT;
@@ -176,15 +184,13 @@ ABSTRACT_ITEM(
 ITEM(
 	banana,
 	item,
-	2,
-	(
-	 20,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(2, new bananapeal(30), new bananaflesh(150)); },
+	InitMaterials(2, new bananapeal(30), new bananaflesh(150)),
+	{
+		SSize(20);
+	},
 	{},
-	1,
-	50,
+	{},
+	POSSIBILITY RET(50)
 	NAME RET(NameSized(Case,"a", 15, 40))
 	GET_CONSUME_TYPE RET(Material[1]->CConsumeType())
 	GET_IN_HANDS_PIC RET(vector(160, 112))
@@ -199,15 +205,13 @@ ITEM(
 ITEM(
 	holybananaofliukasvipro,
 	banana,
-	2,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(2, new bananapeal(40), new bananaflesh(300)); },
+	InitMaterials(2, new bananapeal(40), new bananaflesh(300)),
+	{
+		SSize(30);
+	},
 	{},
-	2,
-	1,
+	{},
+	POSSIBILITY RET(1)
 	NAME RET(NameArtifact(Case, IBANANAPEAL))
 	NAME_SINGULAR RET("holy banana of Liukas Vipro")
 	NAME_PLURAL RET("holy bananas of Liukas Vipro")
@@ -220,15 +224,13 @@ ITEM(
 ITEM(
 	lamp,
 	item,
-	1,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new glass(850)); },
+	InitMaterials(new glass(850)),
+	{
+		SSize(30);
+	},
 	{},
-	3,
-	10,
+	{},
+	POSSIBILITY RET(10)
 	POSITIONED_DRAW_TO_TILE_BUFFER;
 	C_EMITATION RET(300)
 	NAME_SINGULAR RET("lamp")
@@ -242,15 +244,13 @@ ITEM(
 ITEM(
 	can,
 	item,
-	2,
-	(
-	 10,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(2, new iron(50), rand() % 2 ? (material*)(new bananaflesh(600)) : (material*)(new schoolfood(600))); },
+	InitMaterials(2, new iron(50), rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
+	{
+		SSize(10);
+	},
 	{},
-	4,
-	100,
+	{},
+	POSSIBILITY RET(100)
 	POSITIONED_DRAW_TO_TILE_BUFFER;
 	NAME RET(NameContainer(Case))
 	TRY_TO_OPEN;
@@ -267,15 +267,13 @@ ITEM(
 ITEM(
 	lump,
 	item,
-	1,
-	(
-	 10,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(rand() % 2 ? (material*)(new bananaflesh(600)) : (material*)(new schoolfood(600))); },
+	InitMaterials(rand() % 2 ? (material*)new bananaflesh(600) : (material*)new schoolfood(600)),
+	{
+		SSize(10);
+	},
 	{},
-	5,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	GET_CONSUME_TYPE RET(Material[0]->CConsumeType())
 	CONSUME;
@@ -294,15 +292,13 @@ ITEM(
 ITEM(
 	sword,
 	meleeweapon,
-	3,
-	(
-	 150,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(2500), new iron(100), 0); },
+	InitMaterials(3, new iron(2500), new iron(100), 0),
+	{
+		SSize(150);
+	},
 	{},
-	6,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	GET_IN_HANDS_PIC RET(vector(160,32))
 	NAME_SINGULAR RET("sword")
 	NAME_PLURAL RET("swords")
@@ -314,15 +310,13 @@ ITEM(
 ITEM(
 	twohandedsword,
 	sword,
-	3,
-	(
-	 175,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(5500), new iron(250), 0); },
+	InitMaterials(3, new iron(5500), new iron(250), 0),
+	{
+		SSize(175);
+	},
 	{},
-	7,
-	3,
+	{},
+	POSSIBILITY RET(3)
 	NAME_SINGULAR RET("two-handed sword")
 	NAME_PLURAL RET("two-handed swords")
 	C_FORM_MODIFIER RET(125)
@@ -333,15 +327,13 @@ ITEM(
 ITEM(
 	curvedtwohandedsword,
 	twohandedsword,
-	3,
-	(
-	 175,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(5500), new iron(250), 0); },
+	InitMaterials(3, new iron(5500), new iron(250), 0),
+	{
+		SSize(175);
+	},
 	{},
-	8,
-	1,
+	{},
+	POSSIBILITY RET(1)
 	NAME_SINGULAR RET("curved two-handed sword")
 	NAME_PLURAL RET("curved two-handed swords")
 	C_FORM_MODIFIER RET(150)
@@ -352,15 +344,13 @@ ITEM(
 ITEM(
 	valpurijustifier,
 	sword,
-	3,
-	(
-	 200,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new valpurium(6500), new valpurium(300), 0); },
+	InitMaterials(3, new valpurium(6500), new valpurium(300), 0),
+	{
+		SSize(200);
+	},
 	{},
-	9,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME RET(NameArtifact(Case, IVALPURIUM))
 	NAME_SINGULAR RET("holy broadsword named Valpuri's Justifier")
 	NAME_PLURAL RET("holy broadswords named Valpuri's Justifier")
@@ -374,15 +364,13 @@ ITEM(
 ITEM(
 	axe,
 	meleeweapon,
-	3,
-	(
-	 125,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(450), new iron(900), 0); },
+	InitMaterials(3, new iron(450), new iron(900), 0),
+	{
+		SSize(125);
+	},
 	{},
-	10,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	GET_IN_HANDS_PIC RET(vector(160,16))
 	NAME_SINGULAR RET("axe")
 	NAME_PLURAL RET("axes")
@@ -394,15 +382,13 @@ ITEM(
 ITEM(
 	pickaxe,
 	axe,
-	3,
-	(
-	 150,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(1000), new wood(1050), 0); },
+	InitMaterials(3, new iron(1000), new wood(1050), 0),
+	{
+		SSize(150);
+	},
 	{},
-	11,
-	10,
+	{},
+	POSSIBILITY RET(10)
 	NAME_SINGULAR RET("pick-axe")
 	NAME_PLURAL RET("pick-axes")
 	C_FORM_MODIFIER RET(150)
@@ -415,15 +401,13 @@ ITEM(
 ITEM(
 	spear,
 	meleeweapon,
-	3,
-	(
-	 200,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(150), new wood(1500), 0); },
+	InitMaterials(3, new iron(150), new wood(1500), 0),
+	{
+		SSize(200);
+	},
 	{},
-	12,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	GET_IN_HANDS_PIC RET(vector(160,96))
 	CAN_BE_DIPPED_INTO RET(Material[2] ? false : true)
 	NAME_SINGULAR RET("spear")
@@ -436,7 +420,6 @@ ITEM(
 ABSTRACT_ITEM(
 	torsoarmor,
 	item,
-	1,
 	{},
 	{},
 	CAN_BE_WORN RET(true)
@@ -445,15 +428,13 @@ ABSTRACT_ITEM(
 ITEM(
 	platemail,
 	torsoarmor,
-	1,
-	(
-	 75,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new iron(4000)); },
+	InitMaterials(new iron(4000)),
+	{
+		SSize(75);
+	},
 	{},
-	13,
-	3,
+	{},
+	POSSIBILITY RET(3)
 	GET_ARMOR_VALUE { float Base = 80 - sqrt(Material[0]->GetHitValue()) * 3; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
 	C_FORM_MODIFIER RET(15)
 	NAME_SINGULAR RET("plate mail")
@@ -465,15 +446,13 @@ ITEM(
 ITEM(
 	chainmail,
 	torsoarmor,
-	1,
-	(
-	 75,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new iron(2000)); },
+	InitMaterials(new iron(2000)),
+	{
+		SSize(75);
+	},
 	{},
-	14,
-	10,
+	{},
+	POSSIBILITY RET(10)
 	GET_ARMOR_VALUE { float Base = 90 - sqrt(Material[0]->GetHitValue()) * 2; if(Base < 0) Base = 0; if(Base > 100) Base = 100; return ushort(Base); }
 	C_FORM_MODIFIER RET(15)
 	NAME_SINGULAR RET("chain mail")
@@ -485,7 +464,6 @@ ITEM(
 ABSTRACT_ITEM(
 	shirt,
 	torsoarmor,
-	1,
 	{},
 	{},
 	private: void Temporary(void) {} //...
@@ -494,15 +472,13 @@ ABSTRACT_ITEM(
 ITEM(
 	maakotkashirt,
 	shirt,
-	1,
-	(
-	 60,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new cloth(1000)); },
+	InitMaterials(new cloth(1000)),
+	{
+		SSize(60);
+	},
 	{},
-	15,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	GET_ARMOR_VALUE RET(10)
 	C_FORM_MODIFIER RET(15)
 	NAME_SINGULAR RET("Maakotka shirt")
@@ -517,15 +493,13 @@ ITEM(
 ITEM(
 	corpse,
 	item,
-	1,
-	(
-	 0,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new humanflesh(60000)); },
+	InitMaterials(new humanflesh(60000)),
+	{
+		SSize(0);
+	},
 	{},
-	16,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	GET_CONSUME_TYPE RET(Material[0]->CConsumeType())
 	CONSUME;
 	NAME_SINGULAR RET("corpse")
@@ -539,15 +513,13 @@ ITEM(
 ITEM(
 	potion,
 	item,
-	2,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(2, new glass(50), rand() % 3 ? 0 : new omleurine(1500)); },
+	InitMaterials(2, new glass(50), rand() % 3 ? 0 : new omleurine(1500)),
+	{
+		SSize(30);
+	},
 	{},
-	17,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	GET_CONSUME_TYPE RET(Material[1] ? Material[1]->CConsumeType() : ODD)
 	CONSUME;
 	NAME RET(NameContainer(Case))
@@ -563,15 +535,13 @@ ITEM(
 ITEM(
 	bananapeals,
 	item,
-	1,
-	(
-	 20,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new bananapeal(15)); },
+	InitMaterials(new bananapeal(15)),
+	{
+		SSize(20);
+	},
 	{},
-	18,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	NAME RET(NameHandleDefaultMaterial(Case, "a", IBANANAPEAL))
 	NAME_SINGULAR RET("banana peal")
 	NAME_PLURAL RET("banana peals")
@@ -585,19 +555,17 @@ ITEM(
 ITEM(
 	brokenbottle,
 	item,
-	1,
-	(
-	 10,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new glass(50)); },
+	InitMaterials(new glass(50)),
+	{
+		SSize(10);
+	},
 	{},
-	19,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	NAME_SINGULAR RET("broken bottle")
 	NAME_PLURAL RET("broken bottles")
 	C_FORM_MODIFIER RET(60)
-	BETTER_VERSION { item* P = new potion(30, false); P->InitMaterials(2, new glass(50), new omleurine(1500)); return P; }
+	BETTER_VERSION { item* P = new potion(false); P->InitMaterials(2, new glass(50), new omleurine(1500)); return P; }
 	OFFER_MODIFIER RET(0)
 	C_BITMAP_POS RETV(144,160)
 );
@@ -605,7 +573,6 @@ ITEM(
 ABSTRACT_ITEM(
 	scroll,
 	item,
-	1,
 	{},
 	{},
 	CAN_BE_READ;
@@ -615,15 +582,13 @@ ABSTRACT_ITEM(
 ITEM(
 	scrollofcreatemonster,
 	scroll,
-	1,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new parchment(200)); },
+	InitMaterials(new parchment(200)),
+	{
+		SSize(30);
+	},
 	{},
-	20,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	READ;
 	NAME_SINGULAR RET("scroll of create monster")
 	NAME_PLURAL RET("scrolls of create monster")
@@ -634,15 +599,13 @@ ITEM(
 ITEM(
 	scrollofteleport,
 	scroll,
-	1,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new parchment(200)); },
+	InitMaterials(new parchment(200)),
+	{
+		SSize(30);
+	},
 	{},
-	21,
-	25,
+	{},
+	POSSIBILITY RET(25)
 	READ;
 	NAME_SINGULAR RET("scroll of teleportation")
 	NAME_PLURAL RET("scrolls of teleportation")
@@ -653,15 +616,13 @@ ITEM(
 ITEM(
 	head,
 	item,
-	1,
-	(
-	 0,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new humanflesh(2000)); },
+	InitMaterials(new humanflesh(2000)),
+	{
+		SSize(0);
+	},
 	{},
-	22,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME_SINGULAR RET("head")
 	NAME_PLURAL RET("heads")
 	C_FORM_MODIFIER RET(10)
@@ -673,15 +634,13 @@ ITEM(
 ITEM(
 	headofelpuri,
 	head,
-	1,
-	(
-	 60,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new elpuriflesh(25000)); },
+	InitMaterials(new elpuriflesh(25000)),
+	{
+		SSize(60);
+	},
 	{},
-	23,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME RET(NameArtifact(Case, IELPURIFLESH))
 	IS_HEAD_OF_ELPURI RET(true)
 	NAME_SINGULAR RET("head of Elpuri")
@@ -694,15 +653,13 @@ ITEM(
 ITEM(
 	nut,
 	item,
-	1,
-	(
-	 0,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new humanflesh(15)); },
+	InitMaterials(new humanflesh(15)),
+	{
+		SSize(0);
+	},
 	{},
-	24,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	C_FORM_MODIFIER RET(10)
 	NAME_SINGULAR RET("nut")
 	NAME_PLURAL RET("nuts")
@@ -714,15 +671,13 @@ ITEM(
 ITEM(
 	leftnutofperttu,
 	nut,
-	1,
-	(
-	 10,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new humanflesh(150)); },
+	InitMaterials(new humanflesh(150)),
+	{
+		SSize(10);
+	},
 	{},
-	25,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	IS_PERTTUS_NUT RET(true)
 	NAME RET(NameArtifact(Case, IHUMANFLESH))
 	NAME_SINGULAR RET("left nut of Perttu")
@@ -735,15 +690,13 @@ ITEM(
 ITEM(
 	abone,
 	item,
-	1,
-	(
-	 50,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new bone(2000)); },
+	InitMaterials(new bone(2000)),
+	{
+		SSize(50);
+	},
 	{},
-	26,
-	50,
+	{},
+	POSSIBILITY RET(50)
 	NAME_SINGULAR RET("bone")
 	NAME_PLURAL RET("bones")
 	C_FORM_MODIFIER RET(50)
@@ -758,15 +711,13 @@ ITEM(
 ITEM(
 	poleaxe,
 	axe,
-	3,
-	(
-	 225,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(1500), new wood(3000), 0); },
+	InitMaterials(3, new iron(1500), new wood(3000), 0),
+	{
+		SSize(225);
+	},
 	{},
-	27,
-	15,
+	{},
+	POSSIBILITY RET(15)
 	C_FORM_MODIFIER RET(100)
 	NAME_SINGULAR RET("poleaxe")
 	NAME_PLURAL RET("poleaxes")
@@ -777,15 +728,13 @@ ITEM(
 ITEM(
 	spikedmace,
 	meleeweapon,
-	3,
-	(
-	 150,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new iron(5000), new wood(3000), 0); },
+	InitMaterials(3, new iron(5000), new wood(3000), 0),
+	{
+		SSize(150);
+	},
 	{},
-	28,
-	5,
+	{},
+	POSSIBILITY RET(5)
 	C_FORM_MODIFIER RET(75)
 	NAME_SINGULAR RET("spiked mace")
 	NAME_PLURAL RET("spiked maces")
@@ -797,15 +746,13 @@ ITEM(
 ITEM(
 	htaedfoneercseulb,
 	spikedmace,
-	3,
-	(
-	 200,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(3, new mithril(15000), new iron(8000), new darkfrogflesh(1000)); },
+	InitMaterials(3, new mithril(15000), new iron(8000), new darkfrogflesh(1000)),
+	{
+		SSize(200);
+	},
 	{},
-	29,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME RET(NameArtifact(Case, IMITHRIL))
 	C_FORM_MODIFIER RET(100)
 	NAME_SINGULAR RET("ancient mace named H'taed Foneer Cse-ulb")
@@ -820,15 +767,13 @@ ITEM(
 ITEM(
 	loaf,
 	item,
-	1,
-	(
-	 40,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(1, rand() % 2 ? (material*)(new pork(2000)) : (material*)(new beef(2000))); },
+	InitMaterials(rand() % 2 ? (material*)new pork(2000) : (material*)new beef(2000)),
+	{
+		SSize(40);
+	},
 	{},
-	30,
-	200,
+	{},
+	POSSIBILITY RET(200)
 	NAME RET(NameThingsThatAreLikeLumps(Case, "a")) 
 	NAME_SINGULAR RET("loaf")
 	NAME_PLURAL RET("loaves")
@@ -842,15 +787,13 @@ ITEM(
 ITEM(
 	scrollofwishing,
 	scroll,
-	1,
-	(
-	 30,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new parchment(200)); },
+	InitMaterials(new parchment(200)),
+	{
+		SSize(30);
+	},
 	{},
-	31,
-	1,
+	{},
+	POSSIBILITY RET(1)
 	READ;
 	NAME_SINGULAR RET("scroll of wishing")
 	NAME_PLURAL RET("scrolls of wishing")
@@ -862,18 +805,17 @@ ITEM(
 ITEM(
 	cheapcopyofleftnutofperttu,
 	nut,
-	1,
-	(
-	 10,
-	 false
-	),
-	{ if(CreateMaterials) InitMaterials(new glass(150)); },
+	InitMaterials(new glass(150)),
+	{
+		SSize(10);
+	},
 	{},
-	32,
-	0,
+	{},
+	POSSIBILITY RET(0)
 	NAME_SINGULAR RET("cheap copy of left nut of Perttu")
 	NAME_PLURAL RET("cheap copies of left nut of Perttu")		//???
 	SCORE RET(1)
 	C_BITMAP_POS RETV(144,208)
 );
+
 #endif

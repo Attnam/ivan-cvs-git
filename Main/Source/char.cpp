@@ -22,15 +22,12 @@
 #include "lsquare.h"
 #include "level.h"
 
-character::character(material** Material2, ushort Size2, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : Stack(new stack), Wielded(0), Strength(Strength), Endurance(Endurance), Agility(Agility), Perception(Perception), RegenerationCounter(0), HP(Endurance * 2), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(Relations), Dead(false)
+character::character(bool CreateMaterials, bool SetStats, bool CreateEquipment) : Stack(new stack), Wielded(0), RegenerationCounter(0), NP(1000), AP(0), StrengthExperience(0), EnduranceExperience(0), AgilityExperience(0), PerceptionExperience(0), Relations(0), Dead(false)
 {
 	SConsumingCurrently(0xFFFF);
 
-	Material.push_back(Material2[0]);
-
-	delete [] Material2;
-
-	Size = Size2;
+	if(CreateMaterials || SetStats || CreateEquipment)
+		ABORT("BOOO!");
 }
 
 character::~character(void)
@@ -38,75 +35,37 @@ character::~character(void)
 	delete Stack;
 }
 
-perttu::perttu(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : human(Material, Size, Agility, Strength, Endurance, Perception, 3, 15, 2, 3, Relations)
+void perttu::CreateInitialEquipment(void)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new valpurijustifier)));
-	item* VPlate = new platemail(75, false);
+	item* VPlate = new platemail(false);
 	VPlate->InitMaterials(new valpurium(4000));
 	WearItem(CStack()->CItem(CStack()->FastAddItem(VPlate)));
-	SHealTimer(100);
-	SConsumingCurrently(0xFFFF);
 }
 
-perttu::perttu(void) : human(NewMaterial(1, new humanflesh(110000)), 200, 80, 80, 80, 80, 3, 15,2,3,1)
-{
-	SWielded(CStack()->CItem(CStack()->FastAddItem(new valpurijustifier)));
-	item* VPlate = new platemail(75, false);
-	VPlate->InitMaterials(new valpurium(4000));
-	WearItem(CStack()->CItem(CStack()->FastAddItem(VPlate)));
-	SHealTimer(100);
-}
-
-oree::oree(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
+void oree::CreateInitialEquipment(void)
 {
 	CStack()->FastAddItem(new maakotkashirt);
 
 	for(ushort c = 0; c < 6; c++)
 	{
-		item* Can = new can(10, false);
+		item* Can = new can(false);
 		Can->InitMaterials(2, new iron(10), new pepsi(330));
 		CStack()->FastAddItem(Can);
 	}
 }
 
-oree::oree(void) : character(NewMaterial(1, new pepsi(110000)), 225, 40, 40, 40, 27, 0)
-{
-	CStack()->FastAddItem(new maakotkashirt);
-
-	for(ushort c = 0; c < 6; c++)
-	{
-		item* Can = new can(10, false);
-		Can->InitMaterials(2, new iron(10), new pepsi(330));
-		CStack()->FastAddItem(Can);
-	}
-}
-
-swatcommando::swatcommando(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
+void swatcommando::CreateInitialEquipment(void)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new curvedtwohandedsword)));
 }
 
-swatcommando::swatcommando(void) : character(NewMaterial(1, new humanflesh(110000)), 200, 30, 20, 15, 27, 0)
-{
-	SWielded(CStack()->CItem(CStack()->FastAddItem(new curvedtwohandedsword)));
-}
-
-fallenvalpurist::fallenvalpurist(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
+void fallenvalpurist::CreateInitialEquipment(void)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new pickaxe)));
 }
 
-fallenvalpurist::fallenvalpurist(void) : character(NewMaterial(1, new bone(60000)), 150, 10, 5, 5, 15, 0)
-{
-	SWielded(CStack()->CItem(CStack()->FastAddItem(new pickaxe)));
-}
-
-froggoblin::froggoblin(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
-{
-	SWielded(CStack()->CItem(CStack()->FastAddItem(new spear)));
-}
-
-froggoblin::froggoblin(void) : character(NewMaterial(1, new goblinoidflesh(25000)), 100, 15, 10, 5, 21, 0)
+void froggoblin::CreateInitialEquipment(void)
 {
 	SWielded(CStack()->CItem(CStack()->FastAddItem(new spear)));
 }
@@ -978,7 +937,7 @@ void character::Die(void)
 	
 	CLevelSquareUnder()->RemoveCharacter();
 
-	item* Corpse = new corpse(Size, false);
+	item* Corpse = new corpse(false);
 
 	Corpse->InitMaterials(CMaterial(0));
 
@@ -1109,7 +1068,7 @@ void elpuri::Die(void)
 	while(CStack()->CItems())
 		CStack()->MoveItem(0, CLevelSquareUnder()->CStack());
 
-	item* Corpse = new corpse(Size, false);
+	item* Corpse = new corpse(false);
 
 	Corpse->InitMaterials(CMaterial(0));
 
@@ -1150,7 +1109,7 @@ void perttu::Die(void)
 	while(CStack()->CItems())
 		CStack()->MoveItem(0, CLevelSquareUnder()->CStack());
 
-	item* Corpse = new corpse(Size, false);
+	item* Corpse = new corpse(false);
 
 	Corpse->InitMaterials(CMaterial(0));
 
@@ -1605,7 +1564,7 @@ void character::Save(std::ofstream* SaveFile)
 	SaveFile->write((char*)&Dead, sizeof(Dead)); // ?
 }
 
-character::character(std::ifstream* SaveFile, ushort MaterialQuantity) : object(SaveFile)
+character::character(std::ifstream* SaveFile) : object(SaveFile)
 {
 	Stack = new stack(SaveFile);
 
@@ -1649,19 +1608,10 @@ void humanoid::Save(std::ofstream* SaveFile)
 	SaveFile->write((char*)&TorsoType, sizeof(TorsoType));
 }
 
-humanoid::humanoid(std::ifstream* SaveFile, ushort MaterialQuantity) : character(SaveFile, MaterialQuantity)
+/*void humanoid::LoadSpecialVariables(std::ifstream* SaveFile)
 {
-	ushort Index;
-
-	SaveFile->read((char*)&Index, sizeof(Index));
-
-	Armor.Torso = Index != 0xFFFF ? Stack->CItem(Index) : 0;
-
-	SaveFile->read((char*)&ArmType, sizeof(ArmType));
-	SaveFile->read((char*)&HeadType, sizeof(HeadType));
-	SaveFile->read((char*)&LegType, sizeof(LegType));
-	SaveFile->read((char*)&TorsoType, sizeof(TorsoType));
-}
+	
+}*/
 
 bool character::WizardMode(void)
 {
@@ -1819,15 +1769,6 @@ bool character::ShowKeyLayout(void)
 	return false;
 }
 
-
-golem::golem(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations) : character(Material, Size, Agility, Strength, Endurance, Perception, Relations)
-{
-}
-
-golem::golem(void) : character(NewMaterial(1, game::CreateRandomSolidMaterial(100000)), 250, 5, 35, 20, 12, 0)
-{
-}
-
 bool character::Look(void)
 {
 	int Key;
@@ -1964,7 +1905,7 @@ void golem::Die(void)
 	while(CStack()->CItems())
 		CStack()->MoveItem(0, CLevelSquareUnder()->CStack());
 
-	item* Corpse = new corpse(Size, false);
+	item* Corpse = new corpse(false);
 
 	Corpse->InitMaterials(CMaterial(0));
 
@@ -2005,20 +1946,20 @@ bool character::WhatToEngrave(void)
 	return false;
 }
 
-ushort golem::CalculateArmorModifier(void)
-{
-	if(CMaterial(0)->CArmorValue() / 2 > 90)
-		return 10;
-	else
-		return 100 - CMaterial(0)->CArmorValue() / 2;
-}
-
 void character::MoveRandomly(void)
 {
 	ushort ToTry = rand() % 8;
 
 	if(!game::CCurrentLevel()->CLevelSquare(CPos() + game::CMoveVector()[ToTry])->CCharacter());
 		TryMove(CPos() + game::CMoveVector()[ToTry]);
+}
+
+ushort golem::CalculateArmorModifier(void)
+{
+	if(CMaterial(0)->CArmorValue() / 2 > 90)
+		return 10;
+	else
+		return 100 - CMaterial(0)->CArmorValue() / 2;
 }
 
 void golem::MoveRandomly(void)
@@ -2042,7 +1983,7 @@ bool character::TestForPickup(item* ToBeTested)
 	return true;
 }
 
-humanoid::humanoid(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar ArmType, uchar HeadType, uchar LegType, uchar TorsoType, uchar Relations)  : character(Material, Size, Agility, Strength, Endurance, Perception, Relations), ArmType(ArmType), HeadType(HeadType), LegType(LegType), TorsoType(TorsoType) {}
+//humanoid::humanoid(ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar ArmType, uchar HeadType, uchar LegType, uchar TorsoType, uchar Relations, bool CreateMaterials)  : character(Size, Agility, Strength, Endurance, Perception, Relations, CreateMaterials), ArmType(ArmType), HeadType(HeadType), LegType(LegType), TorsoType(TorsoType) {}
 
 bool character::OpenPos(vector APos)
 {
@@ -2405,11 +2346,6 @@ void character::Darkness(long SizeOfEffect)
 	else SAgility(1);
 	if(CHP() - x / 10 > 1) SHP(CHP() - x / 10);
 	else SHP(1);
-}
-
-perttu::perttu(std::ifstream* SaveFile, ushort MaterialQuantity) : human(SaveFile, MaterialQuantity)
-{
-	SaveFile->read((char*)&HealTimer, sizeof(HealTimer));
 }
 
 bool character::Kick(void)

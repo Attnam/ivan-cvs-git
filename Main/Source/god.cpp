@@ -139,7 +139,7 @@ void consummo::PrayBadEffect(void)
 void valpuri::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("A valpurium curved two-handed sword drops on to the ground.");
-	item* Reward = new curvedtwohandedsword(175, false);
+	item* Reward = new curvedtwohandedsword(false);
 	Reward->InitMaterials(3, new valpurium(5500), new iron(250), 0);
 	game::CPlayer()->CLevelSquareUnder()->CStack()->AddItem(Reward);
 }
@@ -262,7 +262,7 @@ void seges::PrayBadEffect(void)
 void atavus::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("A mithril platemail drops on the ground.");
-	item* Reward = new platemail(75, false);
+	item* Reward = new platemail(false);
 	Reward->InitMaterials(new mithril(4000));
 	game::CPlayer()->CLevelSquareUnder()->CStack()->AddItem(Reward);
 }
@@ -428,7 +428,7 @@ void pestifer::PrayGoodEffect(void)
 
 void pestifer::PrayBadEffect(void)
 {
-	game::CCurrentLevel()->CLevelSquare(game::CCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
+	//game::CCurrentLevel()->CLevelSquare(game::CCurrentLevel()->RandomSquare(true))->AddCharacter(new ennerbeast);
 	ADD_MESSAGE("You hear the shouts of a new enner beast!");
 }
 
@@ -503,7 +503,7 @@ void infuscor::PrayBadEffect(void)
 void macellarius::PrayGoodEffect(void)
 {
 	ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
-	item* Reward = new potion(30, false);
+	item* Reward = new potion(false);
 	Reward->InitMaterials(2, new glass(50), new omleurine(1500));
 	game::CPlayer()->CLevelSquareUnder()->CStack()->AddItem(Reward);
 	ADD_MESSAGE("%s drops on the ground.", Reward->CNAME(DEFINITE));
@@ -522,7 +522,7 @@ void scabies::PrayGoodEffect(void)
 	ADD_MESSAGE("5 cans full of school food drop to on the ground.");
 	for(uchar c = 0; c < 5; c++)
 	{
-		item* Reward = new can(10, false);
+		item* Reward = new can(false);
 		Reward->InitMaterials(2, new iron(50), new schoolfood(600));
 		game::CPlayer()->CLevelSquareUnder()->CStack()->AddItem(Reward);
 	}

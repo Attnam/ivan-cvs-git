@@ -193,9 +193,16 @@ void game::Init(std::string Name)
 
 		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->CXSize() - 1, Level[9]->CYSize() - 1, Level[9]->CLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
 		Level[9]->CLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
-		Level[9]->CLevelSquare(Pos + vector(0,  2))->FastAddCharacter(new golem(NewMaterial(1, new pepsi(100000)), 250, 5, 35, 20, 12, 0));
-		Level[9]->CLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(new golem(NewMaterial(1, new pepsi(100000)), 250, 5, 35, 20, 12, 0));
-		Level[9]->CLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(new golem(NewMaterial(1, new pepsi(100000)), 250, 5, 35, 20, 12, 0));
+
+		golem* Golem[3] = { new golem(false), new golem(false), new golem(false) };
+
+		Golem[0]->InitMaterials(new pepsi(100000));
+		Golem[1]->InitMaterials(new pepsi(100000));
+		Golem[2]->InitMaterials(new pepsi(100000));
+
+		Level[9]->CLevelSquare(Pos + vector(0,  2))->FastAddCharacter(Golem[0]);
+		Level[9]->CLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(Golem[1]);
+		Level[9]->CLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(Golem[2]);
 
 		{
 		for(ushort c = 0; c < game::CLevels() - 1; c++)

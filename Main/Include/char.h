@@ -33,6 +33,7 @@
 #include "game.h"
 #include "igraph.h"
 #include "object.h"
+#include "stack.h"
 
 class square;
 class bitmap;
@@ -47,8 +48,8 @@ class levelsquare;
 class character : public object
 {
 public:
-	character(material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations);
-	character(std::ifstream*, ushort = 1);
+	character(bool = true, bool = true, bool = true);
+	character(std::ifstream*);
 	~character(void);
 	virtual void DrawToTileBuffer(void);
 	virtual void Act(void);
@@ -193,12 +194,14 @@ public:
 	virtual long CAPsToBeEaten(void) { return APsToBeEaten; }
 	virtual void Vomit(ushort);
 	virtual character* Clone(void) const = 0;
-	virtual character* Load(std::ifstream*, ushort = 1) const = 0;
+	virtual character* Load(std::ifstream*) const = 0;
 	virtual ushort Possibility(void) const = 0;
 	virtual bool Apply(void);
 	virtual bool GainAllItems(void);
 	virtual bool ForceVomit(void);
 protected:
+	virtual void CreateInitialEquipment(void) {}
+	virtual void SetDefaultStats(void) = 0;
 	virtual void GetPlayerCommand(void);
 	virtual void GetAICommand(void);
 	virtual void Charge(character*);
@@ -249,10 +252,6 @@ protected:
 #define SAVE public: virtual void Save(std::ofstream*)
 #define C_ARM_TYPE public: virtual uchar CArmType(void)
 #define C_HEAD_TYPE public: virtual uchar CHeadType(void)
-#define HUMANOID_CHILD_PARAMETERS (material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar PArmType, uchar PHeadType, uchar PLegType, uchar PTorsoType, uchar Relations)
-#define HUMANOID_BASE_PARAMETERS (Material, Size, Agility, Strength, Endurance, Perception, PArmType, PHeadType, PLegType, PTorsoType, Relations)
-#define NORMAL_CHILD_PARAMETERS (material** Material, ushort Size, ushort Agility, ushort Strength, ushort Endurance, ushort Perception, uchar Relations)
-#define NORMAL_BASE_PARAMETERS (Material, Size, Agility, Strength, Endurance, Perception, Relations)
 #define GET_MELEE_STRENGTH protected: virtual float GetMeleeStrength(void)
 #define ADD_HIT_MESSAGE protected: virtual void AddHitMessage(character* Enemy, const bool Critical = false)
 #define BE_TALKED_TO public: virtual void BeTalkedTo(character*)
@@ -283,121 +282,85 @@ protected:
 #define AI_COMBAT_HIT_VERB protected: virtual std::string AICombatHitVerb(character*, const bool Critical)
 #define CATCHES public: virtual bool Catches(item*, float, bool)
 #define CONSUME_ITEM_TYPE public: virtual bool ConsumeItemType(uchar)
+#define CREATE_INITIAL_EQUIPMENT protected: virtual void CreateInitialEquipment(void)
+#undef POSSIBILITY
+#define POSSIBILITY public: virtual ushort Possibility(void) const
 #undef APPLY
 #define APPLY public: virtual bool Apply(void)
 
-#define BASIC_LOAD_CONSTRUCTOR(name, base) inline name::name(std::ifstream* SaveFile, ushort MaterialQuantity) : base(SaveFile, MaterialQuantity) {}
-
 #ifdef __FILE_OF_STATIC_PROTOTYPE_DECLARATIONS__
 
-	#define HEADER_CONSTRUCTED_CHARACTER(name, base, cparameters, bparameters, dparameters, constructor, load, type, possibility, data)\
+	#define CHARACTER(name, base, initmaterials, setstats, loader, destructor, data)\
 	\
 	class name : public base\
 	{\
 	public:\
-		name cparameters : base bparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
-		name(void) : base dparameters constructor\
-		virtual ~name() {}\
+		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(std::ifstream* SaveFile) : base(SaveFile) loader\
+		virtual ~name() destructor\
 		virtual character* Clone(void) const { return new name; }\
-		virtual character* Load(std::ifstream* SaveFile, ushort MaterialQuantity = 1) const { return new name(SaveFile, MaterialQuantity); }\
-		virtual ushort Possibility(void) const { return possibility; }\
+		virtual character* Load(std::ifstream* SaveFile) const { return new name(SaveFile); }\
 	protected:\
-		virtual ushort Type(void) { return type; }\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void);\
 		data\
 	};\
 	\
 	class proto_##name\
 	{\
 	public:\
-		proto_##name(void) { game::CCharacterPrototype().Add(type, new name); }\
-	} static Proto_##name;
-
-	#define SOURCE_CONSTRUCTED_CHARACTER(name, base, cparameters, type, possibility, data)\
+		proto_##name(void) : Index(game::CCharacterPrototype().Add(new name)) {}\
+		ushort GetIndex(void) { return Index; }\
+	private:\
+		ushort Index;\
+	} static Proto_##name;\
 	\
-	class name : public base\
-	{\
-	public:\
-		name cparameters;\
-		name(std::ifstream*, ushort = 1);\
-		name(void);\
-		virtual ~name() {}\
-		virtual character* Clone(void) const { return new name; }\
-		virtual character* Load(std::ifstream* SaveFile, ushort MaterialQuantity = 1) const { return new name(SaveFile, MaterialQuantity); }\
-		virtual ushort Possibility(void) const { return possibility; }\
-	protected:\
-		virtual ushort Type(void) { return type; }\
-		data\
-	};\
-	\
-	class proto_##name\
-	{\
-	public:\
-		proto_##name(void) { game::CCharacterPrototype().Add(type, new name); }\
-	} static Proto_##name;
+	ushort name::Type(void) { return Proto_##name.GetIndex(); }
 
 #else
 
-	#define HEADER_CONSTRUCTED_CHARACTER(name, base, cparameters, bparameters, dparameters, constructor, load, type, possibility, data)\
+	#define CHARACTER(name, base, initmaterials, setstats, loader, destructor, data)\
 	\
 	class name : public base\
 	{\
 	public:\
-		name cparameters : base bparameters constructor\
-		name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
-		name(void) : base dparameters constructor\
-		virtual ~name() {}\
+		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(std::ifstream* SaveFile) : base(SaveFile) loader\
+		virtual ~name() destructor\
 		virtual character* Clone(void) const { return new name; }\
-		virtual character* Load(std::ifstream* SaveFile, ushort MaterialQuantity = 1) const { return new name(SaveFile, MaterialQuantity); }\
-		virtual ushort Possibility(void) const { return possibility; }\
+		virtual character* Load(std::ifstream* SaveFile) const { return new name(SaveFile); }\
 	protected:\
-		virtual ushort Type(void) { return type; }\
-		data\
-	};
-
-	#define SOURCE_CONSTRUCTED_CHARACTER(name, base, cparameters, type, possibility, data)\
-	\
-	class name : public base\
-	{\
-	public:\
-		name cparameters;\
-		name(std::ifstream*, ushort = 1);\
-		name(void);\
-		virtual ~name() {}\
-		virtual character* Clone(void) const { return new name; }\
-		virtual character* Load(std::ifstream* SaveFile, ushort MaterialQuantity = 1) const { return new name(SaveFile, MaterialQuantity); }\
-		virtual ushort Possibility(void) const { return possibility; }\
-	protected:\
-		virtual ushort Type(void) { return type; }\
+		virtual void SetDefaultStats(void) { setstats }\
+		virtual ushort Type(void);\
 		data\
 	};
 
 #endif
 
-#define HEADER_CONSTRUCTED_BASE(name, base, cparameters, bparameters, constructor, load, data)\
+#define ABSTRACT_CHARACTER(name, base, loader, destructor, data)\
+\
 class name : public base\
 {\
 public:\
-	name cparameters : base bparameters constructor\
-	name(std::ifstream* SaveFile, ushort MaterialQuantity = 1) : base(SaveFile, MaterialQuantity) load\
-	virtual ~name() {}\
+	name(bool CreateMaterials, bool SetStats, bool CreateEquipment) : base(CreateMaterials, SetStats, CreateEquipment) {}\
+	name(std::ifstream* SaveFile) : base(SaveFile) loader\
+	virtual ~name() destructor\
 	data\
 };
 
-#define SOURCE_CONSTRUCTED_BASE(name, base, cparameters, data)\
-class name : public base\
-{\
-public:\
-	name cparameters;\
-	name(std::ifstream*, ushort = 1);\
-	virtual ~name() {}\
-	data\
-};
-
-SOURCE_CONSTRUCTED_BASE(
+ABSTRACT_CHARACTER(
 	humanoid,
 	character,
-	HUMANOID_CHILD_PARAMETERS,
+	{
+		ushort Index;
+		SaveFile->read((char*)&Index, sizeof(Index));
+		Armor.Torso = Index != 0xFFFF ? Stack->CItem(Index) : 0;
+		SaveFile->read((char*)&ArmType, sizeof(ArmType));
+		SaveFile->read((char*)&HeadType, sizeof(HeadType));
+		SaveFile->read((char*)&LegType, sizeof(LegType));
+		SaveFile->read((char*)&TorsoType, sizeof(TorsoType));
+	},
+	{},
 	DRAW_TO_TILE_BUFFER;
 	WEAR_ARMOR;
 	C_TORSO_ARMOR RET(Armor.Torso)
@@ -417,42 +380,59 @@ SOURCE_CONSTRUCTED_BASE(
 	uchar ArmType; uchar HeadType; uchar LegType; uchar TorsoType;
 	C_BITMAP_POS RETV(0,0)
 	APPLY;
+public:
+	V void SArmType(uchar Value) { ArmType = Value; }
+	V void SHeadType(uchar Value) { HeadType = Value; }
+	V void SLegType(uchar Value) { LegType = Value; }
+	V void STorsoType(uchar Value) { TorsoType = Value; }
 );
 
 inline humanoid::armor::armor(void) : Torso(0), Legs(0), Hands(0), Head(0), Feet(0) {}
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	human,
 	humanoid,
-	HUMANOID_CHILD_PARAMETERS,
-	HUMANOID_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new humanflesh(80000)),
-	 150 + rand() % 51,
-	 15 + rand() % 11,
-	 10 + rand() % 6,
-	 10 + rand() % 6,
-	 10 + rand() % 6,
-	 rand() % NUMBER_OF_HUMAN_ARMS,
-	 rand() % NUMBER_OF_HUMAN_HEADS,
-	 rand() % NUMBER_OF_HUMAN_LEGS,
-	 rand() % NUMBER_OF_HUMAN_TORSOS, 0
-	),
+	InitMaterials(new humanflesh(80000)),
+	{
+		SSize(150 + rand() % 51);
+		SAgility(15 + rand() % 11);
+		SStrength(10 + rand() % 6);
+		SEndurance(10 + rand() % 6);
+		SPerception(10 + rand() % 6);
+		SArmType(rand() % NUMBER_OF_HUMAN_ARMS);
+		SHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
+		SLegType(rand() % NUMBER_OF_HUMAN_LEGS);
+		STorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
+	},
 	{},
 	{},
-	1,
-	0,
 	NAME_SINGULAR RET("human")
 	NAME_PLURAL RET("humans")
 	DANGER RET(0)
+	POSSIBILITY RET(0)
 );
                       
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	perttu,
 	human,
-	NORMAL_CHILD_PARAMETERS,
-	2,
-	0,
+	InitMaterials(new humanflesh(80000)),
+	{
+		SSize(200);
+		SAgility(80);
+		SStrength(80);
+		SEndurance(80);
+		SPerception(80);
+		SArmType(3);
+		SHeadType(15);
+		SLegType(2);
+		STorsoType(3);
+		SRelations(1);
+		SHealTimer(100);
+	},
+	{
+		SaveFile->read((char*)&HealTimer, sizeof(HealTimer));
+	},
+	{},
 	NAME_SINGULAR RET("Perttu, the Überpriest of the Great Frog")
 	NAME_PLURAL RET("Perttus, the Überpriests of the Great Frog")
 	NAME RET(NameProperNoun(Case))
@@ -469,14 +449,24 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	SAVE;
 	DANGER RET(150000)
 	CHARMABLE RET(false)
+	POSSIBILITY RET(0)
+	CREATE_INITIAL_EQUIPMENT;
 );
 
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	oree,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	3,
-	0,
+	InitMaterials(new pepsi(110000)),
+	{
+		SSize(225);
+		SAgility(40);
+		SStrength(40);
+		SEndurance(40);
+		SPerception(27);
+	},
+	{},
+	{},
+	POSSIBILITY RET(0)
 	NAME RET(NameProperNoun(Case))
 	GET_SEX RET(MALE)
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonPepsiVerb(Critical))
@@ -489,16 +479,23 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	DANGER RET(30000)
 	CHARMABLE RET(false)
 	C_BITMAP_POS RETV(208,0)
+	CREATE_INITIAL_EQUIPMENT;
 );
 
-BASIC_LOAD_CONSTRUCTOR(oree, character)
-
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	swatcommando,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	4,
-	5,
+	InitMaterials(new humanflesh(110000)),
+	{
+		SSize(200);
+		SAgility(30);
+		SStrength(20);
+		SEndurance(15);
+		SPerception(27);
+	},
+	{},
+	{},
+	POSSIBILITY RET(5)
 	GET_SEX RET(MALE)
 	GET_MELEE_STRENGTH RET(10000)
 	NAME_SINGULAR RET("Bill's SWAT commando")
@@ -508,28 +505,23 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	DANGER RET(750)
 	CHARMABLE RET(false)
 	C_BITMAP_POS RETV(128,0)
+	CREATE_INITIAL_EQUIPMENT;
 );
 
-BASIC_LOAD_CONSTRUCTOR(swatcommando, character)
-
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	ennerbeast,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new ennerbeastflesh(60000)),
-	 150,
-	 10,
-	 5,
-	 10,
-	 9,
-	 0
-	),
+	InitMaterials(new ennerbeastflesh(60000)),
+	{
+		SSize(150);
+		SAgility(10);
+		SStrength(5);
+		SEndurance(10);
+		SPerception(9);
+	},
 	{},
 	{},
-	5,
-	0,
+	POSSIBILITY RET(0)
 	HIT;
 	HOSTILE_AI_COMMAND;
 	GET_MELEE_STRENGTH RET(200000)
@@ -540,11 +532,9 @@ HEADER_CONSTRUCTED_CHARACTER(
 	C_BITMAP_POS RETV(96,0)
 );
 
-HEADER_CONSTRUCTED_BASE(
+ABSTRACT_CHARACTER(
 	frog,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
 	{},
 	{},
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
@@ -553,48 +543,40 @@ HEADER_CONSTRUCTED_BASE(
 	GET_MELEE_STRENGTH RET(20000)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	darkfrog,
 	frog,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new darkfrogflesh(100)),
-	 15,
-	 20,
-	 1,
-	 2,
-	 15,
-	 0
-	),
+	InitMaterials(new darkfrogflesh(100)),
+	{
+		SSize(15);
+		SAgility(20);
+		SStrength(1);
+		SEndurance(2);
+		SPerception(15);
+	},
 	{},
 	{},
-	6,
-	100,
+	POSSIBILITY RET(100)
 	NAME_SINGULAR RET("dark frog")
 	NAME_PLURAL RET("dark frogs")
 	DANGER RET(25)
 	C_BITMAP_POS RETV(80,0)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	elpuri,
 	darkfrog,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new elpuriflesh(8000000)),
-	 300,
-	 50,
-	 50,
-	 50,
-	 18,
-	 0
-	),
+	InitMaterials(new elpuriflesh(8000000)),
+	{
+		SSize(300);
+		SAgility(50);
+		SStrength(50);
+		SEndurance(50);
+		SPerception(18);
+	},
 	{},
 	{},
-	7,
-	0,
+	POSSIBILITY RET(0)
 	NAME RET(NameProperNoun(Case))
 	NAME_SINGULAR RET("Elpuri the Dark Frog")
 	NAME_PLURAL RET("Elpuris the Dark Frogs")
@@ -604,24 +586,20 @@ HEADER_CONSTRUCTED_CHARACTER(
 	C_BITMAP_POS RETV(64,0)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	billswill,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new air(500000)),
-	 100,
-	 40,
-	 5,
-	 5,
-	 27,
-	 0
-	),
+	InitMaterials(new air(500000)),
+	{
+		SSize(100);
+		SAgility(40);
+		SStrength(5);
+		SEndurance(5);
+		SPerception(27);
+	},
 	{},
 	{},
-	8,
-	50,
+	POSSIBILITY RET(50)
 	DIE;
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonPSIVerb(Critical))
 	FIRST_PERSON_HIT_VERB RET(FirstPersonPSIVerb(Critical))
@@ -635,12 +613,20 @@ HEADER_CONSTRUCTED_CHARACTER(
 	C_BITMAP_POS RETV(48,0)
 );
 
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	fallenvalpurist,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	9,
-	50,
+	InitMaterials(new bone(60000)),
+	{
+		SSize(150);
+		SAgility(10);
+		SStrength(5);
+		SEndurance(5);
+		SPerception(15);
+	},
+	{},
+	{},
+	POSSIBILITY RET(50)
 	GET_MELEE_STRENGTH RET(5000)
 	NAME_SINGULAR RET("fallen valpurist")
 	NAME_PLURAL RET("fallen valpurists")
@@ -649,16 +635,23 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	DIE;
 	DANGER RET(25)
 	C_BITMAP_POS RETV(112,0)
+	CREATE_INITIAL_EQUIPMENT;
 );
 
-BASIC_LOAD_CONSTRUCTOR(fallenvalpurist, character)
-
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	froggoblin,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	10,
-	100,
+	InitMaterials(new goblinoidflesh(25000)),
+	{
+		SSize(100);
+		SAgility(15);
+		SStrength(10);
+		SEndurance(5);
+		SPerception(21);
+	},
+	{},
+	{},
+	POSSIBILITY RET(100)
 	GET_MELEE_STRENGTH RET(5000)
 	NAME_SINGULAR RET("frog-goblin hybrid")
 	NAME_PLURAL RET("frog-goblin hybrids")
@@ -666,15 +659,12 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	CAN_WEAR RET(false)
 	DANGER RET(25)
 	C_BITMAP_POS RETV(144,0)
+	CREATE_INITIAL_EQUIPMENT;
 );
 
-BASIC_LOAD_CONSTRUCTOR(froggoblin, character)
-
-HEADER_CONSTRUCTED_BASE(
+ABSTRACT_CHARACTER(
 	mommo,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
 	{},
 	{},
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBrownSlimeVerb(Critical))
@@ -683,60 +673,60 @@ HEADER_CONSTRUCTED_BASE(
 	GET_MELEE_STRENGTH RET(25000)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	conicalmommo,
 	mommo,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new brownslime(250000)),
-	 100,
-	 1,
-	 2,
-	 40,
-	 9,
-	 0
-	),
+	InitMaterials(new brownslime(250000)),
+	{
+		SSize(100);
+		SAgility(1);
+		SStrength(2);
+		SEndurance(40);
+		SPerception(9);
+	},
 	{},
 	{},
-	11,
-	25,
+	POSSIBILITY RET(25)
 	NAME_SINGULAR RET("conical mommo slime")
 	NAME_PLURAL RET("conical mommo slimes")
 	DANGER RET(250)
 	C_BITMAP_POS RETV(176,0)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	flatmommo,
 	mommo,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new brownslime(150000)),
-	 50,
-	 2,
-	 1,
-	 20,
-	 9,
-	 0
-	),
+	InitMaterials(new brownslime(150000)),
+	{
+		SSize(50);
+		SAgility(2);
+		SStrength(1);
+		SEndurance(20);
+		SPerception(9);
+	},
 	{},
 	{},
-	12,
-	75,
+	POSSIBILITY RET(75)
 	NAME_SINGULAR RET("flat mommo slime")
 	NAME_PLURAL RET("flat mommo slimes")
 	DANGER RET(75)
 	C_BITMAP_POS RETV(192,0)
 );
 
-SOURCE_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	golem,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	13,
-	20,
+	InitMaterials(game::CreateRandomSolidMaterial(100000)),
+	{
+		SSize(250);
+		SAgility(5);
+		SStrength(35);
+		SEndurance(20);
+		SPerception(12);
+	},
+	{},
+	{},
+	POSSIBILITY RET(20)
 	CALCULATE_ARMOR_MODIFIER;
 	DIE;
 	MOVE_RANDOMLY;
@@ -749,26 +739,20 @@ SOURCE_CONSTRUCTED_CHARACTER(
 	SPILL_BLOOD {}
 );
 
-BASIC_LOAD_CONSTRUCTOR(golem, character)
-
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	wolf,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new wolfflesh(30000)),
-	 100,
-	 20,
-	 6,
-	 6,
-	 24,
-	 0
-	),
+	InitMaterials(new wolfflesh(30000)),
+	{
+		SSize(100);
+		SAgility(20);
+		SStrength(6);
+		SEndurance(6);
+		SPerception(24);
+	},
 	{},
 	{},
-	14,
-	40,
+	POSSIBILITY RET(40)
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
 	FIRST_PERSON_HIT_VERB RET(FirstPersonBiteVerb(Critical))
 	AI_COMBAT_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
@@ -779,24 +763,20 @@ HEADER_CONSTRUCTED_CHARACTER(
 	C_BITMAP_POS RETV(224,0)
 );
 
-HEADER_CONSTRUCTED_CHARACTER(
+CHARACTER(
 	dog,
 	character,
-	NORMAL_CHILD_PARAMETERS,
-	NORMAL_BASE_PARAMETERS,
-	(
-	 NewMaterial(1, new dogflesh(20000)),
-	 75,
-	 15,
-	 4,
-	 4,
-	 21,
-	 0
-	),
+	InitMaterials(new dogflesh(20000)),
+	{
+		SSize(75);
+		SAgility(15);
+		SStrength(4);
+		SEndurance(4);
+		SPerception(21);
+	},
 	{},
 	{},
-	15,
-	20,
+	POSSIBILITY RET(20)
 	THIRD_PERSON_MELEE_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
 	FIRST_PERSON_HIT_VERB RET(FirstPersonBiteVerb(Critical))
 	AI_COMBAT_HIT_VERB RET(ThirdPersonBiteVerb(Critical))
