@@ -806,6 +806,8 @@ class character : public entity, public id
   void SetConfig(ushort, ushort = 0);
   characterslot* GetBodyPartSlot(ushort c) { return &BodyPartSlot[c]; }
   virtual bool CheckConsume(const festring&) const;
+  virtual ushort GetTameSymbolSquareIndex() const { return 0; }
+  virtual ushort GetFlySymbolSquareIndex() const { return 0; }
  protected:
   virtual void LoadSquaresUnder();
   virtual bodypart* MakeBodyPart(ushort) const;

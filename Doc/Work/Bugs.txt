@@ -19,7 +19,7 @@ Messages after teleport.
 (s) (example of the problem) If you generate a sign in the script future random palms may overwrite the sign. (comment: can usually be avoided by reordering script)
 (s) Trying to polymorph into a valpurium golem (which is prohibited) gives a wrong message.
 /Putting mines in Attnam is considered OK by guards.
-The player often becomes burdened, stressed or overloaded when he eats big corpses.
+//The player often becomes burdened, stressed or overloaded when he eats big corpses.
 (s) Wielded items can't be eaten.
 (s) Throwing a potion of water at a wall in a shop makes the guards hostile.
 (s) If the player can attack with arms but is a more powerful kicker, the danger system still only checks the arm attack.

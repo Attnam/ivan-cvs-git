@@ -401,6 +401,7 @@ class ABSTRACT_CHARACTER
   virtual void Remove();
   virtual bool CreateRoute();
   virtual bool CanTheoreticallyMoveOn(const lsquare*) const;
+  virtual ushort GetFlySymbolSquareIndex() const { return 1; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual void CreateCorpse(lsquare*);

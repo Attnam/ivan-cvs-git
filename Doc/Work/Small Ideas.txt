@@ -229,7 +229,7 @@ Monster that only sees in red, green or blue light.
 Page up, page down, home and end should work with message panel.
 If Petrus is attacked via a ranged weapon, his guards should jump in the missile's path to protect him and scream "NOOOOOOOOOH!"
 Monsters that have died of poisoning should be poisoned when eaten.
-Carrot that would increase perception a little.
+//Carrot that would increase perception a little.
 Eat, drink and offer selection should accept multiple items.
 If something inside a chest explodes, the container should be completely destroyed.
 Fly system should be remade (with the ability of having two or more items in the air at the same time).
@@ -295,7 +295,7 @@ Carnivorous plant seeds.
 Town hit by "zombie-plague"
 Panicking should be more probable when friends around the character have panicked.
 If the player has enough wisdom, the game should warn about obviously damaging food.
-Invisible creatures carrying a light source should be revealed.
+*Invisible creatures carrying a light source should be revealed.
 /Wielded wands should sometimes break in fights.
 *IVAN's linux version should be distributed in rpm form, too.
 There should be an "unusable" state for bodyparts about to be severed.
@@ -369,7 +369,7 @@ Ghost should be able to change level anywhere.
 Nymph hair should burn.
 If one tries to eat the holy banana, there should be a boolquestion to prevent accidents.
 Mistresses should sometimes kick male players in the groin.
-Banana peels should become bananas if zapped with a wand of resurrection.
+*Banana peels should become bananas if zapped with a wand of resurrection.
 Wand of digging.
 Skeletons should throw bones at dogs.
 Uses for engraving. (random magic word?)
@@ -408,7 +408,7 @@ Shift + direction should act as go command.
 Flying monsters can fly over jungle...
 Jussi The tenant farmer wielding a hoe on some swamp.
 Snow pines should change to regular pines when kicked a few times.
-Library improvement - When walking towards the book cases should show the inventory (like with doors)
+//Library improvement - When walking towards the book cases should show the inventory (like with doors)
 Wand of change material (change everything in wand path to material of the wand).
 Go should stop if the player teleports.
 Ability to absorb specific elemental damage.
