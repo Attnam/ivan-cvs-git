@@ -37,3 +37,4 @@ Screenshot toimimaan getkeyn aikanakin, kuten F4.
 Ehkä muitakin näppäimiä?
 Lamppujen pitäisi mennä rikki potkittaessa ja heitoissa.
 Menujen koristelu (pentagrammeja ja ehkä fadeja)
+Tilejen piirto kaksinkertaisina switchiksi. (ilmeisesti pieniä tunnistus ongelmia eräillä henkilöillä)
