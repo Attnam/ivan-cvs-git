@@ -1465,10 +1465,10 @@ void werewolf::ChangeIntoHuman()
 	SetStrength(15);
 	SetEndurance(15);
 	SetPerception(15);
-	SetLegType(1);
-	SetTorsoType(1);
-	SetArmType(1);		// Needs GFX
-	SetHeadType(1);
+	SetLegType(11);
+	SetTorsoType(15);
+	SetArmType(0);
+	SetHeadType(24);
 	SetShieldType(0);
 	SetIsWolf(false);
 	SetStrengthExperience(0);
@@ -1476,6 +1476,9 @@ void werewolf::ChangeIntoHuman()
 	SetAgilityExperience(0);
 	SetPerceptionExperience(0);
 	SetHP(GetMaxHP());
+
+	if(GetSquareUnder())
+		GetSquareUnder()->SendNewDrawRequest();
 }
 
 void werewolf::ChangeIntoWolf()
@@ -1485,10 +1488,10 @@ void werewolf::ChangeIntoWolf()
 	SetStrength(25);
 	SetEndurance(25);
 	SetPerception(24);
-	SetLegType(2);		// Needs GFX
-	SetTorsoType(2);
-	SetArmType(2);
-	SetHeadType(2);
+	SetLegType(12);
+	SetTorsoType(16);
+	SetArmType(15);
+	SetHeadType(25);
 	SetShieldType(0);
 	SetIsWolf(true);
 	SetWielded(0);
@@ -1497,6 +1500,9 @@ void werewolf::ChangeIntoWolf()
 	SetAgilityExperience(0);
 	SetPerceptionExperience(0);
 	SetHP(GetMaxHP());
+
+	if(GetSquareUnder())
+		GetSquareUnder()->SendNewDrawRequest();
 }
 
 void werewolf::Be()

@@ -1060,11 +1060,11 @@ class CHARACTER
 		SetStrength(10);
 		SetEndurance(5);
 		SetPerception(12);
-		SetLegType(0);		// Needs GFX
-		SetTorsoType(0);	// Needs GFX
-		SetArmType(0);		// Needs GFX
-		SetHeadType(0);		// Needs GFX
-		SetShieldType(0);	// Needs GFX
+		SetLegType(10);
+		SetTorsoType(14);
+		SetArmType(14);
+		SetHeadType(23);
+		SetShieldType(0);
 	},
 public:
 	virtual bool CanBeGenerated() const { return true; }

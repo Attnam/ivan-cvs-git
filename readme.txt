@@ -49,31 +49,26 @@ game.
 Q: I've found a bug. What should I do?
 
 A: Write a small description on how the bug occured and
-if possible even how we could replicate it and it by
-email to ivan-users@sourceforge.net
+if possible even how we could replicate it and send this
+information by email to ivan-users@sourceforge.net.
+If you are a SourceForge user, you can also report
+this bug at Ivan's SourceForge project page:
+
+http://sourceforge.net/projects/ivan
 
 Q: I've got a great idea to make IVAN better! What should
 I do?
 
-A: Descibe the idea to us by sending it to 
-ivan-users@sourceforge.net
+A: Describe the idea to us by sending it to 
+ivan-users@sourceforge.net or report it at Ivan's
+SourceForge project page (see above).
 
 Q: I'm a programmer and I would like to help you. 
 What should I do?
 
-A: Currently we are using Microsoft Visual C++ 5.0 and
-we accept the fact that most people don't have it on there
-machines. We currently looking at ways to port this to
+A: Currently we are using Microsoft Visual C++ 5.0/6.0 and
+we accept the fact that most people don't have either on their
+machines. We are currently searching for ways to port this to
 gcc and Mingw32. If you happen to have Microsoft Visual
-C++ 5.0 or you are intrested in porting IVAN to other platforms
-or other compilers contact us at ivan-users@sourceforge.net.
-
-
-
-
-	
-
-
-
-
-
+C++ 5.0/6.0 or you are interested in porting IVAN to other
+platforms or other compilers contact us at ivan-users@sourceforge.net.
