@@ -470,7 +470,7 @@ const char* god::GetObjectPronoun() const
 
 void god::SignalRandomAltarGeneration(const std::vector<v2>& RoomSquare)
 {
-  int Times = 2 + femath::LoopRoll(80, 8);
+  int Times = 1 + femath::LoopRoll(50, 4);
 
   for(int c = 0; c < Times; ++c)
   {
@@ -479,7 +479,8 @@ void god::SignalRandomAltarGeneration(const std::vector<v2>& RoomSquare)
     if(!Category)
       Category = ANY_CATEGORY;
 
-    item* Item = protosystem::BalancedCreateItem(0, MAX_PRICE, Category, 0, 0, GetType());
+    long MaxPrice = 250 + femath::LoopRoll(95, 500) * 10;
+    item* Item = protosystem::BalancedCreateItem(0, MaxPrice, Category, 0, 0, GetType());
 
     if(Item)
     {
