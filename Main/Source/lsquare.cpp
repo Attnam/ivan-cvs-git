@@ -872,7 +872,7 @@ void lsquare::MoveCharacter(lsquare* To)
       SignalEmitationDecrease(Emit);
       NewDrawRequested = true;
       To->NewDrawRequested = true;
-      To->StepOn(Movee, this);
+      if(!Movee->CanFly()) To->StepOn(Movee, this);
     }
 }
 

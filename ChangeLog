@@ -1,7 +1,27 @@
+2002-03-29 Heikki Sairanen <heikki.sairanen@phpoint.net>
+
+	* Main/Include/itemde.h: Added mine.
+	* Main/Source/itemde.cpp: Added functions for mine
+	* Main/Source/lsquare.cpp: Added a if clause for flying creatures in StepOn function. 	
+
+
 2002-03-25  Heikki Sairanen  <heikki.sairanen@phpoint.net>
 
-	* Main/Source/level.cpp (MakeRoom): 
+	* Main/Include/lterraba.h: Added function CreateBoobyTrap that is really an empty function
 
+	* Main/Include/lterrade.h: Added function CreateBoobyTrap in door, which is actually used and functions CreateBoobyTrap, ActivateBoobyTrap (also to door)
+
+	* Main/Include/script.h (constructor... probably): Added support for AllowBoobyTraps
+
+	* Main/Source/script.cpp: Added support for AllowBoobyTraps
+
+	* Main/Source/itemde.cpp: Reduced randomness in wandoffireballs
+
+	* Main/Source/level.cpp: Boobytraps are now generated one per 5 locked doors
+
+	* Script/dungeon.dat: Added parameter AllowBoobyTraps to both dungeon and Attnam.
+
+	
 2002-03-23  Heikki Sairanen  <hex@localhost.localdomain>
 
 	* Main/Include/charde.h: Changed ivan class to communist and assigned it the name "Ivan". Also changed Elpuri, Oree and Petrus to get their _name_ from AssignedName

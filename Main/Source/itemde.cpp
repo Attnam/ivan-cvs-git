@@ -1228,3 +1228,62 @@ ushort bodypart::StrengthValue() const
   else
     return ulong(StrengthModifier()) * GetMaterial(SurfaceMaterial())->StrengthValue() / 1000;
 }
+
+void mine::Load(inputfile& SaveFile)
+{
+  item::Load(SaveFile);
+  SaveFile >> Charged;
+}
+
+void mine::Save(outputfile& SaveFile) const
+{
+  item::Save(SaveFile);
+  SaveFile << Charged;
+}
+
+bool mine::ReceiveFireDamage(character* Burner, std::string DeathMsg, stack* MotherStack, long)
+{
+  if(!(RAND() % 2))
+    {
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s activates and explodes!", CNAME(DEFINITE));
+
+      MotherStack->RemoveItem(MotherStack->SearchItem(this));
+      SetExists(false);
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Burner, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 30);
+      return true;
+    }
+  else
+    return false;
+}
+
+bool mine::StruckByWandOfStriking(character* Striker, std::string DeathMsg, stack* MotherStack) 
+{ 
+  if(!(RAND() % 2))
+    {
+      if(MotherStack->GetLSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s explodes!", CNAME(DEFINITE));
+
+      MotherStack->RemoveItem(MotherStack->SearchItem(this));
+      SetExists(false);
+      MotherStack->GetLSquareUnder()->GetLevelUnder()->Explosion(Striker, DeathMsg, MotherStack->GetLSquareUnder()->GetPos(), 30);
+      return true;
+    }
+  else
+    return false;
+}
+
+
+bool mine::GetStepOnEffect(character* Stepper)
+{
+  if(GetCharged())
+    {
+      if(Stepper->GetIsPlayer())
+	ADD_MESSAGE("You hear a faint thumb. You look down. You see %s. It explodes.", CNAME(INDEFINITE));
+      else if(Stepper->GetSquareUnder()->CanBeSeen())
+	ADD_MESSAGE("%s steps on %s.", Stepper->CNAME(DEFINITE), CNAME(INDEFINITE));
+      Stepper->GetLSquareUnder()->GetLevelUnder()->Explosion(0, "killed by a land mine", Stepper->GetPos(), 30);
+    }
+
+  return false;
+}

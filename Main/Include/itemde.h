@@ -1452,5 +1452,36 @@ class ITEM
   virtual ushort GetBeamColor() const { return GREEN; }
 );
 
+class ITEM
+(
+  mine,
+  item,
+  InitMaterials(2, new iron, new gunpowder),
+  {
+    SetSize(5);
+    SetCharged(bool(RAND() % 5));
+    
+  },
+ public:
+  //  virtual bool Apply(character*, stack*);
+  virtual void Save(outputfile&) const;
+  virtual void Load(inputfile&);
+  virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
+  virtual bool IsExplosive() const { return (GetMaterial(1) && GetMaterial(1)->IsExplosive()) ? true : false; }
+  virtual bool ReceiveFireDamage(character*, std::string, stack*, long);
+  virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", iron::StaticType()); }
+  virtual uchar GetCharged() const { return Charged; }
+  virtual bool StruckByWandOfStriking(character*, std::string, stack*);
+  virtual void SetCharged(bool What) { Charged = What; }
+  bool IsChargable() const { return true; }
+  virtual bool GetStepOnEffect(character *);
+  virtual ushort Possibility() const { return 20; }
+  virtual std::string NameSingular() const { return "mine"; }
+ protected:
+  virtual ushort StrengthModifier() const { return 50; }
+  virtual vector2d GetBitmapPos() const { return vector2d(0,288); }
+  virtual ushort GetFormModifier() const { return 30; }
+  bool Charged;
+);
 #endif
 
