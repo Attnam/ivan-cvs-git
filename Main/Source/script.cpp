@@ -612,12 +612,12 @@ void roomscript::ReadFrom(inputfile& SaveFile, bool ReRead)
 			continue;
 		}
 
-		if(Word == "GenerateLamps")
+		if(Word == "GenerateLanterns")
 		{
-			if(!GenerateLamps)
-				GenerateLamps = new bool;
+			if(!GenerateLanterns)
+				GenerateLanterns = new bool;
 
-			*GenerateLamps = SaveFile.ReadBool();
+			*GenerateLanterns = SaveFile.ReadBool();
 
 			continue;
 		}
@@ -1052,3 +1052,4 @@ void gamescript::ReadFrom(inputfile& SaveFile)
 		ABORT("Odd script term %s encountered in game script!", Word.c_str());
 	}
 }
+

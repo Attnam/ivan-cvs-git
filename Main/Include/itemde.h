@@ -60,7 +60,7 @@ protected:
 
 class ITEM
 (
-	lamp,
+	lantern,
 	item,
 	InitMaterials(new glass),
 	{
@@ -72,7 +72,7 @@ public:
 	virtual ushort Possibility() const RET(50)
 	virtual void PositionedDrawToTileBuffer(uchar) const;
 	virtual ushort GetEmitation() const RET(300)
-	virtual std::string NameSingular() const RET("lamp")
+	virtual std::string NameSingular() const RET("lantern")
 	virtual vector2d GetInHandsPic() const RET(vector2d(160, 160))
 	virtual float OfferModifier() const RET(1)
 	virtual vector2d GetBitmapPos() const { return vector2d(0, OnWall ? 192 : 256); }
@@ -839,8 +839,8 @@ public:
 
 class ITEM
 (
-	brokenlamp,
-	lamp,
+	brokenlantern,
+	lantern,
 	InitMaterials(new glass),
 	{
 		SetSize(15);
@@ -849,8 +849,8 @@ class ITEM
 	},
 public:
 	virtual ushort Possibility() const RET(50)
-	virtual std::string NameSingular() const RET("broken lamp")
-	virtual item* BetterVersion() const { return new lamp; }
+	virtual std::string NameSingular() const RET("broken lantern")
+	virtual item* BetterVersion() const { return new lantern; }
 	virtual float OfferModifier() const RET(0)
 	virtual vector2d GetBitmapPos() const { return vector2d(0, OnWall ? 208 : 304); }
 	virtual vector2d GetInHandsPic() const RET(vector2d(160,128))

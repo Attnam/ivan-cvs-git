@@ -425,18 +425,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[x][YPos + Height - 1]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
-		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 		{
-			lamp* Lamp = new lamp;
-			Lamp->SignalSquarePositionChange(true);
-			Map[x][YPos]->GetSideStack(2)->FastAddItem(Lamp);
+			lantern* Lantern = new lantern;
+			Lantern->SignalSquarePositionChange(true);
+			Map[x][YPos]->GetSideStack(2)->FastAddItem(Lantern);
 		}
 
-		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
+		if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && x != XPos && x != XPos + Width - 1)
 		{
-			lamp* Lamp = new lamp;
-			Lamp->SignalSquarePositionChange(true);
-			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lamp);
+			lantern* Lantern = new lantern;
+			Lantern->SignalSquarePositionChange(true);
+			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(Lantern);
 		}
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
@@ -457,18 +457,18 @@ bool level::MakeRoom(roomscript* RoomScript)
 		Map[XPos + Width - 1][y]->ChangeLevelTerrain(RoomScript->GetWallSquare()->GetGroundTerrain()->Instantiate(), RoomScript->GetWallSquare()->GetOverTerrain()->Instantiate());
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
-		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 		{
-			lamp* Lamp = new lamp;
-			Lamp->SignalSquarePositionChange(true);
-			Map[XPos][y]->GetSideStack(1)->FastAddItem(Lamp);
+			lantern* Lantern = new lantern;
+			Lantern->SignalSquarePositionChange(true);
+			Map[XPos][y]->GetSideStack(1)->FastAddItem(Lantern);
 		}
 
-		if(*RoomScript->GetGenerateLamps() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
+		if(*RoomScript->GetGenerateLanterns() && !(RAND() % 7) && y != YPos && y != YPos + Height - 1)
 		{
-			lamp* Lamp = new lamp;
-			Lamp->SignalSquarePositionChange(true);
-			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lamp);
+			lantern* Lantern = new lantern;
+			Lantern->SignalSquarePositionChange(true);
+			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(Lantern);
 		}
 
 		if(RoomScript->GetDivineOwner(false) && *RoomScript->GetDivineOwner())
@@ -1078,3 +1078,4 @@ bool level::IsValid(vector2d Vector) const
 	else
 		return false;
 }
+

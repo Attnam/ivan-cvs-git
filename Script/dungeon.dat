@@ -86,7 +86,7 @@ Dungeon 0;
 			ReCalculate=true;
 			DivineOwner=0;
 			GenerateTunnel=true;
-			GenerateLamps=true;
+			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=true;
 			AllowLockedDoors=true;
@@ -126,7 +126,7 @@ Dungeon 0;
 
 			Square, Pos 3,1;
 			{
-				Item=lamp;
+				Item=lantern;
 			}
 		}
 	}
@@ -211,7 +211,7 @@ Dungeon 0;
 					L = iron longsword;
 					C = mithril chainmail;
 					s = wandofstriking;
-					a = lamp;
+					a = lantern;
 					l = pork loaf;
 					t = scrollofteleport;
 					g = iron goblinoidflesh can;
@@ -264,7 +264,7 @@ Dungeon 0;
 			AltarPossible=false;
 			WallSquare=floor, iron wall;
 			DoorSquare=parquet,iron door;
-			GenerateLamps=false;
+			GenerateLanterns=false;
 		}
 
 		Square, Random { Walkable=true; InRoom=true; }
@@ -419,7 +419,7 @@ Dungeon 1;
 			ReCalculate=true;
 			DivineOwner=0;
 			GenerateTunnel=false;
-			GenerateLamps=true;
+			GenerateLanterns=true;
 			Type=normalroom;
 			GenerateFountains=false;
 			AllowLockedDoors=false;
@@ -476,7 +476,7 @@ Dungeon 1;
 			GenerateDoor=false;
 			ReCalculate=false;
 			DivineOwner=1;
-			GenerateLamps=false;
+			GenerateLanterns=false;
 			Type=cathedral;
 			
 			Square, Pos 19, 41;
@@ -763,7 +763,7 @@ Dungeon 1;
 					l = wolfflesh lump;
 					i = iron polarbearflesh can;
 					L = pork loaf;
-					a = lamp;
+					a = lantern;
 					P = glass omleurine potion;
 					C = chainmail;
 					w = whip;

@@ -159,7 +159,7 @@ protected:
 class roomscript : public script
 {
 public:
-	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLamps(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) {}
+	roomscript() : CharacterMap(0), ItemMap(0), GroundTerrainMap(0), OverTerrainMap(0), WallSquare(0), FloorSquare(0), DoorSquare(0), Size(0), Pos(0), AltarPossible(0), GenerateDoor(0), ReCalculate(0), GenerateTunnel(0), DivineOwner(0), GenerateLanterns(0), Type(0), GenerateFountains(0), AllowLockedDoors(0), Base(0) {}
 	void ReadFrom(inputfile&, bool = false);
 	void SetBase(roomscript* What) { Base = What; }
 	std::vector<squarescript*>& GetSquare() { return Square; }
@@ -177,7 +177,7 @@ public:
 	bool* GetReCalculate(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(ReCalculate) }
 	bool* GetGenerateTunnel(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateTunnel) }
 	uchar* GetDivineOwner(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(DivineOwner) }
-	bool* GetGenerateLamps(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLamps) }
+	bool* GetGenerateLanterns(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateLanterns) }
 	ushort* GetType(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(Type) }
 	bool* GetGenerateFountains(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(GenerateFountains) }
 	bool* GetAllowLockedDoors(bool AOE = true) const { SCRIPT_RETURN_WITH_BASE(AllowLockedDoors) }
@@ -195,7 +195,7 @@ protected:
 	vector2d* Pos;
 	bool* AltarPossible, * GenerateDoor, * ReCalculate, * GenerateTunnel;
 	uchar* DivineOwner;
-	bool* GenerateLamps;
+	bool* GenerateLanterns;
 	ushort* Type;
 	bool* GenerateFountains;
 	bool* AllowLockedDoors;

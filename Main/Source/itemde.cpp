@@ -119,7 +119,7 @@ bool potion::Consume(character* Eater, float Amount)
 	return false;
 }
 
-void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
+void lantern::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
 	switch(LevelSquarePosition)
 	{
@@ -380,20 +380,20 @@ bool scrollofwishing::Read(character* Reader)
 	return false;
 }
 
-bool lamp::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
+bool lantern::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	brokenlamp* Lamp = new brokenlamp(false);
-	Lamp->InitMaterials(GetMaterial(0));
+	brokenlantern* Lantern = new brokenlantern(false);
+	Lantern->InitMaterials(GetMaterial(0));
 	PreserveMaterial(0);
-	Lamp->SignalSquarePositionChange(OnWall);
-	ItemStack->AddItem(Lamp);
+	Lantern->SignalSquarePositionChange(OnWall);
+	ItemStack->AddItem(Lantern);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
-	if (IsShown) ADD_MESSAGE("The lamp shatters to pieces.");
+	if (IsShown) ADD_MESSAGE("The lantern shatters to pieces.");
 	SetExists(false);
 	return true;
 }
 
-bool lamp::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
+bool lantern::ReceiveSound(float Strength, bool Shown, stack* ItemsStack)
 {
 	if(!(RAND() % 75) && Strength > 10 + RAND() % 10)
 	{
@@ -583,7 +583,7 @@ ulong torsoarmor::Price() const
 	return ulong(ArmorModifier * ArmorModifier * ArmorModifier * 200);
 }
 
-void lamp::SignalSquarePositionChange(bool NewPosOnWall)
+void lantern::SignalSquarePositionChange(bool NewPosOnWall)
 {
 	if(OnWall == NewPosOnWall)
 		return;
@@ -592,14 +592,14 @@ void lamp::SignalSquarePositionChange(bool NewPosOnWall)
 	UpdatePicture();
 }
 
-void lamp::Save(outputfile& SaveFile) const
+void lantern::Save(outputfile& SaveFile) const
 {
 	item::Save(SaveFile);
 
 	SaveFile << OnWall;
 }
 
-void lamp::Load(inputfile& SaveFile)
+void lantern::Load(inputfile& SaveFile)
 {
 	item::Load(SaveFile);
 
@@ -892,3 +892,4 @@ material* loaf::CreateLoafMaterials(void)
       return new beef;
     }
 }
+
