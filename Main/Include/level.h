@@ -236,7 +236,8 @@ class level : public area
   int GetEnchantmentPlusChance() { return EnchantmentPlusChance; }
   void Amnesia(int);
   spawnresult SpawnMonsters(characterspawner, team*, v2, int = 0, int = 1, truth = false);
-  bool GasExplosion(gas*, lsquare*);
+  void AddSpecialCursors();
+  void GasExplosion(gas*, lsquare*);
  protected:
   truth GenerateLanterns(int, int, int) const;
   truth GenerateWindows(int, int) const;

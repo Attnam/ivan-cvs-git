@@ -164,7 +164,7 @@ CHARACTER(humanoid, character)
   virtual truth BrainsHurt() const;
   virtual const char* GetRunDescriptionLine(int) const;
   virtual const char* GetNormalDeathMessage() const;
-  virtual void CalculateSpecialAttributeBonuses();
+  virtual void ApplySpecialAttributeBonuses();
  protected:
   virtual v2 GetBodyPartBitmapPos(int, truth = false) const;
   virtual col16 GetBodyPartColorB(int, truth = false) const;
@@ -418,7 +418,7 @@ CHARACTER(zombie, humanoid)
   virtual festring GetZombieDescription() const;
  protected:
   virtual void PostConstruct();
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual void GetAICommand();
   virtual truth AllowExperience() const { return false; }
   festring Description;

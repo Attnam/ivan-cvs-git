@@ -7,10 +7,20 @@
 
 -----------------------------------------------------------------------------
 
-April 02 2005 Timo & Heikki
+April 2 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
+
+  * Added some antidote to priests' inventories
+  * Stairs and portals flash in look mode
+  * Reduced magical whistle's recharging time from 75 to 60 min,
+    because the latter is easier to remember
+  * Fixed a certain bug caused by the addition of willpower
+  * Fixed a memory leak in the scar code
+  * Golems' AGI, DEX and STRs are no longer affected by scars
+
+April 2 2005 Timo & Heikki
 
   * Scars
-	
+
 March 24 2005 Timo Kiviluoto <holybanana@users.sourceforge.net>
 
   * You now hear coins clinking inside imperialists

@@ -764,6 +764,7 @@ priest
   IsCharmable = false;
   MoveType = WALK|SWIM;
   IsAbstract = true;
+  Inventory == potion { Times = 2; SecondaryMaterial = ANTIDOTE_LIQUID; }
 
   Config VALPURUS;
   {

@@ -260,6 +260,7 @@ class lsquare : public square
   bool TeleportAllSmokeAway();
   bool TeleportAllFluidsAway();
   bool TeleportAllTrapsAway();
+  void AddSpecialCursors();
  protected:
   void ChangeLuminance(col24&, col24);
   void RemoveLuminance(col24&);

@@ -416,6 +416,8 @@ class game
   static truth GetCausePanicFlag() { return CausePanicFlag; }
   static void SetCausePanicFlag(truth What) { CausePanicFlag = What; }
   static long GetTimeSpent();
+  static void AddSpecialCursor(v2, int);
+  static void RemoveSpecialCursors();
  private:
   static void UpdateCameraCoordinate(int&, int, int, int);
   static const char* const Alignment[];
@@ -517,6 +519,8 @@ class game
   static time_t TimePlayedBeforeLastLoad;
   static time_t LastLoad;
   static time_t GameBegan;
+  static std::vector<v2> SpecialCursorPos;
+  static std::vector<int> SpecialCursorData;
 };
 
 inline void game::CombineLights(col24& L1, col24 L2)

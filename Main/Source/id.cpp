@@ -38,13 +38,13 @@ void id::AddName(festring& Name, int Case) const
   else
     Articled = !(Case & PLURAL) && (Case & ARTICLE_BIT) && (Case & INDEFINE_BIT) && GetArticleMode() != NO_ARTICLE;
 
-  if(AddRustLevelDescription(Name, Articled))
+  if(!(Case & STRIPPED) && AddRustLevelDescription(Name, Articled))
     Articled = false;
 
   if(AddAdjective(Name, Articled))
     Articled = false;
 
-  if(ShowMaterial() && AddMaterialDescription(Name, Articled))
+  if(!(Case & STRIPPED) && ShowMaterial() && AddMaterialDescription(Name, Articled))
     Articled = false;
 
   if(Case & PLURAL)
@@ -52,7 +52,7 @@ void id::AddName(festring& Name, int Case) const
   else
     AddNameSingular(Name, Articled);
 
-  AddPostFix(Name);
+  AddPostFix(Name, Case);
 }
 
 festring id::GetName(int Case) const
@@ -102,7 +102,7 @@ truth id::AddAdjective(festring& String, truth Articled) const
     return false;
 }
 
-void id::AddPostFix(festring& String) const
+void id::AddPostFix(festring& String, int) const
 {
   if(GetPostFix().GetSize())
     String << ' ' << GetPostFix();

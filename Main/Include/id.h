@@ -39,7 +39,7 @@ class id
   virtual truth UsesLongAdjectiveArticle() const = 0;
   virtual truth AddMaterialDescription(festring&, truth) const { return false; }
   virtual const festring& GetPostFix() const = 0;
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual int GetArticleMode() const { return 0; }
   virtual truth ShowMaterial() const { return false; }
   virtual truth AddActiveAdjective(festring&, truth) const;

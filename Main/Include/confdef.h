@@ -112,6 +112,7 @@
 #define EVIL_WONDER_STAFF_VAPOUR (GAS_ID + 7)
 #define GOOD_WONDER_STAFF_VAPOUR (GAS_ID + 8)
 #define FART (GAS_ID + 9)
+#define MUSTARD_GAS (GAS_ID + 10)
 
 #define LIQUID_ID (4 << 12)
 
@@ -140,6 +141,7 @@
 #define GLOWING_BLOOD (LIQUID_ID + 23)
 #define YELLOW_SLIME (LIQUID_ID + 24)
 #define SICK_BLOOD (LIQUID_ID + 25)
+#define MUSTARD_GAS_LIQUID (LIQUID_ID + 26)
 
 #define FLESH_ID (5 << 12)
 

@@ -2822,3 +2822,9 @@ bool lsquare::TeleportAllTrapsAway()
 
   return false;
 }
+
+void lsquare::AddSpecialCursors()
+{
+  if((LastSeen || game::GetSeeWholeMapCheatMode()) && OLTerrain)
+    OLTerrain->AddSpecialCursors();
+}

@@ -4312,7 +4312,7 @@ character* humanoid::CreateZombie() const
   return Zombie;
 }
 
-void zombie::AddPostFix(festring& String) const
+void zombie::AddPostFix(festring& String, int) const
 {
   if(!Description.IsEmpty())
     String << Description;
@@ -4904,8 +4904,8 @@ void slave::PostConstruct()
   Weakness = TALENT_CLEVER;
 }
 
-const int TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
-const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25 };
+const int TalentOfAttribute[ATTRIBUTES] = { TALENT_HEALTHY, TALENT_FAST_N_ACCURATE, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_CLEVER, TALENT_STRONG, TALENT_STRONG, TALENT_FAST_N_ACCURATE, TALENT_FAST_N_ACCURATE };
+const double TalentBonusOfAttribute[ATTRIBUTES] = { 1.1, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25, 1.25 };
 
 double playerkind::GetNaturalExperience(int Identifier) const
 {
@@ -4928,11 +4928,13 @@ const char* humanoid::GetRunDescriptionLine(int I) const
   if(IsFlying())
     return !I ? "Flying" : "very fast";
 
-  if(IsSwimming() && !GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
-    return !I ? "Floating" : "ahead fast";
-
   if(IsSwimming())
-    return !I ? "Swimming" : "very fast";
+  {
+    if(!GetRightArm() && !GetLeftArm() && !GetRightLeg() && !GetLeftLeg())
+      return !I ? "Floating" : "ahead fast";
+    else
+      return !I ? "Swimming" : "very fast";
+  }
 
   if(!GetRightLeg() && !GetLeftLeg())
     return !I ? "Rolling" : "very fast";
@@ -5011,7 +5013,7 @@ void imperialist::DisplayStethoscopeInfo(character*) const
   ADD_MESSAGE("You hear coins clinking inside.");
 }
 
-void humanoid::CalculateSpecialAttributeBonuses() 
+void humanoid::ApplySpecialAttributeBonuses() 
 {
   if(GetHead())
   {
@@ -5019,7 +5021,5 @@ void humanoid::CalculateSpecialAttributeBonuses()
 				CalculateScarAttributePenalty(GetAttribute(CHARISMA,false));
   }
   else
-  {
     AttributeBonus[CHARISMA] -= GetAttribute(CHARISMA,false) - 1;
-  }
 }

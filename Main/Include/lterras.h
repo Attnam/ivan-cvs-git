@@ -77,6 +77,7 @@ OLTERRAIN(stairs, olterrain)
   virtual void SetAttachedEntry(int What) { AttachedEntry = What; }
   int GetAttachedArea() const { return AttachedArea; }
   int GetAttachedEntry() const { return AttachedEntry; }
+  virtual void AddSpecialCursors();
  protected:
   virtual void PostConstruct();
   int AttachedArea;
@@ -153,7 +154,7 @@ OLTERRAIN(fountain, olterrain)
  protected:
   virtual void GenerateMaterials();
   virtual col16 GetMaterialColorB(int) const;
-  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
   virtual v2 GetBitmapPos(int) const;
   material* SecondaryMaterial;
@@ -182,7 +183,7 @@ GLTERRAIN(liquidterrain, glterrain)
   virtual void SurviveEffect(character*);
   virtual void AddLocationDescription(festring&) const;
  protected:
-  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual int GetClassAnimationFrames() const { return 32; }
   virtual v2 GetBitmapPos(int) const;
 };
@@ -198,7 +199,7 @@ OLTERRAIN(sign, olterrain)
   virtual void Load(inputfile&);
   virtual void SetText(const festring& What) { Text = What; }
   virtual festring GetText() const;
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual void StepOn(character*);
  protected:
   festring Text;

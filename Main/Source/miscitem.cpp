@@ -815,7 +815,7 @@ struct distancepair
 
 void magicalwhistle::BlowEffect(character* Whistler)
 {
-  if(LastUsed && game::GetTick() - LastUsed < 2500)
+  if(LastUsed && game::GetTick() - LastUsed < 2000)
   {
     whistle::BlowEffect(Whistler);
     return;

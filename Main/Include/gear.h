@@ -63,7 +63,7 @@ ITEM(meleeweapon, item)
   virtual long GetMaterialPrice() const;
   virtual truth CalculateHasBe() const;
   virtual void PostConstruct();
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual void GenerateMaterials();
   virtual col16 GetMaterialColorB(int) const;
   virtual col16 GetMaterialColorC(int) const;
@@ -201,7 +201,7 @@ ITEM(armor, item)
   virtual double GetTHVBonus() const;
   virtual double GetDamageBonus() const;
  protected:
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual void PostConstruct();
   int Enchantment;
 };

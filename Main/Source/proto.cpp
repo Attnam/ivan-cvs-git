@@ -406,7 +406,20 @@ item* protosystem::CreateItem(const festring& What, truth Output)
   std::pair<const item::prototype*, int> ID = SearchForProto<item>(What, Output);
 
   if(ID.first)
-    return ID.first->Spawn(ID.second);
+  {
+    item* Item = ID.first->Spawn(ID.second);
+    festring Q = "Do you want to wish for ";
+    Item->AddName(Q, INDEFINITE|STRIPPED);
+    Q << "? [y/N]";
+
+    if(!game::TruthQuestion(Q))
+    {
+      delete Item;
+      return 0;
+    }
+
+    return Item;
+  }
   else
     return 0;
 }

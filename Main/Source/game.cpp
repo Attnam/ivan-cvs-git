@@ -161,6 +161,8 @@ bitmap* game::BusyAnimationCache[32];
 festring game::PlayerName;
 ulong game::EquipmentMemory[MAX_EQUIPMENT_SLOTS];
 olterrain* game::MonsterPortal;
+std::vector<v2> game::SpecialCursorPos;
+std::vector<int> game::SpecialCursorData;
 
 void game::AddCharacterID(character* Char, ulong ID) {
   if(CharacterIDMap.find(ID) != CharacterIDMap.end())
@@ -720,6 +722,12 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     else
       DOUBLE_BUFFER->Fill(CalculateScreenCoordinates(CursorPos), TILE_V2, 0);
 
+  int c;
+
+  for(c = 0; c < SpecialCursorPos.size(); ++c)
+    if(OnScreen(SpecialCursorPos[c]))
+      CurrentArea->GetSquare(SpecialCursorPos[c])->SendStrongNewDrawRequest();
+
   globalwindowhandler::UpdateTick();
   GetCurrentArea()->Draw(AnimationDraw);
   Player->DrawPanel(AnimationDraw);
@@ -765,6 +773,10 @@ void game::DrawEverythingNoBlit(truth AnimationDraw)
     if(OnScreen(Pos))
       igraph::DrawCursor(CalculateScreenCoordinates(Pos), Player->GetCursorData());
   }
+
+  for(c = 0; c < SpecialCursorPos.size(); ++c)
+    if(OnScreen(SpecialCursorPos[c]))
+      igraph::DrawCursor(CalculateScreenCoordinates(SpecialCursorPos[c]), SpecialCursorData[c]);
 }
 
 truth game::Save(const festring& SaveName)
@@ -2435,6 +2447,8 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   }
 
   List.AddDescription(SideTopic);
+  List.AddDescription(CONST_S(""));
+  List.AddDescription("Choose a type of creatures to browse death details.");
   std::set<massacresetentry>::const_iterator i2;
 
   for(i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
@@ -3564,4 +3578,16 @@ inputfile& operator>>(inputfile& SaveFile, massacreid& MI)
 truth game::PlayerIsRunning()
 {
   return PlayerRunning && Player->CanMove();
+}
+
+void game::AddSpecialCursor(v2 Pos, int Data)
+{
+  SpecialCursorPos.push_back(Pos);
+  SpecialCursorData.push_back(Data);
+}
+
+void game::RemoveSpecialCursors()
+{
+  SpecialCursorPos.clear();
+  SpecialCursorData.clear();
 }

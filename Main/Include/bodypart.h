@@ -18,15 +18,22 @@
 class humanoid;
 class sweaponskill;
 
+struct scar 
+{
+  int Severity;
+  mutable bitmap* PanelBitmap;
+};
+
+outputfile& operator<<(outputfile&, const scar&);
+inputfile& operator>>(inputfile&, scar&);
+
 ITEM(bodypart, item)
 {
- protected:
-  struct scar;
  public:
   friend class corpse;
-  friend outputfile& operator<<(outputfile&, const bodypart::scar&);
-  friend inputfile& operator>>(inputfile&, bodypart::scar&);
   bodypart() : Master(0) { }
+  bodypart(const bodypart&);
+  virtual ~bodypart();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual int GetGraphicsContainerIndex() const;
@@ -136,14 +143,14 @@ ITEM(bodypart, item)
   void SetNormalMaterial(int What) { NormalMaterial = What; }
   virtual truth IsBroken() const { return HP < MaxHP; }
   virtual truth IsDestroyable(const character*) const;
-  virtual void DrawScars(const blitdata&) const;
-  virtual truth DamageTypeCanScar(int) const;
-  virtual truth GenerateScar(int, int);
+  void DrawScars(const blitdata&) const;
+  static truth DamageTypeCanScar(int);
+  void GenerateScar(int, int);
   int CalculateScarAttributePenalty(int) const;
  protected:
   virtual alpha GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual truth ShowMaterial() const;
   virtual int GetArticleMode() const;
   virtual col16 GetMaterialColorA(int) const;
@@ -173,17 +180,8 @@ ITEM(bodypart, item)
   short NormalMaterial;
   uchar SpillBloodCounter;
   uchar WobbleData;
-  struct scar 
-  {
-    int Severity;
-    bitmap* PanelBitmap;
-  };
-
   std::vector<scar> Scar;
 };
-
-outputfile& operator<<(outputfile&, const bodypart::scar&);
-inputfile& operator>>(inputfile&, bodypart::scar&);
 
 ITEM(head, bodypart)
 {
@@ -513,6 +511,7 @@ ITEM(corpse, item)
   virtual truth AddRustLevelDescription(festring&, truth) const { return false; }
   virtual truth Necromancy(character*);
   virtual int GetSparkleFlags() const;
+  virtual truth IsRusted() const { return false; }
  protected:
   virtual void GenerateMaterials() { }
   virtual col16 GetMaterialColorA(int) const;
@@ -520,7 +519,7 @@ ITEM(corpse, item)
   virtual alpha GetAlphaA(int) const;
   virtual alpha GetAlphaB(int) const;
   virtual truth ShowMaterial() const { return false; }
-  virtual void AddPostFix(festring&) const;
+  virtual void AddPostFix(festring&, int) const;
   virtual v2 GetBitmapPos(int) const;
   virtual int GetSize() const;
   virtual int GetArticleMode() const;

@@ -270,10 +270,8 @@ truth bodypart::ReceiveDamage(character* Damager, int Damage, int Type, int)
     if(HP <= 0)
       return true;
 
-    if(DamageTypeCanScar(Type) && !(RAND_N(25 + 25 * HP / MaxHP))) 
-    {
+    if(DamageTypeCanScar(Type))// && !(RAND_N(25 + 25 * HP / MaxHP)))
       GenerateScar(Damage, Type);
-    }
 
     if(Master->IsPlayer())
       if(HP == 1 && BHP > 1)
@@ -568,7 +566,7 @@ void corpse::Load(inputfile& SaveFile)
   Enable();
 }
 
-void corpse::AddPostFix(festring& String) const
+void corpse::AddPostFix(festring& String, int) const
 {
   String << " of ";
   GetDeceased()->AddName(String, INDEFINITE);
@@ -1247,7 +1245,7 @@ alpha bodypart::GetMaxAlpha() const
     return 255;
 }
 
-void bodypart::AddPostFix(festring& String) const
+void bodypart::AddPostFix(festring& String, int) const
 {
   if(!OwnerDescription.IsEmpty())
     String << ' ' << OwnerDescription;
@@ -1349,10 +1347,9 @@ void bodypart::CalculateMaxHP(ulong Flags)
       long Endurance = Master->GetAttribute(ENDURANCE);
       double DoubleHP = GetBodyPartVolume() * Endurance * Endurance / 200000;
 
-      for(int c = 0; c < Scar.size(); ++c) 
-      {
+      for(int c = 0; c < Scar.size(); ++c)
 	DoubleHP *= (100. - Scar[c].Severity * 4) / 100;
-      }
+
       MaxHP = int(DoubleHP);
     }
     else
@@ -1879,8 +1876,11 @@ void arm::CalculateAttributeBonuses()
     ApplyDexterityPenalty(GetExternalBodyArmor());
   }
 
-  StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH,false));
-  DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY,false)) ; 
+  if(!UseMaterialAttributes())
+  {
+    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(ARM_STRENGTH,false));
+    DexterityBonus -= CalculateScarAttributePenalty(GetAttribute(DEXTERITY,false)) ; 
+  }
 }
 
 void leg::CalculateAttributeBonuses()
@@ -1902,8 +1902,12 @@ void leg::CalculateAttributeBonuses()
     ApplyAgilityPenalty(GetExternalCloak());
     ApplyAgilityPenalty(GetExternalBodyArmor());
   }
-  StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH,false));
-  AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY,false)) ; 
+
+  if(!UseMaterialAttributes())
+  {
+    StrengthBonus -= CalculateScarAttributePenalty(GetAttribute(LEG_STRENGTH,false));
+    AgilityBonus -= CalculateScarAttributePenalty(GetAttribute(AGILITY,false)) ; 
+  }
 }
 
 void humanoidtorso::SignalEquipmentAdd(gearslot* Slot)
@@ -3391,52 +3395,57 @@ truth bodypart::IsDestroyable(const character*) const
   return !Master || !Master->BodyPartIsVital(GetBodyPartIndex());
 }
 
-truth bodypart::DamageTypeCanScar(int Type) const 
+truth bodypart::DamageTypeCanScar(int Type)
 {
   return !(Type == POISON || Type == DRAIN);
 }
 
-truth bodypart::GenerateScar(int Damage, int Type) 
+void bodypart::GenerateScar(int Damage, int Type) 
 {
-  scar NewScar;
+  Scar.push_back(scar());
+  scar& NewScar = Scar.back();
   NewScar.Severity = 1 + RAND_N(1 + 5 * Damage / GetMaxHP());
   
   if(GetMaster()->IsPlayer()) 
   {
     int ScarColor = MakeShadeColor(GetMainMaterial()->GetColor());
-  
-    NewScar.PanelBitmap = igraph::GenerateScarBitmap(GetBodyPartIndex(), NewScar.Severity, 
-						   ScarColor);
-
+    NewScar.PanelBitmap = igraph::GenerateScarBitmap(GetBodyPartIndex(),
+						     NewScar.Severity, 
+						     ScarColor);
     ADD_MESSAGE("Your %s is scarred.", CHAR_NAME(UNARTICLED));
   }
   else
-  {
     NewScar.PanelBitmap = 0;
-  }
 
-  Scar.push_back(NewScar);
-  GetMaster()->CalculateAttributeBonuses();
-  CalculateMaxHP(CHECK_USABILITY|MAY_CHANGE_HPS);
+  CalculateMaxHP();
   GetMaster()->CalculateMaxHP();
-  GetMaster()->CalculateBattleInfo();
+  GetMaster()->CalculateAttributeBonuses();
+  CalculateAttackInfo();
 }
 
 void bodypart::DrawScars(const blitdata& B) const
 {
   for(int c = 0; c < Scar.size(); ++c)
   {
+    if(!Scar[c].PanelBitmap)
+    {
+      int ScarColor = MakeShadeColor(GetMainMaterial()->GetColor());
+      Scar[c].PanelBitmap = igraph::GenerateScarBitmap(GetBodyPartIndex(),
+						       Scar[c].Severity, 
+						       ScarColor);
+    }
+
     Scar[c].PanelBitmap->NormalMaskedBlit(B);
   }
 }
 
-outputfile& operator<<(outputfile& SaveFile, const bodypart::scar& Scar)
+outputfile& operator<<(outputfile& SaveFile, const scar& Scar)
 {
   SaveFile << Scar.Severity << Scar.PanelBitmap;
   return SaveFile;
 }
 
-inputfile& operator>>(inputfile& SaveFile, bodypart::scar& Scar)
+inputfile& operator>>(inputfile& SaveFile, scar& Scar)
 {
   SaveFile >> Scar.Severity >> Scar.PanelBitmap;
   return SaveFile;
@@ -3445,9 +3454,22 @@ inputfile& operator>>(inputfile& SaveFile, bodypart::scar& Scar)
 int bodypart::CalculateScarAttributePenalty(int Attribute) const 
 {
   double DoubleAttribute = Attribute;
-  for(int c = 0; c < Scar.size(); ++c) 
-  {
+
+  for(int c = 0; c < Scar.size(); ++c)
     DoubleAttribute *= (100. - Scar[c].Severity * 4) / 100;
-  }
+
   return Min(Attribute - int(DoubleAttribute), Attribute - 1);
+}
+
+bodypart::~bodypart()
+{
+  for(int c = 0; c < Scar.size(); ++c)
+    delete Scar[c].PanelBitmap;
+}
+
+bodypart::bodypart(const bodypart& B) : OwnerDescription(B.OwnerDescription), Master(B.Master), CarriedWeight(B.CarriedWeight), BodyPartVolume(B.BodyPartVolume), BitmapPos(B.BitmapPos), ColorB(B.ColorB), ColorC(B.ColorC), ColorD(B.ColorD), SpecialFlags(B.SpecialFlags), HP(B.HP), MaxHP(B.MaxHP), BloodMaterial(B.BloodMaterial), NormalMaterial(B.NormalMaterial), SpillBloodCounter(B.SpillBloodCounter), WobbleData(B.WobbleData), Scar(B.Scar)
+{
+  for(int c = 0; c < Scar.size(); ++c)
+    if(Scar[c].PanelBitmap)
+      Scar[c].PanelBitmap = new bitmap(*Scar[c].PanelBitmap);
 }

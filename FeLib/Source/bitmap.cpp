@@ -1270,6 +1270,8 @@ inputfile& operator>>(inputfile& SaveFile, bitmap*& Bitmap)
     Bitmap = new bitmap(ReadType<v2>(SaveFile));
     Bitmap->Load(SaveFile);
   }
+  else
+    Bitmap = 0;
 
   return SaveFile;
 }

@@ -959,7 +959,7 @@ void stairs::PostConstruct()
   }
 }
 
-void sign::AddPostFix(festring& String) const
+void sign::AddPostFix(festring& String, int) const
 {
   String << " with text \"" << Text << '\"';
 }
@@ -1233,4 +1233,9 @@ v2 liquidterrain::GetBitmapPos(int F) const
 void liquidterrain::AddLocationDescription(festring& String) const
 {
   String << " in the " << GetNameSingular();
+}
+
+void stairs::AddSpecialCursors()
+{
+  game::AddSpecialCursor(GetPos(), YELLOW_CURSOR|TARGET);
 }

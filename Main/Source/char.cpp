@@ -5901,28 +5901,43 @@ int character::GetRelation(const character* Who) const
   return GetTeam()->GetRelation(Who->GetTeam());
 }
 
+truth (item::*AffectTest[BASE_ATTRIBUTES])() const =
+{
+  &item::AffectsEndurance,
+  &item::AffectsPerception,
+  &item::AffectsIntelligence,
+  &item::AffectsWisdom,
+  &item::AffectsWillPower,
+  &item::AffectsCharisma,
+  &item::AffectsMana
+};
+
 void character::CalculateAttributeBonuses()
 {
   doforbodyparts()(this, &bodypart::CalculateAttributeBonuses);
   int BackupBonus[BASE_ATTRIBUTES];
   int BackupCarryingBonus = CarryingBonus;
   CarryingBonus = 0;
-  int c;
+  int c1;
 
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
+  for(c1 = 0; c1 < BASE_ATTRIBUTES; ++c1)
   {
-    BackupBonus[c] = AttributeBonus[c];
-    AttributeBonus[c] = 0;
+    BackupBonus[c1] = AttributeBonus[c1];
+    AttributeBonus[c1] = 0;
   }
 
-  for(c = 0; c < GetEquipments(); ++c)
+  for(c1 = 0; c1 < GetEquipments(); ++c1)
   {
-    item* Equipment = GetEquipment(c);
+    item* Equipment = GetEquipment(c1);
 
-    if(!Equipment || !Equipment->IsInCorrectSlot(c))
+    if(!Equipment || !Equipment->IsInCorrectSlot(c1))
       continue;
 
-    if(Equipment->AffectsEndurance())
+    for(int c2 = 0; c2 < BASE_ATTRIBUTES; ++c2)
+      if((Equipment->*AffectTest[c2])())
+	AttributeBonus[c2] += Equipment->GetEnchantment();
+
+    /*if(Equipment->AffectsEndurance())
       AttributeBonus[ENDURANCE] += Equipment->GetEnchantment();
 
     if(Equipment->AffectsPerception())
@@ -5941,13 +5956,13 @@ void character::CalculateAttributeBonuses()
       AttributeBonus[CHARISMA] += Equipment->GetEnchantment();
 
     if(Equipment->AffectsMana())
-      AttributeBonus[MANA] += Equipment->GetEnchantment();
+      AttributeBonus[MANA] += Equipment->GetEnchantment();*/
 
     if(Equipment->AffectsCarryingCapacity())
       CarryingBonus += Equipment->GetCarryingBonus();
   }
 
-  CalculateSpecialAttributeBonuses();
+  ApplySpecialAttributeBonuses();
 
   if(!IsInitializing() && AttributeBonus[ENDURANCE] != BackupBonus[ENDURANCE])
   {

@@ -971,6 +971,7 @@ bodyarmor /* armor-> */
     DefaultMainVolume = 5000;
     BitmapPos = 64, 208;
     Possibility = 5;
+    UsesLongArticle = true;
     NameSingular = "armor";
     PostFix = "of great health";
     MainMaterialConfig = { 7, LEATHER, HARDENED_LEATHER, NYMPH_HAIR, TROLL_HIDE, OMMEL_HAIR, OMMEL_BONE, OMMEL_TOOTH; }

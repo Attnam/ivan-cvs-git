@@ -211,6 +211,7 @@ const name##prototype name::ProtoType
 #define DEFINITE 2
 #define INDEFINE_BIT 4
 #define INDEFINITE 6
+#define STRIPPED 8
 
 #define TRANSPARENT_COLOR 0xF81F // pink
 

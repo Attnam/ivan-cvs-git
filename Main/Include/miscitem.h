@@ -117,7 +117,7 @@ ITEM(can, materialcontainer)
   virtual truth WillSpoil() const { return false; } // temporary
   virtual truth HasBetterVersion() const { return !SecondaryMaterial; }
  protected:
-  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
   virtual v2 GetBitmapPos(int) const;
 };
@@ -125,7 +125,7 @@ ITEM(can, materialcontainer)
 ITEM(lump, item)
 {
  protected:
-  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }
 };
@@ -145,7 +145,7 @@ ITEM(potion, materialcontainer)
   virtual truth EffectIsGood() const;
   virtual truth IsKamikazeWeapon(const character*) const { return IsExplosive(); }
  protected:
-  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
   virtual truth AddAdjective(festring&, truth) const;
 };
 
@@ -212,7 +212,7 @@ ITEM(bone, item)
 ITEM(loaf, item)
 {
  protected:
-  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
 };
 
@@ -287,7 +287,7 @@ ITEM(backpack, materialcontainer)
   virtual long GetTotalExplosivePower() const;
   virtual void SpillFluid(character*, liquid*, int = 0);
  protected:
-  virtual void AddPostFix(festring& String) const { AddContainerPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddContainerPostFix(String); }
 };
 
 ITEM(holybook, item)
@@ -576,7 +576,7 @@ ITEM(scrollofdetectmaterial, scroll)
 ITEM(stick, item)
 {
  protected:
-  virtual void AddPostFix(festring& String) const { AddLumpyPostFix(String); }
+  virtual void AddPostFix(festring& String, int) const { AddLumpyPostFix(String); }
   virtual truth ShowMaterial() const { return false; }
   virtual truth WeightIsIrrelevant() const { return true; }
 };

@@ -19,3 +19,4 @@ It should be checked whether read times of scrolls used in emergency situations 
 Repairing special limbs in Attnam is too cheap.
 The mage room is too difficult.
 '.' should take less time.
+Legs made of ommel cerumen.

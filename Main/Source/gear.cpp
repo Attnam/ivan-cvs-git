@@ -369,9 +369,9 @@ void meleeweapon::SignalSpoil(material* Material)
   }
 }
 
-void meleeweapon::AddPostFix(festring& String) const
+void meleeweapon::AddPostFix(festring& String, int Case) const
 {
-  item::AddPostFix(String);
+  item::AddPostFix(String, Case);
 
   if(Fluid)
   {
@@ -558,9 +558,9 @@ void armor::Load(inputfile& SaveFile)
   SaveFile >> Enchantment;
 }
 
-void armor::AddPostFix(festring& String) const
+void armor::AddPostFix(festring& String, int Case) const
 {
-  item::AddPostFix(String);
+  item::AddPostFix(String, Case);
 
   if(Fluid)
   {

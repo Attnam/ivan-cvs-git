@@ -2913,15 +2913,22 @@ spawnresult level::SpawnMonsters(characterspawner Spawner, team* Team,
   return SR;
 }
 
-bool level::GasExplosion(gas* GasMaterial, lsquare* Square) 
+void level::AddSpecialCursors()
 {
-    for(int d = 0; d < 9; ++d)
-    {
-      lsquare* Neighbour = Square->GetNeighbourLSquare(d);
+  for(int x = 0; x < XSize; ++x)
+    for(int y = 0; y < YSize; ++y)
+      Map[x][y]->AddSpecialCursors();
+}
 
-      if(Neighbour && Neighbour->IsFlyable())
-      {
-	Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
-      }
-    }  
+void level::GasExplosion(gas* GasMaterial, lsquare* Square) 
+{
+  for(int d = 0; d < 9; ++d)
+  {
+    lsquare* Neighbour = Square->GetNeighbourLSquare(d);
+
+    if(Neighbour && Neighbour->IsFlyable())
+    {
+      Neighbour->AddSmoke(static_cast<gas*>(GasMaterial->SpawnMore(1000)));
+    }
+  } 
 }

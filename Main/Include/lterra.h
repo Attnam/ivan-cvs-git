@@ -331,6 +331,7 @@ class olterrain : public lterrain, public oterrain
   virtual void RestoreHP() { HP = CalculateMaxHP(); }
   virtual truth IsAnimated() const;
   virtual truth VomitingIsDangerous(const character*) const { return false; }
+  virtual void AddSpecialCursors() { }
  protected:
   virtual v2 GetBitmapPos(int) const;
   v2 GetBorderBitmapPos(v2, int) const;
