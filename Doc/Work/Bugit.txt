@@ -4,3 +4,4 @@ Sokeaksi tuleminen pepsistä bugittaa.
 Unknown substance.
 Kloonaus.
 Stackien potkiminen.
+Savekansion autoluonti.
