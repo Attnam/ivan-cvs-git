@@ -62,7 +62,7 @@ Mirage puppies.
 If the whole level is full of monsters, the game won't work correctly.
 / Better gentoo packages. No root should be needed.
 Petrus's AI goes rather insane (he just runs around his throne) if he is severely wounded.
-(hs) Headless zombies can vomit.
+//(hs) Headless zombies can vomit.
 Valpurus, Dulcis and Nefas can't harm headless zombies nor skeletons.
 //(hs) Choosing a name including one of characters '?', '*', '|', '<' or '>' and saving will crash (at least in Windows).
 // (hs) Choosing a name including one of characters '/', '\' as any but the first characters and saving will crash (at least in Windows).
@@ -91,4 +91,5 @@ Kamikaze dwarfs' death message is wrong when they kamikaze themselves to death.
 "There is many items on the wall"
 Vladimir can now be teleported (example: magical whistle) to places where he destroys the cathedral and buildings like that before moving away from them.
 Funny colors with dexterity etc when going to change equipment and then pressing esc
-(hs) Smith not repairing equiped items.
+// (hs) Smith not repairing equiped items.
+Etta the Maniac. When given anything confusing to eat or drink, will go mad and will try to kill everything in sight including the player.

@@ -8349,7 +8349,7 @@ bool character::EquipmentScreen(stack* MainStack, stack* SecStack)
 
   int Chosen = 0;
   bool EquipmentChanged = false;
-  felist List(CONST_S("Equipment menu"));
+  felist List(CONST_S("Equipment menu [ESC exits]"));
   festring Entry;
 
   for(;;)

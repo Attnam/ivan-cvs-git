@@ -435,6 +435,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual festring GetZombieDescription() const;
+  virtual bool CanForceVomit() const;
  protected:
   virtual void VirtualConstructor(bool);
   virtual void AddPostFix(festring&) const;

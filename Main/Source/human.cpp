@@ -2685,7 +2685,7 @@ void smith::BeTalkedTo()
 	}
     }
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith))
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableBySmith) || PLAYER->EquipsSomething(&item::IsFixableBySmith))
     {
       item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableBySmith);
 
@@ -4635,7 +4635,7 @@ void tailor::BeTalkedTo()
 {
   if(GetRelation(PLAYER) == HOSTILE)
     {
-      ADD_MESSAGE("\"You talkin' to me? You talkin' to me? You talkin' to me? Then who the hell else are you talkin' to? You talkin' to me? Well I'm the only one here. Who do you think you're talking to? Oh yeah? Huh? Ok.\"");
+      ADD_MESSAGE("Armor is merely a kind of clothing worn by a man whose tailor is a blacksmith.");
       return;
     }
 
@@ -4661,7 +4661,7 @@ void tailor::BeTalkedTo()
 	}
     }
 
-  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor))
+  if(PLAYER->GetStack()->SortedItems(this, &item::IsFixableByTailor) || PLAYER->EquipsSomething(&item::IsFixableByTailor))
     {
       item* Item = PLAYER->SelectFromPossessions(CONST_S("\"What do you want me to fix?\""), &item::IsFixableByTailor);
 
@@ -4782,4 +4782,9 @@ void oree::CallForMonsters()
     }
   delete ToBeCalled;
   return;
+}
+
+bool zombie::CanForceVomit() const
+{
+  return HasHead() && humanoid::CanForceVomit();
 }
