@@ -1453,6 +1453,10 @@ bitmap* bitmap::ColorizeTo16Bit(ushort* Color)
 
 bitmap* bitmap::ColorizeTo16Bit(vector2d Pos, vector2d Size, ushort* Color)
 {
+	uchar r = GET_RED(Color[0]);
+	uchar g = GET_GREEN(Color[0]);
+	uchar b = GET_BLUE(Color[0]);
+
 	bitmap* Bitmap = new bitmap(Size.X, Size.Y);
 
 	DDSURFACEDESC2 ddsd;

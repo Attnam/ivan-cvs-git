@@ -4,6 +4,21 @@
 #include "charba.h"
 #include "graphics.h"
 
+class weaponskill
+{
+public:
+	weaponskill() : Hits(0), LastHit(0) {}
+	void Turn() {}
+	uchar GetLevel();
+	ulong GetHits();
+	ulong GetLastHit();
+	void AddHit() { Hits++; }
+private:
+	uchar Level;
+	ulong Hits;
+	ulong LastHit;
+};
+
 class ABSTRACT_CHARACTER
 (
 	humanoid,
@@ -35,7 +50,6 @@ protected:
 	virtual float GetMeleeStrength() const RET(2000)
 	struct armor
 	{
-	public:
 		armor();
 		item* Torso;
 		item* Legs;
@@ -43,6 +57,13 @@ protected:
 		item* Head;
 		item* Feet;
 	} Armor;
+	struct weaponskills
+	{
+		weaponskill LargeSwords;
+		weaponskill Maces;
+		weaponskill Axes;
+		weaponskill Spears;
+	} WeaponSkills;
 	uchar ArmType;
 	uchar HeadType;
 	uchar LegType;
