@@ -210,7 +210,6 @@ public:
 	virtual void VirtualConstructor() {}
 	virtual ushort GetSpeed() const;
 	virtual void CharacterSpeciality() {}
-<<<<<<< charba.h
 	virtual void ActivateState(uchar Index) { State |= 1 << Index; }
 	virtual void DeActivateState(uchar Index) { State &= ~(1 << Index); }
 	virtual bool StateIsActivated(uchar Index) const { return State & (1 << Index) ? true : false; }

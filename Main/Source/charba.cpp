@@ -2323,7 +2323,6 @@ bool character::ShowWeaponSkills()
 
 	return false;
 }
-<<<<<<< charba.cpp
 
 void character::Faint()
 {
