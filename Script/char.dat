@@ -125,8 +125,8 @@ human
 	TotalSize = 150;
 	CanRead = true;
 	NameSingular = "human";
-	Inventory == wandofpolymorph;
-	RightRing = ring(RING_OF_POLYMORPH_CONTROL);
+	/*Inventory == wandofpolymorph;
+	RightRing = ring(RING_OF_POLYMORPH_CONTROL);*/
 	/*Helmet = LEATHER helmet;
 	RightWielded = COPPER meleeweapon(SPEAR);
 	CWeaponSkillHits == 25;
