@@ -7,6 +7,7 @@
 #include "materde.h"
 #include "wskill.h"
 #include "rand.h"
+#include "game.h"
 
 class ITEM
 (
@@ -358,7 +359,7 @@ public:
 	virtual std::string Name(uchar Case) const RET(NameArtifact(Case, cloth::StaticType()))
 	virtual ushort Possibility() const RET(0)
 	virtual ushort GetArmorValue() const RET(10)
-	virtual std::string NameSingular() const RET("Maakotka Shirt")
+	virtual std::string NameSingular() const RET("Holy Maakotka Shirt")
 	virtual short CalculateOfferValue(char) const RET(750)
 	virtual long Score() const RET(2500)
 	virtual bool IsMaakotkaShirt() const RET(true);
@@ -722,6 +723,7 @@ public:
 	virtual bool CanBeWished() const RET(false)
 	virtual bool Read(character*);
 	virtual ulong Price() const { return 2000; }
+	virtual bool PolymorphSpawnable() const { return false; }
 );
 
 class ITEM
@@ -754,6 +756,7 @@ public:
 	virtual void Load(inputfile&);
 	virtual vector2d GetBitmapPos() const RETV(0,288)
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 100; default: return 0; } }
+	virtual bool IsExplosive() const { return true; }
 protected:
 	virtual ushort GetFormModifier() const RET(80)
 	uchar Charge;
@@ -775,6 +778,7 @@ public:
 	virtual float OfferModifier() const RET(30)
 	virtual bool Zap(character*, vector2d, uchar);
 	virtual ulong Price() const { return 500; }
+	virtual bool PolymorphSpawnable() const { return false; }
 );
 
 /*class ITEM
@@ -1013,6 +1017,59 @@ public:
 	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; default: return 0; } }
 protected:
 	virtual ushort GetFormModifier() const;
+);
+
+class ITEM
+(
+	backpack,
+	item,
+	InitMaterials(2, new leather, new gunpowder),
+	{
+		SetSize(80);
+	},
+public:
+	virtual ushort Possibility() const RET(10)
+	virtual std::string Name(uchar Case) const RET(NameContainer(Case))
+	virtual uchar GetConsumeType() const RET(GetMaterial(1) ? GetMaterial(1)->GetConsumeType() : ODD)
+	virtual vector2d GetInHandsPic() const RET(vector2d(160, 144))
+	virtual float OfferModifier() const RET(0.5)
+	virtual vector2d GetBitmapPos() const RETV(32, 16)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 1000; case 1: return 10000; default: return 0; } }
+	virtual ulong Price() const { return GetMaterial(1) ? GetMaterial(1)->RawPrice() : 0; }
+	virtual uchar GetConsumeMaterial() const { return 1; }
+	virtual bool Apply(character*, stack*);
+	virtual bool IsExplosive() const { return (GetMaterial(1) && GetMaterial(1)->IsExplosive()) ? true : false; }
+protected:
+	virtual std::string NameSingular() const RET("backpack")
+	virtual ushort GetFormModifier() const RET(20)
+);
+
+class ITEM
+(
+	holybook,
+	item,
+	InitMaterials(new parchment),
+	{	
+		SetSize(25);
+		SetOwnerGod(1 + RAND() % game::GetGodNumber());
+	},
+public:
+	virtual bool CanBeRead(character*) const;
+	virtual std::string Name(uchar Case) const { return NameHandleDefaultMaterial(Case, "a", parchment::StaticType()) + OwnerGodDescription(OwnerGod); }
+	virtual vector2d GetInHandsPic() const RET(vector2d(160, 128))
+	virtual ushort Possibility() const RET(5)
+	virtual float OfferModifier() const RET(0.4f)
+	virtual vector2d GetBitmapPos() const RETV(32,32)
+	virtual ulong GetDefaultVolume(ushort Index) const { switch(Index) { case 0: return 2000; default: return 0; } }
+	virtual void Save(outputfile&) const;
+	virtual void Load(inputfile&);
+	virtual uchar GetOwnerGod() const { return OwnerGod; }
+	virtual void SetOwnerGod(uchar What) { OwnerGod = What; }
+	virtual bool Read(character*);
+protected:
+	virtual std::string NameSingular() const RET("holy book")
+	virtual ushort GetFormModifier() const RET(30)
+	uchar OwnerGod;
 );
 
 #endif

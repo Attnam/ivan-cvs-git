@@ -714,7 +714,7 @@ void petrus::BeTalkedTo(character* Talker)
 	else
 		if(StoryState >= 2)
 		{
-			ADD_MESSAGE("Petrus says: \"Bring me the Maakotka shirt and we'll talk.\"");
+			ADD_MESSAGE("Petrus says: \"Bring me the Maakotka Shirt and we'll talk.\"");
 			return;
 		}
 
@@ -1539,15 +1539,16 @@ void werewolf::Be()
 ulong werewolf::MaxDanger()
 {
 	bool BeforeThis = GetIsWolf();
+
 	ChangeIntoWolf();
-	ulong AsWolf = ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+	ulong AsWolf = complexhumanoid::MaxDanger();
 	ChangeIntoHuman();
-	ulong AsHuman = ulong(GetAttackStrength() * GetStrength() * GetMaxHP() * (GetToHitValue() + GetDodgeValue() + GetAgility()) / (float(CalculateArmorModifier()) * 1000));
+	ulong AsHuman = complexhumanoid::MaxDanger();
+
 	if(BeforeThis)
 		ChangeIntoWolf();
-	else
-		ChangeIntoHuman();
-	return (AsWolf + AsHuman) / 2;
+
+	return (AsWolf + AsHuman) >> 1;
 }
 
 float werewolf::GetMeleeStrength() const
@@ -1639,30 +1640,62 @@ void angel::SetMaster(uchar NewMaster)
 	Master = NewMaster;
 }
 
-std::string angel::Name(uchar Case) const
-{
-	if(!(Case & PLURAL))
-		if(!(Case & DEFINEBIT))
-			return NameSingular() + " of " + game::GetGod(Master)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NameSingular() + " of " + game::GetGod(Master)->Name();
-			else
-				return std::string("an ") + NameSingular() + " of " + game::GetGod(Master)->Name();
-	else
-		if(!(Case & DEFINEBIT))
-			return NamePlural() + " of " + game::GetGod(Master)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + NamePlural() + " of " + game::GetGod(Master)->Name();
-			else
-				return NamePlural() + " of " + game::GetGod(Master)->Name();
-}
-
 void angel::BeTalkedTo(character* Talker)
 {
 	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
 		ADD_MESSAGE("\"With the power of %s, I shall slay thee, sinner!\"", game::GetGod(Master)->Name().c_str());
 	else
 		ADD_MESSAGE("\"%s be with you, mortal.\"", game::GetGod(Master)->Name().c_str());
+}
+
+void kamikazedwarf::BeTalkedTo(character* Talker)
+{
+	if(GetTeam()->GetRelation(Talker->GetTeam()) == HOSTILE)
+		ADD_MESSAGE("\"Heaven awaits me in the house of %s after I bomb you, heretic!\"", game::GetGod(Master)->Name().c_str());
+	else
+		ADD_MESSAGE("\"Would you like me to teach you the best suicidal bombing tactics?\"");
+}
+
+void kamikazedwarf::CreateInitialEquipment()
+{
+	holybook* HolyBook = new holybook;
+	HolyBook->SetOwnerGod(Master);
+	SetWielded(GetStack()->GetItem(GetStack()->FastAddItem(HolyBook)));
+	GetStack()->FastAddItem(new backpack);
+}
+
+ulong kamikazedwarf::MaxDanger()
+{
+	return 100;
+}
+
+bool kamikazedwarf::Hit(character* Enemy)
+{
+	if(GetIsPlayer())
+		humanoid::Hit(Enemy);
+	else
+	{
+		for(ushort c = 0; c < GetStack()->GetItems(); ++c)
+			if(GetStack()->GetItem(c)->IsExplosive())
+				if(GetStack()->GetItem(c)->Apply(this, GetStack()))
+					return true;
+
+		humanoid::Hit(Enemy);
+	}
+
+	return true;
+}
+
+void kamikazedwarf::Save(outputfile& SaveFile) const
+{
+	humanoid::Save(SaveFile);
+
+	SaveFile << Master;
+}
+
+void kamikazedwarf::Load(inputfile& SaveFile)
+{
+	humanoid::Load(SaveFile);
+
+	SaveFile >> Master;
 }

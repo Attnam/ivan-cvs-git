@@ -17,7 +17,7 @@
 #include "rand.h"
 #include "config.h"
 
-levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0)
+levelsquare::levelsquare(level* LevelUnder, vector2d Pos) : square(LevelUnder, Pos), OverLevelTerrain(0), GroundLevelTerrain(0), Emitation(0), DivineOwner(0), Fluided(false), FluidBuffer(0), Room(0), TemporaryEmitation(0)
 {
 	Stack = new stack(this);
 
@@ -80,6 +80,9 @@ ushort levelsquare::CalculateEmitation() const
 
 	if(GetOverLevelTerrain() && GetOverLevelTerrain()->GetEmitation() > Emitation)
 		Emitation = GetOverLevelTerrain()->GetEmitation();
+
+	if(TemporaryEmitation > Emitation)
+		Emitation = TemporaryEmitation;
 
 	return Emitation;
 }
@@ -997,4 +1000,15 @@ room* levelsquare::GetRoomClass() const
 		return GetLevelUnder()->GetRoom(Room);
 	else
 		return 0;
+}
+
+void levelsquare::SetTemporaryEmitation(ushort What)
+{
+	ushort Old = TemporaryEmitation;
+	TemporaryEmitation = What;
+
+	if(What > Emitation)
+		SignalEmitationIncrease(What);
+	else if(What < Emitation)
+		SignalEmitationDecrease(Old);
 }

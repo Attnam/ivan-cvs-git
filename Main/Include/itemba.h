@@ -86,6 +86,8 @@ public:
 	virtual bool IsBadFoodForAI(character*) const;
 	virtual uchar GetConsumeMaterial() const { return 0; }
 	virtual std::string GetConsumeVerb() const { return std::string("eating"); }
+	virtual bool PolymorphSpawnable() const { return true; }
+	virtual bool IsExplosive() const { return false; }
 protected:
 	virtual void SetDefaultStats() = 0;
 	virtual ushort GetFormModifier() const { return 0; }

@@ -139,7 +139,7 @@ bool scrollofcreatemonster::Read(character* Reader)
 
 		if(game::IsValidPos(TryToCreate) && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverLevelTerrain()->GetIsWalkable() && game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetCharacter() == 0)
 		{
-			game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::BalancedCreateMonster(5));
+			game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(protosystem::CreateMonster());
 
 			if(Reader->GetIsPlayer())
 				ADD_MESSAGE("As you read the scroll a monster appears.");
@@ -302,30 +302,19 @@ ushort brokenplatemail::GetArmorValue() const
 	return ushort(Base);
 }
 
-bool wand::Apply(character* StupidPerson, stack* MotherStack)
+bool wand::Apply(character* Terrorist, stack* MotherStack)
 {
-	if(StupidPerson->GetIsPlayer())
-		ADD_MESSAGE("The wand breaks in two and then explodes.");
+	if(Terrorist->GetIsPlayer())
+		ADD_MESSAGE("%s breaks in two and then explodes!", CNAME(DEFINITE));
 	else
-		if(StupidPerson->GetLevelSquareUnder()->CanBeSeen())
-			ADD_MESSAGE("%s breaks a wand in two. It explodes!", StupidPerson->CNAME(DEFINITE));
+		if(Terrorist->GetLevelSquareUnder()->CanBeSeen())
+			ADD_MESSAGE("%s breaks %s in two. It explodes!", Terrorist->CNAME(DEFINITE), CNAME(INDEFINITE));
 
 	MotherStack->RemoveItem(MotherStack->SearchItem(this));
-	SetExists(false);	
-
-	DO_FOR_SQUARES_AROUND(StupidPerson->GetPos().X, StupidPerson->GetPos().Y, game::GetCurrentLevel()->GetXSize(), game::GetCurrentLevel()->GetYSize(),
-
-	if(game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter())
-	{
-		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->ReceiveFireDamage(5);
-		game::GetCurrentLevel()->GetLevelSquare(vector2d(DoX, DoY))->GetCharacter()->CheckDeath(std::string("killed by ") + Name(INDEFINITE) + std::string(" exploding nearby"));
-	})
-
-	StupidPerson->ReceiveFireDamage(10);
-	StupidPerson->CheckDeath(std::string("killed by an exploding ") + Name(UNARTICLED));
+	SetExists(false);
+	Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, Terrorist->GetLevelSquareUnder()->GetPos(), 40);
 	return true;
 }
-
 
 bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 {
@@ -351,20 +340,18 @@ bool wandofpolymorph::Zap(character* Zapper, vector2d Pos, uchar Direction)
 				if(Character = game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetCharacter())
 				{
 					Zapper->Hostility(Character);
-					Character->Polymorph(protosystem::BalancedCreateMonster(5, false));
+					Character->Polymorph(protosystem::CreateMonster(false));
 				}
 
-				if(game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->GetItems())
-					game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
+				game::GetCurrentLevel()->GetLevelSquare(CurrentPos)->GetStack()->Polymorph();
 			}
 		}
 	else
 	{
 		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter())
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph(protosystem::BalancedCreateMonster(5, false));
+			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetCharacter()->Polymorph(protosystem::CreateMonster(false));
 		
-		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->GetItems())
-			game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
+		game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack()->Polymorph();
 	}
 
 	SetCharge(GetCharge() - 1);
@@ -712,4 +699,50 @@ ushort whip::GetFormModifier() const
 		return 1000;
 	else
 		return 70;
+}
+
+bool backpack::Apply(character* Terrorist, stack* MotherStack)
+{
+	if(GetMaterial(1) && GetMaterial(1)->IsExplosive())
+	{
+		if(Terrorist->GetIsPlayer())
+			ADD_MESSAGE("You light your %s. It explodes!", CNAME(UNARTICLED));
+		else
+			if(Terrorist->GetLevelSquareUnder()->CanBeSeen())
+				ADD_MESSAGE("%s lights %s. It explodes!", Terrorist->CNAME(DEFINITE), CNAME(INDEFINITE));
+
+		MotherStack->RemoveItem(MotherStack->SearchItem(this));
+		SetExists(false);
+		Terrorist->GetLevelSquareUnder()->GetLevelUnder()->Explosion(Terrorist, Terrorist->GetLevelSquareUnder()->GetPos(), GetMaterial(1)->ExplosivePower());
+		return true;
+	}
+	else
+		if(Terrorist->GetIsPlayer())
+			ADD_MESSAGE("You can't apply this!");	
+
+	return false;
+}
+
+void holybook::Load(inputfile& SaveFile)
+{
+	item::Load(SaveFile);
+
+	SaveFile >> OwnerGod;
+}
+
+void holybook::Save(outputfile& SaveFile) const
+{
+	item::Save(SaveFile);
+
+	SaveFile << OwnerGod;
+}
+
+bool holybook::CanBeRead(character* Reader) const
+{
+	return Reader->CanRead();
+}
+
+bool holybook::Read(character* Reader)
+{
+	return true;
 }

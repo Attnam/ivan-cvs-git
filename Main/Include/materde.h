@@ -802,4 +802,32 @@ protected:
 	virtual std::string NameStem() const	{ return "evil leather"; }
 );
 
+class MATERIAL
+(
+	dwarfflesh,
+	flesh,
+public:
+	virtual ushort GetColor() const { return MAKE_RGB(180, 120, 90); }
+protected:
+	virtual std::string NameStem() const	{ return "dwarf flesh"; }
+);
+
+class MATERIAL
+(
+	gunpowder,
+	material,
+public:
+	virtual ushort GetHitValue() const				{ return 5; }
+	virtual uchar GetConsumeType() const				{ return ODD; }
+	virtual ushort GetDensity() const				{ return 250; }
+	virtual ushort OfferValue() const				{ return 5; }
+	virtual uchar Alignment() const					{ return NEUTRAL; }
+	virtual ushort GetColor() const { return MAKE_RGB(30, 30, 30); }
+	virtual bool CanBeWished() const { return false; }
+	virtual bool IsExplosive() const { return true; }
+	virtual ushort ExplosivePower() const { return GetVolume() / 250; }
+protected:
+	virtual std::string NameStem() const	{ return "gunpowder"; }
+);
+
 #endif

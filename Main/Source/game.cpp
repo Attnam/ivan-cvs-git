@@ -219,6 +219,10 @@ void game::Init(std::string Name)
 
 		BaseScore = Player->Score();
 
+		dolphin* Doggie = new dolphin;
+		Doggie->SetTeam(GetTeam(0));
+		GetWorldMap()->GetPlayerGroup().push_back(Doggie);
+
 		ADD_MESSAGE("Game generated successfully.");
 	}
 }
@@ -490,7 +494,7 @@ void game::UpdateCameraY()
 
 const char* game::Insult()
 {
-	switch(RAND() % 1500 / 100)
+	switch(RAND() % 15)
 	{
 	case 0  : return "moron";
 	case 1  : return "silly";
@@ -815,13 +819,13 @@ float game::Difficulty()
 
 		if(!Dice)
 		{
-			Base /= 5;
+			Base /= 6;
 			continue;
 		}
 
 		if(Dice == 4)
 		{
-			Base *= 5;
+			Base *= 6;
 			continue;
 		}
 

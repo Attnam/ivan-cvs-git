@@ -71,6 +71,7 @@ public:
 	virtual room* GetRoom(uchar) const;
 	virtual void SetRoom(uchar Index, room* What) { Room[Index] = What; }
 	virtual void AddRoom(room*);
+	virtual void Explosion(character*, vector2d, ushort);
 protected:
 	levelsquare*** Map;
 	levelscript* LevelScript;

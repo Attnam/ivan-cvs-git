@@ -2158,7 +2158,10 @@ void character::ReceiveFireDamage(long SizeOfEffect)
 		if(GetLevelSquareUnder()->CanBeSeen())
 			ADD_MESSAGE("%s is hurt by the fire.", CNAME(DEFINITE));
 
-	SetHP(GetHP() - (RAND() % SizeOfEffect + SizeOfEffect));
+	if(SizeOfEffect > 1)
+		SetHP(GetHP() - (SizeOfEffect + RAND() % (SizeOfEffect / 2)));
+	else
+		SetHP(GetHP() - SizeOfEffect);
 }
 
 void character::GetPlayerCommand()

@@ -51,3 +51,7 @@ You should be able to fight when overloaded, because it can be abused. (Elpuri's
 World map terrain descriptions shouldn't have an article.
 Talk idea.
 Lookmode should show wielded item.
+Script should have an initial blood level of square option.
+Check the load system.
+Balancing offervalues.
+Items on the level could get impactdamage when hit by an earthquake. Doors could also break.

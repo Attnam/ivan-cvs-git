@@ -412,7 +412,7 @@ void stack::SetSquareUnder(square* Square)
 
 bool stack::Polymorph()
 {
-	for(ushort c = 0, i = 0; c < GetItems(); ++c)
+	for(ushort c = 0, i = 0; c < GetItems() && c - i < 5; ++c)
 		if(GetItem(i)->Polymorph(this))
 			RemoveItem(i);
 		else

@@ -36,55 +36,64 @@ character* protosystem::BalancedCreateMonster(float Multiplier, bool CreateItems
 	{
 		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
 
-		if(!protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
-			continue;
-
-		character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
-
-		float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
-
-		if(c == 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
+		if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
 		{
+			character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
+
+			float Danger = Monster->MaxDanger(), Difficulty = game::Difficulty();
+
+			if(c >= 99 || (Danger < Difficulty * Multiplier * 2.0f && Danger > Difficulty * Multiplier * 0.5f))
+			{
+				Monster->SetTeam(game::GetTeam(1));
+				return Monster;
+			}
+			else
+				delete Monster;
+		}
+	}
+}
+
+item* protosystem::BalancedCreateItem(bool Polymorph)
+{
+	while(true)
+	{
+		ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
+
+		ushort c;
+
+		for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+			SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
+			
+		RandomOne = 1 + RAND() % (SumOfPossibilities);
+		
+		for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
+		{
+			Counter += protocontainer<item>::GetProto(c)->Possibility();
+
+			if(Counter >= RandomOne)
+				if(!Polymorph || protocontainer<item>::GetProto(c)->PolymorphSpawnable())
+					return protocontainer<item>::GetProto(c)->Clone();
+				else
+					break;
+		}
+	}
+}
+
+character* protosystem::CreateMonster(bool CreateItems)
+{
+	while(true)
+	{
+		ushort Chosen = 1 + RAND() % protocontainer<character>::GetProtoAmount();
+
+		if(protocontainer<character>::GetProto(Chosen)->CanBeGenerated())
+		{
+			character* Monster = protocontainer<character>::GetProto(Chosen)->Clone(true, true, CreateItems);
+
 			Monster->SetTeam(game::GetTeam(1));
+
 			return Monster;
 		}
-		else
-			delete Monster;
 	}
-}
-
-item* protosystem::BalancedCreateItem()
-{
-	ushort SumOfPossibilities = 0, Counter = 0, RandomOne;
-
-	ushort c;
-
-	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-		SumOfPossibilities += protocontainer<item>::GetProto(c)->Possibility();
-		
-	RandomOne = 1 + RAND() % (SumOfPossibilities);
-	
-	for(c = 1; c <= protocontainer<item>::GetProtoAmount(); ++c)
-	{
-		Counter += protocontainer<item>::GetProto(c)->Possibility();
-
-		if(Counter >= RandomOne)
-			return CreateItem(c);
-	}
-
-	ABORT("Balanced Create Item kaatuuu");
-
-	return 0;
-}
-
-character* protosystem::CreateMonster(ushort Index)
-{
-	return protocontainer<character>::GetProto(Index)->Clone();
-}
-
-item* protosystem::CreateItem(ushort Index)
-{
-	return protocontainer<item>::GetProto(Index)->Clone();
 }
 
 item* protosystem::CreateItem(std::string What, bool Output)

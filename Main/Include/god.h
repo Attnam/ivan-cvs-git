@@ -17,12 +17,9 @@
 #define ACM	9
 #define ACMM	10
 
-#define NUMBER_OF_GODS 16
-
 #include <string>
 
 #include "typedef.h"
-
 #include "materba.h"
 
 class item;

@@ -61,9 +61,8 @@ class protosystem
 {
 public:
 	static character*		BalancedCreateMonster(float = 1, bool = true);
-	static item*			BalancedCreateItem();
-	static character*		CreateMonster(ushort);
-	static item*			CreateItem(ushort);
+	static item*			BalancedCreateItem(bool = false);
+	static character*		CreateMonster(bool = true);
 	static item*			CreateItem(std::string, bool = true);
 	static material*		CreateRandomSolidMaterial(ulong = 0);
 	static material*		CreateMaterial(ushort, ulong);

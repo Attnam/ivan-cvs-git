@@ -79,4 +79,4 @@ Effect for critically hitting a golem
 Werewolves should gain exp
 Cats should devour rats
 Starting pet
-Polypile balancement
+*Polypile balancement

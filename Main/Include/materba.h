@@ -85,6 +85,8 @@ public:
 	virtual bool GetIsBadFoodForAI() const { return false; }
 	virtual bool CanBeDigged() const { return true; }
 	virtual bool IsFlexible() const { return false; }
+	virtual bool IsExplosive() const { return false; }
+	virtual ushort ExplosivePower() const { return 0; }
 protected:
 	virtual std::string NameStem() const = 0;
 	virtual std::string Article() const { return "a"; }

@@ -1291,13 +1291,45 @@ public:
 	virtual uchar GetSex() const RET(FEMALE)
 	virtual void SetMaster(uchar);
 	virtual uchar GetMaster() const { return Master; }
-	virtual std::string Name(uchar) const;
+	virtual std::string Name(uchar Case) const { return NameNormal(Case, "an") + OwnerGodDescription(Master); }
 protected:
 	virtual std::string DeathMessage() { return Name(DEFINITE) + " leaves this mortal plane behind."; }
 	virtual vector2d GetBitmapPos() const RETV(432,0)
 	virtual std::string NameSingular() const RET("angel")
 	virtual float GetMeleeStrength() const RET(10000)
 	virtual void CreateCorpse() {}
+	uchar Master;
+);
+
+class CHARACTER
+(
+	kamikazedwarf,
+	humanoid,
+	InitMaterials(new dwarfflesh),
+	{
+		SetSize(130);
+		SetAgility(20);
+		SetStrength(20);
+		SetEndurance(20);
+		SetPerception(24);
+		SetMaster(1 + RAND() % game::GetGodNumber());
+	},
+public:
+	virtual void BeTalkedTo(character*);
+	virtual bool CanBeGenerated() const { return true; }
+	virtual ulong GetDefaultVolume(ushort Index) const { if(!Index) return 60000; else return 0; }
+	virtual float GetMeleeStrength() const RET(2000)
+	virtual ulong MaxDanger();
+	virtual bool Hit(character*);
+	virtual void Load(inputfile&);
+	virtual void Save(outputfile&) const;
+	virtual void SetMaster(uchar What) { Master = What; }
+	virtual uchar GetMaster() const { return Master; }
+	virtual bool CheckForUsefulItemsOnGround() { return false; }
+protected:
+	virtual vector2d GetBitmapPos() const RETV(400,0)
+	virtual void CreateInitialEquipment();
+	virtual std::string NameSingular() const RET("kamikaze dwarf")
 	uchar Master;
 );
 

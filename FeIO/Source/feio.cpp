@@ -1,3 +1,4 @@
+#include <ctime>
 #include <io.h>
 
 #include "graphics.h"
@@ -66,10 +67,12 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 
 	while(!bReady)
 	{
-		if(Rotation == 2 * 3.141)
-			Rotation = 0;
-		else
-			Rotation += 0.003;
+		clock_t StartTime = clock();
+
+		Rotation += 0.01;
+
+		if(Rotation > 2 * 3.1415926535897932384626433832795f)
+			Rotation -= 2 * 3.1415926535897932384626433832795f;
 
 		DOUBLEBUFFER->ClearToColor(0);
 
@@ -91,6 +94,9 @@ int iosystem::Menu(bitmap* PentaPicture, std::string sMS, ushort ColorSelected, 
 		}
 
 		graphics::BlitDBToScreen();
+
+		while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
+
 		int k;
 		
 		switch(k = READKEY())

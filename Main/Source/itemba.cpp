@@ -103,12 +103,15 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 		}
 		else
 		{
+			clock_t StartTime = clock();
+
 			Pos += game::GetMoveVector(Direction);
 			Speed *= 0.7f;
+
 			if(Speed < 0.5)
 				break;
+
 			Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
-			clock_t StartTime = clock();
 			game::DrawEverything(false);
 			Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
 
@@ -180,9 +183,10 @@ item* item::CreateWishedItem() const
 	return protocontainer<item>::GetProto(Type())->Clone();
 }
 
-bool item::Apply(character*, stack*)
+bool item::Apply(character* Applier, stack*)
 {
-	ADD_MESSAGE("You can't apply this!");
+	if(Applier->GetIsPlayer())
+		ADD_MESSAGE("You can't apply this!");
 
 	return false;
 }
@@ -194,9 +198,7 @@ bool item::Zap(character*, vector2d, uchar)
 
 bool item::Polymorph(stack* CurrentStack)
 {
-	if(RAND() % 3)
-		CurrentStack->AddItem(protosystem::BalancedCreateItem());
-
+	CurrentStack->AddItem(protosystem::BalancedCreateItem());
 	SetExists(false);
 	return true;
 }

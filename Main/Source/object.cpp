@@ -7,6 +7,7 @@
 #include "game.h"
 #include "lsquare.h"
 #include "rand.h"
+#include "god.h"
 
 object::object(bool AddToPool) : InPool(AddToPool), Exists(true), Picture(0), SquareUnder(0)
 {
@@ -364,4 +365,9 @@ material* object::GetMaterial(ushort Index) const
 		return Material[Index];
 	else
 		return 0;
+}
+
+std::string object::OwnerGodDescription(uchar OwnerGod) const
+{
+	return std::string(" of ") + game::GetGod(OwnerGod)->Name();
 }

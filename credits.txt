@@ -5,7 +5,7 @@ Programming (in order of actual code completed):
 	Perttu Luukko
 	Niko Kosonen
 
-Special thanks for the rand() function we use:
+Special thanks for the random number generator we use:
 
 	Takuji Nishimura
 	Makoto Matsumoto

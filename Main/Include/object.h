@@ -78,6 +78,7 @@ protected:
 	virtual std::string NameContainer(uchar) const;
 	virtual std::string NameSized(uchar, std::string, ushort, ushort) const;
 	virtual std::string NameThingsThatAreLikeLumps(uchar, std::string) const;
+	virtual std::string OwnerGodDescription(uchar) const;
 	virtual vector2d GetBitmapPos() const = 0;
 	std::vector<material*> Material;
 	std::vector<bool> PreserveBit;

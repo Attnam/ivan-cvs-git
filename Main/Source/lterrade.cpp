@@ -46,26 +46,6 @@ bool door::Close(character* Closer)
 	return true;
 }
 
-std::string altar::Name(uchar Case) const
-{
-	if(!(Case & PLURAL))
-		if(!(Case & DEFINEBIT))
-			return GetMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + GetMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
-			else
-				return GetMaterial(0)->Name(INDEFINITE)  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
-	else
-		if(!(Case & DEFINEBIT))
-			return GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
-		else
-			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
-			else
-				return GetMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
-}
-
 void altar::DrawToTileBuffer() const
 {
 	Picture->MaskedBlit(igraph::GetTileBuffer(), 0, 0, 0, 0, 16, 16);
@@ -342,6 +322,8 @@ void altar::Kick(ushort, bool ShowOnScreen, uchar)
 
 	if(GetLevelSquareUnder()->GetDivineOwner() > 1)
 		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() - 1)->PlayerKickedFriendsAltar();
+
+	/* What the hell does this do? */
 
 	if(GetLevelSquareUnder()->GetDivineOwner() < game::GetGodNumber())
 		game::GetGod(GetLevelSquareUnder()->GetDivineOwner() + 1)->PlayerKickedFriendsAltar();

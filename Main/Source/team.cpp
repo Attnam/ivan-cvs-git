@@ -26,7 +26,7 @@ uchar team::GetRelation(team* AnotherTeam)
 
 void team::Hostility(team* Enemy)
 {
-	if(GetRelation(Enemy) != HOSTILE)
+	if(this != Enemy && GetRelation(Enemy) != HOSTILE)
 	{
 		game::Hostility(this, Enemy);
 
@@ -39,9 +39,9 @@ void team::Hostility(team* Enemy)
 
 			ADD_MESSAGE("You have a feeling this wasn't a good idea...");
 		}
-	}
 
-	SetRelation(Enemy, HOSTILE);
+		SetRelation(Enemy, HOSTILE);
+	}
 }
 
 void team::Save(outputfile& SaveFile) const

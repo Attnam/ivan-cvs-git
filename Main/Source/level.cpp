@@ -1,4 +1,5 @@
 #include <cmath>
+#include <ctime>
 
 #include "level.h"
 #include "charba.h"
@@ -12,6 +13,9 @@
 #include "script.h"
 #include "roomde.h"
 #include "rand.h"
+#include "team.h"
+#include "femath.h"
+#include "config.h"
 
 void level::ExpandPossibleRoute(vector2d Origo, vector2d Target, bool XMode)
 {
@@ -853,4 +857,62 @@ room* level::GetRoom(uchar Index) const
 		ABORT("Access to room zero denied!");
 
 	return Room[Index];
+}
+
+void level::Explosion(character* Terrorist, vector2d Pos, ushort Strength)
+{
+	GetLevelSquare(Pos)->SetTemporaryEmitation(350);
+	
+	uchar Radius = log(Strength / 10) / log(2);
+	ushort PlayerDamage;
+	bool PlayerHurt = false;
+
+	DO_FILLED_RECTANGLE(Pos.X, Pos.Y, 0, 0, GetXSize() - 1, GetYSize() - 1, Radius,
+	{
+		levelsquare* Square = GetLevelSquare(vector2d(XPointer, YPointer));
+		character* Char = Square->GetCharacter();
+
+		if(Char)
+		{
+			if(Char->GetIsPlayer())
+			{
+				PlayerDamage = Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y)));
+				PlayerHurt = true;
+			}
+			else
+			{
+				Terrorist->GetTeam()->Hostility(Char->GetTeam());
+				Char->ReceiveFireDamage(Strength / (1 << Max(abs(long(XPointer) - Pos.X), abs(long(YPointer) - Pos.Y))));
+				Char->CheckDeath(std::string("killed by an explosion"));
+			}
+		}
+	})
+
+	if(PlayerHurt)
+	{
+		Terrorist->GetTeam()->Hostility(game::GetPlayer()->GetTeam());
+		game::GetPlayer()->ReceiveFireDamage(PlayerDamage);
+		game::GetPlayer()->CheckDeath(std::string("killed by an explosion"));
+	}
+
+	game::DrawEverythingNoBlit(false);
+
+	ushort ContrastLuminance = ushort(256.0f * configuration::GetContrast() / 100);
+
+	vector2d BPos = (Pos - game::GetCamera() + vector2d(0,2)) << 4;
+
+	if(Strength >= 100)
+		igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 64, 32, BPos.X - 32, BPos.Y - 32, 80, 80, ContrastLuminance);
+	else if(Strength >= 25)
+		igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 16, 32, BPos.X - 16, BPos.Y - 16, 48, 48, ContrastLuminance);
+	else
+		igraph::GetSymbolGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 32, BPos.X, BPos.Y, 16, 16, ContrastLuminance);
+
+	graphics::BlitDBToScreen();
+
+	clock_t StartTime = clock();
+
+	while(clock() - StartTime < 0.2f * CLOCKS_PER_SEC);
+
+	GetLevelSquare(Pos)->SetTemporaryEmitation(0);
 }

@@ -188,7 +188,7 @@ class OVERLEVELTERRAIN
 	},
 public:
 	virtual bool CanBeOffered() const { return true; }
-	virtual std::string Name(uchar) const;
+	virtual std::string Name(uchar Case) const { return NameWithMaterial(Case) + OwnerGodDescription(OwnerGod); }
 	virtual void DrawToTileBuffer() const;
 	virtual uchar GetOwnerGod() const { return OwnerGod; }
 	virtual void SetOwnerGod(uchar What) { OwnerGod = What; }

@@ -36,11 +36,11 @@ public:
 	virtual void FastAddCharacter(character* Guy);
 	virtual void AddCharacter(character* Guy);
 	virtual void RemoveCharacter();
-	virtual stack* GetStack() const		{ return Stack; }
+	virtual stack* GetStack() const { return Stack; }
 	virtual void AlterLuminance(vector2d, ushort);
 	virtual void Emitate();
 	virtual void ReEmitate();
-	virtual stack* GetSideStack(uchar Index) const	{ return SideStack[Index]; }
+	virtual stack* GetSideStack(uchar Index) const { return SideStack[Index]; }
 	virtual void Clean();
 	virtual bool Open(character*);
 	virtual bool Close(character*);
@@ -50,7 +50,7 @@ public:
 	virtual ushort GetLuminance() const;
 	virtual void SignalEmitationIncrease(ushort);
 	virtual void SignalEmitationDecrease(ushort);
-	virtual ushort GetEmitation() const			{ return Emitation; }
+	virtual ushort GetEmitation() const { return Emitation; }
 	virtual void ForceEmitterNoxify();
 	virtual void ForceEmitterEmitation();
 	virtual void Noxify();
@@ -94,6 +94,8 @@ public:
 	virtual void SwapCharacter(levelsquare*);
 	virtual void ReceiveVomit(character*);
 	virtual room* GetRoomClass() const;
+	virtual void SetTemporaryEmitation(ushort);
+	virtual ushort GetTemporaryEmitation() const { return TemporaryEmitation; }
 protected:
 	groundlevelterrain* GroundLevelTerrain;
 	overlevelterrain* OverLevelTerrain;
@@ -102,8 +104,8 @@ protected:
 	{
 		emitter(vector2d Pos, ushort DilatedEmitation) : Pos(Pos), DilatedEmitation(DilatedEmitation) {}
 		emitter() {}
-		bool operator==(emitter& AE) const {if(Pos == AE.Pos) return true; else return false; }
-		emitter& operator=(emitter& AE) {Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
+		bool operator==(emitter& AE) const { if(Pos == AE.Pos) return true; else return false; }
+		emitter& operator=(emitter& AE) { Pos = AE.Pos; DilatedEmitation = AE.DilatedEmitation; return *this; }
 		vector2d Pos;
 		ushort DilatedEmitation;
 	};
@@ -115,6 +117,7 @@ protected:
 	bool Fluided;
 	bitmap* FluidBuffer;
 	uchar Room;
+	ushort TemporaryEmitation;
 };
 
 #endif

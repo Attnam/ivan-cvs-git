@@ -17,3 +17,5 @@ Monster, item and god memories.
 The Saveloader.
 Random fellow adventurers.
 Indiana Jones.
+Fake gods.
+Capitalists.
