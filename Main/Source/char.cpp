@@ -243,6 +243,14 @@ wsquare* character::GetWSquareUnder() const { return static_cast<wsquare*>(GetSq
 god* character::GetMasterGod() const { return game::GetGod(GetConfig()); }
 wsquare* character::GetNearWSquare(vector2d Pos) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(Pos)); }
 wsquare* character::GetNearWSquare(ushort x, ushort y) const { return static_cast<wsquare*>(GetSquareUnder()->GetArea()->GetSquare(x, y)); }
+ushort character::GetBodyPartColorA(ushort, bool) const { return GetSkinColor(); }
+ushort character::GetBodyPartColorB(ushort, bool) const { return GetTorsoMainColor(); }
+ushort character::GetBodyPartColorC(ushort, bool) const { return 0; } // reserved for future use
+ushort character::GetBodyPartColorD(ushort, bool) const { return GetTorsoSpecialColor(); }
+bool character::BodyPartColorAIsSparkling(ushort, bool) const { return SkinColorIsSparkling(); }
+bool character::BodyPartColorBIsSparkling(ushort, bool) const { return TorsoMainColorIsSparkling(); }
+bool character::BodyPartColorCIsSparkling(ushort, bool) const { return 0; } // reserved for future use
+bool character::BodyPartColorDIsSparkling(ushort, bool) const { return TorsoSpecialColorIsSparkling(); }
 
 character::character(const character& Char) : entity(Char), id(Char), NP(Char.NP), AP(Char.AP), Player(false), TemporaryState(Char.TemporaryState&~POLYMORPHED), Team(Char.Team), WayPoint(-1, -1), Money(0), AssignedName(Char.AssignedName), Action(0), Config(Char.Config), DataBase(Char.DataBase), StuckToBodyPart(NONE_INDEX), StuckTo(0), MotherEntity(0), PolymorphBackup(0), EquipmentState(0), SquareUnder(0), Initializing(true), AllowedWeaponSkillCategories(Char.AllowedWeaponSkillCategories), BodyParts(Char.BodyParts), Polymorphed(false), InNoMsgMode(true), RegenerationCounter(Char.RegenerationCounter)
 {
@@ -2687,10 +2695,7 @@ bool character::ReceiveDamage(character* Damager, ushort Damage, ushort Type, uc
 
 bool character::BodyPartCanBeSevered(ushort Index) const
 {
-  if(Index == 0)
-    return false;
-  else
-    return true;
+  return Index != 0;
 }
 
 festring character::GetDescription(uchar Case) const
@@ -3027,50 +3032,6 @@ vector2d character::GetBodyPartBitmapPos(ushort Index, bool) const
     }
 }
 
-ushort character::GetBodyPartColorA(ushort Index, bool) const
-{
-  if(Index < GetBodyParts())
-    return GetSkinColor();
-  else
-    {
-      ABORT("Weird bodypart color A request for a character!");
-      return 0;
-    }
-}
-
-ushort character::GetBodyPartColorB(ushort Index, bool) const
-{
-  if(Index == TORSO_INDEX)
-    return GetTorsoMainColor();
-  else
-    {
-      ABORT("Weird bodypart color B request for a character!");
-      return 0;
-    }
-}
-
-ushort character::GetBodyPartColorC(ushort Index, bool) const
-{
-  if(Index == TORSO_INDEX)
-    return 0; // reserved for future use
-  else
-    {
-      ABORT("Weird bodypart color C request for a character!");
-      return 0;
-    }
-}
-
-ushort character::GetBodyPartColorD(ushort Index, bool) const
-{
-  if(Index == TORSO_INDEX)
-    return GetTorsoSpecialColor();
-  else
-    {
-      ABORT("Weird bodypart color D request for a character!");
-      return 0;
-    }
-}
-
 void character::UpdateBodyPartPicture(ushort Index, bool Severed)
 {
   bodypart* BodyPart = GetBodyPart(Index);
@@ -3079,9 +3040,13 @@ void character::UpdateBodyPartPicture(ushort Index, bool Severed)
     {
       BodyPart->SetBitmapPos(GetBodyPartBitmapPos(Index, Severed));
       BodyPart->GetMainMaterial()->SetSkinColor(GetBodyPartColorA(Index, Severed));
+      BodyPart->GetMainMaterial()->SetSkinColorIsSparkling(BodyPartColorAIsSparkling(Index, Severed));
       BodyPart->SetMaterialColorB(GetBodyPartColorB(Index, Severed));
       BodyPart->SetMaterialColorC(GetBodyPartColorC(Index, Severed));
       BodyPart->SetMaterialColorD(GetBodyPartColorD(Index, Severed));
+      BodyPart->SetIsSparklingB(BodyPartColorBIsSparkling(Index, Severed));
+      BodyPart->SetIsSparklingC(BodyPartColorCIsSparkling(Index, Severed));
+      BodyPart->SetIsSparklingD(BodyPartColorDIsSparkling(Index, Severed));
       BodyPart->SetSpecialFlags(GetSpecialBodyPartFlags(Index, Severed));
       BodyPart->UpdatePictures();
     }
@@ -5746,7 +5711,7 @@ void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
 
   for(c = 0; c < AnimationFrames; ++c)
     {
-      Bitmap[c] = new bitmap(16, 16, TRANSPARENT_COLOR);
+      Bitmap[c] = new bitmap(16, 16, 0);
       globalwindowhandler::SetTick(c);
       DrawBodyParts(Bitmap[c], vector2d(0, 0), NORMAL_LUMINANCE, true, false);
     }

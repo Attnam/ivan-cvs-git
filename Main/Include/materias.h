@@ -53,9 +53,12 @@ class MATERIAL
   virtual void Load(inputfile&);
   virtual ushort GetSkinColor() const { return SkinColor; }
   virtual void SetSkinColor(ushort What) { SkinColor = What; }
+  virtual bool SkinColorIsSparkling() const { return SkinColorSparkling; }
+  virtual void SetSkinColorIsSparkling(bool What) { SkinColorSparkling = What; }
   virtual bool IsFlesh() const { return true; }
  protected:
   ushort SkinColor;
+  bool SkinColorSparkling;
 );
 
 class MATERIAL

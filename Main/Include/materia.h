@@ -167,6 +167,8 @@ class material
   void EditVolume(long What) { SetVolume(Volume + What); }
   DATA_BASE_VALUE(const festring&, BreatheMessage);
   bool BreatheEffect(character*);
+  virtual bool SkinColorIsSparkling() const { return IsSparkling(); }
+  virtual void SetSkinColorIsSparkling(bool) { }
  protected:
   virtual void VirtualConstructor(bool) { }
   void Initialize(ushort, ulong, bool);

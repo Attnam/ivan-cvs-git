@@ -21,8 +21,6 @@ struct felistdescription;
 class felist
 {
  public:
-  felist();
-  felist(const felist&);
   felist(const festring&, ushort = WHITE, ushort = 0);
   ~felist();
   void AddEntry(const festring&, ushort, ushort = 0, bitmap* = 0, bool = true);
@@ -53,6 +51,7 @@ class felist
   void SetFlags(ushort What) { Flags = What; }
   void AddFlags(ushort What) { Flags |= What; }
   void RemoveFlags(ushort What) { Flags &= ~What; }
+  void SetMaskColor(ushort What) { MaskColor = What; }
  private:
   void DrawDescription(bitmap*, vector2d, ushort, ushort) const;
   std::vector<felistentry*> Entry;
@@ -65,6 +64,7 @@ class felist
   ushort PageLength;
   ushort BackColor;
   ushort Flags;
+  ushort MaskColor;
 };
 
 #endif

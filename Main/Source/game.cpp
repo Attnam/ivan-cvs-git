@@ -128,7 +128,7 @@ void game::InitScript()
 #include "item.h"
 #include "stack.h"*/
 
-//#include "confdef.h"
+#include "confdef.h"
 
 bool game::Init(const festring& Name)
 {
@@ -462,7 +462,6 @@ void game::DrawEverythingNoBlit(bool AnimationDraw)
 
   globalwindowhandler::UpdateTick();
   GetCurrentArea()->Draw(AnimationDraw);
-
   GetPlayer()->DrawPanel(AnimationDraw);
 
   if(!AnimationDraw)
@@ -2004,6 +2003,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const char* Reaso
   felist List(MainTopic);
   game::SetStandardListAttributes(List);
   List.SetPageLength(15);
+  List.SetMaskColor(0);
   List.AddDescription(CONST_S(""));
   festring SideTopic;
 

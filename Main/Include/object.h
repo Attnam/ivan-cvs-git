@@ -45,14 +45,14 @@ class object : public entity, public id
   void SetVisualEffects(uchar What) { VisualEffects = What; }
   virtual uchar GetForcedVisualEffects() const { return 0; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
-  ushort GetAnimationFrames() const { return AnimationFrames; }
+  virtual ushort GetAnimationFrames() const { return AnimationFrames; }
   bool IsAnimated() const { return AnimationFrames > 1; }
   virtual void CalculateEmitation();
   void LoadMaterial(inputfile&, material*&);
   ushort GetConfig() const { return Config; }
   virtual void Draw(bitmap*, vector2d, ulong, bool) const;
   void SolidDraw(bitmap*, vector2d, ulong, bool) const;
-  void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
   virtual god* GetMasterGod() const;
   virtual const std::vector<long>& GetMainMaterialConfig() const = 0;
   virtual const std::vector<long>& GetMaterialConfigChances() const = 0;
@@ -60,6 +60,9 @@ class object : public entity, public id
   virtual void CalculateAll() = 0;
   virtual uchar GetSpoilLevel() const { return 0; }
   void CreateWieldedBitmap(graphicid&) const;
+  virtual vector2d GetWieldedBitmapPos(ushort) const { return vector2d(); }
+  ushort UpdatePictures(std::vector<graphicid>&, std::vector<bitmap*>&, vector2d, uchar, uchar, uchar, vector2d (object::*)(ushort) const) const;
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual bool IsSparkling(ushort) const;
   void CopyMaterial(material* const&, material*&);
@@ -72,19 +75,19 @@ class object : public entity, public id
   material* SetMaterial(material*&, material*, ulong, ushort);
   void ChangeMaterial(material*&, material*, ulong, ushort);
   bool CalculateHasBe() const;
-  virtual ushort GetSpecialFlags() const;
   virtual uchar GetGraphicsContainerIndex() const = 0;
   virtual ushort GetMaterialColorA(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const { return 0; }
   virtual ushort GetMaterialColorC(ushort) const { return 0; }
   virtual ushort GetMaterialColorD(ushort) const { return 0; }
-  virtual uchar GetMaxAlpha(ushort) const { return 255; }
+  virtual uchar GetMaxAlpha() const { return 255; }
   virtual uchar GetBaseAlpha(ushort) const { return 255; }
   virtual uchar GetAlphaA(ushort) const;
   virtual uchar GetAlphaB(ushort) const { return 255; }
   virtual uchar GetAlphaC(ushort) const { return 255; }
   virtual uchar GetAlphaD(ushort) const { return 255; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const { return 255; }
   virtual bool AddMaterialDescription(festring&, bool) const;
   virtual ushort RandomizeMaterialConfiguration();
   virtual void GenerateMaterials();

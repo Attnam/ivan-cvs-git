@@ -85,7 +85,25 @@ void bitmap::DrawRectangle(vector2d TopLeft, ushort Right, ushort Bottom, ushort
 void bitmap::DrawRectangle(ushort Left, ushort Top, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
 void bitmap::DrawRectangle(vector2d TopLeft, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
 
-bitmap::bitmap(const festring& FileName) : AlphaMap(0)
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { MaskedPriorityBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { MaskedPriorityBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { AlphaPriorityBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { AlphaPriorityBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
+bitmap::bitmap(const festring& FileName) : AlphaMap(0), PriorityMap(0)
 {
   inputfile File(FileName.CStr(), 0, false);
 
@@ -131,7 +149,7 @@ bitmap::bitmap(const festring& FileName) : AlphaMap(0)
       }
 }
 
-bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), Image(Alloc2D<ushort>(YSize, XSize))
+bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSize), YSize(Bitmap->YSize), XSizeTimesYSize(Bitmap->XSizeTimesYSize), Image(Alloc2D<ushort>(YSize, XSize)), PriorityMap(0)
 {
   if(CopyAlpha && Bitmap->AlphaMap)
     {
@@ -149,20 +167,20 @@ bitmap::bitmap(bitmap* Bitmap, uchar Flags, bool CopyAlpha) : XSize(Bitmap->XSiz
     }
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
 {
 }
 
-bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(vector2d Size) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
 {
 }
 
-bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(ushort XSize, ushort YSize, ushort Color) : XSize(XSize), YSize(YSize), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
 {
   ClearToColor(Color);
 }
 
-bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0)
+bitmap::bitmap(vector2d Size, ushort Color) : XSize(Size.X), YSize(Size.Y), XSizeTimesYSize(XSize * YSize), Image(Alloc2D<ushort>(YSize, XSize)), AlphaMap(0), PriorityMap(0)
 {
   ClearToColor(Color);
 }
@@ -171,6 +189,7 @@ bitmap::~bitmap()
 {
   delete [] Image;
   delete [] AlphaMap;
+  delete [] PriorityMap;
 }
 
 void bitmap::Save(outputfile& SaveFile) const
@@ -179,23 +198,35 @@ void bitmap::Save(outputfile& SaveFile) const
 
   if(AlphaMap)
     {
-      SaveFile << uchar(1);
+      SaveFile << bool(true);
       SaveFile.Write(reinterpret_cast<char*>(AlphaMap[0]), XSizeTimesYSize);
     }
   else
-    SaveFile << uchar(0);
+    SaveFile << bool(false);
+
+  if(PriorityMap)
+    {
+      SaveFile << bool(true);
+      SaveFile.Write(reinterpret_cast<char*>(PriorityMap[0]), XSizeTimesYSize);
+    }
+  else
+    SaveFile << bool(false);
 }
 
 void bitmap::Load(inputfile& SaveFile)
 {
   SaveFile.Read(reinterpret_cast<char*>(Image[0]), (XSizeTimesYSize) << 1);
-  uchar Alpha;
-  SaveFile >> Alpha;
 
-  if(Alpha)
+  if(ReadType<bool>(SaveFile))
     {
       Alloc2D<uchar>(AlphaMap, YSize, XSize);
       SaveFile.Read(reinterpret_cast<char*>(AlphaMap[0]), XSizeTimesYSize);
+    }
+
+  if(ReadType<bool>(SaveFile))
+    {
+      Alloc2D<uchar>(PriorityMap, YSize, XSize);
+      SaveFile.Read(reinterpret_cast<char*>(PriorityMap[0]), XSizeTimesYSize);
     }
 }
 
@@ -448,7 +479,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const
 {
   if(!Width || !Height)
-    ABORT("Zero-sized bitmap blit attempt detected!");
+    ABORT("Zero-sized bitmap masked blit attempt detected!");
 
   if(Flags & ROTATE && Width != Height)
     ABORT("MaskedBlit error: FeLib supports only square rotating!");
@@ -612,7 +643,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
     }
 
   if(!Width || !Height)
-    ABORT("Zero-sized bitmap blit attempt detected!");
+    ABORT("Zero-sized bitmap masked blit attempt detected!");
 
   if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
     return;
@@ -1103,8 +1134,11 @@ bool bitmap::ChangeAlpha(char Amount)
   return Changes;
 }
 
-void bitmap::Outline(ushort Color)
+void bitmap::Outline(ushort Color, uchar Alpha)
 {
+  if(!AlphaMap)
+    CreateAlphaMap(255);
+
   ushort LastColor, NextColor;
 
   for(ushort x = 0; x < XSize; ++x)
@@ -1117,12 +1151,18 @@ void bitmap::Outline(ushort Color)
 	  NextColor = *(Buffer + XSize);
 
 	  if((LastColor == TRANSPARENT_COLOR || !y) && NextColor != TRANSPARENT_COLOR)
-	    *Buffer = Color;
+	    {
+	      *Buffer = Color;
+	      SetAlpha(x, y, Alpha);
+	    }
 
 	  Buffer += XSize;
 
 	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || y == YSize - 2))
-	    *Buffer = Color;
+	    {
+	      *Buffer = Color;
+	      SetAlpha(x, y + 1, Alpha);
+	    }
 
 	  LastColor = NextColor;
 	}
@@ -1138,12 +1178,18 @@ void bitmap::Outline(ushort Color)
 	  NextColor = *(Buffer + 1);
 
 	  if((LastColor == TRANSPARENT_COLOR || !x) && NextColor != TRANSPARENT_COLOR)
-	    *Buffer = Color;
+	    {
+	      *Buffer = Color;
+	      SetAlpha(x, y, Alpha);
+	    }
 
 	  ++Buffer;
 
 	  if(LastColor != TRANSPARENT_COLOR && (NextColor == TRANSPARENT_COLOR || x == XSize - 2))
-	    *Buffer = Color;
+	    {
+	      *Buffer = Color;
+	      SetAlpha(x + 1, y, Alpha);
+	    }
 
 	  LastColor = NextColor;
 	}
@@ -1353,7 +1399,7 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
     {
       const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
       ushort* DestPtr = &DestImage[DestY + y][DestX];
-      uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
+      const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
 
       for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr)
 	if(*SrcPtr != MaskColor)
@@ -1366,45 +1412,60 @@ void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort De
 void bitmap::CreateFlames(ushort Frame, ushort MaskColor)
 {
   ushort* FlameLowestPoint = new ushort[XSize];
-  ushort x,y, Top, MaxDist, RelPos;
+  ushort* FlameTop = new ushort[XSize];
+  ushort* FlamePhase = new ushort[XSize];
+  ushort x, y;
   femath::SaveSeed();
-  femath::SetSeed((Frame & 15) + 1); /* We want flame animation loops to be same in every session */
+  femath::SetSeed(0x666);
 
   for(x = 0; x < XSize; ++x)
     {
-      FlameLowestPoint[x] = NOFLAME;
+      if(GetPixel(x, 0) == MaskColor && GetPixel(x, 1) == MaskColor)
+	{
+	  FlameLowestPoint[x] = NO_FLAME;
 
-      if(GetPixel(x, 0) != MaskColor)
-	FlameLowestPoint[x] = 0;
+	  for(ushort y = 1; y < YSize - 1; ++y)
+	    if(GetPixel(x, y) == MaskColor && GetPixel(x, y + 1) != MaskColor)
+	      {
+		FlameLowestPoint[x] = y;
+
+		if(FlameLowestPoint[x] >= 4)
+		  FlameTop[x] = (FlameLowestPoint[x] >> 1) - (RAND() % (FlameLowestPoint[x] >> 1)) - 1;
+		else
+		  FlameTop[x] = 0;
+
+		FlamePhase[x] = RAND_16;
+		break;
+	      }
+	}
       else
 	{
-	  for(ushort y = 1; y < YSize; ++y)
-	    if(GetPixel(x,y - 1) == MaskColor && GetPixel(x,y) != MaskColor && (FlameLowestPoint[x] == NOFLAME && FlameLowestPoint[x] > y))
-	      FlameLowestPoint[x] = y;
+	  FlameLowestPoint[x] = 1;
+	  FlameTop[x] = 0;
+	  FlamePhase[x] = RAND_16;
 	}
     }
-  
-  for(x = 0; x < 16; ++x)
-    {
-      if(FlameLowestPoint[x] != NOFLAME)
-	{
-	  if(FlameLowestPoint[x] != 0)
-	    {
-	      Top = RAND() % FlameLowestPoint[x];
 
-	      for(y = Top; y <= FlameLowestPoint[x]; ++y)
-		{
-		  MaxDist = FlameLowestPoint[x] - Top;
-		  RelPos = y - Top;
-		  SafePutPixelAndResetAlpha(x,y, MakeRGB16((RelPos << 7) / MaxDist, 255 - ((RelPos << 7) / MaxDist), 0));
-		}
+  for(x = 0; x < XSize; ++x)
+    {
+      if(FlameLowestPoint[x] != NO_FLAME)
+	{
+	  ushort Phase = (Frame + FlamePhase[x]) & 15;
+	  ushort Length = FlameLowestPoint[x] - FlameTop[x];
+	  ushort Top = FlameLowestPoint[x] - Length + Phase * (15 - Phase) * Length / 56;
+
+	  for(y = Top; y <= FlameLowestPoint[x]; ++y)
+	    {
+	      ushort Pos = y - Top;
+	      PowerPutPixel(x, y, MakeRGB16(255, 255 - (Pos << 7) / Length, 0), 127 + (Pos << 6) / Length, 0);
 	    }
-	  else if(RAND() & 1)
-	    SafePutPixelAndResetAlpha(x,0, MakeRGB16(0,255,0));
 	}
     }
 
   femath::LoadSeed();
+  delete [] FlameLowestPoint;
+  delete [] FlameTop;
+  delete [] FlamePhase;
 }
 
 void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
@@ -1413,16 +1474,16 @@ void bitmap::CreateSparkle(vector2d SparklePos, ushort Frame)
     return;
 
   ushort Size = (Frame - 1) * (16 - Frame) / 10;
-  SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y, WHITE);
+  PowerPutPixel(SparklePos.X, SparklePos.Y, WHITE, 255, 10);
 
   for(ushort c = 1; c < Size; ++c)
     {
       uchar Lightness = 191 + ((Size - c) << 6) / Size;
       ushort RGB = MakeRGB16(Lightness, Lightness, Lightness);
-      SafePutPixelAndResetAlpha(SparklePos.X + c, SparklePos.Y, RGB);
-      SafePutPixelAndResetAlpha(SparklePos.X - c, SparklePos.Y, RGB);
-      SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y + c, RGB);
-      SafePutPixelAndResetAlpha(SparklePos.X, SparklePos.Y - c, RGB);
+      PowerPutPixel(SparklePos.X + c, SparklePos.Y, RGB, 255, 10);
+      PowerPutPixel(SparklePos.X - c, SparklePos.Y, RGB, 255, 10);
+      PowerPutPixel(SparklePos.X, SparklePos.Y + c, RGB, 255, 10);
+      PowerPutPixel(SparklePos.X, SparklePos.Y - c, RGB, 255, 10);
     }
 }
 
@@ -1443,7 +1504,7 @@ void bitmap::CreateFlies(ulong Seed, ushort Frame, uchar FlyAmount)
       vector2d Where;
       Where.X = short(StartPos.X + sin(Constant + Temp) * 3);
       Where.Y = short(StartPos.Y + sin(2*(Constant + Temp)) * 3);
-      SafePutPixelAndResetAlpha(Where.X, Where.Y, MakeRGB16(0, 0, 0));
+      PowerPutPixel(Where.X, Where.Y, MakeRGB16(0, 0, 0), 255, 5);
     }
 
   femath::LoadSeed();
@@ -1727,24 +1788,127 @@ void bitmap::FillAlpha(uchar Alpha)
   memset(AlphaMap[0], Alpha, XSizeTimesYSize);
 }
 
-void bitmap::SafePutPixelAndResetAlpha(ushort X, ushort Y, ushort Color)
+void bitmap::PowerPutPixel(ushort X, ushort Y, ushort Color, uchar Alpha, uchar Priority)
 {
   if(X < XSize && Y < YSize)
     {
       Image[Y][X] = Color;
 
       if(AlphaMap)
-	AlphaMap[Y][X] = 255;
+	AlphaMap[Y][X] = Alpha;
+      else if(Alpha != 255)
+	{
+	  CreateAlphaMap(255);
+	  AlphaMap[Y][X] = Alpha;
+	}
+
+      if(PriorityMap)
+	PriorityMap[Y][X] = Priority;
     }
 }
 
-void bitmap::SafePutPixelAndResetAlpha(vector2d Pos, ushort Color)
+void bitmap::MaskedPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
 {
-  if(Pos.X < XSize && Pos.Y < YSize)
+  if(!PriorityMap || !Bitmap->PriorityMap)
     {
-      Image[Pos.Y][Pos.X] = Color;
-
-      if(AlphaMap)
-	AlphaMap[Pos.Y][Pos.X] = 255;
+      MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
+      return;
     }
+
+  if(!Width || !Height)
+    ABORT("Zero-sized bitmap masked priority blit attempt detected!");
+
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
+
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
+  uchar** SrcPriorityMap = PriorityMap;
+  uchar** DestPriorityMap = Bitmap->PriorityMap;
+
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
+
+  for(ushort y = 0; y < Height; ++y)
+    {
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+      const uchar* SrcPriorityPtr = &SrcPriorityMap[SourceY + y][SourceX];
+      uchar* DestPriorityPtr = &DestPriorityMap[DestY + y][DestX];
+
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++SrcPriorityPtr, ++DestPriorityPtr)
+	if(*SrcPtr != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	  {
+	    *DestPtr = MakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF),
+				 Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF),
+				 Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF));
+
+	    *DestPriorityPtr = *SrcPriorityPtr;
+	  }
+    }
+}
+
+void bitmap::AlphaPriorityBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const
+{
+  if(!AlphaMap)
+    {
+      MaskedPriorityBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
+      return;
+    }
+
+  if(!PriorityMap || !Bitmap->PriorityMap)
+    {
+      AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, Width, Height, Luminance, MaskColor);
+      return;
+    }
+
+  if(!Width || !Height)
+    ABORT("Zero-sized bitmap alpha priority blit attempt detected!");
+
+  if(!femath::Clip(SourceX, SourceY, DestX, DestY, Width, Height, XSize, YSize, Bitmap->XSize, Bitmap->YSize))
+    return;
+
+  ushort** SrcImage = Image;
+  ushort** DestImage = Bitmap->Image;
+  uchar** SrcAlphaMap = AlphaMap;
+  uchar** SrcPriorityMap = PriorityMap;
+  uchar** DestPriorityMap = Bitmap->PriorityMap;
+
+  ushort RedLuminance = (Luminance >> 15 & 0x1FE) - 256;
+  ushort GreenLuminance = (Luminance >> 7 & 0x1FE) - 256;
+  ushort BlueLuminance = (Luminance << 1 & 0x1FE) - 256;
+
+  for(ushort y = 0; y < Height; ++y)
+    {
+      const ushort* SrcPtr = &SrcImage[SourceY + y][SourceX];
+      ushort* DestPtr = &DestImage[DestY + y][DestX];
+      const uchar* AlphaPtr = &SrcAlphaMap[SourceY + y][SourceX];
+      const uchar* SrcPriorityPtr = &SrcPriorityMap[SourceY + y][SourceX];
+      uchar* DestPriorityPtr = &DestPriorityMap[DestY + y][DestX];
+
+      for(ushort x = 0; x < Width; ++x, ++SrcPtr, ++DestPtr, ++AlphaPtr, ++SrcPriorityPtr, ++DestPriorityPtr)
+	if(*SrcPtr != MaskColor && *SrcPriorityPtr >= *DestPriorityPtr)
+	  {
+	    *DestPtr = RightShift8AndMakeRGB16(Limit<short>(GetRed16(*SrcPtr) + RedLuminance, 0, 0xFF) * (*AlphaPtr) + GetRed16(*DestPtr) * (256 - (*AlphaPtr)),
+					       Limit<short>(GetGreen16(*SrcPtr) + GreenLuminance, 0, 0xFF) * (*AlphaPtr) + GetGreen16(*DestPtr) * (256 - (*AlphaPtr)),
+					       Limit<short>(GetBlue16(*SrcPtr) + BlueLuminance, 0, 0xFF) * (*AlphaPtr) + GetBlue16(*DestPtr) * (256 - (*AlphaPtr)));
+
+	    *DestPriorityPtr = *SrcPriorityPtr;
+	  }
+    }
+}
+
+void bitmap::CreatePriorityMap(uchar InitialValue)
+{
+  if(PriorityMap)
+    ABORT("Priority leak detected!");
+
+  Alloc2D<uchar>(PriorityMap, YSize, XSize);
+  memset(PriorityMap[0], InitialValue, XSizeTimesYSize);
+}
+
+void bitmap::FillPriority(uchar Priority)
+{
+  memset(PriorityMap[0], Priority, XSizeTimesYSize);
 }

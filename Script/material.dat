@@ -1285,7 +1285,7 @@ flesh
 		Effect = EFFECT_PERCEPTION_INCREASE;
 		EffectStrength = 2000;
 		AttachedGod = SILVA;
-		Color = rgb16(100, 0, 0);
+		Color = rgb16(220, 120, 0);
 	}
 }
 

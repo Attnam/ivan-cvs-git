@@ -79,3 +79,4 @@ Graphical statistics of kills per 100 turns etc. to endgame.
 Player-creatable magic.
 Noble ranks.
 Pyramids.
+Temperatures.

@@ -60,10 +60,13 @@ class ITEM
 (
   justifier,
   meleeweapon,
+ public:
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -73,10 +76,12 @@ class ITEM
   meleeweapon,
  public:
   virtual bool HitEffect(character*, character*, uchar, uchar, bool);
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -149,10 +154,12 @@ class ITEM
   meleeweapon,
  public:
   virtual bool IsGorovitsFamilyRelic() const { return true; }
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -162,10 +169,12 @@ class ITEM
   meleeweapon,
  public:
   virtual bool IsGorovitsFamilyRelic() const { return true; }
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual void Be() { }
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -230,9 +239,11 @@ class ITEM
   virtual void Be() { }
   virtual bool IsGoldenEagleShirt() const { return true; }
   virtual bool IsConsumable(const character*) const { return false; }
+  virtual bool AllowAlphaEverywhere() const { return true; }
  protected:
   virtual ushort GetClassAnimationFrames() const { return 32; }
   virtual ushort GetOutlineColor(ushort) const;
+  virtual uchar GetOutlineAlpha(ushort) const;
   virtual bool HasSpecialAnimation() const { return true; }
 );
 
@@ -323,7 +334,6 @@ class ITEM
   virtual bool IsHelmet(const character*) const { return true; }
   virtual bool IsInCorrectSlot(ushort) const;
  protected:
-  virtual uchar GetAlphaB(ushort) const;
   virtual ushort GetMaterialColorB(ushort) const;
   virtual ushort GetMaterialColorC(ushort) const;
 );

@@ -89,9 +89,14 @@ class ABSTRACT_ITEM
   virtual material* CreateDipMaterial();
   virtual void RaiseStats() { }
   virtual void LowerStats() { }
+  virtual void Draw(bitmap*, vector2d, ulong, bool, bool) const;
+  void SetIsSparklingB(bool What) { IsSparklingB = What; }
+  void SetIsSparklingC(bool What) { IsSparklingC = What; }
+  void SetIsSparklingD(bool What) { IsSparklingD = What; }
+  virtual ushort GetSpecialFlags() const;
  protected:
-  virtual bool IsSparkling(ushort) const { return false; }
-  virtual uchar GetMaxAlpha(ushort) const;
+  virtual bool IsSparkling(ushort) const;
+  virtual uchar GetMaxAlpha() const;
   virtual void GenerateMaterials() { }
   virtual void VirtualConstructor(bool);
   virtual void AddPostFix(festring&) const;
@@ -102,7 +107,6 @@ class ABSTRACT_ITEM
   virtual ushort GetMaterialColorC(ushort) const { return ColorC; }
   virtual ushort GetMaterialColorD(ushort) const { return ColorD; }
   virtual vector2d GetBitmapPos(ushort) const { return BitmapPos; }
-  virtual ushort GetSpecialFlags() const { return SpecialFlags; }
   festring OwnerDescription;
   vector2d BitmapPos;
   ushort ColorB;
@@ -116,6 +120,9 @@ class ABSTRACT_ITEM
   ulong BodyPartVolume;
   ushort BloodColor;
   character* Master;
+  bool IsSparklingB;
+  bool IsSparklingC;
+  bool IsSparklingD;
 );
 
 class ITEM
@@ -274,9 +281,10 @@ class ABSTRACT_ITEM
   void AddAttackInfo(felist&) const;
   void AddDefenceInfo(felist&) const;
   void UpdateWieldedPicture();
-  void DrawWielded(bitmap*, vector2d, ulong, bool, bool) const;
+  void DrawWielded(bitmap*, vector2d, ulong, bool) const;
   virtual bool IsRightArm() const = 0;
   virtual void UpdatePictures();
+  virtual ushort GetAnimationFrames() const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -292,8 +300,8 @@ class ABSTRACT_ITEM
   long APCost;
   short StrengthBonus;
   short DexterityBonus;
-  graphicid WieldedGraphicId;
-  bitmap* WieldedPicture;
+  std::vector<graphicid> WieldedGraphicId;
+  std::vector<bitmap*> WieldedPicture;
 );
 
 class ITEM
@@ -306,9 +314,9 @@ class ITEM
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
   virtual bool IsRightArm() const { return true; }
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -321,9 +329,9 @@ class ITEM
   virtual arm* GetPairArm() const;
   virtual sweaponskill* GetCurrentSWeaponSkill() const;
   virtual bool IsRightArm() const { return false; }
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -334,8 +342,8 @@ class ITEM
   virtual ushort GetTotalResistance(ushort) const;
   virtual uchar GetBodyPartIndex() const;
   virtual bool DamageArmor(character*, ushort, ushort);
- protected:
   virtual ushort GetSpecialFlags() const;
+ protected:
 );
 
 class ABSTRACT_ITEM
@@ -403,9 +411,9 @@ class ITEM
  public:
   rightleg(const rightleg&);
   virtual uchar GetBodyPartIndex() const;
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM
@@ -415,9 +423,9 @@ class ITEM
  public:
   leftleg(const leftleg&);
   virtual uchar GetBodyPartIndex() const;
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual void VirtualConstructor(bool);
-  virtual ushort GetSpecialFlags() const;
 );
 
 class ITEM

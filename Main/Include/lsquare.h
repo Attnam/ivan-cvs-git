@@ -110,6 +110,7 @@ class lsquare : public square
   void CalculateLuminance();
   void DrawStaticContents(bitmap*, vector2d, ulong, bool) const;
   void DrawMemorized();
+  void DrawMemorizedCharacter();
   bitmap* GetMemorized() const { return Memorized; }
   void SendMemorizedUpdateRequest();
   lsquare* GetNeighbourLSquare(ushort Index) const { return static_cast<level*>(AreaUnder)->GetNeighbourLSquare(Pos, Index); }

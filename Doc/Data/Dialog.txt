@@ -2061,6 +2061,41 @@ Voting still possible, though.
 But there always only one choice which leader decide alone.
 Ivan redirect link to IVAN homepage.
 
+Leader on April 18 2003
+-----------------------
+
+Leader apologize for not whipping Ivan to tough work lately.
+High school homepage say Ivan had test week and leader short of tasks.
+But this now corrected.
+
+First leader attach latest IVAN.
+Wielded items now shown correctly on game screen.
+They also animated if original thing be.
+Ivan try equipping lanterns, glittering items, spoiled items, outlined
+artifacts, thunder hammers, flaming swords and holy bananas.
+Leader especially like flaming sword.
+It really cool.
+Er. Warm.
+
+Ivan behold new outlook and report problems.
+There probably also numerous bugs.
+Last week leader debug ages one vile code ruiner which turn out to be in
+Microsoft's std::string class.
+Well, what else can be expected from bourgeoisie!
+Leader make new better string class and continue journey.
+
+Leader notice there no broken shield in humanoid.pcx.
+Ivan fix this by breaking one with his strong fingers.
+
+Leader also plan to add invisible stalker monster.
+They clouds of intelligent air mass which move hidden from all eyes.
+They make excellent KGB officials, indeed!
+However, with infravision they can be seen.
+Ivan check his cyber eye batteries recharged and add revealed stalker to
+char.pcx.
+
+Ivan ready on feMonday.
+
 ----------------------------------------------------------------------------
 
 End of document.

@@ -166,6 +166,8 @@
 #define ST_GROIN 24
 #define ST_RIGHT_LEG 32
 #define ST_LEFT_LEG 40
+#define ST_OTHER_BODYPART 48
+#define ST_WIELDED 56
 #define ST_FLAME 64
 #define ST_LIGHTNING 128
 

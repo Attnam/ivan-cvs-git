@@ -30,8 +30,7 @@ class bitmap
   void Save(const festring&) const;
   void PutPixel(ushort X, ushort Y, ushort Color) { Image[Y][X] = Color; }
   void PutPixel(vector2d Pos, ushort Color) { Image[Pos.Y][Pos.X] = Color; }
-  void SafePutPixelAndResetAlpha(ushort, ushort, ushort);
-  void SafePutPixelAndResetAlpha(vector2d, ushort);
+  void PowerPutPixel(ushort, ushort, ushort, uchar, uchar);
   ushort GetPixel(ushort X, ushort Y) const { return Image[Y][X]; }
   ushort GetPixel(vector2d Pos) const { return Image[Pos.Y][Pos.X]; }
 
@@ -131,6 +130,26 @@ class bitmap
 
   void BlitAndCopyAlpha(bitmap*, uchar = 0) const;
 
+  void MaskedPriorityBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, ushort, ushort, vector2d, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, ushort, ushort, ushort, ushort, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, vector2d, vector2d, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, vector2d, ushort, ushort, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, ushort, ushort, vector2d, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, vector2d, vector2d, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void MaskedPriorityBlit(bitmap*, ulong, ushort = TRANSPARENT_COLOR) const;
+
+  void AlphaPriorityBlit(bitmap*, ushort, ushort, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, vector2d, ushort, ushort, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, ushort, ushort, vector2d, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, ushort, ushort, ushort, ushort, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, vector2d, vector2d, ushort, ushort, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, vector2d, ushort, ushort, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, ushort, ushort, vector2d, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, vector2d, vector2d, vector2d, ulong, ushort = TRANSPARENT_COLOR) const;
+  void AlphaPriorityBlit(bitmap*, ulong, ushort = TRANSPARENT_COLOR) const;
+
   ushort GetXSize() const { return XSize; }
   ushort GetYSize() const { return YSize; }
   vector2d GetSize() const { return vector2d(XSize, YSize); }
@@ -141,8 +160,7 @@ class bitmap
   void SetAlpha(vector2d Pos, uchar Alpha) { AlphaMap[Pos.Y][Pos.X] = Alpha; }
   uchar GetAlpha(ushort X, ushort Y) const { return AlphaMap[Y][X]; }
   uchar GetAlpha(vector2d Pos) const { return AlphaMap[Pos.Y][Pos.X]; }
-
-  void Outline(ushort);
+  void Outline(ushort, uchar);
   void CreateOutlineBitmap(bitmap*, ushort);
   void FadeToScreen(bitmapeditor = 0);
   void CreateFlames(ushort, ushort = TRANSPARENT_COLOR);
@@ -156,11 +174,14 @@ class bitmap
   uchar** GetAlphaMap() const { return AlphaMap; }
   static bool PixelVectorHandler(long, long);
   void FillAlpha(uchar);
+  void CreatePriorityMap(uchar);
+  void FillPriority(uchar);
  protected:
   ushort XSize, YSize;
   ulong XSizeTimesYSize;
   ushort** Image;
   uchar** AlphaMap;
+  uchar** PriorityMap;
 };
 
 outputfile& operator<<(outputfile&, const bitmap*);

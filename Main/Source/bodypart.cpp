@@ -7,6 +7,8 @@ ulong bodypart::GetTruePrice() const { return MainMaterial->GetRawPrice(); }
 uchar bodypart::GetArticleMode() const { return Unique ? DEFINITE_ARTICLE : NORMAL_ARTICLE; }
 bool bodypart::IsAlive() const { return MainMaterial->IsAlive(); }
 bool bodypart::IsDipDestination(const character*) const { return MainMaterial->IsFlesh() || MainMaterial->IsLiquid(); }
+ushort bodypart::GetSpecialFlags() const { return SpecialFlags|ST_OTHER_BODYPART; }
+ushort bodypart::GetMaterialColorA(ushort) const { return GetMainMaterial()->GetSkinColor(); }
 
 uchar head::GetBodyPartIndex() const { return HEAD_INDEX; }
 ushort head::GetBiteMinDamage() const { return ushort(BiteDamage * 0.75f); }
@@ -19,6 +21,7 @@ uchar normaltorso::GetGraphicsContainerIndex() const { return GR_CHARACTER; }
 ushort arm::GetMinDamage() const { return ushort(Damage * 0.75f); }
 ushort arm::GetMaxDamage() const { return ushort(Damage * 1.25f + 1); }
 float arm::GetBlockValue() const { return GetToHitValue() * GetWielded()->GetBlockModifier() / 10000; }
+ushort arm::GetAnimationFrames() const { return Max<ushort>(bodypart::GetAnimationFrames(), WieldedGraphicId.size()); }
 
 uchar rightarm::GetBodyPartIndex() const { return RIGHT_ARM_INDEX; }
 ushort rightarm::GetSpecialFlags() const { return SpecialFlags|ST_RIGHT_ARM; }
@@ -48,13 +51,13 @@ uchar corpse::GetAttachedGod() const { return GetDeceased()->GetTorso()->GetAtta
 void bodypart::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
-  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << BloodColor;
+  SaveFile << BitmapPos << ColorB << ColorC << ColorD << SpecialFlags << HP << OwnerDescription << Unique << BloodColor << IsSparklingB << IsSparklingC << IsSparklingD;
 }
 
 void bodypart::Load(inputfile& SaveFile)
 {
   item::Load(SaveFile);
-  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> HP >> OwnerDescription >> Unique >> BloodColor;
+  SaveFile >> BitmapPos >> ColorB >> ColorC >> ColorD >> SpecialFlags >> HP >> OwnerDescription >> Unique >> BloodColor >> IsSparklingB >> IsSparklingC >> IsSparklingD;
 }
 
 ushort bodypart::GetStrengthValue() const
@@ -195,11 +198,7 @@ void arm::Save(outputfile& SaveFile) const
   SaveFile << BaseUnarmedStrength;
   SaveFile << Strength << StrengthExperience << Dexterity << DexterityExperience;
   SaveFile << WieldedSlot << GauntletSlot << RingSlot;
-
-  if(WieldedPicture)
-    SaveFile << bool(true) << WieldedGraphicId;
-  else
-    SaveFile << bool(false);
+  SaveFile << WieldedGraphicId;
 }
 
 void arm::Load(inputfile& SaveFile)
@@ -208,12 +207,12 @@ void arm::Load(inputfile& SaveFile)
   SaveFile >> BaseUnarmedStrength;
   SaveFile >> Strength >> StrengthExperience >> Dexterity >> DexterityExperience;
   SaveFile >> WieldedSlot >> GauntletSlot >> RingSlot;
+  SaveFile >> WieldedGraphicId;
+  ushort AnimationFrames = WieldedGraphicId.size();
+  WieldedPicture.resize(AnimationFrames);
 
-  if(ReadType<bool>(SaveFile))
-    {
-      SaveFile >> WieldedGraphicId;
-      WieldedPicture = igraph::AddUser(WieldedGraphicId);
-    }
+  for(ushort c = 0; c < AnimationFrames; ++c)
+    WieldedPicture[c] = igraph::AddUser(WieldedGraphicId[c]);
 }
 
 void leg::Save(outputfile& SaveFile) const
@@ -636,6 +635,9 @@ humanoidtorso::~humanoidtorso()
 
 arm::~arm()
 {
+  for(ushort c = 0; c < WieldedGraphicId.size(); ++c)
+    igraph::RemoveUser(WieldedGraphicId[c]);
+
   delete GetWielded();
   delete GetGauntlet();
   delete GetRing();
@@ -700,12 +702,16 @@ material* corpse::GetMaterial(ushort Index) const
   return GetDeceased()->GetTorso()->GetMaterial(Index);
 }
 
-ushort bodypart::GetMaterialColorA(ushort) const
+bool bodypart::IsSparkling(ushort Index) const
 {
-  if(GetMainMaterial())
-    return GetMainMaterial()->GetSkinColor();
-  else
-    return 0;
+  switch(Index)
+    {
+      case 0: return GetMainMaterial()->SkinColorIsSparkling();
+      case 1: return IsSparklingB;
+      case 2: return IsSparklingC;
+      case 3: return IsSparklingD;
+      default: return false;
+    }
 }
 
 bool corpse::RaiseTheDead(character* Summoner)
@@ -748,7 +754,6 @@ void humanoidtorso::VirtualConstructor(bool Load)
 void arm::VirtualConstructor(bool Load)
 {
   bodypart::VirtualConstructor(Load);
-  WieldedPicture = 0;
 
   if(!Load)
     StrengthBonus = DexterityBonus = StrengthExperience = DexterityExperience = 0;
@@ -1110,7 +1115,7 @@ sweaponskill* leftarm::GetCurrentSWeaponSkill() const
   return GetHumanoidMaster()->GetCurrentLeftSWeaponSkill();
 }
 
-uchar bodypart::GetMaxAlpha(ushort) const
+uchar bodypart::GetMaxAlpha() const
 {
   if(Master && Master->StateIsActivated(INVISIBLE))
     return 150;
@@ -2178,29 +2183,41 @@ void arm::AddDefenceInfo(felist&) const { }
 
 void arm::UpdateWieldedPicture()
 {
-  if(WieldedPicture)
-    igraph::RemoveUser(WieldedGraphicId);
+  item* Wielded = GetWielded();
 
-  if(GetWielded())
+  if(Wielded && Master)
     {
-      GetWielded()->CreateWieldedGraphicId(WieldedGraphicId, Master->GetWieldedPosition(), GetMaxAlpha(0), IsRightArm());
-      WieldedPicture = igraph::AddUser(WieldedGraphicId);
+      ushort SpecialFlags = (IsRightArm() ? 0 : MIRROR)|ST_WIELDED|(Wielded->GetSpecialFlags()&~0x3F);
+      Wielded->UpdatePictures(WieldedGraphicId, WieldedPicture, Master->GetWieldedPosition(), SpecialFlags, GetMaxAlpha(), GR_HUMANOID, &object::GetWieldedBitmapPos);
     }
   else
-    WieldedPicture = 0;
+    {
+      for(ushort c = 0; c < WieldedGraphicId.size(); ++c)
+        igraph::RemoveUser(WieldedGraphicId[c]);
+
+      WieldedPicture.resize(0);
+      WieldedGraphicId.resize(0);
+    }
 }
 
-void arm::DrawWielded(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+void arm::DrawWielded(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate) const
 {
-  if(WieldedPicture)
-    if(AllowAlpha)
-      WieldedPicture->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-    else
-      WieldedPicture->MaskedBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  ushort WieldedAnimationFrames = WieldedPicture.size();
+
+  if(WieldedAnimationFrames)
+    WieldedPicture[!AllowAnimate || WieldedAnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % WieldedAnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }
 
 void arm::UpdatePictures()
 {
   bodypart::UpdatePictures();
   UpdateWieldedPicture();
+}
+
+void bodypart::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
+{
+  if(AllowAlpha)
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->AlphaPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
+  else
+    Picture[!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames]->MaskedPriorityBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
 }

@@ -1004,6 +1004,8 @@ void level::Draw(bool AnimationDraw) const
 	      for(ushort y = YMin; y < YMax; ++y, ++Square)
 		if((*Square)->LastSeen == game::GetLOSTurns())
 		  (*Square)->Draw();
+		else
+		  (*Square)->DrawMemorizedCharacter();
 	    }
 	}
     }

@@ -81,7 +81,7 @@ inputfile& operator>>(inputfile& SaveFile, felistdescription*& Desc)
   return SaveFile;
 }
 
-felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE)
+felist::felist(const festring& Topic, ushort TopicColor, ushort Maximum) : Maximum(Maximum), Selected(0), Pos(10, 10), Width(780), PageLength(30), BackColor(0), Flags(SELECTABLE|FADE), MaskColor(TRANSPARENT_COLOR)
 {
   AddDescription(Topic, TopicColor);
 }
@@ -350,7 +350,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 	  if(ushort(Str.GetSize()) <= (Width - 50) >> 3)
 	    {
 	      Buffer->Fill(Pos.X + 3, LastFillBottom, Width - 6, 20, BackColor);
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16);
+	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, LastFillBottom, 16, 16, uchar(0), MaskColor);
 
 	      if(Flags & SELECTABLE && Entry[c]->Selectable && Selected == i)
 		  FONT->PrintfShade(Buffer, Pos.X + 37, LastFillBottom + 4, Entry[c]->Color, "%s", Str.CStr());
@@ -376,7 +376,7 @@ bool felist::DrawPage(bitmap* Buffer) const
 		  LastFillBottom += 10;
 		}
 
-	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, PictureTop, 16, 16);
+	      Entry[c]->Bitmap[globalwindowhandler::GetTick() % Entry[c]->Bitmap.size()]->AlphaBlit(Buffer, 0, 0, Pos.X + 13, PictureTop, 16, 16, uchar(0), MaskColor);
 	    }
 	}
       else

@@ -436,11 +436,12 @@ void colorizablebitmap::CreateFontCache(ushort Color)
 
 /* returns ERROR_VECTOR if fails find Pos else returns pos */
 
-vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, bool* Sparkling) const
+vector2d colorizablebitmap::RandomizeSparklePos(const std::vector<vector2d>& ValidVector, vector2d Pos, vector2d Size, bool* Sparkling) const
 {
   bool SparklingReally = false;
+  ushort c;
 
-  for(ushort c = 0; c < 4; ++c)
+  for(c = 0; c < 4; ++c)
     if(Sparkling[c])
       SparklingReally = true;
 
@@ -448,34 +449,62 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
     return ERROR_VECTOR;
 
   vector2d* PreferredPossible = new vector2d[(Size.X - 8) * (Size.Y - 8)];
-  vector2d* BadPossible = new vector2d[((Size.X + Size.Y) << 3) - 64];
+  vector2d* BadPossible[4] = {	new vector2d[((Size.X + Size.Y) << 1) -  4],
+				new vector2d[((Size.X + Size.Y) << 1) - 12],
+				new vector2d[((Size.X + Size.Y) << 1) - 20],
+				new vector2d[((Size.X + Size.Y) << 1) - 28] };
   ushort Preferred = 0;
-  ushort Bad = 0;
+  ushort Bad[4] = { 0, 0, 0, 0 };
   ushort XMax = Pos.X + Size.X;
   ushort YMax = Pos.Y + Size.Y;
 
-  for(ushort x = Pos.X; x < XMax; ++x)
-    for(ushort y = Pos.Y; y < YMax; ++y)
-      {
-	uchar Entry = GetPaletteEntry(x, y);
+  for(c = 0; c < ValidVector.size(); ++c)
+    {
+      vector2d V = ValidVector[c] + Pos;
+      uchar Entry = GetPaletteEntry(V.X, V.Y);
 
-	if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
-	  if(x >= Pos.X + 4 && x < XMax - 4 && y >= Pos.Y + 4 && y < YMax - 4)
-	    PreferredPossible[Preferred++] = vector2d(x, y);
+      if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
+	{
+	  short MinDist = 0x7FFF;
+
+	  if(V.X < Pos.X + 4)
+	    MinDist = Min<short>(V.X - Pos.X, MinDist);
+
+	  if(V.X >= XMax - 4)
+	    MinDist = Min<short>(XMax - V.X - 1, MinDist);
+
+	  if(V.Y < Pos.Y + 4)
+	    MinDist = Min<short>(V.Y - Pos.Y, MinDist);
+
+	  if(V.Y >= YMax - 4)
+	    MinDist = Min<short>(YMax - V.Y - 1, MinDist);
+
+	  if(MinDist >= 4)
+	    PreferredPossible[Preferred++] = V;
 	  else
-	    BadPossible[Bad++] = vector2d(x, y);
-      }
+	    BadPossible[MinDist][Bad[MinDist]++] = V;
+	}
+    }
 
   vector2d Return;
 
   if(Preferred)
     Return = PreferredPossible[RAND() % Preferred] - Pos;
-  else if(Bad)
-    Return = BadPossible[RAND() % Bad] - Pos;
+  else if(Bad[3])
+    Return = BadPossible[3][RAND() % Bad[3]] - Pos;
+  else if(Bad[2])
+    Return = BadPossible[2][RAND() % Bad[2]] - Pos;
+  else if(Bad[1])
+    Return = BadPossible[1][RAND() % Bad[1]] - Pos;
+  else if(Bad[0])
+    Return = BadPossible[0][RAND() % Bad[0]] - Pos;
   else
     Return = ERROR_VECTOR;
 
   delete [] PreferredPossible;
-  delete [] BadPossible;
+  delete [] BadPossible[0];
+  delete [] BadPossible[1];
+  delete [] BadPossible[2];
+  delete [] BadPossible[3];
   return Return;
 }

@@ -37,6 +37,8 @@ bool mine::AddAdjective(festring& String, bool Articled) const { return IsActive
 
 bool beartrap::AddAdjective(festring& String, bool Articled) const { return (IsActive() && AddActiveAdjective(String, Articled)) || (!IsActive() && item::AddAdjective(String, Articled)); }
 
+ushort carrot::GetMaterialColorB(ushort) const { return MakeRGB16(80, 100, 16); }
+
 void potion::GenerateLeftOvers(character* Eater)
 {
   ChangeConsumeMaterial(0);

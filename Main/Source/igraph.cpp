@@ -46,6 +46,7 @@ void igraph::Init()
       Graphic[GR_TRANSPARENT_COLOR_TILE] = new bitmap(16, 16, TRANSPARENT_COLOR);
 
       TileBuffer = new bitmap(16, 16);
+      TileBuffer->CreatePriorityMap(0);
       OutlineBuffer = new bitmap(16, 16);
     }
 }
@@ -90,11 +91,9 @@ bitmap* igraph::AddUser(const graphicid& GI)
 
       if((GI.SpecialFlags & 0x38) == ST_RIGHT_ARM)
 	Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
-
-      if((GI.SpecialFlags & 0x38) == ST_LEFT_ARM)
+      else if((GI.SpecialFlags & 0x38) == ST_LEFT_ARM)
 	Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
-
-      if((GI.SpecialFlags & 0x38) == ST_GROIN)
+      else if((GI.SpecialFlags & 0x38) == ST_GROIN)
 	{
 	  ushort Pixel[9], y, i;
 
@@ -108,12 +107,12 @@ bitmap* igraph::AddUser(const graphicid& GI)
 	    for(ushort x = y - 5; x < 20 - y; ++x)
 	      Bitmap->PutPixel(x, y, Pixel[i++]);
 	}
-
-      if((GI.SpecialFlags & 0x38) == ST_RIGHT_LEG)
+      else if((GI.SpecialFlags & 0x38) == ST_RIGHT_LEG)
 	{
-	  /* Left leg from the character's, NOT the player's point of view */
+	  /* Right leg from the character's, NOT the player's point of view */
 
 	  Bitmap->Fill(8, 0, 8, 16, TRANSPARENT_COLOR);
+	  Bitmap->Fill(0, 0, 8, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(5, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(6, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
@@ -121,35 +120,56 @@ bitmap* igraph::AddUser(const graphicid& GI)
 	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
-
-      if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
+      else if((GI.SpecialFlags & 0x38) == ST_LEFT_LEG)
 	{
-	  /* Right leg from the character's, NOT the player's point of view */
+	  /* Left leg from the character's, NOT the player's point of view */
 
-	  Bitmap->Fill(0, 0, 7, 16, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
+	  Bitmap->Fill(0, 0, 8, 16, TRANSPARENT_COLOR);
+	  Bitmap->Fill(8, 0, 8, 10, TRANSPARENT_COLOR);
+	  //Bitmap->PutPixel(7, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(8, 10, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(9, 10, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
+	  //Bitmap->PutPixel(7, 11, TRANSPARENT_COLOR);
 	  Bitmap->PutPixel(8, 11, TRANSPARENT_COLOR);
-	  Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
+	  //Bitmap->PutPixel(7, 12, TRANSPARENT_COLOR);
 	}
 
       if(GI.OutlineColor != TRANSPARENT_COLOR)
-	Bitmap->Outline(GI.OutlineColor);
+	Bitmap->Outline(GI.OutlineColor, GI.OutlineAlpha);
 
-      if(GI.SparklePos != ERROR_VECTOR)
-	Bitmap->CreateSparkle(GI.SparklePos, GI.SparkleFrame);
-
-      if(GI.FlyAmount)
-	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
+      vector2d SparklePos = GI.SparklePos;
 
       if(GI.SpecialFlags & 0x7) /* Do we need rotating/flipping? */
 	{
 	  bitmap* Temp = new bitmap(Bitmap, GI.SpecialFlags);
 	  delete Bitmap;
 	  Bitmap = Temp;
+
+	  if(SparklePos != ERROR_VECTOR)
+	    {
+	      if(GI.SpecialFlags & ROTATE)
+		{
+		  short T = SparklePos.X;
+		  SparklePos.X = 15 - SparklePos.Y;
+		  SparklePos.Y = T;
+		}
+
+	      if(GI.SpecialFlags & MIRROR)
+		SparklePos.X = 15 - SparklePos.X;
+
+	      if(GI.SpecialFlags & FLIP)
+		SparklePos.Y = 15 - SparklePos.Y;
+	    }
 	}
+
+      if(GI.SpecialFlags & 0x38)
+	Bitmap->CreatePriorityMap(0);
+
+      if(SparklePos != ERROR_VECTOR)
+	Bitmap->CreateSparkle(SparklePos + GI.Position, GI.SparkleFrame);
+
+      if(GI.FlyAmount)
+	Bitmap->CreateFlies(GI.Seed, GI.Frame, GI.FlyAmount);
 
       if(GI.SpecialFlags & ST_FLAME)
 	Bitmap->CreateFlames(GI.Frame);

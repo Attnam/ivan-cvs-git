@@ -23,13 +23,13 @@ void square::AddCharacter(character* Guy)
   Guy->SetSquareUnder(this);
   NewDrawRequested = true;
 
-  if(Guy->IsAnimated())
+  //if(Guy->IsAnimated())
     IncAnimatedEntities();
 }
 
 void square::RemoveCharacter()
 {
-  if(Character && Character->IsAnimated())
+  if(Character)// && Character->IsAnimated())
     DecAnimatedEntities();
 
   SetCharacter(0);

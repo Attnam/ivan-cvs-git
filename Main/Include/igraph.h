@@ -36,6 +36,7 @@ struct graphicid
   vector2d SparklePos NO_ALIGNMENT;
   uchar SparkleFrame NO_ALIGNMENT;
   ushort OutlineColor NO_ALIGNMENT;
+  uchar OutlineAlpha NO_ALIGNMENT;
   ushort Seed NO_ALIGNMENT;
   uchar FlyAmount NO_ALIGNMENT;
   vector2d Position NO_ALIGNMENT;

@@ -9,7 +9,15 @@ ushort meleeweapon::GetEffectBonus() const { return 100 + 5 * Enchantment; }
 ushort meleeweapon::GetAPBonus() const { return 2000 / (20 + Enchantment); }
 ushort meleeweapon::GetBonus() const { return 100 + 5 * Enchantment; }
 
+ushort justifier::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 0); }
+
+ushort neercseulb::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
+
 ushort flamingsword::GetSpecialFlags() const { return ST_FLAME; }
+
+ushort gorovitshammer::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
+
+ushort gorovitssickle::GetOutlineColor(ushort) const { return MakeRGB16(255, 0, 0); }
 
 ushort thunderhammer::GetSpecialFlags() const { return !IsBroken() ? ST_LIGHTNING : 0; }
 
@@ -18,6 +26,8 @@ short armor::GetCarryingBonus() const { return Enchantment << 1; }
 ulong bodyarmor::GetPrice() const { return (armor::GetPrice() << 3) + GetEnchantedPrice(Enchantment); }
 bool bodyarmor::IsInCorrectSlot(ushort Index) const { return Index == BODY_ARMOR_INDEX; }
 const festring& bodyarmor::GetNameSingular() const { return GetMainMaterial()->GetFlexibility() >= 5 ? item::GetFlexibleNameSingular() : item::GetNameSingular(); }
+
+ushort goldeneagleshirt::GetOutlineColor(ushort) const { return MakeRGB16(0, 255, 255); }
 
 ushort shield::GetBonus() const { return 100 + 10 * Enchantment; }
 
@@ -43,7 +53,6 @@ ushort amulet::GetMaterialColorB(ushort) const { return MakeRGB16(111, 64, 37); 
 bool helmet::IsGorovitsFamilyRelic() const { return Config == GOROVITS_FAMILY_GAS_MASK; }
 ulong helmet::GetPrice() const { return armor::GetPrice() + GetEnchantedPrice(Enchantment); }
 bool helmet::IsInCorrectSlot(ushort Index) const { return Index == HELMET_INDEX; }
-uchar helmet::GetAlphaB(ushort) const { return Config != GOROVITS_FAMILY_GAS_MASK ? 255 : 255; }
 ushort helmet::GetMaterialColorB(ushort) const { return Config != GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(140, 70, 70) : MakeRGB16(0, 40, 0); }
 ushort helmet::GetMaterialColorC(ushort) const { return MakeRGB16(180, 200, 180); }
 
@@ -391,18 +400,6 @@ bool meleeweapon::IsSparkling(ushort ColorIndex) const
   return (ColorIndex == 0 && MainMaterial->IsSparkling()) || (ColorIndex == 1 && SecondaryMaterial->IsSparkling()) || (ColorIndex == 2 && ContainedMaterial && ContainedMaterial->IsSparkling());
 }
 
-ushort justifier::GetOutlineColor(ushort Frame) const
-{
-  Frame &= 31;
-  return MakeRGB16(0, 135 + (Frame * (31 - Frame) >> 1), 0);
-}
-
-ushort neercseulb::GetOutlineColor(ushort Frame) const
-{
-  Frame &= 31;
-  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
-}
-
 void meleeweapon::SetEnchantment(char Amount)
 {
   Enchantment = Amount;
@@ -434,18 +431,6 @@ void meleeweapon::VirtualConstructor(bool Load)
 uchar meleeweapon::GetSpoilLevel() const
 {
   return Max<uchar>(MainMaterial->GetSpoilLevel(), SecondaryMaterial->GetSpoilLevel(), ContainedMaterial ? ContainedMaterial->GetSpoilLevel() : 0);
-}
-
-ushort gorovitshammer::GetOutlineColor(ushort Frame) const
-{
-  Frame &= 31;
-  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
-}
-
-ushort gorovitssickle::GetOutlineColor(ushort Frame) const
-{
-  Frame &= 31;
-  return MakeRGB16(135 + (Frame * (31 - Frame) >> 1), 0, 0);
 }
 
 bool neercseulb::HitEffect(character* Enemy, character* Hitter, uchar BodyPartIndex, uchar Direction, bool BlockedByArmour)
@@ -545,13 +530,6 @@ ulong shield::GetPrice() const /* temporary... */
   return ulong(sqrt(GetBaseBlockValue()) * StrengthValue * StrengthValue) + item::GetPrice();
 }
 
-ushort goldeneagleshirt::GetOutlineColor(ushort Frame) const
-{
-  Frame &= 31;
-  ushort Element = 135 + (Frame * (31 - Frame) >> 2);
-  return MakeRGB16(0, Element, Element);
-}
-
 void armor::Save(outputfile& SaveFile) const
 {
   item::Save(SaveFile);
@@ -648,3 +626,33 @@ bool chameleonwhip::ScabiesHelps(const character* Enemy, const character* Hitter
   else
     return !(RAND() % 20);
 } 
+
+uchar justifier::GetOutlineAlpha(ushort Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+uchar neercseulb::GetOutlineAlpha(ushort Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+uchar gorovitshammer::GetOutlineAlpha(ushort Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+uchar gorovitssickle::GetOutlineAlpha(ushort Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}
+
+uchar goldeneagleshirt::GetOutlineAlpha(ushort Frame) const
+{
+  Frame &= 31;
+  return 50 + (Frame * (31 - Frame) >> 1);
+}

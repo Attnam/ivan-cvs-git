@@ -251,6 +251,19 @@ template<> void databasecreator<character>::CreateDataBaseMemberMap()
   ADD_MEMBER(CanAttack);
   ADD_MEMBER(CanApply);
   ADD_MEMBER(WieldedPosition);
+  ADD_MEMBER(ClothColorIsSparkling);
+  ADD_MEMBER(SkinColorIsSparkling);
+  ADD_MEMBER(CapColorIsSparkling);
+  ADD_MEMBER(HairColorIsSparkling);
+  ADD_MEMBER(EyeColorIsSparkling);
+  ADD_MEMBER(TorsoMainColorIsSparkling);
+  ADD_MEMBER(BeltColorIsSparkling);
+  ADD_MEMBER(BootColorIsSparkling);
+  ADD_MEMBER(TorsoSpecialColorIsSparkling);
+  ADD_MEMBER(ArmMainColorIsSparkling);
+  ADD_MEMBER(ArmSpecialColorIsSparkling);
+  ADD_MEMBER(LegMainColorIsSparkling);
+  ADD_MEMBER(LegSpecialColorIsSparkling);
 }
 
 template<> void databasecreator<item>::CreateDataBaseMemberMap()
@@ -458,6 +471,8 @@ template<> void databasecreator<character>::CheckDefaults(const festring& Word, 
     DataBase.GroinBitmapPos = DataBase.RightLegBitmapPos = DataBase.LeftLegBitmapPos = DataBase.LegBitmapPos;
   else if(Word == "ClothColor")
     DataBase.CapColor = DataBase.TorsoMainColor = DataBase.ArmMainColor = DataBase.LegMainColor = DataBase.ClothColor;
+  else if(Word == "ClothColorIsSparkling")
+    DataBase.CapColorIsSparkling = DataBase.TorsoMainColorIsSparkling = DataBase.ArmMainColorIsSparkling = DataBase.LegMainColorIsSparkling = DataBase.ClothColorIsSparkling;
   else if(Word == "NameSingular")
     DataBase.NamePlural = DataBase.NameSingular + 's';
   else if(Word == "BaseUnarmedStrength")

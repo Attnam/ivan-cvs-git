@@ -140,6 +140,9 @@ class ABSTRACT_CHARACTER
   virtual ushort GetBodyPartColorB(ushort, bool = false) const;
   virtual ushort GetBodyPartColorC(ushort, bool = false) const;
   virtual ushort GetBodyPartColorD(ushort, bool = false) const;
+  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorDIsSparkling(ushort, bool = false) const;
   virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   virtual bodypart* MakeBodyPart(ushort) const;
@@ -164,6 +167,9 @@ class CHARACTER
   virtual ushort GetBodyPartColorA(ushort, bool = false) const;
   virtual ushort GetBodyPartColorB(ushort, bool = false) const;
   virtual ushort GetBodyPartColorC(ushort, bool = false) const;
+  virtual bool BodyPartColorAIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
 );
 
 class CHARACTER
@@ -343,8 +349,6 @@ class CHARACTER
 (
   femaleslave,
   humanoid,
-// public:
-//  virtual void DrawBodyParts(bitmap*, vector2d, ulong, bool, bool = true) const;
  protected:
   virtual void GetAICommand() { StandIdleAI(); }
 );

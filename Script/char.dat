@@ -91,6 +91,19 @@ character
 	CanAttack = true;
 	CanApply = false;
 	WieldedPosition = 0, 0;
+	/*ClothColorIsSparkling = false;*/
+	SkinColorIsSparkling = false;	
+	CapColorIsSparkling = false;
+	HairColorIsSparkling = false;
+	EyeColorIsSparkling = false;
+	TorsoMainColorIsSparkling = false;
+	BeltColorIsSparkling = false;
+	BootColorIsSparkling = false;
+	TorsoSpecialColorIsSparkling = false;
+	ArmMainColorIsSparkling = false;
+	ArmSpecialColorIsSparkling = false;
+	LegMainColorIsSparkling = false;
+	LegSpecialColorIsSparkling = false;
 }
 
 humanoid
@@ -377,6 +390,7 @@ guard
 		PanicLevel = 10;
 		TotalVolume = 80000;
 		ClothColor = rgb16(220, 220, 220);
+		ClothColorIsSparkling = true;
 		FriendlyReplies =
 		{
 			5,
@@ -413,6 +427,7 @@ guard
 		IsPolymorphable = false;
 		ClothColor = rgb16(144, 144, 200);
 		CanBeConfused = false;
+		ClothColorIsSparkling = true;
 		FriendlyReplies =
 		{
 			5,
@@ -1124,6 +1139,7 @@ goblin
 		ClothColor = rgb16(200, 0, 0);
 		Inventory = { 5, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; }, stone { Chance = 50; } }
 		CanBeConfused = false;
+		HairColorIsSparkling = true;
 	}
 }
 
@@ -1428,7 +1444,7 @@ communist /* Ivan */
 	ClassStates = INFRA_VISION;
 	Helmet = helmet(GOROVITS_FAMILY_GAS_MASK);
 	Cloak = NYMPH_HAIR cloak { Enchantment = 1; }
-	BodyArmor = IRON bodyarmor(PLATE_MAIL) { Enchantment = 1; }
+	BodyArmor = STEEL bodyarmor(PLATE_MAIL) { Enchantment = 1; }
 	Belt = NYMPH_HAIR belt { Enchantment = 1; }
 	RightWielded = gorovitshammer;
 	LeftWielded = gorovitssickle;

@@ -6,6 +6,7 @@
 #endif
 
 #include <map>
+#include <vector>
 
 #include "vector2d.h"
 
@@ -64,7 +65,7 @@ class colorizablebitmap
   static bool IsMaterialColor(uchar Color) { return Color >= 192; }
   static uchar GetMaterialColorIndex(uchar Color) { return (Color - 192) >> 4; }
   uchar GetPaletteEntry(ushort X, ushort Y) const { return PaletteBuffer[Y * XSize + X]; }
-  vector2d RandomizeSparklePos(vector2d, vector2d, bool*) const;
+  vector2d RandomizeSparklePos(const std::vector<vector2d>&, vector2d, vector2d, bool*) const;
  protected:
   ushort XSize, YSize;
   uchar* Palette;

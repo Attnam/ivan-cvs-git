@@ -1275,6 +1275,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	    }
 
+	  List.SetMaskColor(0);
 	  PageLength = 15;
 	  break;
 	case 1:
@@ -1290,6 +1291,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Character[c]->AddAttackInfo(List);
 	    }
 
+	  List.SetMaskColor(0);
 	  PageLength = 20;
 	  break;
 	case 2:
@@ -1309,6 +1311,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      Character[c]->AddDefenceInfo(List);
 	    }
 
+	  List.SetMaskColor(0);
 	  PageLength = 25;
 	  break;
 	case 3:
@@ -1337,6 +1340,7 @@ bool commandsystem::SecretKnowledge(character* Char)
 	      List.AddEntry(Entry, LIGHT_GRAY, 0, Picture);
 	    }
 
+	  List.SetMaskColor(0);
 	  PageLength = 15;
 	  break;
 	}

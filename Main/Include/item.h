@@ -302,7 +302,7 @@ class item : public object
   DATA_BASE_VALUE(uchar, BeamStyle);
   DATA_BASE_VALUE(ushort, WearWisdomLimit);
   DATA_BASE_VALUE(uchar, BreakEffectRange);
-  DATA_BASE_VALUE(vector2d, WieldedBitmapPos);
+  virtual DATA_BASE_VALUE_WITH_PARAMETER(vector2d, WieldedBitmapPos, ushort);
   bool CanBeSoldInLibrary(character* Librarian) const { return CanBeRead(Librarian); }
   virtual bool TryKey(item*, character*) { return false; }
   virtual bool TryToUnstuck(character*, vector2d) { return true; }
@@ -393,7 +393,6 @@ class item : public object
   virtual bool IsGorovitsFamilyRelic() const { return false; }
   virtual bool HasLock() const { return false; }
   virtual bool EffectIsGood() const { return false; }
-  void CreateWieldedGraphicId(graphicid&, vector2d, uchar, bool) const;
 #ifdef WIZARD
   virtual void AddAttackInfo(felist&) const;
   void AddMiscellaneousInfo(felist&) const;

@@ -494,14 +494,14 @@ void nonhumanoid::CalculateBiteAttackInfo()
 
 void dog::BeTalkedTo()
 {
-  if(RAND() % 50)
+  if(RAND() % 25)
     {
       if(GetRelation(PLAYER) != HOSTILE)
 	{
 	  static bool Last;
 	  const char* Reply;
 
-	  if(!IsInBadCondition())
+	  if(GetHP() << 1 > GetMaxHP())
 	    Reply = Last ? "barks happily" : "wags its tail happily";
 	  else
 	    Reply = Last ? "yelps" : "howls";

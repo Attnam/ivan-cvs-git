@@ -154,10 +154,13 @@ material* object::SetMaterial(material*& Material, material* NewMaterial, ulong 
 
 void object::UpdatePictures()
 {
-  AnimationFrames = GetClassAnimationFrames();
+  AnimationFrames = UpdatePictures(GraphicId, Picture, vector2d(0, 0), (VisualEffects & 0x7)|GetSpecialFlags(), GetMaxAlpha(), GetGraphicsContainerIndex(), &object::GetBitmapPos);
+}
+
+ushort object::UpdatePictures(std::vector<graphicid>& GraphicId, std::vector<bitmap*>& Picture, vector2d Position, uchar SpecialFlags, uchar MaxAlpha, uchar GraphicsContainerIndex, vector2d (object::*BitmapPosRetriever)(ushort) const) const
+{
+  ushort AnimationFrames = GetClassAnimationFrames();
   vector2d SparklePos;
-  uchar GraphicsContainerIndex = GetGraphicsContainerIndex();
-  ushort SpecialFlags = (VisualEffects & 0x7)|GetSpecialFlags();
   uchar SparkleTime = 0;
   ushort Seed = 0;
   uchar FlyAmount = GetSpoilLevel(); 
@@ -176,24 +179,76 @@ void object::UpdatePictures()
 	{
 	  static ushort SeedModifier = 1;
 	  femath::SaveSeed();
-	  vector2d BPos = GetBitmapPos(0);
+	  vector2d BPos = (this->*BitmapPosRetriever)(0);
 	  femath::SetSeed(BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier);
 
 	  if(++SeedModifier > 0x10)
 	    SeedModifier = 1;
 
-	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(BPos, vector2d(16, 16), MColorSparkling);
-	  SparkleTime = ((RAND() & 3) << 5) + (RAND() & 0xF);
+	  /* These vectors should be precalculated */
+
+	  std::vector<vector2d> ValidVector;
+	  ushort y, x;
+
+	  if((SpecialFlags & 0x38) == ST_RIGHT_ARM)
+	    {
+	      for(y = 0; y < 16; ++y)
+		for(x = 0; x < 8; ++x)
+		  ValidVector.push_back(vector2d(x, y));
+	    }
+	  else if((SpecialFlags & 0x38) == ST_LEFT_ARM)
+	    {
+	      for(y = 0; y < 16; ++y)
+		for(x = 8; x < 16; ++x)
+		  ValidVector.push_back(vector2d(x, y));
+	    }
+	  else if((SpecialFlags & 0x38) == ST_GROIN)
+	    {
+	      for(y = 0; y < 10; ++y)
+		for(x = 0; x < 16; ++x)
+		  ValidVector.push_back(vector2d(x, y));
+
+	      for(y = 10; y < 13; ++y)
+		for(x = y - 5; x < 20 - y; ++x)
+		  ValidVector.push_back(vector2d(x, y));
+	    }
+	  else if((SpecialFlags & 0x38) == ST_RIGHT_LEG)
+	    {
+	      /* Right leg from the character's, NOT the player's point of view */
+
+	      for(y = 10; y < 16; ++y)
+		for(x = 0; x < 8; ++x)
+		  if((y != 10 || x < 5) && (y != 11 || x < 6) && (y != 12 || x < 7))
+		    ValidVector.push_back(vector2d(x, y));
+	    }
+	  else if((SpecialFlags & 0x38) == ST_LEFT_LEG)
+	    {
+	      /* Left leg from the character's, NOT the player's point of view */
+
+	      for(y = 10; y < 16; ++y)
+		for(x = 8; x < 16; ++x)
+		  if((y != 10 || x > 9) && (y != 11 || x > 8))
+		    ValidVector.push_back(vector2d(x, y));
+	    }
+	  else
+	    {
+	      for(y = 0; y < 16; ++y)
+		for(x = 0; x < 16; ++x)
+		  ValidVector.push_back(vector2d(x, y));
+	    }
+
+	  SparklePos = igraph::GetRawGraphic(GraphicsContainerIndex)->RandomizeSparklePos(ValidVector, BPos, vector2d(16, 16), MColorSparkling);
+	  SparkleTime = RAND() % 241;
 	  femath::LoadSeed();
 
-	  if(AnimationFrames <= 128)
-	    AnimationFrames = 128;
+	  if(AnimationFrames <= 256)
+	    AnimationFrames = 256;
 	}
 
       if(FlyAmount)
 	{
 	  static ushort SeedModifier = 1;
-	  vector2d BPos = GetBitmapPos(0);
+	  vector2d BPos = (this->*BitmapPosRetriever)(0);
 	  Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier;
 
 	  if(++SeedModifier > 0x10)
@@ -213,7 +268,7 @@ void object::UpdatePictures()
   else if(SpecialFlags & ST_LIGHTNING)
     {
       static ushort SeedModifier = 1;
-      vector2d BPos = GetBitmapPos(0);
+      vector2d BPos = (this->*BitmapPosRetriever)(0);
       Seed = BPos.X + BPos.Y + GetMaterialColorA(0) + SeedModifier + 0x42;
 
       if(++SeedModifier > 0x10)
@@ -238,7 +293,6 @@ void object::UpdatePictures()
       GI.Color[1] = GetMaterialColorB(c);
       GI.Color[2] = GetMaterialColorC(c);
       GI.Color[3] = GetMaterialColorD(c);
-      ushort MaxAlpha = GetMaxAlpha(c);
       GI.BaseAlpha = GetBaseAlpha(c);
 
       if(GI.BaseAlpha > MaxAlpha)
@@ -264,11 +318,11 @@ void object::UpdatePictures()
       if(GI.Alpha[3] > MaxAlpha)
 	GI.Alpha[3] = MaxAlpha;
 
-      GI.BitmapPos = GetBitmapPos(c);
+      GI.BitmapPos = (this->*BitmapPosRetriever)(c);
       GI.FileIndex = GraphicsContainerIndex;
       GI.SpecialFlags = SpecialFlags;
 
-      bool SparkleInfoNeeded = Sparkling && c >= SparkleTime && c < SparkleTime + 16;
+      bool SparkleInfoNeeded = Sparkling && c > SparkleTime && c < SparkleTime + 16;
 
       if(SparkleInfoNeeded)
 	{
@@ -283,11 +337,14 @@ void object::UpdatePictures()
 
       GI.Frame = !c || FrameNeeded || (SpecialFlags & ST_LIGHTNING && !((c + 1) & 7)) ? c : 0;
       GI.OutlineColor = GetOutlineColor(c);
+      GI.OutlineAlpha = GetOutlineAlpha(c);
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
-      GI.Position = vector2d(0, 0);
+      GI.Position = Position;
       Picture[c] = igraph::AddUser(GI);
     }
+
+  return AnimationFrames;
 }
 
 ushort object::GetMaterialColorA(ushort) const

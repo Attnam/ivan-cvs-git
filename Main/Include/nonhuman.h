@@ -120,8 +120,6 @@ class CHARACTER
 (
   mommo,
   nonhumanoid,
- public:
-  virtual bool IsAnimated() const { return true; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual const char* FirstPersonBiteVerb() const;
@@ -315,7 +313,6 @@ class CHARACTER
   nonhumanoid,
  public:
   virtual bool Hit(character*, bool = false);
-  virtual bool IsAnimated() const { return true; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual void GetAICommand();

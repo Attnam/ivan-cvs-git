@@ -374,3 +374,4 @@ A wand which could penetrate walls.
 Lockpick item.
 Mjolak should do more energy damage if the player has good relation with Cruentus.
 Mellis should sometimes give vodka bottles.
+Very high damage should sometimes leave permanent scars, which would decrease charisma.

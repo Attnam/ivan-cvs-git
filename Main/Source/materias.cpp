@@ -52,13 +52,13 @@ void organicsubstance::VirtualConstructor(bool Load)
 void flesh::Save(outputfile& SaveFile) const
 {
   organicsubstance::Save(SaveFile);
-  SaveFile << SkinColor;
+  SaveFile << SkinColor << SkinColorSparkling;
 }
 
 void flesh::Load(inputfile& SaveFile)
 {
   organicsubstance::Load(SaveFile);
-  SaveFile >> SkinColor;
+  SaveFile >> SkinColor >> SkinColorSparkling;
 }
 
 void powder::Be()

@@ -80,6 +80,7 @@ class ITEM
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool AllowAlphaEverywhere() const { return true; }
+  virtual ushort GetSpecialFlags() const;
  protected:
   virtual bool HasSpecialAnimation() const { return !IsBroken(); }
   virtual ushort GetClassAnimationFrames() const { return !IsBroken() ? 32 : 1; }
@@ -91,7 +92,6 @@ class ITEM
   virtual uchar GetAlphaB(ushort) const;
   virtual uchar GetAlphaC(ushort) const;
   virtual uchar GetAlphaD(ushort) const;
-  virtual ushort GetSpecialFlags() const;
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBitmapPos(ushort) const;
   uchar SquarePosition;
@@ -631,7 +631,8 @@ class ITEM
 (
   carrot,
   item,
-  ;
+ protected:
+  virtual ushort GetMaterialColorB(ushort) const;
 );
 
 #endif

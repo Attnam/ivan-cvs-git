@@ -150,6 +150,19 @@ struct characterdatabase
   bool CanAttack;
   bool CanApply;
   vector2d WieldedPosition;
+  bool ClothColorIsSparkling;
+  bool SkinColorIsSparkling;
+  bool CapColorIsSparkling;
+  bool HairColorIsSparkling;
+  bool EyeColorIsSparkling;
+  bool TorsoMainColorIsSparkling;
+  bool BeltColorIsSparkling;
+  bool BootColorIsSparkling;
+  bool TorsoSpecialColorIsSparkling;
+  bool ArmMainColorIsSparkling;
+  bool ArmSpecialColorIsSparkling;
+  bool LegMainColorIsSparkling;
+  bool LegSpecialColorIsSparkling;
 };
 
 class characterprototype
@@ -346,7 +359,6 @@ class character : public entity, public id
   void AddBoneConsumeEndMessage() const;
   void PrintInfo() const;
   virtual item* SevereBodyPart(ushort);
-  virtual bool IsAnimated() const { return false; }
   virtual void CompleteRiseFromTheDead();
   bool RaiseTheDead(character*);
   bodypart* CreateBodyPart(ushort, ushort = 0);
@@ -455,6 +467,19 @@ class character : public entity, public id
   DATA_BASE_BOOL(CanAttack);
   DATA_BASE_BOOL(CanApply);
   DATA_BASE_VALUE(vector2d, WieldedPosition);
+  DATA_BASE_BOOL(ClothColorIsSparkling);
+  DATA_BASE_BOOL(SkinColorIsSparkling);
+  DATA_BASE_BOOL(CapColorIsSparkling);
+  DATA_BASE_BOOL(HairColorIsSparkling);
+  DATA_BASE_BOOL(EyeColorIsSparkling);
+  DATA_BASE_BOOL(TorsoMainColorIsSparkling);
+  DATA_BASE_BOOL(BeltColorIsSparkling);
+  DATA_BASE_BOOL(BootColorIsSparkling);
+  DATA_BASE_BOOL(TorsoSpecialColorIsSparkling);
+  DATA_BASE_BOOL(ArmMainColorIsSparkling);
+  DATA_BASE_BOOL(ArmSpecialColorIsSparkling);
+  DATA_BASE_BOOL(LegMainColorIsSparkling);
+  DATA_BASE_BOOL(LegSpecialColorIsSparkling);
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void TeleportRandomly();
   bool TeleportNear(character*);
@@ -735,6 +760,10 @@ class character : public entity, public id
   virtual ushort GetBodyPartColorB(ushort, bool = false) const;
   virtual ushort GetBodyPartColorC(ushort, bool = false) const;
   virtual ushort GetBodyPartColorD(ushort, bool = false) const;
+  virtual bool BodyPartColorAIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorBIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorCIsSparkling(ushort, bool = false) const;
+  virtual bool BodyPartColorDIsSparkling(ushort, bool = false) const;
   virtual ulong GetBodyPartSize(ushort, ushort) const;
   virtual ulong GetBodyPartVolume(ushort) const;
   void UpdateBodyPartPicture(ushort, bool = false);

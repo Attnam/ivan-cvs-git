@@ -7,6 +7,16 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
+April 18 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Carrots now look better
+	* A wielded item is now animated if the original item is (ie. it is glittering,
+	  spoiled, outlined, flaming or shooting lightnings)
+	* Golems made of precious metals now sparkle, as do elite guards' and Haedlac's
+	  armor and the goblin king's crown
+	* Shining armor now sparkles on the game screen if worn by the player
+	* The player's head looks correct if he wears the Gorovits family gas mask
+
 April 16 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Corrected many bugs in the bear trap code
@@ -21,6 +31,7 @@ April 14 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* Bill's wills and ghosts are no longer überpowerful in the DOS port
 	* Greater carnivorous plants are now tougher
 	* Key names again work correctly
+	* Magpies are now more intelligent
 
 April 7 2003 Heikki Sairanen <heikki.sairanen@phpoint.net>
 

@@ -573,7 +573,7 @@ void lsquare::AddCharacter(character* Guy)
   SignalEmitationIncrease(Guy->GetEmitation());
   NewDrawRequested = true;
 
-  if(Guy->IsAnimated())
+  //if(Guy->IsAnimated())
     IncAnimatedEntities();
 }
 
@@ -589,7 +589,7 @@ void lsquare::RemoveCharacter()
 {
   if(Character)
     {
-      if(Character->IsAnimated())
+      //if(Character->IsAnimated())
 	DecAnimatedEntities();
 
       character* Backup = Character;
@@ -886,7 +886,7 @@ void lsquare::MoveCharacter(lsquare* To)
       NewDrawRequested = true;
       To->NewDrawRequested = true;
 
-      if(Movee->IsAnimated())
+      //if(Movee->IsAnimated())
 	{
 	  DecAnimatedEntities();
 	  To->IncAnimatedEntities();
@@ -931,13 +931,13 @@ void lsquare::SwapCharacter(lsquare* With)
 	NewDrawRequested = true;
 	With->NewDrawRequested = true;
 
-	if(MoveeOne->IsAnimated())
+	//if(MoveeOne->IsAnimated())
 	  {
 	    DecAnimatedEntities();
 	    With->IncAnimatedEntities();
 	  }
 
-	if(MoveeTwo->IsAnimated())
+	//if(MoveeTwo->IsAnimated())
 	  {
 	    IncAnimatedEntities();
 	    With->DecAnimatedEntities();
@@ -1149,6 +1149,22 @@ void lsquare::DrawMemorized()
     Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
 
   NewDrawRequested = false;
+}
+
+void lsquare::DrawMemorizedCharacter()
+{
+  if(Character && Character->CanBeSeenByPlayer())
+    {
+      vector2d BitPos = game::CalculateScreenCoordinates(Pos);
+
+      if(LastSeen)
+	Memorized->Blit(DOUBLE_BUFFER, 0, 0, BitPos, 16, 16, configuration::GetContrastLuminance());
+      else
+	DOUBLE_BUFFER->Fill(BitPos, 16, 16, 0);
+
+      Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
+      NewDrawRequested = false;
+    }
 }
 
 bool lsquare::IsDangerousForAIToStepOn(const character* Who) const
@@ -1434,7 +1450,7 @@ bool lsquare::Clone(character* Zapper, const festring&, uchar)
 
 bool lsquare::Lightning(character* Zapper, const festring& DeathMsg, uchar Direction)
 {
-  ushort Damage = 20 + RAND() % 6 - RAND() % 6;
+  ushort Damage = 25 + RAND() % 6 - RAND() % 6;
   GetStack()->ReceiveDamage(Zapper, Damage, ELECTRICITY);
   stack* SideStack = GetFirstSideStackUnderAttack(Direction);
 

@@ -75,7 +75,7 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 #define FLIP 2
 #define ROTATE_90 4
 
-#define NOFLAME 0xFFFF
+#define NO_FLAME 0xFFFF
 
 #define ERROR_VECTOR vector2d(-0x8000, -0x8000)
 

@@ -778,26 +778,6 @@ bool item::IsStupidToConsume() const
   return GetConsumeMaterial()->IsStupidToConsume();
 }
 
-void item::CreateWieldedGraphicId(graphicid& GI, vector2d Position, uchar Alpha, bool Right) const
-{
-  GI.BitmapPos = GetWieldedBitmapPos();
-  GI.Color[0] = GetMaterialColorA(0);
-  GI.Color[1] = GetMaterialColorB(0);
-  GI.Color[2] = 0;
-  GI.Color[3] = 0;
-  GI.Frame = 0;
-  GI.FileIndex = GR_HUMANOID;
-  GI.BaseAlpha = Alpha;
-  GI.Alpha[0] = GI.Alpha[1] = GI.Alpha[2] = GI.Alpha[3] = Alpha;
-  GI.SpecialFlags = Right ? 0 : MIRROR;
-  GI.SparklePos = ERROR_VECTOR;
-  GI.SparkleFrame = 0;
-  GI.OutlineColor = TRANSPARENT_COLOR;
-  GI.Seed = 0;
-  GI.FlyAmount = 0;
-  GI.Position = Position;
-}
-
 #ifdef WIZARD
 
 void item::AddAttackInfo(felist& List) const

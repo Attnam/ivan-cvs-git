@@ -263,7 +263,7 @@ meleeweapon
 		NameSingular = "spear";
 		MainMaterialConfig = { 8, WOOD, BONE, COPPER, BRONZE, IRON, STEEL, METEORIC_STEEL, MITHRIL; }
 		SecondaryMaterialConfig == WOOD;
-		MaterialConfigChances = { 8, 2500, 500, 2000, 1500, 500, 100, 25, 25; }
+		MaterialConfigChances = { 8, 1500, 500, 1500, 1000, 500, 100, 25, 25; }
 		Roundness = 10;
 		IsTwoHanded = true;
 		AttachedGod = CRUENTUS;

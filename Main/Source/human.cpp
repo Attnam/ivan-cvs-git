@@ -52,7 +52,7 @@ bool ennerbeast::Hit(character*, bool)
   for(ushort x = Rect.X1; x <= Rect.X2; ++x)
     for(ushort y = Rect.Y1; y <= Rect.Y2; ++y)
       {
-	ushort ScreamStrength = ushort(60 / (HypotSquare(GetPos().X - x, GetPos().Y - y) + 1));
+	ushort ScreamStrength = ushort(75 / (HypotSquare(GetPos().X - x, GetPos().Y - y) + 1));
 
 	if(ScreamStrength)
 	  {
@@ -1577,6 +1577,57 @@ ushort humanoid::GetBodyPartColorD(ushort Index, bool) const
     }
 }
 
+bool humanoid::BodyPartColorBIsSparkling(ushort Index, bool) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return TorsoMainColorIsSparkling();
+    case HEAD_INDEX: return CapColorIsSparkling();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return ArmMainColorIsSparkling();
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return LegMainColorIsSparkling();
+    default:
+      ABORT("Weird bodypart color B request for a humanoid!");
+      return 0;
+    }
+}
+
+bool humanoid::BodyPartColorCIsSparkling(ushort Index, bool) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return BeltColorIsSparkling();
+    case HEAD_INDEX: return HairColorIsSparkling();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX:
+    case GROIN_INDEX: return 0; // reserved for future use
+    case RIGHT_LEG_INDEX: return BootColorIsSparkling();
+    case LEFT_LEG_INDEX: return BootColorIsSparkling();
+    default:
+      ABORT("Weird bodypart color C request for a humanoid!");
+      return 0;
+    }
+}
+
+bool humanoid::BodyPartColorDIsSparkling(ushort Index, bool) const
+{
+  switch(Index)
+    {
+    case TORSO_INDEX: return TorsoSpecialColorIsSparkling();
+    case HEAD_INDEX: return EyeColorIsSparkling();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return ArmSpecialColorIsSparkling();
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return LegSpecialColorIsSparkling();
+    default:
+      ABORT("Weird bodypart color D request for a humanoid!");
+      return 0;
+    }
+}
+
 void human::VirtualConstructor(bool Load)
 {
   humanoid::VirtualConstructor(Load);
@@ -2023,64 +2074,76 @@ void angel::VirtualConstructor(bool Load)
 
 void humanoid::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
-  /* Order is important: Don't use a loop. */
+  bitmap* TileBuffer = igraph::GetTileBuffer();
+  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
+  TileBuffer->FillPriority(0);
+
+  /* Order is important: don't use a loop. */
 
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
   if(GetRightArm())
-    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+
+  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
 void kamikazedwarf::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
+  bitmap* TileBuffer = igraph::GetTileBuffer();
+  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
+  TileBuffer->FillPriority(0);
+
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos + vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, -1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos + vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 1), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
   if(GetRightArm())
-    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+
+  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
 ushort angel::GetTorsoMainColor() const
@@ -2736,19 +2799,6 @@ bool humanoid::CheckIfEquipmentIsNotUsable(ushort Index) const
       || (Index == LEFT_WIELDED_INDEX && GetRightWielded() && GetRightWielded()->IsTwoHanded() && GetRightArm()->CheckIfWeaponTooHeavy("your other wielded item"));
 }
 
-/*void femaleslave::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
-{
-  humanoid::DrawBodyParts(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-
-  if(GetRightArm())
-    {
-      ushort Color = MakeRGB16(0, 160, 0);
-      bitmap* Temp = igraph::GetHumanoidRawGraphic()->Colorize(vector2d(160, 208), vector2d(16, 16), &Color, StateIsActivated(INVISIBLE) && AllowAlpha ? 150 : 255);
-      Temp->AlphaBlit(Bitmap, 0, 0, Pos, 16, 16, Luminance);
-      delete Temp;
-    }
-}*/
-
 ushort mistress::TakeHit(character* Enemy, item* Weapon, float Damage, float ToHitValue, short Success, uchar Type, bool Critical, bool ForceHit)
 {
   ushort Return = humanoid::TakeHit(Enemy, Weapon, Damage, ToHitValue, Success, Type, Critical, ForceHit);
@@ -3119,7 +3169,7 @@ vector2d human::GetBodyPartBitmapPos(ushort Index, bool Severed) const
   switch(Index)
     {
     case TORSO_INDEX: return vector2d(GetBelt() ? 32 : 48, NoChainMailGraphics ? GetCloak() ? 320 : 288 : GetCloak() ? 336 : 304);
-    case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? 112 : 160 : 0);
+    case HEAD_INDEX: return vector2d(96, GetHelmet() ? GetHelmet()->GetConfig()&~BROKEN ? GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? 304 : 112 : 160 : 0);
     case RIGHT_ARM_INDEX: return vector2d(GetRightGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
     case LEFT_ARM_INDEX: return vector2d(GetLeftGauntlet() ? 80 : 64, GetBodyArmor() ? NoChainMailGraphics ? 304 : 320 : 288);
     case GROIN_INDEX:
@@ -3139,9 +3189,9 @@ ushort human::GetBodyPartColorA(ushort Index, bool Severed) const
   switch(Index)
     {
     case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->GetColor() : GetSkinColor();
+    case HEAD_INDEX: return GetHelmet() && GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(0, 60, 0) : GetSkinColor();
     case RIGHT_ARM_INDEX:
     case LEFT_ARM_INDEX:
-    case HEAD_INDEX:
     case GROIN_INDEX: return GetSkinColor();
     case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
     case LEFT_LEG_INDEX: return GetLeftBoot() ? GetLeftBoot()->GetMainMaterial()->GetColor() : GetSkinColor();
@@ -3179,7 +3229,7 @@ ushort human::GetBodyPartColorC(ushort Index, bool Severed) const
   switch(Index)
     {
     case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->GetColor() : 0;
-    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->GetColor() : GetHairColor();
+    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetConfig() == GOROVITS_FAMILY_GAS_MASK ? MakeRGB16(180, 200, 180) : GetHelmet()->GetMainMaterial()->GetColor() : GetHairColor();
     case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->GetColor() : 0;
     case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->GetColor() : 0;
     case GROIN_INDEX:
@@ -3188,6 +3238,60 @@ ushort human::GetBodyPartColorC(ushort Index, bool Severed) const
     default:
       ABORT("Weird bodypart color C request for a humanoid!");
       return 0;
+    }
+}
+
+bool human::BodyPartColorAIsSparkling(ushort Index, bool Severed) const
+{
+  if(Severed)
+    return humanoid::BodyPartColorAIsSparkling(Index);
+
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX:
+    case HEAD_INDEX:
+    case GROIN_INDEX: return SkinColorIsSparkling();
+    case RIGHT_LEG_INDEX: return GetRightBoot() ? GetRightBoot()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
+    case LEFT_LEG_INDEX: return GetLeftBoot() ? GetLeftBoot()->GetMainMaterial()->IsSparkling() : SkinColorIsSparkling();
+    default: return false;
+    }
+}
+
+bool human::BodyPartColorBIsSparkling(ushort Index, bool Severed) const
+{
+  if(Severed)
+    return humanoid::BodyPartColorBIsSparkling(Index);
+
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetCloak() ? GetCloak()->GetMainMaterial()->IsSparkling() : false;
+    case HEAD_INDEX: return GetHelmet() ? GetHelmet()->GetMainMaterial()->IsSparkling() : false;
+    case RIGHT_ARM_INDEX:
+    case LEFT_ARM_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : false;
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return GetBodyArmor() ? GetBodyArmor()->GetMainMaterial()->IsSparkling() : LegMainColorIsSparkling();
+    default: return false;
+    }
+}
+
+bool human::BodyPartColorCIsSparkling(ushort Index, bool Severed) const
+{
+  if(Severed)
+    return humanoid::BodyPartColorCIsSparkling(Index);
+
+  switch(Index)
+    {
+    case TORSO_INDEX: return GetBelt() ? GetBelt()->GetMainMaterial()->IsSparkling() : false;
+    case HEAD_INDEX: return GetHelmet() ? false : HairColorIsSparkling();
+    case RIGHT_ARM_INDEX: return GetRightGauntlet() ? GetRightGauntlet()->GetMainMaterial()->IsSparkling() : false;
+    case LEFT_ARM_INDEX: return GetLeftGauntlet() ? GetLeftGauntlet()->GetMainMaterial()->IsSparkling() : false;
+    case GROIN_INDEX:
+    case RIGHT_LEG_INDEX:
+    case LEFT_LEG_INDEX: return false;
+    default: return false;
     }
 }
 
@@ -3229,34 +3333,40 @@ bool communist::BoundToUse(const item* Item, ushort Index) const
 
 void human::DrawBodyParts(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAnimate, bool AllowAlpha) const
 {
-  /* Order is important: Don't use a loop. */
+  bitmap* TileBuffer = igraph::GetTileBuffer();
+  Bitmap->Blit(TileBuffer, Pos, 0, 0, 16, 16);
+  TileBuffer->FillPriority(0);
+
+  /* Order is important: don't use a loop. */
 
   if(GetTorso())
-    GetTorso()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetTorso()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetGroin())
-    GetGroin()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetGroin()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightLeg())
-    GetRightLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftLeg())
-    GetLeftLeg()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetLeftLeg()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetHead())
-    GetHead()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetHead()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetRightArm())
-    GetRightArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
 
   if(GetLeftArm())
     {
-      GetLeftArm()->Draw(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
-      GetLeftArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->Draw(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate, AllowAlpha);
+      GetLeftArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
     }
 
   if(GetRightArm())
-    GetRightArm()->DrawWielded(Bitmap, Pos, Luminance, AllowAnimate, AllowAlpha);
+    GetRightArm()->DrawWielded(TileBuffer, vector2d(0, 0), Luminance, AllowAnimate);
+
+  TileBuffer->Blit(Bitmap, 0, 0, Pos, 16, 16);
 }
 
 festring werewolfwolf::GetKillName() const
