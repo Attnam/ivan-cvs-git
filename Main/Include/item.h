@@ -14,7 +14,7 @@
 class felist;
 class head;
 template <class type> class contentscript;
-template <class type> class database;
+template <class type> class databasecreator;
 
 typedef std::vector<item*> itemvector;
 
@@ -104,11 +104,11 @@ struct itemdatabase
 class itemprototype
 {
  public:
-  friend class database<item>;
-  itemprototype(itemprototype*, item* (*)(ushort, ushort), const std::string&);
+  friend class databasecreator<item>;
+  itemprototype(itemprototype*, item* (*)(ushort, ushort), const char*);
   item* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   item* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
   const itemprototype* GetBase() const { return Base; }
   const std::map<ushort, itemdatabase>& GetConfig() const { return Config; }
@@ -119,13 +119,13 @@ class itemprototype
   itemprototype* Base;
   std::map<ushort, itemdatabase> Config;
   item* (*Cloner)(ushort, ushort);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class item : public object
 {
  public:
-  friend class database<item>;
+  friend class databasecreator<item>;
   typedef itemprototype prototype;
   typedef itemdatabase database;
   typedef std::map<ushort, itemdatabase> databasemap;
@@ -156,7 +156,7 @@ class item : public object
   virtual bool IsTheAvatar() const { return false; }
   virtual void SignalSquarePositionChange(uchar) { }
   virtual bool CanBeEatenByAI(const character*) const;
-  virtual std::string GetConsumeVerb() const;
+  virtual const char* GetConsumeVerb() const;
   virtual bool IsExplosive() const { return false; }
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -174,7 +174,7 @@ class item : public object
   void PlaceToSlot(slot* Slot) { Slot->PutInItem(this); }
   void RemoveFromSlot();
   void MoveTo(stack*);
-  static std::string ItemCategoryName(ulong);
+  static const char* GetItemCategoryName(ulong);
   static bool EatableSorter(const item* Item, const character* Char) { return Item->IsEatable(Char); }
   static bool DrinkableSorter(const item* Item, const character* Char) { return Item->IsDrinkable(Char); }
   static bool OpenableSorter(const item* Item, const character* Char) { return Item->IsOpenable(Char); }
@@ -343,8 +343,6 @@ class item : public object
   ushort GetBaseToHitValue() const;
   ushort GetBaseBlockValue() const;
   virtual void AddInventoryEntry(const character*, std::string&, ushort, bool) const;
-  virtual void AddAttackInfo(felist&) const;
-  void AddMiscellaneousInfo(felist&) const;
   ulong GetNutritionValue() const;
   virtual void SignalSpoil(material*);
   virtual bool AllowSpoil() const;
@@ -395,6 +393,10 @@ class item : public object
   virtual bool IsGorovitsFamilyRelic() const { return false; }
   virtual bool HasLock() const { return false; }
   virtual bool EffectIsGood() const { return false; }
+#ifdef WIZARD
+  virtual void AddAttackInfo(felist&) const;
+  void AddMiscellaneousInfo(felist&) const;
+#endif
  protected:
   virtual ulong GetMaterialPrice() const;
   virtual item* RawDuplicate() const = 0;

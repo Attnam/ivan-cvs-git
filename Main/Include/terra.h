@@ -15,11 +15,11 @@ class terrain
 {
  public:
   virtual void StepOn(character*) { }
-  virtual std::string SurviveMessage() const;
-  virtual std::string MonsterSurviveMessage() const;
-  virtual std::string DeathMessage() const;
-  virtual std::string MonsterDeathVerb() const;
-  virtual std::string ScoreEntry() const;
+  virtual const char* SurviveMessage() const;
+  virtual const char* MonsterSurviveMessage() const;
+  virtual const char* DeathMessage() const;
+  virtual const char* MonsterDeathVerb() const;
+  virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return false; }
 };
 

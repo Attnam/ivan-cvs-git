@@ -1,91 +1,91 @@
 /* Compiled through godset.cpp */
 
-std::string valpurus::GetName() const { return "Valpurus"; }
-std::string valpurus::GetDescription() const { return "King of Gods"; }
+const char* valpurus::GetName() const { return "Valpurus"; }
+const char* valpurus::GetDescription() const { return "King of Gods"; }
 uchar valpurus::GetAlignment() const { return ALPP; }
 uchar valpurus::GetBasicAlignment() const { return GOOD; }
 ushort valpurus::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string legifer::GetName() const { return "Legifer"; }
-std::string legifer::GetDescription() const { return "god of law and order"; }
+const char* legifer::GetName() const { return "Legifer"; }
+const char* legifer::GetDescription() const { return "god of law and order"; }
 uchar legifer::GetAlignment() const { return ALP; }
 uchar legifer::GetBasicAlignment() const { return GOOD; }
 ushort legifer::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string atavus::GetName() const { return "Atavus"; }
-std::string atavus::GetDescription() const { return "god of charity and munificence"; }
+const char* atavus::GetName() const { return "Atavus"; }
+const char* atavus::GetDescription() const { return "god of charity and munificence"; }
 uchar atavus::GetAlignment() const { return ALP; }
 uchar atavus::GetBasicAlignment() const { return GOOD; }
 ushort atavus::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string dulcis::GetName() const { return "Dulcis"; }
-std::string dulcis::GetDescription() const { return "goddess of love and art"; }
+const char* dulcis::GetName() const { return "Dulcis"; }
+const char* dulcis::GetDescription() const { return "goddess of love and art"; }
 uchar dulcis::GetAlignment() const { return AL; }
 uchar dulcis::GetBasicAlignment() const { return GOOD; }
 ushort dulcis::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string seges::GetName() const { return "Seges"; }
-std::string seges::GetDescription() const { return "goddess of health and nutrition"; }
+const char* seges::GetName() const { return "Seges"; }
+const char* seges::GetDescription() const { return "goddess of health and nutrition"; }
 uchar seges::GetAlignment() const { return AL; }
 uchar seges::GetBasicAlignment() const { return GOOD; }
 ushort seges::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string sophos::GetName() const { return "Sophos"; }
-std::string sophos::GetDescription() const { return "god of knowledge and magic"; }
+const char* sophos::GetName() const { return "Sophos"; }
+const char* sophos::GetDescription() const { return "god of knowledge and magic"; }
 uchar sophos::GetAlignment() const { return ALM; }
 uchar sophos::GetBasicAlignment() const { return GOOD; }
 ushort sophos::GetColor() const { return MakeRGB16(160, 160, 0); }
 
-std::string silva::GetName() const { return "Silva"; }
-std::string silva::GetDescription() const { return "goddess of nature"; }
+const char* silva::GetName() const { return "Silva"; }
+const char* silva::GetDescription() const { return "goddess of nature"; }
 uchar silva::GetAlignment() const { return ANP; }
 uchar silva::GetBasicAlignment() const { return NEUTRAL; }
 ushort silva::GetColor() const { return MakeRGB16(20, 120, 200); }
 
-std::string loricatus::GetName() const { return "Loricatus"; }
-std::string loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
+const char* loricatus::GetName() const { return "Loricatus"; }
+const char* loricatus::GetDescription() const { return "god of fire, machines and weaponry"; }
 uchar loricatus::GetAlignment() const { return AN; }
 uchar loricatus::GetBasicAlignment() const { return NEUTRAL; }
 ushort loricatus::GetColor() const { return MakeRGB16(20, 120, 200); }
 
-std::string mellis::GetName() const { return "Mellis"; }
-std::string mellis::GetDescription() const { return "god of money, trade and politics"; }
+const char* mellis::GetName() const { return "Mellis"; }
+const char* mellis::GetDescription() const { return "god of money, trade and politics"; }
 uchar mellis::GetAlignment() const { return ANM; }
 uchar mellis::GetBasicAlignment() const { return NEUTRAL; }
 ushort mellis::GetColor() const { return MakeRGB16(20, 120, 200); }
 
-std::string cleptia::GetName() const { return "Cleptia"; }
-std::string cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
+const char* cleptia::GetName() const { return "Cleptia"; }
+const char* cleptia::GetDescription() const { return "goddess of assassins and thieves"; }
 uchar cleptia::GetAlignment() const { return ACP; }
 uchar cleptia::GetBasicAlignment() const { return EVIL; }
 ushort cleptia::GetColor() const { return MakeRGB16(200, 0, 0); }
 
-std::string nefas::GetName() const { return "Nefas"; }
-std::string nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
+const char* nefas::GetName() const { return "Nefas"; }
+const char* nefas::GetDescription() const { return "goddess of forbidden pleasures"; }
 uchar nefas::GetAlignment() const { return AC; }
 uchar nefas::GetBasicAlignment() const { return EVIL; }
 ushort nefas::GetColor() const { return MakeRGB16(200, 0, 0); }
 
-std::string scabies::GetName() const { return "Scabies"; }
-std::string scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
+const char* scabies::GetName() const { return "Scabies"; }
+const char* scabies::GetDescription() const { return "goddess of mutations, disease and famine"; }
 uchar scabies::GetAlignment() const { return AC; }
 uchar scabies::GetBasicAlignment() const { return EVIL; }
 ushort scabies::GetColor() const { return MakeRGB16(200, 0, 0); }
 
-std::string infuscor::GetName() const { return "Infuscor"; }
-std::string infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
+const char* infuscor::GetName() const { return "Infuscor"; }
+const char* infuscor::GetDescription() const { return "goddess of wrong knowledge and vile magic"; }
 uchar infuscor::GetAlignment() const { return ACM; }
 uchar infuscor::GetBasicAlignment() const { return EVIL; }
 ushort infuscor::GetColor() const { return MakeRGB16(200, 0, 0); }
 
-std::string cruentus::GetName() const { return "Cruentus"; }
-std::string cruentus::GetDescription() const { return "god of war and blood"; }
+const char* cruentus::GetName() const { return "Cruentus"; }
+const char* cruentus::GetDescription() const { return "god of war and blood"; }
 uchar cruentus::GetAlignment() const { return ACM; }
 uchar cruentus::GetBasicAlignment() const { return EVIL; }
 ushort cruentus::GetColor() const { return MakeRGB16(200, 0, 0); }
 
-std::string mortifer::GetName() const { return "Mortifer"; }
-std::string mortifer::GetDescription() const { return "Destroyer of Worlds"; }
+const char* mortifer::GetName() const { return "Mortifer"; }
+const char* mortifer::GetDescription() const { return "Destroyer of Worlds"; }
 uchar mortifer::GetAlignment() const { return ACMM; }
 uchar mortifer::GetBasicAlignment() const { return EVIL; }
 ushort mortifer::GetColor() const { return MakeRGB16(200, 0, 0); }
@@ -100,7 +100,7 @@ void sophos::PrayBadEffect()
 {
   ADD_MESSAGE("Suddenly, the fabric of space experiences an unnaturally powerful quantum displacement!");
   PLAYER->TeleportSomePartsAway(1 + (RAND() & 1));
-  PLAYER->CheckDeath("shattered to pieces by the wrath of " + GetName(), 0);
+  PLAYER->CheckDeath(std::string("shattered to pieces by the wrath of ") + GetName(), 0);
 }
 
 void valpurus::PrayGoodEffect()
@@ -125,20 +125,20 @@ void valpurus::PrayBadEffect()
 {
   ADD_MESSAGE("Valpurus smites you with a small hammer.");
   PLAYER->ReceiveDamage(0, 10, PHYSICAL_DAMAGE, HEAD, RAND() & 7);
-  PLAYER->CheckDeath("faced the hammer of Justice from the hand of " + GetName(), 0);
+  PLAYER->CheckDeath(std::string("faced the hammer of Justice from the hand of ") + GetName(), 0);
 }
 
 void legifer::PrayGoodEffect()
 {
   ADD_MESSAGE("A booming voice echoes: \"Xunil! Xunil! Save us!\" A huge firestorm engulfs everything around you.");
-  game::GetCurrentLevel()->Explosion(PLAYER, "killed accidentally by " + GetName(), PLAYER->GetPos(), 40, false);
+  game::GetCurrentLevel()->Explosion(PLAYER, std::string("killed accidentally by ") + GetName(), PLAYER->GetPos(), 40, false);
 }
 
 void legifer::PrayBadEffect()
 {
-  ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GOD_NAME);
+  ADD_MESSAGE("%s casts a beam of horrible, yet righteous, fire on you.", GetName());
   PLAYER->ReceiveDamage(0, 20 + RAND() % 20, FIRE, ALL);
-  PLAYER->CheckDeath("burned to death by the wrath of " + GetName(), 0);
+  PLAYER->CheckDeath(std::string("burned to death by the wrath of ") + GetName(), 0);
 }
 
 void dulcis::PrayGoodEffect()
@@ -176,9 +176,9 @@ void dulcis::PrayGoodEffect()
 
 void dulcis::PrayBadEffect()
 {
-  ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GOD_NAME);
+  ADD_MESSAGE("%s plays a horrible tune that rots your brain.", GetName());
   PLAYER->ReceiveDamage(0, 1 + RAND() % 9, SOUND, HEAD);
-  PLAYER->CheckDeath("became insane by listening " + GetName() + " too much", 0);
+  PLAYER->CheckDeath(std::string("became insane by listening ") + GetName() + " too much", 0);
 }
 
 void seges::PrayGoodEffect()
@@ -192,7 +192,7 @@ void seges::PrayGoodEffect()
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(OldBodyPart->GetMaxHP());
-	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back and heals it.", GetName(), OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
@@ -206,14 +206,14 @@ void seges::PrayGoodEffect()
 
   if(PLAYER->IsInBadCondition())
     {
-      ADD_MESSAGE("%s cures your wounds.", GOD_NAME);
+      ADD_MESSAGE("%s cures your wounds.", GetName());
       PLAYER->RestoreLivingHP();
       return;
     }
 
   if(PLAYER->TemporaryStateIsActivated(POISONED))
     {
-      ADD_MESSAGE("%s removes the foul liquid in your veins.", GOD_NAME);
+      ADD_MESSAGE("%s removes the foul liquid in your veins.", GetName());
       PLAYER->DeActivateTemporaryState(POISONED);
       return;
     }
@@ -233,7 +233,7 @@ void seges::PrayBadEffect()
     {
       ADD_MESSAGE("You feel Seges altering the contents of your stomach in an eerie way.");
       PLAYER->EditNP(-10000);
-      PLAYER->CheckStarvationDeath("starved by " + GetName());
+      PLAYER->CheckStarvationDeath(std::string("starved by ") + GetName());
     }
   else
     ADD_MESSAGE("Seges tries to alter the contents of your stomach, but fails.");
@@ -277,7 +277,7 @@ void atavus::PrayBadEffect()
 	}
       else
 	{
-	  ADD_MESSAGE("%s tries to remove your %s, but fails. You feel you are not so gifted anymore.", GOD_NAME, Disappearing->CHAR_NAME(UNARTICLED));
+	  ADD_MESSAGE("%s tries to remove your %s, but fails. You feel you are not so gifted anymore.", GetName(), Disappearing->CHAR_NAME(UNARTICLED));
 	  PLAYER->EditAttribute(AGILITY, -1);
 	  PLAYER->EditAttribute(ARM_STRENGTH, -1);
 	  PLAYER->EditAttribute(ENDURANCE, -1);
@@ -303,7 +303,7 @@ void silva::PrayGoodEffect()
 	  OldBodyPart->RemoveFromSlot();
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(1);
-	  ADD_MESSAGE("%s attaches your old %s back.", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back.", GetName(), OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
@@ -494,7 +494,7 @@ void loricatus::PrayGoodEffect()
   for(ushort c = 0; c < PLAYER->GetEquipmentSlots(); ++c)
     if(PLAYER->GetEquipment(c) && PLAYER->GetEquipment(c)->IsBroken())
       {
-	ADD_MESSAGE("%s fixes your %s.", GOD_NAME, PLAYER->GetEquipment(c)->CHAR_NAME(UNARTICLED));
+	ADD_MESSAGE("%s fixes your %s.", GetName(), PLAYER->GetEquipment(c)->CHAR_NAME(UNARTICLED));
 	PLAYER->GetEquipment(c)->Fix();
 	return;
       }
@@ -532,7 +532,7 @@ void loricatus::PrayGoodEffect()
 	      if(!(RAND() % 10))
 		{
 		  item* Scroll = new scrollofrepair;
-		  ADD_MESSAGE("%s gives you %s.", GOD_NAME, Scroll->CHAR_NAME(INDEFINITE));
+		  ADD_MESSAGE("%s gives you %s.", GetName(), Scroll->CHAR_NAME(INDEFINITE));
 		  PLAYER->GetGiftStack()->AddItem(Scroll);
 		}
 	      else
@@ -582,14 +582,14 @@ void cleptia::PrayGoodEffect()
 {
   if(!PLAYER->StateIsActivated(HASTE))
     {
-      ADD_MESSAGE("%s gives you the talent for speed.", GOD_NAME);
+      ADD_MESSAGE("%s gives you the talent for speed.", GetName());
       PLAYER->BeginTemporaryState(HASTE, 250);
       return;
     }
 
   if(!PLAYER->StateIsActivated(INVISIBLE))
     {
-      ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GOD_NAME);
+      ADD_MESSAGE("%s helps you to avoid your enemies by making you invisible.", GetName());
       PLAYER->BeginTemporaryState(INVISIBLE, 250);
       return;
     }
@@ -601,7 +601,7 @@ void cleptia::PrayGoodEffect()
 
 void cleptia::PrayBadEffect()
 {
-  ADD_MESSAGE("%s slows you down.", GOD_NAME);
+  ADD_MESSAGE("%s slows you down.", GetName());
   PLAYER->BeginTemporaryState(SLOW, 250);
 }
 
@@ -618,7 +618,7 @@ void mortifer::PrayBadEffect()
   PLAYER->EditAttribute(AGILITY, -1);
   PLAYER->EditAttribute(ARM_STRENGTH, -1);
   PLAYER->EditAttribute(ENDURANCE, -1);
-  PLAYER->CheckDeath("obliterated by the unholy power of " + GetName(), 0);
+  PLAYER->CheckDeath(std::string("obliterated by the unholy power of ") + GetName(), 0);
 }
 
 void mellis::PrayGoodEffect()
@@ -641,7 +641,7 @@ void mellis::PrayGoodEffect()
     {
       item* ToBeDeleted = OKItems[RAND() % OKItems.size()];
       NewVersion = ToBeDeleted->BetterVersion();
-      ADD_MESSAGE("%s manages to trade %s into %s.", GOD_NAME, ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
+      ADD_MESSAGE("%s manages to trade %s into %s.", GetName(), ToBeDeleted->CHAR_NAME(DEFINITE), NewVersion->CHAR_NAME(INDEFINITE));
       PLAYER->GetStack()->AddItem(NewVersion);
       ToBeDeleted->RemoveFromSlot();
       ToBeDeleted->SendToHell();
@@ -661,7 +661,7 @@ void mellis::PrayGoodEffect()
 	{
 	  uchar NewKnownGod = Possible[RAND() % PossibleSize];
 	  game::GetGod(NewKnownGod)->SetIsKnown(true);
-	  ADD_MESSAGE("%s shares his knowledge of %s, the %s.", GOD_NAME, game::GetGod(NewKnownGod)->GOD_NAME, game::GetGod(NewKnownGod)->GetDescription().c_str());
+	  ADD_MESSAGE("%s shares his knowledge of %s, the %s.", GetName(), game::GetGod(NewKnownGod)->GetName(), game::GetGod(NewKnownGod)->GetDescription());
 	  return;
 	}
     }
@@ -676,14 +676,14 @@ void mellis::PrayBadEffect()
     if(c != GetType())
       game::GetGod(c)->AdjustRelation(-100);
 
-  ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GOD_NAME);
+  ADD_MESSAGE("%s spreads bad rumours about you to other gods.", GetName());
 }
 
 void valpurus::Pray()
 {
   if(!Timer && Relation == 1000)
     {
-      ADD_MESSAGE("You feel %s is very pleased.", GOD_NAME);
+      ADD_MESSAGE("You feel %s is very pleased.", GetName());
       PrayGoodEffect();
       AdjustTimer(100000);
       AdjustRelation(-500);
@@ -703,7 +703,7 @@ void valpurus::Pray()
     }
   else
     {
-      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
+      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GetName());
       PrayBadEffect();
       AdjustTimer(50000);
       AdjustRelation(-100);
@@ -727,7 +727,7 @@ void mortifer::Pray()
 {
   if(!Timer && Relation == 1000)
     {
-      ADD_MESSAGE("You feel %s is very pleased.", GOD_NAME);
+      ADD_MESSAGE("You feel %s is very pleased.", GetName());
       PrayGoodEffect();
       AdjustTimer(100000);
       AdjustRelation(-500);
@@ -747,7 +747,7 @@ void mortifer::Pray()
     }
   else
     {
-      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GOD_NAME);
+      ADD_MESSAGE("You feel you are not yet worthy enough for %s.", GetName());
       PrayBadEffect();
       AdjustTimer(50000);
       AdjustRelation(-100);
@@ -806,7 +806,7 @@ void nefas::PrayGoodEffect()
 	    if(Audience && !Audience->TemporaryStateIsActivated(CONFUSED) && Audience->CanBeConfused() && PLAYER->GetRelation(Audience) == HOSTILE)
 	      {
 		if(Audience->CanBeSeenByPlayer())
-		  ADD_MESSAGE("%s confuses %s with her sweet lies.", GOD_NAME, Audience->CHAR_NAME(DEFINITE));
+		  ADD_MESSAGE("%s confuses %s with her sweet lies.", GetName(), Audience->CHAR_NAME(DEFINITE));
 
 		Audience->BeginTemporaryState(CONFUSED, 500 + RAND() % 500);
 	      }
@@ -831,7 +831,7 @@ void nefas::PrayGoodEffect()
     }
   else
     {
-      ADD_MESSAGE("%s wishes you to have fun with this potion.", GOD_NAME);
+      ADD_MESSAGE("%s wishes you to have fun with this potion.", GetName());
       potion* Reward = new potion(0, NO_MATERIALS);
       Reward->InitMaterials(MAKE_MATERIAL(GLASS), MAKE_MATERIAL(OMMEL_URINE));
       PLAYER->GetGiftStack()->AddItem(Reward);
@@ -844,7 +844,7 @@ void nefas::PrayBadEffect()
   ADD_MESSAGE("A potion drops on your head and shatters into small bits.");
   PLAYER->ReceiveDamage(0, 2 + RAND() % 7, PHYSICAL_DAMAGE, HEAD);
   PLAYER->GetStackUnder()->AddItem(new brokenbottle);
-  PLAYER->CheckDeath("killed while enjoying the company of " + GetName(), 0);
+  PLAYER->CheckDeath(std::string("killed while enjoying the company of ") + GetName(), 0);
 }
 
 void scabies::PrayGoodEffect()
@@ -859,7 +859,7 @@ void scabies::PrayGoodEffect()
 	  PLAYER->AttachBodyPart(OldBodyPart);
 	  OldBodyPart->SetHP(1);
 	  OldBodyPart->Mutate();
-	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GOD_NAME, OldBodyPart->GetBodyPartName().c_str());
+	  ADD_MESSAGE("%s attaches your old %s back. But it seems somehow different...", GetName(), OldBodyPart->GetBodyPartName().c_str());
 	}
       else
 	{
@@ -894,7 +894,7 @@ void scabies::PrayGoodEffect()
 
       if(Square && Square->GetCharacter() && Square->GetCharacter()->GetRelation(PLAYER) == HOSTILE)
 	{
-	  ADD_MESSAGE("%s throws poison on %s!", GOD_NAME, Square->GetCharacter()->CHAR_NAME(DEFINITE));
+	  ADD_MESSAGE("%s throws poison on %s!", GetName(), Square->GetCharacter()->CHAR_NAME(DEFINITE));
 	  Square->SpillFluid(PLAYER, MAKE_MATERIAL(POISON_LIQUID, 500), 100);
 	  Success = true;
 	}
@@ -908,7 +908,7 @@ void scabies::PrayBadEffect()
 {
   if(!(RAND() % 50))
     {
-      ADD_MESSAGE("%s makes you eat a LOT of school food.", GOD_NAME);
+      ADD_MESSAGE("%s makes you eat a LOT of school food.", GetName());
       material* SchoolFood = MAKE_MATERIAL(SCHOOL_FOOD, 1000);
       SchoolFood->EatEffect(PLAYER, 1000);
       delete SchoolFood;
@@ -918,14 +918,14 @@ void scabies::PrayBadEffect()
     }
   else
     {
-      ADD_MESSAGE("%s unleashes all her fury upon you!", GOD_NAME);
+      ADD_MESSAGE("%s unleashes all her fury upon you!", GetName());
       PLAYER->BeginTemporaryState(POISONED, 600 + RAND() % 400);
     }
 }
 
 void infuscor::PrayGoodEffect()
 {
-  ADD_MESSAGE("%s helps you.", GOD_NAME);
+  ADD_MESSAGE("%s helps you.", GetName());
 
   if(!PLAYER->StateIsActivated(ESP))
     {
@@ -1034,7 +1034,7 @@ void cruentus::PrayBadEffect()
 	  ToBe = PLAYER->GetSecondaryWielded();
 
 	  if(!ToBe || !ToBe->IsDestroyable())
-	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, PLAYER->GetMainWielded()->CHAR_NAME(UNARTICLED));
+	    ADD_MESSAGE("%s tries to destroy your %s, but fails.", GetName(), PLAYER->GetMainWielded()->CHAR_NAME(UNARTICLED));
 	}
     }
   else
@@ -1042,50 +1042,26 @@ void cruentus::PrayBadEffect()
       ToBe = PLAYER->GetSecondaryWielded();
 
       if(ToBe && !ToBe->IsDestroyable())
-	ADD_MESSAGE("%s tries to destroy your %s, but fails.", GOD_NAME, ToBe->CHAR_NAME(UNARTICLED));
+	ADD_MESSAGE("%s tries to destroy your %s, but fails.", GetName(), ToBe->CHAR_NAME(UNARTICLED));
     }
 
   if(ToBe && ToBe->IsDestroyable())
     {
-      ADD_MESSAGE("%s destroys your weapon.", GOD_NAME);
+      ADD_MESSAGE("%s destroys your weapon.", GetName());
       ToBe->RemoveFromSlot();
       ToBe->SendToHell();
     }
   else
     {
-      ADD_MESSAGE("%s gets mad and hits you!", GOD_NAME);
+      ADD_MESSAGE("%s gets mad and hits you!", GetName());
       PLAYER->ReceiveDamage(0, 1 + RAND() % 30, PHYSICAL_DAMAGE, ALL, RAND() & 7);
-      PLAYER->CheckDeath("destroyed by " + GetName(), 0);
+      PLAYER->CheckDeath(std::string("destroyed by ") + GetName(), 0);
     }
-}
-
-std::string legifer::GetPriestMessage() const
-{
-  return "\"" + GetName() + " is the Great Protector of all Law and Order. Prayed upon, He may burn thy enemies with the Fire of Justice, if thou art worthy.\"";
-}
-
-std::string dulcis::GetPriestMessage() const
-{
-  return "\"" + GetName() + " is the Creator of everything we call Art and Beauty. When thou prayest for Her help, She may calm thy worst enemies with Her love. But beware! There are villains that may resist even Her call!\"";
-}
-
-std::string seges::GetPriestMessage() const
-{
-  return "\"" + GetName() + " brings Life, Health and Nutrition to all who follow Her. When thou callest upon Her with an empty stomach, a miracle may indeed fill it.";
-}
-
-std::string sophos::GetPriestMessage() const
-{
-  return "\"The Wise bow before " + GetName() + ", for He maketh the Universe as rational as it is. Those who follow Him are not bound to space and time, since knowledge controls them. This is why those chosen by Him may escape any danger with their wisdom. Alas, beware! Soon thou mayst find thyself in an even worse situation!\"";
 }
 
 void scabies::PlayerVomitedOnAltar()
 {
-  ADD_MESSAGE("%s feels that you are indeed her follower.", GOD_NAME); 
+  ADD_MESSAGE("%s feels that you are indeed her follower.", GetName()); 
   AdjustRelation(1);
 }
 
-std::string valpurus::GetPriestMessage() const
-{
-  return "\"" + GetName() + " the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"";
-}

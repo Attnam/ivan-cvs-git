@@ -503,9 +503,6 @@ void lsquare::Save(outputfile& SaveFile) const
 
 void lsquare::Load(inputfile& SaveFile)
 {
-  if(Pos == vector2d(10, 14))
-    int esko = 2;
-
   Stack->Load(SaveFile); // This must be before square::Load! (Note: This comment is years old. It's probably obsolete)
   Stack->SetMotherSquare(this);
   square::Load(SaveFile);
@@ -690,13 +687,24 @@ void lsquare::BeKicked(character* Kicker, item* Boot, float KickDamage, float Ki
   if(RoomIndex)
     GetLevel()->GetRoom(RoomIndex)->KickSquare(Kicker, this);
 
+  uchar Direction = game::GetDirectionForVector(GetPos() - Kicker->GetPos());
   GetStack()->BeKicked(Kicker, ushort(KickDamage));
+
+  stack* SideStack = GetFirstSideStackUnderAttack(Direction);
+
+  if(SideStack)
+    SideStack->BeKicked(Kicker, ushort(KickDamage));
+
+  SideStack = GetSecondSideStackUnderAttack(Direction);
+
+  if(SideStack)
+    SideStack->BeKicked(Kicker, ushort(KickDamage));
 
   if(GetCharacter())
     GetCharacter()->BeKicked(Kicker, Boot, KickDamage, KickToHitValue, Success, Critical, ForceHit);
 
   if(GetOLTerrain())
-    GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage));
+    GetOLTerrain()->BeKicked(Kicker, ushort(KickDamage * (100 + Success) / 100));
 }
 
 bool lsquare::CanBeDug() const
@@ -1008,8 +1016,8 @@ void lsquare::DrawParticles(ulong Color, bool DrawHere)
 {
   if(GetPos().X < game::GetCamera().X
   || GetPos().Y < game::GetCamera().Y
-  || GetPos().X >= game::GetCamera().X + game::GetScreenSize().X
-  || GetPos().Y >= game::GetCamera().Y + game::GetScreenSize().Y
+  || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
+  || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
   || !CanBeSeenByPlayer(true)
   || Color == TRANSPARENT_COLOR)
     return;
@@ -1223,8 +1231,8 @@ vector2d lsquare::DrawLightning(vector2d StartPos, ulong Color, uchar Direction,
 {
   if(GetPos().X < game::GetCamera().X
   || GetPos().Y < game::GetCamera().Y
-  || GetPos().X >= game::GetCamera().X + game::GetScreenSize().X
-  || GetPos().Y >= game::GetCamera().Y + game::GetScreenSize().Y
+  || GetPos().X >= game::GetCamera().X + game::GetScreenXSize()
+  || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize()
   || !CanBeSeenByPlayer(true))
     switch(Direction)
       {
@@ -1690,3 +1698,4 @@ bool lsquare::CanBeFeltByPlayer() const
 {
   return OLTerrain && !OLTerrain->IsWalkable() && Pos.IsAdjacent(PLAYER->GetPos());
 }
+

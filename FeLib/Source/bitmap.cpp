@@ -10,6 +10,81 @@
 bitmap* CurrentSprite;
 std::vector<vector2d> CurrentPixelVector;
 
+void bitmap::Fill(vector2d TopLeft, ushort Width, ushort Height, ushort Color) { Fill(TopLeft.X, TopLeft.Y, Width, Height, Color); }
+void bitmap::Fill(ushort X, ushort Y, vector2d FillSize, ushort Color) { Fill(X, Y, FillSize.X, FillSize.Y, Color); }
+void bitmap::Fill(vector2d TopLeft, vector2d FillSize, ushort Color) { Fill(TopLeft.X, TopLeft.Y, FillSize.X, FillSize.Y, Color); }
+
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags) const { Blit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags) const { Blit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags) const { Blit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, uchar Flags) const { Blit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags) const { Blit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, uchar Flags) const { Blit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags) const  { Blit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags); }
+void bitmap::Blit(bitmap* Bitmap, uchar Flags) const { Blit(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags); }
+
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance) const { Blit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance) const { Blit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance) const { Blit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance) const { Blit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance) const { Blit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance) const { Blit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance) const  { Blit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance); }
+void bitmap::Blit(bitmap* Bitmap, ulong Luminance) const { Blit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance); }
+
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, uchar Flags, ushort MaskColor) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags, MaskColor); }
+
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::MaskedBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, uchar Flags, ushort MaskColor) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Flags, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, uchar Flags, ushort MaskColor) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Flags, MaskColor); }
+
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ulong Luminance, ushort MaskColor) const  { AlphaBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Luminance, MaskColor); }
+void bitmap::AlphaBlit(bitmap* Bitmap, ulong Luminance, ushort MaskColor) const { AlphaBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Luminance, MaskColor); }
+
+void bitmap::DrawLine(vector2d From, ushort ToX, ushort ToY, ushort Color, bool Wide) { DrawLine(From.X, From.Y, ToX, ToY, Color, Wide); }
+void bitmap::DrawLine(ushort FromX, ushort FromY, vector2d To, ushort Color, bool Wide) { DrawLine(FromX, FromY, To.X, To.Y, Color, Wide); }
+void bitmap::DrawLine(vector2d From, vector2d To, ushort Color, bool Wide) { DrawLine(From.X, From.Y, To.X, To.Y, Color, Wide); }
+
+void bitmap::StretchBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, char Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, char Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, char Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, char Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, char Stretch) const { StretchBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, char Stretch) const { StretchBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, char Stretch) const  { StretchBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Stretch); }
+void bitmap::StretchBlit(bitmap* Bitmap, char Stretch) const { StretchBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Stretch); }
+
+void bitmap::DrawRectangle(vector2d TopLeft, ushort Right, ushort Bottom, ushort Color, bool Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, Right, Bottom, Color, Wide); }
+void bitmap::DrawRectangle(ushort Left, ushort Top, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(Left, Top, BottomRight.X, BottomRight.Y, Color, Wide); }
+void bitmap::DrawRectangle(vector2d TopLeft, vector2d BottomRight, ushort Color, bool Wide) { DrawRectangle(TopLeft.X, TopLeft.Y, BottomRight.X, BottomRight.Y, Color, Wide); }
+
 bitmap::bitmap(const std::string& FileName) : AlphaMap(0)
 {
   inputfile File(FileName.c_str(), 0, false);
@@ -835,7 +910,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 		  Ptr += PtrYMove;
 		}
 
-	      if(IsValidPos(x, y))
+	      //if(IsValidPos(x, y))
 		*Ptr = Color;
 	    }
 	}
@@ -862,7 +937,7 @@ void bitmap::DrawLine(ushort OrigFromX, ushort OrigFromY, ushort OrigToX, ushort
 		  Ptr += XMove;
 		}
 
-	      if(IsValidPos(x, y))
+	      //if(IsValidPos(x, y))
 		*Ptr = Color;
 	    }
 	}
@@ -938,31 +1013,43 @@ void bitmap::DrawPolygon(vector2d Center, ushort Radius, ushort NumberOfSides, u
   if(!DrawSides && !DrawDiameters)
     return;
 
-  std::vector<vector2d> Points;
+  vector2d* Point = new vector2d[NumberOfSides];
+  double AngleDelta = 2 * FPI / NumberOfSides;
   ushort c;
 
   for(c = 0; c < NumberOfSides; ++c)
     {
-      float PosX = sin((2 * FPI / NumberOfSides) * c + Rotation) * Radius;
-      float PosY = cos((2 * FPI / NumberOfSides) * c + Rotation) * Radius;
-      Points.push_back(vector2d(short(PosX), short(PosY)) + Center);
+      Point[c].X = short(sin(AngleDelta * c + Rotation) * Radius);
+      Point[c].Y = short(cos(AngleDelta * c + Rotation) * Radius);
+      Point[c] += Center;
     }
 
-  if(DrawDiameters && DrawSides)
-    for(c = 0; c < Points.size(); ++c)
-      for(ushort a = 0; a < Points.size(); ++a)
-	if(c != a)
-	  DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
+  if(DrawDiameters)
+    {
+      if(DrawSides)
+	{
+	  for(c = 0; c < NumberOfSides; ++c)
+	    for(ushort a = 0; a < NumberOfSides; ++a)
+	      if(c != a)
+		DrawLine(Point[c].X, Point[c].Y, Point[a].X, Point[a].Y, Color, true);
+	}
+      else
+	{
+	  for(c = 0; c < NumberOfSides; ++c)
+	    for(ushort a = 0; a < NumberOfSides; ++a)
+	      if((short(c - a) > 1 || short(a - c) > 1) && (a || c != NumberOfSides - 1) && (c || a != NumberOfSides - 1))
+		DrawLine(Point[c].X, Point[c].Y, Point[a].X, Point[a].Y, Color, true);
+	}
+    }
+  else
+    {
+      for(c = 0; c < NumberOfSides - 1; ++c)
+	DrawLine(Point[c].X, Point[c].Y, Point[c + 1].X, Point[c + 1].Y, Color, true);
 
-  if(DrawDiameters && !DrawSides)
-    for(c = 0; c < Points.size(); ++c)
-      for(ushort a = 0; a < Points.size(); ++a)
-	if(abs(int(c - a)) > 1 && !((a == 0) && c == Points.size() - 1) && !((c == 0) && a == Points.size() - 1))
-	  DrawLine(Points[c].X, Points[c].Y, Points[a].X, Points[a].Y, Color, true);
+      DrawLine(Point[NumberOfSides - 1].X, Point[NumberOfSides - 1].Y, Point[0].X, Point[0].Y, Color, true);
+    }
 
-  if(!DrawDiameters)
-    for(c = 0; c < NumberOfSides; ++c)
-      DrawLine(Points[c].X, Points[c].Y, Points[(c + 1) % Points.size()].X, Points[(c + 1) % Points.size()].Y, Color, true);
+  delete [] Point;
 }
 
 void bitmap::CreateAlphaMap(uchar InitialValue)
@@ -1638,4 +1725,26 @@ void bitmap::BlitAndCopyAlpha(bitmap* Bitmap, uchar Flags) const
 void bitmap::FillAlpha(uchar Alpha)
 {
   memset(AlphaMap[0], Alpha, XSizeTimesYSize);
+}
+
+void bitmap::SafePutPixelAndResetAlpha(ushort X, ushort Y, ushort Color)
+{
+  if(X < XSize && Y < YSize)
+    {
+      Image[Y][X] = Color;
+
+      if(AlphaMap)
+	AlphaMap[Y][X] = 255;
+    }
+}
+
+void bitmap::SafePutPixelAndResetAlpha(vector2d Pos, ushort Color)
+{
+  if(Pos.X < XSize && Pos.Y < YSize)
+    {
+      Image[Pos.Y][Pos.X] = Color;
+
+      if(AlphaMap)
+	AlphaMap[Pos.Y][Pos.X] = 255;
+    }
 }

@@ -6,6 +6,7 @@
 #include "bitmap.h"
 #include "terra.h"
 #include "proto.h"
+#include "save.h"
 
 #include "area.cpp"
 #include "square.cpp"

@@ -1,6 +1,27 @@
-/* Compiled through charset.cpp */
+#include "command.h"
+#include "char.h"
+#include "message.h"
+#include "game.h"
+#include "stack.h"
+#include "room.h"
+#include "god.h"
+#include "felist.h"
+#include "config.h"
+#include "bitmap.h"
+#include "actions.h"
+#include "wskill.h"
+#include "miscitem.h"
+#include "worldmap.h"
+#include "wsquare.h"
+#include "wterras.h"
+#include "materia.h"
+#include "database.h"
 
-command::command(bool (*LinkedFunction)(character*), const std::string& Description, char Key, bool UsableInWilderness, bool WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key(Key), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
+#ifdef WIZARD
+#include "proto.h"
+#endif
+
+command::command(bool (*LinkedFunction)(character*), const char* Description, char Key, bool UsableInWilderness, bool WizardModeFunction) : LinkedFunction(LinkedFunction), Description(Description), Key(Key), UsableInWilderness(UsableInWilderness), WizardModeFunction(WizardModeFunction) { }
 
 command* commandsystem::Command[] =
 {
@@ -18,7 +39,7 @@ command* commandsystem::Command[] =
   new command(&WhatToEngrave, "engrave", 'G', false),
   new command(&EquipmentScreen, "equipment menu", 'E', true),
   new command(&Go, "go", 'g', false),
-  new command(&GoDown, "go down", '>', true),
+  new command(&GoDown, "go down/enter area", '>', true),
   new command(&GoUp, "go up", '<', true),
   new command(&Kick, "kick", 'k', false),
   new command(&Look, "look", 'l', true),
@@ -47,8 +68,12 @@ command* commandsystem::Command[] =
   new command(&NOP, "wait", '.', true),
   new command(&WieldInRightArm, "wield in right arm", 'w', true),
   new command(&WieldInLeftArm, "wield in left arm", 'W', true),
+#ifdef WIZARD
   new command(&WizardMode, "wizard mode activation", 'X', true),
+#endif
   new command(&Zap, "zap", 'z', false),
+
+#ifdef WIZARD
 
   /* Sort according to key */
 
@@ -63,9 +88,11 @@ command* commandsystem::Command[] =
   new command(&SecretKnowledge, "reveal secret knowledge", '9', true, true),
   new command(&DetachBodyPart, "detach a limb", '0', true, true),
   new command(&ReloadDatafiles, "reload datafiles", 'R', true, true),
-  new command(&ShowBattleInfo, "show battle info", '%', true, true),
   new command(&SummonMonster, "summon monster", '&', false, true),
   new command(&LevelTeleport, "level teleport", '|', false, true),
+
+#endif
+
   0
 };
 
@@ -554,87 +581,6 @@ bool commandsystem::Dip(character* Char)
   return false;
 }
 
-bool commandsystem::WizardMode(character* Char)
-{
-  if(!game::WizardModeIsActive())
-    {
-      if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [y/N]"))
-	{
-	  game::ActivateWizardMode();
-	  ADD_MESSAGE("Wizard mode activated.");
-
-	  for(ushort x = 0; x < 5; ++x)
-	    Char->GetStack()->AddItem(new scrollofwishing);
-
-	  if(game::IsInWilderness())
-	    {
-	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
-	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-	      game::GetWorldMap()->SendNewDrawRequest();
-	    }
-	  else
-	    {
-	      game::LoadWorldMap();
-	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
-	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
-	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
-	      game::SaveWorldMap();
-	    }
-
-	  game::Save();
-	  game::Save(game::GetAutoSaveFileName());
-
-	}
-    }
-  else
-    {
-      ADD_MESSAGE("Got some scrolls of wishing.");
-
-      for(ushort x = 0; x < 5; ++x)
-	Char->GetStack()->AddItem(new scrollofwishing);
-    }
-
-  return false;
-
-}
-
-bool commandsystem::RaiseStats(character* Char)
-{
-  Char->RaiseStats();
-  return false;
-}
-
-bool commandsystem::LowerStats(character* Char)
-{
-  Char->LowerStats();
-  return false;
-}
-
-bool commandsystem::GainAllItems(character* Char)
-{
-  itemvector AllItems;
-  protosystem::CreateEveryItem(AllItems);
-  stack* Stack = game::IsInWilderness() ? Char->GetStack() : Char->GetStackUnder();
-
-  for(ushort c = 0; c < AllItems.size(); ++c)
-    Stack->AddItem(AllItems[c]);
-
-  return false;
-}
-
-bool commandsystem::SeeWholeMap(character*)
-{
-  game::SeeWholeMap();
-  return false;
-}
-
-bool commandsystem::WalkThroughWalls(character*)
-{
-  game::GoThroughWalls();
-  return false;
-}
-
 bool commandsystem::ShowKeyLayout(character*)
 {
   felist List("Keyboard Layout");
@@ -703,7 +649,8 @@ bool commandsystem::WhatToEngrave(character* Char)
 bool commandsystem::Pray(character* Char)
 {
   felist Panthenon("To Whom you want to address your prayers?");
-  std::vector<ushort> KnownIndex;
+  ushort Known[GODS];
+  ushort Index = 0;
 
   if(!Char->GetLSquareUnder()->GetDivineMaster())
     {
@@ -712,7 +659,7 @@ bool commandsystem::Pray(character* Char)
 	  {
 	    igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), c << 4, 0, 0, 0, 16, 16);
 	    Panthenon.AddEntry(game::GetGod(c)->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
-	    KnownIndex.push_back(c);
+	    Known[Index++] = c;
 	  }
     }
   else
@@ -720,7 +667,7 @@ bool commandsystem::Pray(character* Char)
       {
 	igraph::GetSymbolGraphic()->Blit(igraph::GetTileBuffer(), Char->GetLSquareUnder()->GetDivineMaster() << 4, 0, 0, 0, 16, 16);
 	Panthenon.AddEntry(game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetCompleteDescription(), LIGHT_GRAY, 20, igraph::GetTileBuffer());
-	KnownIndex.push_back(Char->GetLSquareUnder()->GetDivineMaster());
+	Known[0] = Char->GetLSquareUnder()->GetDivineMaster();
       }
     else
       {
@@ -746,7 +693,7 @@ bool commandsystem::Pray(character* Char)
 	{
 	  if(!Select)
 	    {
-	      if(game::BoolQuestion("Do you really wish to pray to " + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
+	      if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->GetName() + "? [y/N]"))
 		game::GetGod(Char->GetLSquareUnder()->GetDivineMaster())->Pray();
 	      else
 		return false;
@@ -756,8 +703,8 @@ bool commandsystem::Pray(character* Char)
 	}
       else
 	{
-	  if(game::BoolQuestion("Do you really wish to pray to " + game::GetGod(KnownIndex[Select])->GetName() + "? [y/N]"))
-	    game::GetGod(KnownIndex[Select])->Pray();
+	  if(game::BoolQuestion(std::string("Do you really wish to pray to ") + game::GetGod(Known[Select])->GetName() + "? [y/N]"))
+	    game::GetGod(Known[Select])->Pray();
 	  else
 	    return false;
 	}
@@ -988,30 +935,6 @@ bool commandsystem::OutlineItems(character* Char)
   return false;
 }
 
-bool commandsystem::RaiseGodRelations(character*)
-{
-  for(ushort c = 1; c <= GODS; ++c)
-    game::GetGod(c)->AdjustRelation(50);
-
-  return false;
-}
-
-bool commandsystem::LowerGodRelations(character*)
-{
-  for(ushort c = 1; c <= GODS; ++c)
-    game::GetGod(c)->AdjustRelation(-50);
-
-  return false;
-}
-
-bool commandsystem::GainDivineKnowledge(character*)
-{
-  for(ushort c = 1; c <= GODS; ++c)
-    game::GetGod(c)->SetIsKnown(true);
-
-  return false;
-}
-
 bool commandsystem::Sit(character* Char)
 {
   lsquare* Square = Char->GetLSquareUnder();
@@ -1052,6 +975,262 @@ bool commandsystem::Go(character* Char)
 bool commandsystem::ShowConfigScreen(character*)
 {
   configuration::ShowConfigScreen();
+  return false;
+}
+
+bool commandsystem::AssignName(character* Char)
+{
+  game::PositionQuestion("What do you want to name? [press 'n' over a tame creature or ESC to exit]", Char->GetPos(), 0, &game::NameKeyHandler);
+  return false;
+}
+
+bool commandsystem::EquipmentScreen(character* Char)
+{
+  if(!Char->CanUseEquipment())
+    {
+      ADD_MESSAGE("You cannot use equipment.");
+      return false;
+    }
+
+  ushort Chosen = 0;
+  bool EquipmentChanged = false;
+  felist List("Equipment menu");
+  std::string Entry;
+
+  while(true)
+    {
+      List.Empty();
+
+      for(ushort c = 0; c < Char->GetEquipmentSlots(); ++c)
+	{
+	  Entry = Char->GetEquipmentName(c);
+	  Entry << ':';
+	  Entry.resize(20, ' ');
+	  item* Equipment = Char->GetEquipment(c);
+
+	  if(Equipment)
+	    {
+	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
+	      Char->AddSpecialEquipmentInfo(Entry, c);
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), true, Equipment->AllowAlphaEverywhere());
+	    }
+	  else
+	    {
+	      Entry += Char->GetBodyPartOfEquipment(c) ? "-" : "can't use";
+	      List.AddEntry(Entry, LIGHT_GRAY, 20, igraph::GetTransparentTile());
+	    }
+	}
+
+      game::DrawEverythingNoBlit();
+      game::SetStandardListAttributes(List);
+      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
+      Chosen = List.Draw();
+
+      if(Chosen >= Char->GetEquipmentSlots())
+	break;
+
+      EquipmentChanged = Char->TryToChangeEquipment(Chosen);
+    }
+
+  if(EquipmentChanged)
+    Char->DexterityAction(5);
+
+  return EquipmentChanged;
+}
+
+bool commandsystem::ScrollMessagesDown(character*)
+{
+  msgsystem::ScrollDown();
+  return false;
+}
+
+bool commandsystem::ScrollMessagesUp(character*)
+{
+  msgsystem::ScrollUp();
+  return false;
+}
+
+bool commandsystem::ShowWeaponSkills(character* Char)
+{
+  felist List("Your experience in weapon categories");
+  List.AddDescription("");
+  List.AddDescription("Category name                 Level     Points    Needed    Battle bonus");
+  bool Something = false;
+
+  for(ushort c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
+    {
+      cweaponskill* Skill = Char->GetCWeaponSkill(c);
+
+      if(Skill->GetHits())
+	{
+	  std::string Buffer = Skill->GetName();
+	  Buffer.resize(30, ' ');
+	  Buffer << Skill->GetLevel();
+	  Buffer.resize(40, ' ');
+	  Buffer << Skill->GetHits();
+	  Buffer.resize(50, ' ');
+
+	  if(Skill->GetLevel() != 10)
+	    Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits());
+	  else
+	    Buffer << '-';
+
+	  Buffer.resize(60, ' ');
+	  Buffer << '+' << int(Skill->GetBonus() - 100) << '%';
+	  List.AddEntry(Buffer, LIGHT_GRAY);
+	  Something = true;
+	}
+    }
+
+  if(Char->AddSpecialSkillInfo(List))
+    Something = true;
+
+  if(Something)
+    {
+      game::SetStandardListAttributes(List);
+      List.Draw();
+    }
+  else
+    ADD_MESSAGE("You are not experienced in any weapon skill yet!");
+
+  return false;
+}
+
+bool commandsystem::WieldInRightArm(character* Char)
+{
+  if(!Char->CanUseEquipment())
+    ADD_MESSAGE("You cannot wield anything.");
+  else if(Char->TryToChangeEquipment(RIGHT_WIELDED_INDEX))
+    {
+      Char->DexterityAction(5);
+      return true;
+    }
+
+  return false;
+}
+
+bool commandsystem::WieldInLeftArm(character* Char)
+{
+  if(!Char->CanUseEquipment())
+    ADD_MESSAGE("You cannot wield anything.");
+  else if(Char->TryToChangeEquipment(LEFT_WIELDED_INDEX))
+    {
+      Char->DexterityAction(5);
+      return true;
+    }
+
+  return false;
+}
+
+bool commandsystem::Search(character* Char)
+{
+  Char->Search(Char->GetAttribute(PERCEPTION) << 2);
+  return true;
+}
+
+#ifdef WIZARD
+
+bool commandsystem::WizardMode(character* Char)
+{
+  if(!game::WizardModeIsActive())
+    {
+      if(game::BoolQuestion("Do you want to cheat, cheater? This action cannot be undone. [y/N]"))
+	{
+	  game::ActivateWizardMode();
+	  ADD_MESSAGE("Wizard mode activated.");
+
+	  for(ushort x = 0; x < 5; ++x)
+	    Char->GetStack()->AddItem(new scrollofwishing);
+
+	  if(game::IsInWilderness())
+	    {
+	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+	      game::GetWorldMap()->SendNewDrawRequest();
+	    }
+	  else
+	    {
+	      game::LoadWorldMap();
+	      vector2d ElpuriCavePos = game::GetWorldMap()->GetEntryPos(0, ELPURI_CAVE);
+	      game::GetWorldMap()->GetWSquare(ElpuriCavePos)->ChangeOWTerrain(new elpuricave);
+	      game::GetWorldMap()->RevealEnvironment(ElpuriCavePos, 1);
+	      game::SaveWorldMap();
+	    }
+
+	  game::Save();
+	  game::Save(game::GetAutoSaveFileName());
+
+	}
+    }
+  else
+    {
+      ADD_MESSAGE("Got some scrolls of wishing.");
+
+      for(ushort x = 0; x < 5; ++x)
+	Char->GetStack()->AddItem(new scrollofwishing);
+    }
+
+  return false;
+}
+
+bool commandsystem::RaiseStats(character* Char)
+{
+  Char->RaiseStats();
+  return false;
+}
+
+bool commandsystem::LowerStats(character* Char)
+{
+  Char->LowerStats();
+  return false;
+}
+
+bool commandsystem::GainAllItems(character* Char)
+{
+  itemvector AllItems;
+  protosystem::CreateEveryItem(AllItems);
+  stack* Stack = game::IsInWilderness() ? Char->GetStack() : Char->GetStackUnder();
+
+  for(ushort c = 0; c < AllItems.size(); ++c)
+    Stack->AddItem(AllItems[c]);
+
+  return false;
+}
+
+bool commandsystem::SeeWholeMap(character*)
+{
+  game::SeeWholeMap();
+  return false;
+}
+
+bool commandsystem::WalkThroughWalls(character*)
+{
+  game::GoThroughWalls();
+  return false;
+}
+
+bool commandsystem::RaiseGodRelations(character*)
+{
+  for(ushort c = 1; c <= GODS; ++c)
+    game::GetGod(c)->AdjustRelation(50);
+
+  return false;
+}
+
+bool commandsystem::LowerGodRelations(character*)
+{
+  for(ushort c = 1; c <= GODS; ++c)
+    game::GetGod(c)->AdjustRelation(-50);
+
+  return false;
+}
+
+bool commandsystem::GainDivineKnowledge(character*)
+{
+  for(ushort c = 1; c <= GODS; ++c)
+    game::GetGod(c)->SetIsKnown(true);
+
   return false;
 }
 
@@ -1234,123 +1413,6 @@ bool commandsystem::SecretKnowledge(character* Char)
   return false;
 }
 
-bool commandsystem::AssignName(character* Char)
-{
-  game::PositionQuestion("What do you want to name? [press 'n' over a tame creature or ESC to exit]", Char->GetPos(), 0, &game::NameKeyHandler);
-  return false;
-}
-
-bool commandsystem::EquipmentScreen(character* Char)
-{
-  if(!Char->CanUseEquipment())
-    {
-      ADD_MESSAGE("You cannot use equipment.");
-      return false;
-    }
-
-  ushort Chosen = 0;
-  bool EquipmentChanged = false;
-  felist List("Equipment menu");
-  std::string Entry;
-
-  while(true)
-    {
-      List.Empty();
-
-      for(ushort c = 0; c < Char->GetEquipmentSlots(); ++c)
-	{
-	  Entry = Char->GetEquipmentName(c) + ":";
-	  Entry.resize(20, ' ');
-	  item* Equipment = Char->GetEquipment(c);
-
-	  if(Equipment)
-	    {
-	      Equipment->AddInventoryEntry(Char, Entry, 1, true);
-	      Char->AddSpecialEquipmentInfo(Entry, c);
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, Equipment->GetPicture(), true, Equipment->AllowAlphaEverywhere());
-	    }
-	  else
-	    {
-	      Entry += Char->GetBodyPartOfEquipment(c) ? "-" : "can't use";
-	      List.AddEntry(Entry, LIGHT_GRAY, 20, igraph::GetTransparentTile());
-	    }
-	}
-
-      game::DrawEverythingNoBlit();
-      game::SetStandardListAttributes(List);
-      List.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
-      Chosen = List.Draw();
-
-      if(Chosen >= Char->GetEquipmentSlots())
-	break;
-
-      EquipmentChanged = Char->TryToChangeEquipment(Chosen);
-    }
-
-  if(EquipmentChanged)
-    Char->DexterityAction(5);
-
-  return EquipmentChanged;
-}
-
-bool commandsystem::ScrollMessagesDown(character*)
-{
-  msgsystem::ScrollDown();
-  return false;
-}
-
-bool commandsystem::ScrollMessagesUp(character*)
-{
-  msgsystem::ScrollUp();
-  return false;
-}
-
-bool commandsystem::ShowWeaponSkills(character* Char)
-{
-  felist List("Your experience in weapon categories");
-  List.AddDescription("");
-  List.AddDescription("Category name                 Level     Points    Needed    Battle bonus");
-  bool Something = false;
-
-  for(ushort c = 0; c < Char->GetAllowedWeaponSkillCategories(); ++c)
-    {
-      cweaponskill* Skill = Char->GetCWeaponSkill(c);
-
-      if(Skill->GetHits())
-	{
-	  std::string Buffer = Skill->GetName();
-	  Buffer.resize(30, ' ');
-	  Buffer << Skill->GetLevel();
-	  Buffer.resize(40, ' ');
-	  Buffer << Skill->GetHits();
-	  Buffer.resize(50, ' ');
-
-	  if(Skill->GetLevel() != 10)
-	    Buffer << (Skill->GetLevelMap(Skill->GetLevel() + 1) - Skill->GetHits());
-	  else
-	    Buffer << '-';
-
-	  Buffer.resize(60, ' ');
-	  Buffer << '+' << int(Skill->GetBonus() - 100) << '%';
-	  List.AddEntry(Buffer, LIGHT_GRAY);
-	  Something = true;
-	}
-    }
-
-  if(Char->AddSpecialSkillInfo(List))
-    Something = true;
-
-  if(Something)
-    {
-      game::SetStandardListAttributes(List);
-      List.Draw();
-    }
-  else
-    ADD_MESSAGE("You are not experienced in any weapon skill yet!");
-
-  return false;
-}
-
 bool commandsystem::DetachBodyPart(character* Char)
 {
   Char->DetachBodyPart();
@@ -1399,40 +1461,4 @@ bool commandsystem::LevelTeleport(character*)
   return game::TryTravel(game::GetCurrentDungeonIndex(), Level - 1, RANDOM, true);
 }
 
-bool commandsystem::WieldInRightArm(character* Char)
-{
-  if(!Char->CanUseEquipment())
-    ADD_MESSAGE("You cannot wield anything.");
-  else if(Char->TryToChangeEquipment(RIGHT_WIELDED_INDEX))
-    {
-      Char->DexterityAction(5);
-      return true;
-    }
-
-  return false;
-}
-
-bool commandsystem::WieldInLeftArm(character* Char)
-{
-  if(!Char->CanUseEquipment())
-    ADD_MESSAGE("You cannot wield anything.");
-  else if(Char->TryToChangeEquipment(LEFT_WIELDED_INDEX))
-    {
-      Char->DexterityAction(5);
-      return true;
-    }
-
-  return false;
-}
-
-bool commandsystem::ShowBattleInfo(character* Char)
-{
-  Char->ShowBattleInfo();
-  return false;
-}
-
-bool commandsystem::Search(character* Char)
-{
-  Char->Search(Char->GetAttribute(PERCEPTION) << 2);
-  return true;
-}
+#endif

@@ -31,7 +31,7 @@ struct vector2d
   vector2d  operator >>  (uchar S) const      { return vector2d(X >> S, Y >> S); }
   vector2d& operator >>= (uchar S)	      { X >>= S; Y >>= S; return *this; }
   ulong GetLengthSquare() const		      { return long(X) * long(X) + long(Y) * long(Y); }
-  bool IsAdjacent(vector2d V) const { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; } // Also returns true if TPos == this
+  bool IsAdjacent(vector2d V) const	      { return V.X >= X - 1 && V.X <= X + 1 && V.Y <= Y + 1 && V.Y >= Y - 1; } // Also returns true if V == this
   short X, Y;
 };
 

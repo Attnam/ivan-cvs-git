@@ -5,33 +5,36 @@
 #pragma warning(disable : 4786)
 #endif
 
-#include "rect.h"
-#include "save.h"
-#include "femath.h"
+#include <list>
+#include <map>
 
-#define DATA_MEMBER(type, name)\
+#include "rect.h"
+#include "femath.h"
+#include "festring.h"
+
+#define SCRIPT_MEMBER(type, name)\
  public:\
   const type* Get##name() const { return name##Holder.GetMember(); }\
  protected:\
-  datamember< type > name##Holder;
+  scriptmember< type > name##Holder;
 
-#define DATA_MEMBER_WITH_BASE(type, name)\
+#define SCRIPT_MEMBER_WITH_BASE(type, name)\
  public:\
   const type* Get##name() const { return GetMemberOf(name##Holder, Base, &scripttype::Get##name); }\
  protected:\
-  datamember< type > name##Holder;
+  scriptmember< type > name##Holder;
 
-#define DATA_BOOL(name)\
+#define SCRIPT_BOOL(name)\
  public:\
   const bool* name() const { return name##Holder.GetMember(); }\
  protected:\
-  datamember<bool> name##Holder;
+  scriptmember<bool> name##Holder;
 
-#define DATA_BOOL_WITH_BASE(name)\
+#define SCRIPT_BOOL_WITH_BASE(name)\
  public:\
   const bool* name() const { return GetMemberOf(name##Holder, Base, &scripttype::name); }\
  protected:\
-  datamember<bool> name##Holder;
+  scriptmember<bool> name##Holder;
 
 class glterrain;
 class olterrain;
@@ -39,40 +42,42 @@ class character;
 class item;
 class material;
 class scriptwithbase;
+class outputfile;
+class inputfile;
 
-class datamemberbase
+class scriptmemberbase
 {
  public:
-  virtual ~datamemberbase() { }
+  virtual ~scriptmemberbase() { }
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile&) const = 0;
   virtual void Load(inputfile&) = 0;
-  virtual void Replace(datamemberbase&) = 0;
+  virtual void Replace(scriptmemberbase&) = 0;
 };
 
-template <class type> class datamember : public datamemberbase
+template <class type> class scriptmember : public scriptmemberbase
 {
  public:
-  virtual ~datamember() { delete Member; }
-  datamember() : Member(0) { }
-  datamember(const datamember& Data) : datamemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
-  datamember& operator=(const datamember&);
+  virtual ~scriptmember() { delete Member; }
+  scriptmember() : Member(0) { }
+  scriptmember(const scriptmember& Data) : scriptmemberbase(Data), Member(Data.Member ? new type(*Data.Member) : 0) {  }
+  scriptmember& operator=(const scriptmember&);
   type* GetMember() const { return Member; }
   void SetMember(type* What) { Member = What; }
   virtual void ReadFrom(inputfile&);
-  virtual void Replace(datamemberbase&);
+  virtual void Replace(scriptmemberbase&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
   type* Member;
 };
 
-template <class type, class scripttype> inline const type* GetMemberOf(const datamember<type>& Data, const scriptwithbase* Base, const type* (scripttype::*MemberRetriever)() const)
+template <class type, class scripttype> inline const type* GetMemberOf(const scriptmember<type>& Data, const scriptwithbase* Base, const type* (scripttype::*MemberRetriever)() const)
 {
   return Data.GetMember() ? Data.GetMember() : Base ? (static_cast<const scripttype*>(Base)->*MemberRetriever)() : 0;
 }
 
-template <class type> inline datamember<type>& datamember<type>::operator=(const datamember<type>& Data)
+template <class type> inline scriptmember<type>& scriptmember<type>::operator=(const scriptmember<type>& Data)
 {
   if(Member)
     {
@@ -90,58 +95,18 @@ template <class type> inline datamember<type>& datamember<type>::operator=(const
   return *this;
 }
 
-template <class type> inline void datamember<type>::ReadFrom(inputfile& SaveFile)
-{
-  if(!Member)
-    Member = new type;
-
-  ReadData(*Member, SaveFile);
-}
-
-template <class type> inline void datamember<type>::Replace(datamemberbase& Base)
-{
-  datamember<type>& Data = static_cast<datamember<type>&>(Base);
-
-  if(Data.Member)
-    {
-      delete Member;
-      Member = Data.Member;
-      Data.Member = 0;
-    }
-}
-
-template <class type> inline void datamember<type>::Save(outputfile& SaveFile) const
-{
-  if(Member)
-    {
-      SaveFile.Put(1);
-      SaveFile << *Member;
-    }
-  else
-    SaveFile.Put(0);
-}
-
-template <class type> inline void datamember<type>::Load(inputfile& SaveFile)
-{
-  if(SaveFile.Get())
-    {
-      Member = new type;
-      SaveFile >> *Member;
-    }
-}
-
 class script
 {
  public:
-  typedef std::map<std::string, datamemberbase script::*> datamap;
+  typedef std::map<const char*, scriptmemberbase script::*, festring::charcomparer> datamap;
   virtual ~script() { }
   virtual void ReadFrom(inputfile&) = 0;
   virtual void Save(outputfile& SaveFile) const { SaveDataMap(GetDataMap(), SaveFile); }
   virtual void Load(inputfile& SaveFile) { LoadDataMap(GetDataMap(), SaveFile); }
  protected:
   bool ReadMember(inputfile&, const std::string&);
-  virtual datamemberbase* GetDataFromMap(const datamap&, const std::string&);
-  virtual datamemberbase* GetData(const std::string& String) { return GetDataFromMap(GetDataMap(), String); }
+  virtual scriptmemberbase* GetDataFromMap(const datamap&, const char*);
+  virtual scriptmemberbase* GetData(const char* String) { return GetDataFromMap(GetDataMap(), String); }
   virtual const datamap& GetDataMap() const = 0;
   virtual void SaveDataMap(const datamap&, outputfile&) const;
   virtual void LoadDataMap(const datamap&, inputfile&);
@@ -174,9 +139,9 @@ class posscript : public script
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   bool Random;
-  DATA_MEMBER(vector2d, Vector);
-  DATA_MEMBER(uchar, Flags);
-  DATA_MEMBER(rect, Borders);
+  SCRIPT_MEMBER(vector2d, Vector);
+  SCRIPT_MEMBER(uchar, Flags);
+  SCRIPT_MEMBER(rect, Borders);
 };
 
 class materialscript : public script
@@ -192,7 +157,7 @@ class materialscript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  DATA_MEMBER(ulong, Volume);
+  SCRIPT_MEMBER(ulong, Volume);
   ushort Config;
 };
 
@@ -209,29 +174,20 @@ class basecontentscript : public script
   static void InitDataMap();
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
-  virtual datamemberbase* GetData(const std::string&);
+  virtual scriptmemberbase* GetData(const char*);
   virtual ushort SearchCodeName(const std::string&) const = 0;
   virtual const char* GetClassId() const = 0;
   static datamap DataMap;
-  DATA_MEMBER(materialscript, MainMaterial);
-  DATA_MEMBER(materialscript, SecondaryMaterial);
-  DATA_MEMBER(materialscript, ContainedMaterial);
-  DATA_MEMBER(ulong, Parameters);
+  SCRIPT_MEMBER(materialscript, MainMaterial);
+  SCRIPT_MEMBER(materialscript, SecondaryMaterial);
+  SCRIPT_MEMBER(materialscript, ContainedMaterial);
+  SCRIPT_MEMBER(ulong, Parameters);
   ushort ContentType;
   ushort Config;
   bool Random;
 };
 
 inline bool IsValidScript(const basecontentscript* S) { return S->IsValid(); }
-
-template <class type> inline bool IsValidScript(const std::list<type>* List)
-{
-  for(typename std::list<type>::const_iterator i = List->begin(); i != List->end(); ++i)
-    if(IsValidScript(&*i))
-      return true;
-
-  return false;
-}
 
 template <class type> class contentscripttemplate : public basecontentscript
 {
@@ -252,10 +208,10 @@ class contentscript<character> : public contentscripttemplate<character>
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual const char* GetClassId() const;
   static datamap DataMap;
-  DATA_MEMBER(ushort, Team);
-  DATA_MEMBER(std::list<contentscript<item> >, Inventory);
-  DATA_BOOL(IsMaster);
-  DATA_MEMBER(std::vector<vector2d>, WayPoint);
+  SCRIPT_MEMBER(ushort, Team);
+  SCRIPT_MEMBER(std::list<contentscript<item> >, Inventory);
+  SCRIPT_BOOL(IsMaster);
+  SCRIPT_MEMBER(std::vector<vector2d>, WayPoint);
 };
 
 class contentscript<item> : public contentscripttemplate<item>
@@ -268,16 +224,18 @@ class contentscript<item> : public contentscripttemplate<item>
   virtual const datamap& GetDataMap() const { return DataMap; }
   virtual const char* GetClassId() const;
   static datamap DataMap;
-  DATA_MEMBER(ushort, Team);
-  DATA_BOOL(IsActive);
-  DATA_MEMBER(uchar, SideStackIndex);
-  DATA_MEMBER(short, Enchantment);
-  DATA_MEMBER(ulong, MinPrice);
-  DATA_MEMBER(ulong, MaxPrice);
-  DATA_MEMBER(ulong, Category);
-  DATA_MEMBER(std::list<contentscript<item> >, ItemsInside);
-  DATA_MEMBER(uchar, Chance);
+  SCRIPT_MEMBER(ushort, Team);
+  SCRIPT_BOOL(IsActive);
+  SCRIPT_MEMBER(uchar, SideStackIndex);
+  SCRIPT_MEMBER(short, Enchantment);
+  SCRIPT_MEMBER(ulong, MinPrice);
+  SCRIPT_MEMBER(ulong, MaxPrice);
+  SCRIPT_MEMBER(ulong, Category);
+  SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(uchar, Chance);
 };
+
+bool IsValidScript(const std::list<contentscript<item> >*);
 
 class contentscript<glterrain> : public contentscripttemplate<glterrain>
 {
@@ -301,11 +259,11 @@ class contentscript<olterrain> : public contentscripttemplate<olterrain>
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   virtual const char* GetClassId() const;
-  DATA_MEMBER(uchar, VisualEffects);
-  DATA_MEMBER(uchar, AttachedArea);
-  DATA_MEMBER(uchar, AttachedEntry);
-  DATA_MEMBER(std::string, Text);
-  DATA_MEMBER(std::list<contentscript<item> >, ItemsInside);
+  SCRIPT_MEMBER(uchar, VisualEffects);
+  SCRIPT_MEMBER(uchar, AttachedArea);
+  SCRIPT_MEMBER(uchar, AttachedEntry);
+  SCRIPT_MEMBER(std::string, Text);
+  SCRIPT_MEMBER(std::list<contentscript<item> >, ItemsInside);
 };
 
 class squarescript : public script
@@ -317,14 +275,14 @@ class squarescript : public script
  protected:
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
-  DATA_MEMBER(posscript, Position);
-  DATA_MEMBER(contentscript<character>, Character);
-  DATA_MEMBER(std::list<contentscript<item> >, Items);
-  DATA_MEMBER(contentscript<glterrain>, GTerrain);
-  DATA_MEMBER(contentscript<olterrain>, OTerrain);
-  DATA_MEMBER(interval, Times);
-  DATA_BOOL(AttachRequired);
-  DATA_MEMBER(uchar, EntryIndex);
+  SCRIPT_MEMBER(posscript, Position);
+  SCRIPT_MEMBER(contentscript<character>, Character);
+  SCRIPT_MEMBER(std::list<contentscript<item> >, Items);
+  SCRIPT_MEMBER(contentscript<glterrain>, GTerrain);
+  SCRIPT_MEMBER(contentscript<olterrain>, OTerrain);
+  SCRIPT_MEMBER(interval, Times);
+  SCRIPT_BOOL(AttachRequired);
+  SCRIPT_MEMBER(uchar, EntryIndex);
 };
 
 template <class type, class contenttype = contentscript<type> > class contentmap : public script
@@ -343,8 +301,8 @@ template <class type, class contenttype = contentscript<type> > class contentmap
   static datamap DataMap;
   std::pair<char, contenttype*>** ContentMap;
   std::map<char, contenttype> SymbolMap;
-  DATA_MEMBER(vector2d, Size);
-  DATA_MEMBER(vector2d, Pos);
+  SCRIPT_MEMBER(vector2d, Size);
+  SCRIPT_MEMBER(vector2d, Pos);
 };
 
 typedef contentmap<item, std::list<contentscript<item> > > itemcontentmap;
@@ -357,7 +315,7 @@ class roomscript : public scriptwithbase
  public:
   typedef roomscript scripttype;
   void ReadFrom(inputfile&);
-  const std::list<squarescript>& GetSquare() const { return Square; }
+  const std::list<squarescript>& GetSquare() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
@@ -365,25 +323,25 @@ class roomscript : public scriptwithbase
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   std::list<squarescript> Square;
-  DATA_MEMBER_WITH_BASE(charactercontentmap, CharacterMap);
-  DATA_MEMBER_WITH_BASE(itemcontentmap, ItemMap);
-  DATA_MEMBER_WITH_BASE(glterraincontentmap, GTerrainMap);
-  DATA_MEMBER_WITH_BASE(olterraincontentmap, OTerrainMap);
-  DATA_MEMBER_WITH_BASE(squarescript, WallSquare);
-  DATA_MEMBER_WITH_BASE(squarescript, FloorSquare);
-  DATA_MEMBER_WITH_BASE(squarescript, DoorSquare);
-  DATA_MEMBER_WITH_BASE(region, Size);
-  DATA_MEMBER_WITH_BASE(region, Pos);
-  DATA_BOOL_WITH_BASE(AltarPossible);
-  DATA_BOOL_WITH_BASE(GenerateDoor);
-  DATA_BOOL_WITH_BASE(GenerateTunnel);
-  DATA_MEMBER_WITH_BASE(uchar, DivineMaster);
-  DATA_BOOL_WITH_BASE(GenerateLanterns);
-  DATA_MEMBER_WITH_BASE(ushort, Type);
-  DATA_BOOL_WITH_BASE(GenerateFountains);
-  DATA_BOOL_WITH_BASE(AllowLockedDoors);
-  DATA_BOOL_WITH_BASE(AllowBoobyTrappedDoors);
-  DATA_MEMBER_WITH_BASE(uchar, Shape);
+  SCRIPT_MEMBER_WITH_BASE(charactercontentmap, CharacterMap);
+  SCRIPT_MEMBER_WITH_BASE(itemcontentmap, ItemMap);
+  SCRIPT_MEMBER_WITH_BASE(glterraincontentmap, GTerrainMap);
+  SCRIPT_MEMBER_WITH_BASE(olterraincontentmap, OTerrainMap);
+  SCRIPT_MEMBER_WITH_BASE(squarescript, WallSquare);
+  SCRIPT_MEMBER_WITH_BASE(squarescript, FloorSquare);
+  SCRIPT_MEMBER_WITH_BASE(squarescript, DoorSquare);
+  SCRIPT_MEMBER_WITH_BASE(region, Size);
+  SCRIPT_MEMBER_WITH_BASE(region, Pos);
+  SCRIPT_BOOL_WITH_BASE(AltarPossible);
+  SCRIPT_BOOL_WITH_BASE(GenerateDoor);
+  SCRIPT_BOOL_WITH_BASE(GenerateTunnel);
+  SCRIPT_MEMBER_WITH_BASE(uchar, DivineMaster);
+  SCRIPT_BOOL_WITH_BASE(GenerateLanterns);
+  SCRIPT_MEMBER_WITH_BASE(ushort, Type);
+  SCRIPT_BOOL_WITH_BASE(GenerateFountains);
+  SCRIPT_BOOL_WITH_BASE(AllowLockedDoors);
+  SCRIPT_BOOL_WITH_BASE(AllowBoobyTrappedDoors);
+  SCRIPT_MEMBER_WITH_BASE(uchar, Shape);
 };
 
 class levelscript : public scriptwithbase
@@ -391,8 +349,8 @@ class levelscript : public scriptwithbase
  public:
   typedef levelscript scripttype;
   void ReadFrom(inputfile&);
-  const std::list<squarescript>& GetSquare() const { return Square; }
-  const std::list<roomscript>& GetRoom() const { return Room; }
+  const std::list<squarescript>& GetSquare() const;
+  const std::list<roomscript>& GetRoom() const;
   void Combine(levelscript&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -403,27 +361,27 @@ class levelscript : public scriptwithbase
   static datamap DataMap;
   std::list<squarescript> Square;
   std::list<roomscript> Room;
-  DATA_MEMBER_WITH_BASE(roomscript, RoomDefault);
-  DATA_MEMBER_WITH_BASE(squarescript, FillSquare);
-  DATA_MEMBER_WITH_BASE(std::string, LevelMessage);
-  DATA_MEMBER_WITH_BASE(vector2d, Size);
-  DATA_MEMBER_WITH_BASE(interval, Items);
-  DATA_MEMBER_WITH_BASE(interval, Rooms);
-  DATA_BOOL_WITH_BASE(GenerateMonsters);
-  DATA_BOOL_WITH_BASE(IsOnGround);
-  DATA_MEMBER_WITH_BASE(uchar, TeamDefault);
-  DATA_MEMBER_WITH_BASE(ulong, AmbientLight);
-  DATA_MEMBER_WITH_BASE(std::string, Description);
-  DATA_MEMBER_WITH_BASE(uchar, LOSModifier);
-  DATA_BOOL_WITH_BASE(IgnoreDefaultSpecialSquares);
-  DATA_MEMBER_WITH_BASE(short, DifficultyBase);
-  DATA_MEMBER_WITH_BASE(short, DifficultyDelta);
-  DATA_MEMBER_WITH_BASE(short, MonsterAmountBase);
-  DATA_MEMBER_WITH_BASE(short, MonsterAmountDelta);
-  DATA_MEMBER_WITH_BASE(short, MonsterGenerationIntervalBase);
-  DATA_MEMBER_WITH_BASE(short, MonsterGenerationIntervalDelta);
-  DATA_BOOL_WITH_BASE(AutoReveal);
-  DATA_MEMBER_WITH_BASE(std::string, ShortDescription);
+  SCRIPT_MEMBER_WITH_BASE(roomscript, RoomDefault);
+  SCRIPT_MEMBER_WITH_BASE(squarescript, FillSquare);
+  SCRIPT_MEMBER_WITH_BASE(std::string, LevelMessage);
+  SCRIPT_MEMBER_WITH_BASE(vector2d, Size);
+  SCRIPT_MEMBER_WITH_BASE(interval, Items);
+  SCRIPT_MEMBER_WITH_BASE(interval, Rooms);
+  SCRIPT_BOOL_WITH_BASE(GenerateMonsters);
+  SCRIPT_BOOL_WITH_BASE(IsOnGround);
+  SCRIPT_MEMBER_WITH_BASE(uchar, TeamDefault);
+  SCRIPT_MEMBER_WITH_BASE(ulong, AmbientLight);
+  SCRIPT_MEMBER_WITH_BASE(std::string, Description);
+  SCRIPT_MEMBER_WITH_BASE(uchar, LOSModifier);
+  SCRIPT_BOOL_WITH_BASE(IgnoreDefaultSpecialSquares);
+  SCRIPT_MEMBER_WITH_BASE(short, DifficultyBase);
+  SCRIPT_MEMBER_WITH_BASE(short, DifficultyDelta);
+  SCRIPT_MEMBER_WITH_BASE(short, MonsterAmountBase);
+  SCRIPT_MEMBER_WITH_BASE(short, MonsterAmountDelta);
+  SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalBase);
+  SCRIPT_MEMBER_WITH_BASE(short, MonsterGenerationIntervalDelta);
+  SCRIPT_BOOL_WITH_BASE(AutoReveal);
+  SCRIPT_MEMBER_WITH_BASE(std::string, ShortDescription);
 };
 
 class dungeonscript : public script
@@ -433,7 +391,7 @@ class dungeonscript : public script
   dungeonscript();
   virtual ~dungeonscript();
   virtual void ReadFrom(inputfile&);
-  const std::map<uchar, levelscript>& GetLevel() const { return Level; }
+  const std::map<uchar, levelscript>& GetLevel() const;
   void RandomizeLevels();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -443,10 +401,10 @@ class dungeonscript : public script
   static datamap DataMap;
   std::map<uchar, levelscript> Level;
   std::list<std::pair<interval, levelscript> > RandomLevel;
-  DATA_MEMBER(levelscript, LevelDefault);
-  DATA_MEMBER(uchar, Levels);
-  DATA_MEMBER(std::string, Description);
-  DATA_MEMBER(std::string, ShortDescription);
+  SCRIPT_MEMBER(levelscript, LevelDefault);
+  SCRIPT_MEMBER(uchar, Levels);
+  SCRIPT_MEMBER(std::string, Description);
+  SCRIPT_MEMBER(std::string, ShortDescription);
 };
 
 class teamscript : public script
@@ -454,7 +412,7 @@ class teamscript : public script
  public:
   typedef teamscript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::vector<std::pair<uchar, uchar> >& GetRelation() const { return Relation; }
+  const std::vector<std::pair<uchar, uchar> >& GetRelation() const;
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   static void InitDataMap();
@@ -462,7 +420,7 @@ class teamscript : public script
   virtual const datamap& GetDataMap() const { return DataMap; }
   static datamap DataMap;
   std::vector<std::pair<uchar, uchar> > Relation;
-  DATA_MEMBER(ushort, KillEvilness);
+  SCRIPT_MEMBER(ushort, KillEvilness);
 };
 
 class gamescript : public script
@@ -470,8 +428,8 @@ class gamescript : public script
  public:
   typedef gamescript scripttype;
   virtual void ReadFrom(inputfile&);
-  const std::list<std::pair<uchar, teamscript> >& GetTeam() const { return Team; }
-  const std::map<uchar, dungeonscript>& GetDungeon() const { return Dungeon; }
+  const std::list<std::pair<uchar, teamscript> >& GetTeam() const;
+  const std::map<uchar, dungeonscript>& GetDungeon() const;
   void RandomizeLevels();
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
@@ -481,8 +439,8 @@ class gamescript : public script
   static datamap DataMap;
   std::list<std::pair<uchar, teamscript> > Team;
   std::map<uchar, dungeonscript> Dungeon;
-  DATA_MEMBER(uchar, Dungeons);
-  DATA_MEMBER(uchar, Teams);
+  SCRIPT_MEMBER(uchar, Dungeons);
+  SCRIPT_MEMBER(uchar, Teams);
 };
 
 outputfile& operator<<(outputfile&, const gamescript*);

@@ -11,7 +11,6 @@
 #endif
 
 #include "whandler.h"
-#include "festring.h"
 #include "hscore.h"
 #include "colorbit.h"
 #include "message.h"
@@ -30,6 +29,7 @@
 #include "game.h"
 #include "graphics.h"
 #include "bitmap.h"
+#include "save.h"
 
 #define SAVE_FILE_VERSION 112 // Increment this if changes make savefiles incompatible
 
@@ -57,7 +57,6 @@ ulong game::NextItemID = 1;
 ulong game::NextExplosionID = 1;
 team** game::Team;
 ulong game::LOSTurns;
-vector2d game::ScreenSize(42, 26);
 vector2d game::CursorPos(-1, -1);
 bool game::Zoom;
 ushort** game::CurrentRedLuxTable;
@@ -87,11 +86,11 @@ character* game::Petrus = 0;
 character* game::Haedlac = 0;
 
 std::string game::AutoSaveFileName = game::GetSaveDir() + "AutoSave";
-std::string game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
-std::string game::LockDescription[] = { "round", "square", "triangular", "broken" };
+const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-", "C+", "C", "C-", "C--" };
+const char* const game::LockDescription[] = { "round", "square", "triangular", "broken" };
 god** game::God;
 
-int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+const int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
 
@@ -100,11 +99,7 @@ ushort*** game::LuxTable = 0;
 ushort* game::LuxTableSize = 0;
 bool game::Running;
 character* game::Player;
-vector2d game::Camera(0,0);
-bool game::WizardMode;
-uchar game::SeeWholeMapCheatMode;
-bool game::GoThroughWallsCheat;
-bool KeyIsOK(char);
+vector2d game::Camera(0, 0);
 ulong game::Ticks;
 gamescript* game::GameScript = 0;
 valuemap game::GlobalValueMap;
@@ -118,10 +113,13 @@ level* game::CurrentLevel;
 wsquare*** game::CurrentWSquareMap;
 lsquare*** game::CurrentLSquareMap;
 std::string game::DefaultPolymorphTo;
+bool game::WizardMode;
+uchar game::SeeWholeMapCheatMode;
+bool game::GoThroughWallsCheat;
 
-vector2d game::CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
+const dangermap& game::GetDangerMap() { return DangerMap; }
 
 void game::InitScript()
 {
@@ -216,9 +214,6 @@ bool game::Init(const std::string& Name)
 	iosystem::TextScreen("Generating game...\n\nThis may take some time, please wait.", WHITE, false, &BusyAnimation);
 	InitScript();
 	msgsystem::Format();
-	WizardMode = false;
-	SeeWholeMapCheatMode = MAP_HIDDEN;
-	GoThroughWallsCheat = false;
 	LOSTurns = 1;
 	CreateTeams();
 	CreateGods();
@@ -265,6 +260,9 @@ bool game::Init(const std::string& Name)
 	  }*/
 
 	ADD_MESSAGE("Game generated successfully.");
+	WizardMode = false;
+	SeeWholeMapCheatMode = MAP_HIDDEN;
+	GoThroughWallsCheat = false;
 	return true;
       }
     default:
@@ -362,47 +360,47 @@ bool game::LevelLOSHandler(long X, long Y)
 
 void game::UpdateCameraX()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X >> 1)
+  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Player->GetPos().X < GetScreenXSize() >> 1)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
-    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
+    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenXSize())
       return;
     else
-      Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
+      Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
   else
-    if(Camera.X == Player->GetPos().X - (GetScreenSize().X >> 1))
+    if(Camera.X == Player->GetPos().X - (GetScreenXSize() >> 1))
       return;
     else
-      Camera.X = Player->GetPos().X - (GetScreenSize().X >> 1);
+      Camera.X = Player->GetPos().X - (GetScreenXSize() >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraY()
 {
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y >> 1)
+  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Player->GetPos().Y < GetScreenYSize() >> 1)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
-    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
+    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenYSize())
       return;
     else
-      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
+      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
   else
-    if(Camera.Y == Player->GetPos().Y - (GetScreenSize().Y >> 1))
+    if(Camera.Y == Player->GetPos().Y - (GetScreenYSize() >> 1))
       return;
     else
-      Camera.Y = Player->GetPos().Y - (GetScreenSize().Y >> 1);
+      Camera.Y = Player->GetPos().Y - (GetScreenYSize() >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
-const char* game::Insult()
+const char* game::Insult() // convert to array
 {
   switch(RAND() & 15)
     {
@@ -449,7 +447,7 @@ void game::DrawEverything()
 
 bool game::OnScreen(vector2d Pos)
 {
-  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenSize().X && Pos.Y < GetCamera().Y + GetScreenSize().Y)
+  if(Pos.X >= 0 && Pos.Y >= 0 && Pos.X >= Camera.X && Pos.Y >= Camera.Y && Pos.X < GetCamera().X + GetScreenXSize() && Pos.Y < GetCamera().Y + GetScreenYSize())
     return true;
   else
     return false;
@@ -492,8 +490,9 @@ bool game::Save(const std::string& SaveName)
 {
   outputfile SaveFile(SaveName + ".sav");
   SaveFile << ushort(SAVE_FILE_VERSION);
-  SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera << WizardMode << SeeWholeMapCheatMode;
-  SaveFile << GoThroughWallsCheat << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
+  SaveFile << GameScript << CurrentDungeonIndex << CurrentLevelIndex << Camera;
+  SaveFile << WizardMode << SeeWholeMapCheatMode << GoThroughWallsCheat;
+  SaveFile << BaseScore << Ticks << InWilderness << NextCharacterID << NextItemID;
   SaveFile << LOSTurns;
   ulong Seed = RAND();
   femath::SetSeed(Seed);
@@ -542,8 +541,9 @@ uchar game::Load(const std::string& SaveName)
 	return BACK;
     }
 
-  SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera >> WizardMode >> SeeWholeMapCheatMode;
-  SaveFile >> GoThroughWallsCheat >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
+  SaveFile >> GameScript >> CurrentDungeonIndex >> CurrentLevelIndex >> Camera;
+  SaveFile >> WizardMode >> SeeWholeMapCheatMode >> GoThroughWallsCheat;
+  SaveFile >> BaseScore >> Ticks >> InWilderness >> NextCharacterID >> NextItemID;
   SaveFile >> LOSTurns;
   femath::SetSeed(ReadType<ulong>(SaveFile));
   SaveFile >> AveragePlayerArmStrength >> AveragePlayerLegStrength >> AveragePlayerDexterity >> AveragePlayerAgility;
@@ -633,42 +633,42 @@ bool game::NoxifyHandler(long X, long Y)
 
 void game::UpdateCameraXWithPos(ushort Coord)
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Coord < GetScreenSize().X >> 1)
+  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Coord < GetScreenXSize() >> 1)
     if(!Camera.X)
       return;
     else
       Camera.X = 0;
-  else if(Coord > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
-    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenSize().X)
+  else if(Coord > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
+    if(Camera.X == GetCurrentArea()->GetXSize() - GetScreenXSize())
       return;
     else
-      Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
+      Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
   else
-    if(Camera.X == Coord - (GetScreenSize().X >> 1))
+    if(Camera.X == Coord - (GetScreenXSize() >> 1))
       return;
     else
-      Camera.X = Coord - (GetScreenSize().X >> 1);
+      Camera.X = Coord - (GetScreenXSize() >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::UpdateCameraYWithPos(ushort Coord)
 {
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Coord < GetScreenSize().Y >> 1)
+  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Coord < GetScreenYSize() >> 1)
     if(!Camera.Y)
       return;
     else
       Camera.Y = 0;
-  else if(Coord > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
-    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenSize().Y)
+  else if(Coord > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
+    if(Camera.Y == GetCurrentArea()->GetYSize() - GetScreenYSize())
       return;
     else
-      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
+      Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
   else
-    if(Camera.Y == Coord - (GetScreenSize().Y >> 1))
+    if(Camera.Y == Coord - (GetScreenYSize() >> 1))
       return;
     else
-      Camera.Y = Coord - (GetScreenSize().Y >> 1);
+      Camera.Y = Coord - (GetScreenYSize() >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -723,9 +723,9 @@ long game::GodScore()
   return Score;
 }
 
-float game::Difficulty()
+float game::GetMinDifficulty()
 {
-  float Base = float(CurrentLevel->GetDifficulty()) / 1000;
+  float Base = float(CurrentLevel->GetDifficulty()) / 5000;
 
   while(true)
     {
@@ -825,16 +825,6 @@ void game::SetPlayer(character* NP)
 
   if(Player)
     Player->SetIsPlayer(true);
-}
-
-void game::SeeWholeMap()
-{
-  if(SeeWholeMapCheatMode < 2)
-    ++SeeWholeMapCheatMode;
-  else
-    SeeWholeMapCheatMode = 0;
-    
-  GetCurrentArea()->SendNewDrawRequest();
 }
 
 void game::InitDungeons()
@@ -972,27 +962,27 @@ void game::CreateTeams()
 std::string game::StringQuestion(const std::string& Topic, vector2d Pos, ushort Color, ushort MinLetters, ushort MaxLetters, bool AllowExit)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0); // pos may be incorrect!
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0); // pos may be incorrect!
   std::string Return = iosystem::StringQuestion(Topic, Pos, Color, MinLetters, MaxLetters, false, AllowExit);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
 
 long game::NumberQuestion(const std::string& Topic, vector2d Pos, ushort Color)
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   long Return = iosystem::NumberQuestion(Topic, Pos, Color, false);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
 
 long game::ScrollBarQuestion(const std::string& Topic, vector2d Pos, long BeginValue, long Step, long Min, long Max, long AbortValue, ushort TopicColor, ushort Color1, ushort Color2, void (*Handler)(long))
 {
   DrawEverythingNoBlit();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, false, Handler);
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
 
@@ -1004,19 +994,19 @@ void game::LOSTurn()
 
 void game::UpdateCamera()
 {
-  if(GetCurrentArea()->GetXSize() <= GetScreenSize().X || Player->GetPos().X < GetScreenSize().X >> 1)
+  if(GetCurrentArea()->GetXSize() <= GetScreenXSize() || Player->GetPos().X < GetScreenXSize() >> 1)
     Camera.X = 0;
-  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenSize().X >> 1))
-    Camera.X = GetCurrentArea()->GetXSize() - GetScreenSize().X;
+  else if(Player->GetPos().X > GetCurrentArea()->GetXSize() - (GetScreenXSize() >> 1))
+    Camera.X = GetCurrentArea()->GetXSize() - GetScreenXSize();
   else
-    Camera.X = Player->GetPos().X - (GetScreenSize().X >> 1);
+    Camera.X = Player->GetPos().X - (GetScreenXSize() >> 1);
 
-  if(GetCurrentArea()->GetYSize() <= GetScreenSize().Y || Player->GetPos().Y < GetScreenSize().Y >> 1)
+  if(GetCurrentArea()->GetYSize() <= GetScreenYSize() || Player->GetPos().Y < GetScreenYSize() >> 1)
     Camera.Y = 0;
-  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenSize().Y >> 1))
-    Camera.Y = GetCurrentArea()->GetYSize() - GetScreenSize().Y;
+  else if(Player->GetPos().Y > GetCurrentArea()->GetYSize() - (GetScreenYSize() >> 1))
+    Camera.Y = GetCurrentArea()->GetYSize() - GetScreenYSize();
   else
-    Camera.Y = Player->GetPos().Y - (GetScreenSize().Y >> 1);
+    Camera.Y = Player->GetPos().Y - (GetScreenYSize() >> 1);
 
   GetCurrentArea()->SendNewDrawRequest();
 }
@@ -1141,10 +1131,10 @@ void game::BusyAnimation(bitmap* Buffer)
       ushort x;
 
       for(x = 0; x < 10; ++x)
-	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB16(255 - 25 * (10 - x),0,0), false, true, Rotation + double(x) / 50);
+	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB16(255 - 25 * (10 - x), 0, 0), false, true, Rotation + double(x) / 50);
 
       for(x = 0; x < 4; ++x)
-	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB16(255 - 12 * x,0,0));
+	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
 
       if(Buffer == DOUBLE_BUFFER)
 	graphics::BlitDBToScreen();
@@ -1159,7 +1149,7 @@ int game::AskForKeyPress(const std::string& Topic)
   FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", festring::CapitalizeCopy(Topic).c_str());
   graphics::BlitDBToScreen();
   int Key = GET_KEY();
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Key;
 }
 
@@ -1214,24 +1204,22 @@ vector2d game::PositionQuestion(const std::string& Topic, vector2d CursorPos, vo
       else if(KeyHandler)
 	KeyHandler(CursorPos, Key);
 
-      if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenSize().X - 3)
+      if(CursorPos.X < GetCamera().X + 3 || CursorPos.X >= GetCamera().X + GetScreenXSize() - 3)
 	UpdateCameraXWithPos(CursorPos.X);
 
-      if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenSize().Y - 3)
+      if(CursorPos.Y < GetCamera().Y + 3 || CursorPos.Y >= GetCamera().Y + GetScreenYSize() - 3)
 	UpdateCameraYWithPos(CursorPos.Y);
 
       FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Topic.c_str());
       SetCursorPos(CursorPos);
-      DrawEverythingNoBlit();
-      graphics::BlitDBToScreen();
+      DrawEverything();
       Key = GET_KEY();
     }
 
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, BLACK);
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, BLACK);
   DOUBLE_BUFFER->Fill(RES_X - 96, RES_Y - 96, 80, 80, BLACK);
   SetDoZoom(false);
   SetCursorPos(vector2d(-1, -1));
-  DrawEverythingNoBlit();
   return Return;
 }
 
@@ -1318,38 +1306,36 @@ void game::TextScreen(const std::string& Text, ushort Color, bool GKey, void (*B
 
 int game::KeyQuestion(const std::string& Message, int DefaultAnswer, int KeyNumber, ...)
 {
-  std::vector<int> KeyVector;
+  int* Key = new int[KeyNumber];
   va_list Arguments;
   va_start(Arguments, KeyNumber);
 
   for(ushort c = 0; c < KeyNumber; ++c)
-    KeyVector.push_back(va_arg(Arguments, int));
+    Key[c] = va_arg(Arguments, int);
 
   va_end(Arguments);
-
   DrawEverythingNoBlit();
   FONT->Printf(DOUBLE_BUFFER, 16, 8, WHITE, "%s", Message.c_str());
   graphics::BlitDBToScreen();
-  int Return;
+  int Return = 0;
 
-  while(true)
+  while(!Return)
     {
       int k = GET_KEY();
-      std::vector<int>::iterator i = std::find(KeyVector.begin(), KeyVector.end(), k);
 
-      if(i != KeyVector.end())
-	{
-	  Return = k;
-	  break;
-	}
-      else if(DefaultAnswer != REQUIRES_ANSWER)
-	{
-	  Return = DefaultAnswer;
-	  break;
-	}
+      for(ushort c = 0; c < KeyNumber; ++c)
+	if(Key[c] == k)
+	  {
+	    Return = k;
+	    break;
+	  }
+
+      if(!Return && DefaultAnswer != REQUIRES_ANSWER)
+	Return = DefaultAnswer;
     }
 
-  DOUBLE_BUFFER->Fill(16, 6, GetScreenSize().X << 4, 23, 0);
+  delete [] Key;
+  DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
 
@@ -1426,10 +1412,10 @@ void game::End(bool Permanently, bool AndGoToMenu)
   globalwindowhandler::DeInstallControlLoop(AnimationController);
   SetIsRunning(false);
 
-  if(Permanently || !WizardModeIsActive())
+  if(Permanently || !WizardModeIsReallyActive())
     RemoveSaves(Permanently);
 
-  if(Permanently && !WizardModeIsActive())
+  if(Permanently && !WizardModeIsReallyActive())
     {
       highscore HScore;
 
@@ -1980,7 +1966,7 @@ struct massacresetentry
 
 void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string& Reason, ulong Amount)
 {
-  std::multiset<massacresetentry> MassacreSet;
+  std::set<massacresetentry> MassacreSet;
   std::string FirstPronoun;
   bool First = true;
 
@@ -2047,7 +2033,7 @@ void game::DisplayMassacreList(const massacremap& MassacreMap, const std::string
 
   List.AddDescription(SideTopic);
 
-  for(std::multiset<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
+  for(std::set<massacresetentry>::const_iterator i2 = MassacreSet.begin(); i2 != MassacreSet.end(); ++i2)
     {
       List.AddEntry(i2->String, LIGHT_GRAY, 0, i2->Picture);
 
@@ -2062,3 +2048,17 @@ bool game::MassacreListsEmpty()
 {
   return PlayerMassacreMap.empty() && PetMassacreMap.empty() && MiscMassacreMap.empty();
 }
+
+#ifdef WIZARD
+
+void game::SeeWholeMap()
+{
+  if(SeeWholeMapCheatMode < 2)
+    ++SeeWholeMapCheatMode;
+  else
+    SeeWholeMapCheatMode = 0;
+    
+  GetCurrentArea()->SendNewDrawRequest();
+}
+
+#endif

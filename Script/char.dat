@@ -770,7 +770,6 @@ frog
 	KnownCWeaponSkills == BITE;
 	FleshMaterial = FROG_FLESH;
 	PanicLevel = 50;
-	DangerModifier = 50;
 
 	Config DARK;
 	{
@@ -1915,7 +1914,6 @@ bat
 	CWeaponSkillHits == 20;
 	PanicLevel = 75;
 	FleshMaterial = BAT_FLESH;
-	DangerModifier = 50;
 	AttachedGod = INFUSCOR;
 }
 
@@ -3466,7 +3464,6 @@ ghost
 	DefaultMana = 15;
 	StandVerb = "hovering";
 	Frequency = 5000;
-	DangerModifier = 50;
 	CanFly = true;
 	TotalVolume = 300000;
 	TorsoBitmapPos = 112, 16;

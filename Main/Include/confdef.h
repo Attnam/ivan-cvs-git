@@ -131,9 +131,6 @@
 #define GUN_POWDER (POWDER_ID + 1)
 #define SNOW (POWDER_ID + 2)
 
-#define BROKEN 256
-#define DEVOUT 512
-
 #define LONG_SWORD 1
 #define TWO_HANDED_SWORD 2
 #define TWO_HANDED_SCIMITAR 3

@@ -6,6 +6,7 @@
 #include "proto.h"
 #include "game.h"
 #include "bitmap.h"
+#include "save.h"
 
 object::object() : entity(0), MainMaterial(0), AnimationFrames(1) { }
 void object::SetMainMaterial(material* NewMaterial, ushort SpecialFlags) { SetMaterial(MainMaterial, NewMaterial, GetDefaultMainVolume(), SpecialFlags); }
@@ -14,6 +15,7 @@ void object::SetConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { Se
 void object::ChangeConsumeMaterial(material* NewMaterial, ushort SpecialFlags) { ChangeMainMaterial(NewMaterial, SpecialFlags); }
 uchar object::GetSpecialFlags() const { return ST_NORMAL; }
 ushort object::GetOutlineColor(ushort) const { return TRANSPARENT_COLOR; }
+const std::vector<bitmap*>& object::GetPicture() const { return Picture; }
 
 object::object(const object& Object) : entity(Object), id(Object), Config(Object.Config), VisualEffects(Object.VisualEffects)
 {
@@ -53,7 +55,7 @@ void object::Load(inputfile& SaveFile)
   Picture.resize(AnimationFrames);
 
   for(ushort c = 0; c < AnimationFrames; ++c)
-    Picture[c] = igraph::AddUser(GraphicId[c]).Bitmap;
+    Picture[c] = igraph::AddUser(GraphicId[c]);
 }
 
 void object::InitMaterials(material* FirstMaterial, bool CallUpdatePictures)
@@ -283,7 +285,7 @@ void object::UpdatePictures()
       GI.OutlineColor = GetOutlineColor(c);
       GI.Seed = Seed;
       GI.FlyAmount = FlyAmount;
-      Picture[c] = igraph::AddUser(GI).Bitmap;
+      Picture[c] = igraph::AddUser(GI);
     }
 }
 

@@ -29,11 +29,11 @@ class felist
   void AddEntry(const std::string&, ushort, ushort, const std::vector<bitmap*>&, bool = true, bool = false);
   void AddDescription(const std::string&, ushort = WHITE);
   ushort Draw();
-  void QuickDraw(vector2d, ushort, ushort = 20) const;
+  void QuickDraw(bitmap*, ushort) const;
   void Empty();
-  std::string GetEntry(ushort Index) const;
-  ushort GetColor(ushort Index) const;
-  void SetColor(ushort Index, ushort What);
+  std::string GetEntry(ushort) const;
+  ushort GetColor(ushort) const;
+  void SetColor(ushort, ushort);
   ushort GetLength() const;
   ushort GetLastEntryIndex() const;
   void Load(inputfile&);

@@ -461,4 +461,7 @@
 
 #define DIM_LUMINANCE 0x6E6E6E
 
+#define BROKEN 256
+#define DEVOUT 512
+
 #endif

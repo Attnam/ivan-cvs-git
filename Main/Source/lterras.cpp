@@ -14,12 +14,14 @@ vector2d fountain::GetBitmapPos(ushort) const { return vector2d(GetContainedMate
 
 void brokendoor::HasBeenHitByItem(character* Thrower, item*, ushort Damage) { ReceiveDamage(Thrower, Damage, PHYSICAL_DAMAGE); }
 
-std::string liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
-std::string liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
-std::string liquidterrain::DeathMessage() const { return "you drown"; }
-std::string liquidterrain::MonsterDeathVerb() const { return "drowns"; }
-std::string liquidterrain::ScoreEntry() const { return "drowned"; }
+const char* liquidterrain::SurviveMessage() const { return "you manage to get out of the pool"; }
+const char* liquidterrain::MonsterSurviveMessage() const { return "manages to get out of the pool"; }
+const char* liquidterrain::DeathMessage() const { return "you drown"; }
+const char* liquidterrain::MonsterDeathVerb() const { return "drowns"; }
+const char* liquidterrain::ScoreEntry() const { return "drowned"; }
 vector2d liquidterrain::GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 0); } // gum solution, should come from script
+
+std::string sign::GetText() const { return Text; }
 
 bool door::Open(character* Opener)
 {
@@ -201,7 +203,7 @@ void altar::StepOn(character* Stepper)
 {
   if(Stepper->IsPlayer() && !GetMasterGod()->IsKnown())
     {
-      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->GOD_NAME, GetMasterGod()->GetDescription().c_str());
+      ADD_MESSAGE("The ancient altar is covered with strange markings. You manage to decipher them. The altar is dedicated to %s, the %s. You now know the sacred rituals that allow you to contact this deity via prayers.", GetMasterGod()->GetName(), GetMasterGod()->GetDescription());
       GetMasterGod()->SetIsKnown(true);
     }
 }
@@ -554,7 +556,7 @@ bool altar::Polymorph(character*)
 
 bool altar::SitOn(character* Sitter)
 {
-  ADD_MESSAGE("You kneel down and worship %s for a moment.", GetMasterGod()->GOD_NAME);
+  ADD_MESSAGE("You kneel down and worship %s for a moment.", GetMasterGod()->GetName());
 
   if(GetMasterGod()->GetRelation() < 500)
     {
@@ -1083,3 +1085,4 @@ bool liquidterrain::DipInto(item* ToBeDipped, character* Who)
   ToBeDipped->DipInto(GetMainMaterial()->Clone(GetMainMaterial()->TakeDipVolumeAway()), Who);
   return true;
 }
+

@@ -40,7 +40,7 @@ class MATERIAL
   liquid,
   material,
  public:
-  virtual std::string GetConsumeVerb() const;
+  virtual const char* GetConsumeVerb() const;
   virtual bool IsLiquid() const { return true; }
 );
 

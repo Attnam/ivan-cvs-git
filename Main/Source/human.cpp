@@ -12,11 +12,13 @@ bool humanoid::HasFeet() const { return GetLeftLeg() || GetRightLeg(); }
 vector2d farmer::GetHeadBitmapPos() const { return vector2d(96, (4 + (RAND() & 1)) << 4); }
 vector2d farmer::GetRightArmBitmapPos() const { return vector2d(64, (RAND() & 1) << 4); }
 
-std::string oree::FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
-std::string oree::FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
-std::string oree::ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
-std::string oree::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
-std::string oree::BiteNoun() const { return "liquid"; }
+void guard::SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+
+const char* oree::FirstPersonBiteVerb() const { return "vomit acidous blood at"; }
+const char* oree::FirstPersonCriticalBiteVerb() const { return "vomit very acidous blood at"; }
+const char* oree::ThirdPersonBiteVerb() const { return "vomits acidous blood at"; }
+const char* oree::ThirdPersonCriticalBiteVerb() const { return "vomits very acidous blood at"; }
+const char* oree::BiteNoun() const { return "liquid"; }
 
 bool skeleton::BodyPartIsVital(ushort Index) const { return Index == GROIN_INDEX || Index == TORSO_INDEX; }
 
@@ -621,7 +623,7 @@ void priest::BeTalkedTo()
   if(!GetHomeRoom())
     ADD_MESSAGE("\"Receive my blessings, child.\"");
   else
-    ADD_MESSAGE("%s talks to you: %s", CHAR_DESCRIPTION(DEFINITE), game::GetGod(GetHomeRoom()->GetDivineMaster())->GetPriestMessage().c_str());
+    ADD_MESSAGE("%s talks to you: \"Valpurus the Great Frog is the highest of all gods. The Wise know that the world is really a square pancake which He carries on His back. This is why this Cathedral and the whole city of Attnam is dedicated to His worship.\" \"In thy prayers thou must understand He is a busy god who knows His importance. He will not help newbies. Thou shouldst only pray Him when He hath called thee a Champion!\"", CHAR_DESCRIPTION(DEFINITE));
 }
 
 void skeleton::BeTalkedTo()
@@ -942,9 +944,9 @@ bool kamikazedwarf::Hit(character* Enemy, bool ForceHit)
 	if(i->IsExplosive())
 	  {
 	    if(RAND() & 1)
-	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GOD_NAME);
+	      ADD_MESSAGE("%s shouts: \"For %s!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
 	    else
-	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GOD_NAME);
+	      ADD_MESSAGE("%s screams: \"%s, here I come!\"", CHAR_DESCRIPTION(DEFINITE), GetMasterGod()->GetName());
 
 	    if(i->Apply(this))
 	      return true;
@@ -1139,7 +1141,7 @@ void humanoid::SetSecondaryWielded(item* Item)
     ABORT("Left hand in wrong place!");
 }
 
-std::string humanoid::GetEquipmentName(ushort Index) const
+const char* humanoid::GetEquipmentName(ushort Index) const // convert to array
 {
   switch(Index)
     {
@@ -1355,7 +1357,7 @@ bool humanoid::CheckOffer() const
     }
 }
 
-vector2d humanoid::GetEquipmentPanelPos(ushort Index) const
+vector2d humanoid::GetEquipmentPanelPos(ushort Index) const // convert to array
 {
   switch(Index)
     {
@@ -1872,7 +1874,7 @@ void hunter::CreateBodyParts(ushort SpecialFlags)
     if(c != LEFT_ARM_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
-      SetLeftArm(0);
+      SetBodyPart(LEFT_ARM_INDEX, 0);
 }
 
 bool humanoid::EquipmentEasilyRecognized(ushort Index) const
@@ -1975,50 +1977,6 @@ void humanoid::SWeaponSkillTick()
       else
 	++i;
     }
-}
-
-void humanoid::DetachBodyPart()
-{
-  uchar ToBeDetached;
-
-  switch(game::KeyQuestion("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?", KEY_ESC, 5, 'l','r','L','R', 'h'))
-    {
-    case 'l':
-      ToBeDetached = LEFT_ARM_INDEX;
-      break;
-    case 'r':
-      ToBeDetached = RIGHT_ARM_INDEX;
-      break;
-    case 'L':
-      ToBeDetached = LEFT_LEG_INDEX;
-      break;
-    case 'R':
-      ToBeDetached = RIGHT_LEG_INDEX;
-      break;
-    case 'h':
-      ToBeDetached = HEAD_INDEX;
-      break;
-    default:
-      return;
-    }
-
-  if(GetBodyPart(ToBeDetached))
-    {
-      item* ToDrop = SevereBodyPart(ToBeDetached);
-      GetSquareUnder()->SendNewDrawRequest();
-
-      if(ToDrop)
-	{
-	  GetStack()->AddItem(ToDrop);
-	  ToDrop->DropEquipment();
-	}
-
-      ADD_MESSAGE("Bodypart detached!");  
-    }
-  else
-    ADD_MESSAGE("That bodypart has already been detached.");
-
-  CheckDeath("removed one of his vital bodyparts", 0);
 }
 
 void angel::GetAICommand()
@@ -2218,44 +2176,6 @@ bool humanoid::IsUsingHead() const
   return (GetAttackStyle() & USE_HEAD || ((GetAttackStyle() & USE_LEGS || (GetAttackStyle() & USE_ARMS && (!GetRightArm() || !GetRightArm()->GetDamage()) && (!GetLeftArm() || !GetLeftArm()->GetDamage()))) && (!GetRightLeg() || !GetLeftLeg()))) && GetHead();
 }
 
-void humanoid::AddAttackInfo(felist& List) const
-{
-  if(GetAttackStyle() & USE_ARMS)
-    {
-      if(GetRightArm())
-	GetRightArm()->AddAttackInfo(List);
-
-      if(GetLeftArm())
-	GetLeftArm()->AddAttackInfo(List);
-    }
-
-  if(IsUsingLegs())
-    {
-      leg* KickLeg = GetKickLeg();
-
-      std::string Entry = "   kick attack";
-      Entry.resize(50, ' ');
-      Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
-      Entry.resize(60, ' ');
-      Entry << int(KickLeg->GetKickToHitValue());
-      Entry.resize(70, ' ');
-      Entry << KickLeg->GetKickAPCost();
-      List.AddEntry(Entry, LIGHT_GRAY);
-    }
-
-  if(IsUsingHead())
-    {
-      std::string Entry = "   bite attack";
-      Entry.resize(50, ' ');
-      Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
-      Entry.resize(60, ' ');
-      Entry << int(GetHead()->GetBiteToHitValue());
-      Entry.resize(70, ' ');
-      Entry << GetHead()->GetBiteAPCost();
-      List.AddEntry(Entry, LIGHT_GRAY);
-    }
-}
-
 void humanoid::CalculateBattleInfo()
 {
   CalculateDodgeValue();
@@ -2408,17 +2328,6 @@ void humanoid::CheckIfSWeaponSkillRemovalNeeded(sweaponskill* Skill)
 	  SWeaponSkill.erase(i);
 	  break;
 	}
-}
-
-void humanoid::AddDefenceInfo(felist& List) const
-{
-  character::AddDefenceInfo(List);
-
-  if(GetRightArm())
-    GetRightArm()->AddDefenceInfo(List);
-
-  if(GetLeftArm())
-    GetLeftArm()->AddDefenceInfo(List);
 }
 
 humanoid::humanoid(const humanoid& Humanoid) : character(Humanoid), CurrentRightSWeaponSkill(0), CurrentLeftSWeaponSkill(0)
@@ -2605,81 +2514,6 @@ void smith::BeTalkedTo()
     ADD_MESSAGE("\"Come back when you have some weapons or armor I can fix.\"");
 }
 
-void humanoid::ShowBattleInfo()
-{
-  felist CategoryList("Choose battle info category");
-  game::SetStandardListAttributes(CategoryList);
-  CategoryList.SetFlags(SELECTABLE|DRAW_BACKGROUND_AFTERWARDS);
-  ushort Index = 1;
-  ushort InfoToDraw[6];
-  InfoToDraw[0] = 0;
-  CategoryList.AddEntry("Dodge and move info", LIGHT_GRAY);
-
-  if(GetAttackStyle() & USE_ARMS)
-    {
-      if(GetRightArm() && (GetRightArm()->GetDamage() || GetRightArm()->GetWielded()))
-	{
-	  if(!GetRightArm()->GetWielded() || !GetRightArm()->GetWielded()->IsShield(this))
-	    {
-	      InfoToDraw[Index++] = 1;
-	      CategoryList.AddEntry("Right arm attack info", LIGHT_GRAY);
-	    }
-
-	  if(GetRightArm()->GetWielded())
-	    {
-	      InfoToDraw[Index++] = 2;
-	      CategoryList.AddEntry("Right arm defence info", LIGHT_GRAY);
-	    }
-	}
-
-      if(GetLeftArm() && (GetLeftArm()->GetDamage() || GetLeftArm()->GetWielded()))
-	{
-	  if(!GetLeftArm()->GetWielded() || !GetLeftArm()->GetWielded()->IsShield(this))
-	    {
-	      InfoToDraw[Index++] = 3;
-	      CategoryList.AddEntry("Left arm attack info", LIGHT_GRAY);
-	    }
-
-	  if(GetLeftArm()->GetWielded())
-	    {
-	      InfoToDraw[Index++] = 4;
-	      CategoryList.AddEntry("Left arm defence info", LIGHT_GRAY);
-	    }
-	}
-    }
-
-  if(GetRightLeg() && GetLeftLeg() && CanKick())
-    {
-      InfoToDraw[Index++] = 5;
-      CategoryList.AddEntry("Kick info", LIGHT_GRAY);
-    }
-
-  if(IsUsingHead())
-    {
-      InfoToDraw[Index++] = 6;
-      CategoryList.AddEntry("Bite info", LIGHT_GRAY);
-    }
-
-  while(true)
-    {
-      Index = CategoryList.Draw();
-
-      if(Index & FELIST_ERROR_BIT)
-	return;
-
-      switch(InfoToDraw[Index])
-	{
-	case 0: ShowDodgeAndMoveInfo(); break;
-	case 1: GetRightArm()->ShowAttackInfo(); break;
-	case 2: GetRightArm()->ShowDefenceInfo(); break;
-	case 3: GetLeftArm()->ShowAttackInfo(); break;
-	case 4: GetLeftArm()->ShowDefenceInfo(); break;
-	case 5: GetKickLeg()->ShowKickInfo(); break;
-	case 6: GetHead()->ShowBiteInfo(); break;
-	}
-    }
-}
-
 void humanoid::AddSpecialMovePenaltyInfo(felist& Info) const
 {
   if(!CanFly() && GetLegs() == 0)
@@ -2715,19 +2549,6 @@ bool humanoid::CheckZap()
     }
   else
     return character::CheckZap();
-}
-
-void humanoid::AddAttributeInfo(std::string& Entry) const
-{
-  Entry.resize(45, ' ');
-  Entry << GetAttribute(ARM_STRENGTH);
-  Entry.resize(48, ' ');
-  Entry << GetAttribute(LEG_STRENGTH);
-  Entry.resize(51, ' ');
-  Entry << GetAttribute(DEXTERITY);
-  Entry.resize(54, ' ');
-  Entry << GetAttribute(AGILITY);
-  character::AddAttributeInfo(Entry);
 }
 
 void bananagrower::GetAICommand()
@@ -2841,7 +2662,7 @@ void elder::CreateBodyParts(ushort SpecialFlags)
     if(c != LEFT_LEG_INDEX)
       CreateBodyPart(c, SpecialFlags);
     else
-      SetLeftLeg(0);
+      SetBodyPart(LEFT_LEG_INDEX, 0);
 }
 
 void encourager::GetAICommand()
@@ -3433,3 +3254,120 @@ std::string werewolfwolf::GetKillName() const
 
   return humanoid::GetKillName();
 }
+
+#ifdef WIZARD
+
+void humanoid::AddAttributeInfo(std::string& Entry) const
+{
+  Entry.resize(45, ' ');
+  Entry << GetAttribute(ARM_STRENGTH);
+  Entry.resize(48, ' ');
+  Entry << GetAttribute(LEG_STRENGTH);
+  Entry.resize(51, ' ');
+  Entry << GetAttribute(DEXTERITY);
+  Entry.resize(54, ' ');
+  Entry << GetAttribute(AGILITY);
+  character::AddAttributeInfo(Entry);
+}
+
+void humanoid::AddAttackInfo(felist& List) const
+{
+  if(GetAttackStyle() & USE_ARMS)
+    {
+      if(GetRightArm())
+	GetRightArm()->AddAttackInfo(List);
+
+      if(GetLeftArm())
+	GetLeftArm()->AddAttackInfo(List);
+    }
+
+  if(IsUsingLegs())
+    {
+      leg* KickLeg = GetKickLeg();
+
+      std::string Entry = "   kick attack";
+      Entry.resize(50, ' ');
+      Entry << KickLeg->GetKickMinDamage() << '-' << KickLeg->GetKickMaxDamage();
+      Entry.resize(60, ' ');
+      Entry << int(KickLeg->GetKickToHitValue());
+      Entry.resize(70, ' ');
+      Entry << KickLeg->GetKickAPCost();
+      List.AddEntry(Entry, LIGHT_GRAY);
+    }
+
+  if(IsUsingHead())
+    {
+      std::string Entry = "   bite attack";
+      Entry.resize(50, ' ');
+      Entry << GetHead()->GetBiteMinDamage() << '-' << GetHead()->GetBiteMaxDamage();
+      Entry.resize(60, ' ');
+      Entry << int(GetHead()->GetBiteToHitValue());
+      Entry.resize(70, ' ');
+      Entry << GetHead()->GetBiteAPCost();
+      List.AddEntry(Entry, LIGHT_GRAY);
+    }
+}
+
+void humanoid::AddDefenceInfo(felist& List) const
+{
+  character::AddDefenceInfo(List);
+
+  if(GetRightArm())
+    GetRightArm()->AddDefenceInfo(List);
+
+  if(GetLeftArm())
+    GetLeftArm()->AddDefenceInfo(List);
+}
+
+void humanoid::DetachBodyPart()
+{
+  uchar ToBeDetached;
+
+  switch(game::KeyQuestion("What limb? (l)eft arm, (r)ight arm, (L)eft leg, (R)ight leg, (h)ead?", KEY_ESC, 5, 'l','r','L','R', 'h'))
+    {
+    case 'l':
+      ToBeDetached = LEFT_ARM_INDEX;
+      break;
+    case 'r':
+      ToBeDetached = RIGHT_ARM_INDEX;
+      break;
+    case 'L':
+      ToBeDetached = LEFT_LEG_INDEX;
+      break;
+    case 'R':
+      ToBeDetached = RIGHT_LEG_INDEX;
+      break;
+    case 'h':
+      ToBeDetached = HEAD_INDEX;
+      break;
+    default:
+      return;
+    }
+
+  if(GetBodyPart(ToBeDetached))
+    {
+      item* ToDrop = SevereBodyPart(ToBeDetached);
+      GetSquareUnder()->SendNewDrawRequest();
+
+      if(ToDrop)
+	{
+	  GetStack()->AddItem(ToDrop);
+	  ToDrop->DropEquipment();
+	}
+
+      ADD_MESSAGE("Bodypart detached!");  
+    }
+  else
+    ADD_MESSAGE("That bodypart has already been detached.");
+
+  CheckDeath("removed one of his vital bodyparts", 0);
+}
+
+#else
+
+void humanoid::AddAttributeInfo(std::string&) const { }
+void humanoid::AddAttackInfo(felist&) const { }
+void humanoid::AddDefenceInfo(felist&) const { }
+void humanoid::DetachBodyPart() { }
+
+#endif

@@ -37,10 +37,10 @@ bool highscore::Add(long NewScore, const std::string& NewEntry)
       return true;
     }
   else
-  {
-    LastAdd = 100;
-    return false;
-  }
+    {
+      LastAdd = 100;
+      return false;
+    }
 }
 
 void highscore::Draw() const

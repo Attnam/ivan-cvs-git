@@ -360,4 +360,5 @@ Alpha halos to some other items, too.
 Arm m-color 3 should be allocated for gauntlets.
 Engraved messages should be shown in the lookmode.
 Shirt of the Golden Eagle shouldn't emit light unless it's worn.
+Uring the lookmode while polymorphed into a floating eye should have a special effect.
 The starting puppy dies in every game. It should be named Kenny.

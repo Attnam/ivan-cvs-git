@@ -49,23 +49,19 @@ class ABSTRACT_CHARACTER
   virtual void EditExperience(ushort, long);
   virtual ushort DrawStats(bool) const;
   virtual void Bite(character*, bool = false);
-  virtual void RaiseStats();
-  virtual void LowerStats();
   virtual ushort GetCarryingStrength() const;
-  virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   void CalculateUnarmedAttackInfo();
   void CalculateKickAttackInfo();
   void CalculateBiteAttackInfo();
   virtual bool IsAlive() const;
-  virtual void ShowBattleInfo();
-  void ShowUnarmedInfo() const;
-  void ShowKickInfo() const;
-  void ShowBiteInfo() const;
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
-  virtual void AddAttributeInfo(std::string&) const;
   virtual void AddSpecialStethoscopeInfo(felist&) const;
+  virtual void RaiseStats();
+  virtual void LowerStats();
+  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttackInfo(felist&) const;
  protected:
   ushort Strength;
   ushort Agility;
@@ -113,10 +109,10 @@ class CHARACTER
   billswill,
   nonhumanoid,
  protected:
-  virtual std::string FirstPersonBiteHitVerb() const;
-  virtual std::string FirstPersonCriticalBiteHitVerb() const;
-  virtual std::string ThirdPersonBiteHitVerb() const;
-  virtual std::string ThirdPersonCriticalBiteHitVerb() const;
+  virtual const char* FirstPersonBiteHitVerb() const;
+  virtual const char* FirstPersonCriticalBiteHitVerb() const;
+  virtual const char* ThirdPersonBiteHitVerb() const;
+  virtual const char* ThirdPersonCriticalBiteHitVerb() const;
   virtual bool AttackIsBlockable(uchar) const { return false; }
 );
 
@@ -128,11 +124,11 @@ class CHARACTER
   virtual bool IsAnimated() const { return true; }
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
-  virtual std::string FirstPersonBiteVerb() const;
-  virtual std::string FirstPersonCriticalBiteVerb() const;
-  virtual std::string ThirdPersonBiteVerb() const;
-  virtual std::string ThirdPersonCriticalBiteVerb() const;
-  virtual std::string BiteNoun() const;
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual const char* BiteNoun() const;
   virtual void CreateCorpse(lsquare*);
 );
 
@@ -303,7 +299,7 @@ class CHARACTER
  public:
   virtual bool Hit(character*, bool);
   virtual ushort TakeHit(character*, item*, float, float, short, uchar, bool, bool);
-  virtual void SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+  virtual void SetWayPoints(const std::vector<vector2d>&);
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
  protected:
@@ -355,10 +351,10 @@ class CHARACTER
   ghost,
   nonhumanoid,
  protected:
-  virtual std::string FirstPersonBiteHitVerb() const;
-  virtual std::string FirstPersonCriticalBiteHitVerb() const;
-  virtual std::string ThirdPersonBiteHitVerb() const;
-  virtual std::string ThirdPersonCriticalBiteHitVerb() const;
+  virtual const char* FirstPersonBiteHitVerb() const;
+  virtual const char* FirstPersonCriticalBiteHitVerb() const;
+  virtual const char* ThirdPersonBiteHitVerb() const;
+  virtual const char* ThirdPersonCriticalBiteHitVerb() const;
 );
 
 class CHARACTER
@@ -377,10 +373,10 @@ class CHARACTER
   virtual void GetAICommand();
   virtual bool IsRetreating() const;
  protected:
-  virtual std::string FirstPersonBiteVerb() const;
-  virtual std::string FirstPersonCriticalBiteVerb() const;
-  virtual std::string ThirdPersonBiteVerb() const;
-  virtual std::string ThirdPersonCriticalBiteVerb() const;
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
 );
 
 class CHARACTER

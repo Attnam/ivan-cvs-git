@@ -3,8 +3,9 @@
 #include "proto.h"
 #include "god.h"
 
-std::vector<god::prototype*> protocontainer<god>::ProtoData;
+god::prototype** protocontainer<god>::ProtoData;
 valuemap protocontainer<god>::CodeNameMap;
+ushort protocontainer<god>::ProtoAmount;
 
 #include "gods.h"
 
@@ -15,15 +16,14 @@ valuemap protocontainer<god>::CodeNameMap;
 #include "human.h"
 #include "message.h"
 #include "game.h"
-#include "festring.h"
 #include "nonhuman.h"
 #include "stack.h"
 #include "lterras.h"
-#include "festring.h"
 #include "gear.h"
 #include "miscitem.h"
 #include "confdef.h"
 #include "materia.h"
+#include "save.h"
 
 #include "god.cpp"
 #include "gods.cpp"

@@ -22,12 +22,6 @@ class ABSTRACT_CHARACTER
   groin* GetGroin() const { return static_cast<groin*>(*BodyPartSlot[GROIN_INDEX]); }
   rightleg* GetRightLeg() const { return static_cast<rightleg*>(*BodyPartSlot[RIGHT_LEG_INDEX]); }
   leftleg* GetLeftLeg() const { return static_cast<leftleg*>(*BodyPartSlot[LEFT_LEG_INDEX]); }
-  void SetHead(head* What) { SetBodyPart(HEAD_INDEX, What); }
-  void SetRightArm(rightarm* What) { SetBodyPart(RIGHT_ARM_INDEX, What); }
-  void SetLeftArm(leftarm* What) { SetBodyPart(LEFT_ARM_INDEX, What); }
-  void SetGroin(groin* What) { SetBodyPart(GROIN_INDEX, What); }
-  void SetRightLeg(rightleg* What) { SetBodyPart(RIGHT_LEG_INDEX, What); }
-  void SetLeftLeg(leftleg* What) { SetBodyPart(LEFT_LEG_INDEX, What); }
   item* GetHelmet() const { return GetHead() ? GetHead()->GetHelmet() : 0; }
   item* GetAmulet() const { return GetHead() ? GetHead()->GetAmulet() : 0; }
   item* GetCloak() const { return GetHumanoidTorso() ? GetHumanoidTorso()->GetCloak() : 0; }
@@ -63,7 +57,7 @@ class ABSTRACT_CHARACTER
   virtual item* GetSecondaryWielded() const;
   virtual void SetMainWielded(item*);
   virtual void SetSecondaryWielded(item*);
-  virtual std::string GetEquipmentName(ushort) const;
+  virtual const char* GetEquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const;
   virtual item* GetEquipment(ushort) const;
   virtual ushort GetEquipmentSlots() const { return 13; }
@@ -94,7 +88,6 @@ class ABSTRACT_CHARACTER
   virtual bool AddSpecialSkillInfo(felist&) const;
   virtual bool CheckBalance(float);
   virtual long GetMoveAPRequirement(uchar) const;
-  virtual void DetachBodyPart();
   virtual vector2d GetEquipmentPanelPos(ushort) const;
   virtual bool EquipmentEasilyRecognized(ushort) const;
   sweaponskill* GetCurrentRightSWeaponSkill() const { return CurrentRightSWeaponSkill; }
@@ -114,7 +107,6 @@ class ABSTRACT_CHARACTER
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
-  virtual void AddAttackInfo(felist&) const;
   virtual void CalculateBattleInfo();
   leg* GetKickLeg() const;
   virtual void CalculateBodyParts();
@@ -126,14 +118,11 @@ class ABSTRACT_CHARACTER
   virtual void CreateBlockPossibilityVector(blockvector&, float) const;
   void CheckIfSWeaponSkillRemovalNeeded(sweaponskill*);
   virtual item* SevereBodyPart(ushort);
-  virtual void AddDefenceInfo(felist&) const;
   virtual uchar GetSWeaponSkillLevel(const item*) const;
   virtual bool IsAlive() const;
-  virtual void ShowBattleInfo();
   virtual void AddSpecialMovePenaltyInfo(felist&) const;
   virtual void CalculateDodgeValue();
   virtual bool CheckZap();
-  virtual void AddAttributeInfo(std::string&) const;
   virtual bool IsHumanoid() const { return true; }
   virtual bool CheckTalk();
   virtual bool CheckIfEquipmentIsNotUsable(ushort) const;
@@ -142,6 +131,10 @@ class ABSTRACT_CHARACTER
   virtual bool HasHead() const { return GetHead() != 0; }
   virtual const std::string& GetStandVerb() const;
   virtual head* Behead();
+  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttackInfo(felist&) const;
+  virtual void AddDefenceInfo(felist&) const;
+  virtual void DetachBodyPart();
  protected:
   virtual void VirtualConstructor(bool);
   virtual vector2d GetBodyPartBitmapPos(ushort, bool = false) const;
@@ -210,7 +203,7 @@ class CHARACTER
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void GetAICommand();
-  virtual void SetWayPoints(const std::vector<vector2d>& What) { WayPoints = What; }
+  virtual void SetWayPoints(const std::vector<vector2d>&);
  protected:
   virtual void VirtualConstructor(bool);
   std::vector<vector2d> WayPoints;
@@ -240,11 +233,11 @@ class CHARACTER
   oree,
   humanoid,
  protected:
-  virtual std::string FirstPersonBiteVerb() const;
-  virtual std::string FirstPersonCriticalBiteVerb() const;
-  virtual std::string ThirdPersonBiteVerb() const;
-  virtual std::string ThirdPersonCriticalBiteVerb() const;
-  virtual std::string BiteNoun() const;
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual const char* BiteNoun() const;
 );
 
 class CHARACTER
@@ -498,7 +491,7 @@ class CHARACTER
   virtual void Load(inputfile&);
   virtual void BeTalkedTo();
   virtual std::string& ProcessMessage(std::string&) const;
-  virtual std::string GetProfessionDescription() const;
+  std::string GetProfessionDescription() const;
   virtual bool IsBananaGrower() const { return true; }
  protected:
   virtual bool HandleCharacterBlockingTheWay(character*);

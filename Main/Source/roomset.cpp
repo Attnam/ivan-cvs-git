@@ -3,8 +3,9 @@
 #include "proto.h"
 #include "room.h"
 
-std::vector<room::prototype*> protocontainer<room>::ProtoData;
+room::prototype** protocontainer<room>::ProtoData;
 valuemap protocontainer<room>::CodeNameMap;
+ushort protocontainer<room>::ProtoAmount;
 
 #include "rooms.h"
 
@@ -16,6 +17,7 @@ valuemap protocontainer<room>::CodeNameMap;
 #include "game.h"
 #include "stack.h"
 #include "team.h"
+#include "save.h"
 
 #include "room.cpp"
 #include "rooms.cpp"

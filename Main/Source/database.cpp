@@ -1,9 +1,14 @@
 /* Compiled through dataset.cpp */
 
-template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
+databasecreator<character>::databasemembermap databasecreator<character>::DataBaseMemberMap;
+databasecreator<item>::databasemembermap databasecreator<item>::DataBaseMemberMap;
+databasecreator<glterrain>::databasemembermap databasecreator<glterrain>::DataBaseMemberMap;
+databasecreator<olterrain>::databasemembermap databasecreator<olterrain>::DataBaseMemberMap;
+databasecreator<material>::databasemembermap databasecreator<material>::DataBaseMemberMap;
+
+template <class type> void databasecreator<type>::ReadFrom(inputfile& SaveFile)
 {
-  typedef typename type::database typedatabase;
-  typedef typename type::prototype typeprototype;
+  typedef typename type::prototype prototype;
   std::string Word;
 
   for(SaveFile.ReadWord(Word, false); !SaveFile.Eof(); SaveFile.ReadWord(Word, false))
@@ -11,37 +16,37 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
       ushort Index = protocontainer<type>::SearchCodeName(Word);
 
       if(!Index)
-	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+	ABORT("Odd term %s encountered in %s datafile line %d!", Word.c_str(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
-      typeprototype* Proto = protocontainer<type>::ProtoData[Index];
-      Proto->Config.insert(std::pair<ushort, typedatabase>(0, Proto->Base ? typedatabase(Proto->Base->Config.begin()->second) : typedatabase()));
-      typedatabase& DataBase = Proto->Config.begin()->second;
+      prototype* Proto = protocontainer<type>::ProtoData[Index];
+      Proto->Config.insert(std::pair<ushort, database>(0, Proto->Base ? database(Proto->Base->Config.begin()->second) : database()));
+      database& DataBase = Proto->Config.begin()->second;
       DataBase.InitDefaults(0);
 
       if(SaveFile.ReadWord() != "{")
-	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+	ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
       for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 	{
 	  if(Word == "Config")
 	    {
 	      ushort ConfigNumber = SaveFile.ReadNumber();
-	      typedatabase TempDataBase(Proto->ChooseBaseForConfig(ConfigNumber));
+	      database TempDataBase(Proto->ChooseBaseForConfig(ConfigNumber));
 	      TempDataBase.InitDefaults(ConfigNumber);
 
 	      if(SaveFile.ReadWord() != "{")
-		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+		ABORT("Bracket missing in %s datafile line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
 	      for(SaveFile.ReadWord(Word); Word != "}"; SaveFile.ReadWord(Word))
 		if(!AnalyzeData(SaveFile, Word, TempDataBase))
-		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId().c_str(), ConfigNumber, SaveFile.TellLine());
+		  ABORT("Illegal datavalue %s found while building up %s config #%d, line %d!", Word.c_str(), Proto->GetClassId(), ConfigNumber, SaveFile.TellLine());
 
-	      Proto->Config.insert(std::pair<ushort, typedatabase>(ConfigNumber, TempDataBase));
+	      Proto->Config.insert(std::pair<ushort, database>(ConfigNumber, TempDataBase));
 	      continue;
 	    }
 
 	  if(!AnalyzeData(SaveFile, Word, DataBase))
-	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId().c_str(), SaveFile.TellLine());
+	    ABORT("Illegal datavalue %s found while building up %s, line %d!", Word.c_str(), Proto->GetClassId(), SaveFile.TellLine());
 	}
 
       if(DataBase.CreateDivineConfigurations)
@@ -49,10 +54,10 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
 	  for(ushort c = 1; c < protocontainer<god>::GetProtoAmount(); ++c)
 	    if(Proto->Config.find(c) == Proto->Config.end())
 	      {
-		typedatabase TempDataBase(DataBase);
+		database TempDataBase(DataBase);
 		TempDataBase.InitDefaults(DEVOUT|c);
 		TempDataBase.AttachedGod = c;
-		Proto->Config.insert(std::pair<ushort, typedatabase>(c, TempDataBase));
+		Proto->Config.insert(std::pair<ushort, database>(c, TempDataBase));
 	      }
 	}
 
@@ -60,374 +65,440 @@ template <class type> void database<type>::ReadFrom(inputfile& SaveFile)
     }
 }
 
-#define ANALYZE_DATA(data)\
-{\
-  if(Word == #data)\
-    {\
-      ReadData(DataBase.data, SaveFile);\
-      Found = true;\
-    }\
-}
-
-#define ANALYZE_DATA_WITH_DEFAULT(data, defaultdata)\
-{\
-  if(Word == #data)\
-    {\
-      ReadData(DataBase.data, SaveFile);\
-      Found = true;\
-    }\
-  \
-  if(Word == #defaultdata)\
-    DataBase.data = DataBase.defaultdata;\
-}
-
-#define ANALYZE_DATA_WITH_COMPLEX_DEFAULT(data, defaultdata, statement)\
-{\
-  if(Word == #data)\
-    {\
-      ReadData(DataBase.data, SaveFile);\
-      Found = true;\
-    }\
-  \
-  if(Word == #defaultdata)\
-    DataBase.data = statement;\
-}
-
-#define ANALYZE_DATA_AND_ADD_TO_ANOTHER(data, to)\
-{\
-  if(Word == #data)\
-    {\
-      ReadData(DataBase.data, SaveFile);\
-      DataBase.to.push_back(DataBase.data);\
-      Found = true;\
-    }\
-}
-
-template<> bool database<character>::AnalyzeData(inputfile& SaveFile, const std::string& Word, character::database& DataBase)
+template <class database, class member> struct databasemember : public databasememberbase<database>
 {
-  bool Found = false;
+  databasemember(member Member) : Member(Member) { }
+  virtual void ReadData(database& DataBase, inputfile& SaveFile) { ::ReadData(DataBase.*Member, SaveFile); }
+  member Member;
+};
 
-  ANALYZE_DATA(DefaultArmStrength);
-  ANALYZE_DATA(DefaultLegStrength);
-  ANALYZE_DATA(DefaultDexterity);
-  ANALYZE_DATA(DefaultAgility);
-  ANALYZE_DATA(DefaultEndurance);
-  ANALYZE_DATA(DefaultPerception);
-  ANALYZE_DATA(DefaultIntelligence);
-  ANALYZE_DATA(DefaultWisdom);
-  ANALYZE_DATA(DefaultCharisma);
-  ANALYZE_DATA(DefaultMana);
-  ANALYZE_DATA(DefaultMoney);
-  ANALYZE_DATA(TotalSize);
-  ANALYZE_DATA(CanRead);
-  ANALYZE_DATA(IsCharmable);
-  ANALYZE_DATA(Sex);
-  ANALYZE_DATA(BloodColor);
-  ANALYZE_DATA(CanBeGenerated);
-  ANALYZE_DATA(CriticalModifier);
-  ANALYZE_DATA(StandVerb);
-  ANALYZE_DATA(CanOpen);
-  ANALYZE_DATA(CanBeDisplaced);
-  ANALYZE_DATA(Frequency);
-  ANALYZE_DATA(CanWalk);
-  ANALYZE_DATA(CanSwim);
-  ANALYZE_DATA(CanFly);
-  ANALYZE_DATA(FireResistance);
-  ANALYZE_DATA(PoisonResistance);
-  ANALYZE_DATA(ElectricityResistance);
-  ANALYZE_DATA(IsUnique);
-  ANALYZE_DATA(ConsumeFlags);
-  ANALYZE_DATA(TotalVolume);
-  ANALYZE_DATA(HeadBitmapPos);
-  ANALYZE_DATA(TorsoBitmapPos);
-  ANALYZE_DATA(ArmBitmapPos);
-  ANALYZE_DATA(LegBitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(RightArmBitmapPos, ArmBitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(LeftArmBitmapPos, ArmBitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(RightLegBitmapPos, LegBitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(LeftLegBitmapPos, LegBitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(GroinBitmapPos, LegBitmapPos);
-  ANALYZE_DATA(ClothColor);
-  ANALYZE_DATA(SkinColor);
-  ANALYZE_DATA_WITH_DEFAULT(CapColor, ClothColor);
-  ANALYZE_DATA(HairColor);
-  ANALYZE_DATA(EyeColor);
-  ANALYZE_DATA_WITH_DEFAULT(TorsoMainColor, ClothColor);
-  ANALYZE_DATA(BeltColor);
-  ANALYZE_DATA(BootColor);
-  ANALYZE_DATA(TorsoSpecialColor);
-  ANALYZE_DATA_WITH_DEFAULT(ArmMainColor, ClothColor);
-  ANALYZE_DATA(ArmSpecialColor);
-  ANALYZE_DATA_WITH_DEFAULT(LegMainColor, ClothColor);
-  ANALYZE_DATA(LegSpecialColor);
-  ANALYZE_DATA(IsNameable);
-  ANALYZE_DATA(BaseEmitation);
-  ANALYZE_DATA(Article);
-  ANALYZE_DATA(Adjective);
-  ANALYZE_DATA(AdjectiveArticle);
-  ANALYZE_DATA(NameSingular);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
-  ANALYZE_DATA(PostFix);
-  ANALYZE_DATA(ArticleMode);
-  ANALYZE_DATA(IsAbstract);
-  ANALYZE_DATA(IsPolymorphable);
-  ANALYZE_DATA(BaseUnarmedStrength);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseBiteStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength >> 1);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(BaseKickStrength, BaseUnarmedStrength, DataBase.BaseUnarmedStrength << 1);
-  ANALYZE_DATA(AttackStyle);
-  ANALYZE_DATA(CanUseEquipment);
-  ANALYZE_DATA(CanKick);
-  ANALYZE_DATA(CanTalk);
-  ANALYZE_DATA(ClassStates);
-  ANALYZE_DATA(CanBeWished);
-  ANALYZE_DATA(Alias);
-  ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(CreateGolemMaterialConfigurations);
-  ANALYZE_DATA(Helmet);
-  ANALYZE_DATA(Amulet);
-  ANALYZE_DATA(Cloak);
-  ANALYZE_DATA(BodyArmor);
-  ANALYZE_DATA(Belt);
-  ANALYZE_DATA(RightWielded);
-  ANALYZE_DATA(LeftWielded);
-  ANALYZE_DATA(RightRing);
-  ANALYZE_DATA(LeftRing);
-  ANALYZE_DATA(RightGauntlet);
-  ANALYZE_DATA_WITH_DEFAULT(LeftGauntlet, RightGauntlet);
-  ANALYZE_DATA(RightBoot);
-  ANALYZE_DATA_WITH_DEFAULT(LeftBoot, RightBoot);
-  ANALYZE_DATA(AttributeBonus);
-  ANALYZE_DATA(KnownCWeaponSkills);
-  ANALYZE_DATA(CWeaponSkillHits);
-  ANALYZE_DATA(RightSWeaponSkillHits);
-  ANALYZE_DATA(LeftSWeaponSkillHits);
-  ANALYZE_DATA(PanicLevel);
-  ANALYZE_DATA(CanBeCloned);
-  ANALYZE_DATA(Inventory);
-  ANALYZE_DATA(DangerModifier);
-  ANALYZE_DATA_AND_ADD_TO_ANOTHER(DefaultName, Alias);
-  ANALYZE_DATA(FriendlyReplies);
-  ANALYZE_DATA(HostileReplies);
-  ANALYZE_DATA(CanZap);
-  ANALYZE_DATA(FleshMaterial);
-  ANALYZE_DATA(HasFeet);
-  ANALYZE_DATA(DeathMessage);
-  ANALYZE_DATA(IgnoreDanger);
-  ANALYZE_DATA(HPRequirementForGeneration);
-  ANALYZE_DATA(IsExtraCoward);
-  ANALYZE_DATA(SpillsBlood);
-  ANALYZE_DATA(HasEyes);
-  ANALYZE_DATA(HasHead);
-  ANALYZE_DATA(CanThrow);
-  ANALYZE_DATA(UsesNutrition);
-  ANALYZE_DATA(AttackWisdomLimit);
-  ANALYZE_DATA(CanWalkThroughWalls);
-  ANALYZE_DATA(AttachedGod);
-  ANALYZE_DATA(BodyPartsDisappearWhenSevered);
-  ANALYZE_DATA(CanBeConfused);
-  ANALYZE_DATA(CanAttack);
-  ANALYZE_DATA(CanApply);
-
-  return Found;
+template <class database, class member> void AddMember(std::map<std::string, databasememberbase<database>*>& Map, const char* Str, member Member)
+{
+  Map.insert(std::pair<std::string, databasememberbase<database>*>(Str, new databasemember<database, member>(Member)));
 }
 
-template<> bool database<item>::AnalyzeData(inputfile& SaveFile, const std::string& Word, item::database& DataBase)
+/* Explicit instantiations seem to increases compile speed greatly here... */
+
+#define INST_ADD_MEMBER(type, member) template void AddMember<type##database, member type##database::*>(std::map<std::string, databasememberbase<type##database>*>&, const char*, member type##database::*)
+
+INST_ADD_MEMBER(character, bool);
+INST_ADD_MEMBER(character, uchar);
+INST_ADD_MEMBER(character, short);
+INST_ADD_MEMBER(character, ushort);
+INST_ADD_MEMBER(character, ulong);
+INST_ADD_MEMBER(character, vector2d);
+INST_ADD_MEMBER(character, std::string);
+INST_ADD_MEMBER(character, std::vector<std::string>);
+INST_ADD_MEMBER(character, contentscript<item>);
+INST_ADD_MEMBER(character, std::vector<long>);
+INST_ADD_MEMBER(character, std::list<contentscript<item> >);
+
+INST_ADD_MEMBER(item, bool);
+INST_ADD_MEMBER(item, char);
+INST_ADD_MEMBER(item, uchar);
+INST_ADD_MEMBER(item, ushort);
+INST_ADD_MEMBER(item, long);
+INST_ADD_MEMBER(item, ulong);
+INST_ADD_MEMBER(item, vector2d);
+INST_ADD_MEMBER(item, std::string);
+INST_ADD_MEMBER(item, std::vector<std::string>);
+INST_ADD_MEMBER(item, std::vector<long>);
+
+INST_ADD_MEMBER(glterrain, bool);
+INST_ADD_MEMBER(glterrain, uchar);
+INST_ADD_MEMBER(glterrain, ushort);
+INST_ADD_MEMBER(glterrain, ulong);
+INST_ADD_MEMBER(glterrain, vector2d);
+INST_ADD_MEMBER(glterrain, std::string);
+INST_ADD_MEMBER(glterrain, std::vector<long>);
+
+INST_ADD_MEMBER(olterrain, bool);
+INST_ADD_MEMBER(olterrain, uchar);
+INST_ADD_MEMBER(olterrain, ushort);
+INST_ADD_MEMBER(olterrain, ulong);
+INST_ADD_MEMBER(olterrain, vector2d);
+INST_ADD_MEMBER(olterrain, std::string);
+INST_ADD_MEMBER(olterrain, std::vector<long>);
+
+INST_ADD_MEMBER(material, bool);
+INST_ADD_MEMBER(material, uchar);
+INST_ADD_MEMBER(material, ushort);
+INST_ADD_MEMBER(material, ulong);
+INST_ADD_MEMBER(material, std::string);
+
+#define ADD_MEMBER(data) AddMember(DataBaseMemberMap, #data, &database::data);
+
+template<> void databasecreator<character>::CreateDataBaseMemberMap()
 {
-  bool Found = false;
-
-  ANALYZE_DATA(Possibility);
-  ANALYZE_DATA(InHandsPic);
-  ANALYZE_DATA(Score);
-  ANALYZE_DATA(IsDestroyable);
-  ANALYZE_DATA(CanBeWished);
-  ANALYZE_DATA(IsMaterialChangeable);
-  ANALYZE_DATA(WeaponCategory);
-  ANALYZE_DATA(IsPolymorphSpawnable);
-  ANALYZE_DATA(IsAutoInitializable);
-  ANALYZE_DATA(Category);
-  ANALYZE_DATA(FireResistance);
-  ANALYZE_DATA(PoisonResistance);
-  ANALYZE_DATA(ElectricityResistance);
-  ANALYZE_DATA(StrengthModifier);
-  ANALYZE_DATA(FormModifier);
-  ANALYZE_DATA(DefaultSize);
-  ANALYZE_DATA(DefaultMainVolume);
-  ANALYZE_DATA(DefaultSecondaryVolume);
-  ANALYZE_DATA(DefaultContainedVolume);
-  ANALYZE_DATA(BitmapPos);
-  ANALYZE_DATA(Price);
-  ANALYZE_DATA(BaseEmitation);
-  ANALYZE_DATA(Article);
-  ANALYZE_DATA(Adjective);
-  ANALYZE_DATA(AdjectiveArticle);
-  ANALYZE_DATA(NameSingular);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
-  ANALYZE_DATA(PostFix);
-  ANALYZE_DATA(ArticleMode);
-  ANALYZE_DATA(MainMaterialConfig);
-  ANALYZE_DATA(SecondaryMaterialConfig);
-  ANALYZE_DATA(ContainedMaterialConfig);
-  ANALYZE_DATA(MaterialConfigChances);
-  ANALYZE_DATA(IsAbstract);
-  ANALYZE_DATA(IsPolymorphable);
-  ANALYZE_DATA(Alias);
-  ANALYZE_DATA(OKVisualEffects);
-  ANALYZE_DATA(CanBeGeneratedInContainer);
-  ANALYZE_DATA(ForcedVisualEffects);
-  ANALYZE_DATA(Roundness);
-  ANALYZE_DATA(GearStates);
-  ANALYZE_DATA(IsTwoHanded);
-  ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(CanBeCloned);
-  ANALYZE_DATA(BeamRange);
-  ANALYZE_DATA(CanBeBroken);
-  ANALYZE_DATA_WITH_DEFAULT(WallBitmapPos, BitmapPos);
-  ANALYZE_DATA_WITH_DEFAULT(FlexibleNameSingular, NameSingular);
-  ANALYZE_DATA(MaxCharges);
-  ANALYZE_DATA(MinCharges);
-  ANALYZE_DATA(CanBePiled);
-  ANALYZE_DATA(StorageVolume);
-  ANALYZE_DATA(MaxGeneratedContainedItems);
-  ANALYZE_DATA(AffectsArmStrength);
-  ANALYZE_DATA(AffectsLegStrength);
-  ANALYZE_DATA(AffectsDexterity);
-  ANALYZE_DATA(AffectsAgility);
-  ANALYZE_DATA(AffectsEndurance);
-  ANALYZE_DATA(AffectsPerception);
-  ANALYZE_DATA(AffectsIntelligence);
-  ANALYZE_DATA(AffectsWisdom);
-  ANALYZE_DATA(AffectsCharisma);
-  ANALYZE_DATA(AffectsMana);
-  ANALYZE_DATA(DefaultEnchantment);
-  ANALYZE_DATA(PriceIsProportionalToEnchantment);
-  ANALYZE_DATA(InElasticityPenaltyModifier);
-  ANALYZE_DATA(CanBeUsedBySmith);
-  ANALYZE_DATA(AffectsCarryingCapacity);
-  ANALYZE_DATA(DamageDivider);
-  ANALYZE_DATA(HandleInPairs);
-  ANALYZE_DATA(CanBeEnchanted);
-  ANALYZE_DATA(BeamColor);
-  ANALYZE_DATA(BeamEffect);
-  ANALYZE_DATA(BeamStyle);
-  ANALYZE_DATA(WearWisdomLimit);
-  ANALYZE_DATA(AttachedGod);
-  ANALYZE_DATA(BreakEffectRange);
-
-  return Found;
+  ADD_MEMBER(DefaultArmStrength);
+  ADD_MEMBER(DefaultLegStrength);
+  ADD_MEMBER(DefaultDexterity);
+  ADD_MEMBER(DefaultAgility);
+  ADD_MEMBER(DefaultEndurance);
+  ADD_MEMBER(DefaultPerception);
+  ADD_MEMBER(DefaultIntelligence);
+  ADD_MEMBER(DefaultWisdom);
+  ADD_MEMBER(DefaultCharisma);
+  ADD_MEMBER(DefaultMana);
+  ADD_MEMBER(DefaultMoney);
+  ADD_MEMBER(TotalSize);
+  ADD_MEMBER(CanRead);
+  ADD_MEMBER(IsCharmable);
+  ADD_MEMBER(Sex);
+  ADD_MEMBER(BloodColor);
+  ADD_MEMBER(CanBeGenerated);
+  ADD_MEMBER(CriticalModifier);
+  ADD_MEMBER(StandVerb);
+  ADD_MEMBER(CanOpen);
+  ADD_MEMBER(CanBeDisplaced);
+  ADD_MEMBER(Frequency);
+  ADD_MEMBER(CanWalk);
+  ADD_MEMBER(CanSwim);
+  ADD_MEMBER(CanFly);
+  ADD_MEMBER(FireResistance);
+  ADD_MEMBER(PoisonResistance);
+  ADD_MEMBER(ElectricityResistance);
+  ADD_MEMBER(IsUnique);
+  ADD_MEMBER(ConsumeFlags);
+  ADD_MEMBER(TotalVolume);
+  ADD_MEMBER(HeadBitmapPos);
+  ADD_MEMBER(TorsoBitmapPos);
+  ADD_MEMBER(ArmBitmapPos);
+  ADD_MEMBER(LegBitmapPos);
+  ADD_MEMBER(RightArmBitmapPos);
+  ADD_MEMBER(LeftArmBitmapPos);
+  ADD_MEMBER(RightLegBitmapPos);
+  ADD_MEMBER(LeftLegBitmapPos);
+  ADD_MEMBER(GroinBitmapPos);
+  ADD_MEMBER(ClothColor);
+  ADD_MEMBER(SkinColor);
+  ADD_MEMBER(CapColor);
+  ADD_MEMBER(HairColor);
+  ADD_MEMBER(EyeColor);
+  ADD_MEMBER(TorsoMainColor);
+  ADD_MEMBER(BeltColor);
+  ADD_MEMBER(BootColor);
+  ADD_MEMBER(TorsoSpecialColor);
+  ADD_MEMBER(ArmMainColor);
+  ADD_MEMBER(ArmSpecialColor);
+  ADD_MEMBER(LegMainColor);
+  ADD_MEMBER(LegSpecialColor);
+  ADD_MEMBER(IsNameable);
+  ADD_MEMBER(BaseEmitation);
+  ADD_MEMBER(Article);
+  ADD_MEMBER(Adjective);
+  ADD_MEMBER(AdjectiveArticle);
+  ADD_MEMBER(NameSingular);
+  ADD_MEMBER(NamePlural);
+  ADD_MEMBER(PostFix);
+  ADD_MEMBER(ArticleMode);
+  ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(IsPolymorphable);
+  ADD_MEMBER(BaseUnarmedStrength);
+  ADD_MEMBER(BaseBiteStrength);
+  ADD_MEMBER(BaseKickStrength);
+  ADD_MEMBER(AttackStyle);
+  ADD_MEMBER(CanUseEquipment);
+  ADD_MEMBER(CanKick);
+  ADD_MEMBER(CanTalk);
+  ADD_MEMBER(ClassStates);
+  ADD_MEMBER(CanBeWished);
+  ADD_MEMBER(Alias);
+  ADD_MEMBER(CreateDivineConfigurations);
+  ADD_MEMBER(CreateGolemMaterialConfigurations);
+  ADD_MEMBER(Helmet);
+  ADD_MEMBER(Amulet);
+  ADD_MEMBER(Cloak);
+  ADD_MEMBER(BodyArmor);
+  ADD_MEMBER(Belt);
+  ADD_MEMBER(RightWielded);
+  ADD_MEMBER(LeftWielded);
+  ADD_MEMBER(RightRing);
+  ADD_MEMBER(LeftRing);
+  ADD_MEMBER(RightGauntlet);
+  ADD_MEMBER(LeftGauntlet);
+  ADD_MEMBER(RightBoot);
+  ADD_MEMBER(LeftBoot);
+  ADD_MEMBER(AttributeBonus);
+  ADD_MEMBER(KnownCWeaponSkills);
+  ADD_MEMBER(CWeaponSkillHits);
+  ADD_MEMBER(RightSWeaponSkillHits);
+  ADD_MEMBER(LeftSWeaponSkillHits);
+  ADD_MEMBER(PanicLevel);
+  ADD_MEMBER(CanBeCloned);
+  ADD_MEMBER(Inventory);
+  ADD_MEMBER(DangerModifier);
+  ADD_MEMBER(DefaultName);
+  ADD_MEMBER(FriendlyReplies);
+  ADD_MEMBER(HostileReplies);
+  ADD_MEMBER(CanZap);
+  ADD_MEMBER(FleshMaterial);
+  ADD_MEMBER(HasFeet);
+  ADD_MEMBER(DeathMessage);
+  ADD_MEMBER(IgnoreDanger);
+  ADD_MEMBER(HPRequirementForGeneration);
+  ADD_MEMBER(IsExtraCoward);
+  ADD_MEMBER(SpillsBlood);
+  ADD_MEMBER(HasEyes);
+  ADD_MEMBER(HasHead);
+  ADD_MEMBER(CanThrow);
+  ADD_MEMBER(UsesNutrition);
+  ADD_MEMBER(AttackWisdomLimit);
+  ADD_MEMBER(CanWalkThroughWalls);
+  ADD_MEMBER(AttachedGod);
+  ADD_MEMBER(BodyPartsDisappearWhenSevered);
+  ADD_MEMBER(CanBeConfused);
+  ADD_MEMBER(CanAttack);
+  ADD_MEMBER(CanApply);
 }
 
-template<> bool database<glterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, glterrain::database& DataBase)
+template<> void databasecreator<item>::CreateDataBaseMemberMap()
 {
-  bool Found = false;
-
-  ANALYZE_DATA(BitmapPos);
-  ANALYZE_DATA(Article);
-  ANALYZE_DATA(Adjective);
-  ANALYZE_DATA(AdjectiveArticle);
-  ANALYZE_DATA(NameSingular);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
-  ANALYZE_DATA(PostFix);
-  ANALYZE_DATA(ArticleMode);
-  ANALYZE_DATA(MainMaterialConfig);
-  ANALYZE_DATA(SecondaryMaterialConfig);
-  ANALYZE_DATA(ContainedMaterialConfig);
-  ANALYZE_DATA(MaterialConfigChances);
-  ANALYZE_DATA(IsAbstract);
-  ANALYZE_DATA(OKVisualEffects);
-  ANALYZE_DATA(MaterialColorB);
-  ANALYZE_DATA(MaterialColorC);
-  ANALYZE_DATA(MaterialColorD);
-  ANALYZE_DATA(SitMessage);
-  ANALYZE_DATA(DefaultMainVolume);
-  ANALYZE_DATA(DefaultSecondaryVolume);
-  ANALYZE_DATA(DefaultContainedVolume);
-  ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(ShowMaterial);
-  ANALYZE_DATA(AttachedGod);
-
-  return Found;
+  ADD_MEMBER(Possibility);
+  ADD_MEMBER(InHandsPic);
+  ADD_MEMBER(Score);
+  ADD_MEMBER(IsDestroyable);
+  ADD_MEMBER(CanBeWished);
+  ADD_MEMBER(IsMaterialChangeable);
+  ADD_MEMBER(WeaponCategory);
+  ADD_MEMBER(IsPolymorphSpawnable);
+  ADD_MEMBER(IsAutoInitializable);
+  ADD_MEMBER(Category);
+  ADD_MEMBER(FireResistance);
+  ADD_MEMBER(PoisonResistance);
+  ADD_MEMBER(ElectricityResistance);
+  ADD_MEMBER(StrengthModifier);
+  ADD_MEMBER(FormModifier);
+  ADD_MEMBER(DefaultSize);
+  ADD_MEMBER(DefaultMainVolume);
+  ADD_MEMBER(DefaultSecondaryVolume);
+  ADD_MEMBER(DefaultContainedVolume);
+  ADD_MEMBER(BitmapPos);
+  ADD_MEMBER(Price);
+  ADD_MEMBER(BaseEmitation);
+  ADD_MEMBER(Article);
+  ADD_MEMBER(Adjective);
+  ADD_MEMBER(AdjectiveArticle);
+  ADD_MEMBER(NameSingular);
+  ADD_MEMBER(NamePlural);
+  ADD_MEMBER(PostFix);
+  ADD_MEMBER(ArticleMode);
+  ADD_MEMBER(MainMaterialConfig);
+  ADD_MEMBER(SecondaryMaterialConfig);
+  ADD_MEMBER(ContainedMaterialConfig);
+  ADD_MEMBER(MaterialConfigChances);
+  ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(IsPolymorphable);
+  ADD_MEMBER(Alias);
+  ADD_MEMBER(OKVisualEffects);
+  ADD_MEMBER(CanBeGeneratedInContainer);
+  ADD_MEMBER(ForcedVisualEffects);
+  ADD_MEMBER(Roundness);
+  ADD_MEMBER(GearStates);
+  ADD_MEMBER(IsTwoHanded);
+  ADD_MEMBER(CreateDivineConfigurations);
+  ADD_MEMBER(CanBeCloned);
+  ADD_MEMBER(BeamRange);
+  ADD_MEMBER(CanBeBroken);
+  ADD_MEMBER(WallBitmapPos);
+  ADD_MEMBER(FlexibleNameSingular);
+  ADD_MEMBER(MaxCharges);
+  ADD_MEMBER(MinCharges);
+  ADD_MEMBER(CanBePiled);
+  ADD_MEMBER(StorageVolume);
+  ADD_MEMBER(MaxGeneratedContainedItems);
+  ADD_MEMBER(AffectsArmStrength);
+  ADD_MEMBER(AffectsLegStrength);
+  ADD_MEMBER(AffectsDexterity);
+  ADD_MEMBER(AffectsAgility);
+  ADD_MEMBER(AffectsEndurance);
+  ADD_MEMBER(AffectsPerception);
+  ADD_MEMBER(AffectsIntelligence);
+  ADD_MEMBER(AffectsWisdom);
+  ADD_MEMBER(AffectsCharisma);
+  ADD_MEMBER(AffectsMana);
+  ADD_MEMBER(DefaultEnchantment);
+  ADD_MEMBER(PriceIsProportionalToEnchantment);
+  ADD_MEMBER(InElasticityPenaltyModifier);
+  ADD_MEMBER(CanBeUsedBySmith);
+  ADD_MEMBER(AffectsCarryingCapacity);
+  ADD_MEMBER(DamageDivider);
+  ADD_MEMBER(HandleInPairs);
+  ADD_MEMBER(CanBeEnchanted);
+  ADD_MEMBER(BeamColor);
+  ADD_MEMBER(BeamEffect);
+  ADD_MEMBER(BeamStyle);
+  ADD_MEMBER(WearWisdomLimit);
+  ADD_MEMBER(AttachedGod);
+  ADD_MEMBER(BreakEffectRange);
 }
 
-template<> bool database<olterrain>::AnalyzeData(inputfile& SaveFile, const std::string& Word, olterrain::database& DataBase)
+template<> void databasecreator<glterrain>::CreateDataBaseMemberMap()
 {
-  bool Found = false;
-
-  ANALYZE_DATA(BitmapPos);
-  ANALYZE_DATA(Article);
-  ANALYZE_DATA(Adjective);
-  ANALYZE_DATA(AdjectiveArticle);
-  ANALYZE_DATA(NameSingular);
-  ANALYZE_DATA_WITH_COMPLEX_DEFAULT(NamePlural, NameSingular, DataBase.NameSingular + "s");
-  ANALYZE_DATA(PostFix);
-  ANALYZE_DATA(ArticleMode);
-  ANALYZE_DATA(MainMaterialConfig);
-  ANALYZE_DATA(SecondaryMaterialConfig);
-  ANALYZE_DATA(ContainedMaterialConfig);
-  ANALYZE_DATA(MaterialConfigChances);
-  ANALYZE_DATA(IsAbstract);
-  ANALYZE_DATA(OKVisualEffects);
-  ANALYZE_DATA(MaterialColorB);
-  ANALYZE_DATA(MaterialColorC);
-  ANALYZE_DATA(MaterialColorD);
-  ANALYZE_DATA(SitMessage);
-  ANALYZE_DATA(DefaultMainVolume);
-  ANALYZE_DATA(DefaultSecondaryVolume);
-  ANALYZE_DATA(DefaultContainedVolume);
-  ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(ShowMaterial);
-  ANALYZE_DATA(AttachedGod);
-
-  ANALYZE_DATA(DigMessage);
-  ANALYZE_DATA(CanBeDestroyed);
-  ANALYZE_DATA(RestModifier);
-  ANALYZE_DATA(RestMessage);
-  ANALYZE_DATA(IsUpLink);
-  ANALYZE_DATA(StorageVolume);
-  ANALYZE_DATA(HPModifier);
-  ANALYZE_DATA(IsSafeToCreateDoor);
-  ANALYZE_DATA(OpenBitmapPos);
-
-  return Found;
+  ADD_MEMBER(BitmapPos);
+  ADD_MEMBER(Article);
+  ADD_MEMBER(Adjective);
+  ADD_MEMBER(AdjectiveArticle);
+  ADD_MEMBER(NameSingular);
+  ADD_MEMBER(NamePlural);
+  ADD_MEMBER(PostFix);
+  ADD_MEMBER(ArticleMode);
+  ADD_MEMBER(MainMaterialConfig);
+  ADD_MEMBER(SecondaryMaterialConfig);
+  ADD_MEMBER(ContainedMaterialConfig);
+  ADD_MEMBER(MaterialConfigChances);
+  ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(OKVisualEffects);
+  ADD_MEMBER(MaterialColorB);
+  ADD_MEMBER(MaterialColorC);
+  ADD_MEMBER(MaterialColorD);
+  ADD_MEMBER(SitMessage);
+  ADD_MEMBER(DefaultMainVolume);
+  ADD_MEMBER(DefaultSecondaryVolume);
+  ADD_MEMBER(DefaultContainedVolume);
+  ADD_MEMBER(CreateDivineConfigurations);
+  ADD_MEMBER(ShowMaterial);
+  ADD_MEMBER(AttachedGod);
 }
 
-template<> bool database<material>::AnalyzeData(inputfile& SaveFile, const std::string& Word, material::database& DataBase)
+template<> void databasecreator<olterrain>::CreateDataBaseMemberMap()
 {
-  bool Found = false;
+  ADD_MEMBER(BitmapPos);
+  ADD_MEMBER(Article);
+  ADD_MEMBER(Adjective);
+  ADD_MEMBER(AdjectiveArticle);
+  ADD_MEMBER(NameSingular);
+  ADD_MEMBER(NamePlural);
+  ADD_MEMBER(PostFix);
+  ADD_MEMBER(ArticleMode);
+  ADD_MEMBER(MainMaterialConfig);
+  ADD_MEMBER(SecondaryMaterialConfig);
+  ADD_MEMBER(ContainedMaterialConfig);
+  ADD_MEMBER(MaterialConfigChances);
+  ADD_MEMBER(IsAbstract);
+  ADD_MEMBER(OKVisualEffects);
+  ADD_MEMBER(MaterialColorB);
+  ADD_MEMBER(MaterialColorC);
+  ADD_MEMBER(MaterialColorD);
+  ADD_MEMBER(SitMessage);
+  ADD_MEMBER(DefaultMainVolume);
+  ADD_MEMBER(DefaultSecondaryVolume);
+  ADD_MEMBER(DefaultContainedVolume);
+  ADD_MEMBER(CreateDivineConfigurations);
+  ADD_MEMBER(ShowMaterial);
+  ADD_MEMBER(AttachedGod);
 
-  ANALYZE_DATA(StrengthValue);
-  ANALYZE_DATA(ConsumeType);
-  ANALYZE_DATA(Density);
-  ANALYZE_DATA(Color);
-  ANALYZE_DATA(PriceModifier);
-  ANALYZE_DATA(IsGolemMaterial);
-  ANALYZE_DATA(Emitation);
-  ANALYZE_DATA(CanBeWished);
-  ANALYZE_DATA(NutritionValue);
-  ANALYZE_DATA(IsAlive);
-  ANALYZE_DATA(IsFlammable);
-  ANALYZE_DATA(IsExplosive);
-  ANALYZE_DATA(NameStem);
-  ANALYZE_DATA_WITH_DEFAULT(AdjectiveStem, NameStem);
-  ANALYZE_DATA(Article);
-  ANALYZE_DATA(Effect);
-  ANALYZE_DATA(ConsumeEndMessage);
-  ANALYZE_DATA(HitMessage);
-  ANALYZE_DATA(ExplosivePower);
-  ANALYZE_DATA(Alpha);
-  ANALYZE_DATA(CreateDivineConfigurations);
-  ANALYZE_DATA(Flexibility);
-  ANALYZE_DATA(SpoilModifier);
-  ANALYZE_DATA(IsSparkling);
-  ANALYZE_DATA(EffectStrength);
-  ANALYZE_DATA(IsMetal);
-  ANALYZE_DATA(CanHaveParasite);
-  ANALYZE_DATA(DigProductMaterial);
-  ANALYZE_DATA(ConsumeWisdomLimit);
-  ANALYZE_DATA(AttachedGod);
-  ANALYZE_DATA(BreatheMessage);
-  ANALYZE_DATA(EffectIsGood);
+  ADD_MEMBER(DigMessage);
+  ADD_MEMBER(CanBeDestroyed);
+  ADD_MEMBER(RestModifier);
+  ADD_MEMBER(RestMessage);
+  ADD_MEMBER(IsUpLink);
+  ADD_MEMBER(StorageVolume);
+  ADD_MEMBER(HPModifier);
+  ADD_MEMBER(IsSafeToCreateDoor);
+  ADD_MEMBER(OpenBitmapPos);
+}
 
-  return Found;
+template<> void databasecreator<material>::CreateDataBaseMemberMap()
+{
+  ADD_MEMBER(StrengthValue);
+  ADD_MEMBER(ConsumeType);
+  ADD_MEMBER(Density);
+  ADD_MEMBER(Color);
+  ADD_MEMBER(PriceModifier);
+  ADD_MEMBER(IsGolemMaterial);
+  ADD_MEMBER(Emitation);
+  ADD_MEMBER(CanBeWished);
+  ADD_MEMBER(NutritionValue);
+  ADD_MEMBER(IsAlive);
+  ADD_MEMBER(IsFlammable);
+  ADD_MEMBER(IsExplosive);
+  ADD_MEMBER(NameStem);
+  ADD_MEMBER(AdjectiveStem);
+  ADD_MEMBER(Article);
+  ADD_MEMBER(Effect);
+  ADD_MEMBER(ConsumeEndMessage);
+  ADD_MEMBER(HitMessage);
+  ADD_MEMBER(ExplosivePower);
+  ADD_MEMBER(Alpha);
+  ADD_MEMBER(CreateDivineConfigurations);
+  ADD_MEMBER(Flexibility);
+  ADD_MEMBER(SpoilModifier);
+  ADD_MEMBER(IsSparkling);
+  ADD_MEMBER(EffectStrength);
+  ADD_MEMBER(IsMetal);
+  ADD_MEMBER(CanHaveParasite);
+  ADD_MEMBER(DigProductMaterial);
+  ADD_MEMBER(ConsumeWisdomLimit);
+  ADD_MEMBER(AttachedGod);
+  ADD_MEMBER(BreatheMessage);
+  ADD_MEMBER(EffectIsGood);
+}
+
+template<class type> bool databasecreator<type>::AnalyzeData(inputfile& SaveFile, const std::string& Word, database& DataBase)
+{
+  typename databasemembermap::iterator i = DataBaseMemberMap.find(Word);
+
+  if(i != DataBaseMemberMap.end())
+    {
+      i->second->ReadData(DataBase, SaveFile);
+      CheckDefaults(Word, DataBase);
+      return true;
+   }
+  else
+    return false;
+}
+
+template<> void databasecreator<character>::CheckDefaults(const std::string& Word, character::database& DataBase)
+{
+  if(Word == "ArmBitmapPos")
+    DataBase.RightArmBitmapPos = DataBase.LeftArmBitmapPos = DataBase.ArmBitmapPos;
+  else if(Word == "LegBitmapPos")
+    DataBase.GroinBitmapPos = DataBase.RightLegBitmapPos = DataBase.LeftLegBitmapPos = DataBase.LegBitmapPos;
+  else if(Word == "ClothColor")
+    DataBase.CapColor = DataBase.TorsoMainColor = DataBase.ArmMainColor = DataBase.LegMainColor = DataBase.ClothColor;
+  else if(Word == "NameSingular")
+    DataBase.NamePlural = DataBase.NameSingular + 's';
+  else if(Word == "BaseUnarmedStrength")
+    {
+      DataBase.BaseBiteStrength = DataBase.BaseUnarmedStrength >> 1;
+      DataBase.BaseKickStrength = DataBase.BaseUnarmedStrength << 1;
+    }
+  else if(Word == "RightGauntlet")
+    DataBase.LeftGauntlet = DataBase.RightGauntlet;
+  else if(Word == "RightBoot")
+    DataBase.LeftBoot = DataBase.RightBoot;
+  else if(Word == "DefaultName")
+    DataBase.Alias.push_back(DataBase.DefaultName);
+}
+
+template<> void databasecreator<item>::CheckDefaults(const std::string& Word, item::database& DataBase)
+{
+  if(Word == "NameSingular")
+    {
+      DataBase.NamePlural = DataBase.NameSingular + 's';
+      DataBase.FlexibleNameSingular = DataBase.NameSingular;
+    }
+  else if(Word == "BitmapPos")
+    DataBase.WallBitmapPos = DataBase.BitmapPos;
+}
+
+template<> void databasecreator<glterrain>::CheckDefaults(const std::string& Word, glterrain::database& DataBase)
+{
+  if(Word == "NameSingular")
+    DataBase.NamePlural = DataBase.NameSingular + 's';
+}
+
+template<> void databasecreator<olterrain>::CheckDefaults(const std::string& Word, olterrain::database& DataBase)
+{
+  if(Word == "NameSingular")
+    DataBase.NamePlural = DataBase.NameSingular + 's';
+}
+
+template<> void databasecreator<material>::CheckDefaults(const std::string& Word, material::database& DataBase)
+{
+  if(Word == "NameStem")
+    DataBase.AdjectiveStem = DataBase.NameStem;
 }
 
 void databasesystem::Initialize()
@@ -436,26 +507,35 @@ void databasesystem::Initialize()
     /* Must be before character */
 
     inputfile ScriptFile(game::GetGameDir() + "Script/material.dat", &game::GetGlobalValueMap());
-    database<material>::ReadFrom(ScriptFile);
+    databasecreator<material>::ReadFrom(ScriptFile);
   }
 
   {
     inputfile ScriptFile(game::GetGameDir() + "Script/char.dat", &game::GetGlobalValueMap());
-    database<character>::ReadFrom(ScriptFile);
+    databasecreator<character>::ReadFrom(ScriptFile);
   }
 
   {
     inputfile ScriptFile(game::GetGameDir() + "Script/item.dat", &game::GetGlobalValueMap());
-    database<item>::ReadFrom(ScriptFile);
+    databasecreator<item>::ReadFrom(ScriptFile);
   }
 
   {
     inputfile ScriptFile(game::GetGameDir() + "Script/glterra.dat", &game::GetGlobalValueMap());
-    database<glterrain>::ReadFrom(ScriptFile);
+    databasecreator<glterrain>::ReadFrom(ScriptFile);
   }
 
   {
     inputfile ScriptFile(game::GetGameDir() + "Script/olterra.dat", &game::GetGlobalValueMap());
-    database<olterrain>::ReadFrom(ScriptFile);
+    databasecreator<olterrain>::ReadFrom(ScriptFile);
   }
+}
+
+void databasesystem::CreateDataBaseMemberMaps()
+{
+  databasecreator<character>::CreateDataBaseMemberMap();
+  databasecreator<item>::CreateDataBaseMemberMap();
+  databasecreator<glterrain>::CreateDataBaseMemberMap();
+  databasecreator<olterrain>::CreateDataBaseMemberMap();
+  databasecreator<material>::CreateDataBaseMemberMap();
 }

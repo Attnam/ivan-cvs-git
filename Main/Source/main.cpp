@@ -7,7 +7,6 @@
 #endif
 
 #include "game.h"
-#include "festring.h"
 #include "database.h"
 #include "feio.h"
 #include "igraph.h"
@@ -16,6 +15,7 @@
 #include "hscore.h"
 #include "graphics.h"
 #include "script.h"
+#include "message.h"
 
 int Main(int argc, char **argv)
 {
@@ -38,11 +38,13 @@ int Main(int argc, char **argv)
   femath::SetSeed(time(0));
   game::InitGlobalValueMap();
   scriptsystem::Initialize();
+  databasesystem::CreateDataBaseMemberMaps();
   databasesystem::Initialize();
   game::InitLuxTable();
   configuration::Load();
   igraph::Init();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
+  msgsystem::Init();
 
   while(true)
     switch(iosystem::Menu(igraph::GetMenuGraphic(), vector2d(RES_X / 2 - 130, RES_Y / 2 + 20), "\r", "Start Game\rContinue Game\rConfiguration\rHighscores\rQuit\r", LIGHT_GRAY, "Released under the GNU\rGeneral Public License\rMore info: see COPYING\r", "IVAN v" IVAN_VERSION "\r"))
@@ -93,4 +95,3 @@ int Main(int argc, char **argv)
 	return 0;
       }
 }
-

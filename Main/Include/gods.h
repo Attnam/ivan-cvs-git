@@ -12,12 +12,11 @@ class GOD
   valpurus,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual void Pray();
   virtual uchar GetBasicAlignment() const;
-  virtual std::string GetPriestMessage() const;
   virtual ushort GetColor() const;
  protected:
   virtual void PrayGoodEffect();
@@ -29,11 +28,10 @@ class GOD
   legifer,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
-  virtual std::string GetPriestMessage() const;
   virtual ushort GetColor() const;
  protected:
   virtual void PrayGoodEffect();
@@ -45,8 +43,8 @@ class GOD
   atavus,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -60,12 +58,11 @@ class GOD
   dulcis,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
-  virtual std::string GetPriestMessage() const;
  protected:
   virtual void PrayGoodEffect();
   virtual void PrayBadEffect();
@@ -76,11 +73,10 @@ class GOD
   seges,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
-  virtual std::string GetPriestMessage() const;
   virtual ushort GetColor() const;
  protected:
   virtual void PrayGoodEffect();
@@ -92,11 +88,10 @@ class GOD
   sophos,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
-  virtual std::string GetPriestMessage() const;
   virtual ushort GetColor() const;
  protected:
   virtual void PrayGoodEffect();
@@ -108,8 +103,8 @@ class GOD
   silva,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -123,8 +118,8 @@ class GOD
   loricatus,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -138,8 +133,8 @@ class GOD
   mellis,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -153,8 +148,8 @@ class GOD
   cleptia,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -168,8 +163,8 @@ class GOD
   nefas,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -183,8 +178,8 @@ class GOD
   scabies,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual void PlayerVomitedOnAltar();
@@ -199,8 +194,8 @@ class GOD
   infuscor,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -214,8 +209,8 @@ class GOD
   cruentus,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual uchar GetBasicAlignment() const;
   virtual ushort GetColor() const;
@@ -229,8 +224,8 @@ class GOD
   mortifer,
   god,
  public:
-  virtual std::string GetName() const;
-  virtual std::string GetDescription() const;
+  virtual const char* GetName() const;
+  virtual const char* GetDescription() const;
   virtual uchar GetAlignment() const;
   virtual void Pray();
   virtual uchar GetBasicAlignment() const;

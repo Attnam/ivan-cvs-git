@@ -1,8 +1,4 @@
-#include "fluid.h"
-#include "bitmap.h"
-#include "save.h"
-#include "game.h"
-#include "femath.h"
+/* Compiled through materset.cpp */
 
 fluid::fluid() : entity(HAS_BE) { }
 

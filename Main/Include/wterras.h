@@ -13,15 +13,15 @@ class GWTERRAIN
   gwterrain,
  public:
   virtual void VirtualConstructor(bool) { SetAnimationFrames(32); }
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual bool LongerArticle() const { return true; }
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 10; }
+  virtual ushort GetPriority() const { return 10; }
   virtual bool IsWalkable(const character* = 0) const;
-  virtual std::string SurviveMessage() const;
-  virtual std::string MonsterSurviveMessage() const;
-  virtual std::string DeathMessage() const;
-  virtual std::string ScoreEntry() const;
+  virtual const char* SurviveMessage() const;
+  virtual const char* MonsterSurviveMessage() const;
+  virtual const char* DeathMessage() const;
+  virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
 );
 
@@ -30,9 +30,9 @@ class GWTERRAIN
   glacier,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 90; }
+  virtual ushort GetPriority() const { return 90; }
 );
 
 class GWTERRAIN
@@ -40,9 +40,9 @@ class GWTERRAIN
   desert,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 20; }
+  virtual ushort GetPriority() const { return 20; }
 );
 
 class GWTERRAIN
@@ -50,9 +50,9 @@ class GWTERRAIN
   snow,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 80; }
+  virtual ushort GetPriority() const { return 80; }
 );
 
 class GWTERRAIN
@@ -60,18 +60,18 @@ class GWTERRAIN
   jungle,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 50; }
+  virtual ushort GetPriority() const { return 50; }
 );
 
 class GWTERRAIN
 (
   leafyforest,
   gwterrain,
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 60; }
+  virtual ushort GetPriority() const { return 60; }
 );
 
 class GWTERRAIN
@@ -79,10 +79,10 @@ class GWTERRAIN
   evergreenforest,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual bool LongerArticle() const { return true; }
-  virtual uchar Priority() const { return 70; }
+  virtual ushort GetPriority() const { return 70; }
 );
 
 class GWTERRAIN
@@ -90,9 +90,9 @@ class GWTERRAIN
   steppe,
   gwterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
-  virtual uchar Priority() const { return 30; }
+  virtual ushort GetPriority() const { return 30; }
 );
 
 class OWTERRAIN
@@ -100,7 +100,7 @@ class OWTERRAIN
   attnam,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
   virtual bool Enter(bool) const;
@@ -111,7 +111,7 @@ class OWTERRAIN
   elpuricave,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
 );
@@ -121,7 +121,7 @@ class OWTERRAIN
   newattnam,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
 );
@@ -131,7 +131,7 @@ class OWTERRAIN
   underwatertunnel,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
   virtual bool LongerArticle() const { return true; }
@@ -142,7 +142,7 @@ class OWTERRAIN
   underwatertunnelexit,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
   virtual bool LongerArticle() const { return true; }
@@ -154,7 +154,7 @@ class OWTERRAIN
   mondedr,
   owterrain,
  public:
-  virtual std::string GetNameStem() const;
+  virtual const char* GetNameStem() const;
   virtual vector2d GetBitmapPos(ushort) const;
   virtual uchar GetAttachedDungeon() const;
 );

@@ -3,8 +3,9 @@
 #include "proto.h"
 #include "action.h"
 
-std::vector<action::prototype*> protocontainer<action>::ProtoData;
+action::prototype** protocontainer<action>::ProtoData;
 valuemap protocontainer<action>::CodeNameMap;
+ushort protocontainer<action>::ProtoAmount;
 
 #include "actions.h"
 
@@ -14,6 +15,7 @@ valuemap protocontainer<action>::CodeNameMap;
 #include "char.h"
 #include "materia.h"
 #include "game.h"
+#include "save.h"
 
 #include "action.cpp"
 #include "actions.cpp"

@@ -118,22 +118,15 @@ class game
   static uchar Load(const std::string& = SaveName(""));
   static bool IsRunning() { return Running; }
   static void SetIsRunning(bool What) { Running = What; }
-  static void ActivateWizardMode() { WizardMode = true; }
-  static bool WizardModeIsActive() { return WizardMode; }
-  static void SeeWholeMap();
-  static uchar GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
   static bool EmitationHandler(long, long);
   static bool NoxifyHandler(long, long);
-  static bool GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
-  static void GoThroughWalls() { GoThroughWallsCheat = !GoThroughWallsCheat; }
   static void UpdateCameraXWithPos(ushort);
   static void UpdateCameraYWithPos(ushort);
-  static bool KeyIsOK(char);
   static uchar GetCurrentLevelIndex() { return CurrentLevelIndex; }
   static int GetMoveCommandKeyBetweenPoints(vector2d, vector2d);
   static void DrawEverythingNoBlit(bool = false);
   static god* GetGod(ushort Index) { return God[Index]; }
-  static const std::string& GetAlignment(ushort Index) { return Alignment[Index]; }
+  static const char* GetAlignment(ushort Index) { return Alignment[Index]; }
   static void ApplyDivineTick();
   static void ApplyDivineAlignmentBonuses(god*, bool, short = 10);
   static vector2d GetDirectionVectorForKey(int);
@@ -141,7 +134,7 @@ class game
   static bool EyeHandler(long, long);
   static long GodScore();
   static void ShowLevelMessage();
-  static float Difficulty();
+  static float GetMinDifficulty();
   static void TriggerQuestForGoldenEagleShirt();
   static void CalculateGodNumber();
   static long GetBaseScore() { return BaseScore; }
@@ -185,9 +178,9 @@ class game
   static uchar GetDirectionForVector(vector2d);
   static std::string GetVerbalPlayerAlignment();
   static void CreateGods();
-  static vector2d GetScreenSize() { return ScreenSize; }
-  static void SetScreenSize(vector2d What) { ScreenSize = What; }
-  static vector2d CalculateScreenCoordinates(vector2d);
+  static ushort GetScreenXSize() { return 42; }
+  static ushort GetScreenYSize() { return 26; }
+  static vector2d CalculateScreenCoordinates(vector2d Pos) { return (Pos - Camera + vector2d(1, 2)) << 4; }
   static void BusyAnimation();
   static void BusyAnimation(bitmap*);
   static vector2d PositionQuestion(const std::string&, vector2d, void (*)(vector2d) = 0, void (*)(vector2d, int) = 0, bool = true);
@@ -206,7 +199,7 @@ class game
   static int KeyQuestion(const std::string&, int, int, ...);
   static void LookKeyHandler(vector2d, int);
   static void NameKeyHandler(vector2d, int);
-  static const std::string& GetLockDescription(ushort Index) { return LockDescription[Index]; }
+  static const char* GetLockDescription(ushort Index) { return LockDescription[Index]; }
   static void End(bool = true, bool = true);
   static uchar CalculateRoughDirection(vector2d);
   static void InstallCurrentEmitter(vector2d, ulong);
@@ -217,7 +210,7 @@ class game
   static void CalculateNextDanger();
   static int Menu(bitmap*, vector2d, const std::string&, const std::string&, ushort, const std::string& = "", const std::string& = "");
   static void InitDangerMap();
-  static const dangermap& GetDangerMap() { return DangerMap; }
+  static const dangermap& GetDangerMap();
   static bool TryTravel(uchar, uchar, uchar, bool = false);
   static bool LeaveArea(std::vector<character*>&, bool);
   static void EnterArea(std::vector<character*>&, uchar, uchar);
@@ -261,12 +254,25 @@ class game
   static void DisplayMassacreLists();
   static void DisplayMassacreList(const massacremap&, const std::string&, ulong);
   static bool MassacreListsEmpty();
+#ifdef WIZARD
+  static void ActivateWizardMode() { WizardMode = true; }
+  static bool WizardModeIsActive() { return WizardMode; }
+  static void SeeWholeMap();
+  static uchar GetSeeWholeMapCheatMode() { return SeeWholeMapCheatMode; }
+  static bool GoThroughWallsCheatIsActive() { return GoThroughWallsCheat; }
+  static void GoThroughWalls() { GoThroughWallsCheat = !GoThroughWallsCheat; }
+#else
+  static bool WizardModeIsActive() { return false; }
+  static uchar GetSeeWholeMapCheatMode() { return 0; }
+  static bool GoThroughWallsCheatIsActive() { return false; }
+#endif
+  static bool WizardModeIsReallyActive() { return WizardMode; }
  private:
-  static std::string Alignment[];
+  static const char* const Alignment[];
   static god** God;
   static uchar CurrentLevelIndex;
   static uchar CurrentDungeonIndex;
-  static int MoveCommandKey[];
+  static const int MoveCommandKey[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
   static ushort*** LuxTable;
@@ -274,9 +280,6 @@ class game
   static bool Running;
   static character* Player;
   static vector2d Camera;
-  static bool WizardMode;
-  static uchar SeeWholeMapCheatMode;
-  static bool GoThroughWallsCheat;
   static long BaseScore;
   static ulong Ticks;
   static std::string AutoSaveFileName;
@@ -293,12 +296,11 @@ class game
   static bool LOSUpdateRequested;
   static character* Petrus;
   static bool Loading;
-  static vector2d ScreenSize;
   static gamescript* GameScript;
   static valuemap GlobalValueMap;
   static vector2d CursorPos;
   static bool Zoom;
-  static std::string LockDescription[];
+  static const char* const LockDescription[];
   static ushort** CurrentRedLuxTable;
   static ushort** CurrentGreenLuxTable;
   static ushort** CurrentBlueLuxTable;
@@ -331,6 +333,9 @@ class game
   static ulong PlayerMassacreAmount;
   static ulong PetMassacreAmount;
   static ulong MiscMassacreAmount;
+  static bool WizardMode;
+  static uchar SeeWholeMapCheatMode;
+  static bool GoThroughWallsCheat;
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -6,25 +6,39 @@
 #endif
 
 #include <string>
+#include <map>
+
+#include "error.h"
 
 class inputfile;
 
-template <class type> class database
+template <class database> struct databasememberbase
+{
+  virtual void ReadData(database&, inputfile&) = 0;
+};
+
+template <class type> class databasecreator
 {
  public:
+  typedef typename type::database database;
+  typedef std::map<std::string, databasememberbase<database>*> databasemembermap;
   static void ReadFrom(inputfile&);
   static void InstallDataBase(type*);
+  static void CreateDataBaseMemberMap();
  private:
-  static bool AnalyzeData(inputfile&, const std::string&, typename type::database&);
+  static bool AnalyzeData(inputfile&, const std::string&, database&);
+  static void CheckDefaults(const std::string&, database&);
+  static databasemembermap DataBaseMemberMap;
 };
 
 class databasesystem
 {
  public:
   static void Initialize();
+  static void CreateDataBaseMemberMaps();
 };
 
-template <class type> inline void database<type>::InstallDataBase(type* Instance)
+template <class type> inline void databasecreator<type>::InstallDataBase(type* Instance)
 {
   const typename type::databasemap& Config = Instance->GetProtoType()->GetConfig();
   const typename type::databasemap::const_iterator i = Config.find(Instance->Config);
@@ -32,7 +46,7 @@ template <class type> inline void database<type>::InstallDataBase(type* Instance
   if(i != Config.end())
     Instance->DataBase = &i->second;
   else
-    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassId().c_str(), Instance->Config);
+    ABORT("Undefined %s configuration #%d sought!", Instance->GetProtoType()->GetClassId(), Instance->Config);
 }
 
 #endif

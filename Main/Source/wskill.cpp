@@ -1,7 +1,7 @@
 #include "wskill.h"
 #include "message.h"
-#include "save.h"
 #include "ivandef.h"
+#include "save.h"
 
 ushort CWeaponSkillLevelMap[] = { 0, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 65535 };
 ulong CWeaponSkillUnuseTickMap[] = { 500000, 250000, 200000, 150000, 50000, 30000, 25000, 20000, 15000, 12500, 10000 };

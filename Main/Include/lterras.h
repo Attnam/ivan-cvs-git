@@ -192,11 +192,11 @@ class GLTERRAIN
   glterrain,
  public:
   virtual bool IsWalkable(const character* = 0) const;
-  virtual std::string SurviveMessage() const;
-  virtual std::string MonsterSurviveMessage() const;
-  virtual std::string DeathMessage() const;
-  virtual std::string MonsterDeathVerb() const;
-  virtual std::string ScoreEntry() const;
+  virtual const char* SurviveMessage() const;
+  virtual const char* MonsterSurviveMessage() const;
+  virtual const char* DeathMessage() const;
+  virtual const char* MonsterDeathVerb() const;
+  virtual const char* ScoreEntry() const;
   virtual bool IsFatalToStay() const { return true; }
   virtual bool DipInto(item*, character*);
   virtual bool IsDipDestination() const { return true; }
@@ -222,7 +222,7 @@ class OLTERRAIN
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual void SetText(const std::string& What) { Text = What; }
-  virtual std::string GetText() const { return Text; }
+  virtual std::string GetText() const;
   virtual void AddPostFix(std::string&) const;
   virtual void StepOn(character*);
  protected:

@@ -1,13 +1,13 @@
 /* Compiled through materset.cpp */
 
-materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<material>::Add(this); }
+materialprototype::materialprototype(materialprototype* Base, material* (*Cloner)(ushort, ulong, bool), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<material>::Add(this); }
 const materialdatabase& materialprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
-void material::InstallDataBase() { ::database<material>::InstallDataBase(this); }
+void material::InstallDataBase() { databasecreator<material>::InstallDataBase(this); }
 ulong material::GetRawPrice() const { return GetPriceModifier() * GetWeight() / 10000; }
 bool material::CanBeDug(material* ShovelMaterial) const { return ShovelMaterial->GetStrengthValue() > GetStrengthValue(); }
 ulong material::GetTotalExplosivePower() const { return ulong(float(Volume) * GetExplosivePower() / 1000000); }
-std::string material::GetConsumeVerb() const { return "eating"; }
+const char* material::GetConsumeVerb() const { return "eating"; }
 
 void material::AddName(std::string& Name, bool Articled, bool Adjective) const
 {

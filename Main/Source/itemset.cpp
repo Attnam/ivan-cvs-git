@@ -3,8 +3,9 @@
 #include "proto.h"
 #include "item.h"
 
-std::vector<item::prototype*> protocontainer<item>::ProtoData;
+item::prototype** protocontainer<item>::ProtoData;
 valuemap protocontainer<item>::CodeNameMap;
+ushort protocontainer<item>::ProtoAmount;
 itemprototype item_ProtoType(0, 0, "item");
 const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 
@@ -22,7 +23,6 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "stack.h"
 #include "wskill.h"
 #include "felist.h"
-#include "festring.h"
 #include "confdef.h"
 #include "room.h"
 #include "game.h"
@@ -34,6 +34,7 @@ const itemprototype* item::GetProtoType() const { return &item_ProtoType; }
 #include "config.h"
 #include "team.h"
 #include "smoke.h"
+#include "save.h"
 
 #include "item.cpp"
 #include "bodypart.cpp"

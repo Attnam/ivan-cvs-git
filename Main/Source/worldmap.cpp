@@ -12,11 +12,13 @@
 short DirX[8] = { -1, -1, -1, 0, 0, 1, 1, 1 };
 short DirY[8] = { -1, 0, 1, -1, 1, -1, 0, 1 };
 
-/* This can't be inlined, since then #include of char.h and cont.h should be included in worldmap.h */
-
 worldmap::worldmap() { }
 continent* worldmap::GetContinentUnder(vector2d Pos) const { return Continent[ContinentBuffer[Pos.X][Pos.Y]]; }
 vector2d worldmap::GetEntryPos(const character*, uchar Index) const { return EntryMap.find(Index)->second; }
+continent* worldmap::GetContinent(ushort Index) const { return Continent[Index]; }
+short worldmap::GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
+std::vector<character*>& worldmap::GetPlayerGroup() { return PlayerGroup; }
+character* worldmap::GetPlayerGroupMember(ushort c) { return PlayerGroup[c]; }
 
 worldmap::worldmap(ushort XSize, ushort YSize) : area(XSize, YSize)
 {
@@ -579,8 +581,8 @@ void worldmap::Draw(bool) const
 {
   ushort XMin = game::GetCamera().X;
   ushort YMin = game::GetCamera().Y;
-  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
-  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
+  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
+  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
 
   if(!game::GetSeeWholeMapCheatMode())
     {
@@ -650,3 +652,4 @@ inputfile& operator>>(inputfile& SaveFile, worldmap*& WorldMap)
   WorldMap->Load(SaveFile);
   return SaveFile;
 }
+

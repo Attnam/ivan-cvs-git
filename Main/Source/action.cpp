@@ -1,6 +1,6 @@
 /* Compiled through actset.cpp */
 
-actionprototype::actionprototype(action* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<action>::Add(this); }
+actionprototype::actionprototype(action* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<action>::Add(this); }
 
 action::action(donothing) : Actor(0), DNDMode(false) { }
 action::~action() { }

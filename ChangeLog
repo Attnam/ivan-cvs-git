@@ -7,7 +7,23 @@ is also provided AS IS and is probably completely unreadable.
 
 ------------------------------------------------------------------------------------
 
-April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
+April 7 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
+	* Extremely powerful kickers like adamant golems can now kick down walls
+	* It is now possible to break lanterns on walls by kicking them
+	* The faster monster now gets a 25% bonus when calculating relative danger,
+	  since it can potentially flee from the battle
+	* Remade database.cpp
+	* Converted a lot of std::strings to const char*s in places where it decreased
+	  compile time
+	* Removed the ShowBattleInfo command which was nearly useless and took months
+	  to compile
+	* Compile time (full optimization) decreased by about 30-40%
+	* The game maybe compiles on machines with a lot less memory now
+	* Added WIZARD define without which wizard-mode commands are not compiled
+	* You can now feel walls around you even if you don't see them
+
+April 4 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
 	* Version updated to 0.411
 	* SeeWholeMapCheat is now more versatile
@@ -19,7 +35,8 @@ April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
 	* If less than four items are on the ground, stepping on them says "A few items
 	  are lying here" instead of "several"
 	* State information is again better categorized and documented
-	* Again corrected a bug in the messages after teleport
+	* Again corrected a bug in the messages after teleport (alas, this slowed down
+	  the game...)
 
 April 3 2003 Timo Kiviluoto <sonor@phpoint.fi>
 

@@ -22,7 +22,7 @@ class wterrain
   std::string GetName(uchar) const;
   bool IsAnimated() const { return AnimationFrames > 1; }
   void SetAnimationFrames(ushort What) { AnimationFrames = What; }
-  virtual std::string GetNameStem() const = 0; // should be const std::string&
+  virtual const char* GetNameStem() const = 0; // should be const std::string&
  protected:
   virtual void VirtualConstructor(bool) { }
   virtual bool LongerArticle() const { return false; }
@@ -34,15 +34,15 @@ class wterrain
 class gwterrainprototype
 {
  public:
-  gwterrainprototype(gwterrain* (*)(bool), const std::string&);
+  gwterrainprototype(gwterrain* (*)(bool), const char*);
   gwterrain* Clone() const { return Cloner(false); }
   gwterrain* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   gwterrain* (*Cloner)(bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class gwterrain : public wterrain, public gterrain
@@ -52,26 +52,27 @@ class gwterrain : public wterrain, public gterrain
   gwterrain(donothing) { }
   virtual void Save(outputfile&) const;
   void Draw(bitmap*, vector2d, ulong, bool) const;
-  virtual uchar Priority() const = 0;
+  virtual ushort GetPriority() const = 0;
   virtual uchar GetEntryDifficulty() const { return 10; }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
   void CalculateNeighbourBitmapPoses();
-  std::vector<std::pair<vector2d, uchar> > Neighbour;
+ protected:
+  std::pair<vector2d, uchar> Neighbour[8];
 };
 
 class owterrainprototype
 {
  public:
-  owterrainprototype(owterrain* (*)(bool), const std::string&);
+  owterrainprototype(owterrain* (*)(bool), const char*);
   owterrain* Clone() const { return Cloner(false); }
   owterrain* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   owterrain* (*Cloner)(bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class owterrain : public wterrain, public oterrain

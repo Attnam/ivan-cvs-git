@@ -160,9 +160,9 @@ void temple::Enter(character* Pilgrim)
       {
 	if(GetMaster()->GetRelation(Pilgrim) != HOSTILE && Pilgrim->CanBeSeenBy(GetMaster()))
 	  if(GetMaster()->CanBeSeenByPlayer())
-	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->GOD_NAME);
+	    ADD_MESSAGE("%s opens %s mouth: \"Welcome to the shrine of %s!\"", GetMaster()->CHAR_NAME(DEFINITE), GetMaster()->GetPossessivePronoun().c_str(), game::GetGod(DivineMaster)->GetName());
 	  else
-	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->GOD_NAME);
+	    ADD_MESSAGE("You hear a voice say: \"Welcome to the shrine of %s!\"", game::GetGod(DivineMaster)->GetName());
       }
     else
       ADD_MESSAGE("The temple appears to be deserted.");
@@ -657,3 +657,4 @@ void library::HostileAction(character* Guilty) const
       Guilty->Hostility(GetMaster());
     }
 }
+

@@ -186,7 +186,7 @@ void stack::BeKicked(character* Kicker, ushort KickDamage)
     {
       ReceiveDamage(Kicker, KickDamage, PHYSICAL_DAMAGE);
 
-      if(GetItems())
+      if(GetItems() && SquarePosition == CENTER)
 	{
 	  item* Item1 = *GetTop();
 	  item* Item2 = RAND() & 1 && GetItems() > 1 ? *--GetTop() : 0;
@@ -409,7 +409,7 @@ void stack::AddContentsToList(felist& Contents, const character* Viewer, const s
       if(Item->GetCategory() != LastCategory)
 	{
 	  LastCategory = Item->GetCategory();
-	  Contents.AddEntry(item::ItemCategoryName(LastCategory), LIGHT_GRAY, 0, 0, false);
+	  Contents.AddEntry(item::GetItemCategoryName(LastCategory), LIGHT_GRAY, 0, 0, false);
 	}
 
       std::string Entry;

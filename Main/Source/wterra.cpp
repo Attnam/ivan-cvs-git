@@ -1,7 +1,7 @@
 /* Compiled through wmapset.cpp */
 
-gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<gwterrain>::Add(this); }
-owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<owterrain>::Add(this); }
+gwterrainprototype::gwterrainprototype(gwterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<gwterrain>::Add(this); }
+owterrainprototype::owterrainprototype(owterrain* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<owterrain>::Add(this); }
 
 void wterrain::AddName(std::string& String, uchar Case) const
 {
@@ -34,7 +34,7 @@ void gwterrain::Draw(bitmap* Bitmap, vector2d Pos, ulong Luminance, bool AllowAn
 {
   igraph::GetWTerrainGraphic()->Blit(Bitmap, GetBitmapPos(!AllowAnimate || AnimationFrames == 1 ? 0 : globalwindowhandler::GetTick() % AnimationFrames), Pos, 16, 16, Luminance);
 
-  for(ushort c = 0; c < Neighbour.size(); ++c)
+  for(ushort c = 0; c < 8 && Neighbour[c].second; ++c)
     igraph::GetWTerrainGraphic()->MaskedBlit(Bitmap, Neighbour[c].first, Pos, 16, 16, Luminance);
 }
 
@@ -79,7 +79,7 @@ bool DrawOrderer(const std::pair<vector2d, uchar>& Pair1, const std::pair<vector
 
 void gwterrain::CalculateNeighbourBitmapPoses()
 {
-  Neighbour.clear();
+  ushort Index = 0;
 
   for(ushort d = 0; d < 8; ++d)
     {
@@ -89,12 +89,19 @@ void gwterrain::CalculateNeighbourBitmapPoses()
 	{
 	  gwterrain* DoNeighbour = NeighbourSquare->GetGWTerrain();
 
-	  if(DoNeighbour->Priority() > Priority())
-	    Neighbour.push_back(std::pair<vector2d, uchar>(DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(d) << 4), DoNeighbour->Priority()));
+	  if(DoNeighbour->GetPriority() > GetPriority())
+	    {
+	      Neighbour[Index].first = DoNeighbour->GetBitmapPos(0) - (game::GetMoveVector(d) << 4);
+	      Neighbour[Index].second = DoNeighbour->GetPriority();
+	      ++Index;
+	    }
 	}
     }
 
-  std::sort(Neighbour.begin(), Neighbour.end(), DrawOrderer);
+  std::sort(Neighbour, Neighbour + Index, DrawOrderer);
+
+  if(Index < 8)
+    Neighbour[Index].second = 0;
 }
 
 bool owterrain::Enter(bool DirectionUp) const

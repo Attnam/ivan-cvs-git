@@ -2,17 +2,17 @@
 #include "felist.h"
 #include "bitmap.h"
 #include "graphics.h"
-#include "save.h"
 #include "config.h"
 #include "colorbit.h"
 #include "game.h"
+#include "save.h"
 
 colorizablebitmap* igraph::RawGraphic[RAW_TYPES];
 bitmap* igraph::Graphic[GRAPHIC_TYPES + 1];
 bitmap* igraph::TileBuffer;
 bitmap* igraph::OutlineBuffer;
-std::string igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
-std::string igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
+const char* igraph::RawGraphicFileName[] = { "Graphics/GLTerra.pcx", "Graphics/OLTerra.pcx", "Graphics/Item.pcx", "Graphics/Char.pcx", "Graphics/Humanoid.pcx", "Graphics/Effect.pcx" };
+const char* igraph::GraphicFileName[] = { "Graphics/WTerra.pcx", "Graphics/FOW.pcx", "Graphics/Cursor.pcx", "Graphics/Symbol.pcx", "Graphics/Menu.pcx" };
 tilemap igraph::TileMap;
 
 void igraph::Init()
@@ -69,24 +69,14 @@ void igraph::DrawCursor(vector2d Pos)
   igraph::GetCursorGraphic()->MaskedBlit(DOUBLE_BUFFER, 0, 0, Pos, 16, 16, configuration::GetContrastLuminance());
 }
 
-tile igraph::GetTile(graphicid GI)
-{
-  tilemap::iterator Iterator = TileMap.find(GI);
-
-  if(Iterator == TileMap.end())
-    ABORT("Art stolen!");
-
-  return Iterator->second;
-}
-
-tile igraph::AddUser(graphicid GI)
+bitmap* igraph::AddUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
   if(Iterator != TileMap.end())
     {
       ++Iterator->second.Users;
-      return Iterator->second;
+      return Iterator->second.Bitmap;
     }
   else
     {
@@ -161,22 +151,20 @@ tile igraph::AddUser(graphicid GI)
       if(GI.SpecialFlags & ST_LIGHTNING && !((GI.Frame + 1) & 7))
 	Bitmap->CreateLightning(GI.Seed + GI.Frame, WHITE);
 
-      tile Tile(Bitmap);
-      TileMap.insert(std::pair<graphicid, tile>(GI, Tile));
-      return Tile;
+      TileMap.insert(std::pair<graphicid, tile>(GI, tile(Bitmap)));
+      return Bitmap;
     }
 }
 
-void igraph::RemoveUser(graphicid GI)
+void igraph::RemoveUser(const graphicid& GI)
 {
   tilemap::iterator Iterator = TileMap.find(GI);
 
-  if(Iterator != TileMap.end())
-    if(!--Iterator->second.Users)
-      {
-	delete Iterator->second.Bitmap;
-	TileMap.erase(Iterator);
-      }
+  if(Iterator != TileMap.end() && !--Iterator->second.Users)
+    {
+      delete Iterator->second.Bitmap;
+      TileMap.erase(Iterator);
+    }
 }
 
 outputfile& operator<<(outputfile& SaveFile, const graphicid& Value)

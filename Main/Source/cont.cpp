@@ -6,6 +6,9 @@ uchar** continent::ContinentBuffer;
 
 continent::continent() { }
 continent::continent(ushort Index) : Index(Index) { }
+ulong continent::GetSize() const { return Member.size(); }
+ushort continent::GetGTerrainAmount(ushort Type) const { return GTerrainAmount[Type]; }
+vector2d continent::GetMember(ushort Index) const { return Member[Index]; }
 
 void continent::Save(outputfile& SaveFile) const
 {
@@ -44,21 +47,24 @@ void continent::GenerateInfo()
 
 vector2d continent::GetRandomMember(ushort Type)
 {
-  std::vector<vector2d> TypeContainer;
-
   if(!GTerrainAmount[Type])
     ABORT("Shortage of terrain!");
+
+  vector2d* TypeContainer = new vector2d[Member.size()];
+  ulong Index = 0;
 
   for(ulong c = 0; c < Member.size(); ++c)
     if(TypeBuffer[Member[c].X][Member[c].Y] == Type)
       {
-	TypeContainer.push_back(Member[c]);
+	TypeContainer[Index++] = Member[c];
 
-	if(TypeContainer.size() == GTerrainAmount[Type])
+	if(Index == GetGTerrainAmount(Type))
 	  break;
       }
 
-  return TypeContainer[RAND() % TypeContainer.size()];
+  vector2d Return = TypeContainer[RAND() % Index];
+  delete [] TypeContainer;
+  return Return;
 }
 
 outputfile& operator<<(outputfile& SaveFile, const continent* Continent)

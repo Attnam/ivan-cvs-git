@@ -1,6 +1,6 @@
 /* Compiled through roomset.cpp */
 
-roomprototype::roomprototype(room* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<room>::Add(this); }
+roomprototype::roomprototype(room* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<room>::Add(this); }
 
 room::room(donothing) : MasterID(0) { }
 room::~room() { }

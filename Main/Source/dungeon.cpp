@@ -1,10 +1,11 @@
 #include "dungeon.h"
 #include "level.h"
-#include "festring.h"
 #include "script.h"
 #include "error.h"
 #include "game.h"
 #include "ivandef.h"
+#include "save.h"
+#include "femath.h"
 
 dungeon::dungeon() { }
 

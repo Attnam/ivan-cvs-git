@@ -3,10 +3,12 @@
 #include "proto.h"
 #include "wterra.h"
 
-std::vector<gwterrain::prototype*> protocontainer<gwterrain>::ProtoData;
-std::vector<owterrain::prototype*> protocontainer<owterrain>::ProtoData;
+gwterrain::prototype** protocontainer<gwterrain>::ProtoData;
+owterrain::prototype** protocontainer<owterrain>::ProtoData;
 valuemap protocontainer<gwterrain>::CodeNameMap;
 valuemap protocontainer<owterrain>::CodeNameMap;
+ushort protocontainer<gwterrain>::ProtoAmount;
+ushort protocontainer<owterrain>::ProtoAmount;
 
 #include "wterras.h"
 
@@ -18,7 +20,6 @@ valuemap protocontainer<owterrain>::CodeNameMap;
 #include "char.h"
 #include "cont.h"
 #include "game.h"
-#include "festring.h"
 #include "cont.h"
 #include "femath.h"
 #include "config.h"
@@ -28,6 +29,7 @@ valuemap protocontainer<owterrain>::CodeNameMap;
 #include "igraph.h"
 #include "bitmap.h"
 #include "team.h"
+#include "save.h"
 
 #include "cont.cpp"
 #include "worldmap.cpp"

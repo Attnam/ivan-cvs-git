@@ -1,8 +1,8 @@
 /* Compiled through coreset.cpp */
 
-std::list<entity*> pool::Pool;
-std::list<entity*>::iterator pool::CurrentEntity = pool::Pool.end();
-std::vector<entity*> pool::Hell;
+entitylist pool::Pool;
+entitylist::iterator pool::CurrentEntity = pool::Pool.end();
+entitylist pool::Hell;
 
 /*
  * Calls the Be() function of each self-changeable entity during each tick,
@@ -16,7 +16,7 @@ void pool::Be()
     (*CurrentEntity)->Be();
 }
 
-void pool::Remove(std::list<entity*>::iterator Iterator)
+void pool::Remove(entitylist::iterator Iterator)
 {
   if(Iterator == CurrentEntity)
     ++CurrentEntity;
@@ -26,8 +26,8 @@ void pool::Remove(std::list<entity*>::iterator Iterator)
 
 void pool::BurnHell()
 {
-  for(ushort c = 0; c < Hell.size(); ++c)
-    delete Hell[c];
+  for(entitylist::iterator i = Hell.begin(); i != Hell.end(); ++i)
+    delete *i;
 
   Hell.clear();
 }

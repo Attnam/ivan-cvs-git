@@ -1,16 +1,4 @@
-#include "smoke.h"
-#include "lsquare.h"
-#include "bitmap.h"
-#include "save.h"
-#include "materias.h"
-#include "femath.h"
-#include "whandler.h"
-#include "proto.h"
-#include "game.h"
-#include "igraph.h"
-#include "colorbit.h"
-#include "message.h"
-#include "char.h"
+/* Compiled through materset.cpp */
 
 smoke::smoke(gas* Gas, lsquare* LSquareUnder) : entity(HAS_BE), Gas(Gas), LSquareUnder(LSquareUnder), Alpha(Gas->GetAlpha())
 {

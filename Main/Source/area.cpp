@@ -105,12 +105,12 @@ void area::UpdateLOS()
 
 void area::SendNewDrawRequest()
 {
-  for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenSize().X; ++x)
-    for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenSize().Y; ++y)
+  for(ushort x = game::GetCamera().X; x < XSize && x < game::GetCamera().X + game::GetScreenXSize(); ++x)
+    for(ushort y = game::GetCamera().Y; y < YSize && y < game::GetCamera().Y + game::GetScreenYSize(); ++y)
       Map[x][y]->SendNewDrawRequest();
 
   DOUBLE_BUFFER->ClearToColor(0);
-  DOUBLE_BUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenSize().X << 4), 33 + (game::GetScreenSize().Y << 4), DARK_GRAY, true);
+  DOUBLE_BUFFER->DrawRectangle(14, 30, 17 + (game::GetScreenXSize() << 4), 33 + (game::GetScreenYSize() << 4), DARK_GRAY, true);
 }
 
 void area::MoveCharacter(vector2d From, vector2d To)
@@ -134,3 +134,4 @@ void area::SetEntryPos(uchar Index, vector2d Pos)
 {
   EntryMap.insert(std::pair<uchar, vector2d>(Index, Pos));
 }
+

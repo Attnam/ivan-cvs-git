@@ -2,7 +2,7 @@
 
 void organicsubstance::ResetSpoiling() { SpoilCounter = SpoilLevel = 0; }
 
-std::string liquid::GetConsumeVerb() const { return "drinking"; }
+const char* liquid::GetConsumeVerb() const { return "drinking"; }
 
 bool powder::IsExplosive() const { return !Wetness && material::IsExplosive(); }
 

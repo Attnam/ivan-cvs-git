@@ -3,8 +3,9 @@
 #include "proto.h"
 #include "char.h"
 
-std::vector<character::prototype*> protocontainer<character>::ProtoData;
+character::prototype** protocontainer<character>::ProtoData;
 valuemap protocontainer<character>::CodeNameMap;
+ushort protocontainer<character>::ProtoAmount;
 characterprototype character_ProtoType(0, 0, "character");
 const characterprototype* character::GetProtoType() const { return &character_ProtoType; }
 
@@ -21,7 +22,6 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "team.h"
 #include "config.h"
 #include "god.h"
-#include "festring.h"
 #include "felist.h"
 #include "miscitem.h"
 #include "gear.h"
@@ -33,6 +33,7 @@ const characterprototype* character::GetProtoType() const { return &character_Pr
 #include "materias.h"
 #include "bitmap.h"
 #include "lterras.h"
+#include "save.h"
 
 #include "human.cpp"
 #include "nonhuman.cpp"

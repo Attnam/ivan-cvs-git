@@ -14,6 +14,7 @@
 class felist;
 class outputfile;
 class inputfile;
+class bitmap;
 
 class msgsystem
 {
@@ -30,6 +31,7 @@ class msgsystem
   static void DisableMessages() { Enabled = false; }
   static void EnterBigMessageMode() { BigMessageMode = true; }
   static void LeaveBigMessageMode();
+  static void Init();
  private:
   static felist MessageHistory;
   static std::string LastMessage;
@@ -38,6 +40,8 @@ class msgsystem
   static ulong Begin, End;
   static bool Enabled;
   static bool BigMessageMode;
+  static bool MessagesChanged;
+  static bitmap* QuickDrawCache;
 };
 
 #endif

@@ -98,18 +98,6 @@ inline ulong MakeRGB24(ulong Red, ulong Green, ulong Blue) { return (Red << 16 &
 
 #define NO_LIMIT 0xFFFF
 
-/* This multiplier was obtained from Knuth, D.E., "The Art of
-   Computer Programming," Vol 2, Seminumerical Algorithms, Third
-   Edition, Addison-Wesley, 1998, p. 106 (line 26) & p. 108 */
-
-#ifdef GCC
-#define RAND_MULTIPLIER 6364136223846793005ULL
-#endif
-
-#ifdef VC
-#define RAND_MULTIPLIER 6364136223846793005
-#endif
-
 #define MAX_CONTROLS 0x10
 
 #define HIGHEST 0xFF

@@ -462,7 +462,7 @@ void holybook::FinishReading(character* Reader)
     {
       if(GetMasterGod()->IsKnown())
 	{
-	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GOD_NAME);
+	  ADD_MESSAGE("The book reveals many divine secrets of %s to you.", GetMasterGod()->GetName());
 	  GetMasterGod()->AdjustRelation(75);
 	  game::ApplyDivineAlignmentBonuses(GetMasterGod(), true);
 	  PLAYER->EditExperience(WISDOM, 250);
@@ -477,7 +477,7 @@ void holybook::FinishReading(character* Reader)
       else
 	{
 	  GetMasterGod()->SetIsKnown(true);
-	  ADD_MESSAGE("You feel you master the magical rites of %s.", GetMasterGod()->GOD_NAME);
+	  ADD_MESSAGE("You feel you master the magical rites of %s.", GetMasterGod()->GetName());
 	}
     }
 }
@@ -732,7 +732,8 @@ void scrolloftaming::FinishReading(character* Reader)
 {
   // First find all characters in the squares around Reader
 
-  std::vector<character*> CharactersNearBy;
+  character* CharacterNear[8];
+  ushort Index = 0;
 
   for(ushort c = 0; c < 8; ++c)
     {
@@ -740,23 +741,23 @@ void scrolloftaming::FinishReading(character* Reader)
 
       if(GetArea()->IsValidPos(Test))
 	{
-	  character* CharacterInSquare = GetNearSquare(Test)->GetCharacter();
+	  character* Char = GetNearSquare(Test)->GetCharacter();
 
-	  if(CharacterInSquare && CharacterInSquare->IsCharmable() && CharacterInSquare->GetTeam() != Reader->GetTeam())
-	    CharactersNearBy.push_back(CharacterInSquare);
+	  if(Char && Char->IsCharmable() && Char->GetTeam() != Reader->GetTeam())
+	    CharacterNear[Index++] = Char;
 	}
     }
   
   // Then pick one of the characters and set it to the same team as Reader
 
-  if(CharactersNearBy.empty())
+  if(!Index)
     {
       if(Reader->IsPlayer() || Reader->CanBeSeenByPlayer())
 	ADD_MESSAGE("The scroll burns, but nothing happens.");
     }
   else
     {
-      character* ToBeTamed = CharactersNearBy[RAND() % CharactersNearBy.size()];
+      character* ToBeTamed = CharacterNear[RAND() % Index];
       ToBeTamed->ChangeTeam(Reader->GetTeam());
 
       if(Reader->IsPlayer())
@@ -1119,9 +1120,13 @@ itemcontainer::~itemcontainer()
   delete Contained;
 }
 
-const std::string& key::GetAdjective() const
+bool key::AddAdjective(std::string& String, bool Articled) const
 {
-  return game::GetLockDescription(LockType);
+  if(Articled)
+    String << "a ";
+
+  String << game::GetLockDescription(LockType);
+  return true;
 }
 
 /* Victim is the stuck person, Bodypart is the index of the bodypart that the trap is stuck to and the last vector2d is just a direction vector that may - or may not - be used in the future. This function returns true if the character manages to escape */
@@ -2201,3 +2206,4 @@ bool potion::ReceiveDamage(character* Damager, ushort Damage, ushort Type)
 
   return item::ReceiveDamage(Damager, Damage, Type);
 }
+

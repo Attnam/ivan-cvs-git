@@ -19,7 +19,7 @@ class entity;
 class outputfile;
 class inputfile;
 class material;
-template <class type> class database;
+template <class type> class databasecreator;
 
 struct materialdatabase
 {
@@ -61,11 +61,11 @@ struct materialdatabase
 class materialprototype
 {
  public:
-  friend class database<material>;
-  materialprototype(materialprototype*, material* (*)(ushort, ulong, bool), const std::string&);
+  friend class databasecreator<material>;
+  materialprototype(materialprototype*, material* (*)(ushort, ulong, bool), const char*);
   material* Clone(ushort Config, ulong Volume = 0) const { return Cloner(Config, Volume, false); }
   material* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
   const materialprototype* GetBase() const { return Base; }
   const std::map<ushort, materialdatabase>& GetConfig() const { return Config; }
@@ -76,13 +76,13 @@ class materialprototype
   materialprototype* Base;
   std::map<ushort, materialdatabase> Config;
   material* (*Cloner)(ushort, ulong, bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class material
 {
  public:
-  friend class database<material>;
+  friend class databasecreator<material>;
   typedef materialprototype prototype;
   typedef materialdatabase database;
   typedef std::map<ushort, materialdatabase> databasemap;
@@ -147,7 +147,7 @@ class material
   static material* MakeMaterial(ushort, ulong);
   virtual bool IsFlesh() const { return false; }
   virtual bool IsLiquid() const { return false; }
-  virtual std::string GetConsumeVerb() const;
+  virtual const char* GetConsumeVerb() const;
   ulong GetWeight() const { return Weight; }
   void CalculateWeight() { Weight = Volume * GetDensity() / 1000; }
   entity* GetMotherEntity() const { return MotherEntity; }

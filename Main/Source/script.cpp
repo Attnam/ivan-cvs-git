@@ -1,4 +1,10 @@
-/* Compiled through dataset.cpp */
+#include "script.h"
+#include "save.h"
+#include "game.h"
+#include "materia.h"
+#include "char.h"
+#include "proto.h"
+#include "allocate.h"
 
 script::datamap posscript::DataMap;
 script::datamap materialscript::DataMap;
@@ -18,9 +24,80 @@ script::datamap dungeonscript::DataMap;
 script::datamap teamscript::DataMap;
 script::datamap gamescript::DataMap;
 
+template <class type> void scriptmember<type>::ReadFrom(inputfile& SaveFile)
+{
+  if(!Member)
+    Member = new type;
+
+  ReadData(*Member, SaveFile);
+}
+
+template <class type> void scriptmember<type>::Replace(scriptmemberbase& Base)
+{
+  scriptmember<type>& Data = static_cast<scriptmember<type>&>(Base);
+
+  if(Data.Member)
+    {
+      delete Member;
+      Member = Data.Member;
+      Data.Member = 0;
+    }
+}
+
+template <class type> void scriptmember<type>::Save(outputfile& SaveFile) const
+{
+  if(Member)
+    {
+      SaveFile.Put(1);
+      SaveFile << *Member;
+    }
+  else
+    SaveFile.Put(0);
+}
+
+template <class type> void scriptmember<type>::Load(inputfile& SaveFile)
+{
+  if(SaveFile.Get())
+    {
+      Member = new type;
+      SaveFile >> *Member;
+    }
+}
+
+#define INST_SCRIPT_MEMBER(type)\
+template void scriptmember< type >::ReadFrom(inputfile&);\
+template void scriptmember< type >::Replace(scriptmemberbase&);\
+template void scriptmember< type >::Save(outputfile&) const;\
+template void scriptmember< type >::Load(inputfile&);
+
+INST_SCRIPT_MEMBER(bool);
+INST_SCRIPT_MEMBER(uchar);
+INST_SCRIPT_MEMBER(short);
+INST_SCRIPT_MEMBER(ushort);
+INST_SCRIPT_MEMBER(ulong);
+INST_SCRIPT_MEMBER(vector2d);
+INST_SCRIPT_MEMBER(std::string);
+INST_SCRIPT_MEMBER(std::vector<vector2d>);
+INST_SCRIPT_MEMBER(rect);
+INST_SCRIPT_MEMBER(interval);
+INST_SCRIPT_MEMBER(region);
+INST_SCRIPT_MEMBER(posscript);
+INST_SCRIPT_MEMBER(materialscript);
+INST_SCRIPT_MEMBER(squarescript);
+INST_SCRIPT_MEMBER(roomscript);
+INST_SCRIPT_MEMBER(levelscript);
+INST_SCRIPT_MEMBER(contentscript<character>);
+INST_SCRIPT_MEMBER(std::list<contentscript<item> >);
+INST_SCRIPT_MEMBER(contentscript<glterrain>);
+INST_SCRIPT_MEMBER(contentscript<olterrain>);
+INST_SCRIPT_MEMBER(charactercontentmap);
+INST_SCRIPT_MEMBER(itemcontentmap);
+INST_SCRIPT_MEMBER(glterraincontentmap);
+INST_SCRIPT_MEMBER(olterraincontentmap);
+
 bool script::ReadMember(inputfile& SaveFile, const std::string& Word)
 {
-  datamemberbase* Data = GetData(Word);
+  scriptmemberbase* Data = GetData(Word.c_str());
 
   if(Data)
     {
@@ -31,7 +108,7 @@ bool script::ReadMember(inputfile& SaveFile, const std::string& Word)
     return false;
 }
 
-datamemberbase* script::GetDataFromMap(const datamap& DataMap, const std::string& Identifier)
+scriptmemberbase* script::GetDataFromMap(const datamap& DataMap, const char* Identifier)
 {
   datamap::const_iterator i = DataMap.find(Identifier);
   return i != DataMap.end() ? &(this->*i->second) : 0;
@@ -49,9 +126,9 @@ void script::LoadDataMap(const datamap& DataMap, inputfile& SaveFile)
     (this->*i->second).Load(SaveFile);
 }
 
-template<class type, class scripttype> inline void InitMember(script::datamap& DataMap, const std::string& Identifier, datamember<type> scripttype::* DataMember)
+template<class type, class scripttype> void InitMember(script::datamap& DataMap, const char* Identifier, scriptmember<type> scripttype::* DataMember)
 {
-  DataMap.insert(std::pair<std::string, datamemberbase script::*>(Identifier, reinterpret_cast<datamemberbase script::*>(DataMember)));
+  DataMap[Identifier] = reinterpret_cast<scriptmemberbase script::*>(DataMember);
 }
 
 #define INIT_MEMBER(name) InitMember(DataMap, #name, &scripttype::name##Holder)
@@ -219,9 +296,9 @@ void basecontentscript::ReadFrom(inputfile& SaveFile)
       ABORT("Odd terminator %s encountered in %s content script, file %s line %d!", Word.c_str(), GetClassId(), SaveFile.GetFileName().c_str(), SaveFile.TellLine());
 }
 
-datamemberbase* basecontentscript::GetData(const std::string& String)
+scriptmemberbase* basecontentscript::GetData(const char* String)
 {
-  datamemberbase* Return = GetDataFromMap(GetDataMap(), String);
+  scriptmemberbase* Return = GetDataFromMap(GetDataMap(), String);
   return Return ? Return : GetDataFromMap(DataMap, String);
 }
 
@@ -392,6 +469,15 @@ item* contentscript<item>::Instantiate(ushort SpecialFlags) const
   return Instance;
 }
 
+bool IsValidScript(const std::list<contentscript<item> >* List)
+{
+  for(std::list<contentscript<item> >::const_iterator i = List->begin(); i != List->end(); ++i)
+    if(IsValidScript(&*i))
+      return true;
+
+  return false;
+}
+
 void contentscript<olterrain>::InitDataMap()
 {
   INIT_MEMBER(VisualEffects);
@@ -492,10 +578,10 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
   typedef typename maptype::iterator mapiterator;
 
   if(ContentMap)
-    ABORT("Illegal %s content map redefinition on line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+    ABORT("Illegal %s content map redefinition on line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+    ABORT("Bracket missing in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
   SymbolMap.insert(std::pair<char, contenttype>('.', contenttype()));
   std::string Word1, Word2;
@@ -505,7 +591,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
       if(Word1 == "Types")
 	{
 	  if(SaveFile.ReadWord() != "{")
-	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+	    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
 	  for(Word2 = SaveFile.ReadWord(); Word2 != "}"; Word2 = SaveFile.ReadWord())
 	    {
@@ -514,21 +600,21 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	      if(Return.second)
 		ReadData(Return.first->second, SaveFile);
 	      else
-		ABORT("Symbol %c defined again in %s content map script line %d!", Word2[0], protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+		ABORT("Symbol %c defined again in %s content map script line %d!", Word2[0], protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 	    }
 
 	  continue;
 	}
 
       if(!ReadMember(SaveFile, Word1))
-	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.c_str(), protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+	ABORT("Odd script term %s encountered in %s content script line %d!", Word1.c_str(), protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
     }
 
   vector2d Size = *GetSize();
   Alloc2D(ContentMap, Size.X, Size.Y);
 
   if(SaveFile.ReadWord() != "{")
-    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 
   for(ushort y = 0; y < Size.Y; ++y)
     for(ushort x = 0; x < Size.X; ++x)
@@ -539,11 +625,11 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Rea
 	if(i != SymbolMap.end())
 	  ContentMap[x][y] = std::pair<char, contenttype*>(Char, &i->second);
 	else
-	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+	  ABORT("Illegal content %c in %s content map line %d!", Char, protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
       }
 
   if(SaveFile.ReadWord() != "}")
-    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId().c_str(), SaveFile.TellLine());
+    ABORT("Missing bracket in %s content map script line %d!", protocontainer<type>::GetMainClassId(), SaveFile.TellLine());
 }
 
 template <class type, class contenttype> void contentmap<type, contenttype>::Save(outputfile& SaveFile) const
@@ -572,10 +658,7 @@ template <class type, class contenttype> void contentmap<type, contenttype>::Loa
       }
 }
 
-/*template charactercontentmap;
-template itemcontentmap;
-template glterraincontentmap;
-template olterraincontentmap;*/
+const std::list<squarescript>& roomscript::GetSquare() const { return Square; }
 
 void roomscript::InitDataMap()
 {
@@ -632,6 +715,9 @@ void roomscript::Load(inputfile& SaveFile)
   script::Load(SaveFile);
   SaveFile >> Square;
 }
+
+const std::list<squarescript>& levelscript::GetSquare() const { return Square; }
+const std::list<roomscript>& levelscript::GetRoom() const { return Room; }
 
 void levelscript::InitDataMap()
 {
@@ -771,6 +857,7 @@ void levelscript::Load(inputfile& SaveFile)
 
 dungeonscript::dungeonscript() { }
 dungeonscript::~dungeonscript() { }
+const std::map<uchar, levelscript>& dungeonscript::GetLevel() const { return Level; }
 
 void dungeonscript::InitDataMap()
 {
@@ -862,6 +949,8 @@ void dungeonscript::Load(inputfile& SaveFile)
     }
 }
 
+const std::vector<std::pair<uchar, uchar> >& teamscript::GetRelation() const { return Relation; }
+
 void teamscript::InitDataMap()
 {
   INIT_MEMBER(KillEvilness);
@@ -901,6 +990,9 @@ void teamscript::Load(inputfile& SaveFile)
   script::Load(SaveFile);
   SaveFile >> Relation;
 }
+
+const std::list<std::pair<uchar, teamscript> >& gamescript::GetTeam() const { return Team; }
+const std::map<uchar, dungeonscript>& gamescript::GetDungeon() const { return Dungeon; }
 
 void gamescript::InitDataMap()
 {

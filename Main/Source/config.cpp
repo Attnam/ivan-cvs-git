@@ -1,7 +1,6 @@
 #include <fstream>
 
 #include "config.h"
-#include "save.h"
 #include "game.h"
 #include "felist.h"
 #include "festring.h"
@@ -10,6 +9,7 @@
 #include "bitmap.h"
 #include "graphics.h"
 #include "femath.h"
+#include "save.h"
 
 #if defined(WIN32) || defined(__DJGPP__)
 #define CONFIG_FILENAME "ivan.cfg"
@@ -135,7 +135,7 @@ void configuration::ShowConfigScreen()
       if(game::IsRunning())
 	{
 	  game::DrawEverythingNoBlit();
-	  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenSize().X << 4, 23, 0);
+	  DOUBLE_BUFFER->Fill(16, 6, game::GetScreenXSize() << 4, 23, 0);
 	}
 
       List.Empty();
@@ -254,3 +254,4 @@ ulong configuration::ApplyContrastTo(ulong L)
 {
   return MakeRGB24(GetRed24(L) * Contrast / 100, GetGreen24(L) * Contrast / 100, GetBlue24(L) * Contrast / 100);
 }
+

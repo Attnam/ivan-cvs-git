@@ -30,11 +30,11 @@ class worldmap : public area
   void SmoothClimate();
   void RandomizeAltitude();
   continent* GetContinentUnder(vector2d) const;
-  continent* GetContinent(ushort Index) const { return Continent[Index]; }
+  continent* GetContinent(ushort) const;
   void RemoveEmptyContinents();
-  short GetAltitude(vector2d Pos) { return AltitudeBuffer[Pos.X][Pos.Y]; }
-  std::vector<character*>& GetPlayerGroup() { return PlayerGroup; }
-  character* GetPlayerGroupMember(uchar c) { return PlayerGroup[c]; }
+  short GetAltitude(vector2d);
+  std::vector<character*>& GetPlayerGroup();
+  character* GetPlayerGroupMember(ushort);
   virtual void Draw(bool) const;
   void CalculateLuminances();
   void CalculateNeighbourBitmapPoses();

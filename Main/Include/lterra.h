@@ -16,37 +16,7 @@ class lsquare;
 class stack;
 class room;
 template <class type> class contentscript;
-template <class type> class database;
-
-struct terraindatabase
-{
-  void InitDefaults(ushort);
-  bool AllowRandomInstantiation() const { return true; }
-  vector2d BitmapPos;
-  std::string Article;
-  std::string Adjective;
-  std::string AdjectiveArticle;
-  std::string NameSingular;
-  std::string NamePlural;
-  std::string PostFix;
-  uchar ArticleMode;
-  std::vector<long> MainMaterialConfig;
-  std::vector<long> SecondaryMaterialConfig;
-  std::vector<long> ContainedMaterialConfig;
-  std::vector<long> MaterialConfigChances;
-  bool IsAbstract;
-  uchar OKVisualEffects;
-  ushort MaterialColorB;
-  ushort MaterialColorC;
-  ushort MaterialColorD;
-  std::string SitMessage;
-  ulong DefaultMainVolume;
-  ulong DefaultSecondaryVolume;
-  ulong DefaultContainedVolume;
-  bool CreateDivineConfigurations;
-  bool ShowMaterial;
-  uchar AttachedGod;
-};
+template <class type> class databasecreator;
 
 class lterrain : public object
 {
@@ -86,18 +56,44 @@ class lterrain : public object
   lsquare* LSquareUnder;
 };
 
-struct glterraindatabase : public terraindatabase
+struct glterraindatabase
 {
+  void InitDefaults(ushort) { }
+  bool AllowRandomInstantiation() const { return true; }
+  vector2d BitmapPos;
+  std::string Article;
+  std::string Adjective;
+  std::string AdjectiveArticle;
+  std::string NameSingular;
+  std::string NamePlural;
+  std::string PostFix;
+  uchar ArticleMode;
+  std::vector<long> MainMaterialConfig;
+  std::vector<long> SecondaryMaterialConfig;
+  std::vector<long> ContainedMaterialConfig;
+  std::vector<long> MaterialConfigChances;
+  bool IsAbstract;
+  uchar OKVisualEffects;
+  ushort MaterialColorB;
+  ushort MaterialColorC;
+  ushort MaterialColorD;
+  std::string SitMessage;
+  ulong DefaultMainVolume;
+  ulong DefaultSecondaryVolume;
+  ulong DefaultContainedVolume;
+  bool CreateDivineConfigurations;
+  bool ShowMaterial;
+  uchar AttachedGod;
 };
 
 class glterrainprototype
 {
  public:
-  friend class database<glterrain>;
-  glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, ushort), const std::string&);
+  friend class databasecreator<glterrain>;
+  glterrainprototype(glterrainprototype*, glterrain* (*)(ushort, ushort), const char*);
   glterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   glterrain* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
   const std::map<ushort, glterraindatabase>& GetConfig() const { return Config; }
   const glterrainprototype* GetBase() const { return Base; }
@@ -108,13 +104,13 @@ class glterrainprototype
   glterrainprototype* Base;
   std::map<ushort, glterraindatabase> Config;
   glterrain* (*Cloner)(ushort, ushort);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class glterrain : public lterrain, public gterrain
 {
  public:
-  friend class database<glterrain>;
+  friend class databasecreator<glterrain>;
   typedef glterrainprototype prototype;
   typedef glterraindatabase database;
   typedef std::map<ushort, glterraindatabase> databasemap;
@@ -153,8 +149,34 @@ class glterrain : public lterrain, public gterrain
   const database* DataBase;
 };
 
-struct olterraindatabase : public terraindatabase
+struct olterraindatabase
 {
+  void InitDefaults(ushort);
+  bool AllowRandomInstantiation() const { return true; }
+  vector2d BitmapPos;
+  std::string Article;
+  std::string Adjective;
+  std::string AdjectiveArticle;
+  std::string NameSingular;
+  std::string NamePlural;
+  std::string PostFix;
+  uchar ArticleMode;
+  std::vector<long> MainMaterialConfig;
+  std::vector<long> SecondaryMaterialConfig;
+  std::vector<long> ContainedMaterialConfig;
+  std::vector<long> MaterialConfigChances;
+  bool IsAbstract;
+  uchar OKVisualEffects;
+  ushort MaterialColorB;
+  ushort MaterialColorC;
+  ushort MaterialColorD;
+  std::string SitMessage;
+  ulong DefaultMainVolume;
+  ulong DefaultSecondaryVolume;
+  ulong DefaultContainedVolume;
+  bool CreateDivineConfigurations;
+  bool ShowMaterial;
+  uchar AttachedGod;
   std::string DigMessage;
   bool CanBeDestroyed;
   uchar RestModifier;
@@ -169,11 +191,11 @@ struct olterraindatabase : public terraindatabase
 class olterrainprototype
 {
  public:
-  friend class database<olterrain>;
-  olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, ushort), const std::string&);
+  friend class databasecreator<olterrain>;
+  olterrainprototype(olterrainprototype*, olterrain* (*)(ushort, ushort), const char*);
   olterrain* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   olterrain* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
   const std::map<ushort, olterraindatabase>& GetConfig() const { return Config; }
   const olterrainprototype* GetBase() const { return Base; }
@@ -184,13 +206,13 @@ class olterrainprototype
   olterrainprototype* Base;
   std::map<ushort, olterraindatabase> Config;
   olterrain* (*Cloner)(ushort, ushort);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class olterrain : public lterrain, public oterrain
 {
  public:
-  friend class database<olterrain>;
+  friend class databasecreator<olterrain>;
   typedef olterrainprototype prototype;
   typedef olterraindatabase database;
   typedef std::map<ushort, olterraindatabase> databasemap;
@@ -198,7 +220,7 @@ class olterrain : public lterrain, public oterrain
   virtual void Save(outputfile&) const;
   virtual void Load(inputfile&);
   virtual bool Enter(bool) const;
-  virtual void BeKicked(character*, ushort) { }
+  virtual void BeKicked(character*, ushort);
   virtual bool IsDoor() const { return false; }
   virtual bool HasEatEffect() const { return false; } 
   virtual bool HasDrinkEffect() const { return false; } 

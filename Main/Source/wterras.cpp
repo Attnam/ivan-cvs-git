@@ -1,54 +1,54 @@
 /* Compiled through wmapset.cpp */
 
-std::string ocean::GetNameStem() const { return "ocean"; }
+const char* ocean::GetNameStem() const { return "ocean"; }
 vector2d ocean::GetBitmapPos(ushort Frame) const { return vector2d(48 + ((Frame << 3)&~8), 48); }
-std::string ocean::SurviveMessage() const { return "you manage to reach the shore"; }
-std::string ocean::MonsterSurviveMessage() const { return "manages to reach the shore"; }
-std::string ocean::DeathMessage() const { return "you drown"; }
-std::string ocean::ScoreEntry() const { return "drowned"; }
+const char* ocean::SurviveMessage() const { return "you manage to reach the shore"; }
+const char* ocean::MonsterSurviveMessage() const { return "manages to reach the shore"; }
+const char* ocean::DeathMessage() const { return "you drown"; }
+const char* ocean::ScoreEntry() const { return "drowned"; }
 
-std::string glacier::GetNameStem() const { return "glacier"; }
+const char* glacier::GetNameStem() const { return "glacier"; }
 vector2d glacier::GetBitmapPos(ushort) const { return vector2d(16, 16); }
 
-std::string desert::GetNameStem() const { return "desert"; }
+const char* desert::GetNameStem() const { return "desert"; }
 vector2d desert::GetBitmapPos(ushort) const { return vector2d(64, 16); }
 
-std::string snow::GetNameStem() const { return "tundra"; }
+const char* snow::GetNameStem() const { return "tundra"; }
 vector2d snow::GetBitmapPos(ushort) const { return vector2d(112, 16); }
 
-std::string jungle::GetNameStem() const { return "jungle"; }
+const char* jungle::GetNameStem() const { return "jungle"; }
 vector2d jungle::GetBitmapPos(ushort) const { return vector2d(208, 16); }
 
-std::string leafyforest::GetNameStem() const { return "leafy forest"; }
+const char* leafyforest::GetNameStem() const { return "leafy forest"; }
 vector2d leafyforest::GetBitmapPos(ushort) const { return vector2d(304, 16); }
 
-std::string evergreenforest::GetNameStem() const { return "evergreen forest"; }
+const char* evergreenforest::GetNameStem() const { return "evergreen forest"; }
 vector2d evergreenforest::GetBitmapPos(ushort) const { return vector2d(352, 16); }
 
-std::string steppe::GetNameStem() const { return "steppe"; }
+const char* steppe::GetNameStem() const { return "steppe"; }
 vector2d steppe::GetBitmapPos(ushort) const { return vector2d(160, 16); }
 
-std::string attnam::GetNameStem() const { return "migthy cathedral reaching the clouds"; }
+const char* attnam::GetNameStem() const { return "migthy cathedral reaching the clouds"; }
 vector2d attnam::GetBitmapPos(ushort) const { return vector2d(0, 48); }
 uchar attnam::GetAttachedDungeon() const { return ATTNAM; }
 
-std::string elpuricave::GetNameStem() const { return "hideous cave entry radiating pure evil"; }
+const char* elpuricave::GetNameStem() const { return "hideous cave entry radiating pure evil"; }
 vector2d elpuricave::GetBitmapPos(ushort) const { return vector2d(16, 48); }
 uchar elpuricave::GetAttachedDungeon() const { return ELPURI_CAVE; }
 
-std::string newattnam::GetNameStem() const { return "primitive village"; }
+const char* newattnam::GetNameStem() const { return "primitive village"; }
 vector2d newattnam::GetBitmapPos(ushort) const { return vector2d(16, 64); }
 uchar newattnam::GetAttachedDungeon() const { return NEW_ATTNAM; }
 
-std::string underwatertunnel::GetNameStem() const { return "entrance to an underwater tunnel"; }
+const char* underwatertunnel::GetNameStem() const { return "entrance to an underwater tunnel"; }
 vector2d underwatertunnel::GetBitmapPos(ushort) const { return vector2d(32, 64); }
 uchar underwatertunnel::GetAttachedDungeon() const { return UNDER_WATER_TUNNEL; }
 
-std::string underwatertunnelexit::GetNameStem() const { return "exit from an underwater tunnel"; }
+const char* underwatertunnelexit::GetNameStem() const { return "exit from an underwater tunnel"; }
 vector2d underwatertunnelexit::GetBitmapPos(ushort) const { return vector2d(32, 64); }
 uchar underwatertunnelexit::GetAttachedDungeon() const { return UNDER_WATER_TUNNEL; }
 
-std::string mondedr::GetNameStem() const { return "very unattractive place"; }
+const char* mondedr::GetNameStem() const { return "very unattractive place"; }
 vector2d mondedr::GetBitmapPos(ushort) const { return vector2d(0, 64); }
 uchar mondedr::GetAttachedDungeon() const { return MONDEDR; }
 

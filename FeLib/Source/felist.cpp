@@ -41,8 +41,10 @@ felistentry::~felistentry()
 
 felistentry::felistentry(const std::vector<bitmap*>& BitmapVector, const std::string& String, ushort Color, ushort Marginal, bool Selectable, bool AllowAlpha) : String(String), Color(Color), Marginal(Marginal), Selectable(Selectable)
 {
+  Bitmap.resize(BitmapVector.size());
+
   for(ushort c = 0; c < BitmapVector.size(); ++c)
-    Bitmap.push_back(new bitmap(BitmapVector[c], 0, AllowAlpha));
+    Bitmap[c] = new bitmap(BitmapVector[c], 0, AllowAlpha);
 }
 
 outputfile& operator<<(outputfile& SaveFile, const felistentry* Entry)
@@ -435,18 +437,16 @@ void felist::DrawDescription(bitmap* Buffer, vector2d Pos, ushort Width, ushort 
 
 /* We suppose InverseMode == true here */
 
-void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
+void felist::QuickDraw(bitmap* Bitmap, ushort PageLength) const
 {
   static std::vector<std::string> Chapter;
-  DOUBLE_BUFFER->Fill(Pos.X + 3, Pos.Y + 3, Width - 6, 20 + PageLength * 10, 0);
-  DOUBLE_BUFFER->DrawRectangle(Pos.X + 1, Pos.Y + 1, Pos.X + Width - 2, Pos.Y + 24 + PageLength * 10, DARK_GRAY, true);
+  ushort Width = Bitmap->GetXSize();
+  Bitmap->Fill(3, 3, Width - 6, 20 + PageLength * 10, 0);
+  Bitmap->DrawRectangle(1, 1, Width - 2, 24 + PageLength * 10, DARK_GRAY, true);
   ushort LineSize = (Width - 26) >> 3;
 
-  if(!PageLength)
-    return;
-
   ushort Index = 0;
-  ushort Bottom = Pos.Y + PageLength * 10 + 3;
+  ushort Bottom = PageLength * 10 + 3;
 
   for(ushort c1 = 0; c1 <= Selected; ++c1)
     {
@@ -457,7 +457,7 @@ void felist::QuickDraw(vector2d Pos, ushort Width, ushort PageLength) const
 	{
 	  ushort Color = CurrentEntry->Color;
 	  Color = MakeRGB16(GetRed16(Color) - ((GetRed16(Color) * 3 * Index / PageLength) >> 2), GetGreen16(Color) - ((GetGreen16(Color) * 3 * Index / PageLength) >> 2), GetBlue16(Color) - ((GetBlue16(Color) * 3 * Index / PageLength) >> 2));
-	  FONT->Printf(DOUBLE_BUFFER, Pos.X + 13, Bottom, Color, "%s", Chapter[ChapterSize - c2 - 1].c_str());
+	  FONT->Printf(Bitmap, 13, Bottom, Color, "%s", Chapter[ChapterSize - c2 - 1].c_str());
 	  Bottom -= 10;
 
 	  if(++Index == PageLength)

@@ -63,7 +63,7 @@ class level : public area
   ushort GetLOSModifier() const;
   ushort CalculateMinimumEmitationRadius(ulong) const;
   room* GetRoom(ushort) const;
-  void SetRoom(ushort Index, room* What) { Room[Index] = What; }
+  void SetRoom(ushort, room*);
   void AddRoom(room*);
   void Explosion(character*, const std::string&, vector2d, ushort, bool = true);
   bool CollectCreatures(std::vector<character*>&, character*, bool);

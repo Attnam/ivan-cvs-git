@@ -37,8 +37,7 @@ class object : public entity, public id
   virtual void ChangeContainedMaterial(material*, ushort = 0);
   virtual ushort GetMaterials() const { return 1; }
   virtual material* GetMaterial(ushort) const { return MainMaterial; }
-  const std::vector<bitmap*>& GetPicture() const { return Picture; }
-  bitmap* GetPicture(ushort Index) const { return Picture[Index]; }
+  const std::vector<bitmap*>& GetPicture() const;
   virtual ulong GetBaseEmitation() const { return 0; }
   virtual void SetParameters(uchar) { }
   virtual uchar GetOKVisualEffects() const { return 0; }

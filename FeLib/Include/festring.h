@@ -5,6 +5,7 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,10 @@ public:
   static strsize IgnoreCaseFind(const std::string&, const std::string&, strsize = 0);
   static void SearchAndReplace(std::string&, const std::string&, const std::string&, strsize = 0);
   static bool IgnoreCaseCompare(const std::string&, const std::string&);
+  struct charcomparer
+  {
+    bool operator()(const char* const& S1, const char* const& S2) const { return strcmp(S1, S2) < 0; }
+  };
 private:
   static char** IntegerMap;
   static char IntegerBuffer[12];

@@ -154,14 +154,14 @@ struct characterdatabase
 class characterprototype
 {
  public:
-  friend class database<character>;
-  characterprototype(characterprototype*, character* (*)(ushort, ushort), const std::string&);
+  friend class databasecreator<character>;
+  characterprototype(characterprototype*, character* (*)(ushort, ushort), const char*);
   character* Clone(ushort Config = 0, ushort SpecialFlags = 0) const { return Cloner(Config, SpecialFlags); }
   character* CloneAndLoad(inputfile&) const;
   ushort GetIndex() const { return Index; }
   const characterprototype* GetBase() const { return Base; }
   const std::map<ushort, characterdatabase>& GetConfig() const { return Config; }
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   void CreateSpecialConfigurations();
   const characterdatabase& ChooseBaseForConfig(ushort);
  private:
@@ -169,13 +169,13 @@ class characterprototype
   characterprototype* Base;
   std::map<ushort, characterdatabase> Config;
   character* (*Cloner)(ushort, ushort);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class character : public entity, public id
 {
  public:
-  friend class database<character>;
+  friend class databasecreator<character>;
   friend class corpse;
   typedef characterprototype prototype;
   typedef characterdatabase database;
@@ -328,7 +328,7 @@ class character : public entity, public id
   bool ClosePos(vector2d);
   ushort GetResistance(ushort) const;
   virtual ushort GlobalResistance(ushort Type) const { return GetResistance(Type); }
-  virtual std::string GetEquipmentName(ushort) const;
+  virtual const char* GetEquipmentName(ushort) const;
   virtual bodypart* GetBodyPartOfEquipment(ushort) const { return 0; }
   virtual item* GetEquipment(ushort) const { return 0; }
   virtual ushort GetEquipmentSlots() const { return 0; }
@@ -528,7 +528,6 @@ class character : public entity, public id
   void PrintEndESPMessage() const;
   bool CanBeSeenByPlayer(bool = false, bool = false) const;
   bool CanBeSeenBy(const character*, bool = false, bool = false) const;
-  virtual void DetachBodyPart();
   void AttachBodyPart(bodypart*);
   bool HasAllBodyParts() const;
   bodypart* FindRandomOwnBodyPart(bool = false) const;
@@ -554,7 +553,6 @@ class character : public entity, public id
   virtual bool IsUsingArms() const;
   virtual bool IsUsingLegs() const;
   virtual bool IsUsingHead() const;
-  virtual void AddAttackInfo(felist&) const = 0;
   level* GetLevel() const { return static_cast<level*>(GetSquareUnder()->GetArea()); }
   area* GetArea() const { return GetSquareUnder()->GetArea(); }
   square* GetNeighbourSquare(ushort Index) const { return GetSquareUnder()->GetNeighbourSquare(Index); }
@@ -617,7 +615,6 @@ class character : public entity, public id
   virtual bool SpecialBiteEffect(character*, uchar, uchar, bool) { return false; }
   bool HitEffect(character*, item*, uchar, uchar, uchar, bool);
   void WeaponSkillHit(item*, uchar);
-  virtual void AddDefenceInfo(felist&) const;
   character* Duplicate() const;
   room* GetRoom() const { return GetLSquareUnder()->GetRoom(); }
   bool TryToEquip(item*);
@@ -648,10 +645,8 @@ class character : public entity, public id
   void ReceiveAntidote(long);
   void AddAntidoteConsumeEndMessage() const;
   bool IsDead() const;
-  virtual void ShowBattleInfo() = 0;
   void AddOriginalBodyPartID(ushort, ulong);
   void AddToInventory(const std::list<contentscript<item> >&, ushort);
-  void ShowDodgeAndMoveInfo() const;
   virtual void AddSpecialMovePenaltyInfo(felist&) const { }
   bool HasHadBodyPart(const item*) const;
   void ProcessAndAddMessage(std::string) const;
@@ -664,7 +659,6 @@ class character : public entity, public id
   void SetMana(ushort);
   void DamageAllItems(character*, ushort, ushort);
   bool Equips(const item*) const;
-  virtual void AddAttributeInfo(std::string&) const;
   void PrintBeginConfuseMessage() const;
   void PrintEndConfuseMessage() const;
   vector2d ApplyStateModification(vector2d) const;
@@ -700,8 +694,6 @@ class character : public entity, public id
   void RemoveHomeData();
   ulong GetID() const { return ID; }
   void AddESPConsumeMessage() const;
-  virtual void RaiseStats();
-  virtual void LowerStats();
   const std::list<ulong>& GetOriginalBodyPartID(ushort) const;
   void GetHitByExplosion(const explosion*, ushort);
   bool CanBePoisoned() const { return IsAlive(); }
@@ -709,7 +701,7 @@ class character : public entity, public id
   void SortAllItems(itemvector&, const character* = 0, bool (*)(const item*, const character*) = 0);
   character* GetRandomNeighbourEnemy() const;
   void Search(ushort);
-  character* GetRandomNeighbour(uchar = (HOSTILE | UNCARING | FRIEND)) const;
+  character* GetRandomNeighbour(uchar = (HOSTILE|UNCARING|FRIEND)) const;
   virtual bool IsRetreating() const { return StateIsActivated(PANIC); }
   virtual bool IsMushroom() const { return false; }
   void ResetStates();
@@ -721,6 +713,14 @@ class character : public entity, public id
   void DrawBodyPartVector(std::vector<bitmap*>&) const;
   virtual bool BoundToUse(const item*, ushort) const { return false; }
   virtual bool IsBananaGrower() const { return false; }
+#ifdef WIZARD
+  virtual void RaiseStats();
+  virtual void LowerStats();
+  virtual void AddAttributeInfo(std::string&) const;
+  virtual void AddAttackInfo(felist&) const = 0;
+  virtual void AddDefenceInfo(felist&) const;
+  virtual void DetachBodyPart();
+#endif
  protected:
   virtual bodypart* MakeBodyPart(ushort) const;
   virtual character* RawDuplicate() const = 0;
@@ -751,21 +751,21 @@ class character : public entity, public id
   void GetPlayerCommand();
   virtual void GetAICommand();
   bool MoveTowards(vector2d);
-  virtual std::string FirstPersonUnarmedHitVerb() const;
-  virtual std::string FirstPersonCriticalUnarmedHitVerb() const;
-  virtual std::string ThirdPersonUnarmedHitVerb() const;
-  virtual std::string ThirdPersonCriticalUnarmedHitVerb() const;
-  virtual std::string FirstPersonKickVerb() const;
-  virtual std::string FirstPersonCriticalKickVerb() const;
-  virtual std::string ThirdPersonKickVerb() const;
-  virtual std::string ThirdPersonCriticalKickVerb() const;
-  virtual std::string FirstPersonBiteVerb() const;
-  virtual std::string FirstPersonCriticalBiteVerb() const;
-  virtual std::string ThirdPersonBiteVerb() const;
-  virtual std::string ThirdPersonCriticalBiteVerb() const;
-  virtual std::string UnarmedHitNoun() const;
-  virtual std::string KickNoun() const;
-  virtual std::string BiteNoun() const;
+  virtual const char* FirstPersonUnarmedHitVerb() const;
+  virtual const char* FirstPersonCriticalUnarmedHitVerb() const;
+  virtual const char* ThirdPersonUnarmedHitVerb() const;
+  virtual const char* ThirdPersonCriticalUnarmedHitVerb() const;
+  virtual const char* FirstPersonKickVerb() const;
+  virtual const char* FirstPersonCriticalKickVerb() const;
+  virtual const char* ThirdPersonKickVerb() const;
+  virtual const char* ThirdPersonCriticalKickVerb() const;
+  virtual const char* FirstPersonBiteVerb() const;
+  virtual const char* FirstPersonCriticalBiteVerb() const;
+  virtual const char* ThirdPersonBiteVerb() const;
+  virtual const char* ThirdPersonCriticalBiteVerb() const;
+  virtual const char* UnarmedHitNoun() const;
+  virtual const char* KickNoun() const;
+  virtual const char* BiteNoun() const;
   virtual bool AttackIsBlockable(uchar) const { return true; }
   virtual uchar GetSpecialBodyPartFlags(ushort, bool = false) const;
   stack* Stack;

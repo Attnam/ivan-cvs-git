@@ -3,11 +3,11 @@
 const std::string ToHitValueDescription[] = { "unbelievably inaccurate", "extremely inaccurate", "inaccurate", "decently accurate", "accurate", "highly accurate", "extremely accurate", "unbelievably accurate" };
 const std::string StrengthValueDescription[] = { "fragile", "rather sturdy", "sturdy", "durable", "very durable", "extremely durable", "almost unbreakable" };
 
-itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<item>::Add(this); }
+itemprototype::itemprototype(itemprototype* Base, item* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<item>::Add(this); }
 
 item::item(const item& Item) : object(Item), Slot(0), Cannibalised(false), Size(Item.Size), ID(game::CreateNewItemID()), BackupID(game::CreateNewItemID()), DataBase(Item.DataBase), Volume(Item.Volume), Weight(Item.Weight) { }
 item::item(donothing) : Slot(0), Cannibalised(false) { }
-void item::InstallDataBase() { ::database<item>::InstallDataBase(this); }
+void item::InstallDataBase() { databasecreator<item>::InstallDataBase(this); }
 bool item::IsOnGround() const { return GetSlot()->IsOnGround(); }
 bool item::IsSimiliarTo(item* Item) const { return Item->GetType() == GetType() && Item->GetConfig() == GetConfig(); }
 ushort item::GetBaseMinDamage() const { return ushort(sqrt(GetWeaponStrength() / 20000.0f) * 0.75f); }
@@ -243,7 +243,7 @@ void item::MoveTo(stack* Stack)
     Stack->AddItem(this);
 }
 
-std::string item::ItemCategoryName(ulong Category)
+const char* item::GetItemCategoryName(ulong Category) // convert to array
 {
   switch(Category)
     {
@@ -357,7 +357,7 @@ bool item::ShowMaterial() const
     return true;
 }
 
-std::string item::GetConsumeVerb() const
+const char* item::GetConsumeVerb() const
 {
   return GetConsumeMaterial()->GetConsumeVerb();
 }
@@ -524,30 +524,6 @@ void itemdatabase::InitDefaults(ushort Config)
 
   if(Config & DEVOUT)
     PostFix.append("of " + festring::CapitalizeCopy(protocontainer<god>::GetProto(Config&0xFF)->GetClassId()));
-}
-
-void item::AddAttackInfo(felist& List) const
-{
-  std::string Entry(40, ' ');
-  Entry << int(GetWeight());
-  Entry.resize(50, ' ');
-  Entry << int(GetSize());
-  Entry.resize(60, ' ');
-  Entry << int(GetStrengthRequirement());
-  Entry.resize(70, ' ');
-  Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
-  List.AddEntry(Entry, LIGHT_GRAY);
-}
-
-void item::AddMiscellaneousInfo(felist& List) const
-{
-  std::string Entry(40, ' ');
-  Entry << int(GetTruePrice());
-  Entry.resize(55, ' ');
-  Entry << int(GetOfferValue(0));
-  Entry.resize(70, ' ');
-  Entry << int(GetNutritionValue());
-  List.AddEntry(Entry, LIGHT_GRAY);
 }
 
 ulong item::GetNutritionValue() const
@@ -733,17 +709,18 @@ const std::string& item::GetBaseToHitValueDescription() const
 const std::string& item::GetStrengthValueDescription() const
 {
   ushort SV = GetStrengthValue();
+
   if(SV < 3)
     return StrengthValueDescription[0];
-  if(SV < 5)
+  else if(SV < 5)
     return StrengthValueDescription[1];
-  if(SV < 8)
+  else if(SV < 8)
     return StrengthValueDescription[2];
-  if(SV < 11)
+  else if(SV < 11)
     return StrengthValueDescription[3];
-  if(SV < 16)
+  else if(SV < 16)
     return StrengthValueDescription[4];
-  if(SV < 20)
+  else if(SV < 20)
     return StrengthValueDescription[5];
   else
     return StrengthValueDescription[6];
@@ -800,3 +777,31 @@ bool item::IsStupidToConsume() const
 {
   return GetConsumeMaterial()->IsStupidToConsume();
 }
+
+#ifdef WIZARD
+
+void item::AddAttackInfo(felist& List) const
+{
+  std::string Entry(40, ' ');
+  Entry << int(GetWeight());
+  Entry.resize(50, ' ');
+  Entry << int(GetSize());
+  Entry.resize(60, ' ');
+  Entry << int(GetStrengthRequirement());
+  Entry.resize(70, ' ');
+  Entry << int(GetBaseMinDamage()) << '-' << GetBaseMaxDamage();
+  List.AddEntry(Entry, LIGHT_GRAY);
+}
+
+void item::AddMiscellaneousInfo(felist& List) const
+{
+  std::string Entry(40, ' ');
+  Entry << int(GetTruePrice());
+  Entry.resize(55, ' ');
+  Entry << int(GetOfferValue(0));
+  Entry.resize(70, ' ');
+  Entry << int(GetNutritionValue());
+  List.AddEntry(Entry, LIGHT_GRAY);
+}
+
+#endif

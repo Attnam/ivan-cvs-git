@@ -9,8 +9,6 @@
 
 #include "typedef.h"
 
-#define GOD_NAME GetName().c_str()
-
 class item;
 class character;
 class outputfile;
@@ -20,15 +18,15 @@ class god;
 class godprototype
 {
  public:
-  godprototype(god* (*)(bool), const std::string&);
+  godprototype(god* (*)(bool), const char*);
   god* Clone() const { return Cloner(false); }
   god* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   god* (*Cloner)(bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class god
@@ -37,8 +35,8 @@ class god
   typedef godprototype prototype;
   god();
   virtual void Pray();
-  virtual std::string GetName() const = 0;
-  virtual std::string GetDescription() const = 0;
+  virtual const char* GetName() const = 0;
+  virtual const char* GetDescription() const = 0;
   virtual uchar GetAlignment() const = 0;
   std::string GetCompleteDescription() const;
   void ApplyDivineTick();
@@ -55,7 +53,6 @@ class god
   void PrintRelation() const;
   void SetIsKnown(bool What) { Known = What; }
   bool IsKnown() const { return Known; }
-  virtual std::string GetPriestMessage() const;
   void PlayerKickedAltar() { AdjustRelation(-100); }
   void PlayerKickedFriendsAltar() { AdjustRelation(-50); }
   virtual void PlayerVomitedOnAltar();

@@ -5,8 +5,9 @@
 #include "festring.h"
 #include "felist.h"
 #include "game.h"
-#include "save.h"
 #include "graphics.h"
+#include "save.h"
+#include "bitmap.h"
 
 felist msgsystem::MessageHistory("Message history", WHITE, 128);
 std::string msgsystem::LastMessage;
@@ -15,6 +16,8 @@ ushort msgsystem::Times;
 ulong msgsystem::Begin, msgsystem::End;
 bool msgsystem::Enabled = true;
 bool msgsystem::BigMessageMode = false;
+bool msgsystem::MessagesChanged = true;
+bitmap* msgsystem::QuickDrawCache = 0;
 
 void msgsystem::AddMessage(const char* Format, ...)
 {
@@ -88,13 +91,21 @@ void msgsystem::AddMessage(const char* Format, ...)
     MessageHistory.AddEntry(Chapter[c], WHITE);
 
   MessageHistory.SetSelected(MessageHistory.GetLastEntryIndex());
+  MessagesChanged = true;
 }
 
 void msgsystem::Draw()
 {
   bool WasInBigMessageMode = BigMessageMode;
   LeaveBigMessageMode();
-  MessageHistory.QuickDraw(vector2d(13, RES_Y - 122), (game::GetScreenSize().X << 4) + 6, 8);
+
+  if(MessagesChanged)
+    {
+      MessageHistory.QuickDraw(QuickDrawCache, 8);
+      MessagesChanged = false;
+    }
+
+  QuickDrawCache->Blit(DOUBLE_BUFFER, 0, 0, 13, RES_Y - 122, QuickDrawCache->GetSize());
 
   if(WasInBigMessageMode)
     EnterBigMessageMode();
@@ -102,8 +113,6 @@ void msgsystem::Draw()
 
 void msgsystem::DrawMessageHistory()
 {
-  game::SetStandardListAttributes(MessageHistory); // optimize
-  MessageHistory.AddFlags(INVERSE_MODE);
   MessageHistory.Draw();
 }
 
@@ -111,6 +120,7 @@ void msgsystem::Format()
 {
   MessageHistory.Empty();
   LastMessage.resize(0);
+  MessagesChanged = true;
 }
 
 void msgsystem::Save(outputfile& SaveFile)
@@ -128,13 +138,19 @@ void msgsystem::Load(inputfile& SaveFile)
 void msgsystem::ScrollDown()
 {
   if(MessageHistory.GetSelected() < MessageHistory.GetLastEntryIndex())
-    MessageHistory.EditSelected(1);
+    {
+      MessageHistory.EditSelected(1);
+      MessagesChanged = true;
+    }
 }
 
 void msgsystem::ScrollUp()
 {
   if(MessageHistory.GetSelected())
-    MessageHistory.EditSelected(-1);
+    {
+      MessageHistory.EditSelected(-1);
+      MessagesChanged = true;
+    }
 }
 
 void msgsystem::LeaveBigMessageMode()
@@ -146,5 +162,12 @@ void msgsystem::LeaveBigMessageMode()
       AddMessage("%s", BigMessage.c_str());
       BigMessage.resize(0);
     }
+}
+
+void msgsystem::Init()
+{
+  QuickDrawCache = new bitmap((game::GetScreenXSize() << 4) + 6, 106);
+  game::SetStandardListAttributes(MessageHistory);
+  MessageHistory.AddFlags(INVERSE_MODE);
 }
 

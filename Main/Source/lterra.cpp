@@ -1,7 +1,7 @@
 /* Compiled through levelset.cpp */
 
-glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<glterrain>::Add(this); }
-olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<olterrain>::Add(this); }
+glterrainprototype::glterrainprototype(glterrainprototype* Base, glterrain* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<glterrain>::Add(this); }
+olterrainprototype::olterrainprototype(olterrainprototype* Base, olterrain* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<olterrain>::Add(this); }
 const glterraindatabase& glterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 const olterraindatabase& olterrainprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
@@ -11,8 +11,8 @@ lsquare* lterrain::GetNearLSquare(vector2d Pos) const { return LSquareUnder->Get
 lsquare* lterrain::GetNearLSquare(ushort x, ushort y) const { return LSquareUnder->GetLevel()->GetLSquare(x, y); }
 room* lterrain::GetRoom() const { return GetLSquareUnder()->GetRoom(); }
 
-void glterrain::InstallDataBase() { ::database<glterrain>::InstallDataBase(this); }
-void olterrain::InstallDataBase() { ::database<olterrain>::InstallDataBase(this); }
+void glterrain::InstallDataBase() { databasecreator<glterrain>::InstallDataBase(this); }
+void olterrain::InstallDataBase() { databasecreator<olterrain>::InstallDataBase(this); }
 uchar glterrain::GetGraphicsContainerIndex() const { return GR_GLTERRAIN; }
 uchar olterrain::GetGraphicsContainerIndex() const { return GR_OLTERRAIN; }
 
@@ -177,11 +177,11 @@ ushort olterrain::GetStrengthValue() const
   return GetMainMaterial()->GetStrengthValue() / 20;
 }
 
-void olterrain::ReceiveDamage(character* Villain, ushort What, ushort)
+void olterrain::ReceiveDamage(character* Villain, ushort Damage, ushort)
 {
-  if(CanBeDestroyed() && What > GetStrengthValue())
+  if(CanBeDestroyed() && Damage > GetStrengthValue())
     {
-      EditHP(GetStrengthValue() - What);
+      EditHP(GetStrengthValue() - Damage);
 
       if(HP <= 0)
 	{
@@ -192,6 +192,29 @@ void olterrain::ReceiveDamage(character* Villain, ushort What, ushort)
 	    Room->DestroyTerrain(Villain);
 	}
     }
+}
+
+void olterrain::BeKicked(character* Kicker, ushort Damage)
+{
+  if(CanBeDestroyed() && Damage > GetMainMaterial()->GetStrengthValue() >> 1)
+    {
+      EditHP((GetMainMaterial()->GetStrengthValue() >> 1) - Damage);
+
+      if(HP <= 0)
+	{
+	  room* Room = GetRoom();
+
+	  if(CanBeSeenByPlayer())
+	    ADD_MESSAGE("%s is shattered.", CHAR_NAME(DEFINITE));
+
+	  Break();
+
+	  if(Room)
+	    Room->DestroyTerrain(Kicker);
+	}
+    }
+  else if(Kicker->IsPlayer())
+    ADD_MESSAGE("Your kick has no effect on %s.", CHAR_NAME(DEFINITE));
 }
 
 void olterrain::CalculateHP()
@@ -213,7 +236,7 @@ uchar olterrain::GetAttachedGod() const
   return DataBase->AttachedGod ? DataBase->AttachedGod : MainMaterial->GetAttachedGod();
 }
 
-void terraindatabase::InitDefaults(ushort Config)
+void olterraindatabase::InitDefaults(ushort Config)
 {
   IsAbstract = false;
 

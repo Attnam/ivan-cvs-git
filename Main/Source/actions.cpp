@@ -1,12 +1,13 @@
 /* Compiled through actset.cpp */
 
-std::string faint::GetDescription() const { return "fainted"; }
-std::string consume::GetDescription() const { return Description; }
+const char* faint::GetDeathExplanation() const { return " while helpless"; }
+const char* faint::GetDescription() const { return "fainted"; }
+const char* consume::GetDescription() const { return Description.c_str(); }
 void consume::SetDescription(const std::string& What) { Description = What; }
-std::string rest::GetDescription() const { return "resting"; }
-std::string dig::GetDescription() const { return "digging"; }
-std::string go::GetDescription() const { return "going"; }
-std::string read::GetDescription() const { return "reading"; }
+const char* rest::GetDescription() const { return "resting"; }
+const char* dig::GetDescription() const { return "digging"; }
+const char* go::GetDescription() const { return "going"; }
+const char* read::GetDescription() const { return "reading"; }
 
 void faint::Save(outputfile& SaveFile) const
 {
@@ -70,7 +71,7 @@ void consume::Handle()
       {
 	ADD_MESSAGE("You have a really hard time getting all this down your throat.");
 
-	if(game::BoolQuestion("Continue " + GetDescription() + "? [y/N]"))
+	if(game::BoolQuestion(std::string("Continue ") + GetDescription() + "? [y/N]"))
 	  SetInDNDMode(true);
 	else
 	  {

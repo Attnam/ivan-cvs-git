@@ -1,6 +1,6 @@
 /* Compiled through godset.cpp */
 
-godprototype::godprototype(god* (*Cloner)(bool), const std::string& ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<god>::Add(this); }
+godprototype::godprototype(god* (*Cloner)(bool), const char* ClassId) : Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<god>::Add(this); }
 
 god::god() : Relation(0), Timer(0), Known(false) { }
 uchar god::GetBasicAlignment() const { return NEUTRAL; }
@@ -10,7 +10,7 @@ void god::Pray()
   if(!Timer)
     if(Relation >= -RAND_N(500))
       {
-	ADD_MESSAGE("You feel %s is pleased.", GOD_NAME);
+	ADD_MESSAGE("You feel %s is pleased.", GetName());
 	PrayGoodEffect();
 	AdjustTimer(5000);
 	AdjustRelation(50);
@@ -30,7 +30,7 @@ void god::Pray()
       }
     else
       {
-	ADD_MESSAGE("You feel %s is displeased today.", GOD_NAME);
+	ADD_MESSAGE("You feel %s is displeased today.", GetName());
 	PrayBadEffect();
 	AdjustTimer(10000);
 	game::ApplyDivineAlignmentBonuses(this, false);
@@ -39,7 +39,7 @@ void god::Pray()
   else
     if(Relation > RAND_N(500))
       {
-	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GOD_NAME);
+	ADD_MESSAGE("You feel %s is displeased, but tries to help you anyway.", GetName());
 	PrayGoodEffect();
 	AdjustTimer(25000);
 	AdjustRelation(-50);
@@ -48,7 +48,7 @@ void god::Pray()
       }
     else
       {
-	ADD_MESSAGE("You feel %s is angry.", GOD_NAME);
+	ADD_MESSAGE("You feel %s is angry.", GetName());
 	PrayBadEffect();
 	AdjustTimer(50000);
 	AdjustRelation(-100);
@@ -169,11 +169,6 @@ character* god::CreateAngel()
   return 0;
 }
 
-std::string god::GetPriestMessage() const
-{
-  return "\"Not currently implemented.\"";
-}
-
 void god::PrintRelation() const
 {
   std::string VerbalRelation;
@@ -196,7 +191,7 @@ void god::PrintRelation() const
     VerbalRelation = "is extremely angry.";
   else VerbalRelation = "hates you more than any other mortal.";
 
-  ADD_MESSAGE("%s %s", GOD_NAME, VerbalRelation.c_str());
+  ADD_MESSAGE("%s %s", GetName(), VerbalRelation.c_str());
 }
 
 bool god::ReceiveOffer(item* Sacrifice)
@@ -222,12 +217,12 @@ bool god::ReceiveOffer(item* Sacrifice)
       if(OfferValue > 0)
 	{
 	  if(Sacrifice->GetAttachedGod() == GetType())
-	    ADD_MESSAGE("%s appreciates your generous offer truly.", GOD_NAME);
+	    ADD_MESSAGE("%s appreciates your generous offer truly.", GetName());
 	  else
-	    ADD_MESSAGE("%s thanks you for your gift.", GOD_NAME);
+	    ADD_MESSAGE("%s thanks you for your gift.", GetName());
 	}
       else
-	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GOD_NAME);
+	ADD_MESSAGE("%s seems not to appreciate your gift at all.", GetName());
 
       PrintRelation();
 
@@ -274,3 +269,4 @@ void god::ApplyDivineTick()
   if(Timer)
     --Timer;
 }
+

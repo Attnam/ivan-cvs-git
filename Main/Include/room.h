@@ -5,6 +5,8 @@
 #pragma warning(disable : 4786)
 #endif
 
+#include <string>
+
 #include "vector2d.h"
 
 class room;
@@ -14,15 +16,15 @@ class lsquare;
 class roomprototype
 {
  public:
-  roomprototype(room* (*)(bool), const std::string&);
+  roomprototype(room* (*)(bool), const char*);
   room* Clone() const { return Cloner(false); }
   room* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   room* (*Cloner)(bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class room

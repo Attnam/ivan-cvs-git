@@ -18,15 +18,15 @@ class actionslot;
 class actionprototype
 {
  public:
-  actionprototype(action* (*)(bool), const std::string&);
+  actionprototype(action* (*)(bool), const char*);
   action* Clone() const { return Cloner(false); }
   action* CloneAndLoad(inputfile&) const;
-  const std::string& GetClassId() const { return ClassId; }
+  const char* GetClassId() const { return ClassId; }
   ushort GetIndex() const { return Index; }
  private:
   ushort Index;
   action* (*Cloner)(bool);
-  std::string ClassId;
+  const char* ClassId;
 };
 
 class action
@@ -50,7 +50,7 @@ class action
   virtual void DeleteUsedItems() { }
   virtual const prototype* GetProtoType() const = 0;
   ushort GetType() const { return GetProtoType()->GetIndex(); }
-  virtual std::string GetDescription() const = 0;
+  virtual const char* GetDescription() const = 0;
   void LoadActionSlot(inputfile&, actionslot&);
   bool InDNDMode() const { return DNDMode; }
   void SetInDNDMode(bool What) { DNDMode = What; }
@@ -59,7 +59,7 @@ class action
   virtual ulong GetEmitation() const { return 0; }
   virtual long GetScore() const { return 0; }
   virtual bool ShowEnvironment() const { return true; }
-  virtual std::string GetDeathExplanation() const { return ""; }
+  virtual const char* GetDeathExplanation() const { return ""; }
  protected:
   virtual void VirtualConstructor(bool) { }
   character* Actor;

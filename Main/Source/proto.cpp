@@ -4,7 +4,7 @@ character* protosystem::BalancedCreateMonster()
 {
   for(ushort c = 0;; ++c)
     {
-      float Difficulty = game::Difficulty();
+      float MinDifficulty = game::GetMinDifficulty(), MaxDifficulty = MinDifficulty * 25;
       std::vector<configid> Possible;
 
       for(ushort Type = 1; Type < protocontainer<character>::GetProtoAmount(); ++Type)
@@ -31,7 +31,7 @@ character* protosystem::BalancedCreateMonster()
 		  {
 		    float DangerModifier = i->second.DangerModifier == 100 ? DangerId.EquippedDanger : DangerId.EquippedDanger * 100 / i->second.DangerModifier;
 
-		    if(DangerModifier > Difficulty * 5 || DangerModifier < Difficulty / 5)
+		    if(DangerModifier < MinDifficulty || DangerModifier > MaxDifficulty)
 		      continue;
 		  }
 
@@ -310,6 +310,8 @@ material* protosystem::CreateMaterial(const std::string& What, ulong Volume, boo
   return 0;
 }
 
+#ifdef WIZARD
+
 void protosystem::CreateEveryCharacter(std::vector<character*>& Character)
 {
   for(ushort c = 1; c < protocontainer<character>::GetProtoAmount(); ++c)
@@ -347,3 +349,5 @@ void protosystem::CreateEveryMaterial(std::vector<material*>& Material)
 	Material.push_back(Proto->Clone(i->first));
     }
 }
+
+#endif

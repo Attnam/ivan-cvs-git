@@ -442,7 +442,7 @@ class ITEM
   virtual bool CanOpenLockType(uchar AnotherLockType) const { return LockType == AnotherLockType; }
   virtual bool CanBePiledWith(const item*, const character*) const;
  protected:
-  virtual const std::string& GetAdjective() const;
+  virtual bool AddAdjective(std::string&, bool) const;
   virtual void VirtualConstructor(bool);
   uchar LockType;
 );

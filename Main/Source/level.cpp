@@ -6,6 +6,7 @@
 #define PREFERRED 8
 
 level::level() : Room(1, static_cast<room*>(0)) { }
+void level::SetRoom(ushort Index, room* What) { Room[Index] = What; }
 
 level::~level()
 {
@@ -972,8 +973,8 @@ void level::Draw(bool AnimationDraw) const
 {
   ushort XMin = game::GetCamera().X;
   ushort YMin = game::GetCamera().Y;
-  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenSize().X);
-  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenSize().Y);
+  ushort XMax = Min<ushort>(XSize, game::GetCamera().X + game::GetScreenXSize());
+  ushort YMax = Min<ushort>(YSize, game::GetCamera().Y + game::GetScreenYSize());
 
   if(!game::GetSeeWholeMapCheatMode())
     {
@@ -1518,3 +1519,4 @@ void level::LightningVisualizer(const rect& Rect, ushort BeamColor) const
   graphics::BlitDBToScreen();
   while(clock() - StartTime < 0.05f * CLOCKS_PER_SEC);
 }
+

@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /vd0 /GX /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MD /W3 /vd0 /GX /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /D "WIZARD" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -75,7 +75,7 @@ PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GR /GX /Zi /Od /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
-# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /I /" " /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /Od /I "Main/Include" /I "FeLib/Include" /D "_DEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /D "WIZARD" /YX /FD /I /" " /c
 # SUBTRACT CPP /Gy
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o NUL /win32
@@ -108,7 +108,7 @@ PostBuild_Cmds=copy Main\PowerDebug\Main.exe IVAN.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GR /GX /O2 /Ob2 /I "Main/Include" /I "Main/Resource" /I "FeLib/Include" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
-# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /YX /FD /c
+# ADD CPP /nologo /MDd /W3 /vd0 /GX /Zi /O2 /Ob2 /I "Main/Include" /I "FeLib/Include" /D "NDEBUG" /D "USE_SDL" /D "WIN32" /D "_WINDOWS" /D "VC" /D "WIZARD" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /o NUL /win32
 # ADD BASE RSC /l 0x40b /d "NDEBUG"
@@ -180,7 +180,6 @@ SOURCE=.\Main\Source\charsset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\command.cpp
-# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -216,6 +215,7 @@ SOURCE=.\Main\Source\entity.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\fluid.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -349,7 +349,6 @@ SOURCE=.\Main\Source\roomset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\script.cpp
-# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -363,6 +362,7 @@ SOURCE=.\Main\Source\slotset.cpp
 # Begin Source File
 
 SOURCE=.\Main\Source\smoke.cpp
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
@@ -655,15 +655,6 @@ SOURCE=.\Main\Resource\Ivan.ico
 # Begin Source File
 
 SOURCE=.\Main\Resource\Ivan.rc
-
-!IF  "$(CFG)" == "Main - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 PowerDebug"
-
-!ELSEIF  "$(CFG)" == "Main - Win32 FastDebug"
-
-!ENDIF 
-
 # End Source File
 # End Group
 # End Target

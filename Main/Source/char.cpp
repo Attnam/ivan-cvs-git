@@ -188,7 +188,7 @@ statedata StateData[STATES] =
   }
 };
 
-characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const std::string& ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
+characterprototype::characterprototype(characterprototype* Base, character* (*Cloner)(ushort, ushort), const char* ClassId) : Base(Base), Cloner(Cloner), ClassId(ClassId) { Index = protocontainer<character>::Add(this); }
 const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { return Config.begin()->second; }
 
 /*
@@ -196,7 +196,7 @@ const characterdatabase& characterprototype::ChooseBaseForConfig(ushort) { retur
  * characterdatabase and cause a syntax error. Sorry for bad naming.
  */
 
-void character::InstallDataBase() { ::database<character>::InstallDataBase(this); }
+void character::InstallDataBase() { databasecreator<character>::InstallDataBase(this); }
 std::list<character*>::iterator character::GetTeamIterator() { return TeamIterator; }
 void character::SetTeamIterator(std::list<character*>::iterator What) { TeamIterator = What; }
 void character::CreateInitialEquipment(ushort SpecialFlags) { AddToInventory(DataBase->Inventory, SpecialFlags); }
@@ -220,23 +220,23 @@ bool character::IsOnGround() const { return MotherEntity && MotherEntity->IsOnGr
 bool character::LeftOversAreUnique() const { return GetArticleMode() != NORMAL_ARTICLE || AssignedName.length(); }
 bool character::HomeDataIsValid() const { return HomeData && HomeData->Level == GetLSquareUnder()->GetLevelIndex() && HomeData->Dungeon == GetLSquareUnder()->GetDungeonIndex(); }
 void character::SetHomePos(vector2d Pos) { HomeData->Pos = Pos; }
-std::string character::FirstPersonUnarmedHitVerb() const { return "hit"; }
-std::string character::FirstPersonCriticalUnarmedHitVerb() const { return "critically hit"; }
-std::string character::ThirdPersonUnarmedHitVerb() const { return "hits"; }
-std::string character::ThirdPersonCriticalUnarmedHitVerb() const { return "critically hits"; }
-std::string character::FirstPersonKickVerb() const { return "kick"; }
-std::string character::FirstPersonCriticalKickVerb() const { return "critically kick"; }
-std::string character::ThirdPersonKickVerb() const { return "kicks"; }
-std::string character::ThirdPersonCriticalKickVerb() const { return "critically kicks"; }
-std::string character::FirstPersonBiteVerb() const { return "bite"; }
-std::string character::FirstPersonCriticalBiteVerb() const { return "critically bite"; }
-std::string character::ThirdPersonBiteVerb() const { return "bites"; }
-std::string character::ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
-std::string character::UnarmedHitNoun() const { return "attack"; }
-std::string character::KickNoun() const { return "kick"; }
-std::string character::BiteNoun() const { return "attack"; }
+const char* character::FirstPersonUnarmedHitVerb() const { return "hit"; }
+const char* character::FirstPersonCriticalUnarmedHitVerb() const { return "critically hit"; }
+const char* character::ThirdPersonUnarmedHitVerb() const { return "hits"; }
+const char* character::ThirdPersonCriticalUnarmedHitVerb() const { return "critically hits"; }
+const char* character::FirstPersonKickVerb() const { return "kick"; }
+const char* character::FirstPersonCriticalKickVerb() const { return "critically kick"; }
+const char* character::ThirdPersonKickVerb() const { return "kicks"; }
+const char* character::ThirdPersonCriticalKickVerb() const { return "critically kicks"; }
+const char* character::FirstPersonBiteVerb() const { return "bite"; }
+const char* character::FirstPersonCriticalBiteVerb() const { return "critically bite"; }
+const char* character::ThirdPersonBiteVerb() const { return "bites"; }
+const char* character::ThirdPersonCriticalBiteVerb() const { return "critically bites"; }
+const char* character::UnarmedHitNoun() const { return "attack"; }
+const char* character::KickNoun() const { return "kick"; }
+const char* character::BiteNoun() const { return "attack"; }
 uchar character::GetSpecialBodyPartFlags(ushort, bool) const { return ST_NORMAL; }
-std::string character::GetEquipmentName(ushort) const { return ""; }
+const char* character::GetEquipmentName(ushort) const { return ""; }
 const std::list<ulong>& character::GetOriginalBodyPartID(ushort Index) const { return OriginalBodyPartID[Index]; }
 wsquare* character::GetNeighbourWSquare(ushort Index) const { return static_cast<wsquare*>(GetSquareUnder())->GetNeighbourWSquare(Index); }
 wsquare* character::GetWSquareUnder() const { return static_cast<wsquare*>(GetSquareUnder()); }
@@ -1537,7 +1537,7 @@ long character::GetScore() const
 
 void character::AddScoreEntry(const std::string& Description, float Multiplier, bool AddEndLevel) const
 {
-  if(!game::WizardModeIsActive())
+  if(!game::WizardModeIsReallyActive())
     {
       highscore HScore;
       std::string Desc = PLAYER->GetAssignedName();
@@ -1885,7 +1885,7 @@ void character::DeActivateVoluntaryAction(const std::string& Reason)
 	  if(Reason.length())
 	    ADD_MESSAGE("%s", Reason.c_str());
 
-	  if(game::BoolQuestion("Continue " + GetAction()->GetDescription() + "? [y/N]"))
+	  if(game::BoolQuestion(std::string("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 	    GetAction()->SetInDNDMode(true);
 	  else
 	    GetAction()->Terminate(false);
@@ -1909,7 +1909,7 @@ void character::ActionAutoTermination()
 	      {
 		ADD_MESSAGE("%s seems to be hostile.", (*i)->CHAR_NAME(DEFINITE));
 
-		if(game::BoolQuestion("Continue " + GetAction()->GetDescription() + "? [y/N]"))
+		if(game::BoolQuestion(std::string("Continue ") + GetAction()->GetDescription() + "? [y/N]"))
 		  GetAction()->SetInDNDMode(true);
 		else
 		  GetAction()->Terminate(false);
@@ -2146,14 +2146,13 @@ void character::SetNP(long What)
 
 void character::ShowNewPosInfo() const
 {
-  if(GetPos().X < game::GetCamera().X + 3 || GetPos().X >= game::GetCamera().X + game::GetScreenSize().X - 3)
+  if(GetPos().X < game::GetCamera().X + 3 || GetPos().X >= game::GetCamera().X + game::GetScreenXSize() - 3)
     game::UpdateCameraX();
 
-  if(GetPos().Y < game::GetCamera().Y + 3 || GetPos().Y >= game::GetCamera().Y + game::GetScreenSize().Y - 3)
+  if(GetPos().Y < game::GetCamera().Y + 3 || GetPos().Y >= game::GetCamera().Y + game::GetScreenYSize() - 3)
     game::UpdateCameraY();
 
   game::SendLOSUpdateRequest();
-  GetArea()->UpdateLOS();
   UpdateESPLOS();
   game::DrawEverythingNoBlit();
 
@@ -2277,7 +2276,8 @@ void character::GoOn(go* Go)
       return;
     }
 
-  game::DrawEverything();
+  graphics::BlitDBToScreen();
+  //game::DrawEverything();
 }
 
 void character::SetTeam(team* What)
@@ -2873,7 +2873,7 @@ void character::PrintInfo() const
 
   for(ushort c = 0; c < GetEquipmentSlots(); ++c)
     if((EquipmentEasilyRecognized(c) || game::WizardModeIsActive()) && GetEquipment(c))
-      Info.AddEntry(GetEquipmentName(c) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
+      Info.AddEntry(std::string(GetEquipmentName(c)) + ": " + GetEquipment(c)->GetName(INDEFINITE), LIGHT_GRAY, 0, GetEquipment(c)->GetPicture(), true, GetEquipment(c)->AllowAlphaEverywhere());
 
   if(Info.IsEmpty())
     ADD_MESSAGE("There's nothing special to tell about %s.", CHAR_NAME(DEFINITE));
@@ -3502,9 +3502,9 @@ void character::DrawPanel(bool AnimationDraw) const
       return;
     }
 
-  DOUBLE_BUFFER->Fill(19 + (game::GetScreenSize().X << 4), 0, RES_X - 19 - (game::GetScreenSize().X << 4), RES_Y, 0);
-  DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenSize().Y << 4), game::GetScreenSize().X << 4, 9, 0);
-  FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenSize().Y << 4), WHITE, "%s", GetPanelName().c_str());
+  DOUBLE_BUFFER->Fill(19 + (game::GetScreenXSize() << 4), 0, RES_X - 19 - (game::GetScreenXSize() << 4), RES_Y, 0);
+  DOUBLE_BUFFER->Fill(16, 45 + (game::GetScreenYSize() << 4), game::GetScreenXSize() << 4, 9, 0);
+  FONT->Printf(DOUBLE_BUFFER, 16, 45 + (game::GetScreenYSize() << 4), WHITE, "%s", GetPanelName().c_str());
 
   ushort PanelPosX = RES_X - 96;
   ushort PanelPosY = DrawStats(false);
@@ -4162,16 +4162,14 @@ bool character::HasAllBodyParts() const
 
 bodypart* character::GenerateRandomBodyPart()
 {
-  std::vector<ushort> NeededBodyParts;
+  ushort NeededBodyPart[MAX_BODYPARTS];
+  ushort Index = 0;
 
   for(ushort c = 0; c < GetBodyParts(); ++c)
     if(!GetBodyPart(c) && CanCreateBodyPart(c))
-      NeededBodyParts.push_back(c);
+      NeededBodyPart[Index++] = c;
 
-  if(NeededBodyParts.empty())
-    return 0;
-
-  return CreateBodyPart(NeededBodyParts[RAND() % NeededBodyParts.size()]);
+  return Index ? CreateBodyPart(NeededBodyPart[RAND() % Index]) : 0;
 }
 
 /* searched for character's Stack and if it find some bodyparts there that are the character's old bodyparts returns a stackiterator to one of them (choocen in random). If no fitting bodyparts are found the function returns 0 */
@@ -4392,7 +4390,7 @@ void character::TeleportSomePartsAway(ushort NumberToTeleport)
 	      GetTorso()->SetHP((GetTorso()->GetHP() << 2) / 5);
 	      ulong TorsosVolume = GetTorso()->GetMainMaterial()->GetVolume() / 10;
 
-	      if(TorsosVolume == 0)
+	      if(!TorsosVolume)
 		break;
 	      
 	      ulong Amount = (RAND() % TorsosVolume) + 1;
@@ -4698,6 +4696,13 @@ float character::GetTimeToDie(const character* Enemy, ushort Damage, float ToHit
 float character::GetRelativeDanger(const character* Enemy, bool UseMaxHP) const
 {
   float Danger = Enemy->GetTimeToKill(this, UseMaxHP) / GetTimeToKill(Enemy, UseMaxHP);
+  ushort EnemyAP = Enemy->GetMoveAPRequirement(1);
+  ushort ThisAP = GetMoveAPRequirement(1);
+
+  if(EnemyAP > ThisAP)
+    Danger *= 1.25f;
+  else if(ThisAP > EnemyAP)
+    Danger *= 0.80f;
 
   if(!Enemy->CanBeSeenBy(this, true))
     Danger *= 0.25f;
@@ -4789,21 +4794,6 @@ void character::WeaponSkillHit(item* Weapon, uchar Type)
       if(IsPlayer())
 	GetCWeaponSkill(Category)->AddLevelUpMessage();
     }
-}
-
-void character::AddDefenceInfo(felist& List) const
-{
-  for(ushort c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      {
-	std::string Entry = "   ";
-	Entry << GetBodyPart(c)->GetBodyPartName();
-	Entry.resize(60, ' ');
-	Entry << GetBodyPart(c)->GetMaxHP();
-	Entry.resize(70, ' ');
-	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICAL_DAMAGE);
-	List.AddEntry(Entry, LIGHT_GRAY);
-      }
 }
 
 /* returns 0 if character cannot be cloned */
@@ -5174,51 +5164,6 @@ void character::AddToInventory(const std::list<contentscript<item> >& ItemList, 
       }
 }
 
-void character::ShowDodgeAndMoveInfo() const
-{
-  felist Info("Dodge and move info:");
-  game::SetStandardListAttributes(Info);
-  short Bonus;
-
-  /* Dodge value */
-
-  Info.AddEntry("Dodge value: how easily you may avoid enemy attacks", LIGHT_GRAY);
-  Info.AddEntry("", LIGHT_GRAY);
-  Info.AddEntry(std::string("Base: ") + int(100 / sqrt(GetSize())), LIGHT_GRAY);
-  AddSpecialMovePenaltyInfo(Info);
-  Bonus = GetAttribute(AGILITY) * 10;
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 100)
-    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
-
-  if(GetMoveEase() < 100)
-    Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMoveEase() - 100) + '%', LIGHT_GRAY);
-
-  Info.AddEntry(std::string("Real dodge value: ") + int(GetDodgeValue()), MakeRGB16(220, 220, 220));
-  Info.AddEntry("", LIGHT_GRAY);
-
-  /* Move speed */
-
-  Info.AddEntry("Move speed: how often you may move", LIGHT_GRAY);
-  Info.AddEntry("", LIGHT_GRAY);
-  Info.AddEntry("Base: 10", LIGHT_GRAY);
-  AddSpecialMovePenaltyInfo(Info);
-  Bonus = APBonus(GetAttribute(AGILITY));
-
-  if(Bonus > 100)
-    Info.AddEntry(std::string("Agility bonus: ") + '+' + (Bonus - 100) + '%', LIGHT_GRAY);
-  else if(Bonus < 100)
-    Info.AddEntry(std::string("Agility penalty: ") + (Bonus - 100) + '%', LIGHT_GRAY);
-
-  if(GetMoveEase() < 100)
-    Info.AddEntry(std::string("Penalty for carrying too much: ") + (GetMoveEase() - 100) + '%', LIGHT_GRAY);
-
-  Info.AddEntry(std::string("Real move speed: ") + 10000 / GetMoveAPRequirement(1), MakeRGB16(220, 220, 220));
-  Info.Draw();
-}
-
 bool character::HasHadBodyPart(const item* Item) const
 {
   for(ushort c = 0; c < GetBodyParts(); ++c)
@@ -5294,22 +5239,6 @@ bool character::Equips(const item* Item) const
       return true;
 
   return false;
-}
-
-void character::AddAttributeInfo(std::string& Entry) const
-{
-  Entry.resize(57, ' ');
-  Entry << GetAttribute(ENDURANCE);
-  Entry.resize(60, ' ');
-  Entry << GetAttribute(PERCEPTION);
-  Entry.resize(63, ' ');
-  Entry << GetAttribute(INTELLIGENCE);
-  Entry.resize(66, ' ');
-  Entry << GetAttribute(WISDOM);
-  Entry.resize(69, ' ');
-  Entry << GetAttribute(CHARISMA);
-  Entry.resize(72, ' ');
-  Entry << GetAttribute(MANA);
 }
 
 void character::PrintBeginConfuseMessage() const
@@ -5479,7 +5408,7 @@ bool character::TryToChangeEquipment(ushort Chosen)
     {
       game::DrawEverythingNoBlit();
       itemvector ItemVector;
-      ushort Return = GetStack()->DrawContents(ItemVector, this, "Choose " + GetEquipmentName(Chosen) + ":", NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
+      ushort Return = GetStack()->DrawContents(ItemVector, this, std::string("Choose ") + GetEquipmentName(Chosen) + ":", NONE_AS_CHOICE|NO_MULTI_SELECT, EquipmentSorter(Chosen));
 
       if(Return == ESCAPED)
 	{
@@ -5619,11 +5548,6 @@ void character::SetBodyPart(ushort Index, bodypart* What)
     AddOriginalBodyPartID(Index, What->GetID());
 }
 
-void character::DetachBodyPart()
-{
-  ADD_MESSAGE("You haven't got any extra bodyparts.");
-}
-
 bool character::ConsumeItem(item* Item)
 {
   if(IsPlayer() && HasHadBodyPart(Item) && !game::BoolQuestion("Are you sure? You may be able to put it back... [y/N]"))
@@ -5633,9 +5557,9 @@ bool character::ConsumeItem(item* Item)
     return false;
      
   if(IsPlayer())
-    ADD_MESSAGE("You begin %s %s.", Item->GetConsumeVerb().c_str(), Item->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("You begin %s %s.", Item->GetConsumeVerb(), Item->CHAR_NAME(DEFINITE));
   else if(CanBeSeenByPlayer())
-    ADD_MESSAGE("%s begins %s %s.", CHAR_NAME(DEFINITE), Item->GetConsumeVerb().c_str(), Item->CHAR_NAME(DEFINITE));
+    ADD_MESSAGE("%s begins %s %s.", CHAR_NAME(DEFINITE), Item->GetConsumeVerb(), Item->CHAR_NAME(DEFINITE));
 
   consume* Consume = new consume(this);
   Consume->SetDescription(Item->GetConsumeVerb());
@@ -5644,40 +5568,6 @@ bool character::ConsumeItem(item* Item)
   SetAction(Consume);
   DexterityAction(5);
   return true;
-}
-
-void character::RaiseStats()
-{
-  ushort c = 0;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->RaiseStats();
-
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
-    BaseAttribute[c] += 10;
-
-  CalculateAll();
-  RestoreHP();
-  game::SendLOSUpdateRequest();
-  UpdateESPLOS();
-}
-
-void character::LowerStats()
-{
-  ushort c = 0;
-
-  for(c = 0; c < GetBodyParts(); ++c)
-    if(GetBodyPart(c))
-      GetBodyPart(c)->LowerStats();
-
-  for(c = 0; c < BASE_ATTRIBUTES; ++c)
-    BaseAttribute[c] -= 10;
-
-  CalculateAll();
-  RestoreHP();
-  game::SendLOSUpdateRequest();
-  UpdateESPLOS();
 }
 
 bool character::CheckThrow() const
@@ -5852,3 +5742,77 @@ void character::DrawBodyPartVector(std::vector<bitmap*>& Bitmap) const
       DrawBodyParts(Bitmap[c], vector2d(0, 0), NORMAL_LUMINANCE, true, false);
     }
 }
+
+#ifdef WIZARD
+
+void character::RaiseStats()
+{
+  ushort c = 0;
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->RaiseStats();
+
+  for(c = 0; c < BASE_ATTRIBUTES; ++c)
+    BaseAttribute[c] += 10;
+
+  CalculateAll();
+  RestoreHP();
+  game::SendLOSUpdateRequest();
+  UpdateESPLOS();
+}
+
+void character::LowerStats()
+{
+  ushort c = 0;
+
+  for(c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      GetBodyPart(c)->LowerStats();
+
+  for(c = 0; c < BASE_ATTRIBUTES; ++c)
+    BaseAttribute[c] -= 10;
+
+  CalculateAll();
+  RestoreHP();
+  game::SendLOSUpdateRequest();
+  UpdateESPLOS();
+}
+
+void character::AddAttributeInfo(std::string& Entry) const
+{
+  Entry.resize(57, ' ');
+  Entry << GetAttribute(ENDURANCE);
+  Entry.resize(60, ' ');
+  Entry << GetAttribute(PERCEPTION);
+  Entry.resize(63, ' ');
+  Entry << GetAttribute(INTELLIGENCE);
+  Entry.resize(66, ' ');
+  Entry << GetAttribute(WISDOM);
+  Entry.resize(69, ' ');
+  Entry << GetAttribute(CHARISMA);
+  Entry.resize(72, ' ');
+  Entry << GetAttribute(MANA);
+}
+
+void character::AddDefenceInfo(felist& List) const
+{
+  for(ushort c = 0; c < GetBodyParts(); ++c)
+    if(GetBodyPart(c))
+      {
+	std::string Entry = "   ";
+	Entry << GetBodyPart(c)->GetBodyPartName();
+	Entry.resize(60, ' ');
+	Entry << GetBodyPart(c)->GetMaxHP();
+	Entry.resize(70, ' ');
+	Entry << GetBodyPart(c)->GetTotalResistance(PHYSICAL_DAMAGE);
+	List.AddEntry(Entry, LIGHT_GRAY);
+      }
+}
+
+void character::DetachBodyPart()
+{
+  ADD_MESSAGE("You haven't got any extra bodyparts.");
+}
+
+#endif

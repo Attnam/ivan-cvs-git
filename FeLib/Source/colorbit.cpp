@@ -5,6 +5,31 @@
 #include "save.h"
 #include "femath.h"
 
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, ushort DestY, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, ushort Width, ushort Height, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, Width, Height, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, ushort DestX, ushort DestY, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, Source.X, Source.Y, DestX, DestY, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, vector2d Dest, vector2d BlitSize, ushort* Color) const { MaskedBlit(Bitmap, SourceX, SourceY, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, vector2d Source, vector2d Dest, vector2d BlitSize, ushort* Color) const  { MaskedBlit(Bitmap, Source.X, Source.Y, Dest.X, Dest.Y, BlitSize.X, BlitSize.Y, Color); }
+void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort* Color) const { MaskedBlit(Bitmap, 0, 0, 0, 0, XSize, YSize, Color); }
+
+void colorizablebitmap::AlterGradient(vector2d Pos, ushort Width, ushort Height, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, Width, Height, MColor, Amount, Clip); }
+void colorizablebitmap::AlterGradient(ushort X, ushort Y, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(X, Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+void colorizablebitmap::AlterGradient(vector2d Pos, vector2d AlterSize, uchar MColor, char Amount, bool Clip) { AlterGradient(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, MColor, Amount, Clip); }
+
+void colorizablebitmap::SwapColors(vector2d Pos, ushort Width, ushort Height, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, Width, Height, Color1, Color2); }
+void colorizablebitmap::SwapColors(ushort X, ushort Y, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(X, Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
+void colorizablebitmap::SwapColors(vector2d Pos, vector2d AlterSize, uchar Color1, uchar Color2) { SwapColors(Pos.X, Pos.Y, AlterSize.X, AlterSize.Y, Color1, Color2); }
+
+void colorizablebitmap::Roll(vector2d Pos, ushort Width, ushort Height, short XMove, short YMove) { Roll(Pos.X, Pos.Y, Width, Height, XMove, YMove); }
+void colorizablebitmap::Roll(ushort X, ushort Y, vector2d BlitSize, short XMove, short YMove) { Roll(X, Y, BlitSize.X, BlitSize.Y, XMove, YMove); }
+void colorizablebitmap::Roll(ushort X, ushort Y, ushort Width, ushort Height, vector2d Move) { Roll(X, Y, Width, Height, Move.X, Move.Y); }
+void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, short XMove, short YMove) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, XMove, YMove); }
+void colorizablebitmap::Roll(vector2d Pos, ushort Width, ushort Height, vector2d Move) { Roll(Pos.X, Pos.Y, Width, Height, Move.X, Move.Y); }
+void colorizablebitmap::Roll(ushort X, ushort Y, vector2d BlitSize, vector2d Move) { Roll(X, Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
+void colorizablebitmap::Roll(vector2d Pos, vector2d BlitSize, vector2d Move) { Roll(Pos.X, Pos.Y, BlitSize.X, BlitSize.Y, Move.X, Move.Y); }
+
 colorizablebitmap::colorizablebitmap(const std::string& FileName)
 {
   inputfile File(FileName.c_str(), 0, false);
@@ -120,7 +145,7 @@ void colorizablebitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort Source
     }
 }
 
-bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(XSize, YSize);
   uchar* Buffer = PaletteBuffer;
@@ -174,7 +199,7 @@ bitmap* colorizablebitmap::Colorize(ushort* Color, uchar BaseAlpha, uchar* Alpha
   return Bitmap;
 }
 
-bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, ushort* Color, uchar BaseAlpha, uchar* Alpha) const
+bitmap* colorizablebitmap::Colorize(vector2d Pos, vector2d Size, const ushort* Color, uchar BaseAlpha, const uchar* Alpha) const
 {
   bitmap* Bitmap = new bitmap(Size.X, Size.Y);
   uchar* Buffer = reinterpret_cast<uchar*>(ulong(PaletteBuffer) + ulong(Pos.Y) * XSize);
@@ -422,11 +447,10 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
   if(!SparklingReally)
     return ERROR_VECTOR;
 
-  std::vector<vector2d> PreferredPossible;
-  PreferredPossible.reserve((Size.X - 8) * (Size.Y - 8));
-  std::vector<vector2d> BadPossible;
-  BadPossible.reserve(((Size.X + Size.Y) << 3) - 64);
-
+  vector2d* PreferredPossible = new vector2d[(Size.X - 8) * (Size.Y - 8)];
+  vector2d* BadPossible = new vector2d[((Size.X + Size.Y) << 3) - 64];
+  ushort Preferred = 0;
+  ushort Bad = 0;
   ushort XMax = Pos.X + Size.X;
   ushort YMax = Pos.Y + Size.Y;
 
@@ -437,15 +461,21 @@ vector2d colorizablebitmap::RandomizeSparklePos(vector2d Pos, vector2d Size, boo
 
 	if(IsMaterialColor(Entry) && Sparkling[GetMaterialColorIndex(Entry)])
 	  if(x >= Pos.X + 4 && x < XMax - 4 && y >= Pos.Y + 4 && y < YMax - 4)
-	    PreferredPossible.push_back(vector2d(x, y));
+	    PreferredPossible[Preferred++] = vector2d(x, y);
 	  else
-	    BadPossible.push_back(vector2d(x, y));
+	    BadPossible[Bad++] = vector2d(x, y);
       }
 
-  if(!PreferredPossible.empty())
-    return PreferredPossible[RAND() % PreferredPossible.size()] - Pos;
-  else if(!BadPossible.empty())
-    return BadPossible[RAND() % BadPossible.size()] - Pos;
+  vector2d Return;
 
-  return ERROR_VECTOR;
+  if(Preferred)
+    Return = PreferredPossible[RAND() % Preferred] - Pos;
+  else if(Bad)
+    Return = BadPossible[RAND() % Bad] - Pos;
+  else
+    Return = ERROR_VECTOR;
+
+  delete [] PreferredPossible;
+  delete [] BadPossible;
+  return Return;
 }

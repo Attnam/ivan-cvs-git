@@ -39,8 +39,6 @@ class ABSTRACT_ITEM
   virtual void SetConsumeMaterial(material*, ushort = 0);
   virtual void ChangeConsumeMaterial(material*, ushort = 0);
   virtual bool ApplyExperience() { return false; }
-  virtual void RaiseStats() { }
-  virtual void LowerStats() { }
   virtual void InitSpecialAttributes();
   virtual void SignalEquipmentAdd(gearslot*);
   virtual void SignalEquipmentRemoval(gearslot*);
@@ -89,6 +87,8 @@ class ABSTRACT_ITEM
   bool CannotBeSevered(ushort);
   virtual bool IsDipDestination(const character*) const;
   virtual material* CreateDipMaterial();
+  virtual void RaiseStats() { }
+  virtual void LowerStats() { }
  protected:
   virtual bool IsSparkling(ushort) const { return false; }
   virtual uchar GetMaxAlpha(ushort) const;
@@ -147,7 +147,6 @@ class ITEM
   virtual void CalculateDamage();
   virtual void CalculateToHitValue();
   virtual void CalculateAPCost();
-  void ShowBiteInfo() const;
   virtual bool DamageArmor(character*, ushort, ushort);
   virtual head* Behead();
  protected:
@@ -233,8 +232,6 @@ class ABSTRACT_ITEM
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
   virtual bool ApplyExperience();
-  virtual void RaiseStats();
-  virtual void LowerStats();
   void SetStrength(ushort What) { Strength = What; }
   void SetDexterity(ushort What) { Dexterity = What; }
   virtual void InitSpecialAttributes();
@@ -258,25 +255,23 @@ class ABSTRACT_ITEM
   float GetToHitValue() const { return ToHitValue; }
   long GetAPCost() const { return APCost; }
   bool PairArmAllowsMelee() const;
-  void AddAttackInfo(felist&) const;
   virtual void SignalVolumeAndWeightChange();
   bool TwoHandWieldIsActive() const;
   float GetBlockChance(float) const;
   ushort GetBlockCapability() const;
   void WieldedSkillHit();
   float GetBlockValue() const;
-  void AddDefenceInfo(felist&) const;
   void ApplyEquipmentAttributeBonuses(item*);
   virtual void CalculateAttributeBonuses();
   short GetWieldedHitStrength() const;
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyDexterityPenalty(item*);
-  void ShowAttackInfo() const;
-  void ShowWieldedAttackInfo() const;
-  void ShowDefenceInfo() const;
-  void ShowUnarmedInfo() const;
   virtual bool DamageArmor(character*, ushort, ushort);
   bool CheckIfWeaponTooHeavy(const std::string&) const;
+  virtual void RaiseStats();
+  virtual void LowerStats();
+  void AddAttackInfo(felist&) const;
+  void AddDefenceInfo(felist&) const;
  protected:
   virtual void VirtualConstructor(bool);
   gearslot WieldedSlot;
@@ -355,8 +350,6 @@ class ABSTRACT_ITEM
   bool EditAttribute(ushort, short);
   void EditExperience(ushort, long);
   virtual bool ApplyExperience();
-  virtual void RaiseStats();
-  virtual void LowerStats();
   void SetStrength(ushort What) { Strength = What; }
   void SetAgility(ushort What) { Agility = What; }
   ushort GetAgility() const { return Agility; }
@@ -376,8 +369,9 @@ class ABSTRACT_ITEM
   virtual void SignalEquipmentAdd(gearslot*);
   void ApplyAgilityPenalty(item*);
   virtual void SignalVolumeAndWeightChange();
-  void ShowKickInfo() const;
   virtual bool DamageArmor(character*, ushort, ushort);
+  virtual void RaiseStats();
+  virtual void LowerStats();
  protected:
   virtual void VirtualConstructor(bool);
   gearslot BootSlot;
@@ -441,7 +435,7 @@ class ITEM
   virtual ulong GetTruePrice() const;
   virtual ushort GetMaterials() const { return 2; }
   virtual bool RaiseTheDead(character*);
-  virtual std::string GetConsumeVerb() const;
+  virtual const char* GetConsumeVerb() const;
   virtual bool IsEatable(const character* Eater) const { return IsConsumable(Eater); }
   virtual bool IsDrinkable(const character*) const { return false; }
   virtual void CalculateVolumeAndWeight();
