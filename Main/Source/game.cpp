@@ -113,7 +113,7 @@ void game::Init(std::string Name)
 
 	FILE* Debug = fopen("Debug.txt", "w");
 	Turns = 0;
-	EMPTY_MESSAGES;
+	EMPTY_MESSAGES();
 	game::GlobalMessagingSystem.Format();
 	ADD_MESSAGE("Initialization of game number %d started...", ++Counter);
 
@@ -133,9 +133,9 @@ void game::Init(std::string Name)
 	LevelMsg[9] = "You are welcomed by an evil laughter: \"Welcome to my private lair, mortal! There's no escape now! Prepare to be pepsified!\" Suddenly the stairs behind you are gone.";
 
 	if(Name == "")
-		SPlayerName(StringQuestionWithClear("What is your name?", 30));
+		SetPlayerName(StringQuestionWithClear("What is your name?", 30));
 	else
-		SPlayerName(Name);
+		SetPlayerName(Name);
 
 	if(Load())
 	{
@@ -149,11 +149,11 @@ void game::Init(std::string Name)
 
 		StoryScreen("Generating game...\n\nThis may take some time, please wait.", false);
 
-		SPlayer(new human);
+		SetPlayer(new human);
 
 		BaseScore = Player->Score();
 
-		CPlayer()->SRelations(2);
+		GetPlayer()->SetRelations(2);
 
 		Level = new level*[Levels];
 
@@ -162,46 +162,46 @@ void game::Init(std::string Name)
 			Level[c] = new level(36, 36, c);
 		}
 
-		vector PerttuPos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
+		vector PerttuPos = vector(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
 
 		{
 		for(ushort c = 0; !Level[0]->MakeRoom(PerttuPos + vector(-2, -2), vector(5, 5), false); c++)
-			PerttuPos = vector(5 + rand() % (Level[0]->CXSize() - 10), 5 + rand() % (Level[0]->CYSize() - 10));
+			PerttuPos = vector(5 + rand() % (Level[0]->GetXSize() - 10), 5 + rand() % (Level[0]->GetYSize() - 10));
 		}
 
-		Level[0]->CLevelSquare(PerttuPos)->ChangeTerrain(new parquet, new stairsup);
+		Level[0]->GetLevelSquare(PerttuPos)->ChangeTerrain(new parquet, new stairsup);
 
-		Level[0]->CLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
+		Level[0]->GetLevelSquare(PerttuPos)->FastAddCharacter(new perttu);
 		Level[0]->PutPlayerAround(PerttuPos);
 
-		vector Pos = vector(6 + rand() % (Level[8]->CXSize() - 12), 6 + rand() % (Level[8]->CYSize() - 12));
+		vector Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
 
 		{
 		for(ushort c = 0; !Level[8]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false); c++)
-			Pos = vector(6 + rand() % (Level[8]->CXSize() - 12), 6 + rand() % (Level[8]->CYSize() - 12));
+			Pos = vector(6 + rand() % (Level[8]->GetXSize() - 12), 6 + rand() % (Level[8]->GetYSize() - 12));
 		}
 
 		Level[9]->MakeRoom(Pos + vector(-3, -3), vector(7, 7), false, 16);
 
-		Level[8]->CLevelSquare(Pos)->ChangeTerrain(new parquet, new stairsdown(new pepsi(1)));
-		Level[8]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->CLevelSquare(Pos + vector(-2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[8]->CLevelSquare(Pos + vector( 2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
-		Level[9]->CLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new stairsup(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos)->ChangeTerrain(new parquet, new stairsdown(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector(-2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[8]->GetLevelSquare(Pos + vector( 2, 0))->ChangeTerrain(new parquet, new wall(new pepsi(1)));
+		Level[9]->GetLevelSquare(Pos + vector(0,  2))->ChangeTerrain(new parquet, new stairsup(new pepsi(1)));
 		altar* Altar = new altar(new pepsi(1));
-		Altar->SOwnerGod(16);
-		Level[9]->CLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, Altar); //GGG
+		Altar->SetOwnerGod(16);
+		Level[9]->GetLevelSquare(Pos + vector(0, -2))->ChangeTerrain(new parquet, Altar); //GGG
 
-		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->CXSize() - 1, Level[9]->CYSize() - 1, Level[9]->CLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
-		Level[9]->CLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
+		DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, Level[9]->GetXSize() - 1, Level[9]->GetYSize() - 1, Level[9]->GetLevelSquare(vector(DoX, DoY))->FastAddCharacter(new swatcommando);)
+		Level[9]->GetLevelSquare(Pos + vector(0, -2))->FastAddCharacter(new oree);
 
-		Level[9]->CLevelSquare(Pos + vector(0,  2))->FastAddCharacter(new golem(new pepsi(100000)));
-		Level[9]->CLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
-		Level[9]->CLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
+		Level[9]->GetLevelSquare(Pos + vector(0,  2))->FastAddCharacter(new golem(new pepsi(100000)));
+		Level[9]->GetLevelSquare(Pos + vector(-2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
+		Level[9]->GetLevelSquare(Pos + vector( 2, 0))->FastAddCharacter(new golem(new pepsi(100000)));
 
 		{
-		for(ushort c = 0; c < game::CLevels() - 1; c++)
+		for(ushort c = 0; c < game::GetLevels() - 1; c++)
 		{
 			Level[c]->Generate();
 
@@ -210,13 +210,13 @@ void game::Init(std::string Name)
 		}
 		}
 
-		Level[0]->CLevelSquare(PerttuPos)->CStack()->Clean();
+		Level[0]->GetLevelSquare(PerttuPos)->GetStack()->Clean();
 
 		Pos = Level[3]->RandomSquare(true);
-		Level[3]->CLevelSquare(Pos)->FastAddCharacter(new ennerbeast);
+		Level[3]->GetLevelSquare(Pos)->FastAddCharacter(new ennerbeast);
 
 		Pos = Level[6]->RandomSquare(true);
-		Level[6]->CLevelSquare(Pos)->FastAddCharacter(new elpuri);
+		Level[6]->GetLevelSquare(Pos)->FastAddCharacter(new elpuri);
 
 		{
 		for(ushort c = 1; c < Levels; c++)
@@ -230,13 +230,13 @@ void game::Init(std::string Name)
 		UpDateCameraX();
 		UpDateCameraY();
 
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->UpdateLOS();
 
 		{
-		for(ushort c = 1; CGod(c); c++)
+		for(ushort c = 1; GetGod(c); c++)
 		{
-			CGod(c)->SRelation(0);
-			CGod(c)->STimer(0);
+			GetGod(c)->SetRelation(0);
+			GetGod(c)->SetTimer(0);
 		}
 		}
 
@@ -258,11 +258,11 @@ void game::DeInit(void)
 
 void game::Run(void)
 {
-	while(CRunning())
+	while(GetRunning())
 	{
-		game::CPlayer()->Act();
+		game::GetPlayer()->Act();
 
-		if(!CRunning())
+		if(!GetRunning())
 			break;
 
 		Level[Current]->HandleCharacters();
@@ -315,16 +315,15 @@ void game::globalmessagingsystem::AddMessage(const char* Format, ...)
 		for(ushort c = 0; c < BufferLength; c++)
 			MessageBuffer[c] = Message[c];
 	}
-	sprintf(Buffer, "%d - %s", int(game::CTurns()), Message);
+
+	sprintf(Buffer, "%d - %s", int(game::GetTurns()), Message);
+
 	game::GlobalMessagingSystem.MessageHistory.AddString(Buffer);
-	while(game::GlobalMessagingSystem.MessageHistory.Length() > 200)
-		game::GlobalMessagingSystem.MessageHistory.CString()->Remove(0);
 }
 
 void game::globalmessagingsystem::Draw(void) const
 {
 	graphics::ClearDBToColor(0, 0, 800, 32);
-	//GGG DOUBLEBUFFER->ClearToColor(0, 0, 800, 16);
 
 	ulong Length = BufferLength, Pointer = 0;
 
@@ -385,8 +384,6 @@ void game::globalmessagingsystem::Draw(void) const
 		if(Length)
 		{
 			graphics::BlitDBToScreen();
-
-			//GGG DOUBLEBUFFER->ClearToColor(0, 0, 800, 16);
 
 			GETKEY();
 
@@ -475,13 +472,13 @@ void game::Quit(void)
 
 bool game::FlagHandler(ushort CX, ushort CY, ushort OX, ushort OY) // CurrentX = CX, CurrentY = CY
 {                                                   // OrigoX = OX, OrigoY = OY
-	Level[Current]->CLevelSquare(vector(CX, CY))->SetFlag();
-	Level[Current]->CLevelSquare(vector(CX, CY))->UpdateItemMemory();
+	Level[Current]->GetLevelSquare(vector(CX, CY))->SetFlag();
+	Level[Current]->GetLevelSquare(vector(CX, CY))->UpdateItemMemory();
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->CLevelSquare(vector(CX, CY))->COverTerrain()->CIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
 }
 
 bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, ushort, ushort))
@@ -548,37 +545,37 @@ bool game::DoLine(int X1, int Y1, int X2, int Y2, bool (*Proc)(ushort, ushort, u
 
 void game::panel::Draw(void) const
 {
-	character* Player = game::CPlayer();
+	character* Player = game::GetPlayer();
 
-	FONTW->PrintfToDB(16, 524, "Name: %s", game::CPlayerName().c_str());
+	FONTW->PrintfToDB(16, 524, "Name: %s", game::GetPlayerName().c_str());
 
-	FONTW->PrintfToDB(16, 534, "Strength: %d", Player->CStrength());
-	FONTW->PrintfToDB(16, 544, "Endurance: %d", Player->CEndurance());
-	FONTW->PrintfToDB(16, 554, "Agility: %d", Player->CAgility());
-	FONTW->PrintfToDB(16, 564, "Perception: %d", Player->CPerception());
-	FONTW->PrintfToDB(16, 574, "Size: %d", Player->CSize());
-	(Player->CHP() < (Player->CEndurance() << 1) / 3 ? FONTR : FONTW)->PrintfToDB(16, 584, "HP: %d/%d", Player->CHP(), (Player->CEndurance() << 1));
+	FONTW->PrintfToDB(16, 534, "Strength: %d", Player->GetStrength());
+	FONTW->PrintfToDB(16, 544, "Endurance: %d", Player->GetEndurance());
+	FONTW->PrintfToDB(16, 554, "Agility: %d", Player->GetAgility());
+	FONTW->PrintfToDB(16, 564, "Perception: %d", Player->GetPerception());
+	FONTW->PrintfToDB(16, 574, "Size: %d", Player->GetSize());
+	(Player->GetHP() < (Player->GetEndurance() << 1) / 3 ? FONTR : FONTW)->PrintfToDB(16, 584, "HP: %d/%d", Player->GetHP(), (Player->GetEndurance() << 1));
 
-	FONTW->PrintfToDB(160, 534, "Exp: %d", Player->CStrengthExperience());
-	FONTW->PrintfToDB(160, 544, "Exp: %d", Player->CEnduranceExperience());
-	FONTW->PrintfToDB(160, 554, "Exp: %d", Player->CAgilityExperience());
-	FONTW->PrintfToDB(160, 564, "Exp: %d", Player->CPerceptionExperience());
+	FONTW->PrintfToDB(160, 534, "Exp: %d", Player->GetStrengthExperience());
+	FONTW->PrintfToDB(160, 544, "Exp: %d", Player->GetEnduranceExperience());
+	FONTW->PrintfToDB(160, 554, "Exp: %d", Player->GetAgilityExperience());
+	FONTW->PrintfToDB(160, 564, "Exp: %d", Player->GetPerceptionExperience());
 
-	if(Player->CWielded())
-		FONTW->PrintfToDB(160, 574, "Wielded: %s", Player->CWielded()->CNAME(INDEFINITE));
-        if(Player->CTorsoArmor())
-		FONTW->PrintfToDB(160, 584, "Worn: %s", Player->CTorsoArmor()->CNAME(INDEFINITE));
+	if(Player->GetWielded())
+		FONTW->PrintfToDB(160, 574, "Wielded: %s", Player->GetWielded()->CNAME(INDEFINITE));
+        if(Player->GetTorsoArmor())
+		FONTW->PrintfToDB(160, 584, "Worn: %s", Player->GetTorsoArmor()->CNAME(INDEFINITE));
 
-	FONTW->PrintfToDB(320, 534, "Speed: %d", Player->CWielded() ? ushort(sqrt((ulong(Player->CAgility() << 2) + Player->CStrength()) * 20000 / Player->CWielded()->CWeight())) : ulong(Player->CAgility() << 2) + Player->CStrength());
+	FONTW->PrintfToDB(320, 534, "Speed: %d", Player->GetWielded() ? ushort(sqrt((ulong(Player->GetAgility() << 2) + Player->GetStrength()) * 20000 / Player->GetWielded()->GetWeight())) : ulong(Player->GetAgility() << 2) + Player->GetStrength());
 	FONTW->PrintfToDB(320, 544, "Armor Value: %d", Player->CalculateArmorModifier());
 	FONTW->PrintfToDB(320, 554, "Weaponstrength: %.0f", Player->CWeaponStrength());
-	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->CWeaponStrength() * Player->CStrength() / 26667), ushort(Player->CWeaponStrength() * Player->CStrength() / 16000 + 1));
+	FONTW->PrintfToDB(320, 564, "Min dam & Max dam: %d, %d", ushort(Player->CWeaponStrength() * Player->GetStrength() / 26667), ushort(Player->CWeaponStrength() * Player->GetStrength() / 16000 + 1));
 	FONTW->PrintfToDB(600, 534, "You are %s", Player->CNAME(INDEFINITE));
 	FONTW->PrintfToDB(600, 544, "Dungeon level: %d", game::CCurrent() + 1);
-	FONTW->PrintfToDB(600, 554, "NP: %d", Player->CNP());
-	FONTW->PrintfToDB(600, 564, "Turns: %d", game::CTurns());
-	if(Player->CNP() < CRITICALHUNGERLEVEL) FONTR->PrintfToDB(600, 574, "Fainting");
-	else if(Player->CNP() < HUNGERLEVEL) FONTB->PrintfToDB(600, 574, "Hungry");
+	FONTW->PrintfToDB(600, 554, "NP: %d", Player->GetNP());
+	FONTW->PrintfToDB(600, 564, "Turns: %d", game::GetTurns());
+	if(Player->GetNP() < CRITICALHUNGERLEVEL) FONTR->PrintfToDB(600, 574, "Fainting");
+	else if(Player->GetNP() < HUNGERLEVEL) FONTB->PrintfToDB(600, 574, "Hungry");
 	switch(Player->GetBurdenState())
 	{
 		case OVERLOADED:
@@ -596,18 +593,18 @@ void game::panel::Draw(void) const
 
 void game::UpDateCameraX(void)
 {
-	if(Player->CPos().X < 25)
+	if(Player->GetPos().X < 25)
 		Camera.X = 0;
 	else
-		Camera.X = Player->CPos().X - 25;
+		Camera.X = Player->GetPos().X - 25;
 }
 
 void game::UpDateCameraY(void)
 {
-	if(Player->CPos().Y < 18)
+	if(Player->GetPos().Y < 18)
 		Camera.Y = 0;
 	else
-		Camera.Y = Player->CPos().Y - 18;
+		Camera.Y = Player->GetPos().Y - 18;
 }
 
 character* game::BalancedCreateMonster(void)
@@ -750,15 +747,15 @@ bool game::BoolQuestion(std::string String, char DefaultAnswer, int OtherKeyForT
 {
 	int ch;
 	ADD_MESSAGE(String.c_str());
-	DRAW_MESSAGES;
+	DRAW_MESSAGES();
 	graphics::BlitDBToScreen();
 	for(;;)
 	{
 	ch = GETKEY();
-	if (ch == 0x00d || ch == 'y' || ch == 'Y' || ch == OtherKeyForTrue) { EMPTY_MESSAGES; graphics::BlitDBToScreen(); return true;  }
-	if (ch == 'n' || ch == 'N') { EMPTY_MESSAGES; graphics::BlitDBToScreen(); return false; }
+	if (ch == 0x00d || ch == 'y' || ch == 'Y' || ch == OtherKeyForTrue) { EMPTY_MESSAGES(); graphics::BlitDBToScreen(); return true;  }
+	if (ch == 'n' || ch == 'N') { EMPTY_MESSAGES(); graphics::BlitDBToScreen(); return false; }
 	if(DefaultAnswer == 2) continue;
-	EMPTY_MESSAGES;
+	EMPTY_MESSAGES();
 	graphics::BlitDBToScreen();
 	return DefaultAnswer ? true : false;
 	}
@@ -805,10 +802,10 @@ void game::DrawEverything(bool EmptyMsg)
 void game::DrawEverythingNoBlit(bool EmptyMsg)
 {
 	graphics::ClearDBToColor(0);
-	game::CCurrentLevel()->Draw();
+	game::GetCurrentLevel()->Draw();
 	game::Panel.Draw();
-	DRAW_MESSAGES;
-	if(EmptyMsg) EMPTY_MESSAGES;
+	DRAW_MESSAGES();
+	if(EmptyMsg) EMPTY_MESSAGES();
 }
 
 void game::StoryScreen(const char* Text, bool GKey)
@@ -877,15 +874,15 @@ bool game::Save(std::string SaveName)
 	SaveLevel(SaveName, Current, false);
 
 	{
-	for(ushort c = 1; CGod(c); c++)
-		CGod(c)->Save(SaveFile);
+	for(ushort c = 1; GetGod(c); c++)
+		GetGod(c)->Save(SaveFile);
 	}
 
-	vector Pos = game::CPlayer()->CPos();
+	vector Pos = game::GetPlayer()->GetPos();
 
 	SaveFile->write((char*)&Pos, sizeof(Pos));
 
-	for(ushort c = 0; c < CLevels(); c++)
+	for(ushort c = 0; c < GetLevels(); c++)
 		*SaveFile += LevelMsg[c];
 
 	SaveFile->close();
@@ -927,17 +924,17 @@ bool game::Load(std::string SaveName)
 	LoadLevel(SaveName);
 
 	{
-	for(ushort c = 1; CGod(c); c++)
-		CGod(c)->Load(SaveFile);
+	for(ushort c = 1; GetGod(c); c++)
+		GetGod(c)->Load(SaveFile);
 	}
 
 	vector Pos;
 
 	SaveFile->read((char*)&Pos, sizeof(Pos));
 
-	SPlayer(Level[Current]->CLevelSquare(Pos)->CCharacter());
+	SetPlayer(Level[Current]->GetLevelSquare(Pos)->CCharacter());
 
-	for(ushort c = 0; c < CLevels(); c++)
+	for(ushort c = 0; c < GetLevels(); c++)
 		*SaveFile -= LevelMsg[c];
 
 	SaveFile->close();
@@ -961,11 +958,11 @@ std::string game::SaveName(void)
 
 material* game::CreateRandomSolidMaterial(ulong Volume)
 {
-	for(ushort c = 1, Materials = 0; CMaterialPrototype(c++); Materials++);
+	for(ushort c = 1, Materials = 0; GetMaterialPrototype(c++); Materials++);
 
 	for(c = 1 + rand() % Materials;; c = 1 + rand() % Materials)
-		if(CMaterialPrototype(c)->IsSolid())
-			return CMaterialPrototype(c)->Clone(Volume);
+		if(GetMaterialPrototype(c)->IsSolid())
+			return GetMaterialPrototype(c)->Clone(Volume);
 }
 
 material* game::CreateMaterial(ushort Index, ulong Volume)
@@ -1055,31 +1052,31 @@ overterrain* game::LoadOverTerrain(std::ifstream* SaveFile)
 
 bool game::EmitationHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	ushort Emit = Level[Current]->CLevelSquare(vector(OX, OY))->CEmitation();
+	ushort Emit = Level[Current]->GetLevelSquare(vector(OX, OY))->GetEmitation();
 
-	ushort MaxSize = (game::CLuxTableSize()[Emit] >> 1);
+	ushort MaxSize = (game::GetLuxTableSize()[Emit] >> 1);
 
 	if(long(CX) - long(OX) > MaxSize || long(OX) - long(CX) > MaxSize || long(CY) - long(OY) > MaxSize || long(OY) - long(CY) > MaxSize)
 		Emit = 0;
 	else
-		Emit = game::CLuxTable()[Emit][long(CX) - long(OX) + (game::CLuxTableSize()[Emit] >> 1)][long(CY) - long(OY) + (game::CLuxTableSize()[Emit] >> 1)];
+		Emit = game::GetLuxTable()[Emit][long(CX) - long(OX) + (game::GetLuxTableSize()[Emit] >> 1)][long(CY) - long(OY) + (game::GetLuxTableSize()[Emit] >> 1)];
 
-	Level[Current]->CLevelSquare(vector(CX, CY))->AlterLuminance(vector(OX, OY), Emit);
+	Level[Current]->GetLevelSquare(vector(CX, CY))->AlterLuminance(vector(OX, OY), Emit);
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->CLevelSquare(vector(CX, CY))->COverTerrain()->CIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
 }
 
 bool game::NoxifyHandler(ushort CX, ushort CY, ushort OX, ushort OY)
 {
-	Level[Current]->CLevelSquare(vector(CX, CY))->NoxifyEmitter(vector(OX, OY));
+	Level[Current]->GetLevelSquare(vector(CX, CY))->NoxifyEmitter(vector(OX, OY));
 
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->CLevelSquare(vector(CX, CY))->COverTerrain()->CIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
 }
 
 void game::UpdateCameraXWithPos(ushort Coord)
@@ -1153,15 +1150,15 @@ int game::GetMoveCommandKey(vector A, vector B)
 
 void game::ApplyDivineTick(ushort Turns)
 {
-	for(ushort c = 1; CGod(c); c++)
-		CGod(c)->ApplyDivineTick(Turns);
+	for(ushort c = 1; GetGod(c); c++)
+		GetGod(c)->ApplyDivineTick(Turns);
 }
 
 void game::ApplyDivineAlignmentBonuses(god* CompareTarget, bool Good)
 {
-	for(ushort c = 1; CGod(c); c++)
-		if(CGod(c) != CompareTarget)
-			CGod(c)->AdjustRelation(CompareTarget, Good);
+	for(ushort c = 1; GetGod(c); c++)
+		if(GetGod(c) != CompareTarget)
+			GetGod(c)->AdjustRelation(CompareTarget, Good);
 }
 
 void game::BurnHellsContents(void)
@@ -1182,7 +1179,7 @@ void game::SendToHell(character* PassedAway)
 vector game::GetDirectionVectorForKey(ushort Key)
 {
 	for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-		if(Key == game::CMoveCommandKey()[c])
+		if(Key == game::GetMoveCommandKey()[c])
 			return game::CMoveVector()[c];
 
 	return vector(0,0);
@@ -1241,17 +1238,17 @@ bool game::EyeHandler(ushort CX, ushort CY, ushort OX, ushort OY)  // CurrentX =
 	if(CX == OX && CY == OY)
 		return true;
 	else
-		return Level[Current]->CLevelSquare(vector(CX, CY))->COverTerrain()->CIsWalkable();
+		return Level[Current]->GetLevelSquare(vector(CX, CY))->GetOverTerrain()->GetIsWalkable();
 }
 
 long game::GodScore(void)
 {
 	long Score = -1000;
 
-	for(ushort c = 1; CGod(c); c++)
+	for(ushort c = 1; GetGod(c); c++)
 	{
-		if(CGod(c)->CRelation() > Score)
-			Score = CGod(c)->CRelation();
+		if(GetGod(c)->GetRelation() > Score)
+			Score = GetGod(c)->GetRelation();
 	}
 
 	return Score;
@@ -1259,7 +1256,7 @@ long game::GodScore(void)
 
 float game::Difficulty(void)
 {
-	float Base = game::CPlayer()->CDifficulty() * (Current + 1);
+	float Base = game::GetPlayer()->GetDifficulty() * (Current + 1);
 
 	while(true)
 	{
@@ -1313,9 +1310,9 @@ void game::CalculateGodNumber(void)
 {
 	for(ushort c = 1;; c++)
 	{
-		if(game::CGod(c) == 0)
+		if(game::GetGod(c) == 0)
 		{
-			SGodNumber(c - 1);
+			SetGodNumber(c - 1);
 			break;
 		}
 	}
@@ -1372,9 +1369,9 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 {
 	ADD_MESSAGE(Topic.c_str());
 
-	DRAW_MESSAGES;
+	DRAW_MESSAGES();
 
-	EMPTY_MESSAGES;
+	EMPTY_MESSAGES();
 
 	graphics::BlitDBToScreen();
 
@@ -1383,7 +1380,7 @@ uchar game::DirectionQuestion(std::string Topic, uchar DefaultAnswer, bool Requi
 		int Key = GETKEY();
 
 		for(uchar c = 0; c < DIRECTION_COMMAND_KEYS; c++)
-			if(Key == game::CMoveCommandKey()[c])
+			if(Key == game::GetMoveCommandKey()[c])
 				return c;
 
 		if(DefaultAnswer < 8) return DefaultAnswer;
@@ -1441,18 +1438,18 @@ void game::RemoveSaves(void)
 item* game::CreateItem(std::string What)
 {
 	for(ushort x = 1; ItemPrototype[x]; x++)
-		if(ItemPrototype[x]->CanBeWished() && ItemPrototype[x]->CNameSingular() == What)
+		if(ItemPrototype[x]->CanBeWished() && ItemPrototype[x]->GetNameSingular() == What)
 			return ItemPrototype[x]->CreateWishedItem();
 
 	return 0;
 }
 
-void game::SPlayer(character* NP)
+void game::SetPlayer(character* NP)
 {
 	Player = NP;
 
 	if(Player)
-		Player->SIsPlayer(true);
+		Player->SetIsPlayer(true);
 }
 
 ushort game::AddProtoType(material* What)	{ return MaterialPrototype.Add(What); }

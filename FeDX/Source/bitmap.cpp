@@ -235,7 +235,7 @@ void bitmap::Blit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort DestX, 
 	if(!Flags)
 	{
 		RECT RDest = { DestX, DestY, DestX + Width, DestY + Height }, RSource = { SourceX, SourceY, SourceX + Width, SourceY + Height };
-		Bitmap->CDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT, NULL); 
+		Bitmap->GetDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT, NULL); 
 		return;
 	}
 
@@ -606,7 +606,7 @@ void bitmap::MaskedBlit(bitmap* Bitmap, ushort SourceX, ushort SourceY, ushort D
 	if(!Flags)
 	{
 		RECT RDest = { DestX, DestY, DestX + Width, DestY + Height }, RSource = { SourceX, SourceY, SourceX + Width, SourceY + Height };
-		Bitmap->CDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
+		Bitmap->GetDXSurface()->GetDDrawSurface()->Blt(&RDest, DXSurface->GetDDrawSurface(), &RSource, DDBLT_WAIT | DDBLT_KEYSRC, NULL);
 	}
 
 	DDSURFACEDESC2 srcddsd;
@@ -1058,12 +1058,12 @@ void bitmap::MaskedBlitToDB(ushort SourceX, ushort SourceY, ushort DestX, ushort
 
 void bitmap::FastBlit(bitmap* Bitmap) const
 {
-	Bitmap->CDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT);
+	Bitmap->GetDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT);
 }
 
 void bitmap::FastMaskedBlit(bitmap* Bitmap) const
 {
-	Bitmap->CDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT | DDBLTFAST_SRCCOLORKEY);
+	Bitmap->GetDXSurface()->GetDDrawSurface()->BltFast(0,0, DXSurface->GetDDrawSurface(), NULL, DDBLTFAST_WAIT | DDBLTFAST_SRCCOLORKEY);
 }
 
 void bitmap::Printf(bitmap* Bitmap, ushort X, ushort Y, const char* Format, ...) const

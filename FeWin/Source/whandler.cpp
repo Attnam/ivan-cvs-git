@@ -5,7 +5,6 @@
 #include "error.h"
 
 dynarray<int> globalwindowhandler::KeyBuffer;
-bool globalwindowhandler::Active = true;
 bool globalwindowhandler::KeyPressed = false;
 char globalwindowhandler::KeyboardLayoutName[KL_NAMELENGTH];
 bool globalwindowhandler::InGetKey = false;
@@ -113,7 +112,7 @@ int globalwindowhandler::GetKey(void)
 				int Key =  KeyBuffer.Remove(0);
 				int BackUp = Key;
 
-				unsigned int ScanCode = MapVirtualKeyEx(Key, 0, CKeyboardLayoutName());
+				unsigned int ScanCode = MapVirtualKeyEx(Key, 0, KeyboardLayoutName);
 				unsigned short ToBeReturned;	
 				unsigned char KeyboardBuffer[256];
 
@@ -128,7 +127,7 @@ int globalwindowhandler::GetKey(void)
 
 				if(!GetKeyboardState(KeyboardBuffer))
 					return 'x';
-				ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(CKeyboardLayoutName(), KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
+				ToAsciiEx(Key, ScanCode, KeyboardBuffer, &ToBeReturned, 0, LoadKeyboardLayout(KeyboardLayoutName, KLF_SUBSTITUTE_OK | KLF_REPLACELANG | KLF_ACTIVATE ));
 
 				if(ToBeReturned != 0 && ToBeReturned != 0xFFFF)
 					return ToBeReturned;
@@ -136,7 +135,6 @@ int globalwindowhandler::GetKey(void)
 		}
 	}
 }
-
 
 void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 {
@@ -170,5 +168,5 @@ void globalwindowhandler::Init(HINSTANCE hInst, HWND* phWnd, const char* Title)
 
 	*phWnd = hWnd;
 
-	GetKeyboardLayoutName(CKeyboardLayoutName());
+	GetKeyboardLayoutName(KeyboardLayoutName);
 }

@@ -22,12 +22,12 @@ item::item(bool CreateMaterials, bool SetStats)
 
 void item::PositionedDrawToTileBuffer(uchar) const
 {
-	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
 void can::PositionedDrawToTileBuffer(uchar) const
 {
-	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
 ushort can::TryToOpen(stack* Stack)
@@ -36,18 +36,18 @@ ushort can::TryToOpen(stack* Stack)
 
 	ushort x = Stack->AddItem(new lump(CMaterial(1)));
 
-	SMaterial(1,0);
+	SetMaterial(1,0);
 
 	return x;
 }
 
-ulong item::CWeight(void) const
+ulong item::GetWeight(void) const
 {
 	ulong TotalWeight = 0;
 
-	for(uchar c = 0; c < CMaterials(); c++)
+	for(uchar c = 0; c < GetMaterials(); c++)
 		if(CMaterial(c))
-			TotalWeight += CMaterial(c)->CWeight();
+			TotalWeight += CMaterial(c)->GetWeight();
 
 	return TotalWeight;
 }
@@ -55,7 +55,7 @@ ulong item::CWeight(void) const
 bool corpse::Consume(character* Eater, float Amount)
 {
 	if(Amount > 100) Amount = 100;
-	if(Eater == game::CPlayer())
+	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
@@ -70,7 +70,7 @@ bool corpse::Consume(character* Eater, float Amount)
 bool banana::Consume(character* Eater, float Amount)
 {
 	if(Amount > 100) Amount = 100;
-	if(Eater == game::CPlayer())
+	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
@@ -78,14 +78,14 @@ bool banana::Consume(character* Eater, float Amount)
 			ADD_MESSAGE("You eat part of %s.", CNAME(DEFINITE));
 	}
 	CMaterial(1)->EatEffect(Eater, Amount);
-	game::CCurrentLevel()->CLevelSquare(Eater->CPos())->CStack()->AddItem(new bananapeals);
+	game::GetCurrentLevel()->GetLevelSquare(Eater->GetPos())->GetStack()->AddItem(new bananapeals);
 	return (Amount > 99);
 }
 
 bool lump::Consume(character* Eater, float Amount)
 {
 	if(Amount > 100) Amount = 100;
-	if(Eater == game::CPlayer())
+	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
@@ -99,7 +99,7 @@ bool lump::Consume(character* Eater, float Amount)
 bool potion::Consume(character* Eater, float Amount)
 {
 	if(Amount > 100) Amount = 100;
-	if(Eater == game::CPlayer())
+	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You drink %s.", CNAME(DEFINITE));
@@ -111,14 +111,14 @@ bool potion::Consume(character* Eater, float Amount)
 	if(Amount == 100)
 	{
 		delete Material[1];
-		SMaterial(1,0);
+		SetMaterial(1,0);
 	}	
 	return false;
 }
 
 void lamp::PositionedDrawToTileBuffer(uchar LevelSquarePosition) const
 {
-	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), (CBitmapPos().Y + (LevelSquarePosition << 4)), 0, 0, 16, 16);
+	igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), (GetBitmapPos().Y + (LevelSquarePosition << 4)), 0, 0, 16, 16);
 }
 
 bool scroll::CanBeRead(character* Reader) const
@@ -131,19 +131,19 @@ bool scrollofcreatemonster::Read(character* Reader)
 	vector TryToCreate;
 	for(;;) // Bug bug bug!
 	{
-		TryToCreate = (Reader->CPos() + game::CMoveVector()[rand() % DIRECTION_COMMAND_KEYS]);
-		if(game::CCurrentLevel()->CLevelSquare(TryToCreate)->COverTerrain()->CIsWalkable())
+		TryToCreate = (Reader->GetPos() + game::CMoveVector()[rand() % DIRECTION_COMMAND_KEYS]);
+		if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->GetOverTerrain()->GetIsWalkable())
 			break;
 	}
 
-	if(game::CCurrentLevel()->CLevelSquare(TryToCreate)->CCharacter() == 0)
+	if(game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->CCharacter() == 0)
 	{
-		game::CCurrentLevel()->CLevelSquare(TryToCreate)->AddCharacter(game::BalancedCreateMonster());
-		if(Reader == game::CPlayer()) ADD_MESSAGE("As you read the scroll a monster appears.");
+		game::GetCurrentLevel()->GetLevelSquare(TryToCreate)->AddCharacter(game::BalancedCreateMonster());
+		if(Reader == game::GetPlayer()) ADD_MESSAGE("As you read the scroll a monster appears.");
 	}
 	else
 	{
-		if(Reader == game::CPlayer()) ADD_MESSAGE("You feel a lost soul fly by you.");
+		if(Reader == game::GetPlayer()) ADD_MESSAGE("You feel a lost soul fly by you.");
 	}
 	return true;
 }
@@ -153,11 +153,11 @@ bool scrollofteleport::Read(character* Reader)
 	vector Pos;
 	for(;;)
 	{
-		Pos = game::CCurrentLevel()->RandomSquare(true);
-		if(game::CCurrentLevel()->CLevelSquare(Pos)->CCharacter() == 0)
+		Pos = game::GetCurrentLevel()->RandomSquare(true);
+		if(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter() == 0)
 			break;
 	}
-	if(Reader == game::CPlayer())
+	if(Reader == game::GetPlayer())
 		ADD_MESSAGE("After you have read the scroll you realise that you have teleported.");
 	Reader->Move(Pos, true);
 	return true;
@@ -176,7 +176,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 {
 	if(CMaterial(2))
 	{
-		if(Enemy == game::CPlayer())
+		if(Enemy == game::GetPlayer())
 			ADD_MESSAGE("The %s reacts with you!", CMaterial(2)->CNAME(UNARTICLED));
 		else
 			ADD_MESSAGE("The %s reacts with %s.", CMaterial(2)->CNAME(UNARTICLED), Enemy->CNAME(DEFINITE));
@@ -187,7 +187,7 @@ void meleeweapon::ReceiveHitEffect(character* Enemy, character*)
 
 void meleeweapon::DipInto(item* DipTo)
 {
-	SMaterial(2, DipTo->BeDippedInto());
+	SetMaterial(2, DipTo->BeDippedInto());
 	ADD_MESSAGE("%s is now covered with %s.", CNAME(DEFINITE), CMaterial(2)->CNAME(UNARTICLED));
 }
 
@@ -201,21 +201,21 @@ bool item::Consumable(character* Eater) const
 	return Eater->ConsumeItemType(GetConsumeType());
 }
 
-ushort item::CEmitation(void) const
+ushort item::GetEmitation(void) const
 {
 	ushort Emitation = 0;
 
-	for(ushort c = 0; c < CMaterials(); c++)
+	for(ushort c = 0; c < GetMaterials(); c++)
 		if(CMaterial(c))
-			if(CMaterial(c)->CEmitation() > Emitation)
-				Emitation = CMaterial(c)->CEmitation();
+			if(CMaterial(c)->GetEmitation() > Emitation)
+				Emitation = CMaterial(c)->GetEmitation();
 
 	return Emitation;
 }
 
 void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 {
-	game::CCurrentLevel()->CLevelSquare(ItemStack->CPos())->CStack()->AddItem(new brokenbottle);
+	game::GetCurrentLevel()->GetLevelSquare(ItemStack->GetPos())->GetStack()->AddItem(new brokenbottle);
 	ItemStack->RemoveItem(ItemStack->SearchItem(this));
 	if (IsShown) ADD_MESSAGE("The potion shatters to pieces.");
 	delete this;
@@ -224,16 +224,16 @@ void potion::ImpactDamage(ushort, bool IsShown, stack* ItemStack)
 
 void potion::PositionedDrawToTileBuffer(uchar) const
 {
-	igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (Material[0]->CItemColor() << 4), CBitmapPos().Y+16, 0, 0, 16, 16);
+	igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (Material[0]->GetItemColor() << 4), GetBitmapPos().Y+16, 0, 0, 16, 16);
 
 	if(Material[1])
-		igraph::CItemGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (Material[1]->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
+		igraph::GetItemGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (Material[1]->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
 bool loaf::Consume(character* Eater, float Amount)
 {
 	if(Amount > 100) Amount = 100;
-	if(Eater == game::CPlayer())
+	if(Eater == game::GetPlayer())
 	{
 		if(Amount == 100)
 			ADD_MESSAGE("You eat %s.", CNAME(DEFINITE));
@@ -248,28 +248,28 @@ bool loaf::Consume(character* Eater, float Amount)
 short item::CalculateOfferValue(char GodAlignment) const
 {
 	float OfferValue = 0;
-	for(ushort c = 0; c < CMaterials(); c++)
+	for(ushort c = 0; c < GetMaterials(); c++)
 	{
 		if(CMaterial(c))
 		{
 		if(CMaterial(c)->Alignment() == EVIL)
 		{
 			if(GodAlignment == EVIL || GodAlignment == NEUTRAL)
-				OfferValue += Material[c]->CVolume() * Material[c]->OfferValue();
+				OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
 			else
 			if(GodAlignment == GOOD)
-				OfferValue -= Material[c]->CVolume() * Material[c]->OfferValue();
+				OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
 		}
 		else if(CMaterial(c)->Alignment() == GOOD)
 		{
 			if(GodAlignment == GOOD || GodAlignment == NEUTRAL)
-				OfferValue += Material[c]->CVolume() * Material[c]->OfferValue();
+				OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
 			else
 			if(GodAlignment == EVIL)
-				OfferValue -= Material[c]->CVolume() * Material[c]->OfferValue();
+				OfferValue -= Material[c]->GetVolume() * Material[c]->OfferValue();
 		}
 		else
-			OfferValue += Material[c]->CVolume() * Material[c]->OfferValue();
+			OfferValue += Material[c]->GetVolume() * Material[c]->OfferValue();
 		}
 	}
 	return short(OfferValue * (OfferModifier() / 250));
@@ -277,13 +277,13 @@ short item::CalculateOfferValue(char GodAlignment) const
 
 bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 {
-	vector StartingPos = Start->CPos();
-	vector Pos = Start->CPos();
+	vector StartingPos = Start->GetPos();
+	vector Pos = Start->GetPos();
 	bool Breaks = false;
-	float Speed = float(Force) / CWeight() * 1500;
+	float Speed = float(Force) / GetWeight() * 1500;
 	for(;;)
 	{
-		if(!game::CCurrentLevel()->CLevelSquare(Pos + game::CMoveVector()[Direction])->COverTerrain()->CIsWalkable())
+		if(!game::GetCurrentLevel()->GetLevelSquare(Pos + game::CMoveVector()[Direction])->GetOverTerrain()->GetIsWalkable())
 		{
 			Breaks = true;
 			break;
@@ -295,18 +295,18 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 			Speed *= 0.7f;
 			if(Speed < 0.5)
 				break;
-			Start->MoveItem(Start->SearchItem(this), game::CCurrentLevel()->CLevelSquare(Pos)->CStack());
+			Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 			clock_t StartTime = clock();
-			game::CCurrentLevel()->CLevelSquare(Pos)->ReEmitate();
-			game::CCurrentLevel()->CLevelSquare(OldPos)->ReEmitate();
+			game::GetCurrentLevel()->GetLevelSquare(Pos)->ReEmitate();
+			game::GetCurrentLevel()->GetLevelSquare(OldPos)->ReEmitate();
 			game::DrawEverything(false);
-			Start = game::CCurrentLevel()->CLevelSquare(Pos)->CStack();
+			Start = game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack();
 
-			if(game::CCurrentLevel()->CLevelSquare(Pos)->CCharacter())
+			if(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter())
 			{
 				if(Hostile)
-					game::CCurrentLevel()->CLevelSquare(Pos)->CCharacter()->SRelations(HOSTILE);
-				if(HitCharacter(game::CCurrentLevel()->CLevelSquare(Pos)->CCharacter(), Speed, game::CCurrentLevel()->CLevelSquare(Pos)->CanBeSeen()))
+					game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter()->SetRelations(HOSTILE);
+				if(HitCharacter(game::GetCurrentLevel()->GetLevelSquare(Pos)->CCharacter(), Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen()))
 					break;
 			}
 			while(clock() - StartTime < 0.2 * CLOCKS_PER_SEC)
@@ -316,9 +316,9 @@ bool item::Fly(uchar Direction, ushort Force, stack* Start, bool Hostile)
 
 		}
 	}
-	Start->MoveItem(Start->SearchItem(this), game::CCurrentLevel()->CLevelSquare(Pos)->CStack());
+	Start->MoveItem(Start->SearchItem(this), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 	if(Breaks)
-		ImpactDamage(Speed, game::CCurrentLevel()->CLevelSquare(Pos)->CanBeSeen(), game::CCurrentLevel()->CLevelSquare(Pos)->CStack());
+		ImpactDamage(Speed, game::GetCurrentLevel()->GetLevelSquare(Pos)->CanBeSeen(), game::GetCurrentLevel()->GetLevelSquare(Pos)->GetStack());
 	if(Pos == StartingPos)
 		return false;
 	else
@@ -341,9 +341,9 @@ bool item::HitCharacter(character* Dude, float Speed, bool CanBeSeen)
 
 bool abone::Consume(character* Consumer, float Amount)
 {
-	if(Consumer == game::CPlayer())
+	if(Consumer == game::GetPlayer())
 		ADD_MESSAGE("You consume %s.", CNAME(DEFINITE));
-	else if(Consumer->CLevelSquareUnder()->CanBeSeen())
+	else if(Consumer->GetLevelSquareUnder()->CanBeSeen())
 		ADD_MESSAGE("%s consumes %s.", Consumer->CNAME(DEFINITE), CNAME(DEFINITE));
 	CMaterial(0)->EatEffect(Consumer, Amount);
 	return (Amount > 99);
@@ -351,7 +351,7 @@ bool abone::Consume(character* Consumer, float Amount)
 
 ushort can::PrepareForConsuming(character* Consumer, stack* Stack)
 {
-	if(Consumer != game::CPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
+	if(Consumer != game::GetPlayer() || game::BoolQuestion(std::string("Do you want to open ") + CNAME(DEFINITE) + " before eating it? [Y/N]"))
 	{
 		return TryToOpen(Stack);
 	}
@@ -366,7 +366,7 @@ ushort item::PrepareForConsuming(character*, stack* Stack)
 
 float item::GetWeaponStrength(void) const
 {
-	return sqrt(float(CFormModifier()) * Material[0]->GetHitValue() * CWeight());
+	return sqrt(float(GetFormModifier()) * Material[0]->GetHitValue() * GetWeight());
 }
 
 bool scrollofwishing::Read(character* Reader)
@@ -376,7 +376,7 @@ bool scrollofwishing::Read(character* Reader)
 
 	if(TempItem)
 	{
-		Reader->CLevelSquareUnder()->CStack()->AddItem(TempItem);
+		Reader->GetLevelSquareUnder()->GetStack()->AddItem(TempItem);
 		ADD_MESSAGE("%s appears from nothing and the scroll burns!", TempItem->CNAME(INDEFINITE));
 		return true;
 	}
@@ -403,10 +403,10 @@ bool pickaxe::Apply(character* User)
 	if((Temp = game::AskForDirectionVector("What direction do you want to dig?")) != vector(0,0))
 	{
 
-		if(game::CCurrentLevel()->CLevelSquare(User->CPos() + Temp)->Dig(User, this))
+		if(game::GetCurrentLevel()->GetLevelSquare(User->GetPos() + Temp)->Dig(User, this))
 		{
-			User->SAP(ushort(User->CAP() + float(User->CStrength() * 2 - 200)));
-			User->SStrengthExperience(User->CStrengthExperience() + 50);
+			User->SetAP(ushort(User->GetAP() + float(User->GetStrength() * 2 - 200)));
+			User->SetStrengthExperience(User->GetStrengthExperience() + 50);
 			return true;
 		}
 	}	

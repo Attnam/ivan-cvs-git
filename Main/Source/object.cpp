@@ -57,14 +57,14 @@ void object::InitMaterials(material* FirstMaterial)
 	Material.push_back(FirstMaterial);
 }
 
-ushort object::CEmitation(void) const
+ushort object::GetEmitation(void) const
 {
 	ushort Emitation = 0;
 
 	for(ushort c = 0; c < Material.size(); c++)
 		if(Material[c])
-			if(Material[c]->CEmitation() > Emitation)
-				Emitation = Material[c]->CEmitation();
+			if(Material[c]->GetEmitation() > Emitation)
+				Emitation = Material[c]->GetEmitation();
 
 	return Emitation;
 }
@@ -164,9 +164,9 @@ std::string object::NameSized(uchar Case, std::string Article, ushort LillaBorde
 {
 	std::string Temp;
 
-	if(CSize() >= StoraBorder) Temp = "big ";
-	if(CSize() >= LillaBorder && Size < StoraBorder) Temp = "standard sized ";
-	if(CSize() < LillaBorder) Temp = "small ";            // SWEDISH SUX0R BAD!
+	if(GetSize() >= StoraBorder) Temp = "big ";
+	if(GetSize() >= LillaBorder && Size < StoraBorder) Temp = "standard sized ";
+	if(GetSize() < LillaBorder) Temp = "small ";            // SWEDISH SUX0R BAD!
 
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))

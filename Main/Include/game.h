@@ -1,8 +1,6 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-#define NUMB_OF_SOLID_MATERIALS 9
-
 #define DIRECTION_COMMAND_KEYS	8
 
 #define UNDEFINED		0
@@ -11,8 +9,8 @@
 #define TRANSSEXUAL		3
 
 #define ADD_MESSAGE game::GlobalMessagingSystem.AddMessage
-#define DRAW_MESSAGES game::GlobalMessagingSystem.Draw()
-#define EMPTY_MESSAGES game::GlobalMessagingSystem.Empty()
+#define DRAW_MESSAGES game::GlobalMessagingSystem.Draw
+#define EMPTY_MESSAGES game::GlobalMessagingSystem.Empty
 
 #include <ctime>
 #include <string>
@@ -47,19 +45,19 @@ public:
 	static void DeInit(void);
 	static void Run(void);
 	static int Menu(std::string sMS); // hihi :-) (MENU)
-	static int* CMoveCommandKey(void)	{return MoveCommandKey;}
+	static int* GetMoveCommandKey(void)	{return MoveCommandKey;}
 	static const vector* CMoveVector(void)	{return MoveVector;}
-	static level* CCurrentLevel(void)		{return Level[Current];}
+	static level* GetCurrentLevel(void)		{return Level[Current];}
 	static bool FlagHandler(ushort, ushort, ushort, ushort);
 	static bool DoLine(int, int, int, int, bool (*Proc)(ushort, ushort, ushort, ushort));
 	static class globalmessagingsystem
 	{
 	public:
-		globalmessagingsystem(void) : MessageBuffer(0), BufferLength(0) {}
+		globalmessagingsystem(void) : MessageBuffer(0), BufferLength(0), MessageHistory(200) {}
 		void AddMessage(const char*, ...);
 		void Draw(void) const;
 		void Empty(void);
-		const char* CBuffer(void) const {return MessageBuffer;}
+		//const char* CBuffer(void) const {return MessageBuffer;}
 		void DrawMessageHistory(void) const;
 		void Format(void);
 	private:
@@ -73,16 +71,16 @@ public:
 		void Draw(void) const;
 	private:
 	} Panel;
-	static ushort*** CLuxTable(void)		{return LuxTable;}
-	static ushort* CLuxTableSize(void)		{return LuxTableSize;}
+	static ushort*** GetLuxTable(void)		{return LuxTable;}
+	static ushort* GetLuxTableSize(void)		{return LuxTableSize;}
 	static void Quit(void);
-	static character* CPlayer(void) {return Player;}
-	static void SPlayer(character*);
+	static character* GetPlayer(void) {return Player;}
+	static void SetPlayer(character*);
 	static vector CCamera(void) {return Camera;}
 	static void UpDateCameraX(void);
 	static void UpDateCameraY(void);
 	static bool Flag;
-	static level* CLevel(ushort Index) {return Level[Index];}
+	static level* GetLevel(ushort Index) {return Level[Index];}
 	static character* CreateMonster(ushort);
 	static item* CreateItem(ushort);
 	static void InitLuxTable(void);
@@ -104,26 +102,26 @@ public:
 	static material* LoadMaterial(std::ifstream*);
 	static item* LoadItem(std::ifstream*);
 	static character* LoadCharacter(std::ifstream*);
-	static bool CRunning(void) {return Running;}
+	static bool GetRunning(void) {return Running;}
 	static void EnableWizardMode(void) { WizardMode = true; }
-	static bool CWizardMode(void) {return WizardMode;}
+	static bool GetWizardMode(void) {return WizardMode;}
 	static void SeeWholeMap(void) { SeeWholeMapCheat = !SeeWholeMapCheat; }
-	static bool CSeeWholeMapCheat(void) {return SeeWholeMapCheat;}
+	static bool GetSeeWholeMapCheat(void) {return SeeWholeMapCheat;}
 	static uchar EditGamma(short Value) {if(Value > 255 - Gamma) Gamma = 255; else if(Value + Gamma < 0) Gamma = 0; else Gamma += Value; return Gamma;}
 	static bool EmitationHandler(ushort, ushort, ushort, ushort);
 	static bool NoxifyHandler(ushort, ushort, ushort, ushort);
-	static bool CGoThroughWallsCheat(void) { return GoThroughWallsCheat; }
+	static bool GetGoThroughWallsCheat(void) { return GoThroughWallsCheat; }
 	static void GoThroughWalls(void) { GoThroughWallsCheat = !GoThroughWallsCheat; }
 	static void UpdateCameraXWithPos(ushort);
 	static void UpdateCameraYWithPos(ushort);
 	static std::string StringQuestion(const char*, ushort);
 	static bool KeyIsOK(char);
-	static void SCurrent(ushort What) { Current = What; }
+	static void SetCurrent(ushort What) { Current = What; }
 	static ushort CCurrent(void) { return Current; }
-	static ushort CLevels(void) { return Levels; }
+	static ushort GetLevels(void) { return Levels; }
 	static int GetMoveCommandKey(vector, vector);
 	static void DrawEverythingNoBlit(bool = true);
-	static god* CGod(uchar Index) { return God[Index]; }
+	static god* GetGod(uchar Index) { return God[Index]; }
 	static std::string CAlignment(uchar Index) { return Alignment[Index]; }
 	static void ApplyDivineTick(ushort = 1);
 	static void ApplyDivineAlignmentBonuses(god*, bool);
@@ -132,8 +130,8 @@ public:
 	static vector GetDirectionVectorForKey(ushort);
 	static vector AskForDirectionVector(std::string = "");
 	static std::string StringQuestionWithClear(std::string, ushort);
-	static std::string CPlayerName(void) { return PlayerName; }
-	static void SPlayerName(std::string What) { PlayerName = What; }
+	static std::string GetPlayerName(void) { return PlayerName; }
+	static void SetPlayerName(std::string What) { PlayerName = What; }
 	static std::string SaveName(void);
 	static bool EyeHandler(ushort, ushort, ushort, ushort);
 	static long GodScore(void);
@@ -141,22 +139,22 @@ public:
 	static float Difficulty(void);
 	static void TriggerQuestForMaakotkaShirt(void);
 	static void CalculateGodNumber(void);
-	static void SGodNumber(uchar What) { GodNumber = What; }
-	static uchar CGodNumber(void) { return GodNumber; }
-	static long CBaseScore(void) { return BaseScore; }
+	static void SetGodNumber(uchar What) { GodNumber = What; }
+	static uchar GetGodNumber(void) { return GodNumber; }
+	static long GetBaseScore(void) { return BaseScore; }
 	static void Turn(ushort Turn = 1) { Turns += Turn; }
 	static float CSoftGamma(void) { return SoftGamma; }
 	static void EditSoftGamma(float E) { SoftGamma += E; if(SoftGamma < 0) SoftGamma = 0; if(SoftGamma > 2) SoftGamma = 2; }
 	static void WhatToLoadMenu(void);
-	static ulong CTurns(void) { return Turns; }
-	static std::string CAutoSaveFileName(void) { return AutoSaveFileName; }
+	static ulong GetTurns(void) { return Turns; }
+	static std::string GetAutoSaveFileName(void) { return AutoSaveFileName; }
 	static uchar DirectionQuestion(std::string, uchar = 8, bool = true);
-	static command* CCommand(ushort Index) { return Command[Index]; }
-	static const material* const CMaterialPrototype(ushort Index) { return MaterialPrototype[Index]; }
-	static const character* const CCharacterPrototype(ushort Index) { return CharacterPrototype[Index]; }
-	static const item* const CItemPrototype(ushort Index) { return ItemPrototype[Index]; }
-	static const groundterrain* const CGroundTerrainPrototype(ushort Index) { return GroundTerrainPrototype[Index]; }
-	static const overterrain* const COverTerrainPrototype(ushort Index) { return OverTerrainPrototype[Index]; }
+	static command* GetCommand(ushort Index) { return Command[Index]; }
+	static const material* const GetMaterialPrototype(ushort Index) { return MaterialPrototype[Index]; }
+	static const character* const GetCharacterPrototype(ushort Index) { return CharacterPrototype[Index]; }
+	static const item* const GetItemPrototype(ushort Index) { return ItemPrototype[Index]; }
+	static const groundterrain* const GetGroundTerrainPrototype(ushort Index) { return GroundTerrainPrototype[Index]; }
+	static const overterrain* const GetOverTerrainPrototype(ushort Index) { return OverTerrainPrototype[Index]; }
 	static ushort AddProtoType(material* Material);
 	static ushort AddProtoType(character* Character);
 	static ushort AddProtoType(item* Item);

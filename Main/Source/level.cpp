@@ -42,20 +42,20 @@ level::~level(void)
 	for(ushort x = 0; x < XSize; x++)				\
 		for(ushort y = 0; y < YSize; y++)			\
 		{						\
-			Map[x][y]->CGroundTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
-			Map[x][y]->COverTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetGroundTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
+			Map[x][y]->GetOverTerrain()->Draw(DOUBLEBUFFER, vector((x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4), 256);			\
 																					\
 			if(FlagMap[x][y] & FORBIDDEN)															\
-				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 0);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 0);	\
 																					\
 			if(FlagMap[x][y] & ON_POSSIBLE_ROUTE)														\
-				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 128);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 128);	\
 																					\
 			if(FlagMap[x][y] & STILL_ON_POSSIBLE_ROUTE)													\
-				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 256);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 256);	\
 																					\
 			if(FlagMap[x][y] & PREFERRED)															\
-				igraph::CFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 511);	\
+				igraph::GetFOWGraphic()->MaskedBlit(DOUBLEBUFFER, 0, 0, (x - game::CCamera().X) << 4, (y - game::CCamera().Y + 1) << 4, 16, 16, 511);	\
 		}						\
 								\
 	graphics::BlitToDBToScreen()				\
@@ -376,10 +376,10 @@ vector level::CreateDownStairs(void)
 {
 	vector Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
-	while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN) || (game::CLevel(LevelIndex + 1)->CFlag(Pos) & FORBIDDEN))
+	while((FlagMap[Pos.X][Pos.Y] & PREFERRED) || (FlagMap[Pos.X][Pos.Y] & FORBIDDEN) || (game::GetLevel(LevelIndex + 1)->GetFlag(Pos) & FORBIDDEN))
 		Pos = vector(1 + rand() % (XSize - 2), 1 + rand() % (YSize - 2));
 
-	game::CLevel(LevelIndex + 1)->PutStairs(Pos);
+	game::GetLevel(LevelIndex + 1)->PutStairs(Pos);
 
 	Map[Pos.X][Pos.Y]->ChangeTerrain(new floory, new stairsdown);
 
@@ -426,10 +426,10 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 		FlagMap[x][YPos + Height - 1] |= FORBIDDEN;
 
 		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
-			Map[x][YPos]->CSideStack(2)->FastAddItem(new lamp);
+			Map[x][YPos]->GetSideStack(2)->FastAddItem(new lamp);
 
 		if(!(rand() % 7) && x != XPos && x != XPos + Width - 1)
-			Map[x][YPos + Height - 1]->CSideStack(0)->FastAddItem(new lamp);
+			Map[x][YPos + Height - 1]->GetSideStack(0)->FastAddItem(new lamp);
 	}
 	}
 
@@ -441,10 +441,10 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 		FlagMap[XPos + Width - 1][y] |= FORBIDDEN;
 
 		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
-			Map[XPos][y]->CSideStack(1)->FastAddItem(new lamp);
+			Map[XPos][y]->GetSideStack(1)->FastAddItem(new lamp);
 
 		if(!(rand() % 7) && y != YPos && y != YPos + Height - 1)
-			Map[XPos + Width - 1][y]->CSideStack(3)->FastAddItem(new lamp);
+			Map[XPos + Width - 1][y]->GetSideStack(3)->FastAddItem(new lamp);
 	}
 
 	for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
@@ -460,17 +460,17 @@ bool level::MakeRoom(vector Pos, vector Size, bool AltarPossible, uchar DivineOw
 		vector Pos(XPos + 1 + rand() % (Width-2), YPos + 1 + rand() % (Height-2));
 		Map[Pos.X][Pos.Y]->ChangeTerrain(new parquet, new altar);
 
-		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->COverTerrain())->COwnerGod();
+		uchar Owner = ((altar*)Map[Pos.X][Pos.Y]->GetOverTerrain())->GetOwnerGod();
 
 		for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
 			for(ushort y = YPos + 1; y < YPos + Height - 1; y++)
-				Map[x][y]->SDivineOwner(Owner);
+				Map[x][y]->SetDivineOwner(Owner);
 	}
 
 	if(DivineOwner)
 		for(ushort x = XPos + 1; x < XPos + Width - 1; x++)
 			for(ushort y = YPos + 1; y < YPos + Height - 1; y++)
-				Map[x][y]->SDivineOwner(DivineOwner);
+				Map[x][y]->SetDivineOwner(DivineOwner);
 
 	if(Door.Length())
 	{
@@ -552,10 +552,10 @@ void level::HandleCharacters(void)
 		{
 			Map[x][y]->HandleCharacters();
 			
-			Population += Map[x][y]->CPopulation();
+			Population += Map[x][y]->GetPopulation();
 
 			Map[x][y]->HandleFluids();
-			if(!game::CRunning())
+			if(!game::GetRunning())
 				return;
 		}
 	}
@@ -563,7 +563,7 @@ void level::HandleCharacters(void)
 	for(ushort x = 0; x < XSize; x++)
 		for(ushort y = 0; y < YSize; y++)
 			if(Map[x][y]->CCharacter())
-				Map[x][y]->CCharacter()->SHasActed(false);
+				Map[x][y]->CCharacter()->SetHasActed(false);
 
 	if(Population < CIdealPopulation() && LevelIndex != 9)
 		GenerateNewMonsters(CIdealPopulation() - Population);
@@ -579,12 +579,12 @@ void level::EmptyFlags(void)
 void level::PutPlayer(bool)
 {
 	vector Pos = RandomSquare(true);
-	Map[Pos.X][Pos.Y]->FastAddCharacter(game::CPlayer());
+	Map[Pos.X][Pos.Y]->FastAddCharacter(game::GetPlayer());
 }
 
 void level::PutPlayerAround(vector Pos)
 {
-	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->COverTerrain()->CIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::CPlayer()); game::CPlayer()->SSquareUnder(Map[DoX][DoY]); return;});
+	DO_FOR_SQUARES_AROUND(Pos.X, Pos.Y, XSize, YSize, if(Map[DoX][DoY]->GetOverTerrain()->GetIsWalkable()) {Map[DoX][DoY]->FastAddCharacter(game::GetPlayer()); game::GetPlayer()->SetSquareUnder(Map[DoX][DoY]); return;});
 }
 
 void level::Save(std::ofstream* SaveFile) const
@@ -660,41 +660,41 @@ void level::FastAddCharacter(vector Pos, character* Guy)
 
 void level::Draw(void) const
 {
-	ushort XMax = game::CCurrentLevel()->CXSize() < game::CCamera().X + 50 ? game::CCurrentLevel()->CXSize() : game::CCamera().X + 50;
-	ushort YMax = game::CCurrentLevel()->CYSize() < game::CCamera().Y + 30 ? game::CCurrentLevel()->CYSize() : game::CCamera().Y + 30;
+	ushort XMax = game::GetCurrentLevel()->GetXSize() < game::CCamera().X + 50 ? game::GetCurrentLevel()->GetXSize() : game::CCamera().X + 50;
+	ushort YMax = game::GetCurrentLevel()->GetYSize() < game::CCamera().Y + 30 ? game::GetCurrentLevel()->GetYSize() : game::CCamera().Y + 30;
 
-	if(game::CSeeWholeMapCheat())
+	if(game::GetSeeWholeMapCheat())
 		for(ushort x = game::CCamera().X; x < XMax; x++)
 			for(ushort y = game::CCamera().Y; y < YMax; y++)
 			{
-				long xDist = long(x) - game::CPlayer()->CPos().X, yDist = long(y) - game::CPlayer()->CPos().Y;
+				long xDist = long(x) - game::GetPlayer()->GetPos().X, yDist = long(y) - game::GetPlayer()->GetPos().Y;
 
-				if(game::CCurrentLevel()->CLevelSquare(vector(x, y))->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::CPlayer()->LOSRangeLevelSquare())
-					game::CCurrentLevel()->CLevelSquare(vector(x, y))->UpdateMemorizedAndDraw();
+				if(game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+					game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->UpdateMemorizedAndDraw();
 				else
-					game::CCurrentLevel()->CLevelSquare(vector(x, y))->DrawCheat();
+					game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->DrawCheat();
 			}
 	else
 		for(ushort x = game::CCamera().X; x < XMax; x++)
 			for(ushort y = game::CCamera().Y; y < YMax; y++)
 			{
-				long xDist = (long(x) - game::CPlayer()->CPos().X), yDist = (long(y) - game::CPlayer()->CPos().Y);
+				long xDist = (long(x) - game::GetPlayer()->GetPos().X), yDist = (long(y) - game::GetPlayer()->GetPos().Y);
 
-				if(game::CCurrentLevel()->CLevelSquare(vector(x, y))->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::CPlayer()->LOSRangeLevelSquare())
-					game::CCurrentLevel()->CLevelSquare(vector(x, y))->UpdateMemorizedAndDraw();
+				if(game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->RetrieveFlag() && (xDist * xDist + yDist * yDist) <= game::GetPlayer()->LOSRangeLevelSquare())
+					game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->UpdateMemorizedAndDraw();
 				else
-					game::CCurrentLevel()->CLevelSquare(vector(x, y))->DrawMemorized();
+					game::GetCurrentLevel()->GetLevelSquare(vector(x, y))->DrawMemorized();
 			}
 }
 
 void level::UpdateLOS(void)
 {
-	game::CCurrentLevel()->EmptyFlags();
+	game::GetCurrentLevel()->EmptyFlags();
 
-	DO_BIG_RECTANGLE(0, 0, game::CCurrentLevel()->CXSize() - 1, game::CCurrentLevel()->CYSize() - 1,	              {game::DoLine(game::CPlayer()->CPos().X, game::CPlayer()->CPos().Y, XPointer, 0,                                  game::FlagHandler);
-	               game::DoLine(game::CPlayer()->CPos().X, game::CPlayer()->CPos().Y, XPointer, game::CCurrentLevel()->CYSize() - 1, game::FlagHandler);},
-	              {game::DoLine(game::CPlayer()->CPos().X, game::CPlayer()->CPos().Y, 0,                                  YPointer, game::FlagHandler);
-	               game::DoLine(game::CPlayer()->CPos().X, game::CPlayer()->CPos().Y, game::CCurrentLevel()->CXSize() - 1, YPointer, game::FlagHandler);})
+	DO_BIG_RECTANGLE(0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,	              {game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, 0,                                  game::FlagHandler);
+	               game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, XPointer, game::GetCurrentLevel()->GetYSize() - 1, game::FlagHandler);},
+	              {game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, 0,                                  YPointer, game::FlagHandler);
+	               game::DoLine(game::GetPlayer()->GetPos().X, game::GetPlayer()->GetPos().Y, game::GetCurrentLevel()->GetXSize() - 1, YPointer, game::FlagHandler);})
 }
 
 void level::GenerateNewMonsters(ushort HowMany)
@@ -706,7 +706,7 @@ void level::GenerateNewMonsters(ushort HowMany)
 		for(uchar cc = 0; cc < 30; c++)
 		{
 			Pos = RandomSquare(true);
-			if(abs(short(Pos.X) - game::CPlayer()->CPos().X) > 6 && abs(short(Pos.Y) - game::CPlayer()->CPos().Y) > 6 && !Map[Pos.X][Pos.Y]->Character)
+			if(abs(short(Pos.X) - game::GetPlayer()->GetPos().X) > 6 && abs(short(Pos.Y) - game::GetPlayer()->GetPos().Y) > 6 && !Map[Pos.X][Pos.Y]->Character)
 				break;
 		}
 		if(!(Pos.X == 0 && Pos.Y == 0)) Map[Pos.X][Pos.Y]->AddCharacter(game::BalancedCreateMonster());

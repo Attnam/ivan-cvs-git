@@ -171,10 +171,9 @@ public:
 	virtual void FastAddCharacter(vector, character*);
 	virtual void HandleCharacters(void);
 	virtual void EmptyFlags(void);
-	virtual levelsquare* CLevelSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	virtual levelsquare* GetLevelSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
 	virtual void PutPlayer(bool);
 	virtual void PutPlayerAround(vector Pos);
-	virtual dynarray<vector, uchar>* CKeyPoint(void) {return &KeyPoint;} //should be inspector
 	virtual void GenerateTunnel(vector, vector, bool);
 	virtual void PutStairs(vector);
 	virtual void ExpandPossibleRoute(vector, vector, bool);
@@ -182,7 +181,7 @@ public:
 	virtual void Save(std::ofstream*) const;
 	virtual void Luxify(void);
 	virtual void UpdateLOS(void);
-	virtual ushort CPopulation(void) const { return Population; }
+	virtual ushort GetPopulation(void) const { return Population; }
 	virtual ushort CIdealPopulation(void) const { return 25; }
 	virtual void GenerateNewMonsters(ushort);
 	virtual void AttachPos(vector);
@@ -191,7 +190,7 @@ public:
 	virtual void CreateMonsters(ushort);
 	virtual vector CreateDownStairs(void);
 	virtual bool MakeRoom(vector, vector, bool = true, uchar = 0);
-	virtual bitmap* CFluidBuffer(void) const { return FluidBuffer; }
+	virtual bitmap* GetFluidBuffer(void) const { return FluidBuffer; }
 protected:
 	levelsquare*** Map;
 	bitmap* FluidBuffer;

@@ -65,7 +65,7 @@ vector area::RandomSquare(bool Walkablility) const
 {
 	vector Pos(rand() % XSize, rand() % YSize);
 
-	while(Map[Pos.X][Pos.Y]->COverTerrain()->CIsWalkable() != Walkablility)
+	while(Map[Pos.X][Pos.Y]->GetOverTerrain()->GetIsWalkable() != Walkablility)
 	{
 		Pos.X = rand() % XSize;
 		Pos.Y = rand() % YSize;

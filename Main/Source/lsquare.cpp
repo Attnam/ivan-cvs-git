@@ -38,7 +38,7 @@ levelsquare::~levelsquare(void)
 
 void levelsquare::HandleCharacters(void)
 {
-	if(CCharacter() && CCharacter() != game::CPlayer())
+	if(CCharacter() && CCharacter() != game::GetPlayer())
 		CCharacter()->Act();
 }
 
@@ -50,34 +50,34 @@ void levelsquare::SignalEmitationIncrease(ushort EmitationUpdate)
 
 void levelsquare::SignalEmitationDecrease(ushort EmitationUpdate)
 {
-	if(EmitationUpdate == CEmitation() && EmitationUpdate != CalculateEmitation())
+	if(EmitationUpdate == GetEmitation() && EmitationUpdate != CalculateEmitation())
 		ReEmitate();
 }
 
 ushort levelsquare::CalculateEmitation(void) const
 {
-	ushort Emitation = CStack()->CEmitation();
+	ushort Emitation = GetStack()->GetEmitation();
 
-	#define NE(D, S) game::CCurrentLevel()->CLevelSquare(Pos + D)->CSideStack(S)->CEmitation()
+	#define NE(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)->GetEmitation()
 
-	if(CPos().X)
+	if(GetPos().X)
 		if(NE(vector(-1, 0), 1) > Emitation)
 			Emitation = NE(vector(-1, 0), 1);
 
-	if(CPos().X < game::CCurrentLevel()->CXSize() - 1)
+	if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
 		if(NE(vector(1, 0), 3) > Emitation)
 			Emitation = NE(vector(1, 0), 3);
 
-	if(CPos().Y)
+	if(GetPos().Y)
 		if(NE(vector(0, -1), 2) > Emitation)
 			Emitation = NE(vector(0, -1), 2);
 
-	if(CPos().Y < game::CCurrentLevel()->CYSize() - 1)
+	if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
 		if(NE(vector(0, 1), 0) > Emitation)
 			Emitation = NE(vector(0, 1), 0);
 
-	if(CCharacter() && CCharacter()->CEmitation() > Emitation)
-		Emitation = CCharacter()->CEmitation();
+	if(CCharacter() && CCharacter()->GetEmitation() > Emitation)
+		Emitation = CCharacter()->GetEmitation();
 
 	return Emitation;
 }
@@ -88,99 +88,99 @@ void levelsquare::DrawToTileBuffer(void) const
 
 	if(Fluided)
 	{
-		game::CCurrentLevel()->CFluidBuffer()->MaskedBlit(igraph::CTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
+		game::GetCurrentLevel()->GetFluidBuffer()->MaskedBlit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16,16, ushort(256 - TimeFromSpill));
 	}
 	OverTerrain->DrawToTileBuffer();
-	CStack()->PositionedDrawToTileBuffer();
+	GetStack()->PositionedDrawToTileBuffer();
 
-	#define NS(D, S) game::CCurrentLevel()->CLevelSquare(Pos + D)->CSideStack(S)
+	#define NS(D, S) game::GetCurrentLevel()->GetLevelSquare(Pos + D)->GetSideStack(S)
 
-	if(CPos().X)
+	if(GetPos().X)
 		NS(vector(-1, 0), 1)->PositionedDrawToTileBuffer(1);
 
-	if(CPos().X < game::CCurrentLevel()->CXSize() - 1)
+	if(GetPos().X < game::GetCurrentLevel()->GetXSize() - 1)
 		NS(vector(1, 0), 3)->PositionedDrawToTileBuffer(3);
 
-	if(CPos().Y)
+	if(GetPos().Y)
 		NS(vector(0, -1), 2)->PositionedDrawToTileBuffer(2);
 
-	if(CPos().Y < game::CCurrentLevel()->CYSize() - 1)
+	if(GetPos().Y < game::GetCurrentLevel()->GetYSize() - 1)
 		NS(vector(0, 1), 0)->PositionedDrawToTileBuffer(0);
 }
 
 void levelsquare::UpdateMemorizedAndDraw(void)
 {
-	SKnown(true);
+	SetKnown(true);
 
 	DrawToTileBuffer();
 
-	ushort RealLuminance = CLuminance();
+	ushort RealLuminance = GetLuminance();
 
-	igraph::CTileBuffer()->MaskedBlit(game::CCurrentLevel()->CMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16, RealLuminance);
-	igraph::CFOWGraphic()->MaskedBlit(game::CCurrentLevel()->CMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
+	igraph::GetTileBuffer()->MaskedBlit(game::GetCurrentLevel()->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16, RealLuminance);
+	igraph::GetFOWGraphic()->MaskedBlit(game::GetCurrentLevel()->GetMemorized(), 0, 0, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	if(CCharacter())
 		CCharacter()->DrawToTileBuffer();
 
-	if(game::CSeeWholeMapCheat())
+	if(game::GetSeeWholeMapCheat())
 		RealLuminance = 256;
 
-	igraph::BlitTileBuffer(vector((CPos().X - game::CCamera().X) << 4, (CPos().Y - game::CCamera().Y + 2) << 4), RealLuminance);
+	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4), RealLuminance);
 }
 
 void levelsquare::Emitate(void)
 {
-	SEmitation(CalculateEmitation());
+	SetEmitation(CalculateEmitation());
 
-	if(CEmitation() < 64)
+	if(GetEmitation() < 64)
 		return;
 	else
 		int esko = 2;
 
-	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::CCurrentLevel()->CXSize() - 1, game::CCurrentLevel()->CYSize() - 1,
-	             game::CLuxTableSize()[Emitation] >> 1,
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Top,      game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Bottom,   game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, Left,     YPointer, game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, Rigth,    YPointer, game::EmitationHandler));
+	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+	             game::GetLuxTableSize()[Emitation] >> 1,
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, game::EmitationHandler));
 }
 
 void levelsquare::ReEmitate(void)
 {
-	ushort OldEmitation = CEmitation();
-	SEmitation(CalculateEmitation());
+	ushort OldEmitation = GetEmitation();
+	SetEmitation(CalculateEmitation());
 
 	if(OldEmitation < 64)
 		return;
 
-	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::CCurrentLevel()->CXSize() - 1, game::CCurrentLevel()->CYSize() - 1,
-	             game::CLuxTableSize()[OldEmitation] >> 1,
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Top,      game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Bottom,   game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, Left,     YPointer, game::EmitationHandler),
-	             game::DoLine(CPos().X, CPos().Y, Rigth,    YPointer, game::EmitationHandler));
+	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+	             game::GetLuxTableSize()[OldEmitation] >> 1,
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, game::EmitationHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, game::EmitationHandler));
 }
 
 void levelsquare::Noxify(void)
 {
-	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::CCurrentLevel()->CXSize() - 1, game::CCurrentLevel()->CYSize() - 1,
-	             game::CLuxTableSize()[Emitation] >> 1,
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Top,      game::NoxifyHandler),
-	             game::DoLine(CPos().X, CPos().Y, XPointer, Bottom,   game::NoxifyHandler),
-	             game::DoLine(CPos().X, CPos().Y, Left,     YPointer, game::NoxifyHandler),
-	             game::DoLine(CPos().X, CPos().Y, Rigth,    YPointer, game::NoxifyHandler));
+	DO_RECTANGLE(Pos.X, Pos.Y, 0, 0, game::GetCurrentLevel()->GetXSize() - 1, game::GetCurrentLevel()->GetYSize() - 1,
+	             game::GetLuxTableSize()[Emitation] >> 1,
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Top,      game::NoxifyHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, XPointer, Bottom,   game::NoxifyHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Left,     YPointer, game::NoxifyHandler),
+	             game::DoLine(GetPos().X, GetPos().Y, Rigth,    YPointer, game::NoxifyHandler));
 }
 
 void levelsquare::ForceEmitterNoxify(void)
 {
 	for(ushort c = 0; c < Emitter.Length(); c++)
-		game::CCurrentLevel()->CLevelSquare(Emitter.Access(c).Pos)->Noxify();
+		game::GetCurrentLevel()->GetLevelSquare(Emitter.Access(c).Pos)->Noxify();
 }
 
 void levelsquare::ForceEmitterEmitation(void)
 {
 	for(ushort c = 0; c < Emitter.Length(); c++)
-		game::CCurrentLevel()->CLevelSquare(Emitter.Access(c).Pos)->Emitate();
+		game::GetCurrentLevel()->GetLevelSquare(Emitter.Access(c).Pos)->Emitate();
 }
 
 void levelsquare::NoxifyEmitter(vector Dir)
@@ -196,7 +196,7 @@ uchar levelsquare::CalculateBitMask(vector Dir) const
 {
 	uchar BitMask = 0;
 
-	#define IW(X, Y) game::CCurrentLevel()->CLevelSquare(Pos + vector(X, Y))->COverTerrain()->CIsWalkable()
+	#define IW(X, Y) game::GetCurrentLevel()->GetLevelSquare(Pos + vector(X, Y))->GetOverTerrain()->GetIsWalkable()
 
 	if(Dir.X < Pos.X)
 	{
@@ -282,13 +282,13 @@ void levelsquare::AlterLuminance(vector Dir, ushort AiL)
 
 bool levelsquare::Open(character* Opener)
 {
-	return COverTerrain()->Open(Opener);
+	return GetOverTerrain()->Open(Opener);
 }
 
 bool levelsquare::Close(character* Closer)
 {
-	if(!CStack()->CItems() && !Character)
-		return COverTerrain()->Close(Closer);
+	if(!GetStack()->GetItems() && !Character)
+		return GetOverTerrain()->Close(Closer);
 	else
 	{
 		ADD_MESSAGE("There's something in the way...");
@@ -301,7 +301,7 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 {
 	square::Save(SaveFile);
 
-	CStack()->Save(SaveFile);
+	GetStack()->Save(SaveFile);
 
 	{
 	for(ushort c = 0; c < 4; c++)
@@ -321,7 +321,7 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 	SaveFile->write((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
-		CMotherLevel()->CFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetMotherLevel()->GetFluidBuffer()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile->write((char*)&Emitation, sizeof(Emitation));
 
@@ -334,7 +334,7 @@ void levelsquare::Save(std::ofstream* SaveFile) const
 levelsquare::levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos) : square(MotherLevel, SaveFile, Pos), MotherLevel(MotherLevel)
 {
 	Stack = new stack(SaveFile);
-	CStack()->SSquareUnder(this);
+	GetStack()->SetSquareUnder(this);
 
 	{
 	for(ushort c = 0; c < 4; c++)
@@ -358,7 +358,7 @@ levelsquare::levelsquare(level* MotherLevel, std::ifstream* SaveFile, vector Pos
 	SaveFile->read((char*)&Fluided, sizeof(Fluided));
 
 	if(Fluided)
-		CMotherLevel()->CFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetMotherLevel()->GetFluidBuffer()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 
 	SaveFile->read((char*)&Emitation, sizeof(Emitation));
 	SaveFile->read((char*)&Flag, sizeof(Flag));
@@ -373,13 +373,13 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	{
 		Fluided = true;
 		TimeFromSpill = 0;
-		CMotherLevel()->CFluidBuffer()->ClearToColor(Pos.X << 4, Pos.Y << 4, 16, 16, 0xF81F);
+		GetMotherLevel()->GetFluidBuffer()->ClearToColor(Pos.X << 4, Pos.Y << 4, 16, 16, 0xF81F);
 	}
 
 	for(ushort c = 0; c < Amount; c++)
 	{
 		vector Cords((Pos.X << 4) + 1 + rand() % 14, (Pos.Y << 4) + 1 + rand() % 14);
-		game::CCurrentLevel()->CFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
+		game::GetCurrentLevel()->GetFluidBuffer()->PutPixel(Cords.X, Cords.Y, Color);
 		for(ushort d = 0; d < 8; d++)
 		{
 			if((rand() % Lumpiness))
@@ -397,8 +397,8 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 				if(long(GET_GREEN(Color) + Change[1]) > 255) Change[1] = 255 - GET_GREEN(Color);
 				if(long(GET_BLUE(Color) + Change[2]) > 255) Change[2] = 255 - GET_BLUE(Color);
 
-				game::CCurrentLevel()->CFluidBuffer()->PutPixel(Cords.X + game::CMoveVector()[d].X, Cords.Y + game::CMoveVector()[d].Y,
-				RGB(GET_RED(Color) + Change[0],
+				game::GetCurrentLevel()->GetFluidBuffer()->PutPixel(Cords.X + game::CMoveVector()[d].X, Cords.Y + game::CMoveVector()[d].Y,
+				MAKE_RGB(GET_RED(Color) + Change[0],
 				GET_GREEN(Color) + Change[1],
 				GET_BLUE(Color) + Change[2]) );
 			}
@@ -407,11 +407,11 @@ void levelsquare::SpillFluid(uchar Amount, ulong Color, ushort Lumpiness, ushort
 	}
 }
 
-ushort levelsquare::CLuminance(void) const
+ushort levelsquare::GetLuminance(void) const
 {
 	ushort Luminance = 0;
 
-	if(COverTerrain()->CIsWalkable())
+	if(GetOverTerrain()->GetIsWalkable())
 	{
 		for(ushort c = 0; c < Emitter.Length(); c++)
 			if(Emitter.Access(c).DilatedEmitation > Luminance)
@@ -419,7 +419,7 @@ ushort levelsquare::CLuminance(void) const
 	}
 	else
 		for(ushort c = 0; c < Emitter.Length(); c++)
-			if(CalculateBitMask(Emitter.Access(c).Pos) & CalculateBitMask(game::CPlayer()->CPos()))
+			if(CalculateBitMask(Emitter.Access(c).Pos) & CalculateBitMask(game::GetPlayer()->GetPos()))
 				if(Emitter.Access(c).DilatedEmitation > Luminance)
 					Luminance = Emitter.Access(c).DilatedEmitation;
 
@@ -429,22 +429,22 @@ ushort levelsquare::CLuminance(void) const
 void levelsquare::AddCharacter(character* Guy)
 {
 	Character = Guy;
-	Guy->SSquareUnder(this);
-	SignalEmitationIncrease(Guy->CEmitation());
+	Guy->SetSquareUnder(this);
+	SignalEmitationIncrease(Guy->GetEmitation());
 }	//lisätkää aborttiii!!!
 
 void levelsquare::FastAddCharacter(character* Guy)
 {
-	SCharacter(Guy);
-	Guy->SSquareUnder(this);
+	SetCharacter(Guy);
+	Guy->SetSquareUnder(this);
 }	//lisätkää aborttiii!!!
 
 void levelsquare::Clean(void)
 {
-	CStack()->Clean();
+	GetStack()->Clean();
 
 	for(uchar c = 0; c < 4; c++)
-		CSideStack(c)->Clean();
+		GetSideStack(c)->Clean();
 }
 
 void levelsquare::RemoveCharacter(void)
@@ -453,54 +453,54 @@ void levelsquare::RemoveCharacter(void)
 	{
 		character* Backup = Character;
 
-		SCharacter(0);
+		SetCharacter(0);
 
-		SignalEmitationDecrease(Backup->CEmitation());
+		SignalEmitationDecrease(Backup->GetEmitation());
 	}
 }
 
 void levelsquare::UpdateItemMemory(void)
 {
-	SRememberedItems("");
+	SetRememberedItems("");
 
 	bool Anything = false;
 
-	if(CStack()->CItems())
+	if(GetStack()->GetItems())
 		Anything = true;
 
-	if(CStack()->CItems() > 1)
-		SRememberedItems("many items");
+	if(GetStack()->GetItems() > 1)
+		SetRememberedItems("many items");
 	else
-		if(CStack()->CItems() == 1)
+		if(GetStack()->GetItems() == 1)
 		{
-			SRememberedItems(std::string(CStack()->CItem(0)->Name(INDEFINITE)));
+			SetRememberedItems(std::string(GetStack()->GetItem(0)->Name(INDEFINITE)));
 		}
 
 	for(uchar c = 0; c < 4; c++)
 	{
-		if(CSideStack(c)->CItems() == 1)
+		if(GetSideStack(c)->GetItems() == 1)
 		{
 			if(Anything)
-				SRememberedItems(std::string(CRememberedItems() + " and " + CSideStack(c)->CItem(0)->Name(INDEFINITE)));
+				SetRememberedItems(std::string(GetRememberedItems() + " and " + GetSideStack(c)->GetItem(0)->Name(INDEFINITE)));
 			else
-				SRememberedItems(std::string(CSideStack(c)->CItem(0)->Name(INDEFINITE)));
+				SetRememberedItems(std::string(GetSideStack(c)->GetItem(0)->Name(INDEFINITE)));
 		}
 		else
-		if(CSideStack(c)->CItems() > 1)
+		if(GetSideStack(c)->GetItems() > 1)
 		{
 			if(Anything)
-				SRememberedItems(CRememberedItems());
+				SetRememberedItems(GetRememberedItems());
 			else
-				SRememberedItems("some items");
+				SetRememberedItems("some items");
 		}
 	}
 }
 
 bool levelsquare::CanBeSeen(void) const
 {
-	float xDist = (float(CPos().X) - game::CPlayer()->CPos().X), yDist = (float(CPos().Y) - game::CPlayer()->CPos().Y);
+	float xDist = (float(GetPos().X) - game::GetPlayer()->GetPos().X), yDist = (float(GetPos().Y) - game::GetPlayer()->GetPos().Y);
 
-	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::CPlayer()->LOSRangeLevelSquare())
+	if(RetrieveFlag() && xDist * xDist + yDist * yDist <= game::GetPlayer()->LOSRangeLevelSquare())
 		return true;
 	else
 		return false;
@@ -508,15 +508,15 @@ bool levelsquare::CanBeSeen(void) const
 
 void levelsquare::Kick(ushort Strength, uchar KickWay)
 {
-	CStack()->Kick(Strength, RetrieveFlag(), KickWay);
+	GetStack()->Kick(Strength, RetrieveFlag(), KickWay);
 }
 
 bool levelsquare::CanBeSeenFrom(vector FromPos) const
 {
-	return game::DoLine(FromPos.X, FromPos.Y, CPos().X, CPos().Y, game::EyeHandler);
+	return game::DoLine(FromPos.X, FromPos.Y, GetPos().X, GetPos().Y, game::EyeHandler);
 }
 
-void levelsquare::SRememberedItems(std::string What)
+void levelsquare::SetRememberedItems(std::string What)
 {
 	RememberedItems = What; 
 }
@@ -526,7 +526,7 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 	char Result = CanBeDigged(DiggerCharacter, DiggerItem);
 	if(Result != 2)
 	{
-		COverTerrain()->ShowDigMessage(DiggerCharacter, DiggerItem);
+		GetOverTerrain()->ShowDigMessage(DiggerCharacter, DiggerItem);
 	}
 	else 
 		Result = false;
@@ -534,14 +534,14 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 	if(Result == 1)
 	{
 		delete OverTerrain;
-		SOverTerrain(new empty);
+		SetOverTerrain(new empty);
 		ForceEmitterEmitation();
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->UpdateLOS();
 	}
 	for(uchar c = 0; c < 4; c++)
 	{
-		for(uchar x = 0; x < CSideStack(c)->CItems(); x++)
-			CSideStack(c)->MoveItem(x, CStack());
+		for(uchar x = 0; x < GetSideStack(c)->GetItems(); x++)
+			GetSideStack(c)->MoveItem(x, GetStack());
 	}
 
 	return Result ? true : false;
@@ -549,15 +549,13 @@ bool levelsquare::Dig(character* DiggerCharacter, item* DiggerItem) // early pro
 
 char levelsquare::CanBeDigged(character* DiggerCharacter, item* DiggerItem) const
 {
-	if(CPos().X == 0 || CPos().Y == 0 || CPos().X == game::CCurrentLevel()->CXSize() - 1 || CPos().Y == game::CCurrentLevel()->CYSize() - 1)
+	if(GetPos().X == 0 || GetPos().Y == 0 || GetPos().X == game::GetCurrentLevel()->GetXSize() - 1 || GetPos().Y == game::GetCurrentLevel()->GetYSize() - 1)
 	{
 		ADD_MESSAGE("Somehow you feel that by digging this square you would collapse the whole dungeon.");
 		return 2;
 	}
-	return COverTerrain()->CanBeDigged();
+	return GetOverTerrain()->CanBeDigged();
 }
-
-
 
 void levelsquare::HandleFluids(void)
 {

@@ -22,15 +22,15 @@ public:
 	virtual std::string Name(uchar Case) const { return NameNormal(Case, "a"); }
 	virtual void Save(std::ofstream*) const;
 	virtual void DrawToTileBuffer(void) const = 0;
-	virtual std::string CNameSingular(void) const { return NameSingular(); }
-	virtual std::string CNamePlural(void) const { return NamePlural(); }
+	virtual std::string GetNameSingular(void) const { return NameSingular(); }
+	virtual std::string GetNamePlural(void) const { return NamePlural(); }
 protected:
 	virtual std::string NameSingular(void) const = 0;
 	virtual std::string NamePlural(void) const = 0;
 	virtual std::string NameNormal(uchar, std::string) const;
 	virtual std::string NameProperNoun(uchar) const;
 	virtual ushort Type(void) const = 0;
-	virtual vector CBitmapPos(void) const = 0;
+	virtual vector GetBitmapPos(void) const = 0;
 };
 
 #endif

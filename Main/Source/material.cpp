@@ -5,10 +5,10 @@ ushort material::TakeDipVolumeAway(void)
 {
 	ulong Amount = rand() % 100;
 
-	if(CVolume() < Amount)
-		Amount = rand() % CVolume();
+	if(GetVolume() < Amount)
+		Amount = rand() % GetVolume();
 
-	SVolume(CVolume() - Amount);
+	SetVolume(GetVolume() - Amount);
 
 	return Amount;
 }
@@ -27,7 +27,7 @@ void material::Load(std::ifstream* SaveFile)
 
 void material::NormalFoodEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->ReceiveNutrition(long(NutritionValue() * CWeight() * NPModifier) * Amount / 100);
+	Eater->ReceiveNutrition(long(NutritionValue() * GetWeight() * NPModifier) * Amount / 100);
 }
 
 void schoolfood::EatEffect(character* Eater, float Amount, float NPModifier)
@@ -80,8 +80,8 @@ void pepsi::HitEffect(character* Enemy)
 
 void bone::EatEffect(character* Eater, float Amount, float NPModifier)
 {
-	Eater->SRelations(NEUTRAL);
-	if(Eater == game::CPlayer())
+	Eater->SetRelations(NEUTRAL);
+	if(Eater == game::GetPlayer())
 		ADD_MESSAGE("You feel like a hippie.");
 	else
 		ADD_MESSAGE("%s doesn't seem to care about you anymore.", Eater->CNAME(DEFINITE));

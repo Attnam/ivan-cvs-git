@@ -40,11 +40,11 @@ public:
 	virtual void AdjustTimer(long Amount);
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
-	virtual void SRelation(short Value) { Relation = Value; }
-	virtual void STimer(long Value) { Timer = Value; }
+	virtual void SetRelation(short Value) { Relation = Value; }
+	virtual void SetTimer(long Value) { Timer = Value; }
 	virtual bool ReceiveOffer(item*);
 	virtual uchar BasicAlignment(void) const { return NEUTRAL; }
-	virtual short CRelation(void) const { return Relation; }
+	virtual short GetRelation(void) const { return Relation; }
 	virtual void PrintRelation(void) const;
 protected:
 	virtual void PrayGoodEffect(void);

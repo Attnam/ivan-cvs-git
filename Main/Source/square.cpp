@@ -37,23 +37,23 @@ void square::Save(std::ofstream* SaveFile) const
 	SaveFile->write((char*)&Known, sizeof(Known));
 
 	if(Known)
-		CMotherArea()->CMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetMotherArea()->GetMemorized()->Save(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 }
 
 square::square(area* MotherArea, std::ifstream* SaveFile, vector Pos) : MotherArea(MotherArea), Rider(0), Flyer(0), Pos(Pos)
 {
 	GroundTerrain = game::LoadGroundTerrain(SaveFile);
-	GroundTerrain->SSquareUnder(this);
+	GroundTerrain->SetSquareUnder(this);
 	OverTerrain = game::LoadOverTerrain(SaveFile);
-	OverTerrain->SSquareUnder(this);
+	OverTerrain->SetSquareUnder(this);
 
 	Character = game::LoadCharacter(SaveFile);
-	if(Character) Character->SSquareUnder(this);
+	if(Character) Character->SetSquareUnder(this);
 
 	SaveFile->read((char*)&Known, sizeof(Known));
 
 	if(Known)
-		CMotherArea()->CMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
+		GetMotherArea()->GetMemorized()->Load(SaveFile, Pos.X << 4, Pos.Y << 4, 16, 16);
 }
 
 void square::DrawCheat(void) const
@@ -63,36 +63,35 @@ void square::DrawCheat(void) const
 	if(CCharacter())
 		CCharacter()->DrawToTileBuffer();
 
-	igraph::BlitTileBuffer(vector((CPos().X - game::CCamera().X) << 4, (CPos().Y - game::CCamera().Y + 2) << 4));
+	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4));
 }
 
 void square::DrawMemorized(void) const
 {
-	if(CKnown())
+	if(GetKnown())
 	{
-		game::CCurrentLevel()->CMemorized()->Blit(igraph::CTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
-		igraph::BlitTileBuffer(vector((CPos().X - game::CCamera().X) << 4, (CPos().Y - game::CCamera().Y + 2) << 4));
+		game::GetCurrentLevel()->GetMemorized()->Blit(igraph::GetTileBuffer(), Pos.X << 4, Pos.Y << 4, 0, 0, 16, 16);
+		igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4));
 	}
 }
 
 void square::AddCharacter(character* Guy)
 {
 	Character = Guy;
-	Guy->SSquareUnder(this);
+	Guy->SetSquareUnder(this);
 }	//lisätkää aborttiii!!!
 
 void square::RemoveCharacter(void)
 {
-	SCharacter(0);
+	SetCharacter(0);
 }
 
 void square::ChangeTerrain(groundterrain* NewGround, overterrain* NewOver)
 {
 	delete GroundTerrain;
-	SGroundTerrain(NewGround);
-	CGroundTerrain()->SSquareUnder(this);
+	SetGroundTerrain(NewGround);
+	GetGroundTerrain()->SetSquareUnder(this);
 	delete OverTerrain;
-	SOverTerrain(NewOver);
-	COverTerrain()->SSquareUnder(this);
+	SetOverTerrain(NewOver);
+	GetOverTerrain()->SetSquareUnder(this);
 }
-

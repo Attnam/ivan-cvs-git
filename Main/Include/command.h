@@ -11,9 +11,9 @@ class command
 {
 public:
 	command(bool (character::*LinkedFunction)(void), std::string Description, char Key) : LinkedFunction(LinkedFunction), Description(Description), Key(Key) {}
-	bool (character::*CLinkedFunction(void))(void) { return LinkedFunction; } //should be inspector
-	std::string CDescription(void) const { return Description; }
-	char CKey(void) const { return Key; }
+	bool (character::*GetLinkedFunction(void) const)(void) { return LinkedFunction; }
+	std::string GetDescription(void) const { return Description; }
+	char GetKey(void) const { return Key; }
 private:
 	bool (character::*LinkedFunction)(void);
 	std::string Description;

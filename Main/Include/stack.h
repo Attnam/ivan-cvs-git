@@ -33,23 +33,23 @@ public:
 	ushort FastAddItem(item*);
 	item* RemoveItem(ushort);
 	void FastRemoveItem(ushort);
-	item* CItem(ushort I) const	{ return Item[I]; }
-	ushort CItems(void) const	{ return Items; }
-	void SSquareUnder(square*);
+	item* GetItem(ushort I) const	{ return Item[I]; }
+	ushort GetItems(void) const	{ return Items; }
+	void SetSquareUnder(square*);
 	ushort DrawContents(const char*) const;
 	void DrawPartOfContents(ushort, ushort, bool, const char*) const;
 	ushort MoveItem(ushort, stack*);
-	ushort CEmitation(void) const;
-	vector CPos(void) const;
+	ushort GetEmitation(void) const;
+	vector GetPos(void) const;
 	void Clean(void);
 	ulong SumOfMasses(void) const;
 	void Save(std::ofstream*) const;
 	ushort SearchItem(item*) const;
 	void Move(levelsquare*);
-	square* CSquareUnder(void) const { return SquareUnder; }
-	levelsquare* CLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
-	void SItem(ushort Where, item* What) { Item[Where] = What; }
-	void SItems(ushort What) { Items = What; }
+	square* GetSquareUnder(void) const { return SquareUnder; }
+	levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	void SetItem(ushort Where, item* What) { Item[Where] = What; }
+	void SetItems(ushort What) { Items = What; }
 	ushort CNonExistent(void) const { return NonExistent; }
 	void SNonExistent(ushort What) { NonExistent = What; }
 	ushort ConsumableItems(character*);

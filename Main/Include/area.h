@@ -22,12 +22,12 @@ public:
 	virtual void AddCharacter(vector, character*);
 	virtual void RemoveCharacter(vector);
 	virtual void Save(std::ofstream*) const;
-	virtual ushort CFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
+	virtual ushort GetFlag(vector Pos) const { return FlagMap[Pos.X][Pos.Y]; }
 	virtual square* operator [] (vector Pos) const {return Map[Pos.X][Pos.Y];}
-	virtual square* CSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
-	virtual ushort CXSize(void) const {return XSize;}
-	virtual ushort CYSize(void) const {return YSize;}
-	virtual bitmap* CMemorized(void) const { return Memorized; }
+	virtual square* GetSquare(vector Pos) const {return Map[Pos.X][Pos.Y];}
+	virtual ushort GetXSize(void) const {return XSize;}
+	virtual ushort GetYSize(void) const {return YSize;}
+	virtual bitmap* GetMemorized(void) const { return Memorized; }
 protected:
 	square*** Map;
 	bitmap* Memorized;

@@ -13,21 +13,21 @@
 
 bool overterrain::GoUp(character* Who) // Try to go up
 {
-	if(game::CCurrent() != 0 && game::CCurrent() != 9 && game::CWizardMode())
+	if(game::CCurrent() != 0 && game::CCurrent() != 9 && game::GetWizardMode())
 	{
-		game::CCurrentLevel()->RemoveCharacter(Who->CPos());
-		vector Pos = Who->CPos();
+		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SCurrent(game::CCurrent() - 1);
+		game::SetCurrent(game::CCurrent() - 1);
 		game::LoadLevel();
-		game::CCurrentLevel()->AddCharacter(Pos, Who);
-		game::CCurrentLevel()->Luxify();
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentLevel()->Luxify();
+		game::GetCurrentLevel()->UpdateLOS();
 		return true;
 	}
 	else
 	{
-	if(Who == game::CPlayer())
+	if(Who == game::GetPlayer())
 		ADD_MESSAGE("You can't go up.");
 	return false;
 	}
@@ -35,21 +35,21 @@ bool overterrain::GoUp(character* Who) // Try to go up
 
 bool overterrain::GoDown(character* Who) // Try to go down
 {
-	if(game::CCurrent() < game::CLevels() - 2 && game::CWizardMode())
+	if(game::CCurrent() < game::GetLevels() - 2 && game::GetWizardMode())
 	{
-		game::CCurrentLevel()->RemoveCharacter(Who->CPos());
-		vector Pos = Who->CPos();
+		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SCurrent(game::CCurrent() + 1);
+		game::SetCurrent(game::CCurrent() + 1);
 		game::LoadLevel();
-		game::CCurrentLevel()->AddCharacter(Pos, Who);
-		game::CCurrentLevel()->Luxify();
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentLevel()->Luxify();
+		game::GetCurrentLevel()->UpdateLOS();
 		return true;
 	}
 	else
 	{
-	if(Who == game::CPlayer())
+	if(Who == game::GetPlayer())
 		ADD_MESSAGE("You can't go down.");
 	return false;
 	}
@@ -85,12 +85,12 @@ void overterrain::Load(std::ifstream* SaveFile)
 
 void overterrain::DrawToTileBuffer(void) const
 {
-	igraph::CTerrainGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16, CVisualFlags());
+	igraph::GetTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16, GetVisualFlags());
 }
 
 void groundterrain::DrawToTileBuffer(void) const
 {
-	igraph::CTerrainGraphic()->Blit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetTerrainGraphic()->Blit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
 }
 
 bool stairsup::GoUp(character* Who)  // Try to go up
@@ -101,30 +101,30 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 			if(!game::BoolQuestion("Somehow you get the feeling you cannot return. Continue anyway? [y/N]"))
 				return false;
 
-		game::CCurrentLevel()->RemoveCharacter(Who->CPos());
-		vector Pos = Who->CPos();
+		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SCurrent(game::CCurrent() - 1);
+		game::SetCurrent(game::CCurrent() - 1);
 		game::LoadLevel();
-		game::CCurrentLevel()->AddCharacter(Pos, Who);
-		game::CCurrentLevel()->Luxify();
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentLevel()->Luxify();
+		game::GetCurrentLevel()->UpdateLOS();
 		return true;
 	}
 	else
 	{
-		if(Who == game::CPlayer())
+		if(Who == game::GetPlayer())
 			if(Who->HasPerttusNut())
 			{
-				if(Who->HasMaakotkaShirt() && game::CGod(1)->CRelation() == 1000)
+				if(Who->HasMaakotkaShirt() && game::GetGod(1)->GetRelation() == 1000)
 				{
 					game::StoryScreen("A heavenly choir starts to sing Grandis Rana and a booming voice fills the air:\n\n\"Mortal! Thou hast surpassed Perttu, and pleaseth Me greatly during thine adventures!\nI hereby title thee as My new Überpriest!\"\n\nYou are victorious!");
 					game::RemoveSaves();
 					game::Quit();
 
-					if(!game::CWizardMode())
+					if(!game::GetWizardMode())
 					{
-						game::CPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
+						game::GetPlayer()->AddScoreEntry("ascended to Überpriesthood", 5);
 						highscore HScore;
 						HScore.Draw();
 					}
@@ -136,9 +136,9 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 					game::RemoveSaves();
 					game::Quit();
 
-					if(!game::CWizardMode())
+					if(!game::GetWizardMode())
 					{
-						game::CPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
+						game::GetPlayer()->AddScoreEntry("killed Perttu and became the Avatar of Chaos", 4);
 						highscore HScore;
 						HScore.Draw();
 					}
@@ -151,9 +151,9 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 				game::RemoveSaves();
 				game::Quit();
 
-				if(!game::CWizardMode())
+				if(!game::GetWizardMode())
 				{
-					game::CPlayer()->AddScoreEntry("escaped from the dungeon and was executed for cowardice");
+					game::GetPlayer()->AddScoreEntry("escaped from the dungeon and was executed for cowardice");
 					highscore HScore;
 					HScore.Draw();
 				}
@@ -166,30 +166,30 @@ bool stairsup::GoUp(character* Who)  // Try to go up
 
 bool stairsdown::GoDown(character* Who)  // Try to go down
 {
-	if(game::CCurrent() != game::CLevels() - 1)
+	if(game::CCurrent() != game::GetLevels() - 1)
 	{
 		if(game::CCurrent() == 8)
 		{
 			if(!game::BoolQuestion("Something with ultimate sinister power seems to tremble under your feet. You feel you shouldn't wander any further. Continue anyway? [y/N]"))
 				return false;
 
-			Who->CLevelSquareUnder()->ChangeTerrain(new parquet, new empty);
+			Who->GetLevelSquareUnder()->ChangeTerrain(new parquet, new empty);
 		}
 
-		game::CCurrentLevel()->RemoveCharacter(Who->CPos());
-		vector Pos = Who->CPos();
+		game::GetCurrentLevel()->RemoveCharacter(Who->GetPos());
+		vector Pos = Who->GetPos();
 		game::SaveLevel();
-		game::SCurrent(game::CCurrent() + 1);
+		game::SetCurrent(game::CCurrent() + 1);
 		game::LoadLevel();
-		game::CCurrentLevel()->AddCharacter(Pos, Who);
-		game::CCurrentLevel()->Luxify();
-		game::CCurrentLevel()->UpdateLOS();
+		game::GetCurrentLevel()->AddCharacter(Pos, Who);
+		game::GetCurrentLevel()->Luxify();
+		game::GetCurrentLevel()->UpdateLOS();
 		game::ShowLevelMessage();
 		return true;
 	}
 	else
 	{
-		if(Who == game::CPlayer())
+		if(Who == game::GetPlayer())
 			ADD_MESSAGE("You are at the bottom.");
 
 		return false;
@@ -199,14 +199,14 @@ bool stairsdown::GoDown(character* Who)  // Try to go down
 bool door::Open(character* Opener)
 {
 
-	if(!CIsWalkable())
+	if(!GetIsWalkable())
 	{
-		if(Opener == game::CPlayer())
+		if(Opener == game::GetPlayer())
 			ADD_MESSAGE("You open the door.");
 	}
 	else
 	{
-		if(Opener == game::CPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
+		if(Opener == game::GetPlayer()) ADD_MESSAGE("The door is already open, %s.", game::Insult());
 
 		return false;
 	}
@@ -218,8 +218,8 @@ bool door::Open(character* Opener)
 
 bool door::Close(character* Closer)
 {
-	if(Closer == game::CPlayer())
-		if(CIsWalkable())
+	if(Closer == game::GetPlayer())
+		if(GetIsWalkable())
 			ADD_MESSAGE("You close the door.");
 		else
 		{
@@ -235,7 +235,7 @@ bool door::Close(character* Closer)
 
 bool terrain::Open(character* Opener)
 {
-	if(Opener == game::CPlayer())
+	if(Opener == game::GetPlayer())
 		ADD_MESSAGE("There isn't anything to open, %s.", game::Insult());
 
 	return false;
@@ -243,7 +243,7 @@ bool terrain::Open(character* Opener)
 
 bool terrain::Close(character* Closer)
 {
-	if(Closer == game::CPlayer())
+	if(Closer == game::GetPlayer())
 		ADD_MESSAGE("There isn't anything to close, %s.", game::Insult());
 
 	return false;
@@ -253,58 +253,58 @@ void overterrain::MakeWalkable(void)
 {
 	IsWalkable = true;
 
-	CLevelSquareUnder()->ForceEmitterEmitation();
+	GetLevelSquareUnder()->ForceEmitterEmitation();
 
-	if(CLevelSquareUnder()->RetrieveFlag())
-		game::CCurrentLevel()->UpdateLOS();
+	if(GetLevelSquareUnder()->RetrieveFlag())
+		game::GetCurrentLevel()->UpdateLOS();
 }
 
 void overterrain::MakeNotWalkable(void)
 {
-	CLevelSquareUnder()->ForceEmitterNoxify();
+	GetLevelSquareUnder()->ForceEmitterNoxify();
 
 	IsWalkable = false;
 
-	CLevelSquareUnder()->ForceEmitterEmitation();
+	GetLevelSquareUnder()->ForceEmitterEmitation();
 
-	if(CLevelSquareUnder()->RetrieveFlag())
-		game::CCurrentLevel()->UpdateLOS();
+	if(GetLevelSquareUnder()->RetrieveFlag())
+		game::GetCurrentLevel()->UpdateLOS();
 }
 
-vector terrain::CPos(void) const
+vector terrain::GetPos(void) const
 {
-	return CLevelSquareUnder()->CPos();
+	return GetLevelSquareUnder()->GetPos();
 }
 
 std::string altar::Name(uchar Case) const
 {
 	if(!(Case & PLURAL))
 		if(!(Case & DEFINEBIT))
-			return CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::CGod(OwnerGod)->Name();
+			return CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::CGod(OwnerGod)->Name();
+				return std::string("the ") + CMaterial(0)->Name()  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 			else
-				return CMaterial(0)->Name(INDEFINITE)  + " " + NameSingular() + " of " + game::CGod(OwnerGod)->Name();
+				return CMaterial(0)->Name(INDEFINITE)  + " " + NameSingular() + " of " + game::GetGod(OwnerGod)->Name();
 	else
 		if(!(Case & DEFINEBIT))
-			return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::CGod(OwnerGod)->Name();
+			return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 		else
 			if(!(Case & INDEFINEBIT))
-				return std::string("the ") + CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::CGod(OwnerGod)->Name();
+				return std::string("the ") + CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 			else
-				return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::CGod(OwnerGod)->Name();
+				return CMaterial(0)->Name()  + " " + NamePlural() + " of " + game::GetGod(OwnerGod)->Name();
 }
 
-void terrain::SSquareUnder(square* Square)
+void terrain::SetSquareUnder(square* Square)
 {
 	SquareUnder = Square;
 }
 
 void altar::DrawToTileBuffer(void) const
 {
-	igraph::CTerrainGraphic()->MaskedBlit(igraph::CTileBuffer(), CBitmapPos().X + (CMaterial(0)->CItemColor() << 4), CBitmapPos().Y, 0, 0, 16, 16);
-	igraph::CSymbolGraphic()->MaskedBlit(igraph::CTileBuffer(), COwnerGod() << 4, 0, 0, 0, 16, 16);
+	igraph::GetTerrainGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetBitmapPos().X + (CMaterial(0)->GetItemColor() << 4), GetBitmapPos().Y, 0, 0, 16, 16);
+	igraph::GetSymbolGraphic()->MaskedBlit(igraph::GetTileBuffer(), GetOwnerGod() << 4, 0, 0, 0, 16, 16);
 }
 
 void altar::Load(std::ifstream* SaveFile)
@@ -329,5 +329,5 @@ void terrain::HandleVisualEffects(void)
 		if((AcceptedFlags & (1 << c)) && (rand() % 2))
 			Flags |= 1 << c;
 
-	SVisualFlags(Flags);
+	SetVisualFlags(Flags);
 }

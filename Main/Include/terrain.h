@@ -22,19 +22,19 @@ class terrain : public object
 {
 public:
 	virtual void Load(std::ifstream*);
-	virtual void SSquareUnder(square*);
+	virtual void SetSquareUnder(square*);
 	virtual bool Open(character* Opener);
 	virtual bool Close(character* Closer);
-	virtual vector CPos(void) const;
-	virtual square* CSquareUnder(void) const { return SquareUnder; }
-	virtual levelsquare* CLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	virtual vector GetPos(void) const;
+	virtual square* GetSquareUnder(void) const { return SquareUnder; }
+	virtual levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
 	virtual bool CanBeOpened(void) const { return false; }
 	virtual bool CanBeOffered(void) const { return false; }
 	virtual std::string Name(uchar Case) const {return NameWithMaterial(Case);}
 	virtual bool CanBeDigged(void) const { return false; }
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual uchar CVisualFlags(void) const { return VisualFlags; }
-	virtual void SVisualFlags(uchar What) { VisualFlags = What; }
+	virtual uchar GetVisualFlags(void) const { return VisualFlags; }
+	virtual void SetVisualFlags(uchar What) { VisualFlags = What; }
 	virtual void HandleVisualEffects(void);
 	virtual void Save(std::ofstream*) const;
 protected:
@@ -60,11 +60,11 @@ public:
 	virtual void DrawToTileBuffer(void) const;
 	virtual bool GoUp(character*);
 	virtual bool GoDown(character*);
-	virtual void SIsWalkable(bool What)			{ IsWalkable = What; }
-	virtual bool CIsWalkable(void) const			{ return IsWalkable; }
+	virtual void SetIsWalkable(bool What)			{ IsWalkable = What; }
+	virtual bool GetIsWalkable(void) const			{ return IsWalkable; }
 	virtual void Save(std::ofstream*) const;
-	virtual uchar COwnerGod(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
+	virtual uchar GetOwnerGod(void) const { return 0; }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The ground is too hard to dig."); }
 	virtual overterrain* Clone(bool = true, bool = true) const = 0;
 protected:
 	virtual void MakeWalkable(void);
@@ -142,16 +142,16 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new moraine(1)),
 	{
-		SIsWalkable(false);
+		SetIsWalkable(false);
 	},
 public:
 	virtual uchar OKVisualEffects(void) const { return MIRROR | FLIP | ROTATE_90; }
 	virtual bool CanBeDigged(void) const { return true; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The ground is fairly easy to dig."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The ground is fairly easy to dig."); }
 protected:
 	virtual std::string NameSingular() const				{return "earth";}
 	virtual std::string NamePlural() const					{return "earths";}
-	virtual vector CBitmapPos(void) const					{ return vector(0, 336); }
+	virtual vector GetBitmapPos(void) const					{ return vector(0, 336); }
 );
 
 OVERTERRAIN(
@@ -159,16 +159,16 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new stone(1)),
 	{
-		SIsWalkable(false);
+		SetIsWalkable(false);
 	},
 public:
 	virtual uchar OKVisualEffects(void) const { return 0; }
 	virtual bool CanBeDigged(void) const { return true; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The wall is pretty hard, but you still manage to go through it."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The wall is pretty hard, but you still manage to go through it."); }
 protected:
 	virtual std::string NameSingular() const				{return "wall";}
 	virtual std::string NamePlural() const					{return "walls";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 240); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
 OVERTERRAIN(
@@ -176,14 +176,14 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new air(1)),
 	{
-		SIsWalkable(true);
+		SetIsWalkable(true);
 	},
 public:
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The square you are trying to dig is empty."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The square you are trying to dig is empty."); }
 protected:
 	virtual std::string NameSingular() const				{return "atmosphere";}
 	virtual std::string NamePlural() const					{return "atmospheres";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 480); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 480); }
 );
 
 OVERTERRAIN(
@@ -191,17 +191,17 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new stone(1)),
 	{
-		SIsWalkable(false);
+		SetIsWalkable(false);
 	},
 public:
 	virtual bool Open(character*);
 	virtual bool Close(character*);
-	virtual bool CanBeOpened(void) const { return !CIsWalkable(); }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The door is too hard to dig through."); }
+	virtual bool CanBeOpened(void) const { return !GetIsWalkable(); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The door is too hard to dig through."); }
 protected:
 	virtual std::string NameSingular() const				{return "door";}
 	virtual std::string NamePlural() const					{return "doors";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, CIsWalkable() ? 48 : 176); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, GetIsWalkable() ? 48 : 176); }
 );
 
 OVERTERRAIN(
@@ -209,16 +209,16 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new stone(1)),
 	{
-		SIsWalkable(true);
+		SetIsWalkable(true);
 	},
 public:
 	virtual bool GoUp(character*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
 protected:
 	virtual std::string NameSingular() const				{return "stairway upwards";}
 	virtual std::string NamePlural() const					{return "stairways upwards";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 192); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 192); }
 );
 
 OVERTERRAIN(
@@ -226,16 +226,16 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new stone(1)),
 	{
-		SIsWalkable(true);
+		SetIsWalkable(true);
 	},
 public:
 	virtual bool GoDown(character*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("The stairs are too hard to dig."); }
 protected:
 	virtual std::string NameSingular() const				{return "stairway downwards";}
 	virtual std::string NamePlural() const					{return "stairways downwards";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 208); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 208); }
 );
 
 GROUNDTERRAIN(
@@ -249,7 +249,7 @@ public:
 protected:
 	virtual std::string NameSingular() const				{return "parquet";}
 	virtual std::string NamePlural() const					{return "parquette";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 240); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 240); }
 );
 
 GROUNDTERRAIN(
@@ -263,7 +263,7 @@ public:
 protected:
 	virtual std::string NameSingular() const				{return "floor";}
 	virtual std::string NamePlural() const					{return "floors";}
-	virtual vector CBitmapPos(void) const						{ return vector(0, 352); }
+	virtual vector GetBitmapPos(void) const						{ return vector(0, 352); }
 );
 
 OVERTERRAIN(
@@ -271,23 +271,23 @@ OVERTERRAIN(
 	overterrain,
 	InitMaterials(new stone(1)),
 	{
-		SIsWalkable(true);
-		SOwnerGod(rand() % game::CGodNumber() + 1);
+		SetIsWalkable(true);
+		SetOwnerGod(rand() % game::GetGodNumber() + 1);
 	},
 public:
 	virtual bool CanBeOffered(void) const { return true; }
 	virtual std::string Name(uchar) const;
 	virtual void DrawToTileBuffer(void) const;
-	virtual uchar COwnerGod(void) const { return OwnerGod; }
-	virtual void SOwnerGod(uchar What) { OwnerGod = What; }
+	virtual uchar GetOwnerGod(void) const { return OwnerGod; }
+	virtual void SetOwnerGod(uchar What) { OwnerGod = What; }
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
 	virtual uchar OKVisualEffects(void) const { return 0; }
-	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::CPlayer()) ADD_MESSAGE("An invisible wall stops your feeble attempt."); }
+	virtual void ShowDigMessage(character* Who, item*) const { if(Who == game::GetPlayer()) ADD_MESSAGE("An invisible wall stops your feeble attempt."); }
 protected:
 	virtual std::string NameSingular() const		{return "altar";}
 	virtual std::string NamePlural() const			{return "altars";}
-	virtual vector CBitmapPos(void) const				{ return vector(0, 368); }
+	virtual vector GetBitmapPos(void) const				{ return vector(0, 368); }
 	uchar OwnerGod;
 );
 

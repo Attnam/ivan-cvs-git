@@ -21,12 +21,12 @@ void worldmapsquare::DrawToTileBuffer(void)
 
 void worldmapsquare::UpdateMemorizedAndDraw(void)
 {
-	SKnown(true);
+	SetKnown(true);
 
 	DrawToTileBuffer();
 
 	if(CCharacter())
 		CCharacter()->DrawToTileBuffer();
 
-	igraph::BlitTileBuffer(vector((CPos().X - game::CCamera().X) << 4, (CPos().Y - game::CCamera().Y + 2) << 4), 256);
+	igraph::BlitTileBuffer(vector((GetPos().X - game::CCamera().X) << 4, (GetPos().Y - game::CCamera().Y + 2) << 4), 256);
 }

@@ -18,20 +18,16 @@
 #define HUNGERLEVEL 		200 
 #define CRITICALHUNGERLEVEL 	60
 
-#define CHARACTER_TYPES		16
-
 #define OVERLOADED		0
 #define STRESSED		1
 #define BURDENED		2
 #define UNBURDENED		3
 
-#define KEYS_PER_PAGE		15
-
 #include "typedef.h"
 #include "vector.h"
 
 #include "game.h"
-#include "igraph.h"
+#include "graphics.h"
 #include "object.h"
 #include "stack.h"
 
@@ -68,21 +64,21 @@ public:
 	virtual void Die(void);
 	virtual bool OpenItem(void);
 	virtual void ReceiveSound(char*, short, float);
-	virtual item* CWielded(void) const				{return Wielded;}
-	virtual stack* CStack(void) const				{return Stack;}
-	virtual ushort CEmitation(void) const;
-	virtual vector CPos(void) const;
-	virtual bool CHasActed(void) const					{return HasActed;}
-	virtual ushort CStrength(void) const					{return Strength;}
-	virtual ushort CAgility(void) const					{return Agility;}
-	virtual ushort CEndurance(void) const					{return Endurance;}
-	virtual ushort CPerception(void) const				{return Perception;}
-	virtual short CHP(void) const					{return HP;}
-	virtual long CNP(void) const					{return NP;}
-	virtual void SSquareUnder(square* Square);
-	virtual void SHasActed(bool HA)				{HasActed = HA;}
+	virtual item* GetWielded(void) const				{return Wielded;}
+	virtual stack* GetStack(void) const				{return Stack;}
+	virtual ushort GetEmitation(void) const;
+	virtual vector GetPos(void) const;
+	virtual bool GetHasActed(void) const					{return HasActed;}
+	virtual ushort GetStrength(void) const					{return Strength;}
+	virtual ushort GetAgility(void) const					{return Agility;}
+	virtual ushort GetEndurance(void) const					{return Endurance;}
+	virtual ushort GetPerception(void) const				{return Perception;}
+	virtual short GetHP(void) const					{return HP;}
+	virtual long GetNP(void) const					{return NP;}
+	virtual void SetSquareUnder(square* Square);
+	virtual void SetHasActed(bool HA)				{HasActed = HA;}
 	virtual bool WearArmor(void);
-	virtual item* CTorsoArmor(void) const				{return 0;}
+	virtual item* GetTorsoArmor(void) const				{return 0;}
 	virtual bool ConsumeItemType(uchar) const;
 	virtual void ReceiveFireDamage(long);
 	virtual void ReceiveSchoolFoodEffect(long);
@@ -91,7 +87,7 @@ public:
 	virtual void ReceivePepsiEffect(long);
 	virtual void Darkness(long);
 	virtual void ReceiveBulimiaDamage(void);
-	virtual uchar CRelations(void) const { return Relations; }
+	virtual uchar GetRelations(void) const { return Relations; }
 	virtual void AddBlockMessage(character*) const;
 	virtual void AddDodgeMessage(character*) const;
 	virtual void AddHitMessage(character*, const bool = false) const;
@@ -127,36 +123,36 @@ public:
 	virtual float CWeaponStrength(void) const;
 	virtual bool ShowKeyLayout(void);
 	virtual bool Look(void);
-	virtual long CStrengthExperience(void) const {return StrengthExperience;}
-	virtual long CEnduranceExperience(void) const {return EnduranceExperience;}
-	virtual long CAgilityExperience(void) const {return AgilityExperience;}
-	virtual long CPerceptionExperience(void) const {return PerceptionExperience;}
-	virtual float CAttackStrength(void) const;
-	virtual float CDifficulty(void) const;
+	virtual long GetStrengthExperience(void) const {return StrengthExperience;}
+	virtual long GetEnduranceExperience(void) const {return EnduranceExperience;}
+	virtual long GetAgilityExperience(void) const {return AgilityExperience;}
+	virtual long GetPerceptionExperience(void) const {return PerceptionExperience;}
+	virtual float GetAttackStrength(void) const;
+	virtual float GetDifficulty(void) const;
 	virtual bool Engrave(std::string);
 	virtual bool WhatToEngrave(void);
 	virtual ushort CRegenerationCounter(void) const { return RegenerationCounter; }
 	virtual void MoveRandomly(void);
-	virtual void SWielded(item* Something) { Wielded = Something; }
-	virtual void SMaterial(ushort Where, material* What) { Material[Where] = What; }
-	virtual void SHP(short What) { HP = What; }
-	virtual void SStrengthExperience(long What) { StrengthExperience = What; }
-	virtual void SAgilityExperience(long What) { AgilityExperience = What; }
-	virtual void SEnduranceExperience(long What) { EnduranceExperience = What; }
-	virtual void SPerceptionExperience(long What) { PerceptionExperience = What; }
-	virtual square* CSquareUnder(void) const { return SquareUnder; }
-	virtual levelsquare* CLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
-	virtual void SAP(long What) { AP = What; }
-	virtual bool CFainted(void) const { return Fainted; }
-	virtual void SFainted(bool To) { Fainted = To; }
-	virtual void SNP(long What) { NP = What; }
-	virtual void SRelations(uchar What) { Relations = What; }
-	virtual long CAP(void) const { return AP; }
-	virtual void SStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
-	virtual void SEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
-	virtual void SAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
-	virtual void SPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
-	virtual void SRegenerationCounter(long What) { RegenerationCounter = What; }
+	virtual void SetWielded(item* Something) { Wielded = Something; }
+	virtual void SetMaterial(ushort Where, material* What) { Material[Where] = What; }
+	virtual void SetHP(short What) { HP = What; }
+	virtual void SetStrengthExperience(long What) { StrengthExperience = What; }
+	virtual void SetAgilityExperience(long What) { AgilityExperience = What; }
+	virtual void SetEnduranceExperience(long What) { EnduranceExperience = What; }
+	virtual void SetPerceptionExperience(long What) { PerceptionExperience = What; }
+	virtual square* GetSquareUnder(void) const { return SquareUnder; }
+	virtual levelsquare* GetLevelSquareUnder(void) const { return (levelsquare*)SquareUnder; }
+	virtual void SetAP(long What) { AP = What; }
+	virtual bool GetFainted(void) const { return Fainted; }
+	virtual void SetFainted(bool To) { Fainted = To; }
+	virtual void SetNP(long What) { NP = What; }
+	virtual void SetRelations(uchar What) { Relations = What; }
+	virtual long GetAP(void) const { return AP; }
+	virtual void SetStrength(ushort What) { Strength = What; if(short(Strength) < 1) Strength = 1; }
+	virtual void SetEndurance(ushort What) { Endurance = What; if(short(Endurance) < 1) Endurance = 1; }
+	virtual void SetAgility(ushort What) { Agility = What; if(short(Agility) < 1) Agility = 1; }
+	virtual void SetPerception(ushort What) { Perception = What; if(short(Perception) < 1) Perception = 1; }
+	virtual void SetRegenerationCounter(long What) { RegenerationCounter = What; }
 	virtual bool TestForPickup(item*) const;
 	virtual bool CanWield(void) const { return false; }
 	virtual bool CanWear(void) const { return false; }
@@ -168,8 +164,8 @@ public:
 	virtual bool Kick(void);
 	virtual bool ScreenShot(void);
 	virtual bool Offer(void);
-	virtual ushort LOSRange(void) const { return CPerception() / 3; }
-	virtual ushort LOSRangeLevelSquare(void) const { return CPerception() * CPerception() / 9; }
+	virtual ushort LOSRange(void) const { return GetPerception() / 3; }
+	virtual ushort LOSRangeLevelSquare(void) const { return GetPerception() * GetPerception() / 9; }
 	virtual long Score(void) const;
 	virtual long AddScoreEntry(std::string, float = 1) const;
 	virtual bool CheckDeath(std::string);
@@ -183,13 +179,13 @@ public:
 	virtual void HasBeenHitByItem(item*, float, bool);
 	virtual bool Catches(item*, float, bool) { return false; }
 	virtual bool DodgesFlyingItem(item*, float, bool);
-	virtual ulong CBloodColor(void) const { return RGB(100,0,0); }
-	virtual void SConsumingCurrently(ushort What) { EatingCurrently = What; }
-	virtual ushort CConsumingCurrently(void) const { return EatingCurrently; }
+	virtual ulong GetBloodColor(void) const { return MAKE_RGB(100,0,0); }
+	virtual void SetConsumingCurrently(ushort What) { EatingCurrently = What; }
+	virtual ushort GetConsumingCurrently(void) const { return EatingCurrently; }
 	virtual void ContinueEating(void);
 	virtual void StopEating(void);
-	virtual void SAPsToBeEaten(long What) { APsToBeEaten = What; }
-	virtual long CAPsToBeEaten(void) const { return APsToBeEaten; }
+	virtual void SetAPsToBeEaten(long What) { APsToBeEaten = What; }
+	virtual long GetAPsToBeEaten(void) const { return APsToBeEaten; }
 	virtual void Vomit(ushort);
 	virtual character* Clone(bool = true, bool = true, bool = true) const = 0;
 	virtual void Load(std::ifstream*);
@@ -197,8 +193,8 @@ public:
 	virtual bool Apply(void);
 	virtual bool GainAllItems(void);
 	virtual bool ForceVomit(void);
-	virtual bool CIsPlayer(void) const { return IsPlayer; }
-	virtual void SIsPlayer(bool What) { IsPlayer = What; }
+	virtual bool GetIsPlayer(void) const { return IsPlayer; }
+	virtual void SetIsPlayer(bool What) { IsPlayer = What; }
 protected:
 	virtual void CreateInitialEquipment(void) {}
 	virtual void SetDefaultStats(void) = 0;
@@ -246,8 +242,8 @@ protected:
 	class name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
 	protected:\
 		virtual void SetDefaultStats(void) { setstats }\
@@ -273,8 +269,8 @@ protected:
 	class name : public base\
 	{\
 	public:\
-		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
-		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SHP(CEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { if(CreateMaterials) initmaterials ; if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
+		name(material* Material, bool SetStats = true, bool CreateEquipment = true) : base(false, false, false) { InitMaterials(Material); if(SetStats) { SetDefaultStats(); SetHP(GetEndurance() * 2); } if(CreateEquipment) CreateInitialEquipment(); }\
 		virtual character* Clone(bool CreateMaterials = true, bool SetStats = true, bool CreateEquipment = true) const { return new name(CreateMaterials, SetStats, CreateEquipment); }\
 	protected:\
 		virtual void SetDefaultStats(void) { setstats }\
@@ -300,24 +296,24 @@ public:
 	virtual void Load(std::ifstream*);
 	virtual void DrawToTileBuffer(void) const;
 	virtual bool WearArmor(void);
-	virtual item* CTorsoArmor(void) const RET(Armor.Torso)
+	virtual item* GetTorsoArmor(void) const RET(Armor.Torso)
 	virtual uchar GetSex(void) const RET(MALE)
 	virtual ushort CalculateArmorModifier(void) const;
 	virtual bool Drop(void);
 	virtual bool Wield(void);
 	virtual void Save(std::ofstream*) const;
 	virtual bool Throw(void);
-	virtual uchar CArmType(void) const RET(ArmType)
-	virtual uchar CHeadType(void) const RET(HeadType)
+	virtual uchar GetArmType(void) const RET(ArmType)
+	virtual uchar GetHeadType(void) const RET(HeadType)
 	virtual bool CanWield(void) const RET(true)
 	virtual bool CanWear(void) const RET(true)
 	virtual bool WearItem(item* What) { Armor.Torso = What; return true; }
-	virtual vector CBitmapPos(void) const RETV(0,0)
+	virtual vector GetBitmapPos(void) const RETV(0,0)
 	virtual bool Apply(void);
-	virtual void SArmType(uchar Value) { ArmType = Value; }
-	virtual void SHeadType(uchar Value) { HeadType = Value; }
-	virtual void SLegType(uchar Value) { LegType = Value; }
-	virtual void STorsoType(uchar Value) { TorsoType = Value; }
+	virtual void SetArmType(uchar Value) { ArmType = Value; }
+	virtual void SetHeadType(uchar Value) { HeadType = Value; }
+	virtual void SetLegType(uchar Value) { LegType = Value; }
+	virtual void SetTorsoType(uchar Value) { TorsoType = Value; }
 protected:
 	virtual float GetMeleeStrength(void) const RET(2000)
 	struct armor
@@ -343,15 +339,15 @@ CHARACTER(
 	humanoid,
 	InitMaterials(new humanflesh(80000)),
 	{
-		SSize(150 + rand() % 51);
-		SAgility(15 + rand() % 11);
-		SStrength(10 + rand() % 6);
-		SEndurance(10 + rand() % 6);
-		SPerception(10 + rand() % 6);
-		SArmType(rand() % NUMBER_OF_HUMAN_ARMS);
-		SHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
-		SLegType(rand() % NUMBER_OF_HUMAN_LEGS);
-		STorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
+		SetSize(150 + rand() % 51);
+		SetAgility(15 + rand() % 11);
+		SetStrength(10 + rand() % 6);
+		SetEndurance(10 + rand() % 6);
+		SetPerception(10 + rand() % 6);
+		SetArmType(rand() % NUMBER_OF_HUMAN_ARMS);
+		SetHeadType(rand() % NUMBER_OF_HUMAN_HEADS);
+		SetLegType(rand() % NUMBER_OF_HUMAN_LEGS);
+		SetTorsoType(rand() % NUMBER_OF_HUMAN_TORSOS);
 	},
 public:
 	virtual std::string NameSingular(void) const RET("human")
@@ -365,17 +361,17 @@ CHARACTER(
 	human,
 	InitMaterials(new humanflesh(80000)),
 	{
-		SSize(200);
-		SAgility(80);
-		SStrength(80);
-		SEndurance(80);
-		SPerception(80);
-		SArmType(3);
-		SHeadType(15);
-		SLegType(2);
-		STorsoType(3);
-		SRelations(1);
-		SHealTimer(100);
+		SetSize(200);
+		SetAgility(80);
+		SetStrength(80);
+		SetEndurance(80);
+		SetPerception(80);
+		SetArmType(3);
+		SetHeadType(15);
+		SetLegType(2);
+		SetTorsoType(3);
+		SetRelations(1);
+		SetHealTimer(100);
 	},
 public:
 	virtual void Load(std::ifstream*);
@@ -383,11 +379,11 @@ public:
 	virtual std::string NamePlural(void) const RET("Perttus, the Überpriests of the Great Frog")
 	virtual std::string Name(uchar Case) const RET(NameProperNoun(Case))
 	virtual void BeTalkedTo(character*);
-	virtual ushort CEmitation(void) const RET(333)
+	virtual ushort GetEmitation(void) const RET(333)
 	virtual void Die(void);
 	virtual void HealFully(character*);
-	virtual void SHealTimer(ushort What) { HealTimer = What; }
-	virtual ushort CHealTimer(void) RET(HealTimer)
+	virtual void SetHealTimer(ushort What) { HealTimer = What; }
+	virtual ushort GetHealTimer(void) RET(HealTimer)
 	virtual void ReceiveFireDamage(long) {}
 	virtual void Save(std::ofstream*) const;
 	virtual ulong Danger(void) const RET(150000)
@@ -405,11 +401,11 @@ CHARACTER(
 	character,
 	InitMaterials(new pepsi(110000)),
 	{
-		SSize(225);
-		SAgility(40);
-		SStrength(40);
-		SEndurance(40);
-		SPerception(27);
+		SetSize(225);
+		SetAgility(40);
+		SetStrength(40);
+		SetEndurance(40);
+		SetPerception(27);
 	},
 public:
 	virtual ushort Possibility(void) const RET(0)
@@ -420,7 +416,7 @@ public:
 	virtual std::string NamePlural(void) const RET("Orees the Pepsi Daemon Kings")
 	virtual ulong Danger(void) const RET(30000)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector CBitmapPos(void) const RETV(208,0)
+	virtual vector GetBitmapPos(void) const RETV(208,0)
 protected:
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(40000)
@@ -434,11 +430,11 @@ CHARACTER(
 	character,
 	InitMaterials(new humanflesh(110000)),
 	{
-		SSize(200);
-		SAgility(30);
-		SStrength(20);
-		SEndurance(15);
-		SPerception(27);
+		SetSize(200);
+		SetAgility(30);
+		SetStrength(20);
+		SetEndurance(15);
+		SetPerception(27);
 	},
 public:
 	virtual ushort Possibility(void) const RET(5)
@@ -448,7 +444,7 @@ public:
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(750)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector CBitmapPos(void) const RETV(128,0)
+	virtual vector GetBitmapPos(void) const RETV(128,0)
 protected:
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(10000)
@@ -459,11 +455,11 @@ CHARACTER(
 	character,
 	InitMaterials(new ennerbeastflesh(60000)),
 	{
-		SSize(150);
-		SAgility(10);
-		SStrength(5);
-		SEndurance(10);
-		SPerception(9);
+		SetSize(150);
+		SetAgility(10);
+		SetStrength(5);
+		SetEndurance(10);
+		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility(void) const RET(0)
@@ -472,7 +468,7 @@ public:
 	virtual std::string NamePlural(void) const RET("Enner Beasts")
 	virtual ulong Danger(void) const RET(2500);
 	virtual bool Charmable(void) const RET(false)
-	virtual vector CBitmapPos(void) const RETV(96,0)
+	virtual vector GetBitmapPos(void) const RETV(96,0)
 protected:
 	virtual float GetMeleeStrength(void) const RET(200000)
 	virtual void HostileAICommand(void);
@@ -493,18 +489,18 @@ CHARACTER(
 	frog,
 	InitMaterials(new darkfrogflesh(100)),
 	{
-		SSize(15);
-		SAgility(20);
-		SStrength(1);
-		SEndurance(2);
-		SPerception(15);
+		SetSize(15);
+		SetAgility(20);
+		SetStrength(1);
+		SetEndurance(2);
+		SetPerception(15);
 	},
 public:
 	virtual ushort Possibility(void) const RET(100)
 	virtual std::string NameSingular(void) const RET("dark frog")
 	virtual std::string NamePlural(void) const RET("dark frogs")
 	virtual ulong Danger(void) const RET(25)
-	virtual vector CBitmapPos(void) const RETV(80,0)
+	virtual vector GetBitmapPos(void) const RETV(80,0)
 );
 
 CHARACTER(
@@ -512,11 +508,11 @@ CHARACTER(
 	darkfrog,
 	InitMaterials(new elpuriflesh(8000000)),
 	{
-		SSize(300);
-		SAgility(50);
-		SStrength(50);
-		SEndurance(50);
-		SPerception(18);
+		SetSize(300);
+		SetAgility(50);
+		SetStrength(50);
+		SetEndurance(50);
+		SetPerception(18);
 	},
 public:
 	virtual ushort Possibility(void) const RET(0)
@@ -526,7 +522,7 @@ public:
 	virtual void Die(void);
 	virtual ulong Danger(void) const RET(5000)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector CBitmapPos(void) const RETV(64,0)
+	virtual vector GetBitmapPos(void) const RETV(64,0)
 );
 
 CHARACTER(
@@ -534,11 +530,11 @@ CHARACTER(
 	character,
 	InitMaterials(new air(500000)),
 	{
-		SSize(100);
-		SAgility(40);
-		SStrength(5);
-		SEndurance(5);
-		SPerception(27);
+		SetSize(100);
+		SetAgility(40);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(27);
 	},
 public:
 	virtual ushort Possibility(void) const RET(50)
@@ -548,7 +544,7 @@ public:
 	virtual void SpillBlood(uchar) {}
 	virtual ulong Danger(void) const RET(75)
 	virtual bool Charmable(void) const RET(false)
-	virtual vector CBitmapPos(void) const RETV(48,0)
+	virtual vector GetBitmapPos(void) const RETV(48,0)
 protected:
 	virtual float GetMeleeStrength(void) const RET(30000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonPSIVerb(Critical))
@@ -561,11 +557,11 @@ CHARACTER(
 	character,
 	InitMaterials(new bone(60000)),
 	{
-		SSize(150);
-		SAgility(10);
-		SStrength(5);
-		SEndurance(5);
-		SPerception(15);
+		SetSize(150);
+		SetAgility(10);
+		SetStrength(5);
+		SetEndurance(5);
+		SetPerception(15);
 	},
 public:
 	virtual ushort Possibility(void) const RET(50)
@@ -574,7 +570,7 @@ public:
 	virtual bool CanWield(void) const RET(true)
 	virtual void Die(void);
 	virtual ulong Danger(void) const RET(25)
-	virtual vector CBitmapPos(void) const RETV(112,0)
+	virtual vector GetBitmapPos(void) const RETV(112,0)
 protected:
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(5000)
@@ -585,11 +581,11 @@ CHARACTER(
 	character,
 	InitMaterials(new goblinoidflesh(25000)),
 	{
-		SSize(100);
-		SAgility(15);
-		SStrength(10);
-		SEndurance(5);
-		SPerception(21);
+		SetSize(100);
+		SetAgility(15);
+		SetStrength(10);
+		SetEndurance(5);
+		SetPerception(21);
 	},
 public:
 	virtual ushort Possibility(void) const RET(100)
@@ -597,7 +593,7 @@ public:
 	virtual std::string NamePlural(void) const RET("frog-goblin hybrids")
 	virtual bool CanWield(void) const RET(true)
 	virtual ulong Danger(void) const RET(25)
-	virtual vector CBitmapPos(void) const RETV(144,0)
+	virtual vector GetBitmapPos(void) const RETV(144,0)
 protected:
 	virtual void CreateInitialEquipment(void);
 	virtual float GetMeleeStrength(void) const RET(5000)
@@ -618,19 +614,19 @@ CHARACTER(
 	mommo,
 	InitMaterials(new brownslime(250000)),
 	{
-		SSize(100);
-		SAgility(1);
-		SStrength(2);
-		SEndurance(40);
-		SPerception(9);
+		SetSize(100);
+		SetAgility(1);
+		SetStrength(2);
+		SetEndurance(40);
+		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility(void) const RET(25)
 	virtual std::string NameSingular(void) const RET("conical mommo slime")
 	virtual std::string NamePlural(void) const RET("conical mommo slimes")
 	virtual ulong Danger(void) const RET(250)
-	virtual vector CBitmapPos(void) const RETV(176,0)
-	virtual ulong CBloodColor(void) const RET(RGB(7,155,0))
+	virtual vector GetBitmapPos(void) const RETV(176,0)
+	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
 
 );
 
@@ -639,19 +635,19 @@ CHARACTER(
 	mommo,
 	InitMaterials(new brownslime(150000)),
 	{
-		SSize(50);
-		SAgility(2);
-		SStrength(1);
-		SEndurance(20);
-		SPerception(9);
+		SetSize(50);
+		SetAgility(2);
+		SetStrength(1);
+		SetEndurance(20);
+		SetPerception(9);
 	},
 public:
 	virtual ushort Possibility(void) const RET(75)
 	virtual std::string NameSingular(void) const RET("flat mommo slime")
 	virtual std::string NamePlural(void) const RET("flat mommo slimes")
 	virtual ulong Danger(void) const RET(75)
-	virtual vector CBitmapPos(void) const RETV(192,0)
-	virtual ulong CBloodColor(void) const RET(RGB(7,155,0))
+	virtual vector GetBitmapPos(void) const RETV(192,0)
+	virtual ulong GetBloodColor(void) const RET(MAKE_RGB(7,155,0))
 );
 
 CHARACTER(
@@ -659,11 +655,11 @@ CHARACTER(
 	character,
 	InitMaterials(game::CreateRandomSolidMaterial(100000)),
 	{
-		SSize(250);
-		SAgility(5);
-		SStrength(35);
-		SEndurance(20);
-		SPerception(12);
+		SetSize(250);
+		SetAgility(5);
+		SetStrength(35);
+		SetEndurance(20);
+		SetPerception(12);
 	},
 public:
 	virtual ushort Possibility(void) const RET(20)
@@ -673,7 +669,7 @@ public:
 	virtual std::string NameSingular(void) const;
 	virtual std::string NamePlural(void) const RET("golems")
 	virtual ulong Danger(void) const;
-	virtual vector CBitmapPos(void) const RETV(256,0)
+	virtual vector GetBitmapPos(void) const RETV(256,0)
 	virtual void DrawToTileBuffer(void) const;
 	virtual void SpillBlood(uchar) {}
 protected:
@@ -685,18 +681,18 @@ CHARACTER(
 	character,
 	InitMaterials(new wolfflesh(30000)),
 	{
-		SSize(100);
-		SAgility(20);
-		SStrength(6);
-		SEndurance(6);
-		SPerception(24);
+		SetSize(100);
+		SetAgility(20);
+		SetStrength(6);
+		SetEndurance(6);
+		SetPerception(24);
 	},
 public:
 	virtual ushort Possibility(void) const RET(40)
 	virtual std::string NameSingular(void) const RET("wolf")
 	virtual std::string NamePlural(void) const RET("wolves")
 	virtual ulong Danger(void) const RET(20)
-	virtual vector CBitmapPos(void) const RETV(224,0)
+	virtual vector GetBitmapPos(void) const RETV(224,0)
 protected:
 	virtual float GetMeleeStrength(void) const RET(7500)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))
@@ -709,11 +705,11 @@ CHARACTER(
 	character,
 	InitMaterials(new dogflesh(20000)),
 	{
-		SSize(75);
-		SAgility(15);
-		SStrength(4);
-		SEndurance(4);
-		SPerception(21);
+		SetSize(75);
+		SetAgility(15);
+		SetStrength(4);
+		SetEndurance(4);
+		SetPerception(21);
 	},
 public:
 	virtual ushort Possibility(void) const RET(20)
@@ -722,7 +718,7 @@ public:
 	virtual ulong Danger(void) const RET(10)
 	virtual bool Catches(item*, float, bool);
 	virtual bool ConsumeItemType(uchar) const;
-	virtual vector CBitmapPos(void) const RETV(240,0)
+	virtual vector GetBitmapPos(void) const RETV(240,0)
 protected:
 	virtual float GetMeleeStrength(void) const RET(5000)
 	virtual std::string ThirdPersonMeleeHitVerb(bool Critical) const RET(ThirdPersonBiteVerb(Critical))

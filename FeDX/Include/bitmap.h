@@ -1,13 +1,13 @@
 #ifndef __BITMAP_H__
 #define __BITMAP_H__
 
-#include <fstream>
-
-#include "typedef.h"
-
 #define MIRROR 1
 #define FLIP 2
 #define ROTATE_90 4
+
+#include <fstream>
+
+#include "typedef.h"
 
 class CSurface;
 struct IDirectDrawSurface7;
@@ -47,7 +47,7 @@ protected:
 	void AttachSurface(IDirectDrawSurface7*);
 	void Backup(ushort = 0, ushort = 0, bool = true);
 	void Restore(ushort = 0, ushort = 0, bool = true);
-	CSurface* CDXSurface(void) { return DXSurface; }
+	CSurface* GetDXSurface(void) { return DXSurface; }
 	static char BMPHeader[];
 	CSurface* DXSurface;
 	ushort XSize, YSize;

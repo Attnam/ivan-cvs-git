@@ -32,42 +32,42 @@ public:
 	virtual void AddCharacter(character* Guy);
 	virtual void HandleCharacters(void);
 	virtual void RemoveCharacter(void);
-	virtual stack* CStack(void) const		{return Stack;}
+	virtual stack* GetStack(void) const		{return Stack;}
 	virtual void AlterLuminance(vector, ushort);
 	virtual void EmptyFlag(void)			{Flag = false;}
 	virtual void SetFlag(void)			{Flag = true;}
 	virtual bool RetrieveFlag(void) const		{return Flag;}
 	virtual void Emitate(void);
 	virtual void ReEmitate(void);
-	virtual stack* CSideStack(uchar Index) const	{return SideStack[Index];}
+	virtual stack* GetSideStack(uchar Index) const	{return SideStack[Index];}
 	virtual void Clean(void);
 	virtual bool Open(character*);
 	virtual bool Close(character*);
 	virtual void Save(std::ofstream*) const;
 	virtual void SpillFluid(uchar, ulong, ushort = 3, ushort = 32);
-	virtual ushort CLuminance(void) const;
+	virtual ushort GetLuminance(void) const;
 	virtual void SignalEmitationIncrease(ushort);
 	virtual void SignalEmitationDecrease(ushort);
-	virtual ushort CEmitation(void) const			{return Emitation;}
+	virtual ushort GetEmitation(void) const			{return Emitation;}
 	virtual void ForceEmitterNoxify(void);
 	virtual void ForceEmitterEmitation(void);
 	virtual void Noxify(void);
 	virtual void NoxifyEmitter(vector);
 	virtual uchar CalculateBitMask(vector) const;
-	virtual std::string CEngraved(void) const { return Engraved; }
+	virtual std::string GetEngraved(void) const { return Engraved; }
 	virtual bool Engrave(std::string What) { Engraved = What; return true; }
-	virtual void SEmitation(ushort What) { Emitation = What; }
-	virtual std::string CRememberedItems(void) const { return RememberedItems; }
-	virtual void SRememberedItems(std::string);
+	virtual void SetEmitation(ushort What) { Emitation = What; }
+	virtual std::string GetRememberedItems(void) const { return RememberedItems; }
+	virtual void SetRememberedItems(std::string);
 	virtual void UpdateItemMemory(void);
 	virtual bool CanBeSeen(void) const;
 	virtual void Kick(ushort,uchar);
 	virtual bool CanBeSeenFrom(vector) const;
-	virtual uchar CDivineOwner(void) const { return DivineOwner; }
-	virtual void SDivineOwner(uchar NDO) { DivineOwner = NDO; }
+	virtual uchar GetDivineOwner(void) const { return DivineOwner; }
+	virtual void SetDivineOwner(uchar NDO) { DivineOwner = NDO; }
 	virtual void DrawToTileBuffer(void) const;
 	virtual void UpdateMemorizedAndDraw(void);
-	virtual level* CMotherLevel(void) const { return MotherLevel; }
+	virtual level* GetMotherLevel(void) const { return MotherLevel; }
 	virtual char CanBeDigged(character*, item*) const;
 	virtual bool Dig(character*, item*);
 	virtual void HandleFluids(void);

@@ -13,23 +13,15 @@
 #define GFONTW		7
 #define GSYMBOL		8
 
-#define FONTR		igraph::CFontRGraphic()
-#define FONTB		igraph::CFontBGraphic()
-#define FONTW		igraph::CFontWGraphic()
+#define FONTR		igraph::GetFontRGraphic()
+#define FONTB		igraph::GetFontBGraphic()
+#define FONTW		igraph::GetFontWGraphic()
 
 #include <windows.h>
 
 #include "typedef.h"
 #include "vector.h"
 
-#undef RGB
-#define RGB(Red, Green, Blue) ((Red) << 8 & 0xF800) | ((Green) << 3 & 0x7E0) | ((Blue) >> 3 & 0x1F)
-
-#define GET_RED(Color)		((Color >> 8) & 0xF8)
-#define GET_GREEN(Color)	((Color >> 3) & 0xFC)
-#define GET_BLUE(Color)		((Color << 3) & 0xF8)
-
-#define PINK 0xF81F
 class bitmap;
 
 class igraph
@@ -37,16 +29,16 @@ class igraph
 public:
 	static void Init(HINSTANCE, HWND*);
 	static void DeInit(void);
-	static bitmap* CTerrainGraphic(void)	{return Graphic[GTERRAIN];}
-	static bitmap* CItemGraphic(void)	{return Graphic[GITEM];}
-	static bitmap* CCharacterGraphic(void)	{return Graphic[GCHARACTER];}
-	static bitmap* CFOWGraphic(void)	{return Graphic[GFOWGRAPHIC];}
-	static bitmap* CHumanGraphic(void)	{return Graphic[GHUMAN];}
-	static bitmap* CFontRGraphic(void)	{return Graphic[GFONTR];}
-	static bitmap* CFontBGraphic(void)	{return Graphic[GFONTB];}
-	static bitmap* CFontWGraphic(void)	{return Graphic[GFONTW];}
-	static bitmap* CSymbolGraphic(void)	{return Graphic[GSYMBOL];}
-	static bitmap* CTileBuffer(void)	{ return TileBuffer; }
+	static bitmap* GetTerrainGraphic(void)	{return Graphic[GTERRAIN];}
+	static bitmap* GetItemGraphic(void)	{return Graphic[GITEM];}
+	static bitmap* GetCharacterGraphic(void)	{return Graphic[GCHARACTER];}
+	static bitmap* GetFOWGraphic(void)	{return Graphic[GFOWGRAPHIC];}
+	static bitmap* GetHumanGraphic(void)	{return Graphic[GHUMAN];}
+	static bitmap* GetFontRGraphic(void)	{return Graphic[GFONTR];}
+	static bitmap* GetFontBGraphic(void)	{return Graphic[GFONTB];}
+	static bitmap* GetFontWGraphic(void)	{return Graphic[GFONTW];}
+	static bitmap* GetSymbolGraphic(void)	{return Graphic[GSYMBOL];}
+	static bitmap* GetTileBuffer(void)	{ return TileBuffer; }
 	static void BlitTileBuffer(vector, ushort = 256);
 private:
 	static bitmap* Graphic[GRAPHIC_TYPES];

@@ -22,11 +22,11 @@ public:
 	virtual void InitMaterials(ushort, ...);
 	virtual void InitMaterials(material*);
 	virtual material* CMaterial(ushort Index) const { return Material[Index]; }
-	virtual ushort CEmitation(void) const;
-	virtual void SSize(ushort Value) { Size = Value; }
-	virtual ushort CSize(void) const { return Size; }
+	virtual ushort GetEmitation(void) const;
+	virtual void SetSize(ushort Value) { Size = Value; }
+	virtual ushort GetSize(void) const { return Size; }
 	virtual void EraseMaterials(void);
-	virtual ushort CMaterials(void) const { return Material.size(); }
+	virtual ushort GetMaterials(void) const { return Material.size(); }
 protected:
 	virtual std::string NameArtifact(uchar, uchar) const;
 	virtual std::string NameWithMaterial(uchar) const;

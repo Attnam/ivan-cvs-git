@@ -49,27 +49,27 @@ class material
 {
 public: 
 	virtual ~material(void)					{}
-	virtual uchar CFleshColor(void) const			{ return CItemColor(); }
-	virtual uchar CItemColor(void) const = 0;
+	virtual uchar GetFleshColor(void) const			{ return GetItemColor(); }
+	virtual uchar GetItemColor(void) const = 0;
 	virtual std::string Name(uchar Case = 0) const = 0;
 	virtual ushort GetHitValue(void) const = 0;
-	virtual uchar CConsumeType(void) const			{return ODD;}
-	virtual ulong CVolume(void) const			{return Volume;}
-	virtual ulong CWeight(void) const			{return ulong(float(Volume) * GetDensity() / 1000);}
+	virtual uchar GetConsumeType(void) const			{return ODD;}
+	virtual ulong GetVolume(void) const			{return Volume;}
+	virtual ulong GetWeight(void) const			{return ulong(float(Volume) * GetDensity() / 1000);}
 	virtual ushort GetDensity(void) const			{return 1;}
 	virtual uchar EffectType(void)				{return EFOOD;}
 	virtual ushort TakeDipVolumeAway(void);
 	virtual void Save(std::ofstream*) const;
 	virtual void Load(std::ifstream*);
-	virtual ushort CArmorValue(void) const { return GetHitValue(); }
-	virtual void SVolume(ulong What) { Volume = What; }
-	virtual ushort CEmitation(void) const { return 0; }
+	virtual ushort GetArmorValue(void) const { return GetHitValue(); }
+	virtual void SetVolume(ulong What) { Volume = What; }
+	virtual ushort GetEmitation(void) const { return 0; }
 	virtual ushort OfferValue(void) const = 0;
 	virtual uchar Alignment(void) const				{ return NEUTRAL; }
 	virtual void EatEffect(character*, float = 100, float = 1.0f)	{ }
 	virtual void HitEffect(character*)			{ }
 	virtual short NutritionValue(void) const			{ return 0; }
-	virtual void MinusAmount(float Amount)			{ SVolume(CVolume() - ulong(CVolume() * Amount / 100)); }
+	virtual void MinusAmount(float Amount)			{ SetVolume(GetVolume() - ulong(GetVolume() * Amount / 100)); }
 	virtual material* Clone(ulong Volume) const = 0;
 	virtual material* Clone(void) const = 0;
 	virtual bool IsType(ushort QType) const { return Type() == QType; }
@@ -134,10 +134,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "iron" : "an iron";}
 	virtual ushort GetHitValue(void) const				{return 100;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const				{return 8000;}
 	virtual ushort OfferValue(void) const				{ return 10; }
-	virtual uchar CItemColor(void) const			{ return LGRAY; }
+	virtual uchar GetItemColor(void) const			{ return LGRAY; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -147,11 +147,11 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "valpurium" : "a valpurium";}
 	virtual ushort GetHitValue(void) const				{return 400;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const				{return 3000;}
 	virtual ushort OfferValue(void) const				{ return 100; }
 	virtual uchar Alignment(void) const				{ return GOOD; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -161,10 +161,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "stone" : "a stone";}
 	virtual ushort GetHitValue(void) const				{return 50;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const				{return 3000;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return DGRAY; }
+	virtual uchar GetItemColor(void) const			{ return DGRAY; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -174,13 +174,13 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "banana flesh" : "a banana flesh";}
 	virtual ushort GetHitValue(void) const				{return 5;}
-	virtual uchar CConsumeType(void) const				{return FRUIT;}
+	virtual uchar GetConsumeType(void) const				{return FRUIT;}
 	virtual ushort GetDensity(void) const				{return 1200;}
 	virtual uchar EffectType(void)				{return EFOOD;}
 	virtual ushort OfferValue(void) const				{ return 10; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue(void) const			{ return 175; }
-	virtual uchar CItemColor(void) const			{ return YELLOW; }
+	virtual uchar GetItemColor(void) const			{ return YELLOW; }
 );
 
 MATERIAL(
@@ -189,10 +189,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "gravel" : "a gravel";}
 	virtual ushort GetHitValue(void) const				{return 40;}
-	virtual uchar CConsumeType(void) const				{return ODD;}
+	virtual uchar GetConsumeType(void) const				{return ODD;}
 	virtual ushort GetDensity(void) const				{return 2500;}
 	virtual ushort OfferValue(void) const				{ return 1; }
-	virtual uchar CItemColor(void) const			{ return LGRAY; }
+	virtual uchar GetItemColor(void) const			{ return LGRAY; }
 );
 
 MATERIAL(
@@ -201,10 +201,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "moraine" : "a moraine";}
 	virtual ushort GetHitValue(void) const				{return 25;}
-	virtual uchar CConsumeType(void) const				{return ODD;}
+	virtual uchar GetConsumeType(void) const				{return ODD;}
 	virtual ushort GetDensity(void) const				{return 2500;}
 	virtual ushort OfferValue(void) const				{ return 2; }
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 );
 
 MATERIAL(
@@ -213,7 +213,7 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "school food" : "a school food";}
 	virtual ushort GetHitValue(void) const				{return 5;}
-	virtual uchar CConsumeType(void) const				{return SCHOOLFOOD;}
+	virtual uchar GetConsumeType(void) const				{return SCHOOLFOOD;}
 	virtual ushort GetDensity(void) const				{return 1500;}
 	virtual uchar EffectType(void)				{return ESCHOOLFOOD;}
 	virtual ushort OfferValue(void) const				{ return 20; }
@@ -221,7 +221,7 @@ public:
 	virtual short NutritionValue(void) const			{ return 75; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 );
 
 MATERIAL(
@@ -232,7 +232,7 @@ public:
 	virtual ushort GetHitValue(void) const				{return 0;}
 	virtual ushort GetDensity(void) const				{return 1;}
 	virtual ushort OfferValue(void) const				{ return 0; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 );
 
 MATERIAL(
@@ -241,10 +241,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "wood" : "a wood";}
 	virtual ushort GetHitValue(void) const				{return 20;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const				{return 500;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -254,13 +254,13 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "flesh" : "a flesh";}
 	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort GetDensity(void) const				{return 1200;}
 	virtual ushort OfferValue(void) const				{ return 15; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
 	virtual short NutritionValue(void) const			{ return 50; }
-	virtual uchar CFleshColor(void) const			{ return FLESH; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetFleshColor(void) const			{ return FLESH; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 );
 
 MATERIAL(
@@ -268,9 +268,9 @@ MATERIAL(
 	flesh,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "green flesh" : "a green flesh";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort OfferValue(void) const				{ return 10; }
-	virtual uchar CItemColor(void) const			{ return GREEN; }
+	virtual uchar GetItemColor(void) const			{ return GREEN; }
 );
 
 MATERIAL(
@@ -278,10 +278,10 @@ MATERIAL(
 	flesh,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "pork" : "a pork";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort OfferValue(void) const				{ return 20; }
 	virtual short NutritionValue(void) const			{ return 500; }
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 );
 
 MATERIAL(
@@ -289,10 +289,10 @@ MATERIAL(
 	flesh,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "beef" : "a beef";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort OfferValue(void) const				{ return 20; }
 	virtual short NutritionValue(void) const			{ return 500; }
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 );
 
 MATERIAL(
@@ -303,10 +303,10 @@ public:
 	virtual ushort GetHitValue(void) const 				{return 25;}
 	virtual ushort GetDensity(void) const				{return 2000;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CConsumeType(void) const				{ return BONE; }
+	virtual uchar GetConsumeType(void) const				{ return BONE; }
 	virtual void EatEffect(character*, float, float);
-	virtual uchar CFleshColor(void) const			{ return FLESH; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetFleshColor(void) const			{ return FLESH; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -315,13 +315,13 @@ MATERIAL(
 	flesh,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "dark forg flesh" : "a dark frog flesh";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual uchar EffectType(void) 				{return EDARKNESS;}
 	virtual ushort OfferValue(void) const				{ return 50; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
-	virtual uchar CItemColor(void) const			{ return BLACK; }
+	virtual uchar GetItemColor(void) const			{ return BLACK; }
 );
 
 MATERIAL(
@@ -340,10 +340,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "glass" : "a glass";}
 	virtual ushort GetHitValue(void) const 				{return 30;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const				{return 2500;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -353,14 +353,14 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "Omle urine" : "an Omle urine";}
 	virtual ushort GetHitValue(void) const 				{return 1;}
-	virtual uchar CConsumeType(void) const				{return LIQUID;}
+	virtual uchar GetConsumeType(void) const				{return LIQUID;}
 	virtual ushort GetDensity(void) const				{return 1000;}
 	virtual uchar EffectType(void) 				{return EOMLEURINE;}
 	virtual ushort OfferValue(void) const				{ return 100; }
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual short NutritionValue(void) const			{ return 50; }
-	virtual uchar CItemColor(void) const			{ return YELLOW; }
+	virtual uchar GetItemColor(void) const			{ return YELLOW; }
 );
 
 MATERIAL(
@@ -369,10 +369,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "banana peal" : "a banana peal";}
 	virtual ushort GetHitValue(void) const 				{return 10;}
-	virtual uchar CConsumeType(void) const				{return ODD;}
+	virtual uchar GetConsumeType(void) const				{return ODD;}
 	virtual ushort GetDensity(void) const				{return 500;}
 	virtual ushort OfferValue(void) const				{ return 1; }
-	virtual uchar CItemColor(void) const			{ return YELLOW; }
+	virtual uchar GetItemColor(void) const			{ return YELLOW; }
 );
 
 MATERIAL(
@@ -381,10 +381,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "parchment" : "a parchment";}
 	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar CConsumeType(void) const				{return ODD;}
+	virtual uchar GetConsumeType(void) const				{return ODD;}
 	virtual ushort GetDensity(void) const				{return 600;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -394,10 +394,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "cloth" : "a cloth";}
 	virtual ushort GetHitValue(void) const 				{return 15;}
-	virtual uchar CConsumeType(void) const				{return ODD;}
+	virtual uchar GetConsumeType(void) const				{return ODD;}
 	virtual ushort GetDensity(void) const				{return 100;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return BLUE; }
+	virtual uchar GetItemColor(void) const			{ return BLUE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 
@@ -406,11 +406,11 @@ MATERIAL(
 	flesh,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "human flesh" : "a human flesh";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
-	virtual ushort CEmitation(void) const				{ return 192; }
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
+	virtual ushort GetEmitation(void) const				{ return 192; }
 	virtual ushort OfferValue(void) const				{ return 30; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 );
 
 MATERIAL(
@@ -419,13 +419,13 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "slime" : "a slime";}
 	virtual ushort GetHitValue(void) const 				{return 2;}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort GetDensity(void) const 				{return 400;}
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual short NutritionValue(void) const			{ return 25; }
 	virtual void EatEffect(character* Eater, float Amount, float NPModifier)	{ NormalFoodEffect(Eater, Amount, NPModifier); MinusAmount(Amount); }
-	virtual uchar CFleshColor(void) const			{ return FLESH; }
-	virtual uchar CItemColor(void) const			{ return GREEN; }
+	virtual uchar GetFleshColor(void) const			{ return FLESH; }
+	virtual uchar GetItemColor(void) const			{ return GREEN; }
 );
 
 MATERIAL(
@@ -433,10 +433,10 @@ MATERIAL(
 	slime,
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "brown slime" : "a brown slime";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort OfferValue(void) const				{ return 1; }
 	virtual short NutritionValue(void) const			{ return 25; }
-	virtual uchar CItemColor(void) const			{ return BROWN; }
+	virtual uchar GetItemColor(void) const			{ return BROWN; }
 );
 
 MATERIAL(
@@ -445,9 +445,9 @@ MATERIAL(
 public:
 	virtual ~wolfflesh(void)				{}
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "wolf flesh" : "a wolf flesh";}
-	virtual uchar CConsumeType(void) const				{return MEAT;}
+	virtual uchar GetConsumeType(void) const				{return MEAT;}
 	virtual ushort OfferValue(void) const				{ return 15; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 );
 
 MATERIAL(
@@ -467,7 +467,7 @@ public:
 	virtual ushort GetHitValue(void) const 				{return 30;}
 	virtual ushort GetDensity(void) const				{return 2400;}
 	virtual ushort OfferValue(void) const				{ return 5; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 );
 
 MATERIAL(
@@ -476,7 +476,7 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "pepsi" : "a pepsi";}
 	virtual ushort GetHitValue(void) const 				{return 200;}
-	virtual uchar CConsumeType(void) const				{return LIQUID;}
+	virtual uchar GetConsumeType(void) const				{return LIQUID;}
 	virtual ushort GetDensity(void) const 				{return 1500;}
 	virtual ushort OfferValue(void) const				{ return 50; }
 	virtual uchar Alignment(void) const				{ return EVIL; }
@@ -484,8 +484,8 @@ public:
 	virtual void EatEffect(character*, float, float);
 	virtual void HitEffect(character* Enemy);
 	virtual short NutritionValue(void) const			{ return 100; }
-	virtual uchar CFleshColor(void) const			{ return FLESH; }
-	virtual uchar CItemColor(void) const			{ return BLACK; }
+	virtual uchar GetFleshColor(void) const			{ return FLESH; }
+	virtual uchar GetItemColor(void) const			{ return BLACK; }
 );
 
 MATERIAL(
@@ -494,10 +494,10 @@ MATERIAL(
 public:
 	virtual std::string Name(uchar Case) const				{return !(Case & INDEFINEBIT) ? "mithril" : "a mithril";}
 	virtual ushort GetHitValue(void) const 				{return 200;}
-	virtual uchar CConsumeType(void) const				{return HARD;}
+	virtual uchar GetConsumeType(void) const				{return HARD;}
 	virtual ushort GetDensity(void) const 				{return 5000;}
 	virtual ushort OfferValue(void) const				{ return 25; }
-	virtual uchar CItemColor(void) const			{ return WHITE; }
+	virtual uchar GetItemColor(void) const			{ return WHITE; }
 	virtual bool IsSolid(void) const { return true; }
 );
 

@@ -91,3 +91,11 @@ void list::Empty(void)
 	while(String.Length())
 		String.Remove(0);
 }
+
+void list::AddString(std::string S)
+{
+	String.Add(S);
+
+	if(Maximum && String.Length() > Maximum)
+		String.Remove(0);
+}
