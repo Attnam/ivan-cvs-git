@@ -104,7 +104,7 @@ int iosystem::Menu(bitmap* FontSelected, bitmap* FontNotSelected, std::string sM
 	return signed(iSelected);
 }
 
-std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d Pos, ushort MaxLetters)
+std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d Pos, ushort MinLetters, ushort MaxLetters)
 {
 	std::string Input;
 
@@ -118,19 +118,24 @@ std::string iosystem::StringQuestion(bitmap* Font, std::string Topic, vector2d P
 		Font->Printf(DOUBLEBUFFER, Pos.X, Pos.Y + 10, "%s_", Input.c_str());
 		graphics::BlitDBToScreen();
 
-		while(!(isalpha(LastKey) || LastKey == 8 || LastKey == 13))
+		while(!(isalpha(LastKey) || LastKey == ' ' || LastKey == 8 || LastKey == 13))
 			LastKey = GETKEY();
 
 		if(LastKey == 8)
 		{
-			if(Input.length()) Input.resize(Input.length() - 1);
+			if(Input.length())
+				Input.resize(Input.length() - 1);
+
 			continue;
 		}
 
 		if(LastKey == 13)
-			break;
+			if(Input.length() >= MinLetters)
+				break;
+			else
+				continue;
 
-		if(Input.length() < MaxLetters)
+		if(Input.length() <= MaxLetters)
 			Input += LastKey;
 	}
 

@@ -128,7 +128,7 @@ void game::Init(std::string Name)
 	if(Name == "")
 	{
 		DOUBLEBUFFER->ClearToColor(0); //GGG
-		SetPlayerName(iosystem::StringQuestion(FONTW, "What is your name?", vector2d(30, 50), 30));
+		SetPlayerName(iosystem::StringQuestion(FONTW, "What is your name?", vector2d(30, 50), 3, 30));
 	}
 	else
 		SetPlayerName(Name);

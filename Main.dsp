@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
 # ADD LINK32 dxguid.lib ddraw.lib FEEL/Release/FEEL.lib FeFile/Release/FeFile.lib FELL/Release/FELL.lib FeDX/Release/FeDX.lib FeWin/Release/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# SUBTRACT LINK32 /pdb:none
+# SUBTRACT LINK32 /profile /incremental:yes
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Release\Main.exe IVAN.exe
@@ -84,7 +84,8 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib ddraw.lib FEEL/Debug/FEEL.lib FeFile/Debug/FeFile.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
+# ADD LINK32 dxguid.lib ddraw.lib FEEL/Debug/FEEL.lib FeFile/Debug/FeFile.lib FELL/Debug/FELL.lib FeDX/Debug/FeDX.lib FeWin/Debug/FeWin.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386
+# SUBTRACT LINK32 /profile /incremental:no
 # Begin Special Build Tool
 SOURCE=$(InputPath)
 PostBuild_Cmds=copy Main\Debug\Main.exe IVAN.exe

@@ -42,7 +42,7 @@ LRESULT CALLBACK globalwindowhandler::WndProc(HWND hWnd, UINT uMsg, WPARAM wPara
 
 		case WM_CLOSE:								// Did We Receive A Close Message?
 		{
-			PostQuitMessage(0);						// Send A Quit Message
+			//PostQuitMessage(0);						// Send A Quit Message
 			return 0;								// Jump Back
 		}
 

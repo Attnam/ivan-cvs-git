@@ -44,9 +44,12 @@ Weapons should break.
 Space should = esc in the inventory.
 Pickup all.
 Last game should be highlighted in the high scores.
-Some way of writing a word on a different colour with ADD_MESSAGE()
+Some way of writing a word on a different colour with ADD_MESSAGE().
 Blindness of pets.
 Messagebuffer should be reordered.
 Messagebuffer should be saved.
 Particle Trail.
 Increase/decrease god relations as option to WMode.
+Uses for vomiting.
+CNAME should be clarified.
+Hit rate of thrown items should be lowered.

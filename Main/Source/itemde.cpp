@@ -351,7 +351,7 @@ void wand::Load(inputfile& SaveFile)
 
 bool scrollofwishing::Read(character* Reader)
 {
-	std::string Temp = iosystem::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 256);
+	std::string Temp = iosystem::StringQuestion(FONTW, "What do you want to wish for?", vector2d(7,7), 0, 256);
 
 	item* TempItem = protosystem::CreateItem(Temp);
 

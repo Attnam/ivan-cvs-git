@@ -1,5 +1,3 @@
-Luxify?
-Noxify?
 Sokeaksi tuleminen pepsistä bugittaa.
 Stackien potkiminen.
 Savekansion autoluonti.

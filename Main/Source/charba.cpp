@@ -262,7 +262,7 @@ void character::Be()
 
 bool character::GoUp()
 {
-	if(GetLevelSquareUnder()->GetOverLevelTerrain()->GoUp(this))
+	if(GetSquareUnder()->GetOverTerrain()->GoUp(this))
 	{
 		SetStrengthExperience(GetStrengthExperience() + 25);
 		SetNP(GetNP() - 2);
@@ -1465,7 +1465,7 @@ bool character::Engrave(std::string What)
 
 bool character::WhatToEngrave()
 {
-	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(iosystem::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 50));
+	game::GetCurrentLevel()->GetLevelSquare(GetPos())->Engrave(iosystem::StringQuestion(FONTW, "What do you want to engrave here?", vector2d(7,7), 0, 50));
 	return false;
 }
 
