@@ -86,7 +86,7 @@ Things thrown at doors.
 //Skeleton volume.
 //"snake is standing"
 Genie's strength.
-Items inside chests carried by player at death should be shown. (hex)
+//Items inside chests carried by player at death should be shown. (hex)
 //Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
 //Glitter effect.
@@ -127,3 +127,4 @@ Prohibit spoiling in shops and on the cathedral floor.
 Whips shouldn't really break when hitting armor.
 Balancing Loricatus.
 ?Charges for magic whistle.
+

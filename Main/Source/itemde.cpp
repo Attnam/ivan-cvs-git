@@ -3614,7 +3614,7 @@ void potion::Break()
     ADD_MESSAGE("The %s shatters to pieces.", CHARNAME(DEFINITE));
 
   if(GetContainedMaterial()) 
-    GetLSquareUnder()->SpillFluid(5, GetContainedMaterial()->GetColor());
+    GetLSquareUnder()->SpillFluid(GetContainedMaterial()->Clone(), 70, 0);
 
   item* Remains = new brokenbottle(0, NOMATERIALS);
   Remains->InitMaterials(GetMainMaterial()->Clone());

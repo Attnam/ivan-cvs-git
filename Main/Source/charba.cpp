@@ -4998,7 +4998,7 @@ void character::PoisonedHandler()
     if(!(RAND() % 50))
       ++Damage;
 
-  ReceiveDamage(this, Damage, POISON);
+  ReceiveDamage(this, Damage, POISON, ALL, 8, true, false, false);
   CheckDeath("died of acute poisoning");
 }
 
@@ -5774,4 +5774,9 @@ bool character::CanHeal() const
 void character::ReceiveFluidSpill(material* Liquid, ushort HitPercent)
 {
   Liquid->Effect(this, Liquid->GetVolume() * HitPercent / 100);
+}
+
+uchar character::GetRelation(const character* Who) const
+{
+  return GetTeam()->GetRelation(Who->GetTeam());
 }

@@ -691,6 +691,7 @@ class character : public entity, public id
   virtual vector2d GetWaypoint() const { return WayPoint; }
   virtual void SetWayPoint(vector2d What) { WayPoint = What; }
   virtual void ReceiveFluidSpill(material*, ushort);
+  virtual uchar GetRelation(const character*) const;
  protected:
   virtual character* RawDuplicate() const = 0;
   virtual bool ShowMaterial() const { return CreateSolidMaterialConfigurations(); }

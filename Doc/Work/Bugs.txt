@@ -86,4 +86,6 @@ Omle urine doesn't really work.
 Infravision range.
 Carnivorous plants spill blood.
 Oree's blood golems' HPs' are incorrect.
+(In Linux) push X-button, then cancel
 Skeletons' health bugs. Some have over 20000 hps.
+

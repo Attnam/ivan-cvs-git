@@ -83,7 +83,7 @@ void dulcis::PrayGoodEffect()
 		{
 		  if(Char->GetTeam() == game::GetPlayer()->GetTeam())
 		    ADD_MESSAGE("%s seems to be very happy.", Char->CHARNAME(DEFINITE));
-		  else if(Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) == HOSTILE)
+		  else if(Char->GetRelation(game::GetPlayer()) == HOSTILE)
 		    ADD_MESSAGE("%s stops fighting.", Char->CHARNAME(DEFINITE));
 		  else
 		    ADD_MESSAGE("%s seems to be very friendly towards you.", Char->CHARNAME(DEFINITE));
@@ -264,7 +264,7 @@ void silva::PrayGoodEffect()
 
 	    character* Char = game::GetCurrentLevel()->GetLSquare(Pos)->GetCharacter();
 
-	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || Char->GetTeam()->GetRelation(game::GetPlayer()->GetTeam()) != HOSTILE)))
+	    if(!game::GetCurrentLevel()->GetLSquare(Pos)->GetOLTerrain()->IsSafeToDestroy() || (Char && (Char->IsPlayer() || game::GetPlayer()->GetRelation(Char) != HOSTILE)))
 	      continue;
 
 	    ushort Walkables = 0;
@@ -672,11 +672,17 @@ void scabies::PrayGoodEffect()
 	  lsquare* Square = game::GetPlayer()->GetNeighbourLSquare(d);
 	  if(Square)
 	    {
-	      Square->SpillFluid(MAKE_MATERIAL(POISONLIQUID, 1500), 100, 0);
+	      if(Square->GetCharacter())
+		{
+		  if(Square->GetCharacter()->GetRelation(game::GetPlayer()) == HOSTILE)
+		    ADD_MESSAGE("%s throws poisons on %s!", GOD_NAME, Square->GetCharacter()->CHARNAME(DEFINITE));
+		  else
+		    continue;
+		}
+	      Square->SpillFluid(MAKE_MATERIAL(POISONLIQUID, 300), 100, game::GetPlayer());
 	    }
-	  ADD_MESSAGE("%s throws poisons all squares near!", GOD_NAME);
-	}
 
+	}
     }
 
 }
