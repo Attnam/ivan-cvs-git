@@ -1132,6 +1132,7 @@ void lsquare::SetLastSeen(ulong What)
 
 void lsquare::DrawMemorized()
 {
+  NewDrawRequested = false;
   vector2d BitPos = game::CalculateScreenCoordinates(Pos);
 
   if(LastSeen)
@@ -1141,8 +1142,6 @@ void lsquare::DrawMemorized()
 
   if(Character && Character->CanBeSeenByPlayer())
     Character->Draw(DOUBLE_BUFFER, BitPos, configuration::GetContrastLuminance(), true);
-
-  NewDrawRequested = false;
 }
 
 void lsquare::DrawMemorizedCharacter()

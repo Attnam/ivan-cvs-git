@@ -116,6 +116,7 @@ bool game::WizardMode;
 uchar game::SeeWholeMapCheatMode;
 bool game::GoThroughWallsCheat;
 bool game::QuestMonsterFoundBool;
+bitmap* game::BusyAnimationCache[48];
 
 void game::AddCharacterID(character* Char, ulong ID) { CharacterIDMap.insert(std::pair<ulong, character*>(ID, Char)); }
 void game::RemoveCharacterID(ulong ID) { CharacterIDMap.erase(CharacterIDMap.find(ID)); }
@@ -1102,40 +1103,44 @@ void game::BusyAnimation()
 
 void game::BusyAnimation(bitmap* Buffer)
 {
-  static bitmap Elpuri(16, 16, TRANSPARENT_COLOR);
-  static bool ElpuriLoaded = false;
-  static double Rotation = 0;
   static clock_t LastTime = 0;
+  static ushort Frame = 0;
+  static vector2d Pos((RES_X >> 1) - 100, (RES_Y << 1) / 3 - 100);
 
-  if(clock() - LastTime > CLOCKS_PER_SEC >> 5)
+  if((clock() - LastTime) << 5 > CLOCKS_PER_SEC)
     {
-      if(!ElpuriLoaded)
-	{
-	  ushort Color = MakeRGB16(60, 60, 60);
-	  igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
-	  ElpuriLoaded = true;
-	}
-
-      vector2d Pos(RES_X >> 1, (RES_Y << 1) / 3);
-      Buffer->Fill(Pos.X - 100, Pos.Y - 100, 200, 200, 0);
-      Rotation += 0.02;
-
-      if(Rotation > 2 * FPI)
-	Rotation -= 2 * FPI;
-
-      Elpuri.MaskedBlit(Buffer, 0, 0, Pos.X - 8, Pos.Y - 7, 16, 16);
-      ushort x;
-
-      for(x = 0; x < 10; ++x)
-	Buffer->DrawPolygon(Pos, 100, 5, MakeRGB16(255 - 25 * (10 - x), 0, 0), false, true, Rotation + double(x) / 50);
-
-      for(x = 0; x < 4; ++x)
-	Buffer->DrawPolygon(Pos, 100 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
+      BusyAnimationCache[Frame]->Blit(Buffer, 0, 0, Pos, 200, 200);
 
       if(Buffer == DOUBLE_BUFFER)
 	graphics::BlitDBToScreen();
 
+      if(++Frame == 48)
+	Frame = 0;
+
       LastTime = clock();
+    }
+}
+
+void game::CreateBusyAnimationCache()
+{
+  bitmap Elpuri(16, 16, TRANSPARENT_COLOR);
+  ushort Color = MakeRGB16(60, 60, 60);
+  igraph::GetCharacterRawGraphic()->MaskedBlit(&Elpuri, 64, 0, 0, 0, 16, 16, &Color);
+  bitmap Circle(200, 200, TRANSPARENT_COLOR);
+
+  for(ushort x = 0; x < 4; ++x)
+    Circle.DrawPolygon(vector2d(100, 100), 95 + x, 50, MakeRGB16(255 - 12 * x, 0, 0));
+
+  for(ushort c = 0; c < 48; ++c)
+    {
+      bitmap* Bitmap = BusyAnimationCache[c] = new bitmap(200, 200, 0);
+      Elpuri.MaskedBlit(Bitmap, 0, 0, 92, 93, 16, 16);
+      double Rotation = 0.3f + c * FPI / 120;
+
+      for(ushort x = 0; x < 10; ++x)
+	Bitmap->DrawPolygon(vector2d(100, 100), 95, 5, MakeRGB16(255 - 25 * (10 - x), 0, 0), false, true, Rotation + double(x) / 50);
+
+      Circle.MaskedBlit(Bitmap);
     }
 }
 

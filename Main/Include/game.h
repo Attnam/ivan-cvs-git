@@ -281,6 +281,7 @@ class game
   static character* CreateGhost();
   static bool TooGreatDangerFound() { return TooGreatDangerFoundBool; }
   static void SetTooGreatDangerFound(bool What) { TooGreatDangerFoundBool = What; }
+  static void CreateBusyAnimationCache();
  private:
   static const char* const Alignment[];
   static god** God;
@@ -354,6 +355,7 @@ class game
   static boneidmap BoneItemIDMap;
   static boneidmap BoneCharacterIDMap;
   static bool TooGreatDangerFoundBool;
+  static bitmap* BusyAnimationCache[48];
 };
 
 inline void game::CombineLights(ulong& L1, ulong L2)

@@ -389,3 +389,4 @@ One should get some score for pets.
 Message for bottles breaking inside chests.
 Bear traps made of stronger materials should do more damage.
 If the player has a wand of resurrection, a ghost should steal it and float quickly to raise his corpse.
+Unarmed accustomization.

@@ -42,6 +42,7 @@ int Main(int argc, char **argv)
   game::InitLuxTable();
   configuration::Load();
   igraph::Init();
+  game::CreateBusyAnimationCache();
   globalwindowhandler::SetQuitMessageHandler(game::HandleQuitMessage);
   msgsystem::Init();
 

@@ -9,6 +9,10 @@ is also provided AS IS and is probably completely unreadable.
 
 April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
 
+	* BusyAnimations are now cached
+
+April 28 2003 Timo Kiviluoto <sonor@phpoint.fi>
+
 	* Bonefiles are now working
 	* Mellis now changes 10 items instead of 5
 	* Replaced many Id-ending terms with *ID
