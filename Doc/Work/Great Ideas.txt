@@ -45,6 +45,9 @@ Player god.
 Different holy water effects for each god.
 Camera.
 Monolith.
-Elevetor.
+Elevator.
 Plaque epidemic.
+AK-47.
 Swedish educator.
+Summon Pelzar spell.
+Flying asses (donkeys).

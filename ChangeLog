@@ -15,7 +15,7 @@ August 29 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	  position and timing varies depending on class instance
 	* SparklePos now prefers the middle parts of the picture, since clipping
 	  the sparkle isn't really aesthetic
-	* Far away stacks can now be 'l'ooked at if SeeWholeMapCheat is active,
+	* Unseen far away stacks can now be 'l'ooked at if SeeWholeMapCheat is active,
 	  and full information about their items is shown
 	* Corrected a fatal bug that caused the breaking of wielded potions to crash
 	* Added weapon and armor enchantments (the +x thing)
@@ -47,7 +47,7 @@ August 27 2002 Timo Kiviluoto <sonor@phpoint.fi>
 	* Removed bodypart animation structures, as they weren't used and were
 	  already outdated
 	* The game crashes no more when an item spoils when it's currently being
-	  eating
+	  eaten
 	* Wolves are now easier
 	* The dungeon shop now appears before the wolf level
 	* The dungeon shop has now more useful items for sale

@@ -18,28 +18,28 @@
 //* Uusi siluetti. (kahvi)
 //* Itemit sen ympärille.
 //* Attribuutit ja status alle.
-Efektien läpikäyminen. (timo)
+//Efektien läpikäyminen. (timo)
 //Miina kuntoon. (timo)
 //Lookmoden messaget kuntoon. (timo)
 Bodypartien ja actioneiden scoret. (timo)
-(s) Luut kuntoon. (timo)
-(s) BloodColorin animaatiostuktuuri. (timo)
-/Paniikki. (hex)
-Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
+Luut kuntoon. (timo)
+(r) BloodColorin animaatiostuktuuri. (timo)
+//Paniikki. (hex)
+//Pari kolme uutta artifaktiasetta, mutta ei miekkoja.
 //Leather armorin nimi kuntoon. (hex)
-Taistelun tasapainotus. (timo)
-Animaatiot: Artifaktit, lamput...
+//Taistelun tasapainotus. (timo)
+//Animaatiot: Artifaktit, (s) lamput...
 //Amulet of life saving. (hex)
 //Amulet of ESP.
-/Ring of polymorph. (hex)
+//Ring of polymorph. (hex)
 Ring of strength.
 //Ring of infravision. (timo)
-/Ring of teleportation. (hex)
+//Ring of teleportation. (hex)
 Potion of invisibility. (hex)
 //Magic whistlen kuva. (kahvi)
-/Magic whistle. (hex)
+//Magic whistle. (hex)
 (s) Inhandspicit kuntoon. (timo)
-Ruumiinosien hoitotavat:
+//Ruumiinosien hoitotavat:
 //* Temppelit rahaa vastaan - raaja paikoilleen (1 hp) tai uusi luonnollinen raaja (1 hp). (hex)
 //* Atavus - lahjaraaja (max hp). (hex)
 //* Seges - raaja paikoilleen (max hp) tai uusi luonnollinen raaja (max hp). (hex)
@@ -52,29 +52,29 @@ Ruumiinosien hoitotavat:
 //* Perttu (kerran 16384 vuorossa) - kaikki raajat paikoilleen + kaikki hp:t maksimiin. (hex)
 //Raajapulan vaikutus kickiin ja dodgaukseen. (timo)
 //Avaimelle kuva. (kahvi)
-/Helmet. (hex)
+//Helmet. (hex)
 //BaseEmitationit toimintaan. (timo)
 //Pertun nutin wishaaminen. (timo)
 //Orc.
-Prices. (timo)
-OfferModifiers. (timo)
-NPModifiers. (timo)
+//Prices. (timo)
+//OfferModifiers. (timo)
+//NPModifiers. (timo)
 1-2 spesiaali helmettiä, cloakkia, gauntlettia, belttiä ja boottia.
 Dipping to corpses, containers etc.
 //Aliases!!!!!!!!!!!!!! (timo)
-/Potion of poison. (timo)
+//Potion of poison. (timo)
 //One handed penalties. (timo)
 //Poisonous snake. (hex)
 //Biting shouldn't make bodyparts fly.
 //People shouldn't "die screaming" if their heads are not present.
 //Shields. (timo)
-(r) Lower all unarmed to hit values. (timo)
+//Lower all unarmed to hit values. (timo)
 /Skeleton bodyparts.
 //Amuletit, cloak
 //Unicorns
 Effects and exps for intelligence, wisdom, charisma and mana.
 Shirt.
-/Kamikaze dwarves.
+//Kamikaze dwarves.
 //Naming hostile monsters.
 The flight of wielded item and amulet.
 Cats & rat corpses.
@@ -86,13 +86,13 @@ Things thrown at doors.
 //"snake is standing"
 Genie's strength.
 Items inside chests carried by player at death should be shown. (hex)
-Consummo's pray effect. (hex)
+//Consummo's pray effect. (hex)
 //"You didn't manage to get onto the high score list" message.
 //Glitter effect.
 //Fire effect.
 Lightning effect.
 Flies over spoiling items effect.
-Monster mine triggering should be limited.
+(s) Monster mine triggering should be limited.
 //Boots and gauntlets should be generated in pairs of two.
 Re-enable Golden Eagle Quest danger requirement.
 Prevent escape from Oree.
@@ -113,11 +113,11 @@ Manual.
 //Item possibilities. (timo)
 Skull. (hex)
 //Wand of cloning. (hex)
-Water should make gunpowder useless.
+Water should make gunpowder useless!
 Temporary invisibility should be cancelled if the character hits something.
-Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player.
-Prevent digging with broken pick-axe.
-Stethoscopre should show relative danger.
+Applying a whistle should set the waypoint of all monsters in the level to point to the square under the player. (hex)
+Prevent digging with a broken pick-axe.
+Stethoscope should show relative danger.
 Remove the school food effects of scabies (or make them a lot more seldom).
 Raven.
 Kicking chests.
