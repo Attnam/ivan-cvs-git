@@ -1,4 +1,4 @@
 scriptdir = $(datadir)/ivan/Script/
-script_data = dungeon.dat
+script_DATA = dungeon.dat
 #data_DATA = dungeon.dat
 

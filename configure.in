@@ -1,6 +1,6 @@
 AC_INIT(Main/Source/area.cpp)
 
-AM_INIT_AUTOMAKE(ivan,0.1)
+AM_INIT_AUTOMAKE(ivan,0.310)
 AC_PROG_CC
 
 AC_PROG_CXX
