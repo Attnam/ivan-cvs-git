@@ -89,7 +89,9 @@ const char* const game::Alignment[] = { "L++", "L+", "L", "L-", "N+", "N=", "N-"
 const char* const game::LockDescription[] = { "round", "square", "triangular", "broken", "hexagonal" };
 god** game::God;
 
-const int game::MoveCommandKey[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+const int game::MoveCommandKeyWithNumberPad[] = { KEY_HOME, KEY_UP, KEY_PAGE_UP, KEY_LEFT, KEY_RIGHT, KEY_END, KEY_DOWN, KEY_PAGE_DOWN, '.' };
+const int game::MoveCommandKeyWithoutNumberPad[] = { '7','8','9','u','o','j','k','l','.' };
+
 const vector2d game::MoveVector[] = { vector2d(-1, -1), vector2d(0, -1), vector2d(1, -1), vector2d(-1, 0), vector2d(1, 0), vector2d(-1, 1), vector2d(0, 1), vector2d(1, 1), vector2d(0, 0) };
 const vector2d game::RelativeMoveVector[] = { vector2d(-1, -1), vector2d(1, 0), vector2d(1, 0), vector2d(-2, 1), vector2d(2, 0), vector2d(-2, 1), vector2d(1, 0), vector2d(1, 0), vector2d(-1, -1) };
 const vector2d game::BasicMoveVector[] = { vector2d(-1,0), vector2d(1,0), vector2d(0,-1), vector2d(0,1) };
@@ -167,6 +169,7 @@ bool game::Init(const festring& Name)
 #ifdef __DJGPP__
   mkdir("Bones", S_IWUSR);
 #endif
+
 
   switch(Load(SaveName(PlayerName)))
     {
@@ -673,7 +676,7 @@ int game::GetMoveCommandKeyBetweenPoints(vector2d A, vector2d B)
 {
   for(ushort c = 0; c < EXTENDED_DIRECTION_COMMAND_KEYS; ++c)
     if((A + GetMoveVector(c)) == B)
-      return MoveCommandKey[c];
+      return GetMoveCommandKey(c);
 
   return DIR_ERROR;
 }
@@ -966,7 +969,7 @@ long game::ScrollBarQuestion(const festring& Topic, vector2d Pos, long BeginValu
 {
   DrawEverythingNoBlit();
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
-  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, false, Handler);
+  long Return = iosystem::ScrollBarQuestion(Topic, Pos, BeginValue, Step, Min, Max, AbortValue, TopicColor, Color1, Color2, GetMoveCommandKey(KEY_LEFT_INDEX), GetMoveCommandKey(KEY_RIGHT_INDEX), false, Handler);
   DOUBLE_BUFFER->Fill(16, 6, GetScreenXSize() << 4, 23, 0);
   return Return;
 }
@@ -2235,4 +2238,12 @@ character* game::CreateGhost()
     delete EnemyVector[c];
 
   return Ghost;
+}
+
+int game::GetMoveCommandKey(ushort Index) 
+{
+  if(configuration::GetUseNumberPad())
+    return MoveCommandKeyWithNumberPad[Index];
+  else
+    return MoveCommandKeyWithoutNumberPad[Index];
 }

@@ -497,4 +497,9 @@
 #define WALK_THROUGH_WALLS 8
 #define ANY_MOVE 15
 
+#define KEY_UP_INDEX 1
+#define KEY_LEFT_INDEX 3
+#define KEY_RIGHT_INDEX 4
+#define KEY_DOWN_INDEX 6
+
 #endif

@@ -44,6 +44,8 @@ class configuration
   static const festring& GetDefaultPetName() { return DefaultPetName; }
   static void SetDefaultPetName(const festring&);
   static festring GetConfigFileName();
+  static bool GetUseNumberPad() { return UseNumberPad; }
+  static void SetUseNumberPad(bool What) { UseNumberPad = What; }
  private:
   static void ContrastHandler(long);
   static festring DefaultName;
@@ -59,6 +61,7 @@ class configuration
   static bool FullScreenMode;
   static ulong ContrastLuminance;
   static bool LookZoom;
+  static bool UseNumberPad;
 };
 
 #endif

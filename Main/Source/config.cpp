@@ -10,6 +10,7 @@
 #include "graphics.h"
 #include "femath.h"
 #include "save.h"
+#include "ivandef.h"
 
 festring configuration::DefaultName;
 festring configuration::DefaultPetName = CONST_S("Kenny");
@@ -24,6 +25,7 @@ bool configuration::BeepOnCritical = false;
 bool configuration::FullScreenMode = false;
 ulong configuration::ContrastLuminance = NORMAL_LUMINANCE;
 bool configuration::LookZoom = false;
+bool configuration::UseNumberPad = true;
 
 void configuration::Save()
 {
@@ -43,6 +45,7 @@ void configuration::Save()
   SaveFile << "ItemOutlineColor = " << GetRed16(ItemOutlineColor) << ", " << GetGreen16(ItemOutlineColor) << ", " << GetBlue16(ItemOutlineColor) << ";\n";
   SaveFile << "FullScreenMode = " << FullScreenMode << ";\n";
   SaveFile << "LookZoom = " << LookZoom <<";\n";
+  SaveFile << "UseNumberPad = " << UseNumberPad << ";\n;";
 }
 
 void configuration::Load()
@@ -106,6 +109,9 @@ void configuration::Load()
 
       if(Word == "LookZoom")
 	SetLookZoom(SaveFile.ReadBool());
+
+      if(Word == "UseNumberPad")
+	SetUseNumberPad(SaveFile.ReadBool());
     }
 }
 
@@ -152,6 +158,7 @@ void configuration::ShowConfigScreen()
       List.AddEntry(CONST_S("Outline all characters:                 ") + (OutlineCharacters ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(CONST_S("Outline all items:                      ") + (OutlineItems ? "yes" : "no"), LIGHT_GRAY);
       List.AddEntry(CONST_S("Zoom feature in look mode:              ") + (LookZoom ? "yes" : "no"), LIGHT_GRAY);
+      List.AddEntry(CONST_S("Use number pad:                         ") + (UseNumberPad ? "yes" : "no"), LIGHT_GRAY);
 
 #ifndef __DJGPP__
       List.AddEntry(CONST_S("Run the game in full screen mode:       ") + (FullScreenMode ? "yes" : "no"), LIGHT_GRAY);
@@ -178,7 +185,7 @@ void configuration::ShowConfigScreen()
 	  BoolChange = false;
 	  break;
 	case 3:
-	  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, !game::IsRunning(), &ContrastHandler);
+	  iosystem::ScrollBarQuestion(CONST_S("Set new contrast value (0-200, '<' and '>' move the slider):"), QuestionPos, Contrast, 5, 0, 200, Contrast, WHITE, LIGHT_GRAY, DARK_GRAY, game::GetMoveCommandKey(KEY_LEFT_INDEX), game::GetMoveCommandKey(KEY_RIGHT_INDEX), !game::IsRunning(), &ContrastHandler);
 	  BoolChange = false;
 	  break;
 	case 4:
@@ -199,8 +206,12 @@ void configuration::ShowConfigScreen()
 	  SetLookZoom(!GetLookZoom());
 	  BoolChange = true;
 	  break;
-#ifndef __DJGPP__
 	case 8:
+	  SetUseNumberPad(!GetUseNumberPad());
+	  BoolChange = true;
+	  break;
+#ifndef __DJGPP__
+	case 9:
 	  graphics::SwitchMode();
 	  BoolChange = true;
 	  break;

@@ -94,7 +94,7 @@ class game
   static bool Init(const festring& = CONST_S(""));
   static void DeInit();
   static void Run();
-  static int GetMoveCommandKey(ushort Index) { return MoveCommandKey[Index]; }
+  static int GetMoveCommandKey(ushort);
   static const vector2d GetMoveVector(ushort Index) { return MoveVector[Index]; }
   static const vector2d GetRelativeMoveVector(ushort Index) { return RelativeMoveVector[Index]; }
   static const vector2d GetBasicMoveVector(ushort Index) { return BasicMoveVector[Index]; }
@@ -286,7 +286,8 @@ class game
   static god** God;
   static ushort CurrentLevelIndex;
   static ushort CurrentDungeonIndex;
-  static const int MoveCommandKey[];
+  static const int MoveCommandKeyWithNumberPad[];
+  static const int MoveCommandKeyWithoutNumberPad[];
   static const vector2d MoveVector[];
   static const vector2d RelativeMoveVector[];
   static const vector2d BasicMoveVector[];

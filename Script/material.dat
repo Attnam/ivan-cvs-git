@@ -710,7 +710,7 @@ material
 		IsGolemMaterial = true;
 		Color = rgb16(150, 150, 170);
 		Article = "a";
-		NameStem = "crystal";
+		NameStem = "blue crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
@@ -727,7 +727,7 @@ material
 		IsGolemMaterial = true;
 		Color = rgb16(175, 150, 175);
 		Article = "a";
-		NameStem = "crystal";
+		NameStem = "purple crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
@@ -744,7 +744,7 @@ material
 		IsGolemMaterial = true;
 		Color = rgb16(150, 175, 150);
 		Article = "a";
-		NameStem = "crystal";
+		NameStem = "green crystal";
 		AdjectiveStem = "crystal";
 		Alpha = 150;
 		AttachedGod = TERRA;
