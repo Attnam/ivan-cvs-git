@@ -211,3 +211,10 @@ Scroll of gold detection that would identify every unit made of gold.
 Bananas should act as boomerangs when thrown.
 *Satiated and bloated states.
 Zombies should spoil.
+Kicking heads should spill blood.
+*Average based difficulty!
+*Strength and weapon weight should affect attack speed!
+One must be able to use a stethoscope on doors.
+Item list to lookmode.
+Jammed bananas.
+Kamikaze dwarfs should sometimes have gunpowder golems as pets.

@@ -9,7 +9,7 @@ done (or understood) by anyone else than the writer.
 Assistenttioperaattorien integrointi? (<- osoitinluokat)
 *Kenttäkutsujen modifikaatio riippumattomaksi pelaajan lokaatiosta.
 Tilojen luokittaminen.
-*Tuonpuoleisen prototyypitys.
+//*Tuonpuoleisen prototyypitys.
 Tasovaihdosten funktionaalisuuden kohotus.
 Syöntisallimusten liputtaminen.
 Karakterin atribuuttien kollektivointi.
